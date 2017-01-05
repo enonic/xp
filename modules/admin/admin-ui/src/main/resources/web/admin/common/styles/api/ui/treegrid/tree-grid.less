@@ -62,7 +62,10 @@
         .notSelectable();
       }
 
-      .selected {
+      .selected, &.selected {
+        background-color: @admin-blue;
+        color: @admin-white;
+
         h6, p, .children-to-load {
           color: @admin-white;
         }

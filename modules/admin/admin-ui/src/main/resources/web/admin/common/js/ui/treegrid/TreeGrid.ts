@@ -154,37 +154,81 @@ module api.ui.treegrid {
             }
 
             this.grid.subscribeOnClick((event, data) => {
-                if (this.isActive()) {
-                    this.setActive(false);
-                    var elem = new ElementHelper(event.target);
-                    if (elem.hasClass("expand")) {
-                        elem.removeClass("expand").addClass("collapse");
-                        var node = this.gridData.getItem(data.row);
-                        this.expandNode(node);
-
-                    } else if (elem.hasClass("collapse")) {
-                        this.setActive(false);
-                        elem.removeClass("collapse").addClass("expand");
-                        var node = this.gridData.getItem(data.row);
-                        this.collapseNode(node);
-
-                    } else if (elem.hasAnyParentClass("slick-cell-checkboxsel")) {
-                        this.setActive(true);
-                        if (elem.getAttribute("type") === "checkbox") {
-                            this.grid.toggleRow(data.row);
-
-                        }
-                    } else {
-                        this.setActive(true);
-                        this.root.clearStashedSelection();
-                        let repeatedSelection = this.grid.selectRow(data.row) === -1;
-                        if (!elem.hasClass("sort-dialog-trigger")) {
-                            new TreeGridItemClickedEvent(repeatedSelection).fire();
-                        }
-                    }
+                if (!this.isActive()) {
+                    return;
                 }
+
                 if (this.contextMenu) {
                     this.contextMenu.hide();
+                }
+
+                this.setActive(false);
+                var elem = new ElementHelper(event.target);
+
+                if (elem.hasClass("expand")) {
+                    elem.removeClass("expand").addClass("collapse");
+                    var node = this.gridData.getItem(data.row);
+                    this.expandNode(node);
+
+                    return;
+                }
+
+                if (elem.hasClass("collapse")) {
+                    elem.removeClass("collapse").addClass("expand");
+                    var node = this.gridData.getItem(data.row);
+                    this.collapseNode(node);
+
+                    return;
+                }
+
+                let clickedRow = wemjq(elem.getHTMLElement()).closest(".slick-row");
+                let isMultiSelect = clickedRow.children().is(".slick-cell-checkboxsel");
+
+                this.setActive(true);
+
+                if (elem.hasAnyParentClass("slick-cell-checkboxsel")) {
+                    if (elem.getAttribute("type") !== "checkbox") {
+                        return;
+                    }
+
+                    if (!isMultiSelect) {
+                        this.grid.toggleRow(data.row);
+                        return;
+                    }
+
+                    let isRowHighlighted = clickedRow.hasClass("selected");
+                    if (!this.grid.isRowSelected(data.row)) {
+                        // If we are selecting a new row by clicking its checkbox - remove highlighting from all other rows
+                        this.unhighlightRows();
+                        if (isRowHighlighted) {
+                            clickedRow.addClass("selected");
+                        }
+                    }
+
+                    this.grid.toggleRow(data.row);
+
+                    return;
+                }
+                
+                // A cell in the row is clicked
+                if (isMultiSelect) {
+                    let isRowSelected = this.grid.isRowSelected(data.row);
+                    this.unselectAllRows();
+
+                    if (isRowSelected) {
+                        this.grid.selectRow(data.row);
+                        return;
+                    }
+
+                    clickedRow.addClass("selected");
+                }
+                else {
+                    this.root.clearStashedSelection();
+                    let repeatedSelection = this.grid.selectRow(data.row) === -1;
+
+                    if (!elem.hasClass("sort-dialog-trigger")) {
+                        new TreeGridItemClickedEvent(repeatedSelection).fire();
+                    }
                 }
             });
 
@@ -292,12 +336,22 @@ module api.ui.treegrid {
             this.onLoaded(() => this.unmask());
         }
 
+        private unhighlightRows() {
+            wemjq(this.grid.getHTMLElement()).find(".slick-row.selected").removeClass("selected");
+        }
+
+        private unselectAllRows() {
+            this.unhighlightRows();
+            this.grid.clearSelection();
+        }
+
         public setContextMenu(contextMenu: TreeGridContextMenu) {
             this.contextMenu = contextMenu;
             this.grid.subscribeOnContextMenu((event) => {
                 event.preventDefault();
                 this.setActive(false);
                 var cell = this.grid.getCellFromEvent(event);
+                this.unhighlightRows();
                 this.grid.selectRow(cell.row);
                 this.contextMenu.showAt(event.pageX, event.pageY);
                 this.notifyContextMenuShown(event.pageX, event.pageY);
