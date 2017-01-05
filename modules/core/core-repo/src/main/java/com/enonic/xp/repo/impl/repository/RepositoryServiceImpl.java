@@ -76,10 +76,15 @@ public class RepositoryServiceImpl
                 throw new RepositoryAlreadyExistException( key );
             }
 
-            //If the repository does not exist, creates it and the root node
+            //If the repository does not exist, creates it
             if ( !this.nodeRepositoryService.isInitialized( params.getRepositoryId() ) )
             {
                 this.nodeRepositoryService.create( params );
+            }
+
+            //If the root node does not exist, creates it
+            if ( getRootNode( params ) != null )
+            {
                 createRootNode( params );
             }
 
@@ -182,6 +187,17 @@ public class RepositoryServiceImpl
             branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
             settings( params.getRepositorySettings() ).
             build();
+    }
+
+    private Node getRootNode( final CreateRepositoryParams params )
+    {
+        final Context rootNodeContext = ContextBuilder.from( ContextAccessor.current() ).
+            repositoryId( params.getRepositoryId() ).
+            branch( RepositoryConstants.MASTER_BRANCH ).
+            build();
+        final InternalContext rootNodeInternalContext = InternalContext.create( rootNodeContext ).build();
+
+        return this.nodeStorageService.get( Node.ROOT_UUID, rootNodeInternalContext );
     }
 
     private void createRootNode( final CreateRepositoryParams params )
