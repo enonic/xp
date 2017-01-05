@@ -60,7 +60,7 @@ public class RepositoryServiceImpl
     {
         if ( this.indexServiceInternal.isMaster() )
         {
-            new SystemRepoInitializer( this ).initialize();
+            new SystemRepoInitializer( this, this.nodeStorageService ).initialize();
         }
     }
 
