@@ -69,11 +69,21 @@ public class RepositoryServiceImpl
     {
         requireAdminRole();
         return repositoryMap.compute( params.getRepositoryId(), ( key, previousRepository ) -> {
+
+            //If the repository entry already exists, throws an exception
             if ( previousRepository != null || repositoryEntryService.getRepositoryEntry( key ) != null )
             {
                 throw new RepositoryAlreadyExistException( key );
             }
-            createRootNode( params, RepositoryConstants.MASTER_BRANCH );
+
+            //If the repository does not exist, creates it
+            if ( !this.nodeRepositoryService.isInitialized( params.getRepositoryId() ) )
+            {
+                this.nodeRepositoryService.create( params );
+                createRootNode( params, RepositoryConstants.MASTER_BRANCH );
+            }
+
+            //Creates the repository entry
             final Repository repository = createRepositoryObject( params );
             repositoryEntryService.createRepositoryEntry( repository );
             return repository;
@@ -176,11 +186,6 @@ public class RepositoryServiceImpl
 
     private void createRootNode( final CreateRepositoryParams params, final Branch branch )
     {
-        if ( !this.nodeRepositoryService.isInitialized( params.getRepositoryId() ) )
-        {
-            this.nodeRepositoryService.create( params );
-        }
-
         final Context rootNodeContext = ContextBuilder.from( ContextAccessor.current() ).
             repositoryId( params.getRepositoryId() ).
             branch( branch ).
