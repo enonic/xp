@@ -67,6 +67,10 @@ module api.ui.treegrid {
 
         private errorPanel: ValidationRecordingViewer;
 
+        private highlightedRow: JQuery;
+
+        private highlightedNode: TreeNode<DATA>;
+
         constructor(builder: TreeGridBuilder<DATA>) {
 
             super(builder.getClasses());
@@ -164,11 +168,17 @@ module api.ui.treegrid {
 
                 this.setActive(false);
                 var elem = new ElementHelper(event.target);
+                let clickedRow = wemjq(elem.getHTMLElement()).closest(".slick-row");
+                let isRowHighlighted = clickedRow.hasClass("selected");
 
                 if (elem.hasClass("expand")) {
                     elem.removeClass("expand").addClass("collapse");
                     var node = this.gridData.getItem(data.row);
-                    this.expandNode(node);
+                    this.expandNode(node).then(() => {
+                        if (isRowHighlighted) {
+                            this.highlightRowByNode(node);
+                        }
+                    });
 
                     return;
                 }
@@ -177,11 +187,13 @@ module api.ui.treegrid {
                     elem.removeClass("collapse").addClass("expand");
                     var node = this.gridData.getItem(data.row);
                     this.collapseNode(node);
+                    if (isRowHighlighted) {
+                        this.highlightRowByNode(node);
+                    }
 
                     return;
                 }
 
-                let clickedRow = wemjq(elem.getHTMLElement()).closest(".slick-row");
                 let isMultiSelect = clickedRow.children().is(".slick-cell-checkboxsel");
 
                 this.setActive(true);
@@ -196,31 +208,28 @@ module api.ui.treegrid {
                         return;
                     }
 
-                    let isRowHighlighted = clickedRow.hasClass("selected");
-                    if (!this.grid.isRowSelected(data.row)) {
-                        // If we are selecting a new row by clicking its checkbox - remove highlighting from all other rows
-                        this.unhighlightRows();
-                        if (isRowHighlighted) {
-                            clickedRow.addClass("selected");
-                        }
-                    }
-
                     this.grid.toggleRow(data.row);
+
+                    if (this.grid.getSelectedRows().length > 1) {
+                        this.unhighlightRows();
+                    }
+                    else if (this.grid.isRowSelected(data.row)) {
+                        this.highlightRow(clickedRow);
+                    }
 
                     return;
                 }
                 
                 // A cell in the row is clicked
                 if (isMultiSelect) {
-                    let isRowSelected = this.grid.isRowSelected(data.row);
-                    this.unselectAllRows();
 
-                    if (isRowSelected) {
-                        this.grid.selectRow(data.row);
-                        return;
+                    if (this.grid.getSelectedRows().length > 0 || isRowHighlighted) {
+                        this.unselectAllRows();
                     }
 
-                    clickedRow.addClass("selected");
+                    if (!isRowHighlighted) {
+                        this.highlightRow(clickedRow);
+                    }
                 }
                 else {
                     this.root.clearStashedSelection();
@@ -267,12 +276,23 @@ module api.ui.treegrid {
                     keyBindings = keyBindings.concat([
                         new KeyBinding('up', () => {
                             if (this.isActive()) {
-                                this.scrollToRow(this.grid.moveSelectedUp());
+
+                                this.navigateUp();
+
+                                if (this.grid.navigateUp()) {
+                                    this.unhighlightRow(this.highlightedRow);
+                                    let cell = this.grid.getActiveCell();
+                                }
+                                //this.scrollToRow(this.grid.moveSelectedUp());
                             }
                         }),
                         new KeyBinding('down', () => {
                             if (this.isActive()) {
-                                this.scrollToRow(this.grid.moveSelectedDown());
+                                if (this.grid.navigateDown()) {
+                                    this.unhighlightRow(this.highlightedRow);
+                                    let cell = this.grid.getActiveCell();
+                                }
+                                //this.scrollToRow(this.grid.moveSelectedDown());
                             }
                         }),
                         new KeyBinding('left', () => {
@@ -336,8 +356,51 @@ module api.ui.treegrid {
             this.onLoaded(() => this.unmask());
         }
 
+        private navigateUp() {
+            if (!this.highlightedRow) {
+
+            }
+        }
+
+        private highlightRowByNode(node: TreeNode<DATA>) {
+            let rowIndex = this.gridData.getRowById(node.getId());
+            let cell = this.grid.getCellNode(rowIndex, 0);
+            let clickedRow = wemjq(cell).closest(".slick-row");
+
+            this.highlightRow(clickedRow);
+        }
+
+        private highlightRow(row: JQuery, skipEvent: boolean = false) {
+
+            if (!!this.highlightedRow && this.highlightedRow === row) {
+                return;
+            }
+
+            if (!!this.highlightedRow && this.highlightedRow !== row) {
+                this.unhighlightCurrentRow();
+            }
+
+            row.addClass("selected");
+            this.highlightedRow = row;
+            //Fire event here to notify preview panel
+        }
+
+        private unhighlightCurrentRow() {
+            this.unhighlightRow(this.highlightedRow);
+        }
+
+        private unhighlightRow(row) {
+            if (!row) {
+                return;
+            }
+            row.removeClass("selected");
+            this.highlightedRow = null;
+            //Fire event here to notify preview panel
+        }
+
         private unhighlightRows() {
             wemjq(this.grid.getHTMLElement()).find(".slick-row.selected").removeClass("selected");
+            this.highlightedRow = null;
         }
 
         private unselectAllRows() {

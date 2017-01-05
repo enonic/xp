@@ -325,6 +325,10 @@ module api.ui.grid {
             return this.slickGrid.getCellFromEvent(e);
         }
 
+        getCellNode(row: number, cell: number): HTMLElement {
+            return this.slickGrid.getCellNode(row, cell);
+        }
+
         moveSelectedUp() {
             if (this.slickGrid.getDataLength() > 0) {
                 var selected: number[] = this.getSelectedRows().sort((a, b) => {
