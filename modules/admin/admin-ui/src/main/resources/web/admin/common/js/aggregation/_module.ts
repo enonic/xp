@@ -20,6 +20,7 @@
 ///<reference path='AggregationContainer.ts' />
 ///<reference path='AggregationFactory.ts' />
 
+///<reference path='AggregationSelection.ts' />
 ///<reference path='AggregationGroupView.ts' />
 ///<reference path='ContentTypeAggregationGroupView.ts' />
 
