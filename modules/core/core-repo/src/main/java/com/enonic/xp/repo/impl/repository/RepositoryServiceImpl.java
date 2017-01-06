@@ -83,7 +83,7 @@ public class RepositoryServiceImpl
             }
 
             //If the root node does not exist, creates it
-            if ( getRootNode( params ) == null )
+            if ( getRootNode( params.getRepositoryId(), RepositoryConstants.MASTER_BRANCH ) == null )
             {
                 createRootNode( params );
             }
@@ -103,19 +103,28 @@ public class RepositoryServiceImpl
             getRepositoryId();
 
         repositoryMap.compute( repositoryId, ( key, previousRepository ) -> {
+
+            //If the repository entry does not exist, throws an exception
             previousRepository = previousRepository == null ? repositoryEntryService.getRepositoryEntry( key ) : previousRepository;
             if ( previousRepository == null )
             {
                 throw new RepositoryNotFoundException( "Cannot create branch in repository [" + repositoryId + "], not found" );
             }
 
+            //If the branch already exists, throws an exception
             final Branch newBranch = createBranchParams.getBranch();
             if ( previousRepository.getBranches().contains( newBranch ) )
             {
                 throw new BranchAlreadyExistException( newBranch );
             }
 
-            pushRootNode( previousRepository, newBranch );
+            //If the root node does not exist, creates it
+            if ( getRootNode( previousRepository.getId(), newBranch ) == null )
+            {
+                pushRootNode( previousRepository, newBranch );
+            }
+
+            //Updates the repository entry
             final Repository newRepository = repositoryEntryService.addBranchToRepositoryEntry( repositoryId, newBranch );
             return newRepository;
         } );
@@ -189,11 +198,11 @@ public class RepositoryServiceImpl
             build();
     }
 
-    private Node getRootNode( final CreateRepositoryParams params )
+    private Node getRootNode( final RepositoryId repositoryId, final Branch branch )
     {
         final Context rootNodeContext = ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( params.getRepositoryId() ).
-            branch( RepositoryConstants.MASTER_BRANCH ).
+            repositoryId( repositoryId ).
+            branch( branch ).
             build();
         final InternalContext rootNodeInternalContext = InternalContext.create( rootNodeContext ).build();
 
