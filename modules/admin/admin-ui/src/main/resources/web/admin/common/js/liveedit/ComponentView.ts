@@ -186,10 +186,11 @@ module api.liveedit {
                 }));
             }
 
+            actions.push(new api.ui.Action("Reset").onExecuted(() => {
+                this.component.reset();
+            }));
+
             if (!isTopFragmentComponent) {
-                actions.push(new api.ui.Action("Reset").onExecuted(() => {
-                    this.component.reset();
-                }));
                 actions.push(new api.ui.Action("Remove").onExecuted(() => {
                     this.deselect();
                     this.remove();
