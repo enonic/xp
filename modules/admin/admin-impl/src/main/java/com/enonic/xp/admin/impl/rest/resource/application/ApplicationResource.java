@@ -314,7 +314,7 @@ public final class ApplicationResource
     public MarketApplicationsJson getMarketApplications( final GetMarketApplicationsJson params )
         throws Exception
     {
-        final String version = params.getVersion();
+        final String version = "6.9.9";
         final int start = params.getStart();
         final int count = params.getCount();
         final List<String> ids = params.getIds();
