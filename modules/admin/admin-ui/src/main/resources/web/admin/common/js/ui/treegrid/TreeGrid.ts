@@ -170,14 +170,18 @@ module api.ui.treegrid {
                 var elem = new ElementHelper(event.target);
                 let clickedRow = wemjq(elem.getHTMLElement()).closest(".slick-row");
                 let isRowHighlighted = clickedRow.hasClass("selected");
+                let node = this.gridData.getItem(data.row);
+                let isMultiSelect = clickedRow.children().is(".slick-cell-checkboxsel");
 
                 if (elem.hasClass("expand")) {
                     elem.removeClass("expand").addClass("collapse");
-                    var node = this.gridData.getItem(data.row);
                     this.expandNode(node).then(() => {
-                        if (isRowHighlighted) {
-                            this.highlightRowByNode(node);
+                        if (isMultiSelect) {
+                            this.highlightCurrentNode();
                         }
+                        /*if (isRowHighlighted) {
+                            this.highlightRowByNode(node);
+                        }*/
                     });
 
                     return;
@@ -185,16 +189,13 @@ module api.ui.treegrid {
 
                 if (elem.hasClass("collapse")) {
                     elem.removeClass("collapse").addClass("expand");
-                    var node = this.gridData.getItem(data.row);
                     this.collapseNode(node);
-                    if (isRowHighlighted) {
-                        this.highlightRowByNode(node);
+                    if (isMultiSelect) {
+                        this.highlightCurrentNode();
                     }
 
                     return;
                 }
-
-                let isMultiSelect = clickedRow.children().is(".slick-cell-checkboxsel");
 
                 this.setActive(true);
 
@@ -214,7 +215,7 @@ module api.ui.treegrid {
                         this.unhighlightRows();
                     }
                     else if (this.grid.isRowSelected(data.row)) {
-                        this.highlightRow(clickedRow);
+                        this.highlightRowByNode(node);
                     }
 
                     return;
@@ -228,7 +229,7 @@ module api.ui.treegrid {
                     }
 
                     if (!isRowHighlighted) {
-                        this.highlightRow(clickedRow);
+                        this.highlightRowByNode(node);
                     }
                 }
                 else {
@@ -362,22 +363,36 @@ module api.ui.treegrid {
             }
         }
 
-        private highlightRowByNode(node: TreeNode<DATA>) {
+        private getRowByNode(node: TreeNode<DATA>): JQuery {
             let rowIndex = this.gridData.getRowById(node.getId());
             let cell = this.grid.getCellNode(rowIndex, 0);
-            let clickedRow = wemjq(cell).closest(".slick-row");
 
-            this.highlightRow(clickedRow);
+            return wemjq(cell).closest(".slick-row");
         }
 
+        private highlightCurrentNode() {
+            if (!this.highlightedNode) {
+                return;
+            }
+
+            this.highlightRowByNode(this.highlightedNode);
+        }
+
+        private highlightRowByNode(node: TreeNode<DATA>) {
+            let row = this.getRowByNode(node);
+
+            if (!!this.highlightedNode && this.highlightedNode !== node) {
+                this.unhighlightCurrentRow();
+            }
+
+            this.highlightedNode = node;
+            this.highlightRow(row);
+        }
+        
         private highlightRow(row: JQuery, skipEvent: boolean = false) {
 
             if (!!this.highlightedRow && this.highlightedRow === row) {
                 return;
-            }
-
-            if (!!this.highlightedRow && this.highlightedRow !== row) {
-                this.unhighlightCurrentRow();
             }
 
             row.addClass("selected");
@@ -395,12 +410,14 @@ module api.ui.treegrid {
             }
             row.removeClass("selected");
             this.highlightedRow = null;
+            this.highlightedNode = null;
             //Fire event here to notify preview panel
         }
 
         private unhighlightRows() {
             wemjq(this.grid.getHTMLElement()).find(".slick-row.selected").removeClass("selected");
             this.highlightedRow = null;
+            this.highlightedNode = null;
         }
 
         private unselectAllRows() {
