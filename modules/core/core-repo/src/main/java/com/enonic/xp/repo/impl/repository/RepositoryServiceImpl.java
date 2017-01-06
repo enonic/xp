@@ -68,31 +68,35 @@ public class RepositoryServiceImpl
     public Repository createRepository( final CreateRepositoryParams params )
     {
         requireAdminRole();
-        return repositoryMap.compute( params.getRepositoryId(), ( key, previousRepository ) -> {
 
-            //If the repository entry already exists, throws an exception
-            if ( previousRepository != null || repositoryEntryService.getRepositoryEntry( key ) != null )
-            {
-                throw new RepositoryAlreadyExistException( key );
-            }
+        return repositoryMap.compute( params.getRepositoryId(),
+                                      ( key, previousRepository ) -> doCreateRepo( params, key, previousRepository ) );
+    }
 
-            //If the repository does not exist, creates it
-            if ( !this.nodeRepositoryService.isInitialized( params.getRepositoryId() ) )
-            {
-                this.nodeRepositoryService.create( params );
-            }
+    private Repository doCreateRepo( final CreateRepositoryParams params, final RepositoryId key, final Repository previousRepository )
+    {
+        //If the repository entry already exists, throws an exception
+        if ( previousRepository != null || repositoryEntryService.getRepositoryEntry( key ) != null )
+        {
+            throw new RepositoryAlreadyExistException( key );
+        }
 
-            //If the root node does not exist, creates it
-            if ( getRootNode( params.getRepositoryId(), RepositoryConstants.MASTER_BRANCH ) == null )
-            {
-                createRootNode( params );
-            }
+        //If the repository does not exist, creates it
+        if ( !this.nodeRepositoryService.isInitialized( params.getRepositoryId() ) )
+        {
+            this.nodeRepositoryService.create( params );
+        }
 
-            //Creates the repository entry
-            final Repository repository = createRepositoryObject( params );
-            repositoryEntryService.createRepositoryEntry( repository );
-            return repository;
-        } );
+        //If the root node does not exist, creates it
+        if ( getRootNode( params.getRepositoryId(), RepositoryConstants.MASTER_BRANCH ) == null )
+        {
+            createRootNode( params );
+        }
+
+        //Creates the repository entry
+        final Repository repository = createRepositoryObject( params );
+        repositoryEntryService.createRepositoryEntry( repository );
+        return repository;
     }
 
     @Override
@@ -102,34 +106,37 @@ public class RepositoryServiceImpl
         final RepositoryId repositoryId = ContextAccessor.current().
             getRepositoryId();
 
-        repositoryMap.compute( repositoryId, ( key, previousRepository ) -> {
-
-            //If the repository entry does not exist, throws an exception
-            previousRepository = previousRepository == null ? repositoryEntryService.getRepositoryEntry( key ) : previousRepository;
-            if ( previousRepository == null )
-            {
-                throw new RepositoryNotFoundException( "Cannot create branch in repository [" + repositoryId + "], not found" );
-            }
-
-            //If the branch already exists, throws an exception
-            final Branch newBranch = createBranchParams.getBranch();
-            if ( previousRepository.getBranches().contains( newBranch ) )
-            {
-                throw new BranchAlreadyExistException( newBranch );
-            }
-
-            //If the root node does not exist, creates it
-            if ( getRootNode( previousRepository.getId(), newBranch ) == null )
-            {
-                pushRootNode( previousRepository, newBranch );
-            }
-
-            //Updates the repository entry
-            final Repository newRepository = repositoryEntryService.addBranchToRepositoryEntry( repositoryId, newBranch );
-            return newRepository;
-        } );
+        repositoryMap.compute( repositoryId,
+                               ( key, previousRepository ) -> doCreateBranch( createBranchParams, repositoryId, key, previousRepository ) );
 
         return createBranchParams.getBranch();
+    }
+
+    private Repository doCreateBranch( final CreateBranchParams createBranchParams, final RepositoryId repositoryId, final RepositoryId key,
+                                       Repository previousRepository )
+    {
+        //If the repository entry does not exist, throws an exception
+        previousRepository = previousRepository == null ? repositoryEntryService.getRepositoryEntry( key ) : previousRepository;
+        if ( previousRepository == null )
+        {
+            throw new RepositoryNotFoundException( "Cannot create branch in repository [" + repositoryId + "], not found" );
+        }
+
+        //If the branch already exists, throws an exception
+        final Branch newBranch = createBranchParams.getBranch();
+        if ( previousRepository.getBranches().contains( newBranch ) )
+        {
+            throw new BranchAlreadyExistException( newBranch );
+        }
+
+        //If the root node does not exist, creates it
+        if ( getRootNode( previousRepository.getId(), newBranch ) == null )
+        {
+            pushRootNode( previousRepository, newBranch );
+        }
+
+        //Updates the repository entry
+        return repositoryEntryService.addBranchToRepositoryEntry( repositoryId, newBranch );
     }
 
     @Override
@@ -204,6 +211,7 @@ public class RepositoryServiceImpl
             repositoryId( repositoryId ).
             branch( branch ).
             build();
+
         final InternalContext rootNodeInternalContext = InternalContext.create( rootNodeContext ).build();
 
         return this.nodeStorageService.get( Node.ROOT_UUID, rootNodeInternalContext );
