@@ -200,6 +200,8 @@ module api.ui.treegrid {
                 this.setActive(true);
 
                 if (elem.hasAnyParentClass("slick-cell-checkboxsel")) {
+                    // Checkbox is clicked
+                    
                     if (elem.getAttribute("type") !== "checkbox") {
                         return;
                     }
@@ -214,8 +216,8 @@ module api.ui.treegrid {
                     if (this.grid.getSelectedRows().length > 1) {
                         this.unhighlightRows();
                     }
-                    else if (this.grid.isRowSelected(data.row)) {
-                        this.highlightRowByNode(node);
+                    else if (this.grid.isRowSelected(data.row) && this.highlightedNode !== node) {
+                        this.unhighlightCurrentRow();
                     }
 
                     return;
@@ -223,12 +225,12 @@ module api.ui.treegrid {
                 
                 // A cell in the row is clicked
                 if (isMultiSelect) {
-
+                    let isRowSelected = this.grid.isRowSelected(data.row);
                     if (this.grid.getSelectedRows().length > 0 || isRowHighlighted) {
                         this.unselectAllRows();
                     }
 
-                    if (!isRowHighlighted) {
+                    if (!isRowHighlighted && !isRowSelected) {
                         this.highlightRowByNode(node);
                     }
                 }
