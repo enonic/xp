@@ -224,12 +224,15 @@ public class IndexServiceImpl
         final IndexSettings defaultIndexSettings = DEFAULT_INDEX_RESOURCE_PROVIDER.getSettings( repositoryId, IndexType.SEARCH );
 
         final Repository repositoryEntry = repositoryEntryService.getRepositoryEntry( repositoryId );
-        final IndexSettings indexSettings = repositoryEntry.getSettings().
-            getIndexSettings( IndexType.SEARCH );
-
-        if ( indexSettings != null )
+        if ( repositoryEntry != null )
         {
-            return new IndexSettings( JsonHelper.merge( defaultIndexSettings.getNode(), indexSettings.getNode() ) );
+            final IndexSettings indexSettings = repositoryEntry.getSettings().
+                getIndexSettings( IndexType.SEARCH );
+
+            if ( indexSettings != null )
+            {
+                return new IndexSettings( JsonHelper.merge( defaultIndexSettings.getNode(), indexSettings.getNode() ) );
+            }
         }
 
         return defaultIndexSettings;
@@ -240,12 +243,15 @@ public class IndexServiceImpl
         final IndexMapping defaultIndexMapping = DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( repositoryId, IndexType.SEARCH );
 
         final Repository repositoryEntry = repositoryEntryService.getRepositoryEntry( repositoryId );
-        final IndexMapping indexMapping = repositoryEntry.getSettings().
-            getIndexMappings( IndexType.SEARCH );
-
-        if ( indexMapping != null )
+        if ( repositoryEntry != null )
         {
-            return new IndexMapping( JsonHelper.merge( defaultIndexMapping.getNode(), indexMapping.getNode() ) );
+            final IndexMapping indexMapping = repositoryEntry.getSettings().
+                getIndexMappings( IndexType.SEARCH );
+
+            if ( indexMapping != null )
+            {
+                return new IndexMapping( JsonHelper.merge( defaultIndexMapping.getNode(), indexMapping.getNode() ) );
+            }
         }
 
         return defaultIndexMapping;
