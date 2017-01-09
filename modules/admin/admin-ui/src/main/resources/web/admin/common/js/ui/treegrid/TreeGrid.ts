@@ -68,8 +68,6 @@ module api.ui.treegrid {
 
         private errorPanel: ValidationRecordingViewer;
 
-        private highlightedRow: JQuery;
-
         private highlightedNode: TreeNode<DATA>;
 
         constructor(builder: TreeGridBuilder<DATA>) {
@@ -172,7 +170,7 @@ module api.ui.treegrid {
                 const clickedRow = wemjq(elem.getHTMLElement()).closest(".slick-row");
                 const isRowHighlighted = clickedRow.hasClass("selected");
                 const node = this.gridData.getItem(data.row);
-                const isMultiSelect = !this.gridOptions.isMultipleSelectionDisabled()/*clickedRow.children().is(".slick-cell-checkboxsel")*/;
+                const isMultiSelect = !this.gridOptions.isMultipleSelectionDisabled();
 
                 if (elem.hasClass("expand")) {
                     elem.removeClass("expand").addClass("collapse");
@@ -224,12 +222,16 @@ module api.ui.treegrid {
                 // A cell in the row is clicked
                 if (isMultiSelect) {
                     const isRowSelected = this.grid.isRowSelected(data.row);
+                    const isMultipleRowsSelected = this.grid.getSelectedRows().length > 1;
                     if (this.grid.getSelectedRows().length > 0 || isRowHighlighted) {
                         this.unselectAllRows();
                     }
 
-                    if (!isRowHighlighted && !isRowSelected) {
+                    if (!(isRowHighlighted || isRowSelected)) {
                         this.highlightRowByNode(node);
+                    }
+                    else if (isMultipleRowsSelected) {
+                        this.grid.selectRow(data.row);
                     }
                 }
                 else {
@@ -441,57 +443,33 @@ module api.ui.treegrid {
             }
 
             this.highlightedNode = node;
-            this.highlightRow(row);
-        }
-        
-        private highlightRow(row: JQuery, skipEvent: boolean = false) {
-
-            if (!!this.highlightedRow && this.highlightedRow === row) {
-                return;
-            }
-
             row.addClass("selected");
-            this.highlightedRow = row;
+
             //Fire event here to notify preview panel
         }
 
         private unhighlightCurrentRow() {
-            this.unhighlightRow(this.highlightedRow);
+            let row = this.getRowByNode(this.highlightedNode);
+            this.unhighlightRow(row);
         }
 
         private unhighlightRow(row) {
+            this.highlightedNode = null;
             if (!row) {
                 return;
             }
             row.removeClass("selected");
-            this.highlightedRow = null;
-            this.highlightedNode = null;
             //Fire event here to notify preview panel
         }
 
         private unhighlightRows() {
             wemjq(this.grid.getHTMLElement()).find(".slick-row.selected").removeClass("selected");
-            this.highlightedRow = null;
             this.highlightedNode = null;
         }
 
         private unselectAllRows() {
             this.unhighlightRows();
             this.grid.clearSelection();
-        }
-
-        public setContextMenu(contextMenu: TreeGridContextMenu) {
-            this.contextMenu = contextMenu;
-            this.grid.subscribeOnContextMenu((event) => {
-                event.preventDefault();
-                this.setActive(false);
-                let cell = this.grid.getCellFromEvent(event);
-                this.grid.selectRow(cell.row);
-                this.contextMenu.showAt(event.pageX, event.pageY);
-                this.notifyContextMenuShown(event.pageX, event.pageY);
-                this.setActive(true);
-            });
-
         }
 
         public isInRenderingView(): boolean {
