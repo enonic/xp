@@ -64,7 +64,6 @@ public class RepositoryNodeTranslator
         if ( indexDefinitions != null )
         {
             final PropertySet indexConfigsPropertySet = data.addSet( INDEX_CONFIG_KEY );
-            final JsonToPropertyTreeTranslator propertyTreeTranslator = new JsonToPropertyTreeTranslator();
             for ( IndexType indexType : IndexType.values() )
             {
                 final IndexDefinition indexDefinition = indexDefinitions.get( indexType );
@@ -74,7 +73,8 @@ public class RepositoryNodeTranslator
                     final IndexMapping indexMapping = indexDefinition.getMapping();
                     if ( indexMapping != null )
                     {
-                        final PropertySet indexMappingPropertySet = propertyTreeTranslator.translate( indexMapping.getNode() ).
+                        final PropertySet indexMappingPropertySet = new JsonToPropertyTreeTranslator().
+                            translate( indexMapping.getNode() ).
                             getRoot();
                         indexConfigPropertySet.setSet( MAPPING_KEY, indexMappingPropertySet );
                     }
@@ -82,7 +82,8 @@ public class RepositoryNodeTranslator
                     final IndexSettings indexSettings = indexDefinition.getSettings();
                     if ( indexSettings != null )
                     {
-                        final PropertySet indexSettingsPropertySet = propertyTreeTranslator.translate( indexSettings.getNode() ).
+                        final PropertySet indexSettingsPropertySet = new JsonToPropertyTreeTranslator().
+                            translate( indexSettings.getNode() ).
                             getRoot();
                         indexConfigPropertySet.setSet( SETTINGS_KEY, indexSettingsPropertySet );
                     }
