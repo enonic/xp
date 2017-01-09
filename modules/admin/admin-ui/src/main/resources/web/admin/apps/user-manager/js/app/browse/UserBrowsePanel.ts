@@ -61,13 +61,13 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
     }
 
     treeNodesToBrowseItems(nodes: TreeNode<UserTreeGridItem>[]): BrowseItem<UserTreeGridItem>[] {
-        var browseItems: BrowseItem<UserTreeGridItem>[] = [];
+        let browseItems: BrowseItem<UserTreeGridItem>[] = [];
 
         // do not proceed duplicated content. still, it can be selected
         nodes.forEach((node: TreeNode<UserTreeGridItem>) => {
-            var userGridItem = node.getData();
+            let userGridItem = node.getData();
 
-            var item = new BrowseItem<UserTreeGridItem>(userGridItem).setId(userGridItem.getDataId()).setDisplayName(
+            let item = new BrowseItem<UserTreeGridItem>(userGridItem).setId(userGridItem.getDataId()).setDisplayName(
                 userGridItem.getItemDisplayName()).setIconClass(this.selectIconClass(userGridItem));
             browseItems.push(item);
 
@@ -77,7 +77,7 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
 
     private selectIconClass(item: UserTreeGridItem): string {
 
-        var type: UserTreeGridItemType = item.getType();
+        let type: UserTreeGridItemType = item.getType();
 
         switch (type) {
         case UserTreeGridItemType.USER_STORE:

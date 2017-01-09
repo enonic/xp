@@ -29,10 +29,10 @@ module api.ui.security.acl {
             super('permission-selector');
 
             PermissionSelector.OPTIONS.forEach((option: PermissionSelectorOption) => {
-                var toggle = new PermissionToggle(option);
+                let toggle = new PermissionToggle(option);
                 toggle.setEnabled(this.enabled);
                 toggle.onValueChanged((event: api.ValueChangedEvent) => {
-                    var newValue = this.getValue();
+                    let newValue = this.getValue();
                     this.notifyValueChanged(new api.ValueChangedEvent(JSON.stringify(this.oldValue), JSON.stringify(newValue)));
                     this.oldValue = newValue;
                 });
@@ -57,7 +57,7 @@ module api.ui.security.acl {
         }
 
         getValue(): {allow: Permission[]; deny: Permission[]} {
-            var values = {
+            let values = {
                 allow: [],
                 deny: []
             };
@@ -77,8 +77,8 @@ module api.ui.security.acl {
 
         setValue(newValue: {allow: Permission[]; deny: Permission[]}, silent?: boolean): PermissionSelector {
             this.toggles.forEach((toggle: PermissionToggle) => {
-                var value = toggle.getValue();
-                var state;
+                let value = toggle.getValue();
+                let state;
                 if (newValue.allow.indexOf(value) >= 0) {
                     state = PermissionState.ALLOW;
                 } else if (newValue.deny.indexOf(value) >= 0) {
@@ -103,13 +103,13 @@ module api.ui.security.acl {
         unValueChanged(listener: (event: api.ValueChangedEvent)=>void) {
             this.valueChangedListeners = this.valueChangedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         notifyValueChanged(event: api.ValueChangedEvent) {
             this.valueChangedListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
     }
 
@@ -135,7 +135,7 @@ module api.ui.security.acl {
 
             this.onClicked((event: MouseEvent) => {
                 if (this.enabled) {
-                    var newIndex = (this.stateIndex + 1) % PermissionToggle.STATES.length;
+                    let newIndex = (this.stateIndex + 1) % PermissionToggle.STATES.length;
                     this.setState(PermissionToggle.STATES[newIndex]);
 
                     event.preventDefault();
@@ -163,14 +163,14 @@ module api.ui.security.acl {
         }
 
         setState(newState: PermissionState, silent?: boolean): PermissionToggle {
-            var newStateIndex = PermissionToggle.STATES.indexOf(newState);
+            let newStateIndex = PermissionToggle.STATES.indexOf(newState);
             if (newStateIndex != this.stateIndex) {
                 if (this.originalStateIndex < 0) {
                     this.originalStateIndex = newStateIndex;
                 }
                 this.toggleClass('dirty', this.originalStateIndex >= 0 && this.originalStateIndex != newStateIndex);
 
-                var oldState = this.getState();
+                let oldState = this.getState();
                 if (oldState != undefined) {
                     this.removeClass(PermissionState[oldState].toLowerCase());
                 }
@@ -191,13 +191,13 @@ module api.ui.security.acl {
         unValueChanged(listener: (event: api.ValueChangedEvent)=>void) {
             this.valueChangedListeners = this.valueChangedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyValueChanged(event: api.ValueChangedEvent) {
             this.valueChangedListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
     }

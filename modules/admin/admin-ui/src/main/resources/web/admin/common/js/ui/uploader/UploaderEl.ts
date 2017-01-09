@@ -5,14 +5,16 @@ module api.ui.uploader {
     import Button = api.ui.button.Button;
     import CloseButton = api.ui.button.CloseButton;
     import Element = api.dom.Element;
+    import ElementRenderedEvent = api.dom.ElementRenderedEvent;
+    import ElementShownEvent = api.dom.ElementShownEvent;
 
     export interface FineUploaderFile {
-        id: string,
-        name: string,
-        size: number,
-        uuid: string,
-        status: string,
-        percent: number
+        id: string;
+        name: string;
+        size: number;
+        uuid: string;
+        status: string;
+        percent: number;
     }
 
     export interface UploaderElConfig {
@@ -20,8 +22,8 @@ module api.ui.uploader {
         url?: string;
         hasUploadButton?: boolean;
         allowDrop?: boolean;
-        selfIsDropzone?: boolean;            // allow drop no matter if the dropzone is visible
-        resultAlwaysVisisble?: boolean;         // never hide the result
+        selfIsDropzone?: boolean;       // allow drop no matter if the dropzone is visible
+        resultAlwaysVisisble?: boolean; // never hide the result
         allowTypes?: {title: string; extensions: string}[];
         allowMultiSelection?: boolean;
         showCancel?: boolean;
@@ -37,9 +39,9 @@ module api.ui.uploader {
     export class UploaderEl<MODEL extends api.Equitable> extends api.dom.FormInputEl {
 
         protected config: UploaderElConfig;
-        protected uploader;
-        protected dragAndDropper;
-        protected value;
+        protected uploader: any;       // qq.FineUploaderBasic
+        protected dragAndDropper: any; // qq.DragAndDrop
+        protected value: string;
         private uploadedItems: UploadItem<MODEL>[] = [];
         private extraDropzoneIds: string[] = [];
 
@@ -58,14 +60,14 @@ module api.ui.uploader {
         private uploadCompleteListeners: { (event: FileUploadCompleteEvent<MODEL>): void }[] = [];
         private uploadFailedListeners: { (event: FileUploadFailedEvent<MODEL>): void }[] = [];
         private uploadResetListeners: {(): void }[] = [];
-        private dropzoneDragEnterListeners: { (event): void }[] = [];
-        private dropzoneDragLeaveListeners: { (event): void }[] = [];
-        private dropzoneDropListeners: { (event): void }[] = [];
+        private dropzoneDragEnterListeners: { (event: DragEvent): void }[] = [];
+        private dropzoneDragLeaveListeners: { (event: DragEvent): void }[] = [];
+        private dropzoneDropListeners: { (event: DragEvent): void }[] = [];
 
         private debouncedUploadStart: () => void;
 
-        private shownInitHandler;
-        private renderedInitHandler;
+        private shownInitHandler: (event: ElementShownEvent) => void;
+        private renderedInitHandler: (event: ElementRenderedEvent) => void;
 
         public static debug: boolean = false;
 
@@ -114,7 +116,7 @@ module api.ui.uploader {
 
         private initUploadButton() {
             if (!this.config.hasUploadButton) {
-                return
+                return;
             }
             this.uploadButton = new api.dom.DivEl('upload-button');
             this.uploadButton.setId('upload-button-' + new Date().getTime());
@@ -155,7 +157,7 @@ module api.ui.uploader {
                 }
             });
 
-            var resetHandler = () => {
+            let resetHandler = () => {
                 this.reset();
                 return false;
             };
@@ -270,12 +272,12 @@ module api.ui.uploader {
                 return this;
             }
 
-            var newItemsToAppend: Element[] = [],
+            let newItemsToAppend: Element[] = [],
                 existingItems: Element[] = [];
 
             this.parseValues(value).forEach((val) => {
                 if (val) {
-                    var existingItem = this.getExistingItem(val);
+                    let existingItem = this.getExistingItem(val);
                     if (!existingItem) {
                         newItemsToAppend.push(this.createResultItem(val));
                     } else {
@@ -292,27 +294,23 @@ module api.ui.uploader {
         }
 
         protected appendNewItems(newItemsToAppend: Element[]) {
-            for (var key in newItemsToAppend) {
-                this.getResultContainer().appendChild(newItemsToAppend[key]);
-            }
+            newItemsToAppend.forEach((elem: Element) => this.getResultContainer().appendChild(elem));
         }
 
         protected removeAllChildrenExceptGiven(itemsToKeep: Element[]) {
-            var items = this.getResultContainer().getChildren(),
-                toRemove = [];
+            const items: Element[] = this.getResultContainer().getChildren();
+            const toRemove = [];
 
-            items.forEach((elem) => {
-                if (!itemsToKeep.some((itemToKeep) => itemToKeep == elem)) {
+            items.forEach((elem: Element) => {
+                if (!itemsToKeep.some((itemToKeep: Element) => itemToKeep === elem)) {
                     toRemove.push(elem);
                 }
             });
-            for (var key in toRemove) {
-                toRemove[key].remove();
-            }
+            toRemove.forEach((elem: Element) => elem.remove());
         }
 
         protected refreshExistingItem(existingItem: Element, value: string) {
-
+            // must be implemented by children
         }
 
         protected getExistingItem(value: string): Element {
@@ -321,7 +319,7 @@ module api.ui.uploader {
 
         parseValues(jsonString: string): string[] {
             try {
-                var o = JSON.parse(jsonString);
+                let o = JSON.parse(jsonString);
 
                 // Handle non-exception-throwing cases:
                 // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
@@ -329,7 +327,7 @@ module api.ui.uploader {
                 if (o && typeof o === "object" && o.length) {
                     return o;
                 }
-            } catch (e) { }
+            } catch (error) { /* empty*/ }
 
             // Value is not JSON so just return it
             return [jsonString];
@@ -405,7 +403,7 @@ module api.ui.uploader {
         }
 
 
-        createModel(serverResponse): MODEL {
+        createModel(serverResponse: any): MODEL {
             throw new Error('Should be overridden by inheritors');
         }
 
@@ -453,7 +451,7 @@ module api.ui.uploader {
                         if (UploaderEl.debug) {
                             console.log('Deferring enabling uploader until it\' shown', this);
                         }
-                        this.shownInitHandler = (event) => {
+                        this.shownInitHandler = (event: ElementShownEvent) => {
                             this.initHandler();
                             this.unShown(this.shownInitHandler);
                             this.shownInitHandler = null;
@@ -468,7 +466,7 @@ module api.ui.uploader {
                         if (UploaderEl.debug) {
                             console.log('Deferring enabling uploader until it\' rendered', this);
                         }
-                        this.renderedInitHandler = (event) => {
+                        this.renderedInitHandler = (event: ElementRenderedEvent) => {
                             this.initHandler();
                             this.unRendered(this.renderedInitHandler);
                             this.renderedInitHandler = null;
@@ -489,8 +487,8 @@ module api.ui.uploader {
         }
 
         private findUploadItemById(id: string): UploadItem<MODEL> {
-            for (var i = 0; i < this.uploadedItems.length; i++) {
-                var uploadItem = this.uploadedItems[i];
+            for (let i = 0; i < this.uploadedItems.length; i++) {
+                let uploadItem = this.uploadedItems[i];
                 if (uploadItem.getId() == id) {
                     return uploadItem;
                 }
@@ -498,15 +496,15 @@ module api.ui.uploader {
             return null;
         }
 
-        private submitCallback(id, name) {
-            var file: FineUploaderFile = this.uploader.getFile(id);
+        private submitCallback(id: string, name: string) {
+            let file: FineUploaderFile = this.uploader.getFile(id);
             file.id = id;
 
             if (name.lastIndexOf(".") > 0) {
                 name = name.substr(0, name.lastIndexOf("."));
             }
 
-            var uploadFile = new UploadItem<MODEL>(file);
+            let uploadFile = new UploadItem<MODEL>(file);
             this.uploadedItems.push(uploadFile.setName(name));
 
             this.setProgressVisible();
@@ -514,31 +512,31 @@ module api.ui.uploader {
             this.debouncedUploadStart();
         }
 
-        private statusChangeCallback(id, oldStatus, newStatus) {
-            var uploadItem = this.findUploadItemById(id);
+        private statusChangeCallback(id: string, oldStatus: string, newStatus: string) {
+            let uploadItem = this.findUploadItemById(id);
             if (!!uploadItem) {
                 uploadItem.setStatus(newStatus);
             }
         }
 
-        private progressCallback(id, name, uploadedBytes, totalBytes) {
-            var percent = Math.round(uploadedBytes / totalBytes * 100);
+        private progressCallback(id: string, name: string, uploadedBytes: number, totalBytes: number) {
+            let percent = Math.round(uploadedBytes / totalBytes * 100);
 
             this.progress.setValue(percent);
 
-            var uploadItem = this.findUploadItemById(id);
+            let uploadItem = this.findUploadItemById(id);
             if (uploadItem) {
                 uploadItem.setProgress(percent);
                 this.notifyFileUploadProgress(uploadItem);
             }
         }
 
-        private fileCompleteCallback(id, name, response, xhrOrXdr) {
+        private fileCompleteCallback(id: string, name: string, response: any, xhrOrXdr: XMLHttpRequest) {
             if (xhrOrXdr && xhrOrXdr.status === 200) {
                 try {
-                    var uploadItem = this.findUploadItemById(id);
+                    let uploadItem = this.findUploadItemById(id);
                     if (uploadItem) {
-                        var model: MODEL = this.createModel(JSON.parse(xhrOrXdr.response));
+                        let model: MODEL = this.createModel(JSON.parse(xhrOrXdr.response));
                         uploadItem.setModel(model);
                         this.notifyFileUploaded(uploadItem);
                     }
@@ -548,18 +546,18 @@ module api.ui.uploader {
             }
         }
 
-        private errorCallback(id, name, errorReason, xhrOrXdr) {
+        private errorCallback(id: string, name: string, errorReason: any, xhrOrXdr: XMLHttpRequest) {
             if (xhrOrXdr && xhrOrXdr.status !== 200) {
                 try {
-                    var responseObj = JSON.parse(xhrOrXdr.response);
-                    var error = new api.rest.RequestError(responseObj.status, responseObj.message);
+                    let responseObj = JSON.parse(xhrOrXdr.response);
+                    let error = new api.rest.RequestError(responseObj.status, responseObj.message);
                     api.DefaultErrorHandler.handle(error);
                 } catch (e) {
                     console.warn("Failed to parse the response", xhrOrXdr.response, e);
                     api.notify.NotifyManager.get().showError(this.getErrorMessage(name));
                 }
 
-                var uploadItem = this.findUploadItemById(id);
+                let uploadItem = this.findUploadItemById(id);
                 if (uploadItem) {
                     uploadItem.setModel(null);
                     this.notifyUploadFailed(uploadItem);
@@ -567,8 +565,8 @@ module api.ui.uploader {
             }
         }
 
-        private allCompleteCallback(succeeded, failed) {
-            var values = [];
+        private allCompleteCallback() {
+            let values = [];
             this.uploadedItems.forEach((item) => {
                 if (item.getStatus() == qq.status.UPLOAD_SUCCESSFUL) {
                     if (item.getModel()) {
@@ -589,9 +587,9 @@ module api.ui.uploader {
         }
 
         protected initUploader() {
-            var uploader = new qq.FineUploaderBasic({
+            let uploader = new qq.FineUploaderBasic({
                 debug: false,
-                button: document.getElementById(this.dropzone.getId()), //this.config.allowBrowse ? document.getElementById(this.dropzone.getId()) : undefined,
+                button: document.getElementById(this.dropzone.getId()),
                 multiple: this.config.allowMultiSelection,
                 folders: false,
                 autoUpload: false,
@@ -626,9 +624,9 @@ module api.ui.uploader {
                     callbacks: {
                         //this submits the dropped files to uploader
                         processingDroppedFilesComplete: (files, dropTarget) => uploader.addFiles(files),
-                        onDrop: (event) => this.notifyDropzoneDrop(event),
-                        onDragEnter: (event) => this.notifyDropzoneDragEnter(event),
-                        onDragLeave: (event) => this.notifyDropzoneDragLeave(event)
+                        onDrop: (event: DragEvent) => this.notifyDropzoneDrop(event),
+                        onDragEnter: (event: DragEvent) => this.notifyDropzoneDragEnter(event),
+                        onDragLeave: (event: DragEvent) => this.notifyDropzoneDragLeave(event)
                     }
                 });
             }
@@ -638,7 +636,7 @@ module api.ui.uploader {
         }
 
         private getFileExtensions(allowTypes: {title: string; extensions: string}[]): string {
-            var result = "";
+            let result = "";
             allowTypes.forEach(allowType => {
                 if (allowType.extensions) {
                     result += "." + allowType.extensions.split(",").join(",.") + ",";
@@ -651,7 +649,7 @@ module api.ui.uploader {
             if (this.config.allowDrop) {
                 this.extraDropzoneIds.push(id);
                 if (this.dragAndDropper) {
-                    var elem = document.getElementById(id);
+                    let elem = document.getElementById(id);
                     if (elem) {
                         this.dragAndDropper.setupExtraDropzone(elem);
                     }
@@ -660,7 +658,7 @@ module api.ui.uploader {
         }
 
         private getDropzoneElements(): HTMLElement[] {
-            var dropElements = [];
+            let dropElements = [];
             if (this.config.selfIsDropzone) {
                 dropElements.push(document.getElementById(this.getId()));
             } else {
@@ -668,7 +666,7 @@ module api.ui.uploader {
             }
 
             this.extraDropzoneIds.forEach(id => {
-                var elem = document.getElementById(id);
+                let elem = document.getElementById(id);
                 if (elem) {
                     dropElements.push(elem);
                 }
@@ -678,10 +676,10 @@ module api.ui.uploader {
         }
 
         private disableInputFocus() {
-            var focusableElements: NodeListOf<HTMLInputElement> = this.getDefaultDropzoneContainer().getHTMLElement().getElementsByTagName(
+            let focusableElements: NodeListOf<HTMLInputElement> = this.getDefaultDropzoneContainer().getHTMLElement().getElementsByTagName(
                 "input");
-            for (var i = 0; i < focusableElements.length; i++) {
-                var el = <HTMLInputElement>focusableElements.item(i);
+            for (let i = 0; i < focusableElements.length; i++) {
+                let el = <HTMLInputElement>focusableElements.item(i);
                 el.tabIndex = -1;
             }
         }
@@ -737,7 +735,7 @@ module api.ui.uploader {
         unFileUploaded(listener: (event: FileUploadedEvent<MODEL>) => void) {
             this.fileUploadedListeners = this.fileUploadedListeners.filter((currentListener) => {
                 return listener != currentListener;
-            })
+            });
         }
 
         onUploadCompleted(listener: (event: FileUploadCompleteEvent<MODEL>) => void) {
@@ -757,7 +755,7 @@ module api.ui.uploader {
         unUploadReset(listener: () => void) {
             this.uploadResetListeners = this.uploadResetListeners.filter((currentListener) => {
                 return listener != currentListener;
-            })
+            });
         }
 
         onUploadFailed(listener: (event: FileUploadFailedEvent<MODEL>) => void) {
@@ -770,50 +768,50 @@ module api.ui.uploader {
             });
         }
 
-        onDropzoneDragEnter(listener: (event) => void) {
+        onDropzoneDragEnter(listener: (event: DragEvent) => void) {
             this.dropzoneDragEnterListeners.push(listener);
         }
 
-        unDropzoneDragEnter(listener: (event) => void) {
+        unDropzoneDragEnter(listener: (event: DragEvent) => void) {
             this.dropzoneDragEnterListeners = this.dropzoneDragEnterListeners.filter((currentListener) => {
                 return listener != currentListener;
             });
         }
 
-        onDropzoneDragLeave(listener: (event) => void) {
+        onDropzoneDragLeave(listener: (event: DragEvent) => void) {
             this.dropzoneDragLeaveListeners.push(listener);
         }
 
-        unDropzoneDragLeave(listener: (event) => void) {
+        unDropzoneDragLeave(listener: (event: DragEvent) => void) {
             this.dropzoneDragLeaveListeners = this.dropzoneDragLeaveListeners.filter((currentListener) => {
                 return listener != currentListener;
             });
         }
 
-        onDropzoneDrop(listener: (event) => void) {
+        onDropzoneDrop(listener: (event: DragEvent) => void) {
             this.dropzoneDropListeners.push(listener);
         }
 
-        unDropzoneDragDrop(listener: (event) => void) {
+        unDropzoneDragDrop(listener: (event: DragEvent) => void) {
             this.dropzoneDropListeners = this.dropzoneDropListeners.filter((currentListener) => {
                 return listener != currentListener;
             });
         }
 
-        private notifyDropzoneDragEnter(event) {
-            this.dropzoneDragEnterListeners.forEach((listener: (event)=>void) => {
+        private notifyDropzoneDragEnter(event: DragEvent) {
+            this.dropzoneDragEnterListeners.forEach((listener: (event: DragEvent)=>void) => {
                 listener(event);
             });
         }
 
-        private notifyDropzoneDragLeave(event) {
-            this.dropzoneDragLeaveListeners.forEach((listener: (event)=>void) => {
+        private notifyDropzoneDragLeave(event: DragEvent) {
+            this.dropzoneDragLeaveListeners.forEach((listener: (event: DragEvent)=>void) => {
                 listener(event);
             });
         }
 
-        private notifyDropzoneDrop(event) {
-            this.dropzoneDropListeners.forEach((listener: (event)=>void) => {
+        private notifyDropzoneDrop(event: DragEvent) {
+            this.dropzoneDropListeners.forEach((listener: (event: DragEvent) => void) => {
                 listener(event);
             });
         }

@@ -60,10 +60,10 @@ export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
     }
 
     public static nameFormatter(content: Content, row: number, cell: number, value: any, columnDef: any, node: TreeNode<ItemView>) {
-        var viewer = <PageComponentsItemViewer>node.getViewer("name");
+        let viewer = <PageComponentsItemViewer>node.getViewer("name");
         if (!viewer) {
-            var viewer = new PageComponentsItemViewer(content);
-            var data = node.getData();
+            viewer = new PageComponentsItemViewer(content);
+            const data = node.getData();
 
             viewer.setObject(data);
             node.setViewer("name", viewer);
@@ -75,13 +75,13 @@ export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
     }
 
     setInvalid(dataIds: string[]) {
-        var root = this.getRoot().getCurrentRoot(),
+        let root = this.getRoot().getCurrentRoot(),
             stylesHash: Slick.CellCssStylesHash = {};
 
         dataIds.forEach((dataId) => {
-            var node = root.findNode(dataId);
+            let node = root.findNode(dataId);
             if (node) {
-                var row = this.getGrid().getDataView().getRowById(node.getId());
+                let row = this.getGrid().getDataView().getRowById(node.getId());
                 stylesHash[row] = {displayName: "invalid", menu: "invalid"};
             }
         });
@@ -93,18 +93,18 @@ export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
     }
 
     hasChildren(data: ItemView): boolean {
-        return this.getDataChildren(data).length > 0
+        return this.getDataChildren(data).length > 0;
     }
 
     fetch(node: TreeNode<ItemView>, dataId?: string): Q.Promise<ItemView> {
-        var deferred = wemQ.defer<ItemView>();
-        var itemViewId = dataId ? new api.liveedit.ItemViewId(parseInt(dataId)) : node.getData().getItemId();
+        let deferred = wemQ.defer<ItemView>();
+        let itemViewId = dataId ? new api.liveedit.ItemViewId(parseInt(dataId, 10)) : node.getData().getItemId();
         deferred.resolve(this.pageView.getItemViewById(itemViewId));
         return deferred.promise;
     }
 
     fetchRoot(): wemQ.Promise<ItemView[]> {
-        var deferred = wemQ.defer<ItemView[]>();
+        let deferred = wemQ.defer<ItemView[]>();
         if (this.pageView.getFragmentView()) {
             deferred.resolve([this.pageView.getFragmentView()]);
         } else {
@@ -114,37 +114,37 @@ export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
     }
 
     fetchChildren(parentNode: TreeNode<ItemView>): Q.Promise<ItemView[]> {
-        var deferred = wemQ.defer<ItemView[]>();
+        let deferred = wemQ.defer<ItemView[]>();
         deferred.resolve(this.getDataChildren(parentNode.getData()));
         return deferred.promise;
     }
 
     private getDataChildren(data: ItemView): ItemView[] {
-        var children = [];
-        var dataType = data.getType();
+        let children = [];
+        let dataType = data.getType();
         if (PageItemType.get().equals(dataType)) {
-            var pageView = <PageView> data;
+            let pageView = <PageView> data;
             children = pageView.getRegions();
             if (children.length === 0) {
-                var fragmentRoot = pageView.getFragmentView();
+                let fragmentRoot = pageView.getFragmentView();
                 if (fragmentRoot) {
                     return [fragmentRoot];
                 }
             }
         } else if (RegionItemType.get().equals(dataType)) {
-            var regionView = <RegionView> data;
+            let regionView = <RegionView> data;
             children = regionView.getComponentViews();
         } else if (LayoutItemType.get().equals(dataType)) {
-            var layoutView = <LayoutComponentView> data;
+            let layoutView = <LayoutComponentView> data;
             children = layoutView.getRegions();
         }
         return children;
     }
 
     public static menuFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
-        var wrapper = new api.dom.SpanEl();
+        let wrapper = new api.dom.SpanEl();
 
-        var icon = new api.dom.DivEl("menu-icon");
+        let icon = new api.dom.DivEl("menu-icon");
         wrapper.getEl().setInnerHtml(icon.toString(), false);
         return wrapper.toString();
     }

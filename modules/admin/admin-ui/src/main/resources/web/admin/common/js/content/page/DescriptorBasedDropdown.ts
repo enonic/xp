@@ -9,11 +9,11 @@ module api.content.page.region {
     export class DescriptorBasedDropdown<DESCRIPTOR extends Descriptor> extends RichDropdown<DESCRIPTOR> {
 
         protected createOption(descriptor: DESCRIPTOR): Option<DESCRIPTOR> {
-            var indices: string[] = [];
+            let indices: string[] = [];
             indices.push(descriptor.getDisplayName());
             indices.push(descriptor.getName().toString());
 
-            var option = <Option<DESCRIPTOR>>{
+            let option = <Option<DESCRIPTOR>>{
                 value: descriptor.getKey().toString(),
                 displayValue: descriptor,
                 indices: indices
@@ -25,7 +25,7 @@ module api.content.page.region {
         setDescriptor(descriptor: Descriptor) {
 
             if (descriptor) {
-                var option = this.getOptionByValue(descriptor.getKey().toString());
+                let option = this.getOptionByValue(descriptor.getKey().toString());
                 if (option) {
                     this.selectOption(option, true);
                 }
@@ -36,7 +36,7 @@ module api.content.page.region {
 
         getDescriptor(descriptorKey: DescriptorKey): DESCRIPTOR {
             if (descriptorKey) {
-                var option = this.getOptionByValue(descriptorKey.toString());
+                let option = this.getOptionByValue(descriptorKey.toString());
                 if (option) {
                     return option.displayValue;
                 }

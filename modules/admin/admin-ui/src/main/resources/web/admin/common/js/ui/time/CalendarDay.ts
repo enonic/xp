@@ -120,7 +120,7 @@ module api.ui.time {
         }
 
         isLastDayOfMonth(month: number): boolean {
-            var lastDateOfMonth = new Date(this.date.getFullYear(), month + 1, 0);
+            let lastDateOfMonth = new Date(this.date.getFullYear(), month + 1, 0);
             return month == this.date.getMonth() && this.date.getDate() == lastDateOfMonth.getDate();
         }
 
@@ -133,7 +133,7 @@ module api.ui.time {
                 return this.previousDay;
             }
             else {
-                var prevDate = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate() - 1);
+                let prevDate = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate() - 1);
                 this.previousDay = new CalendarDayBuilder().
                     setDate(prevDate).
                     setMonth(this.month).
@@ -148,7 +148,7 @@ module api.ui.time {
                 return this.nextDay;
             }
             else {
-                var nextDate = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate() + 1);
+                let nextDate = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate() + 1);
                 this.nextDay = new CalendarDayBuilder().
                     setDate(nextDate).
                     setMonth(this.month).
@@ -164,7 +164,7 @@ module api.ui.time {
                 return false;
             }
 
-            var other = <CalendarDay>o;
+            let other = <CalendarDay>o;
 
             if (!api.ObjectHelper.dateEquals(this.date, other.date)) {
                 return false;
@@ -184,11 +184,11 @@ module api.ui.time {
         unCalendarDayClicked(listener: (event: CalendarDayClickedEvent) => void) {
             this.calendarDayClickedListeners = this.calendarDayClickedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyCalendarDayClicked() {
-            var event = new CalendarDayClickedEvent(this);
+            let event = new CalendarDayClickedEvent(this);
             this.calendarDayClickedListeners.forEach((listener) => {
                 listener(event);
             });

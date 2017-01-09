@@ -41,7 +41,7 @@ module api.content.form.inputtype.upload {
 
                 this.uploaderEl.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<Attachment>) => {
 
-                    var attachment = <Attachment>event.getUploadItem().getModel();
+                    let attachment = <Attachment>event.getUploadItem().getModel();
 
                     this.setFileNameProperty(attachment.getName().toString());
                     this.attachmentNames = this.getFileNamesFromProperty(this.getPropertyArray());
@@ -94,9 +94,9 @@ module api.content.form.inputtype.upload {
         }
 
         private removeItemCallback(itemName: string) {
-            var values = this.getFileNamesFromProperty(this.getPropertyArray());
+            const values = this.getFileNamesFromProperty(this.getPropertyArray());
 
-            var index = values.indexOf(itemName);
+            const index = values.indexOf(itemName);
             values.splice(index, 1);
 
             (<AttachmentUploaderEl>this.uploaderEl).removeAttachmentItem(itemName);

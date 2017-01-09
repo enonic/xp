@@ -18,8 +18,8 @@ module api.content.image {
         private originalHeight: number;
         private originalWidth: number;
 
-        private static SELECTED_CLASS = 'selected';
-        private static STANDOUT_CLASS = 'standout';
+        private static SELECTED_CLASS: string = 'selected';
+        private static STANDOUT_CLASS: string = 'standout';
 
         constructor(config: api.ui.uploader.MediaUploaderElConfig) {
             if (config.allowTypes == undefined) {
@@ -90,17 +90,17 @@ module api.content.image {
         }
 
         private getSizeValue(content: api.content.Content, propertyName: string): number {
-            var value = 0,
+            let value = 0,
                 metaData = content.getContentData().getProperty('metadata');
 
             if (metaData && api.data.ValueTypes.DATA.equals(metaData.getType())) {
-                value = parseInt(metaData.getPropertySet().getProperty(propertyName).getString());
+                value = parseInt(metaData.getPropertySet().getProperty(propertyName).getString(), 10);
             }
             else {
-                var allExtraData = content.getAllExtraData();
+                let allExtraData = content.getAllExtraData();
                 allExtraData.forEach((extraData: ExtraData) => {
                     if (!value && extraData.getData().getProperty(propertyName)) {
-                        value = parseInt(extraData.getData().getProperty(propertyName).getValue().getString());
+                        value = parseInt(extraData.getData().getProperty(propertyName).getValue().getString(), 10);
                     }
                 });
             }
@@ -121,7 +121,7 @@ module api.content.image {
         }
 
         private togglePlaceholder(flag: boolean) {
-            var resultEl = this.getResultContainer().toggleClass('placeholder', flag).getEl();
+            let resultEl = this.getResultContainer().toggleClass('placeholder', flag).getEl();
             if (flag) {
                 resultEl.setHeightPx(resultEl.getHeight() || this.getProportionalHeight());
             } else {
@@ -131,12 +131,12 @@ module api.content.image {
 
         private createImageEditor(value: string): ImageEditor {
 
-            var contentId = new api.content.ContentId(value),
+            let contentId = new api.content.ContentId(value),
                 imgUrl = this.resolveImageUrl(value);
 
             this.togglePlaceholder(true);
 
-            var imageEditor = new ImageEditor();
+            let imageEditor = new ImageEditor();
             this.subscribeImageEditorOnEvents(imageEditor, contentId);
             imageEditor.setSrc(imgUrl);
 
@@ -152,13 +152,13 @@ module api.content.image {
         }
 
         private subscribeImageEditorOnEvents(imageEditor: ImageEditor, contentId: api.content.ContentId) {
-            var focusAutoPositionedChangedHandler = (auto: boolean) => this.notifyFocusAutoPositionedChanged(auto);
-            var cropAutoPositionedChangedHandler = (auto: boolean) => this.notifyCropAutoPositionedChanged(auto);
-            var editModeChangedHandler = (edit: boolean, position: Rect, zoom: Rect, focus: Point) => {
+            let focusAutoPositionedChangedHandler = (auto: boolean) => this.notifyFocusAutoPositionedChanged(auto);
+            let cropAutoPositionedChangedHandler = (auto: boolean) => this.notifyCropAutoPositionedChanged(auto);
+            let editModeChangedHandler = (edit: boolean, position: Rect, zoom: Rect, focus: Point) => {
                 this.notifyEditModeChanged(edit, position, zoom, focus);
                 this.togglePlaceholder(edit);
 
-                var index = -1;
+                let index = -1;
 
                 if (edit) {
                     index = imageEditor.getSiblingIndex();
@@ -168,21 +168,21 @@ module api.content.image {
                     this.getResultContainer().insertChild(imageEditor.removeClass(ImageUploaderEl.STANDOUT_CLASS), index);
                 }
             };
-            var uploadButtonClickedHandler = () => {
+            let uploadButtonClickedHandler = () => {
                 this.showFileSelectionDialog();
             };
-            var getLastButtonInContainerBlurHandler = () => {
+            let getLastButtonInContainerBlurHandler = () => {
                 this.toggleSelected(imageEditor);
             };
-            var shaderVisibilityChangedHandler = (visible: boolean) => {
+            let shaderVisibilityChangedHandler = (visible: boolean) => {
                 new api.app.wizard.MaskContentWizardPanelEvent(contentId, visible).fire();
             };
 
-            var imageErrorHandler = (event: UIEvent) => {
+            let imageErrorHandler = (event: UIEvent) => {
                 new ImageErrorEvent(contentId).fire();
                 this.imageEditors = this.imageEditors.filter((curr) => {
                     return curr !== imageEditor;
-                })
+                });
                 api.notify.showError('Failed to upload an image ' + contentId.toString());
             };
 
@@ -210,7 +210,7 @@ module api.content.image {
         }
 
         private positionImageEditor(imageEditor: ImageEditor) {
-            var resultOffset = this.getResultContainer().getEl().getOffset();
+            let resultOffset = this.getResultContainer().getEl().getOffset();
 
             imageEditor.getEl().setTopPx(resultOffset.top).setLeftPx(resultOffset.left);
         }
@@ -222,8 +222,8 @@ module api.content.image {
         }
 
         protected refreshExistingItem(existingItem: api.dom.Element, value: string) {
-            for (var i = 0; i < this.imageEditors.length; i++) {
-                var editor = this.imageEditors[i];
+            for (let i = 0; i < this.imageEditors.length; i++) {
+                let editor = this.imageEditors[i];
                 if (existingItem == editor) {
                     editor.setSrc(this.resolveImageUrl(value));
                     break;
@@ -237,7 +237,7 @@ module api.content.image {
                 this.initialWidth = this.getParentElement().getEl().getWidth();
             }
 
-            var imageEditor = this.createImageEditor(value);
+            let imageEditor = this.createImageEditor(value);
 
             this.imageEditors.push(imageEditor);
 
@@ -255,7 +255,7 @@ module api.content.image {
                 } else {
                     editor.resetFocusPosition();
                 }
-            })
+            });
         }
 
         setCrop(crop: Rect) {
@@ -265,7 +265,7 @@ module api.content.image {
                 } else {
                     editor.resetCropPosition();
                 }
-            })
+            });
         }
 
         setZoom(zoom: Rect) {
@@ -275,7 +275,7 @@ module api.content.image {
                 } else {
                     editor.resetZoomPosition();
                 }
-            })
+            });
         }
 
         isFocalPointEditMode(): boolean {
@@ -287,7 +287,7 @@ module api.content.image {
         isCropEditMode(): boolean {
             return this.imageEditors.some((editor: ImageEditor) => {
                 return editor.isCropEditMode();
-            })
+            });
         }
 
         protected isSameValueUpdateAllowed(): boolean {
@@ -307,7 +307,7 @@ module api.content.image {
         private notifyEditModeChanged(edit: boolean, crop: Rect, zoom: Rect, focus: Point) {
             this.editModeListeners.forEach((listener) => {
                 listener(edit, crop, zoom, focus);
-            })
+            });
         }
 
         onCropAutoPositionedChanged(listener: (auto: boolean) => void) {

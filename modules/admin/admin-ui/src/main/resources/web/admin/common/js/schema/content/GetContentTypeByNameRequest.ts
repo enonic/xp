@@ -25,8 +25,8 @@ module api.schema.content {
 
         sendAndParse(): wemQ.Promise<ContentType> {
 
-            var contentTypeCache = ContentTypeCache.get();
-            var contentType = contentTypeCache.getByKey(this.name);
+            let contentTypeCache = ContentTypeCache.get();
+            let contentType = contentTypeCache.getByKey(this.name);
             if (contentType) {
                 return wemQ(contentType);
             }

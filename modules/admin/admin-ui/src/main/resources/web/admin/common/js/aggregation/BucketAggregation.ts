@@ -9,8 +9,8 @@ module api.aggregation {
         }
 
         public getBucketByName(name: string): api.aggregation.Bucket {
-            for (var i = 0; i < this.buckets.length; i++) {
-                var bucket: api.aggregation.Bucket = this.buckets[i];
+            for (let i = 0; i < this.buckets.length; i++) {
+                let bucket: api.aggregation.Bucket = this.buckets[i];
                 if (bucket.getKey() == name) {
                     return bucket;
                 }
@@ -28,11 +28,11 @@ module api.aggregation {
 
         public static fromJson(json: api.aggregation.BucketAggregationJson): BucketAggregation {
 
-            var bucketAggregation: BucketAggregation = new BucketAggregation(json.name);
+            let bucketAggregation: BucketAggregation = new BucketAggregation(json.name);
 
             json.buckets.forEach((bucketWrapper: api.aggregation.BucketWrapperJson) => {
                 bucketAggregation.addBucket(api.aggregation.BucketFactory.createFromJson(bucketWrapper));
-            })
+            });
 
             return bucketAggregation;
         }

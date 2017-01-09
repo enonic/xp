@@ -6,9 +6,6 @@ module api.security {
         private deleted: boolean;
         private reason: string;
 
-        constructor() {
-        }
-
         getUserStoreKey(): UserStoreKey {
             return this.userStoreKey;
         }
@@ -22,7 +19,7 @@ module api.security {
         }
 
         static fromJson(json: api.security.DeleteUserStoreResultJson): DeleteUserStoreResult {
-            var result = new DeleteUserStoreResult();
+            let result = new DeleteUserStoreResult();
             result.userStoreKey = UserStoreKey.fromString(json.userStoreKey);
             result.deleted = json.deleted;
             result.reason = json.reason;

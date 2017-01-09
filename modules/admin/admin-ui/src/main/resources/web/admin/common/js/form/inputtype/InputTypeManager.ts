@@ -8,12 +8,12 @@ module api.form.inputtype {
         private static inputTypes: { [name: string]: api.Class; } = {};
 
         static isRegistered(inputTypeName: string): boolean {
-            var name = InputTypeManager.normalize(inputTypeName);
+            let name = InputTypeManager.normalize(inputTypeName);
             return InputTypeManager.inputTypes[name] != undefined;
         }
 
         static register(inputTypeClass: api.Class) {
-            var name = InputTypeManager.normalize(inputTypeClass.getName());
+            let name = InputTypeManager.normalize(inputTypeClass.getName());
 
             if (!InputTypeManager.isRegistered(name)) {
                 InputTypeManager.inputTypes[name] = inputTypeClass;
@@ -24,7 +24,7 @@ module api.form.inputtype {
         }
 
         static unregister(inputTypeName: string) {
-            var name = InputTypeManager.normalize(inputTypeName);
+            let name = InputTypeManager.normalize(inputTypeName);
 
             if (InputTypeManager.isRegistered(name)) {
                 InputTypeManager.inputTypes[name] = undefined;
@@ -36,10 +36,10 @@ module api.form.inputtype {
         }
 
         static createView(inputTypeName: string, context: InputTypeViewContext): InputTypeView<any> {
-            var name = InputTypeManager.normalize(inputTypeName);
+            let name = InputTypeManager.normalize(inputTypeName);
 
             if (InputTypeManager.isRegistered(name)) {
-                var inputTypeClass = InputTypeManager.inputTypes[name];
+                let inputTypeClass = InputTypeManager.inputTypes[name];
                 return inputTypeClass.newInstance(context);
             }
             else {

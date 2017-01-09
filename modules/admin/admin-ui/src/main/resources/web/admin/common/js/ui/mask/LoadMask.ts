@@ -52,7 +52,7 @@ module api.ui.mask {
         }
 
         private centerSplash() {
-            var loaderEl = this.splash.getEl();
+            let loaderEl = this.splash.getEl();
             loaderEl.setMarginLeft("-" + loaderEl.getWidthWithBorder() / 2 + "px");
             loaderEl.setMarginTop("-" + loaderEl.getHeightWithBorder() / 2 + "px");
         }

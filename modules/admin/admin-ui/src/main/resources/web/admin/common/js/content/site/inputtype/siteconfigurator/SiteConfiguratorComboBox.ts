@@ -20,19 +20,16 @@ module api.content.site.inputtype.siteconfigurator {
         constructor(maxOccurrences: number, siteConfigProvider: SiteConfigProvider,
                     formContext: api.content.form.ContentFormContext, value?: string) {
 
-            var filterObject = {
+            let filterObject = {
                 state: Application.STATE_STARTED
             };
 
-            var builder = new api.ui.selector.combobox.RichComboBoxBuilder<Application>();
-            builder.
-                setMaximumOccurrences(maxOccurrences).
-                setIdentifierMethod('getApplicationKey').
+            let builder = new api.ui.selector.combobox.RichComboBoxBuilder<Application>();
+            builder.setMaximumOccurrences(maxOccurrences).setIdentifierMethod("getApplicationKey").
                 setComboBoxName("applicationSelector").setLoader(new SiteApplicationLoader(filterObject)).setSelectedOptionsView(
                 new SiteConfiguratorSelectedOptionsView(siteConfigProvider, formContext)).
-                setOptionDisplayValueViewer(new ApplicationViewer()).
-                setValue(value).
-                setDelayedInputValueChangedHandling(500);
+                setOptionDisplayValueViewer(new ApplicationViewer()).setValue(value).setDelayedInputValueChangedHandling(
+                500).setDisplayMissingSelectedOptions(true);
 
             super(builder);
 
@@ -40,7 +37,7 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         getSelectedOptionViews(): SiteConfiguratorSelectedOptionView[] {
-            var views: SiteConfiguratorSelectedOptionView[] = [];
+            let views: SiteConfiguratorSelectedOptionView[] = [];
             this.getSelectedOptions().forEach((selectedOption: SelectedOption<Application>) => {
                 views.push(<SiteConfiguratorSelectedOptionView>selectedOption.getOptionView());
             });

@@ -63,9 +63,10 @@ module api.aggregation {
         }
 
         unBucketViewSelectionChanged(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
-            this.bucketSelectionChangedListeners = this.bucketSelectionChangedListeners.filter(function (curr) {
-                return curr != listener;
-            });
+            this.bucketSelectionChangedListeners = this.bucketSelectionChangedListeners
+                .filter(function (curr: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
+                    return curr != listener;
+                });
         }
 
         notifyBucketViewSelectionChanged(event: api.aggregation.BucketViewSelectionChangedEvent) {

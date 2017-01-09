@@ -19,7 +19,7 @@ module api.data {
 
         isConvertible(value: string): boolean {
 
-            var asString = <string>value;
+            let asString = <string>value;
             if (api.util.StringHelper.isBlank(value)) {
                 return false;
             }

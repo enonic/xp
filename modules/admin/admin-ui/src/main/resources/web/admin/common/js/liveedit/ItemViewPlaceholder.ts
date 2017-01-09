@@ -11,10 +11,10 @@ module api.liveedit {
             this.removeChildren();
             this.addClass("rendering-error");
 
-            var errorTitle = new api.dom.PEl().
+            let errorTitle = new api.dom.PEl().
                 setHtml(errorMessage);
 
-            var urlAnchor = new api.dom.AEl().
+            let urlAnchor = new api.dom.AEl().
                 setUrl(url, "_blank").
                 setHtml("Show more...");
 
@@ -22,11 +22,11 @@ module api.liveedit {
         }
 
         select() {
-
+            // must be implemented by children
         }
 
         deselect() {
-
+            // must be implemented by children
         }
     }
 }

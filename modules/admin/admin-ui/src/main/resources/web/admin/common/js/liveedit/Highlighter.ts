@@ -20,8 +20,8 @@ module api.liveedit {
         constructor(type?: HighlighterMode) {
             // Needs to be a SVG element as the css has pointer-events:none
             // CSS pointer-events only works for SVG in IE
-            var svgCls = api.StyleHelper.getCls("highlighter");
-            var html = `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="${svgCls}" style="top:-5000px;left:-5000px">
+            let svgCls = api.StyleHelper.getCls("highlighter");
+            let html = `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="${svgCls}" style="top:-5000px;left:-5000px">
                            <rect width="150" height="150"/>
                            <path d=""/>
                        </svg>`;
@@ -50,8 +50,8 @@ module api.liveedit {
                 this.hide();
                 return;
             }
-            var dimensions = itemView.getEl().getDimensions();
-            var style = itemView.getType().getConfig().getHighlighterStyle();
+            let dimensions = itemView.getEl().getDimensions();
+            let style = itemView.getType().getConfig().getHighlighterStyle();
 
             if (!!itemView.getPageView() && itemView.getPageView().hasToolbarContainer()) {
                 dimensions.top = dimensions.top - itemView.getPageView().getEditorToolbarHeight();
@@ -87,30 +87,30 @@ module api.liveedit {
             if (!this.lastHighlightedItemView) {
                 return false;
             }
-            
+
             return this.lastHighlightedItemView.isContainer() &&
                     itemView.isChildOfItemView(this.lastHighlightedItemView);
         }
-        
+
         getSelectedView(): ItemView {
             return this.lastHighlightedItemView;
         }
 
         unselect() {
             this.hide();
-            this.lastHighlightedItemView = null; 
+            this.lastHighlightedItemView = null;
         }
-        
+
         protected preProcessStyle(style: HighlighterStyle, isEmptyView: boolean): HighlighterStyle {
             return {
                 stroke: 'rgba(0, 0, 0, 1)',
                 strokeDasharray: style.strokeDasharray,
                 fill: 'transparent'
-            }
+            };
         }
 
         private resize(dimensions: ElementDimensions, style: HighlighterStyle): void {
-            var w = Math.round(dimensions.width),
+            let w = Math.round(dimensions.width),
                 h = Math.round(dimensions.height),
                 strokeW,
                 top = Math.round(dimensions.top),
@@ -132,7 +132,7 @@ module api.liveedit {
                     screenH = bodyEl.getHeight(),
                     screenW = bodyEl.getWidth();
 
-                strokeW = parseInt(window.getComputedStyle(this.path.getHTMLElement(), null).getPropertyValue("stroke-width"));
+                strokeW = parseInt(window.getComputedStyle(this.path.getHTMLElement(), null).getPropertyValue("stroke-width"), 10);
 
                 this.path.getEl()
                     .setAttribute('d',
@@ -142,7 +142,7 @@ module api.liveedit {
                     .setStroke(style.stroke)
                     .setStrokeDasharray(style.strokeDasharray)
                     .setFill('transparent');
-                
+
                 this.rectangle.getEl()
                     .setAttribute('width', w + '')
                     .setAttribute('height', h + '')
@@ -150,7 +150,7 @@ module api.liveedit {
                     .setAttribute('y', top + '')
                     .setStroke(style.stroke)
                     .setFill(style.fill);
-                
+
                 this.getEl().setWidthPx(screenW).setHeightPx(screenH).setTopPx(0).setLeftPx(0);
                 break;
             }

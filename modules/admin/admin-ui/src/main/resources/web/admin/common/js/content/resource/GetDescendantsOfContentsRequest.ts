@@ -32,7 +32,7 @@ module api.content.resource {
         }
 
         getParams(): Object {
-            var fn = (contentPath: ContentPath) => {
+            let fn = (contentPath: ContentPath) => {
                 return contentPath.toString();
             };
             return {
@@ -48,7 +48,7 @@ module api.content.resource {
         sendAndParse(): wemQ.Promise<ContentId[]> {
 
             return this.send().then((response: api.rest.JsonResponse<api.content.json.ContentIdBaseItemJson[]>) => {
-                return response.getResult().map((item => new ContentId(item.id)))
+                return response.getResult().map((item => new ContentId(item.id)));
             });
         }
     }

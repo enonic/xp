@@ -2,15 +2,15 @@ module api {
 
     export class StyleHelper {
 
-        static COMMON_PREFIX = "xp-admin-common-";
+        static COMMON_PREFIX: string = "xp-admin-common-";
 
-        static ADMIN_PREFIX = "xp-admin-";
+        static ADMIN_PREFIX: string = "xp-admin-";
 
-        static PAGE_EDITOR_PREFIX = "xp-page-editor-";
+        static PAGE_EDITOR_PREFIX: string = "xp-page-editor-";
 
-        static ICON_PREFIX = "icon-";
+        static ICON_PREFIX: string = "icon-";
 
-        static currentPrefix = "";
+        static currentPrefix: string = "";
 
         static setCurrentPrefix(prefix: string) {
             api.StyleHelper.currentPrefix = prefix;
@@ -24,7 +24,7 @@ module api {
             if (!prefix) {
                 return cls;
             }
-            var clsArr = cls.trim().split(" ");
+            let clsArr = cls.trim().split(" ");
             clsArr.forEach((clsEl: string, index: number, arr: string[]) => {
                 if (!api.StyleHelper.isPrefixed(clsEl, prefix)) {
                     arr[index] = prefix + clsEl;

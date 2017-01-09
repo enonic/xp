@@ -10,7 +10,7 @@ export class StartApplicationAction extends api.ui.Action {
         super("Start");
         this.setEnabled(false);
         this.onExecuted(() => {
-            var applications: Application[] = applicationTreeGrid.getSelectedDataList();
+            let applications: Application[] = applicationTreeGrid.getSelectedDataList();
             new StartApplicationEvent(applications).fire();
         });
     }

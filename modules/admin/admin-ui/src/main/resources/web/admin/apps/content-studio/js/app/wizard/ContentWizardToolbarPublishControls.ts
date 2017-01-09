@@ -111,19 +111,19 @@ export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
 
     public enableActionsForExisting(existing: api.content.Content) {
         new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
-            var hasPublishPermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.PUBLISH,
+            let hasPublishPermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.PUBLISH,
                 loginResult, existing.getPermissions());
             this.setUserCanPublish(hasPublishPermission);
         });
     }
 
     private getContentStateValueForSpan(compareStatus: CompareStatus, publishStatus: PublishStatus): string {
-        var status = new api.dom.SpanEl();
+        let status = new api.dom.SpanEl();
         if (compareStatus === CompareStatus.EQUAL) {
             status.addClass("online");
         }
         if (publishStatus && (publishStatus == PublishStatus.PENDING || publishStatus == PublishStatus.EXPIRED)) {
-            status.addClass(api.content.PublishStatusFormatter.formatStatus(publishStatus).toLowerCase())
+            status.addClass(api.content.PublishStatusFormatter.formatStatus(publishStatus).toLowerCase());
             status.setHtml(api.content.CompareStatusFormatter.formatStatus(compareStatus) + ' (' +
                            api.content.PublishStatusFormatter.formatStatus(publishStatus) + ')');
         } else {

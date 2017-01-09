@@ -1,7 +1,7 @@
 module api.util.htmlarea.editor {
 
     import CreateHtmlAreaDialogEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
-    import ApplicationKey = api.application.ApplicationKey
+    import ApplicationKey = api.application.ApplicationKey;
 
     export class HTMLAreaBuilder {
 
@@ -11,11 +11,11 @@ module api.util.htmlarea.editor {
 
         private assetsUri: string;
         private selector: string;
-        private focusHandler: (e) => void;
-        private blurHandler: (e) => void;
-        private keydownHandler: (e) => void;
-        private keyupHandler: (e) => void;
-        private nodeChangeHandler: (e) => void;
+        private focusHandler: (e: FocusEvent) => void;
+        private blurHandler: (e: FocusEvent) => void;
+        private keydownHandler: (e: KeyboardEvent) => void;
+        private keyupHandler: (e: KeyboardEvent) => void;
+        private nodeChangeHandler: (e: any) => void;
         private createDialogListeners: {(event: CreateHtmlAreaDialogEvent): void}[] = [];
         private inline: boolean = false;
         private fixedToolbarContainer: string;
@@ -24,16 +24,35 @@ module api.util.htmlarea.editor {
         private customToolConfig: any;
         private editableSourceCode: boolean;
 
-        private tools: string = "styleselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | charmap anchor image macro link unlink | table | pastetext";
+        private tools: string = [
+            "styleselect",
+            "alignleft aligncenter alignright alignjustify",
+            "bullist numlist outdent indent",
+            "charmap anchor image macro link unlink",
+            "table",
+            "pastetext"
+        ].join(" | ");
 
-        private plugins: string[] = ['directionality', 'hr', 'preview', 'searchreplace', 'textcolor', 'visualchars', 'visualblocks',
-            'autoresize', 'table', 'fullscreen', 'charmap', 'paste'];
+        private plugins: string[] = [
+            'directionality',
+            'hr',
+            'preview',
+            'searchreplace',
+            'textcolor',
+            'visualchars',
+            'visualblocks',
+            'autoresize',
+            'table',
+            'fullscreen',
+            'charmap',
+            'paste'
+        ];
 
         setEditableSourceCode(value: boolean): HTMLAreaBuilder {
             this.editableSourceCode = value;
             return this;
         }
-        
+
         setAssetsUri(assetsUri: string): HTMLAreaBuilder {
             this.assetsUri = assetsUri;
             return this;
@@ -59,30 +78,30 @@ module api.util.htmlarea.editor {
         private notifyCreateDialog(event: CreateHtmlAreaDialogEvent) {
             this.createDialogListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
-        setFocusHandler(focusHandler: (e) => void): HTMLAreaBuilder {
+        setFocusHandler(focusHandler: (e: FocusEvent) => void): HTMLAreaBuilder {
             this.focusHandler = focusHandler;
             return this;
         }
 
-        setBlurHandler(blurHandler: (e) => void): HTMLAreaBuilder {
+        setBlurHandler(blurHandler: (e: FocusEvent) => void): HTMLAreaBuilder {
             this.blurHandler = blurHandler;
             return this;
         }
 
-        setKeydownHandler(keydownHandler: (e) => void): HTMLAreaBuilder {
+        setKeydownHandler(keydownHandler: (e: KeyboardEvent) => void): HTMLAreaBuilder {
             this.keydownHandler = keydownHandler;
             return this;
         }
 
-        setKeyupHandler(keyupHandler: (e) => void): HTMLAreaBuilder {
+        setKeyupHandler(keyupHandler: (e: KeyboardEvent) => void): HTMLAreaBuilder {
             this.keyupHandler = keyupHandler;
             return this;
         }
 
-        setNodeChangeHandler(nodeChangeHandler: (e) => void): HTMLAreaBuilder {
+        setNodeChangeHandler(nodeChangeHandler: (e: any) => void): HTMLAreaBuilder {
             this.nodeChangeHandler = nodeChangeHandler;
             return this;
         }
@@ -118,7 +137,7 @@ module api.util.htmlarea.editor {
         }
 
         private excludeTools(tools: any[]) {
-            var strTools = this.tools;
+            let strTools = this.tools;
             tools.forEach((toolStr: any) => {
                 toolStr.value.split(" ").forEach((tool: string) => {
                     if (tool == "*") {
@@ -168,10 +187,11 @@ module api.util.htmlarea.editor {
                 this.includeTool("code");
             }
 
-            var deferred = wemQ.defer<HtmlAreaEditor>();
+            let deferred = wemQ.defer<HtmlAreaEditor>();
 
             tinymce.init({
                 selector: this.selector,
+                forced_root_block : 'div',
                 document_base_url: this.assetsUri + '/common/lib/tinymce/',
                 skin_url: this.assetsUri + '/common/lib/tinymce/skins/lightgray',
                 content_css: this.assetsUri + '/common/styles/api/util/htmlarea/html-editor.css',
@@ -269,9 +289,9 @@ module api.util.htmlarea.editor {
                             e.preventDefault();
                         }
                         else if (e.keyCode == 46 || e.keyCode == 8) { // DELETE
-                            var selectedNode = editor.selection.getRng().startContainer;
+                            let selectedNode = editor.selection.getRng().startContainer;
                             if (/^(FIGURE)$/.test(selectedNode.nodeName)) {
-                                var previousEl = selectedNode.previousSibling;
+                                let previousEl = selectedNode.previousSibling;
                                 e.preventDefault();
                                 selectedNode.remove();
                                 if (previousEl) {
@@ -288,7 +308,7 @@ module api.util.htmlarea.editor {
                         }
                     });
 
-                    var dragParentElement;
+                    let dragParentElement;
                     editor.on('dragstart', (e) => {
                         dragParentElement = e.target.parentElement || e.target.parentNode;
                     });
@@ -311,25 +331,25 @@ module api.util.htmlarea.editor {
             return deferred.promise;
         }
 
-        private notifyLinkDialog(config) {
+        private notifyLinkDialog(config: any) {
             let event = CreateHtmlAreaDialogEvent.create().setConfig(config).setType(
                 api.util.htmlarea.dialog.HtmlAreaDialogType.LINK).setContent(this.content).build();
             this.publishCreateDialogEvent(event);
         }
 
-        private notifyImageDialog(config) {
+        private notifyImageDialog(config: any) {
             let event = CreateHtmlAreaDialogEvent.create().setConfig(config).setType(
                 api.util.htmlarea.dialog.HtmlAreaDialogType.IMAGE).setContent(this.content).build();
             this.publishCreateDialogEvent(event);
         }
 
-        private notifyAnchorDialog(config) {
+        private notifyAnchorDialog(config: any) {
             let event = CreateHtmlAreaDialogEvent.create().setConfig(config).setType(
                 api.util.htmlarea.dialog.HtmlAreaDialogType.ANCHOR).build();
             this.publishCreateDialogEvent(event);
         }
 
-        private notifyMacroDialog(config) {
+        private notifyMacroDialog(config: any) {
             let event = CreateHtmlAreaDialogEvent.create().setConfig(config).setType(
                 api.util.htmlarea.dialog.HtmlAreaDialogType.MACRO).setContentPath(this.contentPath).setApplicationKeys(
                 this.applicationKeys).setType(api.util.htmlarea.dialog.HtmlAreaDialogType.MACRO).setContent(

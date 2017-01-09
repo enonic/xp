@@ -2,18 +2,18 @@ module api.ui {
 
     export class Tooltip {
 
-        static SIDE_TOP = "top";
-        static SIDE_RIGHT = "right";
-        static SIDE_BOTTOM = "bottom";
-        static SIDE_LEFT = "left";
+        static SIDE_TOP: string = "top";
+        static SIDE_RIGHT: string = "right";
+        static SIDE_BOTTOM: string = "bottom";
+        static SIDE_LEFT: string = "left";
 
-        static TRIGGER_HOVER = "hover";
-        static TRIGGER_FOCUS = "focus";
-        static TRIGGER_NONE = "none";
+        static TRIGGER_HOVER: string = "hover";
+        static TRIGGER_FOCUS: string = "focus";
+        static TRIGGER_NONE: string = "none";
 
-        static MODE_STATIC = "static";
-        static MODE_GLOBAL_STATIC = "global_static";
-        static MODE_FOLLOW = "follow";
+        static MODE_STATIC: string = "static";
+        static MODE_GLOBAL_STATIC: string = "global_static";
+        static MODE_FOLLOW: string = "follow";
 
         private static multipleAllowed: boolean = true;
         private static instances: Tooltip[] = [];
@@ -82,7 +82,7 @@ module api.ui {
                     this.tooltipEl.getEl().setInnerHtml(this.text);
                 }
 
-                var appendTo;
+                let appendTo;
                 if (this.mode == Tooltip.MODE_STATIC) {
                     appendTo = this.targetEl.getParentElement() || this.targetEl;
                 } else {
@@ -213,7 +213,7 @@ module api.ui {
         }
 
         private positionAtMouse(event: MouseEvent) {
-            var left, top,
+            let left, top,
                 x = event.clientX,
                 y = event.clientY,
                 el = this.tooltipEl.getEl(),
@@ -249,7 +249,7 @@ module api.ui {
 
         private positionByTarget() {
 
-            var targetEl = this.targetEl.getHTMLElement(),
+            let targetEl = this.targetEl.getHTMLElement(),
                 targetOffset = this.targetEl.getEl().getOffset(),
                 el = this.tooltipEl.getEl(),
                 elProps = {
@@ -259,7 +259,7 @@ module api.ui {
                     width: el.getWidth()
                 };
 
-            var offsetLeft, offsetTop;
+            let offsetLeft, offsetTop;
             switch (this.side) {
             case Tooltip.SIDE_TOP:
                 offsetLeft = targetOffset.left + (targetEl.offsetWidth - elProps.width) / 2 + elProps.left;
@@ -302,7 +302,7 @@ module api.ui {
 
         private startHideTimeout(ms?: number) {
             this.stopTimeout();
-            var t = ms || this.hideTimeout;
+            let t = ms || this.hideTimeout;
             if (t > 0) {
                 this.timeoutTimer = setTimeout(() => {
                     this.hide();
@@ -314,7 +314,7 @@ module api.ui {
 
         private startShowDelay(ms?: number) {
             this.stopTimeout();
-            var t = ms || this.showDelay;
+            let t = ms || this.showDelay;
             if (t > 0) {
                 if (this.trigger == Tooltip.TRIGGER_HOVER) {
                     // if tooltip target element becomes disabled it doesn't generate mouse leave event
@@ -337,10 +337,10 @@ module api.ui {
         }
 
         private hideOnMouseOut() {
-            var tooltip = this;
-            var mouseMoveListener = (event: MouseEvent) => {
-                var tooltipTargetHtmlElement = tooltip.targetEl.getHTMLElement();
-                for (var element = event.target; element; element = (<any>element).parentNode) {
+            let tooltip = this;
+            let mouseMoveListener = (event: MouseEvent) => {
+                let tooltipTargetHtmlElement = tooltip.targetEl.getHTMLElement();
+                for (let element = event.target; element; element = (<any>element).parentNode) {
                     if (element == tooltipTargetHtmlElement) {
                         return;
                     }
@@ -369,7 +369,7 @@ module api.ui {
                     //console.log("Hiding tooltip because multiple instances are not allowed", tooltip);
                     tooltip.hide();
                 }
-            })
+            });
         }
 
         static allowMultipleInstances(allow: boolean) {

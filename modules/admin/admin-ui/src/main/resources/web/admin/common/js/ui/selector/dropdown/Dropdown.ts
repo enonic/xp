@@ -86,7 +86,7 @@ module api.ui.selector.dropdown {
             this.dropdownHandle = new DropdownHandle();
             this.appendChild(this.dropdownHandle);
 
-            var filter = config.filter || this.defaultFilter;
+            let filter = config.filter || this.defaultFilter;
 
             this.dropdownList = new DropdownList(<DropdownListConfig<OPTION_DISPLAY_VALUE>>{
                 maxHeight: 200,
@@ -140,20 +140,20 @@ module api.ui.selector.dropdown {
                 return true;
             }
 
-            var lowerCasedSearchString = args.searchString.toLowerCase();
+            let lowerCasedSearchString = args.searchString.toLowerCase();
             if (option.value.toLowerCase().indexOf(lowerCasedSearchString) > -1) {
                 return true;
             }
 
-            var displayVaueAsString = option.displayValue.toString();
+            let displayVaueAsString = option.displayValue.toString();
             if (displayVaueAsString.toLowerCase().indexOf(lowerCasedSearchString) > -1) {
                 return true;
             }
 
-            var indices = option.indices;
+            let indices = option.indices;
             if (indices && indices.length > 0) {
-                for (var i = 0; i < indices.length; i++) {
-                    var index = indices[i];
+                for (let i = 0; i < indices.length; i++) {
+                    let index = indices[i];
                     if (index) {
                         if (index.toLocaleLowerCase().indexOf(lowerCasedSearchString) > -1) {
                             return true;
@@ -166,7 +166,7 @@ module api.ui.selector.dropdown {
         }
 
         private doUpdateDropdownTopPositionAndWidth() {
-            var inputEl = this.input.getEl();
+            let inputEl = this.input.getEl();
             this.dropdownList.setTopPx(inputEl.getHeightWithBorder() - inputEl.getBorderBottomWidth());
             this.dropdownList.setWidth(inputEl.getWidthWithBorder());
         }
@@ -188,7 +188,7 @@ module api.ui.selector.dropdown {
 
             this.doUpdateDropdownTopPositionAndWidth();
 
-            var selectedOption = this.getSelectedOption();
+            let selectedOption = this.getSelectedOption();
 
             this.dropdownList.showDropdown(!!selectedOption ? [selectedOption] : null, this.isInputEmpty() ? this.noOptionsText : null);
 
@@ -249,7 +249,7 @@ module api.ui.selector.dropdown {
         }
 
         setValue(value: string): Dropdown<OPTION_DISPLAY_VALUE> {
-            var option = this.getOptionByValue(value);
+            let option = this.getOptionByValue(value);
             if (option != null) {
                 this.selectOption(option);
             }
@@ -257,7 +257,7 @@ module api.ui.selector.dropdown {
         }
 
         selectRow(index: number, silent: boolean = false, keyCode: number = -1) {
-            var option = this.getOptionByRow(index);
+            let option = this.getOptionByRow(index);
             if (option != null) {
                 this.selectOption(option, silent, keyCode);
                 api.dom.FormEl.moveFocusToNextFocusable(this.input);
@@ -286,7 +286,7 @@ module api.ui.selector.dropdown {
         }
 
         getValue(): string {
-            var selectedOption = this.getSelectedOption();
+            let selectedOption = this.getSelectedOption();
             if (!selectedOption) {
                 return null;
             }
@@ -396,7 +396,7 @@ module api.ui.selector.dropdown {
         }
 
         private notifyOptionSelected(item: Option<OPTION_DISPLAY_VALUE>, keyCode: number = -1) {
-            var event = new OptionSelectedEvent<OPTION_DISPLAY_VALUE>(item, -1, keyCode);
+            let event = new OptionSelectedEvent<OPTION_DISPLAY_VALUE>(item, -1, keyCode);
             this.optionSelectedListeners.forEach((listener: (event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
                 listener(event);
             });
@@ -410,11 +410,11 @@ module api.ui.selector.dropdown {
             this.optionFilterInputValueChangedListeners.filter(
                 (currentListener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
                     return listener != currentListener;
-                })
+                });
         }
 
         private notifyOptionFilterInputValueChanged(oldValue: string, newValue: string) {
-            var event = new OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>(oldValue, newValue,
+            let event = new OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>(oldValue, newValue,
                 this.dropdownList.getDropdownGrid().getElement());
             this.optionFilterInputValueChangedListeners.forEach(
                 (listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
@@ -427,7 +427,7 @@ module api.ui.selector.dropdown {
         }
 
         private notifyExpanded() {
-            var event = new api.ui.selector.DropdownExpandedEvent(this.dropdownList.getDropdownGrid().getElement(), true);
+            let event = new api.ui.selector.DropdownExpandedEvent(this.dropdownList.getDropdownGrid().getElement(), true);
             this.expandedListeners.forEach((listener: (event: api.ui.selector.DropdownExpandedEvent)=>void) => {
                 listener(event);
             });

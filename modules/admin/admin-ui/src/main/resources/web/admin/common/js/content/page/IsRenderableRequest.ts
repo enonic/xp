@@ -18,7 +18,7 @@ module api.content.page {
         getParams():Object {
             return {
                 contentId: this.contentId.toString()
-            }
+            };
         }
 
         getRequestPath(): api.rest.Path {

@@ -45,7 +45,7 @@ module api.form {
 
         public toJson(): string {
 
-            return this.toString()
+            return this.toString();
         }
 
         equals(o: api.Equitable): boolean {
@@ -54,7 +54,7 @@ module api.form {
                 return false;
             }
 
-            var other = <InputTypeName>o;
+            let other = <InputTypeName>o;
 
             if (!api.ObjectHelper.booleanEquals(this.custom, other.custom)) {
                 return false;

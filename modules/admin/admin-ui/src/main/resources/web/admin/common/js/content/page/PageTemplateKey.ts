@@ -22,7 +22,7 @@ module api.content.page {
                 return false;
             }
 
-            var other = <PageTemplateKey>o;
+            let other = <PageTemplateKey>o;
             return super.equals(other);
         }
     }

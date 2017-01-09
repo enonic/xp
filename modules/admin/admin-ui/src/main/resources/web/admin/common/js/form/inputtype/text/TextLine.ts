@@ -17,8 +17,8 @@ module api.form.inputtype.text {
         }
 
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
-            var regexpConfig = inputConfig && inputConfig['regexp'] && inputConfig['regexp'][0];
-            var regexp = regexpConfig && regexpConfig['value'];
+            let regexpConfig = inputConfig && inputConfig['regexp'] && inputConfig['regexp'][0];
+            let regexp = regexpConfig && regexpConfig['value'];
             this.regexpStr = regexp || null;
         }
 
@@ -35,11 +35,11 @@ module api.form.inputtype.text {
                 property.convertValueType(ValueTypes.STRING);
             }
 
-            var inputEl = api.ui.text.TextInput.middle(undefined, property.getString());
+            let inputEl = api.ui.text.TextInput.middle(undefined, property.getString());
             inputEl.setName(this.getInput().getName() + "-" + index);
 
             inputEl.onValueChanged((event: api.ValueChangedEvent) => {
-                var isValid = this.isValid(event.getNewValue(), inputEl),
+                let isValid = this.isValid(event.getNewValue(), inputEl),
                     value = isValid ? ValueTypes.STRING.newValue(event.getNewValue()) : this.newInitialValue();
                 this.notifyOccurrenceValueChanged(inputEl, value);
                 inputEl.updateValidationStatusOnUserInput(isValid);
@@ -49,7 +49,7 @@ module api.form.inputtype.text {
 
 
         updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly: boolean) {
-            var input = <api.ui.text.TextInput> occurrence;
+            let input = <api.ui.text.TextInput> occurrence;
 
             if (!unchangedOnly || !input.isDirty()) {
                 input.setValue(property.getString());
@@ -57,12 +57,13 @@ module api.form.inputtype.text {
         }
 
         resetInputOccurrenceElement(occurrence: api.dom.Element) {
-            var input = <api.ui.text.TextInput> occurrence;
+            let input = <api.ui.text.TextInput> occurrence;
 
             input.resetBaseValues();
         }
 
         availableSizeChanged() {
+            // must be implemented by children
         }
 
         valueBreaksRequiredContract(value: Value): boolean {
@@ -71,12 +72,12 @@ module api.form.inputtype.text {
         }
 
         hasInputElementValidUserInput(inputElement: api.dom.Element) {
-            var textInput = <api.ui.text.TextInput>inputElement;
+            let textInput = <api.ui.text.TextInput>inputElement;
             return this.isValid(textInput.getValue(), textInput, true);
         }
 
         private isValid(value: string, textInput: api.ui.text.TextInput, silent: boolean = false): boolean {
-            var parent = textInput.getParentElement();
+            let parent = textInput.getParentElement();
             if (!this.regexpStr || api.util.StringHelper.isEmpty(value)) {
                 parent.removeClass('valid-regexp').removeClass('invalid-regexp');
                 return true;
@@ -84,7 +85,7 @@ module api.form.inputtype.text {
             if (!this.regexp) {
                 this.regexp = new RegExp(this.regexpStr);
             }
-            var valid = this.regexp.test(value);
+            let valid = this.regexp.test(value);
             if (!silent) {
                 parent.toggleClass('valid-regexp', valid);
                 parent.toggleClass('invalid-regexp', !valid);

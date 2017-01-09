@@ -17,7 +17,7 @@ module api.ui.selector.dropdown {
         protected createLoader(): api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE> {
             throw new Error('Must be implemented by inheritors');
         }
-        
+
         private initLoaderListeners() {
             this.loader.onLoadedData(this.handleLoadedData.bind(this));
 
@@ -44,7 +44,7 @@ module api.ui.selector.dropdown {
         }
 
         private createOptions(values: OPTION_DISPLAY_VALUE[]): Option<OPTION_DISPLAY_VALUE>[] {
-            var options = [];
+            let options = [];
 
             values.forEach((value: OPTION_DISPLAY_VALUE) => {
                 options.push(this.createOption(value));

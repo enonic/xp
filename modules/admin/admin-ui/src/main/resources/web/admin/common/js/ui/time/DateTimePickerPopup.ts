@@ -113,8 +113,8 @@ module api.ui.time {
         }
 
         getSelectedDateTime(): Date {
-            var date = this.getSelectedDate();
-            var time = this.getSelectedTime();
+            let date = this.getSelectedDate();
+            let time = this.getSelectedTime();
             if (!date || !time) {
                 return null;
             }

@@ -2,8 +2,10 @@ module api.content.resource {
 
     import BatchContentResult = api.content.resource.result.BatchContentResult;
     import ContentResponse = api.content.resource.result.ContentResponse;
-    
-    export class BatchContentRequest extends ContentResourceRequest<BatchContentResult<api.content.json.ContentSummaryJson>, ContentResponse<ContentSummary>> {
+    import ContentSummaryJson = api.content.json.ContentSummaryJson;
+
+    export class BatchContentRequest
+    extends ContentResourceRequest<BatchContentResult<ContentSummaryJson>, ContentResponse<ContentSummary>> {
 
         private contentPaths: ContentPath[] = [];
 
@@ -26,7 +28,7 @@ module api.content.resource {
         }
 
         getParams(): Object {
-            var fn = (contentPath: ContentPath) => {
+            let fn = (contentPath: ContentPath) => {
                 return contentPath.toString();
             };
             return {

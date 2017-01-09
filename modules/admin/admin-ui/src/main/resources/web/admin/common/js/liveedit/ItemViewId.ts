@@ -3,7 +3,7 @@ module api.liveedit {
 
     export class ItemViewId implements api.Equitable {
 
-        static DATA_ATTRIBUTE = "live-edit-id";
+        static DATA_ATTRIBUTE: string = "live-edit-id";
 
         private value: number;
 
@@ -21,7 +21,7 @@ module api.liveedit {
                 return false;
             }
 
-            var other = <ItemViewId>o;
+            let other = <ItemViewId>o;
 
             if (!api.ObjectHelper.numberEquals(this.value, other.value)) {
                 return false;

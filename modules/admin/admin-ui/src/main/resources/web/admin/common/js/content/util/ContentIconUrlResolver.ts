@@ -27,7 +27,7 @@ module api.content.util {
 
         resolve(): string {
 
-            var url = this.content.getIconUrl();
+            let url = this.content.getIconUrl();
             if (!url) {
                 return null;
             }

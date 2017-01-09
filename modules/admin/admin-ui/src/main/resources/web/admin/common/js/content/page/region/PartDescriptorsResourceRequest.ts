@@ -4,7 +4,7 @@ module api.content.page.region {
 
         fromJsonToPartDescriptors(json: PartDescriptorsJson): PartDescriptor[] {
 
-            var array: PartDescriptor[] = [];
+            let array: PartDescriptor[] = [];
             json.descriptors.forEach((descriptorJson: PartDescriptorJson)=> {
                 array.push(this.fromJsonToPartDescriptor(descriptorJson));
             });

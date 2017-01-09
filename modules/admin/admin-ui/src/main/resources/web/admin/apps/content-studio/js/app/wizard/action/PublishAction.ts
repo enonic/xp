@@ -28,7 +28,7 @@ export class PublishAction extends api.ui.Action {
                             new ContentPublishPromptEvent([contentSummary], includeChildItems).fire();
                         }
                     }).catch((reason: any) => {
-                        api.DefaultErrorHandler.handle(reason)
+                        api.DefaultErrorHandler.handle(reason);
                     }).finally(() => this.setEnabled(true)).done();
                 } else {
                     let contentSummary = ContentSummaryAndCompareStatus.fromContentSummary(wizard.getPersistedItem());

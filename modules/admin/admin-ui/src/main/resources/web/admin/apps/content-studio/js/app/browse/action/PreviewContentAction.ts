@@ -1,12 +1,12 @@
 import "../../../api.ts";
+import {PreviewContentHandler} from "./handler/PreviewContentHandler";
+import {ContentTreeGrid} from "../ContentTreeGrid";
+import {BasePreviewAction} from "../../action/BasePreviewAction";
 
 import Action = api.ui.Action;
 import RenderingMode = api.rendering.RenderingMode;
 import ContentSummary = api.content.ContentSummary;
 import ContentId = api.content.ContentId;
-import {PreviewContentHandler} from "./handler/PreviewContentHandler";
-import {ContentTreeGrid} from "../ContentTreeGrid";
-import {BasePreviewAction} from "../../action/BasePreviewAction";
 
 export class PreviewContentAction extends BasePreviewAction {
 
@@ -20,7 +20,7 @@ export class PreviewContentAction extends BasePreviewAction {
 
         this.onExecuted(() => {
             if (!this.previewContentHandler.isBlocked()) {
-                var contentSummaries: ContentSummary[] = grid.getSelectedDataList().map(data => data.getContentSummary()).filter(
+                let contentSummaries: ContentSummary[] = grid.getSelectedDataList().map(data => data.getContentSummary()).filter(
                     contentSummary => this.previewContentHandler.getRenderableIds().indexOf(contentSummary.getContentId().toString()) >= 0);
 
                 this.openWindows(contentSummaries);

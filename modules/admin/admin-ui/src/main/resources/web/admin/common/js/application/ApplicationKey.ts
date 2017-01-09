@@ -7,11 +7,12 @@ module api.application {
         static PORTAL: ApplicationKey = ApplicationKey.fromString('portal');
         static MEDIA: ApplicationKey = ApplicationKey.fromString('media');
 
-        static SYSTEM_RESERVED_APPLICATION_KEYS = [
+        static SYSTEM_RESERVED_APPLICATION_KEYS: ApplicationKey[] = [
             ApplicationKey.SYSTEM,
             ApplicationKey.BASE,
             ApplicationKey.PORTAL,
-            ApplicationKey.MEDIA];
+            ApplicationKey.MEDIA,
+        ];
 
         private name: string;
 
@@ -28,7 +29,7 @@ module api.application {
         }
 
         isSystemReserved(): boolean {
-            for (var key in ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS) {
+            for (let key in ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS) {
                 if (ApplicationKey.SYSTEM_RESERVED_APPLICATION_KEYS[key].equals(this)) {
                     return true;
                 }
@@ -46,7 +47,7 @@ module api.application {
                 return false;
             }
 
-            var other = <ApplicationKey>o;
+            let other = <ApplicationKey>o;
             return api.ObjectHelper.stringEquals(this.name, other.name);
         }
 

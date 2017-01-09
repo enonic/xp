@@ -20,7 +20,7 @@ module api.application {
                     console.log(api.ClassHelper.getClassName(this) +
                                 " received ApplicationEvent STOPPED - calling deleteByApplicationKey.. " +
                                 event.getApplicationKey().toString());
-                    this.deleteByApplicationKey(event.getApplicationKey())
+                    this.deleteByApplicationKey(event.getApplicationKey());
                 }
             });
         }
@@ -31,7 +31,7 @@ module api.application {
 
         getByApplication(applicationKey: ApplicationKey): T[] {
             api.util.assertNotNull(applicationKey, "applicationKey not given");
-            var cache = this.applicationCaches.getByKey(applicationKey);
+            let cache = this.applicationCaches.getByKey(applicationKey);
             if (!cache) {
                 return null;
             }
@@ -41,7 +41,7 @@ module api.application {
         getByKey(key: TKEY, applicationKey: ApplicationKey): T {
             api.util.assertNotNull(key, "key not given");
 
-            var cache = this.applicationCaches.getByKey(applicationKey);
+            let cache = this.applicationCaches.getByKey(applicationKey);
             if (!cache) {
                 return null;
             }
@@ -51,7 +51,7 @@ module api.application {
         put(object: T, applicationKey?: ApplicationKey) {
             api.util.assertNotNull(object, "a object to cache must be given");
 
-            var cache = this.applicationCaches.getByKey(applicationKey);
+            let cache = this.applicationCaches.getByKey(applicationKey);
             if (!cache) {
                 cache = this.createApplicationCache();
                 this.applicationCaches.put(applicationKey, cache);

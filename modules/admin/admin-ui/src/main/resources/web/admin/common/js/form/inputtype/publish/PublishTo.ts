@@ -8,9 +8,9 @@ module api.content.form.inputtype.publish {
 
         protected additionalValidate(recording: api.form.inputtype.InputValidationRecording) {
             if (recording.isValid()) {
-                var publishInfoPropertySet: api.data.PropertySet = this.propertyArray.getParent();
-                var publishFrom = publishInfoPropertySet.getDateTime("from");
-                var publishTo = publishInfoPropertySet.getDateTime("to");
+                let publishInfoPropertySet: api.data.PropertySet = this.propertyArray.getParent();
+                let publishFrom = publishInfoPropertySet.getDateTime("from");
+                let publishTo = publishInfoPropertySet.getDateTime("to");
                 if (publishTo && publishFrom && (publishTo.toDate() < publishFrom.toDate())) {
                     recording.setBreaksMinimumOccurrences(true);
                     recording.setAdditionalValidationRecord(

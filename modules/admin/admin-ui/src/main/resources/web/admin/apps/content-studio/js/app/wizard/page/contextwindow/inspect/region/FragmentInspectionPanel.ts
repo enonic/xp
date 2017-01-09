@@ -51,7 +51,7 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
 
         this.removeChildren();
 
-        var sitePath = this.liveEditModel.getSiteModel().getSite().getPath().toString();
+        let sitePath = this.liveEditModel.getSiteModel().getSite().getPath().toString();
 
         this.fragmentSelector = new FragmentDropdown(sitePath, this.liveEditModel.getContent().getPath());
         this.fragmentForm = new FragmentSelectorForm(this.fragmentSelector, "Fragment");
@@ -81,14 +81,14 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
         this.fragmentComponent = fragmentView.getComponent();
         this.setComponent(this.fragmentComponent);
 
-        var contentId: ContentId = this.fragmentComponent.getFragment();
+        const contentId: ContentId = this.fragmentComponent.getFragment();
         if (contentId) {
-            var fragment: ContentSummary = this.fragmentSelector.getSelection(contentId);
+            const fragment: ContentSummary = this.fragmentSelector.getSelection(contentId);
             if (fragment) {
                 this.setSelectorValue(fragment);
             } else {
-                new GetContentSummaryByIdRequest(contentId).sendAndParse().then((fragment: ContentSummary) => {
-                    this.setSelectorValue(fragment);
+                new GetContentSummaryByIdRequest(contentId).sendAndParse().then((receivedFragment: ContentSummary) => {
+                    this.setSelectorValue(receivedFragment);
                 }).catch((reason: any) => {
                     if (this.isNotFoundError(reason)) {
                         this.setSelectorValue(null);
@@ -115,7 +115,7 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
     private setSelectorValue(fragment: ContentSummary) {
         this.handleSelectorEvents = false;
         if (fragment) {
-            var option = this.fragmentSelector.getOptionByValue(fragment.getId().toString());
+            let option = this.fragmentSelector.getOptionByValue(fragment.getId().toString());
             if (!option) {
                 this.fragmentSelector.addFragmentOption(fragment);
             }
@@ -128,8 +128,8 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
 
         this.fragmentSelector.onOptionSelected((selectedOption: OptionSelectedEvent<ContentSummary>) => {
             if (this.handleSelectorEvents) {
-                var option: Option<ContentSummary> = selectedOption.getOption();
-                var fragmentContent = option.displayValue;
+                let option: Option<ContentSummary> = selectedOption.getOption();
+                let fragmentContent = option.displayValue;
 
                 if (this.isInsideLayout()) {
                     new GetContentByIdRequest(fragmentContent.getContentId()).sendAndParse().done((content: Content) => {

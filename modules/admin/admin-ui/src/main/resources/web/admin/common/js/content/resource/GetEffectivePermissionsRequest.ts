@@ -1,8 +1,10 @@
 module api.content.resource {
 
     import AccessControlList = api.security.acl.AccessControlList;
+    import EffectivePermissionJson = api.content.json.EffectivePermissionJson;
+    import EffectivePermission = api.ui.security.acl.EffectivePermission;
 
-    export class GetEffectivePermissionsRequest extends ContentResourceRequest<api.content.json.EffectivePermissionJson[], api.ui.security.acl.EffectivePermission[]> {
+    export class GetEffectivePermissionsRequest extends ContentResourceRequest<EffectivePermissionJson[], EffectivePermission[]> {
 
         private contentId: ContentId;
 

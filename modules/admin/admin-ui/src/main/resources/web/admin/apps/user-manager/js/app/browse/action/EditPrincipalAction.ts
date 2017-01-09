@@ -1,9 +1,9 @@
 import "../../../api.ts";
-
-import Action = api.ui.Action;
 import {EditPrincipalEvent} from "../EditPrincipalEvent";
 import {UserTreeGridItem} from "../UserTreeGridItem";
 import {UserItemsTreeGrid} from "../UserItemsTreeGrid";
+
+import Action = api.ui.Action;
 
 export class EditPrincipalAction extends Action {
 
@@ -11,7 +11,7 @@ export class EditPrincipalAction extends Action {
         super("Edit", "f4");
         this.setEnabled(false);
         this.onExecuted(() => {
-            var principals: UserTreeGridItem[] = grid.getSelectedDataList();
+            let principals: UserTreeGridItem[] = grid.getSelectedDataList();
             new EditPrincipalEvent(principals).fire();
         });
     }

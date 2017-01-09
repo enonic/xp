@@ -17,12 +17,13 @@ import Element = api.dom.Element;
 
 export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
 
-    protected handleDragInit(e, dd) {
-        var row = this.getRowByTarget(new ElementHelper(<HTMLElement>e.target)),
+    protected handleDragInit(e: DragEvent, dd: DragEventData) {
+        let row = this.getRowByTarget(new ElementHelper(<HTMLElement>e.target)),
             nodes = this.contentGrid.getRoot().getCurrentRoot().treeToList(),
             draggedNode = nodes[row.getSiblingIndex()];
 
-        if (draggedNode.getData().isDraggableView() && !api.BrowserHelper.isMobile()) { // prevent the grid from cancelling drag'n'drop by default
+        // prevent the grid from cancelling drag'n'drop by default
+        if (draggedNode.getData().isDraggableView() && !api.BrowserHelper.isMobile()) {
             e.stopImmediatePropagation();
         }
     }
@@ -45,7 +46,7 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
     }
 
 
-    protected handleDragEnd(event: Event, data) {
+    protected handleDragEnd(event: Event, data: any) {
         api.dom.Body.get().unMouseMove(this.handleHelperMove);
         api.dom.Body.get().removeChild(DragHelper.get());
 
@@ -55,14 +56,14 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
         super.handleDragEnd(event, data);
     }
 
-    protected handleBeforeMoveRows(event: Event, data): boolean {
+    protected handleBeforeMoveRows(event: Event, data: any): boolean {
 
-        var dataList = this.contentGrid.getRoot().getCurrentRoot().treeToList();
+        let dataList = this.contentGrid.getRoot().getCurrentRoot().treeToList();
 
-        var draggableRow = data.rows[0],
+        let draggableRow = data.rows[0],
             insertBefore = data.insertBefore;
 
-        var insertPosition = (draggableRow > insertBefore) ? insertBefore : insertBefore + 1;
+        let insertPosition = (draggableRow > insertBefore) ? insertBefore : insertBefore + 1;
 
         this.updateDragHelperStatus(draggableRow, insertPosition, dataList);
 
@@ -80,11 +81,11 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
 
     protected makeMovementInNodes(draggableRow: number, insertBefore: number): number {
 
-        var root = this.contentGrid.getRoot().getCurrentRoot();
-        var dataList = root.treeToList();
+        let root = this.contentGrid.getRoot().getCurrentRoot();
+        let dataList = root.treeToList();
 
-        var item = dataList.slice(draggableRow, draggableRow + 1)[0];
-        var insertPosition = (draggableRow > insertBefore) ? insertBefore : insertBefore + 1;
+        let item = dataList.slice(draggableRow, draggableRow + 1)[0];
+        let insertPosition = (draggableRow > insertBefore) ? insertBefore : insertBefore + 1;
 
         this.moveIntoNewParent(item, insertPosition, dataList);
 
@@ -99,16 +100,16 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
         return model ? model.getItemId() : null;
     }
 
-    protected handleMovements(rowDataId, moveBeforeRowDataId) {
+    protected handleMovements(rowDataId: any, moveBeforeRowDataId: any) {
         return;
     }
 
     protected moveIntoNewParent(item: TreeNode<ItemView>, insertBefore: number, data: TreeNode<ItemView>[]) {
-        var insertData = this.getParentPosition(insertBefore, data),
+        let insertData = this.getParentPosition(insertBefore, data),
             regionPosition = insertData.parentPosition,
             insertIndex = insertData.insertIndex;
 
-        var newParent = data[regionPosition];
+        let newParent = data[regionPosition];
 
         if (newParent == item.getParent() && data.indexOf(item) < insertBefore) {
             insertIndex--;
@@ -128,9 +129,9 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
 
     private updateDragHelperStatus(draggableRow: number, insertBeforePos: number, data: TreeNode<ItemView>[]) {
 
-        var parentPosition = this.getParentPosition(insertBeforePos, data).parentPosition;
+        let parentPosition = this.getParentPosition(insertBeforePos, data).parentPosition;
 
-        var parentComponentNode = data[parentPosition],
+        let parentComponentNode = data[parentPosition],
             parentComponentView = parentComponentNode.getData(),
             draggableComponentView = data[draggableRow].getData();
 
@@ -158,7 +159,7 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
 
                 DragHelper.get().setDropAllowed(true);
 
-                var draggableItem = this.getDraggableItem();
+                let draggableItem = this.getDraggableItem();
                 if (draggableItem) {
                     this.updateDraggableItemPosition(draggableItem, parentComponentNode.calcLevel());
                 }
@@ -169,8 +170,8 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
     }
 
     private updateDraggableItemPosition(draggableItem: Element, parentLevel: number) {
-        var margin = parentLevel * api.ui.treegrid.TreeGrid.LEVEL_STEP_INDENT;
-        var nodes = draggableItem.getEl().getElementsByClassName("toggle icon");
+        let margin = parentLevel * api.ui.treegrid.TreeGrid.LEVEL_STEP_INDENT;
+        let nodes = draggableItem.getEl().getElementsByClassName("toggle icon");
 
         if (nodes.length == 1) {
             nodes[0].setMarginLeft(margin + "px");
@@ -179,47 +180,49 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
 
 
     private getParentPosition(insertBeforePos: number, data: TreeNode<ItemView>[]): InsertData {
-        var parentPosition = insertBeforePos,
-            insertIndex = 0;
+        let parentPosition = insertBeforePos;
+        let insertIndex = 0;
 
-        if (!data[insertBeforePos - 1]) {
+        const current = data[insertBeforePos];
+        const previous = data[insertBeforePos - 1];
+
+        if (!previous) {
             return {parentPosition: 0, insertIndex: 0};
         }
 
-        var calcLevel = data[parentPosition - 1].calcLevel();
+        const calcLevel = data[parentPosition - 1].calcLevel();
 
-        var isFirstChildPosition = ( data[insertBeforePos]
-                ? data[insertBeforePos - 1].calcLevel() < data[insertBeforePos].calcLevel()
-                : false) ||
-                                   (api.ObjectHelper.iFrameSafeInstanceOf(data[insertBeforePos - 1].getData(), RegionView));
+        const isFirstChildPosition = ( current ? previous.calcLevel() < current.calcLevel() : false)
+                                   || (api.ObjectHelper.iFrameSafeInstanceOf(previous.getData(), RegionView));
+
+        let parentComponentNode;
+        let parentComponentView;
+
+        const check = (view, node) => {
+            return !( api.ObjectHelper.iFrameSafeInstanceOf(view, RegionView)
+                     // lets drag items inside the 'main' region between layouts
+                     || (api.ObjectHelper.iFrameSafeInstanceOf(view, LayoutComponentView)
+                         && (node.isExpanded() && node.getChildren().length > 0) )
+                     || api.ObjectHelper.iFrameSafeInstanceOf(view, PageView))
+                   || (node.calcLevel() >= calcLevel && !isFirstChildPosition);
+        };
 
         do {
-
             parentPosition = parentPosition <= 0 ? 0 : parentPosition - 1;
 
-
-            var parentComponentNode = data[parentPosition],
-                parentComponentView = parentComponentNode.getData();
+            parentComponentNode = data[parentPosition];
+            parentComponentView = parentComponentNode.getData();
 
             if (parentComponentNode.calcLevel() == calcLevel && !isFirstChildPosition) {
                 insertIndex++;
             }
 
+        } while (check(parentComponentView, parentComponentNode));
 
-        } while (!(api.ObjectHelper.iFrameSafeInstanceOf(parentComponentView, RegionView) ||
-
-                 ( api.ObjectHelper.iFrameSafeInstanceOf(parentComponentView, LayoutComponentView) &&  // lets drag items inside the 'main' region between layouts
-                   (parentComponentNode.isExpanded() && parentComponentNode.getChildren().length > 0) ) ||
-
-                 api.ObjectHelper.iFrameSafeInstanceOf(parentComponentView, PageView))
-
-                 || (parentComponentNode.calcLevel() >= calcLevel && !isFirstChildPosition));
-
-        return {parentPosition: parentPosition, insertIndex: insertIndex};
+        return { parentPosition: parentPosition, insertIndex: insertIndex };
     }
 
     private getRowByTarget(el: ElementHelper): ElementHelper {
-
         return (el && el.hasClass("slick-row")) ? el : this.getRowByTarget(el.getParent());
     }
 

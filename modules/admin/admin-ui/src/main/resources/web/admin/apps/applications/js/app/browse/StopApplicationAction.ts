@@ -10,7 +10,7 @@ export class StopApplicationAction extends api.ui.Action {
         super("Stop");
         this.setEnabled(false);
         this.onExecuted(() => {
-            var applications: Application[] = applicationTreeGrid.getSelectedDataList();
+            let applications: Application[] = applicationTreeGrid.getSelectedDataList();
             new StopApplicationEvent(applications).fire();
         });
     }

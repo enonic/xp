@@ -21,10 +21,10 @@ module api.security {
                 return false;
             }
 
-            var other = <AuthConfig> o;
+            let other = <AuthConfig> o;
 
             return this.applicationKey.equals(other.applicationKey) &&
-                   this.config.equals(other.config)
+                   this.config.equals(other.config);
         }
 
         toJson(): AuthConfigJson {
@@ -54,9 +54,6 @@ module api.security {
     export class AuthConfigBuilder {
         applicationKey: api.application.ApplicationKey;
         config: api.data.PropertyTree;
-
-        constructor() {
-        }
 
         setApplicationKey(applicationKey: api.application.ApplicationKey): AuthConfigBuilder {
             this.applicationKey = applicationKey;

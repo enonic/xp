@@ -36,10 +36,6 @@ module api.content.form.inputtype.tag {
             }
         }
 
-        availableSizeChanged() {
-
-        }
-
         getValueType(): ValueType {
             return ValueTypes.STRING;
         }
@@ -54,12 +50,12 @@ module api.content.form.inputtype.tag {
             }
             super.layout(input, propertyArray);
 
-            var tagsBuilder = new api.ui.tags.TagsBuilder().
+            let tagsBuilder = new api.ui.tags.TagsBuilder().
                 setTagSuggester(this.tagSuggester).
                 setMaxTags(this.context.input.getOccurrences().getMaximum());
 
             propertyArray.forEach((property) => {
-                var value = property.getString();
+                let value = property.getString();
                 if (value) {
                     tagsBuilder.addTag(value);
                 }
@@ -70,7 +66,7 @@ module api.content.form.inputtype.tag {
 
             this.tags.onTagAdded((event: api.ui.tags.TagAddedEvent) => {
                 this.ignorePropertyChange = true;
-                var value = new Value(event.getValue(), ValueTypes.STRING);
+                let value = new Value(event.getValue(), ValueTypes.STRING);
                 if (this.tags.countTags() == 1) {
                     this.getPropertyArray().set(0, value);
                 }
@@ -95,7 +91,7 @@ module api.content.form.inputtype.tag {
 
 
         update(propertyArray: api.data.PropertyArray, unchangedOnly?: boolean): Q.Promise<void> {
-            var superPromise = super.update(propertyArray, unchangedOnly);
+            let superPromise = super.update(propertyArray, unchangedOnly);
 
             if (!unchangedOnly || !this.tags.isDirty()) {
                 return superPromise.then(() => {

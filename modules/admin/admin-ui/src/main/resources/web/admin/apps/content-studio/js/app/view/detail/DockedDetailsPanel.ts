@@ -16,8 +16,9 @@ export class DockedDetailsPanel extends DetailsPanel {
         this.onPanelSizeChanged(() => this.detailsView.setDetailsContainerHeight());
 
         this.onShown(() => {
-            if (!!this.getItem()) {
-                setTimeout(() => this.detailsView.updateActiveWidget(), 250); // small delay so that isVisibleOrAboutToBeVisible() check detects width change
+            if (this.getItem()) {
+                // small delay so that isVisibleOrAboutToBeVisible() check detects width change
+                setTimeout(() => this.detailsView.updateActiveWidget(), 250);
             }
         });
     }

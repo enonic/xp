@@ -26,7 +26,7 @@ module api.app.browse {
         }
 
         private initRemoveButton(callback?: () => void) {
-            var removeEl = new api.dom.DivEl("icon remove");
+            let removeEl = new api.dom.DivEl("icon remove");
             removeEl.onClicked(this.notifyRemoveClicked.bind(this));
             return removeEl;
         }
@@ -38,13 +38,13 @@ module api.app.browse {
         unRemoveClicked(listener: (event: MouseEvent) => void) {
             this.removeListeners = this.removeListeners.filter((current) => {
                 return current !== listener;
-            })
+            });
         }
 
         notifyRemoveClicked(event: MouseEvent) {
             this.removeListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         setBrowseItem(item: BrowseItem<M>) {

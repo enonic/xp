@@ -47,7 +47,7 @@ module api.liveedit {
         }
 
         private createContentContextMenuActions(): api.ui.Action[] {
-            var actions: api.ui.Action[] = [];
+            let actions: api.ui.Action[] = [];
 
             actions.push(this.createSelectParentAction());
             actions.push(new api.ui.Action('Insert').onExecuted(() => {

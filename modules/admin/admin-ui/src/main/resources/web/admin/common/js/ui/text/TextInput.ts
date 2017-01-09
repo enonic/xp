@@ -22,7 +22,7 @@ module api.ui.text {
             if (className) {
                 this.addClass(className);
             }
-            
+
             if (size) {
                 this.addClassEx(size);
             }
@@ -41,7 +41,7 @@ module api.ui.text {
                     return;
                 }
 
-                var symbol = String.fromCharCode((<any> event).charCode);
+                let symbol = String.fromCharCode((<any> event).charCode);
                 // prevent input of forbidden symbols
                 if (this.containsForbiddenChars(symbol)) {
                     if (!this.keyCodeAllowed(event.keyCode)) {
@@ -73,7 +73,7 @@ module api.ui.text {
         }
 
         protected doSetValue(value: string, silent?: boolean) {
-            var newValue = this.removeForbiddenChars(value);
+            let newValue = this.removeForbiddenChars(value);
             super.doSetValue(newValue);
         }
 
@@ -83,7 +83,7 @@ module api.ui.text {
         }
 
         selectText(from?: number, to?: number) {
-            var htmlEl = <HTMLInputElement> this.getHTMLElement();
+            let htmlEl = <HTMLInputElement> this.getHTMLElement();
 
             if (!from) {
                 htmlEl.select();
@@ -92,7 +92,7 @@ module api.ui.text {
             }
 
             if (htmlEl.hasOwnProperty("createTextRange")) {
-                var selRange = htmlEl["createTextRange"];
+                let selRange = htmlEl["createTextRange"];
                 selRange.collapse(true);
                 selRange.moveStart('character', from);
                 selRange.moveEnd('character', to);
@@ -111,7 +111,7 @@ module api.ui.text {
             return this;
         }
 
-        moveCaretTo(pos) {
+        moveCaretTo(pos: number) {
             this.selectText(pos, pos);
         }
 
@@ -131,12 +131,12 @@ module api.ui.text {
 
         private containsForbiddenChars(value: string): boolean {
             // create new RegExp object in order not to mess RegExp.lastIndex
-            var forbidden = new RegExp(<any> this.stripCharsRe);
+            let forbidden = new RegExp(<any> this.stripCharsRe);
             return forbidden.test(value);
         }
 
         private keyCodeAllowed(keyCode: number): boolean {
-            for (var i = 0; i < this.allowedKeyCodes.length; i++) {
+            for (let i = 0; i < this.allowedKeyCodes.length; i++) {
                 if (keyCode == this.allowedKeyCodes[i]) {
                     return true;
                 }

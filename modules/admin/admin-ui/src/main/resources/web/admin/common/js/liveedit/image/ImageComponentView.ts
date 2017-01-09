@@ -32,14 +32,14 @@ module api.liveedit.image {
         }
 
         private handleContentRemovedEvent() {
-            var contentDeletedListener = (event) => {
-                var deleted = event.getDeletedItems().some((deletedItem: api.content.event.ContentDeletedItem) => {
+            let contentDeletedListener = (event) => {
+                let deleted = event.getDeletedItems().some((deletedItem: api.content.event.ContentDeletedItem) => {
                     return !deletedItem.isPending() && deletedItem.getContentId().equals(this.component.getImage());
-                })
+                });
                 if (deleted) {
                     this.remove();
                 }
-            }
+            };
 
             ContentDeletedEvent.on(contentDeletedListener);
 
@@ -50,9 +50,9 @@ module api.liveedit.image {
 
         private initializeImage() {
 
-            var figureElChildren = this.getChildren();
-            for (var i = 0; i < figureElChildren.length; i++) {
-                var image = figureElChildren[i];
+            let figureElChildren = this.getChildren();
+            for (let i = 0; i < figureElChildren.length; i++) {
+                let image = figureElChildren[i];
                 if (image.getHTMLElement().tagName.toUpperCase() == 'IMG') {
                     this.image = image;
 

@@ -24,23 +24,23 @@ module api.ui.security.acl {
             super("access-selector");
 
             AccessSelector.OPTIONS.forEach((option: AccessSelectorOption, index: number) => {
-                var menuItem = (<TabMenuItemBuilder>new TabMenuItemBuilder().setLabel(option.name).setAddLabelTitleAttribute(
+                let menuItem = (<TabMenuItemBuilder>new TabMenuItemBuilder().setLabel(option.name).setAddLabelTitleAttribute(
                     false)).build();
                 this.addNavigationItem(menuItem);
             });
 
             this.onNavigationItemSelected((event: api.ui.NavigatorEvent) => {
-                var item: api.ui.tab.TabMenuItem = <api.ui.tab.TabMenuItem> event.getItem();
+                let item: api.ui.tab.TabMenuItem = <api.ui.tab.TabMenuItem> event.getItem();
                 this.setValue(AccessSelector.OPTIONS[item.getIndex()].value);
-            })
+            });
         }
 
         getValue(): Access {
-            return this.value
+            return this.value;
         }
 
         setValue(value: Access, silent?: boolean): AccessSelector {
-            var option = this.findOptionByValue(value);
+            let option = this.findOptionByValue(value);
             if (option) {
                 this.selectNavigationItem(AccessSelector.OPTIONS.indexOf(option));
                 if (!silent) {
@@ -57,8 +57,8 @@ module api.ui.security.acl {
         }
 
         private findOptionByValue(value: Access): AccessSelectorOption {
-            for (var i = 0; i < AccessSelector.OPTIONS.length; i++) {
-                var option = AccessSelector.OPTIONS[i];
+            for (let i = 0; i < AccessSelector.OPTIONS.length; i++) {
+                let option = AccessSelector.OPTIONS[i];
                 if (option.value == value) {
                     return option;
                 }
@@ -73,7 +73,7 @@ module api.ui.security.acl {
                 this.getSelectedNavigationItem().setVisibleInMenu(false);
             }
 
-            var menu = this.getMenuEl(),
+            let menu = this.getMenuEl(),
                 entry = menu.getParentElement().getParentElement(),
                 list = entry.getParentElement(),
                 offset = entry.getEl().getOffsetTopRelativeToParent() -
@@ -96,13 +96,13 @@ module api.ui.security.acl {
         unValueChanged(listener: (event: api.ValueChangedEvent)=>void) {
             this.valueChangedListeners = this.valueChangedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyValueChanged(event: api.ValueChangedEvent) {
             this.valueChangedListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
     }

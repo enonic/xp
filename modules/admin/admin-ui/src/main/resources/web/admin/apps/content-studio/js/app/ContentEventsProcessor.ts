@@ -28,10 +28,10 @@ export class ContentEventsProcessor {
 
     static handleNew(newContentEvent: NewContentEvent) {
 
-        var contentTypeSummary = newContentEvent.getContentType();
-        var tabId = AppBarTabId.forNew(contentTypeSummary.getName());
+        let contentTypeSummary = newContentEvent.getContentType();
+        let tabId = AppBarTabId.forNew(contentTypeSummary.getName());
 
-        var wizardParams = new ContentWizardPanelParams()
+        let wizardParams = new ContentWizardPanelParams()
             .setTabId(tabId)
             .setContentTypeName(contentTypeSummary.getContentTypeName())
             .setParentContentId(newContentEvent.getParentContent() ? newContentEvent.getParentContent().getContentId() : undefined)
@@ -48,12 +48,12 @@ export class ContentEventsProcessor {
                 return;
             }
 
-            var contentSummary = content.getContentSummary(),
+            let contentSummary = content.getContentSummary(),
                 contentTypeName = contentSummary.getType();
 
-            var tabId = AppBarTabId.forEdit(contentSummary.getId());
+            let tabId = AppBarTabId.forEdit(contentSummary.getId());
 
-            var wizardParams = new ContentWizardPanelParams()
+            let wizardParams = new ContentWizardPanelParams()
                 .setTabId(tabId)
                 .setContentTypeName(contentTypeName)
                 .setContentId(contentSummary.getContentId());
@@ -68,13 +68,13 @@ export class ContentEventsProcessor {
 
     static handleSort(event: SortContentEvent) {
 
-        var contents: ContentSummaryAndCompareStatus[] = event.getModels();
+        let contents: ContentSummaryAndCompareStatus[] = event.getModels();
         new OpenSortDialogEvent(contents[0]).fire();
     }
 
     static handleMove(event: MoveContentEvent) {
 
-        var contents: ContentSummaryAndCompareStatus[] = event.getModels();
+        let contents: ContentSummaryAndCompareStatus[] = event.getModels();
         new OpenMoveDialogEvent(contents.map(content => content.getContentSummary())).fire();
     }
 }

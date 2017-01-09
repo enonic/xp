@@ -31,7 +31,7 @@ module api.ui {
 
         public bindKeys(bindings: KeyBinding[]) {
 
-            var logMessage = "Binded keys: [";
+            let logMessage = "Binded keys: [";
             bindings.forEach((binding: KeyBinding) => {
                 this.bindKey(binding);
                 logMessage += "'" + binding.getCombination() + "' ,";
@@ -50,13 +50,13 @@ module api.ui {
                 Mousetrap.bind(binding.getCombination(), binding.getCallback(),
                     binding.getAction() ? KeyBindingAction[binding.getAction()].toLowerCase() : "");
             }
-            var bindingKey = binding.getAction() ? binding.getCombination() + "-" + binding.getAction() : binding.getCombination();
+            let bindingKey = binding.getAction() ? binding.getCombination() + "-" + binding.getAction() : binding.getCombination();
             this.activeBindings[bindingKey] = binding;
         }
 
         public unbindKeys(bindings: KeyBinding[]) {
 
-            var logMessage = "Binded keys: [";
+            let logMessage = "Binded keys: [";
 
             bindings.forEach((binding: KeyBinding) => {
                 this.unbindKey(binding);
@@ -112,7 +112,7 @@ module api.ui {
          * Resets current bindings and re-binds those from the last shelf.
          */
         public unshelveBindings() {
-            var previousMousetraps: {[s:string] : KeyBinding;} = this.shelves.pop();
+            let previousMousetraps: {[s:string] : KeyBinding;} = this.shelves.pop();
             if (previousMousetraps == undefined) {
                 if (KeyBindings.debug) {
                     console.log("KeyBindings[#" + this.instance + "].unshelveBindings(): nothing to unshelve");
@@ -125,14 +125,15 @@ module api.ui {
 
             this.activeBindings = {};
             Mousetrap.reset();
-            for (var key in previousMousetraps) {
-                var mousetrap: KeyBinding = <KeyBinding> previousMousetraps[key];
-                this.bindKey(mousetrap);
+            for (const name in previousMousetraps) {
+                if (previousMousetraps.hasOwnProperty(name)) {
+                    this.bindKey(<KeyBinding> previousMousetraps[name]);
+                }
             }
         }
 
         isActive(keyBinding: KeyBinding) {
-            for (var key in this.activeBindings) {
+            for (let key in this.activeBindings) {
                 if (this.activeBindings[key] == keyBinding) {
                     return true;
                 }

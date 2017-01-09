@@ -43,7 +43,7 @@ module api.ui {
             this.calculateStyles();
             this.setupAnimation();
 
-            var turnOn = actions.turnOnAction.isEnabled();
+            let turnOn = actions.turnOnAction.isEnabled();
             if (turnOn) {
                 this.slideOn();
             }
@@ -124,7 +124,7 @@ module api.ui {
         }
 
         private calculateStyles() {
-            var sliderEl = this.slider.getEl(),
+            let sliderEl = this.slider.getEl(),
                 onLabelEl = this.onLabel.getEl(),
                 offLabelEl = this.offLabel.getEl();
 
@@ -134,7 +134,7 @@ module api.ui {
             // It will be removed from here when it is inserted in another place.
             api.dom.Body.get().appendChild(this);
 
-            var labelWidth = Math.max(onLabelEl.getWidth(), offLabelEl.getWidth());
+            let labelWidth = Math.max(onLabelEl.getWidth(), offLabelEl.getWidth());
 
             // Increase slider width a bit so it hides seam between labels.
             sliderEl.setWidth((labelWidth + 4) + 'px');

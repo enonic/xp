@@ -3,8 +3,9 @@ module api.application {
 
     export class Application extends api.item.BaseItem {
 
-        static STATE_STARTED = 'started';
-        static STATE_STOPPED = 'stopped';
+        static STATE_STARTED: string = 'started';
+
+        static STATE_STOPPED: string = 'stopped';
 
         private applicationKey: ApplicationKey;
 
@@ -146,7 +147,7 @@ module api.application {
         }
 
         static fromJsonArray(jsonArray: api.application.json.ApplicationJson[]): Application[] {
-            var array: Application[] = [];
+            let array: Application[] = [];
             jsonArray.forEach((json: api.application.json.ApplicationJson) => {
                 array.push(Application.fromJson(json));
             });
@@ -157,7 +158,7 @@ module api.application {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Application) || !super.equals(o)) {
                 return false;
             }
-            var other = <Application>o;
+            let other = <Application>o;
 
             return this.applicationKey.equals(other.applicationKey) &&
                    this.displayName == other.displayName &&
@@ -282,7 +283,7 @@ module api.application {
             return new Application(this);
         }
     }
-    
+
     export class ApplicationUploadMock {
 
         private id: string;

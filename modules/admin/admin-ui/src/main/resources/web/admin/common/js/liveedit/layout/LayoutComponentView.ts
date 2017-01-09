@@ -46,8 +46,8 @@ module api.liveedit.layout {
 
         getRegionViewByName(name: string): RegionView {
 
-            for (var i = 0; i < this.regionViews.length; i++) {
-                var regionView = this.regionViews[i];
+            for (let i = 0; i < this.regionViews.length; i++) {
+                let regionView = this.regionViews[i];
                 if (regionView.getRegionName() == name) {
                     return regionView;
                 }
@@ -57,16 +57,17 @@ module api.liveedit.layout {
 
         getComponentViewByPath(path: ComponentPath): ComponentView<Component> {
 
-            var firstLevelOfPath = path.getFirstLevel();
+            let firstLevelOfPath = path.getFirstLevel();
 
-            for (var i = 0; i < this.regionViews.length; i++) {
-                var regionView = this.regionViews[i];
+            for (let i = 0; i < this.regionViews.length; i++) {
+                let regionView = this.regionViews[i];
                 if (firstLevelOfPath.getRegionName() == regionView.getRegionName()) {
                     if (path.numberOfLevels() == 1) {
                         return regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
                     }
                     else {
-                        var layoutView: LayoutComponentView = <LayoutComponentView>regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
+                        const index = firstLevelOfPath.getComponentIndex();
+                        const layoutView: LayoutComponentView = <LayoutComponentView>regionView.getComponentViewByIndex(index);
                         return layoutView.getComponentViewByPath(path.removeFirstLevel());
                     }
                 }
@@ -81,10 +82,10 @@ module api.liveedit.layout {
             if (!this.regionViews) {
                 return;
             }
-            
-            var regions = layoutComponent.getRegions().getRegions();
+
+            let regions = layoutComponent.getRegions().getRegions();
             this.regionViews.forEach((regionView: RegionView, index: number) => {
-                var region = regions[index];
+                let region = regions[index];
                 regionView.setRegion(region);
             });
         }
@@ -95,10 +96,10 @@ module api.liveedit.layout {
 
         toItemViewArray(): ItemView[] {
 
-            var array: ItemView[] = [];
+            let array: ItemView[] = [];
             array.push(this);
             this.regionViews.forEach((regionView: RegionView) => {
-                var itemsInRegion = regionView.toItemViewArray();
+                let itemsInRegion = regionView.toItemViewArray();
                 array = array.concat(itemsInRegion);
             });
             return array;
@@ -116,17 +117,17 @@ module api.liveedit.layout {
 
         private doParseRegions(parentElement?: api.dom.Element) {
 
-            var layoutComponent: LayoutComponent = <LayoutComponent>this.getComponent();
-            var layoutRegions = layoutComponent.getRegions();
+            let layoutComponent: LayoutComponent = <LayoutComponent>this.getComponent();
+            let layoutRegions = layoutComponent.getRegions();
             if (!layoutRegions) {
                 return;
             }
-            var children = parentElement ? parentElement.getChildren() : this.getChildren();
+            let children = parentElement ? parentElement.getChildren() : this.getChildren();
 
             children.forEach((childElement: api.dom.Element) => {
-                var itemType = ItemType.fromElement(childElement);
-                var isRegionView = api.ObjectHelper.iFrameSafeInstanceOf(childElement, RegionView);
-                var region, regionName, regionView;
+                let itemType = ItemType.fromElement(childElement);
+                let isRegionView = api.ObjectHelper.iFrameSafeInstanceOf(childElement, RegionView);
+                let region, regionName, regionView;
 
                 if (isRegionView) {
                     regionName = RegionItemType.getRegionName(childElement);
@@ -177,7 +178,7 @@ module api.liveedit.layout {
                 console.log('LayoutComponentView.unregisterRegionView: ' + regionView.toString(), this.regionViews);
             }
 
-            var index = this.regionViews.indexOf(regionView);
+            let index = this.regionViews.indexOf(regionView);
             if (index > -1) {
                 this.regionViews.splice(index, 1);
 

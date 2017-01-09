@@ -40,7 +40,7 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
             }]).prependClasses("application-grid")
         );
 
-        this.setContextMenu(new TreeGridContextMenu(new ApplicationBrowseActions(this)));
+        this.setContextMenu(new TreeGridContextMenu(ApplicationBrowseActions.init(this)));
 
         this.initEventHandlers();
     }
@@ -64,7 +64,7 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
     }
 
     private fetchByKey(applicationKey: api.application.ApplicationKey): wemQ.Promise<api.application.Application> {
-        var deferred = wemQ.defer<api.application.Application>();
+        let deferred = wemQ.defer<api.application.Application>();
         new api.application.GetApplicationRequest(applicationKey,
             true).sendAndParse().then((application: api.application.Application)=> {
             deferred.resolve(application);
@@ -92,9 +92,9 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
     }
 
     updateApplicationNode(applicationKey: api.application.ApplicationKey) {
-        var root = this.getRoot().getCurrentRoot();
+        let root = this.getRoot().getCurrentRoot();
         root.getChildren().forEach((child: TreeNode<Application>) => {
-            var curApplication: Application = child.getData();
+            let curApplication: Application = child.getData();
             if (curApplication.getApplicationKey().toString() == applicationKey.toString()) {
                 this.updateNode(curApplication);
             }
@@ -102,10 +102,10 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
     }
 
     getByApplicationKey(applicationKey: api.application.ApplicationKey): Application {
-        var root = this.getRoot().getCurrentRoot(),
+        let root = this.getRoot().getCurrentRoot(),
             result;
         root.getChildren().forEach((child: TreeNode<Application>) => {
-            var curApplication: Application = child.getData();
+            let curApplication: Application = child.getData();
             if (curApplication.getApplicationKey().toString() == applicationKey.toString()) {
                 result = curApplication;
             }
@@ -114,9 +114,9 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
     }
 
     deleteApplicationNode(applicationKey: api.application.ApplicationKey) {
-        var root = this.getRoot().getCurrentRoot();
+        let root = this.getRoot().getCurrentRoot();
         root.getChildren().forEach((child: TreeNode<Application>) => {
-            var curApplication: Application = child.getData();
+            let curApplication: Application = child.getData();
             if (curApplication.getApplicationKey().toString() == applicationKey.toString()) {
                 this.deleteNode(curApplication);
             }
@@ -147,14 +147,12 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
 
     appendUploadNode(item: api.ui.uploader.UploadItem<Application>) {
 
-        var appMock: ApplicationUploadMock = new ApplicationUploadMock(item);
+        let appMock: ApplicationUploadMock = new ApplicationUploadMock(item);
 
-        this.appendNode(<any>appMock, false).then(() => {
+        this.appendNode(<any>appMock, false).done();
 
-        }).done();
-
-        var deleteUploadedNodeHandler = () => {
-            var nodeToRemove = this.getRoot().getCurrentRoot().findNode(item.getId());
+        let deleteUploadedNodeHandler = () => {
+            let nodeToRemove = this.getRoot().getCurrentRoot().findNode(item.getId());
             if (nodeToRemove) {
                 this.deleteNode(nodeToRemove.getData());
                 this.invalidate();
@@ -169,7 +167,7 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
         item.onUploaded(deleteUploadedNodeHandler);
 
         item.onUploadStopped(deleteUploadedNodeHandler);
-        
+
         item.onFailed(() => {
             this.deleteNode(<any>appMock);
             this.triggerSelectionChangedListeners();

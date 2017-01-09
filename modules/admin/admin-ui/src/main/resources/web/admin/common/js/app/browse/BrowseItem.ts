@@ -10,7 +10,7 @@ module api.app.browse {
 
         private path: string;
 
-        private iconUrl;
+        private iconUrl: string;
 
         private iconClass: string;
 
@@ -90,7 +90,7 @@ module api.app.browse {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, BrowseItem)) {
                 return false;
             }
-            var other = <BrowseItem<M>> o;
+            let other = <BrowseItem<M>> o;
             return this.model.equals(other.model) &&
                    this.displayName == other.displayName &&
                    this.path == other.path &&

@@ -28,7 +28,7 @@ module api.content.site {
             return {
                 applicationKey: this.applicationKey.toString(),
                 config: this.config.toJson()
-            }
+            };
         }
 
         equals(o: api.Equitable): boolean {
@@ -37,7 +37,7 @@ module api.content.site {
                 return false;
             }
 
-            var other = <SiteConfig>o;
+            let other = <SiteConfig>o;
 
             if (!api.ObjectHelper.equals(this.applicationKey, other.applicationKey)) {
                 return false;
@@ -70,7 +70,7 @@ module api.content.site {
             if (source) {
                 this.applicationKey = source.getApplicationKey();
                 if (source.getConfig()) {
-                    var newTree = new PropertyTree(source.getConfig());
+                    let newTree = new PropertyTree(source.getConfig());
                     this.config = newTree.getRoot();
                 }
             }
@@ -78,8 +78,8 @@ module api.content.site {
 
         fromData(propertySet: PropertySet): SiteConfigBuilder {
             api.util.assertNotNull(propertySet, "data cannot be null");
-            var applicationKey = ApplicationKey.fromString(propertySet.getString("applicationKey"));
-            var siteConfig = propertySet.getPropertySet("config");
+            let applicationKey = ApplicationKey.fromString(propertySet.getString("applicationKey"));
+            let siteConfig = propertySet.getPropertySet("config");
             this.setApplicationKey(applicationKey);
             this.setConfig(siteConfig);
             return this;

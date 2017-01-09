@@ -12,8 +12,8 @@ module api.security.acl {
         }
 
         getEntries(): UserStoreAccessControlEntry[] {
-            var values = [];
-            for (var key in this.entries) {
+            let values = [];
+            for (let key in this.entries) {
                 if (this.entries.hasOwnProperty(key)) {
                     values.push(this.entries[key]);
                 }
@@ -44,9 +44,9 @@ module api.security.acl {
         }
 
         toJson(): api.security.acl.UserStoreAccessControlEntryJson[] {
-            var acl: api.security.acl.UserStoreAccessControlEntryJson[] = [];
+            let acl: api.security.acl.UserStoreAccessControlEntryJson[] = [];
             this.getEntries().forEach((entry: api.security.acl.UserStoreAccessControlEntry) => {
-                var entryJson = entry.toJson();
+                let entryJson = entry.toJson();
                 acl.push(entryJson);
             });
             return acl;
@@ -62,24 +62,24 @@ module api.security.acl {
                 return false;
             }
 
-            var other = <UserStoreAccessControlList>o;
+            let other = <UserStoreAccessControlList>o;
             return api.ObjectHelper.arrayEquals(this.getEntries().sort(), other.getEntries().sort());
         }
 
         static fromJson(json: api.security.acl.UserStoreAccessControlEntryJson[]): UserStoreAccessControlList {
-            var acl = new UserStoreAccessControlList();
+            let acl = new UserStoreAccessControlList();
             json.forEach((entryJson: api.security.acl.UserStoreAccessControlEntryJson) => {
-                var entry = UserStoreAccessControlEntry.fromJson(entryJson);
+                let entry = UserStoreAccessControlEntry.fromJson(entryJson);
                 acl.add(entry);
             });
             return acl;
         }
 
         clone(): UserStoreAccessControlList {
-            var result = new UserStoreAccessControlList();
-            var clonedEntries = {};
+            let result = new UserStoreAccessControlList();
+            let clonedEntries = {};
             this.getEntries().forEach((item) => {
-                var clonedItem = new UserStoreAccessControlEntry(item.getPrincipal().clone(), item.getAccess());
+                let clonedItem = new UserStoreAccessControlEntry(item.getPrincipal().clone(), item.getAccess());
                 result.add(clonedItem);
             });
 

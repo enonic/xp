@@ -64,7 +64,7 @@ module api.form {
 
         removeUnreachedMinimumOccurrencesByPath(path: ValidationRecordingPath, strict?: boolean, includeChildren?: boolean) {
 
-            for (var i = this.breaksMinimumOccurrencesArray.length - 1; i >= 0; i--) {
+            for (let i = this.breaksMinimumOccurrencesArray.length - 1; i >= 0; i--) {
                 let currentPath = this.breaksMinimumOccurrencesArray[i];
                 let remove = currentPath.equals(path) ||
                              includeChildren && (strict && currentPath.contains(path) ||
@@ -80,7 +80,7 @@ module api.form {
 
         removeBreachedMaximumOccurrencesByPath(path: ValidationRecordingPath, strict?: boolean, includeChildren?: boolean) {
 
-            for (var i = this.breaksMaximumOccurrencesArray.length - 1; i >= 0; i--) {
+            for (let i = this.breaksMaximumOccurrencesArray.length - 1; i >= 0; i--) {
                 let currentPath = this.breaksMaximumOccurrencesArray[0];
                 let remove = currentPath.equals(path) ||
                              includeChildren && (strict && currentPath.contains(path) ||
@@ -103,13 +103,13 @@ module api.form {
                 return false;
             }
 
-            for (var i = 0; i < this.breaksMinimumOccurrencesArray.length; i++) {
+            for (let i = 0; i < this.breaksMinimumOccurrencesArray.length; i++) {
                 if (this.breaksMinimumOccurrencesArray[i].toString() != other.breaksMinimumOccurrencesArray[i].toString()) {
                     return false;
                 }
             }
 
-            for (var i = 0; i < this.breaksMaximumOccurrencesArray.length; i++) {
+            for (let i = 0; i < this.breaksMaximumOccurrencesArray.length; i++) {
                 if (this.breaksMaximumOccurrencesArray[i].toString() != other.breaksMaximumOccurrencesArray[i].toString()) {
                     return false;
                 }
@@ -131,7 +131,7 @@ module api.form {
         }
 
         private exists(path: ValidationRecordingPath, array: ValidationRecordingPath[]): boolean {
-            for (var i = 0; i < array.length; i++) {
+            for (let i = 0; i < array.length; i++) {
                 if (array[i].toString() == path.toString()) {
                     return true;
                 }

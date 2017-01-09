@@ -32,7 +32,7 @@ module api.system {
         }
 
         private doPoll() {
-            var request = new StatusRequest();
+            let request = new StatusRequest();
             request.setTimeout(this.pollIntervalMs);
             request.sendAndParse().then((status: StatusResult) => {
                 if (!this.connected) {
@@ -80,7 +80,7 @@ module api.system {
         unConnectionRestored(listener: ()=>void) {
             this.connectionRestoredListeners = this.connectionRestoredListeners.filter((currentListener: ()=>void) => {
                 return currentListener != listener;
-            })
+            });
         }
 
         unSessionExpired(listener: ()=>void) {

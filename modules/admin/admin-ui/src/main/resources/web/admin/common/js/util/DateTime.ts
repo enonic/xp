@@ -74,13 +74,17 @@ module api.util {
         }
 
         dateToString(): string {
-            return this.year + DateTime.DATE_SEPARATOR + this.padNumber(this.month + 1) + DateTime.DATE_SEPARATOR + this.padNumber(this.day);
+            return this.year +
+                   DateTime.DATE_SEPARATOR + this.padNumber(this.month + 1) +
+                   DateTime.DATE_SEPARATOR + this.padNumber(this.day);
         }
 
         timeToString(): string {
-            var fractions = this.fractions ? DateTime.FRACTION_SEPARATOR + this.padNumber(this.fractions, 3) : StringHelper.EMPTY_STRING;
+            let fractions = this.fractions ? DateTime.FRACTION_SEPARATOR + this.padNumber(this.fractions, 3) : StringHelper.EMPTY_STRING;
 
-            return this.padNumber(this.hours) + DateTime.TIME_SEPARATOR + this.padNumber(this.minutes) + DateTime.TIME_SEPARATOR + this.padNumber(this.seconds ? this.seconds : 0) + fractions;
+            return this.padNumber(this.hours) + DateTime.TIME_SEPARATOR +
+                   this.padNumber(this.minutes) + DateTime.TIME_SEPARATOR +
+                   this.padNumber(this.seconds ? this.seconds : 0) + fractions;
         }
 
         /** Returns date in ISO format. Month value is incremented because ISO month range is 1-12, whereas JS Date month range is 0-11 */
@@ -94,7 +98,7 @@ module api.util {
                 return false;
             }
 
-            var other = <DateTime>o;
+            let other = <DateTime>o;
 
             if (!api.ObjectHelper.stringEquals(this.toString(), other.toString())) {
                 return false;
@@ -104,11 +108,17 @@ module api.util {
         }
 
         toDate(): Date {
-            return DateHelper.parseLongDateTime(DateTime.trimTZ(this.toString()), DateTime.DATE_TIME_SEPARATOR, DateTime.DATE_SEPARATOR, DateTime.TIME_SEPARATOR, DateTime.FRACTION_SEPARATOR);
+            return DateHelper.parseLongDateTime(
+                DateTime.trimTZ(this.toString()),
+                DateTime.DATE_TIME_SEPARATOR,
+                DateTime.DATE_SEPARATOR,
+                DateTime.TIME_SEPARATOR,
+                DateTime.FRACTION_SEPARATOR
+            );
         }
 
         private padNumber(num: number, length: number = 2): string {
-            var numAsString = String(num);
+            let numAsString = String(num);
 
             while (numAsString.length < length){
                 numAsString = "0" + numAsString;
@@ -121,9 +131,17 @@ module api.util {
             if (StringHelper.isBlank(s)) {
                 return false;
             }
-            //matches 2015-02-29T12:05 or 2015-02-29T12:05:59 or 2015-02-29T12:05:59Z or 2015-02-29T12:05:59+01:00 or 2015-02-29T12:05:59.001+01:00
-            var re = /^(\d{2}|\d{4})(?:\-)?([0]{1}\d{1}|[1]{1}[0-2]{1})(?:\-)?([0-2]{1}\d{1}|[3]{1}[0-1]{1})(T)([0-1]{1}\d{1}|[2]{1}[0-3]{1})(?::)?([0-5]{1}\d{1})((:[0-5]{1}\d{1})(\.\d{3})?)?((\+|\-)([0-1]{1}\d{1}|[2]{1}[0-3]{1})(:)([0-5]{1}\d{1})|(z|Z)|$)$/;
-            return re.test(s);
+            /*
+            matches:
+            2015-02-29T12:05
+            2015-02-29T12:05:59
+            2015-02-29T12:05:59Z
+            2015-02-29T12:05:59+01:00
+            2015-02-29T12:05:59.001+01:00
+            */
+            // tslint:disable-next-line:max-line-length
+            const regex = /^(\d{2}|\d{4})(?:\-)?([0]{1}\d{1}|[1]{1}[0-2]{1})(?:\-)?([0-2]{1}\d{1}|[3]{1}[0-1]{1})(T)([0-1]{1}\d{1}|[2]{1}[0-3]{1})(?::)?([0-5]{1}\d{1})((:[0-5]{1}\d{1})(\.\d{3})?)?((\+|\-)([0-1]{1}\d{1}|[2]{1}[0-3]{1})(:)([0-5]{1}\d{1})|(z|Z)|$)$/;
+            return regex.test(s);
         }
 
         /**
@@ -136,7 +154,7 @@ module api.util {
                 throw new Error("Cannot parse DateTime from string: " + s);
             }
 
-            var date, timezone;
+            let date, timezone;
 
             if(DateHelper.isUTCdate(s)) {
                 date = DateHelper.makeDateFromUTCString(s);
@@ -145,13 +163,19 @@ module api.util {
                     date.setHours(date.getHours() - 1);
                 }
             } else {
-                var withoutTZ = DateTime.trimTZ(s);
-                date = DateHelper.parseLongDateTime(withoutTZ, DateTime.DATE_TIME_SEPARATOR, DateTime.DATE_SEPARATOR, DateTime.TIME_SEPARATOR, DateTime.FRACTION_SEPARATOR);
-                var offset = DateTime.parseOffset(s);
+                date = DateHelper.parseLongDateTime(
+                    DateTime.trimTZ(s),
+                    DateTime.DATE_TIME_SEPARATOR,
+                    DateTime.DATE_SEPARATOR,
+                    DateTime.TIME_SEPARATOR,
+                    DateTime.FRACTION_SEPARATOR
+                );
+                let offset = DateTime.parseOffset(s);
                 if(offset != null) {
                     timezone = Timezone.fromOffset(offset);
                 } else {
-                    // assume that if passed date string is not in UTC format and does not contain explicit offset (like '2015-02-29T12:05:59') - use zero offset timezone
+                    // assume that if passed date string is not in UTC format and does not contain explicit offset,
+                    // like '2015-02-29T12:05:59' - use zero offset timezone
                     timezone = Timezone.getZeroOffsetTimezone();
                 }
             }
@@ -193,32 +217,32 @@ module api.util {
             if (DateHelper.isUTCdate(value)) {
                 return 0;
             } else {
-                var dateStr = (value || '').trim();
+                const dateStr = (value || '').trim();
 
                 if (dateStr.indexOf("+") > 0) { // case with positive offset
-                    var parts = dateStr.split("+");
-                    if (parts.length == 2) {
-                        var offsetPart = parts[1];
+                    const parts = dateStr.split("+");
+                    if (parts.length === 2) {
+                        const offsetPart = parts[1];
 
-                        var offset = parseFloat(offsetPart);
+                        const offset = parseFloat(offsetPart);
                         if (isNaN(offset)) {
                             return 0;
                         }
 
                         return offset;
                     } else {
-                        return 0
+                        return 0;
                     }
-                } else if (dateStr.split("-").length == 4) { // case with negative offset ('2015-02-29T12:05:59-01:00')
-                    var parts = dateStr.split("-");
-                    var offsetPart = parts[3];
+                } else if (dateStr.split("-").length === 4) { // case with negative offset ('2015-02-29T12:05:59-01:00')
+                    const parts = dateStr.split("-");
+                    const offsetPart = parts[3];
 
-                    var offset = parseFloat(offsetPart);
+                    const offset = parseFloat(offsetPart);
                     if (isNaN(offset)) {
                         return 0;
                     }
 
-                    return offset * -1;
+                    return -offset;
                 } else {
                     return 0;
                 }
@@ -226,7 +250,7 @@ module api.util {
         }
 
         private static trimTZ(dateString : string): string {
-            var tzStartIndex = dateString.indexOf("+");
+            let tzStartIndex = dateString.indexOf("+");
             if(tzStartIndex > 0) {
                 return dateString.substr(0, tzStartIndex);
             } else if (dateString.split("-").length == 4) {
@@ -235,8 +259,9 @@ module api.util {
                 return dateString.substr(0, tzStartIndex);
             } else {
                 tzStartIndex = dateString.toLowerCase().indexOf("z");
-                if(tzStartIndex > 0)
+                if (tzStartIndex > 0) {
                     return dateString.substr(0, tzStartIndex);
+                }
             }
             return dateString;
         }
@@ -291,7 +316,9 @@ module api.util {
         }
 
         public setFractions(value: number): DateTimeBuilder {
-            if (this.seconds && value > 0) this.fractions = value;
+            if (this.seconds && value > 0) {
+                this.fractions = value;
+            }
             return this;
         }
 

@@ -17,7 +17,7 @@ module api.data {
             if (!(value == "true" || value == "false" )) {
                 return false;
             }
-            var convertedValue = Boolean(value);
+            let convertedValue = Boolean(value);
             return this.isValid(convertedValue);
         }
 

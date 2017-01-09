@@ -13,8 +13,8 @@ module api.data {
         private refString: string;
 
         static fromString(s: string) {
-            var absolute: boolean = s.charAt(0) == PropertyPath.ELEMENT_DIVIDER;
-            var dataPathElements = s.split(PropertyPath.ELEMENT_DIVIDER).
+            let absolute: boolean = s.charAt(0) == PropertyPath.ELEMENT_DIVIDER;
+            let dataPathElements = s.split(PropertyPath.ELEMENT_DIVIDER).
                 filter((element: string) => !!element).                         // filter empty elements
                 map((element: string) => PropertyPathElement.fromString(element));  // map string to DataPathElement
             return new PropertyPath(dataPathElements, absolute);
@@ -22,7 +22,7 @@ module api.data {
 
         static fromParent(parent: PropertyPath, ...childElements: PropertyPathElement[]) {
 
-            var elements: PropertyPathElement[] = parent.elements.slice(0).concat(childElements);
+            let elements: PropertyPathElement[] = parent.elements.slice(0).concat(childElements);
             return new PropertyPath(elements, parent.isAbsolute());
         }
 
@@ -106,7 +106,7 @@ module api.data {
                 return false;
             }
 
-            var other = <PropertyPath>o;
+            let other = <PropertyPath>o;
 
             if (!api.ObjectHelper.stringEquals(this.refString, other.refString)) {
                 return false;
@@ -128,7 +128,7 @@ module api.data {
         }
 
         getName(): string {
-            return this.name
+            return this.name;
         }
 
         getIndex(): number {
@@ -148,8 +148,8 @@ module api.data {
             if (str.indexOf("[") == -1) {
                 return new PropertyPathElement(str, 0);
             }
-            var name = str.substring(0, str.indexOf("["));
-            var index = parseInt(str.substring(str.indexOf("[") + 1, str.indexOf("]")));
+            let name = str.substring(0, str.indexOf("["));
+            let index = parseInt(str.substring(str.indexOf("[") + 1, str.indexOf("]")), 10);
             return new PropertyPathElement(name, index);
         }
     }

@@ -7,7 +7,7 @@ module api.dom {
         private static elements: { [index: string]: api.dom.Element; } = {};
 
         public static registerElement(el: api.dom.Element): string {
-            var fullName,
+            let fullName,
                 id = el.getId();
 
             if (!id) {
@@ -15,7 +15,7 @@ module api.dom {
             } else {
                 fullName = id;
             }
-            var count = ElementRegistry.counters[fullName];
+            let count = ElementRegistry.counters[fullName];
             if (count >= 0) {
                 id += '-' + (++count);
             }
@@ -40,7 +40,7 @@ module api.dom {
 
         public static getElementCountById(id: string): number {
             // Get the counter from the id according to the name notation
-            let count = parseInt(id.slice(id.lastIndexOf('-') + 1)) || 0;
+            let count = parseInt(id.slice(id.lastIndexOf('-') + 1), 10) || 0;
             return count;
         }
     }

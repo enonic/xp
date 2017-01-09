@@ -14,7 +14,7 @@ module api.liveedit {
 
         private static instance: DragPlaceholder;
 
-        public static debug = false;
+        public static debug: boolean = false;
 
         public static get(): DragPlaceholder {
             if (!DragPlaceholder.instance) {

@@ -12,7 +12,7 @@ module api.ui.treegrid {
 
         static createHtml(date:Date): string {
             if (!!date) {
-                var s = DateTimeFormatter.zeroPad(date.getFullYear(), 4) +
+                let s = DateTimeFormatter.zeroPad(date.getFullYear(), 4) +
                     "-" +
                     DateTimeFormatter.zeroPad(date.getMonth() + 1, 2) +
                     "-" +
@@ -31,7 +31,7 @@ module api.ui.treegrid {
 
         static createHtmlNoTimestamp(date:Date):string {
             if (!!date) {
-                var s = DateTimeFormatter.zeroPad(date.getFullYear(), 4) +
+                let s = DateTimeFormatter.zeroPad(date.getFullYear(), 4) +
                     "-" +
                     DateTimeFormatter.zeroPad(date.getMonth() + 1, 2) +
                     "-" +
@@ -43,17 +43,17 @@ module api.ui.treegrid {
         }
 
         private static zeroPad(n:number, width:number) {
-            var nWidth = n.toString().length;
+            let nWidth = n.toString().length;
             if (nWidth >= width) {
                 return "" + n;
             }
-            var neededZeroes = width - nWidth;
-            var s = "";
-            for( var i = 0; i < neededZeroes; i++ ) {
+            let neededZeroes = width - nWidth;
+            let s = "";
+            for( let i = 0; i < neededZeroes; i++ ) {
                 s += "0";
             }
 
-            return s + n
+            return s + n;
         }
     }
 }

@@ -21,7 +21,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.rendering.RenderException;
 import com.enonic.xp.portal.macro.MacroContext;
 import com.enonic.xp.portal.macro.MacroProcessor;
-import com.enonic.xp.portal.macro.MacroProcessorScriptFactory;
+import com.enonic.xp.portal.macro.MacroProcessorFactory;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
@@ -38,7 +38,7 @@ public final class MacroInstruction
 
     public static final String MACRO_DOCUMENT = "_document";
 
-    private MacroProcessorScriptFactory macroScriptFactory;
+    private MacroProcessorFactory macroProcessorFactory;
 
     private MacroDescriptorService macroDescriptorService;
 
@@ -149,7 +149,7 @@ public final class MacroInstruction
     {
         if ( macroDescriptor != null )
         {
-            return macroScriptFactory.fromScript( macroDescriptor.toControllerResourceKey() );
+            return macroProcessorFactory.fromScript( macroDescriptor.toControllerResourceKey() );
         }
         return null;
     }
@@ -208,9 +208,9 @@ public final class MacroInstruction
     }
 
     @Reference
-    public void setMacroScriptFactory( final MacroProcessorScriptFactory macroScriptFactory )
+    public void setMacroProcessorFactory( final MacroProcessorFactory macroProcessorFactory )
     {
-        this.macroScriptFactory = macroScriptFactory;
+        this.macroProcessorFactory = macroProcessorFactory;
     }
 
     @Reference

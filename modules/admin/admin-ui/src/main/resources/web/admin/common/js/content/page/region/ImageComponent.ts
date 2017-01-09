@@ -10,9 +10,9 @@ module api.content.page.region {
 
     export class ImageComponent extends Component implements api.Equitable, api.Cloneable {
 
-        public static PROPERTY_IMAGE = 'image';
+        public static PROPERTY_IMAGE: string = 'image';
 
-        public static PROPERTY_CONFIG = 'config';
+        public static PROPERTY_CONFIG: string = 'config';
 
         public static debug: boolean = false;
 
@@ -42,7 +42,7 @@ module api.content.page.region {
 
             this.config.onChanged(this.configChangedHandler);
 
-            var formBuilder = new FormBuilder();
+            let formBuilder = new FormBuilder();
             formBuilder.addFormItem(new api.form.InputBuilder().
                 setName("caption").
                 setInputType(TextArea.getName()).
@@ -69,7 +69,7 @@ module api.content.page.region {
         }
 
         setImage(contentId: api.content.ContentId, name: string) {
-            var oldValue = this.image;
+            let oldValue = this.image;
             this.image = contentId;
 
             this.setName(name ? new ComponentName(name) : this.getType().getDefaultName());
@@ -93,7 +93,7 @@ module api.content.page.region {
 
         toJson(): ComponentTypeWrapperJson {
 
-            var json: ImageComponentJson = <ImageComponentJson>super.toComponentJson();
+            let json: ImageComponentJson = <ImageComponentJson>super.toComponentJson();
             json.image = this.image != null ? this.image.toString() : null;
             json.config = this.config != null ? this.config.toJson() : null;
 
@@ -108,7 +108,7 @@ module api.content.page.region {
                 return false;
             }
 
-            var other = <ImageComponent>o;
+            let other = <ImageComponent>o;
 
             if (!super.equals(o)) {
                 return false;

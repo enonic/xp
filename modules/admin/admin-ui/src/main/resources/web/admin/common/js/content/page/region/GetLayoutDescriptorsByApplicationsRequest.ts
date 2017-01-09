@@ -21,11 +21,13 @@ module api.content.page.region {
 
         sendAndParse(): wemQ.Promise<LayoutDescriptor[]> {
 
-            var promises = this.applicationKeys.map((applicationKey: ApplicationKey) => new GetLayoutDescriptorsByApplicationRequest(applicationKey).sendAndParse());
+            const req = (applicationKey: ApplicationKey) => new GetLayoutDescriptorsByApplicationRequest(applicationKey).sendAndParse();
+
+            let promises = this.applicationKeys.map(req);
 
             return wemQ.all(promises).
                 then((results: LayoutDescriptor[][]) => {
-                    var all: LayoutDescriptor[] = [];
+                    let all: LayoutDescriptor[] = [];
                     results.forEach((result: LayoutDescriptor[]) => {
                         Array.prototype.push.apply(all, result);
                     });

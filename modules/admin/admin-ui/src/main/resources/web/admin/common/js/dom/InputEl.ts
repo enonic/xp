@@ -59,7 +59,7 @@ module api.dom {
          * @returns {boolean}
          */
         isValid(): boolean {
-            var validity: ValidityState = (<HTMLInputElement> this.getHTMLElement()).validity;
+            let validity: ValidityState = (<HTMLInputElement> this.getHTMLElement()).validity;
             return validity && validity.valid;
         }
 

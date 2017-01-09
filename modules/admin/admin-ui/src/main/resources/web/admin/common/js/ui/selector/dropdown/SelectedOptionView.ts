@@ -25,7 +25,7 @@ module api.ui.selector.dropdown {
                     if (document["selection"] && document["selection"].empty) {
                         document["selection"].empty();
                     } else if (window.getSelection) {
-                        var sel = window.getSelection();
+                        let sel = window.getSelection();
                         sel.removeAllRanges();
                     }
 
@@ -64,7 +64,7 @@ module api.ui.selector.dropdown {
         }
 
         unOpenDropdown(listener: {(): void;}) {
-            this.openDropdownListeners = this.openDropdownListeners.filter(function (curr) {
+            this.openDropdownListeners = this.openDropdownListeners.filter(function (curr: {(): void;}) {
                 return curr != listener;
             });
         }

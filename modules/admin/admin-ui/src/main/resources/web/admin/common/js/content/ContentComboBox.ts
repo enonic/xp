@@ -6,16 +6,18 @@ module api.content {
     import RichComboBoxBuilder = api.ui.selector.combobox.RichComboBoxBuilder;
     import ContentSummaryLoader = api.content.resource.ContentSummaryLoader;
     import RichSelectedOptionViewBuilder = api.ui.selector.combobox.RichSelectedOptionViewBuilder;
+    import ContentQueryResultJson = api.content.json.ContentQueryResultJson;
+    import ContentSummaryJson = api.content.json.ContentSummaryJson;
 
     export class ContentComboBox extends RichComboBox<ContentSummary> {
 
         protected loader: ContentSummaryLoader;
-        
+
         constructor(builder: ContentComboBoxBuilder) {
 
-            var loader = builder.loader ? builder.loader : new ContentSummaryLoader();
+            let loader = builder.loader ? builder.loader : new ContentSummaryLoader();
 
-            var richComboBoxBuilder = new RichComboBoxBuilder<ContentSummary>()
+            let richComboBoxBuilder = new RichComboBoxBuilder<ContentSummary>()
                 .setComboBoxName(builder.name ? builder.name : 'contentSelector')
                 .setLoader(loader)
                 .setSelectedOptionsView(new ContentSelectedOptionsView())
@@ -35,9 +37,9 @@ module api.content {
         getLoader(): ContentSummaryLoader {
             return this.loader;
         }
-        
+
         getContent(contentId: ContentId): ContentSummary {
-            var option = this.getOptionByValue(contentId.toString());
+            let option = this.getOptionByValue(contentId.toString());
             if (option) {
                 return option.displayValue;
             }
@@ -48,7 +50,7 @@ module api.content {
 
             this.clearSelection();
             if (content) {
-                var optionToSelect: Option<ContentSummary> = this.getOptionByValue(content.getContentId().toString());
+                let optionToSelect: Option<ContentSummary> = this.getOptionByValue(content.getContentId().toString());
                 if (!optionToSelect) {
                     optionToSelect = {
                         value: content.getContentId().toString(),
@@ -69,7 +71,7 @@ module api.content {
     export class ContentSelectedOptionsView extends api.ui.selector.combobox.BaseSelectedOptionsView<ContentSummary> {
 
         createSelectedOption(option: api.ui.selector.Option<ContentSummary>): SelectedOption<ContentSummary> {
-            var optionView = !!option.displayValue ? new ContentSelectedOptionView(option) : new MissingContentSelectedOptionView(option);
+            let optionView = !!option.displayValue ? new ContentSelectedOptionView(option) : new MissingContentSelectedOptionView(option);
             return new SelectedOption<ContentSummary>(optionView, this.count());
         }
     }
@@ -85,7 +87,7 @@ module api.content {
 
         doRender(): wemQ.Promise<boolean> {
 
-            var removeButtonEl = new api.dom.AEl("remove"),
+            let removeButtonEl = new api.dom.AEl("remove"),
                 message = new api.dom.H6El("missing-content");
 
             message.setHtml("No access to content with id=" + this.id);
@@ -143,7 +145,7 @@ module api.content {
 
         maximumOccurrences: number = 0;
 
-        loader: api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary>;
+        loader: api.util.loader.BaseLoader<ContentQueryResultJson<ContentSummaryJson>, ContentSummary>;
 
         minWidth: number;
 
@@ -163,7 +165,7 @@ module api.content {
             return this;
         }
 
-        setLoader(loader: api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary>): ContentComboBoxBuilder {
+        setLoader(loader: api.util.loader.BaseLoader<ContentQueryResultJson<ContentSummaryJson>, ContentSummary>): ContentComboBoxBuilder {
             this.loader = loader;
             return this;
         }

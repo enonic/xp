@@ -37,7 +37,7 @@ module api.ui.selector.combobox {
         }
 
         protected createActionButtons(content: T): api.dom.Element[] {
-            var buttons = [];
+            let buttons = [];
             if (this.draggable) {
                 buttons.push(new api.dom.DivEl("drag-control"));
             }
@@ -52,15 +52,15 @@ module api.ui.selector.combobox {
 
         protected createView(content: T): api.dom.Element {
 
-            var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(this.size).build();
+            let namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(this.size).build();
 
             namesAndIconView
                 .setMainName(this.resolveTitle(content))
                 .setSubName(this.resolveSubTitle(content));
 
-            var url = this.resolveIconUrl(content);
+            let url = this.resolveIconUrl(content);
             if (!api.util.StringHelper.isBlank(url)) {
-                namesAndIconView.setIconUrl(this.resolveIconUrl(content) + '?crop=false')
+                namesAndIconView.setIconUrl(this.resolveIconUrl(content) + '?crop=false');
             } else {
                 namesAndIconView.setIconClass(this.resolveIconClass(content));
             }

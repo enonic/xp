@@ -7,9 +7,9 @@ module api.content.page.region {
 
         public static debug: boolean = false;
 
-        public static PROPERTY_DESCRIPTOR = 'descriptor';
+        public static PROPERTY_DESCRIPTOR: string = 'descriptor';
 
-        public static PROPERTY_CONFIG = 'config';
+        public static PROPERTY_CONFIG: string = 'config';
 
         private disableEventForwarding: boolean;
 
@@ -52,7 +52,7 @@ module api.content.page.region {
 
         setDescriptor(descriptorKey: DescriptorKey, descriptor: Descriptor) {
 
-            var oldValue = this.descriptor;
+            let oldValue = this.descriptor;
             this.descriptor = descriptorKey;
 
             this.setName(descriptor ? new ComponentName(descriptor.getDisplayName()) : this.getType().getDefaultName());
@@ -65,7 +65,7 @@ module api.content.page.region {
         }
 
         setConfig(config: PropertyTree) {
-            var oldValue = this.config;
+            let oldValue = this.config;
             if (oldValue) {
                 this.config.unChanged(this.configChangedHandler);
             }
@@ -103,7 +103,7 @@ module api.content.page.region {
             if (!super.equals(o)) {
                 return false;
             }
-            var other = <DescriptorBasedComponent>o;
+            let other = <DescriptorBasedComponent>o;
 
             if (!api.ObjectHelper.equals(this.descriptor, other.descriptor)) {
                 return false;
@@ -121,7 +121,8 @@ module api.content.page.region {
         }
     }
 
-    export class DescriptorBasedComponentBuilder<DESCRIPTOR_BASED_COMPONENT extends DescriptorBasedComponent> extends ComponentBuilder<DESCRIPTOR_BASED_COMPONENT> {
+    export class DescriptorBasedComponentBuilder<DESCRIPTOR_BASED_COMPONENT extends DescriptorBasedComponent>
+    extends ComponentBuilder<DESCRIPTOR_BASED_COMPONENT> {
 
         descriptor: DescriptorKey;
 

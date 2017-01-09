@@ -10,7 +10,7 @@ module api.form {
 
         protected helpText: HelpTextContainer;
 
-        constructor(className, formItemOccurrence: FormItemOccurrence<FormItemOccurrenceView>) {
+        constructor(className: string, formItemOccurrence: FormItemOccurrence<FormItemOccurrenceView>) {
             super(className);
             this.formItemOccurrence = formItemOccurrence;
         }

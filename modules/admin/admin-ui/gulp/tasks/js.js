@@ -8,7 +8,7 @@ var fs = require("fs");
 var path = require("path");
 var gulp = require("gulp");
 var gulpSequence = require("gulp-sequence");
-var _ = require("lodash");
+var forOwn = require("lodash.forown");
 var tsc = require("gulp-typescript");
 var typescript = require("typescript");
 var sourcemaps = require("gulp-sourcemaps");
@@ -27,7 +27,7 @@ var tsResolver = nameResolver.bind(null, 'ts');
 function filterTasks(tasks, callback) {
     const filtered = {};
 
-    _.forOwn(tasks, function (task, name) {
+    forOwn(tasks, function (task, name) {
         if (callback(task)) {
             filtered[name] = task;
         }
@@ -46,7 +46,7 @@ var tsTasks = filterTasks(subtasks, function (task) {
     return !task.name;
 });
 
-_.forOwn(tsTasks, function (task, name) {
+forOwn(tsTasks, function (task, name) {
     var taskPath = pathResolver.commonPaths(task.src, task.dest, CONFIG.root.src);
     var newerPath = pathResolver.anyPath(taskPath.src.dir, 'ts');
 

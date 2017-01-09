@@ -8,6 +8,8 @@ import com.enonic.xp.portal.impl.mapper.PortalRequestMapper;
 import com.enonic.xp.portal.impl.mapper.WebSocketEventMapper;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.websocket.WebSocketEvent;
@@ -17,7 +19,7 @@ final class ControllerScriptImpl
 {
     private final ScriptExports scriptExports;
 
-    public ControllerScriptImpl( final ScriptExports scriptExports )
+    ControllerScriptImpl( final ScriptExports scriptExports )
     {
         this.scriptExports = scriptExports;
     }
@@ -29,7 +31,7 @@ final class ControllerScriptImpl
 
         try
         {
-            return doExecute( portalRequest );
+            return Tracer.trace( "controllerScript", () -> doExecute( portalRequest ) );
         }
         finally
         {
@@ -37,8 +39,15 @@ final class ControllerScriptImpl
         }
     }
 
+    private void addTraceInfo( final Trace trace )
+    {
+        trace.put( "script", this.scriptExports.getScript().toString() );
+    }
+
     private PortalResponse doExecute( final PortalRequest portalRequest )
     {
+        Tracer.withCurrent( this::addTraceInfo );
+
         final HttpMethod method = portalRequest.getMethod();
         final boolean isHead = method == HttpMethod.HEAD;
         final String runMethod = isHead ? "get" : method.toString().toLowerCase();

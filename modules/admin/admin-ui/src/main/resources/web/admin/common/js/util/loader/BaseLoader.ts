@@ -41,7 +41,7 @@ module api.util.loader {
         protected getRequest(): api.rest.ResourceRequest<JSON, OBJECT[]> {
             return this.request;
         }
-        
+
         sendRequest(): wemQ.Promise<OBJECT[]> {
             return this.request.sendAndParse();
         }
@@ -114,12 +114,12 @@ module api.util.loader {
 
         search(searchString: string): wemQ.Promise<OBJECT[]> {
 
-            var deferred = wemQ.defer<OBJECT[]>();
+            let deferred = wemQ.defer<OBJECT[]>();
 
             this.searchString = searchString;
 
             if (this.results) {
-                var filtered = this.results.filter(this.filterFn, this);
+                let filtered = this.results.filter(this.filterFn, this);
                 this.notifyLoadedData(filtered);
                 deferred.resolve(this.results);
             }
@@ -198,7 +198,7 @@ module api.util.loader {
             let error = new LoaderErrorEvent(statusCode, textStatus, postLoad);
             this.loaderErrorListeners.forEach((listener) => {
                 listener(error);
-            })
+            });
         }
     }
 }

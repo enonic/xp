@@ -7,7 +7,7 @@ module api.content {
         }
 
         resolveDisplayName(object: ContentSummaryAndCompareStatus): string {
-            var contentSummary = object.getContentSummary(),
+            let contentSummary = object.getContentSummary(),
                 uploadItem = object.getUploadItem();
 
             if (contentSummary) {
@@ -20,16 +20,16 @@ module api.content {
         }
 
         resolveUnnamedDisplayName(object: ContentSummaryAndCompareStatus): string {
-            var contentSummary = object.getContentSummary();
+            let contentSummary = object.getContentSummary();
             return (contentSummary && contentSummary.getType()) ? contentSummary.getType().getLocalName() : "";
         }
 
         resolveSubName(object: ContentSummaryAndCompareStatus, relativePath: boolean = false): string {
-            var contentSummary = object.getContentSummary(),
+            let contentSummary = object.getContentSummary(),
                 uploadItem = object.getUploadItem();
 
             if (contentSummary) {
-                var contentName = contentSummary.getName(),
+                let contentName = contentSummary.getName(),
                     invalid = !contentSummary.isValid() || !contentSummary.getDisplayName() || contentName.isUnnamed(),
                     pendingDelete = contentSummary.getContentState().isPendingDelete();
                 this.toggleClass("invalid", invalid);
@@ -51,7 +51,7 @@ module api.content {
         }
 
         resolveSubTitle(object: ContentSummaryAndCompareStatus): string {
-            var contentSummary = object.getContentSummary();
+            let contentSummary = object.getContentSummary();
             return !!contentSummary ? contentSummary.getPath().toString() : "";
         }
 
@@ -60,7 +60,7 @@ module api.content {
         }
 
         resolveIconUrl(object: ContentSummaryAndCompareStatus): string {
-            var contentSummary = object.getContentSummary();
+            let contentSummary = object.getContentSummary();
             return !!contentSummary ? new api.content.util.ContentIconUrlResolver().setContent(contentSummary).resolve() : "";
         }
     }

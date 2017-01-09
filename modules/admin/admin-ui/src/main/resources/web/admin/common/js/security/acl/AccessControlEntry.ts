@@ -90,7 +90,7 @@ module api.security.acl {
                 return false;
             }
 
-            var other = <AccessControlEntry>o;
+            let other = <AccessControlEntry>o;
 
             if (!api.ObjectHelper.equals(this.getPrincipalKey(), other.getPrincipalKey())) {
                 return false;
@@ -107,7 +107,7 @@ module api.security.acl {
         }
 
         toString(): string {
-            var values = '';
+            let values = '';
             AccessControlEntry.ALL_PERMISSIONS.forEach((permission: Permission) => {
                 if (this.isSet(permission)) {
                     if (values !== '') {
@@ -121,7 +121,7 @@ module api.security.acl {
         }
 
         clone(): AccessControlEntry {
-            var ace = new AccessControlEntry(this.principal.clone());
+            let ace = new AccessControlEntry(this.principal.clone());
             ace.allowedPermissions = this.allowedPermissions.slice(0);
             ace.deniedPermissions = this.deniedPermissions.slice(0);
             return ace;
@@ -136,9 +136,9 @@ module api.security.acl {
         }
 
         static fromJson(json: api.security.acl.AccessControlEntryJson): AccessControlEntry {
-            var ace = new AccessControlEntry(Principal.fromJson(json.principal));
-            var allow: Permission[] = json.allow.map((permStr) => Permission[permStr.toUpperCase()]);
-            var deny: Permission[] = json.deny.map((permStr) => Permission[permStr.toUpperCase()]);
+            let ace = new AccessControlEntry(Principal.fromJson(json.principal));
+            let allow: Permission[] = json.allow.map((permStr) => Permission[permStr.toUpperCase()]);
+            let deny: Permission[] = json.deny.map((permStr) => Permission[permStr.toUpperCase()]);
             ace.setAllowedPermissions(allow);
             ace.setDeniedPermissions(deny);
             return ace;

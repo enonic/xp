@@ -11,7 +11,7 @@ export class UninstallApplicationAction extends api.ui.Action {
         this.setEnabled(false);
 
         this.onExecuted(() => {
-            var applications: Application[] = applicationTreeGrid.getSelectedDataList();
+            let applications: Application[] = applicationTreeGrid.getSelectedDataList();
             new UninstallApplicationDialog(applications).open();
         });
     }

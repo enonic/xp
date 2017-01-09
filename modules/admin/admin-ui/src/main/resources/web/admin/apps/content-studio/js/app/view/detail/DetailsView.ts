@@ -34,7 +34,7 @@ export class DetailsView extends api.dom.DivEl {
 
     private sizeChangedListeners: {(): void}[] = [];
 
-    public static debug = false;
+    public static debug: boolean = false;
 
     constructor() {
         super("details-panel-view");
@@ -86,11 +86,11 @@ export class DetailsView extends api.dom.DivEl {
     public resetWidgetsWidth() {
         this.widgetViews.forEach((widgetView: WidgetView) => {
             widgetView.resetContainerWidth();
-        })
+        });
     }
 
     getCustomWidgetViewsAndUpdateDropdown(): wemQ.Promise<void> {
-        var deferred = wemQ.defer<void>();
+        let deferred = wemQ.defer<void>();
         if (!this.alreadyFetchedCustomWidgets) {
             this.getAndInitCustomWidgetViews().done(() => {
                 this.widgetsSelectionRow.updateWidgetsDropdown(this.widgetViews);
@@ -146,7 +146,7 @@ export class DetailsView extends api.dom.DivEl {
     }
 
     activateDefaultWidget() {
-        var defaultWidget = this.getDefaultWidget();
+        let defaultWidget = this.getDefaultWidget();
         if (defaultWidget) {
             defaultWidget.setActive();
         }
@@ -212,7 +212,7 @@ export class DetailsView extends api.dom.DivEl {
             }, 400);
 
             this.activeWidget.slideIn();
-        })
+        });
     }
 
     public showLoadMask() {
@@ -224,7 +224,7 @@ export class DetailsView extends api.dom.DivEl {
     }
 
     private initDefaultWidgetView() {
-        var builder = WidgetView.create()
+        let builder = WidgetView.create()
             .setName("Info")
             .setDetailsView(this)
             .setWidgetItemViews([
@@ -239,10 +239,10 @@ export class DetailsView extends api.dom.DivEl {
 
     private initCommonWidgetViews() {
 
-        var versionsWidgetView = WidgetView.create().setName("Version history").setDetailsView(this)
+        let versionsWidgetView = WidgetView.create().setName("Version history").setDetailsView(this)
             .addWidgetItemView(new VersionsWidgetItemView()).build();
 
-        var dependenciesWidgetView = WidgetView.create().setName("Dependencies").setDetailsView(this)
+        let dependenciesWidgetView = WidgetView.create().setName("Dependencies").setDetailsView(this)
             .addWidgetItemView(new DependenciesWidgetItemView()).build();
 
         dependenciesWidgetView.addClass("dependency-widget");
@@ -251,14 +251,14 @@ export class DetailsView extends api.dom.DivEl {
     }
 
     private getAndInitCustomWidgetViews(): wemQ.Promise<any> {
-        var getWidgetsByInterfaceRequest = new api.content.resource.GetWidgetsByInterfaceRequest(this.getWidgetsInterfaceNames());
+        let getWidgetsByInterfaceRequest = new api.content.resource.GetWidgetsByInterfaceRequest(this.getWidgetsInterfaceNames());
 
         return getWidgetsByInterfaceRequest.sendAndParse().then((widgets: Widget[]) => {
             widgets.forEach((widget) => {
-                var widgetView = WidgetView.create().setName(widget.getDisplayName()).setDetailsView(this).setWidget(widget).build();
+                let widgetView = WidgetView.create().setName(widget.getDisplayName()).setDetailsView(this).setWidget(widget).build();
 
                 this.addWidget(widgetView);
-            })
+            });
         }).catch((reason: any) => {
             if (reason && reason.message) {
                 api.notify.showError(reason.message);
@@ -269,7 +269,7 @@ export class DetailsView extends api.dom.DivEl {
     }
 
     setDetailsContainerHeight() {
-        var panelHeight = ActiveDetailsPanelManager.getActiveDetailsPanel().getEl().getHeight(),
+        let panelHeight = ActiveDetailsPanelManager.getActiveDetailsPanel().getEl().getHeight(),
             panelOffset = ActiveDetailsPanelManager.getActiveDetailsPanel().getEl().getOffsetToParent(),
             containerHeight = this.detailsContainer.getEl().getHeight(),
             containerOffset = this.detailsContainer.getEl().getOffsetToParent();
@@ -287,7 +287,7 @@ export class DetailsView extends api.dom.DivEl {
     private addWidgets(widgetViews: WidgetView[]) {
         widgetViews.forEach((widget) => {
             this.addWidget(widget);
-        })
+        });
     }
 
     updateViewer() {

@@ -19,7 +19,7 @@ module api.system {
                                   json.context.principals.map((principal) => api.security.PrincipalKey.fromString(principal)) : [];
             } else {
                 this.authenticated = false;
-                this.principals = []
+                this.principals = [];
             }
         }
 

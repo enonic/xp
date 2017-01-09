@@ -102,7 +102,7 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
     private getContentToUnpublishIds(): ContentId[] {
         return this.getItemList().getItems().map(item => {
             return item.getContentId();
-        })
+        });
     }
 
     private doUnpublish() {
@@ -111,7 +111,7 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
 
         this.setSubTitle(this.countTotal() + " items are being unpublished...");
 
-        var selectedIds = this.getContentToUnpublishIds();
+        let selectedIds = this.getContentToUnpublishIds();
 
         new UnpublishContentRequest()
             .setIncludeChildren(true)

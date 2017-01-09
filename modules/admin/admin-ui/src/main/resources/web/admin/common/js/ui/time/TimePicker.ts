@@ -35,7 +35,7 @@ module api.ui.time {
         }
 
         protected initInput(builder: TimePickerBuilder) {
-            var value;
+            let value;
             if (builder.hours || builder.minutes) {
                 value = this.formatTime(builder.hours, builder.minutes);
             }
@@ -60,7 +60,7 @@ module api.ui.time {
                     return;
                 }
 
-                var typedTime = this.input.getValue();
+                let typedTime = this.input.getValue();
                 if (api.util.StringHelper.isEmpty(typedTime)) {
                     this.validUserInput = true;
                     this.popup.setSelectedTime(null, null);
@@ -68,11 +68,11 @@ module api.ui.time {
                         this.popup.hide();
                     }
                 } else {
-                    var parsedTime = typedTime.match(/^[0-2][0-9]:[0-5][0-9]$/);
+                    let parsedTime = typedTime.match(/^[0-2][0-9]:[0-5][0-9]$/);
                     if (parsedTime && parsedTime.length == 1) {
-                        var splitTime = parsedTime[0].split(':');
+                        let splitTime = parsedTime[0].split(':');
                         this.validUserInput = true;
-                        this.popup.setSelectedTime(parseInt(splitTime[0]), parseInt(splitTime[1]));
+                        this.popup.setSelectedTime(parseInt(splitTime[0], 10), parseInt(splitTime[1], 10));
                         if (!this.popup.isVisible()) {
                             this.popup.show();
                         }

@@ -4,8 +4,9 @@ module api.form.inputtype.support {
     import PropertyArray = api.data.PropertyArray;
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
+    import InputTypeView = api.form.inputtype.InputTypeView;
 
-    export class BaseInputTypeNotManagingAdd<RAW_VALUE_TYPE> extends api.dom.DivEl implements api.form.inputtype.InputTypeView<RAW_VALUE_TYPE> {
+    export class BaseInputTypeNotManagingAdd<RAW_VALUE_TYPE> extends api.dom.DivEl implements InputTypeView<RAW_VALUE_TYPE> {
 
         private context: api.form.inputtype.InputTypeViewContext;
 
@@ -48,7 +49,7 @@ module api.form.inputtype.support {
 
         handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
 
-            var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+            let draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
             this.draggingIndex = draggedElement.getSiblingIndex();
 
             ui.placeholder.html("Drop form item set here");
@@ -61,8 +62,8 @@ module api.form.inputtype.support {
         handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
 
             if (this.draggingIndex >= 0) {
-                var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
-                var draggedToIndex = draggedElement.getSiblingIndex();
+                let draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+                let draggedToIndex = draggedElement.getSiblingIndex();
                 this.inputOccurrences.moveOccurrence(this.draggingIndex, draggedToIndex);
             }
 
@@ -70,7 +71,7 @@ module api.form.inputtype.support {
         }
 
         availableSizeChanged() {
-
+            // must be implemented by children
         }
 
         public getContext(): api.form.inputtype.InputTypeViewContext {
@@ -116,7 +117,7 @@ module api.form.inputtype.support {
         unOccurrenceValueChanged(listener: (occurrence: api.dom.Element, value: api.data.Value) => void) {
             this.inputValueChangedListeners = this.inputValueChangedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         protected notifyOccurrenceValueChanged(occurrence: api.dom.Element, value: api.data.Value) {
@@ -212,15 +213,12 @@ module api.form.inputtype.support {
             this.inputOccurrences.unBlur(listener);
         }
 
-        /**
-         * Override when needed.
-         */
         displayValidationErrors(value: boolean) {
-
+            // must be implemented by children
         }
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
-            var recording = this.validateOccurrences();
+            let recording = this.validateOccurrences();
 
             if (!this.hasValidUserInput()) {
                 recording.setAdditionalValidationRecord(api.form.AdditionalValidationRecord.create().
@@ -244,11 +242,11 @@ module api.form.inputtype.support {
         }
 
         private validateOccurrences(): api.form.inputtype.InputValidationRecording {
-            var recording = new api.form.inputtype.InputValidationRecording();
-            var numberOfValids = 0;
+            let recording = new api.form.inputtype.InputValidationRecording();
+            let numberOfValids = 0;
             this.inputOccurrences.getOccurrenceViews().forEach((occurrenceView: InputOccurrenceView) => {
 
-                var valueFromPropertyArray = this.propertyArray.getValue(occurrenceView.getIndex());
+                let valueFromPropertyArray = this.propertyArray.getValue(occurrenceView.getIndex());
                 if (valueFromPropertyArray) {
                     if (!this.valueBreaksRequiredContract(valueFromPropertyArray) && this.hasValidUserInput()) {
                         numberOfValids++;

@@ -18,7 +18,7 @@ module api.util {
                 return false;
             }
 
-            var other = <Link>o;
+            let other = <Link>o;
 
             if (!api.ObjectHelper.stringEquals(this.path, other.path)) {
                 return false;

@@ -15,7 +15,7 @@ module api.form {
 
         parent: FormItemOccurrenceView;
 
-        dataSet: PropertySet
+        dataSet: PropertySet;
     }
 
     export class FormOptionSetOccurrenceView extends FormSetOccurrenceView {
@@ -56,7 +56,7 @@ module api.form {
                         return;
                     }
 
-                    var previousValidState = this.currentValidationState.isValid();
+                    let previousValidState = this.currentValidationState.isValid();
                     if (event.isValid()) {
                         this.currentValidationState.removeByPath(event.getOrigin(), false, event.isIncludeChildren());
                     } else {
@@ -79,11 +79,12 @@ module api.form {
                         return;
                     }
 
-                    var previousValidationValid = this.currentValidationState.isValid(),
+                    let previousValidationValid = this.currentValidationState.isValid(),
                         multiselectionState = this.validateMultiselection();
 
                     if (multiselectionState.isValid()) {
-                        if (this.formOptionSet.isRadioSelection()) { // for radio - we clean all validation, as even selected item should not be validated
+                        // for radio - we clean all validation, as even selected item should not be validated
+                        if (this.formOptionSet.isRadioSelection()) {
                             this.currentValidationState.removeByPath(
                                 new ValidationRecordingPath(this.getDataPath(), null), true, true);
 
@@ -101,7 +102,7 @@ module api.form {
                         this.notifyValidityChanged(new RecordingValidityChangedEvent(this.currentValidationState,
                             this.resolveValidationRecordingPath()).setIncludeChildren(true));
                     }
-                })
+                });
             });
         }
 
@@ -109,7 +110,7 @@ module api.form {
             if (selectionValidationRecording.isValid()) {
                 this.selectionValidationMessage.addClass("empty");
             } else {
-                var selection: Occurrences = this.formOptionSet.getMultiselection(),
+                let selection: Occurrences = this.formOptionSet.getMultiselection(),
                     message;
                 if (!selectionValidationRecording.isMinimumOccurrencesValid()) {
                     if (selection.getMinimum() == 1) {
@@ -135,7 +136,7 @@ module api.form {
 
         private isNew(): boolean {
             if (api.ObjectHelper.iFrameSafeInstanceOf(this.context, api.content.form.ContentFormContext)) {
-                var contentFormContext = <api.content.form.ContentFormContext> this.context;
+                let contentFormContext = <api.content.form.ContentFormContext> this.context;
                 if (contentFormContext.getFormState() != null && contentFormContext.getFormState().isNew()) {
                     return true;
                 }
@@ -144,13 +145,13 @@ module api.form {
         }
 
         private makeMultiselectionNote(): string {
-            var multiselection = this.formOptionSet.getMultiselection();
+            let multiselection = this.formOptionSet.getMultiselection();
             if (multiselection.getMinimum() == 1 && multiselection.getMaximum() == 1) {
                 return null;
             }
 
             if (multiselection.getMinimum() == 0 && multiselection.getMaximum() == 0) {
-                return "(any)"
+                return "(any)";
             }
             if (multiselection.getMinimum() > 0 && multiselection.getMaximum() == 0) {
                 return "(at least " + multiselection.getMinimum() + ")";
@@ -171,7 +172,7 @@ module api.form {
         }
 
         protected ensureSelectionArrayExists(propertyArraySet: PropertySet) {
-            var selectionPropertyArray = propertyArraySet.getPropertyArray("_selected");
+            let selectionPropertyArray = propertyArraySet.getPropertyArray("_selected");
             if (!selectionPropertyArray) {
                 selectionPropertyArray =
                     PropertyArray.create().setType(ValueTypes.STRING).setName("_selected").setParent(
@@ -184,19 +185,19 @@ module api.form {
         private addDefaultSelectionToSelectionArray(selectionPropertyArray: PropertyArray) {
             this.formOptionSet.getOptions().forEach((option: FormOptionSetOption) => {
                 if (option.isDefaultOption() && selectionPropertyArray.getSize() < this.formOptionSet.getMultiselection().getMaximum()) {
-                    selectionPropertyArray.add(new Value(option.getName(), new api.data.ValueTypeString()))
+                    selectionPropertyArray.add(new Value(option.getName(), new api.data.ValueTypeString()));
                 }
             });
         }
 
         protected extraValidation(validationRecording: ValidationRecording) {
-            var multiselectionState = this.validateMultiselection();
+            let multiselectionState = this.validateMultiselection();
             validationRecording.flatten(multiselectionState);
             this.renderSelectionValidationMessage(multiselectionState);
         }
 
         private validateMultiselection(): ValidationRecording {
-            var multiselectionRecording = new ValidationRecording(),
+            let multiselectionRecording = new ValidationRecording(),
                 validationRecordingPath = this.resolveValidationRecordingPath(),
                 selectionPropertyArray = this.propertySet.getPropertyArray("_selected");
 

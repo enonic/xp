@@ -30,11 +30,11 @@ module api.aggregation {
         setDisplayNames(): void {
             this.bucketViews.forEach((bucketView: api.aggregation.BucketView) => {
                 bucketView.setDisplayName(this.getDisplayNameForName(bucketView.getName()));
-            })
+            });
         }
 
         hasSelectedEntry(): boolean {
-            var isSelected: boolean = false;
+            let isSelected: boolean = false;
             this.bucketViews.forEach((bucketView: api.aggregation.BucketView) => {
                 if (bucketView.isSelected()) {
                     isSelected = true;
@@ -54,7 +54,7 @@ module api.aggregation {
 
         getSelectedValues(): api.aggregation.Bucket[] {
 
-            var selectedBuckets: api.aggregation.Bucket[] = [];
+            let selectedBuckets: api.aggregation.Bucket[] = [];
 
             this.bucketViews.forEach((bucketView: api.aggregation.BucketView) => {
                 if (bucketView.isSelected()) {
@@ -73,19 +73,19 @@ module api.aggregation {
 
         update(aggregation: api.aggregation.Aggregation) {
 
-            var selectedBucketNames: string[] = this.getSelectedBucketNames();
+            let selectedBucketNames: string[] = this.getSelectedBucketNames();
 
             this.bucketAggregation = <api.aggregation.BucketAggregation> aggregation;
             this.bucketViews = [];
             this.removeChildren();
 
-            var anyBucketVisible = false;
+            let anyBucketVisible = false;
 
             this.bucketAggregation.getBuckets().forEach((bucket: api.aggregation.Bucket) => {
 
-                var wasSelected: boolean = (wemjq.inArray(bucket.getKey(), selectedBucketNames)) > -1;
+                let wasSelected: boolean = (wemjq.inArray(bucket.getKey(), selectedBucketNames)) > -1;
 
-                var bucketView: api.aggregation.BucketView = new api.aggregation.BucketView(bucket, this, wasSelected,
+                let bucketView: api.aggregation.BucketView = new api.aggregation.BucketView(bucket, this, wasSelected,
                     this.getDisplayNameForName(bucket.getKey()));
 
                 this.addBucket(bucketView);
@@ -108,9 +108,9 @@ module api.aggregation {
 
         private getSelectedBucketNames(): string[] {
 
-            var selectedBucketNames: string[] = [];
+            let selectedBucketNames: string[] = [];
 
-            var selectedBuckets: api.aggregation.Bucket[] = this.getSelectedValues();
+            let selectedBuckets: api.aggregation.Bucket[] = this.getSelectedValues();
 
             selectedBuckets.forEach((bucket: api.aggregation.Bucket) => {
                 selectedBucketNames.push(bucket.getKey());

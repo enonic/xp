@@ -32,8 +32,8 @@ export class UserMembershipsWizardStepForm extends api.app.wizard.WizardStepForm
         this.groupsLoaded = false;
         this.rolesLoaded = false;
 
-        var groupsLoader = new PrincipalLoader().setAllowedTypes([PrincipalType.GROUP]);
-        var rolesLoader = new PrincipalLoader().setAllowedTypes([PrincipalType.ROLE]).skipPrincipals([RoleKeys.EVERYONE,
+        let groupsLoader = new PrincipalLoader().setAllowedTypes([PrincipalType.GROUP]);
+        let rolesLoader = new PrincipalLoader().setAllowedTypes([PrincipalType.ROLE]).skipPrincipals([RoleKeys.EVERYONE,
             RoleKeys.AUTHENTICATED]);
 
         this.groups = PrincipalComboBox.create().setLoader(groupsLoader).build();
@@ -41,12 +41,12 @@ export class UserMembershipsWizardStepForm extends api.app.wizard.WizardStepForm
         this.roles = PrincipalComboBox.create().setLoader(rolesLoader).build();
         rolesLoader.load();
 
-        var groupsHandler = () => {
+        let groupsHandler = () => {
             this.groupsLoaded = true;
             this.selectMembership();
             this.groups.unLoaded(groupsHandler);
         };
-        var rolesHandler = () => {
+        let rolesHandler = () => {
             this.rolesLoaded = true;
             this.selectMembership();
             this.roles.unLoaded(rolesHandler);
@@ -55,15 +55,15 @@ export class UserMembershipsWizardStepForm extends api.app.wizard.WizardStepForm
         this.groups.onLoaded(groupsHandler);
         this.roles.onLoaded(rolesHandler);
 
-        var groupsFormItem = new FormItemBuilder(this.groups).setLabel('Groups').build();
+        let groupsFormItem = new FormItemBuilder(this.groups).setLabel('Groups').build();
 
-        var rolesFormItem = new FormItemBuilder(this.roles).setLabel('Roles').build();
+        let rolesFormItem = new FormItemBuilder(this.roles).setLabel('Roles').build();
 
-        var fieldSet = new api.ui.form.Fieldset();
+        let fieldSet = new api.ui.form.Fieldset();
         fieldSet.add(groupsFormItem);
         fieldSet.add(rolesFormItem);
 
-        var form = new api.ui.form.Form().add(fieldSet);
+        let form = new api.ui.form.Form().add(fieldSet);
 
         this.appendChild(form);
 
@@ -88,14 +88,14 @@ export class UserMembershipsWizardStepForm extends api.app.wizard.WizardStepForm
             this.groups.clearSelection();
             this.roles.clearSelection();
 
-            var groups = this.principal.asUser().getMemberships().filter((el) => {
-                return el.isGroup()
+            let groups = this.principal.asUser().getMemberships().filter((el) => {
+                return el.isGroup();
             }).map((el) => {
                 return el.getKey().toString();
             });
 
-            var roles = this.principal.asUser().getMemberships().filter((el) => {
-                return el.isRole()
+            let roles = this.principal.asUser().getMemberships().filter((el) => {
+                return el.isRole();
             }).map((el) => {
                 return el.getKey().toString();
             });

@@ -61,10 +61,10 @@ module api.ui {
         }
 
         static createMultiple(callback: (e: ExtendedKeyboardEvent, combo: string) => any, ...combinations:string[]) {
-            var bindings:KeyBinding[] = [];
+            let bindings:KeyBinding[] = [];
 
             combinations.forEach((combination:string) => {
-                bindings.push(new KeyBinding(combination, callback))
+                bindings.push(new KeyBinding(combination, callback));
             });
 
             return bindings;

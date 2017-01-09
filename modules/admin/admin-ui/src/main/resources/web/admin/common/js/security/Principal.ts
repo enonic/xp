@@ -28,7 +28,7 @@ module api.security {
             return {
                 displayName: this.displayName,
                 key: this.key.toString()
-            }
+            };
         }
 
         getKey(): PrincipalKey {
@@ -93,7 +93,7 @@ module api.security {
                 return false;
             }
 
-            var other = <Principal> o;
+            let other = <Principal> o;
 
             if (!api.ObjectHelper.equals(this.key, other.key)) {
                 return false;

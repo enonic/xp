@@ -15,26 +15,26 @@ export class EmulatorGrid extends api.ui.grid.Grid<any> {
         ];
     }
 
-    private buildRow(row, cell, data): api.dom.DivEl {
-        var rowEl = new api.dom.DivEl();
+    private buildRow(row: any, cell: any, data: any): api.dom.DivEl {
+        let rowEl = new api.dom.DivEl();
         rowEl.getEl().setData('width', data.width);
         rowEl.getEl().setData('height', data.height);
         rowEl.getEl().setData('units', data.units);
 
-        var icon = new api.ui.FontIcon("icon-" + data.device_type);
+        let icon = new api.ui.FontIcon("icon-" + data.device_type);
 
-        var title = new api.dom.H5El();
+        let title = new api.dom.H5El();
         title.getEl().setInnerHtml(data.name);
 
-        var subtitle = new api.dom.H6El();
-        var units = data.display_units ? data.units : "";
+        let subtitle = new api.dom.H6El();
+        let units = data.display_units ? data.units : "";
         subtitle.getEl().setInnerHtml(data.width + units + " &times; " + data.height + units, false);
         rowEl.appendChild(icon);
         rowEl.appendChild(title);
         rowEl.appendChild(subtitle);
 
         if (data.rotatable == true) {
-            var rotator = new api.dom.DivEl();
+            let rotator = new api.dom.DivEl();
             rotator.addClass('rotate');
             rotator.addClassEx('icon-loop');
             rowEl.appendChild(rotator);
@@ -44,10 +44,10 @@ export class EmulatorGrid extends api.ui.grid.Grid<any> {
     }
 
     static toSlickData(data: any[]): any[] {
-        var result = [];
-        var i = 1;
+        let result = [];
+        let i = 1;
         data["devices"].forEach((item, index) => {
-            var tmp = {
+            let tmp = {
                 "id": i,
                 "device": item
             };

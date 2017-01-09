@@ -160,7 +160,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     private extendsWindowHeightSize(): boolean {
         if (ResponsiveRanges._540_720.isFitOrBigger(this.getEl().getWidthWithBorder())) {
-            var el = this.getEl(),
+            let el = this.getEl(),
                 bottomPosition: number = (el.getTopPx() || parseFloat(el.getComputedProperty("top")) || 0) +
                                          el.getMarginTop() +
                                          el.getHeightWithBorder() +
@@ -236,12 +236,12 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
         let visibleItems = [];
 
-        for (let key in items) {
-            let position = items[key].getEl().getOffsetTop();
+        items.forEach((item) => {
+            let position = item.getEl().getOffsetTop();
             if (position >= start && position <= end) {
-                visibleItems.push(items[key]);
+                visibleItems.push(item);
             }
-        }
+        });
 
         lastVisible = items.indexOf(visibleItems[visibleItems.length - 1]);
 
@@ -310,7 +310,7 @@ export class DialogItemList extends ListBox<ContentSummaryAndCompareStatus> {
             item.getDisplayName()).setPath(item.getPath().toString()).setIconUrl(
             new api.content.util.ContentIconUrlResolver().setContent(item.getContentSummary()).resolve());
 
-        var statusItem = new StatusSelectionItem(itemViewer, browseItem);
+        let statusItem = new StatusSelectionItem(itemViewer, browseItem);
         statusItem.onRemoveClicked((e: MouseEvent) => {
             this.removeItem(item);
         });

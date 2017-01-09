@@ -22,7 +22,7 @@ module api.util {
                 return false;
             }
 
-            var other = <Reference>o;
+            let other = <Reference>o;
 
             if (!api.ObjectHelper.stringEquals(this.referenceId, other.referenceId)) {
                 return false;

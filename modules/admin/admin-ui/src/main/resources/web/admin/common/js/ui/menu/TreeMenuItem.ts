@@ -5,7 +5,7 @@ module api.ui.menu {
 
         constructor(action: api.ui.Action, cls: string = "", expanded: boolean = false) {
             super(action.hasParentAction() ? "dd" : "dt");
-            
+
             this.action = action;
             cls = this.getCls(action, cls, expanded);
             if (cls) {
@@ -24,9 +24,9 @@ module api.ui.menu {
             });
             this.setEnabled(action.isEnabled());
 
-            action.onPropertyChanged((action: api.ui.Action) => {
-                this.setEnabled(action.isEnabled());
-                this.setVisible(action.isVisible());
+            action.onPropertyChanged((changedAction: api.ui.Action) => {
+                this.setEnabled(changedAction.isEnabled());
+                this.setVisible(changedAction.isVisible());
             });
         }
 
@@ -35,7 +35,7 @@ module api.ui.menu {
         }
 
         private getCls(action: api.ui.Action, cls: string = "", expanded: boolean = false): string {
-            var fullCls = action.hasChildActions() ? "collapsible " : "";
+            let fullCls = action.hasChildActions() ? "collapsible " : "";
             fullCls += expanded ? "expanded " : "";
 
             return fullCls + cls;
@@ -46,7 +46,7 @@ module api.ui.menu {
         }
 
         setEnabled(value: boolean) {
-            var el = this.getEl();
+            let el = this.getEl();
             el.setDisabled(!value);
             if (value) {
                 el.removeClass("disabled");

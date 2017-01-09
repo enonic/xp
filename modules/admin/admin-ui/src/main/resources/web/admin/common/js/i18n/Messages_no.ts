@@ -1,6 +1,6 @@
 module api.i18n {
 
-    var messages = {
+    let messages = {
     };
 
     addBundle('no', messages);

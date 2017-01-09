@@ -127,10 +127,10 @@ module api.ui.treegrid {
         }
 
         getFullSelection(uniqueOnly: boolean = true): TreeNode<DATA>[] {
-            var fullSelection = this.currentSelection.
+            let fullSelection = this.currentSelection.
                 concat(this.stashedSelection);
             if (uniqueOnly) {
-                var fullIds = fullSelection.map((el) => {
+                let fullIds = fullSelection.map((el) => {
                     return el.getDataId();
                 });
                 fullSelection = fullSelection.filter((value, index) => {
@@ -146,7 +146,7 @@ module api.ui.treegrid {
         }
 
         private cleanStashedSelection() {
-            var currentIds = this.currentSelection.map((el) => {
+            let currentIds = this.currentSelection.map((el) => {
                     return el.getDataId();
                 }),
                 stashedIds = this.stashedSelection.map((el) => {

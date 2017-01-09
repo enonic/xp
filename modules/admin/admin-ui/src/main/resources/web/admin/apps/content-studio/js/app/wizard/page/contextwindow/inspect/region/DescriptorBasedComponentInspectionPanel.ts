@@ -15,7 +15,8 @@ export interface DescriptorBasedComponentInspectionPanelConfig extends Component
 
 }
 
-export class DescriptorBasedComponentInspectionPanel<COMPONENT extends DescriptorBasedComponent, DESCRIPTOR extends Descriptor> extends ComponentInspectionPanel<COMPONENT> {
+export class DescriptorBasedComponentInspectionPanel<COMPONENT extends DescriptorBasedComponent, DESCRIPTOR extends Descriptor>
+extends ComponentInspectionPanel<COMPONENT> {
 
     private formView: FormView;
 
@@ -71,8 +72,8 @@ export class DescriptorBasedComponentInspectionPanel<COMPONENT extends Descripto
             return;
         }
 
-        var form = descriptor.getConfig();
-        var config = component.getConfig();
+        let form = descriptor.getConfig();
+        let config = component.getConfig();
         this.formView = new FormView(this.formContext, form, config.getRoot());
         this.appendChild(this.formView);
         component.setDisableEventForwarding(true);

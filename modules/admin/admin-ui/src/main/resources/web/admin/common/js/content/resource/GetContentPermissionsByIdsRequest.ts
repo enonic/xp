@@ -4,7 +4,8 @@ module api.content.resource {
     import ContentsPermissionsEntryJson = api.content.json.ContentPermissionsJson;
     import ContentAccessControlList = api.security.acl.ContentAccessControlList;
 
-    export class GetContentPermissionsByIdsRequest extends ContentResourceRequest<ContentsPermissionsEntryJson[], ContentAccessControlList[]> {
+    export class GetContentPermissionsByIdsRequest
+    extends ContentResourceRequest<ContentsPermissionsEntryJson[], ContentAccessControlList[]> {
 
         private contentIds: ContentId[];
 
@@ -15,7 +16,7 @@ module api.content.resource {
         }
 
         getParams(): Object {
-            var fn = (contentId: ContentId) => {
+            let fn = (contentId: ContentId) => {
                 return contentId.toString();
             };
             return {

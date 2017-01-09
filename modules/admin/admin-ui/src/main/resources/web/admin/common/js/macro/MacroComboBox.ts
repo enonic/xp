@@ -12,13 +12,12 @@ module api.macro {
 
         constructor(builder: MacroComboBoxBuilder) {
 
-            var richComboBoxBuilder = new RichComboBoxBuilder<MacroDescriptor>().
+            let richComboBoxBuilder = new RichComboBoxBuilder<MacroDescriptor>().
                 setComboBoxName('macroSelector').
                 setLoader(builder.loader).
                 setSelectedOptionsView(new MacroSelectedOptionsView()).
                 setMaximumOccurrences(builder.maximumOccurrences).
-                setDelayedInputValueChangedHandling(750).
-                setOptionDisplayValueViewer(new MacroViewer).
+                setDelayedInputValueChangedHandling(750).setOptionDisplayValueViewer(new MacroViewer()).
                 setValue(builder.value).
                 setMaxHeight(250);
 
@@ -30,12 +29,12 @@ module api.macro {
         getLoader(): MacrosLoader {
             return this.loader;
         }
-        
+
         createOption(val: MacroDescriptor): Option<MacroDescriptor> {
             return {
                 value: val.getKey().getRefString(),
                 displayValue: val
-            }
+            };
         }
 
         public static create(): MacroComboBoxBuilder {
@@ -46,7 +45,7 @@ module api.macro {
     export class MacroSelectedOptionsView extends api.ui.selector.combobox.BaseSelectedOptionsView<MacroDescriptor> {
 
         createSelectedOption(option: api.ui.selector.Option<MacroDescriptor>): SelectedOption<MacroDescriptor> {
-            var optionView = new MacroSelectedOptionView(option);
+            let optionView = new MacroSelectedOptionView(option);
             return new SelectedOption<MacroDescriptor>(optionView, this.count());
         }
     }

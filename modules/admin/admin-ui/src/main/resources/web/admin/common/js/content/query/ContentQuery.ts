@@ -2,9 +2,9 @@ module api.content.query {
 
     export class ContentQuery implements api.Equitable {
 
-        static POSTLOAD_SIZE = 10;
+        static POSTLOAD_SIZE: number = 10;
 
-        static DEFAULT_SIZE = 100;
+        static DEFAULT_SIZE: number = 100;
 
         private queryExpr: api.query.expr.QueryExpr;
 
@@ -98,7 +98,7 @@ module api.content.query {
                 return false;
             }
 
-            var other = <ContentQuery>o;
+            let other = <ContentQuery>o;
 
             if (!api.ObjectHelper.numberEquals(this.from, other.from)) {
                 return false;

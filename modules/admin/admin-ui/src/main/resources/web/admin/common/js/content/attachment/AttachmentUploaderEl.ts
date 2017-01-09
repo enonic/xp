@@ -17,7 +17,7 @@ module api.content.attachment {
         private removeCallback: (value: string) => void;
         private addCallback: (value: string) => void;
 
-        constructor(config) {
+        constructor(config: any) {
 
             if (config.url == undefined) {
                 config.url = api.util.UriHelper.getRestUri("content/createAttachment");

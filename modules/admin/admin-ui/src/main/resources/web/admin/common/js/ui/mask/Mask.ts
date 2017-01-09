@@ -14,7 +14,7 @@ module api.ui.mask {
                 // pass the mousewheel event to the masked element to be able to scroll
                 this.onMouseWheel((event: WheelEvent) => {
 
-                    var evt = this.cloneWheelEvent(event);
+                    let evt = this.cloneWheelEvent(event);
                     this.masked.getHTMLElement().dispatchEvent(evt);
 
                     if (this.isBrowserFirefox()) { //scrolling manually ff as dispatch event not working
@@ -75,7 +75,7 @@ module api.ui.mask {
         }
 
         private positionOver(masked: api.dom.Element) {
-            var maskedEl = masked.getEl(),
+            let maskedEl = masked.getEl(),
                 maskEl = this.getEl(),
                 maskedOffset: {top:number; left: number},
                 isMaskedPositioned = maskedEl.getPosition() != 'static',
@@ -99,14 +99,14 @@ module api.ui.mask {
                 }
             } else {
                 // mask is outside masked element
-                var maskedParent = maskedEl.getOffsetParent(),
+                let maskedParent = maskedEl.getOffsetParent(),
                     maskParent = maskEl.getOffsetParent();
 
                 maskedOffset = maskedEl.getOffsetToParent();
 
                 if (maskedParent != maskParent) {
                     // they have different offset parents so calc the difference
-                    var maskedParentOffset = new api.dom.ElementHelper(maskedParent).getOffset(),
+                    let maskedParentOffset = new api.dom.ElementHelper(maskedParent).getOffset(),
                         maskParentOffset = new api.dom.ElementHelper(maskParent).getOffset();
 
                     maskedOffset.left = maskedOffset.left + (maskedParentOffset.left - maskParentOffset.left);
@@ -133,7 +133,8 @@ module api.ui.mask {
 
         private triggerScroll(event: WheelEvent) {
             wemjq(this.masked.getHTMLElement()).stop().animate({
-                scrollTop: this.masked.getHTMLElement().scrollTop + event.deltaY * 25 //converting ff wheel deltaY from lines to px (approximate)
+                // converting ff wheel deltaY from lines to px (approximate)
+                scrollTop: this.masked.getHTMLElement().scrollTop + event.deltaY * 25
             }, 600 / Math.abs(event.deltaY), 'linear');
         }
 

@@ -6,7 +6,7 @@ module api.application {
     export class ApplicationLoader extends api.util.loader.BaseLoader<ApplicationListResult, Application> {
 
         protected request: ListApplicationsRequest;
-        
+
         private filterObject: Object;
 
         constructor(filterObject: Object, request?: ListApplicationsRequest) {
@@ -24,14 +24,14 @@ module api.application {
         protected getRequest(): ListApplicationsRequest {
             return this.request;
         }
-        
+
         search(searchString: string): wemQ.Promise<Application[]> {
             this.getRequest().setSearchQuery(searchString);
             return this.load();
         }
 
         load(): wemQ.Promise<Application[]> {
-            var me = this;
+            let me = this;
             me.notifyLoadingData();
 
             return me.sendRequest()
@@ -50,8 +50,8 @@ module api.application {
                 return true;
             }
 
-            var result = true;
-            for (var name in this.filterObject) {
+            let result = true;
+            for (let name in this.filterObject) {
                 if (this.filterObject.hasOwnProperty(name)) {
                     if (!application.hasOwnProperty(name) || this.filterObject[name] != application[name]) {
                         result = false;

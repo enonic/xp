@@ -14,7 +14,7 @@ module api.form {
 
         parent: FormItemSetOccurrenceView;
 
-        dataSet: PropertySet
+        dataSet: PropertySet;
     }
 
     export class FormItemSetOccurrenceView extends FormSetOccurrenceView {
@@ -39,7 +39,7 @@ module api.form {
                         return; // currentValidationState is initialized on validate() call which may not be triggered in some cases
                     }
 
-                    var previousValidState = this.currentValidationState.isValid();
+                    let previousValidState = this.currentValidationState.isValid();
                     if (event.isValid()) {
                         this.currentValidationState.removeByPath(event.getOrigin(), false, event.isIncludeChildren());
                     } else {
@@ -56,9 +56,9 @@ module api.form {
 
         validate(silent: boolean = true): ValidationRecording {
 
-            var allRecordings = new ValidationRecording();
+            let allRecordings = new ValidationRecording();
             this.formItemViews.forEach((formItemView: FormItemView) => {
-                var currRecording = formItemView.validate(silent);
+                let currRecording = formItemView.validate(silent);
                 allRecordings.flatten(currRecording);
             });
 

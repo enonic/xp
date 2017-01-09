@@ -55,7 +55,7 @@ module api.content.form.inputtype.upload {
             this.imageUploader.onUploadStarted(() => this.imageUploader.getUploadButton().hide());
 
             this.imageUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
-                var content = event.getUploadItem().getModel(),
+                let content = event.getUploadItem().getModel(),
                     value = this.imageUploader.getMediaValue(content);
 
                 this.imageUploader.setOriginalDimensions(content);
@@ -107,11 +107,11 @@ module api.content.form.inputtype.upload {
 
         protected saveToProperty(value: api.data.Value) {
             this.ignorePropertyChange = true;
-            var property = this.getProperty();
+            let property = this.getProperty();
             switch (property.getType()) {
             case ValueTypes.DATA:
                 // update the attachment name, and reset the focal point data
-                var set = property.getPropertySet();
+                let set = property.getPropertySet();
                 set.setProperty('attachment', 0, value);
                 set.removeProperty('focalPoint', 0);
                 set.removeProperty('cropPosition', 0);
@@ -149,7 +149,7 @@ module api.content.form.inputtype.upload {
         }
 
         private saveEditDataToProperty(crop: Rect, zoom: Rect, focus: Point) {
-            var container = this.getPropertyContainer(this.getProperty());
+            let container = this.getPropertyContainer(this.getProperty());
 
             if (container) {
                 if (crop) {
@@ -175,7 +175,7 @@ module api.content.form.inputtype.upload {
         }
 
         private getPropertyContainer(property: Property) {
-            var container;
+            let container;
             switch (property.getType()) {
             case ValueTypes.DATA:
                 container = property.getPropertySet();
@@ -184,11 +184,11 @@ module api.content.form.inputtype.upload {
                 // save in new format always no matter what was the format originally
                 container = new api.data.PropertyTree();
                 container.setString('attachment', 0, property.getString());
-                var propertyParent = property.getParent();
-                var propertyName = property.getName();
+                let propertyParent = property.getParent();
+                let propertyName = property.getName();
                 // remove old string property and set the new property set
                 propertyParent.removeProperty(propertyName, 0);
-                var newProperty = propertyParent.setPropertySet(propertyName, 0, container.getRoot());
+                let newProperty = propertyParent.setPropertySet(propertyName, 0, container.getRoot());
                 // update local property reference
                 this.registerProperty(newProperty);
                 break;
@@ -197,13 +197,13 @@ module api.content.form.inputtype.upload {
         }
 
         private getFocalPoint(content: Content): Point {
-            var focalProperty = this.getMediaProperty(content, 'focalPoint');
+            let focalProperty = this.getMediaProperty(content, 'focalPoint');
 
             if (!focalProperty) {
                 return null;
             }
 
-            var focalSet = focalProperty.getPropertySet(),
+            let focalSet = focalProperty.getPropertySet(),
                 x = focalSet.getDouble('x'),
                 y = focalSet.getDouble('y');
 
@@ -214,17 +214,17 @@ module api.content.form.inputtype.upload {
             return {
                 x: x,
                 y: y
-            }
+            };
         }
 
         private getRectFromProperty(content: Content, propertyName: string): Rect {
-            var property = this.getMediaProperty(content, propertyName);
+            let property = this.getMediaProperty(content, propertyName);
 
             if (!property) {
                 return null;
             }
 
-            var cropPositionSet = property.getPropertySet(),
+            let cropPositionSet = property.getPropertySet(),
                 x = cropPositionSet.getDouble('left'),
                 y = cropPositionSet.getDouble('top'),
                 x2 = cropPositionSet.getDouble('right'),
@@ -239,12 +239,12 @@ module api.content.form.inputtype.upload {
         }
 
         private getMediaProperty(content: Content, propertyName: string) {
-            var mediaProperty = content.getProperty('media');
+            let mediaProperty = content.getProperty('media');
             if (!mediaProperty || !ValueTypes.DATA.equals(mediaProperty.getType())) {
                 return null;
             }
 
-            var resultProperty = mediaProperty.getPropertySet().getProperty(propertyName);
+            let resultProperty = mediaProperty.getPropertySet().getProperty(propertyName);
             if (!resultProperty || !ValueTypes.DATA.equals(resultProperty.getType())) {
                 return null;
             }
@@ -252,19 +252,19 @@ module api.content.form.inputtype.upload {
         }
 
         private configEditorsProperties(content: Content) {
-            var focalPoint = this.getFocalPoint(content);
+            let focalPoint = this.getFocalPoint(content);
             this.imageUploader.setFocalPoint(focalPoint);
 
-            var cropPosition = this.getRectFromProperty(content, 'cropPosition');
+            let cropPosition = this.getRectFromProperty(content, 'cropPosition');
             this.imageUploader.setCrop(cropPosition);
 
-            var zoomPosition = this.getRectFromProperty(content, 'zoomPosition');
+            let zoomPosition = this.getRectFromProperty(content, 'zoomPosition');
             this.imageUploader.setZoom(zoomPosition);
         }
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
-            var recording = new api.form.inputtype.InputValidationRecording();
-            var propertyValue = this.getProperty().getValue();
+            let recording = new api.form.inputtype.InputValidationRecording();
+            let propertyValue = this.getProperty().getValue();
 
             if (this.imageUploader.isFocalPointEditMode() || this.imageUploader.isCropEditMode()) {
                 recording.setBreaksMinimumOccurrences(true);

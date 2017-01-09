@@ -4,8 +4,10 @@ module api.security.acl {
     import PrincipalJson = api.security.PrincipalJson;
     import PrincipalType = api.security.PrincipalType;
     import UserStoreKey = api.security.UserStoreKey;
+    import SecurityResourceRequest = api.security.SecurityResourceRequest;
 
-    export class FindUserStoreAccessControlEntriesRequest extends api.security.SecurityResourceRequest<PrincipalListJson, UserStoreAccessControlEntry[]> {
+    export class FindUserStoreAccessControlEntriesRequest
+    extends SecurityResourceRequest<PrincipalListJson, UserStoreAccessControlEntry[]> {
 
         private allowedTypes: PrincipalType[];
         private searchQuery: string;
@@ -19,7 +21,7 @@ module api.security.acl {
             return {
                 /*"types": this.enumToStrings(this.allowedTypes),*/
                 "query": this.searchQuery
-            }
+            };
         }
 
         getRequestPath(): api.rest.Path {

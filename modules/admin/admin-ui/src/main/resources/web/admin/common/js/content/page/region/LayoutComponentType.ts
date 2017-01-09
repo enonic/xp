@@ -2,7 +2,7 @@ module api.content.page.region {
 
     export class LayoutComponentType extends ComponentType {
 
-        private static INSTANCE = new LayoutComponentType();
+        private static INSTANCE: LayoutComponentType = new LayoutComponentType();
 
         constructor() {
             super("layout");

@@ -2,9 +2,9 @@ import "../../../../../api.ts";
 import {Insertable} from "./Insertable";
 
 export interface InsertablesGridOptions {
-    draggableRows?:boolean;
-    rowClass?:string;
-    onClick?:(el) => void;
+    draggableRows?: boolean;
+    rowClass?: string;
+    onClick?: (event: MouseEvent) => void;
 }
 
 export class InsertablesGrid extends api.ui.grid.Grid<Insertable> {
@@ -21,7 +21,7 @@ export class InsertablesGrid extends api.ui.grid.Grid<Insertable> {
             if (this.componentGridOptions.onClick) {
                 this.setOnClick(this.componentGridOptions.onClick);
             }
-        })
+        });
     }
 
 
@@ -39,21 +39,21 @@ export class InsertablesGrid extends api.ui.grid.Grid<Insertable> {
     }
 
     private buildRow(row: number, cell: number, value: any, columnDef: any, insertable: Insertable): api.dom.DivEl {
-        var rowEl = new api.dom.DivEl();
+        let rowEl = new api.dom.DivEl();
         rowEl.getEl().setData('portal-component-type', insertable.getName());
         if (this.componentGridOptions.draggableRows) {
             rowEl.getEl().setData('context-window-draggable', 'true');
         }
         if (this.componentGridOptions.rowClass) {
-            rowEl.addClass(this.componentGridOptions.rowClass)
+            rowEl.addClass(this.componentGridOptions.rowClass);
         }
 
-        var icon = new api.ui.FontIcon(insertable.getIconCls());
+        let icon = new api.ui.FontIcon(insertable.getIconCls());
 
-        var title = new api.dom.H5El();
+        let title = new api.dom.H5El();
         title.getEl().setInnerHtml(insertable.getDisplayName());
 
-        var subtitle = new api.dom.H6El();
+        let subtitle = new api.dom.H6El();
         subtitle.getEl().setInnerHtml(insertable.getDescription());
 
         rowEl.appendChild(icon);

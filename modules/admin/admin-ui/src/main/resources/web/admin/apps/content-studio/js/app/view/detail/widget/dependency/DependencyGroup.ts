@@ -51,7 +51,7 @@ export class DependencyGroup implements api.Equitable {
             return false;
         }
 
-        var other = <DependencyGroup>o;
+        let other = <DependencyGroup>o;
 
         if (!api.ObjectHelper.numberEquals(this.itemCount, other.itemCount)) {
             return false;
@@ -67,7 +67,7 @@ export class DependencyGroup implements api.Equitable {
     }
 
     static fromDependencyGroupJson(type: DependencyType, jsonItems: ContentDependencyGroupJson[]): DependencyGroup[] {
-        var array: DependencyGroup[] = [];
+        let array: DependencyGroup[] = [];
         jsonItems.forEach((obj: ContentDependencyGroupJson) => {
             array.push(new DependencyGroupBuilder().fromJson(obj).setType(type).build());
         });

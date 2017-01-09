@@ -5,9 +5,6 @@ module api.ui.form {
         private valid: boolean = true;
         private errors: ValidationError[] = [];
 
-        constructor() {
-        }
-
         addError(error: ValidationError) {
             this.errors.push(error);
             if (this.valid) {

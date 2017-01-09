@@ -8,13 +8,9 @@ module api.cache {
 
         private loadedListeners: Function[] = [];
 
-        constructor() {
-
-        }
-
         getAll(): T[] {
-            var all: T[] = [];
-            for (var key in this.objectsByKey) {
+            let all: T[] = [];
+            for (let key in this.objectsByKey) {
                 if (this.objectsByKey.hasOwnProperty(key)) {
                     all.push(this.objectsByKey[key]);
                 }
@@ -45,7 +41,7 @@ module api.cache {
         }
 
         getOnLoaded(key: KEY): wemQ.Promise<T> {
-            var deferred = wemQ.defer<T>();
+            let deferred = wemQ.defer<T>();
 
             let handler = (keyStr: string, value: T) => {
                 if (this.getKeyAsString(key) == keyStr) {
@@ -60,8 +56,8 @@ module api.cache {
         }
 
         put(object: T) {
-            var copy = this.copy(object);
-            var keyAsString = this.getKeyAsString(this.getKeyFromObject(object));
+            let copy = this.copy(object);
+            let keyAsString = this.getKeyAsString(this.getKeyFromObject(object));
             this.objectsByKey[keyAsString] = copy;
 
             if (this.loading.indexOf(keyAsString) >= 0) {
@@ -72,13 +68,13 @@ module api.cache {
         }
 
         deleteByKey(key: KEY) {
-            var keyAsString = this.getKeyAsString(key);
+            let keyAsString = this.getKeyAsString(key);
             delete this.objectsByKey[keyAsString];
         }
 
         getByKey(key: KEY): T {
-            var keyAsString = this.getKeyAsString(key);
-            var object = this.objectsByKey[keyAsString];
+            let keyAsString = this.getKeyAsString(key);
+            let object = this.objectsByKey[keyAsString];
             if (!object) {
                 return null;
             }

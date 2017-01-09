@@ -11,13 +11,13 @@ export class ContentVersionViewer extends api.ui.Viewer<api.content.ContentVersi
     }
 
     private getModifiedString(modified: Date): string {
-        var timeDiff = Math.abs(Date.now() - modified.getTime());
-        var secInMs = 1000;
-        var minInMs = secInMs * 60;
-        var hrInMs = minInMs * 60;
-        var dayInMs = hrInMs * 24;
-        var monInMs = dayInMs * 31;
-        var yrInMs = dayInMs * 365;
+        let timeDiff = Math.abs(Date.now() - modified.getTime());
+        let secInMs = 1000;
+        let minInMs = secInMs * 60;
+        let hrInMs = minInMs * 60;
+        let dayInMs = hrInMs * 24;
+        let monInMs = dayInMs * 31;
+        let yrInMs = dayInMs * 365;
 
         if (timeDiff < minInMs) {
             return "less than a minute ago";
@@ -54,7 +54,7 @@ export class ContentVersionViewer extends api.ui.Viewer<api.content.ContentVersi
     }
 
     private getModifierSpan(contentVersion: api.content.ContentVersion): api.dom.SpanEl {
-        var span = new api.dom.SpanEl("version-modifier");
+        let span = new api.dom.SpanEl("version-modifier");
 
         span.setHtml(this.getModifiedString(contentVersion.modified));
 
@@ -66,13 +66,13 @@ export class ContentVersionViewer extends api.ui.Viewer<api.content.ContentVersi
             return null;
         }
 
-        var span = new api.dom.SpanEl("version-comment");
+        let span = new api.dom.SpanEl("version-comment");
         span.setHtml(contentVersion.comment);
         return span;
     }
 
     private getSubNameElements(contentVersion: api.content.ContentVersion): api.dom.Element[] {
-        var elements: api.dom.Element[] = [this.getModifierSpan(contentVersion)]/*,
+        let elements: api.dom.Element[] = [this.getModifierSpan(contentVersion)]/*,
          commentSpan = this.getCommentSpan(contentVersion)*/;
 
         /*          Uncomment to enable comments in version history

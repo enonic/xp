@@ -2,7 +2,7 @@ module api.application {
 
 
     export class ApplicationBasedName implements api.Equitable {
-        static SEPARATOR = ":";
+        static SEPARATOR: string = ":";
 
         private refString: string;
 
@@ -34,7 +34,7 @@ module api.application {
                 return false;
             }
 
-            var other = <ApplicationBasedName>o;
+            let other = <ApplicationBasedName>o;
 
             if (!api.ObjectHelper.stringEquals(this.refString, other.refString)) {
                 return false;

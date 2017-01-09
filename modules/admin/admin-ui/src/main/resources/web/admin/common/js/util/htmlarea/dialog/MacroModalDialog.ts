@@ -5,7 +5,7 @@ module api.util.htmlarea.dialog {
     import Panel = api.ui.panel.Panel;
     import MacroDescriptor = api.macro.MacroDescriptor;
     import FormContext = api.form.FormContext;
-    import ApplicationKey = api.application.ApplicationKey
+    import ApplicationKey = api.application.ApplicationKey;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
 
     export class MacroModalDialog extends ModalDialog {
@@ -31,9 +31,9 @@ module api.util.htmlarea.dialog {
         }
 
         private makeMacroDockedPanel(): MacroDockedPanel {
-            var macroDockedPanel = new MacroDockedPanel();
+            let macroDockedPanel = new MacroDockedPanel();
 
-            var debouncedPreviewRenderedHandler: () => void = api.util.AppHelper.debounce(() => {
+            let debouncedPreviewRenderedHandler: () => void = api.util.AppHelper.debounce(() => {
                 this.centerMyself();
             }, 400, false);
 
@@ -56,7 +56,7 @@ module api.util.htmlarea.dialog {
         }
 
         private createMacroSelector(id: string): FormItem {
-            var loader = new api.macro.resource.MacrosLoader(),
+            let loader = new api.macro.resource.MacrosLoader(),
                 macroSelector = api.macro.MacroComboBox.create().setLoader(loader).setMaximumOccurrences(1).build(),
                 formItem = this.createFormItem(id, "Macro", Validators.required, api.util.StringHelper.EMPTY_STRING,
                     <api.dom.FormItemEl>macroSelector),
@@ -91,7 +91,7 @@ module api.util.htmlarea.dialog {
         }
 
         protected initializeActions() {
-            var submitAction = new api.ui.Action("Insert");
+            let submitAction = new api.ui.Action("Insert");
             this.setSubmitAction(submitAction);
 
             this.addAction(submitAction.onExecuted(() => {
@@ -106,7 +106,7 @@ module api.util.htmlarea.dialog {
 
         private insertMacroIntoTextArea(): void {
             this.macroDockedPanel.getMacroPreviewString().then((macroString: string) => {
-                var macro = this.callback(api.util.StringHelper.escapeHtml(macroString));
+                let macro = this.callback(api.util.StringHelper.escapeHtml(macroString));
                 this.close();
             }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
@@ -115,7 +115,7 @@ module api.util.htmlarea.dialog {
         }
 
         protected validate(): boolean {
-            var mainFormValid = super.validate(),
+            let mainFormValid = super.validate(),
                 configPanelValid = this.macroDockedPanel.validateMacroForm();
 
             return mainFormValid && configPanelValid;

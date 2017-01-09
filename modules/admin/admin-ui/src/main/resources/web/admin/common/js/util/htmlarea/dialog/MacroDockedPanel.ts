@@ -52,7 +52,7 @@ module api.util.htmlarea.dialog {
         public setContent(content: api.content.ContentSummary) {
             this.content = content;
         }
-        
+
         private createConfigurationPanel(): Panel {
             return this.configPanel = new Panel("macro-config-panel");
         }
@@ -106,7 +106,7 @@ module api.util.htmlarea.dialog {
         }
 
         public getMacroPreviewString(): wemQ.Promise<string> {
-            var deferred = wemQ.defer<string>();
+            let deferred = wemQ.defer<string>();
             if (this.previewResolved) {
                 deferred.resolve(this.macroPreview.getMacroString());
             } else {
@@ -125,24 +125,25 @@ module api.util.htmlarea.dialog {
 
         private renderPreviewWithMessage(message: string) {
             this.previewPanel.removeChildren();
-            var appendMe = new api.dom.DivEl("preview-message");
+            let appendMe = new api.dom.DivEl("preview-message");
             appendMe.setHtml(message);
-            this.previewPanel.appendChild(appendMe)
+            this.previewPanel.appendChild(appendMe);
         }
 
         private renderPreview(macroPreview: MacroPreview) {
-            if (macroPreview.getPageContributions().hasAtLeastOneScript()) { // render in iframe if there are scripts to be included for preview rendering
+            // render in iframe if there are scripts to be included for preview rendering
+            if (macroPreview.getPageContributions().hasAtLeastOneScript()) {
                 this.previewPanel.appendChild(this.makePreviewFrame(macroPreview));
             } else {
-                var appendMe = new api.dom.DivEl("preview-content");
+                let appendMe = new api.dom.DivEl("preview-content");
                 appendMe.setHtml(macroPreview.getHtml(), false);
-                this.previewPanel.appendChild(appendMe)
+                this.previewPanel.appendChild(appendMe);
                 this.notifyPanelRendered();
             }
         }
 
         private makePreviewFrame(macroPreview: MacroPreview): MacroPreviewFrame {
-            var previewFrame = new MacroPreviewFrame(macroPreview),
+            let previewFrame = new MacroPreviewFrame(macroPreview),
                 previewFrameRenderedHandler: () => void = () => {
                     this.notifyPanelRendered();
                 };
@@ -156,7 +157,7 @@ module api.util.htmlarea.dialog {
         }
 
         public validateMacroForm(): boolean {
-            var isValid = true,
+            let isValid = true,
                 form = <FormView>(this.configPanel.getFirstChild());
             if (!!form) {
                 isValid = form.validate(false).isValid();
@@ -177,13 +178,13 @@ module api.util.htmlarea.dialog {
             this.selectPanel(this.configPanel);
 
             if (!!macroDescriptor) {
-                var formView: FormView = new FormView(api.content.form.ContentFormContext.
+                let formView: FormView = new FormView(api.content.form.ContentFormContext.
                         create().
                         setPersistedContent(<api.content.Content>this.content).
                         build(),
                     macroDescriptor.getForm(), this.data);
 
-                this.renderConfigView(formView)
+                this.renderConfigView(formView);
             }
         }
 
@@ -217,7 +218,7 @@ module api.util.htmlarea.dialog {
         private notifyPanelRendered() {
             this.panelRenderedListeners.forEach((listener) => {
                 listener();
-            })
+            });
         }
     }
 
@@ -238,13 +239,13 @@ module api.util.htmlarea.dialog {
             this.setId(this.id);
             this.macroPreview = macroPreview;
 
-            this.initFrameContent(macroPreview)
+            this.initFrameContent(macroPreview);
         }
 
         private initFrameContent(macroPreview: MacroPreview) {
             this.onLoaded(() => {
 
-                var doc = this.getHTMLElement()["contentWindow"] || this.getHTMLElement()["contentDocument"];
+                let doc = this.getHTMLElement()["contentWindow"] || this.getHTMLElement()["contentDocument"];
                 if (doc.document) {
                     doc = doc.document;
                 }
@@ -271,9 +272,9 @@ module api.util.htmlarea.dialog {
         }
 
         private adjustFrameHeightOnContentsUpdate() {
-            var frameWindow = this.getHTMLElement()["contentWindow"];
+            let frameWindow = this.getHTMLElement()["contentWindow"];
             if (!!frameWindow) {
-                var observer = new MutationObserver(this.debouncedResizeHandler),
+                let observer = new MutationObserver(this.debouncedResizeHandler),
                     config = {attributes: true, childList: true, characterData: true};
 
                 observer.observe(frameWindow.document.body, config);
@@ -282,15 +283,14 @@ module api.util.htmlarea.dialog {
 
         private adjustFrameHeight() {
             try {
-                var frameWindow = this.getHTMLElement()["contentWindow"] || this.getHTMLElement()["contentDocument"],
+                let frameWindow = this.getHTMLElement()["contentWindow"] || this.getHTMLElement()["contentDocument"],
                     scrollHeight = frameWindow.document.body.scrollHeight,
                     maxFrameHeight = this.getMaxFrameHeight();
                 this.getEl().setHeightPx(scrollHeight > 150
                     ? scrollHeight > maxFrameHeight ? maxFrameHeight : scrollHeight + (this.isInstagramPreview() ? 18 : 0)
                     : wemjq("#" + this.id).contents().find('body').outerHeight());
                 this.notifyPreviewRendered();
-            } catch (error) {
-            }
+            } catch (error) { /* empty*/ }
         }
 
         private getMaxFrameHeight(): number {
@@ -298,7 +298,7 @@ module api.util.htmlarea.dialog {
         }
 
         private makeContentForPreviewFrame(macroPreview: MacroPreview): string {
-            var result = "";
+            let result = "";
             macroPreview.getPageContributions().getHeadBegin().forEach(script => result += script);
             macroPreview.getPageContributions().getHeadEnd().forEach(script => result += script);
             macroPreview.getPageContributions().getBodyBegin().forEach(script => result += script);
@@ -320,7 +320,7 @@ module api.util.htmlarea.dialog {
         private notifyPreviewRendered() {
             this.previewRenderedListeners.forEach((listener) => {
                 listener();
-            })
+            });
         }
     }
 }

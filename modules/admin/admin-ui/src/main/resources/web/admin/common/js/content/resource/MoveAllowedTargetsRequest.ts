@@ -15,9 +15,9 @@ module api.content.resource {
         private filterContentPaths: ContentPath[];
 
         protected createSearchExpression(): ConstraintExpr {
-            var searchExpr: ConstraintExpr = super.createSearchExpression();
+            let searchExpr: ConstraintExpr = super.createSearchExpression();
 
-            var forbiddenPathsExpr: ConstraintExpr = this.createChildPathsExpr();
+            let forbiddenPathsExpr: ConstraintExpr = this.createChildPathsExpr();
 
             return new LogicalExpr(searchExpr, LogicalOperator.AND, new NotExpr(forbiddenPathsExpr));
         }
@@ -48,7 +48,7 @@ module api.content.resource {
                 }
 
                 let pathExpr: ConstraintExpr = CompareExpr.like(new FieldExpr("_path"),
-                    ValueExpr.string("/content" + this.filterContentPaths[index].toString() + "/*"))
+                    ValueExpr.string("/content" + this.filterContentPaths[index].toString() + "/*"));
                 logicalExpr = LogicalExpr.or(logicalExpr, pathExpr);
             });
 

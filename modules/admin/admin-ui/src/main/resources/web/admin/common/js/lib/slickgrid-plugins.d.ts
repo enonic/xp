@@ -4,13 +4,17 @@ declare module Slick {
 
         constructor();
 
-        constructor( options:any );
+        constructor(options:any);
 
     }
 
     export class CheckboxSelectColumn<T extends Slick.SlickData> {
 
-        constructor( options:any );
+        constructor(options:any);
+
+        public init(grid: Grid<T>): void;
+
+        public destroy(): void;
 
         getColumnDefinition():Slick.Column<T>;
     }
@@ -19,9 +23,13 @@ declare module Slick {
 
         constructor(options: any);
 
-        onBeforeMoveRows(): Slick.Event<OnMoveRowsEventData>;
+        public init(grid: Grid<T>): void;
 
-        onMoveRows(): Slick.Event<OnMoveRowsEventData>;
+        public destroy(): void;
+
+        onBeforeMoveRows: Slick.Event<OnMoveRowsEventData>;
+
+        onMoveRows: Slick.Event<OnMoveRowsEventData>;
 
     }
 

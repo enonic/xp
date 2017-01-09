@@ -68,11 +68,11 @@ module api.content.event {
 
             if (event.getType() == NodeServerChangeType.DELETE && this.hasDraftBranchChanges(changes)) {
                 // content has already been deleted so no need to fetch summaries
-                var changeItems: ContentServerChangeItem[] = changes.reduce((total, change: ContentServerChange) => {
+                let changeItems: ContentServerChangeItem[] = changes.reduce((total, change: ContentServerChange) => {
                     return total.concat(change.getChangeItems());
                 }, []);
 
-                var deletedItems = changeItems.filter(d => d.getBranch() == 'draft'),
+                let deletedItems = changeItems.filter(d => d.getBranch() == 'draft'),
                     unpublishedItems = changeItems.filter(d => deletedItems.every(deleted => !api.ObjectHelper.equals(deleted.contentId,
                         d.contentId)));
 
@@ -134,24 +134,24 @@ module api.content.event {
             return changes.some((change: ContentServerChange) => {
                 return change.getChangeItems().some(changeItem => {
                     return changeItem.getBranch() == 'draft';
-                })
-            })
+                });
+            });
         }
 
         private extractContentPaths(changes: ContentServerChange[]): ContentPath[] {
-            var contentPaths: ContentPath[] = [];
+            let contentPaths: ContentPath[] = [];
 
             changes.forEach((change: ContentServerChange) => {
                 change.getChangeItems().forEach((changeItem: ContentServerChangeItem) => {
                     contentPaths.push(changeItem.getPath());
-                })
+                });
             });
 
             return contentPaths;
         }
 
         private extractNewContentPaths(changes: ContentServerChange[]): ContentPath[] {
-            var contentPaths: ContentPath[] = [];
+            let contentPaths: ContentPath[] = [];
 
             changes.forEach((change: ContentServerChange) => {
                 contentPaths = contentPaths.concat(change.getNewPaths());
@@ -161,12 +161,12 @@ module api.content.event {
         }
 
         private extractContentIds(changes: ContentServerChange[]): ContentId[] {
-            var contentIds: ContentId[] = [];
+            let contentIds: ContentId[] = [];
 
             changes.forEach((change: ContentServerChange) => {
                 change.getChangeItems().forEach((changeItem: ContentServerChangeItem) => {
                     contentIds.push(changeItem.getContentId());
-                })
+                });
             });
 
             return contentIds;
@@ -185,7 +185,7 @@ module api.content.event {
             }
             // TODO: refactor update event to contain multiple contents ?
             data.forEach((el) => {
-                new api.content.event.ContentUpdatedEvent(el.getContentSummary()).fire()
+                new api.content.event.ContentUpdatedEvent(el.getContentSummary()).fire();
             });
 
             this.notifyContentUpdated(data);
@@ -202,7 +202,7 @@ module api.content.event {
             if (ContentServerEventsHandler.debug) {
                 console.debug("ContentServerEventsHandler: deleted", changeItems);
             }
-            var contentDeletedEvent = new ContentDeletedEvent();
+            let contentDeletedEvent = new ContentDeletedEvent();
             changeItems.forEach((changeItem) => {
                 contentDeletedEvent.addItem(changeItem.getContentId(), changeItem.getPath(), changeItem.getBranch());
             });
@@ -215,7 +215,7 @@ module api.content.event {
             if (ContentServerEventsHandler.debug) {
                 console.debug("ContentServerEventsHandler: pending", data);
             }
-            var contentDeletedEvent = new ContentDeletedEvent();
+            let contentDeletedEvent = new ContentDeletedEvent();
 
             data.filter((el) => {
                 return !!el;        // not sure if this check is necessary

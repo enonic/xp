@@ -8,8 +8,9 @@ module api.form.inputtype.support {
     import ValueTypes = api.data.ValueTypes;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
     import FocusSwitchEvent = api.ui.FocusSwitchEvent;
+    import InputTypeView = api.form.inputtype.InputTypeView;
 
-    export class BaseInputTypeManagingAdd<RAW_VALUE_TYPE> extends api.dom.DivEl implements api.form.inputtype.InputTypeView<RAW_VALUE_TYPE> {
+    export class BaseInputTypeManagingAdd<RAW_VALUE_TYPE> extends api.dom.DivEl implements InputTypeView<RAW_VALUE_TYPE> {
 
         private inputValidityChangedListeners: {(event: api.form.inputtype.InputValidityChangedEvent) : void}[] = [];
 
@@ -57,7 +58,7 @@ module api.form.inputtype.support {
         }
 
         availableSizeChanged() {
-
+            // must be implemented by children
         }
 
         getElement(): api.dom.Element {
@@ -136,14 +137,14 @@ module api.form.inputtype.support {
 
         private ensureOccurrenceLimits(propertyArray: PropertyArray) {
 
-            var max = this.input.getOccurrences().getMaximum(),
+            let max = this.input.getOccurrences().getMaximum(),
                 actual = propertyArray.getSize();
 
             if (max > 0 && max < actual) {
                 if (BaseInputTypeManagingAdd.debug) {
                     console.info(`BaseInputTypeManagingAdd: expected max ${max} occurrences, but found ${actual}, dropping extra`);
                 }
-                for (var i = actual - 1; i > max - 1; i--) {
+                for (let i = actual - 1; i > max - 1; i--) {
                     propertyArray.remove(i);
                 }
             }
@@ -153,24 +154,21 @@ module api.form.inputtype.support {
             return true;
         }
 
-        /**
-         * Override when needed.
-         */
         displayValidationErrors(value: boolean) {
-
+            // must be implemented by children
         }
 
         validate(silent: boolean = true,
                  rec: api.form.inputtype.InputValidationRecording = null): api.form.inputtype.InputValidationRecording {
 
-            var recording = rec || new api.form.inputtype.InputValidationRecording();
+            let recording = rec || new api.form.inputtype.InputValidationRecording();
 
             if (this.layoutInProgress) {
                 this.previousValidationRecording = recording;
                 return recording;
             }
 
-            var numberOfValids = this.getNumberOfValids();
+            let numberOfValids = this.getNumberOfValids();
 
             if (this.input.getOccurrences().minimumBreached(numberOfValids)) {
                 recording.setBreaksMinimumOccurrences(true);
@@ -212,7 +210,7 @@ module api.form.inputtype.support {
         unValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
             this.inputValueChangedListeners = this.inputValueChangedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         protected notifyValueChanged(event: api.form.inputtype.ValueChangedEvent) {

@@ -42,7 +42,7 @@ export class ContentItemViewPanel extends api.app.view.ItemViewPanel<api.content
 
         this.actions = [this.editAction, this.deleteAction, this.closeAction];
 
-        var toolbar = new ContentItemViewToolbar({
+        let toolbar = new ContentItemViewToolbar({
             editAction: this.editAction,
             deleteAction: this.deleteAction
         });

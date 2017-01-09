@@ -201,7 +201,7 @@ module api.content {
                 return false;
             }
 
-            var other = <ContentSummary>o;
+            let other = <ContentSummary>o;
 
             if (!api.ObjectHelper.stringEquals(this.id, other.id)) {
                 return false;
@@ -277,7 +277,7 @@ module api.content {
         }
 
         static fromJsonArray(jsonArray: api.content.json.ContentSummaryJson[]): ContentSummary[] {
-            var array: ContentSummary[] = [];
+            let array: ContentSummary[] = [];
             jsonArray.forEach((json: api.content.json.ContentSummaryJson) => {
                 array.push(ContentSummary.fromJson(json));
             });

@@ -2,7 +2,7 @@ module api.content.resource.result {
 
     export class ContentsExistResult {
 
-        private contentsExistMap: Object = {}
+        private contentsExistMap: Object = {};
 
         constructor(json: api.content.json.ContentsExistJson) {
             json.contentsExistJson.forEach(item => {

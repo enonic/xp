@@ -42,7 +42,7 @@ module api.content.attachment {
                 return false;
             }
 
-            var other = <Attachment>o;
+            let other = <Attachment>o;
 
             if (!api.ObjectHelper.equals(this.name, other.name)) {
                 return false;

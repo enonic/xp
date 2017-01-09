@@ -1,6 +1,6 @@
 import "../../api.ts";
 import {MarketAppPanel} from "./view/MarketAppPanel";
-import {UploadAppPanel} from "./view/UploadAppPanel";
+import {ApplicationInput} from "./view/ApplicationInput";
 
 import ApplicationKey = api.application.ApplicationKey;
 import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
@@ -12,22 +12,42 @@ import DockedPanel = api.ui.panel.DockedPanel;
 
 export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
-    private dockedPanel: DockedPanel;
-
-    private uploadAppPanel: UploadAppPanel;
-
     private marketAppPanel: MarketAppPanel;
 
     private dropzoneContainer: api.ui.uploader.DropzoneContainer;
 
-    private onMarketLoaded;
+    private onMarketLoaded: () => void;
+
+    private applicationInput: ApplicationInput;
+
+    private statusMessage: api.dom.DivEl;
+
+    private clearButton: api.dom.ButtonEl;
 
     constructor() {
         super("Install Application");
 
         this.addClass("install-application-dialog hidden");
 
-        this.onMarketLoaded = this.centerMyself.bind(this);
+        let loadedAppsAtLeastOnce = false;
+
+        this.onMarketLoaded = api.util.AppHelper.debounce((() => {
+            if (this.marketAppPanel.getMarketAppsTreeGrid().getGrid().getDataView().getLength() == 0) {
+                this.statusMessage.addClass("empty");
+                this.statusMessage.setHtml("No applications found");
+            } else {
+                if (!loadedAppsAtLeastOnce) {
+                    this.centerMyself();
+                }
+                this.statusMessage.removeClass("empty");
+                loadedAppsAtLeastOnce = true;
+            }
+
+            this.statusMessage.addClass("loaded");
+        }).bind(this), 150, false);
+
+        this.statusMessage = new api.dom.DivEl("status-message");
+        this.statusMessage.setHtml("Loading application list");
 
         api.dom.Body.get().appendChild(this);
     }
@@ -39,53 +59,69 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
     doRender(): Q.Promise<boolean> {
         return super.doRender().then((rendered) => {
 
+            this.applicationInput =
+                new ApplicationInput(this.getCancelAction(), 'large').setPlaceholder("Search Enonic Market, paste url or upload directly");
+            this.onShown(() => {
+                this.applicationInput.giveFocus();
+                this.clearButton.addClass("hidden");
+            });
+
+            this.applicationInput.onKeyUp((event: KeyboardEvent) => {
+                if (event.keyCode === 27) {
+                    this.getCancelAction().execute();
+                }
+            });
+
+            this.applicationInput.onTextValueChanged(() => {
+                this.clearButton.toggleClass("hidden", api.util.StringHelper.isEmpty(this.applicationInput.getValue()));
+            });
+
+            this.applicationInput.onAppInstallFinished(() => {
+                this.clearButton.toggleClass("hidden", api.util.StringHelper.isEmpty(this.applicationInput.getValue()));
+            });
+
+            this.initUploaderListeners();
+
+            this.dropzoneContainer = new api.ui.uploader.DropzoneContainer(true);
+            this.dropzoneContainer.hide();
+            this.appendChild(this.dropzoneContainer);
+
+            this.applicationInput.getUploader().addDropzone(this.dropzoneContainer.getDropzone().getId());
+
+            this.initDragAndDropUploaderEvents();
+
             if (!this.marketAppPanel) {
-                this.marketAppPanel = new MarketAppPanel("market-app-panel");
+                this.marketAppPanel = new MarketAppPanel(this.applicationInput, "market-app-panel");
             }
 
-            if (!this.uploadAppPanel) {
-                this.uploadAppPanel = new UploadAppPanel(this.getCancelAction(), "upload-app-panel");
-                this.uploadAppPanel.onRendered((event) => {
-                    this.uploadAppPanel.getApplicationInput().onKeyUp((event: KeyboardEvent) => {
-                        if (event.keyCode === 27) {
-                            this.getCancelAction().execute();
-                        }
-                    });
-
-                    this.initUploaderListeners(this.uploadAppPanel);
-
-                    this.dropzoneContainer = new api.ui.uploader.DropzoneContainer(true);
-                    this.dropzoneContainer.hide();
-                    this.appendChild(this.dropzoneContainer);
-
-                    this.uploadAppPanel.getApplicationInput().getUploader().addDropzone(this.dropzoneContainer.getDropzone().getId());
-
-                    this.initDragAndDropUploaderEvents();
-                });
-            }
-
-            if (!this.dockedPanel) {
-                this.dockedPanel = new DockedPanel();
-                this.dockedPanel.addClass("install-app-docked-panel");
-                this.dockedPanel.addItem("Enonic Market", true, this.marketAppPanel);
-                this.dockedPanel.addItem("Upload", true, this.uploadAppPanel);
-
-                this.dockedPanel.getNavigator().onNavigationItemSelected(() => this.centerMyself());
-
-                this.appendChildToContentPanel(this.dockedPanel);
-            }
+            this.appendChildToContentPanel(this.applicationInput);
+            this.appendChildToContentPanel(this.statusMessage);
+            this.appendChildToContentPanel(this.clearButton = this.createClearFilterButton());
+            this.appendChildToContentPanel(this.marketAppPanel);
 
             return rendered;
         });
+    }
+
+    public createClearFilterButton(): api.dom.ButtonEl {
+        let clearButton = new api.dom.ButtonEl();
+        clearButton.addClass("clear-button hidden");
+        clearButton.onClicked(() => {
+            this.applicationInput.reset();
+            this.marketAppPanel.getMarketAppsTreeGrid().refresh();
+            clearButton.addClass("hidden");
+            this.applicationInput.getTextInput().giveFocus();
+        });
+        return clearButton;
     }
 
     // in order to toggle appropriate handlers during drag event
     // we catch drag enter on this element and trigger uploader to appear,
     // then catch drag leave on uploader's dropzone to get back to previous state
     private initDragAndDropUploaderEvents() {
-        var dragOverEl;
+        let dragOverEl;
         this.onDragEnter((event: DragEvent) => {
-            var target = <HTMLElement> event.target;
+            let target = <HTMLElement> event.target;
 
             if (!!dragOverEl || dragOverEl == this.getHTMLElement()) {
                 this.dropzoneContainer.show();
@@ -93,20 +129,20 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
             dragOverEl = target;
         });
 
-        this.uploadAppPanel.getApplicationInput().getUploader().onDropzoneDragLeave(() => this.dropzoneContainer.hide());
-        this.uploadAppPanel.getApplicationInput().getUploader().onDropzoneDrop(() => this.dropzoneContainer.hide());
+        this.applicationInput.getUploader().onDropzoneDragLeave(() => this.dropzoneContainer.hide());
+        this.applicationInput.getUploader().onDropzoneDrop(() => this.dropzoneContainer.hide());
     }
 
-    private initUploaderListeners(uploadAppPanel: UploadAppPanel) {
+    private initUploaderListeners() {
 
         let uploadFailedHandler = (event: FileUploadFailedEvent<Application>, uploader: ApplicationUploaderEl) => {
-            uploadAppPanel.getApplicationInput().showFailure(
+            this.applicationInput.showFailure(
                 uploader.getFailure());
             this.resetFileInputWithUploader();
         };
 
-        uploadAppPanel.getApplicationInput().onUploadFailed((event) => {
-            uploadFailedHandler(event, uploadAppPanel.getApplicationInput().getUploader())
+        this.applicationInput.onUploadFailed((event) => {
+            uploadFailedHandler(event, this.applicationInput.getUploader());
         });
 
         let uploadStartedHandler = (event: FileUploadStartedEvent<Application>) => {
@@ -114,7 +150,7 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
             this.close();
         };
 
-        this.uploadAppPanel.getApplicationInput().onUploadStarted(uploadStartedHandler);
+        this.applicationInput.onUploadStarted(uploadStartedHandler);
     }
 
     show() {
@@ -127,17 +163,19 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
     hide() {
         this.marketAppPanel.getMarketAppsTreeGrid().unLoaded(this.onMarketLoaded);
+        this.statusMessage.removeClass("loaded");
         super.hide();
         this.addClass("hidden");
         this.removeClass("animated");
+        this.applicationInput.reset();
     }
 
     close() {
-        this.uploadAppPanel.getApplicationInput().reset();
+        this.applicationInput.reset();
         super.close();
     }
 
     private resetFileInputWithUploader() {
-        this.uploadAppPanel.getApplicationInput().reset();
+        this.applicationInput.reset();
     }
 }

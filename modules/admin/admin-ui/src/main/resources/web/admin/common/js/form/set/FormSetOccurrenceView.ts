@@ -23,13 +23,13 @@ module api.form {
 
         protected occurrenceContainerClassName: string;
 
-        constructor(className, formItemOccurrence: FormItemOccurrence<FormItemOccurrenceView>) {
+        constructor(className: string, formItemOccurrence: FormItemOccurrence<FormItemOccurrenceView>) {
             super(className, formItemOccurrence);
         }
 
         public layout(validate: boolean = true): wemQ.Promise<void> {
 
-            var deferred = wemQ.defer<void>();
+            let deferred = wemQ.defer<void>();
 
             this.removeChildren();
 
@@ -64,7 +64,7 @@ module api.form {
             this.appendChild(this.formSetOccurrencesContainer);
 
 
-            var layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.setFormItems(this.getFormItems()).setParentElement(
+            let layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.setFormItems(this.getFormItems()).setParentElement(
                 this.formSetOccurrencesContainer).setParent(this).layout(this.propertySet, validate);
 
             layoutPromise.then((formItemViews: FormItemView[]) => {
@@ -86,6 +86,7 @@ module api.form {
         }
 
         protected initValidationMessageBlock() {
+            // must be implemented by children
         }
 
         getDataPath(): api.data.PropertyPath {
@@ -94,10 +95,10 @@ module api.form {
 
         validate(silent: boolean = true): ValidationRecording {
 
-            var allRecordings = new ValidationRecording();
+            let allRecordings = new ValidationRecording();
 
             this.formItemViews.forEach((formItemView: FormItemView) => {
-                var currRecording = formItemView.validate(silent);
+                let currRecording = formItemView.validate(silent);
                 allRecordings.flatten(currRecording);
             });
 
@@ -113,6 +114,7 @@ module api.form {
         }
 
         protected extraValidation(validationRecording: ValidationRecording) {
+            // must be implemented by children
         }
 
         protected subscribeOnItemEvents() {
@@ -133,7 +135,7 @@ module api.form {
         }
 
         update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
-            var set = propertyArray.getSet(this.formItemOccurrence.getIndex());
+            let set = propertyArray.getSet(this.formItemOccurrence.getIndex());
             if (!set) {
                 set = propertyArray.addSet();
             }
@@ -144,7 +146,7 @@ module api.form {
 
         hasValidUserInput(): boolean {
 
-            var result = true;
+            let result = true;
             this.formItemViews.forEach((formItemView: FormItemView) => {
                 if (!formItemView.hasValidUserInput()) {
                     result = false;
@@ -193,7 +195,7 @@ module api.form {
         }
 
         giveFocus() {
-            var focusGiven = false;
+            let focusGiven = false;
             this.getFormItemViews().forEach((formItemView: FormItemView) => {
                 if (!focusGiven && formItemView.giveFocus()) {
                     focusGiven = true;

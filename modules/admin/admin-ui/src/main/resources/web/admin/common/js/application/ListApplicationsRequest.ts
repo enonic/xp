@@ -15,7 +15,7 @@ module api.application {
         getParams(): Object {
             return {
                 "query": this.searchQuery
-            }
+            };
         }
 
         setSearchQuery(query: string): ListApplicationsRequest {

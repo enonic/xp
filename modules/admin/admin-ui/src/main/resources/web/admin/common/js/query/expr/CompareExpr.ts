@@ -31,7 +31,7 @@ module api.query.expr {
         }
 
         toString() {
-            var result: string = this.field.toString();
+            let result: string = this.field.toString();
             result = result.concat(" ");
             result = result.concat(this.operatorAsString());
             result = result.concat(" ");
@@ -39,7 +39,7 @@ module api.query.expr {
             if (this.allowMultipleValues()) {
                 result = result.concat("(");
 
-                var sub = [];
+                let sub = [];
                 this.values.forEach((expr: ValueExpr) => {
                     sub.push(expr.toString());
                 });

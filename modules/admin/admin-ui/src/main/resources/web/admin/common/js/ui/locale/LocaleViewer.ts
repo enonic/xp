@@ -8,7 +8,7 @@ module api.ui.locale {
 
         private removeClickedListeners: {(event: MouseEvent):void}[] = [];
 
-        private displayNamePattern = '{0} ({1})';
+        private displayNamePattern: string = '{0} ({1})';
 
         constructor() {
             super();
@@ -33,13 +33,13 @@ module api.ui.locale {
         unRemoveClicked(listener: (event: MouseEvent) => void) {
             this.removeClickedListeners = this.removeClickedListeners.filter((current) => {
                 return current !== listener;
-            })
+            });
         }
 
         notifyRemoveClicked(event: MouseEvent) {
             this.removeClickedListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
     }
 }

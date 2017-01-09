@@ -2,11 +2,11 @@ module api.ui {
 
     export class DragHelper extends api.dom.DivEl {
 
-        public static CURSOR_AT = {left: -10, top: -15};
+        public static CURSOR_AT: {left: number, top: number} = {left: -10, top: -15};
 
         private static instance: DragHelper;
 
-        public static debug = false;
+        public static debug: boolean = false;
 
         public static get(): DragHelper {
             if (!DragHelper.instance) {
@@ -29,7 +29,7 @@ module api.ui {
         }
 
         public setItemName(itemName: string) {
-            var p = new api.dom.PEl();
+            let p = new api.dom.PEl();
             p.setClass("drag-item-name");
             p.setHtml(itemName);
 

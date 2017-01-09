@@ -16,14 +16,14 @@ export class AttachmentsWidgetItemView extends WidgetItemView {
 
     private placeholder: api.dom.SpanEl;
 
-    public static debug = false;
+    public static debug: boolean = false;
 
     constructor() {
         super('attachments-widget-item-view');
     }
 
     public setContentAndUpdateView(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
-        var content = item.getContentSummary();
+        let content = item.getContentSummary();
         if (AttachmentsWidgetItemView.debug) {
             console.debug('AttachmentsWidgetItemView.setContent: ', content);
         }
@@ -63,10 +63,10 @@ export class AttachmentsWidgetItemView extends WidgetItemView {
                 if (attachments) {
                     this.list = new api.dom.UlEl('attachment-list');
 
-                    var contentId = this.content.getContentId();
+                    let contentId = this.content.getContentId();
                     attachments.forEach((attachment: Attachment) => {
-                        var attachmentContainer = new api.dom.LiEl('attachment-container');
-                        var link = this.createLinkEl(contentId, attachment.getName());
+                        let attachmentContainer = new api.dom.LiEl('attachment-container');
+                        let link = this.createLinkEl(contentId, attachment.getName());
                         attachmentContainer.appendChild(link);
                         this.list.appendChild(attachmentContainer);
 
@@ -84,9 +84,9 @@ export class AttachmentsWidgetItemView extends WidgetItemView {
     }
 
     private createLinkEl(contentId: ContentId, attachmentName: AttachmentName): api.dom.AEl {
-        var name = encodeURIComponent(attachmentName.toString());
-        var url = `content/media/${contentId.toString()}/${name}`;
-        var link = new api.dom.AEl().setUrl(api.util.UriHelper.getRestUri(url), '_blank');
+        let name = encodeURIComponent(attachmentName.toString());
+        let url = `content/media/${contentId.toString()}/${name}`;
+        let link = new api.dom.AEl().setUrl(api.util.UriHelper.getRestUri(url), '_blank');
         link.setHtml(attachmentName.toString());
         return link;
     }

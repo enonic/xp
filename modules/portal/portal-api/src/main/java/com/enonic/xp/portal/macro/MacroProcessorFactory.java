@@ -5,7 +5,7 @@ import com.google.common.annotations.Beta;
 import com.enonic.xp.resource.ResourceKey;
 
 @Beta
-public interface MacroProcessorScriptFactory
+public interface MacroProcessorFactory
 {
     MacroProcessor fromDir( ResourceKey dir );
 

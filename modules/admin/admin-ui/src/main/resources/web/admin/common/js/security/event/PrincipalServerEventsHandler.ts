@@ -42,9 +42,6 @@ module api.security.event {
 
             if (event.getType() == NodeServerChangeType.DELETE) {
                this.handleContentDeleted(this.extractContentPaths([event.getNodeChange()]));
-
-            } else {
-
             }
         }
 
@@ -52,7 +49,7 @@ module api.security.event {
             if (PrincipalServerEventsHandler.debug) {
                 console.debug("ContentServerEventsHandler: deleted", oldPaths);
             }
-            var contentDeletedEvent = new PrincipalDeletedEvent();
+            let contentDeletedEvent = new PrincipalDeletedEvent();
 
             oldPaths.filter((path) => {
                 return !!path;        // not sure if this check is necessary

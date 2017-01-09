@@ -6,7 +6,7 @@ module api.content {
 
         constructor(value: string) {
             if (!ContentId.isValidContentId(value)) {
-                throw new Error("Invalid content id: " + value)
+                throw new Error("Invalid content id: " + value);
             }
             this.value = value;
         }
@@ -21,7 +21,7 @@ module api.content {
                 return false;
             }
 
-            var other = <ContentId>o;
+            let other = <ContentId>o;
 
             if (!api.ObjectHelper.stringEquals(this.value, other.value)) {
                 return false;

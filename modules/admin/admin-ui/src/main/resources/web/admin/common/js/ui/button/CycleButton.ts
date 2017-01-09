@@ -37,14 +37,14 @@ module api.ui.button {
         }
 
         private setAndShowTitle() {
-            var title = this.actionList[this.active].getTitle();
+            let title = this.actionList[this.active].getTitle();
             if (title) {
                 this.setTitle(title);
             }
         }
 
         private updateActive() {
-            var name, prevName;
+            let name, prevName;
 
             prevName = this.actionList[this.active] ? this.actionList[this.active].getLabel().toLowerCase() : "";
 
@@ -64,7 +64,7 @@ module api.ui.button {
         }
 
         executePrevAction() {
-            var prev = this.active - 1;
+            let prev = this.active - 1;
             prev = prev < 0 ? this.actionList.length - 1 : prev;
 
             if (this.actionList.length > 0) {
@@ -73,7 +73,7 @@ module api.ui.button {
         }
 
         selectActiveAction(action: Action) {
-            var i, l = this.actionList.length;
+            let i, l = this.actionList.length;
             for (i = 0; i < l; i++) {
                 if (this.actionList[i] === action) {
                     this.active = i;

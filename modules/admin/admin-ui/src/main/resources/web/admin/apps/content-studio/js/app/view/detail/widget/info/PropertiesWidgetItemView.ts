@@ -13,14 +13,14 @@ export class PropertiesWidgetItemView extends WidgetItemView {
 
     private list: api.dom.DlEl;
 
-    public static debug = false;
+    public static debug: boolean = false;
 
     constructor() {
         super("properties-widget-item-view");
     }
 
     public setContentAndUpdateView(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
-        var content = item.getContentSummary();
+        let content = item.getContentSummary();
         if (!content.equals(this.content)) {
             if (!this.content) {
                 this.initListeners();
@@ -38,12 +38,12 @@ export class PropertiesWidgetItemView extends WidgetItemView {
         let layoutOnPublishStateChange = (contents: ContentSummaryAndCompareStatus[]) => {
             let thisContentId = this.content.getId();
 
-            let content: ContentSummaryAndCompareStatus = contents.filter((content) => {
+            let contentSummary: ContentSummaryAndCompareStatus = contents.filter((content) => {
                 return thisContentId == content.getId();
             })[0];
 
-            if (!!content) {
-                this.setContentAndUpdateView(content);
+            if (contentSummary) {
+                this.setContentAndUpdateView(contentSummary);
             }
         };
 
@@ -62,7 +62,7 @@ export class PropertiesWidgetItemView extends WidgetItemView {
 
         return super.layout().then(() => {
             if (this.content != undefined) {
-                var applicationKey = this.content.getType().getApplicationKey();
+                let applicationKey = this.content.getType().getApplicationKey();
                 if (!applicationKey.isSystemReserved()) {
                     return new api.application.GetApplicationRequest(applicationKey).sendAndParse().then((application: Application) => {
                         this.layoutApplication(application);
@@ -83,7 +83,7 @@ export class PropertiesWidgetItemView extends WidgetItemView {
         }
         this.list = new api.dom.DlEl();
 
-        var strings: FieldString[];
+        let strings: FieldString[];
 
         strings = [
             new FieldString().setName("Type").setValue(this.content.getType().getLocalName()
@@ -138,8 +138,8 @@ class FieldString {
     }
 
     public layout(parentEl: api.dom.Element) {
-        var valueEl = new api.dom.DdDtEl("dt").setHtml(this.value);
-        var spanEl = new api.dom.DdDtEl("dd").setHtml(this.fieldName + ": ");
+        let valueEl = new api.dom.DdDtEl("dt").setHtml(this.value);
+        let spanEl = new api.dom.DdDtEl("dd").setHtml(this.fieldName + ": ");
         parentEl.appendChildren(spanEl, valueEl);
     }
 
