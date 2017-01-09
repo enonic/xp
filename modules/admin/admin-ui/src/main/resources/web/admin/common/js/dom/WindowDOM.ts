@@ -58,6 +58,14 @@ module api.dom {
             return parent.api.dom.WindowDOM.get();
         }
 
+        isInIFrame(): boolean {
+            return window.self !== window.top;
+        }
+
+        getFrameElement(): HTMLElement {
+            return this.el.frameElement;
+        }
+
         getHTMLElement(): HTMLElement {
             return this.el;
         }
