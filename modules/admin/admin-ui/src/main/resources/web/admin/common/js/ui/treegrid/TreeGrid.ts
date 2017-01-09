@@ -282,6 +282,9 @@ module api.ui.treegrid {
                     keyBindings = keyBindings.concat([
                         new KeyBinding('up', () => {
                             if (this.isActive()) {
+                                if (this.contextMenu) {
+                                    this.contextMenu.hide();
+                                }
                                 if (this.gridOptions.isMultipleSelectionDisabled()) {
                                     this.scrollToRow(this.grid.moveSelectedUp());
                                 }
@@ -292,6 +295,9 @@ module api.ui.treegrid {
                         }),
                         new KeyBinding('down', () => {
                             if (this.isActive()) {
+                                if (this.contextMenu) {
+                                    this.contextMenu.hide();
+                                }
                                 if (this.gridOptions.isMultipleSelectionDisabled()) {
                                     this.scrollToRow(this.grid.moveSelectedDown());
                                 }
@@ -306,6 +312,9 @@ module api.ui.treegrid {
                                 return;
                             }
 
+                            if (this.contextMenu) {
+                                this.contextMenu.hide();
+                            }
                             let node = this.gridData.getItem(selected[0]) || this.highlightedNode;
                             if (node && this.isActive()) {
                                 if (node.isExpanded()) {
@@ -335,6 +344,9 @@ module api.ui.treegrid {
                                 return;
                             }
 
+                            if (this.contextMenu) {
+                                this.contextMenu.hide();
+                            }
                             let node = this.gridData.getItem(selected[0]) || this.highlightedNode;
                             if (node && this.hasChildren(node.getData())
                                 && !node.isExpanded() && this.isActive()) {
@@ -349,8 +361,23 @@ module api.ui.treegrid {
                             }
 
                         }),
+                        new KeyBinding('mod+a', (event: ExtendedKeyboardEvent) => {
+                            let selected = this.grid.getSelectedRows();
+                            if (selected.length === this.gridData.getLength()) {
+                                this.deselectAll();
+                            }
+                            else {
+                                this.selectAll();
+                            }
+
+                            event.preventDefault();
+                            event.stopImmediatePropagation();
+                        }),
                         new KeyBinding('space', () => {
-                            this.deselectAll();
+                            if (this.highlightedNode) {
+                                let row = this.gridData.getRowById(this.highlightedNode.getId());
+                                this.grid.toggleRow(row);
+                            }
                         })
                     ]);
 
@@ -412,7 +439,7 @@ module api.ui.treegrid {
         private navigateDown() {
             let selectedIndex = this.highlightedNode ? this.gridData.getRowById(this.highlightedNode.getId()) : -1;
 
-            if (this.gridData.getItems().length > 0 && selectedIndex < this.gridData.getLength() - 1) {
+            if (this.gridData.getLength() > 0 && selectedIndex < this.gridData.getLength() - 1) {
                 this.unselectAllRows();
                 selectedIndex++;
                 this.highlightRowByNode(this.gridData.getItem(selectedIndex));
