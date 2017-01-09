@@ -54,25 +54,15 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
 
         this.handleGlobalEvents();
-
-        let highlightingChangedDebouncedHandler = api.util.AppHelper.debounce(
-            (node: TreeNode<ContentSummaryAndCompareStatus>) => {
-
-                if (node) {
-                    let browseItem: ContentBrowseItem = this.treeNodesToBrowseItems([node])[0];
-                    let previewHandler = this.getBrowseActions().getPreviewHandler();
-                    previewHandler.checkIfItemIsRenderable(browseItem).then(() => {
-                        this.getBrowseItemPanel().togglePreviewForItem(browseItem);
-                    })
-                }
-                else {
-                    this.getBrowseItemPanel().togglePreviewForItem();
-                }
-            }, 200, false);
-
-        this.treeGrid.onHighlightingChanged(highlightingChangedDebouncedHandler);
     }
 
+    protected checkIfItemIsRenderable(browseItem: ContentBrowseItem): wemQ.Promise<any> {
+        let previewHandler = this.getBrowseActions().getPreviewHandler();
+        return previewHandler.checkIfItemIsRenderable(browseItem).then(() => {
+            this.getBrowseItemPanel().togglePreviewForItem(browseItem);
+        })
+    }
+    
     private getBrowseActions(): ContentTreeGridActions {
         return <ContentTreeGridActions>this.treeGrid.getContextMenu().getActions();
     }

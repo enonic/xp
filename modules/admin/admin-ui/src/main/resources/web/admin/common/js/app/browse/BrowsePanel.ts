@@ -5,6 +5,7 @@ module api.app.browse {
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import TreeNode = api.ui.treegrid.TreeNode;
     import ActionButton = api.ui.button.ActionButton;
+    import BrowseItem = api.app.browse.BrowseItem;
 
     export class BrowsePanel<M extends api.Equitable> extends api.ui.panel.Panel implements api.ui.ActionContainer {
 
@@ -45,18 +46,24 @@ module api.app.browse {
             
             let selectionChangedDebouncedHandler = (currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[], highlighted: boolean) => {
                 let browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(fullSelection);
-                let changes = this.browseItemPanel.setItems(browseItems, true);
+                let changes = this. getBrowseItemPanel().setItems(browseItems, true);
                 this.treeGrid.getContextMenu().getActions()
-                    .updateActionsEnabledState(this.browseItemPanel.getItems(), changes)
+                    .updateActionsEnabledState(this.getBrowseItemPanel().getItems(), changes)
                     .then(() => {
                         if (!highlighted) {
-                            this.browseItemPanel.updateDisplayedPanel();
+                            this. getBrowseItemPanel().updateDisplayedPanel();
                         }
                     }).catch(api.DefaultErrorHandler.handle);
                 };
 
             this.treeGrid.onSelectionChanged(selectionChangedDebouncedHandler);
 
+            let highlightingChangedDebouncedHandler = api.util.AppHelper.debounce(((node: TreeNode<Object>) => {
+                this.onHighlightingChanged(node);
+            }).bind(this), 200, false);
+
+            this.treeGrid.onHighlightingChanged(highlightingChangedDebouncedHandler);
+            
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 this.checkFilterPanelToBeShownFullScreen(item);
 
@@ -75,6 +82,26 @@ module api.app.browse {
             });
         }
 
+        protected checkIfItemIsRenderable(browseItem: BrowseItem<M>): wemQ.Promise<boolean> {
+            let deferred = wemQ.defer<boolean>();
+
+            deferred.resolve(true);
+
+            return deferred.promise;
+        }
+        
+        private onHighlightingChanged(node: TreeNode<Object>) {
+            if (node) {
+                let browseItem: BrowseItem<M> = this.treeNodesToBrowseItems([node])[0];
+                this.checkIfItemIsRenderable(browseItem).then(() => {
+                    this.getBrowseItemPanel().togglePreviewForItem(browseItem);
+                })
+            }
+            else {
+                this.getBrowseItemPanel().togglePreviewForItem();
+            }
+        }
+        
         protected createToolbar(): api.ui.toolbar.Toolbar {
             throw "Must be implemented by inheritors";
         }
