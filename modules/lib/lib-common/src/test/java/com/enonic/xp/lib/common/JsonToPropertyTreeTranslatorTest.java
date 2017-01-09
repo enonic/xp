@@ -1,4 +1,4 @@
-package com.enonic.xp.json;
+package com.enonic.xp.lib.common;
 
 import java.net.URL;
 
@@ -13,7 +13,7 @@ import com.enonic.xp.data.ValueTypes;
 
 import static org.junit.Assert.*;
 
-public class JsonToPropertyTreeTranslator2Test
+public class JsonToPropertyTreeTranslatorTest
 {
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -22,7 +22,7 @@ public class JsonToPropertyTreeTranslator2Test
         throws Exception
     {
         final JsonNode node = loadJson( "allInputTypes" );
-        final PropertyTree data = JsonToPropertyTreeTranslator2.translate( node );
+        final PropertyTree data = JsonToPropertyTreeTranslator.translate( node );
 
         final Property media = data.getProperty( "media" );
         assertNotNull( media );
@@ -35,7 +35,7 @@ public class JsonToPropertyTreeTranslator2Test
     {
         final JsonNode node = loadJson( "stringArray" );
 
-        final PropertyTree data = JsonToPropertyTreeTranslator2.translate( node );
+        final PropertyTree data = JsonToPropertyTreeTranslator.translate( node );
 
         final Property myArray = data.getProperty( "stringArray" );
         assertNotNull( myArray );

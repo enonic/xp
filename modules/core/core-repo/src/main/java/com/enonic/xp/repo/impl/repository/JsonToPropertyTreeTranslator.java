@@ -1,4 +1,4 @@
-package com.enonic.xp.json;
+package com.enonic.xp.repo.impl.repository;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -10,9 +10,9 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 
-public final class JsonToPropertyTreeTranslator2
+final class JsonToPropertyTreeTranslator
 {
-    public static PropertyTree translate( final JsonNode json )
+    static PropertyTree translate( final JsonNode json )
     {
         final PropertyTree propertyTree = new PropertyTree();
         traverse( json, propertyTree.getRoot() );

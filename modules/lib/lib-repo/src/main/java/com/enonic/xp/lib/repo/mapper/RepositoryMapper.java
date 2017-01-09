@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexType;
-import com.enonic.xp.json.JsonToPropertyTreeTranslator2;
+import com.enonic.xp.lib.common.JsonToPropertyTreeTranslator;
 import com.enonic.xp.repository.IndexDefinition;
 import com.enonic.xp.repository.IndexDefinitions;
 import com.enonic.xp.repository.Repository;
@@ -16,7 +16,7 @@ import com.enonic.xp.script.serializer.MapSerializable;
 public class RepositoryMapper
     implements MapSerializable
 {
-    private Repository repository;
+    private final Repository repository;
 
     public RepositoryMapper( final Repository repository )
     {
@@ -60,7 +60,6 @@ public class RepositoryMapper
 
                     if ( indexDefinition.getSettings() != null )
                     {
-
                         gen.map( "settings" );
                         serialize( gen, indexDefinition.getSettings().getNode() );
                         gen.end();
@@ -83,7 +82,7 @@ public class RepositoryMapper
 
     private void serialize( final MapGenerator gen, final JsonNode jsonNode )
     {
-        final PropertyTree propertyTree = JsonToPropertyTreeTranslator2.translate( jsonNode );
+        final PropertyTree propertyTree = JsonToPropertyTreeTranslator.translate( jsonNode );
         new PropertyTreeMapper( propertyTree ).serialize( gen );
     }
 }

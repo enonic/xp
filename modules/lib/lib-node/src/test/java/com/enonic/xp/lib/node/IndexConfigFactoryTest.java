@@ -11,7 +11,7 @@ import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.json.JsonToPropertyTreeTranslator2;
+import com.enonic.xp.lib.common.JsonToPropertyTreeTranslator;
 import com.enonic.xp.util.JsonHelper;
 
 import static org.junit.Assert.*;
@@ -92,7 +92,7 @@ public class IndexConfigFactoryTest
     {
         final JsonNode node = JsonHelper.from( json );
 
-        final PropertyTree properties = JsonToPropertyTreeTranslator2.translate( node );
+        final PropertyTree properties = JsonToPropertyTreeTranslator.translate( node );
 
         return new IndexConfigFactory( properties.getRoot() ).create();
     }

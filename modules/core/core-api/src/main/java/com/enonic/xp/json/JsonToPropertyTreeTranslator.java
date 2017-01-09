@@ -19,7 +19,7 @@ import com.enonic.xp.inputtype.InputTypes;
 
 
 /**
- * @deprecated As of release 6.9, replaced by {@link JsonToPropertyTreeTranslator2}
+ * @deprecated As of release 6.9
  */
 @Deprecated
 public final class JsonToPropertyTreeTranslator
