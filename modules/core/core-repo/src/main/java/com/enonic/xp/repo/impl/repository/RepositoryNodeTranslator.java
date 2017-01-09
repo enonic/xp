@@ -8,7 +8,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexType;
-import com.enonic.xp.json.JsonToPropertyTreeTranslator;
+import com.enonic.xp.json.JsonToPropertyTreeTranslator2;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
@@ -64,7 +64,6 @@ public class RepositoryNodeTranslator
         if ( indexDefinitions != null )
         {
             final PropertySet indexConfigsPropertySet = data.addSet( INDEX_CONFIG_KEY );
-            final JsonToPropertyTreeTranslator propertyTreeTranslator = new JsonToPropertyTreeTranslator();
             for ( IndexType indexType : IndexType.values() )
             {
                 final IndexDefinition indexDefinition = indexDefinitions.get( indexType );
@@ -74,7 +73,7 @@ public class RepositoryNodeTranslator
                     final IndexMapping indexMapping = indexDefinition.getMapping();
                     if ( indexMapping != null )
                     {
-                        final PropertySet indexMappingPropertySet = propertyTreeTranslator.translate( indexMapping.getNode() ).
+                        final PropertySet indexMappingPropertySet = JsonToPropertyTreeTranslator2.translate( indexMapping.getNode() ).
                             getRoot();
                         indexConfigPropertySet.setSet( MAPPING_KEY, indexMappingPropertySet );
                     }
@@ -82,7 +81,7 @@ public class RepositoryNodeTranslator
                     final IndexSettings indexSettings = indexDefinition.getSettings();
                     if ( indexSettings != null )
                     {
-                        final PropertySet indexSettingsPropertySet = propertyTreeTranslator.translate( indexSettings.getNode() ).
+                        final PropertySet indexSettingsPropertySet = JsonToPropertyTreeTranslator2.translate( indexSettings.getNode() ).
                             getRoot();
                         indexConfigPropertySet.setSet( SETTINGS_KEY, indexSettingsPropertySet );
                     }

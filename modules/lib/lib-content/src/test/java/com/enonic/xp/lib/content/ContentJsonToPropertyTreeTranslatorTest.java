@@ -1,8 +1,10 @@
-package com.enonic.xp.json;
+package com.enonic.xp.lib.content;
 
 import java.net.URL;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,20 +24,34 @@ import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
 import static org.junit.Assert.*;
 
-public class JsonToPropertyTreeTranslatorTest
+public class ContentJsonToPropertyTreeTranslatorTest
 {
     private final ObjectMapper mapper = new ObjectMapper();
+
+    @Rule
+    public ExpectedException expectedEx = ExpectedException.none();
 
     @Test
     public void all_input_types()
         throws Exception
     {
         final JsonNode node = loadJson( "allInputTypes" );
-        final PropertyTree data = new JsonToPropertyTreeTranslator( createFormForAllInputTypes(), true ).translate( node );
+        final PropertyTree data = new ContentJsonToPropertyTreeTranslator( createFormForAllInputTypes(), true ).translate( node );
 
         final Property media = data.getProperty( "media" );
         assertNotNull( media );
         assertEquals( ValueTypes.PROPERTY_SET.getName(), media.getType().getName() );
+    }
+
+    @Test
+    public void item_not_allowed_in_form()
+        throws Exception
+    {
+        expectedEx.expect( IllegalArgumentException.class );
+        expectedEx.expectMessage( "No mapping defined for property cheesecake with value not allowed" );
+
+        final JsonNode node = loadJson( "propertyNotInForm" );
+        new ContentJsonToPropertyTreeTranslator( createFormForAllInputTypes(), true ).translate( node );
     }
 
     @Test
@@ -44,7 +60,7 @@ public class JsonToPropertyTreeTranslatorTest
     {
         final JsonNode node = loadJson( "allInputTypes" );
 
-        final PropertyTree data = new JsonToPropertyTreeTranslator( null, false ).translate( node );
+        final PropertyTree data = new ContentJsonToPropertyTreeTranslator( null, false ).translate( node );
 
         final Property myArray = data.getProperty( "stringArray" );
         assertNotNull( myArray );
@@ -66,7 +82,7 @@ public class JsonToPropertyTreeTranslatorTest
     {
         final JsonNode node = loadJson( "allInputTypes" );
 
-        final PropertyTree data = new JsonToPropertyTreeTranslator( createFormForAllInputTypes(), false ).translate( node );
+        final PropertyTree data = new ContentJsonToPropertyTreeTranslator( createFormForAllInputTypes(), true ).translate( node );
 
         final Property noTimezone = data.getProperty( "localDateTime" );
         assertNotNull( noTimezone );
@@ -75,6 +91,38 @@ public class JsonToPropertyTreeTranslatorTest
         final Property timezoned = data.getProperty( "dateTime" );
         assertNotNull( timezoned );
         assertEquals( ValueTypes.DATE_TIME.getName(), timezoned.getType().getName() );
+    }
+
+    @Test
+    public void map_optionSet()
+        throws Exception
+    {
+        final JsonNode node = loadJson( "allInputTypes" );
+
+        final PropertyTree data = new ContentJsonToPropertyTreeTranslator( createFormForAllInputTypes(), true ).translate( node );
+
+        final Property optionSet = data.getProperty( "myOptionSet" );
+        assertNotNull( optionSet );
+        assertEquals( ValueTypes.PROPERTY_SET.getName(), optionSet.getType().getName() );
+
+        final Property optionSetSelection1 = optionSet.getSet().getProperty( "_selected", 0 );
+        assertNotNull( optionSetSelection1 );
+        assertEquals( ValueTypes.STRING.getName(), optionSetSelection1.getType().getName() );
+        assertEquals( "myOptionSetOption1", optionSetSelection1.getString() );
+
+        final Property optionSetSelection2 = optionSet.getSet().getProperty( "_selected", 1 );
+        assertNotNull( optionSetSelection2 );
+        assertEquals( ValueTypes.STRING.getName(), optionSetSelection2.getType().getName() );
+        assertEquals( "myOptionSetOption2", optionSetSelection2.getString() );
+
+        final Property optionSetOption1 = optionSet.getSet().getProperty( "myOptionSetOption1" );
+        assertNotNull( optionSetOption1 );
+        assertEquals( ValueTypes.PROPERTY_SET.getName(), optionSetOption1.getType().getName() );
+
+        final Property optionSetOption1TextLine1 = optionSetOption1.getSet().getProperty( "myTextLine1" );
+        assertNotNull( optionSetOption1TextLine1 );
+        assertEquals( ValueTypes.STRING.getName(), optionSetOption1TextLine1.getType().getName() );
+        assertEquals( "My Text 1", optionSetOption1TextLine1.getString() );
     }
 
     private JsonNode loadJson( final String name )

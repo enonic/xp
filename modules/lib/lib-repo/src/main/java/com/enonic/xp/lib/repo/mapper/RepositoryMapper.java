@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexType;
-import com.enonic.xp.json.JsonToPropertyTreeTranslator;
+import com.enonic.xp.json.JsonToPropertyTreeTranslator2;
 import com.enonic.xp.repository.IndexDefinition;
 import com.enonic.xp.repository.IndexDefinitions;
 import com.enonic.xp.repository.Repository;
@@ -83,8 +83,7 @@ public class RepositoryMapper
 
     private void serialize( final MapGenerator gen, final JsonNode jsonNode )
     {
-        //TODO We have to handle better this conversion. And the PropertyTreeMapper is duplicated everywhere
-        final PropertyTree propertyTree = new JsonToPropertyTreeTranslator().translate( jsonNode );
+        final PropertyTree propertyTree = JsonToPropertyTreeTranslator2.translate( jsonNode );
         new PropertyTreeMapper( propertyTree ).serialize( gen );
     }
 }

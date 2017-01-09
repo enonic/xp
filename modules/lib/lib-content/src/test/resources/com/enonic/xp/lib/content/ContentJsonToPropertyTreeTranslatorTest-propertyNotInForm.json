@@ -29,5 +29,20 @@
   "set": {
     "setString": "ost",
     "setDouble": 123
+  },
+  "myOptionSet": {
+    "cheesecake": [
+      "not allowed"
+    ],
+    "_selected": [
+      "myOptionSetOption1",
+      "myOptionSetOption2"
+    ],
+    "myOptionSetOption1": {
+      "myTextLine1": "My Text 1"
+    },
+    "myOptionSetOption2": {
+      "myTextLine2": "My Text 2"
+    }
   }
 }
