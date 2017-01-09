@@ -30,9 +30,11 @@ module api.app.browse {
             this.itemsSelectionPanel.setMobileView(mobileView);
         }
 
-        setItems(items: api.app.browse.BrowseItem<M>[]): BrowseItemsChanges<M> {
+        setItems(items: api.app.browse.BrowseItem<M>[], skipPanelUpdate: boolean = false): BrowseItemsChanges<M> {
             let changes = this.itemsSelectionPanel.setItems(items);
-            this.updateDisplayedPanel();
+            if (!skipPanelUpdate) {
+                this.updateDisplayedPanel();
+            }
 
             return changes;
         }
@@ -45,6 +47,15 @@ module api.app.browse {
             this.itemsSelectionPanel.updateItemViewers(items);
         }
 
+        togglePreviewForItem(item?: BrowseItem<M>) {
+            if (item) {
+                this.showPanelByIndex(1);
+                this.setStatisticsItem(item);
+            } else {
+                this.showPanelByIndex(0);
+            }
+        }
+        
         updateDisplayedPanel() {
             let selectedItems = this.getItems();
             if (selectedItems.length == 1) {

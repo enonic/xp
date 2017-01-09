@@ -54,6 +54,8 @@ module api.ui.treegrid {
 
         private selectionChangeListeners: Function[] = [];
 
+        private highlightingChangeListeners: Function[] = [];
+
         private dataChangeListeners: {(event: DataChangedEvent<DATA>):void}[] = [];
 
         private activeChangedListeners: {(active: boolean): void}[] = [];
@@ -207,15 +209,15 @@ module api.ui.treegrid {
                         return;
                     }
 
-                    this.grid.toggleRow(data.row);
-
                     if (this.grid.getSelectedRows().length > 1) {
-                        this.unhighlightRows();
+                        this.unhighlightRows(true);
                     }
-                    else if (this.grid.isRowSelected(data.row) && this.highlightedNode !== node) {
-                        this.unhighlightCurrentRow();
+                    else if (!this.grid.isRowSelected(data.row) && this.highlightedNode !== node) {
+                        this.unhighlightCurrentRow(true);
                     }
 
+                    this.grid.toggleRow(data.row);
+                    
                     return;
                 }
                 
@@ -422,11 +424,12 @@ module api.ui.treegrid {
         
         private navigateUp() {
 
-            if (!this.highlightedNode) {
+            if (!this.highlightedNode && this.grid.getSelectedRows().length === 0) {
                 return;
             }
             
-            let selectedIndex = this.gridData.getRowById(this.highlightedNode.getId());
+            let selectedIndex = this.highlightedNode ? 
+                                    this.gridData.getRowById(this.highlightedNode.getId()) : this.grid.getSelectedRows()[0];
 
             if (selectedIndex > 0) {
                 this.unselectAllRows();
@@ -438,7 +441,10 @@ module api.ui.treegrid {
 
         private navigateDown() {
             let selectedIndex = this.highlightedNode ? this.gridData.getRowById(this.highlightedNode.getId()) : -1;
-
+            if (this.grid.getSelectedRows().length > 0) {
+                selectedIndex = this.grid.getSelectedRows()[0];
+            }
+            
             if (this.gridData.getLength() > 0 && selectedIndex < this.gridData.getLength() - 1) {
                 this.unselectAllRows();
                 selectedIndex++;
@@ -463,40 +469,54 @@ module api.ui.treegrid {
         }
 
         private highlightRowByNode(node: TreeNode<DATA>) {
-            let row = this.getRowByNode(node);
-
-            if (!!this.highlightedNode && this.highlightedNode !== node) {
+            if (!this.highlightedNode || this.highlightedNode !== node) {
                 this.unhighlightCurrentRow();
+                this.highlightedNode = node;
+                this.notifyHighlightingChanged();
             }
 
-            this.highlightedNode = node;
+            let row = this.getRowByNode(node);
             row.addClass("selected");
-
-            //Fire event here to notify preview panel
         }
 
-        private unhighlightCurrentRow() {
+        private unhighlightCurrentRow(skipEvent: boolean = false) {
+            if (!this.highlightedNode) {
+                return;
+            }
             let row = this.getRowByNode(this.highlightedNode);
-            this.unhighlightRow(row);
+            this.unhighlightRow(row, skipEvent);
         }
 
-        private unhighlightRow(row) {
+        private unhighlightRow(row: JQuery, skipEvent: boolean = false) {
             this.highlightedNode = null;
             if (!row) {
                 return;
             }
             row.removeClass("selected");
-            //Fire event here to notify preview panel
+
+            if (!skipEvent) {
+                this.notifyHighlightingChanged();
+            }
         }
 
-        private unhighlightRows() {
+        private unhighlightRows(skipEvent: boolean = false) {
+            if (!this.highlightedNode) {
+                return;
+            }
+
             wemjq(this.grid.getHTMLElement()).find(".slick-row.selected").removeClass("selected");
             this.highlightedNode = null;
+
+            if (!skipEvent) {
+                this.notifyHighlightingChanged();
+            }
         }
 
         private unselectAllRows() {
             this.unhighlightRows();
-            this.grid.clearSelection();
+            if (this.grid.getSelectedRows().length > 0) {
+                this.grid.clearSelection();
+            }
         }
 
         public isInRenderingView(): boolean {
@@ -825,6 +845,7 @@ module api.ui.treegrid {
         }
 
         selectAll() {
+            this.unhighlightCurrentRow();
             let rows = [];
             for (let i = 0; i < this.gridData.getLength(); i++) {
                 if (!api.util.StringHelper.isEmpty(this.gridData.getItem(i).getDataId())) {
@@ -835,6 +856,7 @@ module api.ui.treegrid {
         }
 
         deselectAll() {
+            this.unhighlightCurrentRow();
             this.grid.clearSelection();
         }
 
@@ -1322,18 +1344,36 @@ module api.ui.treegrid {
             this.triggerSelectionChangedListeners();
         }
 
-        triggerSelectionChangedListeners() {
-            this.selectionChangeListeners.forEach((listener: Function) => {
-                listener(this.root.getCurrentSelection(), this.root.getFullSelection());
+        private notifyHighlightingChanged(): void {
+            this.highlightingChangeListeners.forEach((listener: Function) => {
+                listener(this.highlightedNode);
             });
         }
 
-        onSelectionChanged(listener: (currentSelection: TreeNode<DATA>[], fullSelection: TreeNode<DATA>[]) => void) {
+        triggerSelectionChangedListeners() {
+            this.selectionChangeListeners.forEach((listener: Function) => {
+                listener(this.root.getCurrentSelection(), this.root.getFullSelection(), !!this.highlightedNode);
+            });
+        }
+
+        onHighlightingChanged(listener: (node: TreeNode<DATA>) => void) {
+            this.highlightingChangeListeners.push(listener);
+            return this;
+        }
+
+        unHighlightingChanged(listener: (node: TreeNode<DATA>) => void) {
+            this.highlightingChangeListeners = this.highlightingChangeListeners.filter((curr) => {
+                return curr != listener;
+            });
+            return this;
+        }
+
+        onSelectionChanged(listener: (currentSelection: TreeNode<DATA>[], fullSelection: TreeNode<DATA>[], highlighted: boolean) => void) {
             this.selectionChangeListeners.push(listener);
             return this;
         }
 
-        unSelectionChanged(listener: (currentSelection: TreeNode<DATA>[], fullSelection: TreeNode<DATA>[]) => void) {
+        unSelectionChanged(listener: (currentSelection: TreeNode<DATA>[], fullSelection: TreeNode<DATA>[], highlighted: boolean) => void) {
             this.selectionChangeListeners = this.selectionChangeListeners.filter((curr) => {
                 return curr != listener;
             });

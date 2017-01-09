@@ -40,21 +40,20 @@ module api.app.browse {
             super();
 
             this.treeGrid = this.createTreeGrid();
-            //this.browseItemPanel = this.createBrowseItemPanel();
             this.filterPanel = this.createFilterPanel();
             this.browseToolbar = this.createToolbar();
-
-
-            let selectionChangedDebouncedHandler = api.util.AppHelper.debounce(
-                (currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[]) => {
+            
+            let selectionChangedDebouncedHandler = (currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[], highlighted: boolean) => {
                 let browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(fullSelection);
-                let changes = this.browseItemPanel.setItems(browseItems);
+                let changes = this.browseItemPanel.setItems(browseItems, true);
                 this.treeGrid.getContextMenu().getActions()
                     .updateActionsEnabledState(this.browseItemPanel.getItems(), changes)
                     .then(() => {
-                        this.browseItemPanel.updateDisplayedPanel();
+                        if (!highlighted) {
+                            this.browseItemPanel.updateDisplayedPanel();
+                        }
                     }).catch(api.DefaultErrorHandler.handle);
-                }, 200, false);
+                };
 
             this.treeGrid.onSelectionChanged(selectionChangedDebouncedHandler);
 

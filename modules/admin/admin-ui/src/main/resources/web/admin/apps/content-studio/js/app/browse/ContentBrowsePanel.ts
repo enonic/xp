@@ -54,6 +54,23 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
 
         this.handleGlobalEvents();
+
+        let highlightingChangedDebouncedHandler = api.util.AppHelper.debounce(
+            (node: TreeNode<ContentSummaryAndCompareStatus>) => {
+
+                if (node) {
+                    let browseItem: ContentBrowseItem = this.treeNodesToBrowseItems([node])[0];
+                    let previewHandler = this.getBrowseActions().getPreviewHandler();
+                    previewHandler.checkIfItemIsRenderable(browseItem).then(() => {
+                        this.getBrowseItemPanel().togglePreviewForItem(browseItem);
+                    })
+                }
+                else {
+                    this.getBrowseItemPanel().togglePreviewForItem();
+                }
+            }, 200, false);
+
+        this.treeGrid.onHighlightingChanged(highlightingChangedDebouncedHandler);
     }
 
     private getBrowseActions(): ContentTreeGridActions {
