@@ -77,6 +77,38 @@ public class JsonToPropertyTreeTranslatorTest
         assertEquals( ValueTypes.DATE_TIME.getName(), timezoned.getType().getName() );
     }
 
+    @Test
+    public void map_optionSet()
+        throws Exception
+    {
+        final JsonNode node = loadJson( "allInputTypes" );
+
+        final PropertyTree data = new JsonToPropertyTreeTranslator( createFormForAllInputTypes(), false ).translate( node );
+
+        final Property optionSet = data.getProperty( "myOptionSet" );
+        assertNotNull( optionSet );
+        assertEquals( ValueTypes.PROPERTY_SET.getName(), optionSet.getType().getName() );
+
+        final Property optionSetSelection1 = optionSet.getSet().getProperty( "_selected", 0 );
+        assertNotNull( optionSetSelection1 );
+        assertEquals( ValueTypes.STRING.getName(), optionSetSelection1.getType().getName() );
+        assertEquals( "myOptionSetOption1", optionSetSelection1.getString() );
+
+        final Property optionSetSelection2 = optionSet.getSet().getProperty( "_selected", 1 );
+        assertNotNull( optionSetSelection2 );
+        assertEquals( ValueTypes.STRING.getName(), optionSetSelection2.getType().getName() );
+        assertEquals( "myOptionSetOption2", optionSetSelection2.getString() );
+
+        final Property optionSetOption1 = optionSet.getSet().getProperty( "myOptionSetOption1" );
+        assertNotNull( optionSetOption1 );
+        assertEquals( ValueTypes.PROPERTY_SET.getName(), optionSetOption1.getType().getName() );
+
+        final Property optionSetOption1TextLine1 = optionSetOption1.getSet().getProperty( "myTextLine1" );
+        assertNotNull( optionSetOption1TextLine1 );
+        assertEquals( ValueTypes.STRING.getName(), optionSetOption1TextLine1.getType().getName() );
+        assertEquals( "My Text 1", optionSetOption1TextLine1.getString() );
+    }
+
     protected final JsonNode loadJson( final String name )
         throws Exception
     {

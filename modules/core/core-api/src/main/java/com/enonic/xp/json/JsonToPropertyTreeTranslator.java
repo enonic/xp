@@ -12,6 +12,7 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemPath;
+import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputType;
 import com.enonic.xp.inputtype.InputTypeResolver;
@@ -26,6 +27,8 @@ public final class JsonToPropertyTreeTranslator
     private final InputTypeResolver inputTypeResolver;
 
     private final boolean strictMode;
+
+    private static final String OPTION_SET_SELECTION_ARRAY_NAME = "_selected";
 
     public JsonToPropertyTreeTranslator()
     {
@@ -61,15 +64,29 @@ public final class JsonToPropertyTreeTranslator
     {
         if ( value.isArray() )
         {
-            for ( final JsonNode objNode : value )
+            if ( isOptionSetSelection( key, parent.getProperty() ) )
             {
-                addValue( parent, key, objNode );
+                for ( final JsonNode objNode : value )
+                {
+                    parent.addProperty( key, ValueFactory.newString( objNode.textValue() ) );
+                }
+            }
+            else
+            {
+                for ( final JsonNode objNode : value )
+                {
+                    addValue( parent, key, objNode );
+                }
             }
         }
         else if ( value.isObject() && !hasInput( parent.getProperty(), key ) )
         {
             final PropertySet parentSet = parent.addSet( key );
             value.fields().forEachRemaining( ( objectValue ) -> addValue( parentSet, objectValue.getKey(), objectValue.getValue() ) );
+        }
+        else if ( isOptionSetSelection( key, parent.getProperty() ) )
+        {
+            parent.addProperty( key, ValueFactory.newString( value.textValue() ) );
         }
         else
         {
@@ -175,5 +192,11 @@ public final class JsonToPropertyTreeTranslator
     private Input getInput( final Property parentProperty, final String key )
     {
         return this.form.getInput( resolveInputPath( key, parentProperty ) );
+    }
+
+    private boolean isOptionSetSelection( final String key, final Property parentProperty )
+    {
+        return OPTION_SET_SELECTION_ARRAY_NAME.equals( key ) && FormOptionSet.class.isInstance(
+            this.form.getFormItem( resolveInputPath( parentProperty.getName(), parentProperty.getParent().getProperty() ) ) );
     }
 }
