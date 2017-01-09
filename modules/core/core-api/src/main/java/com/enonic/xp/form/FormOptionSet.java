@@ -14,7 +14,6 @@ public class FormOptionSet
     extends FormItem
     implements Iterable<FormOptionSetOption>
 {
-
     private final String name;
 
     private final String label;
