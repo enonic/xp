@@ -2,11 +2,11 @@
  Main tasks
  */
 
-var gulp = require("gulp");
-var gulpSequence = require("gulp-sequence");
+const gulp = require("gulp");
+const gulpSequence = require("gulp-sequence");
 
-gulp.task('all:no-ts', ['css', 'directives']);
-gulp.task('all:no-css', gulpSequence('directives', 'js'));
-gulp.task('all', gulpSequence(['css', 'all:no-css']));
-gulp.task('all:clean', gulpSequence('clean', 'all'));
+gulp.task('all', gulpSequence(['css', 'directives'], 'js'));
+gulp.task('all+clean', gulpSequence('clean', 'all'));
+gulp.task('all+lint', ['lint', 'all']);
+gulp.task('all+clean+lint', gulpSequence('clean', ['lint', 'all']));
 gulp.task('default', ['all']);
