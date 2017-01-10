@@ -898,9 +898,11 @@ module api.ui.treegrid {
         }
 
         getSelectedDataList(): DATA[] {
-            return this.root.getFullSelection().map((node: TreeNode<DATA>) => {
-                return node.getData();
-            });
+            return this.highlightedNode ?
+                       [this.highlightedNode.getData()] :
+                       this.root.getFullSelection().map((node: TreeNode<DATA>) => {
+                            return node.getData();
+                        });
         }
 
         // Hard reset

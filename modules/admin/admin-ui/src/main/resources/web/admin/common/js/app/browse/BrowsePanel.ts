@@ -6,6 +6,7 @@ module api.app.browse {
     import TreeNode = api.ui.treegrid.TreeNode;
     import ActionButton = api.ui.button.ActionButton;
     import BrowseItem = api.app.browse.BrowseItem;
+    import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
 
     export class BrowsePanel<M extends api.Equitable> extends api.ui.panel.Panel implements api.ui.ActionContainer {
 
@@ -48,14 +49,14 @@ module api.app.browse {
                                                     fullSelection: TreeNode<Object>[],
                                                     highlighted: boolean
                                                    ) => {
+                if (highlighted) {
+                    return;
+                }
                 let browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(fullSelection);
-                let changes = this. getBrowseItemPanel().setItems(browseItems, true);
-                this.treeGrid.getContextMenu().getActions()
-                    .updateActionsEnabledState(this.getBrowseItemPanel().getItems(), changes)
+                let changes = this.getBrowseItemPanel().setItems(browseItems, true);
+                this.getBrowseActions().updateActionsEnabledState(this.getBrowseItemPanel().getItems(), changes)
                     .then(() => {
-                        if (!highlighted) {
-                            this. getBrowseItemPanel().updateDisplayedPanel();
-                        }
+                        this.getBrowseItemPanel().updateDisplayedPanel();
                     }).catch(api.DefaultErrorHandler.handle);
                 };
 
@@ -94,11 +95,13 @@ module api.app.browse {
         private onHighlightingChanged(node: TreeNode<Object>) {
             if (node) {
                 let browseItem: BrowseItem<M> = this.treeNodesToBrowseItems([node])[0];
+                this.getBrowseActions().updateActionsEnabledState([browseItem]);
                 this.checkIfItemIsRenderable(browseItem).then(() => {
                     this.getBrowseItemPanel().togglePreviewForItem(browseItem);
                 });
             }
             else {
+                this.getBrowseActions().updateActionsEnabledState([]);
                 this.getBrowseItemPanel().togglePreviewForItem();
             }
         }
@@ -115,6 +118,10 @@ module api.app.browse {
             throw "Must be implemented by inheritors";
         }
 
+        protected getBrowseActions(): TreeGridActions<M> {
+            return this.treeGrid.getContextMenu().getActions();
+        }
+
         private initBrowseItemPanel() {
 
             this.browseItemPanel.onDeselected((event: ItemDeselectedEvent<M>) => {
@@ -123,8 +130,7 @@ module api.app.browse {
                 let newSelectedCount = this.treeGrid.getGrid().getSelectedRows().length;
 
                 if (oldSelectedCount === newSelectedCount) {
-                    this.treeGrid.getContextMenu().getActions()
-                        .updateActionsEnabledState(this.browseItemPanel.getItems())
+                    this.getBrowseActions().updateActionsEnabledState(this.browseItemPanel.getItems())
                         .then(() => {
                             this.browseItemPanel.updateDisplayedPanel();
                         });

@@ -63,8 +63,8 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
     }
 
-    private getBrowseActions(): ContentTreeGridActions {
-        return <ContentTreeGridActions>this.treeGrid.getContextMenu().getActions();
+    protected getBrowseActions(): ContentTreeGridActions {
+        return <ContentTreeGridActions>super.getBrowseActions();
     }
 
     protected createToolbar(): ContentBrowseToolbar {
@@ -78,7 +78,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             if (event.getType() === 'updated') {
                 let browseItems = this.treeNodesToBrowseItems(event.getTreeNodes());
                 this.getBrowseItemPanel().updateItemViewers(browseItems);
-                treeGrid.getContextMenu().getActions().updateActionsEnabledState(
+                this.getBrowseActions().updateActionsEnabledState(
                     this.treeNodesToBrowseItems(this.treeGrid.getRoot().getFullSelection()));
             }
         });
