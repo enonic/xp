@@ -59,29 +59,6 @@ public class ModifyNodeExecutorTest
     }
 
     @Test
-    public void modify_name_ignored()
-        throws Exception
-    {
-        final Node originalNode = Node.create().
-            name( "myNode" ).
-            parentPath( NodePath.ROOT ).
-            build();
-
-        final EditableNode editableNode = new EditableNode( originalNode );
-
-        final PropertyTree updateScript = new PropertyTree();
-        updateScript.setString( "_name", "newNodeName" );
-
-        ModifyNodeExecutor.create().
-            editableNode( editableNode ).
-            propertyTree( updateScript ).
-            build().
-            execute();
-
-        assertEquals( "myNode", editableNode.name.toString() );
-    }
-
-    @Test
     public void update_child_order()
         throws Exception
     {
