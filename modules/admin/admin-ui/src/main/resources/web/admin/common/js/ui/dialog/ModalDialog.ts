@@ -180,9 +180,9 @@ module api.ui.dialog {
             this.buttonRow.focusDefaultAction();
         }
 
-        hide(callback?: Function) {
+        hide() {
             api.dom.Body.get().getHTMLElement().classList.remove("modal-dialog");
-            super.hide(callback);
+            super.hide(true);
         }
 
         protected centerMyself() {
@@ -305,12 +305,12 @@ module api.ui.dialog {
             ModalDialog.openDialogsCounter++;
         }
 
-        close(callback?: Function) {
+        close() {
             if (ModalDialog.openDialogsCounter == 1) {
                 api.ui.mask.BodyMask.get().hide();
             }
 
-            this.hide(callback);
+            this.hide();
 
             api.ui.KeyBindings.get().unshelveBindings();
 

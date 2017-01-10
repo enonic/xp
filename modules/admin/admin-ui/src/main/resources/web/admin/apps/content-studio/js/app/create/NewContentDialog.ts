@@ -137,19 +137,19 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     }
 
     private closeAndFireEventFromMediaUpload(event: FileUploadStartedEvent<Content>) {
-        let parentContent = this.parentContent,
-            fn = function() {
-                new NewMediaUploadEvent(event.getUploadItems(), parentContent).fire();
-            };
-        this.close(fn);
+        this.onHidden((e: api.dom.ElementHiddenEvent) => {
+            new NewMediaUploadEvent(event.getUploadItems(), this.parentContent).fire();
+        });
+
+        this.close();
     }
 
     private closeAndFireEventFromContentType(event: NewContentDialogItemSelectedEvent) {
-        let parentContent = this.parentContent,
-            fn = function() {
-                new NewContentEvent(event.getItem().getContentType(), parentContent).fire();
-            };
-        this.close(fn);
+        this.onHidden((e: api.dom.ElementHiddenEvent) => {
+            new NewContentEvent(event.getItem().getContentType(), this.parentContent).fire();
+        });
+
+        this.close();
     }
 
     private appendElementsToDialog() {
@@ -209,15 +209,15 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
         this.loadContentTypes();
     }
 
-    hide(callback?: Function) {
+    hide() {
         this.mostPopularContentTypes.hide();
         this.clearAllItems();
-        super.hide(callback);
+        super.hide();
     }
 
-    close(callback?: Function) {
+    close() {
         this.fileInput.reset();
-        super.close(callback);
+        super.close();
     }
 
     private loadContentTypes() {
