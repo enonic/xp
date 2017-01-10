@@ -1,5 +1,4 @@
 import "../../api.ts";
-import {ContentSettingsModel} from "./ContentSettingsModel";
 
 import Content = api.content.Content;
 import PublishStatus = api.content.PublishStatus;
@@ -54,11 +53,11 @@ export class ScheduleWizardStepForm extends api.app.wizard.WizardStepForm {
     private initFormView(content: api.content.Content) {
         var formBuilder = new api.form.FormBuilder().addFormItem(
             new api.form.InputBuilder().setName("from").setInputType(api.content.form.inputtype.publish.PublishFrom.getName()).setLabel(
-                "Online from").setHelpText("Time from which your contents will be available online").setOccurrences(
+                "Online from").setHelpText("Offline items will go online at the specified time").setOccurrences(
                 new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).setInputTypeConfig({}).setMaximizeUIInputWidth(
                 true).build()).addFormItem(
             new api.form.InputBuilder().setName("to").setInputType(api.content.form.inputtype.publish.PublishTo.getName()).setLabel(
-                "Online to").setHelpText("Time until which your contents will be available online").setOccurrences(
+                "Online to").setHelpText("Online items will be taken offline at the specified time").setOccurrences(
                 new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).setInputTypeConfig({}).setMaximizeUIInputWidth(
                 true).build());
 
