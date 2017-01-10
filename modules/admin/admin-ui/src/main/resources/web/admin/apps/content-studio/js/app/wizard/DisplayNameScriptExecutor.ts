@@ -62,7 +62,7 @@ export class DisplayNameScriptExecutor implements api.app.wizard.DisplayNameGene
 
         try {
             // hide eval, Function, document, window and other things from the script.
-            result = eval('var eval; var Function; var document; var location; ' +
+            result = eval('"strict mode"; var Function; var document; var location; ' +
                           'var window; var parent; var self; var top; ' +
                           script);
         } catch (e) {

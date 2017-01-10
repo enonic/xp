@@ -2,4 +2,5 @@ dependencies {
     provided project( ':core:core-api' )
     provided project( ':portal:portal-api' )
     testCompile project( ':tools:testing' )
+    compile project( ':lib:lib-common' )
 }

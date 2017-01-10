@@ -1,7 +1,7 @@
 package com.enonic.xp.lib.context;
 
 import com.enonic.xp.context.Context;
-import com.enonic.xp.lib.auth.PrincipalMapper;
+import com.enonic.xp.lib.common.PrincipalMapper;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.security.PrincipalKey;

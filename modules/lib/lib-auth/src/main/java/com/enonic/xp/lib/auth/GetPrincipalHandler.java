@@ -3,6 +3,7 @@ package com.enonic.xp.lib.auth;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import com.enonic.xp.lib.common.PrincipalMapper;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.security.Principal;

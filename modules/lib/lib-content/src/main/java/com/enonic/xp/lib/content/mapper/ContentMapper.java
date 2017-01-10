@@ -11,6 +11,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;

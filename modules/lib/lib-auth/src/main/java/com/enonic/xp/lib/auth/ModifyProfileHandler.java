@@ -9,8 +9,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.json.JsonToPropertyTreeTranslator;
-import com.enonic.xp.lib.content.mapper.PropertyTreeMapper;
+import com.enonic.xp.lib.common.JsonToPropertyTreeTranslator;
+import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -127,8 +127,7 @@ public final class ModifyProfileHandler
         }
 
         final JsonNode jsonNode = createJsonNode( value );
-        return new JsonToPropertyTreeTranslator( null, false ).
-            translate( jsonNode );
+        return JsonToPropertyTreeTranslator.translate( jsonNode );
     }
 
     private JsonNode createJsonNode( final Map<String, Object> value )

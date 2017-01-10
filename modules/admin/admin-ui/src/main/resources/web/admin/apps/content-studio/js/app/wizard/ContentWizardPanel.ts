@@ -1463,7 +1463,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             return true;
         } else {
 
-            let viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent)).build();
+            let viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent), true).build();
 
             // ignore empty values for auto-created content that hasn't been updated yet because it doesn't have data at all
             let ignoreEmptyValues = !persistedContent.getModifiedTime() || !persistedContent.getCreatedTime() ||

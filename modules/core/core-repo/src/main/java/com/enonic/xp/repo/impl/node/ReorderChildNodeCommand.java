@@ -58,6 +58,11 @@ public class ReorderChildNodeCommand
     {
         final Long nodeAfterOrderValue = nodeToMoveBefore.getManualOrderValue();
 
+        if ( nodeAfterOrderValue == null )
+        {
+            throw new IllegalArgumentException( "Node with id [" + nodeToMoveBefore.id() + "] missing manual order value" );
+        }
+
         final NodeQueryResult result = findLastNodeBeforeInsert( nodeAfterOrderValue );
 
         final Long newOrderValue;
@@ -146,6 +151,11 @@ public class ReorderChildNodeCommand
     {
         final NodeId lastNodeId = result.getNodeQueryResultSet().first();
         final Node lastNode = doGetById( lastNodeId );
+
+        if ( lastNode.getManualOrderValue() == null )
+        {
+            throw new IllegalArgumentException( "Node with id [" + lastNode.id() + "] missing manual order value" );
+        }
 
         return lastNode.getManualOrderValue() - NodeManualOrderValueResolver.ORDER_SPACE;
     }

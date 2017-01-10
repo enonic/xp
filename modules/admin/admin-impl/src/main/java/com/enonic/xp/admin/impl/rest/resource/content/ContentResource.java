@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,6 +23,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -177,6 +179,7 @@ import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
+import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
@@ -391,6 +394,7 @@ public final class ContentResource
                                                 "Content [%s] could not be updated. A content with that name already exists",
                                                 json.getRenameContentParams().getNewName().toString() );
         }
+        validate( json.getContentPublishInfo() );
 
         final UpdateContentParams updateParams = json.getUpdateContentParams();
 
@@ -763,7 +767,7 @@ public final class ContentResource
                     iconUrl( contentIconUrlResolver.resolve( content ) ).
                     build();
             } ).
-                collect( Collectors.toList() );
+            collect( Collectors.toList() );
     }
 
     @POST
@@ -1562,6 +1566,26 @@ public final class ContentResource
 
         return true;
     }
+
+    private void validate( final ContentPublishInfo contentPublishInfo )
+    {
+        final Instant publishToInstant = contentPublishInfo.getTo();
+        if ( publishToInstant != null )
+        {
+            final Instant publishFromInstant = contentPublishInfo.getFrom();
+            if ( publishFromInstant == null )
+            {
+                throw new WebApplicationException( "[Online to] date/time cannot be set without [Online from]",
+                                                   HttpStatus.UNPROCESSABLE_ENTITY.value() );
+            }
+            if ( publishToInstant.compareTo( publishFromInstant ) < 0 )
+            {
+                throw new WebApplicationException( "[Online from] date/time must be earlier than [Online to]",
+                                                   HttpStatus.UNPROCESSABLE_ENTITY.value() );
+            }
+        }
+    }
+
 
     @Reference
     public void setContentService( final ContentService contentService )

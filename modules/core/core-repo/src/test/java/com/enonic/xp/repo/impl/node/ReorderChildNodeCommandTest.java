@@ -15,6 +15,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 
@@ -148,6 +149,49 @@ public class ReorderChildNodeCommandTest
         assertEquals( "e", iterator.next().toString() );
         assertEquals( "f", iterator.next().toString() );
         assertEquals( "c", iterator.next().toString() );
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void move_last_missing_order_values()
+        throws Exception
+    {
+        final Node parentNode = createNode( CreateNodeParams.create().
+            name( "my-node" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        createChildNodes( parentNode );
+
+        setChildOrder( parentNode, NodeIndexPath.NAME, OrderExpr.Direction.ASC );
+        setChildOrder( parentNode, NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.DESC );
+
+        setManualOrderValueToNull( NodeId.from( "a" ) );
+        setManualOrderValueToNull( NodeId.from( "b" ) );
+        setManualOrderValueToNull( NodeId.from( "c" ) );
+        setManualOrderValueToNull( NodeId.from( "d" ) );
+        setManualOrderValueToNull( NodeId.from( "e" ) );
+        setManualOrderValueToNull( NodeId.from( "f" ) );
+
+        ReorderChildNodeCommand.create().
+            parentNode( getNodeById( parentNode.id() ) ).
+            nodeToMove( getNodeById( NodeId.from( "c" ) ) ).
+            nodeToMoveBefore( getNode( NodeId.from( "f" ) ) ).
+            indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
+            build().
+            execute();
+        refresh();
+    }
+
+    private void setManualOrderValueToNull( final NodeId nodeId )
+    {
+        updateNode( UpdateNodeParams.create().
+            editor( ( node ) -> {
+                node.manualOrderValue = null;
+            } ).
+            id( nodeId ).
+            build() );
     }
 
     private void createChildNodes( final Node parentNode )

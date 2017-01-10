@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
@@ -21,6 +23,8 @@ import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 public final class VirtualHostFilter
     extends OncePerRequestFilter
 {
+    private final static Logger LOG = LoggerFactory.getLogger( VirtualHostFilter.class );
+
     private VirtualHostConfig config;
 
     @Override
@@ -32,7 +36,8 @@ public final class VirtualHostFilter
             final VirtualHostMapping virtualHostMapping = this.config.getMappings().resolve( req );
             if ( virtualHostMapping == null )
             {
-                chain.doFilter( req, res );
+                LOG.warn( "Virtual host mapping could not be resolved: " + req.getServerName() + req.getRequestURI() );
+                res.setStatus( HttpServletResponse.SC_NOT_FOUND );
             }
             else
             {

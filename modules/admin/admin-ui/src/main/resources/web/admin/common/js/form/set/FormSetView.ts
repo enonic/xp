@@ -3,6 +3,7 @@ module api.form {
     import PropertySet = api.data.PropertySet;
     import PropertyArray = api.data.PropertyArray;
     import DragHelper = api.ui.DragHelper;
+    import ValueTypes = api.data.ValueTypes;
 
     export class FormSetView<V extends FormSetOccurrenceView> extends FormItemView {
 
@@ -202,7 +203,13 @@ module api.form {
         }
 
         protected getPropertyArray(propertySet: PropertySet): PropertyArray {
-            throw new Error("Must be implemented by inheritor");
+            const propertyArray = propertySet.getPropertyArray(this.formSet.getName());
+            if (!propertyArray) {
+                propertyArray = PropertyArray.create().setType(ValueTypes.DATA).setName(this.formSet.getName()).setParent(
+                    this.parentDataSet).build();
+                propertySet.addPropertyArray(propertyArray);
+            }
+            return propertyArray;
         }
 
         protected initOccurrences(): FormSetOccurrences<V> {
