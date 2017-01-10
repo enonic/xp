@@ -60,9 +60,9 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         let previewHandler = this.getBrowseActions().getPreviewHandler();
         return previewHandler.checkIfItemIsRenderable(browseItem).then(() => {
             this.getBrowseItemPanel().togglePreviewForItem(browseItem);
-        })
+        });
     }
-    
+
     private getBrowseActions(): ContentTreeGridActions {
         return <ContentTreeGridActions>this.treeGrid.getContextMenu().getActions();
     }

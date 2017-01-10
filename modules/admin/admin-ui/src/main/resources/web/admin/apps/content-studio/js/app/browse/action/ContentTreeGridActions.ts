@@ -75,7 +75,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     getPreviewHandler(): PreviewContentHandler {
         return (<PreviewContentAction>this.PREVIEW_CONTENT).getPreviewHandler();
     }
-    
+
     getAllActions(): api.ui.Action[] {
         return [...this.actions, this.PUBLISH_CONTENT, this.UNPUBLISH_CONTENT];
     }

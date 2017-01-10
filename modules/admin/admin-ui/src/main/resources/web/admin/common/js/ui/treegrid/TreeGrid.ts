@@ -199,7 +199,7 @@ module api.ui.treegrid {
 
                 if (elem.hasAnyParentClass("slick-cell-checkboxsel")) {
                     // Checkbox is clicked
-                    
+
                     if (elem.getAttribute("type") !== "checkbox") {
                         return;
                     }
@@ -217,10 +217,10 @@ module api.ui.treegrid {
                     }
 
                     this.grid.toggleRow(data.row);
-                    
+
                     return;
                 }
-                
+
                 // A cell in the row is clicked
                 if (isMultiSelect) {
                     const isRowSelected = this.grid.isRowSelected(data.row);
@@ -419,7 +419,7 @@ module api.ui.treegrid {
         }
 
         protected editItem(node: TreeNode<DATA>) {
-
+            return;
         }
 
         public setContextMenu(contextMenu: TreeGridContextMenu) {
@@ -435,15 +435,15 @@ module api.ui.treegrid {
             });
 
         }
-        
+
         private navigateUp() {
 
             if (!this.highlightedNode && this.grid.getSelectedRows().length === 0) {
                 return;
             }
-            
-            let selectedIndex = this.highlightedNode ? 
-                                    this.gridData.getRowById(this.highlightedNode.getId()) : this.grid.getSelectedRows()[0];
+
+            let selectedIndex = this.highlightedNode ?
+                                this.gridData.getRowById(this.highlightedNode.getId()) : this.grid.getSelectedRows()[0];
 
             if (selectedIndex > 0) {
                 this.unselectAllRows();
@@ -458,7 +458,7 @@ module api.ui.treegrid {
             if (this.grid.getSelectedRows().length > 0) {
                 selectedIndex = this.grid.getSelectedRows()[0];
             }
-            
+
             if (this.gridData.getLength() > 0 && selectedIndex < this.gridData.getLength() - 1) {
                 this.unselectAllRows();
                 selectedIndex++;
@@ -466,7 +466,7 @@ module api.ui.treegrid {
                 this.scrollToRow(selectedIndex, true);
             }
         }
-        
+
         private getRowByNode(node: TreeNode<DATA>): JQuery {
             let rowIndex = this.gridData.getRowById(node.getId());
             let cell = this.grid.getCellNode(rowIndex, 0);

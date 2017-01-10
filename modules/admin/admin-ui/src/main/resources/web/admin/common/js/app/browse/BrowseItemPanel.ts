@@ -55,7 +55,7 @@ module api.app.browse {
                 this.showPanelByIndex(0);
             }
         }
-        
+
         updateDisplayedPanel() {
             let selectedItems = this.getItems();
             if (selectedItems.length == 1) {

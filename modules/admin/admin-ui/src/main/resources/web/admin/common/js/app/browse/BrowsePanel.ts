@@ -43,8 +43,11 @@ module api.app.browse {
             this.treeGrid = this.createTreeGrid();
             this.filterPanel = this.createFilterPanel();
             this.browseToolbar = this.createToolbar();
-            
-            let selectionChangedDebouncedHandler = (currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[], highlighted: boolean) => {
+
+            let selectionChangedDebouncedHandler = (currentSelection: TreeNode<Object>[],
+                                                    fullSelection: TreeNode<Object>[],
+                                                    highlighted: boolean
+                                                   ) => {
                 let browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(fullSelection);
                 let changes = this. getBrowseItemPanel().setItems(browseItems, true);
                 this.treeGrid.getContextMenu().getActions()
@@ -63,7 +66,7 @@ module api.app.browse {
             }).bind(this), 200, false);
 
             this.treeGrid.onHighlightingChanged(highlightingChangedDebouncedHandler);
-            
+
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 this.checkFilterPanelToBeShownFullScreen(item);
 
@@ -84,24 +87,22 @@ module api.app.browse {
 
         protected checkIfItemIsRenderable(browseItem: BrowseItem<M>): wemQ.Promise<boolean> {
             let deferred = wemQ.defer<boolean>();
-
             deferred.resolve(true);
-
             return deferred.promise;
         }
-        
+
         private onHighlightingChanged(node: TreeNode<Object>) {
             if (node) {
                 let browseItem: BrowseItem<M> = this.treeNodesToBrowseItems([node])[0];
                 this.checkIfItemIsRenderable(browseItem).then(() => {
                     this.getBrowseItemPanel().togglePreviewForItem(browseItem);
-                })
+                });
             }
             else {
                 this.getBrowseItemPanel().togglePreviewForItem();
             }
         }
-        
+
         protected createToolbar(): api.ui.toolbar.Toolbar {
             throw "Must be implemented by inheritors";
         }

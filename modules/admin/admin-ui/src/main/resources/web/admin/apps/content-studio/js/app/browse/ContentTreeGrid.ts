@@ -132,7 +132,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
             new api.content.event.EditContentEvent([node.getData()]).fire();
         }
     }
-    
+
     private initEventHandlers(updateColumnsHandler: Function) {
         let onBecameActive = (active: boolean) => {
             if (active) {
