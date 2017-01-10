@@ -57,11 +57,11 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
     private initFormView() {
         let formBuilder = new api.form.FormBuilder().addFormItem(
             new api.form.InputBuilder().setName("from").setInputType(api.content.form.inputtype.publish.PublishFrom.getName()).setLabel(
-                "Online from").setHelpText("Time from which your contents will be available online").setOccurrences(
+                "Online from").setHelpText("Offline items will go online at the specified time").setOccurrences(
                 new api.form.OccurrencesBuilder().setMinimum(1).setMaximum(1).build()).setInputTypeConfig({}).setMaximizeUIInputWidth(
                 true).build()).addFormItem(
             new api.form.InputBuilder().setName("to").setInputType(api.content.form.inputtype.publish.PublishToFuture.getName()).setLabel(
-                "Online to").setHelpText("Time until when your contents will be available online").setOccurrences(
+                "Online to").setHelpText("Online items will be taken offline at the specified time").setOccurrences(
                 new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).setInputTypeConfig({}).setMaximizeUIInputWidth(
                 true).build());
 
@@ -84,7 +84,8 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
 
     private addSubtitle() {
         this.appendChildToHeader(
-            new api.dom.H6El("schedule-publish-dialog-subtitle").setHtml("NB: These times will only affect offline items.",
+            new api.dom.H6El("schedule-publish-dialog-subtitle").setHtml(
+                "NB: Only offline items will be scheduled. All other changes will be published immediately.",
                 false));
     }
 

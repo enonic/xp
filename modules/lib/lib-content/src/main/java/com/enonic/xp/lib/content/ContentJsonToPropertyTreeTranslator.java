@@ -1,4 +1,4 @@
-package com.enonic.xp.json;
+package com.enonic.xp.lib.content;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -12,17 +12,13 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemPath;
+import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputType;
 import com.enonic.xp.inputtype.InputTypeResolver;
 import com.enonic.xp.inputtype.InputTypes;
 
-
-/**
- * @deprecated As of release 6.9
- */
-@Deprecated
-public final class JsonToPropertyTreeTranslator
+final class ContentJsonToPropertyTreeTranslator
 {
     private final Form form;
 
@@ -32,16 +28,9 @@ public final class JsonToPropertyTreeTranslator
 
     private final boolean strictMode;
 
-    @SuppressWarnings("unused")
-    // Kept for backward compatibility
-    public JsonToPropertyTreeTranslator()
-    {
-        this( null, false );
-    }
+    private static final String OPTION_SET_SELECTION_ARRAY_NAME = "_selected";
 
-    @SuppressWarnings("unused")
-    // Kept for backward compatibility
-    public JsonToPropertyTreeTranslator( final Form form, final boolean strict )
+    public ContentJsonToPropertyTreeTranslator( final Form form, final boolean strict )
     {
         this.form = form != null ? form : Form.create().build();
         this.strictMode = strict;
@@ -93,7 +82,7 @@ public final class JsonToPropertyTreeTranslator
 
         if ( input == null )
         {
-            if ( this.strictMode )
+            if ( this.strictMode && !isOptionSetSelection( key, parentProperty ) )
             {
                 throw new IllegalArgumentException(
                     "No mapping defined for property " + key + " with value " + resolveStringValue( value ) );
@@ -184,6 +173,12 @@ public final class JsonToPropertyTreeTranslator
     private Input getInput( final Property parentProperty, final String key )
     {
         return this.form.getInput( resolveInputPath( key, parentProperty ) );
+    }
+
+    private boolean isOptionSetSelection( final String key, final Property parentProperty )
+    {
+        return OPTION_SET_SELECTION_ARRAY_NAME.equals( key ) && FormOptionSet.class.isInstance(
+            this.form.getFormItem( resolveInputPath( parentProperty.getName(), parentProperty.getParent().getProperty() ) ) );
     }
 
 }
