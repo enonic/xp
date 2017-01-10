@@ -42,6 +42,8 @@ export class EmulatorPanel extends api.ui.panel.Panel {
 
             if (units === "px") {
                 this.updateLiveEditFrameContainerHeight(height);
+            } else {
+                this.resetParentHeight();
             }
 
         });
@@ -81,6 +83,12 @@ export class EmulatorPanel extends api.ui.panel.Panel {
             frameParent.style.height = height + this.getScrollbarWidth() + "px";
             frameParent.classList.remove("overflow");
         }
+    }
+
+    private resetParentHeight() {
+        var frameParent = this.liveEditPage.getIFrame().getHTMLElement().parentElement;
+        frameParent.style.height = "";
+        frameParent.classList.remove("overflow");
     }
 
     private getScrollbarWidth(): number {
