@@ -127,6 +127,12 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         this.initEventHandlers(updateColumns);
     }
 
+    protected editItem(node: TreeNode<ContentSummaryAndCompareStatus>) {
+        if (this.getDataId(node.getData())) { // default event
+            new api.content.event.EditContentEvent([node.getData()]).fire();
+        }
+    }
+    
     private initEventHandlers(updateColumnsHandler: Function) {
         let onBecameActive = (active: boolean) => {
             if (active) {
@@ -158,9 +164,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                  * nodes will be loaded and displayed. If the any other
                  * node is clicked, edit event will be triggered by default.
                  */
-                if (this.getDataId(node.getData())) { // default event
-                    new api.content.event.EditContentEvent([node.getData()]).fire();
-                }
+                this.editItem(node);
             }
         });
 

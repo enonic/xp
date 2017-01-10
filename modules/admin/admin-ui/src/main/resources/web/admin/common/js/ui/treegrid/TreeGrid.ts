@@ -266,6 +266,7 @@ module api.ui.treegrid {
                         keyBindings = [
                             new KeyBinding('shift+up', (event: ExtendedKeyboardEvent) => {
                                 if (this.isActive()) {
+                                    this.unhighlightRows();
                                     this.scrollToRow(this.grid.addSelectedUp());
                                 }
                                 event.preventDefault();
@@ -273,6 +274,7 @@ module api.ui.treegrid {
                             }),
                             new KeyBinding('shift+down', (event: ExtendedKeyboardEvent) => {
                                 if (this.isActive()) {
+                                    this.unhighlightRows();
                                     this.scrollToRow(this.grid.addSelectedDown());
                                 }
                                 event.preventDefault();
@@ -380,6 +382,14 @@ module api.ui.treegrid {
                                 let row = this.gridData.getRowById(this.highlightedNode.getId());
                                 this.grid.toggleRow(row);
                             }
+                            else if (this.grid.getSelectedRows().length > 0) {
+                                this.deselectAll();
+                            }
+                        }),
+                        new KeyBinding('enter', () => {
+                            if (this.highlightedNode) {
+                                this.editItem(this.highlightedNode);
+                            }
                         })
                     ]);
 
@@ -406,6 +416,10 @@ module api.ui.treegrid {
             });
 
             this.onLoaded(() => this.unmask());
+        }
+
+        protected editItem(node: TreeNode<DATA>) {
+
         }
 
         public setContextMenu(contextMenu: TreeGridContextMenu) {

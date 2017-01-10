@@ -73,11 +73,15 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
 
             if (this.isActive()) {
                 let node = this.getGrid().getDataView().getItem(data.row);
-                if (this.isUserItemEditable(node.getData())) {
-                    new EditPrincipalEvent([node.getData()]).fire();
-                }
+                this.editItem(node);
             }
         });
+    }
+
+    protected editItem(node: TreeNode<UserTreeGridItem>) {
+        if (this.isUserItemEditable(node.getData())) {
+            new EditPrincipalEvent([node.getData()]).fire();
+        }
     }
 
     private isUserItemEditable(userItem: UserTreeGridItem): boolean {
