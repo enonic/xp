@@ -324,7 +324,7 @@ module api.util.htmlarea.editor {
                     });
 
                     // BlockFormat shortcuts keys
-                    for (var i = 1; i <= 6; i++) {
+                    for (let i = 1; i <= 6; i++) {
                         editor.addShortcut('meta+alt+' + i, '', ['FormatBlock', false, 'h' + i]);
                     }
 

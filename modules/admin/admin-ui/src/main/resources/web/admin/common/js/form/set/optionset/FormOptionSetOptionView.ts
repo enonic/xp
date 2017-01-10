@@ -7,6 +7,7 @@ module api.form {
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
     import Occurrences = api.form.Occurrences;
+    import PropertyValueChangedEvent = api.data.PropertyValueChangedEvent;
 
     export interface FormOptionSetOptionViewConfig {
 
@@ -41,7 +42,7 @@ module api.form {
             this.setCheckBoxDisabled();
         }).bind(this);
 
-        private radioDeselectHandler: (event: api.data.PropertyValueChangedEvent) => void = ((event: api.data.PropertyValueChangedEvent) => {
+        private radioDeselectHandler: (event: PropertyValueChangedEvent) => void = ((event: PropertyValueChangedEvent) => {
             if (event.getPreviousValue().getString() === this.getName()) {
                 this.deselectHandle();
             }
@@ -113,7 +114,7 @@ module api.form {
 
                 this.formItemViews.forEach((formItemView: FormItemView) => {
                     formItemView.onEditContentRequest((content: api.content.ContentSummary) => {
-                        var summaryAndStatus = api.content.ContentSummaryAndCompareStatus.fromContentSummary(content);
+                        let summaryAndStatus = api.content.ContentSummaryAndCompareStatus.fromContentSummary(content);
                         new api.content.event.EditContentEvent([summaryAndStatus]).fire();
                     });
                 });
