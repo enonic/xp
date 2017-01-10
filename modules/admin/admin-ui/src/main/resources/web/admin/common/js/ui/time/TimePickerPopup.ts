@@ -217,7 +217,6 @@ module api.ui.time {
             return result + value;
         }
 
-
         private addHour(add: number, silent?: boolean) {
             this.selectedHour += add;
             if (this.selectedHour < 0) {
@@ -265,7 +264,6 @@ module api.ui.time {
         public padNumber(value: number, pad: number): string {
             return Array(pad - String(value).length + 1).join('0') + value;
         }
-
 
         public isHoursValid(hours: number): boolean {
             return hours >= 0 && hours < 24;

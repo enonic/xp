@@ -48,7 +48,6 @@ export class ContentPermissionsApplyEvent extends api.event.Event {
         api.event.Event.unbind(api.ClassHelper.getFullName(this), handler, contextWindow);
     }
 
-
 }
 class Builder {
 

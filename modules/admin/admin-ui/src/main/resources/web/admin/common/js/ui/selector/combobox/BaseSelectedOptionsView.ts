@@ -62,7 +62,6 @@ module api.ui.selector.combobox {
             this.toggleClass('sortable', sortable);
         }
 
-
         protected handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
             this.beforeDragStartedHeight = this.getEl().getHeight();
 

@@ -140,5 +140,4 @@ module api.ui.mask {
 
     }
 
-
 }

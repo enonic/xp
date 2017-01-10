@@ -96,7 +96,6 @@ module api.content.attachment {
             return this;
         }
 
-
         public setName(value: AttachmentName): AttachmentBuilder {
             this.name = value;
             return this;

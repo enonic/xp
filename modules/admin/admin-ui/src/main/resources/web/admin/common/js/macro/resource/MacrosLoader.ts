@@ -72,5 +72,4 @@ module api.macro.resource {
 
     }
 
-
 }

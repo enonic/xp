@@ -74,7 +74,6 @@ module api.ui.tab {
                     }
                 }
 
-
                 if (KeyHelper.isEscKey(event) && this.isMenuVisible()) {
                     this.hideMenu();
                 }
@@ -197,7 +196,6 @@ module api.ui.tab {
                 slicedTab.setIndex(slicedTab.getIndex() + 1);
             });
 
-
             if (tab.isVisibleInMenu()) {
                 this.menuEl.insertChild(tab, index);
                 this.tabMenuButton.show();
@@ -237,7 +235,6 @@ module api.ui.tab {
 
             this.notifyTabAddedListeners(tab);
         }
-
 
         isEmpty(): boolean {
             return this.tabs.length == 0;
@@ -335,7 +332,6 @@ module api.ui.tab {
                 });
             }
         }
-
 
         updateActiveTab(tabIndex: number) {
             this.tabs.forEach((tab: TabMenuItem, index: number) => {

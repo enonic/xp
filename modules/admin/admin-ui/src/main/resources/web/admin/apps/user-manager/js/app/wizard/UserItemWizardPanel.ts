@@ -105,7 +105,6 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
 
     }
 
-
     createSteps(persistedItem: USER_ITEM_TYPE): WizardStep[] {
         throw new Error("Must be implemented by inheritors");
     }

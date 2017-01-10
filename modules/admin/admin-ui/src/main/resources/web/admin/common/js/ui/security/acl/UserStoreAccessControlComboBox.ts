@@ -123,7 +123,6 @@ module api.ui.security.acl {
             return itemView;
         }
 
-
         addOption(option: Option<UserStoreAccessControlEntry>, silent: boolean = false, keyCode: number = -1): boolean {
             if(option.readOnly)
             {

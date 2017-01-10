@@ -65,7 +65,6 @@ module api.security {
             return this;
         }
 
-
         fromJson(json: api.security.AuthConfigJson): AuthConfigBuilder {
             this.applicationKey = api.application.ApplicationKey.fromString(json.applicationKey);
             this.config = json.config != null ? api.data.PropertyTree.fromJson(json.config) : null;

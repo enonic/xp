@@ -118,7 +118,6 @@ module api.content.resource {
             return aggregationQueryJsons;
         }
 
-
         private queryFiltersToJson(queryFilters: api.query.filter.Filter[]): api.query.filter.FilterTypeWrapperJson[] {
 
             let queryFilterJsons: api.query.filter.FilterTypeWrapperJson[] = [];

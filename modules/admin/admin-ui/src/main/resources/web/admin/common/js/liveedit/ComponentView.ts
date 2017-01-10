@@ -314,7 +314,6 @@ module api.liveedit {
                     setData(duplicate).
                     setPositionIndex(index + 1));
 
-
             parentView.addComponentView(duplicateView, index + 1);
 
             return duplicateView;
@@ -452,7 +451,6 @@ module api.liveedit {
             }
             return parentItemView;
         }
-
 
         // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
         private handleDragStart2(event: DragEvent) {

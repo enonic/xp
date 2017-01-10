@@ -10,7 +10,6 @@ import PrincipalType = api.security.PrincipalType;
 
 export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel {
 
-
     constructor() {
 
         super(null);

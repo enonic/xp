@@ -359,7 +359,6 @@ module api.liveedit {
                 console.log('ItemView.remove [' + this.toString() + ']');
             }
 
-
             if (this.contextMenu) {
                 this.contextMenu.remove();
             }

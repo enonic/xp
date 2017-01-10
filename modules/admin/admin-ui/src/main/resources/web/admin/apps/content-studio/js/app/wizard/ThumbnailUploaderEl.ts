@@ -43,7 +43,6 @@ export class ThumbnailUploaderEl extends api.ui.uploader.UploaderEl<api.content.
         this.iconUrlResolver = new api.content.util.ContentIconUrlResolver();
     }
 
-
     createModel(serverResponse: api.content.json.ContentJson): api.content.Content {
         if (serverResponse) {
             return new api.content.ContentBuilder().fromContentJson(<api.content.json.ContentJson> serverResponse).build();

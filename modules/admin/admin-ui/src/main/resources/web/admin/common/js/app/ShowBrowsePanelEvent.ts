@@ -1,6 +1,5 @@
 module api.app {
 
-
     export class ShowBrowsePanelEvent extends api.event.Event {
 
         static on(handler: (event: ShowBrowsePanelEvent) => void) {

@@ -69,7 +69,7 @@
       "spaces"
     ],
     "linebreak-style": false,
-    "no-consecutive-blank-lines": false,
+    "no-consecutive-blank-lines": true,
     "no-trailing-whitespace": true,
     "object-literal-key-quotes": [
       false

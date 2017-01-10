@@ -33,7 +33,6 @@ module api.content.order {
 
         }
 
-
         static fromJson(childOrderJson: ChildOrderJson): ChildOrder {
             let childOrder: ChildOrder = new ChildOrder();
             childOrderJson.orderExpressions.forEach((orderExprJson: OrderExprWrapperJson) => {

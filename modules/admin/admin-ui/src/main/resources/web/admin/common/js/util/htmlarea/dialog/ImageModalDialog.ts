@@ -283,7 +283,6 @@ module api.util.htmlarea.dialog {
             new api.dom.ElementHelper(this.imagePreviewContainer.getHTMLElement()).setMaxHeightPx(maxImagePreviewHeight);
         }
 
-
         private getCaption(): string {
             if (this.imageElement) {
                 return wemjq(this.imageElement.parentElement).children("figcaption").text();
@@ -373,7 +372,6 @@ module api.util.htmlarea.dialog {
         private showProgress() {
             this.progress.show();
         }
-
 
         private hideUploadMasks() {
             this.progress.hide();

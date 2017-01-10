@@ -836,7 +836,6 @@ module api.ui.image {
                     this.setFocusRadiusPx(this.revertFocusData.r, false);
                     this.setFocusAutoPositioned(this.revertFocusData.auto);
 
-
                     this.setZoomPositionPx(this.revertZoomData, false);
                     this.setCropPositionPx(this.revertCropData, false);
                     this.setCropAutoPositioned(this.revertCropData.auto);
@@ -860,7 +859,6 @@ module api.ui.image {
         isEditMode(): boolean {
             return this.hasClass('edit-mode');
         }
-
 
         /*
          *  Focus related methods
@@ -1181,7 +1179,6 @@ module api.ui.image {
             return r == Math.min(this.cropData.w, this.cropData.h) / 4;
         }
 
-
         /*
          *  Crop related methods
          */
@@ -1294,7 +1291,6 @@ module api.ui.image {
                 oldY != this.cropData.y ||
                 oldW != this.cropData.w ||
                 oldH != this.cropData.h) {
-
 
                 let dx = this.cropData.x - oldX,
                     dy = this.cropData.y - oldY;
@@ -1601,7 +1597,6 @@ module api.ui.image {
             return rect.x == 0 && rect.y == 0 && rect.w == this.frameW && rect.h == this.frameH;
         }
 
-
         /*
          *  Zoom related methods
          */
@@ -1798,7 +1793,6 @@ module api.ui.image {
             return Math.max(Math.min(this.frameH, this.cropData.h), Math.min(this.maxZoom * this.frameH, y));
         }
 
-
         /*
          *      Common listeners
          */
@@ -1818,7 +1812,6 @@ module api.ui.image {
                 listener(edit, position, zoom, focus);
             });
         }
-
 
         /*
          *   Focus related listeners
@@ -1873,7 +1866,6 @@ module api.ui.image {
                 listener(normalizedRadius);
             });
         }
-
 
         /*
          *   Crop related listeners

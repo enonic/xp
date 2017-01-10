@@ -33,4 +33,3 @@ export class MostPopularItemsBlock extends api.dom.DivEl {
         }
     }
 }
-

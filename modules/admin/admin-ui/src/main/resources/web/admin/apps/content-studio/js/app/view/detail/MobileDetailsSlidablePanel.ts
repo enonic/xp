@@ -5,7 +5,6 @@ import {DETAILS_PANEL_TYPE} from "./DetailsPanel";
 
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 
-
 export class MobileDetailsPanel extends SlidablePanel {
 
     constructor(detailsView: DetailsView) {

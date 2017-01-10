@@ -115,7 +115,6 @@ module api.ui.security.acl {
             return itemView;
         }
 
-
         addOption(option: Option<AccessControlEntry>, silent: boolean = false, keyCode: number = -1): boolean {
             this.addItem(option.displayValue);
 

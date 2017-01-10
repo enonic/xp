@@ -157,7 +157,6 @@ module api.form.inputtype.combobox {
             return this.getPropertyArray().getSize();
         }
 
-
         onFocus(listener: (event: FocusEvent) => void) {
             this.comboBox.onFocus(listener);
         }

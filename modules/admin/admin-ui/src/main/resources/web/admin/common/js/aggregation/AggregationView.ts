@@ -57,7 +57,6 @@ module api.aggregation {
             throw new Error("Must be implemented by inheritor");
         }
 
-
         onBucketViewSelectionChanged(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
             this.bucketSelectionChangedListeners.push(listener);
         }
@@ -76,7 +75,6 @@ module api.aggregation {
             });
         }
 
-
         static createAggregationView(aggregation: api.aggregation.Aggregation,
                                      parentGroupView: api.aggregation.AggregationGroupView): api.aggregation.AggregationView {
             if (api.ObjectHelper.iFrameSafeInstanceOf(aggregation, api.aggregation.BucketAggregation)) {
@@ -87,6 +85,5 @@ module api.aggregation {
             }
         }
     }
-
 
 }

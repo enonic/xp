@@ -31,7 +31,6 @@ module api.ui.locale {
         }
     }
 
-
     class LocaleSelectedOptionView extends LocaleViewer implements api.ui.selector.combobox.SelectedOptionView<Locale> {
 
         private option: Option<Locale>;

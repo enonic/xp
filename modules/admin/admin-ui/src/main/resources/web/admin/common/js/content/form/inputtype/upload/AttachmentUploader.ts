@@ -13,7 +13,6 @@ module api.content.form.inputtype.upload {
     import FileUploaderEl = api.ui.uploader.FileUploaderEl;
     import AttachmentUploaderEl = api.content.attachment.AttachmentUploaderEl;
 
-
     export class AttachmentUploader extends FileUploader {
 
         private attachmentNames: string[] = [];

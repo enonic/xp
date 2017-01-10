@@ -77,7 +77,6 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
             new StartApplicationRequest(applicationKeys).sendAndParse().done();
         });
 
-
         UninstallApplicationEvent.on((event: UninstallApplicationEvent) => {
             let applicationKeys = ApplicationKey.fromClusterApplications(event.getApplications());
             new UninstallApplicationRequest(applicationKeys).sendAndParse().done();

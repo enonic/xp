@@ -175,4 +175,3 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
     }
 
 }
-

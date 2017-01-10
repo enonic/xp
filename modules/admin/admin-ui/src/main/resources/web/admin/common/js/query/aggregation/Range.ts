@@ -26,7 +26,6 @@ module api.query.aggregation {
                 return {};
             }
 
-
         }
 
     }

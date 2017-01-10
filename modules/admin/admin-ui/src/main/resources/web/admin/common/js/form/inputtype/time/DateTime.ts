@@ -48,7 +48,6 @@ module api.content.form.inputtype.time {
             }
         }
 
-
         updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly: boolean) {
             let dateTimePicker = <DateTimePicker> occurrence;
 

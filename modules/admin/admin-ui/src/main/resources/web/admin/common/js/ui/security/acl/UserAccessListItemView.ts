@@ -4,7 +4,6 @@ module api.ui.security.acl {
     import Tooltip = api.ui.Tooltip;
     import User = api.security.User;
 
-
     export class UserAccessListItemView extends api.ui.Viewer<EffectivePermission> {
 
         private userLine: api.dom.DivEl;
@@ -115,7 +114,6 @@ module api.ui.security.acl {
             }
 
         }
-
 
     }
 }

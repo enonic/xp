@@ -164,7 +164,6 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
         return item.getDataId();
     }
 
-
     hasChildren(item: UserTreeGridItem): boolean {
         return item.hasChildren();
     }

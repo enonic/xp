@@ -45,7 +45,6 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
         this.contentGrid.onMouseEnter(this.handleMouseEnter);
     }
 
-
     protected handleDragEnd(event: Event, data: any) {
         api.dom.Body.get().unMouseMove(this.handleHelperMove);
         api.dom.Body.get().removeChild(DragHelper.get());
@@ -95,7 +94,6 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
         return dataList.indexOf(item);
     }
 
-
     protected getModelId(model: ItemView) {
         return model ? model.getItemId() : null;
     }
@@ -123,7 +121,6 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
         item.getData().select(null, api.liveedit.ItemViewContextMenuPosition.NONE);
         this.contentGrid.refresh();
 
-
         return data[regionPosition];
     }
 
@@ -134,7 +131,6 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
         let parentComponentNode = data[parentPosition],
             parentComponentView = parentComponentNode.getData(),
             draggableComponentView = data[draggableRow].getData();
-
 
         if (parentComponentView) {
 
@@ -177,7 +173,6 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
             nodes[0].setMarginLeft(margin + "px");
         }
     }
-
 
     private getParentPosition(insertBeforePos: number, data: TreeNode<ItemView>[]): InsertData {
         let parentPosition = insertBeforePos;
@@ -234,14 +229,12 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
         DragHelper.get().setVisible(true);
     }
 
-
     private handleHelperMove(event: MouseEvent) {
         DragHelper.get().getEl().setLeftPx(event.pageX);
         DragHelper.get().getEl().setTopPx(event.pageY);
     }
 
 }
-
 
 export interface InsertData {
     parentPosition: number;

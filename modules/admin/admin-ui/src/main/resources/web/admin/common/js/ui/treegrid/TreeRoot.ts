@@ -14,7 +14,6 @@ module api.ui.treegrid {
 
         private stashedSelection: TreeNode<DATA>[];
 
-
         constructor() {
 
             this.defaultRoot = new TreeNodeBuilder<DATA>().setExpanded(true).build();

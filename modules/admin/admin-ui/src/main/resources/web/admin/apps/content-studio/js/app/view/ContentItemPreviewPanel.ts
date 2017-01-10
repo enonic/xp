@@ -9,7 +9,6 @@ import UriHelper = api.util.UriHelper;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import PEl = api.dom.PEl;
 
-
 enum PREVIEW_TYPE {
     IMAGE,
     SVG,

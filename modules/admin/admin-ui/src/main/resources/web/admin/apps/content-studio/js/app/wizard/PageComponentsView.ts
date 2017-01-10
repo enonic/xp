@@ -410,7 +410,6 @@ export class PageComponentsView extends api.dom.DivEl {
         });
     }
 
-
     private bindTreeTextNodeUpdateOnTextComponentModify(textComponentView: TextComponentView) {
         let handler = api.util.AppHelper.debounce((event) => {
             this.tree.updateNode(textComponentView);
@@ -604,7 +603,6 @@ export class PageComponentsView extends api.dom.DivEl {
             this.showContextMenu(null, {x: event.pageX, y: event.pageY});
         }
     }
-
 
     private isMenuIconClicked(cellNumber: number): boolean {
         return cellNumber == 1;

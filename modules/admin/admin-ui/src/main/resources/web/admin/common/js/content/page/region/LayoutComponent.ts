@@ -124,7 +124,6 @@ module api.content.page.region {
             regions.unComponentPropertyChanged(this.componentPropertyChangedEventHandler);
         }
 
-
         onComponentPropertyChanged(listener: (event: ComponentPropertyChangedEvent)=>void) {
             this.componentPropertyChangedListeners.push(listener);
         }

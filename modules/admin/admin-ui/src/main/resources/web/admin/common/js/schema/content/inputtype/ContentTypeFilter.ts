@@ -111,7 +111,6 @@ module api.schema.content.inputtype {
             });
         }
 
-
         update(propertyArray: api.data.PropertyArray, unchangedOnly: boolean): Q.Promise<void> {
             let superPromise = super.update(propertyArray, unchangedOnly);
 

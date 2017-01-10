@@ -94,7 +94,6 @@ export class ContextWindow extends api.ui.panel.DockedPanel {
             this.addItem("Inspect", false, this.inspectionsPanel);
             this.addItem("Emulator", false, this.emulatorPanel);
 
-
             this.insertablesPanel.getComponentsView().onBeforeInsertAction(() => {
                 this.fixed = true;
             });
@@ -167,7 +166,6 @@ export class ContextWindow extends api.ui.panel.DockedPanel {
     isSlidingOut(): boolean {
         return this.contextWindowState == ContextWindowState.SLIDING_OUT;
     }
-
 
     isFixed(): boolean {
         return this.fixed;

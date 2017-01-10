@@ -132,7 +132,6 @@ module api.liveedit {
                 this.refreshEmptyState();
             };
 
-
             this.onMouseDown(this.memorizeLastMouseDownTarget.bind(this));
 
             this.mouseOverListener = (e: MouseEvent) => {

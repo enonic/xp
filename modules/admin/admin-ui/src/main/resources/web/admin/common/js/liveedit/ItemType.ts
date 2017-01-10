@@ -33,7 +33,6 @@ module api.liveedit {
             return this.config;
         }
 
-
         isComponentType(): boolean {
             return false;
         }

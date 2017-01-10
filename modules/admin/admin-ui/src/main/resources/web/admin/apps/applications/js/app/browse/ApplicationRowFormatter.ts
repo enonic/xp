@@ -30,4 +30,3 @@ export class ApplicationRowFormatter {
         return statusEl.toString();
     }
 }
-

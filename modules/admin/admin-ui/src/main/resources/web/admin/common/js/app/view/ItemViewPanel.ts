@@ -50,7 +50,6 @@ module api.app.view {
             return true;
         }
 
-
         onClosed(listener: (event: ItemViewClosedEvent<M>)=>void) {
             this.closedListeners.push(listener);
         }

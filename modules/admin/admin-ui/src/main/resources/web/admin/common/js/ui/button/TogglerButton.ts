@@ -46,7 +46,6 @@ module api.ui.button {
             return this.hasClass("active");
         }
 
-
         onActiveChanged(listener: (isActive: boolean) => void) {
             this.activeListeners.push(listener);
         }

@@ -28,11 +28,9 @@ module api.ui.grid {
             this.contentGrid.getGrid().subscribeMoveRows(this.handleMoveRows.bind(this));
         }
 
-
         protected handleDragInit(event: DragEvent, data: DragEventData) {
             event.stopImmediatePropagation();
         }
-
 
         protected handleDragStart() {
             let draggableClass = this.contentGrid.getOptions().getSelectedCellCssClass() || "";
@@ -57,10 +55,8 @@ module api.ui.grid {
             this.draggableItem.getEl().setTop(proxyEl.getTop()).setPosition("absolute");
             let gridClasses = (" " + this.contentGrid.getGrid().getEl().getClass()).replace(/\s/g, ".");
 
-
             wemjq(".tree-grid " + gridClasses + " .slick-viewport").append(wemjq(this.draggableItem.getHTMLElement()));
         }
-
 
         protected handleDrag(event: Event, data: DragEventData) {
             if (!this.draggableItem) {
@@ -69,7 +65,6 @@ module api.ui.grid {
             let top = Element.fromString(".slick-reorder-proxy").getEl().getTopPx();
             this.draggableItem.getEl().setTopPx(top /*- this.rowHeight*//* / 2*/).setZindex(2);
         }
-
 
         protected handleDragEnd(event: Event, data: DragEventData) {
             this.draggableItem.remove();
@@ -110,7 +105,6 @@ module api.ui.grid {
             this.contentGrid.scrollToRow(data.insertBefore);
             return true;
         }
-
 
         protected handleMoveRows(event: Event, args: DragEventData) {
             let dataView = this.contentGrid.getGrid().getDataView();

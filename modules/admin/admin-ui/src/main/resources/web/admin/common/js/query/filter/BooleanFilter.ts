@@ -1,12 +1,10 @@
 module api.query.filter {
 
-
     export class BooleanFilter extends Filter {
 
         private must: api.query.filter.Filter[] = [];
         private mustNot: api.query.filter.Filter[] = [];
         private should: api.query.filter.Filter[] = [];
-
 
         public addMust(must: api.query.filter.Filter): void {
             this.must.push(must);

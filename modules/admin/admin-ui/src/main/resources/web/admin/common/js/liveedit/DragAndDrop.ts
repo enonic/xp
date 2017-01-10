@@ -47,11 +47,9 @@ module api.liveedit {
         private droppedListeners: {(componentView: ComponentView<Component>, regionView: RegionView): void}[] = [];
         private canceledListeners: {(componentView: ComponentView<Component>): void}[] = [];
 
-
         public static init(pageView: PageView) {
             DragAndDrop.instance = new DragAndDrop(pageView);
         }
-
 
         public static get(): DragAndDrop {
             if (!DragAndDrop.instance) {
@@ -80,7 +78,6 @@ module api.liveedit {
             wemjq(this.REGION_SELECTOR).sortable('refresh');
         }
 
-
         private processMouseOverRegionView(regionView: RegionView) {
 
             // Make sure no other region has the over class
@@ -99,7 +96,6 @@ module api.liveedit {
             // Remove over class from region
             regionView.refreshEmptyState().removeClass(this.DRAGGED_OVER_CLASS);
         }
-
 
         createSortable(selector: any): void {
 
@@ -441,14 +437,12 @@ module api.liveedit {
             toRegionView.refreshEmptyState();
         }
 
-
         private cancelDrag(sortable: HTMLElement) {
 
             wemjq(sortable).sortable('cancel');
 
             this.notifyCanceled(this.draggedComponentView);
         }
-
 
         onDragStarted(listener: (componentView: ComponentView<Component>) => void) {
             this.dragStartedListeners.push(listener);
@@ -543,7 +537,6 @@ module api.liveedit {
             new ComponentViewDragCanceledEvent(componentView).fire();
         }
 
-
         private updateHelperAndPlaceholder(regionView: RegionView, enter: boolean = true) {
             let helper = DragHelper.get();
             let placeholder = DragPlaceholder.get().setRegionView(enter ? regionView : null);
@@ -562,7 +555,6 @@ module api.liveedit {
             }
         }
 
-
         private getItemType(): ItemType {
             if (this.draggedComponentView) {
                 return this.draggedComponentView.getType();
@@ -573,11 +565,9 @@ module api.liveedit {
             }
         }
 
-
         private isDraggingFromContextWindow(): boolean {
             return !!this.newItemItemType;
         }
-
 
         private isDraggingLayoutOverLayout(regionView: RegionView, draggingItemType: ItemType): boolean {
             let isLayout = regionView.hasParentLayoutComponentView() && draggingItemType.getShortName() == 'layout';
@@ -597,13 +587,11 @@ module api.liveedit {
             return isLayout;
         }
 
-
         private getComponentView(jq: JQuery): ComponentView<Component> {
             let comp = this.pageView.getComponentViewByElement(jq.get(0));
             api.util.assertState(!!comp, "ComponentView is not expected to be null");
             return comp;
         }
-
 
         private getRegionView(jq: JQuery): RegionView {
             let region = this.pageView.getRegionViewByElement(jq.get(0));

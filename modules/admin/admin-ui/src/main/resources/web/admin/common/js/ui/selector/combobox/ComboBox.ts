@@ -871,7 +871,6 @@ module api.ui.selector.combobox {
                 this.input.giveFocus();
             }
 
-
             if (event.which == 38 || event.which == 40 || event.which == 13) {
                 event.stopPropagation();
                 event.preventDefault();

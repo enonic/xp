@@ -7,5 +7,4 @@ module api.content.json {
         contentVersion: ContentVersionJson;
     }
 
-
 }

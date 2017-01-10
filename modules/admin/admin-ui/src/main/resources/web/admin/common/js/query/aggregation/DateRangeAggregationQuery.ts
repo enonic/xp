@@ -39,8 +39,6 @@ module api.query.aggregation {
             };
         }
 
-
     }
-
 
 }

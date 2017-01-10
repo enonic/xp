@@ -47,7 +47,6 @@ module api.form.inputtype.text {
             return inputEl;
         }
 
-
         updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly: boolean) {
             let input = <api.ui.text.TextInput> occurrence;
 

@@ -84,7 +84,6 @@ module api.ui.treegrid {
             });
             this.gridData.setItemMetadataHandler(this.handleItemMetadata.bind(this));
 
-
             this.columns = this.updateColumnsFormatter(builder.getColumns());
 
             this.gridOptions = builder.getOptions();
@@ -1006,7 +1005,6 @@ module api.ui.treegrid {
             });
             this.notifyDataChanged(new DataChangedEvent<DATA>(deleted, DataChangedEvent.DELETED));
         }
-
 
         initData(nodes: TreeNode<DATA>[]) {
             this.gridData.setItems(nodes, "id");

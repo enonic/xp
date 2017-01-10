@@ -15,7 +15,6 @@ export class DeletePrincipalAction extends Action {
                 .setNoCallback(null)
                 .setYesCallback(() => {
 
-
                     let principalItems = grid.getSelectedDataList().filter(
                         userItem => UserTreeGridItemType.PRINCIPAL == userItem.getType()).map((userItem: UserTreeGridItem) => {
                         return userItem.getPrincipal();
@@ -37,7 +36,6 @@ export class DeletePrincipalAction extends Action {
                     }).map((userStore: api.security.UserStore) => {
                         return userStore.getKey();
                     });
-
 
                     if (principalKeys && principalKeys.length > 0) {
                         new api.security.DeletePrincipalRequest()

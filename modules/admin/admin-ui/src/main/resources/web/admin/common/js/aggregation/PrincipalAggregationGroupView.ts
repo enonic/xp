@@ -16,9 +16,7 @@ module api.aggregation {
             //  displayNameMap["group"] = "Group";
             mask.remove();
 
-
         }
-
 
     }
 

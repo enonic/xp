@@ -20,7 +20,6 @@ module api.security.event {
             super(type, changeItems, newPrincipalPaths);
         }
 
-
         getChangeType(): NodeServerChangeType {
             return this.type;
         }

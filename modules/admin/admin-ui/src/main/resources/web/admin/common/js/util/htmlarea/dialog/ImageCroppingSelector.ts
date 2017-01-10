@@ -7,7 +7,6 @@ module api.util.htmlarea.dialog {
 
     export class ImageCroppingSelector extends Dropdown<ImageCroppingOption> {
 
-
         constructor() {
             super("imageSelector", <DropdownConfig<ImageCroppingOption>>{
                 optionDisplayValueViewer: new ImageCroppingOptionViewer(),

@@ -220,7 +220,6 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
     postPersistNewItem(persistedPrincipal: Principal): wemQ.Promise<Principal> {
         Router.setHash("edit/" + persistedPrincipal.getKey());
 
-
         return wemQ(persistedPrincipal);
     }
 

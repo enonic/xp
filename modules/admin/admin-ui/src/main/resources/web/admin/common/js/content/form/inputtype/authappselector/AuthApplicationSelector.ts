@@ -70,7 +70,6 @@ module api.content.site.inputtype.authappselector {
             return wemQ<void>(null);
         }
 
-
         update(propertyArray: api.data.PropertyArray, unchangedOnly?: boolean): Q.Promise<void> {
             let superPromise = super.update(propertyArray, unchangedOnly);
             this.siteConfigProvider.setPropertyArray(propertyArray);
@@ -89,7 +88,6 @@ module api.content.site.inputtype.authappselector {
         reset() {
             this.comboBox.resetBaseValues();
         }
-
 
         private saveToSet(siteConfig: SiteConfig, index: number) {
 

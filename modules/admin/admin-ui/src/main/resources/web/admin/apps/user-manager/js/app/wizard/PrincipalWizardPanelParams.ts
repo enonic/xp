@@ -15,7 +15,6 @@ export class PrincipalWizardPanelParams extends UserItemWizardPanelParams<Princi
 
     principalKey: PrincipalKey;
 
-
     setPrincipalKey(value: api.security.PrincipalKey): PrincipalWizardPanelParams {
         this.principalKey = value;
         return this;

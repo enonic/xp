@@ -79,7 +79,6 @@ export class ContentItemViewPanel extends api.app.view.ItemViewPanel<api.content
         this.previewPanel.setItem(item);
     }
 
-
     public showPreview(enabled: boolean) {
         this.previewMode = enabled;
         // refresh the view

@@ -120,7 +120,6 @@ module api.form.inputtype.radiobutton {
                 this.saveToProperty(ValueTypes.STRING.newValue(event.getNewValue()));
             });
 
-
             return radioGroup;
         }
 

@@ -5,7 +5,6 @@ module api.ui.uploader {
     import Element = api.dom.Element;
     import SelectionItem = api.app.browse.SelectionItem;
 
-
     export class FileUploaderEl<MODEL extends api.Equitable> extends UploaderEl<MODEL> {
 
         protected contentId: string;

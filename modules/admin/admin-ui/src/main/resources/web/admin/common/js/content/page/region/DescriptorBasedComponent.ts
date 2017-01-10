@@ -149,7 +149,6 @@ module api.content.page.region {
             return this;
         }
 
-
         public build(): DESCRIPTOR_BASED_COMPONENT {
             throw new Error("Must be implemented by inheritor");
         }

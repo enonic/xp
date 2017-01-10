@@ -27,7 +27,6 @@ module api.system {
             return this.authenticated;
         }
 
-
         getInstallation(): string {
             return this.installation;
         }

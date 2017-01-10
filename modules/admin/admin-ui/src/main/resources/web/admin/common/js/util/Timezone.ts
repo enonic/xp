@@ -93,7 +93,6 @@ module api.util {
         }
     }
 
-
     export class TimezoneBuilder {
 
         offset: number;

@@ -176,7 +176,6 @@ module api.content.site.inputtype.siteconfigurator {
                     api.ObjectHelper.iFrameSafeInstanceOf(inputView.getInputTypeView(), api.form.inputtype.combobox.ComboBox));
         }
 
-
         show() {
             api.dom.Body.get().appendChild(this);
             super.show();

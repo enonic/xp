@@ -56,5 +56,4 @@ module api.content.resource {
 
     }
 
-
 }

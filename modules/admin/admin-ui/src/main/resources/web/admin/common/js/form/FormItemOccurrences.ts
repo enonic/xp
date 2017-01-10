@@ -173,7 +173,6 @@ module api.form {
                 }
             });
 
-
             return wemQ.all(promises).spread<void>(() => wemQ<void>(null));
         }
 
@@ -334,7 +333,6 @@ module api.form {
         countOccurrences(): number {
             return this.occurrences.length;
         }
-
 
         moveOccurrence(fromIndex: number, toIndex: number) {
 

@@ -194,7 +194,6 @@ module api.dom {
             return this;
         }
 
-
         public findChildById(id: string, deep: boolean = false): Element {
             for (let i = 0; i < this.children.length; i++) {
                 let child = this.children[i];
@@ -494,7 +493,6 @@ module api.dom {
             return this.el.getHTMLElement();
         }
 
-
         /*
          *      Child manipulations
          */
@@ -630,7 +628,6 @@ module api.dom {
             return childIndex;
         }
 
-
         /*
          *      Self actions
          */
@@ -752,7 +749,6 @@ module api.dom {
             this.getEl().setInnerHtml(value, escapeHtml);
             return this;
         }
-
 
         /*
          *      Event listeners
@@ -1140,7 +1136,6 @@ module api.dom {
         unDragEnd(listener: (event: DragEvent) => void) {
             this.getEl().removeEventListener("dragend", listener);
         }
-
 
         static fromHtmlElement(element: HTMLElement, loadExistingChildren: boolean = false, parent?: Element): Element {
             return new Element(new ElementFromHelperBuilder().setHelper(new ElementHelper(element)).setLoadExistingChildren(

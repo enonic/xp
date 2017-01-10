@@ -16,5 +16,4 @@ module api.content.resource {
         }
     }
 
-
 }

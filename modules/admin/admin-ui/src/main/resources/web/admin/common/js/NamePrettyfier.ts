@@ -38,7 +38,6 @@ module api {
                 prettifiedPathName = this.transcribe(prettifiedPathName);
             }
 
-
             if (StringHelper.isBlank(prettifiedPathName)) {
                 return '';
             }

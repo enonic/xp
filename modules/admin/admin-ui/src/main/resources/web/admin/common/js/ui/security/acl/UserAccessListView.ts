@@ -11,7 +11,6 @@ module api.ui.security.acl {
 
         private userAccessListItemViews: UserAccessListItemView[];
 
-
         constructor(className?: string) {
             super('user-access-list-view' + (className ? " " + className : ""));
         }

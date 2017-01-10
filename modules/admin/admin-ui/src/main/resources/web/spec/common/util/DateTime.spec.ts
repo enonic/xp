@@ -100,7 +100,6 @@ describe("DateTime", () => {
         });
     });
 
-
     describe("parse string with negative offset", () => {
 
         it("String with negative timezone should be parsed correctly", () => {
@@ -132,7 +131,6 @@ describe("DateTime", () => {
 
             expect(dateTime.toString()).toEqual("2015-04-25T12:05:37+01:00");
         });
-
 
         it("should correctly convert with fractions and timezone", () => {
             timeZone = Timezone.create().setOffset(1).build();
@@ -189,7 +187,6 @@ describe("DateTime", () => {
             expect(date1.equals(date2)).toBeFalsy();
         });
     });
-
 
     describe("parsing of a date literal", () => {
 

@@ -28,7 +28,6 @@ module api.content.order {
             };
         }
 
-
     }
 
 }

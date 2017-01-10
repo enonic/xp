@@ -188,7 +188,6 @@ module api.util.htmlarea.dialog {
             return this.fields[id];
         }
 
-
         close() {
             super.close();
             if (!this.editor["destroyed"]) {

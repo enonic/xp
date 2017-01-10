@@ -76,7 +76,6 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             }
         });
 
-
         return treeGrid;
     }
 
@@ -291,7 +290,6 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
         return browseItems;
     }
-
 
     private handleGlobalEvents() {
 

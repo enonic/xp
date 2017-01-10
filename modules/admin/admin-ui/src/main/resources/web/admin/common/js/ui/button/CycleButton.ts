@@ -1,6 +1,5 @@
 module api.ui.button {
 
-
     export class CycleButton extends api.ui.button.Button {
 
         private actionList: Action[];

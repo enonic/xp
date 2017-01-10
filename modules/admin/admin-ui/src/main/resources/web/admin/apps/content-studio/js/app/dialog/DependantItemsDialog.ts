@@ -348,4 +348,3 @@ export class DialogDependantList extends ListBox<ContentSummaryAndCompareStatus>
         return item.getContentSummary().getId();
     }
 }
-

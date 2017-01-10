@@ -52,7 +52,6 @@ module api.content.resource {
             };
         }
 
-
         getRequestPath(): api.rest.Path {
             return api.rest.Path.fromParent(super.getResourcePath(), "reorderChildren");
         }

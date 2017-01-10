@@ -118,7 +118,6 @@ module api.ui.text {
             }
         }
 
-
         private generatePassword() {
             let length = NumberHelper.randomBetween(14, 16),
                 maxSpecials = NumberHelper.randomBetween(1, 3),

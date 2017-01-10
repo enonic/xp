@@ -315,4 +315,3 @@ export class DetailsView extends api.dom.DivEl {
         this.sizeChangedListeners.forEach((listener: ()=> void) => listener());
     }
 }
-

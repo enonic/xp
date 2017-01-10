@@ -26,7 +26,6 @@ module api.ui {
             return super.setObject(object);
         }
 
-
         doLayout(object: OBJECT) {
             super.doLayout(object);
 

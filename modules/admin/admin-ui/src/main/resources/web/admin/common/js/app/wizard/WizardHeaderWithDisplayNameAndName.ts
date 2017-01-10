@@ -102,7 +102,6 @@ module api.app.wizard {
                    name.toLowerCase() === this.generateName(displayName).toLowerCase();
         }
 
-
         resetBaseValues() {
             this.displayNameEl.resetBaseValues();
         }

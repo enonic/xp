@@ -136,7 +136,6 @@ module api.liveedit {
                 this.setLocked(true);
             }
 
-
         }
 
         private registerPageModel() {
@@ -789,7 +788,6 @@ module api.liveedit {
 
             return null;
         }
-
 
         private registerItemView(view: ItemView) {
 

@@ -165,7 +165,6 @@ module api.content.page.region {
 
             this.setName(json.name ? new ComponentName(json.name) : null);
 
-
             if (json.config) {
                 this.setConfig(PropertyTree.fromJson(json.config));
             }

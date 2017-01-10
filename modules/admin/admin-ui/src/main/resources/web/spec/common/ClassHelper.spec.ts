@@ -2,7 +2,6 @@ import ClassHelper = api.ClassHelper;
 
 describe("api.ClassHelper", function () {
 
-
     describe("tests for api.ClassHelper.getFunctionName() function", function () {
 
         it("returns function name as string", function () {

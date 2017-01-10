@@ -70,7 +70,6 @@ module api.dom {
             return;
         }
 
-
         private static getIndexOfInput(elements: NodeList, el: Element) {
             let index = -1;
             let inputHTMLElement = el.getHTMLElement();

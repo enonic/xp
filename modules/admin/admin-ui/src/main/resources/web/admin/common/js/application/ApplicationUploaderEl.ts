@@ -21,7 +21,6 @@ module api.application {
             this.addClass('media-uploader-el');
         }
 
-
         createModel(serverResponse: api.application.json.ApplicationInstallResultJson): Application {
             if (serverResponse) {
 

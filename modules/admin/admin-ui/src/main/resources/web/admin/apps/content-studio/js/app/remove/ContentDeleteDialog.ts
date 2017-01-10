@@ -219,7 +219,6 @@ export class ContentDeleteDialog extends ProgressBarDialog {
         }
     }
 
-
     private isAnySiteToBeDeleted(): boolean {
         let result = this.getItemList().getItems().some((item: ContentSummaryAndCompareStatus) => {
             return item.getContentSummary().isSite();
@@ -240,5 +239,3 @@ export class ContentDeleteDialog extends ProgressBarDialog {
     }
 
 }
-
-

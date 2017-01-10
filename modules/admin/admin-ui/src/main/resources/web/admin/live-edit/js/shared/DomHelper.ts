@@ -8,11 +8,9 @@ interface ViewPortSize {
     height: number;
 }
 
-
 module LiveEdit {
 
     export class DomHelper {
-
 
         public static getDocumentSize():DocumentSize {
             return {

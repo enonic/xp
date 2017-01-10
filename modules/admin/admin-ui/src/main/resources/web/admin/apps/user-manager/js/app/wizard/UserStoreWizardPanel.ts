@@ -74,7 +74,6 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         return new UserStoreWizardActions(this);
     }
 
-
     protected createMainToolbar(): UserStoreWizardToolbar {
         return new UserStoreWizardToolbar({
             saveAction: this.wizardActions.getSaveAction(),
@@ -95,7 +94,6 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
 
     protected createWizardHeader(): api.app.wizard.WizardHeaderWithDisplayNameAndName {
         let wizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().build();
-
 
         let existing = this.getPersistedItem(),
             displayName = "",
@@ -170,7 +168,6 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         });
     }
 
-
     protected doLayoutPersistedItem(persistedItem: UserStore): Q.Promise<void> {
 
         if (!!persistedItem) {
@@ -212,7 +209,6 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
             return userStore;
         });
     }
-
 
     hasUnsavedChanges(): boolean {
         let persistedUserStore: UserStore = this.getPersistedItem();
@@ -272,7 +268,6 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
             .setAuthConfig(authConfig)
             .setPermissions(permissions);
     }
-
 
     onUserStoreNamed(listener: (event: UserStoreNamedEvent)=>void) {
         this.userStoreNamedListeners.push(listener);

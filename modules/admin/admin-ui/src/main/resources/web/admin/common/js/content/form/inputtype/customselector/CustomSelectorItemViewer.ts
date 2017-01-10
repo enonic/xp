@@ -12,7 +12,6 @@ module api.content.form.inputtype.customselector {
             return object.displayName;
         }
 
-
         resolveSubName(object: CustomSelectorItem): string {
             return object.description;
         }
@@ -30,4 +29,3 @@ module api.content.form.inputtype.customselector {
     }
 
 }
-    

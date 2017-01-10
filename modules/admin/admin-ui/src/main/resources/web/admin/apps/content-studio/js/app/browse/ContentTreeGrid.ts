@@ -215,7 +215,6 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         return data.getId();
     }
 
-
     fetch(node: TreeNode<ContentSummaryAndCompareStatus>, dataId?: string): wemQ.Promise<ContentSummaryAndCompareStatus> {
         return this.fetchById(node.getData().getContentId());
     }
@@ -388,7 +387,6 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
             }
         }
     }
-
 
     selectAll() {
         this.getGrid().mask();

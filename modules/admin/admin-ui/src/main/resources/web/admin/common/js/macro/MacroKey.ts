@@ -28,7 +28,6 @@ module api.macro {
             return new MacroKey(api.application.ApplicationKey.fromString(applicationKey), name);
         }
 
-
         public getApplicationKey(): api.application.ApplicationKey {
             return this.applicationKey;
         }

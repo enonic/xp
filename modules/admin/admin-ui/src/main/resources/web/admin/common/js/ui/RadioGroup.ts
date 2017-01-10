@@ -62,7 +62,6 @@ module api.ui {
 
     }
 
-
     export class RadioButton extends api.dom.FormInputEl {
 
         private radio: api.dom.InputEl;
@@ -94,7 +93,6 @@ module api.ui {
             this.radio.setValue(value);
             return this;
         }
-
 
         getValue(): string {
             if (RadioButton.debug) {

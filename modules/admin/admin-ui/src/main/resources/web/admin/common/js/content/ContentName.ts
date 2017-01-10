@@ -4,7 +4,6 @@ module api.content {
 
         public static UNNAMED_PREFIX: string = "__unnamed__";
 
-
         constructor(name: string) {
             super(name);
         }

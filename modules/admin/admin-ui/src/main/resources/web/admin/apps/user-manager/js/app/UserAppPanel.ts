@@ -137,14 +137,12 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
         return new UserBrowsePanel();
     }
 
-
     private handleWizardCreated(wizard: UserItemWizardPanel<api.Equitable>, tabName: string) {
         let tabMenuItem = new AppBarTabMenuItemBuilder()
             .setLabel(api.content.ContentUnnamed.prettifyUnnamed(tabName))
             .setTabId(wizard.getTabId())
             .setCloseAction(wizard.getCloseAction())
             .build();
-
 
         this.addWizardPanel(tabMenuItem, wizard);
 
@@ -182,7 +180,6 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
          this.removePanelByIndex(viewTabMenuItem.getIndex());
          }*/
     }
-
 
     private handleNew(event: NewPrincipalEvent) {
         let userItem = event.getPrincipals()[0],
@@ -311,7 +308,6 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
         let wizardParams = <UserStoreWizardPanelParams> new UserStoreWizardPanelParams().setTabId(tabId);
         this.handleWizardCreated(new UserStoreWizardPanel(wizardParams), tabName);
     }
-
 
     private handleEdit(event: EditPrincipalEvent) {
         let userItems: UserTreeGridItem[] = event.getPrincipals();

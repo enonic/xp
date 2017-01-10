@@ -81,7 +81,6 @@ module api.content.site.inputtype.authappselector {
             this.siteConfigFormDisplayedListeners.forEach((listener) => listener(applicationKey, formView));
         }
 
-
         onBeforeOptionCreated(listener: () => void) {
             this.beforeOptionCreatedListeners.push(listener);
         }

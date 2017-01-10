@@ -434,7 +434,6 @@ module api.form.inputtype.text {
             });
         }
 
-
         private destroyEditor(id: string): void {
             let editor = this.getEditor(id);
             if (editor) {

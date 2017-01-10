@@ -58,7 +58,6 @@ module api.content.event {
             }
         }
 
-
         private contentServerEventHandler(event: BatchContentServerEvent) {
             if (ContentServerEventsHandler.debug) {
                 console.debug("ContentServerEventsHandler: received server event", event);
@@ -263,7 +262,6 @@ module api.content.event {
             }
             this.notifyContentSorted(data);
         }
-
 
         onContentCreated(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentCreatedListeners.push(listener);

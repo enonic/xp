@@ -15,5 +15,4 @@ module api.content.json {
         id: string;
     }
 
-
 }

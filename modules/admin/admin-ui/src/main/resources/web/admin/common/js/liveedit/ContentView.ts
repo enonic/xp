@@ -34,7 +34,6 @@ module api.liveedit {
 
         constructor(builder: ContentViewBuilder) {
 
-
             super(new ItemViewBuilder().
                 setItemViewIdProducer(builder.parentPartComponentView.getItemViewIdProducer()).
                 setType(ContentItemType.get()).

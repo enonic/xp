@@ -7,7 +7,6 @@ import PrincipalType = api.security.PrincipalType;
 import UserStore = api.security.UserStore;
 import WizardPanelParams = api.app.wizard.WizardPanelParams;
 
-
 export class PrincipalWizardDataLoader {
 
     principal: Principal;

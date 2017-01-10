@@ -4,13 +4,11 @@ import {DialogDependantList} from "../dialog/DependantItemsDialog";
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
 
-
 export class PublishDialogDependantList extends DialogDependantList {
 
     private itemClickListeners: {(item: ContentSummaryAndCompareStatus): void}[] = [];
 
     private removeClickListeners: {(item: ContentSummaryAndCompareStatus): void}[] = [];
-
 
     clearItems() {
         this.removeClass("contains-removable");

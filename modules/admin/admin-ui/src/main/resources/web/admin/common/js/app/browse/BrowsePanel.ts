@@ -44,7 +44,6 @@ module api.app.browse {
             this.filterPanel = this.createFilterPanel();
             this.browseToolbar = this.createToolbar();
 
-
             let selectionChangedDebouncedHandler = api.util.AppHelper.debounce(
                 (currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[]) => {
                 let browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(fullSelection);

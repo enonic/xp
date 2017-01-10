@@ -470,7 +470,6 @@ module api.app.wizard {
             return wemQ(rendered);
         }
 
-
         onDataLoaded(listener: (item: EQUITABLE) => void) {
             this.dataLoadedListeners.push(listener);
         }

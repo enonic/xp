@@ -402,11 +402,9 @@ module api.ui.uploader {
             this.resultContainer.setVisible(visible);
         }
 
-
         createModel(serverResponse: any): MODEL {
             throw new Error('Should be overridden by inheritors');
         }
-
 
         getModelValue(item: MODEL): string {
             throw new Error('Should be overridden by inheritors');
