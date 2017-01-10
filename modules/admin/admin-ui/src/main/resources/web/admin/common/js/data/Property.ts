@@ -105,6 +105,11 @@ module api.data {
          * Detach this Property from it's array and parent. Should be called when removed from the array.
          */
         detach() {
+            if (this.getType().equals(ValueTypes.DATA)) {
+
+                this.getPropertySet().setContainerProperty(null);
+                this.array.unregisterPropertySetListeners(this.getPropertySet());
+            }
             this.array = null;
             this.parent = null;
             this.propertyIndexChangedListeners = [];

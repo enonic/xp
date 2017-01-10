@@ -1,0 +1,45 @@
+{
+  "textLine": "myValue",
+  "comboBox": "1234",
+  "checkbox": true,
+  "tag": "myTag",
+  "contentSelector": "1234abc",
+  "contentTypeFilter": "article",
+  "siteConfigurator": "my config here",
+  "double": 1.1,
+  "long": 12345678910,
+  "stringArray": [
+    "a",
+    "b",
+    "c"
+  ],
+  "localDateTime": "2015-01-14T10:00:00",
+  "dateTime": "2015-01-15T10:15:00+02:00",
+  "date": "2015-01-15",
+  "time": "10:00:32.123",
+  "geoPoint": "-45,34",
+  "htmlArea": "<stuff>staff</stuff>",
+  "media": {
+    "attachment": "MyImage.JPG",
+    "focalPoint": {
+      "x": 0.5,
+      "y": 0.5
+    }
+  },
+  "set": {
+    "setString": "ost",
+    "setDouble": 123
+  },
+  "myOptionSet": {
+    "_selected": [
+      "myOptionSetOption1",
+      "myOptionSetOption2"
+    ],
+    "myOptionSetOption1": {
+      "myTextLine1": "My Text 1"
+    },
+    "myOptionSetOption2": {
+      "myTextLine2": "My Text 2"
+    }
+  }
+}

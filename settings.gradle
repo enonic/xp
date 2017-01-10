@@ -54,6 +54,7 @@ include 'tools:toolbox'
 include 'tools:testing'
 include 'tools:gradle-plugin'
 
+include 'lib:lib-common'
 include 'lib:lib-content'
 include 'lib:lib-i18n'
 include 'lib:lib-portal'

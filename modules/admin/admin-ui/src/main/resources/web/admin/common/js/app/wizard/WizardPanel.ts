@@ -769,10 +769,9 @@ module api.app.wizard {
             return wemQ(persistedItem);
         }
 
-
         close(checkCanClose: boolean = false) {
             if (!checkCanClose || this.canClose()) {
-                this.notifyClosed();
+                this.notifyClosed(checkCanClose);
             }
         }
 
@@ -819,9 +818,9 @@ module api.app.wizard {
             return splitPanel.build();
         }
 
-        private notifyClosed() {
+        private notifyClosed(checkCanClose: boolean) {
             this.closedListeners.forEach((listener: (event: WizardClosedEvent)=>void) => {
-                listener(new WizardClosedEvent(this));
+                listener(new WizardClosedEvent(this, checkCanClose));
             });
         }
 

@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
 
 public class JsonToPropertyTreeTranslatorTest
 {
-    final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @Test
     public void all_input_types()
@@ -77,7 +77,7 @@ public class JsonToPropertyTreeTranslatorTest
         assertEquals( ValueTypes.DATE_TIME.getName(), timezoned.getType().getName() );
     }
 
-    protected final JsonNode loadJson( final String name )
+    private JsonNode loadJson( final String name )
         throws Exception
     {
         final String resource = "/" + getClass().getName().replace( '.', '/' ) + "-" + name + ".json";

@@ -17,6 +17,11 @@ import com.enonic.xp.inputtype.InputType;
 import com.enonic.xp.inputtype.InputTypeResolver;
 import com.enonic.xp.inputtype.InputTypes;
 
+
+/**
+ * @deprecated As of release 6.9
+ */
+@Deprecated
 public final class JsonToPropertyTreeTranslator
 {
     private final Form form;
@@ -27,11 +32,15 @@ public final class JsonToPropertyTreeTranslator
 
     private final boolean strictMode;
 
+    @SuppressWarnings("unused")
+    // Kept for backward compatibility
     public JsonToPropertyTreeTranslator()
     {
         this( null, false );
     }
 
+    @SuppressWarnings("unused")
+    // Kept for backward compatibility
     public JsonToPropertyTreeTranslator( final Form form, final boolean strict )
     {
         this.form = form != null ? form : Form.create().build();
@@ -176,4 +185,5 @@ public final class JsonToPropertyTreeTranslator
     {
         return this.form.getInput( resolveInputPath( key, parentProperty ) );
     }
+
 }

@@ -1,4 +1,5 @@
 dependencies {
+    compile project( ':lib:lib-common' )
     provided project( ':core:core-api' )
     provided project( ':script:script-api' )
     testCompile project( ':tools:testing' )

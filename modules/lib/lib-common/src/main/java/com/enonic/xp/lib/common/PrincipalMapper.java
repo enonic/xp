@@ -1,7 +1,6 @@
-package com.enonic.xp.lib.auth;
+package com.enonic.xp.lib.common;
 
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.lib.content.mapper.PropertyTreeMapper;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.security.Principal;

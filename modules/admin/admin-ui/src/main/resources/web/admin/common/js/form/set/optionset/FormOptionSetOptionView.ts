@@ -41,6 +41,12 @@ module api.form {
             this.setCheckBoxDisabled();
         }).bind(this);
 
+        private radioDeselectHandler: (event: api.data.PropertyValueChangedEvent) => void = ((event: api.data.PropertyValueChangedEvent) => {
+            if (event.getPreviousValue().getString() === this.getName()) {
+                this.deselectHandle();
+            }
+        }).bind(this);
+
         constructor(config: FormOptionSetOptionViewConfig) {
             super(<FormItemViewConfig> {
                 className: "form-option-set-option-view",
@@ -87,17 +93,7 @@ module api.form {
 
             layoutPromise.then((formItemViews: FormItemView[]) => {
 
-                if (this.isOptionSetExpandedByDefault() || this.getThisPropertyFromSelectedOptionsArray() != null) {
-                    this.expand();
-                }
-
-                if (this.isOptionSetExpandedByDefault() && this.getThisPropertyFromSelectedOptionsArray() == null) {
-                    this.disableFormItems();
-                }
-
-                if (this.getThisPropertyFromSelectedOptionsArray() != null) {
-                    this.addClass("selected");
-                }
+                this.updateViewState();
 
                 if (this.formOptionSetOption.getFormItems().length > 0) {
                     this.addClass("expandable");
@@ -114,6 +110,13 @@ module api.form {
                 if (validate) {
                     this.validate(true);
                 }
+
+                this.formItemViews.forEach((formItemView: FormItemView) => {
+                    formItemView.onEditContentRequest((content: api.content.ContentSummary) => {
+                        var summaryAndStatus = api.content.ContentSummaryAndCompareStatus.fromContentSummary(content);
+                        new api.content.event.EditContentEvent([summaryAndStatus]).fire();
+                    });
+                });
 
                 deferred.resolve(null);
             }).catch((reason: any) => {
@@ -214,12 +217,8 @@ module api.form {
         }
 
         private subscribeOnRadioDeselect(property: Property) {
-            let radioDeselectHandler = (event: api.data.PropertyValueChangedEvent) => {
-                if (event.getPreviousValue().getString() == this.getName()) {
-                    this.deselectHandle();
-                }
-            };
-            property.onPropertyValueChanged(radioDeselectHandler);
+            property.unPropertyValueChanged(this.radioDeselectHandler);
+            property.onPropertyValueChanged(this.radioDeselectHandler);
         }
 
         private makeSelectionCheckbox(): api.ui.Checkbox {
@@ -325,9 +324,20 @@ module api.form {
 
             const array = this.getOptionItemsPropertyArray(this.parentDataSet);
             array.getSet(0).forEach((property) => {
-                array.getSet(0).removeProperty(property.getName(), property.getIndex());
+                this.removeNonDataProperties(property);
             });
+
             this.update(this.parentDataSet);
+        }
+
+        private removeNonDataProperties(property: Property) {
+            if (property.getType().equals(ValueTypes.DATA)) {
+                property.getPropertySet().forEach((prop) => {
+                    this.removeNonDataProperties(prop);
+                });
+            } else {
+                property.getParent().removeProperty(property.getName(), property.getIndex());
+            }
         }
 
         private isSelectionLimitReached(): boolean {
@@ -350,12 +360,27 @@ module api.form {
 
         update(propertySet: api.data.PropertySet, unchangedOnly?: boolean): Q.Promise<void> {
             this.parentDataSet = propertySet;
-            let propertyArray = this.getOptionItemsPropertyArray(propertySet);
+            const propertyArray = this.getOptionItemsPropertyArray(propertySet);
+
             return this.formItemLayer.update(propertyArray.getSet(0), unchangedOnly).then(() => {
                 if (!this.isRadioSelection()) {
                     this.subscribeCheckboxOnPropertyEvents();
+                } else if (this.getThisPropertyFromSelectedOptionsArray() == null) {
+                    wemjq(this.getHTMLElement()).find("input:radio").first().prop('checked', false);
                 }
+
+                this.updateViewState();
             });
+        }
+
+        private updateViewState() {
+            this.expand(this.isOptionSetExpandedByDefault() || this.getThisPropertyFromSelectedOptionsArray() != null);
+
+            if (this.isOptionSetExpandedByDefault() && this.getThisPropertyFromSelectedOptionsArray() == null) {
+                this.disableFormItems();
+            }
+
+            this.toggleClass("selected", this.getThisPropertyFromSelectedOptionsArray() != null);
         }
 
         broadcastFormSizeChanged() {

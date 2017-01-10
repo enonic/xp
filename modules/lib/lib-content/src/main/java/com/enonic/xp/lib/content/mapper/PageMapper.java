@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.content.mapper;
 
+import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.region.Component;

@@ -201,6 +201,8 @@ module api.content.page {
                 this.setAutomaticTemplate(eventSource);
             }
 
+            this.setCustomized(false);
+
             this.notifyReset();
         }
 
