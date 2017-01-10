@@ -344,20 +344,16 @@ module api.liveedit {
             }
             super.replaceWith(replacement);
 
+            // unbind the old view from the component and bind the new one
+            this.unregisterComponentListeners(this.component);
+            this.unbindMouseListeners();
+
             let parentIsPage = api.ObjectHelper.iFrameSafeInstanceOf(this.getParentItemView(), PageView);
             if (parentIsPage) {
-                // unbind the old view from the component and bind the new one
-                this.unregisterComponentListeners(this.component);
-                this.unbindMouseListeners();
-
+                this.getPageView().unregisterFragmentComponentView(this);
                 this.getPageView().registerFragmentComponentView(replacement);
-
             } else {
                 let index = this.getParentItemView().getComponentViewIndex(this);
-
-                // unbind the old view from the component and bind the new one
-                this.unregisterComponentListeners(this.component);
-                this.unbindMouseListeners();
 
                 let parentRegionView = this.parentRegionView;
                 this.parentRegionView.unregisterComponentView(this);

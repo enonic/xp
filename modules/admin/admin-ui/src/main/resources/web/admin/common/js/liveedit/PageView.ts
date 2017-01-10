@@ -833,12 +833,12 @@ module api.liveedit {
                 this.doParseFragmentItemViews();
             } else {
                 this.doParseItemViews();
+                // register everything that was parsed
+                this.toItemViewArray().forEach((value: ItemView) => {
+                    this.registerItemView(value);
+                });
             }
 
-            // register everything that was parsed
-            this.toItemViewArray().forEach((value: ItemView) => {
-                this.registerItemView(value);
-            });
         }
 
         private doParseItemViews(parentElement?: api.dom.Element) {
@@ -916,16 +916,29 @@ module api.liveedit {
             });
         }
 
+        unregisterFragmentComponentView(componentView: ComponentView<Component>) {
+            componentView.unItemViewAdded(this.itemViewAddedListener);
+            componentView.unItemViewRemoved(this.itemViewRemovedListener);
+
+            componentView.toItemViewArray().forEach((itemView: ItemView) => {
+                this.unregisterItemView(itemView);
+            });
+        }
+
         registerFragmentComponentView(componentView: ComponentView<Component>) {
             componentView.onItemViewAdded(this.itemViewAddedListener);
             componentView.onItemViewRemoved(this.itemViewRemovedListener);
 
-            this.registerItemView(componentView);
+            componentView.toItemViewArray().forEach((value: ItemView) => {
+                this.registerItemView(value);
+            });
+
             if (componentView instanceof api.liveedit.layout.LayoutComponentView) {
                 componentView.getRegions().forEach((regionView) => {
                     this.registerRegionView(regionView);
                 });
             }
+
             this.fragmentView = componentView;
         }
 
