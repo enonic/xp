@@ -1,5 +1,6 @@
 import "../../../api.ts";
 import {MarketAppViewer} from "./MarketAppViewer";
+import {ApplicationInput} from "./../view/ApplicationInput";
 
 import Element = api.dom.Element;
 import ElementHelper = api.dom.ElementHelper;
@@ -45,7 +46,9 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
 
     public static debug: boolean = false;
 
-    constructor() {
+    applicationInput: ApplicationInput;
+
+    constructor(applicationInput: ApplicationInput) {
 
         var nameColumn = new GridColumnBuilder<TreeNode<MarketApplication>>()
             .setName("Name")
@@ -90,10 +93,19 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
         );
 
         this.installApplications = [];
+        this.applicationInput = applicationInput;
 
         this.subscribeAndManageInstallClick();
         this.subscribeOnUninstallEvent();
         this.subscribeOnInstallEvent();
+        this.initAppsFilter();
+    }
+
+    private initAppsFilter() {
+        var changeHandler = () => {
+            this.refresh();
+        };
+        this.applicationInput.onTextValueChanged(changeHandler);
     }
 
     private subscribeOnUninstallEvent() { // set status of market app to NOT_INSTALLED if it was uninstalled
@@ -307,6 +319,29 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
         });
     }
 
+    initData(nodes: TreeNode<MarketApplication>[]) {
+        var items = nodes;
+        if (this.applicationInput && !api.util.StringHelper.isEmpty(this.applicationInput.getValue())) {
+            items = nodes.filter((node: TreeNode<MarketApplication>) => {
+                return this.nodePassesFilterCondition(node);
+            });
+        }
+        super.initData(items);
+        this.getGrid().getCanvasNode().style.height = (70 * items.length + "px");
+        this.getGrid().resizeCanvas();
+        this.toggleClass("empty", items.length == 0);
+    }
+
+    private nodePassesFilterCondition(node: TreeNode<MarketApplication>): boolean {
+        var app: MarketApplication = node.getData();
+        return app.isEmpty() ? true : this.appHasFilterEntry(app); // true for empty app because empty app is empty node that triggers loading
+    }
+
+    private appHasFilterEntry(app: MarketApplication): boolean {
+        return this.applicationInput.hasMatchInEntry(app.getDisplayName()) ||
+               this.applicationInput.hasMatchInEntry(app.getDescription());
+    }
+
     private getVersion(): string {
         let version: string = CONFIG.xpVersion;
         if (!version) {
@@ -322,5 +357,29 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
 
     getDataId(data: MarketApplication): string {
         return data.getAppKey() ? data.getAppKey().toString() : "";
+    }
+}
+
+export class MarketAppsFilterInputEl extends api.dom.Element {
+
+    constructor() {
+        super(new api.dom.NewElementBuilder().setTagName("input").setClassName("market-apps-filter-input"));
+
+        this.getEl().setAttribute("placeholder", "Filter apps...");
+        this.getEl().setAttribute("type", "text");
+        this.getEl().addEventListener("click", (event) => event.stopPropagation());
+        this.getEl().setAttribute("tabindex", "-1");
+    }
+
+    public hasMatchInEntry(entry: string): boolean {
+        return entry.toLowerCase().indexOf(this.getValue().toLowerCase()) > -1
+    }
+
+    public reset() {
+        this.getEl().setValue("");
+    }
+
+    public getValue(): string {
+        return this.getEl().getValue();
     }
 }
