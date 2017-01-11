@@ -339,9 +339,14 @@ module api.dom {
             this.notifyShown(this, true);
         }
 
-        hide() {
+        hide(skipAnimation: boolean = false) {
             // Using jQuery to hide, since it seems to contain some smartness
-            wemjq(this.el.getHTMLElement()).hide();
+            if (skipAnimation) {
+                wemjq(this.el.getHTMLElement()).hide(null);
+            }
+            else {
+                wemjq(this.el.getHTMLElement()).hide();
+            }
             this.notifyHidden(this);
         }
 
