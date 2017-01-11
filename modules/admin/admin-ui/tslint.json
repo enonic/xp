@@ -63,7 +63,7 @@
       false
     ],
     "curly": true,
-    "eofline": false,
+    "eofline": true,
     "indent": [
       true,
       "spaces"
