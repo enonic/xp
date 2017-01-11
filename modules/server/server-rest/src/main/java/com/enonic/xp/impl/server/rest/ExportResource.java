@@ -26,7 +26,9 @@ import com.enonic.xp.impl.server.rest.model.NodeExportResultJson;
 import com.enonic.xp.impl.server.rest.model.NodeImportResultJson;
 import com.enonic.xp.impl.server.rest.model.RepoPath;
 import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.vfs.VirtualFile;
 import com.enonic.xp.vfs.VirtualFiles;
 
@@ -38,6 +40,8 @@ public final class ExportResource
     implements JaxRsComponent
 {
     private ExportService exportService;
+
+    private RepositoryService repositoryService;
 
     private java.nio.file.Path getExportDirectory( final String exportName )
     {
@@ -67,11 +71,12 @@ public final class ExportResource
     {
         final String xsl = request.getXslSource();
         final VirtualFile xsltFile = xsl != null ? VirtualFiles.from( getExportDirectory( xsl ) ) : null;
+        final RepoPath targetRepoPath = request.getTargetRepoPath();
 
         final NodeImportResult result =
             getContext( request.getTargetRepoPath() ).callWith( () -> this.exportService.importNodes( ImportNodesParams.create().
                 source( VirtualFiles.from( getExportDirectory( request.getExportName() ) ) ).
-                targetNodePath( request.getTargetRepoPath().getNodePath() ).
+                targetNodePath( targetRepoPath.getNodePath() ).
                 dryRun( request.isDryRun() ).
                 includeNodeIds( request.isImportWithIds() ).
                 includePermissions( request.isImportWithPermissions() ).
@@ -79,6 +84,12 @@ public final class ExportResource
                 xsltParams( request.getXslParams() ).
                 build() ) );
 
+        if ( SystemConstants.SYSTEM_REPO.getId().equals( targetRepoPath.getRepositoryId() ) &&
+            SystemConstants.BRANCH_SYSTEM.equals( targetRepoPath.getBranch() ) )
+        {
+            this.repositoryService.invalidateAll();
+        }
+        
         return NodeImportResultJson.from( result );
     }
 
@@ -95,5 +106,11 @@ public final class ExportResource
     public void setExportService( final ExportService exportService )
     {
         this.exportService = exportService;
+    }
+
+    @Reference
+    public void setRepositoryService( final RepositoryService repositoryService )
+    {
+        this.repositoryService = repositoryService;
     }
 }

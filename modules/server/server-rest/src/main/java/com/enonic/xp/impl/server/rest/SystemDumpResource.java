@@ -86,7 +86,9 @@ public final class SystemDumpResource
     {
         final List<NodeImportResult> results = Lists.newArrayList();
 
-        results.add( importRepoBranch( "system-repo", "master", request.getName() ) );
+        results.add( importRepoBranch( SystemConstants.SYSTEM_REPO.getId().toString(), SystemConstants.BRANCH_SYSTEM.toString(),
+                                       request.getName() ) );
+        this.repositoryService.invalidateAll();
 
         for ( Repository repository : repositoryService.list() )
         {
@@ -105,8 +107,6 @@ public final class SystemDumpResource
                 {
                     continue;
                 }
-
-                //TODO Branch creation
 
                 results.add( importRepoBranch( repository.getId().toString(), branch.getValue(), request.getName() ) );
             }
