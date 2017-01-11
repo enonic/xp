@@ -26,6 +26,9 @@ import com.enonic.xp.impl.server.rest.model.NodeExportResultJson;
 import com.enonic.xp.impl.server.rest.model.NodeImportResultJson;
 import com.enonic.xp.impl.server.rest.model.RepoPath;
 import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.repository.CreateRepositoryParams;
+import com.enonic.xp.repository.NodeRepositoryService;
+import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
@@ -42,6 +45,8 @@ public final class ExportResource
     private ExportService exportService;
 
     private RepositoryService repositoryService;
+
+    private NodeRepositoryService nodeRepositoryService;
 
     private java.nio.file.Path getExportDirectory( final String exportName )
     {
@@ -88,8 +93,19 @@ public final class ExportResource
             SystemConstants.BRANCH_SYSTEM.equals( targetRepoPath.getBranch() ) )
         {
             this.repositoryService.invalidateAll();
+            for ( Repository repository : repositoryService.list() )
+            {
+                if ( !this.nodeRepositoryService.isInitialized( repository.getId() ) )
+                {
+                    final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
+                        repositoryId( repository.getId() ).
+                        repositorySettings( repository.getSettings() ).
+                        build();
+                    this.nodeRepositoryService.create( createRepositoryParams );
+                }
+            }
         }
-        
+
         return NodeImportResultJson.from( result );
     }
 
@@ -112,5 +128,11 @@ public final class ExportResource
     public void setRepositoryService( final RepositoryService repositoryService )
     {
         this.repositoryService = repositoryService;
+    }
+
+    @Reference
+    public void setNodeRepositoryService( final NodeRepositoryService nodeRepositoryService )
+    {
+        this.nodeRepositoryService = nodeRepositoryService;
     }
 }
