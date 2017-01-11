@@ -30,11 +30,11 @@ export class WidgetItemView extends api.dom.DivEl {
     }
 
     public setUrl(url: string, contentId: string, keepId: boolean = false): wemQ.Promise<void> {
-        let deferred = wemQ.defer<void>(),
-            uid = (!keepId || !this.uid) ? Date.now().toString() : this.uid,
-            linkEl = new LinkEl(this.getFullWidgetUrl(url, uid, contentId)).setAsync(),
-            el = this.getEl(),
-            onLinkLoaded = ((event: UIEvent) => {
+        let deferred = wemQ.defer<void>();
+        let uid = (!keepId || !this.uid) ? Date.now().toString() : this.uid;
+        let linkEl = new LinkEl(this.getFullWidgetUrl(url, uid, contentId)).setAsync();
+        let el = this.getEl();
+        let onLinkLoaded = ((event: UIEvent) => {
                 let mainContainer = event.target["import"].body;
                 if (mainContainer) {
                     let html = this.stripOffAssets(mainContainer.innerHTML);

@@ -39,8 +39,8 @@ module api.form.inputtype.text {
             inputEl.setName(this.getInput().getName() + "-" + index);
 
             inputEl.onValueChanged((event: api.ValueChangedEvent) => {
-                let isValid = this.isValid(event.getNewValue(), inputEl),
-                    value = isValid ? ValueTypes.STRING.newValue(event.getNewValue()) : this.newInitialValue();
+                let isValid = this.isValid(event.getNewValue(), inputEl);
+                let value = isValid ? ValueTypes.STRING.newValue(event.getNewValue()) : this.newInitialValue();
                 this.notifyOccurrenceValueChanged(inputEl, value);
                 inputEl.updateValidationStatusOnUserInput(isValid);
             });

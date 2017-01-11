@@ -26,8 +26,8 @@ module api.ui {
         }
 
         public addOption(value: string, label: string) {
-            let checked = value == this.getOriginalValue(),
-                radio = new RadioButton(label, value, this.groupName, checked);
+            let checked = value == this.getOriginalValue();
+            let radio = new RadioButton(label, value, this.groupName, checked);
 
             radio.onValueChanged((event: api.ValueChangedEvent) => {
                 this.setValue(this.doGetValue(), false, true);

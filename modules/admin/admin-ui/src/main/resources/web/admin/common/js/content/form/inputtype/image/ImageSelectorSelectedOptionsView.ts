@@ -117,8 +117,8 @@ module api.content.form.inputtype.image {
             let selectedOption: SelectedOption<ImageSelectorDisplayValue> = this.createSelectedOption(option);
             this.getSelectedOptions().push(selectedOption);
 
-            let optionView: ImageSelectorSelectedOptionView = <ImageSelectorSelectedOptionView>selectedOption.getOptionView(),
-                isMissingContent = option.displayValue.isEmptyContent();
+            let optionView: ImageSelectorSelectedOptionView = <ImageSelectorSelectedOptionView>selectedOption.getOptionView();
+            let isMissingContent = option.displayValue.isEmptyContent();
 
             optionView.onRendered(() => {
                 this.handleOptionViewRendered(selectedOption, optionView);

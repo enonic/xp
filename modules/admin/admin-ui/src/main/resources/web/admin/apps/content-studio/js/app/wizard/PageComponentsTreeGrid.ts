@@ -75,8 +75,8 @@ export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
     }
 
     setInvalid(dataIds: string[]) {
-        let root = this.getRoot().getCurrentRoot(),
-            stylesHash: Slick.CellCssStylesHash = {};
+        let root = this.getRoot().getCurrentRoot();
+        let stylesHash: Slick.CellCssStylesHash = {};
 
         dataIds.forEach((dataId) => {
             let node = root.findNode(dataId);

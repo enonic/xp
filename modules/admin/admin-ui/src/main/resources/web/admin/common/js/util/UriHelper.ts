@@ -152,8 +152,8 @@ module api.util {
                 return url;
             }
 
-            let urlParams = UriHelper.decodeUrlParams(url),
-                hasParams = Object.keys(urlParams).length > 0;
+            let urlParams = UriHelper.decodeUrlParams(url);
+            let hasParams = Object.keys(urlParams).length > 0;
 
             return url + (hasParams ? '&' : '?') + UriHelper.encodeUrlParams(params);
         }

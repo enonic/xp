@@ -64,8 +64,8 @@ module api.ui.uploader {
         }
 
         private getItems(value: string) : {existingItems:Element[], newItems:Element[]} {
-            let newItems: Element[] = [],
-                existingItems:Element[] = [];
+            let newItems: Element[] = [];
+            let existingItems:Element[] = [];
 
             this.parseValues(value).forEach((parsedValue: string) => {
                 if (parsedValue) {

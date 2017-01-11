@@ -123,8 +123,8 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             return elem.getModel().getContentSummary();
         });
 
-        let treePublishEnabled = true,
-            unpublishEnabled = true;
+        let treePublishEnabled = true;
+        let unpublishEnabled = true;
 
         let eachOnline = contentBrowseItems.every((browseItem) => {
             return this.isOnline(browseItem.getModel().getCompareStatus());

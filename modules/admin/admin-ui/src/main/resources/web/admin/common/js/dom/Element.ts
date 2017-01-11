@@ -1153,8 +1153,8 @@ module api.dom {
 
         static fromSelector(s: string, loadExistingChildren: boolean = true): Element[] {
             return wemjq(s).map((index, elem) => {
-                let htmlEl = <HTMLElement> elem,
-                    parentEl;
+                let htmlEl = <HTMLElement> elem;
+                let parentEl;
                 if (htmlEl && htmlEl.parentElement) {
                     parentEl = Element.fromHtmlElement(htmlEl.parentElement);
                 }

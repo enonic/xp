@@ -260,8 +260,8 @@ module api.ui.selector.combobox {
         }
 
         private placeDropdownAbove() {
-            let dropdown = this.comboBoxDropdown.getDropdownGrid().getElement().getEl(),
-                placeholder = this.comboBoxDropdown.getEmptyDropdown().getEl();
+            let dropdown = this.comboBoxDropdown.getDropdownGrid().getElement().getEl();
+            let placeholder = this.comboBoxDropdown.getEmptyDropdown().getEl();
 
             dropdown.setTopPx(-dropdown.getHeightWithBorder()).addClass("reverted");
             placeholder.setTopPx(-placeholder.getHeightWithBorder());
@@ -403,8 +403,8 @@ module api.ui.selector.combobox {
             }
 
             let valueSetPromise;
-            let optionIds = this.splitValues(value),
-                missingOptionIds = this.getMissingOptionsIds(optionIds);
+            let optionIds = this.splitValues(value);
+            let missingOptionIds = this.getMissingOptionsIds(optionIds);
 
             if (this.displayMissingSelectedOptions || this.removeMissingSelectedOptions && missingOptionIds.length > 0) {
                 valueSetPromise = this.selectExistingAndHandleMissing(optionIds, missingOptionIds);
@@ -428,8 +428,8 @@ module api.ui.selector.combobox {
 
         // tslint:disable-next-line:max-line-length
         private selectExistingAndHandleMissing(optionIds: string[], missingOptionIds: string[]): wemQ.Promise<Option<OPTION_DISPLAY_VALUE>[]> {
-            let nonExistingIds: string[] = [],
-                selectedOptions = [];
+            let nonExistingIds: string[] = [];
+            let selectedOptions = [];
 
             return new api.content.resource.ContentsExistRequest(missingOptionIds).sendAndParse()
                 .then((result: api.content.resource.result.ContentsExistResult) => {
@@ -494,8 +494,8 @@ module api.ui.selector.combobox {
                 return x.value;
             }).join();
             let selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = this.getSelectedOptions();
-            let filteredOption = [],
-                gridOptions = [];
+            let filteredOption = [];
+            let gridOptions = [];
             for (let k in selectedOptions) {
                 if (optionsMap.search(selectedOptions[k].value) >= 0) {
                     filteredOption.push(selectedOptions[k].value);

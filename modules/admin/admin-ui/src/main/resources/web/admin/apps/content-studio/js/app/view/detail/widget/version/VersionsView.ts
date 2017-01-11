@@ -122,9 +122,9 @@ export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
     }
 
     private createDataBlocks(item: ContentVersion, itemEl: api.dom.Element) {
-        let descriptionDiv = this.createDescriptionBlock(item),
-            versionInfoDiv = this.createVersionInfoBlock(item),
-            closeButton = this.createCloseButton();
+        let descriptionDiv = this.createDescriptionBlock(item);
+        let versionInfoDiv = this.createVersionInfoBlock(item);
+        let closeButton = this.createCloseButton();
 
         itemEl.appendChildren(closeButton, descriptionDiv, versionInfoDiv);
     }

@@ -216,8 +216,8 @@ module api.content.form.inputtype.image {
                     = ImageContentComboBox.create().setMaximumOccurrences(maximumOccurrences).setLoader(imageSelectorLoader).
                     setSelectedOptionsView(this.selectedOptionsView = this.createSelectedOptionsView()).
                     setValue(value).
-                    build(),
-                comboBox: ComboBox<ImageSelectorDisplayValue> = contentComboBox.getComboBox();
+                    build();
+            let comboBox: ComboBox<ImageSelectorDisplayValue> = contentComboBox.getComboBox();
 
             comboBox.onHidden((event: api.dom.ElementHiddenEvent) => {
                 // hidden on max occurrences reached

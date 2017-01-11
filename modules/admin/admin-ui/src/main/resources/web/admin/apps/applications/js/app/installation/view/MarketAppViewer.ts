@@ -60,10 +60,10 @@ export class MarketAppViewer extends api.ui.Viewer<MarketApplication> {
         }
 
         if (object) {
-            let displayName = this.resolveDisplayName(object),
-                subName = this.resolveSubName(object, this.relativePath),
-                subTitle = this.resolveSubTitle(object),
-                iconUrl = this.resolveIconUrl(object);
+            let displayName = this.resolveDisplayName(object);
+            let subName = this.resolveSubName(object, this.relativePath);
+            let subTitle = this.resolveSubTitle(object);
+            let iconUrl = this.resolveIconUrl(object);
 
             this.namesAndIconView.getNamesView().setMainName(displayName, false).setSubName(subName, subTitle);
             if (!!subTitle) {

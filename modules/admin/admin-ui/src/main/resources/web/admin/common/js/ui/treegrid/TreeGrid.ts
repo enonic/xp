@@ -337,12 +337,12 @@ module api.ui.treegrid {
 
         getEmptyNodesCount(): number {
 
-            let viewportRange = this.grid.getViewport(),
-                lastIndex = this.gridData.getItems().length - 1,
+            let viewportRange = this.grid.getViewport();
+            let lastIndex = this.gridData.getItems().length - 1;
             // first and last rows, that are visible in grid
-                firstVisible = viewportRange.top,
+            let firstVisible = viewportRange.top;
             // interval borders to search for the empty node
-                from = firstVisible;
+            let from = firstVisible;
             let emptyNodesCount = 0;
 
             for (let i = from; i <= lastIndex; i++) {
@@ -613,8 +613,8 @@ module api.ui.treegrid {
         }
 
         selectNode(dataId: string) {
-            let root = this.root.getCurrentRoot(),
-                node = root.findNode(dataId);
+            let root = this.root.getCurrentRoot();
+            let node = root.findNode(dataId);
 
             if (node) {
                 let row = this.gridData.getRowById(node.getId());
@@ -623,8 +623,8 @@ module api.ui.treegrid {
         }
 
         refreshNodeById(dataId: string) {
-            let root = this.root.getCurrentRoot(),
-                node = root.findNode(dataId);
+            let root = this.root.getCurrentRoot();
+            let node = root.findNode(dataId);
 
             if (node) {
                 this.refreshNode(node);
@@ -646,9 +646,9 @@ module api.ui.treegrid {
         }
 
         deselectNodes(dataIds: string[]) {
-            let oldSelected = this.root.getFullSelection(),
-                newSelected = [],
-                newSelectedRows = [];
+            let oldSelected = this.root.getFullSelection();
+            let newSelected = [];
+            let newSelectedRows = [];
 
             for (let i = 0; i < oldSelected.length; i++) {
                 if (dataIds.indexOf(oldSelected[i].getDataId()) < 0) {
@@ -723,8 +723,8 @@ module api.ui.treegrid {
 
         private reloadNode(parentNode?: TreeNode<DATA>, expandedNodesDataId?: String[]): wemQ.Promise<void> {
 
-            let deferred = wemQ.defer<void>(),
-                promises = [];
+            let deferred = wemQ.defer<void>();
+            let promises = [];
 
             this.fetchData(parentNode).then((dataList: DATA[]) => {
                 let hasNotEmptyChildren = false;
@@ -796,8 +796,8 @@ module api.ui.treegrid {
 
         updateNode(data: DATA, oldDataId?: string): wemQ.Promise<void> {
 
-            let dataId = oldDataId || this.getDataId(data),
-                nodeToUpdate = this.root.getCurrentRoot().findNode(dataId);
+            let dataId = oldDataId || this.getDataId(data);
+            let nodeToUpdate = this.root.getCurrentRoot().findNode(dataId);
 
             if (!nodeToUpdate) {
                 throw new Error("TreeNode to update not found: " + dataId);
@@ -808,8 +808,8 @@ module api.ui.treegrid {
 
         updateNodes(data: DATA, oldDataId?: string): wemQ.Promise<void> {
 
-            let dataId = oldDataId || this.getDataId(data),
-                nodesToUpdate = this.root.getCurrentRoot().findNodes(dataId);
+            let dataId = oldDataId || this.getDataId(data);
+            let nodesToUpdate = this.root.getCurrentRoot().findNodes(dataId);
 
             if (!nodesToUpdate) {
                 throw new Error("TreeNode to update not found: " + dataId);
@@ -985,8 +985,8 @@ module api.ui.treegrid {
         }
 
         private deleteRootNodes(root: TreeNode<DATA>, dataList: DATA[]): void {
-            let updated: TreeNode<DATA>[] = [],
-                deleted: TreeNode<DATA>[] = [];
+            let updated: TreeNode<DATA>[] = [];
+            let deleted: TreeNode<DATA>[] = [];
 
             dataList.forEach((data: DATA) => {
                 let node = root.findNode(this.getDataId(data));
@@ -1013,10 +1013,8 @@ module api.ui.treegrid {
         }
 
         private resetCurrentSelection(nodes: TreeNode<DATA>[]) {
-            let selection: any = [],
-                selectionIds = this.root.getFullSelection().map((el) => {
-                    return el.getDataId();
-                });
+            let selection: any = [];
+            let selectionIds = this.root.getFullSelection().map(el => el.getDataId());
 
             selectionIds.forEach((selectionId) => {
                 nodes.forEach((node, index) => {

@@ -127,7 +127,9 @@ module api.liveedit.layout {
             children.forEach((childElement: api.dom.Element) => {
                 let itemType = ItemType.fromElement(childElement);
                 let isRegionView = api.ObjectHelper.iFrameSafeInstanceOf(childElement, RegionView);
-                let region, regionName, regionView;
+                let region;
+                let regionName;
+                let regionView;
 
                 if (isRegionView) {
                     regionName = RegionItemType.getRegionName(childElement);

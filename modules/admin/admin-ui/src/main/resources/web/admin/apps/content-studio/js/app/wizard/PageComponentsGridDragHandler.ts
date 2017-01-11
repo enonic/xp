@@ -18,9 +18,9 @@ import Element = api.dom.Element;
 export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
 
     protected handleDragInit(e: DragEvent, dd: DragEventData) {
-        let row = this.getRowByTarget(new ElementHelper(<HTMLElement>e.target)),
-            nodes = this.contentGrid.getRoot().getCurrentRoot().treeToList(),
-            draggedNode = nodes[row.getSiblingIndex()];
+        let row = this.getRowByTarget(new ElementHelper(<HTMLElement>e.target));
+        let nodes = this.contentGrid.getRoot().getCurrentRoot().treeToList();
+        let draggedNode = nodes[row.getSiblingIndex()];
 
         // prevent the grid from cancelling drag'n'drop by default
         if (draggedNode.getData().isDraggableView() && !api.BrowserHelper.isMobile()) {
@@ -59,8 +59,8 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
 
         let dataList = this.contentGrid.getRoot().getCurrentRoot().treeToList();
 
-        let draggableRow = data.rows[0],
-            insertBefore = data.insertBefore;
+        let draggableRow = data.rows[0];
+        let insertBefore = data.insertBefore;
 
         let insertPosition = (draggableRow > insertBefore) ? insertBefore : insertBefore + 1;
 
@@ -103,9 +103,9 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
     }
 
     protected moveIntoNewParent(item: TreeNode<ItemView>, insertBefore: number, data: TreeNode<ItemView>[]) {
-        let insertData = this.getParentPosition(insertBefore, data),
-            regionPosition = insertData.parentPosition,
-            insertIndex = insertData.insertIndex;
+        let insertData = this.getParentPosition(insertBefore, data);
+        let regionPosition = insertData.parentPosition;
+        let insertIndex = insertData.insertIndex;
 
         let newParent = data[regionPosition];
 
@@ -128,9 +128,9 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
 
         let parentPosition = this.getParentPosition(insertBeforePos, data).parentPosition;
 
-        let parentComponentNode = data[parentPosition],
-            parentComponentView = parentComponentNode.getData(),
-            draggableComponentView = data[draggableRow].getData();
+        let parentComponentNode = data[parentPosition];
+        let parentComponentView = parentComponentNode.getData();
+        let draggableComponentView = data[draggableRow].getData();
 
         if (parentComponentView) {
 

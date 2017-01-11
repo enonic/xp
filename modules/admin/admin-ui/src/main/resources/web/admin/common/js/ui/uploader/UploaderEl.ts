@@ -272,8 +272,8 @@ module api.ui.uploader {
                 return this;
             }
 
-            let newItemsToAppend: Element[] = [],
-                existingItems: Element[] = [];
+            let newItemsToAppend: Element[] = [];
+            let existingItems: Element[] = [];
 
             this.parseValues(value).forEach((val) => {
                 if (val) {

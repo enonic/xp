@@ -215,8 +215,8 @@ module api.ui.time {
         }
 
         private setDate(date: Date) {
-            let hours = this.selectedDate ? this.selectedDate.getHours() : 0,
-                minutes = this.selectedDate ? this.selectedDate.getMinutes() : 0;
+            let hours = this.selectedDate ? this.selectedDate.getHours() : 0;
+            let minutes = this.selectedDate ? this.selectedDate.getMinutes() : 0;
 
             this.selectedDate = date;
 

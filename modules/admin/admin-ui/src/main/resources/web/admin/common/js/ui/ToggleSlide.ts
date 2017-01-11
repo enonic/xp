@@ -124,9 +124,9 @@ module api.ui {
         }
 
         private calculateStyles() {
-            let sliderEl = this.slider.getEl(),
-                onLabelEl = this.onLabel.getEl(),
-                offLabelEl = this.offLabel.getEl();
+            let sliderEl = this.slider.getEl();
+            let onLabelEl = this.onLabel.getEl();
+            let offLabelEl = this.offLabel.getEl();
 
             // ToggleSlide width depends on width of longest label.
             // To have labels width calculated by browser they should be rendered into dom.

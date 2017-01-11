@@ -119,15 +119,15 @@ module api.ui.text {
         }
 
         private generatePassword() {
-            let length = NumberHelper.randomBetween(14, 16),
-                maxSpecials = NumberHelper.randomBetween(1, 3),
-                specials = 0,
-                maxDigits = NumberHelper.randomBetween(2, 4),
-                digits = 0,
-                maxUppercase = NumberHelper.randomBetween(2, 4),
-                uppercase = 0,
-                maxLowercase = length - maxSpecials - maxDigits - maxUppercase,
-                lowercase = 0;
+            let length = NumberHelper.randomBetween(14, 16);
+            let maxSpecials = NumberHelper.randomBetween(1, 3);
+            let specials = 0;
+            let maxDigits = NumberHelper.randomBetween(2, 4);
+            let digits = 0;
+            let maxUppercase = NumberHelper.randomBetween(2, 4);
+            let uppercase = 0;
+            let maxLowercase = length - maxSpecials - maxDigits - maxUppercase;
+            let lowercase = 0;
 
             let result = "";
             let types = [CharType.SPECIAL, CharType.DIGIT, CharType.UPPERCASE, CharType.LOWERCASE];

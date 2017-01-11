@@ -47,8 +47,8 @@ module api.ui.text {
                 return;
             }
 
-            let inputEl = this.getEl(),
-                cloneEl = this.clone.getEl();
+            let inputEl = this.getEl();
+            let cloneEl = this.clone.getEl();
 
             cloneEl.setFontSize(inputEl.getFontSize()).
                 setPaddingLeft(inputEl.getPaddingLeft() + 'px').

@@ -182,10 +182,10 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
     }
 
     private handleNew(event: NewPrincipalEvent) {
-        let userItem = event.getPrincipals()[0],
-            data: PrincipalData = this.resolvePrincipalData(userItem),
-            tabId = AppBarTabId.forNew(data.tabName),
-            tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
+        let userItem = event.getPrincipals()[0];
+        let data: PrincipalData = this.resolvePrincipalData(userItem);
+        let tabId = AppBarTabId.forNew(data.tabName);
+        let tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
         if (tabMenuItem != null) {
             this.selectPanel(tabMenuItem);
@@ -202,9 +202,9 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
     }
 
     private resolvePrincipalData(userItem: UserTreeGridItem): PrincipalData {
-        let principalType: PrincipalType,
-            principalPath = "",
-            tabName;
+        let principalType: PrincipalType;
+        let principalPath = "";
+        let tabName;
 
         if (userItem) {
             switch (userItem.getType()) {
@@ -400,8 +400,8 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
 
     private handlePrincipalNamedEvent(event: api.event.Event) {
         let e = <api.security.PrincipalNamedEvent>event;
-        let wizard = e.getWizard(),
-            tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(wizard.getTabId());
+        let wizard = e.getWizard();
+        let tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(wizard.getTabId());
         // update tab id so that new wizard for the same content type can be created
         let newTabId = api.app.bar.AppBarTabId.forEdit(e.getPrincipal().getKey().toString());
         tabMenuItem.setTabId(newTabId);

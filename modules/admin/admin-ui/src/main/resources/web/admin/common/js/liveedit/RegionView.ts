@@ -518,7 +518,8 @@ module api.liveedit {
             children.forEach((childElement: api.dom.Element) => {
                 let itemType = ItemType.fromElement(childElement);
                 let isComponentView = api.ObjectHelper.iFrameSafeInstanceOf(childElement, ComponentView);
-                let component, componentView;
+                let component;
+                let componentView;
 
                 if (isComponentView) {
                     component = region.getComponentByIndex(this.componentIndex++);

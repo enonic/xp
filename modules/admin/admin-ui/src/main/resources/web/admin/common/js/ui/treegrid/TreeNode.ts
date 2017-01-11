@@ -120,8 +120,8 @@ module api.ui.treegrid {
         }
 
         getRoot(): TreeNode<DATA> {
-            let root: TreeNode<DATA> = this,
-                parent: TreeNode<DATA> = this.getParent();
+            let root: TreeNode<DATA> = this;
+            let parent: TreeNode<DATA> = this.getParent();
             while (parent) {
                 root = parent;
                 parent = parent.getParent();
@@ -287,8 +287,8 @@ module api.ui.treegrid {
         }
 
         calcLevel(): number {
-            let parent = this.parent,
-                lvl = 0;
+            let parent = this.parent;
+            let lvl = 0;
             while (parent) {
                 parent = parent.getParent();
                 lvl++;

@@ -88,10 +88,10 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
     protected createWizardHeader(): WizardHeaderWithDisplayNameAndName {
         let wizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().build();
 
-        let existing = this.getPersistedItem(),
-            displayName = "",
-            name = "";
-        if (!!existing) {
+        let existing = this.getPersistedItem();
+        let displayName = "";
+        let name = "";
+        if (existing) {
             displayName = existing.getDisplayName();
             name = existing.getKey().getId();
 

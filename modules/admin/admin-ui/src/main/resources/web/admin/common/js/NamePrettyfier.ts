@@ -60,9 +60,9 @@ module api {
 
             let result = "";
 
-            for (let i = 0, len = prettifiedName.length; i < len; i++) {
-                let character = prettifiedName[i],
-                    replace = this.REPLACE_WITH_HYPHEN_CHARS[character];
+            for (let i = 0; i < prettifiedName.length; i++) {
+                let character = prettifiedName[i];
+                let replace = this.REPLACE_WITH_HYPHEN_CHARS[character];
                 result += (replace != null ? replace : character);
             }
 
@@ -128,9 +128,9 @@ module api {
 
             let result = "";
 
-            for (let i = 0, len = transcribeMe.length; i < len; i++) {
-                let character = transcribeMe[i],
-                    replace = this.NON_DIACRITICS[character];
+            for (let i = 0; i < transcribeMe.length; i++) {
+                let character = transcribeMe[i];
+                let replace = this.NON_DIACRITICS[character];
 
                 replace = replace != null ? replace : this.DIACRITICS[character];
                 result += (replace != null ? replace : character);

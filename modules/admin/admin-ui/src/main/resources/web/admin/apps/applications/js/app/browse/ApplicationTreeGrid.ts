@@ -102,8 +102,8 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
     }
 
     getByApplicationKey(applicationKey: api.application.ApplicationKey): Application {
-        let root = this.getRoot().getCurrentRoot(),
-            result;
+        let root = this.getRoot().getCurrentRoot();
+        let result;
         root.getChildren().forEach((child: TreeNode<Application>) => {
             let curApplication: Application = child.getData();
             if (curApplication.getApplicationKey().toString() == applicationKey.toString()) {

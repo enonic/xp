@@ -209,8 +209,8 @@ export class ContentDeleteDialog extends ProgressBarDialog {
     }
 
     private updateSubTitle() {
-        let items = this.getItemList().getItems(),
-            count = items.length;
+        let items = this.getItemList().getItems();
+        let count = items.length;
 
         if (!this.doAnyHaveChildren(items)) {
             super.setSubTitle("");

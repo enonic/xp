@@ -158,7 +158,8 @@ module api.app {
         }
 
         private getWebSocketUriPrefix(): string {
-            let loc = window.location, newUri;
+            let loc = window.location;
+            let newUri;
             if (loc.protocol === "https:") {
                 newUri = "wss:";
             } else {

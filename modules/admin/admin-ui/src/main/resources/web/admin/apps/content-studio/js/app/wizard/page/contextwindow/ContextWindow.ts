@@ -223,9 +223,9 @@ export class ContextWindow extends api.ui.panel.DockedPanel {
     }
 
     private updateFrameSize() {
-        let isFloating = this.isFloating(),
-            displayModeChanged = this.hasClass('floating') && !isFloating,
-            contextWindowWidth = this.actualWidth || this.getEl().getWidth();
+        let isFloating = this.isFloating();
+        let displayModeChanged = this.hasClass('floating') && !isFloating;
+        let contextWindowWidth = this.actualWidth || this.getEl().getWidth();
 
         this.liveFormPanel.updateFrameContainerSize(!isFloating && this.isShown(), contextWindowWidth);
 

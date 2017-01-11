@@ -95,11 +95,11 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
     protected createWizardHeader(): api.app.wizard.WizardHeaderWithDisplayNameAndName {
         let wizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().build();
 
-        let existing = this.getPersistedItem(),
-            displayName = "",
-            name = "";
+        let existing = this.getPersistedItem();
+        let displayName = "";
+        let name = "";
 
-        if (!!existing) {
+        if (existing) {
             displayName = existing.getDisplayName();
             name = existing.getKey().getId();
 
@@ -239,12 +239,12 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
     }
 
     private produceCreateUserStoreRequest(): CreateUserStoreRequest {
-        let header = this.getWizardHeader(),
-            key = new UserStoreKey(header.getName()),
-            name = header.getDisplayName(),
-            description = this.userStoreWizardStepForm.getDescription(),
-            authConfig = this.userStoreWizardStepForm.getAuthConfig(),
-            permissions = this.permissionsWizardStepForm.getPermissions();
+        let header = this.getWizardHeader();
+        let key = new UserStoreKey(header.getName());
+        let name = header.getDisplayName();
+        let description = this.userStoreWizardStepForm.getDescription();
+        let authConfig = this.userStoreWizardStepForm.getAuthConfig();
+        let permissions = this.permissionsWizardStepForm.getPermissions();
 
         return new CreateUserStoreRequest()
             .setDisplayName(name)
@@ -255,11 +255,11 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
     }
 
     private produceUpdateUserStoreRequest(viewedUserStore: UserStore): UpdateUserStoreRequest {
-        let key = this.getPersistedItem().getKey(),
-            name = viewedUserStore.getDisplayName(),
-            description = viewedUserStore.getDescription(),
-            authConfig = viewedUserStore.getAuthConfig(),
-            permissions = viewedUserStore.getPermissions();
+        let key = this.getPersistedItem().getKey();
+        let name = viewedUserStore.getDisplayName();
+        let description = viewedUserStore.getDescription();
+        let authConfig = viewedUserStore.getAuthConfig();
+        let permissions = viewedUserStore.getPermissions();
 
         return new UpdateUserStoreRequest()
             .setKey(key)

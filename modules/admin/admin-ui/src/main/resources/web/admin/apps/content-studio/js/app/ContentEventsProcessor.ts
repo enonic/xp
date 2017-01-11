@@ -14,9 +14,9 @@ import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
 export class ContentEventsProcessor {
 
     static openWizardTab(params: ContentWizardPanelParams, tabId: AppBarTabId): Window {
-        let wizardUrl = 'content-studio#/' + params.toString(),
-            isNew = !params.contentId,
-            wizardId;
+        let wizardUrl = 'content-studio#/' + params.toString();
+        let isNew = !params.contentId;
+        let wizardId;
         if (!isNew && navigator.userAgent.search("Chrome") > -1) {
             // add tab id for browsers that can focus tabs by id
             // don't do it for new to be able to create multiple
@@ -48,8 +48,8 @@ export class ContentEventsProcessor {
                 return;
             }
 
-            let contentSummary = content.getContentSummary(),
-                contentTypeName = contentSummary.getType();
+            let contentSummary = content.getContentSummary();
+            let contentTypeName = contentSummary.getType();
 
             let tabId = AppBarTabId.forEdit(contentSummary.getId());
 

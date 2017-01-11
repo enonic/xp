@@ -44,8 +44,8 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
 
         api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
             if (this.hasClass("image-preview")) {
-                let imgEl = this.image.getEl(),
-                    el = this.getEl();
+                let imgEl = this.image.getEl();
+                let el = this.getEl();
                 this.centerImage(imgEl.getWidth(), imgEl.getHeight(), el.getWidth(), el.getHeight());
             }
         });

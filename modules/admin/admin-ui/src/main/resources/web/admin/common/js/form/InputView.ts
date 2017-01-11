@@ -230,9 +230,9 @@ module api.form {
         private handleInputValidationRecording(inputRecording: api.form.inputtype.InputValidationRecording,
                                                silent: boolean = true): ValidationRecording {
 
-            let recording = new ValidationRecording(),
-                validationRecordingPath = this.resolveValidationRecordingPath(),
-                hasValidInput = this.hasValidUserInput();
+            let recording = new ValidationRecording();
+            let validationRecordingPath = this.resolveValidationRecordingPath();
+            let hasValidInput = this.hasValidUserInput();
 
             if (inputRecording.isMinimumOccurrencesBreached()) {
                 recording.breaksMinimumOccurrences(validationRecordingPath);

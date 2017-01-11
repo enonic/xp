@@ -160,8 +160,8 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     private extendsWindowHeightSize(): boolean {
         if (ResponsiveRanges._540_720.isFitOrBigger(this.getEl().getWidthWithBorder())) {
-            let el = this.getEl(),
-                bottomPosition: number = (el.getTopPx() || parseFloat(el.getComputedProperty("top")) || 0) +
+            let el = this.getEl();
+            let bottomPosition: number = (el.getTopPx() || parseFloat(el.getComputedProperty("top")) || 0) +
                                          el.getMarginTop() +
                                          el.getHeightWithBorder() +
                                          el.getMarginBottom();

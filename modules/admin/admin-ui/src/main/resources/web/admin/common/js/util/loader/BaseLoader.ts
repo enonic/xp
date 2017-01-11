@@ -82,9 +82,9 @@ module api.util.loader {
         }
 
         private handleLoadError(postLoad: boolean = false, error: any): OBJECT[] {
-            let isObj = typeof error == 'object',
-                textMessage = isObj ? (error['message'] || 'Unknown error') : String(error),
-                statusCode = isObj && error['statusCode'] ? error['statusCode'] : 500;
+            let isObj = typeof error == 'object';
+            let textMessage = isObj ? (error['message'] || 'Unknown error') : String(error);
+            let statusCode = isObj && error['statusCode'] ? error['statusCode'] : 500;
 
             this.notifyErrorOccurred(statusCode, 'Service error: ' + textMessage, postLoad);
 

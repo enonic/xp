@@ -109,11 +109,10 @@ module api.util.htmlarea.dialog {
         }
 
         private createImageSelector(id: string): FormItem {
-            let imageSelector = api.content.ContentComboBox.create().setMaximumOccurrences(1).build(),
-
-                formItem = this.createFormItem(id, "Image", Validators.required, api.util.StringHelper.EMPTY_STRING,
-                    <api.dom.FormItemEl>imageSelector),
-                imageSelectorComboBox = imageSelector.getComboBox();
+            let imageSelector = api.content.ContentComboBox.create().setMaximumOccurrences(1).build();
+            let formItem = this.createFormItem(id, "Image", Validators.required, api.util.StringHelper.EMPTY_STRING,
+                    <api.dom.FormItemEl>imageSelector);
+            let imageSelectorComboBox = imageSelector.getComboBox();
 
             imageSelector.getComboBox().getInput().setPlaceholder("Type to search or drop image here...");
 
@@ -643,10 +642,10 @@ module api.util.htmlarea.dialog {
         }
 
         private rebuildImgSrcParams() {
-            let imgSrc = this.image.getEl().getAttribute("src"),
-                newSrc = api.util.UriHelper.trimUrlParams(imgSrc),
-                isCroppingSelected: boolean = !!this.imageCroppingSelector.getSelectedOption(),
-                keepOriginalSizeChecked: boolean = this.keepOriginalSizeCheckbox.isChecked();
+            let imgSrc = this.image.getEl().getAttribute("src");
+            let newSrc = api.util.UriHelper.trimUrlParams(imgSrc);
+            let isCroppingSelected: boolean = !!this.imageCroppingSelector.getSelectedOption();
+            let keepOriginalSizeChecked: boolean = this.keepOriginalSizeCheckbox.isChecked();
 
             if (isCroppingSelected) {
                 let imageCroppingOption: ImageCroppingOption = this.imageCroppingSelector.getSelectedOption().displayValue;
@@ -661,10 +660,10 @@ module api.util.htmlarea.dialog {
         }
 
         private rebuildImgDataSrcParams() {
-            let dataSrc = this.image.getEl().getAttribute("data-src"),
-                newDataSrc = api.util.UriHelper.trimUrlParams(dataSrc),
-                isCroppingSelected: boolean = !!this.imageCroppingSelector.getSelectedOption(),
-                keepOriginalSizeChecked: boolean = this.keepOriginalSizeCheckbox.isChecked();
+            let dataSrc = this.image.getEl().getAttribute("data-src");
+            let newDataSrc = api.util.UriHelper.trimUrlParams(dataSrc);
+            let isCroppingSelected: boolean = !!this.imageCroppingSelector.getSelectedOption();
+            let keepOriginalSizeChecked: boolean = this.keepOriginalSizeCheckbox.isChecked();
 
             if (isCroppingSelected) {
                 let imageCroppingOption: ImageCroppingOption = this.imageCroppingSelector.getSelectedOption().displayValue;
@@ -723,9 +722,9 @@ module api.util.htmlarea.dialog {
         }
 
         private createScrollButton(direction: string): api.dom.Element {
-            let scrollAreaDiv = new api.dom.DivEl(direction === "up" ? "scroll-up-div" : "scroll-down-div"),
-                imageEl = new api.dom.ImgEl(api.util.UriHelper.getAdminUri("common/images/icons/512x512/arrow_" + direction + ".png")),
-                scrollTop = (direction === "up" ? "-=50" : "+=50");
+            let scrollAreaDiv = new api.dom.DivEl(direction === "up" ? "scroll-up-div" : "scroll-down-div");
+            let imageEl = new api.dom.ImgEl(api.util.UriHelper.getAdminUri("common/images/icons/512x512/arrow_" + direction + ".png"));
+            let scrollTop = (direction === "up" ? "-=50" : "+=50");
 
             scrollAreaDiv.appendChild(imageEl);
 

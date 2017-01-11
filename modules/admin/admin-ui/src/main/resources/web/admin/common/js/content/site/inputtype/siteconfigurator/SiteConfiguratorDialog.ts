@@ -154,8 +154,8 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         private getComboboxFromSelectorInputView(inputView: InputView): ComboBox<any> {
-            let contentComboBox,
-                inputTypeView = inputView.getInputTypeView();
+            let contentComboBox;
+            let inputTypeView = inputView.getInputTypeView();
             if (api.ObjectHelper.iFrameSafeInstanceOf(inputTypeView, ContentSelector)) {
                 contentComboBox = (<ContentSelector> inputTypeView).getContentComboBox();
             } else if (api.ObjectHelper.iFrameSafeInstanceOf(inputTypeView, ImageSelector)) {

@@ -50,9 +50,9 @@ module api.content.form.inputtype.customselector {
         }
 
         private readConfig(context: ContentInputTypeViewContext): void {
-            let serviceUrl = context.inputConfig['service'][0]['value'],
-                serviceParams = context.inputConfig['param'] || [],
-                contentPath = context.contentPath.toString();
+            let serviceUrl = context.inputConfig['service'][0]['value'];
+            let serviceParams = context.inputConfig['param'] || [];
+            let contentPath = context.contentPath.toString();
 
             let params = serviceParams.reduce((prev, curr) => {
                 prev[curr['@value']] = curr['value'];

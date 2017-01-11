@@ -73,8 +73,8 @@ export class PublishDialogDependantList extends DialogDependantList {
 }
 
 export function isContentSummaryValid(item: ContentSummaryAndCompareStatus): boolean {
-    let status = item.getCompareStatus(),
-        summary = item.getContentSummary();
+    let status = item.getCompareStatus();
+    let summary = item.getContentSummary();
 
     return status == CompareStatus.PENDING_DELETE ||
            (summary.isValid() && !api.util.StringHelper.isBlank(summary.getDisplayName()) && !summary.getName().isUnnamed());

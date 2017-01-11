@@ -237,8 +237,8 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     private getFirstSelectedBrowseItem(fullSelection?: TreeNode<ContentSummaryAndCompareStatus>[]): BrowseItem<ContentSummaryAndCompareStatus> {
         let browseItems: BrowseItem<ContentSummaryAndCompareStatus>[] = this.treeNodesToBrowseItems(!!fullSelection
                 ? fullSelection
-                : this.treeGrid.getRoot().getFullSelection()),
-            item: BrowseItem<ContentSummaryAndCompareStatus> = null;
+                : this.treeGrid.getRoot().getFullSelection());
+        let item: BrowseItem<ContentSummaryAndCompareStatus> = null;
         if (browseItems.length > 0) {
             item = browseItems[0];
         }
@@ -456,9 +456,9 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
     private processContentCreated(data: ContentSummaryAndCompareStatus[], oldPaths?: ContentPath[]) {
 
-        let paths: api.content.ContentPath[] = data.map(d => d.getContentSummary().getPath()),
-            createResult: TreeNodesOfContentPath[] = this.treeGrid.findByPaths(paths, true),
-            parentsOfContents: TreeNodeParentOfContent[] = [];
+        let paths: api.content.ContentPath[] = data.map(d => d.getContentSummary().getPath());
+        let createResult: TreeNodesOfContentPath[] = this.treeGrid.findByPaths(paths, true);
+        let parentsOfContents: TreeNodeParentOfContent[] = [];
 
         for (let i = 0; i < createResult.length; i++) {
 
@@ -469,8 +469,8 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                 if (el.getContentSummary().getPath().isChildOf(createResult[i].getPath())) {
 
                     if (oldPaths && oldPaths.length > 0) {
-                        let movedNodes: TreeNode<ContentSummaryAndCompareStatus>[] = [],
-                            renameResult: TreeNodesOfContentPath[] = this.treeGrid.findByPaths(oldPaths);
+                        let movedNodes: TreeNode<ContentSummaryAndCompareStatus>[] = [];
+                        let renameResult: TreeNodesOfContentPath[] = this.treeGrid.findByPaths(oldPaths);
                         let premerged = renameResult.map((curRenameResult) => {
                             return curRenameResult.getNodes();
                         });

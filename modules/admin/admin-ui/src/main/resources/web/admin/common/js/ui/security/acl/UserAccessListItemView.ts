@@ -80,9 +80,9 @@ module api.ui.security.acl {
 
         private setExtraCount() {
             if (this.userLine.getChildren().length > 0) {
-                let visibleCount = this.getVisibleCount(),
-                    iconCount = this.getObject().getPermissionAccess().getCount(),
-                    extraCount = iconCount - visibleCount;
+                let visibleCount = this.getVisibleCount();
+                let iconCount = this.getObject().getPermissionAccess().getCount();
+                let extraCount = iconCount - visibleCount;
 
                 if (extraCount > 0) {
                     this.userLine.getEl().setAttribute("extra-count", "+" + extraCount);
@@ -93,8 +93,8 @@ module api.ui.security.acl {
         }
 
         private getVisibleCount(): number {
-            let userIcons = this.userLine.getChildren(),
-                count = 0;
+            let userIcons = this.userLine.getChildren();
+            let count = 0;
             for (let userIconKey in userIcons) {
                 if (userIcons[userIconKey].getEl().getOffsetTopRelativeToParent() == 0) {
                     count++;
