@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.data.PropertyPath;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.form.FieldSet;
@@ -72,11 +73,16 @@ public final class FormDefaultValuesProcessorImpl
                 FormOptionSetOption option = formItem.toFormOptionSetOption();
                 if ( option.isDefaultOption() )
                 {
+                    data.getSet( parentPath ).addSet( option.getName() );
                     processFormItems( option.getFormItems(), data, PropertyPath.from( parentPath, formItem.getName() ) );
                 }
             }
             else if ( formItem.getType() == FORM_OPTION_SET )
             {
+                if ( data.getSet( PropertyPath.from( parentPath, formItem.getName() ) ) == null )
+                {
+                    data.setSet( PropertyPath.from( parentPath, formItem.getName() ), new PropertySet() );
+                }
                 processFormItems( formItem.toFormOptionSet().getFormItems(), data, PropertyPath.from( parentPath, formItem.getName() ) );
             }
         } );
