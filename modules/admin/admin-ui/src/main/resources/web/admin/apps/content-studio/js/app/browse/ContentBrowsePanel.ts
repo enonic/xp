@@ -244,6 +244,9 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
     // tslint:disable-next-line:max-line-length
     private getFirstSelectedBrowseItem(fullSelection?: TreeNode<ContentSummaryAndCompareStatus>[]): BrowseItem<ContentSummaryAndCompareStatus> {
+        if (!fullSelection && !this.treeGrid.getFirstSelectedOrHighlightedNode()) {
+            return null;
+        }
         let browseItems: BrowseItem<ContentSummaryAndCompareStatus>[] = this.treeNodesToBrowseItems(!!fullSelection
                 ? fullSelection
                 : [this.treeGrid.getFirstSelectedOrHighlightedNode()]);
