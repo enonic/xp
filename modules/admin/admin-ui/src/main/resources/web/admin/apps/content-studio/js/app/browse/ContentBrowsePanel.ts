@@ -32,6 +32,7 @@ import ContentPath = api.content.ContentPath;
 import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
 import DataChangedEvent = api.ui.treegrid.DataChangedEvent;
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
+import TreeGridItemClickedEvent = api.ui.treegrid.TreeGridItemClickedEvent;
 
 export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
 
@@ -222,7 +223,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             }
         };
 
-        api.ui.treegrid.TreeGridItemClickedEvent.on((event) => {
+        TreeGridItemClickedEvent.on((event: TreeGridItemClickedEvent) => {
             if (this.isSomethingSelectedInMobileMode()) {
                 if (this.itemChanged()) {
                     this.mobileContentItemStatisticsPanel.getPreviewPanel().setBlank();
@@ -245,16 +246,13 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     private getFirstSelectedBrowseItem(fullSelection?: TreeNode<ContentSummaryAndCompareStatus>[]): BrowseItem<ContentSummaryAndCompareStatus> {
         let browseItems: BrowseItem<ContentSummaryAndCompareStatus>[] = this.treeNodesToBrowseItems(!!fullSelection
                 ? fullSelection
-                : this.treeGrid.getRoot().getFullSelection()),
-            item: BrowseItem<ContentSummaryAndCompareStatus> = null;
-        if (browseItems.length > 0) {
-            item = browseItems[0];
-        }
-        return item;
+                : [this.treeGrid.getFirstSelectedOrHighlightedNode()]);
+
+        return (browseItems.length > 0) ? browseItems[0] : null;
     }
 
     private isSomethingSelected(): boolean {
-        return this.getFirstSelectedBrowseItem() != null;
+        return !!this.getFirstSelectedBrowseItem();
     }
 
     private isMobileMode(): boolean {

@@ -143,6 +143,10 @@ module api.ui.treegrid {
             this.highlightCurrentNode();
         }
 
+        public getFirstSelectedOrHighlightedNode(): TreeNode<DATA> {
+            return this.highlightedNode ? this.highlightedNode : this.getRoot().getFullSelection()[0];
+        }
+        
         private initEventListeners(builder: TreeGridBuilder<DATA>) {
 
             let keyBindings = [];
@@ -230,6 +234,14 @@ module api.ui.treegrid {
                 if (isMultiSelect) {
                     const isRowSelected = this.grid.isRowSelected(data.row);
                     const isMultipleRowsSelected = this.grid.getSelectedRows().length > 1;
+
+                    if (elem.hasClass("sort-dialog-trigger") && (isRowSelected || isRowHighlighted)) {
+                        if (isMultipleRowsSelected) {
+                            this.grid.selectRow(data.row);
+                        }
+                        return;
+                    }
+
                     if (this.grid.getSelectedRows().length > 0 || isRowHighlighted) {
                         this.unselectAllRows();
                     }
@@ -243,15 +255,12 @@ module api.ui.treegrid {
                 }
                 else {
                     this.root.clearStashedSelection();
-                    const repeatedSelection = this.grid.selectRow(data.row) === -1;
+                }
 
-                    if (!elem.hasClass("sort-dialog-trigger")) {
-                        new TreeGridItemClickedEvent(repeatedSelection).fire();
-                    }
+                if (!elem.hasClass("sort-dialog-trigger")) {
+                    new TreeGridItemClickedEvent(!!this.highlightedNode || this.grid.getSelectedRows().length > 0).fire();
                 }
-                if (this.contextMenu) {
-                    this.contextMenu.hide();
-                }
+
             });
 
             if (this.quietErrorHandling) {
