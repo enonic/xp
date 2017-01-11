@@ -138,6 +138,11 @@ module api.ui.treegrid {
 
         }
 
+        protected setColumns(columns: GridColumn<TreeNode<DATA>>[], toBegin: boolean = false) {
+            this.getGrid().setColumns(columns, toBegin);
+            this.highlightCurrentNode();
+        }
+
         private initEventListeners(builder: TreeGridBuilder<DATA>) {
 
             let keyBindings = [];

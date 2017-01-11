@@ -105,9 +105,9 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                 }
 
                 if (ResponsiveRanges._240_360.isFitOrSmaller(width)) {
-                    this.getGrid().setColumns([nameColumn, orderColumn], checkSelIsMoved);
+                    this.setColumns([nameColumn, orderColumn], checkSelIsMoved);
                 } else if (ResponsiveRanges._360_540.isFitOrSmaller(width)) {
-                    this.getGrid().setColumns([nameColumn, orderColumn, compareStatusColumn], checkSelIsMoved);
+                    this.setColumns([nameColumn, orderColumn, compareStatusColumn], checkSelIsMoved);
                 } else {
                     if (ResponsiveRanges._540_720.isFitOrSmaller(width)) {
                         modifiedTimeColumn.setMaxWidth(90);
@@ -116,7 +116,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                         modifiedTimeColumn.setMaxWidth(135);
                         modifiedTimeColumn.setFormatter(DateTimeFormatter.format);
                     }
-                    this.getGrid().setColumns([nameColumn, orderColumn, compareStatusColumn, modifiedTimeColumn]);
+                    this.setColumns([nameColumn, orderColumn, compareStatusColumn, modifiedTimeColumn]);
                 }
             } else {
                 this.getGrid().resizeCanvas();
