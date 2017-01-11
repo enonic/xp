@@ -90,7 +90,7 @@
         "singleline": "never"
       }
     ],
-    "typedef-whitespace": false,
+    "typedef-whitespace": true,
     "whitespace": [
       false
     ],
