@@ -162,6 +162,11 @@ module api.liveedit.fragment {
 
                     // remove component-type attributes to avoid inner components of fragment to be affected by d&d sorting
                     let htmlElement = childElement.getHTMLElement();
+                    let hasErrors = !!htmlElement.getAttribute("data-portal-placeholder-error");
+                    if (hasErrors) {
+                        this.getEl().setAttribute("data-portal-placeholder-error", "true");
+                    }
+
                     htmlElement.removeAttribute("data-" + ItemType.ATTRIBUTE_TYPE);
                     htmlElement.removeAttribute("data-" + ItemType.ATTRIBUTE_REGION_NAME);
                 }
