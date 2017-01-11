@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.postprocess.instruction;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.osgi.service.component.annotations.Reference;
 
@@ -23,6 +24,8 @@ import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.ComponentService;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutRegions;
+import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Tracer;
 
 import static org.apache.commons.lang.StringUtils.substringAfter;
 
@@ -108,7 +111,19 @@ public final class ComponentInstruction
             throw new RenderException( "No Renderer found for: " + component.getClass().getSimpleName() );
         }
 
-        return renderer.render( component, portalRequest );
+        return trace( component, () -> renderer.render( component, portalRequest ) );
+    }
+
+    private PortalResponse trace( final Component component, final Supplier<PortalResponse> callable )
+    {
+        final Trace trace = Tracer.newTrace( "renderComponent" );
+        if ( trace != null )
+        {
+            trace.put( "path", component.getPath() );
+            trace.put( "type", component.getType().toString() );
+        }
+
+        return Tracer.trace( trace, callable::get );
     }
 
     private Component resolveComponent( final PortalRequest portalRequest, final ComponentPath path )
