@@ -39,6 +39,20 @@ module api.content.site.inputtype.siteconfigurator {
             this.setOccurrencesSortable(true);
         }
 
+        makeEmptyOption(id: string): Option<Application> {
+
+            let key = ApplicationKey.fromString(id),
+                emptyApp = new api.application.ApplicationBuilder();
+            emptyApp.applicationKey = key;
+            emptyApp.displayName = id;
+
+            return <Option<Application>>{
+                value: id,
+                displayValue: emptyApp.build(),
+                empty: true
+            };
+        }
+
         createSelectedOption(option: Option<Application>): SelectedOption<Application> {
 
             let siteConfig = this.siteConfigProvider.getConfig(option.displayValue.getApplicationKey());

@@ -6,8 +6,6 @@ module api.content.site {
 
     export class SiteModel {
 
-        public static PROPERTY_NAME_SITE_CONFIGS = "siteConfigs";
-
         private site: api.content.site.Site;
 
         private siteConfigs: SiteConfig[];
@@ -25,6 +23,8 @@ module api.content.site {
         private applicationGlobalEventsListener: (event: ApplicationEvent) => void;
 
         private applicationUnavailableListeners: {(applicationEvent: ApplicationEvent):void}[] = [];
+
+        private applicationStartedListeners: {(applicationEvent: ApplicationEvent): void}[] = [];
 
         constructor(site: Site) {
             this.initApplicationPropertyListeners();
@@ -59,6 +59,8 @@ module api.content.site {
             this.applicationGlobalEventsListener = (event: ApplicationEvent) => {
                 if (ApplicationEventType.STOPPED == event.getEventType()) {
                     this.notifyApplicationUnavailable(event);
+                } else if (ApplicationEventType.STARTED == event.getEventType()) {
+                    this.notifyApplicationStarted(event);
                 }
             }
         }
@@ -162,6 +164,23 @@ module api.content.site {
 
         private notifyApplicationUnavailable(applicationEvent: ApplicationEvent) {
             this.applicationUnavailableListeners.forEach((listener: (applicationEvent: ApplicationEvent)=>void) => {
+                listener(applicationEvent);
+            })
+        }
+
+        onApplicationStarted(listener: (applicationEvent: ApplicationEvent)=>void) {
+            this.applicationStartedListeners.push(listener);
+        }
+
+        unApplicationStarted(listener: (applicationEvent: ApplicationEvent)=>void) {
+            this.applicationStartedListeners =
+                this.applicationStartedListeners.filter((curr: (applicationEvent: ApplicationEvent)=>void) => {
+                    return listener != curr;
+                });
+        }
+
+        private notifyApplicationStarted(applicationEvent: ApplicationEvent) {
+            this.applicationStartedListeners.forEach((listener: (applicationEvent: ApplicationEvent)=>void) => {
                 listener(applicationEvent);
             })
         }
