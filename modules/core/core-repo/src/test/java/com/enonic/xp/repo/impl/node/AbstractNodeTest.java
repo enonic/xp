@@ -17,6 +17,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.index.PatternIndexConfigDocument;
+import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
