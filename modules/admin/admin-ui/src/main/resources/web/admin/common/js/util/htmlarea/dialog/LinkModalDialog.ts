@@ -393,7 +393,8 @@ module api.util.htmlarea.dialog {
                         href: linkEl.getHref(),
                         target: linkEl.getTarget() ? linkEl.getTarget() : null,
                         rel: null,
-                        "class": null,
+                        // tslint:disable-next-line:object-literal-key-quotes
+                        'class': null,
                         title: linkEl.getTitle()
                     };
 

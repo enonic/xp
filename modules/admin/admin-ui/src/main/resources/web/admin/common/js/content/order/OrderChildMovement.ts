@@ -23,8 +23,8 @@ module api.content.order {
 
         toJson(): ReorderChildContentJson {
             return {
-                "contentId": this.contentId.toString(),
-                "moveBefore": !!this.moveBefore ? this.moveBefore.toString() : ""
+                contentId: this.contentId.toString(),
+                moveBefore: !!this.moveBefore ? this.moveBefore.toString() : ""
             };
         }
 

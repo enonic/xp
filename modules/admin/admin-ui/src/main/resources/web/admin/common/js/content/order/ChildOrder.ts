@@ -82,7 +82,7 @@ module api.content.order {
         toJson(): api.content.json.ChildOrderJson {
 
             return {
-                "orderExpressions": OrderExpr.toArrayJson(this.getOrderExpressions())
+                orderExpressions: OrderExpr.toArrayJson(this.getOrderExpressions())
             };
         }
 
@@ -115,9 +115,9 @@ module api.content.order {
         static toSetChildOrderJson(contentId: ContentId, childOrder: ChildOrder, silent: boolean): api.content.json.SetChildOrderJson {
             if (contentId && childOrder) {
                 return {
-                    "silent": silent,
-                    "childOrder": childOrder.toJson(),
-                    "contentId": contentId.toString()
+                    silent: silent,
+                    childOrder: childOrder.toJson(),
+                    contentId: contentId.toString()
                 };
             }
         }

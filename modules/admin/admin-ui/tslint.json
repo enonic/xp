@@ -72,7 +72,8 @@
     "no-consecutive-blank-lines": true,
     "no-trailing-whitespace": true,
     "object-literal-key-quotes": [
-      false
+      true,
+      "as-needed"
     ],
     "one-line": [
       false

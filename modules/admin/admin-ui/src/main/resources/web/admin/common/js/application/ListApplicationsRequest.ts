@@ -14,7 +14,7 @@ module api.application {
 
         getParams(): Object {
             return {
-                "query": this.searchQuery
+                query: this.searchQuery
             };
         }
 

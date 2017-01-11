@@ -48,8 +48,8 @@ export class EmulatorGrid extends api.ui.grid.Grid<any> {
         let i = 1;
         data["devices"].forEach((item, index) => {
             let tmp = {
-                "id": i,
-                "device": item
+                id: i,
+                device: item
             };
             result.push(tmp);
             i++;

@@ -211,7 +211,7 @@ module api.util.htmlarea.editor {
                             styles: {textAlign: 'left'},
                             inline: 'span'
                         },
-                        {selector: 'table', collapsed: false, styles: {'float': 'left'}}
+                        {selector: 'table', collapsed: false, styles: {float: 'left'}}
                     ],
                     aligncenter: [
                         {
@@ -227,7 +227,7 @@ module api.util.htmlarea.editor {
                             styles: {textAlign: 'right'},
                             inline: 'span'
                         },
-                        {selector: 'table', collapsed: false, styles: {'float': 'right'}}
+                        {selector: 'table', collapsed: false, styles: {float: 'right'}}
                     ],
                     alignjustify: [
                         {
@@ -245,10 +245,10 @@ module api.util.htmlarea.editor {
                 verify_css_classes: false,
                 plugins: this.editableSourceCode ? this.plugins.concat('code') : this.plugins,
                 external_plugins: {
-                    "link": this.assetsUri + "/common/js/util/htmlarea/plugins/link.js",
-                    "anchor": this.assetsUri + "/common/js/util/htmlarea/plugins/anchor.js",
-                    "image": this.assetsUri + "/common/js/util/htmlarea/plugins/image.js",
-                    "macro": this.assetsUri + "/common/js/util/htmlarea/plugins/macro.js"
+                    link: this.assetsUri + "/common/js/util/htmlarea/plugins/link.js",
+                    anchor: this.assetsUri + "/common/js/util/htmlarea/plugins/anchor.js",
+                    image: this.assetsUri + "/common/js/util/htmlarea/plugins/image.js",
+                    macro: this.assetsUri + "/common/js/util/htmlarea/plugins/macro.js"
                 },
                 object_resizing: "table",
                 autoresize_min_height: 100,

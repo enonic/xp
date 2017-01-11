@@ -57,8 +57,8 @@ module api.security.acl {
 
         toJson(): api.security.acl.UserStoreAccessControlEntryJson {
             return {
-                "principal": this.principal.toJson(),
-                "access": UserStoreAccess[this.access]
+                principal: this.principal.toJson(),
+                access: UserStoreAccess[this.access]
             };
         }
 
