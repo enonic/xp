@@ -55,6 +55,29 @@ exports.login = function (params) {
 };
 
 /**
+ * Login a user in LDAP
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.user Name of user to log in.
+ * @param {string} [params.userStore] Name of user-store where the user is stored.
+ * @param {string} [params.password] Password for the user.
+ * @returns {object} Information for logged-in user.
+ */
+exports.ldapLogin = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.LdapLoginHandler');
+
+    bean.user = required(params, 'user');
+
+    bean.password = required(params, 'password');
+
+    bean.ldapAddress = required(params, 'ldapAddress');
+
+    bean.userStore = required(params, 'userStore');
+
+    return __.toNativeObject(bean.login());
+};
+
+/**
  * Logout an already logged-in user.
  *
  * @example-ref examples/auth/logout.js
