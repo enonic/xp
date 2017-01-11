@@ -137,17 +137,21 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     }
 
     private closeAndFireEventFromMediaUpload(event: FileUploadStartedEvent<Content>) {
-        this.onHidden((e: api.dom.ElementHiddenEvent) => {
+        let handler = (e: api.dom.ElementHiddenEvent) => {
             new NewMediaUploadEvent(event.getUploadItems(), this.parentContent).fire();
-        });
+            this.unHidden(handler);
+        };
+        this.onHidden(handler);
 
         this.close();
     }
 
     private closeAndFireEventFromContentType(event: NewContentDialogItemSelectedEvent) {
-        this.onHidden((e: api.dom.ElementHiddenEvent) => {
+        let handler = (e: api.dom.ElementHiddenEvent) => {
             new NewContentEvent(event.getItem().getContentType(), this.parentContent).fire();
-        });
+            this.unHidden(handler);
+        };
+        this.onHidden(handler);
 
         this.close();
     }
