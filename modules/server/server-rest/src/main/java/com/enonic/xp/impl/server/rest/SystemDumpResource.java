@@ -30,8 +30,13 @@ import com.enonic.xp.impl.server.rest.model.SystemDumpRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemLoadRequestJson;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.repository.CreateRepositoryParams;
+import com.enonic.xp.repository.NodeRepositoryService;
+import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.vfs.VirtualFiles;
 
 @Path("/api/system")
@@ -42,6 +47,10 @@ public final class SystemDumpResource
     implements JaxRsComponent
 {
     private ExportService exportService;
+
+    private RepositoryService repositoryService;
+
+    private NodeRepositoryService nodeRepositoryService;
 
     private java.nio.file.Path getDumpDirectory( final String name )
     {
@@ -60,9 +69,13 @@ public final class SystemDumpResource
     {
         final List<NodeExportResult> results = Lists.newArrayList();
 
-        results.add( exportRepoBranch( "cms-repo", "draft", request.getName() ) );
-        results.add( exportRepoBranch( "cms-repo", "master", request.getName() ) );
-        results.add( exportRepoBranch( "system-repo", "master", request.getName() ) );
+        for ( Repository repository : repositoryService.list() )
+        {
+            for ( Branch branch : repository.getBranches() )
+            {
+                results.add( exportRepoBranch( repository.getId().toString(), branch.getValue(), request.getName() ) );
+            }
+        }
 
         return NodeExportResultsJson.from( results );
     }
@@ -73,9 +86,31 @@ public final class SystemDumpResource
     {
         final List<NodeImportResult> results = Lists.newArrayList();
 
-        results.add( importRepoBranch( "cms-repo", "draft", request.getName() ) );
-        results.add( importRepoBranch( "cms-repo", "master", request.getName() ) );
         results.add( importRepoBranch( "system-repo", "master", request.getName() ) );
+
+        for ( Repository repository : repositoryService.list() )
+        {
+            if ( !this.nodeRepositoryService.isInitialized( repository.getId() ) )
+            {
+                final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
+                    repositoryId( repository.getId() ).
+                    repositorySettings( repository.getSettings() ).
+                    build();
+                this.nodeRepositoryService.create( createRepositoryParams );
+            }
+
+            for ( Branch branch : repository.getBranches() )
+            {
+                if ( SystemConstants.SYSTEM_REPO.equals( repository ) && SystemConstants.BRANCH_SYSTEM.equals( branch ) )
+                {
+                    continue;
+                }
+
+                //TODO Branch creation
+
+                results.add( importRepoBranch( repository.getId().toString(), branch.getValue(), request.getName() ) );
+            }
+        }
 
         return NodeImportResultsJson.from( results );
     }
@@ -126,5 +161,17 @@ public final class SystemDumpResource
     public void setExportService( final ExportService exportService )
     {
         this.exportService = exportService;
+    }
+
+    @Reference
+    public void setRepositoryService( final RepositoryService repositoryService )
+    {
+        this.repositoryService = repositoryService;
+    }
+
+    @Reference
+    public void setNodeRepositoryService( final NodeRepositoryService nodeRepositoryService )
+    {
+        this.nodeRepositoryService = nodeRepositoryService;
     }
 }
