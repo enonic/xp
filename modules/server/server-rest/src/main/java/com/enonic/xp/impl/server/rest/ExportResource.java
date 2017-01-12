@@ -89,24 +89,34 @@ public final class ExportResource
                 xsltParams( request.getXslParams() ).
                 build() ) );
 
-        if ( SystemConstants.SYSTEM_REPO.getId().equals( targetRepoPath.getRepositoryId() ) &&
-            SystemConstants.BRANCH_SYSTEM.equals( targetRepoPath.getBranch() ) )
+        if ( targetIsSystemRepo( targetRepoPath ) )
         {
-            this.repositoryService.invalidateAll();
-            for ( Repository repository : repositoryService.list() )
-            {
-                if ( !this.nodeRepositoryService.isInitialized( repository.getId() ) )
-                {
-                    final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
-                        repositoryId( repository.getId() ).
-                        repositorySettings( repository.getSettings() ).
-                        build();
-                    this.nodeRepositoryService.create( createRepositoryParams );
-                }
-            }
+            initializeStoredRepositories();
         }
 
         return NodeImportResultJson.from( result );
+    }
+
+    private boolean targetIsSystemRepo( final RepoPath targetRepoPath )
+    {
+        return SystemConstants.SYSTEM_REPO.getId().equals( targetRepoPath.getRepositoryId() ) &&
+            SystemConstants.BRANCH_SYSTEM.equals( targetRepoPath.getBranch() );
+    }
+
+    private void initializeStoredRepositories()
+    {
+        this.repositoryService.invalidateAll();
+        for ( Repository repository : repositoryService.list() )
+        {
+            if ( !this.nodeRepositoryService.isInitialized( repository.getId() ) )
+            {
+                final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
+                    repositoryId( repository.getId() ).
+                    repositorySettings( repository.getSettings() ).
+                    build();
+                this.nodeRepositoryService.create( createRepositoryParams );
+            }
+        }
     }
 
     private Context getContext( final RepoPath repoPath )

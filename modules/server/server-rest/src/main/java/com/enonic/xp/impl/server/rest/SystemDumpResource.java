@@ -86,33 +86,55 @@ public final class SystemDumpResource
     {
         final List<NodeImportResult> results = Lists.newArrayList();
 
-        results.add( importRepoBranch( SystemConstants.SYSTEM_REPO.getId().toString(), SystemConstants.BRANCH_SYSTEM.toString(),
-                                       request.getName() ) );
+        importSystemRepo( request, results );
+
         this.repositoryService.invalidateAll();
 
         for ( Repository repository : repositoryService.list() )
         {
-            if ( !this.nodeRepositoryService.isInitialized( repository.getId() ) )
-            {
-                final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
-                    repositoryId( repository.getId() ).
-                    repositorySettings( repository.getSettings() ).
-                    build();
-                this.nodeRepositoryService.create( createRepositoryParams );
-            }
-
-            for ( Branch branch : repository.getBranches() )
-            {
-                if ( SystemConstants.SYSTEM_REPO.equals( repository ) && SystemConstants.BRANCH_SYSTEM.equals( branch ) )
-                {
-                    continue;
-                }
-
-                results.add( importRepoBranch( repository.getId().toString(), branch.getValue(), request.getName() ) );
-            }
+            initializeRepo( repository );
+            importRepoBranches( request.getName(), results, repository );
         }
 
         return NodeImportResultsJson.from( results );
+    }
+
+    private void importRepoBranches( final String dumpName, final List<NodeImportResult> results, final Repository repository )
+    {
+        for ( Branch branch : repository.getBranches() )
+        {
+            if ( isSystemRepoMaster( repository, branch ) )
+            {
+                continue;
+            }
+
+            results.add( importRepoBranch( repository.getId().toString(), branch.getValue(), dumpName ) );
+        }
+    }
+
+    private boolean isSystemRepoMaster( final Repository repository, final Branch branch )
+    {
+        return SystemConstants.SYSTEM_REPO.equals( repository ) && SystemConstants.BRANCH_SYSTEM.equals( branch );
+    }
+
+    private void initializeRepo( final Repository repository )
+    {
+        if ( !this.nodeRepositoryService.isInitialized( repository.getId() ) )
+        {
+            final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
+                repositoryId( repository.getId() ).
+                repositorySettings( repository.getSettings() ).
+                build();
+            this.nodeRepositoryService.create( createRepositoryParams );
+        }
+    }
+
+    private void importSystemRepo( final SystemLoadRequestJson request, final List<NodeImportResult> results )
+    {
+        final NodeImportResult systemRepoImport =
+            importRepoBranch( SystemConstants.SYSTEM_REPO.getId().toString(), SystemConstants.BRANCH_SYSTEM.toString(), request.getName() );
+
+        results.add( systemRepoImport );
     }
 
     private NodeImportResult importRepoBranch( final String repoName, final String branch, final String dumpName )
