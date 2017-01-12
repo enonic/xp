@@ -373,44 +373,59 @@ module api.ui.grid {
             return -1;
         }
 
-        addSelectedUp() {
+        addSelectedUp(startIndex?: number) {
+            let row = -1;
             if (this.slickGrid.getDataLength() > 0) {
                 let selected: number[] = this.getSelectedRows().sort((a, b) => {
                     return a - b;
                 });
 
-                if (selected.length > 0 && (selected[0] - 1) >= 0) {
-                    let row = selected[0] - 1;
-                    selected.push(row);
-                    selected = selected.sort((a, b) => {
-                        return a - b;
-                    });
+                if (selected.length > 0) {
+                    let firstSelected = selected[0];
+                    if (selected.length > 1 && !isNaN(startIndex) && firstSelected === startIndex) {
+                        row = startIndex;
+                        selected.pop();
+                    }
+                    else if (firstSelected - 1 >= 0) {
+                        row = selected[0] - 1;
+                        selected.push(row);
+                        selected = selected.sort((a, b) => {
+                            return a - b;
+                        });
+                    }
+
                     this.setSelectedRows(selected, true);
-                    return row;
                 }
             }
-
-            return -1;
+            return row;
         }
 
-        addSelectedDown(): number {
+        addSelectedDown(startIndex?: number): number {
+            let row = -1;
             if (this.slickGrid.getDataLength() > 0) {
                 let selected: number[] = this.getSelectedRows().sort((a, b) => {
                     return a - b;
                 });
 
-                if (selected.length > 0 && (selected[selected.length - 1] + 1) < this.slickGrid.getDataLength()) {
-                    let row = selected[selected.length - 1] + 1;
-                    selected.push(row);
+                if (selected.length > 0) {
+                    let lastSelected = selected[selected.length - 1];
+                    if (selected.length > 1 && !isNaN(startIndex) && lastSelected === startIndex) {
+                        row = startIndex;
+                        selected.shift();
+                    }
+                    else if (lastSelected + 1 < this.slickGrid.getDataLength()) {
+                        row = lastSelected + 1;
+                        selected.push(row);
+                    }
+
                     this.setSelectedRows(selected, true);
-                    return row;
-                } else if (selected.length === 0) {
+                } else {
+                    row = 0;
                     this.moveSelectedDown();
-                    return 0;
                 }
             }
 
-            return -1;
+            return row;
         }
 
         // Operate with cells
