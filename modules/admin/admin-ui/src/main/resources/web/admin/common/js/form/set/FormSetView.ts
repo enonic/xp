@@ -203,7 +203,7 @@ module api.form {
         }
 
         protected getPropertyArray(propertySet: PropertySet): PropertyArray {
-            const propertyArray = propertySet.getPropertyArray(this.formSet.getName());
+            let propertyArray = propertySet.getPropertyArray(this.formSet.getName());
             if (!propertyArray) {
                 propertyArray = PropertyArray.create().setType(ValueTypes.DATA).setName(this.formSet.getName()).setParent(
                     this.parentDataSet).build();
@@ -222,10 +222,10 @@ module api.form {
                 throw new Error("Can't validate before layout is done");
             }
 
-            let validationRecordingPath = this.resolveValidationRecordingPath(),
-                wholeRecording = new ValidationRecording(),
-                occurrenceViews = this.formItemOccurrences.getOccurrenceViews().filter(view => view != viewToSkipValidation),
-                numberOfValids = 0;
+            let validationRecordingPath = this.resolveValidationRecordingPath();
+            let wholeRecording = new ValidationRecording();
+            let occurrenceViews = this.formItemOccurrences.getOccurrenceViews().filter(view => view != viewToSkipValidation);
+            let numberOfValids = 0;
 
             occurrenceViews.forEach((occurrenceView: FormSetOccurrenceView) => {
                 let recordingForOccurrence = occurrenceView.validate(silent);

@@ -34,5 +34,3 @@ module api.content.resource {
     }
 
 }
-
-    

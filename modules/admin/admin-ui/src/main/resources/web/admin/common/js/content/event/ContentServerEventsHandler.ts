@@ -58,7 +58,6 @@ module api.content.event {
             }
         }
 
-
         private contentServerEventHandler(event: BatchContentServerEvent) {
             if (ContentServerEventsHandler.debug) {
                 console.debug("ContentServerEventsHandler: received server event", event);
@@ -72,9 +71,9 @@ module api.content.event {
                     return total.concat(change.getChangeItems());
                 }, []);
 
-                let deletedItems = changeItems.filter(d => d.getBranch() == 'draft'),
-                    unpublishedItems = changeItems.filter(d => deletedItems.every(deleted => !api.ObjectHelper.equals(deleted.contentId,
-                        d.contentId)));
+                let deletedItems = changeItems.filter(d => d.getBranch() == 'draft');
+                let unpublishedItems = changeItems.filter(d => deletedItems.every(deleted => !api.ObjectHelper.equals(deleted.contentId,
+                    d.contentId)));
 
                 this.handleContentDeleted(deletedItems);
                 api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByPaths(unpublishedItems.map(item => item.getPath()))
@@ -263,7 +262,6 @@ module api.content.event {
             }
             this.notifyContentSorted(data);
         }
-
 
         onContentCreated(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentCreatedListeners.push(listener);

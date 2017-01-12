@@ -219,7 +219,6 @@ export class NonMobileDetailsPanelsManager {
     }
 }
 
-
 export class NonMobileDetailsPanelsManagerBuilder {
     private splitPanelWithGridAndDetails: api.ui.panel.SplitPanel;
     private dockedDetailsPanel: DockedDetailsPanel;

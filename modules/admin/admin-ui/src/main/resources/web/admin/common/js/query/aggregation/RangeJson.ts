@@ -6,5 +6,4 @@ module api.query.aggregation {
 
     }
 
-
 }

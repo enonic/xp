@@ -316,10 +316,10 @@ module api.form.inputtype.text {
         }
 
         private getToolbarOffsetTop(delta: number = 0): number {
-            let toolbar = wemjq(this.getHTMLElement()).closest(".form-panel").find(".wizard-step-navigator-and-toolbar"),
-                stickyToolbarHeight = toolbar.outerHeight(true),
-                offset = toolbar.offset(),
-                stickyToolbarOffset = offset ? offset.top : 0;
+            let toolbar = wemjq(this.getHTMLElement()).closest(".form-panel").find(".wizard-step-navigator-and-toolbar");
+            let stickyToolbarHeight = toolbar.outerHeight(true);
+            let offset = toolbar.offset();
+            let stickyToolbarOffset = offset ? offset.top : 0;
 
             return stickyToolbarOffset + stickyToolbarHeight + delta;
         }
@@ -433,7 +433,6 @@ module api.form.inputtype.text {
                 listener(event);
             });
         }
-
 
         private destroyEditor(id: string): void {
             let editor = this.getEditor(id);

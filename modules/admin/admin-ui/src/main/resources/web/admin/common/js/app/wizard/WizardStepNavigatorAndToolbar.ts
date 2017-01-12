@@ -44,7 +44,6 @@ module api.app.wizard {
             return this.helpTextToggleButton;
         }
 
-
         setStepToolbar(stepToolbar: Toolbar) {
             if (this.stepToolbar) {
                 this.removeChild(this.stepToolbar);

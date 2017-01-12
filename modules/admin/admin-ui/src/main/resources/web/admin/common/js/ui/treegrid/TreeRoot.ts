@@ -14,7 +14,6 @@ module api.ui.treegrid {
 
         private stashedSelection: TreeNode<DATA>[];
 
-
         constructor() {
 
             this.defaultRoot = new TreeNodeBuilder<DATA>().setExpanded(true).build();
@@ -146,12 +145,8 @@ module api.ui.treegrid {
         }
 
         private cleanStashedSelection() {
-            let currentIds = this.currentSelection.map((el) => {
-                    return el.getDataId();
-                }),
-                stashedIds = this.stashedSelection.map((el) => {
-                    return el.getDataId();
-                });
+            let currentIds = this.currentSelection.map(el => el.getDataId());
+            let stashedIds = this.stashedSelection.map(el => el.getDataId());
 
             this.stashedSelection = this.stashedSelection.filter((value, index, self) => {
                 // remove duplicated nodes and those, that are already in `currentSelection`

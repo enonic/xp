@@ -94,4 +94,3 @@ export class ContentVersionViewer extends api.ui.Viewer<api.content.ContentVersi
         return super.setObject(contentVersion);
     }
 }
-

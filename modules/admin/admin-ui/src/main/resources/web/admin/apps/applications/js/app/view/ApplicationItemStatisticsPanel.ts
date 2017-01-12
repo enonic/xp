@@ -60,7 +60,6 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
             ApplicationBrowseActions.get().STOP_APPLICATION.setEnabled(false);
         }
 
-
         this.applicationDataContainer.removeChildren();
 
         let infoGroup = new ItemDataGroup("Info", "info");
@@ -70,12 +69,10 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
         infoGroup.addDataList("System Required",
             ">= " + currentApplication.getMinSystemVersion() + " and < " + currentApplication.getMaxSystemVersion());
 
-
         let descriptorResponse = this.initDescriptors(currentApplication.getApplicationKey());
         let schemaResponse = this.initSchemas(currentApplication.getApplicationKey());
         let macroResponse = this.initMacros(currentApplication.getApplicationKey());
         let providerResponse = this.initProviders(currentApplication.getApplicationKey());
-
 
         wemQ.all([descriptorResponse, schemaResponse, macroResponse, providerResponse])
             .spread((descriptorsGroup, schemasGroup, macrosGroup, providersGroup) => {
@@ -163,7 +160,6 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
         return wemQ.all(schemaPromises).spread<any>(
             (contentTypes: ContentTypeSummary[], mixins: Mixin[], relationshipTypes: RelationshipType[]) => {
                 let schemasGroup = new ItemDataGroup("Schemas", "schemas");
-
 
                 let contentTypeNames = contentTypes.map(
                     (contentType: ContentTypeSummary) => contentType.getContentTypeName().getLocalName()).sort(this.sortAlphabeticallyAsc);

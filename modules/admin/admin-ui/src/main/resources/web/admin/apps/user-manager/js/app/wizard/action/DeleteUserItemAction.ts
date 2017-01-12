@@ -16,9 +16,9 @@ export class DeleteUserItemAction extends api.ui.Action {
 
                     wizardPanel.close();
 
-                    let persistedItem = wizardPanel.getPersistedItem(),
-                        isPrincipal = (wizardPanel instanceof PrincipalWizardPanel) && !!persistedItem,
-                        userItemKey;
+                    let persistedItem = wizardPanel.getPersistedItem();
+                    let isPrincipal = (wizardPanel instanceof PrincipalWizardPanel) && !!persistedItem;
+                    let userItemKey;
                     if (isPrincipal) {
                         userItemKey = (<Principal>persistedItem).getKey();
                         new api.security.DeletePrincipalRequest()

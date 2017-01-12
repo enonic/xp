@@ -88,7 +88,6 @@ module api.ui {
             this.shelves = [];
         }
 
-
         public getActiveBindings(): KeyBinding[] {
             return Object.keys(this.activeBindings).map((key) => {
                 return this.activeBindings[key];

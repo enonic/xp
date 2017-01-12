@@ -34,7 +34,6 @@ describe("api.security.Principal", () => {
             var principal2 = Principal.create().setKey(PrincipalKey.fromString("user:mystore:other")).setDisplayName(
                 "Anon").setModifiedTime(later).build();
 
-
             expect(principal1.equals(principal2)).toBeFalsy();
         });
 

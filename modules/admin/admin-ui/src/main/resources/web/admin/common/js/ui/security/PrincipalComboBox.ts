@@ -64,7 +64,6 @@ module api.ui.security {
         }
     }
 
-
     export class PrincipalSelectedOptionView extends PrincipalViewer implements api.ui.selector.combobox.SelectedOptionView<Principal> {
 
         private option: Option<Principal>;

@@ -35,8 +35,8 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
     constructor() {
         super("security-wizard-step-form");
 
-        let label = new DivEl("input-label"),
-            wrapper = new DivEl("wrapper required");
+        let label = new DivEl("input-label");
+        let wrapper = new DivEl("wrapper required");
         this.label = new LabelEl("Permissions");
         wrapper.appendChild(this.label);
         label.appendChild(wrapper);
@@ -56,11 +56,11 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
             this.notifyBlurred(event);
         });
 
-        let formView = new DivEl("form-view"),
-            inputView = new DivEl("input-view valid"),
-            inputTypeView = new DivEl("input-type-view"),
-            inputOccurrenceView = new DivEl("input-occurrence-view single-occurrence"),
-            inputWrapper = new DivEl("input-wrapper");
+        let formView = new DivEl("form-view");
+        let inputView = new DivEl("input-view valid");
+        let inputTypeView = new DivEl("input-type-view");
+        let inputOccurrenceView = new DivEl("input-occurrence-view single-occurrence");
+        let inputWrapper = new DivEl("input-wrapper");
 
         inputWrapper.appendChildren(this.inheritance, this.accessListView, this.editLink);
 
@@ -92,8 +92,8 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
         this.permissions.getEntries().sort().forEach((entry) => {
             this.accessListView.addItem(entry);
 
-            let entryView = <AccessControlEntryView> this.accessListView.getItemView(entry),
-                selector = entryView.getPermissionSelector();
+            let entryView = <AccessControlEntryView> this.accessListView.getItemView(entry);
+            let selector = entryView.getPermissionSelector();
 
             // detach onValueChanged events
             entryView.getValueChangedListeners().splice(0);

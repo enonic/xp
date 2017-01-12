@@ -66,7 +66,6 @@ module api.ui.security.acl {
                     this.notifyValueChanged(this.getAccessControlEntry());
                 });
 
-
                 // this.toggleClass("dirty", !ace.isInherited());
 
                 this.accessSelector.onValueChanged((event: api.ValueChangedEvent) => {
@@ -198,7 +197,6 @@ module api.ui.security.acl {
         private static onlyFullAccess(allowed: Permission[]): boolean {
             return this.isFullAccess(allowed) && allowed.length === 7;
         }
-
 
         private getPermissionsValueFromAccess(access: Access) {
             let permissions = {

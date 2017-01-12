@@ -272,8 +272,8 @@ module api.ui.uploader {
                 return this;
             }
 
-            let newItemsToAppend: Element[] = [],
-                existingItems: Element[] = [];
+            let newItemsToAppend: Element[] = [];
+            let existingItems: Element[] = [];
 
             this.parseValues(value).forEach((val) => {
                 if (val) {
@@ -402,11 +402,9 @@ module api.ui.uploader {
             this.resultContainer.setVisible(visible);
         }
 
-
         createModel(serverResponse: any): MODEL {
             throw new Error('Should be overridden by inheritors');
         }
-
 
         getModelValue(item: MODEL): string {
             throw new Error('Should be overridden by inheritors');

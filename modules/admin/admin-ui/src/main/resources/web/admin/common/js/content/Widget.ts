@@ -19,8 +19,8 @@ module api.content {
         }
 
         private makeWidgetDescriptorKey(key: string): WidgetDescriptorKey {
-            let applicationKey = key.split(":")[0],
-                descriptorKeyName = key.split(":")[1];
+            let applicationKey = key.split(":")[0];
+            let descriptorKeyName = key.split(":")[1];
             return new WidgetDescriptorKey(ApplicationKey.fromString(applicationKey), descriptorKeyName);
         }
 

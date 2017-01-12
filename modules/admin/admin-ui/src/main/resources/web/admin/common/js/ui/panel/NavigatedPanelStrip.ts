@@ -55,16 +55,18 @@ module api.ui.panel {
                 return false;
             }
 
-            let totalHeight = this.getScrollable().getEl().getHeight(),
-                headerHeight = this.getFocusedHeaderHeight(this.focusIndex),
-                panelEl = this.getPanel(this.focusIndex).getEl(),
-                panelTop = panelEl.getOffsetToParent().top - this.getScrollOffset() - headerHeight,
-                panelBottom = panelTop + panelEl.getHeight() - headerHeight;
+            let totalHeight = this.getScrollable().getEl().getHeight();
+            let headerHeight = this.getFocusedHeaderHeight(this.focusIndex);
+            let panelEl = this.getPanel(this.focusIndex).getEl();
+            let panelTop = panelEl.getOffsetToParent().top - this.getScrollOffset() - headerHeight;
+            let panelBottom = panelTop + panelEl.getHeight() - headerHeight;
             return panelEl.isVisible() && (( panelTop <= 0 && panelBottom > 0) || (panelTop <= totalHeight && panelBottom > totalHeight));
         }
 
         private getScrolledPanelIndex(scrollTop: number): number {
-            let panelEl, panelTop, panelBottom;
+            let panelEl;
+            let panelTop;
+            let panelBottom;
             if (scrollTop == 0) {
                 // select first element if we are in the beginning
                 return 0;

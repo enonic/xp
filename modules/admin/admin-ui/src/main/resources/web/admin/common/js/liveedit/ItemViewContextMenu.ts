@@ -151,15 +151,15 @@ module api.liveedit {
         private restrainX(x: number): number {
             let parentEl = this.getParentElement().getEl();
 
-            let width = this.getEl().getWidth(),
-                halfWidth = width / 2,
-                arrowHalfWidth = this.arrow ? this.arrow.getWidth() / 2 : 0,
-                desiredX = x - halfWidth,
-                resultX = desiredX,
-                deltaX,
-                arrowPos,
-                minX = parentEl.getMarginLeft(),
-                maxX = parentEl.getWidthWithMargin() - parentEl.getMarginRight() - width;
+            let width = this.getEl().getWidth();
+            let halfWidth = width / 2;
+            let arrowHalfWidth = this.arrow ? this.arrow.getWidth() / 2 : 0;
+            let desiredX = x - halfWidth;
+            let resultX = desiredX;
+            let deltaX;
+            let arrowPos;
+            let minX = parentEl.getMarginLeft();
+            let maxX = parentEl.getWidthWithMargin() - parentEl.getMarginRight() - width;
 
             if (desiredX < minX) {
                 deltaX = minX - desiredX;
@@ -178,12 +178,12 @@ module api.liveedit {
         }
 
         private restrainY(y: number, notClicked?: boolean): number {
-            let orientation = ItemViewContextMenuOrientation.DOWN,
-                arrowHeight = this.arrow ? this.arrow.getHeight() : 0,
-                height = this.getEl().getHeight(),
-                minY = 0,
-                maxY,
-                desiredY;
+            let orientation = ItemViewContextMenuOrientation.DOWN;
+            let arrowHeight = this.arrow ? this.arrow.getHeight() : 0;
+            let height = this.getEl().getHeight();
+            let minY = 0;
+            let maxY;
+            let desiredY;
 
             if (notClicked) {
                 maxY = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);

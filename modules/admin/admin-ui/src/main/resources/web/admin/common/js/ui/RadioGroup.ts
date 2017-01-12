@@ -26,8 +26,8 @@ module api.ui {
         }
 
         public addOption(value: string, label: string) {
-            let checked = value == this.getOriginalValue(),
-                radio = new RadioButton(label, value, this.groupName, checked);
+            let checked = value == this.getOriginalValue();
+            let radio = new RadioButton(label, value, this.groupName, checked);
 
             radio.onValueChanged((event: api.ValueChangedEvent) => {
                 this.setValue(this.doGetValue(), false, true);
@@ -62,7 +62,6 @@ module api.ui {
 
     }
 
-
     export class RadioButton extends api.dom.FormInputEl {
 
         private radio: api.dom.InputEl;
@@ -94,7 +93,6 @@ module api.ui {
             this.radio.setValue(value);
             return this;
         }
-
 
         getValue(): string {
             if (RadioButton.debug) {

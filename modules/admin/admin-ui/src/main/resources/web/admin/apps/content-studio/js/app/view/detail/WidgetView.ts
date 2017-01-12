@@ -101,8 +101,8 @@ export class WidgetView extends api.dom.DivEl {
     }
 
     public updateWidgetItemViews(force: boolean = false): wemQ.Promise<any> {
-        let content = this.detailsView.getItem(),
-            promises = [];
+        let content = this.detailsView.getItem();
+        let promises = [];
 
         if (this.widgetShouldBeUpdated(force)) {
             this.detailsView.showLoadMask();

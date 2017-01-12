@@ -28,7 +28,6 @@ extends ComponentInspectionPanel<COMPONENT> {
         this.formView = null;
     }
 
-
     setModel(liveEditModel: LiveEditModel) {
 
         if (this.liveEditModel != liveEditModel) {

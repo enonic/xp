@@ -36,7 +36,6 @@ module api.schema.mixin {
 
             let other = <Mixin>o;
 
-
             if (!api.ObjectHelper.stringEquals(this.schemaKey, other.schemaKey)) {
                 return false;
             }

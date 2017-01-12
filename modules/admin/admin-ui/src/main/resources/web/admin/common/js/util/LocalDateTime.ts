@@ -158,12 +158,10 @@ module api.util {
                 .build();
         }
 
-
         public static create(): LocalDateTimeBuilder {
             return new LocalDateTimeBuilder();
         }
     }
-
 
     export class LocalDateTimeBuilder {
 

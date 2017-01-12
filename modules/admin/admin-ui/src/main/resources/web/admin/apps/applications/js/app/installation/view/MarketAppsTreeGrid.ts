@@ -208,11 +208,11 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
 
     private subscribeAndManageInstallClick() {
         this.getGrid().subscribeOnClick((event, data) => {
-            let node = this.getItem(data.row),
-                app = <MarketApplication>node.getData(),
-                url = app.getLatestVersionDownloadUrl(),
-                elem = new Element(new ElementFromHelperBuilder().setHelper(new ElementHelper(event.target))),
-                status = app.getStatus();
+            let node = this.getItem(data.row);
+            let app = <MarketApplication>node.getData();
+            let url = app.getLatestVersionDownloadUrl();
+            let elem = new Element(new ElementFromHelperBuilder().setHelper(new ElementHelper(event.target)));
+            let status = app.getStatus();
 
             if ((elem.hasClass(MarketAppStatusFormatter.statusInstallCssClass) ||
                  elem.hasClass(MarketAppStatusFormatter.statusUpdateCssClass))) {
@@ -330,8 +330,8 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
                 }
                 return applications;
             }).catch((reason: any) => {
-            let status500Message = "Woops... The server seems to be experiencing problems. Please try again later.",
-                defaultErrorMessage = "Enonic Market is temporarily unavailable. Please try again later.";
+            let status500Message = "Woops... The server seems to be experiencing problems. Please try again later.";
+            let defaultErrorMessage = "Enonic Market is temporarily unavailable. Please try again later.";
             this.handleError(reason, reason.getStatusCode() === 500 ? status500Message : defaultErrorMessage);
             return [];
         });

@@ -15,8 +15,8 @@ module api.content.order {
 
         toJson(): json.OrderExprJson {
             return {
-                "fieldName": this.fieldName,
-                "direction": this.getDirection()
+                fieldName: this.fieldName,
+                direction: this.getDirection()
             };
         }
 

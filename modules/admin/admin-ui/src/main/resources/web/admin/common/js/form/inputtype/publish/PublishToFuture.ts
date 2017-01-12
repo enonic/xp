@@ -5,7 +5,6 @@ module api.content.form.inputtype.publish {
      */
     export class PublishToFuture extends api.content.form.inputtype.time.DateTime {
 
-
         protected additionalValidate(recording: api.form.inputtype.InputValidationRecording) {
             if (recording.isValid()) {
                 let publishInfoPropertySet: api.data.PropertySet = this.propertyArray.getParent();

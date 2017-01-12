@@ -33,7 +33,6 @@ describe("api.data.type.LongValueType", () => {
             expect(ValueTypes.LONG.isConvertible("1.1")).toBeFalsy();
         });
 
-
         it("given a letter as string then false is returned", () => {
             expect(ValueTypes.LONG.isConvertible("a")).toBeFalsy();
         });

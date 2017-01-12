@@ -209,8 +209,8 @@ export class ContentDeleteDialog extends ProgressBarDialog {
     }
 
     private updateSubTitle() {
-        let items = this.getItemList().getItems(),
-            count = items.length;
+        let items = this.getItemList().getItems();
+        let count = items.length;
 
         if (!this.doAnyHaveChildren(items)) {
             super.setSubTitle("");
@@ -218,7 +218,6 @@ export class ContentDeleteDialog extends ProgressBarDialog {
             super.setSubTitle(`Delete selected items and ${count > 1 ? 'their' : 'its'} child content`);
         }
     }
-
 
     private isAnySiteToBeDeleted(): boolean {
         let result = this.getItemList().getItems().some((item: ContentSummaryAndCompareStatus) => {
@@ -240,5 +239,3 @@ export class ContentDeleteDialog extends ProgressBarDialog {
     }
 
 }
-
-

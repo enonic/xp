@@ -213,18 +213,19 @@ module api.ui {
         }
 
         private positionAtMouse(event: MouseEvent) {
-            let left, top,
-                x = event.clientX,
-                y = event.clientY,
-                el = this.tooltipEl.getEl(),
-                windowEl = <any> api.dom.WindowDOM.get().getHTMLElement(),
-                elProps = {
-                    height: el.getHeightWithMargin(),
-                    width: el.getWidthWithMargin(),
-                    // if mode == follow, tooltip is appended to body, so window scroll can affect tooltip
-                    scrollLeft: this.mode == Tooltip.MODE_FOLLOW ? windowEl.scrollX : 0,
-                    scrollTop: this.mode == Tooltip.MODE_FOLLOW ? windowEl.scrollY : 0
-                };
+            let left;
+            let top;
+            let x = event.clientX;
+            let y = event.clientY;
+            let el = this.tooltipEl.getEl();
+            let windowEl = <any> api.dom.WindowDOM.get().getHTMLElement();
+            let elProps = {
+                height: el.getHeightWithMargin(),
+                width: el.getWidthWithMargin(),
+                // if mode == follow, tooltip is appended to body, so window scroll can affect tooltip
+                scrollLeft: this.mode == Tooltip.MODE_FOLLOW ? windowEl.scrollX : 0,
+                scrollTop: this.mode == Tooltip.MODE_FOLLOW ? windowEl.scrollY : 0
+            };
             switch (this.side) {
             case Tooltip.SIDE_TOP:
                 left = x - elProps.width / 2 + elProps.scrollLeft;
@@ -249,17 +250,18 @@ module api.ui {
 
         private positionByTarget() {
 
-            let targetEl = this.targetEl.getHTMLElement(),
-                targetOffset = this.targetEl.getEl().getOffset(),
-                el = this.tooltipEl.getEl(),
-                elProps = {
-                    left: el.getMarginLeft() || 0,
-                    top: el.getMarginTop() || 0,
-                    height: el.getHeight(),
-                    width: el.getWidth()
-                };
+            let targetEl = this.targetEl.getHTMLElement();
+            let targetOffset = this.targetEl.getEl().getOffset();
+            let el = this.tooltipEl.getEl();
+            let elProps = {
+                left: el.getMarginLeft() || 0,
+                top: el.getMarginTop() || 0,
+                height: el.getHeight(),
+                width: el.getWidth()
+            };
 
-            let offsetLeft, offsetTop;
+            let offsetLeft;
+            let offsetTop;
             switch (this.side) {
             case Tooltip.SIDE_TOP:
                 offsetLeft = targetOffset.left + (targetEl.offsetWidth - elProps.width) / 2 + elProps.left;

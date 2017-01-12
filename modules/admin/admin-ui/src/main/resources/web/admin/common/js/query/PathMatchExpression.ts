@@ -49,4 +49,3 @@ module api.query {
     }
 
 }
-

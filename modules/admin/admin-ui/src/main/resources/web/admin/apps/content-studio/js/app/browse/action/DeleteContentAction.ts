@@ -18,9 +18,9 @@ export class DeleteContentAction extends Action {
                 .setNoCallback(null)
                 .setYesCallback((exclude?: api.content.CompareStatus[]) => {
 
-                    let excludeStatuses = !!exclude ? exclude : [CompareStatus.EQUAL, CompareStatus.NEWER, CompareStatus.MOVED,
-                            CompareStatus.PENDING_DELETE, CompareStatus.OLDER],
-                    deselected = [];
+                    let excludeStatuses = exclude ? exclude : [CompareStatus.EQUAL, CompareStatus.NEWER, CompareStatus.MOVED,
+                            CompareStatus.PENDING_DELETE, CompareStatus.OLDER];
+                    let deselected = [];
                     grid.getSelectedDataList().forEach((content: ContentSummaryAndCompareStatus) => {
                         if (excludeStatuses.indexOf(content.getCompareStatus()) < 0) {
                             deselected.push(content.getId());

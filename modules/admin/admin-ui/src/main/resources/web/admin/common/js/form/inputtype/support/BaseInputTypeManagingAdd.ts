@@ -137,8 +137,8 @@ module api.form.inputtype.support {
 
         private ensureOccurrenceLimits(propertyArray: PropertyArray) {
 
-            let max = this.input.getOccurrences().getMaximum(),
-                actual = propertyArray.getSize();
+            let max = this.input.getOccurrences().getMaximum();
+            let actual = propertyArray.getSize();
 
             if (max > 0 && max < actual) {
                 if (BaseInputTypeManagingAdd.debug) {

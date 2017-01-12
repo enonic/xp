@@ -162,8 +162,8 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
         this.setSubTitle("Resolving items...");
 
-        let ids = this.getContentToPublishIds(),
-            loadChildren = this.childrenCheckbox.isChecked();
+        let ids = this.getContentToPublishIds();
+        let loadChildren = this.childrenCheckbox.isChecked();
 
         let resolveDependenciesRequest = api.content.resource.ResolvePublishDependenciesRequest.
             create().

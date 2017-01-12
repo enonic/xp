@@ -70,6 +70,5 @@ module api.liveedit.image {
             }
         }
 
-
     }
 }

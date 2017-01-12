@@ -56,11 +56,11 @@ module api.util.htmlarea.dialog {
         }
 
         private createMacroSelector(id: string): FormItem {
-            let loader = new api.macro.resource.MacrosLoader(),
-                macroSelector = api.macro.MacroComboBox.create().setLoader(loader).setMaximumOccurrences(1).build(),
-                formItem = this.createFormItem(id, "Macro", Validators.required, api.util.StringHelper.EMPTY_STRING,
-                    <api.dom.FormItemEl>macroSelector),
-                macroSelectorComboBox = macroSelector.getComboBox();
+            let loader = new api.macro.resource.MacrosLoader();
+            let macroSelector = api.macro.MacroComboBox.create().setLoader(loader).setMaximumOccurrences(1).build();
+            let formItem = this.createFormItem(id, "Macro", Validators.required, api.util.StringHelper.EMPTY_STRING,
+                    <api.dom.FormItemEl>macroSelector);
+            let macroSelectorComboBox = macroSelector.getComboBox();
 
             this.macroSelector = macroSelector;
             this.addClass("macro-selector");
@@ -115,8 +115,8 @@ module api.util.htmlarea.dialog {
         }
 
         protected validate(): boolean {
-            let mainFormValid = super.validate(),
-                configPanelValid = this.macroDockedPanel.validateMacroForm();
+            let mainFormValid = super.validate();
+            let configPanelValid = this.macroDockedPanel.validateMacroForm();
 
             return mainFormValid && configPanelValid;
         }

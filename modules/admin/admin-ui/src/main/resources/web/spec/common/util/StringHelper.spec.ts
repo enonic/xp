@@ -153,7 +153,6 @@ describe("api.util.StringHelper", () => {
             expect(sh.escapeHtml("\/")).toBe("&#x2F;");
         });
 
-
     });
 
     describe("removeCarriageChars", () => {

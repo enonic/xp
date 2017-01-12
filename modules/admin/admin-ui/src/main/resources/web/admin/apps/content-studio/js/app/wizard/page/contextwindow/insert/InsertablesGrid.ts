@@ -24,7 +24,6 @@ export class InsertablesGrid extends api.ui.grid.Grid<Insertable> {
         });
     }
 
-
     protected createOptions(): api.ui.grid.GridOptions<any> {
         return new api.ui.grid.GridOptionsBuilder().setHideColumnHeaders(true).setRowHeight(50).setHeight(400).setWidth(320).build();
     }

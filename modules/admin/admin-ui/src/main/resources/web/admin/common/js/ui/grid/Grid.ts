@@ -285,8 +285,8 @@ module api.ui.grid {
 
         toggleRow(row: number, debounce?: boolean): number {
             // Prevent unnecessary render on the same row
-            let rows = this.getSelectedRows(),
-                index = rows.indexOf(row);
+            let rows = this.getSelectedRows();
+            let index = rows.indexOf(row);
             if (index < 0) {
                 rows.push(row);
                 rows.sort((a, b) => {
@@ -301,8 +301,8 @@ module api.ui.grid {
         }
 
         isRowSelected(row: number): boolean {
-            let rows = this.getSelectedRows(),
-                index = rows.indexOf(row);
+            let rows = this.getSelectedRows();
+            let index = rows.indexOf(row);
 
             return index >= 0;
         }

@@ -49,7 +49,6 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
         });
     });
 
-
     describe("what happens after layout", () => {
 
         let createComboBoxSpy, parentSpy, appendChildSpy, providerSpy;
@@ -305,7 +304,6 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
                 it("should create a new property set", () => {
                     expect(fakePropertyArrayObj.addSet).toHaveBeenCalled();
                 });
-
 
                 it("should update properties of the new property set", () => {
                     expect(fakePropertySetObj.setStringByPath).toHaveBeenCalled();

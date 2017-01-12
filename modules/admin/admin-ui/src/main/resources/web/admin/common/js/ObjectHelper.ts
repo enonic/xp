@@ -288,7 +288,6 @@ module api {
             return false;
         }
 
-
         static objectPropertyIterator(object: any, callback: {(name: string, property: any, index?: number): void;}) {
 
             let index = 0;

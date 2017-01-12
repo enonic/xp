@@ -7,8 +7,8 @@ module api.dom {
         private static elements: { [index: string]: api.dom.Element; } = {};
 
         public static registerElement(el: api.dom.Element): string {
-            let fullName,
-                id = el.getId();
+            let fullName;
+            let id = el.getId();
 
             if (!id) {
                 id = fullName = api.ClassHelper.getFullName(el);

@@ -72,7 +72,6 @@ describe("api.data.Property", () => {
             propertyArray.addProperty(property);
         });
 
-
         describe("getName()", () => {
 
             it("given a Property with name 'myValue' then 'myValue' is returned", () => {
@@ -354,7 +353,6 @@ describe("api.data.Property", () => {
             })
         });
 
-
         describe("getLong()", () => {
             it("String to Long is valid", () => {
                 property.setValue(new Value("3", ValueTypes.STRING));
@@ -402,7 +400,6 @@ describe("api.data.Property", () => {
                 expect(property.getDateTime().timeToString()).toBe("19:20:00");
             });
         });
-
 
         describe("getLocalDateTime()", () => {
             it("LocalDateTime to LocalDateTime is valid", () => {

@@ -63,11 +63,11 @@ module api.content.resource {
 
             return this.send().then((response: api.rest.JsonResponse<ContentQueryResultJson<CONTENT_JSON>>) => {
 
-                let responseResult: ContentQueryResultJson<CONTENT_JSON> = response.getResult(),
-                    aggregations = api.aggregation.Aggregation.fromJsonArray(responseResult.aggregations),
-                    contentsAsJson: ContentIdBaseItemJson[] = responseResult.contents,
-                    metadata = new ContentMetadata(response.getResult().metadata["hits"], response.getResult().metadata["totalHits"]),
-                    contents: CONTENT[];
+                let responseResult: ContentQueryResultJson<CONTENT_JSON> = response.getResult();
+                let aggregations = api.aggregation.Aggregation.fromJsonArray(responseResult.aggregations);
+                let contentsAsJson: ContentIdBaseItemJson[] = responseResult.contents;
+                let metadata = new ContentMetadata(response.getResult().metadata["hits"], response.getResult().metadata["totalHits"]);
+                let contents: CONTENT[];
 
                 if (this.expand == api.rest.Expand.NONE) {
                     contents = <any[]> this.fromJsonToContentIdBaseItemArray(contentsAsJson);
@@ -117,7 +117,6 @@ module api.content.resource {
 
             return aggregationQueryJsons;
         }
-
 
         private queryFiltersToJson(queryFilters: api.query.filter.Filter[]): api.query.filter.FilterTypeWrapperJson[] {
 

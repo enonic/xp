@@ -26,7 +26,6 @@ module api.data {
             return api.util.LocalTime.isValidString(value);
         }
 
-
         newValue(value: string): Value {
             if (!value) {
                 return this.newNullValue();
@@ -50,7 +49,6 @@ module api.data {
         valueEquals(a: api.util.LocalTime, b: api.util.LocalTime): boolean {
             return api.ObjectHelper.equals(a, b);
         }
-
 
         toJsonValue(value: Value): string {
             return value.isNull() ? null : value.getLocalTime().toString();

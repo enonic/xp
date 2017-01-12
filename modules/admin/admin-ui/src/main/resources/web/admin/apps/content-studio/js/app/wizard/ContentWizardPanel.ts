@@ -347,7 +347,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             }).then(() => super.doLoadData());
     }
 
-
     protected createFormIcon(): ThumbnailUploaderEl {
         let thumbnailUploader = new ThumbnailUploaderEl({
             name: 'thumbnail-uploader',
@@ -756,7 +755,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                         setPublishStatus(this.currentContentPublishStatus);
                     this.refreshScheduleWizardStep();
 
-
                     this.getWizardHeader().disableNameGeneration(this.currentContentCompareStatus === CompareStatus.EQUAL);
                 }
             });
@@ -862,10 +860,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     private updateLiveForm() {
-        let content = this.getPersistedItem(),
-            formContext = this.createFormContext(content);
+        let content = this.getPersistedItem();
+        let formContext = this.createFormContext(content);
 
-        if (!!this.siteModel) {
+        if (this.siteModel) {
             this.unbindSiteModelListeners();
         }
 
@@ -951,8 +949,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     private doHtmlAreasContainId(id: string): boolean {
-        let areas = this.getHtmlAreasInForm(this.getContentType().getForm()),
-            data: api.data.PropertyTree = this.getPersistedItem().getContentData();
+        let areas = this.getHtmlAreasInForm(this.getContentType().getForm());
+        let data: api.data.PropertyTree = this.getPersistedItem().getContentData();
 
         return areas.some((area) => {
             let property = data.getProperty(area);
@@ -1209,8 +1207,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     // when rendering form - we may add extra fields from mixins;
     // as this is intended action from XP, not user - it should be present in persisted content
     private synchPersistedItemWithMixinData(mixinName: MixinName, mixinData: PropertyTree) {
-        let persistedContent = this.getPersistedItem(),
-            extraData = persistedContent.getExtraData(mixinName);
+        let persistedContent = this.getPersistedItem();
+        let extraData = persistedContent.getExtraData(mixinName);
         if (!extraData) { // ensure ExtraData object corresponds to each step form
             this.enrichWithExtraData(persistedContent, mixinName, mixinData.copy());
         } else {
@@ -1623,8 +1621,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             return true;
         }
 
-        let allMetadataFormsValid = true,
-            allMetadataFormsHaveValidUserInput = true;
+        let allMetadataFormsValid = true;
+        let allMetadataFormsHaveValidUserInput = true;
         for (let key in this.metadataStepFormByName) {
             if (this.metadataStepFormByName.hasOwnProperty(key)) {
                 let form = this.metadataStepFormByName[key];
@@ -1751,7 +1749,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.contentWizardStepForm.update(contentCopy.getContentData(), unchangedOnly).then(() => {
             setTimeout(this.contentWizardStepForm.validate.bind(this.contentWizardStepForm), 100);
         });
-
 
         if (contentCopy.isSite()) {
             this.siteModel.update(<Site>contentCopy);

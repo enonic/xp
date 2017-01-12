@@ -15,4 +15,3 @@ module api.content.json {
         contentVersions: ContentVersionViewJson[];
     }
 }
-

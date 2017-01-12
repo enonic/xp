@@ -47,8 +47,8 @@ module api.util.htmlarea.dialog {
         }
 
         static getOptionByProportion(proportion: string): ImageCroppingOption {
-            let imageCroppingOption: ImageCroppingOption = null,
-                imageCroppingOptions: ImageCroppingOption[] = ImageCroppingOptions.getCroppingOptions();
+            let imageCroppingOption: ImageCroppingOption = null;
+            let imageCroppingOptions: ImageCroppingOption[] = ImageCroppingOptions.getCroppingOptions();
 
             for (let i = 0; i < imageCroppingOptions.length; i++) {
                 if (imageCroppingOptions[i].getProportionString() == proportion) {

@@ -126,7 +126,6 @@ module ImageUploaderElSpec {
 
         });
 
-
         describe("public methods", () => {
 
             let editorSpyObj, editorSpy;
@@ -154,7 +153,6 @@ module ImageUploaderElSpec {
             afterEach(() => {
                 api.dom.Body.get().removeChild(imageUploaderEl);
             });
-
 
             describe("createResultItem()", () => {
 
@@ -241,7 +239,6 @@ module ImageUploaderElSpec {
                         });
                     });
 
-
                 });
 
                 describe("from extradata", () => {
@@ -274,7 +271,6 @@ module ImageUploaderElSpec {
                     });
 
                 });
-
 
             });
 
@@ -408,7 +404,6 @@ module ImageUploaderElSpec {
             });
         });
 
-
         describe("image editor listeners", () => {
 
             let editor;
@@ -500,12 +495,9 @@ module ImageUploaderElSpec {
                 });
             });
 
-
         });
 
-
     });
-
 
     function createUploader(config?): ImageUploaderEl {
         return new ImageUploaderEl(config || {

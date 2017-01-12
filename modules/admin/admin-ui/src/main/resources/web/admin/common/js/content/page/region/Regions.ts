@@ -46,7 +46,6 @@ module api.content.page.region {
             this.registerRegionListeners(region);
         }
 
-
         private registerRegionListeners(region: Region) {
             region.onChanged(this.regionChangedEventHandler);
             region.onComponentPropertyChangedEvent(this.componentPropertyChangedEventHandler);
@@ -145,7 +144,6 @@ module api.content.page.region {
             }
 
             let other = <Regions>o;
-
 
             let thisRegions = this.getRegions();
             let otherRegions = other.getRegions();

@@ -64,7 +64,6 @@ describe("api.util.LocalDateTime", () => {
         });
     });
 
-
     describe("conversion to string", () => {
 
         it("should correctly convert without seconds and fractions", () => {
@@ -104,7 +103,6 @@ describe("api.util.LocalDateTime", () => {
             expect(date1.equals(date2)).toBeFalsy();
         });
 
-
         it("should correctly compare equal dates with different fraction part", () => {
             var date1 = LocalDateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(37).build();
             var date2 = LocalDateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(37).setFractions(
@@ -113,7 +111,6 @@ describe("api.util.LocalDateTime", () => {
             expect(date1.equals(date2)).toBeTruthy();
         });
     });
-
 
     describe("parsing of a date literal", () => {
 

@@ -104,7 +104,7 @@ module api.content.page.region {
         toComponentJson(): ComponentJson {
 
             return {
-                "name": this.name ? this.name.toString() : null
+                name: this.name ? this.name.toString() : null
             };
         }
 

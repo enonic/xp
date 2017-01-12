@@ -30,7 +30,8 @@ module api.form.inputtype.combobox {
             let options: ComboBoxOption[] = [];
 
             let optionValues = inputConfig['option'] || [];
-            let l = optionValues.length, optionValue;
+            let l = optionValues.length;
+            let optionValue;
             for (let i = 0; i < l; i++) {
                 optionValue = optionValues[i];
                 options.push({label: optionValue['value'], value: optionValue['@value']});
@@ -156,7 +157,6 @@ module api.form.inputtype.combobox {
         protected getNumberOfValids(): number {
             return this.getPropertyArray().getSize();
         }
-
 
         onFocus(listener: (event: FocusEvent) => void) {
             this.comboBox.onFocus(listener);

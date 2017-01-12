@@ -60,7 +60,6 @@ module api.liveedit {
                 }
             });
 
-
             controllerDropdown.onClicked((event: MouseEvent) => {
                 controllerDropdown.giveFocus();
                 event.stopPropagation();

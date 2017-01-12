@@ -10,7 +10,6 @@ import PrincipalType = api.security.PrincipalType;
 
 export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel {
 
-
     constructor() {
 
         super(null);
@@ -43,8 +42,8 @@ export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilt
     }
 
     private searchFacets(isRefresh: boolean = false) {
-        let values = this.getSearchInputValues(),
-            searchText = values.getTextSearchFieldValue();
+        let values = this.getSearchInputValues();
+        let searchText = values.getTextSearchFieldValue();
         if (!searchText) {
             this.handleEmptyFilterInput(isRefresh);
             return;

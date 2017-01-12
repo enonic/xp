@@ -9,7 +9,6 @@ import Validators = api.ui.form.Validators;
 import DivEl = api.dom.DivEl;
 import LabelEl = api.dom.LabelEl;
 
-
 export class UserEmailWizardStepForm extends api.app.wizard.WizardStepForm {
 
     private email: EmailInput;

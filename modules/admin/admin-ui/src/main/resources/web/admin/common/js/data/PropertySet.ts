@@ -426,10 +426,10 @@ module api.data {
         }
 
         public diff(other: PropertySet): PropertyTreeDiff {
-            let checkedProperties: String[] = [],
-                diff = this.doDiff(other, checkedProperties),
+            let checkedProperties: String[] = [];
+            let diff = this.doDiff(other, checkedProperties);
             // run inverse diff to find properties, which were added to the original set
-                inverseDiff = other.doDiff(this, checkedProperties);
+            let inverseDiff = other.doDiff(this, checkedProperties);
 
             diff.added = diff.added.concat(inverseDiff.removed);
 
@@ -437,14 +437,14 @@ module api.data {
         }
 
         private doDiff(other: PropertySet, checkedProperties: String[] = []): PropertyTreeDiff {
-            let added = [],
-                removed = [],
-                modified = [];
+            let added = [];
+            let removed = [];
+            let modified = [];
 
             this.forEach((property) => {
                 if (checkedProperties.indexOf(property.getPath().toString()) == -1) {
-                    let type = property.getType(),
-                        otherProperty = other.getProperty(property.getName(), property.getIndex());
+                    let type = property.getType();
+                    let otherProperty = other.getProperty(property.getName(), property.getIndex());
 
                     if (!otherProperty) {
                         removed.push(property);
@@ -457,8 +457,8 @@ module api.data {
                         }
                         checkedProperties.push(property.getPath().toString());
                     } else {
-                        let propertySetValue = property.getValue().getPropertySet(),
-                            diff = propertySetValue.doDiff(otherProperty.getValue().getPropertySet(), checkedProperties);
+                        let propertySetValue = property.getValue().getPropertySet();
+                        let diff = propertySetValue.doDiff(otherProperty.getValue().getPropertySet(), checkedProperties);
 
                         added = added.concat(diff.added);
                         removed = removed.concat(diff.removed);

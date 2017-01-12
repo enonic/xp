@@ -11,7 +11,6 @@ export class UninstallApplicationDialog extends api.ui.dialog.ModalDialog {
 
     private noAction: Action = new Action('No');
 
-
     constructor(applications: Application[]) {
         super("Uninstall Applications");
 

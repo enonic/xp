@@ -359,7 +359,6 @@ module api.liveedit {
                 console.log('ItemView.remove [' + this.toString() + ']');
             }
 
-
             if (this.contextMenu) {
                 this.contextMenu.remove();
             }
@@ -527,8 +526,8 @@ module api.liveedit {
             }
 
             if (!this.isSelected() || rightClicked) {
-                let selectedView = pageView.getSelectedView(),
-                    isViewInsideSelectedContainer = this.isViewInsideSelectedContainer();
+                let selectedView = pageView.getSelectedView();
+                let isViewInsideSelectedContainer = this.isViewInsideSelectedContainer();
                 let clickPosition = !this.isEmpty() ? {x: event.pageX, y: event.pageY} : null;
 
                 if (selectedView && isViewInsideSelectedContainer && !rightClicked) {
@@ -573,9 +572,9 @@ module api.liveedit {
         }
 
         protected isEventOverItem(event: MouseEvent): boolean {
-            let offset = this.getEl().getDimensions(),
-                x = event.pageX,
-                y = event.pageY;
+            let offset = this.getEl().getDimensions();
+            let x = event.pageX;
+            let y = event.pageY;
 
             return x >= offset.left
                    && x <= offset.left + offset.width
@@ -689,8 +688,8 @@ module api.liveedit {
         }
 
         private selectItem() {
-            let pageView = this.getPageView(),
-                selectedView = pageView.getSelectedView();
+            let pageView = this.getPageView();
+            let selectedView = pageView.getSelectedView();
 
             if (selectedView == this) {
                 // view is already selected
@@ -860,14 +859,14 @@ module api.liveedit {
         }
 
         private calcDistanceToViewport(): number {
-            let dimensions = this.getEl().getDimensions(),
-                menuHeight = this.contextMenu && this.contextMenu.isVisible() ? this.contextMenu.getEl().getHeight() : dimensions.height,
-                scrollTop: number = this.getDocumentScrollTop(),
-                padding = 10;
+            let dimensions = this.getEl().getDimensions();
+            let menuHeight = this.contextMenu && this.contextMenu.isVisible() ? this.contextMenu.getEl().getHeight() : dimensions.height;
+            let scrollTop: number = this.getDocumentScrollTop();
+            let padding = 10;
 
-            let top = (dimensions.top - padding) - scrollTop,
-                bottom = (dimensions.top + menuHeight + padding) - (scrollTop + window.innerHeight),
-                tallerThanWindow = menuHeight > window.innerHeight;
+            let top = (dimensions.top - padding) - scrollTop;
+            let bottom = (dimensions.top + menuHeight + padding) - (scrollTop + window.innerHeight);
+            let tallerThanWindow = menuHeight > window.innerHeight;
 
             return top <= 0 ? top : (bottom > 0 && !tallerThanWindow) ? bottom : 0;
         }
@@ -893,8 +892,8 @@ module api.liveedit {
         }
 
         protected createComponentView(componentItemType: ItemType): ItemView {
-            let regionView = this.getRegionView(),
-                newComponent = regionView.createComponent(componentItemType.toComponentType());
+            let regionView = this.getRegionView();
+            let newComponent = regionView.createComponent(componentItemType.toComponentType());
 
             return componentItemType.createView(new CreateItemViewConfig<RegionView,Component>().
                 setParentView(regionView).
@@ -957,8 +956,8 @@ module api.liveedit {
             if (this == itemView) {
                 return false;
             }
-            let parentItemView = this.getParentItemView(),
-                result = false;
+            let parentItemView = this.getParentItemView();
+            let result = false;
             while (!!parentItemView && !result) {
                 result = (parentItemView == itemView);
                 parentItemView = parentItemView.getParentItemView();

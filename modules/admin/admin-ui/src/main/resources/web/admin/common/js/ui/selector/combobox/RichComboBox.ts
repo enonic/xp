@@ -322,7 +322,6 @@ module api.ui.selector.combobox {
             this.comboBox.unOptionSelected(listener);
         }
 
-
         onOptionMoved(listener: {(option: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
             this.comboBox.onOptionMoved(listener);
         }
@@ -598,6 +597,5 @@ module api.ui.selector.combobox {
             return new RichComboBox(this);
         }
     }
-
 
 }

@@ -209,10 +209,10 @@ module api.form {
         }
 
         private getToolbarOffsetTop(delta: number = 0): number {
-            let toolbar = wemjq(this.getHTMLElement()).closest(".form-panel").find(".wizard-step-navigator-and-toolbar"),
-                stickyToolbarHeight = toolbar.outerHeight(true),
-                offset = toolbar.offset(),
-                stickyToolbarOffset = offset ? offset.top : 0;
+            let toolbar = wemjq(this.getHTMLElement()).closest(".form-panel").find(".wizard-step-navigator-and-toolbar");
+            let stickyToolbarHeight = toolbar.outerHeight(true);
+            let offset = toolbar.offset();
+            let stickyToolbarOffset = offset ? offset.top : 0;
 
             return stickyToolbarOffset + stickyToolbarHeight + delta;
         }
@@ -223,11 +223,11 @@ module api.form {
         }
 
         private makeSelectionCheckbox(): api.ui.Checkbox {
-            let checked = this.getThisPropertyFromSelectedOptionsArray() != null,
-                button = api.ui.Checkbox.create()
-                    .setLabelText(this.formOptionSetOption.getLabel())
-                    .setChecked(checked)
-                    .build();
+            let checked = this.getThisPropertyFromSelectedOptionsArray() != null;
+            let button = api.ui.Checkbox.create()
+                                        .setLabelText(this.formOptionSetOption.getLabel())
+                                        .setChecked(checked)
+                                        .build();
 
             this.checkbox = button;
 

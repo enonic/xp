@@ -74,7 +74,6 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         return new UserStoreWizardActions(this);
     }
 
-
     protected createMainToolbar(): UserStoreWizardToolbar {
         return new UserStoreWizardToolbar({
             saveAction: this.wizardActions.getSaveAction(),
@@ -96,12 +95,11 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
     protected createWizardHeader(): api.app.wizard.WizardHeaderWithDisplayNameAndName {
         let wizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().build();
 
+        let existing = this.getPersistedItem();
+        let displayName = "";
+        let name = "";
 
-        let existing = this.getPersistedItem(),
-            displayName = "",
-            name = "";
-
-        if (!!existing) {
+        if (existing) {
             displayName = existing.getDisplayName();
             name = existing.getKey().getId();
 
@@ -170,7 +168,6 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         });
     }
 
-
     protected doLayoutPersistedItem(persistedItem: UserStore): Q.Promise<void> {
 
         if (!!persistedItem) {
@@ -213,7 +210,6 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         });
     }
 
-
     hasUnsavedChanges(): boolean {
         let persistedUserStore: UserStore = this.getPersistedItem();
         if (persistedUserStore == undefined) {
@@ -243,12 +239,12 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
     }
 
     private produceCreateUserStoreRequest(): CreateUserStoreRequest {
-        let header = this.getWizardHeader(),
-            key = new UserStoreKey(header.getName()),
-            name = header.getDisplayName(),
-            description = this.userStoreWizardStepForm.getDescription(),
-            authConfig = this.userStoreWizardStepForm.getAuthConfig(),
-            permissions = this.permissionsWizardStepForm.getPermissions();
+        let header = this.getWizardHeader();
+        let key = new UserStoreKey(header.getName());
+        let name = header.getDisplayName();
+        let description = this.userStoreWizardStepForm.getDescription();
+        let authConfig = this.userStoreWizardStepForm.getAuthConfig();
+        let permissions = this.permissionsWizardStepForm.getPermissions();
 
         return new CreateUserStoreRequest()
             .setDisplayName(name)
@@ -259,11 +255,11 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
     }
 
     private produceUpdateUserStoreRequest(viewedUserStore: UserStore): UpdateUserStoreRequest {
-        let key = this.getPersistedItem().getKey(),
-            name = viewedUserStore.getDisplayName(),
-            description = viewedUserStore.getDescription(),
-            authConfig = viewedUserStore.getAuthConfig(),
-            permissions = viewedUserStore.getPermissions();
+        let key = this.getPersistedItem().getKey();
+        let name = viewedUserStore.getDisplayName();
+        let description = viewedUserStore.getDescription();
+        let authConfig = viewedUserStore.getAuthConfig();
+        let permissions = viewedUserStore.getPermissions();
 
         return new UpdateUserStoreRequest()
             .setKey(key)
@@ -272,7 +268,6 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
             .setAuthConfig(authConfig)
             .setPermissions(permissions);
     }
-
 
     onUserStoreNamed(listener: (event: UserStoreNamedEvent)=>void) {
         this.userStoreNamedListeners.push(listener);

@@ -143,8 +143,8 @@ module api.util.htmlarea.dialog {
         }
 
         private makePreviewFrame(macroPreview: MacroPreview): MacroPreviewFrame {
-            let previewFrame = new MacroPreviewFrame(macroPreview),
-                previewFrameRenderedHandler: () => void = () => {
+            const previewFrame = new MacroPreviewFrame(macroPreview);
+            const previewFrameRenderedHandler: () => void = () => {
                     this.notifyPanelRendered();
                 };
 
@@ -157,9 +157,10 @@ module api.util.htmlarea.dialog {
         }
 
         public validateMacroForm(): boolean {
-            let isValid = true,
-                form = <FormView>(this.configPanel.getFirstChild());
-            if (!!form) {
+            let isValid = true;
+            let form = <FormView>(this.configPanel.getFirstChild());
+
+            if (form) {
                 isValid = form.validate(false).isValid();
                 form.displayValidationErrors(!isValid);
             }
@@ -273,9 +274,9 @@ module api.util.htmlarea.dialog {
 
         private adjustFrameHeightOnContentsUpdate() {
             let frameWindow = this.getHTMLElement()["contentWindow"];
-            if (!!frameWindow) {
-                let observer = new MutationObserver(this.debouncedResizeHandler),
-                    config = {attributes: true, childList: true, characterData: true};
+            if (frameWindow) {
+                let observer = new MutationObserver(this.debouncedResizeHandler);
+                let config = {attributes: true, childList: true, characterData: true};
 
                 observer.observe(frameWindow.document.body, config);
             }
@@ -283,9 +284,9 @@ module api.util.htmlarea.dialog {
 
         private adjustFrameHeight() {
             try {
-                let frameWindow = this.getHTMLElement()["contentWindow"] || this.getHTMLElement()["contentDocument"],
-                    scrollHeight = frameWindow.document.body.scrollHeight,
-                    maxFrameHeight = this.getMaxFrameHeight();
+                let frameWindow = this.getHTMLElement()["contentWindow"] || this.getHTMLElement()["contentDocument"];
+                let scrollHeight = frameWindow.document.body.scrollHeight;
+                let maxFrameHeight = this.getMaxFrameHeight();
                 this.getEl().setHeightPx(scrollHeight > 150
                     ? scrollHeight > maxFrameHeight ? maxFrameHeight : scrollHeight + (this.isInstagramPreview() ? 18 : 0)
                     : wemjq("#" + this.id).contents().find('body').outerHeight());

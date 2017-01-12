@@ -78,7 +78,6 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
         this.recentContentTypes.getItemsList().onSelected(this.closeAndFireEventFromContentType.bind(this));
     }
 
-
     private initFileInput() {
         this.dropzoneContainer = new api.ui.uploader.DropzoneContainer(true);
         this.dropzoneContainer.hide();

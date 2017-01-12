@@ -36,11 +36,11 @@ export class MostPopularItemsList extends NewContentDialogList {
 
         let contentTypes = listItems.map((el) => el.getContentType());
 
-        let mostPopularItems: MostPopularItem[] = [],
-            allowedContentTypes: api.content.ContentSummary[] = directChildContents.filter((content: api.content.ContentSummary) => {
+        let mostPopularItems: MostPopularItem[] = [];
+        let allowedContentTypes: api.content.ContentSummary[] = directChildContents.filter((content: api.content.ContentSummary) => {
                 return this.isAllowedContentType(contentTypes, content);
-            }),
-            aggregatedList: ContentTypeInfo[] = this.getAggregatedItemList(allowedContentTypes);
+            });
+        let aggregatedList: ContentTypeInfo[] = this.getAggregatedItemList(allowedContentTypes);
 
         for (let i = 0; i < aggregatedList.length && i < MostPopularItemsBlock.DEFAULT_MAX_ITEMS; i++) {
             let contentType: ContentTypeSummary = api.util.ArrayHelper.findElementByFieldValue(contentTypes, "name",

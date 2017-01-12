@@ -24,6 +24,5 @@ module api.content.page {
             this.request.setApplicationKeys(applicationKeys);
         }
 
-
     }
 }

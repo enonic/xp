@@ -310,8 +310,8 @@ export class PageComponentsView extends api.dom.DivEl {
                 return;
             }
 
-            let rowElement = event.target,
-                selected = false;
+            let rowElement = event.targetж;
+            let selected = false;
 
             while (!rowElement.classList.contains("slick-row")) {
                 if (rowElement.classList.contains("selected")) {
@@ -410,7 +410,6 @@ export class PageComponentsView extends api.dom.DivEl {
         });
     }
 
-
     private bindTreeTextNodeUpdateOnTextComponentModify(textComponentView: TextComponentView) {
         let handler = api.util.AppHelper.debounce((event) => {
             this.tree.updateNode(textComponentView);
@@ -490,16 +489,16 @@ export class PageComponentsView extends api.dom.DivEl {
                         event.preventDefault();
                         event.stopPropagation();
 
-                        let el = this.getEl(),
-                            newPos = {
-                                x: event.clientX,
-                                y: event.clientY
-                            },
-                            offset = el.getOffset(),
-                            newOffset = {
-                                top: offset.top + newPos.y - lastPos.y,
-                                left: offset.left + newPos.x - lastPos.x
-                            };
+                        let el = this.getEl();
+                        let newPos = {
+                            x: event.clientX,
+                            y: event.clientY
+                        };
+                        let offset = el.getOffset();
+                        let newOffset = {
+                            top: offset.top + newPos.y - lastPos.y,
+                            left: offset.left + newPos.x - lastPos.x
+                        };
 
                         this.constrainToParent(newOffset);
 
@@ -605,7 +604,6 @@ export class PageComponentsView extends api.dom.DivEl {
         }
     }
 
-
     private isMenuIconClicked(cellNumber: number): boolean {
         return cellNumber == 1;
     }
@@ -700,8 +698,8 @@ export class PageComponentsView extends api.dom.DivEl {
         else {
             let elementHelper = new api.dom.ElementHelper(rowElement);
             let dimensions = elementHelper.getDimensions();
-            let nodes = this.tree.getRoot().getCurrentRoot().treeToList(),
-                hoveredNode = nodes[new api.dom.ElementHelper(rowElement).getSiblingIndex()];
+            let nodes = this.tree.getRoot().getCurrentRoot().treeToList();
+            let hoveredNode = nodes[new api.dom.ElementHelper(rowElement).getSiblingIndex()];
 
             if (hoveredNode) {
                 let data = hoveredNode.getData();

@@ -180,7 +180,4 @@ module api.ui {
             return new Checkbox(this);
         }
     }
-
-
-
 }

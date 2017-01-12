@@ -144,6 +144,5 @@ module api.ui.text {
             return false;
         }
 
-
     }
 }

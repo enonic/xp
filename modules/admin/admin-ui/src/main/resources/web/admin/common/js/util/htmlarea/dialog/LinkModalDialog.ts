@@ -250,8 +250,8 @@ module api.util.htmlarea.dialog {
                 loader.setContentPath(this.content.getPath());
             });
 
-            let contentSelector = api.content.ContentComboBox.create().setLoader(loader).setMaximumOccurrences(1).build(),
-                contentSelectorComboBox = contentSelector.getComboBox();
+            let contentSelector = api.content.ContentComboBox.create().setLoader(loader).setMaximumOccurrences(1).build();
+            let contentSelectorComboBox = contentSelector.getComboBox();
 
             contentSelectorComboBox.onValueChanged(() => {
                 this.centerMyself();
@@ -304,8 +304,8 @@ module api.util.htmlarea.dialog {
         }
 
         private createContentLink(): api.dom.AEl {
-            let contentSelector = <api.content.ContentComboBox>this.getFieldById("contentId"),
-                targetCheckbox = <api.ui.Checkbox>this.getFieldById("contentTarget");
+            let contentSelector = <api.content.ContentComboBox>this.getFieldById("contentId");
+            let targetCheckbox = <api.ui.Checkbox>this.getFieldById("contentTarget");
 
             let linkEl = new api.dom.AEl();
             linkEl.setUrl(LinkModalDialog.contentPrefix + contentSelector.getValue(), targetCheckbox.isChecked() ? "_blank" : null);
@@ -323,8 +323,8 @@ module api.util.htmlarea.dialog {
         }
 
         private createUrlLink(): api.dom.AEl {
-            let url = (<api.ui.text.TextInput>this.getFieldById("url")).getValue(),
-                targetCheckbox = <api.ui.Checkbox>this.getFieldById("urlTarget");
+            let url = (<api.ui.text.TextInput>this.getFieldById("url")).getValue();
+            let targetCheckbox = <api.ui.Checkbox>this.getFieldById("urlTarget");
 
             let linkEl = new api.dom.AEl();
             linkEl.setUrl(url, targetCheckbox.isChecked() ? "_blank" : null);
@@ -342,8 +342,8 @@ module api.util.htmlarea.dialog {
         }
 
         private createEmailLink(): api.dom.AEl {
-            let email = (<api.ui.text.TextInput>this.getFieldById("email")).getValue(),
-                subject = (<api.ui.text.TextInput>this.getFieldById("subject")).getValue();
+            let email = (<api.ui.text.TextInput>this.getFieldById("email")).getValue();
+            let subject = (<api.ui.text.TextInput>this.getFieldById("subject")).getValue();
 
             let linkEl = new api.dom.AEl();
             linkEl.setUrl(LinkModalDialog.emailPrefix + email + (subject ? LinkModalDialog.subjectPrefix + encodeURI(subject) : ""));
@@ -352,11 +352,11 @@ module api.util.htmlarea.dialog {
         }
 
         private createLink(): void {
-            let linkEl: api.dom.AEl,
-                deck = <api.ui.panel.NavigatedDeckPanel>this.dockedPanel.getDeck(),
-                selectedTab = <api.ui.tab.TabBarItem>deck.getSelectedNavigationItem(),
-                linkText: string = this.onlyTextSelected ? (<api.ui.text.TextInput>this.getFieldById("linkText")).getValue() : "",
-                toolTip: string = (<api.ui.text.TextInput>this.getFieldById("toolTip")).getValue();
+            let linkEl: api.dom.AEl;
+            let deck = <api.ui.panel.NavigatedDeckPanel>this.dockedPanel.getDeck();
+            let selectedTab = <api.ui.tab.TabBarItem>deck.getSelectedNavigationItem();
+            let linkText: string = this.onlyTextSelected ? (<api.ui.text.TextInput>this.getFieldById("linkText")).getValue() : "";
+            let toolTip: string = (<api.ui.text.TextInput>this.getFieldById("toolTip")).getValue();
 
             switch (selectedTab.getLabel()) {
             case (LinkModalDialog.tabNames.content):
@@ -393,7 +393,8 @@ module api.util.htmlarea.dialog {
                         href: linkEl.getHref(),
                         target: linkEl.getTarget() ? linkEl.getTarget() : null,
                         rel: null,
-                        "class": null,
+                        // tslint:disable-next-line:object-literal-key-quotes
+                        'class': null,
                         title: linkEl.getTitle()
                     };
 

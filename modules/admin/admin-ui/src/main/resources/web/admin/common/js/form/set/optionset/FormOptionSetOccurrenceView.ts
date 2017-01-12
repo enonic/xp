@@ -79,8 +79,8 @@ module api.form {
                         return;
                     }
 
-                    let previousValidationValid = this.currentValidationState.isValid(),
-                        multiselectionState = this.validateMultiselection();
+                    let previousValidationValid = this.currentValidationState.isValid();
+                    let multiselectionState = this.validateMultiselection();
 
                     if (multiselectionState.isValid()) {
                         // for radio - we clean all validation, as even selected item should not be validated
@@ -110,8 +110,8 @@ module api.form {
             if (selectionValidationRecording.isValid()) {
                 this.selectionValidationMessage.addClass("empty");
             } else {
-                let selection: Occurrences = this.formOptionSet.getMultiselection(),
-                    message;
+                let selection: Occurrences = this.formOptionSet.getMultiselection();
+                let message;
                 if (!selectionValidationRecording.isMinimumOccurrencesValid()) {
                     if (selection.getMinimum() == 1) {
                         message = "At least 1 option must be selected";
@@ -197,9 +197,9 @@ module api.form {
         }
 
         private validateMultiselection(): ValidationRecording {
-            let multiselectionRecording = new ValidationRecording(),
-                validationRecordingPath = this.resolveValidationRecordingPath(),
-                selectionPropertyArray = this.propertySet.getPropertyArray("_selected");
+            let multiselectionRecording = new ValidationRecording();
+            let validationRecordingPath = this.resolveValidationRecordingPath();
+            let selectionPropertyArray = this.propertySet.getPropertyArray("_selected");
 
             if (selectionPropertyArray.getSize() < this.formOptionSet.getMultiselection().getMinimum()) {
                 multiselectionRecording.breaksMinimumOccurrences(validationRecordingPath);

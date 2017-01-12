@@ -136,7 +136,6 @@ module api.liveedit {
                 this.setLocked(true);
             }
 
-
         }
 
         private registerPageModel() {
@@ -542,9 +541,9 @@ module api.liveedit {
         }
 
         private waitUntilEditorToolbarShown() {
-            let intervalId,
-                toolbarHeight,
-                attempts = 0;
+            let intervalId;
+            let toolbarHeight;
+            let attempts = 0;
 
             intervalId = setInterval(()=> {
                 attempts++;
@@ -790,7 +789,6 @@ module api.liveedit {
             return null;
         }
 
-
         private registerItemView(view: ItemView) {
 
             if (PageView.debug) {
@@ -852,7 +850,9 @@ module api.liveedit {
             children.forEach((childElement: api.dom.Element) => {
                 let itemType = ItemType.fromElement(childElement);
                 let isRegionView = api.ObjectHelper.iFrameSafeInstanceOf(childElement, RegionView);
-                let region, regionName, regionView;
+                let region;
+                let regionName;
+                let regionView;
 
                 if (isRegionView) {
                     regionName = RegionItemType.getRegionName(childElement);

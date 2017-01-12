@@ -133,7 +133,6 @@ module api.util {
             }
         }
 
-
         public build(): LocalDate {
             this.validate();
             return new LocalDate(this);

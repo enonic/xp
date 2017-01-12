@@ -63,7 +63,6 @@ module api.form {
             this.formSetOccurrencesContainer = new api.dom.DivEl(this.occurrenceContainerClassName);
             this.appendChild(this.formSetOccurrencesContainer);
 
-
             let layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.setFormItems(this.getFormItems()).setParentElement(
                 this.formSetOccurrencesContainer).setParent(this).layout(this.propertySet, validate);
 

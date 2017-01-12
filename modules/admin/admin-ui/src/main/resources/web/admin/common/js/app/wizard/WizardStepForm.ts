@@ -50,7 +50,6 @@ module api.app.wizard {
             });
         }
 
-
         onFocus(listener: (event: FocusEvent) => void) {
             this.focusListeners.push(listener);
         }

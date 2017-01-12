@@ -7,9 +7,9 @@ module api.content {
         }
 
         resolveDisplayName(object: ContentSummary): string {
-            let contentName = object.getName(),
-                invalid = !object.isValid() || !object.getDisplayName() || contentName.isUnnamed(),
-                pendingDelete = object.getContentState().isPendingDelete();
+            let contentName = object.getName();
+            let invalid = !object.isValid() || !object.getDisplayName() || contentName.isUnnamed();
+            let pendingDelete = object.getContentState().isPendingDelete();
             this.toggleClass("invalid", invalid);
             this.toggleClass("pending-delete", pendingDelete);
 

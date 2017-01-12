@@ -112,7 +112,6 @@ module api.content.page {
             return this;
         }
 
-
         public build(): PageTemplate {
             return new PageTemplate(this);
         }

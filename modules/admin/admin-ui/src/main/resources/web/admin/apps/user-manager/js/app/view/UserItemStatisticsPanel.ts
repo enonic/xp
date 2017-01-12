@@ -53,7 +53,6 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
                 }
             }
 
-
             super.setItem(item);
         }
     }
@@ -148,7 +147,6 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).done();
-
 
             }).catch((reason: any) => {
             api.DefaultErrorHandler.handle(reason);

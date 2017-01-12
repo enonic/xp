@@ -55,8 +55,8 @@ module api.content.form.inputtype.upload {
             this.imageUploader.onUploadStarted(() => this.imageUploader.getUploadButton().hide());
 
             this.imageUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
-                let content = event.getUploadItem().getModel(),
-                    value = this.imageUploader.getMediaValue(content);
+                let content = event.getUploadItem().getModel();
+                let value = this.imageUploader.getMediaValue(content);
 
                 this.imageUploader.setOriginalDimensions(content);
 
@@ -203,9 +203,9 @@ module api.content.form.inputtype.upload {
                 return null;
             }
 
-            let focalSet = focalProperty.getPropertySet(),
-                x = focalSet.getDouble('x'),
-                y = focalSet.getDouble('y');
+            let focalSet = focalProperty.getPropertySet();
+            let x = focalSet.getDouble('x');
+            let y = focalSet.getDouble('y');
 
             if (!x || !y) {
                 return null;
@@ -224,18 +224,13 @@ module api.content.form.inputtype.upload {
                 return null;
             }
 
-            let cropPositionSet = property.getPropertySet(),
-                x = cropPositionSet.getDouble('left'),
-                y = cropPositionSet.getDouble('top'),
-                x2 = cropPositionSet.getDouble('right'),
-                y2 = cropPositionSet.getDouble('bottom');
+            let cropPositionSet = property.getPropertySet();
+            let x = cropPositionSet.getDouble('left');
+            let y = cropPositionSet.getDouble('top');
+            let x2 = cropPositionSet.getDouble('right');
+            let y2 = cropPositionSet.getDouble('bottom');
 
-            return {
-                x: x,
-                y: y,
-                x2: x2,
-                y2: y2
-            };
+            return {x, y, x2, y2};
         }
 
         private getMediaProperty(content: Content, propertyName: string) {

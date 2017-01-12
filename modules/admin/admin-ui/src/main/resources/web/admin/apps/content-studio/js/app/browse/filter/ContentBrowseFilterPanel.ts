@@ -126,8 +126,8 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private createContentQuery(): ContentQuery {
-        let contentQuery: ContentQuery = new ContentQuery(),
-            values = this.getSearchInputValues();
+        let contentQuery: ContentQuery = new ContentQuery();
+        let values = this.getSearchInputValues();
         this.appendQueryExpression(values, contentQuery);
         this.appendContentTypeFilter(values, contentQuery);
         this.appendOutboundReferencesFilter(contentQuery);
@@ -296,8 +296,8 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private appendQueryExpression(searchInputValues: SearchInputValues, contentQuery: ContentQuery) {
-        let fulltextSearchExpression = this.makeFulltextSearchExpr(searchInputValues),
-            query: QueryExpr;
+        let fulltextSearchExpression = this.makeFulltextSearchExpr(searchInputValues);
+        let query: QueryExpr;
 
         if (this.dependenciesSection.isActive() && this.dependenciesSection.isInbound()) {
             query = new QueryExpr(new LogicalExpr(fulltextSearchExpression, LogicalOperator.AND, this.makeInboundDependenciesSearchExpr()));

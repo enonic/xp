@@ -154,7 +154,8 @@ module api.util {
                 throw new Error("Cannot parse DateTime from string: " + s);
             }
 
-            let date, timezone;
+            let date;
+            let timezone;
 
             if(DateHelper.isUTCdate(s)) {
                 date = DateHelper.makeDateFromUTCString(s);

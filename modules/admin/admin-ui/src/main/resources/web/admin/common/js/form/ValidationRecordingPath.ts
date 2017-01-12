@@ -69,8 +69,8 @@ module api.form {
         }
 
         contains(other: ValidationRecordingPath): boolean {
-            let fullPath = PropertyPath.fromString(this.refString),
-                otherPath = PropertyPath.fromString(other.refString);
+            let fullPath = PropertyPath.fromString(this.refString);
+            let otherPath = PropertyPath.fromString(other.refString);
 
             if (fullPath.elementCount() <= otherPath.elementCount()) {
                 return false;

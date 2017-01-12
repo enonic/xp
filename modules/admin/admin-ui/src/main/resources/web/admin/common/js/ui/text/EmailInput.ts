@@ -34,7 +34,6 @@ module api.ui.text {
             this.updateStatus('available');
         }
 
-
         createInput(): InputEl {
             let input = new InputEl(undefined, 'email');
             // tslint:disable-next-line:max-line-length
@@ -128,7 +127,6 @@ module api.ui.text {
         validate(): boolean {
             return this.input.validate();
         }
-
 
         onFocus(listener: (event: FocusEvent) => void) {
             this.focusListeners.push(listener);

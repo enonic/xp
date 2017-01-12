@@ -102,7 +102,6 @@ module api.app.wizard {
                    name.toLowerCase() === this.generateName(displayName).toLowerCase();
         }
 
-
         resetBaseValues() {
             this.displayNameEl.resetBaseValues();
         }
@@ -224,12 +223,12 @@ module api.app.wizard {
         }
 
         private updatePathAndNameWidth() {
-            let pathEl = this.pathEl.getEl(),
-                nameEl = this.nameEl.getEl(),
-                headerWidth = this.getEl().getWidth(),
-                pathWidth = pathEl.getWidthWithMargin(),
-                nameWidth = nameEl.getWidthWithMargin(),
-                nameMinWidth = nameEl.getMinWidth();
+            let pathEl = this.pathEl.getEl();
+            let nameEl = this.nameEl.getEl();
+            let headerWidth = this.getEl().getWidth();
+            let pathWidth = pathEl.getWidthWithMargin();
+            let nameWidth = nameEl.getWidthWithMargin();
+            let nameMinWidth = nameEl.getMinWidth();
 
             if (pathWidth + nameWidth > headerWidth) {
                 if (nameWidth > nameMinWidth) {

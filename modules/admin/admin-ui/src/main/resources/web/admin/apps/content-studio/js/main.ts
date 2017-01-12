@@ -230,8 +230,8 @@ function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDe
         // header will be ready after rendering is complete
         wizard.getWizardHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
             if (event.getPropertyName() === "displayName") {
-                let contentType = (<ContentWizardPanel>wizard).getContentType(),
-                    name = <string>event.getNewValue() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName());
+                let contentType = (<ContentWizardPanel>wizard).getContentType();
+                let name = <string>event.getNewValue() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName());
 
                 updateTabTitle(name);
             }
@@ -269,9 +269,9 @@ function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDe
 }
 
 function startContentApplication(application: api.app.Application) {
-    let body = api.dom.Body.get(),
-        appBar = new api.app.bar.AppBar(application),
-        appPanel = new ContentAppPanel(application.getPath());
+    let body = api.dom.Body.get();
+    let appBar = new api.app.bar.AppBar(application);
+    let appPanel = new ContentAppPanel(application.getPath());
 
     let clientEventsListener = new ContentEventsListener();
     clientEventsListener.start();

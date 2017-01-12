@@ -26,7 +26,6 @@ module api.ui {
             return super.setObject(object);
         }
 
-
         doLayout(object: OBJECT) {
             super.doLayout(object);
 
@@ -44,8 +43,9 @@ module api.ui {
                 const subName = this.resolveSubName(object, this.relativePath) || api.content.ContentUnnamed.prettifyUnnamed();
                 const subTitle = this.resolveSubTitle(object);
 
-                let iconUrl, iconClass,
-                    iconEl = this.resolveIconEl(object);
+                let iconUrl;
+                let iconClass;
+                let iconEl = this.resolveIconEl(object);
 
                 if (iconEl) {
                     this.namesAndIconView.setIconEl(iconEl);

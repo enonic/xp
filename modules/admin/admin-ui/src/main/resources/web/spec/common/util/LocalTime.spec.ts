@@ -78,7 +78,6 @@ describe("api.util.LocalTime", () => {
         });
     });
 
-
     describe("parsing of a time literal", () => {
 
         it("should not parse empty string", () => {

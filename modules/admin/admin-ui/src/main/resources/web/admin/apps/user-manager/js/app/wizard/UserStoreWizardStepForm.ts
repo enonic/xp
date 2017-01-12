@@ -4,7 +4,6 @@ import FormItemBuilder = api.ui.form.FormItemBuilder;
 import DivEl = api.dom.DivEl;
 import LabelEl = api.dom.LabelEl;
 
-
 export class UserStoreWizardStepForm extends api.app.wizard.WizardStepForm {
 
     private formView: api.form.FormView;

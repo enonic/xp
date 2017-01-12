@@ -11,13 +11,13 @@ module api.ui.responsive {
         // Custom handler will be executed in addition on element update
         static onAvailableSizeChanged(el: api.dom.Element,
                                       handler: (item: ResponsiveItem) => void = (item: ResponsiveItem) => { /*empty*/ }): ResponsiveItem {
-            const responsiveItem: ResponsiveItem = new ResponsiveItem(el, handler),
-                listener = () => {
-                    if (el.isVisible()) {
-                        responsiveItem.update();
-                    }
-                },
-                responsiveListener = new ResponsiveListener(responsiveItem, listener);
+            const responsiveItem: ResponsiveItem = new ResponsiveItem(el, handler);
+            let listener = () => {
+                if (el.isVisible()) {
+                    responsiveItem.update();
+                }
+            };
+            let responsiveListener = new ResponsiveListener(responsiveItem, listener);
 
             this.updateItemOnShown(el, responsiveItem);
 

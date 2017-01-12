@@ -10,8 +10,8 @@ module api.util.htmlarea.editor {
     export class HTMLAreaHelper {
 
         private static getConvertedImageSrc(imgSrc:string):string {
-            let contentId = imgSrc.replace(ImageModalDialog.imagePrefix, StringHelper.EMPTY_STRING),
-                imageUrl = new api.content.util.ContentImageUrlResolver().
+            let contentId = imgSrc.replace(ImageModalDialog.imagePrefix, StringHelper.EMPTY_STRING);
+            let imageUrl = new api.content.util.ContentImageUrlResolver().
                     setContentId(new api.content.ContentId(contentId)).
                     setScaleWidth(true).
                     setSize(ImageModalDialog.maxImageWidth).
@@ -21,9 +21,9 @@ module api.util.htmlarea.editor {
         }
 
         public static prepareImgSrcsInValueForEdit(value:string):string {
-            let processedContent = value,
-                regex = /<img.*?src="(.*?)"/g,
-                imgSrcs;
+            let processedContent = value;
+            let regex = /<img.*?src="(.*?)"/g;
+            let imgSrcs;
 
             if (!processedContent) {
                 return "";
@@ -91,8 +91,8 @@ module api.util.htmlarea.editor {
             }
 
             let styleFormat = "float: {0}; margin: {1};" +
-                              (HTMLAreaHelper.isImageInOriginalSize(image) ? "" : "width: {2}%;"),
-                styleAttr = "";
+                              (HTMLAreaHelper.isImageInOriginalSize(image) ? "" : "width: {2}%;");
+            let styleAttr = '';
 
             image.parentElement.className = "";
 

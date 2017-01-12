@@ -85,8 +85,8 @@ module api.util.htmlarea.dialog {
         }
 
         protected createForm(formItems: FormItem[]): Form {
-            let form = new Form(),
-                validationCls = api.form.FormView.VALIDATION_CLASS;
+            let form = new Form();
+            let validationCls = api.form.FormView.VALIDATION_CLASS;
 
             formItems.forEach((formItem: FormItem) => {
                 form.add(this.createFieldSet(formItem));
@@ -108,8 +108,8 @@ module api.util.htmlarea.dialog {
         }
 
         protected createFormPanel(formItems: FormItem[]): api.ui.panel.Panel {
-            let panel = new api.ui.panel.Panel(),
-                form = this.createForm(formItems);
+            let panel = new api.ui.panel.Panel();
+            let form = this.createForm(formItems);
 
             panel.appendChild(form);
 
@@ -142,10 +142,10 @@ module api.util.htmlarea.dialog {
 
         protected createFormItem(id: string, label: string, validator?: (input: api.dom.FormInputEl) => string, value?: string,
                                  inputEl?: api.dom.FormItemEl): FormItem {
-            let formItemEl = inputEl || new api.ui.text.TextInput(),
-                formItemBuilder = new FormItemBuilder(formItemEl).setLabel(label),
-                inputWrapper = new api.dom.DivEl("input-wrapper"),
-                formItem;
+            let formItemEl = inputEl || new api.ui.text.TextInput();
+            let formItemBuilder = new FormItemBuilder(formItemEl).setLabel(label);
+            let inputWrapper = new api.dom.DivEl("input-wrapper");
+            let formItem;
 
             if (this.fields[id]) {
                 throw "Element with id " + id + " already exists";
@@ -187,7 +187,6 @@ module api.util.htmlarea.dialog {
         protected getFieldById(id: string): api.dom.FormItemEl {
             return this.fields[id];
         }
-
 
         close() {
             super.close();

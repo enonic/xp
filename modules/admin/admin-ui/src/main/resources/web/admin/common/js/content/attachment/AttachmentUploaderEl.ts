@@ -9,7 +9,6 @@ module api.content.attachment {
     import AttachmentBuilder = api.content.attachment.AttachmentBuilder;
     import SelectionItem = api.app.browse.SelectionItem;
 
-
     export class AttachmentUploaderEl extends api.ui.uploader.FileUploaderEl<Attachment> {
 
         private attachmentItems: AttachmentItem[];
@@ -40,7 +39,6 @@ module api.content.attachment {
 
             this.addClass('attachment-uploader-el');
         }
-
 
         createModel(serverResponse: AttachmentJson): Attachment {
             if (serverResponse) {

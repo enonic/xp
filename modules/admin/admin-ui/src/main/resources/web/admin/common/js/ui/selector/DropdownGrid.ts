@@ -65,7 +65,6 @@ module api.ui.selector {
             this.grid.hide();
             this.grid.setSelectionModel(new Slick.RowSelectionModel({selectActiveRow: false}));
 
-
             // Listen to click in grid and issue selection
             this.grid.subscribeOnClick((e, args) => {
                 this.notifyRowSelection(args.row);

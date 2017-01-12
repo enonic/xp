@@ -29,9 +29,9 @@ module api.thumb {
         toJson(): ThumbnailJson {
 
             return {
-                "binaryReference": this.getBinaryReference().toString(),
-                "mimeType": this.getMimeType(),
-                "size": this.getSize()
+                binaryReference: this.getBinaryReference().toString(),
+                mimeType: this.getMimeType(),
+                size: this.getSize()
             };
         }
 

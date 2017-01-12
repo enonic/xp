@@ -140,5 +140,4 @@ export class SortContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus
         this.curChildOrder = value;
     }
 
-
 }
