@@ -1,5 +1,4 @@
 apply plugin: 'java-base'
-apply from: "$rootDir/gradle/sonar.gradle"
 apply plugin: 'build-dashboard'
 
 ext {
