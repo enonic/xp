@@ -3,7 +3,6 @@ package com.enonic.xp.lib.node.mapper;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.lib.node.NodePropertyConstants;
-import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
@@ -27,7 +26,6 @@ public class NodeMapper
         gen.value( NodePropertyConstants.CHILD_ORDER, node.getChildOrder().toString() );
         serializeIndexConfigDocument( gen, node.getIndexConfigDocument() );
         serializePermissions( gen, node );
-        serializeAttachedBinaries( gen, node.getAttachedBinaries() );
         gen.value( NodePropertyConstants.NODE_STATE, node.getNodeState().toString() );
         gen.value( NodePropertyConstants.NODE_TYPE, node.getNodeType().getName() );
         gen.value( NodePropertyConstants.NODE_VERSION_ID, node.getNodeVersionId() );
@@ -54,11 +52,5 @@ public class NodeMapper
         new PermissionsMapper( node ).serialize( gen );
     }
 
-    private static void serializeAttachedBinaries( final MapGenerator gen, final AttachedBinaries attachedBinaries )
-    {
-        gen.array( NodePropertyConstants.ATTACHED_BINARIES );
-        new AttachedBinariesMapper( attachedBinaries ).serialize( gen );
-        gen.end();
-    }
 
 }

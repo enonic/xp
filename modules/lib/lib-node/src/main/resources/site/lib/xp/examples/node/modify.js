@@ -111,11 +111,6 @@ var expected = {
             "deny": []
         }
     ],
-    "_attachedBinaries": [
-        {
-            "binaryReference": "myFile"
-        }
-    ],
     "_state": "DEFAULT",
     "_nodeType": "default",
     "notChanged": "originalValue",
