@@ -5,8 +5,8 @@ describe("api.data.PropertyArray", () => {
     describe("when move", () => {
 
         it("given 2 string values when move(0, 1) then properties has correct index", () => {
-            var tree = new PropertyTree();
-            var array = PropertyArray.create().
+            let tree = new PropertyTree();
+            let array = PropertyArray.create().
                 setType(ValueTypes.STRING).
                 setParent(tree.getRoot()).
                 setName("myStrings").

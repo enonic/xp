@@ -45,7 +45,8 @@ module FormItemSetSpec {
         });
 
         describe("what happens when item set has items", function () {
-            let itemSetJson, addSetItemSpy;
+            let itemSetJson;
+            let addSetItemSpy;
 
             beforeEach(function () {
                 addSetItemSpy = spyOn(FormItemSet.prototype, 'addFormItem').and.callThrough();
@@ -117,8 +118,8 @@ module FormItemSetSpec {
             });
 
             describe("equals()", function () {
-                let itemSet2: FormItemSet,
-                    itemSetJson: FormItemSetJson;
+                let itemSet2: FormItemSet;
+                let itemSetJson: FormItemSetJson;
 
                 beforeEach(function () {
                     itemSetJson = getItemSetJson();
@@ -256,7 +257,7 @@ module FormItemSetSpec {
                     }]
                 }
             }
-        ]
+        ];
     }
 
 }

@@ -5,8 +5,8 @@ describe("api.data.Value", () => {
         it("given a letter as value and ValueType is LONG then Error is thrown", () => {
 
             expect(() => {
-
-                new Value("a", ValueTypes.LONG)
+                // tslint:disable-next-line:no-unused-new
+                new Value("a", ValueTypes.LONG);
 
             }).toThrow(new Error("Invalid value for type Long: a"));
         });

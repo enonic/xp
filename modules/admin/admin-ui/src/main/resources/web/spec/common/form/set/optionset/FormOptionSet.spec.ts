@@ -5,6 +5,7 @@ module FormOptionSetSpec {
     import FormOptionSetOptionJson = api.form.json.FormOptionSetOptionJson;
     import FormItemTypeWrapperJson = api.form.json.FormItemTypeWrapperJson;
     import ContentId = api.content.ContentId;
+    import FormOptionSetOption = api.form.FormOptionSetOption;
 
     describe("api.form.FormOptionSet", function () {
 
@@ -51,7 +52,8 @@ module FormOptionSetSpec {
         });
 
         describe("what happens when option set has options", function () {
-            let optionSetJson, addSetOptionSpy;
+            let optionSetJson;
+            let addSetOptionSpy;
 
             beforeEach(function () {
                 addSetOptionSpy = spyOn(FormOptionSet.prototype, 'addSetOption').and.callThrough();
@@ -65,13 +67,13 @@ module FormOptionSetSpec {
             });
 
             it("each option should have correct label", function () {
-                optionSet.getOptions().forEach(function (option, index) {
+                optionSet.getOptions().forEach(function (option: FormOptionSetOption, index: number) {
                     expect(option.getLabel()).toEqual(optionSetJson.options[index].label);
                 });
             });
 
             it("each option should have correct name", function () {
-                optionSet.getOptions().forEach(function (option, index) {
+                optionSet.getOptions().forEach(function (option: FormOptionSetOption, index: number) {
                     expect(option.getName()).toEqual(optionSetJson.options[index].name);
                 });
             });
@@ -81,7 +83,7 @@ module FormOptionSetSpec {
             });
 
             it("items inside options must be created as form items", function () {
-                optionSet.getOptions().forEach(function (option, index) {
+                optionSet.getOptions().forEach(function (option: FormOptionSetOption, index: number) {
                     if (optionSetJson.options[index].items) {
                         expect(option.getFormItems().length).toEqual(optionSetJson.options[index].items.length);
                     }
@@ -89,7 +91,7 @@ module FormOptionSetSpec {
             });
 
             it("empty options should not have any form items", function () {
-                optionSet.getOptions().forEach(function (option, index) {
+                optionSet.getOptions().forEach(function (option: FormOptionSetOption, index: number) {
                     if (!optionSetJson.options[index].items) {
                         expect(option.getFormItems().length).toEqual(0);
                     }
@@ -142,8 +144,8 @@ module FormOptionSetSpec {
             });
 
             describe("equals()", function () {
-                let optionSet2: FormOptionSet,
-                    optionSetJson: FormOptionSetJson;
+                let optionSet2: FormOptionSet;
+                let optionSetJson: FormOptionSetJson;
 
                 beforeEach(function () {
                     optionSetJson = getOptionSetJson();
@@ -303,6 +305,6 @@ module FormOptionSetSpec {
                 name: 'option3',
                 label: 'Option 3'
             }
-        ]
+        ];
     }
 }

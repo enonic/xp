@@ -54,7 +54,7 @@ module FormItemSetViewSpec {
             formItemSet: itemSet,
             parent: undefined,
             parentDataSet: dataSet
-        }
+        };
     }
 
     export function getFormContext(): FormContext {
@@ -62,8 +62,8 @@ module FormItemSetViewSpec {
     }
 
     export function getPropertySet(): PropertySet {
-        var tree = new api.data.PropertyTree();
-        var set = tree.addPropertySet('itemSet1');
+        let tree = new api.data.PropertyTree();
+        let set = tree.addPropertySet('itemSet1');
 
         return tree.getRoot();
     }

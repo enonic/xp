@@ -56,7 +56,8 @@ describe("api.data.type.LocalDateTimeValueType", () => {
         });
 
         it("given date time string '2000-01-01T12:30:00' then an equal date string is returned", () => {
-            expect(ValueTypes.LOCAL_DATE_TIME.toJsonValue(ValueTypes.LOCAL_DATE_TIME.newValue("2000-01-01T12:30:00"))).toEqual("2000-01-01T12:30:00");
+            const date = ValueTypes.LOCAL_DATE_TIME.toJsonValue(ValueTypes.LOCAL_DATE_TIME.newValue("2000-01-01T12:30:00"));
+            expect(date).toEqual("2000-01-01T12:30:00");
         });
     });
 
