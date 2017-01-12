@@ -660,24 +660,19 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, ImageComponentView)) {
             this.imageInspectionPanel.setImageComponent(<ImageComponentView>componentView);
             this.contextWindow.showInspectionPanel(this.imageInspectionPanel);
-        }
-        else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, PartComponentView)) {
+        } else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, PartComponentView)) {
             this.partInspectionPanel.setPartComponent(<PartComponentView>componentView);
             this.contextWindow.showInspectionPanel(this.partInspectionPanel);
-        }
-        else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, LayoutComponentView)) {
+        } else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, LayoutComponentView)) {
             this.layoutInspectionPanel.setLayoutComponent(<LayoutComponentView>componentView);
             this.contextWindow.showInspectionPanel(this.layoutInspectionPanel);
-        }
-        else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, TextComponentView)) {
+        } else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, TextComponentView)) {
             this.textInspectionPanel.setTextComponent(<TextComponentView>componentView);
             this.contextWindow.showInspectionPanel(this.textInspectionPanel);
-        }
-        else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, FragmentComponentView)) {
+        } else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, FragmentComponentView)) {
             this.fragmentInspectionPanel.setFragmentComponent(<FragmentComponentView>componentView);
             this.contextWindow.showInspectionPanel(this.fragmentInspectionPanel);
-        }
-        else {
+        } else {
             throw new Error("ComponentView cannot be selected: " + api.ClassHelper.getClassName(componentView));
         }
     }

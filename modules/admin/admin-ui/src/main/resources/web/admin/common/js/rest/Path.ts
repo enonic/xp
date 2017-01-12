@@ -47,8 +47,7 @@ module api.rest {
             elements.forEach((element:string, index:number) => {
                 if (element == null) {
                     throw new Error("Path element was null at index: " + index);
-                }
-                else if (element.length == 0) {
+                } else if (element.length == 0) {
                     throw new Error("Path element was empty string at index: " + index);
                 }
             });

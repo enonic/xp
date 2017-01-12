@@ -106,8 +106,7 @@ export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
     private getState(workspace: string): string {
         if (workspace === VersionsView.branchMaster) {
             return api.content.CompareStatusFormatter.formatStatus(api.content.CompareStatus.EQUAL);
-        }
-        else {
+        } else {
             return api.content.CompareStatusFormatter.formatStatus(this.status);
         }
     }

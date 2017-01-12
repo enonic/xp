@@ -52,8 +52,7 @@ module api.liveedit {
                         infoBlock.setBaseHeader();
                     }
                     infoBlock.removeClass("empty");
-                }
-                else {
+                } else {
                     controllerDropdown.hide();
                     infoBlock.setNoControllersAvailableText();
                     infoBlock.addClass("empty");

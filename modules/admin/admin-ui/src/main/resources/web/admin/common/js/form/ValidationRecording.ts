@@ -98,8 +98,7 @@ module api.form {
 
             if (this.breaksMinimumOccurrencesArray.length != other.breaksMinimumOccurrencesArray.length) {
                 return false;
-            }
-            else if (this.breaksMaximumOccurrencesArray.length != other.breaksMaximumOccurrencesArray.length) {
+            } else if (this.breaksMaximumOccurrencesArray.length != other.breaksMaximumOccurrencesArray.length) {
                 return false;
             }
 

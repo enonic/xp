@@ -71,11 +71,9 @@ module api.content.resource {
 
                 if (this.expand == api.rest.Expand.NONE) {
                     contents = <any[]> this.fromJsonToContentIdBaseItemArray(contentsAsJson);
-                }
-                else if (this.expand == api.rest.Expand.SUMMARY) {
+                } else if (this.expand == api.rest.Expand.SUMMARY) {
                     contents = <any[]> this.fromJsonToContentSummaryArray(<ContentSummaryJson[]>contentsAsJson);
-                }
-                else {
+                } else {
                     contents = <any[]>this.fromJsonToContentArray(<ContentJson[]>contentsAsJson);
                 }
 

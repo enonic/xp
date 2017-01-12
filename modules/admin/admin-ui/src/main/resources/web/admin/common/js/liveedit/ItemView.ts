@@ -543,13 +543,11 @@ module api.liveedit {
                     if (pageView.isTextEditMode()) { // if in text edit mode don't select on first click
                         pageView.setTextEditMode(false);
                         this.unhighlight();
-                    }
-                    else {
+                    } else {
                         this.select(clickPosition, menuPosition, false, rightClicked);
                     }
 
-                }
-                else if (isViewInsideSelectedContainer && rightClicked) {
+                } else if (isViewInsideSelectedContainer && rightClicked) {
                     SelectedHighlighter.get().getSelectedView().showContextMenu(clickPosition);
                 }
             } else {

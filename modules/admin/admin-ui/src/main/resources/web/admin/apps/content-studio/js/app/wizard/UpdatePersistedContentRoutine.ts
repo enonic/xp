@@ -55,8 +55,7 @@ export class UpdatePersistedContentRoutine extends api.util.Flow<Content,UpdateP
                 return this.doExecuteNext(context);
 
             });
-        }
-        else if (!this.doneHandledPage) {
+        } else if (!this.doneHandledPage) {
 
             return this.doHandlePage(context).then(() => {
 
@@ -64,8 +63,7 @@ export class UpdatePersistedContentRoutine extends api.util.Flow<Content,UpdateP
                 return this.doExecuteNext(context);
 
             });
-        }
-        else {
+        } else {
 
             return wemQ(context.content);
         }
@@ -92,8 +90,7 @@ export class UpdatePersistedContentRoutine extends api.util.Flow<Content,UpdateP
                     context.content = content;
 
                 });
-        }
-        else {
+        } else {
             let deferred = wemQ.defer<void>();
             deferred.resolve(null);
             return deferred.promise;
@@ -104,8 +101,7 @@ export class UpdatePersistedContentRoutine extends api.util.Flow<Content,UpdateP
 
         if (persistedContent.isPage() && !viewedContent.isPage()) {
             return new DeletePageRequest(persistedContent.getContentId());
-        }
-        else if (!persistedContent.isPage() && viewedContent.isPage()) {
+        } else if (!persistedContent.isPage() && viewedContent.isPage()) {
             const viewedPage = viewedContent.getPage();
             return new CreatePageRequest(persistedContent.getContentId())
                 .setController(viewedPage.getController())
@@ -114,8 +110,7 @@ export class UpdatePersistedContentRoutine extends api.util.Flow<Content,UpdateP
                 .setRegions(viewedPage.getRegions())
                 .setFragment(viewedPage.getFragment())
                 .setCustomized(viewedPage.isCustomized());
-        }
-        else if (persistedContent.isPage() && viewedContent.isPage()) {
+        } else if (persistedContent.isPage() && viewedContent.isPage()) {
             const viewedPage = viewedContent.getPage();
             return new UpdatePageRequest(persistedContent.getContentId())
                 .setController((viewedPage.getController()))

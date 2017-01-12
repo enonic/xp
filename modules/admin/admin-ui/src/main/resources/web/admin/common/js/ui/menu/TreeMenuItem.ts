@@ -16,8 +16,7 @@ module api.ui.menu {
                 if (action.isEnabled()) {
                     if (action.hasChildActions()) {
                         this.toggleExpand();
-                    }
-                    else {
+                    } else {
                         action.execute();
                     }
                 }

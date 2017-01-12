@@ -79,8 +79,7 @@ module api.aggregation {
                                      parentGroupView: api.aggregation.AggregationGroupView): api.aggregation.AggregationView {
             if (api.ObjectHelper.iFrameSafeInstanceOf(aggregation, api.aggregation.BucketAggregation)) {
                 return new api.aggregation.BucketAggregationView(<api.aggregation.BucketAggregation>aggregation, parentGroupView);
-            }
-            else {
+            } else {
                 throw Error("Creating AggregationView of this type of Aggregation is not supported: " + aggregation);
             }
         }

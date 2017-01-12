@@ -157,8 +157,7 @@ module api.form {
             let previousValidState = this.previousValidationRecording.isValid();
             if (event.isValid()) {
                 this.previousValidationRecording.removeByPath(event.getOrigin(), false, event.isIncludeChildren());
-            }
-            else {
+            } else {
                 this.previousValidationRecording.flatten(event.getRecording());
             }
 
@@ -317,8 +316,7 @@ module api.form {
             if (recording.isValid()) {
                 this.removeClass("invalid");
                 this.addClass("valid");
-            }
-            else {
+            } else {
                 this.removeClass("valid");
                 this.addClass("invalid");
             }

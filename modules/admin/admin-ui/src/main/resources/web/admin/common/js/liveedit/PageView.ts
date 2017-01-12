@@ -217,8 +217,7 @@ module api.liveedit {
                 if (itemView.getType().equals(api.liveedit.text.TextItemType.get())) {
                     if (!this.isTextEditMode()) {
                         this.setTextEditMode(true);
-                    }
-                    else {
+                    } else {
                         (<api.liveedit.text.TextComponentView>itemView).setEditMode(true);
                         this.closeTextEditModeButton.toggleClass("active", true);
                     }
@@ -266,8 +265,7 @@ module api.liveedit {
         private toggleStickyToolbar() {
             if (!this.isPageScrolled()) {
                 this.editorToolbar.removeClass("sticky-toolbar");
-            }
-            else if (!this.editorToolbar.hasClass("sticky-toolbar")) {
+            } else if (!this.editorToolbar.hasClass("sticky-toolbar")) {
                 this.editorToolbar.addClass("sticky-toolbar");
             }
         }
@@ -398,8 +396,7 @@ module api.liveedit {
                 }
                 if (this.lockedContextMenu.isVisible()) {
                     this.deselectLocked();
-                }
-                else {
+                } else {
                     this.selectLocked({x: event.pageX, y: event.pageY});
                 }
             } else if (!this.isSelected() || event.which == 3) {
@@ -508,8 +505,7 @@ module api.liveedit {
 
                 this.onScrolled(this.scrolledListener);
                 new PageTextModeStartedEvent(this).fire();
-            }
-            else {
+            } else {
                 this.removeVerticalSpaceForEditorToolbar();
                 this.unScrolled(this.scrolledListener);
 
@@ -533,8 +529,7 @@ module api.liveedit {
 
             if (!!result) {
                 this.getPageView().getEl().setTop(this.getEditorToolbarWidth() + "px");
-            }
-            else {
+            } else {
                 this.waitUntilEditorToolbarShown();
             }
 
@@ -551,8 +546,7 @@ module api.liveedit {
                 if (!!toolbarHeight) {
                     this.getPageView().getEl().setTop(toolbarHeight + "px");
                     clearInterval(intervalId);
-                }
-                else if (attempts > 10) {
+                } else if (attempts > 10) {
                     clearInterval(intervalId);
                 }
             }, 50);
@@ -754,8 +748,7 @@ module api.liveedit {
                         let layoutView = <api.liveedit.layout.LayoutComponentView>componentView;
                         layoutView.getRegionViewByName(path.getRegionName());
                     }
-                }
-                else {
+                } else {
                     if (path.getRegionName() == regionView.getRegionName()) {
                         return regionView;
                     }
@@ -777,8 +770,7 @@ module api.liveedit {
                 if (firstLevelOfPath.getRegionName() == regionView.getRegionName()) {
                     if (path.numberOfLevels() == 1) {
                         return regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
-                    }
-                    else {
+                    } else {
                         const view = regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
                         const layoutView: api.liveedit.layout.LayoutComponentView = <api.liveedit.layout.LayoutComponentView>view;
                         return layoutView.getComponentViewByPath(path.removeFirstLevel());

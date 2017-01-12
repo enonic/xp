@@ -4,8 +4,7 @@ module api.ui.uploader {
     import CloseButton = api.ui.button.CloseButton;
     import ValueTypes = api.data.ValueTypes;
 
-    export enum MediaUploaderElOperation
-    {
+    export enum MediaUploaderElOperation {
         create,
         update
     }
@@ -37,8 +36,7 @@ module api.ui.uploader {
                 return new api.content.ContentBuilder().
                 fromContentJson(<api.content.json.ContentJson> serverResponse).
                 build();
-            }
-            else {
+            } else {
                 return null;
             }
         }

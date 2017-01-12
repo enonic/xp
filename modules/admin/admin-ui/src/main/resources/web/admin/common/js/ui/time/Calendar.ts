@@ -85,12 +85,10 @@ module api.ui.time {
                 if (api.util.DateHelper.isInvalidDate(value)) {
                     let spanEl = new api.dom.SpanEl().setHtml("Invalid date");
                     this.appendChild(spanEl);
-                }
-                else {
+                } else {
                     this.renderMonth();
                 }
-            }
-            else {
+            } else {
                 this.selectedDate = null;
                 let now = new Date();
                 this.year = now.getFullYear();
@@ -160,8 +158,7 @@ module api.ui.time {
             let firstDay: CalendarDay = null;
             if (this.startingDayOfWeek.equals(this.calendarDays[0].getDayOfWeek())) {
                 firstDay = this.calendarDays[0];
-            }
-            else {
+            } else {
                 let previousDay = this.calendarDays[0].getPrevious();
                 while (!previousDay.getDayOfWeek().equals(this.startingDayOfWeek)) {
                     previousDay = previousDay.getPrevious();

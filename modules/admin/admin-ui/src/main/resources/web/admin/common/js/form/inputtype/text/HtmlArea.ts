@@ -186,8 +186,7 @@ module api.form.inputtype.text {
                         if (this.isIframe(nextFocusable)) {
                             let nextId = nextFocusable.getId().replace("_ifr", "");
                             this.getEditor(nextId).focus();
-                        }
-                        else {
+                        } else {
                             nextFocusable.giveFocus();
                         }
                     }
@@ -276,8 +275,7 @@ module api.form.inputtype.text {
                     this.updateEditorToolbarWidth(inputOccurence, editorInfo);
                 }
                 this.updateEditorToolbarPos(inputOccurence);
-            }
-            else if (editorInfo.hasStickyToolbar) {
+            } else if (editorInfo.hasStickyToolbar) {
                 editorInfo.hasStickyToolbar = false;
                 inputOccurence.removeClass("sticky-toolbar");
                 this.updateEditorToolbarWidth(inputOccurence, editorInfo);
@@ -293,8 +291,7 @@ module api.form.inputtype.text {
                 // Toolbar in sticky mode has position: fixed which makes it not
                 // inherit width of its parent, so we have to explicitly set width
                 wemjq(inputOccurence.getHTMLElement()).find(".mce-toolbar-grp").width(inputOccurence.getEl().getWidth() - 3);
-            }
-            else {
+            } else {
                 wemjq(inputOccurence.getHTMLElement()).find(".mce-toolbar-grp").width('auto');
             }
         }
@@ -439,8 +436,7 @@ module api.form.inputtype.text {
             if (editor) {
                 try {
                     editor.destroy(false);
-                }
-                catch (e) {
+                } catch (e) {
                     //error thrown in FF on tab close - XP-2624
                 }
             }

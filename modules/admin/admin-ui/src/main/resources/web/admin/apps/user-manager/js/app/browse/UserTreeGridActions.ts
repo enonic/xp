@@ -92,8 +92,7 @@ export class UserTreeGridActions implements TreeGridActions<UserTreeGridItem> {
             UserStore.checkOnDeletable(userBrowseItem.getUserStore().getKey()).then((result: boolean) => {
                 this.DELETE.setEnabled(result);
             });
-        }
-        else {
+        } else {
             this.DELETE.setEnabled(false);
         }
     }

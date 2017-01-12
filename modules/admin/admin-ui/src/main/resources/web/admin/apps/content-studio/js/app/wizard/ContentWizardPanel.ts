@@ -273,8 +273,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
                 if (this.isVisible()) {
                     api.notify.showWarning(message);
-                }
-                else {
+                } else {
                     let shownHandler = () => {
                         new api.application.GetApplicationRequest(event.getApplicationKey()).sendAndParse()
                             .then(
@@ -1120,8 +1119,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
                     deferred.resolve(null);
                 });
-            }
-            else {
+            } else {
                 liveFormPanel.loadPage();
                 deferred.resolve(null);
             }

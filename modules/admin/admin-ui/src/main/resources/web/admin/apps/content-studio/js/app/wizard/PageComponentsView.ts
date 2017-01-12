@@ -530,8 +530,7 @@ export class PageComponentsView extends api.dom.DivEl {
         if (this.getParentElement()) {
             parentEl = this.getParentElement().getEl();
             parentOffset = parentEl.getOffset();
-        }
-        else {
+        } else {
             parentEl = api.dom.WindowDOM.get();
             parentOffset = {
                 top: 0,
@@ -694,8 +693,7 @@ export class PageComponentsView extends api.dom.DivEl {
     private highlightRow(rowElement: HTMLElement, selected: boolean): void {
         if (selected) {
             Highlighter.get().hide();
-        }
-        else {
+        } else {
             let elementHelper = new api.dom.ElementHelper(rowElement);
             let dimensions = elementHelper.getDimensions();
             let nodes = this.tree.getRoot().getCurrentRoot().treeToList();

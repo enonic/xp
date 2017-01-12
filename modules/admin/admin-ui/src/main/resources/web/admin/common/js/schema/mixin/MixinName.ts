@@ -1,4 +1,4 @@
-module api.schema.mixin{
+module api.schema.mixin {
 
     import ApplicationKey = api.application.ApplicationKey;
 

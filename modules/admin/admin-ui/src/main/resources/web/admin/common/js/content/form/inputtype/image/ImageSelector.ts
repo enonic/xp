@@ -456,8 +456,7 @@ module api.content.form.inputtype.image {
                 this.ignorePropertyChange = true;
                 if (this.contentComboBox.countSelected() == 1) { // overwrite initial value
                     this.getPropertyArray().set(0, value);
-                }
-                else {
+                } else {
                     this.getPropertyArray().add(value);
                 }
                 this.ignorePropertyChange = false;

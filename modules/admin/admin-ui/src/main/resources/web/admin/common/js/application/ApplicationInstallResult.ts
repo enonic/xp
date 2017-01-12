@@ -1,6 +1,6 @@
 module api.application {
 
-    export class ApplicationInstallResult implements api.Equitable{
+    export class ApplicationInstallResult implements api.Equitable {
 
         private application: Application;
 

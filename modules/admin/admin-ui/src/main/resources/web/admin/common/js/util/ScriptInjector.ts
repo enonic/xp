@@ -26,8 +26,7 @@ module api.util {
                     dataType: 'script',
                     cache: true
                 });
-            }
-            else {
+            } else {
                 callback();
             }
         }

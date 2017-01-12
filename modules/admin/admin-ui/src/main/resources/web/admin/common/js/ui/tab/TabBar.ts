@@ -56,12 +56,10 @@ module api.ui.tab {
             if (this.isEmpty()) {
                 // if there are no tabs than set selected index to negative value
                 this.selectedIndex = -1;
-            }
-            else if ((this.getSize() - 1) < this.selectedIndex) {
+            } else if ((this.getSize() - 1) < this.selectedIndex) {
                 // if selected index is more than tabs amount set last index as selected
                 this.selectedIndex = this.getSize() - 1;
-            }
-            else if (tabIndex < this.selectedIndex) {
+            } else if (tabIndex < this.selectedIndex) {
                 // if removed tab was before selected tab than decrement selected index
                 this.selectedIndex--;
             }

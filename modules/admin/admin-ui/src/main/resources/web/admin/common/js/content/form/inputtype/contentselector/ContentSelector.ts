@@ -176,8 +176,7 @@ module api.content.form.inputtype.contentselector {
                                 const value = new Value(reference, ValueTypes.REFERENCE);
                                 if (this.contentComboBox.countSelected() == 1) { // overwrite initial value
                                     this.getPropertyArray().set(0, value);
-                                }
-                                else if (!this.getPropertyArray().containsValue(value)) {
+                                } else if (!this.getPropertyArray().containsValue(value)) {
                                     this.getPropertyArray().add(value);
                                 }
 
@@ -289,8 +288,7 @@ module api.content.form.inputtype.contentselector {
         private updateSelectedOptionStyle() {
             if (this.getPropertyArray().getSize() > 1) {
                 this.addClass("multiple-occurrence").removeClass("single-occurrence");
-            }
-            else {
+            } else {
                 this.addClass("single-occurrence").removeClass("multiple-occurrence");
             }
         }

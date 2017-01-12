@@ -122,8 +122,7 @@ module api.form.inputtype.support {
 
             if (this.inputOccurrence.oneAndOnly()) {
                 this.addClass("single-occurrence").removeClass("multiple-occurrence");
-            }
-            else {
+            } else {
                 this.addClass("multiple-occurrence").removeClass("single-occurrence");
             }
 

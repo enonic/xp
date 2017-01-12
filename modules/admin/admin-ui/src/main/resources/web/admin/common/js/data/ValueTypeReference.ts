@@ -28,8 +28,7 @@ module api.data {
         newValue(value: string): Value {
             if (this.isConvertible(value)) {
                 return new Value(new api.util.Reference(value), this);
-            }
-            else {
+            } else {
                 return this.newNullValue();
             }
         }
@@ -37,8 +36,7 @@ module api.data {
         valueToString(value: Value): string {
             if (value.isNotNull()) {
                 return value.getReference().toString();
-            }
-            else {
+            } else {
                 return null;
             }
         }

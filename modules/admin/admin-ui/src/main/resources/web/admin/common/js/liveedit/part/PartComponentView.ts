@@ -89,8 +89,7 @@ module api.liveedit.part {
                             setParentElement(parentElement ? parentElement : this).
                             setElement(childElement));
                         this.addContent(contentView);
-                    }
-                    else {
+                    } else {
                         this.parseContentViews(childElement);
                     }
                 }

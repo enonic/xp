@@ -49,8 +49,7 @@ module api.util {
             let indexOfComma = s.indexOf(',');
             if (indexOfComma < 1 || s.split(',').length != 2) {
                 return false;
-            }
-            else if (indexOfComma == s.length - 1) {
+            } else if (indexOfComma == s.length - 1) {
                 return false;
             }
 

@@ -183,8 +183,7 @@ module api.data {
             if (this.get(index) != null) {
                 property = this.array[index];
                 property.setValue(value);
-            }
-            else {
+            } else {
                 property = Property.create().
                     setArray(this).
                     setName(this.name).
@@ -465,8 +464,7 @@ module api.data {
                     valuesJson.push(<PropertyValueJson>{
                         set: valueSetJson
                     });
-                }
-                else {
+                } else {
                     let valueJson = this.type.toJsonValue(property.getValue());
                     valuesJson.push(<PropertyValueJson>{
                         v: valueJson
@@ -508,8 +506,7 @@ module api.data {
                     });
 
                     value = new Value(valueAsPropertySet, ValueTypes.DATA);
-                }
-                else {
+                } else {
                     value = type.fromJsonValue(propertyValueJson.v);
                 }
 

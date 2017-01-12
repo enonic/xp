@@ -44,8 +44,7 @@ module api.ui.menu {
                         subItems[i].toggleExpand();
                     }
                 });
-            }
-            else {
+            } else {
 
                 menuItem.onClicked((event: MouseEvent) => {
                     this.notifyItemClicked();

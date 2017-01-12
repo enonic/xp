@@ -122,8 +122,7 @@ module api.util.loader {
                 let filtered = this.results.filter(this.filterFn, this);
                 this.notifyLoadedData(filtered);
                 deferred.resolve(this.results);
-            }
-            else {
+            } else {
                 deferred.resolve(null);
             }
 

@@ -76,8 +76,7 @@ export class EmulatorPanel extends api.ui.panel.Panel {
         if (height > pageHeight) {
             frameParent.style.height = "";
             frameParent.classList.add("overflow");
-        }
-        else {
+        } else {
             frameParent.style.height = height + this.getScrollbarWidth() + "px";
             frameParent.classList.remove("overflow");
         }

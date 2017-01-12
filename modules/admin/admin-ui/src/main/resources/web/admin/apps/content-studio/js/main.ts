@@ -299,16 +299,14 @@ function startContentApplication(application: api.app.Application) {
                             }).catch((reason: any) => {
                             api.DefaultErrorHandler.handle(reason);
                         }).done();
-                    }
-                    else {
+                    } else {
                         newContentDialog.setParentContent(newParentContent);
                         newContentDialog.open();
                     }
                 }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
-        }
-        else {
+        } else {
             newContentDialog.setParentContent(null);
             newContentDialog.open();
         }

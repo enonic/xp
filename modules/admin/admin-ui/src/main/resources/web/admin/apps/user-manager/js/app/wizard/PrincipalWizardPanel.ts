@@ -201,8 +201,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
                 }
 
                 return wemQ<void>(null);
-            }
-            else {
+            } else {
                 return this.doLayoutPersistedItem(persistedPrincipal ? persistedPrincipal.clone() : null);
             }
 

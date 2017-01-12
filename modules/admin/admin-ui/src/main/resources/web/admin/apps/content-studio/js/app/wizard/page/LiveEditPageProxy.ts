@@ -339,8 +339,7 @@ export class LiveEditPageProxy {
                     console.debug("LiveEditPageProxy.hanldeIframeLoadedEvent: initialize live edit at " + new Date().toISOString());
                 }
                 new api.liveedit.InitializeLiveEditEvent(this.liveEditModel).fire(this.liveEditWindow);
-            }
-            else {
+            } else {
                 if (LiveEditPageProxy.debug) {
                     console.debug("LiveEditPageProxy.handleIframeLoadedEvent: notify live edit ready at " + new Date().toISOString());
                 }

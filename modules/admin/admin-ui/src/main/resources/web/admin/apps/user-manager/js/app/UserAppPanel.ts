@@ -65,8 +65,7 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
                             UserTreeGridItemType.USER_STORE).build()
                     ]).fire();
                 });
-            }
-            else {
+            } else {
                 new api.app.ShowBrowsePanelEvent().fire();
             }
             break;

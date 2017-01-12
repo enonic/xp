@@ -210,8 +210,7 @@ module api.content.form.inputtype.customselector {
         private updateSelectedOptionStyle() {
             if (this.getPropertyArray().getSize() > 1) {
                 this.addClass("multiple-occurrence").removeClass("single-occurrence");
-            }
-            else {
+            } else {
                 this.addClass("single-occurrence").removeClass("multiple-occurrence");
             }
         }

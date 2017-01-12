@@ -36,8 +36,7 @@ export class PrincipalDescriptionWizardStepForm extends api.app.wizard.WizardSte
             || api.ObjectHelper.iFrameSafeInstanceOf(principal, api.security.Group)) {
             let description = principal.getDescription();
             this.description.setValue(!!description ? description : "");
-        }
-        else {
+        } else {
             this.description.setValue("");
         }
 

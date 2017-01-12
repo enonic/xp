@@ -28,8 +28,7 @@ export class DefaultModelsFactory {
                 if (defaultPageTemplate && defaultPageTemplate.isPage()) {
                     defaultPageTemplateDescriptorPromise =
                         new GetPageDescriptorByKeyRequest(defaultPageTemplate.getController()).sendAndParse();
-                }
-                else if (defaultPageTemplate && !defaultPageTemplate.isPage()) {
+                } else if (defaultPageTemplate && !defaultPageTemplate.isPage()) {
                     defaultPageTemplate = null;
                 }
 
@@ -43,8 +42,7 @@ export class DefaultModelsFactory {
                         deferred.reject(new api.Exception("Page descriptor '" + defaultPageTemplate.getController() + "' not found.",
                             api.ExceptionType.WARNING));
                     }).done();
-                }
-                else {
+                } else {
                     deferred.resolve(new DefaultModels(defaultPageTemplate, null));
                 }
 

@@ -46,8 +46,7 @@ module api.ui {
             let turnOn = actions.turnOnAction.isEnabled();
             if (turnOn) {
                 this.slideOn();
-            }
-            else {
+            } else {
                 this.slideOff();
             }
             this.isOn = turnOn;

@@ -98,8 +98,7 @@ export class DetailsView extends api.dom.DivEl {
                 this.alreadyFetchedCustomWidgets = true;
                 deferred.resolve(null);
             });
-        }
-        else {
+        } else {
             deferred.resolve(null);
         }
         return deferred.promise;

@@ -48,8 +48,7 @@ export class DependenciesWidgetItemView extends WidgetItemView {
     private setButtonDecoration(button: ActionButton, dependencies: DependencyGroup[]) {
         if (dependencies.length == 0) {
             button.hide();
-        }
-        else {
+        } else {
             button.setLabel(button.getAction().getLabel() + " (" + this.getTotalItemCount(dependencies) + ")");
             button.show();
         }
@@ -105,8 +104,7 @@ export class DependenciesWidgetItemView extends WidgetItemView {
             this.addClass("no-"  + typeAsString);
             div.addClass("no-dependencies");
             div.setHtml("No " + typeAsString + " dependencies");
-        }
-        else {
+        } else {
             this.appendDependencies(div, dependencies);
         }
 

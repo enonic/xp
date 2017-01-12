@@ -113,8 +113,7 @@ module api.ui.security.acl {
 
             itemView.onRemoveClicked(() => this.removeOption(option, false));
 
-            if(readOnly)
-            {
+            if(readOnly) {
                 itemView.setEditable(false);
             }
 
@@ -124,12 +123,9 @@ module api.ui.security.acl {
         }
 
         addOption(option: Option<UserStoreAccessControlEntry>, silent: boolean = false, keyCode: number = -1): boolean {
-            if(option.readOnly)
-            {
+            if(option.readOnly) {
                 this.addItemReadOnly(option.displayValue);
-            }
-            else
-            {
+            } else {
                 this.addItem(option.displayValue);
             }
             if (!silent) {

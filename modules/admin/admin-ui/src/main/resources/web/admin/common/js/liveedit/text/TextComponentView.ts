@@ -325,8 +325,7 @@ module api.liveedit.text {
                 if (nextFocusable) {
                     wemjq(nextFocusable.getHTMLElement()).simulate("click");
                     nextFocusable.giveFocus();
-                }
-                else {
+                } else {
                     this.htmlAreaEditor.fire("blur");
                 }
             }
@@ -441,8 +440,7 @@ module api.liveedit.text {
             if (editor) {
                 try {
                     editor.destroy(false);
-                }
-                catch (e) {
+                } catch (e) {
                     //error thrown in FF on tab close - XP-2624
                 }
             }
