@@ -21,7 +21,6 @@ allprojects {
 
 configure( javaProjects ) {
     apply from: "$rootDir/gradle/java.gradle"
-    apply from: "$rootDir/gradle/checkstyle.gradle"
 }
 
 configure( mavenProjects ) {
