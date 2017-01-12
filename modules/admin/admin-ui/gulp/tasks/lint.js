@@ -3,7 +3,13 @@ const gulp = require('gulp');
 const tslint = require('gulp-tslint');
 const path = require('path');
 
-const src = [`${CONFIG.root.src}/**/*.ts`, `!${CONFIG.root.src}/**/*.d.ts`];
+const tsFilePattern = root => [`${root}/**/*.ts`, `!${root}/**/*.d.ts`];
+
+const src = [
+    ...tsFilePattern(CONFIG.root.src),
+    ...tsFilePattern(CONFIG.spec.src),
+];
+
 const configuration = path.resolve('tslint.json');
 
 gulp.task('lint', () =>
