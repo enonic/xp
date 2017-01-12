@@ -81,7 +81,6 @@ public class ContentServiceImplTest_unpublish
         this.contentService.push( PushContentParams.create().
             target( ContentConstants.BRANCH_MASTER ).
             contentIds( ContentIds.from( content.getId() ) ).
-            includeChildren( true ).
             build() );
 
         final Context masterContext = ContextBuilder.from( ContextAccessor.current() ).

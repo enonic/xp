@@ -48,7 +48,7 @@ exports.publishWithoutChildrenOrDependencies = function () {
         keys: ['e1f57280-d672-4cd8-b674-98e26e5b69ae'],
         sourceBranch: 'draft',
         targetBranch: 'master',
-        includeChildren: false,
+        excludeChildrenIds: ['e1f57280-d672-4cd8-b674-98e26e5b69ae'],
         includeDependencies: false
     });
 

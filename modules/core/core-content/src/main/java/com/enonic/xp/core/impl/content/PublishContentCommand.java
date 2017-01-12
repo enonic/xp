@@ -31,6 +31,8 @@ public class PublishContentCommand
 
     private final ContentIds excludedContentIds;
 
+    private final ContentIds excludeChildrenIds;
+
     private final Branch target;
 
     private final ContentPublishInfo contentPublishInfo;
@@ -40,8 +42,6 @@ public class PublishContentCommand
     private final boolean resolveSyncWork = true;
 
     private final PublishContentResult.Builder resultBuilder;
-
-    private final boolean includeChildren;
 
     private final PushContentListener pushContentListener;
 
@@ -53,7 +53,7 @@ public class PublishContentCommand
         this.target = builder.target;
         this.contentPublishInfo = builder.contentPublishInfo;
         this.includeDependencies = builder.includeDependencies;
-        this.includeChildren = builder.includeChildren;
+        this.excludeChildrenIds = builder.excludeChildrenIds;
         this.resultBuilder = PublishContentResult.create();
         this.pushContentListener = builder.pushContentListener;
     }
@@ -133,7 +133,7 @@ public class PublishContentCommand
         return ResolveContentsToBePublishedCommand.create().
             contentIds( this.contentIds ).
             excludedContentIds( this.excludedContentIds ).
-            includeChildren( this.includeChildren ).
+            excludeChildrenIds( this.excludeChildrenIds ).
             includeDependencies( this.includeDependencies ).
             target( this.target ).
             contentTypeService( this.contentTypeService ).
@@ -218,13 +218,14 @@ public class PublishContentCommand
 
         private ContentIds excludedContentIds;
 
+        private ContentIds excludeChildrenIds;
+        //  private boolean includeChildren = true;
+
         private Branch target;
 
         private ContentPublishInfo contentPublishInfo;
 
         private boolean includeDependencies = true;
-
-        private boolean includeChildren = true;
 
         private PushContentListener pushContentListener;
 
@@ -237,6 +238,12 @@ public class PublishContentCommand
         public Builder excludedContentIds( final ContentIds excludedContentIds )
         {
             this.excludedContentIds = excludedContentIds;
+            return this;
+        }
+
+        public Builder excludeChildrenIds( final ContentIds excludeChildrenIds )
+        {
+            this.excludeChildrenIds = excludeChildrenIds;
             return this;
         }
 
@@ -265,12 +272,6 @@ public class PublishContentCommand
         public Builder includeDependencies( final boolean includeDependencies )
         {
             this.includeDependencies = includeDependencies;
-            return this;
-        }
-
-        public Builder includeChildren( final boolean includeChildren )
-        {
-            this.includeChildren = includeChildren;
             return this;
         }
 

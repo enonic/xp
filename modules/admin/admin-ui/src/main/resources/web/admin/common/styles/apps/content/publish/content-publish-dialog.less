@@ -4,14 +4,23 @@
     max-height: 200px;
   }
 
+  .icon-tree {
+    font-size: 18px;
+    line-height: 32px;
+
+    .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent, false);
+
+    &.on {
+      .button(@admin-button-blue2, transparent, @admin-button-blue3, transparent, false);
+    }
+  }
+
   .dialog-buttons {
+
+    margin-top: 10px;
 
     button.publish-action {
       .dialog-button(@form-button-font, @admin-green, @form-button-font, lighten(@admin-green, 10%));
-    }
-
-    &.no-checkbox {
-      margin-top: 10px;
     }
   }
 
@@ -20,24 +29,8 @@
     bottom: 40px;
     left: 38px;
 
-    input[type="checkbox"] + label {
-      color: @admin-blue !important;
-
-      &:hover {
-        cursor: pointer;
-      }
-    }
-
     &.disabled {
       opacity: 0.5;
-
-      input[type="checkbox"] + label {
-        color: @admin-font-gray2 !important;
-
-        &:hover {
-          cursor: default;
-        }
-      }
     }
 
     @media screen and (max-height: 360px) {

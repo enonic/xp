@@ -136,7 +136,6 @@ public class ContentServiceImplTest_publish
 
         final PushContentParams pushParams = PushContentParams.create().
             contentIds( ContentIds.from( content2.getId() ) ).
-            includeChildren( true ).
             target( WS_OTHER ).
             build();
 
@@ -161,7 +160,7 @@ public class ContentServiceImplTest_publish
 
         final PushContentParams pushParams = PushContentParams.create().
             contentIds( ContentIds.from( content1_1.getId() ) ).
-            includeChildren( true ).
+            excludeChildrenIds( ContentIds.from( content1_1.getId() ) ).
             target( WS_OTHER ).
             build();
 
@@ -201,7 +200,7 @@ public class ContentServiceImplTest_publish
         final PushContentParams pushParams = PushContentParams.create().
             contentIds( ContentIds.from( content1.getId() ) ).
             excludedContentIds( ContentIds.from( content1_1.getId() ) ).
-            includeChildren( false ).
+            excludeChildrenIds( ContentIds.from( content1.getId() ) ).
             target( WS_OTHER ).
             build();
 
@@ -257,7 +256,6 @@ public class ContentServiceImplTest_publish
         final PushContentParams pushParams = PushContentParams.create().
             contentIds( ContentIds.from( content1.getId() ) ).
             includeDependencies( false ).
-            includeChildren( true ).
             target( WS_OTHER ).
             build();
 
@@ -283,7 +281,7 @@ public class ContentServiceImplTest_publish
         this.contentService.publish( PushContentParams.create().
             contentIds( ContentIds.from( content1.getId() ) ).
             target( WS_OTHER ).
-            includeChildren( true ).
+            excludeChildrenIds( ContentIds.from( content1.getId() ) ).
             build() );
 
         this.contentService.move( new MoveContentParams( content2_1.getId(), content1.getPath() ) );
@@ -305,7 +303,7 @@ public class ContentServiceImplTest_publish
         final Content s1 = createContent( ContentPath.ROOT, "s1" );
         final Content f1 = createContent( s1.getPath(), "f1" );
         final Content c1 = createContent( f1.getPath(), "c1" );
-        doPublish( true, s1.getId() );
+        doPublish( ContentIds.empty(), s1.getId() );
 
         // Move to f2, delete f1
         final Content f2 = createContent( s1.getPath(), "f2" );
@@ -313,7 +311,7 @@ public class ContentServiceImplTest_publish
         doDelete( f1.getPath(), false );
 
         // include children = false should be overridden since its a pending delete
-        final PublishContentResult result = doPublish( false, f1.getId() );
+        final PublishContentResult result = doPublish( ContentIds.from( f1.getId() ), f1.getId() );
         assertTrue( result.getPushedContents().contains( c1.getId() ) );
         assertStatus( c1.getId(), CompareStatus.EQUAL );
     }
@@ -342,7 +340,7 @@ public class ContentServiceImplTest_publish
         final Content b = createContent( ContentPath.ROOT, "b" );
         final Content a1 = createContent( a.getPath(), "a1" );
         final Content a2 = createContent( a.getPath(), "a2" );
-        doPublish( true, a.getId() );
+        doPublish( ContentIds.empty(), a.getId() );
 
         System.out.println( "After initial push:" );
         printContentTree( getByPath( ContentPath.ROOT ).getId() );
@@ -354,7 +352,7 @@ public class ContentServiceImplTest_publish
         doMove( a1.getId(), "/a" );
         doMove( a2.getId(), "/a" );
 
-        doPublish( true, b.getId() );
+        doPublish( ContentIds.empty(), b.getId() );
 
         System.out.println( "" );
         System.out.println( "After second push:" );
@@ -413,10 +411,10 @@ public class ContentServiceImplTest_publish
         this.contentService.deleteWithoutFetch( deleteContentParams );
     }
 
-    private PublishContentResult doPublish( final boolean includeChildren, final ContentId... contentIds )
+    private PublishContentResult doPublish( final ContentIds excludeChildrenIds, final ContentId... contentIds )
     {
         return this.contentService.publish( PushContentParams.create().
-            includeChildren( includeChildren ).
+            excludeChildrenIds( excludeChildrenIds ).
             contentIds( ContentIds.from( contentIds ) ).
             target( WS_OTHER ).
             build() );

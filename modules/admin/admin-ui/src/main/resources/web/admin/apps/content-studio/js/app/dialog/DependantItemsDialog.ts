@@ -15,6 +15,7 @@ import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
 import DialogButton = api.ui.dialog.DialogButton;
 import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
+import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
 
 export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
@@ -44,7 +45,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     protected previousScrollTop: number;
 
-    protected dependantIds: ContentId[];
+    protected dependantIds: ContentId[] = [];
 
     constructor(dialogName: string, dialogSubName: string, dependantsName: string) {
         super(dialogName);
@@ -301,8 +302,8 @@ export class DialogItemList extends ListBox<ContentSummaryAndCompareStatus> {
         });
     }
 
-    createItemView(item: ContentSummaryAndCompareStatus, readOnly: boolean): api.dom.Element {
-        let itemViewer = new api.content.ContentSummaryAndCompareStatusViewer();
+    createItemView(item: ContentSummaryAndCompareStatus, readOnly: boolean): StatusSelectionItem {
+        let itemViewer = new ContentSummaryAndCompareStatusViewer();
 
         itemViewer.setObject(item);
 
@@ -310,12 +311,18 @@ export class DialogItemList extends ListBox<ContentSummaryAndCompareStatus> {
             item.getDisplayName()).setPath(item.getPath().toString()).setIconUrl(
             new api.content.util.ContentIconUrlResolver().setContent(item.getContentSummary()).resolve());
 
-        let statusItem = new StatusSelectionItem(itemViewer, browseItem);
+        let statusItem = this.createSelectionItem(itemViewer, browseItem);
+
         statusItem.onRemoveClicked((e: MouseEvent) => {
             this.removeItem(item);
         });
 
         return statusItem;
+    }
+
+    protected createSelectionItem(viewer: ContentSummaryAndCompareStatusViewer,
+                                  browseItem: BrowseItem<ContentSummaryAndCompareStatus>): StatusSelectionItem {
+        return new StatusSelectionItem(viewer, browseItem);
     }
 
     getItemId(item: ContentSummaryAndCompareStatus): string {

@@ -8,18 +8,18 @@ public class PublishContentJson
 
     private Set<String> excludedIds;
 
-    private boolean includeChildren;
+    private Set<String> excludeChildrenIds;
 
     private PublishScheduleJson schedule;
 
-    public boolean isIncludeChildren()
+    public Set<String> getExcludeChildrenIds()
     {
-        return includeChildren;
+        return excludeChildrenIds;
     }
 
-    public void setIncludeChildren( final boolean includeChildren )
+    public void setExcludeChildrenIds( final Set<String> excludeChildrenIds )
     {
-        this.includeChildren = includeChildren;
+        this.excludeChildrenIds = excludeChildrenIds;
     }
 
     public Set<String> getIds()
@@ -27,14 +27,19 @@ public class PublishContentJson
         return ids;
     }
 
+    public void setIds( final Set<String> ids )
+    {
+        this.ids = ids;
+    }
+
     public PublishScheduleJson getSchedule()
     {
         return schedule;
     }
 
-    public void setIds( final Set<String> ids )
+    public void setSchedule( final PublishScheduleJson schedule )
     {
-        this.ids = ids;
+        this.schedule = schedule;
     }
 
     public Set<String> getExcludedIds()
@@ -45,10 +50,5 @@ public class PublishContentJson
     public void setExcludedIds( final Set<String> excludedIds )
     {
         this.excludedIds = excludedIds;
-    }
-
-    public void setSchedule( final PublishScheduleJson schedule )
-    {
-        this.schedule = schedule;
     }
 }
