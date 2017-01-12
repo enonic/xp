@@ -19,8 +19,6 @@ allprojects {
             url 'http://repo.enonic.com/public'
         }
     }
-
-    buildDir = 'target'
 }
 
 configure( javaProjects ) {

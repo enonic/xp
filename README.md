@@ -28,7 +28,7 @@ Build all code skipping all tests:
 
 After building the project, you can start it locally by running the server script (or `bat` on Windows):
 
-    modules/distro/target/install/bin/server.sh
+    modules/distro/build/install/bin/server.sh
     
 You can also go to the `modules/distro` directory and type:
     
