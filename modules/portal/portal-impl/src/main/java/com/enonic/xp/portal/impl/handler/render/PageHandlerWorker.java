@@ -1,7 +1,5 @@
 package com.enonic.xp.portal.impl.handler.render;
 
-import java.util.function.Supplier;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
@@ -107,7 +105,13 @@ final class PageHandlerWorker
         this.request.setPageDescriptor( pageDescriptor );
 
         final Renderer<Content> renderer = this.rendererFactory.getRenderer( effectiveContent );
-        return trace( effectiveContent, () -> renderer.render( effectiveContent, this.request ) );
+        final Trace trace = Tracer.current();
+        if ( trace != null )
+        {
+            trace.put( "path", effectiveContent.getPath().toString() );
+            trace.put( "type", "page" );
+        }
+        return renderer.render( effectiveContent, this.request );
     }
 
     private PortalResponse renderShortcut( final Content content )
@@ -139,16 +143,5 @@ final class PageHandlerWorker
         }
 
         return pageDescriptor;
-    }
-
-    private PortalResponse trace( final Content content, final Supplier<PortalResponse> callable )
-    {
-        final Trace trace = Tracer.newTrace( "renderComponent" );
-        if ( trace != null )
-        {
-            trace.put( "path", content.getPath().toString() );
-            trace.put( "type", "page" );
-        }
-        return Tracer.trace( trace, callable::get );
     }
 }

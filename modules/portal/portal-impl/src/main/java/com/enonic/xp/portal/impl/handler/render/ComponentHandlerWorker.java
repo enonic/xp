@@ -1,7 +1,5 @@
 package com.enonic.xp.portal.impl.handler.render;
 
-import java.util.function.Supplier;
-
 import com.enonic.xp.content.Content;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
@@ -106,19 +104,13 @@ final class ComponentHandlerWorker
         this.request.setPageDescriptor( null );
 
         final Renderer<Component> renderer = this.rendererFactory.getRenderer( component );
-        final Component finalComponent = component;
-        final PortalResponse response = trace( component, () -> renderer.render( finalComponent, this.request ) );
-        return this.postProcessor.processResponseInstructions( this.request, response );
-    }
-
-    private PortalResponse trace( final Component component, final Supplier<PortalResponse> callable )
-    {
-        final Trace trace = Tracer.newTrace( "renderComponent" );
+        final Trace trace = Tracer.current();
         if ( trace != null )
         {
             trace.put( "path", component.getPath() );
             trace.put( "type", component.getType().toString() );
         }
-        return Tracer.trace( trace, callable::get );
+        final PortalResponse response = renderer.render( component, this.request );
+        return this.postProcessor.processResponseInstructions( this.request, response );
     }
 }
