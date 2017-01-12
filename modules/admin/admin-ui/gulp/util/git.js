@@ -4,11 +4,12 @@ const path = require('path');
 const root = path.resolve(__dirname, '../..');
 const git = simpleGit(root);
 
-function filterByExtension(files, extension) {
+function filterByExtension(files, extension, filter) {
+
     if (extension) {
         return files.filter((file) => {
             const ext = path.parse(file).ext;
-            return ext === extension;
+            return ext === extension && !(file.search(filter) === -1);
         });
     }
 
@@ -16,14 +17,14 @@ function filterByExtension(files, extension) {
 }
 
 // git status
-function status(extension = '') {
+function status(extension = '', filter = /./) {
     return new Promise((resolve) => {
         git.status((err, result) => {
             const files = result.files.map((file) => {
                 return file.path;
             });
 
-            resolve(filterByExtension(files, extension));
+            resolve(filterByExtension(files, extension, filter));
         });
     });
 }
@@ -39,13 +40,13 @@ function mergeBase() {
 
 // git diff --name-only origin/master
 //   Outputs modified files from all commits that are not in master yet and indexed files
-function diff(branch = 'origin/master', extension = '') {
+function diff(branch = 'origin/master', extension = '', filter = /./) {
     const options = ['--name-only', `${branch}`];
     return new Promise((resolve) => {
         git.diff(options, (err, result) => {
             const files = !result ? [] : result.trim().split('\n');
 
-            resolve(filterByExtension(files, extension));
+            resolve(filterByExtension(files, extension, filter));
         });
     });
 }
