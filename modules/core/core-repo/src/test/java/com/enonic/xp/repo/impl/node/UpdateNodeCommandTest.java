@@ -13,7 +13,6 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBinaryReferenceException;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.BinaryReference;
 
@@ -333,17 +332,6 @@ public class UpdateNodeCommandTest
         final Node updatedNode = getNodeById( node.id() );
 
         assertTrue( updatedNode.getTimestamp().equals( node.getTimestamp() ) );
-    }
-
-    @Test(expected = OperationNotPermittedException.class)
-    public void cannot_update_root_node()
-        throws Exception
-    {
-        updateNode( UpdateNodeParams.create().
-            id( Node.ROOT_UUID ).
-            editor( ( node ) -> {
-            } ).
-            build() );
     }
 
 }

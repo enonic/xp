@@ -345,7 +345,10 @@ class NodeServiceMock
     @Override
     public Node createRootNode( final CreateRootNodeParams params )
     {
-        throw new UnsupportedOperationException( "Not implemented in mock" );
+        final Node rootNode = Node.createRoot().build();
+        nodeIdMap.putIfAbsent( rootNode.id(), rootNode );
+        nodePathMap.putIfAbsent( rootNode.path(), rootNode );
+        return rootNode;
     }
 
     @Override
@@ -432,18 +435,27 @@ class NodeServiceMock
         final Node importNode = params.getNode();
         final boolean preExist = this.nodePathMap.get( importNode.path() ) != null;
 
-        final Node createdNode = doCreate( CreateNodeParams.create().
-            setBinaryAttachments( params.getBinaryAttachments() ).
-            childOrder( importNode.getChildOrder() ).
-            data( importNode.data() ).
-            indexConfigDocument( importNode.getIndexConfigDocument() ).
-            insertManualStrategy( params.getInsertManualStrategy() ).
-            manualOrderValue( importNode.getManualOrderValue() ).
-            name( importNode.name().toString() ).
-            parent( importNode.parentPath() ).
-            setNodeId( importNode.id() ).
-            permissions( importNode.getPermissions() ).
-            build(), importNode.getTimestamp() );
+        final Node createdNode;
+        if ( importNode.isRoot() )
+        {
+            createdNode = createRootNode( null );
+            
+        }
+        else
+        {
+            createdNode = doCreate( CreateNodeParams.create().
+                setBinaryAttachments( params.getBinaryAttachments() ).
+                childOrder( importNode.getChildOrder() ).
+                data( importNode.data() ).
+                indexConfigDocument( importNode.getIndexConfigDocument() ).
+                insertManualStrategy( params.getInsertManualStrategy() ).
+                manualOrderValue( importNode.getManualOrderValue() ).
+                name( importNode.name().toString() ).
+                parent( importNode.parentPath() ).
+                setNodeId( importNode.id() ).
+                permissions( importNode.getPermissions() ).
+                build(), importNode.getTimestamp() );
+        }
 
         return ImportNodeResult.create().node( createdNode ).preExisting( preExist ).build();
     }

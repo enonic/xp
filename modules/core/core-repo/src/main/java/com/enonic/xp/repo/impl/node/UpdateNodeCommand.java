@@ -10,7 +10,6 @@ import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -52,11 +51,6 @@ public final class UpdateNodeCommand
         if ( persistedNode == null )
         {
             throw new NodeNotFoundException( "Cannot update node with id '" + params.getId() + "', node not found" );
-        }
-
-        if ( persistedNode.isRoot() )
-        {
-            throw new OperationNotPermittedException( "Not allowed to modify root-node" );
         }
 
         requireContextUserPermissionOrAdmin( Permission.MODIFY, persistedNode );

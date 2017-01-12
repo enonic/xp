@@ -85,7 +85,7 @@ public final class NodeImporter
 
         verifyImportRoot();
 
-        importFromDirectoryLayout( this.exportRoot );
+        processNodeFolder( this.exportRoot, ProcessNodeSettings.create() );
 
         nodeService.refresh( RefreshMode.ALL );
 
