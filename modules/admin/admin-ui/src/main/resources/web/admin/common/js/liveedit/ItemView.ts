@@ -189,6 +189,13 @@ module api.liveedit {
             this.contextMenuActions = this.contextMenuActions.concat(actions);
         }
 
+        protected removeContextMenuAction(action: api.ui.Action) {
+            if (this.contextMenuActions.indexOf(action) === -1) {
+                return;
+            }
+            this.contextMenuActions.splice(this.contextMenuActions.indexOf(action), 1);
+        }
+
         protected setPlaceholder(placeholder: ItemViewPlaceholder) {
             this.placeholder = placeholder;
             this.appendChild(placeholder);
