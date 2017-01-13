@@ -75,16 +75,17 @@ public abstract class RepoCommand
         if ( !response.isSuccessful() )
         {
             final String responseBody = response.body().string();
+            final String prettified;
             try
             {
-                final String prettified = JsonHelper.prettifyJson( responseBody );
-                throw new ResponseException( prettified, response.code() );
+                prettified = JsonHelper.prettifyJson( responseBody );
             }
             catch ( Exception e )
             {
                 LOG.error( "Failed to prettify response", e );
                 throw new ResponseException( responseBody, response.code() );
             }
+            throw new ResponseException( prettified, response.code() );
         }
 
         final String responseBody = response.body().string();
