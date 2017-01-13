@@ -410,6 +410,8 @@ export class LiveFormPanel extends api.ui.panel.Panel {
                     this.pageView.setLocked(true);
                     this.lockPageAfterProxyLoad = false;
                 }
+
+                this.contextWindow.clearSelection(); //resetting selection, selected item may already be gone
             });
         }
     }
