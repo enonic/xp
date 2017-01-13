@@ -69,8 +69,7 @@ export class InspectionsPanel extends api.ui.panel.Panel {
         let saveButton = new api.ui.button.ActionButton(config.saveAction);
         this.buttons.appendChild(saveButton);
 
-        this.appendChildren(this.deck, this.buttons);
-
+        this.appendChildren(<api.dom.Element>this.deck, this.buttons);
     }
 
     public showInspectionPanel(panel: api.ui.panel.Panel) {
