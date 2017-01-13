@@ -339,6 +339,13 @@ function startContentApplication(application: api.app.Application) {
 
 preLoadApplication();
 
-window.onload = function () {
+let body = api.dom.Body.get();
+let renderListener = () => {
     startApplication();
+    body.unRendered(renderListener);
 };
+if (body.isRendered()) {
+    renderListener();
+} else {
+    body.onRendered(renderListener);
+}
