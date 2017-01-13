@@ -263,28 +263,31 @@ module api.content.form.inputtype.image {
         private handleOptionViewKeyDownEvent(event: KeyboardEvent, option: SelectedOption<ImageSelectorDisplayValue>,
                                              optionView: ImageSelectorSelectedOptionView) {
             var checkbox = optionView.getCheckbox();
-
             switch (event.which) {
-            case 32: // Spacebar
-                checkbox.toggleChecked();
-                break;
-            case 8: // Backspace
-                checkbox.setChecked(false);
-                this.removeOptionViewAndRefocus(option);
-                event.preventDefault();
-                break;
-            case 46: // Delete
-                checkbox.setChecked(false);
-                this.removeOptionViewAndRefocus(option);
-                break;
-            case 13: // Enter
-                this.notifyEditSelectedOptions([option]);
-                break;
-            case 9: // tab
-                this.resetActiveOption();
-                break;
+                case 32: // Spacebar
+                    checkbox.toggleChecked();
+                    event.stopPropagation();
+                    break;
+                case 8: // Backspace
+                    checkbox.setChecked(false);
+                    this.removeOptionViewAndRefocus(option);
+                    event.preventDefault();
+                    event.stopPropagation();
+                    break;
+                case 46: // Delete
+                    checkbox.setChecked(false);
+                    this.removeOptionViewAndRefocus(option);
+                    event.stopPropagation();
+                    break;
+                case 13: // Enter
+                    this.notifyEditSelectedOptions([option]);
+                    event.stopPropagation();
+                    break;
+                case 9: // tab
+                    this.resetActiveOption();
+                    event.stopPropagation();
+                    break;
             }
-            event.stopPropagation();
         }
 
         private handleOptionViewChecked(checked: boolean, option: SelectedOption<ImageSelectorDisplayValue>,
