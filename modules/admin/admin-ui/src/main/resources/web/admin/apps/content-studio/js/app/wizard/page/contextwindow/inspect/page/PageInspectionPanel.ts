@@ -102,12 +102,10 @@ export class PageInspectionPanel extends BaseInspectionPanel {
                         }).catch((reason: any) => {
                             api.DefaultErrorHandler.handle(reason);
                         }).done();
-                }
-                else if (this.pageModel.hasDefaultPageTemplate()) {
+                } else if (this.pageModel.hasDefaultPageTemplate()) {
                     this.pageControllerForm.hide();
                     this.pageModel.setAutomaticTemplate(this, true);
-                }
-                else {
+                } else {
                     this.pageModel.reset(this);
                 }
             }
@@ -214,8 +212,7 @@ class BaseInspectionHandler {
 
             if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER) {
                 this.pageControllerForm.show();
-            }
-            else {
+            } else {
                 this.pageDescriptorForm.show();
             }
 
@@ -275,8 +272,7 @@ class ContentInspectionHandler extends BaseInspectionHandler {
 
         if (pageMode == PageMode.FORCED_TEMPLATE || pageMode == PageMode.AUTOMATIC) {
             this.showPageConfig(pageModel, liveEditModel.getFormContext());
-        }
-        else {
+        } else {
             throw new Error("Unsupported PageMode: " + PageMode[pageMode]);
         }
     }

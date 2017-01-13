@@ -182,8 +182,7 @@ module api.form {
 
             if (inputtype.InputTypeManager.isRegistered(inputType.getName())) {
                 return inputtype.InputTypeManager.createView(inputType.getName(), inputTypeViewContext);
-            }
-            else {
+            } else {
                 console.warn("Input type [" + inputType.getName() + "] needs to be registered first.");
                 return inputtype.InputTypeManager.createView("NoInputTypeFound", inputTypeViewContext);
             }
@@ -294,8 +293,7 @@ module api.form {
             if (recording.isValid() && this.hasValidUserInput()) {
                 this.removeClass("invalid");
                 this.addClass("valid");
-            }
-            else {
+            } else {
                 this.removeClass("valid");
                 this.addClass("invalid");
             }

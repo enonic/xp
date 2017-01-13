@@ -1,6 +1,6 @@
 describe("api.util.LocalTime", () => {
 
-    var localTime;
+    let localTime;
 
     describe("basic asserts", () => {
 
@@ -50,29 +50,29 @@ describe("api.util.LocalTime", () => {
     describe("comparison", () => {
 
         it("should correctly compare equal times with seconds", () => {
-            var time1 = api.util.LocalTime.create().setHours(12).setMinutes(5).setSeconds(7).build();
-            var time2 = api.util.LocalTime.create().setHours(12).setMinutes(5).setSeconds(7).build();
+            let time1 = api.util.LocalTime.create().setHours(12).setMinutes(5).setSeconds(7).build();
+            let time2 = api.util.LocalTime.create().setHours(12).setMinutes(5).setSeconds(7).build();
 
             expect(time1.equals(time2)).toBeTruthy();
         });
 
         it("should correctly compare equal times without seconds", () => {
-            var time1 = api.util.LocalTime.create().setHours(12).setMinutes(5).build();
-            var time2 = api.util.LocalTime.create().setHours(12).setMinutes(5).build();
+            let time1 = api.util.LocalTime.create().setHours(12).setMinutes(5).build();
+            let time2 = api.util.LocalTime.create().setHours(12).setMinutes(5).build();
 
             expect(time1.equals(time2)).toBeTruthy();
         });
 
         it("should correctly compare unequal times", () => {
-            var time1 = api.util.LocalTime.create().setHours(12).setMinutes(5).build();
-            var time2 = api.util.LocalTime.create().setHours(12).setMinutes(5).setSeconds(1).build();
+            let time1 = api.util.LocalTime.create().setHours(12).setMinutes(5).build();
+            let time2 = api.util.LocalTime.create().setHours(12).setMinutes(5).setSeconds(1).build();
 
             expect(time1.equals(time2)).toBeFalsy();
         });
 
         it("should correctly compare equal times with empty and zero seconds", () => {
-            var time1 = api.util.LocalTime.create().setHours(12).setMinutes(5).build();
-            var time2 = api.util.LocalTime.create().setHours(12).setMinutes(5).setSeconds(0).build();
+            let time1 = api.util.LocalTime.create().setHours(12).setMinutes(5).build();
+            let time2 = api.util.LocalTime.create().setHours(12).setMinutes(5).setSeconds(0).build();
 
             expect(time1.equals(time2)).toBeTruthy();
         });
@@ -105,22 +105,22 @@ describe("api.util.LocalTime", () => {
         });
 
         it("should parse time in correct format", () => {
-            var parsedTime = api.util.LocalTime.fromString("12:05:37");
-            var originalTime = api.util.LocalTime.create().setHours(12).setMinutes(5).setSeconds(37).build();
+            let parsedTime = api.util.LocalTime.fromString("12:05:37");
+            let originalTime = api.util.LocalTime.create().setHours(12).setMinutes(5).setSeconds(37).build();
 
             expect(originalTime.equals(parsedTime)).toBeTruthy();
         });
 
         it("should parse time in correct format", () => {
-            var parsedTime = api.util.LocalTime.fromString("12");
-            var originalTime = api.util.LocalTime.create().setHours(12).setMinutes(0).setSeconds(0).build();
+            let parsedTime = api.util.LocalTime.fromString("12");
+            let originalTime = api.util.LocalTime.create().setHours(12).setMinutes(0).setSeconds(0).build();
 
             expect(originalTime.equals(parsedTime)).toBeTruthy();
         });
 
         it("should parse time in correct format", () => {
-            var parsedTime = api.util.LocalTime.fromString("6:7");
-            var originalTime = api.util.LocalTime.create().setHours(6).setMinutes(7).setSeconds(0).build();
+            let parsedTime = api.util.LocalTime.fromString("6:7");
+            let originalTime = api.util.LocalTime.create().setHours(6).setMinutes(7).setSeconds(0).build();
             expect(originalTime.equals(parsedTime)).toBeTruthy();
         });
 

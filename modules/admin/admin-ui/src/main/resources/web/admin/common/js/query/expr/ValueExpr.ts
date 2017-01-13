@@ -41,8 +41,7 @@ module api.query.expr {
         private quoteString(value: string): string {
             if (value.indexOf("'") > -1) {
                 return "\"" + value + "\"";
-            }
-            else {
+            } else {
                 return "'" + value + "'";
             }
         }

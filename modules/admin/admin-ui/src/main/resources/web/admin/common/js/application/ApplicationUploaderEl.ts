@@ -29,8 +29,7 @@ module api.application {
                 this.failure = result.getFailure();
 
                 return result.getApplication();
-            }
-            else {
+            } else {
                 return null;
             }
         }

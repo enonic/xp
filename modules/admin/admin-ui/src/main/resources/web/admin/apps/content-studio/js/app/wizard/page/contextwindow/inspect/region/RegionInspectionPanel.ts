@@ -1,7 +1,7 @@
 import "../../../../../../api.ts";
+import {BaseInspectionPanel} from "../BaseInspectionPanel";
 
 import Region = api.content.page.region.Region;
-import {BaseInspectionPanel} from "../BaseInspectionPanel";
 
 export class RegionInspectionPanel extends BaseInspectionPanel {
 
@@ -26,8 +26,7 @@ export class RegionInspectionPanel extends BaseInspectionPanel {
         if (region) {
             this.namesAndIcon.setMainName(region.getName());
             this.namesAndIcon.setSubName(region.getPath().toString());
-        }
-        else {
+        } else {
             this.namesAndIcon.setMainName("[No  Region given]");
             this.namesAndIcon.setSubName("");
         }

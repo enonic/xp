@@ -40,8 +40,7 @@ module api.data {
         valueToString(value: Value): string {
             if (value.isNotNull()) {
                 return value.getLocalTime().toString();
-            }
-            else {
+            } else {
                 return null;
             }
         }

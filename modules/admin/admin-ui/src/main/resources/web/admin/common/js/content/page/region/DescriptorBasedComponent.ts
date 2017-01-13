@@ -133,8 +133,7 @@ module api.content.page.region {
             if (source) {
                 this.descriptor = source.getDescriptor();
                 this.config = source.getConfig() ? source.getConfig().copy() : null;
-            }
-            else {
+            } else {
                 this.config = new PropertyTree();
             }
         }

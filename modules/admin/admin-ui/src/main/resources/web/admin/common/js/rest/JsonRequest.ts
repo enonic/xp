@@ -45,14 +45,11 @@ module api.rest {
 
                     if (request.status === 204) {
                         deferred.resolve(new JsonResponse<RAW_JSON_TYPE>(null));
-                    }
-                    else if (request.status >= 200 && request.status < 300) {
+                    } else if (request.status >= 200 && request.status < 300) {
                         deferred.resolve(new JsonResponse<RAW_JSON_TYPE>(request.response));
-                    }
-                    else if (request.status === 403) {
+                    } else if (request.status === 403) {
                         deferred.reject(new api.AccessDeniedException('Access denied'));
-                    }
-                    else {
+                    } else {
                         try {
                             errorJson = request.response ? JSON.parse(request.response) : null;
                         } catch (error) {
@@ -68,8 +65,7 @@ module api.rest {
                 this.preparePOSTRequest(request);
                 let paramString = JSON.stringify(this.params);
                 request.send(paramString);
-            }
-            else {
+            } else {
                 this.prepareGETRequest(request).send();
             }
 

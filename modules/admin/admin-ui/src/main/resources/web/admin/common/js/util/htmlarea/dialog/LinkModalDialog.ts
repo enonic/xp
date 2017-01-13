@@ -383,12 +383,10 @@ module api.util.htmlarea.dialog {
 
             if (this.link) {
                 this.link.parentElement.replaceChild(linkEl.getHTMLElement(), this.link);
-            }
-            else {
+            } else {
                 if (this.onlyTextSelected) {
                     this.getEditor().insertContent(linkEl.toString());
-                }
-                else {
+                } else {
                     let linkAttrs = {
                         href: linkEl.getHref(),
                         target: linkEl.getTarget() ? linkEl.getTarget() : null,

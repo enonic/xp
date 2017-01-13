@@ -2,11 +2,11 @@ import StringHelper = api.util.StringHelper;
 
 describe("api.util.StringHelper", () => {
 
-    var sh = StringHelper;
+    let sh = StringHelper;
 
     describe("limit", () => {
 
-        var s = "Lorem ipsum 123% !";
+        let s = "Lorem ipsum 123% !";
 
         it("should return empty string if invalid arguments are passed", () => {
             expect(sh.limit(null, 11)).toBe("");
@@ -17,7 +17,7 @@ describe("api.util.StringHelper", () => {
         });
         it("should allow to specify trailing char", () => {
             expect(sh.limit(s, 11, "!")).toBe(s.substr(0, 11) + "!");
-        })
+        });
 
     });
 
@@ -28,7 +28,7 @@ describe("api.util.StringHelper", () => {
             expect(sh.capitalize("")).toBe("");
         });
         it("should capitalize just the first letter", () => {
-            var s = "lorem ipsum 123% !";
+            let s = "lorem ipsum 123% !";
             expect(sh.capitalize(s)).toBe(s.charAt(0).toUpperCase() + s.substr(1));
         });
 
@@ -193,7 +193,7 @@ describe("api.util.StringHelper", () => {
 
     describe("substringBetween", () => {
 
-        var s = "to be or not to eat bee ?";
+        let s = "to be or not to eat bee ?";
 
         it("should return empty string if invalid arguments are passed", () => {
             expect(sh.substringBetween("abc", null, "c")).toBe("");
@@ -213,7 +213,7 @@ describe("api.util.StringHelper", () => {
 
     describe("format", () => {
 
-        var s = "{0} {{0}} {{0}{1}} {{0{1}}} {{{0}1}} {{{0}{1}}}";
+        let s = "{0} {{0}} {{0}{1}} {{0{1}}} {{{0}1}} {{{0}{1}}}";
 
         it("should return empty string if invalid arguments are passed", () => {
             expect(sh.format(null)).toBe("");
@@ -227,4 +227,3 @@ describe("api.util.StringHelper", () => {
     });
 
 });
-

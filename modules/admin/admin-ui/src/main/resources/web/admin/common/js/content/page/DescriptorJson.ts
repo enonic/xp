@@ -1,6 +1,6 @@
 module api.content.page {
 
-    export interface DescriptorJson{
+    export interface DescriptorJson {
 
         key:string;
 

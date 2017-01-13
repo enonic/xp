@@ -43,8 +43,7 @@ module api.content.attachment {
         createModel(serverResponse: AttachmentJson): Attachment {
             if (serverResponse) {
                 return new AttachmentBuilder().fromJson(serverResponse).build();
-            }
-            else {
+            } else {
                 return null;
             }
         }

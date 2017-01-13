@@ -68,8 +68,7 @@ module api.data {
             if (sourceRoot) {
                 this.root = sourceRoot.copy(this);
                 // Ensure to register all properties from sourceRoot
-            }
-            else {
+            } else {
                 this.root = new PropertySet(this);
             }
         }

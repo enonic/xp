@@ -456,8 +456,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                     this.selectNode(targetNode.getDataId());
                     this.scrollToRow(this.getGrid().getDataView().getRowById(targetNode.getId()));
                 });
-            }
-            else {
+            } else {
                 let nextLevelChildPath = targetPath.getPathAtLevel(!!nodeToSearchTargetIn.getData()
                     ? nodeToSearchTargetIn.getData().getPath().getLevel() + 1
                     : 1);

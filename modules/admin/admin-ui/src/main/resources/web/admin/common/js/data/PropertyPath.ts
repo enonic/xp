@@ -37,8 +37,7 @@ module api.data {
             elements.forEach((element: PropertyPathElement, index: number) => {
                 if (element == null) {
                     throw new Error("Path element was null at index: " + index);
-                }
-                else if (element.getName().length == 0) {
+                } else if (element.getName().length == 0) {
                     throw new Error("Path element was empty string at index: " + index);
                 }
             });
@@ -138,8 +137,7 @@ module api.data {
         toString(): string {
             if (this.index == 0) {
                 return this.name;
-            }
-            else {
+            } else {
                 return this.name + "[" + this.index + "]";
             }
         }

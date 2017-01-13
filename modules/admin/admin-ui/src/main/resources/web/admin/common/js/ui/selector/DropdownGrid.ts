@@ -226,8 +226,7 @@ module api.ui.selector {
             let stylesHash: Slick.CellCssStylesHash = {};
             let rows: number[] = [];
             selectedOptions.forEach((selectedOption: Option<OPTION_DISPLAY_VALUE>) => {
-                if(selectedOption.readOnly)
-                {
+                if(selectedOption.readOnly) {
                     let row = this.gridData.getRowById(selectedOption.value);
                     rows.push(row);
                     stylesHash[row] = {_checkbox_selector: "readonly" ,option: "readonly"};

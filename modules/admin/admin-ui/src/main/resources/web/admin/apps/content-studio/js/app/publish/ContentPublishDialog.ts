@@ -180,8 +180,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
             return this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
                 if (resetDependantItems) { // just opened or first time loading children
                     this.setDependantItems(dependants);
-                }
-                else {
+                } else {
                     this.filterDependantItems(dependants);
                 }
 

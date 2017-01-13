@@ -2,7 +2,7 @@ import LocalDateTime = api.util.LocalDateTime;
 
 describe("api.util.LocalDateTime", () => {
 
-    var localDateTime;
+    let localDateTime;
 
     describe("basic asserts", () => {
 
@@ -90,22 +90,22 @@ describe("api.util.LocalDateTime", () => {
     describe("comparison", () => {
 
         it("should correctly compare equal dates", () => {
-            var date1 = LocalDateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).build();
-            var date2 = LocalDateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).build();
+            let date1 = LocalDateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).build();
+            let date2 = LocalDateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).build();
 
             expect(date1.equals(date2)).toBeTruthy();
         });
 
         it("should correctly compare unequal dates", () => {
-            var date1 = LocalDateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).build();
-            var date2 = LocalDateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(1).build();
+            let date1 = LocalDateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).build();
+            let date2 = LocalDateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(1).build();
 
             expect(date1.equals(date2)).toBeFalsy();
         });
 
         it("should correctly compare equal dates with different fraction part", () => {
-            var date1 = LocalDateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(37).build();
-            var date2 = LocalDateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(37).setFractions(
+            let date1 = LocalDateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(37).build();
+            let date2 = LocalDateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(37).setFractions(
                 0).build();
 
             expect(date1.equals(date2)).toBeTruthy();
@@ -163,24 +163,24 @@ describe("api.util.LocalDateTime", () => {
         });
 
         it("should parse full datetime in correct format", () => {
-            var parsedDate = LocalDateTime.fromString("2015-03-25T12:05:37.009");
-            var originalDate = LocalDateTime.create().setYear(2015).setMonth(2).setDay(25).setHours(12).setMinutes(5).setSeconds(
+            let parsedDate = LocalDateTime.fromString("2015-03-25T12:05:37.009");
+            let originalDate = LocalDateTime.create().setYear(2015).setMonth(2).setDay(25).setHours(12).setMinutes(5).setSeconds(
                 37).setFractions(9).build();
 
             expect(originalDate.equals(parsedDate)).toBeTruthy();
         });
 
         it("should parse datetime without fractions", () => {
-            var parsedDate = LocalDateTime.fromString("2015-03-25T12:05:37");
-            var originalDate = LocalDateTime.create().setYear(2015).setMonth(2).setDay(25).setHours(12).setMinutes(5).setSeconds(
+            let parsedDate = LocalDateTime.fromString("2015-03-25T12:05:37");
+            let originalDate = LocalDateTime.create().setYear(2015).setMonth(2).setDay(25).setHours(12).setMinutes(5).setSeconds(
                 37).build();
 
             expect(originalDate.equals(parsedDate)).toBeTruthy();
         });
 
         it("should parse datetime without seconds and fractions", () => {
-            var parsedDate = LocalDateTime.fromString("2015-03-25T12:05");
-            var originalDate = LocalDateTime.create().setYear(2015).setMonth(2).setDay(25).setHours(12).setMinutes(5).build();
+            let parsedDate = LocalDateTime.fromString("2015-03-25T12:05");
+            let originalDate = LocalDateTime.create().setYear(2015).setMonth(2).setDay(25).setHours(12).setMinutes(5).build();
 
             expect(originalDate.equals(parsedDate)).toBeTruthy();
         });

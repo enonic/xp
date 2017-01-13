@@ -1,4 +1,4 @@
-module api.app.bar{
+module api.app.bar {
 
     export class AppBarTabMenuButton extends api.ui.tab.TabMenuButton {
 

@@ -93,8 +93,7 @@ module api.form {
                             this.previousValidationRecording = event.getRecording();
                             this.notifyValidityChanged(new FormValidityChangedEvent(this.previousValidationRecording,
                                 event.isInputValueBroken()));
-                        }
-                        else {
+                        } else {
                             if (event.isValid()) {
                                 this.previousValidationRecording.removeByPath(event.getOrigin(), false, event.isIncludeChildren());
                             } else {

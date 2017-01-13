@@ -192,8 +192,7 @@ module api.content {
 
             if (type.isSite()) {
                 return new site.SiteBuilder().fromContentJson(json).build();
-            }
-            else if (type.isPageTemplate()) {
+            } else if (type.isPageTemplate()) {
                 return new page.PageTemplateBuilder().fromContentJson(json).build();
             }
             return new ContentBuilder().fromContentJson(json).build();

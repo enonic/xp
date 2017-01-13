@@ -39,7 +39,7 @@ module api.ui.panel {
             return this.panels[index];
         }
 
-        getPanels(): Panel[]{
+        getPanels(): Panel[] {
             return this.panels;
         }
 
@@ -91,8 +91,7 @@ module api.ui.panel {
 
             if (this.isEmpty()) {
                 this.panelShown = null;
-            }
-            else if (panelToRemove == this.getPanelShown()) {
+            } else if (panelToRemove == this.getPanelShown()) {
                 // show either panel that has the same index now or the last panel
                 this.showPanelByIndex(Math.min(index, this.getSize() - 1));
             }

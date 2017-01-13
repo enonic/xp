@@ -19,15 +19,12 @@ export class PageTemplateOptionViewer extends api.ui.NamesAndIconViewer<PageTemp
         if (!!object.getPageTemplate()) {
             if (object.isCustom()) {
                 return "Set up your own page";
-            }
-            else {
+            } else {
                 return object.getPageTemplate().getPath().toString();
             }
-        }
-        else if (!!object.getPageModel().getDefaultPageTemplate()) {
+        } else if (!!object.getPageModel().getDefaultPageTemplate()) {
             return "(" + object.getPageModel().getDefaultPageTemplate().getDisplayName().toString() + ")";
-        }
-        else {
+        } else {
             return "( no default template found )";
         }
     }

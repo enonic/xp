@@ -35,11 +35,9 @@ module api.data {
         private convertFromString(value: string): boolean {
             if (value == "true") {
                 return true;
-            }
-            else if (value == "false") {
+            } else if (value == "false") {
                 return false;
-            }
-            else {
+            } else {
                 throw new Error("given string cannot be converted to a Boolean Value: " + value);
             }
         }

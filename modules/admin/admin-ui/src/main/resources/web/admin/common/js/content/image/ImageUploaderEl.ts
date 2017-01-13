@@ -95,8 +95,7 @@ module api.content.image {
 
             if (metaData && api.data.ValueTypes.DATA.equals(metaData.getType())) {
                 return parseInt(metaData.getPropertySet().getProperty(propertyName).getString(), 10);
-            }
-            else {
+            } else {
                 let allExtraData = content.getAllExtraData();
                 allExtraData.forEach((extraData: ExtraData) => {
                     if (!value && extraData.getData().getProperty(propertyName)) {

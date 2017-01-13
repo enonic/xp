@@ -14,5 +14,4 @@ describe("api.NamePrettyfier", () => {
         });
 
     });
-
 });

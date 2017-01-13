@@ -619,8 +619,7 @@ module api.ui.selector.combobox {
 
             if (giveInputFocus) {
                 this.input.openForTypingAndFocus();
-            }
-            else {
+            } else {
                 this.input.openForTyping();
             }
 
@@ -636,8 +635,7 @@ module api.ui.selector.combobox {
                 return this.selectedOptionsView.getSelectedOptions().map((selectedOption: SelectedOption<OPTION_DISPLAY_VALUE>) => {
                     return selectedOption.getOption();
                 });
-            }
-            else {
+            } else {
                 throw new Error("Not supported yet");
             }
         }
@@ -658,8 +656,7 @@ module api.ui.selector.combobox {
         countSelectedOptions(): number {
             if (this.selectedOptionsView) {
                 return this.selectedOptionsView.count();
-            }
-            else {
+            } else {
                 throw new Error("Not supported yet");
             }
         }

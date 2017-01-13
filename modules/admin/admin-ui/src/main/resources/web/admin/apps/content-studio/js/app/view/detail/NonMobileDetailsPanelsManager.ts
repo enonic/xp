@@ -44,8 +44,7 @@ export class NonMobileDetailsPanelsManager {
                 this.doPanelAnimation();
             } else if (!this.splitPanelWithGridAndDetails.isSecondPanelHidden()) {
                 this.dockedDetailsPanel.notifyPanelSizeChanged();
-            }
-            else if (this.isFloatingDetailsPanelActive()) {
+            } else if (this.isFloatingDetailsPanelActive()) {
                 this.floatingDetailsPanel.notifyPanelSizeChanged();
             }
             setTimeout(() => {

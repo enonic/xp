@@ -160,8 +160,7 @@ export class WidgetView extends api.dom.DivEl {
     slideIn() {
         if (this.hasDynamicHeight()) {
             this.redoLayout();
-        }
-        else {
+        } else {
             this.getEl().setMaxHeightPx(this.getParentElement().getEl().getHeight());
         }
 

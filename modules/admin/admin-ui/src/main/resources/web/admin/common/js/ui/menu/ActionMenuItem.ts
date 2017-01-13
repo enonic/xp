@@ -14,8 +14,7 @@ module api.ui.menu {
             this.action.onPropertyChanged(() => {
                 if (this.action.isEnabled()) {
                     this.show();
-                }
-                else if (!this.action.isEnabled()) {
+                } else if (!this.action.isEnabled()) {
                     this.hide();
                 }
             });

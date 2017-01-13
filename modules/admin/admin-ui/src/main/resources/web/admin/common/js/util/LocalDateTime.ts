@@ -102,7 +102,7 @@ module api.util {
         private padNumber(num: number, length: number = 2): string {
             let numAsString = String(num);
 
-            while (numAsString.length < length){
+            while (numAsString.length < length) {
                 numAsString = "0" + numAsString;
             }
 

@@ -278,8 +278,7 @@ module api.ui.tags {
         giveFocus(): boolean {
             if (this.isMaxTagsReached()) {
                 return this.tags[0].giveFocus();
-            }
-            else {
+            } else {
                 // restore input width to default
                 this.textInput.getEl().setWidth('');
                 return this.textInput.giveFocus();

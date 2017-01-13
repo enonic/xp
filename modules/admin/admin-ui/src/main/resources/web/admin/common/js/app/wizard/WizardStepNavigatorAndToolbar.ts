@@ -114,8 +114,7 @@ module api.app.wizard {
                     if (index == selectedTabIndex) {
                         this.foldButton.setLabel(tab.getLabel());
                     }
-                }
-                else {
+                } else {
                     tab.setLabel(tab.getLabel().replace(strIndex, ""));
                 }
             });

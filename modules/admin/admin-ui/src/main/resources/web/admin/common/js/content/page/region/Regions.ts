@@ -88,8 +88,7 @@ module api.content.page.region {
 
             if (path.numberOfLevels() == 1) {
                 return component;
-            }
-            else {
+            } else {
                 if (!api.ObjectHelper.iFrameSafeInstanceOf(component, LayoutComponent)) {
                     throw new Error("Expected component to be a LayoutComponent: " + api.ClassHelper.getClassName(component));
                 }

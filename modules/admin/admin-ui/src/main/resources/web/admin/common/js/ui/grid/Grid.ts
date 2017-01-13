@@ -93,13 +93,11 @@ module api.ui.grid {
             if (this.isVisible()) {
                 if (this.loadMask) {
                     this.loadMask.show();
-                }
-                else { //lazy mask init
+                } else { //lazy mask init
                     if (this.getParentElement()) {
                         this.createLoadMask();
                         this.loadMask.show();
-                    }
-                    else {
+                    } else {
                         this.onAdded(() => {
                             this.createLoadMask();
                         });

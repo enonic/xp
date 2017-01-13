@@ -130,11 +130,9 @@ export class ContentWizardDataLoader {
                 contentType: contentType,
                 applications: site.getApplicationKeys()
             });
-        }
-        else if (contentType.isSite()) {
+        } else if (contentType.isSite()) {
             return wemQ<DefaultModels>(new DefaultModels(null, null));
-        }
-        else {
+        } else {
             return wemQ<DefaultModels>(null);
         }
     }

@@ -459,8 +459,7 @@ module api.ui.treegrid {
                     this.initData(this.root.getCurrentRoot().treeToList());
                     if (needToCheckFetchedChildren) {
                         this.select(fetchedChildren);
-                    }
-                    else {
+                    } else {
                         this.triggerSelectionChangedListeners();
                     }
                 }).catch((reason: any) => {
@@ -708,8 +707,7 @@ module api.ui.treegrid {
                 this.errorPanel.setError(message || reason);
                 this.grid.hide();
                 this.errorPanel.show();
-            }
-            else {
+            } else {
                 api.DefaultErrorHandler.handle(reason);
             }
         }

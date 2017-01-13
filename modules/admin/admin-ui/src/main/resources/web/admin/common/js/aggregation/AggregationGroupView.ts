@@ -119,8 +119,7 @@ module api.aggregation {
 
                 if (existingAggregationView == null) {
                     this.addAggregationView(api.aggregation.AggregationView.createAggregationView(aggregation, this));
-                }
-                else {
+                } else {
                     if (api.ObjectHelper.iFrameSafeInstanceOf(existingAggregationView, BucketAggregationView)) {
 
                         let bucketAggregationView: BucketAggregationView = <BucketAggregationView>existingAggregationView;

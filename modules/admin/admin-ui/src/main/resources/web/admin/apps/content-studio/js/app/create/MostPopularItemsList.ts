@@ -68,8 +68,7 @@ export class MostPopularItemsList extends NewContentDialogList {
                 if (content.getModifiedTime() > existingContent.lastModified) {
                     existingContent.lastModified = content.getModifiedTime();
                 }
-            }
-            else {
+            } else {
                 aggregatedList.push({contentType: contentType, count: 1, lastModified: content.getModifiedTime()});
             }
         });

@@ -25,8 +25,7 @@ module api.content.page {
             let cached = this.cache.getByApplication(this.applicationKey);
             if (cached) {
                 return wemQ(cached);
-            }
-            else {
+            } else {
                 return this.send().then((response: api.rest.JsonResponse<PageDescriptorsJson>) => {
                     return this.fromJsonToPageDescriptors(response.getResult());
                 });

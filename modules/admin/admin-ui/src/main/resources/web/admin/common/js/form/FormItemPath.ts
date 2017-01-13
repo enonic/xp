@@ -1,4 +1,4 @@
-module api.form{
+module api.form {
 
     export class FormItemPath {
 
@@ -54,8 +54,7 @@ module api.form{
             elements.forEach((element:FormItemPathElement, index:number) => {
                 if (element == null) {
                     throw new Error("Path element was null at index: " + index);
-                }
-                else if (element.getName().length == 0) {
+                } else if (element.getName().length == 0) {
                     throw new Error("Path element was empty string at index: " + index);
                 }
             });

@@ -29,8 +29,7 @@ module api.form {
                 if (this.dataName) {
                     s += "." + this.dataName;
                 }
-            }
-            else {
+            } else {
                 if (this.dataName) {
                     s += this.dataName;
                 }

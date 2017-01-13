@@ -50,11 +50,9 @@ export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
 
             if (this.pageModel.isCustomized()) {
                 this.selectRow(options.length);
-            }
-            else if (this.pageModel.hasTemplate()) {
+            } else if (this.pageModel.hasTemplate()) {
                 this.selectTemplate(this.pageModel.getTemplateKey());
-            }
-            else {
+            } else {
                 this.selectOption(pageTemplateOptions.getDefault(), true);
             }
 
@@ -62,8 +60,7 @@ export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
                 let selectedOption = event.getOption().displayValue;
                 if (selectedOption.getPageTemplate() && selectedOption.isCustom()) {
                     this.notifyCustomizedSelected();
-                }
-                else {
+                } else {
                     this.notifySelection(selectedOption.getPageTemplate());
                 }
             });
@@ -76,8 +73,7 @@ export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
                     } else {
                         this.selectOption(pageTemplateOptions.getDefault(), true);
                     }
-                }
-                else if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && event.getNewValue()) {
+                } else if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && event.getNewValue()) {
                     this.selectCustomized();
                 }
             });

@@ -285,8 +285,7 @@ module api.util.htmlarea.dialog {
         private getCaption(): string {
             if (this.imageElement) {
                 return wemjq(this.imageElement.parentElement).children("figcaption").text();
-            }
-            else {
+            } else {
                 return api.util.StringHelper.EMPTY_STRING;
             }
         }
@@ -294,8 +293,7 @@ module api.util.htmlarea.dialog {
         private getAltText(): string {
             if (this.imageElement) {
                 return this.imageElement.alt;
-            }
-            else {
+            } else {
                 return api.util.StringHelper.EMPTY_STRING;
             }
         }
@@ -438,8 +436,7 @@ module api.util.htmlarea.dialog {
         private isImageWiderThanEditor() {
             if (!!this.getEditor()["editorContainer"]) {
                 return (this.image.getHTMLElement()["width"] > this.getEditor()["editorContainer"].clientWidth);
-            }
-            else if (!!this.getEditor() && this.getEditor()["inline"] === true) {
+            } else if (!!this.getEditor() && this.getEditor()["inline"] === true) {
                 return (this.image.getHTMLElement()["width"] > this.getEditor()["bodyElement"].clientWidth);
             }
             return true;
@@ -651,8 +648,7 @@ module api.util.htmlarea.dialog {
                 let imageCroppingOption: ImageCroppingOption = this.imageCroppingSelector.getSelectedOption().displayValue;
                 newSrc = newSrc + "?scale=" + imageCroppingOption.getProportionString() +
                          (keepOriginalSizeChecked ? "" : "&size=640");
-            }
-            else {
+            } else {
                 newSrc = newSrc + (keepOriginalSizeChecked ? "?scaleWidth=true" : "?size=640&scaleWidth=true");
             }
 
@@ -669,8 +665,7 @@ module api.util.htmlarea.dialog {
                 let imageCroppingOption: ImageCroppingOption = this.imageCroppingSelector.getSelectedOption().displayValue;
                 newDataSrc = newDataSrc + "?scale=" + imageCroppingOption.getProportionString() +
                              (keepOriginalSizeChecked ? "&keepSize=true" : "&size=640");
-            }
-            else {
+            } else {
                 newDataSrc = newDataSrc + (keepOriginalSizeChecked ? "?keepSize=true" : "");
             }
 
@@ -798,15 +793,13 @@ module api.util.htmlarea.dialog {
         toggleScrollButtons() {
             if (this.isScrolledToBottom()) {
                 this.scrollDownButton.hide();
-            }
-            else {
+            } else {
                 this.scrollDownButton.show();
             }
 
             if (this.isScrolledToTop()) {
                 this.scrollUpButton.hide();
-            }
-            else {
+            } else {
                 this.scrollUpButton.show();
             }
         }

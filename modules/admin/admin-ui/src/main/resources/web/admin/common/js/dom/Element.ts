@@ -121,8 +121,7 @@ module api.dom {
                     this.children = sourceElement.children;
                     this.el = sourceElement.el;
                 }
-            }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(builder, ElementFromHelperBuilder)) {
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(builder, ElementFromHelperBuilder)) {
                 let fromHelperBuilder = <ElementFromHelperBuilder>builder;
 
                 this.el = fromHelperBuilder.helper;
@@ -132,24 +131,21 @@ module api.dom {
                 if (fromHelperBuilder.parentElement) {
                     this.parentElement = fromHelperBuilder.parentElement;
                 }
-            }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(builder, NewElementBuilder)) {
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(builder, NewElementBuilder)) {
                 let newElementBuilder = <NewElementBuilder>builder;
                 if (!newElementBuilder.tagName) {
                     throw new Error("tagName cannot be null");
                 }
                 if (newElementBuilder.helper) {
                     this.el = newElementBuilder.helper;
-                }
-                else {
+                } else {
                     this.el = ElementHelper.fromName(newElementBuilder.tagName);
                 }
 
                 if (newElementBuilder.parentElement) {
                     this.parentElement = newElementBuilder.parentElement;
                 }
-            }
-            else {
+            } else {
                 throw new Error("Unsupported builder: " + api.ClassHelper.getClassName(builder));
             }
 

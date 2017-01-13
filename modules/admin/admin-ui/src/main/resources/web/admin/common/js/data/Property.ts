@@ -141,8 +141,7 @@ module api.data {
         getPath(): PropertyPath {
             if (this.hasParentProperty()) {
                 return PropertyPath.fromParent(this.getParentProperty().getPath(), new PropertyPathElement(this.name, this.index));
-            }
-            else {
+            } else {
                 return PropertyPath.fromPathElement(new PropertyPathElement(this.name, this.index));
             }
         }
@@ -250,8 +249,7 @@ module api.data {
                 let destinationTree = destinationPropertyArray.getTree();
                 let copiedPropertySet = this.value.getPropertySet().copy(destinationTree);
                 value = new Value(copiedPropertySet, ValueTypes.DATA);
-            }
-            else {
+            } else {
                 value = this.value;
             }
 
