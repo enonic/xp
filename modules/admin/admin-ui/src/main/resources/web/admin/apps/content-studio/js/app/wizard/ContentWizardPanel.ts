@@ -220,6 +220,17 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             }
         });
 
+        var publishActionHandler = () => {
+            if (this.hasUnsavedChanges()) {
+                this.contentWizardStepForm.validate();
+                this.displayValidationErrors();
+            }
+        }
+
+        wizardActions.getPublishAction().onExecuted(publishActionHandler);
+        wizardActions.getUnpublishAction().onExecuted(publishActionHandler);
+        wizardActions.getPublishTreeAction().onExecuted(publishActionHandler);
+
         return wizardActions;
     }
 

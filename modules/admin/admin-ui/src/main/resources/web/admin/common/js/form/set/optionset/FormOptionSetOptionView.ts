@@ -47,6 +47,8 @@ module api.form {
             }
         }).bind(this);
 
+        private subscribedOnDeselect: boolean = false;
+
         constructor(config: FormOptionSetOptionViewConfig) {
             super(<FormItemViewConfig> {
                 className: "form-option-set-option-view",
@@ -166,20 +168,19 @@ module api.form {
         private makeSelectionRadioButton(): api.ui.RadioButton {
             var selectedProperty = this.getSelectedOptionsArray().get(0),
                 checked = !!selectedProperty && selectedProperty.getString() == this.getName(),
-                button = new api.ui.RadioButton(this.formOptionSetOption.getLabel(), "", this.getParent().getEl().getId(), checked),
-                subscribedOnDeselect = false;
+                button = new api.ui.RadioButton(this.formOptionSetOption.getLabel(), "", this.getParent().getEl().getId(), checked);
 
             button.onChange(() => {
                 var selectedProperty = this.getSelectedOptionsArray().get(0);
                 if (!selectedProperty) {
                     selectedProperty = this.getSelectedOptionsArray().set(0, new Value(this.getName(), new api.data.ValueTypeString()));
                     this.subscribeOnRadioDeselect(selectedProperty);
-                    subscribedOnDeselect = true;
+                    this.subscribedOnDeselect = true;
                 } else {
                     selectedProperty.setValue(new Value(this.getName(), new api.data.ValueTypeString()))
-                    if (!subscribedOnDeselect) {
+                    if (!this.subscribedOnDeselect) {
                         this.subscribeOnRadioDeselect(selectedProperty);
-                        subscribedOnDeselect = true;
+                        this.subscribedOnDeselect = true;
                     }
                 }
                 this.selectHandle(button.getFirstChild());
@@ -192,7 +193,7 @@ module api.form {
             });
             if (!!selectedProperty) {
                 this.subscribeOnRadioDeselect(selectedProperty);
-                subscribedOnDeselect = true;
+                this.subscribedOnDeselect = true;
             }
             return button;
         }
@@ -363,8 +364,11 @@ module api.form {
             return this.formItemLayer.update(propertyArray.getSet(0), unchangedOnly).then(() => {
                 if (!this.isRadioSelection()) {
                     this.subscribeCheckboxOnPropertyEvents();
-                } else if (this.getThisPropertyFromSelectedOptionsArray() == null) {
-                    wemjq(this.getHTMLElement()).find("input:radio").first().prop('checked', false);
+                } else {
+                    if (this.getThisPropertyFromSelectedOptionsArray() == null) {
+                        wemjq(this.getHTMLElement()).find("input:radio").first().prop('checked', false);
+                    }
+                    this.subscribedOnDeselect = false;
                 }
 
                 this.updateViewState();
