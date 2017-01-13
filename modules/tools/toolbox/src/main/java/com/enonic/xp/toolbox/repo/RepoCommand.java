@@ -1,5 +1,8 @@
 package com.enonic.xp.toolbox.repo;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.squareup.okhttp.Credentials;
 import com.squareup.okhttp.MediaType;
@@ -17,6 +20,8 @@ import com.enonic.xp.toolbox.util.JsonHelper;
 public abstract class RepoCommand
     extends ToolCommand
 {
+    private final static Logger LOG = LoggerFactory.getLogger( RepoCommand.class );
+
     private static final MediaType JSON = MediaType.parse( "application/json; charset=utf-8" );
 
     @Option(name = "-a", description = "Authentication token for basic authentication (user:password).", required = true)
@@ -70,8 +75,16 @@ public abstract class RepoCommand
         if ( !response.isSuccessful() )
         {
             final String responseBody = response.body().string();
-            final String prettified = JsonHelper.prettifyJson( responseBody );
-            throw new ResponseException( prettified, response.code() );
+            try
+            {
+                final String prettified = JsonHelper.prettifyJson( responseBody );
+                throw new ResponseException( prettified, response.code() );
+            }
+            catch ( Exception e )
+            {
+                LOG.error( "Failed to prettify response", e );
+                throw new ResponseException( responseBody, response.code() );
+            }
         }
 
         final String responseBody = response.body().string();
