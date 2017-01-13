@@ -7,6 +7,9 @@ module api.ui.selector.combobox {
     import DelayedFunctionCall = api.util.DelayedFunctionCall;
     import Button = api.ui.button.Button;
     import ElementHelper = api.dom.ElementHelper;
+    import IFrameEl = api.dom.IFrameEl;
+    import Body = api.dom.Body;
+    import WindowDOM = api.dom.WindowDOM;
 
     export interface ComboBoxConfig<T> {
 
@@ -215,15 +218,26 @@ module api.ui.selector.combobox {
         }
 
         private dropdownOverflowsBottom(): DropdownPosition {
+            // returns body, if passed element is an html in and iframe
+            const restrainToBody = (el: ElementHelper) => {
+                return el.getHTMLElement() === document.documentElement ? Body.get().getEl() : el;
+            };
+
+            const win = WindowDOM.get();
+
             const inputEl = this.input.getEl();
-            const parent = this.getScrollableParent(inputEl);
+            const parent = restrainToBody(this.getScrollableParent(inputEl));
             const dropdown = this.comboBoxDropdown.getDropdownGrid().getElement().getEl();
 
+            // If the page is in iframe page is not scrollable and fully rendered
+            // The height of the iframe should be used instead
+            const containerHeight = win.isInIFrame() ? new ElementHelper(win.getFrameElement()).getHeight() : parent.getHeight();
+
             // distance is measured from the top of the viewport
-            const distanceToParentsTop = parent.getOffsetTop();
+            const distanceToParentsTop = win.isInIFrame() ? parent.getScrollTop() : parent.getOffsetTop();
             const distanceToInputsTop = inputEl.getOffsetTop();
 
-            const distanceToParentsBottom = distanceToParentsTop + parent.getHeight();
+            const distanceToParentsBottom = distanceToParentsTop + containerHeight;
             const distanceToInputsBottom = distanceToInputsTop + inputEl.getHeight();
 
             const sizeAboveInput = distanceToInputsTop - distanceToParentsTop;
