@@ -113,7 +113,6 @@ function initToolTip() {
 }
 
 function updateTabTitle(title: string) {
-    console.log('Updating title at ' + new Date().toLocaleTimeString(), title);
     wemjq('title').html(`${title} / Content Studio`);
 }
 
@@ -138,7 +137,6 @@ function clearFavicon() {
 }
 
 function updateFavicon(content: Content, iconUrlResolver: ContentIconUrlResolver) {
-    console.log('Updating favicon at ' + new Date().toLocaleTimeString(), content);
     let resolver = iconUrlResolver.setContent(content).setCrop(false);
     let shouldUpdate = shouldUpdateFavicon(content.getType());
     for (var href in faviconCache) {
@@ -240,7 +238,6 @@ function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDe
     let wizard = new ContentWizardPanel(wizardParams);
 
     wizard.onDataLoaded(content => {
-        console.log('Wizard data loaded at ' + new Date().toLocaleTimeString(), content);
         let contentType = (<ContentWizardPanel>wizard).getContentType();
         if (!wizardParams.contentId || !dataPreloaded) {
             // update favicon for new wizard after content has been created or in case data hasn't been preloaded
