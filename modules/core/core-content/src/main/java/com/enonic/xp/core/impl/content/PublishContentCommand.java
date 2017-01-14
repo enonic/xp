@@ -219,7 +219,6 @@ public class PublishContentCommand
         private ContentIds excludedContentIds;
 
         private ContentIds excludeChildrenIds;
-        //  private boolean includeChildren = true;
 
         private Branch target;
 

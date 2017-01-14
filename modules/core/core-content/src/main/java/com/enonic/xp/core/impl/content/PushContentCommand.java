@@ -219,8 +219,6 @@ public class PushContentCommand
 
         private ContentIds excludeChildrenIds;
 
-//        private boolean includeChildren = true;
-
         private Branch target;
 
         private boolean includeDependencies = true;
