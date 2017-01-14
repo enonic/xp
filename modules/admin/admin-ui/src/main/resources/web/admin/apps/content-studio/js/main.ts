@@ -30,6 +30,8 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
 import ImgEl = api.dom.ImgEl;
 import LostConnectionDetector = api.system.LostConnectionDetector;
+import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
+import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
 
 declare var CONFIG;
 
@@ -121,6 +123,10 @@ function shouldUpdateFavicon(contentTypeName: ContentTypeName): boolean {
 
 let faviconCache: {[url: string]: Element} = {};
 
+let iconUrlResolver = new ContentIconUrlResolver();
+
+let dataPreloaded: boolean;
+
 function clearFavicon() {
     // save current favicon hrefs
     wemjq('link[rel*=icon][sizes]').each((index, link) => {
@@ -157,6 +163,23 @@ function preLoadApplication() {
     let wizardParams = ContentWizardPanelParams.fromApp(application);
     if (wizardParams) {
         clearFavicon();
+
+        let body = api.dom.Body.get();
+        if (!body.isRendered() && !body.isRendering()) {
+            dataPreloaded = true;
+            // body is not rendered if the tab is in background
+            if (wizardParams.contentId) {
+                new GetContentByIdRequest(wizardParams.contentId).sendAndParse().then((content) => {
+                    updateFavicon(content, iconUrlResolver);
+                    updateTabTitle(content.getDisplayName());
+
+                })
+            } else {
+                new GetContentTypeByNameRequest(wizardParams.contentTypeName).sendAndParse().then((contentType) => {
+                    updateTabTitle(api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName()));
+                })
+            }
+        }
     }
 }
 
@@ -213,12 +236,16 @@ function startApplication() {
 
 function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDetector: LostConnectionDetector) {
     let wizard = new ContentWizardPanel(wizardParams);
-    let iconUrlResolver = new ContentIconUrlResolver();
 
     wizard.onDataLoaded(content => {
         let contentType = (<ContentWizardPanel>wizard).getContentType();
-        updateTabTitle(content.getDisplayName() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName()));
-        updateFavicon(content, iconUrlResolver);
+        if (!wizardParams.contentId || !dataPreloaded) {
+            // update favicon for new wizard after content has been created or in case data hasn't been preloaded
+            updateFavicon(content, iconUrlResolver);
+        }
+        if (!dataPreloaded) {
+            updateTabTitle(content.getDisplayName() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName()));
+        }
     });
     wizard.onWizardHeaderCreated(() => {
         // header will be ready after rendering is complete
@@ -339,6 +366,13 @@ function startContentApplication(application: api.app.Application) {
 
 preLoadApplication();
 
-window.onload = function () {
+let body = api.dom.Body.get();
+let renderListener = () => {
     startApplication();
+    body.unRendered(renderListener);
 };
+if (body.isRendered()) {
+    renderListener();
+} else {
+    body.onRendered(renderListener);
+}
