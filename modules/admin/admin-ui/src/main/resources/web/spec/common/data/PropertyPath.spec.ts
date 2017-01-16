@@ -4,12 +4,14 @@ describe("api.data.PropertyPath", () => {
 
     it("doesn't accept null in first constructor argument", () => {
         expect(() => {
+            // tslint:disable-next-line:no-unused-new
             new PropertyPath([null]);
         }).toThrow();
     });
 
     it("doesn't accept PropertyPathElement's with empty name in first constructor argument", () => {
         expect(() => {
+            // tslint:disable-next-line:no-unused-new
             new PropertyPath([new PropertyPathElement('', 0)]);
         }).toThrow();
     });
@@ -42,14 +44,14 @@ describe("api.data.PropertyPath", () => {
     describe("test for PropertyPath.fromString() function", () => {
 
         it("applicationKey", () => {
-            var path = PropertyPath.fromString('applicationKey');
+            let path = PropertyPath.fromString('applicationKey');
 
             expect(path.elementCount()).toBe(1);
             expect(path.toString()).toBe('applicationKey');
         });
 
         it("checks if path is absolute and splits elements", () => {
-            var path = PropertyPath.fromString('.first.second');
+            let path = PropertyPath.fromString('.first.second');
 
             expect(path.isAbsolute()).toBeTruthy();
             expect(path.elementCount()).toBe(2);
@@ -60,14 +62,14 @@ describe("api.data.PropertyPath", () => {
         });
 
         it("removes empty elements", () => {
-            var path = PropertyPath.fromString('..first...second..');
+            let path = PropertyPath.fromString('..first...second..');
 
             expect(path.elementCount()).toBe(2);
             expect(path.toString()).toBe('.first.second');
         });
 
         it("sets index to 0 if not specified", () => {
-            var path = PropertyPath.fromString('first.second');
+            let path = PropertyPath.fromString('first.second');
             expect(path.getElement(0).getIndex()).toBe(0);
             expect(path.getElement(1).getIndex()).toBe(0);
         });
@@ -75,8 +77,8 @@ describe("api.data.PropertyPath", () => {
     });
 
     it(".fromParent() function", () => {
-        var parent = PropertyPath.fromString('.first'),
-            path = PropertyPath.fromParent(parent, PropertyPathElement.fromString('second'));
+        let parent = PropertyPath.fromString('.first');
+        let path = PropertyPath.fromParent(parent, PropertyPathElement.fromString('second'));
 
         expect(path.elementCount()).toBe(parent.elementCount() + 1);
         expect(path.isAbsolute()).toBe(parent.isAbsolute());
@@ -84,7 +86,7 @@ describe("api.data.PropertyPath", () => {
     });
 
     it(".fromPathElement() function", () => {
-        var path = PropertyPath.fromPathElement(PropertyPathElement.fromString('element'));
+        let path = PropertyPath.fromPathElement(PropertyPathElement.fromString('element'));
 
         expect(path.isAbsolute()).toBeTruthy();
         expect(path.elementCount()).toBe(1);
@@ -92,8 +94,8 @@ describe("api.data.PropertyPath", () => {
     });
 
     it(".removeFirstPathElement() method", () => {
-        var original = PropertyPath.fromString('.first.second'),
-            newPath = original.removeFirstPathElement();
+        let original = PropertyPath.fromString('.first.second');
+        let newPath = original.removeFirstPathElement();
 
         expect(newPath.elementCount()).toBe(original.elementCount() - 1);
         expect(newPath.toString()).toBe('.second');
@@ -102,13 +104,13 @@ describe("api.data.PropertyPath", () => {
     describe('tests for PropertyPath.getParentPath() method', () => {
 
         it("returns null for root path", () => {
-            var path = PropertyPath.fromString('.');
+            let path = PropertyPath.fromString('.');
 
             expect(path.getParentPath()).toBeNull();
         });
 
         it("returns path without last element", () => {
-            var path = PropertyPath.fromString('.first.second');
+            let path = PropertyPath.fromString('.first.second');
 
             expect(path.getParentPath().elementCount()).toBe(path.elementCount() - 1);
             expect(path.getParentPath().toString()).toBe('.first');
@@ -119,8 +121,8 @@ describe("api.data.PropertyPath", () => {
     describe("tests for PropertyPath.removeFirstPathElement() method", () => {
 
         it("returns new path without first element", () => {
-            var path = PropertyPath.fromString('.first.second'),
-                newPath = path.removeFirstPathElement();
+            let path = PropertyPath.fromString('.first.second');
+            let newPath = path.removeFirstPathElement();
 
             expect(newPath.isAbsolute()).toBe(path.isAbsolute());
             expect(newPath.elementCount()).toBe(path.elementCount() - 1);
@@ -128,14 +130,14 @@ describe("api.data.PropertyPath", () => {
         });
 
         it("throws an exception if path contains one or no elements", () => {
-            var path = PropertyPath.fromString('.first');
+            let path = PropertyPath.fromString('.first');
 
             expect(path.removeFirstPathElement).toThrow();
         });
 
         it("returns relative path if parent is relative", () => {
-            var path = PropertyPath.fromString('first.second'),
-                newPath = path.removeFirstPathElement();
+            let path = PropertyPath.fromString('first.second');
+            let newPath = path.removeFirstPathElement();
 
             expect(newPath.isAbsolute()).toBe(path.isAbsolute());
             expect(newPath.isAbsolute()).toBeFalsy();
@@ -158,7 +160,7 @@ describe("api.data.PropertyPathElement", () => {
     describe("tests for PropertyPathElement.fromString() function", () => {
 
         it("splits string to name and index", () => {
-            var element = PropertyPathElement.fromString('element[1]');
+            let element = PropertyPathElement.fromString('element[1]');
             expect(element.getName()).toBe('element');
             expect(element.getIndex()).toBe(1);
         });
@@ -167,5 +169,5 @@ describe("api.data.PropertyPathElement", () => {
             expect(PropertyPathElement.fromString('element').getIndex()).toBe(0);
         });
 
-    })
+    });
 });

@@ -90,13 +90,12 @@ module api.content.image {
         }
 
         private getSizeValue(content: api.content.Content, propertyName: string): number {
-            let value = 0,
-                metaData = content.getContentData().getProperty('metadata');
+            let value = 0;
+            let metaData = content.getContentData().getProperty('metadata');
 
             if (metaData && api.data.ValueTypes.DATA.equals(metaData.getType())) {
                 return parseInt(metaData.getPropertySet().getProperty(propertyName).getString(), 10);
-            }
-            else {
+            } else {
                 let allExtraData = content.getAllExtraData();
                 allExtraData.forEach((extraData: ExtraData) => {
                     if (!value && extraData.getData().getProperty(propertyName)) {
@@ -131,8 +130,8 @@ module api.content.image {
 
         private createImageEditor(value: string): ImageEditor {
 
-            let contentId = new api.content.ContentId(value),
-                imgUrl = this.resolveImageUrl(value);
+            let contentId = new api.content.ContentId(value);
+            let imgUrl = this.resolveImageUrl(value);
 
             this.togglePlaceholder(true);
 

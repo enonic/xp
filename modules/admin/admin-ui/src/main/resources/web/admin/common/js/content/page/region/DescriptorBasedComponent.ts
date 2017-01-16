@@ -88,9 +88,9 @@ module api.content.page.region {
         toComponentJson(): DescriptorBasedComponentJson {
 
             return <DescriptorBasedComponentJson>{
-                "name": this.getName() ? this.getName().toString() : null,
-                "descriptor": this.descriptor != null ? this.descriptor.toString() : null,
-                "config": this.config != null ? this.config.toJson() : null
+                name: this.getName() ? this.getName().toString() : null,
+                descriptor: this.descriptor != null ? this.descriptor.toString() : null,
+                config: this.config != null ? this.config.toJson() : null
             };
         }
 
@@ -133,8 +133,7 @@ module api.content.page.region {
             if (source) {
                 this.descriptor = source.getDescriptor();
                 this.config = source.getConfig() ? source.getConfig().copy() : null;
-            }
-            else {
+            } else {
                 this.config = new PropertyTree();
             }
         }
@@ -148,7 +147,6 @@ module api.content.page.region {
             this.config = value;
             return this;
         }
-
 
         public build(): DESCRIPTOR_BASED_COMPONENT {
             throw new Error("Must be implemented by inheritor");

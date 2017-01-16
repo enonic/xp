@@ -8,6 +8,4 @@ module api.query.filter {
 
     }
 
-
 }
-

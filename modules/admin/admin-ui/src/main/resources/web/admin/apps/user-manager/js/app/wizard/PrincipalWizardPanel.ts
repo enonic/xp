@@ -88,10 +88,10 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
     protected createWizardHeader(): WizardHeaderWithDisplayNameAndName {
         let wizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().build();
 
-        let existing = this.getPersistedItem(),
-            displayName = "",
-            name = "";
-        if (!!existing) {
+        let existing = this.getPersistedItem();
+        let displayName = "";
+        let name = "";
+        if (existing) {
             displayName = existing.getDisplayName();
             name = existing.getKey().getId();
 
@@ -201,8 +201,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
                 }
 
                 return wemQ<void>(null);
-            }
-            else {
+            } else {
                 return this.doLayoutPersistedItem(persistedPrincipal ? persistedPrincipal.clone() : null);
             }
 
@@ -219,7 +218,6 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
 
     postPersistNewItem(persistedPrincipal: Principal): wemQ.Promise<Principal> {
         Router.setHash("edit/" + persistedPrincipal.getKey());
-
 
         return wemQ(persistedPrincipal);
     }

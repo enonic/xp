@@ -65,10 +65,10 @@ module api.content.attachment {
 
         toJson(): api.content.attachment.AttachmentJson {
             return {
-                "name": this.getName().toString(),
-                "label": this.getLabel(),
-                "mimeType": this.getMimeType(),
-                "size": this.getSize()
+                name: this.getName().toString(),
+                label: this.getLabel(),
+                mimeType: this.getMimeType(),
+                size: this.getSize()
             };
         }
 
@@ -95,7 +95,6 @@ module api.content.attachment {
                 setMimeType(json.mimeType);
             return this;
         }
-
 
         public setName(value: AttachmentName): AttachmentBuilder {
             this.name = value;

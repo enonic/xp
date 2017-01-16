@@ -18,7 +18,6 @@ module api.content.page.region {
             throw new Error("Unexpected call");
         }
 
-
         sendAndParse(): wemQ.Promise<LayoutDescriptor[]> {
 
             const req = (applicationKey: ApplicationKey) => new GetLayoutDescriptorsByApplicationRequest(applicationKey).sendAndParse();

@@ -48,14 +48,11 @@ module api.notify {
             opts.autoHide = message.getAutoHide();
             if (message.getType() == Type.ERROR) {
                 opts.type = 'error';
-            }
-            else if (message.getType() == Type.WARNING) {
+            } else if (message.getType() == Type.WARNING) {
                 opts.type = 'warning';
-            }
-            else if (message.getType() == Type.ACTION) {
+            } else if (message.getType() == Type.ACTION) {
                 opts.type = 'action';
-            }
-            else if (message.getType() == Type.SUCCESS) {
+            } else if (message.getType() == Type.SUCCESS) {
                 opts.type = 'success';
             }
 

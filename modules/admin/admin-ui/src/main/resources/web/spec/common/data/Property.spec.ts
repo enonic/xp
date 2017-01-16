@@ -12,7 +12,10 @@ import ValueTypeBinaryReference = api.data.ValueTypeBinaryReference;
 
 describe("api.data.Property", () => {
 
-    let builder: PropertyBuilder, propertyArray: PropertyArray, tree: PropertyTree, value: Value;
+    let builder: PropertyBuilder;
+    let propertyArray: PropertyArray;
+    let tree: PropertyTree;
+    let value: Value;
 
     beforeEach(() => {
         builder = Property.create();
@@ -47,14 +50,14 @@ describe("api.data.Property", () => {
         it("throws an exception if index is null", () => {
             builder.setArray(propertyArray).setName("name");
             expect(() => {
-                builder.build()
+                builder.build();
             }).toThrowError("index of a Property cannot be null");
         });
 
         it("throws an exception if value is null", () => {
             builder.setArray(propertyArray).setName("name").setIndex(0);
             expect(() => {
-                builder.build()
+                builder.build();
             }).toThrowError("value of a Property cannot be null");
         });
 
@@ -71,7 +74,6 @@ describe("api.data.Property", () => {
             property = Property.create().setArray(propertyArray).setName("name").setIndex(0).setValue(value).build();
             propertyArray.addProperty(property);
         });
-
 
         describe("getName()", () => {
 
@@ -197,8 +199,8 @@ describe("api.data.Property", () => {
             it("value changed successfully", () => {
                 listenerSpy = spyOn(property, "notifyPropertyValueChangedEvent");
 
-                let newValue = new ValueTypeString().newValue("newValue"),
-                    oldValue = property.getValue();
+                let newValue = new ValueTypeString().newValue("newValue");
+                let oldValue = property.getValue();
 
                 property.setValue(newValue);
 
@@ -206,7 +208,8 @@ describe("api.data.Property", () => {
             });
 
             describe("property set handling", () => {
-                let propertySet: PropertySet, propertySetSpy;
+                let propertySet: PropertySet;
+                let propertySetSpy;
 
                 beforeEach(() => {
                     propertySet = new PropertySet();
@@ -260,9 +263,8 @@ describe("api.data.Property", () => {
             });
 
             it("reset property set to initial value", () => {
-                let propertySet = new PropertySet(),
-                    propertySetSpy = spyOn(propertySet, "reset");
-                ;
+                let propertySet = new PropertySet();
+                let propertySetSpy = spyOn(propertySet, "reset");
 
                 property.setValue(new Value(propertySet, ValueTypes.DATA));
 
@@ -343,7 +345,7 @@ describe("api.data.Property", () => {
             it("String to String is valid", () => {
                 property.setValue(new Value("newValue", ValueTypes.STRING));
                 expect(property.getString()).toBe("newValue");
-            })
+            });
         });
 
         describe("getPropertySet()", () => {
@@ -351,9 +353,8 @@ describe("api.data.Property", () => {
                 let propertySet = new PropertySet();
                 property.setValue(new Value(propertySet, ValueTypes.DATA));
                 expect(property.getPropertySet()).toBe(propertySet);
-            })
+            });
         });
-
 
         describe("getLong()", () => {
             it("String to Long is valid", () => {
@@ -402,7 +403,6 @@ describe("api.data.Property", () => {
                 expect(property.getDateTime().timeToString()).toBe("19:20:00");
             });
         });
-
 
         describe("getLocalDateTime()", () => {
             it("LocalDateTime to LocalDateTime is valid", () => {

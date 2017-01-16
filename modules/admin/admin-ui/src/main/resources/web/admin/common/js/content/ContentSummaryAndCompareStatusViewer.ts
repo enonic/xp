@@ -7,8 +7,8 @@ module api.content {
         }
 
         resolveDisplayName(object: ContentSummaryAndCompareStatus): string {
-            let contentSummary = object.getContentSummary(),
-                uploadItem = object.getUploadItem();
+            let contentSummary = object.getContentSummary();
+            let uploadItem = object.getUploadItem();
 
             if (contentSummary) {
                 return contentSummary.getDisplayName();
@@ -25,13 +25,13 @@ module api.content {
         }
 
         resolveSubName(object: ContentSummaryAndCompareStatus, relativePath: boolean = false): string {
-            let contentSummary = object.getContentSummary(),
-                uploadItem = object.getUploadItem();
+            let contentSummary = object.getContentSummary();
+            let uploadItem = object.getUploadItem();
 
             if (contentSummary) {
-                let contentName = contentSummary.getName(),
-                    invalid = !contentSummary.isValid() || !contentSummary.getDisplayName() || contentName.isUnnamed(),
-                    pendingDelete = contentSummary.getContentState().isPendingDelete();
+                let contentName = contentSummary.getName();
+                let invalid = !contentSummary.isValid() || !contentSummary.getDisplayName() || contentName.isUnnamed();
+                let pendingDelete = contentSummary.getContentState().isPendingDelete();
                 this.toggleClass("invalid", invalid);
                 this.toggleClass("pending-delete", pendingDelete);
 

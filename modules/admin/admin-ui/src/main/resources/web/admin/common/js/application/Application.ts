@@ -233,8 +233,7 @@ module api.application {
                 this.minSystemVersion = source.getMinSystemVersion();
                 this.maxSystemVersion = source.getMaxSystemVersion();
                 this.iconUrl = source.getIconUrl();
-            }
-            else {
+            } else {
                 this.applicationDependencies = [];
                 this.contentTypeDependencies = [];
             }

@@ -4,7 +4,6 @@ module api.content.resource {
 
         private resourcePath: api.rest.Path;
 
-
         constructor() {
             super();
             this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "widget");

@@ -102,8 +102,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
         if (valueOn) {
             this.enableDeleteIfAllowed(content);
-        }
-        else {
+        } else {
             this.delete.setEnabled(true);
             this.enableActionsForExistingByPermissions(content);
         }

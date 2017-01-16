@@ -13,7 +13,7 @@ module api.locale {
 
         getParams(): Object {
             return {
-                "query": this.searchQuery
+                query: this.searchQuery
             };
         }
 

@@ -2,17 +2,14 @@ import ClassHelper = api.ClassHelper;
 
 describe("api.ClassHelper", function () {
 
-
     describe("tests for api.ClassHelper.getFunctionName() function", function () {
 
         it("returns function name as string", function () {
-            expect(ClassHelper.getFunctionName(function namedFunction() {
-            })).toBe('namedFunction');
+            expect(ClassHelper.getFunctionName(function namedFunction() { /* empty */ })).toBe('namedFunction');
         });
 
         it("returns empty string for anonymous function", function () {
-            expect(ClassHelper.getFunctionName(function () {
-            })).toBe('');
+            expect(ClassHelper.getFunctionName(function () { /* empty */ })).toBe('');
         });
 
     });
@@ -20,13 +17,12 @@ describe("api.ClassHelper", function () {
     describe("tests for api.ClassHelper.getClassName() function", function () {
 
         it("returns class name for object", function () {
-            var instance = new api.dom.ElementHelper(document.body);
+            let instance = new api.dom.ElementHelper(document.body);
             expect(ClassHelper.getClassName(instance)).toBe("ElementHelper");
         });
 
         it("should return instance['constructor']['name']", function () {
-            expect(ClassHelper.getClassName(new function Some() {
-            })).toBe("Some");
+            expect(ClassHelper.getClassName(new (function Some() { /* empty */ })())).toBe("Some");
             expect(ClassHelper.getClassName({})).toBe("Object");
         });
 
@@ -35,7 +31,7 @@ describe("api.ClassHelper", function () {
     describe("tests for api.ClassHelper.getModuleName() function", function () {
 
         it("returns full module path for class which given object is instance of", function () {
-            var instance = new api.dom.ElementHelper(document.body);
+            let instance = new api.dom.ElementHelper(document.body);
             expect(ClassHelper.getModuleName(instance)).toBe("api.dom");
         });
 
@@ -52,7 +48,7 @@ describe("api.ClassHelper", function () {
     describe("tests for api.ClassHelper.getFullName() function", function () {
 
         it("returns full name for class which given object is instance of", function () {
-            var instance = new api.dom.ElementHelper(document.body);
+            let instance = new api.dom.ElementHelper(document.body);
             expect(ClassHelper.getFullName(instance)).toBe("api.dom.ElementHelper");
         });
 
@@ -66,12 +62,10 @@ describe("api.ClassHelper", function () {
 
         it("correctly resolves classes with equal names", function () {
             api['test_class1'] = {
-                Class1: function Class1() {
-                }
+                Class1: function Class1() { /* empty */ }
             };
             api['test_class2'] = {
-                Class1: function Class1() {
-                }
+                Class1: function Class1() { /* empty */ }
             };
             expect(ClassHelper.getFullName(api['test_class1'].Class1)).toBe('api.test_class1.Class1');
             expect(ClassHelper.getFullName(api['test_class2'].Class1)).toBe('api.test_class2.Class1');

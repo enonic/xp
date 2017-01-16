@@ -29,8 +29,8 @@ module api.security {
 
         toJson(): AuthConfigJson {
             return {
-                "applicationKey": this.applicationKey.toString(),
-                "config": this.config.toJson()
+                applicationKey: this.applicationKey.toString(),
+                config: this.config.toJson()
             };
         }
 
@@ -64,7 +64,6 @@ module api.security {
             this.config = config;
             return this;
         }
-
 
         fromJson(json: api.security.AuthConfigJson): AuthConfigBuilder {
             this.applicationKey = api.application.ApplicationKey.fromString(json.applicationKey);

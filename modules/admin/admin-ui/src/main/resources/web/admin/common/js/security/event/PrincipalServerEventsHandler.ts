@@ -34,7 +34,6 @@ module api.security.event {
             }
         }
 
-
         private principalServerEventHandler(event: PrincipalServerEvent) {
             if (PrincipalServerEventsHandler.debug) {
                 console.debug("PrincipalServerEventsHandler: received server event", event);

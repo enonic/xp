@@ -56,11 +56,9 @@ module api {
 
             if (!a && !b) {
                 return true;
-            }
-            else if (!a && b) {
+            } else if (!a && b) {
                 return false;
-            }
-            else if (a && !b) {
+            } else if (a && !b) {
                 return false;
             }
 
@@ -71,11 +69,9 @@ module api {
 
             if (!arrayA && !arrayB) {
                 return true;
-            }
-            else if (!arrayA && arrayB) {
+            } else if (!arrayA && arrayB) {
                 return false;
-            }
-            else if (arrayA && !arrayB) {
+            } else if (arrayA && !arrayB) {
                 return false;
             }
 
@@ -96,11 +92,9 @@ module api {
 
             if (!arrayA && !arrayB) {
                 return true;
-            }
-            else if (!arrayA && arrayB) {
+            } else if (!arrayA && arrayB) {
                 return false;
-            }
-            else if (arrayA && !arrayB) {
+            } else if (arrayA && !arrayB) {
                 return false;
             }
 
@@ -157,11 +151,9 @@ module api {
 
             if (!a && !b) {
                 return true;
-            }
-            else if (!a && b) {
+            } else if (!a && b) {
                 return false;
-            }
-            else if (a && !b) {
+            } else if (a && !b) {
                 return false;
             }
 
@@ -172,11 +164,9 @@ module api {
 
             if (!arrayA && !arrayB) {
                 return true;
-            }
-            else if (!arrayA && arrayB) {
+            } else if (!arrayA && arrayB) {
                 return false;
-            }
-            else if (arrayA && !arrayB) {
+            } else if (arrayA && !arrayB) {
                 return false;
             }
 
@@ -197,11 +187,9 @@ module api {
 
             if (!a && !b) {
                 return true;
-            }
-            else if (!a && b) {
+            } else if (!a && b) {
                 return false;
-            }
-            else if (a && !b) {
+            } else if (a && !b) {
                 return false;
             }
 
@@ -219,11 +207,9 @@ module api {
 
             if (!a && !b) {
                 return true;
-            }
-            else if (!a && b) {
+            } else if (!a && b) {
                 return false;
-            }
-            else if (a && !b) {
+            } else if (a && !b) {
                 return false;
             }
 
@@ -234,11 +220,9 @@ module api {
 
             if (!a && !b) {
                 return true;
-            }
-            else if (!a && b) {
+            } else if (!a && b) {
                 return false;
-            }
-            else if (a && !b) {
+            } else if (a && !b) {
                 return false;
             }
 
@@ -287,7 +271,6 @@ module api {
             }
             return false;
         }
-
 
         static objectPropertyIterator(object: any, callback: {(name: string, property: any, index?: number): void;}) {
 

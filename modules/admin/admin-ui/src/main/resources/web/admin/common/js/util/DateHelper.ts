@@ -7,9 +7,9 @@ module api.util {
         }
 
         public static getTZOffset(): number {
-            let jan = new Date(2016, 0, 1),
-                jul = new Date(2016, 6, 1),
-                absoluteOffsetInHrs = Math.min(Math.abs(jan.getTimezoneOffset() / 60), Math.abs(jul.getTimezoneOffset() / 60));
+            let jan = new Date(2016, 0, 1);
+            let jul = new Date(2016, 6, 1);
+            let absoluteOffsetInHrs = Math.min(Math.abs(jan.getTimezoneOffset() / 60), Math.abs(jul.getTimezoneOffset() / 60));
 
             return jan.getTimezoneOffset() > 0 ? absoluteOffsetInHrs * -1 : absoluteOffsetInHrs;
         }
@@ -26,12 +26,12 @@ module api.util {
          */
         public static makeDateFromUTCString(value: string): Date {
 
-            let parsedYear: number = Number(value.substring(0, 4)),
-                parsedMonth: number = Number(value.substring(5, 7)),
-                parsedDayOfMonth: number = Number(value.substring(8, 10)),
-                parsedHours: number = Number(value.substring(11, 13)),
-                parsedMinutes: number = Number(value.substring(14, 16)),
-                parsedSeconds: number = Number(value.substring(17, 19));
+            let parsedYear: number = Number(value.substring(0, 4));
+            let parsedMonth: number = Number(value.substring(5, 7));
+            let parsedDayOfMonth: number = Number(value.substring(8, 10));
+            let parsedHours: number = Number(value.substring(11, 13));
+            let parsedMinutes: number = Number(value.substring(14, 16));
+            let parsedSeconds: number = Number(value.substring(17, 19));
 
             return new Date(Date.UTC(parsedYear, parsedMonth - 1, parsedDayOfMonth, parsedHours, parsedMinutes, parsedSeconds));
         }
@@ -81,9 +81,9 @@ module api.util {
                 return null;
             }
 
-            let parsedYear: number = Number(parts[0]),
-                parsedMonth: number = Number(parts[1]),
-                parsedDayOfMonth: number = Number(parts[2]);
+            let parsedYear: number = Number(parts[0]);
+            let parsedMonth: number = Number(parts[1]);
+            let parsedDayOfMonth: number = Number(parts[2]);
 
             let date = new Date(parsedYear, parsedMonth - 1, parsedDayOfMonth);
             return date.getFullYear() === parsedYear && date.getMonth() === (parsedMonth - 1) && date.getDate() === parsedDayOfMonth

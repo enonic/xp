@@ -10,9 +10,7 @@ import CompareStatus = api.content.CompareStatus;
 import ContentId = api.content.ContentId;
 import ListBox = api.ui.selector.list.ListBox;
 
-
 export class ContentUnpublishDialog extends ProgressBarDialog {
-
 
     constructor() {
 

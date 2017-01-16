@@ -182,8 +182,7 @@ module api.form {
 
             if (inputtype.InputTypeManager.isRegistered(inputType.getName())) {
                 return inputtype.InputTypeManager.createView(inputType.getName(), inputTypeViewContext);
-            }
-            else {
+            } else {
                 console.warn("Input type [" + inputType.getName() + "] needs to be registered first.");
                 return inputtype.InputTypeManager.createView("NoInputTypeFound", inputTypeViewContext);
             }
@@ -230,9 +229,9 @@ module api.form {
         private handleInputValidationRecording(inputRecording: api.form.inputtype.InputValidationRecording,
                                                silent: boolean = true): ValidationRecording {
 
-            let recording = new ValidationRecording(),
-                validationRecordingPath = this.resolveValidationRecordingPath(),
-                hasValidInput = this.hasValidUserInput();
+            let recording = new ValidationRecording();
+            let validationRecordingPath = this.resolveValidationRecordingPath();
+            let hasValidInput = this.hasValidUserInput();
 
             if (inputRecording.isMinimumOccurrencesBreached()) {
                 recording.breaksMinimumOccurrences(validationRecordingPath);
@@ -294,8 +293,7 @@ module api.form {
             if (recording.isValid() && this.hasValidUserInput()) {
                 this.removeClass("invalid");
                 this.addClass("valid");
-            }
-            else {
+            } else {
                 this.removeClass("valid");
                 this.addClass("invalid");
             }

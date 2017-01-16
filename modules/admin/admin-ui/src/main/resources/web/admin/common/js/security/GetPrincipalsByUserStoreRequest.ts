@@ -15,8 +15,8 @@ module api.security {
 
         getParams(): Object {
             return {
-                'userStoreKey': this.userStore.getId(),
-                'types': this.getType()
+                userStoreKey: this.userStore.getId(),
+                types: this.getType()
 
             };
         }

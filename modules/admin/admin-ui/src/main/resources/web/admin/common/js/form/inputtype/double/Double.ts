@@ -29,8 +29,8 @@ module api.content.form.inputtype.double {
             inputEl.setName(this.getInput().getName() + "-" + property.getIndex());
 
             inputEl.onValueChanged((event: api.ValueChangedEvent) => {
-                let isValid = this.isValid(event.getNewValue()),
-                    value = isValid ? ValueTypes.DOUBLE.newValue(event.getNewValue()) : this.newInitialValue();
+                let isValid = this.isValid(event.getNewValue());
+                let value = isValid ? ValueTypes.DOUBLE.newValue(event.getNewValue()) : this.newInitialValue();
 
                 this.notifyOccurrenceValueChanged(inputEl, value);
                 inputEl.updateValidationStatusOnUserInput(isValid);

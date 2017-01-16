@@ -129,9 +129,9 @@ module api.security.acl {
 
         toJson(): api.security.acl.AccessControlEntryJson {
             return {
-                "principal": this.principal.toJson(),
-                "allow": this.allowedPermissions.map((perm) => Permission[perm]),
-                "deny": this.deniedPermissions.map((perm) => Permission[perm])
+                principal: this.principal.toJson(),
+                allow: this.allowedPermissions.map((perm) => Permission[perm]),
+                deny: this.deniedPermissions.map((perm) => Permission[perm])
             };
         }
 

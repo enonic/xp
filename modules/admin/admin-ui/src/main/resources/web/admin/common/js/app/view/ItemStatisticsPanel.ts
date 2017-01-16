@@ -17,7 +17,6 @@ module api.app.view {
             return this.header;
         }
 
-
         setItem(item: api.app.view.ViewItem<M>) {
             this.browseItem = item;
             this.header.setItem(item);

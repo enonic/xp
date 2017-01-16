@@ -1,9 +1,16 @@
 html {
-  height: 100%;
+  min-height: 100%;
+   //hack for browser bug, when child element does not inherit
+   //parents height, if it's set with min-height
+  height: 1px;
+
+  padding: 8px;
+  box-sizing: border-box;
 
   body {
     // for crosshair highlighter to be drawn properly when content is shorter than window
     min-height: 100%;
+    margin: 0;
 
     /*
     Disable pointer events for A elements

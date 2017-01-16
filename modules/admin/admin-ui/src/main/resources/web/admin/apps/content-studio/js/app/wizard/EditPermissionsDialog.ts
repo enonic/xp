@@ -228,8 +228,7 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
 
         if (this.comboBox.getComboBox().isVisible()) {
             this.comboBox.giveFocus();
-        }
-        else {
+        } else {
             this.inheritPermissionsCheck.giveFocus();
         }
     }

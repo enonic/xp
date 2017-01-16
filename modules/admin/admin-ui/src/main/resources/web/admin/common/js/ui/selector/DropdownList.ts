@@ -171,8 +171,7 @@ module api.ui.selector {
             if (selectedOption) {
                 let row = this.dropdownGrid.getRowByValue(selectedOption.value);
                 this.dropdownGrid.navigateToRow(row);
-            }
-            else {
+            } else {
                 this.dropdownGrid.navigateToFirstRow();
             }
         }

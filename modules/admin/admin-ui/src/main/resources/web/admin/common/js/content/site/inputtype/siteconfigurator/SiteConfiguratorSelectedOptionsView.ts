@@ -41,8 +41,8 @@ module api.content.site.inputtype.siteconfigurator {
 
         makeEmptyOption(id: string): Option<Application> {
 
-            let key = ApplicationKey.fromString(id),
-                emptyApp = new api.application.ApplicationBuilder();
+            let key = ApplicationKey.fromString(id);
+            let emptyApp = new api.application.ApplicationBuilder();
             emptyApp.applicationKey = key;
             emptyApp.displayName = id;
 

@@ -7,8 +7,8 @@ describe("api.data.PropertyTree", () => {
 
         it("when getRoot() then PropertySet is returned", () => {
 
-            var tree = new PropertyTree();
-            var root = tree.getRoot();
+            let tree = new PropertyTree();
+            let root = tree.getRoot();
             expect(root).not.toBeNull();
             expect(api.ObjectHelper.iFrameSafeInstanceOf(root, PropertySet)).toBeTruthy();
             expect(root.getTree()).toBe(tree);
@@ -20,8 +20,8 @@ describe("api.data.PropertyTree", () => {
     describe("when removeProperty", () => {
 
         it("given a PropertyTree with 3 properties removing one", () => {
-            var tree = new PropertyTree();
-            var mySet = tree.addPropertySet("mySet");
+            let tree = new PropertyTree();
+            let mySet = tree.addPropertySet("mySet");
             mySet.addStrings("myProp", ["1", "2"]);
             mySet.removeProperty("myProp", 1);
 
@@ -33,8 +33,8 @@ describe("api.data.PropertyTree", () => {
 
         it("adding Property to a sub set then PropertyEvent of type ADDED is received", (done) => {
 
-            var rootSet = new PropertyTree();
-            var subSet = rootSet.addPropertySet("mySet");
+            let rootSet = new PropertyTree();
+            let subSet = rootSet.addPropertySet("mySet");
 
             rootSet.onPropertyAdded((event) => {
                 expect(event.getType()).toBe(PropertyEventType.ADDED);
@@ -50,8 +50,8 @@ describe("api.data.PropertyTree", () => {
 
         it("changing Property in a sub set then PropertyEvent of type CHANGED is received", (done) => {
 
-            var rootSet = new PropertyTree();
-            var subSet = rootSet.addPropertySet("mySet");
+            let rootSet = new PropertyTree();
+            let subSet = rootSet.addPropertySet("mySet");
             subSet.addString("myProp", "myVal");
 
             rootSet.onPropertyValueChanged((event) => {
@@ -68,8 +68,8 @@ describe("api.data.PropertyTree", () => {
 
         it("removing Property in a sub set then PropertyEvent of type REMOVED is received", (done) => {
 
-            var rootSet = new PropertyTree();
-            var subSet = rootSet.addPropertySet("mySet");
+            let rootSet = new PropertyTree();
+            let subSet = rootSet.addPropertySet("mySet");
             subSet.addString("myProp", "myVal");
 
             rootSet.onPropertyRemoved((event) => {
@@ -78,7 +78,7 @@ describe("api.data.PropertyTree", () => {
                 expect(event.getProperty().getString()).toBe("myVal");
                 done();
             });
-            subSet.removeProperty("myProp", 0)
+            subSet.removeProperty("myProp", 0);
         });
     });
 });

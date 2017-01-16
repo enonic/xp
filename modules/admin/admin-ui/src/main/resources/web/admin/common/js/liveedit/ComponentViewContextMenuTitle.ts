@@ -21,7 +21,6 @@ module api.liveedit {
             this.onRemoved(() => component.unPropertyChanged(handler));
         }
 
-
     }
 
 }

@@ -117,8 +117,8 @@ module api.content.form.inputtype.image {
             let selectedOption: SelectedOption<ImageSelectorDisplayValue> = this.createSelectedOption(option);
             this.getSelectedOptions().push(selectedOption);
 
-            let optionView: ImageSelectorSelectedOptionView = <ImageSelectorSelectedOptionView>selectedOption.getOptionView(),
-                isMissingContent = option.displayValue.isEmptyContent();
+            let optionView: ImageSelectorSelectedOptionView = <ImageSelectorSelectedOptionView>selectedOption.getOptionView();
+            let isMissingContent = option.displayValue.isEmptyContent();
 
             optionView.onRendered(() => {
                 this.handleOptionViewRendered(selectedOption, optionView);
@@ -266,26 +266,30 @@ module api.content.form.inputtype.image {
             let checkbox = optionView.getCheckbox();
 
             switch (event.which) {
-            case 32: // Spacebar
-                checkbox.toggleChecked();
-                break;
-            case 8: // Backspace
-                checkbox.setChecked(false);
-                this.removeOptionViewAndRefocus(option);
-                event.preventDefault();
-                break;
-            case 46: // Delete
-                checkbox.setChecked(false);
-                this.removeOptionViewAndRefocus(option);
-                break;
-            case 13: // Enter
-                this.notifyEditSelectedOptions([option]);
-                break;
-            case 9: // tab
-                this.resetActiveOption();
-                break;
+                case 32: // Spacebar
+                    checkbox.toggleChecked();
+                    event.stopPropagation();
+                    break;
+                case 8: // Backspace
+                    checkbox.setChecked(false);
+                    this.removeOptionViewAndRefocus(option);
+                    event.preventDefault();
+                    event.stopPropagation();
+                    break;
+                case 46: // Delete
+                    checkbox.setChecked(false);
+                    this.removeOptionViewAndRefocus(option);
+                    event.stopPropagation();
+                    break;
+                case 13: // Enter
+                    this.notifyEditSelectedOptions([option]);
+                    event.stopPropagation();
+                    break;
+                case 9: // tab
+                    this.resetActiveOption();
+                    event.stopPropagation();
+                    break;
             }
-            event.stopPropagation();
         }
 
         private handleOptionViewChecked(checked: boolean, option: SelectedOption<ImageSelectorDisplayValue>,

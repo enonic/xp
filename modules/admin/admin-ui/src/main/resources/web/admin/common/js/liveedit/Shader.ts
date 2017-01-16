@@ -220,17 +220,17 @@ module api.liveedit {
 
             this.target = element;
 
-            let win = api.dom.WindowDOM.get(),
-                bodyEl = api.dom.Body.get().getEl(),
+            let win = api.dom.WindowDOM.get();
+            let bodyEl = api.dom.Body.get().getEl();
             // check if body is bigger than window to account for scroll
-                documentWidth = Math.max(win.getWidth(), bodyEl.getWidth()),
-                documentHeight = Math.max(win.getHeight(), bodyEl.getHeight());
+            let documentWidth = Math.max(win.getWidth(), bodyEl.getWidth());
+            let documentHeight = Math.max(win.getHeight(), bodyEl.getHeight());
 
-            let dimensions = element.getEl().getDimensions(),
-                x1 = Math.max(0, dimensions.left),
-                y1 = Math.max(0, dimensions.top),
-                x2 = Math.min(documentWidth, dimensions.left + dimensions.width),
-                y2 = Math.min(documentHeight, dimensions.top + dimensions.height);
+            let dimensions = element.getEl().getDimensions();
+            let x1 = Math.max(0, dimensions.left);
+            let y1 = Math.max(0, dimensions.top);
+            let x2 = Math.min(documentWidth, dimensions.left + dimensions.width);
+            let y2 = Math.min(documentHeight, dimensions.top + dimensions.height);
 
             if (Shader.debug) {
                 console.log('Shader.resizeToElement(' + x1 + ', ' + y1 + ', ' + x2 + ', ' + y2 + ')', element);

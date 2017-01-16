@@ -24,8 +24,7 @@ module api.ui.security.acl {
                 this.notifyItemValueChanged(item);
             });
 
-            if(readOnly)
-            {
+            if(readOnly) {
                 itemView.setEditable(false);
             }
 

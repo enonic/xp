@@ -28,7 +28,6 @@ module api.ui.security.acl {
             return effectivePermission;
         }
 
-
     }
 
 }

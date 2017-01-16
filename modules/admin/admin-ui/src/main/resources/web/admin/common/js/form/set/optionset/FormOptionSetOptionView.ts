@@ -48,6 +48,8 @@ module api.form {
             }
         }).bind(this);
 
+        private subscribedOnDeselect: boolean = false;
+
         constructor(config: FormOptionSetOptionViewConfig) {
             super(<FormItemViewConfig> {
                 className: "form-option-set-option-view",
@@ -165,22 +167,21 @@ module api.form {
         }
 
         private makeSelectionRadioButton(): api.ui.RadioButton {
-            const currentlySelected = this.getSelectedOptionsArray().get(0);
-            const checked = !!currentlySelected && currentlySelected.getString() == this.getName();
+            const selectedProperty = this.getSelectedOptionsArray().get(0);
+            const checked = !!selectedProperty && selectedProperty.getString() === this.getName();
             const button = new api.ui.RadioButton(this.formOptionSetOption.getLabel(), "", this.getParent().getEl().getId(), checked);
-            let subscribedOnDeselect = false;
 
             button.onChange(() => {
-                let selectedProperty = this.getSelectedOptionsArray().get(0);
-                if (!selectedProperty) {
-                    selectedProperty = this.getSelectedOptionsArray().set(0, new Value(this.getName(), new api.data.ValueTypeString()));
-                    this.subscribeOnRadioDeselect(selectedProperty);
-                    subscribedOnDeselect = true;
+                let selectedProp = this.getSelectedOptionsArray().get(0);
+                if (!selectedProp) {
+                    selectedProp = this.getSelectedOptionsArray().set(0, new Value(this.getName(), new api.data.ValueTypeString()));
+                    this.subscribeOnRadioDeselect(selectedProp);
+                    this.subscribedOnDeselect = true;
                 } else {
-                    selectedProperty.setValue(new Value(this.getName(), new api.data.ValueTypeString()));
-                    if (!subscribedOnDeselect) {
-                        this.subscribeOnRadioDeselect(selectedProperty);
-                        subscribedOnDeselect = true;
+                    selectedProp.setValue(new Value(this.getName(), new api.data.ValueTypeString()));
+                    if (!this.subscribedOnDeselect) {
+                        this.subscribeOnRadioDeselect(selectedProp);
+                        this.subscribedOnDeselect = true;
                     }
                 }
                 this.selectHandle(button.getFirstChild());
@@ -192,9 +193,9 @@ module api.form {
                 }
             });
 
-            if (currentlySelected) {
-                this.subscribeOnRadioDeselect(currentlySelected);
-                subscribedOnDeselect = true;
+            if (selectedProperty) {
+                this.subscribeOnRadioDeselect(selectedProperty);
+                this.subscribedOnDeselect = true;
             }
 
             return button;
@@ -209,10 +210,10 @@ module api.form {
         }
 
         private getToolbarOffsetTop(delta: number = 0): number {
-            let toolbar = wemjq(this.getHTMLElement()).closest(".form-panel").find(".wizard-step-navigator-and-toolbar"),
-                stickyToolbarHeight = toolbar.outerHeight(true),
-                offset = toolbar.offset(),
-                stickyToolbarOffset = offset ? offset.top : 0;
+            let toolbar = wemjq(this.getHTMLElement()).closest(".form-panel").find(".wizard-step-navigator-and-toolbar");
+            let stickyToolbarHeight = toolbar.outerHeight(true);
+            let offset = toolbar.offset();
+            let stickyToolbarOffset = offset ? offset.top : 0;
 
             return stickyToolbarOffset + stickyToolbarHeight + delta;
         }
@@ -223,11 +224,11 @@ module api.form {
         }
 
         private makeSelectionCheckbox(): api.ui.Checkbox {
-            let checked = this.getThisPropertyFromSelectedOptionsArray() != null,
-                button = api.ui.Checkbox.create()
-                    .setLabelText(this.formOptionSetOption.getLabel())
-                    .setChecked(checked)
-                    .build();
+            let checked = this.getThisPropertyFromSelectedOptionsArray() != null;
+            let button = api.ui.Checkbox.create()
+                                        .setLabelText(this.formOptionSetOption.getLabel())
+                                        .setChecked(checked)
+                                        .build();
 
             this.checkbox = button;
 
@@ -366,8 +367,11 @@ module api.form {
             return this.formItemLayer.update(propertyArray.getSet(0), unchangedOnly).then(() => {
                 if (!this.isRadioSelection()) {
                     this.subscribeCheckboxOnPropertyEvents();
-                } else if (this.getThisPropertyFromSelectedOptionsArray() == null) {
-                    wemjq(this.getHTMLElement()).find("input:radio").first().prop('checked', false);
+                } else {
+                    if (this.getThisPropertyFromSelectedOptionsArray() == null) {
+                        wemjq(this.getHTMLElement()).find("input:radio").first().prop('checked', false);
+                    }
+                    this.subscribedOnDeselect = false;
                 }
 
                 this.updateViewState();
@@ -403,7 +407,6 @@ module api.form {
         }
 
         hasValidUserInput(): boolean {
-
             let result = true;
             this.formItemViews.forEach((formItemView: FormItemView) => {
                 if (!formItemView.hasValidUserInput()) {
@@ -458,7 +461,6 @@ module api.form {
         }
 
         giveFocus(): boolean {
-
             let focusGiven = false;
             if (this.formItemViews.length > 0) {
                 for (let i = 0; i < this.formItemViews.length; i++) {

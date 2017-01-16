@@ -113,7 +113,6 @@ module api.ui.security.acl {
         }
     }
 
-
     export class PermissionToggle extends api.dom.AEl {
 
         private static STATES: PermissionState[] = [PermissionState.ALLOW, PermissionState.DENY, PermissionState.INHERIT];

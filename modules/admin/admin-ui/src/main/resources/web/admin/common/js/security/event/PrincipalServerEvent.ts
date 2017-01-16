@@ -16,7 +16,6 @@ module api.security.event {
             return <PrincipalServerChange>super.getNodeChange();
         }
 
-
         static is(eventJson: api.event.NodeEventJson): boolean {
             return eventJson.data.nodes.some(node => node.path.indexOf("/identity") == 0);
         }

@@ -557,8 +557,7 @@ module api.ui.panel {
 
             if (this.firstPanelIsFullScreen) {
                 this.firstPanelSize = -1;
-            }
-            else {
+            } else {
                 this.firstPanelSize = this.hiddenFirstPanelPreviousSize;
 
                 this.splitterIsHidden = false;

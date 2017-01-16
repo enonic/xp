@@ -110,11 +110,11 @@ module api.liveedit {
         }
 
         private resize(dimensions: ElementDimensions, style: HighlighterStyle): void {
-            let w = Math.round(dimensions.width),
-                h = Math.round(dimensions.height),
-                strokeW,
-                top = Math.round(dimensions.top),
-                left = Math.round(dimensions.left);
+            let w = Math.round(dimensions.width);
+            let h = Math.round(dimensions.height);
+            let strokeW;
+            let top = Math.round(dimensions.top);
+            let left = Math.round(dimensions.left);
 
             switch (this.mode) {
             case HighlighterMode.RECTANGLE:
@@ -128,9 +128,9 @@ module api.liveedit {
                 this.getEl().setWidthPx(w).setHeightPx(h).setTopPx(top).setLeftPx(left);
                 break;
             case HighlighterMode.CROSSHAIR:
-                let bodyEl = api.dom.Body.get().getEl(),
-                    screenH = bodyEl.getHeight(),
-                    screenW = bodyEl.getWidth();
+                let bodyEl = api.dom.Body.get().getEl();
+                let screenH = bodyEl.getHeight();
+                let screenW = bodyEl.getWidth();
 
                 strokeW = parseInt(window.getComputedStyle(this.path.getHTMLElement(), null).getPropertyValue("stroke-width"), 10);
 

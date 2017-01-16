@@ -27,7 +27,7 @@ module api.util {
             });
         }
 
-        static escapeHtml(str: string): string{
+        static escapeHtml(str: string): string {
             return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.replace(/[&<>"'\/]/g,((char: string) => {
                 return StringHelper.SAVE_CHAR_CODES[char];
             }));
@@ -99,7 +99,7 @@ module api.util {
             return StringHelper.EMPTY_STRING;
         }
 
-        static testRegex(regex:string, target:string) : boolean{
+        static testRegex(regex:string, target:string): boolean {
             return new RegExp(regex).test(target);
         }
 

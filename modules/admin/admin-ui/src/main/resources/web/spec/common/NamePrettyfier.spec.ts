@@ -4,7 +4,6 @@ describe("api.NamePrettyfier", () => {
 
     describe("tests for api.NamePrettyfier.prettify() function", () => {
 
-
         it("should prettify correctly", () => {
             expect(NamePrettyfier.prettify(" test Name ")).toBe("test-name");
             expect(NamePrettyfier.prettify("æse Kælrot")).toBe("aese-kaelrot");
@@ -15,6 +14,4 @@ describe("api.NamePrettyfier", () => {
         });
 
     });
-
-
 });

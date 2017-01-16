@@ -5,7 +5,7 @@ import Application = api.application.Application;
 
 describe("api.application.ApplicationLoader", () => {
 
-    var applicationLoader;
+    let applicationLoader;
 
     beforeEach(() => {
         applicationLoader = new ApplicationLoader(null);
@@ -24,7 +24,7 @@ describe("api.application.ApplicationLoader", () => {
     });
 
     describe("default loading behavior", () => {
-        var deferredPromise;
+        let deferredPromise;
 
         beforeEach(() => {
             deferredPromise = wemQ.defer();
@@ -42,11 +42,11 @@ describe("api.application.ApplicationLoader", () => {
         });
 
         describe("after applications are loaded", () => {
-            var applications = [];
+            let applications = [];
 
             beforeEach(() => {
-                var startedApplication = new ApplicationBuilder().build();
-                var stoppedApplication = new ApplicationBuilder().build();
+                let startedApplication = new ApplicationBuilder().build();
+                let stoppedApplication = new ApplicationBuilder().build();
 
                 applications.push(startedApplication, stoppedApplication);
 
@@ -74,7 +74,10 @@ describe("api.application.ApplicationLoader", () => {
     });
 
     describe("loading with filtering", () => {
-        var deferredPromise, filterObject, promiseLoad, applications = [];
+        let deferredPromise;
+        let filterObject;
+        let promiseLoad;
+        let applications;
 
         beforeEach(() => {
             filterObject = {
@@ -92,22 +95,22 @@ describe("api.application.ApplicationLoader", () => {
 
         describe("after applications are loaded", () => {
 
-            var startedApplication, filterSpy;
+            let startedApplication;
+            let filterSpy;
 
             beforeEach(() => {
                 applications = [];
-                var applicationBuilder = new ApplicationBuilder();
+                let applicationBuilder = new ApplicationBuilder();
 
                 applicationBuilder.state = Application.STATE_STARTED;
                 startedApplication = applicationBuilder.build();
 
                 applicationBuilder.state = Application.STATE_STOPPED;
-                var stoppedApplication = applicationBuilder.build();
+                let stoppedApplication = applicationBuilder.build();
 
                 applications.push(startedApplication, stoppedApplication);
 
                 filterSpy = spyOn(applications, "filter");
-
 
             });
 

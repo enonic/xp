@@ -36,7 +36,6 @@ export class UserAccessWidgetItemView extends WidgetItemView {
         {value: Access.CUSTOM, name: 'has custom access to'}
     ];
 
-
     constructor() {
         super("user-access-widget-item-view");
         this.accessListView = new UserAccessListView();

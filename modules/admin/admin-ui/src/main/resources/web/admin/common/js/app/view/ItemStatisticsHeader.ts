@@ -45,8 +45,8 @@ module api.app.view {
                 this.iconEl.remove();
             }
 
-            let size = this.browseItem.getIconSize() || 64,
-                icon: HTMLImageElement = api.util.loader.ImageLoader.get(value + "?size=size", size, size);
+            let size = this.browseItem.getIconSize() || 64;
+            let icon: HTMLImageElement = api.util.loader.ImageLoader.get(value + "?size=size", size, size);
 
             this.iconEl = <api.dom.ImgEl> new api.dom.Element(new api.dom.NewElementBuilder().setTagName("img").setHelper(
                 new api.dom.ImgHelper(icon)));
@@ -63,8 +63,8 @@ module api.app.view {
             let iconEl: api.dom.Element;
 
             if (item.getIconUrl()) {
-                let size = item.getIconSize() || 64,
-                    icon: HTMLImageElement = api.util.loader.ImageLoader.get(item.getIconUrl() + "?size=size", size, size);
+                let size = item.getIconSize() || 64;
+                let icon: HTMLImageElement = api.util.loader.ImageLoader.get(item.getIconUrl() + "?size=size", size, size);
 
                 iconEl = <api.dom.ImgEl> new api.dom.Element(new api.dom.NewElementBuilder().
                     setTagName("img").

@@ -48,8 +48,7 @@ module api.content.page.region {
 
                 if (index == this.regionAndComponentList.length - 1) {
                     regionPathAsString += regionAndComponent.getRegionName();
-                }
-                else {
+                } else {
                     regionPathAsString += regionAndComponent.toString();
                     regionPathAsString += "/";
                 }

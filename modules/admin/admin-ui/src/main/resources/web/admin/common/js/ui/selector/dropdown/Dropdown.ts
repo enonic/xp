@@ -203,8 +203,7 @@ module api.ui.selector.dropdown {
             if (this.selectedOptionView.getOption()) {
                 this.input.hide();
                 this.selectedOptionView.show();
-            }
-            else if (this.typeAhead) {
+            } else if (this.typeAhead) {
                 this.input.show();
                 this.selectedOptionView.hide();
             }
@@ -348,8 +347,7 @@ module api.ui.selector.dropdown {
                 if (event.which == 9) { // tab
                     this.hideDropdown();
                     return;
-                }
-                else if (event.which == 16 || event.which == 17 || event.which == 18) {  // shift or ctrl or alt
+                } else if (event.which == 16 || event.which == 17 || event.which == 18) {  // shift or ctrl or alt
                     return;
                 }
 

@@ -39,6 +39,10 @@ module api.ui.tab {
                 this.createRemoveButton();
             }
 
+            if (!builder.focusable) {
+                this.setFocusable(false);
+            }
+
             this.onClicked((event: MouseEvent) => {
                 this.select();
             });
@@ -169,6 +173,14 @@ module api.ui.tab {
             return this.labelEl.giveFocus();
         }
 
+        private setFocusable(focusable: boolean) {
+            if (focusable) {
+                this.labelEl.getEl().removeAttribute("tabindex");
+            } else {
+                this.labelEl.getEl().setAttribute("tabindex", "-1");
+            }
+        }
+
     }
 
     export class TabItemBuilder {
@@ -184,6 +196,8 @@ module api.ui.tab {
         markUnnamed: boolean;
 
         markInvalid: boolean;
+
+        focusable: boolean = true;
 
         setLabel(label: string): TabItemBuilder {
             this.label = label;
@@ -212,6 +226,11 @@ module api.ui.tab {
 
         setAddLabelTitleAttribute(addLabelTitleAttribute: boolean): TabItemBuilder {
             this.addLabelTitleAttribute = addLabelTitleAttribute;
+            return this;
+        }
+
+        setFocusable(focusable: boolean): TabItemBuilder {
+            this.focusable = focusable;
             return this;
         }
 

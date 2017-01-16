@@ -227,6 +227,17 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             }
         });
 
+        let publishActionHandler = () => {
+            if (this.hasUnsavedChanges()) {
+                this.contentWizardStepForm.validate();
+                this.displayValidationErrors();
+            }
+        };
+
+        wizardActions.getPublishAction().onExecuted(publishActionHandler);
+        wizardActions.getUnpublishAction().onExecuted(publishActionHandler);
+        wizardActions.getPublishTreeAction().onExecuted(publishActionHandler);
+
         return wizardActions;
     }
 
@@ -273,8 +284,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
                 if (this.isVisible()) {
                     api.notify.showWarning(message);
-                }
-                else {
+                } else {
                     let shownHandler = () => {
                         new api.application.GetApplicationRequest(event.getApplicationKey()).sendAndParse()
                             .then(
@@ -346,7 +356,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
             }).then(() => super.doLoadData());
     }
-
 
     protected createFormIcon(): ThumbnailUploaderEl {
         let thumbnailUploader = new ThumbnailUploaderEl({
@@ -651,10 +660,15 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     private handleMissingApp() {
-        let atLeastOneAppIsMissing = this.missingOrStoppedAppKeys.length > 0;
-        this.getLivePanel().toggleClass("no-preview", atLeastOneAppIsMissing);
-        this.getCycleViewModeButton().setEnabled(!atLeastOneAppIsMissing);
-        if (atLeastOneAppIsMissing) {
+        let appsIsMissing = this.missingOrStoppedAppKeys.length > 0;
+        const livePanel = this.getLivePanel();
+
+        if (livePanel) {
+            livePanel.toggleClass("no-preview", appsIsMissing);
+        }
+
+        this.getCycleViewModeButton().setEnabled(!appsIsMissing);
+        if (appsIsMissing) {
             this.getMainToolbar().getComponentsViewToggler().hide();
             this.getMainToolbar().getContextWindowToggler().hide();
         } else {
@@ -755,7 +769,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                         setCompareStatus(this.currentContentCompareStatus).
                         setPublishStatus(this.currentContentPublishStatus);
                     this.refreshScheduleWizardStep();
-
 
                     this.getWizardHeader().disableNameGeneration(this.currentContentCompareStatus === CompareStatus.EQUAL);
                 }
@@ -862,10 +875,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     private updateLiveForm() {
-        let content = this.getPersistedItem(),
-            formContext = this.createFormContext(content);
+        let content = this.getPersistedItem();
+        let formContext = this.createFormContext(content);
 
-        if (!!this.siteModel) {
+        if (this.siteModel) {
             this.unbindSiteModelListeners();
         }
 
@@ -951,8 +964,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     private doHtmlAreasContainId(id: string): boolean {
-        let areas = this.getHtmlAreasInForm(this.getContentType().getForm()),
-            data: api.data.PropertyTree = this.getPersistedItem().getContentData();
+        let areas = this.getHtmlAreasInForm(this.getContentType().getForm());
+        let data: api.data.PropertyTree = this.getPersistedItem().getContentData();
 
         return areas.some((area) => {
             let property = data.getProperty(area);
@@ -1122,8 +1135,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
                     deferred.resolve(null);
                 });
-            }
-            else {
+            } else {
                 liveFormPanel.loadPage();
                 deferred.resolve(null);
             }
@@ -1209,8 +1221,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     // when rendering form - we may add extra fields from mixins;
     // as this is intended action from XP, not user - it should be present in persisted content
     private synchPersistedItemWithMixinData(mixinName: MixinName, mixinData: PropertyTree) {
-        let persistedContent = this.getPersistedItem(),
-            extraData = persistedContent.getExtraData(mixinName);
+        let persistedContent = this.getPersistedItem();
+        let extraData = persistedContent.getExtraData(mixinName);
         if (!extraData) { // ensure ExtraData object corresponds to each step form
             this.enrichWithExtraData(persistedContent, mixinName, mixinData.copy());
         } else {
@@ -1623,8 +1635,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             return true;
         }
 
-        let allMetadataFormsValid = true,
-            allMetadataFormsHaveValidUserInput = true;
+        let allMetadataFormsValid = true;
+        let allMetadataFormsHaveValidUserInput = true;
         for (let key in this.metadataStepFormByName) {
             if (this.metadataStepFormByName.hasOwnProperty(key)) {
                 let form = this.metadataStepFormByName[key];
@@ -1751,7 +1763,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.contentWizardStepForm.update(contentCopy.getContentData(), unchangedOnly).then(() => {
             setTimeout(this.contentWizardStepForm.validate.bind(this.contentWizardStepForm), 100);
         });
-
 
         if (contentCopy.isSite()) {
             this.siteModel.update(<Site>contentCopy);

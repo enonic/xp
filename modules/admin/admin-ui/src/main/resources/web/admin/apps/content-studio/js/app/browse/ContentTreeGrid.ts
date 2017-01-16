@@ -169,8 +169,8 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
          */
         ContentBrowseSearchEvent.on((event) => {
             let contentQueryResult = <ContentQueryResult<ContentSummary,ContentSummaryJson>>event.getContentQueryResult();
-            let contentSummaries = contentQueryResult.getContents(),
-                compareRequest = CompareContentRequest.fromContentSummaries(contentSummaries);
+            let contentSummaries = contentQueryResult.getContents();
+            let compareRequest = CompareContentRequest.fromContentSummaries(contentSummaries);
             this.filterQuery = event.getContentQuery();
             compareRequest.sendAndParse().then((compareResults: CompareContentResults) => {
                 let contents: ContentSummaryAndCompareStatus[] = ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries,
@@ -214,7 +214,6 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
     getDataId(data: ContentSummaryAndCompareStatus): string {
         return data.getId();
     }
-
 
     fetch(node: TreeNode<ContentSummaryAndCompareStatus>, dataId?: string): wemQ.Promise<ContentSummaryAndCompareStatus> {
         return this.fetchById(node.getData().getContentId());
@@ -313,8 +312,8 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
     }
 
     deleteNodes(dataList: ContentSummaryAndCompareStatus[]): void {
-        let root = this.getRoot().getCurrentRoot(),
-            node: TreeNode<ContentSummaryAndCompareStatus>;
+        let root = this.getRoot().getCurrentRoot();
+        let node: TreeNode<ContentSummaryAndCompareStatus>;
 
         // Do not remove the items, that is not new and switched to "PENDING_DELETE"
         dataList = dataList.filter((data) => {
@@ -389,7 +388,6 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         }
     }
 
-
     selectAll() {
         this.getGrid().mask();
         setTimeout(() => {
@@ -399,11 +397,11 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
     }
 
     findByPaths(paths: api.content.ContentPath[], useParent: boolean = false): TreeNodesOfContentPath[] {
-        let root = this.getRoot().getDefaultRoot().treeToList(false, false),
-            filter = this.getRoot().getFilteredRoot().treeToList(false, false),
-            all: TreeNode<ContentSummaryAndCompareStatus>[] = root.concat(filter),
-            result: TreeNodesOfContentPath[] = [],
-            resultIds: string[] = [];
+        let root = this.getRoot().getDefaultRoot().treeToList(false, false);
+        let filter = this.getRoot().getFilteredRoot().treeToList(false, false);
+        let all: TreeNode<ContentSummaryAndCompareStatus>[] = root.concat(filter);
+        let result: TreeNodesOfContentPath[] = [];
+        let resultIds: string[] = [];
 
         for (let i = 0; i < paths.length; i++) {
             let node = useParent
@@ -416,8 +414,8 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                 }
             } else {
                 for (let j = 0; j < all.length; j++) {
-                    let treeNode = all[j],
-                        path = (treeNode.getData() && treeNode.getData().getContentSummary())
+                    let treeNode = all[j];
+                    let path = (treeNode.getData() && treeNode.getData().getContentSummary())
                             ? treeNode.getData().getContentSummary().getPath()
                             : null;
                     if (path && path.equals(node.getPath())) {
@@ -458,8 +456,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                     this.selectNode(targetNode.getDataId());
                     this.scrollToRow(this.getGrid().getDataView().getRowById(targetNode.getId()));
                 });
-            }
-            else {
+            } else {
                 let nextLevelChildPath = targetPath.getPathAtLevel(!!nodeToSearchTargetIn.getData()
                     ? nodeToSearchTargetIn.getData().getPath().getLevel() + 1
                     : 1);
@@ -544,8 +541,8 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
     appendContentNode(parentNode: TreeNode<ContentSummaryAndCompareStatus>, childData: ContentSummaryAndCompareStatus, index: number,
                       update: boolean = true): TreeNode<ContentSummaryAndCompareStatus> {
 
-        let appendedNode = this.dataToTreeNode(childData, parentNode),
-            data = parentNode.getData();
+        let appendedNode = this.dataToTreeNode(childData, parentNode);
+        let data = parentNode.getData();
 
         if (!parentNode.hasParent() ||
             (data && parentNode.hasChildren()) ||
@@ -569,9 +566,9 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
     appendContentNodes(relationships: TreeNodeParentOfContent[]): wemQ.Promise<TreeNode<ContentSummaryAndCompareStatus>[]> {
 
-        let deferred = wemQ.defer<TreeNode<ContentSummaryAndCompareStatus>[]>(),
-            parallelPromises: wemQ.Promise<TreeNode<ContentSummaryAndCompareStatus>[]>[] = [],
-            result: TreeNode<ContentSummaryAndCompareStatus>[] = [];
+        let deferred = wemQ.defer<TreeNode<ContentSummaryAndCompareStatus>[]>();
+        let parallelPromises: wemQ.Promise<TreeNode<ContentSummaryAndCompareStatus>[]>[] = [];
+        let result: TreeNode<ContentSummaryAndCompareStatus>[] = [];
 
         relationships.forEach((relationship) => {
             parallelPromises.push(this.fetchChildrenIds(relationship.getNode()).then((contentIds: ContentId[]) => {
@@ -677,8 +674,8 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
     updatePathsInChildren(node: TreeNode<ContentSummaryAndCompareStatus>) {
         node.getChildren().forEach((child) => {
-            let nodeSummary = node.getData() ? node.getData().getContentSummary() : null,
-                childSummary = child.getData() ? child.getData().getContentSummary() : null;
+            let nodeSummary = node.getData() ? node.getData().getContentSummary() : null;
+            let childSummary = child.getData() ? child.getData().getContentSummary() : null;
             if (nodeSummary && childSummary) {
                 let path = ContentPath.fromParent(nodeSummary.getPath(), childSummary.getPath().getName());
                 child.getData().setContentSummary(new ContentSummaryBuilder(childSummary).setPath(path).build());
@@ -696,8 +693,8 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
             return a.getDataId().localeCompare(b.getDataId());
         });
 
-        let groups = [],
-            group = [];
+        let groups = [];
+        let group = [];
 
         groups.push(group);
 

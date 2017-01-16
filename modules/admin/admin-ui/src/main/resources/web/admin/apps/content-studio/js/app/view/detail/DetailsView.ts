@@ -98,8 +98,7 @@ export class DetailsView extends api.dom.DivEl {
                 this.alreadyFetchedCustomWidgets = true;
                 deferred.resolve(null);
             });
-        }
-        else {
+        } else {
             deferred.resolve(null);
         }
         return deferred.promise;
@@ -269,10 +268,10 @@ export class DetailsView extends api.dom.DivEl {
     }
 
     setDetailsContainerHeight() {
-        let panelHeight = ActiveDetailsPanelManager.getActiveDetailsPanel().getEl().getHeight(),
-            panelOffset = ActiveDetailsPanelManager.getActiveDetailsPanel().getEl().getOffsetToParent(),
-            containerHeight = this.detailsContainer.getEl().getHeight(),
-            containerOffset = this.detailsContainer.getEl().getOffsetToParent();
+        let panelHeight = ActiveDetailsPanelManager.getActiveDetailsPanel().getEl().getHeight();
+        let panelOffset = ActiveDetailsPanelManager.getActiveDetailsPanel().getEl().getOffsetToParent();
+        let containerHeight = this.detailsContainer.getEl().getHeight();
+        let containerOffset = this.detailsContainer.getEl().getOffsetToParent();
 
         if (containerOffset.top > 0 && containerHeight !== (panelHeight - panelOffset.top - containerOffset.top)) {
             this.detailsContainer.getEl().setHeightPx(panelHeight - panelOffset.top - containerOffset.top);
@@ -315,4 +314,3 @@ export class DetailsView extends api.dom.DivEl {
         this.sizeChangedListeners.forEach((listener: ()=> void) => listener());
     }
 }
-

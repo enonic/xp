@@ -47,8 +47,8 @@ describe("api.data.type.LocalTimeValueType", () => {
     describe("when newValue", () => {
 
         it("given time string '20:00' then a new Value with that date is returned", () => {
-            var actual = ValueTypes.LOCAL_TIME.newValue("20:00");
-            var expected = new Value(LocalTime.fromString("20:00"), ValueTypes.LOCAL_TIME);
+            let actual = ValueTypes.LOCAL_TIME.newValue("20:00");
+            let expected = new Value(LocalTime.fromString("20:00"), ValueTypes.LOCAL_TIME);
             expect(actual).toEqual(expected);
         });
 
@@ -72,12 +72,12 @@ describe("api.data.type.LocalTimeValueType", () => {
         });
 
         it("given a time '16:20' then an equal time string is returned", () => {
-            var newValue = new Value(LocalTime.fromString("16:20"), ValueTypes.LOCAL_TIME);
+            let newValue = new Value(LocalTime.fromString("16:20"), ValueTypes.LOCAL_TIME);
             expect(ValueTypes.LOCAL_TIME.toJsonValue(newValue)).toEqual("16:20");
         });
 
         it("given a time '22:22' then an equal time string is returned", () => {
-            var newValue = new Value(LocalTime.fromString("22:22"), ValueTypes.LOCAL_TIME);
+            let newValue = new Value(LocalTime.fromString("22:22"), ValueTypes.LOCAL_TIME);
             expect(ValueTypes.LOCAL_TIME.toJsonValue(newValue)).toEqual("22:22");
         });
     });

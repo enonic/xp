@@ -47,7 +47,7 @@ module api.util {
         private padOffset(num: number, length: number = 2): string {
             let numAsString = String(num);
 
-            while (numAsString.length < length){
+            while (numAsString.length < length) {
                 numAsString = "0" + numAsString;
             }
 
@@ -92,7 +92,6 @@ module api.util {
             return new TimezoneBuilder();
         }
     }
-
 
     export class TimezoneBuilder {
 

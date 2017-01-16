@@ -17,9 +17,9 @@ module api.security.acl {
 
         getParams(): Object {
             return {
-                "types": this.enumToStrings(this.allowedTypes),
-                "query": this.searchQuery,
-                "userStoreKey": this.userStoreKey ? this.userStoreKey.toString() : undefined
+                types: this.enumToStrings(this.allowedTypes),
+                query: this.searchQuery,
+                userStoreKey: this.userStoreKey ? this.userStoreKey.toString() : undefined
             };
         }
 

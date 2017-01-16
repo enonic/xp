@@ -16,8 +16,7 @@ module api.content.page.region {
             this.regionName = regionName;
             if (parentComponentPath != null) {
                 this.refString = parentComponentPath + "/" + regionName;
-            }
-            else {
+            } else {
                 this.refString = regionName;
             }
         }

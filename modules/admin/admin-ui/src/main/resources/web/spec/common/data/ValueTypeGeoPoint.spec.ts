@@ -45,8 +45,8 @@ describe("api.data.type.GeoPointValueTypeTest", () => {
     describe("when newValue", () => {
 
         it("given a geo point as string then a new Value is returned", () => {
-            var actual = ValueTypes.GEO_POINT.newValue("1.1,-2.2");
-            var expected = new Value(GeoPoint.fromString("1.1,-2.2"), ValueTypes.GEO_POINT);
+            let actual = ValueTypes.GEO_POINT.newValue("1.1,-2.2");
+            let expected = new Value(GeoPoint.fromString("1.1,-2.2"), ValueTypes.GEO_POINT);
             expect(actual).toEqual(expected);
         });
 

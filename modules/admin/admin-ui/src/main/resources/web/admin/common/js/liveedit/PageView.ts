@@ -136,7 +136,6 @@ module api.liveedit {
                 this.setLocked(true);
             }
 
-
         }
 
         private registerPageModel() {
@@ -218,8 +217,7 @@ module api.liveedit {
                 if (itemView.getType().equals(api.liveedit.text.TextItemType.get())) {
                     if (!this.isTextEditMode()) {
                         this.setTextEditMode(true);
-                    }
-                    else {
+                    } else {
                         (<api.liveedit.text.TextComponentView>itemView).setEditMode(true);
                         this.closeTextEditModeButton.toggleClass("active", true);
                     }
@@ -267,8 +265,7 @@ module api.liveedit {
         private toggleStickyToolbar() {
             if (!this.isPageScrolled()) {
                 this.editorToolbar.removeClass("sticky-toolbar");
-            }
-            else if (!this.editorToolbar.hasClass("sticky-toolbar")) {
+            } else if (!this.editorToolbar.hasClass("sticky-toolbar")) {
                 this.editorToolbar.addClass("sticky-toolbar");
             }
         }
@@ -399,8 +396,7 @@ module api.liveedit {
                 }
                 if (this.lockedContextMenu.isVisible()) {
                     this.deselectLocked();
-                }
-                else {
+                } else {
                     this.selectLocked({x: event.pageX, y: event.pageY});
                 }
             } else if (!this.isSelected() || event.which == 3) {
@@ -509,8 +505,7 @@ module api.liveedit {
 
                 this.onScrolled(this.scrolledListener);
                 new PageTextModeStartedEvent(this).fire();
-            }
-            else {
+            } else {
                 this.removeVerticalSpaceForEditorToolbar();
                 this.unScrolled(this.scrolledListener);
 
@@ -534,17 +529,16 @@ module api.liveedit {
 
             if (!!result) {
                 this.getPageView().getEl().setTop(this.getEditorToolbarWidth() + "px");
-            }
-            else {
+            } else {
                 this.waitUntilEditorToolbarShown();
             }
 
         }
 
         private waitUntilEditorToolbarShown() {
-            let intervalId,
-                toolbarHeight,
-                attempts = 0;
+            let intervalId;
+            let toolbarHeight;
+            let attempts = 0;
 
             intervalId = setInterval(()=> {
                 attempts++;
@@ -552,8 +546,7 @@ module api.liveedit {
                 if (!!toolbarHeight) {
                     this.getPageView().getEl().setTop(toolbarHeight + "px");
                     clearInterval(intervalId);
-                }
-                else if (attempts > 10) {
+                } else if (attempts > 10) {
                     clearInterval(intervalId);
                 }
             }, 50);
@@ -755,8 +748,7 @@ module api.liveedit {
                         let layoutView = <api.liveedit.layout.LayoutComponentView>componentView;
                         layoutView.getRegionViewByName(path.getRegionName());
                     }
-                }
-                else {
+                } else {
                     if (path.getRegionName() == regionView.getRegionName()) {
                         return regionView;
                     }
@@ -778,8 +770,7 @@ module api.liveedit {
                 if (firstLevelOfPath.getRegionName() == regionView.getRegionName()) {
                     if (path.numberOfLevels() == 1) {
                         return regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
-                    }
-                    else {
+                    } else {
                         const view = regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
                         const layoutView: api.liveedit.layout.LayoutComponentView = <api.liveedit.layout.LayoutComponentView>view;
                         return layoutView.getComponentViewByPath(path.removeFirstLevel());
@@ -789,7 +780,6 @@ module api.liveedit {
 
             return null;
         }
-
 
         private registerItemView(view: ItemView) {
 
@@ -833,12 +823,12 @@ module api.liveedit {
                 this.doParseFragmentItemViews();
             } else {
                 this.doParseItemViews();
+                // register everything that was parsed
+                this.toItemViewArray().forEach((value: ItemView) => {
+                    this.registerItemView(value);
+                });
             }
 
-            // register everything that was parsed
-            this.toItemViewArray().forEach((value: ItemView) => {
-                this.registerItemView(value);
-            });
         }
 
         private doParseItemViews(parentElement?: api.dom.Element) {
@@ -852,7 +842,9 @@ module api.liveedit {
             children.forEach((childElement: api.dom.Element) => {
                 let itemType = ItemType.fromElement(childElement);
                 let isRegionView = api.ObjectHelper.iFrameSafeInstanceOf(childElement, RegionView);
-                let region, regionName, regionView;
+                let region;
+                let regionName;
+                let regionView;
 
                 if (isRegionView) {
                     regionName = RegionItemType.getRegionName(childElement);
@@ -916,16 +908,29 @@ module api.liveedit {
             });
         }
 
+        unregisterFragmentComponentView(componentView: ComponentView<Component>) {
+            componentView.unItemViewAdded(this.itemViewAddedListener);
+            componentView.unItemViewRemoved(this.itemViewRemovedListener);
+
+            componentView.toItemViewArray().forEach((itemView: ItemView) => {
+                this.unregisterItemView(itemView);
+            });
+        }
+
         registerFragmentComponentView(componentView: ComponentView<Component>) {
             componentView.onItemViewAdded(this.itemViewAddedListener);
             componentView.onItemViewRemoved(this.itemViewRemovedListener);
 
-            this.registerItemView(componentView);
+            componentView.toItemViewArray().forEach((value: ItemView) => {
+                this.registerItemView(value);
+            });
+
             if (componentView instanceof api.liveedit.layout.LayoutComponentView) {
                 componentView.getRegions().forEach((regionView) => {
                     this.registerRegionView(regionView);
                 });
             }
+
             this.fragmentView = componentView;
         }
 

@@ -106,5 +106,4 @@ module api.schema {
         }
     }
 
-
 }

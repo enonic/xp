@@ -157,8 +157,7 @@ module api.form {
             let previousValidState = this.previousValidationRecording.isValid();
             if (event.isValid()) {
                 this.previousValidationRecording.removeByPath(event.getOrigin(), false, event.isIncludeChildren());
-            }
-            else {
+            } else {
                 this.previousValidationRecording.flatten(event.getRecording());
             }
 
@@ -203,7 +202,7 @@ module api.form {
         }
 
         protected getPropertyArray(propertySet: PropertySet): PropertyArray {
-            const propertyArray = propertySet.getPropertyArray(this.formSet.getName());
+            let propertyArray = propertySet.getPropertyArray(this.formSet.getName());
             if (!propertyArray) {
                 propertyArray = PropertyArray.create().setType(ValueTypes.DATA).setName(this.formSet.getName()).setParent(
                     this.parentDataSet).build();
@@ -222,10 +221,10 @@ module api.form {
                 throw new Error("Can't validate before layout is done");
             }
 
-            let validationRecordingPath = this.resolveValidationRecordingPath(),
-                wholeRecording = new ValidationRecording(),
-                occurrenceViews = this.formItemOccurrences.getOccurrenceViews().filter(view => view != viewToSkipValidation),
-                numberOfValids = 0;
+            let validationRecordingPath = this.resolveValidationRecordingPath();
+            let wholeRecording = new ValidationRecording();
+            let occurrenceViews = this.formItemOccurrences.getOccurrenceViews().filter(view => view != viewToSkipValidation);
+            let numberOfValids = 0;
 
             occurrenceViews.forEach((occurrenceView: FormSetOccurrenceView) => {
                 let recordingForOccurrence = occurrenceView.validate(silent);
@@ -317,8 +316,7 @@ module api.form {
             if (recording.isValid()) {
                 this.removeClass("invalid");
                 this.addClass("valid");
-            }
-            else {
+            } else {
                 this.removeClass("valid");
                 this.addClass("invalid");
             }

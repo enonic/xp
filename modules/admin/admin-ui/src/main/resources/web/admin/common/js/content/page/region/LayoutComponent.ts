@@ -22,8 +22,7 @@ module api.content.page.region {
                 this.regions.getRegions().forEach((region: Region) => {
                     region.setParent(this);
                 });
-            }
-            else {
+            } else {
                 this.regions = Regions.create().build();
             }
 
@@ -123,7 +122,6 @@ module api.content.page.region {
             regions.unChanged(this.regionsChangedEventHandler);
             regions.unComponentPropertyChanged(this.componentPropertyChangedEventHandler);
         }
-
 
         onComponentPropertyChanged(listener: (event: ComponentPropertyChangedEvent)=>void) {
             this.componentPropertyChangedListeners.push(listener);

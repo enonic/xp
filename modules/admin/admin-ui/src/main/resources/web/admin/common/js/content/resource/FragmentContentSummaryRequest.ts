@@ -17,8 +17,7 @@ module api.content.resource {
                 let searchConstraint = super.createSearchExpression();
                 let nearestSiteConstraint = this.createParentSiteFragmentsOnlyQuery();
                 return new LogicalExpr(searchConstraint, LogicalOperator.AND, nearestSiteConstraint);
-            }
-            else {
+            } else {
                 return super.createSearchExpression();
             }
         }
@@ -34,5 +33,3 @@ module api.content.resource {
     }
 
 }
-
-    

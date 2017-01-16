@@ -37,26 +37,19 @@ module api.content.util {
             let contentTypeName = contentType.getContentTypeName();
             if (contentType.isAbstract()) {
                 return false;
-            }
-            else if (parentContentIsPageTemplate) {
+            } else if (parentContentIsPageTemplate) {
                 return false; // children not allowed for page-template
-            }
-            else if (contentTypeName.isTemplateFolder()) {
+            } else if (contentTypeName.isTemplateFolder()) {
                 return parentContentIsSite; // template-folder only allowed under site
-            }
-            else if (contentTypeName.isPageTemplate()) {
+            } else if (contentTypeName.isPageTemplate()) {
                 return parentContentIsTemplateFolder; // page-template only allowed under a template-folder
-            }
-            else if (parentContentIsTemplateFolder) {
+            } else if (parentContentIsTemplateFolder) {
                 return contentTypeName.isPageTemplate(); // in a template-folder allow only page-template
-            }
-            else if (TYPES_ALLOWED_EVERYWHERE[contentTypeName.toString()]) {
+            } else if (TYPES_ALLOWED_EVERYWHERE[contentTypeName.toString()]) {
                 return true;
-            }
-            else if ((!this.siteApplicationsAllowed) || this.siteApplicationsAllowed[contentTypeName.getApplicationKey().toString()]) {
+            } else if ((!this.siteApplicationsAllowed) || this.siteApplicationsAllowed[contentTypeName.getApplicationKey().toString()]) {
                 return true;
-            }
-            else {
+            } else {
                 return false;
             }
         }

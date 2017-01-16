@@ -1,6 +1,5 @@
 module api.liveedit {
 
-
     export class ItemViewId implements api.Equitable {
 
         static DATA_ATTRIBUTE: string = "live-edit-id";

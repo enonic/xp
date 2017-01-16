@@ -24,8 +24,7 @@ export class ContentInspectionPanel extends BaseInspectionPanel {
         if (content) {
             this.namesAndIcon.setMainName(content.getDisplayName());
             this.namesAndIcon.setSubName(content.getPath().toString());
-        }
-        else {
+        } else {
             this.namesAndIcon.setMainName("[No Content given]");
             this.namesAndIcon.setSubName("");
         }

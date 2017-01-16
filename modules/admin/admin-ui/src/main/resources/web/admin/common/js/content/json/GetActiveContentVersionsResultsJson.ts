@@ -13,4 +13,3 @@ module api.content.json {
         activeContentVersions: ActiveContentVersionJson[];
     }
 }
-

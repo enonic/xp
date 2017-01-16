@@ -101,8 +101,8 @@ export class WidgetView extends api.dom.DivEl {
     }
 
     public updateWidgetItemViews(force: boolean = false): wemQ.Promise<any> {
-        let content = this.detailsView.getItem(),
-            promises = [];
+        let content = this.detailsView.getItem();
+        let promises = [];
 
         if (this.widgetShouldBeUpdated(force)) {
             this.detailsView.showLoadMask();
@@ -160,8 +160,7 @@ export class WidgetView extends api.dom.DivEl {
     slideIn() {
         if (this.hasDynamicHeight()) {
             this.redoLayout();
-        }
-        else {
+        } else {
             this.getEl().setMaxHeightPx(this.getParentElement().getEl().getHeight());
         }
 

@@ -32,16 +32,18 @@ export class EmulatorPanel extends api.ui.panel.Panel {
         // Using jQuery since grid.setOnClick fires event twice, bug in slickgrid
         wemjq(this.getHTMLElement()).on("click", ".grid-row > div", (event: JQueryEventObject) => {
 
-            let el = wemjq(event.currentTarget),
-                width = el.data("width"),
-                height = el.data("height"),
-                units = el.data("units");
+            let el = wemjq(event.currentTarget);
+            let width = el.data("width");
+            let height = el.data("height");
+            let units = el.data("units");
 
             this.liveEditPage.setWidth(width + units);
             this.liveEditPage.setHeight(height + units);
 
             if (units === "px") {
                 this.updateLiveEditFrameContainerHeight(height);
+            } else {
+                this.resetParentHeight();
             }
 
         });
@@ -66,8 +68,8 @@ export class EmulatorPanel extends api.ui.panel.Panel {
     }
 
     private updateLiveEditFrameContainerHeight(height: number) { // this helps to put horizontal scrollbar in the bottom of live edit frame
-        let body = document.body,
-            html = document.documentElement;
+        let body = document.body;
+        let html = document.documentElement;
 
         let pageHeight = Math.max(body.scrollHeight, body.offsetHeight,
             html.clientHeight, html.scrollHeight, html.offsetHeight);
@@ -76,11 +78,16 @@ export class EmulatorPanel extends api.ui.panel.Panel {
         if (height > pageHeight) {
             frameParent.style.height = "";
             frameParent.classList.add("overflow");
-        }
-        else {
+        } else {
             frameParent.style.height = height + this.getScrollbarWidth() + "px";
             frameParent.classList.remove("overflow");
         }
+    }
+
+    private resetParentHeight() {
+        let frameParent = this.liveEditPage.getIFrame().getHTMLElement().parentElement;
+        frameParent.style.height = "";
+        frameParent.classList.remove("overflow");
     }
 
     private getScrollbarWidth(): number {

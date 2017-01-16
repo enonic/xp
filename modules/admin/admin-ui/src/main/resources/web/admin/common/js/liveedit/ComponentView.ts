@@ -186,10 +186,11 @@ module api.liveedit {
                 }));
             }
 
+            actions.push(new api.ui.Action("Reset").onExecuted(() => {
+                this.component.reset();
+            }));
+
             if (!isTopFragmentComponent) {
-                actions.push(new api.ui.Action("Reset").onExecuted(() => {
-                    this.component.reset();
-                }));
                 actions.push(new api.ui.Action("Remove").onExecuted(() => {
                     this.deselect();
                     this.remove();
@@ -314,7 +315,6 @@ module api.liveedit {
                     setData(duplicate).
                     setPositionIndex(index + 1));
 
-
             parentView.addComponentView(duplicateView, index + 1);
 
             return duplicateView;
@@ -344,20 +344,16 @@ module api.liveedit {
             }
             super.replaceWith(replacement);
 
+            // unbind the old view from the component and bind the new one
+            this.unregisterComponentListeners(this.component);
+            this.unbindMouseListeners();
+
             let parentIsPage = api.ObjectHelper.iFrameSafeInstanceOf(this.getParentItemView(), PageView);
             if (parentIsPage) {
-                // unbind the old view from the component and bind the new one
-                this.unregisterComponentListeners(this.component);
-                this.unbindMouseListeners();
-
+                this.getPageView().unregisterFragmentComponentView(this);
                 this.getPageView().registerFragmentComponentView(replacement);
-
             } else {
                 let index = this.getParentItemView().getComponentViewIndex(this);
-
-                // unbind the old view from the component and bind the new one
-                this.unregisterComponentListeners(this.component);
-                this.unbindMouseListeners();
 
                 let parentRegionView = this.parentRegionView;
                 this.parentRegionView.unregisterComponentView(this);
@@ -452,7 +448,6 @@ module api.liveedit {
             }
             return parentItemView;
         }
-
 
         // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
         private handleDragStart2(event: DragEvent) {

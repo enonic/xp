@@ -50,9 +50,9 @@ module api.content.form.inputtype.upload {
 
             this.mediaUploaderEl.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
 
-                let content = event.getUploadItem().getModel(),
-                    value = this.mediaUploaderEl.getMediaValue(content),
-                    fileName = value.getString();
+                let content = event.getUploadItem().getModel();
+                let value = this.mediaUploaderEl.getMediaValue(content);
+                let fileName = value.getString();
 
                 this.mediaUploaderEl.setFileName(fileName);
 
@@ -214,8 +214,8 @@ module api.content.form.inputtype.upload {
 
         private createUploader(property: Property): api.ui.uploader.MediaUploaderEl {
 
-            let predefinedAllowTypes,
-                attachmentFileName = this.getFileNameFromProperty(property);
+            let predefinedAllowTypes;
+            let attachmentFileName = this.getFileNameFromProperty(property);
 
             if (this.propertyAlreadyHasAttachment(property)) {
                 predefinedAllowTypes = this.getAllowTypeFromFileName(attachmentFileName);

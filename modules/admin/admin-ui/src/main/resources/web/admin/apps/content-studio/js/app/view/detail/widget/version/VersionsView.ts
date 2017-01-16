@@ -106,8 +106,7 @@ export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
     private getState(workspace: string): string {
         if (workspace === VersionsView.branchMaster) {
             return api.content.CompareStatusFormatter.formatStatus(api.content.CompareStatus.EQUAL);
-        }
-        else {
+        } else {
             return api.content.CompareStatusFormatter.formatStatus(this.status);
         }
     }
@@ -122,9 +121,9 @@ export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
     }
 
     private createDataBlocks(item: ContentVersion, itemEl: api.dom.Element) {
-        let descriptionDiv = this.createDescriptionBlock(item),
-            versionInfoDiv = this.createVersionInfoBlock(item),
-            closeButton = this.createCloseButton();
+        let descriptionDiv = this.createDescriptionBlock(item);
+        let versionInfoDiv = this.createVersionInfoBlock(item);
+        let closeButton = this.createCloseButton();
 
         itemEl.appendChildren(closeButton, descriptionDiv, versionInfoDiv);
     }

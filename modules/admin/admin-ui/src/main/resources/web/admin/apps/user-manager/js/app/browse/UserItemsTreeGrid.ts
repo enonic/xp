@@ -100,8 +100,8 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
     }
 
     updateUserNode(principal: api.security.Principal, userStore: api.security.UserStore) {
-        let userTreeGridItem,
-            builder = new UserTreeGridItemBuilder();
+        let userTreeGridItem;
+        let builder = new UserTreeGridItemBuilder();
 
         if (!principal) { // UserStore type
             userTreeGridItem = builder.setUserStore(userStore).setType(UserTreeGridItemType.USER_STORE).build();
@@ -163,7 +163,6 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
     getDataId(item: UserTreeGridItem): string {
         return item.getDataId();
     }
-
 
     hasChildren(item: UserTreeGridItem): boolean {
         return item.hasChildren();

@@ -40,6 +40,7 @@ public class NodeImporterTest
         throws Exception
     {
         this.importNodeService = new NodeServiceMock();
+        createRootNodeXmlFile( Paths.get( "myExport" ) );
     }
 
     @Test
@@ -61,7 +62,7 @@ public class NodeImporterTest
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 1, result.addedNodes.getSize() );
+        assertEquals( 2, result.addedNodes.getSize() );
     }
 
     @Test
@@ -83,7 +84,7 @@ public class NodeImporterTest
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 1, result.addedNodes.getSize() );
+        assertEquals( 2, result.addedNodes.getSize() );
     }
 
     @Test
@@ -105,7 +106,7 @@ public class NodeImporterTest
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 1, result.addedNodes.getSize() );
+        assertEquals( 2, result.addedNodes.getSize() );
 
         final Node node1234 = importNodeService.getById( NodeId.from( "1234" ) );
         assertNotNull( node1234 );
@@ -131,7 +132,7 @@ public class NodeImporterTest
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 1, result.addedNodes.getSize() );
+        assertEquals( 2, result.addedNodes.getSize() );
 
         final NodeImportResult updateResult = NodeImporter.create().
             nodeService( importNodeService ).
@@ -142,7 +143,7 @@ public class NodeImporterTest
 
         assertEquals( 0, updateResult.getImportErrors().size() );
         assertEquals( 0, updateResult.addedNodes.getSize() );
-        assertEquals( 1, updateResult.updateNodes.getSize() );
+        assertEquals( 2, updateResult.updateNodes.getSize() );
     }
 
 
@@ -163,7 +164,7 @@ public class NodeImporterTest
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 4, result.addedNodes.getSize() );
+        assertEquals( 5, result.addedNodes.getSize() );
 
         final Node mynode = assertNodeExists( NodePath.ROOT, "mynode" );
         final Node mychild = assertNodeExists( mynode.path(), "mychild" );
@@ -195,7 +196,7 @@ public class NodeImporterTest
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 4, result.addedNodes.getSize() );
+        assertEquals( 5, result.addedNodes.getSize() );
 
         final Node mynode = assertNodeExists( importRoot, "mynode" );
         final Node mychild = assertNodeExists( mynode.path(), "mychild" );
@@ -232,7 +233,7 @@ public class NodeImporterTest
             execute();
 
         assertEquals( 1, result.getImportErrors().size() );
-        assertEquals( 0, result.getAddedNodes().getSize() );
+        assertEquals( 1, result.getAddedNodes().getSize() );
     }
 
     @Test
@@ -252,7 +253,7 @@ public class NodeImporterTest
             build().
             execute();
 
-        assertEquals( 5, result.getAddedNodes().getSize() );
+        assertEquals( 6, result.getAddedNodes().getSize() );
         assertEquals( 1, result.getImportErrors().size() );
     }
 
@@ -280,7 +281,7 @@ public class NodeImporterTest
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 7, result.addedNodes.getSize() );
+        assertEquals( 8, result.addedNodes.getSize() );
 
         final Node mynode = assertNodeExists( NodePath.ROOT, "mynode" );
         assertNull( mynode.getManualOrderValue() );
@@ -315,7 +316,7 @@ public class NodeImporterTest
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 3, result.addedNodes.getSize() );
+        assertEquals( 4, result.addedNodes.getSize() );
 
         final Node mynode = assertNodeExists( NodePath.ROOT, "mynode" );
         assertNodeExists( mynode.path(), "mychild1" );
@@ -339,7 +340,7 @@ public class NodeImporterTest
             execute();
 
         assertEquals( 1, result.getImportErrors().size() );
-        assertEquals( 1, result.getAddedNodes().getSize() );
+        assertEquals( 2, result.getAddedNodes().getSize() );
     }
 
     @Test
@@ -387,7 +388,7 @@ public class NodeImporterTest
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 4, result.addedNodes.getSize() );
+        assertEquals( 5, result.addedNodes.getSize() );
 
         final Node myNode = assertNodeExists( NodePath.ROOT, "mynode" );
         final Node myChild = assertNodeExists( myNode.path(), myChildName );
@@ -402,6 +403,7 @@ public class NodeImporterTest
     public void import_node_with_xslt()
         throws Exception
     {
+
         final Path nodeFileDir = Files.createDirectories( Paths.get( temporaryFolder.getRoot().getPath(), "myExport", "mynode", "_" ) );
         final Path xsltFilePath = nodeFileDir.resolve( "transform.xsl" );
 
@@ -421,7 +423,7 @@ public class NodeImporterTest
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 1, result.addedNodes.getSize() );
+        assertEquals( 2, result.addedNodes.getSize() );
         final Node importedNode = this.importNodeService.getByPath( result.getAddedNodes().first() );
         assertNotNull( importedNode );
     }
@@ -455,6 +457,17 @@ public class NodeImporterTest
 
         assert nodeFileDir != null;
         Files.write( Paths.get( nodeFileDir.toString(), fileName ), bytes );
+    }
+
+    private void createRootNodeXmlFile( final Path exportPath )
+        throws Exception
+    {
+        final Path nodeFileDir = Files.createDirectories(
+            Paths.get( temporaryFolder.getRoot().getPath(), exportPath.toString(), NodeExportPathResolver.SYSTEM_FOLDER_NAME ) );
+
+        assert nodeFileDir != null;
+        Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ),
+                     readFromFile( "root-node.xml" ).getBytes() );
     }
 
     private void createNodeXmlFile( final Path exportPath, boolean ordered )

@@ -6,6 +6,7 @@ import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.security.acl.AccessControlList;
 
 public class ImportNodeFactory
@@ -36,15 +37,26 @@ public class ImportNodeFactory
 
     public Node execute()
     {
-        return Node.create( serializedNode ).
-            parentPath( this.nodeImportPath.getParentPath() ).
-            name( getNodeName() ).
-            inheritPermissions( importPermissions ? serializedNode.inheritsPermissions() : true ).
-            permissions( importPermissions ? serializedNode.getPermissions() : AccessControlList.empty() ).
-            id( importNodeIds && this.serializedNode.id() != null ? NodeId.from( this.serializedNode.id() ) : null ).
-            manualOrderValue( getManualOrderValue() ).
-            timestamp( serializedNode.getTimestamp() ).
-            build();
+        if ( serializedNode.isRoot() )
+        {
+            return Node.create( serializedNode ).
+                inheritPermissions( false ).
+                permissions( importPermissions ? serializedNode.getPermissions() : RepositoryConstants.DEFAULT_REPO_PERMISSIONS ).
+                manualOrderValue( getManualOrderValue() ).
+                build();
+        }
+        else
+        {
+            return Node.create( serializedNode ).
+                parentPath( this.nodeImportPath.getParentPath() ).
+                name( getNodeName() ).
+                inheritPermissions( importPermissions ? serializedNode.inheritsPermissions() : true ).
+                permissions( importPermissions ? serializedNode.getPermissions() : AccessControlList.empty() ).
+                id( importNodeIds && this.serializedNode.id() != null ? NodeId.from( this.serializedNode.id() ) : null ).
+                manualOrderValue( getManualOrderValue() ).
+                timestamp( serializedNode.getTimestamp() ).
+                build();
+        }
     }
 
     private String getNodeName()

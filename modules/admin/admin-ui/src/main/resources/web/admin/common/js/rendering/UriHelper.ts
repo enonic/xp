@@ -29,8 +29,8 @@ module api.rendering {
 
         public static getComponentUri(contentId: string, componentPath: api.content.page.region.ComponentPath, renderingMode: RenderingMode,
                                       workspace: api.content.Branch): string {
-            let elementDivider = api.content.ContentPath.ELEMENT_DIVIDER,
-                componentPart = elementDivider + "_" + elementDivider + "component" + elementDivider;
+            let elementDivider = api.content.ContentPath.ELEMENT_DIVIDER;
+            let componentPart = elementDivider + "_" + elementDivider + "component" + elementDivider;
             let componentPathStr = componentPath ? componentPath.toString() : "";
             return UriHelper.getPortalUri(contentId + componentPart + componentPathStr, renderingMode, workspace);
         }

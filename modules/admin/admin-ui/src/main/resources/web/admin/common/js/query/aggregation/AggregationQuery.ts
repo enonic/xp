@@ -11,7 +11,7 @@ module api.query.aggregation {
         toAggregationQueryJson(): api.query.aggregation.AggregationQueryJson {
 
             return {
-                "name": this.getName()
+                name: this.getName()
             };
         }
 

@@ -139,7 +139,6 @@ export class SortContentTabMenu extends api.ui.tab.TabMenu {
         this.selectNavigationItemByOrder(this.navigationItems.SORT_MANUAL_ITEM.getChildOrder());
     }
 
-
     onSortOrderChanged(listener: () => void) {
         this.sortOrderChangedListeners.push(listener);
     }

@@ -55,5 +55,4 @@ export class ContentBrowseItemsSelectionPanel extends BrowseItemsSelectionPanel<
         return changes;
     }
 
-
 }

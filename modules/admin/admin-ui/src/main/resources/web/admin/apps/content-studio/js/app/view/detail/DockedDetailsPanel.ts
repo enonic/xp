@@ -31,4 +31,3 @@ export class DockedDetailsPanel extends DetailsPanel {
         return DETAILS_PANEL_TYPE.DOCKED;
     }
 }
-

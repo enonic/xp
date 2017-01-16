@@ -44,7 +44,6 @@ module api.app.wizard {
             return this.helpTextToggleButton;
         }
 
-
         setStepToolbar(stepToolbar: Toolbar) {
             if (this.stepToolbar) {
                 this.removeChild(this.stepToolbar);
@@ -115,8 +114,7 @@ module api.app.wizard {
                     if (index == selectedTabIndex) {
                         this.foldButton.setLabel(tab.getLabel());
                     }
-                }
-                else {
+                } else {
                     tab.setLabel(tab.getLabel().replace(strIndex, ""));
                 }
             });

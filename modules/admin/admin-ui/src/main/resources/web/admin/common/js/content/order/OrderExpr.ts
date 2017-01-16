@@ -27,9 +27,9 @@ module api.content.order {
             let wrappers: OrderExprWrapperJson[] = [];
             expressions.forEach((expr: OrderExpr) => {
                 if (api.ObjectHelper.iFrameSafeInstanceOf(expr, FieldOrderExpr)) {
-                    wrappers.push(<OrderExprWrapperJson>{"FieldOrderExpr": expr.toJson()});
+                    wrappers.push(<OrderExprWrapperJson>{FieldOrderExpr: expr.toJson()});
                 } else if (api.ObjectHelper.iFrameSafeInstanceOf(expr, DynamicOrderExpr)) {
-                    wrappers.push(<OrderExprWrapperJson>{"DynamicOrderExpr": expr.toJson()});
+                    wrappers.push(<OrderExprWrapperJson>{DynamicOrderExpr: expr.toJson()});
                 }
             });
             return wrappers;

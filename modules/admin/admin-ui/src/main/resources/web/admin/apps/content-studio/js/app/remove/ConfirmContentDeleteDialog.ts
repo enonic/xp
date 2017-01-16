@@ -81,8 +81,7 @@ export class ConfirmContentDeleteDialog extends api.ui.dialog.ModalDialog {
                 setTimeout(()=> {
                     this.confirmDeleteButton.giveFocus();
                 }, 0);
-            }
-            else {
+            } else {
                 this.input.removeClass("valid").addClass("invalid");
                 this.confirmDeleteAction.setEnabled(false);
             }

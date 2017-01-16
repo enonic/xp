@@ -21,32 +21,23 @@ export class ContentVersionViewer extends api.ui.Viewer<api.content.ContentVersi
 
         if (timeDiff < minInMs) {
             return "less than a minute ago";
-        }
-        else if (timeDiff < 2 * minInMs) {
+        } else if (timeDiff < 2 * minInMs) {
             return "a minute ago";
-        }
-        else if (timeDiff < hrInMs) {
+        } else if (timeDiff < hrInMs) {
             return ~~(timeDiff / minInMs) + " minutes ago";
-        }
-        else if (timeDiff < 2 * hrInMs) {
+        } else if (timeDiff < 2 * hrInMs) {
             return "over an hour ago";
-        }
-        else if (timeDiff < dayInMs) {
+        } else if (timeDiff < dayInMs) {
             return "over " + ~~(timeDiff / hrInMs) + " hours ago";
-        }
-        else if (timeDiff < 2 * dayInMs) {
+        } else if (timeDiff < 2 * dayInMs) {
             return "over a day ago";
-        }
-        else if (timeDiff < monInMs) {
+        } else if (timeDiff < monInMs) {
             return "over " + ~~(timeDiff / dayInMs) + " days ago";
-        }
-        else if (timeDiff < 2 * monInMs) {
+        } else if (timeDiff < 2 * monInMs) {
             return "over a month ago";
-        }
-        else if (timeDiff < yrInMs) {
+        } else if (timeDiff < yrInMs) {
             return "over " + ~~(timeDiff / monInMs) + " months ago";
-        }
-        else if (timeDiff < 2 * yrInMs) {
+        } else if (timeDiff < 2 * yrInMs) {
             return "over a year ago";
         }
 
@@ -94,4 +85,3 @@ export class ContentVersionViewer extends api.ui.Viewer<api.content.ContentVersi
         return super.setObject(contentVersion);
     }
 }
-

@@ -14,8 +14,7 @@ module api.schema.mixin {
 
                 if (!duplicate) {
                     this.array.push(mixinName);
-                }
-                else {
+                } else {
                     throw Error("MixinNames do not allow duplicates, found: '" + mixinName.toString() + "'");
                 }
             });

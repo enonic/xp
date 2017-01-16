@@ -7,6 +7,9 @@ module api.ui.selector.combobox {
     import DelayedFunctionCall = api.util.DelayedFunctionCall;
     import Button = api.ui.button.Button;
     import ElementHelper = api.dom.ElementHelper;
+    import IFrameEl = api.dom.IFrameEl;
+    import Body = api.dom.Body;
+    import WindowDOM = api.dom.WindowDOM;
 
     export interface ComboBoxConfig<T> {
 
@@ -215,15 +218,26 @@ module api.ui.selector.combobox {
         }
 
         private dropdownOverflowsBottom(): DropdownPosition {
+            // returns body, if passed element is an html in and iframe
+            const restrainToBody = (el: ElementHelper) => {
+                return el.getHTMLElement() === document.documentElement ? Body.get().getEl() : el;
+            };
+
+            const win = WindowDOM.get();
+
             const inputEl = this.input.getEl();
-            const parent = this.getScrollableParent(inputEl);
+            const parent = restrainToBody(this.getScrollableParent(inputEl));
             const dropdown = this.comboBoxDropdown.getDropdownGrid().getElement().getEl();
 
+            // If the page is in iframe page is not scrollable and fully rendered
+            // The height of the iframe should be used instead
+            const containerHeight = win.isInIFrame() ? new ElementHelper(win.getFrameElement()).getHeight() : parent.getHeight();
+
             // distance is measured from the top of the viewport
-            const distanceToParentsTop = parent.getOffsetTop();
+            const distanceToParentsTop = win.isInIFrame() ? parent.getScrollTop() : parent.getOffsetTop();
             const distanceToInputsTop = inputEl.getOffsetTop();
 
-            const distanceToParentsBottom = distanceToParentsTop + parent.getHeight();
+            const distanceToParentsBottom = distanceToParentsTop + containerHeight;
             const distanceToInputsBottom = distanceToInputsTop + inputEl.getHeight();
 
             const sizeAboveInput = distanceToInputsTop - distanceToParentsTop;
@@ -260,8 +274,8 @@ module api.ui.selector.combobox {
         }
 
         private placeDropdownAbove() {
-            let dropdown = this.comboBoxDropdown.getDropdownGrid().getElement().getEl(),
-                placeholder = this.comboBoxDropdown.getEmptyDropdown().getEl();
+            let dropdown = this.comboBoxDropdown.getDropdownGrid().getElement().getEl();
+            let placeholder = this.comboBoxDropdown.getEmptyDropdown().getEl();
 
             dropdown.setTopPx(-dropdown.getHeightWithBorder()).addClass("reverted");
             placeholder.setTopPx(-placeholder.getHeightWithBorder());
@@ -403,20 +417,21 @@ module api.ui.selector.combobox {
             }
 
             let valueSetPromise;
-            let optionIds = this.splitValues(value),
-                missingOptionIds = this.getMissingOptionsIds(optionIds);
+            let optionIds = this.splitValues(value);
+            let missingOptionIds = this.getMissingOptionsIds(optionIds);
 
             if (this.displayMissingSelectedOptions || this.removeMissingSelectedOptions && missingOptionIds.length > 0) {
                 valueSetPromise = this.selectExistingAndHandleMissing(optionIds, missingOptionIds);
             } else {
-                valueSetPromise = wemQ(this.selectExistingOptions(value));
+                valueSetPromise = wemQ(this.selectExistingOptions(optionIds));
             }
             valueSetPromise.done((options) => this.notifyValueLoaded(options));
         }
 
-        private selectExistingOptions(value: string) {
+        private selectExistingOptions(optionIds: string[]) {
             let selectedOptions = [];
-            this.splitValues(value).forEach((val) => {
+
+            optionIds.forEach((val) => {
                 let option = this.getOptionByValue(val);
                 if (option != null) {
                     selectedOptions.push(option);
@@ -428,18 +443,15 @@ module api.ui.selector.combobox {
 
         // tslint:disable-next-line:max-line-length
         private selectExistingAndHandleMissing(optionIds: string[], missingOptionIds: string[]): wemQ.Promise<Option<OPTION_DISPLAY_VALUE>[]> {
-            let nonExistingIds: string[] = [],
-                selectedOptions = [];
+            const nonExistingIds: string[] = [];
+            const selectedOptions = this.selectExistingOptions(optionIds);
 
             return new api.content.resource.ContentsExistRequest(missingOptionIds).sendAndParse()
                 .then((result: api.content.resource.result.ContentsExistResult) => {
 
                     optionIds.forEach((val) => {
                         const option = this.getOptionByValue(val);
-                        if (option != null) {
-                            selectedOptions.push(option);
-                            this.selectOption(option, true);
-                        } else {
+                        if (option == null) {
                             const contentExists = result.contentExists(val);
                             if (this.displayMissingSelectedOptions && (contentExists || !this.removeMissingSelectedOptions)) {
                                 const selectedOption = (<BaseSelectedOptionsView<OPTION_DISPLAY_VALUE>> this.selectedOptionsView)
@@ -494,8 +506,8 @@ module api.ui.selector.combobox {
                 return x.value;
             }).join();
             let selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = this.getSelectedOptions();
-            let filteredOption = [],
-                gridOptions = [];
+            let filteredOption = [];
+            let gridOptions = [];
             for (let k in selectedOptions) {
                 if (optionsMap.search(selectedOptions[k].value) >= 0) {
                     filteredOption.push(selectedOptions[k].value);
@@ -605,8 +617,7 @@ module api.ui.selector.combobox {
 
             if (giveInputFocus) {
                 this.input.openForTypingAndFocus();
-            }
-            else {
+            } else {
                 this.input.openForTyping();
             }
 
@@ -622,8 +633,7 @@ module api.ui.selector.combobox {
                 return this.selectedOptionsView.getSelectedOptions().map((selectedOption: SelectedOption<OPTION_DISPLAY_VALUE>) => {
                     return selectedOption.getOption();
                 });
-            }
-            else {
+            } else {
                 throw new Error("Not supported yet");
             }
         }
@@ -644,8 +654,7 @@ module api.ui.selector.combobox {
         countSelectedOptions(): number {
             if (this.selectedOptionsView) {
                 return this.selectedOptionsView.count();
-            }
-            else {
+            } else {
                 throw new Error("Not supported yet");
             }
         }
@@ -870,7 +879,6 @@ module api.ui.selector.combobox {
             if (event.which !== 13) {
                 this.input.giveFocus();
             }
-
 
             if (event.which == 38 || event.which == 40 || event.which == 13) {
                 event.stopPropagation();

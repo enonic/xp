@@ -32,7 +32,6 @@ export class PropertiesWidgetItemView extends WidgetItemView {
         return wemQ<any>(null);
     }
 
-
     private initListeners() {
 
         let layoutOnPublishStateChange = (contents: ContentSummaryAndCompareStatus[]) => {
@@ -119,7 +118,6 @@ export class PropertiesWidgetItemView extends WidgetItemView {
         this.appendChild(this.list);
     }
 }
-
 
 class FieldString {
 

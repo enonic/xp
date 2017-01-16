@@ -136,8 +136,7 @@ module api.app.browse.filter {
         search(elementChanged?: api.dom.Element) {
             if (this.hasFilterSet()) {
                 this.clearFilter.show();
-            }
-            else {
+            } else {
                 this.clearFilter.hide();
             }
             this.notifySearchStarted();
@@ -246,8 +245,7 @@ module api.app.browse.filter {
             if (!emptyFilterValue) {
                 if (hits != 1) {
                     this.hitsCounterEl.setHtml(hits + " hits");
-                }
-                else {
+                } else {
                     this.hitsCounterEl.setHtml(hits + " hit");
                 }
             } else {
@@ -256,8 +254,7 @@ module api.app.browse.filter {
 
             if (hits != 0) {
                 this.showResultsButton.show();
-            }
-            else {
+            } else {
                 this.showResultsButton.hide();
             }
         }

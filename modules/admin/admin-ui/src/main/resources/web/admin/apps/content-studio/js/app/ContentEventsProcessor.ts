@@ -14,9 +14,9 @@ import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
 export class ContentEventsProcessor {
 
     static openWizardTab(params: ContentWizardPanelParams, tabId: AppBarTabId): Window {
-        let wizardUrl = 'content-studio#/' + params.toString(),
-            isNew = !params.contentId,
-            wizardId;
+        let wizardUrl = 'content-studio#/' + params.toString();
+        let isNew = !params.contentId;
+        let wizardId;
         if (!isNew && navigator.userAgent.search("Chrome") > -1) {
             // add tab id for browsers that can focus tabs by id
             // don't do it for new to be able to create multiple
@@ -24,6 +24,10 @@ export class ContentEventsProcessor {
             wizardId = tabId.toString();
         }
         return window.open(wizardUrl, wizardId);
+    }
+
+    static popupBlocked(win: Window) {
+        return !win || win.closed || typeof win.closed == "undefined";
     }
 
     static handleNew(newContentEvent: NewContentEvent) {
@@ -42,14 +46,14 @@ export class ContentEventsProcessor {
 
     static handleEdit(event: api.content.event.EditContentEvent) {
 
-        event.getModels().forEach((content: ContentSummaryAndCompareStatus) => {
+        event.getModels().every((content: ContentSummaryAndCompareStatus) => {
 
             if (!content || !content.getContentSummary()) {
-                return;
+                return true;
             }
 
-            let contentSummary = content.getContentSummary(),
-                contentTypeName = contentSummary.getType();
+            let contentSummary = content.getContentSummary();
+            let contentTypeName = contentSummary.getType();
 
             let tabId = AppBarTabId.forEdit(contentSummary.getId());
 
@@ -58,7 +62,16 @@ export class ContentEventsProcessor {
                 .setContentTypeName(contentTypeName)
                 .setContentId(contentSummary.getContentId());
 
-            ContentEventsProcessor.openWizardTab(wizardParams, tabId);
+            let win = ContentEventsProcessor.openWizardTab(wizardParams, tabId);
+
+            if (ContentEventsProcessor.popupBlocked(win)) {
+                const message = "Pop-up Blocker is enabled in browser settings! Please add the XP admin to the exception list.";
+                api.notify.showWarning(message, false);
+
+                return false;
+            }
+
+            return true;
         });
     }
 

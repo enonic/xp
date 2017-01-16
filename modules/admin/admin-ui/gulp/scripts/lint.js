@@ -6,19 +6,22 @@ function log(fails) {
     fails.forEach(fail => fail.log());
 
     if (fails.length > 0) {
-        const title = 'Linting failed.';
+        const title = `Linter found ${fails.length} error.`;
         const message = 'Run "npm run prelint" to check again.';
 
         notifier.notify({title, message});
-        console.error('\n' + title);
-        console.error(message);
+        console.log('\n' + title);
+        console.log(message);
 
         process.exit(1);
     }
 }
 
-const diff = () => git.mergeBase().then((hash) => git.diff(hash, '.ts')).then(lint).then(log);
-const status = () => git.status('.ts').then(lint).then(log);
+// `*.ts` files, except `*.d.ts`
+const ext = ['.ts', /^(?!.*\.d\.ts$).*$/];
+
+const diff = () => git.mergeBase().then((hash) => git.diff(hash, ...ext)).then(lint).then(log);
+const status = () => git.status(...ext).then(lint).then(log);
 
 module.exports = {
     status,

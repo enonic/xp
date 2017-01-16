@@ -14,8 +14,7 @@ module api.content {
 
                 if (!duplicate) {
                     this.array.push(contentId);
-                }
-                else {
+                } else {
                     throw Error("ContentIds do not allow duplicates, found: '" + contentId.toString() + "'");
                 }
             });

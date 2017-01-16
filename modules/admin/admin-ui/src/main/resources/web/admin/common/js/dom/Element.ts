@@ -121,8 +121,7 @@ module api.dom {
                     this.children = sourceElement.children;
                     this.el = sourceElement.el;
                 }
-            }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(builder, ElementFromHelperBuilder)) {
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(builder, ElementFromHelperBuilder)) {
                 let fromHelperBuilder = <ElementFromHelperBuilder>builder;
 
                 this.el = fromHelperBuilder.helper;
@@ -132,24 +131,21 @@ module api.dom {
                 if (fromHelperBuilder.parentElement) {
                     this.parentElement = fromHelperBuilder.parentElement;
                 }
-            }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(builder, NewElementBuilder)) {
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(builder, NewElementBuilder)) {
                 let newElementBuilder = <NewElementBuilder>builder;
                 if (!newElementBuilder.tagName) {
                     throw new Error("tagName cannot be null");
                 }
                 if (newElementBuilder.helper) {
                     this.el = newElementBuilder.helper;
-                }
-                else {
+                } else {
                     this.el = ElementHelper.fromName(newElementBuilder.tagName);
                 }
 
                 if (newElementBuilder.parentElement) {
                     this.parentElement = newElementBuilder.parentElement;
                 }
-            }
-            else {
+            } else {
                 throw new Error("Unsupported builder: " + api.ClassHelper.getClassName(builder));
             }
 
@@ -193,7 +189,6 @@ module api.dom {
 
             return this;
         }
-
 
         public findChildById(id: string, deep: boolean = false): Element {
             for (let i = 0; i < this.children.length; i++) {
@@ -340,9 +335,13 @@ module api.dom {
             this.notifyShown(this, true);
         }
 
-        hide() {
+        hide(skipAnimation: boolean = false) {
             // Using jQuery to hide, since it seems to contain some smartness
-            wemjq(this.el.getHTMLElement()).hide();
+            if (skipAnimation) {
+                wemjq(this.el.getHTMLElement()).hide(null);
+            } else {
+                wemjq(this.el.getHTMLElement()).hide();
+            }
             this.notifyHidden(this);
         }
 
@@ -494,7 +493,6 @@ module api.dom {
             return this.el.getHTMLElement();
         }
 
-
         /*
          *      Child manipulations
          */
@@ -630,7 +628,6 @@ module api.dom {
             return childIndex;
         }
 
-
         /*
          *      Self actions
          */
@@ -752,7 +749,6 @@ module api.dom {
             this.getEl().setInnerHtml(value, escapeHtml);
             return this;
         }
-
 
         /*
          *      Event listeners
@@ -1141,7 +1137,6 @@ module api.dom {
             this.getEl().removeEventListener("dragend", listener);
         }
 
-
         static fromHtmlElement(element: HTMLElement, loadExistingChildren: boolean = false, parent?: Element): Element {
             return new Element(new ElementFromHelperBuilder().setHelper(new ElementHelper(element)).setLoadExistingChildren(
                 loadExistingChildren).setParentElement(parent));
@@ -1158,8 +1153,8 @@ module api.dom {
 
         static fromSelector(s: string, loadExistingChildren: boolean = true): Element[] {
             return wemjq(s).map((index, elem) => {
-                let htmlEl = <HTMLElement> elem,
-                    parentEl;
+                let htmlEl = <HTMLElement> elem;
+                let parentEl;
                 if (htmlEl && htmlEl.parentElement) {
                     parentEl = Element.fromHtmlElement(htmlEl.parentElement);
                 }

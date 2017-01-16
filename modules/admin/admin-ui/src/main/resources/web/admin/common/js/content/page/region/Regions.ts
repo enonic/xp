@@ -46,7 +46,6 @@ module api.content.page.region {
             this.registerRegionListeners(region);
         }
 
-
         private registerRegionListeners(region: Region) {
             region.onChanged(this.regionChangedEventHandler);
             region.onComponentPropertyChangedEvent(this.componentPropertyChangedEventHandler);
@@ -89,8 +88,7 @@ module api.content.page.region {
 
             if (path.numberOfLevels() == 1) {
                 return component;
-            }
-            else {
+            } else {
                 if (!api.ObjectHelper.iFrameSafeInstanceOf(component, LayoutComponent)) {
                     throw new Error("Expected component to be a LayoutComponent: " + api.ClassHelper.getClassName(component));
                 }
@@ -145,7 +143,6 @@ module api.content.page.region {
             }
 
             let other = <Regions>o;
-
 
             let thisRegions = this.getRegions();
             let otherRegions = other.getRegions();

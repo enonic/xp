@@ -24,8 +24,7 @@ module api.content {
             if (path.indexOf("/") == 0 && path.length > 1) {
                 path = path.substr(1);
                 elements = path.split(ContentPath.ELEMENT_DIVIDER);
-            }
-            else if (path == "/") {
+            } else if (path == "/") {
                 elements = [];
             }
 
@@ -36,8 +35,7 @@ module api.content {
             this.elements = elements;
             if (elements.length == 0) {
                 this.refString = ContentPath.ELEMENT_DIVIDER;
-            }
-            else {
+            } else {
                 this.refString = ContentPath.ELEMENT_DIVIDER + this.elements.join(ContentPath.ELEMENT_DIVIDER);
             }
         }

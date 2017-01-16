@@ -41,8 +41,7 @@ module api.form {
 
             if (this.parent == null) {
                 return FormItemPath.ROOT;
-            }
-            else {
+            } else {
                 return this.parent.getPath();
             }
         }
@@ -66,20 +65,15 @@ module api.form {
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(this, Input)) {
                 return (<Input><any>this).toInputJson();
-            }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(this, FormItemSet)) {
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(this, FormItemSet)) {
                 return (<api.form.FormItemSet><any>this).toFormItemSetJson();
-            }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(this, FieldSet)) {
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(this, FieldSet)) {
                 return (<FieldSet><any>this).toFieldSetJson();
-            }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(this, FormOptionSet)) {
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(this, FormOptionSet)) {
                 return (<api.form.FormOptionSet><any>this).toFormOptionSetJson();
-            }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(this, FormOptionSetOption)) {
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(this, FormOptionSetOption)) {
                 return (<api.form.FormOptionSetOption><any>this).toFormOptionSetOptionJson();
-            }
-            else {
+            } else {
                 throw new Error("Unsupported FormItem: " + this);
             }
         }

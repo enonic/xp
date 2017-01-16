@@ -1,9 +1,0 @@
-apply plugin: 'checkstyle'
-
-checkstyle {
-    configFile = file( "$rootDir/gradle/config/checkstyle.xml" )
-    ignoreFailures = false
-    showViolations = true
-    toolVersion = "6.0"
-}
-

@@ -181,8 +181,8 @@ module api.ui.dialog {
         }
 
         hide() {
-            super.hide();
             api.dom.Body.get().getHTMLElement().classList.remove("modal-dialog");
+            super.hide(true);
         }
 
         protected centerMyself() {
@@ -259,7 +259,6 @@ module api.ui.dialog {
 
         protected overwriteDefaultArrows(element: api.dom.Element) {
             element.onKeyDown((event) => {
-
 
                 if (api.ui.KeyHelper.isArrowLeftKey(event)) {
                     this.focusPreviousTabbable();

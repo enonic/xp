@@ -195,18 +195,19 @@ module api.ui.image {
 
             console.debug('canvas (' + this.canvasWidth + ', ' + this.canvasHeight + ')');
 
-            let oldZoomFactor = this.zoom.previous,
-                zoomFactor = Math.min(Math.max(this.zoom.factor, 1), 10);
+            let oldZoomFactor = this.zoom.previous;
+            let zoomFactor = Math.min(Math.max(this.zoom.factor, 1), 10);
 
             console.debug('old zoom factor = ' + oldZoomFactor + ', \nnew zoom factor after restraining = ' + zoomFactor);
 
             imgEl.setWidthPx(this.canvasWidth * zoomFactor);
 
-            let imgHeight = imgEl.getHeight(),
-                imgWidth = imgEl.getWidth();
+            let imgHeight = imgEl.getHeight();
+            let imgWidth = imgEl.getWidth();
             console.debug('image (' + imgWidth + ', ' + imgHeight + ')');
 
-            let panX, panY;
+            let panX;
+            let panY;
             if (!this.pan.overrideZoom) {
                 let zoomWidthPanFactor = (this.zoom.x - this.pan.x) / oldZoomFactor;
                 let zoomHeightPanFactor = (this.zoom.y - this.pan.y) / oldZoomFactor;

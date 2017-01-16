@@ -1,7 +1,0 @@
-def javaVersion = new com.enonic.gradle.JavaVersion()
-
-// Check java version
-assert javaVersion.java8: "Must use a Java 8 compatible JVM to perform this build. Current JVM is ${javaVersion}."
-
-// Check java update
-assert javaVersion.update >= 92: "Must compile using 1.8 update 92 and above. Current JVM is ${javaVersion}."

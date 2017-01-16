@@ -85,7 +85,6 @@ export class PreviewContentHandler {
         });
     }
 
-
     private setBlocked(blocked: boolean) {
         this.blocked = blocked;
 
@@ -141,7 +140,6 @@ export class PreviewContentHandler {
             this.anyRenderable = newRenderable;
         }
     }
-
 
     onPreviewStateChanged(listener: (active: boolean) => void) {
         this.previewStateChangedListeners.push(listener);

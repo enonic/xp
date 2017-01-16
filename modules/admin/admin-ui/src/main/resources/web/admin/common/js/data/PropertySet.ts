@@ -151,8 +151,7 @@ module api.data {
         setPropertyByPath(path: any, value: Value): Property {
             if (api.ObjectHelper.iFrameSafeInstanceOf(path, PropertyPath)) {
                 return this.doSetProperty(<PropertyPath>path, value);
-            }
-            else {
+            } else {
                 return this.doSetProperty(PropertyPath.fromString(path.toString()), value);
             }
         }
@@ -162,8 +161,7 @@ module api.data {
             if (path.elementCount() > 1) {
                 let propertySet = this.getOrCreateSet(firstPathElement.getName(), firstPathElement.getIndex());
                 return propertySet.setPropertyByPath(path.removeFirstPathElement(), value);
-            }
-            else {
+            } else {
                 return this.setProperty(firstPathElement.getName(), firstPathElement.getIndex(), value);
             }
         }
@@ -174,8 +172,7 @@ module api.data {
                 let newSet = this.tree ? new PropertySet(this.tree) : new PropertySet();
                 this.setProperty(name, index, new Value(newSet, ValueTypes.DATA));
                 return newSet;
-            }
-            else {
+            } else {
                 return existingProperty.getPropertySet();
             }
         }
@@ -256,11 +253,9 @@ module api.data {
                 let type = property.getType();
                 if (property.hasNullValue()) {
                     toRemove.push(property);
-                }
-                else if (type.equals(api.data.ValueTypes.STRING) && (property.getValue().getString() === '')) {
+                } else if (type.equals(api.data.ValueTypes.STRING) && (property.getValue().getString() === '')) {
                     toRemove.push(property);
-                }
-                else if (type.equals(api.data.ValueTypes.DATA)) {
+                } else if (type.equals(api.data.ValueTypes.DATA)) {
                     let propertySetValue = property.getValue().getPropertySet();
                     this.doRemoveEmptyValues(propertySetValue);
                     if (propertySetValue.isEmpty()) {
@@ -326,16 +321,14 @@ module api.data {
 
             if (identifier == undefined && index == undefined) {
                 return this.property;
-            }
-            else if (index != undefined) {
+            } else if (index != undefined) {
                 Property.checkName(identifier);
                 let array = this.propertyArrayByName[identifier];
                 if (!array) {
                     return null;
                 }
                 return array.get(index);
-            }
-            else {
+            } else {
                 return this.getPropertyByPath(identifier);
             }
         }
@@ -344,8 +337,7 @@ module api.data {
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(path, PropertyPath)) {
                 return this.doGetPropertyByPath(<PropertyPath>path);
-            }
-            else {
+            } else {
                 return this.doGetPropertyByPath(PropertyPath.fromString(path.toString()));
             }
         }
@@ -360,8 +352,7 @@ module api.data {
                 }
                 let propertySet = property.getPropertySet();
                 return propertySet.getPropertyByPath(path.removeFirstPathElement());
-            }
-            else {
+            } else {
                 return this.getProperty(firstElement.getName(), firstElement.getIndex());
             }
         }
@@ -426,10 +417,10 @@ module api.data {
         }
 
         public diff(other: PropertySet): PropertyTreeDiff {
-            let checkedProperties: String[] = [],
-                diff = this.doDiff(other, checkedProperties),
+            let checkedProperties: String[] = [];
+            let diff = this.doDiff(other, checkedProperties);
             // run inverse diff to find properties, which were added to the original set
-                inverseDiff = other.doDiff(this, checkedProperties);
+            let inverseDiff = other.doDiff(this, checkedProperties);
 
             diff.added = diff.added.concat(inverseDiff.removed);
 
@@ -437,14 +428,14 @@ module api.data {
         }
 
         private doDiff(other: PropertySet, checkedProperties: String[] = []): PropertyTreeDiff {
-            let added = [],
-                removed = [],
-                modified = [];
+            let added = [];
+            let removed = [];
+            let modified = [];
 
             this.forEach((property) => {
                 if (checkedProperties.indexOf(property.getPath().toString()) == -1) {
-                    let type = property.getType(),
-                        otherProperty = other.getProperty(property.getName(), property.getIndex());
+                    let type = property.getType();
+                    let otherProperty = other.getProperty(property.getName(), property.getIndex());
 
                     if (!otherProperty) {
                         removed.push(property);
@@ -457,8 +448,8 @@ module api.data {
                         }
                         checkedProperties.push(property.getPath().toString());
                     } else {
-                        let propertySetValue = property.getValue().getPropertySet(),
-                            diff = propertySetValue.doDiff(otherProperty.getValue().getPropertySet(), checkedProperties);
+                        let propertySetValue = property.getValue().getPropertySet();
+                        let diff = propertySetValue.doDiff(otherProperty.getValue().getPropertySet(), checkedProperties);
 
                         added = added.concat(diff.added);
                         removed = removed.concat(diff.removed);

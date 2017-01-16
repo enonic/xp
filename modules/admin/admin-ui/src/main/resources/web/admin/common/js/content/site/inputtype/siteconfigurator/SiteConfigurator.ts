@@ -89,7 +89,6 @@ module api.content.site.inputtype.siteconfigurator {
             return deferred.promise;
         }
 
-
         update(propertyArray: api.data.PropertyArray, unchangedOnly?: boolean): Q.Promise<void> {
             return super.update(propertyArray, unchangedOnly).then(() => {
                 this.siteConfigProvider.setPropertyArray(propertyArray);
@@ -104,7 +103,6 @@ module api.content.site.inputtype.siteconfigurator {
         reset() {
             this.comboBox.resetBaseValues();
         }
-
 
         private saveToSet(siteConfig: SiteConfig, index: number) {
 

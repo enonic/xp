@@ -146,7 +146,6 @@ module api.form {
             return result;
         }
 
-
         validate(silent: boolean = true): ValidationRecording {
 
             let recording = new ValidationRecording();

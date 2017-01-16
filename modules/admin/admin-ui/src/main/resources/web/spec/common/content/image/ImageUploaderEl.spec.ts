@@ -53,7 +53,8 @@ module ImageUploaderElSpec {
 
             describe("general behaviour", () => {
 
-                let editorSpyObj, editorSpy;
+                let editorSpyObj;
+                let editorSpy;
 
                 beforeEach(() => {
                     imageUploaderEl.getEl().setWidthPx(0);
@@ -126,10 +127,10 @@ module ImageUploaderElSpec {
 
         });
 
-
         describe("public methods", () => {
 
-            let editorSpyObj, editorSpy;
+            let editorSpyObj;
+            let editorSpy;
 
             beforeEach((done) => {
                 imageUploaderEl.getEl().setWidthPx(0);
@@ -155,12 +156,14 @@ module ImageUploaderElSpec {
                 api.dom.Body.get().removeChild(imageUploaderEl);
             });
 
-
             describe("createResultItem()", () => {
 
                 describe("multiple call", () => {
 
-                    let editors, editorsSpy, secondEditor, thirdEditor;
+                    let editors;
+                    let editorsSpy;
+                    let secondEditor;
+                    let thirdEditor;
 
                     beforeEach(() => {
 
@@ -185,7 +188,9 @@ module ImageUploaderElSpec {
             describe("setOriginalDimensions()", () => {
 
                 let sizeSpy: Spy;
-                let content, contentData, metadata;
+                let content;
+                let contentData;
+                let metadata;
 
                 beforeEach(() => {
                     content = jasmine.createSpyObj("fakeContent", ["getContentData", "getAllExtraData"]);
@@ -234,13 +239,12 @@ module ImageUploaderElSpec {
 
                         afterEach(() => {
                             newItem.remove();
-                        })
+                        });
 
                         it("should use original height values", () => {
                             expect(proportionalHeightSpy).toHaveBeenCalled();
                         });
                     });
-
 
                 });
 
@@ -274,7 +278,6 @@ module ImageUploaderElSpec {
                     });
 
                 });
-
 
             });
 
@@ -371,7 +374,8 @@ module ImageUploaderElSpec {
 
             describe("isFocalPointEditMode()", () => {
 
-                let firstEditor, secondEditor;
+                let firstEditor;
+                let secondEditor;
 
                 beforeEach(() => {
                     firstEditor = imageUploaderEl.createResultItem("firstEditor");
@@ -390,7 +394,8 @@ module ImageUploaderElSpec {
 
             describe("isCropEditMode()", () => {
 
-                let firstEditor, secondEditor;
+                let firstEditor;
+                let secondEditor;
 
                 beforeEach(() => {
                     firstEditor = imageUploaderEl.createResultItem("firstEditor");
@@ -408,7 +413,6 @@ module ImageUploaderElSpec {
             });
         });
 
-
         describe("image editor listeners", () => {
 
             let editor;
@@ -425,7 +429,8 @@ module ImageUploaderElSpec {
 
             describe("after image has been loaded", () => {
 
-                let shaderVisibilitySpy, showFileDialogSpy;
+                let shaderVisibilitySpy;
+                let showFileDialogSpy;
 
                 beforeEach(() => {
                     shaderVisibilitySpy = spyOn(editor, "onShaderVisibilityChanged").and.callThrough();
@@ -438,7 +443,9 @@ module ImageUploaderElSpec {
 
                 describe("and edit mode has been changed", () => {
 
-                    let notifyEditModeSpy, addClassSpy, removeClassSpy: Spy;
+                    let notifyEditModeSpy;
+                    let addClassSpy;
+                    let removeClassSpy: Spy;
                     beforeEach(() => {
                         notifyEditModeSpy = spyOn(imageUploaderEl, "notifyEditModeChanged").and.callThrough();
                         addClassSpy = spyOn(editor, "addClass").and.callThrough();
@@ -500,14 +507,11 @@ module ImageUploaderElSpec {
                 });
             });
 
-
         });
-
 
     });
 
-
-    function createUploader(config?): ImageUploaderEl {
+    function createUploader(config?: MediaUploaderElConfig): ImageUploaderEl {
         return new ImageUploaderEl(config || {
                 params: {
                     parent: "parentId"

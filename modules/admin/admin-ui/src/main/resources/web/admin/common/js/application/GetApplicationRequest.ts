@@ -32,8 +32,7 @@ module api.application {
             let appObj = this.skipCache ? null : cache.getByKey(this.applicationKey);
             if (appObj) {
                 return wemQ(appObj);
-            }
-            else {
+            } else {
                 return this.send().then((response: api.rest.JsonResponse<ApplicationJson>) => {
                     appObj = this.fromJsonToApplication(response.getResult());
                     cache.put(appObj);

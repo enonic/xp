@@ -65,7 +65,6 @@ module api.ui.selector {
             this.grid.hide();
             this.grid.setSelectionModel(new Slick.RowSelectionModel({selectActiveRow: false}));
 
-
             // Listen to click in grid and issue selection
             this.grid.subscribeOnClick((e, args) => {
                 this.notifyRowSelection(args.row);
@@ -227,8 +226,7 @@ module api.ui.selector {
             let stylesHash: Slick.CellCssStylesHash = {};
             let rows: number[] = [];
             selectedOptions.forEach((selectedOption: Option<OPTION_DISPLAY_VALUE>) => {
-                if(selectedOption.readOnly)
-                {
+                if(selectedOption.readOnly) {
                     let row = this.gridData.getRowById(selectedOption.value);
                     rows.push(row);
                     stylesHash[row] = {_checkbox_selector: "readonly" ,option: "readonly"};

@@ -7,7 +7,7 @@ describe("api.ui.time.CalendarDay", () => {
 
         it("given date 2014-01-01 then WEDNESDAY should be returned", () => {
 
-            var calendarDay = new CalendarDayBuilder().
+            let calendarDay = new CalendarDayBuilder().
                 setDate(new Date(Date.UTC(2014, 0, 1))).
                 setMonth(0).
                 build();
@@ -17,7 +17,7 @@ describe("api.ui.time.CalendarDay", () => {
 
         it("given date 2014-12-31 then WEDNESDAY should be returned", () => {
 
-            var calendarDay = new CalendarDayBuilder().
+            let calendarDay = new CalendarDayBuilder().
                 setDate(new Date(Date.UTC(2014, 11, 31))).
                 setMonth(11).
                 build();

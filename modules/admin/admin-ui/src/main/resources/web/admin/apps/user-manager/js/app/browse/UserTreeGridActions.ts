@@ -36,9 +36,9 @@ export class UserTreeGridActions implements TreeGridActions<UserTreeGridItem> {
     }
 
     updateActionsEnabledState(userItemBrowseItems: BrowseItem<UserTreeGridItem>[]): wemQ.Promise<BrowseItem<UserTreeGridItem>[]> {
-        let userStoresSelected: number = 0,
-            principalsSelected: number = 0,
-            directoriesSelected: number = 0;
+        let userStoresSelected: number = 0;
+        let principalsSelected: number = 0;
+        let directoriesSelected: number = 0;
 
         userItemBrowseItems.forEach((browseItem: BrowseItem<UserTreeGridItem>) => {
             let item = <UserTreeGridItem>browseItem.getModel();
@@ -62,9 +62,9 @@ export class UserTreeGridActions implements TreeGridActions<UserTreeGridItem> {
             }
         });
 
-        let totalSelection = userStoresSelected + principalsSelected + directoriesSelected,
-            anyPrincipal = principalsSelected > 0,
-            anyUserStore = userStoresSelected > 0;
+        let totalSelection = userStoresSelected + principalsSelected + directoriesSelected;
+        let anyPrincipal = principalsSelected > 0;
+        let anyUserStore = userStoresSelected > 0;
 
         this.NEW.setEnabled((directoriesSelected <= 1) && (totalSelection <= 1));
         this.EDIT.setEnabled(directoriesSelected < 1 && (anyUserStore || anyPrincipal));
@@ -92,8 +92,7 @@ export class UserTreeGridActions implements TreeGridActions<UserTreeGridItem> {
             UserStore.checkOnDeletable(userBrowseItem.getUserStore().getKey()).then((result: boolean) => {
                 this.DELETE.setEnabled(result);
             });
-        }
-        else {
+        } else {
             this.DELETE.setEnabled(false);
         }
     }

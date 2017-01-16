@@ -28,7 +28,6 @@ export class UserPasswordWizardStepForm extends api.app.wizard.WizardStepForm {
 
     private fieldSet: Fieldset;
 
-
     constructor() {
         super();
 

@@ -126,8 +126,8 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private createContentQuery(): ContentQuery {
-        let contentQuery: ContentQuery = new ContentQuery(),
-            values = this.getSearchInputValues();
+        let contentQuery: ContentQuery = new ContentQuery();
+        let values = this.getSearchInputValues();
         this.appendQueryExpression(values, contentQuery);
         this.appendContentTypeFilter(values, contentQuery);
         this.appendOutboundReferencesFilter(contentQuery);
@@ -159,8 +159,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
             (contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
                 if (contentQueryResult.getMetadata().getTotalHits() > 0) {
                     this.handleDataSearchResult(contentQuery, contentQueryResult);
-                }
-                else {
+                } else {
                     this.handleNoSearchResultOnRefresh(contentQuery);
                 }
             }).catch((reason: any) => {
@@ -182,12 +181,10 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         // remove content type facet from search if both content types and date are filtered
         if (this.contentTypesAndRangeFiltersUsed(contentQuery)) {
             this.refreshDataAndHandleResponse(this.cloneContentQueryNoContentTypes(contentQuery));
-        }
-        else if (this.hasSearchStringSet()) { // if still no result and search text is set remove last modified facet
+        } else if (this.hasSearchStringSet()) { // if still no result and search text is set remove last modified facet
             this.deselectAll();
             this.searchDataAndHandleResponse(this.cloneContentQueryNoAggregations(contentQuery));
-        }
-        else {
+        } else {
             this.reset();
         }
     }
@@ -296,8 +293,8 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private appendQueryExpression(searchInputValues: SearchInputValues, contentQuery: ContentQuery) {
-        let fulltextSearchExpression = this.makeFulltextSearchExpr(searchInputValues),
-            query: QueryExpr;
+        let fulltextSearchExpression = this.makeFulltextSearchExpr(searchInputValues);
+        let query: QueryExpr;
 
         if (this.dependenciesSection.isActive() && this.dependenciesSection.isInbound()) {
             query = new QueryExpr(new LogicalExpr(fulltextSearchExpression, LogicalOperator.AND, this.makeInboundDependenciesSearchExpr()));
@@ -429,8 +426,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
 
             if (aggregationIsEmpty) {
                 aggregationGroupView.hide();
-            }
-            else {
+            } else {
                 aggregationGroupView.show();
             }
         });

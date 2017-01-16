@@ -1,13 +1,13 @@
 import LocalDate = api.util.LocalDate;
 
 describe("api.util.LocalDate", () => {
-    var localDate,
-        test_iso_date_string;
+    let localDate: LocalDate;
+    let isoDate: string;
 
     describe("basic asserts", () => {
         beforeEach(() => {
-            test_iso_date_string = "2001-02-14";
-            localDate = LocalDate.fromISOString(test_iso_date_string);
+            isoDate = "2001-02-14";
+            localDate = LocalDate.fromISOString(isoDate);
         });
         it("should create an instance", () => {
             expect(localDate).toBeDefined();
@@ -26,7 +26,7 @@ describe("api.util.LocalDate", () => {
     });
     describe("conversion to string", () => {
         beforeEach(() => {
-            localDate = LocalDate.fromISOString(test_iso_date_string);
+            localDate = LocalDate.fromISOString(isoDate);
         });
         it("should correctly convert", () => {
             expect("2001-02-14").toEqual(localDate.toString());
@@ -34,23 +34,23 @@ describe("api.util.LocalDate", () => {
     });
     describe("comparison", () => {
         it("should correctly compare equal dates", () => {
-            var date1 = LocalDate.fromISOString(test_iso_date_string);
-            var date2 = LocalDate.fromISOString(test_iso_date_string);
+            let date1 = LocalDate.fromISOString(isoDate);
+            let date2 = LocalDate.fromISOString(isoDate);
             expect(date1.equals(date2)).toBeTruthy();
         });
         it("should correctly compare unequal day", () => {
-            var date1 = LocalDate.fromISOString(test_iso_date_string);
-            var date2 = LocalDate.fromISOString("2001-02-15");
+            let date1 = LocalDate.fromISOString(isoDate);
+            let date2 = LocalDate.fromISOString("2001-02-15");
             expect(date1.equals(date2)).toBeFalsy();
         });
         it("should correctly compare unequal month", () => {
-            var date1 = LocalDate.fromISOString(test_iso_date_string);
-            var date2 = LocalDate.fromISOString("2001-03-14");
+            let date1 = LocalDate.fromISOString(isoDate);
+            let date2 = LocalDate.fromISOString("2001-03-14");
             expect(date1.equals(date2)).toBeFalsy();
         });
         it("should correctly compare unequal year", () => {
-            var date1 = LocalDate.fromISOString(test_iso_date_string);
-            var date2 = LocalDate.fromISOString("2002-02-14");
+            let date1 = LocalDate.fromISOString(isoDate);
+            let date2 = LocalDate.fromISOString("2002-02-14");
             expect(date1.equals(date2)).toBeFalsy();
         });
     });
@@ -76,8 +76,8 @@ describe("api.util.LocalDate", () => {
             }).toThrow();
         });
         it("should parse full date in correct format", () => {
-            var parsedDate = LocalDate.fromISOString("2015-12-31");
-            var originalDate = LocalDate.create().setYear(2015).setMonth(11).setDay(31).build();
+            let parsedDate = LocalDate.fromISOString("2015-12-31");
+            let originalDate = LocalDate.create().setYear(2015).setMonth(11).setDay(31).build();
             expect(originalDate.equals(parsedDate)).toBeTruthy();
         });
 

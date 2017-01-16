@@ -36,12 +36,15 @@ import com.enonic.xp.repo.impl.node.dao.NodeVersionService;
 import com.enonic.xp.repo.impl.repository.DefaultIndexResourceProvider;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.repository.IndexResourceProvider;
+import com.enonic.xp.repo.impl.repository.RepositoryEntryService;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.IndexDataService;
 import com.enonic.xp.repository.IndexMapping;
 import com.enonic.xp.repository.IndexSettings;
+import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.SystemConstants;
+import com.enonic.xp.util.JsonHelper;
 
 @Component
 public class IndexServiceImpl
@@ -59,9 +62,14 @@ public class IndexServiceImpl
 
     private NodeVersionService nodeVersionService;
 
+    private RepositoryEntryService repositoryEntryService;
+
     private final static Logger LOG = LoggerFactory.getLogger( IndexServiceImpl.class );
 
-    private final static String INDEX_RESOURCE_BASE_FOLDER = "/com/enonic/xp/repo/impl/repository/index";
+    private final static String DEFAULT_INDEX_RESOURCE_FOLDER = "/com/enonic/xp/repo/impl/repository/index";
+
+    private final static IndexResourceProvider DEFAULT_INDEX_RESOURCE_PROVIDER =
+        new DefaultIndexResourceProvider( DEFAULT_INDEX_RESOURCE_FOLDER );
 
     @Override
     public ReindexResult reindex( final ReindexParams params )
@@ -193,9 +201,7 @@ public class IndexServiceImpl
         indexServiceInternal.deleteIndices( searchIndexName );
         indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
 
-        final IndexResourceProvider indexResourceProvider = new DefaultIndexResourceProvider( INDEX_RESOURCE_BASE_FOLDER );
-
-        final IndexSettings indexSettings = indexResourceProvider.getSettings( repositoryId, IndexType.SEARCH );
+        final IndexSettings indexSettings = getSearchIndexSettings( repositoryId );
         indexServiceInternal.createIndex( CreateIndexRequest.create().
             indexName( searchIndexName ).
             indexSettings( indexSettings ).
@@ -203,7 +209,7 @@ public class IndexServiceImpl
 
         indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
 
-        final IndexMapping indexMapping = indexResourceProvider.getMapping( repositoryId, IndexType.SEARCH );
+        final IndexMapping indexMapping = getSearchIndexMapping( repositoryId );
         indexServiceInternal.applyMapping( ApplyMappingRequest.create().
             indexName( searchIndexName ).
             indexType( IndexType.SEARCH ).
@@ -211,6 +217,44 @@ public class IndexServiceImpl
             build() );
 
         indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
+    }
+
+    private IndexSettings getSearchIndexSettings( final RepositoryId repositoryId )
+    {
+        final IndexSettings defaultIndexSettings = DEFAULT_INDEX_RESOURCE_PROVIDER.getSettings( repositoryId, IndexType.SEARCH );
+
+        final Repository repositoryEntry = repositoryEntryService.getRepositoryEntry( repositoryId );
+        if ( repositoryEntry != null )
+        {
+            final IndexSettings indexSettings = repositoryEntry.getSettings().
+                getIndexSettings( IndexType.SEARCH );
+
+            if ( indexSettings != null )
+            {
+                return new IndexSettings( JsonHelper.merge( defaultIndexSettings.getNode(), indexSettings.getNode() ) );
+            }
+        }
+
+        return defaultIndexSettings;
+    }
+
+    private IndexMapping getSearchIndexMapping( final RepositoryId repositoryId )
+    {
+        final IndexMapping defaultIndexMapping = DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( repositoryId, IndexType.SEARCH );
+
+        final Repository repositoryEntry = repositoryEntryService.getRepositoryEntry( repositoryId );
+        if ( repositoryEntry != null )
+        {
+            final IndexMapping indexMapping = repositoryEntry.getSettings().
+                getIndexMappings( IndexType.SEARCH );
+
+            if ( indexMapping != null )
+            {
+                return new IndexMapping( JsonHelper.merge( defaultIndexMapping.getNode(), indexMapping.getNode() ) );
+            }
+        }
+
+        return defaultIndexMapping;
     }
 
     @Reference
@@ -235,5 +279,11 @@ public class IndexServiceImpl
     public void setIndexDataService( final IndexDataService indexDataService )
     {
         this.indexDataService = indexDataService;
+    }
+
+    @Reference
+    public void setRepositoryEntryService( final RepositoryEntryService repositoryEntryService )
+    {
+        this.repositoryEntryService = repositoryEntryService;
     }
 }

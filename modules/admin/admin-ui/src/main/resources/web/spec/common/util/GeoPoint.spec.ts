@@ -6,7 +6,7 @@ describe("GeoPoint", () => {
 
         it("given a string '1.1,-2.2' then same string is returned", () => {
 
-            var geoPoint = GeoPoint.fromString("1.1,-2.2");
+            let geoPoint = GeoPoint.fromString("1.1,-2.2");
             expect(geoPoint.toString()).toBe("1.1,-2.2");
         });
     });
@@ -15,7 +15,7 @@ describe("GeoPoint", () => {
 
         it("given a string '1.1,-2.2' then number 1.1 is returned", () => {
 
-            var geoPoint = GeoPoint.fromString("1.1,-2.2");
+            let geoPoint = GeoPoint.fromString("1.1,-2.2");
             expect(geoPoint.getLatitude()).toBe(1.1);
         });
     });
@@ -24,7 +24,7 @@ describe("GeoPoint", () => {
 
         it("given a string '1.1,-2.2' then number -2.2 is returned", () => {
 
-            var geoPoint = GeoPoint.fromString("1.1,-2.2");
+            let geoPoint = GeoPoint.fromString("1.1,-2.2");
             expect(geoPoint.getLongitude()).toBe(-2.2);
         });
     });

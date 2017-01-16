@@ -30,8 +30,7 @@ module api.content.form.inputtype.tag {
         private resolveDataPath(context: api.content.form.inputtype.ContentInputTypeViewContext): PropertyPath {
             if (context.parentDataPath) {
                 return PropertyPath.fromParent(context.parentDataPath, PropertyPathElement.fromString(context.input.getName()));
-            }
-            else {
+            } else {
                 return new PropertyPath([PropertyPathElement.fromString(context.input.getName())], false);
             }
         }
@@ -69,8 +68,7 @@ module api.content.form.inputtype.tag {
                 let value = new Value(event.getValue(), ValueTypes.STRING);
                 if (this.tags.countTags() == 1) {
                     this.getPropertyArray().set(0, value);
-                }
-                else {
+                } else {
                     this.getPropertyArray().add(value);
                 }
                 this.validate(false);
@@ -88,7 +86,6 @@ module api.content.form.inputtype.tag {
 
             return wemQ<void>(null);
         }
-
 
         update(propertyArray: api.data.PropertyArray, unchangedOnly?: boolean): Q.Promise<void> {
             let superPromise = super.update(propertyArray, unchangedOnly);
