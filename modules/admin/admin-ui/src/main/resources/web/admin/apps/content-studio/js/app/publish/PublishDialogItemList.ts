@@ -18,7 +18,7 @@ export class PublishDialogItemList extends DialogItemList {
         super();
 
         this.debonceNotifyListChanged = api.util.AppHelper.debounce(()=> {
-            this.notifyExcludeChildrenListChanged(this.excludeChildrenIds)
+            this.notifyExcludeChildrenListChanged(this.excludeChildrenIds);
         }, 100, false);
     }
 
@@ -26,16 +26,16 @@ export class PublishDialogItemList extends DialogItemList {
                                   browseItem: BrowseItem<ContentSummaryAndCompareStatus>): StatusSelectionItem {
 
         const item = new PublicStatusSelectionItem(viewer, browseItem);
-        item.onItemStateChanged((item, enabled) => {
+        item.onItemStateChanged((contentId, enabled) => {
 
-            const index = this.excludeChildrenIds.indexOf(item);
+            const index = this.excludeChildrenIds.indexOf(contentId);
             if (enabled) {
                 if (index >= 0) {
                     this.excludeChildrenIds.splice(index, 1);
                 }
             } else {
                 if (index < 0) {
-                    this.excludeChildrenIds.push(item);
+                    this.excludeChildrenIds.push(contentId);
                 }
             }
             this.debonceNotifyListChanged();
@@ -129,7 +129,6 @@ class IncludeChildrenToggler extends api.dom.DivEl {
         super("icon icon-tree");
 
         this.tooltip = new Tooltip(this, "", 1000);
-
 
         this.onClicked(() => {
             this.toggle();
