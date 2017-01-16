@@ -181,8 +181,8 @@ module api.ui.dialog {
         }
 
         hide() {
-            super.hide();
             api.dom.Body.get().getHTMLElement().classList.remove("modal-dialog");
+            super.hide(true);
         }
 
         protected centerMyself() {

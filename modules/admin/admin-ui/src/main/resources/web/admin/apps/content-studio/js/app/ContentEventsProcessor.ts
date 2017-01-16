@@ -26,6 +26,10 @@ export class ContentEventsProcessor {
         return window.open(wizardUrl, wizardId);
     }
 
+    static popupBlocked(win: Window) {
+        return !win || win.closed || typeof win.closed == "undefined";
+    }
+
     static handleNew(newContentEvent: NewContentEvent) {
 
         let contentTypeSummary = newContentEvent.getContentType();
@@ -42,10 +46,10 @@ export class ContentEventsProcessor {
 
     static handleEdit(event: api.content.event.EditContentEvent) {
 
-        event.getModels().forEach((content: ContentSummaryAndCompareStatus) => {
+        event.getModels().every((content: ContentSummaryAndCompareStatus) => {
 
             if (!content || !content.getContentSummary()) {
-                return;
+                return true;
             }
 
             let contentSummary = content.getContentSummary();
@@ -58,7 +62,16 @@ export class ContentEventsProcessor {
                 .setContentTypeName(contentTypeName)
                 .setContentId(contentSummary.getContentId());
 
-            ContentEventsProcessor.openWizardTab(wizardParams, tabId);
+            let win = ContentEventsProcessor.openWizardTab(wizardParams, tabId);
+
+            if (ContentEventsProcessor.popupBlocked(win)) {
+                const message = "Pop-up Blocker is enabled in browser settings! Please add the XP admin to the exception list.";
+                api.notify.showWarning(message, false);
+
+                return false;
+            }
+
+            return true;
         });
     }
 

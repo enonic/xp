@@ -9,6 +9,7 @@ module api.liveedit.fragment {
     import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
     import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
     import HTMLAreaHelper = api.util.htmlarea.editor.HTMLAreaHelper;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
     export class FragmentComponentViewBuilder extends ComponentViewBuilder<FragmentComponent> {
 
@@ -30,11 +31,11 @@ module api.liveedit.fragment {
 
         private fragmentLoadErrorListeners: {(event: api.liveedit.FragmentLoadErrorEvent): void}[];
 
+        private editFragmentAction: api.ui.Action;
+
         constructor(builder: FragmentComponentViewBuilder) {
 
             super(builder.setViewer(new FragmentComponentViewer()).setInspectActionRequired(true));
-
-            this.addFragmentContextMenuActions();
 
             this.liveEditModel = builder.parentRegionView.getLiveEditModel();
             this.fragmentContainsLayout = false;
@@ -120,6 +121,8 @@ module api.liveedit.fragment {
             if (contentId) {
                 if (!this.fragmentContent || !contentId.equals(this.fragmentContent.getContentId())) {
                     new GetContentByIdRequest(contentId).sendAndParse().then((content: Content)=> {
+                        let contentAndSummary = api.content.ContentSummaryAndCompareStatus.fromContentSummary(content);
+                        this.addFragmentContextMenuActions(contentAndSummary);
                         this.fragmentContent = content;
                         this.notifyFragmentContentLoaded();
                         new api.liveedit.FragmentComponentLoadedEvent(this).fire();
@@ -136,19 +139,21 @@ module api.liveedit.fragment {
             }
         }
 
-        private addFragmentContextMenuActions() {
+        private addFragmentContextMenuActions(contentAndSummary: ContentSummaryAndCompareStatus) {
             if (this.component.isEmpty()) {
                 return;
             }
-            this.addContextMenuActions([
-                new api.ui.Action("Edit in new tab").onExecuted(() => {
-                    this.deselect();
-                    new GetContentByIdRequest(this.component.getFragment()).sendAndParse().then((content: Content)=> {
-                        let contentAndSummary = api.content.ContentSummaryAndCompareStatus.fromContentSummary(content);
-                        new api.content.event.EditContentEvent([contentAndSummary]).fire();
-                    });
-                })
-            ]);
+
+            if (this.editFragmentAction) {
+                this.removeContextMenuAction(this.editFragmentAction);
+            }
+
+            this.editFragmentAction = new api.ui.Action("Edit in new tab").onExecuted(() => {
+                this.deselect();
+                new api.content.event.EditContentEvent([contentAndSummary]).fire();
+            });
+
+            this.addContextMenuActions([this.editFragmentAction]);
         }
 
         private parseContentViews(parentElement?: api.dom.Element, parentType?: api.liveedit.ItemType) {

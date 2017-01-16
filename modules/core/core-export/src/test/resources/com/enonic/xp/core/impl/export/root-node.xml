@@ -1,0 +1,37 @@
+<node>
+  <id>000-000-000-000</id>
+  <childOrder>_timestamp DESC</childOrder>
+  <nodeType>default</nodeType>
+  <inheritPermissions>false</inheritPermissions>
+  <permissions>
+    <principal key="role:system.authenticated">
+      <allow type="array">
+        <value>READ</value>
+      </allow>
+      <deny type="array"/>
+    </principal>
+    <principal key="role:system.admin">
+      <allow type="array">
+        <value>READ</value>
+        <value>CREATE</value>
+        <value>MODIFY</value>
+        <value>DELETE</value>
+        <value>PUBLISH</value>
+        <value>READ_PERMISSIONS</value>
+        <value>WRITE_PERMISSIONS</value>
+      </allow>
+      <deny type="array"/>
+    </principal>
+  </permissions>
+  <data/>
+  <indexConfigs>
+    <defaultConfig>
+      <decideByType>true</decideByType>
+      <enabled>true</enabled>
+      <nGram>false</nGram>
+      <fulltext>false</fulltext>
+      <includeInAllText>false</includeInAllText>
+    </defaultConfig>
+    <pathIndexConfigs/>
+  </indexConfigs>
+</node>
