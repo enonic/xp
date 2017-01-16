@@ -58,6 +58,10 @@ module api.ui.form {
             }
         }
 
+        setValidator(value: (input: api.dom.FormItemEl) => string) {
+            this.validator = value;
+        }
+        
         validate(validationResult:ValidationResult, markInvalid?: boolean) {
             if (this.validator) {
                 let validationMessage = this.validator(this.input);

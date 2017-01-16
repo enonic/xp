@@ -253,9 +253,6 @@ module api.util.htmlarea.dialog {
             let contentSelector = api.content.ContentComboBox.create().setLoader(loader).setMaximumOccurrences(1).build();
             let contentSelectorComboBox = contentSelector.getComboBox();
 
-            contentSelectorComboBox.onValueChanged(() => {
-                this.centerMyself();
-            });
 
             if (contentTypeNames) {
                 loader.setAllowedContentTypeNames(contentTypeNames);
@@ -273,7 +270,22 @@ module api.util.htmlarea.dialog {
                 contentSelector.setValue(getValueFn.call(this));
             });
 
-            return this.createFormItem(id, label, Validators.required, null, <api.dom.FormItemEl>contentSelector);
+            const formItem = this.createFormItem(id, label, Validators.required, null, <api.dom.FormItemEl>contentSelector);
+
+            contentSelectorComboBox.onValueChanged((event) => {
+                this.centerMyself();
+
+                if (event.getNewValue()) {
+                    new api.content.page.IsRenderableRequest(
+                        new api.content.ContentId(event.getNewValue())).sendAndParse().then((renderable: boolean) => {
+                        formItem.setValidator(() => renderable ? "" : "Only content items that support preview can be selected");
+                    });
+                } else {
+                    formItem.setValidator(Validators.required);
+                }
+            });
+
+            return formItem;
         }
 
         private createAnchorDropdown(anchorList: string[]): FormItem {
