@@ -58,7 +58,7 @@ module api.content {
         public static fromString(str: string): WidgetDescriptorKey {
             let sepIndex: number = str.indexOf(WidgetDescriptorKey.SEPARATOR);
             if (sepIndex == -1) {
-                throw new Error("WidgetDescriptorKey must contain separator '" + WidgetDescriptorKey.SEPARATOR + "':" + str);
+                throw new Error(`WidgetDescriptorKey must contain separator '${WidgetDescriptorKey.SEPARATOR}':${str}`);
             }
 
             let applicationKey = str.substring(0, sepIndex);

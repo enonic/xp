@@ -125,7 +125,7 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
                 this.open();
 
             }).catch(() => {
-                api.notify.showWarning("Could not read inherit permissions for content '" + this.displayName + "'");
+                api.notify.showWarning(`Could not read inherit permissions for content '${this.displayName}'`);
             }).done();
         });
 
@@ -150,7 +150,7 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
             let res = req.sendAndParse();
 
             res.done((updatedContent: Content) => {
-                api.notify.showFeedback("Permissions applied to content '" + updatedContent.getDisplayName() + "'");
+                api.notify.showFeedback(`Permissions applied to content '${updatedContent.getDisplayName()}'`);
                 this.close();
             });
         } else {

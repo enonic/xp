@@ -20,7 +20,7 @@ export class EmulatorPanel extends api.ui.panel.Panel {
         this.liveEditPage = config.liveEditPage;
 
         let text = new api.dom.PEl();
-        text.getEl().setInnerHtml("Emulate different client's physical sizes");
+        text.getEl().setInnerHtml(`Emulate different client's physical sizes`);
         this.appendChild(text);
 
         this.dataView = new api.ui.grid.DataView<any>();

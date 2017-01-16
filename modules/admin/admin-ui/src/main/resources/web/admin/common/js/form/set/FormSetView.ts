@@ -218,7 +218,7 @@ module api.form {
         validate(silent: boolean = true, viewToSkipValidation: FormItemOccurrenceView = null): ValidationRecording {
 
             if (!this.formItemOccurrences) {
-                throw new Error("Can't validate before layout is done");
+                throw new Error(`Can't validate before layout is done`);
             }
 
             let validationRecordingPath = this.resolveValidationRecordingPath();

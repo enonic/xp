@@ -34,7 +34,7 @@ module api.content.site {
         private initApplicationPropertyListeners() {
             this.applicationPropertyAddedListener = (event: api.data.PropertyAddedEvent) => {
                 let property: api.data.Property = event.getProperty();
-                // TODO:? property.getPath().startsWith(PropertyPath.fromString(".siteConfig")) &&  property.getName( )=="config")
+
                 if (property.getPath().toString().indexOf('.siteConfig') == 0 && property.getName() == 'config') {
                     let siteConfig: SiteConfig = api.content.site.SiteConfig.create().fromData(property.getParent()).build();
                     if (!this.siteConfigs) {

@@ -99,7 +99,7 @@ function initToolTip() {
     wemjq(document).on('mouseenter', '*[title]:not([disabled]):visible', function (e: any) {
         wemjq(window).data(DATA, wemjq(window).attr('title'));
         wemjq(window).removeAttr('title').addClass(CLS_ON);
-        wemjq("<div id='" + ID + "' />").appendTo('body');
+        wemjq(`<div id='${ID}' />`).appendTo('body');
         if (e.pageX) {
             pageX = e.pageX;
         }

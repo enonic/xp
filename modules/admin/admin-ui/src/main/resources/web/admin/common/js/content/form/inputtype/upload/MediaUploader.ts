@@ -65,7 +65,7 @@ module api.content.form.inputtype.upload {
                     break;
                 }
 
-                api.notify.showFeedback('\"' + fileName + '\" uploaded');
+                api.notify.showFeedback(`"${fileName}" uploaded`);
 
                 this.manageSVGImageIfPresent(content);
             });

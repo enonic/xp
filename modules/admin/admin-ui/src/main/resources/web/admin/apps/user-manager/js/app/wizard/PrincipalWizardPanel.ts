@@ -188,7 +188,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
                 viewedPrincipal = this.assembleViewedItem();
                 if (!viewedPrincipal.equals(persistedPrincipal)) {
 
-                    console.warn("Received Principal from server differs from what's viewed:");
+                    console.warn(`Received Principal from server differs from what's viewed:`);
                     console.warn(' viewedPrincipal: ', viewedPrincipal);
                     console.warn(' persistedPrincipal: ', persistedPrincipal);
 
@@ -229,7 +229,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
             }
 
             let principalTypeName = StringHelper.capitalize(PrincipalType[principal.getType()].toLowerCase());
-            api.notify.showFeedback(principalTypeName + " '" + principal.getDisplayName() + "' was updated!");
+            api.notify.showFeedback(`${principalTypeName} '${principal.getDisplayName()}' was updated!`);
             new api.security.UserItemUpdatedEvent(principal, this.getUserStore()).fire();
 
             return principal;

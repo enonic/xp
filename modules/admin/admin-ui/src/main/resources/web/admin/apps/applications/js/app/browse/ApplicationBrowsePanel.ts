@@ -89,14 +89,14 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
                         this.treeGrid.triggerSelectionChangedListeners();
                         let installedApp = this.treeGrid.getByApplicationKey(event.getApplicationKey());
                         let installedAppName = installedApp ? installedApp.getDisplayName() : event.getApplicationKey();
-                        api.notify.showFeedback("Application '" + installedAppName + "' installed successfully");
+                        api.notify.showFeedback(`Application '${installedAppName}' installed successfully`);
                     }, 200);
                 });
 
             } else if (ApplicationEventType.UNINSTALLED == event.getEventType()) {
                 let uninstalledApp = this.treeGrid.getByApplicationKey(event.getApplicationKey());
                 let uninstalledAppName = uninstalledApp ? uninstalledApp.getDisplayName() : event.getApplicationKey();
-                api.notify.showFeedback("Application '" + uninstalledAppName + "' uninstalled successfully");
+                api.notify.showFeedback(`Application '${uninstalledAppName}' uninstalled successfully`);
                 this.treeGrid.deleteApplicationNode(event.getApplicationKey());
             } else if (ApplicationEventType.STOPPED == event.getEventType()) {
                 setTimeout(() => { // as uninstall usually follows stop event, lets wait to check if app still exists

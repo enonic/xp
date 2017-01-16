@@ -66,7 +66,7 @@ module api.ui.security.acl {
                     this.notifyValueChanged(this.getAccessControlEntry());
                 });
 
-                // this.toggleClass("dirty", !ace.isInherited());
+                // this.toggleClass('dirty', !ace.isInherited());
 
                 this.accessSelector.onValueChanged((event: api.ValueChangedEvent) => {
                     if (Access[event.getNewValue()] == Access.CUSTOM) {

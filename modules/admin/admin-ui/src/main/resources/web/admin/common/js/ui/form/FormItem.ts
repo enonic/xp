@@ -140,7 +140,7 @@ module api.ui.form {
 
         constructor(input: api.dom.FormItemEl) {
             if(!input) {
-                throw new Error("Input can't be null.");
+                throw new Error(`Input can't be null.`);
             }
             this.input = input;
         }

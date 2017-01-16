@@ -94,7 +94,7 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
     }
 
     private setModel(model: ContentSettingsModel) {
-        api.util.assertNotNull(model, "Model can't be null");
+        api.util.assertNotNull(model, `Model can't be null`);
 
         if (this.model) {
             model.unPropertyChanged(this.modelChangeListener);

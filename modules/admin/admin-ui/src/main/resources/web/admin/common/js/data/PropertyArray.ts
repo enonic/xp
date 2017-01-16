@@ -108,9 +108,8 @@ module api.data {
         }
 
         private checkType(type: ValueType) {
-
             if (!this.type.equals(type)) {
-                throw new Error("This PropertyArray expects only properties with value of type '" + this.type + "', got: " + type);
+                throw new Error(`This PropertyArray expects only properties with value of type '${this.type}', got: ${type}`);
             }
         }
 

@@ -368,7 +368,7 @@ module api.ui {
         private hideOtherInstances() {
             Tooltip.instances.forEach((tooltip: Tooltip) => {
                 if (tooltip != this && tooltip.isVisible()) {
-                    //console.log("Hiding tooltip because multiple instances are not allowed", tooltip);
+                    //console.log('Hiding tooltip because multiple instances are not allowed', tooltip);
                     tooltip.hide();
                 }
             });

@@ -518,8 +518,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.updateMetadataAndMetadataStepForms(newPersistedContent);
         this.updateThumbnailWithContent(newPersistedContent);
         let contentToDisplay = (newPersistedContent.getDisplayName() && newPersistedContent.getDisplayName().length > 0) ?
-                               '\"' + newPersistedContent.getDisplayName() + '\"' : 'Content';
-        api.notify.showFeedback(contentToDisplay + ' saved');
+                               `"${newPersistedContent.getDisplayName()}"` : 'Content';
+        api.notify.showFeedback(`${contentToDisplay} saved`);
     }
 
     private handleSiteConfigApply() {
@@ -639,8 +639,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         new GetMixinByQualifiedNameRequest(name).sendAndParse().then((mixin) => {
             deferred.resolve(mixin);
         }).catch((reason) => {
-            deferred.reject(new api.Exception("Content cannot be opened. Required mixin '" + name.toString() + "' not found.",
-                api.ExceptionType.WARNING));
+            const msg = `Content cannot be opened. Required mixin '${name.toString()}' not found.`;
+            deferred.reject(new api.Exception(msg, api.ExceptionType.WARNING));
         }).done();
         return deferred.promise;
     }
@@ -1035,7 +1035,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                         liveFormPanel.loadPage();
                     }
                 } else {
-                    console.warn("Received Content from server differs from what's viewed:");
+                    console.warn(`Received Content from server differs from what's viewed:`);
                     if (!viewedContent.getContentData().equals(persistedContent.getContentData())) {
                         console.warn(' inequality found in Content.data');
                         if (persistedContent.getContentData() && viewedContent.getContentData()) {
@@ -1436,7 +1436,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 this.notifyContentNamed(content);
             }
             let contentToDisplay = (content.getDisplayName() && content.getDisplayName().length > 0) ?
-                                   '\"' + content.getDisplayName() + '\"' : 'Content';
+                                   `"${content.getDisplayName()}"` : 'Content';
             api.notify.showFeedback(contentToDisplay + ' saved');
             this.getWizardHeader().resetBaseValues();
 

@@ -50,7 +50,7 @@ module api.schema.content {
         static IMAGE: ContentTypeName = ContentTypeName.from(ApplicationKey.MEDIA, 'image');
 
         constructor(name: string) {
-            api.util.assertNotNull(name, "Content type name can't be null");
+            api.util.assertNotNull(name, `Content type name can't be null`);
             let parts = name.split(api.application.ApplicationBasedName.SEPARATOR);
             super(ApplicationKey.fromString(parts[0]), parts[1]);
         }

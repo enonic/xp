@@ -236,12 +236,12 @@ module api.form {
         }
 
         private notifyValidityChanged(event: FormValidityChangedEvent) {
-            //console.log("FormView.validityChanged");
+            //console.log('FormView.validityChanged');
             //if (event.getRecording().isValid()) {
-            //    console.log(" valid: ");
+            //    console.log(' valid: ');
             //}
             //else {
-            //    console.log(" invalid: ");
+            //    console.log(' invalid: ');
             //    event.getRecording().print();
             //}
 

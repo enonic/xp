@@ -69,7 +69,7 @@ export class DetailsView extends api.dom.DivEl {
 
     private initDivForNoSelection() {
         this.divForNoSelection = new api.dom.DivEl('no-selection-message');
-        this.divForNoSelection.getEl().setInnerHtml("Select an item - and we'll show you the details!");
+        this.divForNoSelection.getEl().setInnerHtml(`Select an item - and we'll show you the details!`);
         this.appendChild(this.divForNoSelection);
     }
 

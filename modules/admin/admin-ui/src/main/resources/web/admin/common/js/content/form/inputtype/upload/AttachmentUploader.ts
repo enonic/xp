@@ -45,7 +45,7 @@ module api.content.form.inputtype.upload {
                     this.setFileNameProperty(attachment.getName().toString());
                     this.attachmentNames = this.getFileNamesFromProperty(this.getPropertyArray());
 
-                    api.notify.showFeedback('\"' + attachment.getName().toString() + '\" uploaded');
+                    api.notify.showFeedback(`"${attachment.getName().toString()}" uploaded`);
                 });
 
                 this.uploaderEl.onUploadCompleted(() => {

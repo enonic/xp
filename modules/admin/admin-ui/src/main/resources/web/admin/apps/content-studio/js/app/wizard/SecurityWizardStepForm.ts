@@ -41,7 +41,7 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
         wrapper.appendChild(this.label);
         label.appendChild(wrapper);
 
-        this.inheritance = new DivEl(/*"inheritance"*/);
+        this.inheritance = new DivEl(/*'inheritance'*/);
 
         this.accessListView = new AccessControlListView();
         this.accessListView.setItemsEditable(false);

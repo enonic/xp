@@ -34,7 +34,7 @@ module api.ui {
             let logMessage = 'Binded keys: [';
             bindings.forEach((binding: KeyBinding) => {
                 this.bindKey(binding);
-                logMessage += "'" + binding.getCombination() + "' ,";
+                logMessage += `'${binding.getCombination()}' ,`;
             });
             logMessage += ']';
             if (KeyBindings.debug) {
@@ -60,7 +60,7 @@ module api.ui {
 
             bindings.forEach((binding: KeyBinding) => {
                 this.unbindKey(binding);
-                logMessage += "'" + binding.getCombination() + "' ,";
+                logMessage += `'${binding.getCombination()}' ,`;
             });
             if (KeyBindings.debug) {
                 console.log('KeyBindings[#' + this.instance + '].unbindKeys(): ' + logMessage);

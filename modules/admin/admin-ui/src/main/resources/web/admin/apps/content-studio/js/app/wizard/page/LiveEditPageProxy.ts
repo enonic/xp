@@ -264,7 +264,7 @@ export class LiveEditPageProxy {
 
         if (this.liveEditModel.isRenderableContent()) {
             if (LiveEditPageProxy.debug) {
-                console.log("LiveEditPageProxy.load loading page from '" + pageUrl + "' at " + new Date().toISOString());
+                console.log(`LiveEditPageProxy.load loading page from '${pageUrl}' at ${new Date().toISOString()}`);
             }
             this.hidePlaceholderAndShowEditor();
             this.hideLoadMaskHandler();

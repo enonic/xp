@@ -21,7 +21,7 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
     constructor() {
         super('security-wizard-step-form');
 
-        this.inheritance = new DivEl(/*"inheritance"*/);
+        this.inheritance = new DivEl(/*'inheritance'*/);
 
         this.comboBox = new UserStoreAccessControlComboBox();
         this.comboBox.addClass('principal-combobox');

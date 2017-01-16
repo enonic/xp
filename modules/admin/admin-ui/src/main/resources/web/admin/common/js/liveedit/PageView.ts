@@ -559,7 +559,7 @@ module api.liveedit {
         }
 
         private getEditorToolbarWidth(): number {
-            return wemjq(".mce-toolbar-container .mce-tinymce-inline:not([style*='display: none'])").outerHeight();
+            return wemjq(`.mce-toolbar-container .mce-tinymce-inline:not([style*='display: none'])`).outerHeight();
         }
 
         hasTargetWithinTextComponent(target: HTMLElement) {

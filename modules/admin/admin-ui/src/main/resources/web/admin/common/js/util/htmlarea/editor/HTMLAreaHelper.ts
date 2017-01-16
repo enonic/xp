@@ -17,7 +17,7 @@ module api.util.htmlarea.editor {
                     setSize(ImageModalDialog.maxImageWidth).
                     resolve();
 
-            return ' src=\"' + imageUrl + '\" data-src=\"' + imgSrc + '\"';
+            return ` src="${imageUrl}" data-src="${imgSrc}"`;
         }
 
         public static prepareImgSrcsInValueForEdit(value:string):string {
@@ -29,13 +29,13 @@ module api.util.htmlarea.editor {
                 return '';
             }
 
-            while (processedContent.search(' src=\"' + ImageModalDialog.imagePrefix) > -1) {
+            while (processedContent.search(` src="${ImageModalDialog.imagePrefix}`) > -1) {
                 imgSrcs = regex.exec(processedContent);
                 if (imgSrcs) {
                     imgSrcs.forEach((imgSrc:string) => {
                         if (imgSrc.indexOf(ImageModalDialog.imagePrefix) === 0) {
                             processedContent =
-                                processedContent.replace(' src=\"' + imgSrc + '\"', HTMLAreaHelper.getConvertedImageSrc(imgSrc));
+                                processedContent.replace(` src="${imgSrc}"`, HTMLAreaHelper.getConvertedImageSrc(imgSrc));
                         }
                     });
                 }

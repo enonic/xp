@@ -17,7 +17,7 @@ module api.liveedit {
 
         setTextForContent(contentTypeDisplayName: string) {
             this.setBaseHeader();
-            this.line2.setHtml('No page templates supporting content type "' + contentTypeDisplayName + '" found');
+            this.line2.setHtml(`No page templates supporting content type "${contentTypeDisplayName}" found`);
         }
 
         setBaseHeader(value?: string) {

@@ -1045,23 +1045,23 @@ module api.dom {
         // No native support of focusin/focusout events in Firefox yet.
 
         onFocusIn(listener: (event: any) => void) {
-            // this.getEl().addEventListener("focusin", listener);
+            // this.getEl().addEventListener('focusin', listener);
             wemjq(this.el.getHTMLElement()).on('focusin', listener);
 
         }
 
         unFocusIn(listener: (event: any) => void) {
-            // this.getEl().removeEventListener("focusin", listener);
+            // this.getEl().removeEventListener('focusin', listener);
             wemjq(this.el.getHTMLElement()).off('focusin', listener);
         }
 
         onFocusOut(listener: (event: any) => void) {
-            // this.getEl().addEventListener("focusout", listener);
+            // this.getEl().addEventListener('focusout', listener);
             wemjq(this.el.getHTMLElement()).on('focusout', listener);
         }
 
         unFocusOut(listener: (event: any) => void) {
-            // this.getEl().removeEventListener("focusout", listener);
+            // this.getEl().removeEventListener('focusout', listener);
             wemjq(this.el.getHTMLElement()).off('focusout', listener);
         }
 

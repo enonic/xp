@@ -315,7 +315,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         let root = this.getRoot().getCurrentRoot();
         let node: TreeNode<ContentSummaryAndCompareStatus>;
 
-        // Do not remove the items, that is not new and switched to "PENDING_DELETE"
+        // Do not remove the items, that is not new and switched to 'PENDING_DELETE'
         dataList = dataList.filter((data) => {
             node = root.findNode(this.getDataId(data));
             if (node.getData().getCompareStatus() !== CompareStatus.NEW) {
@@ -352,7 +352,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                 this.invalidate();
             }
 
-            api.notify.showFeedback(data.getContentSummary().getType().toString() + ' \"' + item.getName() + '\" created successfully');
+            api.notify.showFeedback(`${data.getContentSummary().getType().toString()} "${item.getName()}" created successfully`);
         });
         item.onFailed(() => {
             this.deleteNode(data);
@@ -370,7 +370,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
     sortNodeChildren(node: TreeNode<ContentSummaryAndCompareStatus>) {
         let rootNode = this.getRoot().getCurrentRoot();
-        if (node != rootNode) {
+        if (node !== rootNode) {
             if (node.hasChildren()) {
                 node.setChildren([]);
                 node.setMaxChildren(0);

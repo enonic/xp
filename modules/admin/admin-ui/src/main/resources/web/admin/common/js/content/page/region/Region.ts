@@ -108,8 +108,8 @@ module api.content.page.region {
         getComponentByIndex(index: number): Component {
             let component = this.components[index];
             if (!component) {
-                let message = 'The rendered page is not consistent with the page components structure. Expected component with index ' +
-                              index + " was not found in region '" + this.getName() + "'.";
+                let message = `The rendered page is not consistent with the page components structure. Expected component with index ` +
+                              `${index} was not found in region '${this.getName()}'.`;
                 console.error(message);
                 throw new api.Exception(message, api.ExceptionType.ERROR);
             }

@@ -342,7 +342,7 @@ module api.form.inputtype.text {
                 editor.setContent(property.hasNonNullValue() ? HTMLAreaHelper.prepareImgSrcsInValueForEdit(property.getString()) : '');
                 HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
             } else {
-                console.log("Editor with id '" + editorId + "' not found");
+                console.log(`Editor with id '${editorId}' not found`);
             }
         }
 

@@ -672,7 +672,7 @@ module api.ui.panel {
             api.util.assert((panelNumber == 1 || panelNumber == 2), 'Panel number must be 1 or 2');
 
             let unit = (panelNumber == 1) ? this.firstPanelUnit : this.secondPanelUnit;
-            //console.log("UNIT", unit);
+            //console.log('UNIT', unit);
             if (unit == SplitPanelUnit.PIXEL) {
                 return 'px';
             } else {

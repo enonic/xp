@@ -222,7 +222,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
             this.liveEditPageProxy.getPlaceholderIFrame().onShown(() => {
                 // If we are about to show blank placeholder in the editor then remove
-                // "rendering" class from the panel so that it's instantly visible
+                // 'rendering' class from the panel so that it's instantly visible
                 this.removeClass('rendering');
             });
 

@@ -92,7 +92,7 @@ module api.util {
         }
 
         /**
-         * Parses passed value to Time object. Expected format is only 5 chars like "12:10"
+         * Parses passed value to Time object. Expected format is only 5 chars like '12:10'
          * @param value
          * @returns {*}
          */
@@ -114,7 +114,7 @@ module api.util {
         }
 
         /**
-         * Parses passed value into Date object. Expected length is 14-16 chars, value should be like "2015-04-17 06:00"
+         * Parses passed value into Date object. Expected length is 14-16 chars, value should be like '2015-04-17 06:00'
          * @param value
          * @returns {*}
          */

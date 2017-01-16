@@ -132,7 +132,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
             return rendered;
         }).catch((error) => {
-            console.error("Couldn't render ContentBrowsePanel", error);
+            console.error(`Couldn't render ContentBrowsePanel`, error);
             return true;
         });
     }

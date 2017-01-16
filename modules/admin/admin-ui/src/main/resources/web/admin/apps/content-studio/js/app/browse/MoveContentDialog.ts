@@ -103,9 +103,9 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
             if (response.getMoved().length > 0) {
                 if (response.getMoved().length > 1) {
-                    api.notify.showFeedback(response.getMoved().length + ' items moved');
+                    api.notify.showFeedback(`${response.getMoved().length} items moved`);
                 } else {
-                    api.notify.showFeedback('\"' + response.getMoved()[0] + '\" moved');
+                    api.notify.showFeedback(`"${response.getMoved()[0]}" moved`);
                 }
             }
 

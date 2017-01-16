@@ -67,7 +67,7 @@ export class UserWizardPanel extends PrincipalWizardPanel {
                 let viewedPrincipal = this.assembleViewedItem();
                 if (!this.isPersistedEqualsViewed()) {
 
-                    console.warn("Received Principal from server differs from what's viewed:");
+                    console.warn(`Received Principal from server differs from what's viewed:`);
                     console.warn(' viewedPrincipal: ', viewedPrincipal);
                     console.warn(' persistedPrincipal: ', persistedPrincipal);
 

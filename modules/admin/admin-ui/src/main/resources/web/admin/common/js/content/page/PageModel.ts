@@ -129,7 +129,6 @@ module api.content.page {
             this.fragment = liveEditModel.getContent().getPage() ? liveEditModel.getContent().getPage().getFragment() : null;
             this.configPropertyChangedHandler = () => {
                 if (!this.ignorePropertyChanges) {
-                    //console.log("PageModel.config.onChanged: ", event.getPath().toString());
                     if (this.mode == PageMode.AUTOMATIC) {
                         let setTemplate = new SetTemplate(this).setTemplate(this.defaultTemplate, this.defaultTemplateDescriptor);
                         this.setTemplate(setTemplate, true);
@@ -138,7 +137,6 @@ module api.content.page {
             };
             this.regionsChangedEventHandler = () => {
                 if (!this.ignorePropertyChanges) {
-                    //console.log("PageModel.regions.onChanged: ", event);
                     if (this.mode == PageMode.AUTOMATIC) {
                         let setTemplate = new SetTemplate(this).setTemplate(this.defaultTemplate, this.defaultTemplateDescriptor);
                         this.setTemplate(setTemplate);

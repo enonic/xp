@@ -323,7 +323,7 @@ module api.ui.uploader {
 
                 // Handle non-exception-throwing cases:
                 // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
-                // but... JSON.parse(null) returns 'null', and typeof null === "object",
+                // but... JSON.parse(null) returns 'null', and typeof null === 'object',
                 if (o && typeof o === 'object' && o.length) {
                     return o;
                 }

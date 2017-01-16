@@ -37,7 +37,7 @@ module api.content.event {
 
         constructor() {
             // if(instance)
-            // throw new Error("use static getInstance() method instead of creation new object"
+            // throw new Error('use static getInstance() method instead of creation new object');
         }
 
         static getInstance(): ContentServerEventsHandler {
