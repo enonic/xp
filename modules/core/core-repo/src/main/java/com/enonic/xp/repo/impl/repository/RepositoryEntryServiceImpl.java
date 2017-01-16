@@ -172,6 +172,7 @@ public class RepositoryEntryServiceImpl
         if ( updatedNode != null )
         {
             eventPublisher.publish( NodeEvents.updated( updatedNode ) );
+            refresh();
             eventPublisher.publish( RepositoryClusterEvents.updated( repositoryId ) );
         }
 

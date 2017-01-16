@@ -311,6 +311,16 @@ public class RepositoryServiceImpl
         final Context context = ContextAccessor.current();
         final InternalContext internalContext = InternalContext.create( context ).branch( branch ).build();
         this.nodeStorageService.delete( NodeIds.from( Node.ROOT_UUID ), internalContext );
+        doRefresh();
+    }
+
+    private void doRefresh()
+    {
+        RefreshCommand.create().
+            refreshMode( RefreshMode.ALL ).
+            indexServiceInternal( this.indexServiceInternal ).
+            build().
+            execute();
     }
 
     @Reference
