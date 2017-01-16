@@ -123,7 +123,7 @@ public class RepositoryServiceImpl
         previousRepository = previousRepository == null ? repositoryEntryService.getRepositoryEntry( repositoryId ) : previousRepository;
         if ( previousRepository == null )
         {
-            throw new RepositoryNotFoundException( "Repository with id [" + repositoryId + "] not found" );
+            throw new RepositoryNotFoundException( repositoryId );
         }
 
         //If the branch already exists, throws an exception
@@ -202,14 +202,14 @@ public class RepositoryServiceImpl
         previousRepository = previousRepository == null ? repositoryEntryService.getRepositoryEntry( repositoryId ) : previousRepository;
         if ( previousRepository == null )
         {
-            throw new RepositoryNotFoundException( "Repository with id [" + repositoryId + "] not found" );
+            throw new RepositoryNotFoundException( repositoryId );
         }
 
         //If the branch does not exist, throws an exception
         final Branch branch = params.getBranch();
         if ( !previousRepository.getBranches().contains( branch ) )
         {
-            throw new BranchNotFoundException( "Branch with id [" + branch + "] not found" );
+            throw new BranchNotFoundException( branch );
         }
 
         //If the root node exists, deletes it

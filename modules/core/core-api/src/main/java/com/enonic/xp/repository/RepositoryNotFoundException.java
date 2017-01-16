@@ -1,10 +1,17 @@
 package com.enonic.xp.repository;
 
+import com.enonic.xp.exception.BaseException;
+
 public class RepositoryNotFoundException
-    extends RuntimeException
+    extends BaseException
 {
-    public RepositoryNotFoundException( final String message )
+    public RepositoryNotFoundException( final RepositoryId repositoryId )
     {
-        super( message );
+        super( "Repository with id [" + repositoryId + "] not found" );
+    }
+
+    public String getCode()
+    {
+        return "repositoryNotFound";
     }
 }

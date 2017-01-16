@@ -145,3 +145,21 @@ exports.createBranch = function (params) {
     bean.repoId = __.nullOrValue(params.repoId);
     return __.toNativeObject(bean.execute());
 };
+
+/**
+ * Deletes a branch
+ *
+ * @example-ref examples/repo/deleteBranch.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.branchId Branch ID.
+ * @param {string} [params.repoId] Repository where the branch should be deletes. Defaults to repo in context.
+ * @return {object} The branch (as JSON).
+ *
+ */
+exports.deleteBranch = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.repo.DeleteBranchHandler');
+    bean.branchId = required(params, 'branchId');
+    bean.repoId = __.nullOrValue(params.repoId);
+    return __.toNativeObject(bean.execute());
+};
