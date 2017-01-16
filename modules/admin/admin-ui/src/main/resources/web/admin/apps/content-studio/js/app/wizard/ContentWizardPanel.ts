@@ -660,10 +660,15 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     private handleMissingApp() {
-        let atLeastOneAppIsMissing = this.missingOrStoppedAppKeys.length > 0;
-        this.getLivePanel().toggleClass("no-preview", atLeastOneAppIsMissing);
-        this.getCycleViewModeButton().setEnabled(!atLeastOneAppIsMissing);
-        if (atLeastOneAppIsMissing) {
+        let appsIsMissing = this.missingOrStoppedAppKeys.length > 0;
+        const livePanel = this.getLivePanel();
+
+        if (livePanel) {
+            livePanel.toggleClass("no-preview", appsIsMissing);
+        }
+
+        this.getCycleViewModeButton().setEnabled(!appsIsMissing);
+        if (appsIsMissing) {
             this.getMainToolbar().getComponentsViewToggler().hide();
             this.getMainToolbar().getContextWindowToggler().hide();
         } else {
