@@ -443,8 +443,8 @@ module api.ui.selector.combobox {
 
         // tslint:disable-next-line:max-line-length
         private selectExistingAndHandleMissing(optionIds: string[], missingOptionIds: string[]): wemQ.Promise<Option<OPTION_DISPLAY_VALUE>[]> {
-            let nonExistingIds: string[] = [],
-                selectedOptions = this.selectExistingOptions(optionIds);
+            const nonExistingIds: string[] = [];
+            const selectedOptions = this.selectExistingOptions(optionIds);
 
             return new api.content.resource.ContentsExistRequest(missingOptionIds).sendAndParse()
                 .then((result: api.content.resource.result.ContentsExistResult) => {
