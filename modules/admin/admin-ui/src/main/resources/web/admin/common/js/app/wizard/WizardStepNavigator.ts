@@ -1,9 +1,19 @@
 module api.app.wizard {
 
+    import KeyBinding = api.ui.KeyBinding;
+    import KeyBindings = api.ui.KeyBindings;
+    import TabBarItem = api.ui.tab.TabBarItem;
+
     export class WizardStepNavigator extends api.ui.tab.TabBar {
 
         constructor() {
             super("wizard-step-navigator");
+        }
+
+        insertNavigationItem(tab: TabBarItem, index: number, silent?: boolean) {
+            super.insertNavigationItem(tab, index, silent);
+
+            this.addKeyNavigation(tab);
         }
 
         addNavigationItem(step: api.ui.tab.TabBarItem) {
@@ -30,6 +40,18 @@ module api.app.wizard {
 
         hasPrevious(): boolean {
             return this.getSelectedIndex() > 0;
+        }
+
+        private addKeyNavigation(tab: TabBarItem) {
+            const combination: string = "alt+" + this.getSize();
+            const keyBinding: KeyBinding = new KeyBinding(combination, () => {
+                const isTabVisible: boolean = tab.getHTMLElement().style.display !== "none";
+                const tabIndexToShow: number = isTabVisible ? tab.getIndex() : tab.getIndex() + 1;
+
+                this.selectNavigationItem(tabIndexToShow);
+            });
+
+            KeyBindings.get().bindKey(keyBinding);
         }
 
     }
