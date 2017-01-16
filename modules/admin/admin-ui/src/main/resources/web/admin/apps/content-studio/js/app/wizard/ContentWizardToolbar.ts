@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {ContentWizardToolbarPublishControls} from "./ContentWizardToolbarPublishControls";
+import '../../api.ts';
+import {ContentWizardToolbarPublishControls} from './ContentWizardToolbarPublishControls';
 
 import CycleButton = api.ui.button.CycleButton;
 import TogglerButton = api.ui.button.TogglerButton;

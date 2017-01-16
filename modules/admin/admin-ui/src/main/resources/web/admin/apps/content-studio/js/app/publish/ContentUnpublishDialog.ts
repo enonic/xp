@@ -1,6 +1,6 @@
-import "../../api.ts";
-import {ProgressBarDialog} from "../dialog/ProgressBarDialog";
-import {ContentUnpublishPromptEvent} from "../browse/ContentUnpublishPromptEvent";
+import '../../api.ts';
+import {ProgressBarDialog} from '../dialog/ProgressBarDialog';
+import {ContentUnpublishPromptEvent} from '../browse/ContentUnpublishPromptEvent';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import DialogButton = api.ui.dialog.DialogButton;

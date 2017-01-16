@@ -1,11 +1,11 @@
-import "../../api.ts";
-import {ApplicationBrowseToolbar} from "./ApplicationBrowseToolbar";
-import {ApplicationBrowseActions} from "./ApplicationBrowseActions";
-import {ApplicationTreeGrid} from "./ApplicationTreeGrid";
-import {ApplicationBrowseItemPanel} from "./ApplicationBrowseItemPanel";
-import {StopApplicationEvent} from "./StopApplicationEvent";
-import {StartApplicationEvent} from "./StartApplicationEvent";
-import {UninstallApplicationEvent} from "./UninstallApplicationEvent";
+import '../../api.ts';
+import {ApplicationBrowseToolbar} from './ApplicationBrowseToolbar';
+import {ApplicationBrowseActions} from './ApplicationBrowseActions';
+import {ApplicationTreeGrid} from './ApplicationTreeGrid';
+import {ApplicationBrowseItemPanel} from './ApplicationBrowseItemPanel';
+import {StopApplicationEvent} from './StopApplicationEvent';
+import {StartApplicationEvent} from './StartApplicationEvent';
+import {UninstallApplicationEvent} from './UninstallApplicationEvent';
 
 import ApplicationKey = api.application.ApplicationKey;
 import Application = api.application.Application;

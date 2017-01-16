@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {ContentWizardPanel} from "../ContentWizardPanel";
-import {ContentPublishPromptEvent} from "../../browse/ContentPublishPromptEvent";
+import '../../../api.ts';
+import {ContentWizardPanel} from '../ContentWizardPanel';
+import {ContentPublishPromptEvent} from '../../browse/ContentPublishPromptEvent';
 
 import Content = api.content.Content;
 import ContentId = api.content.ContentId;

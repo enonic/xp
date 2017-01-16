@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import GridColumn = api.ui.grid.GridColumn;
 import GridColumnBuilder = api.ui.grid.GridColumnBuilder;

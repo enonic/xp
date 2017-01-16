@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {ContentTreeGridActions} from "./action/ContentTreeGridActions";
+import '../../api.ts';
+import {ContentTreeGridActions} from './action/ContentTreeGridActions';
 
 export class ContentBrowseToolbar extends api.ui.toolbar.Toolbar {
 

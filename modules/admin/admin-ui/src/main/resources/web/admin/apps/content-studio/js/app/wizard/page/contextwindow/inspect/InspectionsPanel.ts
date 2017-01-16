@@ -1,13 +1,13 @@
-import "../../../../../api.ts";
-import {ContentInspectionPanel} from "./ContentInspectionPanel";
-import {FragmentInspectionPanel} from "./region/FragmentInspectionPanel";
-import {TextInspectionPanel} from "./region/TextInspectionPanel";
-import {LayoutInspectionPanel} from "./region/LayoutInspectionPanel";
-import {PartInspectionPanel} from "./region/PartInspectionPanel";
-import {ImageInspectionPanel} from "./region/ImageInspectionPanel";
-import {RegionInspectionPanel} from "./region/RegionInspectionPanel";
-import {PageInspectionPanel} from "./page/PageInspectionPanel";
-import {NoSelectionInspectionPanel} from "./NoSelectionInspectionPanel";
+import '../../../../../api.ts';
+import {ContentInspectionPanel} from './ContentInspectionPanel';
+import {FragmentInspectionPanel} from './region/FragmentInspectionPanel';
+import {TextInspectionPanel} from './region/TextInspectionPanel';
+import {LayoutInspectionPanel} from './region/LayoutInspectionPanel';
+import {PartInspectionPanel} from './region/PartInspectionPanel';
+import {ImageInspectionPanel} from './region/ImageInspectionPanel';
+import {RegionInspectionPanel} from './region/RegionInspectionPanel';
+import {PageInspectionPanel} from './page/PageInspectionPanel';
+import {NoSelectionInspectionPanel} from './NoSelectionInspectionPanel';
 
 export interface InspectionsPanelConfig {
     contentInspectionPanel: ContentInspectionPanel;

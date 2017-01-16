@@ -1,5 +1,5 @@
-import "../../../../../../api.ts";
-import {ComponentInspectionPanel, ComponentInspectionPanelConfig} from "./ComponentInspectionPanel";
+import '../../../../../../api.ts';
+import {ComponentInspectionPanel, ComponentInspectionPanelConfig} from './ComponentInspectionPanel';
 
 import FormView = api.form.FormView;
 import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;

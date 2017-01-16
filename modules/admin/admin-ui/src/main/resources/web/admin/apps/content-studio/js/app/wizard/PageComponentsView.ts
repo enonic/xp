@@ -1,6 +1,6 @@
-import "../../api.ts";
-import {LiveEditPageProxy} from "./page/LiveEditPageProxy";
-import {PageComponentsTreeGrid} from "./PageComponentsTreeGrid";
+import '../../api.ts';
+import {LiveEditPageProxy} from './page/LiveEditPageProxy';
+import {PageComponentsTreeGrid} from './PageComponentsTreeGrid';
 
 import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
 import ItemViewDeselectedEvent = api.liveedit.ItemViewDeselectedEvent;

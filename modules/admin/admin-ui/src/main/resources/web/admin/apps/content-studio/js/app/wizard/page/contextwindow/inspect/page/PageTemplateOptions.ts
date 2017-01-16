@@ -1,5 +1,5 @@
-import "../../../../../../api.ts";
-import {PageTemplateOption} from "./PageTemplateOption";
+import '../../../../../../api.ts';
+import {PageTemplateOption} from './PageTemplateOption';
 
 import ContentId = api.content.ContentId;
 import ContentTypeName = api.schema.content.ContentTypeName;

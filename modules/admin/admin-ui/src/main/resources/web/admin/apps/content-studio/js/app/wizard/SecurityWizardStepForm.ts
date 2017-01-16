@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {ContentPermissionsApplyEvent} from "./ContentPermissionsApplyEvent";
+import '../../api.ts';
+import {ContentPermissionsApplyEvent} from './ContentPermissionsApplyEvent';
 
 import AccessControlList = api.security.acl.AccessControlList;
 import AccessControlListView = api.ui.security.acl.AccessControlListView;

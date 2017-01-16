@@ -1,7 +1,7 @@
-import "../../../api.ts";
-import {PreviewContentHandler} from "./handler/PreviewContentHandler";
-import {ContentTreeGrid} from "../ContentTreeGrid";
-import {BasePreviewAction} from "../../action/BasePreviewAction";
+import '../../../api.ts';
+import {PreviewContentHandler} from './handler/PreviewContentHandler';
+import {ContentTreeGrid} from '../ContentTreeGrid';
+import {BasePreviewAction} from '../../action/BasePreviewAction';
 
 import Action = api.ui.Action;
 import RenderingMode = api.rendering.RenderingMode;

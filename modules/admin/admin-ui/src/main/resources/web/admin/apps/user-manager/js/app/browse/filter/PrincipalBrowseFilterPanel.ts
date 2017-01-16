@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {PrincipalBrowseResetEvent} from "./PrincipalBrowseResetEvent";
-import {PrincipalBrowseSearchEvent} from "./PrincipalBrowseSearchEvent";
+import '../../../api.ts';
+import {PrincipalBrowseResetEvent} from './PrincipalBrowseResetEvent';
+import {PrincipalBrowseSearchEvent} from './PrincipalBrowseSearchEvent';
 
 import AggregationGroupView = api.aggregation.AggregationGroupView;
 import SearchInputValues = api.query.SearchInputValues;

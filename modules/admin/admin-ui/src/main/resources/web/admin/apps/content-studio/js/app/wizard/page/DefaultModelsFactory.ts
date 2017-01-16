@@ -1,5 +1,5 @@
-import "../../../api.ts";
-import {DefaultModels} from "./DefaultModels";
+import '../../../api.ts';
+import {DefaultModels} from './DefaultModels';
 
 import ContentTypeName = api.schema.content.ContentTypeName;
 import ContentId = api.content.ContentId;

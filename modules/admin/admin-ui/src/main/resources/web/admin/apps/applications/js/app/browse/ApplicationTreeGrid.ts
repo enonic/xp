@@ -1,6 +1,6 @@
-import "../../api.ts";
-import {ApplicationBrowseActions} from "./ApplicationBrowseActions";
-import {ApplicationRowFormatter} from "./ApplicationRowFormatter";
+import '../../api.ts';
+import {ApplicationBrowseActions} from './ApplicationBrowseActions';
+import {ApplicationRowFormatter} from './ApplicationRowFormatter';
 
 import GridColumn = api.ui.grid.GridColumn;
 import GridColumnBuilder = api.ui.grid.GridColumnBuilder;

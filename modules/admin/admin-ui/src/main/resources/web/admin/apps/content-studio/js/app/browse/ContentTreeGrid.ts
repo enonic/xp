@@ -1,12 +1,12 @@
-import "../../api.ts";
-import {SortContentEvent} from "./SortContentEvent";
-import {ContentTreeGridActions} from "./action/ContentTreeGridActions";
-import {ContentBrowseSearchEvent} from "./filter/ContentBrowseSearchEvent";
-import {ContentBrowseResetEvent} from "./filter/ContentBrowseResetEvent";
-import {ContentBrowseRefreshEvent} from "./filter/ContentBrowseRefreshEvent";
-import {TreeNodesOfContentPath} from "./TreeNodesOfContentPath";
-import {TreeNodeParentOfContent} from "./TreeNodeParentOfContent";
-import {ContentRowFormatter} from "./ContentRowFormatter";
+import '../../api.ts';
+import {SortContentEvent} from './SortContentEvent';
+import {ContentTreeGridActions} from './action/ContentTreeGridActions';
+import {ContentBrowseSearchEvent} from './filter/ContentBrowseSearchEvent';
+import {ContentBrowseResetEvent} from './filter/ContentBrowseResetEvent';
+import {ContentBrowseRefreshEvent} from './filter/ContentBrowseRefreshEvent';
+import {TreeNodesOfContentPath} from './TreeNodesOfContentPath';
+import {TreeNodeParentOfContent} from './TreeNodeParentOfContent';
+import {ContentRowFormatter} from './ContentRowFormatter';
 
 import Element = api.dom.Element;
 import ElementHelper = api.dom.ElementHelper;

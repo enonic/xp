@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {MarketAppViewer} from "./MarketAppViewer";
-import {ApplicationInput} from "./../view/ApplicationInput";
+import '../../../api.ts';
+import {MarketAppViewer} from './MarketAppViewer';
+import {ApplicationInput} from './../view/ApplicationInput';
 
 import Element = api.dom.Element;
 import ElementHelper = api.dom.ElementHelper;

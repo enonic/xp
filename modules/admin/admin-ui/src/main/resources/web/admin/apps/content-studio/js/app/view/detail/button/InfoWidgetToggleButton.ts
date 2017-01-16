@@ -1,5 +1,5 @@
-import "../../../../api.ts";
-import {DetailsView} from "../DetailsView";
+import '../../../../api.ts';
+import {DetailsView} from '../DetailsView';
 
 export class InfoWidgetToggleButton extends api.dom.DivEl {
 

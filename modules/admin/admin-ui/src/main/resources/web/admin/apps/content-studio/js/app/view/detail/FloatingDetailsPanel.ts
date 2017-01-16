@@ -1,7 +1,7 @@
-import "../../../api.ts";
-import {SlidablePanel, SlidablePanelBuilder} from "./SlidablePanel";
-import {DetailsView} from "./DetailsView";
-import {DETAILS_PANEL_TYPE} from "./DetailsPanel";
+import '../../../api.ts';
+import {SlidablePanel, SlidablePanelBuilder} from './SlidablePanel';
+import {DetailsView} from './DetailsView';
+import {DETAILS_PANEL_TYPE} from './DetailsPanel';
 
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 

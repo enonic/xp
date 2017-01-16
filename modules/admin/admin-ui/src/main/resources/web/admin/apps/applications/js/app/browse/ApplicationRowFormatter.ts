@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 import TreeNode = api.ui.treegrid.TreeNode;
 import Application = api.application.Application;
 import ApplicationViewer = api.application.ApplicationViewer;

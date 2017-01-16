@@ -1,5 +1,5 @@
-import "../../../api.ts";
-import {PrincipalWizardPanel} from "../PrincipalWizardPanel";
+import '../../../api.ts';
+import {PrincipalWizardPanel} from '../PrincipalWizardPanel';
 
 import UserStore = api.security.UserStore;
 import Principal = api.security.Principal;

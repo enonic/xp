@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {ContentSettingsModel} from "./ContentSettingsModel";
+import '../../api.ts';
+import {ContentSettingsModel} from './ContentSettingsModel';
 
 import Content = api.content.Content;
 import PrincipalType = api.security.PrincipalType;

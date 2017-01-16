@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {ContentWizardPanel} from "../ContentWizardPanel";
-import {PublishAction} from "./PublishAction";
+import '../../../api.ts';
+import {ContentWizardPanel} from '../ContentWizardPanel';
+import {PublishAction} from './PublishAction';
 
 export class PublishTreeAction extends PublishAction {
 

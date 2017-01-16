@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import Content = api.content.Content;
 import ComboBox = api.ui.selector.combobox.ComboBox;

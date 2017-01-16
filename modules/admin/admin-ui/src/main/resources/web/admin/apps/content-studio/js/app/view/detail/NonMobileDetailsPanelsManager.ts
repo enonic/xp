@@ -1,9 +1,9 @@
-import "../../../api.ts";
-import {DetailsPanel} from "./DetailsPanel";
-import {FloatingDetailsPanel} from "./FloatingDetailsPanel";
-import {DockedDetailsPanel} from "./DockedDetailsPanel";
-import {NonMobileDetailsPanelToggleButton} from "./button/NonMobileDetailsPanelToggleButton";
-import {ActiveDetailsPanelManager} from "./ActiveDetailsPanelManager";
+import '../../../api.ts';
+import {DetailsPanel} from './DetailsPanel';
+import {FloatingDetailsPanel} from './FloatingDetailsPanel';
+import {DockedDetailsPanel} from './DockedDetailsPanel';
+import {NonMobileDetailsPanelToggleButton} from './button/NonMobileDetailsPanelToggleButton';
+import {ActiveDetailsPanelManager} from './ActiveDetailsPanelManager';
 
 import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 

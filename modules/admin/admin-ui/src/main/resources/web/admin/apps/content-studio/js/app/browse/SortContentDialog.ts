@@ -1,9 +1,9 @@
-import "../../api.ts";
-import {SaveSortedContentAction} from "./action/SaveSortedContentAction";
-import {SortContentTreeGrid} from "./SortContentTreeGrid";
-import {SortContentTabMenu} from "./SortContentTabMenu";
-import {ContentGridDragHandler} from "./ContentGridDragHandler";
-import {OpenSortDialogEvent} from "./OpenSortDialogEvent";
+import '../../api.ts';
+import {SaveSortedContentAction} from './action/SaveSortedContentAction';
+import {SortContentTreeGrid} from './SortContentTreeGrid';
+import {SortContentTabMenu} from './SortContentTabMenu';
+import {ContentGridDragHandler} from './ContentGridDragHandler';
+import {OpenSortDialogEvent} from './OpenSortDialogEvent';
 
 import TreeNode = api.ui.treegrid.TreeNode;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;

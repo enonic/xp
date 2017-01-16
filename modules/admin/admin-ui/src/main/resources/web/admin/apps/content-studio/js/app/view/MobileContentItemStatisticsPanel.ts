@@ -1,10 +1,10 @@
-import "../../api.ts";
-import {MobileDetailsPanel} from "./detail/MobileDetailsSlidablePanel";
-import {ContentItemPreviewPanel} from "./ContentItemPreviewPanel";
-import {MobileDetailsPanelToggleButton} from "./detail/button/MobileDetailsPanelToggleButton";
-import {ContentTreeGridActions} from "../browse/action/ContentTreeGridActions";
-import {DetailsView} from "./detail/DetailsView";
-import {MobilePreviewFoldButton} from "./MobilePreviewFoldButton";
+import '../../api.ts';
+import {MobileDetailsPanel} from './detail/MobileDetailsSlidablePanel';
+import {ContentItemPreviewPanel} from './ContentItemPreviewPanel';
+import {MobileDetailsPanelToggleButton} from './detail/button/MobileDetailsPanelToggleButton';
+import {ContentTreeGridActions} from '../browse/action/ContentTreeGridActions';
+import {DetailsView} from './detail/DetailsView';
+import {MobilePreviewFoldButton} from './MobilePreviewFoldButton';
 
 import ViewItem = api.app.view.ViewItem;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;

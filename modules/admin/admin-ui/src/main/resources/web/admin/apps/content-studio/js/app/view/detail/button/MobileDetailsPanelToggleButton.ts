@@ -1,5 +1,5 @@
-import "../../../../api.ts";
-import {MobileDetailsPanel} from "../MobileDetailsSlidablePanel";
+import '../../../../api.ts';
+import {MobileDetailsPanel} from '../MobileDetailsSlidablePanel';
 
 export class MobileDetailsPanelToggleButton extends api.dom.DivEl {
 

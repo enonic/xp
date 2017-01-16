@@ -1,5 +1,5 @@
-import "../../../../../../api.ts";
-import {PageTemplateOption} from "./PageTemplateOption";
+import '../../../../../../api.ts';
+import {PageTemplateOption} from './PageTemplateOption';
 
 export class PageTemplateOptionViewer extends api.ui.NamesAndIconViewer<PageTemplateOption> {
 

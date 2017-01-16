@@ -1,7 +1,7 @@
-import "../../../api.ts";
-import {WidgetView} from "./WidgetView";
-import {DetailsView} from "./DetailsView";
-import {InfoWidgetToggleButton} from "./button/InfoWidgetToggleButton";
+import '../../../api.ts';
+import {WidgetView} from './WidgetView';
+import {DetailsView} from './DetailsView';
+import {InfoWidgetToggleButton} from './button/InfoWidgetToggleButton';
 
 import Dropdown = api.ui.selector.dropdown.Dropdown;
 import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;

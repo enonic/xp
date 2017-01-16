@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {OpenChangePasswordDialogEvent} from "./OpenChangePasswordDialogEvent";
+import '../../api.ts';
+import {OpenChangePasswordDialogEvent} from './OpenChangePasswordDialogEvent';
 
 import Principal = api.security.Principal;
 import PasswordGenerator = api.ui.text.PasswordGenerator;

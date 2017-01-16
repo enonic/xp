@@ -1,5 +1,5 @@
-import "../../../api.ts";
-import {ContentTreeGrid} from "../ContentTreeGrid";
+import '../../../api.ts';
+import {ContentTreeGrid} from '../ContentTreeGrid';
 
 import Action = api.ui.Action;
 

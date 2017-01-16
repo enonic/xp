@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {MostPopularItemsList} from "./MostPopularItemsList";
+import '../../api.ts';
+import {MostPopularItemsList} from './MostPopularItemsList';
 
 export class MostPopularItemsBlock extends api.dom.DivEl {
 

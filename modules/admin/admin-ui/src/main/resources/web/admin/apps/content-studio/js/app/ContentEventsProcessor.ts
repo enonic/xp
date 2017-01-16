@@ -1,10 +1,10 @@
-import "../api.ts";
-import {ContentWizardPanelParams} from "./wizard/ContentWizardPanelParams";
-import {NewContentEvent} from "./create/NewContentEvent";
-import {SortContentEvent} from "./browse/SortContentEvent";
-import {OpenSortDialogEvent} from "./browse/OpenSortDialogEvent";
-import {MoveContentEvent} from "./browse/MoveContentEvent";
-import {OpenMoveDialogEvent} from "./browse/OpenMoveDialogEvent";
+import '../api.ts';
+import {ContentWizardPanelParams} from './wizard/ContentWizardPanelParams';
+import {NewContentEvent} from './create/NewContentEvent';
+import {SortContentEvent} from './browse/SortContentEvent';
+import {OpenSortDialogEvent} from './browse/OpenSortDialogEvent';
+import {MoveContentEvent} from './browse/MoveContentEvent';
+import {OpenMoveDialogEvent} from './browse/OpenMoveDialogEvent';
 import AppBarTabId = api.app.bar.AppBarTabId;
 import Content = api.content.Content;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;

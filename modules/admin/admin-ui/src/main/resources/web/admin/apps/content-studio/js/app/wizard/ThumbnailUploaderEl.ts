@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import Button = api.ui.button.Button;
 import CloseButton = api.ui.button.CloseButton;

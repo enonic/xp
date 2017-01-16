@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {ContentPreviewPathChangedEvent} from "./ContentPreviewPathChangedEvent";
+import '../../api.ts';
+import {ContentPreviewPathChangedEvent} from './ContentPreviewPathChangedEvent';
 
 import RenderingMode = api.rendering.RenderingMode;
 import ViewItem = api.app.view.ViewItem;

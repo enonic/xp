@@ -1,4 +1,4 @@
-import "../../../../../api.ts";
+import '../../../../../api.ts';
 
 export class NoSelectionInspectionPanel extends api.ui.panel.Panel {
 

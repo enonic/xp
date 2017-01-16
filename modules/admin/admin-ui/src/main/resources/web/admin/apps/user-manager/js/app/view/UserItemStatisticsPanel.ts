@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {UserTreeGridItem, UserTreeGridItemType} from "../browse/UserTreeGridItem";
+import '../../api.ts';
+import {UserTreeGridItem, UserTreeGridItemType} from '../browse/UserTreeGridItem';
 
 import ViewItem = api.app.view.ViewItem;
 import ItemStatisticsPanel = api.app.view.ItemStatisticsPanel;

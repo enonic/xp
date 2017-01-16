@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {MoveContentEvent} from "../MoveContentEvent";
-import {ContentTreeGrid} from "../ContentTreeGrid";
+import '../../../api.ts';
+import {MoveContentEvent} from '../MoveContentEvent';
+import {ContentTreeGrid} from '../ContentTreeGrid';
 
 import Action = api.ui.Action;
 

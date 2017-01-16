@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import ItemView = api.liveedit.ItemView;
 import ComponentView = api.liveedit.ItemView;

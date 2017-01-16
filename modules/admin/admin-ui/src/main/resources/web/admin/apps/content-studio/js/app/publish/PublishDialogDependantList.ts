@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {DialogDependantList} from "../dialog/DependantItemsDialog";
+import '../../api.ts';
+import {DialogDependantList} from '../dialog/DependantItemsDialog';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;

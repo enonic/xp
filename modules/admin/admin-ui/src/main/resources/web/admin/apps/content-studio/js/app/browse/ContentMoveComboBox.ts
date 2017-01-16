@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import SelectedOption = api.ui.selector.combobox.SelectedOption;
 import MoveContentSummaryLoader = api.content.resource.MoveContentSummaryLoader;

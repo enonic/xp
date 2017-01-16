@@ -1,10 +1,10 @@
-import "../../api.ts";
-import {UserItemWizardPanel} from "./UserItemWizardPanel";
-import {PrincipalWizardPanelParams} from "./PrincipalWizardPanelParams";
-import {UserItemWizardActions} from "./action/UserItemWizardActions";
-import {Router} from "../Router";
-import {PrincipalWizardToolbar} from "./PrincipalWizardToolbar";
-import {PrincipalWizardDataLoader} from "./PrincipalWizardDataLoader";
+import '../../api.ts';
+import {UserItemWizardPanel} from './UserItemWizardPanel';
+import {PrincipalWizardPanelParams} from './PrincipalWizardPanelParams';
+import {UserItemWizardActions} from './action/UserItemWizardActions';
+import {Router} from '../Router';
+import {PrincipalWizardToolbar} from './PrincipalWizardToolbar';
+import {PrincipalWizardDataLoader} from './PrincipalWizardDataLoader';
 
 import Principal = api.security.Principal;
 import PrincipalType = api.security.PrincipalType;

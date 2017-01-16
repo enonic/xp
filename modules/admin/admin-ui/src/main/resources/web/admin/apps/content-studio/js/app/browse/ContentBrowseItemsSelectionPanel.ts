@@ -1,7 +1,7 @@
-import "../../api.ts";
-import {ContentBrowseItem} from "./ContentBrowseItem";
-import {ContentTreeGrid} from "./ContentTreeGrid";
-import {ShowAllAction} from "./action/ShowAllAction";
+import '../../api.ts';
+import {ContentBrowseItem} from './ContentBrowseItem';
+import {ContentTreeGrid} from './ContentTreeGrid';
+import {ShowAllAction} from './action/ShowAllAction';
 
 import BrowseItem = api.app.browse.BrowseItem;
 import BrowseItemsSelectionPanel = api.app.browse.BrowseItemsSelectionPanel;

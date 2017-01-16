@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {ShowLiveEditEvent} from "../ShowLiveEditEvent";
-import {ContentWizardPanel} from "../ContentWizardPanel";
+import '../../../api.ts';
+import {ShowLiveEditEvent} from '../ShowLiveEditEvent';
+import {ContentWizardPanel} from '../ContentWizardPanel';
 
 export class ShowLiveEditAction extends api.ui.Action {
 

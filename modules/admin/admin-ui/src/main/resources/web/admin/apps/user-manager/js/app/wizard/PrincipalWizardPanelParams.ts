@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {UserItemWizardPanelParams} from "./UserItemWizardPanelParams";
+import '../../api.ts';
+import {UserItemWizardPanelParams} from './UserItemWizardPanelParams';
 import Principal = api.security.Principal;
 import PrincipalType = api.security.PrincipalType;
 import UserStore = api.security.UserStore;

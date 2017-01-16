@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {ContentItemPreviewPanel} from "./ContentItemPreviewPanel";
+import '../../api.ts';
+import {ContentItemPreviewPanel} from './ContentItemPreviewPanel';
 
 import Panel = api.ui.panel.Panel;
 import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;

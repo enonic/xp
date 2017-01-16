@@ -1,7 +1,7 @@
-import "../../../api.ts";
-import {NewPrincipalEvent} from "../NewPrincipalEvent";
-import {UserTreeGridItem} from "../UserTreeGridItem";
-import {UserItemsTreeGrid} from "../UserItemsTreeGrid";
+import '../../../api.ts';
+import {NewPrincipalEvent} from '../NewPrincipalEvent';
+import {UserTreeGridItem} from '../UserTreeGridItem';
+import {UserItemsTreeGrid} from '../UserItemsTreeGrid';
 
 import Action = api.ui.Action;
 

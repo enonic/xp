@@ -1,8 +1,8 @@
-import "../../api.ts";
-import {MostPopularItem} from "./MostPopularItem";
-import {NewContentDialogList} from "./NewContentDialogList";
-import {NewContentDialogListItem} from "./NewContentDialogListItem";
-import {MostPopularItemsBlock} from "./MostPopularItemsBlock";
+import '../../api.ts';
+import {MostPopularItem} from './MostPopularItem';
+import {NewContentDialogList} from './NewContentDialogList';
+import {NewContentDialogListItem} from './NewContentDialogListItem';
+import {MostPopularItemsBlock} from './MostPopularItemsBlock';
 import ContentTypeSummary = api.schema.content.ContentTypeSummary;
 
 export class MostPopularItemsList extends NewContentDialogList {

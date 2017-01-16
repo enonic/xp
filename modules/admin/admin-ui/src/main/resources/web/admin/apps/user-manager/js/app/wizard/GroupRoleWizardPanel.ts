@@ -1,8 +1,8 @@
-import "../../api.ts";
-import {PrincipalDescriptionWizardStepForm} from "./PrincipalDescriptionWizardStepForm";
-import {PrincipalWizardPanel} from "./PrincipalWizardPanel";
-import {PrincipalWizardPanelParams} from "./PrincipalWizardPanelParams";
-import {PrincipalMembersWizardStepForm} from "./PrincipalMembersWizardStepForm";
+import '../../api.ts';
+import {PrincipalDescriptionWizardStepForm} from './PrincipalDescriptionWizardStepForm';
+import {PrincipalWizardPanel} from './PrincipalWizardPanel';
+import {PrincipalWizardPanelParams} from './PrincipalWizardPanelParams';
+import {PrincipalMembersWizardStepForm} from './PrincipalMembersWizardStepForm';
 
 import Principal = api.security.Principal;
 

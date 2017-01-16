@@ -1,5 +1,5 @@
-import "../../../../../api.ts";
-import {ContentVersionViewer} from "./ContentVersionViewer";
+import '../../../../../api.ts';
+import {ContentVersionViewer} from './ContentVersionViewer';
 
 import ContentVersion = api.content.ContentVersion;
 import ContentId = api.content.ContentId;

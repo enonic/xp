@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {UserTreeGridActions} from "./UserTreeGridActions";
+import '../../api.ts';
+import {UserTreeGridActions} from './UserTreeGridActions';
 
 export class UserBrowseToolbar extends api.ui.toolbar.Toolbar {
 

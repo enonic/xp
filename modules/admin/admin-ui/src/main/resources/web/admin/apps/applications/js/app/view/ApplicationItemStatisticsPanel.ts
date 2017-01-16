@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {ApplicationBrowseActions} from "../browse/ApplicationBrowseActions";
+import '../../api.ts';
+import {ApplicationBrowseActions} from '../browse/ApplicationBrowseActions';
 
 import ContentTypeSummary = api.schema.content.ContentTypeSummary;
 import Mixin = api.schema.mixin.Mixin;

@@ -1,7 +1,7 @@
-import "../../../../../api.ts";
-import {WidgetItemView} from "../../WidgetItemView";
-import {DependencyGroup, DependencyType} from "./DependencyGroup";
-import {ToggleSearchPanelWithDependenciesEvent} from "../../../../browse/ToggleSearchPanelWithDependenciesEvent";
+import '../../../../../api.ts';
+import {WidgetItemView} from '../../WidgetItemView';
+import {DependencyGroup, DependencyType} from './DependencyGroup';
+import {ToggleSearchPanelWithDependenciesEvent} from '../../../../browse/ToggleSearchPanelWithDependenciesEvent';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import ContentDependencyJson = api.content.json.ContentDependencyJson;

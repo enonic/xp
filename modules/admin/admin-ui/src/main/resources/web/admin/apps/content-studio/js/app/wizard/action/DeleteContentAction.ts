@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {ContentWizardPanel} from "../ContentWizardPanel";
-import {ContentDeletePromptEvent} from "../../browse/ContentDeletePromptEvent";
+import '../../../api.ts';
+import {ContentWizardPanel} from '../ContentWizardPanel';
+import {ContentDeletePromptEvent} from '../../browse/ContentDeletePromptEvent';
 
 import ContentId = api.content.ContentId;
 import ContentPath = api.content.ContentPath;

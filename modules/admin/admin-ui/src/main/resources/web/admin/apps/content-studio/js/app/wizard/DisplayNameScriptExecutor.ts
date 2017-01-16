@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import PropertyPath = api.data.PropertyPath;
 import Property = api.data.Property;

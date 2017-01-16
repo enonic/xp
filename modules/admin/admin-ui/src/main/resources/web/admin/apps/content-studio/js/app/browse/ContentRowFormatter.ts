@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 import TreeNode = api.ui.treegrid.TreeNode;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;

@@ -1,6 +1,6 @@
-import "../../api.ts";
-import {UserItemWizardActions} from "./action/UserItemWizardActions";
-import {UserItemWizardPanelParams} from "./UserItemWizardPanelParams";
+import '../../api.ts';
+import {UserItemWizardActions} from './action/UserItemWizardActions';
+import {UserItemWizardPanelParams} from './UserItemWizardPanelParams';
 
 import Principal = api.security.Principal;
 import PrincipalKey = api.security.PrincipalKey;

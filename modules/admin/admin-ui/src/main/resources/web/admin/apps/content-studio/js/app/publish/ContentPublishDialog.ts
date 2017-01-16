@@ -1,8 +1,8 @@
-import "../../api.ts";
-import {ProgressBarDialog} from "../dialog/ProgressBarDialog";
-import {PublishDialogDependantList, isContentSummaryValid} from "./PublishDialogDependantList";
-import {ContentPublishPromptEvent} from "../browse/ContentPublishPromptEvent";
-import {SchedulePublishDialog} from "./SchedulePublishDialog";
+import '../../api.ts';
+import {ProgressBarDialog} from '../dialog/ProgressBarDialog';
+import {PublishDialogDependantList, isContentSummaryValid} from './PublishDialogDependantList';
+import {ContentPublishPromptEvent} from '../browse/ContentPublishPromptEvent';
+import {SchedulePublishDialog} from './SchedulePublishDialog';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import PublishContentRequest = api.content.resource.PublishContentRequest;

@@ -1,6 +1,6 @@
-import "../../api.ts";
-import {ApplicationTreeGrid} from "./ApplicationTreeGrid";
-import {StopApplicationEvent} from "./StopApplicationEvent";
+import '../../api.ts';
+import {ApplicationTreeGrid} from './ApplicationTreeGrid';
+import {StopApplicationEvent} from './StopApplicationEvent';
 
 import Application = api.application.Application;
 

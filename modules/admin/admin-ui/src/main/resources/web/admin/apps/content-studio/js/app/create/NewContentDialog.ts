@@ -1,10 +1,10 @@
-import "../../api.ts";
-import {MostPopularItemsBlock} from "./MostPopularItemsBlock";
-import {RecentItemsBlock} from "./RecentItemsBlock";
-import {NewContentDialogItemSelectedEvent} from "./NewContentDialogItemSelectedEvent";
-import {NewMediaUploadEvent} from "./NewMediaUploadEvent";
-import {NewContentEvent} from "./NewContentEvent";
-import {FilterableItemsList} from "./FilterableItemsList";
+import '../../api.ts';
+import {MostPopularItemsBlock} from './MostPopularItemsBlock';
+import {RecentItemsBlock} from './RecentItemsBlock';
+import {NewContentDialogItemSelectedEvent} from './NewContentDialogItemSelectedEvent';
+import {NewMediaUploadEvent} from './NewMediaUploadEvent';
+import {NewContentEvent} from './NewContentEvent';
+import {FilterableItemsList} from './FilterableItemsList';
 
 import GetAllContentTypesRequest = api.schema.content.GetAllContentTypesRequest;
 import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;

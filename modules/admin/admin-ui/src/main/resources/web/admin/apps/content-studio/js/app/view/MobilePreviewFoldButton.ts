@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {PublishContentAction} from "../browse/action/PublishContentAction";
+import '../../api.ts';
+import {PublishContentAction} from '../browse/action/PublishContentAction';
 
 import Action = api.ui.Action;
 import ActionButton = api.ui.button.ActionButton;

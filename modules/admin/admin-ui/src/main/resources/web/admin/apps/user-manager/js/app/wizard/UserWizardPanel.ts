@@ -1,9 +1,9 @@
-import "../../api.ts";
-import {PrincipalWizardPanel} from "./PrincipalWizardPanel";
-import {UserEmailWizardStepForm} from "./UserEmailWizardStepForm";
-import {UserPasswordWizardStepForm} from "./UserPasswordWizardStepForm";
-import {UserMembershipsWizardStepForm} from "./UserMembershipsWizardStepForm";
-import {PrincipalWizardPanelParams} from "./PrincipalWizardPanelParams";
+import '../../api.ts';
+import {PrincipalWizardPanel} from './PrincipalWizardPanel';
+import {UserEmailWizardStepForm} from './UserEmailWizardStepForm';
+import {UserPasswordWizardStepForm} from './UserPasswordWizardStepForm';
+import {UserMembershipsWizardStepForm} from './UserMembershipsWizardStepForm';
+import {PrincipalWizardPanelParams} from './PrincipalWizardPanelParams';
 
 import User = api.security.User;
 import UserBuilder = api.security.UserBuilder;

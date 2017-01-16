@@ -1,7 +1,7 @@
-import "../../../api.ts";
-import {DetailsView} from "./DetailsView";
-import {WidgetItemView} from "./WidgetItemView";
-import {ActiveDetailsPanelManager} from "../../view/detail/ActiveDetailsPanelManager";
+import '../../../api.ts';
+import {DetailsView} from './DetailsView';
+import {WidgetItemView} from './WidgetItemView';
+import {ActiveDetailsPanelManager} from '../../view/detail/ActiveDetailsPanelManager';
 
 import ViewItem = api.app.view.ViewItem;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;

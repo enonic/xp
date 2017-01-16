@@ -1,5 +1,5 @@
-import "../../../../../../api.ts";
-import {PageTemplateSelector} from "./PageTemplateSelector";
+import '../../../../../../api.ts';
+import {PageTemplateSelector} from './PageTemplateSelector';
 
 export class PageTemplateForm extends api.ui.form.Form {
 

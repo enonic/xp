@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {BasePreviewAction} from "../../action/BasePreviewAction";
-import {ContentWizardPanel} from "../ContentWizardPanel";
+import '../../../api.ts';
+import {BasePreviewAction} from '../../action/BasePreviewAction';
+import {ContentWizardPanel} from '../ContentWizardPanel';
 
 import RenderingMode = api.rendering.RenderingMode;
 

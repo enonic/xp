@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {ContentTreeGrid} from "../ContentTreeGrid";
-import {SortContentEvent} from "../SortContentEvent";
+import '../../../api.ts';
+import {ContentTreeGrid} from '../ContentTreeGrid';
+import {SortContentEvent} from '../SortContentEvent';
 
 import Action = api.ui.Action;
 

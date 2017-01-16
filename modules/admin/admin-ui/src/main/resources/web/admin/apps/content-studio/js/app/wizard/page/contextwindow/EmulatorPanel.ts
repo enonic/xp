@@ -1,6 +1,6 @@
-import "../../../../api.ts";
-import {LiveEditPageProxy} from "../LiveEditPageProxy";
-import {EmulatorGrid} from "./EmulatorGrid";
+import '../../../../api.ts';
+import {LiveEditPageProxy} from '../LiveEditPageProxy';
+import {EmulatorGrid} from './EmulatorGrid';
 
 export interface EmulatorPanelConfig {
 

@@ -1,6 +1,6 @@
-import "../../api.ts";
-import {ApplicationTreeGrid} from "./ApplicationTreeGrid";
-import {InstallAppPromptEvent} from "../installation/InstallAppPromptEvent";
+import '../../api.ts';
+import {ApplicationTreeGrid} from './ApplicationTreeGrid';
+import {InstallAppPromptEvent} from '../installation/InstallAppPromptEvent';
 
 import Application = api.application.Application;
 

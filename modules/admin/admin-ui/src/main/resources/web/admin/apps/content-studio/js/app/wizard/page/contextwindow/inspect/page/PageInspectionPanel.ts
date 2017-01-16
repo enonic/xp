@@ -1,9 +1,9 @@
-import "../../../../../../api.ts";
-import {PageTemplateSelector} from "./PageTemplateSelector";
-import {BaseInspectionPanel} from "../BaseInspectionPanel";
-import {PageTemplateForm} from "./PageTemplateForm";
-import {PageControllerForm} from "./PageControllerForm";
-import {PageControllerSelector} from "./PageControllerSelector";
+import '../../../../../../api.ts';
+import {PageTemplateSelector} from './PageTemplateSelector';
+import {BaseInspectionPanel} from '../BaseInspectionPanel';
+import {PageTemplateForm} from './PageTemplateForm';
+import {PageControllerForm} from './PageControllerForm';
+import {PageControllerSelector} from './PageControllerSelector';
 
 import PropertyChangedEvent = api.PropertyChangedEvent;
 import PropertyTree = api.data.PropertyTree;

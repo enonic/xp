@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 export class UserItemHeader extends api.dom.DivEl {
     private displayName: api.dom.H2El;

@@ -1,5 +1,5 @@
-import "../../../../../../api.ts";
-import {BaseInspectionPanel} from "../BaseInspectionPanel";
+import '../../../../../../api.ts';
+import {BaseInspectionPanel} from '../BaseInspectionPanel';
 
 import TextComponent = api.content.page.region.TextComponent;
 import TextComponentView = api.liveedit.text.TextComponentView;

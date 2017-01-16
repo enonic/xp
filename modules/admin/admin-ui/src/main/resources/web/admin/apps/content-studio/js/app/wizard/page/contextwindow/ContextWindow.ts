@@ -1,11 +1,11 @@
-import "../../../../api.ts";
-import {LiveEditPageProxy} from "../LiveEditPageProxy";
-import {LiveFormPanel} from "../LiveFormPanel";
-import {InspectionsPanel} from "./inspect/InspectionsPanel";
-import {BaseInspectionPanel} from "./inspect/BaseInspectionPanel";
-import {EmulatorPanel} from "./EmulatorPanel";
-import {InsertablesPanel} from "./insert/InsertablesPanel";
-import {PageComponentsView} from "../../PageComponentsView";
+import '../../../../api.ts';
+import {LiveEditPageProxy} from '../LiveEditPageProxy';
+import {LiveFormPanel} from '../LiveFormPanel';
+import {InspectionsPanel} from './inspect/InspectionsPanel';
+import {BaseInspectionPanel} from './inspect/BaseInspectionPanel';
+import {EmulatorPanel} from './EmulatorPanel';
+import {InsertablesPanel} from './insert/InsertablesPanel';
+import {PageComponentsView} from '../../PageComponentsView';
 
 import PageTemplateKey = api.content.page.PageTemplateKey;
 import PageTemplate = api.content.page.PageTemplate;

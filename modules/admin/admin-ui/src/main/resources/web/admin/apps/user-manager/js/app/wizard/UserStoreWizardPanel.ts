@@ -1,12 +1,12 @@
-import "../../api.ts";
-import {UserItemWizardPanel} from "./UserItemWizardPanel";
-import {SecurityWizardStepForm} from "./SecurityWizardStepForm";
-import {UserStoreWizardPanelParams} from "./UserStoreWizardPanelParams";
-import {UserStoreWizardActions} from "./action/UserStoreWizardActions";
-import {UserStoreWizardToolbar} from "./UserStoreWizardToolbar";
-import {UserStoreWizardStepForm} from "./UserStoreWizardStepForm";
-import {Router} from "../Router";
-import {UserStoreWizardDataLoader} from "./UserStoreWizardDataLoader";
+import '../../api.ts';
+import {UserItemWizardPanel} from './UserItemWizardPanel';
+import {SecurityWizardStepForm} from './SecurityWizardStepForm';
+import {UserStoreWizardPanelParams} from './UserStoreWizardPanelParams';
+import {UserStoreWizardActions} from './action/UserStoreWizardActions';
+import {UserStoreWizardToolbar} from './UserStoreWizardToolbar';
+import {UserStoreWizardStepForm} from './UserStoreWizardStepForm';
+import {Router} from '../Router';
+import {UserStoreWizardDataLoader} from './UserStoreWizardDataLoader';
 
 import UserStore = api.security.UserStore;
 import UserStoreKey = api.security.UserStoreKey;

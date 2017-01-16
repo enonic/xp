@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {ContentTreeGrid} from "../ContentTreeGrid";
-import {ContentDeletePromptEvent} from "../ContentDeletePromptEvent";
+import '../../../api.ts';
+import {ContentTreeGrid} from '../ContentTreeGrid';
+import {ContentDeletePromptEvent} from '../ContentDeletePromptEvent';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;

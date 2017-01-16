@@ -1,6 +1,6 @@
-import "../../../../../../api.ts";
-import {ComponentInspectionPanel, ComponentInspectionPanelConfig} from "./ComponentInspectionPanel";
-import {ImageSelectorForm} from "./ImageSelectorForm";
+import '../../../../../../api.ts';
+import {ComponentInspectionPanel, ComponentInspectionPanelConfig} from './ComponentInspectionPanel';
+import {ImageSelectorForm} from './ImageSelectorForm';
 
 import ImageComponent = api.content.page.region.ImageComponent;
 import ContentSummary = api.content.ContentSummary;

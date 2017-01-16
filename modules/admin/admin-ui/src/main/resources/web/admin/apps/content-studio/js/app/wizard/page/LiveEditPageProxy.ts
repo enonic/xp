@@ -1,7 +1,7 @@
-import "../../../api.ts";
-import {ShowContentFormEvent} from "../ShowContentFormEvent";
-import {ShowLiveEditEvent} from "../ShowLiveEditEvent";
-import {ShowSplitEditEvent} from "../ShowSplitEditEvent";
+import '../../../api.ts';
+import {ShowContentFormEvent} from '../ShowContentFormEvent';
+import {ShowLiveEditEvent} from '../ShowLiveEditEvent';
+import {ShowSplitEditEvent} from '../ShowSplitEditEvent';
 
 declare var CONFIG;
 

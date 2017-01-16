@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import  Application = api.application.Application;
 

@@ -1,13 +1,13 @@
-import "../../../api.ts";
-import {WidgetView} from "./WidgetView";
-import {WidgetsSelectionRow} from "./WidgetsSelectionRow";
-import {VersionsWidgetItemView} from "./widget/version/VersionsWidgetItemView";
-import {DependenciesWidgetItemView} from "./widget/dependency/DependenciesWidgetItemView";
-import {StatusWidgetItemView} from "./widget/info/StatusWidgetItemView";
-import {PropertiesWidgetItemView} from "./widget/info/PropertiesWidgetItemView";
-import {AttachmentsWidgetItemView} from "./widget/info/AttachmentsWidgetItemView";
-import {UserAccessWidgetItemView} from "./widget/info/UserAccessWidgetItemView";
-import {ActiveDetailsPanelManager} from "../../view/detail/ActiveDetailsPanelManager";
+import '../../../api.ts';
+import {WidgetView} from './WidgetView';
+import {WidgetsSelectionRow} from './WidgetsSelectionRow';
+import {VersionsWidgetItemView} from './widget/version/VersionsWidgetItemView';
+import {DependenciesWidgetItemView} from './widget/dependency/DependenciesWidgetItemView';
+import {StatusWidgetItemView} from './widget/info/StatusWidgetItemView';
+import {PropertiesWidgetItemView} from './widget/info/PropertiesWidgetItemView';
+import {AttachmentsWidgetItemView} from './widget/info/AttachmentsWidgetItemView';
+import {UserAccessWidgetItemView} from './widget/info/UserAccessWidgetItemView';
+import {ActiveDetailsPanelManager} from '../../view/detail/ActiveDetailsPanelManager';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import Widget = api.content.Widget;

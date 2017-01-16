@@ -1,7 +1,7 @@
-import "../../api.ts";
-import {GroupRoleWizardPanel} from "./GroupRoleWizardPanel";
-import {PrincipalWizardPanelParams} from "./PrincipalWizardPanelParams";
-import {RoleMembersWizardStepForm} from "./RoleMembersWizardStepForm";
+import '../../api.ts';
+import {GroupRoleWizardPanel} from './GroupRoleWizardPanel';
+import {PrincipalWizardPanelParams} from './PrincipalWizardPanelParams';
+import {RoleMembersWizardStepForm} from './RoleMembersWizardStepForm';
 
 import Role = api.security.Role;
 import RoleBuilder = api.security.RoleBuilder;

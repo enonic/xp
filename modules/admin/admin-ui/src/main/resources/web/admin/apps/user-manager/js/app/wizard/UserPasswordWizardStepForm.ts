@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {OpenChangePasswordDialogEvent} from "./OpenChangePasswordDialogEvent";
+import '../../api.ts';
+import {OpenChangePasswordDialogEvent} from './OpenChangePasswordDialogEvent';
 
 import User = api.security.User;
 import Principal = api.security.Principal;

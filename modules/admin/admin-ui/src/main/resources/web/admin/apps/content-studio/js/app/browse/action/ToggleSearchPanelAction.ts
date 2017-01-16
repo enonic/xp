@@ -1,5 +1,5 @@
-import "../../../api.ts";
-import {ToggleSearchPanelEvent} from "../ToggleSearchPanelEvent";
+import '../../../api.ts';
+import {ToggleSearchPanelEvent} from '../ToggleSearchPanelEvent';
 
 import Action = api.ui.Action;
 

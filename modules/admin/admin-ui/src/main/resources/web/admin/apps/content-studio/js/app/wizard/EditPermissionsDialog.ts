@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {ContentPermissionsApplyEvent} from "./ContentPermissionsApplyEvent";
+import '../../api.ts';
+import {ContentPermissionsApplyEvent} from './ContentPermissionsApplyEvent';
 
 import Content = api.content.Content;
 import AccessControlComboBox = api.ui.security.acl.AccessControlComboBox;

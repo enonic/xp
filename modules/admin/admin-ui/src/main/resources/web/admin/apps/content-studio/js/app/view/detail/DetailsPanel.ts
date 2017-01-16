@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {DetailsView} from "./DetailsView";
-import {WidgetView} from "./WidgetView";
+import '../../../api.ts';
+import {DetailsView} from './DetailsView';
+import {WidgetView} from './WidgetView';
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
 import ContentVersionSetEvent = api.content.event.ActiveContentVersionSetEvent;

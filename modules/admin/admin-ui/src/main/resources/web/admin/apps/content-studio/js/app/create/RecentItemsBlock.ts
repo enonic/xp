@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {RecentItemsList} from "./RecentItemsList";
+import '../../api.ts';
+import {RecentItemsList} from './RecentItemsList';
 
 export class RecentItemsBlock extends api.dom.AsideEl {
 

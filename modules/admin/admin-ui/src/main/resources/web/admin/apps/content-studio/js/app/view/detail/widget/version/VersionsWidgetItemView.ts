@@ -1,6 +1,6 @@
-import "../../../../../api.ts";
-import {WidgetItemView} from "../../WidgetItemView";
-import {VersionsView} from "./VersionsView";
+import '../../../../../api.ts';
+import {WidgetItemView} from '../../WidgetItemView';
+import {VersionsView} from './VersionsView';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 

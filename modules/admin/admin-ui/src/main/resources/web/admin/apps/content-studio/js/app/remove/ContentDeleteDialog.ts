@@ -1,8 +1,8 @@
-import "../../api.ts";
-import {ContentDeleteDialogAction} from "./ContentDeleteDialogAction";
-import {ConfirmContentDeleteDialog} from "./ConfirmContentDeleteDialog";
-import {ProgressBarDialog} from "../dialog/ProgressBarDialog";
-import {ContentDeletePromptEvent} from "../browse/ContentDeletePromptEvent";
+import '../../api.ts';
+import {ContentDeleteDialogAction} from './ContentDeleteDialogAction';
+import {ConfirmContentDeleteDialog} from './ConfirmContentDeleteDialog';
+import {ProgressBarDialog} from '../dialog/ProgressBarDialog';
+import {ContentDeletePromptEvent} from '../browse/ContentDeletePromptEvent';
 
 import ContentSummary = api.content.ContentSummary;
 import CompareStatus = api.content.CompareStatus;

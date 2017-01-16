@@ -1,5 +1,5 @@
-import "../../../../../../api.ts";
-import {PageControllerSelector} from "./PageControllerSelector";
+import '../../../../../../api.ts';
+import {PageControllerSelector} from './PageControllerSelector';
 
 export class PageControllerForm extends api.ui.form.Form {
 

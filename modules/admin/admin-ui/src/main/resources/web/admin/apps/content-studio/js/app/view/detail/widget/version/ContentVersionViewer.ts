@@ -1,4 +1,4 @@
-import "../../../../../api.ts";
+import '../../../../../api.ts';
 
 export class ContentVersionViewer extends api.ui.Viewer<api.content.ContentVersion> {
 

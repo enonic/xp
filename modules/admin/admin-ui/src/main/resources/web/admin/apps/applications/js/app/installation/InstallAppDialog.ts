@@ -1,6 +1,6 @@
-import "../../api.ts";
-import {MarketAppPanel} from "./view/MarketAppPanel";
-import {ApplicationInput} from "./view/ApplicationInput";
+import '../../api.ts';
+import {MarketAppPanel} from './view/MarketAppPanel';
+import {ApplicationInput} from './view/ApplicationInput';
 
 import ApplicationKey = api.application.ApplicationKey;
 import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;

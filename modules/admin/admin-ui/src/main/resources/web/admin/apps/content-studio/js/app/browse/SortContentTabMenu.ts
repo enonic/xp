@@ -1,6 +1,6 @@
-import "../../api.ts";
-import {SortContentTabMenuItem} from "./SortContentTabMenuItem";
-import {SortContentTabMenuItems} from "./SortContentTabMenuItems";
+import '../../api.ts';
+import {SortContentTabMenuItem} from './SortContentTabMenuItem';
+import {SortContentTabMenuItems} from './SortContentTabMenuItems';
 
 import ChildOrder = api.content.order.ChildOrder;
 import ContentSummary = api.content.ContentSummary;

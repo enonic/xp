@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {ContentPublishPromptEvent} from "../ContentPublishPromptEvent";
-import {ContentTreeGrid} from "../ContentTreeGrid";
+import '../../../api.ts';
+import {ContentPublishPromptEvent} from '../ContentPublishPromptEvent';
+import {ContentTreeGrid} from '../ContentTreeGrid';
 
 import Action = api.ui.Action;
 import ContentSummary = api.content.ContentSummary;

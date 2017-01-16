@@ -1,13 +1,13 @@
-import "../../api.ts";
-import {ContentItemPreviewPanel} from "./ContentItemPreviewPanel";
-import {ContentItemViewToolbar} from "./ContentItemViewToolbar";
-import {EditAction} from "./EditAction";
-import {DeleteAction} from "./DeleteAction";
-import {CloseAction} from "./CloseAction";
-import {ContentItemStatisticsPanel} from "./ContentItemStatisticsPanel";
-import {Router} from "../Router";
-import {ShowPreviewEvent} from "../browse/ShowPreviewEvent";
-import {ShowDetailsEvent} from "../browse/ShowDetailsEvent";
+import '../../api.ts';
+import {ContentItemPreviewPanel} from './ContentItemPreviewPanel';
+import {ContentItemViewToolbar} from './ContentItemViewToolbar';
+import {EditAction} from './EditAction';
+import {DeleteAction} from './DeleteAction';
+import {CloseAction} from './CloseAction';
+import {ContentItemStatisticsPanel} from './ContentItemStatisticsPanel';
+import {Router} from '../Router';
+import {ShowPreviewEvent} from '../browse/ShowPreviewEvent';
+import {ShowDetailsEvent} from '../browse/ShowDetailsEvent';
 
 export class ContentItemViewPanel extends api.app.view.ItemViewPanel<api.content.ContentSummaryAndCompareStatus> {
 

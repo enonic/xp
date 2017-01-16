@@ -1,4 +1,4 @@
-import "../../../api.ts";
+import '../../../api.ts';
 
 import MarketApplication = api.application.MarketApplication;
 import NamesAndIconViewSize = api.app.NamesAndIconViewSize;

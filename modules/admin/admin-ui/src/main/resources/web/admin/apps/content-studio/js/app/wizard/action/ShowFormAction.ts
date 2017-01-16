@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {ShowContentFormEvent} from "../ShowContentFormEvent";
-import {ContentWizardPanel} from "../ContentWizardPanel";
+import '../../../api.ts';
+import {ShowContentFormEvent} from '../ShowContentFormEvent';
+import {ContentWizardPanel} from '../ContentWizardPanel';
 
 export class ShowFormAction extends api.ui.Action {
 

@@ -1,5 +1,5 @@
-import "../../../../../api.ts";
-import {Insertable} from "./Insertable";
+import '../../../../../api.ts';
+import {Insertable} from './Insertable';
 
 export interface InsertablesGridOptions {
     draggableRows?: boolean;

@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {UninstallApplicationEvent} from "./UninstallApplicationEvent";
+import '../../api.ts';
+import {UninstallApplicationEvent} from './UninstallApplicationEvent';
 import Application = api.application.Application;
 import Action = api.ui.Action;
 

@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {DetailsPanel, DETAILS_PANEL_TYPE} from "./DetailsPanel";
-import {DetailsView} from "./DetailsView";
+import '../../../api.ts';
+import {DetailsPanel, DETAILS_PANEL_TYPE} from './DetailsPanel';
+import {DetailsView} from './DetailsView';
 
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 

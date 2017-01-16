@@ -1,7 +1,7 @@
-import "../../api.ts";
-import {DefaultModels} from "./page/DefaultModels";
-import {DefaultModelsFactory, DefaultModelsFactoryConfig} from "./page/DefaultModelsFactory";
-import {ContentWizardPanelParams} from "./ContentWizardPanelParams";
+import '../../api.ts';
+import {DefaultModels} from './page/DefaultModels';
+import {DefaultModelsFactory, DefaultModelsFactoryConfig} from './page/DefaultModelsFactory';
+import {ContentWizardPanelParams} from './ContentWizardPanelParams';
 
 import ContentId = api.content.ContentId;
 import ContentTypeName = api.schema.content.ContentTypeName;

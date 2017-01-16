@@ -1,5 +1,5 @@
-import "../../../../../../api.ts";
-import {BaseInspectionPanel} from "../BaseInspectionPanel";
+import '../../../../../../api.ts';
+import {BaseInspectionPanel} from '../BaseInspectionPanel';
 
 import Region = api.content.page.region.Region;
 

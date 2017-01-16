@@ -1,6 +1,6 @@
-import "../../../../../../api.ts";
-import {ComponentInspectionPanel, ComponentInspectionPanelConfig} from "./ComponentInspectionPanel";
-import {FragmentSelectorForm} from "./FragmentSelectorForm";
+import '../../../../../../api.ts';
+import {ComponentInspectionPanel, ComponentInspectionPanelConfig} from './ComponentInspectionPanel';
+import {FragmentSelectorForm} from './FragmentSelectorForm';
 
 import FragmentComponent = api.content.page.region.FragmentComponent;
 import ContentSummary = api.content.ContentSummary;

@@ -1,4 +1,4 @@
-import "../../../api.ts";
+import '../../../api.ts';
 
 import Element = api.dom.Element;
 import LabelEl = api.dom.LabelEl;

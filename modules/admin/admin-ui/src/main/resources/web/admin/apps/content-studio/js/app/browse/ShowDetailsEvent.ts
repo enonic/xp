@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {BaseContentModelEvent} from "./BaseContentModelEvent";
+import '../../api.ts';
+import {BaseContentModelEvent} from './BaseContentModelEvent';
 
 export class ShowDetailsEvent extends BaseContentModelEvent {
 

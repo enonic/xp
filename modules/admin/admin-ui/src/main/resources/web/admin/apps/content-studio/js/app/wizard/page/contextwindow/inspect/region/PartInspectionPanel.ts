@@ -1,9 +1,9 @@
-import "../../../../../../api.ts";
+import '../../../../../../api.ts';
 import {
     DescriptorBasedComponentInspectionPanel,
     DescriptorBasedComponentInspectionPanelConfig
-} from "./DescriptorBasedComponentInspectionPanel";
-import {DescriptorBasedDropdownForm} from "./DescriptorBasedDropdownForm";
+} from './DescriptorBasedComponentInspectionPanel';
+import {DescriptorBasedDropdownForm} from './DescriptorBasedDropdownForm';
 
 import SiteModel = api.content.site.SiteModel;
 import PartDescriptor = api.content.page.region.PartDescriptor;

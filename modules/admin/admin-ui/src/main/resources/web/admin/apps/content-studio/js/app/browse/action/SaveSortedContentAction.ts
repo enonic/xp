@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {SortContentDialog} from "../SortContentDialog";
-import {SaveSortedContentEvent} from "../SaveSortedContentEvent";
+import '../../../api.ts';
+import {SortContentDialog} from '../SortContentDialog';
+import {SaveSortedContentEvent} from '../SaveSortedContentEvent';
 
 export class SaveSortedContentAction extends api.ui.Action {
 

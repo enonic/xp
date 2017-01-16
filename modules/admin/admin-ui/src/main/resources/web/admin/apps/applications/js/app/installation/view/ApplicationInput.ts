@@ -1,4 +1,4 @@
-import "../../../api.ts";
+import '../../../api.ts';
 
 import ApplicationUploaderEl = api.application.ApplicationUploaderEl;
 import InputEl = api.dom.InputEl;

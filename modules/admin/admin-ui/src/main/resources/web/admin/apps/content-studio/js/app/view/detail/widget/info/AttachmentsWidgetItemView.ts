@@ -1,5 +1,5 @@
-import "../../../../../api.ts";
-import {WidgetItemView} from "../../WidgetItemView";
+import '../../../../../api.ts';
+import {WidgetItemView} from '../../WidgetItemView';
 
 import ContentSummary = api.content.ContentSummary;
 import Attachments = api.content.attachment.Attachments;

@@ -1,7 +1,7 @@
-import "../../../api.ts";
-import {ContentBrowseResetEvent} from "./ContentBrowseResetEvent";
-import {ContentBrowseSearchEvent} from "./ContentBrowseSearchEvent";
-import {ContentBrowseRefreshEvent} from "./ContentBrowseRefreshEvent";
+import '../../../api.ts';
+import {ContentBrowseResetEvent} from './ContentBrowseResetEvent';
+import {ContentBrowseSearchEvent} from './ContentBrowseSearchEvent';
+import {ContentBrowseRefreshEvent} from './ContentBrowseRefreshEvent';
 
 import ContentQueryRequest = api.content.resource.ContentQueryRequest;
 import ContentTypeName = api.schema.content.ContentTypeName;

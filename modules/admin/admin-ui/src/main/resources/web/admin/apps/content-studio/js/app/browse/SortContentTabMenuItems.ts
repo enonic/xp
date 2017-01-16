@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {SortContentTabMenuItem, SortContentTabMenuItemBuilder} from "./SortContentTabMenuItem";
+import '../../api.ts';
+import {SortContentTabMenuItem, SortContentTabMenuItemBuilder} from './SortContentTabMenuItem';
 
 import ChildOrder = api.content.order.ChildOrder;
 import QueryField = api.query.QueryField;

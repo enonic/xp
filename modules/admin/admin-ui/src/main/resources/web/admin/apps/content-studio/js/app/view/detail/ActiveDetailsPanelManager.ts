@@ -1,5 +1,5 @@
-import "../../../api.ts";
-import {DetailsPanel} from "./DetailsPanel";
+import '../../../api.ts';
+import {DetailsPanel} from './DetailsPanel';
 
 import ViewItem = api.app.view.ViewItem;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;

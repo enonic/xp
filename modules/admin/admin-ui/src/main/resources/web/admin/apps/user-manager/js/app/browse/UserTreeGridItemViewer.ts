@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {UserTreeGridItem, UserTreeGridItemType} from "./UserTreeGridItem";
+import '../../api.ts';
+import {UserTreeGridItem, UserTreeGridItemType} from './UserTreeGridItem';
 
 export class UserTreeGridItemViewer extends api.ui.NamesAndIconViewer<UserTreeGridItem> {
 

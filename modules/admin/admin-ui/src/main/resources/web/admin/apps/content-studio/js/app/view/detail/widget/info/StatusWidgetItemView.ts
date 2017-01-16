@@ -1,5 +1,5 @@
-import "../../../../../api.ts";
-import {WidgetItemView} from "../../WidgetItemView";
+import '../../../../../api.ts';
+import {WidgetItemView} from '../../WidgetItemView';
 
 import CompareStatus = api.content.CompareStatus;
 import PublishStatus = api.content.PublishStatus;

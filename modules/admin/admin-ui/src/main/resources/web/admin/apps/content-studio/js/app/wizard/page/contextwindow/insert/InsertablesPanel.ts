@@ -1,10 +1,10 @@
-import "../../../../../api.ts";
-import {ContentWizardPanel} from "../../../ContentWizardPanel";
-import {LiveEditPageProxy} from "../../LiveEditPageProxy";
-import {Insertable} from "./Insertable";
-import {InsertablesGrid} from "./InsertablesGrid";
-import {Insertables} from "./Insertables";
-import {PageComponentsView} from "../../../PageComponentsView";
+import '../../../../../api.ts';
+import {ContentWizardPanel} from '../../../ContentWizardPanel';
+import {LiveEditPageProxy} from '../../LiveEditPageProxy';
+import {Insertable} from './Insertable';
+import {InsertablesGrid} from './InsertablesGrid';
+import {Insertables} from './Insertables';
+import {PageComponentsView} from '../../../PageComponentsView';
 
 import DragHelper = api.ui.DragHelper;
 import PageView = api.liveedit.PageView;

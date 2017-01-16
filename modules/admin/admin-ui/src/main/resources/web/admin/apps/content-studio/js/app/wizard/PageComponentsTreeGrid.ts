@@ -1,6 +1,6 @@
-import "../../api.ts";
-import {PageComponentsItemViewer} from "./PageComponentsItemViewer";
-import {PageComponentsGridDragHandler} from "./PageComponentsGridDragHandler";
+import '../../api.ts';
+import {PageComponentsItemViewer} from './PageComponentsItemViewer';
+import {PageComponentsGridDragHandler} from './PageComponentsGridDragHandler';
 
 import GridColumn = api.ui.grid.GridColumn;
 import GridColumnBuilder = api.ui.grid.GridColumnBuilder;

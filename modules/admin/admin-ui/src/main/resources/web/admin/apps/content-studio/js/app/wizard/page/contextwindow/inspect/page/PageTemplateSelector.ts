@@ -1,7 +1,7 @@
-import "../../../../../../api.ts";
-import {PageTemplateOption} from "./PageTemplateOption";
-import {PageTemplateOptions} from "./PageTemplateOptions";
-import {PageTemplateOptionViewer} from "./PageTemplateOptionViewer";
+import '../../../../../../api.ts';
+import {PageTemplateOption} from './PageTemplateOption';
+import {PageTemplateOptions} from './PageTemplateOptions';
+import {PageTemplateOptionViewer} from './PageTemplateOptionViewer';
 
 import PropertyChangedEvent = api.PropertyChangedEvent;
 import ContentId = api.content.ContentId;

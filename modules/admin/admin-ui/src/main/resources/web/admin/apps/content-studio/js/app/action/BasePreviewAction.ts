@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import Action = api.ui.Action;
 import RenderingMode = api.rendering.RenderingMode;

@@ -1,6 +1,6 @@
-import "../../api.ts";
-import {ApplicationTreeGrid} from "./ApplicationTreeGrid";
-import {UninstallApplicationDialog} from "./UninstallApplicationDialog";
+import '../../api.ts';
+import {ApplicationTreeGrid} from './ApplicationTreeGrid';
+import {UninstallApplicationDialog} from './UninstallApplicationDialog';
 
 import Application = api.application.Application;
 
