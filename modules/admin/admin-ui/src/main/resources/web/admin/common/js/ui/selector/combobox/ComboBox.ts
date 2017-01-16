@@ -423,14 +423,15 @@ module api.ui.selector.combobox {
             if (this.displayMissingSelectedOptions || this.removeMissingSelectedOptions && missingOptionIds.length > 0) {
                 valueSetPromise = this.selectExistingAndHandleMissing(optionIds, missingOptionIds);
             } else {
-                valueSetPromise = wemQ(this.selectExistingOptions(value));
+                valueSetPromise = wemQ(this.selectExistingOptions(optionIds));
             }
             valueSetPromise.done((options) => this.notifyValueLoaded(options));
         }
 
-        private selectExistingOptions(value: string) {
+        private selectExistingOptions(optionIds: string[]) {
             let selectedOptions = [];
-            this.splitValues(value).forEach((val) => {
+
+            optionIds.forEach((val) => {
                 let option = this.getOptionByValue(val);
                 if (option != null) {
                     selectedOptions.push(option);
@@ -442,18 +443,15 @@ module api.ui.selector.combobox {
 
         // tslint:disable-next-line:max-line-length
         private selectExistingAndHandleMissing(optionIds: string[], missingOptionIds: string[]): wemQ.Promise<Option<OPTION_DISPLAY_VALUE>[]> {
-            let nonExistingIds: string[] = [];
-            let selectedOptions = [];
+            let nonExistingIds: string[] = [],
+                selectedOptions = this.selectExistingOptions(optionIds);
 
             return new api.content.resource.ContentsExistRequest(missingOptionIds).sendAndParse()
                 .then((result: api.content.resource.result.ContentsExistResult) => {
 
                     optionIds.forEach((val) => {
                         const option = this.getOptionByValue(val);
-                        if (option != null) {
-                            selectedOptions.push(option);
-                            this.selectOption(option, true);
-                        } else {
+                        if (option == null) {
                             const contentExists = result.contentExists(val);
                             if (this.displayMissingSelectedOptions && (contentExists || !this.removeMissingSelectedOptions)) {
                                 const selectedOption = (<BaseSelectedOptionsView<OPTION_DISPLAY_VALUE>> this.selectedOptionsView)
