@@ -14,7 +14,6 @@
 ///<reference path='WizardStepForm.ts' />
 ///<reference path='WizardPanel.ts' />
 ///<reference path='MinimizeWizardPanelEvent.ts' />
-///<reference path='SaveBeforeCloseDialog.ts' />
 ///<reference path='UploadFinishedEvent.ts' />
 ///<reference path='WizardClosedEvent.ts' />
 ///<reference path='WizardValidityManager.ts' />
