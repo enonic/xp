@@ -176,8 +176,7 @@ module api.ui.tab {
         private setFocusable(focusable: boolean) {
             if (focusable) {
                 this.labelEl.getEl().removeAttribute("tabindex");
-            }
-            else {
+            } else {
                 this.labelEl.getEl().setAttribute("tabindex", "-1");
             }
         }
@@ -230,7 +229,7 @@ module api.ui.tab {
             return this;
         }
 
-        setFocusable(focusable): TabItemBuilder {
+        setFocusable(focusable: boolean): TabItemBuilder {
             this.focusable = focusable;
             return this;
         }
