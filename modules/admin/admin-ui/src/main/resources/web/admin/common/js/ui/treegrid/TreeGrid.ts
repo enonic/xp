@@ -194,12 +194,21 @@ module api.ui.treegrid {
                     this.contextMenu.hide();
                 }
 
-                this.setActive(false);
                 const elem = new ElementHelper(event.target);
                 const clickedRow = wemjq(elem.getHTMLElement()).closest(".slick-row");
                 const isRowHighlighted = clickedRow.hasClass("selected");
                 const node = this.gridData.getItem(data.row);
                 const isMultiSelect = !this.gridOptions.isMultipleSelectionDisabled();
+
+                if (event.ctrlKey) {
+                    if (!this.grid.isRowSelected(data.row) && this.highlightedNode !== node) {
+                        this.unhighlightCurrentRow(true);
+                    }
+                    this.grid.toggleRow(data.row);
+                    return;
+                }
+
+                this.setActive(false);
 
                 if (elem.hasClass("expand")) {
                     elem.removeClass("expand").addClass("collapse");
