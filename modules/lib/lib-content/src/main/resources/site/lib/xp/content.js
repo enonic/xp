@@ -260,7 +260,7 @@ exports.modify = function (params) {
  * @param {object} [params.schedule] Schedule the publish.
  * @param {string} [params.schedule.from] Time from which the content is considered published. Defaults to the time of the publish
  * @param {string} [params.schedule.to] Time until which the content is considered published.
- * @param {boolean} [params.includeChildren=true] Whether all children should be included when publishing content.
+ * @param {string[]} [params.excludeChildrenIds] List of all content keys which children should be excluded from publishing content.
  * @param {boolean} [params.includeDependencies=true] Whether all related content should be included when publishing content.
  *
  * @returns {object} Status of the publish operation in JSON.
@@ -271,8 +271,8 @@ exports.publish = function (params) {
     bean.targetBranch = required(params, 'targetBranch');
     bean.sourceBranch = required(params, 'sourceBranch');
     bean.contentPublishInfo = __.toScriptValue(params.schedule);
-    if (!nullOrValue(params.includeChildren)) {
-        bean.includeChildren = params.includeChildren;
+    if (params.excludeChildrenIds) {
+        bean.excludeChildrenIds = params.excludeChildrenIds;
     }
     if (!nullOrValue(params.includeDependencies)) {
         bean.includeDependencies = params.includeDependencies;

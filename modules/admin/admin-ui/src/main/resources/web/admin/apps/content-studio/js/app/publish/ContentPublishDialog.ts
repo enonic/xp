@@ -3,6 +3,7 @@ import {ProgressBarDialog} from "../dialog/ProgressBarDialog";
 import {PublishDialogDependantList, isContentSummaryValid} from "./PublishDialogDependantList";
 import {ContentPublishPromptEvent} from "../browse/ContentPublishPromptEvent";
 import {SchedulePublishDialog} from "./SchedulePublishDialog";
+import {PublishDialogItemList} from "./PublishDialogItemList";
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import PublishContentRequest = api.content.resource.PublishContentRequest;
@@ -11,6 +12,9 @@ import CompareStatus = api.content.CompareStatus;
 import ContentId = api.content.ContentId;
 import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
+import BrowseItem = api.app.browse.BrowseItem;
+import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
+import Tooltip = api.ui.Tooltip;
 
 /**
  * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
@@ -20,16 +24,12 @@ import LoadMask = api.ui.mask.LoadMask;
  */
 export class ContentPublishDialog extends ProgressBarDialog {
 
-    private childrenCheckbox: api.ui.Checkbox;
-
     private excludedIds: ContentId[] = [];
 
-    // stashes previous checkbox state items, until selected items changed
-    private stash: {[checked: string]: ContentSummaryAndCompareStatus[]} = {};
-    private stashedDependantIds: {[checked: string]: ContentId[]} = {};
-    private stashedContainsInvalid: {[checked: string]: boolean} = {};
+    private containsInvalid: boolean;
 
     private scheduleDialog: SchedulePublishDialog;
+
     protected showScheduleDialogButton: api.ui.dialog.DialogButton;
 
     constructor() {
@@ -49,13 +49,14 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.initActions();
         this.addCancelButtonToBottom();
 
-        this.initChildrenCheckbox();
-
         this.getItemList().onItemsRemoved((items: ContentSummaryAndCompareStatus[]) => {
             if (!this.isIgnoreItemsChanged()) {
-                this.clearStashedItems();
                 this.reloadPublishDependencies().done();
             }
+        });
+
+        this.getItemList().onExcludeChildrenListChanged((excludedChildrenIds: ContentId[]) => {
+            this.reloadPublishDependencies(true).done();
         });
     }
 
@@ -84,7 +85,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
         dependants.onItemRemoveClicked((item: ContentSummaryAndCompareStatus) => {
             this.excludedIds.push(item.getContentId());
-            this.clearStashedItems();
             this.reloadPublishDependencies().done();
         });
 
@@ -92,15 +92,8 @@ export class ContentPublishDialog extends ProgressBarDialog {
     }
 
     open() {
-        if (!this.doAnyHaveChildren(this.getItemList().getItems())) {
-
-            this.childrenCheckbox.setVisible(false);
-            this.getButtonRow().addClass("no-checkbox");
-        }
-
         this.excludedIds = [];
 
-        this.clearStashedItems();
         this.reloadPublishDependencies(true).done();
 
         super.open();
@@ -108,7 +101,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
     close() {
         super.close();
-        this.childrenCheckbox.setChecked(false);
+        this.getItemList().clearExcludeChildrenIds();
     }
 
     protected lockControls() {
@@ -121,62 +114,26 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.showScheduleDialogButton.setEnabled(true);
     }
 
-    private getStashedItems(): ContentSummaryAndCompareStatus[] {
-        return this.stash[String(this.childrenCheckbox.isChecked())];
-    }
-
-    private setStashedItems(items: ContentSummaryAndCompareStatus[]) {
-        this.stash[String(this.childrenCheckbox.isChecked())] = items.slice();
-    }
-
-    private clearStashedItems() {
-        this.stash = {};
-    }
-
-    private refreshPublishDependencies(): wemQ.Promise<void> {
-        let stashedItems = this.getStashedItems();
-        // null - means items have not been loaded yet or we had to clear it because of selection change
-        if (!stashedItems) {
-            return this.reloadPublishDependencies(true);
-        } else {
-            // apply the stash to avoid extra heavy request
-            this.lockControls();
-            this.loadMask.show();
-            setTimeout(() => {
-                this.setDependantItems(stashedItems.slice());
-                this.centerMyself();
-                this.updateSubTitleShowScheduleAndButtonCount();
-                this.loadMask.hide();
-            }, 100);
-            return wemQ<void>(null);
-        }
-    }
-
     private reloadPublishDependencies(resetDependantItems?: boolean): wemQ.Promise<void> {
         if (this.isProgressBarEnabled()) {
             return wemQ<void>(null);
         }
         this.lockControls();
         this.loadMask.show();
-        this.disableCheckbox();
 
         this.setSubTitle("Resolving items...");
 
         let ids = this.getContentToPublishIds();
-        let loadChildren = this.childrenCheckbox.isChecked();
 
-        let resolveDependenciesRequest = api.content.resource.ResolvePublishDependenciesRequest.
-            create().
-            setIds(ids).
-            setExcludedIds(this.excludedIds).
-            setIncludeChildren(loadChildren).
-            build();
+        let resolveDependenciesRequest = api.content.resource.ResolvePublishDependenciesRequest.create().setIds(ids).setExcludedIds(
+            this.excludedIds).setExcludeChildrenIds(this.getItemList().getExcludeChildrenIds()).build();
 
         return resolveDependenciesRequest.sendAndParse().then((result: ResolvePublishDependenciesResult) => {
 
             this.toggleClass("contains-removable", result.isContainsRemovable());
-            this.stashedDependantIds[String(this.childrenCheckbox.isChecked())] = result.getDependants().slice();
-            this.stashedContainsInvalid[String(this.childrenCheckbox.isChecked())] = result.isContainsInvalid();
+            this.dependantIds = result.getDependants().slice();
+            this.containsInvalid = result.isContainsInvalid();
+
             return this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
                 if (resetDependantItems) { // just opened or first time loading children
                     this.setDependantItems(dependants);
@@ -185,14 +142,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
                 }
 
                 this.loadMask.hide();
-                this.enableCheckbox();
-
-                this.setStashedItems(dependants.slice());
                 this.updateSubTitleShowScheduleAndButtonCount();
-
-                // do not set requested contents as they are never going to change,
-                // but returned data contains less info than original summaries
-                this.childrenCheckbox.setVisible(this.doAnyHaveChildren(this.getItemList().getItems()));
 
                 this.centerMyself();
             });
@@ -224,10 +174,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
             return;
         }
         super.setDependantItems(items);
-
-        if (this.getStashedItems()) {
-            this.updateSubTitleShowScheduleAndButtonCount();
-        }
     }
 
     setContentToPublish(contents: ContentSummaryAndCompareStatus[]) {
@@ -241,21 +187,10 @@ export class ContentPublishDialog extends ProgressBarDialog {
     }
 
     setIncludeChildItems(include: boolean, silent?: boolean) {
-        this.childrenCheckbox.setChecked(include, silent);
+        this.getItemList().getItemViews().forEach((itemView) => {
+            itemView.getIncludeChildrenToggler().toggle(include, silent);
+        });
         return this;
-    }
-
-    private initChildrenCheckbox() {
-
-        let childrenCheckboxListener = () => this.refreshPublishDependencies().done();
-
-        this.childrenCheckbox = api.ui.Checkbox.create().setLabelText('Include child items').build();
-        this.childrenCheckbox.addClass('include-child-check');
-        this.childrenCheckbox.onValueChanged(childrenCheckboxListener);
-
-        this.overwriteDefaultArrows(this.childrenCheckbox);
-
-        this.getButtonRow().appendChild(this.childrenCheckbox);
     }
 
     private getContentToPublishIds(): ContentId[] {
@@ -289,9 +224,9 @@ export class ContentPublishDialog extends ProgressBarDialog {
         let selectedIds = this.getContentToPublishIds();
 
         let publishRequest = new PublishContentRequest()
-            .setIncludeChildren(this.childrenCheckbox.isChecked())
             .setIds(selectedIds)
-            .setExcludedIds(this.excludedIds);
+            .setExcludedIds(this.excludedIds)
+            .setExcludeChildrenIds(this.getItemList().getExcludeChildrenIds());
 
         if (scheduled) {
             publishRequest.setPublishFrom(this.scheduleDialog.getFromDate());
@@ -309,26 +244,16 @@ export class ContentPublishDialog extends ProgressBarDialog {
         });
     }
 
+    protected createItemList(): ListBox<ContentSummaryAndCompareStatus> {
+        return new PublishDialogItemList();
+    }
+
+    protected getItemList(): PublishDialogItemList {
+        return <PublishDialogItemList>super.getItemList();
+    }
+
     protected countTotal(): number {
         return this.countToPublish(this.getItemList().getItems()) + this.getDependantIds().length;
-    }
-
-    protected loadDescendantIds(filterStatuses?: CompareStatus[]) {
-        let contents = this.getItemList().getItems();
-
-        return new api.content.resource.GetDescendantsOfContentsRequest().setContentPaths(
-            contents.map(content => content.getContentSummary().getPath())).setFilterStatuses(filterStatuses).sendAndParse()
-            .then((result: ContentId[]) => {
-                this.stashedDependantIds[String(this.childrenCheckbox.isChecked())] = result.slice();
-            });
-    }
-
-    protected getDependantIds(): ContentId[] {
-        return this.stashedDependantIds[String(this.childrenCheckbox.isChecked())];
-    }
-
-    protected containsInvalid(): boolean {
-        return this.stashedContainsInvalid[String(this.childrenCheckbox.isChecked())];
     }
 
     private countToPublish(summaries: ContentSummaryAndCompareStatus[]): number {
@@ -378,26 +303,9 @@ export class ContentPublishDialog extends ProgressBarDialog {
         return summaries.every((summary: ContentSummaryAndCompareStatus) => isContentSummaryValid(summary));
     }
 
-    private doAnyHaveChildren(items: ContentSummaryAndCompareStatus[]): boolean {
-        return items.some((item: ContentSummaryAndCompareStatus) => {
-            return item.hasChildren();
-        });
-    }
-
     private areItemsAndDependantsValid(): boolean {
-        return !this.containsInvalid() &&
-               this.areAllValid(this.getItemList().getItems()) &&
-               this.areAllValid(this.getDependantList().getItems());
-    }
-
-    private disableCheckbox() {
-        this.childrenCheckbox.setDisabled(true);
-        this.childrenCheckbox.addClass("disabled");
-    }
-
-    private enableCheckbox() {
-        this.childrenCheckbox.setDisabled(false);
-        this.childrenCheckbox.removeClass("disabled");
+        return !this.containsInvalid &&
+               this.areAllValid(this.getItemList().getItems());
     }
 
     protected hasSubDialog(): boolean {

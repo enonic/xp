@@ -257,21 +257,6 @@ module api.ui.dialog {
             }
         }
 
-        protected overwriteDefaultArrows(element: api.dom.Element) {
-            element.onKeyDown((event) => {
-
-                if (api.ui.KeyHelper.isArrowLeftKey(event)) {
-                    this.focusPreviousTabbable();
-                    event.stopPropagation();
-                    event.preventDefault();
-                } else if (api.ui.KeyHelper.isArrowRightKey(event)) {
-                    this.focusNextTabbable();
-                    event.stopPropagation();
-                    event.preventDefault();
-                }
-            });
-        }
-
         open() {
 
             api.ui.mask.BodyMask.get().show();
