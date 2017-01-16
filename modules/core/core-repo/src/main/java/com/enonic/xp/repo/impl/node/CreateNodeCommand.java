@@ -84,7 +84,7 @@ public final class CreateNodeCommand
         final Node.Builder nodeBuilder = Node.create().
             id( this.params.getNodeId() != null ? params.getNodeId() : new NodeId() ).
             parentPath( params.getParent() ).
-            name( NodeName.from( params.getName() ) ).
+            name( NodeName.from( params.getName().toLowerCase() ) ).
             data( params.getData() ).
             indexConfigDocument( params.getIndexConfigDocument() ).
             childOrder( params.getChildOrder() != null ? params.getChildOrder() : ChildOrder.defaultOrder() ).

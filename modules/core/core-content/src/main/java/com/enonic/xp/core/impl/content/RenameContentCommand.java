@@ -4,7 +4,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.RenameContentParams;
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
@@ -42,7 +41,6 @@ final class RenameContentCommand
     private Content doExecute()
     {
         final NodeId nodeId = NodeId.from( params.getContentId() );
-        final Node existingNode = nodeService.getById( nodeId );
 
         final NodeName nodeName = NodeName.from( params.getNewName().toString() );
         nodeService.rename( RenameNodeParams.create().
