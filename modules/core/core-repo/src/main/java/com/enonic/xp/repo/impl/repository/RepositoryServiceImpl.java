@@ -213,7 +213,7 @@ public class RepositoryServiceImpl
         }
 
         //If the root node exists, deletes it
-        if ( getRootNode( previousRepository.getId(), branch ) == null )
+        if ( getRootNode( previousRepository.getId(), branch ) != null )
         {
             deleteRootNode( previousRepository, branch );
         }

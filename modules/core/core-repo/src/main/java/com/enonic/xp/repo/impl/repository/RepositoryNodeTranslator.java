@@ -60,7 +60,7 @@ public class RepositoryNodeTranslator
         return toBeEdited -> {
             final Iterable<String> branches = toBeEdited.data.getStrings( BRANCHES_KEY );
 
-            toBeEdited.data.removeProperty( BRANCHES_KEY );
+            toBeEdited.data.removeProperties( BRANCHES_KEY );
             for ( Iterator<String> branchIterator = branches.iterator(); branchIterator.hasNext(); )
             {
                 final String currentBranch = branchIterator.next();
