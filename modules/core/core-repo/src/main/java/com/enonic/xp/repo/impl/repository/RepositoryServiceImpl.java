@@ -216,7 +216,7 @@ public class RepositoryServiceImpl
         //If the root node exists, deletes it
         if ( getRootNode( previousRepository.getId(), branch ) != null )
         {
-            deleteRootNode( previousRepository, branch );
+            deleteRootNode( branch );
         }
 
         //Updates the repository entry
@@ -306,7 +306,7 @@ public class RepositoryServiceImpl
         this.nodeStorageService.push( rootNode, branch, internalContext );
     }
 
-    private void deleteRootNode( final Repository currentRepo, final Branch branch )
+    private void deleteRootNode( final Branch branch )
     {
         final Context context = ContextAccessor.current();
         final InternalContext internalContext = InternalContext.create( context ).branch( branch ).build();
