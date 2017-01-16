@@ -7,7 +7,7 @@ module api.ui {
 
         private label: api.dom.LabelEl;
 
-        public static debug = false;
+        public static debug: boolean = false;
 
         constructor(builder: CheckboxBuilder) {
             super("div", "checkbox", undefined, String(builder.checked || false));
@@ -44,7 +44,7 @@ module api.ui {
         }
 
         private getInputAlignmentAsString(inputAlignment: InputAlignment = InputAlignment.LEFT): string {
-            
+
             return InputAlignment[inputAlignment].toLowerCase();
         }
 
@@ -161,9 +161,6 @@ module api.ui {
 
         inputAlignment: InputAlignment;
 
-        constructor() {
-        }
-
         setLabelText(value: string): CheckboxBuilder {
             this.text = value;
             return this;
@@ -183,7 +180,4 @@ module api.ui {
             return new Checkbox(this);
         }
     }
-
-
-
 }

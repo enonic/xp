@@ -2,8 +2,10 @@ module api.content.resource {
 
     import ListContentResult = api.content.resource.result.ListContentResult;
     import ContentResponse = api.content.resource.result.ContentResponse;
-    
-    export class ListContentByIdRequest extends ContentResourceRequest<ListContentResult<api.content.json.ContentSummaryJson>, ContentResponse<ContentSummary>> {
+    import ContentSummaryJson = api.content.json.ContentSummaryJson;
+
+    export class ListContentByIdRequest
+    extends ContentResourceRequest<ListContentResult<ContentSummaryJson>, ContentResponse<ContentSummary>> {
 
         private parentId: ContentId;
 

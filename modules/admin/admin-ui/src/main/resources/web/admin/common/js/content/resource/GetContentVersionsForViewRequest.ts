@@ -1,6 +1,8 @@
 module api.content.resource {
 
-    export class GetContentVersionsForViewRequest extends ContentResourceRequest<json.GetContentVersionsForViewResultsJson, ContentVersions> {
+    import GetContentVersionsForViewResultsJson = api.content.json.GetContentVersionsForViewResultsJson;
+
+    export class GetContentVersionsForViewRequest extends ContentResourceRequest<GetContentVersionsForViewResultsJson, ContentVersions> {
 
         private contentId: ContentId;
         private from: number;
@@ -36,7 +38,7 @@ module api.content.resource {
 
         sendAndParse(): wemQ.Promise<ContentVersions> {
 
-            return this.send().then((response: api.rest.JsonResponse<json.GetContentVersionsForViewResultsJson>) => {
+            return this.send().then((response: api.rest.JsonResponse<GetContentVersionsForViewResultsJson>) => {
                 return ContentVersions.fromJson(response.getResult());
             });
         }

@@ -4,7 +4,7 @@ module api.app {
 
     export class ServerEventsConnection {
         private static INSTANCE: ServerEventsConnection;
-        
+
         private static KEEP_ALIVE_TIME: number = 30 * 1000;
 
         private ws: WebSocket;
@@ -38,7 +38,7 @@ module api.app {
                 console.warn('ServerEventsConnection: WebSockets not supported. Server events disabled.');
                 return;
             }
-            var wsUrl = api.util.UriHelper.joinPath(this.getWebSocketUriPrefix(), api.util.UriHelper.getAdminUriPrefix(), 'event');
+            let wsUrl = api.util.UriHelper.joinPath(this.getWebSocketUriPrefix(), api.util.UriHelper.getAdminUriPrefix(), 'event');
             this.keepConnected = true;
             this.doConnect(wsUrl);
         }
@@ -49,7 +49,7 @@ module api.app {
             this.ws.addEventListener('close', (ev: CloseEvent) => {
                 clearInterval(this.keepAliveIntervalId);
                 if (ServerEventsConnection.debug) {
-                    var m = 'ServerEventsConnection: connection closed to ' + wsUrl;
+                    let m = 'ServerEventsConnection: connection closed to ' + wsUrl;
                     if (this.downTime > 0) {
                         m += '\nUptime: ' + (new Date().getTime() - this.downTime);
                     }
@@ -82,7 +82,7 @@ module api.app {
             });
 
             this.ws.addEventListener('message', (remoteEvent: any) => {
-                var jsonEvent = <api.event.NodeEventJson> JSON.parse(remoteEvent.data);
+                let jsonEvent = <api.event.NodeEventJson> JSON.parse(remoteEvent.data);
                 if (ServerEventsConnection.debug) {
                     console.debug('ServerEventsConnection: Server event [' + jsonEvent.type + ']', jsonEvent);
                 }
@@ -91,7 +91,7 @@ module api.app {
 
             this.ws.addEventListener('open', (event: Event) => {
                 if (ServerEventsConnection.debug) {
-                    var m = 'ServerEventsConnection: connection opened to ' + wsUrl;
+                    let m = 'ServerEventsConnection: connection opened to ' + wsUrl;
                     if (this.downTime > 0) {
                         m += '\nDowntime: ' + (new Date().getTime() - this.downTime);
                     }
@@ -126,7 +126,7 @@ module api.app {
         }
 
         private handleServerEvent(eventJson: api.event.NodeEventJson): void {
-            var clientEvent: api.event.Event = this.translateServerEvent(eventJson);
+            let clientEvent: api.event.Event = this.translateServerEvent(eventJson);
 
             if (clientEvent) {
                 this.notifyServerEvent(clientEvent);
@@ -134,7 +134,7 @@ module api.app {
         }
 
         private translateServerEvent(eventJson: EventJson): api.event.Event {
-            var eventType = eventJson.type;
+            let eventType = eventJson.type;
 
             if (eventType === 'application') {
                 return api.application.ApplicationEvent.fromJson(<api.application.ApplicationEventJson>eventJson);
@@ -158,7 +158,8 @@ module api.app {
         }
 
         private getWebSocketUriPrefix(): string {
-            var loc = window.location, newUri;
+            let loc = window.location;
+            let newUri;
             if (loc.protocol === "https:") {
                 newUri = "wss:";
             } else {
@@ -186,7 +187,7 @@ module api.app {
         }
 
         private notifyConnectionLost() {
-            this.connectionLostListeners.forEach((listener: (event)=>void)=> {
+            this.connectionLostListeners.forEach((listener: (event: any) => void) =>  {
                 listener.call(this);
             });
         }
@@ -197,13 +198,13 @@ module api.app {
 
         unConnectionLost(listener: () => void) {
             this.connectionLostListeners =
-                this.connectionLostListeners.filter((currentListener: ()=>void)=> {
+                this.connectionLostListeners.filter((currentListener: () => void) =>  {
                     return currentListener != listener;
                 });
         }
 
         private notifyConnectionRestored() {
-            this.connectionRestoredListeners.forEach((listener: (event)=>void)=> {
+            this.connectionRestoredListeners.forEach((listener: (event: any) => void) => {
                 listener.call(this);
             });
         }
@@ -214,8 +215,8 @@ module api.app {
 
         unConnectionRestored(listener: () => void) {
             this.connectionRestoredListeners =
-                this.connectionRestoredListeners.filter((currentListener: ()=>void)=> {
-                    return currentListener != listener;
+                this.connectionRestoredListeners.filter((currentListener: () => void) =>  {
+                    return currentListener !== listener;
                 });
         }
 

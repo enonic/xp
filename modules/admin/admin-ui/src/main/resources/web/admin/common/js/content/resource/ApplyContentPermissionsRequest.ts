@@ -2,7 +2,7 @@ module api.content.resource {
 
     export class ApplyContentPermissionsRequest extends ContentResourceRequest<api.content.json.ContentJson, Content> {
 
-        private id: string;
+        private id: ContentId;
 
         private permissions: api.security.acl.AccessControlList;
 
@@ -17,7 +17,7 @@ module api.content.resource {
             this.setMethod("POST");
         }
 
-        setId(id: string): ApplyContentPermissionsRequest {
+        setId(id: ContentId): ApplyContentPermissionsRequest {
             this.id = id;
             return this;
         }
@@ -39,7 +39,7 @@ module api.content.resource {
 
         getParams(): Object {
             return {
-                contentId: this.id,
+                contentId: this.id.toString(),
                 permissions: this.permissions ? this.permissions.toJson() : undefined,
                 inheritPermissions: this.inheritPermissions,
                 overwriteChildPermissions: this.overwriteChildPermissions

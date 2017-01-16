@@ -1,6 +1,8 @@
 module api.application {
 
-    export class InstallUrlApplicationRequest extends ApplicationResourceRequest<json.ApplicationInstallResultJson, ApplicationInstallResult> {
+    import ApplicationInstallResultJson = api.application.json.ApplicationInstallResultJson;
+
+    export class InstallUrlApplicationRequest extends ApplicationResourceRequest<ApplicationInstallResultJson, ApplicationInstallResult> {
 
         private applicationUrl: string;
 
@@ -22,7 +24,7 @@ module api.application {
         }
 
         sendAndParse(): wemQ.Promise<ApplicationInstallResult> {
-            return this.send().then((response: api.rest.JsonResponse<json.ApplicationInstallResultJson>) => {
+            return this.send().then((response: api.rest.JsonResponse<ApplicationInstallResultJson>) => {
                 return ApplicationInstallResult.fromJson(response.getResult());
             });
         }

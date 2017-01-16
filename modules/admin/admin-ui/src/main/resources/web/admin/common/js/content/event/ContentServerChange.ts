@@ -53,7 +53,7 @@ module api.content.event {
 
         static fromJson(nodeEventJson: NodeEventJson): ContentServerChange {
 
-            var changeItems = nodeEventJson.data.nodes.
+            let changeItems = nodeEventJson.data.nodes.
                 filter((node) => node.path.indexOf("/content") === 0).
                 map((node: NodeEventNodeJson) => ContentServerChangeItem.fromJson(node));
 
@@ -65,7 +65,7 @@ module api.content.event {
 
             if (NodeServerChangeType.MOVE == nodeEventType || NodeServerChangeType.RENAME == nodeEventType) {
 
-                var newContentPaths = nodeEventJson.data.nodes.
+                let newContentPaths = nodeEventJson.data.nodes.
                     filter((node) => node.newPath.indexOf("/content") === 0).
                     map((node: NodeEventNodeJson) => api.content.ContentPath.fromString(node.newPath.substr("/content".length)));
 

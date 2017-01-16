@@ -22,11 +22,10 @@ module api.content.page.region {
 
         sendAndParse(): wemQ.Promise<PartDescriptor[]> {
 
-            var cached = this.cache.getByApplication(this.applicationKey);
+            let cached = this.cache.getByApplication(this.applicationKey);
             if (cached) {
                 return wemQ(cached);
-            }
-            else {
+            } else {
                 return this.send().then((response: api.rest.JsonResponse<PartDescriptorsJson>) => {
                     return this.fromJsonToPartDescriptors(response.getResult());
                 });

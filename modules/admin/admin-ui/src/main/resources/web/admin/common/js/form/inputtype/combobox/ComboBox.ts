@@ -27,11 +27,12 @@ module api.form.inputtype.combobox {
         }
 
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
-            var options: ComboBoxOption[] = [];
+            let options: ComboBoxOption[] = [];
 
-            var optionValues = inputConfig['option'] || [];
-            var l = optionValues.length, optionValue;
-            for (var i = 0; i < l; i++) {
+            let optionValues = inputConfig['option'] || [];
+            let l = optionValues.length;
+            let optionValue;
+            for (let i = 0; i < l; i++) {
                 optionValue = optionValues[i];
                 options.push({label: optionValue['value'], value: optionValue['@value']});
             }
@@ -64,7 +65,7 @@ module api.form.inputtype.combobox {
             this.comboBox = this.createComboBox(input, propertyArray);
 
             this.comboBoxOptions.forEach((option: ComboBoxOption) => {
-                this.comboBox.addOption({value: option.value, displayValue: option.label})
+                this.comboBox.addOption({value: option.value, displayValue: option.label});
             });
 
             this.appendChild(this.comboBox);
@@ -76,7 +77,7 @@ module api.form.inputtype.combobox {
         }
 
         update(propertyArray: api.data.PropertyArray, unchangedOnly?: boolean): Q.Promise<void> {
-            var superPromise = super.update(propertyArray, unchangedOnly);
+            let superPromise = super.update(propertyArray, unchangedOnly);
 
             if (!unchangedOnly || !this.comboBox.isDirty()) {
                 return superPromise.then(() => {
@@ -92,7 +93,7 @@ module api.form.inputtype.combobox {
         }
 
         createComboBox(input: api.form.Input, propertyArray: PropertyArray): api.ui.selector.combobox.ComboBox<string> {
-            var comboBox = new api.ui.selector.combobox.ComboBox<string>(name, {
+            let comboBox = new api.ui.selector.combobox.ComboBox<string>(name, {
                 filter: this.comboBoxFilter,
                 selectedOptionsView: this.selectedOptionsView,
                 maximumOccurrences: input.getOccurrences().getMaximum(),
@@ -108,7 +109,7 @@ module api.form.inputtype.combobox {
                 this.ignorePropertyChange = true;
 
                 const option = event.getSelectedOption();
-                var value = new Value(option.getOption().value, ValueTypes.STRING);
+                let value = new Value(option.getOption().value, ValueTypes.STRING);
                 if (option.getIndex() >= 0) {
                     this.getPropertyArray().set(option.getIndex(), value);
                 } else {
@@ -149,14 +150,13 @@ module api.form.inputtype.combobox {
             });
         }
 
-        private comboBoxFilter(item: api.ui.selector.Option<string>, args) {
+        private comboBoxFilter(item: api.ui.selector.Option<string>, args: any) {
             return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
         }
 
         protected getNumberOfValids(): number {
             return this.getPropertyArray().getSize();
         }
-
 
         onFocus(listener: (event: FocusEvent) => void) {
             this.comboBox.onFocus(listener);

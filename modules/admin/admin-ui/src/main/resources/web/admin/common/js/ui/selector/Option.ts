@@ -15,4 +15,3 @@ module api.ui.selector {
     }
 
 }
-

@@ -7,8 +7,8 @@ import FieldOrderExpr = api.content.order.FieldOrderExpr;
 import FieldOrderExprBuilder = api.content.order.FieldOrderExprBuilder;
 
 interface OrderMeta {
-    field: string,
-    direction: string
+    field: string;
+    direction: string;
 }
 
 export class SortContentTabMenuItems {

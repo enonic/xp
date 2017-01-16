@@ -169,10 +169,9 @@ module api.ui.selector {
                 return;
             }
             if (selectedOption) {
-                var row = this.dropdownGrid.getRowByValue(selectedOption.value);
+                let row = this.dropdownGrid.getRowByValue(selectedOption.value);
                 this.dropdownGrid.navigateToRow(row);
-            }
-            else {
+            } else {
                 this.dropdownGrid.navigateToFirstRow();
             }
         }

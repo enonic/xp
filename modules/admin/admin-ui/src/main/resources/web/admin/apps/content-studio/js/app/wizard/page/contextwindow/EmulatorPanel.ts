@@ -19,7 +19,7 @@ export class EmulatorPanel extends api.ui.panel.Panel {
 
         this.liveEditPage = config.liveEditPage;
 
-        var text = new api.dom.PEl();
+        let text = new api.dom.PEl();
         text.getEl().setInnerHtml("Emulate different client's physical sizes");
         this.appendChild(text);
 
@@ -32,16 +32,18 @@ export class EmulatorPanel extends api.ui.panel.Panel {
         // Using jQuery since grid.setOnClick fires event twice, bug in slickgrid
         wemjq(this.getHTMLElement()).on("click", ".grid-row > div", (event: JQueryEventObject) => {
 
-            var el = wemjq(event.currentTarget),
-                width = el.data("width"),
-                height = el.data("height"),
-                units = el.data("units");
+            let el = wemjq(event.currentTarget);
+            let width = el.data("width");
+            let height = el.data("height");
+            let units = el.data("units");
 
             this.liveEditPage.setWidth(width + units);
             this.liveEditPage.setHeight(height + units);
 
             if (units === "px") {
                 this.updateLiveEditFrameContainerHeight(height);
+            } else {
+                this.resetParentHeight();
             }
 
         });
@@ -66,41 +68,46 @@ export class EmulatorPanel extends api.ui.panel.Panel {
     }
 
     private updateLiveEditFrameContainerHeight(height: number) { // this helps to put horizontal scrollbar in the bottom of live edit frame
-        var body = document.body,
-            html = document.documentElement;
+        let body = document.body;
+        let html = document.documentElement;
 
-        var pageHeight = Math.max(body.scrollHeight, body.offsetHeight,
+        let pageHeight = Math.max(body.scrollHeight, body.offsetHeight,
             html.clientHeight, html.scrollHeight, html.offsetHeight);
 
-        var frameParent = this.liveEditPage.getIFrame().getHTMLElement().parentElement;
+        let frameParent = this.liveEditPage.getIFrame().getHTMLElement().parentElement;
         if (height > pageHeight) {
             frameParent.style.height = "";
             frameParent.classList.add("overflow");
-        }
-        else {
+        } else {
             frameParent.style.height = height + this.getScrollbarWidth() + "px";
             frameParent.classList.remove("overflow");
         }
     }
 
+    private resetParentHeight() {
+        let frameParent = this.liveEditPage.getIFrame().getHTMLElement().parentElement;
+        frameParent.style.height = "";
+        frameParent.classList.remove("overflow");
+    }
+
     private getScrollbarWidth(): number {
-        var outer = document.createElement("div");
+        let outer = document.createElement("div");
         outer.style.visibility = "hidden";
         outer.style.width = "100px";
         outer.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
 
         document.body.appendChild(outer);
 
-        var widthNoScroll = outer.offsetWidth;
+        let widthNoScroll = outer.offsetWidth;
         // force scrollbars
         outer.style.overflow = "scroll";
 
         // add innerdiv
-        var inner = document.createElement("div");
+        let inner = document.createElement("div");
         inner.style.width = "100%";
         outer.appendChild(inner);
 
-        var widthWithScroll = inner.offsetWidth;
+        let widthWithScroll = inner.offsetWidth;
 
         // remove divs
         outer.parentNode.removeChild(outer);

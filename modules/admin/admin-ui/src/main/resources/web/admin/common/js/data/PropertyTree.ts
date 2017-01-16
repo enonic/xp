@@ -1,4 +1,5 @@
 module api.data {
+    /* tslint:disable:max-line-length */
 
     import Reference = api.util.Reference;
     import BinaryReference = api.util.BinaryReference;
@@ -8,7 +9,7 @@ module api.data {
     export interface PropertyTreeDiff {
         added: Property[];
         removed: Property[];
-        modified: {oldValue: Property; newValue: Property}[]
+        modified: {oldValue: Property; newValue: Property}[];
     }
 
     /**
@@ -67,8 +68,7 @@ module api.data {
             if (sourceRoot) {
                 this.root = sourceRoot.copy(this);
                 // Ensure to register all properties from sourceRoot
-            }
-            else {
+            } else {
                 this.root = new PropertySet(this);
             }
         }
@@ -134,7 +134,7 @@ module api.data {
                 return false;
             }
 
-            var other = <PropertyTree>o;
+            let other = <PropertyTree>o;
 
             if (!api.ObjectHelper.equals(this.root, other.root)) {
                 return false;
@@ -258,10 +258,10 @@ module api.data {
         public static fromJson(json: PropertyArrayJson[]): PropertyTree {
 
             api.util.assertNotNull(json, "a json is required");
-            var tree = new PropertyTree();
+            let tree = new PropertyTree();
 
             json.forEach((propertyArrayJson: PropertyArrayJson) => {
-                tree.root.addPropertyArray(PropertyArray.fromJson(propertyArrayJson, tree.root, tree))
+                tree.root.addPropertyArray(PropertyArray.fromJson(propertyArrayJson, tree.root, tree));
             });
 
             return tree;
@@ -338,17 +338,17 @@ module api.data {
         }
 
         setLongByPath(path: any, value: number): Property {
-            return this.root.setLongByPath(path, value)
+            return this.root.setLongByPath(path, value);
         }
 
         getLong(identifier: string, index?: number): number {
-            var property = this.getProperty(identifier, index);
+            let property = this.getProperty(identifier, index);
             return !property ? null : property.getLong();
         }
 
         getLongs(name: string): number[] {
-            var values: number[] = [];
-            var array = this.getPropertyArray(name);
+            let values: number[] = [];
+            let array = this.getPropertyArray(name);
             array.forEach((property: Property) => {
                 values.push(property.getLong());
             });
@@ -370,17 +370,17 @@ module api.data {
         }
 
         setDoubleByPath(path: any, value: number): Property {
-            return this.root.setDoubleByPath(path, value)
+            return this.root.setDoubleByPath(path, value);
         }
 
         getDouble(identifier: string, index?: number): number {
-            var property = this.getProperty(identifier, index);
+            let property = this.getProperty(identifier, index);
             return !property ? null : property.getDouble();
         }
 
         getDoubles(name: string): number[] {
-            var values: number[] = [];
-            var array = this.getPropertyArray(name);
+            let values: number[] = [];
+            let array = this.getPropertyArray(name);
             array.forEach((property: Property) => {
                 values.push(property.getDouble());
             });
@@ -402,17 +402,17 @@ module api.data {
         }
 
         setBooleanByPath(path: any, value: boolean): Property {
-            return this.root.setBooleanByPath(path, value)
+            return this.root.setBooleanByPath(path, value);
         }
 
         getBoolean(identifier: string, index?: number): boolean {
-            var property = this.getProperty(identifier, index);
+            let property = this.getProperty(identifier, index);
             return !property ? null : property.getBoolean();
         }
 
         getBooleans(name: string): boolean[] {
-            var values: boolean[] = [];
-            var array = this.getPropertyArray(name);
+            let values: boolean[] = [];
+            let array = this.getPropertyArray(name);
             array.forEach((property: Property) => {
                 values.push(property.getBoolean());
             });
@@ -434,17 +434,17 @@ module api.data {
         }
 
         setReferenceByPath(path: any, value: Reference): Property {
-            return this.root.setReferenceByPath(path, value)
+            return this.root.setReferenceByPath(path, value);
         }
 
         getReference(identifier: string, index?: number): Reference {
-            var property = this.getProperty(identifier, index);
+            let property = this.getProperty(identifier, index);
             return !property ? null : property.getReference();
         }
 
         getReferences(name: string): Reference[] {
-            var values: Reference[] = [];
-            var array = this.getPropertyArray(name);
+            let values: Reference[] = [];
+            let array = this.getPropertyArray(name);
             array.forEach((property: Property) => {
                 values.push(property.getReference());
             });
@@ -466,17 +466,17 @@ module api.data {
         }
 
         setBinaryReferenceByPath(path: any, value: BinaryReference): Property {
-            return this.root.setBinaryReferenceByPath(path, value)
+            return this.root.setBinaryReferenceByPath(path, value);
         }
 
         getBinaryReference(identifier: string, index?: number): BinaryReference {
-            var property = this.getProperty(identifier, index);
+            let property = this.getProperty(identifier, index);
             return !property ? null : property.getBinaryReference();
         }
 
         getBinaryReferences(name: string): BinaryReference[] {
-            var values: BinaryReference[] = [];
-            var array = this.getPropertyArray(name);
+            let values: BinaryReference[] = [];
+            let array = this.getPropertyArray(name);
             array.forEach((property: Property) => {
                 values.push(property.getBinaryReference());
             });
@@ -498,17 +498,17 @@ module api.data {
         }
 
         setGeoPointByPath(path: any, value: GeoPoint): Property {
-            return this.root.setGeoPointByPath(path, value)
+            return this.root.setGeoPointByPath(path, value);
         }
 
         getGeoPoint(identifier: string, index?: number): GeoPoint {
-            var property = this.getProperty(identifier, index);
+            let property = this.getProperty(identifier, index);
             return !property ? null : property.getGeoPoint();
         }
 
         getGeoPoints(name: string): GeoPoint[] {
-            var values: GeoPoint[] = [];
-            var array = this.getPropertyArray(name);
+            let values: GeoPoint[] = [];
+            let array = this.getPropertyArray(name);
             array.forEach((property: Property) => {
                 values.push(property.getGeoPoint());
             });
@@ -530,17 +530,17 @@ module api.data {
         }
 
         setLocalDateByPath(path: any, value: api.util.LocalDate): Property {
-            return this.root.setLocalDateByPath(path, value)
+            return this.root.setLocalDateByPath(path, value);
         }
 
         getLocalDate(identifier: string, index?: number): api.util.LocalDate {
-            var property = this.getProperty(identifier, index);
+            let property = this.getProperty(identifier, index);
             return !property ? null : property.getLocalDate();
         }
 
         getLocalDates(name: string): api.util.LocalDate[] {
-            var values: api.util.LocalDate[] = [];
-            var array = this.getPropertyArray(name);
+            let values: api.util.LocalDate[] = [];
+            let array = this.getPropertyArray(name);
             array.forEach((property: Property) => {
                 values.push(property.getLocalDate());
             });
@@ -562,17 +562,17 @@ module api.data {
         }
 
         setLocalDateTimeByPath(path: any, value: api.util.LocalDateTime): Property {
-            return this.root.setLocalDateTimeByPath(path, value)
+            return this.root.setLocalDateTimeByPath(path, value);
         }
 
         getLocalDateTime(identifier: string, index?: number): api.util.LocalDateTime {
-            var property = this.getProperty(identifier, index);
+            let property = this.getProperty(identifier, index);
             return !property ? null : property.getLocalDateTime();
         }
 
         getLocalDateTimes(name: string): api.util.LocalDateTime[] {
-            var values: api.util.LocalDateTime[] = [];
-            var array = this.getPropertyArray(name);
+            let values: api.util.LocalDateTime[] = [];
+            let array = this.getPropertyArray(name);
             array.forEach((property: Property) => {
                 values.push(property.getLocalDateTime());
             });
@@ -594,17 +594,17 @@ module api.data {
         }
 
         setLocalTimeByPath(path: any, value: LocalTime): Property {
-            return this.root.setLocalTimeByPath(path, value)
+            return this.root.setLocalTimeByPath(path, value);
         }
 
         getLocalTime(identifier: string, index?: number): LocalTime {
-            var property = this.getProperty(identifier, index);
+            let property = this.getProperty(identifier, index);
             return !property ? null : property.getLocalTime();
         }
 
         getLocalTimes(name: string): LocalTime[] {
-            var values: LocalTime[] = [];
-            var array = this.getPropertyArray(name);
+            let values: LocalTime[] = [];
+            let array = this.getPropertyArray(name);
             array.forEach((property: Property) => {
                 values.push(property.getLocalTime());
             });
@@ -626,17 +626,17 @@ module api.data {
         }
 
         setDateTimeByPath(path: any, value: api.util.DateTime): Property {
-            return this.root.setDateTimeByPath(path, value)
+            return this.root.setDateTimeByPath(path, value);
         }
 
         getDateTime(identifier: string, index?: number): api.util.DateTime {
-            var property = this.getProperty(identifier, index);
+            let property = this.getProperty(identifier, index);
             return !property ? null : property.getDateTime();
         }
 
         getDateTimes(name: string): api.util.DateTime[] {
-            var values: api.util.DateTime[] = [];
-            var array = this.getPropertyArray(name);
+            let values: api.util.DateTime[] = [];
+            let array = this.getPropertyArray(name);
             array.forEach((property: Property) => {
                 values.push(property.getDateTime());
             });

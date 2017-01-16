@@ -95,7 +95,7 @@ export class ContentWizardDataLoader {
 
         return wemQ.all([modelsPromise, otherPromises]).then(() => {
             return this;
-        })
+        });
     }
 
     private loadContent(contentId: ContentId): wemQ.Promise<Content> {
@@ -107,7 +107,7 @@ export class ContentWizardDataLoader {
     }
 
     private loadContentType(name: ContentTypeName): wemQ.Promise<ContentType> {
-        var deferred = wemQ.defer<ContentType>();
+        let deferred = wemQ.defer<ContentType>();
         new api.schema.content.GetContentTypeByNameRequest(name).sendAndParse().then((contentType) => {
             deferred.resolve(contentType);
         }).catch((reason) => {
@@ -130,11 +130,9 @@ export class ContentWizardDataLoader {
                 contentType: contentType,
                 applications: site.getApplicationKeys()
             });
-        }
-        else if (contentType.isSite()) {
+        } else if (contentType.isSite()) {
             return wemQ<DefaultModels>(new DefaultModels(null, null));
-        }
-        else {
+        } else {
             return wemQ<DefaultModels>(null);
         }
     }

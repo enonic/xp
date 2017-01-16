@@ -27,7 +27,7 @@ module api.security {
                 return false;
             }
 
-            var other = <Group> o;
+            let other = <Group> o;
             return super.equals(o) && api.ObjectHelper.arrayEquals(this.members, other.getMembers());
         }
 

@@ -12,8 +12,8 @@ export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
     private loadedListeners: {(): void}[] = [];
     private activeVersion: ContentVersion;
 
-    private static branchMaster = "master";
-    private static branchDraft = "draft";
+    private static branchMaster: string = "master";
+    private static branchDraft: string = "draft";
 
     constructor() {
         super("all-content-versions");
@@ -32,11 +32,11 @@ export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
         return this.loadData().then((contentVersions: ContentVersion[]) => {
             this.updateView(contentVersions);
             this.notifyLoaded();
-        })
+        });
     }
 
     createItemView(item: ContentVersion, readOnly: boolean): api.dom.Element {
-        var itemContainer = new api.dom.LiEl("content-version-item");
+        let itemContainer = new api.dom.LiEl("content-version-item");
 
         this.createStatusBlock(item, itemContainer);
         this.createDataBlocks(item, itemContainer);
@@ -73,7 +73,7 @@ export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
                     return contentVersions.getContentVersions();
                 });
         } else {
-            throw new Error("Required contentId not set for ActiveContentVersionsTreeGrid")
+            throw new Error("Required contentId not set for ActiveContentVersionsTreeGrid");
         }
     }
 
@@ -87,9 +87,9 @@ export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
         if (this.status == undefined) {
             return null;
         }
-        var result = null;
+        let result = null;
 
-        var hasMaster = contentVersion.workspaces.some((workspace) => {
+        let hasMaster = contentVersion.workspaces.some((workspace) => {
             return workspace == VersionsView.branchMaster;
         });
 
@@ -103,28 +103,27 @@ export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
         return result;
     }
 
-    private getState(workspace): string {
-        if (workspace == VersionsView.branchMaster) {
+    private getState(workspace: string): string {
+        if (workspace === VersionsView.branchMaster) {
             return api.content.CompareStatusFormatter.formatStatus(api.content.CompareStatus.EQUAL);
-        }
-        else {
+        } else {
             return api.content.CompareStatusFormatter.formatStatus(this.status);
         }
     }
 
     private createStatusBlock(item: ContentVersion, itemEl: api.dom.Element) {
-        var contentVersionStatus = this.getStatus(item);
+        let contentVersionStatus = this.getStatus(item);
         if (!!contentVersionStatus) {
-            var statusDiv = new api.dom.DivEl("status " + contentVersionStatus.workspace);
+            let statusDiv = new api.dom.DivEl("status " + contentVersionStatus.workspace);
             statusDiv.setHtml(contentVersionStatus.status);
             itemEl.appendChild(statusDiv);
         }
     }
 
     private createDataBlocks(item: ContentVersion, itemEl: api.dom.Element) {
-        var descriptionDiv = this.createDescriptionBlock(item),
-            versionInfoDiv = this.createVersionInfoBlock(item),
-            closeButton = this.createCloseButton();
+        let descriptionDiv = this.createDescriptionBlock(item);
+        let versionInfoDiv = this.createVersionInfoBlock(item);
+        let closeButton = this.createCloseButton();
 
         itemEl.appendChildren(closeButton, descriptionDiv, versionInfoDiv);
     }
@@ -134,28 +133,28 @@ export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
     }
 
     private createDescriptionBlock(item: ContentVersion): api.dom.Element {
-        var descriptionDiv = new ContentVersionViewer();
+        let descriptionDiv = new ContentVersionViewer();
         descriptionDiv.addClass("description");
         descriptionDiv.setObject(item);
         return descriptionDiv;
     }
 
     private createVersionInfoBlock(item: ContentVersion): api.dom.Element {
-        var versionInfoDiv = new api.dom.DivEl("version-info hidden");
+        let versionInfoDiv = new api.dom.DivEl("version-info hidden");
 
-        var timestampDiv = new api.dom.DivEl("version-info-timestamp");
+        let timestampDiv = new api.dom.DivEl("version-info-timestamp");
         timestampDiv.appendChildren(new api.dom.SpanEl("label").setHtml("Timestamp: "),
             new api.dom.SpanEl().setHtml(api.ui.treegrid.DateTimeFormatter.createHtml(item.modified)));
 
-        var versionIdDiv = new api.dom.DivEl("version-info-version-id");
+        let versionIdDiv = new api.dom.DivEl("version-info-version-id");
         versionIdDiv.appendChildren(new api.dom.SpanEl("label").setHtml("Version Id: "), new api.dom.SpanEl().setHtml(item.id));
 
-        var displayNameDiv = new api.dom.DivEl("version-info-display-name");
+        let displayNameDiv = new api.dom.DivEl("version-info-display-name");
         displayNameDiv.appendChildren(new api.dom.SpanEl("label").setHtml("Display name: "),
             new api.dom.SpanEl().setHtml(item.displayName));
 
-        var isActive = item.id === this.activeVersion.id;
-        var restoreButton = new api.ui.button.ActionButton(new api.ui.Action(isActive
+        let isActive = item.id === this.activeVersion.id;
+        let restoreButton = new api.ui.button.ActionButton(new api.ui.Action(isActive
             ? "This version is active"
             : "Restore this version").onExecuted((action: api.ui.Action) => {
             if (!isActive) {

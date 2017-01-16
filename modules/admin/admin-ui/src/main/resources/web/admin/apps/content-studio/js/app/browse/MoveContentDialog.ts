@@ -23,11 +23,11 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
     constructor() {
         super("Move item with children");
-        
+
         this.addClass("move-content-dialog");
 
         this.contentPathSubHeader = new api.dom.H6El().addClass("content-path");
-        var descMessage = new api.dom.H6El().addClass("desc-message").setHtml(
+        let descMessage = new api.dom.H6El().addClass("desc-message").setHtml(
             "Moves selected items with all children and current permissions to selected destination");
         this.moveMask = new api.ui.mask.LoadMask(this);
         this.initSearchInput();
@@ -85,15 +85,15 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
             this.moveMask.show();
 
-            var parentContent = this.getParentContent();
+            let parentContent = this.getParentContent();
             this.moveContent(parentContent);
         }), true);
     }
 
     private moveContent(parentContent: api.content.ContentSummary) {
-        var parentRoot = (!!parentContent) ? parentContent.getPath() : ContentPath.ROOT;
+        let parentRoot = (!!parentContent) ? parentContent.getPath() : ContentPath.ROOT;
 
-        var contentIds = ContentIds.create().fromContentIds(this.movedContentSummaries.map(summary => summary.getContentId())).build();
+        let contentIds = ContentIds.create().fromContentIds(this.movedContentSummaries.map(summary => summary.getContentId())).build();
 
         new api.content.resource.MoveContentRequest(contentIds, parentRoot).sendAndParse().then((response: MoveContentResult) => {
             if (parentContent) {

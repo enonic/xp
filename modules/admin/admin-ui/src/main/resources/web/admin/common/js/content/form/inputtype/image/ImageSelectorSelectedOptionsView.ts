@@ -26,7 +26,7 @@ module api.content.form.inputtype.image {
 
         private removeSelectedOptionsListeners: {(option: SelectedOption<ImageSelectorDisplayValue>[]): void}[] = [];
 
-        private mouseClickListener: {(MouseEvent): void};
+        private mouseClickListener: (event: MouseEvent) => void;
 
         private clickDisabled: boolean = false;
 
@@ -99,12 +99,12 @@ module api.content.form.inputtype.image {
 
         addOption(option: Option<ImageSelectorDisplayValue>, silent: boolean = false, keyCode: number = -1): boolean {
 
-            var selectedOption = this.getByOption(option);
+            let selectedOption = this.getByOption(option);
             if (!selectedOption) {
                 this.addNewOption(option, silent, keyCode);
                 return true;
             } else if (selectedOption) {
-                var displayValue = selectedOption.getOption().displayValue;
+                let displayValue = selectedOption.getOption().displayValue;
                 if (displayValue.getContentSummary() == null && option.displayValue.getContentSummary() != null) {
                     this.updateUploadedOption(option);
                     return true;
@@ -114,11 +114,11 @@ module api.content.form.inputtype.image {
         }
 
         private addNewOption(option: Option<ImageSelectorDisplayValue>, silent: boolean, keyCode: number = -1) {
-            var selectedOption: SelectedOption<ImageSelectorDisplayValue> = this.createSelectedOption(option);
+            let selectedOption: SelectedOption<ImageSelectorDisplayValue> = this.createSelectedOption(option);
             this.getSelectedOptions().push(selectedOption);
 
-            var optionView: ImageSelectorSelectedOptionView = <ImageSelectorSelectedOptionView>selectedOption.getOptionView(),
-                isMissingContent = option.displayValue.isEmptyContent();
+            let optionView: ImageSelectorSelectedOptionView = <ImageSelectorSelectedOptionView>selectedOption.getOptionView();
+            let isMissingContent = option.displayValue.isEmptyContent();
 
             optionView.onRendered(() => {
                 this.handleOptionViewRendered(selectedOption, optionView);
@@ -131,14 +131,15 @@ module api.content.form.inputtype.image {
                 this.notifyOptionSelected(new SelectedOptionEvent(selectedOption, keyCode));
             }
 
+            // tslint:disable-next-line:no-unused-new
             new Tooltip(optionView, isMissingContent ? option.value : option.displayValue.getPath(), 1000);
         }
 
         updateUploadedOption(option: Option<ImageSelectorDisplayValue>) {
-            var selectedOption = this.getByOption(option);
-            var content = option.displayValue.getContentSummary();
+            let selectedOption = this.getByOption(option);
+            let content = option.displayValue.getContentSummary();
 
-            var newOption = <Option<ImageSelectorDisplayValue>>{
+            let newOption = <Option<ImageSelectorDisplayValue>>{
                 value: content.getId(),
                 displayValue: ImageSelectorDisplayValue.fromContentSummary(content)
             };
@@ -155,9 +156,9 @@ module api.content.form.inputtype.image {
         }
 
         private uncheckOthers(option: SelectedOption<ImageSelectorDisplayValue>) {
-            var selectedOptions = this.getSelectedOptions();
-            for (var i = 0; i < selectedOptions.length; i++) {
-                var view = <ImageSelectorSelectedOptionView>selectedOptions[i].getOptionView();
+            let selectedOptions = this.getSelectedOptions();
+            for (let i = 0; i < selectedOptions.length; i++) {
+                let view = <ImageSelectorSelectedOptionView>selectedOptions[i].getOptionView();
                 if (i != option.getIndex()) {
                     view.getCheckbox().setChecked(false);
                 }
@@ -165,7 +166,7 @@ module api.content.form.inputtype.image {
         }
 
         private removeOptionViewAndRefocus(option: SelectedOption<ImageSelectorDisplayValue>) {
-            var index = this.isLast(option.getIndex()) ?
+            let index = this.isLast(option.getIndex()) ?
                         (this.isFirst(option.getIndex()) ? -1 : option.getIndex() - 1) :
                         option.getIndex();
 
@@ -189,7 +190,7 @@ module api.content.form.inputtype.image {
         }
 
         private updateSelectionToolbarLayout() {
-            var showToolbar = this.selection.length > 0;
+            let showToolbar = this.selection.length > 0;
             this.toolbar.setVisible(showToolbar);
             if (showToolbar) {
                 this.toolbar.setSelectionCount(this.selection.length, this.getNumberOfEditableOptions());
@@ -197,7 +198,7 @@ module api.content.form.inputtype.image {
         }
 
         private getNumberOfEditableOptions(): number {
-            var count = 0;
+            let count = 0;
             this.selection.forEach(selectedOption => {
                 if (!selectedOption.getOption().displayValue.isEmptyContent()) {
                     count++;
@@ -217,7 +218,7 @@ module api.content.form.inputtype.image {
 
         private setOutsideClickListener() {
             this.mouseClickListener = (event: MouseEvent) => {
-                for (var element = event.target; element; element = (<any>element).parentNode) {
+                for (let element = event.target; element; element = (<any>element).parentNode) {
                     if (element == this.getHTMLElement()) {
                         return;
                     }
@@ -262,29 +263,33 @@ module api.content.form.inputtype.image {
 
         private handleOptionViewKeyDownEvent(event: KeyboardEvent, option: SelectedOption<ImageSelectorDisplayValue>,
                                              optionView: ImageSelectorSelectedOptionView) {
-            var checkbox = optionView.getCheckbox();
+            let checkbox = optionView.getCheckbox();
 
             switch (event.which) {
-            case 32: // Spacebar
-                checkbox.toggleChecked();
-                break;
-            case 8: // Backspace
-                checkbox.setChecked(false);
-                this.removeOptionViewAndRefocus(option);
-                event.preventDefault();
-                break;
-            case 46: // Delete
-                checkbox.setChecked(false);
-                this.removeOptionViewAndRefocus(option);
-                break;
-            case 13: // Enter
-                this.notifyEditSelectedOptions([option]);
-                break;
-            case 9: // tab
-                this.resetActiveOption();
-                break;
+                case 32: // Spacebar
+                    checkbox.toggleChecked();
+                    event.stopPropagation();
+                    break;
+                case 8: // Backspace
+                    checkbox.setChecked(false);
+                    this.removeOptionViewAndRefocus(option);
+                    event.preventDefault();
+                    event.stopPropagation();
+                    break;
+                case 46: // Delete
+                    checkbox.setChecked(false);
+                    this.removeOptionViewAndRefocus(option);
+                    event.stopPropagation();
+                    break;
+                case 13: // Enter
+                    this.notifyEditSelectedOptions([option]);
+                    event.stopPropagation();
+                    break;
+                case 9: // tab
+                    this.resetActiveOption();
+                    event.stopPropagation();
+                    break;
             }
-            event.stopPropagation();
         }
 
         private handleOptionViewChecked(checked: boolean, option: SelectedOption<ImageSelectorDisplayValue>,
@@ -294,7 +299,7 @@ module api.content.form.inputtype.image {
                     this.selection.push(option);
                 }
             } else {
-                var index = this.selection.indexOf(option);
+                let index = this.selection.indexOf(option);
                 if (index > -1) {
                     this.selection.splice(index, 1);
                 }
@@ -304,7 +309,7 @@ module api.content.form.inputtype.image {
         }
 
         private handleOptionViewImageLoaded(optionView: ImageSelectorSelectedOptionView) {
-            var loadedListener = () => {
+            let loadedListener = () => {
                 optionView.updateProportions();
                 this.refreshSortable();
             };
@@ -313,7 +318,7 @@ module api.content.form.inputtype.image {
                 loadedListener();
             } else {
                 // execute listener on shown in case it's hidden now to correctly calc proportions
-                var shownListener = () => {
+                let shownListener = () => {
                     loadedListener();
                     optionView.getIcon().unShown(shownListener);
                 };
@@ -348,9 +353,10 @@ module api.content.form.inputtype.image {
         }
 
         unRemoveSelectedOptions(listener: (option: SelectedOption<ImageSelectorDisplayValue>[]) => void) {
-            this.removeSelectedOptionsListeners = this.removeSelectedOptionsListeners.filter(function (curr) {
-                return curr != listener;
-            });
+            this.removeSelectedOptionsListeners = this.removeSelectedOptionsListeners
+                .filter(function (curr: (option: SelectedOption<ImageSelectorDisplayValue>[]) => void) {
+                    return curr != listener;
+                });
         }
 
         private notifyEditSelectedOptions(option: SelectedOption<ImageSelectorDisplayValue>[]) {
@@ -364,9 +370,10 @@ module api.content.form.inputtype.image {
         }
 
         unEditSelectedOptions(listener: (option: SelectedOption<ImageSelectorDisplayValue>[]) => void) {
-            this.editSelectedOptionsListeners = this.editSelectedOptionsListeners.filter(function (curr) {
-                return curr != listener;
-            });
+            this.editSelectedOptionsListeners = this.editSelectedOptionsListeners
+                .filter(function (curr: (option: SelectedOption<ImageSelectorDisplayValue>[]) => void) {
+                    return curr != listener;
+                });
         }
 
     }

@@ -47,9 +47,8 @@ module api.app.wizard {
         notifyValidityChanged(event: WizardStepValidityChangedEvent) {
             this.validityChangedListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
-
 
         onFocus(listener: (event: FocusEvent) => void) {
             this.focusListeners.push(listener);
@@ -77,7 +76,7 @@ module api.app.wizard {
         notifyFocused(event: FocusEvent) {
             this.focusListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         /*
@@ -86,7 +85,7 @@ module api.app.wizard {
         notifyBlurred(event: FocusEvent) {
             this.blurListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         toggleHelpText(show?: boolean) {

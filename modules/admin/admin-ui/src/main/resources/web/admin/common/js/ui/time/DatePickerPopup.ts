@@ -32,7 +32,7 @@ module api.ui.time {
         constructor(builder: DatePickerPopupBuilder) {
             super('date-picker-dialog');
 
-            var yearContainer = new api.dom.H2El('year-container');
+            let yearContainer = new api.dom.H2El('year-container');
             this.appendChild(yearContainer);
 
             this.prevYear = new api.dom.AEl('prev');
@@ -56,7 +56,7 @@ module api.ui.time {
             });
             yearContainer.appendChild(this.nextYear);
 
-            var monthContainer = new api.dom.H5El('month-container');
+            let monthContainer = new api.dom.H5El('month-container');
             this.appendChild(monthContainer);
 
             this.prevMonth = new api.dom.AEl('prev');

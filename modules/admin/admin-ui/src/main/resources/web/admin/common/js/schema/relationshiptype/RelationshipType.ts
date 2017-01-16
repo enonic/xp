@@ -48,7 +48,7 @@ module api.schema.relationshiptype {
                 return false;
             }
 
-            var other = <RelationshipType>o;
+            let other = <RelationshipType>o;
 
             if (!ObjectHelper.stringEquals(this.fromSemantic, other.fromSemantic)) {
                 return false;

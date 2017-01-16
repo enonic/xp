@@ -33,7 +33,7 @@ module api.data {
             if (!this.isConvertible(value)) {
                 return this.newNullValue();
             }
-            var date = DateTime.fromString(value);
+            let date = DateTime.fromString(value);
             return new Value(date, this);
         }
 

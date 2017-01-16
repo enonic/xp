@@ -78,7 +78,6 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
         this.recentContentTypes.getItemsList().onSelected(this.closeAndFireEventFromContentType.bind(this));
     }
 
-
     private initFileInput() {
         this.dropzoneContainer = new api.ui.uploader.DropzoneContainer(true);
         this.dropzoneContainer.hide();
@@ -120,10 +119,10 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     // we catch drag enter on this element and trigger uploader to appear,
     // then catch drag leave on uploader's dropzone to get back to previous state
     private initDragAndDropUploaderEvents() {
-        var dragOverEl;
+        let dragOverEl;
         this.onDragEnter((event: DragEvent) => {
             if (this.fileInput.getUploader().isEnabled()) {
-                var target = <HTMLElement> event.target;
+                let target = <HTMLElement> event.target;
 
                 if (!!dragOverEl || dragOverEl == this.getHTMLElement()) {
                     this.dropzoneContainer.show();
@@ -137,22 +136,32 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     }
 
     private closeAndFireEventFromMediaUpload(event: FileUploadStartedEvent<Content>) {
+        let handler = (e: api.dom.ElementHiddenEvent) => {
+            new NewMediaUploadEvent(event.getUploadItems(), this.parentContent).fire();
+            this.unHidden(handler);
+        };
+        this.onHidden(handler);
+
         this.close();
-        setTimeout(() => new NewMediaUploadEvent(event.getUploadItems(), this.parentContent).fire(), 1);
     }
 
     private closeAndFireEventFromContentType(event: NewContentDialogItemSelectedEvent) {
+        let handler = (e: api.dom.ElementHiddenEvent) => {
+            new NewContentEvent(event.getItem().getContentType(), this.parentContent).fire();
+            this.unHidden(handler);
+        };
+        this.onHidden(handler);
+
         this.close();
-        setTimeout(() => new NewContentEvent(event.getItem().getContentType(), this.parentContent).fire(), 1);
     }
 
     private appendElementsToDialog() {
-        var section = new api.dom.SectionEl().setClass("column");
+        let section = new api.dom.SectionEl().setClass("column");
         this.appendChildToContentPanel(section);
 
         this.mostPopularContentTypes.hide();
 
-        var contentTypesListDiv = new api.dom.DivEl("content-types-content");
+        let contentTypesListDiv = new api.dom.DivEl("content-types-content");
         contentTypesListDiv.appendChildren(<api.dom.Element>this.mostPopularContentTypes,
             <api.dom.Element>this.allContentTypes);
 
@@ -167,16 +176,16 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
         this.parentContent = parent;
         this.allContentTypes.setParentContent(parent);
 
-        var params: {[key: string]: any} = {
+        let params: {[key: string]: any} = {
             parent: parent ? parent.getPath().toString() : api.content.ContentPath.ROOT.toString()
         };
 
-        this.fileInput.setUploaderParams(params)
+        this.fileInput.setUploaderParams(params);
     }
 
     open() {
         super.open();
-        var keyBindings = [
+        let keyBindings = [
             new api.ui.KeyBinding('up', () => {
                 api.dom.FormEl.moveFocusToPrevFocusable(api.dom.Element.fromHtmlElement(<HTMLElement>document.activeElement),
                     "input,li");
@@ -204,9 +213,9 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     }
 
     hide() {
-        super.hide();
         this.mostPopularContentTypes.hide();
         this.clearAllItems();
+        super.hide();
     }
 
     close() {
@@ -241,7 +250,7 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     }
 
     private sendRequestsToFetchContentData(): wemQ.Promise<any>[] {
-        var requests: wemQ.Promise<any>[] = [];
+        let requests: wemQ.Promise<any>[] = [];
         requests.push(new GetAllContentTypesRequest().sendAndParse());
         if (this.parentContent) {
             requests.push(new ListContentByPathRequest(this.parentContent.getPath()).sendAndParse());
@@ -268,7 +277,7 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     }
 
     private toggleUploadersEnabled() {
-        var uploaderEnabled = !this.parentContent || !this.parentContent.getType().isTemplateFolder();
+        let uploaderEnabled = !this.parentContent || !this.parentContent.getType().isTemplateFolder();
         this.toggleClass("no-uploader-el", !uploaderEnabled);
         this.fileInput.getUploader().setEnabled(uploaderEnabled);
     }

@@ -36,7 +36,7 @@ module api.schema.relationshiptype {
         }
 
         private getCachedByApplicationKey(applicationKey: api.application.ApplicationKey): RelationshipType[] {
-            var result: RelationshipType[] = [];
+            let result: RelationshipType[] = [];
             this.getAll().forEach((relationshipType: RelationshipType) => {
                 if (applicationKey.equals(this.getKeyFromObject(relationshipType).getApplicationKey())) {
                     result.push(relationshipType);

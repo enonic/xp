@@ -44,8 +44,7 @@ export class NonMobileDetailsPanelsManager {
                 this.doPanelAnimation();
             } else if (!this.splitPanelWithGridAndDetails.isSecondPanelHidden()) {
                 this.dockedDetailsPanel.notifyPanelSizeChanged();
-            }
-            else if (this.isFloatingDetailsPanelActive()) {
+            } else if (this.isFloatingDetailsPanelActive()) {
                 this.floatingDetailsPanel.notifyPanelSizeChanged();
             }
             setTimeout(() => {
@@ -146,14 +145,14 @@ export class NonMobileDetailsPanelsManager {
     }
 
     private dockedToFloatingSync() {
-        var activePanelWidth = this.splitPanelWithGridAndDetails.getActiveWidthPxOfSecondPanel();
+        let activePanelWidth = this.splitPanelWithGridAndDetails.getActiveWidthPxOfSecondPanel();
         this.hideDockedDetailsPanel();
-        this.floatingDetailsPanel.setWidthPx(activePanelWidth)
+        this.floatingDetailsPanel.setWidthPx(activePanelWidth);
     }
 
     private floatingToDockedSync() {
         this.floatingDetailsPanel.slideOut();
-        var activePanelWidth: number = this.floatingDetailsPanel.getActualWidth();
+        let activePanelWidth: number = this.floatingDetailsPanel.getActualWidth();
         this.splitPanelWithGridAndDetails.setActiveWidthPxOfSecondPanel(activePanelWidth);
     }
 
@@ -186,7 +185,7 @@ export class NonMobileDetailsPanelsManager {
     }
 
     private floatingPanelIsShown(): boolean {
-        var right = this.floatingDetailsPanel.getHTMLElement().style.right;
+        let right = this.floatingDetailsPanel.getHTMLElement().style.right;
         if (right && right.indexOf("px") > -1) {
             right = right.substring(0, right.indexOf("px"));
             return Number(right) >= 0;
@@ -195,17 +194,17 @@ export class NonMobileDetailsPanelsManager {
     }
 
     private requiresFloatingPanelDueToShortWidth(): boolean {
-        var splitPanelWidth = this.splitPanelWithGridAndDetails.getEl().getWidthWithBorder();
+        let splitPanelWidth = this.splitPanelWithGridAndDetails.getEl().getWidthWithBorder();
         if (this.floatingPanelIsShown()) {
             return ( splitPanelWidth - this.floatingDetailsPanel.getActualWidth() ) < 320;
         } else {
-            var defaultDetailsPanelWidth = this.splitPanelWithGridAndDetails.getActiveWidthPxOfSecondPanel();
+            let defaultDetailsPanelWidth = this.splitPanelWithGridAndDetails.getActiveWidthPxOfSecondPanel();
             return ( splitPanelWidth - defaultDetailsPanelWidth ) < 320;
         }
     }
 
     requiresCollapsedDetailsPanel(): boolean {
-        var splitPanelWidth = this.splitPanelWithGridAndDetails.getEl().getWidthWithBorder();
+        let splitPanelWidth = this.splitPanelWithGridAndDetails.getEl().getWidthWithBorder();
         return this.requiresFloatingPanelDueToShortWidth() || ResponsiveRanges._1620_1920.isFitOrSmaller(splitPanelWidth);
     }
 
@@ -219,14 +218,10 @@ export class NonMobileDetailsPanelsManager {
     }
 }
 
-
 export class NonMobileDetailsPanelsManagerBuilder {
     private splitPanelWithGridAndDetails: api.ui.panel.SplitPanel;
     private dockedDetailsPanel: DockedDetailsPanel;
     private floatingDetailsPanel: FloatingDetailsPanel;
-
-    constructor() {
-    }
 
     setSplitPanelWithGridAndDetails(splitPanelWithGridAndDetails: api.ui.panel.SplitPanel) {
         this.splitPanelWithGridAndDetails = splitPanelWithGridAndDetails;

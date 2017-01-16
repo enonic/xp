@@ -15,7 +15,6 @@ import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.impl.filter.FilterChainResolver;
 import com.enonic.xp.portal.impl.filter.FilterExecutor;
 import com.enonic.xp.portal.postprocess.PostProcessor;
-import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.site.filter.FilterDescriptor;
 import com.enonic.xp.site.filter.FilterDescriptors;

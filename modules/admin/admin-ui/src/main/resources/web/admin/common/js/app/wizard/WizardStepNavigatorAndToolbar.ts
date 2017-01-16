@@ -8,7 +8,7 @@ module api.app.wizard {
 
     export class WizardStepNavigatorAndToolbar extends api.dom.DivEl {
 
-        static maxFittingWidth = 675;
+        static maxFittingWidth: number = 675;
 
         private foldButton: api.ui.toolbar.FoldButton;
 
@@ -44,7 +44,6 @@ module api.app.wizard {
             return this.helpTextToggleButton;
         }
 
-
         setStepToolbar(stepToolbar: Toolbar) {
             if (this.stepToolbar) {
                 this.removeChild(this.stepToolbar);
@@ -78,13 +77,14 @@ module api.app.wizard {
 
         private isStepNavigatorFit(): boolean {
             let width;
-            
+
             if (this.stepNavigator.isVisible()) {
                 // StepNavigator fits if summary width of its steps < width of StepNavigator
                 // StepNavigator width is calculated in CSS
                 width = this.stepNavigator.getEl().getWidthWithoutPadding();
                 const steps = this.stepNavigator.getChildren();
-                const stepsWidth = steps.reduce((totalStepWidth, step) => totalStepWidth + (step.isVisible() ? step.getEl().getWidthWithMargin() : 0), 0);
+                const stepMargin = (step) => step.isVisible() ? step.getEl().getWidthWithMargin() : 0;
+                const stepsWidth = steps.reduce((totalStepWidth, step) => totalStepWidth + stepMargin(step), 0);
 
                 // Update fitting width to check, when toolbar is minimized
                 this.fittingWidth = stepsWidth;
@@ -114,11 +114,10 @@ module api.app.wizard {
                     if (index == selectedTabIndex) {
                         this.foldButton.setLabel(tab.getLabel());
                     }
-                }
-                else {
+                } else {
                     tab.setLabel(tab.getLabel().replace(strIndex, ""));
                 }
-            })
+            });
         }
 
         checkAndMinimize() {

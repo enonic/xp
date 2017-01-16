@@ -1,5 +1,5 @@
 import "../../api.ts";
-import {ContentPermissionsAppliedEvent} from "./ContentPermissionsAppliedEvent";
+import {ContentPermissionsApplyEvent} from "./ContentPermissionsApplyEvent";
 
 import AccessControlList = api.security.acl.AccessControlList;
 import AccessControlListView = api.ui.security.acl.AccessControlListView;
@@ -10,6 +10,8 @@ import Content = api.content.Content;
 import DivEl = api.dom.DivEl;
 import LabelEl = api.dom.LabelEl;
 import Button = api.ui.button.Button;
+import OpenEditPermissionsDialogEvent = api.content.event.OpenEditPermissionsDialogEvent;
+import ContentPath = api.content.ContentPath;
 
 export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
 
@@ -18,13 +20,23 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
     private accessListView: AccessControlListView;
     private editLink: Button;
 
-    private content: Content;
+    private contentId: ContentId;
+
+    private contentPath: ContentPath;
+
+    private displayName: string;
+
+    private permissions: AccessControlList;
+
+    private inheritPermissions: boolean;
+
+    private overwritePermissions: boolean;
 
     constructor() {
         super("security-wizard-step-form");
 
-        var label = new DivEl("input-label"),
-            wrapper = new DivEl("wrapper required");
+        let label = new DivEl("input-label");
+        let wrapper = new DivEl("wrapper required");
         this.label = new LabelEl("Permissions");
         wrapper.appendChild(this.label);
         label.appendChild(wrapper);
@@ -44,11 +56,11 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
             this.notifyBlurred(event);
         });
 
-        var formView = new DivEl("form-view"),
-            inputView = new DivEl("input-view valid"),
-            inputTypeView = new DivEl("input-type-view"),
-            inputOccurrenceView = new DivEl("input-occurrence-view single-occurrence"),
-            inputWrapper = new DivEl("input-wrapper");
+        let formView = new DivEl("form-view");
+        let inputView = new DivEl("input-view valid");
+        let inputTypeView = new DivEl("input-type-view");
+        let inputOccurrenceView = new DivEl("input-occurrence-view single-occurrence");
+        let inputWrapper = new DivEl("input-wrapper");
 
         inputWrapper.appendChildren(this.inheritance, this.accessListView, this.editLink);
 
@@ -60,35 +72,35 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
         this.appendChild(formView);
 
         this.editLink.onClicked(() => {
-            if (!!this.content) {
-                new api.content.event.OpenEditPermissionsDialogEvent(this.content).fire();
+            if (this.contentId) {
+                OpenEditPermissionsDialogEvent.create().setContentId(this.contentId).setContentPath(this.contentPath).setDisplayName(
+                    this.displayName).setPermissions(this.permissions).setInheritPermissions(
+                    this.inheritPermissions).setOverwritePermissions(this.overwritePermissions).setImmediateApply(false).build().fire();
             }
         });
 
-        ContentPermissionsAppliedEvent.on((event) => {
-            var content = event.getContent();
-            if (content.getId() === this.content.getId()) {
-                this.layout(content);
+        ContentPermissionsApplyEvent.on((event) => {
+            if (this.contentId.equals(event.getContentId())) {
+                this.layoutPermissions(event.getPermissions(), event.isInheritPermissions(), event.isOverwritePermissions());
             }
         });
     }
 
-    layout(content: api.content.Content) {
-
+    private doLayout() {
         this.accessListView.clearItems();
 
-        content.getPermissions().getEntries().sort().forEach((entry) => {
+        this.permissions.getEntries().sort().forEach((entry) => {
             this.accessListView.addItem(entry);
 
-            var entryView = <AccessControlEntryView> this.accessListView.getItemView(entry),
-                selector = entryView.getPermissionSelector();
+            let entryView = <AccessControlEntryView> this.accessListView.getItemView(entry);
+            let selector = entryView.getPermissionSelector();
 
             // detach onValueChanged events
             entryView.getValueChangedListeners().splice(0);
             entryView.getPermissionSelector().hide();
 
             entryView.onClicked(() => {
-                var isDisplayed = selector.getEl().getDisplay() !== "block";
+                let isDisplayed = selector.getEl().getDisplay() !== "block";
 
                 this.accessListView.getItemViews().forEach((itemView) => {
                     (<AccessControlEntryView>itemView).getPermissionSelector().hide();
@@ -101,21 +113,43 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
             });
         });
 
-        var inheritsText = "";
-        if (content.isInheritPermissionsEnabled() && content.isRoot() == false) {
+        let inheritsText = "";
+        if (this.inheritPermissions && this.contentPath.isRoot() == false) {
             inheritsText = "Inherits permissions from parent";
             this.inheritance.addClass("inheritance");
         } else {
             this.inheritance.removeClass("inheritance");
         }
         this.inheritance.setHtml(inheritsText);
+    }
 
-        this.content = content;
+    layoutPermissions(permissions: AccessControlList, isInherit: boolean, isOverwrite: boolean) {
+
+        this.permissions = permissions;
+        this.inheritPermissions = isInherit;
+        this.overwritePermissions = isOverwrite;
+
+        this.doLayout();
+    }
+
+    layout(content: api.content.Content) {
+
+        this.contentId = content.getContentId();
+        this.contentPath = content.getPath();
+        this.displayName = content.getDisplayName();
+
+        this.layoutPermissions(content.getPermissions(), content.isInheritPermissionsEnabled(), false);
     }
 
     update(content: api.content.Content, unchangedOnly: boolean = true) {
         //TODO: preserve changes
         this.layout(content);
+    }
+
+    apply(builder: api.content.ContentBuilder) {
+        builder.setPermissions(this.permissions);
+        builder.setInheritPermissionsEnabled(this.inheritPermissions);
+        builder.setOverwritePermissionsEnabled(this.overwritePermissions);
     }
 
     giveFocus(): boolean {

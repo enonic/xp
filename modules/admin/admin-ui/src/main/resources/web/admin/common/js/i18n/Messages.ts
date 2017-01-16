@@ -1,8 +1,8 @@
 module api.i18n {
 
-    var messages: Object = {};
+    let messages: Object = {};
 
-    var currentLocale: string = 'en';
+    let currentLocale: string = 'en';
 
     export function setLocale(locale: string) {
         currentLocale = locale;
@@ -18,8 +18,8 @@ module api.i18n {
 
     export function message(key: string, args: any[]): string {
 
-        var message = key;
-        var current = messages[currentLocale];
+        let message = key;
+        let current = messages[currentLocale];
 
         if ((current != undefined) && (current[key] != undefined)) {
             message = current[key];
@@ -30,10 +30,8 @@ module api.i18n {
         });
     }
 
+    export function i18n(key: string, ...args: any[]): string {
+        return message(key, args);
+    }
+
 }
-
-// Global i18n message method
-var _i18n = (key: string, ...args: any[]) => api.i18n.message(key, args);
-
-
-

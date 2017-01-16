@@ -30,7 +30,7 @@ module api.rest {
             throw new Error("Must be implemented by inheritors");
         }
 
-        setTimeout(timeoutMillis) {
+        setTimeout(timeoutMillis: number) {
             this.timeoutMillis = timeoutMillis;
         }
 
@@ -38,18 +38,15 @@ module api.rest {
             this.heavyOperation = value;
         }
 
-        /*
-         * Override to ensure any validation of ResourceRequest before sending.
-         */
         validate() {
-
+            // Override to ensure any validation of ResourceRequest before sending.
         }
 
         send(): wemQ.Promise<JsonResponse<RAW_JSON_TYPE>> {
 
             this.validate();
 
-            var jsonRequest = new JsonRequest<RAW_JSON_TYPE>().
+            let jsonRequest = new JsonRequest<RAW_JSON_TYPE>().
                 setMethod(this.method).setParams(this.getParams()).setPath(this.getRequestPath()).setTimeout(
                 !this.heavyOperation ? this.timeoutMillis : 0);
             return jsonRequest.send();

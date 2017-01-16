@@ -399,6 +399,12 @@ public final class ContentResource
         final UpdateContentParams updateParams = json.getUpdateContentParams();
 
         final Content updatedContent = contentService.update( updateParams );
+
+        if ( json.getApplyContentPermissionsParams().isOverwriteChildPermissions() )
+        {
+            this.contentService.applyPermissions( json.getApplyContentPermissionsParams() );
+        }
+
         if ( json.getContentName().equals( updatedContent.getName() ) )
         {
             return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver );

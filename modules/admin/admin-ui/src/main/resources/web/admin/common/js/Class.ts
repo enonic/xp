@@ -17,7 +17,7 @@ module api {
 
         newInstance(constructorParams?: any): any {
 
-            var newInstance = Object.create(this.fn.prototype);
+            let newInstance = Object.create(this.fn.prototype);
             newInstance.constructor.call(newInstance, constructorParams);
             return newInstance;
         }

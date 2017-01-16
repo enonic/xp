@@ -12,7 +12,7 @@ module api.liveedit {
 
             this.region = region;
 
-            var dragComponentsHereEl = new api.dom.PEl();
+            let dragComponentsHereEl = new api.dom.PEl();
             dragComponentsHereEl.setHtml("Drop here");
 
             this.appendChild(dragComponentsHereEl);

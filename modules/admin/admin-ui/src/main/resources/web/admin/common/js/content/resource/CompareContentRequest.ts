@@ -1,7 +1,7 @@
 module api.content.resource {
 
     import CompareContentResults = api.content.resource.result.CompareContentResults;
-    
+
     export class CompareContentRequest extends ContentResourceRequest<api.content.json.CompareContentResultsJson, CompareContentResults> {
 
         private ids: string[];
@@ -14,7 +14,7 @@ module api.content.resource {
 
         static fromContentSummaries(contentSummaries: ContentSummary[]): CompareContentRequest {
 
-            var ids: string[] = [];
+            let ids: string[] = [];
 
             contentSummaries.forEach((contentSummary: ContentSummary) => {
 

@@ -15,8 +15,8 @@ module api.content.order {
 
         toJson(): json.OrderExprJson {
             return {
-                "fieldName": this.fieldName,
-                "direction": this.getDirection()
+                fieldName: this.fieldName,
+                direction: this.getDirection()
             };
         }
 
@@ -31,7 +31,7 @@ module api.content.order {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, FieldOrderExpr)) {
                 return false;
             }
-            var other = <FieldOrderExpr>o;
+            let other = <FieldOrderExpr>o;
             if (this.fieldName.toLowerCase() != other.getFieldName().toLowerCase()) {
                 return false;
             }

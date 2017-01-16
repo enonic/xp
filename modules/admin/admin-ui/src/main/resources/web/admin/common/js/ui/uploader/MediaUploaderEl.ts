@@ -4,8 +4,7 @@ module api.ui.uploader {
     import CloseButton = api.ui.button.CloseButton;
     import ValueTypes = api.data.ValueTypes;
 
-    export enum MediaUploaderElOperation
-    {
+    export enum MediaUploaderElOperation {
         create,
         update
     }
@@ -24,7 +23,7 @@ module api.ui.uploader {
         constructor(config: MediaUploaderElConfig) {
 
             if (config.url == undefined) {
-                config.url = api.util.UriHelper.getRestUri("content/" + MediaUploaderElOperation[config.operation] + "Media")
+                config.url = api.util.UriHelper.getRestUri("content/" + MediaUploaderElOperation[config.operation] + "Media");
             }
 
             super(config);
@@ -37,8 +36,7 @@ module api.ui.uploader {
                 return new api.content.ContentBuilder().
                 fromContentJson(<api.content.json.ContentJson> serverResponse).
                 build();
-            }
-            else {
+            } else {
                 return null;
             }
         }
@@ -48,8 +46,8 @@ module api.ui.uploader {
         }
 
         getMediaValue(item: api.content.Content): api.data.Value {
-            var mediaProperty = item.getContentData().getProperty("media");
-            var mediaValue;
+            let mediaProperty = item.getContentData().getProperty("media");
+            let mediaValue;
             switch (mediaProperty.getType()) {
                 case ValueTypes.DATA:
                     mediaValue = mediaProperty.getPropertySet().getProperty('attachment').getValue();

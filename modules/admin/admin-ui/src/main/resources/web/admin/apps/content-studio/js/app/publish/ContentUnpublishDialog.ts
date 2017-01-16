@@ -10,9 +10,7 @@ import CompareStatus = api.content.CompareStatus;
 import ContentId = api.content.ContentId;
 import ListBox = api.ui.selector.list.ListBox;
 
-
 export class ContentUnpublishDialog extends ProgressBarDialog {
-
 
     constructor() {
 
@@ -102,7 +100,7 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
     private getContentToUnpublishIds(): ContentId[] {
         return this.getItemList().getItems().map(item => {
             return item.getContentId();
-        })
+        });
     }
 
     private doUnpublish() {
@@ -111,7 +109,7 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
 
         this.setSubTitle(this.countTotal() + " items are being unpublished...");
 
-        var selectedIds = this.getContentToUnpublishIds();
+        let selectedIds = this.getContentToUnpublishIds();
 
         new UnpublishContentRequest()
             .setIncludeChildren(true)

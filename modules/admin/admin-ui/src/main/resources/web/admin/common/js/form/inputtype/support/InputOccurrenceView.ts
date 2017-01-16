@@ -33,7 +33,7 @@ module api.form.inputtype.support {
 
             this.requiredContractBroken = this.inputTypeView.valueBreaksRequiredContract(property != null ? property.getValue() : null);
 
-            var ignorePropertyChange = false;
+            let ignorePropertyChange = false;
             this.inputTypeView.onOccurrenceValueChanged((occurrence: api.dom.Element, value: api.data.Value) => {
                 // check if this is our occurrence because all views will receive occurrence value changed event
                 if (this.inputElement == occurrence) {
@@ -49,7 +49,7 @@ module api.form.inputtype.support {
 
             this.propertyValueChangedHandler = (event: PropertyValueChangedEvent) => {
 
-                var newStateOfRequiredContractBroken = this.inputTypeView.valueBreaksRequiredContract(event.getNewValue());
+                let newStateOfRequiredContractBroken = this.inputTypeView.valueBreaksRequiredContract(event.getNewValue());
 
                 if (this.requiredContractBroken != newStateOfRequiredContractBroken) {
                     this.requiredContractBroken = newStateOfRequiredContractBroken;
@@ -80,7 +80,7 @@ module api.form.inputtype.support {
                 return false;
             });
 
-            var inputWrapper = new api.dom.DivEl("input-wrapper");
+            let inputWrapper = new api.dom.DivEl("input-wrapper");
             this.appendChild(inputWrapper);
 
             inputWrapper.appendChild(this.inputElement);
@@ -89,7 +89,7 @@ module api.form.inputtype.support {
         }
 
         update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
-            var property = propertyArray.get(this.inputOccurrence.getIndex());
+            let property = propertyArray.get(this.inputOccurrence.getIndex());
 
             this.registerProperty(property);
 
@@ -122,8 +122,7 @@ module api.form.inputtype.support {
 
             if (this.inputOccurrence.oneAndOnly()) {
                 this.addClass("single-occurrence").removeClass("multiple-occurrence");
-            }
-            else {
+            } else {
                 this.addClass("multiple-occurrence").removeClass("single-occurrence");
             }
 

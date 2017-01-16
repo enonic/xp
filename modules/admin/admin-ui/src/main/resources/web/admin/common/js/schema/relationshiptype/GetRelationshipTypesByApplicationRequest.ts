@@ -1,8 +1,10 @@
 module api.schema.relationshiptype {
 
     import ApplicationKey = api.application.ApplicationKey;
+    import RelationshipTypeListJson = api.schema.relationshiptype.RelationshipTypeListJson;
 
-    export class GetRelationshipTypesByApplicationRequest extends RelationshipTypeResourceRequest<RelationshipTypeListJson, RelationshipType[]> {
+    export class GetRelationshipTypesByApplicationRequest
+    extends RelationshipTypeResourceRequest<RelationshipTypeListJson, RelationshipType[]> {
 
         private applicationKey: ApplicationKey;
 

@@ -45,7 +45,7 @@ module api.app {
 
         constructor(builder: NamesAndIconViewBuilder) {
             super("names-and-icon-view");
-            var sizeClassName: string = NamesAndIconViewSize[builder.size];
+            let sizeClassName: string = NamesAndIconViewSize[builder.size];
             if (builder.size) {
                 this.addClass(sizeClassName);
             }

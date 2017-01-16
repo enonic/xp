@@ -1,12 +1,12 @@
 describe("api.i18n", () => {
 
     it("test no translation", () => {
-        var message = api.i18n.message('no translation for this', []);
+        let message = api.i18n.message('no translation for this', []);
         expect(message).toBe('no translation for this');
     });
 
     it("test no translation with arguments", () => {
-        var message = api.i18n.message('no $1 for $2', ['translation', 'this']);
+        let message = api.i18n.message('no $1 for $2', ['translation', 'this']);
         expect(message).toBe('no translation for this');
     });
 
@@ -17,7 +17,7 @@ describe("api.i18n", () => {
             'translation for this': 'oversetting for dette'
         });
 
-        var message = api.i18n.message('translation for this', []);
+        let message = api.i18n.message('translation for this', []);
         expect(message).toBe('oversetting for dette');
     });
 
@@ -28,7 +28,7 @@ describe("api.i18n", () => {
             '$1 for this': '$1 for dette'
         });
 
-        var message = api.i18n.message('$1 for this', ['oversetting']);
+        let message = api.i18n.message('$1 for this', ['oversetting']);
         expect(message).toBe('oversetting for dette');
     });
 
@@ -44,10 +44,10 @@ describe("api.i18n", () => {
             'and translate this': 'og oversett dette'
         });
 
-        var message1 = api.i18n.message('translate this', []);
+        let message1 = api.i18n.message('translate this', []);
         expect(message1).toBe('oversett dette');
 
-        var message2 = api.i18n.message('and translate this', []);
+        let message2 = api.i18n.message('and translate this', []);
         expect(message2).toBe('og oversett dette');
     });
 

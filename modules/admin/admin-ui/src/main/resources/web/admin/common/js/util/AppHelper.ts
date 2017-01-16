@@ -6,17 +6,18 @@ module api.util {
         // be triggered. The function will be called after it stops being called for
         // N milliseconds. If `immediate` is passed, trigger the function on the
         // leading edge, instead of the trailing.
-        static debounce(func, wait, immediate) {
-            var timeout;
+        static debounce(func: Function, wait: number, immediate: boolean): (...args: any[]) => void {
+            let timeout;
             return function (...anyArgs: any[]) {
-                var context = this, args = arguments;
-                var later = function () {
+                const context = this;
+                const args = arguments;
+                const later = function () {
                     timeout = null;
                     if (!immediate) {
                         func.apply(context, args);
                     }
                 };
-                var callNow = immediate && !timeout;
+                const callNow = immediate && !timeout;
                 clearTimeout(timeout);
                 timeout = setTimeout(later, wait);
                 if (callNow) {
@@ -25,19 +26,28 @@ module api.util {
             };
         }
 
-        static preventDragRedirect(message: String = "", element?: api.dom.Element) {
+        // Handles the result of the initialization, while the result is truthy
+        static whileTruthy(initializer: () => any, callback: (value: any) => void): void {
+            let result: any;
+
+            for (result = initializer(); !!result; result = initializer()) {
+                callback(result);
+            }
+        }
+
+        static preventDragRedirect(message: String = "", element?: api.dom.Element): void {
             element = element || api.dom.Body.get();
 
-            var window = api.dom.WindowDOM.get();
-            var timeout = null;
+            let window = api.dom.WindowDOM.get();
+            let timeout = null;
 
-            var beforeUnloadHandler = (event) => {
+            let beforeUnloadHandler = (event) => {
                 (event || window.asWindow().event)['returnValue'] = message;
                 event.preventDefault();
                 return message;
             };
 
-            var unBeforeUnload = () => {
+            let unBeforeUnload = () => {
                 timeout = null;
                 window.unBeforeUnload(beforeUnloadHandler);
             };
@@ -51,11 +61,11 @@ module api.util {
             });
         }
 
-        static dispatchCustomEvent(name: string, element: api.dom.Element) {
+        static dispatchCustomEvent(name: string, element: api.dom.Element): void {
             wemjq(element.getHTMLElement()).trigger(name);
         }
 
-        static focusInOut(element: api.dom.Element, onFocusOut: () => void, wait: number = 50, preventMouseDown: boolean = true) {
+        static focusInOut(element: api.dom.Element, onFocusOut: () => void, wait: number = 50, preventMouseDown: boolean = true): void {
             let focusOutTimeout = 0;
             let target;
 
@@ -73,14 +83,15 @@ module api.util {
             // Prevent focus loss on mouse down
             if (preventMouseDown) {
                 element.onMouseDown((e) => {
-                    if ((<HTMLElement>e.target).tagName.toLowerCase() !== "input") { // if click is inside of input then focus will remain in it and no need to prevent default
+                    // if click is inside of input then focus will remain in it and no need to prevent default
+                    if ((<HTMLElement>e.target).tagName.toLowerCase() !== "input") {
                         e.preventDefault();
                     }
                 });
             }
         }
 
-        static lockEvent(event: Event) {
+        static lockEvent(event: Event): void {
             event.stopPropagation();
             event.preventDefault();
         }

@@ -23,7 +23,7 @@ module api.schema.content {
                 return false;
             }
 
-            var other = <ContentType>o;
+            let other = <ContentType>o;
 
             if (!ObjectHelper.equals(this.form, other.form)) {
                 return false;

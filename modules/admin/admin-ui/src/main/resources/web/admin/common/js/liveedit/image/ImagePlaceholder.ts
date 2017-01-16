@@ -26,7 +26,7 @@ module api.liveedit.image {
         }
 
         private initImageCombobox(imageView: ImageComponentView) {
-            var loader = new api.content.resource.ContentSummaryLoader();
+            let loader = new api.content.resource.ContentSummaryLoader();
             loader.setContentPath(imageView.getLiveEditModel().getContent().getPath());
             loader.setAllowedContentTypeNames([ContentTypeName.IMAGE, ContentTypeName.MEDIA_VECTOR]);
 
@@ -39,8 +39,8 @@ module api.liveedit.image {
             this.comboBox.getComboBox().getInput().setPlaceholder("Type to search or drop image here...");
             this.comboBox.onOptionSelected((event: SelectedOptionEvent<api.content.ContentSummary>) => {
 
-                var component: ImageComponent = this.imageComponentView.getComponent();
-                var imageContent = event.getSelectedOption().getOption().displayValue;
+                let component: ImageComponent = this.imageComponentView.getComponent();
+                let imageContent = event.getSelectedOption().getOption().displayValue;
 
                 component.setImage(imageContent.getContentId(), imageContent.getDisplayName());
 
@@ -65,9 +65,9 @@ module api.liveedit.image {
             this.imageUploader.getUploadButton().onClicked(() => this.comboboxWrapper.show());
 
             this.imageUploader.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
-                var createdImage = event.getUploadItem().getModel();
+                let createdImage = event.getUploadItem().getModel();
 
-                var component: ImageComponent = this.imageComponentView.getComponent();
+                let component: ImageComponent = this.imageComponentView.getComponent();
                 component.setImage(createdImage.getContentId(), createdImage.getDisplayName());
             });
 

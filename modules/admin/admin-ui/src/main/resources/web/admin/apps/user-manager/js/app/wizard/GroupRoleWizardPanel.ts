@@ -37,18 +37,19 @@ export class GroupRoleWizardPanel extends PrincipalWizardPanel {
 
             if (this.isRendered()) {
 
-                var viewedPrincipal = this.assembleViewedItem();
+                let viewedPrincipal = this.assembleViewedItem();
                 if (!this.isPersistedEqualsViewed()) {
 
                     console.warn("Received Principal from server differs from what's viewed:");
                     console.warn(" viewedPrincipal: ", viewedPrincipal);
                     console.warn(" persistedPrincipal: ", persistedPrincipal);
 
-                    ConfirmationDialog.get().setQuestion(
-                        "Received Principal from server differs from what you have. Would you like to load changes from server?").setYesCallback(
-                        () => this.doLayoutPersistedItem(persistedPrincipal ? persistedPrincipal.clone() : null)).setNoCallback(
-                        () => {/* Do nothing */
-                        }).show();
+                    const msg = "Received Principal from server differs from what you have. Would you like to load changes from server?";
+                    ConfirmationDialog.get()
+                        .setQuestion(msg)
+                        .setYesCallback(() => this.doLayoutPersistedItem(persistedPrincipal ? persistedPrincipal.clone() : null))
+                        .setNoCallback(() => { /* empty */ })
+                        .show();
                 }
 
                 return wemQ<void>(null);
@@ -70,8 +71,8 @@ export class GroupRoleWizardPanel extends PrincipalWizardPanel {
     }
 
     hasUnsavedChanges(): boolean {
-        var persistedPrincipal = this.getPersistedItem();
-        var wizardHeader = this.getWizardHeader();
+        let persistedPrincipal = this.getPersistedItem();
+        let wizardHeader = this.getWizardHeader();
         if (persistedPrincipal == undefined) {
             return wizardHeader.getName() !== "" ||
                    wizardHeader.getDisplayName() !== "" ||

@@ -2,7 +2,7 @@ module api.content.page.region {
 
     export class ImageComponentType extends ComponentType {
 
-        private static INSTANCE = new ImageComponentType();
+        private static INSTANCE: ImageComponentType = new ImageComponentType();
 
         constructor() {
             super("image");

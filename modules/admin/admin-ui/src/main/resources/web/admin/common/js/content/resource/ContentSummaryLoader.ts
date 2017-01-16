@@ -19,7 +19,7 @@ module api.content.resource {
         protected getRequest(): ContentSummaryRequest {
             return this.request;
         }
-        
+
         setAllowedContentTypes(contentTypes: string[]) {
             this.getRequest().setAllowedContentTypes(contentTypes);
         }
@@ -45,7 +45,7 @@ module api.content.resource {
         }
 
         resetParams() {
-            this.getRequest().resetParams()
+            this.getRequest().resetParams();
         }
 
         search(searchString: string): wemQ.Promise<ContentSummary[]> {
@@ -55,6 +55,5 @@ module api.content.resource {
         }
 
     }
-
 
 }

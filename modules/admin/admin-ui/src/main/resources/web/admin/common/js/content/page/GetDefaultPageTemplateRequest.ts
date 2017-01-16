@@ -17,7 +17,7 @@ module api.content.page {
             return {
                 siteId: this.site.toString(),
                 contentTypeName: this.contentTypeName.toString()
-            }
+            };
         }
 
         getRequestPath(): api.rest.Path {
@@ -30,8 +30,7 @@ module api.content.page {
 
                 if (response.hasResult()) {
                     return this.fromJsonToContent(response.getResult());
-                }
-                else {
+                } else {
                     return null;
                 }
             });

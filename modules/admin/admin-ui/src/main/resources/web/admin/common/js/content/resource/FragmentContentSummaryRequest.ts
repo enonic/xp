@@ -14,11 +14,10 @@ module api.content.resource {
 
         protected createSearchExpression(): ConstraintExpr {
             if (this.parentSitePath) {
-                var searchConstraint = super.createSearchExpression();
-                var nearestSiteConstraint = this.createParentSiteFragmentsOnlyQuery();
+                let searchConstraint = super.createSearchExpression();
+                let nearestSiteConstraint = this.createParentSiteFragmentsOnlyQuery();
                 return new LogicalExpr(searchConstraint, LogicalOperator.AND, nearestSiteConstraint);
-            }
-            else {
+            } else {
                 return super.createSearchExpression();
             }
         }
@@ -34,5 +33,3 @@ module api.content.resource {
     }
 
 }
-
-    

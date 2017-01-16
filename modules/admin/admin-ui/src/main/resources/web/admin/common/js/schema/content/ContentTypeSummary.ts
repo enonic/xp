@@ -98,7 +98,7 @@ module api.schema.content {
                 return false;
             }
 
-            var other = <ContentTypeSummary>o;
+            let other = <ContentTypeSummary>o;
 
             if (!ObjectHelper.booleanEquals(this.allowChildContent, other.allowChildContent)) {
                 return false;
@@ -132,7 +132,7 @@ module api.schema.content {
         }
 
         static fromJsonArray(jsonArray: api.schema.content.ContentTypeSummaryJson[]): ContentTypeSummary[] {
-            var array: ContentTypeSummary[] = [];
+            let array: ContentTypeSummary[] = [];
 
             jsonArray.forEach((summaryJson: api.schema.content.ContentTypeSummaryJson) => {
                 array.push(ContentTypeSummary.fromJson(summaryJson));

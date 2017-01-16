@@ -39,8 +39,7 @@ module api.ui.button {
                     if (forceAction) {
                         wemjq(this.getEl().getHTMLElement()).trigger("mouseenter");
                     }
-                }
-                else {
+                } else {
                     if (forceAction) {
                         wemjq(this.getEl().getHTMLElement()).trigger("mouseleave");
                     }

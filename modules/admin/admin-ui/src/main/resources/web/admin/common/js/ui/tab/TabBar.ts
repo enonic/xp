@@ -26,8 +26,8 @@ module api.ui.tab {
             this.tabs.splice(index, 0, tab);
             tab.setIndex(index);
 
-            this.tabs.slice(index+1).forEach((tab:TabBarItem) => {
-                tab.setIndex(tab.getIndex()+1);
+            this.tabs.slice(index+1).forEach((slicedTab:TabBarItem) => {
+                slicedTab.setIndex(slicedTab.getIndex()+1);
             });
 
             this.insertChild(tab, index);
@@ -44,24 +44,22 @@ module api.ui.tab {
         }
 
         removeNavigationItem(tab: TabBarItem) {
-            var tabIndex = tab.getIndex();
+            let tabIndex = tab.getIndex();
 
             this.tabs.splice(tabIndex, 1);
 
             // update indexes for tabs that have been after the removed tab
-            for (var i = tabIndex; i < this.tabs.length; i++) {
+            for (let i = tabIndex; i < this.tabs.length; i++) {
                 this.tabs[i].setIndex(i);
             }
 
             if (this.isEmpty()) {
                 // if there are no tabs than set selected index to negative value
                 this.selectedIndex = -1;
-            }
-            else if ((this.getSize() - 1) < this.selectedIndex) {
+            } else if ((this.getSize() - 1) < this.selectedIndex) {
                 // if selected index is more than tabs amount set last index as selected
                 this.selectedIndex = this.getSize() - 1;
-            }
-            else if (tabIndex < this.selectedIndex) {
+            } else if (tabIndex < this.selectedIndex) {
                 // if removed tab was before selected tab than decrement selected index
                 this.selectedIndex--;
             }
@@ -84,7 +82,7 @@ module api.ui.tab {
 
             this.deselectNavigationItem();
             this.selectedIndex = index;
-            var selectedTab = this.getSelectedNavigationItem();
+            let selectedTab = this.getSelectedNavigationItem();
             selectedTab.setActive(true);
 
             if (!silent && this.scrollEnabled) {

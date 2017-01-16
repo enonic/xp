@@ -15,9 +15,9 @@ module api.ui.menu {
             });
             this.setEnabled(action.isEnabled());
 
-            action.onPropertyChanged((action: api.ui.Action) => {
-                this.setEnabled(action.isEnabled());
-                this.setVisible(action.isVisible());
+            action.onPropertyChanged((changedAction: api.ui.Action) => {
+                this.setEnabled(changedAction.isEnabled());
+                this.setVisible(changedAction.isVisible());
             });
         }
 
@@ -26,7 +26,7 @@ module api.ui.menu {
         }
 
         setEnabled(value: boolean) {
-            var el = this.getEl();
+            let el = this.getEl();
             el.setDisabled(!value);
             if (value) {
                 el.removeClass("disabled");
@@ -34,7 +34,7 @@ module api.ui.menu {
                 el.addClass("disabled");
             }
         }
-        
+
         isEnabled(): boolean {
             return this.action.isEnabled();
         }

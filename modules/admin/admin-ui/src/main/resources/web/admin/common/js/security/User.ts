@@ -44,7 +44,7 @@ module api.security {
                 return false;
             }
 
-            var other = <User> o;
+            let other = <User> o;
 
             return super.equals(o) &&
                    this.loginDisabled === other.isDisabled() &&

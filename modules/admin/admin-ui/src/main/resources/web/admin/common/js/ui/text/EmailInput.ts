@@ -34,11 +34,10 @@ module api.ui.text {
             this.updateStatus('available');
         }
 
-
         createInput(): InputEl {
             let input = new InputEl(undefined, 'email');
-            input.setPattern(
-                '^(([^<>()\\[\\]\\\\.,;:\\s@"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@"]+)*)|(".+"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$');
+            // tslint:disable-next-line:max-line-length
+            input.setPattern('^(([^<>()\\[\\]\\\\.,;:\\s@"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@"]+)*)|(".+"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$');
 
             input.onFocus((event: FocusEvent) => {
                 this.notifyFocused(event);
@@ -88,15 +87,15 @@ module api.ui.text {
         }
 
         private checkAvailability(email: string) {
-            var status;
-            var isValid = this.input.isValid();
+            let status;
+            let isValid = this.input.isValid();
             this.toggleClass('invalid', !isValid);
 
             if (!StringHelper.isEmpty(email) && isValid) {
                 status = 'checking';
 
                 new CheckEmailAvailabilityRequest(email).setUserStoreKey(this.userStoreKey).sendAndParse().then((available: boolean) => {
-                    var availability = available || email === this.originEmail;
+                    let availability = available || email === this.originEmail;
                     this.updateStatus(availability ? 'available' : 'notavailable');
                     this.notifyValidityChanged(isValid && availability);
                     this.removeClass("just-shown");
@@ -129,7 +128,6 @@ module api.ui.text {
             return this.input.validate();
         }
 
-
         onFocus(listener: (event: FocusEvent) => void) {
             this.focusListeners.push(listener);
         }
@@ -153,13 +151,13 @@ module api.ui.text {
         private notifyFocused(event: FocusEvent) {
             this.focusListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         private notifyBlurred(event: FocusEvent) {
             this.blurListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
     }
 }

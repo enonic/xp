@@ -1,6 +1,8 @@
 module api.application {
 
-    export class GetApplicationRequest extends ApplicationResourceRequest<json.ApplicationJson, Application> {
+    import ApplicationJson = api.application.json.ApplicationJson;
+
+    export class GetApplicationRequest extends ApplicationResourceRequest<ApplicationJson, Application> {
 
         private applicationKey: ApplicationKey;
 
@@ -26,13 +28,12 @@ module api.application {
 
         sendAndParse(): wemQ.Promise<Application> {
 
-            var cache = ApplicationCache.get();
-            var appObj = this.skipCache ? null : cache.getByKey(this.applicationKey);
+            let cache = ApplicationCache.get();
+            let appObj = this.skipCache ? null : cache.getByKey(this.applicationKey);
             if (appObj) {
                 return wemQ(appObj);
-            }
-            else {
-                return this.send().then((response: api.rest.JsonResponse<json.ApplicationJson>) => {
+            } else {
+                return this.send().then((response: api.rest.JsonResponse<ApplicationJson>) => {
                     appObj = this.fromJsonToApplication(response.getResult());
                     cache.put(appObj);
                     return appObj;

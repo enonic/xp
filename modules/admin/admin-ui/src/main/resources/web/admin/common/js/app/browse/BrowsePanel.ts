@@ -43,7 +43,6 @@ module api.app.browse {
             //this.browseItemPanel = this.createBrowseItemPanel();
             this.filterPanel = this.createFilterPanel();
             this.browseToolbar = this.createToolbar();
-            
 
             let selectionChangedDebouncedHandler = api.util.AppHelper.debounce(
                 (currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[]) => {
@@ -108,7 +107,7 @@ module api.app.browse {
         protected createFilterPanel(): api.app.browse.filter.BrowseFilterPanel {
             return null;
         }
-        
+
         doRender(): wemQ.Promise<boolean> {
             return super.doRender().then((rendered) => {
                 if (!this.browseItemPanel) {
@@ -153,7 +152,7 @@ module api.app.browse {
                     // Hack: Same hack.
                     this.browseToolbar.onRendered(() => {
                         setTimeout(() => {
-                            this.appendChild(this.gridAndItemsSplitPanel)
+                            this.appendChild(this.gridAndItemsSplitPanel);
                         });
                     });
                 }
@@ -235,7 +234,7 @@ module api.app.browse {
         }
 
         private setupFilterPanel() {
-            var splitPanel = new api.ui.panel.SplitPanelBuilder(this.filterPanel, this.gridAndToolbarPanel)
+            let splitPanel = new api.ui.panel.SplitPanelBuilder(this.filterPanel, this.gridAndToolbarPanel)
                 .setFirstPanelMinSize(215, api.ui.panel.SplitPanelUnit.PIXEL)
                 .setFirstPanelSize(215, api.ui.panel.SplitPanelUnit.PIXEL)
                 .setAlignment(api.ui.panel.SplitPanelAlignment.VERTICAL)

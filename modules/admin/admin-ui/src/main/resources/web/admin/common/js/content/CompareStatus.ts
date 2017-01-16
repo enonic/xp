@@ -17,7 +17,7 @@ module api.content {
     export class CompareStatusFormatter {
         public static formatStatus(compareStatus: CompareStatus): string {
 
-            var status;
+            let status;
 
             switch (compareStatus) {
             case CompareStatus.NEW:
@@ -48,7 +48,7 @@ module api.content {
                 status = "Conflict";
                 break;
             default:
-                status = "Unknown"
+                status = "Unknown";
             }
 
             if (!!CompareStatus[status]) {

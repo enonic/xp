@@ -17,6 +17,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.index.PatternIndexConfigDocument;
+import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
@@ -117,6 +118,8 @@ public abstract class AbstractNodeTest
 
     protected IndexDataServiceImpl indexedDataService;
 
+    protected RepositoryEntryServiceImpl repositoryEntryService;
+
     protected RepositoryServiceImpl repositoryService;
 
     private BlobStore blobStore;
@@ -199,16 +202,16 @@ public abstract class AbstractNodeTest
         final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl();
         nodeRepositoryService.setIndexServiceInternal( this.indexServiceInternal );
 
-        final RepositoryEntryServiceImpl repositoryEntryService = new RepositoryEntryServiceImpl();
-        repositoryEntryService.setIndexServiceInternal( this.indexServiceInternal );
-        repositoryEntryService.setNodeRepositoryService( nodeRepositoryService );
-        repositoryEntryService.setNodeStorageService( this.storageService );
-        repositoryEntryService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
-        repositoryEntryService.setNodeSearchService( this.searchService );
-        repositoryEntryService.setBinaryService( this.binaryService );
+        this.repositoryEntryService = new RepositoryEntryServiceImpl();
+        this.repositoryEntryService.setIndexServiceInternal( this.indexServiceInternal );
+        this.repositoryEntryService.setNodeRepositoryService( nodeRepositoryService );
+        this.repositoryEntryService.setNodeStorageService( this.storageService );
+        this.repositoryEntryService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
+        this.repositoryEntryService.setNodeSearchService( this.searchService );
+        this.repositoryEntryService.setBinaryService( this.binaryService );
 
         this.repositoryService = new RepositoryServiceImpl();
-        this.repositoryService.setRepositoryEntryService( repositoryEntryService );
+        this.repositoryService.setRepositoryEntryService( this.repositoryEntryService );
         this.repositoryService.setIndexServiceInternal( this.indexServiceInternal );
         this.repositoryService.setNodeRepositoryService( nodeRepositoryService );
         this.repositoryService.setNodeStorageService( this.storageService );

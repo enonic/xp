@@ -2,8 +2,9 @@ module api.content.resource {
 
     import ActiveContentVersionJson = api.content.json.ActiveContentVersionJson;
     import ContentVersionJson = api.content.json.ContentVersionJson;
+    import GetActiveContentVersionsResultsJson = api.content.json.GetActiveContentVersionsResultsJson;
 
-    export class GetActiveContentVersionsRequest extends ContentResourceRequest<json.GetActiveContentVersionsResultsJson, ContentVersion[]> {
+    export class GetActiveContentVersionsRequest extends ContentResourceRequest<GetActiveContentVersionsResultsJson, ContentVersion[]> {
 
         private id: ContentId;
 
@@ -25,16 +26,16 @@ module api.content.resource {
 
         sendAndParse(): wemQ.Promise<ContentVersion[]> {
 
-            return this.send().then((response: api.rest.JsonResponse<json.GetActiveContentVersionsResultsJson>) => {
+            return this.send().then((response: api.rest.JsonResponse<GetActiveContentVersionsResultsJson>) => {
                 return this.fromJsonToContentVersions(response.getResult().activeContentVersions);
             });
         }
 
         private fromJsonToContentVersions(json: ActiveContentVersionJson[]): ContentVersion[] {
 
-            var contentVersionJson: ContentVersionJson;
-            var contentVersion: ContentVersion;
-            var contentVersionsMap: {[id: string]: ContentVersion} = {};
+            let contentVersionJson: ContentVersionJson;
+            let contentVersion: ContentVersion;
+            let contentVersionsMap: {[id: string]: ContentVersion} = {};
 
             json.forEach((activeContentVersion: ActiveContentVersionJson) => {
 
@@ -50,9 +51,7 @@ module api.content.resource {
                 }
             });
 
-            return Object.keys(contentVersionsMap).map(function (key) {
-                return contentVersionsMap[key];
-            });
+            return Object.keys(contentVersionsMap).map((key: string) => contentVersionsMap[key]);
         }
 
     }

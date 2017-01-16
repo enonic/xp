@@ -30,7 +30,7 @@ module api.content.page.region {
         }
 
         getDescriptor(descriptorKey: DescriptorKey): LayoutDescriptor {
-            var option = this.getOptionByValue(descriptorKey.toString());
+            let option = this.getOptionByValue(descriptorKey.toString());
             if (option) {
                 return option.displayValue;
             }
@@ -41,7 +41,7 @@ module api.content.page.region {
 
             this.clearSelection();
             if (descriptor) {
-                var optionToSelect: Option<LayoutDescriptor> = this.getOptionByValue(descriptor.getKey().toString());
+                let optionToSelect: Option<LayoutDescriptor> = this.getOptionByValue(descriptor.getKey().toString());
                 if (!optionToSelect) {
                     optionToSelect = {
                         value: descriptor.getKey().toString(),
@@ -74,12 +74,12 @@ module api.content.page.region {
 
         doRender(): wemQ.Promise<boolean> {
 
-            var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
+            let namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
             namesAndIconView.setIconClass("icon-earth icon-medium")
                 .setMainName(this.descriptor.getDisplayName())
                 .setSubName(this.descriptor.getKey().toString());
 
-            var removeButtonEl = new api.dom.AEl("remove");
+            let removeButtonEl = new api.dom.AEl("remove");
             removeButtonEl.onClicked((event: MouseEvent) => {
                 this.notifyRemoveClicked();
 

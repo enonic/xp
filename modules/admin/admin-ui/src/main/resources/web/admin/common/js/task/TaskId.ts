@@ -20,7 +20,7 @@ module api.task {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, TaskId)) {
                 return false;
             }
-            var other = <TaskId>o;
+            let other = <TaskId>o;
             return this.value == other.value;
         }
 

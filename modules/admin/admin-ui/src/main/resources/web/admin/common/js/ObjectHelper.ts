@@ -13,8 +13,8 @@ module api {
          * @param args arguments constructor arguments
          * @returns {Object}
          */
-        static create(constructor, ...args) {
-            var factory = constructor.bind.apply(constructor, arguments);
+        static create(constructor: Function, ...args: any[]) {
+            let factory = constructor.bind.apply(constructor, arguments);
             return new factory();
         }
 
@@ -39,7 +39,7 @@ module api {
                 return false;
             }
 
-            var prototype = Object.getPrototypeOf(obj);
+            let prototype = Object.getPrototypeOf(obj);
 
             do {
                 prototype = Object.getPrototypeOf(prototype);
@@ -56,11 +56,9 @@ module api {
 
             if (!a && !b) {
                 return true;
-            }
-            else if (!a && b) {
+            } else if (!a && b) {
                 return false;
-            }
-            else if (a && !b) {
+            } else if (a && !b) {
                 return false;
             }
 
@@ -71,11 +69,9 @@ module api {
 
             if (!arrayA && !arrayB) {
                 return true;
-            }
-            else if (!arrayA && arrayB) {
+            } else if (!arrayA && arrayB) {
                 return false;
-            }
-            else if (arrayA && !arrayB) {
+            } else if (arrayA && !arrayB) {
                 return false;
             }
 
@@ -83,7 +79,7 @@ module api {
                 return false;
             }
 
-            for (var i = 0; i < arrayA.length; i++) {
+            for (let i = 0; i < arrayA.length; i++) {
                 if (!ObjectHelper.equals(arrayA[i], arrayB[i])) {
                     return false;
                 }
@@ -96,11 +92,9 @@ module api {
 
             if (!arrayA && !arrayB) {
                 return true;
-            }
-            else if (!arrayA && arrayB) {
+            } else if (!arrayA && arrayB) {
                 return false;
-            }
-            else if (arrayA && !arrayB) {
+            } else if (arrayA && !arrayB) {
                 return false;
             }
 
@@ -108,7 +102,7 @@ module api {
                 return false;
             }
 
-            for (var i = 0; i < arrayA.length; i++) {
+            for (let i = 0; i < arrayA.length; i++) {
                 if (!ObjectHelper.objectEquals(arrayA[i], arrayB[i])) {
                     return false;
                 }
@@ -121,23 +115,21 @@ module api {
 
             if (!mapA && !mapB) {
                 return true;
-            }
-            else if (!mapA && mapB) {
+            } else if (!mapA && mapB) {
                 return false;
-            }
-            else if (mapA && !mapB) {
+            } else if (mapA && !mapB) {
                 return false;
             }
 
             // Gather keys for both maps
-            var keysA: string[] = [];
-            for (var keyA  in mapA) {
+            const keysA: string[] = [];
+            for (const keyA  in mapA) {
                 if (mapA.hasOwnProperty(keyA)) {
                     keysA.push(keyA);
                 }
             }
-            var keysB: string[] = [];
-            for (var keyB  in mapB) {
+            const keysB: string[] = [];
+            for (const keyB  in mapB) {
                 if (mapB.hasOwnProperty(keyB)) {
                     keysB.push(keyB);
                 }
@@ -147,27 +139,21 @@ module api {
                 return false;
             }
 
-            for (var keyA  in keysA) {
-                var valueA: Equitable = mapA[keysA[keyA]];
-                var valueB: Equitable = mapB[keysA[keyA]];
+            return keysA.every((keyA: string) => {
+                const valueA: Equitable = mapA[keysA[keyA]];
+                const valueB: Equitable = mapB[keysA[keyA]];
 
-                if (!ObjectHelper.equals(valueA, valueB)) {
-                    return false;
-                }
-            }
-
-            return true;
+                return ObjectHelper.equals(valueA, valueB);
+            });
         }
 
         static stringEquals(a: string, b: string) {
 
             if (!a && !b) {
                 return true;
-            }
-            else if (!a && b) {
+            } else if (!a && b) {
                 return false;
-            }
-            else if (a && !b) {
+            } else if (a && !b) {
                 return false;
             }
 
@@ -178,11 +164,9 @@ module api {
 
             if (!arrayA && !arrayB) {
                 return true;
-            }
-            else if (!arrayA && arrayB) {
+            } else if (!arrayA && arrayB) {
                 return false;
-            }
-            else if (arrayA && !arrayB) {
+            } else if (arrayA && !arrayB) {
                 return false;
             }
 
@@ -190,7 +174,7 @@ module api {
                 return false;
             }
 
-            for (var i = 0; i < arrayA.length; i++) {
+            for (let i = 0; i < arrayA.length; i++) {
                 if (!ObjectHelper.stringEquals(arrayA[i], arrayB[i])) {
                     return false;
                 }
@@ -203,11 +187,9 @@ module api {
 
             if (!a && !b) {
                 return true;
-            }
-            else if (!a && b) {
+            } else if (!a && b) {
                 return false;
-            }
-            else if (a && !b) {
+            } else if (a && !b) {
                 return false;
             }
 
@@ -225,11 +207,9 @@ module api {
 
             if (!a && !b) {
                 return true;
-            }
-            else if (!a && b) {
+            } else if (!a && b) {
                 return false;
-            }
-            else if (a && !b) {
+            } else if (a && !b) {
                 return false;
             }
 
@@ -240,16 +220,14 @@ module api {
 
             if (!a && !b) {
                 return true;
-            }
-            else if (!a && b) {
+            } else if (!a && b) {
                 return false;
-            }
-            else if (a && !b) {
+            } else if (a && !b) {
                 return false;
             }
 
-            var aString = JSON.stringify(a);
-            var bString = JSON.stringify(b);
+            let aString = JSON.stringify(a);
+            let bString = JSON.stringify(b);
             return aString == bString;
         }
 
@@ -275,10 +253,10 @@ module api {
              To avoid exception, when converting circular structure to JSON in Chrome the replacer
              function must be used to replace references to the same object with `undefined`.
              */
-            var aString = JSON.stringify(a, (key, value) => {
+            let aString = JSON.stringify(a, (key, value) => {
                 return (!!key && a == value) ? undefined : value;
             });
-            var bString = JSON.stringify(b, (key, value) => {
+            let bString = JSON.stringify(b, (key, value) => {
                 return (!!key && b == value) ? undefined : value;
             });
             return aString == bString;
@@ -289,18 +267,17 @@ module api {
             if (array && array.length > 0) {
                 return array.some((curEl) => {
                     return curEl.equals(el);
-                })
+                });
             }
             return false;
         }
 
-
         static objectPropertyIterator(object: any, callback: {(name: string, property: any, index?: number): void;}) {
 
-            var index = 0;
-            for (var name  in object) {
+            let index = 0;
+            for (let name  in object) {
                 if (object.hasOwnProperty(name)) {
-                    var property = object[name];
+                    let property = object[name];
                     callback(name, property, index++);
                 }
             }

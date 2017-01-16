@@ -28,12 +28,10 @@ module api.content.page {
             if (this.isPage()) {
                 if (this.getPage().hasController()) {
                     return api.content.page.PageMode.FORCED_CONTROLLER;
-                }
-                else {
+                } else {
                     throw new Error("Illegal state: A PageTemplate's Page must a controller set");
                 }
-            }
-            else {
+            } else {
                 return api.content.page.PageMode.NO_CONTROLLER;
             }
         }
@@ -111,7 +109,6 @@ module api.content.page {
             super.fromContentJson(contentJson);
             return this;
         }
-
 
         public build(): PageTemplate {
             return new PageTemplate(this);

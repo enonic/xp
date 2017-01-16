@@ -24,7 +24,7 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
     private detailsToggleButton: MobileDetailsPanelToggleButton;
 
     private foldButton: MobilePreviewFoldButton;
-    
+
     constructor(browseActions: ContentTreeGridActions, detailsView: DetailsView) {
         super("mobile-content-item-statistics-panel");
 
@@ -48,12 +48,12 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
         let reloadItemPublishStateChange = (contents: ContentSummaryAndCompareStatus[]) => {
             let thisContentId = this.getItem().getModel().getId();
 
-            let content: ContentSummaryAndCompareStatus = contents.filter((content) => {
+            let contentSummary: ContentSummaryAndCompareStatus = contents.filter((content) => {
                 return thisContentId == content.getId();
             })[0];
 
-            if (!!content) {
-                this.setItem(ViewItem.fromContentSummaryAndCompareStatus(content));
+            if (contentSummary) {
+                this.setItem(ViewItem.fromContentSummaryAndCompareStatus(contentSummary));
             }
         };
 

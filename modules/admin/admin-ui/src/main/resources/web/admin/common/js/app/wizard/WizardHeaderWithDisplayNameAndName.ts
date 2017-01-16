@@ -65,10 +65,10 @@ module api.app.wizard {
 
                 this.displayNameEl.removeClass("generated");
 
-                var currentDisplayName = event.getNewValue() || "";
+                let currentDisplayName = event.getNewValue() || "";
 
                 if (this.displayNameGenerator && this.displayNameGenerator.hasScript()) {
-                    var generatedDisplayName = this.displayNameGenerator.execute() || "";
+                    let generatedDisplayName = this.displayNameGenerator.execute() || "";
 
                     this.displayNameProgrammaticallySet =
                     generatedDisplayName.toLowerCase() === currentDisplayName.toLowerCase() ||
@@ -83,8 +83,8 @@ module api.app.wizard {
             });
 
             this.nameEl.onValueChanged((event: api.ValueChangedEvent) => {
-                var currentName = event.getNewValue() || "";
-                var displayName = this.getDisplayName() || "";
+                let currentName = event.getNewValue() || "";
+                let displayName = this.getDisplayName() || "";
 
                 this.autoGenerateName = this.checkAutoGenerateName(currentName, displayName);
 
@@ -101,7 +101,6 @@ module api.app.wizard {
                    displayName.toLowerCase() === name.toLowerCase() ||
                    name.toLowerCase() === this.generateName(displayName).toLowerCase();
         }
-
 
         resetBaseValues() {
             this.displayNameEl.resetBaseValues();
@@ -127,7 +126,7 @@ module api.app.wizard {
 
             if (this.displayNameGenerator && this.displayNameGenerator.hasScript()) {
                 if (!forceDisplayNameProgrammaticallySet) {
-                    var generatedDisplayName = this.displayNameGenerator.execute();
+                    let generatedDisplayName = this.displayNameGenerator.execute();
                     this.displayNameProgrammaticallySet = generatedDisplayName == displayName;
                 } else {
                     this.displayNameProgrammaticallySet = true;
@@ -194,7 +193,7 @@ module api.app.wizard {
             if (!possibleInvalidName) {
                 return "";
             }
-            var generated;
+            let generated;
             if (this.simplifiedNameGeneration) {
                 generated = possibleInvalidName.replace(Name.SIMPLIFIED_FORBIDDEN_CHARS, '').toLowerCase();
             } else {
@@ -224,12 +223,12 @@ module api.app.wizard {
         }
 
         private updatePathAndNameWidth() {
-            var pathEl = this.pathEl.getEl(),
-                nameEl = this.nameEl.getEl(),
-                headerWidth = this.getEl().getWidth(),
-                pathWidth = pathEl.getWidthWithMargin(),
-                nameWidth = nameEl.getWidthWithMargin(),
-                nameMinWidth = nameEl.getMinWidth();
+            let pathEl = this.pathEl.getEl();
+            let nameEl = this.nameEl.getEl();
+            let headerWidth = this.getEl().getWidth();
+            let pathWidth = pathEl.getWidthWithMargin();
+            let nameWidth = nameEl.getWidthWithMargin();
+            let nameMinWidth = nameEl.getMinWidth();
 
             if (pathWidth + nameWidth > headerWidth) {
                 if (nameWidth > nameMinWidth) {

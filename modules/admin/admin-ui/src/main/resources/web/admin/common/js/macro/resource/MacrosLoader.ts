@@ -11,7 +11,7 @@ module api.macro.resource {
 
         constructor() {
             super();
-            
+
             this.hasRelevantData = false;
 
             ApplicationEvent.on((event: ApplicationEvent) => {
@@ -33,7 +33,7 @@ module api.macro.resource {
         protected getRequest(): GetMacrosRequest {
             return this.request;
         }
-        
+
         private invalidate() {
             this.hasRelevantData = false;
         }
@@ -71,6 +71,5 @@ module api.macro.resource {
         }
 
     }
-
 
 }

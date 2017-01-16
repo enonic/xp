@@ -1,6 +1,8 @@
 module api.content.resource {
 
-    export class GetContentByPathRequest extends ContentResourceRequest<json.ContentJson, Content> {
+    import ContentJson = api.content.json.ContentJson;
+
+    export class GetContentByPathRequest extends ContentResourceRequest<ContentJson, Content> {
 
         private contentPath: ContentPath;
 
@@ -22,7 +24,7 @@ module api.content.resource {
 
         sendAndParse(): wemQ.Promise<Content> {
 
-            return this.send().then((response: api.rest.JsonResponse<json.ContentJson>) => {
+            return this.send().then((response: api.rest.JsonResponse<ContentJson>) => {
                 return this.fromJsonToContent(response.getResult());
             });
         }

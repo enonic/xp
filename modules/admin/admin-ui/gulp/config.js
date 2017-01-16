@@ -2,11 +2,11 @@ var CONFIG = {
     gulpTasks: 'gulp/tasks/',
     root: {
         src: 'src/main/resources/web/admin',
-        dest: 'target/resources/main/web/admin'
+        dest: 'build/resources/main/web/admin'
     },
     assets: {
         src: 'src/main/resources/assets',
-        dest: 'target/resources/main/assets'
+        dest: 'build/resources/main/assets'
     },
     tasks: {
         css: {
@@ -88,6 +88,7 @@ var CONFIG = {
         }
     },
     spec: {
+        src: 'src/main/resources/web/spec',
         frameworks: ['jasmine'],
         plugins: [
             'karma-jasmine',
@@ -140,6 +141,11 @@ var CONFIG = {
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
         singleRun: true
+    },
+    tslint: {
+        options: {
+            fix: true
+        }
     }
 };
 

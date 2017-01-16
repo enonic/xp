@@ -5,7 +5,7 @@ module api.liveedit {
 
     export class PageItemType extends ItemType {
 
-        private static INSTANCE = new PageItemType();
+        private static INSTANCE: PageItemType = new PageItemType();
 
         static get(): PageItemType {
             return PageItemType.INSTANCE;

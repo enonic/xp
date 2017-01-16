@@ -25,13 +25,13 @@ module api.liveedit.layout {
 
             this.comboBox.onOptionSelected((event: SelectedOptionEvent<LayoutDescriptor>) => {
                 this.layoutComponentView.showLoadingSpinner();
-                var descriptor = event.getSelectedOption().getOption().displayValue;
+                let descriptor = event.getSelectedOption().getOption().displayValue;
 
-                var layoutComponent: LayoutComponent = this.layoutComponentView.getComponent();
+                let layoutComponent: LayoutComponent = this.layoutComponentView.getComponent();
                 layoutComponent.setDescriptor(descriptor.getKey(), descriptor);
             });
 
-            var siteModel = layoutView.getLiveEditModel().getSiteModel();
+            let siteModel = layoutView.getLiveEditModel().getSiteModel();
 
             let listener = () => this.reloadDescriptorsOnApplicationChange(siteModel);
 

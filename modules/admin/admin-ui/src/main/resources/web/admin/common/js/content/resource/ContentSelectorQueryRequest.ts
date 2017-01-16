@@ -9,14 +9,15 @@ module api.content.resource {
     import QueryExpr = api.query.expr.QueryExpr;
     import ContentSummaryJson = api.content.json.ContentSummaryJson;
     import ContentId = api.content.ContentId;
+    import ContentQueryResultJson = api.content.json.ContentQueryResultJson;
 
-    export class ContentSelectorQueryRequest extends ContentResourceRequest<json.ContentQueryResultJson<ContentSummaryJson>, ContentSummary[]> {
+    export class ContentSelectorQueryRequest extends ContentResourceRequest<ContentQueryResultJson<ContentSummaryJson>, ContentSummary[]> {
 
-        public static DEFAULT_SIZE = 15;
+        public static DEFAULT_SIZE: number = 15;
 
-        public static MODIFIED_TIME_DESC = new FieldOrderExpr(new FieldExpr("modifiedTime"), OrderDirection.DESC);
+        public static MODIFIED_TIME_DESC: FieldOrderExpr = new FieldOrderExpr(new FieldExpr("modifiedTime"), OrderDirection.DESC);
 
-        public static SCORE_DESC = new FieldOrderExpr(new FieldExpr("_score"), OrderDirection.DESC);
+        public static SCORE_DESC: FieldOrderExpr = new FieldOrderExpr(new FieldExpr("_score"), OrderDirection.DESC);
 
         public static DEFAULT_ORDER: OrderExpr[] = [ContentSelectorQueryRequest.SCORE_DESC, ContentSelectorQueryRequest.MODIFIED_TIME_DESC];
 
@@ -83,7 +84,7 @@ module api.content.resource {
         }
 
         setContentTypeNames(contentTypeNames: string[]) {
-            this.contentTypeNames = contentTypeNames
+            this.contentTypeNames = contentTypeNames;
         }
 
         setAllowedContentPaths(allowedContentPaths: string[]) {
@@ -95,12 +96,12 @@ module api.content.resource {
         }
 
         setQueryExpr(searchString: string = "") {
-            var fulltextExpression = this.createSearchExpression(searchString);
+            let fulltextExpression = this.createSearchExpression(searchString);
 
             this.queryExpr = new QueryExpr(fulltextExpression, ContentSelectorQueryRequest.DEFAULT_ORDER);
         }
 
-        private createSearchExpression(searchString): Expression {
+        private createSearchExpression(searchString: string): Expression {
             return new api.query.PathMatchExpressionBuilder()
                 .setSearchString(searchString)
                 .setPath(this.content ? this.content.getPath().toString() : "")
@@ -132,7 +133,7 @@ module api.content.resource {
         }
 
         getParams(): Object {
-            var queryExprAsString = this.getQueryExpr() ? this.getQueryExpr().toString() : "";
+            let queryExprAsString = this.getQueryExpr() ? this.getQueryExpr().toString() : "";
 
             return {
                 queryExpr: queryExprAsString,
@@ -149,14 +150,14 @@ module api.content.resource {
 
         sendAndParse(): wemQ.Promise<ContentSummary[]> {
 
-            return this.send().then((response: api.rest.JsonResponse<json.ContentQueryResultJson<ContentSummaryJson>>) => {
+            return this.send().then((response: api.rest.JsonResponse<ContentQueryResultJson<ContentSummaryJson>>) => {
 
-                var responseResult: json.ContentQueryResultJson<ContentSummaryJson> = response.getResult();
+                let responseResult: ContentQueryResultJson<ContentSummaryJson> = response.getResult();
 
-                var contentsAsJson: json.ContentSummaryJson[] = responseResult.contents;
+                let contentsAsJson: ContentSummaryJson[] = responseResult.contents;
 
-                var contentSummaries: ContentSummary[] = <any[]> this.fromJsonToContentSummaryArray(
-                    <json.ContentSummaryJson[]>contentsAsJson);
+                let contentSummaries: ContentSummary[] = <any[]> this.fromJsonToContentSummaryArray(
+                    <ContentSummaryJson[]>contentsAsJson);
 
                 if (this.from === 0) {
                     this.results = [];

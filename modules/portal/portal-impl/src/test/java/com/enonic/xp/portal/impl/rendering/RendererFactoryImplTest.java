@@ -7,7 +7,6 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.rendering.Renderer;
 
 import static org.junit.Assert.*;
 

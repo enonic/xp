@@ -1,6 +1,6 @@
 module api.app.browse {
     import TreeGrid = api.ui.treegrid.TreeGrid;
-    
+
     export class BrowseItemPanel<M extends api.Equitable> extends api.ui.panel.DeckPanel {
 
         private itemStatisticsPanel: api.app.view.ItemStatisticsPanel<M>;
@@ -46,7 +46,7 @@ module api.app.browse {
         }
 
         updateDisplayedPanel() {
-            var selectedItems = this.getItems();
+            let selectedItems = this.getItems();
             if (selectedItems.length == 1) {
                 this.showPanelByIndex(1);
                 this.itemStatisticsPanel.setItem(selectedItems[0].toViewItem());

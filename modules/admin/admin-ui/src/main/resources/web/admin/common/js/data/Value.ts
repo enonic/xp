@@ -10,7 +10,7 @@ module api.data {
             this.value = value;
             this.type = type;
             if (value) {
-                var isValid = this.type.isValid(value);
+                let isValid = this.type.isValid(value);
                 if (isValid == undefined) {
                     throw new Error(api.ClassHelper.getClassName(this.type) + ".isValid() did not return any value: " + isValid);
                 }
@@ -141,7 +141,7 @@ module api.data {
                 return false;
             }
 
-            var other = <Value>o;
+            let other = <Value>o;
 
             if (!api.ObjectHelper.equals(this.type, other.type)) {
                 return false;

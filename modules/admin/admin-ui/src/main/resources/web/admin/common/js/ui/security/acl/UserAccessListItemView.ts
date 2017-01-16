@@ -4,7 +4,6 @@ module api.ui.security.acl {
     import Tooltip = api.ui.Tooltip;
     import User = api.security.User;
 
-
     export class UserAccessListItemView extends api.ui.Viewer<EffectivePermission> {
 
         private userLine: api.dom.DivEl;
@@ -58,9 +57,9 @@ module api.ui.security.acl {
 
                 object.getMembers().forEach((principal: EffectivePermissionMember) => {
 
-                    var display = principal.getDisplayName().split(" ").map(word => word.substring(0, 1).toUpperCase());
+                    let display = principal.getDisplayName().split(" ").map(word => word.substring(0, 1).toUpperCase());
 
-                    var icon = new api.dom.SpanEl("user-icon").setHtml(display.length >= 2
+                    let icon = new api.dom.SpanEl("user-icon").setHtml(display.length >= 2
                         ? display.join("").substring(0, 2)
                         : principal.getDisplayName().substring(0, 2).toUpperCase());
                     if (this.currentUser && this.currentUser.getKey().equals(principal.getUserKey())) {
@@ -81,9 +80,9 @@ module api.ui.security.acl {
 
         private setExtraCount() {
             if (this.userLine.getChildren().length > 0) {
-                var visibleCount = this.getVisibleCount(),
-                    iconCount = this.getObject().getPermissionAccess().getCount(),
-                    extraCount = iconCount - visibleCount;
+                let visibleCount = this.getVisibleCount();
+                let iconCount = this.getObject().getPermissionAccess().getCount();
+                let extraCount = iconCount - visibleCount;
 
                 if (extraCount > 0) {
                     this.userLine.getEl().setAttribute("extra-count", "+" + extraCount);
@@ -94,9 +93,9 @@ module api.ui.security.acl {
         }
 
         private getVisibleCount(): number {
-            var userIcons = this.userLine.getChildren(),
-                count = 0;
-            for (var userIconKey in userIcons) {
+            let userIcons = this.userLine.getChildren();
+            let count = 0;
+            for (let userIconKey in userIcons) {
                 if (userIcons[userIconKey].getEl().getOffsetTopRelativeToParent() == 0) {
                     count++;
                 } else {
@@ -107,7 +106,7 @@ module api.ui.security.acl {
         }
 
         private getOptionName(access: Access): string {
-            var currentOption = UserAccessListItemView.OPTIONS.filter(option => {
+            let currentOption = UserAccessListItemView.OPTIONS.filter(option => {
                 return option.value == access;
             });
             if (currentOption && currentOption.length > 0) {
@@ -115,7 +114,6 @@ module api.ui.security.acl {
             }
 
         }
-
 
     }
 }

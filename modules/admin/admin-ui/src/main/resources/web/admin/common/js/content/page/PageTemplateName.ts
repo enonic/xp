@@ -1,4 +1,4 @@
-module api.content.page{
+module api.content.page {
 
     export class PageTemplateName {
 

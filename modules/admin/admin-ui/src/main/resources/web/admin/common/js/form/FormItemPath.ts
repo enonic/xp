@@ -1,4 +1,4 @@
-module api.form{
+module api.form {
 
     export class FormItemPath {
 
@@ -18,19 +18,19 @@ module api.form{
             if (elementDivider == null) {
                 elementDivider = FormItemPath.DEFAULT_ELEMENT_DIVIDER;
             }
-            var absolute:boolean = s.charAt(0) == elementDivider;
-            var elements:string[] = s.split(elementDivider);
+            let absolute:boolean = s.charAt(0) == elementDivider;
+            let elements:string[] = s.split(elementDivider);
             elements = FormItemPath.removeEmptyElements(elements);
-            var pathElements:FormItemPathElement[] = [];
-            elements.forEach((s:string) => {
-                pathElements.push(FormItemPathElement.fromString(s));
+            let pathElements:FormItemPathElement[] = [];
+            elements.forEach((str:string) => {
+                pathElements.push(FormItemPathElement.fromString(str));
             });
             return new FormItemPath(pathElements, elementDivider, absolute);
         }
 
         static fromParent(parent:FormItemPath, ...childElements:FormItemPathElement[]) {
 
-            var elements:FormItemPathElement[] = parent.elements.slice(0);
+            let elements:FormItemPathElement[] = parent.elements.slice(0);
             childElements.forEach((element:FormItemPathElement) => {
                 elements.push(element);
             });
@@ -39,7 +39,7 @@ module api.form{
         }
 
         private static removeEmptyElements(elements:string[]):string[] {
-            var filteredElements:string[] = [];
+            let filteredElements:string[] = [];
             elements.forEach((element:string) => {
                 if (element.length > 0) {
                     filteredElements.push(element);
@@ -54,8 +54,7 @@ module api.form{
             elements.forEach((element:FormItemPathElement, index:number) => {
                 if (element == null) {
                     throw new Error("Path element was null at index: " + index);
-                }
-                else if (element.getName().length == 0) {
+                } else if (element.getName().length == 0) {
                     throw new Error("Path element was empty string at index: " + index);
                 }
             });
@@ -64,7 +63,7 @@ module api.form{
         }
 
         newWithoutFirstElement():FormItemPath {
-            var arr = this.elements;
+            let arr = this.elements;
             arr.shift();
             return new FormItemPath(arr);
         }
@@ -98,7 +97,7 @@ module api.form{
             if (this.elements.length < 1) {
                 return null;
             }
-            var parentElemements:FormItemPathElement[] = [];
+            let parentElemements:FormItemPathElement[] = [];
             this.elements.forEach((element:FormItemPathElement, index:number)=> {
                 if (index < this.elements.length - 1) {
                     parentElemements.push(element);
@@ -125,7 +124,7 @@ module api.form{
         }
 
         getName():string {
-            return this.name
+            return this.name;
         }
 
         toString():string {

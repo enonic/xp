@@ -6,7 +6,7 @@ describe("api.util.DateHelper", () => {
 
         it("given a string '2000-05-23T16:45:15' then returned Date is correct", () => {
 
-            var date = DateHelper.makeDateFromUTCString("2000-05-23T16:45:15");
+            let date = DateHelper.makeDateFromUTCString("2000-05-23T16:45:15");
             expect(date.getUTCFullYear()).toBe(2000);
             expect(date.getUTCMonth()).toBe(4);
             expect(date.getUTCDate()).toBe(23);
@@ -17,7 +17,7 @@ describe("api.util.DateHelper", () => {
 
         it("given a string '2000-05-23T00:01:00' then returned Date is correct", () => {
 
-            var date = DateHelper.makeDateFromUTCString("2000-05-23T00:01:00");
+            let date = DateHelper.makeDateFromUTCString("2000-05-23T00:01:00");
             expect(date.getUTCFullYear()).toBe(2000);
             expect(date.getUTCMonth()).toBe(4);
             expect(date.getUTCDate()).toBe(23);
@@ -28,7 +28,7 @@ describe("api.util.DateHelper", () => {
 
         it("given a string '2000-05-23T23:59:59' then returned Date is correct", () => {
 
-            var date = DateHelper.makeDateFromUTCString("2000-05-23T23:59:59");
+            let date = DateHelper.makeDateFromUTCString("2000-05-23T23:59:59");
             expect(date.getUTCFullYear()).toBe(2000);
             expect(date.getUTCMonth()).toBe(4);
             expect(date.getUTCDate()).toBe(23);

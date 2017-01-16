@@ -10,11 +10,10 @@ export class ImageSelectorForm extends api.ui.form.Form {
         super('image-combobox-form');
         this.imageSelector = templateSelector;
 
-        var fieldSet = new api.ui.form.Fieldset();
+        let fieldSet = new api.ui.form.Fieldset();
         if (!api.util.StringHelper.isBlank(title)) {
             fieldSet.add(new api.ui.form.FormItemBuilder(templateSelector).setLabel(title).build());
-        }
-        else {
+        } else {
             fieldSet.add(new api.ui.form.FormItemBuilder(templateSelector).build());
         }
 

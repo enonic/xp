@@ -14,8 +14,8 @@ module api.application {
 
         getParams(): Object {
             return {
-                "query": this.searchQuery
-            }
+                query: this.searchQuery
+            };
         }
 
         setSearchQuery(query: string): ListApplicationKeysRequest {

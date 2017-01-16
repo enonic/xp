@@ -22,8 +22,8 @@ module api.schema.relationshiptype {
 
         sendAndParse(): wemQ.Promise<RelationshipType> {
 
-            var relationshipTypeCache = RelationshipTypeCache.get();
-            var relationshipType = relationshipTypeCache.getByKey(this.name);
+            const relationshipTypeCache = RelationshipTypeCache.get();
+            const relationshipType = relationshipTypeCache.getByKey(this.name);
 
             if (relationshipType) {
                 return wemQ(relationshipType);
@@ -34,9 +34,9 @@ module api.schema.relationshiptype {
             }
 
             return this.send().then((response: api.rest.JsonResponse<RelationshipTypeJson>) => {
-                var relationshipType = this.fromJsonToReleationshipType(response.getResult());
-                relationshipTypeCache.put(relationshipType);
-                return relationshipType;
+                const newRelationshipType = this.fromJsonToReleationshipType(response.getResult());
+                relationshipTypeCache.put(newRelationshipType);
+                return newRelationshipType;
             });
         }
     }

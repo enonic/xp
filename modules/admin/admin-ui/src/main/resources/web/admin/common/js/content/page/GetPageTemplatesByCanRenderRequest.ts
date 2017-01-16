@@ -20,7 +20,7 @@ module api.content.page {
             return {
                 siteId: this.site.toString(),
                 contentTypeName: this.contentTypeName.toString()
-            }
+            };
         }
 
         getRequestPath(): api.rest.Path {

@@ -19,8 +19,7 @@ module api.liveedit {
             if (!this.repeated) {
                 this.repeated = true;
                 return this.idToRepeatNext;
-            }
-            else {
+            } else {
                 return this.itemViewProducer.next();
             }
         }

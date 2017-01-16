@@ -74,7 +74,6 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         return new UserStoreWizardActions(this);
     }
 
-
     protected createMainToolbar(): UserStoreWizardToolbar {
         return new UserStoreWizardToolbar({
             saveAction: this.wizardActions.getSaveAction(),
@@ -87,21 +86,20 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
     }
 
     protected createFormIcon(): api.app.wizard.FormIcon {
-        var iconUrl = api.dom.ImgEl.PLACEHOLDER;
+        let iconUrl = api.dom.ImgEl.PLACEHOLDER;
         let formIcon = new FormIcon(iconUrl, "icon");
         formIcon.addClass("icon-xlarge icon-address-book");
-        return formIcon
+        return formIcon;
     }
 
     protected createWizardHeader(): api.app.wizard.WizardHeaderWithDisplayNameAndName {
-        var wizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().build();
+        let wizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().build();
 
+        let existing = this.getPersistedItem();
+        let displayName = "";
+        let name = "";
 
-        let existing = this.getPersistedItem(),
-            displayName = "",
-            name = "";
-
-        if (!!existing) {
+        if (existing) {
             displayName = existing.getDisplayName();
             name = existing.getKey().getId();
 
@@ -112,7 +110,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
             name = "";
 
             wizardHeader.onPropertyChanged((event: api.PropertyChangedEvent) => {
-                var updateStatus = event.getPropertyName() === "name" ||
+                let updateStatus = event.getPropertyName() === "name" ||
                                    (wizardHeader.isAutoGenerationEnabled()
                                     && event.getPropertyName() === "displayName");
 
@@ -129,8 +127,8 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         return wizardHeader;
     }
 
-    doRenderOnDataLoaded(rendered): Q.Promise<boolean> {
-        return super.doRenderOnDataLoaded(rendered).then((rendered) => {
+    doRenderOnDataLoaded(rendered: boolean): Q.Promise<boolean> {
+        return super.doRenderOnDataLoaded(rendered).then((nextRendered) => {
             if (UserStoreWizardPanel.debug) {
                 console.debug("UserStoreWizardPanel.doRenderOnDataLoaded");
             }
@@ -138,7 +136,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
 
             this.getFormIcon().addClass("icon-address-book");
 
-            return rendered;
+            return nextRendered;
         });
     }
 
@@ -147,7 +145,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
     }
 
     createSteps(persistedItem: UserStore): WizardStep[] {
-        var steps: WizardStep[] = [];
+        let steps: WizardStep[] = [];
 
         this.userStoreWizardStepForm = new UserStoreWizardStepForm();
         this.permissionsWizardStepForm = new SecurityWizardStepForm();
@@ -169,7 +167,6 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
 
         });
     }
-
 
     protected doLayoutPersistedItem(persistedItem: UserStore): Q.Promise<void> {
 
@@ -213,16 +210,15 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         });
     }
 
-
     hasUnsavedChanges(): boolean {
-        var persistedUserStore: UserStore = this.getPersistedItem();
+        let persistedUserStore: UserStore = this.getPersistedItem();
         if (persistedUserStore == undefined) {
             let wizardHeader = this.getWizardHeader();
             return wizardHeader.getName() !== "" ||
                    wizardHeader.getDisplayName() !== "" ||
                    !this.permissionsWizardStepForm.getPermissions().equals(this.defaultUserStore.getPermissions());
         } else {
-            var viewedUserStore = this.assembleViewedUserStore();
+            let viewedUserStore = this.assembleViewedUserStore();
             return !this.getPersistedItem().equals(viewedUserStore);
         }
     }
@@ -243,12 +239,12 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
     }
 
     private produceCreateUserStoreRequest(): CreateUserStoreRequest {
-        var header = this.getWizardHeader(),
-            key = new UserStoreKey(header.getName()),
-            name = header.getDisplayName(),
-            description = this.userStoreWizardStepForm.getDescription(),
-            authConfig = this.userStoreWizardStepForm.getAuthConfig(),
-            permissions = this.permissionsWizardStepForm.getPermissions();
+        let header = this.getWizardHeader();
+        let key = new UserStoreKey(header.getName());
+        let name = header.getDisplayName();
+        let description = this.userStoreWizardStepForm.getDescription();
+        let authConfig = this.userStoreWizardStepForm.getAuthConfig();
+        let permissions = this.permissionsWizardStepForm.getPermissions();
 
         return new CreateUserStoreRequest()
             .setDisplayName(name)
@@ -259,11 +255,11 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
     }
 
     private produceUpdateUserStoreRequest(viewedUserStore: UserStore): UpdateUserStoreRequest {
-        var key = this.getPersistedItem().getKey(),
-            name = viewedUserStore.getDisplayName(),
-            description = viewedUserStore.getDescription(),
-            authConfig = viewedUserStore.getAuthConfig(),
-            permissions = viewedUserStore.getPermissions();
+        let key = this.getPersistedItem().getKey();
+        let name = viewedUserStore.getDisplayName();
+        let description = viewedUserStore.getDescription();
+        let authConfig = viewedUserStore.getAuthConfig();
+        let permissions = viewedUserStore.getPermissions();
 
         return new UpdateUserStoreRequest()
             .setKey(key)
@@ -272,7 +268,6 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
             .setAuthConfig(authConfig)
             .setPermissions(permissions);
     }
-
 
     onUserStoreNamed(listener: (event: UserStoreNamedEvent)=>void) {
         this.userStoreNamedListeners.push(listener);
@@ -286,7 +281,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
 
     private listenToUserItemEvents() {
 
-        var principalCreatedHandler = (event: api.security.UserItemCreatedEvent) => {
+        let principalCreatedHandler = (event: api.security.UserItemCreatedEvent) => {
             if (!this.getPersistedItem()) { // skip if user store is not persisted yet
                 return;
             }
@@ -300,14 +295,15 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
             }
         };
 
-        var principalDeletedHandler = (event: api.security.UserItemDeletedEvent) => {
-            if (!this.getPersistedItem() || !event.getPrincipals()) { // skip if user store is not persisted yet or if anything except users or roles was deleted
+        let principalDeletedHandler = (event: api.security.UserItemDeletedEvent) => {
+            // skip if user store is not persisted yet or if anything except users or roles was deleted
+            if (!this.getPersistedItem() || !event.getPrincipals()) {
                 return;
             }
 
             this.getPersistedItem().isDeletable().then((result: boolean) => {
                 this.wizardActions.getDeleteAction().setEnabled(result);
-            })
+            });
         };
 
         api.security.UserItemCreatedEvent.on(principalCreatedHandler);

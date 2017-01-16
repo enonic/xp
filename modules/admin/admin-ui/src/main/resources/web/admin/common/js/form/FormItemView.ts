@@ -100,15 +100,16 @@ module api.form {
         }
 
         unEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
-            this.editContentRequestListeners = this.editContentRequestListeners.filter(function (curr) {
-                return curr != listener;
-            });
+            this.editContentRequestListeners = this.editContentRequestListeners
+                .filter(function (curr: (content: api.content.ContentSummary) => void) {
+                    return curr !== listener;
+                });
         }
 
         notifyEditContentRequested(content: api.content.ContentSummary) {
             this.editContentRequestListeners.forEach((listener) => {
                 listener(content);
-            })
+            });
         }
 
         onValidityChanged(listener: (event: RecordingValidityChangedEvent)=>void) {

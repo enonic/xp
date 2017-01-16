@@ -2,7 +2,7 @@ module api.util {
     export class ScriptInjector {
         static inject(url:string, callback:() => void) {
 
-            var load = true;
+            let load = true;
             //check all existing script tags in the page for the url
             wemjq('script[type="text/javascript"]')
                 .each(function () {
@@ -13,9 +13,9 @@ module api.util {
                 wemjq.ajax(url, {
                     type: 'GET',
                     success: (data:any, status:string, xhr:JQueryXHR) => {
-                        var node = document.getElementsByTagName("head")[0] || document.body;
+                        let node = document.getElementsByTagName("head")[0] || document.body;
                         if (node) {
-                            var script = document.createElement("script");
+                            let script = document.createElement("script");
                             script.setAttribute("type", "text/javascript");
                             script.setAttribute("data-url", url);
                             script.innerHTML = data;
@@ -26,8 +26,7 @@ module api.util {
                     dataType: 'script',
                     cache: true
                 });
-            }
-            else {
+            } else {
                 callback();
             }
         }

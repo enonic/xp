@@ -94,7 +94,7 @@ module api.ui.time {
         }
 
         protected handleShownEvent() {
-            var onDatePickerShown = this.onDateTimePickerShown.bind(this);
+            let onDatePickerShown = this.onDateTimePickerShown.bind(this);
             DateTimePickerShownEvent.on(onDatePickerShown);
             this.onRemoved((event: api.dom.ElementRemovedEvent) => {
                 DateTimePickerShownEvent.un(onDatePickerShown);
@@ -107,14 +107,14 @@ module api.ui.time {
         }
 
         protected initPopup(builder: DateTimePickerBuilder) {
-            var calendar = new CalendarBuilder().
+            let calendar = new CalendarBuilder().
                 setSelectedDate(builder.selectedDate).
                 setMonth(builder.month).
                 setYear(builder.year).
                 setInteractive(true).
                 build();
 
-            var popupBuilder = new DateTimePickerPopupBuilder().
+            let popupBuilder = new DateTimePickerPopupBuilder().
                 setHours(builder.hours).
                 setMinutes(builder.minutes).
                 setCalendar(calendar).
@@ -127,7 +127,7 @@ module api.ui.time {
         }
 
         protected wrapChildrenAndAppend() {
-            var wrapper = new api.dom.DivEl('wrapper', api.StyleHelper.COMMON_PREFIX);
+            let wrapper = new api.dom.DivEl('wrapper', api.StyleHelper.COMMON_PREFIX);
             wrapper.appendChildren<api.dom.Element>(this.input, this.popup);
 
             this.appendChild(wrapper);
@@ -152,15 +152,15 @@ module api.ui.time {
                 if (api.ui.KeyHelper.isArrowKey(event) || api.ui.KeyHelper.isModifierKey(event)) {
                     return;
                 }
-                var typedDateTime = this.input.getValue();
-                var date: Date = null;
+                let typedDateTime = this.input.getValue();
+                let date: Date = null;
                 if (api.util.StringHelper.isEmpty(typedDateTime)) {
                     this.validUserInput = true;
                     this.setDateTime(null);
                     this.popup.hide();
                 } else {
                     date = api.util.DateHelper.parseDateTime(typedDateTime);
-                    var dateLength = date && date.getFullYear().toString().length + 12;
+                    let dateLength = date && date.getFullYear().toString().length + 12;
                     if (date && date.toString() != "Invalid Date" && typedDateTime.length == dateLength) {
                         this.validUserInput = true;
                         this.setDateTime(date);
@@ -207,7 +207,7 @@ module api.ui.time {
 
         private setTime(hours: number, minutes: number) {
             if (!this.selectedDate) {
-                var today = new Date();
+                let today = new Date();
                 this.selectedDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
             }
             this.selectedDate.setHours(hours);
@@ -215,8 +215,8 @@ module api.ui.time {
         }
 
         private setDate(date: Date) {
-            var hours = this.selectedDate ? this.selectedDate.getHours() : 0,
-                minutes = this.selectedDate ? this.selectedDate.getMinutes() : 0;
+            let hours = this.selectedDate ? this.selectedDate.getHours() : 0;
+            let minutes = this.selectedDate ? this.selectedDate.getMinutes() : 0;
 
             this.selectedDate = date;
 
@@ -242,7 +242,7 @@ module api.ui.time {
         private notifySelectedDateTimeChanged(event: SelectedDateChangedEvent) {
             this.selectedDateTimeChangedListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         private formatDateTime(date: Date): string {

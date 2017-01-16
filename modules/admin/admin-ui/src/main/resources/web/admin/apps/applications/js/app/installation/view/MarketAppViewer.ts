@@ -27,7 +27,7 @@ export class MarketAppViewer extends api.ui.Viewer<MarketApplication> {
     }
 
     resolveDisplayName(object: MarketApplication): string {
-        var appLink = new api.dom.AEl().setUrl(object.getUrl(), "_blank").setHtml(object.getDisplayName(), false);
+        let appLink = new api.dom.AEl().setUrl(object.getUrl(), "_blank").setHtml(object.getDisplayName(), false);
         return appLink.toString();
     }
 
@@ -60,10 +60,10 @@ export class MarketAppViewer extends api.ui.Viewer<MarketApplication> {
         }
 
         if (object) {
-            var displayName = this.resolveDisplayName(object),
-                subName = this.resolveSubName(object, this.relativePath),
-                subTitle = this.resolveSubTitle(object),
-                iconUrl = this.resolveIconUrl(object);
+            let displayName = this.resolveDisplayName(object);
+            let subName = this.resolveSubName(object, this.relativePath);
+            let subTitle = this.resolveSubTitle(object);
+            let iconUrl = this.resolveIconUrl(object);
 
             this.namesAndIconView.getNamesView().setMainName(displayName, false).setSubName(subName, subTitle);
             if (!!subTitle) {

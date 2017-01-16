@@ -10,16 +10,28 @@ module api.dom {
             if (!body) {
                 body = document.body;
             }
-            var html = Element.fromHtmlElement(body.parentElement);
+            let html = Element.fromHtmlElement(body.parentElement);
 
-            super(new ElementFromHelperBuilder().
-                setHelper(new ElementHelper(body)).
-                setLoadExistingChildren(loadExistingChildren));
+            super(new ElementFromHelperBuilder().setHelper(new ElementHelper(body)).setLoadExistingChildren(loadExistingChildren));
 
             html.appendChild(this);
 
-            this.init();
-            this.childrenLoaded = loadExistingChildren;
+            let visibilityHandler = () => {
+                this.init().then(() => {
+                    this.childrenLoaded = loadExistingChildren;
+                });
+            };
+            if (!document.hidden) {
+                visibilityHandler();
+            } else {
+                let visibilityListener = () => {
+                    if (!document.hidden && !this.isRendered() && !this.isRendering()) {
+                        visibilityHandler();
+                        document.removeEventListener('visibilitychange', visibilityListener);
+                    }
+                };
+                document.addEventListener('visibilitychange', visibilityListener);
+            }
         }
 
         static get(): Body {

@@ -14,9 +14,6 @@ module api.content {
 
         private readOnly: boolean;
 
-        constructor() {
-        }
-
         public static fromContentSummary(contentSummary: ContentSummary) {
             return new ContentSummaryAndCompareStatus().setContentSummary(contentSummary);
         }
@@ -114,7 +111,7 @@ module api.content {
                 return false;
             }
 
-            var other = <ContentSummaryAndCompareStatus>o;
+            let other = <ContentSummaryAndCompareStatus>o;
 
             if (!api.ObjectHelper.equals(this.uploadItem, other.uploadItem)) {
                 return false;

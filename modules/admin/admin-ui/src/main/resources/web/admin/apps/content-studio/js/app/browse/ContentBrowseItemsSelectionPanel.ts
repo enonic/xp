@@ -40,7 +40,7 @@ export class ContentBrowseItemsSelectionPanel extends BrowseItemsSelectionPanel<
     }
 
     createItemViewer(item: ContentBrowseItem): ContentSummaryAndCompareStatusViewer {
-        var viewer = new ContentSummaryAndCompareStatusViewer();
+        let viewer = new ContentSummaryAndCompareStatusViewer();
         viewer.setObject(item.getModel());
         return viewer;
     }
@@ -54,6 +54,5 @@ export class ContentBrowseItemsSelectionPanel extends BrowseItemsSelectionPanel<
 
         return changes;
     }
-
 
 }

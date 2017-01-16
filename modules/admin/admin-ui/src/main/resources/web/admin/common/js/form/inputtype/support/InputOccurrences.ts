@@ -55,7 +55,7 @@ module api.form.inputtype.support {
         }
 
         hasValidUserInput(): boolean {
-            var result = true;
+            let result = true;
             this.getOccurrenceViews().forEach((formItemOccurrenceView: FormItemOccurrenceView) => {
 
                 if (!formItemOccurrenceView.hasValidUserInput()) {
@@ -79,10 +79,10 @@ module api.form.inputtype.support {
         }
 
         protected constructOccurrencesForNoData(): api.form.FormItemOccurrence<InputOccurrenceView>[] {
-            var occurrences: api.form.FormItemOccurrence<InputOccurrenceView>[] = [];
+            let occurrences: api.form.FormItemOccurrence<InputOccurrenceView>[] = [];
             if (this.getAllowedOccurrences().getMinimum() > 0) {
 
-                for (var i = 0; i < this.getAllowedOccurrences().getMinimum(); i++) {
+                for (let i = 0; i < this.getAllowedOccurrences().getMinimum(); i++) {
                     occurrences.push(this.createNewOccurrence(this, i));
                 }
             } else {
@@ -92,14 +92,14 @@ module api.form.inputtype.support {
         }
 
         protected constructOccurrencesForData(): api.form.FormItemOccurrence<InputOccurrenceView>[] {
-            var occurrences: api.form.FormItemOccurrence<InputOccurrenceView>[] = [];
+            let occurrences: api.form.FormItemOccurrence<InputOccurrenceView>[] = [];
 
             this.propertyArray.forEach((property: Property, index: number) => {
                 occurrences.push(this.createNewOccurrence(this, index));
             });
 
             if (occurrences.length < this.input.getOccurrences().getMinimum()) {
-                for (var index: number = occurrences.length; index < this.input.getOccurrences().getMinimum(); index++) {
+                for (let index: number = occurrences.length; index < this.input.getOccurrences().getMinimum(); index++) {
                     occurrences.push(this.createNewOccurrence(this, index));
                 }
             }
@@ -113,10 +113,10 @@ module api.form.inputtype.support {
 
         createNewOccurrenceView(occurrence: InputOccurrence): InputOccurrenceView {
 
-            var property = this.getPropertyFromArray(occurrence.getIndex());
-            var inputOccurrenceView: InputOccurrenceView = new InputOccurrenceView(occurrence, this.baseInputTypeView, property);
+            let property = this.getPropertyFromArray(occurrence.getIndex());
+            let inputOccurrenceView: InputOccurrenceView = new InputOccurrenceView(occurrence, this.baseInputTypeView, property);
 
-            var inputOccurrences: InputOccurrences = this;
+            let inputOccurrences: InputOccurrences = this;
             inputOccurrenceView.onRemoveButtonClicked((event: api.form.RemoveButtonClickedEvent<InputOccurrenceView>) => {
                 inputOccurrences.removeOccurrenceView(event.getView());
             });
@@ -136,9 +136,9 @@ module api.form.inputtype.support {
         }
 
         private getPropertyFromArray(index: number): Property {
-            var property = this.propertyArray.get(index);
+            let property = this.propertyArray.get(index);
             if (!property) {
-                var newInitialValue = this.baseInputTypeView.newInitialValue();
+                let newInitialValue = this.baseInputTypeView.newInitialValue();
                 api.util.assertNotNull(newInitialValue,
                     "InputTypeView-s extending BaseInputTypeNotManagingAdd must must return a Value from newInitialValue");
                 property = this.propertyArray.add(newInitialValue);
@@ -148,10 +148,10 @@ module api.form.inputtype.support {
 
         giveFocus(): boolean {
 
-            var focusGiven = false;
-            var occurrenceViews = this.getOccurrenceViews();
+            let focusGiven = false;
+            let occurrenceViews = this.getOccurrenceViews();
             if (occurrenceViews.length > 0) {
-                for (var i = 0; i < occurrenceViews.length; i++) {
+                for (let i = 0; i < occurrenceViews.length; i++) {
                     if (occurrenceViews[i].giveFocus()) {
                         focusGiven = true;
                         break;

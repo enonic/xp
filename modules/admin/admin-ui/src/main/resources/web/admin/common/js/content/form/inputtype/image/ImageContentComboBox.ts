@@ -8,14 +8,17 @@ module api.content.form.inputtype.image {
     import ImageSelectorDisplayValue = api.content.form.inputtype.image.ImageSelectorDisplayValue;
     import ImageSelectorViewer = api.content.form.inputtype.image.ImageSelectorViewer;
     import ImageSelectorSelectedOptionsView = api.content.form.inputtype.image.ImageSelectorSelectedOptionsView;
+    import ContentQueryResultJson = api.content.json.ContentQueryResultJson;
+    import ContentSummaryJson = api.content.json.ContentSummaryJson;
+    import BaseLoader = api.util.loader.BaseLoader;
 
     export class ImageContentComboBox extends RichComboBox<ImageSelectorDisplayValue> {
 
         constructor(builder: ImageContentComboBoxBuilder) {
 
-            var loader = builder.loader ? builder.loader : new ContentSummaryLoader();
+            let loader = builder.loader ? builder.loader : new ContentSummaryLoader();
 
-            var richComboBoxBuilder = new RichComboBoxBuilder().
+            let richComboBoxBuilder = new RichComboBoxBuilder().
                 setComboBoxName(builder.name ? builder.name : 'imageContentSelector').
                 setLoader(loader).
                 setSelectedOptionsView(builder.selectedOptionsView || new ImageSelectorSelectedOptionsView()).
@@ -37,7 +40,7 @@ module api.content.form.inputtype.image {
             return {
                 value: this.getDisplayValueId(value),
                 displayValue: ImageSelectorDisplayValue.fromContentSummary(value)
-            }
+            };
         }
 
         public static create(): ImageContentComboBoxBuilder {
@@ -51,7 +54,7 @@ module api.content.form.inputtype.image {
 
         maximumOccurrences: number = 0;
 
-        loader: api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary>;
+        loader: BaseLoader<ContentQueryResultJson<ContentSummaryJson>, ContentSummary>;
 
         minWidth: number;
 
@@ -76,7 +79,7 @@ module api.content.form.inputtype.image {
             return this;
         }
 
-        setLoader(loader: api.util.loader.BaseLoader<json.ContentQueryResultJson<json.ContentSummaryJson>, ContentSummary>): ImageContentComboBoxBuilder {
+        setLoader(loader: BaseLoader<ContentQueryResultJson<ContentSummaryJson>, ContentSummary>): ImageContentComboBoxBuilder {
             this.loader = loader;
             return this;
         }

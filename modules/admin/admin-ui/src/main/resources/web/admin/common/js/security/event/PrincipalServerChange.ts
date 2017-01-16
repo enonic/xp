@@ -20,7 +20,6 @@ module api.security.event {
             super(type, changeItems, newPrincipalPaths);
         }
 
-
         getChangeType(): NodeServerChangeType {
             return this.type;
         }
@@ -35,7 +34,7 @@ module api.security.event {
 
         static fromJson(nodeEventJson: NodeEventJson): PrincipalServerChange {
 
-            var changedItems = nodeEventJson.data.nodes.
+            let changedItems = nodeEventJson.data.nodes.
                 filter((node) => node.path.indexOf("/identity") === 0).
                 map((node: NodeEventNodeJson) => PrincipalServerChangeItem.fromJson(node));
 

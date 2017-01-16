@@ -1,7 +1,9 @@
 package com.enonic.xp.blob;
 
-public class Segment
+public final class Segment
 {
+    public static final Segment[] DEFAULT_REQUIRED_SEGMENTS = new Segment[]{Segment.from( "node" ), Segment.from( "binary" )};
+
     private final String value;
 
     private Segment( final String value )

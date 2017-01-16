@@ -46,7 +46,7 @@ module api.content.util {
 
         resolve(): string {
 
-            var url = "content/image/" + this.contentId.toString();
+            let url = "content/image/" + this.contentId.toString();
             if (this.size.length > 0) {
                 url = this.appendParam("size", this.size, url);
             }

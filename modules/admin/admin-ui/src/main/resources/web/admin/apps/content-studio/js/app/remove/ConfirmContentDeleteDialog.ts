@@ -81,8 +81,7 @@ export class ConfirmContentDeleteDialog extends api.ui.dialog.ModalDialog {
                 setTimeout(()=> {
                     this.confirmDeleteButton.giveFocus();
                 }, 0);
-            }
-            else {
+            } else {
                 this.input.removeClass("valid").addClass("invalid");
                 this.confirmDeleteAction.setEnabled(false);
             }
@@ -97,7 +96,7 @@ export class ConfirmContentDeleteDialog extends api.ui.dialog.ModalDialog {
     }
 
     private initConfirmationBlock() {
-        var confirmationDiv = new api.dom.DivEl("confirm-delete-block");
+        let confirmationDiv = new api.dom.DivEl("confirm-delete-block");
 
         confirmationDiv.appendChildren(
             new api.dom.SpanEl("confirm-delete-text").setHtml("Enter "),

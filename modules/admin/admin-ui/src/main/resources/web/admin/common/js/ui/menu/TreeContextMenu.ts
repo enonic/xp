@@ -5,7 +5,7 @@ module api.ui.menu {
 
         private actions: api.ui.Action[] = [];
 
-        constructor(actions?: api.ui.Action[], appendToBody = true) {
+        constructor(actions?: api.ui.Action[], appendToBody: boolean = true) {
             super("context-menu");
 
             if (actions) {
@@ -29,23 +29,22 @@ module api.ui.menu {
         }
 
         private addAction(action: api.ui.Action): TreeMenuItem {
-            var childActions = action.getChildActions();
-            var menuItem = this.createMenuItem(action);
-            var subItems = [];
+            let childActions = action.getChildActions();
+            let menuItem = this.createMenuItem(action);
+            let subItems = [];
             this.appendChild(menuItem);
             this.actions.push(action);
 
             if (childActions.length > 0) {
-                for (var i = 0; i < childActions.length; i++) {
+                for (let i = 0; i < childActions.length; i++) {
                     subItems.push(this.addAction(childActions[i]));
                 }
                 menuItem.onClicked((event: MouseEvent) => {
-                    for (var i = 0; i < subItems.length; i++) {
+                    for (let i = 0; i < subItems.length; i++) {
                         subItems[i].toggleExpand();
                     }
                 });
-            }
-            else {
+            } else {
 
                 menuItem.onClicked((event: MouseEvent) => {
                     this.notifyItemClicked();
@@ -116,7 +115,7 @@ module api.ui.menu {
         }
 
         moveBy(dx: number, dy: number) {
-            var offset = this.getEl().getOffsetToParent();
+            let offset = this.getEl().getOffsetToParent();
             // referencing through prototype to be able to call this function with context other than this
             // i.e this.moveBy.call(other, x, y)
             TreeContextMenu.prototype.doMoveTo(this, offset.left + dx, offset.top + dy);

@@ -77,7 +77,7 @@ export class SortContentTabMenu extends api.ui.tab.TabMenu {
     }
 
     isKeyPrevious(event: KeyboardEvent) {
-        return KeyHelper.isArrowUpKey(event)
+        return KeyHelper.isArrowUpKey(event);
     }
 
     protected hideMenu() {
@@ -138,7 +138,6 @@ export class SortContentTabMenu extends api.ui.tab.TabMenu {
     selectManualSortingItem() {
         this.selectNavigationItemByOrder(this.navigationItems.SORT_MANUAL_ITEM.getChildOrder());
     }
-
 
     onSortOrderChanged(listener: () => void) {
         this.sortOrderChangedListeners.push(listener);

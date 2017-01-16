@@ -9,5 +9,3 @@
 ///<reference path='RangeJson.ts'/>
 ///<reference path='DateRange.ts'/>
 ///<reference path='DateRangeJson.ts'/>
-
-

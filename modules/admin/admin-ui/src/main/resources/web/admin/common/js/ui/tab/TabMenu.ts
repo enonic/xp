@@ -74,7 +74,6 @@ module api.ui.tab {
                     }
                 }
 
-
                 if (KeyHelper.isEscKey(event) && this.isMenuVisible()) {
                     this.hideMenu();
                 }
@@ -122,7 +121,7 @@ module api.ui.tab {
         }
 
         isKeyPrevious(event: KeyboardEvent) {
-            KeyHelper.isArrowLeftKey(event)
+            KeyHelper.isArrowLeftKey(event);
         }
 
         setEnabled(enabled: boolean): TabMenu {
@@ -193,10 +192,9 @@ module api.ui.tab {
             this.tabs.splice(index, 0, tab);
             tab.setIndex(index);
 
-            this.tabs.slice(index+1).forEach((tab:TabBarItem) => {
-                tab.setIndex(tab.getIndex()+1);
+            this.tabs.slice(index+1).forEach((slicedTab:TabBarItem) => {
+                slicedTab.setIndex(slicedTab.getIndex() + 1);
             });
-
 
             if (tab.isVisibleInMenu()) {
                 this.menuEl.insertChild(tab, index);
@@ -238,7 +236,6 @@ module api.ui.tab {
             this.notifyTabAddedListeners(tab);
         }
 
-
         isEmpty(): boolean {
             return this.tabs.length == 0;
         }
@@ -248,7 +245,7 @@ module api.ui.tab {
         }
 
         countVisible(): number {
-            var size = 0;
+            let size = 0;
             this.tabs.forEach((tab: TabMenuItem) => {
                 if (tab.isVisibleInMenu()) {
                     size++;
@@ -290,7 +287,7 @@ module api.ui.tab {
             }
 
             // update indexes for tabs that have been after the removed tab
-            for (var i = tab.getIndex(); i < this.tabs.length; i++) {
+            for (let i = tab.getIndex(); i < this.tabs.length; i++) {
                 this.tabs[i].setIndex(i);
             }
 
@@ -299,7 +296,7 @@ module api.ui.tab {
                 this.tabMenuButton.hide();
                 this.hideMenu();
             } else {
-                var newTab = this.getSelectedNavigationItem();
+                let newTab = this.getSelectedNavigationItem();
                 if (newTab) {
                     this.setButtonLabel(newTab.getLabel());
                     this.updateActiveTab(newTab.getIndex());
@@ -336,10 +333,9 @@ module api.ui.tab {
             }
         }
 
-
         updateActiveTab(tabIndex: number) {
             this.tabs.forEach((tab: TabMenuItem, index: number) => {
-                var activate = (tabIndex == index);
+                let activate = (tabIndex == index);
                 tab.setActive(activate);
             });
         }
@@ -350,7 +346,7 @@ module api.ui.tab {
             }
 
             this.selectedTab = tabIndex;
-            var selectedTab = this.getNavigationItem(tabIndex);
+            let selectedTab = this.getNavigationItem(tabIndex);
             this.setButtonLabel(selectedTab.getLabel());
             this.updateActiveTab(tabIndex);
 
@@ -358,7 +354,7 @@ module api.ui.tab {
         }
 
         deselectNavigationItem() {
-            var selectedTab = this.getSelectedNavigationItem();
+            let selectedTab = this.getSelectedNavigationItem();
             this.selectedTab = -1;
             this.updateActiveTab(this.selectedTab);
 

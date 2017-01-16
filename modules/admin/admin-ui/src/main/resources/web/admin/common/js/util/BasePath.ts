@@ -20,8 +20,7 @@ module api.util {
             elements.forEach((element:string, index:number) => {
                 if (element == null) {
                     throw new Error("Path element was null at index: " + index);
-                }
-                else if (element.length == 0) {
+                } else if (element.length == 0) {
                     throw new Error("Path element was empty string at index: " + index);
                 }
             });
@@ -51,7 +50,7 @@ module api.util {
             if (this.elements.length < 1) {
                 return null;
             }
-            var parentElemements:string[] = [];
+            let parentElemements:string[] = [];
             this.elements.forEach((element:string, index:number)=> {
                 if (index < this.elements.length - 1) {
                     parentElemements.push(element);
@@ -69,7 +68,7 @@ module api.util {
         }
 
         public static removeEmptyElements(elements:string[]):string[] {
-            var filteredElements:string[] = [];
+            let filteredElements:string[] = [];
             elements.forEach((element:string) => {
                 if (element.length > 0) {
                     filteredElements.push(element);

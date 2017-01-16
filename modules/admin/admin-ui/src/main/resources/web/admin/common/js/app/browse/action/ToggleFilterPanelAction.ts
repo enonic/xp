@@ -6,7 +6,7 @@ module api.app.browse.action {
 
         constructor(browsePanel: BrowsePanel<any>) {
             super("");
-            this.setIconClass("icon-search")
+            this.setIconClass("icon-search");
             this.setEnabled(true);
             this.onExecuted(() => {
                 browsePanel.toggleFilterPanel();

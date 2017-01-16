@@ -12,8 +12,8 @@ module api.ui {
          */
         canClose():boolean;
 
-        onClosed(handler: (event) => void);
+        onClosed(handler: (event: any) => void);
 
-        unClosed(handler: (event) => void);
+        unClosed(handler: (event: any) => void);
     }
 }

@@ -60,12 +60,12 @@ export class ContentPublishDialog extends ProgressBarDialog {
     }
 
     private initActions() {
-        var showScheduleAction = new ShowSchedulePublishDialogAction();
+        let showScheduleAction = new ShowSchedulePublishDialogAction();
         showScheduleAction.onExecuted(this.showScheduleDialog.bind(this));
         this.showScheduleDialogButton = this.addAction(showScheduleAction, false);
         this.showScheduleDialogButton.setTitle("Schedule Publishing");
 
-        var publishAction = new ContentPublishDialogAction();
+        let publishAction = new ContentPublishDialogAction();
         publishAction.onExecuted(this.doPublish.bind(this, false));
         this.actionButton = this.addAction(publishAction, true);
 
@@ -134,7 +134,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
     }
 
     private refreshPublishDependencies(): wemQ.Promise<void> {
-        var stashedItems = this.getStashedItems();
+        let stashedItems = this.getStashedItems();
         // null - means items have not been loaded yet or we had to clear it because of selection change
         if (!stashedItems) {
             return this.reloadPublishDependencies(true);
@@ -162,8 +162,8 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
         this.setSubTitle("Resolving items...");
 
-        let ids = this.getContentToPublishIds(),
-            loadChildren = this.childrenCheckbox.isChecked();
+        let ids = this.getContentToPublishIds();
+        let loadChildren = this.childrenCheckbox.isChecked();
 
         let resolveDependenciesRequest = api.content.resource.ResolvePublishDependenciesRequest.
             create().
@@ -180,8 +180,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
             return this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
                 if (resetDependantItems) { // just opened or first time loading children
                     this.setDependantItems(dependants);
-                }
-                else {
+                } else {
                     this.filterDependantItems(dependants);
                 }
 
@@ -204,7 +203,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
         if (this.isProgressBarEnabled()) {
             return;
         }
-        var itemsToRemove = this.getDependantList().getItems().filter(
+        let itemsToRemove = this.getDependantList().getItems().filter(
             (oldDependantItem: ContentSummaryAndCompareStatus) => !dependants.some(
                 (newDependantItem) => oldDependantItem.equals(newDependantItem)));
         this.getDependantList().removeItems(itemsToRemove);
@@ -262,7 +261,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
     private getContentToPublishIds(): ContentId[] {
         return this.getItemList().getItems().map(item => {
             return item.getContentId();
-        })
+        });
     }
 
     private showScheduleDialog() {
@@ -287,9 +286,9 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
         this.setSubTitle(this.countTotal() + " items are being published...");
 
-        var selectedIds = this.getContentToPublishIds();
+        let selectedIds = this.getContentToPublishIds();
 
-        var publishRequest = new PublishContentRequest()
+        let publishRequest = new PublishContentRequest()
             .setIncludeChildren(this.childrenCheckbox.isChecked())
             .setIds(selectedIds)
             .setExcludedIds(this.excludedIds);
@@ -393,7 +392,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
     private disableCheckbox() {
         this.childrenCheckbox.setDisabled(true);
-        this.childrenCheckbox.addClass("disabled")
+        this.childrenCheckbox.addClass("disabled");
     }
 
     private enableCheckbox() {
@@ -405,7 +404,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
         return true;
     }
 
-    private togglePublish(enable) {
+    private togglePublish(enable: boolean) {
         this.toggleControls(enable);
         this.toggleClass('no-publish', !enable);
     }

@@ -9,8 +9,8 @@ module api.form {
 
             this.input = input;
 
-            var wrapper = new api.dom.DivEl("wrapper", api.StyleHelper.COMMON_PREFIX);
-            var label = new api.dom.DivEl("label");
+            let wrapper = new api.dom.DivEl("wrapper", api.StyleHelper.COMMON_PREFIX);
+            let label = new api.dom.DivEl("label");
             label.getEl().setInnerHtml(input.getLabel());
             wrapper.getEl().appendChild(label.getHTMLElement());
 

@@ -32,7 +32,7 @@ module api.aggregation {
         }
 
         hasSelectedBuckets(): boolean {
-            var hasSelected: boolean = false;
+            let hasSelected: boolean = false;
             this.aggregationGroupViews.forEach((aggregationGroupView: api.aggregation.AggregationGroupView) => {
                 if (aggregationGroupView.hasSelections()) {
                     hasSelected = true;
@@ -45,7 +45,7 @@ module api.aggregation {
 
             this.aggregationGroupViews.forEach((aggregationGroupView: api.aggregation.AggregationGroupView) => {
 
-                var matchingAggregations: api.aggregation.Aggregation[] = aggregations.filter((current: api.aggregation.Aggregation) => {
+                let matchingAggregations: api.aggregation.Aggregation[] = aggregations.filter((current: api.aggregation.Aggregation) => {
                     return aggregationGroupView.handlesAggregation(current);
                 });
 
@@ -60,10 +60,10 @@ module api.aggregation {
         }
 
         getSelectedValuesByAggregationName(): api.aggregation.AggregationSelection[] {
-            var aggregationSelections: api.aggregation.AggregationSelection[] = [];
+            let aggregationSelections: api.aggregation.AggregationSelection[] = [];
 
             this.aggregationGroupViews.forEach((aggregationGroupView: api.aggregation.AggregationGroupView) => {
-                var selectedValuesByAggregationName = aggregationGroupView.getSelectedValuesByAggregationName();
+                let selectedValuesByAggregationName = aggregationGroupView.getSelectedValuesByAggregationName();
                 aggregationSelections = aggregationSelections.concat(selectedValuesByAggregationName);
 
             });

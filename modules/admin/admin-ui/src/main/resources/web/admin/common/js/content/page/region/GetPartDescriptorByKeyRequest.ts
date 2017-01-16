@@ -24,17 +24,18 @@ module api.content.page.region {
         }
 
         sendAndParse(): wemQ.Promise<PartDescriptor> {
-            var deferred = wemQ.defer<PartDescriptor>();
+            let deferred = wemQ.defer<PartDescriptor>();
 
-            new GetPartDescriptorsByApplicationRequest(this.key.getApplicationKey()).sendAndParse().then((descriptors: PartDescriptor[]) => {
-                descriptors.forEach((descriptor: PartDescriptor) => {
-                    if (this.key.equals(descriptor.getKey())) {
-                        deferred.resolve(descriptor);
-                    }
-                });
-            }).catch((reason: any) => {
-                api.DefaultErrorHandler.handle(reason);
-            }).done();
+            new GetPartDescriptorsByApplicationRequest(this.key.getApplicationKey()).sendAndParse()
+                .then((descriptors: PartDescriptor[]) => {
+                    descriptors.forEach((descriptor: PartDescriptor) => {
+                        if (this.key.equals(descriptor.getKey())) {
+                            deferred.resolve(descriptor);
+                        }
+                    });
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).done();
 
             return deferred.promise;
         }

@@ -40,8 +40,8 @@ module api.schema.content.inputtype {
         }
 
         private createPageTemplateLoader(): PageTemplateContentTypeLoader {
-            var contentId = this.context.site.getContentId(),
-                loader = new api.schema.content.PageTemplateContentTypeLoader(contentId);
+            let contentId = this.context.site.getContentId();
+            let loader = new api.schema.content.PageTemplateContentTypeLoader(contentId);
 
             loader.setComparator(new api.content.ContentTypeSummaryByDisplayNameComparator());
 
@@ -49,8 +49,8 @@ module api.schema.content.inputtype {
         }
 
         private createComboBox(): ContentTypeComboBox {
-            var loader = this.context.formContext.getContentTypeName().isPageTemplate() ? this.createPageTemplateLoader() : null,
-                comboBox = new ContentTypeComboBox(this.getInput().getOccurrences().getMaximum(), loader);
+            let loader = this.context.formContext.getContentTypeName().isPageTemplate() ? this.createPageTemplateLoader() : null;
+            let comboBox = new ContentTypeComboBox(this.getInput().getOccurrences().getMaximum(), loader);
 
             comboBox.onLoaded(this.onContentTypesLoadedHandler);
 
@@ -78,11 +78,10 @@ module api.schema.content.inputtype {
                 return;
             }
             this.ignorePropertyChange = true;
-            var value = new Value(selectedOption.getOption().displayValue.getContentTypeName().toString(), ValueTypes.STRING);
+            let value = new Value(selectedOption.getOption().displayValue.getContentTypeName().toString(), ValueTypes.STRING);
             if (this.combobox.countSelected() == 1) { // overwrite initial value
                 this.getPropertyArray().set(0, value);
-            }
-            else {
+            } else {
                 this.getPropertyArray().add(value);
             }
 
@@ -111,9 +110,8 @@ module api.schema.content.inputtype {
             });
         }
 
-
         update(propertyArray: api.data.PropertyArray, unchangedOnly: boolean): Q.Promise<void> {
-            var superPromise = super.update(propertyArray, unchangedOnly);
+            let superPromise = super.update(propertyArray, unchangedOnly);
 
             if (!unchangedOnly || !this.combobox.isDirty()) {
                 return superPromise.then(() => {

@@ -1,11 +1,6 @@
 module api.form {
 
     import PropertySet = api.data.PropertySet;
-    import Property = api.data.Property;
-    import PropertyArray = api.data.PropertyArray;
-    import Value = api.data.Value;
-    import ValueType = api.data.ValueType;
-    import ValueTypes = api.data.ValueTypes;
 
     export interface FormOptionSetViewConfig {
 
@@ -46,16 +41,6 @@ module api.form {
                 parent: this.getParent(),
                 propertyArray: this.getPropertyArray(this.parentDataSet)
             });
-        }
-
-        protected getPropertyArray(parentPropertySet: PropertySet): PropertyArray {
-            var propertyArray = parentPropertySet.getPropertyArray(this.formSet.getName());
-            if (!propertyArray) {
-                propertyArray = PropertyArray.create().setType(ValueTypes.DATA).setName(this.formSet.getName()).setParent(
-                    this.parentDataSet).build();
-                parentPropertySet.addPropertyArray(propertyArray);
-            }
-            return propertyArray;
         }
     }
 }

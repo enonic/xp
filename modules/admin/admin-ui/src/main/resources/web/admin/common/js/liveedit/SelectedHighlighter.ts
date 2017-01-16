@@ -15,7 +15,6 @@ module api.liveedit {
             return SelectedHighlighter.SELECT_INSTANCE;
         }
 
-
         protected preProcessStyle(style: api.liveedit.HighlighterStyle, isEmptyView: boolean): api.liveedit.HighlighterStyle {
             return {
                 stroke: 'rgba(11, 104, 249, 1)',

@@ -33,7 +33,7 @@ module api.form {
         private maximum: number;
 
         static fromJson(json: json.OccurrencesJson): Occurrences {
-            var builder = new OccurrencesBuilder();
+            let builder = new OccurrencesBuilder();
             builder.fromJson(json);
             return builder.build();
         }
@@ -95,7 +95,7 @@ module api.form {
                 return false;
             }
 
-            var other = <Occurrences>o;
+            let other = <Occurrences>o;
 
             if (!api.ObjectHelper.numberEquals(this.minimum, other.minimum)) {
                 return false;

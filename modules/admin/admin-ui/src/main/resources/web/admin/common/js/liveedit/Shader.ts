@@ -38,7 +38,7 @@ module api.liveedit {
 
             this.shaders = [this.pageShader, this.northShader, this.eastShader, this.southShader, this.westShader];
 
-            var body = Body.get();
+            let body = Body.get();
             body.appendChildren.apply(body, this.shaders);
             body.onMouseWheel((event: MouseEvent) => {
                 if (this.target && this.isVisible()) {
@@ -66,7 +66,7 @@ module api.liveedit {
         }
 
         private createShaderDiv(cls: string): DivEl {
-            return new DivEl(Shader.CLS_NAME + " " + cls, api.StyleHelper.getCurrentPrefix())
+            return new DivEl(Shader.CLS_NAME + " " + cls, api.StyleHelper.getCurrentPrefix());
         }
 
         public static get(): Shader {
@@ -110,13 +110,13 @@ module api.liveedit {
         unUnlockClicked(listener: (event: MouseEvent) => void) {
             this.unlockClickedListeners = this.unlockClickedListeners.filter((curr) => {
                 return listener != curr;
-            })
+            });
         }
 
         private notifyUnlockClicked(event: MouseEvent) {
             this.unlockClickedListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         onMouseEnter(listener: (event: MouseEvent) => void) {
@@ -126,13 +126,13 @@ module api.liveedit {
         unMouseEnter(listener: (event: MouseEvent) => void) {
             this.mouseEnterListeners = this.mouseEnterListeners.filter((curr) => {
                 return listener != curr;
-            })
+            });
         }
 
         private notifyMouseEntered(event: MouseEvent) {
             this.mouseEnterListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         onMouseLeave(listener: (event: MouseEvent) => void) {
@@ -142,13 +142,13 @@ module api.liveedit {
         unMouseLeave(listener: (event: MouseEvent) => void) {
             this.mouseLeaveListeners = this.mouseLeaveListeners.filter((curr) => {
                 return listener != curr;
-            })
+            });
         }
 
         private notifyMouseLeft(event: MouseEvent) {
             this.mouseLeaveListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         onMouseMove(listener: (event: MouseEvent) => void) {
@@ -158,13 +158,13 @@ module api.liveedit {
         unMouseMove(listener: (event: MouseEvent) => void) {
             this.mouseMoveListeners = this.mouseMoveListeners.filter((curr) => {
                 return listener != curr;
-            })
+            });
         }
 
         private notifyMouseMove(event: MouseEvent) {
             this.mouseMoveListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         onClicked(listener: (event: MouseEvent) => void) {
@@ -174,13 +174,13 @@ module api.liveedit {
         unClicked(listener: (event: MouseEvent) => void) {
             this.clickListeners = this.clickListeners.filter((curr) => {
                 return listener != curr;
-            })
+            });
         }
 
         private notifyClicked(event: MouseEvent) {
             this.clickListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         private handleUnlockClick(event: MouseEvent) {
@@ -197,8 +197,8 @@ module api.liveedit {
             this.notifyClicked(event);
         }
 
-        private showShaderIfNecessary(shader: Element, x, y, width, height) {
-            var shaderEl = shader.getEl();
+        private showShaderIfNecessary(shader: Element, x: number, y: number, width: number, height: number) {
+            let shaderEl = shader.getEl();
             shaderEl.setTopPx(y).
                 setLeftPx(x).
                 setWidthPx(width).
@@ -220,17 +220,17 @@ module api.liveedit {
 
             this.target = element;
 
-            var win = api.dom.WindowDOM.get(),
-                bodyEl = api.dom.Body.get().getEl(),
+            let win = api.dom.WindowDOM.get();
+            let bodyEl = api.dom.Body.get().getEl();
             // check if body is bigger than window to account for scroll
-                documentWidth = Math.max(win.getWidth(), bodyEl.getWidth()),
-                documentHeight = Math.max(win.getHeight(), bodyEl.getHeight());
+            let documentWidth = Math.max(win.getWidth(), bodyEl.getWidth());
+            let documentHeight = Math.max(win.getHeight(), bodyEl.getHeight());
 
-            var dimensions = element.getEl().getDimensions(),
-                x1 = Math.max(0, dimensions.left),
-                y1 = Math.max(0, dimensions.top),
-                x2 = Math.min(documentWidth, dimensions.left + dimensions.width),
-                y2 = Math.min(documentHeight, dimensions.top + dimensions.height);
+            let dimensions = element.getEl().getDimensions();
+            let x1 = Math.max(0, dimensions.left);
+            let y1 = Math.max(0, dimensions.top);
+            let x2 = Math.min(documentWidth, dimensions.left + dimensions.width);
+            let y2 = Math.min(documentHeight, dimensions.top + dimensions.height);
 
             if (Shader.debug) {
                 console.log('Shader.resizeToElement(' + x1 + ', ' + y1 + ', ' + x2 + ', ' + y2 + ')', element);

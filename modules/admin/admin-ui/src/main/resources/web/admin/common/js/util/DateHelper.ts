@@ -7,9 +7,9 @@ module api.util {
         }
 
         public static getTZOffset(): number {
-            var jan = new Date(2016, 0, 1),
-                jul = new Date(2016, 6, 1),
-                absoluteOffsetInHrs = Math.min(Math.abs(jan.getTimezoneOffset() / 60), Math.abs(jul.getTimezoneOffset() / 60));
+            let jan = new Date(2016, 0, 1);
+            let jul = new Date(2016, 6, 1);
+            let absoluteOffsetInHrs = Math.min(Math.abs(jan.getTimezoneOffset() / 60), Math.abs(jul.getTimezoneOffset() / 60));
 
             return jan.getTimezoneOffset() > 0 ? absoluteOffsetInHrs * -1 : absoluteOffsetInHrs;
         }
@@ -26,12 +26,12 @@ module api.util {
          */
         public static makeDateFromUTCString(value: string): Date {
 
-            var parsedYear: number = Number(value.substring(0, 4)),
-                parsedMonth: number = Number(value.substring(5, 7)),
-                parsedDayOfMonth: number = Number(value.substring(8, 10)),
-                parsedHours: number = Number(value.substring(11, 13)),
-                parsedMinutes: number = Number(value.substring(14, 16)),
-                parsedSeconds: number = Number(value.substring(17, 19));
+            let parsedYear: number = Number(value.substring(0, 4));
+            let parsedMonth: number = Number(value.substring(5, 7));
+            let parsedDayOfMonth: number = Number(value.substring(8, 10));
+            let parsedHours: number = Number(value.substring(11, 13));
+            let parsedMinutes: number = Number(value.substring(14, 16));
+            let parsedSeconds: number = Number(value.substring(17, 19));
 
             return new Date(Date.UTC(parsedYear, parsedMonth - 1, parsedDayOfMonth, parsedHours, parsedMinutes, parsedSeconds));
         }
@@ -42,7 +42,7 @@ module api.util {
          * @returns {string}
          */
         public static formatDate(date: Date): string {
-            var yearAsString = "" + date.getFullYear();
+            let yearAsString = "" + date.getFullYear();
             return yearAsString + "-" + this.padNumber(date.getMonth() + 1) + "-" + this.padNumber(date.getDate());
         }
 
@@ -68,11 +68,11 @@ module api.util {
          * @returns {string}
          */
         public static parseDate(value: string, dateSeparator: string = "-", forceDaysBeOfTwoChars: boolean = false): Date {
-            var dateStr = (value || '').trim();
+            let dateStr = (value || '').trim();
             if (dateStr.length < 8 || dateStr.length > 10) {
                 return null;
             }
-            var parts = dateStr.split(dateSeparator);
+            let parts = dateStr.split(dateSeparator);
             if (parts.length !== 3 || parts[0].length !== 4) {
                 return null;
             }
@@ -81,11 +81,11 @@ module api.util {
                 return null;
             }
 
-            var parsedYear: number = Number(parts[0]),
-                parsedMonth: number = Number(parts[1]),
-                parsedDayOfMonth: number = Number(parts[2]);
+            let parsedYear: number = Number(parts[0]);
+            let parsedMonth: number = Number(parts[1]);
+            let parsedDayOfMonth: number = Number(parts[2]);
 
-            var date = new Date(parsedYear, parsedMonth - 1, parsedDayOfMonth);
+            let date = new Date(parsedYear, parsedMonth - 1, parsedDayOfMonth);
             return date.getFullYear() === parsedYear && date.getMonth() === (parsedMonth - 1) && date.getDate() === parsedDayOfMonth
                 ? date
                 : null;
@@ -97,16 +97,16 @@ module api.util {
          * @returns {*}
          */
         private static parseTime(value: string): Time {
-            var dateStr = (value || '').trim();
+            let dateStr = (value || '').trim();
             if (dateStr.length != 5) {
                 return null;
             }
-            var parts = dateStr.split(':');
+            let parts = dateStr.split(':');
             if (parts.length !== 2) {
                 return null;
             }
-            var hour: number = Number(parts[0]);
-            var minute: number = Number(parts[1]);
+            let hour: number = Number(parts[0]);
+            let minute: number = Number(parts[1]);
             if (isNaN(hour) || isNaN(minute) || hour < 0 || hour > 23 || minute < 0 || minute > 59) {
                 return null;
             }
@@ -119,21 +119,21 @@ module api.util {
          * @returns {*}
          */
         static parseDateTime(value: string): Date {
-            var dateStr = (value || '').trim();
+            let dateStr = (value || '').trim();
             if (dateStr.length < 14 || dateStr.length > 16) {
                 return null;
             }
-            var parts = dateStr.split(' ');
+            let parts = dateStr.split(' ');
             if (parts.length !== 2) {
                 return null;
             }
-            var datePart = parts[0];
-            var timePart = parts[1];
-            var date = DateHelper.parseDate(datePart);
+            let datePart = parts[0];
+            let timePart = parts[1];
+            let date = DateHelper.parseDate(datePart);
             if (!date) {
                 return null;
             }
-            var time = DateHelper.parseTime(timePart);
+            let time = DateHelper.parseTime(timePart);
             if (!time) {
                 return null;
             }
@@ -142,23 +142,23 @@ module api.util {
         }
 
         private static parseLongTime(value: string, timeSeparator: string = ":", fractionSeparator: string = "."): LongTime {
-            var timeStr = (value || '').trim();
+            let timeStr = (value || '').trim();
             if (timeStr.length < 5 || timeStr.length > 12) {
                 return null;
             }
-            var time: string[] = timeStr.split(timeSeparator);
+            let time: string[] = timeStr.split(timeSeparator);
 
             if (time.length < 2 || time.length > 3) {
                 return null;
             }
 
-            var hours = Number(time[0]);
-            var minutes = Number(time[1]);
-            var seconds: number = 0;
-            var fractions: number = 0;
+            let hours = Number(time[0]);
+            let minutes = Number(time[1]);
+            let seconds: number = 0;
+            let fractions: number = 0;
 
             if (time[2]) {
-                var secondArr: string[] = time[2].split(fractionSeparator);
+                let secondArr: string[] = time[2].split(fractionSeparator);
                 seconds = Number(secondArr[0]);
                 if (secondArr[1]) {
                     fractions = Number(secondArr[1]);
@@ -189,20 +189,20 @@ module api.util {
          */
         static parseLongDateTime(value: string, dateTimeSeparator: string = "-", dateSeparator: string = "-", timeSeparator: string = ":",
                                  fractionSeparator: string = "."): Date {
-            var dateStr = (value || '').trim();
+            let dateStr = (value || '').trim();
 
-            var parts = dateStr.split(dateTimeSeparator);
+            let parts = dateStr.split(dateTimeSeparator);
             if (parts.length !== 2) {
                 return null;
             }
-            var datePart = parts[0];
-            var timePart = parts[1];
+            let datePart = parts[0];
+            let timePart = parts[1];
 
-            var date = DateHelper.parseDate(datePart, dateSeparator);
+            let date = DateHelper.parseDate(datePart, dateSeparator);
             if (!date) {
                 return null;
             }
-            var time = DateHelper.parseLongTime(timePart, timeSeparator, fractionSeparator);
+            let time = DateHelper.parseLongTime(timePart, timeSeparator, fractionSeparator);
             if (!time) {
                 return null;
             }

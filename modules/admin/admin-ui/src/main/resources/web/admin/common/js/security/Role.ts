@@ -19,7 +19,7 @@ module api.security {
                 return false;
             }
 
-            var other = <Role> o;
+            let other = <Role> o;
             return super.equals(o) && api.ObjectHelper.arrayEquals(this.members, other.getMembers());
         }
 

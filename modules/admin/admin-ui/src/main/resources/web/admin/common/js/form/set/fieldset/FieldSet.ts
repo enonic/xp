@@ -12,7 +12,7 @@ module api.form {
 
             if (fieldSetJson.items != null) {
                 fieldSetJson.items.forEach((formItemJson: api.form.json.FormItemJson) => {
-                    var formItem = FormItemFactory.createFormItem(formItemJson);
+                    let formItem = FormItemFactory.createFormItem(formItemJson);
                     if (formItem) {
                         this.addFormItem(formItem);
                     }
@@ -51,7 +51,7 @@ module api.form {
                 return false;
             }
 
-            var other = <FieldSet>o;
+            let other = <FieldSet>o;
 
             if (!api.ObjectHelper.stringEquals(this.label, other.label)) {
                 return false;

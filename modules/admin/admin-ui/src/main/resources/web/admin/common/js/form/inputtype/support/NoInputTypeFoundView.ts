@@ -22,7 +22,7 @@ module api.form.inputtype.support {
 
         layout(input: api.form.Input, property?: PropertyArray): wemQ.Promise<void> {
 
-            var divEl = new api.dom.DivEl();
+            let divEl = new api.dom.DivEl();
             divEl.getEl().setInnerHtml("Warning: no input type found: " + input.getInputType().toString());
 
             return super.layout(input, property);
@@ -30,13 +30,13 @@ module api.form.inputtype.support {
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
 
-            var inputEl = api.ui.text.TextInput.middle();
+            let inputEl = api.ui.text.TextInput.middle();
             inputEl.setName(this.getInput().getName());
             if (property != null) {
                 inputEl.setValue(property.getString());
             }
             inputEl.onValueChanged((event: api.ValueChangedEvent) => {
-                var value = ValueTypes.STRING.newValue(event.getNewValue());
+                let value = ValueTypes.STRING.newValue(event.getNewValue());
                 this.notifyOccurrenceValueChanged(inputEl, value);
             });
 
@@ -44,7 +44,7 @@ module api.form.inputtype.support {
         }
 
         updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly: boolean) {
-            var input = <api.ui.text.TextInput> occurrence;
+            let input = <api.ui.text.TextInput> occurrence;
 
             if (!unchangedOnly || !input.isDirty()) {
                 input.setValue(property.getString());
@@ -52,7 +52,7 @@ module api.form.inputtype.support {
         }
 
         resetInputOccurrenceElement(occurrence: api.dom.Element) {
-            var input = <api.ui.text.TextInput> occurrence;
+            let input = <api.ui.text.TextInput> occurrence;
 
             input.resetBaseValues();
         }

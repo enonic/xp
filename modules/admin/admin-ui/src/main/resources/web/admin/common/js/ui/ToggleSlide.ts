@@ -43,11 +43,10 @@ module api.ui {
             this.calculateStyles();
             this.setupAnimation();
 
-            var turnOn = actions.turnOnAction.isEnabled();
+            let turnOn = actions.turnOnAction.isEnabled();
             if (turnOn) {
                 this.slideOn();
-            }
-            else {
+            } else {
                 this.slideOff();
             }
             this.isOn = turnOn;
@@ -124,9 +123,9 @@ module api.ui {
         }
 
         private calculateStyles() {
-            var sliderEl = this.slider.getEl(),
-                onLabelEl = this.onLabel.getEl(),
-                offLabelEl = this.offLabel.getEl();
+            let sliderEl = this.slider.getEl();
+            let onLabelEl = this.onLabel.getEl();
+            let offLabelEl = this.offLabel.getEl();
 
             // ToggleSlide width depends on width of longest label.
             // To have labels width calculated by browser they should be rendered into dom.
@@ -134,7 +133,7 @@ module api.ui {
             // It will be removed from here when it is inserted in another place.
             api.dom.Body.get().appendChild(this);
 
-            var labelWidth = Math.max(onLabelEl.getWidth(), offLabelEl.getWidth());
+            let labelWidth = Math.max(onLabelEl.getWidth(), offLabelEl.getWidth());
 
             // Increase slider width a bit so it hides seam between labels.
             sliderEl.setWidth((labelWidth + 4) + 'px');

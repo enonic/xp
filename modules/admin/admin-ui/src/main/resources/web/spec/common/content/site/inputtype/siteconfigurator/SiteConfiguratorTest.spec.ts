@@ -18,62 +18,68 @@ import FormValidityChangedEvent = api.form.FormValidityChangedEvent;
 
 describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
 
-    let input: Input, site: Site, formContext: ContentFormContext, configurator: SiteConfigurator;
+    let globalInput: Input;
+    let globalSite: Site;
+    let globalFormContext: ContentFormContext;
+    let globalConfigurator: SiteConfigurator;
 
     beforeEach(() => {
-        input = createInput();
-        site = createSite();
-        formContext = createFormContext(site);
-        configurator = createSiteConfigurator(input, site, formContext);
+        globalInput = createInput();
+        globalSite = createSite();
+        globalFormContext = createFormContext(globalSite);
+        globalConfigurator = createSiteConfigurator(globalInput, globalSite, globalFormContext);
     });
 
     describe("constructor", () => {
 
         it("should correctly initialize form context", function () {
-            expect(formContext).toEqual(configurator["formContext"]);
+            expect(globalFormContext).toEqual(globalConfigurator["globalFormContext"]);
         });
 
         describe("should correctly initialize input type context:", function () {
 
             it("input", function () {
-                expect(input).toEqual(configurator["context"].input);
+                expect(globalInput).toEqual(globalConfigurator["context"].input);
             });
 
             it("site", function () {
-                expect(site).toEqual(configurator["context"].site);
+                expect(globalSite).toEqual(globalConfigurator["context"].site);
             });
 
             it("formContext", function () {
-                expect(formContext).toEqual(configurator["context"].formContext);
+                expect(globalFormContext).toEqual(globalConfigurator["context"].formContext);
             });
         });
     });
 
-
     describe("what happens after layout", () => {
 
-        let createComboBoxSpy, parentSpy, appendChildSpy, providerSpy;
+        let createComboBoxSpy;
+        let parentSpy;
+        let appendChildSpy;
+        let providerSpy;
 
-        let combobox, provider;
+        let combobox;
+        let provider;
 
         beforeEach((done) => {
-            provider = new SiteConfigProvider(site.getContentData().getPropertyArray("siteConfig"));
+            provider = new SiteConfigProvider(globalSite.getContentData().getPropertyArray("siteConfig"));
 
-            createComboBoxSpy = spyOn(configurator, "createComboBox").and.callThrough();
-            appendChildSpy = spyOn(configurator, "appendChild").and.callThrough();
+            createComboBoxSpy = spyOn(globalConfigurator, "createComboBox").and.callThrough();
+            appendChildSpy = spyOn(globalConfigurator, "appendChild").and.callThrough();
             parentSpy = spyOn(BaseInputTypeManagingAdd.prototype, "layout").and.callThrough();
 
             providerSpy = spyOn(api.content.site.inputtype.siteconfigurator, "SiteConfigProvider")
                 .and.returnValue(provider);
 
-            configurator.layout(input, site.getContentData().getPropertyArray("siteConfig")).then(()=> {
+            globalConfigurator.layout(globalInput, globalSite.getContentData().getPropertyArray("siteConfig")).then(()=> {
                 combobox = createComboBoxSpy.calls.mostRecent().returnValue;
                 done();
             });
         });
 
         it('layout of the parent class is called', () => {
-            expect(parentSpy).toHaveBeenCalledWith(input, site.getContentData().getPropertyArray("siteConfig"));
+            expect(parentSpy).toHaveBeenCalledWith(globalInput, globalSite.getContentData().getPropertyArray("siteConfig"));
         });
 
         it('siteConfigProvider is initialized', () => {
@@ -87,12 +93,13 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
 
     describe("test public methods", () => {
 
-        let combobox, createComboBoxSpy;
+        let combobox;
+        let createComboBoxSpy;
 
         beforeEach((done) => {
-            createComboBoxSpy = spyOn(configurator, "createComboBox").and.callThrough();
+            createComboBoxSpy = spyOn(globalConfigurator, "createComboBox").and.callThrough();
 
-            configurator.layout(input, site.getContentData().getPropertyArray("siteConfig")).then(()=> {
+            globalConfigurator.layout(globalInput, globalSite.getContentData().getPropertyArray("siteConfig")).then(()=> {
                 combobox = createComboBoxSpy.calls.mostRecent().returnValue;
                 done();
             });
@@ -103,7 +110,7 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
 
             beforeEach(() => {
                 resetSpy = spyOn(combobox, "resetBaseValues");
-                configurator.reset();
+                globalConfigurator.reset();
             });
 
             it("combobox resetBaseValues method is called", () => {
@@ -116,7 +123,7 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
             let newSet: PropertySet;
 
             beforeEach(()=> {
-                let propertyArray = site.getContentData().getPropertyArray("siteConfig");
+                let propertyArray = globalSite.getContentData().getPropertyArray("siteConfig");
                 spyOn(combobox.getComboBox(), 'doWhenLoaded').and.stub();
 
                 newSet = propertyArray.addSet();
@@ -128,7 +135,7 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
                     done();
                 });
                 newSet.addString("v", "test");
-            })
+            });
         });
 
         describe("displayValidationErrors()", () => {
@@ -147,7 +154,7 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
 
                 displayValidationErrorsSpy = spyOn(formView, "displayValidationErrors");
 
-                configurator.displayValidationErrors(null);
+                globalConfigurator.displayValidationErrors(null);
             });
 
             it("formView displayValidationErrors method is called", () => {
@@ -158,14 +165,14 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
         describe("getValueType()", () => {
 
             it("value type should be 'PropertySet'", () => {
-                expect(configurator.getValueType() == ValueTypes.DATA).toBeTruthy();
+                expect(globalConfigurator.getValueType() == ValueTypes.DATA).toBeTruthy();
             });
 
         });
         describe("newInitialValue()", () => {
 
             it("initial value should be null", () => {
-                expect(configurator.newInitialValue()).toBeNull();
+                expect(globalConfigurator.newInitialValue()).toBeNull();
             });
 
         });
@@ -181,7 +188,7 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
             describe("if maximum occurrences reached ", () => {
                 beforeEach(() => {
                     combobox.maximumOccurrencesReached.and.returnValue(true);
-                    configurator.giveFocus();
+                    globalConfigurator.giveFocus();
                 });
 
                 it("should not focus the combobox", () => {
@@ -193,7 +200,7 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
             describe("if maximum occurrences is not reached ", () => {
                 beforeEach(() => {
                     combobox.maximumOccurrencesReached.and.returnValue(false);
-                    configurator.giveFocus();
+                    globalConfigurator.giveFocus();
                 });
 
                 it("should focus the combobox", () => {
@@ -203,7 +210,9 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
         });
 
         describe("validate()", () => {
-            let recording, selectedOption, result;
+            let recording;
+            let selectedOption;
+            let result;
 
             beforeEach(() => {
                 selectedOption = combobox.getSelectedOptionsView().createSelectedOption(
@@ -226,7 +235,7 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
                     spyOn(recording, "isMinimumOccurrencesValid").and.returnValue(false);
                     spyOn(recording, "isMaximumOccurrencesValid").and.returnValue(false);
 
-                    result = configurator.validate();
+                    result = globalConfigurator.validate();
                 });
 
                 it("minimum occurrences breached", () => {
@@ -248,7 +257,7 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
                     spyOn(recording, "isMaximumOccurrencesValid").and.returnValue(true);
                     spyOn(recording, "isMinimumOccurrencesValid").and.returnValue(true);
 
-                    result = configurator.validate();
+                    result = globalConfigurator.validate();
                 });
 
                 it("result is valid", () => {
@@ -261,20 +270,24 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
 
     describe("test event listeners", () => {
 
-        let combobox, selectedOption, handlerSpy, event: SelectedOptionEvent<any>, validationSpy;
+        let combobox;
+        let selectedOption;
+        let handlerSpy;
+        let event: SelectedOptionEvent<any>;
+        let validationSpy;
 
         beforeEach((done) => {
-            let createComboBoxSpy = spyOn(configurator, "createComboBox").and.callThrough();
+            let createComboBoxSpy = spyOn(globalConfigurator, "createComboBox").and.callThrough();
 
-            configurator.layout(input, site.getContentData().getPropertyArray("siteConfig")).then(() => {
+            globalConfigurator.layout(globalInput, globalSite.getContentData().getPropertyArray("siteConfig")).then(() => {
                 combobox = createComboBoxSpy.calls.mostRecent().returnValue;
 
                 selectedOption = combobox.getSelectedOptionsView().createSelectedOption(
                     <api.ui.selector.Option<Application>>{displayValue: createApplication(), value: "com.enonic.app.test"}
                 );
 
-                handlerSpy = spyOn(configurator, "saveToSet").and.callThrough();
-                validationSpy = spyOn(configurator, "validate");
+                handlerSpy = spyOn(globalConfigurator, "saveToSet").and.callThrough();
+                validationSpy = spyOn(globalConfigurator, "validate");
                 event = new SelectedOptionEvent(selectedOption, -1);
 
                 done();
@@ -282,7 +295,9 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
         });
 
         describe("when config has changed", () => {
-            var fakePropertyArrayObj, fakePropertySetObj, fakePropertyObj;
+            let fakePropertyArrayObj;
+            let fakePropertySetObj;
+            let fakePropertyObj;
 
             beforeEach(() => {
                 fakePropertySetObj = jasmine.createSpyObj('fakePropertySet', ['setStringByPath', 'setPropertySetByPath']);
@@ -291,7 +306,7 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
                 fakePropertyArrayObj = jasmine.createSpyObj('fakePropertyArray', ['get', 'addSet']);
                 fakePropertyArrayObj.get.and.returnValue(fakePropertyObj);
 
-                spyOn(configurator, "getPropertyArray").and.returnValue(fakePropertyArrayObj);
+                spyOn(globalConfigurator, "getPropertyArray").and.returnValue(fakePropertyArrayObj);
             });
 
             describe("if property set doesn't exist", () => {
@@ -305,7 +320,6 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
                 it("should create a new property set", () => {
                     expect(fakePropertyArrayObj.addSet).toHaveBeenCalled();
                 });
-
 
                 it("should update properties of the new property set", () => {
                     expect(fakePropertySetObj.setStringByPath).toHaveBeenCalled();
@@ -389,11 +403,11 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
         });
 
         describe("when an option is deselected", () => {
-            var fakePropertyArrayObj;
+            let fakePropertyArrayObj;
 
             beforeEach(() => {
                 fakePropertyArrayObj = jasmine.createSpyObj('eventHandler', ['remove']);
-                spyOn(configurator, "getPropertyArray").and.returnValue(fakePropertyArrayObj);
+                spyOn(globalConfigurator, "getPropertyArray").and.returnValue(fakePropertyArrayObj);
 
                 combobox.getSelectedOptionsView().notifyOptionDeselected(selectedOption);
             });
@@ -409,8 +423,12 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
     });
 
     function createFormContext(site: Site): ContentFormContext {
-        return ContentFormContext.create().setSite(site).setParentContent(null).setPersistedContent(site).setContentTypeName(
-            ContentTypeName.SITE).build();
+        return ContentFormContext.create()
+            .setSite(site)
+            .setParentContent(null)
+            .setPersistedContent(site)
+            .setContentTypeName(ContentTypeName.SITE)
+            .build();
     }
 
     function createInput(): Input {
@@ -427,7 +445,7 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
             config: {},
             maximizeUIInputWidth: true
 
-        })
+        });
     }
 
     function createSite(): Site {
@@ -445,14 +463,14 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
                 contentState: "DEFAULT",
                 createdTime: "2016-10-24T15:03:47.914Z",
                 creator: "user:system:su",
-                data: [{"name": "description", "type": "String", "values": [{"v": "Site"}]}, {
-                    "name": "siteConfig",
-                    "type": "PropertySet",
-                    "values": [{
-                        "set": [{"name": "applicationKey", "type": "String", "values": [{"v": "com.enonic.app.test"}]}, {
-                            "name": "config",
-                            "type": "PropertySet",
-                            "values": [{"set": []}]
+                data: [{name: "description", type: "String", values: [{v: "Site"}]}, {
+                    name: "siteConfig",
+                    type: "PropertySet",
+                    values: [{
+                        set: [{name: "applicationKey", type: "String", values: [{v: "com.enonic.app.test"}]}, {
+                            name: "config",
+                            type: "PropertySet",
+                            values: [{set: []}]
                         }]
                     }]
                 }],
@@ -479,36 +497,36 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
                     to: "2017-10-24T15:03:47.914Z"
                 }
             }
-        )
+        );
     }
 
     function createApplication(): Application {
         return Application.fromJson(<ApplicationJson>{
-            "authConfig": null,
-            "config": {
-                "formItems": []
+            authConfig: null,
+            config: {
+                formItems: []
             },
-            "deletable": false,
-            "description": "desc",
-            "displayName": "App",
-            "editable": false,
-            "iconUrl": "",
-            "key": "com.enonic.app.test",
-            "local": true,
-            "maxSystemVersion": "7.0.0",
-            "metaSteps": [],
-            "minSystemVersion": "6.0.0",
-            "modifiedTime": "",
-            "state": "started",
-            "url": null,
-            "vendorName": "Enonic AS",
-            "vendorUrl": "http://enonic.com",
-            "version": "",
-            "info": null,
-            "applicationDependencies": null,
-            "contentTypeDependencies": null,
-            "createdTime": null,
-            "id": ""
+            deletable: false,
+            description: "desc",
+            displayName: "App",
+            editable: false,
+            iconUrl: "",
+            key: "com.enonic.app.test",
+            local: true,
+            maxSystemVersion: "7.0.0",
+            metaSteps: [],
+            minSystemVersion: "6.0.0",
+            modifiedTime: "",
+            state: "started",
+            url: null,
+            vendorName: "Enonic AS",
+            vendorUrl: "http://enonic.com",
+            version: "",
+            info: null,
+            applicationDependencies: null,
+            contentTypeDependencies: null,
+            createdTime: null,
+            id: ""
         });
     }
 
@@ -522,10 +540,9 @@ describe("api.content.site.inputtype.siteconfigurator.SiteConfigurator", () => {
             content: site,
             contentPath: ContentPath.fromString("/test"),
             parentContentPath: ContentPath.ROOT
-        }
+        };
 
         return new SiteConfigurator(config);
     }
 
-})
-;
+});

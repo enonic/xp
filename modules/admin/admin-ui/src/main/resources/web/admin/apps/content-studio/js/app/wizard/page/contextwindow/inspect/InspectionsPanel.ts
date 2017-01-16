@@ -66,16 +66,15 @@ export class InspectionsPanel extends api.ui.panel.Panel {
         this.deck.showPanel(this.pageInspectionPanel);
 
         this.buttons = new api.dom.DivEl('button-bar');
-        var saveButton = new api.ui.button.ActionButton(config.saveAction);
+        let saveButton = new api.ui.button.ActionButton(config.saveAction);
         this.buttons.appendChild(saveButton);
 
-        this.appendChildren(this.deck, this.buttons);
-
+        this.appendChildren(<api.dom.Element>this.deck, this.buttons);
     }
 
     public showInspectionPanel(panel: api.ui.panel.Panel) {
         this.deck.showPanel(panel);
-        var showButtons = !(api.ObjectHelper.iFrameSafeInstanceOf(panel, RegionInspectionPanel) ||
+        let showButtons = !(api.ObjectHelper.iFrameSafeInstanceOf(panel, RegionInspectionPanel) ||
                             api.ObjectHelper.iFrameSafeInstanceOf(panel, NoSelectionInspectionPanel));
         this.buttons.setVisible(showButtons);
     }

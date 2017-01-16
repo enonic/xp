@@ -12,9 +12,6 @@ export class ActiveDetailsPanelManager {
         ActiveDetailsPanelManager.doSetActiveDetailsPanel,
         300, false);
 
-    constructor() {
-    }
-
     static setActiveDetailsPanel(detailsPanelToMakeActive: DetailsPanel) {
         ActiveDetailsPanelManager.debouncedSetActiveDetailsPanel(detailsPanelToMakeActive);
     }
@@ -24,7 +21,7 @@ export class ActiveDetailsPanelManager {
     }
 
     private static doSetActiveDetailsPanel(detailsPanelToMakeActive: DetailsPanel) {
-        var currentlyActivePanel = ActiveDetailsPanelManager.getActiveDetailsPanel();
+        let currentlyActivePanel = ActiveDetailsPanelManager.getActiveDetailsPanel();
         if (currentlyActivePanel == detailsPanelToMakeActive || !detailsPanelToMakeActive) {
             return;
         }

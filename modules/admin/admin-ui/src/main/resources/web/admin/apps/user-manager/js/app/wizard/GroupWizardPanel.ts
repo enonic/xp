@@ -24,10 +24,10 @@ export class GroupWizardPanel extends GroupRoleWizardPanel {
     }
 
     createSteps(principal?: Principal): WizardStep[] {
-        var steps: WizardStep[] = [];
+        let steps: WizardStep[] = [];
 
-        var descriptionStep = this.getDescriptionWizardStepForm();
-        var membersStep = this.getMembersWizardStepForm();
+        let descriptionStep = this.getDescriptionWizardStepForm();
+        let membersStep = this.getMembersWizardStepForm();
 
         steps.push(new WizardStep("Group", descriptionStep));
         steps.push(new WizardStep("Grants", membersStep));
@@ -50,13 +50,11 @@ export class GroupWizardPanel extends GroupRoleWizardPanel {
     }
 
     produceCreateGroupRequest(): CreateGroupRequest {
-        var wizardHeader = this.getWizardHeader();
-        var key = PrincipalKey.ofGroup(this.getUserStore().getKey(), wizardHeader.getName()),
-            name = wizardHeader.getDisplayName(),
-            members = this.getMembersWizardStepForm().getMembers().map((el) => {
-                return el.getKey();
-            }),
-            description = this.getDescriptionWizardStepForm().getDescription();
+        let wizardHeader = this.getWizardHeader();
+        let key = PrincipalKey.ofGroup(this.getUserStore().getKey(), wizardHeader.getName());
+        let name = wizardHeader.getDisplayName();
+        let members = this.getMembersWizardStepForm().getMembers().map(el => el.getKey());
+        let description = this.getDescriptionWizardStepForm().getDescription();
         return new CreateGroupRequest()
             .setKey(key)
             .setDisplayName(name)
@@ -65,24 +63,16 @@ export class GroupWizardPanel extends GroupRoleWizardPanel {
     }
 
     produceUpdateRequest(viewedPrincipal:Principal):UpdateGroupRequest {
-        var group = viewedPrincipal.asGroup(),
-            key = group.getKey(),
-            displayName = group.getDisplayName(),
-            description = group.getDescription(),
-            oldMembers = this.getPersistedItem().asGroup().getMembers(),
-            oldMembersIds = oldMembers.map((el) => {
-                return el.getId();
-            }),
-            newMembers = group.getMembers(),
-            newMembersIds = newMembers.map((el) => {
-                return el.getId();
-            }),
-            addMembers = newMembers.filter((el) => {
-                return oldMembersIds.indexOf(el.getId()) < 0;
-            }),
-            removeMembers = oldMembers.filter((el) => {
-                return newMembersIds.indexOf(el.getId()) < 0;
-            });
+        let group = viewedPrincipal.asGroup();
+        let key = group.getKey();
+        let displayName = group.getDisplayName();
+        let description = group.getDescription();
+        let oldMembers = this.getPersistedItem().asGroup().getMembers();
+        let oldMembersIds = oldMembers.map(el => el.getId());
+        let newMembers = group.getMembers();
+        let newMembersIds = newMembers.map(el => el.getId());
+        let addMembers = newMembers.filter(el => oldMembersIds.indexOf(el.getId()) < 0);
+        let removeMembers = oldMembers.filter(el => newMembersIds.indexOf(el.getId()) < 0);
 
         return new UpdateGroupRequest().setKey(key).setDisplayName(displayName).addMembers(addMembers).removeMembers(
             removeMembers).setDescription(description);
@@ -99,8 +89,8 @@ export class GroupWizardPanel extends GroupRoleWizardPanel {
     }
 
     isPersistedEqualsViewed(): boolean {
-        var persistedPrincipal = this.getPersistedItem().asGroup();
-        var viewedPrincipal = this.assembleViewedItem().asGroup();
+        let persistedPrincipal = this.getPersistedItem().asGroup();
+        let viewedPrincipal = this.assembleViewedItem().asGroup();
         // Group/User order can be different for viewed and persisted principal
         viewedPrincipal.getMembers().sort((a, b) => {
             return a.getId().localeCompare(b.getId());

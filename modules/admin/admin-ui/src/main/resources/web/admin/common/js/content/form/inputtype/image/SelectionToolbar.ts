@@ -57,9 +57,10 @@ module api.content.form.inputtype.image {
         }
 
         unEditClicked(listener: {(): void;}) {
-            this.editClickListeners = this.editClickListeners.filter(function (curr) {
-                return curr != listener;
-            });
+            this.editClickListeners = this.editClickListeners
+                .filter(function (curr: {(): void;}) {
+                    return curr != listener;
+                });
         }
 
         notifyRemoveClicked() {
@@ -73,9 +74,10 @@ module api.content.form.inputtype.image {
         }
 
         unRemoveClicked(listener: {(): void;}) {
-            this.removeClickListeners = this.removeClickListeners.filter(function (curr) {
-                return curr != listener;
-            });
+            this.removeClickListeners = this.removeClickListeners
+                .filter(function (curr: {(): void;}) {
+                    return curr !== listener;
+                });
         }
 
     }

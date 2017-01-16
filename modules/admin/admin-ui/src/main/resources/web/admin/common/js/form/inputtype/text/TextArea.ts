@@ -25,19 +25,19 @@ module api.form.inputtype.text {
                 property.convertValueType(ValueTypes.STRING);
             }
 
-            var value = property.hasNonNullValue() ? property.getString() : undefined;
-            var inputEl = new api.ui.text.TextArea(this.getInput().getName() + "-" + index, value);
+            const value = property.hasNonNullValue() ? property.getString() : undefined;
+            const inputEl = new api.ui.text.TextArea(this.getInput().getName() + "-" + index, value);
 
             inputEl.onValueChanged((event: api.ValueChangedEvent) => {
-                var value = ValueTypes.STRING.newValue(event.getNewValue());
-                this.notifyOccurrenceValueChanged(inputEl, value);
+                const newValue = ValueTypes.STRING.newValue(event.getNewValue());
+                this.notifyOccurrenceValueChanged(inputEl, newValue);
             });
 
             return inputEl;
         }
 
         updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly: boolean) {
-            var input = <api.ui.text.TextArea> occurrence;
+            let input = <api.ui.text.TextArea> occurrence;
 
             if (!unchangedOnly || !input.isDirty()) {
                 input.setValue(property.getString());
@@ -45,7 +45,7 @@ module api.form.inputtype.text {
         }
 
         resetInputOccurrenceElement(occurrence: api.dom.Element) {
-            var input = <api.ui.text.TextArea> occurrence;
+            let input = <api.ui.text.TextArea> occurrence;
 
             input.resetBaseValues();
         }

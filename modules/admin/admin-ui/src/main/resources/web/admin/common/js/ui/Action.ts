@@ -1,5 +1,7 @@
 module api.ui {
 
+    type ExecutionListener = {(action: Action): wemQ.Promise<any>|void};
+
     export class Action {
 
         private label: string;
@@ -18,7 +20,7 @@ module api.ui {
 
         protected forceExecute: boolean = false;
 
-        private executionListeners: {(action:Action): wemQ.Promise<any>|void}[] = [];
+        private executionListeners: ExecutionListener[] = [];
 
         private propertyChangedListeners: Function[] = [];
 
@@ -100,7 +102,7 @@ module api.ui {
 
             if (value !== this.label) {
                 let label = this.label;
-                
+
                 this.label = value;
 
                 if (!!label) {
@@ -146,9 +148,7 @@ module api.ui {
         }
 
         private notifyPropertyChanged() {
-            for (var i in this.propertyChangedListeners) {
-                this.propertyChangedListeners[i](this);
-            }
+            this.propertyChangedListeners.forEach((listener: Function) => listener(this));
         }
 
         hasShortcut(): boolean {
@@ -176,16 +176,12 @@ module api.ui {
                 this.notifyBeforeExecute();
                 this.forceExecute = forceExecute;
 
-                var promises = [];
-                for (var i in this.executionListeners) {
-                    promises.push(this.executionListeners[i](this));
-                }
+                const promises = this.executionListeners.map((listener: ExecutionListener) => listener(this));
 
                 wemQ.all(promises).then(() => {
                     this.forceExecute = false;
                     this.notifyAfterExecute();
                 });
-
 
             }
         }
@@ -251,7 +247,7 @@ module api.ui {
 
         getKeyBindings(): KeyBinding[] {
 
-            var bindings: KeyBinding[] = [];
+            let bindings: KeyBinding[] = [];
 
             if (this.hasShortcut()) {
                 bindings.push(this.getShortcut());
@@ -267,7 +263,7 @@ module api.ui {
 
         static getKeyBindings(actions: api.ui.Action[]): KeyBinding[] {
 
-            var bindings: KeyBinding[] = [];
+            let bindings: KeyBinding[] = [];
             actions.forEach((action: Action) => {
                 action.getKeyBindings().forEach((keyBinding: KeyBinding) => {
                     bindings.push(keyBinding);

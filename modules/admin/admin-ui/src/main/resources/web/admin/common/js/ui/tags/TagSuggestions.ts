@@ -12,7 +12,7 @@ module api.ui.tags {
             this.onMouseMove((event: MouseEvent) => {
                 // don't wrap element in ElementHelper because mousemove event is generated very frequently
                 // unnecessary new objects would clog browser memory
-                var htmlEl = <HTMLElement>event.target;
+                let htmlEl = <HTMLElement>event.target;
                 if (htmlEl.tagName == 'LI') {
                     this.notifySelected(htmlEl.innerText || htmlEl.textContent);
                 }
@@ -28,7 +28,7 @@ module api.ui.tags {
         }
 
         moveDown() {
-            var nextIndex:number;
+            let nextIndex:number;
             if (this.selectedIndex == null) {
                 nextIndex = 0;
             } else if (this.selectedIndex == this.getChildren().length - 1) {
@@ -41,7 +41,7 @@ module api.ui.tags {
         }
 
         moveUp() {
-            var nextIndex:number;
+            let nextIndex:number;
             if (this.selectedIndex == null) {
                 nextIndex = this.getChildren().length - 1;
             } else if (this.selectedIndex == 0) {
@@ -54,8 +54,8 @@ module api.ui.tags {
         }
 
         private select(index: number) {
-            var tags = this.getChildren();
-            var tag = tags[this.selectedIndex];
+            let tags = this.getChildren();
+            let tag = tags[this.selectedIndex];
             if (tag) {
                 tag.removeClass('selected');
             }

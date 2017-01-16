@@ -67,6 +67,7 @@ tinymce.PluginManager.add('image', function (editor) {
         prependToContext: true
     });
 
+    editor.addShortcut('Meta+L', '', showDialog);
     editor.addCommand('mceImage', showDialog);
 
 });

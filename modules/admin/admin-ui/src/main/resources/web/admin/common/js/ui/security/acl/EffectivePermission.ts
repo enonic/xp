@@ -20,14 +20,13 @@ module api.ui.security.acl {
 
         static fromJson(json: api.content.json.EffectivePermissionJson) {
 
-            var effectivePermission = new EffectivePermission();
+            let effectivePermission = new EffectivePermission();
 
             effectivePermission.access = Access[json.access];
             effectivePermission.permissionAccess = EffectivePermissionAccess.fromJson(json.permissionAccessJson);
 
             return effectivePermission;
         }
-
 
     }
 

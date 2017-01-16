@@ -76,7 +76,7 @@ module api.ui.time {
         }
 
         protected handleShownEvent() {
-            var onDatePickerShown = this.onDatePickerShown.bind(this);
+            let onDatePickerShown = this.onDatePickerShown.bind(this);
             DatePickerShownEvent.on(onDatePickerShown);
             this.onRemoved((event: api.dom.ElementRemovedEvent) => {
                 DatePickerShownEvent.un(onDatePickerShown);
@@ -93,7 +93,7 @@ module api.ui.time {
         }
 
         protected initInput(builder: DatePickerBuilder) {
-            var value = "";
+            let value = "";
             if (builder.selectedDate) {
                 value = this.formatDate(builder.selectedDate);
                 this.popup.setSelectedDate(builder.selectedDate);
@@ -121,8 +121,8 @@ module api.ui.time {
                 if (api.ui.KeyHelper.isArrowKey(event) || api.ui.KeyHelper.isModifierKey(event)) {
                     return;
                 }
-                
-                var typedDate = this.input.getValue();
+
+                let typedDate = this.input.getValue();
 
                 if (api.util.StringHelper.isEmpty(typedDate)) {
                     this.calendar.selectDate(null);
@@ -131,7 +131,7 @@ module api.ui.time {
                     this.popup.hide();
                     this.notifySelectedDateChanged(new SelectedDateChangedEvent(null));
                 } else {
-                    var date = api.util.DateHelper.parseDate(typedDate, "-", true);
+                    let date = api.util.DateHelper.parseDate(typedDate, "-", true);
                     if (date) {
                         this.selectedDate = date;
                         this.validUserInput = true;

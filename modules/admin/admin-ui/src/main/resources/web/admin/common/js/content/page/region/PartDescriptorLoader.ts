@@ -23,7 +23,6 @@ module api.content.page.region {
         setApplicationKeys(applicationKeys: ApplicationKey[]) {
             this.request.setApplicationKeys(applicationKeys);
         }
-    
 
     }
 }

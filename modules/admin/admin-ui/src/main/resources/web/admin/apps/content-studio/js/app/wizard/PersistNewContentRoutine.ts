@@ -13,7 +13,7 @@ export class PersistNewContentRoutine extends api.util.Flow<api.content.Content,
 
     private createContentRequestProducer: {() : wemQ.Promise<CreateContentRequest>; };
 
-    private doneHandledContent = false;
+    private doneHandledContent: boolean = false;
 
     constructor(thisOfProducer: ContentWizardPanel) {
         super(thisOfProducer);
@@ -26,7 +26,7 @@ export class PersistNewContentRoutine extends api.util.Flow<api.content.Content,
 
     public execute(): wemQ.Promise<Content> {
 
-        var context = new PersistedNewContentRoutineContext();
+        let context = new PersistedNewContentRoutineContext();
         return this.doExecute(context);
     }
 
@@ -40,8 +40,7 @@ export class PersistNewContentRoutine extends api.util.Flow<api.content.Content,
                 return this.doExecuteNext(context);
 
             });
-        }
-        else {
+        } else {
             return wemQ(context.content);
         }
     }
@@ -58,8 +57,7 @@ export class PersistNewContentRoutine extends api.util.Flow<api.content.Content,
 
                 });
             });
-        }
-        else {
+        } else {
             return api.util.PromiseHelper.newResolvedVoidPromise();
         }
     }

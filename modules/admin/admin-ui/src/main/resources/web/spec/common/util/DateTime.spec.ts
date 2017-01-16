@@ -3,7 +3,8 @@ import DateTime = api.util.DateTime;
 
 describe("DateTime", () => {
 
-    var dateTime, timeZone;
+    let dateTime;
+    let timeZone;
 
     describe("basic asserts", () => {
 
@@ -100,7 +101,6 @@ describe("DateTime", () => {
         });
     });
 
-
     describe("parse string with negative offset", () => {
 
         it("String with negative timezone should be parsed correctly", () => {
@@ -133,7 +133,6 @@ describe("DateTime", () => {
             expect(dateTime.toString()).toEqual("2015-04-25T12:05:37+01:00");
         });
 
-
         it("should correctly convert with fractions and timezone", () => {
             timeZone = Timezone.create().setOffset(1).build();
             dateTime =
@@ -147,22 +146,22 @@ describe("DateTime", () => {
     describe("comparison", () => {
 
         it("should correctly compare equal dates", () => {
-            var date1 = DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).build();
-            var date2 = DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).build();
+            let date1 = DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).build();
+            let date2 = DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).build();
 
             expect(date1.equals(date2)).toBeTruthy();
         });
 
         it("should correctly compare unequal dates", () => {
-            var date1 = DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).build();
-            var date2 = DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(1).build();
+            let date1 = DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).build();
+            let date2 = DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(1).build();
 
             expect(date1.equals(date2)).toBeFalsy();
         });
 
         it("should correctly compare equal dates with different fraction part", () => {
-            var date1 = DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(37).build();
-            var date2 = DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(
+            let date1 = DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(37).build();
+            let date2 = DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(
                 37).setFractions(0).build();
 
             expect(date1.equals(date2)).toBeTruthy();
@@ -170,26 +169,25 @@ describe("DateTime", () => {
 
         it("should correctly compare equal dates with timezones", () => {
             timeZone = Timezone.create().setOffset(1).build();
-            var date1 = DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(
+            let date1 = DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(
                 37).setTimezone(timeZone).build();
-            var date2 = DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(
+            let date2 = DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(
                 37).setTimezone(timeZone).build();
 
             expect(date1.equals(date2)).toBeTruthy();
         });
 
         it("should correctly compare unequal dates with different timezones", () => {
-            var timeZone1 = Timezone.create().setOffset(1).build();
-            var timeZone2 = Timezone.create().setOffset(2).build();
-            var date1 = DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(
+            let timeZone1 = Timezone.create().setOffset(1).build();
+            let timeZone2 = Timezone.create().setOffset(2).build();
+            let date1 = DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(
                 37).setTimezone(timeZone1).build();
-            var date2 = DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(
+            let date2 = DateTime.create().setYear(2015).setMonth(3).setDay(25).setHours(12).setMinutes(5).setSeconds(
                 37).setTimezone(timeZone2).build();
 
             expect(date1.equals(date2)).toBeFalsy();
         });
     });
-
 
     describe("parsing of a date literal", () => {
 
@@ -248,32 +246,32 @@ describe("DateTime", () => {
         });
 
         it("should parse full datetime in correct format", () => {
-            var parsedDate = DateTime.fromString("2015-03-25T12:05:37.009");
-            var originalDate = DateTime.create().setYear(2015).setMonth(2).setDay(25).setHours(12).setMinutes(5).setSeconds(
+            let parsedDate = DateTime.fromString("2015-03-25T12:05:37.009");
+            let originalDate = DateTime.create().setYear(2015).setMonth(2).setDay(25).setHours(12).setMinutes(5).setSeconds(
                 37).setFractions(9).build();
 
             expect(originalDate.equals(parsedDate)).toBeTruthy();
         });
 
         it("should parse datetime without fractions", () => {
-            var parsedDate = DateTime.fromString("2015-03-25T12:05:37");
-            var originalDate = DateTime.create().setYear(2015).setMonth(2).setDay(25).setHours(12).setMinutes(5).setSeconds(
+            let parsedDate = DateTime.fromString("2015-03-25T12:05:37");
+            let originalDate = DateTime.create().setYear(2015).setMonth(2).setDay(25).setHours(12).setMinutes(5).setSeconds(
                 37).build();
 
             expect(originalDate.equals(parsedDate)).toBeTruthy();
         });
 
         it("should parse datetime without seconds and fractions", () => {
-            var parsedDate = DateTime.fromString("2015-03-25T12:05");
-            var originalDate = DateTime.create().setYear(2015).setMonth(2).setDay(25).setHours(12).setMinutes(5).build();
+            let parsedDate = DateTime.fromString("2015-03-25T12:05");
+            let originalDate = DateTime.create().setYear(2015).setMonth(2).setDay(25).setHours(12).setMinutes(5).build();
 
             expect(originalDate.equals(parsedDate)).toBeTruthy();
         });
 
         it("should parse datetime without timezone", () => {
             timeZone = Timezone.create().setOffset(1).build();
-            var parsedDate = DateTime.fromString("2015-03-25T12:05+01:00");
-            var originalDate = DateTime.create().setYear(2015).setMonth(2).setDay(25).setHours(12).setMinutes(5).setTimezone(
+            let parsedDate = DateTime.fromString("2015-03-25T12:05+01:00");
+            let originalDate = DateTime.create().setYear(2015).setMonth(2).setDay(25).setHours(12).setMinutes(5).setTimezone(
                 timeZone).build();
 
             expect(originalDate.equals(parsedDate)).toBeTruthy();

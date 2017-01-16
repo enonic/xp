@@ -128,13 +128,13 @@ module api.liveedit {
             this.parentRegionView = builder.parentRegionView;
 
             this.addComponentContextMenuActions(builder.inspectActionRequired);
-            
+
             this.propertyChangedListener = () => this.refreshEmptyState();
             this.resetListener = () => {
                 // recreate the component view from scratch
                 // if the component has been reset
                 this.deselect();
-                var clone = this.clone();
+                let clone = this.clone();
                 this.replaceWith(clone);
                 clone.select();
                 clone.hideContextMenu();
@@ -169,11 +169,11 @@ module api.liveedit {
         }
 
         private addComponentContextMenuActions(inspectActionRequired: boolean) {
-            var isFragmentContent = this.liveEditModel.getContent().getType().isFragment();
-            var parentIsPage = api.ObjectHelper.iFrameSafeInstanceOf(this.getRegionView(), PageView);
-            var isTopFragmentComponent = parentIsPage && isFragmentContent;
+            let isFragmentContent = this.liveEditModel.getContent().getType().isFragment();
+            let parentIsPage = api.ObjectHelper.iFrameSafeInstanceOf(this.getRegionView(), PageView);
+            let isTopFragmentComponent = parentIsPage && isFragmentContent;
 
-            var actions: api.ui.Action[] = [];
+            let actions: api.ui.Action[] = [];
 
             if (!isTopFragmentComponent) {
                 actions.push(this.createSelectParentAction());
@@ -186,10 +186,11 @@ module api.liveedit {
                 }));
             }
 
+            actions.push(new api.ui.Action("Reset").onExecuted(() => {
+                this.component.reset();
+            }));
+
             if (!isTopFragmentComponent) {
-                actions.push(new api.ui.Action("Reset").onExecuted(() => {
-                    this.component.reset();
-                }));
                 actions.push(new api.ui.Action("Remove").onExecuted(() => {
                     this.deselect();
                     this.remove();
@@ -197,8 +198,8 @@ module api.liveedit {
                 actions.push(new api.ui.Action("Duplicate").onExecuted(() => {
                     this.deselect();
 
-                    var duplicatedComponent = <COMPONENT> this.getComponent().duplicate();
-                    var duplicatedView = this.duplicate(duplicatedComponent);
+                    let duplicatedComponent = <COMPONENT> this.getComponent().duplicate();
+                    let duplicatedView = this.duplicate(duplicatedComponent);
 
                     duplicatedView.showLoadingSpinner();
 
@@ -206,13 +207,13 @@ module api.liveedit {
                 }));
             }
 
-            var isFragmentComponent = this instanceof api.liveedit.fragment.FragmentComponentView;
+            let isFragmentComponent = this instanceof api.liveedit.fragment.FragmentComponentView;
             if (!isFragmentComponent && !isFragmentContent) {
                 actions.push(new api.ui.Action("Create Fragment").onExecuted(() => {
                     this.deselect();
                     this.createFragment().then((content: Content): void => {
                         // replace created fragment in place of source component
-                        var fragmentCmpView = <FragmentComponentView> this.createComponentView(
+                        let fragmentCmpView = <FragmentComponentView> this.createComponentView(
                             api.liveedit.fragment.FragmentItemType.get());
                         fragmentCmpView.getComponent().setFragment(content.getContentId(), content.getDisplayName());
                         this.addComponentView(fragmentCmpView, this.getNewItemIndex());
@@ -228,7 +229,7 @@ module api.liveedit {
         remove(): ComponentView<Component> {
             this.unregisterComponentListeners(this.component);
 
-            var parentView = this.getParentItemView();
+            let parentView = this.getParentItemView();
             if (parentView) {
                 parentView.removeComponentView(this);
             }
@@ -289,10 +290,10 @@ module api.liveedit {
 
         clone(): ComponentView<Component> {
 
-            var isFragmentContent = this.liveEditModel.getContent().getType().isFragment();
-            var index = isFragmentContent ? 0 : this.getParentItemView().getComponentViewIndex(this);
+            let isFragmentContent = this.liveEditModel.getContent().getType().isFragment();
+            let index = isFragmentContent ? 0 : this.getParentItemView().getComponentViewIndex(this);
 
-            var clone = this.getType().createView(
+            let clone = this.getType().createView(
                 new CreateItemViewConfig<RegionView,Component>().
                     setParentView(this.getParentItemView()).
                     setParentElement(this.getParentElement()).
@@ -304,16 +305,15 @@ module api.liveedit {
 
         private duplicate(duplicate: COMPONENT): ComponentView<Component> {
 
-            var parentView = this.getParentItemView();
-            var index = parentView.getComponentViewIndex(this);
+            let parentView = this.getParentItemView();
+            let index = parentView.getComponentViewIndex(this);
 
-            var duplicateView = this.getType().createView(
+            let duplicateView = this.getType().createView(
                 new CreateItemViewConfig<RegionView,Component>().
                     setParentView(this.getParentItemView()).
                     setParentElement(this.getParentElement()).
                     setData(duplicate).
                     setPositionIndex(index + 1));
-
 
             parentView.addComponentView(duplicateView, index + 1);
 
@@ -321,17 +321,17 @@ module api.liveedit {
         }
 
         private createFragment(): wemQ.Promise<Content> {
-            var contentId = this.getPageView().getLiveEditModel().getContent().getContentId();
-            var config = this.getPageView().getLiveEditModel().getPageModel().getConfig();
+            let contentId = this.getPageView().getLiveEditModel().getContent().getContentId();
+            let config = this.getPageView().getLiveEditModel().getPageModel().getConfig();
 
-            var request = new api.content.page.region.CreateFragmentRequest(contentId).setConfig(config).setComponent(
+            let request = new api.content.page.region.CreateFragmentRequest(contentId).setConfig(config).setComponent(
                 this.getComponent());
 
             return request.sendAndParse();
         }
 
         toString() {
-            var extra = "";
+            let extra = "";
             if (this.hasComponentPath()) {
                 extra = " : " + this.getComponentPath().toString();
             }
@@ -344,22 +344,18 @@ module api.liveedit {
             }
             super.replaceWith(replacement);
 
-            var parentIsPage = api.ObjectHelper.iFrameSafeInstanceOf(this.getParentItemView(), PageView);
+            // unbind the old view from the component and bind the new one
+            this.unregisterComponentListeners(this.component);
+            this.unbindMouseListeners();
+
+            let parentIsPage = api.ObjectHelper.iFrameSafeInstanceOf(this.getParentItemView(), PageView);
             if (parentIsPage) {
-                // unbind the old view from the component and bind the new one
-                this.unregisterComponentListeners(this.component);
-                this.unbindMouseListeners();
-
+                this.getPageView().unregisterFragmentComponentView(this);
                 this.getPageView().registerFragmentComponentView(replacement);
-
             } else {
-                var index = this.getParentItemView().getComponentViewIndex(this);
+                let index = this.getParentItemView().getComponentViewIndex(this);
 
-                // unbind the old view from the component and bind the new one
-                this.unregisterComponentListeners(this.component);
-                this.unbindMouseListeners();
-
-                var parentRegionView = this.parentRegionView;
+                let parentRegionView = this.parentRegionView;
                 this.parentRegionView.unregisterComponentView(this);
                 parentRegionView.registerComponentView(replacement, index);
             }
@@ -382,7 +378,7 @@ module api.liveedit {
             }
 
             // Unregister from previous region...
-            var parentView = this.getParentItemView();
+            let parentView = this.getParentItemView();
             if (parentView) {
                 parentView.removeComponentView(this);
             }
@@ -401,11 +397,11 @@ module api.liveedit {
         unItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {
             this.itemViewAddedListeners = this.itemViewAddedListeners.filter((curr) => {
                 return curr != listener;
-            })
+            });
         }
 
         notifyItemViewAdded(view: ItemView, isNew: boolean = false) {
-            var event = new ItemViewAddedEvent(view, isNew);
+            let event = new ItemViewAddedEvent(view, isNew);
             this.itemViewAddedListeners.forEach((listener) => {
                 listener(event);
             });
@@ -418,11 +414,11 @@ module api.liveedit {
         unItemViewRemoved(listener: (event: ItemViewRemovedEvent) => void) {
             this.itemViewRemovedListeners = this.itemViewRemovedListeners.filter((curr) => {
                 return curr != listener;
-            })
+            });
         }
 
         notifyItemViewRemoved(view: ItemView) {
-            var event = new ItemViewRemovedEvent(view);
+            let event = new ItemViewRemovedEvent(view);
             this.itemViewRemovedListeners.forEach((listener) => {
                 listener(event);
             });
@@ -443,16 +439,15 @@ module api.liveedit {
         isEmpty(): boolean {
             return !this.component || this.component.isEmpty();
         }
-        
+
         static findParentRegionViewHTMLElement(htmlElement: HTMLElement): HTMLElement {
 
-            var parentItemView = ItemView.findParentItemViewAsHTMLElement(htmlElement);
+            let parentItemView = ItemView.findParentItemViewAsHTMLElement(htmlElement);
             while (!RegionView.isRegionViewFromHTMLElement(parentItemView)) {
                 parentItemView = ItemView.findParentItemViewAsHTMLElement(parentItemView);
             }
             return parentItemView;
         }
-
 
         // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
         private handleDragStart2(event: DragEvent) {

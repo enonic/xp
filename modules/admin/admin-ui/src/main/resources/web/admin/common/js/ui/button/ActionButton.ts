@@ -39,10 +39,10 @@ module api.ui.button {
                 this.action.execute();
             });
 
-            this.action.onPropertyChanged((action: api.ui.Action) => {
-                this.setEnabled(action.isEnabled());
-                this.setVisible(action.isVisible());
-                this.setLabel(this.createLabel(action), false);
+            this.action.onPropertyChanged((changedAction: api.ui.Action) => {
+                this.setEnabled(changedAction.isEnabled());
+                this.setVisible(changedAction.isVisible());
+                this.setLabel(this.createLabel(changedAction), false);
             });
         }
 
@@ -55,7 +55,7 @@ module api.ui.button {
         }
 
         private createLabel(action: Action): string {
-            var label: string;
+            let label: string;
             if (action.hasMnemonic()) {
                 label = action.getMnemonic().underlineMnemonic(action.getLabel());
             } else {

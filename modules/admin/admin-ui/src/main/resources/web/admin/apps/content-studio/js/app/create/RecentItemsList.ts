@@ -10,19 +10,19 @@ export class RecentItemsList extends NewContentDialogList {
     }
 
     createItems(items: NewContentDialogListItem[]) {
-        var itemsByName: {[name: string]: NewContentDialogListItem} = {};
+        let itemsByName: {[name: string]: NewContentDialogListItem} = {};
         items.forEach((item: NewContentDialogListItem) => {
             itemsByName[item.getName()] = item;
         });
 
-        var recentItemsNames = RecentItems.get().getRecentItemsNames();
-        var recentItems: NewContentDialogListItem[] = [];
+        let recentItemsNames = RecentItems.get().getRecentItemsNames();
+        let recentItems: NewContentDialogListItem[] = [];
         recentItemsNames.forEach((name: string) => {
             if (itemsByName[name]) {
                 recentItems.push(itemsByName[name]);
             }
         });
 
-        this.setItems(recentItems)
+        this.setItems(recentItems);
     }
 }

@@ -14,7 +14,7 @@ module api.ui.mask {
                 // pass the mousewheel event to the masked element to be able to scroll
                 this.onMouseWheel((event: WheelEvent) => {
 
-                    var evt = this.cloneWheelEvent(event);
+                    let evt = this.cloneWheelEvent(event);
                     this.masked.getHTMLElement().dispatchEvent(evt);
 
                     if (this.isBrowserFirefox()) { //scrolling manually ff as dispatch event not working
@@ -75,11 +75,11 @@ module api.ui.mask {
         }
 
         private positionOver(masked: api.dom.Element) {
-            var maskedEl = masked.getEl(),
-                maskEl = this.getEl(),
-                maskedOffset: {top:number; left: number},
-                isMaskedPositioned = maskedEl.getPosition() != 'static',
-                maskedDimensions: {width: string; height: string} = {
+            let maskedEl = masked.getEl();
+            let maskEl = this.getEl();
+            let maskedOffset: {top:number; left: number};
+            let isMaskedPositioned = maskedEl.getPosition() != 'static';
+            let maskedDimensions: {width: string; height: string} = {
                     width: maskedEl.getWidthWithBorder() + "px",
                     height: maskedEl.getHeightWithBorder() + "px"
                 };
@@ -99,15 +99,15 @@ module api.ui.mask {
                 }
             } else {
                 // mask is outside masked element
-                var maskedParent = maskedEl.getOffsetParent(),
-                    maskParent = maskEl.getOffsetParent();
+                let maskedParent = maskedEl.getOffsetParent();
+                let maskParent = maskEl.getOffsetParent();
 
                 maskedOffset = maskedEl.getOffsetToParent();
 
                 if (maskedParent != maskParent) {
                     // they have different offset parents so calc the difference
-                    var maskedParentOffset = new api.dom.ElementHelper(maskedParent).getOffset(),
-                        maskParentOffset = new api.dom.ElementHelper(maskParent).getOffset();
+                    let maskedParentOffset = new api.dom.ElementHelper(maskedParent).getOffset();
+                    let maskParentOffset = new api.dom.ElementHelper(maskParent).getOffset();
 
                     maskedOffset.left = maskedOffset.left + (maskedParentOffset.left - maskParentOffset.left);
                     maskedOffset.top = maskedOffset.top + (maskedParentOffset.top - maskParentOffset.top);
@@ -133,11 +133,11 @@ module api.ui.mask {
 
         private triggerScroll(event: WheelEvent) {
             wemjq(this.masked.getHTMLElement()).stop().animate({
-                scrollTop: this.masked.getHTMLElement().scrollTop + event.deltaY * 25 //converting ff wheel deltaY from lines to px (approximate)
+                // converting ff wheel deltaY from lines to px (approximate)
+                scrollTop: this.masked.getHTMLElement().scrollTop + event.deltaY * 25
             }, 600 / Math.abs(event.deltaY), 'linear');
         }
 
     }
-
 
 }

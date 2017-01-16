@@ -37,8 +37,7 @@ module api.data {
         valueToString(value: Value): string {
             if (value.isNotNull()) {
                 return value.getGeoPoint().toString();
-            }
-            else {
+            } else {
                 return null;
             }
         }

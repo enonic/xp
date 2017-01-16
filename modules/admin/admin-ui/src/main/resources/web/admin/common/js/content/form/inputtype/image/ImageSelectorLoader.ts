@@ -43,9 +43,6 @@ module api.content.form.inputtype.image {
 
     export class Builder {
 
-        constructor() {
-        }
-
         content: ContentSummary;
 
         inputName: string;

@@ -32,7 +32,7 @@ module api.security {
                 return false;
             }
 
-            var other = <UserStoreKey>o;
+            let other = <UserStoreKey>o;
             return this.id === other.id;
         }
     }

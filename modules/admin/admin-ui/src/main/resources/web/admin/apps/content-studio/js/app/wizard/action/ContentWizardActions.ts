@@ -26,7 +26,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
     private duplicate: api.ui.Action;
 
     private publish: api.ui.Action;
-    
+
     private publishTree: api.ui.Action;
 
     private unpublish: api.ui.Action;
@@ -77,7 +77,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
     enableActionsForNew() {
         this.save.setEnabled(true);
-        this.delete.setEnabled(true)
+        this.delete.setEnabled(true);
     }
 
     enableActionsForExisting(existing: api.content.Content) {
@@ -102,8 +102,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
         if (valueOn) {
             this.enableDeleteIfAllowed(content);
-        }
-        else {
+        } else {
             this.delete.setEnabled(true);
             this.enableActionsForExistingByPermissions(content);
         }
@@ -111,7 +110,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
     private enableDeleteIfAllowed(content: api.content.Content) {
         new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
-            var hasDeletePermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.DELETE,
+            let hasDeletePermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.DELETE,
                 loginResult, content.getPermissions());
             this.delete.setEnabled(hasDeletePermission);
         });
@@ -120,11 +119,11 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
     private enableActionsForExistingByPermissions(existing: api.content.Content) {
         new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
 
-            var hasModifyPermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.MODIFY,
+            let hasModifyPermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.MODIFY,
                 loginResult, existing.getPermissions());
-            var hasDeletePermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.DELETE,
+            let hasDeletePermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.DELETE,
                 loginResult, existing.getPermissions());
-            var hasPublishPermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.PUBLISH,
+            let hasPublishPermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.PUBLISH,
                 loginResult, existing.getPermissions());
 
             if (!hasModifyPermission) {
@@ -145,8 +144,8 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
                 api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByContent(existing)
                     .then((contentAndCompare: api.content.ContentSummaryAndCompareStatus) => {
 
-                        var status = contentAndCompare.getCompareStatus();
-                        var isPublished = status !== api.content.CompareStatus.NEW &&
+                        let status = contentAndCompare.getCompareStatus();
+                        let isPublished = status !== api.content.CompareStatus.NEW &&
                                           status != api.content.CompareStatus.UNKNOWN;
                     });
             }
@@ -156,7 +155,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
                     (parent: api.content.Content) => {
                         new api.content.resource.GetContentPermissionsByIdRequest(parent.getContentId()).sendAndParse().then(
                             (accessControlList: api.security.acl.AccessControlList) => {
-                                var hasParentCreatePermission = api.security.acl.PermissionHelper.hasPermission(
+                                let hasParentCreatePermission = api.security.acl.PermissionHelper.hasPermission(
                                     api.security.acl.Permission.CREATE,
                                     loginResult,
                                     accessControlList);
@@ -164,22 +163,22 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
                                 if (!hasParentCreatePermission) {
                                     this.duplicate.setEnabled(false);
                                 }
-                            })
-                    })
+                            });
+                    });
             } else {
                 new api.content.resource.GetContentRootPermissionsRequest().sendAndParse().then(
                     (accessControlList: api.security.acl.AccessControlList) => {
-                        var hasParentCreatePermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.CREATE,
+                        let hasParentCreatePermission = api.security.acl.PermissionHelper.hasPermission(api.security.acl.Permission.CREATE,
                             loginResult,
                             accessControlList);
 
                         if (!hasParentCreatePermission) {
                             this.duplicate.setEnabled(false);
                         }
-                    })
+                    });
             }
 
-        })
+        });
     }
 
     getDeleteAction(): api.ui.Action {

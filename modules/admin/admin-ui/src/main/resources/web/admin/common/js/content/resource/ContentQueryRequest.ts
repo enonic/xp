@@ -2,9 +2,14 @@ module api.content.resource {
 
     import ContentQuery = api.content.query.ContentQuery;
     import ContentQueryResult = api.content.resource.result.ContentQueryResult;
+    import ContentIdBaseItemJson = api.content.json.ContentIdBaseItemJson;
+    import ContentQueryResultJson = api.content.json.ContentQueryResultJson;
+    import ContentSummaryJson = api.content.json.ContentSummaryJson;
+    import ContentJson = api.content.json.ContentJson;
+    import AggregationQueryTypeWrapperJson = api.query.aggregation.AggregationQueryTypeWrapperJson;
 
-    export class ContentQueryRequest<CONTENT_JSON extends json.ContentIdBaseItemJson,CONTENT extends ContentIdBaseItem>
-    extends ContentResourceRequest<json.ContentQueryResultJson<CONTENT_JSON>, ContentQueryResult<CONTENT,CONTENT_JSON>> {
+    export class ContentQueryRequest<CONTENT_JSON extends ContentIdBaseItemJson,CONTENT extends ContentIdBaseItem>
+    extends ContentResourceRequest<ContentQueryResultJson<CONTENT_JSON>, ContentQueryResult<CONTENT,CONTENT_JSON>> {
 
         private contentQuery: ContentQuery;
 
@@ -40,7 +45,7 @@ module api.content.resource {
 
         getParams(): Object {
 
-            var queryExprAsString = this.contentQuery.getQueryExpr() ? this.contentQuery.getQueryExpr().toString() : "";
+            let queryExprAsString = this.contentQuery.getQueryExpr() ? this.contentQuery.getQueryExpr().toString() : "";
 
             return {
                 queryExpr: queryExprAsString,
@@ -56,22 +61,20 @@ module api.content.resource {
 
         sendAndParse(): wemQ.Promise<ContentQueryResult<CONTENT,CONTENT_JSON>> {
 
-            return this.send().then((response: api.rest.JsonResponse<json.ContentQueryResultJson<CONTENT_JSON>>) => {
+            return this.send().then((response: api.rest.JsonResponse<ContentQueryResultJson<CONTENT_JSON>>) => {
 
-                var responseResult: json.ContentQueryResultJson<CONTENT_JSON> = response.getResult(),
-                    aggregations = api.aggregation.Aggregation.fromJsonArray(responseResult.aggregations),
-                    contentsAsJson: json.ContentIdBaseItemJson[] = responseResult.contents,
-                    metadata = new ContentMetadata(response.getResult().metadata["hits"], response.getResult().metadata["totalHits"]),
-                    contents: CONTENT[];
+                let responseResult: ContentQueryResultJson<CONTENT_JSON> = response.getResult();
+                let aggregations = api.aggregation.Aggregation.fromJsonArray(responseResult.aggregations);
+                let contentsAsJson: ContentIdBaseItemJson[] = responseResult.contents;
+                let metadata = new ContentMetadata(response.getResult().metadata["hits"], response.getResult().metadata["totalHits"]);
+                let contents: CONTENT[];
 
                 if (this.expand == api.rest.Expand.NONE) {
                     contents = <any[]> this.fromJsonToContentIdBaseItemArray(contentsAsJson);
-                }
-                else if (this.expand == api.rest.Expand.SUMMARY) {
-                    contents = <any[]> this.fromJsonToContentSummaryArray(<json.ContentSummaryJson[]>contentsAsJson);
-                }
-                else {
-                    contents = <any[]>this.fromJsonToContentArray(<json.ContentJson[]>contentsAsJson);
+                } else if (this.expand == api.rest.Expand.SUMMARY) {
+                    contents = <any[]> this.fromJsonToContentSummaryArray(<ContentSummaryJson[]>contentsAsJson);
+                } else {
+                    contents = <any[]>this.fromJsonToContentArray(<ContentJson[]>contentsAsJson);
                 }
 
                 this.updateStateAfterLoad(contents, metadata);
@@ -92,15 +95,15 @@ module api.content.resource {
         }
 
         private getMustBereferencedById(): string {
-            var contentId = this.contentQuery.getMustBeReferencedById();
+            let contentId = this.contentQuery.getMustBeReferencedById();
             if (!!contentId) {
                 return contentId.toString();
             }
             return null;
         }
 
-        private aggregationQueriesToJson(aggregationQueries: api.query.aggregation.AggregationQuery[]): api.query.aggregation.AggregationQueryTypeWrapperJson[] {
-            var aggregationQueryJsons: api.query.aggregation.AggregationQueryTypeWrapperJson[] = [];
+        private aggregationQueriesToJson(aggregationQueries: api.query.aggregation.AggregationQuery[]): AggregationQueryTypeWrapperJson[] {
+            let aggregationQueryJsons: AggregationQueryTypeWrapperJson[] = [];
 
             if (aggregationQueries == null) {
                 return aggregationQueryJsons;
@@ -113,10 +116,9 @@ module api.content.resource {
             return aggregationQueryJsons;
         }
 
-
         private queryFiltersToJson(queryFilters: api.query.filter.Filter[]): api.query.filter.FilterTypeWrapperJson[] {
 
-            var queryFilterJsons: api.query.filter.FilterTypeWrapperJson[] = [];
+            let queryFilterJsons: api.query.filter.FilterTypeWrapperJson[] = [];
 
             if (queryFilters == null || queryFilters.length == 0) {
                 return queryFilterJsons;
@@ -145,7 +147,7 @@ module api.content.resource {
         }
 
         contentTypeNamesAsString(names: api.schema.content.ContentTypeName[]): string[] {
-            var result: string[] = [];
+            let result: string[] = [];
 
             names.forEach((name: api.schema.content.ContentTypeName) => {
                 result.push(name.toString());

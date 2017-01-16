@@ -25,23 +25,23 @@ module api.ui.security.acl {
             super("access-selector");
 
             UserStoreAccessSelector.OPTIONS.forEach((option: UserStoreAccessSelectorOption, index: number) => {
-                var menuItem = (<TabMenuItemBuilder>new TabMenuItemBuilder().setLabel(option.name)).build();
+                let menuItem = (<TabMenuItemBuilder>new TabMenuItemBuilder().setLabel(option.name)).build();
                 this.addNavigationItem(menuItem);
             });
 
             this.onNavigationItemSelected((event: api.ui.NavigatorEvent) => {
-                var item: api.ui.tab.TabMenuItem = <api.ui.tab.TabMenuItem> event.getItem();
+                let item: api.ui.tab.TabMenuItem = <api.ui.tab.TabMenuItem> event.getItem();
                 this.setValue(UserStoreAccessSelector.OPTIONS[item.getIndex()].value);
             });
 
         }
 
         getValue(): UserStoreAccess {
-            return this.value
+            return this.value;
         }
 
         setValue(value: UserStoreAccess, silent?: boolean): UserStoreAccessSelector {
-            var option = this.findOptionByValue(value);
+            let option = this.findOptionByValue(value);
             if (option) {
                 this.selectNavigationItem(UserStoreAccessSelector.OPTIONS.indexOf(option));
                 if (!silent) {
@@ -53,8 +53,8 @@ module api.ui.security.acl {
         }
 
         private findOptionByValue(value: UserStoreAccess): UserStoreAccessSelectorOption {
-            for (var i = 0; i < UserStoreAccessSelector.OPTIONS.length; i++) {
-                var option = UserStoreAccessSelector.OPTIONS[i];
+            for (let i = 0; i < UserStoreAccessSelector.OPTIONS.length; i++) {
+                let option = UserStoreAccessSelector.OPTIONS[i];
                 if (option.value == value) {
                     return option;
                 }
@@ -69,13 +69,13 @@ module api.ui.security.acl {
         unValueChanged(listener: (event: api.ValueChangedEvent)=>void) {
             this.valueChangedListeners = this.valueChangedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyValueChanged(event: api.ValueChangedEvent) {
             this.valueChangedListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
     }

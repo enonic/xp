@@ -4,13 +4,12 @@ module api.content.page.region {
 
         fromJsonToLayoutDescriptors(json: LayoutDescriptorsJson): LayoutDescriptor[] {
 
-            var array: LayoutDescriptor[] = [];
+            let array: LayoutDescriptor[] = [];
             json.descriptors.forEach((descriptorJson: LayoutDescriptorJson)=> {
                 array.push(this.fromJsonToLayoutDescriptor(descriptorJson));
             });
             return array;
         }
-
 
     }
 }

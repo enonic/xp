@@ -12,7 +12,7 @@ export class PublishContentAction extends Action {
         super("Publish...");
         this.setEnabled(false);
         this.onExecuted(() => {
-            var contents: api.content.ContentSummaryAndCompareStatus[]
+            let contents: api.content.ContentSummaryAndCompareStatus[]
                 = grid.getSelectedDataList();
             new ContentPublishPromptEvent(contents).fire();
         });

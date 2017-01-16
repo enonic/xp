@@ -111,29 +111,29 @@ module api.liveedit {
 
         private mouseOutViewListeners: {(): void} [];
 
-        private mouseOverViewListener;
-        private mouseLeaveViewListener;
-        private shaderClickedListener;
-        private pageItemViewAddedListener;
-        private mouseEnterListener;
-        private mouseLeaveListener;
-        private mouseClickedListener;
-        private contextMenuListener;
+        private mouseOverViewListener: () => void;
+        private mouseLeaveViewListener: () => void;
+        private shaderClickedListener: (event: MouseEvent) => void;
+        private pageItemViewAddedListener: (event: ItemViewAddedEvent) => void;
+        private mouseEnterListener: (event: MouseEvent) => void;
+        private mouseLeaveListener: (event: MouseEvent) => void;
+        private mouseClickedListener: (event: MouseEvent) => void;
+        private contextMenuListener: (event: MouseEvent) => void;
 
         public static debug: boolean = false;
 
         constructor(builder: ItemViewBuilder) {
             api.util.assertNotNull(builder.type, "type cannot be null");
 
-            var props: api.dom.ElementBuilder = null;
+            let props: api.dom.ElementBuilder = null;
             if (builder.element) {
-                var elementFromElementBuilder = new api.dom.ElementFromElementBuilder();
+                let elementFromElementBuilder = new api.dom.ElementFromElementBuilder();
                 elementFromElementBuilder.setElement(builder.element);
                 elementFromElementBuilder.setParentElement(builder.parentElement);
                 elementFromElementBuilder.setGenerateId(false);
                 props = elementFromElementBuilder;
             } else {
-                var newElementBuilder = new api.dom.NewElementBuilder();
+                let newElementBuilder = new api.dom.NewElementBuilder();
                 newElementBuilder.setTagName("div");
                 newElementBuilder.setParentElement(builder.parentElement);
                 newElementBuilder.setGenerateId(false);
@@ -151,7 +151,7 @@ module api.liveedit {
             this.addClassEx("item-view");
 
             this.contextMenuActions = [];
-            
+
             this.setDraggable(true);
 
             this.mouseOver = false;
@@ -167,8 +167,8 @@ module api.liveedit {
             this.viewer = builder.viewer;
 
             // remove old placeholder in case of parsing already parsed page again
-            for (var i = 0; i < this.getChildren().length; i++) {
-                var child = this.getChildren()[i];
+            for (let i = 0; i < this.getChildren().length; i++) {
+                let child = this.getChildren()[i];
                 if (api.ObjectHelper.iFrameSafeInstanceOf(child, ItemViewPlaceholder)) {
                     this.removeChild(child);
                     // there can be only one placeholder
@@ -187,6 +187,13 @@ module api.liveedit {
 
         protected addContextMenuActions(actions: api.ui.Action[]) {
             this.contextMenuActions = this.contextMenuActions.concat(actions);
+        }
+
+        protected removeContextMenuAction(action: api.ui.Action) {
+            if (this.contextMenuActions.indexOf(action) === -1) {
+                return;
+            }
+            this.contextMenuActions.splice(this.contextMenuActions.indexOf(action), 1);
         }
 
         protected setPlaceholder(placeholder: ItemViewPlaceholder) {
@@ -233,7 +240,7 @@ module api.liveedit {
             Shader.get().onClicked(this.shaderClickedListener);
 
             this.mouseOverViewListener = () => {
-                var isRegistered = !!this.getParentItemView() || api.ObjectHelper.iFrameSafeInstanceOf(this, PageView);
+                let isRegistered = !!this.getParentItemView() || api.ObjectHelper.iFrameSafeInstanceOf(this, PageView);
                 if (ItemView.debug) {
                     console.log('ItemView[' + this.toString() + '].mouseOverViewListener registered: ' + isRegistered);
                 }
@@ -242,7 +249,7 @@ module api.liveedit {
                     return;
                 }
 
-                var isDragging = DragAndDrop.get().isDragging();
+                let isDragging = DragAndDrop.get().isDragging();
 
                 if (!isDragging) {
                     this.showCursor();
@@ -252,7 +259,7 @@ module api.liveedit {
             this.onMouseOverView(this.mouseOverViewListener);
 
             this.mouseLeaveViewListener = () => {
-                var isRegistered = !!this.getParentItemView() || api.ObjectHelper.iFrameSafeInstanceOf(this, PageView);
+                let isRegistered = !!this.getParentItemView() || api.ObjectHelper.iFrameSafeInstanceOf(this, PageView);
                 if (ItemView.debug) {
                     console.log('ItemView[' + this.toString() + '].mouseLeaveViewListener registered: ' + isRegistered);
                 }
@@ -261,7 +268,7 @@ module api.liveedit {
                     return;
                 }
 
-                var isDragging = DragAndDrop.get().isDragging();
+                let isDragging = DragAndDrop.get().isDragging();
 
                 if (!isDragging) {
                     this.resetCursor();
@@ -319,7 +326,7 @@ module api.liveedit {
             if (!this.getPageView().isHighlightingAllowed()) {
                 return;
             }
-            
+
             SelectedHighlighter.get().highlightItemView(this);
         }
 
@@ -338,7 +345,7 @@ module api.liveedit {
         }
 
         showCursor() {
-            var itemView = this.isViewInsideSelectedContainer() ? SelectedHighlighter.get().getSelectedView() : this;
+            let itemView = this.isViewInsideSelectedContainer() ? SelectedHighlighter.get().getSelectedView() : this;
             Cursor.get().displayItemViewCursor(itemView);
         }
 
@@ -347,7 +354,7 @@ module api.liveedit {
         }
 
         getPageView(): PageView {
-            var itemView: ItemView = this;
+            let itemView: ItemView = this;
             while (!PageItemType.get().equals(itemView.getType())) {
                 itemView = itemView.parentItemView;
             }
@@ -358,7 +365,6 @@ module api.liveedit {
             if (ItemView.debug) {
                 console.log('ItemView.remove [' + this.toString() + ']');
             }
-
 
             if (this.contextMenu) {
                 this.contextMenu.remove();
@@ -383,7 +389,7 @@ module api.liveedit {
         }
 
         scrollComponentIntoView(): void {
-            var distance = this.calcDistanceToViewport();
+            let distance = this.calcDistanceToViewport();
             if (distance != 0) {
                 wemjq("html,body").animate({scrollTop: (distance > 0 ? '+=' : '-=') + Math.abs(distance)}, 200);
             }
@@ -436,7 +442,7 @@ module api.liveedit {
             this.notifyMouseOverView();
 
             if (ItemView.debug) {
-                console.groupEnd()
+                console.groupEnd();
             }
         }
 
@@ -444,8 +450,8 @@ module api.liveedit {
             // Look up for the parent ItemView with 'mouseOver' state.
             // It is direct parent for case 1 or some parent up to the PageView for case 2.
             // Parents are stored to the stack to manage their state and triger events for them further.
-            var parentsStack = [];
-            for (var parent = this.parentItemView; parent; parent = parent.parentItemView) {
+            let parentsStack = [];
+            for (let parent = this.parentItemView; parent; parent = parent.parentItemView) {
                 parentsStack.push(parent);
                 if (parent.mouseOver) {
                     break;
@@ -513,7 +519,7 @@ module api.liveedit {
         handleClick(event: MouseEvent) {
             event.stopPropagation();
 
-            var pageView = this.getPageView();
+            let pageView = this.getPageView();
 
             if (pageView.isNextClickDisabled()) {
                 pageView.setNextClickDisabled(false);
@@ -527,8 +533,8 @@ module api.liveedit {
             }
 
             if (!this.isSelected() || rightClicked) {
-                var selectedView = pageView.getSelectedView(),
-                    isViewInsideSelectedContainer = this.isViewInsideSelectedContainer();
+                let selectedView = pageView.getSelectedView();
+                let isViewInsideSelectedContainer = this.isViewInsideSelectedContainer();
                 let clickPosition = !this.isEmpty() ? {x: event.pageX, y: event.pageY} : null;
 
                 if (selectedView && isViewInsideSelectedContainer && !rightClicked) {
@@ -544,13 +550,11 @@ module api.liveedit {
                     if (pageView.isTextEditMode()) { // if in text edit mode don't select on first click
                         pageView.setTextEditMode(false);
                         this.unhighlight();
-                    }
-                    else {
+                    } else {
                         this.select(clickPosition, menuPosition, false, rightClicked);
                     }
 
-                }
-                else if (isViewInsideSelectedContainer && rightClicked) {
+                } else if (isViewInsideSelectedContainer && rightClicked) {
                     SelectedHighlighter.get().getSelectedView().showContextMenu(clickPosition);
                 }
             } else {
@@ -573,9 +577,9 @@ module api.liveedit {
         }
 
         protected isEventOverItem(event: MouseEvent): boolean {
-            var offset = this.getEl().getDimensions(),
-                x = event.pageX,
-                y = event.pageY;
+            let offset = this.getEl().getDimensions();
+            let x = event.pageX;
+            let y = event.pageY;
 
             return x >= offset.left
                    && x <= offset.left + offset.width
@@ -597,6 +601,10 @@ module api.liveedit {
                 return;
             }
 
+            const dimensions = this.getEl().getDimensions();
+            let x;
+            let y;
+
             if (!this.contextMenu) {
                 this.contextMenu = new api.liveedit.ItemViewContextMenu(this.contextMenuTitle, this.contextMenuActions);
                 this.contextMenu.onOrientationChanged((orientation: ItemViewContextMenuOrientation) => {
@@ -609,8 +617,6 @@ module api.liveedit {
                     }
                 });
             }
-            var dimensions = this.getEl().getDimensions();
-            var x, y;
 
             if (clickPosition) {
                 // show menu at position
@@ -642,7 +648,7 @@ module api.liveedit {
         }
 
         getItemId(): ItemViewId {
-            var asString = this.getEl().getAttribute("data-" + ItemViewId.DATA_ATTRIBUTE);
+            let asString = this.getEl().getAttribute("data-" + ItemViewId.DATA_ATTRIBUTE);
             if (!asString) {
                 return null;
             }
@@ -650,7 +656,7 @@ module api.liveedit {
         }
 
         static parseItemId(element: HTMLElement): ItemViewId {
-            var attribute = element.getAttribute("data-" + ItemViewId.DATA_ATTRIBUTE);
+            let attribute = element.getAttribute("data-" + ItemViewId.DATA_ATTRIBUTE);
             if (api.util.StringHelper.isEmpty(attribute)) {
                 return null;
             }
@@ -687,8 +693,8 @@ module api.liveedit {
         }
 
         private selectItem() {
-            var pageView = this.getPageView(),
-                selectedView = pageView.getSelectedView();
+            let pageView = this.getPageView();
+            let selectedView = pageView.getSelectedView();
 
             if (selectedView == this) {
                 // view is already selected
@@ -739,7 +745,7 @@ module api.liveedit {
         }
 
         private stopTextEditMode() {
-            var pageView = this.getPageView();
+            let pageView = this.getPageView();
             if (pageView.isTextEditMode()) {
                 pageView.setTextEditMode(false);
             }
@@ -800,7 +806,7 @@ module api.liveedit {
         }
 
         toString(): string {
-            return this.getItemId().toNumber() + " : " + this.getType().getShortName()
+            return this.getItemId().toNumber() + " : " + this.getType().getShortName();
         }
 
         getLiveEditModel(): LiveEditModel {
@@ -813,8 +819,8 @@ module api.liveedit {
 
         static findParentItemViewAsHTMLElement(htmlElement: HTMLElement): HTMLElement {
 
-            var parentHTMLElement = htmlElement.parentElement;
-            var parseItemId = ItemView.parseItemId(parentHTMLElement);
+            let parentHTMLElement = htmlElement.parentElement;
+            let parseItemId = ItemView.parseItemId(parentHTMLElement);
             while (parseItemId == null) {
                 parentHTMLElement = parentHTMLElement.parentElement;
                 parseItemId = ItemView.parseItemId(parentHTMLElement);
@@ -858,14 +864,14 @@ module api.liveedit {
         }
 
         private calcDistanceToViewport(): number {
-            var dimensions = this.getEl().getDimensions(),
-                menuHeight = this.contextMenu && this.contextMenu.isVisible() ? this.contextMenu.getEl().getHeight() : dimensions.height,
-                scrollTop: number = this.getDocumentScrollTop(),
-                padding = 10;
+            let dimensions = this.getEl().getDimensions();
+            let menuHeight = this.contextMenu && this.contextMenu.isVisible() ? this.contextMenu.getEl().getHeight() : dimensions.height;
+            let scrollTop: number = this.getDocumentScrollTop();
+            let padding = 10;
 
-            var top = (dimensions.top - padding) - scrollTop,
-                bottom = (dimensions.top + menuHeight + padding) - (scrollTop + window.innerHeight),
-                tallerThanWindow = menuHeight > window.innerHeight;
+            let top = (dimensions.top - padding) - scrollTop;
+            let bottom = (dimensions.top + menuHeight + padding) - (scrollTop + window.innerHeight);
+            let tallerThanWindow = menuHeight > window.innerHeight;
 
             return top <= 0 ? top : (bottom > 0 && !tallerThanWindow) ? bottom : 0;
         }
@@ -877,7 +883,7 @@ module api.liveedit {
                 return pageYOffset;
             } else {
                 //IE 'quirks' and doctype
-                var doc = (document.documentElement.clientHeight) ? document.documentElement : document.body;
+                let doc = (document.documentElement.clientHeight) ? document.documentElement : document.body;
                 return doc.scrollTop;
             }
         }
@@ -891,8 +897,8 @@ module api.liveedit {
         }
 
         protected createComponentView(componentItemType: ItemType): ItemView {
-            var regionView = this.getRegionView(),
-                newComponent = regionView.createComponent(componentItemType.toComponentType());
+            let regionView = this.getRegionView();
+            let newComponent = regionView.createComponent(componentItemType.toComponentType());
 
             return componentItemType.createView(new CreateItemViewConfig<RegionView,Component>().
                 setParentView(regionView).
@@ -901,12 +907,12 @@ module api.liveedit {
         }
 
         private getInsertActions(liveEditModel: LiveEditModel): api.ui.Action[] {
-            var isFragmentContent = liveEditModel.getContent().getType().isFragment();
+            let isFragmentContent = liveEditModel.getContent().getType().isFragment();
 
-            var actions = [this.createInsertSubAction("Image", api.liveedit.image.ImageItemType.get()),
+            let actions = [this.createInsertSubAction("Image", api.liveedit.image.ImageItemType.get()),
                 this.createInsertSubAction("Part", api.liveedit.part.PartItemType.get())];
 
-            var isInRegion = api.ObjectHelper.iFrameSafeInstanceOf(this.getRegionView(), RegionView);
+            let isInRegion = api.ObjectHelper.iFrameSafeInstanceOf(this.getRegionView(), RegionView);
             if (isInRegion && !this.getRegionView().hasParentLayoutComponentView() && !isFragmentContent) {
                 actions.push(this.createInsertSubAction("Layout", api.liveedit.layout.LayoutItemType.get()));
             }
@@ -925,11 +931,11 @@ module api.liveedit {
         }
 
         protected createSelectParentAction(): api.ui.Action {
-            var action = new api.ui.Action("Select parent");
+            let action = new api.ui.Action("Select parent");
 
             action.setSortOrder(0);
             action.onExecuted(() => {
-                var parentView: ItemView = this.getParentItemView();
+                let parentView: ItemView = this.getParentItemView();
                 if (parentView) {
                     this.deselect();
                     parentView.select(null, ItemViewContextMenuPosition.TOP, false, true);
@@ -941,8 +947,8 @@ module api.liveedit {
         }
 
         private createInsertSubAction(label: string, componentItemType: ItemType): api.ui.Action {
-            var action = new api.ui.Action(label).onExecuted(() => {
-                var componentView = this.createComponentView(componentItemType);
+            let action = new api.ui.Action(label).onExecuted(() => {
+                let componentView = this.createComponentView(componentItemType);
                 this.addComponentView(<ComponentView<Component>>componentView, this.getNewItemIndex(), true);
             });
 
@@ -955,16 +961,16 @@ module api.liveedit {
             if (this == itemView) {
                 return false;
             }
-            var parentItemView = this.getParentItemView(),
-                result = false;
+            let parentItemView = this.getParentItemView();
+            let result = false;
             while (!!parentItemView && !result) {
                 result = (parentItemView == itemView);
                 parentItemView = parentItemView.getParentItemView();
             }
-            
+
             return result;
         }
-        
+
         isContainer(): boolean {
             return api.ObjectHelper.iFrameSafeInstanceOf(this, PageView) ||
                    api.ObjectHelper.iFrameSafeInstanceOf(this, RegionView) ||

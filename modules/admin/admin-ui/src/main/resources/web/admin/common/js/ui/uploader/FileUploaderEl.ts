@@ -5,19 +5,18 @@ module api.ui.uploader {
     import Element = api.dom.Element;
     import SelectionItem = api.app.browse.SelectionItem;
 
-
     export class FileUploaderEl<MODEL extends api.Equitable> extends UploaderEl<MODEL> {
 
         protected contentId: string;
 
-        static FILE_NAME_DELIMITER = "/";
+        static FILE_NAME_DELIMITER: string = "/";
 
         doSetValue(value: string, silent?: boolean): UploaderEl<MODEL> {
 
             if (UploaderEl.debug) {
                 console.log('Setting new uploader value', value, this);
             }
-            var result = this.getItems(value);
+            let result = this.getItems(value);
 
             this.appendNewItems(result.newItems);
             this.refreshVisibility();
@@ -27,7 +26,7 @@ module api.ui.uploader {
 
          resetValues(value: string) {
 
-            var result = this.getItems(value);
+            let result = this.getItems(value);
 
             this.removeAllChildrenExceptGiven(result.existingItems);
             this.appendNewItems(result.newItems);
@@ -65,16 +64,16 @@ module api.ui.uploader {
         }
 
         private getItems(value: string) : {existingItems:Element[], newItems:Element[]} {
-            var newItems: Element[] = [],
-                existingItems:Element[] = [];
+            let newItems: Element[] = [];
+            let existingItems:Element[] = [];
 
             this.parseValues(value).forEach((parsedValue: string) => {
                 if (parsedValue) {
 
-                    var newValues = parsedValue.split(FileUploaderEl.FILE_NAME_DELIMITER);
+                    let newValues = parsedValue.split(FileUploaderEl.FILE_NAME_DELIMITER);
                     newValues.forEach((curValue) => {
 
-                        var existingItem = this.getExistingItem(curValue);
+                        let existingItem = this.getExistingItem(curValue);
                         if (!existingItem) {
                             newItems.push(this.createResultItem(curValue));
                         } else {

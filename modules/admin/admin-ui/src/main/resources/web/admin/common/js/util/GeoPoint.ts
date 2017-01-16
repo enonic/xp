@@ -29,7 +29,7 @@ module api.util {
                 return false;
             }
 
-            var other = <GeoPoint>o;
+            let other = <GeoPoint>o;
 
             if (!api.ObjectHelper.numberEquals(this.latitude, other.latitude)) {
                 return false;
@@ -46,20 +46,19 @@ module api.util {
                 return false;
             }
 
-            var indexOfComma = s.indexOf(',');
+            let indexOfComma = s.indexOf(',');
             if (indexOfComma < 1 || s.split(',').length != 2) {
                 return false;
-            }
-            else if (indexOfComma == s.length - 1) {
+            } else if (indexOfComma == s.length - 1) {
                 return false;
             }
 
-            var coordinates: string[] = s.split(',');
+            let coordinates: string[] = s.split(',');
 
-            var latitude = Number(coordinates[0]);
-            var longitude = Number(coordinates[1]);
+            let latitude = Number(coordinates[0]);
+            let longitude = Number(coordinates[1]);
 
-            var isNumber = typeof latitude === 'number' && !isNaN(latitude) &&
+            let isNumber = typeof latitude === 'number' && !isNaN(latitude) &&
                            typeof longitude === 'number' && !isNaN(longitude);
 
             if (!isNumber) {
@@ -73,9 +72,9 @@ module api.util {
             if (!GeoPoint.isValidString(s)) {
                 throw new Error("Cannot parse GeoPoint from string: " + s);
             }
-            var coordinates: string[] = s.split(',');
-            var latitude = Number(coordinates[0]);
-            var longitude = Number(coordinates[1]);
+            let coordinates: string[] = s.split(',');
+            let latitude = Number(coordinates[0]);
+            let longitude = Number(coordinates[1]);
             return new GeoPoint(latitude, longitude);
         }
     }

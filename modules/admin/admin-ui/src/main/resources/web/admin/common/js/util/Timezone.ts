@@ -35,7 +35,7 @@ module api.util {
                 return false;
             }
 
-            var other = <Timezone>o;
+            let other = <Timezone>o;
 
             if (!api.ObjectHelper.stringEquals(this.toString(), other.toString())) {
                 return false;
@@ -45,9 +45,9 @@ module api.util {
         }
 
         private padOffset(num: number, length: number = 2): string {
-            var numAsString = String(num);
+            let numAsString = String(num);
 
-            while (numAsString.length < length){
+            while (numAsString.length < length) {
                 numAsString = "0" + numAsString;
             }
 
@@ -92,7 +92,6 @@ module api.util {
             return new TimezoneBuilder();
         }
     }
-
 
     export class TimezoneBuilder {
 

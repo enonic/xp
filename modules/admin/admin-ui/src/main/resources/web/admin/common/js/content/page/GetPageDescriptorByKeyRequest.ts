@@ -22,11 +22,10 @@ module api.content.page {
 
         sendAndParse(): wemQ.Promise<PageDescriptor> {
 
-            var pageDescriptor = this.cache.getByKey(this.key);
+            let pageDescriptor = this.cache.getByKey(this.key);
             if (pageDescriptor) {
                 return wemQ(pageDescriptor);
-            }
-            else {
+            } else {
                 return this.send().then((response: api.rest.JsonResponse<PageDescriptorJson>) => {
                     pageDescriptor = this.fromJsonToPageDescriptor(response.getResult(), true);
                     return pageDescriptor;

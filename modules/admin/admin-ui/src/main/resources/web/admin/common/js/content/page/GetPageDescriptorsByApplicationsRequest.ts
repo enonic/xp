@@ -21,11 +21,11 @@ module api.content.page {
         sendAndParse(): wemQ.Promise<PageDescriptor[]> {
 
             if (this.applicationKeys.length > 0) {
-                var promises = this.applicationKeys.map(
+                let promises = this.applicationKeys.map(
                     (applicationKey: ApplicationKey) => new GetPageDescriptorsByApplicationRequest(applicationKey).sendAndParse());
 
                 return wemQ.all(promises).then((results: PageDescriptor[][]) => {
-                    var all: PageDescriptor[] = [];
+                    let all: PageDescriptor[] = [];
                     results.forEach((descriptors: PageDescriptor[]) => {
                         Array.prototype.push.apply(all, descriptors);
                     });

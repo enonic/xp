@@ -9,7 +9,7 @@ module api.dom {
         preventSubmit() {
             this.onSubmit((event: Event) => {
                 event.preventDefault();
-            })
+            });
         }
 
         onSubmit(listener: (event: Event) => void) {
@@ -21,18 +21,18 @@ module api.dom {
         }
 
         static getNextFocusable(input: Element, focusableSelector?: string, ignoreTabIndex?: boolean): Element {
-            var focusableElements: NodeList = document.querySelectorAll(focusableSelector ? focusableSelector : "input, button, select");
+            let focusableElements: NodeList = document.querySelectorAll(focusableSelector ? focusableSelector : "input, button, select");
 
             // find index of current input
-            var index = FormEl.getIndexOfInput(focusableElements, input);
+            let index = FormEl.getIndexOfInput(focusableElements, input);
 
             if (index < 0) {
                 return;
             }
 
             // set focus to the next visible input
-            for (var i = index + 1; i < focusableElements.length; i++) {
-                var nextFocusable = api.dom.Element.fromHtmlElement(<HTMLElement>focusableElements.item(i));
+            for (let i = index + 1; i < focusableElements.length; i++) {
+                let nextFocusable = api.dom.Element.fromHtmlElement(<HTMLElement>focusableElements.item(i));
                 if (!nextFocusable.isVisible() ||
                     (!ignoreTabIndex && nextFocusable.getEl().getTabIndex() && nextFocusable.getEl().getTabIndex() < 0 )) {
                     continue;
@@ -46,7 +46,7 @@ module api.dom {
 
         static moveFocusToNextFocusable(input: Element, focusableSelector?: string) {
 
-            var nextFocusable = FormEl.getNextFocusable(input, focusableSelector);
+            let nextFocusable = FormEl.getNextFocusable(input, focusableSelector);
 
             if (nextFocusable) {
                 nextFocusable.giveFocus();
@@ -54,26 +54,26 @@ module api.dom {
         }
 
         static moveFocusToPrevFocusable(input: Element, focusableSelector?: string) {
-            var focusableElements: NodeList = document.querySelectorAll(focusableSelector ? focusableSelector : "input, button, select");
+            let focusableElements: NodeList = document.querySelectorAll(focusableSelector ? focusableSelector : "input, button, select");
 
             // find index of current input
-            var index = FormEl.getIndexOfInput(focusableElements, input);
+            let index = FormEl.getIndexOfInput(focusableElements, input);
+            let nextFocusable: api.dom.Element;
 
             do {
                 index = index - 1;
                 if (0 <= index) {
-                    var nextFocusable = api.dom.Element.fromHtmlElement(<HTMLElement>focusableElements.item(index));
+                    nextFocusable = api.dom.Element.fromHtmlElement(<HTMLElement>focusableElements.item(index));
                 }
             } while (nextFocusable.getEl().getTabIndex() && nextFocusable.getEl().getTabIndex() < 0);
             nextFocusable.giveFocus();
             return;
         }
 
-
         private static getIndexOfInput(elements: NodeList, el: Element) {
-            var index = -1;
-            var inputHTMLElement = el.getHTMLElement();
-            for (var i = 0; i < elements.length; i++) {
+            let index = -1;
+            let inputHTMLElement = el.getHTMLElement();
+            for (let i = 0; i < elements.length; i++) {
                 if (inputHTMLElement == elements.item(i)) {
                     index = i;
                     break;

@@ -42,16 +42,16 @@ module api.data {
             this.array = [];
 
             this.propertyAddedEventHandler = (event) => {
-                this.forwardPropertyAddedEvent(event)
+                this.forwardPropertyAddedEvent(event);
             };
             this.propertyRemovedEventHandler = (event) => {
-                this.forwardPropertyRemovedEvent(event)
+                this.forwardPropertyRemovedEvent(event);
             };
             this.propertyIndexChangedEventHandler = (event) => {
-                this.forwardPropertyIndexChangedEvent(event)
+                this.forwardPropertyIndexChangedEvent(event);
             };
             this.propertyValueChangedEventHandler = (event) => {
-                this.forwardPropertyValueChangedEvent(event)
+                this.forwardPropertyValueChangedEvent(event);
             };
         }
 
@@ -62,7 +62,7 @@ module api.data {
         }
 
         containsValue(value: Value): boolean {
-            var result = false;
+            let result = false;
 
             this.forEach((property: Property) => {
                 if (api.ObjectHelper.equals(property.getValue(), value)) {
@@ -99,9 +99,9 @@ module api.data {
         convertValues(newType: ValueType) {
             this.type = newType;
             this.array.forEach((property: Property) => {
-                var source = property.getValue();
+                let source = property.getValue();
                 if (!newType.equals(source.getType())) {
-                    var converted = ValueTypeConverter.convertTo(source, newType);
+                    let converted = ValueTypeConverter.convertTo(source, newType);
                     property.setValue(converted);
                 }
             });
@@ -144,7 +144,7 @@ module api.data {
         add(value: Value): Property {
             this.checkType(value.getType());
 
-            var property = Property.create().
+            let property = Property.create().
                 setArray(this).
                 setName(this.name).
                 setIndex(this.array.length).
@@ -156,7 +156,7 @@ module api.data {
             if (this.tree) {
                 // Attached any detached PropertySet...
                 if (this.type.equals(ValueTypes.DATA) && value.isNotNull()) {
-                    var addedPropertySet = value.getPropertySet();
+                    let addedPropertySet = value.getPropertySet();
                     if (addedPropertySet && addedPropertySet.isDetached()) {
                         addedPropertySet.attachToTree(this.tree);
                     }
@@ -169,7 +169,7 @@ module api.data {
         }
 
         addSet(): PropertySet {
-            var newSet = this.parent.newSet();
+            let newSet = this.parent.newSet();
             this.add(new Value(newSet, ValueTypes.DATA));
             return newSet;
         }
@@ -178,13 +178,12 @@ module api.data {
             this.checkType(value.getType());
             this.checkIndex(index);
 
-            var property;
+            let property;
 
             if (this.get(index) != null) {
                 property = this.array[index];
                 property.setValue(value);
-            }
-            else {
+            } else {
                 property = Property.create().
                     setArray(this).
                     setName(this.name).
@@ -200,18 +199,18 @@ module api.data {
         }
 
         move(index: number, destinationIndex: number) {
-            var toBeMoved = this.array[index];
+            let toBeMoved = this.array[index];
             api.util.ArrayHelper.moveElement(index, destinationIndex, this.array);
             toBeMoved.setIndex(destinationIndex);
 
-            this.forEach((property: Property, index: number) => {
-                property.setIndex(index);
+            this.forEach((property: Property, i: number) => {
+                property.setIndex(i);
             });
         }
 
         remove(index: number) {
 
-            var propertyToRemove = this.get(index);
+            let propertyToRemove = this.get(index);
             if (!propertyToRemove) {
                 throw new Error("Property not found: " +
                                 PropertyPath.fromParent(this.getParentPropertyPath(), new PropertyPathElement(name, index)));
@@ -219,8 +218,8 @@ module api.data {
 
             this.array.splice(index, 1);
 
-            this.forEach((property: Property, index: number) => {
-                property.setIndex(index);
+            this.forEach((property: Property, i: number) => {
+                property.setIndex(i);
             });
 
             this.notifyPropertyRemoved(propertyToRemove);
@@ -241,12 +240,12 @@ module api.data {
         }
 
         public getValue(index: number): Value {
-            var property = this.get(index);
+            let property = this.get(index);
             return !property ? null : property.getValue();
         }
 
         public getSet(index: number): PropertySet {
-            var property = this.get(index);
+            let property = this.get(index);
             return !property ? null : property.getPropertySet();
         }
 
@@ -271,7 +270,7 @@ module api.data {
                 return false;
             }
 
-            var other = <PropertyArray>o;
+            let other = <PropertyArray>o;
 
             if (!api.ObjectHelper.stringEquals(this.name, other.name)) {
                 return false;
@@ -290,7 +289,7 @@ module api.data {
 
         copy(destinationPropertySet: PropertySet): PropertyArray {
 
-            var copy = PropertyArray.create().
+            let copy = PropertyArray.create().
                 setName(this.name).
                 setType(this.type).
                 setParent(destinationPropertySet).
@@ -330,7 +329,7 @@ module api.data {
             property.unPropertyValueChanged(this.propertyValueChangedEventHandler);
 
             if (property.hasNonNullValue() && property.getType().equals(ValueTypes.DATA)) {
-                var propertySet = property.getPropertySet();
+                let propertySet = property.getPropertySet();
                 this.unregisterPropertySetListeners(propertySet);
             }
         }
@@ -372,7 +371,7 @@ module api.data {
         }
 
         private notifyPropertyAdded(property: Property) {
-            var event = new PropertyAddedEvent(property);
+            let event = new PropertyAddedEvent(property);
             if (PropertyArray.debug) {
                 console.debug("PropertyArray[" + this.idForDebug() +
                               "].notifyPropertyAdded: " +
@@ -400,7 +399,7 @@ module api.data {
         }
 
         private notifyPropertyRemoved(property: Property) {
-            var event = new PropertyRemovedEvent(property);
+            let event = new PropertyRemovedEvent(property);
             if (PropertyArray.debug) {
                 console.debug("PropertyArray[" + this.idForDebug() +
                               "].notifyPropertyRemoved: " +
@@ -458,16 +457,15 @@ module api.data {
 
         public toJson(): PropertyArrayJson {
 
-            var valuesJson: PropertyValueJson[] = [];
+            let valuesJson: PropertyValueJson[] = [];
             this.array.forEach((property: Property) => {
                 if (this.type.equals(ValueTypes.DATA)) {
-                    var valueSetJson = property.hasNullValue() ? null : property.getPropertySet().toJson();
+                    let valueSetJson = property.hasNullValue() ? null : property.getPropertySet().toJson();
                     valuesJson.push(<PropertyValueJson>{
                         set: valueSetJson
                     });
-                }
-                else {
-                    var valueJson = this.type.toJsonValue(property.getValue());
+                } else {
+                    let valueJson = this.type.toJsonValue(property.getValue());
                     valuesJson.push(<PropertyValueJson>{
                         v: valueJson
                     });
@@ -487,9 +485,9 @@ module api.data {
 
         public static fromJson(json: PropertyArrayJson, parentPropertySet: PropertySet, tree: PropertyTree): PropertyArray {
 
-            var type = ValueTypes.fromName(json.type);
+            let type = ValueTypes.fromName(json.type);
 
-            var array = new PropertyArrayBuilder().
+            let array = new PropertyArrayBuilder().
                 setName(json.name).
                 setType(type).
                 setParent(parentPropertySet).
@@ -497,23 +495,22 @@ module api.data {
 
             json.values.forEach((propertyValueJson: PropertyValueJson, index: number) => {
 
-                var value;
+                let value;
 
                 if (type.equals(ValueTypes.DATA)) {
-                    var valueAsPropertySet = tree.newPropertySet();
-                    var propertyArrayJsonArray = propertyValueJson.set;
+                    let valueAsPropertySet = tree.newPropertySet();
+                    let propertyArrayJsonArray = propertyValueJson.set;
                     propertyArrayJsonArray.forEach((propertyArrayJson: PropertyArrayJson) => {
 
-                        valueAsPropertySet.addPropertyArray(PropertyArray.fromJson(propertyArrayJson, valueAsPropertySet, tree))
+                        valueAsPropertySet.addPropertyArray(PropertyArray.fromJson(propertyArrayJson, valueAsPropertySet, tree));
                     });
 
                     value = new Value(valueAsPropertySet, ValueTypes.DATA);
-                }
-                else {
+                } else {
                     value = type.fromJsonValue(propertyValueJson.v);
                 }
 
-                var property = Property.create().
+                let property = Property.create().
                     setArray(array).
                     setName(json.name).
                     setIndex(index).

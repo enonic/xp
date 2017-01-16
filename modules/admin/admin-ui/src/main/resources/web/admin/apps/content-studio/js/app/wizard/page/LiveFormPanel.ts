@@ -171,14 +171,14 @@ export class LiveFormPanel extends api.ui.panel.Panel {
     }
 
     private createInspectionsPanel(model: LiveEditModel): InspectionsPanel {
-        var saveAction = new api.ui.Action('Apply');
+        let saveAction = new api.ui.Action('Apply');
         saveAction.onExecuted(() => {
             if (!this.pageView) {
                 this.contentWizardPanel.saveChanges();
                 return;
             }
 
-            var itemView = this.pageView.getSelectedView();
+            let itemView = this.pageView.getSelectedView();
             if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
                 this.saveAndReloadOnlyComponent(<ComponentView<Component>> itemView);
             } else if (this.pageView.isLocked() || api.ObjectHelper.iFrameSafeInstanceOf(itemView, PageView)) {
@@ -230,9 +230,12 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             this.frameContainer.appendChildren<api.dom.Element>(this.liveEditPageProxy.getIFrame(),
                 this.liveEditPageProxy.getPlaceholderIFrame(), this.liveEditPageProxy.getDragMask());
 
+            let noPreviewMessageEl = new api.dom.PEl("no-preview-message").setHtml(
+                "Failed to render content preview.<br/> Please check logs for errors or open preview in a new window", false);
 
             // append mask here in order for the context window to be above
-            this.appendChildren<api.dom.Element>(this.frameContainer, this.liveEditPageProxy.getLoadMask(), this.contextWindow);
+            this.appendChildren<api.dom.Element>(this.frameContainer, this.liveEditPageProxy.getLoadMask(), this.contextWindow,
+                noPreviewMessageEl);
 
             this.contextWindow.onDisplayModeChanged(() => {
                 const enabled = this.contentWizardPanel.getComponentsViewToggler().isEnabled();
@@ -245,7 +248,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             this.liveEditListen();
 
             // delay rendered event until live edit page is fully loaded
-            var liveEditDeferred = wemQ.defer<boolean>();
+            let liveEditDeferred = wemQ.defer<boolean>();
 
             this.liveEditPageProxy.onLiveEditPageViewReady((event: LiveEditPageViewReadyEvent) => {
                 liveEditDeferred.resolve(rendered);
@@ -291,18 +294,22 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
         this.pageModel.onPropertyChanged((event: api.PropertyChangedEvent) => {
 
-            // NB: To make the event.getSource() check work, all calls from this to PageModel that changes a property must done with this as eventSource argument.
+            // NB: To make the event.getSource() check work,
+            // all calls from this to PageModel that changes a property must done with this as eventSource argument
             if (!api.ObjectHelper.objectEquals(this, event.getSource())) {
 
-                if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER &&
-                    !api.ObjectHelper.objectEquals(event.getOldValue(), event.getNewValue())) {
+                const oldValue = event.getOldValue();
+                const newValue = event.getNewValue();
+
+                if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && !api.ObjectHelper.objectEquals(oldValue, newValue)) {
                     this.contentWizardPanel.saveChanges();
                 }
                 if (event.getPropertyName() == PageModel.PROPERTY_TEMPLATE) {
 
-                    // do not reload page if there was no template in pageModel before and if new template is the default one - case when switching automatic template to default
+                    // do not reload page if there was no template in pageModel before and if new template is the default one -
+                    // case when switching automatic template to default
                     // only reload when switching from customized with controller set back to template or automatic template
-                    if (!(this.pageModel.getDefaultPageTemplate().equals(this.pageModel.getTemplate()) && !event.getOldValue() &&
+                    if (!(this.pageModel.getDefaultPageTemplate().equals(this.pageModel.getTemplate()) && !oldValue &&
                           !this.pageModel.hasController())) {
                         this.pageInspectionPanel.refreshInspectionHandler(liveEditModel);
                         this.lockPageAfterProxyLoad = true;
@@ -315,41 +322,37 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         this.pageModel.onComponentPropertyChangedEvent((event: ComponentPropertyChangedEvent) => {
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponent(), DescriptorBasedComponent)) {
-                if (event.getPropertyName() == DescriptorBasedComponent.PROPERTY_DESCRIPTOR) {
+                if (event.getPropertyName() === DescriptorBasedComponent.PROPERTY_DESCRIPTOR) {
 
-                    var componentView = this.pageView.getComponentViewByPath(event.getPath());
+                    const componentView = this.pageView.getComponentViewByPath(event.getPath());
                     if (componentView) {
                         if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, PartComponentView)) {
-                            var partView = <PartComponentView>componentView;
-                            var partComponent: PartComponent = partView.getComponent();
+                            const partView = <PartComponentView>componentView;
+                            const partComponent: PartComponent = partView.getComponent();
                             if (partComponent.hasDescriptor()) {
                                 this.saveAndReloadOnlyComponent(componentView);
                             }
-                        }
-                        else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, LayoutComponentView)) {
-                            var layoutView = <LayoutComponentView>componentView;
-                            var layoutComponent: LayoutComponent = layoutView.getComponent();
+                        } else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, LayoutComponentView)) {
+                            const layoutView = <LayoutComponentView>componentView;
+                            const layoutComponent: LayoutComponent = layoutView.getComponent();
                             if (layoutComponent.hasDescriptor()) {
                                 this.saveAndReloadOnlyComponent(componentView);
                             }
                         }
-                    }
-                    else {
+                    } else {
                         console.debug("ComponentView by path not found: " + event.getPath().toString());
                     }
                 }
-            }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponent(), ImageComponent)) {
-                if (event.getPropertyName() == ImageComponent.PROPERTY_IMAGE && !event.getComponent().isEmpty()) {
-                    var componentView = this.pageView.getComponentViewByPath(event.getPath());
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponent(), ImageComponent)) {
+                if (event.getPropertyName() === ImageComponent.PROPERTY_IMAGE && !event.getComponent().isEmpty()) {
+                    const componentView = this.pageView.getComponentViewByPath(event.getPath());
                     if (componentView) {
                         this.saveAndReloadOnlyComponent(componentView);
                     }
                 }
-            }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponent(), FragmentComponent)) {
-                if (event.getPropertyName() == FragmentComponent.PROPERTY_FRAGMENT && !event.getComponent().isEmpty()) {
-                    var componentView = this.pageView.getComponentViewByPath(event.getPath());
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponent(), FragmentComponent)) {
+                if (event.getPropertyName() === FragmentComponent.PROPERTY_FRAGMENT && !event.getComponent().isEmpty()) {
+                    const componentView = this.pageView.getComponentViewByPath(event.getPath());
                     if (componentView) {
                         this.saveAndReloadOnlyComponent(componentView);
                     }
@@ -362,9 +365,9 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             this.contentWizardPanel.getContextWindowToggler().setActive(false, true);
         });
 
-        var contentEventListener = (event) => {
+        const contentEventListener = (event) => {
             this.propagateEvent(event);
-        }
+        };
 
         ContentDeletedEvent.on(contentEventListener);
         ContentUpdatedEvent.on(contentEventListener);
@@ -407,6 +410,8 @@ export class LiveFormPanel extends api.ui.panel.Panel {
                     this.pageView.setLocked(true);
                     this.lockPageAfterProxyLoad = false;
                 }
+
+                this.contextWindow.clearSelection(); //resetting selection, selected item may already be gone
             });
         }
     }
@@ -416,7 +421,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         api.util.assertNotNull(componentView, "componentView cannot be null");
 
         this.pageSkipReload = true;
-        var componentUrl = api.rendering.UriHelper.getComponentUri(this.content.getContentId().toString(),
+        let componentUrl = api.rendering.UriHelper.getComponentUri(this.content.getContentId().toString(),
             componentView.getComponentPath(),
             RenderingMode.EDIT,
             api.content.Branch.DRAFT);
@@ -472,8 +477,8 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         });
 
         this.liveEditPageProxy.onItemViewSelected((event: ItemViewSelectedEvent) => {
-            var itemView = event.getItemView();
-            var toggler = this.contentWizardPanel.getContextWindowToggler();
+            let itemView = event.getItemView();
+            let toggler = this.contentWizardPanel.getContextWindowToggler();
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
                 if (!this.contextWindow.isFixed()) {
@@ -496,7 +501,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         });
 
         this.liveEditPageProxy.onItemViewDeselected((event: ItemViewDeselectedEvent) => {
-            var toggler = this.contentWizardPanel.getContextWindowToggler();
+            let toggler = this.contentWizardPanel.getContextWindowToggler();
             if (!toggler.isActive() && this.contextWindow.isShownOrAboutToBeShown()) {
                 this.contextWindow.slideOut();
             } else if (toggler.isActive() && !this.contextWindow.isShownOrAboutToBeShown()) {
@@ -507,7 +512,8 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
         this.liveEditPageProxy.onComponentAdded((event: ComponentAddedEvent) => {
             // do something when component is added
-            // onItemViewSelected() is not called on adding TextComponentView thus calling minimizeContentFormPanelIfNeeded() for it from here
+            // onItemViewSelected() is not called on adding TextComponentView
+            // thus calling minimizeContentFormPanelIfNeeded() for it from here
             if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponentView(), TextComponentView)) {
                 this.minimizeContentFormPanelIfNeeded();
             }
@@ -524,7 +530,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
         this.liveEditPageProxy.onComponentViewDragDropped((event: ComponentViewDragDroppedEvent) => {
 
-            var componentView = event.getComponentView();
+            let componentView = event.getComponentView();
             if (!componentView.isEmpty()) {
                 this.inspectComponent(componentView);
             }
@@ -536,7 +542,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         });
 
         this.liveEditPageProxy.onComponentInspected((event: ComponentInspectedEvent) => {
-            var componentView = event.getComponentView();
+            let componentView = event.getComponentView();
             this.contentWizardPanel.getContextWindowToggler().setActive(true);
             this.contextWindow.slideIn();
             this.inspectComponent(componentView);
@@ -549,21 +555,21 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         });
 
         this.liveEditPageProxy.onComponentFragmentCreated((event: ComponentFragmentCreatedEvent) => {
-            var fragmentView: FragmentComponentView = event.getComponentView();
-            var componentType = event.getSourceComponentType().getShortName();
-            var componentName = fragmentView.getComponent().getName().toString();
+            let fragmentView: FragmentComponentView = event.getComponentView();
+            let componentType = event.getSourceComponentType().getShortName();
+            let componentName = fragmentView.getComponent().getName().toString();
             api.notify.showSuccess(`Fragment created from '${componentName}' ${componentType}.`);
 
             this.saveAndReloadOnlyComponent(event.getComponentView());
 
-            var summaryAndStatus = api.content.ContentSummaryAndCompareStatus.fromContentSummary(event.getFragmentContent());
+            let summaryAndStatus = api.content.ContentSummaryAndCompareStatus.fromContentSummary(event.getFragmentContent());
             new api.content.event.EditContentEvent([summaryAndStatus]).fire();
         });
 
         this.liveEditPageProxy.onFragmentReloadRequired((event: FragmentComponentReloadRequiredEvent) => {
-            var fragmentView = event.getFragmentComponentView();
+            let fragmentView = event.getFragmentComponentView();
 
-            var componentUrl = api.rendering.UriHelper.getComponentUri(this.content.getContentId().toString(),
+            let componentUrl = api.rendering.UriHelper.getComponentUri(this.content.getContentId().toString(),
                 fragmentView.getComponentPath(),
                 RenderingMode.EDIT,
                 api.content.Branch.DRAFT);
@@ -625,9 +631,9 @@ export class LiveFormPanel extends api.ui.panel.Panel {
     }
 
     private clearSelection(): void {
-        var pageModel = this.liveEditModel.getPageModel();
-        var customizedWithController = pageModel.isCustomized() && pageModel.hasController();
-        var isFragmentContent = pageModel.getMode() === PageMode.FRAGMENT;
+        let pageModel = this.liveEditModel.getPageModel();
+        let customizedWithController = pageModel.isCustomized() && pageModel.hasController();
+        let isFragmentContent = pageModel.getMode() === PageMode.FRAGMENT;
         if (pageModel.hasDefaultPageTemplate() || customizedWithController || isFragmentContent) {
             this.contextWindow.clearSelection();
         } else {
@@ -644,7 +650,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
     private inspectRegion(regionView: RegionView) {
 
-        var region = regionView.getRegion();
+        let region = regionView.getRegion();
 
         this.regionInspectionPanel.setRegion(region);
         this.contextWindow.showInspectionPanel(this.regionInspectionPanel);
@@ -656,24 +662,19 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, ImageComponentView)) {
             this.imageInspectionPanel.setImageComponent(<ImageComponentView>componentView);
             this.contextWindow.showInspectionPanel(this.imageInspectionPanel);
-        }
-        else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, PartComponentView)) {
+        } else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, PartComponentView)) {
             this.partInspectionPanel.setPartComponent(<PartComponentView>componentView);
             this.contextWindow.showInspectionPanel(this.partInspectionPanel);
-        }
-        else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, LayoutComponentView)) {
+        } else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, LayoutComponentView)) {
             this.layoutInspectionPanel.setLayoutComponent(<LayoutComponentView>componentView);
             this.contextWindow.showInspectionPanel(this.layoutInspectionPanel);
-        }
-        else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, TextComponentView)) {
+        } else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, TextComponentView)) {
             this.textInspectionPanel.setTextComponent(<TextComponentView>componentView);
             this.contextWindow.showInspectionPanel(this.textInspectionPanel);
-        }
-        else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, FragmentComponentView)) {
+        } else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, FragmentComponentView)) {
             this.fragmentInspectionPanel.setFragmentComponent(<FragmentComponentView>componentView);
             this.contextWindow.showInspectionPanel(this.fragmentInspectionPanel);
-        }
-        else {
+        } else {
             throw new Error("ComponentView cannot be selected: " + api.ClassHelper.getClassName(componentView));
         }
     }

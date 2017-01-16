@@ -10,7 +10,7 @@ module api.content.resource.result {
 
         get(contentId: string): GetPublishStatusResult {
 
-            var getPublishStatusResult: GetPublishStatusResult = null;
+            let getPublishStatusResult: GetPublishStatusResult = null;
 
             this.getPublishStatusesResult.forEach((result: GetPublishStatusResult) => {
 
@@ -28,7 +28,7 @@ module api.content.resource.result {
 
         static fromJson(json: api.content.json.GetPublishStatusesResultJson): GetPublishStatusesResult {
 
-            var list: GetPublishStatusResult[] = [];
+            let list: GetPublishStatusResult[] = [];
 
             json.publishStatuses.forEach((getPublishStatusResult: api.content.json.GetPublishStatusResultJson) => {
                 list.push(GetPublishStatusResult.fromJson(getPublishStatusResult));

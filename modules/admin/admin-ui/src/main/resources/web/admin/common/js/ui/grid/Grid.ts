@@ -5,11 +5,11 @@ module api.ui.grid {
 
     export class Grid<T extends Slick.SlickData> extends api.dom.DivEl {
 
-        private defaultHeight = 400;
+        private defaultHeight: number = 400;
 
-        private defaultWidth = 800;
+        private defaultWidth: number = 800;
 
-        private defaultAutoRenderGridOnDataChanges = true;
+        private defaultAutoRenderGridOnDataChanges: boolean = true;
 
         private checkableRows: boolean;
 
@@ -19,9 +19,9 @@ module api.ui.grid {
 
         private dataView: DataView<T>;
 
-        private checkboxSelectorPlugin;
+        private checkboxSelectorPlugin: Slick.CheckboxSelectColumn<T>; // CheckboxSelectColumn
 
-        private rowManagerPlugin;
+        private rowManagerPlugin: Slick.RowMoveManager<T>; // RowMoveManager
 
         private loadMask: api.ui.mask.LoadMask;
 
@@ -34,7 +34,7 @@ module api.ui.grid {
 
             let options = gridOptions || this.createOptions();
             let columns = gridColumns || this.createColumns();
-            
+
             if (options.isHideColumnHeaders()) {
                 this.addClass("no-header");
             }
@@ -47,7 +47,7 @@ module api.ui.grid {
                     cssClass: "slick-cell-checkboxsel",
                     width: 40
                 });
-                columns.unshift(this.checkboxSelectorPlugin.getColumnDefinition());
+                columns.unshift(<GridColumn<T>>this.checkboxSelectorPlugin.getColumnDefinition());
             }
             if (this.dragAndDrop) {
                 this.rowManagerPlugin = new Slick.RowMoveManager({
@@ -63,10 +63,10 @@ module api.ui.grid {
                 this.autoRenderGridOnDataChanges(this.dataView);
             }
             if (this.checkboxSelectorPlugin != null) {
-                this.slickGrid.registerPlugin(this.checkboxSelectorPlugin);
+                this.slickGrid.registerPlugin(<Slick.Plugin<T>>this.checkboxSelectorPlugin);
             }
             if (this.rowManagerPlugin != null) {
-                this.slickGrid.registerPlugin(this.rowManagerPlugin);
+                this.slickGrid.registerPlugin(<Slick.Plugin<T>>this.rowManagerPlugin);
             }
 
             this.onRemoved((event) => {
@@ -85,7 +85,7 @@ module api.ui.grid {
             throw "Must be implemented by inheritors";
         }
 
-        setItemMetadata(metadataHandler: Function) {
+        setItemMetadata(metadataHandler: () => void) {
             this.dataView.setItemMetadataHandler(metadataHandler);
         }
 
@@ -93,13 +93,11 @@ module api.ui.grid {
             if (this.isVisible()) {
                 if (this.loadMask) {
                     this.loadMask.show();
-                }
-                else { //lazy mask init
+                } else { //lazy mask init
                     if (this.getParentElement()) {
                         this.createLoadMask();
                         this.loadMask.show();
-                    }
-                    else {
+                    } else {
                         this.onAdded(() => {
                             this.createLoadMask();
                         });
@@ -144,7 +142,7 @@ module api.ui.grid {
         setColumns(columns: GridColumn<T>[], toBegin: boolean = false) {
             if (this.checkboxSelectorPlugin) {
                 let pluginColumn = this.checkboxSelectorPlugin.getColumnDefinition();
-                toBegin ? columns.push(pluginColumn) : columns.unshift(pluginColumn);
+                toBegin ? columns.push(<GridColumn<T>>pluginColumn) : columns.unshift(<GridColumn<T>>pluginColumn);
             }
             this.slickGrid.setColumns(columns);
         }
@@ -169,7 +167,7 @@ module api.ui.grid {
             return <GridOptions<T>>this.slickGrid.getOptions();
         }
 
-        getCheckboxSelectorPlugin(): Slick.Plugin<T> {
+        getCheckboxSelectorPlugin(): Slick.CheckboxSelectColumn<T> {
             return this.checkboxSelectorPlugin;
         }
 
@@ -222,14 +220,14 @@ module api.ui.grid {
             this.slickGrid.focus();
         }
 
-        setOnClick(callback: (event, data: GridOnClickData) => void) {
+        setOnClick(callback: (event: any, data: GridOnClickData) => void) {
             this.slickGrid.onClick.subscribe((event, data) => {
                 event.stopPropagation();
                 callback(event, <GridOnClickData>data);
             });
         }
 
-        setOnKeyDown(callback: (event) => void) {
+        setOnKeyDown(callback: (event: any) => void) {
             this.slickGrid.onKeyDown.subscribe((event) => {
                 event.stopPropagation();
                 callback(event);
@@ -241,8 +239,8 @@ module api.ui.grid {
         }
 
         getSelectedRowItems(): T[] {
-            var rowItems: T[] = [];
-            var rows = this.getSelectedRows();
+            let rowItems: T[] = [];
+            let rows = this.getSelectedRows();
             rows.forEach((rowIndex: number) => {
                 rowItems.push(this.dataView.getItem(rowIndex));
             });
@@ -256,7 +254,7 @@ module api.ui.grid {
 
         selectRow(row: number, debounce?: boolean): number {
             // Prevent unnecessary render on the same row
-            var rows = this.getSelectedRows();
+            let rows = this.getSelectedRows();
             if (rows.length > 1 || (rows.length < 2 && rows.indexOf(row) < 0)) {
                 this.setSelectedRows([row], debounce);
                 return row;
@@ -265,7 +263,7 @@ module api.ui.grid {
         }
 
         addSelectedRow(row: number, debounce?: boolean) {
-            var rows = this.getSelectedRows();
+            let rows = this.getSelectedRows();
             if (rows.indexOf(row) < 0) {
                 rows.push(row);
                 this.setSelectedRows(rows, debounce);
@@ -273,7 +271,7 @@ module api.ui.grid {
         }
 
         addSelectedRows(rowsToAdd: number[], debounce?: boolean) {
-            var rows = this.getSelectedRows();
+            let rows = this.getSelectedRows();
             rowsToAdd.forEach((row) => {
                 if (rows.indexOf(row) < 0) {
                     rows.push(row);
@@ -285,8 +283,8 @@ module api.ui.grid {
 
         toggleRow(row: number, debounce?: boolean): number {
             // Prevent unnecessary render on the same row
-            var rows = this.getSelectedRows(),
-                index = rows.indexOf(row);
+            let rows = this.getSelectedRows();
+            let index = rows.indexOf(row);
             if (index < 0) {
                 rows.push(row);
                 rows.sort((a, b) => {
@@ -301,8 +299,8 @@ module api.ui.grid {
         }
 
         isRowSelected(row: number): boolean {
-            var rows = this.getSelectedRows(),
-                index = rows.indexOf(row);
+            let rows = this.getSelectedRows();
+            let index = rows.indexOf(row);
 
             return index >= 0;
         }
@@ -327,10 +325,10 @@ module api.ui.grid {
 
         moveSelectedUp() {
             if (this.slickGrid.getDataLength() > 0) {
-                var selected: number[] = this.getSelectedRows().sort((a, b) => {
+                let selected: number[] = this.getSelectedRows().sort((a, b) => {
                     return a - b;
                 });
-                var row = selected.length >= 1
+                let row = selected.length >= 1
                     ? selected[0] - 1
                     : -1;
 
@@ -354,10 +352,10 @@ module api.ui.grid {
 
         moveSelectedDown() {
             if (this.slickGrid.getDataLength() > 0) {
-                var selected: number[] = this.getSelectedRows().sort((a, b) => {
+                let selected: number[] = this.getSelectedRows().sort((a, b) => {
                     return a - b;
                 });
-                var row = selected.length >= 1
+                let row = selected.length >= 1
                     ? Math.min(selected[selected.length - 1] + 1, this.slickGrid.getDataLength() - 1)
                     : 0;
 
@@ -371,12 +369,12 @@ module api.ui.grid {
 
         addSelectedUp() {
             if (this.slickGrid.getDataLength() > 0) {
-                var selected: number[] = this.getSelectedRows().sort((a, b) => {
+                let selected: number[] = this.getSelectedRows().sort((a, b) => {
                     return a - b;
                 });
 
                 if (selected.length > 0 && (selected[0] - 1) >= 0) {
-                    var row = selected[0] - 1;
+                    let row = selected[0] - 1;
                     selected.push(row);
                     selected = selected.sort((a, b) => {
                         return a - b;
@@ -391,12 +389,12 @@ module api.ui.grid {
 
         addSelectedDown(): number {
             if (this.slickGrid.getDataLength() > 0) {
-                var selected: number[] = this.getSelectedRows().sort((a, b) => {
+                let selected: number[] = this.getSelectedRows().sort((a, b) => {
                     return a - b;
                 });
 
                 if (selected.length > 0 && (selected[selected.length - 1] + 1) < this.slickGrid.getDataLength()) {
-                    var row = selected[selected.length - 1] + 1;
+                    let row = selected[selected.length - 1] + 1;
                     selected.push(row);
                     this.setSelectedRows(selected, true);
                     return row;
@@ -458,7 +456,7 @@ module api.ui.grid {
          If passed no arguments, returns an object that tells you the range of rows (by row number)
          currently being rendered, as well as the left/right range of pixels currently rendered.
          */
-        getRenderedRange(viewportTop?, viewportLeft?): Slick.Viewport {
+        getRenderedRange(viewportTop?: number, viewportLeft?: number): Slick.Viewport {
             return this.slickGrid.getRenderedRange(viewportTop, viewportLeft);
         }
 
@@ -466,7 +464,7 @@ module api.ui.grid {
          Returns an object telling you which rows are currently being displayed on the screen,
          and also the pixel offsets for left/right scrolling.
          */
-        getViewport(viewportTop?, viewportLeft?): Slick.Viewport {
+        getViewport(viewportTop?: number, viewportLeft?: number): Slick.Viewport {
             return this.slickGrid.getViewport(viewportTop, viewportLeft);
         }
 
@@ -478,8 +476,8 @@ module api.ui.grid {
             return this.slickGrid.updateRow(row);
         }
 
-        subscribeOnSelectedRowsChanged(callback: (e, args) => void) {
-            var debouncedCallback = api.util.AppHelper.debounce(callback, 500, false);
+        subscribeOnSelectedRowsChanged(callback: (e: any, args: any) => void) {
+            let debouncedCallback = api.util.AppHelper.debounce(callback, 500, false);
             this.slickGrid.onSelectedRowsChanged.subscribe((e, args) => {
                 if (this.debounceSelectionChange) {
                     debouncedCallback(e, args);
@@ -489,67 +487,67 @@ module api.ui.grid {
             });
         }
 
-        subscribeOnClick(callback: (e, args) => void) {
+        subscribeOnClick(callback: (e: any, args: any) => void) {
             this.slickGrid.onClick.subscribe(callback);
         }
 
-        unsubscribeOnClick(callback: (e, args) => void) {
+        unsubscribeOnClick(callback: (e: any, args: any) => void) {
             this.slickGrid.onClick.unsubscribe(callback);
         }
 
-        subscribeOnDblClick(callback: (e, args) => void) {
+        subscribeOnDblClick(callback: (e: any, args: any) => void) {
             this.slickGrid.onDblClick.subscribe(callback);
         }
 
-        unsubscribeOnDblClick(callback: (e, args) => void) {
+        unsubscribeOnDblClick(callback: (e: any, args: any) => void) {
             this.slickGrid.onDblClick.unsubscribe(callback);
         }
 
-        subscribeOnContextMenu(callback: (e, args) => void) {
+        subscribeOnContextMenu(callback: (e: any, args: any) => void) {
             this.slickGrid.onContextMenu.subscribe(callback);
         }
 
-        subscribeOnDrag(callback: (e, args) => void) {
+        subscribeOnDrag(callback: (e: any, args: any) => void) {
             this.slickGrid.onDrag.subscribe(callback);
         }
 
-        subscribeOnDragInit(callback: (e, args) => void) {
+        subscribeOnDragInit(callback: (e: any, args: any) => void) {
             this.slickGrid.onDragInit.subscribe(callback);
         }
 
-        subscribeOnDragEnd(callback: (e, args) => void) {
+        subscribeOnDragEnd(callback: (e: any, args: any) => void) {
             this.slickGrid.onDragEnd.subscribe(callback);
         }
 
-        subscribeBeforeMoveRows(callback: (e, args) => void) {
+        subscribeBeforeMoveRows(callback: (e: any, args: any) => void) {
             if (this.rowManagerPlugin) {
-                this.rowManagerPlugin.onBeforeMoveRows.subscribe(callback);
+                (<Slick.Event<Slick.OnMoveRowsEventData>>this.rowManagerPlugin.onBeforeMoveRows).subscribe(callback);
             }
         }
 
-        subscribeMoveRows(callback: (e, args) => void) {
+        subscribeMoveRows(callback: (e: any, args: any) => void) {
             if (this.rowManagerPlugin) {
-                this.rowManagerPlugin.onMoveRows.subscribe(callback);
+                (<Slick.Event<Slick.OnMoveRowsEventData>>this.rowManagerPlugin.onMoveRows).subscribe(callback);
             }
         }
 
-        subscribeOnScroll(callback: (e) => void) {
+        subscribeOnScroll(callback: (e: any) => void) {
             this.slickGrid.onScroll.subscribe(callback);
         }
 
         // scrolled event is for the mouse wheel only
-        subscribeOnScrolled(callback: (e) => void) {
+        subscribeOnScrolled(callback: (e: Event) => void) {
             if (this.getHTMLElement().addEventListener) {
                 this.getHTMLElement().addEventListener('DOMMouseScroll', callback, false); // firefox
                 this.getHTMLElement().addEventListener('mousewheel', callback, false);     // chrome
             }
         }
 
-        subscribeOnMouseEnter(callback: (e, args) => void) {
+        subscribeOnMouseEnter(callback: (e: any, args: any) => void) {
             this.slickGrid.onMouseEnter.subscribe(callback);
         }
 
-        subscribeOnMouseLeave(callback: (e, args) => void) {
+        subscribeOnMouseLeave(callback: (e: any, args: any) => void) {
             this.slickGrid.onMouseLeave.subscribe(callback);
         }
     }

@@ -55,7 +55,7 @@ export class ContextWindow extends api.ui.panel.DockedPanel {
 
     private displayModeChangedListeners: {(): void}[] = [];
 
-    private animationTimer;
+    private animationTimer: number;
 
     private fixed: boolean = false;
 
@@ -94,7 +94,6 @@ export class ContextWindow extends api.ui.panel.DockedPanel {
             this.addItem("Inspect", false, this.inspectionsPanel);
             this.addItem("Emulator", false, this.emulatorPanel);
 
-
             this.insertablesPanel.getComponentsView().onBeforeInsertAction(() => {
                 this.fixed = true;
             });
@@ -110,13 +109,13 @@ export class ContextWindow extends api.ui.panel.DockedPanel {
     }
 
     private bindDragListeners() {
-        var initialPos = 0;
-        var splitterPosition = 0;
-        var parent = this.getParentElement();
+        let initialPos = 0;
+        let splitterPosition = 0;
+        let parent = this.getParentElement();
         this.actualWidth = this.getEl().getWidth();
         this.mask = new api.ui.mask.DragMask(parent);
 
-        var dragListener = (e: MouseEvent) => {
+        let dragListener = (e: MouseEvent) => {
             if (this.splitterWithinBoundaries(initialPos - e.clientX)) {
                 splitterPosition = e.clientX;
                 this.ghostDragger.getEl().setLeftPx(e.clientX - this.getEl().getOffsetLeft());
@@ -138,7 +137,7 @@ export class ContextWindow extends api.ui.panel.DockedPanel {
     }
 
     private splitterWithinBoundaries(offset: number) {
-        var newWidth = this.actualWidth + offset;
+        let newWidth = this.actualWidth + offset;
         return (newWidth >= this.minWidth) && (newWidth <= this.getParentElement().getEl().getWidth() - this.parentMinWidth);
     }
 
@@ -167,7 +166,6 @@ export class ContextWindow extends api.ui.panel.DockedPanel {
     isSlidingOut(): boolean {
         return this.contextWindowState == ContextWindowState.SLIDING_OUT;
     }
-
 
     isFixed(): boolean {
         return this.fixed;
@@ -225,9 +223,9 @@ export class ContextWindow extends api.ui.panel.DockedPanel {
     }
 
     private updateFrameSize() {
-        var isFloating = this.isFloating(),
-            displayModeChanged = this.hasClass('floating') && !isFloating,
-            contextWindowWidth = this.actualWidth || this.getEl().getWidth();
+        let isFloating = this.isFloating();
+        let displayModeChanged = this.hasClass('floating') && !isFloating;
+        let contextWindowWidth = this.actualWidth || this.getEl().getWidth();
 
         this.liveFormPanel.updateFrameContainerSize(!isFloating && this.isShown(), contextWindowWidth);
 
@@ -243,8 +241,8 @@ export class ContextWindow extends api.ui.panel.DockedPanel {
     }
 
     isFloating(): boolean {
-        var contextWindowWidth = this.actualWidth || this.getEl().getWidth();
-        var liveFormPanelWidth = this.liveFormPanel.getEl().getWidth();
+        let contextWindowWidth = this.actualWidth || this.getEl().getWidth();
+        let liveFormPanelWidth = this.liveFormPanel.getEl().getWidth();
         return (liveFormPanelWidth < 1200) || ((liveFormPanelWidth - contextWindowWidth) < 920);
     }
 

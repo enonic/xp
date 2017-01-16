@@ -54,15 +54,15 @@ module api.form {
 
         private doLayout(): wemQ.Promise<void> {
 
-            var deferred = wemQ.defer<void>();
+            let deferred = wemQ.defer<void>();
 
-            var label = new FieldSetLabel(this.fieldSet);
+            let label = new FieldSetLabel(this.fieldSet);
             this.appendChild(label);
 
-            var wrappingDiv = new api.dom.DivEl("field-set-container");
+            let wrappingDiv = new api.dom.DivEl("field-set-container");
             this.appendChild(wrappingDiv);
 
-            var layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.
+            let layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.
                 setFormItems(this.fieldSet.getFormItems()).
                 setParentElement(wrappingDiv).
                 setParent(this.getParent()).
@@ -72,7 +72,7 @@ module api.form {
 
                 deferred.resolve(null);
             }).catch((reason: any) => {
-                var fieldSetValue = this.fieldSet ? this.fieldSet.toFieldSetJson() : {};
+                let fieldSetValue = this.fieldSet ? this.fieldSet.toFieldSetJson() : {};
                 console.error('Could not render FieldSet view: ' + reason + '\r\n FieldSet value:', JSON.stringify(fieldSetValue));
                 api.DefaultErrorHandler.handle(reason);
             }).done();
@@ -109,9 +109,9 @@ module api.form {
 
         giveFocus(): boolean {
 
-            var focusGiven = false;
+            let focusGiven = false;
             if (this.formItemViews.length > 0) {
-                for (var i = 0; i < this.formItemViews.length; i++) {
+                for (let i = 0; i < this.formItemViews.length; i++) {
                     if (this.formItemViews[i].giveFocus()) {
                         focusGiven = true;
                         break;
@@ -136,7 +136,7 @@ module api.form {
 
         hasValidUserInput(): boolean {
 
-            var result = true;
+            let result = true;
             this.formItemViews.forEach((formItemView: FormItemView) => {
                 if (!formItemView.hasValidUserInput()) {
                     result = false;
@@ -146,10 +146,9 @@ module api.form {
             return result;
         }
 
-
         validate(silent: boolean = true): ValidationRecording {
 
-            var recording = new ValidationRecording();
+            let recording = new ValidationRecording();
             this.formItemViews.forEach((formItemView: FormItemView)=> {
                 recording.flatten(formItemView.validate(silent));
             });

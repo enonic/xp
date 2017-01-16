@@ -29,8 +29,8 @@ module ContentSummaryAndCompareStatusSpec {
 
             it("create ContentSummaryAndCompareStatus from ContentSummary and CompareStatus", function () {
                 let compareStatus: CompareStatus = CompareStatus.NEWER;
-                let contentSummaryAndCompareStatus: ContentSummaryAndCompareStatus = ContentSummaryAndCompareStatus.fromContentAndCompareStatus(
-                    contentSummary, compareStatus);
+                let contentSummaryAndCompareStatus: ContentSummaryAndCompareStatus =
+                    ContentSummaryAndCompareStatus.fromContentAndCompareStatus(contentSummary, compareStatus);
 
                 expect(contentSummaryAndCompareStatus.getContentSummary()).toBeDefined();
                 expect(contentSummaryAndCompareStatus.getCompareStatus()).toEqual(CompareStatus.NEWER);
@@ -101,65 +101,65 @@ module ContentSummaryAndCompareStatusSpec {
             describe("getPath()", function () {
                 it("returns path of ContentSummary if set", function () {
                     expect(cntntSmmrAndCmprSttsFrmCntntSumm.getPath()).toEqual(contentSummary.getPath());
-                })
+                });
 
                 it("returns null if ContentSummary is not set", function () {
                     expect(cntntSmmrAndCmprSttsFrmUpldItm.getPath()).toBeNull();
-                })
+                });
             });
 
             describe("getType()", function () {
                 it("returns type of ContentSummary if set", function () {
                     expect(cntntSmmrAndCmprSttsFrmCntntSumm.getType()).toEqual(contentSummary.getType());
-                })
+                });
 
                 it("returns null when no ContentSummary is set", function () {
                     expect(cntntSmmrAndCmprSttsFrmUpldItm.getType()).toBeNull();
-                })
+                });
             });
 
             describe("getDisplayName()", function () {
                 it("returns displayName when ContentSummary is set", function () {
                     expect(cntntSmmrAndCmprSttsFrmCntntSumm.getDisplayName()).toEqual(
                         contentSummary.getDisplayName());
-                })
+                });
 
                 it("returns null when no ContentSummary is set", function () {
                     expect(cntntSmmrAndCmprSttsFrmUpldItm.getDisplayName()).toBeNull();
-                })
+                });
             });
 
             describe("getIconUrl()", function () {
                 it("returns iconUrl of ContentSummary if set", function () {
                     expect(cntntSmmrAndCmprSttsFrmCntntSumm.getIconUrl()).toEqual(
                         contentSummary.getIconUrl());
-                })
+                });
 
                 it("returns null when no ContentSummary is set", function () {
                     expect(cntntSmmrAndCmprSttsFrmUpldItm.getIconUrl()).toBeNull();
-                })
+                });
             });
 
             describe("hasChildren()", function () {
                 it("returns ContentSummary has children", function () {
                     expect(cntntSmmrAndCmprSttsFrmCntntSumm.hasChildren()).toEqual(
                         contentSummary.hasChildren());
-                })
+                });
 
                 it("returns false when no ContentSummary is set", function () {
                     expect(cntntSmmrAndCmprSttsFrmUpldItm.hasChildren()).toBeFalsy();
-                })
+                });
             });
 
             describe("readonly status", function () {
                 it("is false after create", function () {
                     expect(cntntSmmrAndCmprSttsFrmCntntSumm.isReadOnly()).toBeFalsy();
-                })
+                });
 
                 it("is set via setReadOnly method", function () {
                     cntntSmmrAndCmprSttsFrmCntntSumm.setReadOnly(true);
                     expect(cntntSmmrAndCmprSttsFrmCntntSumm.isReadOnly).toBeTruthy();
-                })
+                });
             });
 
             describe("equals()", function () {
@@ -199,10 +199,10 @@ module ContentSummaryAndCompareStatusSpec {
                     let compareStatus1: CompareStatus = CompareStatus.EQUAL;
                     let compareStatus2: CompareStatus = CompareStatus.MOVED;
 
-                    let contentSummaryAndCompareStatus1: ContentSummaryAndCompareStatus = ContentSummaryAndCompareStatus.fromContentAndCompareStatus(
-                        contentSummary, compareStatus1);
-                    let contentSummaryAndCompareStatus2: ContentSummaryAndCompareStatus = ContentSummaryAndCompareStatus.fromContentAndCompareStatus(
-                        contentSummary, compareStatus2);
+                    let contentSummaryAndCompareStatus1: ContentSummaryAndCompareStatus =
+                        ContentSummaryAndCompareStatus.fromContentAndCompareStatus(contentSummary, compareStatus1);
+                    let contentSummaryAndCompareStatus2: ContentSummaryAndCompareStatus =
+                        ContentSummaryAndCompareStatus.fromContentAndCompareStatus(contentSummary, compareStatus2);
 
                     expect(contentSummaryAndCompareStatus1.equals(contentSummaryAndCompareStatus2)).toBeFalsy();
                 });
@@ -211,10 +211,10 @@ module ContentSummaryAndCompareStatusSpec {
                     let compareStatus1: CompareStatus = CompareStatus.EQUAL;
                     let compareStatus2: CompareStatus = CompareStatus.EQUAL;
 
-                    let contentSummaryAndCompareStatus1: ContentSummaryAndCompareStatus = ContentSummaryAndCompareStatus.fromContentAndCompareStatus(
-                        createContentSummary(), compareStatus1);
-                    let contentSummaryAndCompareStatus2: ContentSummaryAndCompareStatus = ContentSummaryAndCompareStatus.fromContentAndCompareStatus(
-                        createContentSummary(), compareStatus2);
+                    let contentSummaryAndCompareStatus1: ContentSummaryAndCompareStatus =
+                        ContentSummaryAndCompareStatus.fromContentAndCompareStatus(createContentSummary(), compareStatus1);
+                    let contentSummaryAndCompareStatus2: ContentSummaryAndCompareStatus =
+                        ContentSummaryAndCompareStatus.fromContentAndCompareStatus(createContentSummary(), compareStatus2);
 
                     expect(contentSummaryAndCompareStatus1.equals(contentSummaryAndCompareStatus2)).toBeTruthy();
                 });
@@ -238,39 +238,39 @@ module ContentSummaryAndCompareStatusSpec {
 
     export function createContentSummary(): ContentSummary {
         let json: api.content.json.ContentSummaryJson = <api.content.json.ContentSummaryJson> {
-            "childOrder": {
-                "orderExpressions": [
+            childOrder: {
+                orderExpressions: [
                     {
-                        "FieldOrderExpr": {
-                            "direction": "DESC",
-                            "fieldName": "modifiedtime"
+                        FieldOrderExpr: {
+                            direction: "DESC",
+                            fieldName: "modifiedtime"
                         }
                     }
                 ]
             },
-            "requireValid": false,
-            "contentState": "DEFAULT",
-            "createdTime": "2016-11-08T11:10:52.239Z",
-            "creator": "user:system:su",
-            "deletable": true,
-            "displayName": "444",
-            "editable": true,
-            "hasChildren": true,
-            "iconUrl": "/admin/rest/schema/content/icon/portal:site?hash=fbb03168ba310b23909201cdd2bf0c12",
-            "id": "39d79832-d5fe-4f75-945e-f0bbe5bdb156",
-            "isPage": true,
-            "isRoot": true,
-            "isValid": true,
-            "language": null,
-            "modifiedTime": "2016-11-17T13:24:04.835Z",
-            "modifier": "user:system:su",
-            "name": "444",
-            "owner": "user:system:su",
-            "path": "/444",
-            "publish": null,
-            "thumbnail": null,
-            "type": "portal:site"
-        }
+            requireValid: false,
+            contentState: "DEFAULT",
+            createdTime: "2016-11-08T11:10:52.239Z",
+            creator: "user:system:su",
+            deletable: true,
+            displayName: "444",
+            editable: true,
+            hasChildren: true,
+            iconUrl: "/admin/rest/schema/content/icon/portal:site?hash=fbb03168ba310b23909201cdd2bf0c12",
+            id: "39d79832-d5fe-4f75-945e-f0bbe5bdb156",
+            isPage: true,
+            isRoot: true,
+            isValid: true,
+            language: null,
+            modifiedTime: "2016-11-17T13:24:04.835Z",
+            modifier: "user:system:su",
+            name: "444",
+            owner: "user:system:su",
+            path: "/444",
+            publish: null,
+            thumbnail: null,
+            type: "portal:site"
+        };
 
         return ContentSummary.fromJson(json);
     }

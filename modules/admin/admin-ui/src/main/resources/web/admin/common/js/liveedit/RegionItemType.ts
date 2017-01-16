@@ -4,7 +4,7 @@ module api.liveedit {
 
     export class RegionItemType extends ItemType {
 
-        private static INSTANCE = new RegionItemType();
+        private static INSTANCE: RegionItemType = new RegionItemType();
 
         static get(): RegionItemType {
             return RegionItemType.INSTANCE;

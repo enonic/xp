@@ -15,8 +15,8 @@ module api.security {
 
         getParams(): Object {
             return {
-                'userStoreKey': this.userStore.getId(),
-                'types': this.getType()
+                userStoreKey: this.userStore.getId(),
+                types: this.getType()
 
             };
         }
@@ -26,7 +26,7 @@ module api.security {
         }
 
         private getType(): string {
-            var typeStr: string = "";
+            let typeStr: string = "";
             this.principalTypes.forEach((type) => {
                 typeStr += PrincipalType[type];
                 typeStr += ",";

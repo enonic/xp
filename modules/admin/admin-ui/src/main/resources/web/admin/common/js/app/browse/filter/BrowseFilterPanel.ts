@@ -33,7 +33,7 @@ module api.app.browse.filter {
             this.hideFilterPanelButton = new api.dom.SpanEl("hide-filter-panel-button icon-search");
             this.hideFilterPanelButton.onClicked(() => this.notifyHidePanelButtonPressed());
 
-            var showResultsButtonWrapper = new api.dom.DivEl("show-filter-results");
+            let showResultsButtonWrapper = new api.dom.DivEl("show-filter-results");
             this.showResultsButton = new api.dom.SpanEl("show-filter-results-button");
             this.showResultsButton.setHtml("Show results");
             this.showResultsButton.onClicked(() => this.notifyShowResultsButtonPressed());
@@ -51,14 +51,14 @@ module api.app.browse.filter {
 
             this.hitsCounterEl = new api.dom.SpanEl("hits-counter");
 
-            var hitsCounterAndClearButtonWrapper = new api.dom.DivEl("hits-and-clear");
+            let hitsCounterAndClearButtonWrapper = new api.dom.DivEl("hits-and-clear");
             hitsCounterAndClearButtonWrapper.appendChildren(this.clearFilter, this.hitsCounterEl);
 
             this.aggregationContainer = new api.aggregation.AggregationContainer();
             this.aggregationContainer.hide();
             this.appendChild(this.aggregationContainer);
 
-            let groupViews = this.getGroupViews(); 
+            let groupViews = this.getGroupViews();
             if (groupViews != null) {
                 groupViews.forEach((aggregationGroupView: api.aggregation.AggregationGroupView) => {
 
@@ -100,6 +100,7 @@ module api.app.browse.filter {
         }
 
         protected appendExtraSection() {
+            // must be implemented by children
         }
 
         setRefreshOfFilterRequired() {
@@ -116,7 +117,7 @@ module api.app.browse.filter {
 
         getSearchInputValues(): api.query.SearchInputValues {
 
-            var searchInputValues: api.query.SearchInputValues = new api.query.SearchInputValues();
+            let searchInputValues: api.query.SearchInputValues = new api.query.SearchInputValues();
 
             searchInputValues.setAggregationSelections(this.aggregationContainer.getSelectedValuesByAggregationName());
             searchInputValues.setTextSearchFieldValue(this.searchField.getEl().getValue());
@@ -135,8 +136,7 @@ module api.app.browse.filter {
         search(elementChanged?: api.dom.Element) {
             if (this.hasFilterSet()) {
                 this.clearFilter.show();
-            }
-            else {
+            } else {
                 this.clearFilter.hide();
             }
             this.notifySearchStarted();
@@ -245,8 +245,7 @@ module api.app.browse.filter {
             if (!emptyFilterValue) {
                 if (hits != 1) {
                     this.hitsCounterEl.setHtml(hits + " hits");
-                }
-                else {
+                } else {
                     this.hitsCounterEl.setHtml(hits + " hit");
                 }
             } else {
@@ -255,8 +254,7 @@ module api.app.browse.filter {
 
             if (hits != 0) {
                 this.showResultsButton.show();
-            }
-            else {
+            } else {
                 this.showResultsButton.hide();
             }
         }

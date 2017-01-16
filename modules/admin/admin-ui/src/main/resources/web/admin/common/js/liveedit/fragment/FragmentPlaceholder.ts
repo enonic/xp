@@ -25,9 +25,9 @@ module api.liveedit.fragment {
 
             this.comboboxWrapper = new api.dom.DivEl('rich-combobox-wrapper');
 
-            var sitePath = this.fragmentComponentView.getLiveEditModel().getSiteModel().getSite().getPath().toString();
-            var loader = new api.content.resource.FragmentContentSummaryLoader().setParentSitePath(sitePath);
-            
+            let sitePath = this.fragmentComponentView.getLiveEditModel().getSiteModel().getSite().getPath().toString();
+            let loader = new api.content.resource.FragmentContentSummaryLoader().setParentSitePath(sitePath);
+
             this.comboBox = api.content.ContentComboBox.create().setMaximumOccurrences(1).setLoader(loader).setMinWidth(270).build();
 
             this.comboboxWrapper.appendChildren(this.comboBox);
@@ -35,17 +35,17 @@ module api.liveedit.fragment {
 
             this.comboBox.onOptionSelected((event: SelectedOptionEvent<api.content.ContentSummary>) => {
 
-                var component: FragmentComponent = this.fragmentComponentView.getComponent();
-                var fragmentContent = event.getSelectedOption().getOption().displayValue;
+                let component: FragmentComponent = this.fragmentComponentView.getComponent();
+                let fragmentContent = event.getSelectedOption().getOption().displayValue;
 
                 if (this.isInsideLayout()) {
                     new GetContentByIdRequest(fragmentContent.getContentId()).sendAndParse().done((content: Content) => {
                         let fragmentComponent = content.getPage() ? content.getPage().getFragment() : null;
-                        
+
                         if (fragmentComponent && api.ObjectHelper.iFrameSafeInstanceOf(fragmentComponent.getType(), LayoutComponentType)) {
                             this.comboBox.clearSelection();
                             new api.liveedit.ShowWarningLiveEditEvent("Layout within layout not allowed").fire();
-                            
+
                         } else {
                             component.setFragment(fragmentContent.getContentId(), fragmentContent.getDisplayName());
                             this.fragmentComponentView.showLoadingSpinner();

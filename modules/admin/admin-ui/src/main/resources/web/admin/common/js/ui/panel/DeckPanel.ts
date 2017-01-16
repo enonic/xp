@@ -39,7 +39,7 @@ module api.ui.panel {
             return this.panels[index];
         }
 
-        getPanels(): Panel[]{
+        getPanels(): Panel[] {
             return this.panels;
         }
 
@@ -56,8 +56,8 @@ module api.ui.panel {
         }
 
         getPanelIndex<T extends Panel>(panel: T): number {
-            var size = this.getSize();
-            for (var i = 0; i < size; i++) {
+            let size = this.getSize();
+            for (let i = 0; i < size; i++) {
                 if (this.panels[i] === panel) {
                     return i;
                 }
@@ -70,7 +70,7 @@ module api.ui.panel {
          * @returns {Panel} the removed panel. Null if not was not removable.
          */
         removePanelByIndex(index: number, checkCanRemovePanel: boolean = true): Panel {
-            var panelToRemove = this.getPanel(index);
+            let panelToRemove = this.getPanel(index);
             return this.removePanel(panelToRemove, checkCanRemovePanel) ? panelToRemove : null;
         }
 
@@ -80,7 +80,7 @@ module api.ui.panel {
          */
         removePanel(panelToRemove: Panel, checkCanRemovePanel: boolean = true): number {
 
-            var index: number = this.getPanelIndex(panelToRemove);
+            let index: number = this.getPanelIndex(panelToRemove);
 
             if (index < 0 || checkCanRemovePanel && !this.canRemovePanel(panelToRemove)) {
                 return -1;
@@ -91,8 +91,7 @@ module api.ui.panel {
 
             if (this.isEmpty()) {
                 this.panelShown = null;
-            }
-            else if (panelToRemove == this.getPanelShown()) {
+            } else if (panelToRemove == this.getPanelShown()) {
                 // show either panel that has the same index now or the last panel
                 this.showPanelByIndex(Math.min(index, this.getSize() - 1));
             }
@@ -108,15 +107,15 @@ module api.ui.panel {
         }
 
         showPanel(panel: Panel) {
-            var index = this.getPanelIndex(panel);
+            let index = this.getPanelIndex(panel);
             if (index > -1) {
                 this.showPanelByIndex(index);
             }
         }
 
         showPanelByIndex(index: number) {
-            var previousPanel = this.getPanelShown();
-            var panelToShow = this.getPanel(index);
+            let previousPanel = this.getPanelShown();
+            let panelToShow = this.getPanel(index);
 
             if (panelToShow == null) {
                 return;

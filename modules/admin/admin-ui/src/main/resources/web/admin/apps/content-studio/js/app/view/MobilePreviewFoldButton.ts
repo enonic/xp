@@ -14,7 +14,7 @@ export class MobilePreviewFoldButton extends api.ui.toolbar.FoldButton {
     }
 
     private addElement(button: ActionButton) {
-        var buttonWidth = button.getEl().getWidthWithBorder();
+        let buttonWidth = button.getEl().getWidthWithBorder();
         this.push(button, buttonWidth);
     }
 

@@ -42,7 +42,7 @@ module api.security.acl {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, UserStoreAccessControlEntry)) {
                 return false;
             }
-            var other = <UserStoreAccessControlEntry>o;
+            let other = <UserStoreAccessControlEntry>o;
             return this.principal.equals(other.getPrincipal()) &&
                    this.access === other.access;
         }
@@ -57,8 +57,8 @@ module api.security.acl {
 
         toJson(): api.security.acl.UserStoreAccessControlEntryJson {
             return {
-                "principal": this.principal.toJson(),
-                "access": UserStoreAccess[this.access]
+                principal: this.principal.toJson(),
+                access: UserStoreAccess[this.access]
             };
         }
 

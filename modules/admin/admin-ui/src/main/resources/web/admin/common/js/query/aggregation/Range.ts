@@ -20,12 +20,11 @@ module api.query.aggregation {
 
             if (this.getKey() != null) {
                 return {
-                    "key": this.getKey()
+                    key: this.getKey()
                 };
             } else {
                 return {};
             }
-
 
         }
 

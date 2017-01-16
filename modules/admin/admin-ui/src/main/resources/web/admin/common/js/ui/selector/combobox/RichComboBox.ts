@@ -31,7 +31,7 @@ module api.ui.selector.combobox {
 
         constructor(builder: RichComboBoxBuilder<OPTION_DISPLAY_VALUE>) {
 
-            var comboBoxConfig: ComboBoxConfig<OPTION_DISPLAY_VALUE> = {
+            let comboBoxConfig: ComboBoxConfig<OPTION_DISPLAY_VALUE> = {
                 maximumOccurrences: builder.maximumOccurrences,
                 selectedOptionsView: builder.selectedOptionsView,
                 optionDisplayValueViewer: builder.optionDisplayValueViewer,
@@ -47,7 +47,7 @@ module api.ui.selector.combobox {
                 skipAutoDropShowOnValueChange: true
             };
 
-            var comboBox = new RichComboBoxComboBox<OPTION_DISPLAY_VALUE>(builder.comboBoxName, comboBoxConfig);
+            let comboBox = new RichComboBoxComboBox<OPTION_DISPLAY_VALUE>(builder.comboBoxName, comboBoxConfig);
 
             super(comboBox);
 
@@ -234,9 +234,9 @@ module api.ui.selector.combobox {
         }
 
         isSelected(value: OPTION_DISPLAY_VALUE): boolean {
-            var selectedValues = this.getSelectedValues();
-            var valueToFind = this.getDisplayValueId(value);
-            for (var i = 0; i < selectedValues.length; i++) {
+            let selectedValues = this.getSelectedValues();
+            let valueToFind = this.getDisplayValueId(value);
+            for (let i = 0; i < selectedValues.length; i++) {
                 if (selectedValues[i] == valueToFind) {
                     return true;
                 }
@@ -245,7 +245,7 @@ module api.ui.selector.combobox {
         }
 
         protected getDisplayValueId(value: Object): string {
-            var val = value[this.identifierMethod]();
+            let val = value[this.identifierMethod]();
             return typeof val == 'object' && val['toString'] ? val.toString() : val;
         }
 
@@ -254,7 +254,7 @@ module api.ui.selector.combobox {
                 value: this.getDisplayValueId(value),
                 displayValue: <OPTION_DISPLAY_VALUE>value,
                 readOnly: readOnly
-            }
+            };
         }
 
         private setupLoader() {
@@ -278,7 +278,7 @@ module api.ui.selector.combobox {
 
             this.loader.onLoadedData((event: api.util.loader.event.LoadedDataEvent<OPTION_DISPLAY_VALUE>) => {
                 this.errorContainer.hide();
-                var options = this.createOptions(event.getData());
+                let options = this.createOptions(event.getData());
                 // check if postLoad and save selection
                 this.comboBox.setOptions(options, event.isPostLoad());
                 this.notifyLoaded(event.getData(), event.isPostLoad());
@@ -291,7 +291,7 @@ module api.ui.selector.combobox {
         }
 
         private createOptions(items: Object[]): api.ui.selector.Option<OPTION_DISPLAY_VALUE>[] {
-            var options = [];
+            let options = [];
             items.forEach((itemInst: Object) => {
                 options.push(this.createOption(itemInst));
             });
@@ -322,7 +322,6 @@ module api.ui.selector.combobox {
             this.comboBox.unOptionSelected(listener);
         }
 
-
         onOptionMoved(listener: {(option: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
             this.comboBox.onOptionMoved(listener);
         }
@@ -342,7 +341,7 @@ module api.ui.selector.combobox {
         }
 
         unLoading(listener: {(): void;}) {
-            var index = this.loadedListeners.indexOf(listener);
+            let index = this.loadedListeners.indexOf(listener);
             this.loadedListeners.splice(index, 1);
         }
 
@@ -351,7 +350,7 @@ module api.ui.selector.combobox {
         }
 
         unLoaded(listenerToBeRemoved: {(items: OPTION_DISPLAY_VALUE[], postLoaded?: boolean): void;}) {
-            var index = this.loadedListeners.indexOf(listenerToBeRemoved);
+            let index = this.loadedListeners.indexOf(listenerToBeRemoved);
             this.loadedListeners.splice(index, 1);
         }
 
@@ -434,7 +433,7 @@ module api.ui.selector.combobox {
 
         private doWhenLoaded(callback: Function, value: string) {
             if (this.loader.isLoaded()) {
-                var optionsMissing = !api.util.StringHelper.isEmpty(value) && this.splitValues(value).some((val) => {
+                let optionsMissing = !api.util.StringHelper.isEmpty(value) && this.splitValues(value).some((val) => {
                         return !this.getOptionByValue(val);
                     });
                 if (optionsMissing) { // option needs loading
@@ -448,7 +447,7 @@ module api.ui.selector.combobox {
                 if (RichComboBox.debug) {
                     console.debug(this.toString() + '.doWhenLoaded: waiting to be loaded');
                 }
-                var singleLoadListener = () => {
+                let singleLoadListener = () => {
                     if (RichComboBox.debug) {
                         console.debug(this.toString() + '.doWhenLoaded: on loaded');
                     }
@@ -464,7 +463,7 @@ module api.ui.selector.combobox {
 
         loadOptionsAfterShowDropdown(): wemQ.Promise<void> {
 
-            var deferred = wemQ.defer<void>();
+            let deferred = wemQ.defer<void>();
             this.loader.load().then(() => {
 
                 deferred.resolve(null);
@@ -533,7 +532,7 @@ module api.ui.selector.combobox {
         getSelectedOptionsView(): SelectedOptionsView<T> {
             return this.selectedOptionsView;
         }
-        
+
         setMaximumOccurrences(maximumOccurrences: number): RichComboBoxBuilder<T> {
             this.maximumOccurrences = maximumOccurrences;
             return this;
@@ -598,6 +597,5 @@ module api.ui.selector.combobox {
             return new RichComboBox(this);
         }
     }
-
 
 }

@@ -8,9 +8,8 @@ module api.ui.tab {
             super(builder.setCloseButtonEnabled(true), "tab-menu-item");
         }
 
-
         isVisibleInMenu(): boolean {
-            return this.visibleInMenu
+            return this.visibleInMenu;
         }
 
         setVisibleInMenu(value: boolean) {

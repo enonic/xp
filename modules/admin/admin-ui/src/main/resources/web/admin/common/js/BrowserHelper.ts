@@ -6,7 +6,8 @@ module api {
 
     export class BrowserHelper {
 
-        private static AVAILABLE_VERSIONS = {};
+        // Default Object type contains browser name property
+        private static AVAILABLE_VERSIONS: Object = {};
 
         private static BROWSER_NAME: BrowserName;
 
@@ -76,7 +77,7 @@ module api {
         }
 
         private static init() {
-            var M = navigator.userAgent.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+            let M = navigator.userAgent.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
             BrowserHelper.BROWSER_NAME = (<any>BrowserName)[M[1].toLocaleUpperCase()];
             BrowserHelper.BROWSER_VERSION = M[2];
 

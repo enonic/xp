@@ -10,7 +10,7 @@ module api.form {
         constructor(value?: Date) {
             super("div");
 
-            var publishFromDateTimeBuilder = new DateTimePickerBuilder();
+            let publishFromDateTimeBuilder = new DateTimePickerBuilder();
             if (value) {
                 publishFromDateTimeBuilder.setSelectedDate(value);
                 publishFromDateTimeBuilder.setHours(value.getHours());

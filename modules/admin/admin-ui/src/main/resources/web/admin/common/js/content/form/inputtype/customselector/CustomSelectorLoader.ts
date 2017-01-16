@@ -5,7 +5,7 @@ module api.content.form.inputtype.customselector {
     export class CustomSelectorLoader extends PostLoader<CustomSelectorResponse, CustomSelectorItem> {
 
         protected request: CustomSelectorRequest;
-        
+
         constructor(requestPath: string) {
             super();
 

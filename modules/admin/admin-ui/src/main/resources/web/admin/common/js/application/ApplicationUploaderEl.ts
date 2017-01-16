@@ -21,7 +21,6 @@ module api.application {
             this.addClass('media-uploader-el');
         }
 
-
         createModel(serverResponse: api.application.json.ApplicationInstallResultJson): Application {
             if (serverResponse) {
 
@@ -30,8 +29,7 @@ module api.application {
                 this.failure = result.getFailure();
 
                 return result.getApplication();
-            }
-            else {
+            } else {
                 return null;
             }
         }

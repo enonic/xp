@@ -111,8 +111,8 @@ module api.dom {
             this.rendered = false;
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(builder, ElementFromElementBuilder)) {
-                var fromElementBuilder = <ElementFromElementBuilder>builder;
-                var sourceElement = fromElementBuilder.element;
+                let fromElementBuilder = <ElementFromElementBuilder>builder;
+                let sourceElement = fromElementBuilder.element;
                 if (sourceElement) {
                     this.parentElement = fromElementBuilder.parentElement ? fromElementBuilder.parentElement : sourceElement.parentElement;
                     if (this.parentElement) {
@@ -121,9 +121,8 @@ module api.dom {
                     this.children = sourceElement.children;
                     this.el = sourceElement.el;
                 }
-            }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(builder, ElementFromHelperBuilder)) {
-                var fromHelperBuilder = <ElementFromHelperBuilder>builder;
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(builder, ElementFromHelperBuilder)) {
+                let fromHelperBuilder = <ElementFromHelperBuilder>builder;
 
                 this.el = fromHelperBuilder.helper;
                 if (fromHelperBuilder.loadExistingChildren) {
@@ -132,38 +131,36 @@ module api.dom {
                 if (fromHelperBuilder.parentElement) {
                     this.parentElement = fromHelperBuilder.parentElement;
                 }
-            }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(builder, NewElementBuilder)) {
-                var newElementBuilder = <NewElementBuilder>builder;
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(builder, NewElementBuilder)) {
+                let newElementBuilder = <NewElementBuilder>builder;
                 if (!newElementBuilder.tagName) {
                     throw new Error("tagName cannot be null");
                 }
                 if (newElementBuilder.helper) {
                     this.el = newElementBuilder.helper;
-                }
-                else {
+                } else {
                     this.el = ElementHelper.fromName(newElementBuilder.tagName);
                 }
 
                 if (newElementBuilder.parentElement) {
                     this.parentElement = newElementBuilder.parentElement;
                 }
-            }
-            else {
+            } else {
                 throw new Error("Unsupported builder: " + api.ClassHelper.getClassName(builder));
             }
 
             if (this.parentElement && this.el.getHTMLElement().parentElement) {
                 if (!(this.parentElement.getHTMLElement() === this.el.getHTMLElement().parentElement )) {
+                    // tslint:disable-next-line:max-line-length
                     throw new Error("Illegal state: HTMLElement in parent Element is not the as the HTMLElement parent to this HTMLElement");
                 }
             }
             // Do not generate id unless the distance to Element in the class hierarchy of this is larger than 1
             // This should result in that no id's are generated for new Element or classes extending Element directly
             // (which should prevent id-generation of direct instances of most api.dom classes)
-            var distance = api.ClassHelper.distanceTo(this, Element);
+            let distance = api.ClassHelper.distanceTo(this, Element);
             if (builder.generateId || distance > 1) {
-                var id = ElementRegistry.registerElement(this);
+                let id = ElementRegistry.registerElement(this);
                 this.setId(id);
             }
 
@@ -178,29 +175,28 @@ module api.dom {
         }
 
         private replaceChildElement(replacementChild: Element, existingChild: Element) {
-            var index = this.children.indexOf(existingChild);
+            let index = this.children.indexOf(existingChild);
             this.children[index] = replacementChild;
         }
 
         public loadExistingChildren(): Element {
 
-            var children = this.el.getChildren();
-            for (var i = 0; i < children.length; i++) {
-                var childAsElement = Element.fromHtmlElement(<HTMLElement>children[i], true, this);
+            let children = this.el.getChildren();
+            for (let i = 0; i < children.length; i++) {
+                let childAsElement = Element.fromHtmlElement(<HTMLElement>children[i], true, this);
                 this.children.push(childAsElement);
             }
 
             return this;
         }
 
-
         public findChildById(id: string, deep: boolean = false): Element {
-            for (var i = 0; i < this.children.length; i++) {
-                var child = this.children[i];
+            for (let i = 0; i < this.children.length; i++) {
+                let child = this.children[i];
                 if (child.getId() == id) {
                     return child;
                 } else if (deep) {
-                    var found = child.findChildById(id, deep);
+                    let found = child.findChildById(id, deep);
                     if (found) {
                         return found;
                     }
@@ -224,7 +220,7 @@ module api.dom {
                 this.notifyShown(this);
             }
 
-            var renderPromise;
+            let renderPromise;
             if (this.isRendered() || this.isRendering()) {
                 renderPromise = wemQ(true);
             } else {
@@ -241,9 +237,9 @@ module api.dom {
             });
         }
 
-        private initChildren(rendered): wemQ.Promise<boolean> {
+        private initChildren(rendered: boolean): wemQ.Promise<boolean> {
             this.childrenAddedDuringInit = false;
-            var childPromises = [];
+            let childPromises = [];
 
             this.children.forEach((child: Element) => {
                 if (!child.isRendered()) {
@@ -289,7 +285,7 @@ module api.dom {
             this.rendering = true;
             return this.doRender().then((rendered) => {
 
-                var childPromises = [];
+                let childPromises = [];
                 if (deep) {
                     this.children.forEach((child: Element) => {
                         childPromises.push(child.render(deep));
@@ -309,7 +305,7 @@ module api.dom {
                     api.DefaultErrorHandler.handle(reason);
                     return false;
                 });
-            })
+            });
         }
 
         isRendering(): boolean {
@@ -339,9 +335,13 @@ module api.dom {
             this.notifyShown(this, true);
         }
 
-        hide() {
+        hide(skipAnimation: boolean = false) {
             // Using jQuery to hide, since it seems to contain some smartness
-            wemjq(this.el.getHTMLElement()).hide();
+            if (skipAnimation) {
+                wemjq(this.el.getHTMLElement()).hide(null);
+            } else {
+                wemjq(this.el.getHTMLElement()).hide();
+            }
             this.notifyHidden(this);
         }
 
@@ -365,7 +365,7 @@ module api.dom {
         }
 
         setClassEx(className: string): Element {
-            var cls = api.StyleHelper.getCls(className);
+            let cls = api.StyleHelper.getCls(className);
             return this.setClass(cls);
         }
 
@@ -376,7 +376,7 @@ module api.dom {
         }
 
         addClassEx(className: string): Element {
-            var cls = api.StyleHelper.getCls(className);
+            let cls = api.StyleHelper.getCls(className);
             return this.addClass(cls);
         }
 
@@ -386,7 +386,7 @@ module api.dom {
         }
 
         toggleClassEx(className: string, condition?: boolean): Element {
-            var cls = api.StyleHelper.getCls(className);
+            let cls = api.StyleHelper.getCls(className);
             return this.toggleClass(cls, condition);
         }
 
@@ -395,7 +395,7 @@ module api.dom {
         }
 
         hasClassEx(className: string): boolean {
-            var cls = api.StyleHelper.getCls(className);
+            let cls = api.StyleHelper.getCls(className);
             return this.hasClass(cls);
         }
 
@@ -406,7 +406,7 @@ module api.dom {
         }
 
         removeClassEx(className: string): Element {
-            var cls = api.StyleHelper.getCls(className);
+            let cls = api.StyleHelper.getCls(className);
             return this.removeClass(cls);
         }
 
@@ -463,7 +463,7 @@ module api.dom {
                 return false;
             }
             this.el.focus();
-            var gotFocus: boolean = document.activeElement == this.el.getHTMLElement();
+            let gotFocus: boolean = document.activeElement == this.el.getHTMLElement();
             if (!gotFocus && Element.debug) {
                 console.log("Element.giveFocus(): Failed to give focus to Element: class = " + api.ClassHelper.getClassName(this) +
                             ", id = " +
@@ -480,7 +480,7 @@ module api.dom {
                 return false;
             }
             this.el.blur();
-            var gotBlur: boolean = document.activeElement != this.el.getHTMLElement();
+            let gotBlur: boolean = document.activeElement != this.el.getHTMLElement();
             if (!gotBlur && Element.debug) {
                 console.log("Element.giveBlur(): Failed to give blur to Element: class = " + api.ClassHelper.getClassName(this) +
                             ", id = " +
@@ -492,7 +492,6 @@ module api.dom {
         getHTMLElement(): HTMLElement {
             return this.el.getHTMLElement();
         }
-
 
         /*
          *      Child manipulations
@@ -525,7 +524,7 @@ module api.dom {
         insertAfterEl(existing: Element): Element {
             api.util.assertNotNull(existing, 'Existing element cannot be null');
             // get index before insertion !
-            var existingIndex = existing.getSiblingIndex();
+            let existingIndex = existing.getSiblingIndex();
             this.el.insertAfterEl(existing.el);
 
             return this.insertChildElement(this, existing.parentElement, existingIndex + 1);
@@ -534,7 +533,7 @@ module api.dom {
         insertBeforeEl(existing: Element): Element {
             api.util.assertNotNull(existing, 'Existing element cannot be null');
             // get index before insertion !
-            var existingIndex = existing.getSiblingIndex();
+            let existingIndex = existing.getSiblingIndex();
             this.el.insertBeforeEl(existing.el);
 
             return this.insertChildElement(this, existing.getParentElement(), existingIndex);
@@ -606,7 +605,7 @@ module api.dom {
                 }
             }
 
-            var parentNode = child.getHTMLElement().parentNode;
+            let parentNode = child.getHTMLElement().parentNode;
             // check for parentNode because if parent is not a HtmlElement but a Node ( i.e SVG )
             // then parentElement will be null but parentNode will not
             if (parentNode && parentNode !== this.getHTMLElement()) {
@@ -620,7 +619,7 @@ module api.dom {
         }
 
         private unregisterChildElement(child: Element): number {
-            var childIndex = this.children.indexOf(child);
+            let childIndex = this.children.indexOf(child);
             if (childIndex < 0) {
                 throw new Error("Child element to remove not found");
             }
@@ -628,7 +627,6 @@ module api.dom {
             child.parentElement = null;
             return childIndex;
         }
-
 
         /*
          *      Self actions
@@ -656,8 +654,8 @@ module api.dom {
             replacement.notifyAdded();
 
             // during these operation this.parentElement will become unavailable
-            var parent = this.parentElement;
-            var index = parent.unregisterChildElement(this);
+            let parent = this.parentElement;
+            let index = parent.unregisterChildElement(this);
             parent.registerChildElement(replacement, index);
 
             // Run init of replacement if parent is rendered
@@ -674,7 +672,7 @@ module api.dom {
 
         wrapWithElement(wrapperElement: Element) {
             api.util.assertNotNull(wrapperElement, 'wrapperElement cannot be null');
-            var parent = this.parentElement;
+            let parent = this.parentElement;
             if (!parent) {
                 return;
             }
@@ -700,7 +698,7 @@ module api.dom {
         }
 
         getNextElement(): Element {
-            var nextSiblingHtmlElement = this.getHTMLElement().nextElementSibling;
+            let nextSiblingHtmlElement = this.getHTMLElement().nextElementSibling;
             if (!nextSiblingHtmlElement) {
                 return null;
             }
@@ -708,7 +706,7 @@ module api.dom {
         }
 
         getPreviousElement(): Element {
-            var previousSiblingHtmlElement = this.getHTMLElement().previousElementSibling;
+            let previousSiblingHtmlElement = this.getHTMLElement().previousElementSibling;
             if (!previousSiblingHtmlElement) {
                 return null;
             }
@@ -719,9 +717,9 @@ module api.dom {
          * Returns the index of this element among it's siblings. Returns 0 if first or only child.
          */
         getSiblingIndex(): number {
-            var indexFromDOM = this.el.getSiblingIndex();
+            let indexFromDOM = this.el.getSiblingIndex();
             if (this.parentElement) {
-                var indexFromElement = this.parentElement.children.indexOf(this);
+                let indexFromElement = this.parentElement.children.indexOf(this);
                 api.util.assertState(indexFromElement == indexFromDOM, "index of Element in parentElement.children" +
                                                                        " [" + indexFromElement + "] does not correspond with" +
                                                                        " the actual index [" + indexFromDOM +
@@ -752,11 +750,10 @@ module api.dom {
             return this;
         }
 
-
         /*
          *      Event listeners
          */
-        private mouseEnterByHandler = {};
+        private mouseEnterByHandler: Object = {};
 
         onMouseEnter(handler: (e: MouseEvent) => any) {
             if (typeof this.getHTMLElement().onmouseenter != "undefined") {
@@ -780,7 +777,7 @@ module api.dom {
             }
         }
 
-        private mouseLeaveByHandler = {};
+        private mouseLeaveByHandler: Object = {};
 
         onMouseLeave(handler: (e: MouseEvent) => any) {
             if (typeof this.getHTMLElement().onmouseleave != "undefined") {
@@ -827,18 +824,18 @@ module api.dom {
         unAdded(listener: (event: ElementAddedEvent) => void) {
             this.addedListeners = this.addedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyAdded() {
-            var addedEvent = new ElementAddedEvent(this);
+            let addedEvent = new ElementAddedEvent(this);
             this.addedListeners.forEach((listener) => {
                 listener(addedEvent);
             });
 
             this.children.forEach((child: Element) => {
                 child.notifyAdded();
-            })
+            });
         }
 
         onRemoved(listener: (event: ElementRemovedEvent) => void) {
@@ -848,17 +845,17 @@ module api.dom {
         unRemoved(listener: (event: ElementRemovedEvent) => void) {
             this.removedListeners = this.removedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyRemoved(parent: Element, target?: Element) {
-            var removedEvent = new ElementRemovedEvent(this, parent, target);
+            let removedEvent = new ElementRemovedEvent(this, parent, target);
             this.removedListeners.forEach((listener) => {
                 listener(removedEvent);
             });
             this.children.forEach((child: Element) => {
                 child.notifyRemoved(removedEvent.getParent(), removedEvent.getTarget());
-            })
+            });
         }
 
         onRendered(listener: (event: ElementRenderedEvent) => void) {
@@ -868,11 +865,11 @@ module api.dom {
         unRendered(listener: (event: ElementRenderedEvent) => void) {
             this.renderedListeners = this.renderedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyRendered() {
-            var renderedEvent = new ElementRenderedEvent(this);
+            let renderedEvent = new ElementRenderedEvent(this);
             this.renderedListeners.forEach((listener) => {
                 listener(renderedEvent);
             });
@@ -886,11 +883,11 @@ module api.dom {
         unShown(listener: (event: ElementShownEvent) => void) {
             this.shownListeners = this.shownListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyShown(target?: Element, deep?: boolean) {
-            var shownEvent = new ElementShownEvent(this, target);
+            let shownEvent = new ElementShownEvent(this, target);
             this.shownListeners.forEach((listener) => {
                 listener(shownEvent);
             });
@@ -914,13 +911,13 @@ module api.dom {
         }
 
         private notifyHidden(target?: Element) {
-            var hiddenEvent = new ElementHiddenEvent(this, target);
+            let hiddenEvent = new ElementHiddenEvent(this, target);
             this.hiddenListeners.forEach((listener) => {
                 listener(hiddenEvent);
             });
             this.children.forEach((child: Element) => {
                 child.notifyHidden(hiddenEvent.getTarget());
-            })
+            });
         }
 
         onScrolled(listener: (event: WheelEvent) => void) {
@@ -988,12 +985,12 @@ module api.dom {
         onMouseWheel(listener: (event: WheelEvent) => void) {
             // http://www.javascriptkit.com/javatutors/onmousewheel.shtml
             // FF doesn't recognize mousewheel as of FF3.x
-            var eventName = (/Firefox/i.test(navigator.userAgent)) ? "wheel" : "mousewheel";
+            let eventName = (/Firefox/i.test(navigator.userAgent)) ? "wheel" : "mousewheel";
             this.getEl().addEventListener(eventName, listener);
         }
 
         unMouseWheel(listener: (event: MouseEvent) => void) {
-            var eventName = (/Firefox/i.test(navigator.userAgent)) ? "wheel" : "mousewheel";
+            let eventName = (/Firefox/i.test(navigator.userAgent)) ? "wheel" : "mousewheel";
             this.getEl().removeEventListener(eventName, listener);
         }
 
@@ -1140,15 +1137,14 @@ module api.dom {
             this.getEl().removeEventListener("dragend", listener);
         }
 
-
         static fromHtmlElement(element: HTMLElement, loadExistingChildren: boolean = false, parent?: Element): Element {
             return new Element(new ElementFromHelperBuilder().setHelper(new ElementHelper(element)).setLoadExistingChildren(
                 loadExistingChildren).setParentElement(parent));
         }
 
         static fromString(s: string, loadExistingChildren: boolean = true): Element {
-            var htmlEl = wemjq(s).get(0);
-            var parentEl;
+            let htmlEl = wemjq(s).get(0);
+            let parentEl;
             if (htmlEl && htmlEl.parentElement) {
                 parentEl = Element.fromHtmlElement(htmlEl.parentElement);
             }
@@ -1157,8 +1153,8 @@ module api.dom {
 
         static fromSelector(s: string, loadExistingChildren: boolean = true): Element[] {
             return wemjq(s).map((index, elem) => {
-                var htmlEl = <HTMLElement> elem,
-                    parentEl;
+                let htmlEl = <HTMLElement> elem;
+                let parentEl;
                 if (htmlEl && htmlEl.parentElement) {
                     parentEl = Element.fromHtmlElement(htmlEl.parentElement);
                 }

@@ -5,31 +5,31 @@ module api.data {
      */
     export class ValueTypes {
 
-        static DATA = new ValueTypePropertySet();
+        static DATA: ValueTypePropertySet = new ValueTypePropertySet();
 
-        static STRING = new ValueTypeString();
+        static STRING: ValueTypeString = new ValueTypeString();
 
-        static XML = new ValueTypeXml();
+        static XML: ValueTypeXml = new ValueTypeXml();
 
-        static LOCAL_DATE = new ValueTypeLocalDate();
+        static LOCAL_DATE: ValueTypeLocalDate = new ValueTypeLocalDate();
 
-        static LOCAL_TIME = new ValueTypeLocalTime();
+        static LOCAL_TIME: ValueTypeLocalTime = new ValueTypeLocalTime();
 
-        static LOCAL_DATE_TIME = new ValueTypeLocalDateTime();
+        static LOCAL_DATE_TIME: ValueTypeLocalDateTime = new ValueTypeLocalDateTime();
 
-        static DATE_TIME = new ValueTypeDateTime();
+        static DATE_TIME: ValueTypeDateTime = new ValueTypeDateTime();
 
-        static LONG = new ValueTypeLong();
+        static LONG: ValueTypeLong = new ValueTypeLong();
 
-        static BOOLEAN = new ValueTypeBoolean();
+        static BOOLEAN: ValueTypeBoolean = new ValueTypeBoolean();
 
-        static DOUBLE = new ValueTypeDouble();
+        static DOUBLE: ValueTypeDouble = new ValueTypeDouble();
 
-        static GEO_POINT = new ValueTypeGeoPoint();
+        static GEO_POINT: ValueTypeGeoPoint = new ValueTypeGeoPoint();
 
-        static REFERENCE = new ValueTypeReference();
+        static REFERENCE: ValueTypeReference = new ValueTypeReference();
 
-        static BINARY_REFERENCE = new ValueTypeBinaryReference();
+        static BINARY_REFERENCE: ValueTypeBinaryReference = new ValueTypeBinaryReference();
 
         static ALL: ValueType[] = [
             ValueTypes.DATA,
@@ -44,12 +44,12 @@ module api.data {
             ValueTypes.DOUBLE,
             ValueTypes.GEO_POINT,
             ValueTypes.REFERENCE,
-            ValueTypes.BINARY_REFERENCE
+            ValueTypes.BINARY_REFERENCE,
         ];
 
         public static fromName(name: string): ValueType {
-            for (var i = 0; i < ValueTypes.ALL.length; i++) {
-                var type = ValueTypes.ALL[i];
+            for (let i = 0; i < ValueTypes.ALL.length; i++) {
+                let type = ValueTypes.ALL[i];
                 if (type.toString() == name) {
                     return type;
                 }

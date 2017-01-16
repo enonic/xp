@@ -52,8 +52,8 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
     }
 
     protected createFormIcon(): FormIcon {
-        var iconUrl = api.dom.ImgEl.PLACEHOLDER;
-        var formIcon = new FormIcon(iconUrl, "icon");
+        let iconUrl = api.dom.ImgEl.PLACEHOLDER;
+        let formIcon = new FormIcon(iconUrl, "icon");
         formIcon.addClass("icon icon-xlarge");
         return formIcon;
     }
@@ -62,12 +62,12 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
         return <FormIcon> super.getFormIcon();
     }
 
-    doRenderOnDataLoaded(rendered): Q.Promise<boolean> {
+    doRenderOnDataLoaded(rendered: boolean): Q.Promise<boolean> {
 
-        return super.doRenderOnDataLoaded(rendered).then((rendered) => {
+        return super.doRenderOnDataLoaded(rendered).then((nextRendered) => {
             this.addClass("principal-wizard-panel");
 
-            var responsiveItem = ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
+            const responsiveItem = ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 if (this.isVisible()) {
                     this.updateStickyToolbar();
                 }
@@ -81,7 +81,7 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
                 responsiveItem.update();
             });
 
-            return rendered;
+            return nextRendered;
         });
     }
 
@@ -95,7 +95,7 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
 
     saveChanges(): wemQ.Promise<USER_ITEM_TYPE> {
         if (this.isRendered() && !this.getWizardHeader().getName()) {
-            var deferred = wemQ.defer<USER_ITEM_TYPE>();
+            let deferred = wemQ.defer<USER_ITEM_TYPE>();
             api.notify.showError("Name can not be empty");
             deferred.reject(new Error("Name can not be empty"));
             return deferred.promise;
@@ -104,7 +104,6 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
         }
 
     }
-
 
     createSteps(persistedItem: USER_ITEM_TYPE): WizardStep[] {
         throw new Error("Must be implemented by inheritors");

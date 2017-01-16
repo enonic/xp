@@ -6,9 +6,6 @@ module api.security {
         private deleted: boolean;
         private reason: string;
 
-        constructor() {
-        }
-
         getPrincipalKey(): PrincipalKey {
             return this.principalKey;
         }
@@ -22,7 +19,7 @@ module api.security {
         }
 
         static fromJson(json: api.security.DeletePrincipalResultJson): DeletePrincipalResult {
-            var result = new DeletePrincipalResult();
+            let result = new DeletePrincipalResult();
             result.principalKey = PrincipalKey.fromString(json.principalKey);
             result.deleted = json.deleted;
             result.reason = json.reason;

@@ -1,6 +1,5 @@
 module api.content.json {
 
-
     export interface GetContentVersionsResultsJson {
 
         from: number;
@@ -14,4 +13,3 @@ module api.content.json {
         contentVersions: ContentVersionJson[];
     }
 }
-

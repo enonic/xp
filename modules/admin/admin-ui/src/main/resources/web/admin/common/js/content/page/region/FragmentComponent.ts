@@ -5,9 +5,9 @@ module api.content.page.region {
 
     export class FragmentComponent extends Component implements api.Equitable, api.Cloneable {
 
-        public static PROPERTY_FRAGMENT = 'fragment';
+        public static PROPERTY_FRAGMENT: string = 'fragment';
 
-        public static PROPERTY_CONFIG = 'config';
+        public static PROPERTY_CONFIG: string = 'config';
 
         public static debug: boolean = false;
 
@@ -49,7 +49,7 @@ module api.content.page.region {
         }
 
         setFragment(contentId: api.content.ContentId, name: string) {
-            var oldValue = this.fragment;
+            let oldValue = this.fragment;
             this.fragment = contentId;
 
             this.setName(name ? new ComponentName(name) : this.getType().getDefaultName());
@@ -73,7 +73,7 @@ module api.content.page.region {
 
         toJson(): ComponentTypeWrapperJson {
 
-            var json: FragmentComponentJson = <FragmentComponentJson>super.toComponentJson();
+            let json: FragmentComponentJson = <FragmentComponentJson>super.toComponentJson();
             json.fragment = this.fragment != null ? this.fragment.toString() : null;
             json.config = this.config != null ? this.config.toJson() : null;
 
@@ -88,7 +88,7 @@ module api.content.page.region {
                 return false;
             }
 
-            var other = <FragmentComponent>o;
+            let other = <FragmentComponent>o;
 
             if (!super.equals(o)) {
                 return false;
@@ -144,7 +144,6 @@ module api.content.page.region {
             }
 
             this.setName(json.name ? new ComponentName(json.name) : null);
-
 
             if (json.config) {
                 this.setConfig(PropertyTree.fromJson(json.config));

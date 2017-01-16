@@ -1,6 +1,8 @@
 module api.content.resource {
 
-    export class ResolveDependenciesRequest extends ContentResourceRequest<json.ContentDependencyJson, any> {
+    import ContentDependencyJson = api.content.json.ContentDependencyJson;
+
+    export class ResolveDependenciesRequest extends ContentResourceRequest<ContentDependencyJson, any> {
 
         private id: ContentId;
 

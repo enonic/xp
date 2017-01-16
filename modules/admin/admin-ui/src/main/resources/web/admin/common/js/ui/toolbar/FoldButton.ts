@@ -6,7 +6,7 @@ module api.ui.toolbar {
         private dropdown: api.dom.DivEl;
         private widthCache: number[] = [];
         private hostElement: api.dom.Element;
-        private static expandedCls = "expanded";
+        private static expandedCls: string = "expanded";
 
         constructor(caption: string = "Actions", hostElement?: api.dom.Element) {
             super();
@@ -34,13 +34,13 @@ module api.ui.toolbar {
                 this.hostElement.toggleClass(FoldButton.expandedCls);
             }
         }
-        
-        private onButtonClicked(e) {
+
+        private onButtonClicked(e: MouseEvent) {
             let onBodyClicked = () => {
                 this.collapse();
                 api.dom.Body.get().unClicked(onBodyClicked);
             };
-            
+
             this.toggle();
             if (this.hasClass(FoldButton.expandedCls)) {
                 api.dom.Body.get().onClicked(onBodyClicked);
@@ -49,7 +49,7 @@ module api.ui.toolbar {
             e.stopPropagation();
         }
 
-        private onMenuClicked(e) {
+        private onMenuClicked(e: MouseEvent) {
             this.collapse();
             e.stopPropagation();
         }
@@ -67,7 +67,7 @@ module api.ui.toolbar {
         }
 
         pop(): api.dom.Element {
-            var top = this.dropdown.getFirstChild();
+            let top = this.dropdown.getFirstChild();
             this.dropdown.removeChild(top);
             this.widthCache.shift();
             return top;

@@ -9,7 +9,6 @@ module api.content.attachment {
     import AttachmentBuilder = api.content.attachment.AttachmentBuilder;
     import SelectionItem = api.app.browse.SelectionItem;
 
-
     export class AttachmentUploaderEl extends api.ui.uploader.FileUploaderEl<Attachment> {
 
         private attachmentItems: AttachmentItem[];
@@ -17,7 +16,7 @@ module api.content.attachment {
         private removeCallback: (value: string) => void;
         private addCallback: (value: string) => void;
 
-        constructor(config) {
+        constructor(config: any) {
 
             if (config.url == undefined) {
                 config.url = api.util.UriHelper.getRestUri("content/createAttachment");
@@ -41,12 +40,10 @@ module api.content.attachment {
             this.addClass('attachment-uploader-el');
         }
 
-
         createModel(serverResponse: AttachmentJson): Attachment {
             if (serverResponse) {
                 return new AttachmentBuilder().fromJson(serverResponse).build();
-            }
-            else {
+            } else {
                 return null;
             }
         }

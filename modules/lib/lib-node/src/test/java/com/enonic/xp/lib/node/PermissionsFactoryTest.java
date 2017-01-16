@@ -7,7 +7,7 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.json.JsonToPropertyTreeTranslator;
+import com.enonic.xp.lib.common.JsonToPropertyTreeTranslator;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -110,7 +110,7 @@ public class PermissionsFactoryTest
     {
         final JsonNode node = JsonHelper.from( json );
 
-        final PropertyTree properties = new JsonToPropertyTreeTranslator().translate( node );
+        final PropertyTree properties = JsonToPropertyTreeTranslator.translate( node );
 
         return new PermissionsFactory( properties.getRoot().getSets( "_permissions" ) ).create();
     }

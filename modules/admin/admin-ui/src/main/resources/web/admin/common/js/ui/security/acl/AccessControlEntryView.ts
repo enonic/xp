@@ -66,7 +66,6 @@ module api.ui.security.acl {
                     this.notifyValueChanged(this.getAccessControlEntry());
                 });
 
-
                 // this.toggleClass("dirty", !ace.isInherited());
 
                 this.accessSelector.onValueChanged((event: api.ValueChangedEvent) => {
@@ -79,7 +78,7 @@ module api.ui.security.acl {
                         this.permissionSelector.setValue(this.getPermissionsValueFromAccess(Access[event.getNewValue()]));
                     }
                 });
-                
+
                 if (this.accessSelector.getValue() == Access.CUSTOM) {
                     this.permissionSelector.show();
                 }
@@ -115,27 +114,27 @@ module api.ui.security.acl {
         unValueChanged(listener: (item: AccessControlEntry) => void) {
             this.valueChangedListeners = this.valueChangedListeners.filter((curr) => {
                 return curr != listener;
-            })
+            });
         }
 
         notifyValueChanged(item: AccessControlEntry) {
             this.valueChangedListeners.forEach((listener) => {
                 listener(item);
-            })
+            });
         }
 
         public setAccessControlEntry(ace: AccessControlEntry, silent?: boolean) {
             this.ace = ace;
 
-            var principal = Principal.create().setKey(ace.getPrincipalKey()).setDisplayName(ace.getPrincipalDisplayName()).build();
+            let principal = Principal.create().setKey(ace.getPrincipalKey()).setDisplayName(ace.getPrincipalDisplayName()).build();
             this.setObject(principal);
 
             this.doLayout(principal);
         }
 
         public getAccessControlEntry(): AccessControlEntry {
-            var permissions = this.permissionSelector.getValue();
-            var ace = new AccessControlEntry(this.ace.getPrincipal());
+            let permissions = this.permissionSelector.getValue();
+            let ace = new AccessControlEntry(this.ace.getPrincipal());
             ace.setAllowedPermissions(permissions.allow);
             ace.setDeniedPermissions(permissions.deny);
             return ace;
@@ -144,7 +143,7 @@ module api.ui.security.acl {
         public static getAccessValueFromEntry(ace: AccessControlEntry): Access {
 
             if (ace.getDeniedPermissions().length == 0) {
-                var allowedPermissions = ace.getAllowedPermissions();
+                let allowedPermissions = ace.getAllowedPermissions();
                 if (this.onlyFullAccess(allowedPermissions)) {
                     return Access.FULL;
                 }
@@ -199,9 +198,8 @@ module api.ui.security.acl {
             return this.isFullAccess(allowed) && allowed.length === 7;
         }
 
-
         private getPermissionsValueFromAccess(access: Access) {
-            var permissions = {
+            let permissions = {
                 allow: [],
                 deny: []
             };

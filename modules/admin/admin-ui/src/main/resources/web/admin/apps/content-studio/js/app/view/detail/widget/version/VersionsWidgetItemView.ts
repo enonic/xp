@@ -10,7 +10,7 @@ export class VersionsWidgetItemView extends WidgetItemView {
 
     private gridLoadDeferred: wemQ.Deferred<any>;
 
-    public static debug = false;
+    public static debug: boolean = false;
 
     constructor() {
         super("version-widget-item-view");
@@ -55,8 +55,8 @@ export class VersionsWidgetItemView extends WidgetItemView {
         serverEvents.onContentPublished((contents: ContentSummaryAndCompareStatus[]) => {
             if (this.versionsView && this.versionsView.getContentId()) {
                 // check for item because it can be null after publishing pending for delete item
-                var itemId = this.versionsView.getContentId();
-                var isPublished = contents.some((content) => {
+                let itemId = this.versionsView.getContentId();
+                let isPublished = contents.some((content) => {
                     return itemId.equals(content.getContentId());
                 });
 

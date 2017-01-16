@@ -10,16 +10,16 @@ module api.query {
 
         static createWithPath(searchString: string, queryFields: QueryFields, path: string): api.query.expr.Expression {
 
-            var expression = FulltextSearchExpression.create(searchString, queryFields);
+            let expression = FulltextSearchExpression.create(searchString, queryFields);
 
-            var args = [];
+            let args = [];
             args.push(ValueExpr.stringValue("_path"));
             args.push(ValueExpr.stringValue("/content" + path));
 
-            var matchedExpr: FunctionExpr = new FunctionExpr("pathMatch", args);
-            var matchedDynamicExpr: DynamicConstraintExpr = new DynamicConstraintExpr(matchedExpr);
+            let matchedExpr: FunctionExpr = new FunctionExpr("pathMatch", args);
+            let matchedDynamicExpr: DynamicConstraintExpr = new DynamicConstraintExpr(matchedExpr);
 
-            var booleanExpr: LogicalExpr = new LogicalExpr(expression, LogicalOperator.AND, matchedDynamicExpr);
+            let booleanExpr: LogicalExpr = new LogicalExpr(expression, LogicalOperator.AND, matchedDynamicExpr);
             return booleanExpr;
         }
     }
@@ -49,4 +49,3 @@ module api.query {
     }
 
 }
-

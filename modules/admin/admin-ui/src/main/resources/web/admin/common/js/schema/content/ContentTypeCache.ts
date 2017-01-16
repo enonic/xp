@@ -36,7 +36,7 @@ module api.schema.content {
         }
 
         private getCachedByApplicationKey(applicationKey: api.application.ApplicationKey): ContentType[] {
-            var result: ContentType[] = [];
+            let result: ContentType[] = [];
             this.getAll().forEach((contentType: ContentType) => {
                 if(applicationKey.equals(this.getKeyFromObject(contentType).getApplicationKey())) {
                     result.push(contentType);

@@ -35,7 +35,7 @@ module api.macro {
                 return false;
             }
 
-            var other = <MacroPreview>o;
+            let other = <MacroPreview>o;
 
             if (this.html != other.html) {
                 return false;

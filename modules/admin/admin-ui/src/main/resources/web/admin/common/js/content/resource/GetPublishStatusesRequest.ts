@@ -1,7 +1,9 @@
 module api.content.resource {
 
     import GetPublishStatusesResult = api.content.resource.result.GetPublishStatusesResult;
-    export class GetPublishStatusesRequest extends ContentResourceRequest<api.content.json.GetPublishStatusesResultJson, GetPublishStatusesResult> {
+    import GetPublishStatusesResultJson = api.content.json.GetPublishStatusesResultJson;
+
+    export class GetPublishStatusesRequest extends ContentResourceRequest<GetPublishStatusesResultJson, GetPublishStatusesResult> {
 
         private ids: string[];
 
