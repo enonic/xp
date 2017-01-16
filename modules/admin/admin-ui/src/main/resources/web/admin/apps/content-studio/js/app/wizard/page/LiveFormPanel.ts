@@ -130,7 +130,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
     private liveEditPageProxy: LiveEditPageProxy;
 
     constructor(config: LiveFormPanelConfig) {
-        super("live-form-panel");
+        super('live-form-panel');
         this.contentWizardPanel = config.contentWizardPanel;
         this.defaultModels = config.defaultModels;
 
@@ -214,7 +214,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         return super.doRender().then((rendered: boolean) => {
 
             api.dom.WindowDOM.get().onBeforeUnload((event) => {
-                console.log("onbeforeunload " + this.liveEditModel.getContent().getDisplayName());
+                console.log('onbeforeunload ' + this.liveEditModel.getContent().getDisplayName());
                 // the reload is triggered by the main frame,
                 // so let the live edit know it to skip the popup
                 this.liveEditPageProxy.skipNextReloadConfirmation(true);
@@ -223,15 +223,15 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             this.liveEditPageProxy.getPlaceholderIFrame().onShown(() => {
                 // If we are about to show blank placeholder in the editor then remove
                 // "rendering" class from the panel so that it's instantly visible
-                this.removeClass("rendering");
+                this.removeClass('rendering');
             });
 
-            this.frameContainer = new Panel("frame-container");
+            this.frameContainer = new Panel('frame-container');
             this.frameContainer.appendChildren<api.dom.Element>(this.liveEditPageProxy.getIFrame(),
                 this.liveEditPageProxy.getPlaceholderIFrame(), this.liveEditPageProxy.getDragMask());
 
-            let noPreviewMessageEl = new api.dom.PEl("no-preview-message").setHtml(
-                "Failed to render content preview.<br/> Please check logs for errors or open preview in a new window", false);
+            let noPreviewMessageEl = new api.dom.PEl('no-preview-message').setHtml(
+                'Failed to render content preview.<br/> Please check logs for errors or open preview in a new window', false);
 
             // append mask here in order for the context window to be above
             this.appendChildren<api.dom.Element>(this.frameContainer, this.liveEditPageProxy.getLoadMask(), this.contextWindow,
@@ -340,7 +340,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
                             }
                         }
                     } else {
-                        console.debug("ComponentView by path not found: " + event.getPath().toString());
+                        console.debug('ComponentView by path not found: ' + event.getPath().toString());
                     }
                 }
             } else if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponent(), ImageComponent)) {
@@ -387,7 +387,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
     loadPage(clearInspection: boolean = true) {
         if (LiveFormPanel.debug) {
-            console.debug("LiveFormPanel.loadPage at " + new Date().toISOString());
+            console.debug('LiveFormPanel.loadPage at ' + new Date().toISOString());
         }
         if (this.pageSkipReload == false && !this.pageLoading) {
 
@@ -418,7 +418,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
     saveAndReloadOnlyComponent(componentView: ComponentView<Component>) {
 
-        api.util.assertNotNull(componentView, "componentView cannot be null");
+        api.util.assertNotNull(componentView, 'componentView cannot be null');
 
         this.pageSkipReload = true;
         let componentUrl = api.rendering.UriHelper.getComponentUri(this.content.getContentId().toString(),
@@ -444,9 +444,9 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             return;
         }
         if (contextWindowShown && contextWindowWidth) {
-            this.frameContainer.getEl().setWidth("calc(100% - " + (contextWindowWidth - 1) + "px)");
+            this.frameContainer.getEl().setWidth('calc(100% - ' + (contextWindowWidth - 1) + 'px)');
         } else {
-            this.frameContainer.getEl().setWidth("100%");
+            this.frameContainer.getEl().setWidth('100%');
         }
     }
 
@@ -657,7 +657,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
     }
 
     private inspectComponent(componentView: ComponentView<Component>) {
-        api.util.assertNotNull(componentView, "componentView cannot be null");
+        api.util.assertNotNull(componentView, 'componentView cannot be null');
 
         if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, ImageComponentView)) {
             this.imageInspectionPanel.setImageComponent(<ImageComponentView>componentView);
@@ -675,11 +675,11 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             this.fragmentInspectionPanel.setFragmentComponent(<FragmentComponentView>componentView);
             this.contextWindow.showInspectionPanel(this.fragmentInspectionPanel);
         } else {
-            throw new Error("ComponentView cannot be selected: " + api.ClassHelper.getClassName(componentView));
+            throw new Error('ComponentView cannot be selected: ' + api.ClassHelper.getClassName(componentView));
         }
     }
 
     isShown(): boolean {
-        return !api.ObjectHelper.stringEquals(this.getHTMLElement().style.display, "none");
+        return !api.ObjectHelper.stringEquals(this.getHTMLElement().style.display, 'none');
     }
 }

@@ -16,7 +16,7 @@ module api.ui.mask {
 
         constructor() {
             super();
-            this.addClass("body-mask");
+            this.addClass('body-mask');
         }
 
     }

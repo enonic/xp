@@ -38,7 +38,7 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
 
     constructor() {
         super(<DescriptorBasedComponentInspectionPanelConfig>{
-            iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType("part", "icon-xlarge")
+            iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType('part', 'icon-xlarge')
         });
     }
 
@@ -47,7 +47,7 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
         this.removeChildren();
 
         this.selector = new PartDescriptorDropdown();
-        this.partForm = new DescriptorBasedDropdownForm(this.selector, "Part");
+        this.partForm = new DescriptorBasedDropdownForm(this.selector, 'Part');
 
         this.selector.loadDescriptors(this.liveEditModel.getSiteModel().getApplicationKeys());
 

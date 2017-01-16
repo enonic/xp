@@ -17,7 +17,7 @@ module api.security.event {
         }
 
         static is(eventJson: api.event.NodeEventJson): boolean {
-            return eventJson.data.nodes.some(node => node.path.indexOf("/identity") == 0);
+            return eventJson.data.nodes.some(node => node.path.indexOf('/identity') == 0);
         }
 
         static fromJson(nodeEventJson: api.event.NodeEventJson): PrincipalServerEvent {

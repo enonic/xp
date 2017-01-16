@@ -51,7 +51,7 @@ module api.content.util {
 
         static default(): string {
 
-            return api.util.UriHelper.getAdminUri("common/images/default_content.png");
+            return api.util.UriHelper.getAdminUri('common/images/default_content.png');
         }
     }
 }

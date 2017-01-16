@@ -245,9 +245,9 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         let shownAndLoadedHandler = () => {
             if (this.getPersistedItem()) {
-                Router.setHash("edit/" + this.getPersistedItem().getId());
+                Router.setHash('edit/' + this.getPersistedItem().getId());
             } else {
-                Router.setHash("new/" + this.contentType.getName());
+                Router.setHash('new/' + this.contentType.getName());
             }
         };
 
@@ -280,7 +280,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             if (isAppFromSiteModelUnavailable) {
                 this.missingOrStoppedAppKeys.push(event.getApplicationKey());
 
-                let message = "Required application " + event.getApplicationKey().toString() + " not available.";
+                let message = 'Required application ' + event.getApplicationKey().toString() + ' not available.';
 
                 if (this.isVisible()) {
                     api.notify.showWarning(message);
@@ -289,7 +289,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                         new api.application.GetApplicationRequest(event.getApplicationKey()).sendAndParse()
                             .then(
                             (application: Application) => {
-                                if (application.getState() == "stopped") {
+                                if (application.getState() == 'stopped') {
                                     api.notify.showWarning(message);
                                 }
                             })
@@ -335,12 +335,12 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     protected doLoadData(): Q.Promise<api.content.Content> {
         if (ContentWizardPanel.debug) {
-            console.debug("ContentWizardPanel.doLoadData at " + new Date().toISOString());
+            console.debug('ContentWizardPanel.doLoadData at ' + new Date().toISOString());
         }
         return new ContentWizardDataLoader().loadData(this.contentParams)
             .then((loader) => {
                 if (ContentWizardPanel.debug) {
-                    console.debug("ContentWizardPanel.doLoadData: loaded data at " + new Date().toISOString(), loader);
+                    console.debug('ContentWizardPanel.doLoadData: loaded data at ' + new Date().toISOString(), loader);
                 }
                 if (loader.content) {
                     // in case of new content will be created in super.loadData()
@@ -364,7 +364,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         });
 
         if (this.contentParams.createSite || this.getPersistedItem().isSite()) {
-            thumbnailUploader.addClass("site");
+            thumbnailUploader.addClass('site');
         }
 
         return thumbnailUploader;
@@ -401,9 +401,9 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             .build();
 
         if (this.parentContent) {
-            header.setPath(this.parentContent.getPath().prettifyUnnamedPathElements().toString() + "/");
+            header.setPath(this.parentContent.getPath().prettifyUnnamedPathElements().toString() + '/');
         } else {
-            header.setPath("/");
+            header.setPath('/');
         }
 
         let existing = this.getPersistedItem();
@@ -445,7 +445,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         return super.doRenderOnDataLoaded(rendered, true).then((renderedAfter: boolean) => {
             if (ContentWizardPanel.debug) {
-                console.debug("ContentWizardPanel.doRenderOnDataLoaded at " + new Date().toISOString());
+                console.debug('ContentWizardPanel.doRenderOnDataLoaded at ' + new Date().toISOString());
             }
 
             this.appendChild(this.getContentWizardToolbarPublishControls().getPublishButtonForMobile());
@@ -454,7 +454,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 this.displayNameScriptExecutor.setScript(this.contentType.getContentDisplayNameScript());
             }
 
-            this.addClass("content-wizard-panel");
+            this.addClass('content-wizard-panel');
 
             this.inMobileViewMode = false;
 
@@ -472,7 +472,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 let isThisValid = this.isValid(); // event.isValid() = false will prevent the call to this.isValid()
                 this.isContentFormValid = isThisValid;
                 let thumbnailUploader = this.getFormIcon();
-                thumbnailUploader.toggleClass("invalid", isThisValid);
+                thumbnailUploader.toggleClass('invalid', isThisValid);
                 this.getContentWizardToolbarPublishControls().setContentCanBePublished(this.checkContentCanBePublished());
                 if (!this.formState.isNew()) {
                     this.displayValidationErrors();
@@ -518,7 +518,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.updateMetadataAndMetadataStepForms(newPersistedContent);
         this.updateThumbnailWithContent(newPersistedContent);
         let contentToDisplay = (newPersistedContent.getDisplayName() && newPersistedContent.getDisplayName().length > 0) ?
-                               '\"' + newPersistedContent.getDisplayName() + '\"' : "Content";
+                               '\"' + newPersistedContent.getDisplayName() + '\"' : 'Content';
         api.notify.showFeedback(contentToDisplay + ' saved');
     }
 
@@ -609,15 +609,15 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     steps.splice(index + 1, 0, new WizardStep(mixin.getDisplayName(), stepForm));
                 }
             });
-            this.settingsWizardStep = new WizardStep("Settings", this.settingsWizardStepForm);
+            this.settingsWizardStep = new WizardStep('Settings', this.settingsWizardStepForm);
             steps.push(this.settingsWizardStep);
 
-            this.scheduleWizardStep = new WizardStep("Schedule", this.scheduleWizardStepForm);
+            this.scheduleWizardStep = new WizardStep('Schedule', this.scheduleWizardStepForm);
             this.scheduleWizardStepIndex = steps.length;
             steps.push(this.scheduleWizardStep);
 
             if (this.isSecurityWizardStepFormAllowed) {
-                steps.push(new WizardStep("Security", this.securityWizardStepForm));
+                steps.push(new WizardStep('Security', this.securityWizardStepForm));
             }
 
             this.setSteps(steps);
@@ -664,7 +664,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         const livePanel = this.getLivePanel();
 
         if (livePanel) {
-            livePanel.toggleClass("no-preview", appsIsMissing);
+            livePanel.toggleClass('no-preview', appsIsMissing);
         }
 
         this.getCycleViewModeButton().setEnabled(!appsIsMissing);
@@ -986,7 +986,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 result = result.concat(this.getHtmlAreasInForm(<any>item));
             } else if (api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.Input)) {
                 let input = <api.form.Input> item;
-                if (input.getInputType().getName() === "HtmlArea") {
+                if (input.getInputType().getName() === 'HtmlArea') {
                     result.push(input.getPath().toString());
                 }
             }
@@ -1000,7 +1000,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         return super.doLayout(persistedContent).then(() => {
 
             if (ContentWizardPanel.debug) {
-                console.debug("ContentWizardPanel.doLayout at " + new Date().toISOString(), persistedContent);
+                console.debug('ContentWizardPanel.doLayout at ' + new Date().toISOString(), persistedContent);
             }
 
             this.updateThumbnailWithContent(persistedContent);
@@ -1037,37 +1037,37 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 } else {
                     console.warn("Received Content from server differs from what's viewed:");
                     if (!viewedContent.getContentData().equals(persistedContent.getContentData())) {
-                        console.warn(" inequality found in Content.data");
+                        console.warn(' inequality found in Content.data');
                         if (persistedContent.getContentData() && viewedContent.getContentData()) {
-                            console.warn(" comparing persistedContent.data against viewedContent.data:");
+                            console.warn(' comparing persistedContent.data against viewedContent.data:');
                             new api.data.PropertyTreeComparator().compareTree(persistedContent.getContentData(),
                                 viewedContent.getContentData());
                         }
                     }
                     if (!api.ObjectHelper.equals(viewedContent.getPage(), persistedContent.getPage())) {
-                        console.warn(" inequality found in Content.page");
+                        console.warn(' inequality found in Content.page');
                         if (persistedContent.getPage() && viewedContent.getPage()) {
-                            console.warn(" comparing persistedContent.page.config against viewedContent.page.config:");
+                            console.warn(' comparing persistedContent.page.config against viewedContent.page.config:');
                             new api.data.PropertyTreeComparator().compareTree(persistedContent.getPage().getConfig(),
                                 viewedContent.getPage().getConfig());
                         }
                     }
                     if (!api.ObjectHelper.arrayEquals(viewedContent.getAllExtraData(), persistedContent.getAllExtraData())) {
-                        console.warn(" inequality found in Content.meta");
+                        console.warn(' inequality found in Content.meta');
                     }
                     if (!api.ObjectHelper.equals(viewedContent.getAttachments(), persistedContent.getAttachments())) {
-                        console.warn(" inequality found in Content.attachments");
+                        console.warn(' inequality found in Content.attachments');
                     }
                     if (!api.ObjectHelper.equals(viewedContent.getPermissions(), persistedContent.getPermissions())) {
-                        console.warn(" inequality found in Content.permissions");
+                        console.warn(' inequality found in Content.permissions');
                     }
-                    console.warn(" viewedContent: ", viewedContent);
-                    console.warn(" persistedContent: ", persistedContent);
+                    console.warn(' viewedContent: ', viewedContent);
+                    console.warn(' persistedContent: ', persistedContent);
 
                     if (persistedContent.getType().isDescendantOfMedia()) {
                         this.updateMetadataAndMetadataStepForms(persistedContent);
                     } else {
-                        const msg = "Received Content from server differs from what you have. Would you like to load changes from server?";
+                        const msg = 'Received Content from server differs from what you have. Would you like to load changes from server?';
                         ConfirmationDialog.get()
                             .setQuestion(msg)
                             .setYesCallback(() => this.doLayoutPersistedItem(persistedContent.clone()))
@@ -1104,12 +1104,12 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             .setEnabled(!content.isImage())
             .setValue(new api.content.util.ContentIconUrlResolver().setContent(content).resolve());
 
-        thumbnailUploader.toggleClass("invalid", !content.isValid());
+        thumbnailUploader.toggleClass('invalid', !content.isValid());
     }
 
     private initLiveEditor(formContext: ContentFormContext, content: Content): wemQ.Promise<void> {
         if (ContentWizardPanel.debug) {
-            console.debug("ContentWizardPanel.initLiveEditor at " + new Date().toISOString());
+            console.debug('ContentWizardPanel.initLiveEditor at ' + new Date().toISOString());
         }
         let deferred = wemQ.defer<void>();
 
@@ -1148,10 +1148,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     // Remember that content has been cloned here and it is not the persistedItem any more
     private doLayoutPersistedItem(content: Content): wemQ.Promise<void> {
         if (ContentWizardPanel.debug) {
-            console.debug("ContentWizardPanel.doLayoutPersistedItem at " + new Date().toISOString());
+            console.debug('ContentWizardPanel.doLayoutPersistedItem at ' + new Date().toISOString());
         }
 
-        this.toggleClass("rendered", false);
+        this.toggleClass('rendered', false);
 
         let formContext = this.createFormContext(content);
 
@@ -1195,7 +1195,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
                 return wemQ.all(formViewLayoutPromises).spread<void>(() => {
 
-                    this.contentWizardStepForm.getFormView().addClass("panel-may-display-validation-errors");
+                    this.contentWizardStepForm.getFormView().addClass('panel-may-display-validation-errors');
                     if (this.formState.isNew()) {
                         this.contentWizardStepForm.getFormView().highlightInputsOnValidityChange(true);
                     } else {
@@ -1244,7 +1244,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         let editorEnabled = this.isEditorEnabled();
         let shouldOpenEditor = this.shouldOpenEditorByDefault();
 
-        this.toggleClass("rendered", editorEnabled);
+        this.toggleClass('rendered', editorEnabled);
 
         this.wizardActions.getShowLiveEditAction().setEnabled(editorEnabled);
         this.wizardActions.getShowSplitEditAction().setEnabled(editorEnabled);
@@ -1398,7 +1398,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     .setName(api.content.ContentUnnamed.newUnnamed())
                     .setParent(parentPath)
                     .setContentType(this.contentType.getContentTypeName())
-                    .setDisplayName("")     // new content is created on wizard open so display name is always empty
+                    .setDisplayName('')     // new content is created on wizard open so display name is always empty
                     .setData(new PropertyTree()).setExtraData([]));
         }
 
@@ -1436,7 +1436,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 this.notifyContentNamed(content);
             }
             let contentToDisplay = (content.getDisplayName() && content.getDisplayName().length > 0) ?
-                                   '\"' + content.getDisplayName() + '\"' : "Content";
+                                   '\"' + content.getDisplayName() + '\"' : 'Content';
             api.notify.showFeedback(contentToDisplay + ' saved');
             this.getWizardHeader().resetBaseValues();
 
@@ -1536,7 +1536,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             let property = data.getProperty(optionSet.getPath().toString());
             if (!!property) {
                 let optionSetProperty = property.getPropertySet();
-                let selectionArray = optionSetProperty.getPropertyArray("_selected");
+                let selectionArray = optionSetProperty.getPropertyArray('_selected');
                 if (!selectionArray) {
                     return;
                 }
@@ -1583,35 +1583,35 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             return;
         }
 
-        this.getSplitPanel().addClass("toggle-live").removeClass("toggle-form toggle-split");
-        this.getMainToolbar().toggleClass("live", true);
-        this.toggleClass("form", false);
+        this.getSplitPanel().addClass('toggle-live').removeClass('toggle-form toggle-split');
+        this.getMainToolbar().toggleClass('live', true);
+        this.toggleClass('form', false);
 
         this.openLiveEdit();
     }
 
     showSplitEdit() {
-        this.getSplitPanel().addClass("toggle-split").removeClass("toggle-live toggle-form");
-        this.getMainToolbar().toggleClass("live", true);
-        this.toggleClass("form", false);
+        this.getSplitPanel().addClass('toggle-split').removeClass('toggle-live toggle-form');
+        this.getMainToolbar().toggleClass('live', true);
+        this.toggleClass('form', false);
 
         this.openLiveEdit();
     }
 
     showForm() {
-        this.getSplitPanel().addClass("toggle-form").removeClass("toggle-live toggle-split");
-        this.getMainToolbar().toggleClass("live", false);
-        this.toggleClass("form", true);
+        this.getSplitPanel().addClass('toggle-form').removeClass('toggle-live toggle-split');
+        this.getMainToolbar().toggleClass('live', false);
+        this.toggleClass('form', true);
 
         this.closeLiveEdit();
     }
 
     private isSplitView(): boolean {
-        return this.getSplitPanel() && this.getSplitPanel().hasClass("toggle-split");
+        return this.getSplitPanel() && this.getSplitPanel().hasClass('toggle-split');
     }
 
     private isLiveView(): boolean {
-        return this.getSplitPanel() && this.getSplitPanel().hasClass("toggle-live");
+        return this.getSplitPanel() && this.getSplitPanel().hasClass('toggle-live');
     }
 
     private displayValidationErrors() {
@@ -1784,7 +1784,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         // case when content was moved
         this.getWizardHeader()
-            .setPath(content.getPath().getParentPath().isRoot() ? "/" : content.getPath().getParentPath().toString() + "/");
+            .setPath(content.getPath().getParentPath().isRoot() ? '/' : content.getPath().getParentPath().toString() + '/');
     }
 
     private openLiveEdit() {

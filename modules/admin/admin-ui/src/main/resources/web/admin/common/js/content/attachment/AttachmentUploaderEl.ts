@@ -19,7 +19,7 @@ module api.content.attachment {
         constructor(config: any) {
 
             if (config.url == undefined) {
-                config.url = api.util.UriHelper.getRestUri("content/createAttachment");
+                config.url = api.util.UriHelper.getRestUri('content/createAttachment');
             }
             if (config.selfIsDropzone == undefined) {
                 config.selfIsDropzone = true;

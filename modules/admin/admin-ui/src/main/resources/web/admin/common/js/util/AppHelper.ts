@@ -35,7 +35,7 @@ module api.util {
             }
         }
 
-        static preventDragRedirect(message: String = "", element?: api.dom.Element): void {
+        static preventDragRedirect(message: String = '', element?: api.dom.Element): void {
             element = element || api.dom.Body.get();
 
             let window = api.dom.WindowDOM.get();
@@ -84,7 +84,7 @@ module api.util {
             if (preventMouseDown) {
                 element.onMouseDown((e) => {
                     // if click is inside of input then focus will remain in it and no need to prevent default
-                    if ((<HTMLElement>e.target).tagName.toLowerCase() !== "input") {
+                    if ((<HTMLElement>e.target).tagName.toLowerCase() !== 'input') {
                         e.preventDefault();
                     }
                 });

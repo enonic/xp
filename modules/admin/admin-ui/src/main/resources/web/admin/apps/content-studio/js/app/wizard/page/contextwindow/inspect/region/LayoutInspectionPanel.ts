@@ -42,7 +42,7 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
 
     constructor() {
         super(<DescriptorBasedComponentInspectionPanelConfig>{
-            iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType("layout", "icon-xlarge")
+            iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType('layout', 'icon-xlarge')
         });
     }
 
@@ -51,7 +51,7 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
         this.removeChildren();
 
         this.selector = new LayoutDescriptorDropdown();
-        this.layoutForm = new DescriptorBasedDropdownForm(this.selector, "Layout");
+        this.layoutForm = new DescriptorBasedDropdownForm(this.selector, 'Layout');
 
         this.selector.loadDescriptors(this.liveEditModel.getSiteModel().getApplicationKeys());
 

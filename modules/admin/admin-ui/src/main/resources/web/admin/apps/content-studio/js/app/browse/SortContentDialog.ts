@@ -34,13 +34,13 @@ export class SortContentDialog extends api.ui.dialog.ModalDialog {
     private saveButton: DialogButton;
 
     constructor() {
-        super("Sort items");
+        super('Sort items');
 
         this.initTabMenu();
 
         this.initSortContentMenu();
 
-        this.getEl().addClass("sort-content-dialog");
+        this.getEl().addClass('sort-content-dialog');
 
         this.initSortContentGrid();
 
@@ -88,7 +88,7 @@ export class SortContentDialog extends api.ui.dialog.ModalDialog {
 
     private initSortContentGrid() {
         this.contentGrid = new SortContentTreeGrid();
-        this.contentGrid.getEl().addClass("sort-content-grid");
+        this.contentGrid.getEl().addClass('sort-content-grid');
         this.contentGrid.onLoaded(() => {
             this.contentGrid.render(true);
             this.centerMyself();
@@ -107,7 +107,7 @@ export class SortContentDialog extends api.ui.dialog.ModalDialog {
 
     private initTabMenu() {
         let menu = new api.ui.tab.TabMenu();
-        let tabMenuItem = (<TabMenuItemBuilder>new TabMenuItemBuilder().setLabel("(sorting type)")).build();
+        let tabMenuItem = (<TabMenuItemBuilder>new TabMenuItemBuilder().setLabel('(sorting type)')).build();
         tabMenuItem.setActive(true);
         menu.addNavigationItem(tabMenuItem);
         menu.selectNavigationItem(0);
@@ -129,7 +129,7 @@ export class SortContentDialog extends api.ui.dialog.ModalDialog {
         this.sortAction = new SaveSortedContentAction(this);
 
         this.saveButton = this.addAction(this.sortAction);
-        this.saveButton.addClass("save-button");
+        this.saveButton.addClass('save-button');
 
         this.sortAction.onExecuted(() => {
             this.handleSortAction();
@@ -138,7 +138,7 @@ export class SortContentDialog extends api.ui.dialog.ModalDialog {
 
     private populateContentPanel() {
         let header = new api.dom.H6El();
-        header.setHtml("Sort content by selecting default sort above, or drag and drop for manual sorting");
+        header.setHtml('Sort content by selecting default sort above, or drag and drop for manual sorting');
         this.appendChildToContentPanel(header);
         this.appendChildToContentPanel(this.contentGrid);
     }
@@ -166,11 +166,11 @@ export class SortContentDialog extends api.ui.dialog.ModalDialog {
 
         this.contentGrid.reload(this.parentContent);
         if (!this.parentContent.hasChildren()) {
-            this.contentGrid.getEl().setAttribute("data-content", event.getContent().getPath().toString());
-            this.contentGrid.addClass("no-content");
+            this.contentGrid.getEl().setAttribute('data-content', event.getContent().getPath().toString());
+            this.contentGrid.addClass('no-content');
         } else {
-            this.contentGrid.removeClass("no-content");
-            this.contentGrid.getEl().removeAttribute("data-content");
+            this.contentGrid.removeClass('no-content');
+            this.contentGrid.getEl().removeAttribute('data-content');
         }
     }
 
@@ -204,11 +204,11 @@ export class SortContentDialog extends api.ui.dialog.ModalDialog {
     }
 
     private showLoadingSpinner() {
-        this.saveButton.addClass("spinner");
+        this.saveButton.addClass('spinner');
     }
 
     private hideLoadingSpinner() {
-        this.saveButton.removeClass("spinner");
+        this.saveButton.removeClass('spinner');
     }
 
     private setContentChildOrder(order: ChildOrder, silent: boolean = false): wemQ.Promise<api.content.Content> {

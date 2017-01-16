@@ -75,7 +75,7 @@ module api.dom {
         }
 
         onResized(listener: (event: UIEvent) => void, element?: api.dom.Element) {
-            this.el.addEventListener("resize", listener);
+            this.el.addEventListener('resize', listener);
 
             if (element) {
                 element.onRemoved(() => this.unResized(listener));
@@ -83,7 +83,7 @@ module api.dom {
         }
 
         unResized(listener: (event: UIEvent) => void) {
-            this.el.removeEventListener("resize", listener);
+            this.el.removeEventListener('resize', listener);
         }
 
         getWidth(): number {

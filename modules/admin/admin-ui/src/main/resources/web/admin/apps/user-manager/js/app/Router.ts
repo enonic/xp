@@ -8,6 +8,6 @@ export class Router {
     }
 
     static getPath(): string {
-        return window.location.hash ? window.location.hash.substr(1) : "/";
+        return window.location.hash ? window.location.hash.substr(1) : '/';
     }
 }

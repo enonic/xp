@@ -9,8 +9,8 @@ export class MostPopularItemsBlock extends api.dom.DivEl {
 
     private title: api.dom.H2El;
 
-    constructor(title: string = "Most Popular") {
-        super("most-popular-content-types-container");
+    constructor(title: string = 'Most Popular') {
+        super('most-popular-content-types-container');
 
         this.title = new api.dom.H2El();
         this.title.setHtml(title);

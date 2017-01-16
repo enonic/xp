@@ -41,7 +41,7 @@ module api.ui.time {
             }
 
             this.input = api.ui.text.TextInput.middle(undefined, value);
-            this.input.setPlaceholder("hh:mm");
+            this.input.setPlaceholder('hh:mm');
         }
 
         protected setupListeners(builder: TimePickerBuilder) {
@@ -106,7 +106,7 @@ module api.ui.time {
         formatTime(hours: number, minutes: number): string {
             return this.popup.isHoursValid(hours) && this.popup.isMinutesValid(minutes) ?
                    this.popup.padNumber(hours, 2) + ':' + this.popup.padNumber(minutes, 2) :
-                   "";
+                   '';
         }
     }
 }

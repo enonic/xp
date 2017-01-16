@@ -19,14 +19,14 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
     private content: Content;
 
     constructor() {
-        super("security-wizard-step-form");
+        super('security-wizard-step-form');
 
         this.inheritance = new DivEl(/*"inheritance"*/);
 
         this.comboBox = new UserStoreAccessControlComboBox();
         this.comboBox.addClass('principal-combobox');
 
-        let accessComboBoxFormItem = new FormItemBuilder(this.comboBox).setValidator(Validators.required).setLabel("Permissions").build();
+        let accessComboBoxFormItem = new FormItemBuilder(this.comboBox).setValidator(Validators.required).setLabel('Permissions').build();
 
         let fieldSet = new api.ui.form.Fieldset();
         fieldSet.add(accessComboBoxFormItem);

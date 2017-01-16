@@ -8,7 +8,7 @@ import Action = api.ui.Action;
 export class NewPrincipalAction extends Action {
 
     constructor(grid: UserItemsTreeGrid) {
-        super("New", "mod+alt+n");
+        super('New', 'mod+alt+n');
         this.setEnabled(false);
         this.onExecuted(() => {
             let principals: UserTreeGridItem[] = grid.getSelectedDataList();

@@ -10,7 +10,7 @@ module api.content.resource {
 
         constructor(id: ContentId) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
             this.id = id;
         }
 

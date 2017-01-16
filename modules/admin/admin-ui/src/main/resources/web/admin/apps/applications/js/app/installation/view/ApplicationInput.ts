@@ -20,13 +20,13 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
     private textValueChangedListeners: {(): void}[] = [];
     private appInstallFinishedListeners: {(): void}[] = [];
 
-    private static APPLICATION_ADDRESS_MASK: string = "^(http|https)://\\S+";
+    private static APPLICATION_ADDRESS_MASK: string = '^(http|https)://\\S+';
 
     constructor(cancelAction: Action, className?: string, originalValue?: string) {
 
         super();
 
-        this.setWrappedInput(this.textInput = new InputEl("text"));
+        this.setWrappedInput(this.textInput = new InputEl('text'));
         this.setAdditionalElements(this.applicationUploaderEl = new ApplicationUploaderEl({
             name: 'application-input-uploader',
             allowDrop: true,
@@ -55,7 +55,7 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
             }
         });
 
-        this.addClass("file-input" + (className ? " " + className : ""));
+        this.addClass('file-input' + (className ? ' ' + className : ''));
         this.initUrlEnteredHandler();
     }
 

@@ -12,13 +12,13 @@ export class UninstallApplicationDialog extends api.ui.dialog.ModalDialog {
     private noAction: Action = new Action('No');
 
     constructor(applications: Application[]) {
-        super("Uninstall Applications");
+        super('Uninstall Applications');
 
         this.applications = applications;
-        this.addClass("uninstall-dialog");
+        this.addClass('uninstall-dialog');
 
         let message = new api.dom.H6El();
-        message.getEl().setInnerHtml("Are you sure you want to uninstall selected application(s)?");
+        message.getEl().setInnerHtml('Are you sure you want to uninstall selected application(s)?');
         this.appendChildToContentPanel(message);
 
         this.yesAction.onExecuted(() => {

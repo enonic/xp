@@ -3,7 +3,7 @@ module api.data {
     export class ValueTypeBinaryReference extends ValueType {
 
         constructor() {
-            super("BinaryReference");
+            super('BinaryReference');
         }
 
         isValid(value: any): boolean {

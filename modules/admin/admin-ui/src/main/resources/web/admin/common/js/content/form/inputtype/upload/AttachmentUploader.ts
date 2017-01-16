@@ -19,7 +19,7 @@ module api.content.form.inputtype.upload {
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super(config);
-            this.addClass("attachment-uploader");
+            this.addClass('attachment-uploader');
             this.config = config;
         }
 
@@ -35,7 +35,7 @@ module api.content.form.inputtype.upload {
                 this.update(propertyArray).done();
 
                 this.uploaderEl.onUploadStarted(() => {
-                    this.uploaderWrapper.removeClass("empty");
+                    this.uploaderWrapper.removeClass('empty');
                 });
 
                 this.uploaderEl.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<Attachment>) => {
@@ -57,7 +57,7 @@ module api.content.form.inputtype.upload {
 
                 this.uploaderEl.onUploadFailed(() => {
                     this.uploaderEl.setProgressVisible(false);
-                    this.uploaderWrapper.addClass("empty");
+                    this.uploaderWrapper.addClass('empty');
                 });
 
                 this.appendChild(this.uploaderWrapper);
@@ -116,5 +116,5 @@ module api.content.form.inputtype.upload {
         }
 
     }
-    api.form.inputtype.InputTypeManager.register(new api.Class("AttachmentUploader", AttachmentUploader));
+    api.form.inputtype.InputTypeManager.register(new api.Class('AttachmentUploader', AttachmentUploader));
 }

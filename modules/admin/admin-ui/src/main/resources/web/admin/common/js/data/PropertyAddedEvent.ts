@@ -8,7 +8,7 @@ module api.data {
 
         toString(): string {
             let value = this.getProperty().getValue();
-            return "" + this.getPath().toString() + " = " + (value.getObject() ? value.getObject().toString() : null);
+            return '' + this.getPath().toString() + ' = ' + (value.getObject() ? value.getObject().toString() : null);
         }
     }
 }

@@ -21,7 +21,7 @@ module api.content.resource {
 
         constructor(contentQuery: ContentQuery) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             this.contentQuery = contentQuery;
         }
 
@@ -45,7 +45,7 @@ module api.content.resource {
 
         getParams(): Object {
 
-            let queryExprAsString = this.contentQuery.getQueryExpr() ? this.contentQuery.getQueryExpr().toString() : "";
+            let queryExprAsString = this.contentQuery.getQueryExpr() ? this.contentQuery.getQueryExpr().toString() : '';
 
             return {
                 queryExpr: queryExprAsString,
@@ -66,7 +66,7 @@ module api.content.resource {
                 let responseResult: ContentQueryResultJson<CONTENT_JSON> = response.getResult();
                 let aggregations = api.aggregation.Aggregation.fromJsonArray(responseResult.aggregations);
                 let contentsAsJson: ContentIdBaseItemJson[] = responseResult.contents;
-                let metadata = new ContentMetadata(response.getResult().metadata["hits"], response.getResult().metadata["totalHits"]);
+                let metadata = new ContentMetadata(response.getResult().metadata['hits'], response.getResult().metadata['totalHits']);
                 let contents: CONTENT[];
 
                 if (this.expand == api.rest.Expand.NONE) {
@@ -136,13 +136,13 @@ module api.content.resource {
         private expandAsString(): string {
             switch (this.expand) {
             case api.rest.Expand.FULL:
-                return "full";
+                return 'full';
             case api.rest.Expand.SUMMARY:
-                return "summary";
+                return 'summary';
             case api.rest.Expand.NONE:
-                return "none";
+                return 'none';
             default:
-                return "summary";
+                return 'summary';
             }
         }
 
@@ -157,7 +157,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "query");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'query');
         }
     }
 }

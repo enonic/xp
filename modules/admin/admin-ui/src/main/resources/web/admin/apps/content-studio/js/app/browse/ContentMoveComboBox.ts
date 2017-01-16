@@ -16,7 +16,7 @@ export class ContentMoveComboBox extends api.ui.selector.combobox.RichComboBox<C
         let richComboBoxBuilder: RichComboBoxBuilder<ContentSummary> = new RichComboBoxBuilder<ContentSummary>();
         richComboBoxBuilder
             .setMaximumOccurrences(1)
-            .setComboBoxName("contentSelector")
+            .setComboBoxName('contentSelector')
             .setLoader(new MoveContentSummaryLoader())
             .setSelectedOptionsView(<SelectedOptionsView<ContentSummary>>new ContentSelectedOptionsView())
             .setOptionDisplayValueViewer(new api.content.ContentSummaryViewer())

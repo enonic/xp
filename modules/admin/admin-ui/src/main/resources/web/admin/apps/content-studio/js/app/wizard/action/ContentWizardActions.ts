@@ -45,7 +45,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
     constructor(wizardPanel: ContentWizardPanel) {
         super(
-            new SaveAction(wizardPanel, "Save draft"),
+            new SaveAction(wizardPanel, 'Save draft'),
             new DeleteContentAction(wizardPanel),
             new DuplicateContentAction(wizardPanel),
             new PreviewAction(wizardPanel),

@@ -123,7 +123,7 @@ module api.liveedit {
         public static debug: boolean = false;
 
         constructor(builder: ItemViewBuilder) {
-            api.util.assertNotNull(builder.type, "type cannot be null");
+            api.util.assertNotNull(builder.type, 'type cannot be null');
 
             let props: api.dom.ElementBuilder = null;
             if (builder.element) {
@@ -134,7 +134,7 @@ module api.liveedit {
                 props = elementFromElementBuilder;
             } else {
                 let newElementBuilder = new api.dom.NewElementBuilder();
-                newElementBuilder.setTagName("div");
+                newElementBuilder.setTagName('div');
                 newElementBuilder.setParentElement(builder.parentElement);
                 newElementBuilder.setGenerateId(false);
                 props = newElementBuilder;
@@ -148,7 +148,7 @@ module api.liveedit {
             this.itemViewIdProducer = builder.itemViewIdProducer;
             this.contextMenuTitle = builder.contextMenuTitle;
 
-            this.addClassEx("item-view");
+            this.addClassEx('item-view');
 
             this.contextMenuActions = [];
 
@@ -202,7 +202,7 @@ module api.liveedit {
         }
 
         protected disableLinks() {
-            wemjq(this.getHTMLElement()).find("a").click(e => e.preventDefault());
+            wemjq(this.getHTMLElement()).find('a').click(e => e.preventDefault());
         }
 
         public setContextMenuTitle(title: ItemViewContextMenuTitle) {
@@ -391,7 +391,7 @@ module api.liveedit {
         scrollComponentIntoView(): void {
             let distance = this.calcDistanceToViewport();
             if (distance != 0) {
-                wemjq("html,body").animate({scrollTop: (distance > 0 ? '+=' : '-=') + Math.abs(distance)}, 200);
+                wemjq('html,body').animate({scrollTop: (distance > 0 ? '+=' : '-=') + Math.abs(distance)}, 200);
             }
         }
 
@@ -424,7 +424,7 @@ module api.liveedit {
             // No need to process this event.
 
             if (ItemView.debug) {
-                console.group("mouse enter [" + this.getId() + "]");
+                console.group('mouse enter [' + this.getId() + ']');
             }
 
             if (this.mouseOver) {
@@ -465,13 +465,13 @@ module api.liveedit {
             parentsStack.reverse().forEach((view: ItemView) => {
                 if (view.mouseOver) {
                     if (ItemView.debug) {
-                        console.debug('parent.mouseOver = true, notifying mouse out [' + view.getId() + "]");
+                        console.debug('parent.mouseOver = true, notifying mouse out [' + view.getId() + ']');
                     }
                     view.notifyMouseLeaveView();
                 } else {
                     view.mouseOver = true;
                     if (ItemView.debug) {
-                        console.debug('parent.mouseOver = false, setting to true [' + view.getId() + "]");
+                        console.debug('parent.mouseOver = false, setting to true [' + view.getId() + ']');
                     }
                     view.notifyMouseOverView();
                     view.notifyMouseLeaveView();
@@ -490,7 +490,7 @@ module api.liveedit {
         handleMouseLeave(event: MouseEvent) {
 
             if (ItemView.debug) {
-                console.group("mouse leave [" + this.getId() + "]");
+                console.group('mouse leave [' + this.getId() + ']');
             }
 
             // Turn off 'mouseOver' state and notify ItemVeiw was left.
@@ -508,7 +508,7 @@ module api.liveedit {
         }
 
         isEmpty(): boolean {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         refreshEmptyState(): ItemView {
@@ -611,9 +611,9 @@ module api.liveedit {
 
                     // move menu to the top edge of empty view in order to not overlay it
                     if (orientation == ItemViewContextMenuOrientation.UP && this.isEmpty()) {
-                        this.contextMenu.getEl().setMarginTop("-" + dimensions.height + "px");
+                        this.contextMenu.getEl().setMarginTop('-' + dimensions.height + 'px');
                     } else {
-                        this.contextMenu.getEl().setMarginTop("0px");
+                        this.contextMenu.getEl().setMarginTop('0px');
                     }
                 });
             }
@@ -644,11 +644,11 @@ module api.liveedit {
         }
 
         private setItemId(value: ItemViewId) {
-            this.getEl().setAttribute("data-" + ItemViewId.DATA_ATTRIBUTE, value.toString());
+            this.getEl().setAttribute('data-' + ItemViewId.DATA_ATTRIBUTE, value.toString());
         }
 
         getItemId(): ItemViewId {
-            let asString = this.getEl().getAttribute("data-" + ItemViewId.DATA_ATTRIBUTE);
+            let asString = this.getEl().getAttribute('data-' + ItemViewId.DATA_ATTRIBUTE);
             if (!asString) {
                 return null;
             }
@@ -656,7 +656,7 @@ module api.liveedit {
         }
 
         static parseItemId(element: HTMLElement): ItemViewId {
-            let attribute = element.getAttribute("data-" + ItemViewId.DATA_ATTRIBUTE);
+            let attribute = element.getAttribute('data-' + ItemViewId.DATA_ATTRIBUTE);
             if (api.util.StringHelper.isEmpty(attribute)) {
                 return null;
             }
@@ -708,7 +708,7 @@ module api.liveedit {
             // do this before highlighting as this might change text component dimensions
             this.stopTextEditMode();
 
-            this.getEl().setData("live-edit-selected", "true");
+            this.getEl().setData('live-edit-selected', 'true');
 
             //this.shade();
             this.showCursor();
@@ -724,7 +724,7 @@ module api.liveedit {
         }
 
         deselect(silent?: boolean) {
-            this.getEl().removeAttribute("data-live-edit-selected");
+            this.getEl().removeAttribute('data-live-edit-selected');
 
             this.hideContextMenu();
             this.unhighlightSelected();
@@ -765,7 +765,7 @@ module api.liveedit {
 
         showRenderingError(url: string, errorMessage?: string) {
             if (this.placeholder) {
-                this.addClass("error");
+                this.addClass('error');
                 this.placeholder.showRenderingError(url, errorMessage);
             }
         }
@@ -806,7 +806,7 @@ module api.liveedit {
         }
 
         toString(): string {
-            return this.getItemId().toNumber() + " : " + this.getType().getShortName();
+            return this.getItemId().toNumber() + ' : ' + this.getType().getShortName();
         }
 
         getLiveEditModel(): LiveEditModel {
@@ -839,7 +839,7 @@ module api.liveedit {
 
         private notifyMouseOverView() {
             if (ItemView.debug) {
-                console.log("notifying mouse over [" + this.getId() + "]");
+                console.log('notifying mouse over [' + this.getId() + ']');
             }
             this.mouseOverViewListeners.forEach((listener: () => void) => listener());
         }
@@ -854,7 +854,7 @@ module api.liveedit {
 
         private notifyMouseLeaveView() {
             if (ItemView.debug) {
-                console.log("notifying mouse out [" + this.getId() + "]");
+                console.log('notifying mouse out [' + this.getId() + ']');
             }
             this.mouseOutViewListeners.forEach((listener: () => void) => listener());
         }
@@ -889,11 +889,11 @@ module api.liveedit {
         }
 
         protected addComponentView(componentView: ComponentView<Component>, index?: number, isNew: boolean = false) {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         protected getNewItemIndex(): number {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         protected createComponentView(componentItemType: ItemType): ItemView {
@@ -909,21 +909,21 @@ module api.liveedit {
         private getInsertActions(liveEditModel: LiveEditModel): api.ui.Action[] {
             let isFragmentContent = liveEditModel.getContent().getType().isFragment();
 
-            let actions = [this.createInsertSubAction("Image", api.liveedit.image.ImageItemType.get()),
-                this.createInsertSubAction("Part", api.liveedit.part.PartItemType.get())];
+            let actions = [this.createInsertSubAction('Image', api.liveedit.image.ImageItemType.get()),
+                this.createInsertSubAction('Part', api.liveedit.part.PartItemType.get())];
 
             let isInRegion = api.ObjectHelper.iFrameSafeInstanceOf(this.getRegionView(), RegionView);
             if (isInRegion && !this.getRegionView().hasParentLayoutComponentView() && !isFragmentContent) {
-                actions.push(this.createInsertSubAction("Layout", api.liveedit.layout.LayoutItemType.get()));
+                actions.push(this.createInsertSubAction('Layout', api.liveedit.layout.LayoutItemType.get()));
             }
-            actions.push(this.createInsertSubAction("Text", api.liveedit.text.TextItemType.get()));
-            actions.push(this.createInsertSubAction("Fragment", api.liveedit.fragment.FragmentItemType.get()));
+            actions.push(this.createInsertSubAction('Text', api.liveedit.text.TextItemType.get()));
+            actions.push(this.createInsertSubAction('Fragment', api.liveedit.fragment.FragmentItemType.get()));
 
             return actions;
         }
 
         protected getRegionView(): RegionView {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         protected createInsertAction(): api.ui.Action {
@@ -931,7 +931,7 @@ module api.liveedit {
         }
 
         protected createSelectParentAction(): api.ui.Action {
-            let action = new api.ui.Action("Select parent");
+            let action = new api.ui.Action('Select parent');
 
             action.setSortOrder(0);
             action.onExecuted(() => {

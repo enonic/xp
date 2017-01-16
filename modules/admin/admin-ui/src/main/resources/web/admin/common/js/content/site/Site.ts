@@ -15,13 +15,13 @@ module api.content.site {
         }
 
         getDescription(): string {
-            return this.getContentData().getString("description");
+            return this.getContentData().getString('description');
         }
 
         getSiteConfigs(): SiteConfig[] {
 
             let siteConfigs: SiteConfig[] = [];
-            this.getContentData().forEachProperty("siteConfig", (applicationProperty: Property) => {
+            this.getContentData().forEachProperty('siteConfig', (applicationProperty: Property) => {
                 let siteConfigData = applicationProperty.getPropertySet();
                 if (siteConfigData) {
                     let siteConfig = SiteConfig.create().fromData(siteConfigData).build();

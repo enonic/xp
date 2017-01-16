@@ -5,7 +5,7 @@ module api.ui.menu {
         constructor(actions?: api.ui.Action[], appendToBody: boolean = true) {
             super(actions);
 
-            this.addClass("context-menu");
+            this.addClass('context-menu');
 
             if (appendToBody) {
                 api.dom.Body.get().appendChild(this);

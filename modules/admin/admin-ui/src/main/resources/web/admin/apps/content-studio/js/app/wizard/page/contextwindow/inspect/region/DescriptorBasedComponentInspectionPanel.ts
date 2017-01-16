@@ -49,7 +49,7 @@ extends ComponentInspectionPanel<COMPONENT> {
     }
 
     protected layout() {
-        throw new Error("Must be implemented in inheritors");
+        throw new Error('Must be implemented in inheritors');
     }
 
     protected applicationUnavailableHandler() {

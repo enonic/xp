@@ -33,7 +33,7 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
 
         api.liveedit.Highlighter.get().hide();
         this.getDraggableItem().getChildren().forEach((childEl: api.dom.Element) => {
-            childEl.removeClass("selected");
+            childEl.removeClass('selected');
         });
 
         DragHelper.get().setDropAllowed(true);
@@ -135,7 +135,7 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
         if (parentComponentView) {
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(draggableComponentView, LayoutComponentView)) {
-                if (parentComponentView.getName() != "main") {
+                if (parentComponentView.getName() != 'main') {
                     DragHelper.get().setDropAllowed(false);
                     return;
                 }
@@ -167,10 +167,10 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
 
     private updateDraggableItemPosition(draggableItem: Element, parentLevel: number) {
         let margin = parentLevel * api.ui.treegrid.TreeGrid.LEVEL_STEP_INDENT;
-        let nodes = draggableItem.getEl().getElementsByClassName("toggle icon");
+        let nodes = draggableItem.getEl().getElementsByClassName('toggle icon');
 
         if (nodes.length == 1) {
-            nodes[0].setMarginLeft(margin + "px");
+            nodes[0].setMarginLeft(margin + 'px');
         }
     }
 
@@ -218,7 +218,7 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
     }
 
     private getRowByTarget(el: ElementHelper): ElementHelper {
-        return (el && el.hasClass("slick-row")) ? el : this.getRowByTarget(el.getParent());
+        return (el && el.hasClass('slick-row')) ? el : this.getRowByTarget(el.getParent());
     }
 
     private handleMouseLeave() {

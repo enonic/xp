@@ -212,13 +212,13 @@ module api.liveedit {
     }
 
     export class ItemViewContextMenuArrow extends api.dom.DivEl {
-        private static clsBottom: string = "bottom";
-        private static clsTop: string = "top";
-        private static clsLeft: string = "left";
-        private static clsRight: string = "right";
+        private static clsBottom: string = 'bottom';
+        private static clsTop: string = 'top';
+        private static clsLeft: string = 'left';
+        private static clsRight: string = 'right';
 
         constructor() {
-            super("item-view-context-menu-arrow " + ItemViewContextMenuArrow.clsBottom);
+            super('item-view-context-menu-arrow ' + ItemViewContextMenuArrow.clsBottom);
         }
 
         toggleVerticalPosition(bottom: boolean) {

@@ -22,7 +22,7 @@ module api.content.resource {
             super();
             this.valid = false;
             this.requireValid = false;
-            super.setMethod("POST");
+            super.setMethod('POST');
         }
 
         setValid(value: boolean): CreateContentRequest {
@@ -83,7 +83,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "create");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'create');
         }
 
         sendAndParse(): wemQ.Promise<Content> {

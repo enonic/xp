@@ -179,7 +179,7 @@ module api.liveedit {
 
         private addPageContextMenuActions() {
             let pageModel = this.liveEditModel.getPageModel();
-            let inspectAction = new api.ui.Action("Inspect").onExecuted(() => {
+            let inspectAction = new api.ui.Action('Inspect').onExecuted(() => {
                 new PageInspectedEvent().fire();
             });
 
@@ -219,7 +219,7 @@ module api.liveedit {
                         this.setTextEditMode(true);
                     } else {
                         (<api.liveedit.text.TextComponentView>itemView).setEditMode(true);
-                        this.closeTextEditModeButton.toggleClass("active", true);
+                        this.closeTextEditModeButton.toggleClass('active', true);
                     }
                     new ItemViewSelectedEvent(itemView, null, event.isNew(), true).fire();
                     itemView.giveFocus();
@@ -249,7 +249,7 @@ module api.liveedit {
         }
 
         private createCloseTextEditModeEl(): api.dom.Element {
-            let closeButton = new api.dom.AEl("close-edit-mode-button icon-close2");
+            let closeButton = new api.dom.AEl('close-edit-mode-button icon-close2');
             closeButton.onClicked((event: MouseEvent) => {
                 this.setTextEditMode(false);
                 event.stopPropagation();
@@ -264,22 +264,22 @@ module api.liveedit {
 
         private toggleStickyToolbar() {
             if (!this.isPageScrolled()) {
-                this.editorToolbar.removeClass("sticky-toolbar");
-            } else if (!this.editorToolbar.hasClass("sticky-toolbar")) {
-                this.editorToolbar.addClass("sticky-toolbar");
+                this.editorToolbar.removeClass('sticky-toolbar');
+            } else if (!this.editorToolbar.hasClass('sticky-toolbar')) {
+                this.editorToolbar.addClass('sticky-toolbar');
             }
         }
 
         appendContainerForTextToolbar() {
             if (!this.hasToolbarContainer()) {
-                this.editorToolbar = new api.dom.DivEl("mce-toolbar-container");
+                this.editorToolbar = new api.dom.DivEl('mce-toolbar-container');
                 this.appendChild(this.editorToolbar);
-                this.addClass("has-toolbar-container");
+                this.addClass('has-toolbar-container');
             }
         }
 
         hasToolbarContainer(): boolean {
-            return this.hasClass("has-toolbar-container");
+            return this.hasClass('has-toolbar-container');
         }
 
         getEditorToolbarHeight(): number {
@@ -365,7 +365,7 @@ module api.liveedit {
         }
 
         getLockedMenuActions(): api.ui.Action[] {
-            let unlockAction = new api.ui.Action("Customize Page");
+            let unlockAction = new api.ui.Action('Customize Page');
 
             unlockAction.onExecuted(() => {
                 this.setLocked(false);
@@ -422,8 +422,8 @@ module api.liveedit {
             let target = <HTMLElement> event.target;
             if (!!target) {
                 let parent = <HTMLElement> target.parentElement;
-                return (target.id.indexOf("mce") >= 0 || target.className.indexOf("mce") >= 0 ||
-                        parent.id.indexOf("mce") >= 0 || parent.className.indexOf("mce") >= 0);
+                return (target.id.indexOf('mce') >= 0 || target.className.indexOf('mce') >= 0 ||
+                        parent.id.indexOf('mce') >= 0 || parent.className.indexOf('mce') >= 0);
             }
             return false;
         }
@@ -492,12 +492,12 @@ module api.liveedit {
                 textView = <api.liveedit.text.TextComponentView> view;
                 if (textView.isEditMode() != flag) {
                     textView.setEditMode(flag);
-                    this.closeTextEditModeButton.toggleClass("active", flag);
+                    this.closeTextEditModeButton.toggleClass('active', flag);
                 }
             });
 
             if (this.editorToolbar) {
-                this.editorToolbar.toggleClass("visible", flag);
+                this.editorToolbar.toggleClass('visible', flag);
             }
 
             if (flag) {
@@ -515,7 +515,7 @@ module api.liveedit {
         }
 
         private addVerticalSpaceForEditorToolbar() {
-            this.getPageView().getEl().setPosition("relative");
+            this.getPageView().getEl().setPosition('relative');
             this.updateVerticalSpaceForEditorToolbar();
             this.toggleStickyToolbar();
         }
@@ -528,7 +528,7 @@ module api.liveedit {
             let result = this.getEditorToolbarWidth();
 
             if (!!result) {
-                this.getPageView().getEl().setTop(this.getEditorToolbarWidth() + "px");
+                this.getPageView().getEl().setTop(this.getEditorToolbarWidth() + 'px');
             } else {
                 this.waitUntilEditorToolbarShown();
             }
@@ -544,7 +544,7 @@ module api.liveedit {
                 attempts++;
                 toolbarHeight = this.getEditorToolbarWidth();
                 if (!!toolbarHeight) {
-                    this.getPageView().getEl().setTop(toolbarHeight + "px");
+                    this.getPageView().getEl().setTop(toolbarHeight + 'px');
                     clearInterval(intervalId);
                 } else if (attempts > 10) {
                     clearInterval(intervalId);
@@ -554,8 +554,8 @@ module api.liveedit {
         }
 
         private removeVerticalSpaceForEditorToolbar() {
-            this.getEl().setPosition("");
-            this.getEl().setTop("");
+            this.getEl().setPosition('');
+            this.getEl().setTop('');
         }
 
         private getEditorToolbarWidth(): number {
@@ -608,23 +608,23 @@ module api.liveedit {
         }
 
         getIconUrl(content: api.content.Content): string {
-            return "";
+            return '';
         }
 
         getIconClass(): string {
-            let largeIconCls = " icon-large";
+            let largeIconCls = ' icon-large';
 
             if (this.pageModel.hasTemplate()) {
-                return "icon-newspaper" + largeIconCls;
+                return 'icon-newspaper' + largeIconCls;
             }
             if (this.pageModel.isPageTemplate() && this.pageModel.getController()) {
-                return "icon-file" + largeIconCls;
+                return 'icon-file' + largeIconCls;
             }
             if (this.pageModel.isCustomized()) {
-                return "icon-cog" + largeIconCls;
+                return 'icon-cog' + largeIconCls;
             }
 
-            return "icon-wand" + largeIconCls;
+            return 'icon-wand' + largeIconCls;
         }
 
         getParentItemView(): ItemView {
@@ -632,7 +632,7 @@ module api.liveedit {
         }
 
         setParentItemView(itemView: ItemView) {
-            throw new Error("PageView is the topmost item view and cannot have a parent");
+            throw new Error('PageView is the topmost item view and cannot have a parent');
         }
 
         private registerRegionView(regionView: RegionView) {
@@ -685,7 +685,7 @@ module api.liveedit {
         }
 
         getItemViewById(id: ItemViewId): ItemView {
-            api.util.assertNotNull(id, "value cannot be null");
+            api.util.assertNotNull(id, 'value cannot be null');
             return this.viewsById[id.toNumber()];
         }
 
@@ -703,7 +703,7 @@ module api.liveedit {
         }
 
         getItemViewByElement(element: HTMLElement): ItemView {
-            api.util.assertNotNull(element, "element cannot be null");
+            api.util.assertNotNull(element, 'element cannot be null');
 
             let itemId = ItemView.parseItemId(element);
             if (!itemId) {
@@ -711,7 +711,7 @@ module api.liveedit {
             }
 
             let itemView = this.getItemViewById(itemId);
-            api.util.assertNotNull(itemView, "ItemView not found: " + itemId.toString());
+            api.util.assertNotNull(itemView, 'ItemView not found: ' + itemId.toString());
 
             return itemView;
         }
@@ -784,7 +784,7 @@ module api.liveedit {
         private registerItemView(view: ItemView) {
 
             if (PageView.debug) {
-                console.debug("PageView.registerItemView: " + view.toString());
+                console.debug('PageView.registerItemView: ' + view.toString());
             }
 
             this.viewsById[view.getItemId().toNumber()] = view;
@@ -795,7 +795,7 @@ module api.liveedit {
         private unregisterItemView(view: ItemView) {
 
             if (PageView.debug) {
-                console.debug("PageView.unregisterItemView: " + view.toString());
+                console.debug('PageView.unregisterItemView: ' + view.toString());
             }
 
             delete this.viewsById[view.getItemId().toNumber()];

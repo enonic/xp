@@ -2,7 +2,7 @@ module api.content.page.region {
 
     export class RegionPath implements api.Equitable {
 
-        private static DIVIDER: string = "/";
+        private static DIVIDER: string = '/';
 
         private parentComponentPath: ComponentPath;
 
@@ -15,7 +15,7 @@ module api.content.page.region {
             this.parentComponentPath = parentComponentPath;
             this.regionName = regionName;
             if (parentComponentPath != null) {
-                this.refString = parentComponentPath + "/" + regionName;
+                this.refString = parentComponentPath + '/' + regionName;
             } else {
                 this.refString = regionName;
             }

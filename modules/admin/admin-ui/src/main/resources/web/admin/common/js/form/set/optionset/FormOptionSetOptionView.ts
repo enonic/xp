@@ -52,7 +52,7 @@ module api.form {
 
         constructor(config: FormOptionSetOptionViewConfig) {
             super(<FormItemViewConfig> {
-                className: "form-option-set-option-view",
+                className: 'form-option-set-option-view',
                 context: config.context,
                 formItem: config.formOptionSetOption,
                 parent: config.parent //null
@@ -62,7 +62,7 @@ module api.form {
 
             this.formOptionSetOption = config.formOptionSetOption;
 
-            this.addClass(this.formOptionSetOption.getPath().getElements().length % 2 ? "even" : "odd");
+            this.addClass(this.formOptionSetOption.getPath().getElements().length % 2 ? 'even' : 'odd');
 
             this.formItemLayer = new FormItemLayer(config.context);
         }
@@ -85,7 +85,7 @@ module api.form {
                 this.toggleHelpText(this.formOptionSetOption.isHelpTextOn());
             }
 
-            this.optionItemsContainer = new api.dom.DivEl("option-items-container");
+            this.optionItemsContainer = new api.dom.DivEl('option-items-container');
             this.appendChild(this.optionItemsContainer);
 
             let optionItemsPropertySet = this.getOptionItemsPropertyArray(this.parentDataSet).getSet(0);
@@ -99,7 +99,7 @@ module api.form {
                 this.updateViewState();
 
                 if (this.formOptionSetOption.getFormItems().length > 0) {
-                    this.addClass("expandable");
+                    this.addClass('expandable');
                 }
 
                 this.prependChild(this.makeSelectionButton());
@@ -107,7 +107,7 @@ module api.form {
                 this.formItemViews = formItemViews;
 
                 this.onValidityChanged((event: RecordingValidityChangedEvent) => {
-                    this.toggleClass("invalid", !event.isValid());
+                    this.toggleClass('invalid', !event.isValid());
                 });
 
                 if (validate) {
@@ -141,7 +141,7 @@ module api.form {
         }
 
         private getSelectedOptionsArray(): PropertyArray {
-            return this.parentDataSet.getPropertyArray("_selected");
+            return this.parentDataSet.getPropertyArray('_selected');
         }
 
         private getThisPropertyFromSelectedOptionsArray(): Property {
@@ -169,7 +169,7 @@ module api.form {
         private makeSelectionRadioButton(): api.ui.RadioButton {
             const selectedProperty = this.getSelectedOptionsArray().get(0);
             const checked = !!selectedProperty && selectedProperty.getString() === this.getName();
-            const button = new api.ui.RadioButton(this.formOptionSetOption.getLabel(), "", this.getParent().getEl().getId(), checked);
+            const button = new api.ui.RadioButton(this.formOptionSetOption.getLabel(), '', this.getParent().getEl().getId(), checked);
 
             button.onChange(() => {
                 let selectedProp = this.getSelectedOptionsArray().get(0);
@@ -188,7 +188,7 @@ module api.form {
                 this.notifySelectionChanged();
 
                 if (api.BrowserHelper.isFirefox() && !this.topEdgeIsVisible(button.getFirstChild())) {
-                    wemjq(this.getHTMLElement()).closest(".form-panel").scrollTop(
+                    wemjq(this.getHTMLElement()).closest('.form-panel').scrollTop(
                         this.calcDistToTopOfScrollableArea(button.getFirstChild()));
                 }
             });
@@ -210,7 +210,7 @@ module api.form {
         }
 
         private getToolbarOffsetTop(delta: number = 0): number {
-            let toolbar = wemjq(this.getHTMLElement()).closest(".form-panel").find(".wizard-step-navigator-and-toolbar");
+            let toolbar = wemjq(this.getHTMLElement()).closest('.form-panel').find('.wizard-step-navigator-and-toolbar');
             let stickyToolbarHeight = toolbar.outerHeight(true);
             let offset = toolbar.offset();
             let stickyToolbarOffset = offset ? offset.top : 0;
@@ -266,7 +266,7 @@ module api.form {
             let checkBoxShouldBeDisabled = (checked != null ? !checked : !this.checkbox.isChecked()) && this.isSelectionLimitReached();
 
             if (this.checkbox.isDisabled() != checkBoxShouldBeDisabled) {
-                this.checkbox.setDisabled(checkBoxShouldBeDisabled, "disabled");
+                this.checkbox.setDisabled(checkBoxShouldBeDisabled, 'disabled');
             }
         }
 
@@ -275,28 +275,28 @@ module api.form {
             this.expand();
             this.enableFormItems();
             api.dom.FormEl.moveFocusToNextFocusable(input,
-                thisElSelector + " input, " + thisElSelector + " select, " + thisElSelector + " textarea");
-            this.addClass("selected");
+                thisElSelector + ' input, ' + thisElSelector + ' select, ' + thisElSelector + ' textarea');
+            this.addClass('selected');
         }
 
         private deselectHandle() {
             this.expand(this.isOptionSetExpandedByDefault());
             this.disableAndResetAllFormItems();
             this.cleanValidationForThisOption();
-            this.removeClass("selected");
+            this.removeClass('selected');
         }
 
         private cleanValidationForThisOption() {
             let regExp = /-view(\s|$)/;
 
-            wemjq(this.getEl().getHTMLElement()).find(".invalid").filter(function () {
+            wemjq(this.getEl().getHTMLElement()).find('.invalid').filter(function () {
                 return regExp.test(this.className);
             }).each((index, elem) => {
-                wemjq(elem).removeClass("invalid");
-                wemjq(elem).find(".validation-viewer ul").html("");
+                wemjq(elem).removeClass('invalid');
+                wemjq(elem).find('.validation-viewer ul').html('');
             });
 
-            this.removeClass("invalid");
+            this.removeClass('invalid');
         }
 
         private isOptionSetExpandedByDefault(): boolean {
@@ -304,20 +304,20 @@ module api.form {
         }
 
         private expand(condition: boolean = true) {
-            this.toggleClass("expanded", condition);
+            this.toggleClass('expanded', condition);
         }
 
         private enableFormItems() {
-            wemjq(this.getEl().getHTMLElement()).find(".option-items-container input, .option-items-container button").each(
+            wemjq(this.getEl().getHTMLElement()).find('.option-items-container input, .option-items-container button').each(
                 (index, elem) => {
-                    elem.removeAttribute("disabled");
+                    elem.removeAttribute('disabled');
                 });
         }
 
         private disableFormItems() {
-            wemjq(this.getEl().getHTMLElement()).find(".option-items-container input, .option-items-container button").each(
+            wemjq(this.getEl().getHTMLElement()).find('.option-items-container input, .option-items-container button').each(
                 (index, elem) => {
-                    elem.setAttribute("disabled", "true");
+                    elem.setAttribute('disabled', 'true');
                 });
         }
 
@@ -369,7 +369,7 @@ module api.form {
                     this.subscribeCheckboxOnPropertyEvents();
                 } else {
                     if (this.getThisPropertyFromSelectedOptionsArray() == null) {
-                        wemjq(this.getHTMLElement()).find("input:radio").first().prop('checked', false);
+                        wemjq(this.getHTMLElement()).find('input:radio').first().prop('checked', false);
                     }
                     this.subscribedOnDeselect = false;
                 }
@@ -385,7 +385,7 @@ module api.form {
                 this.disableFormItems();
             }
 
-            this.toggleClass("selected", this.getThisPropertyFromSelectedOptionsArray() != null);
+            this.toggleClass('selected', this.getThisPropertyFromSelectedOptionsArray() != null);
         }
 
         broadcastFormSizeChanged() {
@@ -429,7 +429,7 @@ module api.form {
                 recording.flatten(formItemView.validate(silent));
             });
 
-            this.toggleClass("invalid", !recording.isValid());
+            this.toggleClass('invalid', !recording.isValid());
 
             return recording;
         }

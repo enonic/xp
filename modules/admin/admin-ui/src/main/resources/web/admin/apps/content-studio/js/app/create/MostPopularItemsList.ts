@@ -8,14 +8,14 @@ import ContentTypeSummary = api.schema.content.ContentTypeSummary;
 export class MostPopularItemsList extends NewContentDialogList {
 
     constructor() {
-        super("most-popular-content-types-list");
+        super('most-popular-content-types-list');
     }
 
     createItemView(item: MostPopularItem): api.dom.LiEl {
         let namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
         namesAndIconView
             .setIconUrl(item.getIconUrl())
-            .setMainName(item.getDisplayName() + " (" + item.getHits() + ")")
+            .setMainName(item.getDisplayName() + ' (' + item.getHits() + ')')
             .setSubName(item.getName())
             .setDisplayIconLabel(item.isSite());
 
@@ -43,7 +43,7 @@ export class MostPopularItemsList extends NewContentDialogList {
         let aggregatedList: ContentTypeInfo[] = this.getAggregatedItemList(allowedContentTypes);
 
         for (let i = 0; i < aggregatedList.length && i < MostPopularItemsBlock.DEFAULT_MAX_ITEMS; i++) {
-            let contentType: ContentTypeSummary = api.util.ArrayHelper.findElementByFieldValue(contentTypes, "name",
+            let contentType: ContentTypeSummary = api.util.ArrayHelper.findElementByFieldValue(contentTypes, 'name',
                 aggregatedList[i].contentType);
             mostPopularItems.push(new MostPopularItem(contentType, aggregatedList[i].count));
         }
@@ -53,7 +53,7 @@ export class MostPopularItemsList extends NewContentDialogList {
 
     private isAllowedContentType(allowedContentTypes: ContentTypeSummary[], content: api.content.ContentSummary) {
         return !content.getType().isMedia() && !content.getType().isDescendantOfMedia() &&
-               Boolean(api.util.ArrayHelper.findElementByFieldValue(allowedContentTypes, "id", content.getType().toString()));
+               Boolean(api.util.ArrayHelper.findElementByFieldValue(allowedContentTypes, 'id', content.getType().toString()));
     }
 
     private getAggregatedItemList(contentTypes: api.content.ContentSummary[]) {
@@ -61,7 +61,7 @@ export class MostPopularItemsList extends NewContentDialogList {
 
         contentTypes.forEach((content: api.content.ContentSummary) => {
             let contentType = content.getType().toString();
-            let existingContent = api.util.ArrayHelper.findElementByFieldValue(aggregatedList, "contentType", contentType);
+            let existingContent = api.util.ArrayHelper.findElementByFieldValue(aggregatedList, 'contentType', contentType);
 
             if (existingContent) {
                 existingContent.count++;

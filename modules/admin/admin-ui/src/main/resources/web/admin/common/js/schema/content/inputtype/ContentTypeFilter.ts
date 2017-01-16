@@ -158,6 +158,6 @@ module api.schema.content.inputtype {
         }
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("ContentTypeFilter", ContentTypeFilter));
+    api.form.inputtype.InputTypeManager.register(new api.Class('ContentTypeFilter', ContentTypeFilter));
 
 }

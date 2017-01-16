@@ -70,10 +70,10 @@ export class NonMobileDetailsPanelsManager {
 
     private doPanelAnimation(canSetActivePanel: boolean = true) {
 
-        this.splitPanelWithGridAndDetails.addClass("sliding");
+        this.splitPanelWithGridAndDetails.addClass('sliding');
 
         if (this.requiresFloatingPanelDueToShortWidth()) {
-            this.toggleButton.addClass("floating-mode");
+            this.toggleButton.addClass('floating-mode');
             if (!this.splitPanelWithGridAndDetails.isSecondPanelHidden()) {
                 this.dockedToFloatingSync();
             }
@@ -90,10 +90,10 @@ export class NonMobileDetailsPanelsManager {
                 this.floatingDetailsPanel.slideOut();
             }
             this.splitPanelWithGridAndDetails.setActiveWidthPxOfSecondPanel(this.floatingDetailsPanel.getActualWidth());
-            this.splitPanelWithGridAndDetails.removeClass("sliding");
+            this.splitPanelWithGridAndDetails.removeClass('sliding');
 
         } else {
-            this.toggleButton.removeClass("floating-mode");
+            this.toggleButton.removeClass('floating-mode');
             if (this.floatingPanelIsShown()) {
                 this.floatingToDockedSync();
             }
@@ -102,7 +102,7 @@ export class NonMobileDetailsPanelsManager {
                 ActiveDetailsPanelManager.setActiveDetailsPanel(this.dockedDetailsPanel);
             }
 
-            this.dockedDetailsPanel.addClass("left-bordered");
+            this.dockedDetailsPanel.addClass('left-bordered');
 
             if (this.isExpanded()) {
                 this.splitPanelWithGridAndDetails.showSecondPanel(false);
@@ -111,12 +111,12 @@ export class NonMobileDetailsPanelsManager {
             }
 
             setTimeout(() => {
-                this.dockedDetailsPanel.removeClass("left-bordered");
+                this.dockedDetailsPanel.removeClass('left-bordered');
                 if (this.isExpanded()) {
                     this.splitPanelWithGridAndDetails.showSplitter();
                     this.dockedDetailsPanel.notifyPanelSizeChanged();
                 }
-                this.splitPanelWithGridAndDetails.removeClass("sliding");
+                this.splitPanelWithGridAndDetails.removeClass('sliding');
             }, 600);
         }
 
@@ -124,7 +124,7 @@ export class NonMobileDetailsPanelsManager {
     }
 
     hideActivePanel() {
-        this.toggleButton.removeClass("expanded");
+        this.toggleButton.removeClass('expanded');
         this.doPanelAnimation(false);
     }
 
@@ -141,7 +141,7 @@ export class NonMobileDetailsPanelsManager {
     }
 
     private isExpanded(): boolean {
-        return this.toggleButton.hasClass("expanded");
+        return this.toggleButton.hasClass('expanded');
     }
 
     private dockedToFloatingSync() {
@@ -186,8 +186,8 @@ export class NonMobileDetailsPanelsManager {
 
     private floatingPanelIsShown(): boolean {
         let right = this.floatingDetailsPanel.getHTMLElement().style.right;
-        if (right && right.indexOf("px") > -1) {
-            right = right.substring(0, right.indexOf("px"));
+        if (right && right.indexOf('px') > -1) {
+            right = right.substring(0, right.indexOf('px'));
             return Number(right) >= 0;
         }
         return false;
@@ -209,7 +209,7 @@ export class NonMobileDetailsPanelsManager {
     }
 
     ensureButtonHasCorrectState() {
-        this.toggleButton.toggleClass("expanded",
+        this.toggleButton.toggleClass('expanded',
             !this.splitPanelWithGridAndDetails.isSecondPanelHidden() || this.floatingPanelIsShown());
     }
 

@@ -6,7 +6,7 @@ module api.content.resource {
 
         constructor(widgetInterfaces: string[]) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             this.widgetInterfaces = widgetInterfaces;
         }
 
@@ -15,7 +15,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "list/byinterfaces");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'list/byinterfaces');
         }
 
         sendAndParse(): wemQ.Promise<Widget[]> {

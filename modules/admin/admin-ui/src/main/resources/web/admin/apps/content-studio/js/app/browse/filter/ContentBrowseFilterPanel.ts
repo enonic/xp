@@ -34,10 +34,10 @@ import Action = api.ui.Action;
 
 export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel {
 
-    static CONTENT_TYPE_AGGREGATION_NAME: string = "contentTypes";
-    static LAST_MODIFIED_AGGREGATION_NAME: string = "lastModified";
-    static CONTENT_TYPE_AGGREGATION_DISPLAY_NAME: string = "Content Types";
-    static LAST_MODIFIED_AGGREGATION_DISPLAY_NAME: string = "Last Modified";
+    static CONTENT_TYPE_AGGREGATION_NAME: string = 'contentTypes';
+    static LAST_MODIFIED_AGGREGATION_NAME: string = 'lastModified';
+    static CONTENT_TYPE_AGGREGATION_DISPLAY_NAME: string = 'Content Types';
+    static LAST_MODIFIED_AGGREGATION_DISPLAY_NAME: string = 'Last Modified';
 
     private contentTypeAggregation: ContentTypeAggregationGroupView;
     private lastModifiedAggregation: AggregationGroupView;
@@ -77,13 +77,13 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private removeDependencyItemCallback() {
-        this.removeClass("has-dependency-item");
+        this.removeClass('has-dependency-item');
         this.dependenciesSection.reset();
         this.search();
     }
 
     public setDependencyItem(item: ContentSummary, inbound: boolean) {
-        this.addClass("has-dependency-item");
+        this.addClass('has-dependency-item');
         this.dependenciesSection.setItem(item, inbound);
         if (this.dependenciesSection.isActive()) {
             this.reset(true);
@@ -405,9 +405,9 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
 
         let dateRangeAgg = new DateRangeAggregationQuery((ContentBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_NAME));
         dateRangeAgg.setFieldName(QueryField.MODIFIED_TIME);
-        dateRangeAgg.addRange(new DateRange("now-1h", null, "< 1 hour"));
-        dateRangeAgg.addRange(new DateRange("now-1d", null, "< 1 day"));
-        dateRangeAgg.addRange(new DateRange("now-1w", null, "< 1 week"));
+        dateRangeAgg.addRange(new DateRange('now-1h', null, '< 1 hour'));
+        dateRangeAgg.addRange(new DateRange('now-1d', null, '< 1 day'));
+        dateRangeAgg.addRange(new DateRange('now-1w', null, '< 1 week'));
 
         contentQuery.addAggregationQuery(dateRangeAgg);
     }
@@ -436,8 +436,8 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
 
 export class DependenciesSection extends api.dom.DivEl {
 
-    private inboundLabel: api.dom.LabelEl = new api.dom.LabelEl("Inbound Dependencies");
-    private outboundLabel: api.dom.LabelEl = new api.dom.LabelEl("Outbound Dependencies");
+    private inboundLabel: api.dom.LabelEl = new api.dom.LabelEl('Inbound Dependencies');
+    private outboundLabel: api.dom.LabelEl = new api.dom.LabelEl('Outbound Dependencies');
 
     private dependencyItem: ContentSummary;
     private viewer: ContentSummaryViewer = new ContentSummaryViewer();
@@ -448,7 +448,7 @@ export class DependenciesSection extends api.dom.DivEl {
     private closeCallback: () => void;
 
     constructor(closeCallback?: () => void) {
-        super("dependencies-filter-section");
+        super('dependencies-filter-section');
 
         this.checkVisibilityState();
 
@@ -458,14 +458,14 @@ export class DependenciesSection extends api.dom.DivEl {
         this.outboundLabel.setVisible(false);
         this.appendChildren(this.inboundLabel, this.outboundLabel);
 
-        this.viewer.addClass("dependency-item");
+        this.viewer.addClass('dependency-item');
         this.appendChild(this.viewer);
 
         this.closeButton = this.appendCloseButton();
     }
 
     private appendCloseButton(): ActionButton {
-        let action = new Action("").onExecuted(() => {
+        let action = new Action('').onExecuted(() => {
             this.dependencyItem = null;
             this.checkVisibilityState();
 
@@ -475,7 +475,7 @@ export class DependenciesSection extends api.dom.DivEl {
         });
         let button = new ActionButton(action);
 
-        button.addClass("btn-close");
+        button.addClass('btn-close');
         this.appendChild(button);
 
         return button;

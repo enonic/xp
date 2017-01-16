@@ -7,7 +7,7 @@ import Application = api.application.Application;
 export class StopApplicationAction extends api.ui.Action {
 
     constructor(applicationTreeGrid: ApplicationTreeGrid) {
-        super("Stop");
+        super('Stop');
         this.setEnabled(false);
         this.onExecuted(() => {
             let applications: Application[] = applicationTreeGrid.getSelectedDataList();

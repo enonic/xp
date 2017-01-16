@@ -8,7 +8,7 @@ export class UnpublishAction extends api.ui.Action {
     private wizard: ContentWizardPanel;
 
     constructor(wizard: ContentWizardPanel) {
-        super("Unpublish");
+        super('Unpublish');
 
         this.wizard = wizard;
 

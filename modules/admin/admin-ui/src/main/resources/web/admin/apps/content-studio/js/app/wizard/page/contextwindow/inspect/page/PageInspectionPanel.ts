@@ -76,7 +76,7 @@ export class PageInspectionPanel extends BaseInspectionPanel {
             this.pageControllerSelector.load();
 
             if (this.pageModel.isCustomized()) {
-                this.addClass("customized");
+                this.addClass('customized');
             }
 
             if (this.pageModeImpliesPageControllerShown()) {
@@ -89,7 +89,7 @@ export class PageInspectionPanel extends BaseInspectionPanel {
             this.pageControllerForm).setPageTemplateForm(this.pageTemplateForm).setModel(this.liveEditModel);
 
         this.pageTemplateSelector.onSelection((pageTemplate: PageTemplate) => {
-                this.removeClass("customized");
+                this.removeClass('customized');
                 this.pageModel.setCustomized(false);
 
                 if (pageTemplate) {
@@ -112,7 +112,7 @@ export class PageInspectionPanel extends BaseInspectionPanel {
         );
 
         this.pageTemplateSelector.onCustomizedSelected(() => {
-            this.addClass("customized");
+            this.addClass('customized');
             this.pageControllerForm.getSelector().reset();
             this.pageControllerForm.show();
 
@@ -273,7 +273,7 @@ class ContentInspectionHandler extends BaseInspectionHandler {
         if (pageMode == PageMode.FORCED_TEMPLATE || pageMode == PageMode.AUTOMATIC) {
             this.showPageConfig(pageModel, liveEditModel.getFormContext());
         } else {
-            throw new Error("Unsupported PageMode: " + PageMode[pageMode]);
+            throw new Error('Unsupported PageMode: ' + PageMode[pageMode]);
         }
     }
 

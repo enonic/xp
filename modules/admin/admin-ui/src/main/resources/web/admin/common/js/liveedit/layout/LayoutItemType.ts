@@ -13,7 +13,7 @@ module api.liveedit.layout {
         }
 
         constructor() {
-            super("layout");
+            super('layout');
         }
 
         isComponentType(): boolean {

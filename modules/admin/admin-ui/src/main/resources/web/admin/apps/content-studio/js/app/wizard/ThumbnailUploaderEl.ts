@@ -14,7 +14,7 @@ export class ThumbnailUploaderEl extends api.ui.uploader.UploaderEl<api.content.
     constructor(config?: ThumbnailUploaderElConfig) {
 
         if (config.url == undefined) {
-            config.url = api.util.UriHelper.getRestUri("content/updateThumbnail");
+            config.url = api.util.UriHelper.getRestUri('content/updateThumbnail');
         }
         if (config.showCancel == undefined) {
             config.showCancel = false;

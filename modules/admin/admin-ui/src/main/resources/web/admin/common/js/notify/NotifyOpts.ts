@@ -35,7 +35,7 @@ module api.notify {
                     }
 
                     linkHtml += '<a href="#" class="notify.action_"' + i + '">';
-                    linkHtml += actions[i].getName() + "</a>";
+                    linkHtml += actions[i].getName() + '</a>';
                 }
 
                 linkHtml += '</span>';

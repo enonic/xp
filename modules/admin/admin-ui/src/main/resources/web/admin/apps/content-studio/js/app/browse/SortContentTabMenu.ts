@@ -18,7 +18,7 @@ export class SortContentTabMenu extends api.ui.tab.TabMenu {
     private dropdownHandle: DropdownHandle;
 
     constructor() {
-        super("sort-tab-menu");
+        super('sort-tab-menu');
 
         this.navigationItems = new SortContentTabMenuItems();
         this.addNavigationItems(this.navigationItems.getAllItems());

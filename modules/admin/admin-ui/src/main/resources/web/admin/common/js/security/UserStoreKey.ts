@@ -7,7 +7,7 @@ module api.security {
         private id: string;
 
         constructor(id: string) {
-            api.util.assert(!api.util.StringHelper.isBlank(id), "UserStoreKey id cannot be null or empty");
+            api.util.assert(!api.util.StringHelper.isBlank(id), 'UserStoreKey id cannot be null or empty');
             this.id = id;
         }
 

@@ -25,7 +25,7 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
     private ownerCombo: PrincipalComboBox;
 
     constructor() {
-        super("settings-wizard-step-form");
+        super('settings-wizard-step-form');
 
         this.modelChangeListener = (event: api.PropertyChangedEvent) => {
             if (!this.ignorePropertyChange) {
@@ -33,12 +33,12 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
                 switch (event.getPropertyName()) {
                 case ContentSettingsModel.PROPERTY_LANG:
                     if (!this.updateUnchangedOnly || !this.localeCombo.isDirty()) {
-                        this.localeCombo.setValue(value ? value.toString() : "");
+                        this.localeCombo.setValue(value ? value.toString() : '');
                     }
                     break;
                 case ContentSettingsModel.PROPERTY_OWNER:
                     if (!this.updateUnchangedOnly || !this.ownerCombo.isDirty()) {
-                        this.ownerCombo.setValue(value ? value.toString() : "");
+                        this.ownerCombo.setValue(value ? value.toString() : '');
                     }
                     break;
                 }

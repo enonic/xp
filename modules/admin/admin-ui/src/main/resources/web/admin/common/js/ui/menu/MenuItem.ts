@@ -5,7 +5,7 @@ module api.ui.menu {
         private action:api.ui.Action;
 
         constructor(action:api.ui.Action) {
-            super("menu-item");
+            super('menu-item');
             this.action = action;
             this.getEl().setInnerHtml(this.action.getLabel());
             this.onClicked((event: MouseEvent) => {
@@ -29,9 +29,9 @@ module api.ui.menu {
             let el = this.getEl();
             el.setDisabled(!value);
             if (value) {
-                el.removeClass("disabled");
+                el.removeClass('disabled');
             } else {
-                el.addClass("disabled");
+                el.addClass('disabled');
             }
         }
 

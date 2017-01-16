@@ -433,7 +433,7 @@ module api.content.page {
                 return new PageBuilder().setRegions(null).setConfig(this.config).setCustomized(this.isCustomized()).setFragment(
                     this.fragment).build();
             } else {
-                throw new Error("Page mode not supported: " + this.mode);
+                throw new Error('Page mode not supported: ' + this.mode);
             }
 
         }

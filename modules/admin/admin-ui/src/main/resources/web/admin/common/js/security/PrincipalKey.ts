@@ -2,9 +2,9 @@ module api.security {
 
     export class PrincipalKey implements api.Equitable {
 
-        private static SEPARATOR: string = ":";
+        private static SEPARATOR: string = ':';
 
-        private static ANONYMOUS_PRINCIPAL: PrincipalKey = new PrincipalKey(UserStoreKey.SYSTEM, PrincipalType.USER, "anonymous");
+        private static ANONYMOUS_PRINCIPAL: PrincipalKey = new PrincipalKey(UserStoreKey.SYSTEM, PrincipalType.USER, 'anonymous');
 
         private userStore: UserStoreKey;
 
@@ -21,7 +21,7 @@ module api.security {
 
             const sepIndex: number = str.indexOf(PrincipalKey.SEPARATOR);
             if (sepIndex === -1) {
-                throw new Error("Not a valid principal key [" + str + "]");
+                throw new Error('Not a valid principal key [' + str + ']');
             }
             const sepIndex2: number = str.indexOf(PrincipalKey.SEPARATOR, sepIndex + 1);
 
@@ -34,7 +34,7 @@ module api.security {
 
             } else {
                 if (sepIndex2 === -1) {
-                    throw new Error("Not a valid principal key [" + str + "]");
+                    throw new Error('Not a valid principal key [' + str + ']');
                 }
 
                 const userStore = str.substring(sepIndex + 1, sepIndex2) || '';
@@ -45,9 +45,9 @@ module api.security {
         }
 
         constructor(userStore: UserStoreKey, type: PrincipalType, principalId: string) {
-            api.util.assert(( type === PrincipalType.ROLE ) || (!!userStore), "Principal user store cannot be null");
-            api.util.assertNotNull(type, "Principal type cannot be null");
-            api.util.assert(!api.util.StringHelper.isBlank(principalId), "Principal id cannot be null or empty");
+            api.util.assert(( type === PrincipalType.ROLE ) || (!!userStore), 'Principal user store cannot be null');
+            api.util.assertNotNull(type, 'Principal type cannot be null');
+            api.util.assert(!api.util.StringHelper.isBlank(principalId), 'Principal id cannot be null or empty');
             this.userStore = userStore;
             this.type = type;
             this.principalId = principalId;
@@ -93,9 +93,9 @@ module api.security {
         }
 
         toPath(toParent: boolean = false): string {
-            let path = this.isRole() ? "/roles/" :
-                api.util.StringHelper.format("/{0}/{1}/", this.getUserStore().toString(),
-                    PrincipalType[this.getType()].toLowerCase().replace(/(group|user)/g, "$&s"));
+            let path = this.isRole() ? '/roles/' :
+                api.util.StringHelper.format('/{0}/{1}/', this.getUserStore().toString(),
+                    PrincipalType[this.getType()].toLowerCase().replace(/(group|user)/g, '$&s'));
 
             if (!toParent) {
                 path += this.getId();

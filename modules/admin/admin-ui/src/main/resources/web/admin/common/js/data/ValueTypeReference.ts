@@ -3,7 +3,7 @@ module api.data {
     export class ValueTypeReference extends ValueType {
 
         constructor() {
-            super("Reference");
+            super('Reference');
         }
 
         isValid(value: any): boolean {

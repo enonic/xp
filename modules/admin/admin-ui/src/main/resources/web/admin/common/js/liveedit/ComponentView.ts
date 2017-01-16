@@ -181,21 +181,21 @@ module api.liveedit {
             }
 
             if (inspectActionRequired) {
-                actions.push(new api.ui.Action("Inspect").onExecuted(() => {
+                actions.push(new api.ui.Action('Inspect').onExecuted(() => {
                     new ComponentInspectedEvent(this).fire();
                 }));
             }
 
-            actions.push(new api.ui.Action("Reset").onExecuted(() => {
+            actions.push(new api.ui.Action('Reset').onExecuted(() => {
                 this.component.reset();
             }));
 
             if (!isTopFragmentComponent) {
-                actions.push(new api.ui.Action("Remove").onExecuted(() => {
+                actions.push(new api.ui.Action('Remove').onExecuted(() => {
                     this.deselect();
                     this.remove();
                 }));
-                actions.push(new api.ui.Action("Duplicate").onExecuted(() => {
+                actions.push(new api.ui.Action('Duplicate').onExecuted(() => {
                     this.deselect();
 
                     let duplicatedComponent = <COMPONENT> this.getComponent().duplicate();
@@ -209,7 +209,7 @@ module api.liveedit {
 
             let isFragmentComponent = this instanceof api.liveedit.fragment.FragmentComponentView;
             if (!isFragmentComponent && !isFragmentContent) {
-                actions.push(new api.ui.Action("Create Fragment").onExecuted(() => {
+                actions.push(new api.ui.Action('Create Fragment').onExecuted(() => {
                     this.deselect();
                     this.createFragment().then((content: Content): void => {
                         // replace created fragment in place of source component
@@ -331,9 +331,9 @@ module api.liveedit {
         }
 
         toString() {
-            let extra = "";
+            let extra = '';
             if (this.hasComponentPath()) {
-                extra = " : " + this.getComponentPath().toString();
+                extra = ' : ' + this.getComponentPath().toString();
             }
             return super.toString() + extra;
         }
@@ -453,23 +453,23 @@ module api.liveedit {
         private handleDragStart2(event: DragEvent) {
 
             if (event.target === this.getHTMLElement()) {
-                event.dataTransfer.effectAllowed = "move";
+                event.dataTransfer.effectAllowed = 'move';
                 //event.dataTransfer.setData('text/plain', 'This text may be dragged');
-                console.log("ComponentView[" + this.getItemId().toNumber() + "].handleDragStart", event, this.getHTMLElement());
+                console.log('ComponentView[' + this.getItemId().toNumber() + '].handleDragStart', event, this.getHTMLElement());
             }
         }
 
         // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
         private handleDrag(event: DragEvent) {
             if (event.target === this.getHTMLElement()) {
-                console.log("ComponentView[" + this.getItemId().toNumber() + "].handleDrag", event, this.getHTMLElement());
+                console.log('ComponentView[' + this.getItemId().toNumber() + '].handleDrag', event, this.getHTMLElement());
             }
         }
 
         // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
         private handleDragEnd(event: DragEvent) {
             if (event.target === this.getHTMLElement()) {
-                console.log("ComponentView[" + this.getItemId().toNumber() + "].handleDragEnd", event, this.getHTMLElement());
+                console.log('ComponentView[' + this.getItemId().toNumber() + '].handleDragEnd', event, this.getHTMLElement());
                 //this.hideTooltip();
             }
         }

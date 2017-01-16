@@ -35,7 +35,7 @@ module api.content.site {
             this.applicationPropertyAddedListener = (event: api.data.PropertyAddedEvent) => {
                 let property: api.data.Property = event.getProperty();
                 // TODO:? property.getPath().startsWith(PropertyPath.fromString(".siteConfig")) &&  property.getName( )=="config")
-                if (property.getPath().toString().indexOf(".siteConfig") == 0 && property.getName() == "config") {
+                if (property.getPath().toString().indexOf('.siteConfig') == 0 && property.getName() == 'config') {
                     let siteConfig: SiteConfig = api.content.site.SiteConfig.create().fromData(property.getParent()).build();
                     if (!this.siteConfigs) {
                         this.siteConfigs = [];
@@ -47,8 +47,8 @@ module api.content.site {
 
             this.applicationPropertyRemovedListener = (event: api.data.PropertyRemovedEvent) => {
                 let property: api.data.Property = event.getProperty();
-                if (property.getName() == "siteConfig") {
-                    let applicationKey = ApplicationKey.fromString(property.getPropertySet().getString("applicationKey"));
+                if (property.getName() == 'siteConfig') {
+                    let applicationKey = ApplicationKey.fromString(property.getPropertySet().getString('applicationKey'));
                     this.siteConfigs = this.siteConfigs.filter((siteConfig: SiteConfig) =>
                         !siteConfig.getApplicationKey().equals(applicationKey)
                     );

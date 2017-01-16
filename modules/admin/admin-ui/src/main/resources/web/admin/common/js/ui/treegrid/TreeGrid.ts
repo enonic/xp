@@ -116,9 +116,9 @@ module api.ui.treegrid {
                 this.toolbar = new TreeGridToolbar(new TreeGridToolbarActions(this), this);
                 this.appendChild(this.toolbar);
                 // make sure it won't left from the cloned grid
-                this.removeClass("no-toolbar");
+                this.removeClass('no-toolbar');
             } else {
-                this.addClass("no-toolbar");
+                this.addClass('no-toolbar');
             }
 
             this.appendChild(this.grid);
@@ -157,20 +157,20 @@ module api.ui.treegrid {
                 if (this.isActive()) {
                     this.setActive(false);
                     const elem = new ElementHelper(event.target);
-                    if (elem.hasClass("expand")) {
-                        elem.removeClass("expand").addClass("collapse");
+                    if (elem.hasClass('expand')) {
+                        elem.removeClass('expand').addClass('collapse');
                         const node = this.gridData.getItem(data.row);
                         this.expandNode(node);
 
-                    } else if (elem.hasClass("collapse")) {
+                    } else if (elem.hasClass('collapse')) {
                         this.setActive(false);
-                        elem.removeClass("collapse").addClass("expand");
+                        elem.removeClass('collapse').addClass('expand');
                         const node = this.gridData.getItem(data.row);
                         this.collapseNode(node);
 
-                    } else if (elem.hasAnyParentClass("slick-cell-checkboxsel")) {
+                    } else if (elem.hasAnyParentClass('slick-cell-checkboxsel')) {
                         this.setActive(true);
-                        if (elem.getAttribute("type") === "checkbox") {
+                        if (elem.getAttribute('type') === 'checkbox') {
                             this.grid.toggleRow(data.row);
 
                         }
@@ -178,7 +178,7 @@ module api.ui.treegrid {
                         this.setActive(true);
                         this.root.clearStashedSelection();
                         let repeatedSelection = this.grid.selectRow(data.row) === -1;
-                        if (!elem.hasClass("sort-dialog-trigger")) {
+                        if (!elem.hasClass('sort-dialog-trigger')) {
                             new TreeGridItemClickedEvent(repeatedSelection).fire();
                         }
                     }
@@ -315,12 +315,12 @@ module api.ui.treegrid {
             if (columns.length > 0) {
                 let formatter = columns[0].getFormatter();
                 let toggleFormatter = (row: number, cell: number, value: any, columnDef: any, node: TreeNode<DATA>) => {
-                    let toggleSpan = new api.dom.SpanEl("toggle icon");
+                    let toggleSpan = new api.dom.SpanEl('toggle icon');
                     if (this.hasChildren(node.getData())) {
-                        let toggleClass = node.isExpanded() ? "collapse" : "expand";
+                        let toggleClass = node.isExpanded() ? 'collapse' : 'expand';
                         toggleSpan.addClass(toggleClass);
                     }
-                    toggleSpan.getEl().setMarginLeft(TreeGrid.LEVEL_STEP_INDENT * (node.calcLevel() - 1) + "px");
+                    toggleSpan.getEl().setMarginLeft(TreeGrid.LEVEL_STEP_INDENT * (node.calcLevel() - 1) + 'px');
 
                     return toggleSpan.toString() + formatter(row, cell, value, columnDef, node);
                 };
@@ -346,7 +346,7 @@ module api.ui.treegrid {
             let emptyNodesCount = 0;
 
             for (let i = from; i <= lastIndex; i++) {
-                if (!!this.gridData.getItem(i) && this.gridData.getItem(i).getDataId() === "") {
+                if (!!this.gridData.getItem(i) && this.gridData.getItem(i).getDataId() === '') {
                     emptyNodesCount++;
                 }
             }
@@ -439,8 +439,8 @@ module api.ui.treegrid {
         }
 
         queryScrollable(): api.dom.Element {
-            let gridClasses = (" " + this.grid.getEl().getClass()).replace(/\s/g, ".");
-            let viewport = Element.fromString(".tree-grid " + gridClasses + " .slick-viewport", false);
+            let gridClasses = (' ' + this.grid.getEl().getClass()).replace(/\s/g, '.');
+            let viewport = Element.fromString('.tree-grid ' + gridClasses + ' .slick-viewport', false);
             return viewport;
         }
 
@@ -449,7 +449,7 @@ module api.ui.treegrid {
                 this.fetchChildren(node.getParent()).then((dataList: DATA[]) => {
                     let oldChildren = node.getParent().getChildren();
                     // Ensure to remove empty node from the end if present
-                    if (oldChildren.length > 0 && oldChildren[oldChildren.length - 1].getDataId() === "") {
+                    if (oldChildren.length > 0 && oldChildren[oldChildren.length - 1].getDataId() === '') {
                         oldChildren.pop();
                     }
                     let fetchedChildren = this.dataToTreeNodes(dataList, node.getParent());
@@ -510,7 +510,7 @@ module api.ui.treegrid {
             const to = Math.min(lastVisible + this.loadBufferSize, lastIndex);
 
             for (let i = from; i <= to; i++) {
-                if (this.gridData.getItem(i) && this.gridData.getItem(i).getDataId() === "") {
+                if (this.gridData.getItem(i) && this.gridData.getItem(i).getDataId() === '') {
                     this.loading = true;
                     this.loadEmptyNode(this.gridData.getItem(i));
                     break;
@@ -531,7 +531,7 @@ module api.ui.treegrid {
          * Must be overridden.
          */
         getDataId(data: DATA): string {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         /**
@@ -798,7 +798,7 @@ module api.ui.treegrid {
             let nodeToUpdate = this.root.getCurrentRoot().findNode(dataId);
 
             if (!nodeToUpdate) {
-                throw new Error("TreeNode to update not found: " + dataId);
+                throw new Error('TreeNode to update not found: ' + dataId);
             }
 
             return this.fetchAndUpdateNodes([nodeToUpdate], oldDataId ? this.getDataId(data) : undefined);
@@ -810,7 +810,7 @@ module api.ui.treegrid {
             let nodesToUpdate = this.root.getCurrentRoot().findNodes(dataId);
 
             if (!nodesToUpdate) {
-                throw new Error("TreeNode to update not found: " + dataId);
+                throw new Error('TreeNode to update not found: ' + dataId);
             }
 
             return this.fetchAndUpdateNodes(nodesToUpdate, oldDataId ? this.getDataId(data) : undefined);
@@ -1005,7 +1005,7 @@ module api.ui.treegrid {
         }
 
         initData(nodes: TreeNode<DATA>[]) {
-            this.gridData.setItems(nodes, "id");
+            this.gridData.setItems(nodes, 'id');
             this.notifyDataChanged(new DataChangedEvent<DATA>(nodes, DataChangedEvent.ADDED));
             this.resetCurrentSelection(nodes);
         }

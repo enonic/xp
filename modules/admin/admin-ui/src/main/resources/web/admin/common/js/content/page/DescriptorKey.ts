@@ -2,7 +2,7 @@ module api.content.page {
 
     export class DescriptorKey implements api.Equitable {
 
-        private static SEPARATOR: string = ":";
+        private static SEPARATOR: string = ':';
 
         private applicationKey: api.application.ApplicationKey;
 

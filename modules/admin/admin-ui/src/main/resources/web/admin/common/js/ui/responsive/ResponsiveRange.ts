@@ -9,7 +9,7 @@ module api.ui.responsive {
         constructor(minRange: number, maxRange?: number, rangeClass?: string) {
             this.minRange = minRange;
             this.maxRange = maxRange || 0;
-            this.rangeClass = rangeClass || ("_" + (minRange == 375 ? 360 : minRange) + "-" + (maxRange == 375 ? 360 : maxRange));
+            this.rangeClass = rangeClass || ('_' + (minRange == 375 ? 360 : minRange) + '-' + (maxRange == 375 ? 360 : maxRange));
         }
 
         getMinimumRange(): number {

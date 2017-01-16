@@ -37,7 +37,7 @@ export class UserAccessWidgetItemView extends WidgetItemView {
     ];
 
     constructor() {
-        super("user-access-widget-item-view");
+        super('user-access-widget-item-view');
         this.accessListView = new UserAccessListView();
     }
 
@@ -61,13 +61,13 @@ export class UserAccessWidgetItemView extends WidgetItemView {
         if (entry) {
 
             this.everyoneAccessValue = AccessControlEntryView.getAccessValueFromEntry(entry);
-            let headerStr = entry.getPrincipalDisplayName() + " " + this.getOptionName(this.everyoneAccessValue) +
-                            " this item";
-            let headerStrEl = new api.dom.SpanEl("header-string").setHtml(headerStr);
+            let headerStr = entry.getPrincipalDisplayName() + ' ' + this.getOptionName(this.everyoneAccessValue) +
+                            ' this item';
+            let headerStrEl = new api.dom.SpanEl('header-string').setHtml(headerStr);
 
-            this.headerEl = new api.dom.DivEl("user-access-widget-header");
+            this.headerEl = new api.dom.DivEl('user-access-widget-header');
 
-            this.headerEl.appendChild(new api.dom.DivEl("icon-menu4"));
+            this.headerEl.appendChild(new api.dom.DivEl('icon-menu4'));
             this.headerEl.appendChild(headerStrEl);
             this.prependChild(this.headerEl);
         }
@@ -79,8 +79,8 @@ export class UserAccessWidgetItemView extends WidgetItemView {
             this.removeChild(this.bottomEl);
         }
 
-        this.bottomEl = new api.dom.AEl("edit-permissions-link");
-        this.bottomEl.setHtml("Edit Permissions");
+        this.bottomEl = new api.dom.AEl('edit-permissions-link');
+        this.bottomEl.setHtml('Edit Permissions');
 
         this.appendChild(this.bottomEl);
 

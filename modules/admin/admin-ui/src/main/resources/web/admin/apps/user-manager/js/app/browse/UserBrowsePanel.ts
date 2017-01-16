@@ -38,7 +38,7 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
         });
 
         this.onShown((event) => {
-            Router.setHash("browse");
+            Router.setHash('browse');
         });
     }
 
@@ -81,28 +81,28 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
 
         switch (type) {
         case UserTreeGridItemType.USER_STORE:
-            return "icon-address-book icon-large";
+            return 'icon-address-book icon-large';
 
         case UserTreeGridItemType.PRINCIPAL:
             if (item.getPrincipal().isRole()) {
-                return "icon-masks icon-large";
+                return 'icon-masks icon-large';
 
             } else if (item.getPrincipal().isUser()) {
-                return "icon-user icon-large";
+                return 'icon-user icon-large';
 
             } else if (item.getPrincipal().isGroup()) {
-                return "icon-users icon-large";
+                return 'icon-users icon-large';
             }
             break;
 
         case UserTreeGridItemType.GROUPS:
-            return "icon-folder icon-large";
+            return 'icon-folder icon-large';
 
         case UserTreeGridItemType.ROLES:
-            return "icon-folder icon-large";
+            return 'icon-folder icon-large';
 
         case UserTreeGridItemType.USERS:
-            return "icon-folder icon-large";
+            return 'icon-folder icon-large';
         }
 
     }

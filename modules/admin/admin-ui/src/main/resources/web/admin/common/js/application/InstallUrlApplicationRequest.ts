@@ -8,7 +8,7 @@ module api.application {
 
         constructor(applicationUrl: string) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             this.applicationUrl = applicationUrl;
             this.setHeavyOperation(true);
         }
@@ -20,7 +20,7 @@ module api.application {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "installUrl");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'installUrl');
         }
 
         sendAndParse(): wemQ.Promise<ApplicationInstallResult> {

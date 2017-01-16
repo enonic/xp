@@ -4,7 +4,7 @@ module api.ui.mask {
 
         constructor(itemToMask: api.dom.Element) {
             super(itemToMask);
-            this.addClass("drag-mask");
+            this.addClass('drag-mask');
         }
     }
 }

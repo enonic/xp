@@ -5,7 +5,7 @@ module api.content.page.region {
         private static INSTANCE: TextComponentType = new TextComponentType();
 
         constructor() {
-            super("text");
+            super('text');
         }
 
         newComponentBuilder(): TextComponentBuilder {

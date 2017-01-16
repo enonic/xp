@@ -106,7 +106,7 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
             tabMenuItem.setLabel(this.getWizardPanelItemDisplayName(wizardPanel));
 
             wizardPanel.getWizardHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
-                if (event.getPropertyName() === "displayName") {
+                if (event.getPropertyName() === 'displayName') {
                     let name = <string>event.getNewValue() || this.getPrettyNameForWizardPanel(wizardPanel);
                     tabMenuItem.setLabel(name, !<string>event.getNewValue());
                 }
@@ -202,7 +202,7 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
 
     private resolvePrincipalData(userItem: UserTreeGridItem): PrincipalData {
         let principalType: PrincipalType;
-        let principalPath = "";
+        let principalPath = '';
         let tabName;
 
         if (userItem) {
@@ -210,18 +210,18 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
 
             case UserTreeGridItemType.USERS:
                 principalType = PrincipalType.USER;
-                principalPath = PrincipalKey.ofUser(userItem.getUserStore().getKey(), "none").toPath(true);
-                tabName = "User";
+                principalPath = PrincipalKey.ofUser(userItem.getUserStore().getKey(), 'none').toPath(true);
+                tabName = 'User';
                 break;
             case UserTreeGridItemType.GROUPS:
                 principalType = PrincipalType.GROUP;
-                principalPath = PrincipalKey.ofGroup(userItem.getUserStore().getKey(), "none").toPath(true);
-                tabName = "Group";
+                principalPath = PrincipalKey.ofGroup(userItem.getUserStore().getKey(), 'none').toPath(true);
+                tabName = 'Group';
                 break;
             case UserTreeGridItemType.ROLES:
                 principalType = PrincipalType.ROLE;
-                principalPath = PrincipalKey.ofRole("none").toPath(true);
-                tabName = "Role";
+                principalPath = PrincipalKey.ofRole('none').toPath(true);
+                tabName = 'Role';
                 break;
             case UserTreeGridItemType.PRINCIPAL:
                 principalType = userItem.getPrincipal().getType();
@@ -230,12 +230,12 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
                 tabName = tabName[0] + tabName.slice(1).toLowerCase();
                 break;
             case UserTreeGridItemType.USER_STORE:
-                tabName = "User Store";
+                tabName = 'User Store';
                 break;
             }
 
         } else {
-            tabName = "User Store";
+            tabName = 'User Store';
         }
 
         return {
@@ -279,11 +279,11 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
 
     private handlePrincipalNew(tabId: AppBarTabId, data: PrincipalData, userStore: UserStore, userItem: UserTreeGridItem) {
         if (data.principalType === PrincipalType.USER && !this.areUsersEditable(userStore)) {
-            api.notify.showError("The ID Provider selected for this user store does not allow to create users.");
+            api.notify.showError('The ID Provider selected for this user store does not allow to create users.');
             return;
         }
         if (data.principalType === PrincipalType.GROUP && !this.areGroupsEditable(userStore)) {
-            api.notify.showError("The ID Provider selected for this user store does not allow to create groups.");
+            api.notify.showError('The ID Provider selected for this user store does not allow to create groups.');
             return;
         }
 
@@ -350,11 +350,11 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
         let principalType = principal.getType();
 
         if (PrincipalType.USER == principalType && !this.areUsersEditable(userStore)) {
-            api.notify.showError("The ID Provider selected for this user store does not allow to edit users.");
+            api.notify.showError('The ID Provider selected for this user store does not allow to edit users.');
             return;
 
         } else if (PrincipalType.GROUP == principalType && !this.areGroupsEditable(userStore)) {
-            api.notify.showError("The ID Provider selected for this user store does not allow to edit groups.");
+            api.notify.showError('The ID Provider selected for this user store does not allow to edit groups.');
             return;
 
         } else {

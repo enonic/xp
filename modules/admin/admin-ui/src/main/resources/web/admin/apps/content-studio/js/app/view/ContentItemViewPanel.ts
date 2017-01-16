@@ -68,7 +68,7 @@ export class ContentItemViewPanel extends api.app.view.ItemViewPanel<api.content
 
         this.onShown((event: api.dom.ElementShownEvent) => {
             if (this.getItem()) {
-                Router.setHash("view/" + this.getItem().getModel().getId());
+                Router.setHash('view/' + this.getItem().getModel().getId());
             }
         });
     }

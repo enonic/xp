@@ -35,7 +35,7 @@ module api.app {
         }
 
         static getAppId(): string {
-            return window.frameElement ? new api.dom.ElementHelper(<HTMLElement>window.frameElement).getAttribute("data-wem-app-id") : null;
+            return window.frameElement ? new api.dom.ElementHelper(<HTMLElement>window.frameElement).getAttribute('data-wem-app-id') : null;
         }
 
         isLoaded(): boolean {

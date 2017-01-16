@@ -146,7 +146,7 @@ export class LiveEditPageProxy {
         };
         this.onLiveEditPageViewReady((event: LiveEditPageViewReadyEvent) => {
             if (LiveEditPageProxy.debug) {
-                console.debug("LiveEditPageProxy.onLiveEditPageViewReady at " + new Date().toISOString());
+                console.debug('LiveEditPageProxy.onLiveEditPageViewReady at ' + new Date().toISOString());
             }
             this.hideLoadMaskHandler();
             this.pageView = event.getPageView();
@@ -165,15 +165,15 @@ export class LiveEditPageProxy {
     }
 
     private createLiveEditIFrame(): api.dom.IFrameEl {
-        let liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
+        let liveEditIFrame = new api.dom.IFrameEl('live-edit-frame');
         liveEditIFrame.onLoaded(() => this.handleIFrameLoadedEvent());
 
         return liveEditIFrame;
     }
 
     private createPlaceholderIFrame(): api.dom.IFrameEl {
-        let placeholderIFrame = new api.dom.IFrameEl("live-edit-frame-blank");
-        placeholderIFrame.setSrc(CONFIG.assetsUri + "/live-edit/js/_blank.html");
+        let placeholderIFrame = new api.dom.IFrameEl('live-edit-frame-blank');
+        placeholderIFrame.setSrc(CONFIG.assetsUri + '/live-edit/js/_blank.html');
 
         return placeholderIFrame;
     }
@@ -271,7 +271,7 @@ export class LiveEditPageProxy {
         } else {
 
             if (LiveEditPageProxy.debug) {
-                console.debug("LiveEditPageProxy.load: no reason to load page, showing blank placeholder");
+                console.debug('LiveEditPageProxy.load: no reason to load page, showing blank placeholder');
             }
 
             if (this.placeholderIFrame.isAdded()) {
@@ -307,16 +307,16 @@ export class LiveEditPageProxy {
     }
 
     private handleIFrameLoadedEvent() {
-        let liveEditWindow = this.liveEditIFrame.getHTMLElement()["contentWindow"];
+        let liveEditWindow = this.liveEditIFrame.getHTMLElement()['contentWindow'];
 
         if (LiveEditPageProxy.debug) {
-            console.debug("LiveEditPageProxy.handleIframeLoadedEvent at " + new Date().toISOString());
+            console.debug('LiveEditPageProxy.handleIframeLoadedEvent at ' + new Date().toISOString());
         }
 
         if (liveEditWindow) {
             if (liveEditWindow.wemjq) {
                 if (LiveEditPageProxy.debug) {
-                    console.debug("LiveEditPageProxy.setting config for", liveEditWindow.document, CONFIG);
+                    console.debug('LiveEditPageProxy.setting config for', liveEditWindow.document, CONFIG);
                 }
                 // Give loaded page same CONFIG as in admin
                 liveEditWindow.CONFIG = JSON.parse(JSON.stringify(CONFIG));
@@ -336,12 +336,12 @@ export class LiveEditPageProxy {
                     this.disableLinksInLiveEditForIE();
                 }
                 if (LiveEditPageProxy.debug) {
-                    console.debug("LiveEditPageProxy.hanldeIframeLoadedEvent: initialize live edit at " + new Date().toISOString());
+                    console.debug('LiveEditPageProxy.hanldeIframeLoadedEvent: initialize live edit at ' + new Date().toISOString());
                 }
                 new api.liveedit.InitializeLiveEditEvent(this.liveEditModel).fire(this.liveEditWindow);
             } else {
                 if (LiveEditPageProxy.debug) {
-                    console.debug("LiveEditPageProxy.handleIframeLoadedEvent: notify live edit ready at " + new Date().toISOString());
+                    console.debug('LiveEditPageProxy.handleIframeLoadedEvent: notify live edit ready at ' + new Date().toISOString());
                 }
                 this.notifyLiveEditPageViewReady(new api.liveedit.LiveEditPageViewReadyEvent());
             }
@@ -353,8 +353,8 @@ export class LiveEditPageProxy {
 
     public loadComponent(componentView: ComponentView<Component>, componentUrl: string): wemQ.Promise<string> {
         let deferred = wemQ.defer<string>();
-        api.util.assertNotNull(componentView, "componentView cannot be null");
-        api.util.assertNotNull(componentUrl, "componentUrl cannot be null");
+        api.util.assertNotNull(componentView, 'componentView cannot be null');
+        api.util.assertNotNull(componentUrl, 'componentUrl cannot be null');
 
         wemjq.ajax({
             url: componentUrl,
@@ -376,13 +376,13 @@ export class LiveEditPageProxy {
                 newComponentView.select();
                 newComponentView.hideContextMenu();
 
-                deferred.resolve("");
+                deferred.resolve('');
             },
             error: (jqXHR: JQueryXHR, textStatus: string, errorThrow: string) => {
                 let responseHtml = wemjq.parseHTML(jqXHR.responseText);
-                let errorMessage = "";
+                let errorMessage = '';
                 responseHtml.forEach((el: HTMLElement, i) => {
-                    if (el.tagName && el.tagName.toLowerCase() == "title") {
+                    if (el.tagName && el.tagName.toLowerCase() == 'title') {
                         errorMessage = el.innerHTML;
                     }
                 });
@@ -879,7 +879,7 @@ export class LiveEditPageProxy {
 
     private disableLinksInLiveEditForIE() {
         if (this.livejq) {
-            this.livejq("a").attr("disabled", "disabled"); // this works only in IE
+            this.livejq('a').attr('disabled', 'disabled'); // this works only in IE
         }
     }
 

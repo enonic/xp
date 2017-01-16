@@ -1,11 +1,11 @@
 import "../../../../../../api.ts";
+import {BaseInspectionPanel} from "../BaseInspectionPanel";
 
 import Component = api.content.page.region.Component;
 import ComponentName = api.content.page.region.ComponentName;
 import ComponentView = api.liveedit.ComponentView;
 import ContentFormContext = api.content.form.ContentFormContext;
 import LiveEditModel = api.liveedit.LiveEditModel;
-import {BaseInspectionPanel} from "../BaseInspectionPanel";
 
 export interface ComponentInspectionPanelConfig {
 
@@ -35,7 +35,7 @@ export abstract class ComponentInspectionPanel<COMPONENT extends Component> exte
     }
 
     getComponentView(): ComponentView<Component> {
-        throw new Error("Must be implemented by inheritors");
+        throw new Error('Must be implemented by inheritors');
     }
 
     getComponent(): COMPONENT {

@@ -61,7 +61,7 @@ module api.ui.text {
             this.onAdded(() => {
                 this.codeMirror = CodeMirror.fromTextArea(<HTMLTextAreaElement>this.textArea.getHTMLElement(), this.options);
                 this.codeMirror.setSize(540, 350);
-                this.codeMirror.setOption("mode", this.mode);
+                this.codeMirror.setOption('mode', this.mode);
                 CodeMirror.autoLoadMode(this.codeMirror, this.mode);
                 this.codeMirror.refresh();
             });

@@ -6,7 +6,7 @@ import {NewContentDialogList} from "./NewContentDialogList";
 export class RecentItemsList extends NewContentDialogList {
 
     constructor() {
-        super("recent-content-types-list");
+        super('recent-content-types-list');
     }
 
     createItems(items: NewContentDialogListItem[]) {

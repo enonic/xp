@@ -20,7 +20,7 @@ export class WidgetView extends api.dom.DivEl {
 
     private containerWidth: number = 0;
 
-    private url: string = "";
+    private url: string = '';
 
     private content: ContentSummaryAndCompareStatus;
 
@@ -29,7 +29,7 @@ export class WidgetView extends api.dom.DivEl {
     public static debug: boolean = false;
 
     constructor(builder: WidgetViewBuilder) {
-        super("widget-view " + (builder.widget ? "external-widget" : "internal-widget"));
+        super('widget-view ' + (builder.widget ? 'external-widget' : 'internal-widget'));
 
         this.detailsView = builder.detailsView;
         this.widgetName = builder.name;
@@ -55,7 +55,7 @@ export class WidgetView extends api.dom.DivEl {
     private applyConfig() {
         if (this.isUrlBased()) {
             let config = this.widget.getConfig();
-            if (!!config && config.hasOwnProperty("render-on-resize") && config["render-on-resize"] == "true") {
+            if (!!config && config.hasOwnProperty('render-on-resize') && config['render-on-resize'] == 'true') {
                 this.handleRerenderOnResize();
             }
         }
@@ -82,11 +82,11 @@ export class WidgetView extends api.dom.DivEl {
     }
 
     private getWidgetUrl() {
-        return api.rendering.UriHelper.getAdminUri(this.widget.getUrl(), "/");
+        return api.rendering.UriHelper.getAdminUri(this.widget.getUrl(), '/');
     }
 
     private getFullUrl(url: string) {
-        return url + "/" + this.detailsView.getEl().getWidth();
+        return url + '/' + this.detailsView.getEl().getWidth();
     }
 
     private updateCustomWidgetItemViews(force: boolean = false): wemQ.Promise<any>[] {
@@ -165,7 +165,7 @@ export class WidgetView extends api.dom.DivEl {
         }
 
         setTimeout(() => {
-            this.getEl().setMaxHeight("none");
+            this.getEl().setMaxHeight('none');
         }, 100);
     }
 
@@ -202,7 +202,7 @@ export class WidgetView extends api.dom.DivEl {
         if (!firstItemView) {
             return;
         }
-        this.getEl().setHeight("");
+        this.getEl().setHeight('');
         firstItemView.hide();
         setTimeout(() => {
             firstItemView.show();

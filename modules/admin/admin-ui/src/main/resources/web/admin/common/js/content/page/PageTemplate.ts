@@ -13,7 +13,7 @@ module api.content.page {
             super(builder);
 
             this.canRender = [];
-            this.getContentData().forEachProperty("supports", (property: Property) => {
+            this.getContentData().forEachProperty('supports', (property: Property) => {
                 this.canRender.push(new ContentTypeName(property.getString()));
             });
         }

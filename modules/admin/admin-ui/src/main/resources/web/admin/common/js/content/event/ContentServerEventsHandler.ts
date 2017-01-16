@@ -60,7 +60,7 @@ module api.content.event {
 
         private contentServerEventHandler(event: BatchContentServerEvent) {
             if (ContentServerEventsHandler.debug) {
-                console.debug("ContentServerEventsHandler: received server event", event);
+                console.debug('ContentServerEventsHandler: received server event', event);
             }
 
             let changes = event.getEvents().map((change) => change.getNodeChange());
@@ -90,7 +90,7 @@ module api.content.event {
                 api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByIds(this.extractContentIds(changes))
                     .then((summaries) => {
                         if (ContentServerEventsHandler.debug) {
-                            console.debug("ContentServerEventsHandler: fetched summaries", summaries);
+                            console.debug('ContentServerEventsHandler: fetched summaries', summaries);
                         }
                         switch (event.getType()) {
                         case NodeServerChangeType.CREATE:
@@ -173,14 +173,14 @@ module api.content.event {
 
         private handleContentCreated(data: ContentSummaryAndCompareStatus[]) {
             if (ContentServerEventsHandler.debug) {
-                console.debug("ContentServerEventsHandler: created", data);
+                console.debug('ContentServerEventsHandler: created', data);
             }
             this.notifyContentCreated(data);
         }
 
         private handleContentUpdated(data: ContentSummaryAndCompareStatus[]) {
             if (ContentServerEventsHandler.debug) {
-                console.debug("ContentServerEventsHandler: updated", data);
+                console.debug('ContentServerEventsHandler: updated', data);
             }
             // TODO: refactor update event to contain multiple contents ?
             data.forEach((el) => {
@@ -192,14 +192,14 @@ module api.content.event {
 
         private handleContentRenamed(data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[]) {
             if (ContentServerEventsHandler.debug) {
-                console.debug("ContentServerEventsHandler: renamed", data, oldPaths);
+                console.debug('ContentServerEventsHandler: renamed', data, oldPaths);
             }
             this.notifyContentRenamed(data, oldPaths);
         }
 
         private handleContentDeleted(changeItems: ContentServerChangeItem[]) {
             if (ContentServerEventsHandler.debug) {
-                console.debug("ContentServerEventsHandler: deleted", changeItems);
+                console.debug('ContentServerEventsHandler: deleted', changeItems);
             }
             let contentDeletedEvent = new ContentDeletedEvent();
             changeItems.forEach((changeItem) => {
@@ -212,7 +212,7 @@ module api.content.event {
 
         private handleContentPending(data: ContentSummaryAndCompareStatus[]) {
             if (ContentServerEventsHandler.debug) {
-                console.debug("ContentServerEventsHandler: pending", data);
+                console.debug('ContentServerEventsHandler: pending', data);
             }
             let contentDeletedEvent = new ContentDeletedEvent();
 
@@ -228,14 +228,14 @@ module api.content.event {
 
         private handleContentDuplicated(data: ContentSummaryAndCompareStatus[]) {
             if (ContentServerEventsHandler.debug) {
-                console.debug("ContentServerEventsHandler: duplicated", data);
+                console.debug('ContentServerEventsHandler: duplicated', data);
             }
             this.notifyContentDuplicated(data);
         }
 
         private handleContentPublished(data: ContentSummaryAndCompareStatus[]) {
             if (ContentServerEventsHandler.debug) {
-                console.debug("ContentServerEventsHandler: published", data);
+                console.debug('ContentServerEventsHandler: published', data);
             }
 
             this.notifyContentPublished(data);
@@ -243,7 +243,7 @@ module api.content.event {
 
         private handleContentUnpublished(data: ContentSummaryAndCompareStatus[]) {
             if (ContentServerEventsHandler.debug) {
-                console.debug("ContentServerEventsHandler: unpublished", data);
+                console.debug('ContentServerEventsHandler: unpublished', data);
             }
 
             this.notifyContentUnpublished(data);
@@ -251,14 +251,14 @@ module api.content.event {
 
         private handleContentMoved(data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[]) {
             if (ContentServerEventsHandler.debug) {
-                console.debug("ContentServerEventsHandler: moved", data, oldPaths);
+                console.debug('ContentServerEventsHandler: moved', data, oldPaths);
             }
             this.notifyContentMoved(data, oldPaths);
         }
 
         private handleContentSorted(data: ContentSummaryAndCompareStatus[]) {
             if (ContentServerEventsHandler.debug) {
-                console.debug("ContentServerEventsHandler: sorted", data);
+                console.debug('ContentServerEventsHandler: sorted', data);
             }
             this.notifyContentSorted(data);
         }

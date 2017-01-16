@@ -9,7 +9,7 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 export class DeleteContentAction extends api.ui.Action {
 
     constructor(wizardPanel: ContentWizardPanel) {
-        super("Delete", "mod+del", true);
+        super('Delete', 'mod+del', true);
         this.onExecuted(() => {
             new ContentDeletePromptEvent([new ContentSummaryAndCompareStatus().
                 setContentSummary(wizardPanel.getPersistedItem()).

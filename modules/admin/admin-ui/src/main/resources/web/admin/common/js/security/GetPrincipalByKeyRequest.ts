@@ -8,7 +8,7 @@ module api.security {
 
         constructor(principalKey: PrincipalKey) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
             this.principalKey = principalKey;
             this.includeMemberships = false;
         }

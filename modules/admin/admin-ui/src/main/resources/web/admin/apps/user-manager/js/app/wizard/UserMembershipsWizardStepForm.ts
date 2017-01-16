@@ -27,7 +27,7 @@ export class UserMembershipsWizardStepForm extends api.app.wizard.WizardStepForm
     private rolesLoaded: boolean;
 
     constructor() {
-        super("user-memberships");
+        super('user-memberships');
 
         this.groupsLoaded = false;
         this.rolesLoaded = false;

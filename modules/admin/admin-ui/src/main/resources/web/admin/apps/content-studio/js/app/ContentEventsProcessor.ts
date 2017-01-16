@@ -17,7 +17,7 @@ export class ContentEventsProcessor {
         let wizardUrl = 'content-studio#/' + params.toString();
         let isNew = !params.contentId;
         let wizardId;
-        if (!isNew && navigator.userAgent.search("Chrome") > -1) {
+        if (!isNew && navigator.userAgent.search('Chrome') > -1) {
             // add tab id for browsers that can focus tabs by id
             // don't do it for new to be able to create multiple
             // contents of the same type simultaneously
@@ -27,7 +27,7 @@ export class ContentEventsProcessor {
     }
 
     static popupBlocked(win: Window) {
-        return !win || win.closed || typeof win.closed == "undefined";
+        return !win || win.closed || typeof win.closed == 'undefined';
     }
 
     static handleNew(newContentEvent: NewContentEvent) {
@@ -65,7 +65,7 @@ export class ContentEventsProcessor {
             let win = ContentEventsProcessor.openWizardTab(wizardParams, tabId);
 
             if (ContentEventsProcessor.popupBlocked(win)) {
-                const message = "Pop-up Blocker is enabled in browser settings! Please add the XP admin to the exception list.";
+                const message = 'Pop-up Blocker is enabled in browser settings! Please add the XP admin to the exception list.';
                 api.notify.showWarning(message, false);
 
                 return false;

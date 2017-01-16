@@ -27,7 +27,7 @@ export class MarketAppViewer extends api.ui.Viewer<MarketApplication> {
     }
 
     resolveDisplayName(object: MarketApplication): string {
-        let appLink = new api.dom.AEl().setUrl(object.getUrl(), "_blank").setHtml(object.getDisplayName(), false);
+        let appLink = new api.dom.AEl().setUrl(object.getUrl(), '_blank').setHtml(object.getDisplayName(), false);
         return appLink.toString();
     }
 
@@ -51,7 +51,7 @@ export class MarketAppViewer extends api.ui.Viewer<MarketApplication> {
         super.doLayout(object);
 
         if (MarketAppViewer.debug) {
-            console.debug("MarketAppViewer.doLayout");
+            console.debug('MarketAppViewer.doLayout');
         }
 
         if (!this.namesAndIconView) {
@@ -75,8 +75,8 @@ export class MarketAppViewer extends api.ui.Viewer<MarketApplication> {
                 this.namesAndIconView.setIconUrl(iconUrl);
             }
             this.namesAndIconView.getIconImageEl().onError(() => {
-                this.namesAndIconView.setIconClass("icon-puzzle icon-large");
-                this.namesAndIconView.getIconImageEl().setSrc("");
+                this.namesAndIconView.setIconClass('icon-puzzle icon-large');
+                this.namesAndIconView.getIconImageEl().setSrc('');
             });
         }
     }

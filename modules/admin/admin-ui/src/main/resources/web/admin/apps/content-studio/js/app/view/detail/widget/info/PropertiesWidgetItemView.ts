@@ -16,7 +16,7 @@ export class PropertiesWidgetItemView extends WidgetItemView {
     public static debug: boolean = false;
 
     constructor() {
-        super("properties-widget-item-view");
+        super('properties-widget-item-view');
     }
 
     public setContentAndUpdateView(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
@@ -85,28 +85,28 @@ export class PropertiesWidgetItemView extends WidgetItemView {
         let strings: FieldString[];
 
         strings = [
-            new FieldString().setName("Type").setValue(this.content.getType().getLocalName()
+            new FieldString().setName('Type').setValue(this.content.getType().getLocalName()
                 ? this.content.getType().getLocalName() : this.content.getType().toString()),
 
-            new FieldString().setName("Application").setValue(application ? application.getDisplayName() :
+            new FieldString().setName('Application').setValue(application ? application.getDisplayName() :
                                                               this.content.getType().getApplicationKey().getName()),
 
-            this.content.getLanguage() ? new FieldString().setName("Language").setValue(this.content.getLanguage()) : null,
+            this.content.getLanguage() ? new FieldString().setName('Language').setValue(this.content.getLanguage()) : null,
 
-            this.content.getOwner() ? new FieldString().setName("Owner").setValue(this.content.getOwner().getId()) : null,
+            this.content.getOwner() ? new FieldString().setName('Owner').setValue(this.content.getOwner().getId()) : null,
 
-            new FieldString().setName("Created").setValue(DateTimeFormatter.createHtml(this.content.getCreatedTime())),
+            new FieldString().setName('Created').setValue(DateTimeFormatter.createHtml(this.content.getCreatedTime())),
 
-            this.content.getModifiedTime() ? new FieldString().setName("Modified").setValue(
+            this.content.getModifiedTime() ? new FieldString().setName('Modified').setValue(
                 DateTimeFormatter.createHtml(this.content.getModifiedTime())) : null,
 
-            new FieldString().setName("Publish From").setValue(this.content.getPublishFromTime() ?
-                                                               DateTimeFormatter.createHtml(this.content.getPublishFromTime()) : " "),
+            new FieldString().setName('Publish From').setValue(this.content.getPublishFromTime() ?
+                                                               DateTimeFormatter.createHtml(this.content.getPublishFromTime()) : ' '),
 
-            new FieldString().setName("Publish To").setValue(this.content.getPublishToTime() ?
-                                                             DateTimeFormatter.createHtml(this.content.getPublishToTime()) : " "),
+            new FieldString().setName('Publish To').setValue(this.content.getPublishToTime() ?
+                                                             DateTimeFormatter.createHtml(this.content.getPublishToTime()) : ' '),
 
-            new FieldString().setName("Id").setValue(this.content.getId())
+            new FieldString().setName('Id').setValue(this.content.getId())
         ];
 
         strings.forEach((stringItem: FieldString) => {
@@ -136,8 +136,8 @@ class FieldString {
     }
 
     public layout(parentEl: api.dom.Element) {
-        let valueEl = new api.dom.DdDtEl("dt").setHtml(this.value);
-        let spanEl = new api.dom.DdDtEl("dd").setHtml(this.fieldName + ": ");
+        let valueEl = new api.dom.DdDtEl('dt').setHtml(this.value);
+        let spanEl = new api.dom.DdDtEl('dd').setHtml(this.fieldName + ': ');
         parentEl.appendChildren(spanEl, valueEl);
     }
 

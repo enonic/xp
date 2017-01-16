@@ -24,7 +24,7 @@ module api.content.order {
         toJson(): ReorderChildContentJson {
             return {
                 contentId: this.contentId.toString(),
-                moveBefore: !!this.moveBefore ? this.moveBefore.toString() : ""
+                moveBefore: !!this.moveBefore ? this.moveBefore.toString() : ''
             };
         }
 

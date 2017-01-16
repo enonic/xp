@@ -27,7 +27,7 @@ export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
     private customizedOption: Option<PageTemplateOption>;
 
     constructor() {
-        super("pageTemplate", <DropdownConfig<PageTemplateOption>>{
+        super('pageTemplate', <DropdownConfig<PageTemplateOption>>{
             optionDisplayValueViewer: new PageTemplateOptionViewer()
         });
     }
@@ -131,7 +131,7 @@ export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
             .setDisplayName(pageTemplateDisplayName[pageTemplateDisplayName.Custom]))
             .build();
         let option = {
-            value: "Customized",
+            value: 'Customized',
             displayValue: new PageTemplateOption(pageTemplate, this.pageModel)
         };
 

@@ -33,11 +33,11 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
     private overwritePermissions: boolean;
 
     constructor() {
-        super("security-wizard-step-form");
+        super('security-wizard-step-form');
 
-        let label = new DivEl("input-label");
-        let wrapper = new DivEl("wrapper required");
-        this.label = new LabelEl("Permissions");
+        let label = new DivEl('input-label');
+        let wrapper = new DivEl('wrapper required');
+        this.label = new LabelEl('Permissions');
         wrapper.appendChild(this.label);
         label.appendChild(wrapper);
 
@@ -46,8 +46,8 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
         this.accessListView = new AccessControlListView();
         this.accessListView.setItemsEditable(false);
 
-        this.editLink = new Button("Edit Permissions");
-        this.editLink.addClass("edit-permissions");
+        this.editLink = new Button('Edit Permissions');
+        this.editLink.addClass('edit-permissions');
 
         this.editLink.onFocus((event) => {
             this.notifyFocused(event);
@@ -56,11 +56,11 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
             this.notifyBlurred(event);
         });
 
-        let formView = new DivEl("form-view");
-        let inputView = new DivEl("input-view valid");
-        let inputTypeView = new DivEl("input-type-view");
-        let inputOccurrenceView = new DivEl("input-occurrence-view single-occurrence");
-        let inputWrapper = new DivEl("input-wrapper");
+        let formView = new DivEl('form-view');
+        let inputView = new DivEl('input-view valid');
+        let inputTypeView = new DivEl('input-type-view');
+        let inputOccurrenceView = new DivEl('input-occurrence-view single-occurrence');
+        let inputWrapper = new DivEl('input-wrapper');
 
         inputWrapper.appendChildren(this.inheritance, this.accessListView, this.editLink);
 
@@ -100,7 +100,7 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
             entryView.getPermissionSelector().hide();
 
             entryView.onClicked(() => {
-                let isDisplayed = selector.getEl().getDisplay() !== "block";
+                let isDisplayed = selector.getEl().getDisplay() !== 'block';
 
                 this.accessListView.getItemViews().forEach((itemView) => {
                     (<AccessControlEntryView>itemView).getPermissionSelector().hide();
@@ -113,12 +113,12 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
             });
         });
 
-        let inheritsText = "";
+        let inheritsText = '';
         if (this.inheritPermissions && this.contentPath.isRoot() == false) {
-            inheritsText = "Inherits permissions from parent";
-            this.inheritance.addClass("inheritance");
+            inheritsText = 'Inherits permissions from parent';
+            this.inheritance.addClass('inheritance');
         } else {
-            this.inheritance.removeClass("inheritance");
+            this.inheritance.removeClass('inheritance');
         }
         this.inheritance.setHtml(inheritsText);
     }

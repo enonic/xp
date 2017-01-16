@@ -12,7 +12,7 @@ module api.app.bar {
             builder.setAddLabelTitleAttribute(false);
             super(builder);
 
-            this.addClass("appbar-tab-menu-item");
+            this.addClass('appbar-tab-menu-item');
 
             this.editing = builder.editing;
             this.tabId = builder.tabId;

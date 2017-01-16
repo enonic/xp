@@ -31,7 +31,7 @@ module api.form.inputtype.support {
         public static debug: boolean = false;
 
         constructor(className: string) {
-            super("input-type-view" + (className ? " " + className : ""));
+            super('input-type-view' + (className ? ' ' + className : ''));
 
             this.propertyArrayListener = (...args: any[]) => {
                 if (!this.ignorePropertyChange) {
@@ -70,14 +70,14 @@ module api.form.inputtype.support {
         }
 
         getValueType(): ValueType {
-            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
+            throw new Error('Must be implemented by inheritor: ' + api.ClassHelper.getClassName(this));
         }
 
         /**
          * Must be overridden by inheritors.
          */
         newInitialValue(): Value {
-            throw new Error("Must be overridden by inheritor: " + api.ClassHelper.getClassName(this));
+            throw new Error('Must be overridden by inheritor: ' + api.ClassHelper.getClassName(this));
         }
 
         /**
@@ -108,7 +108,7 @@ module api.form.inputtype.support {
         }
 
         reset() {
-            throw Error("Must be implemented in inheritors");
+            throw Error('Must be implemented in inheritors');
         }
 
         private registerPropertyArray(propertyArray: PropertyArray) {
@@ -223,7 +223,7 @@ module api.form.inputtype.support {
          * Must be overridden by inheritors.
          */
         giveFocus(): boolean {
-            throw new Error("Must be overridden by inheritor: " + api.ClassHelper.getClassName(this));
+            throw new Error('Must be overridden by inheritor: ' + api.ClassHelper.getClassName(this));
         }
 
         onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
@@ -239,7 +239,7 @@ module api.form.inputtype.support {
         }
 
         protected getNumberOfValids(): number {
-            throw new Error("Must be overridden by inheritor: " + api.ClassHelper.getClassName(this));
+            throw new Error('Must be overridden by inheritor: ' + api.ClassHelper.getClassName(this));
         }
 
         protected isLayoutInProgress(): boolean {

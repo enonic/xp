@@ -13,11 +13,11 @@ module api.util {
                 wemjq.ajax(url, {
                     type: 'GET',
                     success: (data:any, status:string, xhr:JQueryXHR) => {
-                        let node = document.getElementsByTagName("head")[0] || document.body;
+                        let node = document.getElementsByTagName('head')[0] || document.body;
                         if (node) {
-                            let script = document.createElement("script");
-                            script.setAttribute("type", "text/javascript");
-                            script.setAttribute("data-url", url);
+                            let script = document.createElement('script');
+                            script.setAttribute('type', 'text/javascript');
+                            script.setAttribute('data-url', url);
                             script.innerHTML = data;
                             node.appendChild(script);
                         }

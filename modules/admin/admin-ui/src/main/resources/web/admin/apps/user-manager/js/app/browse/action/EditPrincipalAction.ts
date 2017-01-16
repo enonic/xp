@@ -8,7 +8,7 @@ import Action = api.ui.Action;
 export class EditPrincipalAction extends Action {
 
     constructor(grid: UserItemsTreeGrid) {
-        super("Edit", "f4");
+        super('Edit', 'f4');
         this.setEnabled(false);
         this.onExecuted(() => {
             let principals: UserTreeGridItem[] = grid.getSelectedDataList();

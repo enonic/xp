@@ -8,14 +8,14 @@ module api.dom {
 
         constructor(className?: string) {
             super(new NewElementBuilder().
-                setTagName("iframe").
+                setTagName('iframe').
                 setClassName(className));
 
             this.onLoaded((event: UIEvent) => this.loaded = true);
         }
 
         public setSrc(src: string): api.dom.IFrameEl {
-            this.getEl().setAttribute("src", src);
+            this.getEl().setAttribute('src', src);
             return this;
         }
 
@@ -27,17 +27,17 @@ module api.dom {
             return this.loaded;
         }
 
-        postMessage(data: any, targetOrigin: string = "*") {
+        postMessage(data: any, targetOrigin: string = '*') {
             let thisIFrameElement: HTMLIFrameElement = <HTMLIFrameElement>this.getHTMLElement();
             thisIFrameElement.contentWindow.postMessage(data, targetOrigin);
         }
 
         onLoaded(listener: (event: UIEvent) => void) {
-            this.getEl().addEventListener("load", listener);
+            this.getEl().addEventListener('load', listener);
         }
 
         unLoaded(listener: (event: UIEvent) => void) {
-            this.getEl().removeEventListener("load", listener);
+            this.getEl().removeEventListener('load', listener);
         }
     }
 }

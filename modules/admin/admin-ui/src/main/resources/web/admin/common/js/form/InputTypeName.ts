@@ -2,7 +2,7 @@ module api.form {
 
     export class InputTypeName implements api.Equitable {
 
-        private static CUSTOM_PREFIX: string = "custom:";
+        private static CUSTOM_PREFIX: string = 'custom:';
 
         private custom: boolean;
 

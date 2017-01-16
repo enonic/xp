@@ -7,7 +7,7 @@ import Action = api.ui.Action;
 export class SortContentAction extends Action {
 
     constructor(grid: ContentTreeGrid) {
-        super("Sort");
+        super('Sort');
         this.setEnabled(false);
         this.onExecuted(() => {
             let contents: api.content.ContentSummaryAndCompareStatus[]

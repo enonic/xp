@@ -6,7 +6,7 @@ module api.content.page.region {
 
         constructor() {
             super();
-            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "content", "page", "fragment");
+            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), 'content', 'page', 'fragment');
         }
 
         getResourcePath(): api.rest.Path {

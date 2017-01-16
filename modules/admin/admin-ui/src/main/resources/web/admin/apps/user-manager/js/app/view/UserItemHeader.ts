@@ -5,7 +5,7 @@ export class UserItemHeader extends api.dom.DivEl {
     private subTitle: api.dom.H3El;
 
     constructor() {
-        super("principal-item-header");
+        super('principal-item-header');
 
         this.displayName = new api.dom.H2El();
         this.subTitle = new api.dom.H3El();

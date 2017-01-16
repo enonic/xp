@@ -9,7 +9,7 @@ export class MobileDetailsPanel extends SlidablePanel {
 
     constructor(detailsView: DetailsView) {
         super(new SlidablePanelBuilder().setSlideFrom(SLIDE_FROM.BOTTOM), detailsView);
-        this.addClass("mobile");
+        this.addClass('mobile');
     }
 
     protected slideOutTop() {

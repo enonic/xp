@@ -11,7 +11,7 @@ module api.ui.selector.combobox {
         private editable: boolean = true;
 
         constructor(option: api.ui.selector.Option<T>) {
-            super("selected-option");
+            super('selected-option');
 
             this.option = option;
         }
@@ -28,7 +28,7 @@ module api.ui.selector.combobox {
 
         doRender(): wemQ.Promise<boolean> {
 
-            let removeButtonEl = new api.dom.AEl("remove");
+            let removeButtonEl = new api.dom.AEl('remove');
             this.optionValueEl = new api.dom.DivEl('option-value');
             if (this.option) {
                 this.setOption(this.option);

@@ -10,7 +10,7 @@ export class PageControllerForm extends api.ui.form.Form {
         this.controllerSelector = controllerSelector;
 
         let fieldSet = new api.ui.form.Fieldset();
-        fieldSet.add(new api.ui.form.FormItemBuilder(controllerSelector).setLabel("Page Controller").build());
+        fieldSet.add(new api.ui.form.FormItemBuilder(controllerSelector).setLabel('Page Controller').build());
         this.add(fieldSet);
     }
 

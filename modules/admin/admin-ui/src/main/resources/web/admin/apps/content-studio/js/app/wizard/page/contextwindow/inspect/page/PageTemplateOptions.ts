@@ -24,7 +24,7 @@ export class PageTemplateOptions {
         this.siteId = siteId;
         this.contentType = contentType;
         this.pageModel = pageModel;
-        this.defaultPageTemplateOption = {value: "__auto__", displayValue: new PageTemplateOption(null, pageModel)};
+        this.defaultPageTemplateOption = {value: '__auto__', displayValue: new PageTemplateOption(null, pageModel)};
     }
 
     getDefault(): Option<PageTemplateOption> {

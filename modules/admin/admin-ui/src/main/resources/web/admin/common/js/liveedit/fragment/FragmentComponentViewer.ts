@@ -7,7 +7,7 @@ module api.liveedit.fragment {
         }
 
         resolveDisplayName(object: api.content.page.region.FragmentComponent): string {
-            return !!object.getName() ? object.getName().toString() : "";
+            return !!object.getName() ? object.getName().toString() : '';
         }
 
         resolveSubName(object: api.content.page.region.FragmentComponent, relativePath: boolean = false): string {
@@ -15,7 +15,7 @@ module api.liveedit.fragment {
         }
 
         resolveIconClass(object: api.content.page.region.FragmentComponent): string {
-            return api.liveedit.ItemViewIconClassResolver.resolveByType("fragment");
+            return api.liveedit.ItemViewIconClassResolver.resolveByType('fragment');
         }
 
     }

@@ -9,7 +9,7 @@ module api.content.resource {
 
         constructor(ids: string[]) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             this.ids = ids;
         }
 
@@ -20,7 +20,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "getPublishStatuses");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'getPublishStatuses');
         }
 
         sendAndParse(): wemQ.Promise<GetPublishStatusesResult> {

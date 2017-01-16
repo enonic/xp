@@ -6,7 +6,7 @@ module api.content.page {
 
         constructor(key: DescriptorKey) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
             this.key = key;
         }
 

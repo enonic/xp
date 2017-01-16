@@ -9,7 +9,7 @@ import PublishContentRequest = api.content.resource.PublishContentRequest;
 export class PublishTreeContentAction extends Action {
 
     constructor(grid: ContentTreeGrid) {
-        super("Publish Tree");
+        super('Publish Tree');
         this.setEnabled(false);
         this.onExecuted(() => {
             let contents: api.content.ContentSummaryAndCompareStatus[]

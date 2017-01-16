@@ -14,9 +14,9 @@ module api.content.page.region {
         protected loader: LayoutDescriptorLoader;
 
         constructor() {
-            super(new RichComboBoxBuilder<LayoutDescriptor>().setIdentifierMethod("getKey").setOptionDisplayValueViewer(
+            super(new RichComboBoxBuilder<LayoutDescriptor>().setIdentifierMethod('getKey').setOptionDisplayValueViewer(
                 new LayoutDescriptorViewer()).setSelectedOptionsView(new LayoutDescriptorSelectedOptionsView()).setMaximumOccurrences(
-                1).setNextInputFocusWhenMaxReached(false).setNoOptionsText("No layouts available"));
+                1).setNextInputFocusWhenMaxReached(false).setNoOptionsText('No layouts available'));
         }
 
         protected createLoader(): LayoutDescriptorLoader {
@@ -69,17 +69,17 @@ module api.content.page.region {
             super(option);
 
             this.descriptor = option.displayValue;
-            this.addClass("layout-descriptor-selected-option-view");
+            this.addClass('layout-descriptor-selected-option-view');
         }
 
         doRender(): wemQ.Promise<boolean> {
 
             let namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
-            namesAndIconView.setIconClass("icon-earth icon-medium")
+            namesAndIconView.setIconClass('icon-earth icon-medium')
                 .setMainName(this.descriptor.getDisplayName())
                 .setSubName(this.descriptor.getKey().toString());
 
-            let removeButtonEl = new api.dom.AEl("remove");
+            let removeButtonEl = new api.dom.AEl('remove');
             removeButtonEl.onClicked((event: MouseEvent) => {
                 this.notifyRemoveClicked();
 

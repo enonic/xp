@@ -7,7 +7,7 @@ import RenderingMode = api.rendering.RenderingMode;
 export class PreviewAction extends BasePreviewAction {
 
     constructor(wizard: ContentWizardPanel) {
-        super("Preview");
+        super('Preview');
         this.onExecuted(() => {
                 if (wizard.hasUnsavedChanges()) {
                     wizard.setRequireValid(true);

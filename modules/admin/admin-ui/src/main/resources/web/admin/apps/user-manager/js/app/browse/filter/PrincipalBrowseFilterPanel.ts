@@ -34,7 +34,7 @@ export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilt
     }
 
     private resetFacets(supressEvent?: boolean) {
-        this.searchDataAndHandleResponse("", false);
+        this.searchDataAndHandleResponse('', false);
 
         if (!supressEvent) { // then fire usual reset event with content grid reloading
             new PrincipalBrowseResetEvent().fire();
@@ -75,6 +75,6 @@ export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilt
     }
 
     private initHitsCounter() {
-        this.searchDataAndHandleResponse("", false);
+        this.searchDataAndHandleResponse('', false);
     }
 }

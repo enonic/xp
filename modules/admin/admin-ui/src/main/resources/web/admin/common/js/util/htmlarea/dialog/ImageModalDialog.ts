@@ -34,11 +34,11 @@ module api.util.htmlarea.dialog {
         private dropzoneContainer: api.ui.uploader.DropzoneContainer;
         private imageSelectorFormItem: FormItem;
 
-        static imagePrefix: string = "image://";
+        static imagePrefix: string = 'image://';
         static maxImageWidth: number = 640;
 
         constructor(config: HtmlAreaImage, content: api.content.ContentSummary) {
-            super(config.editor, "Insert Image", "image-modal-dialog");
+            super(config.editor, 'Insert Image', 'image-modal-dialog');
 
             this.elementContainer = config.container;
             this.content = content;
@@ -80,7 +80,7 @@ module api.util.htmlarea.dialog {
                     this.imageSelector.setValue(imageContent.getId());
                     this.createImgElForExistingImage(imageContent);
                     this.previewImage();
-                    this.imageSelectorFormItem.addClass("selected-item-preview");
+                    this.imageSelectorFormItem.addClass('selected-item-preview');
                 }
                 loader.unLoadedData(singleLoadListener);
             };
@@ -90,16 +90,16 @@ module api.util.htmlarea.dialog {
         }
 
         protected getMainFormItems(): FormItem[] {
-            this.imageSelectorFormItem = this.createImageSelector("imageId");
+            this.imageSelectorFormItem = this.createImageSelector('imageId');
 
             this.addUploaderAndPreviewControls();
             this.setFirstFocusField(this.imageSelectorFormItem.getInput());
 
-            this.imageCaptionField = this.createFormItem("caption", "Caption", null);
-            this.imageAltTextField = this.createFormItem("altText", "Alternative text", null);
+            this.imageCaptionField = this.createFormItem('caption', 'Caption', null);
+            this.imageAltTextField = this.createFormItem('altText', 'Alternative text', null);
 
-            this.imageCaptionField.addClass("caption").hide();
-            this.imageAltTextField.addClass("alttext").hide();
+            this.imageCaptionField.addClass('caption').hide();
+            this.imageAltTextField.addClass('alttext').hide();
 
             return [
                 this.imageSelectorFormItem,
@@ -110,15 +110,15 @@ module api.util.htmlarea.dialog {
 
         private createImageSelector(id: string): FormItem {
             let imageSelector = api.content.ContentComboBox.create().setMaximumOccurrences(1).build();
-            let formItem = this.createFormItem(id, "Image", Validators.required, api.util.StringHelper.EMPTY_STRING,
+            let formItem = this.createFormItem(id, 'Image', Validators.required, api.util.StringHelper.EMPTY_STRING,
                     <api.dom.FormItemEl>imageSelector);
             let imageSelectorComboBox = imageSelector.getComboBox();
 
-            imageSelector.getComboBox().getInput().setPlaceholder("Type to search or drop image here...");
+            imageSelector.getComboBox().getInput().setPlaceholder('Type to search or drop image here...');
 
             this.imageSelector = imageSelector;
 
-            formItem.addClass("image-selector");
+            formItem.addClass('image-selector');
 
             imageSelectorComboBox.onOptionSelected((event: SelectedOptionEvent<api.content.ContentSummary>) => {
                 let imageContent = event.getSelectedOption().getOption().displayValue;
@@ -129,14 +129,14 @@ module api.util.htmlarea.dialog {
                 this.imageLoadMask.show();
                 this.createImgElForNewImage(imageContent);
                 this.previewImage();
-                formItem.addClass("selected-item-preview");
+                formItem.addClass('selected-item-preview');
                 this.setAltTextFieldValue(imageContent.getDisplayName());
                 this.fetchImageCaption(imageContent).then(value => this.setCaptionFieldValue(value)).catch(
                     (reason: any) => api.DefaultErrorHandler.handle(reason)).done();
             });
 
             imageSelectorComboBox.onOptionDeselected(() => {
-                formItem.removeClass("selected-item-preview");
+                formItem.removeClass('selected-item-preview');
                 this.displayValidationErrors(false);
                 this.removePreview();
                 this.imageToolbar.remove();
@@ -166,9 +166,9 @@ module api.util.htmlarea.dialog {
 
             this.createImagePreviewContainer();
 
-            let scrollBarWrapperDiv = new api.dom.DivEl("preview-panel-scrollbar-wrapper");
+            let scrollBarWrapperDiv = new api.dom.DivEl('preview-panel-scrollbar-wrapper');
             scrollBarWrapperDiv.appendChild(this.imagePreviewContainer);
-            let scrollNavigationWrapperDiv = new api.dom.DivEl("preview-panel-scroll-navigation-wrapper");
+            let scrollNavigationWrapperDiv = new api.dom.DivEl('preview-panel-scroll-navigation-wrapper');
             scrollNavigationWrapperDiv.appendChild(scrollBarWrapperDiv);
 
             wemjq(scrollNavigationWrapperDiv.getHTMLElement()).insertAfter(imageSelectorContainer.getHTMLElement());
@@ -209,11 +209,11 @@ module api.util.htmlarea.dialog {
 
             this.image.onLoaded(() => {
                 this.imageLoadMask.hide();
-                this.imagePreviewContainer.removeClass("upload");
+                this.imagePreviewContainer.removeClass('upload');
                 wemjq(this.imageToolbar.getHTMLElement()).insertBefore(
                     this.imagePreviewContainer.getHTMLElement().parentElement.parentElement);
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
-                if (this.getCaptionFieldValue() == "") {
+                if (this.getCaptionFieldValue() == '') {
                     this.imageCaptionField.getEl().scrollIntoView();
                     this.imageCaptionField.getInput().giveFocus();
                 }
@@ -228,18 +228,18 @@ module api.util.htmlarea.dialog {
 
         private createImgElForPreview(imageContent: api.content.ContentSummary, isExistingImg: boolean = false): api.dom.ImgEl {
             let imgSrcAttr = isExistingImg
-                ? new api.dom.ElementHelper(this.imageElement).getAttribute("src")
+                ? new api.dom.ElementHelper(this.imageElement).getAttribute('src')
                 : this.generateDefaultImgSrc(imageContent.getContentId().toString());
             let imgDataSrcAttr = isExistingImg
-                ? new api.dom.ElementHelper(this.imageElement).getAttribute("data-src")
+                ? new api.dom.ElementHelper(this.imageElement).getAttribute('data-src')
                 : ImageModalDialog.imagePrefix + imageContent.getContentId().toString();
 
             let imageEl = new api.dom.ImgEl(imgSrcAttr);
-            imageEl.getEl().setAttribute("alt", imageContent.getDisplayName());
-            imageEl.getEl().setAttribute("data-src", imgDataSrcAttr);
+            imageEl.getEl().setAttribute('alt', imageContent.getDisplayName());
+            imageEl.getEl().setAttribute('data-src', imgDataSrcAttr);
 
             let imageAlignment = isExistingImg ? (this.imageElement.style.textAlign ||
-                                                  this.imageElement.parentElement.style.cssFloat) : "justify";
+                                                  this.imageElement.parentElement.style.cssFloat) : 'justify';
             imageEl.getHTMLElement().style.textAlign = imageAlignment;
 
             return imageEl;
@@ -262,12 +262,12 @@ module api.util.htmlarea.dialog {
         }
 
         private createImagePreviewContainer() {
-            let imagePreviewContainer = new api.dom.DivEl("content-item-preview-panel");
+            let imagePreviewContainer = new api.dom.DivEl('content-item-preview-panel');
 
             this.progress = new api.ui.ProgressBar();
             imagePreviewContainer.appendChild(this.progress);
 
-            this.error = new api.dom.DivEl("error");
+            this.error = new api.dom.DivEl('error');
             imagePreviewContainer.appendChild(this.error);
 
             this.imagePreviewContainer = imagePreviewContainer;
@@ -284,7 +284,7 @@ module api.util.htmlarea.dialog {
 
         private getCaption(): string {
             if (this.imageElement) {
-                return wemjq(this.imageElement.parentElement).children("figcaption").text();
+                return wemjq(this.imageElement.parentElement).children('figcaption').text();
             } else {
                 return api.util.StringHelper.EMPTY_STRING;
             }
@@ -320,7 +320,7 @@ module api.util.htmlarea.dialog {
 
             uploader.onUploadStarted((event: FileUploadStartedEvent<Content>) => {
                 this.hideUploadMasks();
-                this.imagePreviewContainer.addClass("upload");
+                this.imagePreviewContainer.addClass('upload');
                 this.showProgress();
             });
 
@@ -339,7 +339,7 @@ module api.util.htmlarea.dialog {
             });
 
             uploader.onUploadFailed((event: FileUploadFailedEvent<Content>) => {
-                this.showError("Upload failed");
+                this.showError('Upload failed');
             });
 
             return uploader;
@@ -382,7 +382,7 @@ module api.util.htmlarea.dialog {
         }
 
         protected initializeActions() {
-            let submitAction = new api.ui.Action(this.imageElement ? "Update" : "Insert");
+            let submitAction = new api.ui.Action(this.imageElement ? 'Update' : 'Insert');
             this.setSubmitAction(submitAction);
             this.addAction(submitAction.onExecuted(() => {
                 this.displayValidationErrors(true);
@@ -414,14 +414,14 @@ module api.util.htmlarea.dialog {
         private fetchImageCaption(imageContent: ContentSummary): wemQ.Promise<string> {
             return new api.content.resource.GetContentByIdRequest(imageContent.getContentId()).sendAndParse()
                 .then((content: api.content.Content) => {
-                    return this.getDescriptionFromImageContent(content) || content.getProperty("caption").getString() || "";
+                    return this.getDescriptionFromImageContent(content) || content.getProperty('caption').getString() || '';
                 });
         }
 
         private getDescriptionFromImageContent(imageContent: Content): string {
-            let imageInfoMixin = new api.schema.mixin.MixinName("media:imageInfo");
+            let imageInfoMixin = new api.schema.mixin.MixinName('media:imageInfo');
             let imageInfoData = imageContent.getExtraData(imageInfoMixin);
-            let descriptionProperty = imageInfoData.getData().getProperty("description");
+            let descriptionProperty = imageInfoData.getData().getProperty('description');
 
             if (descriptionProperty) {
                 let description = descriptionProperty.getString();
@@ -434,21 +434,21 @@ module api.util.htmlarea.dialog {
         }
 
         private isImageWiderThanEditor() {
-            if (!!this.getEditor()["editorContainer"]) {
-                return (this.image.getHTMLElement()["width"] > this.getEditor()["editorContainer"].clientWidth);
-            } else if (!!this.getEditor() && this.getEditor()["inline"] === true) {
-                return (this.image.getHTMLElement()["width"] > this.getEditor()["bodyElement"].clientWidth);
+            if (!!this.getEditor()['editorContainer']) {
+                return (this.image.getHTMLElement()['width'] > this.getEditor()['editorContainer'].clientWidth);
+            } else if (!!this.getEditor() && this.getEditor()['inline'] === true) {
+                return (this.image.getHTMLElement()['width'] > this.getEditor()['bodyElement'].clientWidth);
             }
             return true;
         }
 
         private createFigureElement() {
 
-            let figure = api.dom.ElementHelper.fromName("figure");
-            let figCaption = api.dom.ElementHelper.fromName("figcaption");
+            let figure = api.dom.ElementHelper.fromName('figure');
+            let figCaption = api.dom.ElementHelper.fromName('figcaption');
             figCaption.setText(this.getCaptionFieldValue());
-            figCaption.setAttribute("style", "text-align: left");
-            this.image.setId("__mcenew");
+            figCaption.setAttribute('style', 'text-align: left');
+            this.image.setId('__mcenew');
             (<HTMLImageElement>this.image.getHTMLElement()).alt = this.getAltTextFieldValue();
 
             figure.appendChildren([(<api.dom.ImgEl>this.image).getEl().getHTMLElement(), figCaption.getHTMLElement()]);
@@ -468,11 +468,11 @@ module api.util.htmlarea.dialog {
 
         private setImageWidthConstraint() {
             let keepImageSize = this.isImageInOriginalSize(this.image.getHTMLElement());
-            this.image.getHTMLElement().style["width"] = (this.isImageWiderThanEditor() || !keepImageSize) ? "100%" : "auto";
+            this.image.getHTMLElement().style['width'] = (this.isImageWiderThanEditor() || !keepImageSize) ? '100%' : 'auto';
         }
 
         private isImageInOriginalSize(image: HTMLElement) {
-            return image.getAttribute("data-src").indexOf("keepSize=true") > 0;
+            return image.getAttribute('data-src').indexOf('keepSize=true') > 0;
         }
     }
 
@@ -495,7 +495,7 @@ module api.util.htmlarea.dialog {
         private imageLoadMask: api.ui.mask.LoadMask;
 
         constructor(image: api.dom.ImgEl, imageLoadMask: api.ui.mask.LoadMask) {
-            super("image-toolbar");
+            super('image-toolbar');
 
             this.image = image;
             this.imageLoadMask = imageLoadMask;
@@ -512,23 +512,23 @@ module api.util.htmlarea.dialog {
         }
 
         private createJustifiedButton(): api.ui.button.ActionButton {
-            return this.createAlignmentButton("icon-paragraph-justify");
+            return this.createAlignmentButton('icon-paragraph-justify');
         }
 
         private createLeftAlignedButton(): api.ui.button.ActionButton {
-            return this.createAlignmentButton("icon-paragraph-left");
+            return this.createAlignmentButton('icon-paragraph-left');
         }
 
         private createCenteredButton(): api.ui.button.ActionButton {
-            return this.createAlignmentButton("icon-paragraph-center");
+            return this.createAlignmentButton('icon-paragraph-center');
         }
 
         private createRightAlignedButton(): api.ui.button.ActionButton {
-            return this.createAlignmentButton("icon-paragraph-right");
+            return this.createAlignmentButton('icon-paragraph-right');
         }
 
         private createAlignmentButton(iconClass: string): api.ui.button.ActionButton {
-            let action: Action = new Action("");
+            let action: Action = new Action('');
 
             action.setIconClass(iconClass);
 
@@ -536,7 +536,7 @@ module api.util.htmlarea.dialog {
 
             action.onExecuted(() => {
                 this.resetActiveButton();
-                button.addClass("active");
+                button.addClass('active');
                 this.image.getHTMLElement().style.textAlign = this.getImageAlignment();
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
@@ -574,10 +574,10 @@ module api.util.htmlarea.dialog {
         }
 
         private initSelectedCropping(imageCroppingSelector: ImageCroppingSelector) {
-            let imgSrc: string = this.image.getEl().getAttribute("src");
-            let scalingApplied: boolean = imgSrc.indexOf("scale=") > 0;
+            let imgSrc: string = this.image.getEl().getAttribute('src');
+            let scalingApplied: boolean = imgSrc.indexOf('scale=') > 0;
             if (scalingApplied) {
-                let scaleParamValue = api.util.UriHelper.decodeUrlParams(imgSrc.replace("&amp;", "&"))["scale"];
+                let scaleParamValue = api.util.UriHelper.decodeUrlParams(imgSrc.replace('&amp;', '&'))['scale'];
                 let scaleOption = ImageCroppingOptions.getOptionByProportion(scaleParamValue);
                 if (!!scaleOption) {
                     imageCroppingSelector.selectOption(imageCroppingSelector.getOptionByValue(scaleOption.getName()));
@@ -590,86 +590,86 @@ module api.util.htmlarea.dialog {
 
             switch (alignment) {
             case 'justify':
-                this.justifyButton.addClass("active");
+                this.justifyButton.addClass('active');
                 break;
             case 'left':
-                this.alignLeftButton.addClass("active");
+                this.alignLeftButton.addClass('active');
                 break;
             case 'center':
-                this.centerButton.addClass("active");
+                this.centerButton.addClass('active');
                 break;
             case 'right':
-                this.alignRightButton.addClass("active");
+                this.alignRightButton.addClass('active');
                 break;
             default:
-                this.justifyButton.addClass("active");
+                this.justifyButton.addClass('active');
                 break;
             }
         }
 
         private resetActiveButton() {
-            this.justifyButton.removeClass("active");
-            this.alignLeftButton.removeClass("active");
-            this.centerButton.removeClass("active");
-            this.alignRightButton.removeClass("active");
+            this.justifyButton.removeClass('active');
+            this.alignLeftButton.removeClass('active');
+            this.centerButton.removeClass('active');
+            this.alignRightButton.removeClass('active');
         }
 
         private initKeepSizeCheckbox() {
-            this.keepOriginalSizeCheckbox.setChecked(this.image.getEl().getAttribute("data-src").indexOf("keepSize=true") > 0);
+            this.keepOriginalSizeCheckbox.setChecked(this.image.getEl().getAttribute('data-src').indexOf('keepSize=true') > 0);
         }
 
         private getImageAlignment(): string {
-            if (this.justifyButton.hasClass("active")) {
-                return "justify";
+            if (this.justifyButton.hasClass('active')) {
+                return 'justify';
             }
 
-            if (this.alignLeftButton.hasClass("active")) {
-                return "left";
+            if (this.alignLeftButton.hasClass('active')) {
+                return 'left';
             }
 
-            if (this.centerButton.hasClass("active")) {
-                return "center";
+            if (this.centerButton.hasClass('active')) {
+                return 'center';
             }
 
-            if (this.alignRightButton.hasClass("active")) {
-                return "right";
+            if (this.alignRightButton.hasClass('active')) {
+                return 'right';
             }
 
-            return "justify";
+            return 'justify';
         }
 
         private rebuildImgSrcParams() {
-            let imgSrc = this.image.getEl().getAttribute("src");
+            let imgSrc = this.image.getEl().getAttribute('src');
             let newSrc = api.util.UriHelper.trimUrlParams(imgSrc);
             let isCroppingSelected: boolean = !!this.imageCroppingSelector.getSelectedOption();
             let keepOriginalSizeChecked: boolean = this.keepOriginalSizeCheckbox.isChecked();
 
             if (isCroppingSelected) {
                 let imageCroppingOption: ImageCroppingOption = this.imageCroppingSelector.getSelectedOption().displayValue;
-                newSrc = newSrc + "?scale=" + imageCroppingOption.getProportionString() +
-                         (keepOriginalSizeChecked ? "" : "&size=640");
+                newSrc = newSrc + '?scale=' + imageCroppingOption.getProportionString() +
+                         (keepOriginalSizeChecked ? '' : '&size=640');
             } else {
-                newSrc = newSrc + (keepOriginalSizeChecked ? "?scaleWidth=true" : "?size=640&scaleWidth=true");
+                newSrc = newSrc + (keepOriginalSizeChecked ? '?scaleWidth=true' : '?size=640&scaleWidth=true');
             }
 
-            this.image.getEl().setAttribute("src", newSrc);
+            this.image.getEl().setAttribute('src', newSrc);
         }
 
         private rebuildImgDataSrcParams() {
-            let dataSrc = this.image.getEl().getAttribute("data-src");
+            let dataSrc = this.image.getEl().getAttribute('data-src');
             let newDataSrc = api.util.UriHelper.trimUrlParams(dataSrc);
             let isCroppingSelected: boolean = !!this.imageCroppingSelector.getSelectedOption();
             let keepOriginalSizeChecked: boolean = this.keepOriginalSizeCheckbox.isChecked();
 
             if (isCroppingSelected) {
                 let imageCroppingOption: ImageCroppingOption = this.imageCroppingSelector.getSelectedOption().displayValue;
-                newDataSrc = newDataSrc + "?scale=" + imageCroppingOption.getProportionString() +
-                             (keepOriginalSizeChecked ? "&keepSize=true" : "&size=640");
+                newDataSrc = newDataSrc + '?scale=' + imageCroppingOption.getProportionString() +
+                             (keepOriginalSizeChecked ? '&keepSize=true' : '&size=640');
             } else {
-                newDataSrc = newDataSrc + (keepOriginalSizeChecked ? "?keepSize=true" : "");
+                newDataSrc = newDataSrc + (keepOriginalSizeChecked ? '?keepSize=true' : '');
             }
 
-            this.image.getEl().setAttribute("data-src", newDataSrc);
+            this.image.getEl().setAttribute('data-src', newDataSrc);
         }
 
         onCroppingChanged(listener: (event: OptionSelectedEvent<ImageCroppingOption>) => void) {
@@ -701,8 +701,8 @@ module api.util.htmlarea.dialog {
         }
 
         private initializeImageScrollNavigation() {
-            this.scrollDownButton = this.createScrollButton("down");
-            this.scrollUpButton = this.createScrollButton("up");
+            this.scrollDownButton = this.createScrollButton('down');
+            this.scrollUpButton = this.createScrollButton('up');
             this.initScrollbarWidth();
         }
 
@@ -717,9 +717,9 @@ module api.util.htmlarea.dialog {
         }
 
         private createScrollButton(direction: string): api.dom.Element {
-            let scrollAreaDiv = new api.dom.DivEl(direction === "up" ? "scroll-up-div" : "scroll-down-div");
-            let imageEl = new api.dom.ImgEl(api.util.UriHelper.getAdminUri("common/images/icons/512x512/arrow_" + direction + ".png"));
-            let scrollTop = (direction === "up" ? "-=50" : "+=50");
+            let scrollAreaDiv = new api.dom.DivEl(direction === 'up' ? 'scroll-up-div' : 'scroll-down-div');
+            let imageEl = new api.dom.ImgEl(api.util.UriHelper.getAdminUri('common/images/icons/512x512/arrow_' + direction + '.png'));
+            let scrollTop = (direction === 'up' ? '-=50' : '+=50');
 
             scrollAreaDiv.appendChild(imageEl);
 
@@ -737,7 +737,7 @@ module api.util.htmlarea.dialog {
                 this.scrolling = false;
             });
 
-            direction === "up"
+            direction === 'up'
                 ? wemjq(scrollAreaDiv.getHTMLElement()).insertBefore(this.imagePreviewContainer.getHTMLElement().parentElement)
                 : wemjq(scrollAreaDiv.getHTMLElement()).insertAfter(this.imagePreviewContainer.getHTMLElement().parentElement);
 
@@ -747,20 +747,20 @@ module api.util.htmlarea.dialog {
         }
 
         private initScrollbarWidth() {
-            let outer = document.createElement("div");
-            outer.style.visibility = "hidden";
-            outer.style.width = "100px";
-            outer.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
+            let outer = document.createElement('div');
+            outer.style.visibility = 'hidden';
+            outer.style.width = '100px';
+            outer.style.msOverflowStyle = 'scrollbar'; // needed for WinJS apps
 
             document.body.appendChild(outer);
 
             let widthNoScroll = outer.offsetWidth;
             // force scrollbars
-            outer.style.overflow = "scroll";
+            outer.style.overflow = 'scroll';
 
             // add innerdiv
-            let inner = document.createElement("div");
-            inner.style.width = "100%";
+            let inner = document.createElement('div');
+            inner.style.width = '100%';
             outer.appendChild(inner);
 
             let widthWithScroll = inner.offsetWidth;
@@ -772,7 +772,7 @@ module api.util.htmlarea.dialog {
         }
 
         private scrollImagePreview(direction: string, scrollBy: number = 2) {
-            let scrollByPx = (direction === "up" ? "-=" : "+=") + Math.round(scrollBy) + "px";
+            let scrollByPx = (direction === 'up' ? '-=' : '+=') + Math.round(scrollBy) + 'px';
             let delta = 0.05;
             wemjq(this.imagePreviewContainer.getHTMLElement()).animate({scrollTop: scrollByPx}, 1, () => {
                 if (this.scrolling) {
@@ -784,9 +784,9 @@ module api.util.htmlarea.dialog {
         }
 
         setMarginRight() {
-            this.imagePreviewContainer.getEl().setMarginRight("");
+            this.imagePreviewContainer.getEl().setMarginRight('');
             if (this.scrollDownButton.isVisible() || this.scrollUpButton.isVisible()) {
-                this.imagePreviewContainer.getEl().setMarginRight("-" + this.scrollBarWidth + "px");
+                this.imagePreviewContainer.getEl().setMarginRight('-' + this.scrollBarWidth + 'px');
             }
         }
 
@@ -809,9 +809,9 @@ module api.util.htmlarea.dialog {
         }
 
         private showScrollBar() {
-            this.imagePreviewContainer.getHTMLElement().parentElement.style.marginRight = "-" + this.scrollBarWidth + "px";
-            this.imagePreviewContainer.getEl().setMarginRight("");
-            this.imagePreviewContainer.getHTMLElement().style.overflowY = "auto";
+            this.imagePreviewContainer.getHTMLElement().parentElement.style.marginRight = '-' + this.scrollBarWidth + 'px';
+            this.imagePreviewContainer.getEl().setMarginRight('');
+            this.imagePreviewContainer.getHTMLElement().style.overflowY = 'auto';
         }
 
         private removeScrollBarOnTimeout() {
@@ -820,9 +820,9 @@ module api.util.htmlarea.dialog {
             }
 
             this.scrollBarRemoveTimeoutId = window.setTimeout(() => {
-                this.imagePreviewContainer.getHTMLElement().parentElement.style.marginRight = "";
-                this.imagePreviewContainer.getEl().setMarginRight("-" + this.scrollBarWidth + "px");
-                this.imagePreviewContainer.getHTMLElement().style.overflowY = "auto";
+                this.imagePreviewContainer.getHTMLElement().parentElement.style.marginRight = '';
+                this.imagePreviewContainer.getEl().setMarginRight('-' + this.scrollBarWidth + 'px');
+                this.imagePreviewContainer.getHTMLElement().style.overflowY = 'auto';
             }, 500);
         }
     }

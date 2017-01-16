@@ -13,7 +13,7 @@ export class UserTreeGridItemViewer extends api.ui.NamesAndIconViewer<UserTreeGr
 
     resolveUnnamedDisplayName(object: UserTreeGridItem): string {
         return object.getPrincipal() ? object.getPrincipal().getTypeName()
-            : object.getUserStore() ? "User Store" : "";
+            : object.getUserStore() ? 'User Store' : '';
     }
 
     resolveSubName(object: UserTreeGridItem, relativePath: boolean = false): string {
@@ -29,28 +29,28 @@ export class UserTreeGridItemViewer extends api.ui.NamesAndIconViewer<UserTreeGr
                     return object.getItemDisplayName().toLocaleLowerCase();
             }
         }
-        return "";
+        return '';
     }
 
     resolveIconClass(object: UserTreeGridItem): string {
 
         switch (object.getType()) {
             case UserTreeGridItemType.USER_STORE:
-                return "icon-address-book icon-large";
+                return 'icon-address-book icon-large';
             case UserTreeGridItemType.PRINCIPAL:
                 if (object.getPrincipal().isRole()) {
-                    return "icon-masks icon-large";
+                    return 'icon-masks icon-large';
                 } else if (object.getPrincipal().isGroup()) {
-                    return "icon-users icon-large";
+                    return 'icon-users icon-large';
                 } else { // object.getPrincipal().isUser()
-                    return "icon-user icon-large";
+                    return 'icon-user icon-large';
                 }
             case UserTreeGridItemType.GROUPS:
-                return "icon-folder icon-large";
+                return 'icon-folder icon-large';
             case UserTreeGridItemType.ROLES:
-                return "icon-folder icon-large";
+                return 'icon-folder icon-large';
             default: // UserTreeGridItemType.USERS:
-                return "icon-folder icon-large";
+                return 'icon-folder icon-large';
         }
     }
 }

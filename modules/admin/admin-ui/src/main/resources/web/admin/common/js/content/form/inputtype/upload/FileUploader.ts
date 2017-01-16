@@ -17,7 +17,7 @@ module api.content.form.inputtype.upload {
         protected uploadButton: api.dom.DivEl;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
-            super("file-uploader");
+            super('file-uploader');
             this.config = config;
         }
 
@@ -74,7 +74,7 @@ module api.content.form.inputtype.upload {
         }
 
         protected createUploaderWrapper(): api.dom.DivEl {
-            const wrapper = new api.dom.DivEl("uploader-wrapper");
+            const wrapper = new api.dom.DivEl('uploader-wrapper');
 
             wrapper.appendChild(this.uploaderEl);
 
@@ -94,7 +94,7 @@ module api.content.form.inputtype.upload {
         }
 
         protected createUploader(property: Property): UploaderEl<any> {
-            throw new Error("must be implemented in inheritors");
+            throw new Error('must be implemented in inheritors');
         }
 
         onFocus(listener: (event: FocusEvent) => void) {

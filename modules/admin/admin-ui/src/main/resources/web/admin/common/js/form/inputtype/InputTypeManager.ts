@@ -27,7 +27,7 @@ module api.form.inputtype {
 
             if (InputTypeManager.isRegistered(name)) {
                 InputTypeManager.inputTypes[name] = undefined;
-                console.log('Unregistered input type [' + name + "]");
+                console.log('Unregistered input type [' + name + ']');
             } else {
                 throw new Error('Input type [' + name + '] is not registered.');
             }
@@ -40,7 +40,7 @@ module api.form.inputtype {
                 let inputTypeClass = InputTypeManager.inputTypes[name];
                 return inputTypeClass.newInstance(context);
             } else {
-                throw new Error("Input type [" + name + "] need to be registered first.");
+                throw new Error('Input type [' + name + '] need to be registered first.');
             }
         }
 

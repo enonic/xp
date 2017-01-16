@@ -19,8 +19,8 @@ module api.content {
         }
 
         private makeWidgetDescriptorKey(key: string): WidgetDescriptorKey {
-            let applicationKey = key.split(":")[0];
-            let descriptorKeyName = key.split(":")[1];
+            let applicationKey = key.split(':')[0];
+            let descriptorKeyName = key.split(':')[1];
             return new WidgetDescriptorKey(ApplicationKey.fromString(applicationKey), descriptorKeyName);
         }
 
@@ -47,7 +47,7 @@ module api.content {
 
     export class WidgetDescriptorKey implements api.Equitable {
 
-        private static SEPARATOR: string = ":";
+        private static SEPARATOR: string = ':';
 
         private applicationKey: ApplicationKey;
 

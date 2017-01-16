@@ -6,7 +6,7 @@ module api.ui.mask {
         private masked: api.dom.Element;
 
         constructor(itemToMask?: api.dom.Element) {
-            super("mask", api.StyleHelper.COMMON_PREFIX);
+            super('mask', api.StyleHelper.COMMON_PREFIX);
 
             this.masked = itemToMask;
 
@@ -80,8 +80,8 @@ module api.ui.mask {
             let maskedOffset: {top:number; left: number};
             let isMaskedPositioned = maskedEl.getPosition() != 'static';
             let maskedDimensions: {width: string; height: string} = {
-                    width: maskedEl.getWidthWithBorder() + "px",
-                    height: maskedEl.getHeightWithBorder() + "px"
+                    width: maskedEl.getWidthWithBorder() + 'px',
+                    height: maskedEl.getHeightWithBorder() + 'px'
                 };
 
             if (masked.contains(this) && isMaskedPositioned) {

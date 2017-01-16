@@ -42,8 +42,8 @@ module api.util {
          * @returns {string}
          */
         public static formatDate(date: Date): string {
-            let yearAsString = "" + date.getFullYear();
-            return yearAsString + "-" + this.padNumber(date.getMonth() + 1) + "-" + this.padNumber(date.getDate());
+            let yearAsString = '' + date.getFullYear();
+            return yearAsString + '-' + this.padNumber(date.getMonth() + 1) + '-' + this.padNumber(date.getDate());
         }
 
         /**
@@ -53,8 +53,8 @@ module api.util {
          * @returns {string}
          */
         public static formatTime(date: Date, includeSeconds: boolean = true): string {
-            return this.padNumber(date.getHours()) + ":" + this.padNumber(date.getMinutes()) +
-                   (includeSeconds ? ":" + this.padNumber(date.getSeconds()) : "");
+            return this.padNumber(date.getHours()) + ':' + this.padNumber(date.getMinutes()) +
+                   (includeSeconds ? ':' + this.padNumber(date.getSeconds()) : '');
         }
 
         private static padNumber(num: number): string {
@@ -67,7 +67,7 @@ module api.util {
          * @param date
          * @returns {string}
          */
-        public static parseDate(value: string, dateSeparator: string = "-", forceDaysBeOfTwoChars: boolean = false): Date {
+        public static parseDate(value: string, dateSeparator: string = '-', forceDaysBeOfTwoChars: boolean = false): Date {
             let dateStr = (value || '').trim();
             if (dateStr.length < 8 || dateStr.length > 10) {
                 return null;
@@ -141,7 +141,7 @@ module api.util {
             return date;
         }
 
-        private static parseLongTime(value: string, timeSeparator: string = ":", fractionSeparator: string = "."): LongTime {
+        private static parseLongTime(value: string, timeSeparator: string = ':', fractionSeparator: string = '.'): LongTime {
             let timeStr = (value || '').trim();
             if (timeStr.length < 5 || timeStr.length > 12) {
                 return null;
@@ -187,8 +187,8 @@ module api.util {
          * @param fractionSeparator
          * @returns {*}
          */
-        static parseLongDateTime(value: string, dateTimeSeparator: string = "-", dateSeparator: string = "-", timeSeparator: string = ":",
-                                 fractionSeparator: string = "."): Date {
+        static parseLongDateTime(value: string, dateTimeSeparator: string = '-', dateSeparator: string = '-', timeSeparator: string = ':',
+                                 fractionSeparator: string = '.'): Date {
             let dateStr = (value || '').trim();
 
             let parts = dateStr.split(dateTimeSeparator);
@@ -217,7 +217,7 @@ module api.util {
          * @returns {number}
          */
         static isUTCdate(value: string): boolean {
-            if (value != null && (value[value.length - 1] == "Z" || value[value.length - 1] == "z")) {
+            if (value != null && (value[value.length - 1] == 'Z' || value[value.length - 1] == 'z')) {
                 return true;
             }
             return false;

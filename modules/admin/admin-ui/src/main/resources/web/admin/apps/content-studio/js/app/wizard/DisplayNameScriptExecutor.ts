@@ -28,8 +28,8 @@ export class DisplayNameScriptExecutor implements api.app.wizard.DisplayNameGene
     }
 
     execute(): string {
-        api.util.assertNotNull(this.formView, "formView not set");
-        api.util.assertNotNull(this.script, "script not set");
+        api.util.assertNotNull(this.formView, 'formView not set');
+        api.util.assertNotNull(this.script, 'script not set');
 
         return this.safeEval(this.script, this.formView);
     }
@@ -47,11 +47,11 @@ export class DisplayNameScriptExecutor implements api.app.wizard.DisplayNameGene
                 }
             });
 
-            let strValue = "";
+            let strValue = '';
             strValues.forEach((s: string, index: number) => {
                 strValue += s;
                 if (index < strValues.length - 1) {
-                    strValue += " ";
+                    strValue += ' ';
                 }
             });
 

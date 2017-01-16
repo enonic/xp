@@ -1,6 +1,6 @@
 import PropertyPathElement = api.data.PropertyPathElement;
 
-describe("api.data.PropertyPath", () => {
+describe('api.data.PropertyPath', () => {
 
     it("doesn't accept null in first constructor argument", () => {
         expect(() => {
@@ -20,7 +20,7 @@ describe("api.data.PropertyPath", () => {
         expect(new PropertyPath([]).isAbsolute()).toBeTruthy();
     });
 
-    describe("tests PropertyPath.toString() method", () => {
+    describe('tests PropertyPath.toString() method', () => {
 
         it("returns '.' when path has no elements and is absolute", () => {
             expect(new PropertyPath([]).toString()).toBe('.');
@@ -41,16 +41,16 @@ describe("api.data.PropertyPath", () => {
 
     });
 
-    describe("test for PropertyPath.fromString() function", () => {
+    describe('test for PropertyPath.fromString() function', () => {
 
-        it("applicationKey", () => {
+        it('applicationKey', () => {
             let path = PropertyPath.fromString('applicationKey');
 
             expect(path.elementCount()).toBe(1);
             expect(path.toString()).toBe('applicationKey');
         });
 
-        it("checks if path is absolute and splits elements", () => {
+        it('checks if path is absolute and splits elements', () => {
             let path = PropertyPath.fromString('.first.second');
 
             expect(path.isAbsolute()).toBeTruthy();
@@ -61,14 +61,14 @@ describe("api.data.PropertyPath", () => {
             expect(path.isAbsolute()).toBeFalsy();
         });
 
-        it("removes empty elements", () => {
+        it('removes empty elements', () => {
             let path = PropertyPath.fromString('..first...second..');
 
             expect(path.elementCount()).toBe(2);
             expect(path.toString()).toBe('.first.second');
         });
 
-        it("sets index to 0 if not specified", () => {
+        it('sets index to 0 if not specified', () => {
             let path = PropertyPath.fromString('first.second');
             expect(path.getElement(0).getIndex()).toBe(0);
             expect(path.getElement(1).getIndex()).toBe(0);
@@ -76,7 +76,7 @@ describe("api.data.PropertyPath", () => {
 
     });
 
-    it(".fromParent() function", () => {
+    it('.fromParent() function', () => {
         let parent = PropertyPath.fromString('.first');
         let path = PropertyPath.fromParent(parent, PropertyPathElement.fromString('second'));
 
@@ -85,7 +85,7 @@ describe("api.data.PropertyPath", () => {
         expect(path.toString()).toBe('.first.second');
     });
 
-    it(".fromPathElement() function", () => {
+    it('.fromPathElement() function', () => {
         let path = PropertyPath.fromPathElement(PropertyPathElement.fromString('element'));
 
         expect(path.isAbsolute()).toBeTruthy();
@@ -93,7 +93,7 @@ describe("api.data.PropertyPath", () => {
         expect(path.toString()).toBe('.element');
     });
 
-    it(".removeFirstPathElement() method", () => {
+    it('.removeFirstPathElement() method', () => {
         let original = PropertyPath.fromString('.first.second');
         let newPath = original.removeFirstPathElement();
 
@@ -103,13 +103,13 @@ describe("api.data.PropertyPath", () => {
 
     describe('tests for PropertyPath.getParentPath() method', () => {
 
-        it("returns null for root path", () => {
+        it('returns null for root path', () => {
             let path = PropertyPath.fromString('.');
 
             expect(path.getParentPath()).toBeNull();
         });
 
-        it("returns path without last element", () => {
+        it('returns path without last element', () => {
             let path = PropertyPath.fromString('.first.second');
 
             expect(path.getParentPath().elementCount()).toBe(path.elementCount() - 1);
@@ -118,9 +118,9 @@ describe("api.data.PropertyPath", () => {
 
     });
 
-    describe("tests for PropertyPath.removeFirstPathElement() method", () => {
+    describe('tests for PropertyPath.removeFirstPathElement() method', () => {
 
-        it("returns new path without first element", () => {
+        it('returns new path without first element', () => {
             let path = PropertyPath.fromString('.first.second');
             let newPath = path.removeFirstPathElement();
 
@@ -129,13 +129,13 @@ describe("api.data.PropertyPath", () => {
             expect(newPath.toString()).toBe('.second');
         });
 
-        it("throws an exception if path contains one or no elements", () => {
+        it('throws an exception if path contains one or no elements', () => {
             let path = PropertyPath.fromString('.first');
 
             expect(path.removeFirstPathElement).toThrow();
         });
 
-        it("returns relative path if parent is relative", () => {
+        it('returns relative path if parent is relative', () => {
             let path = PropertyPath.fromString('first.second');
             let newPath = path.removeFirstPathElement();
 
@@ -147,7 +147,7 @@ describe("api.data.PropertyPath", () => {
 
 });
 
-describe("api.data.PropertyPathElement", () => {
+describe('api.data.PropertyPathElement', () => {
 
     it('.toString() method returns element name followed by index inside brackets', () => {
         expect(new PropertyPathElement('element', 1).toString()).toBe('element[1]');
@@ -157,15 +157,15 @@ describe("api.data.PropertyPathElement", () => {
         expect(new PropertyPathElement('element', 0).toString()).toBe('element');
     });
 
-    describe("tests for PropertyPathElement.fromString() function", () => {
+    describe('tests for PropertyPathElement.fromString() function', () => {
 
-        it("splits string to name and index", () => {
+        it('splits string to name and index', () => {
             let element = PropertyPathElement.fromString('element[1]');
             expect(element.getName()).toBe('element');
             expect(element.getIndex()).toBe(1);
         });
 
-        it("sets index to 0 if not specified", () => {
+        it('sets index to 0 if not specified', () => {
             expect(PropertyPathElement.fromString('element').getIndex()).toBe(0);
         });
 

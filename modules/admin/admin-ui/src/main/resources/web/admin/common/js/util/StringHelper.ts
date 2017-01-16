@@ -2,18 +2,18 @@ module api.util {
 
     export class StringHelper {
 
-        static EMPTY_STRING: string = "";
+        static EMPTY_STRING: string = '';
 
         static SAVE_CHAR_CODES: Object = {
-            "&": "&amp;",
-            "<": "&lt;",
-            ">": "&gt;",
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
             '"': '&quot;',
             "'": '&#39;',
-            "/": '&#x2F;'
+            '/': '&#x2F;'
         };
 
-        static limit(str: string, length: number, ending: string = "\u2026"): string {
+        static limit(str: string, length: number, ending: string = '\u2026'): string {
             return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.substring(0, length) + ending;
         }
 
@@ -72,11 +72,11 @@ module api.util {
          * @returns {string} string without '\r' characters.
          */
         static removeCarriageChars(str: string): string {
-            return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.replace(/\r/g, "");
+            return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.replace(/\r/g, '');
         }
 
         static removeWhitespaces(str: string): string {
-            return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.replace(/\s/g, "");
+            return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.replace(/\s/g, '');
         }
 
         static removeEmptyStrings(elements: string[]): string[] {
@@ -112,8 +112,8 @@ module api.util {
         static format(str: string, ...tokens: any[]): string {
             const regex: RegExp = /\{\{|\}\}|\{(\d+)\}/g;
             return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.replace(regex, function (m: string, n: number) {
-                if (m == "{{") { return "{"; }
-                if (m == "}}") { return "}"; }
+                if (m == '{{') { return '{'; }
+                if (m == '}}') { return '}'; }
                 return tokens[n];
             });
         }

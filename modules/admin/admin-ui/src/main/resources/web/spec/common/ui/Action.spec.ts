@@ -1,6 +1,6 @@
 import Action = api.ui.Action;
 
-describe("api.ui.Action", () => {
+describe('api.ui.Action', () => {
 
     let action;
 
@@ -8,11 +8,11 @@ describe("api.ui.Action", () => {
         action = new Action('My Action');
     });
 
-    it("test getLabel", () => {
+    it('test getLabel', () => {
         expect(action.getLabel()).toBe('My Action');
     });
 
-    it("test addPropertyChangeListener is invoked on enabled", () => {
+    it('test addPropertyChangeListener is invoked on enabled', () => {
 
         action.setEnabled(true);
         expect(action.isEnabled()).toBe(true);
@@ -24,7 +24,7 @@ describe("api.ui.Action", () => {
         action.setEnabled(false);
     });
 
-    it("test addPropertyChangeListener is invoked on label", () => {
+    it('test addPropertyChangeListener is invoked on label', () => {
 
         action.onPropertyChanged((changedAction: Action) => {
             expect(changedAction.getLabel()).toBe('Changed label');

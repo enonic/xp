@@ -7,7 +7,7 @@ module api.security.acl {
         private access: UserStoreAccess;
 
         constructor(principal: Principal, access?: UserStoreAccess) {
-            api.util.assertNotNull(principal, "principal not set");
+            api.util.assertNotNull(principal, 'principal not set');
             //    api.util.assertNotNull(access, "access not set");
             this.principal = principal;
             this.access = access;

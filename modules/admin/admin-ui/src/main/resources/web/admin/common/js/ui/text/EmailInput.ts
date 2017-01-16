@@ -30,7 +30,7 @@ module api.ui.text {
 
             this.setWrappedInput(this.input);
 
-            this.addClass("email-input just-shown");
+            this.addClass('email-input just-shown');
             this.updateStatus('available');
         }
 
@@ -98,7 +98,7 @@ module api.ui.text {
                     let availability = available || email === this.originEmail;
                     this.updateStatus(availability ? 'available' : 'notavailable');
                     this.notifyValidityChanged(isValid && availability);
-                    this.removeClass("just-shown");
+                    this.removeClass('just-shown');
                 }).fail((reason) => {
                     this.notifyValidityChanged(false);
                     this.updateStatus('error');

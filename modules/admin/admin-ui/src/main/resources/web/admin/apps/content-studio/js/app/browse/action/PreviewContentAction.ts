@@ -13,7 +13,7 @@ export class PreviewContentAction extends BasePreviewAction {
     private previewContentHandler: PreviewContentHandler;
 
     constructor(grid: ContentTreeGrid) {
-        super("Preview", "");
+        super('Preview', '');
         this.setEnabled(false);
 
         this.previewContentHandler = new PreviewContentHandler();
@@ -25,8 +25,8 @@ export class PreviewContentAction extends BasePreviewAction {
 
                 this.openWindows(contentSummaries);
             } else {
-                api.notify.showWarning("Number of selected items exceeds maximum number allowed for preview ("
-                                       + PreviewContentHandler.BLOCK_COUNT + "). Please deselect some of the items.");
+                api.notify.showWarning('Number of selected items exceeds maximum number allowed for preview ('
+                                       + PreviewContentHandler.BLOCK_COUNT + '). Please deselect some of the items.');
             }
         });
     }

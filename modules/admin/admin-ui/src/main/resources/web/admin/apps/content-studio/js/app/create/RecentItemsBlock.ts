@@ -7,8 +7,8 @@ export class RecentItemsBlock extends api.dom.AsideEl {
 
     private title: api.dom.H1El;
 
-    constructor(title: string = "Recently Used") {
-        super("column");
+    constructor(title: string = 'Recently Used') {
+        super('column');
 
         this.title = new api.dom.H1El();
         this.title.setHtml(title);

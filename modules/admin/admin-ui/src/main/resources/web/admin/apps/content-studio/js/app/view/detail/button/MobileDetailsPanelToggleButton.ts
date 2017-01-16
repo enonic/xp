@@ -5,10 +5,10 @@ export class MobileDetailsPanelToggleButton extends api.dom.DivEl {
 
     private detailsPanel: MobileDetailsPanel;
 
-    public static EXPANDED_CLASS: string = "expanded";
+    public static EXPANDED_CLASS: string = 'expanded';
 
     constructor(detailsPanel: MobileDetailsPanel, slideInCallback?: () => void) {
-        super("mobile-details-panel-toggle-button");
+        super('mobile-details-panel-toggle-button');
 
         this.detailsPanel = detailsPanel;
 

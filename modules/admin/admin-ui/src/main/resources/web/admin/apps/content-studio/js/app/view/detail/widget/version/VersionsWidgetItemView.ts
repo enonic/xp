@@ -13,7 +13,7 @@ export class VersionsWidgetItemView extends WidgetItemView {
     public static debug: boolean = false;
 
     constructor() {
-        super("version-widget-item-view");
+        super('version-widget-item-view');
         this.managePublishEvent();
     }
 

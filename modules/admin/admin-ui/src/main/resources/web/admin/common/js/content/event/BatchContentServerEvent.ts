@@ -23,9 +23,9 @@ module api.content.event {
         }
 
         toString(): string {
-            return "BatchContentServerEvent: [" +
-                   this.events.map((event) => event.toString()).join(", ") +
-                   "]";
+            return 'BatchContentServerEvent: [' +
+                   this.events.map((event) => event.toString()).join(', ') +
+                   ']';
         }
 
         static on(handler: (event: BatchContentServerEvent) => void) {

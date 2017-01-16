@@ -20,7 +20,7 @@ export class RoleWizardPanel extends GroupRoleWizardPanel {
 
         super(new RoleMembersWizardStepForm(), params);
 
-        this.addClass("role-wizard-panel");
+        this.addClass('role-wizard-panel');
     }
 
     createSteps(principal?: Principal): WizardStep[] {
@@ -28,12 +28,12 @@ export class RoleWizardPanel extends GroupRoleWizardPanel {
 
         let descriptionStep = this.getDescriptionWizardStepForm();
 
-        steps.push(new WizardStep("Role", descriptionStep));
+        steps.push(new WizardStep('Role', descriptionStep));
 
         let principalKey: PrincipalKey = principal ? principal.getKey() : undefined;
         if (!RoleKeys.EVERYONE.equals(principalKey)) {
             let membersStep = this.getMembersWizardStepForm();
-            steps.push(new WizardStep("Grants", membersStep));
+            steps.push(new WizardStep('Grants', membersStep));
         }
 
         return steps;

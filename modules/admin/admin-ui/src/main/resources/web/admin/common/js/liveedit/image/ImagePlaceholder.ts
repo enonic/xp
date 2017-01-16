@@ -17,7 +17,7 @@ module api.liveedit.image {
 
         constructor(imageView: ImageComponentView) {
             super();
-            this.addClassEx("image-placeholder").addClass(api.StyleHelper.getCommonIconCls("image"));
+            this.addClassEx('image-placeholder').addClass(api.StyleHelper.getCommonIconCls('image'));
             this.imageComponentView = imageView;
 
             this.initImageCombobox(imageView);
@@ -36,7 +36,7 @@ module api.liveedit.image {
                 setMinWidth(270).
                 build();
 
-            this.comboBox.getComboBox().getInput().setPlaceholder("Type to search or drop image here...");
+            this.comboBox.getComboBox().getInput().setPlaceholder('Type to search or drop image here...');
             this.comboBox.onOptionSelected((event: SelectedOptionEvent<api.content.ContentSummary>) => {
 
                 let component: ImageComponent = this.imageComponentView.getComponent();

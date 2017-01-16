@@ -108,8 +108,8 @@ module api.content.image {
         }
 
         setOriginalDimensions(content: api.content.Content) {
-            this.originalWidth = this.getSizeValue(content, "imageWidth") || this.initialWidth;
-            this.originalHeight = this.getSizeValue(content, "imageHeight");
+            this.originalWidth = this.getSizeValue(content, 'imageWidth') || this.initialWidth;
+            this.originalHeight = this.getSizeValue(content, 'imageHeight');
         }
 
         private getProportionalHeight(): number {

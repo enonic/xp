@@ -6,6 +6,6 @@ export class PublishTreeAction extends PublishAction {
 
     constructor(wizard: ContentWizardPanel) {
         super(wizard, true);
-        this.setLabel("Publish Tree");
+        this.setLabel('Publish Tree');
     }
 }

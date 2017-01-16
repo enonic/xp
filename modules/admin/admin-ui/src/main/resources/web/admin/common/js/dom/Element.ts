@@ -12,7 +12,7 @@ module api.dom {
             return cls.trim().split(/\s+/)
                 .filter((elem, index, arr) => {
                     return arr.indexOf(elem) === index;
-                }).join(" ");
+                }).join(' ');
         }
 
         setGenerateId(value: boolean): ElementBuilder {
@@ -134,7 +134,7 @@ module api.dom {
             } else if (api.ObjectHelper.iFrameSafeInstanceOf(builder, NewElementBuilder)) {
                 let newElementBuilder = <NewElementBuilder>builder;
                 if (!newElementBuilder.tagName) {
-                    throw new Error("tagName cannot be null");
+                    throw new Error('tagName cannot be null');
                 }
                 if (newElementBuilder.helper) {
                     this.el = newElementBuilder.helper;
@@ -146,13 +146,13 @@ module api.dom {
                     this.parentElement = newElementBuilder.parentElement;
                 }
             } else {
-                throw new Error("Unsupported builder: " + api.ClassHelper.getClassName(builder));
+                throw new Error('Unsupported builder: ' + api.ClassHelper.getClassName(builder));
             }
 
             if (this.parentElement && this.el.getHTMLElement().parentElement) {
                 if (!(this.parentElement.getHTMLElement() === this.el.getHTMLElement().parentElement )) {
                     // tslint:disable-next-line:max-line-length
-                    throw new Error("Illegal state: HTMLElement in parent Element is not the as the HTMLElement parent to this HTMLElement");
+                    throw new Error('Illegal state: HTMLElement in parent Element is not the as the HTMLElement parent to this HTMLElement');
                 }
             }
             // Do not generate id unless the distance to Element in the class hierarchy of this is larger than 1
@@ -213,7 +213,7 @@ module api.dom {
          */
         protected init(): wemQ.Promise<boolean> {
             if (Element.debug) {
-                console.debug("Element.init started", api.ClassHelper.getClassName(this));
+                console.debug('Element.init started', api.ClassHelper.getClassName(this));
             }
 
             if (this.isVisible()) {
@@ -251,12 +251,12 @@ module api.dom {
 
                 if (this.childrenAddedDuringInit) {
                     if (Element.debug) {
-                        console.debug("Element.init: initing children that were added during init", api.ClassHelper.getClassName(this));
+                        console.debug('Element.init: initing children that were added during init', api.ClassHelper.getClassName(this));
                     }
                     return this.initChildren(rendered);
                 } else {
                     if (Element.debug) {
-                        console.log("Element.init done", api.ClassHelper.getClassName(this));
+                        console.log('Element.init done', api.ClassHelper.getClassName(this));
                     }
 
                     this.rendering = false;
@@ -436,9 +436,9 @@ module api.dom {
 
         setDraggable(value: boolean) {
             if (value) {
-                this.getEl().setAttribute("draggable", value.toString());
+                this.getEl().setAttribute('draggable', value.toString());
             } else {
-                this.getEl().removeAttribute("draggable");
+                this.getEl().removeAttribute('draggable');
             }
         }
 
@@ -465,8 +465,8 @@ module api.dom {
             this.el.focus();
             let gotFocus: boolean = document.activeElement == this.el.getHTMLElement();
             if (!gotFocus && Element.debug) {
-                console.log("Element.giveFocus(): Failed to give focus to Element: class = " + api.ClassHelper.getClassName(this) +
-                            ", id = " +
+                console.log('Element.giveFocus(): Failed to give focus to Element: class = ' + api.ClassHelper.getClassName(this) +
+                            ', id = ' +
                             this.getId());
             }
             return gotFocus;
@@ -482,8 +482,8 @@ module api.dom {
             this.el.blur();
             let gotBlur: boolean = document.activeElement != this.el.getHTMLElement();
             if (!gotBlur && Element.debug) {
-                console.log("Element.giveBlur(): Failed to give blur to Element: class = " + api.ClassHelper.getClassName(this) +
-                            ", id = " +
+                console.log('Element.giveBlur(): Failed to give blur to Element: class = ' + api.ClassHelper.getClassName(this) +
+                            ', id = ' +
                             this.getId());
             }
             return gotBlur;
@@ -544,7 +544,7 @@ module api.dom {
         }
 
         removeChild(child: Element): Element {
-            api.util.assertNotNull(child, "Child element to remove cannot be null");
+            api.util.assertNotNull(child, 'Child element to remove cannot be null');
 
             child.getEl().remove();
             this.removeChildElement(child);
@@ -609,7 +609,7 @@ module api.dom {
             // check for parentNode because if parent is not a HtmlElement but a Node ( i.e SVG )
             // then parentElement will be null but parentNode will not
             if (parentNode && parentNode !== this.getHTMLElement()) {
-                throw new Error("Given child must be a child of this Element in DOM before it can be registered");
+                throw new Error('Given child must be a child of this Element in DOM before it can be registered');
             }
             if (!index) {
                 index = child.el.getSiblingIndex();
@@ -621,7 +621,7 @@ module api.dom {
         private unregisterChildElement(child: Element): number {
             let childIndex = this.children.indexOf(child);
             if (childIndex < 0) {
-                throw new Error("Child element to remove not found");
+                throw new Error('Child element to remove not found');
             }
             this.children.splice(childIndex, 1);
             child.parentElement = null;
@@ -720,16 +720,16 @@ module api.dom {
             let indexFromDOM = this.el.getSiblingIndex();
             if (this.parentElement) {
                 let indexFromElement = this.parentElement.children.indexOf(this);
-                api.util.assertState(indexFromElement == indexFromDOM, "index of Element in parentElement.children" +
-                                                                       " [" + indexFromElement + "] does not correspond with" +
-                                                                       " the actual index [" + indexFromDOM +
-                                                                       "] of the HTMLElement in DOM");
+                api.util.assertState(indexFromElement == indexFromDOM, 'index of Element in parentElement.children' +
+                                                                       ' [' + indexFromElement + '] does not correspond with' +
+                                                                       ' the actual index [' + indexFromDOM +
+                                                                       '] of the HTMLElement in DOM');
             }
             return indexFromDOM;
         }
 
         getTabbableElements(): Element[] {
-            let selected = wemjq(this.getHTMLElement()).find(":tabbable");
+            let selected = wemjq(this.getHTMLElement()).find(':tabbable');
             let elements = [];
             for (let i = 0; i < selected.length; i++) {
                 elements.push(Element.fromHtmlElement(selected[i]));
@@ -756,7 +756,7 @@ module api.dom {
         private mouseEnterByHandler: Object = {};
 
         onMouseEnter(handler: (e: MouseEvent) => any) {
-            if (typeof this.getHTMLElement().onmouseenter != "undefined") {
+            if (typeof this.getHTMLElement().onmouseenter != 'undefined') {
                 this.getEl().addEventListener('mouseenter', handler);
             } else {
                 this.mouseEnterByHandler[<any> handler] = (e: MouseEvent) => {
@@ -770,7 +770,7 @@ module api.dom {
         }
 
         unMouseEnter(handler: (e: MouseEvent) => any) {
-            if (typeof this.getHTMLElement().onmouseenter != "undefined") {
+            if (typeof this.getHTMLElement().onmouseenter != 'undefined') {
                 this.getEl().removeEventListener('mouseenter', handler);
             } else {
                 this.getEl().removeEventListener('mouseover', this.mouseEnterByHandler[<any> handler]);
@@ -780,7 +780,7 @@ module api.dom {
         private mouseLeaveByHandler: Object = {};
 
         onMouseLeave(handler: (e: MouseEvent) => any) {
-            if (typeof this.getHTMLElement().onmouseleave != "undefined") {
+            if (typeof this.getHTMLElement().onmouseleave != 'undefined') {
                 this.getEl().addEventListener('mouseleave', handler);
             } else {
                 this.mouseLeaveByHandler[<any> handler] = (e: MouseEvent) => {
@@ -794,7 +794,7 @@ module api.dom {
         }
 
         unMouseLeave(handler: (e: MouseEvent) => any) {
-            if (typeof this.getHTMLElement().onmouseleave != "undefined") {
+            if (typeof this.getHTMLElement().onmouseleave != 'undefined') {
                 this.getEl().removeEventListener('mouseleave', handler);
             } else {
                 this.getEl().removeEventListener('mouseout', this.mouseLeaveByHandler[<any> handler]);
@@ -806,7 +806,7 @@ module api.dom {
         }
 
         unMouseOver(listener: (event: MouseEvent) => void) {
-            this.getEl().removeEventListener("mouseover", listener);
+            this.getEl().removeEventListener('mouseover', listener);
         }
 
         onMouseOut(listener: (e: MouseEvent)=>any) {
@@ -814,7 +814,7 @@ module api.dom {
         }
 
         unMouseOut(listener: (event: MouseEvent) => void) {
-            this.getEl().removeEventListener("mouseout", listener);
+            this.getEl().removeEventListener('mouseout', listener);
         }
 
         onAdded(listener: (event: ElementAddedEvent) => void) {
@@ -922,219 +922,219 @@ module api.dom {
 
         onScrolled(listener: (event: WheelEvent) => void) {
             // IE9, Chrome, Safari, Opera
-            this.getEl().addEventListener("mousewheel", listener);
+            this.getEl().addEventListener('mousewheel', listener);
             // Firefox
-            this.getEl().addEventListener("DOMMouseScroll", listener);
+            this.getEl().addEventListener('DOMMouseScroll', listener);
         }
 
         unScrolled(listener: (event: WheelEvent) => void) {
             // IE9, Chrome, Safari, Opera
-            this.getEl().removeEventListener("mousewheel", listener);
+            this.getEl().removeEventListener('mousewheel', listener);
             // Firefox
-            this.getEl().removeEventListener("DOMMouseScroll", listener);
+            this.getEl().removeEventListener('DOMMouseScroll', listener);
         }
 
         onClicked(listener: (event: MouseEvent) => void) {
-            this.getEl().addEventListener("click", listener);
+            this.getEl().addEventListener('click', listener);
         }
 
         unClicked(listener: (event: MouseEvent) => void) {
-            this.getEl().removeEventListener("click", listener);
+            this.getEl().removeEventListener('click', listener);
         }
 
         onDblClicked(listener: (event: MouseEvent) => void) {
-            this.getEl().addEventListener("dblclick", listener);
+            this.getEl().addEventListener('dblclick', listener);
         }
 
         unDblClicked(listener: (event: MouseEvent) => void) {
-            this.getEl().removeEventListener("dblclick", listener);
+            this.getEl().removeEventListener('dblclick', listener);
         }
 
         onContextMenu(listener: (event: MouseEvent) => void) {
-            this.getEl().addEventListener("contextmenu", listener);
+            this.getEl().addEventListener('contextmenu', listener);
         }
 
         unContextMenu(listener: (event: MouseEvent) => void) {
-            this.getEl().removeEventListener("contextmenu", listener);
+            this.getEl().removeEventListener('contextmenu', listener);
         }
 
         onMouseDown(listener: (event: MouseEvent) => void) {
-            this.getEl().addEventListener("mousedown", listener);
+            this.getEl().addEventListener('mousedown', listener);
         }
 
         unMouseDown(listener: (event: MouseEvent) => void) {
-            this.getEl().removeEventListener("mousedown", listener);
+            this.getEl().removeEventListener('mousedown', listener);
         }
 
         onMouseUp(listener: (event: MouseEvent) => void) {
-            this.getEl().addEventListener("mouseup", listener);
+            this.getEl().addEventListener('mouseup', listener);
         }
 
         unMouseUp(listener: (event: MouseEvent) => void) {
-            this.getEl().removeEventListener("mouseup", listener);
+            this.getEl().removeEventListener('mouseup', listener);
         }
 
         onMouseMove(listener: (event: MouseEvent) => void) {
-            this.getEl().addEventListener("mousemove", listener);
+            this.getEl().addEventListener('mousemove', listener);
         }
 
         unMouseMove(listener: (event: MouseEvent) => void) {
-            this.getEl().removeEventListener("mousemove", listener);
+            this.getEl().removeEventListener('mousemove', listener);
         }
 
         onMouseWheel(listener: (event: WheelEvent) => void) {
             // http://www.javascriptkit.com/javatutors/onmousewheel.shtml
             // FF doesn't recognize mousewheel as of FF3.x
-            let eventName = (/Firefox/i.test(navigator.userAgent)) ? "wheel" : "mousewheel";
+            let eventName = (/Firefox/i.test(navigator.userAgent)) ? 'wheel' : 'mousewheel';
             this.getEl().addEventListener(eventName, listener);
         }
 
         unMouseWheel(listener: (event: MouseEvent) => void) {
-            let eventName = (/Firefox/i.test(navigator.userAgent)) ? "wheel" : "mousewheel";
+            let eventName = (/Firefox/i.test(navigator.userAgent)) ? 'wheel' : 'mousewheel';
             this.getEl().removeEventListener(eventName, listener);
         }
 
         onTouchStart(listener: (event: MouseEvent) => void) {
-            this.getEl().addEventListener("touchstart", listener);
+            this.getEl().addEventListener('touchstart', listener);
         }
 
         unTouchStart(listener: (event: MouseEvent) => void) {
-            this.getEl().removeEventListener("touchstart", listener);
+            this.getEl().removeEventListener('touchstart', listener);
         }
 
         onKeyUp(listener: (event: KeyboardEvent) => void) {
-            this.getEl().addEventListener("keyup", listener);
+            this.getEl().addEventListener('keyup', listener);
         }
 
         unKeyUp(listener: (event: KeyboardEvent) => void) {
-            this.getEl().removeEventListener("keyup", listener);
+            this.getEl().removeEventListener('keyup', listener);
         }
 
         onKeyDown(listener: (event: KeyboardEvent) => void) {
-            this.getEl().addEventListener("keydown", listener);
+            this.getEl().addEventListener('keydown', listener);
         }
 
         unKeyDown(listener: (event: KeyboardEvent) => void) {
-            this.getEl().removeEventListener("keydown", listener);
+            this.getEl().removeEventListener('keydown', listener);
         }
 
         onKeyPressed(listener: (event: KeyboardEvent) => void) {
-            this.getEl().addEventListener("keypress", listener);
+            this.getEl().addEventListener('keypress', listener);
         }
 
         unKeyPressed(listener: (event: KeyboardEvent) => void) {
-            this.getEl().removeEventListener("keypress", listener);
+            this.getEl().removeEventListener('keypress', listener);
         }
 
         onFocus(listener: (event: FocusEvent) => void) {
-            this.getEl().addEventListener("focus", listener);
+            this.getEl().addEventListener('focus', listener);
         }
 
         unFocus(listener: (event: FocusEvent) => void) {
-            this.getEl().removeEventListener("focus", listener);
+            this.getEl().removeEventListener('focus', listener);
         }
 
         onBlur(listener: (event: FocusEvent) => void) {
-            this.getEl().addEventListener("blur", listener);
+            this.getEl().addEventListener('blur', listener);
         }
 
         unBlur(listener: (event: FocusEvent) => void) {
-            this.getEl().removeEventListener("blur", listener);
+            this.getEl().removeEventListener('blur', listener);
         }
 
         // No native support of focusin/focusout events in Firefox yet.
 
         onFocusIn(listener: (event: any) => void) {
             // this.getEl().addEventListener("focusin", listener);
-            wemjq(this.el.getHTMLElement()).on("focusin", listener);
+            wemjq(this.el.getHTMLElement()).on('focusin', listener);
 
         }
 
         unFocusIn(listener: (event: any) => void) {
             // this.getEl().removeEventListener("focusin", listener);
-            wemjq(this.el.getHTMLElement()).off("focusin", listener);
+            wemjq(this.el.getHTMLElement()).off('focusin', listener);
         }
 
         onFocusOut(listener: (event: any) => void) {
             // this.getEl().addEventListener("focusout", listener);
-            wemjq(this.el.getHTMLElement()).on("focusout", listener);
+            wemjq(this.el.getHTMLElement()).on('focusout', listener);
         }
 
         unFocusOut(listener: (event: any) => void) {
             // this.getEl().removeEventListener("focusout", listener);
-            wemjq(this.el.getHTMLElement()).off("focusout", listener);
+            wemjq(this.el.getHTMLElement()).off('focusout', listener);
         }
 
         onScroll(listener: (event: Event) => void) {
-            this.getEl().addEventListener("scroll", listener);
+            this.getEl().addEventListener('scroll', listener);
         }
 
         unScroll(listener: (event: Event) => void) {
-            this.getEl().removeEventListener("scroll", listener);
+            this.getEl().removeEventListener('scroll', listener);
         }
 
         onDrag(listener: (event: DragEvent) => void) {
-            this.getEl().addEventListener("drag", listener);
+            this.getEl().addEventListener('drag', listener);
         }
 
         unDrag(listener: (event: DragEvent) => void) {
-            this.getEl().removeEventListener("drag", listener);
+            this.getEl().removeEventListener('drag', listener);
         }
 
         onDragStart(listener: (event: DragEvent) => void) {
-            this.getEl().addEventListener("dragstart", listener);
+            this.getEl().addEventListener('dragstart', listener);
         }
 
         unDragStart(listener: (event: DragEvent) => void) {
-            this.getEl().removeEventListener("dragstart", listener);
+            this.getEl().removeEventListener('dragstart', listener);
         }
 
         onDragEnter(listener: (event: DragEvent) => void) {
-            this.getEl().addEventListener("dragenter", listener);
+            this.getEl().addEventListener('dragenter', listener);
         }
 
         unDragEnter(listener: (event: DragEvent) => void) {
-            this.getEl().removeEventListener("dragenter", listener);
+            this.getEl().removeEventListener('dragenter', listener);
         }
 
         onDragOver(listener: (event: DragEvent) => void) {
-            this.getEl().addEventListener("dragover", listener);
+            this.getEl().addEventListener('dragover', listener);
         }
 
         unDragOver(listener: (event: DragEvent) => void) {
-            this.getEl().removeEventListener("dragover", listener);
+            this.getEl().removeEventListener('dragover', listener);
         }
 
         onDragOut(listener: (event: DragEvent) => void) {
-            this.getEl().addEventListener("dragout", listener);
+            this.getEl().addEventListener('dragout', listener);
         }
 
         unDragOut(listener: (event: DragEvent) => void) {
-            this.getEl().removeEventListener("dragout", listener);
+            this.getEl().removeEventListener('dragout', listener);
         }
 
         onDragLeave(listener: (event: DragEvent) => void) {
-            this.getEl().addEventListener("dragleave", listener);
+            this.getEl().addEventListener('dragleave', listener);
         }
 
         unDragLeave(listener: (event: DragEvent) => void) {
-            this.getEl().removeEventListener("dragleave", listener);
+            this.getEl().removeEventListener('dragleave', listener);
         }
 
         onDrop(listener: (event: DragEvent) => void) {
-            this.getEl().addEventListener("drop", listener);
+            this.getEl().addEventListener('drop', listener);
         }
 
         unDrop(listener: (event: DragEvent) => void) {
-            this.getEl().removeEventListener("drop", listener);
+            this.getEl().removeEventListener('drop', listener);
         }
 
         onDragEnd(listener: (event: DragEvent) => void) {
-            this.getEl().addEventListener("dragend", listener);
+            this.getEl().addEventListener('dragend', listener);
         }
 
         unDragEnd(listener: (event: DragEvent) => void) {
-            this.getEl().removeEventListener("dragend", listener);
+            this.getEl().removeEventListener('dragend', listener);
         }
 
         static fromHtmlElement(element: HTMLElement, loadExistingChildren: boolean = false, parent?: Element): Element {

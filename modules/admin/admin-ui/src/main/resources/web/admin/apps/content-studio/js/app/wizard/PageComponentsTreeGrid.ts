@@ -29,10 +29,10 @@ export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
 
     constructor(content: Content, pageView: PageView) {
         super(new TreeGridBuilder<ItemView>().setColumns([
-            new GridColumnBuilder<TreeNode<ItemView>>().setName("Name").setId("displayName").setField("displayName").setFormatter(
-                PageComponentsTreeGrid.nameFormatter.bind(null, content)).setMinWidth(250).setBehavior("selectAndMove").build(),
-            new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().setName("Menu").setId("menu").setMinWidth(45).setMaxWidth(
-                45).setField("menu").setCssClass("menu-cell").setFormatter(PageComponentsTreeGrid.menuFormatter).build()
+            new GridColumnBuilder<TreeNode<ItemView>>().setName('Name').setId('displayName').setField('displayName').setFormatter(
+                PageComponentsTreeGrid.nameFormatter.bind(null, content)).setMinWidth(250).setBehavior('selectAndMove').build(),
+            new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().setName('Menu').setId('menu').setMinWidth(45).setMaxWidth(
+                45).setField('menu').setCssClass('menu-cell').setFormatter(PageComponentsTreeGrid.menuFormatter).build()
         ]).setOptions(
             new GridOptionsBuilder<TreeNode<ItemView>>().setAutoHeight(true).setShowHeaderRow(false).setHideColumnHeaders(
                 true).setForceFitColumns(true).setFullWidthRows(true).
@@ -40,9 +40,9 @@ export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
             // It is necessary to turn off the library key handling. It may cause
             // the conflicts with Mousetrap, which leads to skipping the key events
             // Do not set to true, if you are not fully aware of the result
-            setEnableCellNavigation(false).setSelectedCellCssClass("selected cell").setCheckableRows(false).disableMultipleSelection(
+            setEnableCellNavigation(false).setSelectedCellCssClass('selected cell').setCheckableRows(false).disableMultipleSelection(
                 true).setMultiSelect(false).setRowHeight(45).setDragAndDrop(true).build()
-        ).setShowToolbar(false).setAutoLoad(true).setExpandAll(true).prependClasses("components-grid"));
+        ).setShowToolbar(false).setAutoLoad(true).setExpandAll(true).prependClasses('components-grid'));
 
         this.content = content;
         this.pageView = pageView;
@@ -60,15 +60,15 @@ export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
     }
 
     public static nameFormatter(content: Content, row: number, cell: number, value: any, columnDef: any, node: TreeNode<ItemView>) {
-        let viewer = <PageComponentsItemViewer>node.getViewer("name");
+        let viewer = <PageComponentsItemViewer>node.getViewer('name');
         if (!viewer) {
             viewer = new PageComponentsItemViewer(content);
             const data = node.getData();
 
             viewer.setObject(data);
-            node.setViewer("name", viewer);
+            node.setViewer('name', viewer);
             if (!(api.ObjectHelper.iFrameSafeInstanceOf(data, RegionView) || api.ObjectHelper.iFrameSafeInstanceOf(data, PageView))) {
-                viewer.addClass("draggable");
+                viewer.addClass('draggable');
             }
         }
         return viewer.toString();
@@ -82,10 +82,10 @@ export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
             let node = root.findNode(dataId);
             if (node) {
                 let row = this.getGrid().getDataView().getRowById(node.getId());
-                stylesHash[row] = {displayName: "invalid", menu: "invalid"};
+                stylesHash[row] = {displayName: 'invalid', menu: 'invalid'};
             }
         });
-        this.getGrid().setCellCssStyles("invalid-highlight", stylesHash);
+        this.getGrid().setCellCssStyles('invalid-highlight', stylesHash);
     }
 
     getDataId(data: ItemView): string {
@@ -144,7 +144,7 @@ export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
     public static menuFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
         let wrapper = new api.dom.SpanEl();
 
-        let icon = new api.dom.DivEl("menu-icon");
+        let icon = new api.dom.DivEl('menu-icon');
         wrapper.getEl().setInnerHtml(icon.toString(), false);
         return wrapper.toString();
     }

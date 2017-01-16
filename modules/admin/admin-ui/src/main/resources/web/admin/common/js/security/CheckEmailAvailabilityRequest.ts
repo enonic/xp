@@ -12,7 +12,7 @@ module api.security {
 
         constructor(email: string) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
             this.email = email;
         }
 

@@ -6,7 +6,7 @@ module api.security {
 
         constructor() {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
         }
 
         setKeys(keys: UserStoreKey[]): DeleteUserStoreRequest {

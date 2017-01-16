@@ -40,7 +40,7 @@ module api.content.site.inputtype.siteconfigurator {
         private readOnlyPromise: Promise<void>;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
-            super("site-configurator");
+            super('site-configurator');
             this.context = config;
             this.formContext = config.formContext;
 
@@ -185,8 +185,8 @@ module api.content.site.inputtype.siteconfigurator {
 
             let handleAppEvent = (view: SiteConfiguratorSelectedOptionView, hasUninstalledClass: boolean, hasStoppedClass) => {
                 if (view) {
-                    view.toggleClass("stopped", hasStoppedClass);
-                    view.toggleClass("uninstalled", hasUninstalledClass);
+                    view.toggleClass('stopped', hasStoppedClass);
+                    view.toggleClass('uninstalled', hasUninstalledClass);
                 }
             };
 
@@ -197,7 +197,7 @@ module api.content.site.inputtype.siteconfigurator {
                     let view = this.getMatchedOption(comboBox, event);
                     handleAppEvent(view, false, false);
                     if (view && !!view.getOption().empty) {
-                        view.removeClass("empty");
+                        view.removeClass('empty');
                     }
                 } else if (ApplicationEventType.UNINSTALLED == event.getEventType()) {
                     handleAppEvent(this.getMatchedOption(comboBox, event), true, false);
@@ -254,5 +254,5 @@ module api.content.site.inputtype.siteconfigurator {
 
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("SiteConfigurator", SiteConfigurator));
+    api.form.inputtype.InputTypeManager.register(new api.Class('SiteConfigurator', SiteConfigurator));
 }

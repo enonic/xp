@@ -53,11 +53,11 @@ function startLostConnectionDetector(): LostConnectionDetector {
     lostConnectionDetector.setAuthenticated(true);
     lostConnectionDetector.onConnectionLost(() => {
         api.notify.NotifyManager.get().hide(messageId);
-        messageId = api.notify.showError("Lost connection to server - Please wait until connection is restored", false);
+        messageId = api.notify.showError('Lost connection to server - Please wait until connection is restored', false);
     });
     lostConnectionDetector.onSessionExpired(() => {
         api.notify.NotifyManager.get().hide(messageId);
-        window.location.href = api.util.UriHelper.getToolUri("");
+        window.location.href = api.util.UriHelper.getToolUri('');
     });
     lostConnectionDetector.onConnectionRestored(() => {
         api.notify.NotifyManager.get().hide(messageId);
@@ -68,10 +68,10 @@ function startLostConnectionDetector(): LostConnectionDetector {
 }
 
 function initToolTip() {
-    const ID = api.StyleHelper.getCls("tooltip", api.StyleHelper.COMMON_PREFIX);
-    const CLS_ON = "tooltip_ON";
+    const ID = api.StyleHelper.getCls('tooltip', api.StyleHelper.COMMON_PREFIX);
+    const CLS_ON = 'tooltip_ON';
     const FOLLOW = true;
-    const DATA = "_tooltip";
+    const DATA = '_tooltip';
     const OFFSET_X = 0;
     const OFFSET_Y = 20;
 
@@ -92,14 +92,14 @@ function initToolTip() {
         if (left + tooltipWidth >= windowWidth) {
             left = windowWidth - tooltipWidth;
         }
-        wemjq("#" + ID).html(tooltipText).css({
-            position: "absolute", top, left
+        wemjq('#' + ID).html(tooltipText).css({
+            position: 'absolute', top, left
         }).show();
         };
-    wemjq(document).on("mouseenter", "*[title]:not([disabled]):visible", function (e: any) {
-        wemjq(window).data(DATA, wemjq(window).attr("title"));
-        wemjq(window).removeAttr("title").addClass(CLS_ON);
-        wemjq("<div id='" + ID + "' />").appendTo("body");
+    wemjq(document).on('mouseenter', '*[title]:not([disabled]):visible', function (e: any) {
+        wemjq(window).data(DATA, wemjq(window).attr('title'));
+        wemjq(window).removeAttr('title').addClass(CLS_ON);
+        wemjq("<div id='" + ID + "' />").appendTo('body');
         if (e.pageX) {
             pageX = e.pageX;
         }
@@ -108,14 +108,14 @@ function initToolTip() {
         }
         showAt(e);
     });
-    wemjq(document).on("mouseleave click", "." + CLS_ON, function (e: any) {
+    wemjq(document).on('mouseleave click', '.' + CLS_ON, function (e: any) {
         if (wemjq(window).data(DATA)) {
-            wemjq(window).attr("title", wemjq(window).data(DATA));
+            wemjq(window).attr('title', wemjq(window).data(DATA));
         }
         wemjq(window).removeClass(CLS_ON);
-        wemjq("#" + ID).remove();
+        wemjq('#' + ID).remove();
     });
-    if (FOLLOW) { wemjq(document).on("mousemove", "." + CLS_ON, showAt); }
+    if (FOLLOW) { wemjq(document).on('mousemove', '.' + CLS_ON, showAt); }
 }
 
 function updateTabTitle(title: string) {
@@ -124,7 +124,7 @@ function updateTabTitle(title: string) {
 
 function shouldUpdateFavicon(contentTypeName: ContentTypeName): boolean {
     // Chrome currently doesn't support SVG favicons which are served for not image contents
-    return contentTypeName.isImage() || navigator.userAgent.search("Chrome") === -1;
+    return contentTypeName.isImage() || navigator.userAgent.search('Chrome') === -1;
 }
 
 let faviconCache: {[url: string]: Element} = {};
@@ -256,7 +256,7 @@ function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDe
     wizard.onWizardHeaderCreated(() => {
         // header will be ready after rendering is complete
         wizard.getWizardHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
-            if (event.getPropertyName() === "displayName") {
+            if (event.getPropertyName() === 'displayName') {
                 let contentType = (<ContentWizardPanel>wizard).getContentType();
                 let name = <string>event.getNewValue() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName());
 

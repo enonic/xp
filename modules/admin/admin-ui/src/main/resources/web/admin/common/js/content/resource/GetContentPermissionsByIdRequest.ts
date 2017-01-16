@@ -9,7 +9,7 @@ module api.content.resource {
 
         constructor(contentId: ContentId) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
             this.contentId = contentId;
         }
 
@@ -20,7 +20,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "contentPermissions");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'contentPermissions');
         }
 
         sendAndParse(): wemQ.Promise<AccessControlList> {

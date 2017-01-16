@@ -5,7 +5,7 @@ import {SaveSortedContentEvent} from "../SaveSortedContentEvent";
 export class SaveSortedContentAction extends api.ui.Action {
 
     constructor(dialog: SortContentDialog) {
-        super("Save");
+        super('Save');
         this.setEnabled(true);
 
         this.onExecuted(() => {

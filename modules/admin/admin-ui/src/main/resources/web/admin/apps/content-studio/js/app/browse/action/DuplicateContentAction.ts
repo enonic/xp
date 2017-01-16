@@ -6,7 +6,7 @@ import Action = api.ui.Action;
 export class DuplicateContentAction extends Action {
 
     constructor(grid: ContentTreeGrid) {
-        super("Duplicate");
+        super('Duplicate');
         this.setEnabled(false);
         this.onExecuted(() => {
             grid.getSelectedDataList().forEach((elem) => {

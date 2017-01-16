@@ -43,17 +43,17 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
 
     protected doLoadData(): Q.Promise<Principal> {
         if (PrincipalWizardPanel.debug) {
-            console.debug("PrincipalWizardPanel.doLoadData");
+            console.debug('PrincipalWizardPanel.doLoadData');
         }
         if (!this.getPersistedItem()) {
             if (PrincipalWizardPanel.debug) {
-                console.debug("PrincipalWizardPanel.doLoadData: loading data...");
+                console.debug('PrincipalWizardPanel.doLoadData: loading data...');
             }
             // don't call super.doLoadData to prevent saving new entity
             return new PrincipalWizardDataLoader().loadData(this.getParams())
                 .then((loader) => {
                     if (PrincipalWizardPanel.debug) {
-                        console.debug("PrincipalWizardPanel.doLoadData: loaded data", loader);
+                        console.debug('PrincipalWizardPanel.doLoadData: loaded data', loader);
                     }
                     if (loader.principal) {
                         this.formState.setIsNew(false);
@@ -64,7 +64,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
         } else {
             let equitable = this.getPersistedItem();
             if (PrincipalWizardPanel.debug) {
-                console.debug("PrincipalWizardPanel.doLoadData: data present, skipping load...", equitable);
+                console.debug('PrincipalWizardPanel.doLoadData: data present, skipping load...', equitable);
             }
             return wemQ(equitable);
         }
@@ -89,8 +89,8 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
         let wizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().build();
 
         let existing = this.getPersistedItem();
-        let displayName = "";
-        let name = "";
+        let displayName = '';
+        let name = '';
         if (existing) {
             displayName = existing.getDisplayName();
             name = existing.getKey().getId();
@@ -100,9 +100,9 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
         } else {
 
             wizardHeader.onPropertyChanged((event: api.PropertyChangedEvent) => {
-                let updateStatus = event.getPropertyName() === "name" ||
+                let updateStatus = event.getPropertyName() === 'name' ||
                                    (wizardHeader.isAutoGenerationEnabled()
-                                    && event.getPropertyName() === "displayName");
+                                    && event.getPropertyName() === 'displayName');
 
                 if (updateStatus) {
                     this.wizardActions.getSaveAction().setEnabled(!!event.getNewValue());
@@ -119,19 +119,19 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
     doRenderOnDataLoaded(rendered: boolean): Q.Promise<boolean> {
         return super.doRenderOnDataLoaded(rendered).then((nextRendered) => {
             if (PrincipalWizardPanel.debug) {
-                console.debug("PrincipalWizardPanel.doRenderOnDataLoaded");
+                console.debug('PrincipalWizardPanel.doRenderOnDataLoaded');
             }
-            this.addClass("principal-wizard-panel");
+            this.addClass('principal-wizard-panel');
 
             switch (this.getParams().persistedType) {
             case PrincipalType.USER:
-                this.formIcon.addClass("icon-user");
+                this.formIcon.addClass('icon-user');
                 break;
             case PrincipalType.GROUP:
-                this.formIcon.addClass("icon-users");
+                this.formIcon.addClass('icon-users');
                 break;
             case PrincipalType.ROLE:
-                this.formIcon.addClass("icon-masks");
+                this.formIcon.addClass('icon-masks');
                 break;
             }
 
@@ -156,13 +156,13 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
     getUserItemType(): string {
         switch (this.getParams().persistedType) {
         case PrincipalType.USER:
-            return "User";
+            return 'User';
         case PrincipalType.GROUP:
-            return "Group";
+            return 'Group';
         case PrincipalType.ROLE:
-            return "Role";
+            return 'Role';
         default:
-            return "";
+            return '';
         }
     }
 
@@ -175,7 +175,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
     }
 
     createSteps(principal?: Principal): WizardStep[] {
-        throw new Error("Must be implemented by inheritors");
+        throw new Error('Must be implemented by inheritors');
     }
 
     doLayout(persistedPrincipal: Principal): wemQ.Promise<void> {
@@ -189,10 +189,10 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
                 if (!viewedPrincipal.equals(persistedPrincipal)) {
 
                     console.warn("Received Principal from server differs from what's viewed:");
-                    console.warn(" viewedPrincipal: ", viewedPrincipal);
-                    console.warn(" persistedPrincipal: ", persistedPrincipal);
+                    console.warn(' viewedPrincipal: ', viewedPrincipal);
+                    console.warn(' persistedPrincipal: ', persistedPrincipal);
 
-                    const msg = "Received Principal from server differs from what you have. Would you like to load changes from server?";
+                    const msg = 'Received Principal from server differs from what you have. Would you like to load changes from server?';
                     ConfirmationDialog.get()
                         .setQuestion(msg)
                         .setYesCallback(() => this.doLayoutPersistedItem(persistedPrincipal ? persistedPrincipal.clone() : null))
@@ -217,7 +217,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
     }
 
     postPersistNewItem(persistedPrincipal: Principal): wemQ.Promise<Principal> {
-        Router.setHash("edit/" + persistedPrincipal.getKey());
+        Router.setHash('edit/' + persistedPrincipal.getKey());
 
         return wemQ(persistedPrincipal);
     }
@@ -247,11 +247,11 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
     }
 
     protected produceUpdateRequest(viewedPrincipal: Principal): SecurityResourceRequest<PrincipalJson, Principal> {
-        throw new Error("Must be implemented by inheritors");
+        throw new Error('Must be implemented by inheritors');
     }
 
     protected assembleViewedItem():Principal {
-        throw new Error("Must be implemented by inheritors");
+        throw new Error('Must be implemented by inheritors');
     }
 
     onPrincipalNamed(listener: (event: PrincipalNamedEvent)=>void) {
@@ -266,9 +266,9 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
 
     protected updateHash() {
         if (this.getPersistedItem()) {
-            Router.setHash("edit/" + this.getPersistedItem().getKey());
+            Router.setHash('edit/' + this.getPersistedItem().getKey());
         } else {
-            Router.setHash("new/" + PrincipalType[this.getParams().persistedType].toLowerCase());
+            Router.setHash('new/' + PrincipalType[this.getParams().persistedType].toLowerCase());
         }
     }
 }

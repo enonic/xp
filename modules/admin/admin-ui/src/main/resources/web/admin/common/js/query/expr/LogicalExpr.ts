@@ -25,7 +25,7 @@ module api.query.expr {
         }
 
         toString() {
-            return "(" + this.left.toString() + " " + this.operatorAsString() + " " + this.right.toString() + ")";
+            return '(' + this.left.toString() + ' ' + this.operatorAsString() + ' ' + this.right.toString() + ')';
         }
 
         public static and(left: ConstraintExpr, right: ConstraintExpr): LogicalExpr {
@@ -39,11 +39,11 @@ module api.query.expr {
         private operatorAsString(): string {
             switch (this.operator) {
             case LogicalOperator.AND:
-                return "AND";
+                return 'AND';
             case LogicalOperator.OR:
-                return "OR";
+                return 'OR';
             default:
-                return "";
+                return '';
             }
         }
     }

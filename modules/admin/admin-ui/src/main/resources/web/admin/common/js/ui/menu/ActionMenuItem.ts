@@ -6,7 +6,7 @@ module api.ui.menu {
 
         constructor(action: api.ui.Action) {
 
-            super("action");
+            super('action');
             this.action = action;
 
             this.getEl().setInnerHtml(this.action.getLabel());

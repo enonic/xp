@@ -4,14 +4,14 @@ module api.rest {
 
         private restPath: Path;
 
-        private method: string = "GET";
+        private method: string = 'GET';
 
         private heavyOperation: boolean;
 
         private timeoutMillis: number;
 
         constructor() {
-            this.restPath = Path.fromString(api.util.UriHelper.getRestUri(""));
+            this.restPath = Path.fromString(api.util.UriHelper.getRestUri(''));
         }
 
         setMethod(value: string) {
@@ -23,11 +23,11 @@ module api.rest {
         }
 
         getRequestPath(): Path {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         getParams(): Object {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         setTimeout(timeoutMillis: number) {
@@ -53,7 +53,7 @@ module api.rest {
         }
 
         sendAndParse(): wemQ.Promise<PARSED_TYPE> {
-            throw new Error("sendAndParse method was not implemented");
+            throw new Error('sendAndParse method was not implemented');
         }
     }
 }

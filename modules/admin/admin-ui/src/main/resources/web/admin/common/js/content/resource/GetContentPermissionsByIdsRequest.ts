@@ -11,7 +11,7 @@ module api.content.resource {
 
         constructor(contentIds: ContentId[]) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             this.contentIds = contentIds;
         }
 
@@ -25,7 +25,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "contentPermissionsByIds");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'contentPermissionsByIds');
         }
 
         sendAndParse(): wemQ.Promise<ContentAccessControlList[]> {

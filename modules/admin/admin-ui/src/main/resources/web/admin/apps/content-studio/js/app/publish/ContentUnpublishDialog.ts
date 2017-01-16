@@ -15,16 +15,16 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
     constructor() {
 
         super(
-            "Unpublish item",
-            "<b>Take offline?</b> - Unpublishing selected item(s) will set status back to offline",
-            "Dependent items - Clean up references to selected item(s) or click unpublish to take all items offline",
-            "is-unpublishing",
+            'Unpublish item',
+            '<b>Take offline?</b> - Unpublishing selected item(s) will set status back to offline',
+            'Dependent items - Clean up references to selected item(s) or click unpublish to take all items offline',
+            'is-unpublishing',
             () => {
                 new ContentUnpublishPromptEvent([]).fire();
             }
         );
 
-        this.getEl().addClass("unpublish-dialog");
+        this.getEl().addClass('unpublish-dialog');
 
         const unpublishAction = new ContentUnpublishDialogAction();
         unpublishAction.onExecuted(this.doUnpublish.bind(this));
@@ -81,13 +81,13 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
     setDependantItems(items: ContentSummaryAndCompareStatus[]) {
         super.setDependantItems(this.filterUnpublishableItems(items));
 
-        this.updateButtonCount("Unpublish", this.countTotal());
+        this.updateButtonCount('Unpublish', this.countTotal());
     }
 
     addDependantItems(items: ContentSummaryAndCompareStatus[]) {
         super.addDependantItems(this.filterUnpublishableItems(items));
 
-        this.updateButtonCount("Unpublish", this.countTotal());
+        this.updateButtonCount('Unpublish', this.countTotal());
     }
 
     setContentToUnpublish(contents: ContentSummaryAndCompareStatus[]) {
@@ -107,7 +107,7 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
 
         this.lockControls();
 
-        this.setSubTitle(this.countTotal() + " items are being unpublished...");
+        this.setSubTitle(this.countTotal() + ' items are being unpublished...');
 
         let selectedIds = this.getContentToUnpublishIds();
 
@@ -129,7 +129,7 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
 
 export class ContentUnpublishDialogAction extends api.ui.Action {
     constructor() {
-        super("Unpublish");
-        this.setIconClass("unpublish-action");
+        super('Unpublish');
+        this.setIconClass('unpublish-action');
     }
 }

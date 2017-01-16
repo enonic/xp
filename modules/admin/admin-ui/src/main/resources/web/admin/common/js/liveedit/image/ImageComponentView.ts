@@ -57,7 +57,7 @@ module api.liveedit.image {
                     this.image = image;
 
                     // no way to use ImgEl.onLoaded because all html tags are parsed as Element
-                    this.image.getEl().addEventListener("load", (event) => {
+                    this.image.getEl().addEventListener('load', (event) => {
                         // refresh shader and highlighter after image loaded
                         // if it's still selected
                         if (this.isSelected()) {

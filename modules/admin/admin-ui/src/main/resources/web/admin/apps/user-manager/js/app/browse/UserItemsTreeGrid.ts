@@ -30,19 +30,19 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
     constructor() {
 
         super(new TreeGridBuilder<UserTreeGridItem>().setColumnConfig([{
-                name: "Name",
-                id: "name",
-                field: "displayName",
+                name: 'Name',
+                id: 'name',
+                field: 'displayName',
                 formatter: UserItemsRowFormatter.nameFormatter,
                 style: {minWidth: 250}
             }, {
-                name: "ModifiedTime",
-                id: "modifiedTime",
-                field: "modifiedTime",
+                name: 'ModifiedTime',
+                id: 'modifiedTime',
+                field: 'modifiedTime',
                 formatter: DateTimeFormatter.format,
-                style: {cssClass: "modified", minWidth: 150, maxWidth: 170}
+                style: {cssClass: 'modified', minWidth: 150, maxWidth: 170}
             }]).setPartialLoadEnabled(true).setLoadBufferSize(20).// rows count
-            prependClasses("user-tree-grid")
+            prependClasses('user-tree-grid')
         );
 
         this.treeGridActions = new UserTreeGridActions(this);
@@ -92,7 +92,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
     }
 
     isEmptyNode(node: TreeNode<UserTreeGridItem>): boolean {
-        return !node.getDataId() || node.getDataId() == "";
+        return !node.getDataId() || node.getDataId() == '';
     }
 
     getTreeGridActions(): UserTreeGridActions {
@@ -279,7 +279,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
         } else if (itemType === UserTreeGridItemType.USERS) {
             return PrincipalType.USER;
         } else {
-            throw new Error("Invalid item type for folder with principals: " + UserTreeGridItemType[itemType]);
+            throw new Error('Invalid item type for folder with principals: ' + UserTreeGridItemType[itemType]);
         }
     }
 

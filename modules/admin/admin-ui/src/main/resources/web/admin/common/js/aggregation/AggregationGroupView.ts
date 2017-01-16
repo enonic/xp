@@ -16,7 +16,7 @@ module api.aggregation {
         private bucketSelectionChangedListeners: Function[] = [];
 
         constructor(name: string, displayName: string) {
-            super("aggregation-group-view");
+            super('aggregation-group-view');
 
             this.name = name;
             this.displayName = displayName;

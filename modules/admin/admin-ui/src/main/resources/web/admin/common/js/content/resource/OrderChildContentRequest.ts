@@ -14,7 +14,7 @@ module api.content.resource {
 
         constructor() {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
         }
 
         setSilent(silent: boolean): OrderChildContentRequest {
@@ -53,7 +53,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "reorderChildren");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'reorderChildren');
         }
 
         sendAndParse(): wemQ.Promise<any> {

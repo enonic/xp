@@ -1,9 +1,9 @@
 import "../../../../../../api.ts";
+import {BaseInspectionPanel} from "../BaseInspectionPanel";
 
 import TextComponent = api.content.page.region.TextComponent;
 import TextComponentView = api.liveedit.text.TextComponentView;
 import TextComponentViewer = api.liveedit.text.TextComponentViewer;
-import {BaseInspectionPanel} from "../BaseInspectionPanel";
 
 export class TextInspectionPanel extends BaseInspectionPanel {
 
@@ -14,7 +14,7 @@ export class TextInspectionPanel extends BaseInspectionPanel {
 
         this.namesAndIcon =
             new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.medium)).setIconClass(
-                api.liveedit.ItemViewIconClassResolver.resolveByType("text"));
+                api.liveedit.ItemViewIconClassResolver.resolveByType('text'));
 
         this.appendChild(this.namesAndIcon);
     }

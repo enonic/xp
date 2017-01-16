@@ -203,15 +203,15 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
             new api.content.resource.GetContentByPathRequest(parentPath).sendAndParse().then((content: Content) => {
                 deferred.resolve(content.getPermissions());
             }).catch((reason: any) => {
-                deferred.reject(new Error("Inherit permissions for [" + this.contentPath.toString() +
-                                          "] could not be retrieved"));
+                deferred.reject(new Error('Inherit permissions for [' + this.contentPath.toString() +
+                                          '] could not be retrieved'));
             }).done();
         } else {
             new api.content.resource.GetContentRootPermissionsRequest().sendAndParse().then((rootPermissions: AccessControlList) => {
                 deferred.resolve(rootPermissions);
             }).catch((reason: any) => {
-                deferred.reject(new Error("Inherit permissions for [" + this.contentPath.toString() +
-                                          "] could not be retrieved"));
+                deferred.reject(new Error('Inherit permissions for [' + this.contentPath.toString() +
+                                          '] could not be retrieved'));
             }).done();
         }
 

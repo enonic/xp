@@ -7,7 +7,7 @@ module api.ui.menu {
         private itemClickListeners: {(item: MenuItem):void}[] = [];
 
         constructor(actions: api.ui.Action[] = []) {
-            super("menu");
+            super('menu');
 
             actions.forEach((action) => this.addAction(action));
 

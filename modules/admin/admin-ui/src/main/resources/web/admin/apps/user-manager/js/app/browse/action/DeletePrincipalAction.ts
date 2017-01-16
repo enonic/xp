@@ -7,11 +7,11 @@ import Action = api.ui.Action;
 export class DeletePrincipalAction extends Action {
 
     constructor(grid: UserItemsTreeGrid) {
-        super("Delete", "mod+del");
+        super('Delete', 'mod+del');
         this.setEnabled(false);
         this.onExecuted(() => {
             api.ui.dialog.ConfirmationDialog.get()
-                .setQuestion("Are you sure you want to delete this user item?")
+                .setQuestion('Are you sure you want to delete this user item?')
                 .setNoCallback(null)
                 .setYesCallback(() => {
 

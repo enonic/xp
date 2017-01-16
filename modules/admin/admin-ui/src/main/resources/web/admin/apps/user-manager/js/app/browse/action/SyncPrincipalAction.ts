@@ -7,7 +7,7 @@ import Action = api.ui.Action;
 export class SyncPrincipalAction extends Action {
 
     constructor(grid: UserItemsTreeGrid) {
-        super("Sync");
+        super('Sync');
         this.setEnabled(false);
         this.onExecuted(() => {
             let principals: UserTreeGridItem[] = grid.getSelectedDataList();

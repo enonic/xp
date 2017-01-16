@@ -19,15 +19,15 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
     private actionMenu: api.ui.menu.ActionMenu;
 
     constructor() {
-        super("application-item-statistics-panel");
+        super('application-item-statistics-panel');
 
         this.actionMenu =
-            new api.ui.menu.ActionMenu("Application actions", ApplicationBrowseActions.get().START_APPLICATION,
+            new api.ui.menu.ActionMenu('Application actions', ApplicationBrowseActions.get().START_APPLICATION,
                 ApplicationBrowseActions.get().STOP_APPLICATION);
 
         this.appendChild(this.actionMenu);
 
-        this.applicationDataContainer = new api.dom.DivEl("application-data-container");
+        this.applicationDataContainer = new api.dom.DivEl('application-data-container');
         this.appendChild(this.applicationDataContainer);
     }
 
@@ -47,7 +47,7 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
         }
 
         if (currentApplication.getDescription()) {
-            this.getHeader().setHeaderSubtitle(currentApplication.getDescription(), "app-description");
+            this.getHeader().setHeaderSubtitle(currentApplication.getDescription(), 'app-description');
         }
 
         this.actionMenu.setLabel(api.util.StringHelper.capitalize(currentApplication.getState()));
@@ -62,12 +62,12 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
 
         this.applicationDataContainer.removeChildren();
 
-        let infoGroup = new ItemDataGroup("Info", "info");
-        infoGroup.addDataList("Build date", "TBA");
-        infoGroup.addDataList("Version", currentApplication.getVersion());
-        infoGroup.addDataList("Key", currentApplication.getApplicationKey().toString());
-        infoGroup.addDataList("System Required",
-            ">= " + currentApplication.getMinSystemVersion() + " and < " + currentApplication.getMaxSystemVersion());
+        let infoGroup = new ItemDataGroup('Info', 'info');
+        infoGroup.addDataList('Build date', 'TBA');
+        infoGroup.addDataList('Version', currentApplication.getVersion());
+        infoGroup.addDataList('Key', currentApplication.getApplicationKey().toString());
+        infoGroup.addDataList('System Required',
+            '>= ' + currentApplication.getMinSystemVersion() + ' and < ' + currentApplication.getMaxSystemVersion());
 
         let descriptorResponse = this.initDescriptors(currentApplication.getApplicationKey());
         let schemaResponse = this.initSchemas(currentApplication.getApplicationKey());
@@ -106,7 +106,7 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
 
         return wemQ.all(macroPromises).spread((macros: MacroDescriptor[])=> {
 
-            let macrosGroup = new ItemDataGroup("Macros", "macros");
+            let macrosGroup = new ItemDataGroup('Macros', 'macros');
 
             let macroNames = macros.
             filter((macro: MacroDescriptor) => {
@@ -114,7 +114,7 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
             }).map((macro: MacroDescriptor) => {
                 return macro.getDisplayName();
             });
-            macrosGroup.addDataArray("Name", macroNames);
+            macrosGroup.addDataArray('Name', macroNames);
 
             return macrosGroup;
         }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
@@ -131,19 +131,19 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
         return wemQ.all(descriptorPromises).spread(
             (pageDescriptors: PageDescriptor[], partDescriptors: PartDescriptor[], layoutDescriptors: LayoutDescriptor[]) => {
 
-                let descriptorsGroup = new ItemDataGroup("Descriptors", "descriptors");
+                let descriptorsGroup = new ItemDataGroup('Descriptors', 'descriptors');
 
                 let pageNames = pageDescriptors.map((descriptor: PageDescriptor) => descriptor.getName().toString()).sort(
                     this.sortAlphabeticallyAsc);
-                descriptorsGroup.addDataArray("Page", pageNames);
+                descriptorsGroup.addDataArray('Page', pageNames);
 
                 let partNames = partDescriptors.map((descriptor: PartDescriptor) => descriptor.getName().toString()).sort(
                     this.sortAlphabeticallyAsc);
-                descriptorsGroup.addDataArray("Part", partNames);
+                descriptorsGroup.addDataArray('Part', partNames);
 
                 let layoutNames = layoutDescriptors.map((descriptor: LayoutDescriptor) => descriptor.getName().toString()).sort(
                     this.sortAlphabeticallyAsc);
-                descriptorsGroup.addDataArray("Layout", layoutNames);
+                descriptorsGroup.addDataArray('Layout', layoutNames);
 
                 return descriptorsGroup;
             }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
@@ -159,19 +159,19 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
 
         return wemQ.all(schemaPromises).spread<any>(
             (contentTypes: ContentTypeSummary[], mixins: Mixin[], relationshipTypes: RelationshipType[]) => {
-                let schemasGroup = new ItemDataGroup("Schemas", "schemas");
+                let schemasGroup = new ItemDataGroup('Schemas', 'schemas');
 
                 let contentTypeNames = contentTypes.map(
                     (contentType: ContentTypeSummary) => contentType.getContentTypeName().getLocalName()).sort(this.sortAlphabeticallyAsc);
-                schemasGroup.addDataArray("Content Types", contentTypeNames);
+                schemasGroup.addDataArray('Content Types', contentTypeNames);
 
                 let mixinsNames = mixins.map((mixin: Mixin) => mixin.getMixinName().getLocalName()).sort(this.sortAlphabeticallyAsc);
-                schemasGroup.addDataArray("Mixins", mixinsNames);
+                schemasGroup.addDataArray('Mixins', mixinsNames);
 
                 let relationshipTypeNames = relationshipTypes.map(
                     (relationshipType: RelationshipType) => relationshipType.getRelationshiptypeName().getLocalName()).sort(
                     this.sortAlphabeticallyAsc);
-                schemasGroup.addDataArray("RelationshipTypes", relationshipTypeNames);
+                schemasGroup.addDataArray('RelationshipTypes', relationshipTypeNames);
 
                 return schemasGroup;
 
@@ -184,10 +184,10 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
         return wemQ.all(providersPromises).spread<ItemDataGroup>(
             (application: Application) => {
                 if(application) {
-                    let providersGroup = new ItemDataGroup("ID Providers", "providers");
+                    let providersGroup = new ItemDataGroup('ID Providers', 'providers');
 
-                    providersGroup.addDataList("Key", application.getApplicationKey().toString());
-                    providersGroup.addDataList("Name", application.getDisplayName());
+                    providersGroup.addDataList('Key', application.getApplicationKey().toString());
+                    providersGroup.addDataList('Name', application.getDisplayName());
 
                     return providersGroup;
                 }
