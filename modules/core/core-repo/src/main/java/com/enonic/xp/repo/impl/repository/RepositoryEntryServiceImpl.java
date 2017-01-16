@@ -114,6 +114,13 @@ public class RepositoryEntryServiceImpl
     }
 
     @Override
+    public Repository removeBranchFromRepositoryEntry( final RepositoryId repositoryId, final Branch branch )
+    {
+        NodeEditor nodeEditor = RepositoryNodeTranslator.toDeleteBranchNodeEditor( branch );
+        return updateRepositoryEntry( repositoryId, nodeEditor );
+    }
+
+    @Override
     public void deleteRepositoryEntry( final RepositoryId repositoryId )
     {
 

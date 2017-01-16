@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.repository;
 
+import java.util.Iterator;
+
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.branch.Branch;
@@ -51,6 +53,23 @@ public class RepositoryNodeTranslator
     public static NodeEditor toCreateBranchNodeEditor( final Branch branch )
     {
         return toBeEdited -> toBeEdited.data.addString( BRANCHES_KEY, branch.getValue() );
+    }
+
+    public static NodeEditor toDeleteBranchNodeEditor( final Branch branch )
+    {
+        return toBeEdited -> {
+            final Iterable<String> branches = toBeEdited.data.getStrings( BRANCHES_KEY );
+
+            toBeEdited.data.removeProperty( BRANCHES_KEY );
+            for ( Iterator<String> branchIterator = branches.iterator(); branchIterator.hasNext(); )
+            {
+                final String currentBranch = branchIterator.next();
+                if ( !branch.getValue().equals( currentBranch ) )
+                {
+                    toBeEdited.data.addString( BRANCHES_KEY, currentBranch );
+                }
+            }
+        };
     }
 
     private static void toNodeData( final Branches branches, final PropertyTree data )
