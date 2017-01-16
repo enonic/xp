@@ -1323,6 +1323,10 @@ module api.ui.treegrid {
             return deferred.promise;
         }
 
+        isAllSelected(): boolean {
+            return this.grid.isAllSelected();
+        }
+
         protected updateExpanded() {
             this.invalidate();
             this.setActive(true);
