@@ -181,6 +181,7 @@ public class RepositoryServiceImpl
             nodeRepositoryService.delete( repositoryId );
             return null;
         } );
+        doRefresh();
         return repositoryId;
     }
 
@@ -308,7 +309,7 @@ public class RepositoryServiceImpl
     private void deleteRootNode( final Repository currentRepo, final Branch branch )
     {
         final Context context = ContextAccessor.current();
-        final InternalContext internalContext = InternalContext.create( context ).branch( RepositoryConstants.MASTER_BRANCH ).build();
+        final InternalContext internalContext = InternalContext.create( context ).branch( branch ).build();
         this.nodeStorageService.delete( NodeIds.from( Node.ROOT_UUID ), internalContext );
     }
 
