@@ -5,4 +5,4 @@ WORKDIR /app
 EXPOSE 8080
 
 RUN /app/gradlew clean build -x test
-CMD ["/app/modules/distro/build/install/bin/server.sh"]
+CMD ["/app/modules/distro/target/install/bin/server.sh"]
