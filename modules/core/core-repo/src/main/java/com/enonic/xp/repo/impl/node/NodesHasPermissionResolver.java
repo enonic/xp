@@ -51,6 +51,11 @@ public class NodesHasPermissionResolver
             return true;
         }
 
+        if ( nodeIds.isEmpty() )
+        {
+            return false;
+        }
+
         final NodeQuery query = NodeQuery.create().
             addQueryFilter( IdFilter.create().
                 fieldName( NodeIndexPath.ID.getPath() ).
