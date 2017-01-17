@@ -21,7 +21,6 @@ import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
-import com.enonic.xp.region.ImageComponentType;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.Permission;
@@ -131,7 +130,6 @@ final class ImageHandlerWorker
         if ( trace != null )
         {
             trace.put( "path", imageContent.getPath() );
-            trace.put( "type", ImageComponentType.INSTANCE.toString() );
         }
 
         return portalResponse.build();

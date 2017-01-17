@@ -17,8 +17,6 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.EndpointHandler;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
-import com.enonic.xp.trace.Trace;
-import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -74,8 +72,7 @@ public final class ImageHandler
         worker.qualityParam = getParameter( webRequest, "quality" );
         worker.backgroundParam = getParameter( webRequest, "background" );
 
-        final Trace trace = Tracer.newTrace( "renderComponent" );
-        return Tracer.traceEx( trace, worker::execute );
+        return worker.execute();
     }
 
     private String getParameter( final WebRequest req, final String name )
