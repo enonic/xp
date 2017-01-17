@@ -5,7 +5,8 @@ var assert = require('/lib/xp/assert');
 // Deletes a branch
 try {
     var result = repoLib.deleteBranch({
-        branchId: 'test-branch'
+        branchId: 'test-branch',
+        repoId: 'my-repo'
     });
     log.info('Branch [' + result.id + '] deleted');
 } catch (e) {
