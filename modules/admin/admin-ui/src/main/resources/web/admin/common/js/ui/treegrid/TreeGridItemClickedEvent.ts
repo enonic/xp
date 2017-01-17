@@ -12,7 +12,7 @@ module api.ui.treegrid {
         public hasSelection() {
             return this.selection;
         }
-        
+
         static on(handler: (event: TreeGridItemClickedEvent) => void) {
             api.event.Event.bind(api.ClassHelper.getFullName(this), handler);
         }
