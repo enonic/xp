@@ -763,7 +763,7 @@ module api.app.wizard {
         }
 
         close(checkCanClose: boolean = false) {
-                this.notifyClosed(checkCanClose);
+            this.notifyClosed(checkCanClose);
         }
 
         canClose(): boolean {

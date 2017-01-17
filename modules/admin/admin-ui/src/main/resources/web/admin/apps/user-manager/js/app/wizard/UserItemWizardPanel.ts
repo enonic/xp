@@ -1,6 +1,7 @@
 import "../../api.ts";
 import {UserItemWizardActions} from "./action/UserItemWizardActions";
 import {UserItemWizardPanelParams} from "./UserItemWizardPanelParams";
+import {SaveBeforeCloseDialog} from "./SaveBeforeCloseDialog";
 
 import Principal = api.security.Principal;
 import PrincipalKey = api.security.PrincipalKey;
@@ -103,6 +104,21 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
             return super.saveChanges();
         }
 
+    }
+
+    close(checkCanClose: boolean = false) {
+        if (!checkCanClose || this.canClose()) {
+            super.close(checkCanClose);
+        }
+    }
+
+    canClose(): boolean {
+        if (this.hasUnsavedChanges()) {
+            new SaveBeforeCloseDialog(this).open();
+            return false;
+        } else {
+            return true;
+        }
     }
 
 
