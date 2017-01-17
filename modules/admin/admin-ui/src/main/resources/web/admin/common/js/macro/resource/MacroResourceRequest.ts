@@ -6,7 +6,7 @@ module api.macro.resource {
 
         constructor() {
             super();
-            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "macro");
+            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), 'macro');
         }
 
         getResourcePath(): api.rest.Path {

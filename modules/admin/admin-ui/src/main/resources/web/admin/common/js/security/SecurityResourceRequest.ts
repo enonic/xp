@@ -10,7 +10,7 @@ module api.security {
 
         constructor() {
             super();
-            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "security");
+            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), 'security');
         }
 
         getResourcePath(): api.rest.Path {

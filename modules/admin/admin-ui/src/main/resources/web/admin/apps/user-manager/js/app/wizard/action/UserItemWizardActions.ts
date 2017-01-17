@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {UserItemWizardPanel} from "../UserItemWizardPanel";
-import {DeleteUserItemAction} from "./DeleteUserItemAction";
+import '../../../api.ts';
+import {UserItemWizardPanel} from '../UserItemWizardPanel';
+import {DeleteUserItemAction} from './DeleteUserItemAction';
 
 export class UserItemWizardActions<USER_ITEM_TYPE extends api.Equitable> extends api.app.wizard.WizardActions<USER_ITEM_TYPE> {
 

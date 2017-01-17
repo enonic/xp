@@ -7,8 +7,8 @@ module api.ui.menu {
         private labelEl: api.dom.DivEl;
 
         constructor(label: string, ...actions: Action[]) {
-            super("action-menu");
-            this.labelEl = new api.dom.DivEl("drop-down-button icon-arrow-down");
+            super('action-menu');
+            this.labelEl = new api.dom.DivEl('drop-down-button icon-arrow-down');
             this.labelEl.setHtml(label);
             this.appendChild(this.labelEl);
 
@@ -22,10 +22,10 @@ module api.ui.menu {
             }
 
             this.labelEl.onClicked((event) => {
-                if (this.hasClass("expanded")) {
-                    this.removeClass("expanded");
+                if (this.hasClass('expanded')) {
+                    this.removeClass('expanded');
                 } else {
-                    this.addClass("expanded");
+                    this.addClass('expanded');
                 }
             });
         }
@@ -38,7 +38,7 @@ module api.ui.menu {
             let actionMenuItem = new ActionMenuItem(action);
             this.actionListEl.appendChild(actionMenuItem);
             actionMenuItem.onClicked(() => {
-                this.removeClass("expanded");
+                this.removeClass('expanded');
             });
         }
     }

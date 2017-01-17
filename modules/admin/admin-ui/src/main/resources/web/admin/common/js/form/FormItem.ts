@@ -15,7 +15,7 @@ module api.form {
                   api.ObjectHelper.iFrameSafeInstanceOf(parent, FieldSet) ||
                   api.ObjectHelper.iFrameSafeInstanceOf(parent, FormOptionSet) ||
                   api.ObjectHelper.iFrameSafeInstanceOf(parent, FormOptionSetOption))) {
-                throw new Error("A parent FormItem must either be a FormItemSet, FieldSet or a FormOptionSet");
+                throw new Error('A parent FormItem must either be a FormItemSet, FieldSet or a FormOptionSet');
             }
 
             this.parent = parent;
@@ -74,7 +74,7 @@ module api.form {
             } else if (api.ObjectHelper.iFrameSafeInstanceOf(this, FormOptionSetOption)) {
                 return (<api.form.FormOptionSetOption><any>this).toFormOptionSetOptionJson();
             } else {
-                throw new Error("Unsupported FormItem: " + this);
+                throw new Error('Unsupported FormItem: ' + this);
             }
         }
 

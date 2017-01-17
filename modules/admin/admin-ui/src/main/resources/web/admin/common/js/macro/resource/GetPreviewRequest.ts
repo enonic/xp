@@ -12,13 +12,13 @@ module api.macro.resource {
         getParams(): Object {
             return {
                 form: this.data.toJson(),
-                contentPath: !!this.path ? this.path.toString() : "",
+                contentPath: !!this.path ? this.path.toString() : '',
                 macroKey: this.macroKey.getRefString()
             };
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "preview");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'preview');
         }
 
         sendAndParse(): wemQ.Promise<MacroPreview> {

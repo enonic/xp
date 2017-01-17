@@ -9,7 +9,7 @@ module api.content.page.region {
         constructor() {
             super();
             this.cache = LayoutDescriptorCache.get();
-            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "content", "page", "layout", "descriptor");
+            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), 'content', 'page', 'layout', 'descriptor');
         }
 
         getResourcePath(): api.rest.Path {

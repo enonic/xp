@@ -81,8 +81,8 @@ module api {
             BrowserHelper.BROWSER_NAME = (<any>BrowserName)[M[1].toLocaleUpperCase()];
             BrowserHelper.BROWSER_VERSION = M[2];
 
-            BrowserHelper.AVAILABLE_VERSIONS[BrowserName.CHROME] = "39";
-            BrowserHelper.AVAILABLE_VERSIONS[BrowserName.FIREFOX] = "27";
+            BrowserHelper.AVAILABLE_VERSIONS[BrowserName.CHROME] = '39';
+            BrowserHelper.AVAILABLE_VERSIONS[BrowserName.FIREFOX] = '27';
 
             BrowserHelper.IS_IE = BrowserHelper.BROWSER_NAME === BrowserName.TRIDENT ||
                                   BrowserHelper.BROWSER_NAME === BrowserName.MSIE ||

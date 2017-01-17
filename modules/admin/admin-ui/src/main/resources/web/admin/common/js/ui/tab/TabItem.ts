@@ -24,7 +24,7 @@ module api.ui.tab {
 
         constructor(builder: TabItemBuilder, classes?: string) {
 
-            super("tab-item" + (!classes ? "" : " " + classes));
+            super('tab-item' + (!classes ? '' : ' ' + classes));
 
             this.labelEl = new api.dom.AEl('label');
             this.appendChild(this.labelEl);
@@ -86,13 +86,13 @@ module api.ui.tab {
                 this.labelEl.getEl().setAttribute('title', newValue);
             }
 
-            this.labelEl.toggleClass("unnamed", markUnnamed);
+            this.labelEl.toggleClass('unnamed', markUnnamed);
 
             this.notifyLabelChangedListeners(newValue, oldValue);
         }
 
         markInvalid(markInvalid: boolean = false) {
-            this.toggleClass("invalid", markInvalid);
+            this.toggleClass('invalid', markInvalid);
         }
 
         getLabel(): string {
@@ -101,7 +101,7 @@ module api.ui.tab {
 
         setActive(value: boolean) {
             this.active = value;
-            this.toggleClass("active", value);
+            this.toggleClass('active', value);
         }
 
         isActive(): boolean {
@@ -126,7 +126,7 @@ module api.ui.tab {
 
         onClosed(listener: (event: TabItemClosedEvent)=>void) {
             if (this.closeAction) {
-                throw new Error("Failed to set 'on closed' listener. Close action is already setted.");
+                throw new Error(`Failed to set 'on closed' listener. Close action is already setted.`);
             } else {
                 this.closedListeners.push(listener);
             }
@@ -175,9 +175,9 @@ module api.ui.tab {
 
         private setFocusable(focusable: boolean) {
             if (focusable) {
-                this.labelEl.getEl().removeAttribute("tabindex");
+                this.labelEl.getEl().removeAttribute('tabindex');
             } else {
-                this.labelEl.getEl().setAttribute("tabindex", "-1");
+                this.labelEl.getEl().setAttribute('tabindex', '-1');
             }
         }
 

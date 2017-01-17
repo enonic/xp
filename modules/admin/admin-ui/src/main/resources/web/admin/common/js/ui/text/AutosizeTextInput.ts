@@ -60,7 +60,7 @@ module api.ui.text {
             // Set input width to text length from the clone <div>
             // or to maximum possible width corresponding to attendant width.
             if (cloneEl.getWidthWithBorder() > this.attendant.getEl().getWidth()) {
-                inputEl.setWidth("100%");
+                inputEl.setWidth('100%');
             } else {
                 inputEl.setWidthPx(cloneEl.getWidthWithBorder());
             }

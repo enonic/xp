@@ -17,13 +17,13 @@ module api.form.inputtype.support {
         }
 
         newInitialValue(): Value {
-            return super.newInitialValue() || ValueTypes.STRING.newValue("");
+            return super.newInitialValue() || ValueTypes.STRING.newValue('');
         }
 
         layout(input: api.form.Input, property?: PropertyArray): wemQ.Promise<void> {
 
             let divEl = new api.dom.DivEl();
-            divEl.getEl().setInnerHtml("Warning: no input type found: " + input.getInputType().toString());
+            divEl.getEl().setInnerHtml('Warning: no input type found: ' + input.getInputType().toString());
 
             return super.layout(input, property);
         }
@@ -69,5 +69,5 @@ module api.form.inputtype.support {
         }
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("NoInputTypeFound", NoInputTypeFoundView));
+    api.form.inputtype.InputTypeManager.register(new api.Class('NoInputTypeFound', NoInputTypeFoundView));
 }

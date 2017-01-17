@@ -9,7 +9,7 @@ module api.content.resource {
 
         constructor(ids: ContentId[]) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             this.ids = ids;
         }
 

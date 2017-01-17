@@ -23,7 +23,7 @@ module api.form {
 
         protected formItemOccurrences: FormSetOccurrences<V>;
 
-        protected classPrefix: string = "";
+        protected classPrefix: string = '';
 
         protected helpText: string;
 
@@ -41,7 +41,7 @@ module api.form {
         public layout(validate: boolean = true): wemQ.Promise<void> {
             let deferred = wemQ.defer<void>();
 
-            this.occurrenceViewsContainer = new api.dom.DivEl("occurrence-views-container");
+            this.occurrenceViewsContainer = new api.dom.DivEl('occurrence-views-container');
 
             wemjq(this.occurrenceViewsContainer.getHTMLElement()).sortable({
                 revert: false,
@@ -63,7 +63,7 @@ module api.form {
 
                 this.subscribeFormSetOccurrencesOnEvents();
 
-                this.bottomButtonRow = new api.dom.DivEl("bottom-button-row");
+                this.bottomButtonRow = new api.dom.DivEl('bottom-button-row');
                 this.appendChild(this.bottomButtonRow);
 
                 this.bottomButtonRow.appendChild(this.addButton = this.makeAddButton());
@@ -89,7 +89,7 @@ module api.form {
 
             this.formItemOccurrences.onOccurrenceAdded((event: OccurrenceAddedEvent) => {
                 this.refresh();
-                wemjq(this.occurrenceViewsContainer.getHTMLElement()).sortable("refresh");
+                wemjq(this.occurrenceViewsContainer.getHTMLElement()).sortable('refresh');
 
                 if (api.ObjectHelper.iFrameSafeInstanceOf(event.getOccurrenceView(), FormSetOccurrenceView)) {
                     let addedFormSetOccurrenceView = <V>event.getOccurrenceView();
@@ -119,8 +119,8 @@ module api.form {
         }
 
         private makeAddButton(): api.ui.button.Button {
-            let addButton = new api.ui.button.Button("Add " + this.formSet.getLabel());
-            addButton.addClass("small");
+            let addButton = new api.ui.button.Button('Add ' + this.formSet.getLabel());
+            addButton.addClass('small');
             addButton.onClicked((event: MouseEvent) => {
                 this.formItemOccurrences.createAndAddOccurrence(this.formItemOccurrences.countOccurrences(), false);
                 if ((<FormSetOccurrences<V>> this.formItemOccurrences).isCollapsed()) {
@@ -131,14 +131,14 @@ module api.form {
         }
 
         private makeCollapseButton(): api.dom.AEl {
-            let collapseButton = new api.dom.AEl("collapse-button");
-            collapseButton.setHtml("Collapse");
+            let collapseButton = new api.dom.AEl('collapse-button');
+            collapseButton.setHtml('Collapse');
             collapseButton.onClicked((event: MouseEvent) => {
                 if ((<FormSetOccurrences<V>> this.formItemOccurrences).isCollapsed()) {
-                    collapseButton.setHtml("Collapse");
+                    collapseButton.setHtml('Collapse');
                     (<FormSetOccurrences<V>> this.formItemOccurrences).showOccurrences(true);
                 } else {
-                    collapseButton.setHtml("Expand");
+                    collapseButton.setHtml('Expand');
                     (<FormSetOccurrences<V>> this.formItemOccurrences).showOccurrences(false);
                 }
                 event.stopPropagation();
@@ -212,13 +212,13 @@ module api.form {
         }
 
         protected initOccurrences(): FormSetOccurrences<V> {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         validate(silent: boolean = true, viewToSkipValidation: FormItemOccurrenceView = null): ValidationRecording {
 
             if (!this.formItemOccurrences) {
-                throw new Error("Can't validate before layout is done");
+                throw new Error(`Can't validate before layout is done`);
             }
 
             let validationRecordingPath = this.resolveValidationRecordingPath();
@@ -314,29 +314,29 @@ module api.form {
 
         protected renderValidationErrors(recording: ValidationRecording) {
             if (recording.isValid()) {
-                this.removeClass("invalid");
-                this.addClass("valid");
+                this.removeClass('invalid');
+                this.addClass('valid');
             } else {
-                this.removeClass("valid");
-                this.addClass("invalid");
+                this.removeClass('valid');
+                this.addClass('invalid');
             }
         }
 
         protected handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
 
             let draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
-            api.util.assert(draggedElement.hasClass(this.classPrefix + "-occurrence-view"));
+            api.util.assert(draggedElement.hasClass(this.classPrefix + '-occurrence-view'));
             this.draggingIndex = draggedElement.getSiblingIndex();
 
             DragHelper.get().setDropAllowed(true);
-            ui.placeholder.html("Drop form item set here");
+            ui.placeholder.html('Drop form item set here');
         }
 
         protected handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
 
             if (this.draggingIndex >= 0) {
                 let draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
-                api.util.assert(draggedElement.hasClass(this.classPrefix + "-occurrence-view"));
+                api.util.assert(draggedElement.hasClass(this.classPrefix + '-occurrence-view'));
                 let draggedToIndex = draggedElement.getSiblingIndex();
 
                 this.formItemOccurrences.moveOccurrence(this.draggingIndex, draggedToIndex);

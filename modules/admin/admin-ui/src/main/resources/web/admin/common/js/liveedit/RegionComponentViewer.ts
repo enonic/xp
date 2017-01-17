@@ -15,7 +15,7 @@ module api.liveedit {
         }
 
         resolveIconClass(object: api.content.page.region.Region): string {
-            return api.liveedit.ItemViewIconClassResolver.resolveByType("region");
+            return api.liveedit.ItemViewIconClassResolver.resolveByType('region');
         }
     }
 

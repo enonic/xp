@@ -22,7 +22,7 @@ module api.ui.treegrid.actions {
 
         private createLabel(treeGrid: TreeGrid<DATA>) {
             let count = this.getCount(treeGrid);
-            let label = "Clear Selection" + ( !!count ? " (" + count + ")" : "");
+            let label = 'Clear Selection' + ( !!count ? ' (' + count + ')' : '');
 
             this.setLabel(label);
         }

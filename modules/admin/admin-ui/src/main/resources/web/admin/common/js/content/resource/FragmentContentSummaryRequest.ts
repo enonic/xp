@@ -23,7 +23,7 @@ module api.content.resource {
         }
 
         private createParentSiteFragmentsOnlyQuery(): CompareExpr {
-            return CompareExpr.like(new FieldExpr("_path"), ValueExpr.string("/content" + this.parentSitePath + "/*"));
+            return CompareExpr.like(new FieldExpr('_path'), ValueExpr.string('/content' + this.parentSitePath + '/*'));
         }
 
         setParentSitePath(sitePath: string) {

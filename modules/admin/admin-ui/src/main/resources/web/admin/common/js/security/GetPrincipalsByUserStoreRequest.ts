@@ -8,7 +8,7 @@ module api.security {
 
         constructor(userStore: UserStoreKey, principalTypes: PrincipalType[]) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
             this.userStore = userStore;
             this.principalTypes = principalTypes;
         }
@@ -26,10 +26,10 @@ module api.security {
         }
 
         private getType(): string {
-            let typeStr: string = "";
+            let typeStr: string = '';
             this.principalTypes.forEach((type) => {
                 typeStr += PrincipalType[type];
-                typeStr += ",";
+                typeStr += ',';
             });
             return typeStr.substr(0, typeStr.length - 1);
         }

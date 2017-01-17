@@ -15,11 +15,11 @@ module api.query.expr {
         directionAsString(): string {
             switch (this.direction) {
             case OrderDirection.ASC:
-                return "ASC";
+                return 'ASC';
             case OrderDirection.DESC:
-                return "DESC";
+                return 'DESC';
             default:
-                return "";
+                return '';
             }
         }
     }

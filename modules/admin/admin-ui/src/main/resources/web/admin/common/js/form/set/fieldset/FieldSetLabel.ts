@@ -5,7 +5,7 @@ module api.form {
         private fieldSet:FieldSet;
 
         constructor(fieldSet:FieldSet) {
-            super("field-set-label");
+            super('field-set-label');
 
             this.fieldSet = fieldSet;
 

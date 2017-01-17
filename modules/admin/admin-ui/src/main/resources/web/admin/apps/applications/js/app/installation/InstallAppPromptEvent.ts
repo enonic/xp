@@ -1,5 +1,4 @@
-import "../../api.ts";
-import {ApplicationTreeGrid} from "../browse/ApplicationTreeGrid";
+import '../../api.ts';
 
 import  Application = api.application.Application;
 

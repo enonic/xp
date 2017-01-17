@@ -1,9 +1,9 @@
-import "../../../../api.ts";
-import {ContextWindow} from "./ContextWindow";
-import {ShowContentFormEvent} from "../../ShowContentFormEvent";
-import {ShowSplitEditEvent} from "../../ShowSplitEditEvent";
-import {ShowLiveEditEvent} from "../../ShowLiveEditEvent";
-import {ContentWizardPanel} from "../../ContentWizardPanel";
+import '../../../../api.ts';
+import {ContextWindow} from './ContextWindow';
+import {ShowContentFormEvent} from '../../ShowContentFormEvent';
+import {ShowSplitEditEvent} from '../../ShowSplitEditEvent';
+import {ShowLiveEditEvent} from '../../ShowLiveEditEvent';
+import {ContentWizardPanel} from '../../ContentWizardPanel';
 
 import ComponentView = api.liveedit.ComponentView;
 import Component = api.content.page.region.Component;

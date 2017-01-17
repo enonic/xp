@@ -29,7 +29,7 @@ module api.ui.text {
         private DIGIT_CHARS: string = '0123456789';
 
         constructor() {
-            super("div", "password-generator");
+            super('div', 'password-generator');
 
             let inputWrapper = new api.dom.DivEl('input-wrapper');
             this.appendChild(inputWrapper);
@@ -129,7 +129,7 @@ module api.ui.text {
             let maxLowercase = length - maxSpecials - maxDigits - maxUppercase;
             let lowercase = 0;
 
-            let result = "";
+            let result = '';
             let types = [CharType.SPECIAL, CharType.DIGIT, CharType.UPPERCASE, CharType.LOWERCASE];
 
             for (let i = 0; i < length; i++) {

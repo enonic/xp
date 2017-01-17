@@ -33,7 +33,7 @@ module api.content.page.region {
             this.config = builder.config;
             this.configChangedHandler = (event: PropertyEvent) => {
                 if (ImageComponent.debug) {
-                    console.debug("ImageComponent[" + this.getPath().toString() + "].config.onChanged: ", event);
+                    console.debug('ImageComponent[' + this.getPath().toString() + '].config.onChanged: ', event);
                 }
                 if (!this.disableEventForwarding) {
                     this.notifyPropertyValueChanged(ImageComponent.PROPERTY_CONFIG);
@@ -44,9 +44,9 @@ module api.content.page.region {
 
             let formBuilder = new FormBuilder();
             formBuilder.addFormItem(new api.form.InputBuilder().
-                setName("caption").
+                setName('caption').
                 setInputType(TextArea.getName()).
-                setLabel("Caption").
+                setLabel('Caption').
                 setOccurrences(new OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).
                 build());
             this.form = formBuilder.build();

@@ -11,7 +11,7 @@ module api.content.resource {
 
         constructor(contentPath?: ContentPath) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             if (contentPath) {
                 this.addContentPath(contentPath);
             }
@@ -37,7 +37,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "batch");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'batch');
         }
 
         sendAndParse(): wemQ.Promise<ContentResponse<ContentSummary>> {
@@ -45,7 +45,7 @@ module api.content.resource {
             return this.send().then((response: api.rest.JsonResponse<BatchContentResult<api.content.json.ContentSummaryJson>>) => {
                 return new ContentResponse(
                     ContentSummary.fromJsonArray(response.getResult().contents),
-                    new ContentMetadata(response.getResult().metadata["hits"], response.getResult().metadata["totalHits"])
+                    new ContentMetadata(response.getResult().metadata['hits'], response.getResult().metadata['totalHits'])
                 );
             });
         }

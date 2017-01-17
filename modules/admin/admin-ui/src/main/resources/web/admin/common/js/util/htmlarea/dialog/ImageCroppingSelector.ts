@@ -8,11 +8,11 @@ module api.util.htmlarea.dialog {
     export class ImageCroppingSelector extends Dropdown<ImageCroppingOption> {
 
         constructor() {
-            super("imageSelector", <DropdownConfig<ImageCroppingOption>>{
+            super('imageSelector', <DropdownConfig<ImageCroppingOption>>{
                 optionDisplayValueViewer: new ImageCroppingOptionViewer(),
-                inputPlaceholderText: "Cropping effect"
+                inputPlaceholderText: 'Cropping effect'
             });
-            this.addClass("image-cropping-selector");
+            this.addClass('image-cropping-selector');
 
             this.initDropdown();
         }
@@ -23,15 +23,15 @@ module api.util.htmlarea.dialog {
             this.addCroppingOptions();
 
             this.onOptionSelected((event: OptionSelectedEvent<ImageCroppingOption>) => {
-                if(event.getOption().displayValue.getName() == "none") {
+                if(event.getOption().displayValue.getName() == 'none') {
                     this.reset();
                 }
             });
         }
 
         private addNoneOption() {
-            let noneOption = new ImageCroppingOption("none", 0 , 0);
-            noneOption.setDisplayValue("<None>");
+            let noneOption = new ImageCroppingOption('none', 0 , 0);
+            noneOption.setDisplayValue('<None>');
 
             let option =  {
                 value: noneOption.getName(),

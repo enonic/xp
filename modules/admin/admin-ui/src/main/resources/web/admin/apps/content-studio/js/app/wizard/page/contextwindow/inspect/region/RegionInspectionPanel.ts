@@ -1,5 +1,5 @@
-import "../../../../../../api.ts";
-import {BaseInspectionPanel} from "../BaseInspectionPanel";
+import '../../../../../../api.ts';
+import {BaseInspectionPanel} from '../BaseInspectionPanel';
 
 import Region = api.content.page.region.Region;
 
@@ -14,7 +14,7 @@ export class RegionInspectionPanel extends BaseInspectionPanel {
 
         this.namesAndIcon =
             new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.medium)).setIconClass(
-                api.liveedit.ItemViewIconClassResolver.resolveByType("region"));
+                api.liveedit.ItemViewIconClassResolver.resolveByType('region'));
 
         this.appendChild(this.namesAndIcon);
     }
@@ -27,8 +27,8 @@ export class RegionInspectionPanel extends BaseInspectionPanel {
             this.namesAndIcon.setMainName(region.getName());
             this.namesAndIcon.setSubName(region.getPath().toString());
         } else {
-            this.namesAndIcon.setMainName("[No  Region given]");
-            this.namesAndIcon.setSubName("");
+            this.namesAndIcon.setMainName('[No  Region given]');
+            this.namesAndIcon.setSubName('');
         }
     }
 

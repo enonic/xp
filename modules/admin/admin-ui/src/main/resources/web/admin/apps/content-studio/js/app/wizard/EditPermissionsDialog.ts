@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {ContentPermissionsApplyEvent} from "./ContentPermissionsApplyEvent";
+import '../../api.ts';
+import {ContentPermissionsApplyEvent} from './ContentPermissionsApplyEvent';
 
 import Content = api.content.Content;
 import AccessControlComboBox = api.ui.security.acl.AccessControlComboBox;
@@ -125,7 +125,7 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
                 this.open();
 
             }).catch(() => {
-                api.notify.showWarning("Could not read inherit permissions for content '" + this.displayName + "'");
+                api.notify.showWarning(`Could not read inherit permissions for content '${this.displayName}'`);
             }).done();
         });
 
@@ -150,7 +150,7 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
             let res = req.sendAndParse();
 
             res.done((updatedContent: Content) => {
-                api.notify.showFeedback("Permissions applied to content '" + updatedContent.getDisplayName() + "'");
+                api.notify.showFeedback(`Permissions applied to content '${updatedContent.getDisplayName()}'`);
                 this.close();
             });
         } else {
@@ -203,15 +203,15 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
             new api.content.resource.GetContentByPathRequest(parentPath).sendAndParse().then((content: Content) => {
                 deferred.resolve(content.getPermissions());
             }).catch((reason: any) => {
-                deferred.reject(new Error("Inherit permissions for [" + this.contentPath.toString() +
-                                          "] could not be retrieved"));
+                deferred.reject(new Error('Inherit permissions for [' + this.contentPath.toString() +
+                                          '] could not be retrieved'));
             }).done();
         } else {
             new api.content.resource.GetContentRootPermissionsRequest().sendAndParse().then((rootPermissions: AccessControlList) => {
                 deferred.resolve(rootPermissions);
             }).catch((reason: any) => {
-                deferred.reject(new Error("Inherit permissions for [" + this.contentPath.toString() +
-                                          "] could not be retrieved"));
+                deferred.reject(new Error('Inherit permissions for [' + this.contentPath.toString() +
+                                          '] could not be retrieved'));
             }).done();
         }
 

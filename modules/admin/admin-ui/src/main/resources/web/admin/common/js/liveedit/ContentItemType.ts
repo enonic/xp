@@ -11,7 +11,7 @@ module api.liveedit {
         }
 
         constructor() {
-            super("content");
+            super('content');
         }
 
         protected getItemTypeConfig(itemType: string): ItemTypeConfig {

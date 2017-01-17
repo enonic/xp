@@ -54,7 +54,7 @@ module api.dom {
         }
 
         isShowingModalDialog() {
-            return Body.get().hasClass("modal-dialog");
+            return Body.get().hasClass('modal-dialog');
         }
     }
 }

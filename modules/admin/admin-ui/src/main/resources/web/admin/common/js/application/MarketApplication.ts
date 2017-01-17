@@ -70,7 +70,7 @@ module api.application {
 
         public getLatestVersionDownloadUrl(): string {
             if (this.getLatestVersion()) {
-                return this.getVersions()[this.getLatestVersion()]["applicationUrl"];
+                return this.getVersions()[this.getLatestVersion()]['applicationUrl'];
             } else {
                 return null;
             }
@@ -111,10 +111,10 @@ module api.application {
 
     export class MarketAppStatusFormatter {
 
-        public static statusInstallCssClass: string = "install";
-        public static statusInstalledCssClass: string = "installed";
-        public static statusInstallingCssClass: string = "installing";
-        public static statusUpdateCssClass: string = "update";
+        public static statusInstallCssClass: string = 'install';
+        public static statusInstalledCssClass: string = 'installed';
+        public static statusInstallingCssClass: string = 'installing';
+        public static statusUpdateCssClass: string = 'update';
 
         public static formatStatus(appStatus: MarketAppStatus, progress?: number): string {
 
@@ -122,26 +122,26 @@ module api.application {
 
             switch (appStatus) {
             case MarketAppStatus.NOT_INSTALLED:
-                status = "Install";
+                status = 'Install';
                 break;
             case MarketAppStatus.INSTALLED:
-                status = "Installed";
+                status = 'Installed';
                 break;
             case MarketAppStatus.INSTALLING:
                 status = new api.ui.ProgressBar(progress).toString();
                 break;
             case MarketAppStatus.OLDER_VERSION_INSTALLED:
-                status = "Update";
+                status = 'Update';
                 break;
             case MarketAppStatus.UNKNOWN:
-                status = "Unknown";
+                status = 'Unknown';
                 break;
             default:
-                status = "Unknown";
+                status = 'Unknown';
             }
 
             if (!!MarketAppStatus[status]) {
-                return "Unknown";
+                return 'Unknown';
             }
 
             return status;
@@ -165,14 +165,14 @@ module api.application {
                 cssClass = MarketAppStatusFormatter.statusUpdateCssClass;
                 break;
             case MarketAppStatus.UNKNOWN:
-                cssClass = "unknown";
+                cssClass = 'unknown';
                 break;
             default:
-                cssClass = "Unknown";
+                cssClass = 'Unknown';
             }
 
             if (!!MarketAppStatus[status]) {
-                return "unknown";
+                return 'unknown';
             }
 
             return cssClass;
@@ -184,13 +184,13 @@ module api.application {
 
             switch (appStatus) {
             case MarketAppStatus.NOT_INSTALLED:
-                performedOperation = "installed";
+                performedOperation = 'installed';
                 break;
             case MarketAppStatus.OLDER_VERSION_INSTALLED:
-                performedOperation = "updated";
+                performedOperation = 'updated';
                 break;
             default:
-                performedOperation = "installed";
+                performedOperation = 'installed';
             }
 
             return performedOperation;

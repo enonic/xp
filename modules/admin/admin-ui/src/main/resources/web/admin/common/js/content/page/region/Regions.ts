@@ -27,7 +27,7 @@ module api.content.page.region {
 
             builder.regions.forEach((region: Region) => {
                 if (this.regionByName[region.getName()] != undefined) {
-                    throw new Error("Regions must be unique by name, duplicate found: " + region.getName());
+                    throw new Error('Regions must be unique by name, duplicate found: ' + region.getName());
                 }
 
                 this.addRegion(region);
@@ -90,7 +90,7 @@ module api.content.page.region {
                 return component;
             } else {
                 if (!api.ObjectHelper.iFrameSafeInstanceOf(component, LayoutComponent)) {
-                    throw new Error("Expected component to be a LayoutComponent: " + api.ClassHelper.getClassName(component));
+                    throw new Error('Expected component to be a LayoutComponent: ' + api.ClassHelper.getClassName(component));
                 }
 
                 let layoutComponent = <LayoutComponent> component;
@@ -171,7 +171,7 @@ module api.content.page.region {
 
         private notifyChanged(event: RegionsChangedEvent) {
             if (Regions.debug) {
-                console.debug("Regions.notifyChanged");
+                console.debug('Regions.notifyChanged');
             }
             this.changedListeners.forEach((listener: (event: RegionsChangedEvent) => void) => {
                 listener(event);
@@ -209,7 +209,7 @@ module api.content.page.region {
         private notifyRegionChanged(regionPath: RegionPath): void {
             let event = new RegionChangedEvent(regionPath);
             if (Regions.debug) {
-                console.debug("Regions.notifyRegionChanged: " + event.getRegionPath().toString());
+                console.debug('Regions.notifyRegionChanged: ' + event.getRegionPath().toString());
             }
             this.regionChangedListeners.forEach((listener: (event: RegionChangedEvent)=>void) => {
                 listener(event);
@@ -231,7 +231,7 @@ module api.content.page.region {
         private notifyRegionAdded(regionPath: RegionPath) {
             let event = new RegionAddedEvent(regionPath);
             if (Regions.debug) {
-                console.debug("Regions.notifyRegionAdded: " + event.getRegionPath().toString());
+                console.debug('Regions.notifyRegionAdded: ' + event.getRegionPath().toString());
             }
             this.regionAddedListeners.forEach((listener: (event: RegionAddedEvent)=>void) => {
                 listener(event);
@@ -253,7 +253,7 @@ module api.content.page.region {
         private notifyRegionRemoved(regionPath: RegionPath) {
             let event = new RegionRemovedEvent(regionPath);
             if (Regions.debug) {
-                console.debug("Regions.notifyRegionRemoved: " + event.getRegionPath().toString());
+                console.debug('Regions.notifyRegionRemoved: ' + event.getRegionPath().toString());
             }
             this.regionRemovedListeners.forEach((listener: (event: RegionRemovedEvent)=>void) => {
                 listener(event);

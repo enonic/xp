@@ -257,7 +257,7 @@ module api.data {
 
         public static fromJson(json: PropertyArrayJson[]): PropertyTree {
 
-            api.util.assertNotNull(json, "a json is required");
+            api.util.assertNotNull(json, 'a json is required');
             let tree = new PropertyTree();
 
             json.forEach((propertyArrayJson: PropertyArrayJson) => {

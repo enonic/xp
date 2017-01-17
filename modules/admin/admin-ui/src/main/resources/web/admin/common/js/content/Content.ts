@@ -25,7 +25,7 @@ module api.content {
         constructor(builder: ContentBuilder) {
             super(builder);
 
-            api.util.assertNotNull(builder.data, "data is required for Content");
+            api.util.assertNotNull(builder.data, 'data is required for Content');
             this.data = builder.data;
             this.attachments = builder.attachments;
             this.extraData = builder.extraData || [];
@@ -255,7 +255,7 @@ module api.content {
             if (json.permissions) {
                 this.permissions = AccessControlList.fromJson(json);
             }
-            if (typeof json.inheritPermissions !== "undefined") {
+            if (typeof json.inheritPermissions !== 'undefined') {
                 this.inheritPermissions = json.inheritPermissions;
             }
 

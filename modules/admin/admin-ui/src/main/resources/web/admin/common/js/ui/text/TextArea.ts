@@ -7,8 +7,8 @@ module api.ui.text {
         private clone: api.dom.Element;
 
         constructor(name: string, originalValue?: string) {
-            super("textarea", "text-area", undefined, originalValue);
-            this.getEl().setAttribute("name", name);
+            super('textarea', 'text-area', undefined, originalValue);
+            this.getEl().setAttribute('name', name);
 
             this.onInput((event: Event) => {
                 this.refreshDirtyState();
@@ -30,16 +30,16 @@ module api.ui.text {
         }
 
         setRows(rows: number) {
-            this.getEl().setAttribute("rows", rows.toString());
+            this.getEl().setAttribute('rows', rows.toString());
         }
 
         setColumns(columns: number) {
-            this.getEl().setAttribute("cols", columns.toString());
+            this.getEl().setAttribute('cols', columns.toString());
         }
 
         private updateSize() {
             if (this.isRendered()) {
-                this.clone.getEl().setInnerHtml(this.getValue() + " ");
+                this.clone.getEl().setInnerHtml(this.getValue() + ' ');
                 this.getEl().setHeightPx(this.clone.getEl().getHeightWithBorder());
             }
         }

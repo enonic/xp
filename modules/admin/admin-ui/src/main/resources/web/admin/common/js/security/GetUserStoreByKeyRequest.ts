@@ -6,7 +6,7 @@ module api.security {
 
         constructor(userStoreKey: UserStoreKey) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
             this.userStoreKey = userStoreKey;
         }
 

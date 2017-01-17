@@ -6,15 +6,15 @@ module api.ui.form {
         private input: api.dom.FormItemEl;
         private error: api.dom.SpanEl;
         private validator: (input: api.dom.FormItemEl) => string;
-        private invalidClass: string = "invalid";
+        private invalidClass: string = 'invalid';
 
         private focusListeners: {(event: FocusEvent):void}[] = [];
 
         private blurListeners: {(event: FocusEvent):void}[] = [];
 
         constructor(builder: FormItemBuilder) {
-            super("input-view");
-            this.error = new api.dom.SpanEl("error");
+            super('input-view');
+            this.error = new api.dom.SpanEl('error');
             this.appendChild(this.error);
 
             this.input = builder.getInput();
@@ -29,7 +29,7 @@ module api.ui.form {
             if (builder.getLabel()) {
                 this.label = new api.dom.LabelEl(builder.getLabel(), this.input);
                 if(Validators.required == builder.getValidator()) {
-                    this.label.addClass("required");
+                    this.label.addClass('required');
                 }
                 this.appendChild(this.label);
             }
@@ -144,7 +144,7 @@ module api.ui.form {
 
         constructor(input: api.dom.FormItemEl) {
             if(!input) {
-                throw new Error("Input can't be null.");
+                throw new Error(`Input can't be null.`);
             }
             this.input = input;
         }

@@ -1,6 +1,6 @@
-import "../../../../api.ts";
-import {LiveEditPageProxy} from "../LiveEditPageProxy";
-import {EmulatorGrid} from "./EmulatorGrid";
+import '../../../../api.ts';
+import {LiveEditPageProxy} from '../LiveEditPageProxy';
+import {EmulatorGrid} from './EmulatorGrid';
 
 export interface EmulatorPanelConfig {
 
@@ -15,12 +15,12 @@ export class EmulatorPanel extends api.ui.panel.Panel {
     private liveEditPage: LiveEditPageProxy;
 
     constructor(config: EmulatorPanelConfig) {
-        super("emulator-panel");
+        super('emulator-panel');
 
         this.liveEditPage = config.liveEditPage;
 
         let text = new api.dom.PEl();
-        text.getEl().setInnerHtml("Emulate different client's physical sizes");
+        text.getEl().setInnerHtml(`Emulate different client's physical sizes`);
         this.appendChild(text);
 
         this.dataView = new api.ui.grid.DataView<any>();
@@ -30,17 +30,17 @@ export class EmulatorPanel extends api.ui.panel.Panel {
         this.getData();
 
         // Using jQuery since grid.setOnClick fires event twice, bug in slickgrid
-        wemjq(this.getHTMLElement()).on("click", ".grid-row > div", (event: JQueryEventObject) => {
+        wemjq(this.getHTMLElement()).on('click', '.grid-row > div', (event: JQueryEventObject) => {
 
             let el = wemjq(event.currentTarget);
-            let width = el.data("width");
-            let height = el.data("height");
-            let units = el.data("units");
+            let width = el.data('width');
+            let height = el.data('height');
+            let units = el.data('units');
 
             this.liveEditPage.setWidth(width + units);
             this.liveEditPage.setHeight(height + units);
 
-            if (units === "px") {
+            if (units === 'px') {
                 this.updateLiveEditFrameContainerHeight(height);
             } else {
                 this.resetParentHeight();
@@ -48,7 +48,7 @@ export class EmulatorPanel extends api.ui.panel.Panel {
 
         });
 
-        wemjq(this.getHTMLElement()).on("click", ".rotate", (event: JQueryEventObject) => {
+        wemjq(this.getHTMLElement()).on('click', '.rotate', (event: JQueryEventObject) => {
 
             event.stopPropagation();
 
@@ -59,7 +59,7 @@ export class EmulatorPanel extends api.ui.panel.Panel {
 
     private getData(): void {
         wemjq.ajax({
-            url: api.util.UriHelper.getAdminUri("apps/content-studio/js/data/context-window/devices.json"),
+            url: api.util.UriHelper.getAdminUri('apps/content-studio/js/data/context-window/devices.json'),
             success: (data: any, textStatus: string, jqXHR: JQueryXHR) => {
                 this.dataView.setItems(EmulatorGrid.toSlickData(data));
                 this.grid.setActiveCell(0, 0); // select first option
@@ -76,35 +76,35 @@ export class EmulatorPanel extends api.ui.panel.Panel {
 
         let frameParent = this.liveEditPage.getIFrame().getHTMLElement().parentElement;
         if (height > pageHeight) {
-            frameParent.style.height = "";
-            frameParent.classList.add("overflow");
+            frameParent.style.height = '';
+            frameParent.classList.add('overflow');
         } else {
-            frameParent.style.height = height + this.getScrollbarWidth() + "px";
-            frameParent.classList.remove("overflow");
+            frameParent.style.height = height + this.getScrollbarWidth() + 'px';
+            frameParent.classList.remove('overflow');
         }
     }
 
     private resetParentHeight() {
         let frameParent = this.liveEditPage.getIFrame().getHTMLElement().parentElement;
-        frameParent.style.height = "";
-        frameParent.classList.remove("overflow");
+        frameParent.style.height = '';
+        frameParent.classList.remove('overflow');
     }
 
     private getScrollbarWidth(): number {
-        let outer = document.createElement("div");
-        outer.style.visibility = "hidden";
-        outer.style.width = "100px";
-        outer.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
+        let outer = document.createElement('div');
+        outer.style.visibility = 'hidden';
+        outer.style.width = '100px';
+        outer.style.msOverflowStyle = 'scrollbar'; // needed for WinJS apps
 
         document.body.appendChild(outer);
 
         let widthNoScroll = outer.offsetWidth;
         // force scrollbars
-        outer.style.overflow = "scroll";
+        outer.style.overflow = 'scroll';
 
         // add innerdiv
-        let inner = document.createElement("div");
-        inner.style.width = "100%";
+        let inner = document.createElement('div');
+        inner.style.width = '100%';
         outer.appendChild(inner);
 
         let widthWithScroll = inner.offsetWidth;

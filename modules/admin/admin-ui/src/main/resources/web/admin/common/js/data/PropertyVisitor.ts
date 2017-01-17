@@ -26,7 +26,7 @@ module api.data {
         }
 
         public visit(property: Property) {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
     }
 }

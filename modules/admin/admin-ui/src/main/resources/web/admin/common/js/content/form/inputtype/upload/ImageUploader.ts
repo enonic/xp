@@ -15,7 +15,7 @@ module api.content.form.inputtype.upload {
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super(config);
             this.initUploader(config);
-            this.addClass("image-uploader-input");
+            this.addClass('image-uploader-input');
         }
 
         private initUploader(config: api.content.form.inputtype.ContentInputTypeViewContext) {
@@ -294,5 +294,5 @@ module api.content.form.inputtype.upload {
 
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("ImageUploader", ImageUploader));
+    api.form.inputtype.InputTypeManager.register(new api.Class('ImageUploader', ImageUploader));
 }

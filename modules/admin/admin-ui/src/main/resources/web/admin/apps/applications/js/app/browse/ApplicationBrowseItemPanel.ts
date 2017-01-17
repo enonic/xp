@@ -1,6 +1,6 @@
-import "../../api.ts";
-import {ApplicationBrowseItemsSelectionPanel} from "./ApplicationBrowseItemsSelectionPanel";
-import {ApplicationItemStatisticsPanel} from "../view/ApplicationItemStatisticsPanel";
+import '../../api.ts';
+import {ApplicationBrowseItemsSelectionPanel} from './ApplicationBrowseItemsSelectionPanel';
+import {ApplicationItemStatisticsPanel} from '../view/ApplicationItemStatisticsPanel';
 
 export class ApplicationBrowseItemPanel extends api.app.browse.BrowseItemPanel<api.application.Application> {
 

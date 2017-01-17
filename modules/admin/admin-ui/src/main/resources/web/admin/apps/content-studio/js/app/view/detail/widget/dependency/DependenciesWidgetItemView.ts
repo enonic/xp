@@ -1,7 +1,7 @@
-import "../../../../../api.ts";
-import {WidgetItemView} from "../../WidgetItemView";
-import {DependencyGroup, DependencyType} from "./DependencyGroup";
-import {ToggleSearchPanelWithDependenciesEvent} from "../../../../browse/ToggleSearchPanelWithDependenciesEvent";
+import '../../../../../api.ts';
+import {WidgetItemView} from '../../WidgetItemView';
+import {DependencyGroup, DependencyType} from './DependencyGroup';
+import {ToggleSearchPanelWithDependenciesEvent} from '../../../../browse/ToggleSearchPanelWithDependenciesEvent';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import ContentDependencyJson = api.content.json.ContentDependencyJson;
@@ -27,11 +27,11 @@ export class DependenciesWidgetItemView extends WidgetItemView {
     private outboundButton: ActionButton;
 
     constructor() {
-        super("dependency-widget-item-view");
+        super('dependency-widget-item-view');
 
-        this.inboundButton = this.appendButton("Show Inbound", "btn-inbound");
+        this.inboundButton = this.appendButton('Show Inbound', 'btn-inbound');
         this.appendMainContainer();
-        this.outboundButton = this.appendButton("Show Outbound", "btn-outbound");
+        this.outboundButton = this.appendButton('Show Outbound', 'btn-outbound');
         this.manageButtonClick();
     }
 
@@ -49,7 +49,7 @@ export class DependenciesWidgetItemView extends WidgetItemView {
         if (dependencies.length == 0) {
             button.hide();
         } else {
-            button.setLabel(button.getAction().getLabel() + " (" + this.getTotalItemCount(dependencies) + ")");
+            button.setLabel(button.getAction().getLabel() + ' (' + this.getTotalItemCount(dependencies) + ')');
             button.show();
         }
     }
@@ -76,12 +76,12 @@ export class DependenciesWidgetItemView extends WidgetItemView {
     private resetContainers() {
         this.mainContainer.removeChildren();
 
-        this.removeClass("no-inbound");
-        this.removeClass("no-outbound");
+        this.removeClass('no-inbound');
+        this.removeClass('no-outbound');
     }
 
     private appendMainContainer() {
-        this.mainContainer = new api.dom.DivEl("main-container");
+        this.mainContainer = new api.dom.DivEl('main-container');
         this.appendChild(this.mainContainer);
     }
 
@@ -92,18 +92,18 @@ export class DependenciesWidgetItemView extends WidgetItemView {
                 .setMainName(item.getDisplayName())
                 .setSubName(item.getPath().toString());
 
-        this.nameAndIcon.addClass("main-content");
+        this.nameAndIcon.addClass('main-content');
 
         this.mainContainer.appendChild(this.nameAndIcon);
     }
 
     private createDependenciesContainer(type: DependencyType, dependencies: DependencyGroup[]): api.dom.DivEl {
         let typeAsString = DependencyType[type].toLowerCase();
-        let div = new api.dom.DivEl("dependencies-container " + typeAsString);
+        let div = new api.dom.DivEl('dependencies-container ' + typeAsString);
         if (dependencies.length == 0) {
-            this.addClass("no-"  + typeAsString);
-            div.addClass("no-dependencies");
-            div.setHtml("No " + typeAsString + " dependencies");
+            this.addClass('no-'  + typeAsString);
+            div.addClass('no-dependencies');
+            div.setHtml('No ' + typeAsString + ' dependencies');
         } else {
             this.appendDependencies(div, dependencies);
         }
@@ -137,7 +137,7 @@ export class DependenciesWidgetItemView extends WidgetItemView {
         dependencies.forEach((dependencyGroup: DependencyGroup) => {
             let dependencyGroupView = new api.app.NamesAndIconView(new NamesAndIconViewBuilder().setSize(NamesAndIconViewSize.small))
                 .setIconUrl(dependencyGroup.getIconUrl())
-                .setMainName("(" + dependencyGroup.getItemCount().toString() + ")");
+                .setMainName('(' + dependencyGroup.getItemCount().toString() + ')');
 
             /* Tooltip is buggy
             dependencyGroupView.getEl().setTitle(dependencyGroup.getName());

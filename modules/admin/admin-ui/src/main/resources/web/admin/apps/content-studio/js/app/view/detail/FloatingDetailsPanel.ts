@@ -1,7 +1,7 @@
-import "../../../api.ts";
-import {SlidablePanel, SlidablePanelBuilder} from "./SlidablePanel";
-import {DetailsView} from "./DetailsView";
-import {DETAILS_PANEL_TYPE} from "./DetailsPanel";
+import '../../../api.ts';
+import {SlidablePanel, SlidablePanelBuilder} from './SlidablePanel';
+import {DetailsView} from './DetailsView';
+import {DETAILS_PANEL_TYPE} from './DetailsPanel';
 
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 
@@ -17,10 +17,10 @@ export class FloatingDetailsPanel extends SlidablePanel {
 
     constructor(detailsView: DetailsView) {
         super(new SlidablePanelBuilder(), detailsView);
-        this.addClass("floating-details-panel");
+        this.addClass('floating-details-panel');
 
-        this.splitter = new api.dom.DivEl("splitter");
-        this.ghostDragger = new api.dom.DivEl("ghost-dragger");
+        this.splitter = new api.dom.DivEl('splitter');
+        this.ghostDragger = new api.dom.DivEl('ghost-dragger');
 
         this.appendChild(this.splitter);
         this.onRendered(() => this.onRenderedHandler());
@@ -77,14 +77,14 @@ export class FloatingDetailsPanel extends SlidablePanel {
 
     private startDrag(dragListener: {(e: MouseEvent): void}) {
         this.mask.show();
-        this.addClass("dragging");
+        this.addClass('dragging');
         this.mask.onMouseMove(dragListener);
         this.ghostDragger.getEl().setLeftPx(this.splitter.getEl().getOffsetLeftRelativeToParent()).setTop(null);
     }
 
     private stopDrag(dragListener: {(e: MouseEvent): void}) {
         this.getEl().setWidthPx(this.actualWidth);
-        this.removeClass("dragging");
+        this.removeClass('dragging');
 
         setTimeout(() => {
             this.notifyPanelSizeChanged();

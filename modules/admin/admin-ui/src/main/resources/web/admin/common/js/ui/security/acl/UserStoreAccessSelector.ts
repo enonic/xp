@@ -22,7 +22,7 @@ module api.ui.security.acl {
         private valueChangedListeners: {(event: api.ValueChangedEvent):void}[] = [];
 
         constructor() {
-            super("access-selector");
+            super('access-selector');
 
             UserStoreAccessSelector.OPTIONS.forEach((option: UserStoreAccessSelectorOption, index: number) => {
                 let menuItem = (<TabMenuItemBuilder>new TabMenuItemBuilder().setLabel(option.name)).build();

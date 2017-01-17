@@ -22,8 +22,8 @@ module api.form {
         private formItemSet: FormItemSet;
 
         constructor(config: FormItemSetOccurrenceViewConfig) {
-            super("form-item-set-occurrence-view", config.formSetOccurrence);
-            this.occurrenceContainerClassName = "form-item-set-occurrences-container";
+            super('form-item-set-occurrence-view', config.formSetOccurrence);
+            this.occurrenceContainerClassName = 'form-item-set-occurrences-container';
             this.formItemOccurrence = config.formSetOccurrence;
             this.formItemSet = config.formItemSet;
             this.propertySet = config.dataSet;

@@ -30,7 +30,7 @@ module api.ui {
 
         public setItemName(itemName: string) {
             let p = new api.dom.PEl();
-            p.setClass("drag-item-name");
+            p.setClass('drag-item-name');
             p.setHtml(itemName);
 
             this.removeChildren();

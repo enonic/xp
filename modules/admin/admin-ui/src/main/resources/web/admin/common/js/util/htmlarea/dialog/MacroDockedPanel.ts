@@ -10,10 +10,10 @@ module api.util.htmlarea.dialog {
 
     export class MacroDockedPanel extends DockedPanel {
 
-        private static CONFIGURATION_TAB_NAME: string = "Configuration";
-        private static PREVIEW_TAB_NAME: string = "Preview";
-        private static MACRO_FORM_INCOMPLETE_MES: string = "Macro configuration is not complete";
-        private static PREVIEW_LOAD_ERROR_MESSAGE: string = "An error occurred while loading preview";
+        private static CONFIGURATION_TAB_NAME: string = 'Configuration';
+        private static PREVIEW_TAB_NAME: string = 'Preview';
+        private static MACRO_FORM_INCOMPLETE_MES: string = 'Macro configuration is not complete';
+        private static PREVIEW_LOAD_ERROR_MESSAGE: string = 'An error occurred while loading preview';
 
         private configPanel: Panel;
         private previewPanel: Panel;
@@ -54,11 +54,11 @@ module api.util.htmlarea.dialog {
         }
 
         private createConfigurationPanel(): Panel {
-            return this.configPanel = new Panel("macro-config-panel");
+            return this.configPanel = new Panel('macro-config-panel');
         }
 
         private createPreviewPanel(): Panel {
-            return this.previewPanel = new Panel("macro-preview-panel");
+            return this.previewPanel = new Panel('macro-preview-panel');
         }
 
         private handlePreviewPanelShowEvent() {
@@ -125,7 +125,7 @@ module api.util.htmlarea.dialog {
 
         private renderPreviewWithMessage(message: string) {
             this.previewPanel.removeChildren();
-            let appendMe = new api.dom.DivEl("preview-message");
+            let appendMe = new api.dom.DivEl('preview-message');
             appendMe.setHtml(message);
             this.previewPanel.appendChild(appendMe);
         }
@@ -135,7 +135,7 @@ module api.util.htmlarea.dialog {
             if (macroPreview.getPageContributions().hasAtLeastOneScript()) {
                 this.previewPanel.appendChild(this.makePreviewFrame(macroPreview));
             } else {
-                let appendMe = new api.dom.DivEl("preview-content");
+                let appendMe = new api.dom.DivEl('preview-content');
                 appendMe.setHtml(macroPreview.getHtml(), false);
                 this.previewPanel.appendChild(appendMe);
                 this.notifyPanelRendered();
@@ -225,7 +225,7 @@ module api.util.htmlarea.dialog {
 
     export class MacroPreviewFrame extends api.dom.IFrameEl {
 
-        private id: string = "macro-preview-frame-id";
+        private id: string = 'macro-preview-frame-id';
 
         private macroPreview: MacroPreview;
 
@@ -236,7 +236,7 @@ module api.util.htmlarea.dialog {
         private previewRenderedListeners: {(): void}[] = [];
 
         constructor(macroPreview: MacroPreview) {
-            super("preview-iframe");
+            super('preview-iframe');
             this.setId(this.id);
             this.macroPreview = macroPreview;
 
@@ -246,7 +246,7 @@ module api.util.htmlarea.dialog {
         private initFrameContent(macroPreview: MacroPreview) {
             this.onLoaded(() => {
 
-                let doc = this.getHTMLElement()["contentWindow"] || this.getHTMLElement()["contentDocument"];
+                let doc = this.getHTMLElement()['contentWindow'] || this.getHTMLElement()['contentDocument'];
                 if (doc.document) {
                     doc = doc.document;
                 }
@@ -265,15 +265,15 @@ module api.util.htmlarea.dialog {
         }
 
         private isYoutubePreview(): boolean {
-            return this.macroPreview.getMacroString().indexOf("[youtube") == 0;
+            return this.macroPreview.getMacroString().indexOf('[youtube') == 0;
         }
 
         private isInstagramPreview(): boolean {
-            return this.macroPreview.getMacroString().indexOf("[instagram") == 0;
+            return this.macroPreview.getMacroString().indexOf('[instagram') == 0;
         }
 
         private adjustFrameHeightOnContentsUpdate() {
-            let frameWindow = this.getHTMLElement()["contentWindow"];
+            let frameWindow = this.getHTMLElement()['contentWindow'];
             if (frameWindow) {
                 let observer = new MutationObserver(this.debouncedResizeHandler);
                 let config = {attributes: true, childList: true, characterData: true};
@@ -284,12 +284,12 @@ module api.util.htmlarea.dialog {
 
         private adjustFrameHeight() {
             try {
-                let frameWindow = this.getHTMLElement()["contentWindow"] || this.getHTMLElement()["contentDocument"];
+                let frameWindow = this.getHTMLElement()['contentWindow'] || this.getHTMLElement()['contentDocument'];
                 let scrollHeight = frameWindow.document.body.scrollHeight;
                 let maxFrameHeight = this.getMaxFrameHeight();
                 this.getEl().setHeightPx(scrollHeight > 150
                     ? scrollHeight > maxFrameHeight ? maxFrameHeight : scrollHeight + (this.isInstagramPreview() ? 18 : 0)
-                    : wemjq("#" + this.id).contents().find('body').outerHeight());
+                    : wemjq('#' + this.id).contents().find('body').outerHeight());
                 this.notifyPreviewRendered();
             } catch (error) { /* empty*/ }
         }
@@ -299,7 +299,7 @@ module api.util.htmlarea.dialog {
         }
 
         private makeContentForPreviewFrame(macroPreview: MacroPreview): string {
-            let result = "";
+            let result = '';
             macroPreview.getPageContributions().getHeadBegin().forEach(script => result += script);
             macroPreview.getPageContributions().getHeadEnd().forEach(script => result += script);
             macroPreview.getPageContributions().getBodyBegin().forEach(script => result += script);

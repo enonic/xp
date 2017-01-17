@@ -1,5 +1,5 @@
-import "../api.ts";
-import {ApplicationBrowsePanel} from "./browse/ApplicationBrowsePanel";
+import '../api.ts';
+import {ApplicationBrowsePanel} from './browse/ApplicationBrowsePanel';
 import Application = api.application.Application;
 
 export class ApplicationAppPanel extends api.app.AppPanel<Application> {

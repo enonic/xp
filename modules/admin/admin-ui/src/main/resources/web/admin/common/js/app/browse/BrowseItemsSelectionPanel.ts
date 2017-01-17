@@ -11,10 +11,10 @@ module api.app.browse {
         private itemsLimit: number;
 
         constructor(itemsLimit?: number) {
-            super("items-selection-panel");
+            super('items-selection-panel');
             this.getEl().addClass('no-selection');
 
-            this.itemsContainer = new api.dom.DivEl("items-container");
+            this.itemsContainer = new api.dom.DivEl('items-container');
             this.appendChild(this.itemsContainer);
 
             this.itemsContainer.setHtml(this.messageForNoSelection);

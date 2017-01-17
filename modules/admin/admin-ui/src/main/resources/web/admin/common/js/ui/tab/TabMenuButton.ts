@@ -5,7 +5,7 @@ module api.ui.tab {
         private labelEl: api.dom.SpanEl;
 
         constructor() {
-            super("tab-menu-button icon-arrow-down2");
+            super('tab-menu-button icon-arrow-down2');
 
             this.labelEl = new api.dom.SpanEl('label');
             this.appendChild(this.labelEl);

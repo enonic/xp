@@ -43,7 +43,7 @@ module api.ui.security.acl {
                 this.editable = editable;
             }
 
-            this.toggleClass("readonly", !editable);
+            this.toggleClass('readonly', !editable);
         }
 
         isEditable(): boolean {
@@ -85,7 +85,7 @@ module api.ui.security.acl {
             super.doLayout(object);
 
             if (UserStoreAccessControlEntryView.debug) {
-                console.debug("UserStoreAccessControlEntryView.doLayout");
+                console.debug('UserStoreAccessControlEntryView.doLayout');
             }
 
             // permissions will be set on access selector value change
@@ -100,7 +100,7 @@ module api.ui.security.acl {
             this.accessSelector.setValue(this.ace.getAccess(), true);
 
             if (!this.removeButton) {
-                this.removeButton = new api.dom.AEl("icon-close");
+                this.removeButton = new api.dom.AEl('icon-close');
                 this.removeButton.onClicked((event: MouseEvent) => {
                     if (this.editable) {
                         this.notifyRemoveClicked(event);

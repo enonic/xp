@@ -14,7 +14,7 @@ module api.content.resource {
             super();
             this.inheritPermissions = true;
             this.overwriteChildPermissions = false;
-            this.setMethod("POST");
+            this.setMethod('POST');
         }
 
         setId(id: ContentId): ApplyContentPermissionsRequest {
@@ -47,7 +47,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "applyPermissions");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'applyPermissions');
         }
 
         sendAndParse(): wemQ.Promise<Content> {

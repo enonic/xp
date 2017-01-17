@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {ContentWizardToolbarPublishControls} from "./ContentWizardToolbarPublishControls";
+import '../../api.ts';
+import {ContentWizardToolbarPublishControls} from './ContentWizardToolbarPublishControls';
 
 import CycleButton = api.ui.button.CycleButton;
 import TogglerButton = api.ui.button.TogglerButton;
@@ -31,13 +31,13 @@ export class ContentWizardToolbar extends api.ui.toolbar.Toolbar {
     private contentWizardToolbarPublishControls: ContentWizardToolbarPublishControls;
 
     constructor(params: ContentWizardToolbarParams) {
-        super("content-wizard-toolbar");
+        super('content-wizard-toolbar');
 
         let homeAction = new Action(params.application.getName());
         homeAction.onExecuted((action) => {
             let appId = params.application.getId();
             let tabId;
-            if (navigator.userAgent.search("Chrome") > -1) {
+            if (navigator.userAgent.search('Chrome') > -1) {
                 // add tab id for browsers that can focus tabs by id
                 tabId = appId;
             }
@@ -52,12 +52,12 @@ export class ContentWizardToolbar extends api.ui.toolbar.Toolbar {
         super.addAction(params.deleteAction);
         super.addAction(params.duplicateAction);
         super.addAction(params.previewAction);
-        super.addAction(params.unpublishAction).addClass("unpublish-button");
+        super.addAction(params.unpublishAction).addClass('unpublish-button');
         super.addGreedySpacer();
 
         this.cycleViewModeButton = new CycleButton([params.showLiveEditAction, params.showFormAction]);
-        this.componentsViewToggler = new TogglerButton("icon-clipboard", "Show Component View");
-        this.contextWindowToggler = new TogglerButton("icon-cog", "Show Inspection Panel");
+        this.componentsViewToggler = new TogglerButton('icon-clipboard', 'Show Component View');
+        this.contextWindowToggler = new TogglerButton('icon-cog', 'Show Inspection Panel');
 
         this.contentWizardToolbarPublishControls = new ContentWizardToolbarPublishControls(
             params.publishAction, params.publishTreeAction, params.unpublishAction, params.publishMobileAction

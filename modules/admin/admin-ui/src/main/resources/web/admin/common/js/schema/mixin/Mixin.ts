@@ -82,7 +82,7 @@ module api.schema.mixin {
                     this.formItems.push(formItem);
                 }
             });
-            this.schemaKey = "mixin:" + this.name;
+            this.schemaKey = 'mixin:' + this.name;
             return this;
         }
 

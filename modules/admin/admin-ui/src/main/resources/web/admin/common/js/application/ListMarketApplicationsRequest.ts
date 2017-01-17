@@ -11,7 +11,7 @@ module api.application {
 
         constructor() {
             super();
-            this.setMethod("POST");
+            this.setMethod('POST');
         }
 
         setIds(ids: string[]): ListMarketApplicationsRequest {
@@ -44,7 +44,7 @@ module api.application {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "getMarketApplications");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'getMarketApplications');
         }
 
         sendAndParse(): wemQ.Promise<MarketApplicationResponse> {

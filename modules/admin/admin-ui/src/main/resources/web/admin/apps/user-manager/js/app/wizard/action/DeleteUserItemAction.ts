@@ -1,5 +1,5 @@
-import "../../../api.ts";
-import {PrincipalWizardPanel} from "../PrincipalWizardPanel";
+import '../../../api.ts';
+import {PrincipalWizardPanel} from '../PrincipalWizardPanel';
 
 import UserStore = api.security.UserStore;
 import Principal = api.security.Principal;
@@ -7,10 +7,10 @@ import Principal = api.security.Principal;
 export class DeleteUserItemAction extends api.ui.Action {
 
     constructor(wizardPanel: api.app.wizard.WizardPanel<api.Equitable>) {
-        super("Delete", "mod+del", true);
+        super('Delete', 'mod+del', true);
         this.onExecuted(() => {
             api.ui.dialog.ConfirmationDialog.get()
-                .setQuestion("Are you sure you want to delete this item?")
+                .setQuestion('Are you sure you want to delete this item?')
                 .setNoCallback(null)
                 .setYesCallback(() => {
 

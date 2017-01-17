@@ -26,7 +26,7 @@ module api.content.form.inputtype.long {
             }
 
             let inputEl = api.ui.text.TextInput.middle(undefined, this.getPropertyValue(property));
-            inputEl.setName(this.getInput().getName() + "-" + property.getIndex());
+            inputEl.setName(this.getInput().getName() + '-' + property.getIndex());
 
             inputEl.onValueChanged((event: api.ValueChangedEvent) => {
 
@@ -87,5 +87,5 @@ module api.content.form.inputtype.long {
 
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("Long", Long));
+    api.form.inputtype.InputTypeManager.register(new api.Class('Long', Long));
 }

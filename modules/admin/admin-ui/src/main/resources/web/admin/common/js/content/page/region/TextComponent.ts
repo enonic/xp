@@ -4,7 +4,7 @@ module api.content.page.region {
 
         private text: string;
 
-        public static PROPERTY_TEXT: string = "text";
+        public static PROPERTY_TEXT: string = 'text';
 
         constructor(builder?: TextComponentBuilder) {
             super(builder);

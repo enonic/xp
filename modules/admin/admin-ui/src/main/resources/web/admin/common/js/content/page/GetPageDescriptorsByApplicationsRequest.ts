@@ -11,11 +11,11 @@ module api.content.page {
         }
 
         getParams(): Object {
-            throw new Error("Unexpected call");
+            throw new Error('Unexpected call');
         }
 
         getRequestPath(): api.rest.Path {
-            throw new Error("Unexpected call");
+            throw new Error('Unexpected call');
         }
 
         sendAndParse(): wemQ.Promise<PageDescriptor[]> {

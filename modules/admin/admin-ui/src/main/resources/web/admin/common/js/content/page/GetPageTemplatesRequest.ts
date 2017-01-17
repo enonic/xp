@@ -7,11 +7,11 @@ module api.content.page {
 
         constructor() {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "list");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'list');
         }
 
         sendAndParse(): wemQ.Promise<PageTemplate[]> {

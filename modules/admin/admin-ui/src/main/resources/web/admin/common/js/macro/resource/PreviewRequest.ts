@@ -8,7 +8,7 @@ module api.macro.resource {
 
         constructor(data: api.data.PropertyTree, macroKey: api.macro.MacroKey) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             this.data = data;
             this.macroKey = macroKey;
         }

@@ -1,10 +1,10 @@
-import "../../../../api.ts";
-import {DetailsView} from "../DetailsView";
+import '../../../../api.ts';
+import {DetailsView} from '../DetailsView';
 
 export class InfoWidgetToggleButton extends api.dom.DivEl {
 
     constructor(detailsView: DetailsView) {
-        super("info-widget-toggle-button");
+        super('info-widget-toggle-button');
 
         this.onClicked((event) => {
             this.setActive();
@@ -13,10 +13,10 @@ export class InfoWidgetToggleButton extends api.dom.DivEl {
     }
 
     setActive() {
-        this.addClass("active");
+        this.addClass('active');
     }
 
     setInactive() {
-        this.removeClass("active");
+        this.removeClass('active');
     }
 }

@@ -9,7 +9,7 @@ module api.content.page.region {
         constructor() {
             super();
             this.cache = PartDescriptorCache.get();
-            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "content", "page", "part", "descriptor");
+            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), 'content', 'page', 'part', 'descriptor');
         }
 
         getResourcePath(): api.rest.Path {

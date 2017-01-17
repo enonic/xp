@@ -66,8 +66,8 @@ module api.liveedit.fragment {
                 });
                 if (deleted) {
                     this.notifyFragmentLoadError();
-                    new api.liveedit.ShowWarningLiveEditEvent("Fragment " + this.component.getFragment() +
-                                                              " is no longer available").fire();
+                    new api.liveedit.ShowWarningLiveEditEvent('Fragment ' + this.component.getFragment() +
+                                                              ' is no longer available').fire();
                     this.convertToBrokenFragmentView();
                 }
             };
@@ -94,11 +94,11 @@ module api.liveedit.fragment {
         }
 
         private convertToBrokenFragmentView() {
-            this.getEl().setAttribute("data-portal-placeholder", "true");
-            this.getEl().setAttribute("data-portal-placeholder-error", "true");
+            this.getEl().setAttribute('data-portal-placeholder', 'true');
+            this.getEl().setAttribute('data-portal-placeholder-error', 'true');
             this.removeChild(this.getFirstChild());
-            let errorSpan = new api.dom.SpanEl("data-portal-placeholder-error");
-            errorSpan.setHtml("Fragment content could not be found");
+            let errorSpan = new api.dom.SpanEl('data-portal-placeholder-error');
+            errorSpan.setHtml('Fragment content could not be found');
             this.prependChild(errorSpan);
         }
 
@@ -130,7 +130,7 @@ module api.liveedit.fragment {
                         this.fragmentContent = null;
                         this.notifyFragmentContentLoaded();
                         this.notifyFragmentLoadError();
-                        new api.liveedit.ShowWarningLiveEditEvent("Fragment " + contentId + " could not be found").fire();
+                        new api.liveedit.ShowWarningLiveEditEvent('Fragment ' + contentId + ' could not be found').fire();
                     }).done();
                 }
             } else {
@@ -148,7 +148,7 @@ module api.liveedit.fragment {
                 this.removeContextMenuAction(this.editFragmentAction);
             }
 
-            this.editFragmentAction = new api.ui.Action("Edit in new tab").onExecuted(() => {
+            this.editFragmentAction = new api.ui.Action('Edit in new tab').onExecuted(() => {
                 this.deselect();
                 new api.content.event.EditContentEvent([contentAndSummary]).fire();
             });
@@ -167,13 +167,13 @@ module api.liveedit.fragment {
 
                     // remove component-type attributes to avoid inner components of fragment to be affected by d&d sorting
                     let htmlElement = childElement.getHTMLElement();
-                    let hasErrors = !!htmlElement.getAttribute("data-portal-placeholder-error");
+                    let hasErrors = !!htmlElement.getAttribute('data-portal-placeholder-error');
                     if (hasErrors) {
-                        this.getEl().setAttribute("data-portal-placeholder-error", "true");
+                        this.getEl().setAttribute('data-portal-placeholder-error', 'true');
                     }
 
-                    htmlElement.removeAttribute("data-" + ItemType.ATTRIBUTE_TYPE);
-                    htmlElement.removeAttribute("data-" + ItemType.ATTRIBUTE_REGION_NAME);
+                    htmlElement.removeAttribute('data-' + ItemType.ATTRIBUTE_TYPE);
+                    htmlElement.removeAttribute('data-' + ItemType.ATTRIBUTE_REGION_NAME);
                 }
 
                 let isTextComponent = api.liveedit.text.TextItemType.get().equals(parentType);

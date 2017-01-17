@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import DateTimePickerBuilder = api.ui.time.DateTimePickerBuilder;
 import DateTimePicker = api.ui.time.DateTimePicker;
@@ -17,9 +17,9 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
     private onScheduleCallback: () => void;
 
     constructor() {
-        super("Scheduled Publishing");
+        super('Scheduled Publishing');
 
-        this.getEl().addClass("schedule-publish-dialog");
+        this.getEl().addClass('schedule-publish-dialog');
 
         this.addSubtitle();
 
@@ -27,7 +27,7 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
 
         this.initFormView();
 
-        this.addCancelButtonToBottom("Back");
+        this.addCancelButtonToBottom('Back');
     }
 
     show() {
@@ -56,12 +56,12 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
 
     private initFormView() {
         let formBuilder = new api.form.FormBuilder().addFormItem(
-            new api.form.InputBuilder().setName("from").setInputType(api.content.form.inputtype.publish.PublishFrom.getName()).setLabel(
-                "Online from").setHelpText("Offline items will go online at the specified time").setOccurrences(
+            new api.form.InputBuilder().setName('from').setInputType(api.content.form.inputtype.publish.PublishFrom.getName()).setLabel(
+                'Online from').setHelpText('Offline items will go online at the specified time').setOccurrences(
                 new api.form.OccurrencesBuilder().setMinimum(1).setMaximum(1).build()).setInputTypeConfig({}).setMaximizeUIInputWidth(
                 true).build()).addFormItem(
-            new api.form.InputBuilder().setName("to").setInputType(api.content.form.inputtype.publish.PublishToFuture.getName()).setLabel(
-                "Online to").setHelpText("Online items will be taken offline at the specified time").setOccurrences(
+            new api.form.InputBuilder().setName('to').setInputType(api.content.form.inputtype.publish.PublishToFuture.getName()).setLabel(
+                'Online to').setHelpText('Online items will be taken offline at the specified time').setOccurrences(
                 new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).setInputTypeConfig({}).setMaximizeUIInputWidth(
                 true).build());
 
@@ -84,15 +84,15 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
 
     private addSubtitle() {
         this.appendChildToHeader(
-            new api.dom.H6El("schedule-publish-dialog-subtitle").setHtml(
-                "NB: Only offline items will be scheduled. All other changes will be published immediately.",
+            new api.dom.H6El('schedule-publish-dialog-subtitle').setHtml(
+                'NB: Only offline items will be scheduled. All other changes will be published immediately.',
                 false));
     }
 
     private initConfirmScheduleAction() {
-        this.confirmScheduleAction = new api.ui.Action("Schedule");
+        this.confirmScheduleAction = new api.ui.Action('Schedule');
 
-        this.confirmScheduleAction.setIconClass("confirm-schedule-action");
+        this.confirmScheduleAction.setIconClass('confirm-schedule-action');
         this.confirmScheduleAction.onExecuted(() => {
             let validationRecording = this.formView.validate();
             if (validationRecording.isValid()) {
@@ -110,12 +110,12 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
     }
 
     getFromDate(): Date {
-        let publishFrom = this.propertySet.getDateTime("from");
+        let publishFrom = this.propertySet.getDateTime('from');
         return publishFrom && publishFrom.toDate();
     }
 
     getToDate(): Date {
-        let publishTo = this.propertySet.getDateTime("to");
+        let publishTo = this.propertySet.getDateTime('to');
         return publishTo && publishTo.toDate();
     }
 

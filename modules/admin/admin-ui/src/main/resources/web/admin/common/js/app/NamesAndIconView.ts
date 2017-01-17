@@ -44,20 +44,20 @@ module api.app {
         private iconLabelEl: api.dom.SpanEl;
 
         constructor(builder: NamesAndIconViewBuilder) {
-            super("names-and-icon-view");
+            super('names-and-icon-view');
             let sizeClassName: string = NamesAndIconViewSize[builder.size];
             if (builder.size) {
                 this.addClass(sizeClassName);
             }
 
             if (builder.appendIcon) {
-                this.wrapperDivEl = new api.dom.DivEl("wrapper", api.StyleHelper.COMMON_PREFIX);
+                this.wrapperDivEl = new api.dom.DivEl('wrapper', api.StyleHelper.COMMON_PREFIX);
                 this.appendChild(this.wrapperDivEl);
 
-                this.iconImageEl = new api.dom.ImgEl(null, "font-icon-default");
+                this.iconImageEl = new api.dom.ImgEl(null, 'font-icon-default');
                 this.wrapperDivEl.appendChild(this.iconImageEl);
 
-                this.iconDivEl = new api.dom.DivEl("font-icon-default");
+                this.iconDivEl = new api.dom.DivEl('font-icon-default');
                 this.wrapperDivEl.appendChild(this.iconDivEl);
                 this.iconDivEl.hide();
             }
@@ -65,7 +65,7 @@ module api.app {
             this.namesView = new api.app.NamesView(builder.addTitleAttribute);
             this.appendChild(this.namesView);
 
-            this.iconLabelEl = new api.dom.SpanEl("icon-label", api.StyleHelper.COMMON_PREFIX);
+            this.iconLabelEl = new api.dom.SpanEl('icon-label', api.StyleHelper.COMMON_PREFIX);
             this.iconLabelEl.hide();
             this.appendChild(this.iconLabelEl);
         }
@@ -87,7 +87,7 @@ module api.app {
 
         setIconClass(value: string): NamesAndIconView {
             this.iconDivEl
-                .setClass("font-icon-default " + value)
+                .setClass('font-icon-default ' + value)
                 .removeChildren()
                 .getEl().setDisplay('inline-block');
             this.iconImageEl.hide();

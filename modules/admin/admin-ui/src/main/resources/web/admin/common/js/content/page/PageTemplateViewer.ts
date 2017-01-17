@@ -15,7 +15,7 @@ module api.content.page {
         }
 
         resolveIconClass(object: PageTemplate): string {
-            return "icon-newspaper icon-large";
+            return 'icon-newspaper icon-large';
         }
     }
 }

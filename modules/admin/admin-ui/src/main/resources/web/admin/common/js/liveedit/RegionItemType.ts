@@ -11,7 +11,7 @@ module api.liveedit {
         }
 
         constructor() {
-            super("region");
+            super('region');
         }
 
         static getRegionName(element: api.dom.Element): string {

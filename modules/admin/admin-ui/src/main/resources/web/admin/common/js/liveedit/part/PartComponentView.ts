@@ -39,8 +39,8 @@ module api.liveedit.part {
         }
 
         private resetHrefForRootLink(builder: PartComponentViewBuilder) {
-            if (builder.element && builder.element.getEl().hasAttribute("href")) {
-                builder.element.getEl().setAttribute("href", "#");
+            if (builder.element && builder.element.getEl().hasAttribute('href')) {
+                builder.element.getEl().setAttribute('href', '#');
             }
         }
 

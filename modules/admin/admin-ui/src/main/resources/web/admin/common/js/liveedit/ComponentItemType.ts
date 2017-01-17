@@ -5,7 +5,7 @@ module api.liveedit {
     export class ComponentItemType extends ItemType {
 
         createView(config: CreateItemViewConfig<RegionView,Component>): ComponentView<Component> {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         protected getItemTypeConfig(itemType: string): ItemTypeConfig {

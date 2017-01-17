@@ -8,7 +8,7 @@ module api.schema.content {
 
         constructor(name: ContentTypeName) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
             this.name = name;
         }
 

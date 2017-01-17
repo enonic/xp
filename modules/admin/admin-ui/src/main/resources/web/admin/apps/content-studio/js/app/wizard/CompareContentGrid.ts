@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import GridColumn = api.ui.grid.GridColumn;
 import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
@@ -21,10 +21,10 @@ export class CompareContentGrid extends TreeGrid<ContentSummaryAndCompareStatus>
 
     constructor(content: api.content.Content) {
         super(new TreeGridBuilder<ContentSummaryAndCompareStatus>().setColumns([
-                new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().setName("Name").setId("displayName").setField(
-                    "displayName").setFormatter(this.nameFormatter).build()
+                new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().setName('Name').setId('displayName').setField(
+                    'displayName').setFormatter(this.nameFormatter).build()
             ]).setPartialLoadEnabled(true).setLoadBufferSize(20). // rows count
-            prependClasses("compare-content-grid")
+            prependClasses('compare-content-grid')
         );
 
         this.content = content;
@@ -36,11 +36,11 @@ export class CompareContentGrid extends TreeGrid<ContentSummaryAndCompareStatus>
 
     private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
 
-        let viewer = <ContentSummaryViewer>node.getViewer("name");
+        let viewer = <ContentSummaryViewer>node.getViewer('name');
         if (!viewer) {
             viewer = new ContentSummaryViewer();
             viewer.setObject(node.getData().getContentSummary());
-            node.setViewer("name", viewer);
+            node.setViewer('name', viewer);
         }
         return viewer.toString();
     }

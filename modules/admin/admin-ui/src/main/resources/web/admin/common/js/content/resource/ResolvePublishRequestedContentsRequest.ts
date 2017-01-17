@@ -10,7 +10,7 @@ module api.content.resource {
 
         constructor(contentIds: ContentId[], includeChildren: boolean) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             this.ids = contentIds;
             this.includeChildren = includeChildren;
         }
@@ -25,7 +25,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "resolvePublishContent");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'resolvePublishContent');
         }
     }
 }

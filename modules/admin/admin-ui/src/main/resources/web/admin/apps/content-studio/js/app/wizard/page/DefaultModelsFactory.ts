@@ -1,5 +1,5 @@
-import "../../../api.ts";
-import {DefaultModels} from "./DefaultModels";
+import '../../../api.ts';
+import {DefaultModels} from './DefaultModels';
 
 import ContentTypeName = api.schema.content.ContentTypeName;
 import ContentId = api.content.ContentId;
@@ -38,9 +38,8 @@ export class DefaultModelsFactory {
 
                         deferred.resolve(new DefaultModels(defaultPageTemplate, defaultPageTemplateDescriptor));
                     }).catch((reason) => {
-
-                        deferred.reject(new api.Exception("Page descriptor '" + defaultPageTemplate.getController() + "' not found.",
-                            api.ExceptionType.WARNING));
+                        const msg = `Page descriptor '${defaultPageTemplate.getController()}' not found.`;
+                        deferred.reject(new api.Exception(msg, api.ExceptionType.WARNING));
                     }).done();
                 } else {
                     deferred.resolve(new DefaultModels(defaultPageTemplate, null));

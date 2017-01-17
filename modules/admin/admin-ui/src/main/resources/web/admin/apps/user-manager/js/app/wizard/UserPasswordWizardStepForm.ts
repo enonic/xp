@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {OpenChangePasswordDialogEvent} from "./OpenChangePasswordDialogEvent";
+import '../../api.ts';
+import {OpenChangePasswordDialogEvent} from './OpenChangePasswordDialogEvent';
 
 import User = api.security.User;
 import Principal = api.security.Principal;
@@ -33,8 +33,8 @@ export class UserPasswordWizardStepForm extends api.app.wizard.WizardStepForm {
 
         this.password = new PasswordGenerator();
 
-        this.changePasswordButton = new Button("Change Password");
-        this.changePasswordButton.addClass("change-password-button");
+        this.changePasswordButton = new Button('Change Password');
+        this.changePasswordButton.addClass('change-password-button');
 
         this.createPasswordFormItem = new FormItemBuilder(this.password).setLabel('Password').setValidator(Validators.required).build();
 

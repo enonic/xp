@@ -6,7 +6,7 @@ module api.dom {
         private newHeight:number;
 
         constructor(newWidth:number, newHeight:number, element: Element, target?: Element) {
-            super("resized", element, target);
+            super('resized', element, target);
             this.newWidth = newWidth;
             this.newHeight = newHeight;
         }

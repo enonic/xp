@@ -8,7 +8,7 @@ module api.content.page {
 
         constructor(site: api.content.ContentId, contentName: api.schema.content.ContentTypeName) {
             super();
-            this.setMethod("GET");
+            this.setMethod('GET');
             this.site = site;
             this.contentTypeName = contentName;
         }
@@ -21,7 +21,7 @@ module api.content.page {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "default");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'default');
         }
 
         sendAndParse(): wemQ.Promise<PageTemplate> {
