@@ -226,6 +226,14 @@ module api.ui.treegrid {
                     return;
                 }
 
+                if (event.ctrlKey) {
+                    if (!this.grid.isRowSelected(data.row) && this.highlightedNode !== node) {
+                        this.unhighlightCurrentRow(true);
+                    }
+                    this.grid.toggleRow(data.row);
+                    return;
+                }
+
                 this.setActive(false);
 
                 if (elem.hasClass("expand")) {
