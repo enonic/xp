@@ -44,7 +44,7 @@ module api.content.resource {
         }
 
         resetSearchString() {
-            this.getRequest().setSearchString("");
+            this.getRequest().setSearchString('');
         }
 
         load(postLoad: boolean = false): wemQ.Promise<ContentSummary[]> {

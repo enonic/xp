@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {NewContentDialogListItem} from "./NewContentDialogListItem";
+import '../../api.ts';
+import {NewContentDialogListItem} from './NewContentDialogListItem';
 
 export class NewContentDialogItemSelectedEvent {
 

@@ -14,7 +14,7 @@ module api.content.order {
         }
 
         toString() {
-            return this.function + " " + super.getDirection();
+            return this.function + ' ' + super.getDirection();
         }
 
         toJson(): json.OrderExprJson {

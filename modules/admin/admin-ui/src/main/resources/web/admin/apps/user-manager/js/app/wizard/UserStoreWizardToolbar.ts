@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 export interface UserStoreWizardToolbarParams {
     saveAction:api.ui.Action;

@@ -1,5 +1,5 @@
-import {NewContentDialogList} from "./NewContentDialogList";
-import {NewContentDialogListItem} from "./NewContentDialogListItem";
+import {NewContentDialogList} from './NewContentDialogList';
+import {NewContentDialogListItem} from './NewContentDialogListItem';
 import ContentTypeSummary = api.schema.content.ContentTypeSummary;
 import Site = api.content.site.Site;
 import ApplicationKey = api.application.ApplicationKey;

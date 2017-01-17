@@ -17,7 +17,7 @@ module FormOptionSetViewSpec {
     import AEl = api.dom.AEl;
     import CallInfo = jasmine.CallInfo;
 
-    describe("api.form.FormOptionSetView", function () {
+    describe('api.form.FormOptionSetView', function () {
 
         let optionSet: FormOptionSet;
         let optionSetViewConfig: FormOptionSetViewConfig;
@@ -29,7 +29,7 @@ module FormOptionSetViewSpec {
             optionSetView = new FormOptionSetView(optionSetViewConfig);
         });
 
-        describe("constructor", function () {
+        describe('constructor', function () {
 
             it('should be defined', function () {
                 expect(optionSetView).toBeDefined();
@@ -65,7 +65,7 @@ module FormOptionSetViewSpec {
 
             beforeEach(function () {
                 initOccurrencesSpy = spyOn(api.form.FormOptionSetView.prototype, 'initOccurrences').and.callThrough();
-                spyOn(optionSetView, "validate").and.stub();
+                spyOn(optionSetView, 'validate').and.stub();
             });
 
             describe('default behaviour', function () {
@@ -73,9 +73,9 @@ module FormOptionSetViewSpec {
                 let collapseButtonSpy;
 
                 beforeEach(function (done: DoneFn) {
-                    addButtonSpy = spyOn(optionSetView, "makeAddButton").and.callThrough();
-                    collapseButtonSpy = spyOn(optionSetView, "makeCollapseButton").and.callThrough();
-                    spyOn(api.form.FormSetOccurrences.prototype, "layout").and.returnValue(wemQ<void>(null));
+                    addButtonSpy = spyOn(optionSetView, 'makeAddButton').and.callThrough();
+                    collapseButtonSpy = spyOn(optionSetView, 'makeCollapseButton').and.callThrough();
+                    spyOn(api.form.FormSetOccurrences.prototype, 'layout').and.returnValue(wemQ<void>(null));
 
                     optionSetView.layout().then(function () {
                         done();
@@ -83,7 +83,7 @@ module FormOptionSetViewSpec {
                 });
 
                 it('should create a container for occurrence views and append it to DOM', function () {
-                    expect(optionSetView.getEl().getElementsByClassName("occurrence-views-container").length).toEqual(1);
+                    expect(optionSetView.getEl().getElementsByClassName('occurrence-views-container').length).toEqual(1);
                 });
 
                 it('should create form option set occurrences', function () {
@@ -111,7 +111,7 @@ module FormOptionSetViewSpec {
             describe('when layout is called without validation', function () {
 
                 beforeEach(function (done: DoneFn) {
-                    spyOn(api.form.FormSetOccurrences.prototype, "layout").and.returnValue(wemQ<void>(null));
+                    spyOn(api.form.FormSetOccurrences.prototype, 'layout').and.returnValue(wemQ<void>(null));
 
                     optionSetView.layout(false).then(function () {
                         done();
@@ -135,7 +135,7 @@ module FormOptionSetViewSpec {
                     handleValiditySpy = spyOn(optionSetView, 'handleFormSetOccurrenceViewValidityChanged').and.stub();
                     spyOn(optionSetView, 'notifyEditContentRequested').and.callThrough();
                     // need actual layout to pass edit content request event
-                    spyOn(api.form.FormSetOccurrences.prototype, "layout").and.callThrough();
+                    spyOn(api.form.FormSetOccurrences.prototype, 'layout').and.callThrough();
 
                     optionSetView.layout(false).then(function () {
                         done();
@@ -179,7 +179,7 @@ module FormOptionSetViewSpec {
                 beforeEach(function (done: DoneFn) {
                     addSpy = spyOn(optionSetView, 'makeAddButton').and.callThrough();
                     collapseSpy = spyOn(optionSetView, 'makeCollapseButton').and.callThrough();
-                    showSpy = spyOn(api.form.FormSetOccurrences.prototype, "showOccurrences").and.callThrough();
+                    showSpy = spyOn(api.form.FormSetOccurrences.prototype, 'showOccurrences').and.callThrough();
 
                     optionSetView.layout(false).then(function () {
                         done();
@@ -196,7 +196,7 @@ module FormOptionSetViewSpec {
                 });
 
                 it('should collapse occurrence on collapse link click', function () {
-                    spyOn(api.form.FormSetOccurrences.prototype, "isCollapsed").and.returnValues(false);
+                    spyOn(api.form.FormSetOccurrences.prototype, 'isCollapsed').and.returnValues(false);
 
                     let link: AEl = collapseSpy.calls.mostRecent().returnValue;
                     link.getHTMLElement().click();
@@ -206,7 +206,7 @@ module FormOptionSetViewSpec {
                 });
 
                 it('should expand occurrence on expand button click', function () {
-                    spyOn(api.form.FormSetOccurrences.prototype, "isCollapsed").and.returnValues(true);
+                    spyOn(api.form.FormSetOccurrences.prototype, 'isCollapsed').and.returnValues(true);
 
                     let link: AEl = collapseSpy.calls.mostRecent().returnValue;
                     link.getHTMLElement().click();
@@ -217,7 +217,7 @@ module FormOptionSetViewSpec {
             });
         });
 
-        describe("validate()", function () {
+        describe('validate()', function () {
             let occurrenceValidateSpy;
 
             beforeEach(function () {
@@ -363,14 +363,14 @@ module FormOptionSetViewSpec {
         let tree = new api.data.PropertyTree();
         let set = tree.addPropertySet('optionSet');
 
-        let optionSet1 = set.addPropertySet("option1");
-        optionSet1.addString("input1", "Option 1 value from data");
+        let optionSet1 = set.addPropertySet('option1');
+        optionSet1.addString('input1', 'Option 1 value from data');
 
-        let optionSet2 = set.addPropertySet("option2");
+        let optionSet2 = set.addPropertySet('option2');
         let itemSet1 = optionSet2.addPropertySet('itemSet1');
         if (valid) {
-            itemSet1.addString("input2-1", "Option 2 value from data");
-            itemSet1.addBoolean("input2-2", true);
+            itemSet1.addString('input2-1', 'Option 2 value from data');
+            itemSet1.addBoolean('input2-2', true);
         }
 
         return tree.getRoot();

@@ -12,7 +12,7 @@ module api.ui.panel {
         private panelShownListeners: {(event: PanelShownEvent):void}[] = [];
 
         constructor(className?: string) {
-            super("deck-panel" + (className ? " " + className : ""));
+            super('deck-panel' + (className ? ' ' + className : ''));
         }
 
         isEmpty(): boolean {

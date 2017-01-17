@@ -20,8 +20,8 @@ module api.content.form.inputtype.principalselector {
         private comboBox: api.ui.security.PrincipalComboBox;
 
         constructor(config?: api.content.form.inputtype.ContentInputTypeViewContext) {
-            super("relationship");
-            this.addClass("input-type-view");
+            super('relationship');
+            this.addClass('input-type-view');
             this.config = config;
             this.readConfig(config.inputConfig);
         }
@@ -113,7 +113,7 @@ module api.content.form.inputtype.principalselector {
         }
 
         private refreshSortable() {
-            wemjq(this.getHTMLElement()).find(".selected-options").sortable("refresh");
+            wemjq(this.getHTMLElement()).find('.selected-options').sortable('refresh');
         }
 
         protected getNumberOfValids(): number {
@@ -145,5 +145,5 @@ module api.content.form.inputtype.principalselector {
 
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("PrincipalSelector", PrincipalSelector));
+    api.form.inputtype.InputTypeManager.register(new api.Class('PrincipalSelector', PrincipalSelector));
 }

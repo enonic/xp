@@ -21,7 +21,7 @@ module api.form {
                     <api.form.json.FormOptionSetOptionJson>formItemTypeWrapperJson.FormOptionSetOption);
             }
 
-            console.error("Unknown FormItem type: ", formItemTypeWrapperJson);
+            console.error('Unknown FormItem type: ', formItemTypeWrapperJson);
             return null;
         }
 

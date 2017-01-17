@@ -6,7 +6,7 @@ module api.schema.relationshiptype {
 
         constructor(name: RelationshipTypeName) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
             this.name = name;
         }
 

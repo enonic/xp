@@ -6,7 +6,7 @@ module api.content.resource {
 
         constructor() {
             super();
-            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "widget");
+            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), 'widget');
         }
 
         getResourcePath(): api.rest.Path {

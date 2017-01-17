@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import ItemView = api.liveedit.ItemView;
 import ComponentView = api.liveedit.ItemView;
@@ -52,7 +52,7 @@ export class PageComponentsItemViewer extends api.ui.NamesAndIconViewer<ItemView
             }
         }
 
-        return object.getType() ? object.getType().getShortName() : "";
+        return object.getType() ? object.getType().getShortName() : '';
     }
 
     resolveIconUrl(object: ItemView): string {
@@ -67,8 +67,8 @@ export class PageComponentsItemViewer extends api.ui.NamesAndIconViewer<ItemView
     }
 
     private extractTextFromTextComponent(textComponent: TextComponent): string {
-        let tmp = document.createElement("DIV");
-        tmp.innerHTML = textComponent.getText() || "";
-        return (tmp.textContent || tmp.innerText || "").trim();
+        let tmp = document.createElement('DIV');
+        tmp.innerHTML = textComponent.getText() || '';
+        return (tmp.textContent || tmp.innerText || '').trim();
     }
 }

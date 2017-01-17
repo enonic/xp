@@ -36,7 +36,7 @@ module api.content.site.inputtype.authappselector {
         private readOnly: boolean;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
-            super("site-configurator");
+            super('site-configurator');
             this.context = config;
             this.readConfig(config.inputConfig);
             this.formContext = config.formContext;
@@ -53,7 +53,7 @@ module api.content.site.inputtype.authappselector {
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
             let readOnlyConfig = inputConfig['readOnly'] && inputConfig['readOnly'][0];
             let readOnlyValue = readOnlyConfig && readOnlyConfig['value'];
-            this.readOnly = readOnlyValue === "true";
+            this.readOnly = readOnlyValue === 'true';
         }
 
         layout(input: api.form.Input, propertyArray: PropertyArray): wemQ.Promise<void> {
@@ -209,5 +209,5 @@ module api.content.site.inputtype.authappselector {
         }
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("AuthApplicationSelector", AuthApplicationSelector));
+    api.form.inputtype.InputTypeManager.register(new api.Class('AuthApplicationSelector', AuthApplicationSelector));
 }

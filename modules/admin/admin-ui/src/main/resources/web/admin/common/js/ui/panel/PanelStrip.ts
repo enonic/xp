@@ -15,7 +15,7 @@ module api.ui.panel {
         private panelShownListeners: {(event: PanelShownEvent):void}[] = [];
 
         constructor(scrollable?: api.dom.Element, className?: string) {
-            super("panel-strip" + (className ? " " + className : ""));
+            super('panel-strip' + (className ? ' ' + className : ''));
             if (scrollable) {
                 this.scrollable = scrollable;
                 this.scrollable.addClass('panel-strip-scrollable');
@@ -43,7 +43,7 @@ module api.ui.panel {
             let previousChildrenIndex = this.countExistingChildren(index);
             let headerEl;
             if (header) {
-                headerEl = new api.dom.H2El("panel-strip-panel-header");
+                headerEl = new api.dom.H2El('panel-strip-panel-header');
                 headerEl.getEl().setInnerHtml(header);
                 this.insertChild(headerEl, previousChildrenIndex);
             }
@@ -87,15 +87,15 @@ module api.ui.panel {
             if (this.getSize() > 1) {
                 // restore the one before last panel's height if needed
                 let beforeLastEl = this.getPanel(this.getSize() - 2).getEl();
-                let originalHeight = beforeLastEl.getData("originalHeight");
+                let originalHeight = beforeLastEl.getData('originalHeight');
                 if (originalHeight) {
                     beforeLastEl.setHeight(originalHeight);
                 }
             }
             // set the last panel height equal to that of the scrollable
             let lastEl = this.getPanel(this.getSize() - 1).getEl();
-            if (!lastEl.getData("originalHeight")) {
-                lastEl.setData("originalHeight", lastEl.getHTMLElement().style.height || "auto");
+            if (!lastEl.getData('originalHeight')) {
+                lastEl.setData('originalHeight', lastEl.getHTMLElement().style.height || 'auto');
             }
             lastEl.setHeightPx(this.scrollable.getEl().getHeight());
         }

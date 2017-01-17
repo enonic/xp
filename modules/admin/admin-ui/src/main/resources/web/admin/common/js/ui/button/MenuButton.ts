@@ -13,7 +13,7 @@ module api.ui.button {
         private menu: Menu;
 
         constructor(mainAction: Action, menuActions: Action[] = []) {
-            super("menu-button");
+            super('menu-button');
 
             this.initDropdownHandle();
             this.initActionButton(mainAction);

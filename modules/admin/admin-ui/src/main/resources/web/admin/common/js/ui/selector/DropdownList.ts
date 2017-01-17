@@ -21,8 +21,8 @@ module api.ui.selector {
 
         constructor(config: DropdownListConfig<OPTION_DISPLAY_VALUE>) {
 
-            this.emptyDropdown = new api.dom.DivEl("empty-options");
-            this.emptyDropdown.getEl().setInnerHtml("No matching items");
+            this.emptyDropdown = new api.dom.DivEl('empty-options');
+            this.emptyDropdown.getEl().setInnerHtml('No matching items');
             this.emptyDropdown.hide();
 
             this.dropdownGrid = new DropdownGrid<OPTION_DISPLAY_VALUE>(this.assembleGridConfig(config));
@@ -123,7 +123,7 @@ module api.ui.selector {
                 }
             } else {
                 this.dropdownGrid.hide();
-                this.emptyDropdown.getEl().setInnerHtml(!!noOptionsText ? noOptionsText : "No matching items");
+                this.emptyDropdown.getEl().setInnerHtml(!!noOptionsText ? noOptionsText : 'No matching items');
                 this.emptyDropdown.show();
             }
         }

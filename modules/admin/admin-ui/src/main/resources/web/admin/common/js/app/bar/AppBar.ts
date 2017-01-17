@@ -11,7 +11,7 @@ module api.app.bar {
         private showAppLauncherAction: ShowAppLauncherAction;
 
         constructor(application: Application) {
-            super("appbar");
+            super('appbar');
 
             this.application = application;
 
@@ -35,7 +35,7 @@ module api.app.bar {
 
             super(app.getName());
 
-            this.addClass("home-button app-icon icon-" + app.getIconUrl());
+            this.addClass('home-button app-icon icon-' + app.getIconUrl());
 
             this.onClicked((event: MouseEvent) => {
                 action.execute();

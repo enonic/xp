@@ -76,15 +76,15 @@ module api.app.browse {
         }
 
         protected createToolbar(): api.ui.toolbar.Toolbar {
-            throw "Must be implemented by inheritors";
+            throw 'Must be implemented by inheritors';
         }
 
         protected createTreeGrid(): api.ui.treegrid.TreeGrid<Object> {
-            throw "Must be implemented by inheritors";
+            throw 'Must be implemented by inheritors';
         }
 
         protected createBrowseItemPanel(): BrowseItemPanel<M> {
-            throw "Must be implemented by inheritors";
+            throw 'Must be implemented by inheritors';
         }
 
         private initBrowseItemPanel() {
@@ -120,8 +120,8 @@ module api.app.browse {
 
                 this.gridAndItemsSplitPanel.setFirstPanelSize(38, api.ui.panel.SplitPanelUnit.PERCENT);
 
-                this.browseToolbar.addClass("browse-toolbar");
-                this.gridAndItemsSplitPanel.addClass("content-grid-and-browse-split-panel");
+                this.browseToolbar.addClass('browse-toolbar');
+                this.gridAndItemsSplitPanel.addClass('content-grid-and-browse-split-panel');
 
                 if (this.filterPanel) {
                     this.gridAndToolbarPanel = new api.ui.panel.Panel();
@@ -217,7 +217,7 @@ module api.app.browse {
             this.filterAndGridSplitPanel.showFirstPanel();
             this.filterPanel.giveFocusToSearch();
             this.toggleFilterPanelAction.setVisible(false);
-            this.toggleFilterPanelButton.removeClass("filtered");
+            this.toggleFilterPanelButton.removeClass('filtered');
         }
 
         private hideFilterPanel() {
@@ -228,7 +228,7 @@ module api.app.browse {
 
             this.toggleFilterPanelAction.setVisible(true);
             if (this.filterPanel.hasFilterSet()) {
-                this.toggleFilterPanelButton.addClass("filtered");
+                this.toggleFilterPanelButton.addClass('filtered');
             }
 
         }

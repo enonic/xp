@@ -4,7 +4,7 @@ module api.application {
 
         constructor() {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
         }
 
         getParams(): Object {
@@ -12,7 +12,7 @@ module api.application {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "getIdProviderApplications");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'getIdProviderApplications');
         }
 
         sendAndParse(): wemQ.Promise<Application[]> {

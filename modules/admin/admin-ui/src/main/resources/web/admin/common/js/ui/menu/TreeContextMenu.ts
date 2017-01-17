@@ -6,7 +6,7 @@ module api.ui.menu {
         private actions: api.ui.Action[] = [];
 
         constructor(actions?: api.ui.Action[], appendToBody: boolean = true) {
-            super("context-menu");
+            super('context-menu');
 
             if (actions) {
                 actions.sort(function (action1: api.ui.Action, action2: api.ui.Action) {

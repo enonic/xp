@@ -1,4 +1,4 @@
-import "../../../api.ts";
+import '../../../api.ts';
 
 export class PrincipalBrowseResetEvent extends api.event.Event {
 

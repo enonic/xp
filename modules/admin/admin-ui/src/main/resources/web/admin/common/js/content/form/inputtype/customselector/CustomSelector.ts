@@ -42,7 +42,7 @@ module api.content.form.inputtype.customselector {
             super('custom-selector');
 
             if (CustomSelector.debug) {
-                console.debug("CustomSelector: config", context.inputConfig);
+                console.debug('CustomSelector: config', context.inputConfig);
             }
 
             this.context = context;
@@ -173,8 +173,8 @@ module api.content.form.inputtype.customselector {
 
         private setupSortable() {
             this.updateSelectedOptionStyle();
-            wemjq(this.getHTMLElement()).find(".selected-options").sortable({
-                axis: "y",
+            wemjq(this.getHTMLElement()).find('.selected-options').sortable({
+                axis: 'y',
                 containment: 'parent',
                 handle: '.drag-control',
                 tolerance: 'pointer',
@@ -185,7 +185,7 @@ module api.content.form.inputtype.customselector {
 
         private refreshSortable() {
             this.updateSelectedOptionStyle();
-            wemjq(this.getHTMLElement()).find(".selected-options").sortable("refresh");
+            wemjq(this.getHTMLElement()).find('.selected-options').sortable('refresh');
         }
 
         private handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
@@ -193,7 +193,7 @@ module api.content.form.inputtype.customselector {
             let draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
             this.draggingIndex = draggedElement.getSiblingIndex();
 
-            ui.placeholder.html("Drop form item set here");
+            ui.placeholder.html('Drop form item set here');
         }
 
         private handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
@@ -209,12 +209,12 @@ module api.content.form.inputtype.customselector {
 
         private updateSelectedOptionStyle() {
             if (this.getPropertyArray().getSize() > 1) {
-                this.addClass("multiple-occurrence").removeClass("single-occurrence");
+                this.addClass('multiple-occurrence').removeClass('single-occurrence');
             } else {
-                this.addClass("single-occurrence").removeClass("multiple-occurrence");
+                this.addClass('single-occurrence').removeClass('multiple-occurrence');
             }
         }
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("CustomSelector", CustomSelector));
+    api.form.inputtype.InputTypeManager.register(new api.Class('CustomSelector', CustomSelector));
 }

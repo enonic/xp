@@ -10,8 +10,8 @@ module api.content.page.region {
 
             super({
                 optionDisplayValueViewer: new PartDescriptorViewer(),
-                dataIdProperty: "value",
-                noOptionsText: "No parts available"
+                dataIdProperty: 'value',
+                noOptionsText: 'No parts available'
             });
         }
 

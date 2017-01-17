@@ -10,7 +10,7 @@ module api.content.resource {
 
         constructor(contentPath?: ContentPath) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             if (contentPath) {
                 this.addContentPath(contentPath);
             }
@@ -42,7 +42,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "getDescendantsOfContents");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'getDescendantsOfContents');
         }
 
         sendAndParse(): wemQ.Promise<ContentId[]> {

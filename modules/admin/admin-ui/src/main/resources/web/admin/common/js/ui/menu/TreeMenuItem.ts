@@ -3,8 +3,8 @@ module api.ui.menu {
     export class TreeMenuItem extends api.dom.DdDtEl {
         private action: api.ui.Action;
 
-        constructor(action: api.ui.Action, cls: string = "", expanded: boolean = false) {
-            super(action.hasParentAction() ? "dd" : "dt");
+        constructor(action: api.ui.Action, cls: string = '', expanded: boolean = false) {
+            super(action.hasParentAction() ? 'dd' : 'dt');
 
             this.action = action;
             cls = this.getCls(action, cls, expanded);
@@ -30,12 +30,12 @@ module api.ui.menu {
         }
 
         public toggleExpand() {
-            this.toggleClass("expanded");
+            this.toggleClass('expanded');
         }
 
-        private getCls(action: api.ui.Action, cls: string = "", expanded: boolean = false): string {
-            let fullCls = action.hasChildActions() ? "collapsible " : "";
-            fullCls += expanded ? "expanded " : "";
+        private getCls(action: api.ui.Action, cls: string = '', expanded: boolean = false): string {
+            let fullCls = action.hasChildActions() ? 'collapsible ' : '';
+            fullCls += expanded ? 'expanded ' : '';
 
             return fullCls + cls;
         }
@@ -48,9 +48,9 @@ module api.ui.menu {
             let el = this.getEl();
             el.setDisabled(!value);
             if (value) {
-                el.removeClass("disabled");
+                el.removeClass('disabled');
             } else {
-                el.addClass("disabled");
+                el.addClass('disabled');
             }
         }
     }

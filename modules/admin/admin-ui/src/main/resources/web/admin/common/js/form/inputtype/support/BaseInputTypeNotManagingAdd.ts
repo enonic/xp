@@ -32,12 +32,12 @@ module api.form.inputtype.support {
         public static debug: boolean = false;
 
         constructor(context: api.form.inputtype.InputTypeViewContext, className?: string) {
-            super("input-type-view" + ( className ? " " + className : ""));
-            api.util.assertNotNull(context, "context cannot be null");
+            super('input-type-view' + ( className ? ' ' + className : ''));
+            api.util.assertNotNull(context, 'context cannot be null');
             this.context = context;
 
             wemjq(this.getHTMLElement()).sortable({
-                axis: "y",
+                axis: 'y',
                 containment: 'parent',
                 handle: '.drag-control',
                 tolerance: 'pointer',
@@ -52,7 +52,7 @@ module api.form.inputtype.support {
             let draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
             this.draggingIndex = draggedElement.getSiblingIndex();
 
-            ui.placeholder.html("Drop form item set here");
+            ui.placeholder.html('Drop form item set here');
         }
 
         handleDnDStop(event: Event, ui: JQueryUI.SortableUIParams): void {
@@ -127,11 +127,11 @@ module api.form.inputtype.support {
         }
 
         onValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
-            throw new Error("User onOccurrenceValueChanged instead");
+            throw new Error('User onOccurrenceValueChanged instead');
         }
 
         unValueChanged(listener: (event: api.form.inputtype.ValueChangedEvent) => void) {
-            throw new Error("User onOccurrenceValueChanged instead");
+            throw new Error('User onOccurrenceValueChanged instead');
         }
 
         onValidityChanged(listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) {
@@ -170,12 +170,12 @@ module api.form.inputtype.support {
 
             this.onAdded((event: api.dom.ElementAddedEvent) => {
                 this.onOccurrenceAdded(() => {
-                    wemjq(this.getHTMLElement()).sortable("refresh");
+                    wemjq(this.getHTMLElement()).sortable('refresh');
                 });
             });
 
             return this.inputOccurrences.layout().then(() => {
-                wemjq(this.getHTMLElement()).sortable("refresh");
+                wemjq(this.getHTMLElement()).sortable('refresh');
             });
         }
 
@@ -194,7 +194,7 @@ module api.form.inputtype.support {
         }
 
         hasInputElementValidUserInput(inputElement: api.dom.Element): boolean {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         onFocus(listener: (event: FocusEvent) => void) {
@@ -223,7 +223,7 @@ module api.form.inputtype.support {
             if (!this.hasValidUserInput()) {
                 recording.setAdditionalValidationRecord(api.form.AdditionalValidationRecord.create().
                     setOverwriteDefault(true).
-                    setMessage("Incorrect value entered").
+                    setMessage('Incorrect value entered').
                     build());
             } else {
                 this.additionalValidate(recording);
@@ -265,7 +265,7 @@ module api.form.inputtype.support {
         }
 
         protected getPropertyValue(property: Property): string {
-            return property.hasNonNullValue() ? property.getString() : "";
+            return property.hasNonNullValue() ? property.getString() : '';
         }
 
         notifyRequiredContractBroken(state: boolean, index: number) {
@@ -278,23 +278,23 @@ module api.form.inputtype.support {
         }
 
         valueBreaksRequiredContract(value: Value): boolean {
-            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
+            throw new Error('Must be implemented by inheritor: ' + api.ClassHelper.getClassName(this));
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
-            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
+            throw new Error('Must be implemented by inheritor: ' + api.ClassHelper.getClassName(this));
         }
 
         updateInputOccurrenceElement(occurrence: api.dom.Element, property: Property, unchangedOnly?: boolean) {
-            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
+            throw new Error('Must be implemented by inheritor: ' + api.ClassHelper.getClassName(this));
         }
 
         resetInputOccurrenceElement(occurrence: api.dom.Element) {
-            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
+            throw new Error('Must be implemented by inheritor: ' + api.ClassHelper.getClassName(this));
         }
 
         getValueType(): ValueType {
-            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
+            throw new Error('Must be implemented by inheritor: ' + api.ClassHelper.getClassName(this));
         }
 
         newInitialValue(): Value {

@@ -15,7 +15,7 @@ module api.content.page {
         }
 
         resolveIconClass(object: PageDescriptor): string {
-            return api.StyleHelper.getCommonIconCls("file") + " icon-large";
+            return api.StyleHelper.getCommonIconCls('file') + ' icon-large';
         }
     }
 

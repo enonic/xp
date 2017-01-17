@@ -8,7 +8,7 @@ module api.dom {
 
         private originalValue: string;
 
-        private oldValue: string = "";
+        private oldValue: string = '';
 
         private dirty: boolean = false;
 
@@ -23,8 +23,8 @@ module api.dom {
             this.originalValue = originalValue;
 
             if (FormInputEl.debug) {
-                console.groupCollapsed(this.toString() + ".constructor: setting originalValue = " +
-                                       this.originalValue + ", oldValue = " + this.oldValue);
+                console.groupCollapsed(this.toString() + '.constructor: setting originalValue = ' +
+                                       this.originalValue + ', oldValue = ' + this.oldValue);
             }
 
             // Descendant class might override my methods
@@ -38,7 +38,7 @@ module api.dom {
 
                 if (!api.util.StringHelper.isBlank(this.originalValue)) {
                     if (FormInputEl.debug) {
-                        console.debug(this.toString() + '.onAdded: setting original value = "' + this.originalValue + '"');
+                        console.debug(`${this.toString()}.onAdded: setting original value = "${this.originalValue}"`);
                     }
                     // use this prototype's setValue because descendants might override setValue method (i.e. CheckBox, RadioGroup)
                     FormInputEl.prototype.setValue.call(this, this.originalValue, true);
@@ -93,7 +93,7 @@ module api.dom {
             // force set value in case of user input regardless of old value
             if ((this.oldValue != value || this.isSameValueUpdateAllowed()) || userInput) {
                 if (FormInputEl.debug) {
-                    console.debug('update value from "' + this.oldValue + '" to "' + value + '"');
+                    console.debug(`update value from "${this.oldValue}" to "${value}"`);
                 }
                 this.doSetValue(value, silent);
                 this.refreshValueChanged(silent);
@@ -102,10 +102,9 @@ module api.dom {
                     // update original value if not dirty and not user input
                     // to keep the dirty state consistent
                     if (FormInputEl.debug) {
-                        console.debug('not dirty and not user input, update originalValue from "' + this.originalValue + '" to "' + value +
-                                      '"');
+                        console.debug(`not dirty and not user input, update originalValue from "${this.originalValue}" to "${value}"`);
                     }
-                    this.originalValue = "" + value;
+                    this.originalValue = String(value);
                 } else {
                     // update dirty according to new value and original value
                     // to keep dirty state consistent
@@ -113,7 +112,7 @@ module api.dom {
                 }
             } else {
                 if (FormInputEl.debug) {
-                    console.debug("oldValue is equal to new value = " + value + ", skipping setValue...");
+                    console.debug('oldValue is equal to new value = ' + value + ', skipping setValue...');
                 }
             }
             if (FormInputEl.debug) {
@@ -188,28 +187,28 @@ module api.dom {
                 if (!silent) {
                     this.notifyValueChanged(new api.ValueChangedEvent(this.oldValue, value));
                 }
-                this.oldValue = "" + value;
+                this.oldValue = '' + value;
             } else {
                 if (FormInputEl.debug) {
-                    console.debug("oldValue is equal to new value = " + value + ", skipping refreshValueChanged...");
+                    console.debug('oldValue is equal to new value = ' + value + ', skipping refreshValueChanged...');
                 }
             }
         }
 
         onChange(listener: (event: Event) => void) {
-            this.getEl().addEventListener("change", listener);
+            this.getEl().addEventListener('change', listener);
         }
 
         unChange(listener: (event: Event) => void) {
-            this.getEl().removeEventListener("change", listener);
+            this.getEl().removeEventListener('change', listener);
         }
 
         onInput(listener: (event: Event) => void) {
-            this.getEl().addEventListener("input", listener);
+            this.getEl().addEventListener('input', listener);
         }
 
         unInput(listener: (event: Event) => void) {
-            this.getEl().removeEventListener("input", listener);
+            this.getEl().removeEventListener('input', listener);
         }
 
         onDirtyChanged(listener: (dirty: boolean) => void) {

@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 import AppBarTabId = api.app.bar.AppBarTabId;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import ContentId = api.content.ContentId;

@@ -103,7 +103,7 @@ module api.ui.time {
 
         protected initInput() {
             this.input = api.ui.text.TextInput.middle(undefined, this.formatDateTime(this.selectedDate));
-            this.input.setPlaceholder("YYYY-MM-DD hh:mm");
+            this.input.setPlaceholder('YYYY-MM-DD hh:mm');
         }
 
         protected initPopup(builder: DateTimePickerBuilder) {
@@ -161,7 +161,7 @@ module api.ui.time {
                 } else {
                     date = api.util.DateHelper.parseDateTime(typedDateTime);
                     let dateLength = date && date.getFullYear().toString().length + 12;
-                    if (date && date.toString() != "Invalid Date" && typedDateTime.length == dateLength) {
+                    if (date && date.toString() != 'Invalid Date' && typedDateTime.length == dateLength) {
                         this.validUserInput = true;
                         this.setDateTime(date);
                         if (!this.popup.isVisible()) {
@@ -247,7 +247,7 @@ module api.ui.time {
 
         private formatDateTime(date: Date): string {
             if (!date) {
-                return "";
+                return '';
             }
             return api.util.DateHelper.formatDate(date) + ' ' + api.util.DateHelper.formatTime(date, false);
         }

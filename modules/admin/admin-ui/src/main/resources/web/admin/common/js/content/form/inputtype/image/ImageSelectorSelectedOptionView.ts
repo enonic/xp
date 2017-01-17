@@ -38,7 +38,7 @@ module api.content.form.inputtype.image {
         }
 
         private updateIconSrc(content: ImageSelectorDisplayValue) {
-            let newIconSrc = content.getImageUrl() + "?thumbnail=false&size=" + ImageSelectorSelectedOptionView.IMAGE_SIZE;
+            let newIconSrc = content.getImageUrl() + '?thumbnail=false&size=' + ImageSelectorSelectedOptionView.IMAGE_SIZE;
 
             if (this.icon.getSrc().indexOf(newIconSrc) == -1) {
                 if (this.isVisible()) {
@@ -58,10 +58,10 @@ module api.content.form.inputtype.image {
         doRender(): wemQ.Promise<boolean> {
 
             this.icon = new api.dom.ImgEl();
-            this.label = new api.dom.DivEl("label");
+            this.label = new api.dom.DivEl('label');
             this.check = api.ui.Checkbox.create().build();
             this.progress = new api.ui.ProgressBar();
-            this.error = new api.dom.DivEl("error");
+            this.error = new api.dom.DivEl('error');
             this.loadMask = new LoadMask(this);
 
             let squaredContent = new api.dom.DivEl('squared-content');

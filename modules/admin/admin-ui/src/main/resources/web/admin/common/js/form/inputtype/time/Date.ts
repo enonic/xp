@@ -72,6 +72,6 @@ module api.content.form.inputtype.time {
             return datePicker.isValid();
         }
     }
-    api.form.inputtype.InputTypeManager.register(new api.Class("Date", Date));
+    api.form.inputtype.InputTypeManager.register(new api.Class('Date', Date));
 
 }

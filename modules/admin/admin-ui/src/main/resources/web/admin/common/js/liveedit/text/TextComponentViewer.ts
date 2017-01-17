@@ -21,7 +21,7 @@ module api.liveedit.text {
         }
 
         resolveIconClass(object: api.content.page.region.TextComponent): string {
-            return api.liveedit.ItemViewIconClassResolver.resolveByType("text");
+            return api.liveedit.ItemViewIconClassResolver.resolveByType('text');
         }
 
     }

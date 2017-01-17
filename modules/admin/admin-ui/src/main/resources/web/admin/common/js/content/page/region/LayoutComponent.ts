@@ -29,9 +29,9 @@ module api.content.page.region {
             this.componentPropertyChangedEventHandler = (event: any) => this.forwardComponentPropertyChangedEvent(event);
             this.regionsChangedEventHandler = (event: any) => {
                 if (LayoutComponent.debug) {
-                    console.debug("LayoutComponent[" + this.getPath().toString() + "].onChanged: ", event);
+                    console.debug('LayoutComponent[' + this.getPath().toString() + '].onChanged: ', event);
                 }
-                this.notifyPropertyValueChanged("regions");
+                this.notifyPropertyValueChanged('regions');
             };
 
             this.registerRegionsListeners(this.regions);
@@ -57,9 +57,9 @@ module api.content.page.region {
 
             if (!api.ObjectHelper.equals(oldValue, value)) {
                 if (LayoutComponent.debug) {
-                    console.debug("LayoutComponent[" + this.getPath().toString() + "].regions reassigned: ", event);
+                    console.debug('LayoutComponent[' + this.getPath().toString() + '].regions reassigned: ', event);
                 }
-                this.notifyPropertyChanged("regions");
+                this.notifyPropertyChanged('regions');
             }
         }
 

@@ -12,7 +12,7 @@ module api.query.expr {
         }
 
         toString() {
-            return "NOT (" + this.expr.toString() + ")";
+            return 'NOT (' + this.expr.toString() + ')';
         }
     }
 }

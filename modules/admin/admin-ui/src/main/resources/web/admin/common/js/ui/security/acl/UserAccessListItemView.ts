@@ -25,7 +25,7 @@ module api.ui.security.acl {
         public static debug: boolean = false;
 
         constructor(className?: string) {
-            super('user-access-list-item-view' + (className ? " " + className : ""));
+            super('user-access-list-item-view' + (className ? ' ' + className : ''));
         }
 
         setCurrentUser(user: User) {
@@ -36,12 +36,12 @@ module api.ui.security.acl {
             super.doLayout(object);
 
             if (UserAccessListItemView.debug) {
-                console.debug("UserAccessListItemView.doLayout");
+                console.debug('UserAccessListItemView.doLayout');
             }
 
             if (!this.accessLine && !this.userLine) {
-                this.accessLine = new api.dom.SpanEl("access-line");
-                this.userLine = new api.dom.DivEl("user-line");
+                this.accessLine = new api.dom.SpanEl('access-line');
+                this.userLine = new api.dom.DivEl('user-line');
                 this.appendChildren(this.accessLine, this.userLine);
 
                 this.resizeListener = this.setExtraCount.bind(this);
@@ -57,13 +57,13 @@ module api.ui.security.acl {
 
                 object.getMembers().forEach((principal: EffectivePermissionMember) => {
 
-                    let display = principal.getDisplayName().split(" ").map(word => word.substring(0, 1).toUpperCase());
+                    let display = principal.getDisplayName().split(' ').map(word => word.substring(0, 1).toUpperCase());
 
-                    let icon = new api.dom.SpanEl("user-icon").setHtml(display.length >= 2
-                        ? display.join("").substring(0, 2)
+                    let icon = new api.dom.SpanEl('user-icon').setHtml(display.length >= 2
+                        ? display.join('').substring(0, 2)
                         : principal.getDisplayName().substring(0, 2).toUpperCase());
                     if (this.currentUser && this.currentUser.getKey().equals(principal.getUserKey())) {
-                        icon.addClass("active");
+                        icon.addClass('active');
                         this.userLine.insertChild(icon, 0);
                     } else {
                         this.userLine.appendChild(icon);
@@ -85,9 +85,9 @@ module api.ui.security.acl {
                 let extraCount = iconCount - visibleCount;
 
                 if (extraCount > 0) {
-                    this.userLine.getEl().setAttribute("extra-count", "+" + extraCount);
+                    this.userLine.getEl().setAttribute('extra-count', '+' + extraCount);
                 } else {
-                    this.userLine.getEl().removeAttribute("extra-count");
+                    this.userLine.getEl().removeAttribute('extra-count');
                 }
             }
         }

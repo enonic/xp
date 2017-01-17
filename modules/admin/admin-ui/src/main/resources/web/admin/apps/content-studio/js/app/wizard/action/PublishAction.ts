@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {ContentWizardPanel} from "../ContentWizardPanel";
-import {ContentPublishPromptEvent} from "../../browse/ContentPublishPromptEvent";
+import '../../../api.ts';
+import {ContentWizardPanel} from '../ContentWizardPanel';
+import {ContentPublishPromptEvent} from '../../browse/ContentPublishPromptEvent';
 
 import Content = api.content.Content;
 import ContentId = api.content.ContentId;
@@ -9,7 +9,7 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 export class PublishAction extends api.ui.Action {
 
     constructor(wizard: ContentWizardPanel, includeChildItems: boolean = false) {
-        super("Publish...");
+        super('Publish...');
 
         this.setEnabled(false);
 

@@ -1,16 +1,16 @@
-describe("api.i18n", () => {
+describe('api.i18n', () => {
 
-    it("test no translation", () => {
+    it('test no translation', () => {
         let message = api.i18n.message('no translation for this', []);
         expect(message).toBe('no translation for this');
     });
 
-    it("test no translation with arguments", () => {
+    it('test no translation with arguments', () => {
         let message = api.i18n.message('no $1 for $2', ['translation', 'this']);
         expect(message).toBe('no translation for this');
     });
 
-    it("test translation", () => {
+    it('test translation', () => {
 
         api.i18n.setLocale('no');
         api.i18n.addBundle('no', {
@@ -21,7 +21,7 @@ describe("api.i18n", () => {
         expect(message).toBe('oversetting for dette');
     });
 
-    it("test translation with arguments", () => {
+    it('test translation with arguments', () => {
 
         api.i18n.setLocale('no');
         api.i18n.addBundle('no', {
@@ -32,7 +32,7 @@ describe("api.i18n", () => {
         expect(message).toBe('oversetting for dette');
     });
 
-    it("test merge bundles", () => {
+    it('test merge bundles', () => {
 
         api.i18n.setLocale('no');
 

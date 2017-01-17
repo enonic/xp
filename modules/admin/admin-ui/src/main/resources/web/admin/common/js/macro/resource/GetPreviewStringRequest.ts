@@ -7,7 +7,7 @@ module api.macro.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "previewString");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'previewString');
         }
 
         sendAndParse(): wemQ.Promise<string> {

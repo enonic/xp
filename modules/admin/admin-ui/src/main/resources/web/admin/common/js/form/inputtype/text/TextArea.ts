@@ -17,7 +17,7 @@ module api.form.inputtype.text {
         }
 
         newInitialValue(): Value {
-            return super.newInitialValue() || new Value("", ValueTypes.STRING);
+            return super.newInitialValue() || new Value('', ValueTypes.STRING);
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
@@ -26,7 +26,7 @@ module api.form.inputtype.text {
             }
 
             const value = property.hasNonNullValue() ? property.getString() : undefined;
-            const inputEl = new api.ui.text.TextArea(this.getInput().getName() + "-" + index, value);
+            const inputEl = new api.ui.text.TextArea(this.getInput().getName() + '-' + index, value);
 
             inputEl.onValueChanged((event: api.ValueChangedEvent) => {
                 const newValue = ValueTypes.STRING.newValue(event.getNewValue());
@@ -66,7 +66,7 @@ module api.form.inputtype.text {
         }
 
         static getName(): api.form.InputTypeName {
-            return new api.form.InputTypeName("TextArea", false);
+            return new api.form.InputTypeName('TextArea', false);
         }
     }
 

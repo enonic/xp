@@ -63,7 +63,7 @@ module api.ui.time {
         private shownMonthChangedListeners: {(month: number, year: number) : void}[] = [];
 
         constructor(builder: CalendarBuilder) {
-            super("calendar");
+            super('calendar');
 
             let now = new Date();
             this.year = builder.year || now.getFullYear();
@@ -83,7 +83,7 @@ module api.ui.time {
                 this.removeChildren();
 
                 if (api.util.DateHelper.isInvalidDate(value)) {
-                    let spanEl = new api.dom.SpanEl().setHtml("Invalid date");
+                    let spanEl = new api.dom.SpanEl().setHtml('Invalid date');
                     this.appendChild(spanEl);
                 } else {
                     this.renderMonth();

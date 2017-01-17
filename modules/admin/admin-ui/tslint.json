@@ -83,7 +83,9 @@
       "check-whitespace"
     ],
     "quotemark": [
-      true
+      true,
+      "single",
+      "avoid-escape"
     ],
     "semicolon": [
       true,

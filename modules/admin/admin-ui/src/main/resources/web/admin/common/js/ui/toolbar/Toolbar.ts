@@ -11,7 +11,7 @@ module api.ui.toolbar {
         protected actions: api.ui.Action[] = [];
 
         constructor(className?: string) {
-            super(!className ? "toolbar" : className + " toolbar");
+            super(!className ? 'toolbar' : className + ' toolbar');
 
             this.fold = new FoldButton();
             this.fold.hide();

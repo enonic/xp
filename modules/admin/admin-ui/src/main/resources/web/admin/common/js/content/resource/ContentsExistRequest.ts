@@ -9,7 +9,7 @@ module api.content.resource {
 
         constructor(contentIds: string[]) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             this.contentIds = contentIds;
         }
 
@@ -20,7 +20,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "contentsExist");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'contentsExist');
         }
 
         sendAndParse(): wemQ.Promise<ContentsExistResult> {

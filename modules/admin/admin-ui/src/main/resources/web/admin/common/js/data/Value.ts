@@ -12,10 +12,10 @@ module api.data {
             if (value) {
                 let isValid = this.type.isValid(value);
                 if (isValid == undefined) {
-                    throw new Error(api.ClassHelper.getClassName(this.type) + ".isValid() did not return any value: " + isValid);
+                    throw new Error(api.ClassHelper.getClassName(this.type) + '.isValid() did not return any value: ' + isValid);
                 }
                 if (isValid == false) {
-                    throw new Error("Invalid value for type " + type.toString() + ": " + value);
+                    throw new Error('Invalid value for type ' + type.toString() + ': ' + value);
                 }
             }
         }
@@ -53,7 +53,7 @@ module api.data {
             }
 
             api.util.assert(api.ObjectHelper.iFrameSafeInstanceOf(this.value, PropertySet),
-                "Expected value to be a PropertySet: " + api.ClassHelper.getClassName(this.value));
+                'Expected value to be a PropertySet: ' + api.ClassHelper.getClassName(this.value));
 
             return <PropertySet>this.value;
         }

@@ -10,7 +10,7 @@ module api.ui.button {
 
             this.action = action;
             this.setLabel(this.createLabel(action), false);
-            this.addClass("action-button");
+            this.addClass('action-button');
 
             this.setEnabled(this.action.isEnabled());
 

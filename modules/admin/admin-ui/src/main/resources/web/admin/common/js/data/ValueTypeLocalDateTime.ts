@@ -5,7 +5,7 @@ module api.data {
     export class ValueTypeLocalDateTime extends ValueType {
 
         constructor() {
-            super("LocalDateTime");
+            super('LocalDateTime');
         }
 
         isValid(value: string): boolean {

@@ -10,7 +10,7 @@ module api.application {
 
         constructor(applicationKey: ApplicationKey, skipCache: boolean = false) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
             this.applicationKey = applicationKey;
             this.skipCache = skipCache;
             this.setHeavyOperation(true);

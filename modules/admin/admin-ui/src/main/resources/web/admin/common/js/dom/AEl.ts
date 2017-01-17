@@ -3,7 +3,7 @@ module api.dom {
     export class AEl extends Element {
 
         constructor(className?: string) {
-            super(new NewElementBuilder().setTagName("a").setClassName(className));
+            super(new NewElementBuilder().setTagName('a').setClassName(className));
 
             this.setUrl('#');
         }

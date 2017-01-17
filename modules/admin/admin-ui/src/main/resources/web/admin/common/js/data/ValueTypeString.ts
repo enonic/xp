@@ -3,7 +3,7 @@ module api.data {
     export class ValueTypeString extends ValueType {
 
         constructor() {
-            super("String");
+            super('String');
         }
 
         isValid(value: any): boolean {

@@ -21,8 +21,8 @@ module api.data {
         }
 
         toString(): string {
-            return "[" + ( this.previousValue ? this.previousValue.getObject() : null) + "] -> [" +
-                   ( this.newValue ? this.newValue.getObject() : null) + "]";
+            return '[' + ( this.previousValue ? this.previousValue.getObject() : null) + '] -> [' +
+                   ( this.newValue ? this.newValue.getObject() : null) + ']';
         }
     }
 }

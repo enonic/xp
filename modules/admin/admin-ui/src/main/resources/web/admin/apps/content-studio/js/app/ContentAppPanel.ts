@@ -1,7 +1,7 @@
-import "../api.ts";
-import {ViewContentEvent} from "./browse/ViewContentEvent";
-import {ContentBrowsePanel} from "./browse/ContentBrowsePanel";
-import {NewContentEvent} from "./create/NewContentEvent";
+import '../api.ts';
+import {ViewContentEvent} from './browse/ViewContentEvent';
+import {ContentBrowsePanel} from './browse/ContentBrowsePanel';
+import {NewContentEvent} from './create/NewContentEvent';
 
 import ContentSummary = api.content.ContentSummary;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;

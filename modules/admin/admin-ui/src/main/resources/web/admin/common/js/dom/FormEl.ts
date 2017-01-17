@@ -3,7 +3,7 @@ module api.dom {
     export class FormEl extends Element {
 
         constructor(className?: string) {
-            super(new NewElementBuilder().setTagName("form").setClassName(className));
+            super(new NewElementBuilder().setTagName('form').setClassName(className));
         }
 
         preventSubmit() {
@@ -13,15 +13,15 @@ module api.dom {
         }
 
         onSubmit(listener: (event: Event) => void) {
-            this.getEl().addEventListener("submit", listener);
+            this.getEl().addEventListener('submit', listener);
         }
 
         unSubmit(listener: (event: Event) => void) {
-            this.getEl().removeEventListener("submit", listener);
+            this.getEl().removeEventListener('submit', listener);
         }
 
         static getNextFocusable(input: Element, focusableSelector?: string, ignoreTabIndex?: boolean): Element {
-            let focusableElements: NodeList = document.querySelectorAll(focusableSelector ? focusableSelector : "input, button, select");
+            let focusableElements: NodeList = document.querySelectorAll(focusableSelector ? focusableSelector : 'input, button, select');
 
             // find index of current input
             let index = FormEl.getIndexOfInput(focusableElements, input);
@@ -54,7 +54,7 @@ module api.dom {
         }
 
         static moveFocusToPrevFocusable(input: Element, focusableSelector?: string) {
-            let focusableElements: NodeList = document.querySelectorAll(focusableSelector ? focusableSelector : "input, button, select");
+            let focusableElements: NodeList = document.querySelectorAll(focusableSelector ? focusableSelector : 'input, button, select');
 
             // find index of current input
             let index = FormEl.getIndexOfInput(focusableElements, input);

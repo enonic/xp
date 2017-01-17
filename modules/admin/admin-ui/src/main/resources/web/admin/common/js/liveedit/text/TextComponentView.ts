@@ -38,9 +38,9 @@ module api.liveedit.text {
 
         public static debug: boolean = false;
 
-        private static DEFAULT_TEXT: string = "";
+        private static DEFAULT_TEXT: string = '';
 
-        private static EDITOR_FOCUSED_CLASS: string = "editor-focused";
+        private static EDITOR_FOCUSED_CLASS: string = 'editor-focused';
 
         // special handling for click to allow dblclick event without triggering 2 clicks before it
         public static DBL_CLICK_TIMEOUT: number = 250;
@@ -134,7 +134,7 @@ module api.liveedit.text {
 
         private handlePasteEvent() {
             if (this.isAllTextSelected()) {
-                this.rootElement.getHTMLElement().innerHTML = "";
+                this.rootElement.getHTMLElement().innerHTML = '';
             }
         }
 
@@ -321,12 +321,12 @@ module api.liveedit.text {
                 this.closePageTextEditMode();
                 this.removeClass(TextComponentView.EDITOR_FOCUSED_CLASS);
             } else if ((e.altKey) && e.keyCode === 9) { // alt+tab for OSX
-                let nextFocusable = api.dom.FormEl.getNextFocusable(this, ".xp-page-editor-text-view", true);
+                let nextFocusable = api.dom.FormEl.getNextFocusable(this, '.xp-page-editor-text-view', true);
                 if (nextFocusable) {
-                    wemjq(nextFocusable.getHTMLElement()).simulate("click");
+                    wemjq(nextFocusable.getHTMLElement()).simulate('click');
                     nextFocusable.giveFocus();
                 } else {
-                    this.htmlAreaEditor.fire("blur");
+                    this.htmlAreaEditor.fire('blur');
                 }
             }
         }
@@ -351,7 +351,7 @@ module api.liveedit.text {
             this.addClass(id);
 
             if (!this.editorContainer) {
-                this.editorContainer = new api.dom.DivEl("tiny-mce-here");
+                this.editorContainer = new api.dom.DivEl('tiny-mce-here');
                 this.appendChild(this.editorContainer);
             }
 
@@ -392,13 +392,13 @@ module api.liveedit.text {
         private forceEditorFocus() {
             if (this.htmlAreaEditor) {
                 this.htmlAreaEditor.focus();
-                wemjq(this.htmlAreaEditor.getElement()).simulate("click");
+                wemjq(this.htmlAreaEditor.getElement()).simulate('click');
             }
             this.startPageTextEditMode();
         }
 
         private collapseEditorMenuItems() {
-            wemjq(".mce-menubtn.mce-active").click();
+            wemjq('.mce-menubtn.mce-active').click();
         }
 
         private anyEditorHasFocus(): boolean {
@@ -432,7 +432,7 @@ module api.liveedit.text {
 
         private isEditorEmpty(): boolean {
             let editorContent = this.htmlAreaEditor.getContent();
-            return editorContent.trim() === "" || editorContent == "<h2>&nbsp;</h2>";
+            return editorContent.trim() === '' || editorContent == '<h2>&nbsp;</h2>';
         }
 
         private destroyEditor(): void {

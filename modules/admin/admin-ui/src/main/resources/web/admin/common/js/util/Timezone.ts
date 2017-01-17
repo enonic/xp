@@ -21,9 +21,9 @@ module api.util {
 
         offsetToString(): string {
             if (this.offset < 0) {
-                return "-" + this.padOffset(Math.abs(this.offset));
+                return '-' + this.padOffset(Math.abs(this.offset));
             }
-            return "+" + this.padOffset(Math.abs(this.offset));
+            return '+' + this.padOffset(Math.abs(this.offset));
         }
 
         toString(): string {
@@ -48,10 +48,10 @@ module api.util {
             let numAsString = String(num);
 
             while (numAsString.length < length) {
-                numAsString = "0" + numAsString;
+                numAsString = '0' + numAsString;
             }
 
-            return numAsString + ":00";
+            return numAsString + ':00';
         }
 
         static isValidTimezone(s: string): boolean {
@@ -72,7 +72,7 @@ module api.util {
 
         static fromOffset(s: number): Timezone {
             if (!Timezone.isValidOffset(s)) {
-                throw new Error("Passed Timezone ofsset is invalid: " + s);
+                throw new Error('Passed Timezone ofsset is invalid: ' + s);
             }
 
             return Timezone.create()

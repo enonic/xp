@@ -17,8 +17,8 @@ module api.content.form.inputtype.tag {
         private tagSuggester: ContentTagSuggester;
 
         constructor(context: api.content.form.inputtype.ContentInputTypeViewContext) {
-            super("tag");
-            this.addClass("input-type-view");
+            super('tag');
+            this.addClass('input-type-view');
 
             this.context = context;
 
@@ -128,5 +128,5 @@ module api.content.form.inputtype.tag {
         }
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("Tag", Tag));
+    api.form.inputtype.InputTypeManager.register(new api.Class('Tag', Tag));
 }

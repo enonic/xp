@@ -1,6 +1,6 @@
-import "../../../../../../api.ts";
-import {ComponentInspectionPanel, ComponentInspectionPanelConfig} from "./ComponentInspectionPanel";
-import {FragmentSelectorForm} from "./FragmentSelectorForm";
+import '../../../../../../api.ts';
+import {ComponentInspectionPanel, ComponentInspectionPanelConfig} from './ComponentInspectionPanel';
+import {FragmentSelectorForm} from './FragmentSelectorForm';
 
 import FragmentComponent = api.content.page.region.FragmentComponent;
 import ContentSummary = api.content.ContentSummary;
@@ -37,7 +37,7 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
 
     constructor() {
         super(<ComponentInspectionPanelConfig>{
-            iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType("fragment")
+            iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType('fragment')
         });
     }
 
@@ -54,7 +54,7 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
         let sitePath = this.liveEditModel.getSiteModel().getSite().getPath().toString();
 
         this.fragmentSelector = new FragmentDropdown(sitePath, this.liveEditModel.getContent().getPath());
-        this.fragmentForm = new FragmentSelectorForm(this.fragmentSelector, "Fragment");
+        this.fragmentForm = new FragmentSelectorForm(this.fragmentSelector, 'Fragment');
 
         this.fragmentSelector.load();
 
@@ -137,7 +137,7 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
 
                         if (fragmentComponent &&
                             api.ObjectHelper.iFrameSafeInstanceOf(fragmentComponent.getType(), LayoutComponentType)) {
-                            api.notify.showWarning("Layout within layout not allowed");
+                            api.notify.showWarning('Layout within layout not allowed');
 
                         } else {
                             this.fragmentComponent.setFragment(fragmentContent.getContentId(), fragmentContent.getDisplayName());

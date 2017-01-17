@@ -7,7 +7,7 @@ module api.content.resource {
 
         constructor() {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
         }
 
         getParams(): Object {
@@ -15,7 +15,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "rootPermissions");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'rootPermissions');
         }
 
         sendAndParse(): wemQ.Promise<AccessControlList> {

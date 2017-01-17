@@ -10,7 +10,7 @@ module api.content.resource {
 
         constructor() {
             super();
-            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "content");
+            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), 'content');
         }
 
         getResourcePath(): api.rest.Path {

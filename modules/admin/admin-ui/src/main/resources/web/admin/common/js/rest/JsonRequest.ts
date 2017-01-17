@@ -6,7 +6,7 @@ module api.rest {
 
         private path: Path;
 
-        private method: string = "GET";
+        private method: string = 'GET';
 
         private params: Object;
 
@@ -56,12 +56,12 @@ module api.rest {
                             deferred.reject(error);
                         }
 
-                        deferred.reject(new RequestError(request.status, errorJson ? errorJson.message : ""));
+                        deferred.reject(new RequestError(request.status, errorJson ? errorJson.message : ''));
                     }
                 }
             };
 
-            if ("POST" === this.method.toUpperCase()) {
+            if ('POST' === this.method.toUpperCase()) {
                 this.preparePOSTRequest(request);
                 let paramString = JSON.stringify(this.params);
                 request.send(paramString);
@@ -76,10 +76,10 @@ module api.rest {
             let uriString = UriHelper.appendUrlParams(this.path.toString(), this.params);
             request.open(this.method, UriHelper.getUri(uriString), true);
             request.timeout = this.timeoutMillis;
-            request.setRequestHeader("Accept", "application/json");
+            request.setRequestHeader('Accept', 'application/json');
             if (api.BrowserHelper.isIE()) {
-                request.setRequestHeader("Pragma", "no-cache");
-                request.setRequestHeader("Cache-Control", "no-cache");
+                request.setRequestHeader('Pragma', 'no-cache');
+                request.setRequestHeader('Cache-Control', 'no-cache');
             }
             return request;
         }
@@ -87,8 +87,8 @@ module api.rest {
         private preparePOSTRequest(request: XMLHttpRequest) {
             request.open(this.method, UriHelper.getUri(this.path.toString()), true);
             request.timeout = this.timeoutMillis;
-            request.setRequestHeader("Accept", "application/json");
-            request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            request.setRequestHeader('Accept', 'application/json');
+            request.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
         }
     }
 }

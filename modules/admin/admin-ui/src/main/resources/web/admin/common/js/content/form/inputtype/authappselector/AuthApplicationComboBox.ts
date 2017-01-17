@@ -27,7 +27,7 @@ module api.content.site.inputtype.authappselector {
             builder.
                 setMaximumOccurrences(maxOccurrences).
                 setIdentifierMethod('getApplicationKey').
-                setComboBoxName("applicationSelector").setLoader(new api.security.auth.AuthApplicationLoader())
+                setComboBoxName('applicationSelector').setLoader(new api.security.auth.AuthApplicationLoader())
                 .setSelectedOptionsView(view).
                 setOptionDisplayValueViewer(new ApplicationViewer()).
                 setValue(value).

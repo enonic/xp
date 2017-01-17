@@ -3,7 +3,7 @@ module api.ui.tab {
     export class TabBarItem extends TabItem {
 
         constructor(builder: TabBarItemBuilder) {
-            super(builder, "tab-bar-item");
+            super(builder, 'tab-bar-item');
         }
     }
 

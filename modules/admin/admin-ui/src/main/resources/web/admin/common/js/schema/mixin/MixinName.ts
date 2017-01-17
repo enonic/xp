@@ -5,7 +5,7 @@ module api.schema.mixin {
     export class MixinName extends api.application.ApplicationBasedName {
 
         constructor(name:string) {
-            api.util.assertNotNull(name, "Mixin name can't be null");
+            api.util.assertNotNull(name, `Mixin name can't be null`);
             let parts = name.split(api.application.ApplicationBasedName.SEPARATOR);
             super(ApplicationKey.fromString(parts[0]), parts[1]);
         }

@@ -1,8 +1,8 @@
-import "../../api.ts";
-import {ContentBrowseItem} from "./ContentBrowseItem";
-import {ContentBrowseItemsSelectionPanel} from "./ContentBrowseItemsSelectionPanel";
-import {ContentItemStatisticsPanel} from "../view/ContentItemStatisticsPanel";
-import {ContentTreeGrid} from "./ContentTreeGrid";
+import '../../api.ts';
+import {ContentBrowseItem} from './ContentBrowseItem';
+import {ContentBrowseItemsSelectionPanel} from './ContentBrowseItemsSelectionPanel';
+import {ContentItemStatisticsPanel} from '../view/ContentItemStatisticsPanel';
+import {ContentTreeGrid} from './ContentTreeGrid';
 
 export class ContentBrowseItemPanel extends api.app.browse.BrowseItemPanel<api.content.ContentSummaryAndCompareStatus> {
 

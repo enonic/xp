@@ -15,7 +15,7 @@ module api.ui.tab {
         private navigationItemActivatedListeners: {(event: ActivatedEvent):void}[] = [];
 
         constructor(classes?: string) {
-            super("tab-bar" + (!classes ? "" : " " + classes));
+            super('tab-bar' + (!classes ? '' : ' ' + classes));
         }
 
         setScrollEnabled(enabled: boolean) {

@@ -1,7 +1,7 @@
 import AccessControlEntry = api.security.acl.AccessControlEntry;
 import Permission = api.security.acl.Permission;
 
-describe("api.security.acl.AccessControlEntry", () => {
+describe('api.security.acl.AccessControlEntry', () => {
 
     let now;
 
@@ -9,11 +9,11 @@ describe("api.security.acl.AccessControlEntry", () => {
         now = new Date(Date.now());
     });
 
-    describe("equals", () => {
+    describe('equals', () => {
 
-        let principal1 = Principal.create().setKey(PrincipalKey.ofAnonymous()).setDisplayName("principal1").setModifiedTime(now).build();
+        let principal1 = Principal.create().setKey(PrincipalKey.ofAnonymous()).setDisplayName('principal1').setModifiedTime(now).build();
 
-        it("given an equal then true is returned", () => {
+        it('given an equal then true is returned', () => {
 
             let aclA = new AccessControlEntry(principal1);
             aclA.setAllowedPermissions([Permission.READ, Permission.CREATE]);
@@ -26,7 +26,7 @@ describe("api.security.acl.AccessControlEntry", () => {
             expect(aclA.equals(aclB)).toBeTruthy();
         });
 
-        it("given unequal allowed permissions then false is returned", () => {
+        it('given unequal allowed permissions then false is returned', () => {
 
             let aclA = new AccessControlEntry(principal1);
             aclA.setAllowedPermissions([Permission.READ, Permission.CREATE]);

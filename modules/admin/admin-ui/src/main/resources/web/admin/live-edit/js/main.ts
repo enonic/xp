@@ -19,7 +19,7 @@ wemjq(document).ready(() => {
 
     // Notify parent frame if any modifier except shift is pressed
     // For the parent shortcuts to work if the inner iframe has focus
-    wemjq(document).on("keypress keydown keyup", (event) => {
+    wemjq(document).on('keypress keydown keyup', (event) => {
 
         if (shouldBubbleEvent(event)) {
 

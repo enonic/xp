@@ -8,7 +8,7 @@ module api.ui.button {
 
         constructor(actions: Action[]) {
             super();
-            this.addClass("cycle-button icon-medium " + api.StyleHelper.getIconCls("monitor2"));
+            this.addClass('cycle-button icon-medium ' + api.StyleHelper.getIconCls('monitor2'));
             this.actionList = actions;
 
             if (this.actionList.length > 0) {
@@ -31,7 +31,7 @@ module api.ui.button {
 
         private removeAndHdeTitle() {
             if (this.actionList[this.active].getTitle()) {
-                this.setTitle("");
+                this.setTitle('');
             }
         }
 
@@ -43,14 +43,14 @@ module api.ui.button {
         }
 
         private updateActive() {
-            let prevName = this.actionList[this.active] ? this.actionList[this.active].getLabel().toLowerCase() : "";
+            let prevName = this.actionList[this.active] ? this.actionList[this.active].getLabel().toLowerCase() : '';
 
             this.active++;
 
             if (this.active >= this.actionList.length) {
                 this.active = 0;
             }
-            let name = this.actionList[this.active] ? this.actionList[this.active].getLabel().toLowerCase() : "";
+            let name = this.actionList[this.active] ? this.actionList[this.active].getLabel().toLowerCase() : '';
 
             if (prevName) {
                 this.removeClass(prevName);

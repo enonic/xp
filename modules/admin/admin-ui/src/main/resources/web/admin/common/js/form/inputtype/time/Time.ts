@@ -88,6 +88,6 @@ module api.content.form.inputtype.time {
         }
 
     }
-    api.form.inputtype.InputTypeManager.register(new api.Class("Time", Time));
+    api.form.inputtype.InputTypeManager.register(new api.Class('Time', Time));
 
 }

@@ -1,4 +1,4 @@
-import "../../../../../../api.ts";
+import '../../../../../../api.ts';
 
 import FragmentDropdown = api.content.page.region.FragmentDropdown;
 

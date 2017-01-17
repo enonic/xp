@@ -2,7 +2,7 @@ module api.rest {
 
     export class Path {
 
-        private static DEFAULT_ELEMENT_DIVIDER:string = "/";
+        private static DEFAULT_ELEMENT_DIVIDER:string = '/';
 
         private elementDivider:string;
 
@@ -46,13 +46,13 @@ module api.rest {
             this.absolute = absolute == undefined ? true : absolute;
             elements.forEach((element:string, index:number) => {
                 if (element == null) {
-                    throw new Error("Path element was null at index: " + index);
+                    throw new Error('Path element was null at index: ' + index);
                 } else if (element.length == 0) {
-                    throw new Error("Path element was empty string at index: " + index);
+                    throw new Error('Path element was empty string at index: ' + index);
                 }
             });
             this.elements = elements;
-            this.refString = (this.absolute ? this.elementDivider : "") + this.elements.join(this.elementDivider);
+            this.refString = (this.absolute ? this.elementDivider : '') + this.elements.join(this.elementDivider);
         }
 
         getElements():string[] {

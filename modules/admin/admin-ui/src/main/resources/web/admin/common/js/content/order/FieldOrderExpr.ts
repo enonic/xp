@@ -21,7 +21,7 @@ module api.content.order {
         }
 
         toString() {
-            return this.fieldName + " " + super.getDirection();
+            return this.fieldName + ' ' + super.getDirection();
         }
 
         equals(o: api.Equitable): boolean {

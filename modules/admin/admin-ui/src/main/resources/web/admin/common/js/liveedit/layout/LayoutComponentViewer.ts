@@ -7,7 +7,7 @@ module api.liveedit.layout {
         }
 
         resolveDisplayName(object: api.content.page.region.LayoutComponent): string {
-            return !!object.getName() ? object.getName().toString() : "";
+            return !!object.getName() ? object.getName().toString() : '';
         }
 
         resolveSubName(object: api.content.page.region.LayoutComponent, relativePath: boolean = false): string {
@@ -15,7 +15,7 @@ module api.liveedit.layout {
         }
 
         resolveIconClass(object: api.content.page.region.LayoutComponent): string {
-            return api.liveedit.ItemViewIconClassResolver.resolveByType("layout");
+            return api.liveedit.ItemViewIconClassResolver.resolveByType('layout');
         }
     }
 

@@ -5,7 +5,7 @@ module api.app.wizard {
         private propertyChangedListeners: {(event: api.PropertyChangedEvent):void}[] = [];
 
         constructor() {
-            super("wizard-header");
+            super('wizard-header');
         }
 
         onPropertyChanged(listener: (event: api.PropertyChangedEvent)=>void) {

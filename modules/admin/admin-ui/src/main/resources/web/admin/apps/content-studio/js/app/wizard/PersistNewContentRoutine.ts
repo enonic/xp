@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {ContentWizardPanel} from "./ContentWizardPanel";
+import '../../api.ts';
+import {ContentWizardPanel} from './ContentWizardPanel';
 
 import CreateContentRequest = api.content.resource.CreateContentRequest;
 import Content = api.content.Content;

@@ -8,7 +8,7 @@ module api.content.resource {
 
         constructor(versionId: string, contentId: ContentId) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             this.versionId = versionId;
             this.contentId = contentId;
         }
@@ -27,7 +27,7 @@ module api.content.resource {
         sendAndParse(): wemQ.Promise<ContentId> {
 
             return this.send().then((response: api.rest.JsonResponse<any>) => {
-                return new ContentId(response.getResult()["id"]);
+                return new ContentId(response.getResult()['id']);
             });
         }
     }

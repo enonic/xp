@@ -1,9 +1,9 @@
-import "../../api.ts";
-import {ApplicationTreeGrid} from "./ApplicationTreeGrid";
-import {StartApplicationAction} from "./StartApplicationAction";
-import {StopApplicationAction} from "./StopApplicationAction";
-import {InstallApplicationAction} from "./InstallApplicationAction";
-import {UninstallApplicationAction} from "./UninstallApplicationAction";
+import '../../api.ts';
+import {ApplicationTreeGrid} from './ApplicationTreeGrid';
+import {StartApplicationAction} from './StartApplicationAction';
+import {StopApplicationAction} from './StopApplicationAction';
+import {InstallApplicationAction} from './InstallApplicationAction';
+import {UninstallApplicationAction} from './UninstallApplicationAction';
 
 import BrowseItem = api.app.browse.BrowseItem;
 import Application = api.application.Application;

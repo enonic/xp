@@ -19,7 +19,7 @@ module api.ui.security.acl {
 
             let builder = new api.ui.selector.combobox.RichComboBoxBuilder<UserStoreAccessControlEntry>().
                 setMaximumOccurrences(0).
-                setComboBoxName("principalSelector").setLoader(new UserStoreAccessControlEntryLoader()).setSelectedOptionsView(
+                setComboBoxName('principalSelector').setLoader(new UserStoreAccessControlEntryLoader()).setSelectedOptionsView(
                 aceSelectedOptionsView).
                 setOptionDisplayValueViewer(new UserStoreAccessControlEntryViewer()).
                 setDelayedInputValueChangedHandling(500);
@@ -136,10 +136,10 @@ module api.ui.security.acl {
         }
 
         removeOption(optionToRemove: Option<UserStoreAccessControlEntry>, silent: boolean = false) {
-            api.util.assertNotNull(optionToRemove, "optionToRemove cannot be null");
+            api.util.assertNotNull(optionToRemove, 'optionToRemove cannot be null');
 
             let selectedOption = this.getByOption(optionToRemove);
-            api.util.assertNotNull(selectedOption, "Did not find any selected option to remove from option: " + optionToRemove.value);
+            api.util.assertNotNull(selectedOption, 'Did not find any selected option to remove from option: ' + optionToRemove.value);
 
             this.removeItem(optionToRemove.displayValue);
 

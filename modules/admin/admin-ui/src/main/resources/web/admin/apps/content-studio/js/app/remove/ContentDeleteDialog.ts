@@ -1,8 +1,8 @@
-import "../../api.ts";
-import {ContentDeleteDialogAction} from "./ContentDeleteDialogAction";
-import {ConfirmContentDeleteDialog} from "./ConfirmContentDeleteDialog";
-import {ProgressBarDialog} from "../dialog/ProgressBarDialog";
-import {ContentDeletePromptEvent} from "../browse/ContentDeletePromptEvent";
+import '../../api.ts';
+import {ContentDeleteDialogAction} from './ContentDeleteDialogAction';
+import {ConfirmContentDeleteDialog} from './ConfirmContentDeleteDialog';
+import {ProgressBarDialog} from '../dialog/ProgressBarDialog';
+import {ContentDeletePromptEvent} from '../browse/ContentDeletePromptEvent';
 
 import ContentSummary = api.content.ContentSummary;
 import CompareStatus = api.content.CompareStatus;
@@ -21,16 +21,16 @@ export class ContentDeleteDialog extends ProgressBarDialog {
     private totalItemsToDelete: number;
 
     constructor() {
-        super("Delete item",
-            "Delete selected items and their children",
-            "Other items that will be deleted",
-            "is-deleting",
+        super('Delete item',
+            'Delete selected items and their children',
+            'Other items that will be deleted',
+            'is-deleting',
             () => {
                 new ContentDeletePromptEvent([]).fire();
             }
         );
 
-        this.addClass("delete-dialog");
+        this.addClass('delete-dialog');
 
         this.getItemList().onItemsRemoved(this.onListItemsRemoved.bind(this));
 
@@ -40,7 +40,7 @@ export class ContentDeleteDialog extends ProgressBarDialog {
 
         this.addCancelButtonToBottom();
 
-        this.instantDeleteCheckbox = api.ui.Checkbox.create().setLabelText("Instantly delete published items").build();
+        this.instantDeleteCheckbox = api.ui.Checkbox.create().setLabelText('Instantly delete published items').build();
         this.instantDeleteCheckbox.addClass('instant-delete-check');
 
         this.appendChild(this.instantDeleteCheckbox);
@@ -160,10 +160,10 @@ export class ContentDeleteDialog extends ProgressBarDialog {
     }
 
     private countItemsToDeleteAndUpdateButtonCounter() {
-        this.actionButton.setLabel("Delete ");
+        this.actionButton.setLabel('Delete ');
 
         this.totalItemsToDelete = this.countTotal();
-        this.updateButtonCount("Delete", this.totalItemsToDelete);
+        this.updateButtonCount('Delete', this.totalItemsToDelete);
     }
 
     private createDeleteRequest(): api.content.resource.DeleteContentRequest {
@@ -213,7 +213,7 @@ export class ContentDeleteDialog extends ProgressBarDialog {
         let count = items.length;
 
         if (!this.doAnyHaveChildren(items)) {
-            super.setSubTitle("");
+            super.setSubTitle('');
         } else {
             super.setSubTitle(`Delete selected items and ${count > 1 ? 'their' : 'its'} child content`);
         }

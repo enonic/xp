@@ -71,12 +71,12 @@ module api.dom {
         }
 
         setDisabled(value: boolean): ElementHelper {
-            this.el["disabled"] = value;
+            this.el['disabled'] = value;
             return this;
         }
 
         isDisabled(): boolean {
-            return this.el["disabled"];
+            return this.el['disabled'];
         }
 
         getId(): string {
@@ -163,7 +163,7 @@ module api.dom {
         addClass(clsName: string): ElementHelper {
             api.util.assert(!api.util.StringHelper.isEmpty(clsName), 'Class name cannot be empty');
             // spaces are not allowed
-            let classList: string[] = clsName.split(" ");
+            let classList: string[] = clsName.split(' ');
             classList.forEach((classItem: string) => {
                 if (this.el.classList && !this.hasClass(classItem)) {
                     this.el.classList.add(classItem);
@@ -202,7 +202,7 @@ module api.dom {
         hasClass(clsName: string): boolean {
             api.util.assert(!api.util.StringHelper.isEmpty(clsName), 'Class name cannot be empty');
             // spaces are not allowed
-            let classList: string[] = clsName.split(" ");
+            let classList: string[] = clsName.split(' ');
             for (let i = 0; i < classList.length; i++) {
                 let classItem = classList[i];
                 if (!this.el.classList || !this.el.classList.contains(classItem)) {
@@ -215,7 +215,7 @@ module api.dom {
         removeClass(clsName: string): ElementHelper {
             api.util.assert(!api.util.StringHelper.isEmpty(clsName), 'Class name cannot be empty');
             // spaces are not allowed
-            let classList: string[] = clsName.split(" ");
+            let classList: string[] = clsName.split(' ');
             classList.forEach((classItem: string) => {
                 if (this.el.classList) {
                     this.el.classList.remove(classItem);
@@ -300,7 +300,7 @@ module api.dom {
         }
 
         setWidthPx(value: number): ElementHelper {
-            this.setWidth(value + "px");
+            this.setWidth(value + 'px');
             return this;
         }
 
@@ -310,7 +310,7 @@ module api.dom {
         }
 
         setMaxWidthPx(value: number): ElementHelper {
-            this.setMaxWidth(value + "px");
+            this.setMaxWidth(value + 'px');
             return this;
         }
 
@@ -344,7 +344,7 @@ module api.dom {
         }
 
         setHeightPx(value: number): ElementHelper {
-            this.setHeight(value + "px");
+            this.setHeight(value + 'px');
             return this;
         }
 
@@ -358,7 +358,7 @@ module api.dom {
         }
 
         setMaxHeightPx(value: number): ElementHelper {
-            this.setMaxHeight(value + "px");
+            this.setMaxHeight(value + 'px');
             return this;
         }
 
@@ -380,7 +380,7 @@ module api.dom {
         }
 
         setTopPx(value: number): ElementHelper {
-            return this.setTop(value + "px");
+            return this.setTop(value + 'px');
         }
 
         getTopPx(): number {
@@ -397,7 +397,7 @@ module api.dom {
         }
 
         setBottomPx(value: number): ElementHelper {
-            return this.setBottom(value + "px");
+            return this.setBottom(value + 'px');
         }
 
         getLeft(): string {
@@ -409,7 +409,7 @@ module api.dom {
         }
 
         setLeftPx(value: number): ElementHelper {
-            return this.setLeft(value + "px");
+            return this.setLeft(value + 'px');
         }
 
         setLeft(value: string): ElementHelper {
@@ -423,7 +423,7 @@ module api.dom {
         }
 
         setRightPx(value: number): ElementHelper {
-            return this.setRight(value + "px");
+            return this.setRight(value + 'px');
         }
 
         getMarginLeft(): number {
@@ -689,8 +689,8 @@ module api.dom {
         }
 
         isScrollable(): boolean {
-            return this.getComputedProperty("overflow") == "auto" || this.getComputedProperty("overflow-y") == "auto" ||
-                   this.hasClass("slimScrollDiv");
+            return this.getComputedProperty('overflow') == 'auto' || this.getComputedProperty('overflow-y') == 'auto' ||
+                   this.hasClass('slimScrollDiv');
         }
 
         getComputedProperty(name: string, pseudoElement: string = null): string {

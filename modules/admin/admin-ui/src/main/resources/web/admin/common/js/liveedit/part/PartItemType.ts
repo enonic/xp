@@ -14,7 +14,7 @@ module api.liveedit.part {
         }
 
         constructor() {
-            super("part");
+            super('part');
         }
 
         isComponentType(): boolean {

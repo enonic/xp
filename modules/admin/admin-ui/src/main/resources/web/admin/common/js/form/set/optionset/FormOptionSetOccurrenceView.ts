@@ -27,8 +27,8 @@ module api.form {
         private selectionValidationMessage: api.dom.DivEl;
 
         constructor(config: FormOptionSetOccurrenceViewConfig) {
-            super("form-option-set-occurrence-view", config.formSetOccurrence);
-            this.occurrenceContainerClassName = "form-option-set-occurrences-container";
+            super('form-option-set-occurrence-view', config.formSetOccurrence);
+            this.occurrenceContainerClassName = 'form-option-set-occurrences-container';
             this.formItemOccurrence = config.formSetOccurrence;
             this.formOptionSet = config.formOptionSet;
             this.propertySet = config.dataSet;
@@ -39,7 +39,7 @@ module api.form {
         }
 
         protected initValidationMessageBlock() {
-            this.selectionValidationMessage = new api.dom.DivEl("selection-message");
+            this.selectionValidationMessage = new api.dom.DivEl('selection-message');
             this.appendChild(this.selectionValidationMessage);
         }
 
@@ -108,28 +108,28 @@ module api.form {
 
         private renderSelectionValidationMessage(selectionValidationRecording: ValidationRecording) {
             if (selectionValidationRecording.isValid()) {
-                this.selectionValidationMessage.addClass("empty");
+                this.selectionValidationMessage.addClass('empty');
             } else {
                 let selection: Occurrences = this.formOptionSet.getMultiselection();
                 let message;
                 if (!selectionValidationRecording.isMinimumOccurrencesValid()) {
                     if (selection.getMinimum() == 1) {
-                        message = "At least 1 option must be selected";
+                        message = 'At least 1 option must be selected';
                     } else if (selection.getMinimum() > 1) {
-                        message = "At least " + selection.getMinimum() + " options must be selected";
+                        message = 'At least ' + selection.getMinimum() + ' options must be selected';
                     }
                 }
                 if (!selectionValidationRecording.isMaximumOccurrencesValid()) {
                     if (selection.getMaximum() == 1) {
-                        message = "Maximum 1 option can be selected";
+                        message = 'Maximum 1 option can be selected';
                     } else if (selection.getMaximum() > 1) {
-                        message = "Maximum " + selection.getMaximum() + " options can be selected";
+                        message = 'Maximum ' + selection.getMaximum() + ' options can be selected';
                     }
                 }
 
                 if (!!message) {
                     this.selectionValidationMessage.setHtml(message);
-                    this.selectionValidationMessage.removeClass("empty");
+                    this.selectionValidationMessage.removeClass('empty');
                 }
             }
         }
@@ -151,31 +151,31 @@ module api.form {
             }
 
             if (multiselection.getMinimum() == 0 && multiselection.getMaximum() == 0) {
-                return "(any)";
+                return '(any)';
             }
             if (multiselection.getMinimum() > 0 && multiselection.getMaximum() == 0) {
-                return "(at least " + multiselection.getMinimum() + ")";
+                return '(at least ' + multiselection.getMinimum() + ')';
             }
             if (multiselection.getMinimum() > 1 && multiselection.getMinimum() == multiselection.getMaximum()) {
-                return "(pick " + multiselection.getMinimum() + ")";
+                return '(pick ' + multiselection.getMinimum() + ')';
             }
             if (multiselection.getMinimum() == 0 && multiselection.getMaximum() > 1) {
-                return "(up to " + multiselection.getMaximum() + ")";
+                return '(up to ' + multiselection.getMaximum() + ')';
             }
             if (multiselection.getMinimum() > 0 && multiselection.getMaximum() > multiselection.getMinimum()) {
-                return "(" + multiselection.getMinimum() + " to " + multiselection.getMaximum() + ")";
+                return '(' + multiselection.getMinimum() + ' to ' + multiselection.getMaximum() + ')';
             }
             if (multiselection.getMinimum() == 0 && multiselection.getMaximum() == 1) {
-                return "(0 or 1)";
+                return '(0 or 1)';
             }
             return null;
         }
 
         protected ensureSelectionArrayExists(propertyArraySet: PropertySet) {
-            let selectionPropertyArray = propertyArraySet.getPropertyArray("_selected");
+            let selectionPropertyArray = propertyArraySet.getPropertyArray('_selected');
             if (!selectionPropertyArray) {
                 selectionPropertyArray =
-                    PropertyArray.create().setType(ValueTypes.STRING).setName("_selected").setParent(
+                    PropertyArray.create().setType(ValueTypes.STRING).setName('_selected').setParent(
                         propertyArraySet).build();
                 propertyArraySet.addPropertyArray(selectionPropertyArray);
                 this.addDefaultSelectionToSelectionArray(selectionPropertyArray);
@@ -199,7 +199,7 @@ module api.form {
         private validateMultiselection(): ValidationRecording {
             let multiselectionRecording = new ValidationRecording();
             let validationRecordingPath = this.resolveValidationRecordingPath();
-            let selectionPropertyArray = this.propertySet.getPropertyArray("_selected");
+            let selectionPropertyArray = this.propertySet.getPropertyArray('_selected');
 
             if (selectionPropertyArray.getSize() < this.formOptionSet.getMultiselection().getMinimum()) {
                 multiselectionRecording.breaksMinimumOccurrences(validationRecordingPath);

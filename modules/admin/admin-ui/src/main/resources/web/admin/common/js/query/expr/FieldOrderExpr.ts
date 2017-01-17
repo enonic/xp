@@ -14,7 +14,7 @@ module api.query.expr {
         }
 
         toString() {
-            return this.field.toString() + " " + super.directionAsString();
+            return this.field.toString() + ' ' + super.directionAsString();
         }
     }
 }

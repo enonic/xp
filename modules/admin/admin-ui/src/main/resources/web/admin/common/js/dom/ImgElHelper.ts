@@ -5,7 +5,7 @@ module api.dom {
         private imgEl: HTMLImageElement;
 
         static create(): ElementHelper {
-            return new ImgHelper(<HTMLImageElement>document.createElement("img"));
+            return new ImgHelper(<HTMLImageElement>document.createElement('img'));
         }
 
         constructor(element: HTMLImageElement) {

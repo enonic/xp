@@ -13,7 +13,7 @@ module api.content.page {
             super(builder);
 
             this.canRender = [];
-            this.getContentData().forEachProperty("supports", (property: Property) => {
+            this.getContentData().forEachProperty('supports', (property: Property) => {
                 this.canRender.push(new ContentTypeName(property.getString()));
             });
         }
@@ -29,7 +29,7 @@ module api.content.page {
                 if (this.getPage().hasController()) {
                     return api.content.page.PageMode.FORCED_CONTROLLER;
                 } else {
-                    throw new Error("Illegal state: A PageTemplate's Page must a controller set");
+                    throw new Error(`Illegal state: A PageTemplate's Page must a controller set`);
                 }
             } else {
                 return api.content.page.PageMode.NO_CONTROLLER;

@@ -4,12 +4,12 @@ module api.content {
 
     export class ContentUnnamed extends ContentName implements api.Equitable {
 
-        public static PRETTY_UNNAMED: string = "unnamed";
+        public static PRETTY_UNNAMED: string = 'unnamed';
 
         constructor(name: string) {
             super(name);
             api.util.assert(name.indexOf(ContentName.UNNAMED_PREFIX) == 0,
-                    "An UnnamedContent must start with [" + ContentName.UNNAMED_PREFIX + "]: " + name);
+                    'An UnnamedContent must start with [' + ContentName.UNNAMED_PREFIX + ']: ' + name);
         }
 
         isUnnamed(): boolean {
@@ -17,7 +17,7 @@ module api.content {
         }
 
         toString(): string {
-            return "";
+            return '';
         }
 
         equals(o: api.Equitable): boolean {
@@ -42,7 +42,7 @@ module api.content {
                 return `<${ContentUnnamed.PRETTY_UNNAMED}>`;
             }
 
-            let prettifiedName = name.replace(/-/g, " ").trim();
+            let prettifiedName = name.replace(/-/g, ' ').trim();
             prettifiedName = StringHelper.capitalizeAll(`${ContentUnnamed.PRETTY_UNNAMED} ${prettifiedName}`);
 
             return `<${prettifiedName}>`;

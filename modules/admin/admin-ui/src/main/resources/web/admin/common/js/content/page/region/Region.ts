@@ -30,9 +30,9 @@ module api.content.page.region {
 
             this.componentChangedEventHandler = (event: any) => {
                 if (Region.debug) {
-                    console.debug(this.toString() + ".handleComponentChanged: ", event);
+                    console.debug(this.toString() + '.handleComponentChanged: ', event);
                 }
-                this.notifyRegionPropertyValueChanged("components");
+                this.notifyRegionPropertyValueChanged('components');
             };
 
             this.componentPropertyChangedEventHandler = (event: any) => this.forwardComponentPropertyChangedEvent(event);
@@ -68,7 +68,7 @@ module api.content.page.region {
 
         empty() {
             if (Region.debug) {
-                console.debug(this.toString() + ".empty()", this.components);
+                console.debug(this.toString() + '.empty()', this.components);
             }
 
             while (this.components.length > 0) {
@@ -79,7 +79,7 @@ module api.content.page.region {
 
         addComponent(component: Component, index?: number): Component {
             if (Region.debug) {
-                console.debug(this.toString() + ".addComponent: " + component.toString());
+                console.debug(this.toString() + '.addComponent: ' + component.toString());
             }
 
             this.registerComponent(component, index);
@@ -90,7 +90,7 @@ module api.content.page.region {
 
         removeComponent(component: Component): Component {
             if (Region.debug) {
-                console.debug(this.toString() + ".removeComponent: " + component.toString(), this.components);
+                console.debug(this.toString() + '.removeComponent: ' + component.toString(), this.components);
             }
 
             // parent will be cleared on unregister so grab path before it
@@ -108,13 +108,13 @@ module api.content.page.region {
         getComponentByIndex(index: number): Component {
             let component = this.components[index];
             if (!component) {
-                let message = "The rendered page is not consistent with the page components structure. Expected component with index " +
-                              index + " was not found in region '" + this.getName() + "'.";
+                let message = `The rendered page is not consistent with the page components structure. Expected component with index ` +
+                              `${index} was not found in region '${this.getName()}'.`;
                 console.error(message);
                 throw new api.Exception(message, api.ExceptionType.ERROR);
             }
             api.util.assertState(component.getIndex() == index,
-                "Index of Component is not as expected. Expected [" + index + "], was: " + component.getIndex());
+                'Index of Component is not as expected. Expected [' + index + '], was: ' + component.getIndex());
             return component;
         }
 
@@ -133,7 +133,7 @@ module api.content.page.region {
         }
 
         toString(): string {
-            return "Region[" + this.getPath().toString() + "]";
+            return 'Region[' + this.getPath().toString() + ']';
         }
 
         equals(o: api.Equitable): boolean {
@@ -161,7 +161,7 @@ module api.content.page.region {
 
         private checkIllegalLayoutComponentWithinLayoutComponent(component: Component, parent: LayoutComponent) {
             if (!!parent && api.ObjectHelper.iFrameSafeInstanceOf(component, LayoutComponent)) {
-                throw new Error("Not allowed to have a LayoutComponent within a LayoutComponent: " +
+                throw new Error('Not allowed to have a LayoutComponent within a LayoutComponent: ' +
                                 component.getPath().toString());
             }
         }
@@ -174,7 +174,7 @@ module api.content.page.region {
 
         private registerComponent(component: Component, index?: number) {
             if (Region.debug) {
-                console.debug(this.toString() + ".registerComponent: " + component.toString() + " at " + component.getIndex());
+                console.debug(this.toString() + '.registerComponent: ' + component.toString() + ' at ' + component.getIndex());
             }
             this.checkIllegalLayoutComponentWithinLayoutComponent(component, this.parent);
 
@@ -198,14 +198,14 @@ module api.content.page.region {
 
         private unregisterComponent(component: Component) {
             if (Region.debug) {
-                console.debug(this.toString() + ".unregisterComponent: " + component.toString(), this.components);
+                console.debug(this.toString() + '.unregisterComponent: ' + component.toString(), this.components);
             }
             component.unChanged(this.componentChangedEventHandler);
             component.unPropertyChanged(this.componentPropertyChangedEventHandler);
 
             let index = component.getIndex();
             if (index == -1) {
-                throw new Error(component.toString() + " to remove does not exist in " + this.toString());
+                throw new Error(component.toString() + ' to remove does not exist in ' + this.toString());
             }
 
             this.components.splice(index, 1);

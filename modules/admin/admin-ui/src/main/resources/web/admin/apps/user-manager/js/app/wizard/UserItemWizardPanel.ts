@@ -1,6 +1,6 @@
-import "../../api.ts";
-import {UserItemWizardActions} from "./action/UserItemWizardActions";
-import {UserItemWizardPanelParams} from "./UserItemWizardPanelParams";
+import '../../api.ts';
+import {UserItemWizardActions} from './action/UserItemWizardActions';
+import {UserItemWizardPanelParams} from './UserItemWizardPanelParams';
 
 import Principal = api.security.Principal;
 import PrincipalKey = api.security.PrincipalKey;
@@ -53,8 +53,8 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
 
     protected createFormIcon(): FormIcon {
         let iconUrl = api.dom.ImgEl.PLACEHOLDER;
-        let formIcon = new FormIcon(iconUrl, "icon");
-        formIcon.addClass("icon icon-xlarge");
+        let formIcon = new FormIcon(iconUrl, 'icon');
+        formIcon.addClass('icon icon-xlarge');
         return formIcon;
     }
 
@@ -65,7 +65,7 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
     doRenderOnDataLoaded(rendered: boolean): Q.Promise<boolean> {
 
         return super.doRenderOnDataLoaded(rendered).then((nextRendered) => {
-            this.addClass("principal-wizard-panel");
+            this.addClass('principal-wizard-panel');
 
             const responsiveItem = ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 if (this.isVisible()) {
@@ -86,7 +86,7 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
     }
 
     getUserItemType(): string {
-        throw new Error("Must be implemented by inheritors");
+        throw new Error('Must be implemented by inheritors');
     }
 
     getPersistedDisplayName(): string {
@@ -96,8 +96,8 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
     saveChanges(): wemQ.Promise<USER_ITEM_TYPE> {
         if (this.isRendered() && !this.getWizardHeader().getName()) {
             let deferred = wemQ.defer<USER_ITEM_TYPE>();
-            api.notify.showError("Name can not be empty");
-            deferred.reject(new Error("Name can not be empty"));
+            api.notify.showError('Name can not be empty');
+            deferred.reject(new Error('Name can not be empty'));
             return deferred.promise;
         } else {
             return super.saveChanges();
@@ -106,7 +106,7 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
     }
 
     createSteps(persistedItem: USER_ITEM_TYPE): WizardStep[] {
-        throw new Error("Must be implemented by inheritors");
+        throw new Error('Must be implemented by inheritors');
     }
 
     doLayout(persistedItem: USER_ITEM_TYPE): wemQ.Promise<void> {
@@ -117,15 +117,15 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
     }
 
     protected doLayoutPersistedItem(persistedItem: USER_ITEM_TYPE): Q.Promise<void> {
-        throw new Error("Must be implemented by inheritors");
+        throw new Error('Must be implemented by inheritors');
     }
 
     persistNewItem(): wemQ.Promise<USER_ITEM_TYPE> {
-        throw new Error("Must be implemented by inheritors");
+        throw new Error('Must be implemented by inheritors');
     }
 
     updatePersistedItem(): wemQ.Promise<USER_ITEM_TYPE> {
-        throw new Error("Must be implemented by inheritors");
+        throw new Error('Must be implemented by inheritors');
     }
 
     getCloseAction(): api.ui.Action {
@@ -133,6 +133,6 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
     }
 
     protected updateHash() {
-        throw new Error("Must be implemented by inheritors");
+        throw new Error('Must be implemented by inheritors');
     }
 }

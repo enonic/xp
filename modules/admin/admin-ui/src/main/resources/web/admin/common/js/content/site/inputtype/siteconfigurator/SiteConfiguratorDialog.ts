@@ -34,13 +34,13 @@ module api.content.site.inputtype.siteconfigurator {
             this.okCallback = okCallback;
             this.cancelCallback = cancelCallback;
 
-            this.addClass("site-configurator-dialog");
+            this.addClass('site-configurator-dialog');
 
             CreateHtmlAreaDialogEvent.on((event: CreateHtmlAreaDialogEvent) => {
-                this.addClass("masked");
+                this.addClass('masked');
 
                 api.util.htmlarea.dialog.HTMLAreaDialogHandler.getOpenDialog().onRemoved(() => {
-                    this.removeClass("masked");
+                    this.removeClass('masked');
                 });
             });
         }
@@ -48,7 +48,7 @@ module api.content.site.inputtype.siteconfigurator {
         doRender(): Q.Promise<boolean> {
             return super.doRender().then((rendered) => {
                 if (SiteConfiguratorDialog.debug) {
-                    console.debug("SiteConfiguratorDialog.doRender");
+                    console.debug('SiteConfiguratorDialog.doRender');
                 }
 
                 this.appendChildToContentPanel(this.formView);
@@ -62,7 +62,7 @@ module api.content.site.inputtype.siteconfigurator {
                 this.addCancelButtonToBottom();
 
                 return this.formView.layout().then(() => {
-                    this.addClass("animated");
+                    this.addClass('animated');
                     this.centerMyself();
 
                     this.handleSelectorsDropdowns(this.formView);
@@ -74,7 +74,7 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         private addOkButton(okCallback: () => void) {
-            let okAction = new api.ui.Action("Apply");
+            let okAction = new api.ui.Action('Apply');
             this.addAction(okAction, true, true);
             okAction.onExecuted(() => {
                 if (okCallback) {
@@ -87,7 +87,7 @@ module api.content.site.inputtype.siteconfigurator {
         protected getHeaderContent(application: Application): api.app.NamesAndIconView {
             let namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(
                 api.app.NamesAndIconViewSize.large)).setMainName(application.getDisplayName()).setSubName(
-                application.getName() + "-" + application.getVersion());
+                application.getName() + '-' + application.getVersion());
 
             if (application.getIconUrl()) {
                 namesAndIconView.setIconUrl(application.getIconUrl());

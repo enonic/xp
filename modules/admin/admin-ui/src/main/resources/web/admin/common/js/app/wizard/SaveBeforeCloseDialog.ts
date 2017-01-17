@@ -9,27 +9,27 @@ module api.app.wizard {
         private noAction: api.ui.Action = new api.ui.Action('No', 'n');
 
         constructor(wizardPanel: api.app.wizard.WizardPanel<any>) {
-            super("Close wizard");
+            super('Close wizard');
 
             this.wizardPanel = wizardPanel;
 
             let message = new api.dom.H6El();
-            message.getEl().setInnerHtml("There are unsaved changes, do you want to save them before closing?");
+            message.getEl().setInnerHtml('There are unsaved changes, do you want to save them before closing?');
             this.appendChildToContentPanel(message);
 
-            this.yesAction.setMnemonic("y");
+            this.yesAction.setMnemonic('y');
             this.yesAction.onExecuted(() => {
                 this.doSaveAndClose();
             });
             this.addAction(this.yesAction, true);
 
-            this.noAction.setMnemonic("n");
+            this.noAction.setMnemonic('n');
             this.noAction.onExecuted(() => {
                 this.doCloseWithoutSaveCheck();
             });
             this.addAction(this.noAction);
 
-            this.getCancelAction().setMnemonic("c");
+            this.getCancelAction().setMnemonic('c');
         }
 
         show() {

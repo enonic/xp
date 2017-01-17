@@ -34,7 +34,7 @@ module api.ui.security.acl {
             super.doLayout(object);
 
             if (AccessControlEntryView.debug) {
-                console.debug("AccessControlEntryView.doLayout");
+                console.debug('AccessControlEntryView.doLayout');
             }
 
             // permissions will be set on access selector value change
@@ -46,7 +46,7 @@ module api.ui.security.acl {
             this.accessSelector.setValue(AccessControlEntryView.getAccessValueFromEntry(this.ace), true);
 
             if (!this.removeButton) {
-                this.removeButton = new api.dom.AEl("icon-close");
+                this.removeButton = new api.dom.AEl('icon-close');
                 this.removeButton.onClicked((event: MouseEvent) => {
                     this.notifyRemoveClicked(event);
                     event.stopPropagation();
@@ -59,14 +59,14 @@ module api.ui.security.acl {
             if (!this.permissionSelector) {
                 this.permissionSelector = new PermissionSelector();
                 this.permissionSelector.onValueChanged((event: api.ValueChangedEvent) => {
-                    this.toggleClass("dirty", event.getNewValue() != JSON.stringify({
+                    this.toggleClass('dirty', event.getNewValue() != JSON.stringify({
                             allow: this.ace.getAllowedPermissions().sort(),
                             deny: this.ace.getDeniedPermissions().sort()
                         }));
                     this.notifyValueChanged(this.getAccessControlEntry());
                 });
 
-                // this.toggleClass("dirty", !ace.isInherited());
+                // this.toggleClass('dirty', !ace.isInherited());
 
                 this.accessSelector.onValueChanged((event: api.ValueChangedEvent) => {
                     if (Access[event.getNewValue()] == Access.CUSTOM) {

@@ -5,7 +5,7 @@ module api.content.page.region {
         private static INSTANCE: PartComponentType = new PartComponentType();
 
         constructor() {
-            super("part");
+            super('part');
         }
 
         newComponentBuilder(): PartComponentBuilder {

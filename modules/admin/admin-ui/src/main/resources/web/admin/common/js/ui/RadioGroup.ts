@@ -15,7 +15,7 @@ module api.ui {
         private options: RadioButton[] = [];
 
         constructor(name: string, originalValue?: string) {
-            super("div", "radio-group", undefined, originalValue);
+            super('div', 'radio-group', undefined, originalValue);
             this.setName(name);
             this.groupName = `${name}-${api.dom.ElementRegistry.getElementCountById(this.getId())}`;
         }
@@ -70,7 +70,7 @@ module api.ui {
         public static debug: boolean = false;
 
         constructor(label: string, value: string, name: string, checked?: boolean) {
-            super("span", "radio-button", undefined, String(checked != undefined ? checked : false));
+            super('span', 'radio-button', undefined, String(checked != undefined ? checked : false));
 
             this.radio = new api.dom.InputEl();
             this.radio.getEl().setAttribute('type', 'radio');
@@ -126,7 +126,7 @@ module api.ui {
         }
 
         public isChecked(): boolean {
-            return super.getValue() == "true";
+            return super.getValue() == 'true';
         }
 
         public setChecked(checked: boolean, silent?: boolean): RadioButton {

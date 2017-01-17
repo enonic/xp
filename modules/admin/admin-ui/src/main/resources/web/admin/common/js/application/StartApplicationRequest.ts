@@ -6,12 +6,12 @@ module api.application {
 
         constructor(applicationKeys: ApplicationKey[]) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             this.applicationKeys = applicationKeys;
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "start");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'start');
         }
 
         getParams(): Object {

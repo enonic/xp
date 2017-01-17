@@ -1,14 +1,14 @@
-import "../../../api.ts";
-import {ContentWizardPanel} from "../ContentWizardPanel";
-import {DuplicateContentAction} from "./DuplicateContentAction";
-import {DeleteContentAction} from "./DeleteContentAction";
-import {PublishAction} from "./PublishAction";
-import {PublishTreeAction} from "./PublishTreeAction";
-import {UnpublishAction} from "./UnpublishAction";
-import {PreviewAction} from "./PreviewAction";
-import {ShowLiveEditAction} from "./ShowLiveEditAction";
-import {ShowFormAction} from "./ShowFormAction";
-import {ShowSplitEditAction} from "./ShowSplitEditAction";
+import '../../../api.ts';
+import {ContentWizardPanel} from '../ContentWizardPanel';
+import {DuplicateContentAction} from './DuplicateContentAction';
+import {DeleteContentAction} from './DeleteContentAction';
+import {PublishAction} from './PublishAction';
+import {PublishTreeAction} from './PublishTreeAction';
+import {UnpublishAction} from './UnpublishAction';
+import {PreviewAction} from './PreviewAction';
+import {ShowLiveEditAction} from './ShowLiveEditAction';
+import {ShowFormAction} from './ShowFormAction';
+import {ShowSplitEditAction} from './ShowSplitEditAction';
 import SaveAction = api.app.wizard.SaveAction;
 import CloseAction = api.app.wizard.CloseAction;
 import SaveAndCloseAction = api.app.wizard.SaveAndCloseAction;
@@ -45,7 +45,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
     constructor(wizardPanel: ContentWizardPanel) {
         super(
-            new SaveAction(wizardPanel, "Save draft"),
+            new SaveAction(wizardPanel, 'Save draft'),
             new DeleteContentAction(wizardPanel),
             new DuplicateContentAction(wizardPanel),
             new PreviewAction(wizardPanel),

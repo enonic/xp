@@ -10,7 +10,7 @@ module api.content.resource {
         constructor(contentPath?: ContentPath) {
             super();
             this.setHeavyOperation(true);
-            super.setMethod("POST");
+            super.setMethod('POST');
             if (contentPath) {
                 this.addContentPath(contentPath);
             }
@@ -41,7 +41,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "delete");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'delete');
         }
 
         sendAndParse(): wemQ.Promise<api.task.TaskId> {
@@ -59,7 +59,7 @@ module api.content.resource {
                         new api.task.GetTaskInfoRequest(taskId).sendAndParse().then((task: api.task.TaskInfo) => {
                             let state = task.getState();
                             if (!task) {
-                                deferred.reject("Task expired");
+                                deferred.reject('Task expired');
                                 return; // task probably expired, stop polling
                             }
 

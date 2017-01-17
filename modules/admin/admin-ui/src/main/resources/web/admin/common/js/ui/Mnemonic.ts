@@ -14,7 +14,7 @@ module api.ui {
         }
 
         toKeyBinding(callback?: (e: ExtendedKeyboardEvent, combo: string) => any): KeyBinding {
-            return new KeyBinding("alt+" + this.getValue(), callback);
+            return new KeyBinding('alt+' + this.getValue(), callback);
         }
 
         underlineMnemonic(text: string): string {
@@ -26,11 +26,11 @@ module api.ui {
                     mStart = text.indexOf(this.value.toUpperCase());
                 }
             }
-            let result = "";
+            let result = '';
             if (mStart > 0) {
                 result = text.substr(0, mStart);
             }
-            result += "<u>" + text.charAt(mStart) + "</u>";
+            result += '<u>' + text.charAt(mStart) + '</u>';
             if (mStart < text.length - 1) {
                 result += text.substr(mStart + 1, text.length);
             }

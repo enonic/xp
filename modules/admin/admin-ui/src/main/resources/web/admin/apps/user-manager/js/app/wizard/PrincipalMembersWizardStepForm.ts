@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import Role = api.security.Role;
 import Principal = api.security.Principal;
@@ -86,7 +86,7 @@ export class PrincipalMembersWizardStepForm extends api.app.wizard.WizardStepFor
     }
 
     getPrincipalMembers(): PrincipalKey[] {
-        throw new Error("Must be implemented by inheritors");
+        throw new Error('Must be implemented by inheritors');
     }
 
     giveFocus(): boolean {

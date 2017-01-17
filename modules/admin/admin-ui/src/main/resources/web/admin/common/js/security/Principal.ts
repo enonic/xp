@@ -14,7 +14,7 @@ module api.security {
 
         constructor(builder: PrincipalBuilder) {
             this.key = builder.key;
-            this.displayName = builder.displayName || "";
+            this.displayName = builder.displayName || '';
             this.type = builder.key.getType();
             this.modifiedTime = builder.modifiedTime;
             this.description = builder.description;
@@ -50,13 +50,13 @@ module api.security {
         getTypeName(): string {
             switch (this.type) {
                 case PrincipalType.GROUP:
-                    return "Group";
+                    return 'Group';
                 case PrincipalType.USER:
-                    return "User";
+                    return 'User';
                 case PrincipalType.ROLE:
-                    return "Role";
+                    return 'Role';
                 default:
-                    return "";
+                    return '';
             }
         }
 

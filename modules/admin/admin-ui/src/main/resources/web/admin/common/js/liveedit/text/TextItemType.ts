@@ -14,7 +14,7 @@ module api.liveedit.text {
         }
 
         constructor() {
-            super("text");
+            super('text');
         }
 
         createView(config: CreateItemViewConfig<RegionView,TextComponent>): TextComponentView {
@@ -34,7 +34,7 @@ module api.liveedit.text {
         protected getItemTypeConfig(itemType: string): ItemTypeConfig {
             let config = super.getItemTypeConfig(itemType);
 
-            config.getContextMenuConfig().push("edit");
+            config.getContextMenuConfig().push('edit');
 
             return config;
 
