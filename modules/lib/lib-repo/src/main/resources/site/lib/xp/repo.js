@@ -135,14 +135,14 @@ exports.get = function (id) {
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.branchId Branch ID.
- * @param {string} [params.repoId] Repository where the branch should be created. Defaults to repo in context.
+ * @param {string} params.repoId Repository where the branch should be created.
  * @return {object} The branch (as JSON).
  *
  */
 exports.createBranch = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.repo.CreateBranchHandler');
     bean.branchId = required(params, 'branchId');
-    bean.repoId = __.nullOrValue(params.repoId);
+    bean.repoId = required(params, 'repoId');
     return __.toNativeObject(bean.execute());
 };
 
@@ -153,13 +153,13 @@ exports.createBranch = function (params) {
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.branchId Branch ID.
- * @param {string} [params.repoId] Repository where the branch should be deletes. Defaults to repo in context.
+ * @param {string} params.repoId Repository where the branch should be deleted.
  * @return {object} The branch (as JSON).
  *
  */
 exports.deleteBranch = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.repo.DeleteBranchHandler');
     bean.branchId = required(params, 'branchId');
-    bean.repoId = __.nullOrValue(params.repoId);
+    bean.repoId = required(params, 'repoId');
     return __.toNativeObject(bean.execute());
 };
