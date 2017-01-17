@@ -32,7 +32,7 @@ module api.content.resource {
             super();
             this.id = id;
             this.requireValid = false;
-            this.setMethod("POST");
+            this.setMethod('POST');
         }
 
         setId(id: string): UpdateContentRequest {
@@ -119,7 +119,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "update");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'update');
         }
 
         sendAndParse(): wemQ.Promise<Content> {

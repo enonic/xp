@@ -10,9 +10,9 @@ module api.liveedit {
 
         constructor(pageView: PageView) {
             super();
-            this.addClassEx("page-placeholder");
+            this.addClassEx('page-placeholder');
 
-            let pageDescriptorPlaceholder = new api.dom.DivEl("page-descriptor-placeholder", api.StyleHelper.getCurrentPrefix());
+            let pageDescriptorPlaceholder = new api.dom.DivEl('page-descriptor-placeholder', api.StyleHelper.getCurrentPrefix());
 
             let infoBlock = new PagePlaceholderInfoBlock();
             let controllerDropdown = this.createControllerDropdown(pageView, infoBlock);
@@ -25,7 +25,7 @@ module api.liveedit {
 
         private createControllerDropdown(pageView: PageView, infoBlock: PagePlaceholderInfoBlock): PageDescriptorDropdown {
             let controllerDropdown = new PageDescriptorDropdown(pageView.getLiveEditModel());
-            controllerDropdown.addClassEx("page-descriptor-dropdown");
+            controllerDropdown.addClassEx('page-descriptor-dropdown');
             controllerDropdown.hide();
             controllerDropdown.load();
 
@@ -51,12 +51,11 @@ module api.liveedit {
                     } else {
                         infoBlock.setBaseHeader();
                     }
-                    infoBlock.removeClass("empty");
-                }
-                else {
+                    infoBlock.removeClass('empty');
+                } else {
                     controllerDropdown.hide();
                     infoBlock.setNoControllersAvailableText();
-                    infoBlock.addClass("empty");
+                    infoBlock.addClass('empty');
                 }
             });
 

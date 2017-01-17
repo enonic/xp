@@ -8,7 +8,7 @@ module api.content.resource {
 
         constructor(id: ContentId) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             this.id = id;
         }
 
@@ -19,7 +19,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "duplicate");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'duplicate');
         }
 
         sendAndParse(): wemQ.Promise<Content> {

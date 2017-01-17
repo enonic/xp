@@ -88,6 +88,7 @@ var CONFIG = {
         }
     },
     spec: {
+        src: 'src/main/resources/web/spec',
         frameworks: ['jasmine'],
         plugins: [
             'karma-jasmine',

@@ -1,6 +1,6 @@
-import "../../../../../api.ts";
-import {WidgetItemView} from "../../WidgetItemView";
-import {VersionsView} from "./VersionsView";
+import '../../../../../api.ts';
+import {WidgetItemView} from '../../WidgetItemView';
+import {VersionsView} from './VersionsView';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
@@ -13,7 +13,7 @@ export class VersionsWidgetItemView extends WidgetItemView {
     public static debug: boolean = false;
 
     constructor() {
-        super("version-widget-item-view");
+        super('version-widget-item-view');
         this.managePublishEvent();
     }
 

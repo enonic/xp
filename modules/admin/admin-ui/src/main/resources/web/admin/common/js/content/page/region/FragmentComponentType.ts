@@ -5,7 +5,7 @@ module api.content.page.region {
         private static INSTANCE: FragmentComponentType = new FragmentComponentType();
 
         constructor() {
-            super("fragment");
+            super('fragment');
         }
 
         newComponentBuilder(): FragmentComponentBuilder {

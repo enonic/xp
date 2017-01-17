@@ -22,7 +22,7 @@ module api.ui.selector.combobox {
         private editable: boolean = true;
 
         constructor(className?: string) {
-            super("selected-options" + (className ? " " + className : ""));
+            super('selected-options' + (className ? ' ' + className : ''));
         }
 
         setEditable(editable: boolean) {
@@ -131,10 +131,10 @@ module api.ui.selector.combobox {
         }
 
         removeOption(optionToRemove: api.ui.selector.Option<T>, silent: boolean = false) {
-            api.util.assertNotNull(optionToRemove, "optionToRemove cannot be null");
+            api.util.assertNotNull(optionToRemove, 'optionToRemove cannot be null');
 
             let selectedOption = this.getByOption(optionToRemove);
-            api.util.assertNotNull(selectedOption, "Did not find any selected option to remove from option: " + optionToRemove.value);
+            api.util.assertNotNull(selectedOption, 'Did not find any selected option to remove from option: ' + optionToRemove.value);
 
             selectedOption.getOptionView().remove();
 

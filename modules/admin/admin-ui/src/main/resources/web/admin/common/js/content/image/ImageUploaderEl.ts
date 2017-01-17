@@ -95,8 +95,7 @@ module api.content.image {
 
             if (metaData && api.data.ValueTypes.DATA.equals(metaData.getType())) {
                 return parseInt(metaData.getPropertySet().getProperty(propertyName).getString(), 10);
-            }
-            else {
+            } else {
                 let allExtraData = content.getAllExtraData();
                 allExtraData.forEach((extraData: ExtraData) => {
                     if (!value && extraData.getData().getProperty(propertyName)) {
@@ -109,8 +108,8 @@ module api.content.image {
         }
 
         setOriginalDimensions(content: api.content.Content) {
-            this.originalWidth = this.getSizeValue(content, "imageWidth") || this.initialWidth;
-            this.originalHeight = this.getSizeValue(content, "imageHeight");
+            this.originalWidth = this.getSizeValue(content, 'imageWidth') || this.initialWidth;
+            this.originalHeight = this.getSizeValue(content, 'imageHeight');
         }
 
         private getProportionalHeight(): number {

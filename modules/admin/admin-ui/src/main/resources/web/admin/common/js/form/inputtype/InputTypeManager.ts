@@ -17,8 +17,7 @@ module api.form.inputtype {
 
             if (!InputTypeManager.isRegistered(name)) {
                 InputTypeManager.inputTypes[name] = inputTypeClass;
-            }
-            else {
+            } else {
                 throw new Error('Input type [' + name + '] is already registered, unregister it first.');
             }
         }
@@ -28,9 +27,8 @@ module api.form.inputtype {
 
             if (InputTypeManager.isRegistered(name)) {
                 InputTypeManager.inputTypes[name] = undefined;
-                console.log('Unregistered input type [' + name + "]");
-            }
-            else {
+                console.log('Unregistered input type [' + name + ']');
+            } else {
                 throw new Error('Input type [' + name + '] is not registered.');
             }
         }
@@ -41,9 +39,8 @@ module api.form.inputtype {
             if (InputTypeManager.isRegistered(name)) {
                 let inputTypeClass = InputTypeManager.inputTypes[name];
                 return inputTypeClass.newInstance(context);
-            }
-            else {
-                throw new Error("Input type [" + name + "] need to be registered first.");
+            } else {
+                throw new Error('Input type [' + name + '] need to be registered first.');
             }
         }
 

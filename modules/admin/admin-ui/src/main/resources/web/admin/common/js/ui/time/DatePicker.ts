@@ -93,7 +93,7 @@ module api.ui.time {
         }
 
         protected initInput(builder: DatePickerBuilder) {
-            let value = "";
+            let value = '';
             if (builder.selectedDate) {
                 value = this.formatDate(builder.selectedDate);
                 this.popup.setSelectedDate(builder.selectedDate);
@@ -101,7 +101,7 @@ module api.ui.time {
             }
 
             this.input = api.ui.text.TextInput.middle(undefined, value);
-            this.input.setPlaceholder("YYYY-MM-DD");
+            this.input.setPlaceholder('YYYY-MM-DD');
         }
 
         protected setupListeners(builder: DatePickerBuilder) {
@@ -131,7 +131,7 @@ module api.ui.time {
                     this.popup.hide();
                     this.notifySelectedDateChanged(new SelectedDateChangedEvent(null));
                 } else {
-                    let date = api.util.DateHelper.parseDate(typedDate, "-", true);
+                    let date = api.util.DateHelper.parseDate(typedDate, '-', true);
                     if (date) {
                         this.selectedDate = date;
                         this.validUserInput = true;
@@ -183,7 +183,7 @@ module api.ui.time {
         }
 
         private formatDate(date: Date): string {
-            return date ? api.util.DateHelper.formatDate(date) : "";
+            return date ? api.util.DateHelper.formatDate(date) : '';
         }
     }
 

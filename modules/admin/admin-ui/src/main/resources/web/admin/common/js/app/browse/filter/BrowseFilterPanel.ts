@@ -30,12 +30,12 @@ module api.app.browse.filter {
             super();
             this.addClass('filter-panel');
 
-            this.hideFilterPanelButton = new api.dom.SpanEl("hide-filter-panel-button icon-search");
+            this.hideFilterPanelButton = new api.dom.SpanEl('hide-filter-panel-button icon-search');
             this.hideFilterPanelButton.onClicked(() => this.notifyHidePanelButtonPressed());
 
-            let showResultsButtonWrapper = new api.dom.DivEl("show-filter-results");
-            this.showResultsButton = new api.dom.SpanEl("show-filter-results-button");
-            this.showResultsButton.setHtml("Show results");
+            let showResultsButtonWrapper = new api.dom.DivEl('show-filter-results');
+            this.showResultsButton = new api.dom.SpanEl('show-filter-results-button');
+            this.showResultsButton.setHtml('Show results');
             this.showResultsButton.onClicked(() => this.notifyShowResultsButtonPressed());
             showResultsButtonWrapper.appendChild(this.showResultsButton);
 
@@ -49,9 +49,9 @@ module api.app.browse.filter {
                 this.reset();
             });
 
-            this.hitsCounterEl = new api.dom.SpanEl("hits-counter");
+            this.hitsCounterEl = new api.dom.SpanEl('hits-counter');
 
-            let hitsCounterAndClearButtonWrapper = new api.dom.DivEl("hits-and-clear");
+            let hitsCounterAndClearButtonWrapper = new api.dom.DivEl('hits-and-clear');
             hitsCounterAndClearButtonWrapper.appendChildren(this.clearFilter, this.hitsCounterEl);
 
             this.aggregationContainer = new api.aggregation.AggregationContainer();
@@ -81,7 +81,7 @@ module api.app.browse.filter {
 
                 this.showResultsButton.hide();
 
-                api.ui.KeyBindings.get().bindKey(new api.ui.KeyBinding("/", (e: ExtendedKeyboardEvent) => {
+                api.ui.KeyBindings.get().bindKey(new api.ui.KeyBinding('/', (e: ExtendedKeyboardEvent) => {
                     setTimeout(this.giveFocusToSearch.bind(this), 100);
                 }).setGlobal(true));
             });
@@ -136,8 +136,7 @@ module api.app.browse.filter {
         search(elementChanged?: api.dom.Element) {
             if (this.hasFilterSet()) {
                 this.clearFilter.show();
-            }
-            else {
+            } else {
                 this.clearFilter.hide();
             }
             this.notifySearchStarted();
@@ -245,19 +244,17 @@ module api.app.browse.filter {
         updateHitsCounter(hits: number, emptyFilterValue: boolean = false) {
             if (!emptyFilterValue) {
                 if (hits != 1) {
-                    this.hitsCounterEl.setHtml(hits + " hits");
-                }
-                else {
-                    this.hitsCounterEl.setHtml(hits + " hit");
+                    this.hitsCounterEl.setHtml(hits + ' hits');
+                } else {
+                    this.hitsCounterEl.setHtml(hits + ' hit');
                 }
             } else {
-                this.hitsCounterEl.setHtml(hits + " total");
+                this.hitsCounterEl.setHtml(hits + ' total');
             }
 
             if (hits != 0) {
                 this.showResultsButton.show();
-            }
-            else {
+            } else {
                 this.showResultsButton.hide();
             }
         }

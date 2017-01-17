@@ -10,7 +10,7 @@ module api.ui {
         public static debug: boolean = false;
 
         constructor(builder: CheckboxBuilder) {
-            super("div", "checkbox", undefined, String(builder.checked || false));
+            super('div', 'checkbox', undefined, String(builder.checked || false));
 
             this.initCheckbox(builder.inputAlignment);
             this.initLabel(builder.text);
@@ -54,7 +54,7 @@ module api.ui {
         }
 
         isChecked(): boolean {
-            return super.getValue() == "true";
+            return super.getValue() == 'true';
         }
 
         toggleChecked() {

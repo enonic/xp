@@ -8,7 +8,7 @@ module FormItemSetViewSpec {
     import FormContext = api.form.FormContext;
     import FormItemSetViewConfig = api.form.FormItemSetViewConfig;
 
-    describe("api.form.FormItemSetView", function () {
+    describe('api.form.FormItemSetView', function () {
 
         let itemSet: FormItemSet;
         let itemSetView: FormItemSetView;
@@ -19,25 +19,25 @@ module FormItemSetViewSpec {
             itemSetView = createItemSetView(itemSet, getPropertySet());
         });
 
-        describe("constructor", function () {
+        describe('constructor', function () {
 
-            it("should correctly initialize label", function () {
-                expect(itemSet.getLabel()).toEqual("Custom Item Set");
+            it('should correctly initialize label', function () {
+                expect(itemSet.getLabel()).toEqual('Custom Item Set');
             });
 
-            it("should correctly initialize help text", function () {
-                expect(itemSet.getHelpText()).toEqual("Custom Help Text");
+            it('should correctly initialize help text', function () {
+                expect(itemSet.getHelpText()).toEqual('Custom Help Text');
             });
 
-            it("should correctly initialize custom text", function () {
-                expect(itemSet.getCustomText()).toEqual("Custom text");
+            it('should correctly initialize custom text', function () {
+                expect(itemSet.getCustomText()).toEqual('Custom text');
             });
 
-            it("should correctly initialize immutable property", function () {
+            it('should correctly initialize immutable property', function () {
                 expect(itemSet.isImmutable()).toBeFalsy();
             });
 
-            it("should correctly initialize occurrences config", function () {
+            it('should correctly initialize occurrences config', function () {
                 expect(itemSet.getOccurrences().getMinimum()).toEqual(5);
                 expect(itemSet.getOccurrences().getMaximum()).toEqual(7);
             });
@@ -54,7 +54,7 @@ module FormItemSetViewSpec {
             formItemSet: itemSet,
             parent: undefined,
             parentDataSet: dataSet
-        }
+        };
     }
 
     export function getFormContext(): FormContext {
@@ -62,8 +62,8 @@ module FormItemSetViewSpec {
     }
 
     export function getPropertySet(): PropertySet {
-        var tree = new api.data.PropertyTree();
-        var set = tree.addPropertySet('itemSet1');
+        let tree = new api.data.PropertyTree();
+        let set = tree.addPropertySet('itemSet1');
 
         return tree.getRoot();
     }

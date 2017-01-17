@@ -45,8 +45,8 @@ module api.content.site.inputtype.siteconfigurator {
                 this.notifyBeforePropertyChanged();
 
                 let siteConfigAsSet = this.propertyArray.addSet();
-                siteConfigAsSet.addString("applicationKey", applicationKey.toString());
-                siteConfigAsSet.addPropertySet("config");
+                siteConfigAsSet.addString('applicationKey', applicationKey.toString());
+                siteConfigAsSet.addPropertySet('config');
                 let newSiteConfig = SiteConfig.create().
                     fromData(siteConfigAsSet).
                     build();

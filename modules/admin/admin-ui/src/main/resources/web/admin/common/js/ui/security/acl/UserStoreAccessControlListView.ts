@@ -11,7 +11,7 @@ module api.ui.security.acl {
         private itemsEditable: boolean = true;
 
         constructor(className?: string) {
-            super('access-control-list' + (className ? " " + className : ""));
+            super('access-control-list' + (className ? ' ' + className : ''));
         }
 
         createItemView(entry: UserStoreAccessControlEntry, readOnly: boolean): UserStoreAccessControlEntryView {
@@ -24,8 +24,7 @@ module api.ui.security.acl {
                 this.notifyItemValueChanged(item);
             });
 
-            if(readOnly)
-            {
+            if(readOnly) {
                 itemView.setEditable(false);
             }
 

@@ -6,7 +6,7 @@ module api.schema.content {
 
         constructor() {
             super();
-            this.resourceUrl = api.rest.Path.fromParent(super.getRestPath(), "schema/content");
+            this.resourceUrl = api.rest.Path.fromParent(super.getRestPath(), 'schema/content');
         }
 
         getResourcePath(): api.rest.Path {

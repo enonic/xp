@@ -13,11 +13,11 @@ module api.schema.content {
                 if (ApplicationEventType.STARTED == event.getEventType()
                     || ApplicationEventType.STOPPED == event.getEventType()
                     || ApplicationEventType.UPDATED == event.getEventType()) {
-                    console.log(api.ClassHelper.getClassName(this) + " received ApplicationEvent - removing cached content types... " +
+                    console.log(api.ClassHelper.getClassName(this) + ' received ApplicationEvent - removing cached content types... ' +
                                 event.getApplicationKey().toString());
                     this.getCachedByApplicationKey(event.getApplicationKey()).forEach((contentType: ContentType) => {
                         this.deleteByKey(this.getKeyFromObject(contentType));
-                        console.log("Removed cached content type: " + contentType.getName());
+                        console.log('Removed cached content type: ' + contentType.getName());
                     });
                 }
             });

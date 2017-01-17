@@ -1,17 +1,17 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
 export class DependantItemViewer extends api.ui.NamesAndIconViewer<ContentSummaryAndCompareStatus> {
 
     constructor() {
-        super("dependant-item-viewer");
+        super('dependant-item-viewer');
     }
 
     resolveDisplayName(object: ContentSummaryAndCompareStatus): string {
         let pendingDelete = (api.content.CompareStatus.PENDING_DELETE == object.getCompareStatus());
 
-        this.toggleClass("pending-delete", pendingDelete);
+        this.toggleClass('pending-delete', pendingDelete);
         return object.getPath().toString();
     }
 
@@ -26,7 +26,7 @@ export class DependantItemViewer extends api.ui.NamesAndIconViewer<ContentSummar
     }
     resolveIconClass (object: ContentSummaryAndCompareStatus): string {
         if(object.getType().isImage()) {
-            return "image";
+            return 'image';
         }
     }
 }

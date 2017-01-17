@@ -1,15 +1,15 @@
-import "../../../api.ts";
+import '../../../api.ts';
+import {ToggleSearchPanelEvent} from '../ToggleSearchPanelEvent';
 
 import Action = api.ui.Action;
-import {ToggleSearchPanelEvent} from "../ToggleSearchPanelEvent";
 
 export class ToggleSearchPanelAction extends Action {
 
     constructor() {
-        super("");
+        super('');
         this.onExecuted(() => {
             new ToggleSearchPanelEvent().fire();
         });
-        this.setIconClass("icon-search3");
+        this.setIconClass('icon-search3');
     }
 }

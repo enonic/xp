@@ -8,7 +8,7 @@ module api.schema.mixin {
 
         constructor(applicationKey: ApplicationKey) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
             this.applicationKey = applicationKey;
         }
 
@@ -19,7 +19,7 @@ module api.schema.mixin {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "byApplication");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'byApplication');
         }
 
         sendAndParse(): wemQ.Promise<Mixin[]> {

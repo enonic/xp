@@ -2,12 +2,12 @@ module api.content.page.region {
 
     export class ComponentName implements api.Equitable {
 
-        private static COUNT_DELIMITER: string = "-";
+        private static COUNT_DELIMITER: string = '-';
 
         private value: string;
 
         constructor(value: string) {
-            api.util.assertNotNull(value, "ComponentName value cannot be null");
+            api.util.assertNotNull(value, 'ComponentName value cannot be null');
             this.value = value;
         }
 
@@ -42,7 +42,7 @@ module api.content.page.region {
 
         public createDuplicate(count: number): ComponentName {
 
-            let newValue = this.value + ComponentName.COUNT_DELIMITER + "" + count;
+            let newValue = this.value + ComponentName.COUNT_DELIMITER + '' + count;
             return new ComponentName(newValue);
         }
 

@@ -1,4 +1,4 @@
-import "../../../../../../api.ts";
+import '../../../../../../api.ts';
 
 import Dropdown = api.ui.selector.dropdown.Dropdown;
 
@@ -13,8 +13,7 @@ export class DescriptorBasedDropdownForm extends api.ui.form.Form {
         let fieldSet = new api.ui.form.Fieldset();
         if (!api.util.StringHelper.isBlank(title)) {
             fieldSet.add(new api.ui.form.FormItemBuilder(templateSelector).setLabel(title).build());
-        }
-        else {
+        } else {
             fieldSet.add(new api.ui.form.FormItemBuilder(templateSelector).build());
         }
 

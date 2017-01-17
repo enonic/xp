@@ -10,7 +10,7 @@ module api.content.resource {
 
         constructor() {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
         }
 
         setContentId(value: ContentId): OrderContentRequest {
@@ -37,7 +37,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "setChildOrder");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'setChildOrder');
         }
 
         sendAndParse(): wemQ.Promise<Content> {

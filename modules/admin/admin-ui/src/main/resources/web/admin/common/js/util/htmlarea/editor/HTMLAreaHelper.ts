@@ -17,7 +17,7 @@ module api.util.htmlarea.editor {
                     setSize(ImageModalDialog.maxImageWidth).
                     resolve();
 
-            return " src=\"" + imageUrl + "\" data-src=\"" + imgSrc + "\"";
+            return ` src="${imageUrl}" data-src="${imgSrc}"`;
         }
 
         public static prepareImgSrcsInValueForEdit(value:string):string {
@@ -26,16 +26,16 @@ module api.util.htmlarea.editor {
             let imgSrcs;
 
             if (!processedContent) {
-                return "";
+                return '';
             }
 
-            while (processedContent.search(" src=\"" + ImageModalDialog.imagePrefix) > -1) {
+            while (processedContent.search(` src="${ImageModalDialog.imagePrefix}`) > -1) {
                 imgSrcs = regex.exec(processedContent);
                 if (imgSrcs) {
                     imgSrcs.forEach((imgSrc:string) => {
                         if (imgSrc.indexOf(ImageModalDialog.imagePrefix) === 0) {
                             processedContent =
-                                processedContent.replace(" src=\"" + imgSrc + "\"", HTMLAreaHelper.getConvertedImageSrc(imgSrc));
+                                processedContent.replace(` src="${imgSrc}"`, HTMLAreaHelper.getConvertedImageSrc(imgSrc));
                         }
                     });
                 }
@@ -51,7 +51,7 @@ module api.util.htmlarea.editor {
             AppHelper.whileTruthy(() => regex.exec(content), (imgTags) => {
                 const imgTag = imgTags[0];
 
-                if (imgTag.indexOf("<img ") === 0 && imgTag.indexOf(ImageModalDialog.imagePrefix) > 0) {
+                if (imgTag.indexOf('<img ') === 0 && imgTag.indexOf(ImageModalDialog.imagePrefix) > 0) {
                     const dataSrc = /<img.*?data-src="(.*?)".*?>/.exec(imgTag)[1];
                     const src = /<img.*?src="(.*?)".*?>/.exec(imgTags[0])[1];
 
@@ -80,7 +80,7 @@ module api.util.htmlarea.editor {
                 });
             });
 
-            let config = {attributes: true, childList: false, characterData: false, attributeFilter: ["style"]};
+            let config = {attributes: true, childList: false, characterData: false, attributeFilter: ['style']};
 
             observer.observe(img, config);
         }
@@ -90,19 +90,19 @@ module api.util.htmlarea.editor {
                 alignment = image.style.textAlign;
             }
 
-            let styleFormat = "float: {0}; margin: {1};" +
-                              (HTMLAreaHelper.isImageInOriginalSize(image) ? "" : "width: {2}%;");
+            let styleFormat = 'float: {0}; margin: {1};' +
+                              (HTMLAreaHelper.isImageInOriginalSize(image) ? '' : 'width: {2}%;');
             let styleAttr = '';
 
-            image.parentElement.className = "";
+            image.parentElement.className = '';
 
             switch (alignment) {
                 case 'left':
                 case 'right':
-                    styleAttr = StringHelper.format(styleFormat, alignment, "15px", "40");
+                    styleAttr = StringHelper.format(styleFormat, alignment, '15px', '40');
                     break;
                 case 'center':
-                    styleAttr = StringHelper.format(styleFormat, "none", "auto", "60");
+                    styleAttr = StringHelper.format(styleFormat, 'none', 'auto', '60');
                     image.parentElement.classList.add(alignment);
                     break;
             case 'justify':
@@ -110,12 +110,12 @@ module api.util.htmlarea.editor {
                 break;
             }
 
-            image.parentElement.setAttribute("style", styleAttr);
-            image.parentElement.setAttribute("data-mce-style", styleAttr);
+            image.parentElement.setAttribute('style', styleAttr);
+            image.parentElement.setAttribute('data-mce-style', styleAttr);
         }
 
         private static isImageInOriginalSize(image: HTMLElement) {
-            return image.getAttribute("data-src").indexOf("keepSize=true") > 0;
+            return image.getAttribute('data-src').indexOf('keepSize=true') > 0;
         }
     }
 }

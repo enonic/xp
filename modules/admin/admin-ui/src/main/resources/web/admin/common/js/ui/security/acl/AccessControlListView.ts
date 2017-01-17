@@ -11,7 +11,7 @@ module api.ui.security.acl {
         private itemsEditable: boolean = true;
 
         constructor(className?: string) {
-            super('access-control-list' + (className ? " " + className : ""));
+            super('access-control-list' + (className ? ' ' + className : ''));
         }
 
         createItemView(entry: AccessControlEntry): AccessControlEntryView {

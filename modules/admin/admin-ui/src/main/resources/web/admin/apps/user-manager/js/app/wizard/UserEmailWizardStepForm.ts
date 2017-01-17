@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import Principal = api.security.Principal;
 
@@ -38,7 +38,7 @@ export class UserEmailWizardStepForm extends api.app.wizard.WizardStepForm {
 
         form.onValidityChanged((event: api.ValidityChangedEvent) => {
             this.notifyValidityChanged(new api.app.wizard.WizardStepValidityChangedEvent(event.isValid()));
-            emailFormItem.toggleClass("invalid", !event.isValid());
+            emailFormItem.toggleClass('invalid', !event.isValid());
         });
 
         this.appendChild(form);

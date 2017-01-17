@@ -8,12 +8,12 @@ module api.schema.content {
 
         constructor(applicationKey: ApplicationKey) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
             this.applicationKey = applicationKey;
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "byApplication");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'byApplication');
         }
 
         getParams(): Object {

@@ -26,8 +26,7 @@ module api.content.page {
             if (source) {
                 super(source);
                 this.regions = source.getRegions();
-            }
-            else {
+            } else {
                 this.regions = [];
             }
         }

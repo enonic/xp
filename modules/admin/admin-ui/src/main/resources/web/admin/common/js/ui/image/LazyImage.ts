@@ -5,23 +5,23 @@ module api.ui.image {
         private phantomImage: api.dom.ImgEl;
 
         constructor(src?: string) {
-            super("lazy-image");
+            super('lazy-image');
 
-            this.addClass("empty");
+            this.addClass('empty');
 
-            this.phantomImage = new api.dom.ImgEl(null, "phantom-image");
+            this.phantomImage = new api.dom.ImgEl(null, 'phantom-image');
 
             this.phantomImage.onLoaded(() => {
-                this.getEl().setBackgroundImage("url(" + this.phantomImage.getSrc() + ")");
-                this.removeClass("empty");
+                this.getEl().setBackgroundImage('url(' + this.phantomImage.getSrc() + ')');
+                this.removeClass('empty');
             });
 
             this.setSrc(src);
         }
 
         setSrc(src: string) {
-            if (!this.hasClass("empty")) {
-                this.addClass("empty");
+            if (!this.hasClass('empty')) {
+                this.addClass('empty');
             }
 
             this.phantomImage.setSrc(src);

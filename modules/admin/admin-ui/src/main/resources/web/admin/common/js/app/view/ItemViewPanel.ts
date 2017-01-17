@@ -11,7 +11,7 @@ module api.app.view {
         private closedListeners: {(event: ItemViewClosedEvent<M>):void}[] = [];
 
         constructor() {
-            super("item-view-panel");
+            super('item-view-panel');
         }
 
         setToolbar(toolbar: api.ui.toolbar.Toolbar) {

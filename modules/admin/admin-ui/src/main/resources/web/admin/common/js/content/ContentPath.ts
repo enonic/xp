@@ -2,9 +2,9 @@ module api.content {
 
     export class ContentPath implements api.Equitable {
 
-        public static ELEMENT_DIVIDER: string = "/";
+        public static ELEMENT_DIVIDER: string = '/';
 
-        public static ROOT: ContentPath = ContentPath.fromString("/");
+        public static ROOT: ContentPath = ContentPath.fromString('/');
 
         private elements: string[];
 
@@ -21,11 +21,10 @@ module api.content {
 
             let elements: string[];
 
-            if (path.indexOf("/") == 0 && path.length > 1) {
+            if (path.indexOf('/') == 0 && path.length > 1) {
                 path = path.substr(1);
                 elements = path.split(ContentPath.ELEMENT_DIVIDER);
-            }
-            else if (path == "/") {
+            } else if (path == '/') {
                 elements = [];
             }
 
@@ -36,14 +35,13 @@ module api.content {
             this.elements = elements;
             if (elements.length == 0) {
                 this.refString = ContentPath.ELEMENT_DIVIDER;
-            }
-            else {
+            } else {
                 this.refString = ContentPath.ELEMENT_DIVIDER + this.elements.join(ContentPath.ELEMENT_DIVIDER);
             }
         }
 
         getPathAtLevel(level: number): ContentPath {
-            let result = "";
+            let result = '';
             for (let index = 0; index < this.getElements().length; index++) {
                 result = result + ContentPath.ELEMENT_DIVIDER + this.getElements()[index];
                 if (index == (level - 1)) {
@@ -70,7 +68,7 @@ module api.content {
         }
 
         getFirstElement(): string {
-            return (this.elements[0] || "");
+            return (this.elements[0] || '');
         }
 
         getParentPath(): ContentPath {
@@ -125,7 +123,7 @@ module api.content {
             let prettyElements: string[] = [];
             this.elements.forEach((element: string) => {
                 if (ContentName.fromString(element).isUnnamed()) {
-                    prettyElements.push("<" + ContentUnnamed.PRETTY_UNNAMED + ">");
+                    prettyElements.push('<' + ContentUnnamed.PRETTY_UNNAMED + '>');
                 } else {
                     prettyElements.push(element);
                 }

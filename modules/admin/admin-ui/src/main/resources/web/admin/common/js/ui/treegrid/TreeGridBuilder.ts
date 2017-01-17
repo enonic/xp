@@ -19,7 +19,7 @@ module api.ui.treegrid {
 
         private columns: GridColumn<TreeNode<NODE>>[] = [];
 
-        private classes: string = "";
+        private classes: string = '';
 
         private autoLoad: boolean = true;
 
@@ -45,7 +45,7 @@ module api.ui.treegrid {
                 this.columns = this.buildDefaultColumns();
             }
 
-            this.classes = "tree-grid " + this.classes;
+            this.classes = 'tree-grid ' + this.classes;
         }
 
         /*
@@ -57,7 +57,7 @@ module api.ui.treegrid {
          */
         nodeExtractor(node: any, column: Slick.Column<NODE>) {
             let names = column.field.split('.');
-            let val = node["data"][names[0]];
+            let val = node['data'][names[0]];
 
             for (let i = 1; i < names.length; i++) {
                 if (val && typeof val == 'object' && names[i] in val) {
@@ -169,7 +169,7 @@ module api.ui.treegrid {
         }
 
         prependClasses(classes: string): TreeGridBuilder<NODE> {
-            this.classes = classes + " " + this.classes;
+            this.classes = classes + ' ' + this.classes;
             return this;
         }
 

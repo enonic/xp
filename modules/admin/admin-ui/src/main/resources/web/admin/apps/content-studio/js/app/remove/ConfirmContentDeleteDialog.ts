@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 export interface ConfirmContentDeleteDialogConfig {
 
@@ -20,11 +20,11 @@ export class ConfirmContentDeleteDialog extends api.ui.dialog.ModalDialog {
     private deleteConfig: ConfirmContentDeleteDialogConfig;
 
     constructor(deleteConfig: ConfirmContentDeleteDialogConfig) {
-        super("Confirm delete");
+        super('Confirm delete');
 
         this.deleteConfig = deleteConfig;
 
-        this.getEl().addClass("confirm-delete-dialog");
+        this.getEl().addClass('confirm-delete-dialog');
 
         this.addSubtitle();
 
@@ -49,14 +49,14 @@ export class ConfirmContentDeleteDialog extends api.ui.dialog.ModalDialog {
     }
 
     private addSubtitle() {
-        this.appendChildToHeader(new api.dom.H6El("confirm-delete-subtitle").setHtml(
-            "You are about to delete important content. This action cannot be undone."));
+        this.appendChildToHeader(new api.dom.H6El('confirm-delete-subtitle').setHtml(
+            'You are about to delete important content. This action cannot be undone.'));
     }
 
     private initConfirmDeleteAction() {
-        this.confirmDeleteAction = new api.ui.Action("Confirm");
+        this.confirmDeleteAction = new api.ui.Action('Confirm');
 
-        this.confirmDeleteAction.setIconClass("confirm-delete-action");
+        this.confirmDeleteAction.setIconClass('confirm-delete-action');
         this.confirmDeleteAction.setEnabled(false);
         this.confirmDeleteAction.onExecuted(() => {
             this.close();
@@ -67,23 +67,22 @@ export class ConfirmContentDeleteDialog extends api.ui.dialog.ModalDialog {
     }
 
     private initConfirmationInput() {
-        this.input = api.ui.text.TextInput.middle("text").setForbiddenCharsRe(/[^0-9]/);
+        this.input = api.ui.text.TextInput.middle('text').setForbiddenCharsRe(/[^0-9]/);
         this.input.onValueChanged((event: api.ValueChangedEvent) => {
             if (this.isInputEmpty()) {
-                this.input.removeClass("invalid valid");
+                this.input.removeClass('invalid valid');
                 this.confirmDeleteAction.setEnabled(false);
                 return;
             }
 
             if (this.isCorrectNumberEntered()) {
-                this.input.removeClass("invalid").addClass("valid");
+                this.input.removeClass('invalid').addClass('valid');
                 this.confirmDeleteAction.setEnabled(true);
                 setTimeout(()=> {
                     this.confirmDeleteButton.giveFocus();
                 }, 0);
-            }
-            else {
-                this.input.removeClass("valid").addClass("invalid");
+            } else {
+                this.input.removeClass('valid').addClass('invalid');
                 this.confirmDeleteAction.setEnabled(false);
             }
 
@@ -97,19 +96,19 @@ export class ConfirmContentDeleteDialog extends api.ui.dialog.ModalDialog {
     }
 
     private initConfirmationBlock() {
-        let confirmationDiv = new api.dom.DivEl("confirm-delete-block");
+        let confirmationDiv = new api.dom.DivEl('confirm-delete-block');
 
         confirmationDiv.appendChildren(
-            new api.dom.SpanEl("confirm-delete-text").setHtml("Enter "),
-            new api.dom.SpanEl("confirm-delete-text-number").setHtml("" + this.deleteConfig.totalItemsToDelete),
-            new api.dom.SpanEl("confirm-delete-text").setHtml(" in the field and click Confirm: "),
+            new api.dom.SpanEl('confirm-delete-text').setHtml('Enter '),
+            new api.dom.SpanEl('confirm-delete-text-number').setHtml('' + this.deleteConfig.totalItemsToDelete),
+            new api.dom.SpanEl('confirm-delete-text').setHtml(' in the field and click Confirm: '),
             this.input);
 
         this.appendChildToContentPanel(confirmationDiv);
     }
 
     private isInputEmpty(): boolean {
-        return this.input.getValue() == "";
+        return this.input.getValue() == '';
     }
 
     private isCorrectNumberEntered(): boolean {

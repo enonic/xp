@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 export class ShowLiveEditEvent extends api.event.Event {
 

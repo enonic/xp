@@ -15,7 +15,7 @@ module api.liveedit.fragment {
         }
 
         constructor() {
-            super("fragment");
+            super('fragment');
         }
 
         createView(config: CreateItemViewConfig<RegionView,FragmentComponent>): FragmentComponentView {

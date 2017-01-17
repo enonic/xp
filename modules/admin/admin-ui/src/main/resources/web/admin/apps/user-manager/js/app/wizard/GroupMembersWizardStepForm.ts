@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {PrincipalMembersWizardStepForm} from "./PrincipalMembersWizardStepForm";
+import '../../api.ts';
+import {PrincipalMembersWizardStepForm} from './PrincipalMembersWizardStepForm';
 
 import Role = api.security.Role;
 import Principal = api.security.Principal;

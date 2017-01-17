@@ -29,11 +29,11 @@ module api.event {
         }
 
         static is(eventJson: api.event.NodeEventJson): boolean {
-            throw new Error("must be implemented in inheritors");
+            throw new Error('must be implemented in inheritors');
         }
 
         toString(): string {
-            return "NodeServerEvent: [" + this.change.toString() + "]";
+            return 'NodeServerEvent: [' + this.change.toString() + ']';
         }
 
         static on(handler: (event: NodeServerEvent) => void) {
@@ -45,7 +45,7 @@ module api.event {
         }
 
         static fromJson(nodeEventJson: NodeEventJson): NodeServerEvent {
-            throw new Error("must be implemented in inheritors");
+            throw new Error('must be implemented in inheritors');
         }
     }
 }

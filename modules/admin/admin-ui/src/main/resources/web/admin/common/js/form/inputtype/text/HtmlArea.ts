@@ -32,8 +32,8 @@ module api.form.inputtype.text {
         private blurListeners: {(event: FocusEvent): void}[] = [];
 
         private tools: any = {
-            include: "",
-            exclude: ""
+            include: '',
+            exclude: ''
         };
 
         private authRequest: Promise<void>;
@@ -43,7 +43,7 @@ module api.form.inputtype.text {
 
             super(config);
 
-            this.addClass("html-area");
+            this.addClass('html-area');
             this.editors = [];
             this.contentPath = config.contentPath;
             this.content = config.content;
@@ -69,7 +69,7 @@ module api.form.inputtype.text {
         }
 
         newInitialValue(): Value {
-            return super.newInitialValue() || ValueTypes.STRING.newValue("");
+            return super.newInitialValue() || ValueTypes.STRING.newValue('');
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
@@ -78,7 +78,7 @@ module api.form.inputtype.text {
             }
 
             let value = HTMLAreaHelper.prepareImgSrcsInValueForEdit(property.getString());
-            let textAreaEl = new api.ui.text.TextArea(this.getInput().getName() + "-" + index, value);
+            let textAreaEl = new api.ui.text.TextArea(this.getInput().getName() + '-' + index, value);
 
             let editorId = textAreaEl.getId();
 
@@ -127,7 +127,7 @@ module api.form.inputtype.text {
         }
 
         private initEditor(id: string, property: Property, textAreaWrapper: Element): void {
-            let focusedEditorCls = "html-area-focused";
+            let focusedEditorCls = 'html-area-focused';
             let baseUrl = CONFIG.assetsUri;
 
             let focusHandler = (e) => {
@@ -136,7 +136,7 @@ module api.form.inputtype.text {
 
                 this.notifyFocused(e);
 
-                api.util.AppHelper.dispatchCustomEvent("focusin", this);
+                api.util.AppHelper.dispatchCustomEvent('focusin', this);
                 new api.ui.selector.SelectorOnBlurEvent(this).fire();
             };
 
@@ -146,7 +146,7 @@ module api.form.inputtype.text {
 
             let blurHandler = (e) => {
                 //checking if remove occurence button clicked or not
-                api.util.AppHelper.dispatchCustomEvent("focusout", this);
+                api.util.AppHelper.dispatchCustomEvent('focusout', this);
 
                 if (!isMouseOverRemoveOccurenceButton) {
                     this.setStaticInputHeight();
@@ -175,19 +175,18 @@ module api.form.inputtype.text {
                 } else if ((e.altKey) && e.keyCode === 9) { // alt+tab for OSX
                     e.preventDefault();
                     // the one that event is triggered from
-                    let htmlAreaIframe = wemjq(textAreaWrapper.getHTMLElement()).find("iframe").get(0);
+                    let htmlAreaIframe = wemjq(textAreaWrapper.getHTMLElement()).find('iframe').get(0);
                     // check if focused element is html area that triggered event
                     let activeElement = this.isNotActiveElement(htmlAreaIframe) ? htmlAreaIframe : <HTMLElement>document.activeElement;
                     let nextFocusable = api.dom.FormEl.getNextFocusable(api.dom.Element.fromHtmlElement(activeElement),
-                        "iframe, input, select");
+                        'iframe, input, select');
 
                     if (nextFocusable) {
                         // if iframe is next focusable then it is a html area and using it's own focus method
                         if (this.isIframe(nextFocusable)) {
-                            let nextId = nextFocusable.getId().replace("_ifr", "");
+                            let nextId = nextFocusable.getId().replace('_ifr', '');
                             this.getEditor(nextId).focus();
-                        }
-                        else {
+                        } else {
                             nextFocusable.giveFocus();
                         }
                     }
@@ -212,11 +211,11 @@ module api.form.inputtype.text {
                     this.removeTooltipFromEditorArea(textAreaWrapper);
 
                 let removeButtonEL = wemjq(textAreaWrapper.getParentElement().getParentElement().getHTMLElement()).find(
-                    ".remove-button")[0];
-                removeButtonEL.addEventListener("mouseover", () => {
+                    '.remove-button')[0];
+                removeButtonEL.addEventListener('mouseover', () => {
                     isMouseOverRemoveOccurenceButton = true;
                 });
-                removeButtonEL.addEventListener("mouseleave", () => {
+                removeButtonEL.addEventListener('mouseleave', () => {
                     isMouseOverRemoveOccurenceButton = false;
                 });
 
@@ -246,7 +245,7 @@ module api.form.inputtype.text {
                 this.updateStickyEditorToolbar(inputOccurence, this.getEditorInfo(editorId));
             }, 20, false);
 
-            wemjq(this.getHTMLElement()).closest(".form-panel").on("scroll", (event) => {
+            wemjq(this.getHTMLElement()).closest('.form-panel').on('scroll', (event) => {
                 scrollHandler();
             });
 
@@ -272,30 +271,28 @@ module api.form.inputtype.text {
             if (!this.editorTopEdgeIsVisible(inputOccurence) && this.editorLowerEdgeIsVisible(inputOccurence)) {
                 if (!editorInfo.hasStickyToolbar) {
                     editorInfo.hasStickyToolbar = true;
-                    inputOccurence.addClass("sticky-toolbar");
+                    inputOccurence.addClass('sticky-toolbar');
                     this.updateEditorToolbarWidth(inputOccurence, editorInfo);
                 }
                 this.updateEditorToolbarPos(inputOccurence);
-            }
-            else if (editorInfo.hasStickyToolbar) {
+            } else if (editorInfo.hasStickyToolbar) {
                 editorInfo.hasStickyToolbar = false;
-                inputOccurence.removeClass("sticky-toolbar");
+                inputOccurence.removeClass('sticky-toolbar');
                 this.updateEditorToolbarWidth(inputOccurence, editorInfo);
             }
         }
 
         private updateEditorToolbarPos(inputOccurence: Element) {
-            wemjq(inputOccurence.getHTMLElement()).find(".mce-toolbar-grp").css({top: this.getToolbarOffsetTop(1)});
+            wemjq(inputOccurence.getHTMLElement()).find('.mce-toolbar-grp').css({top: this.getToolbarOffsetTop(1)});
         }
 
         private updateEditorToolbarWidth(inputOccurence: Element, editorInfo: HtmlAreaOccurrenceInfo) {
             if (editorInfo.hasStickyToolbar) {
                 // Toolbar in sticky mode has position: fixed which makes it not
                 // inherit width of its parent, so we have to explicitly set width
-                wemjq(inputOccurence.getHTMLElement()).find(".mce-toolbar-grp").width(inputOccurence.getEl().getWidth() - 3);
-            }
-            else {
-                wemjq(inputOccurence.getHTMLElement()).find(".mce-toolbar-grp").width('auto');
+                wemjq(inputOccurence.getHTMLElement()).find('.mce-toolbar-grp').width(inputOccurence.getEl().getWidth() - 3);
+            } else {
+                wemjq(inputOccurence.getHTMLElement()).find('.mce-toolbar-grp').width('auto');
             }
         }
 
@@ -305,8 +302,8 @@ module api.form.inputtype.text {
 
         private editorLowerEdgeIsVisible(inputOccurence: Element): boolean {
             let distToTopOfScrlblArea = this.calcDistToTopOfScrlbleArea(inputOccurence);
-            let editorToolbarHeight = wemjq(inputOccurence.getHTMLElement()).find(".mce-toolbar-grp").outerHeight(true);
-            let mceStatusToolbarHeight = wemjq(inputOccurence.getHTMLElement()).find(".mce-statusbar").outerHeight(true);
+            let editorToolbarHeight = wemjq(inputOccurence.getHTMLElement()).find('.mce-toolbar-grp').outerHeight(true);
+            let mceStatusToolbarHeight = wemjq(inputOccurence.getHTMLElement()).find('.mce-statusbar').outerHeight(true);
             return (inputOccurence.getEl().getHeightWithoutPadding() - editorToolbarHeight - mceStatusToolbarHeight +
                     distToTopOfScrlblArea) > 0;
         }
@@ -316,7 +313,7 @@ module api.form.inputtype.text {
         }
 
         private getToolbarOffsetTop(delta: number = 0): number {
-            let toolbar = wemjq(this.getHTMLElement()).closest(".form-panel").find(".wizard-step-navigator-and-toolbar");
+            let toolbar = wemjq(this.getHTMLElement()).closest('.form-panel').find('.wizard-step-navigator-and-toolbar');
             let stickyToolbarHeight = toolbar.outerHeight(true);
             let offset = toolbar.offset();
             let stickyToolbarOffset = offset ? offset.top : 0;
@@ -325,7 +322,7 @@ module api.form.inputtype.text {
         }
 
         private resetInputHeight() {
-            wemjq(this.getHTMLElement()).height("auto");
+            wemjq(this.getHTMLElement()).height('auto');
         }
 
         private setStaticInputHeight() {
@@ -342,15 +339,15 @@ module api.form.inputtype.text {
         private setEditorContent(editorId: string, property: Property): void {
             let editor = this.getEditor(editorId);
             if (editor) {
-                editor.setContent(property.hasNonNullValue() ? HTMLAreaHelper.prepareImgSrcsInValueForEdit(property.getString()) : "");
+                editor.setContent(property.hasNonNullValue() ? HTMLAreaHelper.prepareImgSrcsInValueForEdit(property.getString()) : '');
                 HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
             } else {
-                console.log("Editor with id '" + editorId + "' not found");
+                console.log(`Editor with id '${editorId}' not found`);
             }
         }
 
         private notInLiveEdit(): boolean {
-            return !(wemjq(this.getHTMLElement()).parents(".inspection-panel").length > 0);
+            return !(wemjq(this.getHTMLElement()).parents('.inspection-panel').length > 0);
         }
 
         private notifyValueChanged(id: string, occurrence: api.dom.Element) {
@@ -369,7 +366,7 @@ module api.form.inputtype.text {
         }
 
         private isIframe(element: Element): boolean {
-            return element.getEl().getTagName().toLowerCase() === "iframe";
+            return element.getEl().getTagName().toLowerCase() === 'iframe';
         }
 
         valueBreaksRequiredContract(value: Value): boolean {
@@ -383,7 +380,7 @@ module api.form.inputtype.text {
         }
 
         private removeTooltipFromEditorArea(inputOccurence: Element) {
-            wemjq(inputOccurence.getHTMLElement()).find("iframe").removeAttr("title");
+            wemjq(inputOccurence.getHTMLElement()).find('iframe').removeAttr('title');
         }
 
         handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
@@ -439,8 +436,7 @@ module api.form.inputtype.text {
             if (editor) {
                 try {
                     editor.destroy(false);
-                }
-                catch (e) {
+                } catch (e) {
                     //error thrown in FF on tab close - XP-2624
                 }
             }
@@ -455,7 +451,7 @@ module api.form.inputtype.text {
         }
 
         private getEditorInfo(id: string): HtmlAreaOccurrenceInfo {
-            return api.util.ArrayHelper.findElementByFieldValue(this.editors, "id", id);
+            return api.util.ArrayHelper.findElementByFieldValue(this.editors, 'id', id);
         }
 
     }
@@ -467,5 +463,5 @@ module api.form.inputtype.text {
         hasStickyToolbar: boolean;
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("HtmlArea", HtmlArea));
+    api.form.inputtype.InputTypeManager.register(new api.Class('HtmlArea', HtmlArea));
 }

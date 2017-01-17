@@ -9,7 +9,7 @@ module api.application {
         constructor(config: api.ui.uploader.UploaderElConfig) {
 
             if (config.url == undefined) {
-                config.url = api.util.UriHelper.getRestUri("application/install");
+                config.url = api.util.UriHelper.getRestUri('application/install');
             }
 
             if (config.allowTypes == undefined) {
@@ -29,8 +29,7 @@ module api.application {
                 this.failure = result.getFailure();
 
                 return result.getApplication();
-            }
-            else {
+            } else {
                 return null;
             }
         }
@@ -44,11 +43,11 @@ module api.application {
         }
 
         createResultItem(value: string): api.dom.Element {
-            return new api.dom.AEl().setUrl(api.util.UriHelper.getRestUri('application/' + value), "_blank");
+            return new api.dom.AEl().setUrl(api.util.UriHelper.getRestUri('application/' + value), '_blank');
         }
 
         protected getErrorMessage(fileString: string): string {
-            return "The application could not be installed";
+            return 'The application could not be installed';
         }
     }
 }

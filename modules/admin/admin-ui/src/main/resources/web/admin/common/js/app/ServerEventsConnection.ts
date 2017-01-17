@@ -101,7 +101,7 @@ module api.app {
                 clearTimeout(this.disconnectTimeoutHandle);
                 this.keepAliveIntervalId = setInterval(() => {
                     if (this.connected) {
-                        this.ws.send("KeepAlive");
+                        this.ws.send('KeepAlive');
                         if (ServerEventsConnection.debug) {
                             console.log('ServerEventsConnection: Sending Keep Alive message');
                         }
@@ -160,12 +160,12 @@ module api.app {
         private getWebSocketUriPrefix(): string {
             let loc = window.location;
             let newUri;
-            if (loc.protocol === "https:") {
-                newUri = "wss:";
+            if (loc.protocol === 'https:') {
+                newUri = 'wss:';
             } else {
-                newUri = "ws:";
+                newUri = 'ws:';
             }
-            newUri += "//" + loc.host;
+            newUri += '//' + loc.host;
             return newUri;
         }
 

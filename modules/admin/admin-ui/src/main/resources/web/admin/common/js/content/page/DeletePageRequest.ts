@@ -9,7 +9,7 @@ module api.content.page {
 
         constructor(contentId: api.content.ContentId) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
             this.contentId = contentId;
         }
 
@@ -20,7 +20,7 @@ module api.content.page {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "delete");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'delete');
         }
 
         sendAndParse(): wemQ.Promise<Content> {

@@ -21,7 +21,7 @@ module api.ui.treegrid.actions {
 
         private createLabel(treeGrid: TreeGrid<DATA>) {
             let count = this.getCount(treeGrid);
-            let label = "Select All" + ( !!count ? " (" + count + ")" : "");
+            let label = 'Select All' + ( !!count ? ' (' + count + ')' : '');
 
             this.setLabel(label);
         }

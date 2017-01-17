@@ -1,6 +1,6 @@
-import "../../api.ts";
-import {DependantItemsDialog} from "../dialog/DependantItemsDialog";
-import {MenuButtonProgressBarManager} from "../browse/MenuButtonProgressBarManager";
+import '../../api.ts';
+import {DependantItemsDialog} from '../dialog/DependantItemsDialog';
+import {MenuButtonProgressBarManager} from '../browse/MenuButtonProgressBarManager';
 import TaskState = api.task.TaskState;
 
 export class ProcessingStats {

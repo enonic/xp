@@ -7,7 +7,7 @@ module api.app.view {
         private empty: boolean;
 
         constructor(title: string, className?: string) {
-            super(!!className ? className + " item-data-group" : "item-data-group");
+            super(!!className ? className + ' item-data-group' : 'item-data-group');
             this.header = new api.dom.H2El();
             this.header.getEl().setInnerHtml(title);
             this.appendChild(this.header);
@@ -20,7 +20,7 @@ module api.app.view {
         }
 
         addDataArray(header: string, datas: string[]) {
-            let dataList = new api.dom.UlEl("data-list");
+            let dataList = new api.dom.UlEl('data-list');
 
             if (header) {
                 this.addHeader(header, dataList);
@@ -37,7 +37,7 @@ module api.app.view {
         }
 
         addDataElements(header:string, datas:api.dom.Element[]) {
-            let dataList = new api.dom.UlEl("data-list");
+            let dataList = new api.dom.UlEl('data-list');
 
             if (header) {
                 this.addHeader(header, dataList);
@@ -55,7 +55,7 @@ module api.app.view {
 
         private addHeader(header:string, dataList:api.dom.UlEl) {
             let headerElement = new api.dom.LiEl();
-            headerElement.addClass("list-header");
+            headerElement.addClass('list-header');
 
             headerElement.getEl().setInnerHtml(header, false);
             dataList.appendChild(headerElement);

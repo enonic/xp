@@ -6,7 +6,7 @@ module api.task {
 
         constructor() {
             super();
-            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "tasks");
+            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), 'tasks');
         }
 
         getResourcePath(): api.rest.Path {

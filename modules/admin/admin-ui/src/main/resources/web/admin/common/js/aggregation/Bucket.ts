@@ -31,7 +31,7 @@ module api.aggregation {
         }
 
         public getSelectionValue(): any {
-            return "test";
+            return 'test';
         }
 
     }

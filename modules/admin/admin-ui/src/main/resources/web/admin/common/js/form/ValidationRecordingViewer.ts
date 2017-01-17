@@ -3,9 +3,9 @@ module api.form {
     export class ValidationRecordingViewer extends api.ui.Viewer<ValidationRecording> {
 
         private list: api.dom.UlEl;
-        private minText: string = "Min {0} occurrences required";
-        private minTextSingle: string = "This field is required";
-        private maxText: string = "Max {0} occurrence{1} allowed";
+        private minText: string = 'Min {0} occurrences required';
+        private minTextSingle: string = 'This field is required';
+        private maxText: string = 'Max {0} occurrence{1} allowed';
 
         constructor() {
             super('validation-viewer');

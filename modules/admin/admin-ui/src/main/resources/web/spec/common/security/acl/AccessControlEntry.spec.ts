@@ -1,38 +1,38 @@
 import AccessControlEntry = api.security.acl.AccessControlEntry;
 import Permission = api.security.acl.Permission;
 
-describe("api.security.acl.AccessControlEntry", () => {
+describe('api.security.acl.AccessControlEntry', () => {
 
-    var now;
+    let now;
 
     beforeEach(() => {
         now = new Date(Date.now());
     });
 
-    describe("equals", () => {
+    describe('equals', () => {
 
-        var principal1 = Principal.create().setKey(PrincipalKey.ofAnonymous()).setDisplayName("principal1").setModifiedTime(now).build();
+        let principal1 = Principal.create().setKey(PrincipalKey.ofAnonymous()).setDisplayName('principal1').setModifiedTime(now).build();
 
-        it("given an equal then true is returned", () => {
+        it('given an equal then true is returned', () => {
 
-            var aclA = new AccessControlEntry(principal1);
+            let aclA = new AccessControlEntry(principal1);
             aclA.setAllowedPermissions([Permission.READ, Permission.CREATE]);
             aclA.setDeniedPermissions([Permission.MODIFY]);
 
-            var aclB = new AccessControlEntry(principal1);
+            let aclB = new AccessControlEntry(principal1);
             aclB.setAllowedPermissions([Permission.READ, Permission.CREATE]);
             aclB.setDeniedPermissions([Permission.MODIFY]);
 
             expect(aclA.equals(aclB)).toBeTruthy();
         });
 
-        it("given unequal allowed permissions then false is returned", () => {
+        it('given unequal allowed permissions then false is returned', () => {
 
-            var aclA = new AccessControlEntry(principal1);
+            let aclA = new AccessControlEntry(principal1);
             aclA.setAllowedPermissions([Permission.READ, Permission.CREATE]);
             aclA.setDeniedPermissions([Permission.MODIFY]);
 
-            var aclB = new AccessControlEntry(principal1);
+            let aclB = new AccessControlEntry(principal1);
             aclB.setAllowedPermissions([Permission.READ, Permission.DELETE]);
             aclB.setDeniedPermissions([Permission.MODIFY]);
 

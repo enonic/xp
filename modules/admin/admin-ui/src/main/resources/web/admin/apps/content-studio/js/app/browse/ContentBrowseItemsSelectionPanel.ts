@@ -1,7 +1,7 @@
-import "../../api.ts";
-import {ContentBrowseItem} from "./ContentBrowseItem";
-import {ContentTreeGrid} from "./ContentTreeGrid";
-import {ShowAllAction} from "./action/ShowAllAction";
+import '../../api.ts';
+import {ContentBrowseItem} from './ContentBrowseItem';
+import {ContentTreeGrid} from './ContentTreeGrid';
+import {ShowAllAction} from './action/ShowAllAction';
 
 import BrowseItem = api.app.browse.BrowseItem;
 import BrowseItemsSelectionPanel = api.app.browse.BrowseItemsSelectionPanel;
@@ -17,7 +17,7 @@ export class ContentBrowseItemsSelectionPanel extends BrowseItemsSelectionPanel<
 
     constructor(grid: ContentTreeGrid) {
         super();
-        this.addClass("content-browse-items-selection-panel");
+        this.addClass('content-browse-items-selection-panel');
         this.initToolbar(grid);
     }
 
@@ -26,11 +26,11 @@ export class ContentBrowseItemsSelectionPanel extends BrowseItemsSelectionPanel<
         const action = new ShowAllAction(this, grid);
         this.toolbar.addAction(action);
         this.appendChild(this.toolbar);
-        this.addClass("no-toolbar");
+        this.addClass('no-toolbar');
     }
 
     showAll() {
-        this.toggleClass("no-toolbar", true);
+        this.toggleClass('no-toolbar', true);
         this.setItemsLimit(Number.MAX_VALUE);
         this.updateDisplayedSelection();
     }
@@ -50,7 +50,7 @@ export class ContentBrowseItemsSelectionPanel extends BrowseItemsSelectionPanel<
 
         const count = this.getItems().length;
         const hideToolbar = count <= this.getItemsLimit();
-        this.toggleClass("no-toolbar", hideToolbar);
+        this.toggleClass('no-toolbar', hideToolbar);
 
         return changes;
     }

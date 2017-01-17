@@ -185,7 +185,7 @@ module api.ui.image {
                 return false;
             };
 
-            let imageMask = new api.dom.DivEl("image-bg-mask");
+            let imageMask = new api.dom.DivEl('image-bg-mask');
 
             this.canvas.appendChildren(imageMask, this.image, this.clip);
 
@@ -198,12 +198,12 @@ module api.ui.image {
 
             this.onAdded((event: api.dom.ElementAddedEvent) => {
                 // sticky toolbar needs to have access to parent elements
-                wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR).bind("scroll", scrollListener);
+                wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR).bind('scroll', scrollListener);
             });
             this.onRemoved((event: api.dom.ElementRemovedEvent) => {
                 // element has already been removed so use parent
                 if (!!event.getParent()) {
-                    wemjq(event.getParent().getHTMLElement()).closest(this.SCROLLABLE_SELECTOR).unbind("scroll", scrollListener);
+                    wemjq(event.getParent().getHTMLElement()).closest(this.SCROLLABLE_SELECTOR).unbind('scroll', scrollListener);
                 }
                 api.ui.responsive.ResponsiveManager.unAvailableSizeChanged(this);
                 this.unImageError(imageErrorHandler);
@@ -744,11 +744,11 @@ module api.ui.image {
         private updateStickyToolbar() {
             let relativeScrollTop = this.getRelativeScrollTop();
             if (!this.isTopEdgeVisible(relativeScrollTop) && this.isBottomEdgeVisible(relativeScrollTop)) {
-                this.addClass("sticky-mode");
+                this.addClass('sticky-mode');
                 this.stickyToolbar.getEl().setTopPx(-relativeScrollTop);
             } else {
                 this.stickyToolbar.getEl().setTopPx(0);
-                this.removeClass("sticky-mode");
+                this.removeClass('sticky-mode');
             }
         }
 

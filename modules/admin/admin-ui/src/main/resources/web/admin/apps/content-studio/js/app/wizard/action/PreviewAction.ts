@@ -1,13 +1,13 @@
-import "../../../api.ts";
-import {BasePreviewAction} from "../../action/BasePreviewAction";
-import {ContentWizardPanel} from "../ContentWizardPanel";
+import '../../../api.ts';
+import {BasePreviewAction} from '../../action/BasePreviewAction';
+import {ContentWizardPanel} from '../ContentWizardPanel';
 
 import RenderingMode = api.rendering.RenderingMode;
 
 export class PreviewAction extends BasePreviewAction {
 
     constructor(wizard: ContentWizardPanel) {
-        super("Preview");
+        super('Preview');
         this.onExecuted(() => {
                 if (wizard.hasUnsavedChanges()) {
                     wizard.setRequireValid(true);

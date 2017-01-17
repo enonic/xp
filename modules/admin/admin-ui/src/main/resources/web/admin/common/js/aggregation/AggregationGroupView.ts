@@ -16,7 +16,7 @@ module api.aggregation {
         private bucketSelectionChangedListeners: Function[] = [];
 
         constructor(name: string, displayName: string) {
-            super("aggregation-group-view");
+            super('aggregation-group-view');
 
             this.name = name;
             this.displayName = displayName;
@@ -119,8 +119,7 @@ module api.aggregation {
 
                 if (existingAggregationView == null) {
                     this.addAggregationView(api.aggregation.AggregationView.createAggregationView(aggregation, this));
-                }
-                else {
+                } else {
                     if (api.ObjectHelper.iFrameSafeInstanceOf(existingAggregationView, BucketAggregationView)) {
 
                         let bucketAggregationView: BucketAggregationView = <BucketAggregationView>existingAggregationView;

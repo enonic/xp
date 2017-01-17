@@ -8,7 +8,7 @@ module api.content.resource {
 
         constructor(ids: string[]) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             this.ids = ids;
         }
 
@@ -31,7 +31,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "compare");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'compare');
         }
 
         sendAndParse(): wemQ.Promise<CompareContentResults> {

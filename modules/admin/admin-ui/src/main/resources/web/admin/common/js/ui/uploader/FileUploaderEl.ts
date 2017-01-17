@@ -9,7 +9,7 @@ module api.ui.uploader {
 
         protected contentId: string;
 
-        static FILE_NAME_DELIMITER: string = "/";
+        static FILE_NAME_DELIMITER: string = '/';
 
         doSetValue(value: string, silent?: boolean): UploaderEl<MODEL> {
 

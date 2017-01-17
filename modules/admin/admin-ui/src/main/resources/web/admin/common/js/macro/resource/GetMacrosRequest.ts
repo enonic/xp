@@ -8,7 +8,7 @@ module api.macro.resource {
 
         constructor() {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
         }
 
         setApplicationKeys(applicationKeys: ApplicationKey[]) {
@@ -22,7 +22,7 @@ module api.macro.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "getByApps");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'getByApps');
         }
 
         sendAndParse(): wemQ.Promise<MacroDescriptor[]> {

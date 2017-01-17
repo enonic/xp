@@ -100,8 +100,7 @@ module api.aggregation {
 
             if (!this.showBucketView) {
                 this.hide();
-            }
-            else if (!this.isVisible()) {
+            } else if (!this.isVisible()) {
                 this.show();
             }
         }

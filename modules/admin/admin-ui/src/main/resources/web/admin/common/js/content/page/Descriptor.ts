@@ -34,7 +34,7 @@ module api.content.page {
         }
 
         clone(): Descriptor {
-            throw new Error("Must be implemented in inheritor");
+            throw new Error('Must be implemented in inheritor');
         }
     }
 

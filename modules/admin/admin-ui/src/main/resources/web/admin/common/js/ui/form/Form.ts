@@ -12,7 +12,7 @@ module api.ui.form {
 
         constructor(className?: string) {
             super(className);
-            this.addClass("form-view");
+            this.addClass('form-view');
             this.preventSubmit();
 
         }

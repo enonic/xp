@@ -21,7 +21,7 @@ module api.ui.security.acl {
         private valueChangedListeners: {(event: api.ValueChangedEvent): void}[] = [];
 
         constructor() {
-            super("access-selector");
+            super('access-selector');
 
             AccessSelector.OPTIONS.forEach((option: AccessSelectorOption, index: number) => {
                 let menuItem = (<TabMenuItemBuilder>new TabMenuItemBuilder().setLabel(option.name).setAddLabelTitleAttribute(
@@ -81,9 +81,9 @@ module api.ui.security.acl {
             let height = menu.getEl().getHeightWithoutPadding();
 
             if (offset > height) {
-                menu.addClass("upward");
+                menu.addClass('upward');
             } else {
-                menu.removeClass("upward");
+                menu.removeClass('upward');
             }
 
             super.showMenu();

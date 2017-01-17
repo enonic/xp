@@ -1,8 +1,8 @@
-module api.form{
+module api.form {
 
     export class FormItemPath {
 
-        private static DEFAULT_ELEMENT_DIVIDER:string = ".";
+        private static DEFAULT_ELEMENT_DIVIDER:string = '.';
 
         public static ROOT:FormItemPath = new FormItemPath([], FormItemPath.DEFAULT_ELEMENT_DIVIDER, true );
 
@@ -53,14 +53,13 @@ module api.form{
             this.absolute = absolute == undefined ? true : absolute;
             elements.forEach((element:FormItemPathElement, index:number) => {
                 if (element == null) {
-                    throw new Error("Path element was null at index: " + index);
-                }
-                else if (element.getName().length == 0) {
-                    throw new Error("Path element was empty string at index: " + index);
+                    throw new Error('Path element was null at index: ' + index);
+                } else if (element.getName().length == 0) {
+                    throw new Error('Path element was empty string at index: ' + index);
                 }
             });
             this.elements = elements;
-            this.refString = (this.absolute ? this.elementDivider : "") + this.elements.join(this.elementDivider);
+            this.refString = (this.absolute ? this.elementDivider : '') + this.elements.join(this.elementDivider);
         }
 
         newWithoutFirstElement():FormItemPath {

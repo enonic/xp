@@ -22,8 +22,8 @@ module api.app.bar {
         private timeoutHandler: number;
 
         constructor() {
-            super("appbar-tab-menu");
-            this.barEl = new api.dom.UlEl("bar");
+            super('appbar-tab-menu');
+            this.barEl = new api.dom.UlEl('bar');
             this.prependChild(this.barEl);
 
             this.onRendered(() => {

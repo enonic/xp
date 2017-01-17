@@ -20,7 +20,7 @@ module api.liveedit {
         constructor(type?: HighlighterMode) {
             // Needs to be a SVG element as the css has pointer-events:none
             // CSS pointer-events only works for SVG in IE
-            let svgCls = api.StyleHelper.getCls("highlighter");
+            let svgCls = api.StyleHelper.getCls('highlighter');
             let html = `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="${svgCls}" style="top:-5000px;left:-5000px">
                            <rect width="150" height="150"/>
                            <path d=""/>
@@ -132,7 +132,7 @@ module api.liveedit {
                 let screenH = bodyEl.getHeight();
                 let screenW = bodyEl.getWidth();
 
-                strokeW = parseInt(window.getComputedStyle(this.path.getHTMLElement(), null).getPropertyValue("stroke-width"), 10);
+                strokeW = parseInt(window.getComputedStyle(this.path.getHTMLElement(), null).getPropertyValue('stroke-width'), 10);
 
                 this.path.getEl()
                     .setAttribute('d',

@@ -12,14 +12,14 @@ module api.ui.dialog {
         private noAction: api.ui.Action;
 
         constructor() {
-            super("Confirmation");
+            super('Confirmation');
 
-            this.addClass("confirmation-dialog");
+            this.addClass('confirmation-dialog');
 
-            this.questionEl = new api.dom.DivEl("question");
+            this.questionEl = new api.dom.DivEl('question');
             this.appendChildToContentPanel(this.questionEl);
 
-            this.noAction = new api.ui.Action("No", "esc");
+            this.noAction = new api.ui.Action('No', 'esc');
             this.noAction.onExecuted(() => {
                 this.close();
                 if (this.noCallback) {
@@ -27,7 +27,7 @@ module api.ui.dialog {
                 }
             });
 
-            this.yesAction = new api.ui.Action("Yes");
+            this.yesAction = new api.ui.Action('Yes');
             this.yesAction.onExecuted(() => {
                 this.close();
                 if (this.yesCallback) {

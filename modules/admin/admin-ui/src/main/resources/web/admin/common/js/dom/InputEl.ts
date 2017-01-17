@@ -3,7 +3,7 @@ module api.dom {
     export class InputEl extends FormInputEl {
 
         constructor(className?: string, type?: string, prefix?: string, originalValue?: string) {
-            super("input", className, prefix, originalValue);
+            super('input', className, prefix, originalValue);
             this.setType(type || 'text');
 
             this.onInput(this.handleInput.bind(this));
@@ -51,7 +51,7 @@ module api.dom {
         }
 
         reset() {
-            this.getEl().setValue("");
+            this.getEl().setValue('');
         }
 
         /**

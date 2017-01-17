@@ -17,7 +17,7 @@ module FormOptionSetViewSpec {
     import AEl = api.dom.AEl;
     import CallInfo = jasmine.CallInfo;
 
-    describe("api.form.FormOptionSetView", function () {
+    describe('api.form.FormOptionSetView', function () {
 
         let optionSet: FormOptionSet;
         let optionSetViewConfig: FormOptionSetViewConfig;
@@ -29,7 +29,7 @@ module FormOptionSetViewSpec {
             optionSetView = new FormOptionSetView(optionSetViewConfig);
         });
 
-        describe("constructor", function () {
+        describe('constructor', function () {
 
             it('should be defined', function () {
                 expect(optionSetView).toBeDefined();
@@ -65,16 +65,17 @@ module FormOptionSetViewSpec {
 
             beforeEach(function () {
                 initOccurrencesSpy = spyOn(api.form.FormOptionSetView.prototype, 'initOccurrences').and.callThrough();
-                spyOn(optionSetView, "validate").and.stub();
+                spyOn(optionSetView, 'validate').and.stub();
             });
 
             describe('default behaviour', function () {
-                var addButtonSpy, collapseButtonSpy;
+                let addButtonSpy;
+                let collapseButtonSpy;
 
-                beforeEach(function (done) {
-                    addButtonSpy = spyOn(optionSetView, "makeAddButton").and.callThrough();
-                    collapseButtonSpy = spyOn(optionSetView, "makeCollapseButton").and.callThrough();
-                    spyOn(api.form.FormSetOccurrences.prototype, "layout").and.returnValue(wemQ<void>(null));
+                beforeEach(function (done: DoneFn) {
+                    addButtonSpy = spyOn(optionSetView, 'makeAddButton').and.callThrough();
+                    collapseButtonSpy = spyOn(optionSetView, 'makeCollapseButton').and.callThrough();
+                    spyOn(api.form.FormSetOccurrences.prototype, 'layout').and.returnValue(wemQ<void>(null));
 
                     optionSetView.layout().then(function () {
                         done();
@@ -82,7 +83,7 @@ module FormOptionSetViewSpec {
                 });
 
                 it('should create a container for occurrence views and append it to DOM', function () {
-                    expect(optionSetView.getEl().getElementsByClassName("occurrence-views-container").length).toEqual(1);
+                    expect(optionSetView.getEl().getElementsByClassName('occurrence-views-container').length).toEqual(1);
                 });
 
                 it('should create form option set occurrences', function () {
@@ -109,8 +110,8 @@ module FormOptionSetViewSpec {
 
             describe('when layout is called without validation', function () {
 
-                beforeEach(function (done) {
-                    spyOn(api.form.FormSetOccurrences.prototype, "layout").and.returnValue(wemQ<void>(null));
+                beforeEach(function (done: DoneFn) {
+                    spyOn(api.form.FormSetOccurrences.prototype, 'layout').and.returnValue(wemQ<void>(null));
 
                     optionSetView.layout(false).then(function () {
                         done();
@@ -129,12 +130,12 @@ module FormOptionSetViewSpec {
             describe('occurrences events', function () {
                 let handleValiditySpy;
 
-                beforeEach(function (done) {
+                beforeEach(function (done: DoneFn) {
                     spyOn(optionSetView, 'refresh').and.stub();
                     handleValiditySpy = spyOn(optionSetView, 'handleFormSetOccurrenceViewValidityChanged').and.stub();
                     spyOn(optionSetView, 'notifyEditContentRequested').and.callThrough();
                     // need actual layout to pass edit content request event
-                    spyOn(api.form.FormSetOccurrences.prototype, "layout").and.callThrough();
+                    spyOn(api.form.FormSetOccurrences.prototype, 'layout').and.callThrough();
 
                     optionSetView.layout(false).then(function () {
                         done();
@@ -171,12 +172,14 @@ module FormOptionSetViewSpec {
             });
 
             describe('buttons interaction', function () {
-                let addSpy, collapseSpy, showSpy;
+                let addSpy;
+                let collapseSpy;
+                let showSpy;
 
-                beforeEach(function (done) {
+                beforeEach(function (done: DoneFn) {
                     addSpy = spyOn(optionSetView, 'makeAddButton').and.callThrough();
                     collapseSpy = spyOn(optionSetView, 'makeCollapseButton').and.callThrough();
-                    showSpy = spyOn(api.form.FormSetOccurrences.prototype, "showOccurrences").and.callThrough();
+                    showSpy = spyOn(api.form.FormSetOccurrences.prototype, 'showOccurrences').and.callThrough();
 
                     optionSetView.layout(false).then(function () {
                         done();
@@ -193,7 +196,7 @@ module FormOptionSetViewSpec {
                 });
 
                 it('should collapse occurrence on collapse link click', function () {
-                    spyOn(api.form.FormSetOccurrences.prototype, "isCollapsed").and.returnValues(false);
+                    spyOn(api.form.FormSetOccurrences.prototype, 'isCollapsed').and.returnValues(false);
 
                     let link: AEl = collapseSpy.calls.mostRecent().returnValue;
                     link.getHTMLElement().click();
@@ -203,7 +206,7 @@ module FormOptionSetViewSpec {
                 });
 
                 it('should expand occurrence on expand button click', function () {
-                    spyOn(api.form.FormSetOccurrences.prototype, "isCollapsed").and.returnValues(true);
+                    spyOn(api.form.FormSetOccurrences.prototype, 'isCollapsed').and.returnValues(true);
 
                     let link: AEl = collapseSpy.calls.mostRecent().returnValue;
                     link.getHTMLElement().click();
@@ -211,10 +214,10 @@ module FormOptionSetViewSpec {
                     expect(link.getHtml()).toEqual('Collapse');
                     expect(showSpy).toHaveBeenCalledWith(true);
                 });
-            })
+            });
         });
 
-        describe("validate()", function () {
+        describe('validate()', function () {
             let occurrenceValidateSpy;
 
             beforeEach(function () {
@@ -226,9 +229,11 @@ module FormOptionSetViewSpec {
             });
 
             describe('after layout was done', function () {
-                let renderValidationErrorsSpy, notifyValidityChangedSpy, initOccurrencesSpy;
+                let renderValidationErrorsSpy;
+                let notifyValidityChangedSpy;
+                let initOccurrencesSpy;
 
-                beforeEach(function (done) {
+                beforeEach(function (done: DoneFn) {
                     initOccurrencesSpy = spyOn(api.form.FormOptionSetView.prototype, 'initOccurrences').and.callThrough();
 
                     optionSetView.layout(false).then(function () {
@@ -280,9 +285,10 @@ module FormOptionSetViewSpec {
                 });
 
                 describe('validate with exclusions', function () {
-                    let recording, excludedOccurrenceView;
+                    let recording;
+                    let excludedOccurrenceView;
 
-                    beforeEach(function (done) {
+                    beforeEach(function (done: DoneFn) {
                         let occurrences = initOccurrencesSpy.calls.mostRecent().returnValue;
 
                         occurrences.createAndAddOccurrence(1, false).then((addedView) => {
@@ -303,7 +309,7 @@ module FormOptionSetViewSpec {
 
         describe('update()', function () {
 
-            it('should become invalid after setting invalid data', function (done) {
+            it('should become invalid after setting invalid data', function (done: DoneFn) {
 
                 optionSetView.layout(false).then(function () {
 
@@ -320,7 +326,7 @@ module FormOptionSetViewSpec {
                 });
             });
 
-            it('should become valid after setting valid data', function (done) {
+            it('should become valid after setting valid data', function (done: DoneFn) {
 
                 optionSetView = new FormOptionSetView(getFormOptionSetViewConfig(optionSet, getPropertySet(false)));
                 optionSetView.layout(false).then(function () {
@@ -336,8 +342,8 @@ module FormOptionSetViewSpec {
                         done();
                     });
                 });
-            })
-        })
+            });
+        });
     });
 
     export function getFormOptionSetViewConfig(optionSet: FormOptionSet, dataSet: PropertySet): FormOptionSetViewConfig {
@@ -346,7 +352,7 @@ module FormOptionSetViewSpec {
             formOptionSet: optionSet,
             parent: undefined,
             parentDataSet: dataSet
-        }
+        };
     }
 
     export function getFormContext(): FormContext {
@@ -354,17 +360,17 @@ module FormOptionSetViewSpec {
     }
 
     export function getPropertySet(valid: boolean = true): PropertySet {
-        var tree = new api.data.PropertyTree();
-        var set = tree.addPropertySet('optionSet');
+        let tree = new api.data.PropertyTree();
+        let set = tree.addPropertySet('optionSet');
 
-        var optionSet1 = set.addPropertySet("option1");
-        optionSet1.addString("input1", "Option 1 value from data");
+        let optionSet1 = set.addPropertySet('option1');
+        optionSet1.addString('input1', 'Option 1 value from data');
 
-        var optionSet2 = set.addPropertySet("option2");
-        var itemSet1 = optionSet2.addPropertySet('itemSet1');
+        let optionSet2 = set.addPropertySet('option2');
+        let itemSet1 = optionSet2.addPropertySet('itemSet1');
         if (valid) {
-            itemSet1.addString("input2-1", "Option 2 value from data");
-            itemSet1.addBoolean("input2-2", true);
+            itemSet1.addString('input2-1', 'Option 2 value from data');
+            itemSet1.addBoolean('input2-2', true);
         }
 
         return tree.getRoot();

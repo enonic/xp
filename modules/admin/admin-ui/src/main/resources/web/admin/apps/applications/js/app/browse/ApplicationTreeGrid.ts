@@ -1,6 +1,6 @@
-import "../../api.ts";
-import {ApplicationBrowseActions} from "./ApplicationBrowseActions";
-import {ApplicationRowFormatter} from "./ApplicationRowFormatter";
+import '../../api.ts';
+import {ApplicationBrowseActions} from './ApplicationBrowseActions';
+import {ApplicationRowFormatter} from './ApplicationRowFormatter';
 
 import GridColumn = api.ui.grid.GridColumn;
 import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
@@ -21,23 +21,23 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
 
     constructor() {
         super(new TreeGridBuilder<Application>().setColumnConfig([{
-                name: "Name",
-                id: "displayName",
-                field: "displayName",
+                name: 'Name',
+                id: 'displayName',
+                field: 'displayName',
                 formatter: ApplicationRowFormatter.nameFormatter,
                 style: {minWidth: 250}
             }, {
-                name: "Version",
-                id: "version",
-                field: "version",
-                style: {cssClass: "version", minWidth: 50, maxWidth: 130}
+                name: 'Version',
+                id: 'version',
+                field: 'version',
+                style: {cssClass: 'version', minWidth: 50, maxWidth: 130}
             }, {
-                name: "State",
-                id: "state",
-                field: "state",
+                name: 'State',
+                id: 'state',
+                field: 'state',
                 formatter: ApplicationRowFormatter.stateFormatter,
-                style: {cssClass: "state", minWidth: 80, maxWidth: 100}
-            }]).prependClasses("application-grid")
+                style: {cssClass: 'state', minWidth: 80, maxWidth: 100}
+            }]).prependClasses('application-grid')
         );
 
         this.setContextMenu(new TreeGridContextMenu(ApplicationBrowseActions.init(this)));

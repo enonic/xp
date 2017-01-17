@@ -19,7 +19,7 @@ module api.ui.time {
         private calendarDays: CalendarDay[];
 
         constructor(builder: CalendarWeekBuilder) {
-            super("calendar-week");
+            super('calendar-week');
 
             this.calendarDays = builder.calendarDays;
             this.calendarDays.forEach((day)=> {

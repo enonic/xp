@@ -6,7 +6,7 @@ module api {
 
         private newValue: string;
 
-        constructor(oldValue: string = "", newValue: string = "") {
+        constructor(oldValue: string = '', newValue: string = '') {
             this.oldValue = oldValue;
             this.newValue = newValue;
         }

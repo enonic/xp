@@ -15,15 +15,15 @@ module api.content.resource {
 
         private path: ContentPath;
 
-        private searchString: string = "";
+        private searchString: string = '';
 
         private request: ContentQueryRequest<ContentSummaryJson, ContentSummary>;
 
-        public static MODIFIED_TIME_DESC: FieldOrderExpr = new FieldOrderExpr(new FieldExpr("modifiedTime"), OrderDirection.DESC);
+        public static MODIFIED_TIME_DESC: FieldOrderExpr = new FieldOrderExpr(new FieldExpr('modifiedTime'), OrderDirection.DESC);
 
-        public static SCORE_DESC: FieldOrderExpr = new FieldOrderExpr(new FieldExpr("_score"), OrderDirection.DESC);
+        public static SCORE_DESC: FieldOrderExpr = new FieldOrderExpr(new FieldExpr('_score'), OrderDirection.DESC);
 
-        public static PATH_ASC: FieldOrderExpr = new FieldOrderExpr(new FieldExpr("_path"), OrderDirection.ASC);
+        public static PATH_ASC: FieldOrderExpr = new FieldOrderExpr(new FieldExpr('_path'), OrderDirection.ASC);
 
         public static DEFAULT_ORDER: OrderExpr[] = [ContentSummaryRequest.SCORE_DESC, ContentSummaryRequest.MODIFIED_TIME_DESC];
 
@@ -84,7 +84,7 @@ module api.content.resource {
             this.path = path;
         }
 
-        setSearchString(value: string = "") {
+        setSearchString(value: string = '') {
             this.searchString = value;
         }
 
@@ -107,7 +107,7 @@ module api.content.resource {
         protected createSearchExpression(): ConstraintExpr {
             return new api.query.PathMatchExpressionBuilder()
                 .setSearchString(this.searchString)
-                .setPath(this.path ? this.path.toString() : "")
+                .setPath(this.path ? this.path.toString() : '')
                 .addField(new QueryField(QueryField.DISPLAY_NAME, 5))
                 .addField(new QueryField(QueryField.NAME, 3))
                 .addField(new QueryField(QueryField.ALL))

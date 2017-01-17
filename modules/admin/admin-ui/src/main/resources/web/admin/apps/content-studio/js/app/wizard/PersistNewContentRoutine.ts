@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {ContentWizardPanel} from "./ContentWizardPanel";
+import '../../api.ts';
+import {ContentWizardPanel} from './ContentWizardPanel';
 
 import CreateContentRequest = api.content.resource.CreateContentRequest;
 import Content = api.content.Content;
@@ -40,8 +40,7 @@ export class PersistNewContentRoutine extends api.util.Flow<api.content.Content,
                 return this.doExecuteNext(context);
 
             });
-        }
-        else {
+        } else {
             return wemQ(context.content);
         }
     }
@@ -58,8 +57,7 @@ export class PersistNewContentRoutine extends api.util.Flow<api.content.Content,
 
                 });
             });
-        }
-        else {
+        } else {
             return api.util.PromiseHelper.newResolvedVoidPromise();
         }
     }

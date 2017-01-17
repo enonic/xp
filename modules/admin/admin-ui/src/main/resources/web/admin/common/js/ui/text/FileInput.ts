@@ -18,10 +18,10 @@ module api.ui.text {
         constructor(className?: string, originalValue?: string) {
             super();
 
-            this.setWrappedInput(this.textInput = new InputEl("text"));
+            this.setWrappedInput(this.textInput = new InputEl('text'));
             this.setAdditionalElements(this.mediaUploaderEl = this.createMediaUploaderEl(originalValue));
 
-            this.addClass("file-input" + (className ? " " + className : ""));
+            this.addClass('file-input' + (className ? ' ' + className : ''));
         }
 
         private createMediaUploaderEl(originalValue?: string): api.ui.uploader.MediaUploaderEl {
@@ -78,14 +78,14 @@ module api.ui.text {
 
         enable() {
             this.textInput.getEl().setDisabled(false);
-            this.mediaUploaderEl.getDropzone().getEl().removeAttribute("disabled");
-            this.mediaUploaderEl.getEl().removeAttribute("disabled");
+            this.mediaUploaderEl.getDropzone().getEl().removeAttribute('disabled');
+            this.mediaUploaderEl.getEl().removeAttribute('disabled');
         }
 
         disable() {
             this.textInput.getEl().setDisabled(true);
-            this.mediaUploaderEl.getDropzone().getEl().setAttribute("disabled", "true");
-            this.mediaUploaderEl.getEl().setAttribute("disabled", "true");
+            this.mediaUploaderEl.getDropzone().getEl().setAttribute('disabled', 'true');
+            this.mediaUploaderEl.getEl().setAttribute('disabled', 'true');
         }
 
         getUploader(): api.ui.uploader.MediaUploaderEl {

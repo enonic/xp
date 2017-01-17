@@ -1,1 +1,1 @@
-///<reference path="RelationshipJson.ts" />
+///<reference path='RelationshipJson.ts' />

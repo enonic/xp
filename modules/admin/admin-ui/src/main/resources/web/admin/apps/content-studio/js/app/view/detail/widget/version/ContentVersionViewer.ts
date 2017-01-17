@@ -1,4 +1,4 @@
-import "../../../../../api.ts";
+import '../../../../../api.ts';
 
 export class ContentVersionViewer extends api.ui.Viewer<api.content.ContentVersion> {
 
@@ -20,41 +20,32 @@ export class ContentVersionViewer extends api.ui.Viewer<api.content.ContentVersi
         let yrInMs = dayInMs * 365;
 
         if (timeDiff < minInMs) {
-            return "less than a minute ago";
-        }
-        else if (timeDiff < 2 * minInMs) {
-            return "a minute ago";
-        }
-        else if (timeDiff < hrInMs) {
-            return ~~(timeDiff / minInMs) + " minutes ago";
-        }
-        else if (timeDiff < 2 * hrInMs) {
-            return "over an hour ago";
-        }
-        else if (timeDiff < dayInMs) {
-            return "over " + ~~(timeDiff / hrInMs) + " hours ago";
-        }
-        else if (timeDiff < 2 * dayInMs) {
-            return "over a day ago";
-        }
-        else if (timeDiff < monInMs) {
-            return "over " + ~~(timeDiff / dayInMs) + " days ago";
-        }
-        else if (timeDiff < 2 * monInMs) {
-            return "over a month ago";
-        }
-        else if (timeDiff < yrInMs) {
-            return "over " + ~~(timeDiff / monInMs) + " months ago";
-        }
-        else if (timeDiff < 2 * yrInMs) {
-            return "over a year ago";
+            return 'less than a minute ago';
+        } else if (timeDiff < 2 * minInMs) {
+            return 'a minute ago';
+        } else if (timeDiff < hrInMs) {
+            return ~~(timeDiff / minInMs) + ' minutes ago';
+        } else if (timeDiff < 2 * hrInMs) {
+            return 'over an hour ago';
+        } else if (timeDiff < dayInMs) {
+            return 'over ' + ~~(timeDiff / hrInMs) + ' hours ago';
+        } else if (timeDiff < 2 * dayInMs) {
+            return 'over a day ago';
+        } else if (timeDiff < monInMs) {
+            return 'over ' + ~~(timeDiff / dayInMs) + ' days ago';
+        } else if (timeDiff < 2 * monInMs) {
+            return 'over a month ago';
+        } else if (timeDiff < yrInMs) {
+            return 'over ' + ~~(timeDiff / monInMs) + ' months ago';
+        } else if (timeDiff < 2 * yrInMs) {
+            return 'over a year ago';
         }
 
-        return "over " + ~~(timeDiff / yrInMs) + " years ago";
+        return 'over ' + ~~(timeDiff / yrInMs) + ' years ago';
     }
 
     private getModifierSpan(contentVersion: api.content.ContentVersion): api.dom.SpanEl {
-        let span = new api.dom.SpanEl("version-modifier");
+        let span = new api.dom.SpanEl('version-modifier');
 
         span.setHtml(this.getModifiedString(contentVersion.modified));
 
@@ -66,7 +57,7 @@ export class ContentVersionViewer extends api.ui.Viewer<api.content.ContentVersi
             return null;
         }
 
-        let span = new api.dom.SpanEl("version-comment");
+        let span = new api.dom.SpanEl('version-comment');
         span.setHtml(contentVersion.comment);
         return span;
     }
@@ -89,7 +80,7 @@ export class ContentVersionViewer extends api.ui.Viewer<api.content.ContentVersi
         this.namesAndIconView
             .setMainName(contentVersion.modifierDisplayName)
             .setSubNameElements(this.getSubNameElements(contentVersion))
-            .setIconClass("icon-user");
+            .setIconClass('icon-user');
 
         return super.setObject(contentVersion);
     }

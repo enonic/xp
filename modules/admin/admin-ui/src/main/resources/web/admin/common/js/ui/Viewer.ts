@@ -9,7 +9,7 @@ module api.ui {
 
         constructor(className?: string) {
             super(new api.dom.NewElementBuilder().
-                setTagName("div").
+                setTagName('div').
                 setClassName('viewer ' + (className || '')).
                 setGenerateId(false));
         }
@@ -41,7 +41,7 @@ module api.ui {
         }
 
         getPreferredHeight(): number {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         toString(): string {

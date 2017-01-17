@@ -28,7 +28,7 @@ module api.content.page.region {
 
             this.configChangedHandler = (event: PropertyEvent) => {
                 if (DescriptorBasedComponent.debug) {
-                    console.debug("DescriptorBasedComponent[" + this.getPath().toString() + "].config.onChanged: ", event);
+                    console.debug('DescriptorBasedComponent[' + this.getPath().toString() + '].config.onChanged: ', event);
                 }
                 if (!this.disableEventForwarding) {
                     this.notifyPropertyValueChanged(DescriptorBasedComponent.PROPERTY_CONFIG);
@@ -117,7 +117,7 @@ module api.content.page.region {
         }
 
         clone(): DescriptorBasedComponent {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
     }
 
@@ -133,8 +133,7 @@ module api.content.page.region {
             if (source) {
                 this.descriptor = source.getDescriptor();
                 this.config = source.getConfig() ? source.getConfig().copy() : null;
-            }
-            else {
+            } else {
                 this.config = new PropertyTree();
             }
         }
@@ -150,7 +149,7 @@ module api.content.page.region {
         }
 
         public build(): DESCRIPTOR_BASED_COMPONENT {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
     }
 }

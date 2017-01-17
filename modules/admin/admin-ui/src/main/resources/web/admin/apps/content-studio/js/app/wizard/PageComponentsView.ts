@@ -1,6 +1,6 @@
-import "../../api.ts";
-import {LiveEditPageProxy} from "./page/LiveEditPageProxy";
-import {PageComponentsTreeGrid} from "./PageComponentsTreeGrid";
+import '../../api.ts';
+import {LiveEditPageProxy} from './page/LiveEditPageProxy';
+import {PageComponentsTreeGrid} from './PageComponentsTreeGrid';
 
 import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
 import ItemViewDeselectedEvent = api.liveedit.ItemViewDeselectedEvent;
@@ -78,7 +78,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
         this.onShown((event) => {
             this.constrainToParent();
-            this.getHTMLElement().style.display = "";
+            this.getHTMLElement().style.display = '';
             if (this.pageView && this.pageView.isLocked()) {
                 this.mask.show();
             }
@@ -313,8 +313,8 @@ export class PageComponentsView extends api.dom.DivEl {
             let rowElement = event.targetж;
             let selected = false;
 
-            while (!rowElement.classList.contains("slick-row")) {
-                if (rowElement.classList.contains("selected")) {
+            while (!rowElement.classList.contains('slick-row')) {
+                if (rowElement.classList.contains('selected')) {
                     selected = true;
                 }
 
@@ -384,7 +384,7 @@ export class PageComponentsView extends api.dom.DivEl {
     }
 
     private isMenuIcon(element: HTMLElement): boolean {
-        if (!!element && !!element.className && element.className.indexOf("menu-icon") > -1) {
+        if (!!element && !!element.className && element.className.indexOf('menu-icon') > -1) {
             return true;
         }
         return false;
@@ -530,8 +530,7 @@ export class PageComponentsView extends api.dom.DivEl {
         if (this.getParentElement()) {
             parentEl = this.getParentElement().getEl();
             parentOffset = parentEl.getOffset();
-        }
-        else {
+        } else {
             parentEl = api.dom.WindowDOM.get();
             parentOffset = {
                 top: 0,
@@ -636,7 +635,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
         this.contextMenu.getMenu().onBeforeAction((action: api.ui.Action) => {
             this.pageView.setDisabledContextMenu(true);
-            if (action.hasParentAction() && action.getParentAction().getLabel() == "Insert") {
+            if (action.hasParentAction() && action.getParentAction().getLabel() == 'Insert') {
                 this.notifyBeforeInsertAction();
             }
         });
@@ -663,21 +662,21 @@ export class PageComponentsView extends api.dom.DivEl {
     }
 
     private hidePageComponentsIfInMobileView(action: api.ui.Action) {
-        if (api.BrowserHelper.isMobile() && ((action.hasParentAction() && action.getParentAction().getLabel() == "Insert")
-                                             || action.getLabel() == "Inspect" || action.getLabel() == "Edit" ||
-                                             action.getLabel() == "Duplicate")) {
+        if (api.BrowserHelper.isMobile() && ((action.hasParentAction() && action.getParentAction().getLabel() == 'Insert')
+                                             || action.getLabel() == 'Inspect' || action.getLabel() == 'Edit' ||
+                                             action.getLabel() == 'Duplicate')) {
             this.hide();
         }
     }
 
     private setMenuOpenStyleOnMenuIcon(row: number) {
         let stylesHash: Slick.CellCssStylesHash = {};
-        stylesHash[row] = {menu: "menu-open"};
-        this.tree.getGrid().setCellCssStyles("menu-open", stylesHash);
+        stylesHash[row] = {menu: 'menu-open'};
+        this.tree.getGrid().setCellCssStyles('menu-open', stylesHash);
     }
 
     private removeMenuOpenStyleFromMenuIcon() {
-        this.tree.getGrid().removeCellCssStyles("menu-open");
+        this.tree.getGrid().removeCellCssStyles('menu-open');
     }
 
     private hideContextMenu() {
@@ -694,8 +693,7 @@ export class PageComponentsView extends api.dom.DivEl {
     private highlightRow(rowElement: HTMLElement, selected: boolean): void {
         if (selected) {
             Highlighter.get().hide();
-        }
-        else {
+        } else {
             let elementHelper = new api.dom.ElementHelper(rowElement);
             let dimensions = elementHelper.getDimensions();
             let nodes = this.tree.getRoot().getCurrentRoot().treeToList();
@@ -736,7 +734,7 @@ export class PageComponentsView extends api.dom.DivEl {
         let editAction: api.ui.Action;
 
         contextMenuActions.some((action: api.ui.Action) => {
-            if(action.getLabel() === "Edit") {
+            if(action.getLabel() === 'Edit') {
                 editAction = action;
                 return true;
             }

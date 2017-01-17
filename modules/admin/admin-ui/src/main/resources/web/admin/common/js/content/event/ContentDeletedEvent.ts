@@ -14,7 +14,7 @@ module api.content.event {
         }
 
         addPendingItem(contentId: ContentId, contentPath: api.content.ContentPath): ContentDeletedEvent {
-            this.contentDeletedItems.push(new ContentDeletedItem(contentId, contentPath, "master", true));
+            this.contentDeletedItems.push(new ContentDeletedItem(contentId, contentPath, 'master', true));
             return this;
         }
 

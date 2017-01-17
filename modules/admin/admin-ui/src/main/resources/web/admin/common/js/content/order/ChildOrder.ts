@@ -6,13 +6,13 @@ module api.content.order {
 
     export class ChildOrder implements api.Equitable {
 
-        private DEFAULT_ORDER_DIRECTION_VALUE: string = "DESC";
+        private DEFAULT_ORDER_DIRECTION_VALUE: string = 'DESC';
 
         static DEFAULT_ORDER_FIELD_VALUE: string = api.query.QueryField.MODIFIED_TIME;
 
-        static ASC_ORDER_DIRECTION_VALUE: string = "ASC";
+        static ASC_ORDER_DIRECTION_VALUE: string = 'ASC';
 
-        static DESC_ORDER_DIRECTION_VALUE: string = "DESC";
+        static DESC_ORDER_DIRECTION_VALUE: string = 'DESC';
 
         static MANUAL_ORDER_VALUE_KEY: string = api.query.QueryField.MANUAL_ORDER_VALUE;
 
@@ -87,9 +87,9 @@ module api.content.order {
         }
 
         toString(): string {
-            let result = "";
+            let result = '';
             this.orderExpressions.forEach((expr: OrderExpr) => {
-                result = result.concat(" ", expr.toString());
+                result = result.concat(' ', expr.toString());
             });
             return result;
         }

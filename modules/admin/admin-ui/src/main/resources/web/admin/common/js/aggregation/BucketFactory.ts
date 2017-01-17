@@ -9,7 +9,7 @@ module api.aggregation {
             } else if (json.BucketJson) {
                 return Bucket.fromJson(<api.aggregation.BucketJson>json.BucketJson);
             } else {
-                throw new Error("Bucket-type not recognized: " + json);
+                throw new Error('Bucket-type not recognized: ' + json);
             }
         }
     }

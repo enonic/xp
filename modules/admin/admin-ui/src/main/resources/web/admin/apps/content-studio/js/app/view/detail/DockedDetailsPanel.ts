@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {DetailsPanel, DETAILS_PANEL_TYPE} from "./DetailsPanel";
-import {DetailsView} from "./DetailsView";
+import '../../../api.ts';
+import {DetailsPanel, DETAILS_PANEL_TYPE} from './DetailsPanel';
+import {DetailsView} from './DetailsView';
 
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 
@@ -9,7 +9,7 @@ export class DockedDetailsPanel extends DetailsPanel {
     constructor(detailsView: DetailsView) {
         super(detailsView);
         this.setDoOffset(false);
-        this.addClass("docked-details-panel");
+        this.addClass('docked-details-panel');
     }
 
     protected subscribeOnEvents() {

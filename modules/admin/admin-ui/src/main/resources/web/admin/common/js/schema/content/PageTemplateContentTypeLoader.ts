@@ -32,17 +32,13 @@ module api.schema.content {
                         let contentTypeName = item.getContentTypeName();
                         if (item.isAbstract()) {
                             return false;
-                        }
-                        else if (contentTypeName.isDescendantOfMedia()) {
+                        } else if (contentTypeName.isDescendantOfMedia()) {
                             return true;
-                        }
-                        else if (typesAllowedEverywhere[contentTypeName.toString()]) {
+                        } else if (typesAllowedEverywhere[contentTypeName.toString()]) {
                             return true;
-                        }
-                        else if (siteApplications[contentTypeName.getApplicationKey().toString()]) {
+                        } else if (siteApplications[contentTypeName.getApplicationKey().toString()]) {
                             return true;
-                        }
-                        else {
+                        } else {
                             return false;
                         }
 

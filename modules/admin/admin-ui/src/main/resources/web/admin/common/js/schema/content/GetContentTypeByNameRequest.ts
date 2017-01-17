@@ -8,7 +8,7 @@ module api.schema.content {
 
         constructor(name: ContentTypeName) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
             this.name = name;
         }
 
@@ -29,8 +29,7 @@ module api.schema.content {
             let contentType = contentTypeCache.getByKey(this.name);
             if (contentType) {
                 return wemQ(contentType);
-            }
-            else {
+            } else {
                 return this.send().then((response: api.rest.JsonResponse<ContentTypeJson>) => {
                     contentType = this.fromJsonToContentType(response.getResult());
                     contentTypeCache.put(contentType);

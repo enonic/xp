@@ -1,7 +1,7 @@
-import "../../api.ts";
-import {GroupRoleWizardPanel} from "./GroupRoleWizardPanel";
-import {PrincipalWizardPanelParams} from "./PrincipalWizardPanelParams";
-import {GroupMembersWizardStepForm} from "./GroupMembersWizardStepForm";
+import '../../api.ts';
+import {GroupRoleWizardPanel} from './GroupRoleWizardPanel';
+import {PrincipalWizardPanelParams} from './PrincipalWizardPanelParams';
+import {GroupMembersWizardStepForm} from './GroupMembersWizardStepForm';
 
 import Group = api.security.Group;
 import GroupBuilder = api.security.GroupBuilder;
@@ -20,7 +20,7 @@ export class GroupWizardPanel extends GroupRoleWizardPanel {
 
         super(new GroupMembersWizardStepForm(), params);
 
-        this.addClass("group-wizard-panel");
+        this.addClass('group-wizard-panel');
     }
 
     createSteps(principal?: Principal): WizardStep[] {
@@ -29,8 +29,8 @@ export class GroupWizardPanel extends GroupRoleWizardPanel {
         let descriptionStep = this.getDescriptionWizardStepForm();
         let membersStep = this.getMembersWizardStepForm();
 
-        steps.push(new WizardStep("Group", descriptionStep));
-        steps.push(new WizardStep("Grants", membersStep));
+        steps.push(new WizardStep('Group', descriptionStep));
+        steps.push(new WizardStep('Grants', membersStep));
 
         return steps;
     }

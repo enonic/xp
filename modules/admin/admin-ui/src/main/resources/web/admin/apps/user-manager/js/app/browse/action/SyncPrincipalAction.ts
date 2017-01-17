@@ -1,13 +1,13 @@
-import "../../../api.ts";
-import {UserItemsTreeGrid} from "../UserItemsTreeGrid";
-import {UserTreeGridItem} from "../UserTreeGridItem";
+import '../../../api.ts';
+import {UserItemsTreeGrid} from '../UserItemsTreeGrid';
+import {UserTreeGridItem} from '../UserTreeGridItem';
 
 import Action = api.ui.Action;
 
 export class SyncPrincipalAction extends Action {
 
     constructor(grid: UserItemsTreeGrid) {
-        super("Sync");
+        super('Sync');
         this.setEnabled(false);
         this.onExecuted(() => {
             let principals: UserTreeGridItem[] = grid.getSelectedDataList();

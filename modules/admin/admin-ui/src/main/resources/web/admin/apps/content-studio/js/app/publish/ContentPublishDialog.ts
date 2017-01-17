@@ -34,17 +34,17 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
     constructor() {
         super(
-            "Publishing Wizard",
-            "Resolving items...",
-            "Other items that will be published",
-            "is-publishing",
+            'Publishing Wizard',
+            'Resolving items...',
+            'Other items that will be published',
+            'is-publishing',
             () => {
                 new ContentPublishPromptEvent([]).fire();
             }
         );
 
         this.setAutoUpdateTitle(false);
-        this.getEl().addClass("publish-dialog");
+        this.getEl().addClass('publish-dialog');
 
         this.initActions();
         this.addCancelButtonToBottom();
@@ -64,7 +64,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
         let showScheduleAction = new ShowSchedulePublishDialogAction();
         showScheduleAction.onExecuted(this.showScheduleDialog.bind(this));
         this.showScheduleDialogButton = this.addAction(showScheduleAction, false);
-        this.showScheduleDialogButton.setTitle("Schedule Publishing");
+        this.showScheduleDialogButton.setTitle('Schedule Publishing');
 
         let publishAction = new ContentPublishDialogAction();
         publishAction.onExecuted(this.doPublish.bind(this, false));
@@ -121,7 +121,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.lockControls();
         this.loadMask.show();
 
-        this.setSubTitle("Resolving items...");
+        this.setSubTitle('Resolving items...');
 
         let ids = this.getContentToPublishIds();
 
@@ -134,11 +134,13 @@ export class ContentPublishDialog extends ProgressBarDialog {
             this.dependantIds = result.getDependants().slice();
             this.containsInvalid = result.isContainsInvalid();
 
+            this.toggleClass('contains-removable', result.isContainsRemovable());
+            this.stashedDependantIds[String(this.childrenCheckbox.isChecked())] = result.getDependants().slice();
+            this.stashedContainsInvalid[String(this.childrenCheckbox.isChecked())] = result.isContainsInvalid();
             return this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
                 if (resetDependantItems) { // just opened or first time loading children
                     this.setDependantItems(dependants);
-                }
-                else {
+                } else {
                     this.filterDependantItems(dependants);
                 }
 
@@ -167,7 +169,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
         this.updateSubTitle(count);
         this.updateShowScheduleDialogButton();
-        this.updateButtonCount("Publish", count);
+        this.updateButtonCount('Publish', count);
     }
 
     setDependantItems(items: api.content.ContentSummaryAndCompareStatus[]) {
@@ -204,7 +206,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
         if (!this.scheduleDialog) {
             this.scheduleDialog = new SchedulePublishDialog();
             this.scheduleDialog.onClose(() => {
-                this.removeClass("masked");
+                this.removeClass('masked');
                 this.getEl().focus();
             });
             this.scheduleDialog.onSchedule(() => {
@@ -213,14 +215,14 @@ export class ContentPublishDialog extends ProgressBarDialog {
             this.addClickIgnoredElement(this.scheduleDialog);
         }
         this.scheduleDialog.open();
-        this.addClass("masked");
+        this.addClass('masked');
     }
 
     private doPublish(scheduled: boolean = false) {
 
         this.lockControls();
 
-        this.setSubTitle(this.countTotal() + " items are being published...");
+        this.setSubTitle(this.countTotal() + ' items are being published...');
 
         let selectedIds = this.getContentToPublishIds();
 
@@ -267,12 +269,12 @@ export class ContentPublishDialog extends ProgressBarDialog {
         let allValid = this.areItemsAndDependantsValid();
 
         let subTitle = count == 0
-            ? "No items to publish"
-            : allValid ? "Your changes are ready for publishing"
-                           : "Invalid item(s) prevent publish";
+            ? 'No items to publish'
+            : allValid ? 'Your changes are ready for publishing'
+                           : 'Invalid item(s) prevent publish';
 
         this.setSubTitle(subTitle);
-        this.toggleClass("invalid", !allValid);
+        this.toggleClass('invalid', !allValid);
     }
 
     protected updateButtonCount(actionString: string, count: number) {
@@ -321,14 +323,14 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
 export class ContentPublishDialogAction extends api.ui.Action {
     constructor() {
-        super("Publish");
-        this.setIconClass("publish-action");
+        super('Publish');
+        this.setIconClass('publish-action');
     }
 }
 
 export class ShowSchedulePublishDialogAction extends api.ui.Action {
     constructor() {
         super();
-        this.setIconClass("show-schedule-action");
+        this.setIconClass('show-schedule-action');
     }
 }

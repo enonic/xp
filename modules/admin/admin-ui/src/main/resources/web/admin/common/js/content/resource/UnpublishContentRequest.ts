@@ -9,7 +9,7 @@ module api.content.resource {
         constructor(contentId?: ContentId) {
             super();
             this.setHeavyOperation(true);
-            super.setMethod("POST");
+            super.setMethod('POST');
             if (contentId) {
                 this.addId(contentId);
             }
@@ -40,7 +40,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "unpublish");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'unpublish');
         }
 
         sendAndParse(): wemQ.Promise<api.task.TaskId> {
