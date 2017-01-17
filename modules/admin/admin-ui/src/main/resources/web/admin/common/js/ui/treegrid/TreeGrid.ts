@@ -200,6 +200,32 @@ module api.ui.treegrid {
                 const node = this.gridData.getItem(data.row);
                 const isMultiSelect = !this.gridOptions.isMultipleSelectionDisabled();
 
+                if (event.shiftKey) {
+                    if (!this.grid.isRowSelected(data.row) && this.highlightedNode !== node) {
+                        this.unhighlightCurrentRow(true);
+                    }
+                    if (this.grid.getSelectedRows().length >= 1 && !this.grid.isRowSelected(data.row)) {
+                        if (isMultiSelect) {
+                            const firstSelectedRow = this.grid.getSelectedRows()[0],
+                                highlightFrom = firstSelectedRow < data.row ? firstSelectedRow : data.row,
+                                highlightTo = data.row > firstSelectedRow ? data.row : firstSelectedRow;
+
+                            for (let i = highlightFrom; i <= highlightTo; i++) {
+                                if (!this.grid.isRowSelected(i)) {
+                                    this.grid.toggleRow(i);
+                                }
+                            }
+                            event.stopPropagation();
+                            event.preventDefault();
+                            return;
+                        } else {
+                            this.deselectAll();
+                        }
+                    }
+                    this.grid.toggleRow(data.row);
+                    return;
+                }
+
                 if (event.ctrlKey) {
                     if (!this.grid.isRowSelected(data.row) && this.highlightedNode !== node) {
                         this.unhighlightCurrentRow(true);
