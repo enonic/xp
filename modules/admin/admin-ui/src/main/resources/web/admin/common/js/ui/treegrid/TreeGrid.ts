@@ -151,7 +151,7 @@ module api.ui.treegrid {
             if (this.isActive()) {
                 let row;
                 if (this.highlightedNode) {
-                    row = this.gridData.getRowById(this.highlightedNode.getId())
+                    row = this.gridData.getRowById(this.highlightedNode.getId());
                     if (!this.grid.isRowSelected(row)) {
                         this.grid.selectRow(row);
                     }

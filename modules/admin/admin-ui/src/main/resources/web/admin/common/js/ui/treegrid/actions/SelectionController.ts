@@ -41,7 +41,7 @@ module api.ui.treegrid.actions {
 
             this.onRendered(() => {
                 this.setChecked(false, true);
-            })
+            });
 
             this.tooltip = new Tooltip(this, "", 1000);
         }
