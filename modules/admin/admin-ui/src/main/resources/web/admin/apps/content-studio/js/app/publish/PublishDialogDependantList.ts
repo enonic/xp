@@ -1,5 +1,5 @@
-import '../../api.ts';
-import {DialogDependantList} from '../dialog/DependantItemsDialog';
+import "../../api.ts";
+import {DialogDependantList} from "../dialog/DependantItemsDialog";
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
@@ -10,17 +10,11 @@ export class PublishDialogDependantList extends DialogDependantList {
 
     private removeClickListeners: {(item: ContentSummaryAndCompareStatus): void}[] = [];
 
-    clearItems() {
-        this.removeClass('contains-removable');
-        super.clearItems();
-    }
-
     createItemView(item: ContentSummaryAndCompareStatus, readOnly: boolean): api.dom.Element {
         let view = super.createItemView(item, readOnly);
 
         if (CompareStatus.NEWER == item.getCompareStatus()) {
             view.addClass('removable');
-            this.toggleClass('contains-removable', true);
         }
 
         view.onClicked((event) => {

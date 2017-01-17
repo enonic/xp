@@ -1,6 +1,6 @@
-import '../../api.ts';
-import {StatusSelectionItem} from './StatusSelectionItem';
-import {DependantItemViewer} from './DependantItemViewer';
+import "../../api.ts";
+import {StatusSelectionItem} from "./StatusSelectionItem";
+import {DependantItemViewer} from "./DependantItemViewer";
 
 import ContentSummary = api.content.ContentSummary;
 import ContentIds = api.content.ContentIds;
@@ -67,8 +67,6 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
             if (this.autoUpdateTitle) {
                 this.setTitle(this.dialogName + (count > 1 ? 's' : ''));
             }
-
-            this.toggleClass('contains-removable', (count > 1));
         };
         this.itemList.onItemsRemoved(itemsChangedListener);
         this.itemList.onItemsAdded(itemsChangedListener);
