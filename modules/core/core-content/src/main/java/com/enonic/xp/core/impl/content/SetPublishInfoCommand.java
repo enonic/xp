@@ -77,6 +77,11 @@ public class SetPublishInfoCommand
 
     private NodeIds findNodesWithoutPublishInfo( final NodeIds nodesToPush )
     {
+        if ( nodesToPush.isEmpty() )
+        {
+            return NodeIds.empty();
+        }
+
         final NodeQuery query = NodeQuery.create().
             addQueryFilter( BooleanFilter.create().
                 mustNot( ExistsFilter.create().

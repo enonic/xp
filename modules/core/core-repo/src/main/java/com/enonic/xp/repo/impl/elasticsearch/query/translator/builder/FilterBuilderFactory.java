@@ -102,11 +102,6 @@ public class FilterBuilderFactory
 
     private FilterBuilder createIdFilter( final IdFilter idFilter )
     {
-        if ( idFilter.getValues().isEmpty() )
-        {
-            return null;
-        }
-
         final String queryFieldName = IndexFieldNameNormalizer.normalize( idFilter.getFieldName() );
 
         final Set<Object> values = Sets.newHashSet();
