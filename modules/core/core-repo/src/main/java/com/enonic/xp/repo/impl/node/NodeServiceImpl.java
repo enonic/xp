@@ -780,12 +780,12 @@ public class NodeServiceImpl
             final Repository repository = this.repositoryService.get( repoId );
             if ( repository == null )
             {
-                throw new RepositoryNotFoundException( "Repository with id [" + repoId + "] not found" );
+                throw new RepositoryNotFoundException( repoId );
             }
 
             if ( !repository.getBranches().contains( branch ) )
             {
-                throw new BranchNotFoundException( "Branch with id [" + branch + "] not found" );
+                throw new BranchNotFoundException( branch );
             }
         } );
     }

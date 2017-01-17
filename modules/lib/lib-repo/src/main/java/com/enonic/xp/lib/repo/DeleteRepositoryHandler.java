@@ -2,6 +2,7 @@ package com.enonic.xp.lib.repo;
 
 import java.util.function.Supplier;
 
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.RepositoryExeption;
 import com.enonic.xp.repository.RepositoryNotFoundException;
@@ -25,7 +26,8 @@ public class DeleteRepositoryHandler
 
     public boolean execute()
     {
-        if ( SystemConstants.SYSTEM_REPO.getId().toString().equals( repositoryId ) )
+        if ( SystemConstants.SYSTEM_REPO.getId().toString().equals( repositoryId ) ||
+            ContentConstants.CONTENT_REPO.getId().toString().equals( repositoryId ) )
         {
             throw new RepositoryExeption( "No allowed to delete repository [" + repositoryId + "]" );
         }
