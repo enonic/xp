@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
@@ -42,6 +43,11 @@ public class ContentDependenciesResolver
 
     private Collection<ContentDependenciesAggregation> resolveInboundDependenciesAggregation( final ContentId contentId )
     {
+        if ( contentId == null )
+        {
+            return new HashSet<>();
+        }
+
         final FindContentIdsByQueryResult result = this.contentService.find( ContentQuery.create().
             queryFilter( BooleanFilter.create().
                 must( IdFilter.create().

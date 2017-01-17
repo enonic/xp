@@ -53,6 +53,11 @@ public class FindNodeBranchEntriesByIdCommand
 
     private NodeIds getNodeIds( final Context context )
     {
+        if ( this.ids.isEmpty() )
+        {
+            return NodeIds.empty();
+        }
+
         final NodeQuery.Builder queryBuilder = NodeQuery.create().
             addQueryFilters( Filters.create().
                 add( IdFilter.create().
