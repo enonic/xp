@@ -116,6 +116,10 @@ module api.liveedit.fragment {
             return null;
         }
 
+        getFragmentDisplayName(): string {
+            return this.fragmentContent ? this.fragmentContent.getDisplayName() : null;
+        }
+
         private loadFragmentContent() {
             var contentId = this.component.getFragment();
             if (contentId) {
