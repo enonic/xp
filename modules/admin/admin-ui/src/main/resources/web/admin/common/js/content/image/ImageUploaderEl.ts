@@ -22,12 +22,12 @@ module api.content.image {
         private static STANDOUT_CLASS: string = 'standout';
 
         constructor(config: api.ui.uploader.MediaUploaderElConfig) {
-            if (config.allowTypes === undefined) {
+            if (config.allowTypes == null) {
                 config.allowTypes = [
                     {title: 'Image files', extensions: 'jpg,jpeg,gif,png,svg'}
                 ];
             }
-            if (config.selfIsDropzone === undefined) {
+            if (config.selfIsDropzone == null) {
                 config.selfIsDropzone = true;
             }
 

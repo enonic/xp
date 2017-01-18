@@ -217,7 +217,7 @@ module api.util {
          * @returns {number}
          */
         static isUTCdate(value: string): boolean {
-            if (value !== null && (value[value.length - 1] === 'Z' || value[value.length - 1] === 'z')) {
+            if (value != null && (value[value.length - 1] === 'Z' || value[value.length - 1] === 'z')) {
                 return true;
             }
             return false;

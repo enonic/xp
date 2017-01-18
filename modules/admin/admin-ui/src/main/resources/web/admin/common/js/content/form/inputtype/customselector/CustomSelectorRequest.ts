@@ -78,7 +78,7 @@ module api.content.form.inputtype.customselector {
 
         private validateResponse(result: CustomSelectorResponse) {
             const errors = [];
-            const isInvalid = (value) => value === undefined || value === null;
+            const isInvalid = (value) => value == null || value == null;
             if (isInvalid(result.total)) {
                 errors.push(`'total'`);
             }

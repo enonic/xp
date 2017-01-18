@@ -119,12 +119,12 @@ module api.ui.selector.combobox {
             this.getEl().setAttribute('name', name);
 
             this.hideComboBoxWhenMaxReached = config.hideComboBoxWhenMaxReached;
-            if (config.setNextInputFocusWhenMaxReached !== undefined) {
+            if (config.setNextInputFocusWhenMaxReached != null) {
                 this.setNextInputFocusWhenMaxReached = config.setNextInputFocusWhenMaxReached;
             }
-            if (config.selectedOptionsView !== null) {
+            if (config.selectedOptionsView != null) {
                 this.selectedOptionsView = config.selectedOptionsView;
-                this.selectedOptionsView.setMaximumOccurrences(config.maximumOccurrences !== null ? config.maximumOccurrences : 0);
+                this.selectedOptionsView.setMaximumOccurrences(config.maximumOccurrences != null ? config.maximumOccurrences : 0);
             }
             if (config.iconUrl) {
                 this.icon = new api.dom.ImgEl(config.iconUrl, 'input-icon');
@@ -433,7 +433,7 @@ module api.ui.selector.combobox {
 
             optionIds.forEach((val) => {
                 let option = this.getOptionByValue(val);
-                if (option !== null) {
+                if (option != null) {
                     selectedOptions.push(option);
                     this.selectOption(option, true);
                 }
@@ -451,7 +451,7 @@ module api.ui.selector.combobox {
 
                     optionIds.forEach((val) => {
                         const option = this.getOptionByValue(val);
-                        if (option === null) {
+                        if (option == null) {
                             const contentExists = result.contentExists(val);
                             if (this.displayMissingSelectedOptions && (contentExists || !this.removeMissingSelectedOptions)) {
                                 const selectedOption = (<BaseSelectedOptionsView<OPTION_DISPLAY_VALUE>> this.selectedOptionsView)
@@ -477,7 +477,7 @@ module api.ui.selector.combobox {
             let result: string[] = [];
             values.forEach((val) => {
                 let option = this.getOptionByValue(val);
-                if (option === null && !api.util.StringHelper.isBlank(val)) {
+                if (option == null && !api.util.StringHelper.isBlank(val)) {
                     result.push(val);
                 }
             });
@@ -490,7 +490,7 @@ module api.ui.selector.combobox {
 
         handleRowSelected(index: number, keyCode: number = -1) {
             let option = this.getOptionByRow(index);
-            if (option !== null && !option.readOnly) {
+            if (option != null && !option.readOnly) {
                 if (!this.isOptionSelected(option)) {
                     this.selectOption(option, false, keyCode);
                 } else {
@@ -661,7 +661,7 @@ module api.ui.selector.combobox {
 
         // Checks added occurrences
         maximumOccurrencesReached(): boolean {
-            api.util.assert(this.selectedOptionsView !== null,
+            api.util.assert(this.selectedOptionsView != null,
                 'No point of calling maximumOccurrencesReached when no multiple selections are enabled');
 
             return this.selectedOptionsView.maximumOccurrencesReached();

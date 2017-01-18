@@ -105,7 +105,7 @@ module api.content.resource {
         private aggregationQueriesToJson(aggregationQueries: api.query.aggregation.AggregationQuery[]): AggregationQueryTypeWrapperJson[] {
             let aggregationQueryJsons: AggregationQueryTypeWrapperJson[] = [];
 
-            if (aggregationQueries === null) {
+            if (aggregationQueries == null) {
                 return aggregationQueryJsons;
             }
 
@@ -120,7 +120,7 @@ module api.content.resource {
 
             let queryFilterJsons: api.query.filter.FilterTypeWrapperJson[] = [];
 
-            if (queryFilters === null || queryFilters.length === 0) {
+            if (queryFilters == null || queryFilters.length === 0) {
                 return queryFilterJsons;
             }
 

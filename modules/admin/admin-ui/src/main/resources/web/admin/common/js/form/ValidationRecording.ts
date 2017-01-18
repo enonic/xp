@@ -118,7 +118,7 @@ module api.form {
         }
 
         validityChanged(previous: api.form.ValidationRecording): boolean {
-            return previous === undefined || previous === null || !previous.equals(this);
+            return previous == null || previous == null || !previous.equals(this);
         }
 
         containsPathInBreaksMin(path: ValidationRecordingPath) {

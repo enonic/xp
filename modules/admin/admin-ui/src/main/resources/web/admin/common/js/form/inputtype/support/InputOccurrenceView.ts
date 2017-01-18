@@ -31,7 +31,7 @@ module api.form.inputtype.support {
             this.inputTypeView = baseInputTypeView;
             this.inputElement = this.inputTypeView.createInputOccurrenceElement(inputOccurrence.getIndex(), property);
 
-            this.requiredContractBroken = this.inputTypeView.valueBreaksRequiredContract(property !== null ? property.getValue() : null);
+            this.requiredContractBroken = this.inputTypeView.valueBreaksRequiredContract(property != null ? property.getValue() : null);
 
             let ignorePropertyChange = false;
             this.inputTypeView.onOccurrenceValueChanged((occurrence: api.dom.Element, value: api.data.Value) => {

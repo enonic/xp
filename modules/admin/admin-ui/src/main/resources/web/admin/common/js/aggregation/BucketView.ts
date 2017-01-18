@@ -32,7 +32,7 @@ module api.aggregation {
 
         private resolveLabelValue(): string {
 
-            if (this.displayName !== null) {
+            if (this.displayName != null) {
                 return this.displayName + ' (' + this.bucket.getDocCount() + ')';
             }
 

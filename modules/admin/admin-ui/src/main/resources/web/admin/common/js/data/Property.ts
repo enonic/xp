@@ -296,7 +296,7 @@ module api.data {
         }
 
         public static checkName(name: string) {
-            if (name === null) {
+            if (name == null) {
                 throw new Error('Property name cannot be null');
             }
             if (api.util.StringHelper.isBlank(name)) {

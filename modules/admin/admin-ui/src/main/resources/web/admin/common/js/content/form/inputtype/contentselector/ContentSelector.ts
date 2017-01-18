@@ -70,7 +70,7 @@ module api.content.form.inputtype.contentselector {
                                           selectedContentIdsMap.hasOwnProperty(deletedItem.getContentId().toString())).
                     forEach((deletedItem) => {
                         let option = this.contentComboBox.getSelectedOptionView().getById(deletedItem.getContentId().toString());
-                        if (option !== null) {
+                        if (option != null) {
                             this.contentComboBox.getSelectedOptionView().removeOption(option.getOption(), false);
                         }
                     });

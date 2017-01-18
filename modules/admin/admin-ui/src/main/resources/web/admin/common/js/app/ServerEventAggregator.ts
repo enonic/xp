@@ -30,7 +30,7 @@ module api.app {
         }
 
         appendEvent(event: NodeServerEvent) {
-            if (this.events === null || this.events.length === 0) {
+            if (this.events == null || this.events.length === 0) {
                 this.init(event);
             } else {
                 if (this.isTheSameTypeEvent(event)) {

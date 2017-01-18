@@ -29,7 +29,7 @@ module api.ui.tags {
 
         moveDown() {
             let nextIndex:number;
-            if (this.selectedIndex === null) {
+            if (this.selectedIndex == null) {
                 nextIndex = 0;
             } else if (this.selectedIndex === this.getChildren().length - 1) {
                 nextIndex = null;
@@ -42,7 +42,7 @@ module api.ui.tags {
 
         moveUp() {
             let nextIndex:number;
-            if (this.selectedIndex === null) {
+            if (this.selectedIndex == null) {
                 nextIndex = this.getChildren().length - 1;
             } else if (this.selectedIndex === 0) {
                 nextIndex = null;

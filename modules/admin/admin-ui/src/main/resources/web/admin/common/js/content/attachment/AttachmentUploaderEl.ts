@@ -18,10 +18,10 @@ module api.content.attachment {
 
         constructor(config: any) {
 
-            if (config.url === undefined) {
+            if (config.url == null) {
                 config.url = api.util.UriHelper.getRestUri('content/createAttachment');
             }
-            if (config.selfIsDropzone === undefined) {
+            if (config.selfIsDropzone == null) {
                 config.selfIsDropzone = true;
             }
 

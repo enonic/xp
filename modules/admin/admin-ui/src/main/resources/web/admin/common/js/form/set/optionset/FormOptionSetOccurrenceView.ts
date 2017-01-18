@@ -137,7 +137,7 @@ module api.form {
         private isNew(): boolean {
             if (api.ObjectHelper.iFrameSafeInstanceOf(this.context, api.content.form.ContentFormContext)) {
                 let contentFormContext = <api.content.form.ContentFormContext> this.context;
-                if (contentFormContext.getFormState() !== null && contentFormContext.getFormState().isNew()) {
+                if (contentFormContext.getFormState() != null && contentFormContext.getFormState().isNew()) {
                     return true;
                 }
             }

@@ -105,7 +105,7 @@ module api.content.form.inputtype.image {
                 return true;
             } else if (selectedOption) {
                 let displayValue = selectedOption.getOption().displayValue;
-                if (displayValue.getContentSummary() === null && option.displayValue.getContentSummary() !== null) {
+                if (displayValue.getContentSummary() == null && option.displayValue.getContentSummary() != null) {
                     this.updateUploadedOption(option);
                     return true;
                 }

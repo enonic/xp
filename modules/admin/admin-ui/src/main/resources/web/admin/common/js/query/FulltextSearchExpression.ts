@@ -10,7 +10,7 @@ module api.query {
 
         static create(searchString: string, queryFields: QueryFields): api.query.expr.Expression {
 
-            if (searchString === null) {
+            if (searchString == null) {
                 return null;
             }
             let args: api.query.expr.ValueExpr[] = [];

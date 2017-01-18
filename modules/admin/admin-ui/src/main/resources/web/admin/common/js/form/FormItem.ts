@@ -39,7 +39,7 @@ module api.form {
 
         private resolveParentPath(): FormItemPath {
 
-            if (this.parent === null) {
+            if (this.parent == null) {
                 return FormItemPath.ROOT;
             } else {
                 return this.parent.getPath();

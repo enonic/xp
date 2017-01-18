@@ -100,7 +100,7 @@ module api.content.form.inputtype.image {
                                                               selectedContentIdsMap.hasOwnProperty(
                                                                   deletedItem.getContentId().toString())).forEach((deletedItem) => {
                         let option = this.selectedOptionsView.getById(deletedItem.getContentId().toString());
-                        if (option !== null) {
+                        if (option != null) {
                             this.selectedOptionsView.removeSelectedOptions([option]);
                         }
                     });

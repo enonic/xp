@@ -253,25 +253,25 @@ module api.application {
             this.version = json.version;
             this.local = json.local;
 
-            this.config = json.config !== null ? api.form.Form.fromJson(json.config) : null;
-            this.authConfig = json.authConfig !== null ? api.form.Form.fromJson(json.authConfig) : null;
+            this.config = json.config != null ? api.form.Form.fromJson(json.config) : null;
+            this.authConfig = json.authConfig != null ? api.form.Form.fromJson(json.authConfig) : null;
             this.minSystemVersion = json.minSystemVersion;
             this.maxSystemVersion = json.maxSystemVersion;
             this.iconUrl = json.iconUrl;
 
-            if (json.applicationDependencies !== null) {
+            if (json.applicationDependencies != null) {
                 json.applicationDependencies.forEach((dependency: string) => {
                     this.applicationDependencies.push(api.application.ApplicationKey.fromString(dependency));
                 });
             }
 
-            if (json.contentTypeDependencies !== null) {
+            if (json.contentTypeDependencies != null) {
                 json.contentTypeDependencies.forEach((dependency: string) => {
                     this.contentTypeDependencies.push(new api.schema.content.ContentTypeName(dependency));
                 });
             }
 
-            if (json.metaSteps !== null) {
+            if (json.metaSteps != null) {
                 this.metaSteps = api.schema.mixin.MixinNames.create().fromStrings(json.metaSteps).build();
             }
 

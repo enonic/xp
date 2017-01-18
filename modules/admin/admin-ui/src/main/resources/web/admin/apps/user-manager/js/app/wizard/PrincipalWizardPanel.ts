@@ -238,7 +238,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
 
     hasUnsavedChanges(): boolean {
         let persistedPrincipal: Principal = this.getPersistedItem();
-        if (persistedPrincipal === undefined) {
+        if (persistedPrincipal == null) {
             return true;
         } else {
             let viewedPrincipal = this.assembleViewedItem();

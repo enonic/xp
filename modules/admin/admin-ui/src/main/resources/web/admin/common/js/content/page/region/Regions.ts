@@ -26,7 +26,7 @@ module api.content.page.region {
             this.componentPropertyChangedEventHandler = (event) => this.forwardComponentPropertyChangedEvent(event);
 
             builder.regions.forEach((region: Region) => {
-                if (this.regionByName[region.getName()] !== undefined) {
+                if (this.regionByName[region.getName()] != null) {
                     throw new Error('Regions must be unique by name, duplicate found: ' + region.getName());
                 }
 

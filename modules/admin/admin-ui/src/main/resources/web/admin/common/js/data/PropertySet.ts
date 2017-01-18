@@ -319,9 +319,9 @@ module api.data {
          */
         getProperty(identifier?: any, index?: number): Property {
 
-            if (identifier === undefined && index === undefined) {
+            if (identifier == null && index == null) {
                 return this.property;
-            } else if (index !== undefined) {
+            } else if (index != null) {
                 Property.checkName(identifier);
                 let array = this.propertyArrayByName[identifier];
                 if (!array) {
@@ -390,7 +390,7 @@ module api.data {
 
         public isNotNull(identifier: any, index?: number): boolean {
             let property = this.getProperty(identifier, index);
-            if (property === null) {
+            if (property == null) {
                 return false;
             }
 

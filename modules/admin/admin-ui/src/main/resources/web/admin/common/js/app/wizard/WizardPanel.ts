@@ -696,7 +696,7 @@ module api.app.wizard {
         }
 
         isItemPersisted(): boolean {
-            return this.persistedItem !== null;
+            return this.persistedItem != null;
         }
 
         protected setPersistedItem(newPersistedItem: EQUITABLE): void {

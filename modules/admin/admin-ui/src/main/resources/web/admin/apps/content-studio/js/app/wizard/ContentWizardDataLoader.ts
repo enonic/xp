@@ -143,7 +143,7 @@ export class ContentWizardDataLoader {
          }*/
 
         if (!isNew && !this.content.hasParent() ||
-            isNew && params.parentContentId === null) {
+            isNew && params.parentContentId == null) {
             return wemQ<Content>(null);
 
         } else if (this.content) {

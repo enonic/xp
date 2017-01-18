@@ -133,7 +133,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         this.appendOutboundReferencesFilter(contentQuery);
 
         let lastModifiedFilter: api.query.filter.Filter = this.appendLastModifiedQuery(values);
-        if (lastModifiedFilter !== null) {
+        if (lastModifiedFilter != null) {
             contentQuery.addQueryFilter(lastModifiedFilter);
         }
 
@@ -351,7 +351,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         let lastModifiedSelectedBuckets: api.aggregation.Bucket[] = searchInputValues.getSelectedValuesForAggregationName(
             ContentBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_NAME);
 
-        if (lastModifiedSelectedBuckets === null || lastModifiedSelectedBuckets.length === 0) {
+        if (lastModifiedSelectedBuckets == null || lastModifiedSelectedBuckets.length === 0) {
             return null;
         }
 

@@ -39,7 +39,7 @@ export class StatusWidgetItemView extends WidgetItemView {
         }
 
         return super.layout().then(() => {
-            if (this.compareStatus !== null) {
+            if (this.compareStatus != null) {
                 let statusEl = new api.dom.SpanEl();
 
                 statusEl.addClass(CompareStatus[this.compareStatus].toLowerCase().replace('_', '-') || 'unknown');

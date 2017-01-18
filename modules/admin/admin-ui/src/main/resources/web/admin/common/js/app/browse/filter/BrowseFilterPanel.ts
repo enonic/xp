@@ -59,7 +59,7 @@ module api.app.browse.filter {
             this.appendChild(this.aggregationContainer);
 
             let groupViews = this.getGroupViews();
-            if (groupViews !== null) {
+            if (groupViews != null) {
                 groupViews.forEach((aggregationGroupView: api.aggregation.AggregationGroupView) => {
 
                         aggregationGroupView.onBucketViewSelectionChanged((event: api.aggregation.BucketViewSelectionChangedEvent) => {

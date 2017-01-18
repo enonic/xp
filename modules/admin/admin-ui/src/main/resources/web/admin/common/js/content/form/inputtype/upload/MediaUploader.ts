@@ -147,7 +147,7 @@ module api.content.form.inputtype.upload {
         }
 
         private getFileNameFromProperty(property: Property): string {
-            if (property.getValue() !== null) {
+            if (property.getValue() != null) {
                 switch (property.getType()) {
                 case ValueTypes.DATA:
                     return property.getPropertySet().getString('attachment');
@@ -163,7 +163,7 @@ module api.content.form.inputtype.upload {
         }
 
         private propertyAlreadyHasAttachment(property: Property): boolean {
-            return (property.getValue() !== null &&
+            return (property.getValue() != null &&
                     property.getType() === ValueTypes.DATA &&
                     !api.util.StringHelper.isEmpty(property.getPropertySet().getString('attachment')));
         }
@@ -238,7 +238,7 @@ module api.content.form.inputtype.upload {
                 name: this.getContext().input.getName(),
                 maximumOccurrences: 1,
                 allowMultiSelection: false,
-                hideDefaultDropZone: hideDropZone !== null ? hideDropZone : true,
+                hideDefaultDropZone: hideDropZone != null ? hideDropZone : true,
                 deferred: true,
                 hasUploadButton: false
             });

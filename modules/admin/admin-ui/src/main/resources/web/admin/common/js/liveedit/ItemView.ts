@@ -821,7 +821,7 @@ module api.liveedit {
 
             let parentHTMLElement = htmlElement.parentElement;
             let parseItemId = ItemView.parseItemId(parentHTMLElement);
-            while (parseItemId === null) {
+            while (parseItemId == null) {
                 parentHTMLElement = parentHTMLElement.parentElement;
                 parseItemId = ItemView.parseItemId(parentHTMLElement);
             }

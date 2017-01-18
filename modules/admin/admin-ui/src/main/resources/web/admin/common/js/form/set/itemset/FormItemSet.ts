@@ -20,7 +20,7 @@ module api.form {
             this.immutable = formItemSetJson.immutable;
             this.customText = formItemSetJson.customText;
 
-            if (formItemSetJson.items !== null) {
+            if (formItemSetJson.items != null) {
                 formItemSetJson.items.forEach((formItemJson: api.form.json.FormItemJson) => {
                     let formItem: FormItem = FormItemFactory.createFormItem(formItemJson);
                     if (formItem) {

@@ -43,7 +43,7 @@ module api.content.page {
         }
 
         hasRegions(): boolean {
-            return this.regions !== null;
+            return this.regions != null;
         }
 
         getRegions(): api.content.page.region.Regions {
@@ -51,7 +51,7 @@ module api.content.page {
         }
 
         hasConfig(): boolean {
-            return this.config !== null;
+            return this.config != null;
         }
 
         getConfig(): PropertyTree {
@@ -67,7 +67,7 @@ module api.content.page {
         }
 
         isFragment(): boolean {
-            return this.fragment !== null;
+            return this.fragment != null;
         }
 
         equals(o: api.Equitable): boolean {
@@ -134,8 +134,8 @@ module api.content.page {
         public fromJson(json: api.content.page.PageJson): PageBuilder {
             this.setController(json.controller ? DescriptorKey.fromString(json.controller) : null);
             this.setTemplate(json.template ? PageTemplateKey.fromString(json.template) : null);
-            this.setRegions(json.regions !== null ? api.content.page.region.Regions.create().fromJson(json.regions, null).build() : null);
-            this.setConfig(json.config !== null
+            this.setRegions(json.regions != null ? api.content.page.region.Regions.create().fromJson(json.regions, null).build() : null);
+            this.setConfig(json.config != null
                 ? PropertyTree.fromJson(json.config)
                 : null);
             this.setCustomized(json.customized);

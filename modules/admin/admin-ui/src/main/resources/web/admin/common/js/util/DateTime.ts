@@ -172,7 +172,7 @@ module api.util {
                     DateTime.FRACTION_SEPARATOR
                 );
                 let offset = DateTime.parseOffset(s);
-                if(offset !== null) {
+                if(offset != null) {
                     timezone = Timezone.fromOffset(offset);
                 } else {
                     // assume that if passed date string is not in UTC format and does not contain explicit offset,

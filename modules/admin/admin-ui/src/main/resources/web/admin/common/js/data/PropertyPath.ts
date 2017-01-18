@@ -35,7 +35,7 @@ module api.data {
 
             this.absolute = absolute;
             elements.forEach((element: PropertyPathElement, index: number) => {
-                if (element === null) {
+                if (element == null) {
                     throw new Error('Path element was null at index: ' + index);
                 } else if (element.getName().length === 0) {
                     throw new Error('Path element was empty string at index: ' + index);

@@ -82,7 +82,7 @@ module api.data {
         }
 
         getParentPropertyPath(): PropertyPath {
-            if (this.parent.getProperty() === null) {
+            if (this.parent.getProperty() == null) {
                 return PropertyPath.ROOT;
             }
             return this.parent.getProperty().getPath();
@@ -179,7 +179,7 @@ module api.data {
 
             let property;
 
-            if (this.get(index) !== null) {
+            if (this.get(index) != null) {
                 property = this.array[index];
                 property.setValue(value);
             } else {

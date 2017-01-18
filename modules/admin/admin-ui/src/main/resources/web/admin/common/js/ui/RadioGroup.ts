@@ -70,7 +70,7 @@ module api.ui {
         public static debug: boolean = false;
 
         constructor(label: string, value: string, name: string, checked?: boolean) {
-            super('span', 'radio-button', undefined, String(checked !== undefined ? checked : false));
+            super('span', 'radio-button', undefined, String(checked != null ? checked : false));
 
             this.radio = new api.dom.InputEl();
             this.radio.getEl().setAttribute('type', 'radio');

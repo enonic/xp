@@ -162,7 +162,7 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
 
     private handleWizardUpdated(wizard: UserItemWizardPanel<api.Equitable>, tabMenuItem: AppBarTabMenuItem) {
 
-        if (tabMenuItem !== null) {
+        if (tabMenuItem != null) {
             this.getAppBarTabMenu().deselectNavigationItem();
             this.getAppBarTabMenu().removeNavigationItem(tabMenuItem);
             this.removePanelByIndex(tabMenuItem.getIndex());
@@ -175,7 +175,7 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
         // TODO: what is this view that we try to remove?
         /*var viewTabId = AppBarTabId.forView(id);
          var viewTabMenuItem = this.getAppBarTabMenu().getNavigationItemById(viewTabId);
-         if (viewTabMenuItem !== null) {
+         if (viewTabMenuItem != null) {
          this.removePanelByIndex(viewTabMenuItem.getIndex());
          }*/
     }
@@ -186,7 +186,7 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
         let tabId = AppBarTabId.forNew(data.tabName);
         let tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
-        if (tabMenuItem !== null) {
+        if (tabMenuItem != null) {
             this.selectPanel(tabMenuItem);
         } else {
             if (!userItem || userItem.getType() === UserTreeGridItemType.USER_STORE) {
@@ -318,7 +318,7 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
 
             let tabMenuItem = this.resolveTabMenuItem(userItem);
 
-            if (tabMenuItem !== null) {
+            if (tabMenuItem != null) {
                 this.selectPanel(tabMenuItem);
             } else {
                 let tabId = this.getTabIdForUserItem(userItem);

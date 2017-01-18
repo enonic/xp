@@ -38,16 +38,16 @@ module api.content.form {
         }
 
         getContentId(): api.content.ContentId {
-            return this.persistedContent !== null ? this.persistedContent.getContentId() : null;
+            return this.persistedContent != null ? this.persistedContent.getContentId() : null;
         }
 
         getContentPath(): api.content.ContentPath {
-            return this.persistedContent !== null ? this.persistedContent.getPath() : null;
+            return this.persistedContent != null ? this.persistedContent.getPath() : null;
         }
 
         getParentContentPath(): api.content.ContentPath {
 
-            if (this.parentContent === null) {
+            if (this.parentContent == null) {
                 return api.content.ContentPath.ROOT;
             }
 

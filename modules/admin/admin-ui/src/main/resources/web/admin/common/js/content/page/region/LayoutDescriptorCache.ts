@@ -13,7 +13,7 @@ module api.content.page.region {
         static get(): LayoutDescriptorCache {
 
             let w = api.dom.WindowDOM.get();
-            let topWindow: any = w.getTopParent() === null ? w.asWindow() : w.getTopParent().asWindow();
+            let topWindow: any = w.getTopParent() == null ? w.asWindow() : w.getTopParent().asWindow();
 
             if (!topWindow.api.content.page.region.LayoutDescriptorCache.instance) {
                 topWindow.api.content.page.region.LayoutDescriptorCache.instance = new LayoutDescriptorCache();

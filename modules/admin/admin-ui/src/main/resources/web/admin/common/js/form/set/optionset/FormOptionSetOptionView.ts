@@ -92,7 +92,7 @@ module api.form {
 
             let layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.setFormItems(
                 this.formOptionSetOption.getFormItems()).setParentElement(this.optionItemsContainer).setParent(this.getParent()).layout(
-                optionItemsPropertySet, validate && this.getThisPropertyFromSelectedOptionsArray() !== null);
+                optionItemsPropertySet, validate && this.getThisPropertyFromSelectedOptionsArray() != null);
 
             layoutPromise.then((formItemViews: FormItemView[]) => {
 
@@ -224,7 +224,7 @@ module api.form {
         }
 
         private makeSelectionCheckbox(): api.ui.Checkbox {
-            let checked = this.getThisPropertyFromSelectedOptionsArray() !== null;
+            let checked = this.getThisPropertyFromSelectedOptionsArray() != null;
             let button = api.ui.Checkbox.create()
                                         .setLabelText(this.formOptionSetOption.getLabel())
                                         .setChecked(checked)
@@ -263,7 +263,7 @@ module api.form {
         }
 
         private setCheckBoxDisabled(checked?: boolean) {
-            let checkBoxShouldBeDisabled = (checked !== null ? !checked : !this.checkbox.isChecked()) && this.isSelectionLimitReached();
+            let checkBoxShouldBeDisabled = (checked != null ? !checked : !this.checkbox.isChecked()) && this.isSelectionLimitReached();
 
             if (this.checkbox.isDisabled() !== checkBoxShouldBeDisabled) {
                 this.checkbox.setDisabled(checkBoxShouldBeDisabled, 'disabled');
@@ -368,7 +368,7 @@ module api.form {
                 if (!this.isRadioSelection()) {
                     this.subscribeCheckboxOnPropertyEvents();
                 } else {
-                    if (this.getThisPropertyFromSelectedOptionsArray() === null) {
+                    if (this.getThisPropertyFromSelectedOptionsArray() == null) {
                         wemjq(this.getHTMLElement()).find('input:radio').first().prop('checked', false);
                     }
                     this.subscribedOnDeselect = false;
@@ -379,13 +379,13 @@ module api.form {
         }
 
         private updateViewState() {
-            this.expand(this.isOptionSetExpandedByDefault() || this.getThisPropertyFromSelectedOptionsArray() !== null);
+            this.expand(this.isOptionSetExpandedByDefault() || this.getThisPropertyFromSelectedOptionsArray() != null);
 
-            if (this.isOptionSetExpandedByDefault() && this.getThisPropertyFromSelectedOptionsArray() === null) {
+            if (this.isOptionSetExpandedByDefault() && this.getThisPropertyFromSelectedOptionsArray() == null) {
                 this.disableFormItems();
             }
 
-            this.toggleClass('selected', this.getThisPropertyFromSelectedOptionsArray() !== null);
+            this.toggleClass('selected', this.getThisPropertyFromSelectedOptionsArray() != null);
         }
 
         broadcastFormSizeChanged() {
@@ -419,7 +419,7 @@ module api.form {
 
         validate(silent: boolean = true): ValidationRecording {
 
-            if (this.getThisPropertyFromSelectedOptionsArray() === null) {
+            if (this.getThisPropertyFromSelectedOptionsArray() == null) {
                 return new ValidationRecording();
             }
 

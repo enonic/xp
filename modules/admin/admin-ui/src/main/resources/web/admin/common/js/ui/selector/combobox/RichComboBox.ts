@@ -421,7 +421,7 @@ module api.ui.selector.combobox {
         }
 
         protected doGetValue(): string {
-            if (!this.loader.isLoaded() && this.tempValue !== undefined) {
+            if (!this.loader.isLoaded() && this.tempValue != null) {
                 if (RichComboBox.debug) {
                     console.debug('RichComboBox: loader is not loaded, returning temp value = ' + this.tempValue);
                 }

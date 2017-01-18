@@ -177,7 +177,7 @@ module api.ui.selector.combobox {
         }
 
         isSelected(option: api.ui.selector.Option<T>): boolean {
-            return this.getByOption(option) !== null;
+            return this.getByOption(option) != null;
         }
 
         maximumOccurrencesReached(): boolean {

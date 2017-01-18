@@ -152,7 +152,7 @@ module api.ui {
         }
 
         hasShortcut(): boolean {
-            return this.shortcut !== null;
+            return this.shortcut != null;
         }
 
         getShortcut(): KeyBinding {
@@ -164,7 +164,7 @@ module api.ui {
         }
 
         hasMnemonic(): boolean {
-            return this.mnemonic !== null;
+            return this.mnemonic != null;
         }
 
         getMnemonic(): Mnemonic {

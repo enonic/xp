@@ -40,7 +40,7 @@ export class AttachmentsWidgetItemView extends WidgetItemView {
         }
 
         return super.layout().then(() => {
-            if (this.content !== undefined) {
+            if (this.content != null) {
                 return this.layoutAttachments();
             } else {
                 this.removeChildren();

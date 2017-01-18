@@ -170,7 +170,7 @@ module api.ui.security.acl {
                 this.toggleClass('dirty', this.originalStateIndex >= 0 && this.originalStateIndex !== newStateIndex);
 
                 let oldState = this.getState();
-                if (oldState !== undefined) {
+                if (oldState != null) {
                     this.removeClass(PermissionState[oldState].toLowerCase());
                 }
                 this.addClass(PermissionState[newState].toLowerCase());

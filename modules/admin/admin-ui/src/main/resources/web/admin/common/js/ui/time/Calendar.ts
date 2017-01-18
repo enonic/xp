@@ -67,7 +67,7 @@ module api.ui.time {
 
             let now = new Date();
             this.year = builder.year || now.getFullYear();
-            this.month = builder.month !== undefined ? builder.month : now.getMonth();
+            this.month = builder.month != null ? builder.month : now.getMonth();
             this.selectedDate = builder.selectedDate;
             this.startingDayOfWeek = builder.startingDayOfWeek || DaysOfWeek.MONDAY;
             this.interactive = builder.interactive;

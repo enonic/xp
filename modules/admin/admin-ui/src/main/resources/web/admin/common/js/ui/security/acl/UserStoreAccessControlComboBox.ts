@@ -182,7 +182,7 @@ module api.ui.security.acl {
         }
 
         isSelected(option: Option<UserStoreAccessControlEntry>): boolean {
-            return this.getByOption(option) !== null;
+            return this.getByOption(option) != null;
         }
 
         maximumOccurrencesReached(): boolean {

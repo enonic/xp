@@ -205,43 +205,43 @@ module api.ui.uploader {
         private initConfig(config: UploaderElConfig) {
             this.config = config;
 
-            if (this.config.showResult === undefined) {
+            if (this.config.showResult == null) {
                 this.config.showResult = true;
             }
-            if (this.config.allowMultiSelection === undefined) {
+            if (this.config.allowMultiSelection == null) {
                 this.config.allowMultiSelection = false;
             }
-            if (this.config.showCancel === undefined) {
+            if (this.config.showCancel == null) {
                 this.config.showCancel = true;
             }
 
             //TODO: property is not used. it might have sense to use it when filtering upload file candidates.
             // otherwise - just remove it
-            if (this.config.maximumOccurrences === undefined) {
+            if (this.config.maximumOccurrences == null) {
                 this.config.maximumOccurrences = 0;
             }
-            if (this.config.hasUploadButton === undefined) {
+            if (this.config.hasUploadButton == null) {
                 this.config.hasUploadButton = true;
             }
-            if (this.config.allowDrop === undefined) {
+            if (this.config.allowDrop == null) {
                 this.config.allowDrop = true;
             }
-            if (this.config.selfIsDropzone === undefined) {
+            if (this.config.selfIsDropzone == null) {
                 this.config.selfIsDropzone = false;
             }
-            if (this.config.resultAlwaysVisisble === undefined) {
+            if (this.config.resultAlwaysVisisble == null) {
                 this.config.resultAlwaysVisisble = false;
             }
-            if (this.config.allowTypes === undefined) {
+            if (this.config.allowTypes == null) {
                 this.config.allowTypes = [];
             }
-            if (this.config.deferred === undefined) {
+            if (this.config.deferred == null) {
                 this.config.deferred = false;
             }
-            if (this.config.disabled === undefined) {
+            if (this.config.disabled == null) {
                 this.config.disabled = false;
             }
-            if (this.config.hideDefaultDropZone === undefined) {
+            if (this.config.hideDefaultDropZone == null) {
                 this.config.hideDefaultDropZone = true;
             }
         }

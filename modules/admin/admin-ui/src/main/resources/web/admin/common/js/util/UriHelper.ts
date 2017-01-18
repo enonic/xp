@@ -134,7 +134,7 @@ module api.util {
             }
             let urlArray = [];
             for (let key in params) {
-                if (params.hasOwnProperty(key) && params[key] !== undefined) {
+                if (params.hasOwnProperty(key) && params[key] != null) {
                     let value = params[key];
                     let prefixedKey = prefix ? prefix + '[' + key + ']' : key;
                     if (typeof value === 'object') {

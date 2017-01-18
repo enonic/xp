@@ -47,7 +47,7 @@ module api.ui.time {
         protected setupListeners(builder: TimePickerBuilder) {
 
             this.popup.onSelectedTimeChanged((hours: number, minutes: number) => {
-                if (hours !== null && minutes !== null) {
+                if (hours != null && minutes != null) {
                     this.input.setValue(this.formatTime(hours, minutes), false, true);
                     this.validUserInput = true;
                 }

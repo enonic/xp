@@ -16,7 +16,7 @@ module api.app.browse.filter {
                     this.refreshDirtyState();
                     this.refreshValueChanged();
                 } else {
-                    if (this.timerId !== null) {
+                    if (this.timerId != null) {
                         window.clearTimeout(this.timerId);
                         this.timerId = null;
                     }

@@ -64,7 +64,7 @@ module api.aggregation {
 
                 let selectedBuckets: api.aggregation.Bucket[] = bucketAggregationView.getSelectedValues();
 
-                if (selectedBuckets !== null) {
+                if (selectedBuckets != null) {
                     let aggregationSelection: AggregationSelection = new AggregationSelection(bucketAggregationView.getName());
                     aggregationSelection.setValues(selectedBuckets);
 
@@ -117,7 +117,7 @@ module api.aggregation {
 
                 let existingAggregationView: api.aggregation.AggregationView = this.getAggregationView(aggregation.getName());
 
-                if (existingAggregationView === null) {
+                if (existingAggregationView == null) {
                     this.addAggregationView(api.aggregation.AggregationView.createAggregationView(aggregation, this));
                 } else {
                     if (api.ObjectHelper.iFrameSafeInstanceOf(existingAggregationView, BucketAggregationView)) {

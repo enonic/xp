@@ -261,7 +261,7 @@ module api.form {
         }
 
         userInputValidityChanged(currentState: boolean): boolean {
-            return this.userInputValid === undefined || this.userInputValid === null || !(this.userInputValid === currentState);
+            return this.userInputValid == null || this.userInputValid == null || !(this.userInputValid === currentState);
         }
 
         giveFocus(): boolean {

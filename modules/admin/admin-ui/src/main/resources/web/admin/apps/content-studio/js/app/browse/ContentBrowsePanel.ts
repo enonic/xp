@@ -246,7 +246,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     }
 
     private isSomethingSelected(): boolean {
-        return this.getFirstSelectedBrowseItem() !== null;
+        return this.getFirstSelectedBrowseItem() != null;
     }
 
     private isMobileMode(): boolean {

@@ -33,7 +33,7 @@ module api.content.page.region {
             this.setKey(api.content.page.DescriptorKey.fromString(json.key));
             this.setName(new api.content.page.DescriptorName(json.name));
             this.setDisplayName(json.displayName);
-            this.setConfig(json.config !== null ? api.form.Form.fromJson(json.config) : null);
+            this.setConfig(json.config != null ? api.form.Form.fromJson(json.config) : null);
             for (let i = 0; i < json.regions.length; i++) {
                 let region = new RegionDescriptorBuilder().fromJson(json.regions[i]).build();
                 this.regions.push(region);

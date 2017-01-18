@@ -51,10 +51,10 @@ module api.ui.image {
         private focusClipPath: Element;
         private cropClipPath: Element;
 
-        private focusData: FocusData = {x: 0, y: 0, r: 0.25, auto: undefined};
+        private focusData: FocusData = {x: 0, y: 0, r: 0.25, auto: null};
         private revertFocusData: FocusData;
 
-        private cropData: CropData = {x: 0, y: 0, w: 0, h: 0, auto: undefined};
+        private cropData: CropData = {x: 0, y: 0, w: 0, h: 0, auto: null};
         private revertCropData: CropData;
 
         private zoomData: ZoomData = {x: 0, y: 0, w: 0, h: 0};
@@ -398,7 +398,7 @@ module api.ui.image {
                     // zoom was set while images was not yet loaded (saved in px);
                     this.setZoomPositionPx(this.denormalizeRect(this.revertZoomData));
 
-                    this.revertZoomData = undefined;
+                    this.revertZoomData = null;
                 } else if (this.cropData.auto) {
                     // use cropData.auto flag for zoom as well
                     this.resetZoomPosition();
@@ -409,7 +409,7 @@ module api.ui.image {
                     // crop was set while images was not yet loaded (saved in px);
                     this.setCropPositionPx(this.denormalizeRect(this.revertCropData));
 
-                    this.revertCropData = undefined;
+                    this.revertCropData = null;
                 } else if (this.cropData.auto) {
                     this.resetCropPosition();
                 }
@@ -423,7 +423,7 @@ module api.ui.image {
 
                     this.setFocusRadiusPx(this.denormalizeRadius(this.revertFocusData.r));
 
-                    this.revertFocusData = undefined;
+                    this.revertFocusData = null;
                 } else if (this.focusData.auto) {
                     // set position to center by default
                     this.resetFocusPosition();
@@ -842,9 +842,9 @@ module api.ui.image {
                     this.setCropAutoPositioned(this.revertCropData.auto);
                 }
 
-                this.revertFocusData = undefined;
-                this.revertCropData = undefined;
-                this.revertZoomData = undefined;
+                this.revertFocusData = null;
+                this.revertCropData = null;
+                this.revertZoomData = null;
             }
 
             this.notifyEditModeChanged(edit, crop, zoom, focus);

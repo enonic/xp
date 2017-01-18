@@ -249,7 +249,7 @@ module api.ui.selector.dropdown {
 
         setValue(value: string): Dropdown<OPTION_DISPLAY_VALUE> {
             let option = this.getOptionByValue(value);
-            if (option !== null) {
+            if (option != null) {
                 this.selectOption(option);
             }
             return this;
@@ -257,7 +257,7 @@ module api.ui.selector.dropdown {
 
         selectRow(index: number, silent: boolean = false, keyCode: number = -1) {
             let option = this.getOptionByRow(index);
-            if (option !== null) {
+            if (option != null) {
                 this.selectOption(option, silent, keyCode);
                 api.dom.FormEl.moveFocusToNextFocusable(this.input);
             }

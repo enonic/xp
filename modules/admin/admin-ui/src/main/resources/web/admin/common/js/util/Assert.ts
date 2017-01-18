@@ -12,12 +12,12 @@ module api.util {
     }
 
     export function assertNotNull<T>(value: T, message?: string): T {
-        assert(value !== null, message || 'Value may not be null');
+        assert(value != null, message || 'Value may not be null');
         return value;
     }
 
     export function assertNull(value: Object, message?: string) {
-        assert(value === null, message);
+        assert(value == null, message);
     }
 
 }

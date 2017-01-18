@@ -74,8 +74,8 @@ module api.content.page.region {
         toJson(): ComponentTypeWrapperJson {
 
             let json: FragmentComponentJson = <FragmentComponentJson>super.toComponentJson();
-            json.fragment = this.fragment !== null ? this.fragment.toString() : null;
-            json.config = this.config !== null ? this.config.toJson() : null;
+            json.fragment = this.fragment != null ? this.fragment.toString() : null;
+            json.config = this.config != null ? this.config.toJson() : null;
 
             return <ComponentTypeWrapperJson> {
                 FragmentComponent: json

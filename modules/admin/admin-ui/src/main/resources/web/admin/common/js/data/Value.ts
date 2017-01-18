@@ -11,7 +11,7 @@ module api.data {
             this.type = type;
             if (value) {
                 let isValid = this.type.isValid(value);
-                if (isValid === undefined) {
+                if (isValid == null) {
                     throw new Error(api.ClassHelper.getClassName(this.type) + '.isValid() did not return any value: ' + isValid);
                 }
                 if (isValid === false) {
@@ -29,7 +29,7 @@ module api.data {
         }
 
         isNull(): boolean {
-            return this.value === null || this.value === undefined;
+            return this.value == null || this.value == null;
         }
 
         getObject(): Object {

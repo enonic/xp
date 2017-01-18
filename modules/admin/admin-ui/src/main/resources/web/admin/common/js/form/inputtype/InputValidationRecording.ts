@@ -59,7 +59,7 @@ module api.form.inputtype {
         }
 
         validityChanged(other: InputValidationRecording) {
-            return other === undefined || other === null || !other.equals(this);
+            return other == null || other == null || !other.equals(this);
         }
     }
 }

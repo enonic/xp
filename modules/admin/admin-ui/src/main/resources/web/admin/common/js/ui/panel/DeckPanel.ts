@@ -117,11 +117,11 @@ module api.ui.panel {
             let previousPanel = this.getPanelShown();
             let panelToShow = this.getPanel(index);
 
-            if (panelToShow === null) {
+            if (panelToShow == null) {
                 return;
             }
 
-            if (this.panelShown !== null) {
+            if (this.panelShown != null) {
                 this.panelShown.hide();
             }
 

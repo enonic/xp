@@ -36,7 +36,7 @@ module api.content.page.region {
         toJson(): ComponentTypeWrapperJson {
 
             let json: TextComponentJson = <TextComponentJson>super.toComponentJson();
-            json.text = this.text !== null ? this.text : null;
+            json.text = this.text != null ? this.text : null;
 
             return <ComponentTypeWrapperJson> {
                 TextComponent: json

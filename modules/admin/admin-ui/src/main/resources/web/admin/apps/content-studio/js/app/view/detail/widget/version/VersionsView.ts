@@ -84,7 +84,7 @@ export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
     }
 
     private getStatus(contentVersion: ContentVersion): ContentVersionStatus {
-        if (this.status === undefined) {
+        if (this.status == null) {
             return null;
         }
         let result = null;

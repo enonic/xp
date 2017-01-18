@@ -173,7 +173,7 @@ module api.ui.time {
         }
 
         getSelectedTime(): {hour: number; minute: number} {
-            return this.selectedHour !== null && this.selectedMinute !== null ? {
+            return this.selectedHour != null && this.selectedMinute != null ? {
                 hour: this.selectedHour,
                 minute: this.selectedMinute
             } : null;

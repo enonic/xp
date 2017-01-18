@@ -18,7 +18,7 @@ module api.query.aggregation {
 
         public toRangeJson(): api.query.aggregation.RangeJson {
 
-            if (this.getKey() !== null) {
+            if (this.getKey() != null) {
                 return {
                     key: this.getKey()
                 };

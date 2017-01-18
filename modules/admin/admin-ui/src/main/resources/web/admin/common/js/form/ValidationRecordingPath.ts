@@ -15,7 +15,7 @@ module api.form {
         private max: number;
 
         constructor(parentPropertySet: PropertyPath, dataName: string, min?: number, max?: number) {
-            this.parentDataSet = parentPropertySet !== null ? parentPropertySet.asRelative() : null;
+            this.parentDataSet = parentPropertySet != null ? parentPropertySet.asRelative() : null;
             this.dataName = dataName;
             this.refString = this.resolveRefString();
             this.min = min;

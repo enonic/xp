@@ -18,7 +18,7 @@ module api.rest {
         }
 
         hasResult(): boolean {
-            if (this.json === undefined || this.json === null) {
+            if (this.json == null || this.json == null) {
                 return false;
             }
             return true;

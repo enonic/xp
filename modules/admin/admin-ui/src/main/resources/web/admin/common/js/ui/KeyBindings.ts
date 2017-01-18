@@ -112,7 +112,7 @@ module api.ui {
          */
         public unshelveBindings() {
             let previousMousetraps: {[s:string] : KeyBinding;} = this.shelves.pop();
-            if (previousMousetraps === undefined) {
+            if (previousMousetraps == null) {
                 if (KeyBindings.debug) {
                     console.log('KeyBindings[#' + this.instance + '].unshelveBindings(): nothing to unshelve');
                 }

@@ -31,7 +31,7 @@ extends ComponentInspectionPanel<COMPONENT> {
     setModel(liveEditModel: LiveEditModel) {
 
         if (this.liveEditModel !== liveEditModel) {
-            if (this.liveEditModel !== null && this.liveEditModel.getSiteModel() !== null) {
+            if (this.liveEditModel != null && this.liveEditModel.getSiteModel() != null) {
                 let siteModel = this.liveEditModel.getSiteModel();
 
                 siteModel.unApplicationUnavailable(this.applicationUnavailableHandler.bind(this));

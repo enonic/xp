@@ -14,7 +14,7 @@ module api.content.page.region {
 
             this.parentComponentPath = parentComponentPath;
             this.regionName = regionName;
-            if (parentComponentPath !== null) {
+            if (parentComponentPath != null) {
                 this.refString = parentComponentPath + '/' + regionName;
             } else {
                 this.refString = regionName;
@@ -23,7 +23,7 @@ module api.content.page.region {
 
         public hasParentComponentPath(): boolean {
 
-            return this.parentComponentPath !== null;
+            return this.parentComponentPath != null;
         }
 
         public getParentComponentPath(): ComponentPath {

@@ -176,7 +176,7 @@ module api.ui.panel {
 
         showPanelByIndex(index: number) {
             let panelToShow = this.getPanel(index);
-            if (panelToShow === null) {
+            if (panelToShow == null) {
                 return;
             }
 

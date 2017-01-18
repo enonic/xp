@@ -152,7 +152,7 @@ module api.dom {
         }
 
         toggleClass(className: string, condition?: boolean): ElementHelper {
-            if (condition === false || condition === undefined && this.hasClass(className)) {
+            if (condition === false || condition == null && this.hasClass(className)) {
                 this.removeClass(className);
             } else {
                 this.addClass(className);

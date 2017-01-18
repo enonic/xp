@@ -587,7 +587,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     return this.fetchMixin(name);
                 }));
 
-            applications.filter((app) => app !== null).forEach((app: Application) => {
+            applications.filter((app) => app != null).forEach((app: Application) => {
                 metadataMixinPromises = metadataMixinPromises.concat(
                     app.getMetaSteps().map((name: MixinName) => {
                         return this.fetchMixin(name);
@@ -778,12 +778,12 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         let updateHandler = (contentId: ContentId, compareStatus?: CompareStatus, publishStatus?: PublishStatus) => {
 
             if (this.isCurrentContentId(contentId)) {
-                if (publishStatus !== undefined) {
+                if (publishStatus != null) {
                     this.persistedContentPublishStatus = this.currentContentPublishStatus = publishStatus;
                     this.getContentWizardToolbarPublishControls().
                         setPublishStatus(publishStatus);
                 }
-                if (compareStatus !== undefined) {
+                if (compareStatus != null) {
                     this.persistedContentCompareStatus = this.currentContentCompareStatus = compareStatus;
                     this.getContentWizardToolbarPublishControls().
                         setCompareStatus(compareStatus);
@@ -1387,7 +1387,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     private produceCreateContentRequest(): wemQ.Promise<CreateContentRequest> {
         let deferred = wemQ.defer<CreateContentRequest>();
 
-        let parentPath = this.parentContent !== null ? this.parentContent.getPath() : api.content.ContentPath.ROOT;
+        let parentPath = this.parentContent != null ? this.parentContent.getPath() : api.content.ContentPath.ROOT;
 
         if (this.contentType.getContentTypeName().isMedia()) {
             deferred.resolve(null);
@@ -1471,7 +1471,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             return false;
         }
         let persistedContent: Content = this.getPersistedItem();
-        if (persistedContent === undefined) {
+        if (persistedContent == null) {
             return true;
         } else {
 
