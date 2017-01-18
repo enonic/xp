@@ -279,7 +279,7 @@ function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDe
     });
 
     wizard.onClosed(event => window.close());
-    
+
     api.content.event.EditContentEvent.on(ContentEventsProcessor.handleEdit);
 
     api.dom.Body.get().addClass('wizard-page').appendChild(wizard);

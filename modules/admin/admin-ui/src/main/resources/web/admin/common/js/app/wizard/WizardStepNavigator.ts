@@ -43,9 +43,9 @@ module api.app.wizard {
         }
 
         private addKeyNavigation(tab: TabBarItem) {
-            const combination: string = "alt+" + this.getSize();
+            const combination: string = 'alt+' + this.getSize();
             const keyBinding: KeyBinding = new KeyBinding(combination, () => {
-                const isTabVisible: boolean = tab.getHTMLElement().style.display !== "none";
+                const isTabVisible: boolean = tab.getHTMLElement().style.display !== 'none';
                 const tabIndexToShow: number = isTabVisible ? tab.getIndex() : tab.getIndex() + 1;
 
                 this.selectNavigationItem(tabIndexToShow);

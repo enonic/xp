@@ -253,7 +253,6 @@ module api.util.htmlarea.dialog {
             let contentSelector = api.content.ContentComboBox.create().setLoader(loader).setMaximumOccurrences(1).build();
             let contentSelectorComboBox = contentSelector.getComboBox();
 
-
             if (contentTypeNames) {
                 loader.setAllowedContentTypeNames(contentTypeNames);
             }
@@ -278,7 +277,7 @@ module api.util.htmlarea.dialog {
                 if (event.getNewValue()) {
                     new api.content.page.IsRenderableRequest(
                         new api.content.ContentId(event.getNewValue())).sendAndParse().then((renderable: boolean) => {
-                        formItem.setValidator(() => renderable ? "" : "Only content items that support preview can be selected");
+                        formItem.setValidator(() => renderable ? '' : 'Only content items that support preview can be selected');
                     });
                 } else {
                     formItem.setValidator(Validators.required);
