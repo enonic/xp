@@ -291,6 +291,11 @@ public class BranchServiceImpl
 
     private NodeBranchEntries getIgnoreOrder( final NodeIds nodeIds, final InternalContext context )
     {
+        if ( nodeIds.isEmpty() )
+        {
+            return NodeBranchEntries.empty();
+        }
+
         final SearchResult results = this.searchDao.search( SearchRequest.create().
             query( NodeBranchQuery.create().
                 addQueryFilter( ValueFilter.create().

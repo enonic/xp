@@ -22,7 +22,7 @@ module api.ui.tab {
             this.scrollEnabled = enabled;
         }
 
-        insertNavigationItem(tab: TabBarItem, index?: number, silent?: boolean) {
+        insertNavigationItem(tab: TabBarItem, index: number, silent?: boolean) {
             this.tabs.splice(index, 0, tab);
             tab.setIndex(index);
 

@@ -196,6 +196,11 @@ public class StorageDaoImpl
     @Override
     public void copy( final CopyRequest request )
     {
+        if ( request.getNodeIds().isEmpty() )
+        {
+            return;
+        }
+
         final IdFilter idFilter = IdFilter.create().
             fieldName( NodeIndexPath.ID.getPath() ).
             values( request.getNodeIds() ).

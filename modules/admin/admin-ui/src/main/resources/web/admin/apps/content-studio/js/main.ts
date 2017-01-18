@@ -265,7 +265,7 @@ function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDe
         });
     });
 
-    const beforeUnload = event => {
+    api.dom.WindowDOM.get().onBeforeUnload(event => {
         if (wizard.isContentDeleted() || !connectionDetector.isConnected() || !connectionDetector.isAuthenticated()) {
             return;
         }
@@ -275,21 +275,11 @@ function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDe
             const e: any = event || window.event || { returnValue: '' };
             e['returnValue'] = message;
             return message;
-        } else {
-            // do close to notify everybody
-            wizard.close(false);
         }
-    };
-
-    wizard.onClosed((event) => {
-        if (!event.isCheckCanClose()) {
-            api.dom.WindowDOM.get().unBeforeUnload(beforeUnload);
-        }
-        window.close();
     });
 
-    api.dom.WindowDOM.get().onBeforeUnload(beforeUnload);
-
+    wizard.onClosed(event => window.close());
+    
     api.content.event.EditContentEvent.on(ContentEventsProcessor.handleEdit);
 
     api.dom.Body.get().addClass('wizard-page').appendChild(wizard);

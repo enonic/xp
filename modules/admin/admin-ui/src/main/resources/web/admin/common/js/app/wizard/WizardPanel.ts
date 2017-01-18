@@ -713,10 +713,6 @@ module api.app.wizard {
             return this.isChanged;
         }
 
-        askUserForSaveChangesBeforeClosing() {
-            new SaveBeforeCloseDialog(this).open();
-        }
-
         saveChanges(): wemQ.Promise<EQUITABLE> {
 
             if (this.isItemPersisted()) {
@@ -769,18 +765,11 @@ module api.app.wizard {
         }
 
         close(checkCanClose: boolean = false) {
-            if (!checkCanClose || this.canClose()) {
-                this.notifyClosed(checkCanClose);
-            }
+            this.notifyClosed(checkCanClose);
         }
 
         canClose(): boolean {
-            if (this.hasUnsavedChanges()) {
-                this.askUserForSaveChangesBeforeClosing();
-                return false;
-            } else {
-                return true;
-            }
+            return !this.hasUnsavedChanges();
         }
 
         onClosed(listener: (event: WizardClosedEvent)=>void) {

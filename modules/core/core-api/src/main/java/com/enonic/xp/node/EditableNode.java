@@ -13,8 +13,6 @@ public class EditableNode
 {
     public Node source;
 
-    public NodeName name;
-
     public PropertyTree data;
 
     public IndexConfigDocument indexConfigDocument;
@@ -32,7 +30,6 @@ public class EditableNode
     public EditableNode( final Node source )
     {
         this.source = source;
-        this.name = source.name();
         this.data = source.data().copy();
         this.indexConfigDocument = source.getIndexConfigDocument();
         this.manualOrderValue = source.getManualOrderValue();
@@ -45,7 +42,6 @@ public class EditableNode
     public Node build()
     {
         return Node.create( source ).
-            name( name ).
             data( data ).
             indexConfigDocument( indexConfigDocument ).
             manualOrderValue( manualOrderValue ).

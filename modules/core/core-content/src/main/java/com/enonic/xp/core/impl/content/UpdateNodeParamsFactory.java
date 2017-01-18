@@ -9,7 +9,6 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.schema.content.ContentTypeService;
 
@@ -47,7 +46,6 @@ public class UpdateNodeParamsFactory
         final IndexConfigDocument indexConfigDocument = ContentIndexConfigFactory.create( content, contentTypeService );
 
         return editableNode -> {
-            editableNode.name = NodeName.from( content.getName().toString() );
             editableNode.indexConfigDocument = indexConfigDocument;
             editableNode.data = nodeData;
             editableNode.permissions = content.getPermissions();
