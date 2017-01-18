@@ -56,7 +56,7 @@ module api.ui.treegrid {
 
         private highlightingChangeListeners: Function[] = [];
 
-        private dataChangeListeners: {(event: DataChangedEvent<DATA>):void}[] = [];
+        private dataChangeListeners: {(event: DataChangedEvent<DATA>): void}[] = [];
 
         private activeChangedListeners: {(active: boolean): void}[] = [];
 
@@ -71,6 +71,8 @@ module api.ui.treegrid {
         private errorPanel: ValidationRecordingViewer;
 
         private highlightedNode: TreeNode<DATA>;
+
+        private interval: number;
 
         constructor(builder: TreeGridBuilder<DATA>) {
 
@@ -88,11 +90,8 @@ module api.ui.treegrid {
             });
             this.gridData.setItemMetadataHandler(this.handleItemMetadata.bind(this));
 
-
             this.columns = this.updateColumnsFormatter(builder.getColumns());
-
             this.gridOptions = builder.getOptions();
-
             this.grid = new Grid<TreeNode<DATA>>(this.gridData, this.columns, this.gridOptions);
 
             // Custom row selection required for valid behaviour
@@ -106,10 +105,7 @@ module api.ui.treegrid {
              * key custom key navigation. Without it plugin is having
              * some spacebar handling error, due to active cell can't be set.
              */
-            let selectorPlugin = this.grid.getCheckboxSelectorPlugin();
-            if (selectorPlugin) {
-                this.grid.unregisterPlugin(<Slick.Plugin<TreeNode<DATA>>>this.grid.getCheckboxSelectorPlugin());
-            }
+            this.initSelectorPlugin();
 
             this.grid.syncGridSelection(false);
 
@@ -117,25 +113,38 @@ module api.ui.treegrid {
                 this.setContextMenu(builder.getContextMenu());
             }
 
-            if (builder.isShowToolbar()) {
-                this.toolbar = new TreeGridToolbar(new TreeGridToolbarActions(this), this);
-                this.appendChild(this.toolbar);
-                // make sure it won't left from the cloned grid
-                this.removeClass("no-toolbar");
-            } else {
-                this.addClass("no-toolbar");
-            }
+            this.initToolbar(builder.isShowToolbar());
 
             this.appendChild(this.grid);
 
-            if (builder.isAutoLoad()) {
-                this.onAdded(() => {
-                    this.reload().then(() => this.grid.resizeCanvas());
-                });
+            if (this.quietErrorHandling) {
+                this.appendChild(this.errorPanel = new api.form.ValidationRecordingViewer());
+                this.errorPanel.hide();
+            }
+
+            if (builder.isPartialLoadEnabled()) {
+                this.loadBufferSize = builder.getLoadBufferSize();
             }
 
             this.initEventListeners(builder);
+        }
 
+        private initSelectorPlugin() {
+            let selectorPlugin = this.grid.getCheckboxSelectorPlugin();
+            if (selectorPlugin) {
+                this.grid.unregisterPlugin(<Slick.Plugin<TreeNode<DATA>>>this.grid.getCheckboxSelectorPlugin());
+            }
+        }
+
+        private initToolbar(showToolbar: boolean) {
+            if (showToolbar) {
+                this.toolbar = new TreeGridToolbar(new TreeGridToolbarActions(this), this);
+                this.appendChild(this.toolbar);
+                // make sure it won't left from the cloned grid
+                this.removeClass('no-toolbar');
+            } else {
+                this.addClass('no-toolbar');
+            }
         }
 
         protected setColumns(columns: GridColumn<TreeNode<DATA>>[], toBegin: boolean = false) {
@@ -168,304 +177,33 @@ module api.ui.treegrid {
         private initEventListeners(builder: TreeGridBuilder<DATA>) {
 
             let keyBindings = [];
-            let interval;
 
             this.onClicked(() => {
                 this.grid.focus();
             });
 
-            if (builder.isPartialLoadEnabled()) {
-
-                this.loadBufferSize = builder.getLoadBufferSize();
-                this.onRendered(() => {
-                    if (interval) {
-                        clearInterval(interval);
-                    }
-                    interval = setInterval(this.postLoad.bind(this), 200);
+            if (builder.isAutoLoad()) {
+                this.onAdded(() => {
+                    this.reload().then(() => this.grid.resizeCanvas());
                 });
             }
 
-            this.grid.subscribeOnClick((event, data) => {
-                if (!this.isActive()) {
-                    return;
-                }
-
-                if (this.contextMenu) {
-                    this.contextMenu.hide();
-                }
-
-                const elem = new ElementHelper(event.target);
-                const clickedRow = wemjq(elem.getHTMLElement()).closest(".slick-row");
-                const isRowHighlighted = clickedRow.hasClass("selected");
-                const node = this.gridData.getItem(data.row);
-                const isMultiSelect = !this.gridOptions.isMultipleSelectionDisabled();
-
-                if (event.shiftKey) {
-                    if (!this.grid.isRowSelected(data.row) && this.highlightedNode !== node) {
-                        this.unhighlightCurrentRow(true);
-                    }
-                    if (this.grid.getSelectedRows().length >= 1 && !this.grid.isRowSelected(data.row)) {
-                        if (isMultiSelect) {
-                            const firstSelectedRow = this.grid.getSelectedRows()[0],
-                                highlightFrom = firstSelectedRow < data.row ? firstSelectedRow : data.row,
-                                highlightTo = data.row > firstSelectedRow ? data.row : firstSelectedRow;
-
-                            for (let i = highlightFrom; i <= highlightTo; i++) {
-                                if (!this.grid.isRowSelected(i)) {
-                                    this.grid.toggleRow(i);
-                                }
-                            }
-                            event.stopPropagation();
-                            event.preventDefault();
-                            return;
-                        } else {
-                            this.deselectAll();
-                        }
-                    }
-                    this.grid.toggleRow(data.row);
-                    return;
-                }
-
-                if (event.ctrlKey) {
-                    if (!this.grid.isRowSelected(data.row) && this.highlightedNode !== node) {
-                        this.unhighlightCurrentRow(true);
-                    }
-                    this.grid.toggleRow(data.row);
-                    return;
-                }
-
-                this.setActive(false);
-
-                if (elem.hasClass("expand")) {
-                    elem.removeClass("expand").addClass("collapse");
-                    this.expandNode(node).then(() => {
-                        if (isMultiSelect) {
-                            this.highlightCurrentNode();
-                        }
-                    });
-
-                    return;
-                }
-
-                if (elem.hasClass("collapse")) {
-                    elem.removeClass("collapse").addClass("expand");
-                    this.collapseNode(node);
-                    if (isMultiSelect) {
-                        this.highlightCurrentNode();
-                    }
-
-                    return;
-                }
-
-                this.setActive(true);
-
-                if (elem.hasAnyParentClass("slick-cell-checkboxsel")) {
-                    // Checkbox is clicked
-
-                    if (elem.getAttribute("type") !== "checkbox") {
-                        return;
-                    }
-
-                    if (!isMultiSelect) {
-                        this.grid.toggleRow(data.row);
-                        return;
-                    }
-
-                    if (this.grid.getSelectedRows().length > 1) {
-                        this.unhighlightRows(true);
-                    }
-                    else if (!this.grid.isRowSelected(data.row) && this.highlightedNode !== node) {
-                        this.unhighlightCurrentRow(true);
-                    }
-
-                    this.grid.toggleRow(data.row);
-
-                    return;
-                }
-
-                // A cell in the row is clicked
-                if (isMultiSelect) {
-                    const isRowSelected = this.grid.isRowSelected(data.row);
-                    const isMultipleRowsSelected = this.grid.getSelectedRows().length > 1;
-
-                    if (elem.hasClass("sort-dialog-trigger") && (isRowSelected || isRowHighlighted)) {
-                        if (isMultipleRowsSelected) {
-                            this.grid.selectRow(data.row);
-                        }
-                        return;
-                    }
-
-                    if (this.grid.getSelectedRows().length > 0 || isRowHighlighted) {
-                        this.unselectAllRows();
-                    }
-
-                    if (!(isRowHighlighted || isRowSelected)) {
-                        this.highlightRowByNode(node);
-                    }
-                    else if (isMultipleRowsSelected) {
-                        this.grid.selectRow(data.row);
-                    }
-                }
-                else {
-                    this.root.clearStashedSelection();
-                }
-
-                if (!elem.hasClass("sort-dialog-trigger")) {
-                    new TreeGridItemClickedEvent(!!this.highlightedNode || this.grid.getSelectedRows().length > 0).fire();
-                }
-
-            });
-
-            if (this.quietErrorHandling) {
-                this.appendChild(this.errorPanel = new api.form.ValidationRecordingViewer());
-                this.errorPanel.hide();
-            }
+            this.bindClickEvents();
 
             this.grid.onShown(() => {
                 this.scrollable = this.queryScrollable();
             });
 
             this.onShown(() => {
-                this.grid.resizeCanvas();
-                if (builder.isHotkeysEnabled()) {
-
-                    if (!this.gridOptions.isMultipleSelectionDisabled()) {
-                        keyBindings = [
-                            new KeyBinding('shift+up', (event: ExtendedKeyboardEvent) => {
-                                this.onSelectRange(event, this.grid.addSelectedUp.bind(this.grid));
-                            }),
-                            new KeyBinding('shift+down', (event: ExtendedKeyboardEvent) => {
-                                this.onSelectRange(event, this.grid.addSelectedDown.bind(this.grid));
-                            })
-                        ];
-                    }
-
-                    keyBindings = keyBindings.concat([
-                        new KeyBinding('up', () => {
-                            if (this.isActive()) {
-                                if (this.contextMenu) {
-                                    this.contextMenu.hide();
-                                }
-                                if (this.gridOptions.isMultipleSelectionDisabled()) {
-                                    this.scrollToRow(this.grid.moveSelectedUp());
-                                }
-                                else {
-                                    this.navigateUp();
-                                }
-                            }
-                        }),
-                        new KeyBinding('down', () => {
-                            if (this.isActive()) {
-                                if (this.contextMenu) {
-                                    this.contextMenu.hide();
-                                }
-                                if (this.gridOptions.isMultipleSelectionDisabled()) {
-                                    this.scrollToRow(this.grid.moveSelectedDown());
-                                }
-                                else {
-                                    this.navigateDown();
-                                }
-                            }
-                        }),
-                        new KeyBinding('left', () => {
-                            let selected = this.grid.getSelectedRows();
-                            if (selected.length !== 1 && !this.highlightedNode) {
-                                return;
-                            }
-
-                            if (this.contextMenu) {
-                                this.contextMenu.hide();
-                            }
-                            let node = this.gridData.getItem(selected[0]) || this.highlightedNode;
-                            if (node && this.isActive()) {
-                                if (node.isExpanded()) {
-                                    this.setActive(false);
-                                    this.collapseNode(node);
-                                    if (!selected[0]) {
-                                        this.highlightRowByNode(node);
-                                    }
-                                } else if (node.getParent() !== this.root.getCurrentRoot()) {
-                                    node = node.getParent();
-                                    this.setActive(false);
-                                    let row = this.gridData.getRowById(node.getId());
-                                    this.collapseNode(node);
-                                    if (selected[0]) {
-                                        this.unselectAllRows();
-                                        this.grid.selectRow(row, true);
-                                    }
-                                    else {
-                                        this.highlightRowByNode(node);
-                                    }
-                                }
-                            }
-                        }),
-                        new KeyBinding('right', () => {
-                            let selected = this.grid.getSelectedRows();
-                            if (selected.length !== 1 && !this.highlightedNode) {
-                                return;
-                            }
-
-                            if (this.contextMenu) {
-                                this.contextMenu.hide();
-                            }
-                            let node = this.gridData.getItem(selected[0]) || this.highlightedNode;
-                            if (node && this.hasChildren(node.getData())
-                                && !node.isExpanded() && this.isActive()) {
-
-                                this.setActive(false);
-                                this.invalidate();
-                                this.expandNode(node).then(() => {
-                                    if (!selected[0]) {
-                                        this.highlightCurrentNode();
-                                    }
-                                });
-                            }
-
-                        }),
-                        new KeyBinding('mod+a', (event: ExtendedKeyboardEvent) => {
-                            let selected = this.grid.getSelectedRows();
-                            if (selected.length === this.gridData.getLength()) {
-                                this.deselectAll();
-                            }
-                            else {
-                                this.selectAll();
-                            }
-
-                            event.preventDefault();
-                            event.stopImmediatePropagation();
-                        }),
-                        new KeyBinding('space', () => {
-                            if (this.highlightedNode) {
-                                let row = this.gridData.getRowById(this.highlightedNode.getId());
-                                this.grid.toggleRow(row);
-                            }
-                            else if (this.grid.getSelectedRows().length > 0) {
-                                this.deselectAll();
-                            }
-                        }),
-                        new KeyBinding('enter', () => {
-                            if (this.highlightedNode) {
-                                this.editItem(this.highlightedNode);
-                            }
-                        })
-                    ]);
-
-                    KeyBindings.get().bindKeys(keyBindings);
-                }
+                this.bindKeys(builder, keyBindings);
             });
 
             this.onRendered(() => {
-                this.grid.resizeCanvas();
+                this.onRenderedHandler(builder);
             });
 
             this.onRemoved(() => {
-                if (builder.isHotkeysEnabled()) {
-                    KeyBindings.get().unbindKeys(keyBindings);
-                }
-
-                if (builder.isPartialLoadEnabled() && interval) {
-                    clearInterval(interval);
-                }
+                this.onRemovedHandler(builder, keyBindings)
             });
 
             this.grid.subscribeOnSelectedRowsChanged((event, rows) => {
@@ -473,6 +211,333 @@ module api.ui.treegrid {
             });
 
             this.onLoaded(() => this.unmask());
+        }
+
+        private onRenderedHandler(builder) {
+            this.grid.resizeCanvas();
+            if (builder.isPartialLoadEnabled()) {
+                if (this.interval) {
+                    clearInterval(this.interval);
+                }
+                this.interval = setInterval(this.postLoad.bind(this), 200);
+            }
+        }
+
+        private onRemovedHandler(builder, keyBindings) {
+            if (builder.isHotkeysEnabled()) {
+                KeyBindings.get().unbindKeys(keyBindings);
+            }
+
+            if (builder.isPartialLoadEnabled() && this.interval) {
+                clearInterval(this.interval);
+            }
+        };
+
+        private bindClickEvents() {
+            this.grid.subscribeOnClick((event, data) => {
+                if (!this.isActive()) {
+                    return;
+                }
+
+                const elem = new ElementHelper(event.target);
+                const isMultiSelect = !this.gridOptions.isMultipleSelectionDisabled();
+
+                if (this.contextMenu) {
+                    this.contextMenu.hide();
+                }
+
+                if (event.shiftKey) {
+                    this.onClickWithShift(event, data);
+                    return;
+                }
+
+                if (event.metaKey || event.ctrlKey) {
+                    this.onClickWithCmd(data);
+                    return;
+                }
+
+                this.setActive(false);
+
+                if (elem.hasClass('expand')) {
+                    this.onExpand(elem, data);
+                    return;
+                }
+
+                if (elem.hasClass('collapse')) {
+                    this.onCollapse(elem, data);
+                    return;
+                }
+
+                this.setActive(true);
+
+                // Checkbox is clicked
+                if (elem.hasAnyParentClass('slick-cell-checkboxsel')) {
+                    if (elem.getAttribute('type') === 'checkbox') {
+                        this.onCheckboxClicked(data);
+                    }
+                    return;
+                }
+
+                // A cell in the row is clicked
+                if (isMultiSelect) {
+                    this.onCellClicked(elem, data);
+                }
+                else {
+                    this.root.clearStashedSelection();
+                }
+
+                if (!elem.hasClass('sort-dialog-trigger')) {
+                    new TreeGridItemClickedEvent(!!this.highlightedNode || this.grid.getSelectedRows().length > 0).fire();
+                }
+            });
+        }
+
+        private onClickWithShift(event, data) {
+            const node = this.gridData.getItem(data.row);
+            const thereIsHighlightedNode = this.highlightedNode != null && this.highlightedNode !== node;
+            const isMultiSelect = !this.gridOptions.isMultipleSelectionDisabled();
+
+            if (!this.grid.isRowSelected(data.row) && (this.grid.getSelectedRows().length >= 1 || thereIsHighlightedNode)) {
+                if (isMultiSelect) {
+                    let firstSelectedRow, highlightFrom, highlightTo;
+
+                    if (thereIsHighlightedNode) {
+                        const highlightedRow = this.gridData.getRowById(this.highlightedNode.getId());
+                        highlightFrom = highlightedRow < data.row ? highlightedRow : data.row;
+                        highlightTo = data.row > highlightedRow ? data.row : highlightedRow;
+                    } else {
+                        firstSelectedRow = this.grid.getSelectedRows()[0];
+                        highlightFrom = firstSelectedRow < data.row ? firstSelectedRow : data.row;
+                        highlightTo = data.row > firstSelectedRow ? data.row : firstSelectedRow;
+                    }
+
+                    this.unhighlightCurrentRow();
+
+                    for (let i = highlightFrom; i <= highlightTo; i++) {
+                        if (!this.grid.isRowSelected(i)) {
+                            this.grid.toggleRow(i);
+                        }
+                    }
+                    event.stopPropagation();
+                    event.preventDefault();
+                    return;
+                } else {
+                    this.deselectAll();
+                }
+            }
+            this.grid.toggleRow(data.row);
+        }
+
+        private onClickWithCmd(data) {
+            const node = this.gridData.getItem(data.row);
+            if (!this.grid.isRowSelected(data.row) && this.highlightedNode !== node) {
+                this.unhighlightCurrentRow(true);
+            }
+            this.grid.toggleRow(data.row);
+        }
+
+        private onExpand(elem, data) {
+            const node = this.gridData.getItem(data.row);
+            elem.removeClass('expand').addClass('collapse');
+            this.expandNode(node).then(() => {
+                if (!this.gridOptions.isMultipleSelectionDisabled()) {
+                    this.highlightCurrentNode();
+                }
+            });
+        }
+
+        private onCollapse(elem, data) {
+            const node = this.gridData.getItem(data.row);
+            elem.removeClass('collapse').addClass('expand');
+            this.collapseNode(node);
+            if (!this.gridOptions.isMultipleSelectionDisabled()) {
+                this.highlightCurrentNode();
+            }
+        }
+
+        private onCheckboxClicked(data) {
+            const node = this.gridData.getItem(data.row);
+            if (this.gridOptions.isMultipleSelectionDisabled()) {
+                this.grid.toggleRow(data.row);
+                return;
+            }
+
+            if (this.grid.getSelectedRows().length > 1) {
+                this.unhighlightRows(true);
+            }
+            else if (!this.grid.isRowSelected(data.row) && this.highlightedNode !== node) {
+                this.unhighlightCurrentRow(true);
+            }
+
+            this.grid.toggleRow(data.row);
+        }
+
+        private onCellClicked(elem, data) {
+            const node = this.gridData.getItem(data.row);
+            const clickedRow = wemjq(elem.getHTMLElement()).closest('.slick-row');
+            const isRowSelected = this.grid.isRowSelected(data.row);
+            const isMultipleRowsSelected = this.grid.getSelectedRows().length > 1;
+            const isRowHighlighted = clickedRow.hasClass('selected');
+
+            if (elem.hasClass('sort-dialog-trigger') && (isRowSelected || isRowHighlighted)) {
+                if (isMultipleRowsSelected) {
+                    this.grid.selectRow(data.row);
+                }
+                return;
+            }
+
+            if (this.grid.getSelectedRows().length > 0 || isRowHighlighted) {
+                this.unselectAllRows();
+            }
+
+            if (!(isRowHighlighted || isRowSelected)) {
+                this.highlightRowByNode(node);
+            }
+            else if (isMultipleRowsSelected) {
+                this.grid.selectRow(data.row);
+            }
+        }
+
+        private bindKeys(builder: TreeGridBuilder<DATA>, keyBindings) {
+            this.grid.resizeCanvas();
+            if (builder.isHotkeysEnabled()) {
+
+                if (!this.gridOptions.isMultipleSelectionDisabled()) {
+                    keyBindings = [
+                        new KeyBinding('shift+up', (event: ExtendedKeyboardEvent) => {
+                            this.onSelectRange(event, this.grid.addSelectedUp.bind(this.grid));
+                        }),
+                        new KeyBinding('shift+down', (event: ExtendedKeyboardEvent) => {
+                            this.onSelectRange(event, this.grid.addSelectedDown.bind(this.grid));
+                        })
+                    ];
+                }
+
+                keyBindings = keyBindings.concat([
+                    new KeyBinding('up', this.onUpKeyPress.bind(this)),
+                    new KeyBinding('down', this.onDownKeyPress.bind(this)),
+                    new KeyBinding('left', this.onLeftKeyPress.bind(this)),
+                    new KeyBinding('right', this.onRightKeyPress.bind(this)),
+                    new KeyBinding('mod+a', this.onAwithModKeyPress.bind(this)),
+                    new KeyBinding('space', this.onSpaceKeyPress.bind(this)),
+                    new KeyBinding('enter', this.onEnterKeyPress.bind(this), KeyBindingAction.KEYUP)
+                ]);
+
+                KeyBindings.get().bindKeys(keyBindings);
+            }
+        }
+
+        private onUpKeyPress() {
+            if (this.isActive()) {
+                if (this.contextMenu) {
+                    this.contextMenu.hide();
+                }
+                if (this.gridOptions.isMultipleSelectionDisabled()) {
+                    this.scrollToRow(this.grid.moveSelectedUp());
+                }
+                else {
+                    this.navigateUp();
+                }
+            }
+        }
+
+        private onDownKeyPress() {
+            if (this.isActive()) {
+                if (this.contextMenu) {
+                    this.contextMenu.hide();
+                }
+                if (this.gridOptions.isMultipleSelectionDisabled()) {
+                    this.scrollToRow(this.grid.moveSelectedDown());
+                }
+                else {
+                    this.navigateDown();
+                }
+            }
+        }
+
+        private onLeftKeyPress() {
+            let selected = this.grid.getSelectedRows();
+            if (selected.length !== 1 && !this.highlightedNode) {
+                return;
+            }
+
+            if (this.contextMenu) {
+                this.contextMenu.hide();
+            }
+            let node = this.gridData.getItem(selected[0]) || this.highlightedNode;
+            if (node && this.isActive()) {
+                if (node.isExpanded()) {
+                    this.setActive(false);
+                    this.collapseNode(node);
+                    if (!selected[0]) {
+                        this.highlightRowByNode(node);
+                    }
+                } else if (node.getParent() !== this.root.getCurrentRoot()) {
+                    node = node.getParent();
+                    this.setActive(false);
+                    let row = this.gridData.getRowById(node.getId());
+                    this.collapseNode(node);
+                    if (selected[0]) {
+                        this.unselectAllRows();
+                        this.grid.selectRow(row, true);
+                    }
+                    else {
+                        this.highlightRowByNode(node);
+                    }
+                }
+            }
+        }
+
+        private onRightKeyPress() {
+            let selected = this.grid.getSelectedRows();
+            if (selected.length !== 1 && !this.highlightedNode) {
+                return;
+            }
+
+            if (this.contextMenu) {
+                this.contextMenu.hide();
+            }
+            let node = this.gridData.getItem(selected[0]) || this.highlightedNode;
+            if (node && this.hasChildren(node.getData())
+                && !node.isExpanded() && this.isActive()) {
+
+                this.setActive(false);
+                this.invalidate();
+                this.expandNode(node).then(() => {
+                    if (!selected[0]) {
+                        this.highlightCurrentNode();
+                    }
+                });
+            }
+        }
+
+        private onAwithModKeyPress = (event: ExtendedKeyboardEvent) => {
+            let selected = this.grid.getSelectedRows();
+            if (selected.length === this.gridData.getLength()) {
+                this.deselectAll();
+            }
+            else {
+                this.selectAll();
+            }
+
+            event.preventDefault();
+            event.stopImmediatePropagation();
+        }
+
+        private onSpaceKeyPress() {
+            if (this.highlightedNode) {
+                let row = this.gridData.getRowById(this.highlightedNode.getId());
+                this.grid.toggleRow(row);
+            }
+            else if (this.grid.getSelectedRows().length > 0) {
+                this.deselectAll();
+            }
+        }
+
+        private onEnterKeyPress() {
+            if (this.highlightedNode) {
+                this.editItem(this.highlightedNode);
+            }
         }
 
         protected editItem(node: TreeNode<DATA>) {
@@ -500,7 +565,7 @@ module api.ui.treegrid {
             }
 
             let selectedIndex = this.highlightedNode ?
-                                this.gridData.getRowById(this.highlightedNode.getId()) : this.grid.getSelectedRows()[selectedCount-1];
+                                this.gridData.getRowById(this.highlightedNode.getId()) : this.grid.getSelectedRows()[selectedCount - 1];
 
             if (selectedIndex > 0) {
                 this.unselectAllRows();
@@ -528,7 +593,7 @@ module api.ui.treegrid {
             let rowIndex = this.gridData.getRowById(node.getId());
             let cell = this.grid.getCellNode(rowIndex, 0);
 
-            return wemjq(cell).closest(".slick-row");
+            return wemjq(cell).closest('.slick-row');
         }
 
         private highlightCurrentNode() {
@@ -547,7 +612,7 @@ module api.ui.treegrid {
             }
 
             let row = this.getRowByNode(node);
-            row.addClass("selected");
+            row.addClass('selected');
         }
 
         private unhighlightCurrentRow(skipEvent: boolean = false) {
@@ -563,7 +628,7 @@ module api.ui.treegrid {
             if (!row) {
                 return;
             }
-            row.removeClass("selected");
+            row.removeClass('selected');
 
             if (!skipEvent) {
                 this.notifyHighlightingChanged();
@@ -575,7 +640,7 @@ module api.ui.treegrid {
                 return;
             }
 
-            wemjq(this.grid.getHTMLElement()).find(".slick-row.selected").removeClass("selected");
+            wemjq(this.grid.getHTMLElement()).find('.slick-row.selected').removeClass('selected');
             this.highlightedNode = null;
 
             if (!skipEvent) {
@@ -599,12 +664,12 @@ module api.ui.treegrid {
             if (columns.length > 0) {
                 let formatter = columns[0].getFormatter();
                 let toggleFormatter = (row: number, cell: number, value: any, columnDef: any, node: TreeNode<DATA>) => {
-                    let toggleSpan = new api.dom.SpanEl("toggle icon");
+                    let toggleSpan = new api.dom.SpanEl('toggle icon');
                     if (this.hasChildren(node.getData())) {
-                        let toggleClass = node.isExpanded() ? "collapse" : "expand";
+                        let toggleClass = node.isExpanded() ? 'collapse' : 'expand';
                         toggleSpan.addClass(toggleClass);
                     }
-                    toggleSpan.getEl().setMarginLeft(TreeGrid.LEVEL_STEP_INDENT * (node.calcLevel() - 1) + "px");
+                    toggleSpan.getEl().setMarginLeft(TreeGrid.LEVEL_STEP_INDENT * (node.calcLevel() - 1) + 'px');
 
                     return toggleSpan.toString() + formatter(row, cell, value, columnDef, node);
                 };
@@ -630,7 +695,7 @@ module api.ui.treegrid {
             let emptyNodesCount = 0;
 
             for (let i = from; i <= lastIndex; i++) {
-                if (!!this.gridData.getItem(i) && this.gridData.getItem(i).getDataId() === "") {
+                if (!!this.gridData.getItem(i) && this.gridData.getItem(i).getDataId() === '') {
                     emptyNodesCount++;
                 }
             }
@@ -723,8 +788,8 @@ module api.ui.treegrid {
         }
 
         queryScrollable(): api.dom.Element {
-            let gridClasses = (" " + this.grid.getEl().getClass()).replace(/\s/g, ".");
-            let viewport = Element.fromString(".tree-grid " + gridClasses + " .slick-viewport", false);
+            let gridClasses = (' ' + this.grid.getEl().getClass()).replace(/\s/g, '.');
+            let viewport = Element.fromString('.tree-grid ' + gridClasses + ' .slick-viewport', false);
             return viewport;
         }
 
@@ -733,7 +798,7 @@ module api.ui.treegrid {
                 this.fetchChildren(node.getParent()).then((dataList: DATA[]) => {
                     let oldChildren = node.getParent().getChildren();
                     // Ensure to remove empty node from the end if present
-                    if (oldChildren.length > 0 && oldChildren[oldChildren.length - 1].getDataId() === "") {
+                    if (oldChildren.length > 0 && oldChildren[oldChildren.length - 1].getDataId() === '') {
                         oldChildren.pop();
                     }
                     let fetchedChildren = this.dataToTreeNodes(dataList, node.getParent());
@@ -770,7 +835,7 @@ module api.ui.treegrid {
         private areAllOldChildrenSelected(oldChildren: TreeNode<DATA>[]): boolean {
             if (oldChildren && oldChildren.length > 0) {
                 return oldChildren.every(node =>
-                        this.grid.isRowSelected(this.gridData.getRowById(node.getId()))
+                    this.grid.isRowSelected(this.gridData.getRowById(node.getId()))
                 );
             } else {
                 return false;
@@ -795,7 +860,7 @@ module api.ui.treegrid {
             const to = Math.min(lastVisible + this.loadBufferSize, lastIndex);
 
             for (let i = from; i <= to; i++) {
-                if (this.gridData.getItem(i) && this.gridData.getItem(i).getDataId() === "") {
+                if (this.gridData.getItem(i) && this.gridData.getItem(i).getDataId() === '') {
                     this.loading = true;
                     this.loadEmptyNode(this.gridData.getItem(i));
                     break;
@@ -816,7 +881,7 @@ module api.ui.treegrid {
          * Must be overridden.
          */
         getDataId(data: DATA): string {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         /**
@@ -857,11 +922,7 @@ module api.ui.treegrid {
         }
 
         dataToTreeNode(data: DATA, parent: TreeNode<DATA>): TreeNode<DATA> {
-            return new TreeNodeBuilder<DATA>().
-                setData(data, this.getDataId(data)).
-                setExpanded(this.expandAll).
-                setParent(parent).
-                build();
+            return new TreeNodeBuilder<DATA>().setData(data, this.getDataId(data)).setExpanded(this.expandAll).setParent(parent).build();
         }
 
         dataToTreeNodes(dataArray: DATA[], parent: TreeNode<DATA>): TreeNode<DATA>[] {
@@ -956,10 +1017,10 @@ module api.ui.treegrid {
 
         getSelectedDataList(): DATA[] {
             return this.highlightedNode ?
-                       [this.highlightedNode.getData()] :
-                       this.root.getFullSelection().map((node: TreeNode<DATA>) => {
-                            return node.getData();
-                        });
+                [this.highlightedNode.getData()] :
+                   this.root.getFullSelection().map((node: TreeNode<DATA>) => {
+                       return node.getData();
+                   });
         }
 
         // Hard reset
@@ -1088,7 +1149,7 @@ module api.ui.treegrid {
                 nodeToUpdate = this.root.getCurrentRoot().findNode(dataId);
 
             if (!nodeToUpdate) {
-                throw new Error("TreeNode to update not found: " + dataId);
+                throw new Error('TreeNode to update not found: ' + dataId);
             }
 
             return this.fetchAndUpdateNodes([nodeToUpdate], oldDataId ? this.getDataId(data) : undefined);
@@ -1100,7 +1161,7 @@ module api.ui.treegrid {
                 nodesToUpdate = this.root.getCurrentRoot().findNodes(dataId);
 
             if (!nodesToUpdate) {
-                throw new Error("TreeNode to update not found: " + dataId);
+                throw new Error('TreeNode to update not found: ' + dataId);
             }
 
             return this.fetchAndUpdateNodes(nodesToUpdate, oldDataId ? this.getDataId(data) : undefined);
@@ -1173,7 +1234,7 @@ module api.ui.treegrid {
         appendNode(data: DATA, nextToSelection: boolean = false, prepend: boolean = true,
                    stashedParentNode?: TreeNode<DATA>): wemQ.Promise<void> {
             let parentNode = this.getParentNode(nextToSelection, stashedParentNode);
-            let index = prepend ? 0 :  Math.max(0, parentNode.getChildren().length - 1);
+            let index = prepend ? 0 : Math.max(0, parentNode.getChildren().length - 1);
             return this.insertNode(data, nextToSelection, index, stashedParentNode);
         }
 
@@ -1231,9 +1292,9 @@ module api.ui.treegrid {
                         }
                         deferred.resolve(null);
                     }).catch((reason: any) => {
-                        this.handleError(reason);
-                        deferred.reject(reason);
-                    });
+                    this.handleError(reason);
+                    deferred.reject(reason);
+                });
             } else {
                 this.doInsertNodeToParentWithChildren(parentNode, data, root, index, stashedParentNode, isRootParentNode);
                 deferred.resolve(null);
@@ -1296,7 +1357,7 @@ module api.ui.treegrid {
 
 
         initData(nodes: TreeNode<DATA>[]) {
-            this.gridData.setItems(nodes, "id");
+            this.gridData.setItems(nodes, 'id');
             this.notifyDataChanged(new DataChangedEvent<DATA>(nodes, DataChangedEvent.ADDED));
             this.resetCurrentSelection(nodes);
         }
@@ -1349,9 +1410,9 @@ module api.ui.treegrid {
                             }
                             deferred.resolve(true);
                         }).catch((reason: any) => {
-                            this.handleError(reason);
+                        this.handleError(reason);
                         deferred.resolve(false);
-                        }).done(() => this.notifyLoaded());
+                    }).done(() => this.notifyLoaded());
                 }
             }
 
