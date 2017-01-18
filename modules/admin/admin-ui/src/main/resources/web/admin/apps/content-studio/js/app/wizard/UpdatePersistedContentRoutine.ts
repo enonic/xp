@@ -83,7 +83,7 @@ export class UpdatePersistedContentRoutine extends api.util.Flow<Content,UpdateP
 
         let pageCUDRequest = this.producePageCUDRequest(context.content, this.viewedContent);
 
-        if (pageCUDRequest != null) {
+        if (pageCUDRequest !== null) {
             return pageCUDRequest
                 .sendAndParse().then((content: Content): void => {
 

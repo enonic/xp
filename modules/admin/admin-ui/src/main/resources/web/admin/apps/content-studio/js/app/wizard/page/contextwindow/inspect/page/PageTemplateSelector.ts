@@ -66,14 +66,14 @@ export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
             });
 
             this.pageModel.onPropertyChanged((event: PropertyChangedEvent) => {
-                if (event.getPropertyName() == PageModel.PROPERTY_TEMPLATE && this !== event.getSource()) {
+                if (event.getPropertyName() === PageModel.PROPERTY_TEMPLATE && this !== event.getSource()) {
                     let pageTemplateKey = <PageTemplateKey>event.getNewValue();
                     if (pageTemplateKey) {
                         this.selectTemplate(pageTemplateKey);
                     } else {
                         this.selectOption(pageTemplateOptions.getDefault(), true);
                     }
-                } else if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && event.getNewValue()) {
+                } else if (event.getPropertyName() === PageModel.PROPERTY_CONTROLLER && event.getNewValue()) {
                     this.selectCustomized();
                 }
             });
@@ -104,7 +104,7 @@ export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
 
     unSelection(listener: (event: PageTemplate)=>void) {
         this.selectionListeners.filter((currentListener: (event: PageTemplate)=>void) => {
-            return listener != currentListener;
+            return listener !== currentListener;
         });
     }
 

@@ -161,7 +161,7 @@ module api.ui.time {
                 } else {
                     date = api.util.DateHelper.parseDateTime(typedDateTime);
                     let dateLength = date && date.getFullYear().toString().length + 12;
-                    if (date && date.toString() != 'Invalid Date' && typedDateTime.length == dateLength) {
+                    if (date && date.toString() !== 'Invalid Date' && typedDateTime.length === dateLength) {
                         this.validUserInput = true;
                         this.setDateTime(date);
                         if (!this.popup.isVisible()) {

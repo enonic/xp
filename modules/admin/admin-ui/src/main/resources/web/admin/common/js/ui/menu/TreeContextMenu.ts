@@ -85,7 +85,7 @@ module api.ui.menu {
 
         unItemClicked(listener: () => void) {
             this.itemClickListeners = this.itemClickListeners.filter((currentListener: () => void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 

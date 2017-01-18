@@ -72,7 +72,7 @@ export class CompareContentGrid extends TreeGrid<ContentSummaryAndCompareStatus>
 
     sortNodeChildren(node: TreeNode<ContentSummaryAndCompareStatus>) {
         let comparator: api.Comparator<TreeNode<ContentSummaryAndCompareStatus>>;
-        if (this.getRoot().getCurrentRoot() == node) {
+        if (this.getRoot().getCurrentRoot() === node) {
             comparator = new api.content.util.ContentNodeByDisplayNameComparator();
         } else {
             comparator = new api.content.util.ContentNodeByModifiedTimeComparator();

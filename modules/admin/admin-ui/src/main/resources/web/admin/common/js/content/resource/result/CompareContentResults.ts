@@ -14,7 +14,7 @@ module api.content.resource.result {
 
             this.compareContentResults.forEach((result: CompareContentResult) => {
 
-                if (result.getId() == contentId) {
+                if (result.getId() === contentId) {
                     compareContentResult = result;
                 }
             });

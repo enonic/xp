@@ -162,7 +162,7 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
 
     private handleWizardUpdated(wizard: UserItemWizardPanel<api.Equitable>, tabMenuItem: AppBarTabMenuItem) {
 
-        if (tabMenuItem != null) {
+        if (tabMenuItem !== null) {
             this.getAppBarTabMenu().deselectNavigationItem();
             this.getAppBarTabMenu().removeNavigationItem(tabMenuItem);
             this.removePanelByIndex(tabMenuItem.getIndex());
@@ -175,7 +175,7 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
         // TODO: what is this view that we try to remove?
         /*var viewTabId = AppBarTabId.forView(id);
          var viewTabMenuItem = this.getAppBarTabMenu().getNavigationItemById(viewTabId);
-         if (viewTabMenuItem != null) {
+         if (viewTabMenuItem !== null) {
          this.removePanelByIndex(viewTabMenuItem.getIndex());
          }*/
     }
@@ -186,10 +186,10 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
         let tabId = AppBarTabId.forNew(data.tabName);
         let tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
-        if (tabMenuItem != null) {
+        if (tabMenuItem !== null) {
             this.selectPanel(tabMenuItem);
         } else {
-            if (!userItem || userItem.getType() == UserTreeGridItemType.USER_STORE) {
+            if (!userItem || userItem.getType() === UserTreeGridItemType.USER_STORE) {
                 this.handleUserStoreNew(tabId, data.tabName);
             } else {
                 this.loadUserStoreIfNeeded(userItem).then((userStore: UserStore) => {
@@ -318,13 +318,13 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
 
             let tabMenuItem = this.resolveTabMenuItem(userItem);
 
-            if (tabMenuItem != null) {
+            if (tabMenuItem !== null) {
                 this.selectPanel(tabMenuItem);
             } else {
                 let tabId = this.getTabIdForUserItem(userItem);
                 if (userItem.getType() === UserTreeGridItemType.USER_STORE) {
                     this.handleUserStoreEdit(userItem.getUserStore(), tabId, tabMenuItem);
-                } else if (userItem.getType() == UserTreeGridItemType.PRINCIPAL) {
+                } else if (userItem.getType() === UserTreeGridItemType.PRINCIPAL) {
                     this.loadUserStoreIfNeeded(userItem).then((userStore) => {
                         this.handlePrincipalEdit(userItem.getPrincipal(), userStore, tabId, tabMenuItem);
                     });
@@ -349,11 +349,11 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
 
         let principalType = principal.getType();
 
-        if (PrincipalType.USER == principalType && !this.areUsersEditable(userStore)) {
+        if (PrincipalType.USER === principalType && !this.areUsersEditable(userStore)) {
             api.notify.showError('The ID Provider selected for this user store does not allow to edit users.');
             return;
 
-        } else if (PrincipalType.GROUP == principalType && !this.areGroupsEditable(userStore)) {
+        } else if (PrincipalType.GROUP === principalType && !this.areGroupsEditable(userStore)) {
             api.notify.showError('The ID Provider selected for this user store does not allow to edit groups.');
             return;
 
@@ -422,9 +422,9 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
 
     private getTabIdForUserItem(userItem: UserTreeGridItem): AppBarTabId {
         let appBarTabId: AppBarTabId;
-        if (UserTreeGridItemType.PRINCIPAL == userItem.getType()) {
+        if (UserTreeGridItemType.PRINCIPAL === userItem.getType()) {
             appBarTabId = AppBarTabId.forEdit(userItem.getPrincipal().getKey().toString());
-        } else if (UserTreeGridItemType.USER_STORE == userItem.getType()) {
+        } else if (UserTreeGridItemType.USER_STORE === userItem.getType()) {
             appBarTabId = AppBarTabId.forEdit(userItem.getUserStore().getKey().toString());
         }
         return appBarTabId;
@@ -432,12 +432,12 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
 
     private areUsersEditable(userStore: UserStore): boolean {
         let idProviderMode = userStore.getIdProviderMode();
-        return api.security.IdProviderMode.EXTERNAL != idProviderMode && api.security.IdProviderMode.MIXED != idProviderMode;
+        return api.security.IdProviderMode.EXTERNAL !== idProviderMode && api.security.IdProviderMode.MIXED !== idProviderMode;
     }
 
     private areGroupsEditable(userStore: UserStore): boolean {
         let idProviderMode = userStore.getIdProviderMode();
-        return api.security.IdProviderMode.EXTERNAL != idProviderMode;
+        return api.security.IdProviderMode.EXTERNAL !== idProviderMode;
     }
 
 }

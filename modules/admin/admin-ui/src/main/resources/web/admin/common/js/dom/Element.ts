@@ -193,7 +193,7 @@ module api.dom {
         public findChildById(id: string, deep: boolean = false): Element {
             for (let i = 0; i < this.children.length; i++) {
                 let child = this.children[i];
-                if (child.getId() == id) {
+                if (child.getId() === id) {
                     return child;
                 } else if (deep) {
                     let found = child.findChildById(id, deep);
@@ -443,7 +443,7 @@ module api.dom {
         }
 
         isDraggable(): boolean {
-            return this.getEl().getAttribute('draggable') == 'true';
+            return this.getEl().getAttribute('draggable') === 'true';
         }
 
         setContentEditable(flag: boolean): ArticleEl {
@@ -452,7 +452,7 @@ module api.dom {
         }
 
         isContentEditable(): boolean {
-            return this.getEl().getAttribute('contenteditable') == 'true';
+            return this.getEl().getAttribute('contenteditable') === 'true';
         }
 
         giveFocus(): boolean {
@@ -463,7 +463,7 @@ module api.dom {
                 return false;
             }
             this.el.focus();
-            let gotFocus: boolean = document.activeElement == this.el.getHTMLElement();
+            let gotFocus: boolean = document.activeElement === this.el.getHTMLElement();
             if (!gotFocus && Element.debug) {
                 console.log('Element.giveFocus(): Failed to give focus to Element: class = ' + api.ClassHelper.getClassName(this) +
                             ', id = ' +
@@ -480,7 +480,7 @@ module api.dom {
                 return false;
             }
             this.el.blur();
-            let gotBlur: boolean = document.activeElement != this.el.getHTMLElement();
+            let gotBlur: boolean = document.activeElement !== this.el.getHTMLElement();
             if (!gotBlur && Element.debug) {
                 console.log('Element.giveBlur(): Failed to give blur to Element: class = ' + api.ClassHelper.getClassName(this) +
                             ', id = ' +
@@ -597,7 +597,7 @@ module api.dom {
             // that happens when parentElement has been set on Element in constructor, which is evil >:)
             // no need to do it with dom nodes because html takes care of this
             if (child.parentElement) {
-                if (child.parentElement != this) {
+                if (child.parentElement !== this) {
                     child.parentElement.unregisterChildElement(child);
                 } else if (this.children.indexOf(child) > -1) {
                     // is already registered
@@ -720,7 +720,7 @@ module api.dom {
             let indexFromDOM = this.el.getSiblingIndex();
             if (this.parentElement) {
                 let indexFromElement = this.parentElement.children.indexOf(this);
-                api.util.assertState(indexFromElement == indexFromDOM, 'index of Element in parentElement.children' +
+                api.util.assertState(indexFromElement === indexFromDOM, 'index of Element in parentElement.children' +
                                                                        ' [' + indexFromElement + '] does not correspond with' +
                                                                        ' the actual index [' + indexFromDOM +
                                                                        '] of the HTMLElement in DOM');
@@ -756,7 +756,7 @@ module api.dom {
         private mouseEnterByHandler: Object = {};
 
         onMouseEnter(handler: (e: MouseEvent) => any) {
-            if (typeof this.getHTMLElement().onmouseenter != 'undefined') {
+            if (typeof this.getHTMLElement().onmouseenter !== 'undefined') {
                 this.getEl().addEventListener('mouseenter', handler);
             } else {
                 this.mouseEnterByHandler[<any> handler] = (e: MouseEvent) => {
@@ -770,7 +770,7 @@ module api.dom {
         }
 
         unMouseEnter(handler: (e: MouseEvent) => any) {
-            if (typeof this.getHTMLElement().onmouseenter != 'undefined') {
+            if (typeof this.getHTMLElement().onmouseenter !== 'undefined') {
                 this.getEl().removeEventListener('mouseenter', handler);
             } else {
                 this.getEl().removeEventListener('mouseover', this.mouseEnterByHandler[<any> handler]);
@@ -780,7 +780,7 @@ module api.dom {
         private mouseLeaveByHandler: Object = {};
 
         onMouseLeave(handler: (e: MouseEvent) => any) {
-            if (typeof this.getHTMLElement().onmouseleave != 'undefined') {
+            if (typeof this.getHTMLElement().onmouseleave !== 'undefined') {
                 this.getEl().addEventListener('mouseleave', handler);
             } else {
                 this.mouseLeaveByHandler[<any> handler] = (e: MouseEvent) => {
@@ -794,7 +794,7 @@ module api.dom {
         }
 
         unMouseLeave(handler: (e: MouseEvent) => any) {
-            if (typeof this.getHTMLElement().onmouseleave != 'undefined') {
+            if (typeof this.getHTMLElement().onmouseleave !== 'undefined') {
                 this.getEl().removeEventListener('mouseleave', handler);
             } else {
                 this.getEl().removeEventListener('mouseout', this.mouseLeaveByHandler[<any> handler]);

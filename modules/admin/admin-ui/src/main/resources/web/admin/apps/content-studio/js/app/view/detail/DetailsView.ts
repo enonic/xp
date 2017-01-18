@@ -61,7 +61,7 @@ export class DetailsView extends api.dom.DivEl {
     private subscribeOnEvents() {
         ContentVersionSetEvent.on((event: ContentVersionSetEvent) => {
             if (ActiveDetailsPanelManager.getActiveDetailsPanel().isVisibleOrAboutToBeVisible() && !!this.activeWidget &&
-                this.activeWidget.getWidgetName() == 'Version history') {
+                this.activeWidget.getWidgetName() === 'Version history') {
                 this.updateActiveWidget();
             }
         });
@@ -119,7 +119,7 @@ export class DetailsView extends api.dom.DivEl {
     }
 
     /*setActiveWidgetWithName(value: string) {
-     if (this.activeWidget && value == this.activeWidget.getWidgetName()) {
+     if (this.activeWidget && value === this.activeWidget.getWidgetName()) {
      return;
      }
 
@@ -129,7 +129,7 @@ export class DetailsView extends api.dom.DivEl {
 
      var widgetFound = false;
      this.widgetViews.forEach((widgetView: WidgetView) => {
-     if (widgetView.getWidgetName() == value) {
+     if (widgetView.getWidgetName() === value) {
      widgetView.setActive();
      widgetFound = true;
      }
@@ -152,7 +152,7 @@ export class DetailsView extends api.dom.DivEl {
     }
 
     isDefaultWidget(widgetView: WidgetView): boolean {
-        return widgetView == this.defaultWidgetView;
+        return widgetView === this.defaultWidgetView;
     }
 
     getDefaultWidget(): WidgetView {

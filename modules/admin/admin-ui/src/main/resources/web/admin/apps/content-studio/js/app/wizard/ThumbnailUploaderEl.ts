@@ -13,27 +13,27 @@ export class ThumbnailUploaderEl extends api.ui.uploader.UploaderEl<api.content.
 
     constructor(config?: ThumbnailUploaderElConfig) {
 
-        if (config.url == undefined) {
+        if (config.url === undefined) {
             config.url = api.util.UriHelper.getRestUri('content/updateThumbnail');
         }
-        if (config.showCancel == undefined) {
+        if (config.showCancel === undefined) {
             config.showCancel = false;
         }
-        if (config.resultAlwaysVisisble == undefined) {
+        if (config.resultAlwaysVisisble === undefined) {
             config.resultAlwaysVisisble = true;
         }
-        if (config.allowTypes == undefined) {
+        if (config.allowTypes === undefined) {
             config.allowTypes = [
                 {title: 'Image files', extensions: 'jpg,gif,png,svg'}
             ];
         }
-        if (config.allowMultiSelection == undefined) {
+        if (config.allowMultiSelection === undefined) {
             config.allowMultiSelection = false;
         }
-        if (config.hasUploadButton == undefined) {
+        if (config.hasUploadButton === undefined) {
             config.hasUploadButton = false;
         }
-        if (config.hideDefaultDropZone == undefined) {
+        if (config.hideDefaultDropZone === undefined) {
             config.hideDefaultDropZone = false;
         }
 

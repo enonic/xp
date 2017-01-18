@@ -95,7 +95,7 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
         let root = this.getRoot().getCurrentRoot();
         root.getChildren().forEach((child: TreeNode<Application>) => {
             let curApplication: Application = child.getData();
-            if (curApplication.getApplicationKey().toString() == applicationKey.toString()) {
+            if (curApplication.getApplicationKey().toString() === applicationKey.toString()) {
                 this.updateNode(curApplication);
             }
         });
@@ -106,7 +106,7 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
         let result;
         root.getChildren().forEach((child: TreeNode<Application>) => {
             let curApplication: Application = child.getData();
-            if (curApplication.getApplicationKey().toString() == applicationKey.toString()) {
+            if (curApplication.getApplicationKey().toString() === applicationKey.toString()) {
                 result = curApplication;
             }
         });
@@ -117,7 +117,7 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
         let root = this.getRoot().getCurrentRoot();
         root.getChildren().forEach((child: TreeNode<Application>) => {
             let curApplication: Application = child.getData();
-            if (curApplication.getApplicationKey().toString() == applicationKey.toString()) {
+            if (curApplication.getApplicationKey().toString() === applicationKey.toString()) {
                 this.deleteNode(curApplication);
             }
         });

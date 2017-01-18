@@ -25,7 +25,7 @@ export class StatusSelectionItem extends api.app.browse.SelectionItem<ContentSum
         let statusDiv = new api.dom.DivEl('status');
         let statusClass = '' + CompareStatus[compareStatus];
         let compareStatusFormatted = api.content.CompareStatusFormatter.formatStatus(compareStatus);
-        if (publishStatus && (publishStatus == PublishStatus.PENDING || publishStatus == PublishStatus.EXPIRED)) {
+        if (publishStatus && (publishStatus === PublishStatus.PENDING || publishStatus === PublishStatus.EXPIRED)) {
             let publishStatusFormatted = api.content.PublishStatusFormatter.formatStatus(publishStatus);
             compareStatusFormatted += ` (${publishStatusFormatted})`;
             statusClass += ' ' + PublishStatus[publishStatus];

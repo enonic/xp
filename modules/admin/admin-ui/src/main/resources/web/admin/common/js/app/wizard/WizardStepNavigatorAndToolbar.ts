@@ -111,7 +111,7 @@ module api.app.wizard {
                 let strIndex = (index + 1) + ' - ';
                 if (numberTabs && tab.getLabel().indexOf(strIndex) !== 0) {
                     tab.setLabel(strIndex + tab.getLabel());
-                    if (index == selectedTabIndex) {
+                    if (index === selectedTabIndex) {
                         this.foldButton.setLabel(tab.getLabel());
                     }
                 } else {
@@ -121,7 +121,7 @@ module api.app.wizard {
         }
 
         checkAndMinimize() {
-            const needUpdate = () => this.isStepNavigatorFit() == this.hasClass('minimized');
+            const needUpdate = () => this.isStepNavigatorFit() === this.hasClass('minimized');
 
             if (needUpdate()) {
                 const needMinimize = !this.hasClass('minimized');

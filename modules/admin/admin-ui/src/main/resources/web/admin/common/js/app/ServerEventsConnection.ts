@@ -182,7 +182,7 @@ module api.app {
         unServerEvent(listener: (event: api.event.Event) => void) {
             this.serverEventReceivedListeners =
                 this.serverEventReceivedListeners.filter((currentListener: (event: api.event.Event)=>void)=> {
-                    return currentListener != listener;
+                    return currentListener !== listener;
                 });
         }
 
@@ -199,7 +199,7 @@ module api.app {
         unConnectionLost(listener: () => void) {
             this.connectionLostListeners =
                 this.connectionLostListeners.filter((currentListener: () => void) =>  {
-                    return currentListener != listener;
+                    return currentListener !== listener;
                 });
         }
 

@@ -57,7 +57,7 @@ module api.content.form.inputtype.customselector {
             return this.send().then((response: api.rest.JsonResponse<CustomSelectorResponse>) => {
 
                 let result: CustomSelectorResponse = response.getResult();
-                if (this.start == 0) {
+                if (this.start === 0) {
                     this.results = [];
                 }
 

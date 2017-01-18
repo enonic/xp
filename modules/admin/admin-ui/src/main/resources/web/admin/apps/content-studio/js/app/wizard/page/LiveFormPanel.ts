@@ -301,10 +301,10 @@ export class LiveFormPanel extends api.ui.panel.Panel {
                 const oldValue = event.getOldValue();
                 const newValue = event.getNewValue();
 
-                if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && !api.ObjectHelper.objectEquals(oldValue, newValue)) {
+                if (event.getPropertyName() === PageModel.PROPERTY_CONTROLLER && !api.ObjectHelper.objectEquals(oldValue, newValue)) {
                     this.contentWizardPanel.saveChanges();
                 }
-                if (event.getPropertyName() == PageModel.PROPERTY_TEMPLATE) {
+                if (event.getPropertyName() === PageModel.PROPERTY_TEMPLATE) {
 
                     // do not reload page if there was no template in pageModel before and if new template is the default one -
                     // case when switching automatic template to default
@@ -389,7 +389,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         if (LiveFormPanel.debug) {
             console.debug('LiveFormPanel.loadPage at ' + new Date().toISOString());
         }
-        if (this.pageSkipReload == false && !this.pageLoading) {
+        if (this.pageSkipReload === false && !this.pageLoading) {
 
             if (clearInspection) {
                 this.clearSelection();
@@ -521,7 +521,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
         this.liveEditPageProxy.onComponentRemoved((event: ComponentRemovedEvent) => {
 
-            if (!this.pageModel.isPageTemplate() && this.pageModel.getMode() == PageMode.AUTOMATIC) {
+            if (!this.pageModel.isPageTemplate() && this.pageModel.getMode() === PageMode.AUTOMATIC) {
                 this.pageModel.initializePageFromDefault(this);
             }
 

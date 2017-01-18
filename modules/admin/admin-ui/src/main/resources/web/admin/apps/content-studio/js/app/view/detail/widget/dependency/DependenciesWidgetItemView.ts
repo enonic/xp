@@ -46,7 +46,7 @@ export class DependenciesWidgetItemView extends WidgetItemView {
     }
 
     private setButtonDecoration(button: ActionButton, dependencies: DependencyGroup[]) {
-        if (dependencies.length == 0) {
+        if (dependencies.length === 0) {
             button.hide();
         } else {
             button.setLabel(button.getAction().getLabel() + ' (' + this.getTotalItemCount(dependencies) + ')');
@@ -100,7 +100,7 @@ export class DependenciesWidgetItemView extends WidgetItemView {
     private createDependenciesContainer(type: DependencyType, dependencies: DependencyGroup[]): api.dom.DivEl {
         let typeAsString = DependencyType[type].toLowerCase();
         let div = new api.dom.DivEl('dependencies-container ' + typeAsString);
-        if (dependencies.length == 0) {
+        if (dependencies.length === 0) {
             this.addClass('no-'  + typeAsString);
             div.addClass('no-dependencies');
             div.setHtml('No ' + typeAsString + ' dependencies');

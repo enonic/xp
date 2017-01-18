@@ -289,7 +289,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                         new api.application.GetApplicationRequest(event.getApplicationKey()).sendAndParse()
                             .then(
                             (application: Application) => {
-                                if (application.getState() == 'stopped') {
+                                if (application.getState() === 'stopped') {
                                     api.notify.showWarning(message);
                                 }
                             })
@@ -587,7 +587,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     return this.fetchMixin(name);
                 }));
 
-            applications.filter((app) => app != null).forEach((app: Application) => {
+            applications.filter((app) => app !== null).forEach((app: Application) => {
                 metadataMixinPromises = metadataMixinPromises.concat(
                     app.getMetaSteps().map((name: MixinName) => {
                         return this.fetchMixin(name);
@@ -648,7 +648,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     private fetchApplication(key: ApplicationKey): wemQ.Promise<Application> {
         let deferred = wemQ.defer<Application>();
         new api.application.GetApplicationRequest(key).sendAndParse().then((app) => {
-            if (app.getState() == Application.STATE_STOPPED) {
+            if (app.getState() === Application.STATE_STOPPED) {
                 this.missingOrStoppedAppKeys.push(key);
             }
             deferred.resolve(app);
@@ -778,12 +778,12 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         let updateHandler = (contentId: ContentId, compareStatus?: CompareStatus, publishStatus?: PublishStatus) => {
 
             if (this.isCurrentContentId(contentId)) {
-                if (publishStatus != undefined) {
+                if (publishStatus !== undefined) {
                     this.persistedContentPublishStatus = this.currentContentPublishStatus = publishStatus;
                     this.getContentWizardToolbarPublishControls().
                         setPublishStatus(publishStatus);
                 }
-                if (compareStatus != undefined) {
+                if (compareStatus !== undefined) {
                     this.persistedContentCompareStatus = this.currentContentCompareStatus = compareStatus;
                     this.getContentWizardToolbarPublishControls().
                         setCompareStatus(compareStatus);
@@ -1387,7 +1387,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     private produceCreateContentRequest(): wemQ.Promise<CreateContentRequest> {
         let deferred = wemQ.defer<CreateContentRequest>();
 
-        let parentPath = this.parentContent != null ? this.parentContent.getPath() : api.content.ContentPath.ROOT;
+        let parentPath = this.parentContent !== null ? this.parentContent.getPath() : api.content.ContentPath.ROOT;
 
         if (this.contentType.getContentTypeName().isMedia()) {
             deferred.resolve(null);
@@ -1471,7 +1471,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             return false;
         }
         let persistedContent: Content = this.getPersistedItem();
-        if (persistedContent == undefined) {
+        if (persistedContent === undefined) {
             return true;
         } else {
 
@@ -1479,7 +1479,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
             // ignore empty values for auto-created content that hasn't been updated yet because it doesn't have data at all
             let ignoreEmptyValues = !persistedContent.getModifiedTime() || !persistedContent.getCreatedTime() ||
-                                    persistedContent.getCreatedTime().getTime() == persistedContent.getModifiedTime().getTime();
+                                    persistedContent.getCreatedTime().getTime() === persistedContent.getModifiedTime().getTime();
 
             return !viewedContent.equals(persistedContent, ignoreEmptyValues);
         }
@@ -1543,7 +1543,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 optionSet.getOptions().forEach((option: api.form.FormOptionSetOption) => {
                     let isSelected = false;
                     selectionArray.forEach((selectedOptionName: api.data.Property) => {
-                        if (selectedOptionName.getString() == option.getName()) {
+                        if (selectedOptionName.getString() === option.getName()) {
                             isSelected = true;
                         }
                     });
@@ -1678,7 +1678,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     unContentNamed(listener: (event: ContentNamedEvent)=>void) {
         this.contentNamedListeners = this.contentNamedListeners.filter((curr) => {
-            return curr != listener;
+            return curr !== listener;
         });
         return this;
     }

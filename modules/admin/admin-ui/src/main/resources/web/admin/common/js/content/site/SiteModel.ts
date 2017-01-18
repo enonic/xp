@@ -35,7 +35,7 @@ module api.content.site {
             this.applicationPropertyAddedListener = (event: api.data.PropertyAddedEvent) => {
                 let property: api.data.Property = event.getProperty();
 
-                if (property.getPath().toString().indexOf('.siteConfig') == 0 && property.getName() == 'config') {
+                if (property.getPath().toString().indexOf('.siteConfig') === 0 && property.getName() === 'config') {
                     let siteConfig: SiteConfig = api.content.site.SiteConfig.create().fromData(property.getParent()).build();
                     if (!this.siteConfigs) {
                         this.siteConfigs = [];
@@ -47,7 +47,7 @@ module api.content.site {
 
             this.applicationPropertyRemovedListener = (event: api.data.PropertyRemovedEvent) => {
                 let property: api.data.Property = event.getProperty();
-                if (property.getName() == 'siteConfig') {
+                if (property.getName() === 'siteConfig') {
                     let applicationKey = ApplicationKey.fromString(property.getPropertySet().getString('applicationKey'));
                     this.siteConfigs = this.siteConfigs.filter((siteConfig: SiteConfig) =>
                         !siteConfig.getApplicationKey().equals(applicationKey)
@@ -57,9 +57,9 @@ module api.content.site {
             };
 
             this.applicationGlobalEventsListener = (event: ApplicationEvent) => {
-                if (ApplicationEventType.STOPPED == event.getEventType()) {
+                if (ApplicationEventType.STOPPED === event.getEventType()) {
                     this.notifyApplicationUnavailable(event);
-                } else if (ApplicationEventType.STARTED == event.getEventType()) {
+                } else if (ApplicationEventType.STARTED === event.getEventType()) {
                     this.notifyApplicationStarted(event);
                 }
             };
@@ -104,7 +104,7 @@ module api.content.site {
         unPropertyChanged(listener: (event: api.PropertyChangedEvent)=>void) {
             this.propertyChangedListeners =
                 this.propertyChangedListeners.filter((curr: (event: api.PropertyChangedEvent)=>void) => {
-                    return listener != curr;
+                    return listener !== curr;
                 });
         }
 
@@ -122,7 +122,7 @@ module api.content.site {
         unApplicationAdded(listener: (event: ApplicationAddedEvent)=>void) {
             this.applicationAddedListeners =
             this.applicationAddedListeners.filter((curr: (event: ApplicationAddedEvent)=>void) => {
-                    return listener != curr;
+                    return listener !== curr;
                 });
         }
 
@@ -140,7 +140,7 @@ module api.content.site {
         unApplicationRemoved(listener: (event: ApplicationRemovedEvent)=>void) {
             this.applicationRemovedListeners =
             this.applicationRemovedListeners.filter((curr: (event: ApplicationRemovedEvent)=>void) => {
-                    return listener != curr;
+                    return listener !== curr;
                 });
         }
 
@@ -158,7 +158,7 @@ module api.content.site {
         unApplicationUnavailable(listener: (applicationEvent: ApplicationEvent)=>void) {
             this.applicationUnavailableListeners =
                 this.applicationUnavailableListeners.filter((curr: (applicationEvent: ApplicationEvent)=>void) => {
-                    return listener != curr;
+                    return listener !== curr;
                 });
         }
 
@@ -175,7 +175,7 @@ module api.content.site {
         unApplicationStarted(listener: (applicationEvent: ApplicationEvent)=>void) {
             this.applicationStartedListeners =
                 this.applicationStartedListeners.filter((curr: (applicationEvent: ApplicationEvent)=>void) => {
-                    return listener != curr;
+                    return listener !== curr;
                 });
         }
 

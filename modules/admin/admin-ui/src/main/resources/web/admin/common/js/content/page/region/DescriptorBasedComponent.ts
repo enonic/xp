@@ -89,8 +89,8 @@ module api.content.page.region {
 
             return <DescriptorBasedComponentJson>{
                 name: this.getName() ? this.getName().toString() : null,
-                descriptor: this.descriptor != null ? this.descriptor.toString() : null,
-                config: this.config != null ? this.config.toJson() : null
+                descriptor: this.descriptor !== null ? this.descriptor.toString() : null,
+                config: this.config !== null ? this.config.toJson() : null
             };
         }
 

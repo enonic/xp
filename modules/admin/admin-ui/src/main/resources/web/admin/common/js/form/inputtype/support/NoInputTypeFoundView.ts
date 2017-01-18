@@ -32,7 +32,7 @@ module api.form.inputtype.support {
 
             let inputEl = api.ui.text.TextInput.middle();
             inputEl.setName(this.getInput().getName());
-            if (property != null) {
+            if (property !== null) {
                 inputEl.setValue(property.getString());
             }
             inputEl.onValueChanged((event: api.ValueChangedEvent) => {

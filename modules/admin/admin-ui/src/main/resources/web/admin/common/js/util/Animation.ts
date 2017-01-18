@@ -31,7 +31,7 @@ module api.util {
                     this.doStep(progress);
                 }
 
-                if (progress == 1) {
+                if (progress === 1) {
                     this.stop();
                 }
             }, this.interval);

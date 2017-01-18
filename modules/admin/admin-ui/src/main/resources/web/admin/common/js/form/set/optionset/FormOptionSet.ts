@@ -13,7 +13,7 @@ module api.form {
             this.expanded = formOptionSetJson.expanded;
             this.multiselection = Occurrences.fromJson(formOptionSetJson.multiselection);
 
-            if (formOptionSetJson.options != null) {
+            if (formOptionSetJson.options !== null) {
                 formOptionSetJson.options.forEach((formOptionSetOptionJson: api.form.json.FormOptionSetOptionJson) => {
                     let option = FormOptionSetOption.fromJson(formOptionSetOptionJson);
                     if (option) {
@@ -45,7 +45,7 @@ module api.form {
         }
 
         isRadioSelection(): boolean {
-            return this.multiselection.getMinimum() == 1 && this.multiselection.getMaximum() == 1;
+            return this.multiselection.getMinimum() === 1 && this.multiselection.getMaximum() === 1;
         }
 
         public toFormOptionSetJson(): api.form.json.FormItemTypeWrapperJson {

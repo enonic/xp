@@ -23,7 +23,7 @@ module api.query.expr {
         toString() {
             let result: string = '';
 
-            if (this.constraint != null) {
+            if (this.constraint !== null) {
                 result = result.concat(this.constraint.toString());
             }
 

@@ -212,7 +212,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
 
     hasUnsavedChanges(): boolean {
         let persistedUserStore: UserStore = this.getPersistedItem();
-        if (persistedUserStore == undefined) {
+        if (persistedUserStore === undefined) {
             let wizardHeader = this.getWizardHeader();
             return wizardHeader.getName() !== '' ||
                    wizardHeader.getDisplayName() !== '' ||

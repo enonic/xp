@@ -140,7 +140,7 @@ module api.util.htmlarea.editor {
             let strTools = this.tools;
             tools.forEach((toolStr: any) => {
                 toolStr.value.split(' ').forEach((tool: string) => {
-                    if (tool == '*') {
+                    if (tool === '*') {
                         strTools = '';
                     } else {
                         strTools = strTools.replace(tool, '');
@@ -283,10 +283,10 @@ module api.util.htmlarea.editor {
                         }
                     });
                     editor.on('keydown', (e) => {
-                        if (e.keyCode == 9 && !e.altKey && !e.ctrlKey) { // tab pressed
+                        if (e.keyCode === 9 && !e.altKey && !e.ctrlKey) { // tab pressed
                             editor.execCommand(e.shiftKey ? 'Outdent' : 'Indent');
                             e.preventDefault();
-                        } else if (e.keyCode == 46 || e.keyCode == 8) { // DELETE
+                        } else if (e.keyCode === 46 || e.keyCode === 8) { // DELETE
                             let selectedNode = editor.selection.getRng().startContainer;
                             if (/^(FIGURE)$/.test(selectedNode.nodeName)) {
                                 let previousEl = selectedNode.previousSibling;

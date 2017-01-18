@@ -140,7 +140,7 @@ module api.form.inputtype.support {
 
         unValidityChanged(listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) {
             this.inputValidityChangedListeners.filter((currentListener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) => {
-                return listener == currentListener;
+                return listener === currentListener;
             });
         }
 

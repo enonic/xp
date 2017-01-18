@@ -67,7 +67,7 @@ module api.content.form.inputtype.tag {
                         propertySet.forEachProperty(this.propertyPath.getLastElement().getName(), (property: Property) => {
                             if (property.hasNonNullValue()) {
                                 let suggestedTag = property.getString();
-                                if (suggestedTag.search(new RegExp(value, 'i')) == 0 && suggestedTags.indexOf(suggestedTag) < 0) {
+                                if (suggestedTag.search(new RegExp(value, 'i')) === 0 && suggestedTags.indexOf(suggestedTag) < 0) {
                                     suggestedTags.push(suggestedTag);
                                 }
                             }

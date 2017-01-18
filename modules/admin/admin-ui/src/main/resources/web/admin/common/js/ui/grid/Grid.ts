@@ -59,13 +59,13 @@ module api.ui.grid {
             this.dataView = dataView;
             this.slickGrid = new Slick.Grid<T>(this.getHTMLElement(), dataView.slick(), columns, options);
             if (options.isAutoRenderGridOnDataChanges() ||
-                (options.isAutoRenderGridOnDataChanges() == undefined && this.defaultAutoRenderGridOnDataChanges)) {
+                (options.isAutoRenderGridOnDataChanges() === undefined && this.defaultAutoRenderGridOnDataChanges)) {
                 this.autoRenderGridOnDataChanges(this.dataView);
             }
-            if (this.checkboxSelectorPlugin != null) {
+            if (this.checkboxSelectorPlugin !== null) {
                 this.slickGrid.registerPlugin(<Slick.Plugin<T>>this.checkboxSelectorPlugin);
             }
-            if (this.rowManagerPlugin != null) {
+            if (this.rowManagerPlugin !== null) {
                 this.slickGrid.registerPlugin(<Slick.Plugin<T>>this.rowManagerPlugin);
             }
 

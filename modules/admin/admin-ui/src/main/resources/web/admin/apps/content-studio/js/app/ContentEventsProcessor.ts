@@ -27,7 +27,7 @@ export class ContentEventsProcessor {
     }
 
     static popupBlocked(win: Window) {
-        return !win || win.closed || typeof win.closed == 'undefined';
+        return !win || win.closed || typeof win.closed === 'undefined';
     }
 
     static handleNew(newContentEvent: NewContentEvent) {

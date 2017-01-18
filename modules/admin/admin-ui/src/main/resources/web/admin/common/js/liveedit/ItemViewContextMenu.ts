@@ -113,10 +113,10 @@ module api.liveedit {
         }
 
         private setOrientation(orientation: ItemViewContextMenuOrientation) {
-            if (this.orientation != orientation) {
+            if (this.orientation !== orientation) {
                 this.orientation = orientation;
                 if (this.arrow) {
-                    this.arrow.toggleVerticalPosition(orientation == ItemViewContextMenuOrientation.DOWN);
+                    this.arrow.toggleVerticalPosition(orientation === ItemViewContextMenuOrientation.DOWN);
                 }
                 this.notifyOrientationChanged(orientation);
             }
@@ -191,14 +191,14 @@ module api.liveedit {
                 maxY = Math.max(document.body.scrollTop, document.documentElement.scrollTop) + window.innerHeight;
             }
 
-            if (orientation == ItemViewContextMenuOrientation.DOWN) {
+            if (orientation === ItemViewContextMenuOrientation.DOWN) {
                 // account for arrow
                 desiredY = y + arrowHeight + (notClicked ? 0 : 1);
                 if (desiredY + height > maxY) {
                     orientation = ItemViewContextMenuOrientation.UP;
                 }
             }
-            if (orientation == ItemViewContextMenuOrientation.UP) {
+            if (orientation === ItemViewContextMenuOrientation.UP) {
                 // subtract my full height to display above target
                 desiredY = y - arrowHeight - height - (notClicked ? 0 : 1);
                 if (desiredY < minY) {

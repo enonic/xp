@@ -63,7 +63,7 @@ module api.content.event {
 
             let nodeEventType = this.getNodeServerChangeType(nodeEventJson.type);
 
-            if (NodeServerChangeType.MOVE == nodeEventType || NodeServerChangeType.RENAME == nodeEventType) {
+            if (NodeServerChangeType.MOVE === nodeEventType || NodeServerChangeType.RENAME === nodeEventType) {
 
                 let newContentPaths = nodeEventJson.data.nodes.
                     filter((node) => node.newPath.indexOf('/content') === 0).

@@ -73,11 +73,11 @@ module api.liveedit {
         }
 
         setMode(mode: HighlighterMode): Highlighter {
-            if (this.mode != undefined) {
+            if (this.mode !== undefined) {
                 this.getEl().removeClass(HighlighterMode[this.mode].toLowerCase());
             }
             this.mode = mode;
-            if (mode != undefined) {
+            if (mode !== undefined) {
                 this.getEl().addClass(HighlighterMode[mode].toLowerCase());
             }
             return this;

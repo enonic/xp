@@ -17,7 +17,7 @@ module api.data {
         }
 
         valueToBoolean(value: Value): boolean {
-            return value.getString() == 'true';
+            return value.getString() === 'true';
         }
 
         valueToNumber(value: Value): number {
@@ -70,7 +70,7 @@ module api.data {
         fromJsonValue(jsonValue: any): Value {
             if (jsonValue) {
                 return this.newValue(jsonValue.toString());
-            } else if ('' == jsonValue) { // NB: empty string is not true in Javascript
+            } else if ('' === jsonValue) { // NB: empty string is not true in Javascript
                 return this.newValue(jsonValue);
             } else {
                 return this.newNullValue();

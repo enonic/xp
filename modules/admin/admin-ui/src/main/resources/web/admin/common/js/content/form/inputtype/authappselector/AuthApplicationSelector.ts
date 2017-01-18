@@ -160,7 +160,7 @@ module api.content.site.inputtype.authappselector {
 
             comboBox.onSiteConfigFormDisplayed((applicationKey: ApplicationKey, formView: FormView) => {
                 let indexToRemove = siteConfigFormsToDisplay.indexOf(applicationKey.toString());
-                if (indexToRemove != -1) {
+                if (indexToRemove !== -1) {
                     siteConfigFormsToDisplay.splice(indexToRemove, 1);
                 }
 

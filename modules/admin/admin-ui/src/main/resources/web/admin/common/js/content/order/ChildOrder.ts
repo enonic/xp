@@ -46,7 +46,7 @@ module api.content.order {
         }
 
         isManual(): boolean {
-            if (this.orderExpressions.length == 0) {
+            if (this.orderExpressions.length === 0) {
                 return false;
             }
             let order = this.orderExpressions[0];
@@ -58,8 +58,8 @@ module api.content.order {
         }
 
         isDesc(): boolean {
-            if (this.orderExpressions.length == 0) {
-                return this.DEFAULT_ORDER_DIRECTION_VALUE == ChildOrder.DESC_ORDER_DIRECTION_VALUE;
+            if (this.orderExpressions.length === 0) {
+                return this.DEFAULT_ORDER_DIRECTION_VALUE === ChildOrder.DESC_ORDER_DIRECTION_VALUE;
             }
             let order = this.orderExpressions[0];
             return api.ObjectHelper.stringEquals(ChildOrder.DESC_ORDER_DIRECTION_VALUE.toLowerCase(), order.getDirection().toLowerCase());
@@ -100,7 +100,7 @@ module api.content.order {
                 return false;
             }
             let other = <ChildOrder>o;
-            if (this.orderExpressions.length != other.getOrderExpressions().length) {
+            if (this.orderExpressions.length !== other.getOrderExpressions().length) {
                 return false;
             }
             for (let count in this.orderExpressions) {

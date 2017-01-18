@@ -109,7 +109,7 @@ module api.liveedit {
 
         unUnlockClicked(listener: (event: MouseEvent) => void) {
             this.unlockClickedListeners = this.unlockClickedListeners.filter((curr) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
@@ -125,7 +125,7 @@ module api.liveedit {
 
         unMouseEnter(listener: (event: MouseEvent) => void) {
             this.mouseEnterListeners = this.mouseEnterListeners.filter((curr) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
@@ -141,7 +141,7 @@ module api.liveedit {
 
         unMouseLeave(listener: (event: MouseEvent) => void) {
             this.mouseLeaveListeners = this.mouseLeaveListeners.filter((curr) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
@@ -157,7 +157,7 @@ module api.liveedit {
 
         unMouseMove(listener: (event: MouseEvent) => void) {
             this.mouseMoveListeners = this.mouseMoveListeners.filter((curr) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
@@ -173,7 +173,7 @@ module api.liveedit {
 
         unClicked(listener: (event: MouseEvent) => void) {
             this.clickListeners = this.clickListeners.filter((curr) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 

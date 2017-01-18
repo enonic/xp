@@ -302,7 +302,7 @@ function startContentApplication(application: api.app.Application) {
         let parentContent: api.content.ContentSummary = event.getParentContent()
             ? event.getParentContent().getContentSummary() : null;
 
-        if (parentContent != null) {
+        if (parentContent !== null) {
             new api.content.resource.GetContentByIdRequest(parentContent.getContentId()).sendAndParse().then(
                 (newParentContent: api.content.Content) => {
 

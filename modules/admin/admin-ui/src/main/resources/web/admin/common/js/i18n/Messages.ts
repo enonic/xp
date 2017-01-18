@@ -9,7 +9,7 @@ module api.i18n {
     }
 
     export function addBundle(locale: string, bundle: Object) {
-        if (messages[locale] == undefined) {
+        if (messages[locale] === undefined) {
             messages[locale] = bundle;
         } else {
             wemjq.extend(messages[locale], messages[locale], bundle);
@@ -21,7 +21,7 @@ module api.i18n {
         let message = key;
         let current = messages[currentLocale];
 
-        if ((current != undefined) && (current[key] != undefined)) {
+        if ((current !== undefined) && (current[key] !== undefined)) {
             message = current[key];
         }
 

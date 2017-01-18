@@ -137,7 +137,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
 
             const deleteHandler = ((event: api.security.event.PrincipalDeletedEvent) => {
                 event.getDeletedItems().forEach((path: string) => {
-                    if (!!this.getPersistedItem() && this.getPersistedItem().getKey().toPath() == path) {
+                    if (!!this.getPersistedItem() && this.getPersistedItem().getKey().toPath() === path) {
                         this.close();
                     }
                 });
@@ -238,7 +238,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
 
     hasUnsavedChanges(): boolean {
         let persistedPrincipal: Principal = this.getPersistedItem();
-        if (persistedPrincipal == undefined) {
+        if (persistedPrincipal === undefined) {
             return true;
         } else {
             let viewedPrincipal = this.assembleViewedItem();

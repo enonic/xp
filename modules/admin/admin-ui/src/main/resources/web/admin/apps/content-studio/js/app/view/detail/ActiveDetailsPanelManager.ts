@@ -22,7 +22,7 @@ export class ActiveDetailsPanelManager {
 
     private static doSetActiveDetailsPanel(detailsPanelToMakeActive: DetailsPanel) {
         let currentlyActivePanel = ActiveDetailsPanelManager.getActiveDetailsPanel();
-        if (currentlyActivePanel == detailsPanelToMakeActive || !detailsPanelToMakeActive) {
+        if (currentlyActivePanel === detailsPanelToMakeActive || !detailsPanelToMakeActive) {
             return;
         }
 

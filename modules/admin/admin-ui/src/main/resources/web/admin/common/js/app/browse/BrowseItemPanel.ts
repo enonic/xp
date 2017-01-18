@@ -47,7 +47,7 @@ module api.app.browse {
 
         updateDisplayedPanel() {
             let selectedItems = this.getItems();
-            if (selectedItems.length == 1) {
+            if (selectedItems.length === 1) {
                 this.showPanelByIndex(1);
                 this.itemStatisticsPanel.setItem(selectedItems[0].toViewItem());
             } else {

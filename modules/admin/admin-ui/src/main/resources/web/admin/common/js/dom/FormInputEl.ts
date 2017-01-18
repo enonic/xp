@@ -91,14 +91,14 @@ module api.dom {
                 console.groupCollapsed(this.toString() + '.setValue(' + value + ')');
             }
             // force set value in case of user input regardless of old value
-            if ((this.oldValue != value || this.isSameValueUpdateAllowed()) || userInput) {
+            if ((this.oldValue !== value || this.isSameValueUpdateAllowed()) || userInput) {
                 if (FormInputEl.debug) {
                     console.debug(`update value from "${this.oldValue}" to "${value}"`);
                 }
                 this.doSetValue(value, silent);
                 this.refreshValueChanged(silent);
 
-                if (!userInput && !this.dirty && this.originalValue != value) {
+                if (!userInput && !this.dirty && this.originalValue !== value) {
                     // update original value if not dirty and not user input
                     // to keep the dirty state consistent
                     if (FormInputEl.debug) {
@@ -150,7 +150,7 @@ module api.dom {
         }
 
         private setDirty(dirty: boolean, silent?: boolean) {
-            if (this.dirty != dirty) {
+            if (this.dirty !== dirty) {
                 this.dirty = dirty;
                 if (FormInputEl.debug) {
                     console.debug(this.toString() + ' dirty changed to ' + dirty);
@@ -180,7 +180,7 @@ module api.dom {
         protected refreshValueChanged(silent?: boolean) {
             let value = this.doGetValue();
 
-            if (this.oldValue != value) {
+            if (this.oldValue !== value) {
                 if (FormInputEl.debug) {
                     console.debug(this.toString() + ' value changed from "' + this.oldValue + '" to "' + value + '"');
                 }

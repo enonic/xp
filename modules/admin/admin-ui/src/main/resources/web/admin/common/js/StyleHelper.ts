@@ -42,7 +42,7 @@ module api {
         }
 
         private static isPrefixed(cls: string, prefix: string): boolean {
-            return cls.indexOf(prefix) == 0;
+            return cls.indexOf(prefix) === 0;
         }
     }
 }

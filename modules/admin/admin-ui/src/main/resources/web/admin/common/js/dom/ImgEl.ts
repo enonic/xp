@@ -100,7 +100,7 @@ module api.dom {
         }
 
         isPlaceholder(): boolean {
-            return this.getCurrentSrc() == ImgEl.PLACEHOLDER;
+            return this.getCurrentSrc() === ImgEl.PLACEHOLDER;
         }
     }
 }

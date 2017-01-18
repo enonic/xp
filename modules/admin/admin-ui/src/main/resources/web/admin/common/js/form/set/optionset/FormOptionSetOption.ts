@@ -21,7 +21,7 @@ module api.form {
             this.label = optionJson.label;
             this.defaultOption = optionJson.defaultOption;
             this.helpText = optionJson.helpText;
-            if (optionJson.items != null) {
+            if (optionJson.items !== null) {
                 optionJson.items.forEach((formItemJson: api.form.json.FormItemJson) => {
                     let formItem: FormItem = FormItemFactory.createFormItem(formItemJson);
                     if (formItem) {

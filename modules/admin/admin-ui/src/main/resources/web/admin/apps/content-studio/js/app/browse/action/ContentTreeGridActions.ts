@@ -149,7 +149,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.DELETE_CONTENT.setEnabled(this.anyDeletable(contentSummaries));
         this.DUPLICATE_CONTENT.setEnabled(false);
         this.MOVE_CONTENT.setEnabled(true);
-        this.SORT_CONTENT.setEnabled(contentSummaries.length == 1);
+        this.SORT_CONTENT.setEnabled(contentSummaries.length === 1);
 
         this.PUBLISH_CONTENT.setEnabled(publishEnabled);
         this.PUBLISH_TREE_CONTENT.setEnabled(treePublishEnabled);
@@ -171,11 +171,11 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     }
 
     private isPublished(status: api.content.CompareStatus): boolean {
-        return status != api.content.CompareStatus.NEW && status != api.content.CompareStatus.UNKNOWN;
+        return status !== api.content.CompareStatus.NEW && status !== api.content.CompareStatus.UNKNOWN;
     }
 
     private isOnline(status: api.content.CompareStatus): boolean {
-        return status == api.content.CompareStatus.EQUAL;
+        return status === api.content.CompareStatus.EQUAL;
     }
 
     private doUpdateActionsEnabledState(contentBrowseItems: ContentBrowseItem[]): wemQ.Promise<any> {

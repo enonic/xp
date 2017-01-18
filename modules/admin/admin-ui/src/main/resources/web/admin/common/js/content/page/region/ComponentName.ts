@@ -28,7 +28,7 @@ module api.content.page.region {
         }
 
         public isDuplicateOf(other: ComponentName): boolean {
-            if (this.value == other.value) {
+            if (this.value === other.value) {
                 return true;
             }
 

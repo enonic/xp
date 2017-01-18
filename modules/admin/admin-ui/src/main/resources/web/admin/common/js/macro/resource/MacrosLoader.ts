@@ -15,8 +15,8 @@ module api.macro.resource {
             this.hasRelevantData = false;
 
             ApplicationEvent.on((event: ApplicationEvent) => {
-                if (event.getEventType() == ApplicationEventType.STARTED || event.getEventType() == ApplicationEventType.STOPPED ||
-                    event.getEventType() == ApplicationEventType.UPDATED) {
+                if (event.getEventType() === ApplicationEventType.STARTED || event.getEventType() === ApplicationEventType.STOPPED ||
+                    event.getEventType() === ApplicationEventType.UPDATED) {
                     this.invalidate();
                 }
             });
@@ -67,7 +67,7 @@ module api.macro.resource {
         }
 
         filterFn(macro: MacroDescriptor) {
-            return macro.getDisplayName().toLowerCase().indexOf(this.getSearchString().toLowerCase()) != -1;
+            return macro.getDisplayName().toLowerCase().indexOf(this.getSearchString().toLowerCase()) !== -1;
         }
 
     }

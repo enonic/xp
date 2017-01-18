@@ -32,17 +32,17 @@ module api.content.util {
                 return null;
             }
             // CMS-4677: using crop=false for images only by default
-            if (this.crop == undefined) {
+            if (this.crop === undefined) {
                 this.crop = !this.content.isImage();
             }
 
             // parse existing params from url in case there are any
             let params = UriHelper.decodeUrlParams(url);
 
-            if (this.crop != undefined) {
+            if (this.crop !== undefined) {
                 params['crop'] = String(this.crop);
             }
-            if (this.size != undefined) {
+            if (this.size !== undefined) {
                 params['size'] = String(this.size);
             }
 

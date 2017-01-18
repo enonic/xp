@@ -59,7 +59,7 @@ module api.content.form.inputtype.image {
         unEditClicked(listener: {(): void;}) {
             this.editClickListeners = this.editClickListeners
                 .filter(function (curr: {(): void;}) {
-                    return curr != listener;
+                    return curr !== listener;
                 });
         }
 

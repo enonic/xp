@@ -21,7 +21,7 @@ module api.task {
                 return false;
             }
             let other = <TaskId>o;
-            return this.value == other.value;
+            return this.value === other.value;
         }
 
         static fromJson(json: TaskIdJson): TaskId {

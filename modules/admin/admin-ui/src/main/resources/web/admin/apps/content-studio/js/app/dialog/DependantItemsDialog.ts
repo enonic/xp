@@ -153,7 +153,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     setListItems(items: ContentSummaryAndCompareStatus[]) {
         this.itemList.setItems(items);
-        if (items.length == 1) {
+        if (items.length === 1) {
             (<StatusSelectionItem>this.getItemList().getItemView(items[0])).hideRemoveButton();
         }
     }
@@ -219,7 +219,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
     }
 
     private doPostLoad() {
-        if (this.previousScrollTop != this.getContentPanel().getEl().getScrollTop()) {
+        if (this.previousScrollTop !== this.getContentPanel().getEl().getScrollTop()) {
             setTimeout(this.postLoad.bind(this), 100);
         }
     }
@@ -295,7 +295,7 @@ export class DialogItemList extends ListBox<ContentSummaryAndCompareStatus> {
         super(className);
 
         this.onItemsRemoved((items: ContentSummaryAndCompareStatus[]) => {
-            if (this.getItemCount() == 1) {
+            if (this.getItemCount() === 1) {
                 (<StatusSelectionItem>this.getItemViews()[0]).hideRemoveButton();
             }
         });

@@ -28,7 +28,7 @@ module api.notify {
                 let linkHtml = '<span style="float: right; margin-left: 30px;">';
 
                 for (let i = 0; i < actions.length; i++) {
-                    if ((i > 0) && (i == (actions.length - 1))) {
+                    if ((i > 0) && (i === (actions.length - 1))) {
                         linkHtml += ' or ';
                     } else if (i > 0) {
                         linkHtml += ', ';
@@ -46,13 +46,13 @@ module api.notify {
         static buildOpts(message: Message): NotifyOpts {
             let opts = new NotifyOpts();
             opts.autoHide = message.getAutoHide();
-            if (message.getType() == Type.ERROR) {
+            if (message.getType() === Type.ERROR) {
                 opts.type = 'error';
-            } else if (message.getType() == Type.WARNING) {
+            } else if (message.getType() === Type.WARNING) {
                 opts.type = 'warning';
-            } else if (message.getType() == Type.ACTION) {
+            } else if (message.getType() === Type.ACTION) {
                 opts.type = 'action';
-            } else if (message.getType() == Type.SUCCESS) {
+            } else if (message.getType() === Type.SUCCESS) {
                 opts.type = 'success';
             }
 

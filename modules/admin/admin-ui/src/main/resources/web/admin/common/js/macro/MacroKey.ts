@@ -47,7 +47,7 @@ module api.macro {
 
             let other = <MacroKey>o;
 
-            if (this.name != other.name) {
+            if (this.name !== other.name) {
                 return false;
             }
 

@@ -73,19 +73,19 @@ module api.system {
 
         unConnectionLost(listener: ()=>void) {
             this.connectionLostListeners = this.connectionLostListeners.filter((currentListener: ()=>void) => {
-                return currentListener != listener;
+                return currentListener !== listener;
             });
         }
 
         unConnectionRestored(listener: ()=>void) {
             this.connectionRestoredListeners = this.connectionRestoredListeners.filter((currentListener: ()=>void) => {
-                return currentListener != listener;
+                return currentListener !== listener;
             });
         }
 
         unSessionExpired(listener: ()=>void) {
             this.sessionExpiredListeners = this.sessionExpiredListeners.filter((currentListener: ()=>void) => {
-                return currentListener != listener;
+                return currentListener !== listener;
             });
         }
 

@@ -47,7 +47,7 @@ module api.ui.time {
         protected setupListeners(builder: TimePickerBuilder) {
 
             this.popup.onSelectedTimeChanged((hours: number, minutes: number) => {
-                if (hours != null && minutes != null) {
+                if (hours !== null && minutes !== null) {
                     this.input.setValue(this.formatTime(hours, minutes), false, true);
                     this.validUserInput = true;
                 }
@@ -69,7 +69,7 @@ module api.ui.time {
                     }
                 } else {
                     let parsedTime = typedTime.match(/^[0-2][0-9]:[0-5][0-9]$/);
-                    if (parsedTime && parsedTime.length == 1) {
+                    if (parsedTime && parsedTime.length === 1) {
                         let splitTime = parsedTime[0].split(':');
                         this.validUserInput = true;
                         this.popup.setSelectedTime(parseInt(splitTime[0], 10), parseInt(splitTime[1], 10));

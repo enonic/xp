@@ -90,7 +90,7 @@ module api.ui.toolbar {
         }
 
         isEmpty(): boolean {
-            return this.dropdown.getChildren().length == 0;
+            return this.dropdown.getChildren().length === 0;
         }
 
     }

@@ -58,7 +58,7 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
         this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
 
             // Ensure displayed config form and selector option are removed when descriptor is removed
-            if (event.getPropertyName() == DescriptorBasedComponent.PROPERTY_DESCRIPTOR) {
+            if (event.getPropertyName() === DescriptorBasedComponent.PROPERTY_DESCRIPTOR) {
                 if (!this.layoutComponent.hasDescriptor()) {
                     this.setSelectorValue(null, false);
                 }

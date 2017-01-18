@@ -62,7 +62,7 @@ module api.data {
             let oldIndex = this.index;
             this.index = newIndex;
 
-            if (oldIndex != newIndex) {
+            if (oldIndex !== newIndex) {
                 this.notifyPropertyIndexChangedEvent(oldIndex, newIndex);
             }
         }
@@ -267,7 +267,7 @@ module api.data {
 
         unPropertyIndexChanged(listener: {(event: PropertyIndexChangedEvent): void;}) {
             this.propertyIndexChangedListeners =
-            this.propertyIndexChangedListeners.filter((curr) => (curr != listener));
+            this.propertyIndexChangedListeners.filter((curr) => (curr !== listener));
         }
 
         private notifyPropertyIndexChangedEvent(previousIndex: number, newIndex: number) {
@@ -284,7 +284,7 @@ module api.data {
 
         unPropertyValueChanged(listener: {(event: PropertyValueChangedEvent): void;}) {
             this.propertyValueChangedListeners =
-            this.propertyValueChangedListeners.filter((curr) => (curr != listener));
+            this.propertyValueChangedListeners.filter((curr) => (curr !== listener));
         }
 
         private notifyPropertyValueChangedEvent(previousValue: Value, newValue: Value) {
@@ -296,7 +296,7 @@ module api.data {
         }
 
         public static checkName(name: string) {
-            if (name == null) {
+            if (name === null) {
                 throw new Error('Property name cannot be null');
             }
             if (api.util.StringHelper.isBlank(name)) {

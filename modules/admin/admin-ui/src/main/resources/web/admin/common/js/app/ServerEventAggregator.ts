@@ -30,7 +30,7 @@ module api.app {
         }
 
         appendEvent(event: NodeServerEvent) {
-            if (this.events == null || this.events.length == 0) {
+            if (this.events === null || this.events.length === 0) {
                 this.init(event);
             } else {
                 if (this.isTheSameTypeEvent(event)) {
@@ -50,7 +50,7 @@ module api.app {
         private isTheSameTypeEvent(event: NodeServerEvent) {
             let change = event.getNodeChange();
 
-            if (this.type != change.getChangeType()) {
+            if (this.type !== change.getChangeType()) {
                 return false;
             }
 

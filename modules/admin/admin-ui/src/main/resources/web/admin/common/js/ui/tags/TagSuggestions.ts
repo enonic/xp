@@ -13,7 +13,7 @@ module api.ui.tags {
                 // don't wrap element in ElementHelper because mousemove event is generated very frequently
                 // unnecessary new objects would clog browser memory
                 let htmlEl = <HTMLElement>event.target;
-                if (htmlEl.tagName == 'LI') {
+                if (htmlEl.tagName === 'LI') {
                     this.notifySelected(htmlEl.innerText || htmlEl.textContent);
                 }
             });
@@ -29,9 +29,9 @@ module api.ui.tags {
 
         moveDown() {
             let nextIndex:number;
-            if (this.selectedIndex == null) {
+            if (this.selectedIndex === null) {
                 nextIndex = 0;
-            } else if (this.selectedIndex == this.getChildren().length - 1) {
+            } else if (this.selectedIndex === this.getChildren().length - 1) {
                 nextIndex = null;
             } else {
                 nextIndex = this.selectedIndex + 1;
@@ -42,9 +42,9 @@ module api.ui.tags {
 
         moveUp() {
             let nextIndex:number;
-            if (this.selectedIndex == null) {
+            if (this.selectedIndex === null) {
                 nextIndex = this.getChildren().length - 1;
-            } else if (this.selectedIndex == 0) {
+            } else if (this.selectedIndex === 0) {
                 nextIndex = null;
             } else {
                 nextIndex = this.selectedIndex - 1;

@@ -143,7 +143,7 @@ export class InsertablesPanel extends api.ui.panel.Panel {
         }
 
         let over = this.isOverIFrame(<JQueryEventObject>event);
-        if (this.overIFrame != over) {
+        if (this.overIFrame !== over) {
             if (over) {
                 this.onEnterIFrame(event, ui);
             } else {
@@ -170,7 +170,7 @@ export class InsertablesPanel extends api.ui.panel.Panel {
     }
 
     private isOverIFrame(event: JQueryEventObject): boolean {
-        return event.originalEvent.target == this.liveEditPageProxy.getDragMask().getHTMLElement();
+        return event.originalEvent.target === this.liveEditPageProxy.getDragMask().getHTMLElement();
     }
 
     private onLeftIFrame(event: JQueryEventObject, ui: JQueryUI.DraggableEventUIParams) {
@@ -230,7 +230,7 @@ export class InsertablesPanel extends api.ui.panel.Panel {
     unHideContextWindowRequest(listener: {(): void;}) {
         this.hideContextWindowRequestListeners = this.hideContextWindowRequestListeners
             .filter(function (curr: {(): void;}) {
-                return curr != listener;
+                return curr !== listener;
             });
     }
 

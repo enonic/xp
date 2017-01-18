@@ -12,7 +12,7 @@ module api.content.page {
 
         public static fromString(str: string): DescriptorKey {
             let sepIndex: number = str.indexOf(DescriptorKey.SEPARATOR);
-            if (sepIndex == -1) {
+            if (sepIndex === -1) {
                 throw new Error(`DescriptorKey must contain separator '${DescriptorKey.SEPARATOR}':${str}`);
             }
 

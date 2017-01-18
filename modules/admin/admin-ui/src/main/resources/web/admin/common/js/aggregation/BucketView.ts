@@ -32,7 +32,7 @@ module api.aggregation {
 
         private resolveLabelValue(): string {
 
-            if (this.displayName != null) {
+            if (this.displayName !== null) {
                 return this.displayName + ' (' + this.bucket.getDocCount() + ')';
             }
 
@@ -103,7 +103,7 @@ module api.aggregation {
         unSelectionChanged(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
             this.selectionChangedListeners = this.selectionChangedListeners
                 .filter(function (curr: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 

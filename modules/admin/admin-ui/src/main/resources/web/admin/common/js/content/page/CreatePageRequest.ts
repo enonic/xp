@@ -61,9 +61,9 @@ module api.content.page {
                 controller: this.controller ? this.controller.toString() : null,
                 template: this.template ? this.template.toString() : null,
                 config: this.config ? this.config.toJson() : null,
-                regions: this.regions != null ? this.regions.toJson() : null,
+                regions: this.regions !== null ? this.regions.toJson() : null,
                 customized: this.customized,
-                fragment: this.fragment != null ? this.fragment.toJson() : null
+                fragment: this.fragment !== null ? this.fragment.toJson() : null
             };
         }
 

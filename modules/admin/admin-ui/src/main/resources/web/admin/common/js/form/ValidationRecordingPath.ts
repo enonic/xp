@@ -15,7 +15,7 @@ module api.form {
         private max: number;
 
         constructor(parentPropertySet: PropertyPath, dataName: string, min?: number, max?: number) {
-            this.parentDataSet = parentPropertySet != null ? parentPropertySet.asRelative() : null;
+            this.parentDataSet = parentPropertySet !== null ? parentPropertySet.asRelative() : null;
             this.dataName = dataName;
             this.refString = this.resolveRefString();
             this.min = min;
@@ -76,7 +76,7 @@ module api.form {
             }
 
             return otherPath.getElements().every((whatEl, whatIdx) => {
-                return fullPath.getElement(whatIdx).toString() == whatEl.toString();
+                return fullPath.getElement(whatIdx).toString() === whatEl.toString();
             });
         }
 

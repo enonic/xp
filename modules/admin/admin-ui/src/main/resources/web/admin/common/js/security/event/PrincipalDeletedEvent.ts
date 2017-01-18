@@ -18,7 +18,7 @@ module api.security.event {
         }
 
         isEmpty(): boolean {
-            return this.principalDeletedPaths.length == 0;
+            return this.principalDeletedPaths.length === 0;
         }
 
         fire() {

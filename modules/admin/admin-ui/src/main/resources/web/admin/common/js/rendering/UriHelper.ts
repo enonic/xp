@@ -37,7 +37,7 @@ module api.rendering {
 
         public static getAdminUri(baseUrl: string, contentPath: string): string {
             let adminUrl = UriHelper.getPortalUri(contentPath, RenderingMode.ADMIN, api.content.Branch.DRAFT);
-            return adminUrl + (adminUrl.charAt(adminUrl.length - 1) == '/' ? '' : api.content.ContentPath.ELEMENT_DIVIDER) + baseUrl;
+            return adminUrl + (adminUrl.charAt(adminUrl.length - 1) === '/' ? '' : api.content.ContentPath.ELEMENT_DIVIDER) + baseUrl;
         }
     }
 }

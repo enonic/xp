@@ -236,7 +236,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
             from--;
         }
 
-        if (!this.isFiltered() || parentNode != this.getRoot().getCurrentRoot()) {
+        if (!this.isFiltered() || parentNode !== this.getRoot().getCurrentRoot()) {
             return ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId, from, ContentTreeGrid.MAX_FETCH_SIZE).then(
                 (data: ContentResponse<ContentSummaryAndCompareStatus>) => {
                     // TODO: Will reset the ids and the selection for child nodes.
@@ -291,7 +291,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
             size--;
         }
 
-        if (!this.isFiltered() || parentNode != this.getRoot().getCurrentRoot()) {
+        if (!this.isFiltered() || parentNode !== this.getRoot().getCurrentRoot()) {
             return ContentSummaryAndCompareStatusFetcher.fetchChildrenIds(parentContentId).then(
                 (response: ContentId[]) => {
                     return response;
@@ -471,7 +471,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
     private isTargetNodeLevelReached(nodeToSearchTargetIn: TreeNode<ContentSummaryAndCompareStatus>, targetPath: ContentPath): boolean {
         let nodeToExpandLevel = !!nodeToSearchTargetIn.getData() ? nodeToSearchTargetIn.getData().getPath().getLevel() : 0;
-        let targetNodeLevelReached = (targetPath.getLevel() - 1) == nodeToExpandLevel;
+        let targetNodeLevelReached = (targetPath.getLevel() - 1) === nodeToExpandLevel;
 
         return targetNodeLevelReached;
     }

@@ -36,7 +36,7 @@ module api.ui.security.acl {
 
         unItemValueChanged(listener: (item: AccessControlEntry) => void) {
             this.itemValueChangedListeners = this.itemValueChangedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 
@@ -47,7 +47,7 @@ module api.ui.security.acl {
         }
 
         setItemsEditable(editable: boolean): AccessControlListView {
-            if (this.itemsEditable != editable) {
+            if (this.itemsEditable !== editable) {
                 this.itemsEditable = editable;
                 this.refreshList();
             }

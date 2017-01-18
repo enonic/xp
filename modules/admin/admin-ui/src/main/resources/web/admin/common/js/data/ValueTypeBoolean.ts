@@ -14,7 +14,7 @@ module api.data {
             if (api.util.StringHelper.isBlank(value)) {
                 return false;
             }
-            if (!(value == 'true' || value == 'false' )) {
+            if (!(value === 'true' || value === 'false' )) {
                 return false;
             }
             let convertedValue = Boolean(value);
@@ -33,9 +33,9 @@ module api.data {
         }
 
         private convertFromString(value: string): boolean {
-            if (value == 'true') {
+            if (value === 'true') {
                 return true;
-            } else if (value == 'false') {
+            } else if (value === 'false') {
                 return false;
             } else {
                 throw new Error('given string cannot be converted to a Boolean Value: ' + value);

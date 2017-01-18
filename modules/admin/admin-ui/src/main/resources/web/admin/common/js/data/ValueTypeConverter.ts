@@ -49,9 +49,9 @@ module api.data {
         }
 
         private static convertToBoolean(value: any): Value {
-            if (typeof value == 'boolean') {
+            if (typeof value === 'boolean') {
                 return ValueTypes.BOOLEAN.newBoolean(value);
-            } else if (typeof value == 'string') {
+            } else if (typeof value === 'string') {
                 return ValueTypes.BOOLEAN.newValue(value);
             }
             return ValueTypes.BOOLEAN.newNullValue();

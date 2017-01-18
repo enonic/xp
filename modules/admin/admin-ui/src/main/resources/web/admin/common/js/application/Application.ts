@@ -161,20 +161,20 @@ module api.application {
             let other = <Application>o;
 
             return this.applicationKey.equals(other.applicationKey) &&
-                   this.displayName == other.displayName &&
-                   this.description == other.description &&
-                   this.vendorName == other.vendorName &&
-                   this.vendorUrl == other.vendorUrl &&
-                   this.url == other.url &&
-                   this.state == other.state &&
-                   this.version == other.version &&
-                   this.local == other.local &&
+                   this.displayName === other.displayName &&
+                   this.description === other.description &&
+                   this.vendorName === other.vendorName &&
+                   this.vendorUrl === other.vendorUrl &&
+                   this.url === other.url &&
+                   this.state === other.state &&
+                   this.version === other.version &&
+                   this.local === other.local &&
                    api.ObjectHelper.arrayEquals(this.applicationDependencies, other.applicationDependencies) &&
                    api.ObjectHelper.arrayEquals(this.contentTypeDependencies, other.contentTypeDependencies) &&
                    api.ObjectHelper.equals(this.metaSteps, other.metaSteps) &&
-                   this.minSystemVersion == other.minSystemVersion &&
-                   this.maxSystemVersion == other.maxSystemVersion &&
-                   this.iconUrl == other.iconUrl;
+                   this.minSystemVersion === other.minSystemVersion &&
+                   this.maxSystemVersion === other.maxSystemVersion &&
+                   this.iconUrl === other.iconUrl;
         }
     }
 
@@ -253,25 +253,25 @@ module api.application {
             this.version = json.version;
             this.local = json.local;
 
-            this.config = json.config != null ? api.form.Form.fromJson(json.config) : null;
-            this.authConfig = json.authConfig != null ? api.form.Form.fromJson(json.authConfig) : null;
+            this.config = json.config !== null ? api.form.Form.fromJson(json.config) : null;
+            this.authConfig = json.authConfig !== null ? api.form.Form.fromJson(json.authConfig) : null;
             this.minSystemVersion = json.minSystemVersion;
             this.maxSystemVersion = json.maxSystemVersion;
             this.iconUrl = json.iconUrl;
 
-            if (json.applicationDependencies != null) {
+            if (json.applicationDependencies !== null) {
                 json.applicationDependencies.forEach((dependency: string) => {
                     this.applicationDependencies.push(api.application.ApplicationKey.fromString(dependency));
                 });
             }
 
-            if (json.contentTypeDependencies != null) {
+            if (json.contentTypeDependencies !== null) {
                 json.contentTypeDependencies.forEach((dependency: string) => {
                     this.contentTypeDependencies.push(new api.schema.content.ContentTypeName(dependency));
                 });
             }
 
-            if (json.metaSteps != null) {
+            if (json.metaSteps !== null) {
                 this.metaSteps = api.schema.mixin.MixinNames.create().fromStrings(json.metaSteps).build();
             }
 

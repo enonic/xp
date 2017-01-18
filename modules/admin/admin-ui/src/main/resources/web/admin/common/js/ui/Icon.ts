@@ -10,11 +10,11 @@ module api.ui {
             super(iconClass);
             this.addClass('wem-icon');
 
-            if (size == IconSize.SMALL) {
+            if (size === IconSize.SMALL) {
                 this.addClass('icon-small');
-            } else if (size == IconSize.MEDIUM) {
+            } else if (size === IconSize.MEDIUM) {
                 this.addClass('icon-medium');
-            } else if (size == IconSize.LARGE) {
+            } else if (size === IconSize.LARGE) {
                 this.addClass('icon-large');
             }
         }

@@ -21,12 +21,12 @@ module api.ui {
         }
 
         public setOrientation(orientation: RadioOrientation): RadioGroup {
-            this.toggleClass('vertical', orientation == RadioOrientation.VERTICAL);
+            this.toggleClass('vertical', orientation === RadioOrientation.VERTICAL);
             return this;
         }
 
         public addOption(value: string, label: string) {
-            let checked = value == this.getOriginalValue();
+            let checked = value === this.getOriginalValue();
             let radio = new RadioButton(label, value, this.groupName, checked);
 
             radio.onValueChanged((event: api.ValueChangedEvent) => {
@@ -40,7 +40,7 @@ module api.ui {
             let option;
             for (let i = 0; i < this.options.length; i++) {
                 option = this.options[i];
-                option.setChecked(option.getValue() == value, true);
+                option.setChecked(option.getValue() === value, true);
             }
             return this;
         }
@@ -70,7 +70,7 @@ module api.ui {
         public static debug: boolean = false;
 
         constructor(label: string, value: string, name: string, checked?: boolean) {
-            super('span', 'radio-button', undefined, String(checked != undefined ? checked : false));
+            super('span', 'radio-button', undefined, String(checked !== undefined ? checked : false));
 
             this.radio = new api.dom.InputEl();
             this.radio.getEl().setAttribute('type', 'radio');
@@ -105,7 +105,7 @@ module api.ui {
             if (RadioButton.debug) {
                 console.warn('RadioButton.doSetValue', value);
             }
-            this.radio.getHTMLElement()['checked'] = value == 'true';
+            this.radio.getHTMLElement()['checked'] = value === 'true';
         }
 
         protected doGetValue(): string {
@@ -126,7 +126,7 @@ module api.ui {
         }
 
         public isChecked(): boolean {
-            return super.getValue() == 'true';
+            return super.getValue() === 'true';
         }
 
         public setChecked(checked: boolean, silent?: boolean): RadioButton {

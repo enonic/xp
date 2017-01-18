@@ -122,9 +122,9 @@ module api.ui.selector.combobox {
             if (config.setNextInputFocusWhenMaxReached !== undefined) {
                 this.setNextInputFocusWhenMaxReached = config.setNextInputFocusWhenMaxReached;
             }
-            if (config.selectedOptionsView != null) {
+            if (config.selectedOptionsView !== null) {
                 this.selectedOptionsView = config.selectedOptionsView;
-                this.selectedOptionsView.setMaximumOccurrences(config.maximumOccurrences != null ? config.maximumOccurrences : 0);
+                this.selectedOptionsView.setMaximumOccurrences(config.maximumOccurrences !== null ? config.maximumOccurrences : 0);
             }
             if (config.iconUrl) {
                 this.icon = new api.dom.ImgEl(config.iconUrl, 'input-icon');
@@ -159,7 +159,7 @@ module api.ui.selector.combobox {
             this.dropdownHandle = new DropdownHandle();
             this.appendChild(this.dropdownHandle);
 
-            if (this.selectedOptionsView && (config.maximumOccurrences != 1)) {
+            if (this.selectedOptionsView && (config.maximumOccurrences !== 1)) {
                 this.applySelectionsButton = new Button('Apply');
                 this.applySelectionsButton.addClass('small apply-button');
                 this.applySelectionsButton.hide();
@@ -172,7 +172,7 @@ module api.ui.selector.combobox {
                 optionDisplayValueViewer: config.optionDisplayValueViewer,
                 filter: config.filter,
                 dataIdProperty: config.dataIdProperty,
-                multipleSelections: (this.selectedOptionsView && (config.maximumOccurrences != 1))
+                multipleSelections: (this.selectedOptionsView && (config.maximumOccurrences !== 1))
             });
 
             this.appendChild(this.comboBoxDropdown.getEmptyDropdown());
@@ -433,7 +433,7 @@ module api.ui.selector.combobox {
 
             optionIds.forEach((val) => {
                 let option = this.getOptionByValue(val);
-                if (option != null) {
+                if (option !== null) {
                     selectedOptions.push(option);
                     this.selectOption(option, true);
                 }
@@ -451,7 +451,7 @@ module api.ui.selector.combobox {
 
                     optionIds.forEach((val) => {
                         const option = this.getOptionByValue(val);
-                        if (option == null) {
+                        if (option === null) {
                             const contentExists = result.contentExists(val);
                             if (this.displayMissingSelectedOptions && (contentExists || !this.removeMissingSelectedOptions)) {
                                 const selectedOption = (<BaseSelectedOptionsView<OPTION_DISPLAY_VALUE>> this.selectedOptionsView)
@@ -477,7 +477,7 @@ module api.ui.selector.combobox {
             let result: string[] = [];
             values.forEach((val) => {
                 let option = this.getOptionByValue(val);
-                if (option == null && !api.util.StringHelper.isBlank(val)) {
+                if (option === null && !api.util.StringHelper.isBlank(val)) {
                     result.push(val);
                 }
             });
@@ -490,7 +490,7 @@ module api.ui.selector.combobox {
 
         handleRowSelected(index: number, keyCode: number = -1) {
             let option = this.getOptionByRow(index);
-            if (option != null && !option.readOnly) {
+            if (option !== null && !option.readOnly) {
                 if (!this.isOptionSelected(option)) {
                     this.selectOption(option, false, keyCode);
                 } else {
@@ -661,7 +661,7 @@ module api.ui.selector.combobox {
 
         // Checks added occurrences
         maximumOccurrencesReached(): boolean {
-            api.util.assert(this.selectedOptionsView != null,
+            api.util.assert(this.selectedOptionsView !== null,
                 'No point of calling maximumOccurrencesReached when no multiple selections are enabled');
 
             return this.selectedOptionsView.maximumOccurrencesReached();
@@ -747,7 +747,7 @@ module api.ui.selector.combobox {
             this.input.onValueChanged((event: api.ValueChangedEvent) => {
 
                 this.preservedInputValueChangedEvent = event;
-                if (this.delayedInputValueChangedHandling == 0) {
+                if (this.delayedInputValueChangedHandling === 0) {
                     this.handleInputValueChanged();
                 } else if (!event.valuesAreEqual()) {
                     this.setEmptyDropdownText('Just keep on typing...');
@@ -803,10 +803,10 @@ module api.ui.selector.combobox {
 
         private handleKeyDown(event: KeyboardEvent) {
 
-            if (event.which == 9) { // tab
+            if (event.which === 9) { // tab
                 this.hideDropdown();
                 return;
-            } else if (event.which == 16 || event.which == 17 || event.which == 18 || event.which == 91) {  // shift or ctrl or alt or super
+            } else if (event.which === 16 || event.which === 17 || event.which === 18 || event.which === 91) {  // shift or ctrl or alt or super
                 return;
             }
 
@@ -880,7 +880,7 @@ module api.ui.selector.combobox {
                 this.input.giveFocus();
             }
 
-            if (event.which == 38 || event.which == 40 || event.which == 13) {
+            if (event.which === 38 || event.which === 40 || event.which === 13) {
                 event.stopPropagation();
                 event.preventDefault();
             }
@@ -899,7 +899,7 @@ module api.ui.selector.combobox {
                 this.show();
             }
 
-            if (this.countSelectedOptions() == 0) {
+            if (this.countSelectedOptions() === 0) {
                 this.removeClass('followed-by-options');
             }
             this.input.openForTypingAndFocus();
@@ -942,8 +942,8 @@ module api.ui.selector.combobox {
             });
 
             this.selectiondDelta = gridOptions
-                .filter(x => selectedValues.indexOf(x) == -1)
-                .concat(selectedValues.filter(x => gridOptions.indexOf(x) == -1));
+                .filter(x => selectedValues.indexOf(x) === -1)
+                .concat(selectedValues.filter(x => gridOptions.indexOf(x) === -1));
 
         }
 
@@ -962,7 +962,7 @@ module api.ui.selector.combobox {
         unOptionFilterInputValueChanged(listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) {
             this.optionFilterInputValueChangedListeners.filter(
                 (currentListener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
-                    return listener != currentListener;
+                    return listener !== currentListener;
                 });
         }
 

@@ -112,7 +112,7 @@ module api.ui {
          */
         public unshelveBindings() {
             let previousMousetraps: {[s:string] : KeyBinding;} = this.shelves.pop();
-            if (previousMousetraps == undefined) {
+            if (previousMousetraps === undefined) {
                 if (KeyBindings.debug) {
                     console.log('KeyBindings[#' + this.instance + '].unshelveBindings(): nothing to unshelve');
                 }
@@ -133,7 +133,7 @@ module api.ui {
 
         isActive(keyBinding: KeyBinding) {
             for (let key in this.activeBindings) {
-                if (this.activeBindings[key] == keyBinding) {
+                if (this.activeBindings[key] === keyBinding) {
                     return true;
                 }
             }
@@ -157,7 +157,7 @@ module api.ui {
         unHelpKeyPressed(listener: () => void) {
             this.helpKeyPressedListeners =
             this.helpKeyPressedListeners.filter((currentListener: (event: ExtendedKeyboardEvent) => void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 

@@ -108,11 +108,11 @@ export class ConfirmContentDeleteDialog extends api.ui.dialog.ModalDialog {
     }
 
     private isInputEmpty(): boolean {
-        return this.input.getValue() == '';
+        return this.input.getValue() === '';
     }
 
     private isCorrectNumberEntered(): boolean {
-        return this.input.getValue() == this.deleteConfig.totalItemsToDelete.toString();
+        return this.input.getValue() === this.deleteConfig.totalItemsToDelete.toString();
     }
 
     private enableActions() {

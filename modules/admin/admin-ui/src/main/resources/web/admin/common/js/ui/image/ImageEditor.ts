@@ -484,7 +484,7 @@ module api.ui.image {
             let bottom = offset.top + el.getHeightWithBorder();
             let right = offset.left + el.getWidthWithBorder();
             let scrollEl = wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR);
-            let scrollOffset = scrollEl.length == 1 ? scrollEl.offset() : { left: 0, top: 0 };
+            let scrollOffset = scrollEl.length === 1 ? scrollEl.offset() : { left: 0, top: 0 };
 
             return event.clientX < Math.max(scrollOffset.left, offset.left) ||
                    event.clientX > right ||
@@ -542,7 +542,7 @@ module api.ui.image {
                         let newTopLimited;
                         let heightLimit = this.stickyToolbar.getEl().getHeight() + 100;
                         newTopLimited = Math.min(winHeight - heightLimit, Math.max(heightLimit - myHeight, newTop));
-                        let isInsideLimit = newTop == newTopLimited;
+                        let isInsideLimit = newTop === newTopLimited;
                         if (!isInsideLimit && (Math.abs(newTop - newTopLimited) > Math.abs(myTop - newTopLimited))) {
                             // we are outside limit and trying to move away from it
                             // so keep my current position to prevent it
@@ -555,7 +555,7 @@ module api.ui.image {
                             // leave newTop untouched to allow it
                         }
 
-                        if (newTop != myTop) {
+                        if (newTop !== myTop) {
                             el.setTopPx(newTop);
                             this.updateStickyToolbar();
                         }
@@ -609,7 +609,7 @@ module api.ui.image {
             if ('deltaX' in event) { pixelX = event.deltaX; }
 
             if ((pixelX || pixelY) && event.deltaMode) {
-                if (event.deltaMode == 1) {          // delta in LINE units
+                if (event.deltaMode === 1) {          // delta in LINE units
                     pixelX *= this.WHEEL_LINE_HEIGHT;
                     pixelY *= this.WHEEL_LINE_HEIGHT;
                 } else {                             // delta in PAGE units
@@ -785,10 +785,10 @@ module api.ui.image {
 
         private getRelativeScrollTop(): number {
             let scrollEl = wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR);
-            let scrollElOffsetTop = scrollEl.length == 1
+            let scrollElOffsetTop = scrollEl.length === 1
                 ? scrollEl.offset().top
                 : 0;
-            let wizardToolbarHeight = !this.isEditMode() && scrollEl.length == 1
+            let wizardToolbarHeight = !this.isEditMode() && scrollEl.length === 1
                 ? scrollEl.find(this.WIZARD_TOOLBAR_SELECTOR).innerHeight()
                 : 0;
 
@@ -948,7 +948,7 @@ module api.ui.image {
                 this.setFocusAutoPositioned(this.isFocusNotModified(this.focusData));
             }
 
-            if (oldX != this.focusData.x || oldY != this.focusData.y) {
+            if (oldX !== this.focusData.x || oldY !== this.focusData.y) {
                 this.notifyFocusPositionChanged(this.focusData);
 
                 if (ImageEditor.debug) {
@@ -1016,7 +1016,7 @@ module api.ui.image {
                 this.setFocusAutoPositioned(this.isFocusNotModified(this.focusData));
             }
 
-            if (oldR != this.focusData.r) {
+            if (oldR !== this.focusData.r) {
                 this.notifyFocusRadiusChanged(this.focusData.r);
 
                 if (ImageEditor.debug) {
@@ -1049,7 +1049,7 @@ module api.ui.image {
             if (ImageEditor.debug) {
                 console.log('setFocusAutoPositioned', auto);
             }
-            let autoChanged = this.focusData.auto != auto;
+            let autoChanged = this.focusData.auto !== auto;
             this.focusData.auto = auto;
 
             this.toggleClass('focused', !auto);
@@ -1106,7 +1106,7 @@ module api.ui.image {
                         console.log('ImageEditor.mouseUpListener');
                     }
 
-                    if (this.isOutside(event) && mouseDownOriginalTarget == event['originalTarget']) {
+                    if (this.isOutside(event) && mouseDownOriginalTarget === event['originalTarget']) {
                         if (ImageEditor.debug) {
                             console.log('mouseUpListener, set to skip next click');
                         }
@@ -1172,12 +1172,12 @@ module api.ui.image {
         }
 
         private isFocusPositionNotModified(focus: FocusData): boolean {
-            return focus.x == Math.min(this.frameW, this.cropData.w) / 2 &&
-                   focus.y == Math.min(this.frameH, this.cropData.h) / 2;
+            return focus.x === Math.min(this.frameW, this.cropData.w) / 2 &&
+                   focus.y === Math.min(this.frameH, this.cropData.h) / 2;
         }
 
         private isFocusRadiusNotModified(r: number): boolean {
-            return r == Math.min(this.cropData.w, this.cropData.h) / 4;
+            return r === Math.min(this.cropData.w, this.cropData.h) / 4;
         }
 
         /*
@@ -1288,10 +1288,10 @@ module api.ui.image {
                 this.setCropAutoPositioned(this.isCropNotModified(this.cropData));
             }
 
-            if (oldX != this.cropData.x ||
-                oldY != this.cropData.y ||
-                oldW != this.cropData.w ||
-                oldH != this.cropData.h) {
+            if (oldX !== this.cropData.x ||
+                oldY !== this.cropData.y ||
+                oldW !== this.cropData.w ||
+                oldH !== this.cropData.h) {
 
                 let dx = this.cropData.x - oldX;
                 let dy = this.cropData.y - oldY;
@@ -1348,7 +1348,7 @@ module api.ui.image {
             if (ImageEditor.debug) {
                 console.log('setCropAutoPositioned', auto);
             }
-            let autoChanged = this.cropData.auto != auto;
+            let autoChanged = this.cropData.auto !== auto;
             this.cropData.auto = auto;
 
             if (autoChanged) {
@@ -1486,7 +1486,7 @@ module api.ui.image {
                     let newH = this.cropData.h +
                                (deltaY > distBetweenCropAndZoomBottoms ? distBetweenCropAndZoomBottoms : deltaY);
 
-                    if (newH > topBoundary && newH != this.cropData.h) {
+                    if (newH > topBoundary && newH !== this.cropData.h) {
 
                         this.setCropPositionPx({
                             x: this.cropData.x,
@@ -1515,7 +1515,7 @@ module api.ui.image {
                     console.log('mouse up', event);
                 }
 
-                if (this.isOutside(event) && mouseDownOriginalTarget == event['originalTarget'] &&
+                if (this.isOutside(event) && mouseDownOriginalTarget === event['originalTarget'] &&
                     (dragMouseDown || zoomMouseDown || panMouseDown)) {
                     if (ImageEditor.debug) {
                         console.log('mouseUpListener, set to skip next click');
@@ -1595,7 +1595,7 @@ module api.ui.image {
         }
 
         private isCropNotModified(rect: SVGRect): boolean {
-            return rect.x == 0 && rect.y == 0 && rect.w == this.frameW && rect.h == this.frameH;
+            return rect.x === 0 && rect.y === 0 && rect.w === this.frameW && rect.h === this.frameH;
         }
 
         /*
@@ -1634,10 +1634,10 @@ module api.ui.image {
             this.zoomData.x = this.restrainZoomX(zoom.x);
             this.zoomData.y = this.restrainZoomY(zoom.y);
 
-            if (oldX != this.zoomData.x ||
-                oldY != this.zoomData.y ||
-                oldW != this.zoomData.w ||
-                oldH != this.zoomData.h) {
+            if (oldX !== this.zoomData.x ||
+                oldY !== this.zoomData.y ||
+                oldW !== this.zoomData.w ||
+                oldH !== this.zoomData.h) {
 
                 let dx = this.zoomData.x - oldX;
                 let dy = this.zoomData.y - oldY;
@@ -1701,7 +1701,7 @@ module api.ui.image {
             let knobX = zoomKnobEl.getLeftPx() || 0;
             let knobNewX = Math.max(0, Math.min(sliderLength, knobX + delta));
 
-            if (knobNewX != knobX) {
+            if (knobNewX !== knobX) {
                 zoomKnobEl.setLeftPx(knobNewX);
 
                 let knobPct = knobNewX / sliderLength;

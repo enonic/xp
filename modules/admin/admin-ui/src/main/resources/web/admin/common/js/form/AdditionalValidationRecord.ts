@@ -24,11 +24,11 @@ module api.form {
 
         equals(that: AdditionalValidationRecord): boolean {
 
-            if (this.message != that.message) {
+            if (this.message !== that.message) {
                 return false;
             }
 
-            if (this.overwriteDefault != that.overwriteDefault) {
+            if (this.overwriteDefault !== that.overwriteDefault) {
                 return false;
             }
 

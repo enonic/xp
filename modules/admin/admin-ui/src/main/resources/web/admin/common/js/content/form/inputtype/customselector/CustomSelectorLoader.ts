@@ -43,7 +43,7 @@ module api.content.form.inputtype.customselector {
         }
 
         filterFn(item: CustomSelectorItem): boolean {
-            return item.displayName.indexOf(this.getSearchString().toLowerCase()) != -1;
+            return item.displayName.indexOf(this.getSearchString().toLowerCase()) !== -1;
         }
     }
 

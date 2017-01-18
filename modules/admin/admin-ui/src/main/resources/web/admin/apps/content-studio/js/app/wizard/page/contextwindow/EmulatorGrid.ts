@@ -33,7 +33,7 @@ export class EmulatorGrid extends api.ui.grid.Grid<any> {
         rowEl.appendChild(title);
         rowEl.appendChild(subtitle);
 
-        if (data.rotatable == true) {
+        if (data.rotatable === true) {
             let rotator = new api.dom.DivEl();
             rotator.addClass('rotate');
             rotator.addClassEx('icon-loop');

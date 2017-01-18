@@ -83,7 +83,7 @@ module api.ui {
                 }
 
                 let appendTo;
-                if (this.mode == Tooltip.MODE_STATIC) {
+                if (this.mode === Tooltip.MODE_STATIC) {
                     appendTo = this.targetEl.getParentElement() || this.targetEl;
                 } else {
                     appendTo = api.dom.Body.get();
@@ -95,7 +95,7 @@ module api.ui {
                 }
                 this.tooltipEl.show();
 
-                if (this.mode == Tooltip.MODE_STATIC || this.mode == Tooltip.MODE_GLOBAL_STATIC) {
+                if (this.mode === Tooltip.MODE_STATIC || this.mode === Tooltip.MODE_GLOBAL_STATIC) {
                     this.positionByTarget();
                 }
             }
@@ -163,7 +163,7 @@ module api.ui {
         }
 
         setTrigger(trigger: string): Tooltip {
-            if (trigger == this.trigger) {
+            if (trigger === this.trigger) {
                 return this;
             }
 
@@ -175,7 +175,7 @@ module api.ui {
             this.trigger = trigger;
 
             // add new listeners
-            if (trigger != Tooltip.TRIGGER_NONE) {
+            if (trigger !== Tooltip.TRIGGER_NONE) {
                 this.targetEl.getEl().
                     addEventListener(this.getEventName(true), this.overListener).
                     addEventListener(this.getEventName(false), this.outListener);
@@ -197,11 +197,11 @@ module api.ui {
         }
 
         setMode(mode: string): Tooltip {
-            if (mode == this.mode) {
+            if (mode === this.mode) {
                 return this;
-            } else if (mode == Tooltip.MODE_STATIC || mode == Tooltip.MODE_GLOBAL_STATIC) {
+            } else if (mode === Tooltip.MODE_STATIC || mode === Tooltip.MODE_GLOBAL_STATIC) {
                 api.dom.Body.get().unMouseMove(this.moveListener);
-            } else if (mode == Tooltip.MODE_FOLLOW) {
+            } else if (mode === Tooltip.MODE_FOLLOW) {
                 api.dom.Body.get().onMouseMove(this.moveListener);
             }
             this.mode = mode;
@@ -222,9 +222,9 @@ module api.ui {
             let elProps = {
                 height: el.getHeightWithMargin(),
                 width: el.getWidthWithMargin(),
-                // if mode == follow, tooltip is appended to body, so window scroll can affect tooltip
-                scrollLeft: this.mode == Tooltip.MODE_FOLLOW ? windowEl.scrollX : 0,
-                scrollTop: this.mode == Tooltip.MODE_FOLLOW ? windowEl.scrollY : 0
+                // if mode === follow, tooltip is appended to body, so window scroll can affect tooltip
+                scrollLeft: this.mode === Tooltip.MODE_FOLLOW ? windowEl.scrollX : 0,
+                scrollTop: this.mode === Tooltip.MODE_FOLLOW ? windowEl.scrollY : 0
             };
             switch (this.side) {
             case Tooltip.SIDE_TOP:
@@ -318,7 +318,7 @@ module api.ui {
             this.stopTimeout();
             let t = ms || this.showDelay;
             if (t > 0) {
-                if (this.trigger == Tooltip.TRIGGER_HOVER) {
+                if (this.trigger === Tooltip.TRIGGER_HOVER) {
                     // if tooltip target element becomes disabled it doesn't generate mouse leave event
                     // so we need to check whether mouse has moved from tooltip target or not
                     //this.hideOnMouseOut();
@@ -343,7 +343,7 @@ module api.ui {
             let mouseMoveListener = (event: MouseEvent) => {
                 let tooltipTargetHtmlElement = tooltip.targetEl.getHTMLElement();
                 for (let element = event.target; element; element = (<any>element).parentNode) {
-                    if (element == tooltipTargetHtmlElement) {
+                    if (element === tooltipTargetHtmlElement) {
                         return;
                     }
                 }
@@ -367,7 +367,7 @@ module api.ui {
 
         private hideOtherInstances() {
             Tooltip.instances.forEach((tooltip: Tooltip) => {
-                if (tooltip != this && tooltip.isVisible()) {
+                if (tooltip !== this && tooltip.isVisible()) {
                     //console.log('Hiding tooltip because multiple instances are not allowed', tooltip);
                     tooltip.hide();
                 }

@@ -69,8 +69,8 @@ export class UserTreeGridActions implements TreeGridActions<UserTreeGridItem> {
         this.NEW.setEnabled((directoriesSelected <= 1) && (totalSelection <= 1));
         this.EDIT.setEnabled(directoriesSelected < 1 && (anyUserStore || anyPrincipal));
 
-        if (totalSelection == 1) {
-            if (principalsSelected == 1) {
+        if (totalSelection === 1) {
+            if (principalsSelected === 1) {
                 this.DELETE.setEnabled(true);
             } else {
                 this.establishDeleteActionState((<BrowseItem<UserTreeGridItem>>userItemBrowseItems[0]).getModel());

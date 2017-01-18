@@ -18,8 +18,8 @@ export class FilterableItemsList extends NewContentDialogList {
         let valueLowerCase = value ? value.toLowerCase() : undefined;
 
         let filteredItems = this.listItems.filter((item: NewContentDialogListItem) => {
-            return (!valueLowerCase || (item.getDisplayName().toLowerCase().indexOf(valueLowerCase) != -1) ||
-                    (item.getName().toLowerCase().indexOf(valueLowerCase) != -1));
+            return (!valueLowerCase || (item.getDisplayName().toLowerCase().indexOf(valueLowerCase) !== -1) ||
+                    (item.getName().toLowerCase().indexOf(valueLowerCase) !== -1));
         });
 
         this.setItems(filteredItems);

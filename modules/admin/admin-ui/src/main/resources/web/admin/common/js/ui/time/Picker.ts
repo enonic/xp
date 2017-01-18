@@ -56,7 +56,7 @@ module api.ui.time {
 
             this.popup.onKeyDown((event: KeyboardEvent) => {
                 if (api.ui.KeyHelper.isTabKey(event)) {
-                    if (!(document.activeElement == this.input.getEl().getHTMLElement())) {
+                    if (!(document.activeElement === this.input.getEl().getHTMLElement())) {
                         this.popup.hide();
                     }
                 }

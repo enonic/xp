@@ -146,12 +146,12 @@ module api.form.inputtype.combobox {
 
         private isExistingValue(value: string): boolean {
             return this.comboBoxOptions.some((option: ComboBoxOption) => {
-                return option.value == value;
+                return option.value === value;
             });
         }
 
         private comboBoxFilter(item: api.ui.selector.Option<string>, args: any) {
-            return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
+            return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) === -1);
         }
 
         protected getNumberOfValids(): number {

@@ -46,7 +46,7 @@ module api.content.page.region {
             let regionPathAsString = '';
             this.regionAndComponentList.forEach((regionAndComponent: ComponentPathRegionAndComponent, index: number) => {
 
-                if (index == this.regionAndComponentList.length - 1) {
+                if (index === this.regionAndComponentList.length - 1) {
                     regionPathAsString += regionAndComponent.getRegionName();
                 } else {
                     regionPathAsString += regionAndComponent.toString();

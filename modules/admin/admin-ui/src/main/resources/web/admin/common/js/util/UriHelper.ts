@@ -72,12 +72,12 @@ module api.util {
             if (StringHelper.isBlank(path)) {
                 return StringHelper.EMPTY_STRING;
             }
-            return path.charAt(0) == '/' ? path.substring(1) : path;
+            return path.charAt(0) === '/' ? path.substring(1) : path;
         }
 
         static isNavigatingOutsideOfXP(href: string, contentWindow: Window): boolean {
             // href should start with '/' or after replacing window's protocol and host not be equal to basic href value
-            return href.charAt(0) == '/' ? false : UriHelper.trimWindowProtocolAndPortFromHref(href, contentWindow) == href;
+            return href.charAt(0) === '/' ? false : UriHelper.trimWindowProtocolAndPortFromHref(href, contentWindow) === href;
         }
 
         static trimWindowProtocolAndPortFromHref(href: string, contentWindow: Window) {
@@ -134,10 +134,10 @@ module api.util {
             }
             let urlArray = [];
             for (let key in params) {
-                if (params.hasOwnProperty(key) && params[key] != undefined) {
+                if (params.hasOwnProperty(key) && params[key] !== undefined) {
                     let value = params[key];
                     let prefixedKey = prefix ? prefix + '[' + key + ']' : key;
-                    if (typeof value == 'object') {
+                    if (typeof value === 'object') {
                         urlArray.push(this.encodeUrlParams(value, prefixedKey));
                     } else {
                         urlArray.push(encodeURIComponent(prefixedKey) + '=' + encodeURIComponent(value));
@@ -148,7 +148,7 @@ module api.util {
         }
 
         static appendUrlParams(url: string, params: {[name: string]: any}): string {
-            if (!params || Object.keys(params).length == 0) {
+            if (!params || Object.keys(params).length === 0) {
                 return url;
             }
 

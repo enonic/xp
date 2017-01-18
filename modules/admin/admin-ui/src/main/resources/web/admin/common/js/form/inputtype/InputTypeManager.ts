@@ -9,7 +9,7 @@ module api.form.inputtype {
 
         static isRegistered(inputTypeName: string): boolean {
             let name = InputTypeManager.normalize(inputTypeName);
-            return InputTypeManager.inputTypes[name] != undefined;
+            return InputTypeManager.inputTypes[name] !== undefined;
         }
 
         static register(inputTypeClass: api.Class) {

@@ -25,7 +25,7 @@ export class StatusWidgetItemView extends WidgetItemView {
             console.debug('StatusWidgetItemView.setCompareStatus: ', compareStatus);
             console.debug('StatusWidgetItemView.setPublishStatus: ', publishStatus);
         }
-        if (compareStatus != this.compareStatus || publishStatus != this.publishStatus) {
+        if (compareStatus !== this.compareStatus || publishStatus !== this.publishStatus) {
             this.compareStatus = compareStatus;
             this.publishStatus = publishStatus;
             return this.layout();
@@ -39,7 +39,7 @@ export class StatusWidgetItemView extends WidgetItemView {
         }
 
         return super.layout().then(() => {
-            if (this.compareStatus != undefined) {
+            if (this.compareStatus !== null) {
                 let statusEl = new api.dom.SpanEl();
 
                 statusEl.addClass(CompareStatus[this.compareStatus].toLowerCase().replace('_', '-') || 'unknown');

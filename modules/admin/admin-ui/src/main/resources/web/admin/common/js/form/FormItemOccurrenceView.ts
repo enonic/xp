@@ -44,7 +44,7 @@ module api.form {
 
         unRemoveButtonClicked(listener: (event: RemoveButtonClickedEvent<FormItemOccurrenceView>)=>void) {
             this.removeButtonClickedListeners.filter((currentListener: (event: RemoveButtonClickedEvent<FormItemOccurrenceView>)=>void) => {
-                return currentListener != listener;
+                return currentListener !== listener;
             });
         }
 

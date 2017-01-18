@@ -31,7 +31,7 @@ module api.ui.panel {
             let item = new api.ui.tab.TabBarItemBuilder().setLabel(label).setAddLabelTitleAttribute(addLabelTitleAttribute).build();
             this.items.push(item);
 
-            this.deck.addNavigablePanel(item, panel, select || this.items.length == 1);
+            this.deck.addNavigablePanel(item, panel, select || this.items.length === 1);
 
             return this.deck.getPanelIndex(panel);
         }

@@ -54,7 +54,7 @@ module api.ui {
         }
 
         isChecked(): boolean {
-            return super.getValue() == 'true';
+            return super.getValue() === 'true';
         }
 
         toggleChecked() {
@@ -65,7 +65,7 @@ module api.ui {
             if (Checkbox.debug) {
                 console.debug('Checkbox.doSetValue: ', value);
             }
-            this.checkbox.getHTMLElement()['checked'] = value == 'true';
+            this.checkbox.getHTMLElement()['checked'] = value === 'true';
         }
 
         protected doGetValue(): string {

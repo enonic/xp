@@ -21,10 +21,10 @@ module api.content {
 
             let elements: string[];
 
-            if (path.indexOf('/') == 0 && path.length > 1) {
+            if (path.indexOf('/') === 0 && path.length > 1) {
                 path = path.substr(1);
                 elements = path.split(ContentPath.ELEMENT_DIVIDER);
-            } else if (path == '/') {
+            } else if (path === '/') {
                 elements = [];
             }
 
@@ -33,7 +33,7 @@ module api.content {
 
         constructor(elements: string[]) {
             this.elements = elements;
-            if (elements.length == 0) {
+            if (elements.length === 0) {
                 this.refString = ContentPath.ELEMENT_DIVIDER;
             } else {
                 this.refString = ContentPath.ELEMENT_DIVIDER + this.elements.join(ContentPath.ELEMENT_DIVIDER);
@@ -44,7 +44,7 @@ module api.content {
             let result = '';
             for (let index = 0; index < this.getElements().length; index++) {
                 result = result + ContentPath.ELEMENT_DIVIDER + this.getElements()[index];
-                if (index == (level - 1)) {
+                if (index === (level - 1)) {
                     return ContentPath.fromString(result);
                 }
             }

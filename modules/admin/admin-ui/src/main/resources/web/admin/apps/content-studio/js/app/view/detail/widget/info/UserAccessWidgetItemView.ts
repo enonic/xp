@@ -150,7 +150,7 @@ export class UserAccessWidgetItemView extends WidgetItemView {
 
     private getUserAccessList(results: api.ui.security.acl.EffectivePermission[]): UserAccessListItemView[] {
 
-        return results.filter(item => item.getAccess() != this.everyoneAccessValue &&
+        return results.filter(item => item.getAccess() !== this.everyoneAccessValue &&
                                       item.getPermissionAccess().getCount() > 0).map((item: api.ui.security.acl.EffectivePermission) => {
             let view = new UserAccessListItemView();
             view.setObject(item);
@@ -161,7 +161,7 @@ export class UserAccessWidgetItemView extends WidgetItemView {
 
     private getOptionName(access: Access): string {
         let currentOption = UserAccessWidgetItemView.OPTIONS.filter(option => {
-            return option.value == access;
+            return option.value === access;
         });
         if (currentOption && currentOption.length > 0) {
             return currentOption[0].name;

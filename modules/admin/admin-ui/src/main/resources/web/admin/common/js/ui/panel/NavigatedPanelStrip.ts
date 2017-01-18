@@ -39,7 +39,7 @@ module api.ui.panel {
 
             let focusVisible = this.isFocusedPanelVisible(scrollTop);
             let scrollIndex = this.getScrolledPanelIndex(scrollTop);
-            if (this.scrollIndex != scrollIndex || this.focusVisible != focusVisible) {
+            if (this.scrollIndex !== scrollIndex || this.focusVisible !== focusVisible) {
                 if (focusVisible) {
                     this.navigator.selectNavigationItem(this.focusIndex, true);
                 } else {
@@ -67,7 +67,7 @@ module api.ui.panel {
             let panelEl;
             let panelTop;
             let panelBottom;
-            if (scrollTop == 0) {
+            if (scrollTop === 0) {
                 // select first element if we are in the beginning
                 return 0;
             }

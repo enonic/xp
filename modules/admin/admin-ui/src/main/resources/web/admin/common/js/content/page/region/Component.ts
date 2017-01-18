@@ -134,7 +134,7 @@ module api.content.page.region {
         unChanged(listener: (event: ComponentChangedEvent)=>void) {
             this.changedListeners =
             this.changedListeners.filter((curr: (event: ComponentPropertyChangedEvent)=>void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
@@ -150,7 +150,7 @@ module api.content.page.region {
 
         unReset(listener: (event: ComponentResetEvent)=>void) {
             this.resetListeners = this.resetListeners.filter((curr: (event: ComponentResetEvent)=>void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
@@ -171,7 +171,7 @@ module api.content.page.region {
         unPropertyChanged(listener: (event: ComponentPropertyChangedEvent)=>void) {
             this.propertyChangedListeners =
             this.propertyChangedListeners.filter((curr: (event: ComponentPropertyChangedEvent)=>void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
@@ -199,7 +199,7 @@ module api.content.page.region {
         unPropertyValueChanged(listener: (event: ComponentPropertyValueChangedEvent)=>void) {
             this.propertyValueChangedListeners =
             this.propertyValueChangedListeners.filter((curr: (event: ComponentPropertyValueChangedEvent)=>void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 

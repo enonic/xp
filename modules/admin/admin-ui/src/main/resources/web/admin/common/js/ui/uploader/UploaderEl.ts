@@ -152,7 +152,7 @@ module api.ui.uploader {
 
         private handleKeyEvents() {
             this.onKeyPressed((event: KeyboardEvent) => {
-                if (this.defaultDropzoneContainer.isVisible() && event.keyCode == 13) {
+                if (this.defaultDropzoneContainer.isVisible() && event.keyCode === 13) {
                     wemjq(this.dropzone.getEl().getHTMLElement()).simulate('click');
                 }
             });
@@ -205,43 +205,43 @@ module api.ui.uploader {
         private initConfig(config: UploaderElConfig) {
             this.config = config;
 
-            if (this.config.showResult == undefined) {
+            if (this.config.showResult === undefined) {
                 this.config.showResult = true;
             }
-            if (this.config.allowMultiSelection == undefined) {
+            if (this.config.allowMultiSelection === undefined) {
                 this.config.allowMultiSelection = false;
             }
-            if (this.config.showCancel == undefined) {
+            if (this.config.showCancel === undefined) {
                 this.config.showCancel = true;
             }
 
             //TODO: property is not used. it might have sense to use it when filtering upload file candidates.
             // otherwise - just remove it
-            if (this.config.maximumOccurrences == undefined) {
+            if (this.config.maximumOccurrences === undefined) {
                 this.config.maximumOccurrences = 0;
             }
-            if (this.config.hasUploadButton == undefined) {
+            if (this.config.hasUploadButton === undefined) {
                 this.config.hasUploadButton = true;
             }
-            if (this.config.allowDrop == undefined) {
+            if (this.config.allowDrop === undefined) {
                 this.config.allowDrop = true;
             }
-            if (this.config.selfIsDropzone == undefined) {
+            if (this.config.selfIsDropzone === undefined) {
                 this.config.selfIsDropzone = false;
             }
-            if (this.config.resultAlwaysVisisble == undefined) {
+            if (this.config.resultAlwaysVisisble === undefined) {
                 this.config.resultAlwaysVisisble = false;
             }
-            if (this.config.allowTypes == undefined) {
+            if (this.config.allowTypes === undefined) {
                 this.config.allowTypes = [];
             }
-            if (this.config.deferred == undefined) {
+            if (this.config.deferred === undefined) {
                 this.config.deferred = false;
             }
-            if (this.config.disabled == undefined) {
+            if (this.config.disabled === undefined) {
                 this.config.disabled = false;
             }
-            if (this.config.hideDefaultDropZone == undefined) {
+            if (this.config.hideDefaultDropZone === undefined) {
                 this.config.hideDefaultDropZone = true;
             }
         }
@@ -491,7 +491,7 @@ module api.ui.uploader {
         private findUploadItemById(id: string): UploadItem<MODEL> {
             for (let i = 0; i < this.uploadedItems.length; i++) {
                 let uploadItem = this.uploadedItems[i];
-                if (uploadItem.getId() == id) {
+                if (uploadItem.getId() === id) {
                     return uploadItem;
                 }
             }
@@ -570,7 +570,7 @@ module api.ui.uploader {
         private allCompleteCallback() {
             let values = [];
             this.uploadedItems.forEach((item) => {
-                if (item.getStatus() == qq.status.UPLOAD_SUCCESSFUL) {
+                if (item.getStatus() === qq.status.UPLOAD_SUCCESSFUL) {
                     if (item.getModel()) {
                         values.push(this.getModelValue(item.getModel()));
                     } else {
@@ -716,7 +716,7 @@ module api.ui.uploader {
 
         unUploadStarted(listener: (event: FileUploadStartedEvent<MODEL>) => void) {
             this.uploadStartedListeners = this.uploadStartedListeners.filter((currentListener) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
@@ -726,7 +726,7 @@ module api.ui.uploader {
 
         unUploadProgress(listener: (event: FileUploadProgressEvent<MODEL>) => void) {
             this.uploadProgressListeners = this.uploadProgressListeners.filter((currentListener) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
@@ -736,7 +736,7 @@ module api.ui.uploader {
 
         unFileUploaded(listener: (event: FileUploadedEvent<MODEL>) => void) {
             this.fileUploadedListeners = this.fileUploadedListeners.filter((currentListener) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
@@ -746,7 +746,7 @@ module api.ui.uploader {
 
         unUploadCompleted(listener: (event: FileUploadCompleteEvent<MODEL>) => void) {
             this.uploadCompleteListeners = this.uploadCompleteListeners.filter((currentListener) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
@@ -756,7 +756,7 @@ module api.ui.uploader {
 
         unUploadReset(listener: () => void) {
             this.uploadResetListeners = this.uploadResetListeners.filter((currentListener) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
@@ -766,7 +766,7 @@ module api.ui.uploader {
 
         unUploadFailed(listener: (event: FileUploadFailedEvent<MODEL>) => void) {
             this.uploadFailedListeners = this.uploadFailedListeners.filter((currentListener) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
@@ -776,7 +776,7 @@ module api.ui.uploader {
 
         unDropzoneDragEnter(listener: (event: DragEvent) => void) {
             this.dropzoneDragEnterListeners = this.dropzoneDragEnterListeners.filter((currentListener) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
@@ -786,7 +786,7 @@ module api.ui.uploader {
 
         unDropzoneDragLeave(listener: (event: DragEvent) => void) {
             this.dropzoneDragLeaveListeners = this.dropzoneDragLeaveListeners.filter((currentListener) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
@@ -796,7 +796,7 @@ module api.ui.uploader {
 
         unDropzoneDragDrop(listener: (event: DragEvent) => void) {
             this.dropzoneDropListeners = this.dropzoneDropListeners.filter((currentListener) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 

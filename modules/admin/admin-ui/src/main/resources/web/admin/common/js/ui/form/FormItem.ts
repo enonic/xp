@@ -28,7 +28,7 @@ module api.ui.form {
 
             if (builder.getLabel()) {
                 this.label = new api.dom.LabelEl(builder.getLabel(), this.input);
-                if(Validators.required == builder.getValidator()) {
+                if(Validators.required === builder.getValidator()) {
                     this.label.addClass('required');
                 }
                 this.appendChild(this.label);

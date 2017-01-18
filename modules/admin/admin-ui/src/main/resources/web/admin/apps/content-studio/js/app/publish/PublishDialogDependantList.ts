@@ -18,7 +18,7 @@ export class PublishDialogDependantList extends DialogDependantList {
     createItemView(item: ContentSummaryAndCompareStatus, readOnly: boolean): api.dom.Element {
         let view = super.createItemView(item, readOnly);
 
-        if (CompareStatus.NEWER == item.getCompareStatus()) {
+        if (CompareStatus.NEWER === item.getCompareStatus()) {
             view.addClass('removable');
             this.toggleClass('contains-removable', true);
         }
@@ -76,6 +76,6 @@ export function isContentSummaryValid(item: ContentSummaryAndCompareStatus): boo
     let status = item.getCompareStatus();
     let summary = item.getContentSummary();
 
-    return status == CompareStatus.PENDING_DELETE ||
+    return status === CompareStatus.PENDING_DELETE ||
            (summary.isValid() && !api.util.StringHelper.isBlank(summary.getDisplayName()) && !summary.getName().isUnnamed());
 }

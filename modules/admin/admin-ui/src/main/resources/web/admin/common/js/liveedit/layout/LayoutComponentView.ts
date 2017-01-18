@@ -48,7 +48,7 @@ module api.liveedit.layout {
 
             for (let i = 0; i < this.regionViews.length; i++) {
                 let regionView = this.regionViews[i];
-                if (regionView.getRegionName() == name) {
+                if (regionView.getRegionName() === name) {
                     return regionView;
                 }
             }
@@ -61,8 +61,8 @@ module api.liveedit.layout {
 
             for (let i = 0; i < this.regionViews.length; i++) {
                 let regionView = this.regionViews[i];
-                if (firstLevelOfPath.getRegionName() == regionView.getRegionName()) {
-                    if (path.numberOfLevels() == 1) {
+                if (firstLevelOfPath.getRegionName() === regionView.getRegionName()) {
+                    if (path.numberOfLevels() === 1) {
                         return regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
                     } else {
                         const index = firstLevelOfPath.getComponentIndex();

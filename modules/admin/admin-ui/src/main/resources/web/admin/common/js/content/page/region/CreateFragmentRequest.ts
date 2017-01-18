@@ -28,7 +28,7 @@ module api.content.page.region {
             return {
                 contentId: this.contentId.toString(),
                 config: this.config ? this.config.toJson() : null,
-                component: this.component != null ? this.component.toJson() : null
+                component: this.component !== null ? this.component.toJson() : null
             };
         }
 

@@ -101,9 +101,9 @@ module api.app {
         }
 
         private checkBrowsePanelNeedsToBeShown(index: number, panel: api.ui.panel.Panel) {
-            if (panel == this.browsePanel && index > -1) {
+            if (panel === this.browsePanel && index > -1) {
                 this.browsePanel = undefined;
-            } else if (this.getSize() == 0) {
+            } else if (this.getSize() === 0) {
                 // show browse panel if all others were removed
                 new ShowBrowsePanelEvent().fire();
             }

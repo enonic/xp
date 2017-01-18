@@ -82,7 +82,7 @@ module api.content.form.inputtype.upload {
                 operation: api.ui.uploader.MediaUploaderElOperation.update,
                 name: this.getContext().input.getName(),
                 showCancel: false,
-                allowMultiSelection: this.getInput().getOccurrences().getMaximum() != 1,
+                allowMultiSelection: this.getInput().getOccurrences().getMaximum() !== 1,
                 hideDefaultDropZone: !!(<any>(this.config.inputConfig)).hideDropZone,
                 deferred: true,
                 maximumOccurrences: this.getInput().getOccurrences().getMaximum(),

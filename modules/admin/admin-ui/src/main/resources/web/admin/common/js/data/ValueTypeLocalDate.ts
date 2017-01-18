@@ -21,10 +21,10 @@ module api.data {
                 return false;
             }
 
-            if (value.length != 10) {
+            if (value.length !== 10) {
                 return false;
             }
-            if (!(value.charAt(4) == '-' && value.charAt(7) == '-')) {
+            if (!(value.charAt(4) === '-' && value.charAt(7) === '-')) {
                 return false;
             }
             return this.isValid(value);

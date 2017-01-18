@@ -11,7 +11,7 @@ module api.schema.content {
         }
 
         filterFn(contentType: ContentTypeSummary) {
-            return contentType.getContentTypeName().toString().indexOf(this.getSearchString().toLowerCase()) != -1;
+            return contentType.getContentTypeName().toString().indexOf(this.getSearchString().toLowerCase()) !== -1;
         }
 
         sendRequest(): wemQ.Promise<ContentTypeSummary[]> {

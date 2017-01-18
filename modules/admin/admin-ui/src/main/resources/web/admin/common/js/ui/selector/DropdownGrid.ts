@@ -291,7 +291,7 @@ module api.ui.selector {
 
         unRowSelection(listener: (event: DropdownGridRowSelectedEvent) => void) {
             this.rowSelectionListeners.filter((currentListener: (event: DropdownGridRowSelectedEvent) => void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
@@ -301,7 +301,7 @@ module api.ui.selector {
 
         unMultipleSelection(listener: (event: DropdownGridMultipleSelectionEvent) => void) {
             this.multipleSelectionListeners.filter((currentListener: (event: DropdownGridMultipleSelectionEvent) => void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 

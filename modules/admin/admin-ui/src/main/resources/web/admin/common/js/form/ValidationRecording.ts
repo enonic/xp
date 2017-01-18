@@ -19,15 +19,15 @@ module api.form {
         }
 
         isValid(): boolean {
-            return this.breaksMinimumOccurrencesArray.length == 0 && this.breaksMaximumOccurrencesArray.length == 0;
+            return this.breaksMinimumOccurrencesArray.length === 0 && this.breaksMaximumOccurrencesArray.length === 0;
         }
 
         isMinimumOccurrencesValid(): boolean {
-            return this.breaksMinimumOccurrencesArray.length == 0;
+            return this.breaksMinimumOccurrencesArray.length === 0;
         }
 
         isMaximumOccurrencesValid(): boolean {
-            return this.breaksMaximumOccurrencesArray.length == 0;
+            return this.breaksMaximumOccurrencesArray.length === 0;
         }
 
         flatten(recording: ValidationRecording) {
@@ -68,7 +68,7 @@ module api.form {
                 let currentPath = this.breaksMinimumOccurrencesArray[i];
                 let remove = currentPath.equals(path) ||
                              includeChildren && (strict && currentPath.contains(path) ||
-                                                 !strict && currentPath.toString().indexOf(path.toString()) == 0);
+                                                 !strict && currentPath.toString().indexOf(path.toString()) === 0);
                 if (remove) {
                     this.breaksMinimumOccurrencesArray.splice(i, 1);
                     if (!includeChildren) {
@@ -84,7 +84,7 @@ module api.form {
                 let currentPath = this.breaksMaximumOccurrencesArray[0];
                 let remove = currentPath.equals(path) ||
                              includeChildren && (strict && currentPath.contains(path) ||
-                                                 !strict && currentPath.toString().indexOf(path.toString()) == 0);
+                                                 !strict && currentPath.toString().indexOf(path.toString()) === 0);
                 if (remove) {
                     this.breaksMaximumOccurrencesArray.splice(i, 1);
                     if (!includeChildren) {
@@ -96,20 +96,20 @@ module api.form {
 
         equals(other: ValidationRecording): boolean {
 
-            if (this.breaksMinimumOccurrencesArray.length != other.breaksMinimumOccurrencesArray.length) {
+            if (this.breaksMinimumOccurrencesArray.length !== other.breaksMinimumOccurrencesArray.length) {
                 return false;
-            } else if (this.breaksMaximumOccurrencesArray.length != other.breaksMaximumOccurrencesArray.length) {
+            } else if (this.breaksMaximumOccurrencesArray.length !== other.breaksMaximumOccurrencesArray.length) {
                 return false;
             }
 
             for (let i = 0; i < this.breaksMinimumOccurrencesArray.length; i++) {
-                if (this.breaksMinimumOccurrencesArray[i].toString() != other.breaksMinimumOccurrencesArray[i].toString()) {
+                if (this.breaksMinimumOccurrencesArray[i].toString() !== other.breaksMinimumOccurrencesArray[i].toString()) {
                     return false;
                 }
             }
 
             for (let i = 0; i < this.breaksMaximumOccurrencesArray.length; i++) {
-                if (this.breaksMaximumOccurrencesArray[i].toString() != other.breaksMaximumOccurrencesArray[i].toString()) {
+                if (this.breaksMaximumOccurrencesArray[i].toString() !== other.breaksMaximumOccurrencesArray[i].toString()) {
                     return false;
                 }
             }
@@ -118,7 +118,7 @@ module api.form {
         }
 
         validityChanged(previous: api.form.ValidationRecording): boolean {
-            return previous == undefined || previous == null || !previous.equals(this);
+            return previous === undefined || previous === null || !previous.equals(this);
         }
 
         containsPathInBreaksMin(path: ValidationRecordingPath) {
@@ -131,7 +131,7 @@ module api.form {
 
         private exists(path: ValidationRecordingPath, array: ValidationRecordingPath[]): boolean {
             for (let i = 0; i < array.length; i++) {
-                if (array[i].toString() == path.toString()) {
+                if (array[i].toString() === path.toString()) {
                     return true;
                 }
             }

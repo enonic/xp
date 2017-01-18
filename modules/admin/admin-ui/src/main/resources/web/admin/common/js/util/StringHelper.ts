@@ -37,14 +37,14 @@ module api.util {
             if (StringHelper.isEmpty(str)) {
                 return false;
             }
-            return str.toUpperCase() == str;
+            return str.toUpperCase() === str;
         }
 
         static isLowerCase(str: string): boolean {
             if (StringHelper.isEmpty(str)) {
                 return false;
             }
-            return str.toLowerCase() == str;
+            return str.toLowerCase() === str;
         }
 
         static isMixedCase(str: string): boolean {
@@ -55,11 +55,11 @@ module api.util {
         }
 
         static isEmpty(str: string): boolean {
-            return !str || str.length == 0;
+            return !str || str.length === 0;
         }
 
         static isBlank(str: string): boolean {
-            return StringHelper.isEmpty(str) || str.trim().length == 0;
+            return StringHelper.isEmpty(str) || str.trim().length === 0;
         }
 
         /**
@@ -112,8 +112,8 @@ module api.util {
         static format(str: string, ...tokens: any[]): string {
             const regex: RegExp = /\{\{|\}\}|\{(\d+)\}/g;
             return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.replace(regex, function (m: string, n: number) {
-                if (m == '{{') { return '{'; }
-                if (m == '}}') { return '}'; }
+                if (m === '{{') { return '{'; }
+                if (m === '}}') { return '}'; }
                 return tokens[n];
             });
         }

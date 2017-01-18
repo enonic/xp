@@ -73,7 +73,7 @@ module api.form {
         unOccurrenceRendered(listener: (event: OccurrenceRenderedEvent)=>void) {
             this.occurrenceRenderedListeners =
                 this.occurrenceRenderedListeners.filter((currentListener: (event: OccurrenceRenderedEvent)=>void)=> {
-                    return listener != currentListener;
+                    return listener !== currentListener;
                 });
         }
 
@@ -89,7 +89,7 @@ module api.form {
 
         unOccurrenceAdded(listener: (event: OccurrenceAddedEvent)=>void) {
             this.occurrenceAddedListeners = this.occurrenceAddedListeners.filter((currentListener: (event: OccurrenceAddedEvent)=>void)=> {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
@@ -106,7 +106,7 @@ module api.form {
         unOccurrenceRemoved(listener: (event: OccurrenceRemovedEvent)=>void) {
             this.occurrenceRemovedListeners =
                 this.occurrenceRemovedListeners.filter((currentListener: (event: OccurrenceRemovedEvent)=>void)=> {
-                    return listener != currentListener;
+                    return listener !== currentListener;
                 });
         }
 
@@ -227,7 +227,7 @@ module api.form {
             this.occurrences.splice(insertAtIndex, 0, occurrence);
 
             let occurrenceViewBefore: api.dom.Element = this.getOccurrenceViewElementBefore(insertAtIndex);
-            if (insertAtIndex == countOccurrences || !occurrenceViewBefore) {
+            if (insertAtIndex === countOccurrences || !occurrenceViewBefore) {
                 this.occurrenceViewContainer.appendChild(occurrenceView);
             } else {
                 occurrenceView.insertAfterEl(occurrenceViewBefore);
@@ -262,11 +262,11 @@ module api.form {
 
             occurrenceViewToRemove.remove();
             this.occurrenceViews = this.occurrenceViews.filter((curr: V) => {
-                return curr != occurrenceViewToRemove;
+                return curr !== occurrenceViewToRemove;
             });
             let occurrenceToRemove = this.occurrences[indexToRemove];
             this.occurrences = this.occurrences.filter((curr: FormItemOccurrence<V>) => {
-                return curr.getIndex() != indexToRemove;
+                return curr.getIndex() !== indexToRemove;
             });
 
             this.resetOccurrenceIndexes();
@@ -293,7 +293,7 @@ module api.form {
 
         unBlur(listener: (event: FocusEvent) => void) {
             this.blurListeners = this.blurListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 
@@ -326,7 +326,7 @@ module api.form {
                 return null;
             }
             return this.occurrenceViews.filter((occurrenceView: V) => {
-                return occurrenceView.getIndex() == index - 1;
+                return occurrenceView.getIndex() === index - 1;
             })[0];
         }
 

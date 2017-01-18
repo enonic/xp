@@ -30,7 +30,7 @@ module api.ui.selector.list {
         getItem(id: string): I {
             for (let i = 0; i < this.items.length; i++) {
                 let item = this.items[i];
-                if (this.getItemId(item) == id) {
+                if (this.getItemId(item) === id) {
                     return item;
                 }
             }
@@ -80,7 +80,7 @@ module api.ui.selector.list {
             let itemsRemoved: I[] = [];
             this.items = this.items.filter((item) => {
                 for (let i = 0; i < items.length; i++) {
-                    if (this.getItemId(item) == this.getItemId(items[i])) {
+                    if (this.getItemId(item) === this.getItemId(items[i])) {
                         this.removeItemView(item);
                         itemsRemoved.push(item);
                         return false;

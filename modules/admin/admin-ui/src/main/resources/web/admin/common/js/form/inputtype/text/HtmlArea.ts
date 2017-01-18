@@ -362,7 +362,7 @@ module api.form.inputtype.text {
         private isNotActiveElement(htmlAreaIframe: HTMLElement): boolean {
             let activeElement = wemjq(document.activeElement).get(0);
 
-            return htmlAreaIframe != activeElement;
+            return htmlAreaIframe !== activeElement;
         }
 
         private isIframe(element: Element): boolean {

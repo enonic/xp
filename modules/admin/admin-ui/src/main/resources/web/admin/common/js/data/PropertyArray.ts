@@ -82,7 +82,7 @@ module api.data {
         }
 
         getParentPropertyPath(): PropertyPath {
-            if (this.parent.getProperty() == null) {
+            if (this.parent.getProperty() === null) {
                 return PropertyPath.ROOT;
             }
             return this.parent.getProperty().getPath();
@@ -128,11 +128,11 @@ module api.data {
          * Application protected. Not to be used outside module.
          */
         addProperty(property: Property) {
-            api.util.assert(property.getName() == this.name,
+            api.util.assert(property.getName() === this.name,
                 'Expected name of added Property to be [' + this.name + '], got: ' + property.getName());
             api.util.assert(property.getType().equals(this.getType()),
                 'Expected type of added Property to be [' + this.type.toString() + '], got: ' + property.getType().toString());
-            api.util.assert(property.getIndex() == this.array.length,
+            api.util.assert(property.getIndex() === this.array.length,
                 'Expected index of added Property to be [' + this.array.length + '], got: ' + property.getIndex());
 
             this.array.push(property);
@@ -179,7 +179,7 @@ module api.data {
 
             let property;
 
-            if (this.get(index) != null) {
+            if (this.get(index) !== null) {
                 property = this.array[index];
                 property.setValue(value);
             } else {
@@ -366,7 +366,7 @@ module api.data {
 
         unPropertyAdded(listener: {(event: PropertyAddedEvent): void;}) {
             this.propertyAddedListeners =
-            this.propertyAddedListeners.filter((curr) => (curr != listener));
+            this.propertyAddedListeners.filter((curr) => (curr !== listener));
         }
 
         private notifyPropertyAdded(property: Property) {
@@ -394,7 +394,7 @@ module api.data {
 
         unPropertyRemoved(listener: {(event: PropertyRemovedEvent): void;}) {
             this.propertyRemovedListeners =
-            this.propertyRemovedListeners.filter((curr) => (curr != listener));
+            this.propertyRemovedListeners.filter((curr) => (curr !== listener));
         }
 
         private notifyPropertyRemoved(property: Property) {
@@ -422,7 +422,7 @@ module api.data {
 
         unPropertyIndexChanged(listener: {(event: PropertyIndexChangedEvent): void;}) {
             this.propertyIndexChangedListeners =
-            this.propertyIndexChangedListeners.filter((curr) => (curr != listener));
+            this.propertyIndexChangedListeners.filter((curr) => (curr !== listener));
         }
 
         private forwardPropertyIndexChangedEvent(event: PropertyIndexChangedEvent) {
@@ -439,7 +439,7 @@ module api.data {
 
         unPropertyValueChanged(listener: {(event: PropertyValueChangedEvent): void;}) {
             this.propertyValueChangedListeners =
-            this.propertyValueChangedListeners.filter((curr) => (curr != listener));
+            this.propertyValueChangedListeners.filter((curr) => (curr !== listener));
         }
 
         private forwardPropertyValueChangedEvent(event: PropertyValueChangedEvent) {

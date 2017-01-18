@@ -63,7 +63,7 @@ module api {
             for (let i = 0; i < prettifiedName.length; i++) {
                 let character = prettifiedName[i];
                 let replace = this.REPLACE_WITH_HYPHEN_CHARS[character];
-                result += (replace != null ? replace : character);
+                result += (replace !== null ? replace : character);
             }
 
             return result;
@@ -132,8 +132,8 @@ module api {
                 let character = transcribeMe[i];
                 let replace = this.NON_DIACRITICS[character];
 
-                replace = replace != null ? replace : this.DIACRITICS[character];
-                result += (replace != null ? replace : character);
+                replace = replace !== null ? replace : this.DIACRITICS[character];
+                result += (replace !== null ? replace : character);
             }
 
             let normalized = result;

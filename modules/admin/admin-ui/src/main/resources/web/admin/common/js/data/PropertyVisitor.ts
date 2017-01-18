@@ -13,7 +13,7 @@ module api.data {
 
             propertySet.forEach((property: Property, index: number) => {
 
-                if (this.valueType == null || this.valueType == property.getType()) {
+                if (this.valueType === null || this.valueType === property.getType()) {
                     this.visit(property);
                 }
 

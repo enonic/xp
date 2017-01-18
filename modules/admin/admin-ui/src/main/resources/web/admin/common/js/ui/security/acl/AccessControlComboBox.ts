@@ -42,7 +42,7 @@ module api.ui.security.acl {
 
         constructor(option: Option<AccessControlEntry>) {
             let ace = option.displayValue;
-            if (ace.getAllowedPermissions().length == 0 && ace.getDeniedPermissions().length == 0) {
+            if (ace.getAllowedPermissions().length === 0 && ace.getDeniedPermissions().length === 0) {
                 // allow read by default
                 ace.allow(Permission.READ);
             }
@@ -134,7 +134,7 @@ module api.ui.security.acl {
             this.removeItem(optionToRemove.displayValue);
 
             this.list = this.list.filter((option: SelectedOption<AccessControlEntry>) => {
-                return option.getOption().value != selectedOption.getOption().value;
+                return option.getOption().value !== selectedOption.getOption().value;
             });
 
             // update item indexes to the right of removed item
@@ -167,16 +167,16 @@ module api.ui.security.acl {
 
         getById(id: string): SelectedOption<AccessControlEntry> {
             return this.list.filter((selectedOption: SelectedOption<AccessControlEntry>) => {
-                return selectedOption.getOption().value == id;
+                return selectedOption.getOption().value === id;
             })[0];
         }
 
         isSelected(option: Option<AccessControlEntry>): boolean {
-            return this.getByOption(option) != null;
+            return this.getByOption(option) !== null;
         }
 
         maximumOccurrencesReached(): boolean {
-            if (this.maximumOccurrences == 0) {
+            if (this.maximumOccurrences === 0) {
                 return false;
             }
             return this.count() >= this.maximumOccurrences;

@@ -144,7 +144,7 @@ module api.ui.security.acl {
             this.removeItem(optionToRemove.displayValue);
 
             this.list = this.list.filter((option: SelectedOption<UserStoreAccessControlEntry>) => {
-                return option.getOption().value != selectedOption.getOption().value;
+                return option.getOption().value !== selectedOption.getOption().value;
             });
 
             // update item indexes to the right of removed item
@@ -177,16 +177,16 @@ module api.ui.security.acl {
 
         getById(id: string): SelectedOption<UserStoreAccessControlEntry> {
             return this.list.filter((selectedOption: SelectedOption<UserStoreAccessControlEntry>) => {
-                return selectedOption.getOption().value == id;
+                return selectedOption.getOption().value === id;
             })[0];
         }
 
         isSelected(option: Option<UserStoreAccessControlEntry>): boolean {
-            return this.getByOption(option) != null;
+            return this.getByOption(option) !== null;
         }
 
         maximumOccurrencesReached(): boolean {
-            if (this.maximumOccurrences == 0) {
+            if (this.maximumOccurrences === 0) {
                 return false;
             }
             return this.count() >= this.maximumOccurrences;

@@ -41,7 +41,7 @@ module api.content.form.inputtype.time {
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
-            if (this.valueType == ValueTypes.DATE_TIME) {
+            if (this.valueType === ValueTypes.DATE_TIME) {
                 return this.createInputAsDateTime(property);
             } else {
                 return this.createInputAsLocalDateTime(property);
@@ -54,7 +54,7 @@ module api.content.form.inputtype.time {
             if (!unchangedOnly || !dateTimePicker.isDirty()) {
 
                 let date = property.hasNonNullValue()
-                    ? this.valueType == ValueTypes.DATE_TIME
+                    ? this.valueType === ValueTypes.DATE_TIME
                                ? property.getDateTime().toDate()
                                : property.getLocalDateTime().toDate()
                     : null;
@@ -101,7 +101,7 @@ module api.content.form.inputtype.time {
             let dateTimePicker = dateTimeBuilder.build();
 
             dateTimePicker.onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
-                let value = new Value(event.getDate() != null ? api.util.LocalDateTime.fromDate(event.getDate()) : null,
+                let value = new Value(event.getDate() !== null ? api.util.LocalDateTime.fromDate(event.getDate()) : null,
                     ValueTypes.LOCAL_DATE_TIME);
                 this.notifyOccurrenceValueChanged(dateTimePicker, value);
             });
@@ -130,7 +130,7 @@ module api.content.form.inputtype.time {
 
             let dateTimePicker = new DateTimePicker(dateTimeBuilder);
             dateTimePicker.onSelectedDateTimeChanged((event: api.ui.time.SelectedDateChangedEvent) => {
-                let value = new Value(event.getDate() != null ? api.util.DateTime.fromDate(event.getDate()) : null,
+                let value = new Value(event.getDate() !== null ? api.util.DateTime.fromDate(event.getDate()) : null,
                     ValueTypes.DATE_TIME);
                 this.notifyOccurrenceValueChanged(dateTimePicker, value);
             });

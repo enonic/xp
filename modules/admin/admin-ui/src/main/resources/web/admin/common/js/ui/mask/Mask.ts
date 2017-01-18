@@ -24,7 +24,7 @@ module api.ui.mask {
                 });
 
                 this.masked.onHidden((event: api.dom.ElementHiddenEvent) => {
-                    if (event.getTarget() == this.masked) {
+                    if (event.getTarget() === this.masked) {
                         this.hide();
                     }
                 });
@@ -78,7 +78,7 @@ module api.ui.mask {
             let maskedEl = masked.getEl();
             let maskEl = this.getEl();
             let maskedOffset: {top:number; left: number};
-            let isMaskedPositioned = maskedEl.getPosition() != 'static';
+            let isMaskedPositioned = maskedEl.getPosition() !== 'static';
             let maskedDimensions: {width: string; height: string} = {
                     width: maskedEl.getWidthWithBorder() + 'px',
                     height: maskedEl.getHeightWithBorder() + 'px'
@@ -91,7 +91,7 @@ module api.ui.mask {
                     left: 0
                 };
 
-                if (maskedEl.getPosition() == 'absolute') {
+                if (maskedEl.getPosition() === 'absolute') {
                     maskedDimensions = {
                         width: '100%',
                         height: '100%'
@@ -104,7 +104,7 @@ module api.ui.mask {
 
                 maskedOffset = maskedEl.getOffsetToParent();
 
-                if (maskedParent != maskParent) {
+                if (maskedParent !== maskParent) {
                     // they have different offset parents so calc the difference
                     let maskedParentOffset = new api.dom.ElementHelper(maskedParent).getOffset();
                     let maskParentOffset = new api.dom.ElementHelper(maskParent).getOffset();

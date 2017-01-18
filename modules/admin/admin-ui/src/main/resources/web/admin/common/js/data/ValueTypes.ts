@@ -50,7 +50,7 @@ module api.data {
         public static fromName(name: string): ValueType {
             for (let i = 0; i < ValueTypes.ALL.length; i++) {
                 let type = ValueTypes.ALL[i];
-                if (type.toString() == name) {
+                if (type.toString() === name) {
                     return type;
                 }
             }

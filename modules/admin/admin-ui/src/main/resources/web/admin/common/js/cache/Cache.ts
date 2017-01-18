@@ -44,7 +44,7 @@ module api.cache {
             let deferred = wemQ.defer<T>();
 
             let handler = (keyStr: string, value: T) => {
-                if (this.getKeyAsString(key) == keyStr) {
+                if (this.getKeyAsString(key) === keyStr) {
 
                     this.unLoaded(handler);
                     return deferred.resolve(value);
@@ -94,7 +94,7 @@ module api.cache {
 
         private unLoaded(listener: (keyStr: string, value: T) => void) {
             this.loadedListeners = this.loadedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
             return this;
         }

@@ -41,7 +41,7 @@ module api.app.wizard {
             super();
             this.addClass('wizard-header-with-display-name-and-name');
             this.displayNameGenerator = builder.displayNameGenerator;
-            this.displayNameProgrammaticallySet = this.displayNameGenerator != null;
+            this.displayNameProgrammaticallySet = this.displayNameGenerator !== null;
 
             this.displayNameEl = api.ui.text.AutosizeTextInput.large();
             this.displayNameEl.setPlaceholder('<Display Name>').setName(api.query.QueryField.DISPLAY_NAME);
@@ -118,7 +118,7 @@ module api.app.wizard {
             this.autoGenerateName = this.checkAutoGenerateName(name, displayName);
 
             this.displayNameEl.setValue(displayName);
-            if (name != null) {
+            if (name !== null) {
                 this.nameEl.setValue(name);
             } else {
                 this.nameEl.setValue(this.generateName(displayName));
@@ -127,7 +127,7 @@ module api.app.wizard {
             if (this.displayNameGenerator && this.displayNameGenerator.hasScript()) {
                 if (!forceDisplayNameProgrammaticallySet) {
                     let generatedDisplayName = this.displayNameGenerator.execute();
-                    this.displayNameProgrammaticallySet = generatedDisplayName == displayName;
+                    this.displayNameProgrammaticallySet = generatedDisplayName === displayName;
                 } else {
                     this.displayNameProgrammaticallySet = true;
                 }

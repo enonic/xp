@@ -237,7 +237,7 @@ module api.ui.tab {
         }
 
         isEmpty(): boolean {
-            return this.tabs.length == 0;
+            return this.tabs.length === 0;
         }
 
         getSize(): number {
@@ -281,7 +281,7 @@ module api.ui.tab {
             } else if (tab.getIndex() < this.selectedTab) {
                 // if removed tab was before selected tab than decrement selected index
                 this.selectedTab--;
-            } else if (tab.getIndex() > this.getSize() - 1 && this.selectedTab != 0) {
+            } else if (tab.getIndex() > this.getSize() - 1 && this.selectedTab !== 0) {
                 // if selected index is more than tabs amount set last index as selected
                 this.selectedTab = this.getSize() - 1;
             }
@@ -291,7 +291,7 @@ module api.ui.tab {
                 this.tabs[i].setIndex(i);
             }
 
-            if (this.countVisible() == 0) {
+            if (this.countVisible() === 0) {
                 this.setButtonLabel('');
                 this.tabMenuButton.hide();
                 this.hideMenu();
@@ -312,7 +312,7 @@ module api.ui.tab {
                 this.notifyTabRemovedListeners(tab);
             });
 
-            if (this.countVisible() == 0) {
+            if (this.countVisible() === 0) {
                 this.setButtonLabel('');
                 this.tabMenuButton.hide();
                 this.hideMenu();
@@ -335,13 +335,13 @@ module api.ui.tab {
 
         updateActiveTab(tabIndex: number) {
             this.tabs.forEach((tab: TabMenuItem, index: number) => {
-                let activate = (tabIndex == index);
+                let activate = (tabIndex === index);
                 tab.setActive(activate);
             });
         }
 
         selectNavigationItem(tabIndex: number) {
-            if (tabIndex < 0 || tabIndex >= this.getSize() || this.selectedTab == tabIndex) {
+            if (tabIndex < 0 || tabIndex >= this.getSize() || this.selectedTab === tabIndex) {
                 return;
             }
 
@@ -380,28 +380,28 @@ module api.ui.tab {
         unNavigationItemAdded(listener: (event: NavigatorEvent) => void) {
             this.navigationItemAddedListeners =
             this.navigationItemAddedListeners.filter((currentListener: (event: NavigatorEvent)=>void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
         unNavigationItemRemoved(listener: (event: NavigatorEvent) => void) {
             this.navigationItemRemovedListeners =
             this.navigationItemRemovedListeners.filter((currentListener: (event: NavigatorEvent)=>void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
         unNavigationItemSelected(listener: (event: NavigatorEvent) => void) {
             this.navigationItemSelectedListeners =
             this.navigationItemSelectedListeners.filter((currentListener: (event: NavigatorEvent)=>void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
         unNavigationItemDeselected(listener: (event: NavigatorEvent) => void) {
             this.navigationItemDeselectedListeners =
             this.navigationItemDeselectedListeners.filter((currentListener: (event: NavigatorEvent)=>void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 

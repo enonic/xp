@@ -246,11 +246,11 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     }
 
     private isSomethingSelected(): boolean {
-        return this.getFirstSelectedBrowseItem() != null;
+        return this.getFirstSelectedBrowseItem() !== null;
     }
 
     private isMobileMode(): boolean {
-        // return ActiveDetailsPanelManager.getActiveDetailsPanel() == this.mobileContentItemStatisticsPanel.getDetailsPanel();
+        // return ActiveDetailsPanelManager.getActiveDetailsPanel() === this.mobileContentItemStatisticsPanel.getDetailsPanel();
         return this.mobileContentItemStatisticsPanel.isVisible();
     }
 
@@ -333,7 +333,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     }
 
     private isSingleItemSelectedInGrid(): boolean {
-        return this.treeGrid.getSelectedNodes() && this.treeGrid.getSelectedNodes().length == 1;
+        return this.treeGrid.getSelectedNodes() && this.treeGrid.getSelectedNodes().length === 1;
     }
 
     private getPathFromPreviewPath(contentPreviewPath: string): string {
@@ -421,7 +421,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         mergedParentNodes = mergedParentNodes.concat.apply(mergedParentNodes, parentNodes);
 
         mergedParentNodes.forEach((parentNode: TreeNode<ContentSummaryAndCompareStatus>) => {
-            if (parentNode.getChildren().length == 0) {
+            if (parentNode.getChildren().length === 0) {
                 // update parent if all children were deleted
                 this.treeGrid.refreshNodeData(parentNode);
             }
@@ -609,7 +609,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
         let content: ContentSummaryAndCompareStatus;
         let detailsPanelNeedsUpdate = data.some((contentItem: ContentSummaryAndCompareStatus) => {
-            if (contentItem.getId() == itemInDetailPanel.getId()) {
+            if (contentItem.getId() === itemInDetailPanel.getId()) {
                 content = contentItem;
                 return true;
             }

@@ -59,7 +59,7 @@ module api.ui.security.acl {
         private findOptionByValue(value: Access): AccessSelectorOption {
             for (let i = 0; i < AccessSelector.OPTIONS.length; i++) {
                 let option = AccessSelector.OPTIONS[i];
-                if (option.value == value) {
+                if (option.value === value) {
                     return option;
                 }
             }

@@ -94,8 +94,8 @@ module api.content.page.region {
         toJson(): ComponentTypeWrapperJson {
 
             let json: ImageComponentJson = <ImageComponentJson>super.toComponentJson();
-            json.image = this.image != null ? this.image.toString() : null;
-            json.config = this.config != null ? this.config.toJson() : null;
+            json.image = this.image !== null ? this.image.toString() : null;
+            json.config = this.config !== null ? this.config.toJson() : null;
 
             return <ComponentTypeWrapperJson> {
                 ImageComponent: json

@@ -36,8 +36,8 @@ module api.content {
 
         public static fromString(str: string): ContentName {
 
-            api.util.assert(str != null, 'name cannot be null');
-            if (str.indexOf(ContentName.UNNAMED_PREFIX) == 0) {
+            api.util.assert(str !== null, 'name cannot be null');
+            if (str.indexOf(ContentName.UNNAMED_PREFIX) === 0) {
                 return new ContentUnnamed(str);
             } else {
                 return new ContentName(str);

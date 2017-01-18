@@ -13,10 +13,10 @@ module api.rest {
         private refString:string;
 
         public static fromString(s:string, elementDivider?:string) {
-            if (elementDivider == null) {
+            if (elementDivider === null) {
                 elementDivider = Path.DEFAULT_ELEMENT_DIVIDER;
             }
-            let absolute:boolean = s.charAt(0) == elementDivider;
+            let absolute:boolean = s.charAt(0) === elementDivider;
             let elements:string[] = s.split(elementDivider);
             return new Path(Path.removeEmptyElements(elements), elementDivider, absolute);
         }
@@ -42,12 +42,12 @@ module api.rest {
         }
 
         constructor(elements:string[], elementDivider?:string, absolute?:boolean) {
-            this.elementDivider = elementDivider != null ? elementDivider : Path.DEFAULT_ELEMENT_DIVIDER;
-            this.absolute = absolute == undefined ? true : absolute;
+            this.elementDivider = elementDivider !== null ? elementDivider : Path.DEFAULT_ELEMENT_DIVIDER;
+            this.absolute = absolute === undefined ? true : absolute;
             elements.forEach((element:string, index:number) => {
-                if (element == null) {
+                if (element === null) {
                     throw new Error('Path element was null at index: ' + index);
-                } else if (element.length == 0) {
+                } else if (element.length === 0) {
                     throw new Error('Path element was empty string at index: ' + index);
                 }
             });

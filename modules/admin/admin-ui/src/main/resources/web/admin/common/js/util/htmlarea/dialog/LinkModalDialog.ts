@@ -115,7 +115,7 @@ module api.util.htmlarea.dialog {
         }
 
         private getSubject(): string {
-            if (!this.isEmail() || this.getHref().indexOf(LinkModalDialog.subjectPrefix) == -1) {
+            if (!this.isEmail() || this.getHref().indexOf(LinkModalDialog.subjectPrefix) === -1) {
                 return api.util.StringHelper.EMPTY_STRING;
             }
             let emailArr = this.getHref().split(LinkModalDialog.subjectPrefix);
@@ -212,8 +212,8 @@ module api.util.htmlarea.dialog {
 
             this.onAdded(() => {
                 dockedPanel.getDeck().getPanels().forEach((panel, index) => {
-                    if ((index == 1 && this.isUrl()) || (index == 2 && this.isDownloadLink()) || (index == 3 && this.isEmail()) ||
-                        (index == 4 && this.isAnchor())) {
+                    if ((index === 1 && this.isUrl()) || (index === 2 && this.isDownloadLink()) || (index === 3 && this.isEmail()) ||
+                        (index === 4 && this.isAnchor())) {
                         dockedPanel.selectPanel(panel);
                         return false;
                     }

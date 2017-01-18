@@ -126,7 +126,7 @@ module api.query.expr {
         }
 
         private allowMultipleValues(): boolean {
-            return this.operator == CompareOperator.IN || this.operator == CompareOperator.NOT_IN;
+            return this.operator === CompareOperator.IN || this.operator === CompareOperator.NOT_IN;
         }
     }
 }

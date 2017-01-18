@@ -19,7 +19,7 @@ module api.content.util {
         }
 
         siteApplicationsFilter(siteApplicationKeys: ApplicationKey[]): CreateContentFilter {
-            if (siteApplicationKeys == null) {
+            if (siteApplicationKeys === null) {
                 return this;
             }
             this.siteApplicationsAllowed = {};

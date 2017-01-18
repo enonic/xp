@@ -265,11 +265,11 @@ module api.util.htmlarea.dialog {
         }
 
         private isYoutubePreview(): boolean {
-            return this.macroPreview.getMacroString().indexOf('[youtube') == 0;
+            return this.macroPreview.getMacroString().indexOf('[youtube') === 0;
         }
 
         private isInstagramPreview(): boolean {
-            return this.macroPreview.getMacroString().indexOf('[instagram') == 0;
+            return this.macroPreview.getMacroString().indexOf('[instagram') === 0;
         }
 
         private adjustFrameHeightOnContentsUpdate() {

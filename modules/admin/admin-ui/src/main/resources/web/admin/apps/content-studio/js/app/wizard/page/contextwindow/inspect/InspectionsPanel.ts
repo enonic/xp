@@ -84,7 +84,7 @@ export class InspectionsPanel extends api.ui.panel.Panel {
     }
 
     public isInspecting(): boolean {
-        return this.deck.getPanelShown() != this.noSelectionPanel;
+        return this.deck.getPanelShown() !== this.noSelectionPanel;
     }
 
 }

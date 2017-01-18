@@ -195,7 +195,7 @@ module api.form {
 
             this.renderValidationErrors(this.previousValidationRecording);
 
-            if (previousValidState != this.previousValidationRecording.isValid()) {
+            if (previousValidState !== this.previousValidationRecording.isValid()) {
                 this.notifyValidityChanged(new RecordingValidityChangedEvent(this.previousValidationRecording,
                     validationRecordingPath).setIncludeChildren(true));
             }
@@ -223,7 +223,7 @@ module api.form {
 
             let validationRecordingPath = this.resolveValidationRecordingPath();
             let wholeRecording = new ValidationRecording();
-            let occurrenceViews = this.formItemOccurrences.getOccurrenceViews().filter(view => view != viewToSkipValidation);
+            let occurrenceViews = this.formItemOccurrences.getOccurrenceViews().filter(view => view !== viewToSkipValidation);
             let numberOfValids = 0;
 
             occurrenceViews.forEach((occurrenceView: FormSetOccurrenceView) => {
@@ -302,7 +302,7 @@ module api.form {
 
         unValidityChanged(listener: (event: RecordingValidityChangedEvent)=>void) {
             this.validityChangedListeners.filter((currentListener: (event: RecordingValidityChangedEvent)=>void) => {
-                return listener == currentListener;
+                return listener === currentListener;
             });
         }
 

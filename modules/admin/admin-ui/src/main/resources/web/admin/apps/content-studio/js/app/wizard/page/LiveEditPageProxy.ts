@@ -382,7 +382,7 @@ export class LiveEditPageProxy {
                 let responseHtml = wemjq.parseHTML(jqXHR.responseText);
                 let errorMessage = '';
                 responseHtml.forEach((el: HTMLElement, i) => {
-                    if (el.tagName && el.tagName.toLowerCase() == 'title') {
+                    if (el.tagName && el.tagName.toLowerCase() === 'title') {
                         errorMessage = el.innerHTML;
                     }
                 });
@@ -527,7 +527,7 @@ export class LiveEditPageProxy {
     }
 
     unComponentViewDragStarted(listener: (event: ComponentViewDragStartedEvent) => void) {
-        this.componentViewDragStartedListeners = this.componentViewDragStartedListeners.filter((curr) => (curr != listener));
+        this.componentViewDragStartedListeners = this.componentViewDragStartedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyComponentViewDragStarted(event: ComponentViewDragStartedEvent) {
@@ -539,7 +539,7 @@ export class LiveEditPageProxy {
     }
 
     unComponentViewDragStopped(listener: {(event: ComponentViewDragStoppedEvent): void;}) {
-        this.componentViewDragStoppedListeners = this.componentViewDragStoppedListeners.filter((curr) => (curr != listener));
+        this.componentViewDragStoppedListeners = this.componentViewDragStoppedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyComponentViewDragStopped(event: ComponentViewDragStoppedEvent) {
@@ -551,7 +551,7 @@ export class LiveEditPageProxy {
     }
 
     unComponentViewDragCanceled(listener: {(event: ComponentViewDragCanceledEvent): void;}) {
-        this.componentViewDragCanceledListeners = this.componentViewDragCanceledListeners.filter((curr) => (curr != listener));
+        this.componentViewDragCanceledListeners = this.componentViewDragCanceledListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyComponentViewDragCanceled(event: ComponentViewDragCanceledEvent) {
@@ -563,7 +563,7 @@ export class LiveEditPageProxy {
     }
 
     unComponentViewDragDropped(listener: {(event: ComponentViewDragDroppedEvent): void;}) {
-        this.componentViewDragDroppedListeners = this.componentViewDragDroppedListeners.filter((curr) => (curr != listener));
+        this.componentViewDragDroppedListeners = this.componentViewDragDroppedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyComponentViewDragDropped(event: ComponentViewDragDroppedEvent) {
@@ -575,7 +575,7 @@ export class LiveEditPageProxy {
     }
 
     unPageSelected(listener: (event: PageSelectedEvent) => void) {
-        this.pageSelectedListeners = this.pageSelectedListeners.filter((curr) => (curr != listener));
+        this.pageSelectedListeners = this.pageSelectedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyPageSelected(event: PageSelectedEvent) {
@@ -587,7 +587,7 @@ export class LiveEditPageProxy {
     }
 
     unPageLocked(listener: (event: PageLockedEvent) => void) {
-        this.pageLockedListeners = this.pageLockedListeners.filter((curr) => (curr != listener));
+        this.pageLockedListeners = this.pageLockedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyPageLocked(event: PageLockedEvent) {
@@ -599,7 +599,7 @@ export class LiveEditPageProxy {
     }
 
     unPageUnlocked(listener: (event: PageUnlockedEvent) => void) {
-        this.pageUnlockedListeners = this.pageUnlockedListeners.filter((curr) => (curr != listener));
+        this.pageUnlockedListeners = this.pageUnlockedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyPageUnlocked(event: PageUnlockedEvent) {
@@ -611,7 +611,7 @@ export class LiveEditPageProxy {
     }
 
     unPageUnloaded(listener: (event: PageUnloadedEvent) => void) {
-        this.pageUnloadedListeners = this.pageUnloadedListeners.filter((curr) => (curr != listener));
+        this.pageUnloadedListeners = this.pageUnloadedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyPageUnloaded(event: PageUnloadedEvent) {
@@ -623,7 +623,7 @@ export class LiveEditPageProxy {
     }
 
     unPageTextModeStarted(listener: (event: PageTextModeStartedEvent) => void) {
-        this.pageTextModeStartedListeners = this.pageTextModeStartedListeners.filter((curr) => (curr != listener));
+        this.pageTextModeStartedListeners = this.pageTextModeStartedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyPageTextModeStarted(event: PageTextModeStartedEvent) {
@@ -635,7 +635,7 @@ export class LiveEditPageProxy {
     }
 
     unRegionSelected(listener: {(event: RegionSelectedEvent): void;}) {
-        this.regionSelectedListeners = this.regionSelectedListeners.filter((curr) => (curr != listener));
+        this.regionSelectedListeners = this.regionSelectedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyRegionSelected(event: RegionSelectedEvent) {
@@ -647,7 +647,7 @@ export class LiveEditPageProxy {
     }
 
     unItemViewSelected(listener: {(event: ItemViewSelectedEvent): void;}) {
-        this.itemViewSelectedListeners = this.itemViewSelectedListeners.filter((curr) => (curr != listener));
+        this.itemViewSelectedListeners = this.itemViewSelectedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyItemViewSelected(event: ItemViewSelectedEvent) {
@@ -659,7 +659,7 @@ export class LiveEditPageProxy {
     }
 
     unItemViewDeselected(listener: {(event: ItemViewDeselectedEvent): void;}) {
-        this.itemViewDeselectedListeners = this.itemViewDeselectedListeners.filter((curr) => (curr != listener));
+        this.itemViewDeselectedListeners = this.itemViewDeselectedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyItemViewDeselected(event: ItemViewDeselectedEvent) {
@@ -671,7 +671,7 @@ export class LiveEditPageProxy {
     }
 
     unComponentAdded(listener: {(event: ComponentAddedEvent): void;}) {
-        this.componentAddedListeners = this.componentAddedListeners.filter((curr) => (curr != listener));
+        this.componentAddedListeners = this.componentAddedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyComponentAdded(event: ComponentAddedEvent) {
@@ -683,7 +683,7 @@ export class LiveEditPageProxy {
     }
 
     unComponentRemoved(listener: {(event: ComponentRemovedEvent): void;}) {
-        this.componentRemovedListeners = this.componentRemovedListeners.filter((curr) => (curr != listener));
+        this.componentRemovedListeners = this.componentRemovedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyComponentRemoved(event: ComponentRemovedEvent) {
@@ -695,7 +695,7 @@ export class LiveEditPageProxy {
     }
 
     unComponentDuplicated(listener: {(event: ComponentDuplicatedEvent): void;}) {
-        this.componentDuplicatedListeners = this.componentDuplicatedListeners.filter((curr) => (curr != listener));
+        this.componentDuplicatedListeners = this.componentDuplicatedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyComponentDuplicated(event: ComponentDuplicatedEvent) {
@@ -707,7 +707,7 @@ export class LiveEditPageProxy {
     }
 
     unComponentInspected(listener: {(event: ComponentInspectedEvent): void;}) {
-        this.componentInspectedListeners = this.componentInspectedListeners.filter((curr) => (curr != listener));
+        this.componentInspectedListeners = this.componentInspectedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyComponentInspected(event: ComponentInspectedEvent) {
@@ -719,7 +719,7 @@ export class LiveEditPageProxy {
     }
 
     unPageInspected(listener: {(event: PageInspectedEvent): void;}) {
-        this.pageInspectedListeners = this.pageInspectedListeners.filter((curr) => (curr != listener));
+        this.pageInspectedListeners = this.pageInspectedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyPageInspected(event: PageInspectedEvent) {
@@ -731,7 +731,7 @@ export class LiveEditPageProxy {
     }
 
     unComponentLoaded(listener: {(event: ComponentLoadedEvent): void;}) {
-        this.componentLoadedListeners = this.componentLoadedListeners.filter((curr) => (curr != listener));
+        this.componentLoadedListeners = this.componentLoadedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyComponentLoaded(event: ComponentLoadedEvent) {
@@ -743,7 +743,7 @@ export class LiveEditPageProxy {
     }
 
     unComponentReset(listener: {(event: ComponentResetEvent): void;}) {
-        this.componentResetListeners = this.componentResetListeners.filter((curr) => (curr != listener));
+        this.componentResetListeners = this.componentResetListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyComponentReset(event: ComponentResetEvent) {
@@ -755,7 +755,7 @@ export class LiveEditPageProxy {
     }
 
     unLiveEditPageViewReady(listener: {(event: LiveEditPageViewReadyEvent): void;}) {
-        this.liveEditPageViewReadyListeners = this.liveEditPageViewReadyListeners.filter((curr) => (curr != listener));
+        this.liveEditPageViewReadyListeners = this.liveEditPageViewReadyListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyLiveEditPageViewReady(event: LiveEditPageViewReadyEvent) {
@@ -767,7 +767,7 @@ export class LiveEditPageProxy {
     }
 
     unLiveEditPageInitializationError(listener: {(event: LiveEditPageInitializationErrorEvent): void;}) {
-        this.liveEditPageInitErrorListeners = this.liveEditPageInitErrorListeners.filter((curr) => (curr != listener));
+        this.liveEditPageInitErrorListeners = this.liveEditPageInitErrorListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyLiveEditPageInitializationError(event: LiveEditPageInitializationErrorEvent) {
@@ -779,7 +779,7 @@ export class LiveEditPageProxy {
     }
 
     unLiveEditPageDialogCreate(listener: {(event: CreateHtmlAreaDialogEvent): void;}) {
-        this.createHtmlAreaDialogListeners = this.createHtmlAreaDialogListeners.filter((curr) => (curr != listener));
+        this.createHtmlAreaDialogListeners = this.createHtmlAreaDialogListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyLiveEditPageDialogCreate(event: CreateHtmlAreaDialogEvent) {
@@ -795,7 +795,7 @@ export class LiveEditPageProxy {
     }
 
     unComponentFragmentCreated(listener: {(event: ComponentFragmentCreatedEvent): void;}) {
-        this.fragmentCreatedListeners = this.fragmentCreatedListeners.filter((curr) => (curr != listener));
+        this.fragmentCreatedListeners = this.fragmentCreatedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyFragmentCreated(event: ComponentFragmentCreatedEvent) {
@@ -807,7 +807,7 @@ export class LiveEditPageProxy {
     }
 
     unFragmentReloadRequired(listener: {(event: FragmentComponentReloadRequiredEvent): void;}) {
-        this.fragmentLoadedListeners = this.fragmentLoadedListeners.filter((curr) => (curr != listener));
+        this.fragmentLoadedListeners = this.fragmentLoadedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyFragmentReloadRequired(event: FragmentComponentReloadRequiredEvent) {
@@ -819,7 +819,7 @@ export class LiveEditPageProxy {
     }
 
     unShowWarning(listener: {(event: ShowWarningLiveEditEvent): void;}) {
-        this.showWarningListeners = this.showWarningListeners.filter((curr) => (curr != listener));
+        this.showWarningListeners = this.showWarningListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyShowWarning(event: ShowWarningLiveEditEvent) {
@@ -831,7 +831,7 @@ export class LiveEditPageProxy {
     }
 
     unEditContent(listener: {(event: EditContentEvent): void;}) {
-        this.editContentListeners = this.editContentListeners.filter((curr) => (curr != listener));
+        this.editContentListeners = this.editContentListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyEditContent(event: EditContentEvent) {

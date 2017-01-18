@@ -32,7 +32,7 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
         let loadedAppsAtLeastOnce = false;
 
         this.onMarketLoaded = api.util.AppHelper.debounce((() => {
-            if (this.marketAppPanel.getMarketAppsTreeGrid().getGrid().getDataView().getLength() == 0) {
+            if (this.marketAppPanel.getMarketAppsTreeGrid().getGrid().getDataView().getLength() === 0) {
                 this.statusMessage.addClass('empty');
                 this.statusMessage.setHtml('No applications found');
             } else {
@@ -123,7 +123,7 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
         this.onDragEnter((event: DragEvent) => {
             let target = <HTMLElement> event.target;
 
-            if (!!dragOverEl || dragOverEl == this.getHTMLElement()) {
+            if (!!dragOverEl || dragOverEl === this.getHTMLElement()) {
                 this.dropzoneContainer.show();
             }
             dragOverEl = target;

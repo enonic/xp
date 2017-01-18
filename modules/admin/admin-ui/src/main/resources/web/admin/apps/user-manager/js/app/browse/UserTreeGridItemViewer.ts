@@ -18,7 +18,7 @@ export class UserTreeGridItemViewer extends api.ui.NamesAndIconViewer<UserTreeGr
 
     resolveSubName(object: UserTreeGridItem, relativePath: boolean = false): string {
 
-        if (object.getType() != null) {
+        if (object.getType() !== null) {
             switch (object.getType()) {
                 case UserTreeGridItemType.USER_STORE:
                     return ('/' + object.getUserStore().getKey().toString());

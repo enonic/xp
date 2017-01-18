@@ -47,7 +47,7 @@ export class PersistNewContentRoutine extends api.util.Flow<api.content.Content,
 
     private doHandleCreateContent(context: PersistedNewContentRoutineContext): wemQ.Promise<void> {
 
-        if (this.createContentRequestProducer != undefined) {
+        if (this.createContentRequestProducer !== undefined) {
 
             return this.createContentRequestProducer.call(this.getThisOfProducer()).then((createContentRequest: CreateContentRequest) => {
 

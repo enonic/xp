@@ -81,7 +81,7 @@ module api.content.page {
 
         unLoadedData(listener: (event: LoadedDataEvent<PageDescriptor>) => void) {
             this.loadedDataListeners = this.loadedDataListeners.filter((currentListener: (event: LoadedDataEvent<PageDescriptor>)=>void)=> {
-                return currentListener != listener;
+                return currentListener !== listener;
             });
         }
 

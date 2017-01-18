@@ -167,8 +167,8 @@ module api.app.browse {
 
         private indexOf(item: BrowseItem<M>): number {
             for (let i = 0; i < this.items.length; i++) {
-                if (item.getPath() && item.getPath() == this.items[i].getPath() ||
-                    item.getId() == this.items[i].getId()) {
+                if (item.getPath() && item.getPath() === this.items[i].getPath() ||
+                    item.getId() === this.items[i].getId()) {
                     return i;
                 }
             }

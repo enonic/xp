@@ -49,7 +49,7 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
             let thisContentId = this.getItem().getModel().getId();
 
             let contentSummary: ContentSummaryAndCompareStatus = contents.filter((content) => {
-                return thisContentId == content.getId();
+                return thisContentId === content.getId();
             })[0];
 
             if (contentSummary) {

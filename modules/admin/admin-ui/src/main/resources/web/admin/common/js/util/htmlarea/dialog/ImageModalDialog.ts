@@ -213,7 +213,7 @@ module api.util.htmlarea.dialog {
                 wemjq(this.imageToolbar.getHTMLElement()).insertBefore(
                     this.imagePreviewContainer.getHTMLElement().parentElement.parentElement);
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
-                if (this.getCaptionFieldValue() == '') {
+                if (this.getCaptionFieldValue() === '') {
                     this.imageCaptionField.getEl().scrollIntoView();
                     this.imageCaptionField.getInput().giveFocus();
                 }
@@ -351,7 +351,7 @@ module api.util.htmlarea.dialog {
                 if (this.imageUploaderEl.isEnabled()) {
                     let target = <HTMLElement> event.target;
 
-                    if (!!dragOverEl || dragOverEl == this.getHTMLElement()) {
+                    if (!!dragOverEl || dragOverEl === this.getHTMLElement()) {
                         this.dropzoneContainer.show();
                     }
                     dragOverEl = target;

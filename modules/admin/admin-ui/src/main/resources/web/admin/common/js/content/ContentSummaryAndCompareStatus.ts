@@ -121,7 +121,7 @@ module api.content {
                 return false;
             }
 
-            if (this.compareStatus != other.compareStatus) {
+            if (this.compareStatus !== other.compareStatus) {
                 return false;
             }
 

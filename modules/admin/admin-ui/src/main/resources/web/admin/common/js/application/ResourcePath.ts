@@ -5,7 +5,7 @@ module api.application {
         private static ELEMENT_DIVIDER:string = '/';
 
         public static fromString(s:string) {
-            let absolute:boolean = s.charAt(0) == ResourcePath.ELEMENT_DIVIDER;
+            let absolute:boolean = s.charAt(0) === ResourcePath.ELEMENT_DIVIDER;
             let elements:string[] = s.split(ResourcePath.ELEMENT_DIVIDER);
             return new ResourcePath(api.util.BasePath.removeEmptyElements(elements), absolute);
         }

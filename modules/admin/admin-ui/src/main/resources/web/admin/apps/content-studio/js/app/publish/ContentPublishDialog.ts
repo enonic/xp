@@ -333,14 +333,14 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
     private countToPublish(summaries: ContentSummaryAndCompareStatus[]): number {
         return summaries.reduce((count, summary: ContentSummaryAndCompareStatus) => {
-            return summary.getCompareStatus() != CompareStatus.EQUAL ? ++count : count;
+            return summary.getCompareStatus() !== CompareStatus.EQUAL ? ++count : count;
         }, 0);
     }
 
     private updateSubTitle(count: number) {
         let allValid = this.areItemsAndDependantsValid();
 
-        let subTitle = count == 0
+        let subTitle = count === 0
             ? 'No items to publish'
             : allValid ? 'Your changes are ready for publishing'
                            : 'Invalid item(s) prevent publish';

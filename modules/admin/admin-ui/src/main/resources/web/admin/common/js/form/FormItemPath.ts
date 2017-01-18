@@ -15,10 +15,10 @@ module api.form {
         private refString:string;
 
         static fromString(s:string, elementDivider?:string) {
-            if (elementDivider == null) {
+            if (elementDivider === null) {
                 elementDivider = FormItemPath.DEFAULT_ELEMENT_DIVIDER;
             }
-            let absolute:boolean = s.charAt(0) == elementDivider;
+            let absolute:boolean = s.charAt(0) === elementDivider;
             let elements:string[] = s.split(elementDivider);
             elements = FormItemPath.removeEmptyElements(elements);
             let pathElements:FormItemPathElement[] = [];
@@ -49,12 +49,12 @@ module api.form {
         }
 
         constructor(elements:FormItemPathElement[], elementDivider?:string, absolute?:boolean) {
-            this.elementDivider = elementDivider != null ? elementDivider : FormItemPath.DEFAULT_ELEMENT_DIVIDER;
-            this.absolute = absolute == undefined ? true : absolute;
+            this.elementDivider = elementDivider !== null ? elementDivider : FormItemPath.DEFAULT_ELEMENT_DIVIDER;
+            this.absolute = absolute === undefined ? true : absolute;
             elements.forEach((element:FormItemPathElement, index:number) => {
-                if (element == null) {
+                if (element === null) {
                     throw new Error('Path element was null at index: ' + index);
-                } else if (element.getName().length == 0) {
+                } else if (element.getName().length === 0) {
                     throw new Error('Path element was empty string at index: ' + index);
                 }
             });

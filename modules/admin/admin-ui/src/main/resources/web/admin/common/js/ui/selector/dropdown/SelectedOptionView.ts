@@ -34,7 +34,7 @@ module api.ui.selector.dropdown {
             }
 
             this.onKeyPressed((event:KeyboardEvent) => {
-                if (event.which == 32 || event.which == 13) { // space or enter
+                if (event.which === 32 || event.which === 13) { // space or enter
                     this.notifyOpenDropdown();
                 }
             });
@@ -65,7 +65,7 @@ module api.ui.selector.dropdown {
 
         unOpenDropdown(listener: {(): void;}) {
             this.openDropdownListeners = this.openDropdownListeners.filter(function (curr: {(): void;}) {
-                return curr != listener;
+                return curr !== listener;
             });
         }
     }

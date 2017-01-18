@@ -9,7 +9,7 @@ module api.util.loader {
             url = encodeURI(url);
 
             for (let i in ImageLoader.cachedImages) {
-                if (ImageLoader.cachedImages[i].src == url) {
+                if (ImageLoader.cachedImages[i].src === url) {
                     imageFound = true;
                     returnImage = ImageLoader.cachedImages[i];
                 }

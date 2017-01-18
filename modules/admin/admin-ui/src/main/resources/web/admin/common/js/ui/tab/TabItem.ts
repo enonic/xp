@@ -74,7 +74,7 @@ module api.ui.tab {
         }
 
         setLabel(newValue: string, markUnnamed: boolean = false, addLabelTitleAttribute: boolean = true) {
-            if (this.label == newValue) {
+            if (this.label === newValue) {
                 return;
             }
 
@@ -135,19 +135,19 @@ module api.ui.tab {
         unLabelChanged(listener: (event: TabItemLabelChangedEvent)=>void) {
             this.labelChangedListeners =
                 this.labelChangedListeners.filter((currentListener: (event: TabItemLabelChangedEvent)=>void) => {
-                    return listener != currentListener;
+                    return listener !== currentListener;
                 });
         }
 
         unSelected(listener: (event: TabItemSelectedEvent)=>void) {
             this.selectedListeners = this.selectedListeners.filter((currentListener: (event: TabItemSelectedEvent)=>void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
         unClosed(listener: (event: TabItemClosedEvent)=>void) {
             this.closedListeners = this.closedListeners.filter((currentListener: (event: TabItemClosedEvent)=>void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 

@@ -4,10 +4,10 @@ module api.icon {
 
         appendParam(paramName: string, paramValue: string, url: string) {
             let questionIndex = url.indexOf('?');
-            if (questionIndex == -1) {
+            if (questionIndex === -1) {
                 url += '?' + paramName + '=' + paramValue;
                 return url;
-            } else if (url.charAt(url.length - 1) == '?') {
+            } else if (url.charAt(url.length - 1) === '?') {
                 url += paramName + '=' + paramValue;
                 return url;
             } else {

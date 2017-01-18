@@ -43,11 +43,11 @@ module api.form.inputtype {
 
         equals(that: InputValidationRecording): boolean {
 
-            if (this.breaksMinimumOccurrences != that.breaksMinimumOccurrences) {
+            if (this.breaksMinimumOccurrences !== that.breaksMinimumOccurrences) {
                 return false;
             }
 
-            if (this.breaksMaximumOccurrences != that.breaksMaximumOccurrences) {
+            if (this.breaksMaximumOccurrences !== that.breaksMaximumOccurrences) {
                 return false;
             }
 
@@ -59,7 +59,7 @@ module api.form.inputtype {
         }
 
         validityChanged(other: InputValidationRecording) {
-            return other == undefined || other == null || !other.equals(this);
+            return other === undefined || other === null || !other.equals(this);
         }
     }
 }
