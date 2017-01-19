@@ -127,7 +127,7 @@ module api.app.wizard {
             if (this.displayNameGenerator && this.displayNameGenerator.hasScript()) {
                 if (!forceDisplayNameProgrammaticallySet) {
                     let generatedDisplayName = this.displayNameGenerator.execute();
-                    this.displayNameProgrammaticallySet = generatedDisplayName == displayName;
+                    this.displayNameProgrammaticallySet = generatedDisplayName === displayName;
                 } else {
                     this.displayNameProgrammaticallySet = true;
                 }

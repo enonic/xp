@@ -73,7 +73,7 @@ export class GroupRoleWizardPanel extends PrincipalWizardPanel {
     hasUnsavedChanges(): boolean {
         let persistedPrincipal = this.getPersistedItem();
         let wizardHeader = this.getWizardHeader();
-        if (persistedPrincipal == undefined) {
+        if (persistedPrincipal == null) {
             return wizardHeader.getName() !== '' ||
                    wizardHeader.getDisplayName() !== '' ||
                    this.membersWizardStepForm.getMembers().length !== 0;

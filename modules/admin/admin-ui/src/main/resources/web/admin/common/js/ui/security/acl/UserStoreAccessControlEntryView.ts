@@ -38,7 +38,7 @@ module api.ui.security.acl {
         }
 
         setEditable(editable: boolean) {
-            if (editable != this.editable) {
+            if (editable !== this.editable) {
                 this.accessSelector.setEnabled(editable);
                 this.editable = editable;
             }
@@ -56,7 +56,7 @@ module api.ui.security.acl {
 
         unValueChanged(listener: (item: UserStoreAccessControlEntry) => void) {
             this.valueChangedListeners = this.valueChangedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 

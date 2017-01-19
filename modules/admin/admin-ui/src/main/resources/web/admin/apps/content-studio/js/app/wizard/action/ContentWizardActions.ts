@@ -88,7 +88,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
     }
 
     setDeleteOnlyMode(content: api.content.Content, valueOn: boolean = true) {
-        if (this.deleteOnlyMode == valueOn) {
+        if (this.deleteOnlyMode === valueOn) {
             return;
         }
         this.deleteOnlyMode = valueOn;
@@ -146,7 +146,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
                         let status = contentAndCompare.getCompareStatus();
                         let isPublished = status !== api.content.CompareStatus.NEW &&
-                                          status != api.content.CompareStatus.UNKNOWN;
+                                          status !== api.content.CompareStatus.UNKNOWN;
                     });
             }
 

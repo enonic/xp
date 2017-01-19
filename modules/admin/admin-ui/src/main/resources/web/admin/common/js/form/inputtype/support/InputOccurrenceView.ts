@@ -36,7 +36,7 @@ module api.form.inputtype.support {
             let ignorePropertyChange = false;
             this.inputTypeView.onOccurrenceValueChanged((occurrence: api.dom.Element, value: api.data.Value) => {
                 // check if this is our occurrence because all views will receive occurrence value changed event
-                if (this.inputElement == occurrence) {
+                if (this.inputElement === occurrence) {
                     if (InputOccurrenceView.debug) {
                         console.debug('InputOccurrenceView: onOccurrenceValueChanged ', occurrence, value);
                     }
@@ -51,7 +51,7 @@ module api.form.inputtype.support {
 
                 let newStateOfRequiredContractBroken = this.inputTypeView.valueBreaksRequiredContract(event.getNewValue());
 
-                if (this.requiredContractBroken != newStateOfRequiredContractBroken) {
+                if (this.requiredContractBroken !== newStateOfRequiredContractBroken) {
                     this.requiredContractBroken = newStateOfRequiredContractBroken;
                     this.inputTypeView.notifyRequiredContractBroken(newStateOfRequiredContractBroken, inputOccurrence.getIndex());
                 }

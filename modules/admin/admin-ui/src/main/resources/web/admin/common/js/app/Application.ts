@@ -112,15 +112,15 @@ module api.app {
         }
 
         isDisplayed(): boolean {
-            return ApplicationShowStatus.DISPLAYED == this.status;
+            return ApplicationShowStatus.DISPLAYED === this.status;
         }
 
         isPreparing(): boolean {
-            return this.status == ApplicationShowStatus.PREPARING;
+            return this.status === ApplicationShowStatus.PREPARING;
         }
 
         isNotDisplayed(): boolean {
-            return this.status == ApplicationShowStatus.NOT_DISPLAYED;
+            return this.status === ApplicationShowStatus.NOT_DISPLAYED;
         }
 
         onLoaded(listener: () => void) {

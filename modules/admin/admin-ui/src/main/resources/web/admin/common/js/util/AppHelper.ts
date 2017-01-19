@@ -70,7 +70,7 @@ module api.util {
             let target;
 
             element.onFocusOut((event) => {
-                if(target == event.target) {
+                if(target === event.target) {
                     focusOutTimeout = setTimeout(onFocusOut, wait);
                 }
             });

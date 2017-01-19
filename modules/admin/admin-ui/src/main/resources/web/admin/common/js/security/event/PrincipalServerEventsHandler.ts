@@ -39,7 +39,7 @@ module api.security.event {
                 console.debug('PrincipalServerEventsHandler: received server event', event);
             }
 
-            if (event.getType() == NodeServerChangeType.DELETE) {
+            if (event.getType() === NodeServerChangeType.DELETE) {
                this.handleContentDeleted(this.extractContentPaths([event.getNodeChange()]));
             }
         }
@@ -75,7 +75,7 @@ module api.security.event {
         unPrincipalDeleted(listener: (paths: string[])=>void) {
             this.principalDeletedListeners =
                 this.principalDeletedListeners.filter((currentListener: (paths: string[])=>void) => {
-                    return currentListener != listener;
+                    return currentListener !== listener;
                 });
         }
 

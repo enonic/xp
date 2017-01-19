@@ -62,7 +62,7 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
 
         this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
             // Ensure displayed selector option is removed when fragment is removed
-            if (event.getPropertyName() == FragmentComponent.PROPERTY_FRAGMENT) {
+            if (event.getPropertyName() === FragmentComponent.PROPERTY_FRAGMENT) {
                 if (!this.fragmentComponent.hasFragment()) {
                     // this.fragmentSelector.setContent(null);
                     this.fragmentSelector.setSelection(null);

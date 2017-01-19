@@ -55,7 +55,7 @@ export class WidgetView extends api.dom.DivEl {
     private applyConfig() {
         if (this.isUrlBased()) {
             let config = this.widget.getConfig();
-            if (!!config && config.hasOwnProperty('render-on-resize') && config['render-on-resize'] == 'true') {
+            if (!!config && config.hasOwnProperty('render-on-resize') && config['render-on-resize'] === 'true') {
                 this.handleRerenderOnResize();
             }
         }
@@ -190,7 +190,7 @@ export class WidgetView extends api.dom.DivEl {
     }
 
     private isActive() {
-        return this.detailsView.getActiveWidget() == this;
+        return this.detailsView.getActiveWidget() === this;
     }
 
     private hasDynamicHeight(): boolean {
@@ -223,7 +223,7 @@ export class WidgetView extends api.dom.DivEl {
 
     unActivated(listener: ()=>void) {
         this.activationListeners = this.activationListeners.filter((currentListener: ()=>void) => {
-            return currentListener != listener;
+            return currentListener !== listener;
         });
     }
 

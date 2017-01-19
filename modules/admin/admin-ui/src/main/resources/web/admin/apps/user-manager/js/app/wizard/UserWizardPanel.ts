@@ -194,7 +194,7 @@ export class UserWizardPanel extends PrincipalWizardPanel {
         let persistedPrincipal = this.getPersistedItem();
         let email = this.userEmailWizardStepForm.getEmail();
         let memberships = this.userMembershipsWizardStepForm.getMemberships();
-        if (persistedPrincipal == undefined) {
+        if (persistedPrincipal == null) {
             let wizardHeader = this.getWizardHeader();
             return wizardHeader.getName() !== '' ||
                    wizardHeader.getDisplayName() !== '' ||

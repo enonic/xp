@@ -69,9 +69,9 @@ module api.content.resource {
                 let metadata = new ContentMetadata(response.getResult().metadata['hits'], response.getResult().metadata['totalHits']);
                 let contents: CONTENT[];
 
-                if (this.expand == api.rest.Expand.NONE) {
+                if (this.expand === api.rest.Expand.NONE) {
                     contents = <any[]> this.fromJsonToContentIdBaseItemArray(contentsAsJson);
-                } else if (this.expand == api.rest.Expand.SUMMARY) {
+                } else if (this.expand === api.rest.Expand.SUMMARY) {
                     contents = <any[]> this.fromJsonToContentSummaryArray(<ContentSummaryJson[]>contentsAsJson);
                 } else {
                     contents = <any[]>this.fromJsonToContentArray(<ContentJson[]>contentsAsJson);
@@ -84,7 +84,7 @@ module api.content.resource {
         }
 
         private updateStateAfterLoad(contents: CONTENT[], metadata: ContentMetadata) {
-            if (this.contentQuery.getFrom() == 0) {
+            if (this.contentQuery.getFrom() === 0) {
                 this.results = [];
             }
 
@@ -120,7 +120,7 @@ module api.content.resource {
 
             let queryFilterJsons: api.query.filter.FilterTypeWrapperJson[] = [];
 
-            if (queryFilters == null || queryFilters.length == 0) {
+            if (queryFilters == null || queryFilters.length === 0) {
                 return queryFilterJsons;
             }
 

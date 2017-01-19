@@ -25,6 +25,6 @@ export class PageTemplateOption {
     isCustom(): boolean {
         let pageTemplateDisplayName = api.content.page.PageTemplateDisplayName;
 
-        return this.template && this.template.getDisplayName() == pageTemplateDisplayName[pageTemplateDisplayName.Custom];
+        return this.template && this.template.getDisplayName() === pageTemplateDisplayName[pageTemplateDisplayName.Custom];
     }
 }

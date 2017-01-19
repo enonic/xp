@@ -16,11 +16,11 @@ module api.util {
 
             this.elementDivider = elementDivider != null ? elementDivider : BasePath.DEFAULT_ELEMENT_DIVIDER;
 
-            this.absolute = absolute == undefined ? true : absolute;
+            this.absolute = absolute == null ? true : absolute;
             elements.forEach((element:string, index:number) => {
                 if (element == null) {
                     throw new Error('Path element was null at index: ' + index);
-                } else if (element.length == 0) {
+                } else if (element.length === 0) {
                     throw new Error('Path element was empty string at index: ' + index);
                 }
             });

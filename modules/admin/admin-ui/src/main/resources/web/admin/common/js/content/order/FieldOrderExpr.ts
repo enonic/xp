@@ -32,7 +32,7 @@ module api.content.order {
                 return false;
             }
             let other = <FieldOrderExpr>o;
-            if (this.fieldName.toLowerCase() != other.getFieldName().toLowerCase()) {
+            if (this.fieldName.toLowerCase() !== other.getFieldName().toLowerCase()) {
                 return false;
             }
             return true;

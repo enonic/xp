@@ -164,7 +164,7 @@ module api.content.form.inputtype.upload {
 
         private propertyAlreadyHasAttachment(property: Property): boolean {
             return (property.getValue() != null &&
-                    property.getType() == ValueTypes.DATA &&
+                    property.getType() === ValueTypes.DATA &&
                     !api.util.StringHelper.isEmpty(property.getPropertySet().getString('attachment')));
         }
 

@@ -33,7 +33,7 @@ module api.app.bar {
         }
 
         equals(other: AppBarTabId): boolean {
-            return other.id == this.id && other.mode == this.mode;
+            return other.id === this.id && other.mode === this.mode;
         }
 
         toString(): string {

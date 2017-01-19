@@ -390,7 +390,7 @@ module api.liveedit {
 
         scrollComponentIntoView(): void {
             let distance = this.calcDistanceToViewport();
-            if (distance != 0) {
+            if (distance !== 0) {
                 wemjq('html,body').animate({scrollTop: (distance > 0 ? '+=' : '-=') + Math.abs(distance)}, 200);
             }
         }
@@ -544,7 +544,7 @@ module api.liveedit {
                 // Allow selecting only component types if something is selected
                 // The rest will only deselect current selection
                 // Also allow selecting the same component again (i.e. to show context menu)
-                if (!selectedView || selectedView == this || !isViewInsideSelectedContainer) {
+                if (!selectedView || selectedView === this || !isViewInsideSelectedContainer) {
                     let menuPosition = rightClicked ? null : ItemViewContextMenuPosition.NONE;
 
                     if (pageView.isTextEditMode()) { // if in text edit mode don't select on first click
@@ -571,7 +571,7 @@ module api.liveedit {
             if (this.isSelected()) {
                 this.deselect();
             }
-            if (!!event.type && (event.type == 'click' || event.type == 'contextmenu') && this.isEventOverItem(event)) {
+            if (!!event.type && (event.type === 'click' || event.type === 'contextmenu') && this.isEventOverItem(event)) {
                 this.handleClick(event);
             }
         }
@@ -596,7 +596,7 @@ module api.liveedit {
                 return;
             }
 
-            if (menuPosition && ItemViewContextMenuPosition.NONE == menuPosition) {
+            if (menuPosition && ItemViewContextMenuPosition.NONE === menuPosition) {
                 this.hideContextMenu();
                 return;
             }
@@ -610,7 +610,7 @@ module api.liveedit {
                 this.contextMenu.onOrientationChanged((orientation: ItemViewContextMenuOrientation) => {
 
                     // move menu to the top edge of empty view in order to not overlay it
-                    if (orientation == ItemViewContextMenuOrientation.UP && this.isEmpty()) {
+                    if (orientation === ItemViewContextMenuOrientation.UP && this.isEmpty()) {
                         this.contextMenu.getEl().setMarginTop('-' + dimensions.height + 'px');
                     } else {
                         this.contextMenu.getEl().setMarginTop('0px');
@@ -625,7 +625,7 @@ module api.liveedit {
             } else {
                 // show menu below if empty or on top
                 x = dimensions.left + dimensions.width / 2;
-                y = dimensions.top + (ItemViewContextMenuPosition.TOP == menuPosition ? 0 : dimensions.height);
+                y = dimensions.top + (ItemViewContextMenuPosition.TOP === menuPosition ? 0 : dimensions.height);
             }
             this.contextMenu.showAt(x, y, !clickPosition);
         }
@@ -696,7 +696,7 @@ module api.liveedit {
             let pageView = this.getPageView();
             let selectedView = pageView.getSelectedView();
 
-            if (selectedView == this) {
+            if (selectedView === this) {
                 // view is already selected
                 return;
             } else if (selectedView) {
@@ -834,7 +834,7 @@ module api.liveedit {
         }
 
         unMouseOverView(listener: () => void) {
-            this.mouseOverViewListeners = this.mouseOverViewListeners.filter((current) => (current != listener));
+            this.mouseOverViewListeners = this.mouseOverViewListeners.filter((current) => (current !== listener));
         }
 
         private notifyMouseOverView() {
@@ -849,7 +849,7 @@ module api.liveedit {
         }
 
         unMouseLeaveView(listener: () => void) {
-            this.mouseOutViewListeners = this.mouseOutViewListeners.filter((current) => (current != listener));
+            this.mouseOutViewListeners = this.mouseOutViewListeners.filter((current) => (current !== listener));
         }
 
         private notifyMouseLeaveView() {
@@ -878,7 +878,7 @@ module api.liveedit {
 
         // http://stackoverflow.com/a/872537
         private getDocumentScrollTop() {
-            if (typeof pageYOffset != 'undefined') {
+            if (typeof pageYOffset !== 'undefined') {
                 //most browsers except IE before #9
                 return pageYOffset;
             } else {
@@ -958,13 +958,13 @@ module api.liveedit {
         }
 
         isChildOfItemView(itemView: ItemView) {
-            if (this == itemView) {
+            if (this === itemView) {
                 return false;
             }
             let parentItemView = this.getParentItemView();
             let result = false;
             while (!!parentItemView && !result) {
-                result = (parentItemView == itemView);
+                result = (parentItemView === itemView);
                 parentItemView = parentItemView.getParentItemView();
             }
 

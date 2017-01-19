@@ -124,7 +124,7 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
             if (this.fileInput.getUploader().isEnabled()) {
                 let target = <HTMLElement> event.target;
 
-                if (!!dragOverEl || dragOverEl == this.getHTMLElement()) {
+                if (!!dragOverEl || dragOverEl === this.getHTMLElement()) {
                     this.dropzoneContainer.show();
                 }
                 dragOverEl = target;

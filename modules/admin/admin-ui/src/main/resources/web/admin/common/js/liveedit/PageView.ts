@@ -152,7 +152,7 @@ module api.liveedit {
             this.pageModel.onPropertyChanged(this.propertyChangedListener);
 
             this.pageModeChangedListener = (event: PageModeChangedEvent) => {
-                let resetEnabled = event.getNewMode() != PageMode.AUTOMATIC && event.getNewMode() != PageMode.NO_CONTROLLER;
+                let resetEnabled = event.getNewMode() !== PageMode.AUTOMATIC && event.getNewMode() !== PageMode.NO_CONTROLLER;
                 if (PageView.debug) {
                     console.log('PageView.pageModeChangedListener setting reset enabled', resetEnabled);
                 }
@@ -193,7 +193,7 @@ module api.liveedit {
                 this.setIgnorePropertyChanges(false);
             });
 
-            if (pageModel.getMode() == PageMode.AUTOMATIC || pageModel.getMode() == PageMode.NO_CONTROLLER) {
+            if (pageModel.getMode() === PageMode.AUTOMATIC || pageModel.getMode() === PageMode.NO_CONTROLLER) {
                 this.resetAction.setEnabled(false);
             }
 
@@ -399,7 +399,7 @@ module api.liveedit {
                 } else {
                     this.selectLocked({x: event.pageX, y: event.pageY});
                 }
-            } else if (!this.isSelected() || event.which == 3) {
+            } else if (!this.isSelected() || event.which === 3) {
                 this.handleClick(event);
             } else {
                 this.deselect();
@@ -490,7 +490,7 @@ module api.liveedit {
             let textView: api.liveedit.text.TextComponentView;
             textItemViews.forEach((view: ItemView) => {
                 textView = <api.liveedit.text.TextComponentView> view;
-                if (textView.isEditMode() != flag) {
+                if (textView.isEditMode() !== flag) {
                     textView.setEditMode(flag);
                     this.closeTextEditModeButton.toggleClass('active', flag);
                 }
@@ -579,7 +579,7 @@ module api.liveedit {
         }
 
         isEmpty(): boolean {
-            return !this.pageModel || this.pageModel.getMode() == PageMode.NO_CONTROLLER;
+            return !this.pageModel || this.pageModel.getMode() === PageMode.NO_CONTROLLER;
         }
 
         private isContentEmpty() {
@@ -600,7 +600,7 @@ module api.liveedit {
                     ? this.pageModel.getController().getDisplayName()
                     : pageTemplateDisplayName[pageTemplateDisplayName.Custom];
             }
-            if (this.pageModel.getMode() == PageMode.AUTOMATIC) {
+            if (this.pageModel.getMode() === PageMode.AUTOMATIC) {
                 return this.pageModel.getDefaultPageTemplate().getDisplayName();
             }
 
@@ -749,7 +749,7 @@ module api.liveedit {
                         layoutView.getRegionViewByName(path.getRegionName());
                     }
                 } else {
-                    if (path.getRegionName() == regionView.getRegionName()) {
+                    if (path.getRegionName() === regionView.getRegionName()) {
                         return regionView;
                     }
                 }
@@ -767,8 +767,8 @@ module api.liveedit {
 
             for (let i = 0; i < this.regionViews.length; i++) {
                 let regionView = this.regionViews[i];
-                if (firstLevelOfPath.getRegionName() == regionView.getRegionName()) {
-                    if (path.numberOfLevels() == 1) {
+                if (firstLevelOfPath.getRegionName() === regionView.getRegionName()) {
+                    if (path.numberOfLevels() === 1) {
                         return regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
                     } else {
                         const view = regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
@@ -939,7 +939,7 @@ module api.liveedit {
         }
 
         unItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {
-            this.itemViewAddedListeners = this.itemViewAddedListeners.filter((current) => (current != listener));
+            this.itemViewAddedListeners = this.itemViewAddedListeners.filter((current) => (current !== listener));
         }
 
         private notifyItemViewAdded(itemView: ItemView) {
@@ -952,7 +952,7 @@ module api.liveedit {
         }
 
         unItemViewRemoved(listener: (event: ItemViewRemovedEvent) => void) {
-            this.itemViewRemovedListeners = this.itemViewRemovedListeners.filter((current) => (current != listener));
+            this.itemViewRemovedListeners = this.itemViewRemovedListeners.filter((current) => (current !== listener));
         }
 
         private notifyItemViewRemoved(itemView: ItemView) {
@@ -965,7 +965,7 @@ module api.liveedit {
         }
 
         unPageLocked(listener: (event: any) => void) {
-            this.pageLockedListeners = this.pageLockedListeners.filter((current) => (current != listener));
+            this.pageLockedListeners = this.pageLockedListeners.filter((current) => (current !== listener));
         }
 
         private notifyPageLockChanged(locked: boolean) {

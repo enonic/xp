@@ -369,7 +369,7 @@ module api.liveedit {
             this.moving = false;
 
             if (this.parentRegionView.getRegionPath().equals(toRegionView.getRegionPath()) &&
-                toIndex == this.parentRegionView.getComponentViewIndex(this)) {
+                toIndex === this.parentRegionView.getComponentViewIndex(this)) {
 
                 if (ComponentView.debug) {
                     console.debug('Dropped in the same region at the same index, no need to move', this.parentRegionView, toRegionView);
@@ -396,7 +396,7 @@ module api.liveedit {
 
         unItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {
             this.itemViewAddedListeners = this.itemViewAddedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 
@@ -413,7 +413,7 @@ module api.liveedit {
 
         unItemViewRemoved(listener: (event: ItemViewRemovedEvent) => void) {
             this.itemViewRemovedListeners = this.itemViewRemovedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 

@@ -109,7 +109,7 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
 
         let newParent = data[regionPosition];
 
-        if (newParent == item.getParent() && data.indexOf(item) < insertBefore) {
+        if (newParent === item.getParent() && data.indexOf(item) < insertBefore) {
             insertIndex--;
         }
 
@@ -135,7 +135,7 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
         if (parentComponentView) {
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(draggableComponentView, LayoutComponentView)) {
-                if (parentComponentView.getName() != 'main') {
+                if (parentComponentView.getName() !== 'main') {
                     DragHelper.get().setDropAllowed(false);
                     return;
                 }
@@ -169,7 +169,7 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
         let margin = parentLevel * api.ui.treegrid.TreeGrid.LEVEL_STEP_INDENT;
         let nodes = draggableItem.getEl().getElementsByClassName('toggle icon');
 
-        if (nodes.length == 1) {
+        if (nodes.length === 1) {
             nodes[0].setMarginLeft(margin + 'px');
         }
     }
@@ -208,7 +208,7 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
             parentComponentNode = data[parentPosition];
             parentComponentView = parentComponentNode.getData();
 
-            if (parentComponentNode.calcLevel() == calcLevel && !isFirstChildPosition) {
+            if (parentComponentNode.calcLevel() === calcLevel && !isFirstChildPosition) {
                 insertIndex++;
             }
 

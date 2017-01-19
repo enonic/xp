@@ -56,7 +56,7 @@ module api.aggregation {
         }
 
         private isGroupUpdatable(aggregationGroupView: api.aggregation.AggregationGroupView) {
-            return aggregationGroupView != this.lastSelectedGroupView;
+            return aggregationGroupView !== this.lastSelectedGroupView;
         }
 
         getSelectedValuesByAggregationName(): api.aggregation.AggregationSelection[] {

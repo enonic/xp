@@ -13,7 +13,7 @@ module api.data {
         private refString: string;
 
         static fromString(s: string) {
-            let absolute: boolean = s.charAt(0) == PropertyPath.ELEMENT_DIVIDER;
+            let absolute: boolean = s.charAt(0) === PropertyPath.ELEMENT_DIVIDER;
             let dataPathElements = s.split(PropertyPath.ELEMENT_DIVIDER).
                 filter((element: string) => !!element).                         // filter empty elements
                 map((element: string) => PropertyPathElement.fromString(element));  // map string to DataPathElement
@@ -37,7 +37,7 @@ module api.data {
             elements.forEach((element: PropertyPathElement, index: number) => {
                 if (element == null) {
                     throw new Error('Path element was null at index: ' + index);
-                } else if (element.getName().length == 0) {
+                } else if (element.getName().length === 0) {
                     throw new Error('Path element was empty string at index: ' + index);
                 }
             });
@@ -96,7 +96,7 @@ module api.data {
         }
 
         isRoot(): boolean {
-            return this.elementCount() == 0;
+            return this.elementCount() === 0;
         }
 
         equals(o: Equitable): boolean {
@@ -135,7 +135,7 @@ module api.data {
         }
 
         toString(): string {
-            if (this.index == 0) {
+            if (this.index === 0) {
                 return this.name;
             } else {
                 return this.name + '[' + this.index + ']';
@@ -143,7 +143,7 @@ module api.data {
         }
 
         static fromString(str: string) {
-            if (str.indexOf('[') == -1) {
+            if (str.indexOf('[') === -1) {
                 return new PropertyPathElement(str, 0);
             }
             let name = str.substring(0, str.indexOf('['));

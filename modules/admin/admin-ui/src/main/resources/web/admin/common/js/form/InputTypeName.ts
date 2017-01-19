@@ -11,7 +11,7 @@ module api.form {
         private refString: string;
 
         static parseInputTypeName(str: string) {
-            if (str.substr(0, InputTypeName.CUSTOM_PREFIX.length) == InputTypeName.CUSTOM_PREFIX) {
+            if (str.substr(0, InputTypeName.CUSTOM_PREFIX.length) === InputTypeName.CUSTOM_PREFIX) {
                 return new InputTypeName(str.substr(InputTypeName.CUSTOM_PREFIX.length, str.length), true);
             } else {
                 return new InputTypeName(str, false);

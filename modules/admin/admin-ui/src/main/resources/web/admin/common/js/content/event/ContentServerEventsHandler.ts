@@ -65,13 +65,13 @@ module api.content.event {
 
             let changes = event.getEvents().map((change) => change.getNodeChange());
 
-            if (event.getType() == NodeServerChangeType.DELETE && this.hasDraftBranchChanges(changes)) {
+            if (event.getType() === NodeServerChangeType.DELETE && this.hasDraftBranchChanges(changes)) {
                 // content has already been deleted so no need to fetch summaries
                 let changeItems: ContentServerChangeItem[] = changes.reduce((total, change: ContentServerChange) => {
                     return total.concat(change.getChangeItems());
                 }, []);
 
-                let deletedItems = changeItems.filter(d => d.getBranch() == 'draft');
+                let deletedItems = changeItems.filter(d => d.getBranch() === 'draft');
                 let unpublishedItems = changeItems.filter(d => deletedItems.every(deleted => !api.ObjectHelper.equals(deleted.contentId,
                     d.contentId)));
 
@@ -81,7 +81,7 @@ module api.content.event {
                         this.handleContentUnpublished(summaries);
                     });
 
-            } else if (event.getType() == NodeServerChangeType.MOVE) {
+            } else if (event.getType() === NodeServerChangeType.MOVE) {
                 api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByPaths(this.extractNewContentPaths(changes))
                     .then((summaries) => {
                         this.handleContentMoved(summaries, this.extractContentPaths(changes));
@@ -132,7 +132,7 @@ module api.content.event {
         private hasDraftBranchChanges(changes: ContentServerChange[]): boolean {
             return changes.some((change: ContentServerChange) => {
                 return change.getChangeItems().some(changeItem => {
-                    return changeItem.getBranch() == 'draft';
+                    return changeItem.getBranch() === 'draft';
                 });
             });
         }
@@ -270,7 +270,7 @@ module api.content.event {
         unContentCreated(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentCreatedListeners =
                 this.contentCreatedListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[])=>void) => {
-                    return currentListener != listener;
+                    return currentListener !== listener;
                 });
         }
 
@@ -287,7 +287,7 @@ module api.content.event {
         unContentUpdated(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentUpdatedListeners =
                 this.contentUpdatedListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[])=>void) => {
-                    return currentListener != listener;
+                    return currentListener !== listener;
                 });
         }
 
@@ -304,7 +304,7 @@ module api.content.event {
         unContentDeleted(listener: (paths: ContentServerChangeItem[], pending?: boolean)=>void) {
             this.contentDeletedListeners =
                 this.contentDeletedListeners.filter((currentListener: (paths: ContentServerChangeItem[], pending?: boolean)=>void) => {
-                    return currentListener != listener;
+                    return currentListener !== listener;
                 });
         }
 
@@ -322,7 +322,7 @@ module api.content.event {
             this.contentMovedListeners =
                 this.contentMovedListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[],
                                                                      oldPaths: ContentPath[])=>void) => {
-                    return currentListener != listener;
+                    return currentListener !== listener;
                 });
         }
 
@@ -340,7 +340,7 @@ module api.content.event {
             this.contentRenamedListeners =
                 this.contentRenamedListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[],
                                                                        oldPaths: ContentPath[])=>void) => {
-                    return currentListener != listener;
+                    return currentListener !== listener;
                 });
         }
 
@@ -357,7 +357,7 @@ module api.content.event {
         unContentDuplicated(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentDuplicateListeners =
                 this.contentDuplicateListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[])=>void) => {
-                    return currentListener != listener;
+                    return currentListener !== listener;
                 });
         }
 
@@ -374,7 +374,7 @@ module api.content.event {
         unContentPublished(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentPublishListeners =
                 this.contentPublishListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[])=>void) => {
-                    return currentListener != listener;
+                    return currentListener !== listener;
                 });
         }
 
@@ -391,7 +391,7 @@ module api.content.event {
         unContentUnpublished(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentUnpublishListeners =
                 this.contentUnpublishListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[])=>void) => {
-                    return currentListener != listener;
+                    return currentListener !== listener;
                 });
         }
 
@@ -408,7 +408,7 @@ module api.content.event {
         unContentPending(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentPendingListeners =
                 this.contentPendingListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[])=>void) => {
-                    return currentListener != listener;
+                    return currentListener !== listener;
                 });
         }
 
@@ -425,7 +425,7 @@ module api.content.event {
         unContentSorted(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentSortListeners =
                 this.contentSortListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[])=>void) => {
-                    return currentListener != listener;
+                    return currentListener !== listener;
                 });
         }
 

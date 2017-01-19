@@ -344,15 +344,15 @@ module api.ui.selector.dropdown {
             });
 
             this.input.onKeyDown((event: KeyboardEvent) => {
-                if (event.which == 9) { // tab
+                if (event.which === 9) { // tab
                     this.hideDropdown();
                     return;
-                } else if (event.which == 16 || event.which == 17 || event.which == 18) {  // shift or ctrl or alt
+                } else if (event.which === 16 || event.which === 17 || event.which === 18) {  // shift or ctrl or alt
                     return;
                 }
 
                 if (!this.isDropdownShown()) {
-                    if (event.which == 40) { // down
+                    if (event.which === 40) { // down
                         this.input.setReadOnly(true);
                         this.showDropdown();
                         this.dropdownList.navigateToRowIfNotActive();
@@ -363,18 +363,18 @@ module api.ui.selector.dropdown {
                     return;
                 }
 
-                if (event.which == 38) { // up
+                if (event.which === 38) { // up
                     this.dropdownList.navigateToPreviousRow();
-                } else if (event.which == 40) { // down
+                } else if (event.which === 40) { // down
                     this.dropdownList.navigateToNextRow();
-                } else if (event.which == 13) { // enter
+                } else if (event.which === 13) { // enter
                     this.selectRow(this.dropdownList.getActiveRow(), false, 13);
                     this.input.getEl().setValue('');
-                } else if (event.which == 27) { // esc
+                } else if (event.which === 27) { // esc
                     this.hideDropdown();
                 }
 
-                if (event.which == 38 || event.which == 40 || event.which == 13 || event.which == 27) {
+                if (event.which === 38 || event.which === 40 || event.which === 13 || event.which === 27) {
                     event.stopPropagation();
                     event.preventDefault();
                 }
@@ -389,7 +389,7 @@ module api.ui.selector.dropdown {
 
         unOptionSelected(listener: (event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>)=>void) {
             this.optionSelectedListeners.filter((currentListener: (event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
@@ -407,7 +407,7 @@ module api.ui.selector.dropdown {
         unOptionFilterInputValueChanged(listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) {
             this.optionFilterInputValueChangedListeners.filter(
                 (currentListener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
-                    return listener != currentListener;
+                    return listener !== currentListener;
                 });
         }
 

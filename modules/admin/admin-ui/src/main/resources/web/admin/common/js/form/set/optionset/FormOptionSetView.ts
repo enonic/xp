@@ -28,7 +28,7 @@ module api.form {
             this.helpText = this.formSet.getHelpText();
 
             this.addClass(this.formSet.getPath().getElements().length % 2 ? 'even' : 'odd');
-            if (this.formSet.getOccurrences().getMaximum() == 1) {
+            if (this.formSet.getOccurrences().getMaximum() === 1) {
                 this.addClass('max-1-occurrence');
             }
         }

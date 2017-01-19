@@ -373,7 +373,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
     private removeFromInvalidItems(itemId: string) {
         this.invalidItemIds = this.invalidItemIds.filter((curr) => {
-            return curr != itemId;
+            return curr !== itemId;
         });
         this.highlightInvalidItems();
     }
@@ -450,7 +450,7 @@ export class PageComponentsView extends api.dom.DivEl {
                     if (PageComponentsView.debug) {
                         console.log('mouse down', this.mouseDown, event);
                     }
-                    if (!this.mouseDown && event.buttons == 1) {
+                    if (!this.mouseDown && event.buttons === 1) {
                         // left button was clicked
                         event.preventDefault();
                         event.stopPropagation();
@@ -481,7 +481,7 @@ export class PageComponentsView extends api.dom.DivEl {
             if (!this.mouseMoveListener) {
                 this.mouseMoveListener = (event: MouseEvent) => {
                     if (this.mouseDown) {
-                        if (event.buttons != 1) {
+                        if (event.buttons !== 1) {
                             // button was probably released outside browser window
                             this.mouseUpListener();
                             return;
@@ -604,7 +604,7 @@ export class PageComponentsView extends api.dom.DivEl {
     }
 
     private isMenuIconClicked(cellNumber: number): boolean {
-        return cellNumber == 1;
+        return cellNumber === 1;
     }
 
     private showContextMenu(row: number, clickPosition: api.liveedit.Position) {
@@ -635,7 +635,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
         this.contextMenu.getMenu().onBeforeAction((action: api.ui.Action) => {
             this.pageView.setDisabledContextMenu(true);
-            if (action.hasParentAction() && action.getParentAction().getLabel() == 'Insert') {
+            if (action.hasParentAction() && action.getParentAction().getLabel() === 'Insert') {
                 this.notifyBeforeInsertAction();
             }
         });
@@ -662,9 +662,9 @@ export class PageComponentsView extends api.dom.DivEl {
     }
 
     private hidePageComponentsIfInMobileView(action: api.ui.Action) {
-        if (api.BrowserHelper.isMobile() && ((action.hasParentAction() && action.getParentAction().getLabel() == 'Insert')
-                                             || action.getLabel() == 'Inspect' || action.getLabel() == 'Edit' ||
-                                             action.getLabel() == 'Duplicate')) {
+        if (api.BrowserHelper.isMobile() && ((action.hasParentAction() && action.getParentAction().getLabel() === 'Insert')
+                                             || action.getLabel() === 'Inspect' || action.getLabel() === 'Edit' ||
+                                             action.getLabel() === 'Duplicate')) {
             this.hide();
         }
     }
@@ -687,7 +687,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
     private sameRowClicked(clickedRow: number): boolean {
         let currentlySelectedRow = this.tree.getGrid().getSelectedRows()[0];
-        return clickedRow == currentlySelectedRow;
+        return clickedRow === currentlySelectedRow;
     }
 
     private highlightRow(rowElement: HTMLElement, selected: boolean): void {
@@ -718,7 +718,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
     unBeforeInsertAction(listener: (event: any) => void) {
         this.beforeInsertActionListeners = this.beforeInsertActionListeners.filter((currentListener: (event: any) => void) =>  {
-            return listener != currentListener;
+            return listener !== currentListener;
         });
     }
 

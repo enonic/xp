@@ -41,7 +41,7 @@ module api.content.form.inputtype.time {
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
-            if (this.valueType == ValueTypes.DATE_TIME) {
+            if (this.valueType === ValueTypes.DATE_TIME) {
                 return this.createInputAsDateTime(property);
             } else {
                 return this.createInputAsLocalDateTime(property);
@@ -54,7 +54,7 @@ module api.content.form.inputtype.time {
             if (!unchangedOnly || !dateTimePicker.isDirty()) {
 
                 let date = property.hasNonNullValue()
-                    ? this.valueType == ValueTypes.DATE_TIME
+                    ? this.valueType === ValueTypes.DATE_TIME
                                ? property.getDateTime().toDate()
                                : property.getLocalDateTime().toDate()
                     : null;

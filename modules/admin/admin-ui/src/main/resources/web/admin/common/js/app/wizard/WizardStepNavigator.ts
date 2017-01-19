@@ -19,7 +19,7 @@ module api.app.wizard {
         addNavigationItem(step: api.ui.tab.TabBarItem) {
             super.addNavigationItem(step);
 
-            if (this.getSize() == 1) {
+            if (this.getSize() === 1) {
                 step.addClass('first');
             }
         }

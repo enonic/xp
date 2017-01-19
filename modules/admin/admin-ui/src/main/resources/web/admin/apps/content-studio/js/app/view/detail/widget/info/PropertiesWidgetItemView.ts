@@ -38,7 +38,7 @@ export class PropertiesWidgetItemView extends WidgetItemView {
             let thisContentId = this.content.getId();
 
             let contentSummary: ContentSummaryAndCompareStatus = contents.filter((content) => {
-                return thisContentId == content.getId();
+                return thisContentId === content.getId();
             })[0];
 
             if (contentSummary) {
@@ -60,7 +60,7 @@ export class PropertiesWidgetItemView extends WidgetItemView {
         }
 
         return super.layout().then(() => {
-            if (this.content != undefined) {
+            if (this.content != null) {
                 let applicationKey = this.content.getType().getApplicationKey();
                 if (!applicationKey.isSystemReserved()) {
                     return new api.application.GetApplicationRequest(applicationKey).sendAndParse().then((application: Application) => {

@@ -84,7 +84,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
 
         let type: UserTreeGridItemType = userItem.getType();
 
-        if (type == UserTreeGridItemType.ROLES || type == UserTreeGridItemType.GROUPS || type == UserTreeGridItemType.USERS) {
+        if (type === UserTreeGridItemType.ROLES || type === UserTreeGridItemType.GROUPS || type === UserTreeGridItemType.USERS) {
             return false;
         }
 
@@ -92,7 +92,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
     }
 
     isEmptyNode(node: TreeNode<UserTreeGridItem>): boolean {
-        return !node.getDataId() || node.getDataId() == '';
+        return !node.getDataId() || node.getDataId() === '';
     }
 
     getTreeGridActions(): UserTreeGridActions {
@@ -236,7 +236,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
         let userStoreNode: UserTreeGridItem = null;
         let userStoreKey: UserStoreKey = null;
         // fetch principals from the user store, if parent node 'Groups' or 'Users' was selected
-        if(parentNode.getData().getType() != UserTreeGridItemType.ROLES) {
+        if(parentNode.getData().getType() !== UserTreeGridItemType.ROLES) {
             userStoreNode = parentNode.getParent().getData();
             userStoreKey = userStoreNode.getUserStore().getKey();
         }
@@ -285,7 +285,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
 
     private addUsersGroupsToUserStore(parentItem: UserTreeGridItem): UserTreeGridItem[] {
         let items: UserTreeGridItem[] = [];
-        if (parentItem.getType() == UserTreeGridItemType.USER_STORE) {
+        if (parentItem.getType() === UserTreeGridItemType.USER_STORE) {
             let userStore = parentItem.getUserStore();
             let userFolderItem = new UserTreeGridItemBuilder().setUserStore(userStore).setType(UserTreeGridItemType.USERS).build();
             let groupFolderItem = new UserTreeGridItemBuilder().setUserStore(userStore).setType(UserTreeGridItemType.GROUPS).build();

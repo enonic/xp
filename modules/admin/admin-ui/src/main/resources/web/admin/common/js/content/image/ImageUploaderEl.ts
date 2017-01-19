@@ -22,12 +22,12 @@ module api.content.image {
         private static STANDOUT_CLASS: string = 'standout';
 
         constructor(config: api.ui.uploader.MediaUploaderElConfig) {
-            if (config.allowTypes == undefined) {
+            if (config.allowTypes == null) {
                 config.allowTypes = [
                     {title: 'Image files', extensions: 'jpg,jpeg,gif,png,svg'}
                 ];
             }
-            if (config.selfIsDropzone == undefined) {
+            if (config.selfIsDropzone == null) {
                 config.selfIsDropzone = true;
             }
 
@@ -43,7 +43,7 @@ module api.content.image {
             this.initialWidth = 0;
             this.onShown(() => {
 
-                if (this.getEl().getWidth() == 0) {
+                if (this.getEl().getWidth() === 0) {
                     this.initialWidth = Math.max(this.getParentElement().getEl().getWidth(), this.initialWidth);
                     this.getEl().setMaxWidthPx(this.initialWidth);
                 }
@@ -223,7 +223,7 @@ module api.content.image {
         protected refreshExistingItem(existingItem: api.dom.Element, value: string) {
             for (let i = 0; i < this.imageEditors.length; i++) {
                 let editor = this.imageEditors[i];
-                if (existingItem == editor) {
+                if (existingItem === editor) {
                     editor.setSrc(this.resolveImageUrl(value));
                     break;
                 }

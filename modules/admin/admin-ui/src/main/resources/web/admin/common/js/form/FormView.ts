@@ -73,7 +73,7 @@ module api.form {
             layoutPromise.then((formItemViews: FormItemView[]) => {
 
                 this.formItemViews = formItemViews;
-                api.util.assert(this.formItemViews.length == formItems.length,
+                api.util.assert(this.formItemViews.length === formItems.length,
                     'Not all FormItemView-s was created. Expected ' + formItems.length + ', was: ' + formItemViews.length);
 
                 deferred.resolve(null);
@@ -153,7 +153,7 @@ module api.form {
         }
 
         private isSizeChanged(): boolean {
-            return this.width != this.getEl().getWidth();
+            return this.width !== this.getEl().getWidth();
         }
 
         private broadcastFormSizeChanged() {
@@ -231,7 +231,7 @@ module api.form {
         unValidityChanged(listener: (event: FormValidityChangedEvent)=>void) {
             this.formValidityChangedListeners =
                 this.formValidityChangedListeners.filter((currentListener: (event: FormValidityChangedEvent)=>void)=> {
-                    return listener != currentListener;
+                    return listener !== currentListener;
                 });
         }
 

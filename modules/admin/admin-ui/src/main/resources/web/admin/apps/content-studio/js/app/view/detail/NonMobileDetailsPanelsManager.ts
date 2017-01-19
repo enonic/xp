@@ -60,12 +60,12 @@ export class NonMobileDetailsPanelsManager {
     }
 
     private isFloatingDetailsPanelActive(): boolean {
-        return ActiveDetailsPanelManager.getActiveDetailsPanel() == this.floatingDetailsPanel;
+        return ActiveDetailsPanelManager.getActiveDetailsPanel() === this.floatingDetailsPanel;
     }
 
     private nonMobileDetailsPanelIsActive(): boolean {
-        return ActiveDetailsPanelManager.getActiveDetailsPanel() == this.dockedDetailsPanel ||
-               ActiveDetailsPanelManager.getActiveDetailsPanel() == this.floatingDetailsPanel;
+        return ActiveDetailsPanelManager.getActiveDetailsPanel() === this.dockedDetailsPanel ||
+               ActiveDetailsPanelManager.getActiveDetailsPanel() === this.floatingDetailsPanel;
     }
 
     private doPanelAnimation(canSetActivePanel: boolean = true) {

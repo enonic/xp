@@ -46,7 +46,7 @@ module api.form {
                         this.currentValidationState.flatten(event.getRecording());
                     }
 
-                    if (previousValidState != this.currentValidationState.isValid()) {
+                    if (previousValidState !== this.currentValidationState.isValid()) {
                         this.notifyValidityChanged(new RecordingValidityChangedEvent(this.currentValidationState,
                             this.resolveValidationRecordingPath()).setIncludeChildren(true));
                     }

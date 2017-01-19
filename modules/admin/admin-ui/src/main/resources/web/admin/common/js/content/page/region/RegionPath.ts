@@ -56,7 +56,7 @@ module api.content.page.region {
         public static fromString(str: string): RegionPath {
 
             let lastDivider = str.lastIndexOf(RegionPath.DIVIDER);
-            if (lastDivider == -1) {
+            if (lastDivider === -1) {
                 return new RegionPath(null, str);
             }
 

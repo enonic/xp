@@ -351,11 +351,11 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         let lastModifiedSelectedBuckets: api.aggregation.Bucket[] = searchInputValues.getSelectedValuesForAggregationName(
             ContentBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_NAME);
 
-        if (lastModifiedSelectedBuckets == null || lastModifiedSelectedBuckets.length == 0) {
+        if (lastModifiedSelectedBuckets == null || lastModifiedSelectedBuckets.length === 0) {
             return null;
         }
 
-        if (lastModifiedSelectedBuckets.length == 1) {
+        if (lastModifiedSelectedBuckets.length === 1) {
             let dateRangeBucket: api.aggregation.DateRangeBucket = <api.aggregation.DateRangeBucket> lastModifiedSelectedBuckets.pop();
             return new api.query.filter.RangeFilter(QueryField.MODIFIED_TIME, ValueExpr.dateTime(dateRangeBucket.getFrom()).getValue(),
                 null);
@@ -420,7 +420,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
                 }
             });
 
-            let aggregationGroupView = aggregation.getName() == ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME
+            let aggregationGroupView = aggregation.getName() === ContentBrowseFilterPanel.CONTENT_TYPE_AGGREGATION_NAME
                 ? this.contentTypeAggregation
                 : this.lastModifiedAggregation;
 

@@ -80,7 +80,7 @@ module api.ui.panel {
         }
 
         private updateLastPanelHeight() {
-            if (this.getSize() == 0) {
+            if (this.getSize() === 0) {
                 return;
             }
 
@@ -113,12 +113,12 @@ module api.ui.panel {
 
             if (this.isEmpty()) {
                 this.panelShown = null;
-            } else if (panelToRemove == this.getPanelShown()) {
+            } else if (panelToRemove === this.getPanelShown()) {
                 // show either panel that has the same index now or the last panel
                 this.showPanelByIndex(Math.min(index, this.getSize() - 1));
             }
 
-            if (this.isVisible() && index == this.getSize() && !this.isEmpty()) {
+            if (this.isVisible() && index === this.getSize() && !this.isEmpty()) {
                 // update if last panel was removed and there are still left
                 this.updateLastPanelHeight();
             }
@@ -134,7 +134,7 @@ module api.ui.panel {
         }
 
         isEmpty(): boolean {
-            return this.panels.length == 0;
+            return this.panels.length === 0;
         }
 
         getSize(): number {
@@ -181,7 +181,7 @@ module api.ui.panel {
             }
 
             wemjq(this.scrollable.getHTMLElement()).animate({
-                scrollTop: index == 0 ? 0 : this.getScroll() - this.offset +
+                scrollTop: index === 0 ? 0 : this.getScroll() - this.offset +
                                             panelToShow.getEl().getOffsetToParent().top -
                                             this.headers[index].getEl().getHeightWithBorder()
             }, {
@@ -207,7 +207,7 @@ module api.ui.panel {
 
         unPanelShown(listener: (event: PanelShownEvent)=>void) {
             this.panelShownListeners = this.panelShownListeners.filter((currentListener: (event: PanelShownEvent) => void) => {
-                return  listener != currentListener;
+                return  listener !== currentListener;
             });
         }
 

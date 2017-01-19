@@ -61,19 +61,19 @@ module api.ui.tags {
             this.appendChild(this.tagSuggestions);
 
             this.textInput.onKeyDown((event: KeyboardEvent) => {
-                if (event.keyCode == 188 || event.keyCode == 13) { // comma or enter
+                if (event.keyCode === 188 || event.keyCode === 13) { // comma or enter
                     this.handleWordCompleted();
                     event.preventDefault();
-                } else if (event.keyCode == 8) {
+                } else if (event.keyCode === 8) {
                     if (!this.textInput.getValue() && this.countTags() > 0) {
                         this.doRemoveTag(this.tags[this.countTags() - 1]);
                     }
-                } else if (event.keyCode == 38) {
+                } else if (event.keyCode === 38) {
                     if (this.tagSuggestions.isVisible()) {
                         this.tagSuggestions.moveUp();
                         event.preventDefault();
                     }
-                } else if (event.keyCode == 40) {
+                } else if (event.keyCode === 40) {
                     if (this.tagSuggestions.isVisible()) {
                         this.tagSuggestions.moveDown();
                         event.preventDefault();
@@ -142,7 +142,7 @@ module api.ui.tags {
                 let existingValues = this.doGetTags().concat(searchString);
                 values = values.filter((value: string) => (existingValues.indexOf(value) < 0));
 
-                if (values.length == 0) {
+                if (values.length === 0) {
                     this.tagSuggestions.hide();
                 } else {
                     this.tagSuggestions.setTags(values);
@@ -220,7 +220,7 @@ module api.ui.tags {
         private indexOf(value: string): number {
             if (!api.util.StringHelper.isEmpty(value)) {
                 for (let i = 0; i < this.tags.length; i++) {
-                    if (value == this.tags[i].getValue()) {
+                    if (value === this.tags[i].getValue()) {
                         return i;
                     }
 
@@ -247,7 +247,7 @@ module api.ui.tags {
         }
 
         isMaxTagsReached(): boolean {
-            if (this.maxTags == 0) {
+            if (this.maxTags === 0) {
                 return false;
             }
             return this.countTags() >= this.maxTags;

@@ -450,7 +450,7 @@ module api.liveedit {
 
         unDragStarted(listener: (componentView: ComponentView<Component>) => void) {
             this.dragStartedListeners = this.dragStartedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 
@@ -474,7 +474,7 @@ module api.liveedit {
 
         unDragStopped(listener: (componentView: ComponentView<Component>) => void) {
             this.dragStoppedListeners = this.dragStoppedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 
@@ -498,7 +498,7 @@ module api.liveedit {
 
         unDropped(listener: (componentView: ComponentView<Component>, regionView: RegionView) => void) {
             this.droppedListeners = this.droppedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 
@@ -521,7 +521,7 @@ module api.liveedit {
 
         unCanceled(listener: (componentView: ComponentView<Component>) => void) {
             this.canceledListeners = this.canceledListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 
@@ -570,7 +570,7 @@ module api.liveedit {
         }
 
         private isDraggingLayoutOverLayout(regionView: RegionView, draggingItemType: ItemType): boolean {
-            let isLayout = regionView.hasParentLayoutComponentView() && draggingItemType.getShortName() == 'layout';
+            let isLayout = regionView.hasParentLayoutComponentView() && draggingItemType.getShortName() === 'layout';
             if (!isLayout) {
                 let itemType = this.getItemType();
                 if (api.liveedit.fragment.FragmentItemType.get().equals(itemType)) {

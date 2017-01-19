@@ -18,10 +18,10 @@ module api.content.attachment {
 
         constructor(config: any) {
 
-            if (config.url == undefined) {
+            if (config.url == null) {
                 config.url = api.util.UriHelper.getRestUri('content/createAttachment');
             }
-            if (config.selfIsDropzone == undefined) {
+            if (config.selfIsDropzone == null) {
                 config.selfIsDropzone = true;
             }
 
@@ -54,14 +54,14 @@ module api.content.attachment {
 
         removeAttachmentItem(value: string) {
             this.attachmentItems = this.attachmentItems.filter(
-                item => !(item.getValue() == value)
+                item => !(item.getValue() === value)
             );
         }
 
         getExistingItem(value: string): api.dom.Element {
             let element = null;
             this.getResultContainer().getChildren().forEach((item) => {
-                if ((<AttachmentItem>item).getValue() == value) {
+                if ((<AttachmentItem>item).getValue() === value) {
                     element = item;
                 }
             });

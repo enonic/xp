@@ -185,7 +185,7 @@ module api.ui.time {
 
         unSelectedTimeChanged(listener: (hours: number, minutes: number) => void) {
             this.timeChangedListeners = this.timeChangedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 
@@ -194,7 +194,7 @@ module api.ui.time {
             let delay = 400;
             let intervalFn = () => {
                 fn.apply(this, args);
-                if (++times % 5 == 0 && delay > 50) {
+                if (++times % 5 === 0 && delay > 50) {
                     // speed up after 5 occurrences but not faster than 50ms
                     this.stopInterval();
                     delay /= 2;
@@ -209,11 +209,11 @@ module api.ui.time {
         }
 
         private getUTCString(value: number) {
-            if (!value && value != 0) {
+            if (!value && value !== 0) {
                 return '';
             }
             let result = 'UTC';
-            result = value > 0 ? result + '+' : (value == 0 ? result + '-' : result);
+            result = value > 0 ? result + '+' : (value === 0 ? result + '-' : result);
             return result + value;
         }
 

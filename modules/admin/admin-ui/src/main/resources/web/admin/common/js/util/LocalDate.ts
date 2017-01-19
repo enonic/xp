@@ -126,7 +126,7 @@ module api.util {
         validate() {
             if (!this.year) {
                 throw new Error('Invalid parameter. Year should be set');
-            } else if (this.month == undefined) {
+            } else if (this.month == null) {
                 throw new Error('Invalid parameter. Month should be set');
             } else if (!this.day) {
                 throw new Error('Invalid parameter. Day should be set');

@@ -62,7 +62,7 @@ module api.ui.dialog {
             this.mouseClickListener = (event: MouseEvent) => {
                 if (this.isVisible()) {
                     for (let element = event.target; element; element = (<any>element).parentNode) {
-                        if (element == this.getHTMLElement() || this.isIgnoredElementClicked(<any>element)) {
+                        if (element === this.getHTMLElement() || this.isIgnoredElementClicked(<any>element)) {
                             return;
                         }
                     }
@@ -125,7 +125,7 @@ module api.ui.dialog {
                 ignoredElementClicked = element.className.indexOf('mce-') > -1 || element.className.indexOf('html-area-modal-dialog') > -1;
             }
             ignoredElementClicked = ignoredElementClicked || this.listOfClickIgnoredElements.some((elem: api.dom.Element) => {
-                    return elem.getHTMLElement() == element || elem.getEl().contains(element);
+                    return elem.getHTMLElement() === element || elem.getEl().contains(element);
                 });
             return ignoredElementClicked;
         }
@@ -305,7 +305,7 @@ module api.ui.dialog {
         }
 
         close() {
-            if (ModalDialog.openDialogsCounter == 1) {
+            if (ModalDialog.openDialogsCounter === 1) {
                 api.ui.mask.BodyMask.get().hide();
             }
 

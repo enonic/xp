@@ -254,7 +254,7 @@ module api.util {
             let tzStartIndex = dateString.indexOf('+');
             if(tzStartIndex > 0) {
                 return dateString.substr(0, tzStartIndex);
-            } else if (dateString.split('-').length == 4) {
+            } else if (dateString.split('-').length === 4) {
                 // case when there is a negative tz (2015-02-29T12:05:59.001-01:00)
                 tzStartIndex = dateString.lastIndexOf('-');
                 return dateString.substr(0, tzStartIndex);

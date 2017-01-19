@@ -47,7 +47,7 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
 
         this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
             // Ensure displayed config form and selector option are removed when image is removed
-            if (event.getPropertyName() == ImageComponent.PROPERTY_IMAGE) {
+            if (event.getPropertyName() === ImageComponent.PROPERTY_IMAGE) {
                 if (!this.imageComponent.hasImage()) {
                     this.setupComponentForm(this.imageComponent);
                     this.imageSelector.setContent(null);

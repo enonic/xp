@@ -147,7 +147,7 @@ module api.form {
         private getThisPropertyFromSelectedOptionsArray(): Property {
             let result: Property = null;
             this.getSelectedOptionsArray().forEach((property: api.data.Property, i: number) => {
-                if (property.getString() == this.getName()) {
+                if (property.getString() === this.getName()) {
                     result = property;
                 }
             });
@@ -265,7 +265,7 @@ module api.form {
         private setCheckBoxDisabled(checked?: boolean) {
             let checkBoxShouldBeDisabled = (checked != null ? !checked : !this.checkbox.isChecked()) && this.isSelectionLimitReached();
 
-            if (this.checkbox.isDisabled() != checkBoxShouldBeDisabled) {
+            if (this.checkbox.isDisabled() !== checkBoxShouldBeDisabled) {
                 this.checkbox.setDisabled(checkBoxShouldBeDisabled, 'disabled');
             }
         }
@@ -347,7 +347,7 @@ module api.form {
         }
 
         private isRadioSelection(): boolean {
-            return this.getMultiselection().getMinimum() == 1 && this.getMultiselection().getMaximum() == 1;
+            return this.getMultiselection().getMinimum() === 1 && this.getMultiselection().getMaximum() === 1;
         }
 
         private getMultiselection(): Occurrences {
@@ -452,7 +452,7 @@ module api.form {
 
         unSelectionChanged(listener: ()=> void) {
             this.selectionChangedListeners.filter((currentListener: () => void) => {
-                return listener == currentListener;
+                return listener === currentListener;
             });
         }
 

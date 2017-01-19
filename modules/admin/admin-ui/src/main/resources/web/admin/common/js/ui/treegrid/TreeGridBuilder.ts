@@ -60,7 +60,7 @@ module api.ui.treegrid {
             let val = node['data'][names[0]];
 
             for (let i = 1; i < names.length; i++) {
-                if (val && typeof val == 'object' && names[i] in val) {
+                if (val && typeof val === 'object' && names[i] in val) {
                     val = val[names[i]];
                 } else {
                     val = '';

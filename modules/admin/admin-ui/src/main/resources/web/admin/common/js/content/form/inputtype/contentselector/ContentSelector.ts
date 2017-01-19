@@ -53,7 +53,7 @@ module api.content.form.inputtype.contentselector {
 
         private handleContentDeletedEvent() {
             this.contentDeletedListener = (event) => {
-                if (this.contentComboBox.getSelectedOptionView().count() == 0) {
+                if (this.contentComboBox.getSelectedOptionView().count() === 0) {
                     return;
                 }
 
@@ -174,7 +174,7 @@ module api.content.form.inputtype.contentselector {
                             const reference = api.util.Reference.from(event.getSelectedOption().getOption().displayValue.getContentId());
 
                                 const value = new Value(reference, ValueTypes.REFERENCE);
-                                if (this.contentComboBox.countSelected() == 1) { // overwrite initial value
+                                if (this.contentComboBox.countSelected() === 1) { // overwrite initial value
                                     this.getPropertyArray().set(0, value);
                                 } else if (!this.getPropertyArray().containsValue(value)) {
                                     this.getPropertyArray().add(value);
@@ -203,7 +203,7 @@ module api.content.form.inputtype.contentselector {
         private removePropertyWithId(id: string) {
             let length = this.getPropertyArray().getSize();
             for (let i = 0; i < length; i++) {
-                if (this.getPropertyArray().get(i).getValue().getString() == id) {
+                if (this.getPropertyArray().get(i).getValue().getString() === id) {
                     this.getPropertyArray().remove(i);
                     api.notify.NotifyManager.get().showWarning('Failed to load content item with id ' + id +
                                                                '. The reference will be removed upon save.');

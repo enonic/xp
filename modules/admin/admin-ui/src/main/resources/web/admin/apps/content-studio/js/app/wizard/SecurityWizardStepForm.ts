@@ -114,7 +114,7 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
         });
 
         let inheritsText = '';
-        if (this.inheritPermissions && this.contentPath.isRoot() == false) {
+        if (this.inheritPermissions && this.contentPath.isRoot() === false) {
             inheritsText = 'Inherits permissions from parent';
             this.inheritance.addClass('inheritance');
         } else {

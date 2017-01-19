@@ -181,7 +181,7 @@ module api.liveedit.fragment {
                 }
 
                 let isTextComponent = api.liveedit.text.TextItemType.get().equals(parentType);
-                if (isTextComponent && childElement.getEl().getTagName().toUpperCase() == 'SECTION') {
+                if (isTextComponent && childElement.getEl().getTagName().toUpperCase() === 'SECTION') {
                     // convert image urls in text component for web
                     childElement.setHtml(HTMLAreaHelper.prepareImgSrcsInValueForEdit(childElement.getHtml()), false);
                     return;
@@ -200,7 +200,7 @@ module api.liveedit.fragment {
 
         unFragmentContentLoaded(listener: (event: api.liveedit.FragmentComponentLoadedEvent) => void) {
             this.fragmentContentLoadedListeners = this.fragmentContentLoadedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 
@@ -217,7 +217,7 @@ module api.liveedit.fragment {
 
         unFragmentLoadError(listener: (event: api.liveedit.FragmentLoadErrorEvent) => void) {
             this.fragmentLoadErrorListeners = this.fragmentLoadErrorListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 

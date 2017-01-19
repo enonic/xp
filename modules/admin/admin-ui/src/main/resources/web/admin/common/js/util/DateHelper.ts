@@ -77,7 +77,7 @@ module api.util {
                 return null;
             }
 
-            if (forceDaysBeOfTwoChars && parts[2].length != 2) {
+            if (forceDaysBeOfTwoChars && parts[2].length !== 2) {
                 return null;
             }
 
@@ -98,7 +98,7 @@ module api.util {
          */
         private static parseTime(value: string): Time {
             let dateStr = (value || '').trim();
-            if (dateStr.length != 5) {
+            if (dateStr.length !== 5) {
                 return null;
             }
             let parts = dateStr.split(':');
@@ -217,7 +217,7 @@ module api.util {
          * @returns {number}
          */
         static isUTCdate(value: string): boolean {
-            if (value != null && (value[value.length - 1] == 'Z' || value[value.length - 1] == 'z')) {
+            if (value != null && (value[value.length - 1] === 'Z' || value[value.length - 1] === 'z')) {
                 return true;
             }
             return false;
@@ -226,7 +226,7 @@ module api.util {
         /**
          * E.g. numDaysInMonth(2015, 1) -> 28
          * @param year
-         * @param month 0 based month number of the year. 0 == January , 11 == December
+         * @param month 0 based month number of the year. 0 === January , 11 === December
          * @returns {number}
          */
         static numDaysInMonth(year: number, month: number): number {

@@ -59,7 +59,7 @@ module api.form {
                     const formItemSet: FormItemSet = <FormItemSet>formItem;
                     const propertyArray: PropertyArray = propertySet.getPropertyArray(formItemSet.getName());
 
-                    if (!propertyArray || propertyArray.getSize() == 0) {
+                    if (!propertyArray || propertyArray.getSize() === 0) {
                         if (!this.context) {
                             this.context = FormContext.create().setShowEmptyFormItemSetOccurrences(false).build();
                         } else {
@@ -111,7 +111,7 @@ module api.form {
                     const formOptionSet: FormOptionSet = <FormOptionSet>formItem;
                     const propertyArray: PropertyArray = propertySet.getPropertyArray(formOptionSet.getName());
 
-                    if (!propertyArray || propertyArray.getSize() == 0) {
+                    if (!propertyArray || propertyArray.getSize() === 0) {
                         if (!this.context) {
                             this.context = FormContext.create().setShowEmptyFormItemSetOccurrences(false).build();
                         } else {

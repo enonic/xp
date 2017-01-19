@@ -40,7 +40,7 @@ module api.content.order {
                 return false;
             }
             let other = <OrderExpr>o;
-            if (this.direction.toLowerCase() != other.getDirection().toLowerCase()) {
+            if (this.direction.toLowerCase() !== other.getDirection().toLowerCase()) {
                 return false;
             }
             return true;

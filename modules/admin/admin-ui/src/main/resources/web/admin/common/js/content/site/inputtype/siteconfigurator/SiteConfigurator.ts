@@ -172,7 +172,7 @@ module api.content.site.inputtype.siteconfigurator {
 
             comboBox.onSiteConfigFormDisplayed((applicationKey: ApplicationKey, formView: FormView) => {
                 let indexToRemove = siteConfigFormsToDisplay.indexOf(applicationKey.toString());
-                if (indexToRemove != -1) {
+                if (indexToRemove !== -1) {
                     siteConfigFormsToDisplay.splice(indexToRemove, 1);
                 }
 
@@ -191,15 +191,15 @@ module api.content.site.inputtype.siteconfigurator {
             };
 
             ApplicationEvent.on((event: ApplicationEvent) => {
-                if (ApplicationEventType.STOPPED == event.getEventType()) {
+                if (ApplicationEventType.STOPPED === event.getEventType()) {
                     handleAppEvent(this.getMatchedOption(comboBox, event), false, true);
-                } else if (ApplicationEventType.STARTED == event.getEventType()) {
+                } else if (ApplicationEventType.STARTED === event.getEventType()) {
                     let view = this.getMatchedOption(comboBox, event);
                     handleAppEvent(view, false, false);
                     if (view && !!view.getOption().empty) {
                         view.removeClass('empty');
                     }
-                } else if (ApplicationEventType.UNINSTALLED == event.getEventType()) {
+                } else if (ApplicationEventType.UNINSTALLED === event.getEventType()) {
                     handleAppEvent(this.getMatchedOption(comboBox, event), true, false);
                 }
             });

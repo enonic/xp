@@ -8,7 +8,7 @@ module api.content {
 
         constructor(name: string) {
             super(name);
-            api.util.assert(name.indexOf(ContentName.UNNAMED_PREFIX) == 0,
+            api.util.assert(name.indexOf(ContentName.UNNAMED_PREFIX) === 0,
                     'An UnnamedContent must start with [' + ContentName.UNNAMED_PREFIX + ']: ' + name);
         }
 

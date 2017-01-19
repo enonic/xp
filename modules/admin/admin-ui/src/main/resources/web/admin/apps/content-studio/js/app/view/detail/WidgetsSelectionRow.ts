@@ -47,7 +47,7 @@ export class WidgetsSelectionRow extends api.dom.DivEl {
         } else {
             this.widgetSelectorDropdown.addClass('non-default-selected');
             this.infoWidgetToggleButton.setInactive();
-            if (this.widgetSelectorDropdown.getValue() != widgetView.getWidgetName()) {
+            if (this.widgetSelectorDropdown.getValue() !== widgetView.getWidgetName()) {
                 this.widgetSelectorDropdown.setValue(widgetView.getWidgetName());
             }
         }
@@ -98,7 +98,7 @@ export class WidgetSelectorDropdown extends Dropdown<WidgetViewOption> {
             if (this.isDefaultOptionDisplayValueViewer(event.target)) {
                 if (this.getSelectedOption()) {
                     let widgetView = this.getSelectedOption().displayValue.getWidgetView();
-                    if (widgetView != detailsView.getActiveWidget()) {
+                    if (widgetView !== detailsView.getActiveWidget()) {
                         widgetView.setActive();
                     }
                     this.hideDropdown();

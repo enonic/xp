@@ -23,7 +23,7 @@ module api.util.htmlarea.dialog {
             this.addCroppingOptions();
 
             this.onOptionSelected((event: OptionSelectedEvent<ImageCroppingOption>) => {
-                if(event.getOption().displayValue.getName() == 'none') {
+                if(event.getOption().displayValue.getName() === 'none') {
                     this.reset();
                 }
             });

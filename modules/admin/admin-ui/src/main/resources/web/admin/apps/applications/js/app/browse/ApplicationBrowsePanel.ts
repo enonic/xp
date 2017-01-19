@@ -83,7 +83,7 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
         });
 
         api.application.ApplicationEvent.on((event: ApplicationEvent) => {
-            if (ApplicationEventType.INSTALLED == event.getEventType()) {
+            if (ApplicationEventType.INSTALLED === event.getEventType()) {
                 this.treeGrid.placeApplicationNode(event.getApplicationKey()).then(() => {
                     setTimeout(() => { // timeout lets grid to remove UploadMockNode so that its not counted in the toolbar
                         this.treeGrid.triggerSelectionChangedListeners();
@@ -93,12 +93,12 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
                     }, 200);
                 });
 
-            } else if (ApplicationEventType.UNINSTALLED == event.getEventType()) {
+            } else if (ApplicationEventType.UNINSTALLED === event.getEventType()) {
                 let uninstalledApp = this.treeGrid.getByApplicationKey(event.getApplicationKey());
                 let uninstalledAppName = uninstalledApp ? uninstalledApp.getDisplayName() : event.getApplicationKey();
                 api.notify.showFeedback(`Application '${uninstalledAppName}' uninstalled successfully`);
                 this.treeGrid.deleteApplicationNode(event.getApplicationKey());
-            } else if (ApplicationEventType.STOPPED == event.getEventType()) {
+            } else if (ApplicationEventType.STOPPED === event.getEventType()) {
                 setTimeout(() => { // as uninstall usually follows stop event, lets wait to check if app still exists
                     let stoppedApp = this.treeGrid.getByApplicationKey(event.getApplicationKey());
                     // seems to be present in the grid and xp is running

@@ -74,22 +74,22 @@ wemjq(document).ready(() => {
 
             switch (keys[i].getCombination()) {
             case 'backspace':
-                matches = key == 8;
+                matches = key === 8;
                 break;
             case 'del':
-                matches = key == 46;
+                matches = key === 46;
                 // intentional fall-through
             case 'mod+del':
                 matches = matches && isMod;
                 break;
             case 'mod+s':
-                matches = key == 83 && isMod;
+                matches = key === 83 && isMod;
                 break;
             case 'mod+esc':
-                matches = key == 83 && isMod;
+                matches = key === 83 && isMod;
                 break;
             case 'mod+alt+f4':
-                matches = key == 115 && isMod && isAlt;
+                matches = key === 115 && isMod && isAlt;
                 break;
             }
 

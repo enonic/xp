@@ -33,7 +33,7 @@ module api {
 
             let other = <Name>o;
 
-            if (this.value != other.value) {
+            if (this.value !== other.value) {
                 return false;
             }
 

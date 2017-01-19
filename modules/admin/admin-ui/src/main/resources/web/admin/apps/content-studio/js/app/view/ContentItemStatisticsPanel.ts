@@ -17,7 +17,7 @@ export class ContentItemStatisticsPanel extends api.app.view.ItemStatisticsPanel
     }
 
     setItem(item: api.app.view.ViewItem<api.content.ContentSummaryAndCompareStatus>) {
-        if (this.getItem() != item) {
+        if (this.getItem() !== item) {
             super.setItem(item);
             this.previewPanel.setItem(item);
         }

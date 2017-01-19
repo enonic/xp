@@ -121,7 +121,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
 
     private subscribeOnUninstallEvent() { // set status of market app to NOT_INSTALLED if it was uninstalled
         api.application.ApplicationEvent.on((event: ApplicationEvent) => {
-            if (ApplicationEventType.UNINSTALLED == event.getEventType()) {
+            if (ApplicationEventType.UNINSTALLED === event.getEventType()) {
                 let nodeToUpdate = this.getRoot().getCurrentRoot().findNode(event.getApplicationKey().toString());
                 if (!!nodeToUpdate) {
                     (<MarketApplication>nodeToUpdate.getData()).setStatus(MarketAppStatus.NOT_INSTALLED);
@@ -135,7 +135,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
         let nodes: TreeNode<MarketApplication>[] = this.getGrid().getDataView().getItems();
         for (let i = 0; i < nodes.length; i++) {
             let node = nodes[i];
-            if (node.getData().getLatestVersionDownloadUrl() == url) {
+            if (node.getData().getLatestVersionDownloadUrl() === url) {
                 return node;
             }
         }
@@ -286,7 +286,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
             statusWrapper.setHtml(MarketAppStatusFormatter.formatStatus(status, progress), false);
             statusWrapper.addClass(MarketAppStatusFormatter.getStatusCssClass(status));
 
-            if (status != MarketAppStatus.NOT_INSTALLED && status != MarketAppStatus.OLDER_VERSION_INSTALLED) {
+            if (status !== MarketAppStatus.NOT_INSTALLED && status !== MarketAppStatus.OLDER_VERSION_INSTALLED) {
                 statusWrapper.getEl().setTabIndex(-1);
             }
         }

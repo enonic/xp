@@ -156,15 +156,15 @@ export class ContextWindow extends api.ui.panel.DockedPanel {
     }
 
     isShown(): boolean {
-        return this.contextWindowState == ContextWindowState.SHOWN;
+        return this.contextWindowState === ContextWindowState.SHOWN;
     }
 
     isSlidingIn(): boolean {
-        return this.contextWindowState == ContextWindowState.SLIDING_IN;
+        return this.contextWindowState === ContextWindowState.SLIDING_IN;
     }
 
     isSlidingOut(): boolean {
-        return this.contextWindowState == ContextWindowState.SLIDING_OUT;
+        return this.contextWindowState === ContextWindowState.SLIDING_OUT;
     }
 
     isFixed(): boolean {
@@ -256,7 +256,7 @@ export class ContextWindow extends api.ui.panel.DockedPanel {
 
     unDisplayModeChanged(listener: () => void) {
         this.displayModeChangedListeners = this.displayModeChangedListeners.filter((currentListener: () => void) => {
-            return listener != currentListener;
+            return listener !== currentListener;
         });
     }
 

@@ -66,7 +66,7 @@ module api.content.form.inputtype.tag {
             this.tags.onTagAdded((event: api.ui.tags.TagAddedEvent) => {
                 this.ignorePropertyChange = true;
                 let value = new Value(event.getValue(), ValueTypes.STRING);
-                if (this.tags.countTags() == 1) {
+                if (this.tags.countTags() === 1) {
                     this.getPropertyArray().set(0, value);
                 } else {
                     this.getPropertyArray().add(value);

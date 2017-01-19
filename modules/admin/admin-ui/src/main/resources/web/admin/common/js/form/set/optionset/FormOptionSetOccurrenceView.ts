@@ -63,7 +63,7 @@ module api.form {
                         this.currentValidationState.flatten(event.getRecording());
                     }
 
-                    if (previousValidState != this.currentValidationState.isValid()) {
+                    if (previousValidState !== this.currentValidationState.isValid()) {
                         this.notifyValidityChanged(new RecordingValidityChangedEvent(this.currentValidationState,
                             this.resolveValidationRecordingPath()).setIncludeChildren(true));
                     }
@@ -98,7 +98,7 @@ module api.form {
 
                     this.renderSelectionValidationMessage(multiselectionState);
 
-                    if (this.currentValidationState.isValid() != previousValidationValid) {
+                    if (this.currentValidationState.isValid() !== previousValidationValid) {
                         this.notifyValidityChanged(new RecordingValidityChangedEvent(this.currentValidationState,
                             this.resolveValidationRecordingPath()).setIncludeChildren(true));
                     }
@@ -113,14 +113,14 @@ module api.form {
                 let selection: Occurrences = this.formOptionSet.getMultiselection();
                 let message;
                 if (!selectionValidationRecording.isMinimumOccurrencesValid()) {
-                    if (selection.getMinimum() == 1) {
+                    if (selection.getMinimum() === 1) {
                         message = 'At least 1 option must be selected';
                     } else if (selection.getMinimum() > 1) {
                         message = 'At least ' + selection.getMinimum() + ' options must be selected';
                     }
                 }
                 if (!selectionValidationRecording.isMaximumOccurrencesValid()) {
-                    if (selection.getMaximum() == 1) {
+                    if (selection.getMaximum() === 1) {
                         message = 'Maximum 1 option can be selected';
                     } else if (selection.getMaximum() > 1) {
                         message = 'Maximum ' + selection.getMaximum() + ' options can be selected';
@@ -146,26 +146,26 @@ module api.form {
 
         private makeMultiselectionNote(): string {
             let multiselection = this.formOptionSet.getMultiselection();
-            if (multiselection.getMinimum() == 1 && multiselection.getMaximum() == 1) {
+            if (multiselection.getMinimum() === 1 && multiselection.getMaximum() === 1) {
                 return null;
             }
 
-            if (multiselection.getMinimum() == 0 && multiselection.getMaximum() == 0) {
+            if (multiselection.getMinimum() === 0 && multiselection.getMaximum() === 0) {
                 return '(any)';
             }
-            if (multiselection.getMinimum() > 0 && multiselection.getMaximum() == 0) {
+            if (multiselection.getMinimum() > 0 && multiselection.getMaximum() === 0) {
                 return '(at least ' + multiselection.getMinimum() + ')';
             }
-            if (multiselection.getMinimum() > 1 && multiselection.getMinimum() == multiselection.getMaximum()) {
+            if (multiselection.getMinimum() > 1 && multiselection.getMinimum() === multiselection.getMaximum()) {
                 return '(pick ' + multiselection.getMinimum() + ')';
             }
-            if (multiselection.getMinimum() == 0 && multiselection.getMaximum() > 1) {
+            if (multiselection.getMinimum() === 0 && multiselection.getMaximum() > 1) {
                 return '(up to ' + multiselection.getMaximum() + ')';
             }
             if (multiselection.getMinimum() > 0 && multiselection.getMaximum() > multiselection.getMinimum()) {
                 return '(' + multiselection.getMinimum() + ' to ' + multiselection.getMaximum() + ')';
             }
-            if (multiselection.getMinimum() == 0 && multiselection.getMaximum() == 1) {
+            if (multiselection.getMinimum() === 0 && multiselection.getMaximum() === 1) {
                 return '(0 or 1)';
             }
             return null;

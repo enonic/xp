@@ -77,7 +77,7 @@ module api.content.form.inputtype.image {
             const selectedOption = this.getByOption(optionToRemove);
 
             this.selection = this.selection.filter((option: SelectedOption<ImageSelectorDisplayValue>) => {
-                return option.getOption().value != selectedOption.getOption().value;
+                return option.getOption().value !== selectedOption.getOption().value;
             });
 
             this.updateSelectionToolbarLayout();
@@ -159,7 +159,7 @@ module api.content.form.inputtype.image {
             let selectedOptions = this.getSelectedOptions();
             for (let i = 0; i < selectedOptions.length; i++) {
                 let view = <ImageSelectorSelectedOptionView>selectedOptions[i].getOptionView();
-                if (i != option.getIndex()) {
+                if (i !== option.getIndex()) {
                     view.getCheckbox().setChecked(false);
                 }
             }
@@ -219,7 +219,7 @@ module api.content.form.inputtype.image {
         private setOutsideClickListener() {
             this.mouseClickListener = (event: MouseEvent) => {
                 for (let element = event.target; element; element = (<any>element).parentNode) {
-                    if (element == this.getHTMLElement()) {
+                    if (element === this.getHTMLElement()) {
                         return;
                     }
                 }
@@ -253,7 +253,7 @@ module api.content.form.inputtype.image {
 
             this.uncheckOthers(option);
 
-            if (document.activeElement == optionView.getEl().getHTMLElement() || this.activeOption == option) {
+            if (document.activeElement === optionView.getEl().getHTMLElement() || this.activeOption === option) {
                 optionView.getCheckbox().toggleChecked();
             } else {
                 optionView.getCheckbox().setChecked(true);
@@ -327,19 +327,19 @@ module api.content.form.inputtype.image {
         }
 
         private isFirstInRow(index: number): boolean {
-            return index % this.numberOfOptionsPerRow == 0;
+            return index % this.numberOfOptionsPerRow === 0;
         }
 
         private isLastInRow(index: number): boolean {
-            return index % this.numberOfOptionsPerRow == 2;
+            return index % this.numberOfOptionsPerRow === 2;
         }
 
         private isFirst(index: number): boolean {
-            return index == 0;
+            return index === 0;
         }
 
         private isLast(index: number): boolean {
-            return index == this.getSelectedOptions().length - 1;
+            return index === this.getSelectedOptions().length - 1;
         }
 
         private notifyRemoveSelectedOptions(option: SelectedOption<ImageSelectorDisplayValue>[]) {
@@ -355,7 +355,7 @@ module api.content.form.inputtype.image {
         unRemoveSelectedOptions(listener: (option: SelectedOption<ImageSelectorDisplayValue>[]) => void) {
             this.removeSelectedOptionsListeners = this.removeSelectedOptionsListeners
                 .filter(function (curr: (option: SelectedOption<ImageSelectorDisplayValue>[]) => void) {
-                    return curr != listener;
+                    return curr !== listener;
                 });
         }
 
@@ -372,7 +372,7 @@ module api.content.form.inputtype.image {
         unEditSelectedOptions(listener: (option: SelectedOption<ImageSelectorDisplayValue>[]) => void) {
             this.editSelectedOptionsListeners = this.editSelectedOptionsListeners
                 .filter(function (curr: (option: SelectedOption<ImageSelectorDisplayValue>[]) => void) {
-                    return curr != listener;
+                    return curr !== listener;
                 });
         }
 

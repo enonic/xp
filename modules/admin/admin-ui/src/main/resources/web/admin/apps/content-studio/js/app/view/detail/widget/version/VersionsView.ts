@@ -84,17 +84,17 @@ export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
     }
 
     private getStatus(contentVersion: ContentVersion): ContentVersionStatus {
-        if (this.status == undefined) {
+        if (this.status == null) {
             return null;
         }
         let result = null;
 
         let hasMaster = contentVersion.workspaces.some((workspace) => {
-            return workspace == VersionsView.branchMaster;
+            return workspace === VersionsView.branchMaster;
         });
 
         contentVersion.workspaces.some((workspace: string) => {
-            if (!hasMaster || workspace == VersionsView.branchMaster) {
+            if (!hasMaster || workspace === VersionsView.branchMaster) {
                 result = {workspace: workspace, status: this.getState(workspace)};
                 return true;
             }

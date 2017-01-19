@@ -138,7 +138,7 @@ export class PageInspectionPanel extends BaseInspectionPanel {
 
     private pageModeImpliesPageControllerShown(): boolean {
         return (this.pageModel.isCustomized() && this.pageModel.hasController()) ||
-               this.pageModel.getMode() == PageMode.FORCED_CONTROLLER;
+               this.pageModel.getMode() === PageMode.FORCED_CONTROLLER;
     }
 }
 
@@ -206,11 +206,11 @@ class BaseInspectionHandler {
                 return;
             }
 
-            if ([PageModel.PROPERTY_CONFIG, PageModel.PROPERTY_CONTROLLER].indexOf(event.getPropertyName()) == -1) {
+            if ([PageModel.PROPERTY_CONFIG, PageModel.PROPERTY_CONTROLLER].indexOf(event.getPropertyName()) === -1) {
                 return;
             }
 
-            if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER) {
+            if (event.getPropertyName() === PageModel.PROPERTY_CONTROLLER) {
                 this.pageControllerForm.show();
             } else {
                 this.pageDescriptorForm.show();
@@ -270,7 +270,7 @@ class ContentInspectionHandler extends BaseInspectionHandler {
         let pageModel = liveEditModel.getPageModel();
         let pageMode = pageModel.getMode();
 
-        if (pageMode == PageMode.FORCED_TEMPLATE || pageMode == PageMode.AUTOMATIC) {
+        if (pageMode === PageMode.FORCED_TEMPLATE || pageMode === PageMode.AUTOMATIC) {
             this.showPageConfig(pageModel, liveEditModel.getFormContext());
         } else {
             throw new Error('Unsupported PageMode: ' + PageMode[pageMode]);

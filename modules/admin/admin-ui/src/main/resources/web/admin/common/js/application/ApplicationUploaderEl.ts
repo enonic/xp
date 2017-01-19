@@ -8,11 +8,11 @@ module api.application {
 
         constructor(config: api.ui.uploader.UploaderElConfig) {
 
-            if (config.url == undefined) {
+            if (config.url == null) {
                 config.url = api.util.UriHelper.getRestUri('application/install');
             }
 
-            if (config.allowTypes == undefined) {
+            if (config.allowTypes == null) {
                 config.allowTypes = [{title: 'Application files', extensions: 'jar,zip'}];
             }
 

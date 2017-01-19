@@ -129,7 +129,7 @@ module api.content.page {
             this.fragment = liveEditModel.getContent().getPage() ? liveEditModel.getContent().getPage().getFragment() : null;
             this.configPropertyChangedHandler = () => {
                 if (!this.ignorePropertyChanges) {
-                    if (this.mode == PageMode.AUTOMATIC) {
+                    if (this.mode === PageMode.AUTOMATIC) {
                         let setTemplate = new SetTemplate(this).setTemplate(this.defaultTemplate, this.defaultTemplateDescriptor);
                         this.setTemplate(setTemplate, true);
                     }
@@ -137,14 +137,14 @@ module api.content.page {
             };
             this.regionsChangedEventHandler = () => {
                 if (!this.ignorePropertyChanges) {
-                    if (this.mode == PageMode.AUTOMATIC) {
+                    if (this.mode === PageMode.AUTOMATIC) {
                         let setTemplate = new SetTemplate(this).setTemplate(this.defaultTemplate, this.defaultTemplateDescriptor);
                         this.setTemplate(setTemplate);
                     }
                 }
             };
             this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
-                if (!this.isPageTemplate() && this.getMode() == PageMode.AUTOMATIC) {
+                if (!this.isPageTemplate() && this.getMode() === PageMode.AUTOMATIC) {
                     this.initializePageFromDefault(this);
                 }
 
@@ -182,7 +182,7 @@ module api.content.page {
 
             this.customized = value;
 
-            if (oldValue != value) {
+            if (oldValue !== value) {
                 this.notifyCustomizeChanged(this.customized);
             }
         }
@@ -208,7 +208,7 @@ module api.content.page {
 
             this.mode = value;
 
-            if (this.mode != oldValue) {
+            if (this.mode !== oldValue) {
                 this.notifyPageModeChanged(oldValue, this.mode);
             }
         }
@@ -301,7 +301,7 @@ module api.content.page {
 
             if (setTemplate.template) {
                 this.setMode(PageMode.FORCED_TEMPLATE);
-            } else if (this.getMode() != PageMode.FRAGMENT) {
+            } else if (this.getMode() !== PageMode.FRAGMENT) {
                 this.setMode(PageMode.AUTOMATIC);
             }
 
@@ -393,10 +393,10 @@ module api.content.page {
          */
         getPage(): Page {
 
-            if (this.mode == PageMode.AUTOMATIC) {
+            if (this.mode === PageMode.AUTOMATIC) {
 
                 return null;
-            } else if (this.mode == PageMode.FORCED_TEMPLATE) {
+            } else if (this.mode === PageMode.FORCED_TEMPLATE) {
 
                 let regionsUnchanged = this.defaultTemplate.getRegions().equals(this.regions);
                 let regions = regionsUnchanged ? null : this.regions;
@@ -411,7 +411,7 @@ module api.content.page {
                     setCustomized(this.isCustomized()).
                     setFragment(this.fragment).
                     build();
-            } else if (this.mode == PageMode.FORCED_CONTROLLER) {
+            } else if (this.mode === PageMode.FORCED_CONTROLLER) {
                 return new PageBuilder().
                     setController(this.controller.getKey()).
                     setRegions(this.regions).
@@ -419,7 +419,7 @@ module api.content.page {
                     setCustomized(this.isCustomized()).
                     setFragment(this.fragment).
                     build();
-            } else if (this.mode == PageMode.NO_CONTROLLER) {
+            } else if (this.mode === PageMode.NO_CONTROLLER) {
                 if (this.contentHasNonRenderableTemplateSet()) {
                     return new PageBuilder().
                         setTemplate(this.liveEditModel.getContent().getPage().getTemplate()).setFragment(this.fragment).
@@ -427,7 +427,7 @@ module api.content.page {
                 } else {
                     return null;
                 }
-            } else if (this.mode == PageMode.FRAGMENT) {
+            } else if (this.mode === PageMode.FRAGMENT) {
                 return new PageBuilder().setRegions(null).setConfig(this.config).setCustomized(this.isCustomized()).setFragment(
                     this.fragment).build();
             } else {
@@ -463,11 +463,11 @@ module api.content.page {
             let descriptor: PageDescriptor;
 
             if (!this.isPageTemplate()) {
-                if (this.mode == PageMode.FORCED_TEMPLATE) {
+                if (this.mode === PageMode.FORCED_TEMPLATE) {
                     return this.templateDescriptor;
                 }
 
-                if (this.mode == PageMode.AUTOMATIC) {
+                if (this.mode === PageMode.AUTOMATIC) {
                     return this.defaultTemplateDescriptor;
                 }
             }
@@ -512,7 +512,7 @@ module api.content.page {
         }
 
         private contentHasNonRenderableTemplateSet() {
-            return !this.isPageTemplate() && (this.mode == PageMode.NO_CONTROLLER) &&
+            return !this.isPageTemplate() && (this.mode === PageMode.NO_CONTROLLER) &&
                    this.liveEditModel.getContent().getPage() &&
                    this.liveEditModel.getContent().getPage().getTemplate();
         }
@@ -542,7 +542,7 @@ module api.content.page {
         unPageModeChanged(listener: (event: PageModeChangedEvent)=>void) {
             this.pageModeChangedListeners =
                 this.pageModeChangedListeners.filter((curr: (event: PageModeChangedEvent)=>void) => {
-                    return listener != curr;
+                    return listener !== curr;
                 });
         }
 
@@ -559,7 +559,7 @@ module api.content.page {
 
         unPropertyChanged(listener: (event: api.PropertyChangedEvent)=>void) {
             this.propertyChangedListeners = this.propertyChangedListeners.filter((curr: (event: api.PropertyChangedEvent)=>void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
@@ -577,7 +577,7 @@ module api.content.page {
         unComponentPropertyChangedEvent(listener: (event: ComponentPropertyChangedEvent) => void) {
             this.componentPropertyChangedListeners =
                 this.componentPropertyChangedListeners.filter((curr: (event: ComponentPropertyChangedEvent) => void) => {
-                    return listener != curr;
+                    return listener !== curr;
                 });
         }
 
@@ -587,7 +587,7 @@ module api.content.page {
 
         unCustomizeChanged(listener: (value: boolean) => void) {
             this.customizeChangedListeners = this.customizeChangedListeners.filter((curr: (value: boolean) => void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
@@ -603,7 +603,7 @@ module api.content.page {
 
         unReset(listener: ()=>void) {
             this.resetListeners = this.resetListeners.filter((curr: ()=>void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 

@@ -92,9 +92,9 @@ module api.app.browse {
             }
             let other = <BrowseItem<M>> o;
             return this.model.equals(other.model) &&
-                   this.displayName == other.displayName &&
-                   this.path == other.path &&
-                   this.iconUrl == other.iconUrl && this.iconClass == other.iconClass;
+                   this.displayName === other.displayName &&
+                   this.path === other.path &&
+                   this.iconUrl === other.iconUrl && this.iconClass === other.iconClass;
         }
     }
 

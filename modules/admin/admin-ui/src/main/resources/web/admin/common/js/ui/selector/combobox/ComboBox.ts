@@ -119,7 +119,7 @@ module api.ui.selector.combobox {
             this.getEl().setAttribute('name', name);
 
             this.hideComboBoxWhenMaxReached = config.hideComboBoxWhenMaxReached;
-            if (config.setNextInputFocusWhenMaxReached !== undefined) {
+            if (config.setNextInputFocusWhenMaxReached != null) {
                 this.setNextInputFocusWhenMaxReached = config.setNextInputFocusWhenMaxReached;
             }
             if (config.selectedOptionsView != null) {
@@ -159,7 +159,7 @@ module api.ui.selector.combobox {
             this.dropdownHandle = new DropdownHandle();
             this.appendChild(this.dropdownHandle);
 
-            if (this.selectedOptionsView && (config.maximumOccurrences != 1)) {
+            if (this.selectedOptionsView && (config.maximumOccurrences !== 1)) {
                 this.applySelectionsButton = new Button('Apply');
                 this.applySelectionsButton.addClass('small apply-button');
                 this.applySelectionsButton.hide();
@@ -172,7 +172,7 @@ module api.ui.selector.combobox {
                 optionDisplayValueViewer: config.optionDisplayValueViewer,
                 filter: config.filter,
                 dataIdProperty: config.dataIdProperty,
-                multipleSelections: (this.selectedOptionsView && (config.maximumOccurrences != 1))
+                multipleSelections: (this.selectedOptionsView && (config.maximumOccurrences !== 1))
             });
 
             this.appendChild(this.comboBoxDropdown.getEmptyDropdown());
@@ -747,7 +747,7 @@ module api.ui.selector.combobox {
             this.input.onValueChanged((event: api.ValueChangedEvent) => {
 
                 this.preservedInputValueChangedEvent = event;
-                if (this.delayedInputValueChangedHandling == 0) {
+                if (this.delayedInputValueChangedHandling === 0) {
                     this.handleInputValueChanged();
                 } else if (!event.valuesAreEqual()) {
                     this.setEmptyDropdownText('Just keep on typing...');
@@ -803,10 +803,12 @@ module api.ui.selector.combobox {
 
         private handleKeyDown(event: KeyboardEvent) {
 
-            if (event.which == 9) { // tab
+            if (event.which === 9) { // tab
                 this.hideDropdown();
                 return;
-            } else if (event.which == 16 || event.which == 17 || event.which == 18 || event.which == 91) {  // shift or ctrl or alt or super
+
+            // shift or ctrl or alt or super
+            } else if (event.which === 16 || event.which === 17 || event.which === 18 || event.which === 91) {
                 return;
             }
 
@@ -880,7 +882,7 @@ module api.ui.selector.combobox {
                 this.input.giveFocus();
             }
 
-            if (event.which == 38 || event.which == 40 || event.which == 13) {
+            if (event.which === 38 || event.which === 40 || event.which === 13) {
                 event.stopPropagation();
                 event.preventDefault();
             }
@@ -899,7 +901,7 @@ module api.ui.selector.combobox {
                 this.show();
             }
 
-            if (this.countSelectedOptions() == 0) {
+            if (this.countSelectedOptions() === 0) {
                 this.removeClass('followed-by-options');
             }
             this.input.openForTypingAndFocus();
@@ -942,8 +944,8 @@ module api.ui.selector.combobox {
             });
 
             this.selectiondDelta = gridOptions
-                .filter(x => selectedValues.indexOf(x) == -1)
-                .concat(selectedValues.filter(x => gridOptions.indexOf(x) == -1));
+                .filter(x => selectedValues.indexOf(x) === -1)
+                .concat(selectedValues.filter(x => gridOptions.indexOf(x) === -1));
 
         }
 
@@ -962,7 +964,7 @@ module api.ui.selector.combobox {
         unOptionFilterInputValueChanged(listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) {
             this.optionFilterInputValueChangedListeners.filter(
                 (currentListener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
-                    return listener != currentListener;
+                    return listener !== currentListener;
                 });
         }
 

@@ -74,7 +74,7 @@ module api.dom {
             let index = -1;
             let inputHTMLElement = el.getHTMLElement();
             for (let i = 0; i < elements.length; i++) {
-                if (inputHTMLElement == elements.item(i)) {
+                if (inputHTMLElement === elements.item(i)) {
                     index = i;
                     break;
                 }

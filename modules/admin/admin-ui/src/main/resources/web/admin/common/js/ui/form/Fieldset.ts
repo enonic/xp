@@ -112,7 +112,7 @@ module api.ui.form {
 
         unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
             this.validityChangedListeners = this.validityChangedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 

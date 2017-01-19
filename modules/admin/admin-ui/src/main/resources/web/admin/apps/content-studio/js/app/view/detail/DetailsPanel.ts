@@ -59,7 +59,7 @@ export class DetailsPanel extends api.ui.panel.Panel {
     }
 
     public isMobile(): boolean {
-        return this.getType() == DETAILS_PANEL_TYPE.MOBILE;
+        return this.getType() === DETAILS_PANEL_TYPE.MOBILE;
     }
 }
 

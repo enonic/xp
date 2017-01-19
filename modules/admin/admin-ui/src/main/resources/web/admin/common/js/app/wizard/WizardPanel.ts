@@ -525,7 +525,7 @@ module api.app.wizard {
                 this.stepNavigatorAndToolbarContainer.removeClass('pre-scroll-stick');
             }
 
-            if (scrollTop == 0) {
+            if (scrollTop === 0) {
                 mainToolbar.removeClass('scroll-shadow');
             }
 
@@ -675,7 +675,7 @@ module api.app.wizard {
 
         removeStepWithForm(form: WizardStepForm) {
             this.steps = this.steps.filter((step: WizardStep) => {
-                let remove = (step.getStepForm() == form);
+                let remove = (step.getStepForm() === form);
                 if (remove) {
                     this.validityManager.removeItem(step);
                 }
@@ -778,7 +778,7 @@ module api.app.wizard {
 
         unClosed(listener: (event: WizardClosedEvent)=>void) {
             this.closedListeners = this.closedListeners.filter((currentListener: (event: WizardClosedEvent)=>void) => {
-                return currentListener != listener;
+                return currentListener !== listener;
             });
         }
 

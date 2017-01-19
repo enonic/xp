@@ -166,7 +166,7 @@ module api.ui.grid {
 
         unPositionChanged(listener: ()=>void) {
             this.positionChangedListeners = this.positionChangedListeners.filter((currentListener: ()=>void) => {
-                return currentListener != listener;
+                return currentListener !== listener;
             });
         }
 

@@ -84,7 +84,7 @@ module api.content.form.inputtype.image {
 
         private handleContentDeletedEvent() {
             this.contentDeletedListener = (event) => {
-                if (this.selectedOptionsView.count() == 0) {
+                if (this.selectedOptionsView.count() === 0) {
                     return;
                 }
 
@@ -165,11 +165,11 @@ module api.content.form.inputtype.image {
             let inputMaximum = this.getInput().getOccurrences().getMaximum();
             let countSelected = this.countSelectedOptions();
             let rest = -1;
-            if (inputMaximum == 0) {
+            if (inputMaximum === 0) {
                 rest = 0;
             } else {
                 rest = inputMaximum - countSelected;
-                rest = (rest == 0) ? -1 : rest;
+                rest = (rest === 0) ? -1 : rest;
             }
 
             return rest;
@@ -304,7 +304,7 @@ module api.content.form.inputtype.image {
         private removePropertyWithId(id: string) {
             let length = this.getPropertyArray().getSize();
             for (let i = 0; i < length; i++) {
-                if (this.getPropertyArray().get(i).getValue().getString() == id) {
+                if (this.getPropertyArray().get(i).getValue().getString() === id) {
                     this.getPropertyArray().remove(i);
                     api.notify.NotifyManager.get().showWarning('Failed to load image with id ' + id +
                                                                '. The reference will be removed upon save.');
@@ -326,7 +326,7 @@ module api.content.form.inputtype.image {
         }
 
         private createUploader(): api.content.image.ImageUploaderEl {
-            let multiSelection = (this.getInput().getOccurrences().getMaximum() != 1);
+            let multiSelection = (this.getInput().getOccurrences().getMaximum() !== 1);
 
             this.uploader = new api.content.image.ImageUploaderEl({
                 params: {
@@ -454,7 +454,7 @@ module api.content.form.inputtype.image {
 
             if (!this.getPropertyArray().containsValue(value)) {
                 this.ignorePropertyChange = true;
-                if (this.contentComboBox.countSelected() == 1) { // overwrite initial value
+                if (this.contentComboBox.countSelected() === 1) { // overwrite initial value
                     this.getPropertyArray().set(0, value);
                 } else {
                     this.getPropertyArray().add(value);
@@ -486,7 +486,7 @@ module api.content.form.inputtype.image {
         unEditContentRequest(listener: (content: ContentSummary) => void) {
             this.editContentRequestListeners = this.editContentRequestListeners
                 .filter(function (curr: (content: ContentSummary) => void) {
-                    return curr != listener;
+                    return curr !== listener;
                 });
         }
 

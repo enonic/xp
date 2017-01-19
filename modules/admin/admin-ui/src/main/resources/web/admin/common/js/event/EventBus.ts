@@ -28,7 +28,7 @@ module api.event {
                     if (entry.apiEventHandler === handler) {
                         customEventHandler = entry.customEventHandler;
                     }
-                    return entry.apiEventHandler != handler;
+                    return entry.apiEventHandler !== handler;
                 });
                 contextWindow.removeEventListener(eventName, customEventHandler);
             } else {

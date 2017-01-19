@@ -16,12 +16,12 @@ export class DeletePrincipalAction extends Action {
                 .setYesCallback(() => {
 
                     let principalItems = grid.getSelectedDataList().filter(
-                        userItem => UserTreeGridItemType.PRINCIPAL == userItem.getType()).map((userItem: UserTreeGridItem) => {
+                        userItem => UserTreeGridItemType.PRINCIPAL === userItem.getType()).map((userItem: UserTreeGridItem) => {
                         return userItem.getPrincipal();
                     });
 
                     let userStoreItems = grid.getSelectedDataList().filter(
-                        userItem => UserTreeGridItemType.USER_STORE == userItem.getType()).map((userItem: UserTreeGridItem) => {
+                        userItem => UserTreeGridItemType.USER_STORE === userItem.getType()).map((userItem: UserTreeGridItem) => {
                         return userItem.getUserStore();
                     });
 

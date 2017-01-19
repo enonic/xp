@@ -82,7 +82,7 @@ module api.util.loader {
         }
 
         private handleLoadError(postLoad: boolean = false, error: any): OBJECT[] {
-            let isObj = typeof error == 'object';
+            let isObj = typeof error === 'object';
             let textMessage = isObj ? (error['message'] || 'Unknown error') : String(error);
             let statusCode = isObj && error['statusCode'] ? error['statusCode'] : 500;
 
@@ -92,15 +92,15 @@ module api.util.loader {
         }
 
         isLoading(): boolean {
-            return this.status == LoaderStatus.LOADING;
+            return this.status === LoaderStatus.LOADING;
         }
 
         isLoaded(): boolean {
-            return this.status == LoaderStatus.LOADED;
+            return this.status === LoaderStatus.LOADED;
         }
 
         isNotStarted(): boolean {
-            return this.status == LoaderStatus.NOT_STARTED;
+            return this.status === LoaderStatus.NOT_STARTED;
         }
 
         setComparator(comparator: Comparator<OBJECT>): BaseLoader<JSON, OBJECT> {
@@ -173,13 +173,13 @@ module api.util.loader {
 
         unLoadedData(listener: (event: LoadedDataEvent<OBJECT>) => void) {
             this.loadedDataListeners = this.loadedDataListeners.filter((currentListener: (event: LoadedDataEvent<OBJECT>)=>void)=> {
-                return currentListener != listener;
+                return currentListener !== listener;
             });
         }
 
         unLoadingData(listener: (event: LoadingDataEvent) => void) {
             this.loadingDataListeners = this.loadingDataListeners.filter((currentListener: (event: LoadingDataEvent)=>void)=> {
-                return currentListener != listener;
+                return currentListener !== listener;
             });
         }
 

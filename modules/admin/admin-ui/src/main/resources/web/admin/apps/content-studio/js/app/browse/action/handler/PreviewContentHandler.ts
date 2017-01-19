@@ -109,7 +109,7 @@ export class PreviewContentHandler {
     addRenderableIds(contentIds: ContentId[], silent ?: boolean) {
         if (contentIds) {
             contentIds.forEach((contentId) => {
-                if (this.renderableIds.indexOf(contentId.toString()) == -1) {
+                if (this.renderableIds.indexOf(contentId.toString()) === -1) {
                     this.renderableIds.push(contentId.toString());
                 }
             });
@@ -135,7 +135,7 @@ export class PreviewContentHandler {
 
     private notifyPreviewStateChangedIfNeeded() {
         let newRenderable = this.isBlocked() || this.renderableIds.length > 0;
-        if (newRenderable != this.anyRenderable) {
+        if (newRenderable !== this.anyRenderable) {
             this.notifyPreviewStateChanged(newRenderable);
             this.anyRenderable = newRenderable;
         }

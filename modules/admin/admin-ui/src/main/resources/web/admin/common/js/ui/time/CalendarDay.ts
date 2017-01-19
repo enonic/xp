@@ -65,7 +65,7 @@ module api.ui.time {
                 this.nextDay.previousDay = this;
             }
 
-            if (new Date().toDateString() == builder.date.toDateString()) {
+            if (new Date().toDateString() === builder.date.toDateString()) {
                 this.addClass('today');
             }
 
@@ -111,16 +111,16 @@ module api.ui.time {
         }
 
         isBeforeMonth(): boolean {
-            return this.date.getMonth() < this.month || (this.month == 0 && this.date.getMonth() == 11);
+            return this.date.getMonth() < this.month || (this.month === 0 && this.date.getMonth() === 11);
         }
 
         isAfterMonth(): boolean {
-            return this.date.getMonth() > this.month || (this.month == 11 && this.date.getMonth() == 0);
+            return this.date.getMonth() > this.month || (this.month === 11 && this.date.getMonth() === 0);
         }
 
         isLastDayOfMonth(month: number): boolean {
             let lastDateOfMonth = new Date(this.date.getFullYear(), month + 1, 0);
-            return month == this.date.getMonth() && this.date.getDate() == lastDateOfMonth.getDate();
+            return month === this.date.getMonth() && this.date.getDate() === lastDateOfMonth.getDate();
         }
 
         getDayOfWeek(): DayOfWeek {

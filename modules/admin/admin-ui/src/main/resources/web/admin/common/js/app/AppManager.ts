@@ -24,13 +24,13 @@ module api.app {
 
         unConnectionLost(listener: ()=>void) {
             this.connectionLostListeners = this.connectionLostListeners.filter((currentListener: ()=>void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
         unConnectionRestored(listener: ()=>void) {
             this.connectionRestoredListeners = this.connectionRestoredListeners.filter((currentListener: ()=>void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 

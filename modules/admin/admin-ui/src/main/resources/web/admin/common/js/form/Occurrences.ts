@@ -56,7 +56,7 @@ module api.form {
         }
 
         multiple(): boolean {
-            return this.maximum > 1 || this.maximum == 0;
+            return this.maximum > 1 || this.maximum === 0;
         }
 
         minimumReached(occurrenceCount: number): boolean {
@@ -64,18 +64,18 @@ module api.form {
         }
 
         minimumBreached(occurrenceCount: number): boolean {
-            return (this.minimum == 0) ? false : (occurrenceCount < this.minimum);
+            return (this.minimum === 0) ? false : (occurrenceCount < this.minimum);
         }
 
         maximumReached(occurrenceCount: number): boolean {
-            if (this.maximum == 0) {
+            if (this.maximum === 0) {
                 return false;
             }
             return occurrenceCount >= this.maximum;
         }
 
         maximumBreached(occurrenceCount: number): boolean {
-            if (this.maximum == 0) {
+            if (this.maximum === 0) {
                 return false;
             }
             return occurrenceCount > this.maximum;

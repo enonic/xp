@@ -93,7 +93,7 @@ module api.ui {
         }
 
         setEnabled(enabled: boolean) {
-            if (enabled != this.enabled) {
+            if (enabled !== this.enabled) {
                 if (!enabled) {
                     this.addClass(this.disabledClass);
                 } else {

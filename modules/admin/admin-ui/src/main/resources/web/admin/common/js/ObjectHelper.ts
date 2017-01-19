@@ -75,7 +75,7 @@ module api {
                 return false;
             }
 
-            if (arrayA.length != arrayB.length) {
+            if (arrayA.length !== arrayB.length) {
                 return false;
             }
 
@@ -98,7 +98,7 @@ module api {
                 return false;
             }
 
-            if (arrayA.length != arrayB.length) {
+            if (arrayA.length !== arrayB.length) {
                 return false;
             }
 
@@ -170,7 +170,7 @@ module api {
                 return false;
             }
 
-            if (arrayA.length != arrayB.length) {
+            if (arrayA.length !== arrayB.length) {
                 return false;
             }
 
@@ -193,14 +193,14 @@ module api {
                 return false;
             }
 
-            return a == b;
+            return a === b;
         }
 
         /*
          * Keep in mind that !0 is true as well as !null
          */
         static numberEquals(a: number, b: number) {
-            return NumberHelper.isNumber(a) && NumberHelper.isNumber(b) && a == b;
+            return NumberHelper.isNumber(a) && NumberHelper.isNumber(b) && a === b;
         }
 
         static dateEquals(a: Date, b: Date) {
@@ -213,7 +213,7 @@ module api {
                 return false;
             }
 
-            return a.toISOString() == b.toISOString();
+            return a.toISOString() === b.toISOString();
         }
 
         static anyEquals(a: any, b: any) {
@@ -228,7 +228,7 @@ module api {
 
             let aString = JSON.stringify(a);
             let bString = JSON.stringify(b);
-            return aString == bString;
+            return aString === bString;
         }
 
         static objectEquals(a: Object, b: Object) {
@@ -254,12 +254,12 @@ module api {
              function must be used to replace references to the same object with `undefined`.
              */
             let aString = JSON.stringify(a, (key, value) => {
-                return (!!key && a == value) ? undefined : value;
+                return (!!key && a === value) ? undefined : value;
             });
             let bString = JSON.stringify(b, (key, value) => {
-                return (!!key && b == value) ? undefined : value;
+                return (!!key && b === value) ? undefined : value;
             });
-            return aString == bString;
+            return aString === bString;
 
         }
 

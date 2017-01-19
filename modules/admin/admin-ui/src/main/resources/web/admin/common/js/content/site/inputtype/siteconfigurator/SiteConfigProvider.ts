@@ -64,7 +64,7 @@ module api.content.site.inputtype.siteconfigurator {
 
         unPropertyChanged(listener: ()=>void) {
             this.arrayChangedListeners = this.arrayChangedListeners.filter((currentListener: ()=>void) => {
-                return currentListener != listener;
+                return currentListener !== listener;
             });
         }
 
@@ -80,7 +80,7 @@ module api.content.site.inputtype.siteconfigurator {
 
         unBeforePropertyChanged(listener: ()=>void) {
             this.beforeArrayChangedListeners = this.beforeArrayChangedListeners.filter((currentListener: ()=>void) => {
-                return currentListener != listener;
+                return currentListener !== listener;
             });
         }
 
@@ -96,7 +96,7 @@ module api.content.site.inputtype.siteconfigurator {
 
         unAfterPropertyChanged(listener: ()=>void) {
             this.afterArrayChangedListeners = this.afterArrayChangedListeners.filter((currentListener: ()=>void) => {
-                return currentListener != listener;
+                return currentListener !== listener;
             });
         }
 

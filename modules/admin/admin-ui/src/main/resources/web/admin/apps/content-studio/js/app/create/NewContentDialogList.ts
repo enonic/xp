@@ -18,7 +18,7 @@ export class NewContentDialogList extends api.ui.selector.list.ListBox<NewConten
 
     unSelected(listener: (event: NewContentDialogItemSelectedEvent)=>void) {
         this.selectedListeners = this.selectedListeners.filter((currentListener: (event: NewContentDialogItemSelectedEvent)=>void)=> {
-            return currentListener != listener;
+            return currentListener !== listener;
         });
     }
 
@@ -41,7 +41,7 @@ export class NewContentDialogList extends api.ui.selector.list.ListBox<NewConten
         itemEl.appendChild(namesAndIconView);
         itemEl.onClicked((event: MouseEvent) => this.notifySelected(item));
         itemEl.onKeyPressed((event: KeyboardEvent) => {
-            if (event.keyCode == 13) {
+            if (event.keyCode === 13) {
                 this.notifySelected(item);
             }
         });

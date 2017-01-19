@@ -56,7 +56,7 @@ module api.app.view {
 
         unClosed(listener: (event: ItemViewClosedEvent<M>)=>void) {
             this.closedListeners = this.closedListeners.filter((currentListener: (event: ItemViewClosedEvent<M>)=>void) => {
-                return currentListener != listener;
+                return currentListener !== listener;
             });
         }
 

@@ -19,15 +19,15 @@ module api.query.expr {
         toString() {
             let type: api.data.ValueType = this.value.getType();
 
-            if (type == api.data.ValueTypes.DOUBLE) {
+            if (type === api.data.ValueTypes.DOUBLE) {
                 return this.value.getString();
             }
 
-            if (type == api.data.ValueTypes.DATE_TIME) {
+            if (type === api.data.ValueTypes.DATE_TIME) {
                 return this.typecastFunction('dateTime', this.value.getString());
             }
 
-            if (type == api.data.ValueTypes.GEO_POINT) {
+            if (type === api.data.ValueTypes.GEO_POINT) {
                 return this.typecastFunction('geoPoint', this.value.getString());
             }
 

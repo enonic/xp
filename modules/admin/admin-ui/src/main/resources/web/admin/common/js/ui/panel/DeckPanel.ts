@@ -16,7 +16,7 @@ module api.ui.panel {
         }
 
         isEmpty(): boolean {
-            return this.panels.length == 0;
+            return this.panels.length === 0;
         }
 
         getSize(): number {
@@ -91,7 +91,7 @@ module api.ui.panel {
 
             if (this.isEmpty()) {
                 this.panelShown = null;
-            } else if (panelToRemove == this.getPanelShown()) {
+            } else if (panelToRemove === this.getPanelShown()) {
                 // show either panel that has the same index now or the last panel
                 this.showPanelByIndex(Math.min(index, this.getSize() - 1));
             }
@@ -136,7 +136,7 @@ module api.ui.panel {
 
         unPanelShown(listener: (event: PanelShownEvent)=>void) {
             this.panelShownListeners = this.panelShownListeners.filter((currentListener: (event: PanelShownEvent) => void) => {
-                return  listener != currentListener;
+                return  listener !== currentListener;
             });
         }
 

@@ -366,7 +366,7 @@ module api.liveedit {
 
             let firstLevelOfPath = path.getFirstLevel();
 
-            if (path.numberOfLevels() == 1) {
+            if (path.numberOfLevels() === 1) {
 
                 return this.componentViews[firstLevelOfPath.getComponentIndex()];
             }
@@ -437,7 +437,7 @@ module api.liveedit {
 
         unItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {
             this.itemViewAddedListeners = this.itemViewAddedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 
@@ -460,7 +460,7 @@ module api.liveedit {
 
         unItemViewRemoved(listener: (event: ItemViewRemovedEvent) => void) {
             this.itemViewRemovedListeners = this.itemViewRemovedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 

@@ -129,7 +129,7 @@ module api.liveedit.text {
         }
 
         private isAllTextSelected(): boolean {
-            return this.rootElement.getHTMLElement().innerText.trim() == window['getSelection']().toString();
+            return this.rootElement.getHTMLElement().innerText.trim() === window['getSelection']().toString();
         }
 
         private handlePasteEvent() {
@@ -154,7 +154,7 @@ module api.liveedit.text {
         private initializeRootElement() {
             for (let i = 0; i < this.getChildren().length; i++) {
                 let child = this.getChildren()[i];
-                if (child.getEl().getTagName().toUpperCase() == 'SECTION') {
+                if (child.getEl().getTagName().toUpperCase() === 'SECTION') {
                     this.rootElement = child;
                     // convert image urls in text component for web
                     child.setHtml(HTMLAreaHelper.prepareImgSrcsInValueForEdit(child.getHtml()), false);
@@ -203,7 +203,7 @@ module api.liveedit.text {
             }
 
             event.stopPropagation();
-            if (event.which == 3) { // right click
+            if (event.which === 3) { // right click
                 event.preventDefault();
             }
 
@@ -311,13 +311,13 @@ module api.liveedit.text {
         }
 
         private onKeydownHandler(e: KeyboardEvent) {
-            let saveShortcut = (e.keyCode == 83 && (e.ctrlKey || e.metaKey));
+            let saveShortcut = (e.keyCode === 83 && (e.ctrlKey || e.metaKey));
 
             if (saveShortcut) { //Cmd-S
                 this.processEditorValue();
             }
 
-            if (e.keyCode == 27 || saveShortcut) { // esc or Cmd-S
+            if (e.keyCode === 27 || saveShortcut) { // esc or Cmd-S
                 this.closePageTextEditMode();
                 this.removeClass(TextComponentView.EDITOR_FOCUSED_CLASS);
             } else if ((e.altKey) && e.keyCode === 9) { // alt+tab for OSX
@@ -432,7 +432,7 @@ module api.liveedit.text {
 
         private isEditorEmpty(): boolean {
             let editorContent = this.htmlAreaEditor.getContent();
-            return editorContent.trim() === '' || editorContent == '<h2>&nbsp;</h2>';
+            return editorContent.trim() === '' || editorContent === '<h2>&nbsp;</h2>';
         }
 
         private destroyEditor(): void {

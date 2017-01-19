@@ -21,7 +21,7 @@ module api.form {
                 this.list.removeChildren();
             }
 
-            if (object && this.list.getChildren().length == 0) {
+            if (object && this.list.getChildren().length === 0) {
                 object.breaksMinimumOccurrencesArray.forEach((path: ValidationRecordingPath) => {
                     this.list.appendChild(this.createItemView(path, true));
                 });

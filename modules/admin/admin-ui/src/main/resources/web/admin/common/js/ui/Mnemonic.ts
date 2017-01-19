@@ -20,9 +20,9 @@ module api.ui {
         underlineMnemonic(text: string): string {
 
             let mStart: number = text.indexOf(this.value);
-            if (mStart == -1) {
+            if (mStart === -1) {
                 mStart = text.indexOf(this.value.toLowerCase());
-                if (mStart == -1) {
+                if (mStart === -1) {
                     mStart = text.indexOf(this.value.toUpperCase());
                 }
             }

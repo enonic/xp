@@ -6,7 +6,7 @@ module api.util {
             //check all existing script tags in the page for the url
             wemjq('script[type="text/javascript"]')
                 .each(function () {
-                    return load = (url != wemjq(this).attr('data-url'));
+                    return load = (url !== wemjq(this).attr('data-url'));
                 });
             if (load) {
                 //didn't find it in the page, so load it

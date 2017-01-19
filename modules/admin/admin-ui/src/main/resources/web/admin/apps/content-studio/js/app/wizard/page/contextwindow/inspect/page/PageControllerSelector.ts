@@ -24,7 +24,7 @@ export class PageControllerSelector extends api.content.page.PageDescriptorDropd
         });
 
         this.pageModel.onPropertyChanged((event: PropertyChangedEvent) => {
-            if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && this !== event.getSource()) {
+            if (event.getPropertyName() === PageModel.PROPERTY_CONTROLLER && this !== event.getSource()) {
                 let descriptorKey = <DescriptorKey>event.getNewValue();
                 if (descriptorKey) {
                     this.selectController(descriptorKey);

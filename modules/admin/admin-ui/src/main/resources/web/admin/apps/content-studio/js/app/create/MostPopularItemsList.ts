@@ -24,7 +24,7 @@ export class MostPopularItemsList extends NewContentDialogList {
         itemEl.appendChild(namesAndIconView);
         itemEl.onClicked((event: MouseEvent) => this.notifySelected(item));
         itemEl.onKeyPressed((event: KeyboardEvent) => {
-            if (event.keyCode == 13) {
+            if (event.keyCode === 13) {
                 this.notifySelected(item);
             }
         });
@@ -79,7 +79,7 @@ export class MostPopularItemsList extends NewContentDialogList {
     }
 
     private sortByCountAndDate(contentType1: ContentTypeInfo, contentType2: ContentTypeInfo) {
-        if (contentType2.count == contentType1.count) {
+        if (contentType2.count === contentType1.count) {
             return contentType2.lastModified > contentType1.lastModified ? 1 : -1;
         }
         return contentType2.count - contentType1.count;

@@ -213,7 +213,7 @@ module api.content.site.inputtype.siteconfigurator {
 
         unEditClicked(listener: (event: MouseEvent) => void) {
             this.editClickedListeners = this.editClickedListeners.filter((curr) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
@@ -229,7 +229,7 @@ module api.content.site.inputtype.siteconfigurator {
 
         unSiteConfigFormDisplayed(listener: {(applicationKey: ApplicationKey): void;}) {
             this.siteConfigFormDisplayedListeners =
-                this.siteConfigFormDisplayedListeners.filter((curr) => (curr != listener));
+                this.siteConfigFormDisplayedListeners.filter((curr) => (curr !== listener));
         }
 
         private notifySiteConfigFormDisplayed(applicationKey: ApplicationKey) {

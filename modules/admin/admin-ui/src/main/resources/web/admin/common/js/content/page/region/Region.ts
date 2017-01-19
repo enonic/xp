@@ -63,7 +63,7 @@ module api.content.page.region {
         }
 
         isEmpty(): boolean {
-            return !this.components || this.components.length == 0;
+            return !this.components || this.components.length === 0;
         }
 
         empty() {
@@ -113,7 +113,7 @@ module api.content.page.region {
                 console.error(message);
                 throw new api.Exception(message, api.ExceptionType.ERROR);
             }
-            api.util.assertState(component.getIndex() == index,
+            api.util.assertState(component.getIndex() === index,
                 'Index of Component is not as expected. Expected [' + index + '], was: ' + component.getIndex());
             return component;
         }
@@ -204,7 +204,7 @@ module api.content.page.region {
             component.unPropertyChanged(this.componentPropertyChangedEventHandler);
 
             let index = component.getIndex();
-            if (index == -1) {
+            if (index === -1) {
                 throw new Error(component.toString() + ' to remove does not exist in ' + this.toString());
             }
 
@@ -223,7 +223,7 @@ module api.content.page.region {
         unChanged(listener: (event: BaseRegionChangedEvent)=>void) {
             this.changedListeners =
             this.changedListeners.filter((curr: (event: BaseRegionChangedEvent)=>void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
@@ -240,7 +240,7 @@ module api.content.page.region {
         unComponentAdded(listener: (event: ComponentAddedEvent) => void) {
             this.componentAddedListeners =
             this.componentAddedListeners.filter((curr: (event: ComponentAddedEvent) => void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
@@ -259,7 +259,7 @@ module api.content.page.region {
         unComponentRemoved(listener: (event: ComponentRemovedEvent) => void) {
             this.componentRemovedListeners =
             this.componentRemovedListeners.filter((curr: (event: ComponentRemovedEvent) => void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
@@ -278,7 +278,7 @@ module api.content.page.region {
         unComponentPropertyChangedEvent(listener: (event: ComponentPropertyChangedEvent) => void) {
             this.componentPropertyChangedListeners =
             this.componentPropertyChangedListeners.filter((curr: (event: ComponentPropertyChangedEvent)=>void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
@@ -295,7 +295,7 @@ module api.content.page.region {
         unRegionPropertyValueChanged(listener: (event: RegionPropertyValueChangedEvent) => void) {
             this.propertyValueChangedListeners =
             this.propertyValueChangedListeners.filter((curr: (event: RegionPropertyValueChangedEvent)=>void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 

@@ -53,7 +53,7 @@ export class ContentVersionViewer extends api.ui.Viewer<api.content.ContentVersi
     }
 
     private getCommentSpan(contentVersion: api.content.ContentVersion): api.dom.SpanEl {
-        if (contentVersion.comment.length == 0) {
+        if (contentVersion.comment.length === 0) {
             return null;
         }
 

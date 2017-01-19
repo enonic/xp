@@ -76,7 +76,7 @@ module api.form {
             }
 
             return otherPath.getElements().every((whatEl, whatIdx) => {
-                return fullPath.getElement(whatIdx).toString() == whatEl.toString();
+                return fullPath.getElement(whatIdx).toString() === whatEl.toString();
             });
         }
 

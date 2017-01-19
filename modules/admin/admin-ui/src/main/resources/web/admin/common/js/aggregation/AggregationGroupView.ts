@@ -53,7 +53,7 @@ module api.aggregation {
          */
         handlesAggregation(aggregation: api.aggregation.Aggregation) {
 
-            return aggregation.getName() == this.name;
+            return aggregation.getName() === this.name;
         }
 
         getSelectedValuesByAggregationName(): AggregationSelection[] {
@@ -134,7 +134,7 @@ module api.aggregation {
 
             for (let i = 0; i < this.aggregationViews.length; i++) {
                 let aggregationView: api.aggregation.AggregationView = this.aggregationViews[i];
-                if (aggregationView.getName() == name) {
+                if (aggregationView.getName() === name) {
                     return aggregationView;
                 }
             }

@@ -237,7 +237,7 @@ module api.ui.selector.combobox {
             let selectedValues = this.getSelectedValues();
             let valueToFind = this.getDisplayValueId(value);
             for (let i = 0; i < selectedValues.length; i++) {
-                if (selectedValues[i] == valueToFind) {
+                if (selectedValues[i] === valueToFind) {
                     return true;
                 }
             }
@@ -246,7 +246,7 @@ module api.ui.selector.combobox {
 
         protected getDisplayValueId(value: Object): string {
             let val = value[this.identifierMethod]();
-            return typeof val == 'object' && val['toString'] ? val.toString() : val;
+            return typeof val === 'object' && val['toString'] ? val.toString() : val;
         }
 
         protected createOption(value: Object, readOnly?: boolean): Option<OPTION_DISPLAY_VALUE> {
@@ -421,7 +421,7 @@ module api.ui.selector.combobox {
         }
 
         protected doGetValue(): string {
-            if (!this.loader.isLoaded() && this.tempValue != undefined) {
+            if (!this.loader.isLoaded() && this.tempValue != null) {
                 if (RichComboBox.debug) {
                     console.debug('RichComboBox: loader is not loaded, returning temp value = ' + this.tempValue);
                 }

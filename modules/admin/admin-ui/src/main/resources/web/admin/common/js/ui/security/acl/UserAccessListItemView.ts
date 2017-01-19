@@ -96,7 +96,7 @@ module api.ui.security.acl {
             let userIcons = this.userLine.getChildren();
             let count = 0;
             for (let userIconKey in userIcons) {
-                if (userIcons[userIconKey].getEl().getOffsetTopRelativeToParent() == 0) {
+                if (userIcons[userIconKey].getEl().getOffsetTopRelativeToParent() === 0) {
                     count++;
                 } else {
                     break;
@@ -107,7 +107,7 @@ module api.ui.security.acl {
 
         private getOptionName(access: Access): string {
             let currentOption = UserAccessListItemView.OPTIONS.filter(option => {
-                return option.value == access;
+                return option.value === access;
             });
             if (currentOption && currentOption.length > 0) {
                 return currentOption[0].name;

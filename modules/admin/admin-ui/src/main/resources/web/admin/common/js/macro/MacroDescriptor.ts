@@ -55,15 +55,15 @@ module api.macro {
 
             let other = <MacroDescriptor>o;
 
-            if (this.displayName != other.displayName) {
+            if (this.displayName !== other.displayName) {
                 return false;
             }
 
-            if (this.description != other.description) {
+            if (this.description !== other.description) {
                 return false;
             }
 
-            if (this.iconUrl != other.iconUrl) {
+            if (this.iconUrl !== other.iconUrl) {
                 return false;
             }
 

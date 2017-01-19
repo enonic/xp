@@ -196,7 +196,7 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
 
     private setPreviewType(previewType: PREVIEW_TYPE) {
 
-        if (this.previewType != previewType) {
+        if (this.previewType !== previewType) {
 
             this.getEl().removeClass('image-preview page-preview svg-preview no-preview');
 
@@ -242,7 +242,7 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
 
         this.previewType = previewType;
 
-        if (PREVIEW_TYPE.FAILED == previewType || PREVIEW_TYPE.EMPTY == previewType) {
+        if (PREVIEW_TYPE.FAILED === previewType || PREVIEW_TYPE.EMPTY === previewType) {
             this.hideMask();
         }
     }

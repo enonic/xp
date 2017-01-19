@@ -195,7 +195,7 @@ module api.app.bar {
 
         unButtonLabelChanged(listener: () => void) {
             this.buttonLabelChangedListeners = this.buttonLabelChangedListeners.filter((currentListener: () => void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 

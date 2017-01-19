@@ -22,7 +22,7 @@ export class BasePreviewAction extends Action {
     }
 
     private popupCheck(win: Window) {
-        const isBlocked = !win || win.closed || typeof win.closed == 'undefined';
+        const isBlocked = !win || win.closed || typeof win.closed === 'undefined';
 
         if (isBlocked) {
             this.notifyBlocked();

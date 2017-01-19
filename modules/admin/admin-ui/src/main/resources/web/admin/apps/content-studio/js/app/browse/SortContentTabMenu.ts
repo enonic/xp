@@ -145,7 +145,7 @@ export class SortContentTabMenu extends api.ui.tab.TabMenu {
 
     unSortOrderChanged(listener: () => void) {
         this.sortOrderChangedListeners = this.sortOrderChangedListeners.filter((currentListener: () => void) => {
-            return listener != currentListener;
+            return listener !== currentListener;
         });
     }
 

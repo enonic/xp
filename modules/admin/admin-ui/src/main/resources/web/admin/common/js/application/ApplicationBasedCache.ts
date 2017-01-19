@@ -10,12 +10,12 @@ module api.application {
 
             ApplicationEvent.on((event: ApplicationEvent) => {
 
-                if (ApplicationEventType.STARTED == event.getEventType()) {
+                if (ApplicationEventType.STARTED === event.getEventType()) {
                     console.log(api.ClassHelper.getClassName(this) +
                                 ' received ApplicationEvent STARTED, calling - loadByApplication.. ' +
                                 event.getApplicationKey().toString());
                     this.loadByApplication(event.getApplicationKey());
-                } else if (ApplicationEventType.STOPPED == event.getEventType()) {
+                } else if (ApplicationEventType.STOPPED === event.getEventType()) {
                     console.log(api.ClassHelper.getClassName(this) +
                                 ' received ApplicationEvent STOPPED - calling deleteByApplicationKey.. ' +
                                 event.getApplicationKey().toString());

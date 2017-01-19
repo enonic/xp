@@ -23,7 +23,7 @@ module api.ui.time {
 
             let match: DayOfWeek = null;
             DaysOfWeek.ALL.forEach((dayOfWeek: DayOfWeek) => {
-                if (dayOfWeek.getNumberCode() == value) {
+                if (dayOfWeek.getNumberCode() === value) {
                     match = dayOfWeek;
                 }
             });

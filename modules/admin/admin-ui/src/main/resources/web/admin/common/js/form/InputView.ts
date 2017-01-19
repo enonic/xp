@@ -261,7 +261,7 @@ module api.form {
         }
 
         userInputValidityChanged(currentState: boolean): boolean {
-            return this.userInputValid == undefined || this.userInputValid == null || !(this.userInputValid == currentState);
+            return this.userInputValid == null || this.userInputValid == null || !(this.userInputValid === currentState);
         }
 
         giveFocus(): boolean {
@@ -274,7 +274,7 @@ module api.form {
 
         unValidityChanged(listener: (event: RecordingValidityChangedEvent)=>void) {
             this.validityChangedListeners.filter((currentListener: (event: RecordingValidityChangedEvent)=>void) => {
-                return listener == currentListener;
+                return listener === currentListener;
             });
         }
 

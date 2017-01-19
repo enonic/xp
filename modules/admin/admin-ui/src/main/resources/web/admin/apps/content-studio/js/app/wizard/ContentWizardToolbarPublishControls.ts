@@ -87,7 +87,7 @@ export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
     private refreshState() {
         let canBePublished = !this.isOnline() && this.contentCanBePublished && this.userCanPublish;
         let canTreeBePublished = !this.leafContent && this.contentCanBePublished && this.userCanPublish;
-        let canBeUnpublished = this.contentCompareStatus != CompareStatus.NEW && this.contentCompareStatus != CompareStatus.UNKNOWN &&
+        let canBeUnpublished = this.contentCompareStatus !== CompareStatus.NEW && this.contentCompareStatus !== CompareStatus.UNKNOWN &&
                                this.userCanPublish;
 
         this.publishAction.setEnabled(canBePublished);
@@ -106,7 +106,7 @@ export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
     }
 
     public isPendingDelete(): boolean {
-        return this.contentCompareStatus == CompareStatus.PENDING_DELETE;
+        return this.contentCompareStatus === CompareStatus.PENDING_DELETE;
     }
 
     public enableActionsForExisting(existing: api.content.Content) {
@@ -122,7 +122,7 @@ export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
         if (compareStatus === CompareStatus.EQUAL) {
             status.addClass('online');
         }
-        if (publishStatus && (publishStatus == PublishStatus.PENDING || publishStatus == PublishStatus.EXPIRED)) {
+        if (publishStatus && (publishStatus === PublishStatus.PENDING || publishStatus === PublishStatus.EXPIRED)) {
             status.addClass(api.content.PublishStatusFormatter.formatStatus(publishStatus).toLowerCase());
             status.setHtml(api.content.CompareStatusFormatter.formatStatus(compareStatus) + ' (' +
                            api.content.PublishStatusFormatter.formatStatus(publishStatus) + ')');

@@ -51,7 +51,7 @@ module api.dom {
          */
         getPrevious(): ElementHelper {
             let previous = this.el.previousSibling;
-            while (previous && previous.nodeType != Node.ELEMENT_NODE) {
+            while (previous && previous.nodeType !== Node.ELEMENT_NODE) {
                 previous = previous.previousSibling;
             }
             return previous ? new ElementHelper(<HTMLElement> previous) : null;
@@ -59,7 +59,7 @@ module api.dom {
 
         getNext(): ElementHelper {
             let next = this.el.nextSibling;
-            while (next && next.nodeType != Node.ELEMENT_NODE) {
+            while (next && next.nodeType !== Node.ELEMENT_NODE) {
                 next = next.nextSibling;
             }
             return next ? new ElementHelper(<HTMLElement> next) : null;
@@ -152,7 +152,7 @@ module api.dom {
         }
 
         toggleClass(className: string, condition?: boolean): ElementHelper {
-            if (condition == false || condition == undefined && this.hasClass(className)) {
+            if (condition === false || condition == null && this.hasClass(className)) {
                 this.removeClass(className);
             } else {
                 this.addClass(className);
@@ -689,7 +689,7 @@ module api.dom {
         }
 
         isScrollable(): boolean {
-            return this.getComputedProperty('overflow') == 'auto' || this.getComputedProperty('overflow-y') == 'auto' ||
+            return this.getComputedProperty('overflow') === 'auto' || this.getComputedProperty('overflow-y') === 'auto' ||
                    this.hasClass('slimScrollDiv');
         }
 
@@ -737,7 +737,7 @@ module api.dom {
 
             return this.el.children || //children property not supported for IE SVGelement, Document and DocumentFragment
                    Array.prototype.slice.call(this.el.childNodes).filter((childNode: Node) => {
-                       return (childNode.nodeType == Node.ELEMENT_NODE);
+                       return (childNode.nodeType === Node.ELEMENT_NODE);
                    });
         }
 

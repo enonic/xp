@@ -130,7 +130,7 @@ module api.app.browse.filter {
         }
 
         hasSearchStringSet(): boolean {
-            return this.searchField.getHTMLElement()['value'].trim() != '';
+            return this.searchField.getHTMLElement()['value'].trim() !== '';
         }
 
         search(elementChanged?: api.dom.Element) {
@@ -186,19 +186,19 @@ module api.app.browse.filter {
 
         unRefreshStarted(listener: ()=>void) {
             this.refreshStartedListeners = this.refreshStartedListeners.filter((currentListener: ()=> void) => {
-                return currentListener != listener;
+                return currentListener !== listener;
             });
         }
 
         unSearchStarted(listener: ()=> void) {
             this.searchStartedListeners = this.searchStartedListeners.filter((currentListener: ()=> void) => {
-                return currentListener != listener;
+                return currentListener !== listener;
             });
         }
 
         unReset(listener: ()=> void) {
             this.resetListeners = this.resetListeners.filter((currentListener: ()=>void) => {
-                return currentListener != listener;
+                return currentListener !== listener;
             });
 
         }
@@ -243,7 +243,7 @@ module api.app.browse.filter {
 
         updateHitsCounter(hits: number, emptyFilterValue: boolean = false) {
             if (!emptyFilterValue) {
-                if (hits != 1) {
+                if (hits !== 1) {
                     this.hitsCounterEl.setHtml(hits + ' hits');
                 } else {
                     this.hitsCounterEl.setHtml(hits + ' hit');
@@ -252,7 +252,7 @@ module api.app.browse.filter {
                 this.hitsCounterEl.setHtml(hits + ' total');
             }
 
-            if (hits != 0) {
+            if (hits !== 0) {
                 this.showResultsButton.show();
             } else {
                 this.showResultsButton.hide();

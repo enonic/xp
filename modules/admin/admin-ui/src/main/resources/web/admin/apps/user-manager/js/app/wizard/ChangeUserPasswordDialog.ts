@@ -66,7 +66,7 @@ export class ChangeUserPasswordDialog extends api.ui.dialog.ModalDialog {
     }
 
     private toggleChangePasswordButton() {
-        if (this.password.getValue().length == 0) {
+        if (this.password.getValue().length === 0) {
             this.changePasswordButton.setEnabled(false);
         } else {
             this.changePasswordButton.setEnabled(true);

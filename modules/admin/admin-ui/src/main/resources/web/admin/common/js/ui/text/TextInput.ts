@@ -30,7 +30,7 @@ module api.ui.text {
             this.previousValue = this.getValue();
 
             this.onKeyUp((event: KeyboardEvent) => {
-                if (event.keyCode == 27) {
+                if (event.keyCode === 27) {
                     this.setPreviousValue();
                     this.getEl().blur();
                 }
@@ -137,7 +137,7 @@ module api.ui.text {
 
         private keyCodeAllowed(keyCode: number): boolean {
             for (let i = 0; i < this.allowedKeyCodes.length; i++) {
-                if (keyCode == this.allowedKeyCodes[i]) {
+                if (keyCode === this.allowedKeyCodes[i]) {
                     return true;
                 }
             }

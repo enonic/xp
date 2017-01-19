@@ -15,7 +15,7 @@ module api.app.wizard {
         unPropertyChanged(listener: (event: api.PropertyChangedEvent)=>void) {
             this.propertyChangedListeners =
             this.propertyChangedListeners.filter((currentListener: (event: api.PropertyChangedEvent)=>void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
