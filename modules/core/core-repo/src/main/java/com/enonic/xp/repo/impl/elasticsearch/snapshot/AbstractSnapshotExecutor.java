@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.indices.close.CloseIndexRequestBuilder;
@@ -10,7 +11,15 @@ import org.elasticsearch.indices.IndexMissingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Sets;
+
+import com.enonic.xp.repo.impl.repository.IndexNameResolver;
+import com.enonic.xp.repository.Repositories;
+import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.security.SystemConstants;
 
 class AbstractSnapshotExecutor
 {
@@ -18,7 +27,7 @@ class AbstractSnapshotExecutor
 
     final Client client;
 
-    final RepositoryService repositoryService;
+    private final RepositoryService repositoryService;
 
     private final Logger LOG = LoggerFactory.getLogger( AbstractSnapshotExecutor.class );
 
@@ -65,6 +74,27 @@ class AbstractSnapshotExecutor
                 LOG.warn( "Could not open index [" + indexName + "]" );
             }
         }
+    }
+
+    RepositoryIds getRepositories( boolean includeSystemRepo )
+    {
+        final Repositories list = this.repositoryService.list();
+
+        return RepositoryIds.from( list.stream().
+            filter( ( repo ) -> includeSystemRepo || !repo.getId().equals( SystemConstants.SYSTEM_REPO.getId() ) ).
+            map( Repository::getId ).
+            collect( Collectors.toSet() ) );
+    }
+
+
+    Set<String> getIndexNames( final RepositoryId repositoryId )
+    {
+        final Set<String> indices = Sets.newHashSet();
+
+        indices.add( IndexNameResolver.resolveStorageIndexName( repositoryId ) );
+        indices.add( IndexNameResolver.resolveSearchIndexName( repositoryId ) );
+
+        return indices;
     }
 
 

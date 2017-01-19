@@ -2,21 +2,15 @@ package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotRequestBuilder;
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotResponse;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.node.RestoreResult;
-import com.enonic.xp.repo.impl.repository.IndexNameResolver;
-import com.enonic.xp.repository.Repositories;
-import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.security.SystemConstants;
 
 public class SnapshotRestoreExecutor
@@ -40,14 +34,13 @@ public class SnapshotRestoreExecutor
         if ( this.repositoryToRestore == null )
         {
             addResult( builder, doRestoreRepo( SystemConstants.SYSTEM_REPO.getId() ) );
-            getRepositoriesToRestore( false ).forEach( ( repo ) -> addResult( builder, doRestoreRepo( repo ) ) );
+            getRepositories( false ).forEach( ( repo ) -> addResult( builder, doRestoreRepo( repo ) ) );
+            return builder.build();
         }
         else
         {
-            doRestoreRepo( this.repositoryToRestore );
+            return doRestoreRepo( this.repositoryToRestore );
         }
-
-        return builder.build();
     }
 
     private void addResult( final RestoreResult.Builder builder, RestoreResult result )
@@ -72,16 +65,6 @@ public class SnapshotRestoreExecutor
     {
         final Set<String> indexNames = getIndexNames( repositoryId );
         return doRestoreIndices( indexNames );
-    }
-
-    private Set<String> getIndexNames( final RepositoryId repositoryId )
-    {
-        final Set<String> indices = Sets.newHashSet();
-
-        indices.add( IndexNameResolver.resolveStorageIndexName( repositoryId ) );
-        indices.add( IndexNameResolver.resolveSearchIndexName( repositoryId ) );
-
-        return indices;
     }
 
     private RestoreResult doRestoreIndices( final Set<String> indices )
@@ -121,16 +104,6 @@ public class SnapshotRestoreExecutor
 
         response = this.client.admin().cluster().restoreSnapshot( restoreSnapshotRequestBuilder.request() ).actionGet();
         return response;
-    }
-
-    private RepositoryIds getRepositoriesToRestore( boolean includeSystemRepo )
-    {
-        final Repositories list = this.repositoryService.list();
-
-        return RepositoryIds.from( list.stream().
-            filter( ( repo ) -> includeSystemRepo || !repo.getId().equals( SystemConstants.SYSTEM_REPO.getId() ) ).
-            map( Repository::getId ).
-            collect( Collectors.toSet() ) );
     }
 
     public static Builder create()

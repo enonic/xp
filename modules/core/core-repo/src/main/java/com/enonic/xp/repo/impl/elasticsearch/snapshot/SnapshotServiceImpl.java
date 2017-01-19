@@ -7,8 +7,6 @@ import java.util.Set;
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesRequest;
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesResponse;
 import org.elasticsearch.action.admin.cluster.repositories.put.PutRepositoryRequestBuilder;
-import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotRequestBuilder;
-import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotResponse;
 import org.elasticsearch.action.admin.cluster.snapshots.delete.DeleteSnapshotRequest;
 import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsRequest;
 import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsRequestBuilder;
@@ -22,8 +20,6 @@ import org.elasticsearch.snapshots.SnapshotInfo;
 import org.elasticsearch.snapshots.SnapshotState;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
@@ -36,10 +32,7 @@ import com.enonic.xp.node.SnapshotResult;
 import com.enonic.xp.node.SnapshotResults;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.node.NodeHelper;
-import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.snapshot.SnapshotService;
-import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.repository.RepositoryService;
 
 @Component
@@ -47,8 +40,6 @@ public class SnapshotServiceImpl
     implements SnapshotService
 {
     private final static String SNAPSHOT_REPOSITORY_NAME = "enonic-xp-snapshot-repo";
-
-    private final static Logger LOG = LoggerFactory.getLogger( SnapshotServiceImpl.class );
 
     private Client client;
 
@@ -66,21 +57,14 @@ public class SnapshotServiceImpl
     {
         checkSnapshotRepository();
 
-        final Set<String> indices = getSnapshotIndexNames( snapshotParams.getRepositoryId(), snapshotParams.isIncludeIndexedData() );
-
-        final CreateSnapshotRequestBuilder createRequest = new CreateSnapshotRequestBuilder( this.client.admin().cluster() ).
-            setIndices( indices.toArray( new String[indices.size()] ) ).
-            setIncludeGlobalState( false ).
-            setWaitForCompletion( true ).
-            setRepository( SNAPSHOT_REPOSITORY_NAME ).
-            setSnapshot( snapshotParams.getSnapshotName() ).
-            setSettings( ImmutableSettings.settingsBuilder().
-                put( "ignore_unavailable", true ) );
-
-        final CreateSnapshotResponse createSnapshotResponse =
-            this.client.admin().cluster().createSnapshot( createRequest.request() ).actionGet();
-
-        return SnapshotResultFactory.create( createSnapshotResponse );
+        return SnapshotExecutor.create().
+            snapshotName( snapshotParams.getSnapshotName() ).
+            repositoryToSnapshot( snapshotParams.getRepositoryId() ).
+            client( this.client ).
+            repositoryService( this.repositoryService ).
+            snapshotRepositoryName( SNAPSHOT_REPOSITORY_NAME ).
+            build().
+            execute();
     }
 
     @Override
@@ -94,7 +78,7 @@ public class SnapshotServiceImpl
         checkSnapshotRepository();
         validateSnapshot( restoreParams.getSnapshotName() );
 
-        final RestoreResult result = SnapshotRestoreExecutor.create().
+        return SnapshotRestoreExecutor.create().
             repositoryToRestore( restoreParams.getRepositoryId() ).
             snapshotName( restoreParams.getSnapshotName() ).
             client( this.client ).
@@ -102,8 +86,6 @@ public class SnapshotServiceImpl
             snapshotRepositoryName( SNAPSHOT_REPOSITORY_NAME ).
             build().
             execute();
-
-        return result;
     }
 
     @Override
@@ -218,26 +200,6 @@ public class SnapshotServiceImpl
         {
             return snapshots.get( 0 );
         }
-    }
-
-    private Set<String> getSnapshotIndexNames( final RepositoryId repositoryId, final boolean includeIndexedData )
-    {
-        final Set<String> indices = Sets.newHashSet();
-
-        final RepositoryIds repositoryIds =
-            repositoryId == null ? this.repositoryService.list().getIds() : RepositoryIds.from( repositoryId );
-
-        for ( RepositoryId currentRepositoryId : repositoryIds )
-        {
-            indices.add( IndexNameResolver.resolveStorageIndexName( currentRepositoryId ) );
-
-            if ( includeIndexedData )
-            {
-                indices.add( IndexNameResolver.resolveSearchIndexName( currentRepositoryId ) );
-            }
-        }
-
-        return indices;
     }
 
     private DeleteSnapshotsResult doDelete( final DeleteSnapshotParams params )
