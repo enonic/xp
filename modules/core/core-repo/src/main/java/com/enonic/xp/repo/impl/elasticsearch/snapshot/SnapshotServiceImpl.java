@@ -4,7 +4,6 @@ import java.io.File;
 import java.time.Instant;
 import java.util.Set;
 
-import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesRequest;
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesResponse;
 import org.elasticsearch.action.admin.cluster.repositories.put.PutRepositoryRequestBuilder;
@@ -14,14 +13,9 @@ import org.elasticsearch.action.admin.cluster.snapshots.delete.DeleteSnapshotReq
 import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsRequest;
 import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsRequestBuilder;
 import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsResponse;
-import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotRequestBuilder;
-import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotResponse;
-import org.elasticsearch.action.admin.indices.close.CloseIndexRequestBuilder;
-import org.elasticsearch.action.admin.indices.open.OpenIndexRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.collect.ImmutableList;
 import org.elasticsearch.common.settings.ImmutableSettings;
-import org.elasticsearch.indices.IndexMissingException;
 import org.elasticsearch.repositories.RepositoryException;
 import org.elasticsearch.repositories.RepositoryMissingException;
 import org.elasticsearch.snapshots.SnapshotInfo;
@@ -98,45 +92,18 @@ public class SnapshotServiceImpl
     private RestoreResult doRestore( final RestoreParams restoreParams )
     {
         checkSnapshotRepository();
+        validateSnapshot( restoreParams.getSnapshotName() );
 
-        final RepositoryId repositoryId = restoreParams.getRepositoryId();
-        final String snapshotName = restoreParams.getSnapshotName();
+        final RestoreResult result = SnapshotRestoreExecutor.create().
+            repositoryToRestore( restoreParams.getRepositoryId() ).
+            snapshotName( restoreParams.getSnapshotName() ).
+            client( this.client ).
+            repositoryService( this.repositoryService ).
+            snapshotRepositoryName( SNAPSHOT_REPOSITORY_NAME ).
+            build().
+            execute();
 
-        validateSnapshot( snapshotName );
-
-        final Set<String> indices = getSnapshotIndexNames( repositoryId, restoreParams.isIncludeIndexedData() );
-
-        closeIndices( indices );
-
-        final RestoreSnapshotResponse response;
-        try
-        {
-            final RestoreSnapshotRequestBuilder restoreSnapshotRequestBuilder =
-                new RestoreSnapshotRequestBuilder( this.client.admin().cluster() ).
-                    setRestoreGlobalState( false ).
-                    setIndices( indices.toArray( new String[indices.size()] ) ).
-                    setRepository( SNAPSHOT_REPOSITORY_NAME ).
-                    setSnapshot( snapshotName ).
-                    setWaitForCompletion( true );
-
-            response = this.client.admin().cluster().restoreSnapshot( restoreSnapshotRequestBuilder.request() ).actionGet();
-
-            return RestoreResultFactory.create( response, repositoryId );
-        }
-        catch ( ElasticsearchException e )
-        {
-            return RestoreResult.create().
-                repositoryId( repositoryId ).
-                indices( indices ).
-                failed( true ).
-                name( snapshotName ).
-                message( "Could not restore snapshot: " + e.toString() + " to repository " + repositoryId ).
-                build();
-        }
-        finally
-        {
-            openIndices( indices );
-        }
+        return result;
     }
 
     @Override
@@ -161,7 +128,6 @@ public class SnapshotServiceImpl
     {
         return NodeHelper.runAsAdmin( () -> doDelete( params ) );
     }
-
 
     private void validateSnapshot( final String snapshotName )
     {
@@ -192,13 +158,45 @@ public class SnapshotServiceImpl
         }
     }
 
-
     private void checkSnapshotRepository()
     {
         if ( !snapshotRepositoryExists() )
         {
             registerRepository();
         }
+    }
+
+    private boolean snapshotRepositoryExists()
+    {
+        final GetRepositoriesRequest getRepositoriesRequest = new GetRepositoriesRequest( new String[]{SNAPSHOT_REPOSITORY_NAME} );
+
+        try
+        {
+            final GetRepositoriesResponse response = this.client.admin().cluster().getRepositories( getRepositoriesRequest ).actionGet();
+            return !response.repositories().isEmpty();
+        }
+        catch ( RepositoryException e )
+        {
+            return false;
+        }
+    }
+
+    private void registerRepository()
+    {
+        final PutRepositoryRequestBuilder requestBuilder = new PutRepositoryRequestBuilder( this.client.admin().cluster() ).
+            setName( SNAPSHOT_REPOSITORY_NAME ).
+            setType( "fs" ).
+            setSettings( ImmutableSettings.settingsBuilder().
+                put( "compress", true ).
+                put( "location", getSnapshotsDir() ).
+                build() );
+
+        this.client.admin().cluster().putRepository( requestBuilder.request() ).actionGet();
+    }
+
+    private File getSnapshotsDir()
+    {
+        return this.configuration.getSnapshotsDir();
     }
 
     private SnapshotInfo getSnapshot( final String snapshotName )
@@ -298,78 +296,6 @@ public class SnapshotServiceImpl
 
         this.client.admin().cluster().deleteSnapshot( deleteSnapshotRequest ).actionGet();
     }
-
-    private void openIndices( final Set<String> indexNames )
-    {
-        for ( final String indexName : indexNames )
-        {
-            OpenIndexRequestBuilder openIndexRequestBuilder = new OpenIndexRequestBuilder( this.client.admin().indices() ).
-                setIndices( indexName );
-
-            try
-            {
-                this.client.admin().indices().open( openIndexRequestBuilder.request() ).actionGet();
-                LOG.info( "Opened index " + indexName );
-            }
-            catch ( ElasticsearchException e )
-            {
-                LOG.warn( "Could not open index [" + indexName + "]" );
-            }
-        }
-    }
-
-    private void closeIndices( final Set<String> indexNames )
-    {
-        for ( final String indexName : indexNames )
-        {
-            CloseIndexRequestBuilder closeIndexRequestBuilder = new CloseIndexRequestBuilder( this.client.admin().indices() ).
-                setIndices( indexName );
-
-            try
-            {
-                this.client.admin().indices().close( closeIndexRequestBuilder.request() ).actionGet();
-                LOG.info( "Closed index " + indexName );
-            }
-            catch ( IndexMissingException e )
-            {
-                LOG.warn( "Could not close index [" + indexName + "], not found" );
-            }
-        }
-    }
-
-    private boolean snapshotRepositoryExists()
-    {
-        final GetRepositoriesRequest getRepositoriesRequest = new GetRepositoriesRequest( new String[]{SNAPSHOT_REPOSITORY_NAME} );
-
-        try
-        {
-            final GetRepositoriesResponse response = this.client.admin().cluster().getRepositories( getRepositoriesRequest ).actionGet();
-            return !response.repositories().isEmpty();
-        }
-        catch ( RepositoryException e )
-        {
-            return false;
-        }
-    }
-
-    private File getSnapshotsDir()
-    {
-        return this.configuration.getSnapshotsDir();
-    }
-
-    private void registerRepository()
-    {
-        final PutRepositoryRequestBuilder requestBuilder = new PutRepositoryRequestBuilder( this.client.admin().cluster() ).
-            setName( SNAPSHOT_REPOSITORY_NAME ).
-            setType( "fs" ).
-            setSettings( ImmutableSettings.settingsBuilder().
-                put( "compress", true ).
-                put( "location", getSnapshotsDir() ).
-                build() );
-
-        this.client.admin().cluster().putRepository( requestBuilder.request() ).actionGet();
-    }
-
 
     @Reference
     public void setConfiguration( final RepoConfiguration configuration )

@@ -16,7 +16,6 @@ class RestoreResultFactory
             repositoryId( respositoryId ).
             name( restoreInfo.name() ).
             indices( restoreInfo.indices() ).
-            message( "Restore successfull, " + response.getRestoreInfo().successfulShards() + " shards restored" ).
             build();
     }
 
