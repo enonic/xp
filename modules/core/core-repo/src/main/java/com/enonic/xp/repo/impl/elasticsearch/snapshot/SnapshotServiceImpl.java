@@ -21,6 +21,7 @@ import org.elasticsearch.action.admin.indices.open.OpenIndexRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.collect.ImmutableList;
 import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.indices.IndexMissingException;
 import org.elasticsearch.repositories.RepositoryException;
 import org.elasticsearch.repositories.RepositoryMissingException;
 import org.elasticsearch.snapshots.SnapshotInfo;
@@ -32,7 +33,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.node.DeleteSnapshotsResult;
 import com.enonic.xp.node.RestoreParams;
@@ -45,7 +45,8 @@ import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.snapshot.SnapshotService;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.security.SystemConstants;
+import com.enonic.xp.repository.RepositoryIds;
+import com.enonic.xp.repository.RepositoryService;
 
 @Component
 public class SnapshotServiceImpl
@@ -58,6 +59,8 @@ public class SnapshotServiceImpl
     private Client client;
 
     private RepoConfiguration configuration;
+
+    private RepositoryService repositoryService;
 
     @Override
     public SnapshotResult snapshot( final SnapshotParams snapshotParams )
@@ -223,10 +226,8 @@ public class SnapshotServiceImpl
     {
         final Set<String> indices = Sets.newHashSet();
 
-        //If the repository is not specified, select cms-repo and system-repo
-        final RepositoryId[] repositoryIds = repositoryId == null
-            ? new RepositoryId[]{ContentConstants.CONTENT_REPO.getId(), SystemConstants.SYSTEM_REPO.getId()}
-            : new RepositoryId[]{repositoryId};
+        final RepositoryIds repositoryIds =
+            repositoryId == null ? this.repositoryService.list().getIds() : RepositoryIds.from( repositoryId );
 
         for ( RepositoryId currentRepositoryId : repositoryIds )
         {
@@ -305,9 +306,15 @@ public class SnapshotServiceImpl
             OpenIndexRequestBuilder openIndexRequestBuilder = new OpenIndexRequestBuilder( this.client.admin().indices() ).
                 setIndices( indexName );
 
-            this.client.admin().indices().open( openIndexRequestBuilder.request() ).actionGet();
-
-            LOG.info( "Opened index " + indexName );
+            try
+            {
+                this.client.admin().indices().open( openIndexRequestBuilder.request() ).actionGet();
+                LOG.info( "Opened index " + indexName );
+            }
+            catch ( ElasticsearchException e )
+            {
+                LOG.warn( "Could not open index [" + indexName + "]" );
+            }
         }
     }
 
@@ -318,9 +325,15 @@ public class SnapshotServiceImpl
             CloseIndexRequestBuilder closeIndexRequestBuilder = new CloseIndexRequestBuilder( this.client.admin().indices() ).
                 setIndices( indexName );
 
-            this.client.admin().indices().close( closeIndexRequestBuilder.request() ).actionGet();
-
-            LOG.info( "Closed index " + indexName );
+            try
+            {
+                this.client.admin().indices().close( closeIndexRequestBuilder.request() ).actionGet();
+                LOG.info( "Closed index " + indexName );
+            }
+            catch ( IndexMissingException e )
+            {
+                LOG.warn( "Could not close index [" + indexName + "], not found" );
+            }
         }
     }
 
@@ -368,5 +381,11 @@ public class SnapshotServiceImpl
     public void setClient( final Client client )
     {
         this.client = client;
+    }
+
+    @Reference
+    public void setRepositoryService( final RepositoryService repositoryService )
+    {
+        this.repositoryService = repositoryService;
     }
 }
