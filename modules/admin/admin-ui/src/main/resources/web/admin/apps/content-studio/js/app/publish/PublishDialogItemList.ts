@@ -1,5 +1,5 @@
-import {DialogItemList} from "../dialog/DependantItemsDialog";
-import {StatusSelectionItem} from "../dialog/StatusSelectionItem";
+import {DialogItemList} from '../dialog/DependantItemsDialog';
+import {StatusSelectionItem} from '../dialog/StatusSelectionItem';
 
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
 import BrowseItem = api.app.browse.BrowseItem;
@@ -15,7 +15,7 @@ export class PublishDialogItemList extends DialogItemList {
     private debonceNotifyListChanged: Function;
 
     constructor() {
-        super("publish-dialog-item-list");
+        super('publish-dialog-item-list');
 
         this.debonceNotifyListChanged = api.util.AppHelper.debounce(()=> {
             this.notifyExcludeChildrenListChanged(this.excludeChildrenIds);
@@ -126,9 +126,9 @@ class IncludeChildrenToggler extends api.dom.DivEl {
     private tooltip: Tooltip;
 
     constructor() {
-        super("icon icon-tree");
+        super('icon icon-tree');
 
-        this.tooltip = new Tooltip(this, "", 1000);
+        this.tooltip = new Tooltip(this, '', 1000);
 
         this.onClicked(() => {
             this.toggle();
@@ -136,15 +136,15 @@ class IncludeChildrenToggler extends api.dom.DivEl {
     }
 
     toggle(condition?: boolean, silent?: boolean) {
-        this.toggleClass("on", condition);
+        this.toggleClass('on', condition);
 
-        this.tooltip.setText(this.isEnabled() ? "Exclude child items" : "Include child items");
+        this.tooltip.setText(this.isEnabled() ? 'Exclude child items' : 'Include child items');
 
         this.notifyStateChanged(this.isEnabled());
     }
 
     isEnabled(): boolean {
-        return this.hasClass("on");
+        return this.hasClass('on');
     }
 
     public onStateChanged(listener: (enabled: boolean) => void) {
