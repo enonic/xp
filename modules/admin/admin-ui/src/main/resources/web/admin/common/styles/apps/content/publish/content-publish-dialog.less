@@ -4,14 +4,43 @@
     max-height: 200px;
   }
 
+  .icon-tree {
+    font-size: 18px;
+    line-height: 32px;
+
+    .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent, false);
+
+    &.on {
+      .button(@admin-button-blue1, transparent, @admin-button-blue1, transparent, false);
+      padding: 0;
+      margin-right: 15px;
+    }
+
+    padding: 0;
+    margin-right: 15px;
+  }
+
+  .publish-dialog-item-list {
+
+    .browse-selection-item {
+
+      .status {
+        line-height: 32px;
+      }
+      .remove {
+        order: 1;
+        float: none;
+        margin: 0 5px 0 12px;
+      }
+    }
+  }
+
   .dialog-buttons {
+
+    margin-top: 10px;
 
     button.publish-action {
       .dialog-button(@form-button-font, @admin-green, @form-button-font, lighten(@admin-green, 10%));
-    }
-
-    &.no-checkbox {
-      margin-top: 10px;
     }
   }
 
@@ -20,24 +49,8 @@
     bottom: 40px;
     left: 38px;
 
-    input[type="checkbox"] + label {
-      color: @admin-blue !important;
-
-      &:hover {
-        cursor: pointer;
-      }
-    }
-
     &.disabled {
       opacity: 0.5;
-
-      input[type="checkbox"] + label {
-        color: @admin-font-gray2 !important;
-
-        &:hover {
-          cursor: default;
-        }
-      }
     }
 
     @media screen and (max-height: 360px) {

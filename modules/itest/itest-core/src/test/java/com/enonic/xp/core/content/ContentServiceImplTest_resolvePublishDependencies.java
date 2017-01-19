@@ -52,7 +52,7 @@ public class ContentServiceImplTest_resolvePublishDependencies
 
         final CompareContentResults result = this.contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
-            includeChildren( true ).
+            excludeChildrenIds( ContentIds.from( content.getId() ) ).
             target( WS_OTHER ).
             build() );
 

@@ -20,11 +20,11 @@ public class ResolveContentsToBePublishedCommand
 
     private final ContentIds excludedContentIds;
 
+    private final ContentIds excludeChildrenIds;
+
     private final Branch target;
 
     private final CompareContentResults.Builder resultBuilder;
-
-    private final boolean includeChildren;
 
     private final boolean includeDependencies;
 
@@ -35,7 +35,7 @@ public class ResolveContentsToBePublishedCommand
         this.excludedContentIds = builder.excludedContentIds;
         this.target = builder.target;
         this.resultBuilder = CompareContentResults.create();
-        this.includeChildren = builder.includeChildren;
+        this.excludeChildrenIds = builder.excludeChildrenIds;
         this.includeDependencies = builder.includeDependencies;
     }
 
@@ -68,8 +68,10 @@ public class ResolveContentsToBePublishedCommand
             map( id -> NodeId.from( id.toString() ) ).
             collect( Collectors.toList() ) ) : NodeIds.empty();
 
+        final boolean includeChildren = excludeChildrenIds != null ? !this.excludeChildrenIds.contains( contentId ) : true;
+
         return nodeService.resolveSyncWork( SyncWorkResolverParams.create().
-            includeChildren( this.includeChildren ).
+            includeChildren( includeChildren ).
             includeDependencies( this.includeDependencies ).
             nodeId( NodeId.from( contentId.toString() ) ).
             excludedNodeIds( nodeIds ).
@@ -84,9 +86,9 @@ public class ResolveContentsToBePublishedCommand
 
         private ContentIds excludedContentIds;
 
-        private Branch target;
+        private ContentIds excludeChildrenIds;
 
-        private boolean includeChildren = true;
+        private Branch target;
 
         private boolean includeDependencies = true;
 
@@ -108,9 +110,9 @@ public class ResolveContentsToBePublishedCommand
             return this;
         }
 
-        public Builder includeChildren( final boolean includeChildren )
+        public Builder excludeChildrenIds( final ContentIds excludeChildrenIds )
         {
-            this.includeChildren = includeChildren;
+            this.excludeChildrenIds = excludeChildrenIds;
             return this;
         }
 

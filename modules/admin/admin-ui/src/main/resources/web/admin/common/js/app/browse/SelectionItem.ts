@@ -6,7 +6,7 @@ module api.app.browse {
 
         protected item: BrowseItem<M>;
 
-        private removeEl: api.dom.DivEl;
+        protected removeEl: api.dom.DivEl;
 
         private removeListeners: {(event: MouseEvent): void}[] = [];
 

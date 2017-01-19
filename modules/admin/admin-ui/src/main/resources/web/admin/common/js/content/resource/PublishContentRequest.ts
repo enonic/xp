@@ -8,7 +8,7 @@ module api.content.resource {
 
         private excludedIds: ContentId[] = [];
 
-        private includeChildren: boolean;
+        private excludeChildrenIds: ContentId[] = [];
 
         private publishFrom: Date;
 
@@ -32,8 +32,8 @@ module api.content.resource {
             return this;
         }
 
-        setIncludeChildren(includeChildren: boolean): PublishContentRequest {
-            this.includeChildren = includeChildren;
+        setExcludeChildrenIds(excludeIds: ContentId[]): PublishContentRequest {
+            this.excludeChildrenIds = excludeIds;
             return this;
         }
 
@@ -58,7 +58,9 @@ module api.content.resource {
                 excludedIds: this.excludedIds.map((el) => {
                     return el.toString();
                 }),
-                includeChildren: this.includeChildren,
+                excludeChildrenIds: this.excludeChildrenIds.map((el) => {
+                    return el.toString();
+                }),
                 schedule: this.publishFrom ? {
                     from: this.publishFrom.toISOString(),
                     to: this.publishTo ? this.publishTo.toISOString() : undefined

@@ -8,7 +8,7 @@ public class ResolvePublishDependenciesJson
 
     private Set<String> excludedIds;
 
-    private boolean includeChildren;
+    private Set<String> excludeChildrenIds;
 
     public Set<String> getIds()
     {
@@ -31,14 +31,14 @@ public class ResolvePublishDependenciesJson
         this.excludedIds = excludedIds;
     }
 
-    public boolean includeChildren()
+    public Set<String> getExcludeChildrenIds()
     {
-        return includeChildren;
+        return excludeChildrenIds;
     }
 
     @SuppressWarnings("unused")
-    public void setIncludeChildren( final boolean includeChildren )
+    public void setExcludeChildrenIds( final Set<String> excludeChildrenIds )
     {
-        this.includeChildren = includeChildren;
+        this.excludeChildrenIds = excludeChildrenIds;
     }
 }
