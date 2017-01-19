@@ -1,16 +1,5 @@
 .dependant-dialog {
 
-  &.contains-removable {
-    .dialog-content .dependants .dependant-list {
-      margin-left: 24px;
-
-      &.contains-removable {
-        margin-left: 0;
-      }
-    }
-
-  }
-
   &.invalid {
     .sub-title {
       color: @admin-red;
@@ -116,21 +105,26 @@
       .dependant-list {
         margin-top: 10px;
 
+        .browse-selection-item {
+          .remove {
+            display: none;
+            visibility: hidden;
+
+            height: 16px;
+          }
+        }
+
         &.contains-removable {
-          padding-left: 25px;
-          margin-left: 8px;
-
           .browse-selection-item {
-            padding-left: 0px;
-
-            .names-and-icon-view .@{_COMMON_PREFIX}wrapper {
-              margin-left: 8px;
-              margin-right: 15px;
+            .remove {
+              display: block;
+              order: 1;
             }
           }
-
-          .icon.remove {
-            margin-right: 1px;
+          .removable {
+            .remove {
+              visibility: visible;
+            }
           }
         }
         h6 {
@@ -139,21 +133,6 @@
 
         .browse-selection-item {
           padding-left: 2px;
-
-          .remove {
-            display: none;
-            height: 16px;
-            width: 24px;
-          }
-
-          &.removable {
-
-            margin-left: -25px;
-
-            .remove {
-              display: block;
-            }
-          }
 
           &.invalid {
             cursor: pointer;

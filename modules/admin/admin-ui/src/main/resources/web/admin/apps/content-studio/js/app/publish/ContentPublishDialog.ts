@@ -73,7 +73,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.lockControls();
     }
 
-    protected createDependantList(): ListBox<ContentSummaryAndCompareStatus> {
+    protected createDependantList(): PublishDialogDependantList {
         let dependants = new PublishDialogDependantList();
 
         dependants.onItemClicked((item: ContentSummaryAndCompareStatus) => {
@@ -130,7 +130,9 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
         return resolveDependenciesRequest.sendAndParse().then((result: ResolvePublishDependenciesResult) => {
 
-            this.toggleClass("contains-removable", result.isContainsRemovable());
+            debugger;
+            this.getDependantList().toggleClass('contains-removable', result.isContainsRemovable());
+
             this.dependantIds = result.getDependants().slice();
             this.containsInvalid = result.isContainsInvalid();
 

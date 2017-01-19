@@ -15,7 +15,7 @@ export class PublishDialogItemList extends DialogItemList {
     private debonceNotifyListChanged: Function;
 
     constructor() {
-        super();
+        super("publish-dialog-item-list");
 
         this.debonceNotifyListChanged = api.util.AppHelper.debounce(()=> {
             this.notifyExcludeChildrenListChanged(this.excludeChildrenIds);
