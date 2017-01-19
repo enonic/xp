@@ -1,8 +1,8 @@
 /**
  * CellSelection.js
  *
- * Copyright, Moxiecode Systems AB
  * Released under LGPL License.
+ * Copyright (c) 1999-2015 Ephox Corp. All rights reserved
  *
  * License: http://www.tinymce.com/license
  * Contributing: http://www.tinymce.com/contributing
@@ -16,161 +16,202 @@
  * @private
  */
 define("tinymce/tableplugin/CellSelection", [
-    "tinymce/tableplugin/TableGrid",
-    "tinymce/dom/TreeWalker",
-    "tinymce/util/Tools"
-], function (TableGrid, TreeWalker, Tools) {
-    return function (editor) {
-        var dom = editor.dom, tableGrid, startCell, startTable, hasCellSelection = true, resizing;
+	"tinymce/tableplugin/TableGrid",
+	"tinymce/dom/TreeWalker",
+	"tinymce/util/Tools"
+], function(TableGrid, TreeWalker, Tools) {
+	return function(editor, selectionChange) {
+		var dom = editor.dom, tableGrid, startCell, startTable, lastMouseOverTarget, hasCellSelection = true, resizing, dragging;
 
-        function clear(force) {
-            // Restore selection possibilities
-            editor.getBody().style.webkitUserSelect = '';
+		function clear(force) {
+			// Restore selection possibilities
+			editor.getBody().style.webkitUserSelect = '';
 
-            if (force || hasCellSelection) {
-                editor.dom.removeClass(
-                    editor.dom.select('td.mce-item-selected,th.mce-item-selected'),
-                    'mce-item-selected'
-                );
+			if (force || hasCellSelection) {
+				editor.$('td[data-mce-selected],th[data-mce-selected]').removeAttr('data-mce-selected');
+				hasCellSelection = false;
+			}
+		}
 
-                hasCellSelection = false;
-            }
-        }
+		var endSelection = function () {
+			startCell = tableGrid = startTable = lastMouseOverTarget = null;
+			selectionChange(false);
+		};
 
-        function cellSelectionHandler(e) {
-            var sel, table, target = e.target;
+		function isCellInTable(table, cell) {
+			if (!table || !cell) {
+				return false;
+			}
 
-            if (resizing) {
-                return;
-            }
+			return table === dom.getParent(cell, 'table');
+		}
 
-            if (startCell && (tableGrid || target != startCell) && (target.nodeName == 'TD' || target.nodeName == 'TH')) {
-                table = dom.getParent(target, 'table');
-                if (table == startTable) {
-                    if (!tableGrid) {
-                        tableGrid = new TableGrid(editor, table);
-                        tableGrid.setStartCell(startCell);
+		function cellSelectionHandler(e) {
+			var sel, target = e.target, currentCell;
 
-                        editor.getBody().style.webkitUserSelect = 'none';
-                    }
+			if (resizing || dragging) {
+				return;
+			}
 
-                    tableGrid.setEndCell(target);
-                    hasCellSelection = true;
-                }
+			// Fake mouse enter by keeping track of last mouse over
+			if (target === lastMouseOverTarget) {
+				return;
+			}
 
-                // Remove current selection
-                sel = editor.selection.getSel();
+			lastMouseOverTarget = target;
 
-                try {
-                    if (sel.removeAllRanges) {
-                        sel.removeAllRanges();
-                    } else {
-                        sel.empty();
-                    }
-                } catch (ex) {
-                    // IE9 might throw errors here
-                }
+			if (startTable && startCell) {
+				currentCell = dom.getParent(target, 'td,th');
 
-                e.preventDefault();
-            }
-        }
+				if (!isCellInTable(startTable, currentCell)) {
+					currentCell = dom.getParent(startTable, 'td,th');
+				}
 
-        // Add cell selection logic
-        editor.on('MouseDown', function (e) {
-            if (e.button != 2 && !resizing) {
-                clear();
+				// Selection inside first cell is normal until we have expanted
+				if (startCell === currentCell && !hasCellSelection) {
+					return;
+				}
 
-                startCell = dom.getParent(e.target, 'td,th');
-                startTable = dom.getParent(startCell, 'table');
-            }
-        });
+				selectionChange(true);
 
-        editor.on('mouseover', cellSelectionHandler);
+				if (isCellInTable(startTable, currentCell)) {
+					e.preventDefault();
 
-        editor.on('remove', function () {
-            dom.unbind(editor.getDoc(), 'mouseover', cellSelectionHandler);
-        });
+					if (!tableGrid) {
+						tableGrid = new TableGrid(editor, startTable, startCell);
+						editor.getBody().style.webkitUserSelect = 'none';
+					}
 
-        editor.on('MouseUp', function () {
-            var rng, sel = editor.selection, selectedCells, walker, node, lastNode;
+					tableGrid.setEndCell(currentCell);
+					hasCellSelection = true;
 
-            function setPoint(node, start) {
-                var walker = new TreeWalker(node, node);
+					// Remove current selection
+					sel = editor.selection.getSel();
 
-                do {
-                    // Text node
-                    if (node.nodeType == 3 && Tools.trim(node.nodeValue).length !== 0) {
-                        if (start) {
-                            rng.setStart(node, 0);
-                        } else {
-                            rng.setEnd(node, node.nodeValue.length);
-                        }
+					try {
+						if (sel.removeAllRanges) {
+							sel.removeAllRanges();
+						} else {
+							sel.empty();
+						}
+					} catch (ex) {
+						// IE9 might throw errors here
+					}
+				}
+			}
+		}
 
-                        return;
-                    }
+		editor.on('SelectionChange', function(e) {
+			if (hasCellSelection) {
+				e.stopImmediatePropagation();
+			}
+		}, true);
 
-                    // BR element
-                    if (node.nodeName == 'BR') {
-                        if (start) {
-                            rng.setStartBefore(node);
-                        } else {
-                            rng.setEndBefore(node);
-                        }
+		// Add cell selection logic
+		editor.on('MouseDown', function(e) {
+			if (e.button != 2 && !resizing && !dragging) {
+				clear();
 
-                        return;
-                    }
-                } while ((node = (start ? walker.next() : walker.prev())));
-            }
+				startCell = dom.getParent(e.target, 'td,th');
+				startTable = dom.getParent(startCell, 'table');
+			}
+		});
 
-            // Move selection to startCell
-            if (startCell) {
-                if (tableGrid) {
-                    editor.getBody().style.webkitUserSelect = '';
-                }
+		editor.on('mouseover', cellSelectionHandler);
 
-                // Try to expand text selection as much as we can only Gecko supports cell selection
-                selectedCells = dom.select('td.mce-item-selected,th.mce-item-selected');
-                if (selectedCells.length > 0) {
-                    rng = dom.createRng();
-                    node = selectedCells[0];
-                    rng.setStartBefore(node);
-                    rng.setEndAfter(node);
+		editor.on('remove', function() {
+			dom.unbind(editor.getDoc(), 'mouseover', cellSelectionHandler);
+			clear();
+		});
 
-                    setPoint(node, 1);
-                    walker = new TreeWalker(node, dom.getParent(selectedCells[0], 'table'));
+		editor.on('MouseUp', function() {
+			var rng, sel = editor.selection, selectedCells, walker, node, lastNode;
 
-                    do {
-                        if (node.nodeName == 'TD' || node.nodeName == 'TH') {
-                            if (!dom.hasClass(node, 'mce-item-selected')) {
-                                break;
-                            }
+			function setPoint(node, start) {
+				var walker = new TreeWalker(node, node);
 
-                            lastNode = node;
-                        }
-                    } while ((node = walker.next()));
+				do {
+					// Text node
+					if (node.nodeType == 3 && Tools.trim(node.nodeValue).length !== 0) {
+						if (start) {
+							rng.setStart(node, 0);
+						} else {
+							rng.setEnd(node, node.nodeValue.length);
+						}
 
-                    setPoint(lastNode);
+						return;
+					}
 
-                    sel.setRng(rng);
-                }
+					// BR element
+					if (node.nodeName == 'BR') {
+						if (start) {
+							rng.setStartBefore(node);
+						} else {
+							rng.setEndBefore(node);
+						}
 
-                editor.nodeChanged();
-                startCell = tableGrid = startTable = null;
-            }
-        });
+						return;
+					}
+				} while ((node = (start ? walker.next() : walker.prev())));
+			}
 
-        editor.on('KeyUp Drop SetContent', function (e) {
-            clear(e.type == 'setcontent');
-            startCell = tableGrid = startTable = null;
-            resizing = false;
-        });
+			// Move selection to startCell
+			if (startCell) {
+				if (tableGrid) {
+					editor.getBody().style.webkitUserSelect = '';
+				}
 
-        editor.on('ObjectResizeStart ObjectResized', function (e) {
-            resizing = e.type != 'objectresized';
-        });
+				// Try to expand text selection as much as we can only Gecko supports cell selection
+				selectedCells = dom.select('td[data-mce-selected],th[data-mce-selected]');
+				if (selectedCells.length > 0) {
+					rng = dom.createRng();
+					node = selectedCells[0];
+					rng.setStartBefore(node);
+					rng.setEndAfter(node);
 
-        return {
-            clear: clear
-        };
-    };
+					setPoint(node, 1);
+					walker = new TreeWalker(node, dom.getParent(selectedCells[0], 'table'));
+
+					do {
+						if (node.nodeName == 'TD' || node.nodeName == 'TH') {
+							if (!dom.getAttrib(node, 'data-mce-selected')) {
+								break;
+							}
+
+							lastNode = node;
+						}
+					} while ((node = walker.next()));
+
+					setPoint(lastNode);
+
+					sel.setRng(rng);
+				}
+
+				editor.nodeChanged();
+				endSelection();
+			}
+		});
+
+		editor.on('KeyUp Drop SetContent', function(e) {
+			clear(e.type == 'setcontent');
+			endSelection();
+			resizing = false;
+		});
+
+		editor.on('ObjectResizeStart ObjectResized', function(e) {
+			resizing = e.type != 'objectresized';
+		});
+
+		editor.on('dragstart', function () {
+			dragging = true;
+		});
+
+		editor.on('drop dragend', function () {
+			dragging = false;
+		});
+
+		return {
+			clear: clear
+		};
+	};
 });

@@ -1,9 +1,9 @@
 // incomplete definitions for http://www.tinymce.com
 
 interface HtmlAreaObservable {
-    off: (name?: string, callback?: Function) => Object;
-    on: (name: string, callback: Function) => Object;
-    fire: (name: string, args?: Object, bubble?: Boolean) => Event;
+    off: (name?: string, callback?: () => void) => any;
+    on: (name: string, callback: () => void) => any;
+    fire: (name: string, args?: any, bubble?: boolean) => Event;
 }
 
 interface HtmlAreaEditor extends HtmlAreaObservable {
@@ -11,23 +11,25 @@ interface HtmlAreaEditor extends HtmlAreaObservable {
     remove: () => void;
     hide: () => void;
     show: () => void;
-    getContent: (args?: Object) => string;
-    setContent: (content: string, args?: Object) => string;
-    focus: (skip_focus?: Boolean) => void;
+    getContent: (args?: any) => string;
+    setContent: (content: string, args?: any) => string;
+    focus: (skip_focus?: boolean) => void;
     undoManager: HtmlAreaUndoManager;
-    settings: Object;
+    settings: any;
     insertContent: (content: string, args?: Object) => string;
     nodeChanged: (args?: Object) => void;
     execCommand: (c: string, u: Boolean, v: Object, args?: Object) => void;
     getBody: () => Element;
     selection: any;
     getElement: () => Element;
+    getDoc: () => Document;
+    editorUpload: any;
 }
 
 interface HtmlAreaUndoManager {
-    undo: () => Object;
+    undo: () => any;
     clear: () => void;
-    hasUndo: () => Boolean;
+    hasUndo: () => boolean;
 }
 
 interface HtmlAreaEvent {
@@ -35,10 +37,11 @@ interface HtmlAreaEvent {
 }
 
 interface HtmlAreaStatic extends HtmlAreaObservable {
-    init: (settings: Object) => void;
-    execCommand: (c: string, u: Boolean, v: string) => Boolean;
+    init: (settings: any) => void;
+    execCommand: (c: string, u: boolean, v: string) => boolean;
     activeEditor: HtmlAreaEditor;
-    get: (id: String) => HtmlAreaEditor;
+    get: (id: string) => HtmlAreaEditor;
+    triggerSave: () => void;
 }
 
 declare var tinymce: HtmlAreaStatic;
