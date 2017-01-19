@@ -36,7 +36,7 @@ module api.security.event {
 
         private principalServerEventHandler(event: PrincipalServerEvent) {
             if (PrincipalServerEventsHandler.debug) {
-                console.debug("PrincipalServerEventsHandler: received server event", event);
+                console.debug('PrincipalServerEventsHandler: received server event', event);
             }
 
             if (event.getType() == NodeServerChangeType.DELETE) {
@@ -46,7 +46,7 @@ module api.security.event {
 
         private handleContentDeleted(oldPaths: string[]) {
             if (PrincipalServerEventsHandler.debug) {
-                console.debug("ContentServerEventsHandler: deleted", oldPaths);
+                console.debug('ContentServerEventsHandler: deleted', oldPaths);
             }
             let contentDeletedEvent = new PrincipalDeletedEvent();
 

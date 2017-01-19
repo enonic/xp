@@ -54,7 +54,7 @@ module api.util.loader {
                 .catch<OBJECT[]>(this.handleLoadError.bind(this, postLoad));
         }
 
-        preLoad(searchString: string = ""): wemQ.Promise<OBJECT[]> {
+        preLoad(searchString: string = ''): wemQ.Promise<OBJECT[]> {
             this.notifyLoadingData(false);
 
             return this.sendPreLoadRequest(searchString)
@@ -122,8 +122,7 @@ module api.util.loader {
                 let filtered = this.results.filter(this.filterFn, this);
                 this.notifyLoadedData(filtered);
                 deferred.resolve(this.results);
-            }
-            else {
+            } else {
                 deferred.resolve(null);
             }
 
@@ -147,7 +146,7 @@ module api.util.loader {
         }
 
         filterFn(result: OBJECT): boolean {
-            throw Error("must be implemented");
+            throw Error('must be implemented');
         }
 
         notifyLoadedData(results: OBJECT[], postLoad?: boolean) {

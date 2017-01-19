@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import BrowseItem = api.app.browse.BrowseItem;
 import Application = api.application.Application;

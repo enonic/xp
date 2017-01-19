@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {ContentTreeGrid} from "../ContentTreeGrid";
-import {ContentDeletePromptEvent} from "../ContentDeletePromptEvent";
+import '../../../api.ts';
+import {ContentTreeGrid} from '../ContentTreeGrid';
+import {ContentDeletePromptEvent} from '../ContentDeletePromptEvent';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
@@ -9,7 +9,7 @@ import Action = api.ui.Action;
 export class DeleteContentAction extends Action {
 
     constructor(grid: ContentTreeGrid) {
-        super("Delete", "mod+del");
+        super('Delete', 'mod+del');
         this.setEnabled(false);
         this.onExecuted(() => {
             let contents: api.content.ContentSummaryAndCompareStatus[]

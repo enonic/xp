@@ -5,8 +5,8 @@ module api.notify {
         private wrapper: api.dom.DivEl;
 
         constructor() {
-            super("notification-container");
-            this.wrapper = new api.dom.DivEl("notification-wrapper");
+            super('notification-container');
+            this.wrapper = new api.dom.DivEl('notification-wrapper');
             this.appendChild(this.wrapper);
         }
 

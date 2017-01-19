@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {PublishContentAction} from "../browse/action/PublishContentAction";
+import '../../api.ts';
+import {PublishContentAction} from '../browse/action/PublishContentAction';
 
 import Action = api.ui.Action;
 import ActionButton = api.ui.button.ActionButton;
@@ -7,9 +7,9 @@ import ActionButton = api.ui.button.ActionButton;
 export class MobilePreviewFoldButton extends api.ui.toolbar.FoldButton {
 
     constructor(actions: Action[], hostElement: api.dom.Element) {
-        super("", hostElement);
+        super('', hostElement);
 
-        this.addClass("mobile-preview-fold-button");
+        this.addClass('mobile-preview-fold-button');
         this.addActions(actions);
     }
 
@@ -21,7 +21,7 @@ export class MobilePreviewFoldButton extends api.ui.toolbar.FoldButton {
     private addAction(action: Action) {
         let button = new ActionButton(action);
         if (api.ObjectHelper.iFrameSafeInstanceOf(action, PublishContentAction)) {
-            button.addClass("publish");
+            button.addClass('publish');
         }
         this.addElement(button);
     }

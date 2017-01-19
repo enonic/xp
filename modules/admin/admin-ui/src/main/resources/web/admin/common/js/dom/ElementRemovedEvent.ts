@@ -5,7 +5,7 @@ module api.dom {
         private parent: Element;
 
         constructor(element: Element, parent: Element, target?: Element) {
-            super("removed", element, target);
+            super('removed', element, target);
 
             this.parent = parent;
         }

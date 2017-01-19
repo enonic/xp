@@ -11,20 +11,20 @@ module api.content {
 
             switch (publishStatus) {
             case PublishStatus.ONLINE:
-                status = "Online";
+                status = 'Online';
                 break;
             case PublishStatus.PENDING:
-                status = "Pending";
+                status = 'Pending';
                 break;
             case PublishStatus.EXPIRED:
-                status = "Expired";
+                status = 'Expired';
                 break;
             default:
-                status = "Unknown";
+                status = 'Unknown';
             }
 
             if (!!CompareStatus[status]) {
-                return "Unknown";
+                return 'Unknown';
             }
 
             return status;

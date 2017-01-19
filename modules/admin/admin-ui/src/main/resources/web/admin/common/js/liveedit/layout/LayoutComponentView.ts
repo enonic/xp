@@ -64,8 +64,7 @@ module api.liveedit.layout {
                 if (firstLevelOfPath.getRegionName() == regionView.getRegionName()) {
                     if (path.numberOfLevels() == 1) {
                         return regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
-                    }
-                    else {
+                    } else {
                         const index = firstLevelOfPath.getComponentIndex();
                         const layoutView: LayoutComponentView = <LayoutComponentView>regionView.getComponentViewByIndex(index);
                         return layoutView.getComponentViewByPath(path.removeFirstLevel());

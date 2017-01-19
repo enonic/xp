@@ -8,12 +8,12 @@ module api.content.page {
 
         constructor(pageTemplateKey: PageTemplateKey) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
             this.pageTemplateKey = pageTemplateKey;
         }
 
         validate() {
-            api.util.assertNotNull(this.pageTemplateKey, "pageTemplateKey cannot be null");
+            api.util.assertNotNull(this.pageTemplateKey, 'pageTemplateKey cannot be null');
         }
 
         getParams(): Object {

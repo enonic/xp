@@ -19,7 +19,7 @@ module api.content.attachment {
         constructor(config: any) {
 
             if (config.url == undefined) {
-                config.url = api.util.UriHelper.getRestUri("content/createAttachment");
+                config.url = api.util.UriHelper.getRestUri('content/createAttachment');
             }
             if (config.selfIsDropzone == undefined) {
                 config.selfIsDropzone = true;
@@ -43,8 +43,7 @@ module api.content.attachment {
         createModel(serverResponse: AttachmentJson): Attachment {
             if (serverResponse) {
                 return new AttachmentBuilder().fromJson(serverResponse).build();
-            }
-            else {
+            } else {
                 return null;
             }
         }

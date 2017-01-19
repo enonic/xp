@@ -7,7 +7,7 @@ module api.ui.selector.combobox {
         }
 
         setMaximumReached() {
-            this.setPlaceholder("Maximum reached");
+            this.setPlaceholder('Maximum reached');
             this.getEl().setDisabled(true);
         }
 

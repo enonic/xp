@@ -31,16 +31,16 @@ module api.ui.dialog {
 
         public static debug: boolean = false;
 
-        constructor(title: string = "", forceHorizontalCentering: boolean = false) {
-            super("modal-dialog", api.StyleHelper.COMMON_PREFIX);
+        constructor(title: string = '', forceHorizontalCentering: boolean = false) {
+            super('modal-dialog', api.StyleHelper.COMMON_PREFIX);
 
             this.forceHorizontalCentering = forceHorizontalCentering;
 
-            let wrapper = new api.dom.DivEl("modal-dialog-content-wrapper");
+            let wrapper = new api.dom.DivEl('modal-dialog-content-wrapper');
             this.appendChild(wrapper);
 
             this.cancelAction = this.createDefaultCancelAction();
-            this.cancelButton = new api.dom.DivEl("cancel-button-top");
+            this.cancelButton = new api.dom.DivEl('cancel-button-top');
             this.cancelButton.onClicked(() => this.cancelAction.execute());
             wrapper.appendChild(this.cancelButton);
 
@@ -50,10 +50,10 @@ module api.ui.dialog {
             this.contentPanel = new ModalDialogContentPanel();
             wrapper.appendChild(this.contentPanel);
 
-            let push = new api.dom.DivEl("modal-dialog-content-push");
+            let push = new api.dom.DivEl('modal-dialog-content-push');
             wrapper.appendChild(push);
 
-            let footer = new api.dom.DivEl("modal-dialog-footer");
+            let footer = new api.dom.DivEl('modal-dialog-footer');
             this.appendChild(footer);
 
             this.buttonRow = new ModalDialogButtonRow();
@@ -122,7 +122,7 @@ module api.ui.dialog {
         private isIgnoredElementClicked(element: HTMLElement): boolean {
             let ignoredElementClicked = false;
             if (!!element && !!element.className && !!element.className.indexOf) {
-                ignoredElementClicked = element.className.indexOf("mce-") > -1 || element.className.indexOf("html-area-modal-dialog") > -1;
+                ignoredElementClicked = element.className.indexOf('mce-') > -1 || element.className.indexOf('html-area-modal-dialog') > -1;
             }
             ignoredElementClicked = ignoredElementClicked || this.listOfClickIgnoredElements.some((elem: api.dom.Element) => {
                     return elem.getHTMLElement() == element || elem.getEl().contains(element);
@@ -131,9 +131,9 @@ module api.ui.dialog {
         }
 
         private createDefaultCancelAction() {
-            let cancelAction = new api.ui.Action("Cancel", "esc");
-            cancelAction.setIconClass("cancel-button-top");
-            cancelAction.setLabel("");
+            let cancelAction = new api.ui.Action('Cancel', 'esc');
+            cancelAction.setIconClass('cancel-button-top');
+            cancelAction.setLabel('');
             cancelAction.onExecuted(()=> {
                 this.close();
             });
@@ -145,9 +145,9 @@ module api.ui.dialog {
             return this.cancelAction;
         }
 
-        addCancelButtonToBottom(buttonLabel: string = "Cancel") {
+        addCancelButtonToBottom(buttonLabel: string = 'Cancel') {
             let cancelAction = new api.ui.Action(buttonLabel);
-            cancelAction.setIconClass("cancel-button-bottom");
+            cancelAction.setIconClass('cancel-button-bottom');
             cancelAction.onExecuted(() => this.cancelAction.execute());
             this.buttonRow.addAction(cancelAction);
         }
@@ -174,36 +174,36 @@ module api.ui.dialog {
         }
 
         show() {
-            api.dom.Body.get().getHTMLElement().classList.add("modal-dialog");
+            api.dom.Body.get().getHTMLElement().classList.add('modal-dialog');
             this.centerMyself();
             super.show();
             this.buttonRow.focusDefaultAction();
         }
 
         hide() {
-            super.hide();
-            api.dom.Body.get().getHTMLElement().classList.remove("modal-dialog");
+            api.dom.Body.get().getHTMLElement().classList.remove('modal-dialog');
+            super.hide(true);
         }
 
         protected centerMyself() {
             if (ModalDialog.debug) {
-                console.debug("ModalDialog.centerMyself", api.ClassHelper.getClassName(this));
+                console.debug('ModalDialog.centerMyself', api.ClassHelper.getClassName(this));
             }
             let el = this.getEl();
-            el.setMarginTop("-" + (el.getHeightWithBorder() / 2) + "px");
+            el.setMarginTop('-' + (el.getHeightWithBorder() / 2) + 'px');
 
             if (this.forceHorizontalCentering || ResponsiveRanges._540_720.isFitOrBigger(this.getEl().getWidthWithBorder())) {
                 this.centerHorisontally();
             } else {
-                el.setMarginLeft("0px");
-                el.removeClass("centered_horizontally");
+                el.setMarginLeft('0px');
+                el.removeClass('centered_horizontally');
             }
         }
 
         centerHorisontally() {
             let el = this.getEl();
-            el.setMarginLeft("-" + (el.getWidthWithBorder() / 2) + "px");
-            el.addClass("centered_horizontally");
+            el.setMarginLeft('-' + (el.getWidthWithBorder() / 2) + 'px');
+            el.addClass('centered_horizontally');
         }
 
         getButtonRow(): ModalDialogButtonRow {
@@ -270,13 +270,13 @@ module api.ui.dialog {
             this.updateTabbable();
 
             keyBindings = keyBindings.concat([
-                new KeyBinding("right", (event) => {
+                new KeyBinding('right', (event) => {
                     this.focusNextTabbable();
 
                     event.stopPropagation();
                     event.preventDefault();
                 }),
-                new KeyBinding("left", (event) => {
+                new KeyBinding('left', (event) => {
                     this.focusPreviousTabbable();
 
                     event.stopPropagation();
@@ -307,7 +307,7 @@ module api.ui.dialog {
         private titleEl: api.dom.H2El;
 
         constructor(title: string) {
-            super("dialog-header");
+            super('dialog-header');
 
             this.titleEl = new api.dom.H2El('title');
             this.titleEl.setHtml(title);
@@ -322,7 +322,7 @@ module api.ui.dialog {
     export class ModalDialogContentPanel extends api.dom.DivEl {
 
         constructor() {
-            super("dialog-content");
+            super('dialog-content');
         }
     }
 
@@ -333,7 +333,7 @@ module api.ui.dialog {
         private buttonContainer: api.dom.DivEl;
 
         constructor() {
-            super("dialog-buttons");
+            super('dialog-buttons');
 
             this.buttonContainer = new api.dom.DivEl('button-container');
             this.appendChild(this.buttonContainer);

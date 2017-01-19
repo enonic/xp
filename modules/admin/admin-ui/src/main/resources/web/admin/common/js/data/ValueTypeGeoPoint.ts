@@ -3,7 +3,7 @@ module api.data {
     export class ValueTypeGeoPoint extends ValueType {
 
         constructor() {
-            super("GeoPoint");
+            super('GeoPoint');
         }
 
         isValid(value: any): boolean {
@@ -37,8 +37,7 @@ module api.data {
         valueToString(value: Value): string {
             if (value.isNotNull()) {
                 return value.getGeoPoint().toString();
-            }
-            else {
+            } else {
                 return null;
             }
         }

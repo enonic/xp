@@ -9,7 +9,7 @@ module api.application {
 
             ApplicationEvent.on((event: ApplicationEvent) => {
                 if (event.getEventType() != ApplicationEventType.PROGRESS) {
-                    console.log("ApplicationCache on ApplicationEvent, deleting: " + event.getApplicationKey().toString());
+                    console.log('ApplicationCache on ApplicationEvent, deleting: ' + event.getApplicationKey().toString());
                     this.deleteByKey(event.getApplicationKey());
                 }
             });

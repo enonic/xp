@@ -54,7 +54,7 @@ module api.data {
                     return type;
                 }
             }
-            throw("Unknown ValueType: " + name);
+            throw('Unknown ValueType: ' + name);
         }
     }
 }

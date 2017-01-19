@@ -1,4 +1,4 @@
-module api.content.page{
+module api.content.page {
 
     export class PageTemplateName {
 
@@ -6,7 +6,7 @@ module api.content.page{
 
         constructor(name:string) {
             if( name == null ) {
-                throw new Error("name cannot be null");
+                throw new Error('name cannot be null');
             }
             this.name = name;
         }

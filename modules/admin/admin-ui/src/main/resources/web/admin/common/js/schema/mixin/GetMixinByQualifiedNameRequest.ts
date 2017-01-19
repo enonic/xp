@@ -6,7 +6,7 @@ module api.schema.mixin {
 
         constructor(name: MixinName) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
             this.name = name;
         }
 

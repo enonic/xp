@@ -59,13 +59,13 @@ module api.ui.selector.dropdown {
         private active: boolean = false;
 
         constructor(name: string, config: DropdownConfig<OPTION_DISPLAY_VALUE>) {
-            super("div", "dropdown", api.StyleHelper.COMMON_PREFIX, config.value);
-            this.getEl().setAttribute("name", name);
+            super('div', 'dropdown', api.StyleHelper.COMMON_PREFIX, config.value);
+            this.getEl().setAttribute('name', name);
 
             this.optionDisplayValueViewer = config.optionDisplayValueViewer || new DefaultOptionDisplayValueViewer();
 
             if (config.iconUrl) {
-                this.icon = new api.dom.ImgEl(config.iconUrl, "input-icon");
+                this.icon = new api.dom.ImgEl(config.iconUrl, 'input-icon');
                 this.appendChild(this.icon);
             }
 
@@ -96,7 +96,7 @@ module api.ui.selector.dropdown {
                 dataIdProperty: config.dataIdProperty
             });
             if (filter) {
-                this.dropdownList.setFilterArgs({searchString: ""});
+                this.dropdownList.setFilterArgs({searchString: ''});
             }
 
             this.dropdownList.onRowSelection((event: DropdownGridRowSelectedEvent) => {
@@ -128,7 +128,7 @@ module api.ui.selector.dropdown {
         }
 
         reset() {
-            this.input.setValue("");
+            this.input.setValue('');
             this.input.show();
             this.selectedOptionView.hide();
             this.selectedOptionView.resetOption();
@@ -203,8 +203,7 @@ module api.ui.selector.dropdown {
             if (this.selectedOptionView.getOption()) {
                 this.input.hide();
                 this.selectedOptionView.show();
-            }
-            else if (this.typeAhead) {
+            } else if (this.typeAhead) {
                 this.input.show();
                 this.selectedOptionView.hide();
             }
@@ -217,7 +216,7 @@ module api.ui.selector.dropdown {
         }
 
         private isInputEmpty(): boolean {
-            return this.input.getValue() === "";
+            return this.input.getValue() === '';
         }
 
         removeAllOptions() {
@@ -296,7 +295,7 @@ module api.ui.selector.dropdown {
         setInputIconUrl(iconUrl: string) {
             if (!this.icon) {
                 this.icon = new api.dom.ImgEl();
-                this.icon.addClass("input-icon");
+                this.icon.addClass('input-icon');
                 this.icon.insertBeforeEl(this.input);
             }
 
@@ -348,8 +347,7 @@ module api.ui.selector.dropdown {
                 if (event.which == 9) { // tab
                     this.hideDropdown();
                     return;
-                }
-                else if (event.which == 16 || event.which == 17 || event.which == 18) {  // shift or ctrl or alt
+                } else if (event.which == 16 || event.which == 17 || event.which == 18) {  // shift or ctrl or alt
                     return;
                 }
 
@@ -371,7 +369,7 @@ module api.ui.selector.dropdown {
                     this.dropdownList.navigateToNextRow();
                 } else if (event.which == 13) { // enter
                     this.selectRow(this.dropdownList.getActiveRow(), false, 13);
-                    this.input.getEl().setValue("");
+                    this.input.getEl().setValue('');
                 } else if (event.which == 27) { // esc
                     this.hideDropdown();
                 }

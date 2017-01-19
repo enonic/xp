@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
 import Form = api.form.Form;

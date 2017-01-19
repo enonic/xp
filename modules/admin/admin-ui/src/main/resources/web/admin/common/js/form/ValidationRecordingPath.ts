@@ -23,14 +23,13 @@ module api.form {
         }
 
         private resolveRefString(): string {
-            let s = "";
+            let s = '';
             if (this.parentDataSet && !this.parentDataSet.isRoot()) {
                 s += this.parentDataSet.toString();
                 if (this.dataName) {
-                    s += "." + this.dataName;
+                    s += '.' + this.dataName;
                 }
-            }
-            else {
+            } else {
                 if (this.dataName) {
                     s += this.dataName;
                 }

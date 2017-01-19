@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {PrincipalWizardPanelParams} from "./PrincipalWizardPanelParams";
+import '../../api.ts';
+import {PrincipalWizardPanelParams} from './PrincipalWizardPanelParams';
 
 import Principal = api.security.Principal;
 import PrincipalKey = api.security.PrincipalKey;

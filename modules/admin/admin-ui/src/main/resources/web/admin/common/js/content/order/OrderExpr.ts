@@ -16,11 +16,11 @@ module api.content.order {
         }
 
         toJson(): OrderExprJson {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         toString(): string {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         static toArrayJson(expressions: OrderExpr[]): OrderExprWrapperJson[] {

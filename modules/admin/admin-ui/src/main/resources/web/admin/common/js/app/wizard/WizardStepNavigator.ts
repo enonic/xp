@@ -3,14 +3,14 @@ module api.app.wizard {
     export class WizardStepNavigator extends api.ui.tab.TabBar {
 
         constructor() {
-            super("wizard-step-navigator");
+            super('wizard-step-navigator');
         }
 
         addNavigationItem(step: api.ui.tab.TabBarItem) {
             super.addNavigationItem(step);
 
             if (this.getSize() == 1) {
-                step.addClass("first");
+                step.addClass('first');
             }
         }
 

@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import Principal = api.security.Principal;
 import UserStore = api.security.UserStore;
@@ -73,7 +73,7 @@ export class UserTreeGridItem implements api.Equitable {
             return 'Groups';
 
         }
-        return "";
+        return '';
     }
 
     getDataId(): string {
@@ -93,7 +93,7 @@ export class UserTreeGridItem implements api.Equitable {
         case UserTreeGridItemType.USERS:
             return this.userStore.getKey().toString() + '/users';
         default:
-            return "";
+            return '';
         }
 
     }

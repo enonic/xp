@@ -55,7 +55,7 @@ module api.content.form.inputtype.image {
         private addOptionMovedEventHandler() {
             //when dragging selected image in chrome it looses focus; bringing focus back
             this.onOptionMoved((moved: SelectedOption<ImageSelectorDisplayValue>) => {
-                let selectedOptionMoved: boolean = moved.getOptionView().hasClass("editing");
+                let selectedOptionMoved: boolean = moved.getOptionView().hasClass('editing');
 
                 if (selectedOptionMoved) {
                     (<ImageSelectorSelectedOptionView>moved.getOptionView()).getCheckbox().giveFocus();
@@ -181,10 +181,10 @@ module api.content.form.inputtype.image {
         private setActiveOption(option: SelectedOption<ImageSelectorDisplayValue>) {
 
             if (this.activeOption) {
-                this.activeOption.getOptionView().removeClass("editing");
+                this.activeOption.getOptionView().removeClass('editing');
             }
             this.activeOption = option;
-            option.getOptionView().addClass("editing");
+            option.getOptionView().addClass('editing');
 
             this.setOutsideClickListener();
         }
@@ -242,7 +242,7 @@ module api.content.form.inputtype.image {
             optionView.getIcon().onLoaded((event: UIEvent) => this.handleOptionViewImageLoaded(optionView));
 
             if (option.getOption().displayValue.isEmptyContent()) {
-                optionView.showError("No access to image.");
+                optionView.showError('No access to image.');
             }
         }
 
@@ -266,26 +266,30 @@ module api.content.form.inputtype.image {
             let checkbox = optionView.getCheckbox();
 
             switch (event.which) {
-            case 32: // Spacebar
-                checkbox.toggleChecked();
-                break;
-            case 8: // Backspace
-                checkbox.setChecked(false);
-                this.removeOptionViewAndRefocus(option);
-                event.preventDefault();
-                break;
-            case 46: // Delete
-                checkbox.setChecked(false);
-                this.removeOptionViewAndRefocus(option);
-                break;
-            case 13: // Enter
-                this.notifyEditSelectedOptions([option]);
-                break;
-            case 9: // tab
-                this.resetActiveOption();
-                break;
+                case 32: // Spacebar
+                    checkbox.toggleChecked();
+                    event.stopPropagation();
+                    break;
+                case 8: // Backspace
+                    checkbox.setChecked(false);
+                    this.removeOptionViewAndRefocus(option);
+                    event.preventDefault();
+                    event.stopPropagation();
+                    break;
+                case 46: // Delete
+                    checkbox.setChecked(false);
+                    this.removeOptionViewAndRefocus(option);
+                    event.stopPropagation();
+                    break;
+                case 13: // Enter
+                    this.notifyEditSelectedOptions([option]);
+                    event.stopPropagation();
+                    break;
+                case 9: // tab
+                    this.resetActiveOption();
+                    event.stopPropagation();
+                    break;
             }
-            event.stopPropagation();
         }
 
         private handleOptionViewChecked(checked: boolean, option: SelectedOption<ImageSelectorDisplayValue>,

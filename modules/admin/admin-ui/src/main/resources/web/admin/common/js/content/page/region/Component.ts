@@ -65,7 +65,7 @@ module api.content.page.region {
         }
 
         doReset() {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         reset() {
@@ -74,7 +74,7 @@ module api.content.page.region {
         }
 
         isEmpty(): boolean {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         getParent(): Region {
@@ -94,11 +94,11 @@ module api.content.page.region {
         }
 
         toJson(): ComponentTypeWrapperJson {
-            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
+            throw new Error('Must be implemented by inheritor: ' + api.ClassHelper.getClassName(this));
         }
 
         toString(): string {
-            return "Component[" + (this.name ? this.name.toString() : "") + "]";
+            return 'Component[' + (this.name ? this.name.toString() : '') + ']';
         }
 
         toComponentJson(): ComponentJson {
@@ -124,7 +124,7 @@ module api.content.page.region {
         }
 
         clone(): Component {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         onChanged(listener: (event: ComponentChangedEvent)=>void) {
@@ -252,7 +252,7 @@ module api.content.page.region {
         }
 
         public build(): COMPONENT {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
     }
 }

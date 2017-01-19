@@ -4,8 +4,8 @@
   "description": "Enonix XP - Admin UI module",
   "scripts": {
     "postinstall": "gulp resources",
-    "lint": "tslint src/main/resources/web/admin/**/*.ts --exclude **/*.d.ts",
-    "fix": "tslint src/main/resources/web/admin/**/*.ts --fix --exclude **/*.d.ts || exit 0",
+    "lint": "tslint src/main/resources/web/{admin,spec}/**/*.ts --exclude **/*.d.ts",
+    "fix": "tslint src/main/resources/web/{admin,spec}/**/*.ts --fix --exclude **/*.d.ts || exit 0",
     "quicklint": "runwith gulp/scripts/lint.js --prop=diff"
   },
   "devDependencies": {

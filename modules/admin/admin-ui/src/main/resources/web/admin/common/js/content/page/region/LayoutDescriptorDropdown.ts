@@ -8,8 +8,8 @@ module api.content.page.region {
 
             super({
                 optionDisplayValueViewer: new LayoutDescriptorViewer(),
-                dataIdProperty: "value",
-                noOptionsText: "No layouts available"
+                dataIdProperty: 'value',
+                noOptionsText: 'No layouts available'
             });
         }
 

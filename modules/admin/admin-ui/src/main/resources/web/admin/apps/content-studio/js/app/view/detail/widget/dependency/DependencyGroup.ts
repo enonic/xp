@@ -1,4 +1,4 @@
-import "../../../../../api.ts";
+import '../../../../../api.ts';
 
 import ContentDependencyGroupJson = api.content.json.ContentDependencyGroupJson;
 import ContentTypeName = api.schema.content.ContentTypeName;

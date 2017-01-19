@@ -1,15 +1,15 @@
 declare var CONFIG;
 
-import "./api.ts";
-import {ApplicationAppPanel} from "./app/ApplicationAppPanel";
-import {InstallAppDialog} from "./app/installation/InstallAppDialog";
-import {InstallAppPromptEvent} from "./app/installation/InstallAppPromptEvent";
+import './api.ts';
+import {ApplicationAppPanel} from './app/ApplicationAppPanel';
+import {InstallAppDialog} from './app/installation/InstallAppDialog';
+import {InstallAppPromptEvent} from './app/installation/InstallAppPromptEvent';
 
 import Application = api.application.Application;
 
 function getApplication(): api.app.Application {
     let application = new api.app.Application('applications', 'Applications', 'AM', 'applications');
-    application.setPath(api.rest.Path.fromString("/"));
+    application.setPath(api.rest.Path.fromString('/'));
     application.setWindow(window);
 
     return application;
@@ -21,11 +21,11 @@ function startLostConnectionDetector() {
     lostConnectionDetector.setAuthenticated(true);
     lostConnectionDetector.onConnectionLost(() => {
         api.notify.NotifyManager.get().hide(messageId);
-        messageId = api.notify.showError("Lost connection to server - Please wait until connection is restored", false);
+        messageId = api.notify.showError('Lost connection to server - Please wait until connection is restored', false);
     });
     lostConnectionDetector.onSessionExpired(() => {
         api.notify.NotifyManager.get().hide(messageId);
-        window.location.href = api.util.UriHelper.getToolUri("");
+        window.location.href = api.util.UriHelper.getToolUri('');
     });
     lostConnectionDetector.onConnectionRestored(() => {
         api.notify.NotifyManager.get().hide(messageId);

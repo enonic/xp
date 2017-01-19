@@ -12,7 +12,7 @@ module api.liveedit {
         }
 
         constructor() {
-            super("page");
+            super('page');
         }
 
         protected getItemTypeConfig(itemType: string): ItemTypeConfig {
@@ -31,7 +31,7 @@ module api.liveedit {
         }
 
         createView(config: CreateItemViewConfig<any,any>): PageView {
-            throw new Error("Not supported");
+            throw new Error('Not supported');
         }
     }
 

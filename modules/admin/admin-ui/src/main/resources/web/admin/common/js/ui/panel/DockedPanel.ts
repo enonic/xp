@@ -9,7 +9,7 @@ module api.ui.panel {
         private items: api.ui.tab.TabBarItem[] = [];
 
         constructor() {
-            super("docked-panel");
+            super('docked-panel');
 
             this.navigator = new TabBar();
             this.deck = new NavigatedDeckPanel(this.navigator);

@@ -1,24 +1,24 @@
-import "../../api.ts";
-import {ContentTreeGridActions} from "./action/ContentTreeGridActions";
-import {ContentBrowseToolbar} from "./ContentBrowseToolbar";
-import {ContentTreeGrid} from "./ContentTreeGrid";
-import {ContentBrowseFilterPanel} from "./filter/ContentBrowseFilterPanel";
-import {ContentBrowseItemPanel} from "./ContentBrowseItemPanel";
-import {MobileContentItemStatisticsPanel} from "../view/MobileContentItemStatisticsPanel";
-import {FloatingDetailsPanel} from "../view/detail/FloatingDetailsPanel";
-import {DockedDetailsPanel} from "../view/detail/DockedDetailsPanel";
-import {DetailsView} from "../view/detail/DetailsView";
-import {NonMobileDetailsPanelsManager, NonMobileDetailsPanelsManagerBuilder} from "../view/detail/NonMobileDetailsPanelsManager";
-import {Router} from "../Router";
-import {ActiveDetailsPanelManager} from "../view/detail/ActiveDetailsPanelManager";
-import {ContentBrowseItem} from "./ContentBrowseItem";
-import {ToggleSearchPanelEvent} from "./ToggleSearchPanelEvent";
-import {ToggleSearchPanelWithDependenciesEvent} from "./ToggleSearchPanelWithDependenciesEvent";
-import {NewMediaUploadEvent} from "../create/NewMediaUploadEvent";
-import {ContentPreviewPathChangedEvent} from "../view/ContentPreviewPathChangedEvent";
-import {ContentPublishMenuButton} from "./ContentPublishMenuButton";
-import {TreeNodeParentOfContent} from "./TreeNodeParentOfContent";
-import {TreeNodesOfContentPath} from "./TreeNodesOfContentPath";
+import '../../api.ts';
+import {ContentTreeGridActions} from './action/ContentTreeGridActions';
+import {ContentBrowseToolbar} from './ContentBrowseToolbar';
+import {ContentTreeGrid} from './ContentTreeGrid';
+import {ContentBrowseFilterPanel} from './filter/ContentBrowseFilterPanel';
+import {ContentBrowseItemPanel} from './ContentBrowseItemPanel';
+import {MobileContentItemStatisticsPanel} from '../view/MobileContentItemStatisticsPanel';
+import {FloatingDetailsPanel} from '../view/detail/FloatingDetailsPanel';
+import {DockedDetailsPanel} from '../view/detail/DockedDetailsPanel';
+import {DetailsView} from '../view/detail/DetailsView';
+import {NonMobileDetailsPanelsManager, NonMobileDetailsPanelsManagerBuilder} from '../view/detail/NonMobileDetailsPanelsManager';
+import {Router} from '../Router';
+import {ActiveDetailsPanelManager} from '../view/detail/ActiveDetailsPanelManager';
+import {ContentBrowseItem} from './ContentBrowseItem';
+import {ToggleSearchPanelEvent} from './ToggleSearchPanelEvent';
+import {ToggleSearchPanelWithDependenciesEvent} from './ToggleSearchPanelWithDependenciesEvent';
+import {NewMediaUploadEvent} from '../create/NewMediaUploadEvent';
+import {ContentPreviewPathChangedEvent} from '../view/ContentPreviewPathChangedEvent';
+import {ContentPublishMenuButton} from './ContentPublishMenuButton';
+import {TreeNodeParentOfContent} from './TreeNodeParentOfContent';
+import {TreeNodesOfContentPath} from './TreeNodesOfContentPath';
 
 import TreeNode = api.ui.treegrid.TreeNode;
 import BrowseItem = api.app.browse.BrowseItem;
@@ -46,7 +46,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         super();
 
         this.onShown(() => {
-            Router.setHash("browse");
+            Router.setHash('browse');
         });
 
         ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
@@ -132,7 +132,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
             return rendered;
         }).catch((error) => {
-            console.error("Couldn't render ContentBrowsePanel", error);
+            console.error(`Couldn't render ContentBrowsePanel`, error);
             return true;
         });
     }
@@ -173,7 +173,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             api.ui.panel.SplitPanelUnit.PIXEL).setSecondPanelMinSize(280, api.ui.panel.SplitPanelUnit.PIXEL).setAnimationDelay(
             600).setSecondPanelShouldSlideRight(true).build();
 
-        contentPanelsAndDetailPanel.addClass("split-panel-with-details");
+        contentPanelsAndDetailPanel.addClass('split-panel-with-details');
         contentPanelsAndDetailPanel.setSecondPanelSize(280, api.ui.panel.SplitPanelUnit.PIXEL);
 
         nonMobileDetailsPanelsManagerBuilder.setSplitPanelWithGridAndDetails(contentPanelsAndDetailPanel);
@@ -375,7 +375,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
     private handleContentCreated(data: ContentSummaryAndCompareStatus[], oldPaths?: ContentPath[]) {
         if (ContentBrowsePanel.debug) {
-            console.debug("ContentBrowsePanel: created", data, oldPaths);
+            console.debug('ContentBrowsePanel: created', data, oldPaths);
         }
 
         this.processContentCreated(data, oldPaths);
@@ -383,7 +383,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
     private handleContentUpdated(data: ContentSummaryAndCompareStatus[]) {
         if (ContentBrowsePanel.debug) {
-            console.debug("ContentBrowsePanel: updated", data);
+            console.debug('ContentBrowsePanel: updated', data);
         }
 
         return this.doHandleContentUpdate(data).then((changed) => {
@@ -395,7 +395,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
     private handleContentDeleted(paths: ContentPath[]) {
         if (ContentBrowsePanel.debug) {
-            console.debug("ContentBrowsePanel: deleted", paths);
+            console.debug('ContentBrowsePanel: deleted', paths);
         }
 
         let nodes = this.treeGrid.findByPaths(paths).map(el => el.getNodes());
@@ -435,21 +435,21 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
     private handleContentPending(data: ContentSummaryAndCompareStatus[]) {
         if (ContentBrowsePanel.debug) {
-            console.debug("ContentBrowsePanel: pending", data);
+            console.debug('ContentBrowsePanel: pending', data);
         }
         this.doHandleContentUpdate(data);
     }
 
     private handleContentPublished(data: ContentSummaryAndCompareStatus[]) {
         if (ContentBrowsePanel.debug) {
-            console.debug("ContentBrowsePanel: published", data);
+            console.debug('ContentBrowsePanel: published', data);
         }
         this.doHandleContentUpdate(data);
     }
 
     private handleContentUnpublished(data: ContentSummaryAndCompareStatus[]) {
         if (ContentBrowsePanel.debug) {
-            console.debug("ContentBrowsePanel: unpublished", data);
+            console.debug('ContentBrowsePanel: unpublished', data);
         }
         this.doHandleContentUpdate(data);
     }
@@ -552,7 +552,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
     private handleContentSorted(data: ContentSummaryAndCompareStatus[]) {
         if (ContentBrowsePanel.debug) {
-            console.debug("ContentBrowsePanel: sorted", data);
+            console.debug('ContentBrowsePanel: sorted', data);
         }
         let paths: api.content.ContentPath[] = data.map(d => d.getContentSummary().getPath());
         let sortResult: TreeNodesOfContentPath[] = this.treeGrid.findByPaths(paths);

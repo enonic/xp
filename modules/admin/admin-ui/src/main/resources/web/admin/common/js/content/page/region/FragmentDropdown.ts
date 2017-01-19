@@ -22,7 +22,7 @@ module api.content.page.region {
 
             super({
                 optionDisplayValueViewer: new ContentSummaryViewer(),
-                dataIdProperty: "value"
+                dataIdProperty: 'value'
             });
 
             this.parentSitePath = sitePath;

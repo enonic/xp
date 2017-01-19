@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {UserItemWizardActions} from "./UserItemWizardActions";
-import {UserItemWizardPanel} from "../UserItemWizardPanel";
+import '../../../api.ts';
+import {UserItemWizardActions} from './UserItemWizardActions';
+import {UserItemWizardPanel} from '../UserItemWizardPanel';
 
 import GetPrincipalsByUserStoreRequest = api.security.GetPrincipalsByUserStoreRequest;
 import PrincipalType = api.security.PrincipalType;

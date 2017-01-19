@@ -28,7 +28,7 @@ module api.content.form.inputtype.customselector {
 
         protected sendPreLoadRequest(ids: string): Q.Promise<CustomSelectorItem[]> {
 
-            return this.getRequest().setIds(ids.split(";")).sendAndParse().then((results) => {
+            return this.getRequest().setIds(ids.split(';')).sendAndParse().then((results) => {
                 this.getRequest().setIds([]);
                 return results;
             });

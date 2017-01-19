@@ -21,7 +21,7 @@ module api.content.page {
 
         constructor(contentId: api.content.ContentId) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             this.contentId = contentId;
         }
 
@@ -68,7 +68,7 @@ module api.content.page {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "update");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'update');
         }
 
         sendAndParse(): wemQ.Promise<Content> {

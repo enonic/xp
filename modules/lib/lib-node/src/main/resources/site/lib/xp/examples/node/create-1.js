@@ -54,7 +54,6 @@ var expected = {
             "deny": []
         }
     ],
-    "_attachedBinaries": [],
     "_state": "DEFAULT",
     "_nodeType": "default",
     "likes": "plywood",

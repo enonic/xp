@@ -17,7 +17,7 @@ module api.ui.uploader {
         }
 
         getId(): string {
-            return this.file.id + "";
+            return this.file.id + '';
         }
 
         setId(id: string): UploadItem<MODEL> {

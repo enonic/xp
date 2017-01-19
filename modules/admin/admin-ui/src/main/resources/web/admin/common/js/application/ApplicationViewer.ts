@@ -4,13 +4,13 @@ module api.application {
     export class ApplicationViewer extends api.ui.NamesAndIconViewer<Application> {
 
         constructor() {
-            super("application-viewer");
+            super('application-viewer');
         }
 
         doLayout(object: Application | ApplicationUploadMock) {
             super.doLayout(<Application>object);
             if (object && object.isLocal()) {
-                this.getNamesAndIconView().setIconToolTip("Local application");
+                this.getNamesAndIconView().setIconToolTip('Local application');
             }
 
             if (object && object instanceof Application && object.getIconUrl()) {
@@ -19,7 +19,7 @@ module api.application {
         }
 
         resolveDisplayName(object: Application): string {
-            this.toggleClass("local", object.isLocal());
+            this.toggleClass('local', object.isLocal());
             return object.getDisplayName();
         }
 
@@ -32,7 +32,7 @@ module api.application {
         }
 
         resolveIconClass(object: Application): string {
-            return "icon-puzzle icon-large";
+            return 'icon-puzzle icon-large';
         }
     }
 }

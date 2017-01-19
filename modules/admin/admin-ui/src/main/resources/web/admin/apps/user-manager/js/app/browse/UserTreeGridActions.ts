@@ -1,10 +1,10 @@
-import "../../api.ts";
-import {UserTreeGridItem, UserTreeGridItemType} from "./UserTreeGridItem";
-import {SyncPrincipalAction} from "./action/SyncPrincipalAction";
-import {DeletePrincipalAction} from "./action/DeletePrincipalAction";
-import {EditPrincipalAction} from "./action/EditPrincipalAction";
-import {NewPrincipalAction} from "./action/NewPrincipalAction";
-import {UserItemsTreeGrid} from "./UserItemsTreeGrid";
+import '../../api.ts';
+import {UserTreeGridItem, UserTreeGridItemType} from './UserTreeGridItem';
+import {SyncPrincipalAction} from './action/SyncPrincipalAction';
+import {DeletePrincipalAction} from './action/DeletePrincipalAction';
+import {EditPrincipalAction} from './action/EditPrincipalAction';
+import {NewPrincipalAction} from './action/NewPrincipalAction';
+import {UserItemsTreeGrid} from './UserItemsTreeGrid';
 
 import Action = api.ui.Action;
 import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
@@ -92,8 +92,7 @@ export class UserTreeGridActions implements TreeGridActions<UserTreeGridItem> {
             UserStore.checkOnDeletable(userBrowseItem.getUserStore().getKey()).then((result: boolean) => {
                 this.DELETE.setEnabled(result);
             });
-        }
-        else {
+        } else {
             this.DELETE.setEnabled(false);
         }
     }

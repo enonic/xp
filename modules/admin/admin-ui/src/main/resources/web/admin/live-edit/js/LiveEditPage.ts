@@ -75,7 +75,7 @@ module LiveEdit {
         private init(event: InitializeLiveEditEvent) {
             let startTime = Date.now();
             if (LiveEditPage.debug) {
-                console.debug("LiveEditPage: starting live edit initialization");
+                console.debug('LiveEditPage: starting live edit initialization');
             }
 
             let liveEditModel = event.getLiveEditModel();
@@ -88,7 +88,7 @@ module LiveEdit {
                     .setElement(body).build();
             } catch (error) {
                 if (LiveEditPage.debug) {
-                    console.error("LiveEditPage: error initializing live edit in " + (Date.now() - startTime) + "ms");
+                    console.error('LiveEditPage: error initializing live edit in ' + (Date.now() - startTime) + 'ms');
                 }
                 if (api.ObjectHelper.iFrameSafeInstanceOf(error, Exception)) {
                     new LiveEditPageInitializationErrorEvent('The Live edit page could not be initialized. ' +
@@ -107,14 +107,14 @@ module LiveEdit {
             this.registerGlobalListeners();
 
             if (LiveEditPage.debug) {
-                console.debug("LiveEditPage: done live edit initializing in " + (Date.now() - startTime) + "ms");
+                console.debug('LiveEditPage: done live edit initializing in ' + (Date.now() - startTime) + 'ms');
             }
             new LiveEditPageViewReadyEvent(this.pageView).fire();
         }
 
         public destroy(win: Window = window): void {
             if (LiveEditPage.debug) {
-                console.debug("LiveEditPage.destroy", win);
+                console.debug('LiveEditPage.destroy', win);
             }
 
             SkipLiveEditReloadConfirmationEvent.un(this.skipConfirmationListener, win);
@@ -128,7 +128,7 @@ module LiveEdit {
 
             this.beforeUnloadListener = (event) => {
                 if (!this.skipNextReloadConfirmation) {
-                    const message = "This will close this wizard!";
+                    const message = 'This will close this wizard!';
                     const e = event || window.event || { returnValue: '' };
                     e['returnValue'] = message;
                     return message;

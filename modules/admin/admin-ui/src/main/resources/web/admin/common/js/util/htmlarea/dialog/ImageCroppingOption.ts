@@ -14,7 +14,7 @@ module api.util.htmlarea.dialog {
             this.name = name;
             this.widthProportion = widthProportion;
             this.heightProportion = heightProportion;
-            this.displayValue = api.util.StringHelper.capitalize(name) + " (" + widthProportion + ":" + heightProportion + ")";
+            this.displayValue = api.util.StringHelper.capitalize(name) + ' (' + widthProportion + ':' + heightProportion + ')';
         }
 
         getName(): string {
@@ -30,7 +30,7 @@ module api.util.htmlarea.dialog {
         }
 
         getProportionString(): string {
-            return this.widthProportion + ":" + this.heightProportion;
+            return this.widthProportion + ':' + this.heightProportion;
         }
 
     }

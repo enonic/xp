@@ -22,7 +22,7 @@ module api.content.form.inputtype.checkbox {
 
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
             if (inputConfig) {
-                this.setInputAlignment(inputConfig["alignment"]);
+                this.setInputAlignment(inputConfig['alignment']);
             }
         }
 
@@ -100,6 +100,6 @@ module api.content.form.inputtype.checkbox {
         }
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("Checkbox", Checkbox));
+    api.form.inputtype.InputTypeManager.register(new api.Class('Checkbox', Checkbox));
 
 }

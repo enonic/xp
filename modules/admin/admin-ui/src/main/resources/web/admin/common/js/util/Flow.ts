@@ -17,7 +17,7 @@ module api.util {
         }
 
         doExecuteNext(context:CONTEXT): wemQ.Promise<RESULT> {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
     }
 }

@@ -9,7 +9,7 @@ module api.app.wizard {
 
             this.nameEl = api.ui.text.AutosizeTextInput.large().setForbiddenCharsRe(/[^_a-z0-9\-]+/ig);
             this.nameEl.setName('name').onValueChanged((event: api.ValueChangedEvent) => {
-                this.notifyPropertyChanged("name", event.getOldValue(), event.getNewValue());
+                this.notifyPropertyChanged('name', event.getOldValue(), event.getNewValue());
             });
             this.appendChild(this.nameEl);
 

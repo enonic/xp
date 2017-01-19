@@ -68,7 +68,7 @@ module api.app {
         }
 
         protected createBrowsePanel(): api.app.browse.BrowsePanel<M> {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
     }
 }

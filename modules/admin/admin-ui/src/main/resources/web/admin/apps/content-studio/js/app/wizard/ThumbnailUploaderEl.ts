@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import Button = api.ui.button.Button;
 import CloseButton = api.ui.button.CloseButton;
@@ -14,7 +14,7 @@ export class ThumbnailUploaderEl extends api.ui.uploader.UploaderEl<api.content.
     constructor(config?: ThumbnailUploaderElConfig) {
 
         if (config.url == undefined) {
-            config.url = api.util.UriHelper.getRestUri("content/updateThumbnail");
+            config.url = api.util.UriHelper.getRestUri('content/updateThumbnail');
         }
         if (config.showCancel == undefined) {
             config.showCancel = false;
@@ -46,8 +46,7 @@ export class ThumbnailUploaderEl extends api.ui.uploader.UploaderEl<api.content.
     createModel(serverResponse: api.content.json.ContentJson): api.content.Content {
         if (serverResponse) {
             return new api.content.ContentBuilder().fromContentJson(<api.content.json.ContentJson> serverResponse).build();
-        }
-        else {
+        } else {
             return null;
         }
     }

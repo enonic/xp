@@ -1,12 +1,12 @@
-import "../../api.ts";
-import {SortContentEvent} from "./SortContentEvent";
-import {ContentTreeGridActions} from "./action/ContentTreeGridActions";
-import {ContentBrowseSearchEvent} from "./filter/ContentBrowseSearchEvent";
-import {ContentBrowseResetEvent} from "./filter/ContentBrowseResetEvent";
-import {ContentBrowseRefreshEvent} from "./filter/ContentBrowseRefreshEvent";
-import {TreeNodesOfContentPath} from "./TreeNodesOfContentPath";
-import {TreeNodeParentOfContent} from "./TreeNodeParentOfContent";
-import {ContentRowFormatter} from "./ContentRowFormatter";
+import '../../api.ts';
+import {SortContentEvent} from './SortContentEvent';
+import {ContentTreeGridActions} from './action/ContentTreeGridActions';
+import {ContentBrowseSearchEvent} from './filter/ContentBrowseSearchEvent';
+import {ContentBrowseResetEvent} from './filter/ContentBrowseResetEvent';
+import {ContentBrowseRefreshEvent} from './filter/ContentBrowseRefreshEvent';
+import {TreeNodesOfContentPath} from './TreeNodesOfContentPath';
+import {TreeNodeParentOfContent} from './TreeNodeParentOfContent';
+import {ContentRowFormatter} from './ContentRowFormatter';
 
 import Element = api.dom.Element;
 import ElementHelper = api.dom.ElementHelper;
@@ -53,31 +53,31 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
     constructor() {
         let builder: TreeGridBuilder<ContentSummaryAndCompareStatus> =
             new TreeGridBuilder<ContentSummaryAndCompareStatus>().setColumnConfig([{
-                name: "Name",
-                id: "displayName",
-                field: "contentSummary.displayName",
+                name: 'Name',
+                id: 'displayName',
+                field: 'contentSummary.displayName',
                 formatter: ContentRowFormatter.nameFormatter,
                 style: {minWidth: 130}
             }, {
-                name: "CompareStatus",
-                id: "compareStatus",
-                field: "compareStatus",
+                name: 'CompareStatus',
+                id: 'compareStatus',
+                field: 'compareStatus',
                 formatter: ContentRowFormatter.statusFormatter,
-                style: {cssClass: "status", minWidth: 75, maxWidth: 75}
+                style: {cssClass: 'status', minWidth: 75, maxWidth: 75}
             }, {
-                name: "Order",
-                id: "order",
-                field: "contentSummary.order",
+                name: 'Order',
+                id: 'order',
+                field: 'contentSummary.order',
                 formatter: ContentRowFormatter.orderFormatter,
-                style: {cssClass: "order", minWidth: 25, maxWidth: 40}
+                style: {cssClass: 'order', minWidth: 25, maxWidth: 40}
             }, {
-                name: "ModifiedTime",
-                id: "modifiedTime",
-                field: "contentSummary.modifiedTime",
+                name: 'ModifiedTime',
+                id: 'modifiedTime',
+                field: 'contentSummary.modifiedTime',
                 formatter: DateTimeFormatter.format,
-                style: {cssClass: "modified", minWidth: 135, maxWidth: 135}
+                style: {cssClass: 'modified', minWidth: 135, maxWidth: 135}
             }]).setPartialLoadEnabled(true).setLoadBufferSize(20).// rows count
-            prependClasses("content-tree-grid");
+            prependClasses('content-tree-grid');
 
         super(builder);
 
@@ -97,10 +97,10 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                 let curClass = nameColumn.getCssClass();
 
                 if (checkSelIsMoved) {
-                    nameColumn.setCssClass(curClass ? curClass : "" + "shifted");
+                    nameColumn.setCssClass(curClass ? curClass : '' + 'shifted');
                 } else {
-                    if (curClass && curClass.indexOf("shifted") >= 0) {
-                        nameColumn.setCssClass(curClass.replace("shifted", ""));
+                    if (curClass && curClass.indexOf('shifted') >= 0) {
+                        nameColumn.setCssClass(curClass.replace('shifted', ''));
                     }
                 }
 
@@ -145,7 +145,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
         this.getGrid().subscribeOnClick((event, data) => {
             let elem = new ElementHelper(event.target);
-            if (elem.hasClass("sort-dialog-trigger")) {
+            if (elem.hasClass('sort-dialog-trigger')) {
                 new SortContentEvent(this.getSelectedDataList()).fire();
             }
         });
@@ -315,7 +315,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         let root = this.getRoot().getCurrentRoot();
         let node: TreeNode<ContentSummaryAndCompareStatus>;
 
-        // Do not remove the items, that is not new and switched to "PENDING_DELETE"
+        // Do not remove the items, that is not new and switched to 'PENDING_DELETE'
         dataList = dataList.filter((data) => {
             node = root.findNode(this.getDataId(data));
             if (node.getData().getCompareStatus() !== CompareStatus.NEW) {
@@ -352,7 +352,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                 this.invalidate();
             }
 
-            api.notify.showFeedback(data.getContentSummary().getType().toString() + " \"" + item.getName() + "\" created successfully");
+            api.notify.showFeedback(`${data.getContentSummary().getType().toString()} "${item.getName()}" created successfully`);
         });
         item.onFailed(() => {
             this.deleteNode(data);
@@ -370,7 +370,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
     sortNodeChildren(node: TreeNode<ContentSummaryAndCompareStatus>) {
         let rootNode = this.getRoot().getCurrentRoot();
-        if (node != rootNode) {
+        if (node !== rootNode) {
             if (node.hasChildren()) {
                 node.setChildren([]);
                 node.setMaxChildren(0);
@@ -456,8 +456,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                     this.selectNode(targetNode.getDataId());
                     this.scrollToRow(this.getGrid().getDataView().getRowById(targetNode.getId()));
                 });
-            }
-            else {
+            } else {
                 let nextLevelChildPath = targetPath.getPathAtLevel(!!nodeToSearchTargetIn.getData()
                     ? nodeToSearchTargetIn.getData().getPath().getLevel() + 1
                     : 1);

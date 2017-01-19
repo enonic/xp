@@ -3,7 +3,7 @@ module api.data {
     export class ValueTypeLink extends ValueType {
 
         constructor() {
-            super("Link");
+            super('Link');
         }
 
         isValid(value: any): boolean {
@@ -26,8 +26,7 @@ module api.data {
         newValue(value: string): Value {
             if (this.isConvertible(value)) {
                 return new Value(new api.util.Link(value), this);
-            }
-            else {
+            } else {
                 return this.newNullValue();
             }
         }
@@ -35,8 +34,7 @@ module api.data {
         valueToString(value: Value): string {
             if (value.isNotNull()) {
                 return value.getLink().toString();
-            }
-            else {
+            } else {
                 return null;
             }
         }

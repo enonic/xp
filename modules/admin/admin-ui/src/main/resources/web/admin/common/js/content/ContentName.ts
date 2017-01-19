@@ -2,7 +2,7 @@ module api.content {
 
     export class ContentName extends api.Name implements api.Equitable {
 
-        public static UNNAMED_PREFIX: string = "__unnamed__";
+        public static UNNAMED_PREFIX: string = '__unnamed__';
 
         constructor(name: string) {
             super(name);
@@ -13,7 +13,7 @@ module api.content {
         }
 
         toUnnamed(): ContentUnnamed {
-            api.util.assert(api.ObjectHelper.iFrameSafeInstanceOf(this, ContentUnnamed), "this is not a ContentUnnamed");
+            api.util.assert(api.ObjectHelper.iFrameSafeInstanceOf(this, ContentUnnamed), 'this is not a ContentUnnamed');
             return <ContentUnnamed>this;
         }
 
@@ -36,11 +36,10 @@ module api.content {
 
         public static fromString(str: string): ContentName {
 
-            api.util.assert(str != null, "name cannot be null");
+            api.util.assert(str != null, 'name cannot be null');
             if (str.indexOf(ContentName.UNNAMED_PREFIX) == 0) {
                 return new ContentUnnamed(str);
-            }
-            else {
+            } else {
                 return new ContentName(str);
             }
         }

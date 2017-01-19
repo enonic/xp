@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 export class ToggleSearchPanelEvent extends api.event.Event {
 

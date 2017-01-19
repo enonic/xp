@@ -1,6 +1,6 @@
-import "../../api.ts";
-import {NewContentDialogItemSelectedEvent} from "./NewContentDialogItemSelectedEvent";
-import {NewContentDialogListItem} from "./NewContentDialogListItem";
+import '../../api.ts';
+import {NewContentDialogItemSelectedEvent} from './NewContentDialogItemSelectedEvent';
+import {NewContentDialogListItem} from './NewContentDialogListItem';
 
 import ContentTypeSummary = api.schema.content.ContentTypeSummary;
 

@@ -5,7 +5,7 @@ module api.content.page.region {
         private static INSTANCE: ImageComponentType = new ImageComponentType();
 
         constructor() {
-            super("image");
+            super('image');
         }
 
         newComponentBuilder(): ImageComponentBuilder {

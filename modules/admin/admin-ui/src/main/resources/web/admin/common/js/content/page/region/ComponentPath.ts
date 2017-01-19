@@ -2,7 +2,7 @@ module api.content.page.region {
 
     export class ComponentPath implements api.Equitable {
 
-        private static DIVIDER: string = "/";
+        private static DIVIDER: string = '/';
 
         private regionAndComponentList: ComponentPathRegionAndComponent[];
 
@@ -12,7 +12,7 @@ module api.content.page.region {
 
             this.regionAndComponentList = regionAndComponentList;
 
-            this.refString = "";
+            this.refString = '';
             this.regionAndComponentList.forEach((regionAndComponent: ComponentPathRegionAndComponent, index: number) => {
                 this.refString += regionAndComponent.toString();
                 if (index < this.regionAndComponentList.length - 1) {
@@ -43,15 +43,14 @@ module api.content.page.region {
 
         getRegionPath(): RegionPath {
 
-            let regionPathAsString = "";
+            let regionPathAsString = '';
             this.regionAndComponentList.forEach((regionAndComponent: ComponentPathRegionAndComponent, index: number) => {
 
                 if (index == this.regionAndComponentList.length - 1) {
                     regionPathAsString += regionAndComponent.getRegionName();
-                }
-                else {
+                } else {
                     regionPathAsString += regionAndComponent.toString();
-                    regionPathAsString += "/";
+                    regionPathAsString += '/';
                 }
 
             });
@@ -110,8 +109,8 @@ module api.content.page.region {
         }
 
         public static fromRegionPathAndComponentIndex(regionPath: RegionPath, componentIndex: number): ComponentPath {
-            api.util.assertNotNull(regionPath, "regionPath cannot be null");
-            api.util.assert(componentIndex >= 0, "componentIndex must be zero or more");
+            api.util.assertNotNull(regionPath, 'regionPath cannot be null');
+            api.util.assert(componentIndex >= 0, 'componentIndex must be zero or more');
 
             let regionAndComponentList: ComponentPathRegionAndComponent[] = [];
             if (regionPath.getParentComponentPath()) {
@@ -126,7 +125,7 @@ module api.content.page.region {
 
     export class ComponentPathRegionAndComponent {
 
-        private static DIVIDER: string = "/";
+        private static DIVIDER: string = '/';
 
         private regionName: string;
 

@@ -14,7 +14,7 @@ module api.app.wizard {
 
         constructor(className?: string) {
             super(className);
-            this.addClass("wizard-step-form");
+            this.addClass('wizard-step-form');
         }
 
         /*

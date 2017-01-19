@@ -158,10 +158,10 @@ module api.ui.time {
             }
 
             if (this.timezone) {
-                let timezoneContainer = new api.dom.LiEl("timezone");
+                let timezoneContainer = new api.dom.LiEl('timezone');
 
-                this.timezoneLocation = new api.dom.SpanEl("timezone-location").setHtml(this.timezone.getLocation());
-                this.timezoneOffset = new api.dom.SpanEl("timezone-offset").setHtml(this.getUTCString(this.timezone.getOffset()));
+                this.timezoneLocation = new api.dom.SpanEl('timezone-location').setHtml(this.timezone.getLocation());
+                this.timezoneOffset = new api.dom.SpanEl('timezone-offset').setHtml(this.getUTCString(this.timezone.getOffset()));
 
                 timezoneContainer.appendChild(this.timezoneLocation);
                 timezoneContainer.appendChild(this.timezoneOffset);
@@ -210,10 +210,10 @@ module api.ui.time {
 
         private getUTCString(value: number) {
             if (!value && value != 0) {
-                return "";
+                return '';
             }
-            let result = "UTC";
-            result = value > 0 ? result + "+" : (value == 0 ? result + "-" : result);
+            let result = 'UTC';
+            result = value > 0 ? result + '+' : (value == 0 ? result + '-' : result);
             return result + value;
         }
 

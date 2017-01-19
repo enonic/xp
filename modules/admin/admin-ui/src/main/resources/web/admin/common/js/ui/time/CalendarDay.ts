@@ -52,7 +52,7 @@ module api.ui.time {
         private calendarDayClickedListeners: {(event: CalendarDayClickedEvent) : void}[] = [];
 
         constructor(builder: CalendarDayBuilder) {
-            super("calendar-day");
+            super('calendar-day');
 
             this.date = builder.date;
             this.month = builder.month;
@@ -70,14 +70,14 @@ module api.ui.time {
             }
 
             this.dayOfWeek = DaysOfWeek.getByNumberCode(this.date.getDay());
-            this.setHtml("" + this.date.getDate());
+            this.setHtml('' + this.date.getDate());
 
             if (this.isBeforeMonth()) {
-                this.addClass("before-month");
+                this.addClass('before-month');
             }
 
             if (this.isAfterMonth()) {
-                this.addClass("after-month");
+                this.addClass('after-month');
             }
 
             this.onClicked((event: MouseEvent) => {
@@ -99,11 +99,10 @@ module api.ui.time {
         }
 
         refreshSelectedDay() {
-            if (this.selectedDay && !this.hasClass("selected-day")) {
-                this.addClass("selected-day");
-            }
-            else if (!this.selectedDay && this.hasClass("selected-day")) {
-                this.removeClass("selected-day");
+            if (this.selectedDay && !this.hasClass('selected-day')) {
+                this.addClass('selected-day');
+            } else if (!this.selectedDay && this.hasClass('selected-day')) {
+                this.removeClass('selected-day');
             }
         }
 
@@ -131,8 +130,7 @@ module api.ui.time {
         getPrevious(): CalendarDay {
             if (this.previousDay) {
                 return this.previousDay;
-            }
-            else {
+            } else {
                 let prevDate = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate() - 1);
                 this.previousDay = new CalendarDayBuilder().
                     setDate(prevDate).
@@ -146,8 +144,7 @@ module api.ui.time {
         getNext(): CalendarDay {
             if (this.nextDay) {
                 return this.nextDay;
-            }
-            else {
+            } else {
                 let nextDate = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate() + 1);
                 this.nextDay = new CalendarDayBuilder().
                     setDate(nextDate).

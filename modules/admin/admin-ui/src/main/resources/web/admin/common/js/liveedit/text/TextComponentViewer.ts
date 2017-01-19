@@ -11,8 +11,7 @@ module api.liveedit.text {
         resolveDisplayName(object: api.content.page.region.TextComponent, componentView?: api.liveedit.text.TextComponentView): string {
             if (componentView) {
                 return componentView.extractText() || componentView.getName();
-            }
-            else {
+            } else {
                 return object.getText();
             }
         }
@@ -22,7 +21,7 @@ module api.liveedit.text {
         }
 
         resolveIconClass(object: api.content.page.region.TextComponent): string {
-            return api.liveedit.ItemViewIconClassResolver.resolveByType("text");
+            return api.liveedit.ItemViewIconClassResolver.resolveByType('text');
         }
 
     }

@@ -81,8 +81,7 @@ module api.schema.content.inputtype {
             let value = new Value(selectedOption.getOption().displayValue.getContentTypeName().toString(), ValueTypes.STRING);
             if (this.combobox.countSelected() == 1) { // overwrite initial value
                 this.getPropertyArray().set(0, value);
-            }
-            else {
+            } else {
                 this.getPropertyArray().add(value);
             }
 
@@ -159,6 +158,6 @@ module api.schema.content.inputtype {
         }
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("ContentTypeFilter", ContentTypeFilter));
+    api.form.inputtype.InputTypeManager.register(new api.Class('ContentTypeFilter', ContentTypeFilter));
 
 }

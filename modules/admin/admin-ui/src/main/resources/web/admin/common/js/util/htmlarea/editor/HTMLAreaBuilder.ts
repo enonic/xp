@@ -25,13 +25,13 @@ module api.util.htmlarea.editor {
         private editableSourceCode: boolean;
 
         private tools: string = [
-            "styleselect",
-            "alignleft aligncenter alignright alignjustify",
-            "bullist numlist outdent indent",
-            "charmap anchor image macro link unlink",
-            "table",
-            "pastetext"
-        ].join(" | ");
+            'styleselect',
+            'alignleft aligncenter alignright alignjustify',
+            'bullist numlist outdent indent',
+            'charmap anchor image macro link unlink',
+            'table',
+            'pastetext'
+        ].join(' | ');
 
         private plugins: string[] = [
             'directionality',
@@ -139,12 +139,11 @@ module api.util.htmlarea.editor {
         private excludeTools(tools: any[]) {
             let strTools = this.tools;
             tools.forEach((toolStr: any) => {
-                toolStr.value.split(" ").forEach((tool: string) => {
-                    if (tool == "*") {
-                        strTools = "";
-                    }
-                    else {
-                        strTools = strTools.replace(tool, "");
+                toolStr.value.split(' ').forEach((tool: string) => {
+                    if (tool == '*') {
+                        strTools = '';
+                    } else {
+                        strTools = strTools.replace(tool, '');
                     }
                 });
             });
@@ -158,17 +157,17 @@ module api.util.htmlarea.editor {
         }
 
         private includeTool(tool: string) {
-            this.tools += " " + tool;
+            this.tools += ' ' + tool;
         }
 
         setTools(tools: any): HTMLAreaBuilder {
             this.customToolConfig = tools;
 
-            if (tools["exclude"] && tools["exclude"] instanceof Array) {
-                this.excludeTools(tools["exclude"]);
+            if (tools['exclude'] && tools['exclude'] instanceof Array) {
+                this.excludeTools(tools['exclude']);
             }
-            if (tools["include"] && tools["include"] instanceof Array) {
-                this.includeTools(tools["include"]);
+            if (tools['include'] && tools['include'] instanceof Array) {
+                this.includeTools(tools['include']);
             }
 
             return this;
@@ -176,15 +175,15 @@ module api.util.htmlarea.editor {
 
         private checkRequiredFieldsAreSet() {
             if (!this.assetsUri || !this.selector || !this.content) {
-                throw new Error("some required fields are missing for tinymce editor");
+                throw new Error('some required fields are missing for tinymce editor');
             }
         }
 
         public createEditor(): wemQ.Promise<HtmlAreaEditor> {
             this.checkRequiredFieldsAreSet();
 
-            if (this.inline && this.editableSourceCode && !this.isToolExcluded("code")) {
-                this.includeTool("code");
+            if (this.inline && this.editableSourceCode && !this.isToolExcluded('code')) {
+                this.includeTool('code');
             }
 
             let deferred = wemQ.defer<HtmlAreaEditor>();
@@ -245,20 +244,20 @@ module api.util.htmlarea.editor {
                 verify_css_classes: false,
                 plugins: this.editableSourceCode ? this.plugins.concat('code') : this.plugins,
                 external_plugins: {
-                    link: this.assetsUri + "/common/js/util/htmlarea/plugins/link.js",
-                    anchor: this.assetsUri + "/common/js/util/htmlarea/plugins/anchor.js",
-                    image: this.assetsUri + "/common/js/util/htmlarea/plugins/image.js",
-                    macro: this.assetsUri + "/common/js/util/htmlarea/plugins/macro.js"
+                    link: this.assetsUri + '/common/js/util/htmlarea/plugins/link.js',
+                    anchor: this.assetsUri + '/common/js/util/htmlarea/plugins/anchor.js',
+                    image: this.assetsUri + '/common/js/util/htmlarea/plugins/image.js',
+                    macro: this.assetsUri + '/common/js/util/htmlarea/plugins/macro.js'
                 },
-                object_resizing: "table",
+                object_resizing: 'table',
                 autoresize_min_height: 100,
                 autoresize_bottom_margin: 0,
 
                 setup: (editor) => {
-                    editor.addCommand("openLinkDialog", this.notifyLinkDialog, this);
-                    editor.addCommand("openAnchorDialog", this.notifyAnchorDialog, this);
-                    editor.addCommand("openImageDialog", this.notifyImageDialog, this);
-                    editor.addCommand("openMacroDialog", this.notifyMacroDialog, this);
+                    editor.addCommand('openLinkDialog', this.notifyLinkDialog, this);
+                    editor.addCommand('openAnchorDialog', this.notifyAnchorDialog, this);
+                    editor.addCommand('openImageDialog', this.notifyImageDialog, this);
+                    editor.addCommand('openMacroDialog', this.notifyMacroDialog, this);
                     editor.on('NodeChange', (e) => {
                         if (!!this.nodeChangeHandler) {
                             this.nodeChangeHandler(e);
@@ -287,8 +286,7 @@ module api.util.htmlarea.editor {
                         if (e.keyCode == 9 && !e.altKey && !e.ctrlKey) { // tab pressed
                             editor.execCommand(e.shiftKey ? 'Outdent' : 'Indent');
                             e.preventDefault();
-                        }
-                        else if (e.keyCode == 46 || e.keyCode == 8) { // DELETE
+                        } else if (e.keyCode == 46 || e.keyCode == 8) { // DELETE
                             let selectedNode = editor.selection.getRng().startContainer;
                             if (/^(FIGURE)$/.test(selectedNode.nodeName)) {
                                 let previousEl = selectedNode.previousSibling;
@@ -296,8 +294,7 @@ module api.util.htmlarea.editor {
                                 selectedNode.remove();
                                 if (previousEl) {
                                     editor.selection.setNode(previousEl);
-                                }
-                                else {
+                                } else {
                                     editor.focus();
                                 }
                             }
@@ -369,10 +366,10 @@ module api.util.htmlarea.editor {
         }
 
         private isToolExcluded(tool: string): boolean {
-            if (!this.customToolConfig || !this.customToolConfig["exclude"]) {
+            if (!this.customToolConfig || !this.customToolConfig['exclude']) {
                 return false;
             }
-            return this.customToolConfig["exclude"].indexOf(tool) > -1;
+            return this.customToolConfig['exclude'].indexOf(tool) > -1;
         }
     }
 }

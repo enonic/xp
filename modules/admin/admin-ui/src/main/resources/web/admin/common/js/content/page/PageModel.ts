@@ -129,7 +129,6 @@ module api.content.page {
             this.fragment = liveEditModel.getContent().getPage() ? liveEditModel.getContent().getPage().getFragment() : null;
             this.configPropertyChangedHandler = () => {
                 if (!this.ignorePropertyChanges) {
-                    //console.log("PageModel.config.onChanged: ", event.getPath().toString());
                     if (this.mode == PageMode.AUTOMATIC) {
                         let setTemplate = new SetTemplate(this).setTemplate(this.defaultTemplate, this.defaultTemplateDescriptor);
                         this.setTemplate(setTemplate, true);
@@ -138,7 +137,6 @@ module api.content.page {
             };
             this.regionsChangedEventHandler = () => {
                 if (!this.ignorePropertyChanges) {
-                    //console.log("PageModel.regions.onChanged: ", event);
                     if (this.mode == PageMode.AUTOMATIC) {
                         let setTemplate = new SetTemplate(this).setTemplate(this.defaultTemplate, this.defaultTemplateDescriptor);
                         this.setTemplate(setTemplate);
@@ -196,8 +194,7 @@ module api.content.page {
                     setConfig(new PropertyTree()).
                     setRegions(api.content.page.region.Regions.create().build());
                 this.setController(setController);
-            }
-            else {
+            } else {
                 this.setAutomaticTemplate(eventSource);
             }
 
@@ -304,8 +301,7 @@ module api.content.page {
 
             if (setTemplate.template) {
                 this.setMode(PageMode.FORCED_TEMPLATE);
-            }
-            else if (this.getMode() != PageMode.FRAGMENT) {
+            } else if (this.getMode() != PageMode.FRAGMENT) {
                 this.setMode(PageMode.AUTOMATIC);
             }
 
@@ -400,8 +396,7 @@ module api.content.page {
             if (this.mode == PageMode.AUTOMATIC) {
 
                 return null;
-            }
-            else if (this.mode == PageMode.FORCED_TEMPLATE) {
+            } else if (this.mode == PageMode.FORCED_TEMPLATE) {
 
                 let regionsUnchanged = this.defaultTemplate.getRegions().equals(this.regions);
                 let regions = regionsUnchanged ? null : this.regions;
@@ -416,8 +411,7 @@ module api.content.page {
                     setCustomized(this.isCustomized()).
                     setFragment(this.fragment).
                     build();
-            }
-            else if (this.mode == PageMode.FORCED_CONTROLLER) {
+            } else if (this.mode == PageMode.FORCED_CONTROLLER) {
                 return new PageBuilder().
                     setController(this.controller.getKey()).
                     setRegions(this.regions).
@@ -425,23 +419,19 @@ module api.content.page {
                     setCustomized(this.isCustomized()).
                     setFragment(this.fragment).
                     build();
-            }
-            else if (this.mode == PageMode.NO_CONTROLLER) {
+            } else if (this.mode == PageMode.NO_CONTROLLER) {
                 if (this.contentHasNonRenderableTemplateSet()) {
                     return new PageBuilder().
                         setTemplate(this.liveEditModel.getContent().getPage().getTemplate()).setFragment(this.fragment).
                         build();
-                }
-                else {
+                } else {
                     return null;
                 }
-            }
-            else if (this.mode == PageMode.FRAGMENT) {
+            } else if (this.mode == PageMode.FRAGMENT) {
                 return new PageBuilder().setRegions(null).setConfig(this.config).setCustomized(this.isCustomized()).setFragment(
                     this.fragment).build();
-            }
-            else {
-                throw new Error("Page mode not supported: " + this.mode);
+            } else {
+                throw new Error('Page mode not supported: ' + this.mode);
             }
 
         }

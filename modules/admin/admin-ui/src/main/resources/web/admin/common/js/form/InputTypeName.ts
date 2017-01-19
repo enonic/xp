@@ -2,7 +2,7 @@ module api.form {
 
     export class InputTypeName implements api.Equitable {
 
-        private static CUSTOM_PREFIX: string = "custom:";
+        private static CUSTOM_PREFIX: string = 'custom:';
 
         private custom: boolean;
 
@@ -13,8 +13,7 @@ module api.form {
         static parseInputTypeName(str: string) {
             if (str.substr(0, InputTypeName.CUSTOM_PREFIX.length) == InputTypeName.CUSTOM_PREFIX) {
                 return new InputTypeName(str.substr(InputTypeName.CUSTOM_PREFIX.length, str.length), true);
-            }
-            else {
+            } else {
                 return new InputTypeName(str, false);
             }
         }
@@ -25,8 +24,7 @@ module api.form {
 
             if (this.custom) {
                 this.refString = InputTypeName.CUSTOM_PREFIX + name;
-            }
-            else {
+            } else {
                 this.refString = name;
             }
         }

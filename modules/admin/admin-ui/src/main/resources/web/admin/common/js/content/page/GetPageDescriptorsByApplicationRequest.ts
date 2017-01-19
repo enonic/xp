@@ -6,7 +6,7 @@ module api.content.page {
 
         constructor(applicationKey: api.application.ApplicationKey) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
             this.applicationKey = applicationKey;
         }
 
@@ -17,7 +17,7 @@ module api.content.page {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "list", "by_application");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'list', 'by_application');
         }
 
         sendAndParse(): wemQ.Promise<PageDescriptor[]> {
@@ -25,8 +25,7 @@ module api.content.page {
             let cached = this.cache.getByApplication(this.applicationKey);
             if (cached) {
                 return wemQ(cached);
-            }
-            else {
+            } else {
                 return this.send().then((response: api.rest.JsonResponse<PageDescriptorsJson>) => {
                     return this.fromJsonToPageDescriptors(response.getResult());
                 });

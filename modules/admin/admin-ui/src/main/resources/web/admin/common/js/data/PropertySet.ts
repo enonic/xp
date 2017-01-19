@@ -129,8 +129,8 @@ module api.data {
 
         addPropertyArray(array: PropertyArray) {
             api.util.assertState(this.tree === array.getTree(),
-                "Added PropertyArray must be attached to the same PropertyTree as this PropertySet");
-            api.util.assert(this == array.getParent(), "propertyArray must have this PropertySet as parent");
+                'Added PropertyArray must be attached to the same PropertyTree as this PropertySet');
+            api.util.assert(this == array.getParent(), 'propertyArray must have this PropertySet as parent');
             this.propertyArrayByName[array.getName()] = array;
 
             this.registerPropertyArrayListeners(array);
@@ -151,8 +151,7 @@ module api.data {
         setPropertyByPath(path: any, value: Value): Property {
             if (api.ObjectHelper.iFrameSafeInstanceOf(path, PropertyPath)) {
                 return this.doSetProperty(<PropertyPath>path, value);
-            }
-            else {
+            } else {
                 return this.doSetProperty(PropertyPath.fromString(path.toString()), value);
             }
         }
@@ -162,8 +161,7 @@ module api.data {
             if (path.elementCount() > 1) {
                 let propertySet = this.getOrCreateSet(firstPathElement.getName(), firstPathElement.getIndex());
                 return propertySet.setPropertyByPath(path.removeFirstPathElement(), value);
-            }
-            else {
+            } else {
                 return this.setProperty(firstPathElement.getName(), firstPathElement.getIndex(), value);
             }
         }
@@ -174,8 +172,7 @@ module api.data {
                 let newSet = this.tree ? new PropertySet(this.tree) : new PropertySet();
                 this.setProperty(name, index, new Value(newSet, ValueTypes.DATA));
                 return newSet;
-            }
-            else {
+            } else {
                 return existingProperty.getPropertySet();
             }
         }
@@ -256,11 +253,9 @@ module api.data {
                 let type = property.getType();
                 if (property.hasNullValue()) {
                     toRemove.push(property);
-                }
-                else if (type.equals(api.data.ValueTypes.STRING) && (property.getValue().getString() === '')) {
+                } else if (type.equals(api.data.ValueTypes.STRING) && (property.getValue().getString() === '')) {
                     toRemove.push(property);
-                }
-                else if (type.equals(api.data.ValueTypes.DATA)) {
+                } else if (type.equals(api.data.ValueTypes.DATA)) {
                     let propertySetValue = property.getValue().getPropertySet();
                     this.doRemoveEmptyValues(propertySetValue);
                     if (propertySetValue.isEmpty()) {
@@ -326,16 +321,14 @@ module api.data {
 
             if (identifier == undefined && index == undefined) {
                 return this.property;
-            }
-            else if (index != undefined) {
+            } else if (index != undefined) {
                 Property.checkName(identifier);
                 let array = this.propertyArrayByName[identifier];
                 if (!array) {
                     return null;
                 }
                 return array.get(index);
-            }
-            else {
+            } else {
                 return this.getPropertyByPath(identifier);
             }
         }
@@ -344,8 +337,7 @@ module api.data {
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(path, PropertyPath)) {
                 return this.doGetPropertyByPath(<PropertyPath>path);
-            }
-            else {
+            } else {
                 return this.doGetPropertyByPath(PropertyPath.fromString(path.toString()));
             }
         }
@@ -360,8 +352,7 @@ module api.data {
                 }
                 let propertySet = property.getPropertySet();
                 return propertySet.getPropertyByPath(path.removeFirstPathElement());
-            }
-            else {
+            } else {
                 return this.getProperty(firstElement.getName(), firstElement.getIndex());
             }
         }
@@ -503,7 +494,7 @@ module api.data {
 
         private registerPropertyArrayListeners(array: PropertyArray) {
             if (PropertySet.debug) {
-                console.debug("PropertySet[" + this.getPropertyPath().toString() + "].registerPropertyArrayListeners: " + array.getName());
+                console.debug('PropertySet[' + this.getPropertyPath().toString() + '].registerPropertyArrayListeners: ' + array.getName());
             }
 
             array.onPropertyAdded(this.propertyAddedEventHandler);
@@ -530,7 +521,7 @@ module api.data {
 
         private notifyChangedListeners(event: PropertyEvent) {
             if (PropertySet.debug) {
-                console.debug("PropertySet[" + this.getPropertyPath().toString() + "].notifyChangedListeners: " +
+                console.debug('PropertySet[' + this.getPropertyPath().toString() + '].notifyChangedListeners: ' +
                               event.toString());
             }
             this.changedListeners.forEach((listener) => listener(event));
@@ -557,7 +548,7 @@ module api.data {
         private forwardPropertyAddedEvent(event: PropertyAddedEvent) {
             this.propertyAddedListeners.forEach((listener) => listener(event));
             if (PropertySet.debug) {
-                console.debug("PropertySet[" + this.getPropertyPath().toString() + "].forwardPropertyAddedEvent: " +
+                console.debug('PropertySet[' + this.getPropertyPath().toString() + '].forwardPropertyAddedEvent: ' +
                               event.toString());
             }
             this.notifyChangedListeners(event);
@@ -583,7 +574,7 @@ module api.data {
 
         private forwardPropertyRemovedEvent(event: PropertyRemovedEvent) {
             if (PropertySet.debug) {
-                console.debug("PropertySet[" + this.getPropertyPath().toString() + "].forwardPropertyRemovedEvent: " +
+                console.debug('PropertySet[' + this.getPropertyPath().toString() + '].forwardPropertyRemovedEvent: ' +
                               event.toString());
             }
             this.propertyRemovedListeners.forEach((listener) => listener(event));
@@ -610,7 +601,7 @@ module api.data {
 
         private forwardPropertyIndexChangedEvent(event: PropertyIndexChangedEvent) {
             if (PropertySet.debug) {
-                console.debug("PropertySet[" + this.getPropertyPath().toString() + "].forwardPropertyIndexChangedEvent: " +
+                console.debug('PropertySet[' + this.getPropertyPath().toString() + '].forwardPropertyIndexChangedEvent: ' +
                               event.toString());
             }
             this.propertyIndexChangedListeners.forEach((listener) => listener(event));
@@ -637,7 +628,7 @@ module api.data {
 
         private forwardPropertyValueChangedEvent(event: PropertyValueChangedEvent) {
             if (PropertySet.debug) {
-                console.debug("PropertySet[" + this.getPropertyPath().toString() + "].forwardPropertyValueChangedEvent: " +
+                console.debug('PropertySet[' + this.getPropertyPath().toString() + '].forwardPropertyValueChangedEvent: ' +
                               event.toString());
             }
             this.propertyValueChangedListeners.forEach((listener) => listener(event));
@@ -653,7 +644,7 @@ module api.data {
          */
         newSet(): PropertySet {
             if (!this.tree) {
-                throw new Error("The PropertySet must be attached to a PropertyTree before this method can be invoked. Use PropertySet constructor with no arguments instead.");
+                throw new Error('The PropertySet must be attached to a PropertyTree before this method can be invoked. Use PropertySet constructor with no arguments instead.');
             }
             return this.tree.newPropertySet();
         }
@@ -667,7 +658,7 @@ module api.data {
         addPropertySet(name: string, value?: PropertySet): PropertySet {
             if (!value) {
                 if (!this.tree) {
-                    throw new Error("The PropertySet must be attached to a PropertyTree before this method can be invoked. Use PropertySet constructor with no arguments instead.");
+                    throw new Error('The PropertySet must be attached to a PropertyTree before this method can be invoked. Use PropertySet constructor with no arguments instead.');
                 }
                 value = this.tree.newPropertySet();
             }

@@ -10,7 +10,7 @@ module api {
 
         private static NOT_ASCII: RegExp = /[^\x00-\x7F]/g;
 
-        private static DEFAULT_REPLACE: string = "";
+        private static DEFAULT_REPLACE: string = '';
 
         private static REPLACE_WITH_HYPHEN_CHARS: NamePrettyfier = NamePrettyfier.buildReplaceWithHyphenMap();
 
@@ -47,7 +47,7 @@ module api {
 
         private static makeLowerCase(prettifiedName: string): string {
             if (StringHelper.isEmpty(prettifiedName)) {
-                return "";
+                return '';
             }
 
             return prettifiedName.toLowerCase();
@@ -55,10 +55,10 @@ module api {
 
         private static replaceWithHyphens(prettifiedName: string): string {
             if (StringHelper.isEmpty(prettifiedName)) {
-                return "";
+                return '';
             }
 
-            let result = "";
+            let result = '';
 
             for (let i = 0; i < prettifiedName.length; i++) {
                 let character = prettifiedName[i];
@@ -71,12 +71,12 @@ module api {
 
         private static replaceBlankSpaces(prettifiedName: string): string {
             if (StringHelper.isEmpty(prettifiedName)) {
-                return "";
+                return '';
             }
 
             let trimmedName: string = prettifiedName.trim();
 
-            return trimmedName.replace(/\s+/g, "-");
+            return trimmedName.replace(/\s+/g, '-');
         }
 
         private static isCurrencyChar(char: string) {
@@ -87,23 +87,23 @@ module api {
 
         private static replaceTrailingHyphens(prettifiedName: string): string {
             if (StringHelper.isBlank(prettifiedName)) {
-                return "";
+                return '';
             }
 
-            return prettifiedName.replace(/-[-]+/g, "-");
+            return prettifiedName.replace(/-[-]+/g, '-');
         }
 
         private static replaceHyphensAroundDot(prettifiedName: string): string {
             if (StringHelper.isBlank(prettifiedName)) {
-                return "";
+                return '';
             }
 
-            return prettifiedName.replace(/-?\.-?/g, ".");
+            return prettifiedName.replace(/-?\.-?/g, '.');
         }
 
         private static ensureNiceBeginningAndEnding(prettifiedName: string): string {
             if (StringHelper.isBlank(prettifiedName)) {
-                return "";
+                return '';
             }
 
             this.STRIP_BEGINNING_PATTERN.lastIndex = this.STRIP_ENDING_PATTERN.lastIndex = 0;
@@ -126,7 +126,7 @@ module api {
                 return '';
             }
 
-            let result = "";
+            let result = '';
 
             for (let i = 0; i < transcribeMe.length; i++) {
                 let character = transcribeMe[i];
@@ -322,33 +322,33 @@ module api {
 
         private static buildReplaceWithHyphenMap(): Object {
             let replaceWithHyphenObject = {
-                $: "-",
-                '&': "-",
-                '|': "-",
-                ':': "-",
-                ';': "-",
-                '#': "-",
-                '/': "-",
-                '\\': "-",
-                '<': "-",
-                '>': "-",
-                '\"': "-",
-                '*': "-",
-                '+': "-",
-                ',': "-",
-                '=': "-",
-                '@': "-",
-                '%': "-",
-                '{': "-",
-                ' }': "-",
-                '[': "-",
-                ']': "-",
-                '`': "-",
-                '~': "-",
-                '^': "-",
-                _: "-",
-                '\'': "-",
-                '?': "-"
+                $: '-',
+                '&': '-',
+                '|': '-',
+                ':': '-',
+                ';': '-',
+                '#': '-',
+                '/': '-',
+                '\\': '-',
+                '<': '-',
+                '>': '-',
+                '\"': '-',
+                '*': '-',
+                '+': '-',
+                ',': '-',
+                '=': '-',
+                '@': '-',
+                '%': '-',
+                '{': '-',
+                ' }': '-',
+                '[': '-',
+                ']': '-',
+                '`': '-',
+                '~': '-',
+                '^': '-',
+                _: '-',
+                '\'': '-',
+                '?': '-'
             };
 
             return replaceWithHyphenObject;
@@ -386,177 +386,177 @@ module api {
             nonDiacriticsObject['*'] = this.DEFAULT_REPLACE;
 
             //replace non-diacritics as their equivalent chars
-            nonDiacriticsObject['\u0141'] = "l";    // BiaLystock
-            nonDiacriticsObject['\u0142'] = "l";    // Bialystock
-            nonDiacriticsObject['\u00df'] = "ss";
-            nonDiacriticsObject['\u00e6'] = "ae";
-            nonDiacriticsObject['\u00f8'] = "o";
-            nonDiacriticsObject['\u00a9'] = "c";
-            nonDiacriticsObject['\u00D0'] = "d";     // all \u00d0 \u00f0 from http://de.wikipedia.org/wiki/%C3%90
-            nonDiacriticsObject['\u00F0'] = "d";
-            nonDiacriticsObject['\u0110'] = "d";
-            nonDiacriticsObject['\u0111'] = "d";
-            nonDiacriticsObject['\u0189'] = "d";
-            nonDiacriticsObject['\u0256'] = "d";
-            nonDiacriticsObject['\u00DE'] = "th";   // thorn \u00de
-            nonDiacriticsObject['\u00FE'] = "th";   // thorn \u00fe
+            nonDiacriticsObject['\u0141'] = 'l';    // BiaLystock
+            nonDiacriticsObject['\u0142'] = 'l';    // Bialystock
+            nonDiacriticsObject['\u00df'] = 'ss';
+            nonDiacriticsObject['\u00e6'] = 'ae';
+            nonDiacriticsObject['\u00f8'] = 'o';
+            nonDiacriticsObject['\u00a9'] = 'c';
+            nonDiacriticsObject['\u00D0'] = 'd';     // all \u00d0 \u00f0 from http://de.wikipedia.org/wiki/%C3%90
+            nonDiacriticsObject['\u00F0'] = 'd';
+            nonDiacriticsObject['\u0110'] = 'd';
+            nonDiacriticsObject['\u0111'] = 'd';
+            nonDiacriticsObject['\u0189'] = 'd';
+            nonDiacriticsObject['\u0256'] = 'd';
+            nonDiacriticsObject['\u00DE'] = 'th';   // thorn \u00de
+            nonDiacriticsObject['\u00FE'] = 'th';   // thorn \u00fe
 
             // cyrillic letters transliteration
             // big letters
-            nonDiacriticsObject['\u0410'] = "a"; // �
-            nonDiacriticsObject['\u0411'] = "b"; // �
-            nonDiacriticsObject['\u0412'] = "v"; // �
-            nonDiacriticsObject['\u0413'] = "g"; // �
-            nonDiacriticsObject['\u0414'] = "d"; // �
-            nonDiacriticsObject['\u0415'] = "e"; // �
-            nonDiacriticsObject['\u0401'] = "jo"; // �
-            nonDiacriticsObject['\u0416'] = "zh"; // �
-            nonDiacriticsObject['\u0417'] = "z"; // �
-            nonDiacriticsObject['\u0418'] = "i"; // �
-            nonDiacriticsObject['\u0419'] = "j"; // �
-            nonDiacriticsObject['\u041a'] = "k"; // �
-            nonDiacriticsObject['\u041b'] = "l"; // �
-            nonDiacriticsObject['\u041c'] = "m"; // �
-            nonDiacriticsObject['\u041d'] = "n"; // �
-            nonDiacriticsObject['\u041e'] = "o"; // �
-            nonDiacriticsObject['\u041f'] = "p"; // �
-            nonDiacriticsObject['\u0420'] = "r"; // �
-            nonDiacriticsObject['\u0421'] = "s"; // �
-            nonDiacriticsObject['\u0422'] = "t"; // �
-            nonDiacriticsObject['\u0423'] = "u"; // �
-            nonDiacriticsObject['\u0424'] = "f"; // �
-            nonDiacriticsObject['\u0425'] = "h"; // �
-            nonDiacriticsObject['\u0426'] = "c"; // �
-            nonDiacriticsObject['\u0427'] = "ch"; // �
-            nonDiacriticsObject['\u0428'] = "sh"; // �
-            nonDiacriticsObject['\u0429'] = "sch"; // �
-            nonDiacriticsObject['\u042a'] = ""; // �
-            nonDiacriticsObject['\u042b'] = "y"; // �
-            nonDiacriticsObject['\u042c'] = ""; // �
-            nonDiacriticsObject['\u042d'] = "eh"; // �
-            nonDiacriticsObject['\u042e'] = "ju"; // �
-            nonDiacriticsObject['\u042f'] = "ja"; // �
+            nonDiacriticsObject['\u0410'] = 'a'; // �
+            nonDiacriticsObject['\u0411'] = 'b'; // �
+            nonDiacriticsObject['\u0412'] = 'v'; // �
+            nonDiacriticsObject['\u0413'] = 'g'; // �
+            nonDiacriticsObject['\u0414'] = 'd'; // �
+            nonDiacriticsObject['\u0415'] = 'e'; // �
+            nonDiacriticsObject['\u0401'] = 'jo'; // �
+            nonDiacriticsObject['\u0416'] = 'zh'; // �
+            nonDiacriticsObject['\u0417'] = 'z'; // �
+            nonDiacriticsObject['\u0418'] = 'i'; // �
+            nonDiacriticsObject['\u0419'] = 'j'; // �
+            nonDiacriticsObject['\u041a'] = 'k'; // �
+            nonDiacriticsObject['\u041b'] = 'l'; // �
+            nonDiacriticsObject['\u041c'] = 'm'; // �
+            nonDiacriticsObject['\u041d'] = 'n'; // �
+            nonDiacriticsObject['\u041e'] = 'o'; // �
+            nonDiacriticsObject['\u041f'] = 'p'; // �
+            nonDiacriticsObject['\u0420'] = 'r'; // �
+            nonDiacriticsObject['\u0421'] = 's'; // �
+            nonDiacriticsObject['\u0422'] = 't'; // �
+            nonDiacriticsObject['\u0423'] = 'u'; // �
+            nonDiacriticsObject['\u0424'] = 'f'; // �
+            nonDiacriticsObject['\u0425'] = 'h'; // �
+            nonDiacriticsObject['\u0426'] = 'c'; // �
+            nonDiacriticsObject['\u0427'] = 'ch'; // �
+            nonDiacriticsObject['\u0428'] = 'sh'; // �
+            nonDiacriticsObject['\u0429'] = 'sch'; // �
+            nonDiacriticsObject['\u042a'] = ''; // �
+            nonDiacriticsObject['\u042b'] = 'y'; // �
+            nonDiacriticsObject['\u042c'] = ''; // �
+            nonDiacriticsObject['\u042d'] = 'eh'; // �
+            nonDiacriticsObject['\u042e'] = 'ju'; // �
+            nonDiacriticsObject['\u042f'] = 'ja'; // �
 
             // small letters
-            nonDiacriticsObject['\u0430'] = "a"; // �
-            nonDiacriticsObject['\u0431'] = "b"; // �
-            nonDiacriticsObject['\u0432'] = "v"; // �
-            nonDiacriticsObject['\u0433'] = "g"; // �
-            nonDiacriticsObject['\u0434'] = "d"; // �
-            nonDiacriticsObject['\u0435'] = "e"; // �
-            nonDiacriticsObject['\u0451'] = "jo"; // �
-            nonDiacriticsObject['\u0436'] = "zh"; // �
-            nonDiacriticsObject['\u0437'] = "z"; // �
-            nonDiacriticsObject['\u0438'] = "i"; // �
-            nonDiacriticsObject['\u0439'] = "j"; // �
-            nonDiacriticsObject['\u043a'] = "k"; // �
-            nonDiacriticsObject['\u043b'] = "l"; // �
-            nonDiacriticsObject['\u043c'] = "m"; // �
-            nonDiacriticsObject['\u043d'] = "n"; // �
-            nonDiacriticsObject['\u043e'] = "o"; // �
-            nonDiacriticsObject['\u043f'] = "p"; // �
-            nonDiacriticsObject['\u0440'] = "r"; // �
-            nonDiacriticsObject['\u0441'] = "s"; // �
-            nonDiacriticsObject['\u0442'] = "t"; // �
-            nonDiacriticsObject['\u0443'] = "u"; // �
-            nonDiacriticsObject['\u0444'] = "f"; // �
-            nonDiacriticsObject['\u0445'] = "h"; // �
-            nonDiacriticsObject['\u0446'] = "c"; // �
-            nonDiacriticsObject['\u0447'] = "ch"; // �
-            nonDiacriticsObject['\u0448'] = "sh"; // �
-            nonDiacriticsObject['\u0449'] = "sch"; // �
-            nonDiacriticsObject['\u044a'] = ""; // �
-            nonDiacriticsObject['\u044b'] = "y"; // �
-            nonDiacriticsObject['\u044c'] = ""; // �
-            nonDiacriticsObject['\u044d'] = "eh"; // �
-            nonDiacriticsObject['\u044e'] = "ju"; // �
-            nonDiacriticsObject['\u044f'] = "ja"; // �
+            nonDiacriticsObject['\u0430'] = 'a'; // �
+            nonDiacriticsObject['\u0431'] = 'b'; // �
+            nonDiacriticsObject['\u0432'] = 'v'; // �
+            nonDiacriticsObject['\u0433'] = 'g'; // �
+            nonDiacriticsObject['\u0434'] = 'd'; // �
+            nonDiacriticsObject['\u0435'] = 'e'; // �
+            nonDiacriticsObject['\u0451'] = 'jo'; // �
+            nonDiacriticsObject['\u0436'] = 'zh'; // �
+            nonDiacriticsObject['\u0437'] = 'z'; // �
+            nonDiacriticsObject['\u0438'] = 'i'; // �
+            nonDiacriticsObject['\u0439'] = 'j'; // �
+            nonDiacriticsObject['\u043a'] = 'k'; // �
+            nonDiacriticsObject['\u043b'] = 'l'; // �
+            nonDiacriticsObject['\u043c'] = 'm'; // �
+            nonDiacriticsObject['\u043d'] = 'n'; // �
+            nonDiacriticsObject['\u043e'] = 'o'; // �
+            nonDiacriticsObject['\u043f'] = 'p'; // �
+            nonDiacriticsObject['\u0440'] = 'r'; // �
+            nonDiacriticsObject['\u0441'] = 's'; // �
+            nonDiacriticsObject['\u0442'] = 't'; // �
+            nonDiacriticsObject['\u0443'] = 'u'; // �
+            nonDiacriticsObject['\u0444'] = 'f'; // �
+            nonDiacriticsObject['\u0445'] = 'h'; // �
+            nonDiacriticsObject['\u0446'] = 'c'; // �
+            nonDiacriticsObject['\u0447'] = 'ch'; // �
+            nonDiacriticsObject['\u0448'] = 'sh'; // �
+            nonDiacriticsObject['\u0449'] = 'sch'; // �
+            nonDiacriticsObject['\u044a'] = ''; // �
+            nonDiacriticsObject['\u044b'] = 'y'; // �
+            nonDiacriticsObject['\u044c'] = ''; // �
+            nonDiacriticsObject['\u044d'] = 'eh'; // �
+            nonDiacriticsObject['\u044e'] = 'ju'; // �
+            nonDiacriticsObject['\u044f'] = 'ja'; // �
 
             // others
-            nonDiacriticsObject['\u0406'] = "i";  // �
-            nonDiacriticsObject['\u0472'] = "fh";  // ?
-            nonDiacriticsObject['\u0462'] = "je";  // ?
-            nonDiacriticsObject['\u0474'] = "yh";  // ?
-            nonDiacriticsObject['\u0490'] = "gj";  // �
-            nonDiacriticsObject['\u0403'] = "gj";  // �
-            nonDiacriticsObject['\u0404'] = "ye";  // �
-            nonDiacriticsObject['\u0407'] = "yi";  // �
-            nonDiacriticsObject['\u0405'] = "dz";  // �
-            nonDiacriticsObject['\u0408'] = "jj";  // �
-            nonDiacriticsObject['\u0409'] = "lj";  // �
-            nonDiacriticsObject['\u040a'] = "nj";  // �
-            nonDiacriticsObject['\u040c'] = "kj";  // �
-            nonDiacriticsObject['\u040f'] = "dj";  // �
-            nonDiacriticsObject['\u040e'] = "uj";  // �
+            nonDiacriticsObject['\u0406'] = 'i';  // �
+            nonDiacriticsObject['\u0472'] = 'fh';  // ?
+            nonDiacriticsObject['\u0462'] = 'je';  // ?
+            nonDiacriticsObject['\u0474'] = 'yh';  // ?
+            nonDiacriticsObject['\u0490'] = 'gj';  // �
+            nonDiacriticsObject['\u0403'] = 'gj';  // �
+            nonDiacriticsObject['\u0404'] = 'ye';  // �
+            nonDiacriticsObject['\u0407'] = 'yi';  // �
+            nonDiacriticsObject['\u0405'] = 'dz';  // �
+            nonDiacriticsObject['\u0408'] = 'jj';  // �
+            nonDiacriticsObject['\u0409'] = 'lj';  // �
+            nonDiacriticsObject['\u040a'] = 'nj';  // �
+            nonDiacriticsObject['\u040c'] = 'kj';  // �
+            nonDiacriticsObject['\u040f'] = 'dj';  // �
+            nonDiacriticsObject['\u040e'] = 'uj';  // �
 
-            nonDiacriticsObject['\u0456'] = "i";  // �
-            nonDiacriticsObject['\u0473'] = "fh";  // ?
-            nonDiacriticsObject['\u0463'] = "je";  // ?
-            nonDiacriticsObject['\u0475'] = "yh";  // ?
-            nonDiacriticsObject['\u0491'] = "gj";  // �
-            nonDiacriticsObject['\u0453'] = "gj";  // �
-            nonDiacriticsObject['\u0454'] = "ye";  // �
-            nonDiacriticsObject['\u0457'] = "yi";  // �
-            nonDiacriticsObject['\u0455'] = "dz";  // �
-            nonDiacriticsObject['\u0458'] = "jj";  // �
-            nonDiacriticsObject['\u0459'] = "lj";  // �
-            nonDiacriticsObject['\u045a'] = "nj";  // �
-            nonDiacriticsObject['\u045c'] = "kj";  // �
-            nonDiacriticsObject['\u045f'] = "dj";  // �
-            nonDiacriticsObject['\u045e'] = "uj";   // �
+            nonDiacriticsObject['\u0456'] = 'i';  // �
+            nonDiacriticsObject['\u0473'] = 'fh';  // ?
+            nonDiacriticsObject['\u0463'] = 'je';  // ?
+            nonDiacriticsObject['\u0475'] = 'yh';  // ?
+            nonDiacriticsObject['\u0491'] = 'gj';  // �
+            nonDiacriticsObject['\u0453'] = 'gj';  // �
+            nonDiacriticsObject['\u0454'] = 'ye';  // �
+            nonDiacriticsObject['\u0457'] = 'yi';  // �
+            nonDiacriticsObject['\u0455'] = 'dz';  // �
+            nonDiacriticsObject['\u0458'] = 'jj';  // �
+            nonDiacriticsObject['\u0459'] = 'lj';  // �
+            nonDiacriticsObject['\u045a'] = 'nj';  // �
+            nonDiacriticsObject['\u045c'] = 'kj';  // �
+            nonDiacriticsObject['\u045f'] = 'dj';  // �
+            nonDiacriticsObject['\u045e'] = 'uj';   // �
 
             // greek
             // big letters
-            nonDiacriticsObject['\u03b1'] = "a";  // ?
-            nonDiacriticsObject['\u03b2'] = "b";  // ?
-            nonDiacriticsObject['\u03b3'] = "g";  // ?
-            nonDiacriticsObject['\u03b4'] = "d";  // ?
-            nonDiacriticsObject['\u03b5'] = "e";  // ?
-            nonDiacriticsObject['\u03b6'] = "z";  // ?
-            nonDiacriticsObject['\u03b7'] = "e";  // ?
-            nonDiacriticsObject['\u03b8'] = "th";  // ?
-            nonDiacriticsObject['\u03b9'] = "i";  // ?
-            nonDiacriticsObject['\u03ba'] = "c";  // ?
-            nonDiacriticsObject['\u03bb'] = "l";  // ?
-            nonDiacriticsObject['\u03bc'] = "m";  // ?
-            nonDiacriticsObject['\u03bd'] = "n";  // ?
-            nonDiacriticsObject['\u03be'] = "x";  // ?
-            nonDiacriticsObject['\u03bf'] = "o";  // ?
-            nonDiacriticsObject['\u03c0'] = "p";  // ?
-            nonDiacriticsObject['\u03c1'] = "r";  // ?
-            nonDiacriticsObject['\u03c3'] = "s";  // ?
-            nonDiacriticsObject['\u03c4'] = "t";  // ?
-            nonDiacriticsObject['\u03c5'] = "y";  // ?
-            nonDiacriticsObject['\u03c6'] = "ph";  // ?
-            nonDiacriticsObject['\u03c7'] = "ch";  // ?
-            nonDiacriticsObject['\u03c8'] = "ps";   // ?
-            nonDiacriticsObject['\u03c9'] = "o";  // ?
+            nonDiacriticsObject['\u03b1'] = 'a';  // ?
+            nonDiacriticsObject['\u03b2'] = 'b';  // ?
+            nonDiacriticsObject['\u03b3'] = 'g';  // ?
+            nonDiacriticsObject['\u03b4'] = 'd';  // ?
+            nonDiacriticsObject['\u03b5'] = 'e';  // ?
+            nonDiacriticsObject['\u03b6'] = 'z';  // ?
+            nonDiacriticsObject['\u03b7'] = 'e';  // ?
+            nonDiacriticsObject['\u03b8'] = 'th';  // ?
+            nonDiacriticsObject['\u03b9'] = 'i';  // ?
+            nonDiacriticsObject['\u03ba'] = 'c';  // ?
+            nonDiacriticsObject['\u03bb'] = 'l';  // ?
+            nonDiacriticsObject['\u03bc'] = 'm';  // ?
+            nonDiacriticsObject['\u03bd'] = 'n';  // ?
+            nonDiacriticsObject['\u03be'] = 'x';  // ?
+            nonDiacriticsObject['\u03bf'] = 'o';  // ?
+            nonDiacriticsObject['\u03c0'] = 'p';  // ?
+            nonDiacriticsObject['\u03c1'] = 'r';  // ?
+            nonDiacriticsObject['\u03c3'] = 's';  // ?
+            nonDiacriticsObject['\u03c4'] = 't';  // ?
+            nonDiacriticsObject['\u03c5'] = 'y';  // ?
+            nonDiacriticsObject['\u03c6'] = 'ph';  // ?
+            nonDiacriticsObject['\u03c7'] = 'ch';  // ?
+            nonDiacriticsObject['\u03c8'] = 'ps';   // ?
+            nonDiacriticsObject['\u03c9'] = 'o';  // ?
 
             // small letters
-            nonDiacriticsObject['\u0391'] = "a";  // ?
-            nonDiacriticsObject['\u0392'] = "b";  // ?
-            nonDiacriticsObject['\u0393'] = "g";  // ?
-            nonDiacriticsObject['\u0394'] = "d";  // ?
-            nonDiacriticsObject['\u0395'] = "e";  // ?
-            nonDiacriticsObject['\u0396'] = "z";  // ?
-            nonDiacriticsObject['\u0397'] = "e";  // ?
-            nonDiacriticsObject['\u0398'] = "th";  // ?
-            nonDiacriticsObject['\u0399'] = "i";  // ?
-            nonDiacriticsObject['\u039a'] = "c";  // ?
-            nonDiacriticsObject['\u039b'] = "l";  // ?
-            nonDiacriticsObject['\u039c'] = "m";  // ?
-            nonDiacriticsObject['\u039d'] = "n";  // ?
-            nonDiacriticsObject['\u039e'] = "x";  // ?
-            nonDiacriticsObject['\u039f'] = "o";  // ?
-            nonDiacriticsObject['\u03a0'] = "p";  // ?
-            nonDiacriticsObject['\u03a1'] = "r";  // ?
-            nonDiacriticsObject['\u03a3'] = "s";  // ?
-            nonDiacriticsObject['\u03a4'] = "t";  // ?
-            nonDiacriticsObject['\u03a5'] = "y";  // ?
-            nonDiacriticsObject['\u03a6'] = "ph";  // ?
-            nonDiacriticsObject['\u03a7'] = "ch"; // ?
-            nonDiacriticsObject['\u03a8'] = "ps"; // ?
-            nonDiacriticsObject['\u03a9'] = "o"; // ?
+            nonDiacriticsObject['\u0391'] = 'a';  // ?
+            nonDiacriticsObject['\u0392'] = 'b';  // ?
+            nonDiacriticsObject['\u0393'] = 'g';  // ?
+            nonDiacriticsObject['\u0394'] = 'd';  // ?
+            nonDiacriticsObject['\u0395'] = 'e';  // ?
+            nonDiacriticsObject['\u0396'] = 'z';  // ?
+            nonDiacriticsObject['\u0397'] = 'e';  // ?
+            nonDiacriticsObject['\u0398'] = 'th';  // ?
+            nonDiacriticsObject['\u0399'] = 'i';  // ?
+            nonDiacriticsObject['\u039a'] = 'c';  // ?
+            nonDiacriticsObject['\u039b'] = 'l';  // ?
+            nonDiacriticsObject['\u039c'] = 'm';  // ?
+            nonDiacriticsObject['\u039d'] = 'n';  // ?
+            nonDiacriticsObject['\u039e'] = 'x';  // ?
+            nonDiacriticsObject['\u039f'] = 'o';  // ?
+            nonDiacriticsObject['\u03a0'] = 'p';  // ?
+            nonDiacriticsObject['\u03a1'] = 'r';  // ?
+            nonDiacriticsObject['\u03a3'] = 's';  // ?
+            nonDiacriticsObject['\u03a4'] = 't';  // ?
+            nonDiacriticsObject['\u03a5'] = 'y';  // ?
+            nonDiacriticsObject['\u03a6'] = 'ph';  // ?
+            nonDiacriticsObject['\u03a7'] = 'ch'; // ?
+            nonDiacriticsObject['\u03a8'] = 'ps'; // ?
+            nonDiacriticsObject['\u03a9'] = 'o'; // ?
 
             return nonDiacriticsObject;
         }

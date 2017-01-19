@@ -7,7 +7,7 @@ module api.liveedit.image {
         }
 
         resolveDisplayName(object: api.content.page.region.ImageComponent): string {
-            return !!object.getName() ? object.getName().toString() : "";
+            return !!object.getName() ? object.getName().toString() : '';
         }
 
         resolveSubName(object: api.content.page.region.ImageComponent, relativePath: boolean = false): string {
@@ -15,7 +15,7 @@ module api.liveedit.image {
         }
 
         resolveIconClass(object: api.content.page.region.ImageComponent): string {
-            return api.liveedit.ItemViewIconClassResolver.resolveByType("image");
+            return api.liveedit.ItemViewIconClassResolver.resolveByType('image');
         }
 
     }

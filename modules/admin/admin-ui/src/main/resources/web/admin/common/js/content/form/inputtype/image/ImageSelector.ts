@@ -56,8 +56,8 @@ module api.content.form.inputtype.image {
         private contentDeletedListener: (event: ContentDeletedEvent) => void;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
-            super("image-selector");
-            this.addClass("input-type-view");
+            super('image-selector');
+            this.addClass('input-type-view');
 
             this.config = config;
 
@@ -92,7 +92,7 @@ module api.content.form.inputtype.image {
                 this.selectedOptionsView.getSelectedOptions().forEach(
                     (selectedOption: any) => {
                         if (!!selectedOption.getOption().displayValue && !!selectedOption.getOption().displayValue.getContentId()) {
-                            selectedContentIdsMap[selectedOption.getOption().displayValue.getContentId().toString()] = "";
+                            selectedContentIdsMap[selectedOption.getOption().displayValue.getContentId().toString()] = '';
                         }
                     });
 
@@ -283,7 +283,7 @@ module api.content.form.inputtype.image {
                             input.getName()
                         );
 
-                        let comboBoxWrapper = new api.dom.DivEl("combobox-wrapper");
+                        let comboBoxWrapper = new api.dom.DivEl('combobox-wrapper');
 
                         comboBoxWrapper.appendChild(this.contentComboBox);
 
@@ -306,8 +306,8 @@ module api.content.form.inputtype.image {
             for (let i = 0; i < length; i++) {
                 if (this.getPropertyArray().get(i).getValue().getString() == id) {
                     this.getPropertyArray().remove(i);
-                    api.notify.NotifyManager.get().showWarning("Failed to load image with id " + id +
-                                                               ". The reference will be removed upon save.");
+                    api.notify.NotifyManager.get().showWarning('Failed to load image with id ' + id +
+                                                               '. The reference will be removed upon save.');
                     break;
                 }
             }
@@ -392,7 +392,7 @@ module api.content.form.inputtype.image {
 
                 let selectedOption = this.selectedOptionsView.getById(item.getId());
                 if (!!selectedOption) {
-                    (<ImageSelectorSelectedOptionView> selectedOption.getOptionView()).showError("Upload failed");
+                    (<ImageSelectorSelectedOptionView> selectedOption.getOptionView()).showError('Upload failed');
                 }
 
                 this.uploader.setMaximumOccurrences(this.getRemainingOccurrences());
@@ -456,8 +456,7 @@ module api.content.form.inputtype.image {
                 this.ignorePropertyChange = true;
                 if (this.contentComboBox.countSelected() == 1) { // overwrite initial value
                     this.getPropertyArray().set(0, value);
-                }
-                else {
+                } else {
                     this.getPropertyArray().add(value);
                 }
                 this.ignorePropertyChange = false;
@@ -498,6 +497,6 @@ module api.content.form.inputtype.image {
         }
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("ImageSelector", ImageSelector));
+    api.form.inputtype.InputTypeManager.register(new api.Class('ImageSelector', ImageSelector));
 
 }

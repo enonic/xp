@@ -6,7 +6,7 @@ module api.content.page {
 
         constructor(contentId:api.content.ContentId) {
             super();
-            this.setMethod("GET");
+            this.setMethod('GET');
             this.contentId = contentId;
         }
 
@@ -22,7 +22,7 @@ module api.content.page {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "isRenderable");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'isRenderable');
         }
 
         sendAndParse(): wemQ.Promise<boolean> {

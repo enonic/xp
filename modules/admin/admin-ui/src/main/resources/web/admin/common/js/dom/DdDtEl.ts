@@ -7,7 +7,7 @@ module api.dom {
             if (className) {
                 builder.setClassName(className);
             }
-            if (tag == "dt" || tag == "dd") {
+            if (tag == 'dt' || tag == 'dd') {
                 builder.setTagName(tag);
             }
 

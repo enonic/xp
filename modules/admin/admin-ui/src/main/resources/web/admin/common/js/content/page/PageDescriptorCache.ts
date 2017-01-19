@@ -22,7 +22,7 @@ module api.content.page {
 
         constructor() {
             if (PageDescriptorCache.instance) {
-                throw new Error("Instantiation failed: Use PageDescriptorCache.get() instead!");
+                throw new Error('Instantiation failed: Use PageDescriptorCache.get() instead!');
             }
             super();
         }
@@ -34,7 +34,7 @@ module api.content.page {
         }
 
         put(descriptor: PageDescriptor) {
-            api.util.assertNotNull(descriptor, "a PageDescriptor must be given");
+            api.util.assertNotNull(descriptor, 'a PageDescriptor must be given');
 
             super.put(descriptor, descriptor.getKey().getApplicationKey());
         }

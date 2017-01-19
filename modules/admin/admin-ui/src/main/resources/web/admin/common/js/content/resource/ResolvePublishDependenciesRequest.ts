@@ -14,7 +14,7 @@ module api.content.resource {
 
         constructor(builder: ResolvePublishDependenciesRequestBuilder) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             this.ids = builder.ids;
             this.excludedIds = builder.excludedIds;
             this.excludeChildrenIds = builder.excludeChildrenIds;
@@ -35,7 +35,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "resolvePublishContent");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'resolvePublishContent');
         }
 
         sendAndParse(): wemQ.Promise<ResolvePublishDependenciesResult> {

@@ -1,5 +1,5 @@
-import "../../../../../../api.ts";
-import {ComponentInspectionPanel, ComponentInspectionPanelConfig} from "./ComponentInspectionPanel";
+import '../../../../../../api.ts';
+import {ComponentInspectionPanel, ComponentInspectionPanelConfig} from './ComponentInspectionPanel';
 
 import FormView = api.form.FormView;
 import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
@@ -49,7 +49,7 @@ extends ComponentInspectionPanel<COMPONENT> {
     }
 
     protected layout() {
-        throw new Error("Must be implemented in inheritors");
+        throw new Error('Must be implemented in inheritors');
     }
 
     protected applicationUnavailableHandler() {

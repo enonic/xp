@@ -47,7 +47,7 @@ module api.ui.tags {
         private tagRemovedListeners: {(event: TagRemovedEvent) : void}[] = [];
 
         constructor(builder: TagsBuilder) {
-            super("ul", "tags", undefined, builder.tags ? builder.tags.join(';') : undefined);
+            super('ul', 'tags', undefined, builder.tags ? builder.tags.join(';') : undefined);
             this.tagSuggester = builder.tagSuggester;
 
             this.maxTags = builder.maxTags;
@@ -164,7 +164,7 @@ module api.ui.tags {
 
             let tag = this.doAddTag(word);
             if (tag) {
-                this.textInput.setValue("");
+                this.textInput.setValue('');
 
                 if (this.isMaxTagsReached()) {
                     this.textInput.hide();
@@ -278,8 +278,7 @@ module api.ui.tags {
         giveFocus(): boolean {
             if (this.isMaxTagsReached()) {
                 return this.tags[0].giveFocus();
-            }
-            else {
+            } else {
                 // restore input width to default
                 this.textInput.getEl().setWidth('');
                 return this.textInput.giveFocus();

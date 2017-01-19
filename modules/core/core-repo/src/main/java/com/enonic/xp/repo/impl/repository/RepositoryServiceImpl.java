@@ -181,6 +181,12 @@ public class RepositoryServiceImpl
     }
 
     @Override
+    public void invalidateAll()
+    {
+        repositoryMap.clear();
+    }
+
+    @Override
     public void invalidate( final RepositoryId repositoryId )
     {
         repositoryMap.remove( repositoryId );

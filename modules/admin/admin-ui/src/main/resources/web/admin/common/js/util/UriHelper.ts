@@ -82,16 +82,16 @@ module api.util {
 
         static trimWindowProtocolAndPortFromHref(href: string, contentWindow: Window) {
             let location: Location = contentWindow.location;
-            return UriHelper.relativePath(href.replace(location.protocol + "//" + location.host, ""));
+            return UriHelper.relativePath(href.replace(location.protocol + '//' + location.host, ''));
         }
 
         static trimAnchor(trimMe: string): string {
-            let index = trimMe.lastIndexOf("#");
+            let index = trimMe.lastIndexOf('#');
             return index >= 0 ? UriHelper.relativePath(trimMe.substring(0, index)) : UriHelper.relativePath(trimMe);
         }
 
         static trimUrlParams(trimMe: string): string {
-            let index = trimMe.lastIndexOf("?");
+            let index = trimMe.lastIndexOf('?');
             return index >= 0 ? trimMe.substring(0, index) : trimMe;
         }
 
@@ -136,15 +136,15 @@ module api.util {
             for (let key in params) {
                 if (params.hasOwnProperty(key) && params[key] != undefined) {
                     let value = params[key];
-                    let prefixedKey = prefix ? prefix + "[" + key + "]" : key;
-                    if (typeof value == "object") {
+                    let prefixedKey = prefix ? prefix + '[' + key + ']' : key;
+                    if (typeof value == 'object') {
                         urlArray.push(this.encodeUrlParams(value, prefixedKey));
                     } else {
-                        urlArray.push(encodeURIComponent(prefixedKey) + "=" + encodeURIComponent(value));
+                        urlArray.push(encodeURIComponent(prefixedKey) + '=' + encodeURIComponent(value));
                     }
                 }
             }
-            return urlArray.join("&");
+            return urlArray.join('&');
         }
 
         static appendUrlParams(url: string, params: {[name: string]: any}): string {

@@ -19,7 +19,7 @@ module api.content.form.inputtype.image {
         }
 
         resolveIconUrl(object: ImageSelectorDisplayValue): string {
-            return object.getImageUrl() + "?crop=false";
+            return object.getImageUrl() + '?crop=false';
         }
     }
 }

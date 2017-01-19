@@ -20,15 +20,15 @@ module api.query.expr {
 
         toString() {
             let result: string = this.name;
-            result = result.concat("(");
+            result = result.concat('(');
 
             let sub = [];
             this.args.forEach((expr: ValueExpr) => {
                 sub.push(expr.toString());
             });
-            result = result.concat(sub.join(", "));
+            result = result.concat(sub.join(', '));
 
-            result = result.concat(")");
+            result = result.concat(')');
 
             return result;
         }

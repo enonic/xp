@@ -21,7 +21,7 @@ module api.data {
         }
 
         toString(): string {
-            return "[" + this.previousIndex + "] -> [" + this.newIndex + "]";
+            return '[' + this.previousIndex + '] -> [' + this.newIndex + ']';
         }
     }
 }

@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {MarketAppViewer} from "./MarketAppViewer";
-import {ApplicationInput} from "./../view/ApplicationInput";
+import '../../../api.ts';
+import {MarketAppViewer} from './MarketAppViewer';
+import {ApplicationInput} from './../view/ApplicationInput';
 
 import Element = api.dom.Element;
 import ElementHelper = api.dom.ElementHelper;
@@ -51,28 +51,28 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
     constructor(applicationInput: ApplicationInput) {
 
         let nameColumn = new GridColumnBuilder<TreeNode<MarketApplication>>()
-            .setName("Name")
-            .setId("displayName")
-            .setField("displayName")
-            .setCssClass("app-name-and-icon")
+            .setName('Name')
+            .setId('displayName')
+            .setField('displayName')
+            .setCssClass('app-name-and-icon')
             .setMinWidth(170)
             .setFormatter(MarketAppsTreeGrid.nameFormatter)
             .build();
         let versionColumn = new GridColumnBuilder<TreeNode<MarketApplication>>()
-            .setName("Version")
-            .setId("version")
-            .setField("latestVersion")
-            .setCssClass("version")
+            .setName('Version')
+            .setId('version')
+            .setField('latestVersion')
+            .setCssClass('version')
             .setMinWidth(40)
             .build();
         let appStatusColumns = new GridColumnBuilder<TreeNode<MarketApplication>>()
-            .setName("AppStatus")
-            .setId("appStatus")
-            .setField("status")
-            .setCssClass("status")
+            .setName('AppStatus')
+            .setId('appStatus')
+            .setField('status')
+            .setCssClass('status')
             .setMinWidth(50)
             .setFormatter(MarketAppsTreeGrid.appStatusFormatter)
-            .setCssClass("app-status").build();
+            .setCssClass('app-status').build();
 
         super(new TreeGridBuilder<MarketApplication>()
             .setColumns([
@@ -86,8 +86,8 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
             .setShowToolbar(false)
             .setRowHeight(70)
             .disableMultipleSelection(true)
-            .prependClasses("market-app-tree-grid")
-            .setSelectedCellCssClass("selected-sort-row")
+            .prependClasses('market-app-tree-grid')
+            .setSelectedCellCssClass('selected-sort-row')
             .setQuietErrorHandling(true)
             .setAutoLoad(false)
         );
@@ -148,7 +148,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
             let nodeToUpdate;
 
             if (MarketAppsTreeGrid.debug) {
-                console.debug("MarketAppsTreeGrid: app event", event.getEventType(), event.getProgress());
+                console.debug('MarketAppsTreeGrid: app event', event.getEventType(), event.getProgress());
             }
 
             switch (event.getEventType()) {
@@ -159,7 +159,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
                 if (!!nodeToUpdate) {
 
                     if (MarketAppsTreeGrid.debug) {
-                        console.debug("MarketAppsTreeGrid: progress", event.getApplicationUrl(), event.getProgress());
+                        console.debug('MarketAppsTreeGrid: progress', event.getApplicationUrl(), event.getProgress());
                     }
 
                     let app = <MarketApplication>nodeToUpdate.getData();
@@ -167,7 +167,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
 
                     let row = this.getGrid().getDataView().getRowById(nodeToUpdate.getId());
                     if (row > -1) {
-                        let cell = this.getGrid().getColumnIndex("appStatus");
+                        let cell = this.getGrid().getColumnIndex('appStatus');
                         this.getGrid().updateCell(row, cell);
                     }
                 }
@@ -178,7 +178,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
                 if (!!nodeToUpdate) {
 
                     if (MarketAppsTreeGrid.debug) {
-                        console.debug("MarketAppsTreeGrid: installed", event.getApplicationUrl(), event.getProgress());
+                        console.debug('MarketAppsTreeGrid: installed', event.getApplicationUrl(), event.getProgress());
                     }
 
                     let app = <MarketApplication>nodeToUpdate.getData();
@@ -223,11 +223,11 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
 
                 let row = this.getGrid().getDataView().getRowById(node.getId());
                 if (row > -1) {
-                    this.getGrid().updateCell(row, this.getGrid().getColumnIndex("appStatus"));
+                    this.getGrid().updateCell(row, this.getGrid().getColumnIndex('appStatus'));
                 }
 
                 if (MarketAppsTreeGrid.debug) {
-                    console.debug("MarketAppsTreeGrid: starting install", url, elem);
+                    console.debug('MarketAppsTreeGrid: starting install', url, elem);
                 }
 
                 new api.application.InstallUrlApplicationRequest(url)
@@ -235,7 +235,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
                     // api.application.ApplicationEvent.un(progressHandler);
                     if (!result.getFailure()) {
 
-                        elem.removeClass(MarketAppStatusFormatter.statusInstallCssClass + " " +
+                        elem.removeClass(MarketAppStatusFormatter.statusInstallCssClass + ' ' +
                                          MarketAppStatusFormatter.statusUpdateCssClass);
                         elem.addClass(MarketAppStatusFormatter.getStatusCssClass(MarketAppStatus.INSTALLED));
 
@@ -257,16 +257,16 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
         const data = <MarketApplication>node.getData();
 
         if (data.getAppKey()) {
-            let viewer: MarketAppViewer = <MarketAppViewer>node.getViewer("name");
+            let viewer: MarketAppViewer = <MarketAppViewer>node.getViewer('name');
             if (!viewer) {
                 viewer = new MarketAppViewer();
                 viewer.setObject(data, node.calcLevel() > 1);
-                node.setViewer("name", viewer);
+                node.setViewer('name', viewer);
             }
             return viewer.toString();
         }
 
-        return "";
+        return '';
     }
 
     isEmptyNode(node: TreeNode<MarketApplication>): boolean {
@@ -325,13 +325,13 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
                 }).slice(0, from).concat(data.getApplications());
                 root.setMaxChildren(meta.getTotalHits());
                 if (from + meta.getHits() < meta.getTotalHits()) {
-                    let emptyApplication = new MarketApplicationBuilder().setLatestVersion("").build();
+                    let emptyApplication = new MarketApplicationBuilder().setLatestVersion('').build();
                     applications.push(emptyApplication);
                 }
                 return applications;
             }).catch((reason: any) => {
-            let status500Message = "Woops... The server seems to be experiencing problems. Please try again later.";
-            let defaultErrorMessage = "Enonic Market is temporarily unavailable. Please try again later.";
+            let status500Message = 'Woops... The server seems to be experiencing problems. Please try again later.';
+            let defaultErrorMessage = 'Enonic Market is temporarily unavailable. Please try again later.';
             this.handleError(reason, reason.getStatusCode() === 500 ? status500Message : defaultErrorMessage);
             return [];
         });
@@ -345,7 +345,7 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
             });
         }
         super.initData(items);
-        this.getGrid().getCanvasNode().style.height = (70 * items.length + "px");
+        this.getGrid().getCanvasNode().style.height = (70 * items.length + 'px');
         this.getGrid().resizeCanvas();
     }
 
@@ -374,6 +374,6 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
     }
 
     getDataId(data: MarketApplication): string {
-        return data.getAppKey() ? data.getAppKey().toString() : "";
+        return data.getAppKey() ? data.getAppKey().toString() : '';
     }
 }

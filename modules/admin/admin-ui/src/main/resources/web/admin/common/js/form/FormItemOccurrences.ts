@@ -55,15 +55,15 @@ module api.form {
         }
 
         protected constructOccurrencesForNoData(): FormItemOccurrence<V>[] {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         protected  constructOccurrencesForData(): FormItemOccurrence<V>[] {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         getAllowedOccurrences(): Occurrences {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         onOccurrenceRendered(listener: (event: OccurrenceRenderedEvent)=>void) {
@@ -187,19 +187,19 @@ module api.form {
         }
 
         createNewOccurrenceView(occurrence: FormItemOccurrence<V>): V {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         updateOccurrenceView(occurrenceView: V, propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         resetOccurrenceView(occurrenceView: V) {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         createNewOccurrence(formItemOccurrences: FormItemOccurrences<V>, insertAtIndex: number): FormItemOccurrence<V> {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         public createAndAddOccurrence(insertAtIndex: number = this.countOccurrences(), validate: boolean = true): wemQ.Promise<V> {

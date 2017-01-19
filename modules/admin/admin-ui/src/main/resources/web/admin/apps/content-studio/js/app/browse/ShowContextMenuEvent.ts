@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 export class ShowContextMenuEvent extends api.event.Event {
 

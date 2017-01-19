@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {SortContentTabMenuItem, SortContentTabMenuItemBuilder} from "./SortContentTabMenuItem";
+import '../../api.ts';
+import {SortContentTabMenuItem, SortContentTabMenuItemBuilder} from './SortContentTabMenuItem';
 
 import ChildOrder = api.content.order.ChildOrder;
 import QueryField = api.query.QueryField;
@@ -33,16 +33,16 @@ export class SortContentTabMenuItems {
         };
 
         this.SORT_ASC_DISPALAY_NAME_ITEM =
-            createOrder("DisplayName - Ascending", [{field: QueryField.DISPLAY_NAME, direction: ChildOrder.ASC_ORDER_DIRECTION_VALUE}]);
+            createOrder('DisplayName - Ascending', [{field: QueryField.DISPLAY_NAME, direction: ChildOrder.ASC_ORDER_DIRECTION_VALUE}]);
         this.SORT_DESC_DISPALAY_NAME_ITEM =
-            createOrder("DisplayName - Descending", [{field: QueryField.DISPLAY_NAME, direction: ChildOrder.DESC_ORDER_DIRECTION_VALUE}]);
+            createOrder('DisplayName - Descending', [{field: QueryField.DISPLAY_NAME, direction: ChildOrder.DESC_ORDER_DIRECTION_VALUE}]);
         this.SORT_ASC_MODIFIED_ITEM =
-            createOrder("Modified - Ascending", [{field: QueryField.MODIFIED_TIME, direction: ChildOrder.ASC_ORDER_DIRECTION_VALUE}]);
+            createOrder('Modified - Ascending', [{field: QueryField.MODIFIED_TIME, direction: ChildOrder.ASC_ORDER_DIRECTION_VALUE}]);
         this.SORT_DESC_MODIFIED_ITEM =
-            createOrder("Modified - Descending (default)",
+            createOrder('Modified - Descending (default)',
                 [{field: QueryField.MODIFIED_TIME, direction: ChildOrder.DESC_ORDER_DIRECTION_VALUE}]);
         this.SORT_MANUAL_ITEM =
-            createOrder("Manually Sorted", [
+            createOrder('Manually Sorted', [
                 {field: QueryField.MANUAL_ORDER_VALUE, direction: ChildOrder.DESC_ORDER_DIRECTION_VALUE},
                 {field: QueryField.TIMESTAMP, direction: ChildOrder.DESC_ORDER_DIRECTION_VALUE}
             ]);

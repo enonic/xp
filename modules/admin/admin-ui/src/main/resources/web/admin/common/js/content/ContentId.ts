@@ -6,7 +6,7 @@ module api.content {
 
         constructor(value: string) {
             if (!ContentId.isValidContentId(value)) {
-                throw new Error("Invalid content id: " + value);
+                throw new Error('Invalid content id: ' + value);
             }
             this.value = value;
         }

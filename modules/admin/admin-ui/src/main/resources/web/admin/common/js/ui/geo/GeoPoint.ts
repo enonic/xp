@@ -5,10 +5,10 @@ module api.ui.geo {
         private validUserInput: boolean;
 
         constructor(originalValue?: api.util.GeoPoint) {
-            super("geo-point", undefined, originalValue ? originalValue.toString() : undefined);
+            super('geo-point', undefined, originalValue ? originalValue.toString() : undefined);
 
             this.validUserInput = true;
-            this.getEl().setAttribute("title", "latitude,longitude");
+            this.getEl().setAttribute('title', 'latitude,longitude');
             this.setPlaceholder(api.i18n.i18n('latitude,longitude'));
 
             this.onValueChanged((event: api.ValueChangedEvent) => {
@@ -21,7 +21,7 @@ module api.ui.geo {
         }
 
         setGeoPoint(value: api.util.GeoPoint): GeoPoint {
-            this.setValue(value ? value.toString() : "");
+            this.setValue(value ? value.toString() : '');
             return this;
         }
 

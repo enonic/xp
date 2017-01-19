@@ -1,4 +1,4 @@
-import "../../../api.ts";
+import '../../../api.ts';
 
 import PageTemplate = api.content.page.PageTemplate;
 import PageDescriptor = api.content.page.PageDescriptor;

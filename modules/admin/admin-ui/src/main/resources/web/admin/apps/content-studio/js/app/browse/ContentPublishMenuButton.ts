@@ -1,6 +1,6 @@
-import "../../api.ts";
-import {ContentTreeGridActions} from "./action/ContentTreeGridActions";
-import {MenuButtonProgressBarManager} from "./MenuButtonProgressBarManager";
+import '../../api.ts';
+import {ContentTreeGridActions} from './action/ContentTreeGridActions';
+import {MenuButtonProgressBarManager} from './MenuButtonProgressBarManager';
 
 import MenuButton = api.ui.button.MenuButton;
 import ProgressBar = api.ui.ProgressBar;

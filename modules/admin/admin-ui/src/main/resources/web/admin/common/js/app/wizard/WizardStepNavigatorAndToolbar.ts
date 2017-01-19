@@ -27,17 +27,17 @@ module api.app.wizard {
             this.fittingWidth = 0;
 
             this.foldButton.getDropdown().onClicked(() => {
-                this.addClass("no-dropdown-hover");
+                this.addClass('no-dropdown-hover');
                 // Place call in the queue outside of the stack and current context,
                 // so the repaint will be triggered between those two calls
-                setTimeout(this.removeClass.bind(this, "no-dropdown-hover"));
+                setTimeout(this.removeClass.bind(this, 'no-dropdown-hover'));
             });
         }
 
         setupHelpTextToggleButton(): api.dom.DivEl {
-            this.helpTextToggleButton = new api.dom.DivEl("help-text-button");
+            this.helpTextToggleButton = new api.dom.DivEl('help-text-button');
 
-            this.addClass("has-help-text-button");
+            this.addClass('has-help-text-button');
             this.appendChild(this.helpTextToggleButton);
             this.checkAndMinimize();
 
@@ -108,15 +108,14 @@ module api.app.wizard {
         private updateStepLabels(numberTabs: boolean) {
             let selectedTabIndex = this.stepNavigator.getSelectedIndex();
             this.stepNavigator.getNavigationItems().forEach((tab: api.ui.tab.TabBarItem, index) => {
-                let strIndex = (index + 1) + " - ";
+                let strIndex = (index + 1) + ' - ';
                 if (numberTabs && tab.getLabel().indexOf(strIndex) !== 0) {
                     tab.setLabel(strIndex + tab.getLabel());
                     if (index == selectedTabIndex) {
                         this.foldButton.setLabel(tab.getLabel());
                     }
-                }
-                else {
-                    tab.setLabel(tab.getLabel().replace(strIndex, ""));
+                } else {
+                    tab.setLabel(tab.getLabel().replace(strIndex, ''));
                 }
             });
         }

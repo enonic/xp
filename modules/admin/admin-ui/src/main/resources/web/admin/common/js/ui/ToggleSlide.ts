@@ -24,7 +24,7 @@ module api.ui {
         private slideLeft: api.util.Animation;
         private slideRight: api.util.Animation;
 
-        private disabledClass: string = "disabled";
+        private disabledClass: string = 'disabled';
 
         constructor(actions: ToggleSlideActions) {
             super('toggle-slide');
@@ -46,8 +46,7 @@ module api.ui {
             let turnOn = actions.turnOnAction.isEnabled();
             if (turnOn) {
                 this.slideOn();
-            }
-            else {
+            } else {
                 this.slideOff();
             }
             this.isOn = turnOn;

@@ -28,10 +28,10 @@ module api.ui.tab {
         private focusIndex: number = -1;
 
         constructor(className?: string) {
-            super("tab-menu" + (className ? " " + className : ""));
+            super('tab-menu' + (className ? ' ' + className : ''));
 
             this.initTabMenuButton();
-            this.menuEl = new api.dom.UlEl("menu");
+            this.menuEl = new api.dom.UlEl('menu');
 
             this.appendChild(this.tabMenuButton);
             this.appendChild(this.menuEl);
@@ -42,7 +42,7 @@ module api.ui.tab {
         private initTabMenuButton() {
             this.tabMenuButton = this.createTabMenuButton();
             this.tabMenuButton.hide();
-            this.tabMenuButton.addClass("tab-menu-button");
+            this.tabMenuButton.addClass('tab-menu-button');
 
             this.tabMenuButton.onClicked((event: MouseEvent) => {
                 if (this.enabled) {
@@ -292,7 +292,7 @@ module api.ui.tab {
             }
 
             if (this.countVisible() == 0) {
-                this.setButtonLabel("");
+                this.setButtonLabel('');
                 this.tabMenuButton.hide();
                 this.hideMenu();
             } else {
@@ -313,7 +313,7 @@ module api.ui.tab {
             });
 
             if (this.countVisible() == 0) {
-                this.setButtonLabel("");
+                this.setButtonLabel('');
                 this.tabMenuButton.hide();
                 this.hideMenu();
             }

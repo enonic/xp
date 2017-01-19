@@ -20,7 +20,7 @@ module api.util {
         }
 
         toString(): string {
-            return "" + this.latitude + "," + this.longitude;
+            return '' + this.latitude + ',' + this.longitude;
         }
 
         equals(o: api.Equitable): boolean {
@@ -49,8 +49,7 @@ module api.util {
             let indexOfComma = s.indexOf(',');
             if (indexOfComma < 1 || s.split(',').length != 2) {
                 return false;
-            }
-            else if (indexOfComma == s.length - 1) {
+            } else if (indexOfComma == s.length - 1) {
                 return false;
             }
 
@@ -71,7 +70,7 @@ module api.util {
 
         static fromString(s: string): GeoPoint {
             if (!GeoPoint.isValidString(s)) {
-                throw new Error("Cannot parse GeoPoint from string: " + s);
+                throw new Error('Cannot parse GeoPoint from string: ' + s);
             }
             let coordinates: string[] = s.split(',');
             let latitude = Number(coordinates[0]);

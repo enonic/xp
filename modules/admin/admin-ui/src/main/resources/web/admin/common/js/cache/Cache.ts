@@ -19,15 +19,15 @@ module api.cache {
         }
 
         copy(object: T): T {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         getKeyFromObject(object: T): KEY {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         getKeyAsString(object: KEY): string {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         isOnLoading(key: KEY): boolean {

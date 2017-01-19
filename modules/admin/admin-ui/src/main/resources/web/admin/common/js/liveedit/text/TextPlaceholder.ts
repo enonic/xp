@@ -7,7 +7,7 @@ module api.liveedit.text {
 
         constructor() {
             super();
-            this.addClassEx("text-placeholder");
+            this.addClassEx('text-placeholder');
         }
 
     }

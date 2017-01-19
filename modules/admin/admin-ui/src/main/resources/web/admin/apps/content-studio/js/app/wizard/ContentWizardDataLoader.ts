@@ -1,7 +1,7 @@
-import "../../api.ts";
-import {DefaultModels} from "./page/DefaultModels";
-import {DefaultModelsFactory, DefaultModelsFactoryConfig} from "./page/DefaultModelsFactory";
-import {ContentWizardPanelParams} from "./ContentWizardPanelParams";
+import '../../api.ts';
+import {DefaultModels} from './page/DefaultModels';
+import {DefaultModelsFactory, DefaultModelsFactoryConfig} from './page/DefaultModelsFactory';
+import {ContentWizardPanelParams} from './ContentWizardPanelParams';
 
 import ContentId = api.content.ContentId;
 import ContentTypeName = api.schema.content.ContentTypeName;
@@ -111,9 +111,8 @@ export class ContentWizardDataLoader {
         new api.schema.content.GetContentTypeByNameRequest(name).sendAndParse().then((contentType) => {
             deferred.resolve(contentType);
         }).catch((reason) => {
-            deferred.reject(new api.Exception("Content cannot be opened. Required content type '" + name.toString() +
-                                              "' not found.",
-                api.ExceptionType.WARNING));
+            const msg = `Content cannot be opened. Required content type '${name.toString()}' not found.`;
+            deferred.reject(new api.Exception(msg, api.ExceptionType.WARNING));
         }).done();
         return deferred.promise;
     }
@@ -130,11 +129,9 @@ export class ContentWizardDataLoader {
                 contentType: contentType,
                 applications: site.getApplicationKeys()
             });
-        }
-        else if (contentType.isSite()) {
+        } else if (contentType.isSite()) {
             return wemQ<DefaultModels>(new DefaultModels(null, null));
-        }
-        else {
+        } else {
             return wemQ<DefaultModels>(null);
         }
     }

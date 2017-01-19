@@ -13,11 +13,11 @@ module api.schema.relationshiptype {
                 if (ApplicationEventType.STARTED == event.getEventType()
                     || ApplicationEventType.STOPPED == event.getEventType()
                     || ApplicationEventType.UPDATED == event.getEventType()) {
-                    console.log(api.ClassHelper.getClassName(this) + " received ApplicationEvent - removing cached content types... " +
+                    console.log(api.ClassHelper.getClassName(this) + ' received ApplicationEvent - removing cached content types... ' +
                                 event.getApplicationKey().toString());
                     this.getCachedByApplicationKey(event.getApplicationKey()).forEach((relationshipType: RelationshipType) => {
                         this.deleteByKey(this.getKeyFromObject(relationshipType));
-                        console.log("Removed cached content type: " + relationshipType.getName());
+                        console.log('Removed cached content type: ' + relationshipType.getName());
                     });
                 }
             });
