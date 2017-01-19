@@ -20,6 +20,8 @@ import ValueExpr = api.query.expr.ValueExpr;
 import FragmentDropdown = api.content.page.region.FragmentDropdown;
 import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 import LiveEditModel = api.liveedit.LiveEditModel;
+import Component = api.content.page.region.Component;
+import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
 
 export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentComponent> {
 
@@ -68,8 +70,24 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
             }
         };
 
+        this.handleContentUpdatedEvent();
         this.initSelectorListeners();
         this.appendChild(this.fragmentForm);
+    }
+
+    private handleContentUpdatedEvent() {
+        let contentUpdatedListener = (event: ContentUpdatedEvent) => {
+            // update currently selected option if this is the one updated
+            if (this.fragmentComponent && event.getContentId().equals(this.fragmentComponent.getFragment())) {
+                this.fragmentSelector.getSelectedOption().displayValue = event.getContentSummary();
+            }
+        };
+
+        ContentUpdatedEvent.on(contentUpdatedListener);
+
+        this.onRemoved((event) => {
+            ContentUpdatedEvent.un(contentUpdatedListener);
+        });
     }
 
     setFragmentComponent(fragmentView: FragmentComponentView) {
