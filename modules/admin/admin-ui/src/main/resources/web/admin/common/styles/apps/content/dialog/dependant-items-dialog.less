@@ -105,14 +105,6 @@
       .dependant-list {
         margin-top: 10px;
 
-        .browse-selection-item {
-          .remove {
-            display: none;
-            visibility: hidden;
-            height: 16px;
-          }
-        }
-
         &.contains-removable {
           .browse-selection-item {
             .remove {
@@ -134,6 +126,12 @@
 
         .browse-selection-item {
           padding-left: 2px;
+
+          .remove {
+            display: none;
+            visibility: hidden;
+            height: 16px;
+          }
 
           &.invalid {
             cursor: pointer;
