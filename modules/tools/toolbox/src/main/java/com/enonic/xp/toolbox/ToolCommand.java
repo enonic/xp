@@ -33,7 +33,7 @@ public abstract class ToolCommand
             }
             else
             {
-                error( "Response error: %s", e.getMessage() );
+                error( "Error %d: %s", ( (ResponseException) e ).getResponseCode(), e.getMessage() );
             }
         }
         exception( "Unexpected error: %s", e );
