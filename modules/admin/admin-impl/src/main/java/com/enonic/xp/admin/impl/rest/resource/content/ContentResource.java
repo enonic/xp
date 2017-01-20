@@ -719,13 +719,14 @@ public final class ContentResource
             collect( Collectors.toList() );
         final ContentIds dependentContentIds = ContentIds.from( dependentContentIdList );
 
-        final Boolean anyRemovable = this.isAnyContentRemovableFromPublish( dependentContentIds );
+        final Boolean anyRemovable = results.getRequiredIds().getSize() > 0;
 
         //Returns the JSON result
         return ResolvePublishContentResultJson.create().
-            setContainsRemovable( anyRemovable ).
             setRequestedContents( requestedContentIds ).
             setDependentContents( dependentContentIds ).
+            setRequiredContents( results.getRequiredIds() ).
+            setContainsRemovable( anyRemovable ).
             setContainsInvalid( !this.isValidContent( results ) ).
             build();
     }
