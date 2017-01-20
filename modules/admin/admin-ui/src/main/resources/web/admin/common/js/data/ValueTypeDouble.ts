@@ -3,7 +3,7 @@ module api.data {
     export class ValueTypeDouble extends ValueType {
 
         constructor() {
-            super("Double");
+            super('Double');
         }
 
         isValid(value: any): boolean {
@@ -14,7 +14,7 @@ module api.data {
             if (api.util.StringHelper.isBlank(value)) {
                 return false;
             }
-            var convertedValue = Number(value);
+            let convertedValue = Number(value);
             return this.isValid(convertedValue);
         }
 

@@ -20,7 +20,7 @@ module api.liveedit.part {
 
         constructor(partView: PartComponentView) {
             super();
-            this.addClassEx("part-placeholder").addClass(api.StyleHelper.getCommonIconCls("part"));
+            this.addClassEx('part-placeholder').addClass(api.StyleHelper.getCommonIconCls('part'));
 
             this.partComponentView = partView;
 
@@ -31,12 +31,12 @@ module api.liveedit.part {
 
             this.comboBox.onOptionSelected((event: SelectedOptionEvent<PartDescriptor>) => {
                 this.partComponentView.showLoadingSpinner();
-                var descriptor: Descriptor = event.getSelectedOption().getOption().displayValue;
-                var partComponent: PartComponent = this.partComponentView.getComponent();
+                let descriptor: Descriptor = event.getSelectedOption().getOption().displayValue;
+                let partComponent: PartComponent = this.partComponentView.getComponent();
                 partComponent.setDescriptor(descriptor.getKey(), descriptor);
             });
 
-            var siteModel = partView.getLiveEditModel().getSiteModel();
+            let siteModel = partView.getLiveEditModel().getSiteModel();
 
             let listener = () => this.reloadDescriptorsOnApplicationChange(siteModel);
 
@@ -50,7 +50,7 @@ module api.liveedit.part {
 
             this.displayName = new api.dom.H3El('display-name');
             this.appendChild(this.displayName);
-            var partComponent = this.partComponentView.getComponent();
+            let partComponent = this.partComponentView.getComponent();
             if (partComponent && partComponent.getName()) {
                 this.setDisplayName(partComponent.getName().toString());
             }

@@ -2,7 +2,7 @@ module api.content.page.region {
 
     export class Component implements api.Equitable, api.Cloneable {
 
-        public static PROPERTY_NAME = 'name';
+        public static PROPERTY_NAME: string = 'name';
 
         private index: number = -1;
 
@@ -57,7 +57,7 @@ module api.content.page.region {
         }
 
         setName(newValue: ComponentName) {
-            var oldValue = this.name;
+            let oldValue = this.name;
             this.name = newValue;
             if (!api.ObjectHelper.equals(oldValue, newValue)) {
                 this.notifyPropertyChanged(Component.PROPERTY_NAME);
@@ -65,7 +65,7 @@ module api.content.page.region {
         }
 
         doReset() {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         reset() {
@@ -74,7 +74,7 @@ module api.content.page.region {
         }
 
         isEmpty(): boolean {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         getParent(): Region {
@@ -82,8 +82,8 @@ module api.content.page.region {
         }
 
         duplicate(): Component {
-            var duplicateName = this.getName();
-            var duplicatedComponent = this.clone();
+            let duplicateName = this.getName();
+            let duplicatedComponent = this.clone();
             duplicatedComponent.setName(duplicateName);
 
             return duplicatedComponent;
@@ -94,17 +94,17 @@ module api.content.page.region {
         }
 
         toJson(): ComponentTypeWrapperJson {
-            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
+            throw new Error('Must be implemented by inheritor: ' + api.ClassHelper.getClassName(this));
         }
 
         toString(): string {
-            return "Component[" + (this.name ? this.name.toString() : "") + "]";
+            return 'Component[' + (this.name ? this.name.toString() : '') + ']';
         }
 
         toComponentJson(): ComponentJson {
 
             return {
-                "name": this.name ? this.name.toString() : null
+                name: this.name ? this.name.toString() : null
             };
         }
 
@@ -114,7 +114,7 @@ module api.content.page.region {
                 return false;
             }
 
-            var other = <Component>o;
+            let other = <Component>o;
 
             if (!api.ObjectHelper.equals(this.name, other.name)) {
                 return false;
@@ -124,7 +124,7 @@ module api.content.page.region {
         }
 
         clone(): Component {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         onChanged(listener: (event: ComponentChangedEvent)=>void) {
@@ -134,14 +134,14 @@ module api.content.page.region {
         unChanged(listener: (event: ComponentChangedEvent)=>void) {
             this.changedListeners =
             this.changedListeners.filter((curr: (event: ComponentPropertyChangedEvent)=>void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
         private notifyChangedEvent(event: ComponentChangedEvent) {
             this.changedListeners.forEach((listener: (event: ComponentChangedEvent)=>void) => {
                 listener(event);
-            })
+            });
         }
 
         onReset(listener: (event: ComponentResetEvent)=>void) {
@@ -150,15 +150,15 @@ module api.content.page.region {
 
         unReset(listener: (event: ComponentResetEvent)=>void) {
             this.resetListeners = this.resetListeners.filter((curr: (event: ComponentResetEvent)=>void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
         private notifyResetEvent() {
-            var event = new ComponentResetEvent(this.getPath());
+            let event = new ComponentResetEvent(this.getPath());
             this.resetListeners.forEach((listener: (event: ComponentResetEvent)=>void) => {
                 listener(event);
-            })
+            });
         }
 
         /**
@@ -171,12 +171,12 @@ module api.content.page.region {
         unPropertyChanged(listener: (event: ComponentPropertyChangedEvent)=>void) {
             this.propertyChangedListeners =
             this.propertyChangedListeners.filter((curr: (event: ComponentPropertyChangedEvent)=>void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
         notifyPropertyChanged(propertyName: string) {
-            var event = ComponentPropertyChangedEvent.create().setComponent(this).setPropertyName(propertyName).build();
+            let event = ComponentPropertyChangedEvent.create().setComponent(this).setPropertyName(propertyName).build();
             this.propertyChangedListeners.forEach((listener: (event: ComponentPropertyChangedEvent)=>void) => {
                 listener(event);
             });
@@ -199,12 +199,12 @@ module api.content.page.region {
         unPropertyValueChanged(listener: (event: ComponentPropertyValueChangedEvent)=>void) {
             this.propertyValueChangedListeners =
             this.propertyValueChangedListeners.filter((curr: (event: ComponentPropertyValueChangedEvent)=>void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
         notifyPropertyValueChanged(propertyName: string) {
-            var event = new ComponentPropertyValueChangedEvent(this.getPath(), propertyName);
+            let event = new ComponentPropertyValueChangedEvent(this.getPath(), propertyName);
             this.propertyValueChangedListeners.forEach((listener: (event: ComponentPropertyValueChangedEvent)=>void) => {
                 listener(event);
             });
@@ -252,7 +252,7 @@ module api.content.page.region {
         }
 
         public build(): COMPONENT {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
     }
 }

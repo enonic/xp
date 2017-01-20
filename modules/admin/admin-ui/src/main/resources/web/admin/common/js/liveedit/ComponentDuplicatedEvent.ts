@@ -18,7 +18,7 @@ module api.liveedit {
         }
 
         getOriginalComponentView(): ComponentView<Component> {
-            return this.originalComponentView
+            return this.originalComponentView;
         }
 
         getDuplicatedComponentView(): ComponentView<Component> {

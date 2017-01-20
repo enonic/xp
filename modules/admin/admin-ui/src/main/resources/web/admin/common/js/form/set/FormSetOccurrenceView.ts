@@ -23,17 +23,17 @@ module api.form {
 
         protected occurrenceContainerClassName: string;
 
-        constructor(className, formItemOccurrence: FormItemOccurrence<FormItemOccurrenceView>) {
+        constructor(className: string, formItemOccurrence: FormItemOccurrence<FormItemOccurrenceView>) {
             super(className, formItemOccurrence);
         }
 
         public layout(validate: boolean = true): wemQ.Promise<void> {
 
-            var deferred = wemQ.defer<void>();
+            let deferred = wemQ.defer<void>();
 
             this.removeChildren();
 
-            this.removeButton = new api.dom.AEl("remove-button");
+            this.removeButton = new api.dom.AEl('remove-button');
             this.appendChild(this.removeButton);
             this.removeButton.onClicked((event: MouseEvent) => {
                 this.notifyRemoveButtonClicked();
@@ -63,8 +63,7 @@ module api.form {
             this.formSetOccurrencesContainer = new api.dom.DivEl(this.occurrenceContainerClassName);
             this.appendChild(this.formSetOccurrencesContainer);
 
-
-            var layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.setFormItems(this.getFormItems()).setParentElement(
+            let layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.setFormItems(this.getFormItems()).setParentElement(
                 this.formSetOccurrencesContainer).setParent(this).layout(this.propertySet, validate);
 
             layoutPromise.then((formItemViews: FormItemView[]) => {
@@ -86,6 +85,7 @@ module api.form {
         }
 
         protected initValidationMessageBlock() {
+            // must be implemented by children
         }
 
         getDataPath(): api.data.PropertyPath {
@@ -94,10 +94,10 @@ module api.form {
 
         validate(silent: boolean = true): ValidationRecording {
 
-            var allRecordings = new ValidationRecording();
+            let allRecordings = new ValidationRecording();
 
             this.formItemViews.forEach((formItemView: FormItemView) => {
-                var currRecording = formItemView.validate(silent);
+                let currRecording = formItemView.validate(silent);
                 allRecordings.flatten(currRecording);
             });
 
@@ -113,18 +113,19 @@ module api.form {
         }
 
         protected extraValidation(validationRecording: ValidationRecording) {
+            // must be implemented by children
         }
 
         protected subscribeOnItemEvents() {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         protected getFormSet(): FormSet {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         protected getFormItems(): FormItem[] {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         toggleHelpText(show?: boolean): any {
@@ -133,7 +134,7 @@ module api.form {
         }
 
         update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
-            var set = propertyArray.getSet(this.formItemOccurrence.getIndex());
+            let set = propertyArray.getSet(this.formItemOccurrence.getIndex());
             if (!set) {
                 set = propertyArray.addSet();
             }
@@ -144,7 +145,7 @@ module api.form {
 
         hasValidUserInput(): boolean {
 
-            var result = true;
+            let result = true;
             this.formItemViews.forEach((formItemView: FormItemView) => {
                 if (!formItemView.hasValidUserInput()) {
                     result = false;
@@ -168,9 +169,9 @@ module api.form {
         refresh() {
 
             if (!this.formItemOccurrence.oneAndOnly()) {
-                this.label.addClass("drag-control");
+                this.label.addClass('drag-control');
             } else {
-                this.label.removeClass("drag-control");
+                this.label.removeClass('drag-control');
             }
 
             this.removeButton.setVisible(this.formItemOccurrence.isRemoveButtonRequired());
@@ -193,7 +194,7 @@ module api.form {
         }
 
         giveFocus() {
-            var focusGiven = false;
+            let focusGiven = false;
             this.getFormItemViews().forEach((formItemView: FormItemView) => {
                 if (!focusGiven && formItemView.giveFocus()) {
                     focusGiven = true;
@@ -232,7 +233,7 @@ module api.form {
 
         unValidityChanged(listener: (event: RecordingValidityChangedEvent)=>void) {
             this.validityChangedListeners.filter((currentListener: (event: RecordingValidityChangedEvent)=>void) => {
-                return listener == currentListener;
+                return listener === currentListener;
             });
         }
 

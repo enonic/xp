@@ -13,7 +13,7 @@ interface OptionWithId<T> extends Option<T> {
     id: string;
 }
 
-describe("api.ui.selector.combobox.ComboBox", () => {
+describe('api.ui.selector.combobox.ComboBox', () => {
 
     let combobox: ComboBox<any>;
 
@@ -21,101 +21,101 @@ describe("api.ui.selector.combobox.ComboBox", () => {
         combobox = createDefaultComboBox();
     });
 
-    describe("constructor", () => {
+    describe('constructor', () => {
 
-        it("should correctly set name", () => {
-            const name = combobox.getEl().getAttribute("name");
-            expect(name).toEqual("comboboxName");
+        it('should correctly set name', () => {
+            const name = combobox.getEl().getAttribute('name');
+            expect(name).toEqual('comboboxName');
         });
 
-        describe("should correctly initialize apply button", function () {
+        describe('should correctly initialize apply button', function () {
 
-            it("`apply` button is present", () => {
-                expect(hasElement(combobox, ".apply-button")).toBeTruthy();
+            it('`apply` button is present', () => {
+                expect(hasElement(combobox, '.apply-button')).toBeTruthy();
             });
 
-            it("no `apply` button for maximum occurrences of 1", () => {
+            it('no `apply` button for maximum occurrences of 1', () => {
                 const cbox = createCustomComboBox({maximumOccurrences: 1});
-                expect(hasElement(cbox, ".apply-button")).toBeFalsy();
+                expect(hasElement(cbox, '.apply-button')).toBeFalsy();
             });
 
-            it("no `apply` button without selected options view", () => {
+            it('no `apply` button without selected options view', () => {
                 const cbox = createCustomComboBox(<ComboBoxConfig<any>>{selectedOptionsView: null});
-                expect(hasElement(cbox, ".apply-button")).toBeFalsy();
+                expect(hasElement(cbox, '.apply-button')).toBeFalsy();
             });
 
         });
     });
 
-    describe("Dropdown", () => {
+    describe('Dropdown', () => {
 
-        it("should show", () => {
+        it('should show', () => {
             combobox.showDropdown();
 
-            expect(combobox.getEl().hasClass("expanded")).toBeTruthy();
+            expect(combobox.getEl().hasClass('expanded')).toBeTruthy();
         });
 
-        it("should hide", () => {
+        it('should hide', () => {
             combobox.hideDropdown();
 
-            expect(combobox.getEl().hasClass("expanded")).toBeFalsy();
+            expect(combobox.getEl().hasClass('expanded')).toBeFalsy();
         });
 
-        describe("doUpdateDropdownTopPositionAndWidth()", function () {
+        describe('doUpdateDropdownTopPositionAndWidth()', function () {
 
-            it("should be displayed below (enough space)", () => {
-                spyOn(combobox, "dropdownOverflowsBottom").and.callFake(function () {
+            it('should be displayed below (enough space)', () => {
+                spyOn(combobox, 'dropdownOverflowsBottom').and.callFake(function () {
                     return <DropdownPosition>{position: PositionType.BELOW, height: 500};
                 });
                 combobox.showDropdown();
 
                 const dropdown = combobox.getComboBoxDropdownGrid().getElement().getEl();
 
-                expect(dropdown.hasClass("reverted")).toBeFalsy();
+                expect(dropdown.hasClass('reverted')).toBeFalsy();
                 expect(dropdown.getHeight()).toEqual(200);
 
                 combobox.hideDropdown();
             });
 
-            it("should be displayed above (enough space)", () => {
-                spyOn(combobox, "dropdownOverflowsBottom").and.callFake(function () {
+            it('should be displayed above (enough space)', () => {
+                spyOn(combobox, 'dropdownOverflowsBottom').and.callFake(function () {
                     return <DropdownPosition>{position: PositionType.ABOVE, height: 500};
                 });
                 combobox.showDropdown();
 
                 const dropdown = combobox.getComboBoxDropdownGrid().getElement().getEl();
 
-                expect(dropdown.hasClass("reverted")).toBeTruthy();
+                expect(dropdown.hasClass('reverted')).toBeTruthy();
                 expect(dropdown.getHeight()).toEqual(200);
 
                 combobox.hideDropdown();
             });
 
-            it("should be displayed below (not enough space)", () => {
-                spyOn(combobox, "dropdownOverflowsBottom").and.callFake(function () {
+            it('should be displayed below (not enough space)', () => {
+                spyOn(combobox, 'dropdownOverflowsBottom').and.callFake(function () {
                     return <DropdownPosition>{position: PositionType.FLEXIBLE_BELOW, height: 100};
                 });
                 combobox.showDropdown();
 
-                spyOn(combobox.getComboBoxDropdownGrid(), "getOptionCount").and.returnValue(10);
+                spyOn(combobox.getComboBoxDropdownGrid(), 'getOptionCount').and.returnValue(10);
                 const dropdown = combobox.getComboBoxDropdownGrid().getElement().getEl();
 
-                expect(dropdown.hasClass("reverted")).toBeFalsy();
+                expect(dropdown.hasClass('reverted')).toBeFalsy();
                 expect(dropdown.getHeight()).toEqual(100);
 
                 combobox.hideDropdown();
             });
 
-            it("should be displayed above (not enough space)", () => {
-                spyOn(combobox, "dropdownOverflowsBottom").and.callFake(function () {
+            it('should be displayed above (not enough space)', () => {
+                spyOn(combobox, 'dropdownOverflowsBottom').and.callFake(function () {
                     return <DropdownPosition>{position: PositionType.FLEXIBLE_ABOVE, height: 100};
                 });
                 combobox.showDropdown();
 
-                spyOn(combobox.getComboBoxDropdownGrid(), "getOptionCount").and.returnValue(10);
+                spyOn(combobox.getComboBoxDropdownGrid(), 'getOptionCount').and.returnValue(10);
                 const dropdown = combobox.getComboBoxDropdownGrid().getElement().getEl();
 
-                expect(dropdown.hasClass("reverted")).toBeTruthy();
+                expect(dropdown.hasClass('reverted')).toBeTruthy();
                 expect(dropdown.getHeight()).toEqual(100);
 
                 combobox.hideDropdown();
@@ -125,11 +125,11 @@ describe("api.ui.selector.combobox.ComboBox", () => {
     });
 
     function createComboBox(config: ComboBoxConfig<any>) {
-        return new ComboBox("comboboxName", config);
+        return new ComboBox('comboboxName', config);
     }
 
     function createDefaultComboBox() {
-        const cbox = new ComboBox("comboboxName", createComboBoxConfig());
+        const cbox = new ComboBox('comboboxName', createComboBoxConfig());
 
         createOptions(10).forEach((option) => cbox.addOption(option));
 
@@ -139,7 +139,7 @@ describe("api.ui.selector.combobox.ComboBox", () => {
     function createCustomComboBox(config: Object) {
         const defaultConfig = createComboBoxConfig();
         const customConfig = (<any>Object).assign(defaultConfig, config);
-        const cbox = new ComboBox("comboboxName", customConfig);
+        const cbox = new ComboBox('comboboxName', customConfig);
 
         createOptions(10).forEach((option) => cbox.addOption(option));
 
@@ -151,7 +151,7 @@ describe("api.ui.selector.combobox.ComboBox", () => {
         const selectedOptionsView = new BaseSelectedOptionsView();
 
         return <ComboBoxConfig<any>> {
-            iconUrl: "https://example.com/image.png",
+            iconUrl: 'https://example.com/image.png',
 
             optionDisplayValueViewer,
 
@@ -165,7 +165,7 @@ describe("api.ui.selector.combobox.ComboBox", () => {
 
             setNextInputFocusWhenMaxReached: true,
 
-            dataIdProperty: "id",
+            dataIdProperty: 'id',
 
             delayedInputValueChangedHandling: 100,
 
@@ -173,9 +173,9 @@ describe("api.ui.selector.combobox.ComboBox", () => {
 
             maxHeight: 200,
 
-            value: "value",
+            value: 'value',
 
-            noOptionsText: "No options",
+            noOptionsText: 'No options',
 
             displayMissingSelectedOptions: true,
 
@@ -194,9 +194,9 @@ describe("api.ui.selector.combobox.ComboBox", () => {
 
     function createOption(): OptionWithId<any> {
         return <OptionWithId<any>> {
-            id: "id" + Math.random().toString(36).slice(2),
-            value: "value" + Math.random().toString(36).slice(2),
-            displayValue: "displayValue" + Math.random().toString(36).slice(2),
+            id: 'id' + Math.random().toString(36).slice(2),
+            value: 'value' + Math.random().toString(36).slice(2),
+            displayValue: 'displayValue' + Math.random().toString(36).slice(2),
         };
     }
 

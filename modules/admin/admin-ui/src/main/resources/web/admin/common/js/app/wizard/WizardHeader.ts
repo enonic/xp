@@ -5,7 +5,7 @@ module api.app.wizard {
         private propertyChangedListeners: {(event: api.PropertyChangedEvent):void}[] = [];
 
         constructor() {
-            super("wizard-header");
+            super('wizard-header');
         }
 
         onPropertyChanged(listener: (event: api.PropertyChangedEvent)=>void) {
@@ -15,15 +15,15 @@ module api.app.wizard {
         unPropertyChanged(listener: (event: api.PropertyChangedEvent)=>void) {
             this.propertyChangedListeners =
             this.propertyChangedListeners.filter((currentListener: (event: api.PropertyChangedEvent)=>void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
         notifyPropertyChanged(property: string, oldValue: string, newValue: string) {
-            var event = new api.PropertyChangedEvent(property, oldValue, newValue);
+            let event = new api.PropertyChangedEvent(property, oldValue, newValue);
             this.propertyChangedListeners.forEach((listener: (event: api.PropertyChangedEvent)=>void) => {
                 listener.call(this, event);
-            })
+            });
         }
 
         isValid(): boolean {

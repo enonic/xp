@@ -7,7 +7,7 @@ module api.data {
     import DateTime = api.util.DateTime;
     import LocalDateTime = api.util.LocalDateTime;
     import LocalDate = api.util.LocalDate;
-    
+
     /**
      * A Property has a [[name]] and a [[value]],
      * but also:
@@ -35,10 +35,10 @@ module api.data {
         private propertyValueChangedListeners: {(event: PropertyValueChangedEvent):void}[] = [];
 
         constructor(builder: PropertyBuilder) {
-            api.util.assertNotNull(builder.array, "array of a Property cannot be null");
-            api.util.assertNotNull(builder.name, "name of a Property cannot be null");
-            api.util.assertNotNull(builder.index, "index of a Property cannot be null");
-            api.util.assertNotNull(builder.value, "value of a Property cannot be null");
+            api.util.assertNotNull(builder.array, 'array of a Property cannot be null');
+            api.util.assertNotNull(builder.name, 'name of a Property cannot be null');
+            api.util.assertNotNull(builder.index, 'index of a Property cannot be null');
+            api.util.assertNotNull(builder.value, 'value of a Property cannot be null');
 
             this.array = builder.array;
             this.parent = builder.array.getParent();
@@ -47,7 +47,7 @@ module api.data {
             this.value = builder.value;
 
             if (this.value.getType().equals(ValueTypes.DATA) && this.value.isNotNull()) {
-                var valuePropertySet = this.value.getPropertySet();
+                let valuePropertySet = this.value.getPropertySet();
                 valuePropertySet.setContainerProperty(this);
             }
         }
@@ -59,10 +59,10 @@ module api.data {
          * @param newIndex
          */
         setIndex(newIndex: number) {
-            var oldIndex = this.index;
+            let oldIndex = this.index;
             this.index = newIndex;
 
-            if (oldIndex != newIndex) {
+            if (oldIndex !== newIndex) {
                 this.notifyPropertyIndexChangedEvent(oldIndex, newIndex);
             }
         }
@@ -74,20 +74,20 @@ module api.data {
          * @param value
          */
         setValue(value: Value) {
-            api.util.assertNotNull(value, "value of a Property cannot be null");
-            var oldValue = this.value;
+            api.util.assertNotNull(value, 'value of a Property cannot be null');
+            let oldValue = this.value;
             this.value = value;
 
             // Register listeners on PropertySet
             if (this.value.getType().equals(ValueTypes.DATA) && this.value.isNotNull()) {
-                var propertySet = this.value.getPropertySet();
+                let propertySet = this.value.getPropertySet();
                 propertySet.setContainerProperty(this);
                 this.array.registerPropertySetListeners(propertySet);
             }
 
             // Unregister listeners on PropertySet from oldValue
             if (oldValue.getType().equals(ValueTypes.DATA) && oldValue.isNotNull()) {
-                var removedPropertySet = oldValue.getPropertySet();
+                let removedPropertySet = oldValue.getPropertySet();
                 removedPropertySet.setContainerProperty(null);
                 this.array.unregisterPropertySetListeners(removedPropertySet);
             }
@@ -140,9 +140,8 @@ module api.data {
 
         getPath(): PropertyPath {
             if (this.hasParentProperty()) {
-                return PropertyPath.fromParent(this.getParentProperty().getPath(), new PropertyPathElement(this.name, this.index))
-            }
-            else {
+                return PropertyPath.fromParent(this.getParentProperty().getPath(), new PropertyPathElement(this.name, this.index));
+            } else {
                 return PropertyPath.fromPathElement(new PropertyPathElement(this.name, this.index));
             }
         }
@@ -225,7 +224,7 @@ module api.data {
                 return false;
             }
 
-            var other = <Property>o;
+            let other = <Property>o;
 
             if (!api.ObjectHelper.stringEquals(this.name, other.name)) {
                 return false;
@@ -244,14 +243,13 @@ module api.data {
 
         copy(destinationPropertyArray: PropertyArray) {
 
-            var value: Value;
+            let value: Value;
 
             if (this.value.isPropertySet() && this.value.isNotNull()) {
-                var destinationTree = destinationPropertyArray.getTree();
-                var copiedPropertySet = this.value.getPropertySet().copy(destinationTree);
+                let destinationTree = destinationPropertyArray.getTree();
+                let copiedPropertySet = this.value.getPropertySet().copy(destinationTree);
                 value = new Value(copiedPropertySet, ValueTypes.DATA);
-            }
-            else {
+            } else {
                 value = this.value;
             }
 
@@ -269,13 +267,13 @@ module api.data {
 
         unPropertyIndexChanged(listener: {(event: PropertyIndexChangedEvent): void;}) {
             this.propertyIndexChangedListeners =
-            this.propertyIndexChangedListeners.filter((curr) => (curr != listener));
+            this.propertyIndexChangedListeners.filter((curr) => (curr !== listener));
         }
 
         private notifyPropertyIndexChangedEvent(previousIndex: number, newIndex: number) {
-            var event = new PropertyIndexChangedEvent(this, previousIndex, newIndex);
+            let event = new PropertyIndexChangedEvent(this, previousIndex, newIndex);
             if (Property.debug) {
-                console.debug("Property[" + this.getPath().toString() + "].notifyPropertyIndexChangedEvent: " + event.toString());
+                console.debug('Property[' + this.getPath().toString() + '].notifyPropertyIndexChangedEvent: ' + event.toString());
             }
             this.propertyIndexChangedListeners.forEach((listener) => listener(event));
         }
@@ -286,29 +284,29 @@ module api.data {
 
         unPropertyValueChanged(listener: {(event: PropertyValueChangedEvent): void;}) {
             this.propertyValueChangedListeners =
-            this.propertyValueChangedListeners.filter((curr) => (curr != listener));
+            this.propertyValueChangedListeners.filter((curr) => (curr !== listener));
         }
 
         private notifyPropertyValueChangedEvent(previousValue: Value, newValue: Value) {
-            var event = new PropertyValueChangedEvent(this, previousValue, newValue);
+            let event = new PropertyValueChangedEvent(this, previousValue, newValue);
             if (Property.debug) {
-                console.debug("Property[" + this.getPath().toString() + "].notifyPropertyValueChangedEvent: " + event.toString());
+                console.debug('Property[' + this.getPath().toString() + '].notifyPropertyValueChangedEvent: ' + event.toString());
             }
             this.propertyValueChangedListeners.forEach((listener) => listener(event));
         }
 
         public static checkName(name: string) {
             if (name == null) {
-                throw new Error("Property name cannot be null");
+                throw new Error('Property name cannot be null');
             }
             if (api.util.StringHelper.isBlank(name)) {
-                throw new Error("Property name cannot be blank");
+                throw new Error('Property name cannot be blank');
             }
-            if (name.indexOf(".") >= 0) {
-                throw new Error("Property name cannot contain .");
+            if (name.indexOf('.') >= 0) {
+                throw new Error('Property name cannot contain .');
             }
-            if (name.indexOf("[") >= 0 || name.indexOf("]") >= 0) {
-                throw new Error("Property name cannot contain [ or ]");
+            if (name.indexOf('[') >= 0 || name.indexOf(']') >= 0) {
+                throw new Error('Property name cannot contain [ or ]');
             }
         }
 

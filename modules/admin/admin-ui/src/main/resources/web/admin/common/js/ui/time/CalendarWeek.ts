@@ -19,7 +19,7 @@ module api.ui.time {
         private calendarDays: CalendarDay[];
 
         constructor(builder: CalendarWeekBuilder) {
-            super("calendar-week");
+            super('calendar-week');
 
             this.calendarDays = builder.calendarDays;
             this.calendarDays.forEach((day)=> {
@@ -28,7 +28,7 @@ module api.ui.time {
         }
 
         hasLastDayOfMonth(month: number): boolean {
-            var match = false;
+            let match = false;
             this.calendarDays.forEach((day: CalendarDay) => {
                 if (day.isLastDayOfMonth(month)) {
                     match = true;

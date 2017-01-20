@@ -4,19 +4,19 @@ module api.util.loader {
         private static cachedImages:HTMLImageElement[] = [];
 
         static get(url:string, width?:number, height?:number):HTMLImageElement {
-            var imageFound:boolean = false;
-            var returnImage:HTMLImageElement;
+            let imageFound:boolean = false;
+            let returnImage:HTMLImageElement;
             url = encodeURI(url);
 
-            for (var i in ImageLoader.cachedImages) {
-                if (ImageLoader.cachedImages[i].src == url) {
+            for (let i in ImageLoader.cachedImages) {
+                if (ImageLoader.cachedImages[i].src === url) {
                     imageFound = true;
                     returnImage = ImageLoader.cachedImages[i];
                 }
             }
 
             if (!imageFound) {
-                var image:HTMLImageElement = new Image(width, height);
+                let image:HTMLImageElement = new Image(width, height);
                 image.src = url;
                 //image.height = height;
                 //image.width = width;

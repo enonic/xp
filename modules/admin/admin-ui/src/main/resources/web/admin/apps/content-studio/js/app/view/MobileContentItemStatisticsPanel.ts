@@ -1,10 +1,10 @@
-import "../../api.ts";
-import {MobileDetailsPanel} from "./detail/MobileDetailsSlidablePanel";
-import {ContentItemPreviewPanel} from "./ContentItemPreviewPanel";
-import {MobileDetailsPanelToggleButton} from "./detail/button/MobileDetailsPanelToggleButton";
-import {ContentTreeGridActions} from "../browse/action/ContentTreeGridActions";
-import {DetailsView} from "./detail/DetailsView";
-import {MobilePreviewFoldButton} from "./MobilePreviewFoldButton";
+import '../../api.ts';
+import {MobileDetailsPanel} from './detail/MobileDetailsSlidablePanel';
+import {ContentItemPreviewPanel} from './ContentItemPreviewPanel';
+import {MobileDetailsPanelToggleButton} from './detail/button/MobileDetailsPanelToggleButton';
+import {ContentTreeGridActions} from '../browse/action/ContentTreeGridActions';
+import {DetailsView} from './detail/DetailsView';
+import {MobilePreviewFoldButton} from './MobilePreviewFoldButton';
 
 import ViewItem = api.app.view.ViewItem;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
@@ -15,8 +15,8 @@ import FoldButton = api.ui.toolbar.FoldButton;
 
 export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.content.ContentSummaryAndCompareStatus> {
 
-    private itemHeader: api.dom.DivEl = new api.dom.DivEl("mobile-content-item-statistics-header");
-    private headerLabel: api.dom.H6El = new api.dom.H6El("mobile-header-title");
+    private itemHeader: api.dom.DivEl = new api.dom.DivEl('mobile-content-item-statistics-header');
+    private headerLabel: api.dom.H6El = new api.dom.H6El('mobile-header-title');
     private subHeaderLabel: api.dom.SpanEl = new api.dom.SpanEl();
 
     private previewPanel: ContentItemPreviewPanel;
@@ -24,9 +24,9 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
     private detailsToggleButton: MobileDetailsPanelToggleButton;
 
     private foldButton: MobilePreviewFoldButton;
-    
+
     constructor(browseActions: ContentTreeGridActions, detailsView: DetailsView) {
-        super("mobile-content-item-statistics-panel");
+        super('mobile-content-item-statistics-panel');
 
         this.setDoOffset(false);
 
@@ -48,12 +48,12 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
         let reloadItemPublishStateChange = (contents: ContentSummaryAndCompareStatus[]) => {
             let thisContentId = this.getItem().getModel().getId();
 
-            let content: ContentSummaryAndCompareStatus = contents.filter((content) => {
-                return thisContentId == content.getId();
+            let contentSummary: ContentSummaryAndCompareStatus = contents.filter((content) => {
+                return thisContentId === content.getId();
             })[0];
 
-            if (!!content) {
-                this.setItem(ViewItem.fromContentSummaryAndCompareStatus(content));
+            if (contentSummary) {
+                this.setItem(ViewItem.fromContentSummaryAndCompareStatus(contentSummary));
             }
         };
 
@@ -90,7 +90,7 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
 
         this.itemHeader.appendChild(this.foldButton);
 
-        let backButton = new api.dom.DivEl("mobile-details-panel-back-button");
+        let backButton = new api.dom.DivEl('mobile-details-panel-back-button');
         backButton.onClicked((event) => {
             this.foldButton.collapse();
             this.slideAllOut();
@@ -118,7 +118,7 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
     private initPreviewPanel() {
         this.previewPanel = new ContentItemPreviewPanel();
         this.previewPanel.setDoOffset(false);
-        this.previewPanel.addClass("mobile");
+        this.previewPanel.addClass('mobile');
         this.appendChild(this.previewPanel);
     }
 
@@ -135,7 +135,7 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
     }
 
     private makeDisplayName(item: ViewItem<ContentSummaryAndCompareStatus>): string {
-        let localName = item.getModel().getType().getLocalName() || "";
+        let localName = item.getModel().getType().getLocalName() || '';
         return StringHelper.isEmpty(item.getDisplayName())
             ? api.content.ContentUnnamed.prettifyUnnamed(localName)
             : item.getDisplayName();
@@ -159,26 +159,26 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
     }
 
     private setStatus(status: string) {
-        this.subHeaderLabel.getHTMLElement().setAttribute("class", "");
-        this.subHeaderLabel.addClass(status.toLowerCase().replace(" ", "-"));
+        this.subHeaderLabel.getHTMLElement().setAttribute('class', '');
+        this.subHeaderLabel.addClass(status.toLowerCase().replace(' ', '-'));
         this.subHeaderLabel.setHtml(status);
     }
 
     slideAllOut() {
         this.slideOut();
         this.detailsPanel.slideOut();
-        this.detailsToggleButton.removeClass("expanded");
+        this.detailsToggleButton.removeClass('expanded');
     }
 
     // hide
     slideOut() {
         this.getEl().setRightPx(-this.getEl().getWidthWithBorder());
-        api.dom.Body.get().getHTMLElement().classList.remove("mobile-statistics-panel");
+        api.dom.Body.get().getHTMLElement().classList.remove('mobile-statistics-panel');
     }
 
     // show
     slideIn() {
-        api.dom.Body.get().getHTMLElement().classList.add("mobile-statistics-panel");
+        api.dom.Body.get().getHTMLElement().classList.add('mobile-statistics-panel');
         this.getEl().setRightPx(0);
     }
 

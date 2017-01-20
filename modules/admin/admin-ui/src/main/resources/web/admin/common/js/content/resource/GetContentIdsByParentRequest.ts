@@ -12,7 +12,7 @@ module api.content.resource {
 
         constructor() {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
         }
 
         setOrder(value: api.content.order.ChildOrder): GetContentIdsByParentRequest {
@@ -28,18 +28,18 @@ module api.content.resource {
         getParams(): Object {
             return {
                 parentId: this.parentId ? this.parentId.toString() : null,
-                childOrder: !!this.order ? this.order.toString() : ""
+                childOrder: !!this.order ? this.order.toString() : ''
             };
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "listIds");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'listIds');
         }
 
         sendAndParse(): wemQ.Promise<ContentId[]> {
 
             return this.send().then((response: api.rest.JsonResponse<api.content.json.ContentIdBaseItemJson[]>) => {
-                return response.getResult().map((item => new ContentId(item.id)))
+                return response.getResult().map((item => new ContentId(item.id)));
             });
         }
     }

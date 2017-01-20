@@ -4,7 +4,7 @@ module api.util {
 
     export class LocalDate implements api.Equitable {
 
-        public static DATE_SEPARATOR: string = "-";
+        public static DATE_SEPARATOR: string = '-';
 
         private year: number;
 
@@ -34,7 +34,7 @@ module api.util {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, LocalDate)) {
                 return false;
             }
-            var other = <LocalDate>o;
+            let other = <LocalDate>o;
             if (!api.ObjectHelper.stringEquals(this.toString(), other.toString())) {
                 return false;
             }
@@ -52,10 +52,10 @@ module api.util {
         }
 
         private padNumber(num: number, length: number = 2): string {
-            var numAsString = String(num);
+            let numAsString = String(num);
 
             while (numAsString.length < length) {
-                numAsString = "0" + numAsString;
+                numAsString = '0' + numAsString;
             }
             return numAsString;
         }
@@ -66,7 +66,7 @@ module api.util {
                 return false;
             }
             //matches 2015-02-29
-            var re = /^(\d{4})(\-)([0]{1}\d{1}|[1]{1}[0-2]{1})(\-)([0-2]{1}\d{1}|[3]{1}[0-1]{1})$/;
+            let re = /^(\d{4})(\-)([0]{1}\d{1}|[1]{1}[0-2]{1})(\-)([0-2]{1}\d{1}|[3]{1}[0-1]{1})$/;
             return re.test(s);
         }
 
@@ -84,10 +84,10 @@ module api.util {
 
         static fromISOString(s: string): LocalDate {
             if (!LocalDate.isValidISODateString(s)) {
-                throw new Error("Cannot parse LocalDate from string: " + s);
+                throw new Error('Cannot parse LocalDate from string: ' + s);
             }
 
-            var date: string[] = s.split(LocalDate.DATE_SEPARATOR);
+            let date: string[] = s.split(LocalDate.DATE_SEPARATOR);
             return LocalDate.create().
                 setYear(Number(date[0])).
                 setMonth(Number(date[1]) - 1).
@@ -125,14 +125,13 @@ module api.util {
 
         validate() {
             if (!this.year) {
-                throw new Error("Invalid parameter. Year should be set");
-            } else if (this.month == undefined) {
-                throw new Error("Invalid parameter. Month should be set");
+                throw new Error('Invalid parameter. Year should be set');
+            } else if (this.month == null) {
+                throw new Error('Invalid parameter. Month should be set');
             } else if (!this.day) {
-                throw new Error("Invalid parameter. Day should be set");
+                throw new Error('Invalid parameter. Day should be set');
             }
         }
-
 
         public build(): LocalDate {
             this.validate();

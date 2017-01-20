@@ -1,6 +1,6 @@
-import "../../api.ts";
-import {OpenMoveDialogEvent} from "./OpenMoveDialogEvent";
-import {ContentMoveComboBox} from "./ContentMoveComboBox";
+import '../../api.ts';
+import {OpenMoveDialogEvent} from './OpenMoveDialogEvent';
+import {ContentMoveComboBox} from './ContentMoveComboBox';
 
 import ContentPath = api.content.ContentPath;
 import ContentType = api.schema.content.ContentType;
@@ -22,13 +22,13 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
     private moveMask: api.ui.mask.LoadMask;
 
     constructor() {
-        super("Move item with children");
-        
-        this.addClass("move-content-dialog");
+        super('Move item with children');
 
-        this.contentPathSubHeader = new api.dom.H6El().addClass("content-path");
-        var descMessage = new api.dom.H6El().addClass("desc-message").setHtml(
-            "Moves selected items with all children and current permissions to selected destination");
+        this.addClass('move-content-dialog');
+
+        this.contentPathSubHeader = new api.dom.H6El().addClass('content-path');
+        let descMessage = new api.dom.H6El().addClass('desc-message').setHtml(
+            'Moves selected items with all children and current permissions to selected destination');
         this.moveMask = new api.ui.mask.LoadMask(this);
         this.initSearchInput();
         this.initMoveAction();
@@ -59,7 +59,7 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
                 const filterContentPaths = contents.map((content)=> content.getPath());
                 this.destinationSearchInput.setFilterContentPaths(filterContentPaths);
                 this.destinationSearchInput.setFilterContentTypes(filterContentTypes);
-                this.contentPathSubHeader.setHtml(contents.length === 1 ? contents[0].getPath().toString() : "");
+                this.contentPathSubHeader.setHtml(contents.length === 1 ? contents[0].getPath().toString() : '');
                 this.open();
                 deferred.resolve(filterContentTypes);
             }).catch((reason: any) => deferred.reject(reason)).done();
@@ -68,7 +68,7 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
     private initSearchInput() {
         this.destinationSearchInput = new ContentMoveComboBox();
-        this.destinationSearchInput.addClass("content-selector");
+        this.destinationSearchInput.addClass('content-selector');
         this.destinationSearchInput.onKeyUp((event: KeyboardEvent) => {
             if (event.keyCode === 27) {
                 this.getCancelAction().execute();
@@ -81,19 +81,19 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
     private initMoveAction() {
 
-        this.addAction(new api.ui.Action("Move", "").onExecuted(() => {
+        this.addAction(new api.ui.Action('Move', '').onExecuted(() => {
 
             this.moveMask.show();
 
-            var parentContent = this.getParentContent();
+            let parentContent = this.getParentContent();
             this.moveContent(parentContent);
         }), true);
     }
 
     private moveContent(parentContent: api.content.ContentSummary) {
-        var parentRoot = (!!parentContent) ? parentContent.getPath() : ContentPath.ROOT;
+        let parentRoot = (!!parentContent) ? parentContent.getPath() : ContentPath.ROOT;
 
-        var contentIds = ContentIds.create().fromContentIds(this.movedContentSummaries.map(summary => summary.getContentId())).build();
+        let contentIds = ContentIds.create().fromContentIds(this.movedContentSummaries.map(summary => summary.getContentId())).build();
 
         new api.content.resource.MoveContentRequest(contentIds, parentRoot).sendAndParse().then((response: MoveContentResult) => {
             if (parentContent) {
@@ -103,9 +103,9 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
             if (response.getMoved().length > 0) {
                 if (response.getMoved().length > 1) {
-                    api.notify.showFeedback(response.getMoved().length + ' items moved');
+                    api.notify.showFeedback(`${response.getMoved().length} items moved`);
                 } else {
-                    api.notify.showFeedback("\"" + response.getMoved()[0] + '\" moved');
+                    api.notify.showFeedback(`"${response.getMoved()[0]}" moved`);
                 }
             }
 

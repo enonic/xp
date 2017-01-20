@@ -9,7 +9,7 @@ module api.content.page.region {
         constructor() {
             super();
             this.cache = LayoutDescriptorCache.get();
-            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "content", "page", "layout", "descriptor");
+            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), 'content', 'page', 'layout', 'descriptor');
         }
 
         getResourcePath(): api.rest.Path {
@@ -18,7 +18,7 @@ module api.content.page.region {
 
         fromJsonToLayoutDescriptor(json: LayoutDescriptorJson): LayoutDescriptor {
 
-            var descriptor = new LayoutDescriptorBuilder().fromJson(json).build();
+            let descriptor = new LayoutDescriptorBuilder().fromJson(json).build();
             this.cache.put(descriptor);
             return  descriptor;
         }

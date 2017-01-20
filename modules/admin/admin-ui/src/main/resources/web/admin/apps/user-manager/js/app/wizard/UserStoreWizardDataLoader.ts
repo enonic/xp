@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {UserStoreWizardPanelParams} from "./UserStoreWizardPanelParams";
+import '../../api.ts';
+import {UserStoreWizardPanelParams} from './UserStoreWizardPanelParams';
 
 import UserStore = api.security.UserStore;
 import UserStoreKey = api.security.UserStoreKey;

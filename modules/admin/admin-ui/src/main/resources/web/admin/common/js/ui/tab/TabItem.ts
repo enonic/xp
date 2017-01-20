@@ -24,7 +24,7 @@ module api.ui.tab {
 
         constructor(builder: TabItemBuilder, classes?: string) {
 
-            super("tab-item" + (!classes ? "" : " " + classes));
+            super('tab-item' + (!classes ? '' : ' ' + classes));
 
             this.labelEl = new api.dom.AEl('label');
             this.appendChild(this.labelEl);
@@ -74,11 +74,11 @@ module api.ui.tab {
         }
 
         setLabel(newValue: string, markUnnamed: boolean = false, addLabelTitleAttribute: boolean = true) {
-            if (this.label == newValue) {
+            if (this.label === newValue) {
                 return;
             }
 
-            var oldValue = this.label;
+            let oldValue = this.label;
             this.label = newValue;
             this.labelEl.setHtml(newValue);
 
@@ -86,13 +86,13 @@ module api.ui.tab {
                 this.labelEl.getEl().setAttribute('title', newValue);
             }
 
-            this.labelEl.toggleClass("unnamed", markUnnamed);
+            this.labelEl.toggleClass('unnamed', markUnnamed);
 
             this.notifyLabelChangedListeners(newValue, oldValue);
         }
 
         markInvalid(markInvalid: boolean = false) {
-            this.toggleClass("invalid", markInvalid);
+            this.toggleClass('invalid', markInvalid);
         }
 
         getLabel(): string {
@@ -101,7 +101,7 @@ module api.ui.tab {
 
         setActive(value: boolean) {
             this.active = value;
-            this.toggleClass("active", value);
+            this.toggleClass('active', value);
         }
 
         isActive(): boolean {
@@ -126,7 +126,7 @@ module api.ui.tab {
 
         onClosed(listener: (event: TabItemClosedEvent)=>void) {
             if (this.closeAction) {
-                throw new Error("Failed to set 'on closed' listener. Close action is already setted.");
+                throw new Error(`Failed to set 'on closed' listener. Close action is already setted.`);
             } else {
                 this.closedListeners.push(listener);
             }
@@ -135,19 +135,19 @@ module api.ui.tab {
         unLabelChanged(listener: (event: TabItemLabelChangedEvent)=>void) {
             this.labelChangedListeners =
                 this.labelChangedListeners.filter((currentListener: (event: TabItemLabelChangedEvent)=>void) => {
-                    return listener != currentListener;
+                    return listener !== currentListener;
                 });
         }
 
         unSelected(listener: (event: TabItemSelectedEvent)=>void) {
             this.selectedListeners = this.selectedListeners.filter((currentListener: (event: TabItemSelectedEvent)=>void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
         unClosed(listener: (event: TabItemClosedEvent)=>void) {
             this.closedListeners = this.closedListeners.filter((currentListener: (event: TabItemClosedEvent)=>void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
@@ -175,10 +175,9 @@ module api.ui.tab {
 
         private setFocusable(focusable: boolean) {
             if (focusable) {
-                this.labelEl.getEl().removeAttribute("tabindex");
-            }
-            else {
-                this.labelEl.getEl().setAttribute("tabindex", "-1");
+                this.labelEl.getEl().removeAttribute('tabindex');
+            } else {
+                this.labelEl.getEl().setAttribute('tabindex', '-1');
             }
         }
 
@@ -230,7 +229,7 @@ module api.ui.tab {
             return this;
         }
 
-        setFocusable(focusable): TabItemBuilder {
+        setFocusable(focusable: boolean): TabItemBuilder {
             this.focusable = focusable;
             return this;
         }

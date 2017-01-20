@@ -5,8 +5,8 @@ module api.app.wizard {
         private img: api.dom.ImgEl;
 
         constructor(iconUrl: string, className?: string) {
-            super("form-icon" + (className ? " " + className : ""));
-            var el = this.getEl();
+            super('form-icon' + (className ? ' ' + className : ''));
+            let el = this.getEl();
 
             this.img = new api.dom.ImgEl(iconUrl);
 

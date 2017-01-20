@@ -41,7 +41,7 @@ module api.ui.text {
 
         private options: CodeMirrorOptions;
 
-        private codeMirror;
+        private codeMirror: CodeMirrorEditor;
 
         private mode: string;
 
@@ -58,15 +58,15 @@ module api.ui.text {
             };
             CodeMirror.modeURL = api.util.UriHelper.getAdminUri('common/lib/codemirror/mode/%N.js');
 
-            this.onAdded((event) => {
+            this.onAdded(() => {
                 this.codeMirror = CodeMirror.fromTextArea(<HTMLTextAreaElement>this.textArea.getHTMLElement(), this.options);
-                this.codeMirror.setSize("540px", "350px");
-                this.codeMirror.setOption("mode", this.mode);
+                this.codeMirror.setSize(540, 350);
+                this.codeMirror.setOption('mode', this.mode);
                 CodeMirror.autoLoadMode(this.codeMirror, this.mode);
                 this.codeMirror.refresh();
             });
 
-            this.onShown((event) => {
+            this.onShown(() => {
                 this.codeMirror.refresh();
             });
         }

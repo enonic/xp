@@ -11,12 +11,12 @@ module api.app {
 
         private type: NodeServerChangeType;
 
-        private batchReadyListeners: {(event):void}[] = [];
+        private batchReadyListeners: {(event: any):void}[] = [];
 
-        private debounced;
+        private debouncedNotification: Function;
 
         constructor() {
-            this.debounced = api.util.AppHelper.debounce(() => {
+            this.debouncedNotification = api.util.AppHelper.debounce(() => {
                 this.notifyBatchIsReady();
             }, ServerEventAggregator.AGGREGATION_TIMEOUT, false);
         }
@@ -30,7 +30,7 @@ module api.app {
         }
 
         appendEvent(event: NodeServerEvent) {
-            if (this.events == null || this.events.length == 0) {
+            if (this.events == null || this.events.length === 0) {
                 this.init(event);
             } else {
                 if (this.isTheSameTypeEvent(event)) {
@@ -40,7 +40,7 @@ module api.app {
                     this.init(event);
                 }
             }
-            this.debounced();
+            this.debouncedNotification();
         }
 
         getType(): NodeServerChangeType {
@@ -48,9 +48,9 @@ module api.app {
         }
 
         private isTheSameTypeEvent(event: NodeServerEvent) {
-            var change = event.getNodeChange();
+            let change = event.getNodeChange();
 
-            if (this.type != change.getChangeType()) {
+            if (this.type !== change.getChangeType()) {
                 return false;
             }
 
@@ -62,18 +62,18 @@ module api.app {
             this.type = !!event.getNodeChange() ? event.getNodeChange().getChangeType() : null;
         }
 
-        onBatchIsReady(listener: (event)=>void) {
+        onBatchIsReady(listener: (event: any) => void) {
             this.batchReadyListeners.push(listener);
         }
 
-        unBatchIsReady(listener: (event)=>void) {
-            this.batchReadyListeners = this.batchReadyListeners.filter((currentListener: (event)=>void)=> {
-                return listener != currentListener
+        unBatchIsReady(listener: (event: any) => void) {
+            this.batchReadyListeners = this.batchReadyListeners.filter((currentListener: (event: any) => void) =>  {
+                return listener !== currentListener;
             });
         }
 
         private notifyBatchIsReady() {
-            this.batchReadyListeners.forEach((listener: (event)=>void)=> {
+            this.batchReadyListeners.forEach((listener: (event: any) => void) =>  {
                 listener.call(this);
             });
         }

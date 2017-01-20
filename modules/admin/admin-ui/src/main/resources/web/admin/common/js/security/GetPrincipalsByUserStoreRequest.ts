@@ -8,15 +8,15 @@ module api.security {
 
         constructor(userStore: UserStoreKey, principalTypes: PrincipalType[]) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
             this.userStore = userStore;
             this.principalTypes = principalTypes;
         }
 
         getParams(): Object {
             return {
-                'userStoreKey': this.userStore.getId(),
-                'types': this.getType()
+                userStoreKey: this.userStore.getId(),
+                types: this.getType()
 
             };
         }
@@ -26,10 +26,10 @@ module api.security {
         }
 
         private getType(): string {
-            var typeStr: string = "";
+            let typeStr: string = '';
             this.principalTypes.forEach((type) => {
                 typeStr += PrincipalType[type];
-                typeStr += ",";
+                typeStr += ',';
             });
             return typeStr.substr(0, typeStr.length - 1);
         }

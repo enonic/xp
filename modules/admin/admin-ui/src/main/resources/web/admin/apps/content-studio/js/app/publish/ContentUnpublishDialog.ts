@@ -1,6 +1,6 @@
-import "../../api.ts";
-import {ProgressBarDialog} from "../dialog/ProgressBarDialog";
-import {ContentUnpublishPromptEvent} from "../browse/ContentUnpublishPromptEvent";
+import '../../api.ts';
+import {ProgressBarDialog} from '../dialog/ProgressBarDialog';
+import {ContentUnpublishPromptEvent} from '../browse/ContentUnpublishPromptEvent';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import DialogButton = api.ui.dialog.DialogButton;
@@ -10,23 +10,21 @@ import CompareStatus = api.content.CompareStatus;
 import ContentId = api.content.ContentId;
 import ListBox = api.ui.selector.list.ListBox;
 
-
 export class ContentUnpublishDialog extends ProgressBarDialog {
-
 
     constructor() {
 
         super(
-            "Unpublish item",
-            "<b>Take offline?</b> - Unpublishing selected item(s) will set status back to offline",
-            "Dependent items - Clean up references to selected item(s) or click unpublish to take all items offline",
-            "is-unpublishing",
+            'Unpublish item',
+            '<b>Take offline?</b> - Unpublishing selected item(s) will set status back to offline',
+            'Dependent items - Clean up references to selected item(s) or click unpublish to take all items offline',
+            'is-unpublishing',
             () => {
                 new ContentUnpublishPromptEvent([]).fire();
             }
         );
 
-        this.getEl().addClass("unpublish-dialog");
+        this.getEl().addClass('unpublish-dialog');
 
         const unpublishAction = new ContentUnpublishDialogAction();
         unpublishAction.onExecuted(this.doUnpublish.bind(this));
@@ -75,21 +73,21 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
     private filterUnpublishableItems(items: ContentSummaryAndCompareStatus[]): ContentSummaryAndCompareStatus[] {
         return items.filter(item => {
             let status = item.getCompareStatus();
-            return status == CompareStatus.EQUAL || status == CompareStatus.NEWER || status == CompareStatus.PENDING_DELETE ||
-                   status == CompareStatus.OLDER;
+            return status === CompareStatus.EQUAL || status === CompareStatus.NEWER || status === CompareStatus.PENDING_DELETE ||
+                   status === CompareStatus.OLDER;
         });
     }
 
     setDependantItems(items: ContentSummaryAndCompareStatus[]) {
         super.setDependantItems(this.filterUnpublishableItems(items));
 
-        this.updateButtonCount("Unpublish", this.countTotal());
+        this.updateButtonCount('Unpublish', this.countTotal());
     }
 
     addDependantItems(items: ContentSummaryAndCompareStatus[]) {
         super.addDependantItems(this.filterUnpublishableItems(items));
 
-        this.updateButtonCount("Unpublish", this.countTotal());
+        this.updateButtonCount('Unpublish', this.countTotal());
     }
 
     setContentToUnpublish(contents: ContentSummaryAndCompareStatus[]) {
@@ -102,16 +100,16 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
     private getContentToUnpublishIds(): ContentId[] {
         return this.getItemList().getItems().map(item => {
             return item.getContentId();
-        })
+        });
     }
 
     private doUnpublish() {
 
         this.lockControls();
 
-        this.setSubTitle(this.countTotal() + " items are being unpublished...");
+        this.setSubTitle(this.countTotal() + ' items are being unpublished...');
 
-        var selectedIds = this.getContentToUnpublishIds();
+        let selectedIds = this.getContentToUnpublishIds();
 
         new UnpublishContentRequest()
             .setIncludeChildren(true)
@@ -131,7 +129,7 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
 
 export class ContentUnpublishDialogAction extends api.ui.Action {
     constructor() {
-        super("Unpublish");
-        this.setIconClass("unpublish-action");
+        super('Unpublish');
+        this.setIconClass('unpublish-action');
     }
 }

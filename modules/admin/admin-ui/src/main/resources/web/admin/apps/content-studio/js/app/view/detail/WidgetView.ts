@@ -1,7 +1,7 @@
-import "../../../api.ts";
-import {DetailsView} from "./DetailsView";
-import {WidgetItemView} from "./WidgetItemView";
-import {ActiveDetailsPanelManager} from "../../view/detail/ActiveDetailsPanelManager";
+import '../../../api.ts';
+import {DetailsView} from './DetailsView';
+import {WidgetItemView} from './WidgetItemView';
+import {ActiveDetailsPanelManager} from '../../view/detail/ActiveDetailsPanelManager';
 
 import ViewItem = api.app.view.ViewItem;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
@@ -20,16 +20,16 @@ export class WidgetView extends api.dom.DivEl {
 
     private containerWidth: number = 0;
 
-    private url: string = "";
+    private url: string = '';
 
     private content: ContentSummaryAndCompareStatus;
 
     private activationListeners: {() : void}[] = [];
 
-    public static debug = false;
+    public static debug: boolean = false;
 
     constructor(builder: WidgetViewBuilder) {
-        super("widget-view " + (builder.widget ? "external-widget" : "internal-widget"));
+        super('widget-view ' + (builder.widget ? 'external-widget' : 'internal-widget'));
 
         this.detailsView = builder.detailsView;
         this.widgetName = builder.name;
@@ -54,43 +54,43 @@ export class WidgetView extends api.dom.DivEl {
 
     private applyConfig() {
         if (this.isUrlBased()) {
-            var config = this.widget.getConfig();
-            if (!!config && config.hasOwnProperty("render-on-resize") && config["render-on-resize"] == "true") {
+            let config = this.widget.getConfig();
+            if (!!config && config.hasOwnProperty('render-on-resize') && config['render-on-resize'] === 'true') {
                 this.handleRerenderOnResize();
             }
         }
     }
 
     private handleRerenderOnResize() {
-        var updateWidgetItemViewsHandler = () => {
-            var containerWidth = this.detailsView.getEl().getWidth();
+        let updateWidgetItemViewsHandler = () => {
+            let containerWidth = this.detailsView.getEl().getWidth();
             if (this.detailsView.getItem() && containerWidth !== this.containerWidth) {
                 this.updateWidgetItemViews(true);
             }
-        }
+        };
         this.detailsView.onPanelSizeChanged(() => {
             if (this.isActive()) {
                 updateWidgetItemViewsHandler();
             } else {
-                var onActivatedHandler = () => {
+                let onActivatedHandler = () => {
                     updateWidgetItemViewsHandler();
                     this.unActivated(onActivatedHandler);
-                }
+                };
                 this.onActivated(onActivatedHandler);
             }
         });
     }
 
     private getWidgetUrl() {
-        return api.rendering.UriHelper.getAdminUri(this.widget.getUrl(), "/");
+        return api.rendering.UriHelper.getAdminUri(this.widget.getUrl(), '/');
     }
 
     private getFullUrl(url: string) {
-        return url + "/" + this.detailsView.getEl().getWidth();
+        return url + '/' + this.detailsView.getEl().getWidth();
     }
 
     private updateCustomWidgetItemViews(force: boolean = false): wemQ.Promise<any>[] {
-        var promises = [];
+        let promises = [];
 
         this.url = this.getWidgetUrl();
         this.widgetItemViews.forEach((widgetItemView: WidgetItemView) => {
@@ -101,8 +101,8 @@ export class WidgetView extends api.dom.DivEl {
     }
 
     public updateWidgetItemViews(force: boolean = false): wemQ.Promise<any> {
-        var content = this.detailsView.getItem(),
-            promises = [];
+        let content = this.detailsView.getItem();
+        let promises = [];
 
         if (this.widgetShouldBeUpdated(force)) {
             this.detailsView.showLoadMask();
@@ -122,7 +122,7 @@ export class WidgetView extends api.dom.DivEl {
     }
 
     private widgetShouldBeUpdated(force: boolean = false): boolean {
-        var content = this.detailsView.getItem();
+        let content = this.detailsView.getItem();
         return content && ActiveDetailsPanelManager.getActiveDetailsPanel().isVisibleOrAboutToBeVisible() &&
                (force || !api.ObjectHelper.equals(this.content, content) || (this.isUrlBased() && this.url !== this.getWidgetUrl()));
     }
@@ -138,7 +138,7 @@ export class WidgetView extends api.dom.DivEl {
 
         this.slideOut();
 
-        var layoutTasks: wemQ.Promise<any>[] = [];
+        let layoutTasks: wemQ.Promise<any>[] = [];
 
         this.widgetItemViews.forEach((itemView: WidgetItemView) => {
             this.appendChild(itemView);
@@ -160,13 +160,12 @@ export class WidgetView extends api.dom.DivEl {
     slideIn() {
         if (this.hasDynamicHeight()) {
             this.redoLayout();
-        }
-        else {
+        } else {
             this.getEl().setMaxHeightPx(this.getParentElement().getEl().getHeight());
         }
 
         setTimeout(() => {
-            this.getEl().setMaxHeight("none");
+            this.getEl().setMaxHeight('none');
         }, 100);
     }
 
@@ -191,7 +190,7 @@ export class WidgetView extends api.dom.DivEl {
     }
 
     private isActive() {
-        return this.detailsView.getActiveWidget() == this;
+        return this.detailsView.getActiveWidget() === this;
     }
 
     private hasDynamicHeight(): boolean {
@@ -199,11 +198,11 @@ export class WidgetView extends api.dom.DivEl {
     }
 
     private redoLayout() {
-        var firstItemView = this.widgetItemViews[0];
+        let firstItemView = this.widgetItemViews[0];
         if (!firstItemView) {
             return;
         }
-        this.getEl().setHeight("");
+        this.getEl().setHeight('');
         firstItemView.hide();
         setTimeout(() => {
             firstItemView.show();
@@ -224,7 +223,7 @@ export class WidgetView extends api.dom.DivEl {
 
     unActivated(listener: ()=>void) {
         this.activationListeners = this.activationListeners.filter((currentListener: ()=>void) => {
-            return currentListener != listener;
+            return currentListener !== listener;
         });
     }
 

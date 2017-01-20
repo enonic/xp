@@ -7,7 +7,7 @@ module api.app.view {
         private empty: boolean;
 
         constructor(title: string, className?: string) {
-            super(!!className ? className + " item-data-group" : "item-data-group");
+            super(!!className ? className + ' item-data-group' : 'item-data-group');
             this.header = new api.dom.H2El();
             this.header.getEl().setInnerHtml(title);
             this.appendChild(this.header);
@@ -20,14 +20,14 @@ module api.app.view {
         }
 
         addDataArray(header: string, datas: string[]) {
-            var dataList = new api.dom.UlEl("data-list");
+            let dataList = new api.dom.UlEl('data-list');
 
             if (header) {
                 this.addHeader(header, dataList);
             }
 
             datas.forEach((data) => {
-                var dataElement = new api.dom.LiEl();
+                let dataElement = new api.dom.LiEl();
                 dataElement.getEl().setInnerHtml(data, false);
                 dataList.appendChild(dataElement);
                 this.empty = false;
@@ -37,14 +37,14 @@ module api.app.view {
         }
 
         addDataElements(header:string, datas:api.dom.Element[]) {
-            var dataList = new api.dom.UlEl("data-list");
+            let dataList = new api.dom.UlEl('data-list');
 
             if (header) {
                 this.addHeader(header, dataList);
             }
 
             datas.forEach((data) => {
-                var dataElement = new api.dom.LiEl();
+                let dataElement = new api.dom.LiEl();
                 dataElement.appendChild(data);
                 dataList.appendChild(dataElement);
                 this.empty = false;
@@ -54,8 +54,8 @@ module api.app.view {
         }
 
         private addHeader(header:string, dataList:api.dom.UlEl) {
-            var headerElement = new api.dom.LiEl();
-            headerElement.addClass("list-header");
+            let headerElement = new api.dom.LiEl();
+            headerElement.addClass('list-header');
 
             headerElement.getEl().setInnerHtml(header, false);
             dataList.appendChild(headerElement);

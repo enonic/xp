@@ -5,16 +5,16 @@ module api.app.browse {
         private deselectedListeners: {(event: ItemDeselectedEvent<M>): void}[] = [];
         private items: BrowseItem<M>[] = [];
         private selectionItems: SelectionItem<M>[] = [];
-        private messageForNoSelection = "You are wasting this space - select something!";
+        private messageForNoSelection: string = 'You are wasting this space - select something!';
         private mobileView: boolean = false;
         private itemsContainer: api.dom.DivEl;
-        private itemsLimit;
+        private itemsLimit: number;
 
         constructor(itemsLimit?: number) {
-            super("items-selection-panel");
+            super('items-selection-panel');
             this.getEl().addClass('no-selection');
 
-            this.itemsContainer = new api.dom.DivEl("items-container");
+            this.itemsContainer = new api.dom.DivEl('items-container');
             this.appendChild(this.itemsContainer);
 
             this.itemsContainer.setHtml(this.messageForNoSelection);
@@ -26,7 +26,7 @@ module api.app.browse {
             return this.itemsLimit;
         }
 
-        setItemsLimit(limit) {
+        setItemsLimit(limit: number) {
             this.itemsLimit = limit;
         }
 
@@ -150,14 +150,14 @@ module api.app.browse {
         }
 
         createItemViewer(item: BrowseItem<M>): api.ui.Viewer<M> {
-            var viewer = new api.ui.Viewer<M>();
+            let viewer = new api.ui.Viewer<M>();
             viewer.setObject(item.getModel());
             return viewer;
         }
 
         updateItemViewers(items: BrowseItem<M>[]) {
             items.forEach((item) => {
-                var index = this.indexOf(item);
+                let index = this.indexOf(item);
                 if (index >= 0) {
                     this.items[index] = item;
                     this.selectionItems[index].setBrowseItem(item);
@@ -166,9 +166,9 @@ module api.app.browse {
         }
 
         private indexOf(item: BrowseItem<M>): number {
-            for (var i = 0; i < this.items.length; i++) {
-                if (item.getPath() && item.getPath() == this.items[i].getPath() ||
-                    item.getId() == this.items[i].getId()) {
+            for (let i = 0; i < this.items.length; i++) {
+                if (item.getPath() && item.getPath() === this.items[i].getPath() ||
+                    item.getId() === this.items[i].getId()) {
                     return i;
                 }
             }

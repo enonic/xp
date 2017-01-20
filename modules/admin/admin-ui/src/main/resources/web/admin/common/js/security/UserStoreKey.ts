@@ -7,7 +7,7 @@ module api.security {
         private id: string;
 
         constructor(id: string) {
-            api.util.assert(!api.util.StringHelper.isBlank(id), "UserStoreKey id cannot be null or empty");
+            api.util.assert(!api.util.StringHelper.isBlank(id), 'UserStoreKey id cannot be null or empty');
             this.id = id;
         }
 
@@ -32,7 +32,7 @@ module api.security {
                 return false;
             }
 
-            var other = <UserStoreKey>o;
+            let other = <UserStoreKey>o;
             return this.id === other.id;
         }
     }

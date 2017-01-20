@@ -15,9 +15,9 @@ module api.content.page.region {
         protected loader: PartDescriptorLoader;
 
         constructor() {
-            super(new RichComboBoxBuilder<PartDescriptor>().setIdentifierMethod("getKey").setOptionDisplayValueViewer(
+            super(new RichComboBoxBuilder<PartDescriptor>().setIdentifierMethod('getKey').setOptionDisplayValueViewer(
                 new PartDescriptorViewer()).setSelectedOptionsView(new PartDescriptorSelectedOptionsView()).setMaximumOccurrences(
-                1).setNextInputFocusWhenMaxReached(false).setNoOptionsText("No parts available"));
+                1).setNextInputFocusWhenMaxReached(false).setNoOptionsText('No parts available'));
         }
 
         loadDescriptors(applicationKeys: ApplicationKey[]) {
@@ -31,7 +31,7 @@ module api.content.page.region {
         }
 
         getDescriptor(descriptorKey: DescriptorKey): PartDescriptor {
-            var option = this.getOptionByValue(descriptorKey.toString());
+            let option = this.getOptionByValue(descriptorKey.toString());
             if (option) {
                 return option.displayValue;
             }
@@ -42,7 +42,7 @@ module api.content.page.region {
 
             this.clearSelection();
             if (descriptor) {
-                var optionToSelect: Option<PartDescriptor> = this.getOptionByValue(descriptor.getKey().toString());
+                let optionToSelect: Option<PartDescriptor> = this.getOptionByValue(descriptor.getKey().toString());
                 if (!optionToSelect) {
                     optionToSelect = {
                         value: descriptor.getKey().toString(),
@@ -71,17 +71,17 @@ module api.content.page.region {
             super(option);
 
             this.descriptor = option.displayValue;
-            this.addClass("part-descriptor-selected-option-view");
+            this.addClass('part-descriptor-selected-option-view');
         }
 
         doRender(): wemQ.Promise<boolean> {
-            
-            var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
-            namesAndIconView.setIconClass(api.StyleHelper.getCommonIconCls("part") + " icon-medium")
+
+            let namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
+            namesAndIconView.setIconClass(api.StyleHelper.getCommonIconCls('part') + ' icon-medium')
                 .setMainName(this.descriptor.getDisplayName())
                 .setSubName(this.descriptor.getKey().toString());
 
-            var removeButtonEl = new api.dom.AEl("remove");
+            let removeButtonEl = new api.dom.AEl('remove');
             removeButtonEl.onClicked((event: MouseEvent) => {
                 this.notifyRemoveClicked();
 

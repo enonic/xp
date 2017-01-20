@@ -2,18 +2,18 @@ module api.ui {
 
     export class Tooltip {
 
-        static SIDE_TOP = "top";
-        static SIDE_RIGHT = "right";
-        static SIDE_BOTTOM = "bottom";
-        static SIDE_LEFT = "left";
+        static SIDE_TOP: string = 'top';
+        static SIDE_RIGHT: string = 'right';
+        static SIDE_BOTTOM: string = 'bottom';
+        static SIDE_LEFT: string = 'left';
 
-        static TRIGGER_HOVER = "hover";
-        static TRIGGER_FOCUS = "focus";
-        static TRIGGER_NONE = "none";
+        static TRIGGER_HOVER: string = 'hover';
+        static TRIGGER_FOCUS: string = 'focus';
+        static TRIGGER_NONE: string = 'none';
 
-        static MODE_STATIC = "static";
-        static MODE_GLOBAL_STATIC = "global_static";
-        static MODE_FOLLOW = "follow";
+        static MODE_STATIC: string = 'static';
+        static MODE_GLOBAL_STATIC: string = 'global_static';
+        static MODE_FOLLOW: string = 'follow';
 
         private static multipleAllowed: boolean = true;
         private static instances: Tooltip[] = [];
@@ -74,7 +74,7 @@ module api.ui {
         show() {
             this.stopTimeout();
             if (!this.tooltipEl) {
-                this.tooltipEl = new api.dom.DivEl("tooltip", api.StyleHelper.COMMON_PREFIX);
+                this.tooltipEl = new api.dom.DivEl('tooltip', api.StyleHelper.COMMON_PREFIX);
                 this.tooltipEl.addClass(this.side);
                 if (this.contentEl) {
                     this.tooltipEl.appendChild(this.contentEl);
@@ -82,8 +82,8 @@ module api.ui {
                     this.tooltipEl.getEl().setInnerHtml(this.text);
                 }
 
-                var appendTo;
-                if (this.mode == Tooltip.MODE_STATIC) {
+                let appendTo;
+                if (this.mode === Tooltip.MODE_STATIC) {
                     appendTo = this.targetEl.getParentElement() || this.targetEl;
                 } else {
                     appendTo = api.dom.Body.get();
@@ -95,7 +95,7 @@ module api.ui {
                 }
                 this.tooltipEl.show();
 
-                if (this.mode == Tooltip.MODE_STATIC || this.mode == Tooltip.MODE_GLOBAL_STATIC) {
+                if (this.mode === Tooltip.MODE_STATIC || this.mode === Tooltip.MODE_GLOBAL_STATIC) {
                     this.positionByTarget();
                 }
             }
@@ -163,7 +163,7 @@ module api.ui {
         }
 
         setTrigger(trigger: string): Tooltip {
-            if (trigger == this.trigger) {
+            if (trigger === this.trigger) {
                 return this;
             }
 
@@ -175,7 +175,7 @@ module api.ui {
             this.trigger = trigger;
 
             // add new listeners
-            if (trigger != Tooltip.TRIGGER_NONE) {
+            if (trigger !== Tooltip.TRIGGER_NONE) {
                 this.targetEl.getEl().
                     addEventListener(this.getEventName(true), this.overListener).
                     addEventListener(this.getEventName(false), this.outListener);
@@ -197,11 +197,11 @@ module api.ui {
         }
 
         setMode(mode: string): Tooltip {
-            if (mode == this.mode) {
+            if (mode === this.mode) {
                 return this;
-            } else if (mode == Tooltip.MODE_STATIC || mode == Tooltip.MODE_GLOBAL_STATIC) {
+            } else if (mode === Tooltip.MODE_STATIC || mode === Tooltip.MODE_GLOBAL_STATIC) {
                 api.dom.Body.get().unMouseMove(this.moveListener);
-            } else if (mode == Tooltip.MODE_FOLLOW) {
+            } else if (mode === Tooltip.MODE_FOLLOW) {
                 api.dom.Body.get().onMouseMove(this.moveListener);
             }
             this.mode = mode;
@@ -213,18 +213,19 @@ module api.ui {
         }
 
         private positionAtMouse(event: MouseEvent) {
-            var left, top,
-                x = event.clientX,
-                y = event.clientY,
-                el = this.tooltipEl.getEl(),
-                windowEl = <any> api.dom.WindowDOM.get().getHTMLElement(),
-                elProps = {
-                    height: el.getHeightWithMargin(),
-                    width: el.getWidthWithMargin(),
-                    // if mode == follow, tooltip is appended to body, so window scroll can affect tooltip
-                    scrollLeft: this.mode == Tooltip.MODE_FOLLOW ? windowEl.scrollX : 0,
-                    scrollTop: this.mode == Tooltip.MODE_FOLLOW ? windowEl.scrollY : 0
-                };
+            let left;
+            let top;
+            let x = event.clientX;
+            let y = event.clientY;
+            let el = this.tooltipEl.getEl();
+            let windowEl = <any> api.dom.WindowDOM.get().getHTMLElement();
+            let elProps = {
+                height: el.getHeightWithMargin(),
+                width: el.getWidthWithMargin(),
+                // if mode === follow, tooltip is appended to body, so window scroll can affect tooltip
+                scrollLeft: this.mode === Tooltip.MODE_FOLLOW ? windowEl.scrollX : 0,
+                scrollTop: this.mode === Tooltip.MODE_FOLLOW ? windowEl.scrollY : 0
+            };
             switch (this.side) {
             case Tooltip.SIDE_TOP:
                 left = x - elProps.width / 2 + elProps.scrollLeft;
@@ -249,17 +250,18 @@ module api.ui {
 
         private positionByTarget() {
 
-            var targetEl = this.targetEl.getHTMLElement(),
-                targetOffset = this.targetEl.getEl().getOffset(),
-                el = this.tooltipEl.getEl(),
-                elProps = {
-                    left: el.getMarginLeft() || 0,
-                    top: el.getMarginTop() || 0,
-                    height: el.getHeight(),
-                    width: el.getWidth()
-                };
+            let targetEl = this.targetEl.getHTMLElement();
+            let targetOffset = this.targetEl.getEl().getOffset();
+            let el = this.tooltipEl.getEl();
+            let elProps = {
+                left: el.getMarginLeft() || 0,
+                top: el.getMarginTop() || 0,
+                height: el.getHeight(),
+                width: el.getWidth()
+            };
 
-            var offsetLeft, offsetTop;
+            let offsetLeft;
+            let offsetTop;
             switch (this.side) {
             case Tooltip.SIDE_TOP:
                 offsetLeft = targetOffset.left + (targetEl.offsetWidth - elProps.width) / 2 + elProps.left;
@@ -302,7 +304,7 @@ module api.ui {
 
         private startHideTimeout(ms?: number) {
             this.stopTimeout();
-            var t = ms || this.hideTimeout;
+            let t = ms || this.hideTimeout;
             if (t > 0) {
                 this.timeoutTimer = setTimeout(() => {
                     this.hide();
@@ -314,9 +316,9 @@ module api.ui {
 
         private startShowDelay(ms?: number) {
             this.stopTimeout();
-            var t = ms || this.showDelay;
+            let t = ms || this.showDelay;
             if (t > 0) {
-                if (this.trigger == Tooltip.TRIGGER_HOVER) {
+                if (this.trigger === Tooltip.TRIGGER_HOVER) {
                     // if tooltip target element becomes disabled it doesn't generate mouse leave event
                     // so we need to check whether mouse has moved from tooltip target or not
                     //this.hideOnMouseOut();
@@ -337,11 +339,11 @@ module api.ui {
         }
 
         private hideOnMouseOut() {
-            var tooltip = this;
-            var mouseMoveListener = (event: MouseEvent) => {
-                var tooltipTargetHtmlElement = tooltip.targetEl.getHTMLElement();
-                for (var element = event.target; element; element = (<any>element).parentNode) {
-                    if (element == tooltipTargetHtmlElement) {
+            let tooltip = this;
+            let mouseMoveListener = (event: MouseEvent) => {
+                let tooltipTargetHtmlElement = tooltip.targetEl.getHTMLElement();
+                for (let element = event.target; element; element = (<any>element).parentNode) {
+                    if (element === tooltipTargetHtmlElement) {
                         return;
                     }
                 }
@@ -356,20 +358,20 @@ module api.ui {
         private getEventName(enter: boolean) {
             switch (this.trigger) {
             case Tooltip.TRIGGER_FOCUS:
-                return enter ? "focus" : "blur";
+                return enter ? 'focus' : 'blur';
             case Tooltip.TRIGGER_HOVER:
             default:
-                return enter ? "mouseenter" : "mouseleave";
+                return enter ? 'mouseenter' : 'mouseleave';
             }
         }
 
         private hideOtherInstances() {
             Tooltip.instances.forEach((tooltip: Tooltip) => {
-                if (tooltip != this && tooltip.isVisible()) {
-                    //console.log("Hiding tooltip because multiple instances are not allowed", tooltip);
+                if (tooltip !== this && tooltip.isVisible()) {
+                    //console.log('Hiding tooltip because multiple instances are not allowed', tooltip);
                     tooltip.hide();
                 }
-            })
+            });
         }
 
         static allowMultipleInstances(allow: boolean) {

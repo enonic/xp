@@ -21,16 +21,16 @@ module api.security {
                 return false;
             }
 
-            var other = <AuthConfig> o;
+            let other = <AuthConfig> o;
 
             return this.applicationKey.equals(other.applicationKey) &&
-                   this.config.equals(other.config)
+                   this.config.equals(other.config);
         }
 
         toJson(): AuthConfigJson {
             return {
-                "applicationKey": this.applicationKey.toString(),
-                "config": this.config.toJson()
+                applicationKey: this.applicationKey.toString(),
+                config: this.config.toJson()
             };
         }
 
@@ -55,9 +55,6 @@ module api.security {
         applicationKey: api.application.ApplicationKey;
         config: api.data.PropertyTree;
 
-        constructor() {
-        }
-
         setApplicationKey(applicationKey: api.application.ApplicationKey): AuthConfigBuilder {
             this.applicationKey = applicationKey;
             return this;
@@ -67,7 +64,6 @@ module api.security {
             this.config = config;
             return this;
         }
-
 
         fromJson(json: api.security.AuthConfigJson): AuthConfigBuilder {
             this.applicationKey = api.application.ApplicationKey.fromString(json.applicationKey);

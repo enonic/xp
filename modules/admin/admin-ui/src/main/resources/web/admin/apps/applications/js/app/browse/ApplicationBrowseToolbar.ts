@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {ApplicationBrowseActions} from "./ApplicationBrowseActions";
+import '../../api.ts';
+import {ApplicationBrowseActions} from './ApplicationBrowseActions';
 
 export class ApplicationBrowseToolbar extends api.ui.toolbar.Toolbar {
 

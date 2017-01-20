@@ -1,5 +1,5 @@
-import "../../../../../api.ts";
-import {WidgetItemView} from "../../WidgetItemView";
+import '../../../../../api.ts';
+import {WidgetItemView} from '../../WidgetItemView';
 
 import ContentSummary = api.content.ContentSummary;
 import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
@@ -13,14 +13,14 @@ export class PropertiesWidgetItemView extends WidgetItemView {
 
     private list: api.dom.DlEl;
 
-    public static debug = false;
+    public static debug: boolean = false;
 
     constructor() {
-        super("properties-widget-item-view");
+        super('properties-widget-item-view');
     }
 
     public setContentAndUpdateView(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
-        var content = item.getContentSummary();
+        let content = item.getContentSummary();
         if (!content.equals(this.content)) {
             if (!this.content) {
                 this.initListeners();
@@ -32,18 +32,17 @@ export class PropertiesWidgetItemView extends WidgetItemView {
         return wemQ<any>(null);
     }
 
-
     private initListeners() {
 
         let layoutOnPublishStateChange = (contents: ContentSummaryAndCompareStatus[]) => {
             let thisContentId = this.content.getId();
 
-            let content: ContentSummaryAndCompareStatus = contents.filter((content) => {
-                return thisContentId == content.getId();
+            let contentSummary: ContentSummaryAndCompareStatus = contents.filter((content) => {
+                return thisContentId === content.getId();
             })[0];
 
-            if (!!content) {
-                this.setContentAndUpdateView(content);
+            if (contentSummary) {
+                this.setContentAndUpdateView(contentSummary);
             }
         };
 
@@ -61,8 +60,8 @@ export class PropertiesWidgetItemView extends WidgetItemView {
         }
 
         return super.layout().then(() => {
-            if (this.content != undefined) {
-                var applicationKey = this.content.getType().getApplicationKey();
+            if (this.content != null) {
+                let applicationKey = this.content.getType().getApplicationKey();
                 if (!applicationKey.isSystemReserved()) {
                     return new api.application.GetApplicationRequest(applicationKey).sendAndParse().then((application: Application) => {
                         this.layoutApplication(application);
@@ -83,31 +82,31 @@ export class PropertiesWidgetItemView extends WidgetItemView {
         }
         this.list = new api.dom.DlEl();
 
-        var strings: FieldString[];
+        let strings: FieldString[];
 
         strings = [
-            new FieldString().setName("Type").setValue(this.content.getType().getLocalName()
+            new FieldString().setName('Type').setValue(this.content.getType().getLocalName()
                 ? this.content.getType().getLocalName() : this.content.getType().toString()),
 
-            new FieldString().setName("Application").setValue(application ? application.getDisplayName() :
+            new FieldString().setName('Application').setValue(application ? application.getDisplayName() :
                                                               this.content.getType().getApplicationKey().getName()),
 
-            this.content.getLanguage() ? new FieldString().setName("Language").setValue(this.content.getLanguage()) : null,
+            this.content.getLanguage() ? new FieldString().setName('Language').setValue(this.content.getLanguage()) : null,
 
-            this.content.getOwner() ? new FieldString().setName("Owner").setValue(this.content.getOwner().getId()) : null,
+            this.content.getOwner() ? new FieldString().setName('Owner').setValue(this.content.getOwner().getId()) : null,
 
-            new FieldString().setName("Created").setValue(DateTimeFormatter.createHtml(this.content.getCreatedTime())),
+            new FieldString().setName('Created').setValue(DateTimeFormatter.createHtml(this.content.getCreatedTime())),
 
-            this.content.getModifiedTime() ? new FieldString().setName("Modified").setValue(
+            this.content.getModifiedTime() ? new FieldString().setName('Modified').setValue(
                 DateTimeFormatter.createHtml(this.content.getModifiedTime())) : null,
 
-            new FieldString().setName("Publish From").setValue(this.content.getPublishFromTime() ?
-                                                               DateTimeFormatter.createHtml(this.content.getPublishFromTime()) : " "),
+            new FieldString().setName('Publish From').setValue(this.content.getPublishFromTime() ?
+                                                               DateTimeFormatter.createHtml(this.content.getPublishFromTime()) : ' '),
 
-            new FieldString().setName("Publish To").setValue(this.content.getPublishToTime() ?
-                                                             DateTimeFormatter.createHtml(this.content.getPublishToTime()) : " "),
+            new FieldString().setName('Publish To').setValue(this.content.getPublishToTime() ?
+                                                             DateTimeFormatter.createHtml(this.content.getPublishToTime()) : ' '),
 
-            new FieldString().setName("Id").setValue(this.content.getId())
+            new FieldString().setName('Id').setValue(this.content.getId())
         ];
 
         strings.forEach((stringItem: FieldString) => {
@@ -119,7 +118,6 @@ export class PropertiesWidgetItemView extends WidgetItemView {
         this.appendChild(this.list);
     }
 }
-
 
 class FieldString {
 
@@ -138,8 +136,8 @@ class FieldString {
     }
 
     public layout(parentEl: api.dom.Element) {
-        var valueEl = new api.dom.DdDtEl("dt").setHtml(this.value);
-        var spanEl = new api.dom.DdDtEl("dd").setHtml(this.fieldName + ": ");
+        let valueEl = new api.dom.DdDtEl('dt').setHtml(this.value);
+        let spanEl = new api.dom.DdDtEl('dd').setHtml(this.fieldName + ': ');
         parentEl.appendChildren(spanEl, valueEl);
     }
 

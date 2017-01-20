@@ -29,9 +29,9 @@ module api.thumb {
         toJson(): ThumbnailJson {
 
             return {
-                "binaryReference": this.getBinaryReference().toString(),
-                "mimeType": this.getMimeType(),
-                "size": this.getSize()
+                binaryReference: this.getBinaryReference().toString(),
+                mimeType: this.getMimeType(),
+                size: this.getSize()
             };
         }
 
@@ -41,7 +41,7 @@ module api.thumb {
                 return false;
             }
 
-            var other = <Thumbnail>o;
+            let other = <Thumbnail>o;
 
             if (!api.ObjectHelper.equals(this.binaryReference, other.binaryReference)) {
                 return false;

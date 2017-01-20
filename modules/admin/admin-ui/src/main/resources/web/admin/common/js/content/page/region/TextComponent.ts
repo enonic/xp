@@ -4,7 +4,7 @@ module api.content.page.region {
 
         private text: string;
 
-        public static PROPERTY_TEXT: string = "text";
+        public static PROPERTY_TEXT: string = 'text';
 
         constructor(builder?: TextComponentBuilder) {
             super(builder);
@@ -35,7 +35,7 @@ module api.content.page.region {
 
         toJson(): ComponentTypeWrapperJson {
 
-            var json: TextComponentJson = <TextComponentJson>super.toComponentJson();
+            let json: TextComponentJson = <TextComponentJson>super.toComponentJson();
             json.text = this.text != null ? this.text : null;
 
             return <ComponentTypeWrapperJson> {
@@ -49,7 +49,7 @@ module api.content.page.region {
                 return false;
             }
 
-            var other = <TextComponent>o;
+            let other = <TextComponent>o;
 
             if (!super.equals(o)) {
                 return false;

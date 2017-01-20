@@ -43,12 +43,12 @@ module api.content.site.inputtype.authappselector {
 
         doRender(): wemQ.Promise<boolean> {
 
-            var header = new api.dom.DivEl('header');
+            let header = new api.dom.DivEl('header');
 
-            var namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(
+            let namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(
                 api.app.NamesAndIconViewSize.small)).setMainName(this.application.getDisplayName()).setSubName(
-                this.application.getName() + "-" + this.application.getVersion()).setIconClass("icon-xlarge icon-puzzle");
-            
+                this.application.getName() + '-' + this.application.getVersion()).setIconClass('icon-xlarge icon-puzzle');
+
             if (this.application.getIconUrl()) {
                 namesAndIconView.setIconUrl(this.application.getIconUrl());
             }
@@ -62,7 +62,7 @@ module api.content.site.inputtype.authappselector {
             this.appendChild(header);
 
             this.formValidityChangedHandler = (event: api.form.FormValidityChangedEvent) => {
-                this.toggleClass("invalid", !event.isValid())
+                this.toggleClass('invalid', !event.isValid());
             };
 
             this.formView = this.createFormView(this.siteConfig);
@@ -73,7 +73,7 @@ module api.content.site.inputtype.authappselector {
             }
 
             if (!this.readOnly) {
-                var removeButton = new api.dom.AEl("remove");
+                let removeButton = new api.dom.AEl('remove');
                 removeButton.onClicked((event: MouseEvent) => {
                     this.notifyRemoveClicked();
                     event.stopPropagation();
@@ -91,7 +91,7 @@ module api.content.site.inputtype.authappselector {
         }
 
         private createEditButton(): api.dom.AEl {
-            var editButton = new api.dom.AEl('edit');
+            let editButton = new api.dom.AEl('edit');
 
             editButton.onClicked((event: MouseEvent) => {
                 this.notifyEditClicked(event);
@@ -108,28 +108,28 @@ module api.content.site.inputtype.authappselector {
 
             if (this.application.getAuthForm().getFormItems().length > 0) {
 
-                var tempSiteConfig: SiteConfig = this.makeTemporarySiteConfig();
+                let tempSiteConfig: SiteConfig = this.makeTemporarySiteConfig();
 
-                var formViewStateOnDialogOpen = this.formView;
+                let formViewStateOnDialogOpen = this.formView;
                 this.unbindValidationEvent(formViewStateOnDialogOpen);
 
                 this.formView = this.createFormView(tempSiteConfig);
                 this.bindValidationEvent(this.formView);
 
-                var okCallback = () => {
+                let okCallback = () => {
                     if (!tempSiteConfig.equals(this.siteConfig)) {
                         this.applyTemporaryConfig(tempSiteConfig);
                     }
                 };
 
-                var cancelCallback = () => {
+                let cancelCallback = () => {
                     this.revertFormViewToGivenState(formViewStateOnDialogOpen);
                     if (comboBoxToUndoSelectionOnCancel) {
                         this.undoSelectionOnCancel(comboBoxToUndoSelectionOnCancel);
                     }
                 };
 
-                var siteConfiguratorDialog = new SiteConfiguratorDialog(this.application,
+                let siteConfiguratorDialog = new SiteConfiguratorDialog(this.application,
                     this.formView,
                     okCallback,
                     cancelCallback);
@@ -142,7 +142,7 @@ module api.content.site.inputtype.authappselector {
             this.unbindValidationEvent(this.formView);
             this.formView = formViewStateToRevertTo;
             this.formView.validate(false, true);
-            this.toggleClass("invalid", !this.formView.isValid())
+            this.toggleClass('invalid', !this.formView.isValid());
         }
 
         private undoSelectionOnCancel(comboBoxToUndoSelectionOnCancel: AuthApplicationComboBox) {
@@ -154,7 +154,7 @@ module api.content.site.inputtype.authappselector {
                 this.siteConfig.getConfig().setProperty(property.getName(), property.getIndex(), property.getValue());
             });
             this.siteConfig.getConfig().forEach((property) => {
-                var prop = tempSiteConfig.getConfig().getProperty(property.getName(), property.getIndex());
+                let prop = tempSiteConfig.getConfig().getProperty(property.getName(), property.getIndex());
                 if (!prop) {
                     this.siteConfig.getConfig().removeProperty(property.getName(), property.getIndex());
                 }
@@ -162,18 +162,18 @@ module api.content.site.inputtype.authappselector {
         }
 
         private makeTemporarySiteConfig(): SiteConfig {
-            var propSet = (new PropertyTree(this.siteConfig.getConfig())).getRoot();
+            let propSet = (new PropertyTree(this.siteConfig.getConfig())).getRoot();
             propSet.setContainerProperty(this.siteConfig.getConfig().getProperty());
             return SiteConfig.create().setConfig(propSet).setApplicationKey(this.siteConfig.getApplicationKey()).build();
         }
 
         private createFormView(siteConfig: SiteConfig): FormView {
-            var formView = new FormView(this.formContext, this.application.getAuthForm(), siteConfig.getConfig());
-            formView.addClass("site-form");
+            let formView = new FormView(this.formContext, this.application.getAuthForm(), siteConfig.getConfig());
+            formView.addClass('site-form');
 
             formView.onLayoutFinished(() => {
                 formView.validate(false, true);
-                this.toggleClass("invalid", !formView.isValid());
+                this.toggleClass('invalid', !formView.isValid());
                 this.notifySiteConfigFormDisplayed(this.application.getApplicationKey());
             });
 
@@ -210,14 +210,14 @@ module api.content.site.inputtype.authappselector {
 
         unEditClicked(listener: (event: MouseEvent) => void) {
             this.editClickedListeners = this.editClickedListeners.filter((curr) => {
-                return listener != curr;
-            })
+                return listener !== curr;
+            });
         }
 
         private notifyEditClicked(event: MouseEvent) {
             this.editClickedListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         onSiteConfigFormDisplayed(listener: {(applicationKey: ApplicationKey): void;}) {
@@ -226,7 +226,7 @@ module api.content.site.inputtype.authappselector {
 
         unSiteConfigFormDisplayed(listener: {(applicationKey: ApplicationKey): void;}) {
             this.siteConfigFormDisplayedListeners =
-                this.siteConfigFormDisplayedListeners.filter((curr) => (curr != listener));
+                this.siteConfigFormDisplayedListeners.filter((curr) => (curr !== listener));
         }
 
         private notifySiteConfigFormDisplayed(applicationKey: ApplicationKey) {

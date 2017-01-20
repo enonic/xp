@@ -2,13 +2,13 @@ module api.util {
 
     export class LocalDateTime implements api.Equitable {
 
-        private static DATE_TIME_SEPARATOR: string = "T";
+        private static DATE_TIME_SEPARATOR: string = 'T';
 
-        private static DATE_SEPARATOR: string = "-";
+        private static DATE_SEPARATOR: string = '-';
 
-        private static TIME_SEPARATOR: string = ":";
+        private static TIME_SEPARATOR: string = ':';
 
-        private static FRACTION_SEPARATOR: string = ".";
+        private static FRACTION_SEPARATOR: string = '.';
 
         private year: number;
 
@@ -68,9 +68,11 @@ module api.util {
         }
 
         timeToString(): string {
-            var fractions = this.fractions ? LocalDateTime.FRACTION_SEPARATOR + this.padNumber(this.fractions, 3) : StringHelper.EMPTY_STRING;
+            // tslint:disable-next-line:max-line-length
+            let fractions = this.fractions ? LocalDateTime.FRACTION_SEPARATOR + this.padNumber(this.fractions, 3) : StringHelper.EMPTY_STRING;
 
-            return this.padNumber(this.hours) + LocalDateTime.TIME_SEPARATOR + this.padNumber(this.minutes) + LocalDateTime.TIME_SEPARATOR +
+            return this.padNumber(this.hours) + LocalDateTime.TIME_SEPARATOR +
+                   this.padNumber(this.minutes) + LocalDateTime.TIME_SEPARATOR +
                    this.padNumber(this.seconds ? this.seconds : 0) + fractions;
         }
 
@@ -83,7 +85,7 @@ module api.util {
                 return false;
             }
 
-            var other = <LocalDateTime>o;
+            let other = <LocalDateTime>o;
 
             if (!api.ObjectHelper.stringEquals(this.toString(), other.toString())) {
                 return false;
@@ -98,10 +100,10 @@ module api.util {
         }
 
         private padNumber(num: number, length: number = 2): string {
-            var numAsString = String(num);
+            let numAsString = String(num);
 
-            while (numAsString.length < length){
-                numAsString = "0" + numAsString;
+            while (numAsString.length < length) {
+                numAsString = '0' + numAsString;
             }
 
             return numAsString;
@@ -112,19 +114,25 @@ module api.util {
                 return false;
             }
 
-            var re = /^(\d{2}|\d{4})(?:\-)?([0]{1}\d{1}|[1]{1}[0-2]{1})(?:\-)?([0-2]{1}\d{1}|[3]{1}[0-1]{1})(T)([0-1]{1}\d{1}|[2]{1}[0-3]{1})(?::)?([0-5]{1}\d{1})(?::)?([0-5]{1}\d{1})?(?:.)?(\d{3})?/;
-            return re.test(s);
+            // tslint:disable-next-line:max-line-length
+            const regex = /^(\d{2}|\d{4})(?:\-)?([0]{1}\d{1}|[1]{1}[0-2]{1})(?:\-)?([0-2]{1}\d{1}|[3]{1}[0-1]{1})(T)([0-1]{1}\d{1}|[2]{1}[0-3]{1})(?::)?([0-5]{1}\d{1})(?::)?([0-5]{1}\d{1})?(?:.)?(\d{3})?/;
+            return regex.test(s);
         }
 
         static fromString(s: string): LocalDateTime {
             if (!LocalDateTime.isValidDateTime(s)) {
-                throw new Error("Cannot parse LocalDateTime from string: " + s);
+                throw new Error('Cannot parse LocalDateTime from string: ' + s);
             }
 
-            var date = DateHelper.parseLongDateTime(s, LocalDateTime.DATE_TIME_SEPARATOR, LocalDateTime.DATE_SEPARATOR, LocalDateTime.TIME_SEPARATOR, LocalDateTime.FRACTION_SEPARATOR);
+            const date = DateHelper.parseLongDateTime(s,
+                LocalDateTime.DATE_TIME_SEPARATOR,
+                LocalDateTime.DATE_SEPARATOR,
+                LocalDateTime.TIME_SEPARATOR,
+                LocalDateTime.FRACTION_SEPARATOR
+            );
 
             if (!date) {
-                throw new Error("Cannot parse LocalDateTime from string: " + s);
+                throw new Error('Cannot parse LocalDateTime from string: ' + s);
             }
 
             return LocalDateTime.create()
@@ -150,12 +158,10 @@ module api.util {
                 .build();
         }
 
-
         public static create(): LocalDateTimeBuilder {
             return new LocalDateTimeBuilder();
         }
     }
-
 
     export class LocalDateTimeBuilder {
 
@@ -204,7 +210,9 @@ module api.util {
         }
 
         public setFractions(value: number): LocalDateTimeBuilder {
-            if (this.seconds && value > 0) this.fractions = value;
+            if (this.seconds && value > 0) {
+                this.fractions = value;
+            }
             return this;
         }
 

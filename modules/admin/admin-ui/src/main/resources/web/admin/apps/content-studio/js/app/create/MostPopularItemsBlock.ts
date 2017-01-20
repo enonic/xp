@@ -1,16 +1,16 @@
-import "../../api.ts";
-import {MostPopularItemsList} from "./MostPopularItemsList";
+import '../../api.ts';
+import {MostPopularItemsList} from './MostPopularItemsList';
 
 export class MostPopularItemsBlock extends api.dom.DivEl {
 
-    public static DEFAULT_MAX_ITEMS = 2;
+    public static DEFAULT_MAX_ITEMS: number = 2;
 
     private mostPopularItemsList: MostPopularItemsList;
 
     private title: api.dom.H2El;
 
-    constructor(title = "Most Popular") {
-        super("most-popular-content-types-container");
+    constructor(title: string = 'Most Popular') {
+        super('most-popular-content-types-container');
 
         this.title = new api.dom.H2El();
         this.title.setHtml(title);
@@ -33,4 +33,3 @@ export class MostPopularItemsBlock extends api.dom.DivEl {
         }
     }
 }
-

@@ -1,12 +1,14 @@
 module api.content.resource {
 
-    export class ResolveDependenciesRequest extends ContentResourceRequest<json.ContentDependencyJson, any> {
+    import ContentDependencyJson = api.content.json.ContentDependencyJson;
+
+    export class ResolveDependenciesRequest extends ContentResourceRequest<ContentDependencyJson, any> {
 
         private id: ContentId;
 
         constructor(contentId: ContentId) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
             this.id = contentId;
         }
 
@@ -17,7 +19,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "getDependencies");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'getDependencies');
         }
     }
 }

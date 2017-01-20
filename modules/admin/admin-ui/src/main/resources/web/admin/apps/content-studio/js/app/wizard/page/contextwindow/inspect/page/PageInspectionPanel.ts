@@ -1,9 +1,9 @@
-import "../../../../../../api.ts";
-import {PageTemplateSelector} from "./PageTemplateSelector";
-import {BaseInspectionPanel} from "../BaseInspectionPanel";
-import {PageTemplateForm} from "./PageTemplateForm";
-import {PageControllerForm} from "./PageControllerForm";
-import {PageControllerSelector} from "./PageControllerSelector";
+import '../../../../../../api.ts';
+import {PageTemplateSelector} from './PageTemplateSelector';
+import {BaseInspectionPanel} from '../BaseInspectionPanel';
+import {PageTemplateForm} from './PageTemplateForm';
+import {PageControllerForm} from './PageControllerForm';
+import {PageControllerSelector} from './PageControllerSelector';
 
 import PropertyChangedEvent = api.PropertyChangedEvent;
 import PropertyTree = api.data.PropertyTree;
@@ -71,11 +71,12 @@ export class PageInspectionPanel extends BaseInspectionPanel {
 
         this.inspectionHandler = this.pageModel.isPageTemplate() ? new PageTemplateInspectionHandler() : new ContentInspectionHandler();
 
-        if (!this.pageModel.isPageTemplate()) { //init page controller selector in case of 'customized' template chosen or no template presents
+        // init page controller selector in case of 'customized' template chosen or no template presents
+        if (!this.pageModel.isPageTemplate()) {
             this.pageControllerSelector.load();
 
             if (this.pageModel.isCustomized()) {
-                this.addClass("customized");
+                this.addClass('customized');
             }
 
             if (this.pageModeImpliesPageControllerShown()) {
@@ -88,30 +89,30 @@ export class PageInspectionPanel extends BaseInspectionPanel {
             this.pageControllerForm).setPageTemplateForm(this.pageTemplateForm).setModel(this.liveEditModel);
 
         this.pageTemplateSelector.onSelection((pageTemplate: PageTemplate) => {
-                this.removeClass("customized");
+                this.removeClass('customized');
                 this.pageModel.setCustomized(false);
 
                 if (pageTemplate) {
                     this.pageControllerForm.hide();
-                    new GetPageDescriptorByKeyRequest(pageTemplate.getController()).sendAndParse().then((pageDescriptor: PageDescriptor) => {
-                        var setTemplate = new SetTemplate(this).setTemplate(pageTemplate, pageDescriptor);
-                        this.pageModel.setTemplate(setTemplate, true);
-                    }).catch((reason: any) => {
-                        api.DefaultErrorHandler.handle(reason);
-                    }).done();
-                }
-                else if (this.pageModel.hasDefaultPageTemplate()) {
+                    new GetPageDescriptorByKeyRequest(pageTemplate.getController())
+                        .sendAndParse()
+                        .then((pageDescriptor: PageDescriptor) => {
+                            let setTemplate = new SetTemplate(this).setTemplate(pageTemplate, pageDescriptor);
+                            this.pageModel.setTemplate(setTemplate, true);
+                        }).catch((reason: any) => {
+                            api.DefaultErrorHandler.handle(reason);
+                        }).done();
+                } else if (this.pageModel.hasDefaultPageTemplate()) {
                     this.pageControllerForm.hide();
                     this.pageModel.setAutomaticTemplate(this, true);
-                }
-                else {
+                } else {
                     this.pageModel.reset(this);
                 }
             }
         );
 
         this.pageTemplateSelector.onCustomizedSelected(() => {
-            this.addClass("customized");
+            this.addClass('customized');
             this.pageControllerForm.getSelector().reset();
             this.pageControllerForm.show();
 
@@ -127,7 +128,7 @@ export class PageInspectionPanel extends BaseInspectionPanel {
             this.pageControllerForm.getSelector().reset();
         }
         if (!this.pageModel.isPageTemplate() && !(this.pageModel.isCustomized() && this.pageModel.hasController())) {
-            this.pageControllerForm.hide()
+            this.pageControllerForm.hide();
         }
     }
 
@@ -137,7 +138,7 @@ export class PageInspectionPanel extends BaseInspectionPanel {
 
     private pageModeImpliesPageControllerShown(): boolean {
         return (this.pageModel.isCustomized() && this.pageModel.hasController()) ||
-               this.pageModel.getMode() == PageMode.FORCED_CONTROLLER;
+               this.pageModel.getMode() === PageMode.FORCED_CONTROLLER;
     }
 }
 
@@ -194,7 +195,7 @@ class BaseInspectionHandler {
     }
 
     private initListener(liveEditModel: LiveEditModel) {
-        var pageModel = liveEditModel.getPageModel();
+        let pageModel = liveEditModel.getPageModel();
 
         if (this.propertyChangedListener) {
             liveEditModel.getPageModel().unPropertyChanged(this.propertyChangedListener);
@@ -205,18 +206,17 @@ class BaseInspectionHandler {
                 return;
             }
 
-            if ([PageModel.PROPERTY_CONFIG, PageModel.PROPERTY_CONTROLLER].indexOf(event.getPropertyName()) == -1) {
+            if ([PageModel.PROPERTY_CONFIG, PageModel.PROPERTY_CONTROLLER].indexOf(event.getPropertyName()) === -1) {
                 return;
             }
 
-            if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER) {
+            if (event.getPropertyName() === PageModel.PROPERTY_CONTROLLER) {
                 this.pageControllerForm.show();
-            }
-            else {
+            } else {
                 this.pageDescriptorForm.show();
             }
 
-            var controller = pageModel.getController();
+            let controller = pageModel.getController();
             if (controller) {
                 this.refreshConfigForm(controller, pageModel.getConfig(), liveEditModel.getFormContext());
             }
@@ -247,6 +247,7 @@ class BaseInspectionHandler {
     }
 
     refreshConfigView(liveEditModel: LiveEditModel) {
+        // must be implemented by children
     }
 
     protected showPageConfig(pageModel: PageModel, formContext: FormContext) {
@@ -266,14 +267,13 @@ class PageTemplateInspectionHandler extends BaseInspectionHandler {
 class ContentInspectionHandler extends BaseInspectionHandler {
 
     refreshConfigView(liveEditModel: LiveEditModel) {
-        var pageModel = liveEditModel.getPageModel();
-        var pageMode = pageModel.getMode();
+        let pageModel = liveEditModel.getPageModel();
+        let pageMode = pageModel.getMode();
 
-        if (pageMode == PageMode.FORCED_TEMPLATE || pageMode == PageMode.AUTOMATIC) {
+        if (pageMode === PageMode.FORCED_TEMPLATE || pageMode === PageMode.AUTOMATIC) {
             this.showPageConfig(pageModel, liveEditModel.getFormContext());
-        }
-        else {
-            throw new Error("Unsupported PageMode: " + PageMode[pageMode]);
+        } else {
+            throw new Error('Unsupported PageMode: ' + PageMode[pageMode]);
         }
     }
 

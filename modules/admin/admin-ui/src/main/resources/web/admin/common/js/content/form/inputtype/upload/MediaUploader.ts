@@ -18,7 +18,7 @@ module api.content.form.inputtype.upload {
         private svgImage: api.dom.ImgEl;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
-            super(config, "media-uploader");
+            super(config, 'media-uploader');
             this.config = config;
         }
 
@@ -45,14 +45,14 @@ module api.content.form.inputtype.upload {
             this.updateProperty(property).done();
 
             this.mediaUploaderEl.onUploadStarted(() => {
-                this.uploaderWrapper.removeClass("empty");
+                this.uploaderWrapper.removeClass('empty');
             });
 
             this.mediaUploaderEl.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<api.content.Content>) => {
 
-                var content = event.getUploadItem().getModel(),
-                    value = this.mediaUploaderEl.getMediaValue(content),
-                    fileName = value.getString();
+                let content = event.getUploadItem().getModel();
+                let value = this.mediaUploaderEl.getMediaValue(content);
+                let fileName = value.getString();
 
                 this.mediaUploaderEl.setFileName(fileName);
 
@@ -65,14 +65,14 @@ module api.content.form.inputtype.upload {
                     break;
                 }
 
-                api.notify.showFeedback('\"' + fileName + '\" uploaded');
+                api.notify.showFeedback(`"${fileName}" uploaded`);
 
                 this.manageSVGImageIfPresent(content);
             });
 
             this.mediaUploaderEl.onUploadFailed(() => {
                 this.mediaUploaderEl.setProgressVisible(false);
-                this.uploaderWrapper.addClass("empty");
+                this.uploaderWrapper.addClass('empty');
             });
 
             this.mediaUploaderEl.onUploadReset(() => {
@@ -117,22 +117,22 @@ module api.content.form.inputtype.upload {
 
         private manageSVGImageIfPresent(content: api.content.Content) {
             if (content.getType().isVectorMedia()) {
-                this.addClass("with-svg-image");
-                var imgUrl = new api.content.util.ContentImageUrlResolver().setContentId(
+                this.addClass('with-svg-image');
+                let imgUrl = new api.content.util.ContentImageUrlResolver().setContentId(
                     this.getContext().content.getContentId()).setTimestamp(
                     content.getModifiedTime()).resolve();
 
                 this.svgImage.setSrc(imgUrl);
             } else {
-                this.removeClass("with-svg-image");
+                this.removeClass('with-svg-image');
             }
         }
 
         private deleteContent(property: Property) {
-            var contentId = this.getContext().content.getContentId();
+            let contentId = this.getContext().content.getContentId();
 
             new api.content.resource.GetContentByIdRequest(contentId).sendAndParse().then((content: api.content.Content) => {
-                var deleteRequest = new api.content.resource.DeleteContentRequest();
+                let deleteRequest = new api.content.resource.DeleteContentRequest();
                 deleteRequest.addContentPath(content.getPath());
                 deleteRequest.sendAndParseWithPolling().then((message: string) => {
                     api.notify.showSuccess(message);
@@ -155,7 +155,7 @@ module api.content.form.inputtype.upload {
                     return property.getValue().getString();
                 }
             }
-            return "";
+            return '';
         }
 
         private getFileExtensionFromFileName(fileName: string): string {
@@ -164,28 +164,28 @@ module api.content.form.inputtype.upload {
 
         private propertyAlreadyHasAttachment(property: Property): boolean {
             return (property.getValue() != null &&
-                    property.getType() == ValueTypes.DATA &&
+                    property.getType() === ValueTypes.DATA &&
                     !api.util.StringHelper.isEmpty(property.getPropertySet().getString('attachment')));
         }
 
         private getAllowTypeFromFileName(fileName: string): MediaUploaderConfigAllowType[] {
-            return [{name: "Media", extensions: this.getFileExtensionFromFileName(fileName)}];
+            return [{name: 'Media', extensions: this.getFileExtensionFromFileName(fileName)}];
         }
 
         private createSvgImageWrapperIfNeeded() {
             if (this.config.formContext.getContentTypeName().isVectorMedia()) {
                 this.svgImage = new api.dom.ImgEl();
-                this.addClass("with-svg-image");
+                this.addClass('with-svg-image');
 
-                var content = this.config.formContext.getPersistedContent();
+                let content = this.config.formContext.getPersistedContent();
 
-                var imgUrl = new api.content.util.ContentImageUrlResolver().setContentId(
+                let imgUrl = new api.content.util.ContentImageUrlResolver().setContentId(
                     this.getContext().content.getContentId()).setTimestamp(
                     content.getModifiedTime()).resolve();
 
                 this.svgImage.setSrc(imgUrl);
 
-                this.appendChild(new api.dom.DivEl("svg-image-wrapper").appendChild(this.svgImage));
+                this.appendChild(new api.dom.DivEl('svg-image-wrapper').appendChild(this.svgImage));
 
                 this.svgImage.onLoaded((event: UIEvent) => {
                     this.mediaUploaderEl.setResultVisible(true); // need to call it manually as svg images are uploaded too quickly
@@ -194,9 +194,9 @@ module api.content.form.inputtype.upload {
         }
 
         private createUploaderWrapper(property: Property): api.dom.DivEl {
-            var wrapper = new api.dom.DivEl("uploader-wrapper");
+            let wrapper = new api.dom.DivEl('uploader-wrapper');
 
-            var uploadButton = new api.ui.button.Button();
+            let uploadButton = new api.ui.button.Button();
             uploadButton.addClass('upload-button');
 
             uploadButton.onClicked((event: MouseEvent) => {
@@ -214,20 +214,20 @@ module api.content.form.inputtype.upload {
 
         private createUploader(property: Property): api.ui.uploader.MediaUploaderEl {
 
-            var predefinedAllowTypes,
-                attachmentFileName = this.getFileNameFromProperty(property);
+            let predefinedAllowTypes;
+            let attachmentFileName = this.getFileNameFromProperty(property);
 
             if (this.propertyAlreadyHasAttachment(property)) {
                 predefinedAllowTypes = this.getAllowTypeFromFileName(attachmentFileName);
             }
 
-            var allowTypesConfig: MediaUploaderConfigAllowType[] = predefinedAllowTypes || (<any>(this.config.inputConfig)).allowTypes ||
+            let allowTypesConfig: MediaUploaderConfigAllowType[] = predefinedAllowTypes || (<any>(this.config.inputConfig)).allowTypes ||
                 [];
-            var allowTypes = allowTypesConfig.map((allowType: MediaUploaderConfigAllowType) => {
+            let allowTypes = allowTypesConfig.map((allowType: MediaUploaderConfigAllowType) => {
                 return {title: allowType.name, extensions: allowType.extensions};
             });
 
-            var hideDropZone = (<any>(this.config.inputConfig)).hideDropZone;
+            let hideDropZone = (<any>(this.config.inputConfig)).hideDropZone;
 
             return new api.ui.uploader.MediaUploaderEl({
                 params: {
@@ -260,5 +260,5 @@ module api.content.form.inputtype.upload {
             this.mediaUploaderEl.unBlur(listener);
         }
     }
-    api.form.inputtype.InputTypeManager.register(new api.Class("MediaUploader", MediaUploader));
+    api.form.inputtype.InputTypeManager.register(new api.Class('MediaUploader', MediaUploader));
 }

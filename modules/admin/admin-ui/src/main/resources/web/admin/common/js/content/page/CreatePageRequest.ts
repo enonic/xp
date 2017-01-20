@@ -1,6 +1,9 @@
 module api.content.page {
 
-    export class CreatePageRequest extends PageResourceRequest<api.content.json.ContentJson, api.content.Content> implements PageCUDRequest {
+    import Content = api.content.Content;
+    import ContentJson = api.content.json.ContentJson;
+
+    export class CreatePageRequest extends PageResourceRequest<ContentJson, Content> implements PageCUDRequest {
 
         private contentId: api.content.ContentId;
 
@@ -18,7 +21,7 @@ module api.content.page {
 
         constructor(contentId: api.content.ContentId) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             this.contentId = contentId;
         }
 
@@ -65,10 +68,10 @@ module api.content.page {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "create");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'create');
         }
 
-        sendAndParse(): wemQ.Promise<api.content.Content> {
+        sendAndParse(): wemQ.Promise<Content> {
 
             return this.send().then((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
                 return response.isBlank() ? null : this.fromJsonToContent(response.getResult());

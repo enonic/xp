@@ -1,7 +1,7 @@
-import "../../api.ts";
-import {UserItemWizardActions} from "./action/UserItemWizardActions";
-import {UserItemWizardPanelParams} from "./UserItemWizardPanelParams";
-import {SaveBeforeCloseDialog} from "./SaveBeforeCloseDialog";
+import '../../api.ts';
+import {UserItemWizardActions} from './action/UserItemWizardActions';
+import {UserItemWizardPanelParams} from './UserItemWizardPanelParams';
+import {SaveBeforeCloseDialog} from './SaveBeforeCloseDialog';
 
 import Principal = api.security.Principal;
 import PrincipalKey = api.security.PrincipalKey;
@@ -53,9 +53,9 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
     }
 
     protected createFormIcon(): FormIcon {
-        var iconUrl = api.dom.ImgEl.PLACEHOLDER;
-        var formIcon = new FormIcon(iconUrl, "icon");
-        formIcon.addClass("icon icon-xlarge");
+        let iconUrl = api.dom.ImgEl.PLACEHOLDER;
+        let formIcon = new FormIcon(iconUrl, 'icon');
+        formIcon.addClass('icon icon-xlarge');
         return formIcon;
     }
 
@@ -63,12 +63,12 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
         return <FormIcon> super.getFormIcon();
     }
 
-    doRenderOnDataLoaded(rendered): Q.Promise<boolean> {
+    doRenderOnDataLoaded(rendered: boolean): Q.Promise<boolean> {
 
-        return super.doRenderOnDataLoaded(rendered).then((rendered) => {
-            this.addClass("principal-wizard-panel");
+        return super.doRenderOnDataLoaded(rendered).then((nextRendered) => {
+            this.addClass('principal-wizard-panel');
 
-            var responsiveItem = ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
+            const responsiveItem = ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 if (this.isVisible()) {
                     this.updateStickyToolbar();
                 }
@@ -82,12 +82,12 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
                 responsiveItem.update();
             });
 
-            return rendered;
+            return nextRendered;
         });
     }
 
     getUserItemType(): string {
-        throw new Error("Must be implemented by inheritors");
+        throw new Error('Must be implemented by inheritors');
     }
 
     getPersistedDisplayName(): string {
@@ -96,9 +96,9 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
 
     saveChanges(): wemQ.Promise<USER_ITEM_TYPE> {
         if (this.isRendered() && !this.getWizardHeader().getName()) {
-            var deferred = wemQ.defer<USER_ITEM_TYPE>();
-            api.notify.showError("Name can not be empty");
-            deferred.reject(new Error("Name can not be empty"));
+            let deferred = wemQ.defer<USER_ITEM_TYPE>();
+            api.notify.showError('Name can not be empty');
+            deferred.reject(new Error('Name can not be empty'));
             return deferred.promise;
         } else {
             return super.saveChanges();
@@ -121,9 +121,8 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
         }
     }
 
-
     createSteps(persistedItem: USER_ITEM_TYPE): WizardStep[] {
-        throw new Error("Must be implemented by inheritors");
+        throw new Error('Must be implemented by inheritors');
     }
 
     doLayout(persistedItem: USER_ITEM_TYPE): wemQ.Promise<void> {
@@ -134,15 +133,15 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
     }
 
     protected doLayoutPersistedItem(persistedItem: USER_ITEM_TYPE): Q.Promise<void> {
-        throw new Error("Must be implemented by inheritors");
+        throw new Error('Must be implemented by inheritors');
     }
 
     persistNewItem(): wemQ.Promise<USER_ITEM_TYPE> {
-        throw new Error("Must be implemented by inheritors");
+        throw new Error('Must be implemented by inheritors');
     }
 
     updatePersistedItem(): wemQ.Promise<USER_ITEM_TYPE> {
-        throw new Error("Must be implemented by inheritors");
+        throw new Error('Must be implemented by inheritors');
     }
 
     getCloseAction(): api.ui.Action {
@@ -150,6 +149,6 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
     }
 
     protected updateHash() {
-        throw new Error("Must be implemented by inheritors");
+        throw new Error('Must be implemented by inheritors');
     }
 }

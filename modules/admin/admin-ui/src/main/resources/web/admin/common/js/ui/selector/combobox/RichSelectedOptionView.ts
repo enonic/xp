@@ -21,25 +21,25 @@ module api.ui.selector.combobox {
         }
 
         resolveIconUrl(content: T): string {
-            return "";
+            return '';
         }
 
         resolveTitle(content: T): string {
-            return "";
+            return '';
         }
 
         resolveSubTitle(content: T): string {
-            return "";
+            return '';
         }
 
         resolveIconClass(content: T): string {
-            return "";
+            return '';
         }
 
         protected createActionButtons(content: T): api.dom.Element[] {
-            var buttons = [];
+            let buttons = [];
             if (this.draggable) {
-                buttons.push(new api.dom.DivEl("drag-control"));
+                buttons.push(new api.dom.DivEl('drag-control'));
             }
             if (this.isEditable()) {
                 buttons.push(this.createEditButton(content));
@@ -52,15 +52,15 @@ module api.ui.selector.combobox {
 
         protected createView(content: T): api.dom.Element {
 
-            var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(this.size).build();
+            let namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(this.size).build();
 
             namesAndIconView
                 .setMainName(this.resolveTitle(content))
                 .setSubName(this.resolveSubTitle(content));
 
-            var url = this.resolveIconUrl(content);
+            let url = this.resolveIconUrl(content);
             if (!api.util.StringHelper.isBlank(url)) {
-                namesAndIconView.setIconUrl(this.resolveIconUrl(content) + '?crop=false')
+                namesAndIconView.setIconUrl(this.resolveIconUrl(content) + '?crop=false');
             } else {
                 namesAndIconView.setIconClass(this.resolveIconClass(content));
             }
@@ -69,7 +69,7 @@ module api.ui.selector.combobox {
         }
 
         protected createEditButton(content: T): api.dom.AEl {
-            let editButton = new api.dom.AEl("edit");
+            let editButton = new api.dom.AEl('edit');
             editButton.onClicked((event: Event) => {
                 event.stopPropagation();
                 event.preventDefault();
@@ -80,7 +80,7 @@ module api.ui.selector.combobox {
         }
 
         protected createRemoveButton(): api.dom.AEl {
-            let removeButton = new api.dom.AEl("remove");
+            let removeButton = new api.dom.AEl('remove');
             removeButton.onClicked((event: Event) => {
                 this.notifyRemoveClicked();
 

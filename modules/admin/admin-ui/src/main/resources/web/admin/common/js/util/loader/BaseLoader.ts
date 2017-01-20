@@ -41,7 +41,7 @@ module api.util.loader {
         protected getRequest(): api.rest.ResourceRequest<JSON, OBJECT[]> {
             return this.request;
         }
-        
+
         sendRequest(): wemQ.Promise<OBJECT[]> {
             return this.request.sendAndParse();
         }
@@ -54,7 +54,7 @@ module api.util.loader {
                 .catch<OBJECT[]>(this.handleLoadError.bind(this, postLoad));
         }
 
-        preLoad(searchString: string = ""): wemQ.Promise<OBJECT[]> {
+        preLoad(searchString: string = ''): wemQ.Promise<OBJECT[]> {
             this.notifyLoadingData(false);
 
             return this.sendPreLoadRequest(searchString)
@@ -82,9 +82,9 @@ module api.util.loader {
         }
 
         private handleLoadError(postLoad: boolean = false, error: any): OBJECT[] {
-            let isObj = typeof error == 'object',
-                textMessage = isObj ? (error['message'] || 'Unknown error') : String(error),
-                statusCode = isObj && error['statusCode'] ? error['statusCode'] : 500;
+            let isObj = typeof error === 'object';
+            let textMessage = isObj ? (error['message'] || 'Unknown error') : String(error);
+            let statusCode = isObj && error['statusCode'] ? error['statusCode'] : 500;
 
             this.notifyErrorOccurred(statusCode, 'Service error: ' + textMessage, postLoad);
 
@@ -92,15 +92,15 @@ module api.util.loader {
         }
 
         isLoading(): boolean {
-            return this.status == LoaderStatus.LOADING;
+            return this.status === LoaderStatus.LOADING;
         }
 
         isLoaded(): boolean {
-            return this.status == LoaderStatus.LOADED;
+            return this.status === LoaderStatus.LOADED;
         }
 
         isNotStarted(): boolean {
-            return this.status == LoaderStatus.NOT_STARTED;
+            return this.status === LoaderStatus.NOT_STARTED;
         }
 
         setComparator(comparator: Comparator<OBJECT>): BaseLoader<JSON, OBJECT> {
@@ -114,16 +114,15 @@ module api.util.loader {
 
         search(searchString: string): wemQ.Promise<OBJECT[]> {
 
-            var deferred = wemQ.defer<OBJECT[]>();
+            let deferred = wemQ.defer<OBJECT[]>();
 
             this.searchString = searchString;
 
             if (this.results) {
-                var filtered = this.results.filter(this.filterFn, this);
+                let filtered = this.results.filter(this.filterFn, this);
                 this.notifyLoadedData(filtered);
                 deferred.resolve(this.results);
-            }
-            else {
+            } else {
                 deferred.resolve(null);
             }
 
@@ -147,7 +146,7 @@ module api.util.loader {
         }
 
         filterFn(result: OBJECT): boolean {
-            throw Error("must be implemented");
+            throw Error('must be implemented');
         }
 
         notifyLoadedData(results: OBJECT[], postLoad?: boolean) {
@@ -174,13 +173,13 @@ module api.util.loader {
 
         unLoadedData(listener: (event: LoadedDataEvent<OBJECT>) => void) {
             this.loadedDataListeners = this.loadedDataListeners.filter((currentListener: (event: LoadedDataEvent<OBJECT>)=>void)=> {
-                return currentListener != listener;
+                return currentListener !== listener;
             });
         }
 
         unLoadingData(listener: (event: LoadingDataEvent) => void) {
             this.loadingDataListeners = this.loadingDataListeners.filter((currentListener: (event: LoadingDataEvent)=>void)=> {
-                return currentListener != listener;
+                return currentListener !== listener;
             });
         }
 
@@ -198,7 +197,7 @@ module api.util.loader {
             let error = new LoaderErrorEvent(statusCode, textStatus, postLoad);
             this.loaderErrorListeners.forEach((listener) => {
                 listener(error);
-            })
+            });
         }
     }
 }

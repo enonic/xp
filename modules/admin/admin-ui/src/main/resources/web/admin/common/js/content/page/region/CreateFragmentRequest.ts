@@ -10,7 +10,7 @@ module api.content.page.region {
 
         constructor(contentId: api.content.ContentId) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             this.contentId = contentId;
         }
 
@@ -33,7 +33,7 @@ module api.content.page.region {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "create");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'create');
         }
 
         sendAndParse(): wemQ.Promise<api.content.Content> {

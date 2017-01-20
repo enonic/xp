@@ -38,7 +38,7 @@ module api.macro {
                 return false;
             }
 
-            var other = <PageContributions>o;
+            let other = <PageContributions>o;
 
             if (!api.ObjectHelper.stringArrayEquals(this.bodyBegin, other.bodyBegin)) {
                 return false;

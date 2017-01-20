@@ -29,7 +29,7 @@ module api.app.wizard {
         }
 
         removeItem(step: WizardStep) {
-            var index = this.steps.indexOf(step);
+            let index = this.steps.indexOf(step);
             if (index >= 0) {
                 this.steps.splice(index, 1);
             }
@@ -47,7 +47,7 @@ module api.app.wizard {
                 return false;
             }
 
-            for (var i = 0; i < this.steps.length; i++) {
+            for (let i = 0; i < this.steps.length; i++) {
                 if (!this.steps[i].getStepForm().isValid()) {
                     return false;
                 }
@@ -62,7 +62,7 @@ module api.app.wizard {
 
         unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
             this.validityChangedListeners = this.validityChangedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 

@@ -18,7 +18,7 @@ module api.content {
                 return false;
             }
 
-            var other = <ContentIdBaseItem>o;
+            let other = <ContentIdBaseItem>o;
 
             if (!api.ObjectHelper.equals(this.contentId, other.contentId)) {
                 return false;
@@ -32,7 +32,7 @@ module api.content {
         }
 
         static fromJsonArray(jsonArray: json.ContentIdBaseItemJson[]): ContentIdBaseItem[] {
-            var array: ContentIdBaseItem[] = [];
+            let array: ContentIdBaseItem[] = [];
             jsonArray.forEach((json: json.ContentIdBaseItemJson) => {
                 array.push(ContentIdBaseItem.fromJson(json));
             });

@@ -85,7 +85,7 @@ module api.event {
         }
 
         static fromJson(nodeEventJson: NodeEventJson): NodeServerChange<any> {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
     }
 }

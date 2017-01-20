@@ -9,26 +9,26 @@ module api.form {
         private toggleListeners: {(show: boolean): void}[] = [];
 
         constructor(value: string) {
-            this.helpTextToggler = new api.dom.DivEl("help-text-toggler");
-            this.helpTextToggler.setHtml("?");
+            this.helpTextToggler = new api.dom.DivEl('help-text-toggler');
+            this.helpTextToggler.setHtml('?');
 
-            this.helpTextDiv = new api.dom.DivEl("help-text");
+            this.helpTextDiv = new api.dom.DivEl('help-text');
 
-            var pEl = new api.dom.PEl();
+            let pEl = new api.dom.PEl();
             pEl.getEl().setText(value);
 
             this.helpTextDiv.appendChild(pEl);
 
             this.helpTextToggler.onClicked(() => {
-                this.helpTextDiv.toggleClass("visible");
-                this.helpTextToggler.toggleClass("on");
-                this.notifyHelpTextToggled(this.helpTextDiv.hasClass("visible"));
+                this.helpTextDiv.toggleClass('visible');
+                this.helpTextToggler.toggleClass('on');
+                this.notifyHelpTextToggled(this.helpTextDiv.hasClass('visible'));
             });
         }
 
         toggleHelpText(show?: boolean) {
-            this.helpTextDiv.toggleClass("visible", show);
-            this.helpTextToggler.toggleClass("on", show);
+            this.helpTextDiv.toggleClass('visible', show);
+            this.helpTextToggler.toggleClass('on', show);
         }
 
         getToggler(): api.dom.DivEl {

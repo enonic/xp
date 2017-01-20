@@ -1,5 +1,5 @@
-import "../../../../../api.ts";
-import {WidgetItemView} from "../../WidgetItemView";
+import '../../../../../api.ts';
+import {WidgetItemView} from '../../WidgetItemView';
 
 import Content = api.content.Content;
 import ContentId = api.content.ContentId;
@@ -10,6 +10,7 @@ import UserAccessListItemView = api.ui.security.acl.UserAccessListItemView;
 import Permission = api.security.acl.Permission;
 import User = api.security.User;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+import OpenEditPermissionsDialogEvent = api.content.event.OpenEditPermissionsDialogEvent;
 
 export class UserAccessWidgetItemView extends WidgetItemView {
 
@@ -19,13 +20,13 @@ export class UserAccessWidgetItemView extends WidgetItemView {
 
     private headerEl: api.dom.SpanEl;
 
-    private bottomEl;
+    private bottomEl: api.dom.AEl;
 
     private currentUser: User;// TODO: need to implement caching for current user value;
 
     private everyoneAccessValue: Access;
 
-    public static debug = false;
+    public static debug: boolean = false;
 
     private static OPTIONS: any[] = [
         {value: Access.FULL, name: 'has full access to'},
@@ -35,14 +36,13 @@ export class UserAccessWidgetItemView extends WidgetItemView {
         {value: Access.CUSTOM, name: 'has custom access to'}
     ];
 
-
     constructor() {
-        super("user-access-widget-item-view");
+        super('user-access-widget-item-view');
         this.accessListView = new UserAccessListView();
     }
 
     public setContentAndUpdateView(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
-        var contentId = item.getContentId();
+        let contentId = item.getContentId();
         if (UserAccessWidgetItemView.debug) {
             console.debug('UserAccessWidgetItemView.setContentId: ', contentId);
         }
@@ -51,7 +51,7 @@ export class UserAccessWidgetItemView extends WidgetItemView {
     }
 
     private layoutHeader(content: Content) {
-        var entry = content.getPermissions().getEntry(api.security.RoleKeys.EVERYONE);
+        let entry = content.getPermissions().getEntry(api.security.RoleKeys.EVERYONE);
         this.everyoneAccessValue = null;
 
         if (this.hasChild(this.headerEl)) {
@@ -61,13 +61,13 @@ export class UserAccessWidgetItemView extends WidgetItemView {
         if (entry) {
 
             this.everyoneAccessValue = AccessControlEntryView.getAccessValueFromEntry(entry);
-            var headerStr = entry.getPrincipalDisplayName() + " " + this.getOptionName(this.everyoneAccessValue) +
-                            " this item";
-            var headerStrEl = new api.dom.SpanEl("header-string").setHtml(headerStr);
+            let headerStr = entry.getPrincipalDisplayName() + ' ' + this.getOptionName(this.everyoneAccessValue) +
+                            ' this item';
+            let headerStrEl = new api.dom.SpanEl('header-string').setHtml(headerStr);
 
-            this.headerEl = new api.dom.DivEl("user-access-widget-header");
+            this.headerEl = new api.dom.DivEl('user-access-widget-header');
 
-            this.headerEl.appendChild(new api.dom.DivEl("icon-menu4"));
+            this.headerEl.appendChild(new api.dom.DivEl('icon-menu4'));
             this.headerEl.appendChild(headerStrEl);
             this.prependChild(this.headerEl);
         }
@@ -79,11 +79,15 @@ export class UserAccessWidgetItemView extends WidgetItemView {
             this.removeChild(this.bottomEl);
         }
 
-        this.bottomEl = new api.dom.AEl("edit-permissions-link").setHtml("Edit Permissions");
+        this.bottomEl = new api.dom.AEl('edit-permissions-link');
+        this.bottomEl.setHtml('Edit Permissions');
+
         this.appendChild(this.bottomEl);
 
         this.bottomEl.onClicked((event: MouseEvent) => {
-            new api.content.event.OpenEditPermissionsDialogEvent(content).fire();
+
+            OpenEditPermissionsDialogEvent.create().applyContent(content).build().fire();
+
             event.stopPropagation();
             event.preventDefault();
             return false;
@@ -93,16 +97,16 @@ export class UserAccessWidgetItemView extends WidgetItemView {
 
     private layoutList(content: Content): wemQ.Promise<boolean> {
 
-        var deferred = wemQ.defer<boolean>();
+        let deferred = wemQ.defer<boolean>();
 
-        var request = new api.content.resource.GetEffectivePermissionsRequest(content.getContentId());
+        let request = new api.content.resource.GetEffectivePermissionsRequest(content.getContentId());
 
         request.sendAndParse().then((results: api.ui.security.acl.EffectivePermission[]) => {
 
             if (this.hasChild(this.accessListView)) {
                 this.removeChild(this.accessListView);
             }
-            var userAccessList = this.getUserAccessList(results);
+            let userAccessList = this.getUserAccessList(results);
 
             this.accessListView = new UserAccessListView();
             this.accessListView.setItemViews(userAccessList);
@@ -146,9 +150,9 @@ export class UserAccessWidgetItemView extends WidgetItemView {
 
     private getUserAccessList(results: api.ui.security.acl.EffectivePermission[]): UserAccessListItemView[] {
 
-        return results.filter(item => item.getAccess() != this.everyoneAccessValue &&
+        return results.filter(item => item.getAccess() !== this.everyoneAccessValue &&
                                       item.getPermissionAccess().getCount() > 0).map((item: api.ui.security.acl.EffectivePermission) => {
-            var view = new UserAccessListItemView();
+            let view = new UserAccessListItemView();
             view.setObject(item);
             view.setCurrentUser(this.currentUser);
             return view;
@@ -156,8 +160,8 @@ export class UserAccessWidgetItemView extends WidgetItemView {
     }
 
     private getOptionName(access: Access): string {
-        var currentOption = UserAccessWidgetItemView.OPTIONS.filter(option => {
-            return option.value == access;
+        let currentOption = UserAccessWidgetItemView.OPTIONS.filter(option => {
+            return option.value === access;
         });
         if (currentOption && currentOption.length > 0) {
             return currentOption[0].name;

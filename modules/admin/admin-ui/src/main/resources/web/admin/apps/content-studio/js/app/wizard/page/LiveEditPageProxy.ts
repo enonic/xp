@@ -1,7 +1,7 @@
-import "../../../api.ts";
-import {ShowContentFormEvent} from "../ShowContentFormEvent";
-import {ShowLiveEditEvent} from "../ShowLiveEditEvent";
-import {ShowSplitEditEvent} from "../ShowSplitEditEvent";
+import '../../../api.ts';
+import {ShowContentFormEvent} from '../ShowContentFormEvent';
+import {ShowLiveEditEvent} from '../ShowLiveEditEvent';
+import {ShowSplitEditEvent} from '../ShowSplitEditEvent';
 
 declare var CONFIG;
 
@@ -127,9 +127,9 @@ export class LiveEditPageProxy {
 
     private static debug: boolean = false;
 
-    private regionsCopyForIE;
+    private regionsCopyForIE: any;
 
-    private controllerCopyForIE;
+    private controllerCopyForIE: any;
 
     constructor() {
 
@@ -146,7 +146,7 @@ export class LiveEditPageProxy {
         };
         this.onLiveEditPageViewReady((event: LiveEditPageViewReadyEvent) => {
             if (LiveEditPageProxy.debug) {
-                console.debug("LiveEditPageProxy.onLiveEditPageViewReady at " + new Date().toISOString());
+                console.debug('LiveEditPageProxy.onLiveEditPageViewReady at ' + new Date().toISOString());
             }
             this.hideLoadMaskHandler();
             this.pageView = event.getPageView();
@@ -165,15 +165,15 @@ export class LiveEditPageProxy {
     }
 
     private createLiveEditIFrame(): api.dom.IFrameEl {
-        var liveEditIFrame = new api.dom.IFrameEl("live-edit-frame");
+        let liveEditIFrame = new api.dom.IFrameEl('live-edit-frame');
         liveEditIFrame.onLoaded(() => this.handleIFrameLoadedEvent());
 
         return liveEditIFrame;
     }
 
     private createPlaceholderIFrame(): api.dom.IFrameEl {
-        var placeholderIFrame = new api.dom.IFrameEl("live-edit-frame-blank");
-        placeholderIFrame.setSrc(CONFIG.assetsUri + "/live-edit/js/_blank.html");
+        let placeholderIFrame = new api.dom.IFrameEl('live-edit-frame-blank');
+        placeholderIFrame.setSrc(CONFIG.assetsUri + '/live-edit/js/_blank.html');
 
         return placeholderIFrame;
     }
@@ -213,7 +213,7 @@ export class LiveEditPageProxy {
     public getPlaceholderIFrame(): api.dom.IFrameEl {
         return this.placeholderIFrame;
     }
-    
+
     public getLoadMask(): api.ui.mask.LoadMask {
         return this.loadMask;
     }
@@ -253,8 +253,8 @@ export class LiveEditPageProxy {
             this.showLoadMaskHandler();
         }
 
-        var contentId = this.liveEditModel.getContent().getContentId().toString();
-        var pageUrl = api.rendering.UriHelper.getPortalUri(contentId, RenderingMode.EDIT, Workspace.DRAFT);
+        let contentId = this.liveEditModel.getContent().getContentId().toString();
+        let pageUrl = api.rendering.UriHelper.getPortalUri(contentId, RenderingMode.EDIT, Workspace.DRAFT);
 
         if (api.BrowserHelper.isIE()) {
             this.copyObjectsBeforeFrameReloadForIE();
@@ -264,14 +264,14 @@ export class LiveEditPageProxy {
 
         if (this.liveEditModel.isRenderableContent()) {
             if (LiveEditPageProxy.debug) {
-                console.log("LiveEditPageProxy.load loading page from '" + pageUrl + "' at " + new Date().toISOString());
+                console.log(`LiveEditPageProxy.load loading page from '${pageUrl}' at ${new Date().toISOString()}`);
             }
             this.hidePlaceholderAndShowEditor();
             this.hideLoadMaskHandler();
         } else {
 
             if (LiveEditPageProxy.debug) {
-                console.debug("LiveEditPageProxy.load: no reason to load page, showing blank placeholder");
+                console.debug('LiveEditPageProxy.load: no reason to load page, showing blank placeholder');
             }
 
             if (this.placeholderIFrame.isAdded()) {
@@ -295,7 +295,7 @@ export class LiveEditPageProxy {
 
     private hidePlaceholderAndShowEditor() {
         this.placeholderIFrame.removeClass('shown');
-        this.liveEditIFrame.addClass('shown')
+        this.liveEditIFrame.addClass('shown');
     }
 
     public skipNextReloadConfirmation(skip: boolean) {
@@ -307,16 +307,16 @@ export class LiveEditPageProxy {
     }
 
     private handleIFrameLoadedEvent() {
-        var liveEditWindow = this.liveEditIFrame.getHTMLElement()["contentWindow"];
+        let liveEditWindow = this.liveEditIFrame.getHTMLElement()['contentWindow'];
 
         if (LiveEditPageProxy.debug) {
-            console.debug("LiveEditPageProxy.handleIframeLoadedEvent at " + new Date().toISOString());
+            console.debug('LiveEditPageProxy.handleIframeLoadedEvent at ' + new Date().toISOString());
         }
 
         if (liveEditWindow) {
             if (liveEditWindow.wemjq) {
                 if (LiveEditPageProxy.debug) {
-                    console.debug("LiveEditPageProxy.setting config for", liveEditWindow.document, CONFIG);
+                    console.debug('LiveEditPageProxy.setting config for', liveEditWindow.document, CONFIG);
                 }
                 // Give loaded page same CONFIG as in admin
                 liveEditWindow.CONFIG = JSON.parse(JSON.stringify(CONFIG));
@@ -336,13 +336,12 @@ export class LiveEditPageProxy {
                     this.disableLinksInLiveEditForIE();
                 }
                 if (LiveEditPageProxy.debug) {
-                    console.debug("LiveEditPageProxy.hanldeIframeLoadedEvent: initialize live edit at " + new Date().toISOString());
+                    console.debug('LiveEditPageProxy.hanldeIframeLoadedEvent: initialize live edit at ' + new Date().toISOString());
                 }
                 new api.liveedit.InitializeLiveEditEvent(this.liveEditModel).fire(this.liveEditWindow);
-            }
-            else {
+            } else {
                 if (LiveEditPageProxy.debug) {
-                    console.debug("LiveEditPageProxy.handleIframeLoadedEvent: notify live edit ready at " + new Date().toISOString());
+                    console.debug('LiveEditPageProxy.handleIframeLoadedEvent: notify live edit ready at ' + new Date().toISOString());
                 }
                 this.notifyLiveEditPageViewReady(new api.liveedit.LiveEditPageViewReadyEvent());
             }
@@ -353,37 +352,37 @@ export class LiveEditPageProxy {
     }
 
     public loadComponent(componentView: ComponentView<Component>, componentUrl: string): wemQ.Promise<string> {
-        var deferred = wemQ.defer<string>();
-        api.util.assertNotNull(componentView, "componentView cannot be null");
-        api.util.assertNotNull(componentUrl, "componentUrl cannot be null");
+        let deferred = wemQ.defer<string>();
+        api.util.assertNotNull(componentView, 'componentView cannot be null');
+        api.util.assertNotNull(componentUrl, 'componentUrl cannot be null');
 
         wemjq.ajax({
             url: componentUrl,
             type: 'GET',
             success: (htmlAsString: string) => {
-                var newElement = api.dom.Element.fromString(htmlAsString);
-                var itemViewIdProducer = componentView.getItemViewIdProducer();
+                let newElement = api.dom.Element.fromString(htmlAsString);
+                let itemViewIdProducer = componentView.getItemViewIdProducer();
 
-                var createViewConfig = new CreateItemViewConfig<RegionView,Component>().setItemViewProducer(
+                let createViewConfig = new CreateItemViewConfig<RegionView,Component>().setItemViewProducer(
                     itemViewIdProducer).setParentView(componentView.getParentItemView()).setData(componentView.getComponent()).setElement(
                     newElement);
-                var newComponentView: ComponentView<Component> = componentView.getType().createView(createViewConfig);
+                let newComponentView: ComponentView<Component> = componentView.getType().createView(createViewConfig);
 
                 componentView.replaceWith(newComponentView);
 
-                var event = new ComponentLoadedEvent(newComponentView, componentView);
+                let event = new ComponentLoadedEvent(newComponentView, componentView);
                 event.fire(this.liveEditWindow);
 
                 newComponentView.select();
                 newComponentView.hideContextMenu();
 
-                deferred.resolve("");
+                deferred.resolve('');
             },
             error: (jqXHR: JQueryXHR, textStatus: string, errorThrow: string) => {
-                var responseHtml = wemjq.parseHTML(jqXHR.responseText);
-                var errorMessage = "";
+                let responseHtml = wemjq.parseHTML(jqXHR.responseText);
+                let errorMessage = '';
                 responseHtml.forEach((el: HTMLElement, i) => {
-                    if (el.tagName && el.tagName.toLowerCase() == "title") {
+                    if (el.tagName && el.tagName.toLowerCase() === 'title') {
                         errorMessage = el.innerHTML;
                     }
                 });
@@ -511,9 +510,10 @@ export class LiveEditPageProxy {
     }
 
     unLoaded(listener: {(): void;}) {
-        this.loadedListeners = this.loadedListeners.filter(function (curr) {
-            return curr != listener;
-        });
+        this.loadedListeners = this.loadedListeners
+            .filter(function (curr: {(): void;}) {
+                return curr !== listener;
+            });
     }
 
     private notifyLoaded() {
@@ -527,7 +527,7 @@ export class LiveEditPageProxy {
     }
 
     unComponentViewDragStarted(listener: (event: ComponentViewDragStartedEvent) => void) {
-        this.componentViewDragStartedListeners = this.componentViewDragStartedListeners.filter((curr) => (curr != listener));
+        this.componentViewDragStartedListeners = this.componentViewDragStartedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyComponentViewDragStarted(event: ComponentViewDragStartedEvent) {
@@ -539,7 +539,7 @@ export class LiveEditPageProxy {
     }
 
     unComponentViewDragStopped(listener: {(event: ComponentViewDragStoppedEvent): void;}) {
-        this.componentViewDragStoppedListeners = this.componentViewDragStoppedListeners.filter((curr) => (curr != listener));
+        this.componentViewDragStoppedListeners = this.componentViewDragStoppedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyComponentViewDragStopped(event: ComponentViewDragStoppedEvent) {
@@ -551,7 +551,7 @@ export class LiveEditPageProxy {
     }
 
     unComponentViewDragCanceled(listener: {(event: ComponentViewDragCanceledEvent): void;}) {
-        this.componentViewDragCanceledListeners = this.componentViewDragCanceledListeners.filter((curr) => (curr != listener));
+        this.componentViewDragCanceledListeners = this.componentViewDragCanceledListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyComponentViewDragCanceled(event: ComponentViewDragCanceledEvent) {
@@ -563,7 +563,7 @@ export class LiveEditPageProxy {
     }
 
     unComponentViewDragDropped(listener: {(event: ComponentViewDragDroppedEvent): void;}) {
-        this.componentViewDragDroppedListeners = this.componentViewDragDroppedListeners.filter((curr) => (curr != listener));
+        this.componentViewDragDroppedListeners = this.componentViewDragDroppedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyComponentViewDragDropped(event: ComponentViewDragDroppedEvent) {
@@ -575,7 +575,7 @@ export class LiveEditPageProxy {
     }
 
     unPageSelected(listener: (event: PageSelectedEvent) => void) {
-        this.pageSelectedListeners = this.pageSelectedListeners.filter((curr) => (curr != listener));
+        this.pageSelectedListeners = this.pageSelectedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyPageSelected(event: PageSelectedEvent) {
@@ -587,7 +587,7 @@ export class LiveEditPageProxy {
     }
 
     unPageLocked(listener: (event: PageLockedEvent) => void) {
-        this.pageLockedListeners = this.pageLockedListeners.filter((curr) => (curr != listener));
+        this.pageLockedListeners = this.pageLockedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyPageLocked(event: PageLockedEvent) {
@@ -599,7 +599,7 @@ export class LiveEditPageProxy {
     }
 
     unPageUnlocked(listener: (event: PageUnlockedEvent) => void) {
-        this.pageUnlockedListeners = this.pageUnlockedListeners.filter((curr) => (curr != listener));
+        this.pageUnlockedListeners = this.pageUnlockedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyPageUnlocked(event: PageUnlockedEvent) {
@@ -611,7 +611,7 @@ export class LiveEditPageProxy {
     }
 
     unPageUnloaded(listener: (event: PageUnloadedEvent) => void) {
-        this.pageUnloadedListeners = this.pageUnloadedListeners.filter((curr) => (curr != listener));
+        this.pageUnloadedListeners = this.pageUnloadedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyPageUnloaded(event: PageUnloadedEvent) {
@@ -623,7 +623,7 @@ export class LiveEditPageProxy {
     }
 
     unPageTextModeStarted(listener: (event: PageTextModeStartedEvent) => void) {
-        this.pageTextModeStartedListeners = this.pageTextModeStartedListeners.filter((curr) => (curr != listener));
+        this.pageTextModeStartedListeners = this.pageTextModeStartedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyPageTextModeStarted(event: PageTextModeStartedEvent) {
@@ -635,7 +635,7 @@ export class LiveEditPageProxy {
     }
 
     unRegionSelected(listener: {(event: RegionSelectedEvent): void;}) {
-        this.regionSelectedListeners = this.regionSelectedListeners.filter((curr) => (curr != listener));
+        this.regionSelectedListeners = this.regionSelectedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyRegionSelected(event: RegionSelectedEvent) {
@@ -647,7 +647,7 @@ export class LiveEditPageProxy {
     }
 
     unItemViewSelected(listener: {(event: ItemViewSelectedEvent): void;}) {
-        this.itemViewSelectedListeners = this.itemViewSelectedListeners.filter((curr) => (curr != listener));
+        this.itemViewSelectedListeners = this.itemViewSelectedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyItemViewSelected(event: ItemViewSelectedEvent) {
@@ -659,7 +659,7 @@ export class LiveEditPageProxy {
     }
 
     unItemViewDeselected(listener: {(event: ItemViewDeselectedEvent): void;}) {
-        this.itemViewDeselectedListeners = this.itemViewDeselectedListeners.filter((curr) => (curr != listener));
+        this.itemViewDeselectedListeners = this.itemViewDeselectedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyItemViewDeselected(event: ItemViewDeselectedEvent) {
@@ -671,7 +671,7 @@ export class LiveEditPageProxy {
     }
 
     unComponentAdded(listener: {(event: ComponentAddedEvent): void;}) {
-        this.componentAddedListeners = this.componentAddedListeners.filter((curr) => (curr != listener));
+        this.componentAddedListeners = this.componentAddedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyComponentAdded(event: ComponentAddedEvent) {
@@ -683,7 +683,7 @@ export class LiveEditPageProxy {
     }
 
     unComponentRemoved(listener: {(event: ComponentRemovedEvent): void;}) {
-        this.componentRemovedListeners = this.componentRemovedListeners.filter((curr) => (curr != listener));
+        this.componentRemovedListeners = this.componentRemovedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyComponentRemoved(event: ComponentRemovedEvent) {
@@ -695,7 +695,7 @@ export class LiveEditPageProxy {
     }
 
     unComponentDuplicated(listener: {(event: ComponentDuplicatedEvent): void;}) {
-        this.componentDuplicatedListeners = this.componentDuplicatedListeners.filter((curr) => (curr != listener));
+        this.componentDuplicatedListeners = this.componentDuplicatedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyComponentDuplicated(event: ComponentDuplicatedEvent) {
@@ -707,7 +707,7 @@ export class LiveEditPageProxy {
     }
 
     unComponentInspected(listener: {(event: ComponentInspectedEvent): void;}) {
-        this.componentInspectedListeners = this.componentInspectedListeners.filter((curr) => (curr != listener));
+        this.componentInspectedListeners = this.componentInspectedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyComponentInspected(event: ComponentInspectedEvent) {
@@ -719,7 +719,7 @@ export class LiveEditPageProxy {
     }
 
     unPageInspected(listener: {(event: PageInspectedEvent): void;}) {
-        this.pageInspectedListeners = this.pageInspectedListeners.filter((curr) => (curr != listener));
+        this.pageInspectedListeners = this.pageInspectedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyPageInspected(event: PageInspectedEvent) {
@@ -731,7 +731,7 @@ export class LiveEditPageProxy {
     }
 
     unComponentLoaded(listener: {(event: ComponentLoadedEvent): void;}) {
-        this.componentLoadedListeners = this.componentLoadedListeners.filter((curr) => (curr != listener));
+        this.componentLoadedListeners = this.componentLoadedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyComponentLoaded(event: ComponentLoadedEvent) {
@@ -743,7 +743,7 @@ export class LiveEditPageProxy {
     }
 
     unComponentReset(listener: {(event: ComponentResetEvent): void;}) {
-        this.componentResetListeners = this.componentResetListeners.filter((curr) => (curr != listener));
+        this.componentResetListeners = this.componentResetListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyComponentReset(event: ComponentResetEvent) {
@@ -755,7 +755,7 @@ export class LiveEditPageProxy {
     }
 
     unLiveEditPageViewReady(listener: {(event: LiveEditPageViewReadyEvent): void;}) {
-        this.liveEditPageViewReadyListeners = this.liveEditPageViewReadyListeners.filter((curr) => (curr != listener));
+        this.liveEditPageViewReadyListeners = this.liveEditPageViewReadyListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyLiveEditPageViewReady(event: LiveEditPageViewReadyEvent) {
@@ -767,7 +767,7 @@ export class LiveEditPageProxy {
     }
 
     unLiveEditPageInitializationError(listener: {(event: LiveEditPageInitializationErrorEvent): void;}) {
-        this.liveEditPageInitErrorListeners = this.liveEditPageInitErrorListeners.filter((curr) => (curr != listener));
+        this.liveEditPageInitErrorListeners = this.liveEditPageInitErrorListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyLiveEditPageInitializationError(event: LiveEditPageInitializationErrorEvent) {
@@ -779,7 +779,7 @@ export class LiveEditPageProxy {
     }
 
     unLiveEditPageDialogCreate(listener: {(event: CreateHtmlAreaDialogEvent): void;}) {
-        this.createHtmlAreaDialogListeners = this.createHtmlAreaDialogListeners.filter((curr) => (curr != listener));
+        this.createHtmlAreaDialogListeners = this.createHtmlAreaDialogListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyLiveEditPageDialogCreate(event: CreateHtmlAreaDialogEvent) {
@@ -795,7 +795,7 @@ export class LiveEditPageProxy {
     }
 
     unComponentFragmentCreated(listener: {(event: ComponentFragmentCreatedEvent): void;}) {
-        this.fragmentCreatedListeners = this.fragmentCreatedListeners.filter((curr) => (curr != listener));
+        this.fragmentCreatedListeners = this.fragmentCreatedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyFragmentCreated(event: ComponentFragmentCreatedEvent) {
@@ -807,7 +807,7 @@ export class LiveEditPageProxy {
     }
 
     unFragmentReloadRequired(listener: {(event: FragmentComponentReloadRequiredEvent): void;}) {
-        this.fragmentLoadedListeners = this.fragmentLoadedListeners.filter((curr) => (curr != listener));
+        this.fragmentLoadedListeners = this.fragmentLoadedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyFragmentReloadRequired(event: FragmentComponentReloadRequiredEvent) {
@@ -819,7 +819,7 @@ export class LiveEditPageProxy {
     }
 
     unShowWarning(listener: {(event: ShowWarningLiveEditEvent): void;}) {
-        this.showWarningListeners = this.showWarningListeners.filter((curr) => (curr != listener));
+        this.showWarningListeners = this.showWarningListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyShowWarning(event: ShowWarningLiveEditEvent) {
@@ -831,7 +831,7 @@ export class LiveEditPageProxy {
     }
 
     unEditContent(listener: {(event: EditContentEvent): void;}) {
-        this.editContentListeners = this.editContentListeners.filter((curr) => (curr != listener));
+        this.editContentListeners = this.editContentListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyEditContent(event: EditContentEvent) {
@@ -844,7 +844,7 @@ export class LiveEditPageProxy {
     }
 
     private copyControllerForIE() {
-        var controller = this.liveEditModel.getPageModel().getController();
+        let controller = this.liveEditModel.getPageModel().getController();
         if (controller) {
             this.controllerCopyForIE = JSON.parse(JSON.stringify(controller));
             this.controllerCopyForIE.key = controller.getKey().toString();
@@ -852,7 +852,7 @@ export class LiveEditPageProxy {
     }
 
     private copyRegionsForIE() {
-        var regions = this.liveEditModel.getPageModel().getRegions();
+        let regions = this.liveEditModel.getPageModel().getRegions();
         if (regions) {
             this.regionsCopyForIE = JSON.parse(JSON.stringify(regions.toJson()));
         }
@@ -865,21 +865,21 @@ export class LiveEditPageProxy {
 
     private resetControllerForIE() {
         if (this.controllerCopyForIE) {
-            var controller = new api.content.page.PageDescriptorBuilder().fromJson(this.controllerCopyForIE).build();
+            let controller = new api.content.page.PageDescriptorBuilder().fromJson(this.controllerCopyForIE).build();
             this.liveEditModel.getPageModel().setControllerDescriptor(controller);
         }
     }
 
     private resetRegionsForIE() {
         if (this.regionsCopyForIE) {
-            var regions = api.content.page.region.Regions.create().fromJson(this.regionsCopyForIE, null).build();
+            let regions = api.content.page.region.Regions.create().fromJson(this.regionsCopyForIE, null).build();
             this.liveEditModel.getPageModel().setRegions(regions);
         }
     }
 
     private disableLinksInLiveEditForIE() {
         if (this.livejq) {
-            this.livejq("a").attr("disabled", "disabled"); // this works only in IE
+            this.livejq('a').attr('disabled', 'disabled'); // this works only in IE
         }
     }
 

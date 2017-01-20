@@ -4,7 +4,7 @@ module api.security {
 
         constructor() {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
         }
 
         getParams(): Object {

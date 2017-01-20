@@ -5,14 +5,14 @@ module api.liveedit {
 
     export class PageItemType extends ItemType {
 
-        private static INSTANCE = new PageItemType();
+        private static INSTANCE: PageItemType = new PageItemType();
 
         static get(): PageItemType {
             return PageItemType.INSTANCE;
         }
 
         constructor() {
-            super("page");
+            super('page');
         }
 
         protected getItemTypeConfig(itemType: string): ItemTypeConfig {
@@ -31,7 +31,7 @@ module api.liveedit {
         }
 
         createView(config: CreateItemViewConfig<any,any>): PageView {
-            throw new Error("Not supported");
+            throw new Error('Not supported');
         }
     }
 

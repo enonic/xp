@@ -47,7 +47,7 @@ module api.ui.tags {
         private tagRemovedListeners: {(event: TagRemovedEvent) : void}[] = [];
 
         constructor(builder: TagsBuilder) {
-            super("ul", "tags", undefined, builder.tags ? builder.tags.join(';') : undefined);
+            super('ul', 'tags', undefined, builder.tags ? builder.tags.join(';') : undefined);
             this.tagSuggester = builder.tagSuggester;
 
             this.maxTags = builder.maxTags;
@@ -61,19 +61,19 @@ module api.ui.tags {
             this.appendChild(this.tagSuggestions);
 
             this.textInput.onKeyDown((event: KeyboardEvent) => {
-                if (event.keyCode == 188 || event.keyCode == 13) { // comma or enter
+                if (event.keyCode === 188 || event.keyCode === 13) { // comma or enter
                     this.handleWordCompleted();
                     event.preventDefault();
-                } else if (event.keyCode == 8) {
+                } else if (event.keyCode === 8) {
                     if (!this.textInput.getValue() && this.countTags() > 0) {
                         this.doRemoveTag(this.tags[this.countTags() - 1]);
                     }
-                } else if (event.keyCode == 38) {
+                } else if (event.keyCode === 38) {
                     if (this.tagSuggestions.isVisible()) {
                         this.tagSuggestions.moveUp();
                         event.preventDefault();
                     }
-                } else if (event.keyCode == 40) {
+                } else if (event.keyCode === 40) {
                     if (this.tagSuggestions.isVisible()) {
                         this.tagSuggestions.moveDown();
                         event.preventDefault();
@@ -102,12 +102,12 @@ module api.ui.tags {
                 this.textInput.getEl().setWidth('');
             });
 
-            var searchSuggestionHandler = api.util.AppHelper.debounce((searchString: string) => {
+            let searchSuggestionHandler = api.util.AppHelper.debounce((searchString: string) => {
                 this.searchSuggestions(searchString);
             }, 300, false);
-            
+
             this.textInput.onValueChanged((event: api.ValueChangedEvent) => {
-                var searchString = event.getNewValue();
+                let searchString = event.getNewValue();
 
                 if (api.util.StringHelper.isBlank(searchString)) {
                     this.tagSuggestions.hide();
@@ -139,10 +139,10 @@ module api.ui.tags {
                     return;
                 }
 
-                var existingValues = this.doGetTags().concat(searchString);
+                let existingValues = this.doGetTags().concat(searchString);
                 values = values.filter((value: string) => (existingValues.indexOf(value) < 0));
 
-                if (values.length == 0) {
+                if (values.length === 0) {
                     this.tagSuggestions.hide();
                 } else {
                     this.tagSuggestions.setTags(values);
@@ -159,12 +159,12 @@ module api.ui.tags {
         }
 
         private handleWordCompleted() {
-            var inputValue = this.textInput.getValue();
-            var word = inputValue.trim();
+            let inputValue = this.textInput.getValue();
+            let word = inputValue.trim();
 
-            var tag = this.doAddTag(word);
+            let tag = this.doAddTag(word);
             if (tag) {
-                this.textInput.setValue("");
+                this.textInput.setValue('');
 
                 if (this.isMaxTagsReached()) {
                     this.textInput.hide();
@@ -183,7 +183,7 @@ module api.ui.tags {
                 return null;
             }
 
-            var tag = new TagBuilder().setValue(value).setRemovable(true).build();
+            let tag = new TagBuilder().setValue(value).setRemovable(true).build();
             this.tags.push(tag);
             tag.insertBeforeEl(this.textInput);
 
@@ -201,7 +201,7 @@ module api.ui.tags {
         }
 
         private doRemoveTag(tag: Tag, silent?: boolean) {
-            var index = this.indexOf(tag.getValue());
+            let index = this.indexOf(tag.getValue());
             if (index >= 0) {
                 tag.remove();
                 this.tags.splice(index, 1);
@@ -219,8 +219,8 @@ module api.ui.tags {
 
         private indexOf(value: string): number {
             if (!api.util.StringHelper.isEmpty(value)) {
-                for (var i = 0; i < this.tags.length; i++) {
-                    if (value == this.tags[i].getValue()) {
+                for (let i = 0; i < this.tags.length; i++) {
+                    if (value === this.tags[i].getValue()) {
                         return i;
                     }
 
@@ -247,7 +247,7 @@ module api.ui.tags {
         }
 
         isMaxTagsReached(): boolean {
-            if (this.maxTags == 0) {
+            if (this.maxTags === 0) {
                 return false;
             }
             return this.countTags() >= this.maxTags;
@@ -278,8 +278,7 @@ module api.ui.tags {
         giveFocus(): boolean {
             if (this.isMaxTagsReached()) {
                 return this.tags[0].giveFocus();
-            }
-            else {
+            } else {
                 // restore input width to default
                 this.textInput.getEl().setWidth('');
                 return this.textInput.giveFocus();

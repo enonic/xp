@@ -1,5 +1,5 @@
-import "../../../../../../api.ts";
-import {ComponentInspectionPanel, ComponentInspectionPanelConfig} from "./ComponentInspectionPanel";
+import '../../../../../../api.ts';
+import {ComponentInspectionPanel, ComponentInspectionPanelConfig} from './ComponentInspectionPanel';
 
 import FormView = api.form.FormView;
 import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
@@ -15,7 +15,8 @@ export interface DescriptorBasedComponentInspectionPanelConfig extends Component
 
 }
 
-export class DescriptorBasedComponentInspectionPanel<COMPONENT extends DescriptorBasedComponent, DESCRIPTOR extends Descriptor> extends ComponentInspectionPanel<COMPONENT> {
+export class DescriptorBasedComponentInspectionPanel<COMPONENT extends DescriptorBasedComponent, DESCRIPTOR extends Descriptor>
+extends ComponentInspectionPanel<COMPONENT> {
 
     private formView: FormView;
 
@@ -27,10 +28,9 @@ export class DescriptorBasedComponentInspectionPanel<COMPONENT extends Descripto
         this.formView = null;
     }
 
-
     setModel(liveEditModel: LiveEditModel) {
 
-        if (this.liveEditModel != liveEditModel) {
+        if (this.liveEditModel !== liveEditModel) {
             if (this.liveEditModel != null && this.liveEditModel.getSiteModel() != null) {
                 let siteModel = this.liveEditModel.getSiteModel();
 
@@ -49,7 +49,7 @@ export class DescriptorBasedComponentInspectionPanel<COMPONENT extends Descripto
     }
 
     protected layout() {
-        throw new Error("Must be implemented in inheritors");
+        throw new Error('Must be implemented in inheritors');
     }
 
     protected applicationUnavailableHandler() {
@@ -71,8 +71,8 @@ export class DescriptorBasedComponentInspectionPanel<COMPONENT extends Descripto
             return;
         }
 
-        var form = descriptor.getConfig();
-        var config = component.getConfig();
+        let form = descriptor.getConfig();
+        let config = component.getConfig();
         this.formView = new FormView(this.formContext, form, config.getRoot());
         this.appendChild(this.formView);
         component.setDisableEventForwarding(true);

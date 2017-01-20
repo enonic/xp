@@ -59,13 +59,13 @@ module api.ui.selector.dropdown {
         private active: boolean = false;
 
         constructor(name: string, config: DropdownConfig<OPTION_DISPLAY_VALUE>) {
-            super("div", "dropdown", api.StyleHelper.COMMON_PREFIX, config.value);
-            this.getEl().setAttribute("name", name);
+            super('div', 'dropdown', api.StyleHelper.COMMON_PREFIX, config.value);
+            this.getEl().setAttribute('name', name);
 
             this.optionDisplayValueViewer = config.optionDisplayValueViewer || new DefaultOptionDisplayValueViewer();
 
             if (config.iconUrl) {
-                this.icon = new api.dom.ImgEl(config.iconUrl, "input-icon");
+                this.icon = new api.dom.ImgEl(config.iconUrl, 'input-icon');
                 this.appendChild(this.icon);
             }
 
@@ -86,7 +86,7 @@ module api.ui.selector.dropdown {
             this.dropdownHandle = new DropdownHandle();
             this.appendChild(this.dropdownHandle);
 
-            var filter = config.filter || this.defaultFilter;
+            let filter = config.filter || this.defaultFilter;
 
             this.dropdownList = new DropdownList(<DropdownListConfig<OPTION_DISPLAY_VALUE>>{
                 maxHeight: 200,
@@ -96,7 +96,7 @@ module api.ui.selector.dropdown {
                 dataIdProperty: config.dataIdProperty
             });
             if (filter) {
-                this.dropdownList.setFilterArgs({searchString: ""});
+                this.dropdownList.setFilterArgs({searchString: ''});
             }
 
             this.dropdownList.onRowSelection((event: DropdownGridRowSelectedEvent) => {
@@ -128,7 +128,7 @@ module api.ui.selector.dropdown {
         }
 
         reset() {
-            this.input.setValue("");
+            this.input.setValue('');
             this.input.show();
             this.selectedOptionView.hide();
             this.selectedOptionView.resetOption();
@@ -140,20 +140,20 @@ module api.ui.selector.dropdown {
                 return true;
             }
 
-            var lowerCasedSearchString = args.searchString.toLowerCase();
+            let lowerCasedSearchString = args.searchString.toLowerCase();
             if (option.value.toLowerCase().indexOf(lowerCasedSearchString) > -1) {
                 return true;
             }
 
-            var displayVaueAsString = option.displayValue.toString();
+            let displayVaueAsString = option.displayValue.toString();
             if (displayVaueAsString.toLowerCase().indexOf(lowerCasedSearchString) > -1) {
                 return true;
             }
 
-            var indices = option.indices;
+            let indices = option.indices;
             if (indices && indices.length > 0) {
-                for (var i = 0; i < indices.length; i++) {
-                    var index = indices[i];
+                for (let i = 0; i < indices.length; i++) {
+                    let index = indices[i];
                     if (index) {
                         if (index.toLocaleLowerCase().indexOf(lowerCasedSearchString) > -1) {
                             return true;
@@ -166,7 +166,7 @@ module api.ui.selector.dropdown {
         }
 
         private doUpdateDropdownTopPositionAndWidth() {
-            var inputEl = this.input.getEl();
+            let inputEl = this.input.getEl();
             this.dropdownList.setTopPx(inputEl.getHeightWithBorder() - inputEl.getBorderBottomWidth());
             this.dropdownList.setWidth(inputEl.getWidthWithBorder());
         }
@@ -188,7 +188,7 @@ module api.ui.selector.dropdown {
 
             this.doUpdateDropdownTopPositionAndWidth();
 
-            var selectedOption = this.getSelectedOption();
+            let selectedOption = this.getSelectedOption();
 
             this.dropdownList.showDropdown(!!selectedOption ? [selectedOption] : null, this.isInputEmpty() ? this.noOptionsText : null);
 
@@ -203,8 +203,7 @@ module api.ui.selector.dropdown {
             if (this.selectedOptionView.getOption()) {
                 this.input.hide();
                 this.selectedOptionView.show();
-            }
-            else if (this.typeAhead) {
+            } else if (this.typeAhead) {
                 this.input.show();
                 this.selectedOptionView.hide();
             }
@@ -217,7 +216,7 @@ module api.ui.selector.dropdown {
         }
 
         private isInputEmpty(): boolean {
-            return this.input.getValue() === "";
+            return this.input.getValue() === '';
         }
 
         removeAllOptions() {
@@ -249,7 +248,7 @@ module api.ui.selector.dropdown {
         }
 
         setValue(value: string): Dropdown<OPTION_DISPLAY_VALUE> {
-            var option = this.getOptionByValue(value);
+            let option = this.getOptionByValue(value);
             if (option != null) {
                 this.selectOption(option);
             }
@@ -257,7 +256,7 @@ module api.ui.selector.dropdown {
         }
 
         selectRow(index: number, silent: boolean = false, keyCode: number = -1) {
-            var option = this.getOptionByRow(index);
+            let option = this.getOptionByRow(index);
             if (option != null) {
                 this.selectOption(option, silent, keyCode);
                 api.dom.FormEl.moveFocusToNextFocusable(this.input);
@@ -286,7 +285,7 @@ module api.ui.selector.dropdown {
         }
 
         getValue(): string {
-            var selectedOption = this.getSelectedOption();
+            let selectedOption = this.getSelectedOption();
             if (!selectedOption) {
                 return null;
             }
@@ -296,7 +295,7 @@ module api.ui.selector.dropdown {
         setInputIconUrl(iconUrl: string) {
             if (!this.icon) {
                 this.icon = new api.dom.ImgEl();
-                this.icon.addClass("input-icon");
+                this.icon.addClass('input-icon');
                 this.icon.insertBeforeEl(this.input);
             }
 
@@ -345,16 +344,15 @@ module api.ui.selector.dropdown {
             });
 
             this.input.onKeyDown((event: KeyboardEvent) => {
-                if (event.which == 9) { // tab
+                if (event.which === 9) { // tab
                     this.hideDropdown();
                     return;
-                }
-                else if (event.which == 16 || event.which == 17 || event.which == 18) {  // shift or ctrl or alt
+                } else if (event.which === 16 || event.which === 17 || event.which === 18) {  // shift or ctrl or alt
                     return;
                 }
 
                 if (!this.isDropdownShown()) {
-                    if (event.which == 40) { // down
+                    if (event.which === 40) { // down
                         this.input.setReadOnly(true);
                         this.showDropdown();
                         this.dropdownList.navigateToRowIfNotActive();
@@ -365,18 +363,18 @@ module api.ui.selector.dropdown {
                     return;
                 }
 
-                if (event.which == 38) { // up
+                if (event.which === 38) { // up
                     this.dropdownList.navigateToPreviousRow();
-                } else if (event.which == 40) { // down
+                } else if (event.which === 40) { // down
                     this.dropdownList.navigateToNextRow();
-                } else if (event.which == 13) { // enter
+                } else if (event.which === 13) { // enter
                     this.selectRow(this.dropdownList.getActiveRow(), false, 13);
-                    this.input.getEl().setValue("");
-                } else if (event.which == 27) { // esc
+                    this.input.getEl().setValue('');
+                } else if (event.which === 27) { // esc
                     this.hideDropdown();
                 }
 
-                if (event.which == 38 || event.which == 40 || event.which == 13 || event.which == 27) {
+                if (event.which === 38 || event.which === 40 || event.which === 13 || event.which === 27) {
                     event.stopPropagation();
                     event.preventDefault();
                 }
@@ -391,12 +389,12 @@ module api.ui.selector.dropdown {
 
         unOptionSelected(listener: (event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>)=>void) {
             this.optionSelectedListeners.filter((currentListener: (event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
         private notifyOptionSelected(item: Option<OPTION_DISPLAY_VALUE>, keyCode: number = -1) {
-            var event = new OptionSelectedEvent<OPTION_DISPLAY_VALUE>(item, -1, keyCode);
+            let event = new OptionSelectedEvent<OPTION_DISPLAY_VALUE>(item, -1, keyCode);
             this.optionSelectedListeners.forEach((listener: (event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
                 listener(event);
             });
@@ -409,12 +407,12 @@ module api.ui.selector.dropdown {
         unOptionFilterInputValueChanged(listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) {
             this.optionFilterInputValueChangedListeners.filter(
                 (currentListener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
-                    return listener != currentListener;
-                })
+                    return listener !== currentListener;
+                });
         }
 
         private notifyOptionFilterInputValueChanged(oldValue: string, newValue: string) {
-            var event = new OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>(oldValue, newValue,
+            let event = new OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>(oldValue, newValue,
                 this.dropdownList.getDropdownGrid().getElement());
             this.optionFilterInputValueChangedListeners.forEach(
                 (listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
@@ -427,7 +425,7 @@ module api.ui.selector.dropdown {
         }
 
         private notifyExpanded() {
-            var event = new api.ui.selector.DropdownExpandedEvent(this.dropdownList.getDropdownGrid().getElement(), true);
+            let event = new api.ui.selector.DropdownExpandedEvent(this.dropdownList.getDropdownGrid().getElement(), true);
             this.expandedListeners.forEach((listener: (event: api.ui.selector.DropdownExpandedEvent)=>void) => {
                 listener(event);
             });

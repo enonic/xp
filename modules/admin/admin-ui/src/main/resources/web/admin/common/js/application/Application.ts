@@ -3,8 +3,9 @@ module api.application {
 
     export class Application extends api.item.BaseItem {
 
-        static STATE_STARTED = 'started';
-        static STATE_STOPPED = 'stopped';
+        static STATE_STARTED: string = 'started';
+
+        static STATE_STOPPED: string = 'stopped';
 
         private applicationKey: ApplicationKey;
 
@@ -146,7 +147,7 @@ module api.application {
         }
 
         static fromJsonArray(jsonArray: api.application.json.ApplicationJson[]): Application[] {
-            var array: Application[] = [];
+            let array: Application[] = [];
             jsonArray.forEach((json: api.application.json.ApplicationJson) => {
                 array.push(Application.fromJson(json));
             });
@@ -157,23 +158,23 @@ module api.application {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Application) || !super.equals(o)) {
                 return false;
             }
-            var other = <Application>o;
+            let other = <Application>o;
 
             return this.applicationKey.equals(other.applicationKey) &&
-                   this.displayName == other.displayName &&
-                   this.description == other.description &&
-                   this.vendorName == other.vendorName &&
-                   this.vendorUrl == other.vendorUrl &&
-                   this.url == other.url &&
-                   this.state == other.state &&
-                   this.version == other.version &&
-                   this.local == other.local &&
+                   this.displayName === other.displayName &&
+                   this.description === other.description &&
+                   this.vendorName === other.vendorName &&
+                   this.vendorUrl === other.vendorUrl &&
+                   this.url === other.url &&
+                   this.state === other.state &&
+                   this.version === other.version &&
+                   this.local === other.local &&
                    api.ObjectHelper.arrayEquals(this.applicationDependencies, other.applicationDependencies) &&
                    api.ObjectHelper.arrayEquals(this.contentTypeDependencies, other.contentTypeDependencies) &&
                    api.ObjectHelper.equals(this.metaSteps, other.metaSteps) &&
-                   this.minSystemVersion == other.minSystemVersion &&
-                   this.maxSystemVersion == other.maxSystemVersion &&
-                   this.iconUrl == other.iconUrl;
+                   this.minSystemVersion === other.minSystemVersion &&
+                   this.maxSystemVersion === other.maxSystemVersion &&
+                   this.iconUrl === other.iconUrl;
         }
     }
 
@@ -232,8 +233,7 @@ module api.application {
                 this.minSystemVersion = source.getMinSystemVersion();
                 this.maxSystemVersion = source.getMaxSystemVersion();
                 this.iconUrl = source.getIconUrl();
-            }
-            else {
+            } else {
                 this.applicationDependencies = [];
                 this.contentTypeDependencies = [];
             }
@@ -282,7 +282,7 @@ module api.application {
             return new Application(this);
         }
     }
-    
+
     export class ApplicationUploadMock {
 
         private id: string;

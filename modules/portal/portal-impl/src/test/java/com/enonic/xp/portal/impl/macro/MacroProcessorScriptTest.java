@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
 
 public class MacroProcessorScriptTest
 {
-    private MacroProcessorScriptFactoryImpl factory;
+    private MacroProcessorFactoryImpl factory;
 
     private MacroContext macroContext;
 
@@ -89,7 +89,7 @@ public class MacroProcessorScriptTest
         scriptService.setScriptRuntimeFactory( runtimeFactory );
         scriptService.initialize();
 
-        this.factory = new MacroProcessorScriptFactoryImpl();
+        this.factory = new MacroProcessorFactoryImpl();
         this.factory.setScriptService( scriptService );
 
         final HttpServletRequest req = Mockito.mock( HttpServletRequest.class );

@@ -6,13 +6,13 @@ module api.content.order {
 
     export class ChildOrder implements api.Equitable {
 
-        private DEFAULT_ORDER_DIRECTION_VALUE: string = "DESC";
+        private DEFAULT_ORDER_DIRECTION_VALUE: string = 'DESC';
 
         static DEFAULT_ORDER_FIELD_VALUE: string = api.query.QueryField.MODIFIED_TIME;
 
-        static ASC_ORDER_DIRECTION_VALUE: string = "ASC";
+        static ASC_ORDER_DIRECTION_VALUE: string = 'ASC';
 
-        static DESC_ORDER_DIRECTION_VALUE: string = "DESC";
+        static DESC_ORDER_DIRECTION_VALUE: string = 'DESC';
 
         static MANUAL_ORDER_VALUE_KEY: string = api.query.QueryField.MANUAL_ORDER_VALUE;
 
@@ -33,9 +33,8 @@ module api.content.order {
 
         }
 
-
         static fromJson(childOrderJson: ChildOrderJson): ChildOrder {
-            var childOrder: ChildOrder = new ChildOrder();
+            let childOrder: ChildOrder = new ChildOrder();
             childOrderJson.orderExpressions.forEach((orderExprJson: OrderExprWrapperJson) => {
                 if (orderExprJson.FieldOrderExpr) {
                     childOrder.orderExpressions.push(new FieldOrderExprBuilder(orderExprJson.FieldOrderExpr).build());
@@ -47,10 +46,10 @@ module api.content.order {
         }
 
         isManual(): boolean {
-            if (this.orderExpressions.length == 0) {
+            if (this.orderExpressions.length === 0) {
                 return false;
             }
-            var order = this.orderExpressions[0];
+            let order = this.orderExpressions[0];
             if (api.ObjectHelper.iFrameSafeInstanceOf(order, FieldOrderExpr)) {
                 return api.ObjectHelper.stringEquals(ChildOrder.MANUAL_ORDER_VALUE_KEY.toLowerCase(),
                     (<FieldOrderExpr>order).getFieldName().toLowerCase());
@@ -59,17 +58,17 @@ module api.content.order {
         }
 
         isDesc(): boolean {
-            if (this.orderExpressions.length == 0) {
-                return this.DEFAULT_ORDER_DIRECTION_VALUE == ChildOrder.DESC_ORDER_DIRECTION_VALUE;
+            if (this.orderExpressions.length === 0) {
+                return this.DEFAULT_ORDER_DIRECTION_VALUE === ChildOrder.DESC_ORDER_DIRECTION_VALUE;
             }
-            var order = this.orderExpressions[0];
+            let order = this.orderExpressions[0];
             return api.ObjectHelper.stringEquals(ChildOrder.DESC_ORDER_DIRECTION_VALUE.toLowerCase(), order.getDirection().toLowerCase());
         }
 
         isDefault(): boolean {
-            var order = this.orderExpressions[0];
+            let order = this.orderExpressions[0];
             if (api.ObjectHelper.iFrameSafeInstanceOf(order, FieldOrderExpr)) {
-                var fieldOrder = (<FieldOrderExpr>order);
+                let fieldOrder = (<FieldOrderExpr>order);
                 if (api.ObjectHelper.stringEquals(this.DEFAULT_ORDER_DIRECTION_VALUE.toLowerCase(),
                     fieldOrder.getDirection().toLowerCase()) &&
                     api.ObjectHelper.stringEquals(ChildOrder.DEFAULT_ORDER_FIELD_VALUE.toLowerCase(),
@@ -83,14 +82,14 @@ module api.content.order {
         toJson(): api.content.json.ChildOrderJson {
 
             return {
-                "orderExpressions": OrderExpr.toArrayJson(this.getOrderExpressions())
+                orderExpressions: OrderExpr.toArrayJson(this.getOrderExpressions())
             };
         }
 
         toString(): string {
-            var result = "";
+            let result = '';
             this.orderExpressions.forEach((expr: OrderExpr) => {
-                result = result.concat(" ", expr.toString());
+                result = result.concat(' ', expr.toString());
             });
             return result;
         }
@@ -100,11 +99,11 @@ module api.content.order {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ChildOrder)) {
                 return false;
             }
-            var other = <ChildOrder>o;
-            if (this.orderExpressions.length != other.getOrderExpressions().length) {
+            let other = <ChildOrder>o;
+            if (this.orderExpressions.length !== other.getOrderExpressions().length) {
                 return false;
             }
-            for (var count in this.orderExpressions) {
+            for (let count in this.orderExpressions) {
                 if (!this.orderExpressions[count].equals(other.getOrderExpressions()[count])) {
                     return false;
                 }
@@ -116,9 +115,9 @@ module api.content.order {
         static toSetChildOrderJson(contentId: ContentId, childOrder: ChildOrder, silent: boolean): api.content.json.SetChildOrderJson {
             if (contentId && childOrder) {
                 return {
-                    "silent": silent,
-                    "childOrder": childOrder.toJson(),
-                    "contentId": contentId.toString()
+                    silent: silent,
+                    childOrder: childOrder.toJson(),
+                    contentId: contentId.toString()
                 };
             }
         }

@@ -11,11 +11,11 @@ module api.content.event {
         }
 
         static is(eventJson: api.event.NodeEventJson): boolean {
-            return eventJson.data.nodes.some(node => node.path.indexOf("/content") == 0);
+            return eventJson.data.nodes.some(node => node.path.indexOf('/content') === 0);
         }
 
         static fromJson(nodeEventJson: api.event.NodeEventJson): ContentServerEvent {
-            var change = ContentServerChange.fromJson(nodeEventJson);
+            let change = ContentServerChange.fromJson(nodeEventJson);
             return new ContentServerEvent(change);
         }
     }

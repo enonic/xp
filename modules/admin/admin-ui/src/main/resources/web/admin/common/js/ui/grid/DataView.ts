@@ -76,15 +76,15 @@ module api.ui.grid {
             return this.slickDataView.getRowById(id);
         }
 
-        onRowsChanged(callback:(eventData:Slick.EventData, args) => void) {
+        onRowsChanged(callback:(eventData:Slick.EventData, args: any) => void) {
             this.slickDataView.onRowsChanged.subscribe(callback);
         }
 
-        onRowCountChanged(listener:(eventData:Slick.EventData, args) => void) {
+        onRowCountChanged(listener:(eventData:Slick.EventData, args: Slick.EventData) => void) {
             this.slickDataView.onRowCountChanged.subscribe(listener);
         }
 
-        setItemMetadataHandler(metadataHandler) {
+        setItemMetadataHandler(metadataHandler: () => void) {
             this.slickDataView.getItemMetadata = metadataHandler;
         }
     }

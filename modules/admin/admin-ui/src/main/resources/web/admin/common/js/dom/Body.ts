@@ -10,7 +10,7 @@ module api.dom {
             if (!body) {
                 body = document.body;
             }
-            var html = Element.fromHtmlElement(body.parentElement);
+            let html = Element.fromHtmlElement(body.parentElement);
 
             super(new ElementFromHelperBuilder().setHelper(new ElementHelper(body)).setLoadExistingChildren(loadExistingChildren));
 
@@ -54,7 +54,7 @@ module api.dom {
         }
 
         isShowingModalDialog() {
-            return Body.get().hasClass("modal-dialog");
+            return Body.get().hasClass('modal-dialog');
         }
     }
 }

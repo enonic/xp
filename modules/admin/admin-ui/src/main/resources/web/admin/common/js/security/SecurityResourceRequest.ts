@@ -10,7 +10,7 @@ module api.security {
 
         constructor() {
             super();
-            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "security");
+            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), 'security');
         }
 
         getResourcePath(): api.rest.Path {
@@ -18,9 +18,9 @@ module api.security {
         }
 
         fromJsonToPrincipal(json: api.security.PrincipalJson): Principal {
-            var pKey: PrincipalKey = PrincipalKey.fromString(json.key);
+            let pKey: PrincipalKey = PrincipalKey.fromString(json.key);
             if (pKey.isRole()) {
-                return Role.fromJson(<api.security.RoleJson>json)
+                return Role.fromJson(<api.security.RoleJson>json);
 
             } else if (pKey.isGroup()) {
                 return Group.fromJson(<api.security.GroupJson>json);

@@ -9,15 +9,14 @@ module api.ui {
             this.onChange((event: Event) => {
                 this.refreshDirtyState();
                 this.refreshValueChanged();
-            })
+            });
         }
 
         addOption(value: string, displayName: string) {
-            var option = new DropdownOption(value, displayName);
+            let option = new DropdownOption(value, displayName);
             this.appendChild(option);
         }
     }
-
 
     export class DropdownOption extends api.dom.OptionEl {
         constructor(value: string, displayName: string) {

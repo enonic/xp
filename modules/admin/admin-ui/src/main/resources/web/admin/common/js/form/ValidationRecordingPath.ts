@@ -8,7 +8,7 @@ module api.form {
 
         private dataName: string;
 
-        private refString;
+        private refString: string;
 
         private min: number;
 
@@ -23,14 +23,13 @@ module api.form {
         }
 
         private resolveRefString(): string {
-            var s = "";
+            let s = '';
             if (this.parentDataSet && !this.parentDataSet.isRoot()) {
                 s += this.parentDataSet.toString();
                 if (this.dataName) {
-                    s += "." + this.dataName
+                    s += '.' + this.dataName;
                 }
-            }
-            else {
+            } else {
                 if (this.dataName) {
                     s += this.dataName;
                 }
@@ -63,22 +62,22 @@ module api.form {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, ValidationRecordingPath)) {
                 return false;
             }
-            var other = <ValidationRecordingPath>o;
+            let other = <ValidationRecordingPath>o;
 
             return api.ObjectHelper.stringEquals(this.refString, other.refString);
         }
 
         contains(other: ValidationRecordingPath): boolean {
-            let fullPath = PropertyPath.fromString(this.refString),
-                otherPath = PropertyPath.fromString(other.refString);
+            let fullPath = PropertyPath.fromString(this.refString);
+            let otherPath = PropertyPath.fromString(other.refString);
 
             if (fullPath.elementCount() <= otherPath.elementCount()) {
                 return false;
             }
 
             return otherPath.getElements().every((whatEl, whatIdx) => {
-                return fullPath.getElement(whatIdx).toString() == whatEl.toString();
-            })
+                return fullPath.getElement(whatIdx).toString() === whatEl.toString();
+            });
         }
 
     }

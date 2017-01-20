@@ -1,16 +1,15 @@
-import "../../../api.ts";
-import {SlidablePanel, SlidablePanelBuilder, SLIDE_FROM} from "./SlidablePanel";
-import {DetailsView} from "./DetailsView";
-import {DETAILS_PANEL_TYPE} from "./DetailsPanel";
+import '../../../api.ts';
+import {SlidablePanel, SlidablePanelBuilder, SLIDE_FROM} from './SlidablePanel';
+import {DetailsView} from './DetailsView';
+import {DETAILS_PANEL_TYPE} from './DetailsPanel';
 
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
-
 
 export class MobileDetailsPanel extends SlidablePanel {
 
     constructor(detailsView: DetailsView) {
         super(new SlidablePanelBuilder().setSlideFrom(SLIDE_FROM.BOTTOM), detailsView);
-        this.addClass("mobile");
+        this.addClass('mobile');
     }
 
     protected slideOutTop() {

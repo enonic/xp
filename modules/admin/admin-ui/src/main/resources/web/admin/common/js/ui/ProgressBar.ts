@@ -10,17 +10,17 @@ module api.ui {
          * @param value the initial value (defaults to 0)
          */
         constructor(value?: number) {
-            super("progress-bar");
+            super('progress-bar');
             this.value = value || 0;
 
-            var progress = this.progress = new api.dom.DivEl("progress-indicator");
+            let progress = this.progress = new api.dom.DivEl('progress-indicator');
             this.getEl().appendChild(progress.getHTMLElement());
             this.setValue(this.value);
         }
 
         setValue(value: number) {
-            var normalizedValue = this.isIntAndInRangeOf100(value) ? value / 100 : (value > 0 ? this.normalizeValue(value) : 0);
-            this.progress.getEl().setWidth(normalizedValue * 100 + "%");
+            let normalizedValue = this.isIntAndInRangeOf100(value) ? value / 100 : (value > 0 ? this.normalizeValue(value) : 0);
+            this.progress.getEl().setWidth(normalizedValue * 100 + '%');
             this.value = normalizedValue;
         }
 
@@ -38,8 +38,8 @@ module api.ui {
          * @returns {number} normalized value
          */
         private normalizeValue(value: number) {
-            var integralLength = Math.ceil(Math.log(value) / Math.log(10));
-            var maxValue = Math.pow(10, integralLength);
+            let integralLength = Math.ceil(Math.log(value) / Math.log(10));
+            let maxValue = Math.pow(10, integralLength);
             return value / maxValue;
         }
 

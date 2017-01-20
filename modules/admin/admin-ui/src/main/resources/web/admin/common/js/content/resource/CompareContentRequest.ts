@@ -1,20 +1,20 @@
 module api.content.resource {
 
     import CompareContentResults = api.content.resource.result.CompareContentResults;
-    
+
     export class CompareContentRequest extends ContentResourceRequest<api.content.json.CompareContentResultsJson, CompareContentResults> {
 
         private ids: string[];
 
         constructor(ids: string[]) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             this.ids = ids;
         }
 
         static fromContentSummaries(contentSummaries: ContentSummary[]): CompareContentRequest {
 
-            var ids: string[] = [];
+            let ids: string[] = [];
 
             contentSummaries.forEach((contentSummary: ContentSummary) => {
 
@@ -31,7 +31,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "compare");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'compare');
         }
 
         sendAndParse(): wemQ.Promise<CompareContentResults> {

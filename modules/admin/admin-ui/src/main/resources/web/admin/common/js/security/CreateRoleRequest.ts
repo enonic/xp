@@ -9,7 +9,7 @@ module api.security {
 
         constructor() {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
         }
 
         setKey(key: PrincipalKey): CreateRoleRequest {

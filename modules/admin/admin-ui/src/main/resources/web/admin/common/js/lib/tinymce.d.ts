@@ -1,30 +1,33 @@
 // incomplete definitions for http://www.tinymce.com
 
 interface HtmlAreaObservable {
-    off: (name?: string, callback?: Function) => Object
-    on: (name: string, callback: Function) => Object
-    fire: (name: string, args?: Object, bubble?: Boolean) => Event
+    off: (name?: string, callback?: Function) => Object;
+    on: (name: string, callback: Function) => Object;
+    fire: (name: string, args?: Object, bubble?: Boolean) => Event;
 }
 
 interface HtmlAreaEditor extends HtmlAreaObservable {
-    destroy: (automatic: boolean) => void
-    remove: () => void
-    hide: () => void
-    show: () => void
-    getContent: (args?: Object) => string
-    setContent: (content: string, args?: Object) => string
-    focus: (skip_focus?: Boolean) => void
-    undoManager: HtmlAreaUndoManager
-    settings: Object
-    insertContent: (content: string, args?: Object) => string
-    nodeChanged: (args?: Object) => void
+    destroy: (automatic: boolean) => void;
+    remove: () => void;
+    hide: () => void;
+    show: () => void;
+    getContent: (args?: Object) => string;
+    setContent: (content: string, args?: Object) => string;
+    focus: (skip_focus?: Boolean) => void;
+    undoManager: HtmlAreaUndoManager;
+    settings: Object;
+    insertContent: (content: string, args?: Object) => string;
+    nodeChanged: (args?: Object) => void;
     execCommand: (c: string, u: Boolean, v: Object, args?: Object) => void;
+    getBody: () => Element;
+    selection: any;
+    getElement: () => Element;
 }
 
 interface HtmlAreaUndoManager {
-    undo: () => Object
-    clear: () => void
-    hasUndo: () => Boolean
+    undo: () => Object;
+    clear: () => void;
+    hasUndo: () => Boolean;
 }
 
 interface HtmlAreaEvent {

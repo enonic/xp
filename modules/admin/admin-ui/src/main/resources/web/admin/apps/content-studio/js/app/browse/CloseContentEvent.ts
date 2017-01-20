@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import Event = api.event.Event;
 import Panel = api.ui.panel.Panel;

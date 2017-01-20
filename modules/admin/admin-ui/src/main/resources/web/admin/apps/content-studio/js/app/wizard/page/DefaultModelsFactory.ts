@@ -1,4 +1,5 @@
-import "../../../api.ts";
+import '../../../api.ts';
+import {DefaultModels} from './DefaultModels';
 
 import ContentTypeName = api.schema.content.ContentTypeName;
 import ContentId = api.content.ContentId;
@@ -6,7 +7,6 @@ import PageTemplate = api.content.page.PageTemplate;
 import PageDescriptor = api.content.page.PageDescriptor;
 import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
 import GetDefaultPageTemplateRequest = api.content.page.GetDefaultPageTemplateRequest;
-import {DefaultModels} from "./DefaultModels";
 
 export interface DefaultModelsFactoryConfig {
 
@@ -24,27 +24,24 @@ export class DefaultModelsFactory {
         return new GetDefaultPageTemplateRequest(config.siteId, config.contentType).sendAndParse().then(
             (defaultPageTemplate: PageTemplate) => {
 
-                var defaultPageTemplateDescriptorPromise = null;
+                let defaultPageTemplateDescriptorPromise = null;
                 if (defaultPageTemplate && defaultPageTemplate.isPage()) {
                     defaultPageTemplateDescriptorPromise =
                         new GetPageDescriptorByKeyRequest(defaultPageTemplate.getController()).sendAndParse();
-                }
-                else if (defaultPageTemplate && !defaultPageTemplate.isPage()) {
+                } else if (defaultPageTemplate && !defaultPageTemplate.isPage()) {
                     defaultPageTemplate = null;
                 }
 
-                var deferred = wemQ.defer<DefaultModels>();
+                let deferred = wemQ.defer<DefaultModels>();
                 if (defaultPageTemplateDescriptorPromise) {
                     defaultPageTemplateDescriptorPromise.then((defaultPageTemplateDescriptor: PageDescriptor) => {
 
                         deferred.resolve(new DefaultModels(defaultPageTemplate, defaultPageTemplateDescriptor));
                     }).catch((reason) => {
-
-                        deferred.reject(new api.Exception("Page descriptor '" + defaultPageTemplate.getController() + "' not found.",
-                            api.ExceptionType.WARNING));
+                        const msg = `Page descriptor '${defaultPageTemplate.getController()}' not found.`;
+                        deferred.reject(new api.Exception(msg, api.ExceptionType.WARNING));
                     }).done();
-                }
-                else {
+                } else {
                     deferred.resolve(new DefaultModels(defaultPageTemplate, null));
                 }
 

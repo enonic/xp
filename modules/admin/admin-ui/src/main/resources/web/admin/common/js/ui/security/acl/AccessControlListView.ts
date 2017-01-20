@@ -11,11 +11,11 @@ module api.ui.security.acl {
         private itemsEditable: boolean = true;
 
         constructor(className?: string) {
-            super('access-control-list' + (className ? " " + className : ""));
+            super('access-control-list' + (className ? ' ' + className : ''));
         }
 
         createItemView(entry: AccessControlEntry): AccessControlEntryView {
-            var itemView = new AccessControlEntryView(entry);
+            let itemView = new AccessControlEntryView(entry);
             itemView.setEditable(this.itemsEditable);
             itemView.onRemoveClicked(() => {
                 this.removeItem(entry);
@@ -36,18 +36,18 @@ module api.ui.security.acl {
 
         unItemValueChanged(listener: (item: AccessControlEntry) => void) {
             this.itemValueChangedListeners = this.itemValueChangedListeners.filter((curr) => {
-                return curr != listener;
-            })
+                return curr !== listener;
+            });
         }
 
         notifyItemValueChanged(item: AccessControlEntry) {
             this.itemValueChangedListeners.forEach((listener) => {
                 listener(item);
-            })
+            });
         }
 
         setItemsEditable(editable: boolean): AccessControlListView {
-            if (this.itemsEditable != editable) {
+            if (this.itemsEditable !== editable) {
                 this.itemsEditable = editable;
                 this.refreshList();
             }

@@ -3,7 +3,7 @@ module api.data {
     export class ValueTypePropertySet extends ValueType {
 
         constructor() {
-            super("PropertySet");
+            super('PropertySet');
         }
 
         isValid(value: any): boolean {
@@ -21,23 +21,23 @@ module api.data {
         }
 
         newValue(value: string): Value {
-            throw new Error("A value of type Data cannot be created from a string");
+            throw new Error('A value of type Data cannot be created from a string');
         }
 
         toJsonValue(value: Value): any {
             if (value.isNull()) {
                 return null;
             }
-            var data = <PropertySet>value.getObject();
+            let data = <PropertySet>value.getObject();
             return data.toJson();
         }
 
         fromJsonValue(propertyArrayJsonArray: PropertyArrayJson[]): Value {
-            throw new Error("Method not supported!");
+            throw new Error('Method not supported!');
         }
 
         valueToString(value: Value): string {
-            throw new Error("A value of type Data cannot be made into a string");
+            throw new Error('A value of type Data cannot be made into a string');
         }
 
         valueEquals(a: PropertySet, b: PropertySet): boolean {

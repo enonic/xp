@@ -7,24 +7,24 @@ module api.content {
     export class PublishStatusFormatter {
         public static formatStatus(publishStatus: PublishStatus): string {
 
-            var status;
+            let status;
 
             switch (publishStatus) {
             case PublishStatus.ONLINE:
-                status = "Online";
+                status = 'Online';
                 break;
             case PublishStatus.PENDING:
-                status = "Pending";
+                status = 'Pending';
                 break;
             case PublishStatus.EXPIRED:
-                status = "Expired";
+                status = 'Expired';
                 break;
             default:
-                status = "Unknown"
+                status = 'Unknown';
             }
 
             if (!!CompareStatus[status]) {
-                return "Unknown";
+                return 'Unknown';
             }
 
             return status;

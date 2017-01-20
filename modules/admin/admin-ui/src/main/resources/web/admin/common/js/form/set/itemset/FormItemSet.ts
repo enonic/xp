@@ -22,7 +22,7 @@ module api.form {
 
             if (formItemSetJson.items != null) {
                 formItemSetJson.items.forEach((formItemJson: api.form.json.FormItemJson) => {
-                    var formItem = FormItemFactory.createFormItem(formItemJson);
+                    let formItem: FormItem = FormItemFactory.createFormItem(formItemJson);
                     if (formItem) {
                         this.addFormItem(formItem);
                     }
@@ -30,9 +30,10 @@ module api.form {
             }
         }
 
-        addFormItem(formItem: FormItem) {
+        addFormItem(formItem: FormItem): void {
+            const name: string = formItem.getName();
             if (this.formItemByName[name]) {
-                throw new Error("FormItem already added: " + name);
+                throw new Error('FormItem already added: ' + name);
             }
             formItem.setParent(this);
             this.formItemByName[formItem.getName()] = formItem;
@@ -68,7 +69,7 @@ module api.form {
                 immutable: this.isImmutable(),
                 items: FormItem.formItemsToJson(this.getFormItems()),
                 label: this.getLabel(),
-                occurrences: this.getOccurrences().toJson(),
+                occurrences: this.getOccurrences().toJson()
             }};
         }
 
@@ -82,7 +83,7 @@ module api.form {
                 return false;
             }
 
-            var other = <FormItemSet>o;
+            let other: FormItemSet = <FormItemSet>o;
 
             if (!api.ObjectHelper.booleanEquals(this.immutable, other.immutable)) {
                 return false;

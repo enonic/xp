@@ -10,7 +10,7 @@ module api.ui.button {
 
             this.action = action;
             this.setLabel(this.createLabel(action), false);
-            this.addClass("action-button");
+            this.addClass('action-button');
 
             this.setEnabled(this.action.isEnabled());
 
@@ -26,7 +26,7 @@ module api.ui.button {
                 this.tooltip = new Tooltip(this, combination, 1000);
                 api.ui.KeyBindings.get().onHelpKeyPressed((e) => {
                     if (this.action.isEnabled() && api.ui.KeyBindings.get().isActive(this.action.getShortcut())) {
-                        if (KeyBindingAction[KeyBindingAction.KEYDOWN].toLowerCase() == e.type) {
+                        if (KeyBindingAction[KeyBindingAction.KEYDOWN].toLowerCase() === e.type) {
                             this.tooltip.show();
                             return;
                         }
@@ -39,10 +39,10 @@ module api.ui.button {
                 this.action.execute();
             });
 
-            this.action.onPropertyChanged((action: api.ui.Action) => {
-                this.setEnabled(action.isEnabled());
-                this.setVisible(action.isVisible());
-                this.setLabel(this.createLabel(action), false);
+            this.action.onPropertyChanged((changedAction: api.ui.Action) => {
+                this.setEnabled(changedAction.isEnabled());
+                this.setVisible(changedAction.isVisible());
+                this.setLabel(this.createLabel(changedAction), false);
             });
         }
 
@@ -55,7 +55,7 @@ module api.ui.button {
         }
 
         private createLabel(action: Action): string {
-            var label: string;
+            let label: string;
             if (action.hasMnemonic()) {
                 label = action.getMnemonic().underlineMnemonic(action.getLabel());
             } else {

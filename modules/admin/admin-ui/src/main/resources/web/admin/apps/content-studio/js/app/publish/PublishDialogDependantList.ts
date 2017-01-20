@@ -1,9 +1,8 @@
-import "../../api.ts";
-import {DialogDependantList} from "../dialog/DependantItemsDialog";
+import '../../api.ts';
+import {DialogDependantList} from '../dialog/DependantItemsDialog';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
-
 
 export class PublishDialogDependantList extends DialogDependantList {
 
@@ -11,31 +10,24 @@ export class PublishDialogDependantList extends DialogDependantList {
 
     private removeClickListeners: {(item: ContentSummaryAndCompareStatus): void}[] = [];
 
-
-    clearItems() {
-        this.removeClass("contains-removable");
-        super.clearItems();
-    }
-
-    createItemView(item: api.content.ContentSummaryAndCompareStatus, readOnly: boolean): api.dom.Element {
+    createItemView(item: ContentSummaryAndCompareStatus, readOnly: boolean): api.dom.Element {
         let view = super.createItemView(item, readOnly);
 
-        if (CompareStatus.NEWER == item.getCompareStatus()) {
-            view.addClass("removable");
-            this.toggleClass("contains-removable", true);
+        if (CompareStatus.NEWER === item.getCompareStatus()) {
+            view.addClass('removable');
         }
 
         view.onClicked((event) => {
-            if (new api.dom.ElementHelper(<HTMLElement>event.target).hasClass("remove")) {
+            if (new api.dom.ElementHelper(<HTMLElement>event.target).hasClass('remove')) {
                 this.notifyItemRemoveClicked(item);
             } else {
-                this.notifyItemClicked(item)
+                this.notifyItemClicked(item);
             }
         });
 
         if (!isContentSummaryValid(item)) {
-            view.addClass("invalid");
-            view.getEl().setTitle("Edit invalid content");
+            view.addClass('invalid');
+            view.getEl().setTitle('Edit invalid content');
         }
 
         return view;
@@ -48,13 +40,13 @@ export class PublishDialogDependantList extends DialogDependantList {
     unItemClicked(listener: (item: ContentSummaryAndCompareStatus) => void) {
         this.itemClickListeners = this.itemClickListeners.filter((curr) => {
             return curr !== listener;
-        })
+        });
     }
 
-    private notifyItemClicked(item) {
+    private notifyItemClicked(item: ContentSummaryAndCompareStatus) {
         this.itemClickListeners.forEach(listener => {
             listener(item);
-        })
+        });
     }
 
     onItemRemoveClicked(listener: (item: ContentSummaryAndCompareStatus) => void) {
@@ -64,20 +56,20 @@ export class PublishDialogDependantList extends DialogDependantList {
     unItemRemoveClicked(listener: (item: ContentSummaryAndCompareStatus) => void) {
         this.removeClickListeners = this.removeClickListeners.filter((curr) => {
             return curr !== listener;
-        })
+        });
     }
 
-    private notifyItemRemoveClicked(item) {
+    private notifyItemRemoveClicked(item: ContentSummaryAndCompareStatus) {
         this.removeClickListeners.forEach(listener => {
             listener(item);
-        })
+        });
     }
 }
 
 export function isContentSummaryValid(item: ContentSummaryAndCompareStatus): boolean {
-    let status = item.getCompareStatus(),
-        summary = item.getContentSummary();
+    let status = item.getCompareStatus();
+    let summary = item.getContentSummary();
 
-    return status == CompareStatus.PENDING_DELETE ||
+    return status === CompareStatus.PENDING_DELETE ||
            (summary.isValid() && !api.util.StringHelper.isBlank(summary.getDisplayName()) && !summary.getName().isUnnamed());
 }

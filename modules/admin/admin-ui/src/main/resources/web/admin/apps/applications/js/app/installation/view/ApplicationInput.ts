@@ -1,4 +1,4 @@
-import "../../../api.ts";
+import '../../../api.ts';
 
 import ApplicationUploaderEl = api.application.ApplicationUploaderEl;
 import InputEl = api.dom.InputEl;
@@ -13,20 +13,20 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
 
     private textInput: InputEl;
     private applicationUploaderEl: ApplicationUploaderEl;
-    private lastTimeKeyPressedTimer;
+    private lastTimeKeyPressedTimer: number;
     private LAST_KEY_PRESS_TIMEOUT: number;
-    private mask: api.ui.mask.LoadMask;
     private cancelAction: Action;
 
-    private errorPanel: api.form.ValidationRecordingViewer;
+    private textValueChangedListeners: {(): void}[] = [];
+    private appInstallFinishedListeners: {(): void}[] = [];
 
-    private static APPLICATION_ADDRESS_MASK: string = "^(http|https)://\\S+";
+    private static APPLICATION_ADDRESS_MASK: string = '^(http|https)://\\S+';
 
     constructor(cancelAction: Action, className?: string, originalValue?: string) {
 
         super();
 
-        this.setWrappedInput(this.textInput = new InputEl("text"));
+        this.setWrappedInput(this.textInput = new InputEl('text'));
         this.setAdditionalElements(this.applicationUploaderEl = new ApplicationUploaderEl({
             name: 'application-input-uploader',
             allowDrop: true,
@@ -37,38 +37,43 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
             showCancel: false
         }));
 
-        this.LAST_KEY_PRESS_TIMEOUT = 1500;
+        this.LAST_KEY_PRESS_TIMEOUT = 750;
         this.cancelAction = cancelAction;
 
         this.applicationUploaderEl.onUploadStarted((event: api.ui.uploader.FileUploadStartedEvent<Application>) => {
-            var names = event.getUploadItems().map((uploadItem: api.ui.uploader.UploadItem<Application>) => {
+            let names = event.getUploadItems().map((uploadItem: api.ui.uploader.UploadItem<Application>) => {
                 return uploadItem.getName();
             });
             this.textInput.setValue(names.join(', '));
         });
 
-        this.errorPanel = new api.form.ValidationRecordingViewer();
-        this.appendChild(this.errorPanel);
-        this.errorPanel.hide();
+        this.applicationUploaderEl.getUploadButton().getEl().setTabIndex(0);
 
-        this.onHidden(() => {
-            this.errorPanel.hide();
+        this.applicationUploaderEl.getUploadButton().onKeyDown((event: KeyboardEvent) => {
+            if (api.ui.KeyHelper.isSpace(event)) {
+                this.applicationUploaderEl.showFileSelectionDialog();
+            }
         });
 
-        this.addClass("file-input" + (className ? " " + className : ""));
+        this.addClass('file-input' + (className ? ' ' + className : ''));
         this.initUrlEnteredHandler();
+    }
+
+    public getValue(): string {
+        return this.textInput.getValue();
     }
 
     private initUrlEnteredHandler() {
         this.onKeyDown((event) => {
             clearTimeout(this.lastTimeKeyPressedTimer);
 
-            this.errorPanel.hide();
             switch (event.keyCode) {
             case 13: //enter
                 this.startInstall();
                 break;
             case 27: //esc
+                break;
+            case 9: //tab
                 break;
             default :
                 this.lastTimeKeyPressedTimer = setTimeout(() => {
@@ -79,29 +84,21 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
         });
     }
 
-    private initMask() {
-        if (!this.mask) {
-            this.mask = new api.ui.mask.LoadMask(this);
-            this.getParentElement().appendChild(this.mask);
-        }
-    }
-
     private startInstall() {
         if (!api.util.StringHelper.isEmpty(this.textInput.getValue())) {
 
             let url = this.textInput.getValue();
             if (api.util.StringHelper.testRegex(ApplicationInput.APPLICATION_ADDRESS_MASK, url)) {
-                this.initMask();
-                this.mask.show();
-
                 this.installWithUrl(url);
-                console.log("url: " + url);
+            } else {
+                this.notifyTextValueChanged();
             }
+        } else {
+            this.notifyTextValueChanged();
         }
     }
 
     private installWithUrl(url: string) {
-        this.mask.show();
         new api.application.InstallUrlApplicationRequest(url).sendAndParse().then((result: api.application.ApplicationInstallResult)=> {
 
             let failure = result.getFailure();
@@ -111,30 +108,16 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
                 this.cancelAction.execute();
             }
 
-            this.mask.hide();
-
+            this.notifyAppInstallFinished();
         }).catch((reason: any) => {
-            this.mask.hide();
             api.DefaultErrorHandler.handle(reason);
         });
     }
 
-    showFailure(failure) {
+    showFailure(failure: string): void {
         if (failure) {
-            this.errorPanel.setError(failure);
-            this.errorPanel.show();
-        } else {
-            this.errorPanel.hide();
+            api.notify.NotifyManager.get().showWarning(failure);
         }
-    }
-
-    setUploaderParams(params: {[key: string]: any}): ApplicationInput {
-        this.applicationUploaderEl.setParams(params);
-        return this;
-    }
-
-    getUploaderParams(): {[key: string]: string} {
-        return this.applicationUploaderEl.getParams();
     }
 
     setPlaceholder(placeholder: string): ApplicationInput {
@@ -142,8 +125,12 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
         return this;
     }
 
-    getPlaceholder(): string {
-        return this.textInput.getPlaceholder();
+    public hasMatchInEntry(entry: string): boolean {
+        return entry.toLowerCase().indexOf(this.getValue().toLowerCase()) > -1;
+    }
+
+    getTextInput(): InputEl {
+        return this.textInput;
     }
 
     reset(): ApplicationInput {
@@ -177,11 +164,35 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
         this.applicationUploaderEl.unUploadFailed(listener);
     }
 
-    onUploadCompleted(listener: (event: FileUploadCompleteEvent<Application>) => void) {
-        this.applicationUploaderEl.onUploadCompleted(listener);
+    onTextValueChanged(listener: () => void) {
+        this.textValueChangedListeners.push(listener);
     }
 
-    unUploadCompleted(listener: (event: FileUploadCompleteEvent<Application>) => void) {
-        this.applicationUploaderEl.unUploadCompleted(listener);
+    unTextValueChanged(listener: () => void) {
+        this.textValueChangedListeners = this.textValueChangedListeners.filter((curr) => {
+            return listener !== curr;
+        });
+    }
+
+    private notifyTextValueChanged() {
+        this.textValueChangedListeners.forEach((listener) => {
+            listener();
+        });
+    }
+
+    onAppInstallFinished(listener: () => void) {
+        this.appInstallFinishedListeners.push(listener);
+    }
+
+    unAppInstallFinished(listener: () => void) {
+        this.appInstallFinishedListeners = this.appInstallFinishedListeners.filter((curr) => {
+            return listener !== curr;
+        });
+    }
+
+    private notifyAppInstallFinished() {
+        this.appInstallFinishedListeners.forEach((listener) => {
+            listener();
+        });
     }
 }

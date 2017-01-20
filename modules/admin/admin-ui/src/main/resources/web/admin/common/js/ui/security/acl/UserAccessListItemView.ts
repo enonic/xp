@@ -4,7 +4,6 @@ module api.ui.security.acl {
     import Tooltip = api.ui.Tooltip;
     import User = api.security.User;
 
-
     export class UserAccessListItemView extends api.ui.Viewer<EffectivePermission> {
 
         private userLine: api.dom.DivEl;
@@ -26,7 +25,7 @@ module api.ui.security.acl {
         public static debug: boolean = false;
 
         constructor(className?: string) {
-            super('user-access-list-item-view' + (className ? " " + className : ""));
+            super('user-access-list-item-view' + (className ? ' ' + className : ''));
         }
 
         setCurrentUser(user: User) {
@@ -37,12 +36,12 @@ module api.ui.security.acl {
             super.doLayout(object);
 
             if (UserAccessListItemView.debug) {
-                console.debug("UserAccessListItemView.doLayout");
+                console.debug('UserAccessListItemView.doLayout');
             }
 
             if (!this.accessLine && !this.userLine) {
-                this.accessLine = new api.dom.SpanEl("access-line");
-                this.userLine = new api.dom.DivEl("user-line");
+                this.accessLine = new api.dom.SpanEl('access-line');
+                this.userLine = new api.dom.DivEl('user-line');
                 this.appendChildren(this.accessLine, this.userLine);
 
                 this.resizeListener = this.setExtraCount.bind(this);
@@ -58,13 +57,13 @@ module api.ui.security.acl {
 
                 object.getMembers().forEach((principal: EffectivePermissionMember) => {
 
-                    var display = principal.getDisplayName().split(" ").map(word => word.substring(0, 1).toUpperCase());
+                    let display = principal.getDisplayName().split(' ').map(word => word.substring(0, 1).toUpperCase());
 
-                    var icon = new api.dom.SpanEl("user-icon").setHtml(display.length >= 2
-                        ? display.join("").substring(0, 2)
+                    let icon = new api.dom.SpanEl('user-icon').setHtml(display.length >= 2
+                        ? display.join('').substring(0, 2)
                         : principal.getDisplayName().substring(0, 2).toUpperCase());
                     if (this.currentUser && this.currentUser.getKey().equals(principal.getUserKey())) {
-                        icon.addClass("active");
+                        icon.addClass('active');
                         this.userLine.insertChild(icon, 0);
                     } else {
                         this.userLine.appendChild(icon);
@@ -81,23 +80,23 @@ module api.ui.security.acl {
 
         private setExtraCount() {
             if (this.userLine.getChildren().length > 0) {
-                var visibleCount = this.getVisibleCount(),
-                    iconCount = this.getObject().getPermissionAccess().getCount(),
-                    extraCount = iconCount - visibleCount;
+                let visibleCount = this.getVisibleCount();
+                let iconCount = this.getObject().getPermissionAccess().getCount();
+                let extraCount = iconCount - visibleCount;
 
                 if (extraCount > 0) {
-                    this.userLine.getEl().setAttribute("extra-count", "+" + extraCount);
+                    this.userLine.getEl().setAttribute('extra-count', '+' + extraCount);
                 } else {
-                    this.userLine.getEl().removeAttribute("extra-count");
+                    this.userLine.getEl().removeAttribute('extra-count');
                 }
             }
         }
 
         private getVisibleCount(): number {
-            var userIcons = this.userLine.getChildren(),
-                count = 0;
-            for (var userIconKey in userIcons) {
-                if (userIcons[userIconKey].getEl().getOffsetTopRelativeToParent() == 0) {
+            let userIcons = this.userLine.getChildren();
+            let count = 0;
+            for (let userIconKey in userIcons) {
+                if (userIcons[userIconKey].getEl().getOffsetTopRelativeToParent() === 0) {
                     count++;
                 } else {
                     break;
@@ -107,15 +106,14 @@ module api.ui.security.acl {
         }
 
         private getOptionName(access: Access): string {
-            var currentOption = UserAccessListItemView.OPTIONS.filter(option => {
-                return option.value == access;
+            let currentOption = UserAccessListItemView.OPTIONS.filter(option => {
+                return option.value === access;
             });
             if (currentOption && currentOption.length > 0) {
                 return currentOption[0].name;
             }
 
         }
-
 
     }
 }

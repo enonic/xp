@@ -1,9 +1,9 @@
-import "../../../../../../api.ts";
+import '../../../../../../api.ts';
 import {
     DescriptorBasedComponentInspectionPanel,
     DescriptorBasedComponentInspectionPanelConfig
-} from "./DescriptorBasedComponentInspectionPanel";
-import {DescriptorBasedDropdownForm} from "./DescriptorBasedDropdownForm";
+} from './DescriptorBasedComponentInspectionPanel';
+import {DescriptorBasedDropdownForm} from './DescriptorBasedDropdownForm';
 
 import Content = api.content.Content;
 import SiteModel = api.content.site.SiteModel;
@@ -36,13 +36,13 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
 
     private handleSelectorEvents: boolean = true;
 
-    private componentPropertyChangedEventHandler;
+    private componentPropertyChangedEventHandler: (event: ComponentPropertyChangedEvent) => void;
 
     protected selector: LayoutDescriptorDropdown;
 
     constructor() {
         super(<DescriptorBasedComponentInspectionPanelConfig>{
-            iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType("layout", "icon-xlarge")
+            iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType('layout', 'icon-xlarge')
         });
     }
 
@@ -51,14 +51,14 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
         this.removeChildren();
 
         this.selector = new LayoutDescriptorDropdown();
-        this.layoutForm = new DescriptorBasedDropdownForm(this.selector, "Layout");
+        this.layoutForm = new DescriptorBasedDropdownForm(this.selector, 'Layout');
 
         this.selector.loadDescriptors(this.liveEditModel.getSiteModel().getApplicationKeys());
 
         this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
 
             // Ensure displayed config form and selector option are removed when descriptor is removed
-            if (event.getPropertyName() == DescriptorBasedComponent.PROPERTY_DESCRIPTOR) {
+            if (event.getPropertyName() === DescriptorBasedComponent.PROPERTY_DESCRIPTOR) {
                 if (!this.layoutComponent.hasDescriptor()) {
                     this.setSelectorValue(null, false);
                 }
@@ -104,14 +104,14 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
         this.layoutComponent = <LayoutComponent> layoutView.getComponent();
 
         this.setComponent(this.layoutComponent);
-        var key: DescriptorKey = this.layoutComponent.getDescriptor();
+        const key: DescriptorKey = this.layoutComponent.getDescriptor();
         if (key) {
-            var descriptor: LayoutDescriptor = this.selector.getDescriptor(key);
+            const descriptor: LayoutDescriptor = this.selector.getDescriptor(key);
             if (descriptor) {
                 this.setSelectorValue(descriptor);
             } else {
-                new GetLayoutDescriptorByKeyRequest(key).sendAndParse().then((descriptor: LayoutDescriptor) => {
-                    this.setSelectorValue(descriptor);
+                new GetLayoutDescriptorByKeyRequest(key).sendAndParse().then((receivedDescriptor: LayoutDescriptor) => {
+                    this.setSelectorValue(receivedDescriptor);
                 }).catch((reason: any) => {
                     if (this.isNotFoundError(reason)) {
                         this.setSelectorValue(null);
@@ -142,9 +142,9 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
         this.selector.onOptionSelected((event: OptionSelectedEvent<LayoutDescriptor>) => {
             if (this.handleSelectorEvents) {
 
-                var option: Option<LayoutDescriptor> = event.getOption();
+                let option: Option<LayoutDescriptor> = event.getOption();
 
-                var selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();
+                let selectedDescriptorKey: DescriptorKey = option.displayValue.getKey();
                 this.layoutComponent.setDescriptor(selectedDescriptorKey, option.displayValue);
             }
         });

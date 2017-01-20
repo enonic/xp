@@ -6,7 +6,7 @@ module api.content.page.region {
 
         constructor(applicationKey: api.application.ApplicationKey) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
             this.applicationKey = applicationKey;
         }
 
@@ -17,16 +17,15 @@ module api.content.page.region {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "list", "by_application");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'list', 'by_application');
         }
 
         sendAndParse(): wemQ.Promise<LayoutDescriptor[]> {
 
-            var cached = this.cache.getByApplication(this.applicationKey);
+            let cached = this.cache.getByApplication(this.applicationKey);
             if (cached) {
                 return wemQ(cached);
-            }
-            else {
+            } else {
                 return this.send().then((response: api.rest.JsonResponse<LayoutDescriptorsJson>) => {
                     return this.fromJsonToLayoutDescriptors(response.getResult());
                 });

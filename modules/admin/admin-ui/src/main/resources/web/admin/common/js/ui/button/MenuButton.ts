@@ -9,11 +9,11 @@ module api.ui.button {
         private dropdownHandle: DropdownHandle;
 
         private actionButton: ActionButton;
-        
+
         private menu: Menu;
 
         constructor(mainAction: Action, menuActions: Action[] = []) {
-            super("menu-button");
+            super('menu-button');
 
             this.initDropdownHandle();
             this.initActionButton(mainAction);
@@ -62,13 +62,13 @@ module api.ui.button {
                     this.dropdownHandle.toggleClass('down');
                 }
             });
-            
+
             this.menu.onItemClicked((item: MenuItem) => {
                 if (this.menu.isHideOnItemClick() && item.isEnabled()) {
                     hideMenu();
                 }
             });
-            
+
             this.actionButton.onClicked(hideMenu);
 
             this.dropdownHandle.onClicked(() => this.dropdownHandle.giveFocus());
@@ -90,7 +90,7 @@ module api.ui.button {
                 this.dropdownHandle.removeClass('down');
             }
         }
-        
+
         hideDropdown(hidden: boolean = true) {
             this.toggleClass('hidden-dropdown', hidden);
         }

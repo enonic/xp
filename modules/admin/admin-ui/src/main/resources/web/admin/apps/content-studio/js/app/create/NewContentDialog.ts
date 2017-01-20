@@ -1,10 +1,10 @@
-import "../../api.ts";
-import {MostPopularItemsBlock} from "./MostPopularItemsBlock";
-import {RecentItemsBlock} from "./RecentItemsBlock";
-import {NewContentDialogItemSelectedEvent} from "./NewContentDialogItemSelectedEvent";
-import {NewMediaUploadEvent} from "./NewMediaUploadEvent";
-import {NewContentEvent} from "./NewContentEvent";
-import {FilterableItemsList} from "./FilterableItemsList";
+import '../../api.ts';
+import {MostPopularItemsBlock} from './MostPopularItemsBlock';
+import {RecentItemsBlock} from './RecentItemsBlock';
+import {NewContentDialogItemSelectedEvent} from './NewContentDialogItemSelectedEvent';
+import {NewMediaUploadEvent} from './NewMediaUploadEvent';
+import {NewContentEvent} from './NewContentEvent';
+import {FilterableItemsList} from './FilterableItemsList';
 
 import GetAllContentTypesRequest = api.schema.content.GetAllContentTypesRequest;
 import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
@@ -42,9 +42,9 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     protected header: NewContentDialogHeader;
 
     constructor() {
-        super("Create Content");
+        super('Create Content');
 
-        this.addClass("new-content-dialog");
+        this.addClass('new-content-dialog');
 
         this.initElements();
 
@@ -54,7 +54,7 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     }
 
     protected createHeader(): NewContentDialogHeader {
-        return new NewContentDialogHeader("Create Content", "");
+        return new NewContentDialogHeader('Create Content', '');
     }
 
     protected getHeader(): NewContentDialogHeader {
@@ -78,13 +78,12 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
         this.recentContentTypes.getItemsList().onSelected(this.closeAndFireEventFromContentType.bind(this));
     }
 
-
     private initFileInput() {
         this.dropzoneContainer = new api.ui.uploader.DropzoneContainer(true);
         this.dropzoneContainer.hide();
         this.appendChild(this.dropzoneContainer);
 
-        this.fileInput = new api.ui.text.FileInput('large', undefined).setPlaceholder("Search for content types").setUploaderParams(
+        this.fileInput = new api.ui.text.FileInput('large', undefined).setPlaceholder('Search for content types').setUploaderParams(
             {parent: ContentPath.ROOT.toString()});
 
         this.fileInput.getUploader().addDropzone(this.dropzoneContainer.getDropzone().getId());
@@ -120,12 +119,12 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     // we catch drag enter on this element and trigger uploader to appear,
     // then catch drag leave on uploader's dropzone to get back to previous state
     private initDragAndDropUploaderEvents() {
-        var dragOverEl;
+        let dragOverEl;
         this.onDragEnter((event: DragEvent) => {
             if (this.fileInput.getUploader().isEnabled()) {
-                var target = <HTMLElement> event.target;
+                let target = <HTMLElement> event.target;
 
-                if (!!dragOverEl || dragOverEl == this.getHTMLElement()) {
+                if (!!dragOverEl || dragOverEl === this.getHTMLElement()) {
                     this.dropzoneContainer.show();
                 }
                 dragOverEl = target;
@@ -157,12 +156,12 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     }
 
     private appendElementsToDialog() {
-        var section = new api.dom.SectionEl().setClass("column");
+        let section = new api.dom.SectionEl().setClass('column');
         this.appendChildToContentPanel(section);
 
         this.mostPopularContentTypes.hide();
 
-        var contentTypesListDiv = new api.dom.DivEl("content-types-content");
+        let contentTypesListDiv = new api.dom.DivEl('content-types-content');
         contentTypesListDiv.appendChildren(<api.dom.Element>this.mostPopularContentTypes,
             <api.dom.Element>this.allContentTypes);
 
@@ -177,23 +176,23 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
         this.parentContent = parent;
         this.allContentTypes.setParentContent(parent);
 
-        var params: {[key: string]: any} = {
+        let params: {[key: string]: any} = {
             parent: parent ? parent.getPath().toString() : api.content.ContentPath.ROOT.toString()
         };
 
-        this.fileInput.setUploaderParams(params)
+        this.fileInput.setUploaderParams(params);
     }
 
     open() {
         super.open();
-        var keyBindings = [
+        let keyBindings = [
             new api.ui.KeyBinding('up', () => {
                 api.dom.FormEl.moveFocusToPrevFocusable(api.dom.Element.fromHtmlElement(<HTMLElement>document.activeElement),
-                    "input,li");
+                    'input,li');
             }).setGlobal(true),
             new api.ui.KeyBinding('down', () => {
                 api.dom.FormEl.moveFocusToNextFocusable(api.dom.Element.fromHtmlElement(<HTMLElement>document.activeElement),
-                    "input,li");
+                    'input,li');
             }).setGlobal(true)];
 
         api.ui.KeyBindings.get().bindKeys(keyBindings);
@@ -251,7 +250,7 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     }
 
     private sendRequestsToFetchContentData(): wemQ.Promise<any>[] {
-        var requests: wemQ.Promise<any>[] = [];
+        let requests: wemQ.Promise<any>[] = [];
         requests.push(new GetAllContentTypesRequest().sendAndParse());
         if (this.parentContent) {
             requests.push(new ListContentByPathRequest(this.parentContent.getPath()).sendAndParse());
@@ -278,8 +277,8 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     }
 
     private toggleUploadersEnabled() {
-        var uploaderEnabled = !this.parentContent || !this.parentContent.getType().isTemplateFolder();
-        this.toggleClass("no-uploader-el", !uploaderEnabled);
+        let uploaderEnabled = !this.parentContent || !this.parentContent.getType().isTemplateFolder();
+        this.toggleClass('no-uploader-el', !uploaderEnabled);
         this.fileInput.getUploader().setEnabled(uploaderEnabled);
     }
 

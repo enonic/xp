@@ -5,15 +5,17 @@ module api.content.util {
     export class ContentNodeByDisplayNameComparator implements api.Comparator<TreeNode<ContentSummaryAndCompareStatus>> {
 
         compare(a: TreeNode<ContentSummaryAndCompareStatus>, b: TreeNode<ContentSummaryAndCompareStatus>): number {
+            let firstName: string;
+            let secondName: string;
             if (!a.getData().getContentSummary()) {
                 return 1;
             } else {
-                var firstName = a.getData().getContentSummary().getDisplayName() || '';
+                firstName = a.getData().getContentSummary().getDisplayName() || '';
             }
             if (!b.getData().getContentSummary()) {
                 return -1;
             } else {
-                var secondName = b.getData().getContentSummary().getDisplayName() || '';
+                secondName = b.getData().getContentSummary().getDisplayName() || '';
             }
             return firstName.localeCompare(secondName);
         }

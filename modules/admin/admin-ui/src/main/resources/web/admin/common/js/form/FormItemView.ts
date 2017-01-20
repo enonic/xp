@@ -33,8 +33,8 @@ module api.form {
 
         constructor(config: FormItemViewConfig) {
             super(config.className);
-            api.util.assertNotNull(config.context, "context cannot be null");
-            api.util.assertNotNull(config.formItem, "formItem cannot be null");
+            api.util.assertNotNull(config.context, 'context cannot be null');
+            api.util.assertNotNull(config.formItem, 'formItem cannot be null');
             this.context = config.context;
             this.formItem = config.formItem;
             this.parent = config.parent;
@@ -46,19 +46,19 @@ module api.form {
         }
 
         broadcastFormSizeChanged() {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         layout(): wemQ.Promise<void> {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         update(propertyArray: PropertySet, unchangedOnly?: boolean): wemQ.Promise<void> {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         reset() {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         getContext(): FormContext {
@@ -74,11 +74,11 @@ module api.form {
         }
 
         public displayValidationErrors(value: boolean) {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         hasValidUserInput(): boolean {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         validate(silent: boolean = true): ValidationRecording {
@@ -100,15 +100,16 @@ module api.form {
         }
 
         unEditContentRequest(listener: (content: api.content.ContentSummary) => void) {
-            this.editContentRequestListeners = this.editContentRequestListeners.filter(function (curr) {
-                return curr != listener;
-            });
+            this.editContentRequestListeners = this.editContentRequestListeners
+                .filter(function (curr: (content: api.content.ContentSummary) => void) {
+                    return curr !== listener;
+                });
         }
 
         notifyEditContentRequested(content: api.content.ContentSummary) {
             this.editContentRequestListeners.forEach((listener) => {
                 listener(content);
-            })
+            });
         }
 
         onValidityChanged(listener: (event: RecordingValidityChangedEvent)=>void) {

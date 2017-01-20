@@ -13,7 +13,7 @@ module api.app.wizard {
         setActions(...actions: api.ui.Action[]) {
             this.actions = actions;
         }
-        
+
         enableActionsForNew() {
             throw new Error('Must be overridden by inheritors');
         }

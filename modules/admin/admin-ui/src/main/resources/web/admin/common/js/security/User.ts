@@ -13,8 +13,8 @@ module api.security {
         constructor(builder: UserBuilder) {
             super(builder);
             api.util.assert(builder.key.isUser(), 'Expected PrincipalKey of type User');
-            this.email = builder.email || "";
-            this.login = builder.login || "";
+            this.email = builder.email || '';
+            this.login = builder.login || '';
             this.loginDisabled = builder.loginDisabled || false;
             this.memberships = builder.memberships || [];
         }
@@ -44,7 +44,7 @@ module api.security {
                 return false;
             }
 
-            var other = <User> o;
+            let other = <User> o;
 
             return super.equals(o) &&
                    this.loginDisabled === other.isDisabled() &&

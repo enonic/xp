@@ -82,6 +82,7 @@ addBundle( project( ':server:server-shell' ), 17 )
 addBundle( project( ':server:server-status' ), 17 )
 addBundle( project( ':server:server-udc' ), 17 )
 addBundle( project( ':server:server-rest' ), 30 )
+addBundle( project( ':server:server-trace' ), 17 )
 
 // Script app
 addBundle( project( ':script:script-impl' ), 24 )

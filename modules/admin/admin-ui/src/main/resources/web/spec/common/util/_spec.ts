@@ -6,4 +6,3 @@
 ///<reference path='LocalTime.spec.ts' />
 ///<reference path='StringHelper.spec.ts' />
 ///<reference path='UriHelper.spec.ts' />
-

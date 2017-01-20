@@ -15,16 +15,16 @@ module api.content.site {
         }
 
         getDescription(): string {
-            return this.getContentData().getString("description");
+            return this.getContentData().getString('description');
         }
 
         getSiteConfigs(): SiteConfig[] {
 
-            var siteConfigs: SiteConfig[] = [];
-            this.getContentData().forEachProperty("siteConfig", (applicationProperty: Property) => {
-                var siteConfigData = applicationProperty.getPropertySet();
+            let siteConfigs: SiteConfig[] = [];
+            this.getContentData().forEachProperty('siteConfig', (applicationProperty: Property) => {
+                let siteConfigData = applicationProperty.getPropertySet();
                 if (siteConfigData) {
-                    var siteConfig = SiteConfig.create().fromData(siteConfigData).build();
+                    let siteConfig = SiteConfig.create().fromData(siteConfigData).build();
                     siteConfigs.push(siteConfig);
                 }
             });

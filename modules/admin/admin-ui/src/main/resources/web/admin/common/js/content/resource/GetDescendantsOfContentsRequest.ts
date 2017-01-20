@@ -10,7 +10,7 @@ module api.content.resource {
 
         constructor(contentPath?: ContentPath) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             if (contentPath) {
                 this.addContentPath(contentPath);
             }
@@ -32,7 +32,7 @@ module api.content.resource {
         }
 
         getParams(): Object {
-            var fn = (contentPath: ContentPath) => {
+            let fn = (contentPath: ContentPath) => {
                 return contentPath.toString();
             };
             return {
@@ -42,13 +42,13 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "getDescendantsOfContents");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'getDescendantsOfContents');
         }
 
         sendAndParse(): wemQ.Promise<ContentId[]> {
 
             return this.send().then((response: api.rest.JsonResponse<api.content.json.ContentIdBaseItemJson[]>) => {
-                return response.getResult().map((item => new ContentId(item.id)))
+                return response.getResult().map((item => new ContentId(item.id)));
             });
         }
     }

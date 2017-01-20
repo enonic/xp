@@ -23,9 +23,9 @@ module api.ui.treegrid {
         }
 
         private restrainX(x: number): number {
-            let posX = x,
-                width = this.getEl().getWidthWithBorder(),
-                right = this.getParentElement().getEl().getWidthWithMargin();
+            let posX = x;
+            let width = this.getEl().getWidthWithBorder();
+            let right = this.getParentElement().getEl().getWidthWithMargin();
 
             if (posX + width > right) {
                 posX = posX - width;
@@ -35,9 +35,9 @@ module api.ui.treegrid {
         }
 
         private restrainY(y: number): number {
-            let posY = y,
-                height = this.getEl().getHeightWithBorder(),
-                bottom = Math.max(document.body.scrollTop, document.documentElement.scrollTop) + window.innerHeight;
+            let posY = y;
+            let height = this.getEl().getHeightWithBorder();
+            let bottom = Math.max(document.body.scrollTop, document.documentElement.scrollTop) + window.innerHeight;
 
             if (posY + height > bottom) {
                 posY = posY - height;

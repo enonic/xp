@@ -6,32 +6,32 @@ export class SaveBeforeCloseDialog extends ModalDialog {
 
     private wizardPanel: WizardPanel<any>;
 
-    private yesAction = new Action('Yes', 'y');
+    private yesAction: Action = new Action('Yes', 'y');
 
-    private noAction = new Action('No', 'n');
+    private noAction: Action = new Action('No', 'n');
 
     constructor(wizardPanel: WizardPanel<any>) {
-        super("Close wizard");
+        super('Close wizard');
 
         this.wizardPanel = wizardPanel;
 
-        var message = new api.dom.H6El();
-        message.getEl().setInnerHtml("There are unsaved changes, do you want to save them before closing?");
+        let message = new api.dom.H6El();
+        message.getEl().setInnerHtml('There are unsaved changes, do you want to save them before closing?');
         this.appendChildToContentPanel(message);
 
-        this.yesAction.setMnemonic("y");
+        this.yesAction.setMnemonic('y');
         this.yesAction.onExecuted(() => {
             this.doSaveAndClose();
         });
         this.addAction(this.yesAction, true);
 
-        this.noAction.setMnemonic("n");
+        this.noAction.setMnemonic('n');
         this.noAction.onExecuted(() => {
             this.doCloseWithoutSaveCheck();
         });
         this.addAction(this.noAction);
 
-        this.getCancelAction().setMnemonic("c");
+        this.getCancelAction().setMnemonic('c');
     }
 
     show() {

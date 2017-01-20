@@ -10,7 +10,7 @@ module api.event {
         private static handlersMap: {[eventName: string]: HandlersMapEntry[]} = {};
 
         static onEvent(eventName: string, handler: (apiEventObj: api.event.Event) => void, contextWindow: Window = window) {
-            var customEventHandler = (customEvent: any) => handler(customEvent['apiEventObj']);
+            let customEventHandler = (customEvent: any) => handler(customEvent['apiEventObj']);
             if (!EventBus.handlersMap[eventName]) {
                 EventBus.handlersMap[eventName] = [];
             }
@@ -28,7 +28,7 @@ module api.event {
                     if (entry.apiEventHandler === handler) {
                         customEventHandler = entry.customEventHandler;
                     }
-                    return entry.apiEventHandler != handler;
+                    return entry.apiEventHandler !== handler;
                 });
                 contextWindow.removeEventListener(eventName, customEventHandler);
             } else {
@@ -40,7 +40,7 @@ module api.event {
         }
 
         static fireEvent(apiEventObj: api.event.Event, contextWindow: Window = window) {
-            var customEvent = contextWindow.document.createEvent('Event');
+            let customEvent = contextWindow.document.createEvent('Event');
             customEvent.initEvent(apiEventObj.getName(), true, true);
             customEvent['apiEventObj'] = apiEventObj;
             contextWindow.dispatchEvent(customEvent);

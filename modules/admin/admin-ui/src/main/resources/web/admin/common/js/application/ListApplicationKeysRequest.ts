@@ -5,17 +5,17 @@ module api.application {
         private searchQuery: string;
         private apiName: string;
 
-        constructor(apiName: string = "listKeys") {
+        constructor(apiName: string = 'listKeys') {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
 
             this.apiName = apiName;
         }
 
         getParams(): Object {
             return {
-                "query": this.searchQuery
-            }
+                query: this.searchQuery
+            };
         }
 
         setSearchQuery(query: string): ListApplicationKeysRequest {

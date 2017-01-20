@@ -6,7 +6,7 @@ module api.security.auth {
 
         constructor(loginCredentials: LoginCredentials) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             this.loginCredentials = loginCredentials;
         }
 

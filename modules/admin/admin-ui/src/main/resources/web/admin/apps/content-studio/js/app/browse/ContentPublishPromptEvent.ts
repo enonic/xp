@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {BaseContentModelEvent} from "./BaseContentModelEvent";
+import '../../api.ts';
+import {BaseContentModelEvent} from './BaseContentModelEvent';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
@@ -11,7 +11,7 @@ export class ContentPublishPromptEvent extends BaseContentModelEvent {
         super(model);
         this.includeChildItems = includeChildItems;
     }
-    
+
     isIncludeChildItems(): boolean {
         return this.includeChildItems;
     }

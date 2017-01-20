@@ -28,7 +28,7 @@ module api.ui.selector.combobox {
             selectedOptions.forEach((selectedOption: Option<OPTION_DISPLAY_VALUE>) => {
                 if (selectedOption.readOnly) {
                     for (let i = 0; i < options.length; i++) {
-                        if (selectedOption.value == options[i].value) {
+                        if (selectedOption.value === options[i].value) {
                             options[i].readOnly = true;
                             break;
                         }

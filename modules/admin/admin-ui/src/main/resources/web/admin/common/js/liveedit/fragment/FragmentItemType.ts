@@ -8,14 +8,14 @@ module api.liveedit.fragment {
 
     export class FragmentItemType extends ComponentItemType {
 
-        private static INSTANCE = new FragmentItemType();
+        private static INSTANCE: FragmentItemType = new FragmentItemType();
 
         static get(): FragmentItemType {
             return FragmentItemType.INSTANCE;
         }
 
         constructor() {
-            super("fragment");
+            super('fragment');
         }
 
         createView(config: CreateItemViewConfig<RegionView,FragmentComponent>): FragmentComponentView {
@@ -25,7 +25,7 @@ module api.liveedit.fragment {
         }
 
         isComponentType(): boolean {
-            return true
+            return true;
         }
     }
 

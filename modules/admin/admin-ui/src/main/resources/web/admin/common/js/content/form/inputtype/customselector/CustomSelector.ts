@@ -42,7 +42,7 @@ module api.content.form.inputtype.customselector {
             super('custom-selector');
 
             if (CustomSelector.debug) {
-                console.debug("CustomSelector: config", context.inputConfig);
+                console.debug('CustomSelector: config', context.inputConfig);
             }
 
             this.context = context;
@@ -50,9 +50,9 @@ module api.content.form.inputtype.customselector {
         }
 
         private readConfig(context: ContentInputTypeViewContext): void {
-            let serviceUrl = context.inputConfig['service'][0]['value'],
-                serviceParams = context.inputConfig['param'] || [],
-                contentPath = context.contentPath.toString();
+            let serviceUrl = context.inputConfig['service'][0]['value'];
+            let serviceParams = context.inputConfig['param'] || [];
+            let contentPath = context.contentPath.toString();
 
             let params = serviceParams.reduce((prev, curr) => {
                 prev[curr['@value']] = curr['value'];
@@ -87,7 +87,7 @@ module api.content.form.inputtype.customselector {
         }
 
         update(propertyArray: api.data.PropertyArray, unchangedOnly?: boolean): Q.Promise<void> {
-            var superPromise = super.update(propertyArray, unchangedOnly);
+            let superPromise = super.update(propertyArray, unchangedOnly);
 
             if (!unchangedOnly || !this.comboBox.isDirty()) {
                 return superPromise.then(() => {
@@ -104,7 +104,7 @@ module api.content.form.inputtype.customselector {
 
         createComboBox(input: api.form.Input, propertyArray: PropertyArray): RichComboBox<CustomSelectorItem> {
 
-            var comboBox = new CustomSelectorComboBox(input, this.requestPath, this.getValueFromPropertyArray(propertyArray));
+            let comboBox = new CustomSelectorComboBox(input, this.requestPath, this.getValueFromPropertyArray(propertyArray));
             /*
              comboBox.onOptionFilterInputValueChanged((event: api.ui.selector.OptionFilterInputValueChangedEvent<string>) => {
              comboBox.setFilterArgs({searchString: event.getNewValue()});
@@ -114,7 +114,7 @@ module api.content.form.inputtype.customselector {
                 this.ignorePropertyChange = true;
 
                 const option = event.getSelectedOption();
-                var value = new Value(String(option.getOption().value), ValueTypes.STRING);
+                let value = new Value(String(option.getOption().value), ValueTypes.STRING);
                 if (option.getIndex() >= 0) {
                     this.getPropertyArray().set(option.getIndex(), value);
                 } else {
@@ -173,8 +173,8 @@ module api.content.form.inputtype.customselector {
 
         private setupSortable() {
             this.updateSelectedOptionStyle();
-            wemjq(this.getHTMLElement()).find(".selected-options").sortable({
-                axis: "y",
+            wemjq(this.getHTMLElement()).find('.selected-options').sortable({
+                axis: 'y',
                 containment: 'parent',
                 handle: '.drag-control',
                 tolerance: 'pointer',
@@ -185,22 +185,22 @@ module api.content.form.inputtype.customselector {
 
         private refreshSortable() {
             this.updateSelectedOptionStyle();
-            wemjq(this.getHTMLElement()).find(".selected-options").sortable("refresh");
+            wemjq(this.getHTMLElement()).find('.selected-options').sortable('refresh');
         }
 
         private handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
 
-            var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+            let draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
             this.draggingIndex = draggedElement.getSiblingIndex();
 
-            ui.placeholder.html("Drop form item set here");
+            ui.placeholder.html('Drop form item set here');
         }
 
         private handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
 
             if (this.draggingIndex >= 0) {
-                var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
-                var draggedToIndex = draggedElement.getSiblingIndex();
+                let draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+                let draggedToIndex = draggedElement.getSiblingIndex();
                 this.getPropertyArray().move(this.draggingIndex, draggedToIndex);
             }
 
@@ -209,13 +209,12 @@ module api.content.form.inputtype.customselector {
 
         private updateSelectedOptionStyle() {
             if (this.getPropertyArray().getSize() > 1) {
-                this.addClass("multiple-occurrence").removeClass("single-occurrence");
-            }
-            else {
-                this.addClass("single-occurrence").removeClass("multiple-occurrence");
+                this.addClass('multiple-occurrence').removeClass('single-occurrence');
+            } else {
+                this.addClass('single-occurrence').removeClass('multiple-occurrence');
             }
         }
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("CustomSelector", CustomSelector));
+    api.form.inputtype.InputTypeManager.register(new api.Class('CustomSelector', CustomSelector));
 }

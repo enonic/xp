@@ -33,7 +33,7 @@ module api.site {
                 return false;
             }
 
-            var other = <SiteDescriptor>o;
+            let other = <SiteDescriptor>o;
 
             if (!api.ObjectHelper.equals(this.form, other.form)) {
                 return false;

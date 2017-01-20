@@ -13,12 +13,10 @@ module api.app.view {
             this.tabMenu.hide();
             this.appendChild(this.tabMenu);
 
-
             this.deckPanel = new api.ui.panel.NavigatedDeckPanel(this.tabMenu);
             this.deckPanel.setDoOffset(false);
             this.appendChild(this.deckPanel);
         }
-
 
         getTabMenu(): api.ui.tab.TabMenu {
             return this.tabMenu;

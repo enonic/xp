@@ -1,12 +1,14 @@
 module api.content.resource {
 
-    export class DuplicateContentRequest extends ContentResourceRequest<json.ContentJson, Content> {
+    import ContentJson = api.content.json.ContentJson;
+
+    export class DuplicateContentRequest extends ContentResourceRequest<ContentJson, Content> {
 
         private id: ContentId;
 
         constructor(id: ContentId) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             this.id = id;
         }
 
@@ -17,12 +19,12 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "duplicate");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'duplicate');
         }
 
         sendAndParse(): wemQ.Promise<Content> {
 
-            return this.send().then((response: api.rest.JsonResponse<json.ContentJson>) => {
+            return this.send().then((response: api.rest.JsonResponse<ContentJson>) => {
                 return this.fromJsonToContent(response.getResult());
             });
         }

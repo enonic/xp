@@ -11,15 +11,15 @@ public class ResolvePublishDependenciesParams
 
     private final ContentIds excludedContentIds;
 
-    private final Branch target;
+    private final ContentIds excludeChildrenIds;
 
-    private final boolean includeChildren;
+    private final Branch target;
 
     private ResolvePublishDependenciesParams( Builder builder )
     {
         contentIds = builder.contentIds;
         target = builder.target;
-        includeChildren = builder.includeChildren;
+        excludeChildrenIds = builder.excludeChildrenIds;
         excludedContentIds = builder.excludedContentIds;
     }
 
@@ -38,14 +38,14 @@ public class ResolvePublishDependenciesParams
         return excludedContentIds;
     }
 
+    public ContentIds getExcludeChildrenIds()
+    {
+        return excludeChildrenIds;
+    }
+
     public Branch getTarget()
     {
         return target;
-    }
-
-    public boolean isIncludeChildren()
-    {
-        return includeChildren;
     }
 
     public static final class Builder
@@ -54,9 +54,9 @@ public class ResolvePublishDependenciesParams
 
         private ContentIds excludedContentIds;
 
-        private Branch target;
+        private ContentIds excludeChildrenIds;
 
-        private boolean includeChildren = true;
+        private Branch target;
 
         private Builder()
         {
@@ -74,15 +74,15 @@ public class ResolvePublishDependenciesParams
             return this;
         }
 
-        public Builder target( Branch target )
+        public Builder excludeChildrenIds( ContentIds excludeChildrenIds )
         {
-            this.target = target;
+            this.excludeChildrenIds = excludeChildrenIds;
             return this;
         }
 
-        public Builder includeChildren( boolean includeChildren )
+        public Builder target( Branch target )
         {
-            this.includeChildren = includeChildren;
+            this.target = target;
             return this;
         }
 

@@ -1,25 +1,23 @@
 module api.liveedit.layout {
 
     import LayoutComponent = api.content.page.region.LayoutComponent;
-    import ItemType = api.liveedit.ItemType;
-    import ItemTypeConfigJson = api.liveedit.ItemTypeConfigJson;
     import RegionView = api.liveedit.RegionView;
     import ComponentItemType = api.liveedit.ComponentItemType;
 
     export class LayoutItemType extends ComponentItemType {
 
-        private static INSTANCE = new LayoutItemType();
+        private static INSTANCE: LayoutItemType = new LayoutItemType();
 
         static get(): LayoutItemType {
             return LayoutItemType.INSTANCE;
         }
 
         constructor() {
-            super("layout");
+            super('layout');
         }
 
         isComponentType(): boolean {
-            return true
+            return true;
         }
 
         createView(config: CreateItemViewConfig<RegionView,LayoutComponent>): LayoutComponentView {

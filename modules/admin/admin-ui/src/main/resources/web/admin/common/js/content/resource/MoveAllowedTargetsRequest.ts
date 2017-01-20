@@ -15,27 +15,27 @@ module api.content.resource {
         private filterContentPaths: ContentPath[];
 
         protected createSearchExpression(): ConstraintExpr {
-            var searchExpr: ConstraintExpr = super.createSearchExpression();
+            let searchExpr: ConstraintExpr = super.createSearchExpression();
 
-            var forbiddenPathsExpr: ConstraintExpr = this.createChildPathsExpr();
+            let forbiddenPathsExpr: ConstraintExpr = this.createChildPathsExpr();
 
             return new LogicalExpr(searchExpr, LogicalOperator.AND, new NotExpr(forbiddenPathsExpr));
         }
 
         private createChildPathsExpr(): ConstraintExpr {
             if (!this.filterContentPaths || this.filterContentPaths.length === 0) {
-                throw new Error("Content paths to be moved not set");
+                throw new Error('Content paths to be moved not set');
             }
 
             if (this.filterContentPaths.length === 1) {
-                return CompareExpr.like(new FieldExpr("_path"),
-                    ValueExpr.string("/content" + this.filterContentPaths[0].toString() + "/*"));
+                return CompareExpr.like(new FieldExpr('_path'),
+                    ValueExpr.string('/content' + this.filterContentPaths[0].toString() + '/*'));
             }
 
-            let pathExpr1 = CompareExpr.like(new FieldExpr("_path"),
-                ValueExpr.string("/content" + this.filterContentPaths[0].toString() + "/*"));
-            let pathExpr2 = CompareExpr.like(new FieldExpr("_path"),
-                ValueExpr.string("/content" + this.filterContentPaths[1].toString() + "/*"));
+            let pathExpr1 = CompareExpr.like(new FieldExpr('_path'),
+                ValueExpr.string('/content' + this.filterContentPaths[0].toString() + '/*'));
+            let pathExpr2 = CompareExpr.like(new FieldExpr('_path'),
+                ValueExpr.string('/content' + this.filterContentPaths[1].toString() + '/*'));
             let logicalExpr: LogicalExpr = LogicalExpr.or(pathExpr1, pathExpr2);
 
             if (this.filterContentPaths.length === 2) {
@@ -47,8 +47,8 @@ module api.content.resource {
                     return;
                 }
 
-                let pathExpr: ConstraintExpr = CompareExpr.like(new FieldExpr("_path"),
-                    ValueExpr.string("/content" + this.filterContentPaths[index].toString() + "/*"))
+                let pathExpr: ConstraintExpr = CompareExpr.like(new FieldExpr('_path'),
+                    ValueExpr.string('/content' + this.filterContentPaths[index].toString() + '/*'));
                 logicalExpr = LogicalExpr.or(logicalExpr, pathExpr);
             });
 

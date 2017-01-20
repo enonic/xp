@@ -5,7 +5,7 @@ module api.ui.menu {
         private action:api.ui.Action;
 
         constructor(action:api.ui.Action) {
-            super("menu-item");
+            super('menu-item');
             this.action = action;
             this.getEl().setInnerHtml(this.action.getLabel());
             this.onClicked((event: MouseEvent) => {
@@ -15,9 +15,9 @@ module api.ui.menu {
             });
             this.setEnabled(action.isEnabled());
 
-            action.onPropertyChanged((action: api.ui.Action) => {
-                this.setEnabled(action.isEnabled());
-                this.setVisible(action.isVisible());
+            action.onPropertyChanged((changedAction: api.ui.Action) => {
+                this.setEnabled(changedAction.isEnabled());
+                this.setVisible(changedAction.isVisible());
             });
         }
 
@@ -26,15 +26,15 @@ module api.ui.menu {
         }
 
         setEnabled(value: boolean) {
-            var el = this.getEl();
+            let el = this.getEl();
             el.setDisabled(!value);
             if (value) {
-                el.removeClass("disabled");
+                el.removeClass('disabled');
             } else {
-                el.addClass("disabled");
+                el.addClass('disabled');
             }
         }
-        
+
         isEnabled(): boolean {
             return this.action.isEnabled();
         }

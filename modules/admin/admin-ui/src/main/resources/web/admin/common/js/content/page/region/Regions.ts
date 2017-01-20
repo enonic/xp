@@ -16,9 +16,9 @@ module api.content.page.region {
 
         private regionRemovedListeners: {(event: RegionRemovedEvent):void}[] = [];
 
-        private regionChangedEventHandler;
+        private regionChangedEventHandler: (event: any) => void;
 
-        private componentPropertyChangedEventHandler;
+        private componentPropertyChangedEventHandler: (event: any) => void;
 
         constructor(builder: RegionsBuilder) {
 
@@ -26,8 +26,8 @@ module api.content.page.region {
             this.componentPropertyChangedEventHandler = (event) => this.forwardComponentPropertyChangedEvent(event);
 
             builder.regions.forEach((region: Region) => {
-                if (this.regionByName[region.getName()] != undefined) {
-                    throw new Error("Regions must be unique by name, duplicate found: " + region.getName());
+                if (this.regionByName[region.getName()] != null) {
+                    throw new Error('Regions must be unique by name, duplicate found: ' + region.getName());
                 }
 
                 this.addRegion(region);
@@ -45,7 +45,6 @@ module api.content.page.region {
             this.notifyRegionAdded(region.getPath());
             this.registerRegionListeners(region);
         }
-
 
         private registerRegionListeners(region: Region) {
             region.onChanged(this.regionChangedEventHandler);
@@ -67,10 +66,11 @@ module api.content.page.region {
         }
 
         getRegions(): Region[] {
-            var regions = [];
-            for (var i in this.regionByName) {
-                var region = this.regionByName[i];
-                regions.push(region);
+            let regions = [];
+            for (const name in this.regionByName) {
+                if (this.regionByName.hasOwnProperty(name)) {
+                    regions.push(this.regionByName[name]);
+                }
             }
             return regions;
         }
@@ -82,19 +82,18 @@ module api.content.page.region {
 
         getComponent(path: ComponentPath): Component {
 
-            var first: ComponentPathRegionAndComponent = path.getFirstLevel();
-            var region = this.getRegionByName(first.getRegionName());
-            var component = region.getComponentByIndex(first.getComponentIndex());
+            let first: ComponentPathRegionAndComponent = path.getFirstLevel();
+            let region = this.getRegionByName(first.getRegionName());
+            let component = region.getComponentByIndex(first.getComponentIndex());
 
-            if (path.numberOfLevels() == 1) {
+            if (path.numberOfLevels() === 1) {
                 return component;
-            }
-            else {
+            } else {
                 if (!api.ObjectHelper.iFrameSafeInstanceOf(component, LayoutComponent)) {
-                    throw new Error("Expected component to be a LayoutComponent: " + api.ClassHelper.getClassName(component));
+                    throw new Error('Expected component to be a LayoutComponent: ' + api.ClassHelper.getClassName(component));
                 }
 
-                var layoutComponent = <LayoutComponent> component;
+                let layoutComponent = <LayoutComponent> component;
                 return layoutComponent.getComponent(path.removeFirstLevel());
             }
         }
@@ -107,18 +106,18 @@ module api.content.page.region {
         changeRegionsTo(regionDescriptors: RegionDescriptor[]) {
 
             // Remove regions not existing in regionDescriptors
-            var regionsToRemove: Region[] = this.getRegions().
+            let regionsToRemove: Region[] = this.getRegions().
                 filter((region: Region, index: number) => {
                     return !regionDescriptors.
                         some((regionDescriptor: RegionDescriptor) => {
-                            return regionDescriptor.getName() == region.getName();
+                            return regionDescriptor.getName() === region.getName();
                         });
                 });
             this.removeRegions(regionsToRemove);
 
             // Add missing regions
             regionDescriptors.forEach((regionDescriptor: RegionDescriptor) => {
-                var region = this.getRegionByName(regionDescriptor.getName());
+                let region = this.getRegionByName(regionDescriptor.getName());
                 if (!region) {
                     region = Region.create().
                         setName(regionDescriptor.getName()).
@@ -130,7 +129,7 @@ module api.content.page.region {
 
         public toJson(): RegionJson[] {
 
-            var regionJsons: RegionJson[] = [];
+            let regionJsons: RegionJson[] = [];
             this.getRegions().forEach((region: Region) => {
                 regionJsons.push(region.toJson());
             });
@@ -143,11 +142,10 @@ module api.content.page.region {
                 return false;
             }
 
-            var other = <Regions>o;
+            let other = <Regions>o;
 
-
-            var thisRegions = this.getRegions();
-            var otherRegions = other.getRegions();
+            let thisRegions = this.getRegions();
+            let otherRegions = other.getRegions();
 
             if (!api.ObjectHelper.arrayEquals(thisRegions, otherRegions)) {
                 return false;
@@ -160,58 +158,58 @@ module api.content.page.region {
             return new RegionsBuilder(this).build();
         }
 
-        onChanged(listener: (event: BaseRegionChangedEvent)=>void) {
+        onChanged(listener: (event: BaseRegionChangedEvent) => void) {
             this.changedListeners.push(listener);
         }
 
-        unChanged(listener: (event: BaseRegionChangedEvent)=>void) {
+        unChanged(listener: (event: BaseRegionChangedEvent) => void) {
             this.changedListeners =
-            this.changedListeners.filter((curr: (event: BaseRegionChangedEvent)=>void) => {
-                return listener != curr;
+            this.changedListeners.filter((curr: (event: BaseRegionChangedEvent) => void) => {
+                return listener !== curr;
             });
         }
 
         private notifyChanged(event: RegionsChangedEvent) {
             if (Regions.debug) {
-                console.debug("Regions.notifyChanged");
+                console.debug('Regions.notifyChanged');
             }
-            this.changedListeners.forEach((listener: (event: RegionsChangedEvent)=>void) => {
+            this.changedListeners.forEach((listener: (event: RegionsChangedEvent) => void) => {
                 listener(event);
             });
         }
 
-        onComponentPropertyChanged(listener: (event: ComponentPropertyChangedEvent)=>void) {
+        onComponentPropertyChanged(listener: (event: ComponentPropertyChangedEvent) => void) {
             this.componentPropertyChangedListeners.push(listener);
         }
 
-        unComponentPropertyChanged(listener: (event: ComponentPropertyChangedEvent)=>void) {
+        unComponentPropertyChanged(listener: (event: ComponentPropertyChangedEvent) => void) {
             this.componentPropertyChangedListeners =
             this.componentPropertyChangedListeners.filter((curr: (event: ComponentPropertyChangedEvent)=>void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
-        private forwardComponentPropertyChangedEvent(event: ComponentPropertyChangedEvent) {
+        private forwardComponentPropertyChangedEvent(event: ComponentPropertyChangedEvent): void {
             this.componentPropertyChangedListeners.forEach((listener: (event: ComponentPropertyChangedEvent)=>void) => {
                 listener(event);
             });
         }
 
-        onRegionChanged(listener: (event: RegionChangedEvent)=>void) {
+        onRegionChanged(listener: (event: RegionChangedEvent) => void) {
             this.regionChangedListeners.push(listener);
         }
 
-        unRegionChanged(listener: (event: RegionChangedEvent)=>void) {
+        unRegionChanged(listener: (event: RegionChangedEvent) => void) {
             this.regionChangedListeners =
-            this.regionChangedListeners.filter((curr: (event: RegionChangedEvent)=>void) => {
-                return listener != curr;
+            this.regionChangedListeners.filter((curr: (event: RegionChangedEvent) => void) => {
+                return listener !== curr;
             });
         }
 
-        private notifyRegionChanged(regionPath: RegionPath) {
-            var event = new RegionChangedEvent(regionPath);
+        private notifyRegionChanged(regionPath: RegionPath): void {
+            let event = new RegionChangedEvent(regionPath);
             if (Regions.debug) {
-                console.debug("Regions.notifyRegionChanged: " + event.getRegionPath().toString());
+                console.debug('Regions.notifyRegionChanged: ' + event.getRegionPath().toString());
             }
             this.regionChangedListeners.forEach((listener: (event: RegionChangedEvent)=>void) => {
                 listener(event);
@@ -226,14 +224,14 @@ module api.content.page.region {
         unRegionAdded(listener: (event: RegionAddedEvent)=>void) {
             this.regionAddedListeners =
             this.regionAddedListeners.filter((curr: (event: RegionAddedEvent)=>void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
         private notifyRegionAdded(regionPath: RegionPath) {
-            var event = new RegionAddedEvent(regionPath);
+            let event = new RegionAddedEvent(regionPath);
             if (Regions.debug) {
-                console.debug("Regions.notifyRegionAdded: " + event.getRegionPath().toString());
+                console.debug('Regions.notifyRegionAdded: ' + event.getRegionPath().toString());
             }
             this.regionAddedListeners.forEach((listener: (event: RegionAddedEvent)=>void) => {
                 listener(event);
@@ -248,14 +246,14 @@ module api.content.page.region {
         unRegionRemoved(listener: (event: RegionRemovedEvent)=>void) {
             this.regionRemovedListeners =
             this.regionRemovedListeners.filter((curr: (event: RegionRemovedEvent)=>void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
         private notifyRegionRemoved(regionPath: RegionPath) {
-            var event = new RegionRemovedEvent(regionPath);
+            let event = new RegionRemovedEvent(regionPath);
             if (Regions.debug) {
-                console.debug("Regions.notifyRegionRemoved: " + event.getRegionPath().toString());
+                console.debug('Regions.notifyRegionRemoved: ' + event.getRegionPath().toString());
             }
             this.regionRemovedListeners.forEach((listener: (event: RegionRemovedEvent)=>void) => {
                 listener(event);
@@ -285,13 +283,13 @@ module api.content.page.region {
 
             regionsJson.forEach((regionJson: RegionJson) => {
 
-                var region = Region.create().
+                let region = Region.create().
                     setName(regionJson.name).
                     setParent(parent).
                     build();
 
                 regionJson.components.forEach((componentJson: ComponentTypeWrapperJson, componentIndex: number) => {
-                    var component: Component = ComponentFactory.createFromJson(componentJson, componentIndex, region);
+                    let component: Component = ComponentFactory.createFromJson(componentJson, componentIndex, region);
                     region.addComponent(component);
                 });
 

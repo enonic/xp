@@ -31,11 +31,17 @@ module api.application {
         }
 
         static fromJsonArray(appsObj: Object): MarketApplication[] {
-            var array: MarketApplication[] = [];
-            for (var property in appsObj) {
-                array.push(MarketApplication.fromJson(property, <api.application.json.MarketApplicationJson>appsObj[property]));
+            const array: MarketApplication[] = [];
+            for (const name in appsObj) {
+                if (appsObj.hasOwnProperty(name)) {
+                    array.push(MarketApplication.fromJson(name, <api.application.json.MarketApplicationJson>appsObj[name]));
+                }
             }
             return array;
+        }
+
+        public isEmpty(): boolean {
+            return !this.displayName && !this.url;
         }
 
         public getDisplayName(): string {
@@ -63,7 +69,11 @@ module api.application {
         }
 
         public getLatestVersionDownloadUrl(): string {
-            return this.getVersions()[this.getLatestVersion()]["applicationUrl"];
+            if (this.getLatestVersion()) {
+                return this.getVersions()[this.getLatestVersion()]['applicationUrl'];
+            } else {
+                return null;
+            }
         }
 
         public getVersions(): Object {
@@ -101,37 +111,37 @@ module api.application {
 
     export class MarketAppStatusFormatter {
 
-        public static statusInstallCssClass = "install";
-        public static statusInstalledCssClass = "installed";
-        public static statusInstallingCssClass = "installing";
-        public static statusUpdateCssClass = "update";
+        public static statusInstallCssClass: string = 'install';
+        public static statusInstalledCssClass: string = 'installed';
+        public static statusInstallingCssClass: string = 'installing';
+        public static statusUpdateCssClass: string = 'update';
 
         public static formatStatus(appStatus: MarketAppStatus, progress?: number): string {
 
-            var status;
+            let status;
 
             switch (appStatus) {
             case MarketAppStatus.NOT_INSTALLED:
-                status = "Install";
+                status = 'Install';
                 break;
             case MarketAppStatus.INSTALLED:
-                status = "Installed";
+                status = 'Installed';
                 break;
             case MarketAppStatus.INSTALLING:
                 status = new api.ui.ProgressBar(progress).toString();
                 break;
             case MarketAppStatus.OLDER_VERSION_INSTALLED:
-                status = "Update";
+                status = 'Update';
                 break;
             case MarketAppStatus.UNKNOWN:
-                status = "Unknown";
+                status = 'Unknown';
                 break;
             default:
-                status = "Unknown"
+                status = 'Unknown';
             }
 
             if (!!MarketAppStatus[status]) {
-                return "Unknown";
+                return 'Unknown';
             }
 
             return status;
@@ -139,7 +149,7 @@ module api.application {
 
         public static getStatusCssClass(appStatus: MarketAppStatus): string {
 
-            var cssClass;
+            let cssClass;
 
             switch (appStatus) {
             case MarketAppStatus.NOT_INSTALLED:
@@ -155,14 +165,14 @@ module api.application {
                 cssClass = MarketAppStatusFormatter.statusUpdateCssClass;
                 break;
             case MarketAppStatus.UNKNOWN:
-                cssClass = "unknown";
+                cssClass = 'unknown';
                 break;
             default:
-                cssClass = "Unknown"
+                cssClass = 'Unknown';
             }
 
             if (!!MarketAppStatus[status]) {
-                return "unknown";
+                return 'unknown';
             }
 
             return cssClass;
@@ -170,17 +180,17 @@ module api.application {
 
         public static formatPerformedAction(appStatus: MarketAppStatus): string {
 
-            var performedOperation;
+            let performedOperation;
 
             switch (appStatus) {
             case MarketAppStatus.NOT_INSTALLED:
-                performedOperation = "installed";
+                performedOperation = 'installed';
                 break;
             case MarketAppStatus.OLDER_VERSION_INSTALLED:
-                performedOperation = "updated";
+                performedOperation = 'updated';
                 break;
             default:
-                performedOperation = "installed"
+                performedOperation = 'installed';
             }
 
             return performedOperation;
@@ -198,9 +208,6 @@ module api.application {
         versions: Object;
         status: string;
         appKey: ApplicationKey;
-
-        constructor() {
-        }
 
         public fromJson(appKey: string, json: api.application.json.MarketApplicationJson): MarketApplicationBuilder {
             this.appKey = ApplicationKey.fromString(appKey);

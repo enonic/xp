@@ -51,10 +51,10 @@ module api.application {
         }
 
         isNeedToUpdateApplication(): boolean {
-            return ApplicationEventType.RESOLVED != this.eventType &&
-                   ApplicationEventType.STARTING != this.eventType &&
-                   ApplicationEventType.UNRESOLVED != this.eventType &&
-                   ApplicationEventType.STOPPING != this.eventType;
+            return ApplicationEventType.RESOLVED !== this.eventType &&
+                   ApplicationEventType.STARTING !== this.eventType &&
+                   ApplicationEventType.UNRESOLVED !== this.eventType &&
+                   ApplicationEventType.STOPPING !== this.eventType;
         }
 
         static on(handler: (event: ApplicationEvent) => void) {
@@ -66,10 +66,10 @@ module api.application {
         }
 
         static fromJson(applicationEventJson: ApplicationEventJson): ApplicationEvent {
-            var applicationKey = api.application.ApplicationKey.fromString(applicationEventJson.data.applicationKey);
-            var eventType = ApplicationEventType[applicationEventJson.data.eventType];
-            var applicationUrl = applicationEventJson.data.applicationUrl;
-            var progress = applicationEventJson.data.progress;
+            let applicationKey = api.application.ApplicationKey.fromString(applicationEventJson.data.applicationKey);
+            let eventType = ApplicationEventType[applicationEventJson.data.eventType];
+            let applicationUrl = applicationEventJson.data.applicationUrl;
+            let progress = applicationEventJson.data.progress;
             return new ApplicationEvent(applicationKey, eventType, applicationUrl, progress);
         }
     }

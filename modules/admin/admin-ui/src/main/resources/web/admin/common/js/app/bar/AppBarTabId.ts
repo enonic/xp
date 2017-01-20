@@ -7,15 +7,15 @@ module api.app.bar {
         private id: string;
 
         static forNew(id?: string): AppBarTabId {
-            return new AppBarTabId("new", id);
+            return new AppBarTabId('new', id);
         }
 
         static forEdit(id: string): AppBarTabId {
-            return new AppBarTabId("edit", id);
+            return new AppBarTabId('edit', id);
         }
 
         static forView(id: string): AppBarTabId {
-            return new AppBarTabId("view", id);
+            return new AppBarTabId('view', id);
         }
 
         constructor(mode: string, id: string) {
@@ -28,16 +28,16 @@ module api.app.bar {
         }
 
         changeToEditMode(id: string) {
-            this.mode = "edit";
+            this.mode = 'edit';
             this.id = id;
         }
 
         equals(other: AppBarTabId): boolean {
-            return other.id == this.id && other.mode == this.mode;
+            return other.id === this.id && other.mode === this.mode;
         }
 
         toString(): string {
-            return this.mode + ":" + this.id;
+            return this.mode + ':' + this.id;
         }
     }
 }

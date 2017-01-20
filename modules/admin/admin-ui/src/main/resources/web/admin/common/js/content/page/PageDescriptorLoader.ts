@@ -13,7 +13,7 @@ module api.content.page {
         }
 
         filterFn(descriptor: PageDescriptor) {
-            return descriptor.getDisplayName().toString().toLowerCase().indexOf(this.getSearchString().toLowerCase()) != -1;
+            return descriptor.getDisplayName().toString().toLowerCase().indexOf(this.getSearchString().toLowerCase()) !== -1;
         }
 
         protected createRequest(): GetPageDescriptorsByApplicationsRequest {
@@ -23,7 +23,6 @@ module api.content.page {
         setApplicationKeys(applicationKeys: ApplicationKey[]) {
             this.request.setApplicationKeys(applicationKeys);
         }
-
 
     }
 }

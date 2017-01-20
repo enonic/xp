@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {ContentSettingsModel} from "./ContentSettingsModel";
+import '../../api.ts';
+import {ContentSettingsModel} from './ContentSettingsModel';
 
 import Content = api.content.Content;
 import PrincipalType = api.security.PrincipalType;
@@ -25,45 +25,45 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
     private ownerCombo: PrincipalComboBox;
 
     constructor() {
-        super("settings-wizard-step-form");
+        super('settings-wizard-step-form');
 
         this.modelChangeListener = (event: api.PropertyChangedEvent) => {
             if (!this.ignorePropertyChange) {
-                var value = event.getNewValue();
+                let value = event.getNewValue();
                 switch (event.getPropertyName()) {
                 case ContentSettingsModel.PROPERTY_LANG:
                     if (!this.updateUnchangedOnly || !this.localeCombo.isDirty()) {
-                        this.localeCombo.setValue(value ? value.toString() : "");
+                        this.localeCombo.setValue(value ? value.toString() : '');
                     }
                     break;
                 case ContentSettingsModel.PROPERTY_OWNER:
                     if (!this.updateUnchangedOnly || !this.ownerCombo.isDirty()) {
-                        this.ownerCombo.setValue(value ? value.toString() : "");
+                        this.ownerCombo.setValue(value ? value.toString() : '');
                     }
                     break;
                 }
             }
-        }
+        };
     }
 
     layout(content: api.content.Content) {
         this.content = content;
 
         this.localeCombo = new LocaleComboBox(1, content.getLanguage());
-        var localeFormItem = new FormItemBuilder(this.localeCombo).setLabel('Language').build();
+        let localeFormItem = new FormItemBuilder(this.localeCombo).setLabel('Language').build();
 
-        var loader = new PrincipalLoader().setAllowedTypes([PrincipalType.USER]);
+        let loader = new PrincipalLoader().setAllowedTypes([PrincipalType.USER]);
 
         this.ownerCombo = PrincipalComboBox.create().setLoader(loader).setMaxOccurences(1).setValue(
             content.getOwner() ? content.getOwner().toString() : undefined).setDisplayMissing(true).build();
 
-        var ownerFormItem = new FormItemBuilder(this.ownerCombo).setLabel('Owner').build();
+        let ownerFormItem = new FormItemBuilder(this.ownerCombo).setLabel('Owner').build();
 
-        var fieldSet = new api.ui.form.Fieldset();
+        let fieldSet = new api.ui.form.Fieldset();
         fieldSet.add(localeFormItem);
         fieldSet.add(ownerFormItem);
 
-        var form = new api.ui.form.Form().add(fieldSet);
+        let form = new api.ui.form.Form().add(fieldSet);
         this.appendChild(form);
 
         form.onFocus((event) => {
@@ -78,7 +78,7 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
 
     update(content: api.content.Content, unchangedOnly: boolean = true) {
         this.updateUnchangedOnly = unchangedOnly;
-        this.model.setOwner(content.getOwner(), true).setLanguage(content.getLanguage(), true);
+        this.model.setOwner(content.getOwner()).setLanguage(content.getLanguage());
     }
 
     reset() {
@@ -94,15 +94,15 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
     }
 
     private setModel(model: ContentSettingsModel) {
-        api.util.assertNotNull(model, "Model can't be null");
+        api.util.assertNotNull(model, `Model can't be null`);
 
         if (this.model) {
             model.unPropertyChanged(this.modelChangeListener);
         }
 
         // 2-way data binding
-        var ownerListener = () => {
-            var principals: api.security.Principal[] = this.ownerCombo.getSelectedDisplayValues();
+        let ownerListener = () => {
+            let principals: api.security.Principal[] = this.ownerCombo.getSelectedDisplayValues();
             this.ignorePropertyChange = true;
             model.setOwner(principals.length > 0 ? principals[0].getKey() : null);
             this.ignorePropertyChange = false;
@@ -110,7 +110,7 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
         this.ownerCombo.onOptionSelected((event) => ownerListener());
         this.ownerCombo.onOptionDeselected((option) => ownerListener());
 
-        var localeListener = () => {
+        let localeListener = () => {
             this.ignorePropertyChange = true;
             model.setLanguage(this.localeCombo.getValue());
             this.ignorePropertyChange = false;

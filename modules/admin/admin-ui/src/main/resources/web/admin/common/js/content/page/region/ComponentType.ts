@@ -16,7 +16,7 @@ module api.content.page.region {
         }
 
         newComponentBuilder(): ComponentBuilder<Component> {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         static byShortName(shortName: string): ComponentType {

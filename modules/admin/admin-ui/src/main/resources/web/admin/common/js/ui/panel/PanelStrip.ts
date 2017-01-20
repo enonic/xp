@@ -15,7 +15,7 @@ module api.ui.panel {
         private panelShownListeners: {(event: PanelShownEvent):void}[] = [];
 
         constructor(scrollable?: api.dom.Element, className?: string) {
-            super("panel-strip" + (className ? " " + className : ""));
+            super('panel-strip' + (className ? ' ' + className : ''));
             if (scrollable) {
                 this.scrollable = scrollable;
                 this.scrollable.addClass('panel-strip-scrollable');
@@ -25,12 +25,12 @@ module api.ui.panel {
 
             this.onShown(() => {
                 this.updateLastPanelHeight();
-            })
+            });
         }
 
         private countExistingChildren(index: number): number {
-            var count = Math.min(this.panels.length, index);
-            for (var i = 0; i < Math.min(this.headers.length, index); i++) {
+            let count = Math.min(this.panels.length, index);
+            for (let i = 0; i < Math.min(this.headers.length, index); i++) {
                 if(this.headers[i]) {
                     count++;
                 }
@@ -40,9 +40,10 @@ module api.ui.panel {
 
         insertPanel(panel: Panel, index: number, header?: string ): number {
             panel.setDoOffset(false);
-            var previousChildrenIndex = this.countExistingChildren(index);
+            let previousChildrenIndex = this.countExistingChildren(index);
+            let headerEl;
             if (header) {
-                var headerEl = new api.dom.H2El("panel-strip-panel-header");
+                headerEl = new api.dom.H2El('panel-strip-panel-header');
                 headerEl.getEl().setInnerHtml(header);
                 this.insertChild(headerEl, previousChildrenIndex);
             }
@@ -79,29 +80,29 @@ module api.ui.panel {
         }
 
         private updateLastPanelHeight() {
-            if (this.getSize() == 0) {
+            if (this.getSize() === 0) {
                 return;
             }
 
             if (this.getSize() > 1) {
                 // restore the one before last panel's height if needed
-                var beforeLastEl = this.getPanel(this.getSize() - 2).getEl();
-                var originalHeight = beforeLastEl.getData("originalHeight");
+                let beforeLastEl = this.getPanel(this.getSize() - 2).getEl();
+                let originalHeight = beforeLastEl.getData('originalHeight');
                 if (originalHeight) {
                     beforeLastEl.setHeight(originalHeight);
                 }
             }
             // set the last panel height equal to that of the scrollable
-            var lastEl = this.getPanel(this.getSize() - 1).getEl();
-            if (!lastEl.getData("originalHeight")) {
-                lastEl.setData("originalHeight", lastEl.getHTMLElement().style.height || "auto");
+            let lastEl = this.getPanel(this.getSize() - 1).getEl();
+            if (!lastEl.getData('originalHeight')) {
+                lastEl.setData('originalHeight', lastEl.getHTMLElement().style.height || 'auto');
             }
             lastEl.setHeightPx(this.scrollable.getEl().getHeight());
         }
 
         removePanel(panelToRemove: Panel, checkCanRemovePanel: boolean = true): number {
 
-            var index: number = this.getPanelIndex(panelToRemove);
+            let index: number = this.getPanelIndex(panelToRemove);
             if (index < 0 || checkCanRemovePanel && !this.canRemovePanel(panelToRemove)) {
                 return -1;
             }
@@ -112,12 +113,12 @@ module api.ui.panel {
 
             if (this.isEmpty()) {
                 this.panelShown = null;
-            } else if (panelToRemove == this.getPanelShown()) {
+            } else if (panelToRemove === this.getPanelShown()) {
                 // show either panel that has the same index now or the last panel
                 this.showPanelByIndex(Math.min(index, this.getSize() - 1));
             }
 
-            if (this.isVisible() && index == this.getSize() && !this.isEmpty()) {
+            if (this.isVisible() && index === this.getSize() && !this.isEmpty()) {
                 // update if last panel was removed and there are still left
                 this.updateLastPanelHeight();
             }
@@ -133,7 +134,7 @@ module api.ui.panel {
         }
 
         isEmpty(): boolean {
-            return this.panels.length == 0;
+            return this.panels.length === 0;
         }
 
         getSize(): number {
@@ -157,8 +158,8 @@ module api.ui.panel {
         }
 
         getPanelIndex<T extends Panel>(panel: T): number {
-            var size = this.getSize();
-            for (var i = 0; i < size; i++) {
+            let size = this.getSize();
+            for (let i = 0; i < size; i++) {
                 if (this.panels[i] === panel) {
                     return i;
                 }
@@ -167,20 +168,20 @@ module api.ui.panel {
         }
 
         showPanel(panel: Panel) {
-            var index = this.getPanelIndex(panel);
+            let index = this.getPanelIndex(panel);
             if (index > -1) {
                 this.showPanelByIndex(index);
             }
         }
 
         showPanelByIndex(index: number) {
-            var panelToShow = this.getPanel(index);
+            let panelToShow = this.getPanel(index);
             if (panelToShow == null) {
                 return;
             }
 
             wemjq(this.scrollable.getHTMLElement()).animate({
-                scrollTop: index == 0 ? 0 : this.getScroll() - this.offset +
+                scrollTop: index === 0 ? 0 : this.getScroll() - this.offset +
                                             panelToShow.getEl().getOffsetToParent().top -
                                             this.headers[index].getEl().getHeightWithBorder()
             }, {
@@ -206,7 +207,7 @@ module api.ui.panel {
 
         unPanelShown(listener: (event: PanelShownEvent)=>void) {
             this.panelShownListeners = this.panelShownListeners.filter((currentListener: (event: PanelShownEvent) => void) => {
-                return  listener != currentListener;
+                return  listener !== currentListener;
             });
         }
 

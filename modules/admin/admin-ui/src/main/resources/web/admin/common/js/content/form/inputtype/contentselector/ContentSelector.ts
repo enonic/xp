@@ -40,8 +40,8 @@ module api.content.form.inputtype.contentselector {
             10, false);
 
         constructor(config?: api.content.form.inputtype.ContentInputTypeViewContext) {
-            super("relationship");
-            this.addClass("input-type-view");
+            super('relationship');
+            this.addClass('input-type-view');
             this.config = config;
             this.readConfig(config.inputConfig);
             this.handleContentDeletedEvent();
@@ -53,15 +53,15 @@ module api.content.form.inputtype.contentselector {
 
         private handleContentDeletedEvent() {
             this.contentDeletedListener = (event) => {
-                if (this.contentComboBox.getSelectedOptionView().count() == 0) {
+                if (this.contentComboBox.getSelectedOptionView().count() === 0) {
                     return;
                 }
 
-                var selectedContentIdsMap: {} = {};
+                let selectedContentIdsMap: {} = {};
                 this.contentComboBox.getSelectedOptionView().getSelectedOptions().forEach(
                     (selectedOption: any) => {
                         if (!!selectedOption.getOption().displayValue && !!selectedOption.getOption().displayValue.getContentId()) {
-                            selectedContentIdsMap[selectedOption.getOption().displayValue.getContentId().toString()] = ""
+                            selectedContentIdsMap[selectedOption.getOption().displayValue.getContentId().toString()] = '';
                         }
                     });
 
@@ -69,7 +69,7 @@ module api.content.form.inputtype.contentselector {
                     filter(deletedItem => !deletedItem.isPending() &&
                                           selectedContentIdsMap.hasOwnProperty(deletedItem.getContentId().toString())).
                     forEach((deletedItem) => {
-                        var option = this.contentComboBox.getSelectedOptionView().getById(deletedItem.getContentId().toString());
+                        let option = this.contentComboBox.getSelectedOptionView().getById(deletedItem.getContentId().toString());
                         if (option != null) {
                             this.contentComboBox.getSelectedOptionView().removeOption(option.getOption(), false);
                         }
@@ -84,7 +84,7 @@ module api.content.form.inputtype.contentselector {
         }
 
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
-            var relationshipTypeConfig = inputConfig['relationshipType'] ? inputConfig['relationshipType'][0] : {};
+            let relationshipTypeConfig = inputConfig['relationshipType'] ? inputConfig['relationshipType'][0] : {};
             this.relationshipType = relationshipTypeConfig['value'];
 
             if (this.relationshipType) {
@@ -93,15 +93,15 @@ module api.content.form.inputtype.contentselector {
                 this.relationshipTypeName = RelationshipTypeName.REFERENCE;
             }
 
-            var allowContentTypeConfig = inputConfig['allowContentType'] || [];
+            let allowContentTypeConfig = inputConfig['allowContentType'] || [];
             this.allowedContentTypes = allowContentTypeConfig.map((cfg) => cfg['value']).filter((val) => !!val);
 
-            var allowContentPathConfig = inputConfig['allowPath'] || [];
+            let allowContentPathConfig = inputConfig['allowPath'] || [];
             this.allowedContentPaths = allowContentPathConfig.map((cfg) => cfg['value']).filter((val) => !!val);
         }
 
         availableSizeChanged() {
-            console.log("Relationship.availableSizeChanged(" + this.getEl().getWidth() + "x" + this.getEl().getWidth() + ")");
+            console.log('Relationship.availableSizeChanged(' + this.getEl().getWidth() + 'x' + this.getEl().getWidth() + ')');
         }
 
         getValueType(): ValueType {
@@ -118,20 +118,20 @@ module api.content.form.inputtype.contentselector {
             }
             super.layout(input, propertyArray);
 
-            var contentSelectorLoader = ContentSelectorLoader.create().setContent(this.config.content).
+            const contentSelectorLoader = ContentSelectorLoader.create().setContent(this.config.content).
                 setInputName(input.getName()).
                 setAllowedContentPaths(this.allowedContentPaths).
                 setContentTypeNames(this.allowedContentTypes).
                 setRelationshipType(this.relationshipType).
                 build();
 
-            var value = this.getValueFromPropertyArray(propertyArray);
+            const comboboxValue = this.getValueFromPropertyArray(propertyArray);
 
             this.contentComboBox = api.content.ContentComboBox.create()
                 .setName(input.getName())
                 .setMaximumOccurrences(input.getOccurrences().getMaximum())
                 .setLoader(contentSelectorLoader)
-                .setValue(value)
+                .setValue(comboboxValue)
                 .setRemoveMissingSelectedOptions(true)
                 .build();
 
@@ -140,17 +140,17 @@ module api.content.form.inputtype.contentselector {
                 this.validate(false);
             });
 
-            return new GetRelationshipTypeByNameRequest(this.relationshipTypeName).sendAndParse().then(
-                (relationshipType: api.schema.relationshiptype.RelationshipType) => {
+            return new GetRelationshipTypeByNameRequest(this.relationshipTypeName).sendAndParse()
+                .then((relationshipType: api.schema.relationshiptype.RelationshipType) => {
 
                     this.contentComboBox.setInputIconUrl(relationshipType.getIconUrl());
 
                     this.appendChild(this.contentComboBox);
 
-                    var contentIds: ContentId[] = [];
+                    const contentIds: ContentId[] = [];
                     propertyArray.forEach((property: Property) => {
                         if (property.hasNonNullValue()) {
-                            var referenceValue = property.getReference();
+                            let referenceValue = property.getReference();
                             if (referenceValue instanceof api.util.Reference) {
                                 contentIds.push(ContentId.fromReference(referenceValue));
                             }
@@ -171,13 +171,12 @@ module api.content.form.inputtype.contentselector {
                         this.contentComboBox.onOptionSelected((event: SelectedOptionEvent<api.content.ContentSummary>) => {
                             this.fireFocusSwitchEvent(event);
 
-                            var reference = api.util.Reference.from(event.getSelectedOption().getOption().displayValue.getContentId());
+                            const reference = api.util.Reference.from(event.getSelectedOption().getOption().displayValue.getContentId());
 
-                                var value = new Value(reference, ValueTypes.REFERENCE);
-                                if (this.contentComboBox.countSelected() == 1) { // overwrite initial value
+                                const value = new Value(reference, ValueTypes.REFERENCE);
+                                if (this.contentComboBox.countSelected() === 1) { // overwrite initial value
                                     this.getPropertyArray().set(0, value);
-                                }
-                                else if (!this.getPropertyArray().containsValue(value)) {
+                                } else if (!this.getPropertyArray().containsValue(value)) {
                                     this.getPropertyArray().add(value);
                                 }
 
@@ -202,12 +201,12 @@ module api.content.form.inputtype.contentselector {
         }
 
         private removePropertyWithId(id: string) {
-            var length = this.getPropertyArray().getSize();
+            let length = this.getPropertyArray().getSize();
             for (let i = 0; i < length; i++) {
-                if (this.getPropertyArray().get(i).getValue().getString() == id) {
+                if (this.getPropertyArray().get(i).getValue().getString() === id) {
                     this.getPropertyArray().remove(i);
-                    api.notify.NotifyManager.get().showWarning("Failed to load content item with id " + id +
-                                                               ". The reference will be removed upon save.");
+                    api.notify.NotifyManager.get().showWarning('Failed to load content item with id ' + id +
+                                                               '. The reference will be removed upon save.');
                     break;
                 }
             }
@@ -216,7 +215,7 @@ module api.content.form.inputtype.contentselector {
         update(propertyArray: api.data.PropertyArray, unchangedOnly: boolean): Q.Promise<void> {
             return super.update(propertyArray, unchangedOnly).then(() => {
                 if (!unchangedOnly || !this.contentComboBox.isDirty()) {
-                    var value = this.getValueFromPropertyArray(propertyArray);
+                    let value = this.getValueFromPropertyArray(propertyArray);
                     this.contentComboBox.setValue(value);
                 }
             });
@@ -255,8 +254,8 @@ module api.content.form.inputtype.contentselector {
         }
 
         private setupSortable() {
-            wemjq(this.getHTMLElement()).find(".selected-options").sortable({
-                axis: "y",
+            wemjq(this.getHTMLElement()).find('.selected-options').sortable({
+                axis: 'y',
                 containment: 'parent',
                 handle: '.drag-control',
                 tolerance: 'pointer',
@@ -269,17 +268,17 @@ module api.content.form.inputtype.contentselector {
 
         private handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
 
-            var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+            let draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
             this.draggingIndex = draggedElement.getSiblingIndex();
 
-            ui.placeholder.html("Drop form item set here");
+            ui.placeholder.html('Drop form item set here');
         }
 
         private handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
 
             if (this.draggingIndex >= 0) {
-                var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
-                var draggedToIndex = draggedElement.getSiblingIndex();
+                let draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+                let draggedToIndex = draggedElement.getSiblingIndex();
                 this.getPropertyArray().move(this.draggingIndex, draggedToIndex);
             }
 
@@ -288,21 +287,20 @@ module api.content.form.inputtype.contentselector {
 
         private updateSelectedOptionStyle() {
             if (this.getPropertyArray().getSize() > 1) {
-                this.addClass("multiple-occurrence").removeClass("single-occurrence");
-            }
-            else {
-                this.addClass("single-occurrence").removeClass("multiple-occurrence");
+                this.addClass('multiple-occurrence').removeClass('single-occurrence');
+            } else {
+                this.addClass('single-occurrence').removeClass('multiple-occurrence');
             }
         }
 
         private updateSelectedOptionIsEditable(selectedOption: SelectedOption<ContentSummary>) {
             let selectedContentId = selectedOption.getOption().displayValue.getContentId();
             let refersToItself = selectedContentId.toString() === this.config.content.getId();
-            selectedOption.getOptionView().toggleClass("non-editable", refersToItself);
+            selectedOption.getOptionView().toggleClass('non-editable', refersToItself);
         }
 
         private refreshSortable() {
-            wemjq(this.getHTMLElement()).find(".selected-options").sortable("refresh");
+            wemjq(this.getHTMLElement()).find('.selected-options').sortable('refresh');
         }
 
         protected getNumberOfValids(): number {
@@ -334,5 +332,5 @@ module api.content.form.inputtype.contentselector {
 
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("ContentSelector", ContentSelector));
+    api.form.inputtype.InputTypeManager.register(new api.Class('ContentSelector', ContentSelector));
 }

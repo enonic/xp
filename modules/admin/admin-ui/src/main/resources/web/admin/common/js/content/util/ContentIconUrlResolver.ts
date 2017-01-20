@@ -27,22 +27,22 @@ module api.content.util {
 
         resolve(): string {
 
-            var url = this.content.getIconUrl();
+            let url = this.content.getIconUrl();
             if (!url) {
                 return null;
             }
             // CMS-4677: using crop=false for images only by default
-            if (this.crop == undefined) {
+            if (this.crop == null) {
                 this.crop = !this.content.isImage();
             }
 
             // parse existing params from url in case there are any
             let params = UriHelper.decodeUrlParams(url);
 
-            if (this.crop != undefined) {
+            if (this.crop != null) {
                 params['crop'] = String(this.crop);
             }
-            if (this.size != undefined) {
+            if (this.size != null) {
                 params['size'] = String(this.size);
             }
 
@@ -51,7 +51,7 @@ module api.content.util {
 
         static default(): string {
 
-            return api.util.UriHelper.getAdminUri("common/images/default_content.png");
+            return api.util.UriHelper.getAdminUri('common/images/default_content.png');
         }
     }
 }

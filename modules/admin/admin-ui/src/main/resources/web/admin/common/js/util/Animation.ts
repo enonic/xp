@@ -17,21 +17,21 @@ module api.util {
             this.interval = interval;
         }
 
-        onStep(doStep:(progress)=>void):void {
+        onStep(doStep: (progress: number) => void):void {
             this.doStep = doStep;
         }
 
         start():void {
-            var startTime = this.getCurrentTime();
+            let startTime = this.getCurrentTime();
 
             this.id = setInterval(() => {
-                var progress = Math.min((this.getCurrentTime() - startTime) / this.duration, 1);
+                let progress = Math.min((this.getCurrentTime() - startTime) / this.duration, 1);
 
                 if (this.doStep) {
                     this.doStep(progress);
                 }
 
-                if (progress == 1) {
+                if (progress === 1) {
                     this.stop();
                 }
             }, this.interval);

@@ -6,12 +6,12 @@ module api.application {
 
         constructor(applicationKeys: ApplicationKey[]) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             this.applicationKeys = applicationKeys;
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "uninstall");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'uninstall');
         }
 
         getParams(): Object {
@@ -21,9 +21,7 @@ module api.application {
         }
 
         sendAndParse(): wemQ.Promise<void> {
-            return this.send().then((response: api.rest.JsonResponse<void>) => {
-
-            });
+            return this.send().then((response: api.rest.JsonResponse<void>) => { /* empty */ });
         }
     }
 }

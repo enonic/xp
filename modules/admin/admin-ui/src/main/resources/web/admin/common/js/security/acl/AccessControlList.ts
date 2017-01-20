@@ -13,8 +13,8 @@ module api.security.acl {
         }
 
         getEntries(): AccessControlEntry[] {
-            var values = [];
-            for (var key in this.entries) {
+            let values = [];
+            for (let key in this.entries) {
                 if (this.entries.hasOwnProperty(key)) {
                     values.push(this.entries[key]);
                 }
@@ -45,9 +45,9 @@ module api.security.acl {
         }
 
         toJson(): api.security.acl.AccessControlEntryJson[] {
-            var acl: api.security.acl.AccessControlEntryJson[] = [];
+            let acl: api.security.acl.AccessControlEntryJson[] = [];
             this.getEntries().forEach((entry: api.security.acl.AccessControlEntry) => {
-                var entryJson = entry.toJson();
+                let entryJson = entry.toJson();
                 acl.push(entryJson);
             });
             return acl;
@@ -63,13 +63,13 @@ module api.security.acl {
                 return false;
             }
 
-            var other = <AccessControlList>o;
+            let other = <AccessControlList>o;
             return api.ObjectHelper.arrayEquals(this.getEntries().sort(), other.getEntries().sort());
         }
 
         clone(): AccessControlList {
-            var entries: AccessControlEntry[] = [];
-            for (var key in this.entries) {
+            let entries: AccessControlEntry[] = [];
+            for (let key in this.entries) {
                 if (this.entries.hasOwnProperty(key)) {
                     entries.push(this.entries[key].clone());
                 }
@@ -78,9 +78,9 @@ module api.security.acl {
         }
 
         static fromJson(json: PermissionsJson): AccessControlList {
-            var acl = new AccessControlList();
+            let acl = new AccessControlList();
             json.permissions.forEach((entryJson: api.security.acl.AccessControlEntryJson) => {
-                var entry = AccessControlEntry.fromJson(entryJson);
+                let entry = AccessControlEntry.fromJson(entryJson);
                 acl.add(entry);
             });
             return acl;

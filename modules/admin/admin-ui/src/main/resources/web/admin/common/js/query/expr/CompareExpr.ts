@@ -31,21 +31,21 @@ module api.query.expr {
         }
 
         toString() {
-            var result: string = this.field.toString();
-            result = result.concat(" ");
+            let result: string = this.field.toString();
+            result = result.concat(' ');
             result = result.concat(this.operatorAsString());
-            result = result.concat(" ");
+            result = result.concat(' ');
 
             if (this.allowMultipleValues()) {
-                result = result.concat("(");
+                result = result.concat('(');
 
-                var sub = [];
+                let sub = [];
                 this.values.forEach((expr: ValueExpr) => {
                     sub.push(expr.toString());
                 });
-                result = result.concat(sub.join(", "));
+                result = result.concat(sub.join(', '));
 
-                result = result.concat(")");
+                result = result.concat(')');
 
             } else {
                 result = result.concat(this.getFirstValue().toString());
@@ -101,32 +101,32 @@ module api.query.expr {
         private operatorAsString(): string {
             switch (this.operator) {
             case CompareOperator.EQ:
-                return "=";
+                return '=';
             case CompareOperator.NEQ:
-                return "!=";
+                return '!=';
             case CompareOperator.GT:
-                return ">";
+                return '>';
             case CompareOperator.GTE:
-                return ">=";
+                return '>=';
             case CompareOperator.LT:
-                return "<";
+                return '<';
             case CompareOperator.LTE:
-                return "<=";
+                return '<=';
             case CompareOperator.LIKE:
-                return "LIKE";
+                return 'LIKE';
             case CompareOperator.NOT_LIKE:
-                return "NOT LIKE";
+                return 'NOT LIKE';
             case CompareOperator.IN:
-                return "IN";
+                return 'IN';
             case CompareOperator.NOT_IN:
-                return "NOT IN";
+                return 'NOT IN';
             default:
-                return "";
+                return '';
             }
         }
 
         private allowMultipleValues(): boolean {
-            return this.operator == CompareOperator.IN || this.operator == CompareOperator.NOT_IN;
+            return this.operator === CompareOperator.IN || this.operator === CompareOperator.NOT_IN;
         }
     }
 }

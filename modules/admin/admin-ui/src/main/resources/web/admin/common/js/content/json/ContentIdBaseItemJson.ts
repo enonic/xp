@@ -1,4 +1,4 @@
-module api.content.json{
+module api.content.json {
 
     export interface ContentIdBaseItemJson {
 

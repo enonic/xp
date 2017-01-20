@@ -11,11 +11,11 @@ module api.ui.security.acl {
         private itemsEditable: boolean = true;
 
         constructor(className?: string) {
-            super('access-control-list' + (className ? " " + className : ""));
+            super('access-control-list' + (className ? ' ' + className : ''));
         }
 
         createItemView(entry: UserStoreAccessControlEntry, readOnly: boolean): UserStoreAccessControlEntryView {
-            var itemView = new UserStoreAccessControlEntryView(entry);
+            let itemView = new UserStoreAccessControlEntryView(entry);
             itemView.setEditable(this.itemsEditable);
             itemView.onRemoveClicked(() => {
                 this.removeItem(entry);
@@ -24,8 +24,7 @@ module api.ui.security.acl {
                 this.notifyItemValueChanged(item);
             });
 
-            if(readOnly)
-            {
+            if(readOnly) {
                 itemView.setEditable(false);
             }
 
@@ -42,18 +41,18 @@ module api.ui.security.acl {
 
         unItemValueChanged(listener: (item: UserStoreAccessControlEntry) => void) {
             this.itemValueChangedListeners = this.itemValueChangedListeners.filter((curr) => {
-                return curr != listener;
-            })
+                return curr !== listener;
+            });
         }
 
         notifyItemValueChanged(item: UserStoreAccessControlEntry) {
             this.itemValueChangedListeners.forEach((listener) => {
                 listener(item);
-            })
+            });
         }
 
         setItemsEditable(editable: boolean): UserStoreAccessControlListView {
-            if (this.itemsEditable != editable) {
+            if (this.itemsEditable !== editable) {
                 this.itemsEditable = editable;
                 this.refreshList();
             }

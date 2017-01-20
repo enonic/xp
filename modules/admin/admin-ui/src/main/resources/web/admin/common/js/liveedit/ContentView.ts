@@ -34,7 +34,6 @@ module api.liveedit {
 
         constructor(builder: ContentViewBuilder) {
 
-
             super(new ItemViewBuilder().
                 setItemViewIdProducer(builder.parentPartComponentView.getItemViewIdProducer()).
                 setType(ContentItemType.get()).
@@ -47,7 +46,7 @@ module api.liveedit {
         }
 
         private createContentContextMenuActions(): api.ui.Action[] {
-            var actions: api.ui.Action[] = [];
+            let actions: api.ui.Action[] = [];
 
             actions.push(this.createSelectParentAction());
             actions.push(new api.ui.Action('Insert').onExecuted(() => {

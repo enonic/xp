@@ -4,11 +4,11 @@ module api.ui.time {
 
         private numberCode: number;
 
-        private oneLetterName;
+        private oneLetterName: string;
 
-        private shortName;
+        private shortName: string;
 
-        private fullName;
+        private fullName: string;
 
         private previous: DayOfWeek;
 
@@ -53,7 +53,7 @@ module api.ui.time {
                 return false;
             }
 
-            var other = <DayOfWeek>o;
+            let other = <DayOfWeek>o;
 
             if (!api.ObjectHelper.numberEquals(this.numberCode, other.numberCode)) {
                 return false;

@@ -76,7 +76,6 @@ public class PublishContentHandlerTest
         PushContentParams pushParams = PushContentParams.create().
             contentIds( ids ).
             target( Branch.from( "master" ) ).
-            includeChildren( true ).
             includeDependencies( false ).
             build();
 
@@ -134,7 +133,7 @@ public class PublishContentHandlerTest
         PushContentParams pushParams = PushContentParams.create().
             contentIds( ids ).
             target( Branch.from( "master" ) ).
-            includeChildren( false ).
+            excludeChildrenIds( ids ).
             includeDependencies( false ).
             build();
 

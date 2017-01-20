@@ -31,10 +31,10 @@
 ///<reference path='PageTemplateLoader.ts' />
 ///<reference path='PageTemplateResourceRequest.ts' />
 ///<reference path='GetPageTemplateByKeyRequest.ts' />
-///<reference path="GetPageTemplatesRequest.ts"/>
-///<reference path="GetPageTemplatesByCanRenderRequest.ts" />
-///<reference path="GetDefaultPageTemplateRequest.ts" />
-///<reference path="IsRenderableRequest.ts" />
+///<reference path='GetPageTemplatesRequest.ts'/>
+///<reference path='GetPageTemplatesByCanRenderRequest.ts' />
+///<reference path='GetDefaultPageTemplateRequest.ts' />
+///<reference path='IsRenderableRequest.ts' />
 
 ///<reference path='PageResourceRequest.ts' />
 ///<reference path='PageCUDRequest.ts' />
@@ -48,4 +48,3 @@
 ///<reference path='PageModel.ts' />
 ///<reference path='DescriptorByDisplayNameComparator.ts' />
 ///<reference path='PageTemplateByDisplayNameComparator.ts' />
-

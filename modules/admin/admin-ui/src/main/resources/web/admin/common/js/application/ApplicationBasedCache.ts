@@ -10,28 +10,27 @@ module api.application {
 
             ApplicationEvent.on((event: ApplicationEvent) => {
 
-                if (ApplicationEventType.STARTED == event.getEventType()) {
+                if (ApplicationEventType.STARTED === event.getEventType()) {
                     console.log(api.ClassHelper.getClassName(this) +
-                                " received ApplicationEvent STARTED, calling - loadByApplication.. " +
+                                ' received ApplicationEvent STARTED, calling - loadByApplication.. ' +
                                 event.getApplicationKey().toString());
                     this.loadByApplication(event.getApplicationKey());
-                }
-                else if (ApplicationEventType.STOPPED == event.getEventType()) {
+                } else if (ApplicationEventType.STOPPED === event.getEventType()) {
                     console.log(api.ClassHelper.getClassName(this) +
-                                " received ApplicationEvent STOPPED - calling deleteByApplicationKey.. " +
+                                ' received ApplicationEvent STOPPED - calling deleteByApplicationKey.. ' +
                                 event.getApplicationKey().toString());
-                    this.deleteByApplicationKey(event.getApplicationKey())
+                    this.deleteByApplicationKey(event.getApplicationKey());
                 }
             });
         }
 
         loadByApplication(applicationKey: ApplicationKey) {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         getByApplication(applicationKey: ApplicationKey): T[] {
-            api.util.assertNotNull(applicationKey, "applicationKey not given");
-            var cache = this.applicationCaches.getByKey(applicationKey);
+            api.util.assertNotNull(applicationKey, 'applicationKey not given');
+            let cache = this.applicationCaches.getByKey(applicationKey);
             if (!cache) {
                 return null;
             }
@@ -39,9 +38,9 @@ module api.application {
         }
 
         getByKey(key: TKEY, applicationKey: ApplicationKey): T {
-            api.util.assertNotNull(key, "key not given");
+            api.util.assertNotNull(key, 'key not given');
 
-            var cache = this.applicationCaches.getByKey(applicationKey);
+            let cache = this.applicationCaches.getByKey(applicationKey);
             if (!cache) {
                 return null;
             }
@@ -49,9 +48,9 @@ module api.application {
         }
 
         put(object: T, applicationKey?: ApplicationKey) {
-            api.util.assertNotNull(object, "a object to cache must be given");
+            api.util.assertNotNull(object, 'a object to cache must be given');
 
-            var cache = this.applicationCaches.getByKey(applicationKey);
+            let cache = this.applicationCaches.getByKey(applicationKey);
             if (!cache) {
                 cache = this.createApplicationCache();
                 this.applicationCaches.put(applicationKey, cache);
@@ -60,7 +59,7 @@ module api.application {
         }
 
         createApplicationCache(): CACHE {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         private deleteByApplicationKey(applicationKey: ApplicationKey) {

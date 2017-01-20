@@ -7,7 +7,7 @@ module api.app.wizard {
     export class WizardStepNavigator extends api.ui.tab.TabBar {
 
         constructor() {
-            super("wizard-step-navigator");
+            super('wizard-step-navigator');
         }
 
         insertNavigationItem(tab: TabBarItem, index: number, silent?: boolean) {
@@ -19,18 +19,18 @@ module api.app.wizard {
         addNavigationItem(step: api.ui.tab.TabBarItem) {
             super.addNavigationItem(step);
 
-            if (this.getSize() == 1) {
-                step.addClass("first");
+            if (this.getSize() === 1) {
+                step.addClass('first');
             }
         }
 
         nextStep() {
-            var nextIndex = Math.min(this.getSelectedIndex() + 1, this.getSize() - 1);
+            let nextIndex = Math.min(this.getSelectedIndex() + 1, this.getSize() - 1);
             this.selectNavigationItem(nextIndex);
         }
 
         previousStep() {
-            var previousIndex = Math.max(this.getSelectedIndex() - 1, 0);
+            let previousIndex = Math.max(this.getSelectedIndex() - 1, 0);
             this.selectNavigationItem(previousIndex);
         }
 
@@ -43,9 +43,9 @@ module api.app.wizard {
         }
 
         private addKeyNavigation(tab: TabBarItem) {
-            const combination: string = "alt+" + this.getSize();
+            const combination: string = 'alt+' + this.getSize();
             const keyBinding: KeyBinding = new KeyBinding(combination, () => {
-                const isTabVisible: boolean = tab.getHTMLElement().style.display !== "none";
+                const isTabVisible: boolean = tab.getHTMLElement().style.display !== 'none';
                 const tabIndexToShow: number = isTabVisible ? tab.getIndex() : tab.getIndex() + 1;
 
                 this.selectNavigationItem(tabIndexToShow);

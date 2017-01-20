@@ -5,8 +5,8 @@ module api.ui.selector {
         private placeholderText: string;
 
         constructor(placeholderText?: string) {
-            super("option-filter-input");
-            this.placeholderText = placeholderText ? placeholderText : "Type to search...";
+            super('option-filter-input');
+            this.placeholderText = placeholderText ? placeholderText : 'Type to search...';
 
             this.setPlaceholder(this.placeholderText);
         }

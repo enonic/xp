@@ -1,6 +1,5 @@
 module api.query.filter {
 
-
     export interface BooleanFilterJson {
 
         must: api.query.filter.FilterTypeWrapperJson[];
@@ -8,6 +7,5 @@ module api.query.filter {
         should: api.query.filter.FilterTypeWrapperJson[];
 
     }
-
 
 }

@@ -2,7 +2,7 @@ module api.data {
 
     export class PropertyPath implements api.Equitable {
 
-        private static ELEMENT_DIVIDER: string = ".";
+        private static ELEMENT_DIVIDER: string = '.';
 
         public static ROOT: PropertyPath = new PropertyPath([], true);
 
@@ -13,8 +13,8 @@ module api.data {
         private refString: string;
 
         static fromString(s: string) {
-            var absolute: boolean = s.charAt(0) == PropertyPath.ELEMENT_DIVIDER;
-            var dataPathElements = s.split(PropertyPath.ELEMENT_DIVIDER).
+            let absolute: boolean = s.charAt(0) === PropertyPath.ELEMENT_DIVIDER;
+            let dataPathElements = s.split(PropertyPath.ELEMENT_DIVIDER).
                 filter((element: string) => !!element).                         // filter empty elements
                 map((element: string) => PropertyPathElement.fromString(element));  // map string to DataPathElement
             return new PropertyPath(dataPathElements, absolute);
@@ -22,7 +22,7 @@ module api.data {
 
         static fromParent(parent: PropertyPath, ...childElements: PropertyPathElement[]) {
 
-            var elements: PropertyPathElement[] = parent.elements.slice(0).concat(childElements);
+            let elements: PropertyPathElement[] = parent.elements.slice(0).concat(childElements);
             return new PropertyPath(elements, parent.isAbsolute());
         }
 
@@ -36,19 +36,18 @@ module api.data {
             this.absolute = absolute;
             elements.forEach((element: PropertyPathElement, index: number) => {
                 if (element == null) {
-                    throw new Error("Path element was null at index: " + index);
-                }
-                else if (element.getName().length == 0) {
-                    throw new Error("Path element was empty string at index: " + index);
+                    throw new Error('Path element was null at index: ' + index);
+                } else if (element.getName().length === 0) {
+                    throw new Error('Path element was empty string at index: ' + index);
                 }
             });
             this.elements = elements;
-            this.refString = (this.absolute ? PropertyPath.ELEMENT_DIVIDER : "") + this.elements.join(PropertyPath.ELEMENT_DIVIDER);
+            this.refString = (this.absolute ? PropertyPath.ELEMENT_DIVIDER : '') + this.elements.join(PropertyPath.ELEMENT_DIVIDER);
         }
 
         removeFirstPathElement(): PropertyPath {
             api.util.assert(this.elements.length > 1,
-                "Cannot create new path without first path element when path does not contain more than one element");
+                'Cannot create new path without first path element when path does not contain more than one element');
             return new PropertyPath(this.elements.slice(1), this.absolute);
         }
 
@@ -97,7 +96,7 @@ module api.data {
         }
 
         isRoot(): boolean {
-            return this.elementCount() == 0;
+            return this.elementCount() === 0;
         }
 
         equals(o: Equitable): boolean {
@@ -106,7 +105,7 @@ module api.data {
                 return false;
             }
 
-            var other = <PropertyPath>o;
+            let other = <PropertyPath>o;
 
             if (!api.ObjectHelper.stringEquals(this.refString, other.refString)) {
                 return false;
@@ -128,7 +127,7 @@ module api.data {
         }
 
         getName(): string {
-            return this.name
+            return this.name;
         }
 
         getIndex(): number {
@@ -136,20 +135,19 @@ module api.data {
         }
 
         toString(): string {
-            if (this.index == 0) {
+            if (this.index === 0) {
                 return this.name;
-            }
-            else {
-                return this.name + "[" + this.index + "]";
+            } else {
+                return this.name + '[' + this.index + ']';
             }
         }
 
         static fromString(str: string) {
-            if (str.indexOf("[") == -1) {
+            if (str.indexOf('[') === -1) {
                 return new PropertyPathElement(str, 0);
             }
-            var name = str.substring(0, str.indexOf("["));
-            var index = parseInt(str.substring(str.indexOf("[") + 1, str.indexOf("]")));
+            let name = str.substring(0, str.indexOf('['));
+            let index = parseInt(str.substring(str.indexOf('[') + 1, str.indexOf(']')), 10);
             return new PropertyPathElement(name, index);
         }
     }

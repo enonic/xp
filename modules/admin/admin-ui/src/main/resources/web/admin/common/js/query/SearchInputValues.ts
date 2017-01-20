@@ -21,9 +21,9 @@ module api.query {
 
         public getSelectedValuesForAggregationName(name: string): api.aggregation.Bucket[] {
 
-            for (var i = 0; i < this.aggregationSelections.length; i++) {
+            for (let i = 0; i < this.aggregationSelections.length; i++) {
 
-                if (this.aggregationSelections[i].getName() == name) {
+                if (this.aggregationSelections[i].getName() === name) {
 
                     return this.aggregationSelections[i].getSelectedBuckets();
                 }

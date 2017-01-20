@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {UserItemWizardActions} from "./UserItemWizardActions";
-import {UserItemWizardPanel} from "../UserItemWizardPanel";
+import '../../../api.ts';
+import {UserItemWizardActions} from './UserItemWizardActions';
+import {UserItemWizardPanel} from '../UserItemWizardPanel';
 
 import GetPrincipalsByUserStoreRequest = api.security.GetPrincipalsByUserStoreRequest;
 import PrincipalType = api.security.PrincipalType;
@@ -11,7 +11,7 @@ export class UserStoreWizardActions extends UserItemWizardActions<api.security.U
     constructor(wizardPanel: UserItemWizardPanel<api.security.UserStore>) {
         super(wizardPanel);
 
-        var userStore = wizardPanel.getPersistedItem();
+        let userStore = wizardPanel.getPersistedItem();
         this.establishDeleteActionState(userStore ? userStore.getKey() : null);
     }
 

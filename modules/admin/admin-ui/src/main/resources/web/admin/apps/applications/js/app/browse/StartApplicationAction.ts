@@ -1,16 +1,16 @@
-import "../../api.ts";
-import {ApplicationTreeGrid} from "./ApplicationTreeGrid";
-import {StartApplicationEvent} from "./StartApplicationEvent";
+import '../../api.ts';
+import {ApplicationTreeGrid} from './ApplicationTreeGrid';
+import {StartApplicationEvent} from './StartApplicationEvent';
 
 import Application = api.application.Application;
 
 export class StartApplicationAction extends api.ui.Action {
 
     constructor(applicationTreeGrid: ApplicationTreeGrid) {
-        super("Start");
+        super('Start');
         this.setEnabled(false);
         this.onExecuted(() => {
-            var applications: Application[] = applicationTreeGrid.getSelectedDataList();
+            let applications: Application[] = applicationTreeGrid.getSelectedDataList();
             new StartApplicationEvent(applications).fire();
         });
     }

@@ -15,7 +15,7 @@ module api.form {
 
         parent: FormItemOccurrenceView;
 
-        dataSet: PropertySet
+        dataSet: PropertySet;
     }
 
     export class FormOptionSetOccurrenceView extends FormSetOccurrenceView {
@@ -27,8 +27,8 @@ module api.form {
         private selectionValidationMessage: api.dom.DivEl;
 
         constructor(config: FormOptionSetOccurrenceViewConfig) {
-            super("form-option-set-occurrence-view", config.formSetOccurrence);
-            this.occurrenceContainerClassName = "form-option-set-occurrences-container";
+            super('form-option-set-occurrence-view', config.formSetOccurrence);
+            this.occurrenceContainerClassName = 'form-option-set-occurrences-container';
             this.formItemOccurrence = config.formSetOccurrence;
             this.formOptionSet = config.formOptionSet;
             this.propertySet = config.dataSet;
@@ -39,7 +39,7 @@ module api.form {
         }
 
         protected initValidationMessageBlock() {
-            this.selectionValidationMessage = new api.dom.DivEl("selection-message");
+            this.selectionValidationMessage = new api.dom.DivEl('selection-message');
             this.appendChild(this.selectionValidationMessage);
         }
 
@@ -56,14 +56,14 @@ module api.form {
                         return;
                     }
 
-                    var previousValidState = this.currentValidationState.isValid();
+                    let previousValidState = this.currentValidationState.isValid();
                     if (event.isValid()) {
                         this.currentValidationState.removeByPath(event.getOrigin(), false, event.isIncludeChildren());
                     } else {
                         this.currentValidationState.flatten(event.getRecording());
                     }
 
-                    if (previousValidState != this.currentValidationState.isValid()) {
+                    if (previousValidState !== this.currentValidationState.isValid()) {
                         this.notifyValidityChanged(new RecordingValidityChangedEvent(this.currentValidationState,
                             this.resolveValidationRecordingPath()).setIncludeChildren(true));
                     }
@@ -79,11 +79,12 @@ module api.form {
                         return;
                     }
 
-                    var previousValidationValid = this.currentValidationState.isValid(),
-                        multiselectionState = this.validateMultiselection();
+                    let previousValidationValid = this.currentValidationState.isValid();
+                    let multiselectionState = this.validateMultiselection();
 
                     if (multiselectionState.isValid()) {
-                        if (this.formOptionSet.isRadioSelection()) { // for radio - we clean all validation, as even selected item should not be validated
+                        // for radio - we clean all validation, as even selected item should not be validated
+                        if (this.formOptionSet.isRadioSelection()) {
                             this.currentValidationState.removeByPath(
                                 new ValidationRecordingPath(this.getDataPath(), null), true, true);
 
@@ -97,45 +98,45 @@ module api.form {
 
                     this.renderSelectionValidationMessage(multiselectionState);
 
-                    if (this.currentValidationState.isValid() != previousValidationValid) {
+                    if (this.currentValidationState.isValid() !== previousValidationValid) {
                         this.notifyValidityChanged(new RecordingValidityChangedEvent(this.currentValidationState,
                             this.resolveValidationRecordingPath()).setIncludeChildren(true));
                     }
-                })
+                });
             });
         }
 
         private renderSelectionValidationMessage(selectionValidationRecording: ValidationRecording) {
             if (selectionValidationRecording.isValid()) {
-                this.selectionValidationMessage.addClass("empty");
+                this.selectionValidationMessage.addClass('empty');
             } else {
-                var selection: Occurrences = this.formOptionSet.getMultiselection(),
-                    message;
+                let selection: Occurrences = this.formOptionSet.getMultiselection();
+                let message;
                 if (!selectionValidationRecording.isMinimumOccurrencesValid()) {
-                    if (selection.getMinimum() == 1) {
-                        message = "At least 1 option must be selected";
+                    if (selection.getMinimum() === 1) {
+                        message = 'At least 1 option must be selected';
                     } else if (selection.getMinimum() > 1) {
-                        message = "At least " + selection.getMinimum() + " options must be selected";
+                        message = 'At least ' + selection.getMinimum() + ' options must be selected';
                     }
                 }
                 if (!selectionValidationRecording.isMaximumOccurrencesValid()) {
-                    if (selection.getMaximum() == 1) {
-                        message = "Maximum 1 option can be selected";
+                    if (selection.getMaximum() === 1) {
+                        message = 'Maximum 1 option can be selected';
                     } else if (selection.getMaximum() > 1) {
-                        message = "Maximum " + selection.getMaximum() + " options can be selected";
+                        message = 'Maximum ' + selection.getMaximum() + ' options can be selected';
                     }
                 }
 
                 if (!!message) {
                     this.selectionValidationMessage.setHtml(message);
-                    this.selectionValidationMessage.removeClass("empty");
+                    this.selectionValidationMessage.removeClass('empty');
                 }
             }
         }
 
         private isNew(): boolean {
             if (api.ObjectHelper.iFrameSafeInstanceOf(this.context, api.content.form.ContentFormContext)) {
-                var contentFormContext = <api.content.form.ContentFormContext> this.context;
+                let contentFormContext = <api.content.form.ContentFormContext> this.context;
                 if (contentFormContext.getFormState() != null && contentFormContext.getFormState().isNew()) {
                     return true;
                 }
@@ -144,37 +145,37 @@ module api.form {
         }
 
         private makeMultiselectionNote(): string {
-            var multiselection = this.formOptionSet.getMultiselection();
-            if (multiselection.getMinimum() == 1 && multiselection.getMaximum() == 1) {
+            let multiselection = this.formOptionSet.getMultiselection();
+            if (multiselection.getMinimum() === 1 && multiselection.getMaximum() === 1) {
                 return null;
             }
 
-            if (multiselection.getMinimum() == 0 && multiselection.getMaximum() == 0) {
-                return "(any)"
+            if (multiselection.getMinimum() === 0 && multiselection.getMaximum() === 0) {
+                return '(any)';
             }
-            if (multiselection.getMinimum() > 0 && multiselection.getMaximum() == 0) {
-                return "(at least " + multiselection.getMinimum() + ")";
+            if (multiselection.getMinimum() > 0 && multiselection.getMaximum() === 0) {
+                return '(at least ' + multiselection.getMinimum() + ')';
             }
-            if (multiselection.getMinimum() > 1 && multiselection.getMinimum() == multiselection.getMaximum()) {
-                return "(pick " + multiselection.getMinimum() + ")";
+            if (multiselection.getMinimum() > 1 && multiselection.getMinimum() === multiselection.getMaximum()) {
+                return '(pick ' + multiselection.getMinimum() + ')';
             }
-            if (multiselection.getMinimum() == 0 && multiselection.getMaximum() > 1) {
-                return "(up to " + multiselection.getMaximum() + ")";
+            if (multiselection.getMinimum() === 0 && multiselection.getMaximum() > 1) {
+                return '(up to ' + multiselection.getMaximum() + ')';
             }
             if (multiselection.getMinimum() > 0 && multiselection.getMaximum() > multiselection.getMinimum()) {
-                return "(" + multiselection.getMinimum() + " to " + multiselection.getMaximum() + ")";
+                return '(' + multiselection.getMinimum() + ' to ' + multiselection.getMaximum() + ')';
             }
-            if (multiselection.getMinimum() == 0 && multiselection.getMaximum() == 1) {
-                return "(0 or 1)";
+            if (multiselection.getMinimum() === 0 && multiselection.getMaximum() === 1) {
+                return '(0 or 1)';
             }
             return null;
         }
 
         protected ensureSelectionArrayExists(propertyArraySet: PropertySet) {
-            var selectionPropertyArray = propertyArraySet.getPropertyArray("_selected");
+            let selectionPropertyArray = propertyArraySet.getPropertyArray('_selected');
             if (!selectionPropertyArray) {
                 selectionPropertyArray =
-                    PropertyArray.create().setType(ValueTypes.STRING).setName("_selected").setParent(
+                    PropertyArray.create().setType(ValueTypes.STRING).setName('_selected').setParent(
                         propertyArraySet).build();
                 propertyArraySet.addPropertyArray(selectionPropertyArray);
                 this.addDefaultSelectionToSelectionArray(selectionPropertyArray);
@@ -184,21 +185,21 @@ module api.form {
         private addDefaultSelectionToSelectionArray(selectionPropertyArray: PropertyArray) {
             this.formOptionSet.getOptions().forEach((option: FormOptionSetOption) => {
                 if (option.isDefaultOption() && selectionPropertyArray.getSize() < this.formOptionSet.getMultiselection().getMaximum()) {
-                    selectionPropertyArray.add(new Value(option.getName(), new api.data.ValueTypeString()))
+                    selectionPropertyArray.add(new Value(option.getName(), new api.data.ValueTypeString()));
                 }
             });
         }
 
         protected extraValidation(validationRecording: ValidationRecording) {
-            var multiselectionState = this.validateMultiselection();
+            let multiselectionState = this.validateMultiselection();
             validationRecording.flatten(multiselectionState);
             this.renderSelectionValidationMessage(multiselectionState);
         }
 
         private validateMultiselection(): ValidationRecording {
-            var multiselectionRecording = new ValidationRecording(),
-                validationRecordingPath = this.resolveValidationRecordingPath(),
-                selectionPropertyArray = this.propertySet.getPropertyArray("_selected");
+            let multiselectionRecording = new ValidationRecording();
+            let validationRecordingPath = this.resolveValidationRecordingPath();
+            let selectionPropertyArray = this.propertySet.getPropertyArray('_selected');
 
             if (selectionPropertyArray.getSize() < this.formOptionSet.getMultiselection().getMinimum()) {
                 multiselectionRecording.breaksMinimumOccurrences(validationRecordingPath);

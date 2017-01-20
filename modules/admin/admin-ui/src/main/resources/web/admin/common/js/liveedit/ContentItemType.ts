@@ -4,14 +4,14 @@ module api.liveedit {
 
     export class ContentItemType extends ItemType {
 
-        private static INSTANCE = new ContentItemType();
+        private static INSTANCE: ContentItemType = new ContentItemType();
 
         static get(): ContentItemType {
             return ContentItemType.INSTANCE;
         }
 
         constructor() {
-            super("content");
+            super('content');
         }
 
         protected getItemTypeConfig(itemType: string): ItemTypeConfig {

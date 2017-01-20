@@ -1,10 +1,11 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import GridDragHandler = api.ui.grid.GridDragHandler;
 import TreeGrid = api.ui.treegrid.TreeGrid;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import OrderChildMovement = api.content.order.OrderChildMovement;
 import OrderChildMovements = api.content.order.OrderChildMovements;
+import ContentId = api.content.ContentId;
 
 export class ContentGridDragHandler extends GridDragHandler<ContentSummaryAndCompareStatus> {
 
@@ -23,7 +24,7 @@ export class ContentGridDragHandler extends GridDragHandler<ContentSummaryAndCom
         this.movements = new OrderChildMovements();
     }
 
-    handleMovements(rowDataId, moveBeforeRowDataId) {
+    handleMovements(rowDataId: ContentId, moveBeforeRowDataId: ContentId) {
         this.movements.addChildMovement(new OrderChildMovement(rowDataId, moveBeforeRowDataId));
     }
 

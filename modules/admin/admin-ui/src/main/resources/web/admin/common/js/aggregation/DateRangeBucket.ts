@@ -19,7 +19,7 @@ module api.aggregation {
 
         public static fromDateRangeJson(json: api.aggregation.DateRangeBucketJson): DateRangeBucket {
 
-            var dateRangeBucket: api.aggregation.DateRangeBucket = new api.aggregation.DateRangeBucket(json.key, json.docCount);
+            let dateRangeBucket: api.aggregation.DateRangeBucket = new api.aggregation.DateRangeBucket(json.key, json.docCount);
             dateRangeBucket.from = json.from;
             dateRangeBucket.to = json.to;
 

@@ -28,9 +28,9 @@ module api.ui.selector.list {
         }
 
         getItem(id: string): I {
-            for (var i = 0; i < this.items.length; i++) {
-                var item = this.items[i];
-                if (this.getItemId(item) == id) {
+            for (let i = 0; i < this.items.length; i++) {
+                let item = this.items[i];
+                if (this.getItemId(item) === id) {
                     return item;
                 }
             }
@@ -77,10 +77,10 @@ module api.ui.selector.list {
         }
 
         removeItems(items: I[]) {
-            var itemsRemoved: I[] = [];
+            let itemsRemoved: I[] = [];
             this.items = this.items.filter((item) => {
-                for (var i = 0; i < items.length; i++) {
-                    if (this.getItemId(item) == this.getItemId(items[i])) {
+                for (let i = 0; i < items.length; i++) {
+                    if (this.getItemId(item) === this.getItemId(items[i])) {
                         this.removeItemView(item);
                         itemsRemoved.push(item);
                         return false;
@@ -98,11 +98,11 @@ module api.ui.selector.list {
         }
 
         protected createItemView(item: I, readOnly: boolean): api.dom.Element {
-            throw new Error("You must override createListItem to create views for list items");
+            throw new Error('You must override createListItem to create views for list items');
         }
 
         protected getItemId(item: I): string {
-            throw new Error("You must override getItemId to find item views by items");
+            throw new Error('You must override getItemId to find item views by items');
         }
 
         getItemView(item: I) {
@@ -119,13 +119,13 @@ module api.ui.selector.list {
 
         private layoutList(items: I[]) {
             this.removeChildren();
-            for (var i = 0; i < items.length; i++) {
+            for (let i = 0; i < items.length; i++) {
                 this.addItemView(items[i]);
             }
         }
 
         private removeItemView(item: I) {
-            var itemView = this.itemViews[this.getItemId(item)];
+            let itemView = this.itemViews[this.getItemId(item)];
             if (itemView) {
                 this.removeChild(itemView);
                 delete this.itemViews[this.getItemId(item)];
@@ -133,7 +133,7 @@ module api.ui.selector.list {
         }
 
         private addItemView(item: I, readOnly: boolean = false) {
-            var itemView = this.createItemView(item, readOnly);
+            let itemView = this.createItemView(item, readOnly);
             this.itemViews[this.getItemId(item)] = itemView;
             this.appendChild(itemView);
         }
@@ -145,13 +145,13 @@ module api.ui.selector.list {
         public unItemsAdded(listener: (items: I[]) => void) {
             this.itemsAddedListeners = this.itemsAddedListeners.filter((current) => {
                 return current !== listener;
-            })
+            });
         }
 
         private notifyItemsAdded(items: I[]) {
             this.itemsAddedListeners.forEach((listener) => {
                 listener(items);
-            })
+            });
         }
 
         public onItemsRemoved(listener: (items: I[]) => void) {
@@ -161,13 +161,13 @@ module api.ui.selector.list {
         public unItemsRemoved(listener: (items: I[]) => void) {
             this.itemsRemovedListeners = this.itemsRemovedListeners.filter((current) => {
                 return current !== listener;
-            })
+            });
         }
 
         private notifyItemsRemoved(items: I[]) {
             this.itemsRemovedListeners.forEach((listener) => {
                 listener(items);
-            })
+            });
         }
 
     }

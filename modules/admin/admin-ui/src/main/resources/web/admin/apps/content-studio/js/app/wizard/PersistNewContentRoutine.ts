@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {ContentWizardPanel} from "./ContentWizardPanel";
+import '../../api.ts';
+import {ContentWizardPanel} from './ContentWizardPanel';
 
 import CreateContentRequest = api.content.resource.CreateContentRequest;
 import Content = api.content.Content;
@@ -13,7 +13,7 @@ export class PersistNewContentRoutine extends api.util.Flow<api.content.Content,
 
     private createContentRequestProducer: {() : wemQ.Promise<CreateContentRequest>; };
 
-    private doneHandledContent = false;
+    private doneHandledContent: boolean = false;
 
     constructor(thisOfProducer: ContentWizardPanel) {
         super(thisOfProducer);
@@ -26,7 +26,7 @@ export class PersistNewContentRoutine extends api.util.Flow<api.content.Content,
 
     public execute(): wemQ.Promise<Content> {
 
-        var context = new PersistedNewContentRoutineContext();
+        let context = new PersistedNewContentRoutineContext();
         return this.doExecute(context);
     }
 
@@ -40,15 +40,14 @@ export class PersistNewContentRoutine extends api.util.Flow<api.content.Content,
                 return this.doExecuteNext(context);
 
             });
-        }
-        else {
+        } else {
             return wemQ(context.content);
         }
     }
 
     private doHandleCreateContent(context: PersistedNewContentRoutineContext): wemQ.Promise<void> {
 
-        if (this.createContentRequestProducer != undefined) {
+        if (this.createContentRequestProducer != null) {
 
             return this.createContentRequestProducer.call(this.getThisOfProducer()).then((createContentRequest: CreateContentRequest) => {
 
@@ -58,8 +57,7 @@ export class PersistNewContentRoutine extends api.util.Flow<api.content.Content,
 
                 });
             });
-        }
-        else {
+        } else {
             return api.util.PromiseHelper.newResolvedVoidPromise();
         }
     }

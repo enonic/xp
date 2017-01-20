@@ -2,7 +2,7 @@ module api.rest {
 
     export class Path {
 
-        private static DEFAULT_ELEMENT_DIVIDER:string = "/";
+        private static DEFAULT_ELEMENT_DIVIDER:string = '/';
 
         private elementDivider:string;
 
@@ -16,14 +16,14 @@ module api.rest {
             if (elementDivider == null) {
                 elementDivider = Path.DEFAULT_ELEMENT_DIVIDER;
             }
-            var absolute:boolean = s.charAt(0) == elementDivider;
-            var elements:string[] = s.split(elementDivider);
+            let absolute:boolean = s.charAt(0) === elementDivider;
+            let elements:string[] = s.split(elementDivider);
             return new Path(Path.removeEmptyElements(elements), elementDivider, absolute);
         }
 
         public static fromParent(parent:Path, ...childElements:string[]) {
 
-            var elements:string[] = parent.elements.slice(0);
+            let elements:string[] = parent.elements.slice(0);
             childElements.forEach((element:string) => {
                 elements.push(element);
             });
@@ -32,7 +32,7 @@ module api.rest {
         }
 
         private static removeEmptyElements(elements:string[]):string[] {
-            var filteredElements:string[] = [];
+            let filteredElements:string[] = [];
             elements.forEach((element:string) => {
                 if (element.length > 0) {
                     filteredElements.push(element);
@@ -43,17 +43,16 @@ module api.rest {
 
         constructor(elements:string[], elementDivider?:string, absolute?:boolean) {
             this.elementDivider = elementDivider != null ? elementDivider : Path.DEFAULT_ELEMENT_DIVIDER;
-            this.absolute = absolute == undefined ? true : absolute;
+            this.absolute = absolute == null ? true : absolute;
             elements.forEach((element:string, index:number) => {
                 if (element == null) {
-                    throw new Error("Path element was null at index: " + index);
-                }
-                else if (element.length == 0) {
-                    throw new Error("Path element was empty string at index: " + index);
+                    throw new Error('Path element was null at index: ' + index);
+                } else if (element.length === 0) {
+                    throw new Error('Path element was empty string at index: ' + index);
                 }
             });
             this.elements = elements;
-            this.refString = (this.absolute ? this.elementDivider : "") + this.elements.join(this.elementDivider);
+            this.refString = (this.absolute ? this.elementDivider : '') + this.elements.join(this.elementDivider);
         }
 
         getElements():string[] {
@@ -73,7 +72,7 @@ module api.rest {
             if (this.elements.length < 1) {
                 return null;
             }
-            var parentElemements:string[] = [];
+            let parentElemements:string[] = [];
             this.elements.forEach((element:string, index:number)=> {
                 if (index < this.elements.length - 1) {
                     parentElemements.push(element);

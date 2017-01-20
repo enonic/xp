@@ -15,7 +15,7 @@ module api.form {
                   api.ObjectHelper.iFrameSafeInstanceOf(parent, FieldSet) ||
                   api.ObjectHelper.iFrameSafeInstanceOf(parent, FormOptionSet) ||
                   api.ObjectHelper.iFrameSafeInstanceOf(parent, FormOptionSetOption))) {
-                throw new Error("A parent FormItem must either be a FormItemSet, FieldSet or a FormOptionSet");
+                throw new Error('A parent FormItem must either be a FormItemSet, FieldSet or a FormOptionSet');
             }
 
             this.parent = parent;
@@ -41,8 +41,7 @@ module api.form {
 
             if (this.parent == null) {
                 return FormItemPath.ROOT;
-            }
-            else {
+            } else {
                 return this.parent.getPath();
             }
         }
@@ -53,7 +52,7 @@ module api.form {
                 return false;
             }
 
-            var other = <FormItem>o;
+            let other = <FormItem>o;
 
             if (!api.ObjectHelper.stringEquals(this.name, other.name)) {
                 return false;
@@ -66,27 +65,22 @@ module api.form {
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(this, Input)) {
                 return (<Input><any>this).toInputJson();
-            }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(this, FormItemSet)) {
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(this, FormItemSet)) {
                 return (<api.form.FormItemSet><any>this).toFormItemSetJson();
-            }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(this, FieldSet)) {
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(this, FieldSet)) {
                 return (<FieldSet><any>this).toFieldSetJson();
-            }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(this, FormOptionSet)) {
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(this, FormOptionSet)) {
                 return (<api.form.FormOptionSet><any>this).toFormOptionSetJson();
-            }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(this, FormOptionSetOption)) {
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(this, FormOptionSetOption)) {
                 return (<api.form.FormOptionSetOption><any>this).toFormOptionSetOptionJson();
-            }
-            else {
-                throw new Error("Unsupported FormItem: " + this);
+            } else {
+                throw new Error('Unsupported FormItem: ' + this);
             }
         }
 
         public static formItemsToJson(formItems: FormItem[]): api.form.json.FormItemTypeWrapperJson[] {
 
-            var formItemArray: api.form.json.FormItemTypeWrapperJson[] = [];
+            let formItemArray: api.form.json.FormItemTypeWrapperJson[] = [];
             formItems.forEach((formItem: FormItem) => {
                 formItemArray.push(formItem.toFormItemJson());
             });

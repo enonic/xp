@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import GridColumn = api.ui.grid.GridColumn;
 import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
@@ -21,10 +21,10 @@ export class CompareContentGrid extends TreeGrid<ContentSummaryAndCompareStatus>
 
     constructor(content: api.content.Content) {
         super(new TreeGridBuilder<ContentSummaryAndCompareStatus>().setColumns([
-                new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().setName("Name").setId("displayName").setField(
-                    "displayName").setFormatter(this.nameFormatter).build()
+                new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().setName('Name').setId('displayName').setField(
+                    'displayName').setFormatter(this.nameFormatter).build()
             ]).setPartialLoadEnabled(true).setLoadBufferSize(20). // rows count
-            prependClasses("compare-content-grid")
+            prependClasses('compare-content-grid')
         );
 
         this.content = content;
@@ -36,17 +36,17 @@ export class CompareContentGrid extends TreeGrid<ContentSummaryAndCompareStatus>
 
     private nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
 
-        var viewer = <ContentSummaryViewer>node.getViewer("name");
+        let viewer = <ContentSummaryViewer>node.getViewer('name');
         if (!viewer) {
             viewer = new ContentSummaryViewer();
             viewer.setObject(node.getData().getContentSummary());
-            node.setViewer("name", viewer);
+            node.setViewer('name', viewer);
         }
         return viewer.toString();
     }
 
     fetchChildren(parentNode?: TreeNode<ContentSummaryAndCompareStatus>): wemQ.Promise<ContentSummaryAndCompareStatus[]> {
-        var parentContentId = parentNode && parentNode.getData() ? parentNode.getData().getContentId() : null;
+        let parentContentId = parentNode && parentNode.getData() ? parentNode.getData().getContentId() : null;
         return api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchChildren(parentContentId).then(
             (data: ContentResponse<ContentSummaryAndCompareStatus>) => {
                 return data.getContents();
@@ -71,13 +71,13 @@ export class CompareContentGrid extends TreeGrid<ContentSummaryAndCompareStatus>
     }
 
     sortNodeChildren(node: TreeNode<ContentSummaryAndCompareStatus>) {
-        var comparator: api.Comparator<TreeNode<ContentSummaryAndCompareStatus>>;
-        if (this.getRoot().getCurrentRoot() == node) {
+        let comparator: api.Comparator<TreeNode<ContentSummaryAndCompareStatus>>;
+        if (this.getRoot().getCurrentRoot() === node) {
             comparator = new api.content.util.ContentNodeByDisplayNameComparator();
         } else {
             comparator = new api.content.util.ContentNodeByModifiedTimeComparator();
         }
-        var children: TreeNode<ContentSummaryAndCompareStatus>[] = node.getChildren().sort(comparator.compare);
+        let children: TreeNode<ContentSummaryAndCompareStatus>[] = node.getChildren().sort(comparator.compare);
         node.setChildren(children);
         this.initData(this.getRoot().getCurrentRoot().treeToList());
     }

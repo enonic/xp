@@ -3,20 +3,21 @@ module api.content.resource {
     import ResolvePublishContentResultJson = api.content.json.ResolvePublishContentResultJson;
     import ResolvePublishDependenciesResult = api.content.resource.result.ResolvePublishDependenciesResult;
 
-    export class ResolvePublishDependenciesRequest extends ContentResourceRequest<ResolvePublishContentResultJson, ResolvePublishDependenciesResult> {
+    export class ResolvePublishDependenciesRequest
+    extends ContentResourceRequest<ResolvePublishContentResultJson, ResolvePublishDependenciesResult> {
 
         private ids: ContentId[] = [];
 
         private excludedIds: ContentId[] = [];
 
-        private includeChildren: boolean;
+        private excludeChildrenIds: ContentId[] = [];
 
         constructor(builder: ResolvePublishDependenciesRequestBuilder) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             this.ids = builder.ids;
             this.excludedIds = builder.excludedIds;
-            this.includeChildren = builder.includeChildren;
+            this.excludeChildrenIds = builder.excludeChildrenIds;
         }
 
         getParams(): Object {
@@ -27,12 +28,14 @@ module api.content.resource {
                 excludedIds: this.excludedIds.map((el) => {
                     return el.toString();
                 }),
-                includeChildren: this.includeChildren
+                excludeChildrenIds: this.excludeChildrenIds.map((el) => {
+                    return el.toString();
+                })
             };
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "resolvePublishContent");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'resolvePublishContent');
         }
 
         sendAndParse(): wemQ.Promise<ResolvePublishDependenciesResult> {
@@ -53,7 +56,7 @@ module api.content.resource {
 
         excludedIds: ContentId[] = [];
 
-        includeChildren: boolean;
+        excludeChildrenIds: ContentId[] = [];
 
         public setIds(value: ContentId[]): ResolvePublishDependenciesRequestBuilder {
             this.ids = value;
@@ -65,8 +68,8 @@ module api.content.resource {
             return this;
         }
 
-        public setIncludeChildren(value: boolean): ResolvePublishDependenciesRequestBuilder {
-            this.includeChildren = value;
+        public setExcludeChildrenIds(value: ContentId[]): ResolvePublishDependenciesRequestBuilder {
+            this.excludeChildrenIds = value;
             return this;
         }
 

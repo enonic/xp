@@ -12,7 +12,7 @@ module api.dom {
             return cls.trim().split(/\s+/)
                 .filter((elem, index, arr) => {
                     return arr.indexOf(elem) === index;
-                }).join(" ");
+                }).join(' ');
         }
 
         setGenerateId(value: boolean): ElementBuilder {
@@ -111,8 +111,8 @@ module api.dom {
             this.rendered = false;
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(builder, ElementFromElementBuilder)) {
-                var fromElementBuilder = <ElementFromElementBuilder>builder;
-                var sourceElement = fromElementBuilder.element;
+                let fromElementBuilder = <ElementFromElementBuilder>builder;
+                let sourceElement = fromElementBuilder.element;
                 if (sourceElement) {
                     this.parentElement = fromElementBuilder.parentElement ? fromElementBuilder.parentElement : sourceElement.parentElement;
                     if (this.parentElement) {
@@ -121,9 +121,8 @@ module api.dom {
                     this.children = sourceElement.children;
                     this.el = sourceElement.el;
                 }
-            }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(builder, ElementFromHelperBuilder)) {
-                var fromHelperBuilder = <ElementFromHelperBuilder>builder;
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(builder, ElementFromHelperBuilder)) {
+                let fromHelperBuilder = <ElementFromHelperBuilder>builder;
 
                 this.el = fromHelperBuilder.helper;
                 if (fromHelperBuilder.loadExistingChildren) {
@@ -132,38 +131,36 @@ module api.dom {
                 if (fromHelperBuilder.parentElement) {
                     this.parentElement = fromHelperBuilder.parentElement;
                 }
-            }
-            else if (api.ObjectHelper.iFrameSafeInstanceOf(builder, NewElementBuilder)) {
-                var newElementBuilder = <NewElementBuilder>builder;
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(builder, NewElementBuilder)) {
+                let newElementBuilder = <NewElementBuilder>builder;
                 if (!newElementBuilder.tagName) {
-                    throw new Error("tagName cannot be null");
+                    throw new Error('tagName cannot be null');
                 }
                 if (newElementBuilder.helper) {
                     this.el = newElementBuilder.helper;
-                }
-                else {
+                } else {
                     this.el = ElementHelper.fromName(newElementBuilder.tagName);
                 }
 
                 if (newElementBuilder.parentElement) {
                     this.parentElement = newElementBuilder.parentElement;
                 }
-            }
-            else {
-                throw new Error("Unsupported builder: " + api.ClassHelper.getClassName(builder));
+            } else {
+                throw new Error('Unsupported builder: ' + api.ClassHelper.getClassName(builder));
             }
 
             if (this.parentElement && this.el.getHTMLElement().parentElement) {
                 if (!(this.parentElement.getHTMLElement() === this.el.getHTMLElement().parentElement )) {
-                    throw new Error("Illegal state: HTMLElement in parent Element is not the as the HTMLElement parent to this HTMLElement");
+                    // tslint:disable-next-line:max-line-length
+                    throw new Error('Illegal state: HTMLElement in parent Element is not the as the HTMLElement parent to this HTMLElement');
                 }
             }
             // Do not generate id unless the distance to Element in the class hierarchy of this is larger than 1
             // This should result in that no id's are generated for new Element or classes extending Element directly
             // (which should prevent id-generation of direct instances of most api.dom classes)
-            var distance = api.ClassHelper.distanceTo(this, Element);
+            let distance = api.ClassHelper.distanceTo(this, Element);
             if (builder.generateId || distance > 1) {
-                var id = ElementRegistry.registerElement(this);
+                let id = ElementRegistry.registerElement(this);
                 this.setId(id);
             }
 
@@ -178,29 +175,28 @@ module api.dom {
         }
 
         private replaceChildElement(replacementChild: Element, existingChild: Element) {
-            var index = this.children.indexOf(existingChild);
+            let index = this.children.indexOf(existingChild);
             this.children[index] = replacementChild;
         }
 
         public loadExistingChildren(): Element {
 
-            var children = this.el.getChildren();
-            for (var i = 0; i < children.length; i++) {
-                var childAsElement = Element.fromHtmlElement(<HTMLElement>children[i], true, this);
+            let children = this.el.getChildren();
+            for (let i = 0; i < children.length; i++) {
+                let childAsElement = Element.fromHtmlElement(<HTMLElement>children[i], true, this);
                 this.children.push(childAsElement);
             }
 
             return this;
         }
 
-
         public findChildById(id: string, deep: boolean = false): Element {
-            for (var i = 0; i < this.children.length; i++) {
-                var child = this.children[i];
-                if (child.getId() == id) {
+            for (let i = 0; i < this.children.length; i++) {
+                let child = this.children[i];
+                if (child.getId() === id) {
                     return child;
                 } else if (deep) {
-                    var found = child.findChildById(id, deep);
+                    let found = child.findChildById(id, deep);
                     if (found) {
                         return found;
                     }
@@ -217,14 +213,14 @@ module api.dom {
          */
         protected init(): wemQ.Promise<boolean> {
             if (Element.debug) {
-                console.debug("Element.init started", api.ClassHelper.getClassName(this));
+                console.debug('Element.init started', api.ClassHelper.getClassName(this));
             }
 
             if (this.isVisible()) {
                 this.notifyShown(this);
             }
 
-            var renderPromise;
+            let renderPromise;
             if (this.isRendered() || this.isRendering()) {
                 renderPromise = wemQ(true);
             } else {
@@ -241,9 +237,9 @@ module api.dom {
             });
         }
 
-        private initChildren(rendered): wemQ.Promise<boolean> {
+        private initChildren(rendered: boolean): wemQ.Promise<boolean> {
             this.childrenAddedDuringInit = false;
-            var childPromises = [];
+            let childPromises = [];
 
             this.children.forEach((child: Element) => {
                 if (!child.isRendered()) {
@@ -255,12 +251,12 @@ module api.dom {
 
                 if (this.childrenAddedDuringInit) {
                     if (Element.debug) {
-                        console.debug("Element.init: initing children that were added during init", api.ClassHelper.getClassName(this));
+                        console.debug('Element.init: initing children that were added during init', api.ClassHelper.getClassName(this));
                     }
                     return this.initChildren(rendered);
                 } else {
                     if (Element.debug) {
-                        console.log("Element.init done", api.ClassHelper.getClassName(this));
+                        console.log('Element.init done', api.ClassHelper.getClassName(this));
                     }
 
                     this.rendering = false;
@@ -289,7 +285,7 @@ module api.dom {
             this.rendering = true;
             return this.doRender().then((rendered) => {
 
-                var childPromises = [];
+                let childPromises = [];
                 if (deep) {
                     this.children.forEach((child: Element) => {
                         childPromises.push(child.render(deep));
@@ -309,7 +305,7 @@ module api.dom {
                     api.DefaultErrorHandler.handle(reason);
                     return false;
                 });
-            })
+            });
         }
 
         isRendering(): boolean {
@@ -343,8 +339,7 @@ module api.dom {
             // Using jQuery to hide, since it seems to contain some smartness
             if (skipAnimation) {
                 wemjq(this.el.getHTMLElement()).hide(null);
-            }
-            else {
+            } else {
                 wemjq(this.el.getHTMLElement()).hide();
             }
             this.notifyHidden(this);
@@ -370,7 +365,7 @@ module api.dom {
         }
 
         setClassEx(className: string): Element {
-            var cls = api.StyleHelper.getCls(className);
+            let cls = api.StyleHelper.getCls(className);
             return this.setClass(cls);
         }
 
@@ -381,7 +376,7 @@ module api.dom {
         }
 
         addClassEx(className: string): Element {
-            var cls = api.StyleHelper.getCls(className);
+            let cls = api.StyleHelper.getCls(className);
             return this.addClass(cls);
         }
 
@@ -391,7 +386,7 @@ module api.dom {
         }
 
         toggleClassEx(className: string, condition?: boolean): Element {
-            var cls = api.StyleHelper.getCls(className);
+            let cls = api.StyleHelper.getCls(className);
             return this.toggleClass(cls, condition);
         }
 
@@ -400,7 +395,7 @@ module api.dom {
         }
 
         hasClassEx(className: string): boolean {
-            var cls = api.StyleHelper.getCls(className);
+            let cls = api.StyleHelper.getCls(className);
             return this.hasClass(cls);
         }
 
@@ -411,7 +406,7 @@ module api.dom {
         }
 
         removeClassEx(className: string): Element {
-            var cls = api.StyleHelper.getCls(className);
+            let cls = api.StyleHelper.getCls(className);
             return this.removeClass(cls);
         }
 
@@ -441,14 +436,14 @@ module api.dom {
 
         setDraggable(value: boolean) {
             if (value) {
-                this.getEl().setAttribute("draggable", value.toString());
+                this.getEl().setAttribute('draggable', value.toString());
             } else {
-                this.getEl().removeAttribute("draggable");
+                this.getEl().removeAttribute('draggable');
             }
         }
 
         isDraggable(): boolean {
-            return this.getEl().getAttribute('draggable') == 'true';
+            return this.getEl().getAttribute('draggable') === 'true';
         }
 
         setContentEditable(flag: boolean): ArticleEl {
@@ -457,7 +452,7 @@ module api.dom {
         }
 
         isContentEditable(): boolean {
-            return this.getEl().getAttribute('contenteditable') == 'true';
+            return this.getEl().getAttribute('contenteditable') === 'true';
         }
 
         giveFocus(): boolean {
@@ -468,10 +463,10 @@ module api.dom {
                 return false;
             }
             this.el.focus();
-            var gotFocus: boolean = document.activeElement == this.el.getHTMLElement();
+            let gotFocus: boolean = document.activeElement === this.el.getHTMLElement();
             if (!gotFocus && Element.debug) {
-                console.log("Element.giveFocus(): Failed to give focus to Element: class = " + api.ClassHelper.getClassName(this) +
-                            ", id = " +
+                console.log('Element.giveFocus(): Failed to give focus to Element: class = ' + api.ClassHelper.getClassName(this) +
+                            ', id = ' +
                             this.getId());
             }
             return gotFocus;
@@ -485,10 +480,10 @@ module api.dom {
                 return false;
             }
             this.el.blur();
-            var gotBlur: boolean = document.activeElement != this.el.getHTMLElement();
+            let gotBlur: boolean = document.activeElement !== this.el.getHTMLElement();
             if (!gotBlur && Element.debug) {
-                console.log("Element.giveBlur(): Failed to give blur to Element: class = " + api.ClassHelper.getClassName(this) +
-                            ", id = " +
+                console.log('Element.giveBlur(): Failed to give blur to Element: class = ' + api.ClassHelper.getClassName(this) +
+                            ', id = ' +
                             this.getId());
             }
             return gotBlur;
@@ -497,7 +492,6 @@ module api.dom {
         getHTMLElement(): HTMLElement {
             return this.el.getHTMLElement();
         }
-
 
         /*
          *      Child manipulations
@@ -530,7 +524,7 @@ module api.dom {
         insertAfterEl(existing: Element): Element {
             api.util.assertNotNull(existing, 'Existing element cannot be null');
             // get index before insertion !
-            var existingIndex = existing.getSiblingIndex();
+            let existingIndex = existing.getSiblingIndex();
             this.el.insertAfterEl(existing.el);
 
             return this.insertChildElement(this, existing.parentElement, existingIndex + 1);
@@ -539,7 +533,7 @@ module api.dom {
         insertBeforeEl(existing: Element): Element {
             api.util.assertNotNull(existing, 'Existing element cannot be null');
             // get index before insertion !
-            var existingIndex = existing.getSiblingIndex();
+            let existingIndex = existing.getSiblingIndex();
             this.el.insertBeforeEl(existing.el);
 
             return this.insertChildElement(this, existing.getParentElement(), existingIndex);
@@ -550,7 +544,7 @@ module api.dom {
         }
 
         removeChild(child: Element): Element {
-            api.util.assertNotNull(child, "Child element to remove cannot be null");
+            api.util.assertNotNull(child, 'Child element to remove cannot be null');
 
             child.getEl().remove();
             this.removeChildElement(child);
@@ -603,7 +597,7 @@ module api.dom {
             // that happens when parentElement has been set on Element in constructor, which is evil >:)
             // no need to do it with dom nodes because html takes care of this
             if (child.parentElement) {
-                if (child.parentElement != this) {
+                if (child.parentElement !== this) {
                     child.parentElement.unregisterChildElement(child);
                 } else if (this.children.indexOf(child) > -1) {
                     // is already registered
@@ -611,11 +605,11 @@ module api.dom {
                 }
             }
 
-            var parentNode = child.getHTMLElement().parentNode;
+            let parentNode = child.getHTMLElement().parentNode;
             // check for parentNode because if parent is not a HtmlElement but a Node ( i.e SVG )
             // then parentElement will be null but parentNode will not
             if (parentNode && parentNode !== this.getHTMLElement()) {
-                throw new Error("Given child must be a child of this Element in DOM before it can be registered");
+                throw new Error('Given child must be a child of this Element in DOM before it can be registered');
             }
             if (!index) {
                 index = child.el.getSiblingIndex();
@@ -625,15 +619,14 @@ module api.dom {
         }
 
         private unregisterChildElement(child: Element): number {
-            var childIndex = this.children.indexOf(child);
+            let childIndex = this.children.indexOf(child);
             if (childIndex < 0) {
-                throw new Error("Child element to remove not found");
+                throw new Error('Child element to remove not found');
             }
             this.children.splice(childIndex, 1);
             child.parentElement = null;
             return childIndex;
         }
-
 
         /*
          *      Self actions
@@ -661,8 +654,8 @@ module api.dom {
             replacement.notifyAdded();
 
             // during these operation this.parentElement will become unavailable
-            var parent = this.parentElement;
-            var index = parent.unregisterChildElement(this);
+            let parent = this.parentElement;
+            let index = parent.unregisterChildElement(this);
             parent.registerChildElement(replacement, index);
 
             // Run init of replacement if parent is rendered
@@ -679,7 +672,7 @@ module api.dom {
 
         wrapWithElement(wrapperElement: Element) {
             api.util.assertNotNull(wrapperElement, 'wrapperElement cannot be null');
-            var parent = this.parentElement;
+            let parent = this.parentElement;
             if (!parent) {
                 return;
             }
@@ -705,7 +698,7 @@ module api.dom {
         }
 
         getNextElement(): Element {
-            var nextSiblingHtmlElement = this.getHTMLElement().nextElementSibling;
+            let nextSiblingHtmlElement = this.getHTMLElement().nextElementSibling;
             if (!nextSiblingHtmlElement) {
                 return null;
             }
@@ -713,7 +706,7 @@ module api.dom {
         }
 
         getPreviousElement(): Element {
-            var previousSiblingHtmlElement = this.getHTMLElement().previousElementSibling;
+            let previousSiblingHtmlElement = this.getHTMLElement().previousElementSibling;
             if (!previousSiblingHtmlElement) {
                 return null;
             }
@@ -724,19 +717,19 @@ module api.dom {
          * Returns the index of this element among it's siblings. Returns 0 if first or only child.
          */
         getSiblingIndex(): number {
-            var indexFromDOM = this.el.getSiblingIndex();
+            let indexFromDOM = this.el.getSiblingIndex();
             if (this.parentElement) {
-                var indexFromElement = this.parentElement.children.indexOf(this);
-                api.util.assertState(indexFromElement == indexFromDOM, "index of Element in parentElement.children" +
-                                                                       " [" + indexFromElement + "] does not correspond with" +
-                                                                       " the actual index [" + indexFromDOM +
-                                                                       "] of the HTMLElement in DOM");
+                let indexFromElement = this.parentElement.children.indexOf(this);
+                api.util.assertState(indexFromElement === indexFromDOM, 'index of Element in parentElement.children' +
+                                                                       ' [' + indexFromElement + '] does not correspond with' +
+                                                                       ' the actual index [' + indexFromDOM +
+                                                                       '] of the HTMLElement in DOM');
             }
             return indexFromDOM;
         }
 
         getTabbableElements(): Element[] {
-            let selected = wemjq(this.getHTMLElement()).find(":tabbable");
+            let selected = wemjq(this.getHTMLElement()).find(':tabbable');
             let elements = [];
             for (let i = 0; i < selected.length; i++) {
                 elements.push(Element.fromHtmlElement(selected[i]));
@@ -757,14 +750,13 @@ module api.dom {
             return this;
         }
 
-
         /*
          *      Event listeners
          */
-        private mouseEnterByHandler = {};
+        private mouseEnterByHandler: Object = {};
 
         onMouseEnter(handler: (e: MouseEvent) => any) {
-            if (typeof this.getHTMLElement().onmouseenter != "undefined") {
+            if (typeof this.getHTMLElement().onmouseenter !== 'undefined') {
                 this.getEl().addEventListener('mouseenter', handler);
             } else {
                 this.mouseEnterByHandler[<any> handler] = (e: MouseEvent) => {
@@ -778,17 +770,17 @@ module api.dom {
         }
 
         unMouseEnter(handler: (e: MouseEvent) => any) {
-            if (typeof this.getHTMLElement().onmouseenter != "undefined") {
+            if (typeof this.getHTMLElement().onmouseenter !== 'undefined') {
                 this.getEl().removeEventListener('mouseenter', handler);
             } else {
                 this.getEl().removeEventListener('mouseover', this.mouseEnterByHandler[<any> handler]);
             }
         }
 
-        private mouseLeaveByHandler = {};
+        private mouseLeaveByHandler: Object = {};
 
         onMouseLeave(handler: (e: MouseEvent) => any) {
-            if (typeof this.getHTMLElement().onmouseleave != "undefined") {
+            if (typeof this.getHTMLElement().onmouseleave !== 'undefined') {
                 this.getEl().addEventListener('mouseleave', handler);
             } else {
                 this.mouseLeaveByHandler[<any> handler] = (e: MouseEvent) => {
@@ -802,7 +794,7 @@ module api.dom {
         }
 
         unMouseLeave(handler: (e: MouseEvent) => any) {
-            if (typeof this.getHTMLElement().onmouseleave != "undefined") {
+            if (typeof this.getHTMLElement().onmouseleave !== 'undefined') {
                 this.getEl().removeEventListener('mouseleave', handler);
             } else {
                 this.getEl().removeEventListener('mouseout', this.mouseLeaveByHandler[<any> handler]);
@@ -814,7 +806,7 @@ module api.dom {
         }
 
         unMouseOver(listener: (event: MouseEvent) => void) {
-            this.getEl().removeEventListener("mouseover", listener);
+            this.getEl().removeEventListener('mouseover', listener);
         }
 
         onMouseOut(listener: (e: MouseEvent)=>any) {
@@ -822,7 +814,7 @@ module api.dom {
         }
 
         unMouseOut(listener: (event: MouseEvent) => void) {
-            this.getEl().removeEventListener("mouseout", listener);
+            this.getEl().removeEventListener('mouseout', listener);
         }
 
         onAdded(listener: (event: ElementAddedEvent) => void) {
@@ -832,18 +824,18 @@ module api.dom {
         unAdded(listener: (event: ElementAddedEvent) => void) {
             this.addedListeners = this.addedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyAdded() {
-            var addedEvent = new ElementAddedEvent(this);
+            let addedEvent = new ElementAddedEvent(this);
             this.addedListeners.forEach((listener) => {
                 listener(addedEvent);
             });
 
             this.children.forEach((child: Element) => {
                 child.notifyAdded();
-            })
+            });
         }
 
         onRemoved(listener: (event: ElementRemovedEvent) => void) {
@@ -853,17 +845,17 @@ module api.dom {
         unRemoved(listener: (event: ElementRemovedEvent) => void) {
             this.removedListeners = this.removedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyRemoved(parent: Element, target?: Element) {
-            var removedEvent = new ElementRemovedEvent(this, parent, target);
+            let removedEvent = new ElementRemovedEvent(this, parent, target);
             this.removedListeners.forEach((listener) => {
                 listener(removedEvent);
             });
             this.children.forEach((child: Element) => {
                 child.notifyRemoved(removedEvent.getParent(), removedEvent.getTarget());
-            })
+            });
         }
 
         onRendered(listener: (event: ElementRenderedEvent) => void) {
@@ -873,11 +865,11 @@ module api.dom {
         unRendered(listener: (event: ElementRenderedEvent) => void) {
             this.renderedListeners = this.renderedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyRendered() {
-            var renderedEvent = new ElementRenderedEvent(this);
+            let renderedEvent = new ElementRenderedEvent(this);
             this.renderedListeners.forEach((listener) => {
                 listener(renderedEvent);
             });
@@ -891,11 +883,11 @@ module api.dom {
         unShown(listener: (event: ElementShownEvent) => void) {
             this.shownListeners = this.shownListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyShown(target?: Element, deep?: boolean) {
-            var shownEvent = new ElementShownEvent(this, target);
+            let shownEvent = new ElementShownEvent(this, target);
             this.shownListeners.forEach((listener) => {
                 listener(shownEvent);
             });
@@ -919,232 +911,231 @@ module api.dom {
         }
 
         private notifyHidden(target?: Element) {
-            var hiddenEvent = new ElementHiddenEvent(this, target);
+            let hiddenEvent = new ElementHiddenEvent(this, target);
             this.hiddenListeners.forEach((listener) => {
                 listener(hiddenEvent);
             });
             this.children.forEach((child: Element) => {
                 child.notifyHidden(hiddenEvent.getTarget());
-            })
+            });
         }
 
         onScrolled(listener: (event: WheelEvent) => void) {
             // IE9, Chrome, Safari, Opera
-            this.getEl().addEventListener("mousewheel", listener);
+            this.getEl().addEventListener('mousewheel', listener);
             // Firefox
-            this.getEl().addEventListener("DOMMouseScroll", listener);
+            this.getEl().addEventListener('DOMMouseScroll', listener);
         }
 
         unScrolled(listener: (event: WheelEvent) => void) {
             // IE9, Chrome, Safari, Opera
-            this.getEl().removeEventListener("mousewheel", listener);
+            this.getEl().removeEventListener('mousewheel', listener);
             // Firefox
-            this.getEl().removeEventListener("DOMMouseScroll", listener);
+            this.getEl().removeEventListener('DOMMouseScroll', listener);
         }
 
         onClicked(listener: (event: MouseEvent) => void) {
-            this.getEl().addEventListener("click", listener);
+            this.getEl().addEventListener('click', listener);
         }
 
         unClicked(listener: (event: MouseEvent) => void) {
-            this.getEl().removeEventListener("click", listener);
+            this.getEl().removeEventListener('click', listener);
         }
 
         onDblClicked(listener: (event: MouseEvent) => void) {
-            this.getEl().addEventListener("dblclick", listener);
+            this.getEl().addEventListener('dblclick', listener);
         }
 
         unDblClicked(listener: (event: MouseEvent) => void) {
-            this.getEl().removeEventListener("dblclick", listener);
+            this.getEl().removeEventListener('dblclick', listener);
         }
 
         onContextMenu(listener: (event: MouseEvent) => void) {
-            this.getEl().addEventListener("contextmenu", listener);
+            this.getEl().addEventListener('contextmenu', listener);
         }
 
         unContextMenu(listener: (event: MouseEvent) => void) {
-            this.getEl().removeEventListener("contextmenu", listener);
+            this.getEl().removeEventListener('contextmenu', listener);
         }
 
         onMouseDown(listener: (event: MouseEvent) => void) {
-            this.getEl().addEventListener("mousedown", listener);
+            this.getEl().addEventListener('mousedown', listener);
         }
 
         unMouseDown(listener: (event: MouseEvent) => void) {
-            this.getEl().removeEventListener("mousedown", listener);
+            this.getEl().removeEventListener('mousedown', listener);
         }
 
         onMouseUp(listener: (event: MouseEvent) => void) {
-            this.getEl().addEventListener("mouseup", listener);
+            this.getEl().addEventListener('mouseup', listener);
         }
 
         unMouseUp(listener: (event: MouseEvent) => void) {
-            this.getEl().removeEventListener("mouseup", listener);
+            this.getEl().removeEventListener('mouseup', listener);
         }
 
         onMouseMove(listener: (event: MouseEvent) => void) {
-            this.getEl().addEventListener("mousemove", listener);
+            this.getEl().addEventListener('mousemove', listener);
         }
 
         unMouseMove(listener: (event: MouseEvent) => void) {
-            this.getEl().removeEventListener("mousemove", listener);
+            this.getEl().removeEventListener('mousemove', listener);
         }
 
         onMouseWheel(listener: (event: WheelEvent) => void) {
             // http://www.javascriptkit.com/javatutors/onmousewheel.shtml
             // FF doesn't recognize mousewheel as of FF3.x
-            var eventName = (/Firefox/i.test(navigator.userAgent)) ? "wheel" : "mousewheel";
+            let eventName = (/Firefox/i.test(navigator.userAgent)) ? 'wheel' : 'mousewheel';
             this.getEl().addEventListener(eventName, listener);
         }
 
         unMouseWheel(listener: (event: MouseEvent) => void) {
-            var eventName = (/Firefox/i.test(navigator.userAgent)) ? "wheel" : "mousewheel";
+            let eventName = (/Firefox/i.test(navigator.userAgent)) ? 'wheel' : 'mousewheel';
             this.getEl().removeEventListener(eventName, listener);
         }
 
         onTouchStart(listener: (event: MouseEvent) => void) {
-            this.getEl().addEventListener("touchstart", listener);
+            this.getEl().addEventListener('touchstart', listener);
         }
 
         unTouchStart(listener: (event: MouseEvent) => void) {
-            this.getEl().removeEventListener("touchstart", listener);
+            this.getEl().removeEventListener('touchstart', listener);
         }
 
         onKeyUp(listener: (event: KeyboardEvent) => void) {
-            this.getEl().addEventListener("keyup", listener);
+            this.getEl().addEventListener('keyup', listener);
         }
 
         unKeyUp(listener: (event: KeyboardEvent) => void) {
-            this.getEl().removeEventListener("keyup", listener);
+            this.getEl().removeEventListener('keyup', listener);
         }
 
         onKeyDown(listener: (event: KeyboardEvent) => void) {
-            this.getEl().addEventListener("keydown", listener);
+            this.getEl().addEventListener('keydown', listener);
         }
 
         unKeyDown(listener: (event: KeyboardEvent) => void) {
-            this.getEl().removeEventListener("keydown", listener);
+            this.getEl().removeEventListener('keydown', listener);
         }
 
         onKeyPressed(listener: (event: KeyboardEvent) => void) {
-            this.getEl().addEventListener("keypress", listener);
+            this.getEl().addEventListener('keypress', listener);
         }
 
         unKeyPressed(listener: (event: KeyboardEvent) => void) {
-            this.getEl().removeEventListener("keypress", listener);
+            this.getEl().removeEventListener('keypress', listener);
         }
 
         onFocus(listener: (event: FocusEvent) => void) {
-            this.getEl().addEventListener("focus", listener);
+            this.getEl().addEventListener('focus', listener);
         }
 
         unFocus(listener: (event: FocusEvent) => void) {
-            this.getEl().removeEventListener("focus", listener);
+            this.getEl().removeEventListener('focus', listener);
         }
 
         onBlur(listener: (event: FocusEvent) => void) {
-            this.getEl().addEventListener("blur", listener);
+            this.getEl().addEventListener('blur', listener);
         }
 
         unBlur(listener: (event: FocusEvent) => void) {
-            this.getEl().removeEventListener("blur", listener);
+            this.getEl().removeEventListener('blur', listener);
         }
 
         // No native support of focusin/focusout events in Firefox yet.
 
         onFocusIn(listener: (event: any) => void) {
-            // this.getEl().addEventListener("focusin", listener);
-            wemjq(this.el.getHTMLElement()).on("focusin", listener);
+            // this.getEl().addEventListener('focusin', listener);
+            wemjq(this.el.getHTMLElement()).on('focusin', listener);
 
         }
 
         unFocusIn(listener: (event: any) => void) {
-            // this.getEl().removeEventListener("focusin", listener);
-            wemjq(this.el.getHTMLElement()).off("focusin", listener);
+            // this.getEl().removeEventListener('focusin', listener);
+            wemjq(this.el.getHTMLElement()).off('focusin', listener);
         }
 
         onFocusOut(listener: (event: any) => void) {
-            // this.getEl().addEventListener("focusout", listener);
-            wemjq(this.el.getHTMLElement()).on("focusout", listener);
+            // this.getEl().addEventListener('focusout', listener);
+            wemjq(this.el.getHTMLElement()).on('focusout', listener);
         }
 
         unFocusOut(listener: (event: any) => void) {
-            // this.getEl().removeEventListener("focusout", listener);
-            wemjq(this.el.getHTMLElement()).off("focusout", listener);
+            // this.getEl().removeEventListener('focusout', listener);
+            wemjq(this.el.getHTMLElement()).off('focusout', listener);
         }
 
         onScroll(listener: (event: Event) => void) {
-            this.getEl().addEventListener("scroll", listener);
+            this.getEl().addEventListener('scroll', listener);
         }
 
         unScroll(listener: (event: Event) => void) {
-            this.getEl().removeEventListener("scroll", listener);
+            this.getEl().removeEventListener('scroll', listener);
         }
 
         onDrag(listener: (event: DragEvent) => void) {
-            this.getEl().addEventListener("drag", listener);
+            this.getEl().addEventListener('drag', listener);
         }
 
         unDrag(listener: (event: DragEvent) => void) {
-            this.getEl().removeEventListener("drag", listener);
+            this.getEl().removeEventListener('drag', listener);
         }
 
         onDragStart(listener: (event: DragEvent) => void) {
-            this.getEl().addEventListener("dragstart", listener);
+            this.getEl().addEventListener('dragstart', listener);
         }
 
         unDragStart(listener: (event: DragEvent) => void) {
-            this.getEl().removeEventListener("dragstart", listener);
+            this.getEl().removeEventListener('dragstart', listener);
         }
 
         onDragEnter(listener: (event: DragEvent) => void) {
-            this.getEl().addEventListener("dragenter", listener);
+            this.getEl().addEventListener('dragenter', listener);
         }
 
         unDragEnter(listener: (event: DragEvent) => void) {
-            this.getEl().removeEventListener("dragenter", listener);
+            this.getEl().removeEventListener('dragenter', listener);
         }
 
         onDragOver(listener: (event: DragEvent) => void) {
-            this.getEl().addEventListener("dragover", listener);
+            this.getEl().addEventListener('dragover', listener);
         }
 
         unDragOver(listener: (event: DragEvent) => void) {
-            this.getEl().removeEventListener("dragover", listener);
+            this.getEl().removeEventListener('dragover', listener);
         }
 
         onDragOut(listener: (event: DragEvent) => void) {
-            this.getEl().addEventListener("dragout", listener);
+            this.getEl().addEventListener('dragout', listener);
         }
 
         unDragOut(listener: (event: DragEvent) => void) {
-            this.getEl().removeEventListener("dragout", listener);
+            this.getEl().removeEventListener('dragout', listener);
         }
 
         onDragLeave(listener: (event: DragEvent) => void) {
-            this.getEl().addEventListener("dragleave", listener);
+            this.getEl().addEventListener('dragleave', listener);
         }
 
         unDragLeave(listener: (event: DragEvent) => void) {
-            this.getEl().removeEventListener("dragleave", listener);
+            this.getEl().removeEventListener('dragleave', listener);
         }
 
         onDrop(listener: (event: DragEvent) => void) {
-            this.getEl().addEventListener("drop", listener);
+            this.getEl().addEventListener('drop', listener);
         }
 
         unDrop(listener: (event: DragEvent) => void) {
-            this.getEl().removeEventListener("drop", listener);
+            this.getEl().removeEventListener('drop', listener);
         }
 
         onDragEnd(listener: (event: DragEvent) => void) {
-            this.getEl().addEventListener("dragend", listener);
+            this.getEl().addEventListener('dragend', listener);
         }
 
         unDragEnd(listener: (event: DragEvent) => void) {
-            this.getEl().removeEventListener("dragend", listener);
+            this.getEl().removeEventListener('dragend', listener);
         }
-
 
         static fromHtmlElement(element: HTMLElement, loadExistingChildren: boolean = false, parent?: Element): Element {
             return new Element(new ElementFromHelperBuilder().setHelper(new ElementHelper(element)).setLoadExistingChildren(
@@ -1152,8 +1143,8 @@ module api.dom {
         }
 
         static fromString(s: string, loadExistingChildren: boolean = true): Element {
-            var htmlEl = wemjq(s).get(0);
-            var parentEl;
+            let htmlEl = wemjq(s).get(0);
+            let parentEl;
             if (htmlEl && htmlEl.parentElement) {
                 parentEl = Element.fromHtmlElement(htmlEl.parentElement);
             }
@@ -1162,8 +1153,8 @@ module api.dom {
 
         static fromSelector(s: string, loadExistingChildren: boolean = true): Element[] {
             return wemjq(s).map((index, elem) => {
-                var htmlEl = <HTMLElement> elem,
-                    parentEl;
+                let htmlEl = <HTMLElement> elem;
+                let parentEl;
                 if (htmlEl && htmlEl.parentElement) {
                     parentEl = Element.fromHtmlElement(htmlEl.parentElement);
                 }

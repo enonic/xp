@@ -1,4 +1,4 @@
-module api.item{
+module api.item {
 
     export interface Item {
 

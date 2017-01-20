@@ -17,7 +17,7 @@ module api.ui.uploader {
         }
 
         getId(): string {
-            return this.file.id + "";
+            return this.file.id + '';
         }
 
         setId(id: string): UploadItem<MODEL> {
@@ -82,7 +82,7 @@ module api.ui.uploader {
                 return false;
             }
 
-            var other = <UploadItem<MODEL>>o;
+            let other = <UploadItem<MODEL>>o;
 
             if (!api.ObjectHelper.equals(this.model, other.model)) {
                 return false;
@@ -96,11 +96,11 @@ module api.ui.uploader {
                     //!api.ObjectHelper.stringEquals(this.file.type, other.file.type) ||
                     !api.ObjectHelper.numberEquals(this.file.size, other.file.size) ||
                     //!api.ObjectHelper.numberEquals(this.file.origSize, other.file.origSize) ||
-                    this.file.status != this.file.status) {
+                    this.file.status !== this.file.status) {
                     return false;
                 }
 
-                /*if (this.file.lastModifiedDate.getMilliseconds() != other.file.lastModifiedDate.getMilliseconds()) {
+                /*if (this.file.lastModifiedDate.getMilliseconds() !== other.file.lastModifiedDate.getMilliseconds()) {
                     return false;
                  }*/
 
@@ -115,7 +115,7 @@ module api.ui.uploader {
         }
 
         isUploaded(): boolean {
-            return !!this.model
+            return !!this.model;
         }
 
         onProgress(listener: (progress: number) => void) {
@@ -125,13 +125,13 @@ module api.ui.uploader {
         unProgress(listener: (progress: number) => void) {
             this.progressListeners = this.progressListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyProgress(progress: number) {
             this.progressListeners.forEach((listener) => {
                 listener(progress);
-            })
+            });
         }
 
         onUploaded(listener: (model: MODEL) => void) {
@@ -141,13 +141,13 @@ module api.ui.uploader {
         unUploaded(listener: (model: MODEL) => void) {
             this.uploadListeners = this.uploadListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyUploaded(model: MODEL) {
             this.uploadListeners.forEach((listener) => {
                 listener(model);
-            })
+            });
         }
 
         onFailed(listener: () => void) {
@@ -157,13 +157,13 @@ module api.ui.uploader {
         unFailed(listener: () => void) {
             this.failedListeners = this.failedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         notifyFailed() {
             this.failedListeners.forEach((listener) => {
                 listener();
-            })
+            });
         }
 
         onUploadStopped(listener: () => void) {
@@ -173,13 +173,13 @@ module api.ui.uploader {
         unUploadStopped(listener: () => void) {
             this.uploadStoppedListeners = this.uploadStoppedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         notifyUploadStopped() {
             this.uploadStoppedListeners.forEach((listener) => {
                 listener();
-            })
+            });
         }
 
     }

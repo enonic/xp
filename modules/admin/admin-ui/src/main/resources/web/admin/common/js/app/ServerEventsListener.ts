@@ -1,6 +1,7 @@
 module api.app {
 
     import ContentServerEvent = api.content.event.ContentServerEvent;
+    import BatchContentServerEvent = api.content.event.BatchContentServerEvent;
 
     export class ServerEventsListener {
 
@@ -16,7 +17,7 @@ module api.app {
 
             this.aggregator.onBatchIsReady(() => {
 
-                var event = new api.content.event.BatchContentServerEvent(<ContentServerEvent[]>this.aggregator.getEvents(), this.aggregator.getType());
+                let event = new BatchContentServerEvent(<ContentServerEvent[]>this.aggregator.getEvents(), this.aggregator.getType());
                 this.fireEvent(event);
 
                 this.aggregator.resetEvents();
@@ -49,7 +50,7 @@ module api.app {
 
         private onServerEvent(event: api.event.Event) {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(event, ContentServerEvent)) {
-                this.fireEvent(event)
+                this.fireEvent(event);
             } else {
                 this.aggregator.appendEvent(<ContentServerEvent>event);
             }
@@ -57,13 +58,12 @@ module api.app {
 
         private fireEvent(event: api.event.Event) {
             this.applications.forEach((application)=> {
-                var appWindow = application.getWindow();
+                let appWindow = application.getWindow();
                 if (appWindow) {
                     event.fire(appWindow);
                 }
             });
         }
-
 
     }
 

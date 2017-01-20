@@ -12,7 +12,7 @@ public class ActiveContentVersionEntry
 
     private final ContentVersion contentVersion;
 
-    public final static ActiveContentVersionEntry from( final Branch branch, final ContentVersion contentVersion )
+    public static ActiveContentVersionEntry from( final Branch branch, final ContentVersion contentVersion )
     {
         return new ActiveContentVersionEntry( branch, contentVersion );
     }

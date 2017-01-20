@@ -9,7 +9,7 @@ module api.content.page {
         constructor() {
             super();
             this.cache = PageDescriptorCache.get();
-            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "content", "page", "descriptor");
+            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), 'content', 'page', 'descriptor');
         }
 
         getResourcePath(): api.rest.Path {
@@ -18,7 +18,7 @@ module api.content.page {
 
         fromJsonToPageDescriptor(json: api.content.page.PageDescriptorJson, ignoreCache: boolean = false): PageDescriptor {
 
-            var pageDescriptor = new api.content.page.PageDescriptorBuilder().fromJson(json).build();
+            let pageDescriptor = new api.content.page.PageDescriptorBuilder().fromJson(json).build();
             if(!ignoreCache) {
                 this.cache.put(pageDescriptor);
             }

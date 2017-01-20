@@ -17,8 +17,6 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.portal.rendering.Renderer;
-import com.enonic.xp.portal.rendering.RendererFactory;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.FragmentComponent;
 
