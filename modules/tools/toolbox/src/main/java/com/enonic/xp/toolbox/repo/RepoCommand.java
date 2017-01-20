@@ -82,7 +82,6 @@ public abstract class RepoCommand
             }
             catch ( Exception e )
             {
-                LOG.error( "Failed to prettify response", e );
                 throw new ResponseException( responseBody, response.code() );
             }
             throw new ResponseException( prettified, response.code() );
