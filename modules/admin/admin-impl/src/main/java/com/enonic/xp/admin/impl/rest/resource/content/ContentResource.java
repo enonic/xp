@@ -129,6 +129,7 @@ import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.GetActiveContentVersionsParams;
 import com.enonic.xp.content.GetActiveContentVersionsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.content.GetInvalidContentResult;
 import com.enonic.xp.content.GetPublishStatusesParams;
 import com.enonic.xp.content.GetPublishStatusesResult;
 import com.enonic.xp.content.MoveContentException;
@@ -712,19 +713,29 @@ public final class ContentResource
         final ContentIds dependentContentIds = ContentIds.from( dependentContentIdList );
 
         final Boolean anyRemovable = this.isAnyContentRemovableFromPublish( dependentContentIds );
+        final GetInvalidContentResult invalidContentResult = getInvalidContent( results );
 
         //Returns the JSON result
         return ResolvePublishContentResultJson.create().
             setContainsRemovable( anyRemovable ).
             setRequestedContents( requestedContentIds ).
-            setDependentContents( dependentContentIds ).
-            setContainsInvalid( !this.isValidContent( results ) ).
+            setDependentContents(
+                this.invalidDependantsOnTop( dependentContentIds, requestedContentIds, invalidContentResult.getInvalidContentIds() ) ).
+            setContainsInvalid( !invalidContentResult.isEmpty() ).
             build();
     }
 
-    private boolean isValidContent( final CompareContentResults compareResults )
+    private ContentIds invalidDependantsOnTop( final ContentIds dependentContentIdList, final ContentIds requestedContentIds,
+                                               final ContentIds invalidContentIds )
     {
-        return contentService.isValidContent(
+        return ContentIds.from( Stream.concat( invalidContentIds.stream().filter( ( e ) -> !requestedContentIds.contains( e ) ),
+                                               dependentContentIdList.stream().filter( ( e ) -> !invalidContentIds.contains( e ) ) ).
+            collect( Collectors.toList() ) );
+    }
+
+    private GetInvalidContentResult getInvalidContent( final CompareContentResults compareResults )
+    {
+        return contentService.getInvalidContent(
             ContentIds.from( compareResults.stream().filter( ( result ) -> result.getCompareStatus() != CompareStatus.PENDING_DELETE ).
                 map( CompareContentResult::getContentId ).
                 collect( Collectors.toList() ) ) );

@@ -41,7 +41,7 @@ public interface ContentService
 
     CompareContentResults resolvePublishDependencies( ResolvePublishDependenciesParams params );
 
-    boolean isValidContent( ContentIds contentIds );
+    GetInvalidContentResult getInvalidContent( ContentIds contentIds );
 
     Content duplicate( DuplicateContentParams params );
 
