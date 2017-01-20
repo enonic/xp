@@ -1,5 +1,5 @@
-import "../../../api.ts";
-import {DetailsPanel} from "./DetailsPanel";
+import '../../../api.ts';
+import {DetailsPanel} from './DetailsPanel';
 
 import ViewItem = api.app.view.ViewItem;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
@@ -12,9 +12,6 @@ export class ActiveDetailsPanelManager {
         ActiveDetailsPanelManager.doSetActiveDetailsPanel,
         300, false);
 
-    constructor() {
-    }
-
     static setActiveDetailsPanel(detailsPanelToMakeActive: DetailsPanel) {
         ActiveDetailsPanelManager.debouncedSetActiveDetailsPanel(detailsPanelToMakeActive);
     }
@@ -24,8 +21,8 @@ export class ActiveDetailsPanelManager {
     }
 
     private static doSetActiveDetailsPanel(detailsPanelToMakeActive: DetailsPanel) {
-        var currentlyActivePanel = ActiveDetailsPanelManager.getActiveDetailsPanel();
-        if (currentlyActivePanel == detailsPanelToMakeActive || !detailsPanelToMakeActive) {
+        let currentlyActivePanel = ActiveDetailsPanelManager.getActiveDetailsPanel();
+        if (currentlyActivePanel === detailsPanelToMakeActive || !detailsPanelToMakeActive) {
             return;
         }
 

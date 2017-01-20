@@ -6,14 +6,14 @@ var CONFIG = require("../config");
 var gulp = require("gulp");
 var del = require("del");
 var path = require("path");
-var _ = require("lodash");
+var forOwn = require("lodash.forown");
 var logger = require("../util/compileLogger");
 
 function resolveCleanPaths() {
     var paths = [path.join(CONFIG.root.src, CONFIG.tasks.clean.pattern)];
     if (CONFIG.tasks.clean.cleanDest) {
         var subtasks = CONFIG.tasks.css.files;
-        _.forOwn(subtasks, function (task) {
+        forOwn(subtasks, function (task) {
             paths.push(path.join(CONFIG.root.dest, task.dest));
         });
     }

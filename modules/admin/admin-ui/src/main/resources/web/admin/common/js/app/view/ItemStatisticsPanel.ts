@@ -7,7 +7,7 @@ module api.app.view {
         private header: ItemStatisticsHeader<M>;
 
         constructor(className?: string) {
-            super("item-statistics-panel" + (className ? " " + className : ""));
+            super('item-statistics-panel' + (className ? ' ' + className : ''));
 
             this.header = new ItemStatisticsHeader<M>();
             this.appendChild(this.header);
@@ -16,7 +16,6 @@ module api.app.view {
         getHeader(): ItemStatisticsHeader<M> {
             return this.header;
         }
-
 
         setItem(item: api.app.view.ViewItem<M>) {
             this.browseItem = item;

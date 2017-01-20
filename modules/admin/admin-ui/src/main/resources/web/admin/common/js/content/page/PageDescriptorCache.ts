@@ -11,8 +11,8 @@ module api.content.page {
 
         static get(): PageDescriptorCache {
 
-            var w = api.dom.WindowDOM.get();
-            var topWindow: any = w.getTopParent() == null ? w.asWindow() : w.getTopParent().asWindow();
+            let w = api.dom.WindowDOM.get();
+            let topWindow: any = w.getTopParent() == null ? w.asWindow() : w.getTopParent().asWindow();
 
             if (!topWindow.api.content.page.PageDescriptorCache.instance) {
                 topWindow.api.content.page.PageDescriptorCache.instance = new PageDescriptorCache();
@@ -22,7 +22,7 @@ module api.content.page {
 
         constructor() {
             if (PageDescriptorCache.instance) {
-                throw new Error("Instantiation failed: Use PageDescriptorCache.get() instead!");
+                throw new Error('Instantiation failed: Use PageDescriptorCache.get() instead!');
             }
             super();
         }
@@ -34,7 +34,7 @@ module api.content.page {
         }
 
         put(descriptor: PageDescriptor) {
-            api.util.assertNotNull(descriptor, "a PageDescriptor must be given");
+            api.util.assertNotNull(descriptor, 'a PageDescriptor must be given');
 
             super.put(descriptor, descriptor.getKey().getApplicationKey());
         }

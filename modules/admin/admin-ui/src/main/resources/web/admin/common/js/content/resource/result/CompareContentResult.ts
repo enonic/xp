@@ -33,7 +33,7 @@ module api.content.resource.result {
                 return false;
             }
 
-            var other = <CompareContentResult>o;
+            let other = <CompareContentResult>o;
 
             if (!api.ObjectHelper.stringEquals(this.id.toString(), other.id.toString())) {
                 return false;
@@ -44,8 +44,8 @@ module api.content.resource.result {
 
         static fromJson(json: api.content.json.CompareContentResultJson): CompareContentResult {
 
-            var compareStatus: CompareStatus = <CompareStatus>CompareStatus[json.compareStatus],
-                publishStatus: PublishStatus = <PublishStatus>PublishStatus[json.publishStatus];
+            let compareStatus: CompareStatus = <CompareStatus>CompareStatus[json.compareStatus];
+            let publishStatus: PublishStatus = <PublishStatus>PublishStatus[json.publishStatus];
 
             return new CompareContentResult(json.id, compareStatus, publishStatus);
         }

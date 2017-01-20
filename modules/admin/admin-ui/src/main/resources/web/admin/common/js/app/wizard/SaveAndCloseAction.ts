@@ -3,11 +3,11 @@ module api.app.wizard {
     export class SaveAndCloseAction extends api.ui.Action {
 
         constructor(wizardPanel: WizardPanel<any>) {
-            super("SaveAndClose", "mod+enter", true);
+            super('SaveAndClose', 'mod+enter', true);
 
             this.onExecuted(() => {
 
-                var deferred = wemQ.defer();
+                let deferred = wemQ.defer();
 
                 let saveAction = new SaveAction(wizardPanel);
                 saveAction.onAfterExecute(() => {

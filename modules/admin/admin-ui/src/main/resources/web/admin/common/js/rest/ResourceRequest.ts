@@ -4,14 +4,14 @@ module api.rest {
 
         private restPath: Path;
 
-        private method: string = "GET";
+        private method: string = 'GET';
 
         private heavyOperation: boolean;
 
         private timeoutMillis: number;
 
         constructor() {
-            this.restPath = Path.fromString(api.util.UriHelper.getRestUri(""));
+            this.restPath = Path.fromString(api.util.UriHelper.getRestUri(''));
         }
 
         setMethod(value: string) {
@@ -23,14 +23,14 @@ module api.rest {
         }
 
         getRequestPath(): Path {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         getParams(): Object {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
-        setTimeout(timeoutMillis) {
+        setTimeout(timeoutMillis: number) {
             this.timeoutMillis = timeoutMillis;
         }
 
@@ -38,25 +38,22 @@ module api.rest {
             this.heavyOperation = value;
         }
 
-        /*
-         * Override to ensure any validation of ResourceRequest before sending.
-         */
         validate() {
-
+            // Override to ensure any validation of ResourceRequest before sending.
         }
 
         send(): wemQ.Promise<JsonResponse<RAW_JSON_TYPE>> {
 
             this.validate();
 
-            var jsonRequest = new JsonRequest<RAW_JSON_TYPE>().
+            let jsonRequest = new JsonRequest<RAW_JSON_TYPE>().
                 setMethod(this.method).setParams(this.getParams()).setPath(this.getRequestPath()).setTimeout(
                 !this.heavyOperation ? this.timeoutMillis : 0);
             return jsonRequest.send();
         }
 
         sendAndParse(): wemQ.Promise<PARSED_TYPE> {
-            throw new Error("sendAndParse method was not implemented");
+            throw new Error('sendAndParse method was not implemented');
         }
     }
 }

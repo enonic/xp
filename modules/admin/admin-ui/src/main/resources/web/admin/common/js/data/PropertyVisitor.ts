@@ -13,7 +13,7 @@ module api.data {
 
             propertySet.forEach((property: Property, index: number) => {
 
-                if (this.valueType == null || this.valueType == property.getType()) {
+                if (this.valueType == null || this.valueType === property.getType()) {
                     this.visit(property);
                 }
 
@@ -26,7 +26,7 @@ module api.data {
         }
 
         public visit(property: Property) {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
     }
 }

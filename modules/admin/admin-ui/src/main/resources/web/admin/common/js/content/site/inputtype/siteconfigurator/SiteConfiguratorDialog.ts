@@ -34,21 +34,21 @@ module api.content.site.inputtype.siteconfigurator {
             this.okCallback = okCallback;
             this.cancelCallback = cancelCallback;
 
-            this.addClass("site-configurator-dialog");
+            this.addClass('site-configurator-dialog');
 
             CreateHtmlAreaDialogEvent.on((event: CreateHtmlAreaDialogEvent) => {
-                this.addClass("masked");
+                this.addClass('masked');
 
                 api.util.htmlarea.dialog.HTMLAreaDialogHandler.getOpenDialog().onRemoved(() => {
-                    this.removeClass("masked");
-                })
+                    this.removeClass('masked');
+                });
             });
         }
 
         doRender(): Q.Promise<boolean> {
             return super.doRender().then((rendered) => {
                 if (SiteConfiguratorDialog.debug) {
-                    console.debug("SiteConfiguratorDialog.doRender");
+                    console.debug('SiteConfiguratorDialog.doRender');
                 }
 
                 this.appendChildToContentPanel(this.formView);
@@ -62,7 +62,7 @@ module api.content.site.inputtype.siteconfigurator {
                 this.addCancelButtonToBottom();
 
                 return this.formView.layout().then(() => {
-                    this.addClass("animated");
+                    this.addClass('animated');
                     this.centerMyself();
 
                     this.handleSelectorsDropdowns(this.formView);
@@ -74,7 +74,7 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         private addOkButton(okCallback: () => void) {
-            var okAction = new api.ui.Action("Apply");
+            let okAction = new api.ui.Action('Apply');
             this.addAction(okAction, true, true);
             okAction.onExecuted(() => {
                 if (okCallback) {
@@ -85,9 +85,9 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         protected getHeaderContent(application: Application): api.app.NamesAndIconView {
-            var namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(
+            let namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(
                 api.app.NamesAndIconViewSize.large)).setMainName(application.getDisplayName()).setSubName(
-                application.getName() + "-" + application.getVersion());
+                application.getName() + '-' + application.getVersion());
 
             if (application.getIconUrl()) {
                 namesAndIconView.setIconUrl(application.getIconUrl());
@@ -101,7 +101,7 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         private handleSelectorsDropdowns(formView: FormView) {
-            var comboboxes = this.getComboboxesFromFormView(formView);
+            let comboboxes = this.getComboboxesFromFormView(formView);
 
             this.getContentPanel().onScroll((event) => {
                 comboboxes.forEach((comboBox: ComboBox<any>) => {
@@ -111,7 +111,7 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         private getComboboxesFromFormView(formView: FormView): ComboBox<any>[] {
-            var comboboxArray = [];
+            let comboboxArray = [];
 
             formView.getChildren().forEach((element: api.dom.Element) => {
                 this.findComboboxesInElement(element, comboboxArray);
@@ -136,7 +136,7 @@ module api.content.site.inputtype.siteconfigurator {
             if (api.ObjectHelper.iFrameSafeInstanceOf(element, InputView)) {
                 this.findComboboxInItemView(<InputView> element, comboboxArray);
             } else if (api.ObjectHelper.iFrameSafeInstanceOf(element, api.form.FieldSetView)) {
-                var fieldSetView: api.form.FieldSetView = <api.form.FieldSetView> element;
+                let fieldSetView: api.form.FieldSetView = <api.form.FieldSetView> element;
                 fieldSetView.getFormItemViews().forEach((formItemView: api.form.FormItemView) => {
                     this.findComboboxesInElement(formItemView, comboboxArray);
                 });
@@ -144,9 +144,9 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         private findComboboxInItemView(itemView: api.form.FormItemView, comboboxArray: ComboBox<any>[]) {
-            var inputView: InputView = <InputView> itemView;
+            let inputView: InputView = <InputView> itemView;
             if (this.isContentOrImageOrPrincipalOrComboSelectorInput(inputView)) {
-                var combobox = this.getComboboxFromSelectorInputView(inputView);
+                let combobox = this.getComboboxFromSelectorInputView(inputView);
                 if (!!combobox) {
                     comboboxArray.push(combobox);
                 }
@@ -154,8 +154,8 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         private getComboboxFromSelectorInputView(inputView: InputView): ComboBox<any> {
-            var contentComboBox,
-                inputTypeView = inputView.getInputTypeView();
+            let contentComboBox;
+            let inputTypeView = inputView.getInputTypeView();
             if (api.ObjectHelper.iFrameSafeInstanceOf(inputTypeView, ContentSelector)) {
                 contentComboBox = (<ContentSelector> inputTypeView).getContentComboBox();
             } else if (api.ObjectHelper.iFrameSafeInstanceOf(inputTypeView, ImageSelector)) {
@@ -175,7 +175,6 @@ module api.content.site.inputtype.siteconfigurator {
                     api.ObjectHelper.iFrameSafeInstanceOf(inputView.getInputTypeView(), PrincipalSelector) ||
                     api.ObjectHelper.iFrameSafeInstanceOf(inputView.getInputTypeView(), api.form.inputtype.combobox.ComboBox));
         }
-
 
         show() {
             api.dom.Body.get().appendChild(this);

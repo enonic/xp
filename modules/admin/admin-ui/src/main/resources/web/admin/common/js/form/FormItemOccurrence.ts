@@ -30,7 +30,7 @@ module api.form {
         }
 
         isRemoveButtonRequiredStrict(): boolean {
-            return this.occurrences.countOccurrences() == 1 ? false : this.moreThanRequiredOccurrences();
+            return this.occurrences.countOccurrences() === 1 ? false : this.moreThanRequiredOccurrences();
         }
 
         showAddButton(): boolean {
@@ -47,7 +47,7 @@ module api.form {
         }
 
         public oneAndOnly() {
-            return this.index == 0 && this.occurrences.countOccurrences() == 1;
+            return this.index === 0 && this.occurrences.countOccurrences() === 1;
         }
 
         private moreThanRequiredOccurrences() {
@@ -59,7 +59,7 @@ module api.form {
         }
 
         private isLastOccurrence() {
-            return this.index == this.occurrences.countOccurrences() - 1;
+            return this.index === this.occurrences.countOccurrences() - 1;
         }
     }
 }

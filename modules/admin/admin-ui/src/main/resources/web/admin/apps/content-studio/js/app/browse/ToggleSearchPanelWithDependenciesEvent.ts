@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 import ContentSummary = api.content.ContentSummary;
 
 export class ToggleSearchPanelWithDependenciesEvent extends api.event.Event {

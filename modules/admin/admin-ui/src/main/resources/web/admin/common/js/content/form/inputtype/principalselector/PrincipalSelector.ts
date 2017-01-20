@@ -9,6 +9,7 @@ module api.content.form.inputtype.principalselector {
     import RelationshipTypeName = api.schema.relationshiptype.RelationshipTypeName;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
     import FocusSwitchEvent = api.ui.FocusSwitchEvent;
+    import PrincipalSelectedOptionView = api.ui.security.PrincipalSelectedOptionView;
 
     export class PrincipalSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<api.security.Principal> {
 
@@ -19,14 +20,14 @@ module api.content.form.inputtype.principalselector {
         private comboBox: api.ui.security.PrincipalComboBox;
 
         constructor(config?: api.content.form.inputtype.ContentInputTypeViewContext) {
-            super("relationship");
-            this.addClass("input-type-view");
+            super('relationship');
+            this.addClass('input-type-view');
             this.config = config;
             this.readConfig(config.inputConfig);
         }
 
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
-            var principalTypeConfig = inputConfig['principalType'] || [];
+            let principalTypeConfig = inputConfig['principalType'] || [];
             this.principalTypes =
                 principalTypeConfig.map((cfg) => cfg['value']).filter((val) => !!val).map(
                     (val: string) => api.security.PrincipalType[val]).filter((val) => !!val);
@@ -57,7 +58,7 @@ module api.content.form.inputtype.principalselector {
         }
 
         update(propertyArray: api.data.PropertyArray, unchangedOnly?: boolean): Q.Promise<void> {
-            var superPromise = super.update(propertyArray, unchangedOnly);
+            let superPromise = super.update(propertyArray, unchangedOnly);
 
             if (!unchangedOnly || !this.comboBox.isDirty()) {
                 return superPromise.then(() => {
@@ -74,10 +75,10 @@ module api.content.form.inputtype.principalselector {
 
         private createComboBox(input: api.form.Input): api.ui.security.PrincipalComboBox {
 
-            var value = this.getValueFromPropertyArray(this.getPropertyArray());
-            var principalLoader = new api.security.PrincipalLoader().setAllowedTypes(this.principalTypes);
+            let value = this.getValueFromPropertyArray(this.getPropertyArray());
+            let principalLoader = new api.security.PrincipalLoader().setAllowedTypes(this.principalTypes);
 
-            var comboBox = api.ui.security.PrincipalComboBox.create().setLoader(principalLoader).setMaxOccurences(
+            let comboBox = api.ui.security.PrincipalComboBox.create().setLoader(principalLoader).setMaxOccurences(
                 input.getOccurrences().getMaximum()).setValue(value).build();
 
             comboBox.onOptionDeselected((event: SelectedOptionEvent<api.security.Principal>) => {
@@ -89,17 +90,17 @@ module api.content.form.inputtype.principalselector {
                 this.fireFocusSwitchEvent(event);
 
                 const selectedOption = event.getSelectedOption();
-                var key = selectedOption.getOption().displayValue.getKey();
+                let key = selectedOption.getOption().displayValue.getKey();
                 if (!key) {
                     return;
                 }
-                var selectedOptionView: api.ui.security.PrincipalSelectedOptionView = <api.ui.security.PrincipalSelectedOptionView>selectedOption.getOptionView();
+                let selectedOptionView: PrincipalSelectedOptionView = <PrincipalSelectedOptionView>selectedOption.getOptionView();
                 this.saveToSet(selectedOptionView.getOption(), selectedOption.getIndex());
                 this.validate(false);
             });
 
             comboBox.onOptionMoved((selectedOption: api.ui.selector.combobox.SelectedOption<api.security.Principal>) => {
-                var selectedOptionView: api.ui.security.PrincipalSelectedOptionView = <api.ui.security.PrincipalSelectedOptionView> selectedOption.getOptionView();
+                let selectedOptionView: PrincipalSelectedOptionView = <PrincipalSelectedOptionView> selectedOption.getOptionView();
                 this.saveToSet(selectedOptionView.getOption(), selectedOption.getIndex());
                 this.validate(false);
             });
@@ -107,12 +108,12 @@ module api.content.form.inputtype.principalselector {
             return comboBox;
         }
 
-        private saveToSet(principalOption: api.ui.selector.Option<api.security.Principal>, index) {
+        private saveToSet(principalOption: api.ui.selector.Option<api.security.Principal>, index: number) {
             this.getPropertyArray().set(index, ValueTypes.REFERENCE.newValue(principalOption.value));
         }
 
         private refreshSortable() {
-            wemjq(this.getHTMLElement()).find(".selected-options").sortable("refresh");
+            wemjq(this.getHTMLElement()).find('.selected-options').sortable('refresh');
         }
 
         protected getNumberOfValids(): number {
@@ -144,5 +145,5 @@ module api.content.form.inputtype.principalselector {
 
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("PrincipalSelector", PrincipalSelector));
+    api.form.inputtype.InputTypeManager.register(new api.Class('PrincipalSelector', PrincipalSelector));
 }

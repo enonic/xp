@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 import AppBarTabId = api.app.bar.AppBarTabId;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import ContentId = api.content.ContentId;
@@ -59,8 +59,9 @@ export class ContentWizardPanelParams {
     }
 
     static fromApp(app: Application): ContentWizardPanelParams {
-        let path = app.getPath(),
-            tabId, wizardParams;
+        let path = app.getPath();
+        let tabId;
+        let wizardParams;
         switch (path.getElement(0)) {
         case 'new':
             let contentTypeName = new ContentTypeName(path.getElement(1));

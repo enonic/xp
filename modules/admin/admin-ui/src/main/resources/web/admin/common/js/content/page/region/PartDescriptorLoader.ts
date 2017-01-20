@@ -13,7 +13,7 @@ module api.content.page.region {
         }
 
         filterFn(descriptor: PartDescriptor) {
-            return descriptor.getDisplayName().toString().toLowerCase().indexOf(this.getSearchString().toLowerCase()) != -1;
+            return descriptor.getDisplayName().toString().toLowerCase().indexOf(this.getSearchString().toLowerCase()) !== -1;
         }
 
         protected createRequest(): GetPartDescriptorsByApplicationsRequest {
@@ -23,7 +23,6 @@ module api.content.page.region {
         setApplicationKeys(applicationKeys: ApplicationKey[]) {
             this.request.setApplicationKeys(applicationKeys);
         }
-    
 
     }
 }

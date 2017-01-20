@@ -21,20 +21,20 @@ module api.query.expr {
         }
 
         toString() {
-            var result: string = "";
+            let result: string = '';
 
             if (this.constraint != null) {
                 result = result.concat(this.constraint.toString());
             }
 
             if (this.orderList.length > 0) {
-                result = result.concat(" ORDER BY ");
+                result = result.concat(' ORDER BY ');
 
-                var sub = [];
+                let sub = [];
                 this.orderList.forEach((expr: OrderExpr) => {
                     sub.push(expr.toString());
                 });
-                result = result.concat(sub.join(", "));
+                result = result.concat(sub.join(', '));
             }
 
             return result;

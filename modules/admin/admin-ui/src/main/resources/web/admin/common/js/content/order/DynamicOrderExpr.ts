@@ -14,13 +14,13 @@ module api.content.order {
         }
 
         toString() {
-            return this.function + " " + super.getDirection();
+            return this.function + ' ' + super.getDirection();
         }
 
         toJson(): json.OrderExprJson {
             return {
-                "function": this.function,
-                "direction": this.getDirection()
+                function: this.function,
+                direction: this.getDirection()
             };
         }
     }

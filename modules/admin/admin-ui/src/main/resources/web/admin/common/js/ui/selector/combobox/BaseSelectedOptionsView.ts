@@ -22,7 +22,7 @@ module api.ui.selector.combobox {
         private editable: boolean = true;
 
         constructor(className?: string) {
-            super("selected-options" + (className ? " " + className : ""));
+            super('selected-options' + (className ? ' ' + className : ''));
         }
 
         setEditable(editable: boolean) {
@@ -62,19 +62,18 @@ module api.ui.selector.combobox {
             this.toggleClass('sortable', sortable);
         }
 
-
         protected handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
             this.beforeDragStartedHeight = this.getEl().getHeight();
 
-            var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+            let draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
             this.draggingIndex = draggedElement.getSiblingIndex();
         }
 
         protected handleDnDUpdate(event: Event, ui: JQueryUI.SortableUIParams) {
 
             if (this.draggingIndex >= 0) {
-                var draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
-                var draggedToIndex = draggedElement.getSiblingIndex();
+                let draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
+                let draggedToIndex = draggedElement.getSiblingIndex();
                 this.handleMovedOccurrence(this.draggingIndex, draggedToIndex);
             }
 
@@ -82,7 +81,7 @@ module api.ui.selector.combobox {
         }
 
         protected handleDnDStop(event: Event, ui: JQueryUI.SortableUIParams): void {
-            
+            // must be implemented by children
         }
 
         private handleMovedOccurrence(fromIndex: number, toIndex: number) {
@@ -114,7 +113,7 @@ module api.ui.selector.combobox {
                 return false;
             }
 
-            var selectedOption: SelectedOption<T> = this.createSelectedOption(option);
+            let selectedOption: SelectedOption<T> = this.createSelectedOption(option);
 
             let optionView = selectedOption.getOptionView();
             optionView.onRemoveClicked(() => this.removeOption(option));
@@ -132,20 +131,20 @@ module api.ui.selector.combobox {
         }
 
         removeOption(optionToRemove: api.ui.selector.Option<T>, silent: boolean = false) {
-            api.util.assertNotNull(optionToRemove, "optionToRemove cannot be null");
+            api.util.assertNotNull(optionToRemove, 'optionToRemove cannot be null');
 
-            var selectedOption = this.getByOption(optionToRemove);
-            api.util.assertNotNull(selectedOption, "Did not find any selected option to remove from option: " + optionToRemove.value);
+            let selectedOption = this.getByOption(optionToRemove);
+            api.util.assertNotNull(selectedOption, 'Did not find any selected option to remove from option: ' + optionToRemove.value);
 
             selectedOption.getOptionView().remove();
 
             this.list = this.list.filter((option: SelectedOption<T>) => {
-                return option.getOption().value != selectedOption.getOption().value;
+                return option.getOption().value !== selectedOption.getOption().value;
             });
 
             // update item indexes to the right of removed item
             if (selectedOption.getIndex() < this.list.length) {
-                for (var i: number = selectedOption.getIndex(); i < this.list.length; i++) {
+                for (let i: number = selectedOption.getIndex(); i < this.list.length; i++) {
                     this.list[i].setIndex(i);
                 }
             }
@@ -173,7 +172,7 @@ module api.ui.selector.combobox {
 
         getById(id: string): SelectedOption<T> {
             return this.list.filter((selectedOption: SelectedOption<T>) => {
-                return selectedOption.getOption().value == id;
+                return selectedOption.getOption().value === id;
             })[0];
         }
 
@@ -182,7 +181,7 @@ module api.ui.selector.combobox {
         }
 
         maximumOccurrencesReached(): boolean {
-            if (this.maximumOccurrences == 0) {
+            if (this.maximumOccurrences === 0) {
                 return false;
             }
             return this.count() >= this.maximumOccurrences;
@@ -215,8 +214,8 @@ module api.ui.selector.combobox {
         }
 
         unOptionDeselected(listener: {(removed: SelectedOptionEvent<T>): void;}) {
-            this.optionRemovedListeners = this.optionRemovedListeners.filter(function (curr) {
-                return curr != listener;
+            this.optionRemovedListeners = this.optionRemovedListeners.filter(function (curr: {(removed: SelectedOptionEvent<T>): void;}) {
+                return curr !== listener;
             });
         }
 
@@ -226,7 +225,7 @@ module api.ui.selector.combobox {
 
         unOptionSelected(listener: (added: SelectedOptionEvent<T>)=>void) {
             this.optionAddedListeners = this.optionAddedListeners.filter((current: (added: SelectedOptionEvent<T>)=>void) => {
-                return listener != current;
+                return listener !== current;
             });
         }
 
@@ -243,7 +242,7 @@ module api.ui.selector.combobox {
         unOptionMoved(listener: (moved: SelectedOption<T>) => void) {
             this.optionMovedListeners =
                 this.optionMovedListeners.filter((current: (option: SelectedOption<T>)=>void) => {
-                    return listener != current;
+                    return listener !== current;
                 });
         }
 

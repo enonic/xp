@@ -14,7 +14,7 @@ module api.form {
 
         parent: FormItemSetOccurrenceView;
 
-        dataSet: PropertySet
+        dataSet: PropertySet;
     }
 
     export class FormItemSetOccurrenceView extends FormSetOccurrenceView {
@@ -22,8 +22,8 @@ module api.form {
         private formItemSet: FormItemSet;
 
         constructor(config: FormItemSetOccurrenceViewConfig) {
-            super("form-item-set-occurrence-view", config.formSetOccurrence);
-            this.occurrenceContainerClassName = "form-item-set-occurrences-container";
+            super('form-item-set-occurrence-view', config.formSetOccurrence);
+            this.occurrenceContainerClassName = 'form-item-set-occurrences-container';
             this.formItemOccurrence = config.formSetOccurrence;
             this.formItemSet = config.formItemSet;
             this.propertySet = config.dataSet;
@@ -39,14 +39,14 @@ module api.form {
                         return; // currentValidationState is initialized on validate() call which may not be triggered in some cases
                     }
 
-                    var previousValidState = this.currentValidationState.isValid();
+                    let previousValidState = this.currentValidationState.isValid();
                     if (event.isValid()) {
                         this.currentValidationState.removeByPath(event.getOrigin(), false, event.isIncludeChildren());
                     } else {
                         this.currentValidationState.flatten(event.getRecording());
                     }
 
-                    if (previousValidState != this.currentValidationState.isValid()) {
+                    if (previousValidState !== this.currentValidationState.isValid()) {
                         this.notifyValidityChanged(new RecordingValidityChangedEvent(this.currentValidationState,
                             this.resolveValidationRecordingPath()).setIncludeChildren(true));
                     }
@@ -56,9 +56,9 @@ module api.form {
 
         validate(silent: boolean = true): ValidationRecording {
 
-            var allRecordings = new ValidationRecording();
+            let allRecordings = new ValidationRecording();
             this.formItemViews.forEach((formItemView: FormItemView) => {
-                var currRecording = formItemView.validate(silent);
+                let currRecording = formItemView.validate(silent);
                 allRecordings.flatten(currRecording);
             });
 

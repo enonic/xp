@@ -2,9 +2,9 @@ module api.content {
 
     export class ContentPath implements api.Equitable {
 
-        public static ELEMENT_DIVIDER: string = "/";
+        public static ELEMENT_DIVIDER: string = '/';
 
-        public static ROOT = ContentPath.fromString("/");
+        public static ROOT: ContentPath = ContentPath.fromString('/');
 
         private elements: string[];
 
@@ -12,20 +12,19 @@ module api.content {
 
         public static fromParent(parent: ContentPath, name: string): ContentPath {
 
-            var elements = parent.elements;
+            let elements = parent.elements;
             elements.push(name);
             return new ContentPath(elements);
         }
 
         public static fromString(path: string): ContentPath {
 
-            var elements: string[];
+            let elements: string[];
 
-            if (path.indexOf("/") == 0 && path.length > 1) {
+            if (path.indexOf('/') === 0 && path.length > 1) {
                 path = path.substr(1);
                 elements = path.split(ContentPath.ELEMENT_DIVIDER);
-            }
-            else if (path == "/") {
+            } else if (path === '/') {
                 elements = [];
             }
 
@@ -34,19 +33,18 @@ module api.content {
 
         constructor(elements: string[]) {
             this.elements = elements;
-            if (elements.length == 0) {
+            if (elements.length === 0) {
                 this.refString = ContentPath.ELEMENT_DIVIDER;
-            }
-            else {
+            } else {
                 this.refString = ContentPath.ELEMENT_DIVIDER + this.elements.join(ContentPath.ELEMENT_DIVIDER);
             }
         }
 
         getPathAtLevel(level: number): ContentPath {
-            var result = "";
-            for (var index = 0; index < this.getElements().length; index++) {
+            let result = '';
+            for (let index = 0; index < this.getElements().length; index++) {
                 result = result + ContentPath.ELEMENT_DIVIDER + this.getElements()[index];
-                if (index == (level - 1)) {
+                if (index === (level - 1)) {
                     return ContentPath.fromString(result);
                 }
             }
@@ -70,7 +68,7 @@ module api.content {
         }
 
         getFirstElement(): string {
-            return (this.elements[0] || "");
+            return (this.elements[0] || '');
         }
 
         getParentPath(): ContentPath {
@@ -78,7 +76,7 @@ module api.content {
             if (this.elements.length < 1) {
                 return null;
             }
-            var parentElements: string[] = [];
+            let parentElements: string[] = [];
             this.elements.forEach((element: string, index: number)=> {
                 if (index < this.elements.length - 1) {
                     parentElements.push(element);
@@ -101,7 +99,7 @@ module api.content {
                 return false;
             }
 
-            var other = <ContentPath>o;
+            let other = <ContentPath>o;
 
             if (!api.ObjectHelper.stringEquals(this.refString, other.refString)) {
                 return false;
@@ -122,10 +120,10 @@ module api.content {
 
         prettifyUnnamedPathElements(): ContentPath {
 
-            var prettyElements: string[] = [];
+            let prettyElements: string[] = [];
             this.elements.forEach((element: string) => {
                 if (ContentName.fromString(element).isUnnamed()) {
-                    prettyElements.push("<" + ContentUnnamed.PRETTY_UNNAMED + ">");
+                    prettyElements.push('<' + ContentUnnamed.PRETTY_UNNAMED + '>');
                 } else {
                     prettyElements.push(element);
                 }

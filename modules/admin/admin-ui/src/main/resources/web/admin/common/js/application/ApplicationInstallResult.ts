@@ -1,6 +1,6 @@
 module api.application {
 
-    export class ApplicationInstallResult implements api.Equitable{
+    export class ApplicationInstallResult implements api.Equitable {
 
         private application: Application;
 
@@ -28,7 +28,7 @@ module api.application {
                 return false;
             }
 
-            var other = <ApplicationInstallResult>o;
+            let other = <ApplicationInstallResult>o;
             return api.ObjectHelper.stringEquals(this.failure, other.failure) &&
                    api.ObjectHelper.equals(this.application, other.application);
         }

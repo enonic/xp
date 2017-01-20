@@ -17,42 +17,42 @@ module api.content {
     export class CompareStatusFormatter {
         public static formatStatus(compareStatus: CompareStatus): string {
 
-            var status;
+            let status;
 
             switch (compareStatus) {
             case CompareStatus.NEW:
-                status = "Offline";
+                status = 'Offline';
                 break;
             case CompareStatus.NEWER:
-                status = "Modified";
+                status = 'Modified';
                 break;
             case CompareStatus.OLDER:
-                status = "Out-of-date";
+                status = 'Out-of-date';
                 break;
             case CompareStatus.PENDING_DELETE:
-                status = "Pending delete";
+                status = 'Pending delete';
                 break;
             case CompareStatus.EQUAL:
-                status = "Online";
+                status = 'Online';
                 break;
             case CompareStatus.MOVED:
-                status = "Moved";
+                status = 'Moved';
                 break;
             case CompareStatus.PENDING_DELETE_TARGET:
-                status = "Deleted in prod";
+                status = 'Deleted in prod';
                 break;
             case CompareStatus.NEW_TARGET:
-                status = "New in prod";
+                status = 'New in prod';
                 break;
             case CompareStatus.CONFLICT_PATH_EXISTS:
-                status = "Conflict";
+                status = 'Conflict';
                 break;
             default:
-                status = "Unknown"
+                status = 'Unknown';
             }
 
             if (!!CompareStatus[status]) {
-                return "Unknown";
+                return 'Unknown';
             }
 
             return status;

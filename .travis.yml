@@ -5,7 +5,8 @@ jdk:
 - oraclejdk8
 
 install: true
-script: ./gradlew ci
+script:
+  - ./gradlew :admin:admin-ui:lint && ./gradlew ci
 
 cache:
   directories:

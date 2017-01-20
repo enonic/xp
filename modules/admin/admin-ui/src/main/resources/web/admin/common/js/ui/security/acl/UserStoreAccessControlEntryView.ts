@@ -38,12 +38,12 @@ module api.ui.security.acl {
         }
 
         setEditable(editable: boolean) {
-            if (editable != this.editable) {
+            if (editable !== this.editable) {
                 this.accessSelector.setEnabled(editable);
                 this.editable = editable;
             }
 
-            this.toggleClass("readonly", !editable);
+            this.toggleClass('readonly', !editable);
         }
 
         isEditable(): boolean {
@@ -56,20 +56,20 @@ module api.ui.security.acl {
 
         unValueChanged(listener: (item: UserStoreAccessControlEntry) => void) {
             this.valueChangedListeners = this.valueChangedListeners.filter((curr) => {
-                return curr != listener;
-            })
+                return curr !== listener;
+            });
         }
 
         notifyValueChanged(item: UserStoreAccessControlEntry) {
             this.valueChangedListeners.forEach((listener) => {
                 listener(item);
-            })
+            });
         }
 
         public setUserStoreAccessControlEntry(ace: UserStoreAccessControlEntry, silent?: boolean) {
             this.ace = ace;
 
-            var principal = Principal.create().setKey(ace.getPrincipal().getKey()).setDisplayName(
+            let principal = Principal.create().setKey(ace.getPrincipal().getKey()).setDisplayName(
                 ace.getPrincipal().getDisplayName()).setModifiedTime(ace.getPrincipal().getModifiedTime()).build();
             this.setObject(principal);
 
@@ -77,7 +77,7 @@ module api.ui.security.acl {
         }
 
         public getUserStoreAccessControlEntry(): UserStoreAccessControlEntry {
-            var ace = new UserStoreAccessControlEntry(this.ace.getPrincipal(), this.ace.getAccess());
+            let ace = new UserStoreAccessControlEntry(this.ace.getPrincipal(), this.ace.getAccess());
             return ace;
         }
 
@@ -85,7 +85,7 @@ module api.ui.security.acl {
             super.doLayout(object);
 
             if (UserStoreAccessControlEntryView.debug) {
-                console.debug("UserStoreAccessControlEntryView.doLayout");
+                console.debug('UserStoreAccessControlEntryView.doLayout');
             }
 
             // permissions will be set on access selector value change
@@ -100,7 +100,7 @@ module api.ui.security.acl {
             this.accessSelector.setValue(this.ace.getAccess(), true);
 
             if (!this.removeButton) {
-                this.removeButton = new api.dom.AEl("icon-close");
+                this.removeButton = new api.dom.AEl('icon-close');
                 this.removeButton.onClicked((event: MouseEvent) => {
                     if (this.editable) {
                         this.notifyRemoveClicked(event);

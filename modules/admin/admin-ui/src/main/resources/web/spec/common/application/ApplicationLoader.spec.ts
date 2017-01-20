@@ -3,57 +3,57 @@ import ListApplicationsRequest = api.application.ListApplicationsRequest;
 import ApplicationBuilder = api.application.ApplicationBuilder;
 import Application = api.application.Application;
 
-describe("api.application.ApplicationLoader", () => {
+describe('api.application.ApplicationLoader', () => {
 
-    var applicationLoader;
+    let applicationLoader;
 
     beforeEach(() => {
         applicationLoader = new ApplicationLoader(null);
     });
 
-    it("should create an instance", () => {
+    it('should create an instance', () => {
         expect(applicationLoader).toBeDefined();
     });
 
-    it("should set request property", () => {
+    it('should set request property', () => {
         expect(applicationLoader.request).toBeDefined();
     });
 
-    it("request property should be of correct type", () => {
+    it('request property should be of correct type', () => {
         expect(api.ObjectHelper.iFrameSafeInstanceOf(applicationLoader.request, ListApplicationsRequest)).toBeTruthy();
     });
 
-    describe("default loading behavior", () => {
-        var deferredPromise;
+    describe('default loading behavior', () => {
+        let deferredPromise;
 
         beforeEach(() => {
             deferredPromise = wemQ.defer();
 
-            spyOn(applicationLoader, "sendRequest").and.returnValue(deferredPromise.promise);
+            spyOn(applicationLoader, 'sendRequest').and.returnValue(deferredPromise.promise);
 
-            spyOn(applicationLoader, "notifyLoadingData");
-            spyOn(applicationLoader, "notifyLoadedData");
+            spyOn(applicationLoader, 'notifyLoadingData');
+            spyOn(applicationLoader, 'notifyLoadedData');
 
             applicationLoader.load();
         });
 
-        it("should fire an event before data load", () => {
+        it('should fire an event before data load', () => {
             expect(applicationLoader.notifyLoadingData).toHaveBeenCalled();
         });
 
-        describe("after applications are loaded", () => {
-            var applications = [];
+        describe('after applications are loaded', () => {
+            let applications = [];
 
             beforeEach(() => {
-                var startedApplication = new ApplicationBuilder().build();
-                var stoppedApplication = new ApplicationBuilder().build();
+                let startedApplication = new ApplicationBuilder().build();
+                let stoppedApplication = new ApplicationBuilder().build();
 
                 applications.push(startedApplication, stoppedApplication);
 
-                spyOn(applications, "filter");
+                spyOn(applications, 'filter');
             });
 
-            it("should fire an event after data load", (done) => {
+            it('should fire an event after data load', (done) => {
                 deferredPromise.promise.then(() => {
                     expect(applicationLoader.notifyLoadedData).toHaveBeenCalled();
                     done();
@@ -62,7 +62,7 @@ describe("api.application.ApplicationLoader", () => {
                 deferredPromise.resolve(applications);
             });
 
-            it("should NOT filter data", (done) => {
+            it('should NOT filter data', (done) => {
                 deferredPromise.promise.then(() => {
                     expect(applications.filter).not.toHaveBeenCalled();
                     done();
@@ -73,8 +73,11 @@ describe("api.application.ApplicationLoader", () => {
         });
     });
 
-    describe("loading with filtering", () => {
-        var deferredPromise, filterObject, promiseLoad, applications = [];
+    describe('loading with filtering', () => {
+        let deferredPromise;
+        let filterObject;
+        let promiseLoad;
+        let applications;
 
         beforeEach(() => {
             filterObject = {
@@ -85,33 +88,33 @@ describe("api.application.ApplicationLoader", () => {
 
             deferredPromise = wemQ.defer();
 
-            spyOn(applicationLoader, "sendRequest").and.returnValue(deferredPromise.promise);
+            spyOn(applicationLoader, 'sendRequest').and.returnValue(deferredPromise.promise);
 
             promiseLoad = applicationLoader.load();
         });
 
-        describe("after applications are loaded", () => {
+        describe('after applications are loaded', () => {
 
-            var startedApplication, filterSpy;
+            let startedApplication;
+            let filterSpy;
 
             beforeEach(() => {
                 applications = [];
-                var applicationBuilder = new ApplicationBuilder();
+                let applicationBuilder = new ApplicationBuilder();
 
                 applicationBuilder.state = Application.STATE_STARTED;
                 startedApplication = applicationBuilder.build();
 
                 applicationBuilder.state = Application.STATE_STOPPED;
-                var stoppedApplication = applicationBuilder.build();
+                let stoppedApplication = applicationBuilder.build();
 
                 applications.push(startedApplication, stoppedApplication);
 
-                filterSpy = spyOn(applications, "filter");
-
+                filterSpy = spyOn(applications, 'filter');
 
             });
 
-            it("should apply filter", (done) => {
+            it('should apply filter', (done) => {
                 deferredPromise.promise.then(() => {
                     expect(applications.filter).toHaveBeenCalled();
                     done();
@@ -120,7 +123,7 @@ describe("api.application.ApplicationLoader", () => {
                 deferredPromise.resolve(applications);
             });
 
-            it("should correctly filter data", (done) => {
+            it('should correctly filter data', (done) => {
                 filterSpy.and.callThrough();
 
                 promiseLoad.then((filteredApplications) => {

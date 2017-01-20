@@ -1,4 +1,5 @@
-import "../../api.ts";
+import '../../api.ts';
+import {OpenChangePasswordDialogEvent} from './OpenChangePasswordDialogEvent';
 
 import User = api.security.User;
 import Principal = api.security.Principal;
@@ -12,7 +13,6 @@ import Validators = api.ui.form.Validators;
 import FormItem = api.ui.form.FormItem;
 import Fieldset = api.ui.form.Fieldset;
 import Button = api.ui.button.Button;
-import {OpenChangePasswordDialogEvent} from "./OpenChangePasswordDialogEvent";
 
 export class UserPasswordWizardStepForm extends api.app.wizard.WizardStepForm {
 
@@ -28,14 +28,13 @@ export class UserPasswordWizardStepForm extends api.app.wizard.WizardStepForm {
 
     private fieldSet: Fieldset;
 
-
     constructor() {
         super();
 
         this.password = new PasswordGenerator();
 
-        this.changePasswordButton = new Button("Change Password");
-        this.changePasswordButton.addClass("change-password-button");
+        this.changePasswordButton = new Button('Change Password');
+        this.changePasswordButton.addClass('change-password-button');
 
         this.createPasswordFormItem = new FormItemBuilder(this.password).setLabel('Password').setValidator(Validators.required).build();
 
@@ -45,7 +44,7 @@ export class UserPasswordWizardStepForm extends api.app.wizard.WizardStepForm {
         this.fieldSet.add(this.createPasswordFormItem);
         this.fieldSet.add(this.updatePasswordFormItem);
 
-        var passwordForm = new api.ui.form.Form().add(this.fieldSet);
+        let passwordForm = new api.ui.form.Form().add(this.fieldSet);
 
         passwordForm.onValidityChanged((event: api.ValidityChangedEvent) => {
             this.notifyValidityChanged(new api.app.wizard.WizardStepValidityChangedEvent(event.isValid()));

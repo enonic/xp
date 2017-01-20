@@ -11,19 +11,21 @@ module api.content.page.region {
         }
 
         getParams(): Object {
-            throw new Error("Unexpected call");
+            throw new Error('Unexpected call');
         }
 
         getRequestPath(): api.rest.Path {
-            throw new Error("Unexpected call");
+            throw new Error('Unexpected call');
         }
 
         sendAndParse(): wemQ.Promise<PartDescriptor[]> {
 
-            var promises = this.applicationKeys.map((applicationKey: ApplicationKey) => new GetPartDescriptorsByApplicationRequest(applicationKey).sendAndParse());
+            const request = (applicationKey: ApplicationKey) => new GetPartDescriptorsByApplicationRequest(applicationKey).sendAndParse();
+
+            const promises = this.applicationKeys.map(request);
 
             return wemQ.all(promises).then((results: PartDescriptor[][]) => {
-                var all: PartDescriptor[] = [];
+                let all: PartDescriptor[] = [];
                 results.forEach((result: PartDescriptor[]) => {
                     Array.prototype.push.apply(all, result);
                 });

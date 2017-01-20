@@ -7,8 +7,8 @@ module api.security.acl {
         private access: UserStoreAccess;
 
         constructor(principal: Principal, access?: UserStoreAccess) {
-            api.util.assertNotNull(principal, "principal not set");
-            //    api.util.assertNotNull(access, "access not set");
+            api.util.assertNotNull(principal, 'principal not set');
+            //    api.util.assertNotNull(access, 'access not set');
             this.principal = principal;
             this.access = access;
         }
@@ -42,7 +42,7 @@ module api.security.acl {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, UserStoreAccessControlEntry)) {
                 return false;
             }
-            var other = <UserStoreAccessControlEntry>o;
+            let other = <UserStoreAccessControlEntry>o;
             return this.principal.equals(other.getPrincipal()) &&
                    this.access === other.access;
         }
@@ -57,8 +57,8 @@ module api.security.acl {
 
         toJson(): api.security.acl.UserStoreAccessControlEntryJson {
             return {
-                "principal": this.principal.toJson(),
-                "access": UserStoreAccess[this.access]
+                principal: this.principal.toJson(),
+                access: UserStoreAccess[this.access]
             };
         }
 

@@ -1,26 +1,19 @@
 package com.enonic.xp.blob;
 
+import java.io.IOException;
+
+import com.google.common.hash.HashCode;
+import com.google.common.hash.Hashing;
+import com.google.common.io.BaseEncoding;
+import com.google.common.io.ByteSource;
+
 public final class BlobKey
 {
-    private final static char[] HEX = "0123456789abcdef".toCharArray();
-
     private final String key;
 
-    public BlobKey( final String key )
+    private BlobKey( final String key )
     {
         this.key = key;
-    }
-
-    public BlobKey( final byte[] key )
-    {
-        char[] buffer = new char[key.length * 2];
-        for ( int i = 0; i < key.length; i++ )
-        {
-            buffer[2 * i] = HEX[( key[i] >> 4 ) & 0x0f];
-            buffer[2 * i + 1] = HEX[key[i] & 0x0f];
-        }
-
-        this.key = new String( buffer );
     }
 
     @Override
@@ -39,5 +32,32 @@ public final class BlobKey
     public boolean equals( final Object object )
     {
         return ( object instanceof BlobKey ) && this.key.equals( ( (BlobKey) object ).key );
+    }
+
+    public static BlobKey from( final String key )
+    {
+        return new BlobKey( key );
+    }
+
+    private static BlobKey from( final byte... key )
+    {
+        return from( BaseEncoding.base16().lowerCase().encode( key ) );
+    }
+
+    public static BlobKey from( final HashCode key )
+    {
+        return from( key.asBytes() );
+    }
+
+    public static BlobKey from( final ByteSource in )
+    {
+        try
+        {
+            return from( in.hash( Hashing.sha1() ) );
+        }
+        catch ( final IOException e )
+        {
+            throw new BlobStoreException( "Failed to create blobKey", e );
+        }
     }
 }

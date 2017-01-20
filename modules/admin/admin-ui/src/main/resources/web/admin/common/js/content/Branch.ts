@@ -5,5 +5,4 @@ module api.content {
         MASTER
     }
 
-
 }

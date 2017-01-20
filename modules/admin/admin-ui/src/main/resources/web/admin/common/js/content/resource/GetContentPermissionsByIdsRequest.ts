@@ -4,18 +4,19 @@ module api.content.resource {
     import ContentsPermissionsEntryJson = api.content.json.ContentPermissionsJson;
     import ContentAccessControlList = api.security.acl.ContentAccessControlList;
 
-    export class GetContentPermissionsByIdsRequest extends ContentResourceRequest<ContentsPermissionsEntryJson[], ContentAccessControlList[]> {
+    export class GetContentPermissionsByIdsRequest
+    extends ContentResourceRequest<ContentsPermissionsEntryJson[], ContentAccessControlList[]> {
 
         private contentIds: ContentId[];
 
         constructor(contentIds: ContentId[]) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             this.contentIds = contentIds;
         }
 
         getParams(): Object {
-            var fn = (contentId: ContentId) => {
+            let fn = (contentId: ContentId) => {
                 return contentId.toString();
             };
             return {
@@ -24,7 +25,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "contentPermissionsByIds");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'contentPermissionsByIds');
         }
 
         sendAndParse(): wemQ.Promise<ContentAccessControlList[]> {

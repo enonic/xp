@@ -14,7 +14,7 @@ module api.ui.grid {
         minWidth?: number;
         maxWidth?: number;
     }
-    
+
     export class GridColumnBuilder<T extends Slick.SlickData> {
 
         asyncPostRender: (cellNode:any, row:any, dataContext:any, colDef:any) => void;
@@ -171,9 +171,9 @@ module api.ui.grid {
 
     export class GridColumn<T extends Slick.SlickData> implements Slick.Column<T> {
 
-        asyncPostRender: (cellNode:any, row:any, dataContext:any, colDef:any) => void;
+        asyncPostRender?: (cellNode:any, row:any, dataContext:any, colDef:any) => void;
 
-        behavior: any;
+        behavior?: any;
 
         cannotTriggerInsert: boolean;
 

@@ -1,14 +1,16 @@
 module api.content.resource {
 
     import AccessControlList = api.security.acl.AccessControlList;
+    import EffectivePermissionJson = api.content.json.EffectivePermissionJson;
+    import EffectivePermission = api.ui.security.acl.EffectivePermission;
 
-    export class GetEffectivePermissionsRequest extends ContentResourceRequest<api.content.json.EffectivePermissionJson[], api.ui.security.acl.EffectivePermission[]> {
+    export class GetEffectivePermissionsRequest extends ContentResourceRequest<EffectivePermissionJson[], EffectivePermission[]> {
 
         private contentId: ContentId;
 
         constructor(contentId: ContentId) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
             this.contentId = contentId;
         }
 
@@ -19,7 +21,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "effectivePermissions");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'effectivePermissions');
         }
 
         sendAndParse(): wemQ.Promise<api.ui.security.acl.EffectivePermission[]> {

@@ -20,16 +20,19 @@ module api.content {
 
         private inheritPermissions: boolean;
 
+        private overwritePermissions: boolean;
+
         constructor(builder: ContentBuilder) {
             super(builder);
 
-            api.util.assertNotNull(builder.data, "data is required for Content");
+            api.util.assertNotNull(builder.data, 'data is required for Content');
             this.data = builder.data;
             this.attachments = builder.attachments;
             this.extraData = builder.extraData || [];
             this.pageObj = builder.pageObj;
             this.permissions = builder.permissions || new AccessControlList();
             this.inheritPermissions = builder.inheritPermissions;
+            this.overwritePermissions = builder.overwritePermissions;
         }
 
         getContentData(): PropertyTree {
@@ -64,17 +67,21 @@ module api.content {
             return this.inheritPermissions;
         }
 
+        isOverwritePermissionsEnabled(): boolean {
+            return this.overwritePermissions;
+        }
+
         isAnyPrincipalAllowed(principalKeys: api.security.PrincipalKey[], permission: api.security.acl.Permission): boolean {
 
             if (principalKeys.map(key => key.toString()).indexOf(api.security.RoleKeys.ADMIN.toString()) > -1) {
                 return true;
             }
 
-            for (var i = 0; i < this.permissions.getEntries().length; i++) {
-                var entry = this.permissions.getEntries()[i];
+            for (let i = 0; i < this.permissions.getEntries().length; i++) {
+                let entry = this.permissions.getEntries()[i];
 
                 if (entry.isAllowed(permission)) {
-                    var principalInEntry = principalKeys.some((principalKey: api.security.PrincipalKey) => {
+                    let principalInEntry = principalKeys.some((principalKey: api.security.PrincipalKey) => {
                         if (principalKey.equals(entry.getPrincipalKey())) {
                             return true;
                         }
@@ -88,19 +95,20 @@ module api.content {
         }
 
         private trimPropertyTree(data: PropertyTree): PropertyTree {
-            var copy = data.copy();
+            let copy = data.copy();
             copy.getRoot().removeEmptyValues();
             return copy;
         }
 
         private trimExtraData(extraData: ExtraData): ExtraData {
-            var copy = extraData.clone();
+            let copy = extraData.clone();
             copy.getData().getRoot().removeEmptyValues();
             return copy;
         }
 
         dataEquals(other: PropertyTree, ignoreEmptyValues: boolean = false): boolean {
-            let data, otherData;
+            let data;
+            let otherData;
             if (ignoreEmptyValues) {
                 data = this.trimPropertyTree(this.data);
                 otherData = this.trimPropertyTree(other);
@@ -112,7 +120,8 @@ module api.content {
         }
 
         extraDataEquals(other: ExtraData[], ignoreEmptyValues: boolean = false): boolean {
-            let extraData, otherExtraData;
+            let extraData;
+            let otherExtraData;
             if (ignoreEmptyValues) {
                 extraData = this.extraData.map((m) => this.trimExtraData(m)).filter((m) => !m.getData().isEmpty());
                 otherExtraData = other.map((m) => this.trimExtraData(m)).filter((m) => !m.getData().isEmpty());
@@ -120,7 +129,7 @@ module api.content {
                 extraData = this.extraData;
                 otherExtraData = other;
             }
-            var comparator = new api.content.util.ExtraDataByMixinNameComparator();
+            let comparator = new api.content.util.ExtraDataByMixinNameComparator();
 
             return api.ObjectHelper.arrayEquals(extraData.sort(comparator.compare), otherExtraData.sort(comparator.compare));
         }
@@ -134,7 +143,7 @@ module api.content {
                 return false;
             }
 
-            var other = <Content>o;
+            let other = <Content>o;
 
             if (!shallow) {
                 if (!this.dataEquals(other.getContentData(), ignoreEmptyValues)) {
@@ -162,6 +171,10 @@ module api.content {
                 return false;
             }
 
+            if (this.overwritePermissions !== other.overwritePermissions) {
+                return false;
+            }
+
             return true;
         }
 
@@ -175,19 +188,18 @@ module api.content {
 
         static fromJson(json: api.content.json.ContentJson): Content {
 
-            var type = new api.schema.content.ContentTypeName(json.type);
+            let type = new api.schema.content.ContentTypeName(json.type);
 
             if (type.isSite()) {
                 return new site.SiteBuilder().fromContentJson(json).build();
-            }
-            else if (type.isPageTemplate()) {
+            } else if (type.isPageTemplate()) {
                 return new page.PageTemplateBuilder().fromContentJson(json).build();
             }
             return new ContentBuilder().fromContentJson(json).build();
         }
 
         static fromJsonArray(jsonArray: api.content.json.ContentJson[]): Content[] {
-            var array: Content[] = [];
+            let array: Content[] = [];
             jsonArray.forEach((json: api.content.json.ContentJson) => {
                 array.push(Content.fromJson(json));
             });
@@ -209,6 +221,8 @@ module api.content {
 
         inheritPermissions: boolean = true;
 
+        overwritePermissions: boolean = false;
+
         constructor(source?: Content) {
             super(source);
             if (source) {
@@ -219,6 +233,7 @@ module api.content {
                 this.pageObj = source.getPage() ? source.getPage().clone() : null;
                 this.permissions = source.getPermissions(); // TODO clone?
                 this.inheritPermissions = source.isInheritPermissionsEnabled();
+                this.overwritePermissions = source.isOverwritePermissionsEnabled();
             }
         }
 
@@ -240,9 +255,11 @@ module api.content {
             if (json.permissions) {
                 this.permissions = AccessControlList.fromJson(json);
             }
-            if (typeof json.inheritPermissions !== "undefined") {
+            if (typeof json.inheritPermissions !== 'undefined') {
                 this.inheritPermissions = json.inheritPermissions;
             }
+
+            this.overwritePermissions = false;
 
             return this;
         }
@@ -275,6 +292,11 @@ module api.content {
 
         setInheritPermissionsEnabled(value: boolean): ContentBuilder {
             this.inheritPermissions = value;
+            return this;
+        }
+
+        setOverwritePermissionsEnabled(value: boolean): ContentBuilder {
+            this.overwritePermissions = value;
             return this;
         }
 

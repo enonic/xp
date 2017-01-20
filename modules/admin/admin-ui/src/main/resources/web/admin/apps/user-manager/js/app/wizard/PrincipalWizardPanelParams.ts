@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {UserItemWizardPanelParams} from "./UserItemWizardPanelParams";
+import '../../api.ts';
+import {UserItemWizardPanelParams} from './UserItemWizardPanelParams';
 import Principal = api.security.Principal;
 import PrincipalType = api.security.PrincipalType;
 import UserStore = api.security.UserStore;
@@ -14,7 +14,6 @@ export class PrincipalWizardPanelParams extends UserItemWizardPanelParams<Princi
     parentOfSameType: boolean;
 
     principalKey: PrincipalKey;
-
 
     setPrincipalKey(value: api.security.PrincipalKey): PrincipalWizardPanelParams {
         this.principalKey = value;

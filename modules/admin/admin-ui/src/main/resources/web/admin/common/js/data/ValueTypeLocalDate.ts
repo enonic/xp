@@ -5,7 +5,7 @@ module api.data {
     export class ValueTypeLocalDate extends ValueType {
 
         constructor() {
-            super("LocalDate");
+            super('LocalDate');
         }
 
         isValid(value: any): boolean {
@@ -21,10 +21,10 @@ module api.data {
                 return false;
             }
 
-            if (value.length != 10) {
+            if (value.length !== 10) {
                 return false;
             }
-            if (!(value.charAt(4) == '-' && value.charAt(7) == '-')) {
+            if (!(value.charAt(4) === '-' && value.charAt(7) === '-')) {
                 return false;
             }
             return this.isValid(value);
@@ -37,7 +37,7 @@ module api.data {
             if (!this.isConvertible(value)) {
                 return this.newNullValue();
             }
-            var date = LocalDate.fromISOString(value);
+            let date = LocalDate.fromISOString(value);
             return new Value(date, this);
         }
 

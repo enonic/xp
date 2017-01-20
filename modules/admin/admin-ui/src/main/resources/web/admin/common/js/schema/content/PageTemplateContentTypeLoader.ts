@@ -2,7 +2,7 @@ module api.schema.content {
 
     import ApplicationKey = api.application.ApplicationKey;
 
-    export class PageTemplateContentTypeLoader extends api.util.loader.BaseLoader<api.schema.content.ContentTypeSummaryListJson, ContentTypeSummary> {
+    export class PageTemplateContentTypeLoader extends api.util.loader.BaseLoader<ContentTypeSummaryListJson, ContentTypeSummary> {
 
         private contentId: api.content.ContentId;
         constructor(contentId: api.content.ContentId) {
@@ -11,38 +11,34 @@ module api.schema.content {
         }
 
         filterFn(contentType: ContentTypeSummary) {
-            return contentType.getContentTypeName().toString().indexOf(this.getSearchString().toLowerCase()) != -1;
+            return contentType.getContentTypeName().toString().indexOf(this.getSearchString().toLowerCase()) !== -1;
         }
 
         sendRequest(): wemQ.Promise<ContentTypeSummary[]> {
             return new GetAllContentTypesRequest().sendAndParse().then((contentTypeArray: ContentTypeSummary[]) => {
                 return new api.content.resource.GetNearestSiteRequest(this.contentId).sendAndParse().then(
                     (parentSite: api.content.site.Site) => {
-                    var typesAllowedEverywhere: {[key:string]: ContentTypeName} = {};
+                    let typesAllowedEverywhere: {[key:string]: ContentTypeName} = {};
                     [ContentTypeName.UNSTRUCTURED, ContentTypeName.FOLDER, ContentTypeName.SITE,
                         ContentTypeName.SHORTCUT].forEach((contentTypeName: ContentTypeName) => {
                             typesAllowedEverywhere[contentTypeName.toString()] = contentTypeName;
                         });
-                    var siteApplications: {[key:string]: ApplicationKey} = {};
+                    let siteApplications: {[key:string]: ApplicationKey} = {};
                     parentSite.getApplicationKeys().forEach((applicationKey: ApplicationKey) => {
                         siteApplications[applicationKey.toString()] = applicationKey;
                     });
 
-                    var results = contentTypeArray.filter((item: ContentTypeSummary) => {
-                        var contentTypeName = item.getContentTypeName();
+                    let results = contentTypeArray.filter((item: ContentTypeSummary) => {
+                        let contentTypeName = item.getContentTypeName();
                         if (item.isAbstract()) {
                             return false;
-                        }
-                        else if (contentTypeName.isDescendantOfMedia()) {
+                        } else if (contentTypeName.isDescendantOfMedia()) {
                             return true;
-                        }
-                        else if (typesAllowedEverywhere[contentTypeName.toString()]) {
+                        } else if (typesAllowedEverywhere[contentTypeName.toString()]) {
                             return true;
-                        }
-                        else if (siteApplications[contentTypeName.getApplicationKey().toString()]) {
+                        } else if (siteApplications[contentTypeName.getApplicationKey().toString()]) {
                             return true;
-                        }
-                        else {
+                        } else {
                             return false;
                         }
 

@@ -1,18 +1,17 @@
 module api.liveedit {
 
-
     export class ItemViewId implements api.Equitable {
 
-        static DATA_ATTRIBUTE = "live-edit-id";
+        static DATA_ATTRIBUTE: string = 'live-edit-id';
 
         private value: number;
 
         private refString: string;
 
         constructor(value: number) {
-            api.util.assert(value >= 1, "An ItemViewId must be 1 or larger");
+            api.util.assert(value >= 1, 'An ItemViewId must be 1 or larger');
             this.value = value;
-            this.refString = "" + value;
+            this.refString = '' + value;
         }
 
         equals(o: api.Equitable): boolean {
@@ -21,7 +20,7 @@ module api.liveedit {
                 return false;
             }
 
-            var other = <ItemViewId>o;
+            let other = <ItemViewId>o;
 
             if (!api.ObjectHelper.numberEquals(this.value, other.value)) {
                 return false;

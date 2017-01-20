@@ -21,13 +21,13 @@ module api.ui.treegrid.actions {
 
         private createLabel(treeGrid: TreeGrid<DATA>) {
             let count = this.getCount(treeGrid);
-            let label = "Select All" + ( !!count ? " (" + count + ")" : "");
+            let label = 'Select All' + ( !!count ? ' (' + count + ')' : '');
 
             this.setLabel(label);
         }
 
         private getCount(treeGrid: TreeGrid<DATA>): number {
-            var allCount = treeGrid.getGrid().getDataView().getLength();
+            let allCount = treeGrid.getGrid().getDataView().getLength();
             return allCount - treeGrid.getEmptyNodesCount();
         }
     }

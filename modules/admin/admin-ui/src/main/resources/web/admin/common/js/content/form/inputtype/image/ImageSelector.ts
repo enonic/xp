@@ -56,8 +56,8 @@ module api.content.form.inputtype.image {
         private contentDeletedListener: (event: ContentDeletedEvent) => void;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
-            super("image-selector");
-            this.addClass("input-type-view");
+            super('image-selector');
+            this.addClass('input-type-view');
 
             this.config = config;
 
@@ -84,22 +84,22 @@ module api.content.form.inputtype.image {
 
         private handleContentDeletedEvent() {
             this.contentDeletedListener = (event) => {
-                if (this.selectedOptionsView.count() == 0) {
+                if (this.selectedOptionsView.count() === 0) {
                     return;
                 }
 
-                var selectedContentIdsMap: {} = {};
+                let selectedContentIdsMap: {} = {};
                 this.selectedOptionsView.getSelectedOptions().forEach(
                     (selectedOption: any) => {
                         if (!!selectedOption.getOption().displayValue && !!selectedOption.getOption().displayValue.getContentId()) {
-                            selectedContentIdsMap[selectedOption.getOption().displayValue.getContentId().toString()] = ""
+                            selectedContentIdsMap[selectedOption.getOption().displayValue.getContentId().toString()] = '';
                         }
                     });
 
                 event.getDeletedItems().filter(deletedItem => !deletedItem.isPending() &&
                                                               selectedContentIdsMap.hasOwnProperty(
                                                                   deletedItem.getContentId().toString())).forEach((deletedItem) => {
-                        var option = this.selectedOptionsView.getById(deletedItem.getContentId().toString());
+                        let option = this.selectedOptionsView.getById(deletedItem.getContentId().toString());
                         if (option != null) {
                             this.selectedOptionsView.removeSelectedOptions([option]);
                         }
@@ -110,7 +110,7 @@ module api.content.form.inputtype.image {
 
             this.onRemoved((event) => {
                 ContentDeletedEvent.un(this.contentDeletedListener);
-            })
+            });
         }
 
         public getContentComboBox(): ImageContentComboBox {
@@ -118,7 +118,7 @@ module api.content.form.inputtype.image {
         }
 
         private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
-            var relationshipTypeConfig = inputConfig['relationshipType'] ? inputConfig['relationshipType'][0] : {};
+            let relationshipTypeConfig = inputConfig['relationshipType'] ? inputConfig['relationshipType'][0] : {};
             this.relationshipType = relationshipTypeConfig['value'];
 
             if (this.relationshipType) {
@@ -127,10 +127,10 @@ module api.content.form.inputtype.image {
                 this.relationshipTypeName = RelationshipTypeName.REFERENCE;
             }
 
-            var allowContentTypeConfig = inputConfig['allowContentType'] || [];
+            let allowContentTypeConfig = inputConfig['allowContentType'] || [];
             this.allowedContentTypes = allowContentTypeConfig.map((cfg) => cfg['value']).filter((val) => !!val);
 
-            var allowContentPathConfig = inputConfig['allowPath'] || [];
+            let allowContentPathConfig = inputConfig['allowPath'] || [];
             this.allowedContentPaths = allowContentPathConfig.map((cfg) => cfg['value']).filter((val) => !!val);
         }
 
@@ -162,21 +162,21 @@ module api.content.form.inputtype.image {
         }
 
         private getRemainingOccurrences(): number {
-            var inputMaximum = this.getInput().getOccurrences().getMaximum();
-            var countSelected = this.countSelectedOptions();
-            var rest = -1;
-            if (inputMaximum == 0) {
+            let inputMaximum = this.getInput().getOccurrences().getMaximum();
+            let countSelected = this.countSelectedOptions();
+            let rest = -1;
+            if (inputMaximum === 0) {
                 rest = 0;
             } else {
                 rest = inputMaximum - countSelected;
-                rest = (rest == 0) ? -1 : rest;
+                rest = (rest === 0) ? -1 : rest;
             }
 
             return rest;
         }
 
         private createSelectedOptionsView(): ImageSelectorSelectedOptionsView {
-            var selectedOptionsView = new ImageSelectorSelectedOptionsView();
+            let selectedOptionsView = new ImageSelectorSelectedOptionsView();
 
             selectedOptionsView.onEditSelectedOptions((options: SelectedOption<ImageSelectorDisplayValue>[]) => {
                 options.forEach((option: SelectedOption<ImageSelectorDisplayValue>) => {
@@ -197,27 +197,27 @@ module api.content.form.inputtype.image {
         createContentComboBox(maximumOccurrences: number, inputIconUrl: string, relationshipAllowedContentTypes: string[],
                               inputName: string): ContentComboBox {
 
-            var value = this.getPropertyArray().getProperties().map((property) => {
+            let value = this.getPropertyArray().getProperties().map((property) => {
                 return property.getString();
             }).join(';');
 
-            var contentTypes = this.allowedContentTypes.length ? this.allowedContentTypes :
+            let contentTypes = this.allowedContentTypes.length ? this.allowedContentTypes :
                                relationshipAllowedContentTypes.length ? relationshipAllowedContentTypes :
                                    [ContentTypeName.IMAGE.toString(), ContentTypeName.MEDIA_VECTOR.toString()];
 
-            var imageSelectorLoader = ImageSelectorLoader.create().setContent(this.config.content).
+            let imageSelectorLoader = ImageSelectorLoader.create().setContent(this.config.content).
                 setInputName(inputName).
                 setAllowedContentPaths(this.allowedContentPaths).
                 setContentTypeNames(contentTypes).
                 setRelationshipType(this.relationshipType).
                 build();
 
-            var contentComboBox: ImageContentComboBox
+            let contentComboBox: ImageContentComboBox
                     = ImageContentComboBox.create().setMaximumOccurrences(maximumOccurrences).setLoader(imageSelectorLoader).
                     setSelectedOptionsView(this.selectedOptionsView = this.createSelectedOptionsView()).
                     setValue(value).
-                    build(),
-                comboBox: ComboBox<ImageSelectorDisplayValue> = contentComboBox.getComboBox();
+                    build();
+            let comboBox: ComboBox<ImageSelectorDisplayValue> = contentComboBox.getComboBox();
 
             comboBox.onHidden((event: api.dom.ElementHiddenEvent) => {
                 // hidden on max occurrences reached
@@ -251,7 +251,7 @@ module api.content.form.inputtype.image {
                 this.fireFocusSwitchEvent(event);
 
                 if (!this.isLayoutInProgress()) {
-                    var contentId = event.getSelectedOption().getOption().displayValue.getContentId();
+                    let contentId = event.getSelectedOption().getOption().displayValue.getContentId();
                     if (!contentId) {
                         return;
                     }
@@ -283,7 +283,7 @@ module api.content.form.inputtype.image {
                             input.getName()
                         );
 
-                        var comboBoxWrapper = new api.dom.DivEl("combobox-wrapper");
+                        let comboBoxWrapper = new api.dom.DivEl('combobox-wrapper');
 
                         comboBoxWrapper.appendChild(this.contentComboBox);
 
@@ -302,12 +302,12 @@ module api.content.form.inputtype.image {
         }
 
         private removePropertyWithId(id: string) {
-            var length = this.getPropertyArray().getSize();
+            let length = this.getPropertyArray().getSize();
             for (let i = 0; i < length; i++) {
-                if (this.getPropertyArray().get(i).getValue().getString() == id) {
+                if (this.getPropertyArray().get(i).getValue().getString() === id) {
                     this.getPropertyArray().remove(i);
-                    api.notify.NotifyManager.get().showWarning("Failed to load image with id " + id +
-                                                               ". The reference will be removed upon save.");
+                    api.notify.NotifyManager.get().showWarning('Failed to load image with id ' + id +
+                                                               '. The reference will be removed upon save.');
                     break;
                 }
             }
@@ -326,7 +326,7 @@ module api.content.form.inputtype.image {
         }
 
         private createUploader(): api.content.image.ImageUploaderEl {
-            var multiSelection = (this.getInput().getOccurrences().getMaximum() != 1);
+            let multiSelection = (this.getInput().getOccurrences().getMaximum() !== 1);
 
             this.uploader = new api.content.image.ImageUploaderEl({
                 params: {
@@ -343,9 +343,9 @@ module api.content.form.inputtype.image {
 
             this.uploader.onUploadStarted((event: FileUploadStartedEvent<Content>) => {
                 event.getUploadItems().forEach((uploadItem: UploadItem<Content>) => {
-                    var value = ImageSelectorDisplayValue.fromUploadItem(uploadItem);
+                    let value = ImageSelectorDisplayValue.fromUploadItem(uploadItem);
 
-                    var option = <api.ui.selector.Option<ImageSelectorDisplayValue>>{
+                    let option = <api.ui.selector.Option<ImageSelectorDisplayValue>>{
                         value: value.getId(),
                         displayValue: value
                     };
@@ -354,9 +354,9 @@ module api.content.form.inputtype.image {
             });
 
             this.uploader.onUploadProgress((event: FileUploadProgressEvent<Content>) => {
-                var item = event.getUploadItem();
+                let item = event.getUploadItem();
 
-                var selectedOption = this.selectedOptionsView.getById(item.getId());
+                let selectedOption = this.selectedOptionsView.getById(item.getId());
                 if (!!selectedOption) {
                     (<ImageSelectorSelectedOptionView> selectedOption.getOptionView()).setProgress(item.getProgress());
                 }
@@ -365,20 +365,20 @@ module api.content.form.inputtype.image {
             });
 
             this.uploader.onFileUploaded((event: FileUploadedEvent<Content>) => {
-                var item = event.getUploadItem();
-                var createdContent = item.getModel();
+                let item = event.getUploadItem();
+                let createdContent = item.getModel();
 
                 //new api.content.ContentUpdatedEvent(this.config.contentId).fire();
 
-                var selectedOption = this.selectedOptionsView.getById(item.getId());
-                var option = selectedOption.getOption();
+                let selectedOption = this.selectedOptionsView.getById(item.getId());
+                let option = selectedOption.getOption();
                 option.displayValue.setContentSummary(createdContent);
                 option.value = createdContent.getContentId().toString();
 
                 selectedOption.getOptionView().setOption(option);
 
                 // checks newly uploaded image in Selected Options view
-                var optionView: ImageSelectorSelectedOptionView = <ImageSelectorSelectedOptionView>selectedOption.getOptionView();
+                let optionView: ImageSelectorSelectedOptionView = <ImageSelectorSelectedOptionView>selectedOption.getOptionView();
                 optionView.getCheckbox().setChecked(true);
 
                 this.setContentIdProperty(createdContent.getContentId());
@@ -388,11 +388,11 @@ module api.content.form.inputtype.image {
             });
 
             this.uploader.onUploadFailed((event: FileUploadFailedEvent<Content>) => {
-                var item = event.getUploadItem();
+                let item = event.getUploadItem();
 
-                var selectedOption = this.selectedOptionsView.getById(item.getId());
+                let selectedOption = this.selectedOptionsView.getById(item.getId());
                 if (!!selectedOption) {
-                    (<ImageSelectorSelectedOptionView> selectedOption.getOptionView()).showError("Upload failed");
+                    (<ImageSelectorSelectedOptionView> selectedOption.getOptionView()).showError('Upload failed');
                 }
 
                 this.uploader.setMaximumOccurrences(this.getRemainingOccurrences());
@@ -427,7 +427,7 @@ module api.content.form.inputtype.image {
 
         private doLoadContent(propertyArray: PropertyArray): wemQ.Promise<ContentSummary[]> {
 
-            var contentIds: ContentId[] = [];
+            let contentIds: ContentId[] = [];
             propertyArray.forEach((property: Property) => {
                 if (property.hasNonNullValue()) {
                     contentIds.push(ContentId.fromReference(property.getReference()));
@@ -448,16 +448,15 @@ module api.content.form.inputtype.image {
         }
 
         private setContentIdProperty(contentId: api.content.ContentId) {
-            var reference = api.util.Reference.from(contentId);
+            let reference = api.util.Reference.from(contentId);
 
-            var value = new Value(reference, ValueTypes.REFERENCE);
+            let value = new Value(reference, ValueTypes.REFERENCE);
 
             if (!this.getPropertyArray().containsValue(value)) {
                 this.ignorePropertyChange = true;
-                if (this.contentComboBox.countSelected() == 1) { // overwrite initial value
+                if (this.contentComboBox.countSelected() === 1) { // overwrite initial value
                     this.getPropertyArray().set(0, value);
-                }
-                else {
+                } else {
                     this.getPropertyArray().add(value);
                 }
                 this.ignorePropertyChange = false;
@@ -485,9 +484,10 @@ module api.content.form.inputtype.image {
         }
 
         unEditContentRequest(listener: (content: ContentSummary) => void) {
-            this.editContentRequestListeners = this.editContentRequestListeners.filter(function (curr) {
-                return curr != listener;
-            });
+            this.editContentRequestListeners = this.editContentRequestListeners
+                .filter(function (curr: (content: ContentSummary) => void) {
+                    return curr !== listener;
+                });
         }
 
         private notifyEditContentRequested(content: ContentSummary) {
@@ -497,6 +497,6 @@ module api.content.form.inputtype.image {
         }
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("ImageSelector", ImageSelector));
+    api.form.inputtype.InputTypeManager.register(new api.Class('ImageSelector', ImageSelector));
 
 }

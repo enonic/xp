@@ -19,7 +19,7 @@ module api.ui.treegrid {
 
         private columns: GridColumn<TreeNode<NODE>>[] = [];
 
-        private classes: string = "";
+        private classes: string = '';
 
         private autoLoad: boolean = true;
 
@@ -45,7 +45,7 @@ module api.ui.treegrid {
                 this.columns = this.buildDefaultColumns();
             }
 
-            this.classes = "tree-grid " + this.classes;
+            this.classes = 'tree-grid ' + this.classes;
         }
 
         /*
@@ -55,12 +55,12 @@ module api.ui.treegrid {
          of the object, like `node.data.id`, we need to specify a custom
          column value extractor.
          */
-        nodeExtractor(node, column) {
-            var names = column.field.split('.');
-            var val = node["data"][names[0]];
+        nodeExtractor(node: any, column: Slick.Column<NODE>) {
+            let names = column.field.split('.');
+            let val = node['data'][names[0]];
 
-            for (var i = 1; i < names.length; i++) {
-                if (val && typeof val == 'object' && names[i] in val) {
+            for (let i = 1; i < names.length; i++) {
+                if (val && typeof val === 'object' && names[i] in val) {
                     val = val[names[i]];
                 } else {
                     val = '';
@@ -159,17 +159,17 @@ module api.ui.treegrid {
         setColumnConfig(columnConfig: GridColumnConfig[]): TreeGridBuilder<NODE> {
             columnConfig.forEach((column: GridColumnConfig) => {
                 this.columns.push(this.buildColumn(column));
-            })
+            });
             return this;
         }
-        
+
         setClasses(classes: string): TreeGridBuilder<NODE> {
             this.classes = classes;
             return this;
         }
 
         prependClasses(classes: string): TreeGridBuilder<NODE> {
-            this.classes = classes + " " + this.classes;
+            this.classes = classes + ' ' + this.classes;
             return this;
         }
 
@@ -197,7 +197,7 @@ module api.ui.treegrid {
         }
 
         isCheckableRows(): boolean {
-            return this.options.isCheckableRows()
+            return this.options.isCheckableRows();
         }
 
         setDragAndDrop(dragAndDrop: boolean): TreeGridBuilder<NODE> {
@@ -276,7 +276,7 @@ module api.ui.treegrid {
         }
 
         /**
-         Should be overriden by child class.
+         * Should be overriden by child class.
          */
         build(): TreeGrid<NODE> {
             return new TreeGrid<NODE>(this);

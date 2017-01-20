@@ -10,11 +10,11 @@ module api.dom {
         }
 
         getName(): string {
-            return this.getEl().getAttribute("name");
+            return this.getEl().getAttribute('name');
         }
 
         setName(name: string): FormItemEl {
-            this.getEl().setAttribute("name", name);
+            this.getEl().setAttribute('name', name);
             return this;
         }
 
@@ -24,7 +24,7 @@ module api.dom {
 
         unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
             this.validityChangedListeners = this.validityChangedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 

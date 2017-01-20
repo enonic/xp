@@ -9,7 +9,7 @@ module api.content.page.region {
         constructor() {
             super();
             this.cache = PartDescriptorCache.get();
-            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "content", "page", "part", "descriptor");
+            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), 'content', 'page', 'part', 'descriptor');
         }
 
         getResourcePath(): api.rest.Path {
@@ -17,7 +17,7 @@ module api.content.page.region {
         }
 
         fromJsonToPartDescriptor(json: PartDescriptorJson): PartDescriptor {
-            var partDescriptor = new PartDescriptorBuilder().fromJson(json).build();
+            let partDescriptor = new PartDescriptorBuilder().fromJson(json).build();
             this.cache.put(partDescriptor);
             return  partDescriptor;
         }

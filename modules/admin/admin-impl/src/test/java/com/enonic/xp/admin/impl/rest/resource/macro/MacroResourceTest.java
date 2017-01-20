@@ -29,7 +29,7 @@ import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.macro.MacroContext;
 import com.enonic.xp.portal.macro.MacroProcessor;
-import com.enonic.xp.portal.macro.MacroProcessorScriptFactory;
+import com.enonic.xp.portal.macro.MacroProcessorFactory;
 import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.site.Site;
@@ -45,7 +45,7 @@ public class MacroResourceTest
 
     private MacroDescriptorService macroDescriptorService;
 
-    private MacroProcessorScriptFactory macroProcessorScriptFactory;
+    private MacroProcessorFactory macroProcessorFactory;
 
     private PortalUrlService portalUrlService;
 
@@ -57,13 +57,13 @@ public class MacroResourceTest
     protected Object getResourceInstance()
     {
         this.macroDescriptorService = Mockito.mock( MacroDescriptorService.class );
-        this.macroProcessorScriptFactory = Mockito.mock( MacroProcessorScriptFactory.class );
+        this.macroProcessorFactory = Mockito.mock( MacroProcessorFactory.class );
         this.portalUrlService = Mockito.mock( PortalUrlService.class );
         this.contentService = Mockito.mock( ContentService.class );
 
         this.macroResource = new MacroResource();
         macroResource.setMacroDescriptorService( this.macroDescriptorService );
-        macroResource.setMacroProcessorScriptFactory( this.macroProcessorScriptFactory );
+        macroResource.setMacroProcessorFactory( this.macroProcessorFactory );
         macroResource.setPortalUrlService( this.portalUrlService );
         macroResource.setContentService( this.contentService );
 
@@ -140,7 +140,7 @@ public class MacroResourceTest
         };
 
         Mockito.when( this.macroDescriptorService.getByKey( MacroKey.from( "test:uppercase" ) ) ).thenReturn( macroDescriptor );
-        Mockito.when( this.macroProcessorScriptFactory.fromScript( any() ) ).thenReturn( macroProcessor );
+        Mockito.when( this.macroProcessorFactory.fromScript( any() ) ).thenReturn( macroProcessor );
         Mockito.when( this.portalUrlService.pageUrl( any() ) ).thenReturn( "/portal/preview/draft/mysite/page" );
 
         final Site site = newSite();

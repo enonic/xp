@@ -17,10 +17,10 @@ module api.security.acl {
 
         getParams(): Object {
             return {
-                "types": this.enumToStrings(this.allowedTypes),
-                "query": this.searchQuery,
-                "userStoreKey": this.userStoreKey ? this.userStoreKey.toString() : undefined
-            }
+                types: this.enumToStrings(this.allowedTypes),
+                query: this.searchQuery,
+                userStoreKey: this.userStoreKey ? this.userStoreKey.toString() : undefined
+            };
         }
 
         getRequestPath(): api.rest.Path {
@@ -64,7 +64,7 @@ module api.security.acl {
 
         constructor() {
             super();
-            
+
             // allow all by default
             this.setAllowedTypes([PrincipalType.GROUP, PrincipalType.USER, PrincipalType.ROLE]);
         }
@@ -76,7 +76,7 @@ module api.security.acl {
         protected getRequest(): FindAccessControlEntriesRequest {
             return this.request;
         }
-        
+
         setUserStoreKey(key: UserStoreKey): AccessControlEntryLoader {
             this.getRequest().setUserStoreKey(key);
             return this;

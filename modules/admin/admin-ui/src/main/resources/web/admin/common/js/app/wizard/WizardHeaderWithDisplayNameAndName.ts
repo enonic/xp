@@ -39,12 +39,12 @@ module api.app.wizard {
 
         constructor(builder: WizardHeaderWithDisplayNameAndNameBuilder) {
             super();
-            this.addClass("wizard-header-with-display-name-and-name");
+            this.addClass('wizard-header-with-display-name-and-name');
             this.displayNameGenerator = builder.displayNameGenerator;
             this.displayNameProgrammaticallySet = this.displayNameGenerator != null;
 
             this.displayNameEl = api.ui.text.AutosizeTextInput.large();
-            this.displayNameEl.setPlaceholder("<Display Name>").setName(api.query.QueryField.DISPLAY_NAME);
+            this.displayNameEl.setPlaceholder('<Display Name>').setName(api.query.QueryField.DISPLAY_NAME);
             this.displayNameEl.onValueChanged((event: api.ValueChangedEvent) => {
                 this.notifyPropertyChanged(api.query.QueryField.DISPLAY_NAME, event.getOldValue(), event.getNewValue());
             });
@@ -55,20 +55,20 @@ module api.app.wizard {
             this.appendChild(this.pathEl);
 
             this.nameEl = api.ui.text.AutosizeTextInput.middle().setForbiddenCharsRe(this.forbiddenChars);
-            this.nameEl.setPlaceholder("<name>").setName('name');
+            this.nameEl.setPlaceholder('<name>').setName('name');
             this.nameEl.onValueChanged((event: api.ValueChangedEvent) => {
-                this.notifyPropertyChanged("name", event.getOldValue(), event.getNewValue());
+                this.notifyPropertyChanged('name', event.getOldValue(), event.getNewValue());
             });
             this.appendChild(this.nameEl);
 
             this.displayNameEl.onValueChanged((event: api.ValueChangedEvent) => {
 
-                this.displayNameEl.removeClass("generated");
+                this.displayNameEl.removeClass('generated');
 
-                var currentDisplayName = event.getNewValue() || "";
+                let currentDisplayName = event.getNewValue() || '';
 
                 if (this.displayNameGenerator && this.displayNameGenerator.hasScript()) {
-                    var generatedDisplayName = this.displayNameGenerator.execute() || "";
+                    let generatedDisplayName = this.displayNameGenerator.execute() || '';
 
                     this.displayNameProgrammaticallySet =
                     generatedDisplayName.toLowerCase() === currentDisplayName.toLowerCase() ||
@@ -76,15 +76,15 @@ module api.app.wizard {
                     api.util.StringHelper.isEmpty(currentDisplayName);
 
                     if (this.displayNameProgrammaticallySet) {
-                        this.displayNameEl.addClass("generated");
+                        this.displayNameEl.addClass('generated');
                     }
                 }
                 this.doAutoGenerateName(currentDisplayName);
             });
 
             this.nameEl.onValueChanged((event: api.ValueChangedEvent) => {
-                var currentName = event.getNewValue() || "";
-                var displayName = this.getDisplayName() || "";
+                let currentName = event.getNewValue() || '';
+                let displayName = this.getDisplayName() || '';
 
                 this.autoGenerateName = this.checkAutoGenerateName(currentName, displayName);
 
@@ -101,7 +101,6 @@ module api.app.wizard {
                    displayName.toLowerCase() === name.toLowerCase() ||
                    name.toLowerCase() === this.generateName(displayName).toLowerCase();
         }
-
 
         resetBaseValues() {
             this.displayNameEl.resetBaseValues();
@@ -127,8 +126,8 @@ module api.app.wizard {
 
             if (this.displayNameGenerator && this.displayNameGenerator.hasScript()) {
                 if (!forceDisplayNameProgrammaticallySet) {
-                    var generatedDisplayName = this.displayNameGenerator.execute();
-                    this.displayNameProgrammaticallySet = generatedDisplayName == displayName;
+                    let generatedDisplayName = this.displayNameGenerator.execute();
+                    this.displayNameProgrammaticallySet = generatedDisplayName === displayName;
                 } else {
                     this.displayNameProgrammaticallySet = true;
                 }
@@ -171,7 +170,7 @@ module api.app.wizard {
         }
 
         disableNameInput() {
-            this.nameEl.getEl().setAttribute("disabled", "disabled");
+            this.nameEl.getEl().setAttribute('disabled', 'disabled');
         }
 
         getName(): string {
@@ -192,9 +191,9 @@ module api.app.wizard {
 
         private ensureValidName(possibleInvalidName: string): string {
             if (!possibleInvalidName) {
-                return "";
+                return '';
             }
-            var generated;
+            let generated;
             if (this.simplifiedNameGeneration) {
                 generated = possibleInvalidName.replace(Name.SIMPLIFIED_FORBIDDEN_CHARS, '').toLowerCase();
             } else {
@@ -217,19 +216,19 @@ module api.app.wizard {
 
         private updateNameGeneratedStatus() {
             if (this.autoGenerateName && !this.ignoreGenerateStatusForName) {
-                this.nameEl.addClass("generated");
+                this.nameEl.addClass('generated');
             } else {
-                this.nameEl.removeClass("generated");
+                this.nameEl.removeClass('generated');
             }
         }
 
         private updatePathAndNameWidth() {
-            var pathEl = this.pathEl.getEl(),
-                nameEl = this.nameEl.getEl(),
-                headerWidth = this.getEl().getWidth(),
-                pathWidth = pathEl.getWidthWithMargin(),
-                nameWidth = nameEl.getWidthWithMargin(),
-                nameMinWidth = nameEl.getMinWidth();
+            let pathEl = this.pathEl.getEl();
+            let nameEl = this.nameEl.getEl();
+            let headerWidth = this.getEl().getWidth();
+            let pathWidth = pathEl.getWidthWithMargin();
+            let nameWidth = nameEl.getWidthWithMargin();
+            let nameMinWidth = nameEl.getMinWidth();
 
             if (pathWidth + nameWidth > headerWidth) {
                 if (nameWidth > nameMinWidth) {

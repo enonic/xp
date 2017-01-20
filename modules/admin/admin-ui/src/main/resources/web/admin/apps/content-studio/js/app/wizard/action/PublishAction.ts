@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {ContentWizardPanel} from "../ContentWizardPanel";
-import {ContentPublishPromptEvent} from "../../browse/ContentPublishPromptEvent";
+import '../../../api.ts';
+import {ContentWizardPanel} from '../ContentWizardPanel';
+import {ContentPublishPromptEvent} from '../../browse/ContentPublishPromptEvent';
 
 import Content = api.content.Content;
 import ContentId = api.content.ContentId;
@@ -9,7 +9,7 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 export class PublishAction extends api.ui.Action {
 
     constructor(wizard: ContentWizardPanel, includeChildItems: boolean = false) {
-        super("Publish...");
+        super('Publish...');
 
         this.setEnabled(false);
 
@@ -28,7 +28,7 @@ export class PublishAction extends api.ui.Action {
                             new ContentPublishPromptEvent([contentSummary], includeChildItems).fire();
                         }
                     }).catch((reason: any) => {
-                        api.DefaultErrorHandler.handle(reason)
+                        api.DefaultErrorHandler.handle(reason);
                     }).finally(() => this.setEnabled(true)).done();
                 } else {
                     let contentSummary = ContentSummaryAndCompareStatus.fromContentSummary(wizard.getPersistedItem());

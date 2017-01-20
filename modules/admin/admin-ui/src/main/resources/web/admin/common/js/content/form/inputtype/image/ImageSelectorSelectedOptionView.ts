@@ -27,7 +27,7 @@ module api.content.form.inputtype.image {
         setOption(option: api.ui.selector.Option<ImageSelectorDisplayValue>) {
             super.setOption(option);
 
-            var content: ImageSelectorDisplayValue = this.getOption().displayValue;
+            let content: ImageSelectorDisplayValue = this.getOption().displayValue;
 
             if (content.getContentSummary()) {
                 this.updateIconSrc(content);
@@ -38,9 +38,9 @@ module api.content.form.inputtype.image {
         }
 
         private updateIconSrc(content: ImageSelectorDisplayValue) {
-            var newIconSrc = content.getImageUrl() + "?thumbnail=false&size=" + ImageSelectorSelectedOptionView.IMAGE_SIZE;
+            let newIconSrc = content.getImageUrl() + '?thumbnail=false&size=' + ImageSelectorSelectedOptionView.IMAGE_SIZE;
 
-            if (this.icon.getSrc().indexOf(newIconSrc) == -1) {
+            if (this.icon.getSrc().indexOf(newIconSrc) === -1) {
                 if (this.isVisible()) {
                     this.showSpinner();
                 }
@@ -50,7 +50,7 @@ module api.content.form.inputtype.image {
 
         setProgress(value: number) {
             this.progress.setValue(value);
-            if (value == 100) {
+            if (value === 100) {
                 this.showSpinner();
             }
         }
@@ -58,13 +58,13 @@ module api.content.form.inputtype.image {
         doRender(): wemQ.Promise<boolean> {
 
             this.icon = new api.dom.ImgEl();
-            this.label = new api.dom.DivEl("label");
+            this.label = new api.dom.DivEl('label');
             this.check = api.ui.Checkbox.create().build();
             this.progress = new api.ui.ProgressBar();
-            this.error = new api.dom.DivEl("error");
+            this.error = new api.dom.DivEl('error');
             this.loadMask = new LoadMask(this);
 
-            var squaredContent = new api.dom.DivEl('squared-content');
+            let squaredContent = new api.dom.DivEl('squared-content');
             squaredContent.appendChildren<api.dom.Element>(this.icon, this.label, this.check, this.progress, this.error, this.loadMask);
 
             this.appendChild(squaredContent);
@@ -83,7 +83,7 @@ module api.content.form.inputtype.image {
             });
 
             this.check.onValueChanged((event: api.ValueChangedEvent) => {
-                this.notifyChecked(event.getNewValue() == 'true');
+                this.notifyChecked(event.getNewValue() === 'true');
             });
 
             this.onShown(() => {
@@ -130,7 +130,7 @@ module api.content.form.inputtype.image {
         }
 
         updateProportions() {
-            var contentHeight = this.getEl().getHeightWithBorder() -
+            let contentHeight = this.getEl().getHeightWithBorder() -
                                 this.getEl().getBorderTopWidth() -
                                 this.getEl().getBorderBottomWidth();
 
@@ -166,9 +166,10 @@ module api.content.form.inputtype.image {
         }
 
         unChecked(listener: {(option: ImageSelectorSelectedOptionView, checked: boolean): void;}) {
-            this.selectionChangeListeners = this.selectionChangeListeners.filter(function (curr) {
-                return curr != listener;
-            });
+            this.selectionChangeListeners = this.selectionChangeListeners
+                .filter(function (curr: {(option: ImageSelectorSelectedOptionView, checked: boolean): void;}) {
+                    return curr !== listener;
+                });
         }
 
     }

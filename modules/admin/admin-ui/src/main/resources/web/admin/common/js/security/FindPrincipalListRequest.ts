@@ -34,6 +34,5 @@ module api.security {
             this.request.setResultFilter(filterPredicate);
         }
 
-
     }
 }

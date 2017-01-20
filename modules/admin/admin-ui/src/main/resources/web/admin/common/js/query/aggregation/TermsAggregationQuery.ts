@@ -12,15 +12,15 @@ module api.query.aggregation {
 
         private orderByType: string = TermsAggregationOrderType.TERM;
 
-        toJson(): api.query.aggregation.AggregationQueryTypeWrapperJson {
+        toJson(): AggregationQueryTypeWrapperJson {
 
-            var json: api.query.aggregation.TermsAggregationQueryJson = <api.query.aggregation.TermsAggregationQueryJson>super.toAggregationQueryJson();
+            let json: TermsAggregationQueryJson = <TermsAggregationQueryJson>super.toAggregationQueryJson();
             json.fieldName = this.getFieldName();
             json.size = this.getSize();
             json.orderByDirection = this.orderByDirection;
             json.orderByType = this.orderByType;
 
-            return <api.query.aggregation.AggregationQueryTypeWrapperJson> {
+            return <AggregationQueryTypeWrapperJson> {
                 TermsAggregationQuery: json
             };
         }
@@ -56,13 +56,13 @@ module api.query.aggregation {
     }
 
     export class TermsAggregationOrderDirection {
-        public static ASC: string = "ASC";
-        public static DESC: string = "DESC";
+        public static ASC: string = 'ASC';
+        public static DESC: string = 'DESC';
     }
 
     export class TermsAggregationOrderType {
-        public static DOC_COUNT: string = "DOC_COUNT";
-        public static TERM: string = "TERM";
+        public static DOC_COUNT: string = 'DOC_COUNT';
+        public static TERM: string = 'TERM';
     }
 
 }

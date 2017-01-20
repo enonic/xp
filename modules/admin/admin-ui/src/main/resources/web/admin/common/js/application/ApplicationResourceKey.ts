@@ -2,7 +2,7 @@ module api.application {
 
     export class ApplicationResourceKey {
 
-        private static SEPARATOR = ":";
+        private static SEPARATOR: string = ':';
 
         private applicationKey:ApplicationKey;
 
@@ -11,13 +11,13 @@ module api.application {
         private refString:string;
 
         public static fromString(str: string): ApplicationResourceKey {
-            var sepIndex: number = str.indexOf(ApplicationResourceKey.SEPARATOR);
-            if( sepIndex == -1 ) {
-                throw new Error("ApplicationResourceKey must contain separator '" + ApplicationResourceKey.SEPARATOR + "':" + str);
+            let sepIndex: number = str.indexOf(ApplicationResourceKey.SEPARATOR);
+            if( sepIndex === -1 ) {
+                throw new Error(`ApplicationResourceKey must contain separator '${ApplicationResourceKey.SEPARATOR}':${str}`);
             }
 
-            var applicationKey = str.substring(0, sepIndex);
-            var path = str.substring(sepIndex+1, str.length);
+            let applicationKey = str.substring(0, sepIndex);
+            let path = str.substring(sepIndex + 1, str.length);
 
             return new ApplicationResourceKey(ApplicationKey.fromString(applicationKey), ResourcePath.fromString(path));
         }

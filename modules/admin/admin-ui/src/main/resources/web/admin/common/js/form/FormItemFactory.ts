@@ -10,22 +10,18 @@ module api.form {
 
             if (formItemTypeWrapperJson.Input) {
                 return FormItemFactory.createInput(<api.form.json.InputJson>formItemTypeWrapperJson.Input);
-            }
-            else if (formItemTypeWrapperJson.FormItemSet) {
+            } else if (formItemTypeWrapperJson.FormItemSet) {
                 return FormItemFactory.createFormItemSet(<api.form.json.FormItemSetJson>formItemTypeWrapperJson.FormItemSet);
-            }
-            else if (formItemTypeWrapperJson.FieldSet) {
+            } else if (formItemTypeWrapperJson.FieldSet) {
                 return FormItemFactory.createFieldSetLayout(<api.form.json.FieldSetJson>formItemTypeWrapperJson.FieldSet);
-            }
-            else if (formItemTypeWrapperJson.FormOptionSet) {
+            } else if (formItemTypeWrapperJson.FormOptionSet) {
                 return FormItemFactory.createFormOptionSet(<api.form.json.FormOptionSetJson>formItemTypeWrapperJson.FormOptionSet);
-            }
-            else if (formItemTypeWrapperJson.FormOptionSetOption) {
+            } else if (formItemTypeWrapperJson.FormOptionSetOption) {
                 return FormItemFactory.createFormOptionSetOption(
                     <api.form.json.FormOptionSetOptionJson>formItemTypeWrapperJson.FormOptionSetOption);
             }
 
-            console.error("Unknown FormItem type: ", formItemTypeWrapperJson);
+            console.error('Unknown FormItem type: ', formItemTypeWrapperJson);
             return null;
         }
 

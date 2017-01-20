@@ -3,14 +3,14 @@ module api.content.form.inputtype.customselector {
     import ResourceRequest = api.rest.ResourceRequest;
 
     export interface CustomSelectorResponse {
-        total: number,
-        count: number,
-        hits: CustomSelectorItem[]
+        total: number;
+        count: number;
+        hits: CustomSelectorItem[];
     }
 
     export class CustomSelectorRequest extends ResourceRequest<CustomSelectorResponse, CustomSelectorItem[]> {
 
-        public static DEFAULT_SIZE = 10;
+        public static DEFAULT_SIZE: number = 10;
 
         private requestPath: string;
         private ids: string[] = [];
@@ -29,7 +29,7 @@ module api.content.form.inputtype.customselector {
         setRequestPath(requestPath: string) {
             this.requestPath = requestPath;
         }
-        
+
         isPartiallyLoaded(): boolean {
             return this.results.length > 0 && !this.loaded;
         }
@@ -46,7 +46,7 @@ module api.content.form.inputtype.customselector {
                 query: this.query || null,
                 start: this.start || null,
                 count: this.count || null
-            }
+            };
         }
 
         getRequestPath(): api.rest.Path {
@@ -56,8 +56,8 @@ module api.content.form.inputtype.customselector {
         sendAndParse(): wemQ.Promise<CustomSelectorItem[]> {
             return this.send().then((response: api.rest.JsonResponse<CustomSelectorResponse>) => {
 
-                var result = response.getResult();
-                if (this.start == 0) {
+                let result: CustomSelectorResponse = response.getResult();
+                if (this.start === 0) {
                     this.results = [];
                 }
 
@@ -76,19 +76,20 @@ module api.content.form.inputtype.customselector {
             });
         }
 
-        private validateResponse(result) {
-            let errors = [];
-            if (result.total == undefined) {
-                errors.push("'total'");
+        private validateResponse(result: CustomSelectorResponse) {
+            const errors = [];
+            const isInvalid = (value) => value == null || value == null;
+            if (isInvalid(result.total)) {
+                errors.push(`'total'`);
             }
-            if (result.count == undefined) {
-                errors.push("'count'");
+            if (isInvalid(result.count)) {
+                errors.push(`'count'`);
             }
-            if (result.hits == undefined) {
-                errors.push("'hits'");
+            if (isInvalid(result.hits)) {
+                errors.push(`'hits'`);
             }
             if (errors.length > 0) {
-                throw new Error('Fields ' + errors.join(', ') + ' must be present in service response');
+                throw new Error(`Fields ${errors.join(', ')} must be present in service response`);
             }
         }
 

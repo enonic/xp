@@ -7,7 +7,7 @@ module api.liveedit.part {
         }
 
         resolveDisplayName(object: api.content.page.region.PartComponent): string {
-            return !!object.getName() ? object.getName().toString() : "";
+            return !!object.getName() ? object.getName().toString() : '';
         }
 
         resolveSubName(object: api.content.page.region.PartComponent, relativePath: boolean = false): string {
@@ -15,7 +15,7 @@ module api.liveedit.part {
         }
 
         resolveIconClass(object: api.content.page.region.PartComponent): string {
-            return api.liveedit.ItemViewIconClassResolver.resolveByType("part");
+            return api.liveedit.ItemViewIconClassResolver.resolveByType('part');
         }
     }
 

@@ -1,5 +1,7 @@
-import "../api.ts";
-import {ViewContentEvent} from "./browse/ViewContentEvent";
+import '../api.ts';
+import {ViewContentEvent} from './browse/ViewContentEvent';
+import {ContentBrowsePanel} from './browse/ContentBrowsePanel';
+import {NewContentEvent} from './create/NewContentEvent';
 
 import ContentSummary = api.content.ContentSummary;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
@@ -12,22 +14,16 @@ import AppBarTabMenuItem = api.app.bar.AppBarTabMenuItem;
 import AppBarTabMenuItemBuilder = api.app.bar.AppBarTabMenuItemBuilder;
 import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
 import UriHelper = api.util.UriHelper;
+import AppPanel = api.app.AppPanel;
 
-export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<ContentSummaryAndCompareStatus> {
+export class ContentAppPanel extends AppPanel<ContentSummaryAndCompareStatus> {
 
     private path: api.rest.Path;
-    private mask: api.ui.mask.LoadMask;
 
-    constructor(appBar: api.app.bar.AppBar, path?: api.rest.Path) {
-
-        super({
-            appBar: appBar
-        });
+    constructor(path?: api.rest.Path) {
+        super();
         this.path = path;
-
-        this.mask = new api.ui.mask.LoadMask(this);
     }
-
 
     doRender(): Q.Promise<boolean> {
         return super.doRender().then((rendered) => {
@@ -37,11 +33,11 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
     }
 
     private route(path?: api.rest.Path) {
-        var action = path ? path.getElement(0) : undefined;
+        const action = path ? path.getElement(0) : null;
+        const id = path ? path.getElement(1) : null;
 
         switch (action) {
         case 'edit':
-            var id = path.getElement(1);
             if (id) {
                 api.content.resource.ContentSummaryAndCompareStatusFetcher.fetch(new ContentId(id)).done(
                     (content: ContentSummaryAndCompareStatus) => {
@@ -50,7 +46,6 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
             }
             break;
         case 'view' :
-            var id = path.getElement(1);
             if (id) {
                 api.content.resource.ContentSummaryAndCompareStatusFetcher.fetch(new ContentId(id)).done(
                     (content: ContentSummaryAndCompareStatus) => {
@@ -61,6 +56,27 @@ export class ContentAppPanel extends api.app.BrowseAndWizardBasedAppPanel<Conten
         default:
             new ShowBrowsePanelEvent().fire();
             break;
+        }
+    }
+
+    protected handleGlobalEvents() {
+        super.handleGlobalEvents();
+
+        NewContentEvent.on((newContentEvent) => {
+            this.handleNew(newContentEvent);
+        });
+    }
+
+    protected createBrowsePanel() {
+        return new ContentBrowsePanel();
+    }
+
+    private handleNew(newContentEvent: NewContentEvent) {
+        if (newContentEvent.getContentType().isSite() && this.browsePanel) {
+            let content: Content = newContentEvent.getParentContent();
+            if (!!content) { // refresh site's node
+                this.browsePanel.getTreeGrid().refreshNodeById(content.getId());
+            }
         }
     }
 

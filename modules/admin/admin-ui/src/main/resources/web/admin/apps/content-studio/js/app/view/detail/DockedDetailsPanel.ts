@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {DetailsPanel, DETAILS_PANEL_TYPE} from "./DetailsPanel";
-import {DetailsView} from "./DetailsView";
+import '../../../api.ts';
+import {DetailsPanel, DETAILS_PANEL_TYPE} from './DetailsPanel';
+import {DetailsView} from './DetailsView';
 
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 
@@ -9,15 +9,16 @@ export class DockedDetailsPanel extends DetailsPanel {
     constructor(detailsView: DetailsView) {
         super(detailsView);
         this.setDoOffset(false);
-        this.addClass("docked-details-panel");
+        this.addClass('docked-details-panel');
     }
 
     protected subscribeOnEvents() {
         this.onPanelSizeChanged(() => this.detailsView.setDetailsContainerHeight());
 
         this.onShown(() => {
-            if (!!this.getItem()) {
-                setTimeout(() => this.detailsView.updateActiveWidget(), 250); // small delay so that isVisibleOrAboutToBeVisible() check detects width change
+            if (this.getItem()) {
+                // small delay so that isVisibleOrAboutToBeVisible() check detects width change
+                setTimeout(() => this.detailsView.updateActiveWidget(), 250);
             }
         });
     }
@@ -30,4 +31,3 @@ export class DockedDetailsPanel extends DetailsPanel {
         return DETAILS_PANEL_TYPE.DOCKED;
     }
 }
-

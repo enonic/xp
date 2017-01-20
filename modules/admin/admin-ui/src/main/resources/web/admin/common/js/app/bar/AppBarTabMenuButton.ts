@@ -1,4 +1,4 @@
-module api.app.bar{
+module api.app.bar {
 
     export class AppBarTabMenuButton extends api.ui.tab.TabMenuButton {
 
@@ -27,11 +27,11 @@ module api.app.bar{
     export class AppBarTabCount extends api.dom.SpanEl {
 
         constructor() {
-            super("tab-count");
+            super('tab-count');
         }
 
         setCount(value:number) {
-            this.getEl().setInnerHtml(value > 0 ? "" + value : "");
+            this.getEl().setInnerHtml(value > 0 ? '' + value : '');
         }
     }
 }

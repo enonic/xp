@@ -39,6 +39,20 @@ module api.content.site.inputtype.siteconfigurator {
             this.setOccurrencesSortable(true);
         }
 
+        makeEmptyOption(id: string): Option<Application> {
+
+            let key = ApplicationKey.fromString(id);
+            let emptyApp = new api.application.ApplicationBuilder();
+            emptyApp.applicationKey = key;
+            emptyApp.displayName = id;
+
+            return <Option<Application>>{
+                value: id,
+                displayValue: emptyApp.build(),
+                empty: true
+            };
+        }
+
         createSelectedOption(option: Option<Application>): SelectedOption<Application> {
 
             let siteConfig = this.siteConfigProvider.getConfig(option.displayValue.getApplicationKey());
@@ -64,7 +78,7 @@ module api.content.site.inputtype.siteconfigurator {
 
         unSiteConfigFormDisplayed(listener: {(applicationKey: ApplicationKey, formView: FormView): void;}) {
             this.siteConfigFormDisplayedListeners =
-                this.siteConfigFormDisplayedListeners.filter((curr) => (curr != listener));
+                this.siteConfigFormDisplayedListeners.filter((curr) => (curr !== listener));
         }
 
         private notifySiteConfigFormDisplayed(applicationKey: ApplicationKey, formView: FormView) {

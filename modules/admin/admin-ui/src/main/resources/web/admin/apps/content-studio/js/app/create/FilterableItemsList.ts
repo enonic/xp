@@ -1,5 +1,5 @@
-import {NewContentDialogList} from "./NewContentDialogList";
-import {NewContentDialogListItem} from "./NewContentDialogListItem";
+import {NewContentDialogList} from './NewContentDialogList';
+import {NewContentDialogListItem} from './NewContentDialogListItem';
 import ContentTypeSummary = api.schema.content.ContentTypeSummary;
 import Site = api.content.site.Site;
 import ApplicationKey = api.application.ApplicationKey;
@@ -15,11 +15,11 @@ export class FilterableItemsList extends NewContentDialogList {
     }
 
     filter(value: string) {
-        var valueLowerCase = value ? value.toLowerCase() : undefined;
+        let valueLowerCase = value ? value.toLowerCase() : undefined;
 
-        var filteredItems = this.listItems.filter((item: NewContentDialogListItem) => {
-            return (!valueLowerCase || (item.getDisplayName().toLowerCase().indexOf(valueLowerCase) != -1) ||
-                    (item.getName().toLowerCase().indexOf(valueLowerCase) != -1));
+        let filteredItems = this.listItems.filter((item: NewContentDialogListItem) => {
+            return (!valueLowerCase || (item.getDisplayName().toLowerCase().indexOf(valueLowerCase) !== -1) ||
+                    (item.getName().toLowerCase().indexOf(valueLowerCase) !== -1));
         });
 
         this.setItems(filteredItems);
@@ -30,22 +30,22 @@ export class FilterableItemsList extends NewContentDialogList {
     }
 
     createItems(allContentTypes: ContentTypeSummary[], parentSite: Site) {
-        var allListItems: NewContentDialogListItem[] = this.createListItems(allContentTypes);
-        var siteApplications: ApplicationKey[] = parentSite ? parentSite.getApplicationKeys() : [];
+        let allListItems: NewContentDialogListItem[] = this.createListItems(allContentTypes);
+        let siteApplications: ApplicationKey[] = parentSite ? parentSite.getApplicationKeys() : [];
         this.listItems = this.filterByParentContent(allListItems, siteApplications);
         this.setItems(this.listItems.slice());
     }
 
     private createListItems(contentTypes: ContentTypeSummary[]): NewContentDialogListItem[] {
-        var contentTypesByName: {[name: string]: ContentTypeSummary} = {};
-        var items: NewContentDialogListItem[] = [];
+        let contentTypesByName: {[name: string]: ContentTypeSummary} = {};
+        let items: NewContentDialogListItem[] = [];
 
         contentTypes.forEach((contentType: ContentTypeSummary) => {
             // filter media type descendants out
-            var contentTypeName = contentType.getContentTypeName();
+            let contentTypeName = contentType.getContentTypeName();
             if (!contentTypeName.isMedia() && !contentTypeName.isDescendantOfMedia() && !contentTypeName.isFragment()) {
                 contentTypesByName[contentType.getName()] = contentType;
-                items.push(NewContentDialogListItem.fromContentType(contentType))
+                items.push(NewContentDialogListItem.fromContentType(contentType));
             }
         });
 
@@ -69,7 +69,7 @@ export class FilterableItemsList extends NewContentDialogList {
 
     private filterByParentContent(items: NewContentDialogListItem[],
                                   siteApplicationKeys: ApplicationKey[]): NewContentDialogListItem[] {
-        var createContentFilter = new api.content.util.CreateContentFilter().siteApplicationsFilter(siteApplicationKeys);
+        let createContentFilter = new api.content.util.CreateContentFilter().siteApplicationsFilter(siteApplicationKeys);
         return items.filter((item: NewContentDialogListItem) =>
             createContentFilter.isCreateContentAllowed(this.parentContent, item.getContentType())
         );

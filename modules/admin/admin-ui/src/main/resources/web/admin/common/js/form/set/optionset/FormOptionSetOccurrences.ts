@@ -35,9 +35,9 @@ module api.form {
 
         createNewOccurrenceView(occurrence: FormSetOccurrence<FormOptionSetOccurrenceView>): FormOptionSetOccurrenceView {
 
-            var dataSet = this.getSetFromArray(occurrence);
+            let dataSet = this.getSetFromArray(occurrence);
 
-            var newOccurrenceView = new FormOptionSetOccurrenceView(<FormOptionSetOccurrenceViewConfig>{
+            let newOccurrenceView = new FormOptionSetOccurrenceView(<FormOptionSetOccurrenceViewConfig>{
                 context: this.context,
                 formSetOccurrence: occurrence,
                 formOptionSet: <FormOptionSet> this.formSet,

@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import ItemView = api.liveedit.ItemView;
 import ComponentView = api.liveedit.ItemView;
@@ -27,17 +27,15 @@ export class PageComponentsItemViewer extends api.ui.NamesAndIconViewer<ItemView
         if (api.ObjectHelper.iFrameSafeInstanceOf(object.getType(), TextItemType)) {
             let textView = <TextComponentView> object;
             let textComponent = <TextComponent>textView.getComponent();
-            let viewer = <TextComponentViewer>object.getViewer()
+            let viewer = <TextComponentViewer>object.getViewer();
             return viewer.resolveDisplayName(textComponent, textView);
         } else if (api.ObjectHelper.iFrameSafeInstanceOf(object.getType(), FragmentItemType)) {
             let fragmentView = <FragmentComponentView> object;
             let fragmentComponent = fragmentView.getFragmentRootComponent();
-            if (fragmentComponent) {
-                if (api.ObjectHelper.iFrameSafeInstanceOf(fragmentComponent, TextComponent)) {
-                    return this.extractTextFromTextComponent(<TextComponent>fragmentComponent) || fragmentComponent.getName().toString();
-                }
-                return fragmentComponent.getName().toString();
+            if (fragmentComponent && api.ObjectHelper.iFrameSafeInstanceOf(fragmentComponent, TextComponent)) {
+                return this.extractTextFromTextComponent(<TextComponent>fragmentComponent) || fragmentComponent.getName().toString();
             }
+            return fragmentView.getFragmentDisplayName();
         }
 
         return object.getName();
@@ -52,7 +50,7 @@ export class PageComponentsItemViewer extends api.ui.NamesAndIconViewer<ItemView
             }
         }
 
-        return object.getType() ? object.getType().getShortName() : "";
+        return object.getType() ? object.getType().getShortName() : '';
     }
 
     resolveIconUrl(object: ItemView): string {
@@ -67,8 +65,8 @@ export class PageComponentsItemViewer extends api.ui.NamesAndIconViewer<ItemView
     }
 
     private extractTextFromTextComponent(textComponent: TextComponent): string {
-        var tmp = document.createElement("DIV");
-        tmp.innerHTML = textComponent.getText() || "";
-        return (tmp.textContent || tmp.innerText || "").trim();
+        let tmp = document.createElement('DIV');
+        tmp.innerHTML = textComponent.getText() || '';
+        return (tmp.textContent || tmp.innerText || '').trim();
     }
 }

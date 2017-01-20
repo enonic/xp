@@ -5,7 +5,7 @@ module api.content.form.inputtype.customselector {
     export class CustomSelectorLoader extends PostLoader<CustomSelectorResponse, CustomSelectorItem> {
 
         protected request: CustomSelectorRequest;
-        
+
         constructor(requestPath: string) {
             super();
 
@@ -28,7 +28,7 @@ module api.content.form.inputtype.customselector {
 
         protected sendPreLoadRequest(ids: string): Q.Promise<CustomSelectorItem[]> {
 
-            return this.getRequest().setIds(ids.split(";")).sendAndParse().then((results) => {
+            return this.getRequest().setIds(ids.split(';')).sendAndParse().then((results) => {
                 this.getRequest().setIds([]);
                 return results;
             });
@@ -43,7 +43,7 @@ module api.content.form.inputtype.customselector {
         }
 
         filterFn(item: CustomSelectorItem): boolean {
-            return item.displayName.indexOf(this.getSearchString().toLowerCase()) != -1;
+            return item.displayName.indexOf(this.getSearchString().toLowerCase()) !== -1;
         }
     }
 

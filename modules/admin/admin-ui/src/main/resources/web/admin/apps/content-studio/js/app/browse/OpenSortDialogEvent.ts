@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 export class OpenSortDialogEvent extends api.event.Event {
     private content: api.content.ContentSummaryAndCompareStatus;

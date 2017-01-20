@@ -7,14 +7,14 @@ module api.liveedit.text {
 
     export class TextItemType extends ComponentItemType {
 
-        private static INSTANCE = new TextItemType();
+        private static INSTANCE: TextItemType = new TextItemType();
 
         static get(): TextItemType {
             return TextItemType.INSTANCE;
         }
 
         constructor() {
-            super("text");
+            super('text');
         }
 
         createView(config: CreateItemViewConfig<RegionView,TextComponent>): TextComponentView {
@@ -32,9 +32,9 @@ module api.liveedit.text {
         }
 
         protected getItemTypeConfig(itemType: string): ItemTypeConfig {
-            var config = super.getItemTypeConfig(itemType);
+            let config = super.getItemTypeConfig(itemType);
 
-            config.getContextMenuConfig().push("edit");
+            config.getContextMenuConfig().push('edit');
 
             return config;
 

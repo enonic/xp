@@ -4,8 +4,8 @@ module api.content.page {
 
         constructor() {
             super(new api.ui.selector.combobox.RichComboBoxBuilder<PageTemplate>().setSelectedOptionsView(
-                new PageTemplateSelectedOptionsView()).setIdentifierMethod("getKey").setMaximumOccurrences(1).setOptionDisplayValueViewer(
-                new PageTemplateViewer));
+                new PageTemplateSelectedOptionsView()).setIdentifierMethod('getKey').setMaximumOccurrences(1).setOptionDisplayValueViewer(
+                new PageTemplateViewer()));
         }
     }
 
@@ -24,17 +24,17 @@ module api.content.page {
             super(option);
 
             this.pageTemplate = option.displayValue;
-            this.addClass("page-template-selected-option-view");
+            this.addClass('page-template-selected-option-view');
         }
 
         doRender(): wemQ.Promise<boolean> {
 
-            var namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
-            namesAndIconView.setIconClass("icon-newspaper icon-large")
+            let namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
+            namesAndIconView.setIconClass('icon-newspaper icon-large')
                 .setMainName(this.pageTemplate.getDisplayName())
                 .setSubName(this.pageTemplate.getController().toString());
 
-            var removeButtonEl = new api.dom.AEl("remove");
+            let removeButtonEl = new api.dom.AEl('remove');
             removeButtonEl.onClicked((event: MouseEvent) => {
                 this.notifyRemoveClicked();
 

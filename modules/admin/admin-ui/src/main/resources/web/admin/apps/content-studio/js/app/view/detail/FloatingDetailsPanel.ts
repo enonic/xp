@@ -1,7 +1,7 @@
-import "../../../api.ts";
-import {SlidablePanel, SlidablePanelBuilder} from "./SlidablePanel";
-import {DetailsView} from "./DetailsView";
-import {DETAILS_PANEL_TYPE} from "./DetailsPanel";
+import '../../../api.ts';
+import {SlidablePanel, SlidablePanelBuilder} from './SlidablePanel';
+import {DetailsView} from './DetailsView';
+import {DETAILS_PANEL_TYPE} from './DetailsPanel';
 
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 
@@ -17,22 +17,22 @@ export class FloatingDetailsPanel extends SlidablePanel {
 
     constructor(detailsView: DetailsView) {
         super(new SlidablePanelBuilder(), detailsView);
-        this.addClass("floating-details-panel");
+        this.addClass('floating-details-panel');
 
-        this.splitter = new api.dom.DivEl("splitter");
-        this.ghostDragger = new api.dom.DivEl("ghost-dragger");
+        this.splitter = new api.dom.DivEl('splitter');
+        this.ghostDragger = new api.dom.DivEl('ghost-dragger');
 
         this.appendChild(this.splitter);
         this.onRendered(() => this.onRenderedHandler());
     }
 
     private onRenderedHandler() {
-        var initialPos = 0;
-        var splitterPosition = 0;
+        let initialPos = 0;
+        let splitterPosition = 0;
         this.actualWidth = this.getEl().getWidth();
         this.mask = new api.ui.mask.DragMask(this.getParentElement());
 
-        var dragListener = (e: MouseEvent) => {
+        let dragListener = (e: MouseEvent) => {
             if (this.splitterWithinBoundaries(initialPos - e.clientX)) {
                 splitterPosition = e.clientX;
                 this.ghostDragger.getEl().setLeftPx(e.clientX - this.getEl().getOffsetLeft());
@@ -71,20 +71,20 @@ export class FloatingDetailsPanel extends SlidablePanel {
     }
 
     private splitterWithinBoundaries(offset: number) {
-        var newWidth = this.actualWidth + offset;
+        let newWidth = this.actualWidth + offset;
         return (newWidth >= this.minWidth) && (newWidth <= this.getParentElement().getEl().getWidth() - this.parentMinWidth);
     }
 
     private startDrag(dragListener: {(e: MouseEvent): void}) {
         this.mask.show();
-        this.addClass("dragging");
+        this.addClass('dragging');
         this.mask.onMouseMove(dragListener);
         this.ghostDragger.getEl().setLeftPx(this.splitter.getEl().getOffsetLeftRelativeToParent()).setTop(null);
     }
 
     private stopDrag(dragListener: {(e: MouseEvent): void}) {
         this.getEl().setWidthPx(this.actualWidth);
-        this.removeClass("dragging");
+        this.removeClass('dragging');
 
         setTimeout(() => {
             this.notifyPanelSizeChanged();

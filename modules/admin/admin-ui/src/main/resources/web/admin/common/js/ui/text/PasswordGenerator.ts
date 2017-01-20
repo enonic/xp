@@ -23,18 +23,18 @@ module api.ui.text {
 
         private blurListeners: {(event: FocusEvent):void}[] = [];
 
-        private SPECIAL_CHARS = '!@#$%^&*()_+{}:"<>?|[];\',./`~';
-        private LOWERCASE_CHARS = 'abcdefghijklmnopqrstuvwxyz';
-        private UPPERCASE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        private DIGIT_CHARS = '0123456789';
+        private SPECIAL_CHARS: string = '!@#$%^&*()_+{}:"<>?|[];\',./`~';
+        private LOWERCASE_CHARS: string = 'abcdefghijklmnopqrstuvwxyz';
+        private UPPERCASE_CHARS: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        private DIGIT_CHARS: string = '0123456789';
 
         constructor() {
-            super("div", "password-generator");
+            super('div', 'password-generator');
 
-            var inputWrapper = new api.dom.DivEl('input-wrapper');
+            let inputWrapper = new api.dom.DivEl('input-wrapper');
             this.appendChild(inputWrapper);
 
-            var strengthMeter = new api.dom.DivEl('strength-meter');
+            let strengthMeter = new api.dom.DivEl('strength-meter');
             inputWrapper.appendChild(strengthMeter);
 
             this.input = new PasswordInput();
@@ -48,7 +48,7 @@ module api.ui.text {
             this.showLink = new api.dom.AEl('show-link');
             this.initFocusEvents(this.showLink);
             this.showLink.onClicked((event: MouseEvent) => {
-                var unlocked = this.hasClass('unlocked');
+                let unlocked = this.hasClass('unlocked');
                 this.toggleClass('unlocked', !unlocked);
                 this.input.setType(unlocked ? 'password' : 'text');
                 event.stopPropagation();
@@ -105,7 +105,7 @@ module api.ui.text {
                 this.complexity = undefined;
             }
             if (this.isExtreme(value)) {
-                this.complexity = 'extreme'
+                this.complexity = 'extreme';
             } else if (this.isStrong(value)) {
                 this.complexity = 'strong';
             } else if (this.isGood(value)) {
@@ -118,23 +118,22 @@ module api.ui.text {
             }
         }
 
-
         private generatePassword() {
-            var length = NumberHelper.randomBetween(14, 16),
-                maxSpecials = NumberHelper.randomBetween(1, 3),
-                specials = 0,
-                maxDigits = NumberHelper.randomBetween(2, 4),
-                digits = 0,
-                maxUppercase = NumberHelper.randomBetween(2, 4),
-                uppercase = 0,
-                maxLowercase = length - maxSpecials - maxDigits - maxUppercase,
-                lowercase = 0;
+            let length = NumberHelper.randomBetween(14, 16);
+            let maxSpecials = NumberHelper.randomBetween(1, 3);
+            let specials = 0;
+            let maxDigits = NumberHelper.randomBetween(2, 4);
+            let digits = 0;
+            let maxUppercase = NumberHelper.randomBetween(2, 4);
+            let uppercase = 0;
+            let maxLowercase = length - maxSpecials - maxDigits - maxUppercase;
+            let lowercase = 0;
 
-            var result = "";
-            var types = [CharType.SPECIAL, CharType.DIGIT, CharType.UPPERCASE, CharType.LOWERCASE];
+            let result = '';
+            let types = [CharType.SPECIAL, CharType.DIGIT, CharType.UPPERCASE, CharType.LOWERCASE];
 
-            for (var i = 0; i < length; i++) {
-                var type = types[NumberHelper.randomBetween(0, types.length - 1)];
+            for (let i = 0; i < length; i++) {
+                let type = types[NumberHelper.randomBetween(0, types.length - 1)];
                 switch (type) {
                 case CharType.SPECIAL:
                     if (specials < maxSpecials) {
@@ -179,7 +178,7 @@ module api.ui.text {
 
         private isWeak(value: string): boolean {
             return !StringHelper.isBlank(value) &&
-                   (value.length < 8 || StringHelper.isLowerCase(value) || StringHelper.isUpperCase(value))
+                   (value.length < 8 || StringHelper.isLowerCase(value) || StringHelper.isUpperCase(value));
         }
 
         private isGood(value: string): boolean {
@@ -258,13 +257,13 @@ module api.ui.text {
         private notifyFocused(event: FocusEvent) {
             this.focusListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         private notifyBlurred(event: FocusEvent) {
             this.blurListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
     }

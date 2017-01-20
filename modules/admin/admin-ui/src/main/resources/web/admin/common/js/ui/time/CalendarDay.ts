@@ -52,7 +52,7 @@ module api.ui.time {
         private calendarDayClickedListeners: {(event: CalendarDayClickedEvent) : void}[] = [];
 
         constructor(builder: CalendarDayBuilder) {
-            super("calendar-day");
+            super('calendar-day');
 
             this.date = builder.date;
             this.month = builder.month;
@@ -65,19 +65,19 @@ module api.ui.time {
                 this.nextDay.previousDay = this;
             }
 
-            if (new Date().toDateString() == builder.date.toDateString()) {
+            if (new Date().toDateString() === builder.date.toDateString()) {
                 this.addClass('today');
             }
 
             this.dayOfWeek = DaysOfWeek.getByNumberCode(this.date.getDay());
-            this.setHtml("" + this.date.getDate());
+            this.setHtml('' + this.date.getDate());
 
             if (this.isBeforeMonth()) {
-                this.addClass("before-month");
+                this.addClass('before-month');
             }
 
             if (this.isAfterMonth()) {
-                this.addClass("after-month");
+                this.addClass('after-month');
             }
 
             this.onClicked((event: MouseEvent) => {
@@ -99,11 +99,10 @@ module api.ui.time {
         }
 
         refreshSelectedDay() {
-            if (this.selectedDay && !this.hasClass("selected-day")) {
-                this.addClass("selected-day");
-            }
-            else if (!this.selectedDay && this.hasClass("selected-day")) {
-                this.removeClass("selected-day");
+            if (this.selectedDay && !this.hasClass('selected-day')) {
+                this.addClass('selected-day');
+            } else if (!this.selectedDay && this.hasClass('selected-day')) {
+                this.removeClass('selected-day');
             }
         }
 
@@ -112,16 +111,16 @@ module api.ui.time {
         }
 
         isBeforeMonth(): boolean {
-            return this.date.getMonth() < this.month || (this.month == 0 && this.date.getMonth() == 11);
+            return this.date.getMonth() < this.month || (this.month === 0 && this.date.getMonth() === 11);
         }
 
         isAfterMonth(): boolean {
-            return this.date.getMonth() > this.month || (this.month == 11 && this.date.getMonth() == 0);
+            return this.date.getMonth() > this.month || (this.month === 11 && this.date.getMonth() === 0);
         }
 
         isLastDayOfMonth(month: number): boolean {
-            var lastDateOfMonth = new Date(this.date.getFullYear(), month + 1, 0);
-            return month == this.date.getMonth() && this.date.getDate() == lastDateOfMonth.getDate();
+            let lastDateOfMonth = new Date(this.date.getFullYear(), month + 1, 0);
+            return month === this.date.getMonth() && this.date.getDate() === lastDateOfMonth.getDate();
         }
 
         getDayOfWeek(): DayOfWeek {
@@ -131,9 +130,8 @@ module api.ui.time {
         getPrevious(): CalendarDay {
             if (this.previousDay) {
                 return this.previousDay;
-            }
-            else {
-                var prevDate = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate() - 1);
+            } else {
+                let prevDate = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate() - 1);
                 this.previousDay = new CalendarDayBuilder().
                     setDate(prevDate).
                     setMonth(this.month).
@@ -146,9 +144,8 @@ module api.ui.time {
         getNext(): CalendarDay {
             if (this.nextDay) {
                 return this.nextDay;
-            }
-            else {
-                var nextDate = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate() + 1);
+            } else {
+                let nextDate = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate() + 1);
                 this.nextDay = new CalendarDayBuilder().
                     setDate(nextDate).
                     setMonth(this.month).
@@ -164,7 +161,7 @@ module api.ui.time {
                 return false;
             }
 
-            var other = <CalendarDay>o;
+            let other = <CalendarDay>o;
 
             if (!api.ObjectHelper.dateEquals(this.date, other.date)) {
                 return false;
@@ -184,11 +181,11 @@ module api.ui.time {
         unCalendarDayClicked(listener: (event: CalendarDayClickedEvent) => void) {
             this.calendarDayClickedListeners = this.calendarDayClickedListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private notifyCalendarDayClicked() {
-            var event = new CalendarDayClickedEvent(this);
+            let event = new CalendarDayClickedEvent(this);
             this.calendarDayClickedListeners.forEach((listener) => {
                 listener(event);
             });

@@ -8,14 +8,14 @@ module api.liveedit.image {
 
     export class ImageItemType extends ComponentItemType {
 
-        private static INSTANCE = new ImageItemType();
+        private static INSTANCE: ImageItemType = new ImageItemType();
 
         static get(): ImageItemType {
             return ImageItemType.INSTANCE;
         }
 
         constructor() {
-            super("image");
+            super('image');
         }
 
         createView(config: CreateItemViewConfig<RegionView,ImageComponent>): ImageComponentView {
@@ -29,7 +29,7 @@ module api.liveedit.image {
         }
 
         isComponentType(): boolean {
-            return true
+            return true;
         }
     }
 

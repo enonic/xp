@@ -7,10 +7,10 @@ module api.ui {
 
         private label: api.dom.LabelEl;
 
-        public static debug = false;
+        public static debug: boolean = false;
 
         constructor(builder: CheckboxBuilder) {
-            super("div", "checkbox", undefined, String(builder.checked || false));
+            super('div', 'checkbox', undefined, String(builder.checked || false));
 
             this.initCheckbox(builder.inputAlignment);
             this.initLabel(builder.text);
@@ -44,7 +44,7 @@ module api.ui {
         }
 
         private getInputAlignmentAsString(inputAlignment: InputAlignment = InputAlignment.LEFT): string {
-            
+
             return InputAlignment[inputAlignment].toLowerCase();
         }
 
@@ -54,7 +54,7 @@ module api.ui {
         }
 
         isChecked(): boolean {
-            return super.getValue() == "true";
+            return super.getValue() === 'true';
         }
 
         toggleChecked() {
@@ -65,7 +65,7 @@ module api.ui {
             if (Checkbox.debug) {
                 console.debug('Checkbox.doSetValue: ', value);
             }
-            this.checkbox.getHTMLElement()['checked'] = value == 'true';
+            this.checkbox.getHTMLElement()['checked'] = value === 'true';
         }
 
         protected doGetValue(): string {
@@ -161,9 +161,6 @@ module api.ui {
 
         inputAlignment: InputAlignment;
 
-        constructor() {
-        }
-
         setLabelText(value: string): CheckboxBuilder {
             this.text = value;
             return this;
@@ -183,7 +180,4 @@ module api.ui {
             return new Checkbox(this);
         }
     }
-
-
-
 }

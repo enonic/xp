@@ -11,23 +11,23 @@ module api.content.resource {
 
         constructor(id: ContentIds, parentPath: ContentPath) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             this.ids = id;
             this.parentPath = parentPath;
         }
 
         getParams(): Object {
-            var fn = (contentId: ContentId) => {
+            let fn = (contentId: ContentId) => {
                 return contentId.toString();
             };
             return {
                 contentIds: this.ids.map(fn),
-                parentContentPath: !!this.parentPath ? this.parentPath.toString() : ""
+                parentContentPath: !!this.parentPath ? this.parentPath.toString() : ''
             };
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "move");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'move');
         }
 
         sendAndParse(): wemQ.Promise<MoveContentResult> {

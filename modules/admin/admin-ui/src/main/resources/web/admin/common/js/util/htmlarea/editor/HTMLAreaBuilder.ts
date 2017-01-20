@@ -1,7 +1,7 @@
 module api.util.htmlarea.editor {
 
     import CreateHtmlAreaDialogEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
-    import ApplicationKey = api.application.ApplicationKey
+    import ApplicationKey = api.application.ApplicationKey;
 
     export class HTMLAreaBuilder {
 
@@ -11,11 +11,11 @@ module api.util.htmlarea.editor {
 
         private assetsUri: string;
         private selector: string;
-        private focusHandler: (e) => void;
-        private blurHandler: (e) => void;
-        private keydownHandler: (e) => void;
-        private keyupHandler: (e) => void;
-        private nodeChangeHandler: (e) => void;
+        private focusHandler: (e: FocusEvent) => void;
+        private blurHandler: (e: FocusEvent) => void;
+        private keydownHandler: (e: KeyboardEvent) => void;
+        private keyupHandler: (e: KeyboardEvent) => void;
+        private nodeChangeHandler: (e: any) => void;
         private createDialogListeners: {(event: CreateHtmlAreaDialogEvent): void}[] = [];
         private inline: boolean = false;
         private fixedToolbarContainer: string;
@@ -24,16 +24,35 @@ module api.util.htmlarea.editor {
         private customToolConfig: any;
         private editableSourceCode: boolean;
 
-        private tools: string = "styleselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | charmap anchor image macro link unlink | table | pastetext";
+        private tools: string = [
+            'styleselect',
+            'alignleft aligncenter alignright alignjustify',
+            'bullist numlist outdent indent',
+            'charmap anchor image macro link unlink',
+            'table',
+            'pastetext'
+        ].join(' | ');
 
-        private plugins: string[] = ['directionality', 'hr', 'preview', 'searchreplace', 'textcolor', 'visualchars', 'visualblocks',
-            'autoresize', 'table', 'fullscreen', 'charmap', 'paste'];
+        private plugins: string[] = [
+            'directionality',
+            'hr',
+            'preview',
+            'searchreplace',
+            'textcolor',
+            'visualchars',
+            'visualblocks',
+            'autoresize',
+            'table',
+            'fullscreen',
+            'charmap',
+            'paste'
+        ];
 
         setEditableSourceCode(value: boolean): HTMLAreaBuilder {
             this.editableSourceCode = value;
             return this;
         }
-        
+
         setAssetsUri(assetsUri: string): HTMLAreaBuilder {
             this.assetsUri = assetsUri;
             return this;
@@ -59,30 +78,30 @@ module api.util.htmlarea.editor {
         private notifyCreateDialog(event: CreateHtmlAreaDialogEvent) {
             this.createDialogListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
-        setFocusHandler(focusHandler: (e) => void): HTMLAreaBuilder {
+        setFocusHandler(focusHandler: (e: FocusEvent) => void): HTMLAreaBuilder {
             this.focusHandler = focusHandler;
             return this;
         }
 
-        setBlurHandler(blurHandler: (e) => void): HTMLAreaBuilder {
+        setBlurHandler(blurHandler: (e: FocusEvent) => void): HTMLAreaBuilder {
             this.blurHandler = blurHandler;
             return this;
         }
 
-        setKeydownHandler(keydownHandler: (e) => void): HTMLAreaBuilder {
+        setKeydownHandler(keydownHandler: (e: KeyboardEvent) => void): HTMLAreaBuilder {
             this.keydownHandler = keydownHandler;
             return this;
         }
 
-        setKeyupHandler(keyupHandler: (e) => void): HTMLAreaBuilder {
+        setKeyupHandler(keyupHandler: (e: KeyboardEvent) => void): HTMLAreaBuilder {
             this.keyupHandler = keyupHandler;
             return this;
         }
 
-        setNodeChangeHandler(nodeChangeHandler: (e) => void): HTMLAreaBuilder {
+        setNodeChangeHandler(nodeChangeHandler: (e: any) => void): HTMLAreaBuilder {
             this.nodeChangeHandler = nodeChangeHandler;
             return this;
         }
@@ -118,14 +137,13 @@ module api.util.htmlarea.editor {
         }
 
         private excludeTools(tools: any[]) {
-            var strTools = this.tools;
+            let strTools = this.tools;
             tools.forEach((toolStr: any) => {
-                toolStr.value.split(" ").forEach((tool: string) => {
-                    if (tool == "*") {
-                        strTools = "";
-                    }
-                    else {
-                        strTools = strTools.replace(tool, "");
+                toolStr.value.split(' ').forEach((tool: string) => {
+                    if (tool === '*') {
+                        strTools = '';
+                    } else {
+                        strTools = strTools.replace(tool, '');
                     }
                 });
             });
@@ -139,17 +157,17 @@ module api.util.htmlarea.editor {
         }
 
         private includeTool(tool: string) {
-            this.tools += " " + tool;
+            this.tools += ' ' + tool;
         }
 
         setTools(tools: any): HTMLAreaBuilder {
             this.customToolConfig = tools;
 
-            if (tools["exclude"] && tools["exclude"] instanceof Array) {
-                this.excludeTools(tools["exclude"]);
+            if (tools['exclude'] && tools['exclude'] instanceof Array) {
+                this.excludeTools(tools['exclude']);
             }
-            if (tools["include"] && tools["include"] instanceof Array) {
-                this.includeTools(tools["include"]);
+            if (tools['include'] && tools['include'] instanceof Array) {
+                this.includeTools(tools['include']);
             }
 
             return this;
@@ -157,21 +175,22 @@ module api.util.htmlarea.editor {
 
         private checkRequiredFieldsAreSet() {
             if (!this.assetsUri || !this.selector || !this.content) {
-                throw new Error("some required fields are missing for tinymce editor");
+                throw new Error('some required fields are missing for tinymce editor');
             }
         }
 
         public createEditor(): wemQ.Promise<HtmlAreaEditor> {
             this.checkRequiredFieldsAreSet();
 
-            if (this.inline && this.editableSourceCode && !this.isToolExcluded("code")) {
-                this.includeTool("code");
+            if (this.inline && this.editableSourceCode && !this.isToolExcluded('code')) {
+                this.includeTool('code');
             }
 
-            var deferred = wemQ.defer<HtmlAreaEditor>();
+            let deferred = wemQ.defer<HtmlAreaEditor>();
 
             tinymce.init({
                 selector: this.selector,
+                forced_root_block : 'div',
                 document_base_url: this.assetsUri + '/common/lib/tinymce/',
                 skin_url: this.assetsUri + '/common/lib/tinymce/skins/lightgray',
                 content_css: this.assetsUri + '/common/styles/api/util/htmlarea/html-editor.css',
@@ -191,7 +210,7 @@ module api.util.htmlarea.editor {
                             styles: {textAlign: 'left'},
                             inline: 'span'
                         },
-                        {selector: 'table', collapsed: false, styles: {'float': 'left'}}
+                        {selector: 'table', collapsed: false, styles: {float: 'left'}}
                     ],
                     aligncenter: [
                         {
@@ -207,7 +226,7 @@ module api.util.htmlarea.editor {
                             styles: {textAlign: 'right'},
                             inline: 'span'
                         },
-                        {selector: 'table', collapsed: false, styles: {'float': 'right'}}
+                        {selector: 'table', collapsed: false, styles: {float: 'right'}}
                     ],
                     alignjustify: [
                         {
@@ -225,20 +244,20 @@ module api.util.htmlarea.editor {
                 verify_css_classes: false,
                 plugins: this.editableSourceCode ? this.plugins.concat('code') : this.plugins,
                 external_plugins: {
-                    "link": this.assetsUri + "/common/js/util/htmlarea/plugins/link.js",
-                    "anchor": this.assetsUri + "/common/js/util/htmlarea/plugins/anchor.js",
-                    "image": this.assetsUri + "/common/js/util/htmlarea/plugins/image.js",
-                    "macro": this.assetsUri + "/common/js/util/htmlarea/plugins/macro.js"
+                    link: this.assetsUri + '/common/js/util/htmlarea/plugins/link.js',
+                    anchor: this.assetsUri + '/common/js/util/htmlarea/plugins/anchor.js',
+                    image: this.assetsUri + '/common/js/util/htmlarea/plugins/image.js',
+                    macro: this.assetsUri + '/common/js/util/htmlarea/plugins/macro.js'
                 },
-                object_resizing: "table",
+                object_resizing: 'table',
                 autoresize_min_height: 100,
                 autoresize_bottom_margin: 0,
 
                 setup: (editor) => {
-                    editor.addCommand("openLinkDialog", this.notifyLinkDialog, this);
-                    editor.addCommand("openAnchorDialog", this.notifyAnchorDialog, this);
-                    editor.addCommand("openImageDialog", this.notifyImageDialog, this);
-                    editor.addCommand("openMacroDialog", this.notifyMacroDialog, this);
+                    editor.addCommand('openLinkDialog', this.notifyLinkDialog, this);
+                    editor.addCommand('openAnchorDialog', this.notifyAnchorDialog, this);
+                    editor.addCommand('openImageDialog', this.notifyImageDialog, this);
+                    editor.addCommand('openMacroDialog', this.notifyMacroDialog, this);
                     editor.on('NodeChange', (e) => {
                         if (!!this.nodeChangeHandler) {
                             this.nodeChangeHandler(e);
@@ -264,20 +283,18 @@ module api.util.htmlarea.editor {
                         }
                     });
                     editor.on('keydown', (e) => {
-                        if (e.keyCode == 9 && !e.altKey && !e.ctrlKey) { // tab pressed
+                        if (e.keyCode === 9 && !e.altKey && !e.ctrlKey) { // tab pressed
                             editor.execCommand(e.shiftKey ? 'Outdent' : 'Indent');
                             e.preventDefault();
-                        }
-                        else if (e.keyCode == 46 || e.keyCode == 8) { // DELETE
-                            var selectedNode = editor.selection.getRng().startContainer;
+                        } else if (e.keyCode === 46 || e.keyCode === 8) { // DELETE
+                            let selectedNode = editor.selection.getRng().startContainer;
                             if (/^(FIGURE)$/.test(selectedNode.nodeName)) {
-                                var previousEl = selectedNode.previousSibling;
+                                let previousEl = selectedNode.previousSibling;
                                 e.preventDefault();
                                 selectedNode.remove();
                                 if (previousEl) {
                                     editor.selection.setNode(previousEl);
-                                }
-                                else {
+                                } else {
                                     editor.focus();
                                 }
                             }
@@ -288,7 +305,7 @@ module api.util.htmlarea.editor {
                         }
                     });
 
-                    var dragParentElement;
+                    let dragParentElement;
                     editor.on('dragstart', (e) => {
                         dragParentElement = e.target.parentElement || e.target.parentNode;
                     });
@@ -304,7 +321,7 @@ module api.util.htmlarea.editor {
                     });
 
                     // BlockFormat shortcuts keys
-                    for (var i = 1; i <= 6; i++) {
+                    for (let i = 1; i <= 6; i++) {
                         editor.addShortcut('meta+alt+' + i, '', ['FormatBlock', false, 'h' + i]);
                     }
 
@@ -316,25 +333,25 @@ module api.util.htmlarea.editor {
             return deferred.promise;
         }
 
-        private notifyLinkDialog(config) {
+        private notifyLinkDialog(config: any) {
             let event = CreateHtmlAreaDialogEvent.create().setConfig(config).setType(
                 api.util.htmlarea.dialog.HtmlAreaDialogType.LINK).setContent(this.content).build();
             this.publishCreateDialogEvent(event);
         }
 
-        private notifyImageDialog(config) {
+        private notifyImageDialog(config: any) {
             let event = CreateHtmlAreaDialogEvent.create().setConfig(config).setType(
                 api.util.htmlarea.dialog.HtmlAreaDialogType.IMAGE).setContent(this.content).build();
             this.publishCreateDialogEvent(event);
         }
 
-        private notifyAnchorDialog(config) {
+        private notifyAnchorDialog(config: any) {
             let event = CreateHtmlAreaDialogEvent.create().setConfig(config).setType(
                 api.util.htmlarea.dialog.HtmlAreaDialogType.ANCHOR).build();
             this.publishCreateDialogEvent(event);
         }
 
-        private notifyMacroDialog(config) {
+        private notifyMacroDialog(config: any) {
             let event = CreateHtmlAreaDialogEvent.create().setConfig(config).setType(
                 api.util.htmlarea.dialog.HtmlAreaDialogType.MACRO).setContentPath(this.contentPath).setApplicationKeys(
                 this.applicationKeys).setType(api.util.htmlarea.dialog.HtmlAreaDialogType.MACRO).setContent(
@@ -349,10 +366,10 @@ module api.util.htmlarea.editor {
         }
 
         private isToolExcluded(tool: string): boolean {
-            if (!this.customToolConfig || !this.customToolConfig["exclude"]) {
+            if (!this.customToolConfig || !this.customToolConfig['exclude']) {
                 return false;
             }
-            return this.customToolConfig["exclude"].indexOf(tool) > -1;
+            return this.customToolConfig['exclude'].indexOf(tool) > -1;
         }
     }
 }

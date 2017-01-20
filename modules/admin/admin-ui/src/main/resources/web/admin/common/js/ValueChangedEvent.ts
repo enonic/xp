@@ -6,11 +6,10 @@ module api {
 
         private newValue: string;
 
-        constructor(oldValue: string = "", newValue: string = "") {
+        constructor(oldValue: string = '', newValue: string = '') {
             this.oldValue = oldValue;
             this.newValue = newValue;
         }
-
 
         getOldValue(): string {
             return this.oldValue;
@@ -19,7 +18,7 @@ module api {
         getNewValue(): string {
             return this.newValue;
         }
-        
+
         valuesAreEqual(): boolean {
             return this.oldValue === this.newValue;
         }

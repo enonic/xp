@@ -2,18 +2,18 @@ module api.content.page.region {
 
     export class ComponentName implements api.Equitable {
 
-        private static COUNT_DELIMITER: string = "-";
+        private static COUNT_DELIMITER: string = '-';
 
         private value: string;
 
         constructor(value: string) {
-            api.util.assertNotNull(value, "ComponentName value cannot be null");
+            api.util.assertNotNull(value, 'ComponentName value cannot be null');
             this.value = value;
         }
 
         public hasCountPostfix(): boolean {
 
-            var countDelimiterIndex = this.value.lastIndexOf(ComponentName.COUNT_DELIMITER);
+            let countDelimiterIndex = this.value.lastIndexOf(ComponentName.COUNT_DELIMITER);
             return countDelimiterIndex > 0 && countDelimiterIndex <= this.value.length - 2;
         }
 
@@ -23,12 +23,12 @@ module api.content.page.region {
                 return this;
             }
 
-            var nameWithoutCountPostfix = this.value.substring(0, this.value.lastIndexOf(ComponentName.COUNT_DELIMITER));
+            let nameWithoutCountPostfix = this.value.substring(0, this.value.lastIndexOf(ComponentName.COUNT_DELIMITER));
             return new ComponentName(nameWithoutCountPostfix);
         }
 
         public isDuplicateOf(other: ComponentName): boolean {
-            if (this.value == other.value) {
+            if (this.value === other.value) {
                 return true;
             }
 
@@ -36,13 +36,13 @@ module api.content.page.region {
                 return false;
             }
 
-            var nameWithoutCountPostfix = this.removeCountPostfix();
+            let nameWithoutCountPostfix = this.removeCountPostfix();
             return nameWithoutCountPostfix.equals(other);
         }
 
         public createDuplicate(count: number): ComponentName {
 
-            var newValue = this.value + ComponentName.COUNT_DELIMITER + "" + count;
+            let newValue = this.value + ComponentName.COUNT_DELIMITER + '' + count;
             return new ComponentName(newValue);
         }
 
@@ -56,7 +56,7 @@ module api.content.page.region {
                 return false;
             }
 
-            var other = <ComponentName>o;
+            let other = <ComponentName>o;
 
             if (!api.ObjectHelper.stringEquals(this.value, other.value)) {
                 return false;

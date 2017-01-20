@@ -8,7 +8,7 @@ module api.content.page {
 
         constructor(site: api.content.ContentId, contentName: api.schema.content.ContentTypeName) {
             super();
-            this.setMethod("GET");
+            this.setMethod('GET');
             this.site = site;
             this.contentTypeName = contentName;
         }
@@ -17,11 +17,11 @@ module api.content.page {
             return {
                 siteId: this.site.toString(),
                 contentTypeName: this.contentTypeName.toString()
-            }
+            };
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "default");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'default');
         }
 
         sendAndParse(): wemQ.Promise<PageTemplate> {
@@ -30,8 +30,7 @@ module api.content.page {
 
                 if (response.hasResult()) {
                     return this.fromJsonToContent(response.getResult());
-                }
-                else {
+                } else {
                     return null;
                 }
             });

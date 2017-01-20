@@ -21,12 +21,12 @@ module api.content {
 
         static fromJson(contentVersionForViewJson: api.content.json.GetContentVersionsForViewResultsJson): ContentVersions {
 
-            var contentVersions: ContentVersion[] = [];
+            let contentVersions: ContentVersion[] = [];
             contentVersionForViewJson.contentVersions.forEach((contentVersionViewJson: api.content.json.ContentVersionViewJson) => {
                 contentVersions.push(ContentVersion.fromJson(contentVersionViewJson, contentVersionViewJson.workspaces));
             });
 
-            var activeVersion;
+            let activeVersion;
             if (!!contentVersionForViewJson.activeVersion) {
                 activeVersion = ContentVersion.fromJson(contentVersionForViewJson.activeVersion.contentVersion,
                     [contentVersionForViewJson.activeVersion.branch]);

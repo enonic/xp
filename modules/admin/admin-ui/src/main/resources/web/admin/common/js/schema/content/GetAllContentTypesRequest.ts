@@ -6,7 +6,7 @@ module api.schema.content {
 
         constructor() {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
         }
 
         getParams():Object {
@@ -16,7 +16,7 @@ module api.schema.content {
         }
 
         getRequestPath():api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "all");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'all');
         }
 
         sendAndParse(): wemQ.Promise<ContentTypeSummary[]> {

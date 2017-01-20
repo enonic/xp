@@ -13,14 +13,13 @@ module api.content.form.inputtype.upload {
     import FileUploaderEl = api.ui.uploader.FileUploaderEl;
     import AttachmentUploaderEl = api.content.attachment.AttachmentUploaderEl;
 
-
     export class AttachmentUploader extends FileUploader {
 
         private attachmentNames: string[] = [];
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super(config);
-            this.addClass("attachment-uploader");
+            this.addClass('attachment-uploader');
             this.config = config;
         }
 
@@ -36,17 +35,17 @@ module api.content.form.inputtype.upload {
                 this.update(propertyArray).done();
 
                 this.uploaderEl.onUploadStarted(() => {
-                    this.uploaderWrapper.removeClass("empty");
+                    this.uploaderWrapper.removeClass('empty');
                 });
 
                 this.uploaderEl.onFileUploaded((event: api.ui.uploader.FileUploadedEvent<Attachment>) => {
 
-                    var attachment = <Attachment>event.getUploadItem().getModel();
+                    let attachment = <Attachment>event.getUploadItem().getModel();
 
                     this.setFileNameProperty(attachment.getName().toString());
                     this.attachmentNames = this.getFileNamesFromProperty(this.getPropertyArray());
 
-                    api.notify.showFeedback('\"' + attachment.getName().toString() + '\" uploaded');
+                    api.notify.showFeedback(`"${attachment.getName().toString()}" uploaded`);
                 });
 
                 this.uploaderEl.onUploadCompleted(() => {
@@ -58,7 +57,7 @@ module api.content.form.inputtype.upload {
 
                 this.uploaderEl.onUploadFailed(() => {
                     this.uploaderEl.setProgressVisible(false);
-                    this.uploaderWrapper.addClass("empty");
+                    this.uploaderWrapper.addClass('empty');
                 });
 
                 this.appendChild(this.uploaderWrapper);
@@ -83,7 +82,7 @@ module api.content.form.inputtype.upload {
                 operation: api.ui.uploader.MediaUploaderElOperation.update,
                 name: this.getContext().input.getName(),
                 showCancel: false,
-                allowMultiSelection: this.getInput().getOccurrences().getMaximum() != 1,
+                allowMultiSelection: this.getInput().getOccurrences().getMaximum() !== 1,
                 hideDefaultDropZone: !!(<any>(this.config.inputConfig)).hideDropZone,
                 deferred: true,
                 maximumOccurrences: this.getInput().getOccurrences().getMaximum(),
@@ -94,9 +93,9 @@ module api.content.form.inputtype.upload {
         }
 
         private removeItemCallback(itemName: string) {
-            var values = this.getFileNamesFromProperty(this.getPropertyArray());
+            const values = this.getFileNamesFromProperty(this.getPropertyArray());
 
-            var index = values.indexOf(itemName);
+            const index = values.indexOf(itemName);
             values.splice(index, 1);
 
             (<AttachmentUploaderEl>this.uploaderEl).removeAttachmentItem(itemName);
@@ -117,5 +116,5 @@ module api.content.form.inputtype.upload {
         }
 
     }
-    api.form.inputtype.InputTypeManager.register(new api.Class("AttachmentUploader", AttachmentUploader));
+    api.form.inputtype.InputTypeManager.register(new api.Class('AttachmentUploader', AttachmentUploader));
 }

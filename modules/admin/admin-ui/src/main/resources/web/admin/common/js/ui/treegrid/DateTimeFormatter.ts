@@ -12,48 +12,48 @@ module api.ui.treegrid {
 
         static createHtml(date:Date): string {
             if (!!date) {
-                var s = DateTimeFormatter.zeroPad(date.getFullYear(), 4) +
-                    "-" +
+                let s = DateTimeFormatter.zeroPad(date.getFullYear(), 4) +
+                    '-' +
                     DateTimeFormatter.zeroPad(date.getMonth() + 1, 2) +
-                    "-" +
+                    '-' +
                     DateTimeFormatter.zeroPad(date.getDate(), 2)+
-                    " " +
+                    ' ' +
                     DateTimeFormatter.zeroPad(date.getHours(), 2)+
-                    ":" +
+                    ':' +
                     DateTimeFormatter.zeroPad(date.getMinutes(), 2) +
-                    ":" +
+                    ':' +
                     DateTimeFormatter.zeroPad(date.getSeconds(), 2);
                 return s;
             }
 
-            return "";
+            return '';
         }
 
         static createHtmlNoTimestamp(date:Date):string {
             if (!!date) {
-                var s = DateTimeFormatter.zeroPad(date.getFullYear(), 4) +
-                    "-" +
+                let s = DateTimeFormatter.zeroPad(date.getFullYear(), 4) +
+                    '-' +
                     DateTimeFormatter.zeroPad(date.getMonth() + 1, 2) +
-                    "-" +
+                    '-' +
                     DateTimeFormatter.zeroPad(date.getDate(), 2);
                 return s;
             }
 
-            return "";
+            return '';
         }
 
         private static zeroPad(n:number, width:number) {
-            var nWidth = n.toString().length;
+            let nWidth = n.toString().length;
             if (nWidth >= width) {
-                return "" + n;
+                return '' + n;
             }
-            var neededZeroes = width - nWidth;
-            var s = "";
-            for( var i = 0; i < neededZeroes; i++ ) {
-                s += "0";
+            let neededZeroes = width - nWidth;
+            let s = '';
+            for( let i = 0; i < neededZeroes; i++ ) {
+                s += '0';
             }
 
-            return s + n
+            return s + n;
         }
     }
 }

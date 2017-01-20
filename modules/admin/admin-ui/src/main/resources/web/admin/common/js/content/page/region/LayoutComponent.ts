@@ -10,9 +10,9 @@ module api.content.page.region {
 
         private componentPropertyChangedListeners: {(event: ComponentPropertyChangedEvent):void}[] = [];
 
-        private componentPropertyChangedEventHandler;
+        private componentPropertyChangedEventHandler: (event: any) => void;
 
-        private regionsChangedEventHandler;
+        private regionsChangedEventHandler: (event: any) => void;
 
         constructor(builder: LayoutComponentBuilder) {
             super(builder);
@@ -22,17 +22,16 @@ module api.content.page.region {
                 this.regions.getRegions().forEach((region: Region) => {
                     region.setParent(this);
                 });
-            }
-            else {
+            } else {
                 this.regions = Regions.create().build();
             }
 
-            this.componentPropertyChangedEventHandler = (event) => this.forwardComponentPropertyChangedEvent(event);
-            this.regionsChangedEventHandler = (event) => {
+            this.componentPropertyChangedEventHandler = (event: any) => this.forwardComponentPropertyChangedEvent(event);
+            this.regionsChangedEventHandler = (event: any) => {
                 if (LayoutComponent.debug) {
-                    console.debug("LayoutComponent[" + this.getPath().toString() + "].onChanged: ", event);
+                    console.debug('LayoutComponent[' + this.getPath().toString() + '].onChanged: ', event);
                 }
-                this.notifyPropertyValueChanged("regions");
+                this.notifyPropertyValueChanged('regions');
             };
 
             this.registerRegionsListeners(this.regions);
@@ -48,7 +47,7 @@ module api.content.page.region {
 
         public setRegions(value: Regions) {
 
-            var oldValue = this.regions;
+            let oldValue = this.regions;
             if (oldValue) {
                 this.unregisterRegionsListeners(oldValue);
             }
@@ -58,9 +57,9 @@ module api.content.page.region {
 
             if (!api.ObjectHelper.equals(oldValue, value)) {
                 if (LayoutComponent.debug) {
-                    console.debug("LayoutComponent[" + this.getPath().toString() + "].regions reassigned: ", event);
+                    console.debug('LayoutComponent[' + this.getPath().toString() + '].regions reassigned: ', event);
                 }
-                this.notifyPropertyChanged("regions");
+                this.notifyPropertyChanged('regions');
             }
         }
 
@@ -73,8 +72,8 @@ module api.content.page.region {
         }
 
         addRegions(layoutDescriptor: LayoutDescriptor) {
-            var sourceRegions = this.getRegions();
-            var mergedRegions = sourceRegions.mergeRegions(layoutDescriptor.getRegions(), this);
+            let sourceRegions = this.getRegions();
+            let mergedRegions = sourceRegions.mergeRegions(layoutDescriptor.getRegions(), this);
             this.setRegions(mergedRegions);
         }
 
@@ -83,7 +82,7 @@ module api.content.page.region {
         }
 
         public toJson(): ComponentTypeWrapperJson {
-            var json: LayoutComponentJson = <LayoutComponentJson>super.toComponentJson();
+            let json: LayoutComponentJson = <LayoutComponentJson>super.toComponentJson();
             json.regions = this.regions.toJson();
 
             return <ComponentTypeWrapperJson> {
@@ -97,7 +96,7 @@ module api.content.page.region {
                 return false;
             }
 
-            var other = <LayoutComponent>o;
+            let other = <LayoutComponent>o;
 
             if (!super.equals(o)) {
                 return false;
@@ -124,7 +123,6 @@ module api.content.page.region {
             regions.unComponentPropertyChanged(this.componentPropertyChangedEventHandler);
         }
 
-
         onComponentPropertyChanged(listener: (event: ComponentPropertyChangedEvent)=>void) {
             this.componentPropertyChangedListeners.push(listener);
         }
@@ -132,7 +130,7 @@ module api.content.page.region {
         unComponentPropertyChanged(listener: (event: ComponentPropertyChangedEvent)=>void) {
             this.componentPropertyChangedListeners =
             this.componentPropertyChangedListeners.filter((curr: (event: ComponentPropertyChangedEvent)=>void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
@@ -164,8 +162,8 @@ module api.content.page.region {
             }
             this.setParent(region);
 
-            var layoutComponent = this.build();
-            var layoutRegions = Regions.create().fromJson(json.regions, layoutComponent).build();
+            let layoutComponent = this.build();
+            let layoutRegions = Regions.create().fromJson(json.regions, layoutComponent).build();
             layoutComponent.setRegions(layoutRegions);
             return layoutComponent;
         }

@@ -9,14 +9,14 @@ module api.ui.locale {
 
     export class LocaleComboBox extends api.ui.selector.combobox.RichComboBox<Locale> {
         constructor(maxOccurrences?: number, value?: string) {
-            var localeSelectedOptionsView = new LocaleSelectedOptionsView();
+            let localeSelectedOptionsView = new LocaleSelectedOptionsView();
             localeSelectedOptionsView.onOptionDeselected(() => {
                 this.clearSelection();
             });
-            var builder = new api.ui.selector.combobox.RichComboBoxBuilder<Locale>().
+            let builder = new api.ui.selector.combobox.RichComboBoxBuilder<Locale>().
                 setMaximumOccurrences(maxOccurrences || 0).
-                setComboBoxName("localeSelector").
-                setIdentifierMethod("getTag").
+                setComboBoxName('localeSelector').
+                setIdentifierMethod('getTag').
                 setLoader(new LocaleLoader()).
                 setValue(value).
                 setSelectedOptionsView(localeSelectedOptionsView).
@@ -26,11 +26,10 @@ module api.ui.locale {
         }
 
         clearSelection(forceClear: boolean = false) {
-            this.getLoader().search("");
+            this.getLoader().search('');
             super.clearSelection(forceClear);
         }
     }
-
 
     class LocaleSelectedOptionView extends LocaleViewer implements api.ui.selector.combobox.SelectedOptionView<Locale> {
 
@@ -39,8 +38,8 @@ module api.ui.locale {
         constructor(option: Option<Locale>) {
             super();
             this.setOption(option);
-            this.setClass("locale-selected-option-view");
-            var removeButton = new api.dom.AEl("icon-close");
+            this.setClass('locale-selected-option-view');
+            let removeButton = new api.dom.AEl('icon-close');
             removeButton.onClicked((event: MouseEvent) => {
                 this.notifyRemoveClicked(event);
                 event.stopPropagation();
@@ -51,6 +50,7 @@ module api.ui.locale {
         }
 
         setEditable(editable: boolean) {
+            // must be implemented by children
         }
 
         setOption(option: api.ui.selector.Option<Locale>) {
@@ -67,11 +67,11 @@ module api.ui.locale {
     class LocaleSelectedOptionsView extends api.ui.selector.combobox.BaseSelectedOptionsView<Locale> {
 
         constructor() {
-            super("locale-selected-options-view");
+            super('locale-selected-options-view');
         }
 
         createSelectedOption(option: Option<Locale>): SelectedOption<Locale> {
-            var optionView = new LocaleSelectedOptionView(option);
+            let optionView = new LocaleSelectedOptionView(option);
             return new api.ui.selector.combobox.SelectedOption<Locale>(optionView, this.count());
         }
 

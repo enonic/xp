@@ -31,7 +31,7 @@ module api.liveedit.part {
         }
 
         private createPlaceholder() {
-            var placeholder = new PartPlaceholder(this);
+            let placeholder = new PartPlaceholder(this);
             placeholder.setDisplayName(this.getComponent().getName().toString());
 
             this.setPlaceholder(placeholder);
@@ -39,8 +39,8 @@ module api.liveedit.part {
         }
 
         private resetHrefForRootLink(builder: PartComponentViewBuilder) {
-            if (builder.element && builder.element.getEl().hasAttribute("href")) {
-                builder.element.getEl().setAttribute("href", "#");
+            if (builder.element && builder.element.getEl().hasAttribute('href')) {
+                builder.element.getEl().setAttribute('href', '#');
             }
         }
 
@@ -68,7 +68,7 @@ module api.liveedit.part {
 
         toItemViewArray(): ItemView[] {
 
-            var array: ItemView[] = [];
+            let array: ItemView[] = [];
             array.push(this);
             this.contentViews.forEach((contentView: ContentView) => {
                 array = array.concat(contentView.toItemViewArray());
@@ -78,19 +78,18 @@ module api.liveedit.part {
 
         private parseContentViews(parentElement?: api.dom.Element) {
 
-            var children = parentElement ? parentElement.getChildren() : this.getChildren();
+            let children = parentElement ? parentElement.getChildren() : this.getChildren();
 
             children.forEach((childElement: api.dom.Element) => {
-                var itemType = ItemType.fromElement(childElement);
+                let itemType = ItemType.fromElement(childElement);
                 if (itemType) {
                     if (ContentItemType.get().equals(itemType)) {
-                        var contentView = new ContentView(new ContentViewBuilder().
+                        let contentView = new ContentView(new ContentViewBuilder().
                             setParentPartComponentView(this).
                             setParentElement(parentElement ? parentElement : this).
                             setElement(childElement));
                         this.addContent(contentView);
-                    }
-                    else {
+                    } else {
                         this.parseContentViews(childElement);
                     }
                 }

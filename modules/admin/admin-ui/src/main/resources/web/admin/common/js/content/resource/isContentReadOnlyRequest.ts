@@ -1,12 +1,12 @@
 module api.content.resource {
 
-    export class isContentReadOnlyRequest extends ContentResourceRequest<string[], string[]> {
+    export class IsContentReadOnlyRequest extends ContentResourceRequest<string[], string[]> {
 
         private ids: ContentId[];
 
         constructor(ids: ContentId[]) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             this.ids = ids;
         }
 

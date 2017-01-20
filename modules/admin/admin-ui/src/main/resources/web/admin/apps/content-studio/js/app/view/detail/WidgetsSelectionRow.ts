@@ -1,7 +1,7 @@
-import "../../../api.ts";
-import {WidgetView} from "./WidgetView";
-import {DetailsView} from "./DetailsView";
-import {InfoWidgetToggleButton} from "./button/InfoWidgetToggleButton";
+import '../../../api.ts';
+import {WidgetView} from './WidgetView';
+import {DetailsView} from './DetailsView';
+import {InfoWidgetToggleButton} from './button/InfoWidgetToggleButton';
 
 import Dropdown = api.ui.selector.dropdown.Dropdown;
 import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
@@ -16,17 +16,17 @@ export class WidgetsSelectionRow extends api.dom.DivEl {
     private infoWidgetToggleButton: InfoWidgetToggleButton;
 
     constructor(detailsView: DetailsView) {
-        super("widgets-selection-row");
+        super('widgets-selection-row');
 
         this.detailsView = detailsView;
 
         this.infoWidgetToggleButton = new InfoWidgetToggleButton(detailsView);
 
         this.widgetSelectorDropdown = new WidgetSelectorDropdown(detailsView);
-        this.widgetSelectorDropdown.addClass("widget-selector");
+        this.widgetSelectorDropdown.addClass('widget-selector');
 
         this.widgetSelectorDropdown.onOptionSelected((event: OptionSelectedEvent<WidgetViewOption>) => {
-            var widgetView = event.getOption().displayValue.getWidgetView();
+            let widgetView = event.getOption().displayValue.getWidgetView();
             widgetView.setActive();
         });
 
@@ -43,16 +43,16 @@ export class WidgetsSelectionRow extends api.dom.DivEl {
     updateState(widgetView: WidgetView) {
         if (this.detailsView.isDefaultWidget(widgetView)) {
             this.infoWidgetToggleButton.setActive();
-            this.widgetSelectorDropdown.removeClass("non-default-selected");
+            this.widgetSelectorDropdown.removeClass('non-default-selected');
         } else {
-            this.widgetSelectorDropdown.addClass("non-default-selected");
+            this.widgetSelectorDropdown.addClass('non-default-selected');
             this.infoWidgetToggleButton.setInactive();
-            if (this.widgetSelectorDropdown.getValue() != widgetView.getWidgetName()) {
+            if (this.widgetSelectorDropdown.getValue() !== widgetView.getWidgetName()) {
                 this.widgetSelectorDropdown.setValue(widgetView.getWidgetName());
             }
         }
         if (this.widgetSelectorDropdown.getSelectedOption()) {
-            this.widgetSelectorDropdown.getSelectedOptionView().getEl().setDisplay("inline-block");
+            this.widgetSelectorDropdown.getSelectedOptionView().getEl().setDisplay('inline-block');
         }
     }
 
@@ -61,7 +61,7 @@ export class WidgetsSelectionRow extends api.dom.DivEl {
 
         widgetViews.forEach((view: WidgetView) => {
 
-            var option = {
+            let option = {
                 value: view.getWidgetName(),
                 displayValue: new WidgetViewOption(view)
             };
@@ -70,10 +70,10 @@ export class WidgetsSelectionRow extends api.dom.DivEl {
         });
 
         if (this.widgetSelectorDropdown.getOptionCount() < 2) {
-            this.widgetSelectorDropdown.addClass("single-optioned")
+            this.widgetSelectorDropdown.addClass('single-optioned');
         }
 
-        var visisbleNow = this.isVisible();
+        let visisbleNow = this.isVisible();
 
         if (visisbleNow) {
             this.setVisible(false);
@@ -88,17 +88,17 @@ export class WidgetsSelectionRow extends api.dom.DivEl {
 export class WidgetSelectorDropdown extends Dropdown<WidgetViewOption> {
 
     constructor(detailsView: DetailsView) {
-        super("widgetSelector", {
+        super('widgetSelector', {
             disableFilter: true,
             skipExpandOnClick: true,
-            inputPlaceholderText: ""
+            inputPlaceholderText: ''
         });
 
         this.onClicked((event) => {
             if (this.isDefaultOptionDisplayValueViewer(event.target)) {
                 if (this.getSelectedOption()) {
-                    var widgetView = this.getSelectedOption().displayValue.getWidgetView();
-                    if (widgetView != detailsView.getActiveWidget()) {
+                    let widgetView = this.getSelectedOption().displayValue.getWidgetView();
+                    if (widgetView !== detailsView.getActiveWidget()) {
                         widgetView.setActive();
                     }
                     this.hideDropdown();
@@ -112,9 +112,9 @@ export class WidgetSelectorDropdown extends Dropdown<WidgetViewOption> {
     }
 
     private isDefaultOptionDisplayValueViewer(object: Object) {
-        if (object && object["id"]) {
-            var id = object["id"].toString();
-            return id.indexOf("DropdownHandle") < 0 && id.indexOf("InfoWidgetToggleButton") < 0;
+        if (object && object['id']) {
+            let id = object['id'].toString();
+            return id.indexOf('DropdownHandle') < 0 && id.indexOf('InfoWidgetToggleButton') < 0;
         }
         return false;
     }

@@ -1,6 +1,6 @@
-import "../../../../../../api.ts";
-import {ComponentInspectionPanel, ComponentInspectionPanelConfig} from "./ComponentInspectionPanel";
-import {ImageSelectorForm} from "./ImageSelectorForm";
+import '../../../../../../api.ts';
+import {ComponentInspectionPanel, ComponentInspectionPanelConfig} from './ComponentInspectionPanel';
+import {ImageSelectorForm} from './ImageSelectorForm';
 
 import ImageComponent = api.content.page.region.ImageComponent;
 import ContentSummary = api.content.ContentSummary;
@@ -37,17 +37,17 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
 
     constructor() {
         super(<ComponentInspectionPanelConfig>{
-            iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType("image", "icon-xlarge")
+            iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType('image', 'icon-xlarge')
         });
         this.loader = new api.content.resource.ContentSummaryLoader();
         this.loader.setAllowedContentTypeNames([ContentTypeName.IMAGE, ContentTypeName.MEDIA_VECTOR]);
         this.imageSelector = ContentComboBox.create().setMaximumOccurrences(1).setLoader(this.loader).build();
 
-        this.imageSelectorForm = new ImageSelectorForm(this.imageSelector, "Image");
+        this.imageSelectorForm = new ImageSelectorForm(this.imageSelector, 'Image');
 
         this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
             // Ensure displayed config form and selector option are removed when image is removed
-            if (event.getPropertyName() == ImageComponent.PROPERTY_IMAGE) {
+            if (event.getPropertyName() === ImageComponent.PROPERTY_IMAGE) {
                 if (!this.imageComponent.hasImage()) {
                     this.setupComponentForm(this.imageComponent);
                     this.imageSelector.setContent(null);
@@ -77,14 +77,14 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
         this.imageComponent = imageView.getComponent();
         this.setComponent(this.imageComponent);
 
-        var contentId: ContentId = this.imageComponent.getImage();
+        const contentId: ContentId = this.imageComponent.getImage();
         if (contentId) {
-            var image: ContentSummary = this.imageSelector.getContent(contentId);
+            const image: ContentSummary = this.imageSelector.getContent(contentId);
             if (image) {
                 this.setImage(image);
             } else {
-                new GetContentSummaryByIdRequest(contentId).sendAndParse().then((image: ContentSummary) => {
-                    this.setImage(image);
+                new GetContentSummaryByIdRequest(contentId).sendAndParse().then((receivedImage: ContentSummary) => {
+                    this.setImage(receivedImage);
                 }).catch((reason: any) => {
                     if (this.isNotFoundError(reason)) {
                         this.setSelectorValue(null);
@@ -121,8 +121,8 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
             this.removeChild(this.formView);
             this.formView = null;
         }
-        var configData = imageComponent.getConfig();
-        var configForm = imageComponent.getForm();
+        let configData = imageComponent.getConfig();
+        let configForm = imageComponent.getForm();
         this.formView = new api.form.FormView(this.formContext, configForm, configData.getRoot());
         this.appendChild(this.formView);
         imageComponent.setDisableEventForwarding(true);
@@ -137,8 +137,8 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
 
         this.imageSelector.onOptionSelected((event: SelectedOptionEvent<ContentSummary>) => {
             if (this.handleSelectorEvents) {
-                var option: Option<ContentSummary> = event.getSelectedOption().getOption();
-                var imageContent = option.displayValue;
+                let option: Option<ContentSummary> = event.getSelectedOption().getOption();
+                let imageContent = option.displayValue;
                 this.imageComponent.setImage(imageContent.getContentId(), imageContent.getDisplayName());
             }
         });

@@ -4,8 +4,8 @@ module OrderExprJsonSpec {
 
     export function getOrderExprJson(): OrderExprJson {
         return <OrderExprJson> {
-            direction: "DESC",
-            fieldName: "modifiedtime"
+            direction: 'DESC',
+            fieldName: 'modifiedtime'
         };
     }
 }

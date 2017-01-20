@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import PropertyPath = api.data.PropertyPath;
 import Property = api.data.Property;
@@ -28,8 +28,8 @@ export class DisplayNameScriptExecutor implements api.app.wizard.DisplayNameGene
     }
 
     execute(): string {
-        api.util.assertNotNull(this.formView, "formView not set");
-        api.util.assertNotNull(this.script, "script not set");
+        api.util.assertNotNull(this.formView, 'formView not set');
+        api.util.assertNotNull(this.script, 'script not set');
 
         return this.safeEval(this.script, this.formView);
     }
@@ -38,27 +38,27 @@ export class DisplayNameScriptExecutor implements api.app.wizard.DisplayNameGene
 
         function $(...paths: string[]) {
 
-            var strValues: string [] = [];
+            let strValues: string [] = [];
             paths.forEach((path: string) => {
 
-                var strValue = formView.getData().getString(path);
+                let strValue = formView.getData().getString(path);
                 if (!api.util.StringHelper.isBlank(strValue)) {
                     strValues.push(strValue);
                 }
             });
 
-            var strValue = "";
+            let strValue = '';
             strValues.forEach((s: string, index: number) => {
                 strValue += s;
                 if (index < strValues.length - 1) {
-                    strValue += " ";
+                    strValue += ' ';
                 }
             });
 
             return strValue;
         }
 
-        var result = '';
+        let result = '';
 
         try {
             // hide eval, Function, document, window and other things from the script.

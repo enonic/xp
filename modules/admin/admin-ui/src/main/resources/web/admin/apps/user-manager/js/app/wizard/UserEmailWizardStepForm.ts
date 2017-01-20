@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import Principal = api.security.Principal;
 
@@ -8,7 +8,6 @@ import Validators = api.ui.form.Validators;
 
 import DivEl = api.dom.DivEl;
 import LabelEl = api.dom.LabelEl;
-
 
 export class UserEmailWizardStepForm extends api.app.wizard.WizardStepForm {
 
@@ -23,12 +22,12 @@ export class UserEmailWizardStepForm extends api.app.wizard.WizardStepForm {
         this.email = new EmailInput();
         this.email.setUserStoreKey(this.userStoreKey);
 
-        var emailFormItem = new FormItemBuilder(this.email).setLabel('Email').setValidator(Validators.required).build();
+        let emailFormItem = new FormItemBuilder(this.email).setLabel('Email').setValidator(Validators.required).build();
 
-        var fieldSet = new api.ui.form.Fieldset();
+        let fieldSet = new api.ui.form.Fieldset();
         fieldSet.add(emailFormItem);
 
-        var form = new api.ui.form.Form(api.form.FormView.VALIDATION_CLASS).add(fieldSet);
+        let form = new api.ui.form.Form(api.form.FormView.VALIDATION_CLASS).add(fieldSet);
 
         form.onFocus((event) => {
             this.notifyFocused(event);
@@ -39,7 +38,7 @@ export class UserEmailWizardStepForm extends api.app.wizard.WizardStepForm {
 
         form.onValidityChanged((event: api.ValidityChangedEvent) => {
             this.notifyValidityChanged(new api.app.wizard.WizardStepValidityChangedEvent(event.isValid()));
-            emailFormItem.toggleClass("invalid", !event.isValid());
+            emailFormItem.toggleClass('invalid', !event.isValid());
         });
 
         this.appendChild(form);

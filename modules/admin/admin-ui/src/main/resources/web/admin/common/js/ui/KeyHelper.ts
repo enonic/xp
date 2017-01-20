@@ -14,6 +14,10 @@ module api.ui {
             return event.keyCode === 46;
         }
 
+        static isSpace(event: KeyboardEvent): boolean {
+            return event.keyCode === 32;
+        }
+
         static isBackspace(event: KeyboardEvent): boolean {
             return event.keyCode === 8;
         }

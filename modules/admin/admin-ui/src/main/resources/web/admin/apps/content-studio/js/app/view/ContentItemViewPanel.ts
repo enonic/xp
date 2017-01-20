@@ -1,13 +1,13 @@
-import "../../api.ts";
-import {ContentItemPreviewPanel} from "./ContentItemPreviewPanel";
-import {ContentItemViewToolbar} from "./ContentItemViewToolbar";
-import {EditAction} from "./EditAction";
-import {DeleteAction} from "./DeleteAction";
-import {CloseAction} from "./CloseAction";
-import {ContentItemStatisticsPanel} from "./ContentItemStatisticsPanel";
-import {Router} from "../Router";
-import {ShowPreviewEvent} from "../browse/ShowPreviewEvent";
-import {ShowDetailsEvent} from "../browse/ShowDetailsEvent";
+import '../../api.ts';
+import {ContentItemPreviewPanel} from './ContentItemPreviewPanel';
+import {ContentItemViewToolbar} from './ContentItemViewToolbar';
+import {EditAction} from './EditAction';
+import {DeleteAction} from './DeleteAction';
+import {CloseAction} from './CloseAction';
+import {ContentItemStatisticsPanel} from './ContentItemStatisticsPanel';
+import {Router} from '../Router';
+import {ShowPreviewEvent} from '../browse/ShowPreviewEvent';
+import {ShowDetailsEvent} from '../browse/ShowDetailsEvent';
 
 export class ContentItemViewPanel extends api.app.view.ItemViewPanel<api.content.ContentSummaryAndCompareStatus> {
 
@@ -42,7 +42,7 @@ export class ContentItemViewPanel extends api.app.view.ItemViewPanel<api.content
 
         this.actions = [this.editAction, this.deleteAction, this.closeAction];
 
-        var toolbar = new ContentItemViewToolbar({
+        let toolbar = new ContentItemViewToolbar({
             editAction: this.editAction,
             deleteAction: this.deleteAction
         });
@@ -68,7 +68,7 @@ export class ContentItemViewPanel extends api.app.view.ItemViewPanel<api.content
 
         this.onShown((event: api.dom.ElementShownEvent) => {
             if (this.getItem()) {
-                Router.setHash("view/" + this.getItem().getModel().getId());
+                Router.setHash('view/' + this.getItem().getModel().getId());
             }
         });
     }
@@ -78,7 +78,6 @@ export class ContentItemViewPanel extends api.app.view.ItemViewPanel<api.content
         this.statisticsPanel.setItem(item);
         this.previewPanel.setItem(item);
     }
-
 
     public showPreview(enabled: boolean) {
         this.previewMode = enabled;

@@ -9,12 +9,12 @@ module api.ui.treegrid {
         private refreshButton: api.dom.Element;
 
         constructor(actions: TreeGridToolbarActions<any>, treeGrid: TreeGrid<any>) {
-            super("tree-grid-toolbar");
+            super('tree-grid-toolbar');
 
             this.addActions(actions.getAllActions());
 
             this.addGreedySpacer();
-            this.refreshButton = new api.ui.button.Button().addClass(api.StyleHelper.getIconCls("loop"));
+            this.refreshButton = new api.ui.button.Button().addClass(api.StyleHelper.getIconCls('loop'));
             this.refreshButton.onClicked((event: MouseEvent) => treeGrid.reload());
             this.addElement(this.refreshButton);
 

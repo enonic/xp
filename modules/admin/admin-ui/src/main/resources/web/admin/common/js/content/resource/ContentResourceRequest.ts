@@ -2,15 +2,15 @@ module api.content.resource {
 
     export class ContentResourceRequest<JSON_TYPE, PARSED_TYPE> extends api.rest.ResourceRequest<JSON_TYPE, PARSED_TYPE> {
 
-        public static EXPAND_NONE = 'none';
-        public static EXPAND_SUMMARY = 'summary';
-        public static EXPAND_FULL = 'full';
+        public static EXPAND_NONE: string = 'none';
+        public static EXPAND_SUMMARY: string = 'summary';
+        public static EXPAND_FULL: string = 'full';
 
         private resourcePath: api.rest.Path;
 
         constructor() {
             super();
-            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "content");
+            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), 'content');
         }
 
         getResourcePath(): api.rest.Path {
@@ -23,7 +23,7 @@ module api.content.resource {
 
         fromJsonToContentArray(json: json.ContentJson[]): Content[] {
 
-            var array: Content[] = [];
+            let array: Content[] = [];
             json.forEach((itemJson: json.ContentJson) => {
                 array.push(this.fromJsonToContent(itemJson));
             });
@@ -37,7 +37,7 @@ module api.content.resource {
 
         fromJsonToContentSummaryArray(json: json.ContentSummaryJson[]): ContentSummary[] {
 
-            var array: ContentSummary[] = [];
+            let array: ContentSummary[] = [];
             json.forEach((itemJson: json.ContentSummaryJson) => {
                 array.push(this.fromJsonToContentSummary(itemJson));
             });

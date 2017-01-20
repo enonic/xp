@@ -18,7 +18,7 @@ module api.security.event {
         }
 
         isEmpty(): boolean {
-            return this.principalDeletedPaths.length == 0;
+            return this.principalDeletedPaths.length === 0;
         }
 
         fire() {
@@ -35,6 +35,5 @@ module api.security.event {
             api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
         }
     }
-
 
 }

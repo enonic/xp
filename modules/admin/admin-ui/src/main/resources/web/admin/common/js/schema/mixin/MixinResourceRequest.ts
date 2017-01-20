@@ -5,7 +5,7 @@ module api.schema.mixin {
 
         constructor() {
             super();
-            this.resourceUrl = api.rest.Path.fromParent(super.getRestPath(), "schema/mixin");
+            this.resourceUrl = api.rest.Path.fromParent(super.getRestPath(), 'schema/mixin');
         }
 
         getResourcePath(): api.rest.Path {

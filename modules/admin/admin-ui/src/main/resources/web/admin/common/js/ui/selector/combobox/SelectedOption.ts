@@ -9,7 +9,7 @@ module api.ui.selector.combobox {
         private index:number;
 
         constructor(optionView:SelectedOptionView<T>, index:number) {
-            api.util.assertNotNull(optionView, "optionView cannot be null");
+            api.util.assertNotNull(optionView, 'optionView cannot be null');
 
             this.optionView = optionView;
             this.index = index;

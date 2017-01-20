@@ -2,7 +2,7 @@ module api.form {
 
     export class InputTypeName implements api.Equitable {
 
-        private static CUSTOM_PREFIX: string = "custom:";
+        private static CUSTOM_PREFIX: string = 'custom:';
 
         private custom: boolean;
 
@@ -11,10 +11,9 @@ module api.form {
         private refString: string;
 
         static parseInputTypeName(str: string) {
-            if (str.substr(0, InputTypeName.CUSTOM_PREFIX.length) == InputTypeName.CUSTOM_PREFIX) {
+            if (str.substr(0, InputTypeName.CUSTOM_PREFIX.length) === InputTypeName.CUSTOM_PREFIX) {
                 return new InputTypeName(str.substr(InputTypeName.CUSTOM_PREFIX.length, str.length), true);
-            }
-            else {
+            } else {
                 return new InputTypeName(str, false);
             }
         }
@@ -25,8 +24,7 @@ module api.form {
 
             if (this.custom) {
                 this.refString = InputTypeName.CUSTOM_PREFIX + name;
-            }
-            else {
+            } else {
                 this.refString = name;
             }
         }
@@ -45,7 +43,7 @@ module api.form {
 
         public toJson(): string {
 
-            return this.toString()
+            return this.toString();
         }
 
         equals(o: api.Equitable): boolean {
@@ -54,7 +52,7 @@ module api.form {
                 return false;
             }
 
-            var other = <InputTypeName>o;
+            let other = <InputTypeName>o;
 
             if (!api.ObjectHelper.booleanEquals(this.custom, other.custom)) {
                 return false;

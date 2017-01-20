@@ -11,21 +11,21 @@ module api.content.page {
         }
 
         getParams(): Object {
-            throw new Error("Unexpected call");
+            throw new Error('Unexpected call');
         }
 
         getRequestPath(): api.rest.Path {
-            throw new Error("Unexpected call");
+            throw new Error('Unexpected call');
         }
 
         sendAndParse(): wemQ.Promise<PageDescriptor[]> {
 
             if (this.applicationKeys.length > 0) {
-                var promises = this.applicationKeys.map(
+                let promises = this.applicationKeys.map(
                     (applicationKey: ApplicationKey) => new GetPageDescriptorsByApplicationRequest(applicationKey).sendAndParse());
 
                 return wemQ.all(promises).then((results: PageDescriptor[][]) => {
-                    var all: PageDescriptor[] = [];
+                    let all: PageDescriptor[] = [];
                     results.forEach((descriptors: PageDescriptor[]) => {
                         Array.prototype.push.apply(all, descriptors);
                     });

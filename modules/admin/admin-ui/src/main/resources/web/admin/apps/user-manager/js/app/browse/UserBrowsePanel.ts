@@ -1,11 +1,11 @@
-import "../../api.ts";
-import {UserItemsTreeGrid} from "./UserItemsTreeGrid";
-import {UserBrowseToolbar} from "./UserBrowseToolbar";
-import {UserTreeGridItem, UserTreeGridItemType} from "./UserTreeGridItem";
-import {UserBrowseItemPanel} from "./UserBrowseItemPanel";
-import {UserTreeGridActions} from "./UserTreeGridActions";
-import {PrincipalBrowseFilterPanel} from "./filter/PrincipalBrowseFilterPanel";
-import {Router} from "../Router";
+import '../../api.ts';
+import {UserItemsTreeGrid} from './UserItemsTreeGrid';
+import {UserBrowseToolbar} from './UserBrowseToolbar';
+import {UserTreeGridItem, UserTreeGridItemType} from './UserTreeGridItem';
+import {UserBrowseItemPanel} from './UserBrowseItemPanel';
+import {UserTreeGridActions} from './UserTreeGridActions';
+import {PrincipalBrowseFilterPanel} from './filter/PrincipalBrowseFilterPanel';
+import {Router} from '../Router';
 
 import TreeGrid = api.ui.treegrid.TreeGrid;
 import TreeNode = api.ui.treegrid.TreeNode;
@@ -38,7 +38,7 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
         });
 
         this.onShown((event) => {
-            Router.setHash("browse");
+            Router.setHash('browse');
         });
     }
 
@@ -61,13 +61,13 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
     }
 
     treeNodesToBrowseItems(nodes: TreeNode<UserTreeGridItem>[]): BrowseItem<UserTreeGridItem>[] {
-        var browseItems: BrowseItem<UserTreeGridItem>[] = [];
+        let browseItems: BrowseItem<UserTreeGridItem>[] = [];
 
         // do not proceed duplicated content. still, it can be selected
         nodes.forEach((node: TreeNode<UserTreeGridItem>) => {
-            var userGridItem = node.getData();
+            let userGridItem = node.getData();
 
-            var item = new BrowseItem<UserTreeGridItem>(userGridItem).setId(userGridItem.getDataId()).setDisplayName(
+            let item = new BrowseItem<UserTreeGridItem>(userGridItem).setId(userGridItem.getDataId()).setDisplayName(
                 userGridItem.getItemDisplayName()).setIconClass(this.selectIconClass(userGridItem));
             browseItems.push(item);
 
@@ -77,32 +77,32 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
 
     private selectIconClass(item: UserTreeGridItem): string {
 
-        var type: UserTreeGridItemType = item.getType();
+        let type: UserTreeGridItemType = item.getType();
 
         switch (type) {
         case UserTreeGridItemType.USER_STORE:
-            return "icon-address-book icon-large";
+            return 'icon-address-book icon-large';
 
         case UserTreeGridItemType.PRINCIPAL:
             if (item.getPrincipal().isRole()) {
-                return "icon-masks icon-large";
+                return 'icon-masks icon-large';
 
             } else if (item.getPrincipal().isUser()) {
-                return "icon-user icon-large";
+                return 'icon-user icon-large';
 
             } else if (item.getPrincipal().isGroup()) {
-                return "icon-users icon-large";
+                return 'icon-users icon-large';
             }
             break;
 
         case UserTreeGridItemType.GROUPS:
-            return "icon-folder icon-large";
+            return 'icon-folder icon-large';
 
         case UserTreeGridItemType.ROLES:
-            return "icon-folder icon-large";
+            return 'icon-folder icon-large';
 
         case UserTreeGridItemType.USERS:
-            return "icon-folder icon-large";
+            return 'icon-folder icon-large';
         }
 
     }

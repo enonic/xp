@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import Content = api.content.Content;
 import ComboBox = api.ui.selector.combobox.ComboBox;
@@ -26,7 +26,7 @@ export class ContentSettingsModel implements api.Equitable {
 
     setOwner(owner: api.security.PrincipalKey, silent?: boolean): ContentSettingsModel {
         if (!silent) {
-            var event = new api.PropertyChangedEvent(ContentSettingsModel.PROPERTY_OWNER, this.owner, owner);
+            let event = new api.PropertyChangedEvent(ContentSettingsModel.PROPERTY_OWNER, this.owner, owner);
             this.notifyPropertyChanged(event);
         }
         this.owner = owner;
@@ -39,7 +39,7 @@ export class ContentSettingsModel implements api.Equitable {
 
     setLanguage(lang: string, silent?: boolean): ContentSettingsModel {
         if (!silent) {
-            var event = new api.PropertyChangedEvent(ContentSettingsModel.PROPERTY_LANG, this.language, lang);
+            let event = new api.PropertyChangedEvent(ContentSettingsModel.PROPERTY_LANG, this.language, lang);
             this.notifyPropertyChanged(event);
         }
         this.language = lang;
@@ -52,7 +52,7 @@ export class ContentSettingsModel implements api.Equitable {
 
     unPropertyChanged(listener: {(event: api.PropertyChangedEvent): void;}) {
         this.propertyChangedListeners =
-            this.propertyChangedListeners.filter((curr) => (curr != listener));
+            this.propertyChangedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyPropertyChanged(event: api.PropertyChangedEvent) {
@@ -63,8 +63,8 @@ export class ContentSettingsModel implements api.Equitable {
         if (!api.ObjectHelper.iFrameSafeInstanceOf(other, ContentSettingsModel)) {
             return false;
         } else {
-            var otherModel = <ContentSettingsModel> other;
-            return otherModel.owner == this.owner && otherModel.language == this.language;
+            let otherModel = <ContentSettingsModel> other;
+            return otherModel.owner === this.owner && otherModel.language === this.language;
         }
     }
 

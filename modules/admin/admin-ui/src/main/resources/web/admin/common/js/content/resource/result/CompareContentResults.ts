@@ -10,11 +10,11 @@ module api.content.resource.result {
 
         get(contentId: string): CompareContentResult {
 
-            var compareContentResult: CompareContentResult = null;
+            let compareContentResult: CompareContentResult = null;
 
             this.compareContentResults.forEach((result: CompareContentResult) => {
 
-                if (result.getId() == contentId) {
+                if (result.getId() === contentId) {
                     compareContentResult = result;
                 }
             });
@@ -28,7 +28,7 @@ module api.content.resource.result {
 
         static fromJson(json: api.content.json.CompareContentResultsJson): CompareContentResults {
 
-            var list: CompareContentResult[] = [];
+            let list: CompareContentResult[] = [];
 
             json.compareContentResults.forEach((compareContentResult: api.content.json.CompareContentResultJson) => {
                 list.push(CompareContentResult.fromJson(compareContentResult));

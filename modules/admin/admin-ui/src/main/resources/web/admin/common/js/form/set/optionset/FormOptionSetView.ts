@@ -17,19 +17,19 @@ module api.form {
 
         constructor(config: FormOptionSetViewConfig) {
             super(<FormItemViewConfig> {
-                className: "form-option-set-view",
+                className: 'form-option-set-view',
                 context: config.context,
                 formItem: config.formOptionSet,
                 parent: config.parent
             });
             this.parentDataSet = config.parentDataSet;
             this.formSet = config.formOptionSet;
-            this.classPrefix = "form-option-set";
+            this.classPrefix = 'form-option-set';
             this.helpText = this.formSet.getHelpText();
 
-            this.addClass(this.formSet.getPath().getElements().length % 2 ? "even" : "odd");
-            if (this.formSet.getOccurrences().getMaximum() == 1) {
-                this.addClass("max-1-occurrence");
+            this.addClass(this.formSet.getPath().getElements().length % 2 ? 'even' : 'odd');
+            if (this.formSet.getOccurrences().getMaximum() === 1) {
+                this.addClass('max-1-occurrence');
             }
         }
 

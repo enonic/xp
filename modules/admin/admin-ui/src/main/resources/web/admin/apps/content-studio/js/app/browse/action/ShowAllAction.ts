@@ -1,6 +1,6 @@
 import Action = api.ui.Action;
-import {ContentBrowseItemsSelectionPanel} from "../ContentBrowseItemsSelectionPanel";
-import {ContentTreeGrid} from "../ContentTreeGrid";
+import {ContentBrowseItemsSelectionPanel} from '../ContentBrowseItemsSelectionPanel';
+import {ContentTreeGrid} from '../ContentTreeGrid';
 
 export class ShowAllAction<DATA> extends Action {
 

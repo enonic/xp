@@ -7,9 +7,9 @@ module api.content.page.region {
 
         public static debug: boolean = false;
 
-        public static PROPERTY_DESCRIPTOR = 'descriptor';
+        public static PROPERTY_DESCRIPTOR: string = 'descriptor';
 
-        public static PROPERTY_CONFIG = 'config';
+        public static PROPERTY_CONFIG: string = 'config';
 
         private disableEventForwarding: boolean;
 
@@ -28,7 +28,7 @@ module api.content.page.region {
 
             this.configChangedHandler = (event: PropertyEvent) => {
                 if (DescriptorBasedComponent.debug) {
-                    console.debug("DescriptorBasedComponent[" + this.getPath().toString() + "].config.onChanged: ", event);
+                    console.debug('DescriptorBasedComponent[' + this.getPath().toString() + '].config.onChanged: ', event);
                 }
                 if (!this.disableEventForwarding) {
                     this.notifyPropertyValueChanged(DescriptorBasedComponent.PROPERTY_CONFIG);
@@ -52,7 +52,7 @@ module api.content.page.region {
 
         setDescriptor(descriptorKey: DescriptorKey, descriptor: Descriptor) {
 
-            var oldValue = this.descriptor;
+            let oldValue = this.descriptor;
             this.descriptor = descriptorKey;
 
             this.setName(descriptor ? new ComponentName(descriptor.getDisplayName()) : this.getType().getDefaultName());
@@ -65,7 +65,7 @@ module api.content.page.region {
         }
 
         setConfig(config: PropertyTree) {
-            var oldValue = this.config;
+            let oldValue = this.config;
             if (oldValue) {
                 this.config.unChanged(this.configChangedHandler);
             }
@@ -88,9 +88,9 @@ module api.content.page.region {
         toComponentJson(): DescriptorBasedComponentJson {
 
             return <DescriptorBasedComponentJson>{
-                "name": this.getName() ? this.getName().toString() : null,
-                "descriptor": this.descriptor != null ? this.descriptor.toString() : null,
-                "config": this.config != null ? this.config.toJson() : null
+                name: this.getName() ? this.getName().toString() : null,
+                descriptor: this.descriptor != null ? this.descriptor.toString() : null,
+                config: this.config != null ? this.config.toJson() : null
             };
         }
 
@@ -103,7 +103,7 @@ module api.content.page.region {
             if (!super.equals(o)) {
                 return false;
             }
-            var other = <DescriptorBasedComponent>o;
+            let other = <DescriptorBasedComponent>o;
 
             if (!api.ObjectHelper.equals(this.descriptor, other.descriptor)) {
                 return false;
@@ -117,11 +117,12 @@ module api.content.page.region {
         }
 
         clone(): DescriptorBasedComponent {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
     }
 
-    export class DescriptorBasedComponentBuilder<DESCRIPTOR_BASED_COMPONENT extends DescriptorBasedComponent> extends ComponentBuilder<DESCRIPTOR_BASED_COMPONENT> {
+    export class DescriptorBasedComponentBuilder<DESCRIPTOR_BASED_COMPONENT extends DescriptorBasedComponent>
+    extends ComponentBuilder<DESCRIPTOR_BASED_COMPONENT> {
 
         descriptor: DescriptorKey;
 
@@ -132,8 +133,7 @@ module api.content.page.region {
             if (source) {
                 this.descriptor = source.getDescriptor();
                 this.config = source.getConfig() ? source.getConfig().copy() : null;
-            }
-            else {
+            } else {
                 this.config = new PropertyTree();
             }
         }
@@ -148,9 +148,8 @@ module api.content.page.region {
             return this;
         }
 
-
         public build(): DESCRIPTOR_BASED_COMPONENT {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
     }
 }

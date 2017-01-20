@@ -7,7 +7,7 @@ module api.application {
 
         constructor(applicationKey: ApplicationKey) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
 
             this.applicationKey = applicationKey;
         }
@@ -19,7 +19,7 @@ module api.application {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "getIdProvider");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'getIdProvider');
         }
 
         sendAndParse(): wemQ.Promise<Application> {

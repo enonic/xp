@@ -55,15 +55,15 @@ module api.form {
         }
 
         protected constructOccurrencesForNoData(): FormItemOccurrence<V>[] {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         protected  constructOccurrencesForData(): FormItemOccurrence<V>[] {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         getAllowedOccurrences(): Occurrences {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         onOccurrenceRendered(listener: (event: OccurrenceRenderedEvent)=>void) {
@@ -73,13 +73,13 @@ module api.form {
         unOccurrenceRendered(listener: (event: OccurrenceRenderedEvent)=>void) {
             this.occurrenceRenderedListeners =
                 this.occurrenceRenderedListeners.filter((currentListener: (event: OccurrenceRenderedEvent)=>void)=> {
-                    return listener != currentListener;
+                    return listener !== currentListener;
                 });
         }
 
         private notifyOccurrenceRendered(occurrence: FormItemOccurrence<V>, occurrenceView: V, validate: boolean) {
             this.occurrenceRenderedListeners.forEach((listener: (event: OccurrenceRenderedEvent)=>void)=> {
-                listener.call(this, new OccurrenceRenderedEvent(occurrence, occurrenceView, validate))
+                listener.call(this, new OccurrenceRenderedEvent(occurrence, occurrenceView, validate));
             });
         }
 
@@ -89,13 +89,13 @@ module api.form {
 
         unOccurrenceAdded(listener: (event: OccurrenceAddedEvent)=>void) {
             this.occurrenceAddedListeners = this.occurrenceAddedListeners.filter((currentListener: (event: OccurrenceAddedEvent)=>void)=> {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
         private notifyOccurrenceAdded(occurrence: FormItemOccurrence<V>, occurrenceView: V) {
             this.occurrenceAddedListeners.forEach((listener: (event: OccurrenceAddedEvent)=>void)=> {
-                listener.call(this, new OccurrenceAddedEvent(occurrence, occurrenceView))
+                listener.call(this, new OccurrenceAddedEvent(occurrence, occurrenceView));
             });
         }
 
@@ -106,13 +106,13 @@ module api.form {
         unOccurrenceRemoved(listener: (event: OccurrenceRemovedEvent)=>void) {
             this.occurrenceRemovedListeners =
                 this.occurrenceRemovedListeners.filter((currentListener: (event: OccurrenceRemovedEvent)=>void)=> {
-                    return listener != currentListener;
+                    return listener !== currentListener;
                 });
         }
 
         private notifyOccurrenceRemoved(occurrence: FormItemOccurrence<V>, occurrenceView: V) {
             this.occurrenceRemovedListeners.forEach((listener: (event: OccurrenceRemovedEvent)=>void)=> {
-                listener.call(this, new OccurrenceRemovedEvent(occurrence, occurrenceView))
+                listener.call(this, new OccurrenceRemovedEvent(occurrence, occurrenceView));
             });
         }
 
@@ -126,14 +126,14 @@ module api.form {
 
         layout(validate: boolean = true): wemQ.Promise<void> {
 
-            var occurrences;
+            let occurrences;
             if (this.propertyArray.getSize() > 0) {
                 occurrences = this.constructOccurrencesForData();
             } else {
                 occurrences = this.constructOccurrencesForNoData();
             }
 
-            var layoutPromises: wemQ.Promise<V>[] = [];
+            let layoutPromises: wemQ.Promise<V>[] = [];
             occurrences.forEach((occurrence: FormItemOccurrence<V>) => {
                 layoutPromises.push(this.addOccurrence(occurrence, validate));
             });
@@ -147,10 +147,10 @@ module api.form {
             }
 
             // first trim existing occurrences if there are too many
-            var arraySize = propertyArray.getSize();
-            var occurrencesViewClone = [].concat(this.occurrenceViews);
+            let arraySize = propertyArray.getSize();
+            let occurrencesViewClone = [].concat(this.occurrenceViews);
             if (occurrencesViewClone.length > arraySize) {
-                for (var i = arraySize; i < occurrencesViewClone.length; i++) {
+                for (let i = arraySize; i < occurrencesViewClone.length; i++) {
                     this.removeOccurrenceView(occurrencesViewClone[i]);
                 }
             }
@@ -158,29 +158,28 @@ module api.form {
             // next update propertyArray because it's used for creation of new occurrences
             this.propertyArray = propertyArray;
 
-            var promises = [];
+            let promises = [];
             // next update existing occurrences and add missing ones if there are not enough
-            this.propertyArray.forEach((property: api.data.Property, i: number) => {
-                var occurrenceView = this.occurrenceViews[i];
-                var occurrence = this.occurrences[i];
+            this.propertyArray.forEach((property: api.data.Property, index: number) => {
+                let occurrenceView = this.occurrenceViews[index];
+                let occurrence = this.occurrences[index];
                 if (occurrenceView && occurrence) {
                     // update occurrence index
-                    occurrence.setIndex(i);
+                    occurrence.setIndex(index);
                     // update occurence view
                     promises.push(this.updateOccurrenceView(occurrenceView, propertyArray, unchangedOnly));
                 } else {
-                    promises.push(this.createAndAddOccurrence(i));
+                    promises.push(this.createAndAddOccurrence(index));
                 }
             });
-
 
             return wemQ.all(promises).spread<void>(() => wemQ<void>(null));
         }
 
         reset() {
             this.propertyArray.forEach((property: api.data.Property, i: number) => {
-                var occurrenceView = this.occurrenceViews[i];
-                var occurrence = this.occurrences[i];
+                let occurrenceView = this.occurrenceViews[i];
+                let occurrence = this.occurrences[i];
                 if (occurrenceView && occurrence) {
                     this.resetOccurrenceView(occurrenceView);
                 }
@@ -188,24 +187,24 @@ module api.form {
         }
 
         createNewOccurrenceView(occurrence: FormItemOccurrence<V>): V {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         updateOccurrenceView(occurrenceView: V, propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         resetOccurrenceView(occurrenceView: V) {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         createNewOccurrence(formItemOccurrences: FormItemOccurrences<V>, insertAtIndex: number): FormItemOccurrence<V> {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         public createAndAddOccurrence(insertAtIndex: number = this.countOccurrences(), validate: boolean = true): wemQ.Promise<V> {
 
-            var occurrence: FormItemOccurrence<V> = this.createNewOccurrence(this, insertAtIndex);
+            let occurrence: FormItemOccurrence<V> = this.createNewOccurrence(this, insertAtIndex);
 
             return this.addOccurrence(occurrence, validate);
         }
@@ -215,20 +214,20 @@ module api.form {
                 console.debug('FormItemOccurrences.addOccurrence:', occurrence);
             }
 
-            var countOccurrences = this.countOccurrences();
+            let countOccurrences = this.countOccurrences();
             if (this.allowedOccurrences.maximumReached(countOccurrences)) {
                 return;
             }
 
-            var occurrenceView: V = this.createNewOccurrenceView(occurrence);
+            let occurrenceView: V = this.createNewOccurrenceView(occurrence);
             occurrenceView.onFocus(this.focusListener);
             occurrenceView.onBlur(this.blurListener);
 
-            var insertAtIndex = occurrence.getIndex();
+            let insertAtIndex = occurrence.getIndex();
             this.occurrences.splice(insertAtIndex, 0, occurrence);
 
-            var occurrenceViewBefore: api.dom.Element = this.getOccurrenceViewElementBefore(insertAtIndex);
-            if (insertAtIndex == countOccurrences || !occurrenceViewBefore) {
+            let occurrenceViewBefore: api.dom.Element = this.getOccurrenceViewElementBefore(insertAtIndex);
+            if (insertAtIndex === countOccurrences || !occurrenceViewBefore) {
                 this.occurrenceViewContainer.appendChild(occurrenceView);
             } else {
                 occurrenceView.insertAfterEl(occurrenceViewBefore);
@@ -256,18 +255,18 @@ module api.form {
                 return;
             }
 
-            var indexToRemove = occurrenceViewToRemove.getIndex();
+            let indexToRemove = occurrenceViewToRemove.getIndex();
 
             occurrenceViewToRemove.unFocus(this.focusListener);
             occurrenceViewToRemove.unBlur(this.blurListener);
 
             occurrenceViewToRemove.remove();
             this.occurrenceViews = this.occurrenceViews.filter((curr: V) => {
-                return curr != occurrenceViewToRemove;
+                return curr !== occurrenceViewToRemove;
             });
-            var occurrenceToRemove = this.occurrences[indexToRemove];
+            let occurrenceToRemove = this.occurrences[indexToRemove];
             this.occurrences = this.occurrences.filter((curr: FormItemOccurrence<V>) => {
-                return curr.getIndex() != indexToRemove;
+                return curr.getIndex() !== indexToRemove;
             });
 
             this.resetOccurrenceIndexes();
@@ -285,7 +284,7 @@ module api.form {
         unFocus(listener: (event: FocusEvent) => void) {
             this.focusListeners = this.focusListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         onBlur(listener: (event: FocusEvent) => void) {
@@ -294,20 +293,20 @@ module api.form {
 
         unBlur(listener: (event: FocusEvent) => void) {
             this.blurListeners = this.blurListeners.filter((curr) => {
-                return curr != listener;
-            })
+                return curr !== listener;
+            });
         }
 
         private notifyFocused(event: FocusEvent) {
             this.focusListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         private notifyBlurred(event: FocusEvent) {
             this.blurListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         resetOccurrenceIndexes() {
@@ -327,14 +326,13 @@ module api.form {
                 return null;
             }
             return this.occurrenceViews.filter((occurrenceView: V) => {
-                return occurrenceView.getIndex() == index - 1
+                return occurrenceView.getIndex() === index - 1;
             })[0];
         }
 
         countOccurrences(): number {
             return this.occurrences.length;
         }
-
 
         moveOccurrence(fromIndex: number, toIndex: number) {
 
@@ -348,7 +346,7 @@ module api.form {
             // move FormItemOccurrenceView
             api.util.ArrayHelper.moveElement(fromIndex, toIndex, this.occurrenceViews);
 
-            this.propertyArray.move(fromIndex, toIndex)
+            this.propertyArray.move(fromIndex, toIndex);
 
         }
 

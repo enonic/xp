@@ -4,12 +4,6 @@ import java.util.Map;
 
 public interface ProviderConfig
 {
-    static final String READ_THROUGH_PROVIDER = "readThrough.provider";
-
-    static final String READ_THROUGH_ENABLED = "readThrough.enabled";
-
-    static final String READ_THROUGH_SIZE_THRESHOLD = "readThrough.sizeThreshold";
-
     Map<Segment, String> segments();
 
     String readThroughProvider();
@@ -19,5 +13,4 @@ public interface ProviderConfig
     long readThroughSizeThreshold();
 
     boolean isValid();
-
 }

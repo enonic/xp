@@ -18,7 +18,7 @@ module api.content.resource {
 
         constructor() {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
         }
 
         addContentIds(...contentIds: ContentId[]): GetPermittedActionsRequest {
@@ -32,10 +32,10 @@ module api.content.resource {
         }
 
         getParams(): Object {
-            var fn = (contentId: ContentId) => {
+            let fn = (contentId: ContentId) => {
                 return contentId.toString();
             };
-            var fn2 = (permission: Permission) => {
+            let fn2 = (permission: Permission) => {
                 return Permission[permission];
             };
 
@@ -46,7 +46,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "allowedActions");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'allowedActions');
         }
 
         sendAndParse(): wemQ.Promise<Permission[]> {

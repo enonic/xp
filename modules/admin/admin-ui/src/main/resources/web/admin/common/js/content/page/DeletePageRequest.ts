@@ -1,12 +1,15 @@
 module api.content.page {
 
-    export class DeletePageRequest extends PageResourceRequest<api.content.json.ContentJson, api.content.Content> implements PageCUDRequest {
+    import Content = api.content.Content;
+    import ContentJson = api.content.json.ContentJson;
+
+    export class DeletePageRequest extends PageResourceRequest<ContentJson, Content> implements PageCUDRequest {
 
         private contentId: api.content.ContentId;
 
         constructor(contentId: api.content.ContentId) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
             this.contentId = contentId;
         }
 
@@ -17,12 +20,12 @@ module api.content.page {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "delete");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'delete');
         }
 
-        sendAndParse(): wemQ.Promise<api.content.Content> {
+        sendAndParse(): wemQ.Promise<Content> {
 
-            return this.send().then((response: api.rest.JsonResponse<api.content.json.ContentJson>) => {
+            return this.send().then((response: api.rest.JsonResponse<ContentJson>) => {
                 return response.isBlank() ? null : this.fromJsonToContent(response.getResult());
             });
         }

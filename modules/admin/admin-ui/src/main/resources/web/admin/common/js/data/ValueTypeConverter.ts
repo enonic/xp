@@ -2,7 +2,7 @@ module api.data {
 
     export class ValueTypeConverter {
 
-        private static VALID_REFERENCE_ID_PATTERN = /^([a-z0-9A-Z_\-\.:])*$/;
+        private static VALID_REFERENCE_ID_PATTERN: RegExp = /^([a-z0-9A-Z_\-\.:])*$/;
 
         public static convertTo(value: Value, toType: ValueType): Value {
 
@@ -38,7 +38,7 @@ module api.data {
                 return ValueTypeConverter.convertToBinaryReference(value);
             }
 
-            throw("Unknown ValueType: " + toType);
+            throw('Unknown ValueType: ' + toType);
         }
 
         private static convertToString(value: Value): Value {
@@ -49,9 +49,9 @@ module api.data {
         }
 
         private static convertToBoolean(value: any): Value {
-            if (typeof value == "boolean") {
+            if (typeof value === 'boolean') {
                 return ValueTypes.BOOLEAN.newBoolean(value);
-            } else if (typeof value == "string") {
+            } else if (typeof value === 'string') {
                 return ValueTypes.BOOLEAN.newValue(value);
             }
             return ValueTypes.BOOLEAN.newNullValue();
@@ -93,7 +93,7 @@ module api.data {
         }
 
         private static convertToReference(value: Value): Value {
-            var str = value.getString();
+            let str = value.getString();
             if (str && ValueTypeConverter.VALID_REFERENCE_ID_PATTERN.test(str)) {
                 return ValueTypes.REFERENCE.newValue(value.getString());
             }
@@ -119,10 +119,10 @@ module api.data {
             if (value.getType() === ValueTypes.STRING && ValueTypes.LOCAL_DATE.isConvertible(value.getString())) { // from string
                 return ValueTypes.LOCAL_DATE.newValue(value.getString());
             } else if (value.getType() === ValueTypes.LOCAL_DATE_TIME && value.isNotNull()) { // from LocalDateTime
-                var localDateTime = value.getString();
+                let localDateTime = value.getString();
                 return ValueTypes.LOCAL_DATE.newValue(localDateTime.substr(0, 10));
             } else if (value.getType() === ValueTypes.DATE_TIME && value.isNotNull()) { // from DateTime
-                var localDate = value.getString();
+                let localDate = value.getString();
                 return ValueTypes.LOCAL_DATE.newValue(localDate.substr(0, 10));
             }
             return ValueTypes.LOCAL_DATE.newNullValue();
@@ -132,10 +132,10 @@ module api.data {
             if (value.getType() === ValueTypes.STRING && ValueTypes.LOCAL_DATE_TIME.isConvertible(value.getString())) { // from string
                 return ValueTypes.LOCAL_DATE_TIME.newValue(value.getString());
             } else if (value.getType() === ValueTypes.LOCAL_DATE && value.isNotNull()) { // from LocalDate
-                var localDate = <api.util.LocalDate>value.getObject();
-                return new Value(api.util.LocalDateTime.fromString(localDate.toString() + "T00:00:00"), ValueTypes.LOCAL_DATE_TIME);
+                let localDate = <api.util.LocalDate>value.getObject();
+                return new Value(api.util.LocalDateTime.fromString(localDate.toString() + 'T00:00:00'), ValueTypes.LOCAL_DATE_TIME);
             } else if (value.getType() === ValueTypes.DATE_TIME && value.isNotNull()) { // from DateTime
-                var dateTime = value.getString();
+                let dateTime = value.getString();
                 return ValueTypes.LOCAL_DATE_TIME.newValue(dateTime.substr(0, 19));
             }
             return ValueTypes.LOCAL_DATE_TIME.newNullValue();
@@ -145,9 +145,9 @@ module api.data {
             if (value.getType() === ValueTypes.STRING && ValueTypes.DATE_TIME.isConvertible(value.getString())) { // from string
                 return ValueTypes.DATE_TIME.newValue(value.getString());
             } else if (value.getType() === ValueTypes.LOCAL_DATE && value.isNotNull()) { // from LocalDate
-                return ValueTypes.DATE_TIME.newValue(value.getString() + "T00:00:00+00:00");
+                return ValueTypes.DATE_TIME.newValue(value.getString() + 'T00:00:00+00:00');
             } else if (value.getType() === ValueTypes.LOCAL_DATE_TIME && value.isNotNull()) { // from LocalDateTime
-                var dateTime = value.getString();
+                let dateTime = value.getString();
                 return ValueTypes.DATE_TIME.newValue(dateTime);
             }
             return ValueTypes.DATE_TIME.newNullValue();
@@ -157,12 +157,12 @@ module api.data {
             if (value.getType() === ValueTypes.STRING && ValueTypes.LOCAL_TIME.isConvertible(value.getString())) { // from string
                 return ValueTypes.LOCAL_TIME.newValue(value.getString());
             } else if (value.getType() === ValueTypes.LOCAL_DATE_TIME && value.isNotNull()) { // from LocalDateTime
-                var localDateTime = <Date>value.getObject();
-                return ValueTypes.LOCAL_TIME.newValue(localDateTime.getHours() + ":" + localDateTime.getMinutes() + ":" +
+                let localDateTime = <Date>value.getObject();
+                return ValueTypes.LOCAL_TIME.newValue(localDateTime.getHours() + ':' + localDateTime.getMinutes() + ':' +
                                                       localDateTime.getSeconds());
             } else if (value.getType() === ValueTypes.DATE_TIME && value.isNotNull()) { // from DateTime
-                var dateTime = <api.util.DateTime> value.getObject();
-                return ValueTypes.LOCAL_TIME.newValue(dateTime.getHours() + ":" + dateTime.getMinutes() + ":" + dateTime.getSeconds());
+                let dateTime = <api.util.DateTime> value.getObject();
+                return ValueTypes.LOCAL_TIME.newValue(dateTime.getHours() + ':' + dateTime.getMinutes() + ':' + dateTime.getSeconds());
             }
             return ValueTypes.LOCAL_TIME.newNullValue();
         }

@@ -20,6 +20,9 @@ module api.liveedit {
         constructor(menuTitle: ItemViewContextMenuTitle, actions: Action[], showArrow: boolean = true, listenToWizard: boolean = true) {
             super('menu item-view-context-menu');
 
+            let dragListener;
+            let upListener;
+
             if (showArrow) {
                 this.arrow = new ItemViewContextMenuArrow();
                 this.appendChild(this.arrow);
@@ -27,25 +30,19 @@ module api.liveedit {
 
             this.title = menuTitle;
             if (this.title) {
-                var lastPosition: {
-                    x: number;
-                    y: number;
-                };
+                let lastPosition: {x: number, y: number};
 
-                var dragListener = (e: MouseEvent) => {
+                dragListener = (e: MouseEvent) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    var x = e.pageX,
-                        y = e.pageY;
+                    const x = e.pageX;
+                    const y = e.pageY;
 
                     this.moveBy(x - lastPosition.x, y - lastPosition.y);
-                    lastPosition = {
-                        x: x,
-                        y: y
-                    };
+                    lastPosition = {x, y};
                 };
 
-                var upListener = (e: MouseEvent) => {
+                upListener = (e: MouseEvent) => {
                     e.preventDefault();
                     e.stopPropagation();
 
@@ -116,10 +113,10 @@ module api.liveedit {
         }
 
         private setOrientation(orientation: ItemViewContextMenuOrientation) {
-            if (this.orientation != orientation) {
+            if (this.orientation !== orientation) {
                 this.orientation = orientation;
                 if (this.arrow) {
-                    this.arrow.toggleVerticalPosition(orientation == ItemViewContextMenuOrientation.DOWN);
+                    this.arrow.toggleVerticalPosition(orientation === ItemViewContextMenuOrientation.DOWN);
                 }
                 this.notifyOrientationChanged(orientation);
             }
@@ -128,7 +125,7 @@ module api.liveedit {
         private notifyOrientationChanged(orientation: ItemViewContextMenuOrientation) {
             this.orientationListeners.forEach((listener) => {
                 listener(orientation);
-            })
+            });
         }
 
         onOrientationChanged(listener: (orientation: ItemViewContextMenuOrientation) => void) {
@@ -138,7 +135,7 @@ module api.liveedit {
         unOrientationChanged(listener: (orientation: ItemViewContextMenuOrientation) => void) {
             this.orientationListeners = this.orientationListeners.filter((curr) => {
                 return curr !== listener;
-            })
+            });
         }
 
         private startDrag(dragListener: (e: MouseEvent) => void, upListener: (e: MouseEvent) => void) {
@@ -152,17 +149,17 @@ module api.liveedit {
         }
 
         private restrainX(x: number): number {
-            var parentEl = this.getParentElement().getEl();
+            let parentEl = this.getParentElement().getEl();
 
-            var width = this.getEl().getWidth(),
-                halfWidth = width / 2,
-                arrowHalfWidth = this.arrow ? this.arrow.getWidth() / 2 : 0,
-                desiredX = x - halfWidth,
-                resultX = desiredX,
-                deltaX,
-                arrowPos,
-                minX = parentEl.getMarginLeft(),
-                maxX = parentEl.getWidthWithMargin() - parentEl.getMarginRight() - width;
+            let width = this.getEl().getWidth();
+            let halfWidth = width / 2;
+            let arrowHalfWidth = this.arrow ? this.arrow.getWidth() / 2 : 0;
+            let desiredX = x - halfWidth;
+            let resultX = desiredX;
+            let deltaX;
+            let arrowPos;
+            let minX = parentEl.getMarginLeft();
+            let maxX = parentEl.getWidthWithMargin() - parentEl.getMarginRight() - width;
 
             if (desiredX < minX) {
                 deltaX = minX - desiredX;
@@ -181,12 +178,12 @@ module api.liveedit {
         }
 
         private restrainY(y: number, notClicked?: boolean): number {
-            var orientation = ItemViewContextMenuOrientation.DOWN,
-                arrowHeight = this.arrow ? this.arrow.getHeight() : 0,
-                height = this.getEl().getHeight(),
-                minY = 0,
-                maxY,
-                desiredY;
+            let orientation = ItemViewContextMenuOrientation.DOWN;
+            let arrowHeight = this.arrow ? this.arrow.getHeight() : 0;
+            let height = this.getEl().getHeight();
+            let minY = 0;
+            let maxY;
+            let desiredY;
 
             if (notClicked) {
                 maxY = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
@@ -194,14 +191,14 @@ module api.liveedit {
                 maxY = Math.max(document.body.scrollTop, document.documentElement.scrollTop) + window.innerHeight;
             }
 
-            if (orientation == ItemViewContextMenuOrientation.DOWN) {
+            if (orientation === ItemViewContextMenuOrientation.DOWN) {
                 // account for arrow
                 desiredY = y + arrowHeight + (notClicked ? 0 : 1);
                 if (desiredY + height > maxY) {
                     orientation = ItemViewContextMenuOrientation.UP;
                 }
             }
-            if (orientation == ItemViewContextMenuOrientation.UP) {
+            if (orientation === ItemViewContextMenuOrientation.UP) {
                 // subtract my full height to display above target
                 desiredY = y - arrowHeight - height - (notClicked ? 0 : 1);
                 if (desiredY < minY) {
@@ -215,13 +212,13 @@ module api.liveedit {
     }
 
     export class ItemViewContextMenuArrow extends api.dom.DivEl {
-        private static clsBottom = "bottom";
-        private static clsTop = "top";
-        private static clsLeft = "left";
-        private static clsRight = "right";
+        private static clsBottom: string = 'bottom';
+        private static clsTop: string = 'top';
+        private static clsLeft: string = 'left';
+        private static clsRight: string = 'right';
 
         constructor() {
-            super("item-view-context-menu-arrow " + ItemViewContextMenuArrow.clsBottom);
+            super('item-view-context-menu-arrow ' + ItemViewContextMenuArrow.clsBottom);
         }
 
         toggleVerticalPosition(bottom: boolean) {

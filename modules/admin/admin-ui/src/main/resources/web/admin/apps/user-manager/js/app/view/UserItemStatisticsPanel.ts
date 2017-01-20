@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {UserTreeGridItem, UserTreeGridItemType} from "../browse/UserTreeGridItem";
+import '../../api.ts';
+import {UserTreeGridItem, UserTreeGridItemType} from '../browse/UserTreeGridItem';
 
 import ViewItem = api.app.view.ViewItem;
 import ItemStatisticsPanel = api.app.view.ItemStatisticsPanel;
@@ -16,14 +16,14 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
     private userDataContainer: api.dom.DivEl;
 
     constructor() {
-        super("principal-item-statistics-panel");
+        super('principal-item-statistics-panel');
 
-        this.userDataContainer = new api.dom.DivEl("user-data-container");
+        this.userDataContainer = new api.dom.DivEl('user-data-container');
         this.appendChild(this.userDataContainer);
     }
 
     setItem(item: ViewItem<UserTreeGridItem>) {
-        var currentItem = this.getItem();
+        let currentItem = this.getItem();
 
         if (!currentItem || !currentItem.equals(item)) {
 
@@ -38,7 +38,7 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
             this.userDataContainer.removeChildren();
 
             if (item.getModel().getPrincipal()) {
-                var type = item.getModel().getPrincipal().getType();
+                let type = item.getModel().getPrincipal().getType();
 
                 switch (type) {
                 case PrincipalType.USER:
@@ -53,7 +53,6 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
                 }
             }
 
-
             super.setItem(item);
         }
     }
@@ -66,66 +65,67 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
 
     private appendUserMetadata(item: ViewItem<UserTreeGridItem>) {
         // Insert an empty data first to avoid blinking, after full data is loaded.
-        var userGroup = new ItemDataGroup("User", "user");
-        userGroup.addDataList("E-mail", " ");
+        let userGroup = new ItemDataGroup('User', 'user');
+        userGroup.addDataList('E-mail', ' ');
         this.userDataContainer.appendChild(userGroup);
 
-        var rolesAndGroupsGroup = new ItemDataGroup("Roles & Groups", "roles-and-groups");
-        rolesAndGroupsGroup.addDataArray("Roles", []);
-        rolesAndGroupsGroup.addDataArray("Groups", []);
+        let rolesAndGroupsGroup = new ItemDataGroup('Roles & Groups', 'roles-and-groups');
+        rolesAndGroupsGroup.addDataArray('Roles', []);
+        rolesAndGroupsGroup.addDataArray('Groups', []);
         this.userDataContainer.appendChild(rolesAndGroupsGroup);
 
         new GetPrincipalByKeyRequest(item.getModel().getPrincipal().getKey()).includeUserMemberships(true).sendAndParse().then(
             (principal: Principal) => {
-                userGroup = new ItemDataGroup("User", "user");
-                userGroup.addDataList("E-mail", principal.asUser().getEmail());
+                userGroup = new ItemDataGroup('User', 'user');
+                userGroup.addDataList('E-mail', principal.asUser().getEmail());
 
-                rolesAndGroupsGroup = new ItemDataGroup("Roles & Groups", "memeberships");
+                rolesAndGroupsGroup = new ItemDataGroup('Roles & Groups', 'memeberships');
 
-                var roles = principal.asUser().getMemberships().filter((el) => {
-                    return el.isRole()
+                let roles = principal.asUser().getMemberships().filter((el) => {
+                    return el.isRole();
                 }).map((el) => {
-                    var viewer = new PrincipalViewer();
+                    let viewer = new PrincipalViewer();
                     viewer.setObject(el);
                     return viewer;
                 });
-                rolesAndGroupsGroup.addDataElements("Roles", roles);
+                rolesAndGroupsGroup.addDataElements('Roles', roles);
 
-                var groups = principal.asUser().getMemberships().filter((el) => {
-                    return el.isGroup()
+                let groups = principal.asUser().getMemberships().filter((el) => {
+                    return el.isGroup();
                 }).map((el) => {
-                    var viewer = new PrincipalViewer();
+                    let viewer = new PrincipalViewer();
                     viewer.setObject(el);
                     return viewer;
                 });
-                rolesAndGroupsGroup.addDataElements("Groups", groups);
+                rolesAndGroupsGroup.addDataElements('Groups', groups);
 
                 this.userDataContainer.removeChildren();
                 this.userDataContainer.appendChild(userGroup);
                 this.userDataContainer.appendChild(rolesAndGroupsGroup);
             }).catch((reason: any) => {
             api.DefaultErrorHandler.handle(reason);
-        }).finally(() => {
         }).done();
     }
 
     private appendGroupRoleMetadata(item: ViewItem<UserTreeGridItem>) {
         // Insert an empty data first to avoid blinking, after full data is loaded.
-        var name = PrincipalType[item.getModel().getPrincipal().getType()],
-            name = name.charAt(0) + name.slice(1).toLowerCase();
+        const type = PrincipalType[item.getModel().getPrincipal().getType()];
+        const name = type.charAt(0) + type.slice(1).toLowerCase();
 
-        var groupAndRoleGroup = new ItemDataGroup(name, "group-and-role");
-        groupAndRoleGroup.appendChild(new api.dom.DivEl("description").setHtml(item.getModel().getPrincipal().getDescription()));
+        const groupAndRoleGroup = new ItemDataGroup(name, 'group-and-role');
+        groupAndRoleGroup.appendChild(new api.dom.DivEl('description').setHtml(item.getModel().getPrincipal().getDescription()));
         this.userDataContainer.appendChild(groupAndRoleGroup);
 
-        var membersGroup = new ItemDataGroup("Members", "members");
-        membersGroup.addDataArray("Members", []);
+        const membersGroup = new ItemDataGroup('Members', 'members');
+        membersGroup.addDataArray('Members', []);
         this.userDataContainer.appendChild(membersGroup);
 
-        new GetPrincipalByKeyRequest(item.getModel().getPrincipal().getKey()).includeUserMemberships(true).sendAndParse().then(
-            (principal: Principal) => {
+        new GetPrincipalByKeyRequest(item.getModel().getPrincipal().getKey())
+            .includeUserMemberships(true)
+            .sendAndParse()
+            .then((principal: Principal) => {
 
-                var membersPromises =
+                const membersPromises =
                     (principal.isGroup() ? principal.asGroup().getMembers() : principal.asRole().getMembers())
                         .map((el) => {
                             return new GetPrincipalByKeyRequest(el).sendAndParse();
@@ -133,25 +133,23 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
 
                 wemQ.all(membersPromises).then((results: Principal[]) => {
 
-                    membersGroup = new ItemDataGroup("Members", "members");
+                    const newMembersGroup = new ItemDataGroup('Members', 'members');
 
-                    membersGroup.addDataElements("Members", results.map((el) => {
-                        var viewer = new PrincipalViewer();
+                    newMembersGroup.addDataElements('Members', results.map((el) => {
+                        const viewer = new PrincipalViewer();
                         viewer.setObject(el);
                         return viewer;
                     }));
 
                     this.userDataContainer.removeChildren();
                     this.userDataContainer.appendChild(groupAndRoleGroup);
-                    this.userDataContainer.appendChild(membersGroup);
+                    this.userDataContainer.appendChild(newMembersGroup);
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).done();
 
-
             }).catch((reason: any) => {
             api.DefaultErrorHandler.handle(reason);
-        }).finally(() => {
         }).done();
     }
 }

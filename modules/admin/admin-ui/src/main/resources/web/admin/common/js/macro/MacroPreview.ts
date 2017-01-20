@@ -35,13 +35,13 @@ module api.macro {
                 return false;
             }
 
-            var other = <MacroPreview>o;
+            let other = <MacroPreview>o;
 
-            if (this.html != other.html) {
+            if (this.html !== other.html) {
                 return false;
             }
 
-            if (this.macroString != other.macroString) {
+            if (this.macroString !== other.macroString) {
                 return false;
             }
 

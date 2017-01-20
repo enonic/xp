@@ -14,9 +14,6 @@ module api.content {
 
         private readOnly: boolean;
 
-        constructor() {
-        }
-
         public static fromContentSummary(contentSummary: ContentSummary) {
             return new ContentSummaryAndCompareStatus().setContentSummary(contentSummary);
         }
@@ -85,7 +82,7 @@ module api.content {
         getId(): string {
             return (this.contentSummary && this.contentSummary.getId()) ||
                    (this.uploadItem && this.uploadItem.getId()) ||
-                   "";
+                   '';
         }
 
         getPath(): ContentPath {
@@ -114,7 +111,7 @@ module api.content {
                 return false;
             }
 
-            var other = <ContentSummaryAndCompareStatus>o;
+            let other = <ContentSummaryAndCompareStatus>o;
 
             if (!api.ObjectHelper.equals(this.uploadItem, other.uploadItem)) {
                 return false;
@@ -124,7 +121,7 @@ module api.content {
                 return false;
             }
 
-            if (this.compareStatus != other.compareStatus) {
+            if (this.compareStatus !== other.compareStatus) {
                 return false;
             }
 

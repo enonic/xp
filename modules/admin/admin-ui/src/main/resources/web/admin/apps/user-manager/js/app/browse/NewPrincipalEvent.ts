@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {BaseUserEvent} from "./BaseUserEvent";
+import '../../api.ts';
+import {BaseUserEvent} from './BaseUserEvent';
 
 export class NewPrincipalEvent extends BaseUserEvent {
 

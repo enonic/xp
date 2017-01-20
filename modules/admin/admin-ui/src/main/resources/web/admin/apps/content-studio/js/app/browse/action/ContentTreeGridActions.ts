@@ -1,17 +1,17 @@
-import "../../../api.ts";
-import {ContentTreeGrid} from "../ContentTreeGrid";
-import {ToggleSearchPanelAction} from "./ToggleSearchPanelAction";
-import {ShowNewContentDialogAction} from "./ShowNewContentDialogAction";
-import {PreviewContentAction} from "./PreviewContentAction";
-import {EditContentAction} from "./EditContentAction";
-import {DeleteContentAction} from "./DeleteContentAction";
-import {DuplicateContentAction} from "./DuplicateContentAction";
-import {MoveContentAction} from "./MoveContentAction";
-import {SortContentAction} from "./SortContentAction";
-import {PublishContentAction} from "./PublishContentAction";
-import {PublishTreeContentAction} from "./PublishTreeContentAction";
-import {UnpublishContentAction} from "./UnpublishContentAction";
-import {ContentBrowseItem} from "../ContentBrowseItem";
+import '../../../api.ts';
+import {ContentTreeGrid} from '../ContentTreeGrid';
+import {ToggleSearchPanelAction} from './ToggleSearchPanelAction';
+import {ShowNewContentDialogAction} from './ShowNewContentDialogAction';
+import {PreviewContentAction} from './PreviewContentAction';
+import {EditContentAction} from './EditContentAction';
+import {DeleteContentAction} from './DeleteContentAction';
+import {DuplicateContentAction} from './DuplicateContentAction';
+import {MoveContentAction} from './MoveContentAction';
+import {SortContentAction} from './SortContentAction';
+import {PublishContentAction} from './PublishContentAction';
+import {PublishTreeContentAction} from './PublishTreeContentAction';
+import {UnpublishContentAction} from './UnpublishContentAction';
+import {ContentBrowseItem} from '../ContentBrowseItem';
 
 import Action = api.ui.Action;
 import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
@@ -69,7 +69,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
         previewHandler.onPreviewStateChanged((value) => {
             this.PREVIEW_CONTENT.setEnabled(value);
-        })
+        });
 
     }
 
@@ -81,8 +81,8 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         return this.actions;
     }
 
-    updateActionsEnabledState(contentBrowseItems: ContentBrowseItem[],
-                              changes?: BrowseItemsChanges<ContentSummaryAndCompareStatus>): wemQ.Promise<BrowseItem<ContentSummaryAndCompareStatus>[]> {
+    // tslint:disable-next-line:max-line-length
+    updateActionsEnabledState(contentBrowseItems: ContentBrowseItem[], changes?: BrowseItemsChanges<ContentSummaryAndCompareStatus>): wemQ.Promise<BrowseItem<ContentSummaryAndCompareStatus>[]> {
 
         this.TOGGLE_SEARCH_PANEL.setVisible(false);
 
@@ -123,8 +123,8 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             return elem.getModel().getContentSummary();
         });
 
-        let treePublishEnabled = true,
-            unpublishEnabled = true;
+        let treePublishEnabled = true;
+        let unpublishEnabled = true;
 
         let eachOnline = contentBrowseItems.every((browseItem) => {
             return this.isOnline(browseItem.getModel().getCompareStatus());
@@ -149,7 +149,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.DELETE_CONTENT.setEnabled(this.anyDeletable(contentSummaries));
         this.DUPLICATE_CONTENT.setEnabled(false);
         this.MOVE_CONTENT.setEnabled(true);
-        this.SORT_CONTENT.setEnabled(contentSummaries.length == 1);
+        this.SORT_CONTENT.setEnabled(contentSummaries.length === 1);
 
         this.PUBLISH_CONTENT.setEnabled(publishEnabled);
         this.PUBLISH_TREE_CONTENT.setEnabled(treePublishEnabled);
@@ -171,11 +171,11 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     }
 
     private isPublished(status: api.content.CompareStatus): boolean {
-        return status != api.content.CompareStatus.NEW && status != api.content.CompareStatus.UNKNOWN;
+        return status !== api.content.CompareStatus.NEW && status !== api.content.CompareStatus.UNKNOWN;
     }
 
     private isOnline(status: api.content.CompareStatus): boolean {
-        return status == api.content.CompareStatus.EQUAL;
+        return status === api.content.CompareStatus.EQUAL;
     }
 
     private doUpdateActionsEnabledState(contentBrowseItems: ContentBrowseItem[]): wemQ.Promise<any> {
@@ -201,7 +201,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     }
 
     private updateActionsByPermissionsSingleItemSelected(contentBrowseItems: ContentBrowseItem[]): wemQ.Promise<any> {
-        var selectedItem = contentBrowseItems[0].getModel().getContentSummary();
+        let selectedItem = contentBrowseItems[0].getModel().getContentSummary();
 
         return this.checkIsChildrenAllowedByContentType(selectedItem).then((contentTypeAllowsChildren: boolean) => {
             return this.updateActionsByPermissionsMultipleItemsSelected(contentBrowseItems, contentTypeAllowsChildren).then(() => {
@@ -244,7 +244,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     }
 
     private checkIsChildrenAllowedByContentType(contentSummary: ContentSummary): wemQ.Promise<Boolean> {
-        var deferred = wemQ.defer<boolean>();
+        let deferred = wemQ.defer<boolean>();
 
         new api.schema.content.GetContentTypeByNameRequest(contentSummary.getType()).sendAndParse().then(
             (contentType: api.schema.content.ContentType) => {
@@ -275,6 +275,6 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
                 this.DUPLICATE_CONTENT.setEnabled(canDuplicate);
             });
 
-        })
+        });
     }
 }

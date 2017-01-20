@@ -1,6 +1,5 @@
-import "../../../../../../api.ts";
-
-import {PageControllerSelector} from "./PageControllerSelector";
+import '../../../../../../api.ts';
+import {PageControllerSelector} from './PageControllerSelector';
 
 export class PageControllerForm extends api.ui.form.Form {
 
@@ -10,8 +9,8 @@ export class PageControllerForm extends api.ui.form.Form {
         super('page-controller-form');
         this.controllerSelector = controllerSelector;
 
-        var fieldSet = new api.ui.form.Fieldset();
-        fieldSet.add(new api.ui.form.FormItemBuilder(controllerSelector).setLabel("Page Controller").build());
+        let fieldSet = new api.ui.form.Fieldset();
+        fieldSet.add(new api.ui.form.FormItemBuilder(controllerSelector).setLabel('Page Controller').build());
         this.add(fieldSet);
     }
 

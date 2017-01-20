@@ -7,7 +7,7 @@ module api.aggregation {
             if (json.BucketAggregation) {
                 return api.aggregation.BucketAggregation.fromJson(<api.aggregation.BucketAggregationJson>json.BucketAggregation);
             } else {
-                throw new Error("Aggregation type not recognized: " + json);
+                throw new Error('Aggregation type not recognized: ' + json);
             }
         }
     }

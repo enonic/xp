@@ -22,11 +22,17 @@ module api.content.resource {
 
         private publishTo: Date;
 
+        private permissions: api.security.acl.AccessControlList;
+
+        private inheritPermissions: boolean;
+
+        private overwritePermissions: boolean;
+
         constructor(id: string) {
             super();
             this.id = id;
             this.requireValid = false;
-            this.setMethod("POST");
+            this.setMethod('POST');
         }
 
         setId(id: string): UpdateContentRequest {
@@ -79,6 +85,21 @@ module api.content.resource {
             return this;
         }
 
+        setPermissions(permissions: api.security.acl.AccessControlList): UpdateContentRequest {
+            this.permissions = permissions;
+            return this;
+        }
+
+        setInheritPermissions(inheritPermissions: boolean): UpdateContentRequest {
+            this.inheritPermissions = inheritPermissions;
+            return this;
+        }
+
+        setOverwritePermissions(overwritePermissions: boolean): UpdateContentRequest {
+            this.overwritePermissions = overwritePermissions;
+            return this;
+        }
+
         getParams(): Object {
             return {
                 contentId: this.id,
@@ -90,12 +111,15 @@ module api.content.resource {
                 language: this.language,
                 owner: this.owner ? this.owner.toString() : undefined,
                 publishFrom: this.publishFrom,
-                publishTo: this.publishTo
+                publishTo: this.publishTo,
+                permissions: this.permissions ? this.permissions.toJson() : undefined,
+                inheritPermissions: this.inheritPermissions,
+                overwriteChildPermissions: this.overwritePermissions
             };
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "update");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'update');
         }
 
         sendAndParse(): wemQ.Promise<Content> {

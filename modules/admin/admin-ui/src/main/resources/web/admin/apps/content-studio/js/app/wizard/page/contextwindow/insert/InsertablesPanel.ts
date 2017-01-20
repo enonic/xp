@@ -1,10 +1,10 @@
-import "../../../../../api.ts";
-import {ContentWizardPanel} from "../../../ContentWizardPanel";
-import {LiveEditPageProxy} from "../../LiveEditPageProxy";
-import {Insertable} from "./Insertable";
-import {InsertablesGrid} from "./InsertablesGrid";
-import {Insertables} from "./Insertables";
-import {PageComponentsView} from "../../../PageComponentsView";
+import '../../../../../api.ts';
+import {ContentWizardPanel} from '../../../ContentWizardPanel';
+import {LiveEditPageProxy} from '../../LiveEditPageProxy';
+import {Insertable} from './Insertable';
+import {InsertablesGrid} from './InsertablesGrid';
+import {Insertables} from './Insertables';
+import {PageComponentsView} from '../../../PageComponentsView';
 
 import DragHelper = api.ui.DragHelper;
 import PageView = api.liveedit.PageView;
@@ -39,19 +39,19 @@ export class InsertablesPanel extends api.ui.panel.Panel {
 
     private contextWindowDraggable: JQuery;
 
-    public static debug = false;
+    public static debug: boolean = false;
 
     constructor(config: ComponentTypesPanelConfig) {
-        super("insertables-panel");
+        super('insertables-panel');
         this.liveEditPageProxy = config.liveEditPage;
 
-        var topDescription = new api.dom.PEl();
+        let topDescription = new api.dom.PEl();
         topDescription.getEl().setInnerHtml('Drag and drop components into the page');
 
         this.insertablesDataView = new api.ui.grid.DataView<Insertable>();
-        this.insertablesGrid = new InsertablesGrid(this.insertablesDataView, {draggableRows: true, rowClass: "comp"});
+        this.insertablesGrid = new InsertablesGrid(this.insertablesDataView, {draggableRows: true, rowClass: 'comp'});
 
-        this.insertablesDataView.setItems(Insertables.ALL, "name");
+        this.insertablesDataView.setItems(Insertables.ALL, 'name');
 
         this.componentsView = new PageComponentsView(config.liveEditPage);
 
@@ -61,7 +61,7 @@ export class InsertablesPanel extends api.ui.panel.Panel {
             this.pageView = event.getPageView();
             if (this.pageView && this.pageView.getLiveEditModel().getPageModel().getMode() === PageMode.FRAGMENT) {
                 this.destroyDraggables();
-                this.insertablesDataView.setItems(Insertables.ALLOWED_IN_FRAGMENT, "name");
+                this.insertablesDataView.setItems(Insertables.ALLOWED_IN_FRAGMENT, 'name');
                 this.initializeDraggables();
             }
         });
@@ -95,7 +95,7 @@ export class InsertablesPanel extends api.ui.panel.Panel {
     }
 
     private initializeDraggables() {
-        var components = wemjq('[data-context-window-draggable="true"]:not(.ui-draggable)');
+        let components = wemjq('[data-context-window-draggable="true"]:not(.ui-draggable)');
 
         if (InsertablesPanel.debug) {
             console.log('InsertablesPanel.initializeDraggables', components);
@@ -116,7 +116,7 @@ export class InsertablesPanel extends api.ui.panel.Panel {
     }
 
     private destroyDraggables() {
-        var components = wemjq('[data-context-window-draggable="true"]:not(.ui-draggable)');
+        let components = wemjq('[data-context-window-draggable="true"]:not(.ui-draggable)');
 
         components.draggable('destroy');
     }
@@ -142,8 +142,8 @@ export class InsertablesPanel extends api.ui.panel.Panel {
             return;
         }
 
-        var over = this.isOverIFrame(<JQueryEventObject>event);
-        if (this.overIFrame != over) {
+        let over = this.isOverIFrame(<JQueryEventObject>event);
+        if (this.overIFrame !== over) {
             if (over) {
                 this.onEnterIFrame(event, ui);
             } else {
@@ -170,7 +170,7 @@ export class InsertablesPanel extends api.ui.panel.Panel {
     }
 
     private isOverIFrame(event: JQueryEventObject): boolean {
-        return event.originalEvent.target == this.liveEditPageProxy.getDragMask().getHTMLElement();
+        return event.originalEvent.target === this.liveEditPageProxy.getDragMask().getHTMLElement();
     }
 
     private onLeftIFrame(event: JQueryEventObject, ui: JQueryUI.DraggableEventUIParams) {
@@ -180,10 +180,10 @@ export class InsertablesPanel extends api.ui.panel.Panel {
         this.liveEditPageProxy.getDragMask().show();
 
         if (this.iFrameDraggable) {
-            var livejq = this.liveEditPageProxy.getJQuery();
+            let livejq = this.liveEditPageProxy.getJQuery();
             // hide the helper of the iframe draggable,
             // it's a function so call it to get element and wrap in jquery to hide
-            livejq(this.iFrameDraggable.draggable("option", "helper")()).hide();
+            livejq(this.iFrameDraggable.draggable('option', 'helper')()).hide();
         }
 
         // and show the one in the parent
@@ -195,10 +195,10 @@ export class InsertablesPanel extends api.ui.panel.Panel {
             console.log('InsertablesPanel.onEnterIFrame');
         }
         this.liveEditPageProxy.getDragMask().hide();
-        var livejq = this.liveEditPageProxy.getJQuery();
+        let livejq = this.liveEditPageProxy.getJQuery();
 
-        var iFrame = <HTMLIFrameElement>this.liveEditPageProxy.getIFrame().getHTMLElement();
-        var hasBody = iFrame && iFrame.contentDocument && iFrame.contentDocument.body;
+        let iFrame = <HTMLIFrameElement>this.liveEditPageProxy.getIFrame().getHTMLElement();
+        let hasBody = iFrame && iFrame.contentDocument && iFrame.contentDocument.body;
         if (!hasBody) {
             if (InsertablesPanel.debug) {
                 console.warn('InsertablesPanel.onEnterIFrame, skip due to missing body in document');
@@ -215,7 +215,7 @@ export class InsertablesPanel extends api.ui.panel.Panel {
 
         // show the helper of the iframe draggable
         // it's a function so call it to get element and wrap in jquery to show
-        livejq(this.iFrameDraggable.draggable("option", "helper")()).show();
+        livejq(this.iFrameDraggable.draggable('option', 'helper')()).show();
 
         // and hide the one in the parent
         ui.helper.hide();
@@ -228,9 +228,10 @@ export class InsertablesPanel extends api.ui.panel.Panel {
     }
 
     unHideContextWindowRequest(listener: {(): void;}) {
-        this.hideContextWindowRequestListeners = this.hideContextWindowRequestListeners.filter(function (curr) {
-            return curr != listener;
-        });
+        this.hideContextWindowRequestListeners = this.hideContextWindowRequestListeners
+            .filter(function (curr: {(): void;}) {
+                return curr !== listener;
+            });
     }
 
     private notifyHideContextWindowRequest() {

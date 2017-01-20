@@ -44,7 +44,7 @@ module api.content.resource {
         }
 
         resetSearchString() {
-            this.getRequest().setSearchString("");
+            this.getRequest().setSearchString('');
         }
 
         load(postLoad: boolean = false): wemQ.Promise<ContentSummary[]> {
@@ -52,20 +52,20 @@ module api.content.resource {
             this.notifyLoadingData(postLoad);
 
             return this.sendRequest().then((contents: ContentSummary[]) => {
-                var deferred = wemQ.defer<ContentSummary[]>();
+                let deferred = wemQ.defer<ContentSummary[]>();
 
                 const allContentTypes = contents.map((content)=> content.getType());
                 const contentTypes = api.util.ArrayHelper.removeDuplicates(allContentTypes, (ct) => ct.toString());
                 const contentTypeRequests = contentTypes.map((contentType)=> new GetContentTypeByNameRequest(contentType).sendAndParse());
 
-                wemQ.all(contentTypeRequests).spread((...contentTypes: ContentType[]) => {
+                wemQ.all(contentTypeRequests).spread((...contentType: ContentType[]) => {
                     if (this.filterContentPaths) {
-                        contents = this.filterContent(contents, contentTypes);
+                        contents = this.filterContent(contents, contentType);
                     }
                     if (contents && contents.length > 0) {
                         /*
                          We don't need sorting on the client - items must be sorted on the server before they are fed to the pager
-                         if (!this.contentSummaryRequest.getSearchString() || this.contentSummaryRequest.getSearchString().length == 0) {
+                         if (!this.contentSummaryRequest.getSearchString() || this.contentSummaryRequest.getSearchString().length === 0) {
                          contents.sort(new api.content.util.ContentByPathComparator().compare);
                          }
                          */
@@ -86,16 +86,16 @@ module api.content.resource {
         }
 
         resetParams() {
-            this.getRequest().resetParams()
+            this.getRequest().resetParams();
         }
 
         private filterContent(contents: ContentSummary[], contentTypes: ContentType[]): ContentSummary[] {
-            var contentTypeAllowsChild: { [s: string]: boolean; } = {};
+            let contentTypeAllowsChild: { [s: string]: boolean; } = {};
             contentTypes.forEach((contentType)=> contentTypeAllowsChild[contentType.getName()] = contentType.isAllowChildContent());
 
-            var createContentFilter = new api.content.util.CreateContentFilter();
+            let createContentFilter = new api.content.util.CreateContentFilter();
 
-            var filtered = contents.slice(0);
+            let filtered = contents.slice(0);
 
             if (this.filterContentPaths.length === 1) {
                 const contentPath = this.filterContentPaths[0];

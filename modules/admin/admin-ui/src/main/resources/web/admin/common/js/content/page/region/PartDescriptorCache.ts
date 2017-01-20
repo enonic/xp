@@ -12,8 +12,8 @@ module api.content.page.region {
 
         static get(): PartDescriptorCache {
 
-            var w = api.dom.WindowDOM.get();
-            var topWindow: any = w.getTopParent() == null ? w.asWindow() : w.getTopParent().asWindow();
+            let w = api.dom.WindowDOM.get();
+            let topWindow: any = w.getTopParent() == null ? w.asWindow() : w.getTopParent().asWindow();
 
             if (!topWindow.api.content.page.region.PartDescriptorCache.instance) {
                 topWindow.api.content.page.region.PartDescriptorCache.instance = new PartDescriptorCache();
@@ -23,7 +23,7 @@ module api.content.page.region {
 
         constructor() {
             if (PartDescriptorCache.instance) {
-                throw new Error("Instantiation failed: Use PartDescriptorCache.get() instead!");
+                throw new Error('Instantiation failed: Use PartDescriptorCache.get() instead!');
             }
             super();
         }
@@ -35,7 +35,7 @@ module api.content.page.region {
         }
 
         put(descriptor: PartDescriptor) {
-            api.util.assertNotNull(descriptor, "a PartDescriptor must be given");
+            api.util.assertNotNull(descriptor, 'a PartDescriptor must be given');
 
             super.put(descriptor, descriptor.getKey().getApplicationKey());
         }

@@ -6,15 +6,15 @@ module api.ui.form {
         private input: api.dom.FormItemEl;
         private error: api.dom.SpanEl;
         private validator: (input: api.dom.FormItemEl) => string;
-        private invalidClass: string = "invalid";
+        private invalidClass: string = 'invalid';
 
         private focusListeners: {(event: FocusEvent):void}[] = [];
 
         private blurListeners: {(event: FocusEvent):void}[] = [];
 
         constructor(builder: FormItemBuilder) {
-            super("input-view");
-            this.error = new api.dom.SpanEl("error");
+            super('input-view');
+            this.error = new api.dom.SpanEl('error');
             this.appendChild(this.error);
 
             this.input = builder.getInput();
@@ -28,8 +28,8 @@ module api.ui.form {
 
             if (builder.getLabel()) {
                 this.label = new api.dom.LabelEl(builder.getLabel(), this.input);
-                if(Validators.required == builder.getValidator()) {
-                    this.label.addClass("required");
+                if(Validators.required === builder.getValidator()) {
+                    this.label.addClass('required');
                 }
                 this.appendChild(this.label);
             }
@@ -57,16 +57,20 @@ module api.ui.form {
                 this.validator = null;
             }
         }
-        
+
+        setValidator(value: (input: api.dom.FormItemEl) => string) {
+            this.validator = value;
+        }
+
         validate(validationResult:ValidationResult, markInvalid?: boolean) {
             if (this.validator) {
-                var validationMessage = this.validator(this.input);
+                let validationMessage = this.validator(this.input);
 
                 if(validationMessage) {
                     validationResult.addError(new ValidationError(this, validationMessage));
                 }
                 if (markInvalid) {
-                    var validityChanged = false;
+                    let validityChanged = false;
                     if (validationMessage) {
                         this.addClass(this.invalidClass);
                         validityChanged = (validationMessage !== this.getError());
@@ -121,13 +125,13 @@ module api.ui.form {
         private notifyFocused(event: FocusEvent) {
             this.focusListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         private notifyBlurred(event: FocusEvent) {
             this.blurListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
     }
@@ -140,7 +144,7 @@ module api.ui.form {
 
         constructor(input: api.dom.FormItemEl) {
             if(!input) {
-                throw new Error("Input can't be null.");
+                throw new Error(`Input can't be null.`);
             }
             this.input = input;
         }

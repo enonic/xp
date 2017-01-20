@@ -1,5 +1,5 @@
-import "../../../../../api.ts";
-import {BaseInspectionPanel} from "./BaseInspectionPanel";
+import '../../../../../api.ts';
+import {BaseInspectionPanel} from './BaseInspectionPanel';
 
 export class ContentInspectionPanel extends BaseInspectionPanel {
 
@@ -12,7 +12,7 @@ export class ContentInspectionPanel extends BaseInspectionPanel {
 
         this.namesAndIcon =
             new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.medium)).setIconClass(
-                api.liveedit.ItemViewIconClassResolver.resolveByType("content", "icon-xlarge"));
+                api.liveedit.ItemViewIconClassResolver.resolveByType('content', 'icon-xlarge'));
 
         this.appendChild(this.namesAndIcon);
     }
@@ -24,10 +24,9 @@ export class ContentInspectionPanel extends BaseInspectionPanel {
         if (content) {
             this.namesAndIcon.setMainName(content.getDisplayName());
             this.namesAndIcon.setSubName(content.getPath().toString());
-        }
-        else {
-            this.namesAndIcon.setMainName("[No Content given]");
-            this.namesAndIcon.setSubName("");
+        } else {
+            this.namesAndIcon.setMainName('[No Content given]');
+            this.namesAndIcon.setSubName('');
         }
     }
 

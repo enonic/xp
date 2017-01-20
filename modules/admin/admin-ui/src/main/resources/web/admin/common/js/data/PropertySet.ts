@@ -1,4 +1,5 @@
 module api.data {
+    /* tslint:disable:max-line-length */
 
     import Reference = api.util.Reference;
     import BinaryReference = api.util.BinaryReference;
@@ -57,7 +58,7 @@ module api.data {
         /**
          * If true, do not add property if it's value is null.
          */
-        private _ifNotNull: boolean = false;
+        private skipNulls: boolean = false;
 
         private changedListeners: {(event: PropertyEvent): void}[] = [];
 
@@ -81,16 +82,16 @@ module api.data {
             this.tree = tree;
 
             this.propertyAddedEventHandler = (event) => {
-                this.forwardPropertyAddedEvent(event)
+                this.forwardPropertyAddedEvent(event);
             };
             this.propertyRemovedEventHandler = (event) => {
-                this.forwardPropertyRemovedEvent(event)
+                this.forwardPropertyRemovedEvent(event);
             };
             this.propertyIndexChangedEventHandler = (event) => {
-                this.forwardPropertyIndexChangedEvent(event)
+                this.forwardPropertyIndexChangedEvent(event);
             };
             this.propertyValueChangedEventHandler = (event) => {
-                this.forwardPropertyValueChangedEvent(event)
+                this.forwardPropertyValueChangedEvent(event);
             };
         }
 
@@ -128,8 +129,8 @@ module api.data {
 
         addPropertyArray(array: PropertyArray) {
             api.util.assertState(this.tree === array.getTree(),
-                "Added PropertyArray must be attached to the same PropertyTree as this PropertySet");
-            api.util.assert(this == array.getParent(), "propertyArray must have this PropertySet as parent");
+                'Added PropertyArray must be attached to the same PropertyTree as this PropertySet');
+            api.util.assert(this === array.getParent(), 'propertyArray must have this PropertySet as parent');
             this.propertyArrayByName[array.getName()] = array;
 
             this.registerPropertyArrayListeners(array);
@@ -137,57 +138,54 @@ module api.data {
 
         addProperty(name: string, value: Value): Property {
 
-            if (this._ifNotNull && value.isNull()) {
-                this._ifNotNull = false;
+            if (this.skipNulls && value.isNull()) {
+                this.skipNulls = false;
                 return null;
             }
 
-            var array = this.getOrCreatePropertyArray(name, value.getType());
-            var property = array.add(value);
+            let array = this.getOrCreatePropertyArray(name, value.getType());
+            let property = array.add(value);
             return property;
         }
 
         setPropertyByPath(path: any, value: Value): Property {
             if (api.ObjectHelper.iFrameSafeInstanceOf(path, PropertyPath)) {
-                return this.doSetProperty(<PropertyPath>path, value)
-            }
-            else {
+                return this.doSetProperty(<PropertyPath>path, value);
+            } else {
                 return this.doSetProperty(PropertyPath.fromString(path.toString()), value);
             }
         }
 
         private doSetProperty(path: PropertyPath, value: Value): Property {
-            var firstPathElement = path.getFirstElement();
+            let firstPathElement = path.getFirstElement();
             if (path.elementCount() > 1) {
-                var propertySet = this.getOrCreateSet(firstPathElement.getName(), firstPathElement.getIndex());
+                let propertySet = this.getOrCreateSet(firstPathElement.getName(), firstPathElement.getIndex());
                 return propertySet.setPropertyByPath(path.removeFirstPathElement(), value);
-            }
-            else {
+            } else {
                 return this.setProperty(firstPathElement.getName(), firstPathElement.getIndex(), value);
             }
         }
 
         private getOrCreateSet(name: string, index: number): PropertySet {
-            var existingProperty = this.getProperty(name, index);
+            let existingProperty = this.getProperty(name, index);
             if (!existingProperty) {
-                var newSet = this.tree ? new PropertySet(this.tree) : new PropertySet();
+                let newSet = this.tree ? new PropertySet(this.tree) : new PropertySet();
                 this.setProperty(name, index, new Value(newSet, ValueTypes.DATA));
                 return newSet;
-            }
-            else {
+            } else {
                 return existingProperty.getPropertySet();
             }
         }
 
         setProperty(name: string, index: number, value: Value): Property {
 
-            var array = this.getOrCreatePropertyArray(name, value.getType());
+            let array = this.getOrCreatePropertyArray(name, value.getType());
             return array.set(index, value);
         }
 
         private getOrCreatePropertyArray(name: string, type: ValueType): PropertyArray {
 
-            var array = this.propertyArrayByName[name];
+            let array = this.propertyArrayByName[name];
             if (!array) {
                 array = PropertyArray.create().setParent(this).setName(name).setType(type).build();
                 this.propertyArrayByName[name] = array;
@@ -203,7 +201,7 @@ module api.data {
         }
 
         removeProperty(name: string, index: number) {
-            var array: PropertyArray = this.propertyArrayByName[name];
+            let array: PropertyArray = this.propertyArrayByName[name];
             if (array) {
                 array.remove(index);
             }
@@ -213,18 +211,19 @@ module api.data {
         }
 
         isEmpty(): boolean {
-            var isEmpty: boolean = true;
-            for (var name in this.propertyArrayByName) {
+            let isEmpty: boolean = true;
+            // tslint:disable-next-line:forin
+            for (const name in this.propertyArrayByName) {
                 if (!isEmpty) {
                     return isEmpty;
                 }
                 if (this.propertyArrayByName.hasOwnProperty(name)) {
-                    var propertyArray: PropertyArray = this.propertyArrayByName[name];
+                    let propertyArray: PropertyArray = this.propertyArrayByName[name];
                     propertyArray.forEach((property: Property) => {
                         if (!isEmpty) {
                             return;
                         }
-                        var type = property.getType();
+                        let type = property.getType();
                         if (property.hasNullValue()) {
                             return;
                         }
@@ -249,22 +248,20 @@ module api.data {
         }
 
         private doRemoveEmptyValues(propertySet: api.data.PropertySet) {
-            var toRemove = [];
+            let toRemove = [];
             propertySet.forEach((property) => {
-                var type = property.getType();
+                let type = property.getType();
                 if (property.hasNullValue()) {
                     toRemove.push(property);
-                }
-                else if (type.equals(api.data.ValueTypes.STRING) && (property.getValue().getString() === '')) {
+                } else if (type.equals(api.data.ValueTypes.STRING) && (property.getValue().getString() === '')) {
                     toRemove.push(property);
-                }
-                else if (type.equals(api.data.ValueTypes.DATA)) {
-                    var propertySetValue = property.getValue().getPropertySet();
+                } else if (type.equals(api.data.ValueTypes.DATA)) {
+                    let propertySetValue = property.getValue().getPropertySet();
                     this.doRemoveEmptyValues(propertySetValue);
                     if (propertySetValue.isEmpty()) {
                         toRemove.push(property);
                     }
-                } else if (type.equals(api.data.ValueTypes.BOOLEAN) && (property.getValue().getBoolean() == false)) {
+                } else if (type.equals(api.data.ValueTypes.BOOLEAN) && (property.getValue().getBoolean() === false)) {
                     toRemove.push(property);
                 }
             });
@@ -284,7 +281,7 @@ module api.data {
          * Returns the number of child properties in this PropertySet (grand children and so on is not counted).
          */
         getSize(): number {
-            var size = 0;
+            let size = 0;
             api.ObjectHelper.objectPropertyIterator(this.propertyArrayByName, (name: string, propertyArray: PropertyArray) => {
                 size += propertyArray.getSize();
             });
@@ -296,7 +293,7 @@ module api.data {
          * Counts the number of child properties having the given name (grand children and so on is not counted).
          */
         countProperties(name: string): number {
-            var array = this.propertyArrayByName[name];
+            let array = this.propertyArrayByName[name];
             if (!array) {
                 return 0;
             }
@@ -322,18 +319,16 @@ module api.data {
          */
         getProperty(identifier?: any, index?: number): Property {
 
-            if (identifier == undefined && index == undefined) {
+            if (identifier == null && index == null) {
                 return this.property;
-            }
-            else if (index != undefined) {
+            } else if (index != null) {
                 Property.checkName(identifier);
-                var array = this.propertyArrayByName[identifier];
+                let array = this.propertyArrayByName[identifier];
                 if (!array) {
                     return null;
                 }
                 return array.get(index);
-            }
-            else {
+            } else {
                 return this.getPropertyByPath(identifier);
             }
         }
@@ -342,24 +337,22 @@ module api.data {
 
             if (api.ObjectHelper.iFrameSafeInstanceOf(path, PropertyPath)) {
                 return this.doGetPropertyByPath(<PropertyPath>path);
-            }
-            else {
+            } else {
                 return this.doGetPropertyByPath(PropertyPath.fromString(path.toString()));
             }
         }
 
         private doGetPropertyByPath(path: PropertyPath): Property {
 
-            var firstElement = path.getFirstElement();
+            let firstElement = path.getFirstElement();
             if (path.elementCount() > 1) {
-                var property = this.getProperty(firstElement.getName(), firstElement.getIndex());
+                let property = this.getProperty(firstElement.getName(), firstElement.getIndex());
                 if (!property) {
                     return null;
                 }
-                var propertySet = property.getPropertySet();
+                let propertySet = property.getPropertySet();
                 return propertySet.getPropertyByPath(path.removeFirstPathElement());
-            }
-            else {
+            } else {
                 return this.getProperty(firstElement.getName(), firstElement.getIndex());
             }
         }
@@ -389,14 +382,14 @@ module api.data {
          * Calls the given callback for each property with the given name.
          */
         forEachProperty(propertyName: string, callback: (property: Property, index?: number) => void) {
-            var array = this.getPropertyArray(propertyName);
+            let array = this.getPropertyArray(propertyName);
             if (array) {
                 array.forEach(callback);
             }
         }
 
         public isNotNull(identifier: any, index?: number): boolean {
-            var property = this.getProperty(identifier, index);
+            let property = this.getProperty(identifier, index);
             if (property == null) {
                 return false;
             }
@@ -414,7 +407,7 @@ module api.data {
                 return false;
             }
 
-            var other = <PropertySet>o;
+            let other = <PropertySet>o;
 
             if (!api.ObjectHelper.mapEquals(this.propertyArrayByName, other.propertyArrayByName)) {
                 return false;
@@ -424,10 +417,10 @@ module api.data {
         }
 
         public diff(other: PropertySet): PropertyTreeDiff {
-            let checkedProperties: String[] = [],
-                diff = this.doDiff(other, checkedProperties),
+            let checkedProperties: String[] = [];
+            let diff = this.doDiff(other, checkedProperties);
             // run inverse diff to find properties, which were added to the original set
-                inverseDiff = other.doDiff(this, checkedProperties);
+            let inverseDiff = other.doDiff(this, checkedProperties);
 
             diff.added = diff.added.concat(inverseDiff.removed);
 
@@ -435,14 +428,14 @@ module api.data {
         }
 
         private doDiff(other: PropertySet, checkedProperties: String[] = []): PropertyTreeDiff {
-            let added = [],
-                removed = [],
-                modified = [];
+            let added = [];
+            let removed = [];
+            let modified = [];
 
             this.forEach((property) => {
-                if (checkedProperties.indexOf(property.getPath().toString()) == -1) {
-                    let type = property.getType(),
-                        otherProperty = other.getProperty(property.getName(), property.getIndex());
+                if (checkedProperties.indexOf(property.getPath().toString()) === -1) {
+                    let type = property.getType();
+                    let otherProperty = other.getProperty(property.getName(), property.getIndex());
 
                     if (!otherProperty) {
                         removed.push(property);
@@ -455,8 +448,8 @@ module api.data {
                         }
                         checkedProperties.push(property.getPath().toString());
                     } else {
-                        let propertySetValue = property.getValue().getPropertySet(),
-                            diff = propertySetValue.doDiff(otherProperty.getValue().getPropertySet(), checkedProperties);
+                        let propertySetValue = property.getValue().getPropertySet();
+                        let diff = propertySetValue.doDiff(otherProperty.getValue().getPropertySet(), checkedProperties);
 
                         added = added.concat(diff.added);
                         removed = removed.concat(diff.removed);
@@ -469,7 +462,7 @@ module api.data {
                 added: added,
                 removed: removed,
                 modified: modified
-            }
+            };
         }
 
         /**
@@ -479,10 +472,10 @@ module api.data {
          */
         copy(destinationTree: PropertyTree): PropertySet {
 
-            var copy = new PropertySet(destinationTree);
+            let copy = new PropertySet(destinationTree);
 
             api.ObjectHelper.objectPropertyIterator(this.propertyArrayByName, (name: string, sourcePropertyArray: PropertyArray) => {
-                var propertyArrayCopy = sourcePropertyArray.copy(copy);
+                let propertyArrayCopy = sourcePropertyArray.copy(copy);
                 copy.addPropertyArray(propertyArrayCopy);
             });
 
@@ -490,7 +483,7 @@ module api.data {
         }
 
         toJson(): PropertyArrayJson[] {
-            var jsonArray: PropertyArrayJson[] = [];
+            let jsonArray: PropertyArrayJson[] = [];
 
             api.ObjectHelper.objectPropertyIterator(this.propertyArrayByName, (name: string, propertyArray: PropertyArray) => {
                 jsonArray.push(propertyArray.toJson());
@@ -501,7 +494,7 @@ module api.data {
 
         private registerPropertyArrayListeners(array: PropertyArray) {
             if (PropertySet.debug) {
-                console.debug("PropertySet[" + this.getPropertyPath().toString() + "].registerPropertyArrayListeners: " + array.getName())
+                console.debug('PropertySet[' + this.getPropertyPath().toString() + '].registerPropertyArrayListeners: ' + array.getName());
             }
 
             array.onPropertyAdded(this.propertyAddedEventHandler);
@@ -523,12 +516,12 @@ module api.data {
         }
 
         unChanged(listener: {(event: PropertyEvent): void;}) {
-            this.changedListeners = this.changedListeners.filter((curr) => (curr != listener));
+            this.changedListeners = this.changedListeners.filter((curr) => (curr !== listener));
         }
 
         private notifyChangedListeners(event: PropertyEvent) {
             if (PropertySet.debug) {
-                console.debug("PropertySet[" + this.getPropertyPath().toString() + "].notifyChangedListeners: " +
+                console.debug('PropertySet[' + this.getPropertyPath().toString() + '].notifyChangedListeners: ' +
                               event.toString());
             }
             this.changedListeners.forEach((listener) => listener(event));
@@ -549,13 +542,13 @@ module api.data {
          * @see [[PropertyAddedEvent]]
          */
         unPropertyAdded(listener: {(event: PropertyAddedEvent): void;}) {
-            this.propertyAddedListeners = this.propertyAddedListeners.filter((curr) => (curr != listener));
+            this.propertyAddedListeners = this.propertyAddedListeners.filter((curr) => (curr !== listener));
         }
 
         private forwardPropertyAddedEvent(event: PropertyAddedEvent) {
             this.propertyAddedListeners.forEach((listener) => listener(event));
             if (PropertySet.debug) {
-                console.debug("PropertySet[" + this.getPropertyPath().toString() + "].forwardPropertyAddedEvent: " +
+                console.debug('PropertySet[' + this.getPropertyPath().toString() + '].forwardPropertyAddedEvent: ' +
                               event.toString());
             }
             this.notifyChangedListeners(event);
@@ -576,12 +569,12 @@ module api.data {
          * @see [[PropertyRemovedEvent]]
          */
         unPropertyRemoved(listener: {(event: PropertyRemovedEvent): void;}) {
-            this.propertyRemovedListeners = this.propertyRemovedListeners.filter((curr) => (curr != listener));
+            this.propertyRemovedListeners = this.propertyRemovedListeners.filter((curr) => (curr !== listener));
         }
 
         private forwardPropertyRemovedEvent(event: PropertyRemovedEvent) {
             if (PropertySet.debug) {
-                console.debug("PropertySet[" + this.getPropertyPath().toString() + "].forwardPropertyRemovedEvent: " +
+                console.debug('PropertySet[' + this.getPropertyPath().toString() + '].forwardPropertyRemovedEvent: ' +
                               event.toString());
             }
             this.propertyRemovedListeners.forEach((listener) => listener(event));
@@ -603,12 +596,12 @@ module api.data {
          * @see [[PropertyIndexChangedEvent]]
          */
         unPropertyIndexChanged(listener: {(event: PropertyIndexChangedEvent): void;}) {
-            this.propertyIndexChangedListeners = this.propertyIndexChangedListeners.filter((curr) => (curr != listener));
+            this.propertyIndexChangedListeners = this.propertyIndexChangedListeners.filter((curr) => (curr !== listener));
         }
 
         private forwardPropertyIndexChangedEvent(event: PropertyIndexChangedEvent) {
             if (PropertySet.debug) {
-                console.debug("PropertySet[" + this.getPropertyPath().toString() + "].forwardPropertyIndexChangedEvent: " +
+                console.debug('PropertySet[' + this.getPropertyPath().toString() + '].forwardPropertyIndexChangedEvent: ' +
                               event.toString());
             }
             this.propertyIndexChangedListeners.forEach((listener) => listener(event));
@@ -630,12 +623,12 @@ module api.data {
          * @see [[PropertyValueChangedEvent]]
          */
         unPropertyValueChanged(listener: {(event: PropertyValueChangedEvent): void;}) {
-            this.propertyValueChangedListeners = this.propertyValueChangedListeners.filter((curr) => (curr != listener));
+            this.propertyValueChangedListeners = this.propertyValueChangedListeners.filter((curr) => (curr !== listener));
         }
 
         private forwardPropertyValueChangedEvent(event: PropertyValueChangedEvent) {
             if (PropertySet.debug) {
-                console.debug("PropertySet[" + this.getPropertyPath().toString() + "].forwardPropertyValueChangedEvent: " +
+                console.debug('PropertySet[' + this.getPropertyPath().toString() + '].forwardPropertyValueChangedEvent: ' +
                               event.toString());
             }
             this.propertyValueChangedListeners.forEach((listener) => listener(event));
@@ -651,7 +644,7 @@ module api.data {
          */
         newSet(): PropertySet {
             if (!this.tree) {
-                throw new Error("The PropertySet must be attached to a PropertyTree before this method can be invoked. Use PropertySet constructor with no arguments instead.");
+                throw new Error('The PropertySet must be attached to a PropertyTree before this method can be invoked. Use PropertySet constructor with no arguments instead.');
             }
             return this.tree.newPropertySet();
         }
@@ -665,7 +658,7 @@ module api.data {
         addPropertySet(name: string, value?: PropertySet): PropertySet {
             if (!value) {
                 if (!this.tree) {
-                    throw new Error("The PropertySet must be attached to a PropertyTree before this method can be invoked. Use PropertySet constructor with no arguments instead.");
+                    throw new Error('The PropertySet must be attached to a PropertyTree before this method can be invoked. Use PropertySet constructor with no arguments instead.');
                 }
                 value = this.tree.newPropertySet();
             }
@@ -678,17 +671,17 @@ module api.data {
         }
 
         setPropertySetByPath(path: any, value: PropertySet): Property {
-            return this.setPropertyByPath(path, new Value(value, ValueTypes.DATA))
+            return this.setPropertyByPath(path, new Value(value, ValueTypes.DATA));
         }
 
         getPropertySet(identifier: any, index?: number): PropertySet {
-            var property = this.getProperty(identifier, index);
+            let property = this.getProperty(identifier, index);
             return !property ? null : property.getPropertySet();
         }
 
         getPropertySets(name: string): PropertySet[] {
-            var values: PropertySet[] = [];
-            var array = this.getPropertyArray(name);
+            let values: PropertySet[] = [];
+            let array = this.getPropertyArray(name);
             array.forEach((property: Property) => {
                 values.push(property.getPropertySet());
             });
@@ -703,7 +696,7 @@ module api.data {
 
         addStrings(name: string, values: string[]): Property[] {
 
-            var properties: Property[] = [];
+            let properties: Property[] = [];
             values.forEach((value: string) => {
                 properties.push(this.addString(name, value));
             });
@@ -715,17 +708,17 @@ module api.data {
         }
 
         setStringByPath(path: any, value: string): Property {
-            return this.setPropertyByPath(path, new Value(value, ValueTypes.STRING))
+            return this.setPropertyByPath(path, new Value(value, ValueTypes.STRING));
         }
 
         getString(identifier: string, index?: number): string {
-            var property = this.getProperty(identifier, index);
+            let property = this.getProperty(identifier, index);
             return !property ? null : property.getString();
         }
 
         getStrings(name: string): string[] {
-            var values: string[] = [];
-            var array = this.getPropertyArray(name);
+            let values: string[] = [];
+            let array = this.getPropertyArray(name);
             array.forEach((property: Property) => {
                 values.push(property.getString());
             });
@@ -740,7 +733,7 @@ module api.data {
 
         addLongs(name: string, values: number[]): Property[] {
 
-            var properties: Property[] = [];
+            let properties: Property[] = [];
             values.forEach((value: number) => {
                 properties.push(this.addLong(name, value));
             });
@@ -756,13 +749,13 @@ module api.data {
         }
 
         getLong(identifier: string, index?: number): number {
-            var property = this.getProperty(identifier, index);
+            let property = this.getProperty(identifier, index);
             return !property ? null : property.getLong();
         }
 
         getLongs(name: string): number[] {
-            var values: number[] = [];
-            var array = this.getPropertyArray(name);
+            let values: number[] = [];
+            let array = this.getPropertyArray(name);
             array.forEach((property: Property) => {
                 values.push(property.getLong());
             });
@@ -777,7 +770,7 @@ module api.data {
 
         addDoubles(name: string, values: number[]): Property[] {
 
-            var properties: Property[] = [];
+            let properties: Property[] = [];
             values.forEach((value: number) => {
                 properties.push(this.addDouble(name, value));
             });
@@ -793,13 +786,13 @@ module api.data {
         }
 
         getDouble(identifier: string, index?: number): number {
-            var property = this.getProperty(identifier, index);
+            let property = this.getProperty(identifier, index);
             return !property ? null : property.getDouble();
         }
 
         getDoubles(name: string): number[] {
-            var values: number[] = [];
-            var array = this.getPropertyArray(name);
+            let values: number[] = [];
+            let array = this.getPropertyArray(name);
             array.forEach((property: Property) => {
                 values.push(property.getDouble());
             });
@@ -814,7 +807,7 @@ module api.data {
 
         addBooleans(name: string, values: boolean[]): Property[] {
 
-            var properties: Property[] = [];
+            let properties: Property[] = [];
             values.forEach((value: boolean) => {
                 properties.push(this.addBoolean(name, value));
             });
@@ -830,13 +823,13 @@ module api.data {
         }
 
         getBoolean(identifier: string, index?: number): boolean {
-            var property = this.getProperty(identifier, index);
+            let property = this.getProperty(identifier, index);
             return !property ? null : property.getBoolean();
         }
 
         getBooleans(name: string): boolean[] {
-            var values: boolean[] = [];
-            var array = this.getPropertyArray(name);
+            let values: boolean[] = [];
+            let array = this.getPropertyArray(name);
             array.forEach((property: Property) => {
                 values.push(property.getBoolean());
             });
@@ -851,7 +844,7 @@ module api.data {
 
         addReferences(name: string, values: Reference[]): Property[] {
 
-            var properties: Property[] = [];
+            let properties: Property[] = [];
             values.forEach((value: Reference) => {
                 properties.push(this.addReference(name, value));
             });
@@ -867,13 +860,13 @@ module api.data {
         }
 
         getReference(identifier: string, index?: number): Reference {
-            var property = this.getProperty(identifier, index);
+            let property = this.getProperty(identifier, index);
             return !property ? null : property.getReference();
         }
 
         getReferences(name: string): Reference[] {
-            var values: Reference[] = [];
-            var array = this.getPropertyArray(name);
+            let values: Reference[] = [];
+            let array = this.getPropertyArray(name);
             array.forEach((property: Property) => {
                 values.push(property.getReference());
             });
@@ -888,7 +881,7 @@ module api.data {
 
         addBinaryReferences(name: string, values: BinaryReference[]): Property[] {
 
-            var properties: Property[] = [];
+            let properties: Property[] = [];
             values.forEach((value: BinaryReference) => {
                 properties.push(this.addBinaryReference(name, value));
             });
@@ -904,13 +897,13 @@ module api.data {
         }
 
         getBinaryReference(identifier: string, index?: number): BinaryReference {
-            var property = this.getProperty(identifier, index);
+            let property = this.getProperty(identifier, index);
             return !property ? null : property.getBinaryReference();
         }
 
         getBinaryReferences(name: string): BinaryReference[] {
-            var values: BinaryReference[] = [];
-            var array = this.getPropertyArray(name);
+            let values: BinaryReference[] = [];
+            let array = this.getPropertyArray(name);
             array.forEach((property: Property) => {
                 values.push(property.getBinaryReference());
             });
@@ -925,7 +918,7 @@ module api.data {
 
         addGeoPoints(name: string, values: GeoPoint[]): Property[] {
 
-            var properties: Property[] = [];
+            let properties: Property[] = [];
             values.forEach((value: GeoPoint) => {
                 properties.push(this.addGeoPoint(name, value));
             });
@@ -941,13 +934,13 @@ module api.data {
         }
 
         getGeoPoint(identifier: string, index?: number): GeoPoint {
-            var property = this.getProperty(identifier, index);
+            let property = this.getProperty(identifier, index);
             return !property ? null : property.getGeoPoint();
         }
 
         getGeoPoints(name: string): GeoPoint[] {
-            var values: GeoPoint[] = [];
-            var array = this.getPropertyArray(name);
+            let values: GeoPoint[] = [];
+            let array = this.getPropertyArray(name);
             array.forEach((property: Property) => {
                 values.push(property.getGeoPoint());
             });
@@ -962,7 +955,7 @@ module api.data {
 
         addLocalDates(name: string, values: api.util.LocalDate[]): Property[] {
 
-            var properties: Property[] = [];
+            let properties: Property[] = [];
             values.forEach((value: api.util.LocalDate) => {
                 properties.push(this.addLocalDate(name, value));
             });
@@ -978,13 +971,13 @@ module api.data {
         }
 
         getLocalDate(identifier: string, index?: number): api.util.LocalDate {
-            var property = this.getProperty(identifier, index);
+            let property = this.getProperty(identifier, index);
             return !property ? null : property.getLocalDate();
         }
 
         getLocalDates(name: string): api.util.LocalDate[] {
-            var values: api.util.LocalDate[] = [];
-            var array = this.getPropertyArray(name);
+            let values: api.util.LocalDate[] = [];
+            let array = this.getPropertyArray(name);
             array.forEach((property: Property) => {
                 values.push(property.getLocalDate());
             });
@@ -999,7 +992,7 @@ module api.data {
 
         addLocalDateTimes(name: string, values: api.util.LocalDateTime[]): Property[] {
 
-            var properties: Property[] = [];
+            let properties: Property[] = [];
             values.forEach((value: api.util.LocalDateTime) => {
                 properties.push(this.addLocalDateTime(name, value));
             });
@@ -1015,13 +1008,13 @@ module api.data {
         }
 
         getLocalDateTime(identifier: string, index?: number): api.util.LocalDateTime {
-            var property = this.getProperty(identifier, index);
+            let property = this.getProperty(identifier, index);
             return !property ? null : property.getLocalDateTime();
         }
 
         getLocalDateTimes(name: string): api.util.LocalDateTime[] {
-            var values: api.util.LocalDateTime[] = [];
-            var array = this.getPropertyArray(name);
+            let values: api.util.LocalDateTime[] = [];
+            let array = this.getPropertyArray(name);
             array.forEach((property: Property) => {
                 values.push(property.getLocalDateTime());
             });
@@ -1036,7 +1029,7 @@ module api.data {
 
         addLocalTimes(name: string, values: LocalTime[]): Property[] {
 
-            var properties: Property[] = [];
+            let properties: Property[] = [];
             values.forEach((value: LocalTime) => {
                 properties.push(this.addLocalTime(name, value));
             });
@@ -1052,13 +1045,13 @@ module api.data {
         }
 
         getLocalTime(identifier: string, index?: number): LocalTime {
-            var property = this.getProperty(identifier, index);
+            let property = this.getProperty(identifier, index);
             return !property ? null : property.getLocalTime();
         }
 
         getLocalTimes(name: string): LocalTime[] {
-            var values: LocalTime[] = [];
-            var array = this.getPropertyArray(name);
+            let values: LocalTime[] = [];
+            let array = this.getPropertyArray(name);
             array.forEach((property: Property) => {
                 values.push(property.getLocalTime());
             });
@@ -1073,7 +1066,7 @@ module api.data {
 
         addDateTimes(name: string, values: api.util.DateTime[]): Property[] {
 
-            var properties: Property[] = [];
+            let properties: Property[] = [];
             values.forEach((value: api.util.DateTime) => {
                 properties.push(this.addDateTime(name, value));
             });
@@ -1089,13 +1082,13 @@ module api.data {
         }
 
         getDateTime(identifier: string, index?: number): api.util.DateTime {
-            var property = this.getProperty(identifier, index);
+            let property = this.getProperty(identifier, index);
             return !property ? null : property.getDateTime();
         }
 
         getDateTimes(name: string): api.util.DateTime[] {
-            var values: api.util.DateTime[] = [];
-            var array = this.getPropertyArray(name);
+            let values: api.util.DateTime[] = [];
+            let array = this.getPropertyArray(name);
             array.forEach((property: Property) => {
                 values.push(property.getDateTime());
             });

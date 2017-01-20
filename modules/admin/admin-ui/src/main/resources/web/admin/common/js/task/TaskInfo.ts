@@ -34,7 +34,7 @@ module api.task {
             let current = Math.min(this.progress.getCurrent(), this.progress.getTotal());
             let total = Math.max(0, this.progress.getTotal());
 
-            return (total == 0) ? 0 : Math.round((current / total) * 100);
+            return (total === 0) ? 0 : Math.round((current / total) * 100);
         }
 
         static fromJson(json: api.task.TaskInfoJson) {

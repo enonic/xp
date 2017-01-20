@@ -15,13 +15,13 @@ module api.content.order {
 
         toJson(): json.OrderExprJson {
             return {
-                "fieldName": this.fieldName,
-                "direction": this.getDirection()
+                fieldName: this.fieldName,
+                direction: this.getDirection()
             };
         }
 
         toString() {
-            return this.fieldName + " " + super.getDirection();
+            return this.fieldName + ' ' + super.getDirection();
         }
 
         equals(o: api.Equitable): boolean {
@@ -31,8 +31,8 @@ module api.content.order {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, FieldOrderExpr)) {
                 return false;
             }
-            var other = <FieldOrderExpr>o;
-            if (this.fieldName.toLowerCase() != other.getFieldName().toLowerCase()) {
+            let other = <FieldOrderExpr>o;
+            if (this.fieldName.toLowerCase() !== other.getFieldName().toLowerCase()) {
                 return false;
             }
             return true;

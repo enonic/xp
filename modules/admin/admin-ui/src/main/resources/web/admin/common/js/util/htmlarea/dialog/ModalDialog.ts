@@ -7,15 +7,15 @@ module api.util.htmlarea.dialog {
 
     export class ModalDialog extends api.ui.dialog.ModalDialog {
         private fields: { [id: string]: api.dom.FormItemEl } = {};
-        private validated = false;
+        private validated: boolean = false;
         private editor: HtmlAreaEditor;
         private mainForm: Form;
         private firstFocusField: api.dom.Element;
         private submitAction: api.ui.Action;
 
-        protected static VALIDATION_CLASS: string = "display-validation-errors";
+        protected static VALIDATION_CLASS: string = 'display-validation-errors';
 
-        public static CLASS_NAME = "html-area-modal-dialog";
+        public static CLASS_NAME: string = 'html-area-modal-dialog';
 
         constructor(editor: HtmlAreaEditor, title: string, cls?: string) {
 
@@ -23,7 +23,7 @@ module api.util.htmlarea.dialog {
 
             this.editor = editor;
 
-            this.getEl().addClass(ModalDialog.CLASS_NAME + (cls ? " " + cls : ""));
+            this.getEl().addClass(ModalDialog.CLASS_NAME + (cls ? ' ' + cls : ''));
 
             this.layout();
             this.initializeActions();
@@ -85,14 +85,14 @@ module api.util.htmlarea.dialog {
         }
 
         protected createForm(formItems: FormItem[]): Form {
-            var form = new Form(),
-                validationCls = api.form.FormView.VALIDATION_CLASS;
+            let form = new Form();
+            let validationCls = api.form.FormView.VALIDATION_CLASS;
 
             formItems.forEach((formItem: FormItem) => {
                 form.add(this.createFieldSet(formItem));
                 if (formItem.getValidator() && validationCls) {
                     form.addClass(validationCls);
-                    validationCls = "";
+                    validationCls = '';
                 }
             });
 
@@ -108,8 +108,8 @@ module api.util.htmlarea.dialog {
         }
 
         protected createFormPanel(formItems: FormItem[]): api.ui.panel.Panel {
-            var panel = new api.ui.panel.Panel(),
-                form = this.createForm(formItems);
+            let panel = new api.ui.panel.Panel();
+            let form = this.createForm(formItems);
 
             panel.appendChild(form);
 
@@ -117,13 +117,13 @@ module api.util.htmlarea.dialog {
         }
 
         public createFieldSet(formItem: FormItem): Fieldset {
-            var fieldSet = new Fieldset();
+            let fieldSet = new Fieldset();
 
-            fieldSet.addClass("modal-dialog-fieldset");
+            fieldSet.addClass('modal-dialog-fieldset');
             fieldSet.add(formItem);
 
             if (formItem.getValidator()) {
-                var validationRecordingViewer = new api.form.ValidationRecordingViewer();
+                let validationRecordingViewer = new api.form.ValidationRecordingViewer();
 
                 fieldSet.appendChild(validationRecordingViewer);
                 fieldSet.onValidityChanged((event: ValidityChangedEvent) => {
@@ -142,13 +142,13 @@ module api.util.htmlarea.dialog {
 
         protected createFormItem(id: string, label: string, validator?: (input: api.dom.FormInputEl) => string, value?: string,
                                  inputEl?: api.dom.FormItemEl): FormItem {
-            var formItemEl = inputEl || new api.ui.text.TextInput(),
-                formItemBuilder = new FormItemBuilder(formItemEl).setLabel(label),
-                inputWrapper = new api.dom.DivEl("input-wrapper"),
-                formItem;
+            let formItemEl = inputEl || new api.ui.text.TextInput();
+            let formItemBuilder = new FormItemBuilder(formItemEl).setLabel(label);
+            let inputWrapper = new api.dom.DivEl('input-wrapper');
+            let formItem;
 
             if (this.fields[id]) {
-                throw "Element with id " + id + " already exists";
+                throw 'Element with id ' + id + ' already exists';
             }
 
             if (value) {
@@ -188,10 +188,9 @@ module api.util.htmlarea.dialog {
             return this.fields[id];
         }
 
-
         close() {
             super.close();
-            if (!this.editor["destroyed"]) {
+            if (!this.editor['destroyed']) {
                 this.editor.focus();
             }
             this.remove();
@@ -199,22 +198,22 @@ module api.util.htmlarea.dialog {
     }
 
     export interface HtmlAreaAnchor {
-        editor: HtmlAreaEditor
-        element: HTMLElement
-        text: string
-        anchorList: string[]
-        onlyTextSelected: boolean
+        editor: HtmlAreaEditor;
+        element: HTMLElement;
+        text: string;
+        anchorList: string[];
+        onlyTextSelected: boolean;
     }
 
     export interface HtmlAreaImage {
-        editor: HtmlAreaEditor
-        element: HTMLElement
-        container: HTMLElement
-        callback: Function
+        editor: HtmlAreaEditor;
+        element: HTMLElement;
+        container: HTMLElement;
+        callback: Function;
     }
 
     export interface HtmlAreaMacro {
-        editor: HtmlAreaEditor
-        callback: Function
+        editor: HtmlAreaEditor;
+        callback: Function;
     }
 }

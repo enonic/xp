@@ -14,7 +14,6 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
-import com.enonic.xp.portal.rendering.Renderer;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.Descriptor;
 import com.enonic.xp.region.DescriptorBasedComponent;

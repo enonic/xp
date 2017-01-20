@@ -20,7 +20,7 @@ module api.security {
         protected getRequest(): FindPrincipalListRequest {
             return this.request;
         }
-        
+
         setUserStoreKey(key: UserStoreKey): PrincipalLoader {
             this.getRequest().setUserStoreKey(key);
             return this;
@@ -41,13 +41,13 @@ module api.security {
             principalKeys.forEach((principalKey: PrincipalKey) => {
                 this.skipPrincipalKeys[principalKey.toString()] = principalKey;
             });
-            this.getRequest().setResultFilter((principal) => !this.skipPrincipalKeys[principal.getKey().toString()])
+            this.getRequest().setResultFilter((principal) => !this.skipPrincipalKeys[principal.getKey().toString()]);
             return this;
         }
 
         skipPrincipal(principalKey: PrincipalKey): PrincipalLoader {
             this.skipPrincipalKeys[principalKey.toString()] = principalKey;
-            this.getRequest().setResultFilter((principal) => !this.skipPrincipalKeys[principal.getKey().toString()])
+            this.getRequest().setResultFilter((principal) => !this.skipPrincipalKeys[principal.getKey().toString()]);
             return this;
         }
 

@@ -12,8 +12,8 @@ module api.content.page.region {
 
         static get(): LayoutDescriptorCache {
 
-            var w = api.dom.WindowDOM.get();
-            var topWindow: any = w.getTopParent() == null ? w.asWindow() : w.getTopParent().asWindow();
+            let w = api.dom.WindowDOM.get();
+            let topWindow: any = w.getTopParent() == null ? w.asWindow() : w.getTopParent().asWindow();
 
             if (!topWindow.api.content.page.region.LayoutDescriptorCache.instance) {
                 topWindow.api.content.page.region.LayoutDescriptorCache.instance = new LayoutDescriptorCache();
@@ -23,7 +23,7 @@ module api.content.page.region {
 
         constructor() {
             if (LayoutDescriptorCache.instance) {
-                throw new Error("Instantiation failed: Use LayoutDescriptorCache.get() instead!");
+                throw new Error('Instantiation failed: Use LayoutDescriptorCache.get() instead!');
             }
             super();
         }
@@ -35,7 +35,7 @@ module api.content.page.region {
         }
 
         put(descriptor: LayoutDescriptor) {
-            api.util.assertNotNull(descriptor, "a LayoutDescriptor must be given");
+            api.util.assertNotNull(descriptor, 'a LayoutDescriptor must be given');
 
             super.put(descriptor, descriptor.getKey().getApplicationKey());
         }

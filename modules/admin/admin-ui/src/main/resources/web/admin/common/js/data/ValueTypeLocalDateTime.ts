@@ -5,7 +5,7 @@ module api.data {
     export class ValueTypeLocalDateTime extends ValueType {
 
         constructor() {
-            super("LocalDateTime");
+            super('LocalDateTime');
         }
 
         isValid(value: string): boolean {
@@ -21,7 +21,7 @@ module api.data {
                 return false;
             }
             // 2010-01-01T10:55:00
-            if (value.length != 19) {
+            if (value.length !== 19) {
                 return false;
             }
 
@@ -35,7 +35,7 @@ module api.data {
             if (!this.isConvertible(value)) {
                 return this.newNullValue();
             }
-            var date: LocalDateTime = LocalDateTime.fromString(value);
+            let date: LocalDateTime = LocalDateTime.fromString(value);
             return new Value(date, this);
         }
 

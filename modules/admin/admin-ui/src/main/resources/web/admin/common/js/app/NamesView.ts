@@ -9,21 +9,21 @@ module api.app {
         private addTitleAttribute: boolean;
 
         constructor(addTitleAttribute: boolean = true) {
-            super("names-view", api.StyleHelper.COMMON_PREFIX);
+            super('names-view', api.StyleHelper.COMMON_PREFIX);
 
             this.addTitleAttribute = addTitleAttribute;
 
-            this.mainNameEl = new api.dom.H6El("main-name", api.StyleHelper.COMMON_PREFIX);
+            this.mainNameEl = new api.dom.H6El('main-name', api.StyleHelper.COMMON_PREFIX);
             this.appendChild(this.mainNameEl);
 
-            this.subNameEl = new api.dom.PEl("sub-name", api.StyleHelper.COMMON_PREFIX);
+            this.subNameEl = new api.dom.PEl('sub-name', api.StyleHelper.COMMON_PREFIX);
             this.appendChild(this.subNameEl);
         }
 
         setMainName(value: string, escapeHtml: boolean = true): NamesView {
             this.mainNameEl.setHtml(value, escapeHtml);
             if (this.addTitleAttribute) {
-                this.mainNameEl.getEl().setAttribute("title", value);
+                this.mainNameEl.getEl().setAttribute('title', value);
             }
             return this;
         }
@@ -31,7 +31,7 @@ module api.app {
         setSubName(value: string, title?: string): NamesView {
             this.subNameEl.setHtml(value);
             if (this.addTitleAttribute) {
-                this.subNameEl.getEl().setAttribute("title", title || value);
+                this.subNameEl.getEl().setAttribute('title', title || value);
             }
             return this;
         }

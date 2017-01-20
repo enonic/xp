@@ -7,7 +7,7 @@ module api.util {
         private static MIN_SAFE_INTEGER: number = -9007199254740991;
 
         static isWholeNumber(value: any): boolean {
-            return NumberHelper.isNumber(value) && (<number>value) % 1 == 0;
+            return NumberHelper.isNumber(value) && (<number>value) % 1 === 0;
         }
 
         static isNumber(value: any): boolean {

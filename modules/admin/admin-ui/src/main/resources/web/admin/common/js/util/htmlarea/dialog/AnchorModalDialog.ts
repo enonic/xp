@@ -7,11 +7,11 @@ module api.util.htmlarea.dialog {
 
         constructor(editor: HtmlAreaEditor) {
 
-            super(editor, "Insert Anchor");
+            super(editor, 'Insert Anchor');
         }
 
         protected getMainFormItems(): FormItem[] {
-            var nameField = this.createFormItem("name", "Name", Validators.required);
+            let nameField = this.createFormItem('name', 'Name', Validators.required);
 
             this.setFirstFocusField(nameField.getInput());
 
@@ -21,7 +21,7 @@ module api.util.htmlarea.dialog {
         }
 
         protected initializeActions() {
-            var submitAction = new api.ui.Action("Insert");
+            let submitAction = new api.ui.Action('Insert');
             this.setSubmitAction(submitAction);
 
             this.addAction(submitAction.onExecuted(() => {
@@ -35,20 +35,20 @@ module api.util.htmlarea.dialog {
         }
 
         private createAnchorEl(): string {
-            var anchorEl = new api.dom.AEl();
+            let anchorEl = new api.dom.AEl();
 
             anchorEl.setId(this.getName());
             anchorEl.getEl().removeAttribute('href');
 
-            return "<p>&nbsp;" + anchorEl.toString() + "</p>";
+            return '<p>&nbsp;' + anchorEl.toString() + '</p>';
         }
 
         private getName(): string {
-            return (<api.ui.text.TextInput>this.getFieldById("name")).getValue();
+            return (<api.ui.text.TextInput>this.getFieldById('name')).getValue();
         }
 
         private insertAnchor(): void {
-            var anchorEl = this.createAnchorEl();
+            let anchorEl = this.createAnchorEl();
             this.getEditor().insertContent(anchorEl);
         }
     }

@@ -29,7 +29,7 @@ module api.query.aggregation {
 
         public toJson(): api.query.aggregation.DateRangeJson {
 
-            var json: api.query.aggregation.DateRangeJson = <api.query.aggregation.DateRangeJson>super.toRangeJson();
+            let json: api.query.aggregation.DateRangeJson = <api.query.aggregation.DateRangeJson>super.toRangeJson();
 
             json.from = this.from;
             json.to = this.to;
@@ -39,4 +39,3 @@ module api.query.aggregation {
     }
 
 }
-

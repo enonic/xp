@@ -2,12 +2,14 @@ module api.liveedit {
 
     import StringHelper = api.util.StringHelper;
 
+    type ShortName = {[shortName: string]: ItemType};
+
     export class ItemType implements api.Equitable {
 
-        static ATTRIBUTE_TYPE = "portal-component-type";
-        static ATTRIBUTE_REGION_NAME = "portal-region";
+        static ATTRIBUTE_TYPE: string = 'portal-component-type';
+        static ATTRIBUTE_REGION_NAME: string = 'portal-region';
 
-        private static shortNameToInstance: {[shortName: string]: ItemType} = {};
+        private static shortNameToInstance: ShortName = {};
 
         private shortName: string;
 
@@ -31,18 +33,17 @@ module api.liveedit {
             return this.config;
         }
 
-
         isComponentType(): boolean {
-            return false
+            return false;
         }
 
         toComponentType(): api.content.page.region.ComponentType {
-            api.util.assert(this.isComponentType(), "Not support when ItemType is not a ComponentType");
+            api.util.assert(this.isComponentType(), 'Not support when ItemType is not a ComponentType');
             return api.content.page.region.ComponentType.byShortName(this.shortName);
         }
 
         createView(config: CreateItemViewConfig<ItemView,any>): ItemView {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         equals(o: api.Equitable): boolean {
@@ -51,7 +52,7 @@ module api.liveedit {
                 return false;
             }
 
-            var other = <ItemType>o;
+            let other = <ItemType>o;
 
             if (!api.ObjectHelper.stringEquals(this.shortName, other.shortName)) {
                 return false;
@@ -61,11 +62,13 @@ module api.liveedit {
         }
 
         static getDraggables(): ItemType[] {
-            var draggables: ItemType[] = [];
-            for (var shortName in  ItemType.shortNameToInstance) {
-                var itemType = ItemType.shortNameToInstance[shortName];
-                if (itemType.getConfig().isDraggable()) {
-                    draggables.push(itemType);
+            const draggables: ItemType[] = [];
+            for (const shortName in  ItemType.shortNameToInstance) {
+                if (ItemType.shortNameToInstance.hasOwnProperty(shortName)) {
+                    const itemType = ItemType.shortNameToInstance[shortName];
+                    if (itemType.getConfig().isDraggable()) {
+                        draggables.push(itemType);
+                    }
                 }
             }
             return draggables;
@@ -76,11 +79,11 @@ module api.liveedit {
         }
 
         static fromHTMLElement(element: HTMLElement): ItemType {
-            var typeAsString = element.getAttribute("data-" + ItemType.ATTRIBUTE_TYPE);
+            let typeAsString = element.getAttribute('data-' + ItemType.ATTRIBUTE_TYPE);
             if (StringHelper.isBlank(typeAsString)) {
-                var regionName = element.getAttribute("data-" + ItemType.ATTRIBUTE_REGION_NAME);
+                let regionName = element.getAttribute('data-' + ItemType.ATTRIBUTE_REGION_NAME);
                 if (!StringHelper.isBlank(regionName)) {
-                    typeAsString = "region";
+                    typeAsString = 'region';
                 }
             }
             return ItemType.byShortName(typeAsString);

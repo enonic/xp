@@ -1,4 +1,4 @@
-import "../../../../../../api.ts";
+import '../../../../../../api.ts';
 
 import FragmentDropdown = api.content.page.region.FragmentDropdown;
 
@@ -10,11 +10,10 @@ export class FragmentSelectorForm extends api.ui.form.Form {
         super('fragment-dropdown-form');
         this.fragmentSelector = fragmentSelector;
 
-        var fieldSet = new api.ui.form.Fieldset();
+        let fieldSet = new api.ui.form.Fieldset();
         if (!api.util.StringHelper.isBlank(title)) {
             fieldSet.add(new api.ui.form.FormItemBuilder(fragmentSelector).setLabel(title).build());
-        }
-        else {
+        } else {
             fieldSet.add(new api.ui.form.FormItemBuilder(fragmentSelector).build());
         }
 

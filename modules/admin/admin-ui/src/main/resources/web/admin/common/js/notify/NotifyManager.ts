@@ -24,27 +24,27 @@ module api.notify {
         }
 
         showFeedback(message: string, autoHide: boolean = true): string {
-            var feedback = Message.newInfo(message, autoHide);
+            let feedback = Message.newInfo(message, autoHide);
             return this.notify(feedback);
         }
 
         showSuccess(message: string, autoHide: boolean = true): string {
-            var feedback = Message.newSuccess(message, autoHide);
+            let feedback = Message.newSuccess(message, autoHide);
             return this.notify(feedback);
         }
 
         showError(message: string, autoHide: boolean = true): string {
-            var error = Message.newError(message, autoHide);
-            return this.notify(error)
+            let error = Message.newError(message, autoHide);
+            return this.notify(error);
         }
 
         showWarning(message: string, autoHide: boolean = true): string {
-            var warning = Message.newWarning(message, autoHide);
+            let warning = Message.newWarning(message, autoHide);
             return this.notify(warning);
         }
 
         notify(message: Message): string {
-            var opts = NotifyOpts.buildOpts(message);
+            let opts = NotifyOpts.buildOpts(message);
             return this.doNotify(opts);
         }
 
@@ -57,7 +57,7 @@ module api.notify {
 
         private doNotify(opts: NotifyOpts): string {
 
-            var notificationEl = this.renderNotification(opts);
+            let notificationEl = this.renderNotification(opts);
             this.registry[notificationEl.getEl().getId()] = notificationEl;
             this.setListeners(notificationEl, opts);
 
@@ -86,7 +86,7 @@ module api.notify {
                 this.stopTimer(el);
             });
             el.onMouseLeave(()=> {
-                this.startTimer(el)
+                this.startTimer(el);
             });
 
             if (opts.listeners) {
@@ -112,7 +112,7 @@ module api.notify {
         }
 
         private startTimer(el: NotificationMessage) {
-            var timer = this.timers[el.getEl().getId()];
+            let timer = this.timers[el.getEl().getId()];
 
             if (!timer) {
                 return;
@@ -128,7 +128,7 @@ module api.notify {
         }
 
         private stopTimer(el: NotificationMessage) {
-            var timer = this.timers[el.getEl().getId()];
+            let timer = this.timers[el.getEl().getId()];
 
             if (!timer || !timer.id) {
                 return;
@@ -140,10 +140,10 @@ module api.notify {
         }
 
         private renderNotification(opts: NotifyOpts): NotificationMessage {
-            var style = {};
+            let style = {};
 
             // create notification DOM element
-            var notifyDiv = new NotificationMessage(opts.message);
+            let notifyDiv = new NotificationMessage(opts.message);
             this.el.getWrapper().appendChild(notifyDiv);
             notifyDiv.hide();
 

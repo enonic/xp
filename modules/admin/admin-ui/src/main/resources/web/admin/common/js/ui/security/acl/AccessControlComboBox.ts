@@ -13,10 +13,10 @@ module api.ui.security.acl {
         private aceSelectedOptionsView: ACESelectedOptionsView;
 
         constructor() {
-            var builder = new api.ui.selector.combobox.RichComboBoxBuilder<AccessControlEntry>().
+            let builder = new api.ui.selector.combobox.RichComboBoxBuilder<AccessControlEntry>().
                 setMaximumOccurrences(0).
-                setComboBoxName("principalSelector").
-                setIdentifierMethod("getPrincipalKey").
+                setComboBoxName('principalSelector').
+                setIdentifierMethod('getPrincipalKey').
                 setLoader(new AccessControlEntryLoader()).setHideComboBoxWhenMaxReached(false).setSelectedOptionsView(
                 new ACESelectedOptionsView()).
                 setOptionDisplayValueViewer(new AccessControlEntryViewer()).
@@ -41,8 +41,8 @@ module api.ui.security.acl {
         private option: Option<AccessControlEntry>;
 
         constructor(option: Option<AccessControlEntry>) {
-            var ace = option.displayValue;
-            if (ace.getAllowedPermissions().length == 0 && ace.getDeniedPermissions().length == 0) {
+            let ace = option.displayValue;
+            if (ace.getAllowedPermissions().length === 0 && ace.getDeniedPermissions().length === 0) {
                 // allow read by default
                 ace.allow(Permission.READ);
             }
@@ -93,20 +93,20 @@ module api.ui.security.acl {
 
         createItemView(entry: AccessControlEntry): ACESelectedOptionView {
 
-            var option = {
+            let option = {
                 displayValue: entry,
                 value: this.getItemId(entry)
             };
-            var itemView = new ACESelectedOptionView(option);
+            let itemView = new ACESelectedOptionView(option);
             itemView.onValueChanged((item: AccessControlEntry) => {
                 // update our selected options list with new values
-                var selectedOption = this.getById(item.getPrincipalKey().toString());
+                let selectedOption = this.getById(item.getPrincipalKey().toString());
                 if (selectedOption) {
                     selectedOption.getOption().displayValue = item;
                 }
                 this.notifyItemValueChanged(item);
             });
-            var selectedOption = new SelectedOption<AccessControlEntry>(itemView, this.list.length);
+            let selectedOption = new SelectedOption<AccessControlEntry>(itemView, this.list.length);
 
             itemView.onRemoveClicked(() => this.removeOption(option, false));
 
@@ -115,32 +115,31 @@ module api.ui.security.acl {
             return itemView;
         }
 
-
         addOption(option: Option<AccessControlEntry>, silent: boolean = false, keyCode: number = -1): boolean {
             this.addItem(option.displayValue);
 
             if (!silent) {
-                var selectedOption = this.getByOption(option);
+                let selectedOption = this.getByOption(option);
                 this.notifySelectedOptionAdded(new SelectedOptionEvent(selectedOption, keyCode));
             }
             return true;
         }
 
         removeOption(optionToRemove: Option<AccessControlEntry>, silent: boolean = false) {
-            api.util.assertNotNull(optionToRemove, "optionToRemove cannot be null");
+            api.util.assertNotNull(optionToRemove, 'optionToRemove cannot be null');
 
-            var selectedOption = this.getByOption(optionToRemove);
-            api.util.assertNotNull(selectedOption, "Did not find any selected option to remove from option: " + optionToRemove.value);
+            let selectedOption = this.getByOption(optionToRemove);
+            api.util.assertNotNull(selectedOption, 'Did not find any selected option to remove from option: ' + optionToRemove.value);
 
             this.removeItem(optionToRemove.displayValue);
 
             this.list = this.list.filter((option: SelectedOption<AccessControlEntry>) => {
-                return option.getOption().value != selectedOption.getOption().value;
+                return option.getOption().value !== selectedOption.getOption().value;
             });
 
             // update item indexes to the right of removed item
             if (selectedOption.getIndex() < this.list.length) {
-                for (var i: number = selectedOption.getIndex(); i < this.list.length; i++) {
+                for (let i: number = selectedOption.getIndex(); i < this.list.length; i++) {
                     this.list[i].setIndex(i);
                 }
             }
@@ -168,7 +167,7 @@ module api.ui.security.acl {
 
         getById(id: string): SelectedOption<AccessControlEntry> {
             return this.list.filter((selectedOption: SelectedOption<AccessControlEntry>) => {
-                return selectedOption.getOption().value == id;
+                return selectedOption.getOption().value === id;
             })[0];
         }
 
@@ -177,7 +176,7 @@ module api.ui.security.acl {
         }
 
         maximumOccurrencesReached(): boolean {
-            if (this.maximumOccurrences == 0) {
+            if (this.maximumOccurrences === 0) {
                 return false;
             }
             return this.count() >= this.maximumOccurrences;
@@ -201,9 +200,10 @@ module api.ui.security.acl {
         }
 
         unOptionDeselected(listener: {(removed: SelectedOptionEvent<AccessControlEntry>): void;}) {
-            this.selectedOptionRemovedListeners = this.selectedOptionRemovedListeners.filter(function (curr) {
-                return curr != listener;
-            });
+            this.selectedOptionRemovedListeners = this.selectedOptionRemovedListeners
+                .filter(function (curr: {(removed: SelectedOptionEvent<AccessControlEntry>): void;}) {
+                    return curr !== listener;
+                });
         }
 
         onOptionSelected(listener: {(added: SelectedOptionEvent<AccessControlEntry>): void;}) {
@@ -211,9 +211,10 @@ module api.ui.security.acl {
         }
 
         unOptionSelected(listener: {(added: SelectedOptionEvent<AccessControlEntry>): void;}) {
-            this.selectedOptionAddedListeners = this.selectedOptionAddedListeners.filter(function (curr) {
-                return curr != listener;
-            });
+            this.selectedOptionAddedListeners = this.selectedOptionAddedListeners
+                .filter(function (curr: {(added: SelectedOptionEvent<AccessControlEntry>): void;}) {
+                    return curr !== listener;
+                });
         }
 
         private notifySelectedOptionAdded(added: SelectedOptionEvent<AccessControlEntry>) {
@@ -223,9 +224,11 @@ module api.ui.security.acl {
         }
 
         onOptionMoved(listener: {(moved: SelectedOption<AccessControlEntry>): void;}) {
+            // must be implemented by children
         }
 
         unOptionMoved(listener: {(moved: SelectedOption<AccessControlEntry>): void;}) {
+            // must be implemented by children
         }
 
     }

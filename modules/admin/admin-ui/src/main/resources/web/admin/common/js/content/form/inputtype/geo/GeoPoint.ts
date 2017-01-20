@@ -27,10 +27,10 @@ module api.content.form.inputtype.geo {
                 property.convertValueType(ValueTypes.GEO_POINT);
             }
 
-            var geoPoint = new api.ui.geo.GeoPoint(property.getGeoPoint());
+            let geoPoint = new api.ui.geo.GeoPoint(property.getGeoPoint());
 
             geoPoint.onValueChanged((event: api.ValueChangedEvent) => {
-                var value = api.util.GeoPoint.isValidString(event.getNewValue()) ?
+                let value = api.util.GeoPoint.isValidString(event.getNewValue()) ?
                             ValueTypes.GEO_POINT.newValue(event.getNewValue()) :
                             ValueTypes.GEO_POINT.newNullValue();
                 this.notifyOccurrenceValueChanged(geoPoint, value);
@@ -40,7 +40,7 @@ module api.content.form.inputtype.geo {
         }
 
         updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly: boolean) {
-            var geoPoint = <api.ui.geo.GeoPoint> occurrence;
+            let geoPoint = <api.ui.geo.GeoPoint> occurrence;
 
             if (!unchangedOnly || !geoPoint.isDirty()) {
                 geoPoint.setGeoPoint(property.getGeoPoint());
@@ -48,13 +48,9 @@ module api.content.form.inputtype.geo {
         }
 
         resetInputOccurrenceElement(occurrence: api.dom.Element) {
-            var input = <api.ui.geo.GeoPoint> occurrence;
+            let input = <api.ui.geo.GeoPoint> occurrence;
 
             input.resetBaseValues();
-        }
-
-
-        availableSizeChanged() {
         }
 
         valueBreaksRequiredContract(value: Value): boolean {
@@ -62,10 +58,10 @@ module api.content.form.inputtype.geo {
         }
 
         hasInputElementValidUserInput(inputElement: api.dom.Element) {
-            var geoPoint = <api.ui.geo.GeoPoint>inputElement;
+            let geoPoint = <api.ui.geo.GeoPoint>inputElement;
             return geoPoint.isValid();
         }
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("GeoPoint", GeoPoint));
+    api.form.inputtype.InputTypeManager.register(new api.Class('GeoPoint', GeoPoint));
 }

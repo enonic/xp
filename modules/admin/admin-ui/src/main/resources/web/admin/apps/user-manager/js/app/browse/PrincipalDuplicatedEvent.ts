@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 import Principal = api.security.Principal;
 
 export class PrincipalDuplicatedEvent extends api.event.Event {

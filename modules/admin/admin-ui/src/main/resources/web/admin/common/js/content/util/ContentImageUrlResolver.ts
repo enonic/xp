@@ -4,7 +4,7 @@ module api.content.util {
 
         private contentId: ContentId;
 
-        private size: string = "";
+        private size: string = '';
 
         private ts: string = null;
 
@@ -20,47 +20,47 @@ module api.content.util {
         }
 
         setSize(value: number): ContentImageUrlResolver {
-            this.size = "" + value;
+            this.size = '' + value;
             return this;
         }
 
         setTimestamp(value: Date): ContentImageUrlResolver {
-            this.ts = "" + value.getTime();
+            this.ts = '' + value.getTime();
             return this;
         }
 
         setScaleWidth(value: boolean): ContentImageUrlResolver {
-            this.scaleWidth = "" + value;
+            this.scaleWidth = '' + value;
             return this;
         }
 
         setSource(value: boolean): ContentImageUrlResolver {
-            this.source = "" + value;
+            this.source = '' + value;
             return this;
         }
 
         setScale(value: string): ContentImageUrlResolver {
-            this.scale = "" + value;
+            this.scale = '' + value;
             return this;
         }
 
         resolve(): string {
 
-            var url = "content/image/" + this.contentId.toString();
+            let url = 'content/image/' + this.contentId.toString();
             if (this.size.length > 0) {
-                url = this.appendParam("size", this.size, url);
+                url = this.appendParam('size', this.size, url);
             }
             if (this.ts) {
-                url = this.appendParam("ts", this.ts, url);
+                url = this.appendParam('ts', this.ts, url);
             }
             if (this.scaleWidth) {
-                url = this.appendParam("scaleWidth", this.scaleWidth, url);
+                url = this.appendParam('scaleWidth', this.scaleWidth, url);
             }
             if (this.source) {
-                url = this.appendParam("source", this.source, url);
+                url = this.appendParam('source', this.source, url);
             }
             if (this.scale) {
-                url = this.appendParam("scale", this.scale, url);
+                url = this.appendParam('scale', this.scale, url);
             }
 
             return api.util.UriHelper.getRestUri(url);

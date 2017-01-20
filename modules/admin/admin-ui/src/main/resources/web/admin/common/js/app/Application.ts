@@ -35,7 +35,7 @@ module api.app {
         }
 
         static getAppId(): string {
-            return window.frameElement ? new api.dom.ElementHelper(<HTMLElement>window.frameElement).getAttribute("data-wem-app-id") : null;
+            return window.frameElement ? new api.dom.ElementHelper(<HTMLElement>window.frameElement).getAttribute('data-wem-app-id') : null;
         }
 
         isLoaded(): boolean {
@@ -62,11 +62,11 @@ module api.app {
             return this.openTabs;
         }
 
-        getWindow() {
+        getWindow(): Window {
             return this.window;
         }
 
-        setWindow(window) {
+        setWindow(window: Window) {
             this.window = window;
         }
 
@@ -112,15 +112,15 @@ module api.app {
         }
 
         isDisplayed(): boolean {
-            return ApplicationShowStatus.DISPLAYED == this.status;
+            return ApplicationShowStatus.DISPLAYED === this.status;
         }
 
         isPreparing(): boolean {
-            return this.status == ApplicationShowStatus.PREPARING;
+            return this.status === ApplicationShowStatus.PREPARING;
         }
 
         isNotDisplayed(): boolean {
-            return this.status == ApplicationShowStatus.NOT_DISPLAYED;
+            return this.status === ApplicationShowStatus.NOT_DISPLAYED;
         }
 
         onLoaded(listener: () => void) {

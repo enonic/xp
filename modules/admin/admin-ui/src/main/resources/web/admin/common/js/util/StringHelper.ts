@@ -2,18 +2,18 @@ module api.util {
 
     export class StringHelper {
 
-        static EMPTY_STRING = "";
+        static EMPTY_STRING: string = '';
 
-        static SAVE_CHAR_CODES = {
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': '&quot;',
-        "'": '&#39;',
-        "/": '&#x2F;'
-    };
+        static SAVE_CHAR_CODES: Object = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;',
+            '/': '&#x2F;'
+        };
 
-        static limit(str: string, length: number, ending: string = "\u2026"): string {
+        static limit(str: string, length: number, ending: string = '\u2026'): string {
             return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.substring(0, length) + ending;
         }
 
@@ -22,12 +22,12 @@ module api.util {
         }
 
         static capitalizeAll(str: string): string {
-            return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.replace(/(?:^|\s)\S/g, function (ch) {
+            return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.replace(/(?:^|\s)\S/g, function (ch: string) {
                 return ch.toUpperCase();
             });
         }
 
-        static escapeHtml(str: string): string{
+        static escapeHtml(str: string): string {
             return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.replace(/[&<>"'\/]/g,((char: string) => {
                 return StringHelper.SAVE_CHAR_CODES[char];
             }));
@@ -37,14 +37,14 @@ module api.util {
             if (StringHelper.isEmpty(str)) {
                 return false;
             }
-            return str.toUpperCase() == str;
+            return str.toUpperCase() === str;
         }
 
         static isLowerCase(str: string): boolean {
             if (StringHelper.isEmpty(str)) {
                 return false;
             }
-            return str.toLowerCase() == str;
+            return str.toLowerCase() === str;
         }
 
         static isMixedCase(str: string): boolean {
@@ -55,11 +55,11 @@ module api.util {
         }
 
         static isEmpty(str: string): boolean {
-            return !str || str.length == 0;
+            return !str || str.length === 0;
         }
 
         static isBlank(str: string): boolean {
-            return StringHelper.isEmpty(str) || str.trim().length == 0;
+            return StringHelper.isEmpty(str) || str.trim().length === 0;
         }
 
         /**
@@ -72,11 +72,11 @@ module api.util {
          * @returns {string} string without '\r' characters.
          */
         static removeCarriageChars(str: string): string {
-            return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.replace(/\r/g, "");
+            return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.replace(/\r/g, '');
         }
 
         static removeWhitespaces(str: string): string {
-            return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.replace(/\s/g, "");
+            return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.replace(/\s/g, '');
         }
 
         static removeEmptyStrings(elements: string[]): string[] {
@@ -89,9 +89,9 @@ module api.util {
             if (StringHelper.isEmpty(str) || StringHelper.isEmpty(left) || StringHelper.isEmpty(right)) {
                 return StringHelper.EMPTY_STRING;
             }
-            var start = str.indexOf(left);
+            let start = str.indexOf(left);
             if (start !== -1) {
-                var end = str.indexOf(right, start + left.length);
+                let end = str.indexOf(right, start + left.length);
                 if (end !== -1) {
                     return str.substring(start + left.length, end);
                 }
@@ -99,7 +99,7 @@ module api.util {
             return StringHelper.EMPTY_STRING;
         }
 
-        static testRegex(regex:string, target:string) : boolean{
+        static testRegex(regex:string, target:string): boolean {
             return new RegExp(regex).test(target);
         }
 
@@ -110,9 +110,10 @@ module api.util {
          * @returns {string}
          */
         static format(str: string, ...tokens: any[]): string {
-            return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.replace(/\{\{|\}\}|\{(\d+)\}/g, function (m, n) {
-                if (m == "{{") { return "{"; }
-                if (m == "}}") { return "}"; }
+            const regex: RegExp = /\{\{|\}\}|\{(\d+)\}/g;
+            return StringHelper.isEmpty(str) ? StringHelper.EMPTY_STRING : str.replace(regex, function (m: string, n: number) {
+                if (m === '{{') { return '{'; }
+                if (m === '}}') { return '}'; }
                 return tokens[n];
             });
         }

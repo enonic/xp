@@ -1,10 +1,10 @@
 module api.query.aggregation {
 
-    export class DateRangeAggregationQuery extends api.query.aggregation.AggregationQuery {
+    export class DateRangeAggregationQuery extends AggregationQuery {
 
         private fieldName: string;
 
-        private ranges: api.query.aggregation.DateRange[] = [];
+        private ranges: DateRange[] = [];
 
         constructor(name: string) {
             super(name);
@@ -18,29 +18,27 @@ module api.query.aggregation {
             return this.fieldName;
         }
 
-        public addRange(range: api.query.aggregation.DateRange) {
+        public addRange(range: DateRange) {
 
             this.ranges.push(range);
         }
 
-        toJson(): api.query.aggregation.AggregationQueryTypeWrapperJson {
+        toJson(): AggregationQueryTypeWrapperJson {
 
-            var json: api.query.aggregation.DateRangeAggregationQueryJson = <api.query.aggregation.DateRangeAggregationQueryJson>super.toAggregationQueryJson();
+            let json: DateRangeAggregationQueryJson = <DateRangeAggregationQueryJson>super.toAggregationQueryJson();
             json.fieldName = this.getFieldName();
             json.ranges = [];
 
-            this.ranges.forEach((range: api.query.aggregation.DateRange) => {
+            this.ranges.forEach((range: DateRange) => {
                 json.ranges.push(range.toJson());
             });
 
-            return <api.query.aggregation.AggregationQueryTypeWrapperJson>
+            return <AggregationQueryTypeWrapperJson>
             {
                 DateRangeAggregationQuery: json
             };
         }
 
-
     }
-
 
 }

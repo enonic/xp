@@ -1,6 +1,8 @@
 module api.content.resource {
 
-    export class GetContentVersionsRequest extends ContentResourceRequest<json.GetContentVersionsResultsJson, ContentVersion[]> {
+    import GetContentVersionsResultsJson = api.content.json.GetContentVersionsResultsJson;
+
+    export class GetContentVersionsRequest extends ContentResourceRequest<GetContentVersionsResultsJson, ContentVersion[]> {
 
         private contentId: ContentId;
         private from: number;
@@ -8,7 +10,7 @@ module api.content.resource {
 
         constructor(contentId: ContentId) {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
             this.contentId = contentId;
         }
 
@@ -36,14 +38,14 @@ module api.content.resource {
 
         sendAndParse(): wemQ.Promise<ContentVersion[]> {
 
-            return this.send().then((response: api.rest.JsonResponse<json.GetContentVersionsResultsJson>) => {
+            return this.send().then((response: api.rest.JsonResponse<GetContentVersionsResultsJson>) => {
                 return this.fromJsonToContentVersions(response.getResult().contentVersions);
             });
         }
 
         private fromJsonToContentVersions(json: api.content.json.ContentVersionJson[]): ContentVersion[] {
 
-            var contentVersions: ContentVersion[] = [];
+            let contentVersions: ContentVersion[] = [];
             json.forEach((contentVersionJson: api.content.json.ContentVersionJson) => {
                 contentVersions.push(ContentVersion.fromJson(contentVersionJson));
             });

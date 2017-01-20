@@ -34,7 +34,7 @@ module api.ui.tags {
         private removeClickListeners: {() : void}[] = [];
 
         constructor(builder: TagBuilder) {
-            super("tag");
+            super('tag');
             this.value = builder.value;
 
             this.valueHolderEl = new api.dom.SpanEl();
@@ -43,7 +43,7 @@ module api.ui.tags {
 
             this.removable = builder.removable;
             if (this.removable) {
-                this.removeButtonEl = new api.dom.AEl("remove-button");
+                this.removeButtonEl = new api.dom.AEl('remove-button');
                 this.appendChild(this.removeButtonEl);
                 this.removeButtonEl.onClicked((event: MouseEvent) => {
                     this.notifyRemoveClicked();

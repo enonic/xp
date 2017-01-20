@@ -12,7 +12,7 @@ module api.ui.form {
 
         constructor(className?: string) {
             super(className);
-            this.addClass("form-view");
+            this.addClass('form-view');
             this.preventSubmit();
 
         }
@@ -36,7 +36,7 @@ module api.ui.form {
         }
 
         validate(markInvalid?: boolean): ValidationResult {
-            var validationResult: ValidationResult = new ValidationResult();
+            let validationResult: ValidationResult = new ValidationResult();
             this.fieldsets.forEach((fieldset: api.ui.form.Fieldset) => {
                 fieldset.validate(validationResult, markInvalid);
             });
@@ -50,11 +50,11 @@ module api.ui.form {
         }
 
         getFormData(): any {
-            var data = {};
-            var fieldsetData;
+            let data = {};
+            let fieldsetData;
             this.fieldsets.forEach((fieldset: api.ui.form.Fieldset) => {
                 fieldsetData = fieldset.getFieldsetData();
-                for (var property in fieldsetData) {
+                for (let property in fieldsetData) {
                     if (fieldsetData.hasOwnProperty(property)) {
                         data[property] = fieldsetData[property];
                     }
@@ -86,13 +86,13 @@ module api.ui.form {
         notifyFocused(event: FocusEvent) {
             this.focusListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         notifyBlurred(event: FocusEvent) {
             this.blurListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         onValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
@@ -101,7 +101,7 @@ module api.ui.form {
 
         unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
             this.validityChangedListeners = this.validityChangedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 

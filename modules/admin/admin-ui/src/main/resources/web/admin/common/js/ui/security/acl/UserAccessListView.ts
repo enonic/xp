@@ -11,9 +11,8 @@ module api.ui.security.acl {
 
         private userAccessListItemViews: UserAccessListItemView[];
 
-
         constructor(className?: string) {
-            super('user-access-list-view' + (className ? " " + className : ""));
+            super('user-access-list-view' + (className ? ' ' + className : ''));
         }
 
         doRender(): wemQ.Promise<boolean> {

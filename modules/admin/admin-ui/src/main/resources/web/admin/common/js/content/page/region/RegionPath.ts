@@ -2,7 +2,7 @@ module api.content.page.region {
 
     export class RegionPath implements api.Equitable {
 
-        private static DIVIDER = "/";
+        private static DIVIDER: string = '/';
 
         private parentComponentPath: ComponentPath;
 
@@ -15,9 +15,8 @@ module api.content.page.region {
             this.parentComponentPath = parentComponentPath;
             this.regionName = regionName;
             if (parentComponentPath != null) {
-                this.refString = parentComponentPath + "/" + regionName;
-            }
-            else {
+                this.refString = parentComponentPath + '/' + regionName;
+            } else {
                 this.refString = regionName;
             }
         }
@@ -45,7 +44,7 @@ module api.content.page.region {
                 return false;
             }
 
-            var other = <RegionPath>o;
+            let other = <RegionPath>o;
 
             if (!api.ObjectHelper.stringEquals(this.refString, other.refString)) {
                 return false;
@@ -56,16 +55,16 @@ module api.content.page.region {
 
         public static fromString(str: string): RegionPath {
 
-            var lastDivider = str.lastIndexOf(RegionPath.DIVIDER);
-            if (lastDivider == -1) {
+            let lastDivider = str.lastIndexOf(RegionPath.DIVIDER);
+            if (lastDivider === -1) {
                 return new RegionPath(null, str);
             }
 
-            var regionNameStart = lastDivider + 1;
+            let regionNameStart = lastDivider + 1;
 
-            var regionName = str.substring(regionNameStart, str.length);
-            var componentPathAsString = str.substring(0, regionNameStart);
-            var parentPath = ComponentPath.fromString(componentPathAsString);
+            let regionName = str.substring(regionNameStart, str.length);
+            let componentPathAsString = str.substring(0, regionNameStart);
+            let parentPath = ComponentPath.fromString(componentPathAsString);
             return new RegionPath(parentPath, regionName);
         }
     }

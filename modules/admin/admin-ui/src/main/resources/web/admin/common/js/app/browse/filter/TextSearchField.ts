@@ -9,14 +9,14 @@ module api.app.browse.filter {
             this.setPlaceholder(placeholder);
 
             this.onKeyDown((event: KeyboardEvent) => {
-                if (event.which == 9) {
+                if (event.which === 9) {
                     // tab
-                } else if (event.which == 13) {
+                } else if (event.which === 13) {
                     // enter
                     this.refreshDirtyState();
                     this.refreshValueChanged();
                 } else {
-                    if (this.timerId !== null) {
+                    if (this.timerId != null) {
                         window.clearTimeout(this.timerId);
                         this.timerId = null;
                     }

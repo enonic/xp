@@ -1,6 +1,6 @@
-import "../../api.ts";
-import {LiveEditPageProxy} from "./page/LiveEditPageProxy";
-import {PageComponentsTreeGrid} from "./PageComponentsTreeGrid";
+import '../../api.ts';
+import {LiveEditPageProxy} from './page/LiveEditPageProxy';
+import {PageComponentsTreeGrid} from './PageComponentsTreeGrid';
 
 import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
 import ItemViewDeselectedEvent = api.liveedit.ItemViewDeselectedEvent;
@@ -41,13 +41,13 @@ export class PageComponentsView extends api.dom.DivEl {
 
     private mask: Mask;
 
-    private beforeInsertActionListeners: {(event): void}[] = [];
+    private beforeInsertActionListeners: {(event: any): void}[] = [];
 
     private mouseDownListener: (event: MouseEvent) => void;
     private mouseUpListener: (event?: MouseEvent) => void;
     private mouseMoveListener: (event: MouseEvent) => void;
-    private clickListener: (event, data) => void;
-    private dblClickListener: (event, data) => void;
+    private clickListener: (event: any, data: any) => void;
+    private dblClickListener: (event: any, data: any) => void;
     private mouseDown: boolean = false;
     public static debug: boolean = false;
 
@@ -60,7 +60,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
         this.onHidden((event) => this.hideContextMenu());
 
-        var closeButton = new api.ui.button.CloseButton();
+        let closeButton = new api.ui.button.CloseButton();
         closeButton.onClicked((event: MouseEvent) => this.hide());
 
         this.onRemoved(() => {
@@ -78,7 +78,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
         this.onShown((event) => {
             this.constrainToParent();
-            this.getHTMLElement().style.display = "";
+            this.getHTMLElement().style.display = '';
             if (this.pageView && this.pageView.isLocked()) {
                 this.mask.show();
             }
@@ -87,7 +87,7 @@ export class PageComponentsView extends api.dom.DivEl {
         this.onAdded(this.initLiveEditEvents.bind(this));
 
         this.responsiveItem = ResponsiveManager.onAvailableSizeChanged(api.dom.Body.get(), (item: ResponsiveItem) => {
-            var smallSize = item.isInRangeOrSmaller(ResponsiveRanges._360_540);
+            let smallSize = item.isInRangeOrSmaller(ResponsiveRanges._360_540);
             if (!smallSize && this.isVisible()) {
                 this.constrainToParent();
             }
@@ -157,7 +157,7 @@ export class PageComponentsView extends api.dom.DivEl {
     private initLiveEditEvents() {
         this.liveEditPage.onItemViewSelected((event: ItemViewSelectedEvent) => {
             if (!event.isNew() && !this.pageView.isLocked()) {
-                var selectedItemId = this.tree.getDataId(event.getItemView());
+                let selectedItemId = this.tree.getDataId(event.getItemView());
                 this.tree.selectNode(selectedItemId);
                 this.tree.getGrid().focus();
             }
@@ -168,11 +168,11 @@ export class PageComponentsView extends api.dom.DivEl {
         });
 
         this.liveEditPage.onComponentAdded((event: ComponentAddedEvent) => {
-            var parentNode = this.tree.getRoot().getCurrentRoot().findNode(this.tree.getDataId(event.getParentRegionView()));
+            let parentNode = this.tree.getRoot().getCurrentRoot().findNode(this.tree.getDataId(event.getParentRegionView()));
             if (parentNode) {
                 // deselect all otherwise node is going to be added as child to selection (that is weird btw)
                 this.tree.deselectAll();
-                var index = event.getParentRegionView().getComponentViews().indexOf(event.getComponentView());
+                let index = event.getParentRegionView().getComponentViews().indexOf(event.getComponentView());
                 if (index >= 0) {
                     this.tree.insertNode(event.getComponentView(), false, index, parentNode).then(() => {
                         // expand parent node to show added one
@@ -183,7 +183,7 @@ export class PageComponentsView extends api.dom.DivEl {
                         }
 
                         if (this.tree.hasChildren(event.getComponentView())) {
-                            var componentNode = this.tree.getRoot().getCurrentRoot().findNode(
+                            let componentNode = this.tree.getRoot().getCurrentRoot().findNode(
                                 this.tree.getDataId(event.getComponentView()));
                             this.tree.expandNode(componentNode, true);
                         }
@@ -213,17 +213,17 @@ export class PageComponentsView extends api.dom.DivEl {
         });
 
         this.liveEditPage.onComponentLoaded((event: ComponentLoadedEvent) => {
-            var oldDataId = this.tree.getDataId(event.getOldComponentView());
+            let oldDataId = this.tree.getDataId(event.getOldComponentView());
 
-            var oldNode = this.tree.getRoot().getCurrentRoot().findNode(oldDataId);
+            let oldNode = this.tree.getRoot().getCurrentRoot().findNode(oldDataId);
             oldNode.removeChildren();
 
             this.tree.updateNode(event.getNewComponentView(), oldDataId).then(() => {
-                var newDataId = this.tree.getDataId(event.getNewComponentView());
+                let newDataId = this.tree.getDataId(event.getNewComponentView());
 
                 if (this.tree.hasChildren(event.getNewComponentView())) {
                     // expand new node as it has children
-                    var newNode = this.tree.getRoot().getCurrentRoot().findNode(newDataId);
+                    let newNode = this.tree.getRoot().getCurrentRoot().findNode(newDataId);
                     this.tree.expandNode(newNode, true);
                 }
 
@@ -243,10 +243,10 @@ export class PageComponentsView extends api.dom.DivEl {
         });
 
         this.liveEditPage.onComponentReset((event: ComponentResetEvent) => {
-            var oldDataId = this.tree.getDataId(event.getOldComponentView());
+            let oldDataId = this.tree.getDataId(event.getOldComponentView());
 
             if (this.tree.hasChildren(event.getOldComponentView())) {
-                var oldNode = this.tree.getRoot().getCurrentRoot().findNode(oldDataId);
+                let oldNode = this.tree.getRoot().getCurrentRoot().findNode(oldDataId);
                 oldNode.removeChildren();
                 this.tree.refreshNode(oldNode);
             }
@@ -254,7 +254,7 @@ export class PageComponentsView extends api.dom.DivEl {
             this.tree.updateNode(event.getNewComponentView(), oldDataId).then(() => {
 
                 if (event.getNewComponentView().isSelected()) {
-                    var newDataId = this.tree.getDataId(event.getNewComponentView());
+                    let newDataId = this.tree.getDataId(event.getNewComponentView());
                     this.tree.selectNode(newDataId);
                 }
             });
@@ -267,7 +267,7 @@ export class PageComponentsView extends api.dom.DivEl {
         this.tree = new PageComponentsTreeGrid(content, pageView);
 
         this.clickListener = (event, data) => {
-            var elem = new api.dom.ElementHelper(event.target);
+            let elem = new api.dom.ElementHelper(event.target);
 
             this.hideContextMenu();
 
@@ -292,8 +292,8 @@ export class PageComponentsView extends api.dom.DivEl {
                 return;
             }
 
-            var clickedItemView: ItemView = this.tree.getGrid().getDataView().getItem(data.row).getData();
-            var isTextComponent = api.ObjectHelper.iFrameSafeInstanceOf(clickedItemView, TextComponentView);
+            let clickedItemView: ItemView = this.tree.getGrid().getDataView().getItem(data.row).getData();
+            let isTextComponent = api.ObjectHelper.iFrameSafeInstanceOf(clickedItemView, TextComponentView);
 
             if(isTextComponent) {
                 this.editTextComponent(clickedItemView);
@@ -310,11 +310,11 @@ export class PageComponentsView extends api.dom.DivEl {
                 return;
             }
 
-            var rowElement = event.target,
-                selected = false;
+            let rowElement = event.targetж;
+            let selected = false;
 
-            while (!rowElement.classList.contains("slick-row")) {
-                if (rowElement.classList.contains("selected")) {
+            while (!rowElement.classList.contains('slick-row')) {
+                if (rowElement.classList.contains('selected')) {
                     selected = true;
                 }
 
@@ -338,7 +338,7 @@ export class PageComponentsView extends api.dom.DivEl {
                 this.hide();
             }
 
-            var treeNode = data[0];
+            let treeNode = data[0];
 
             if (treeNode && !treeNode.getData().isSelected()) {
                 this.selectItem(treeNode);
@@ -351,7 +351,7 @@ export class PageComponentsView extends api.dom.DivEl {
             event.stopPropagation();
             event.preventDefault();
 
-            var cell = this.tree.getGrid().getCellFromEvent(event);
+            let cell = this.tree.getGrid().getCellFromEvent(event);
 
             this.showContextMenu(cell.row, {x: event.pageX, y: event.pageY});
         });
@@ -373,7 +373,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
     private removeFromInvalidItems(itemId: string) {
         this.invalidItemIds = this.invalidItemIds.filter((curr) => {
-            return curr != itemId;
+            return curr !== itemId;
         });
         this.highlightInvalidItems();
     }
@@ -384,7 +384,7 @@ export class PageComponentsView extends api.dom.DivEl {
     }
 
     private isMenuIcon(element: HTMLElement): boolean {
-        if (!!element && !!element.className && element.className.indexOf("menu-icon") > -1) {
+        if (!!element && !!element.className && element.className.indexOf('menu-icon') > -1) {
             return true;
         }
         return false;
@@ -410,9 +410,8 @@ export class PageComponentsView extends api.dom.DivEl {
         });
     }
 
-
     private bindTreeTextNodeUpdateOnTextComponentModify(textComponentView: TextComponentView) {
-        var handler = api.util.AppHelper.debounce((event) => {
+        let handler = api.util.AppHelper.debounce((event) => {
             this.tree.updateNode(textComponentView);
         }, 500, false);
 
@@ -422,7 +421,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
     private bindTreeFragmentNodeUpdateOnComponentLoaded(fragmentComponentView: FragmentComponentView) {
         fragmentComponentView.onFragmentContentLoaded((e)=> {
-            this.tree.updateNode(e.getFragmentComponentView())
+            this.tree.updateNode(e.getFragmentComponentView());
         });
     }
 
@@ -443,15 +442,15 @@ export class PageComponentsView extends api.dom.DivEl {
     }
 
     setDraggable(draggable: boolean): PageComponentsView {
-        var body = api.dom.Body.get();
+        let body = api.dom.Body.get();
         if (!this.draggable && draggable) {
-            var lastPos;
+            let lastPos;
             if (!this.mouseDownListener) {
                 this.mouseDownListener = (event: MouseEvent) => {
                     if (PageComponentsView.debug) {
                         console.log('mouse down', this.mouseDown, event);
                     }
-                    if (!this.mouseDown && event.buttons == 1) {
+                    if (!this.mouseDown && event.buttons === 1) {
                         // left button was clicked
                         event.preventDefault();
                         event.stopPropagation();
@@ -461,7 +460,7 @@ export class PageComponentsView extends api.dom.DivEl {
                             y: event.clientY
                         };
                     }
-                }
+                };
             }
             if (!this.mouseUpListener) {
                 this.mouseUpListener = (event?: MouseEvent) => {
@@ -477,12 +476,12 @@ export class PageComponentsView extends api.dom.DivEl {
 
                         this.mouseDown = false;
                     }
-                }
+                };
             }
             if (!this.mouseMoveListener) {
                 this.mouseMoveListener = (event: MouseEvent) => {
                     if (this.mouseDown) {
-                        if (event.buttons != 1) {
+                        if (event.buttons !== 1) {
                             // button was probably released outside browser window
                             this.mouseUpListener();
                             return;
@@ -490,16 +489,16 @@ export class PageComponentsView extends api.dom.DivEl {
                         event.preventDefault();
                         event.stopPropagation();
 
-                        var el = this.getEl(),
-                            newPos = {
-                                x: event.clientX,
-                                y: event.clientY
-                            },
-                            offset = el.getOffset(),
-                            newOffset = {
-                                top: offset.top + newPos.y - lastPos.y,
-                                left: offset.left + newPos.x - lastPos.x
-                            };
+                        let el = this.getEl();
+                        let newPos = {
+                            x: event.clientX,
+                            y: event.clientY
+                        };
+                        let offset = el.getOffset();
+                        let newOffset = {
+                            top: offset.top + newPos.y - lastPos.y,
+                            left: offset.left + newPos.x - lastPos.x
+                        };
 
                         this.constrainToParent(newOffset);
 
@@ -507,7 +506,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
                         this.hideContextMenu();
                     }
-                }
+                };
             }
             this.header.onMouseDown(this.mouseDownListener);
             body.onMouseUp(this.mouseUpListener);
@@ -523,30 +522,27 @@ export class PageComponentsView extends api.dom.DivEl {
     }
 
     private constrainToParent(offset?: {top: number; left: number}) {
-
-        var parentEl, parentOffset,
-            el = this.getEl(),
-            offset = offset || el.getOffset();
+        const el = this.getEl();
+        const elOffset = offset || el.getOffset();
+        let parentEl;
+        let parentOffset;
 
         if (this.getParentElement()) {
             parentEl = this.getParentElement().getEl();
             parentOffset = parentEl.getOffset();
-        }
-        else {
+        } else {
             parentEl = api.dom.WindowDOM.get();
             parentOffset = {
                 top: 0,
                 left: 0
-            }
+            };
         }
 
         el.setMaxHeightPx(parentEl.getHeight());
 
         el.setOffset({
-            top: Math.max(parentOffset.top,
-                Math.min(offset.top, parentOffset.top + parentEl.getHeight() - el.getHeightWithBorder())),
-            left: Math.max(parentOffset.left,
-                Math.min(offset.left, parentOffset.left + parentEl.getWidth() - el.getWidthWithBorder()))
+            top: Math.max(parentOffset.top, Math.min(elOffset.top, parentOffset.top + parentEl.getHeight() - el.getHeightWithBorder())),
+            left: Math.max(parentOffset.left, Math.min(elOffset.left, parentOffset.left + parentEl.getWidth() - el.getWidthWithBorder()))
         });
     }
 
@@ -575,7 +571,7 @@ export class PageComponentsView extends api.dom.DivEl {
     }
 
     private scrollToItem(dataId: string) {
-        var node = this.tree.getRoot().getCurrentRoot().findNode(dataId);
+        let node = this.tree.getRoot().getCurrentRoot().findNode(dataId);
 
         if (node) {
             node.getData().scrollComponentIntoView();
@@ -607,20 +603,22 @@ export class PageComponentsView extends api.dom.DivEl {
         }
     }
 
-
     private isMenuIconClicked(cellNumber: number): boolean {
-        return cellNumber == 1;
+        return cellNumber === 1;
     }
 
     private showContextMenu(row: number, clickPosition: api.liveedit.Position) {
-        var node = this.tree.getGrid().getDataView().getItem(row);
+        let node = this.tree.getGrid().getDataView().getItem(row);
+        let itemView: ItemView;
+        let pageView: api.liveedit.PageView;
+
         if (node) {
-            var itemView: ItemView = node.getData(),
-                pageView: api.liveedit.PageView = itemView.getPageView();
+            itemView = node.getData();
+            pageView = itemView.getPageView();
         } else {
             pageView = this.pageView;
         }
-        var contextMenuActions: api.ui.Action[];
+        let contextMenuActions: api.ui.Action[];
 
         if (pageView.isLocked()) {
             contextMenuActions = pageView.getLockedMenuActions();
@@ -637,7 +635,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
         this.contextMenu.getMenu().onBeforeAction((action: api.ui.Action) => {
             this.pageView.setDisabledContextMenu(true);
-            if (action.hasParentAction() && action.getParentAction().getLabel() == "Insert") {
+            if (action.hasParentAction() && action.getParentAction().getLabel() === 'Insert') {
                 this.notifyBeforeInsertAction();
             }
         });
@@ -657,28 +655,28 @@ export class PageComponentsView extends api.dom.DivEl {
         this.setMenuOpenStyleOnMenuIcon(row);
 
         // show menu at position
-        var x = clickPosition.x;
-        var y = clickPosition.y;
+        let x = clickPosition.x;
+        let y = clickPosition.y;
 
         this.contextMenu.showAt(x, y, false);
     }
 
     private hidePageComponentsIfInMobileView(action: api.ui.Action) {
-        if (api.BrowserHelper.isMobile() && ((action.hasParentAction() && action.getParentAction().getLabel() == "Insert")
-                                             || action.getLabel() == "Inspect" || action.getLabel() == "Edit" ||
-                                             action.getLabel() == "Duplicate")) {
+        if (api.BrowserHelper.isMobile() && ((action.hasParentAction() && action.getParentAction().getLabel() === 'Insert')
+                                             || action.getLabel() === 'Inspect' || action.getLabel() === 'Edit' ||
+                                             action.getLabel() === 'Duplicate')) {
             this.hide();
         }
     }
 
     private setMenuOpenStyleOnMenuIcon(row: number) {
-        var stylesHash: Slick.CellCssStylesHash = {};
-        stylesHash[row] = {menu: "menu-open"};
-        this.tree.getGrid().setCellCssStyles("menu-open", stylesHash);
+        let stylesHash: Slick.CellCssStylesHash = {};
+        stylesHash[row] = {menu: 'menu-open'};
+        this.tree.getGrid().setCellCssStyles('menu-open', stylesHash);
     }
 
     private removeMenuOpenStyleFromMenuIcon() {
-        this.tree.getGrid().removeCellCssStyles("menu-open");
+        this.tree.getGrid().removeCellCssStyles('menu-open');
     }
 
     private hideContextMenu() {
@@ -688,22 +686,21 @@ export class PageComponentsView extends api.dom.DivEl {
     }
 
     private sameRowClicked(clickedRow: number): boolean {
-        var currentlySelectedRow = this.tree.getGrid().getSelectedRows()[0];
-        return clickedRow == currentlySelectedRow;
+        let currentlySelectedRow = this.tree.getGrid().getSelectedRows()[0];
+        return clickedRow === currentlySelectedRow;
     }
 
     private highlightRow(rowElement: HTMLElement, selected: boolean): void {
         if (selected) {
             Highlighter.get().hide();
-        }
-        else {
-            var elementHelper = new api.dom.ElementHelper(rowElement);
-            var dimensions = elementHelper.getDimensions();
-            var nodes = this.tree.getRoot().getCurrentRoot().treeToList(),
-                hoveredNode = nodes[new api.dom.ElementHelper(rowElement).getSiblingIndex()];
+        } else {
+            let elementHelper = new api.dom.ElementHelper(rowElement);
+            let dimensions = elementHelper.getDimensions();
+            let nodes = this.tree.getRoot().getCurrentRoot().treeToList();
+            let hoveredNode = nodes[new api.dom.ElementHelper(rowElement).getSiblingIndex()];
 
             if (hoveredNode) {
-                var data = hoveredNode.getData();
+                let data = hoveredNode.getData();
                 if (/*data.getType().isComponentType() && */!api.BrowserHelper.isMobile()) {
                     Highlighter.get().highlightElement(dimensions,
                         data.getType().getConfig().getHighlighterStyle());
@@ -715,29 +712,29 @@ export class PageComponentsView extends api.dom.DivEl {
         }
     }
 
-    onBeforeInsertAction(listener: (event)=>void) {
+    onBeforeInsertAction(listener: (event: any) => void) {
         this.beforeInsertActionListeners.push(listener);
     }
 
-    unBeforeInsertAction(listener: (event)=>void) {
-        this.beforeInsertActionListeners = this.beforeInsertActionListeners.filter((currentListener: (event)=>void)=> {
-            return listener != currentListener
+    unBeforeInsertAction(listener: (event: any) => void) {
+        this.beforeInsertActionListeners = this.beforeInsertActionListeners.filter((currentListener: (event: any) => void) =>  {
+            return listener !== currentListener;
         });
     }
 
     private notifyBeforeInsertAction() {
-        this.beforeInsertActionListeners.forEach((listener: (event)=>void)=> {
+        this.beforeInsertActionListeners.forEach((listener: (event: any) => void) => {
             listener.call(this);
         });
     }
 
     private editTextComponent(textComponent: ItemView) {
-        var contextMenuActions: api.ui.Action[] = textComponent.getContextMenuActions();
+        let contextMenuActions: api.ui.Action[] = textComponent.getContextMenuActions();
 
-        var editAction: api.ui.Action;
+        let editAction: api.ui.Action;
 
         contextMenuActions.some((action: api.ui.Action) => {
-            if(action.getLabel() == "Edit") {
+            if(action.getLabel() === 'Edit') {
                 editAction = action;
                 return true;
             }

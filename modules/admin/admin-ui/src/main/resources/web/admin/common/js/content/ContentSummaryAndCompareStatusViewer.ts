@@ -3,12 +3,12 @@ module api.content {
     export class ContentSummaryAndCompareStatusViewer extends api.ui.NamesAndIconViewer<ContentSummaryAndCompareStatus> {
 
         constructor() {
-            super("content-summary-and-compare-status-viewer");
+            super('content-summary-and-compare-status-viewer');
         }
 
         resolveDisplayName(object: ContentSummaryAndCompareStatus): string {
-            var contentSummary = object.getContentSummary(),
-                uploadItem = object.getUploadItem();
+            let contentSummary = object.getContentSummary();
+            let uploadItem = object.getUploadItem();
 
             if (contentSummary) {
                 return contentSummary.getDisplayName();
@@ -16,24 +16,24 @@ module api.content {
                 return uploadItem.getName();
             }
 
-            return "";
+            return '';
         }
 
         resolveUnnamedDisplayName(object: ContentSummaryAndCompareStatus): string {
-            var contentSummary = object.getContentSummary();
-            return (contentSummary && contentSummary.getType()) ? contentSummary.getType().getLocalName() : "";
+            let contentSummary = object.getContentSummary();
+            return (contentSummary && contentSummary.getType()) ? contentSummary.getType().getLocalName() : '';
         }
 
         resolveSubName(object: ContentSummaryAndCompareStatus, relativePath: boolean = false): string {
-            var contentSummary = object.getContentSummary(),
-                uploadItem = object.getUploadItem();
+            let contentSummary = object.getContentSummary();
+            let uploadItem = object.getUploadItem();
 
             if (contentSummary) {
-                var contentName = contentSummary.getName(),
-                    invalid = !contentSummary.isValid() || !contentSummary.getDisplayName() || contentName.isUnnamed(),
-                    pendingDelete = contentSummary.getContentState().isPendingDelete();
-                this.toggleClass("invalid", invalid);
-                this.toggleClass("pending-delete", pendingDelete);
+                let contentName = contentSummary.getName();
+                let invalid = !contentSummary.isValid() || !contentSummary.getDisplayName() || contentName.isUnnamed();
+                let pendingDelete = contentSummary.getContentState().isPendingDelete();
+                this.toggleClass('invalid', invalid);
+                this.toggleClass('pending-delete', pendingDelete);
 
                 if (relativePath) {
                     return !contentName.isUnnamed() ? contentName.toString() :
@@ -47,21 +47,21 @@ module api.content {
                 return uploadItem.getName();
             }
 
-            return "";
+            return '';
         }
 
         resolveSubTitle(object: ContentSummaryAndCompareStatus): string {
-            var contentSummary = object.getContentSummary();
-            return !!contentSummary ? contentSummary.getPath().toString() : "";
+            let contentSummary = object.getContentSummary();
+            return !!contentSummary ? contentSummary.getPath().toString() : '';
         }
 
         resolveIconClass(object: ContentSummaryAndCompareStatus): string {
-            return !!object.getUploadItem() ? "icon-file-upload2" : "";
+            return !!object.getUploadItem() ? 'icon-file-upload2' : '';
         }
 
         resolveIconUrl(object: ContentSummaryAndCompareStatus): string {
-            var contentSummary = object.getContentSummary();
-            return !!contentSummary ? new api.content.util.ContentIconUrlResolver().setContent(contentSummary).resolve() : "";
+            let contentSummary = object.getContentSummary();
+            return !!contentSummary ? new api.content.util.ContentIconUrlResolver().setContent(contentSummary).resolve() : '';
         }
     }
 }

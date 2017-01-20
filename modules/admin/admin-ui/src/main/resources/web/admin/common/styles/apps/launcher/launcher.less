@@ -272,7 +272,6 @@ body.mobile-statistics-panel {
 
 
 .launcher-button {
-  opacity: 1 !important;
   font-family: @admin-font-family;
   font-size: @admin-font-size;
   position: fixed;
@@ -294,7 +293,7 @@ body.mobile-statistics-panel {
     width: 20px;
     height: 3px;
     background: @admin-white;
-    transition: 0.3s;
+    cursor: pointer;
 
     .dark & {
       background: @admin-bg-light-gray;
@@ -308,6 +307,7 @@ body.mobile-statistics-panel {
 
     &:before, &:after {
       .line;
+      transition: top 0.3s;
       position: absolute;
       left: 0;
       content: '';
@@ -323,7 +323,6 @@ body.mobile-statistics-panel {
   }
 
   &:hover {
-    opacity: 1;
     background: none;
     .lines {
       &:before {

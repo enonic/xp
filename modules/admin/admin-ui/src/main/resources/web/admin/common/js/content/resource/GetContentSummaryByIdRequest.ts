@@ -1,6 +1,8 @@
 module api.content.resource {
 
-    export class GetContentSummaryByIdRequest extends ContentResourceRequest<json.ContentSummaryJson, ContentSummary> {
+    import ContentSummaryJson = api.content.json.ContentSummaryJson;
+
+    export class GetContentSummaryByIdRequest extends ContentResourceRequest<ContentSummaryJson, ContentSummary> {
 
         private id: ContentId;
 
@@ -8,7 +10,7 @@ module api.content.resource {
 
         constructor(id: ContentId) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
             this.id = id;
             this.expand = ContentResourceRequest.EXPAND_SUMMARY;
         }
@@ -26,7 +28,7 @@ module api.content.resource {
 
         sendAndParse(): wemQ.Promise<ContentSummary> {
 
-            return this.send().then((response: api.rest.JsonResponse<json.ContentSummaryJson>) => {
+            return this.send().then((response: api.rest.JsonResponse<ContentSummaryJson>) => {
                 return this.fromJsonToContentSummary(response.getResult());
             });
         }

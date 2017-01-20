@@ -10,7 +10,7 @@ module api.content.page {
         }
 
         filterFn(template: PageTemplate) {
-            return template.getDisplayName().toString().indexOf(this.getSearchString().toLowerCase()) != -1;
+            return template.getDisplayName().toString().indexOf(this.getSearchString().toLowerCase()) !== -1;
         }
 
     }

@@ -253,10 +253,7 @@ public final class ContentPath
 
         public void addElements( final List<String> elements )
         {
-            for ( String element : elements )
-            {
-                addElement( element );
-            }
+            elements.forEach( this::addElement );
         }
 
         private void validatePathElement( final String pathElement )

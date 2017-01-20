@@ -41,7 +41,7 @@ module api.form {
 
         public static debug: boolean = false;
 
-        public static VALIDATION_CLASS: string = "display-validation-errors";
+        public static VALIDATION_CLASS: string = 'display-validation-errors';
 
         /**
          * @param context the form context.
@@ -49,7 +49,7 @@ module api.form {
          * @param data the data to back the form with.
          */
         constructor(context: FormContext, form: Form, data: PropertySet) {
-            super("form-view");
+            super('form-view');
             this.context = context;
             this.form = form;
             this.data = data;
@@ -62,10 +62,10 @@ module api.form {
          */
         public layout(): wemQ.Promise<void> {
 
-            var deferred = wemQ.defer<void>();
+            let deferred = wemQ.defer<void>();
 
-            var formItems = this.form.getFormItems();
-            var layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.
+            let formItems = this.form.getFormItems();
+            let layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.
                 setFormItems(formItems).
                 setParentElement(this).
                 layout(this.data);
@@ -73,8 +73,8 @@ module api.form {
             layoutPromise.then((formItemViews: FormItemView[]) => {
 
                 this.formItemViews = formItemViews;
-                api.util.assert(this.formItemViews.length == formItems.length,
-                    "Not all FormItemView-s was created. Expected " + formItems.length + ", was: " + formItemViews.length);
+                api.util.assert(this.formItemViews.length === formItems.length,
+                    'Not all FormItemView-s was created. Expected ' + formItems.length + ', was: ' + formItemViews.length);
 
                 deferred.resolve(null);
 
@@ -93,8 +93,7 @@ module api.form {
                             this.previousValidationRecording = event.getRecording();
                             this.notifyValidityChanged(new FormValidityChangedEvent(this.previousValidationRecording,
                                 event.isInputValueBroken()));
-                        }
-                        else {
+                        } else {
                             if (event.isValid()) {
                                 this.previousValidationRecording.removeByPath(event.getOrigin(), false, event.isIncludeChildren());
                             } else {
@@ -108,9 +107,9 @@ module api.form {
                     });
 
                     formItemView.onEditContentRequest((content: api.content.ContentSummary) => {
-                        var summaryAndStatus = api.content.ContentSummaryAndCompareStatus.fromContentSummary(content);
+                        let summaryAndStatus = api.content.ContentSummaryAndCompareStatus.fromContentSummary(content);
                         new api.content.event.EditContentEvent([summaryAndStatus]).fire();
-                    })
+                    });
                 });
 
                 api.dom.WindowDOM.get().onResized((event: UIEvent) => this.checkSizeChanges(), this);
@@ -154,7 +153,7 @@ module api.form {
         }
 
         private isSizeChanged(): boolean {
-            return this.width != this.getEl().getWidth();
+            return this.width !== this.getEl().getWidth();
         }
 
         private broadcastFormSizeChanged() {
@@ -165,7 +164,7 @@ module api.form {
 
         public hasValidUserInput(): boolean {
 
-            var result = true;
+            let result = true;
             this.formItemViews.forEach((formItemView: FormItemView) => {
                 if (!formItemView.hasValidUserInput()) {
                     result = false;
@@ -177,7 +176,7 @@ module api.form {
 
         public validate(silent?: boolean, forceNotify: boolean = false): ValidationRecording {
 
-            var recording: ValidationRecording = new ValidationRecording();
+            let recording: ValidationRecording = new ValidationRecording();
             this.formItemViews.forEach((formItemView: FormItemView) => {
                 recording.flatten(formItemView.validate(silent));
             });
@@ -203,7 +202,7 @@ module api.form {
             } else {
                 this.removeClass(FormView.VALIDATION_CLASS);
             }
-            for (var i = 0; i < this.formItemViews.length; i++) {
+            for (let i = 0; i < this.formItemViews.length; i++) {
                 this.formItemViews[i].displayValidationErrors(value);
             }
         }
@@ -213,9 +212,9 @@ module api.form {
         }
 
         giveFocus(): boolean {
-            var focusGiven = false;
+            let focusGiven = false;
             if (this.formItemViews.length > 0) {
-                for (var i = 0; i < this.formItemViews.length; i++) {
+                for (let i = 0; i < this.formItemViews.length; i++) {
                     if (this.formItemViews[i].giveFocus()) {
                         focusGiven = true;
                         break;
@@ -232,17 +231,17 @@ module api.form {
         unValidityChanged(listener: (event: FormValidityChangedEvent)=>void) {
             this.formValidityChangedListeners =
                 this.formValidityChangedListeners.filter((currentListener: (event: FormValidityChangedEvent)=>void)=> {
-                    return listener != currentListener;
+                    return listener !== currentListener;
                 });
         }
 
         private notifyValidityChanged(event: FormValidityChangedEvent) {
-            //console.log("FormView.validityChanged");
+            //console.log('FormView.validityChanged');
             //if (event.getRecording().isValid()) {
-            //    console.log(" valid: ");
+            //    console.log(' valid: ');
             //}
             //else {
-            //    console.log(" invalid: ");
+            //    console.log(' invalid: ');
             //    event.getRecording().print();
             //}
 
@@ -284,19 +283,19 @@ module api.form {
         private notifyFocused(event: FocusEvent) {
             this.focusListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         private notifyBlurred(event: FocusEvent) {
             this.blurListeners.forEach((listener) => {
                 listener(event);
-            })
+            });
         }
 
         private notifyLayoutFinished() {
             this.layoutFinishedListeners.forEach((listener) => {
                 listener();
-            })
+            });
         }
 
         toggleHelpText(show?: boolean) {
