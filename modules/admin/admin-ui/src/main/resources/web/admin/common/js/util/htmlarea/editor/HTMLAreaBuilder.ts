@@ -36,16 +36,18 @@ module api.util.htmlarea.editor {
         private plugins: string[] = [
             'autoresize',
             'charmap',
+            'code',
             'directionality',
             'fullscreen',
             'hr',
+            'lists',
             'paste',
             'preview',
             'searchreplace',
             'table',
             'textcolor',
-            'visualchars',
-            'visualblocks'
+            'visualblocks',
+            'visualchars'
         ];
 
         setEditableSourceCode(value: boolean): HTMLAreaBuilder {
