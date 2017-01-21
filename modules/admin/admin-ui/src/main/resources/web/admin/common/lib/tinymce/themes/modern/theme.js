@@ -1049,7 +1049,8 @@ define('tinymce.modern.modes.Iframe', [
 		if (settings.statusbar !== false) {
 			panel.add({type: 'panel', name: 'statusbar', classes: 'statusbar', layout: 'flow', border: '1 0 0 0', ariaRoot: true, items: [
 				{type: 'elementpath', editor: editor},
-				resizeHandleCtrl
+                editor.buttons.code,
+                editor.buttons.fullscreen
 			]});
 		}
 

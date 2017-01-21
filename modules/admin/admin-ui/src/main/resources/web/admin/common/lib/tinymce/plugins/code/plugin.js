@@ -48,7 +48,8 @@ tinymce.PluginManager.add('code', function(editor) {
 	editor.addButton('code', {
 		icon: 'code',
 		tooltip: 'Source code',
-		onclick: showDialog
+		onclick: showDialog,
+        type: 'button'
 	});
 
 	editor.addMenuItem('code', {
