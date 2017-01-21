@@ -6,7 +6,7 @@ jdk:
 
 install: true
 script:
-  - ./gradlew ./gradlew ci
+  - ./gradlew ci
 
 cache:
   directories:

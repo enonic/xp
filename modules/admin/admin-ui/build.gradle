@@ -44,3 +44,4 @@ task copyAll( type: Copy, dependsOn: gulpAll ) {
 
 jar.dependsOn += copyAll
 clean.dependsOn += cleanSourceFiles
+build.dependsOn += lint
