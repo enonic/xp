@@ -93,7 +93,7 @@ public class SetActiveVersionCommandTest
             execute();
 
         final Node movedNode = getNodeById( node1.id() );
-        assertEquals( "renamedNode", movedNode.name().toString() );
+        assertEquals( "renamednode", movedNode.name().toString() );
 
         SetActiveVersionCommand.create().
             nodeId( node1.id() ).

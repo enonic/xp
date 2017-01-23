@@ -63,7 +63,7 @@ public class ContentServiceImplTest_media
 
         final Content storedContent = this.contentService.getById( content.getId() );
 
-        assertEquals( "Small cat.jpg", storedContent.getName().toString() );
+        assertEquals( "small cat.jpg", storedContent.getName().toString() );
         assertEquals( "Small cat", storedContent.getDisplayName() );
     }
 

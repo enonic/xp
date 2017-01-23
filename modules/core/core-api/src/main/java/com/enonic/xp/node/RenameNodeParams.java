@@ -49,7 +49,7 @@ public class RenameNodeParams
 
         public Builder nodeName( final NodeName nodeName )
         {
-            this.newNodeName = nodeName;
+            this.newNodeName = NodeName.from( nodeName.toString().toLowerCase() );
             return this;
         }
 
