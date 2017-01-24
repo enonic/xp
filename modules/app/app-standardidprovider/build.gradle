@@ -12,7 +12,7 @@ bundle {
 }
 
 task copyAdminUiCommon( type: Copy ) {
-    from '../../admin/admin-ui/target/resources/main/web/admin/common'
+    from '../../admin/admin-ui/build/resources/main/web/admin/common'
     into "$buildDir/resources/main/assets/common"
 }
 
