@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.rest.filter;
+package com.enonic.xp.jaxrs.impl.security;
 
 import java.io.IOException;
 
@@ -13,13 +13,13 @@ import javax.ws.rs.core.SecurityContext;
 final class RoleBasedSecurityFilter
     implements ContainerRequestFilter
 {
-    protected String[] rolesAllowed;
+    private String[] rolesAllowed;
 
-    protected boolean denyAll;
+    private boolean denyAll;
 
-    protected boolean permitAll;
+    private boolean permitAll;
 
-    public RoleBasedSecurityFilter( final String[] rolesAllowed, final boolean denyAll, final boolean permitAll )
+    RoleBasedSecurityFilter( final String[] rolesAllowed, final boolean denyAll, final boolean permitAll )
     {
         this.rolesAllowed = rolesAllowed;
         this.denyAll = denyAll;
