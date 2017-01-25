@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.rest.filter;
+package com.enonic.xp.jaxrs.impl.security;
 
 import java.lang.reflect.Method;
 
