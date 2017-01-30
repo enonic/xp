@@ -162,6 +162,7 @@ import com.enonic.xp.query.expr.LogicalExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
+import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.security.Principal;
@@ -717,15 +718,23 @@ public final class ContentResource
             stream().
             filter( contentId -> !requestedContentIds.contains( contentId ) ).
             collect( Collectors.toList() );
+
         final ContentIds dependentContentIds = ContentIds.from( dependentContentIdList );
 
         final Boolean anyRemovable = this.isAnyContentRemovableFromPublish( dependentContentIds );
+
+        //sort all dependant content ids
+        final ContentIds sortedDependentContentIds = this.contentService.find( ContentQuery.create().
+            filterContentIds( dependentContentIds ).
+            queryExpr( QueryParser.parse( "order by _path asc" ) ).
+            size( -1 ).
+            build() ).getContentIds();
 
         //Returns the JSON result
         return ResolvePublishContentResultJson.create().
             setContainsRemovable( anyRemovable ).
             setRequestedContents( requestedContentIds ).
-            setDependentContents( dependentContentIds ).
+            setDependentContents( sortedDependentContentIds ).
             setContainsInvalid( !this.isValidContent( results ) ).
             build();
     }
@@ -760,16 +769,17 @@ public final class ContentResource
         // Sorts the contents by path and for each
         return contents.stream().
             // sorted( ( content1, content2 ) -> content1.getPath().compareTo( content2.getPath() ) ).
-                map( content -> {
-                //Creates a ContentPublishItem
-                final CompareContentResult compareContentResult = compareContentResultsMap.get( content.getId() );
-                return ContentPublishItemJson.create().
-                    content( content ).
-                    compareStatus( compareContentResult.getCompareStatus().name() ).
-                    iconUrl( contentIconUrlResolver.resolve( content ) ).
-                    build();
-            } ).
-            collect( Collectors.toList() );
+                map( content ->
+                     {
+                         //Creates a ContentPublishItem
+                         final CompareContentResult compareContentResult = compareContentResultsMap.get( content.getId() );
+                         return ContentPublishItemJson.create().
+                             content( content ).
+                             compareStatus( compareContentResult.getCompareStatus().name() ).
+                             iconUrl( contentIconUrlResolver.resolve( content ) ).
+                             build();
+                     } ).
+                collect( Collectors.toList() );
     }
 
     @POST
@@ -924,12 +934,13 @@ public final class ContentResource
 
         final List<String> result = new ArrayList<>();
 
-        contents.stream().forEach( content -> {
-            if ( !content.getPermissions().isAllowedFor( authInfo.getPrincipals(), Permission.MODIFY ) )
-            {
-                result.add( content.getId().toString() );
-            }
-        } );
+        contents.stream().forEach( content ->
+                                   {
+                                       if ( !content.getPermissions().isAllowedFor( authInfo.getPrincipals(), Permission.MODIFY ) )
+                                       {
+                                           result.add( content.getId().toString() );
+                                       }
+                                   } );
 
         return result;
     }
@@ -1016,12 +1027,13 @@ public final class ContentResource
 
         final List<String> result = new ArrayList<>();
 
-        permissions.forEach( permission -> {
-            if ( userHasPermission( authInfo, permission, contentsPermissions ) )
-            {
-                result.add( permission.name() );
-            }
-        } );
+        permissions.forEach( permission ->
+                             {
+                                 if ( userHasPermission( authInfo, permission, contentsPermissions ) )
+                                 {
+                                     result.add( permission.name() );
+                                 }
+                             } );
 
         return result;
     }
