@@ -17,9 +17,17 @@ export class PublishDialogItemList extends DialogItemList {
     constructor() {
         super('publish-dialog-item-list');
 
-        this.debonceNotifyListChanged = api.util.AppHelper.debounce(()=> {
+        this.onItemsAdded(this.itemChangedHandler.bind(this));
+        this.onItemsRemoved(this.itemChangedHandler.bind(this));
+
+        this.debonceNotifyListChanged = api.util.AppHelper.debounce(() => {
             this.notifyExcludeChildrenListChanged(this.excludeChildrenIds);
         }, 100, false);
+    }
+
+    private itemChangedHandler() {
+        this.toggleClass("contains-toggleable", this.getItemViews()
+            .some(item => item.getBrowseItem().getModel().getContentSummary().hasChildren()));
     }
 
     protected createSelectionItem(viewer: ContentSummaryAndCompareStatusViewer,
@@ -81,19 +89,25 @@ export class PublicStatusSelectionItem extends StatusSelectionItem {
 
     constructor(viewer: api.ui.Viewer<ContentSummaryAndCompareStatus>, item: BrowseItem<ContentSummaryAndCompareStatus>) {
         super(viewer, item);
-
-        this.toggler = new IncludeChildrenToggler();
-
-        this.toggler.onStateChanged((enabled: boolean) => {
-            this.notifyItemStateChanged(this.getBrowseItem().getModel().getContentId(), enabled);
-        });
     }
 
     public doRender(): wemQ.Promise<boolean> {
 
         return super.doRender().then((rendered) => {
 
-            this.toggler.insertAfterEl(this.removeEl);
+            const hasChildren = this.getBrowseItem().getModel().getContentSummary().hasChildren();
+
+            if (hasChildren) {
+
+                this.addClass("toggleable");
+
+                this.toggler = new IncludeChildrenToggler();
+                this.toggler.insertAfterEl(this.removeEl);
+
+                this.toggler.onStateChanged((enabled: boolean) => {
+                    this.notifyItemStateChanged(this.getBrowseItem().getModel().getContentId(), enabled);
+                });
+            }
 
             return rendered;
         });
