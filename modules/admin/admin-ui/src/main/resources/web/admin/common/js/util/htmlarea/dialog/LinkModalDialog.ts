@@ -278,28 +278,31 @@ module api.util.htmlarea.dialog {
 
             const formItem = this.createFormItem(id, label, Validators.required, null, <api.dom.FormItemEl>contentSelector);
 
-            if (addValueValidation) {
-                contentSelector.onValueChanged((event) => {
-                    this.centerMyself();
-
-                    if(contentSelector.getLoader().isLoaded()) {
-
-                        if (event.getNewValue()) {
-                            const newValueContent = contentSelector.getContent(new api.content.ContentId(event.getNewValue()));
-
-                            const isMedia = !!newValueContent ? newValueContent.getType().isDescendantOfMedia() : false;
-
-                            new api.content.page.IsRenderableRequest(
-                                new api.content.ContentId(event.getNewValue())).sendAndParse().then((renderable: boolean) => {
-                                formItem.setValidator(() =>
-                                    isMedia || renderable ? '' : 'Only content items that support preview can be selected');
-                            });
-                        } else {
-                            formItem.setValidator(Validators.required);
-                        }
-                    }
-                });
+            if (!addValueValidation) {
+                return formItem;
             }
+            
+            contentSelector.onValueChanged((event) => {
+                this.centerMyself();
+
+                if(contentSelector.getLoader().isLoaded()) {
+
+                    if (event.getNewValue()) {
+                        const newValueContent = contentSelector.getContent(new api.content.ContentId(event.getNewValue()));
+
+                        const isMedia = !!newValueContent ? newValueContent.getType().isDescendantOfMedia() : false;
+
+                        new api.content.page.IsRenderableRequest(
+                            new api.content.ContentId(event.getNewValue())).sendAndParse().then((renderable: boolean) => {
+                            formItem.setValidator(() =>
+                                isMedia || renderable ? '' : 'Only content items that support preview can be selected');
+                        });
+                    } else {
+                        formItem.setValidator(Validators.required);
+                    }
+                }
+            });
+            
             return formItem;
         }
 
