@@ -217,8 +217,6 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
             if ((elem.hasClass(MarketAppStatusFormatter.statusInstallCssClass) ||
                  elem.hasClass(MarketAppStatusFormatter.statusUpdateCssClass))) {
 
-                this.mask();
-
                 app.setStatus(MarketAppStatus.INSTALLING);
 
                 let row = this.getGrid().getDataView().getRowById(node.getId());
@@ -242,10 +240,8 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
                     } else {
                         elem.setHtml(MarketAppStatusFormatter.formatStatus(status));
                     }
-                    this.unmask();
 
                 }).catch((reason: any) => {
-                    this.unmask();
                     elem.setHtml(MarketAppStatusFormatter.formatStatus(status));
                     api.DefaultErrorHandler.handle(reason);
                 });
