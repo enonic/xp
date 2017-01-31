@@ -6,7 +6,7 @@ jdk:
 
 install: true
 script:
-  - ./gradlew :admin:admin-ui:lint && ./gradlew ci
+  - ./gradlew ci
 
 cache:
   directories:
@@ -20,6 +20,4 @@ addons:
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
-
-notifications:
-  slack: enonic:0UNe9YkLZ16b0JQ1OJcznoTJ
+  - ./misc/upload.sh

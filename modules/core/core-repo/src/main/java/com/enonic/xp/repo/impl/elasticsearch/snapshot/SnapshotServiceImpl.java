@@ -4,20 +4,13 @@ import java.io.File;
 import java.time.Instant;
 import java.util.Set;
 
-import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesRequest;
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesResponse;
 import org.elasticsearch.action.admin.cluster.repositories.put.PutRepositoryRequestBuilder;
-import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotRequestBuilder;
-import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotResponse;
 import org.elasticsearch.action.admin.cluster.snapshots.delete.DeleteSnapshotRequest;
 import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsRequest;
 import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsRequestBuilder;
 import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsResponse;
-import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotRequestBuilder;
-import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotResponse;
-import org.elasticsearch.action.admin.indices.close.CloseIndexRequestBuilder;
-import org.elasticsearch.action.admin.indices.open.OpenIndexRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.collect.ImmutableList;
 import org.elasticsearch.common.settings.ImmutableSettings;
@@ -27,12 +20,9 @@ import org.elasticsearch.snapshots.SnapshotInfo;
 import org.elasticsearch.snapshots.SnapshotState;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.node.DeleteSnapshotsResult;
 import com.enonic.xp.node.RestoreParams;
@@ -42,10 +32,8 @@ import com.enonic.xp.node.SnapshotResult;
 import com.enonic.xp.node.SnapshotResults;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.node.NodeHelper;
-import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.snapshot.SnapshotService;
-import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.security.SystemConstants;
+import com.enonic.xp.repository.RepositoryService;
 
 @Component
 public class SnapshotServiceImpl
@@ -53,11 +41,11 @@ public class SnapshotServiceImpl
 {
     private final static String SNAPSHOT_REPOSITORY_NAME = "enonic-xp-snapshot-repo";
 
-    private final static Logger LOG = LoggerFactory.getLogger( SnapshotServiceImpl.class );
-
     private Client client;
 
     private RepoConfiguration configuration;
+
+    private RepositoryService repositoryService;
 
     @Override
     public SnapshotResult snapshot( final SnapshotParams snapshotParams )
@@ -69,21 +57,14 @@ public class SnapshotServiceImpl
     {
         checkSnapshotRepository();
 
-        final Set<String> indices = getSnapshotIndexNames( snapshotParams.getRepositoryId(), snapshotParams.isIncludeIndexedData() );
-
-        final CreateSnapshotRequestBuilder createRequest = new CreateSnapshotRequestBuilder( this.client.admin().cluster() ).
-            setIndices( indices.toArray( new String[indices.size()] ) ).
-            setIncludeGlobalState( false ).
-            setWaitForCompletion( true ).
-            setRepository( SNAPSHOT_REPOSITORY_NAME ).
-            setSnapshot( snapshotParams.getSnapshotName() ).
-            setSettings( ImmutableSettings.settingsBuilder().
-                put( "ignore_unavailable", true ) );
-
-        final CreateSnapshotResponse createSnapshotResponse =
-            this.client.admin().cluster().createSnapshot( createRequest.request() ).actionGet();
-
-        return SnapshotResultFactory.create( createSnapshotResponse );
+        return SnapshotExecutor.create().
+            snapshotName( snapshotParams.getSnapshotName() ).
+            repositoryToSnapshot( snapshotParams.getRepositoryId() ).
+            client( this.client ).
+            repositoryService( this.repositoryService ).
+            snapshotRepositoryName( SNAPSHOT_REPOSITORY_NAME ).
+            build().
+            execute();
     }
 
     @Override
@@ -95,45 +76,16 @@ public class SnapshotServiceImpl
     private RestoreResult doRestore( final RestoreParams restoreParams )
     {
         checkSnapshotRepository();
+        validateSnapshot( restoreParams.getSnapshotName() );
 
-        final RepositoryId repositoryId = restoreParams.getRepositoryId();
-        final String snapshotName = restoreParams.getSnapshotName();
-
-        validateSnapshot( snapshotName );
-
-        final Set<String> indices = getSnapshotIndexNames( repositoryId, restoreParams.isIncludeIndexedData() );
-
-        closeIndices( indices );
-
-        final RestoreSnapshotResponse response;
-        try
-        {
-            final RestoreSnapshotRequestBuilder restoreSnapshotRequestBuilder =
-                new RestoreSnapshotRequestBuilder( this.client.admin().cluster() ).
-                    setRestoreGlobalState( false ).
-                    setIndices( indices.toArray( new String[indices.size()] ) ).
-                    setRepository( SNAPSHOT_REPOSITORY_NAME ).
-                    setSnapshot( snapshotName ).
-                    setWaitForCompletion( true );
-
-            response = this.client.admin().cluster().restoreSnapshot( restoreSnapshotRequestBuilder.request() ).actionGet();
-
-            return RestoreResultFactory.create( response, repositoryId );
-        }
-        catch ( ElasticsearchException e )
-        {
-            return RestoreResult.create().
-                repositoryId( repositoryId ).
-                indices( indices ).
-                failed( true ).
-                name( snapshotName ).
-                message( "Could not restore snapshot: " + e.toString() + " to repository " + repositoryId ).
-                build();
-        }
-        finally
-        {
-            openIndices( indices );
-        }
+        return SnapshotRestoreExecutor.create().
+            repositoryToRestore( restoreParams.getRepositoryId() ).
+            snapshotName( restoreParams.getSnapshotName() ).
+            client( this.client ).
+            repositoryService( this.repositoryService ).
+            snapshotRepositoryName( SNAPSHOT_REPOSITORY_NAME ).
+            build().
+            execute();
     }
 
     @Override
@@ -158,7 +110,6 @@ public class SnapshotServiceImpl
     {
         return NodeHelper.runAsAdmin( () -> doDelete( params ) );
     }
-
 
     private void validateSnapshot( final String snapshotName )
     {
@@ -189,13 +140,45 @@ public class SnapshotServiceImpl
         }
     }
 
-
     private void checkSnapshotRepository()
     {
         if ( !snapshotRepositoryExists() )
         {
             registerRepository();
         }
+    }
+
+    private boolean snapshotRepositoryExists()
+    {
+        final GetRepositoriesRequest getRepositoriesRequest = new GetRepositoriesRequest( new String[]{SNAPSHOT_REPOSITORY_NAME} );
+
+        try
+        {
+            final GetRepositoriesResponse response = this.client.admin().cluster().getRepositories( getRepositoriesRequest ).actionGet();
+            return !response.repositories().isEmpty();
+        }
+        catch ( RepositoryException e )
+        {
+            return false;
+        }
+    }
+
+    private void registerRepository()
+    {
+        final PutRepositoryRequestBuilder requestBuilder = new PutRepositoryRequestBuilder( this.client.admin().cluster() ).
+            setName( SNAPSHOT_REPOSITORY_NAME ).
+            setType( "fs" ).
+            setSettings( ImmutableSettings.settingsBuilder().
+                put( "compress", true ).
+                put( "location", getSnapshotsDir() ).
+                build() );
+
+        this.client.admin().cluster().putRepository( requestBuilder.request() ).actionGet();
+    }
+
+    private File getSnapshotsDir()
+    {
+        return this.configuration.getSnapshotsDir();
     }
 
     private SnapshotInfo getSnapshot( final String snapshotName )
@@ -217,28 +200,6 @@ public class SnapshotServiceImpl
         {
             return snapshots.get( 0 );
         }
-    }
-
-    private Set<String> getSnapshotIndexNames( final RepositoryId repositoryId, final boolean includeIndexedData )
-    {
-        final Set<String> indices = Sets.newHashSet();
-
-        //If the repository is not specified, select cms-repo and system-repo
-        final RepositoryId[] repositoryIds = repositoryId == null
-            ? new RepositoryId[]{ContentConstants.CONTENT_REPO.getId(), SystemConstants.SYSTEM_REPO.getId()}
-            : new RepositoryId[]{repositoryId};
-
-        for ( RepositoryId currentRepositoryId : repositoryIds )
-        {
-            indices.add( IndexNameResolver.resolveStorageIndexName( currentRepositoryId ) );
-
-            if ( includeIndexedData )
-            {
-                indices.add( IndexNameResolver.resolveSearchIndexName( currentRepositoryId ) );
-            }
-        }
-
-        return indices;
     }
 
     private DeleteSnapshotsResult doDelete( final DeleteSnapshotParams params )
@@ -298,66 +259,6 @@ public class SnapshotServiceImpl
         this.client.admin().cluster().deleteSnapshot( deleteSnapshotRequest ).actionGet();
     }
 
-    private void openIndices( final Set<String> indexNames )
-    {
-        for ( final String indexName : indexNames )
-        {
-            OpenIndexRequestBuilder openIndexRequestBuilder = new OpenIndexRequestBuilder( this.client.admin().indices() ).
-                setIndices( indexName );
-
-            this.client.admin().indices().open( openIndexRequestBuilder.request() ).actionGet();
-
-            LOG.info( "Opened index " + indexName );
-        }
-    }
-
-    private void closeIndices( final Set<String> indexNames )
-    {
-        for ( final String indexName : indexNames )
-        {
-            CloseIndexRequestBuilder closeIndexRequestBuilder = new CloseIndexRequestBuilder( this.client.admin().indices() ).
-                setIndices( indexName );
-
-            this.client.admin().indices().close( closeIndexRequestBuilder.request() ).actionGet();
-
-            LOG.info( "Closed index " + indexName );
-        }
-    }
-
-    private boolean snapshotRepositoryExists()
-    {
-        final GetRepositoriesRequest getRepositoriesRequest = new GetRepositoriesRequest( new String[]{SNAPSHOT_REPOSITORY_NAME} );
-
-        try
-        {
-            final GetRepositoriesResponse response = this.client.admin().cluster().getRepositories( getRepositoriesRequest ).actionGet();
-            return !response.repositories().isEmpty();
-        }
-        catch ( RepositoryException e )
-        {
-            return false;
-        }
-    }
-
-    private File getSnapshotsDir()
-    {
-        return this.configuration.getSnapshotsDir();
-    }
-
-    private void registerRepository()
-    {
-        final PutRepositoryRequestBuilder requestBuilder = new PutRepositoryRequestBuilder( this.client.admin().cluster() ).
-            setName( SNAPSHOT_REPOSITORY_NAME ).
-            setType( "fs" ).
-            setSettings( ImmutableSettings.settingsBuilder().
-                put( "compress", true ).
-                put( "location", getSnapshotsDir() ).
-                build() );
-
-        this.client.admin().cluster().putRepository( requestBuilder.request() ).actionGet();
-    }
-
-
     @Reference
     public void setConfiguration( final RepoConfiguration configuration )
     {
@@ -368,5 +269,11 @@ public class SnapshotServiceImpl
     public void setClient( final Client client )
     {
         this.client = client;
+    }
+
+    @Reference
+    public void setRepositoryService( final RepositoryService repositoryService )
+    {
+        this.repositoryService = repositoryService;
     }
 }

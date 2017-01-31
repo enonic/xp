@@ -1,4 +1,6 @@
 .mce-content-body {
+  font-family: "Open Sans", sans-serif;
+
   > *:first-child {
     margin-top: 0px;
   }
@@ -63,15 +65,14 @@
   background-color: @admin-white;
 
   .mce-btn-group {
-    border-right: 1px solid @admin-medium-gray-border;
-    margin: 0 1px;
+    &:not(:first-child) {
+      margin-left: 0;
+      padding-left: 2px;
+    }
+
     .mce-menubtn, .mce-btn, .mce-first, .mce-last, .mce-first.mce-last {
       .flat-mixin();
       border: none;
-    }
-
-    &.mce-last {
-      border-right: none;
     }
 
     .mce-btn, .mce-menubtn {
@@ -126,6 +127,11 @@
           background-color: @admin-toolbar-toggle-button;
         }
       }
+    }
+
+    .mce-btn {
+      border-width: 0;
+      margin-left: 0;
     }
   }
 
