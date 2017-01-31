@@ -1,5 +1,4 @@
 import '../../api.ts';
-import {ContentBrowseItem} from './ContentBrowseItem';
 import {ContentBrowseItemsSelectionPanel} from './ContentBrowseItemsSelectionPanel';
 import {ContentItemStatisticsPanel} from '../view/ContentItemStatisticsPanel';
 import {ContentTreeGrid} from './ContentTreeGrid';

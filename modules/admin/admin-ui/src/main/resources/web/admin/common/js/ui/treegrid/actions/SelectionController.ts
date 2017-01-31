@@ -11,7 +11,7 @@ module api.ui.treegrid.actions {
         constructor(builder: SelectionControllerBuilder<DATA>) {
             super(builder);
 
-            this.addClass("selection-controller");
+            this.addClass('selection-controller');
 
             this.treeGrid = builder.treeGrid;
 
@@ -24,7 +24,7 @@ module api.ui.treegrid.actions {
                     }
                 }
 
-                this.tooltip.setText(this.isChecked() ? "Clear selection" : "Select all rows");
+                this.tooltip.setText(this.isChecked() ? 'Clear selection' : 'Select all rows');
             });
 
             this.onClicked((event) => {
@@ -43,7 +43,7 @@ module api.ui.treegrid.actions {
                 this.setChecked(false, true);
             });
 
-            this.tooltip = new Tooltip(this, "", 1000);
+            this.tooltip = new Tooltip(this, '', 1000);
         }
 
         static create(): SelectionControllerBuilder<any> {

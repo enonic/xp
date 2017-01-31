@@ -383,8 +383,7 @@ module api.ui.grid {
                     if (selected.length > 1 && !isNaN(startIndex) && firstSelected === startIndex) {
                         row = startIndex;
                         selected.pop();
-                    }
-                    else if (firstSelected - 1 >= 0) {
+                    } else if (firstSelected - 1 >= 0) {
                         row = selected[0] - 1;
                         selected.push(row);
                         selected = selected.sort((a, b) => {
@@ -410,8 +409,7 @@ module api.ui.grid {
                     if (selected.length > 1 && !isNaN(startIndex) && lastSelected === startIndex) {
                         row = startIndex;
                         selected.shift();
-                    }
-                    else if (lastSelected + 1 < this.slickGrid.getDataLength()) {
+                    } else if (lastSelected + 1 < this.slickGrid.getDataLength()) {
                         row = lastSelected + 1;
                         selected.push(row);
                     }

@@ -165,8 +165,7 @@ module api.ui.treegrid {
                         this.grid.selectRow(row);
                     }
                     this.unhighlightCurrentRow(true); //we unhighlight row as it gets selected, so highlightNode gets empty
-                }
-                else if (this.grid.getSelectedRows().length === 1) {
+                } else if (this.grid.getSelectedRows().length === 1) {
                     row = this.grid.getSelectedRows()[0];
                 }
                 this.scrollToRow(navigateFn(row));
@@ -282,8 +281,7 @@ module api.ui.treegrid {
                 // A cell in the row is clicked
                 if (isMultiSelect) {
                     this.onCellClicked(elem, data);
-                }
-                else {
+                } else {
                     this.root.clearStashedSelection();
                 }
 
@@ -300,7 +298,9 @@ module api.ui.treegrid {
 
             if (!this.grid.isRowSelected(data.row) && (this.grid.getSelectedRows().length >= 1 || thereIsHighlightedNode)) {
                 if (isMultiSelect) {
-                    let firstSelectedRow, highlightFrom, highlightTo;
+                    let firstSelectedRow;
+                    let highlightFrom;
+                    let highlightTo;
 
                     if (thereIsHighlightedNode) {
                         const highlightedRow = this.gridData.getRowById(this.highlightedNode.getId());
@@ -365,8 +365,7 @@ module api.ui.treegrid {
 
             if (this.grid.getSelectedRows().length > 1) {
                 this.unhighlightRows(true);
-            }
-            else if (!this.grid.isRowSelected(data.row) && this.highlightedNode !== node) {
+            } else if (!this.grid.isRowSelected(data.row) && this.highlightedNode !== node) {
                 this.unhighlightCurrentRow(true);
             }
 
@@ -393,8 +392,7 @@ module api.ui.treegrid {
 
             if (!(isRowHighlighted || isRowSelected)) {
                 this.highlightRowByNode(node);
-            }
-            else if (isMultipleRowsSelected) {
+            } else if (isMultipleRowsSelected) {
                 this.grid.selectRow(data.row);
             }
         }
@@ -435,8 +433,7 @@ module api.ui.treegrid {
                 }
                 if (this.gridOptions.isMultipleSelectionDisabled()) {
                     this.scrollToRow(this.grid.moveSelectedUp());
-                }
-                else {
+                } else {
                     this.navigateUp();
                 }
             }
@@ -449,8 +446,7 @@ module api.ui.treegrid {
                 }
                 if (this.gridOptions.isMultipleSelectionDisabled()) {
                     this.scrollToRow(this.grid.moveSelectedDown());
-                }
-                else {
+                } else {
                     this.navigateDown();
                 }
             }
@@ -481,8 +477,7 @@ module api.ui.treegrid {
                     if (selected[0]) {
                         this.unselectAllRows();
                         this.grid.selectRow(row, true);
-                    }
-                    else {
+                    } else {
                         this.highlightRowByNode(node);
                     }
                 }
@@ -516,8 +511,7 @@ module api.ui.treegrid {
             let selected = this.grid.getSelectedRows();
             if (selected.length === this.gridData.getLength()) {
                 this.deselectAll();
-            }
-            else {
+            } else {
                 this.selectAll();
             }
 
@@ -529,8 +523,7 @@ module api.ui.treegrid {
             if (this.highlightedNode) {
                 let row = this.gridData.getRowById(this.highlightedNode.getId());
                 this.grid.toggleRow(row);
-            }
-            else if (this.grid.getSelectedRows().length > 0) {
+            } else if (this.grid.getSelectedRows().length > 0) {
                 this.deselectAll();
             }
         }
