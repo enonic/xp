@@ -281,7 +281,7 @@ module api.util.htmlarea.dialog {
             if (!addValueValidation) {
                 return formItem;
             }
-            
+
             contentSelector.onValueChanged((event) => {
                 this.centerMyself();
 
@@ -302,7 +302,7 @@ module api.util.htmlarea.dialog {
                     }
                 }
             });
-            
+
             return formItem;
         }
 
