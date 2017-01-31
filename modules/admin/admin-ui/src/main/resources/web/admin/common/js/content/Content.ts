@@ -171,10 +171,6 @@ module api.content {
                 return false;
             }
 
-            if (this.overwritePermissions !== other.overwritePermissions) {
-                return false;
-            }
-
             return true;
         }
 
