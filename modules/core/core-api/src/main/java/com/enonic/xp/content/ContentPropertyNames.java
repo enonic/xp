@@ -13,6 +13,8 @@ public class ContentPropertyNames
 
     public static final String ATTACHMENT_TEXT_COMPONENT = "attachment.text";
 
+    public static final String NAME = "_name";
+
     public static final String FORM = "form";
 
     public static final String SITE = "site";
