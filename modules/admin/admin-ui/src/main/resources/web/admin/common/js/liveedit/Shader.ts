@@ -6,7 +6,7 @@ module api.liveedit {
 
     export class Shader {
 
-        private static CLS_NAME: string = "shader";
+        private static CLS_NAME: string = 'shader';
 
         private target: Element;
         private scrollEnabled: boolean = true;
@@ -30,11 +30,11 @@ module api.liveedit {
         private static debug: boolean = false;
 
         constructor() {
-            this.pageShader = this.createShaderDiv("page");
-            this.northShader = this.createShaderDiv("north");
-            this.eastShader = this.createShaderDiv("east");
-            this.southShader = this.createShaderDiv("south");
-            this.westShader = this.createShaderDiv("west");
+            this.pageShader = this.createShaderDiv('page');
+            this.northShader = this.createShaderDiv('north');
+            this.eastShader = this.createShaderDiv('east');
+            this.southShader = this.createShaderDiv('south');
+            this.westShader = this.createShaderDiv('west');
 
             this.shaders = [this.pageShader, this.northShader, this.eastShader, this.southShader, this.westShader];
 
@@ -66,7 +66,7 @@ module api.liveedit {
         }
 
         private createShaderDiv(cls: string): DivEl {
-            return new DivEl(Shader.CLS_NAME + " " + cls, api.StyleHelper.getCurrentPrefix());
+            return new DivEl(Shader.CLS_NAME + ' ' + cls, api.StyleHelper.getCurrentPrefix());
         }
 
         public static get(): Shader {
@@ -109,7 +109,7 @@ module api.liveedit {
 
         unUnlockClicked(listener: (event: MouseEvent) => void) {
             this.unlockClickedListeners = this.unlockClickedListeners.filter((curr) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
@@ -125,7 +125,7 @@ module api.liveedit {
 
         unMouseEnter(listener: (event: MouseEvent) => void) {
             this.mouseEnterListeners = this.mouseEnterListeners.filter((curr) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
@@ -141,7 +141,7 @@ module api.liveedit {
 
         unMouseLeave(listener: (event: MouseEvent) => void) {
             this.mouseLeaveListeners = this.mouseLeaveListeners.filter((curr) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
@@ -157,7 +157,7 @@ module api.liveedit {
 
         unMouseMove(listener: (event: MouseEvent) => void) {
             this.mouseMoveListeners = this.mouseMoveListeners.filter((curr) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
@@ -173,7 +173,7 @@ module api.liveedit {
 
         unClicked(listener: (event: MouseEvent) => void) {
             this.clickListeners = this.clickListeners.filter((curr) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
@@ -220,17 +220,17 @@ module api.liveedit {
 
             this.target = element;
 
-            let win = api.dom.WindowDOM.get(),
-                bodyEl = api.dom.Body.get().getEl(),
+            let win = api.dom.WindowDOM.get();
+            let bodyEl = api.dom.Body.get().getEl();
             // check if body is bigger than window to account for scroll
-                documentWidth = Math.max(win.getWidth(), bodyEl.getWidth()),
-                documentHeight = Math.max(win.getHeight(), bodyEl.getHeight());
+            let documentWidth = Math.max(win.getWidth(), bodyEl.getWidth());
+            let documentHeight = Math.max(win.getHeight(), bodyEl.getHeight());
 
-            let dimensions = element.getEl().getDimensions(),
-                x1 = Math.max(0, dimensions.left),
-                y1 = Math.max(0, dimensions.top),
-                x2 = Math.min(documentWidth, dimensions.left + dimensions.width),
-                y2 = Math.min(documentHeight, dimensions.top + dimensions.height);
+            let dimensions = element.getEl().getDimensions();
+            let x1 = Math.max(0, dimensions.left);
+            let y1 = Math.max(0, dimensions.top);
+            let x2 = Math.min(documentWidth, dimensions.left + dimensions.width);
+            let y2 = Math.min(documentHeight, dimensions.top + dimensions.height);
 
             if (Shader.debug) {
                 console.log('Shader.resizeToElement(' + x1 + ', ' + y1 + ', ' + x2 + ', ' + y2 + ')', element);

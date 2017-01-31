@@ -47,7 +47,7 @@ module api.ui.selector {
             this.optionDisplayValueViewer = config.optionDisplayValueViewer ?
                 new (<any>config.optionDisplayValueViewer['constructor'])() : new DefaultOptionDisplayValueViewer();
             this.filter = config.filter;
-            this.dataIdProperty = config.dataIdProperty || "value";
+            this.dataIdProperty = config.dataIdProperty || 'value';
             this.maxHeight = config.maxHeight;
             this.customHeight = config.maxHeight;
             this.width = config.width;
@@ -60,11 +60,10 @@ module api.ui.selector {
 
             this.grid = new api.ui.grid.Grid<Option<OPTION_DISPLAY_VALUE>>(this.gridData, this.createColumns(), this.createOptions());
 
-            this.grid.addClass("options-container");
-            this.grid.getEl().setPosition("absolute");
+            this.grid.addClass('options-container');
+            this.grid.getEl().setPosition('absolute');
             this.grid.hide();
             this.grid.setSelectionModel(new Slick.RowSelectionModel({selectActiveRow: false}));
-
 
             // Listen to click in grid and issue selection
             this.grid.subscribeOnClick((e, args) => {
@@ -95,7 +94,7 @@ module api.ui.selector {
                 };
 
             return [
-                new api.ui.grid.GridColumnBuilder().setId("option").setName("Options").setField("displayValue").setFormatter(
+                new api.ui.grid.GridColumnBuilder().setId('option').setName('Options').setField('displayValue').setFormatter(
                     columnFormatter).build()
             ];
         }
@@ -214,9 +213,9 @@ module api.ui.selector {
             selectedOptions.forEach((selectedOption: Option<OPTION_DISPLAY_VALUE>) => {
                 let row = this.gridData.getRowById(selectedOption.value);
                 rows.push(row);
-                stylesHash[row] = {option: "selected"};
+                stylesHash[row] = {option: 'selected'};
             });
-            this.grid.setCellCssStyles("selected", stylesHash);
+            this.grid.setCellCssStyles('selected', stylesHash);
             if (!(rows.length === 0 && ignoreEmpty)) {
                 this.grid.setSelectedRows(rows);
             }
@@ -227,14 +226,13 @@ module api.ui.selector {
             let stylesHash: Slick.CellCssStylesHash = {};
             let rows: number[] = [];
             selectedOptions.forEach((selectedOption: Option<OPTION_DISPLAY_VALUE>) => {
-                if(selectedOption.readOnly)
-                {
+                if(selectedOption.readOnly) {
                     let row = this.gridData.getRowById(selectedOption.value);
                     rows.push(row);
-                    stylesHash[row] = {_checkbox_selector: "readonly" ,option: "readonly"};
+                    stylesHash[row] = {_checkbox_selector: 'readonly' ,option: 'readonly'};
                 }
             });
-            this.grid.setCellCssStyles("readonly", stylesHash);
+            this.grid.setCellCssStyles('readonly', stylesHash);
         }
 
         hasActiveRow(): boolean {
@@ -293,7 +291,7 @@ module api.ui.selector {
 
         unRowSelection(listener: (event: DropdownGridRowSelectedEvent) => void) {
             this.rowSelectionListeners.filter((currentListener: (event: DropdownGridRowSelectedEvent) => void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
@@ -303,7 +301,7 @@ module api.ui.selector {
 
         unMultipleSelection(listener: (event: DropdownGridMultipleSelectionEvent) => void) {
             this.multipleSelectionListeners.filter((currentListener: (event: DropdownGridMultipleSelectionEvent) => void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 

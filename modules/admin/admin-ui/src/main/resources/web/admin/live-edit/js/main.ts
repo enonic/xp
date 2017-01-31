@@ -19,7 +19,7 @@ wemjq(document).ready(() => {
 
     // Notify parent frame if any modifier except shift is pressed
     // For the parent shortcuts to work if the inner iframe has focus
-    wemjq(document).on("keypress keydown keyup", (event) => {
+    wemjq(document).on('keypress keydown keyup', (event) => {
 
         if (shouldBubbleEvent(event)) {
 
@@ -74,22 +74,22 @@ wemjq(document).ready(() => {
 
             switch (keys[i].getCombination()) {
             case 'backspace':
-                matches = key == 8;
+                matches = key === 8;
                 break;
             case 'del':
-                matches = key == 46;
+                matches = key === 46;
                 // intentional fall-through
             case 'mod+del':
                 matches = matches && isMod;
                 break;
             case 'mod+s':
-                matches = key == 83 && isMod;
+                matches = key === 83 && isMod;
                 break;
             case 'mod+esc':
-                matches = key == 83 && isMod;
+                matches = key === 83 && isMod;
                 break;
             case 'mod+alt+f4':
-                matches = key == 115 && isMod && isAlt;
+                matches = key === 115 && isMod && isAlt;
                 break;
             }
 
@@ -101,4 +101,3 @@ wemjq(document).ready(() => {
         return false;
     }
 });
-

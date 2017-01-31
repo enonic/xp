@@ -30,13 +30,13 @@ module api.ui.grid {
         public static debug: boolean = false;
 
         constructor(dataView: DataView<T>, gridColumns?: GridColumn<T>[], gridOptions?: GridOptions<T>) {
-            super("grid");
+            super('grid');
 
             let options = gridOptions || this.createOptions();
             let columns = gridColumns || this.createColumns();
 
             if (options.isHideColumnHeaders()) {
-                this.addClass("no-header");
+                this.addClass('no-header');
             }
 
             this.checkboxSelectorPlugin = null;
@@ -44,7 +44,7 @@ module api.ui.grid {
             this.dragAndDrop = options.isDragAndDrop() || false;
             if (this.checkableRows) {
                 this.checkboxSelectorPlugin = new Slick.CheckboxSelectColumn({
-                    cssClass: "slick-cell-checkboxsel",
+                    cssClass: 'slick-cell-checkboxsel',
                     width: 40
                 });
                 columns.unshift(<GridColumn<T>>this.checkboxSelectorPlugin.getColumnDefinition());
@@ -54,12 +54,12 @@ module api.ui.grid {
                     cancelEditOnDrag: true
                 });
             }
-            this.getEl().setHeight((options.getHeight() || this.defaultHeight) + "px");
-            this.getEl().setWidth((options.getWidth() || this.defaultWidth) + "px");
+            this.getEl().setHeight((options.getHeight() || this.defaultHeight) + 'px');
+            this.getEl().setWidth((options.getWidth() || this.defaultWidth) + 'px');
             this.dataView = dataView;
             this.slickGrid = new Slick.Grid<T>(this.getHTMLElement(), dataView.slick(), columns, options);
             if (options.isAutoRenderGridOnDataChanges() ||
-                (options.isAutoRenderGridOnDataChanges() == undefined && this.defaultAutoRenderGridOnDataChanges)) {
+                (options.isAutoRenderGridOnDataChanges() == null && this.defaultAutoRenderGridOnDataChanges)) {
                 this.autoRenderGridOnDataChanges(this.dataView);
             }
             if (this.checkboxSelectorPlugin != null) {
@@ -82,7 +82,7 @@ module api.ui.grid {
         }
 
         protected createColumns(): api.ui.grid.GridColumn<any>[] {
-            throw "Must be implemented by inheritors";
+            throw 'Must be implemented by inheritors';
         }
 
         setItemMetadata(metadataHandler: () => void) {
@@ -93,13 +93,11 @@ module api.ui.grid {
             if (this.isVisible()) {
                 if (this.loadMask) {
                     this.loadMask.show();
-                }
-                else { //lazy mask init
+                } else { //lazy mask init
                     if (this.getParentElement()) {
                         this.createLoadMask();
                         this.loadMask.show();
-                    }
-                    else {
+                    } else {
                         this.onAdded(() => {
                             this.createLoadMask();
                         });
@@ -183,7 +181,7 @@ module api.ui.grid {
 
         doRender() {
             if (Grid.debug) {
-                console.debug("Grid.doRender");
+                console.debug('Grid.doRender');
             }
             return super.doRender().then((rendered) => {
                 this.renderGrid();
@@ -193,7 +191,7 @@ module api.ui.grid {
 
         renderGrid() {
             if (Grid.debug) {
-                console.debug("Grid.renderGrid");
+                console.debug('Grid.renderGrid');
             }
             this.slickGrid.render();
         }
@@ -285,8 +283,8 @@ module api.ui.grid {
 
         toggleRow(row: number, debounce?: boolean): number {
             // Prevent unnecessary render on the same row
-            let rows = this.getSelectedRows(),
-                index = rows.indexOf(row);
+            let rows = this.getSelectedRows();
+            let index = rows.indexOf(row);
             if (index < 0) {
                 rows.push(row);
                 rows.sort((a, b) => {
@@ -301,8 +299,8 @@ module api.ui.grid {
         }
 
         isRowSelected(row: number): boolean {
-            let rows = this.getSelectedRows(),
-                index = rows.indexOf(row);
+            let rows = this.getSelectedRows();
+            let index = rows.indexOf(row);
 
             return index >= 0;
         }

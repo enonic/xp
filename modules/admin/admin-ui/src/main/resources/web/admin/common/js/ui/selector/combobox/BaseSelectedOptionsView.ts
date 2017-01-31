@@ -22,7 +22,7 @@ module api.ui.selector.combobox {
         private editable: boolean = true;
 
         constructor(className?: string) {
-            super("selected-options" + (className ? " " + className : ""));
+            super('selected-options' + (className ? ' ' + className : ''));
         }
 
         setEditable(editable: boolean) {
@@ -61,7 +61,6 @@ module api.ui.selector.combobox {
             }
             this.toggleClass('sortable', sortable);
         }
-
 
         protected handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
             this.beforeDragStartedHeight = this.getEl().getHeight();
@@ -132,15 +131,15 @@ module api.ui.selector.combobox {
         }
 
         removeOption(optionToRemove: api.ui.selector.Option<T>, silent: boolean = false) {
-            api.util.assertNotNull(optionToRemove, "optionToRemove cannot be null");
+            api.util.assertNotNull(optionToRemove, 'optionToRemove cannot be null');
 
             let selectedOption = this.getByOption(optionToRemove);
-            api.util.assertNotNull(selectedOption, "Did not find any selected option to remove from option: " + optionToRemove.value);
+            api.util.assertNotNull(selectedOption, 'Did not find any selected option to remove from option: ' + optionToRemove.value);
 
             selectedOption.getOptionView().remove();
 
             this.list = this.list.filter((option: SelectedOption<T>) => {
-                return option.getOption().value != selectedOption.getOption().value;
+                return option.getOption().value !== selectedOption.getOption().value;
             });
 
             // update item indexes to the right of removed item
@@ -173,7 +172,7 @@ module api.ui.selector.combobox {
 
         getById(id: string): SelectedOption<T> {
             return this.list.filter((selectedOption: SelectedOption<T>) => {
-                return selectedOption.getOption().value == id;
+                return selectedOption.getOption().value === id;
             })[0];
         }
 
@@ -182,7 +181,7 @@ module api.ui.selector.combobox {
         }
 
         maximumOccurrencesReached(): boolean {
-            if (this.maximumOccurrences == 0) {
+            if (this.maximumOccurrences === 0) {
                 return false;
             }
             return this.count() >= this.maximumOccurrences;
@@ -243,7 +242,7 @@ module api.ui.selector.combobox {
         unOptionMoved(listener: (moved: SelectedOption<T>) => void) {
             this.optionMovedListeners =
                 this.optionMovedListeners.filter((current: (option: SelectedOption<T>)=>void) => {
-                    return listener != current;
+                    return listener !== current;
                 });
         }
 

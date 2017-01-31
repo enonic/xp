@@ -44,7 +44,7 @@ module api.content.site.inputtype.siteconfigurator {
 
             let namesAndIconView = new api.app.NamesAndIconView(new api.app.NamesAndIconViewBuilder().setSize(
                 api.app.NamesAndIconViewSize.small)).setMainName(this.application.getDisplayName()).setSubName(
-                this.application.getName() + (!!this.application.getVersion() ? "-" + this.application.getVersion() : ""));
+                this.application.getName() + (!!this.application.getVersion() ? '-' + this.application.getVersion() : ''));
 
             if (this.application.getIconUrl()) {
                 namesAndIconView.setIconUrl(this.application.getIconUrl());
@@ -59,11 +59,11 @@ module api.content.site.inputtype.siteconfigurator {
             this.appendChild(header);
 
             this.formValidityChangedHandler = (event: api.form.FormValidityChangedEvent) => {
-                this.toggleClass("invalid", !event.isValid());
+                this.toggleClass('invalid', !event.isValid());
             };
 
-            this.toggleClass("empty", !!this.getOption().empty);
-            this.toggleClass("stopped", this.application.getState() === Application.STATE_STOPPED);
+            this.toggleClass('empty', !!this.getOption().empty);
+            this.toggleClass('stopped', this.application.getState() === Application.STATE_STOPPED);
 
             this.formView = this.createFormView(this.siteConfig);
 
@@ -71,7 +71,7 @@ module api.content.site.inputtype.siteconfigurator {
                 header.appendChild(this.createEditButton());
             }
 
-            let removeButton = new api.dom.AEl("remove");
+            let removeButton = new api.dom.AEl('remove');
             removeButton.onClicked((event: MouseEvent) => {
                 if (this.isEditable()) {
                     this.notifyRemoveClicked();
@@ -144,7 +144,7 @@ module api.content.site.inputtype.siteconfigurator {
             this.unbindValidationEvent(this.formView);
             this.formView = formViewStateToRevertTo;
             this.formView.validate(false, true);
-            this.toggleClass("invalid", !this.formView.isValid());
+            this.toggleClass('invalid', !this.formView.isValid());
         }
 
         private undoSelectionOnCancel(comboBoxToUndoSelectionOnCancel: SiteConfiguratorComboBox) {
@@ -171,12 +171,12 @@ module api.content.site.inputtype.siteconfigurator {
 
         private createFormView(siteConfig: SiteConfig): FormView {
             let formView = new FormView(this.formContext, this.application.getForm(), siteConfig.getConfig());
-            formView.addClass("site-form");
+            formView.addClass('site-form');
 
             formView.onLayoutFinished(() => {
                 formView.displayValidationErrors(true);
                 formView.validate(false, true);
-                this.toggleClass("invalid", !formView.isValid());
+                this.toggleClass('invalid', !formView.isValid());
                 this.notifySiteConfigFormDisplayed(this.application.getApplicationKey());
             });
 
@@ -213,7 +213,7 @@ module api.content.site.inputtype.siteconfigurator {
 
         unEditClicked(listener: (event: MouseEvent) => void) {
             this.editClickedListeners = this.editClickedListeners.filter((curr) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
@@ -229,7 +229,7 @@ module api.content.site.inputtype.siteconfigurator {
 
         unSiteConfigFormDisplayed(listener: {(applicationKey: ApplicationKey): void;}) {
             this.siteConfigFormDisplayedListeners =
-                this.siteConfigFormDisplayedListeners.filter((curr) => (curr != listener));
+                this.siteConfigFormDisplayedListeners.filter((curr) => (curr !== listener));
         }
 
         private notifySiteConfigFormDisplayed(applicationKey: ApplicationKey) {

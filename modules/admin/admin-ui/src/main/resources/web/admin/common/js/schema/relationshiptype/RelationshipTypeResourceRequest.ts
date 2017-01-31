@@ -6,7 +6,7 @@ module api.schema.relationshiptype {
 
         constructor() {
             super();
-            this.resourceUrl = api.rest.Path.fromParent(super.getRestPath(), "schema/relationship");
+            this.resourceUrl = api.rest.Path.fromParent(super.getRestPath(), 'schema/relationship');
         }
 
         getResourcePath(): api.rest.Path {

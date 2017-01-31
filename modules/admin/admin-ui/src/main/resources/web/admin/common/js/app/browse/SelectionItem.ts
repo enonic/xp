@@ -6,12 +6,12 @@ module api.app.browse {
 
         protected item: BrowseItem<M>;
 
-        private removeEl: api.dom.DivEl;
+        protected removeEl: api.dom.DivEl;
 
         private removeListeners: {(event: MouseEvent): void}[] = [];
 
         constructor(viewer: api.ui.Viewer<M>, item: BrowseItem<M>) {
-            super("browse-selection-item");
+            super('browse-selection-item');
             this.viewer = viewer;
             this.item = item;
         }
@@ -26,7 +26,7 @@ module api.app.browse {
         }
 
         private initRemoveButton(callback?: () => void) {
-            let removeEl = new api.dom.DivEl("icon remove");
+            let removeEl = new api.dom.DivEl('icon remove');
             removeEl.onClicked(this.notifyRemoveClicked.bind(this));
             return removeEl;
         }

@@ -15,8 +15,8 @@ module api.ui.security.acl {
         constructor() {
             let builder = new api.ui.selector.combobox.RichComboBoxBuilder<AccessControlEntry>().
                 setMaximumOccurrences(0).
-                setComboBoxName("principalSelector").
-                setIdentifierMethod("getPrincipalKey").
+                setComboBoxName('principalSelector').
+                setIdentifierMethod('getPrincipalKey').
                 setLoader(new AccessControlEntryLoader()).setHideComboBoxWhenMaxReached(false).setSelectedOptionsView(
                 new ACESelectedOptionsView()).
                 setOptionDisplayValueViewer(new AccessControlEntryViewer()).
@@ -42,7 +42,7 @@ module api.ui.security.acl {
 
         constructor(option: Option<AccessControlEntry>) {
             let ace = option.displayValue;
-            if (ace.getAllowedPermissions().length == 0 && ace.getDeniedPermissions().length == 0) {
+            if (ace.getAllowedPermissions().length === 0 && ace.getDeniedPermissions().length === 0) {
                 // allow read by default
                 ace.allow(Permission.READ);
             }
@@ -115,7 +115,6 @@ module api.ui.security.acl {
             return itemView;
         }
 
-
         addOption(option: Option<AccessControlEntry>, silent: boolean = false, keyCode: number = -1): boolean {
             this.addItem(option.displayValue);
 
@@ -127,15 +126,15 @@ module api.ui.security.acl {
         }
 
         removeOption(optionToRemove: Option<AccessControlEntry>, silent: boolean = false) {
-            api.util.assertNotNull(optionToRemove, "optionToRemove cannot be null");
+            api.util.assertNotNull(optionToRemove, 'optionToRemove cannot be null');
 
             let selectedOption = this.getByOption(optionToRemove);
-            api.util.assertNotNull(selectedOption, "Did not find any selected option to remove from option: " + optionToRemove.value);
+            api.util.assertNotNull(selectedOption, 'Did not find any selected option to remove from option: ' + optionToRemove.value);
 
             this.removeItem(optionToRemove.displayValue);
 
             this.list = this.list.filter((option: SelectedOption<AccessControlEntry>) => {
-                return option.getOption().value != selectedOption.getOption().value;
+                return option.getOption().value !== selectedOption.getOption().value;
             });
 
             // update item indexes to the right of removed item
@@ -168,7 +167,7 @@ module api.ui.security.acl {
 
         getById(id: string): SelectedOption<AccessControlEntry> {
             return this.list.filter((selectedOption: SelectedOption<AccessControlEntry>) => {
-                return selectedOption.getOption().value == id;
+                return selectedOption.getOption().value === id;
             })[0];
         }
 
@@ -177,7 +176,7 @@ module api.ui.security.acl {
         }
 
         maximumOccurrencesReached(): boolean {
-            if (this.maximumOccurrences == 0) {
+            if (this.maximumOccurrences === 0) {
                 return false;
             }
             return this.count() >= this.maximumOccurrences;

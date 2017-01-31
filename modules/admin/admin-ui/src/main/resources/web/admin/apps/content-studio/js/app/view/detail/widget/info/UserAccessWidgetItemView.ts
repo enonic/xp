@@ -1,5 +1,5 @@
-import "../../../../../api.ts";
-import {WidgetItemView} from "../../WidgetItemView";
+import '../../../../../api.ts';
+import {WidgetItemView} from '../../WidgetItemView';
 
 import Content = api.content.Content;
 import ContentId = api.content.ContentId;
@@ -36,9 +36,8 @@ export class UserAccessWidgetItemView extends WidgetItemView {
         {value: Access.CUSTOM, name: 'has custom access to'}
     ];
 
-
     constructor() {
-        super("user-access-widget-item-view");
+        super('user-access-widget-item-view');
         this.accessListView = new UserAccessListView();
     }
 
@@ -62,13 +61,13 @@ export class UserAccessWidgetItemView extends WidgetItemView {
         if (entry) {
 
             this.everyoneAccessValue = AccessControlEntryView.getAccessValueFromEntry(entry);
-            let headerStr = entry.getPrincipalDisplayName() + " " + this.getOptionName(this.everyoneAccessValue) +
-                            " this item";
-            let headerStrEl = new api.dom.SpanEl("header-string").setHtml(headerStr);
+            let headerStr = entry.getPrincipalDisplayName() + ' ' + this.getOptionName(this.everyoneAccessValue) +
+                            ' this item';
+            let headerStrEl = new api.dom.SpanEl('header-string').setHtml(headerStr);
 
-            this.headerEl = new api.dom.DivEl("user-access-widget-header");
+            this.headerEl = new api.dom.DivEl('user-access-widget-header');
 
-            this.headerEl.appendChild(new api.dom.DivEl("icon-menu4"));
+            this.headerEl.appendChild(new api.dom.DivEl('icon-menu4'));
             this.headerEl.appendChild(headerStrEl);
             this.prependChild(this.headerEl);
         }
@@ -80,8 +79,8 @@ export class UserAccessWidgetItemView extends WidgetItemView {
             this.removeChild(this.bottomEl);
         }
 
-        this.bottomEl = new api.dom.AEl("edit-permissions-link");
-        this.bottomEl.setHtml("Edit Permissions");
+        this.bottomEl = new api.dom.AEl('edit-permissions-link');
+        this.bottomEl.setHtml('Edit Permissions');
 
         this.appendChild(this.bottomEl);
 
@@ -151,7 +150,7 @@ export class UserAccessWidgetItemView extends WidgetItemView {
 
     private getUserAccessList(results: api.ui.security.acl.EffectivePermission[]): UserAccessListItemView[] {
 
-        return results.filter(item => item.getAccess() != this.everyoneAccessValue &&
+        return results.filter(item => item.getAccess() !== this.everyoneAccessValue &&
                                       item.getPermissionAccess().getCount() > 0).map((item: api.ui.security.acl.EffectivePermission) => {
             let view = new UserAccessListItemView();
             view.setObject(item);
@@ -162,7 +161,7 @@ export class UserAccessWidgetItemView extends WidgetItemView {
 
     private getOptionName(access: Access): string {
         let currentOption = UserAccessWidgetItemView.OPTIONS.filter(option => {
-            return option.value == access;
+            return option.value === access;
         });
         if (currentOption && currentOption.length > 0) {
             return currentOption[0].name;

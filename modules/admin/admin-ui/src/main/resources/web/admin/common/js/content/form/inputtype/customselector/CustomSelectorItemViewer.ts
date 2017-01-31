@@ -5,13 +5,12 @@ module api.content.form.inputtype.customselector {
     export class CustomSelectorItemViewer extends NamesAndIconViewer<CustomSelectorItem> {
 
         constructor() {
-            super("custom-selector-item-viewer");
+            super('custom-selector-item-viewer');
         }
 
         resolveDisplayName(object: CustomSelectorItem): string {
             return object.displayName;
         }
-
 
         resolveSubName(object: CustomSelectorItem): string {
             return object.description;
@@ -30,4 +29,3 @@ module api.content.form.inputtype.customselector {
     }
 
 }
-    

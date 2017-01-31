@@ -6,8 +6,8 @@ module api.liveedit {
 
     export class ItemType implements api.Equitable {
 
-        static ATTRIBUTE_TYPE: string = "portal-component-type";
-        static ATTRIBUTE_REGION_NAME: string = "portal-region";
+        static ATTRIBUTE_TYPE: string = 'portal-component-type';
+        static ATTRIBUTE_REGION_NAME: string = 'portal-region';
 
         private static shortNameToInstance: ShortName = {};
 
@@ -33,18 +33,17 @@ module api.liveedit {
             return this.config;
         }
 
-
         isComponentType(): boolean {
             return false;
         }
 
         toComponentType(): api.content.page.region.ComponentType {
-            api.util.assert(this.isComponentType(), "Not support when ItemType is not a ComponentType");
+            api.util.assert(this.isComponentType(), 'Not support when ItemType is not a ComponentType');
             return api.content.page.region.ComponentType.byShortName(this.shortName);
         }
 
         createView(config: CreateItemViewConfig<ItemView,any>): ItemView {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         equals(o: api.Equitable): boolean {
@@ -80,11 +79,11 @@ module api.liveedit {
         }
 
         static fromHTMLElement(element: HTMLElement): ItemType {
-            let typeAsString = element.getAttribute("data-" + ItemType.ATTRIBUTE_TYPE);
+            let typeAsString = element.getAttribute('data-' + ItemType.ATTRIBUTE_TYPE);
             if (StringHelper.isBlank(typeAsString)) {
-                let regionName = element.getAttribute("data-" + ItemType.ATTRIBUTE_REGION_NAME);
+                let regionName = element.getAttribute('data-' + ItemType.ATTRIBUTE_REGION_NAME);
                 if (!StringHelper.isBlank(regionName)) {
-                    typeAsString = "region";
+                    typeAsString = 'region';
                 }
             }
             return ItemType.byShortName(typeAsString);

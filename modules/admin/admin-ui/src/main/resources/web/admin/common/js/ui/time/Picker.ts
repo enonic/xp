@@ -28,8 +28,8 @@ module api.ui.time {
         }
 
         private setupCommonListeners() {
-            this.popup.onShown(e => this.addClass("expanded"));
-            this.popup.onHidden(e => this.removeClass("expanded"));
+            this.popup.onShown(e => this.addClass('expanded'));
+            this.popup.onHidden(e => this.removeClass('expanded'));
 
             api.util.AppHelper.focusInOut(this, () => {
                 this.popup.hide();
@@ -56,7 +56,7 @@ module api.ui.time {
 
             this.popup.onKeyDown((event: KeyboardEvent) => {
                 if (api.ui.KeyHelper.isTabKey(event)) {
-                    if (!(document.activeElement == this.input.getEl().getHTMLElement())) {
+                    if (!(document.activeElement === this.input.getEl().getHTMLElement())) {
                         this.popup.hide();
                     }
                 }
@@ -91,11 +91,11 @@ module api.ui.time {
         }
 
         protected initPopup(builder: any) {
-            throw new Error("must be implemented by inheritor");
+            throw new Error('must be implemented by inheritor');
         }
 
         protected initInput(builder: any) {
-            throw new Error("must be implemented by inheritor");
+            throw new Error('must be implemented by inheritor');
         }
 
         protected wrapChildrenAndAppend() {
@@ -106,7 +106,7 @@ module api.ui.time {
         }
 
         protected setupListeners(builder: any) {
-            throw new Error("must be implemented by inheritor");
+            throw new Error('must be implemented by inheritor');
         }
 
         protected togglePopupVisibility() {

@@ -9,7 +9,7 @@ module api.ui.panel {
         private items: api.ui.tab.TabBarItem[] = [];
 
         constructor() {
-            super("docked-panel");
+            super('docked-panel');
 
             this.navigator = new TabBar();
             this.deck = new NavigatedDeckPanel(this.navigator);
@@ -31,7 +31,7 @@ module api.ui.panel {
             let item = new api.ui.tab.TabBarItemBuilder().setLabel(label).setAddLabelTitleAttribute(addLabelTitleAttribute).build();
             this.items.push(item);
 
-            this.deck.addNavigablePanel(item, panel, select || this.items.length == 1);
+            this.deck.addNavigablePanel(item, panel, select || this.items.length === 1);
 
             return this.deck.getPanelIndex(panel);
         }

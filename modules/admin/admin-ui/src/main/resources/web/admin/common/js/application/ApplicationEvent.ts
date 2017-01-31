@@ -51,10 +51,10 @@ module api.application {
         }
 
         isNeedToUpdateApplication(): boolean {
-            return ApplicationEventType.RESOLVED != this.eventType &&
-                   ApplicationEventType.STARTING != this.eventType &&
-                   ApplicationEventType.UNRESOLVED != this.eventType &&
-                   ApplicationEventType.STOPPING != this.eventType;
+            return ApplicationEventType.RESOLVED !== this.eventType &&
+                   ApplicationEventType.STARTING !== this.eventType &&
+                   ApplicationEventType.UNRESOLVED !== this.eventType &&
+                   ApplicationEventType.STOPPING !== this.eventType;
         }
 
         static on(handler: (event: ApplicationEvent) => void) {

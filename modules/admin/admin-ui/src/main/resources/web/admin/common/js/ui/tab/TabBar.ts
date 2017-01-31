@@ -15,14 +15,14 @@ module api.ui.tab {
         private navigationItemActivatedListeners: {(event: ActivatedEvent):void}[] = [];
 
         constructor(classes?: string) {
-            super("tab-bar" + (!classes ? "" : " " + classes));
+            super('tab-bar' + (!classes ? '' : ' ' + classes));
         }
 
         setScrollEnabled(enabled: boolean) {
             this.scrollEnabled = enabled;
         }
 
-        insertNavigationItem(tab: TabBarItem, index?: number, silent?: boolean) {
+        insertNavigationItem(tab: TabBarItem, index: number, silent?: boolean) {
             this.tabs.splice(index, 0, tab);
             tab.setIndex(index);
 
@@ -56,12 +56,10 @@ module api.ui.tab {
             if (this.isEmpty()) {
                 // if there are no tabs than set selected index to negative value
                 this.selectedIndex = -1;
-            }
-            else if ((this.getSize() - 1) < this.selectedIndex) {
+            } else if ((this.getSize() - 1) < this.selectedIndex) {
                 // if selected index is more than tabs amount set last index as selected
                 this.selectedIndex = this.getSize() - 1;
-            }
-            else if (tabIndex < this.selectedIndex) {
+            } else if (tabIndex < this.selectedIndex) {
                 // if removed tab was before selected tab than decrement selected index
                 this.selectedIndex--;
             }
@@ -78,7 +76,7 @@ module api.ui.tab {
             this.notifyTabActivatedListeners(index);
 
             // Do nothing, if index remain the same and
-            if (!forced && this.selectedIndex == index) {
+            if (!forced && this.selectedIndex === index) {
                 return;
             }
 
@@ -93,7 +91,7 @@ module api.ui.tab {
         }
 
         deselectNavigationItem() {
-            if (this.selectedIndex != -1 && this.getSelectedNavigationItem()) {
+            if (this.selectedIndex !== -1 && this.getSelectedNavigationItem()) {
                 this.getSelectedNavigationItem().setActive(false);
             }
 
@@ -143,14 +141,14 @@ module api.ui.tab {
         unNavigationItemAdded(listener: (event: NavigatorEvent) => void) {
             this.navigationItemAddedListeners =
             this.navigationItemAddedListeners.filter((currentListener: (event: NavigatorEvent)=>void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
         unNavigationItemSelected(listener: (event: NavigatorEvent) => void) {
             this.navigationItemSelectedListeners =
             this.navigationItemSelectedListeners.filter((currentListener: (event: NavigatorEvent)=>void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
@@ -161,7 +159,7 @@ module api.ui.tab {
         unNavigationItemActivated(listener: (event: ActivatedEvent) => void) {
             this.navigationItemActivatedListeners =
                 this.navigationItemActivatedListeners.filter((currentListener: (event: ActivatedEvent)=>void) => {
-                    return listener != currentListener;
+                    return listener !== currentListener;
                 });
         }
 

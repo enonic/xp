@@ -67,7 +67,7 @@ public final class ResourceLocatorImpl
         }
 
         this.resourcesSrcDir = new File( rootDir, "modules/admin/admin-ui/src/main/resources" );
-        this.resourcesTargetDir = new File( rootDir, "modules/admin/admin-ui/target/resources/main" );
+        this.resourcesTargetDir = new File( rootDir, "modules/admin/admin-ui/build/resources/main" );
 
         LOG.info( "Loading UI resources from bundle and project directory {} and {}", this.resourcesSrcDir, this.resourcesTargetDir );
     }

@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {ContentWizardPanel} from "../ContentWizardPanel";
-import {ContentUnpublishPromptEvent} from "../../browse/ContentUnpublishPromptEvent";
+import '../../../api.ts';
+import {ContentWizardPanel} from '../ContentWizardPanel';
+import {ContentUnpublishPromptEvent} from '../../browse/ContentUnpublishPromptEvent';
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
 export class UnpublishAction extends api.ui.Action {
@@ -8,7 +8,7 @@ export class UnpublishAction extends api.ui.Action {
     private wizard: ContentWizardPanel;
 
     constructor(wizard: ContentWizardPanel) {
-        super("Unpublish");
+        super('Unpublish');
 
         this.wizard = wizard;
 

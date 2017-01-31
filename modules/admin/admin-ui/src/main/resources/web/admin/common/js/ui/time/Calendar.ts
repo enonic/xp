@@ -63,11 +63,11 @@ module api.ui.time {
         private shownMonthChangedListeners: {(month: number, year: number) : void}[] = [];
 
         constructor(builder: CalendarBuilder) {
-            super("calendar");
+            super('calendar');
 
             let now = new Date();
             this.year = builder.year || now.getFullYear();
-            this.month = builder.month != undefined ? builder.month : now.getMonth();
+            this.month = builder.month != null ? builder.month : now.getMonth();
             this.selectedDate = builder.selectedDate;
             this.startingDayOfWeek = builder.startingDayOfWeek || DaysOfWeek.MONDAY;
             this.interactive = builder.interactive;
@@ -83,14 +83,12 @@ module api.ui.time {
                 this.removeChildren();
 
                 if (api.util.DateHelper.isInvalidDate(value)) {
-                    let spanEl = new api.dom.SpanEl().setHtml("Invalid date");
+                    let spanEl = new api.dom.SpanEl().setHtml('Invalid date');
                     this.appendChild(spanEl);
-                }
-                else {
+                } else {
                     this.renderMonth();
                 }
-            }
-            else {
+            } else {
                 this.selectedDate = null;
                 let now = new Date();
                 this.year = now.getFullYear();
@@ -160,8 +158,7 @@ module api.ui.time {
             let firstDay: CalendarDay = null;
             if (this.startingDayOfWeek.equals(this.calendarDays[0].getDayOfWeek())) {
                 firstDay = this.calendarDays[0];
-            }
-            else {
+            } else {
                 let previousDay = this.calendarDays[0].getPrevious();
                 while (!previousDay.getDayOfWeek().equals(this.startingDayOfWeek)) {
                     previousDay = previousDay.getPrevious();
@@ -208,7 +205,7 @@ module api.ui.time {
                     calendarDay.onCalendarDayClicked((event: CalendarDayClickedEvent) => this.handleCalendarDayClicked(event));
                 }
 
-                if (this.selectedDate && this.selectedDate.toDateString() == date.toDateString()) {
+                if (this.selectedDate && this.selectedDate.toDateString() === date.toDateString()) {
                     calendarDay.setSelectedDay(true);
                 }
             }

@@ -23,9 +23,9 @@ module api.app.bar {
             // Responsive events to update homeButton styles
             api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: api.ui.responsive.ResponsiveItem) => {
                 if (this.tabMenu.countVisible() > 0) {
-                    this.addClass("tabs-present");
+                    this.addClass('tabs-present');
                 } else {
-                    this.removeClass("tabs-present");
+                    this.removeClass('tabs-present');
                 }
             });
         }

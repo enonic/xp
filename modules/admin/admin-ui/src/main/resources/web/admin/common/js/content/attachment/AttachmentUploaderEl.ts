@@ -9,7 +9,6 @@ module api.content.attachment {
     import AttachmentBuilder = api.content.attachment.AttachmentBuilder;
     import SelectionItem = api.app.browse.SelectionItem;
 
-
     export class AttachmentUploaderEl extends api.ui.uploader.FileUploaderEl<Attachment> {
 
         private attachmentItems: AttachmentItem[];
@@ -19,10 +18,10 @@ module api.content.attachment {
 
         constructor(config: any) {
 
-            if (config.url == undefined) {
-                config.url = api.util.UriHelper.getRestUri("content/createAttachment");
+            if (config.url == null) {
+                config.url = api.util.UriHelper.getRestUri('content/createAttachment');
             }
-            if (config.selfIsDropzone == undefined) {
+            if (config.selfIsDropzone == null) {
                 config.selfIsDropzone = true;
             }
 
@@ -41,12 +40,10 @@ module api.content.attachment {
             this.addClass('attachment-uploader-el');
         }
 
-
         createModel(serverResponse: AttachmentJson): Attachment {
             if (serverResponse) {
                 return new AttachmentBuilder().fromJson(serverResponse).build();
-            }
-            else {
+            } else {
                 return null;
             }
         }
@@ -57,14 +54,14 @@ module api.content.attachment {
 
         removeAttachmentItem(value: string) {
             this.attachmentItems = this.attachmentItems.filter(
-                item => !(item.getValue() == value)
+                item => !(item.getValue() === value)
             );
         }
 
         getExistingItem(value: string): api.dom.Element {
             let element = null;
             this.getResultContainer().getChildren().forEach((item) => {
-                if ((<AttachmentItem>item).getValue() == value) {
+                if ((<AttachmentItem>item).getValue() === value) {
                     element = item;
                 }
             });

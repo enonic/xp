@@ -33,7 +33,7 @@ module api.form {
 
             this.removeChildren();
 
-            this.removeButton = new api.dom.AEl("remove-button");
+            this.removeButton = new api.dom.AEl('remove-button');
             this.appendChild(this.removeButton);
             this.removeButton.onClicked((event: MouseEvent) => {
                 this.notifyRemoveButtonClicked();
@@ -62,7 +62,6 @@ module api.form {
 
             this.formSetOccurrencesContainer = new api.dom.DivEl(this.occurrenceContainerClassName);
             this.appendChild(this.formSetOccurrencesContainer);
-
 
             let layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.setFormItems(this.getFormItems()).setParentElement(
                 this.formSetOccurrencesContainer).setParent(this).layout(this.propertySet, validate);
@@ -118,15 +117,15 @@ module api.form {
         }
 
         protected subscribeOnItemEvents() {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         protected getFormSet(): FormSet {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         protected getFormItems(): FormItem[] {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         toggleHelpText(show?: boolean): any {
@@ -170,9 +169,9 @@ module api.form {
         refresh() {
 
             if (!this.formItemOccurrence.oneAndOnly()) {
-                this.label.addClass("drag-control");
+                this.label.addClass('drag-control');
             } else {
-                this.label.removeClass("drag-control");
+                this.label.removeClass('drag-control');
             }
 
             this.removeButton.setVisible(this.formItemOccurrence.isRemoveButtonRequired());
@@ -234,7 +233,7 @@ module api.form {
 
         unValidityChanged(listener: (event: RecordingValidityChangedEvent)=>void) {
             this.validityChangedListeners.filter((currentListener: (event: RecordingValidityChangedEvent)=>void) => {
-                return listener == currentListener;
+                return listener === currentListener;
             });
         }
 

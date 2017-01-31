@@ -8,7 +8,7 @@ module api.content.resource {
 
         constructor(contentId: ContentId) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
             this.id = contentId;
         }
 
@@ -19,7 +19,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "getDependencies");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'getDependencies');
         }
     }
 }

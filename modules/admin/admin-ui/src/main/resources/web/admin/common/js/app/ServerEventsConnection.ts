@@ -101,7 +101,7 @@ module api.app {
                 clearTimeout(this.disconnectTimeoutHandle);
                 this.keepAliveIntervalId = setInterval(() => {
                     if (this.connected) {
-                        this.ws.send("KeepAlive");
+                        this.ws.send('KeepAlive');
                         if (ServerEventsConnection.debug) {
                             console.log('ServerEventsConnection: Sending Keep Alive message');
                         }
@@ -158,13 +158,14 @@ module api.app {
         }
 
         private getWebSocketUriPrefix(): string {
-            let loc = window.location, newUri;
-            if (loc.protocol === "https:") {
-                newUri = "wss:";
+            let loc = window.location;
+            let newUri;
+            if (loc.protocol === 'https:') {
+                newUri = 'wss:';
             } else {
-                newUri = "ws:";
+                newUri = 'ws:';
             }
-            newUri += "//" + loc.host;
+            newUri += '//' + loc.host;
             return newUri;
         }
 
@@ -181,7 +182,7 @@ module api.app {
         unServerEvent(listener: (event: api.event.Event) => void) {
             this.serverEventReceivedListeners =
                 this.serverEventReceivedListeners.filter((currentListener: (event: api.event.Event)=>void)=> {
-                    return currentListener != listener;
+                    return currentListener !== listener;
                 });
         }
 
@@ -198,7 +199,7 @@ module api.app {
         unConnectionLost(listener: () => void) {
             this.connectionLostListeners =
                 this.connectionLostListeners.filter((currentListener: () => void) =>  {
-                    return currentListener != listener;
+                    return currentListener !== listener;
                 });
         }
 

@@ -40,8 +40,8 @@ module api.schema.content.inputtype {
         }
 
         private createPageTemplateLoader(): PageTemplateContentTypeLoader {
-            let contentId = this.context.site.getContentId(),
-                loader = new api.schema.content.PageTemplateContentTypeLoader(contentId);
+            let contentId = this.context.site.getContentId();
+            let loader = new api.schema.content.PageTemplateContentTypeLoader(contentId);
 
             loader.setComparator(new api.content.ContentTypeSummaryByDisplayNameComparator());
 
@@ -49,8 +49,8 @@ module api.schema.content.inputtype {
         }
 
         private createComboBox(): ContentTypeComboBox {
-            let loader = this.context.formContext.getContentTypeName().isPageTemplate() ? this.createPageTemplateLoader() : null,
-                comboBox = new ContentTypeComboBox(this.getInput().getOccurrences().getMaximum(), loader);
+            let loader = this.context.formContext.getContentTypeName().isPageTemplate() ? this.createPageTemplateLoader() : null;
+            let comboBox = new ContentTypeComboBox(this.getInput().getOccurrences().getMaximum(), loader);
 
             comboBox.onLoaded(this.onContentTypesLoadedHandler);
 
@@ -79,10 +79,9 @@ module api.schema.content.inputtype {
             }
             this.ignorePropertyChange = true;
             let value = new Value(selectedOption.getOption().displayValue.getContentTypeName().toString(), ValueTypes.STRING);
-            if (this.combobox.countSelected() == 1) { // overwrite initial value
+            if (this.combobox.countSelected() === 1) { // overwrite initial value
                 this.getPropertyArray().set(0, value);
-            }
-            else {
+            } else {
                 this.getPropertyArray().add(value);
             }
 
@@ -110,7 +109,6 @@ module api.schema.content.inputtype {
                 return wemQ<void>(null);
             });
         }
-
 
         update(propertyArray: api.data.PropertyArray, unchangedOnly: boolean): Q.Promise<void> {
             let superPromise = super.update(propertyArray, unchangedOnly);
@@ -160,6 +158,6 @@ module api.schema.content.inputtype {
         }
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("ContentTypeFilter", ContentTypeFilter));
+    api.form.inputtype.InputTypeManager.register(new api.Class('ContentTypeFilter', ContentTypeFilter));
 
 }

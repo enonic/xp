@@ -28,7 +28,7 @@ module api.form {
                 context: config.context,
                 formItem: config.fieldSet,
                 parent: config.parent,
-                className: "field-set-view"
+                className: 'field-set-view'
             });
 
             this.formItemLayer = new FormItemLayer(config.context);
@@ -59,7 +59,7 @@ module api.form {
             let label = new FieldSetLabel(this.fieldSet);
             this.appendChild(label);
 
-            let wrappingDiv = new api.dom.DivEl("field-set-container");
+            let wrappingDiv = new api.dom.DivEl('field-set-container');
             this.appendChild(wrappingDiv);
 
             let layoutPromise: wemQ.Promise<FormItemView[]> = this.formItemLayer.
@@ -145,7 +145,6 @@ module api.form {
 
             return result;
         }
-
 
         validate(silent: boolean = true): ValidationRecording {
 

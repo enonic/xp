@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import Principal = api.security.Principal;
 import Event = api.event.Event;

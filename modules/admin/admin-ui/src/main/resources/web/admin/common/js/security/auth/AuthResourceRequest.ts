@@ -6,7 +6,7 @@ module api.security.auth {
 
         constructor() {
             super();
-            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), "auth");
+            this.resourcePath = api.rest.Path.fromParent(super.getRestPath(), 'auth');
         }
 
         getResourcePath(): api.rest.Path {

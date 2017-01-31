@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 export class OpenMoveDialogEvent extends api.event.Event {
     private content: api.content.ContentSummary[];

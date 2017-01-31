@@ -3,6 +3,3 @@
 ///<reference path='PathMatchExpression.ts' />
 ///<reference path='QueryField.ts' />
 ///<reference path='QueryFields.ts' />
-
-
-

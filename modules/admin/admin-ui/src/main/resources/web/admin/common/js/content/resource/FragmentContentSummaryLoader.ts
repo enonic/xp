@@ -21,11 +21,11 @@ module api.content.resource {
         }
 
         setAllowedContentTypes(contentTypes: string[]) {
-            throw new Error("Only fragments allowed");
+            throw new Error('Only fragments allowed');
         }
 
         setAllowedContentTypeNames(contentTypeNames: api.schema.content.ContentTypeName[]) {
-            throw new Error("Only fragments allowed");
+            throw new Error('Only fragments allowed');
         }
 
     }

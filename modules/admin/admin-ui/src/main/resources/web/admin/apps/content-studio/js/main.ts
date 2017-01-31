@@ -1,21 +1,21 @@
-import "./api.ts";
-import {Router} from "./app/Router";
-import {ContentAppPanel} from "./app/ContentAppPanel";
-import {ContentDeletePromptEvent} from "./app/browse/ContentDeletePromptEvent";
-import {ContentPublishPromptEvent} from "./app/browse/ContentPublishPromptEvent";
-import {ContentUnpublishPromptEvent} from "./app/browse/ContentUnpublishPromptEvent";
-import {ContentDeleteDialog} from "./app/remove/ContentDeleteDialog";
-import {ContentPublishDialog} from "./app/publish/ContentPublishDialog";
-import {ContentUnpublishDialog} from "./app/publish/ContentUnpublishDialog";
-import {NewContentDialog} from "./app/create/NewContentDialog";
-import {ShowNewContentDialogEvent} from "./app/browse/ShowNewContentDialogEvent";
-import {SortContentDialog} from "./app/browse/SortContentDialog";
-import {MoveContentDialog} from "./app/browse/MoveContentDialog";
-import {EditPermissionsDialog} from "./app/wizard/EditPermissionsDialog";
-import {ContentWizardPanelParams} from "./app/wizard/ContentWizardPanelParams";
-import {ContentWizardPanel} from "./app/wizard/ContentWizardPanel";
-import {ContentEventsListener} from "./app/ContentEventsListener";
-import {ContentEventsProcessor} from "./app/ContentEventsProcessor";
+import './api.ts';
+import {Router} from './app/Router';
+import {ContentAppPanel} from './app/ContentAppPanel';
+import {ContentDeletePromptEvent} from './app/browse/ContentDeletePromptEvent';
+import {ContentPublishPromptEvent} from './app/browse/ContentPublishPromptEvent';
+import {ContentUnpublishPromptEvent} from './app/browse/ContentUnpublishPromptEvent';
+import {ContentDeleteDialog} from './app/remove/ContentDeleteDialog';
+import {ContentPublishDialog} from './app/publish/ContentPublishDialog';
+import {ContentUnpublishDialog} from './app/publish/ContentUnpublishDialog';
+import {NewContentDialog} from './app/create/NewContentDialog';
+import {ShowNewContentDialogEvent} from './app/browse/ShowNewContentDialogEvent';
+import {SortContentDialog} from './app/browse/SortContentDialog';
+import {MoveContentDialog} from './app/browse/MoveContentDialog';
+import {EditPermissionsDialog} from './app/wizard/EditPermissionsDialog';
+import {ContentWizardPanelParams} from './app/wizard/ContentWizardPanelParams';
+import {ContentWizardPanel} from './app/wizard/ContentWizardPanel';
+import {ContentEventsListener} from './app/ContentEventsListener';
+import {ContentEventsProcessor} from './app/ContentEventsProcessor';
 import UriHelper = api.util.UriHelper;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import ContentId = api.content.ContentId;
@@ -28,6 +28,8 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
 import ImgEl = api.dom.ImgEl;
 import LostConnectionDetector = api.system.LostConnectionDetector;
+import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
+import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
 
 declare var CONFIG;
 
@@ -51,11 +53,11 @@ function startLostConnectionDetector(): LostConnectionDetector {
     lostConnectionDetector.setAuthenticated(true);
     lostConnectionDetector.onConnectionLost(() => {
         api.notify.NotifyManager.get().hide(messageId);
-        messageId = api.notify.showError("Lost connection to server - Please wait until connection is restored", false);
+        messageId = api.notify.showError('Lost connection to server - Please wait until connection is restored', false);
     });
     lostConnectionDetector.onSessionExpired(() => {
         api.notify.NotifyManager.get().hide(messageId);
-        window.location.href = api.util.UriHelper.getToolUri("");
+        window.location.href = api.util.UriHelper.getToolUri('');
     });
     lostConnectionDetector.onConnectionRestored(() => {
         api.notify.NotifyManager.get().hide(messageId);
@@ -66,10 +68,10 @@ function startLostConnectionDetector(): LostConnectionDetector {
 }
 
 function initToolTip() {
-    const ID = api.StyleHelper.getCls("tooltip", api.StyleHelper.COMMON_PREFIX);
-    const CLS_ON = "tooltip_ON";
+    const ID = api.StyleHelper.getCls('tooltip', api.StyleHelper.COMMON_PREFIX);
+    const CLS_ON = 'tooltip_ON';
     const FOLLOW = true;
-    const DATA = "_tooltip";
+    const DATA = '_tooltip';
     const OFFSET_X = 0;
     const OFFSET_Y = 20;
 
@@ -90,14 +92,14 @@ function initToolTip() {
         if (left + tooltipWidth >= windowWidth) {
             left = windowWidth - tooltipWidth;
         }
-        wemjq("#" + ID).html(tooltipText).css({
-            position: "absolute", top, left
+        wemjq('#' + ID).html(tooltipText).css({
+            position: 'absolute', top, left
         }).show();
         };
-    wemjq(document).on("mouseenter", "*[title]:not([disabled]):visible", function (e: any) {
-        wemjq(window).data(DATA, wemjq(window).attr("title"));
-        wemjq(window).removeAttr("title").addClass(CLS_ON);
-        wemjq("<div id='" + ID + "' />").appendTo("body");
+    wemjq(document).on('mouseenter', '*[title]:not([disabled]):visible', function (e: any) {
+        wemjq(window).data(DATA, wemjq(window).attr('title'));
+        wemjq(window).removeAttr('title').addClass(CLS_ON);
+        wemjq(`<div id='${ID}' />`).appendTo('body');
         if (e.pageX) {
             pageX = e.pageX;
         }
@@ -106,14 +108,14 @@ function initToolTip() {
         }
         showAt(e);
     });
-    wemjq(document).on("mouseleave click", "." + CLS_ON, function (e: any) {
+    wemjq(document).on('mouseleave click', '.' + CLS_ON, function (e: any) {
         if (wemjq(window).data(DATA)) {
-            wemjq(window).attr("title", wemjq(window).data(DATA));
+            wemjq(window).attr('title', wemjq(window).data(DATA));
         }
         wemjq(window).removeClass(CLS_ON);
-        wemjq("#" + ID).remove();
+        wemjq('#' + ID).remove();
     });
-    if (FOLLOW) { wemjq(document).on("mousemove", "." + CLS_ON, showAt); }
+    if (FOLLOW) { wemjq(document).on('mousemove', '.' + CLS_ON, showAt); }
 }
 
 function updateTabTitle(title: string) {
@@ -122,10 +124,14 @@ function updateTabTitle(title: string) {
 
 function shouldUpdateFavicon(contentTypeName: ContentTypeName): boolean {
     // Chrome currently doesn't support SVG favicons which are served for not image contents
-    return contentTypeName.isImage() || navigator.userAgent.search("Chrome") === -1;
+    return contentTypeName.isImage() || navigator.userAgent.search('Chrome') === -1;
 }
 
 let faviconCache: {[url: string]: Element} = {};
+
+let iconUrlResolver = new ContentIconUrlResolver();
+
+let dataPreloaded: boolean;
 
 function clearFavicon() {
     // save current favicon hrefs
@@ -136,8 +142,8 @@ function clearFavicon() {
     });
 }
 
-function updateFavicon(content: Content, iconUrlResolver: ContentIconUrlResolver) {
-    let resolver = iconUrlResolver.setContent(content).setCrop(false);
+function updateFavicon(content: Content, urlResolver: ContentIconUrlResolver) {
+    let resolver = urlResolver.setContent(content).setCrop(false);
     let shouldUpdate = shouldUpdateFavicon(content.getType());
     for (let href in faviconCache) {
         if (faviconCache.hasOwnProperty(href)) {
@@ -163,6 +169,23 @@ function preLoadApplication() {
     let wizardParams = ContentWizardPanelParams.fromApp(application);
     if (wizardParams) {
         clearFavicon();
+
+        let body = api.dom.Body.get();
+        if (!body.isRendered() && !body.isRendering()) {
+            dataPreloaded = true;
+            // body is not rendered if the tab is in background
+            if (wizardParams.contentId) {
+                new GetContentByIdRequest(wizardParams.contentId).sendAndParse().then((content) => {
+                    updateFavicon(content, iconUrlResolver);
+                    updateTabTitle(content.getDisplayName());
+
+                });
+            } else {
+                new GetContentTypeByNameRequest(wizardParams.contentTypeName).sendAndParse().then((contentType) => {
+                    updateTabTitle(api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName()));
+                });
+            }
+        }
     }
 }
 
@@ -219,26 +242,30 @@ function startApplication() {
 
 function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDetector: LostConnectionDetector) {
     let wizard = new ContentWizardPanel(wizardParams);
-    let iconUrlResolver = new ContentIconUrlResolver();
 
     wizard.onDataLoaded(content => {
         let contentType = (<ContentWizardPanel>wizard).getContentType();
-        updateTabTitle(content.getDisplayName() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName()));
-        updateFavicon(content, iconUrlResolver);
+        if (!wizardParams.contentId || !dataPreloaded) {
+            // update favicon for new wizard after content has been created or in case data hasn't been preloaded
+            updateFavicon(content, iconUrlResolver);
+        }
+        if (!dataPreloaded) {
+            updateTabTitle(content.getDisplayName() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName()));
+        }
     });
     wizard.onWizardHeaderCreated(() => {
         // header will be ready after rendering is complete
         wizard.getWizardHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
-            if (event.getPropertyName() === "displayName") {
-                let contentType = (<ContentWizardPanel>wizard).getContentType(),
-                    name = <string>event.getNewValue() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName());
+            if (event.getPropertyName() === 'displayName') {
+                let contentType = (<ContentWizardPanel>wizard).getContentType();
+                let name = <string>event.getNewValue() || api.content.ContentUnnamed.prettifyUnnamed(contentType.getDisplayName());
 
                 updateTabTitle(name);
             }
         });
     });
 
-    const beforeUnload = event => {
+    api.dom.WindowDOM.get().onBeforeUnload(event => {
         if (wizard.isContentDeleted() || !connectionDetector.isConnected() || !connectionDetector.isAuthenticated()) {
             return;
         }
@@ -248,20 +275,10 @@ function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDe
             const e: any = event || window.event || { returnValue: '' };
             e['returnValue'] = message;
             return message;
-        } else {
-            // do close to notify everybody
-            wizard.close(false);
         }
-    };
-
-    wizard.onClosed((event) => {
-        if (!event.isCheckCanClose()) {
-            api.dom.WindowDOM.get().unBeforeUnload(beforeUnload);
-        }
-        window.close();
     });
 
-    api.dom.WindowDOM.get().onBeforeUnload(beforeUnload);
+    wizard.onClosed(event => window.close());
 
     api.content.event.EditContentEvent.on(ContentEventsProcessor.handleEdit);
 
@@ -269,9 +286,9 @@ function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDe
 }
 
 function startContentApplication(application: api.app.Application) {
-    let body = api.dom.Body.get(),
-        appBar = new api.app.bar.AppBar(application),
-        appPanel = new ContentAppPanel(application.getPath());
+    let body = api.dom.Body.get();
+    let appBar = new api.app.bar.AppBar(application);
+    let appPanel = new ContentAppPanel(application.getPath());
 
     let clientEventsListener = new ContentEventsListener();
     clientEventsListener.start();
@@ -299,16 +316,14 @@ function startContentApplication(application: api.app.Application) {
                             }).catch((reason: any) => {
                             api.DefaultErrorHandler.handle(reason);
                         }).done();
-                    }
-                    else {
+                    } else {
                         newContentDialog.setParentContent(newParentContent);
                         newContentDialog.open();
                     }
                 }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
-        }
-        else {
+        } else {
             newContentDialog.setParentContent(null);
             newContentDialog.open();
         }
@@ -320,6 +335,13 @@ function startContentApplication(application: api.app.Application) {
 
 preLoadApplication();
 
-window.onload = function () {
+let body = api.dom.Body.get();
+let renderListener = () => {
     startApplication();
+    body.unRendered(renderListener);
 };
+if (body.isRendered()) {
+    renderListener();
+} else {
+    body.onRendered(renderListener);
+}

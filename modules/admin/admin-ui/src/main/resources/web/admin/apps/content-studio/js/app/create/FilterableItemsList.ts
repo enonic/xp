@@ -1,5 +1,5 @@
-import {NewContentDialogList} from "./NewContentDialogList";
-import {NewContentDialogListItem} from "./NewContentDialogListItem";
+import {NewContentDialogList} from './NewContentDialogList';
+import {NewContentDialogListItem} from './NewContentDialogListItem';
 import ContentTypeSummary = api.schema.content.ContentTypeSummary;
 import Site = api.content.site.Site;
 import ApplicationKey = api.application.ApplicationKey;
@@ -18,8 +18,8 @@ export class FilterableItemsList extends NewContentDialogList {
         let valueLowerCase = value ? value.toLowerCase() : undefined;
 
         let filteredItems = this.listItems.filter((item: NewContentDialogListItem) => {
-            return (!valueLowerCase || (item.getDisplayName().toLowerCase().indexOf(valueLowerCase) != -1) ||
-                    (item.getName().toLowerCase().indexOf(valueLowerCase) != -1));
+            return (!valueLowerCase || (item.getDisplayName().toLowerCase().indexOf(valueLowerCase) !== -1) ||
+                    (item.getName().toLowerCase().indexOf(valueLowerCase) !== -1));
         });
 
         this.setItems(filteredItems);

@@ -1,10 +1,10 @@
-import "../../api.ts";
-import {UserTreeGridItem, UserTreeGridItemType, UserTreeGridItemBuilder} from "./UserTreeGridItem";
-import {UserTreeGridActions} from "./UserTreeGridActions";
-import {EditPrincipalEvent} from "./EditPrincipalEvent";
-import {PrincipalBrowseResetEvent} from "./filter/PrincipalBrowseResetEvent";
-import {PrincipalBrowseSearchEvent} from "./filter/PrincipalBrowseSearchEvent";
-import {UserItemsRowFormatter} from "./UserItemsRowFormatter";
+import '../../api.ts';
+import {UserTreeGridItem, UserTreeGridItemType, UserTreeGridItemBuilder} from './UserTreeGridItem';
+import {UserTreeGridActions} from './UserTreeGridActions';
+import {EditPrincipalEvent} from './EditPrincipalEvent';
+import {PrincipalBrowseResetEvent} from './filter/PrincipalBrowseResetEvent';
+import {PrincipalBrowseSearchEvent} from './filter/PrincipalBrowseSearchEvent';
+import {UserItemsRowFormatter} from './UserItemsRowFormatter';
 
 import GridColumn = api.ui.grid.GridColumn;
 import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
@@ -30,19 +30,19 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
     constructor() {
 
         super(new TreeGridBuilder<UserTreeGridItem>().setColumnConfig([{
-                name: "Name",
-                id: "name",
-                field: "displayName",
+                name: 'Name',
+                id: 'name',
+                field: 'displayName',
                 formatter: UserItemsRowFormatter.nameFormatter,
                 style: {minWidth: 250}
             }, {
-                name: "ModifiedTime",
-                id: "modifiedTime",
-                field: "modifiedTime",
+                name: 'ModifiedTime',
+                id: 'modifiedTime',
+                field: 'modifiedTime',
                 formatter: DateTimeFormatter.format,
-                style: {cssClass: "modified", minWidth: 150, maxWidth: 170}
+                style: {cssClass: 'modified', minWidth: 150, maxWidth: 170}
             }]).setPartialLoadEnabled(true).setLoadBufferSize(20).// rows count
-            prependClasses("user-tree-grid")
+            prependClasses('user-tree-grid')
         );
 
         this.treeGridActions = new UserTreeGridActions(this);
@@ -88,7 +88,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
 
         let type: UserTreeGridItemType = userItem.getType();
 
-        if (type == UserTreeGridItemType.ROLES || type == UserTreeGridItemType.GROUPS || type == UserTreeGridItemType.USERS) {
+        if (type === UserTreeGridItemType.ROLES || type === UserTreeGridItemType.GROUPS || type === UserTreeGridItemType.USERS) {
             return false;
         }
 
@@ -96,7 +96,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
     }
 
     isEmptyNode(node: TreeNode<UserTreeGridItem>): boolean {
-        return !node.getDataId() || node.getDataId() == "";
+        return !node.getDataId() || node.getDataId() === '';
     }
 
     getTreeGridActions(): UserTreeGridActions {
@@ -104,8 +104,8 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
     }
 
     updateUserNode(principal: api.security.Principal, userStore: api.security.UserStore) {
-        let userTreeGridItem,
-            builder = new UserTreeGridItemBuilder();
+        let userTreeGridItem;
+        let builder = new UserTreeGridItemBuilder();
 
         if (!principal) { // UserStore type
             userTreeGridItem = builder.setUserStore(userStore).setType(UserTreeGridItemType.USER_STORE).build();
@@ -167,7 +167,6 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
     getDataId(item: UserTreeGridItem): string {
         return item.getDataId();
     }
-
 
     hasChildren(item: UserTreeGridItem): boolean {
         return item.hasChildren();
@@ -241,7 +240,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
         let userStoreNode: UserTreeGridItem = null;
         let userStoreKey: UserStoreKey = null;
         // fetch principals from the user store, if parent node 'Groups' or 'Users' was selected
-        if(parentNode.getData().getType() != UserTreeGridItemType.ROLES) {
+        if(parentNode.getData().getType() !== UserTreeGridItemType.ROLES) {
             userStoreNode = parentNode.getParent().getData();
             userStoreKey = userStoreNode.getUserStore().getKey();
         }
@@ -284,13 +283,13 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
         } else if (itemType === UserTreeGridItemType.USERS) {
             return PrincipalType.USER;
         } else {
-            throw new Error("Invalid item type for folder with principals: " + UserTreeGridItemType[itemType]);
+            throw new Error('Invalid item type for folder with principals: ' + UserTreeGridItemType[itemType]);
         }
     }
 
     private addUsersGroupsToUserStore(parentItem: UserTreeGridItem): UserTreeGridItem[] {
         let items: UserTreeGridItem[] = [];
-        if (parentItem.getType() == UserTreeGridItemType.USER_STORE) {
+        if (parentItem.getType() === UserTreeGridItemType.USER_STORE) {
             let userStore = parentItem.getUserStore();
             let userFolderItem = new UserTreeGridItemBuilder().setUserStore(userStore).setType(UserTreeGridItemType.USERS).build();
             let groupFolderItem = new UserTreeGridItemBuilder().setUserStore(userStore).setType(UserTreeGridItemType.GROUPS).build();

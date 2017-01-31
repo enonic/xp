@@ -7,9 +7,9 @@ module api.util {
         }
 
         public static getTZOffset(): number {
-            let jan = new Date(2016, 0, 1),
-                jul = new Date(2016, 6, 1),
-                absoluteOffsetInHrs = Math.min(Math.abs(jan.getTimezoneOffset() / 60), Math.abs(jul.getTimezoneOffset() / 60));
+            let jan = new Date(2016, 0, 1);
+            let jul = new Date(2016, 6, 1);
+            let absoluteOffsetInHrs = Math.min(Math.abs(jan.getTimezoneOffset() / 60), Math.abs(jul.getTimezoneOffset() / 60));
 
             return jan.getTimezoneOffset() > 0 ? absoluteOffsetInHrs * -1 : absoluteOffsetInHrs;
         }
@@ -26,12 +26,12 @@ module api.util {
          */
         public static makeDateFromUTCString(value: string): Date {
 
-            let parsedYear: number = Number(value.substring(0, 4)),
-                parsedMonth: number = Number(value.substring(5, 7)),
-                parsedDayOfMonth: number = Number(value.substring(8, 10)),
-                parsedHours: number = Number(value.substring(11, 13)),
-                parsedMinutes: number = Number(value.substring(14, 16)),
-                parsedSeconds: number = Number(value.substring(17, 19));
+            let parsedYear: number = Number(value.substring(0, 4));
+            let parsedMonth: number = Number(value.substring(5, 7));
+            let parsedDayOfMonth: number = Number(value.substring(8, 10));
+            let parsedHours: number = Number(value.substring(11, 13));
+            let parsedMinutes: number = Number(value.substring(14, 16));
+            let parsedSeconds: number = Number(value.substring(17, 19));
 
             return new Date(Date.UTC(parsedYear, parsedMonth - 1, parsedDayOfMonth, parsedHours, parsedMinutes, parsedSeconds));
         }
@@ -42,8 +42,8 @@ module api.util {
          * @returns {string}
          */
         public static formatDate(date: Date): string {
-            let yearAsString = "" + date.getFullYear();
-            return yearAsString + "-" + this.padNumber(date.getMonth() + 1) + "-" + this.padNumber(date.getDate());
+            let yearAsString = '' + date.getFullYear();
+            return yearAsString + '-' + this.padNumber(date.getMonth() + 1) + '-' + this.padNumber(date.getDate());
         }
 
         /**
@@ -53,8 +53,8 @@ module api.util {
          * @returns {string}
          */
         public static formatTime(date: Date, includeSeconds: boolean = true): string {
-            return this.padNumber(date.getHours()) + ":" + this.padNumber(date.getMinutes()) +
-                   (includeSeconds ? ":" + this.padNumber(date.getSeconds()) : "");
+            return this.padNumber(date.getHours()) + ':' + this.padNumber(date.getMinutes()) +
+                   (includeSeconds ? ':' + this.padNumber(date.getSeconds()) : '');
         }
 
         private static padNumber(num: number): string {
@@ -67,7 +67,7 @@ module api.util {
          * @param date
          * @returns {string}
          */
-        public static parseDate(value: string, dateSeparator: string = "-", forceDaysBeOfTwoChars: boolean = false): Date {
+        public static parseDate(value: string, dateSeparator: string = '-', forceDaysBeOfTwoChars: boolean = false): Date {
             let dateStr = (value || '').trim();
             if (dateStr.length < 8 || dateStr.length > 10) {
                 return null;
@@ -77,13 +77,13 @@ module api.util {
                 return null;
             }
 
-            if (forceDaysBeOfTwoChars && parts[2].length != 2) {
+            if (forceDaysBeOfTwoChars && parts[2].length !== 2) {
                 return null;
             }
 
-            let parsedYear: number = Number(parts[0]),
-                parsedMonth: number = Number(parts[1]),
-                parsedDayOfMonth: number = Number(parts[2]);
+            let parsedYear: number = Number(parts[0]);
+            let parsedMonth: number = Number(parts[1]);
+            let parsedDayOfMonth: number = Number(parts[2]);
 
             let date = new Date(parsedYear, parsedMonth - 1, parsedDayOfMonth);
             return date.getFullYear() === parsedYear && date.getMonth() === (parsedMonth - 1) && date.getDate() === parsedDayOfMonth
@@ -92,13 +92,13 @@ module api.util {
         }
 
         /**
-         * Parses passed value to Time object. Expected format is only 5 chars like "12:10"
+         * Parses passed value to Time object. Expected format is only 5 chars like '12:10'
          * @param value
          * @returns {*}
          */
         private static parseTime(value: string): Time {
             let dateStr = (value || '').trim();
-            if (dateStr.length != 5) {
+            if (dateStr.length !== 5) {
                 return null;
             }
             let parts = dateStr.split(':');
@@ -114,7 +114,7 @@ module api.util {
         }
 
         /**
-         * Parses passed value into Date object. Expected length is 14-16 chars, value should be like "2015-04-17 06:00"
+         * Parses passed value into Date object. Expected length is 14-16 chars, value should be like '2015-04-17 06:00'
          * @param value
          * @returns {*}
          */
@@ -141,7 +141,7 @@ module api.util {
             return date;
         }
 
-        private static parseLongTime(value: string, timeSeparator: string = ":", fractionSeparator: string = "."): LongTime {
+        private static parseLongTime(value: string, timeSeparator: string = ':', fractionSeparator: string = '.'): LongTime {
             let timeStr = (value || '').trim();
             if (timeStr.length < 5 || timeStr.length > 12) {
                 return null;
@@ -187,8 +187,8 @@ module api.util {
          * @param fractionSeparator
          * @returns {*}
          */
-        static parseLongDateTime(value: string, dateTimeSeparator: string = "-", dateSeparator: string = "-", timeSeparator: string = ":",
-                                 fractionSeparator: string = "."): Date {
+        static parseLongDateTime(value: string, dateTimeSeparator: string = '-', dateSeparator: string = '-', timeSeparator: string = ':',
+                                 fractionSeparator: string = '.'): Date {
             let dateStr = (value || '').trim();
 
             let parts = dateStr.split(dateTimeSeparator);
@@ -217,7 +217,7 @@ module api.util {
          * @returns {number}
          */
         static isUTCdate(value: string): boolean {
-            if (value != null && (value[value.length - 1] == "Z" || value[value.length - 1] == "z")) {
+            if (value != null && (value[value.length - 1] === 'Z' || value[value.length - 1] === 'z')) {
                 return true;
             }
             return false;
@@ -226,7 +226,7 @@ module api.util {
         /**
          * E.g. numDaysInMonth(2015, 1) -> 28
          * @param year
-         * @param month 0 based month number of the year. 0 == January , 11 == December
+         * @param month 0 based month number of the year. 0 === January , 11 === December
          * @returns {number}
          */
         static numDaysInMonth(year: number, month: number): number {

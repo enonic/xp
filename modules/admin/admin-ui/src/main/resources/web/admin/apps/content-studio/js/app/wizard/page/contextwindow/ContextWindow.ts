@@ -1,11 +1,11 @@
-import "../../../../api.ts";
-import {LiveEditPageProxy} from "../LiveEditPageProxy";
-import {LiveFormPanel} from "../LiveFormPanel";
-import {InspectionsPanel} from "./inspect/InspectionsPanel";
-import {BaseInspectionPanel} from "./inspect/BaseInspectionPanel";
-import {EmulatorPanel} from "./EmulatorPanel";
-import {InsertablesPanel} from "./insert/InsertablesPanel";
-import {PageComponentsView} from "../../PageComponentsView";
+import '../../../../api.ts';
+import {LiveEditPageProxy} from '../LiveEditPageProxy';
+import {LiveFormPanel} from '../LiveFormPanel';
+import {InspectionsPanel} from './inspect/InspectionsPanel';
+import {BaseInspectionPanel} from './inspect/BaseInspectionPanel';
+import {EmulatorPanel} from './EmulatorPanel';
+import {InsertablesPanel} from './insert/InsertablesPanel';
+import {PageComponentsView} from '../../PageComponentsView';
 
 import PageTemplateKey = api.content.page.PageTemplateKey;
 import PageTemplate = api.content.page.PageTemplate;
@@ -80,20 +80,19 @@ export class ContextWindow extends api.ui.panel.DockedPanel {
     doRender(): Q.Promise<boolean> {
         return super.doRender().then((rendered) => {
 
-            this.addClass("context-window");
+            this.addClass('context-window');
 
-            this.ghostDragger = new api.dom.DivEl("ghost-dragger");
-            this.splitter = new api.dom.DivEl("splitter");
+            this.ghostDragger = new api.dom.DivEl('ghost-dragger');
+            this.splitter = new api.dom.DivEl('splitter');
 
             ResponsiveManager.onAvailableSizeChanged(this.liveFormPanel, (item: ResponsiveItem) => {
                 this.updateFrameSize();
             });
 
             this.appendChild(this.splitter);
-            this.addItem("Insert", false, this.insertablesPanel);
-            this.addItem("Inspect", false, this.inspectionsPanel);
-            this.addItem("Emulator", false, this.emulatorPanel);
-
+            this.addItem('Insert', false, this.insertablesPanel);
+            this.addItem('Inspect', false, this.inspectionsPanel);
+            this.addItem('Emulator', false, this.emulatorPanel);
 
             this.insertablesPanel.getComponentsView().onBeforeInsertAction(() => {
                 this.fixed = true;
@@ -157,17 +156,16 @@ export class ContextWindow extends api.ui.panel.DockedPanel {
     }
 
     isShown(): boolean {
-        return this.contextWindowState == ContextWindowState.SHOWN;
+        return this.contextWindowState === ContextWindowState.SHOWN;
     }
 
     isSlidingIn(): boolean {
-        return this.contextWindowState == ContextWindowState.SLIDING_IN;
+        return this.contextWindowState === ContextWindowState.SLIDING_IN;
     }
 
     isSlidingOut(): boolean {
-        return this.contextWindowState == ContextWindowState.SLIDING_OUT;
+        return this.contextWindowState === ContextWindowState.SLIDING_OUT;
     }
-
 
     isFixed(): boolean {
         return this.fixed;
@@ -225,13 +223,13 @@ export class ContextWindow extends api.ui.panel.DockedPanel {
     }
 
     private updateFrameSize() {
-        let isFloating = this.isFloating(),
-            displayModeChanged = this.hasClass('floating') && !isFloating,
-            contextWindowWidth = this.actualWidth || this.getEl().getWidth();
+        let isFloating = this.isFloating();
+        let displayModeChanged = this.hasClass('floating') && !isFloating;
+        let contextWindowWidth = this.actualWidth || this.getEl().getWidth();
 
         this.liveFormPanel.updateFrameContainerSize(!isFloating && this.isShown(), contextWindowWidth);
 
-        this.toggleClass("floating", isFloating);
+        this.toggleClass('floating', isFloating);
 
         if (displayModeChanged) {
             this.notifyDisplayModeChanged();
@@ -258,7 +256,7 @@ export class ContextWindow extends api.ui.panel.DockedPanel {
 
     unDisplayModeChanged(listener: () => void) {
         this.displayModeChangedListeners = this.displayModeChangedListeners.filter((currentListener: () => void) => {
-            return listener != currentListener;
+            return listener !== currentListener;
         });
     }
 

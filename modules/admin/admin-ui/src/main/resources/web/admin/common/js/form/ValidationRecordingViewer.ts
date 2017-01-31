@@ -3,9 +3,9 @@ module api.form {
     export class ValidationRecordingViewer extends api.ui.Viewer<ValidationRecording> {
 
         private list: api.dom.UlEl;
-        private minText: string = "Min {0} occurrences required";
-        private minTextSingle: string = "This field is required";
-        private maxText: string = "Max {0} occurrence{1} allowed";
+        private minText: string = 'Min {0} occurrences required';
+        private minTextSingle: string = 'This field is required';
+        private maxText: string = 'Max {0} occurrence{1} allowed';
 
         constructor() {
             super('validation-viewer');
@@ -21,7 +21,7 @@ module api.form {
                 this.list.removeChildren();
             }
 
-            if (object && this.list.getChildren().length == 0) {
+            if (object && this.list.getChildren().length === 0) {
                 object.breaksMinimumOccurrencesArray.forEach((path: ValidationRecordingPath) => {
                     this.list.appendChild(this.createItemView(path, true));
                 });

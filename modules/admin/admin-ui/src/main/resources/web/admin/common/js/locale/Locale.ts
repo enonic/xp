@@ -16,14 +16,14 @@ module api.locale {
                 return false;
             }
             let o = <Locale> other;
-            return this.tag == o.tag &&
-                   this.displayName == o.displayName &&
-                   this.language == o.language &&
-                   this.displayLanguage == o.displayLanguage &&
-                   this.variant == o.variant &&
-                   this.displayVariant == o.displayVariant &&
-                   this.country == o.displayCountry &&
-                   this.displayCountry == o.displayCountry;
+            return this.tag === o.tag &&
+                   this.displayName === o.displayName &&
+                   this.language === o.language &&
+                   this.displayLanguage === o.displayLanguage &&
+                   this.variant === o.variant &&
+                   this.displayVariant === o.displayVariant &&
+                   this.country === o.displayCountry &&
+                   this.displayCountry === o.displayCountry;
         }
 
         public static fromJson(json: api.locale.json.LocaleJson): Locale {

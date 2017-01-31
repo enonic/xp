@@ -1,5 +1,5 @@
-import "../../../../../api.ts";
-import {WidgetItemView} from "../../WidgetItemView";
+import '../../../../../api.ts';
+import {WidgetItemView} from '../../WidgetItemView';
 
 import ContentSummary = api.content.ContentSummary;
 import Attachments = api.content.attachment.Attachments;
@@ -40,7 +40,7 @@ export class AttachmentsWidgetItemView extends WidgetItemView {
         }
 
         return super.layout().then(() => {
-            if (this.content != undefined) {
+            if (this.content != null) {
                 return this.layoutAttachments();
             } else {
                 this.removeChildren();

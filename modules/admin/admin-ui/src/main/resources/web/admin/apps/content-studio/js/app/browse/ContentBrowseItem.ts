@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import AccessControlList = api.security.acl.AccessControlList;

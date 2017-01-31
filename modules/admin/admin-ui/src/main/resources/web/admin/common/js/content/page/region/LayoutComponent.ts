@@ -22,17 +22,16 @@ module api.content.page.region {
                 this.regions.getRegions().forEach((region: Region) => {
                     region.setParent(this);
                 });
-            }
-            else {
+            } else {
                 this.regions = Regions.create().build();
             }
 
             this.componentPropertyChangedEventHandler = (event: any) => this.forwardComponentPropertyChangedEvent(event);
             this.regionsChangedEventHandler = (event: any) => {
                 if (LayoutComponent.debug) {
-                    console.debug("LayoutComponent[" + this.getPath().toString() + "].onChanged: ", event);
+                    console.debug('LayoutComponent[' + this.getPath().toString() + '].onChanged: ', event);
                 }
-                this.notifyPropertyValueChanged("regions");
+                this.notifyPropertyValueChanged('regions');
             };
 
             this.registerRegionsListeners(this.regions);
@@ -58,9 +57,9 @@ module api.content.page.region {
 
             if (!api.ObjectHelper.equals(oldValue, value)) {
                 if (LayoutComponent.debug) {
-                    console.debug("LayoutComponent[" + this.getPath().toString() + "].regions reassigned: ", event);
+                    console.debug('LayoutComponent[' + this.getPath().toString() + '].regions reassigned: ', event);
                 }
-                this.notifyPropertyChanged("regions");
+                this.notifyPropertyChanged('regions');
             }
         }
 
@@ -124,7 +123,6 @@ module api.content.page.region {
             regions.unComponentPropertyChanged(this.componentPropertyChangedEventHandler);
         }
 
-
         onComponentPropertyChanged(listener: (event: ComponentPropertyChangedEvent)=>void) {
             this.componentPropertyChangedListeners.push(listener);
         }
@@ -132,7 +130,7 @@ module api.content.page.region {
         unComponentPropertyChanged(listener: (event: ComponentPropertyChangedEvent)=>void) {
             this.componentPropertyChangedListeners =
             this.componentPropertyChangedListeners.filter((curr: (event: ComponentPropertyChangedEvent)=>void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 

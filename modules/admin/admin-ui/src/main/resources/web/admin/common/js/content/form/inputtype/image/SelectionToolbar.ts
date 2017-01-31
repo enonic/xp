@@ -17,17 +17,17 @@ module api.content.form.inputtype.image {
         private removeClickListeners: {(): void;}[] = [];
 
         constructor() {
-            super("selection-toolbar");
+            super('selection-toolbar');
 
-            this.editButton = new Button("Edit");
-            this.editButton.addClass("large edit");
+            this.editButton = new Button('Edit');
+            this.editButton.addClass('large edit');
             this.editButton.onClicked((event: MouseEvent) => {
                 this.notifyEditClicked();
             });
             this.appendChild(this.editButton);
 
-            this.removeButton = new Button("Remove");
-            this.removeButton.addClass("large red");
+            this.removeButton = new Button('Remove');
+            this.removeButton.addClass('large red');
             this.removeButton.onClicked((event: MouseEvent) => {
                 this.notifyRemoveClicked();
             });
@@ -41,9 +41,9 @@ module api.content.form.inputtype.image {
         }
 
         private refreshUI() {
-            this.editButton.setLabel("Edit" + (this.editableCount > 1 ? " (" + this.editableCount + ")" : ""));
+            this.editButton.setLabel('Edit' + (this.editableCount > 1 ? ' (' + this.editableCount + ')' : ''));
             this.editButton.setEnabled(this.editableCount > 0);
-            this.removeButton.setLabel("Remove " + (this.removableCount > 1 ? " (" + this.removableCount + ")" : ""));
+            this.removeButton.setLabel('Remove ' + (this.removableCount > 1 ? ' (' + this.removableCount + ')' : ''));
         }
 
         notifyEditClicked() {
@@ -59,7 +59,7 @@ module api.content.form.inputtype.image {
         unEditClicked(listener: {(): void;}) {
             this.editClickListeners = this.editClickListeners
                 .filter(function (curr: {(): void;}) {
-                    return curr != listener;
+                    return curr !== listener;
                 });
         }
 

@@ -12,7 +12,7 @@ module api.ui.form {
 
         constructor(className?: string) {
             super(className);
-            this.addClass("form-view");
+            this.addClass('form-view');
             this.preventSubmit();
 
         }
@@ -101,7 +101,7 @@ module api.ui.form {
 
         unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
             this.validityChangedListeners = this.validityChangedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 

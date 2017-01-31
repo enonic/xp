@@ -183,7 +183,6 @@ module api.ui {
                     this.notifyAfterExecute();
                 });
 
-
             }
         }
 
@@ -194,7 +193,7 @@ module api.ui {
 
         unExecuted(listener: (action:Action) => wemQ.Promise<any>|void): Action {
             this.executionListeners = this.executionListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
             return this;
         }
@@ -205,7 +204,7 @@ module api.ui {
 
         unPropertyChanged(listener: () => void) {
             this.propertyChangedListeners = this.propertyChangedListeners.filter((currentListener: () => void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
@@ -215,7 +214,7 @@ module api.ui {
 
         unBeforeExecute(listener: () => void) {
             this.beforeExecuteListeners = this.beforeExecuteListeners.filter((currentListener: () => void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
@@ -231,7 +230,7 @@ module api.ui {
 
         unAfterExecute(listener: (action: Action) => void) {
             this.afterExecuteListeners = this.afterExecuteListeners.filter((currentListener: () => void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 

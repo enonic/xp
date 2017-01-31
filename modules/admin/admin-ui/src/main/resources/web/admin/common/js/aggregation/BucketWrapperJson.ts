@@ -7,6 +7,4 @@ module api.aggregation {
 
     }
 
-
 }
-

@@ -1,21 +1,21 @@
-import "../../../api.ts";
-import {ContentWizardPanel} from "../ContentWizardPanel";
-import {DefaultModels} from "./DefaultModels";
-import {EmulatorPanel} from "./contextwindow/EmulatorPanel";
-import {LiveEditPageProxy} from "./LiveEditPageProxy";
-import {TextInspectionPanel} from "./contextwindow/inspect/region/TextInspectionPanel";
-import {ContentInspectionPanel} from "./contextwindow/inspect/ContentInspectionPanel";
-import {RegionInspectionPanel} from "./contextwindow/inspect/region/RegionInspectionPanel";
-import {ImageInspectionPanel} from "./contextwindow/inspect/region/ImageInspectionPanel";
-import {LayoutInspectionPanel} from "./contextwindow/inspect/region/LayoutInspectionPanel";
-import {FragmentInspectionPanel} from "./contextwindow/inspect/region/FragmentInspectionPanel";
-import {PartInspectionPanel} from "./contextwindow/inspect/region/PartInspectionPanel";
-import {PageInspectionPanel} from "./contextwindow/inspect/page/PageInspectionPanel";
-import {InspectionsPanel, InspectionsPanelConfig} from "./contextwindow/inspect/InspectionsPanel";
-import {InsertablesPanel} from "./contextwindow/insert/InsertablesPanel";
-import {ContextWindowController} from "./contextwindow/ContextWindowController";
-import {ContextWindow, ContextWindowConfig} from "./contextwindow/ContextWindow";
-import {ShowContentFormEvent} from "../ShowContentFormEvent";
+import '../../../api.ts';
+import {ContentWizardPanel} from '../ContentWizardPanel';
+import {DefaultModels} from './DefaultModels';
+import {EmulatorPanel} from './contextwindow/EmulatorPanel';
+import {LiveEditPageProxy} from './LiveEditPageProxy';
+import {TextInspectionPanel} from './contextwindow/inspect/region/TextInspectionPanel';
+import {ContentInspectionPanel} from './contextwindow/inspect/ContentInspectionPanel';
+import {RegionInspectionPanel} from './contextwindow/inspect/region/RegionInspectionPanel';
+import {ImageInspectionPanel} from './contextwindow/inspect/region/ImageInspectionPanel';
+import {LayoutInspectionPanel} from './contextwindow/inspect/region/LayoutInspectionPanel';
+import {FragmentInspectionPanel} from './contextwindow/inspect/region/FragmentInspectionPanel';
+import {PartInspectionPanel} from './contextwindow/inspect/region/PartInspectionPanel';
+import {PageInspectionPanel} from './contextwindow/inspect/page/PageInspectionPanel';
+import {InspectionsPanel, InspectionsPanelConfig} from './contextwindow/inspect/InspectionsPanel';
+import {InsertablesPanel} from './contextwindow/insert/InsertablesPanel';
+import {ContextWindowController} from './contextwindow/ContextWindowController';
+import {ContextWindow, ContextWindowConfig} from './contextwindow/ContextWindow';
+import {ShowContentFormEvent} from '../ShowContentFormEvent';
 
 import PageTemplate = api.content.page.PageTemplate;
 import PageTemplateKey = api.content.page.PageTemplateKey;
@@ -130,7 +130,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
     private liveEditPageProxy: LiveEditPageProxy;
 
     constructor(config: LiveFormPanelConfig) {
-        super("live-form-panel");
+        super('live-form-panel');
         this.contentWizardPanel = config.contentWizardPanel;
         this.defaultModels = config.defaultModels;
 
@@ -214,7 +214,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         return super.doRender().then((rendered: boolean) => {
 
             api.dom.WindowDOM.get().onBeforeUnload((event) => {
-                console.log("onbeforeunload " + this.liveEditModel.getContent().getDisplayName());
+                console.log('onbeforeunload ' + this.liveEditModel.getContent().getDisplayName());
                 // the reload is triggered by the main frame,
                 // so let the live edit know it to skip the popup
                 this.liveEditPageProxy.skipNextReloadConfirmation(true);
@@ -222,16 +222,16 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
             this.liveEditPageProxy.getPlaceholderIFrame().onShown(() => {
                 // If we are about to show blank placeholder in the editor then remove
-                // "rendering" class from the panel so that it's instantly visible
-                this.removeClass("rendering");
+                // 'rendering' class from the panel so that it's instantly visible
+                this.removeClass('rendering');
             });
 
-            this.frameContainer = new Panel("frame-container");
+            this.frameContainer = new Panel('frame-container');
             this.frameContainer.appendChildren<api.dom.Element>(this.liveEditPageProxy.getIFrame(),
                 this.liveEditPageProxy.getPlaceholderIFrame(), this.liveEditPageProxy.getDragMask());
 
-            let noPreviewMessageEl = new api.dom.PEl("no-preview-message").setHtml(
-                "Failed to render content preview.<br/> Please check logs for errors or open preview in a new window", false);
+            let noPreviewMessageEl = new api.dom.PEl('no-preview-message').setHtml(
+                'Failed to render content preview.<br/> Please check logs for errors or open preview in a new window', false);
 
             // append mask here in order for the context window to be above
             this.appendChildren<api.dom.Element>(this.frameContainer, this.liveEditPageProxy.getLoadMask(), this.contextWindow,
@@ -301,10 +301,10 @@ export class LiveFormPanel extends api.ui.panel.Panel {
                 const oldValue = event.getOldValue();
                 const newValue = event.getNewValue();
 
-                if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && !api.ObjectHelper.objectEquals(oldValue, newValue)) {
+                if (event.getPropertyName() === PageModel.PROPERTY_CONTROLLER && !api.ObjectHelper.objectEquals(oldValue, newValue)) {
                     this.contentWizardPanel.saveChanges();
                 }
-                if (event.getPropertyName() == PageModel.PROPERTY_TEMPLATE) {
+                if (event.getPropertyName() === PageModel.PROPERTY_TEMPLATE) {
 
                     // do not reload page if there was no template in pageModel before and if new template is the default one -
                     // case when switching automatic template to default
@@ -340,7 +340,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
                             }
                         }
                     } else {
-                        console.debug("ComponentView by path not found: " + event.getPath().toString());
+                        console.debug('ComponentView by path not found: ' + event.getPath().toString());
                     }
                 }
             } else if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponent(), ImageComponent)) {
@@ -387,9 +387,9 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
     loadPage(clearInspection: boolean = true) {
         if (LiveFormPanel.debug) {
-            console.debug("LiveFormPanel.loadPage at " + new Date().toISOString());
+            console.debug('LiveFormPanel.loadPage at ' + new Date().toISOString());
         }
-        if (this.pageSkipReload == false && !this.pageLoading) {
+        if (this.pageSkipReload === false && !this.pageLoading) {
 
             if (clearInspection) {
                 this.clearSelection();
@@ -410,13 +410,15 @@ export class LiveFormPanel extends api.ui.panel.Panel {
                     this.pageView.setLocked(true);
                     this.lockPageAfterProxyLoad = false;
                 }
+
+                this.contextWindow.clearSelection(); //resetting selection, selected item may already be gone
             });
         }
     }
 
     saveAndReloadOnlyComponent(componentView: ComponentView<Component>) {
 
-        api.util.assertNotNull(componentView, "componentView cannot be null");
+        api.util.assertNotNull(componentView, 'componentView cannot be null');
 
         this.pageSkipReload = true;
         let componentUrl = api.rendering.UriHelper.getComponentUri(this.content.getContentId().toString(),
@@ -442,9 +444,9 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             return;
         }
         if (contextWindowShown && contextWindowWidth) {
-            this.frameContainer.getEl().setWidth("calc(100% - " + (contextWindowWidth - 1) + "px)");
+            this.frameContainer.getEl().setWidth('calc(100% - ' + (contextWindowWidth - 1) + 'px)');
         } else {
-            this.frameContainer.getEl().setWidth("100%");
+            this.frameContainer.getEl().setWidth('100%');
         }
     }
 
@@ -519,7 +521,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
         this.liveEditPageProxy.onComponentRemoved((event: ComponentRemovedEvent) => {
 
-            if (!this.pageModel.isPageTemplate() && this.pageModel.getMode() == PageMode.AUTOMATIC) {
+            if (!this.pageModel.isPageTemplate() && this.pageModel.getMode() === PageMode.AUTOMATIC) {
                 this.pageModel.initializePageFromDefault(this);
             }
 
@@ -655,34 +657,29 @@ export class LiveFormPanel extends api.ui.panel.Panel {
     }
 
     private inspectComponent(componentView: ComponentView<Component>) {
-        api.util.assertNotNull(componentView, "componentView cannot be null");
+        api.util.assertNotNull(componentView, 'componentView cannot be null');
 
         if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, ImageComponentView)) {
             this.imageInspectionPanel.setImageComponent(<ImageComponentView>componentView);
             this.contextWindow.showInspectionPanel(this.imageInspectionPanel);
-        }
-        else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, PartComponentView)) {
+        } else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, PartComponentView)) {
             this.partInspectionPanel.setPartComponent(<PartComponentView>componentView);
             this.contextWindow.showInspectionPanel(this.partInspectionPanel);
-        }
-        else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, LayoutComponentView)) {
+        } else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, LayoutComponentView)) {
             this.layoutInspectionPanel.setLayoutComponent(<LayoutComponentView>componentView);
             this.contextWindow.showInspectionPanel(this.layoutInspectionPanel);
-        }
-        else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, TextComponentView)) {
+        } else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, TextComponentView)) {
             this.textInspectionPanel.setTextComponent(<TextComponentView>componentView);
             this.contextWindow.showInspectionPanel(this.textInspectionPanel);
-        }
-        else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, FragmentComponentView)) {
+        } else if (api.ObjectHelper.iFrameSafeInstanceOf(componentView, FragmentComponentView)) {
             this.fragmentInspectionPanel.setFragmentComponent(<FragmentComponentView>componentView);
             this.contextWindow.showInspectionPanel(this.fragmentInspectionPanel);
-        }
-        else {
-            throw new Error("ComponentView cannot be selected: " + api.ClassHelper.getClassName(componentView));
+        } else {
+            throw new Error('ComponentView cannot be selected: ' + api.ClassHelper.getClassName(componentView));
         }
     }
 
     isShown(): boolean {
-        return !api.ObjectHelper.stringEquals(this.getHTMLElement().style.display, "none");
+        return !api.ObjectHelper.stringEquals(this.getHTMLElement().style.display, 'none');
     }
 }

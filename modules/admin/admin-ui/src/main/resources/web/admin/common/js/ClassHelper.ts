@@ -19,7 +19,7 @@ module api {
             } else {
                 let funcNameRegex = /function (.+)\(/;
                 let results = (funcNameRegex).exec(func.toString());
-                return (results && results.length > 1) ? results[1] : "";
+                return (results && results.length > 1) ? results[1] : '';
             }
         }
 
@@ -32,7 +32,7 @@ module api {
          */
 
         static getClassName(instance: any): string {
-            return ClassHelper.getFunctionName(instance["constructor"]);
+            return ClassHelper.getFunctionName(instance['constructor']);
         }
 
         /**
@@ -44,7 +44,7 @@ module api {
          */
 
         static getClass(instance: any): Function {
-            return instance["constructor"];
+            return instance['constructor'];
         }
 
         /**
@@ -56,7 +56,7 @@ module api {
 
         static getModuleName(instance: any): string {
             let fullName = ClassHelper.getFullName(instance);
-            return fullName ? fullName.substr(0, fullName.lastIndexOf(".")) : "";
+            return fullName ? fullName.substr(0, fullName.lastIndexOf('.')) : '';
         }
 
         /**
@@ -66,9 +66,9 @@ module api {
          * @returns {string} full class name.
          */
         static getFullName(instance: any): string {
-            let constructor = (typeof instance === 'function') ? instance : instance["constructor"];
+            let constructor = (typeof instance === 'function') ? instance : instance['constructor'];
             //last one expression for IE
-            return ClassHelper.findPath(window, constructor) || constructor["name"] ||
+            return ClassHelper.findPath(window, constructor) || constructor['name'] ||
                    constructor.toString().match(/^function\s*([^\s(]+)/)[1];
         }
 

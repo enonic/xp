@@ -17,7 +17,7 @@ module api.ui.uploader {
         }
 
         getId(): string {
-            return this.file.id + "";
+            return this.file.id + '';
         }
 
         setId(id: string): UploadItem<MODEL> {
@@ -96,11 +96,11 @@ module api.ui.uploader {
                     //!api.ObjectHelper.stringEquals(this.file.type, other.file.type) ||
                     !api.ObjectHelper.numberEquals(this.file.size, other.file.size) ||
                     //!api.ObjectHelper.numberEquals(this.file.origSize, other.file.origSize) ||
-                    this.file.status != this.file.status) {
+                    this.file.status !== this.file.status) {
                     return false;
                 }
 
-                /*if (this.file.lastModifiedDate.getMilliseconds() != other.file.lastModifiedDate.getMilliseconds()) {
+                /*if (this.file.lastModifiedDate.getMilliseconds() !== other.file.lastModifiedDate.getMilliseconds()) {
                     return false;
                  }*/
 

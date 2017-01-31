@@ -17,8 +17,8 @@ module api.content.form.inputtype.tag {
         private tagSuggester: ContentTagSuggester;
 
         constructor(context: api.content.form.inputtype.ContentInputTypeViewContext) {
-            super("tag");
-            this.addClass("input-type-view");
+            super('tag');
+            this.addClass('input-type-view');
 
             this.context = context;
 
@@ -30,8 +30,7 @@ module api.content.form.inputtype.tag {
         private resolveDataPath(context: api.content.form.inputtype.ContentInputTypeViewContext): PropertyPath {
             if (context.parentDataPath) {
                 return PropertyPath.fromParent(context.parentDataPath, PropertyPathElement.fromString(context.input.getName()));
-            }
-            else {
+            } else {
                 return new PropertyPath([PropertyPathElement.fromString(context.input.getName())], false);
             }
         }
@@ -67,10 +66,9 @@ module api.content.form.inputtype.tag {
             this.tags.onTagAdded((event: api.ui.tags.TagAddedEvent) => {
                 this.ignorePropertyChange = true;
                 let value = new Value(event.getValue(), ValueTypes.STRING);
-                if (this.tags.countTags() == 1) {
+                if (this.tags.countTags() === 1) {
                     this.getPropertyArray().set(0, value);
-                }
-                else {
+                } else {
                     this.getPropertyArray().add(value);
                 }
                 this.validate(false);
@@ -88,7 +86,6 @@ module api.content.form.inputtype.tag {
 
             return wemQ<void>(null);
         }
-
 
         update(propertyArray: api.data.PropertyArray, unchangedOnly?: boolean): Q.Promise<void> {
             let superPromise = super.update(propertyArray, unchangedOnly);
@@ -131,5 +128,5 @@ module api.content.form.inputtype.tag {
         }
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("Tag", Tag));
+    api.form.inputtype.InputTypeManager.register(new api.Class('Tag', Tag));
 }

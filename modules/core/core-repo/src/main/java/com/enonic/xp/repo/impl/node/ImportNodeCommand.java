@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.node;
 
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
@@ -68,28 +69,43 @@ public class ImportNodeCommand
 
     private Node createNode()
     {
-        final CreateNodeParams createNodeParams = CreateNodeParams.create().
-            setNodeId( this.importNode.id() ).
-            nodeType( this.importNode.getNodeType() ).
-            childOrder( this.importNode.getChildOrder() ).
-            setBinaryAttachments( this.binaryAttachments ).
-            data( this.importNode.data() ).
-            indexConfigDocument( this.importNode.getIndexConfigDocument() ).
-            insertManualStrategy( this.insertManualStrategy ).
-            manualOrderValue( this.importNode.getManualOrderValue() ).
-            name( this.importNode.name().toString() ).
-            parent( this.importNode.parentPath() ).
-            inheritPermissions( this.importNode.inheritsPermissions() ).
-            permissions( this.importNode.getPermissions() ).
-            setNodeId( this.importNode.id() ).
-            build();
+        if ( this.importNode.isRoot() )
+        {
+            final CreateRootNodeParams createRootNodeParams = CreateRootNodeParams.create().
+                permissions( this.importNode.getPermissions() ).
+                childOrder( this.importNode.getChildOrder() ).
+                build();
 
-        return CreateNodeCommand.create( this ).
-            params( createNodeParams ).
-            timestamp( this.importNode.getTimestamp() ).
-            binaryService( binaryService ).
-            build().
-            execute();
+            return CreateRootNodeCommand.create( this ).
+                params( createRootNodeParams ).
+                build().
+                execute();
+        }
+        else
+        {
+            final CreateNodeParams createNodeParams = CreateNodeParams.create().
+                setNodeId( this.importNode.id() ).
+                nodeType( this.importNode.getNodeType() ).
+                childOrder( this.importNode.getChildOrder() ).
+                setBinaryAttachments( this.binaryAttachments ).
+                data( this.importNode.data() ).
+                indexConfigDocument( this.importNode.getIndexConfigDocument() ).
+                insertManualStrategy( this.insertManualStrategy ).
+                manualOrderValue( this.importNode.getManualOrderValue() ).
+                name( this.importNode.name().toString() ).
+                parent( this.importNode.parentPath() ).
+                inheritPermissions( this.importNode.inheritsPermissions() ).
+                permissions( this.importNode.getPermissions() ).
+                setNodeId( this.importNode.id() ).
+                build();
+
+            return CreateNodeCommand.create( this ).
+                params( createNodeParams ).
+                timestamp( this.importNode.getTimestamp() ).
+                binaryService( binaryService ).
+                build().
+                execute();
+        }
     }
 
     private Node updateNode( final Node existingNode )

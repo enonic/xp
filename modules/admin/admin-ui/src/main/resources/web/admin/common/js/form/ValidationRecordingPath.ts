@@ -23,14 +23,13 @@ module api.form {
         }
 
         private resolveRefString(): string {
-            let s = "";
+            let s = '';
             if (this.parentDataSet && !this.parentDataSet.isRoot()) {
                 s += this.parentDataSet.toString();
                 if (this.dataName) {
-                    s += "." + this.dataName;
+                    s += '.' + this.dataName;
                 }
-            }
-            else {
+            } else {
                 if (this.dataName) {
                     s += this.dataName;
                 }
@@ -69,15 +68,15 @@ module api.form {
         }
 
         contains(other: ValidationRecordingPath): boolean {
-            let fullPath = PropertyPath.fromString(this.refString),
-                otherPath = PropertyPath.fromString(other.refString);
+            let fullPath = PropertyPath.fromString(this.refString);
+            let otherPath = PropertyPath.fromString(other.refString);
 
             if (fullPath.elementCount() <= otherPath.elementCount()) {
                 return false;
             }
 
             return otherPath.getElements().every((whatEl, whatIdx) => {
-                return fullPath.getElement(whatIdx).toString() == whatEl.toString();
+                return fullPath.getElement(whatIdx).toString() === whatEl.toString();
             });
         }
 

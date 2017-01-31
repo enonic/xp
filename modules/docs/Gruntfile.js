@@ -9,7 +9,7 @@ module.exports = function (grunt) {
                     '../lib/lib-*/src/main/resources/site/lib/xp/*.js'
                 ],
                 options: {
-                    destination: 'target/jsdoc',
+                    destination: 'build/jsdoc',
                     readme: 'src/jsdoc/index.md',
                     template: 'src/jsdoc/template',
                     configure: 'src/jsdoc/conf.json'

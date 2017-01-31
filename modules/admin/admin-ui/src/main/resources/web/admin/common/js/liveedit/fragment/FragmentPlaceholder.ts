@@ -20,7 +20,7 @@ module api.liveedit.fragment {
 
         constructor(fragmentView: FragmentComponentView) {
             super();
-            this.addClassEx("fragment-placeholder");
+            this.addClassEx('fragment-placeholder');
             this.fragmentComponentView = fragmentView;
 
             this.comboboxWrapper = new api.dom.DivEl('rich-combobox-wrapper');
@@ -44,7 +44,7 @@ module api.liveedit.fragment {
 
                         if (fragmentComponent && api.ObjectHelper.iFrameSafeInstanceOf(fragmentComponent.getType(), LayoutComponentType)) {
                             this.comboBox.clearSelection();
-                            new api.liveedit.ShowWarningLiveEditEvent("Layout within layout not allowed").fire();
+                            new api.liveedit.ShowWarningLiveEditEvent('Layout within layout not allowed').fire();
 
                         } else {
                             component.setFragment(fragmentContent.getContentId(), fragmentContent.getDisplayName());

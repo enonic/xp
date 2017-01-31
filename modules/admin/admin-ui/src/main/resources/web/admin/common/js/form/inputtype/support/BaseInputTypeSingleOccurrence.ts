@@ -23,8 +23,8 @@ module api.form.inputtype.support {
         private inputValueChangedListeners: {(event: api.form.inputtype.ValueChangedEvent): void}[] = [];
 
         constructor(ctx: api.form.inputtype.InputTypeViewContext, className?: string) {
-            super("input-type-view" + ( className ? " " + className : ""));
-            api.util.assertNotNull(ctx, "CONTEXT cannot be null");
+            super('input-type-view' + ( className ? ' ' + className : ''));
+            api.util.assertNotNull(ctx, 'CONTEXT cannot be null');
             this.context = ctx;
 
             this.propertyListener = (event: api.data.PropertyValueChangedEvent) => {
@@ -60,7 +60,7 @@ module api.form.inputtype.support {
 
         layoutProperty(input: api.form.Input, property: Property): wemQ.Promise<void> {
 
-            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
+            throw new Error('Must be implemented by inheritor: ' + api.ClassHelper.getClassName(this));
         }
 
         update(propertyArray: PropertyArray, unchangedOnly?: boolean): wemQ.Promise<void> {
@@ -71,11 +71,11 @@ module api.form.inputtype.support {
         }
 
         reset() {
-            throw Error("Must be implemented in inheritors");
+            throw Error('Must be implemented in inheritors');
         }
 
         updateProperty(property: Property, unchangedOnly?: boolean): wemQ.Promise<void> {
-            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
+            throw new Error('Must be implemented by inheritor: ' + api.ClassHelper.getClassName(this));
         }
 
         protected registerProperty(property: Property) {
@@ -100,11 +100,11 @@ module api.form.inputtype.support {
         }
 
         getValueType(): ValueType {
-            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
+            throw new Error('Must be implemented by inheritor: ' + api.ClassHelper.getClassName(this));
         }
 
         newInitialValue(): Value {
-            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
+            throw new Error('Must be implemented by inheritor: ' + api.ClassHelper.getClassName(this));
         }
 
         displayValidationErrors(value: boolean) {
@@ -117,7 +117,7 @@ module api.form.inputtype.support {
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
 
-            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
+            throw new Error('Must be implemented by inheritor: ' + api.ClassHelper.getClassName(this));
         }
 
         protected notifyValidityChanged(event: api.form.inputtype.InputValidityChangedEvent) {
@@ -132,7 +132,7 @@ module api.form.inputtype.support {
 
         unValidityChanged(listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) {
             this.inputValidityChangedListeners.filter((currentListener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) => {
-                return listener == currentListener;
+                return listener === currentListener;
             });
         }
 
@@ -153,19 +153,19 @@ module api.form.inputtype.support {
         }
 
         onFocus(listener: (event: FocusEvent) => void) {
-            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
+            throw new Error('Must be implemented by inheritor: ' + api.ClassHelper.getClassName(this));
         }
 
         unFocus(listener: (event: FocusEvent) => void) {
-            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
+            throw new Error('Must be implemented by inheritor: ' + api.ClassHelper.getClassName(this));
         }
 
         onBlur(listener: (event: FocusEvent) => void) {
-            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
+            throw new Error('Must be implemented by inheritor: ' + api.ClassHelper.getClassName(this));
         }
 
         unBlur(listener: (event: FocusEvent) => void) {
-            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
+            throw new Error('Must be implemented by inheritor: ' + api.ClassHelper.getClassName(this));
         }
 
         onEditContentRequest(listener: (content: api.content.ContentSummary) => void) {

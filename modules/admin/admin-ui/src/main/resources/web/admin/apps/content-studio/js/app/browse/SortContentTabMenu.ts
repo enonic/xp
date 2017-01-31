@@ -1,6 +1,6 @@
-import "../../api.ts";
-import {SortContentTabMenuItem} from "./SortContentTabMenuItem";
-import {SortContentTabMenuItems} from "./SortContentTabMenuItems";
+import '../../api.ts';
+import {SortContentTabMenuItem} from './SortContentTabMenuItem';
+import {SortContentTabMenuItems} from './SortContentTabMenuItems';
 
 import ChildOrder = api.content.order.ChildOrder;
 import ContentSummary = api.content.ContentSummary;
@@ -18,7 +18,7 @@ export class SortContentTabMenu extends api.ui.tab.TabMenu {
     private dropdownHandle: DropdownHandle;
 
     constructor() {
-        super("sort-tab-menu");
+        super('sort-tab-menu');
 
         this.navigationItems = new SortContentTabMenuItems();
         this.addNavigationItems(this.navigationItems.getAllItems());
@@ -139,14 +139,13 @@ export class SortContentTabMenu extends api.ui.tab.TabMenu {
         this.selectNavigationItemByOrder(this.navigationItems.SORT_MANUAL_ITEM.getChildOrder());
     }
 
-
     onSortOrderChanged(listener: () => void) {
         this.sortOrderChangedListeners.push(listener);
     }
 
     unSortOrderChanged(listener: () => void) {
         this.sortOrderChangedListeners = this.sortOrderChangedListeners.filter((currentListener: () => void) => {
-            return listener != currentListener;
+            return listener !== currentListener;
         });
     }
 

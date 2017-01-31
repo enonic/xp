@@ -6,13 +6,13 @@ module api.content.order {
 
     export class ChildOrder implements api.Equitable {
 
-        private DEFAULT_ORDER_DIRECTION_VALUE: string = "DESC";
+        private DEFAULT_ORDER_DIRECTION_VALUE: string = 'DESC';
 
         static DEFAULT_ORDER_FIELD_VALUE: string = api.query.QueryField.MODIFIED_TIME;
 
-        static ASC_ORDER_DIRECTION_VALUE: string = "ASC";
+        static ASC_ORDER_DIRECTION_VALUE: string = 'ASC';
 
-        static DESC_ORDER_DIRECTION_VALUE: string = "DESC";
+        static DESC_ORDER_DIRECTION_VALUE: string = 'DESC';
 
         static MANUAL_ORDER_VALUE_KEY: string = api.query.QueryField.MANUAL_ORDER_VALUE;
 
@@ -33,7 +33,6 @@ module api.content.order {
 
         }
 
-
         static fromJson(childOrderJson: ChildOrderJson): ChildOrder {
             let childOrder: ChildOrder = new ChildOrder();
             childOrderJson.orderExpressions.forEach((orderExprJson: OrderExprWrapperJson) => {
@@ -47,7 +46,7 @@ module api.content.order {
         }
 
         isManual(): boolean {
-            if (this.orderExpressions.length == 0) {
+            if (this.orderExpressions.length === 0) {
                 return false;
             }
             let order = this.orderExpressions[0];
@@ -59,8 +58,8 @@ module api.content.order {
         }
 
         isDesc(): boolean {
-            if (this.orderExpressions.length == 0) {
-                return this.DEFAULT_ORDER_DIRECTION_VALUE == ChildOrder.DESC_ORDER_DIRECTION_VALUE;
+            if (this.orderExpressions.length === 0) {
+                return this.DEFAULT_ORDER_DIRECTION_VALUE === ChildOrder.DESC_ORDER_DIRECTION_VALUE;
             }
             let order = this.orderExpressions[0];
             return api.ObjectHelper.stringEquals(ChildOrder.DESC_ORDER_DIRECTION_VALUE.toLowerCase(), order.getDirection().toLowerCase());
@@ -83,14 +82,14 @@ module api.content.order {
         toJson(): api.content.json.ChildOrderJson {
 
             return {
-                "orderExpressions": OrderExpr.toArrayJson(this.getOrderExpressions())
+                orderExpressions: OrderExpr.toArrayJson(this.getOrderExpressions())
             };
         }
 
         toString(): string {
-            let result = "";
+            let result = '';
             this.orderExpressions.forEach((expr: OrderExpr) => {
-                result = result.concat(" ", expr.toString());
+                result = result.concat(' ', expr.toString());
             });
             return result;
         }
@@ -101,7 +100,7 @@ module api.content.order {
                 return false;
             }
             let other = <ChildOrder>o;
-            if (this.orderExpressions.length != other.getOrderExpressions().length) {
+            if (this.orderExpressions.length !== other.getOrderExpressions().length) {
                 return false;
             }
             for (let count in this.orderExpressions) {
@@ -116,9 +115,9 @@ module api.content.order {
         static toSetChildOrderJson(contentId: ContentId, childOrder: ChildOrder, silent: boolean): api.content.json.SetChildOrderJson {
             if (contentId && childOrder) {
                 return {
-                    "silent": silent,
-                    "childOrder": childOrder.toJson(),
-                    "contentId": contentId.toString()
+                    silent: silent,
+                    childOrder: childOrder.toJson(),
+                    contentId: contentId.toString()
                 };
             }
         }

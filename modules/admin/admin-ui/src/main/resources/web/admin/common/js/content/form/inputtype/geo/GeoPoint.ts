@@ -63,5 +63,5 @@ module api.content.form.inputtype.geo {
         }
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("GeoPoint", GeoPoint));
+    api.form.inputtype.InputTypeManager.register(new api.Class('GeoPoint', GeoPoint));
 }

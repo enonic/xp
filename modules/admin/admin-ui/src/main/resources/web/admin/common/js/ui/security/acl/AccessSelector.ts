@@ -21,7 +21,7 @@ module api.ui.security.acl {
         private valueChangedListeners: {(event: api.ValueChangedEvent): void}[] = [];
 
         constructor() {
-            super("access-selector");
+            super('access-selector');
 
             AccessSelector.OPTIONS.forEach((option: AccessSelectorOption, index: number) => {
                 let menuItem = (<TabMenuItemBuilder>new TabMenuItemBuilder().setLabel(option.name).setAddLabelTitleAttribute(
@@ -59,7 +59,7 @@ module api.ui.security.acl {
         private findOptionByValue(value: Access): AccessSelectorOption {
             for (let i = 0; i < AccessSelector.OPTIONS.length; i++) {
                 let option = AccessSelector.OPTIONS[i];
-                if (option.value == value) {
+                if (option.value === value) {
                     return option;
                 }
             }
@@ -73,17 +73,17 @@ module api.ui.security.acl {
                 this.getSelectedNavigationItem().setVisibleInMenu(false);
             }
 
-            let menu = this.getMenuEl(),
-                entry = menu.getParentElement().getParentElement(),
-                list = entry.getParentElement(),
-                offset = entry.getEl().getOffsetTopRelativeToParent() -
-                    (list.getEl().getOffsetTopRelativeToParent() + list.getEl().getPaddingTop() + list.getEl().getScrollTop()),
-                height = menu.getEl().getHeightWithoutPadding();
+            let menu = this.getMenuEl();
+            let entry = menu.getParentElement().getParentElement();
+            let list = entry.getParentElement();
+            let offset = entry.getEl().getOffsetTopRelativeToParent() -
+                (list.getEl().getOffsetTopRelativeToParent() + list.getEl().getPaddingTop() + list.getEl().getScrollTop());
+            let height = menu.getEl().getHeightWithoutPadding();
 
             if (offset > height) {
-                menu.addClass("upward");
+                menu.addClass('upward');
             } else {
-                menu.removeClass("upward");
+                menu.removeClass('upward');
             }
 
             super.showMenu();

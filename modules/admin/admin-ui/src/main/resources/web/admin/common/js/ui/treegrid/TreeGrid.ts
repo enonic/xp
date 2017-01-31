@@ -687,12 +687,12 @@ module api.ui.treegrid {
 
         getEmptyNodesCount(): number {
 
-            let viewportRange = this.grid.getViewport(),
-                lastIndex = this.gridData.getItems().length - 1,
+            let viewportRange = this.grid.getViewport();
+            let lastIndex = this.gridData.getItems().length - 1;
             // first and last rows, that are visible in grid
-                firstVisible = viewportRange.top,
+            let firstVisible = viewportRange.top;
             // interval borders to search for the empty node
-                from = firstVisible;
+            let from = firstVisible;
             let emptyNodesCount = 0;
 
             for (let i = from; i <= lastIndex; i++) {
@@ -742,7 +742,7 @@ module api.ui.treegrid {
         }
 
         setActive(active: boolean = true) {
-            if (this.active != active) {
+            if (this.active !== active) {
                 this.active = active;
                 this.notifyActiveChanged(active);
             }
@@ -809,8 +809,7 @@ module api.ui.treegrid {
                     this.initData(this.root.getCurrentRoot().treeToList());
                     if (needToCheckFetchedChildren) {
                         this.select(fetchedChildren);
-                    }
-                    else {
+                    } else {
                         this.triggerSelectionChangedListeners();
                     }
                 }).catch((reason: any) => {
@@ -923,7 +922,11 @@ module api.ui.treegrid {
         }
 
         dataToTreeNode(data: DATA, parent: TreeNode<DATA>): TreeNode<DATA> {
-            return new TreeNodeBuilder<DATA>().setData(data, this.getDataId(data)).setExpanded(this.expandAll).setParent(parent).build();
+            return new TreeNodeBuilder<DATA>().
+                setData(data, this.getDataId(data)).
+                setExpanded(this.expandAll).
+                setParent(parent).
+                build();
         }
 
         dataToTreeNodes(dataArray: DATA[], parent: TreeNode<DATA>): TreeNode<DATA>[] {
@@ -959,8 +962,8 @@ module api.ui.treegrid {
         }
 
         selectNode(dataId: string) {
-            let root = this.root.getCurrentRoot(),
-                node = root.findNode(dataId);
+            let root = this.root.getCurrentRoot();
+            let node = root.findNode(dataId);
 
             if (node) {
                 let row = this.gridData.getRowById(node.getId());
@@ -969,8 +972,8 @@ module api.ui.treegrid {
         }
 
         refreshNodeById(dataId: string) {
-            let root = this.root.getCurrentRoot(),
-                node = root.findNode(dataId);
+            let root = this.root.getCurrentRoot();
+            let node = root.findNode(dataId);
 
             if (node) {
                 this.refreshNode(node);
@@ -994,9 +997,9 @@ module api.ui.treegrid {
         }
 
         deselectNodes(dataIds: string[]) {
-            let oldSelected = this.root.getFullSelection(),
-                newSelected = [],
-                newSelectedRows = [];
+            let oldSelected = this.root.getFullSelection();
+            let newSelected = [];
+            let newSelectedRows = [];
 
             for (let i = 0; i < oldSelected.length; i++) {
                 if (dataIds.indexOf(oldSelected[i].getDataId()) < 0) {
@@ -1058,8 +1061,7 @@ module api.ui.treegrid {
                 this.errorPanel.setError(message || reason);
                 this.grid.hide();
                 this.errorPanel.show();
-            }
-            else {
+            } else {
                 api.DefaultErrorHandler.handle(reason);
             }
         }
@@ -1073,8 +1075,8 @@ module api.ui.treegrid {
 
         private reloadNode(parentNode?: TreeNode<DATA>, expandedNodesDataId?: String[]): wemQ.Promise<void> {
 
-            let deferred = wemQ.defer<void>(),
-                promises = [];
+            let deferred = wemQ.defer<void>();
+            let promises = [];
 
             this.fetchData(parentNode).then((dataList: DATA[]) => {
                 let hasNotEmptyChildren = false;
@@ -1146,8 +1148,8 @@ module api.ui.treegrid {
 
         updateNode(data: DATA, oldDataId?: string): wemQ.Promise<void> {
 
-            let dataId = oldDataId || this.getDataId(data),
-                nodeToUpdate = this.root.getCurrentRoot().findNode(dataId);
+            let dataId = oldDataId || this.getDataId(data);
+            let nodeToUpdate = this.root.getCurrentRoot().findNode(dataId);
 
             if (!nodeToUpdate) {
                 throw new Error('TreeNode to update not found: ' + dataId);
@@ -1158,8 +1160,8 @@ module api.ui.treegrid {
 
         updateNodes(data: DATA, oldDataId?: string): wemQ.Promise<void> {
 
-            let dataId = oldDataId || this.getDataId(data),
-                nodesToUpdate = this.root.getCurrentRoot().findNodes(dataId);
+            let dataId = oldDataId || this.getDataId(data);
+            let nodesToUpdate = this.root.getCurrentRoot().findNodes(dataId);
 
             if (!nodesToUpdate) {
                 throw new Error('TreeNode to update not found: ' + dataId);
@@ -1242,7 +1244,7 @@ module api.ui.treegrid {
         getParentNode(nextToSelection: boolean = false, stashedParentNode?: TreeNode<DATA>) {
             let root = stashedParentNode || this.root.getCurrentRoot();
             let parentNode: TreeNode<DATA>;
-            if (this.getSelectedNodes() && this.getSelectedNodes().length == 1) {
+            if (this.getSelectedNodes() && this.getSelectedNodes().length === 1) {
                 parentNode = root.findNode(this.getSelectedNodes()[0].getDataId());
                 if (nextToSelection) {
                     parentNode = parentNode.getParent() || this.root.getCurrentRoot();
@@ -1259,7 +1261,7 @@ module api.ui.treegrid {
             let root = stashedParentNode || this.root.getCurrentRoot();
             let parentNode = this.getParentNode(nextToSelection, stashedParentNode);
 
-            let isRootParentNode: boolean = (parentNode == root);
+            let isRootParentNode: boolean = (parentNode === root);
 
             if (!parentNode.hasChildren() && !isRootParentNode) {
                 this.fetchData(parentNode)
@@ -1282,7 +1284,7 @@ module api.ui.treegrid {
                                 }
                                 this.notifyDataChanged(new DataChangedEvent<DATA>([node], DataChangedEvent.ADDED));
 
-                                if (parentNode != root) {
+                                if (parentNode !== root) {
                                     this.refreshNodeData(parentNode).then((refreshedNode: TreeNode<DATA>) => {
                                         if (!stashedParentNode) {
                                             this.updateSelectedNode(refreshedNode);
@@ -1293,8 +1295,8 @@ module api.ui.treegrid {
                         }
                         deferred.resolve(null);
                     }).catch((reason: any) => {
-                    this.handleError(reason);
-                    deferred.reject(reason);
+                        this.handleError(reason);
+                        deferred.reject(reason);
                 });
             } else {
                 this.doInsertNodeToParentWithChildren(parentNode, data, root, index, stashedParentNode, isRootParentNode);
@@ -1335,8 +1337,8 @@ module api.ui.treegrid {
         }
 
         private deleteRootNodes(root: TreeNode<DATA>, dataList: DATA[]): void {
-            let updated: TreeNode<DATA>[] = [],
-                deleted: TreeNode<DATA>[] = [];
+            let updated: TreeNode<DATA>[] = [];
+            let deleted: TreeNode<DATA>[] = [];
 
             dataList.forEach((data: DATA) => {
                 let node = root.findNode(this.getDataId(data));
@@ -1356,7 +1358,6 @@ module api.ui.treegrid {
             this.notifyDataChanged(new DataChangedEvent<DATA>(deleted, DataChangedEvent.DELETED));
         }
 
-
         initData(nodes: TreeNode<DATA>[]) {
             this.gridData.setItems(nodes, 'id');
             this.notifyDataChanged(new DataChangedEvent<DATA>(nodes, DataChangedEvent.ADDED));
@@ -1364,10 +1365,8 @@ module api.ui.treegrid {
         }
 
         private resetCurrentSelection(nodes: TreeNode<DATA>[]) {
-            let selection: any = [],
-                selectionIds = this.root.getFullSelection().map((el) => {
-                    return el.getDataId();
-                });
+            let selection: any = [];
+            let selectionIds = this.root.getFullSelection().map(el => el.getDataId());
 
             selectionIds.forEach((selectionId) => {
                 nodes.forEach((node, index) => {
@@ -1411,9 +1410,9 @@ module api.ui.treegrid {
                             }
                             deferred.resolve(true);
                         }).catch((reason: any) => {
-                        this.handleError(reason);
-                        deferred.resolve(false);
-                    }).done(() => this.notifyLoaded());
+                            this.handleError(reason);
+                            deferred.resolve(false);
+                        }).done(() => this.notifyLoaded());
                 }
             }
 
@@ -1461,7 +1460,7 @@ module api.ui.treegrid {
 
         unLoaded(listener: () => void) {
             this.loadedListeners = this.loadedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
             return this;
         }
@@ -1514,7 +1513,7 @@ module api.ui.treegrid {
 
         unSelectionChanged(listener: (currentSelection: TreeNode<DATA>[], fullSelection: TreeNode<DATA>[], highlighted: boolean) => void) {
             this.selectionChangeListeners = this.selectionChangeListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
             return this;
         }
@@ -1537,7 +1536,7 @@ module api.ui.treegrid {
 
         unContextMenuShown(listener: () => void) {
             this.contextMenuListeners = this.contextMenuListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
             return this;
         }
@@ -1555,7 +1554,7 @@ module api.ui.treegrid {
 
         unDataChanged(listener: (event: DataChangedEvent<DATA>) => void) {
             this.dataChangeListeners = this.dataChangeListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
             return this;
         }

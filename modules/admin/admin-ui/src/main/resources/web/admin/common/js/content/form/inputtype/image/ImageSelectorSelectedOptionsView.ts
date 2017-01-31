@@ -55,7 +55,7 @@ module api.content.form.inputtype.image {
         private addOptionMovedEventHandler() {
             //when dragging selected image in chrome it looses focus; bringing focus back
             this.onOptionMoved((moved: SelectedOption<ImageSelectorDisplayValue>) => {
-                let selectedOptionMoved: boolean = moved.getOptionView().hasClass("editing");
+                let selectedOptionMoved: boolean = moved.getOptionView().hasClass('editing');
 
                 if (selectedOptionMoved) {
                     (<ImageSelectorSelectedOptionView>moved.getOptionView()).getCheckbox().giveFocus();
@@ -77,7 +77,7 @@ module api.content.form.inputtype.image {
             const selectedOption = this.getByOption(optionToRemove);
 
             this.selection = this.selection.filter((option: SelectedOption<ImageSelectorDisplayValue>) => {
-                return option.getOption().value != selectedOption.getOption().value;
+                return option.getOption().value !== selectedOption.getOption().value;
             });
 
             this.updateSelectionToolbarLayout();
@@ -117,8 +117,8 @@ module api.content.form.inputtype.image {
             let selectedOption: SelectedOption<ImageSelectorDisplayValue> = this.createSelectedOption(option);
             this.getSelectedOptions().push(selectedOption);
 
-            let optionView: ImageSelectorSelectedOptionView = <ImageSelectorSelectedOptionView>selectedOption.getOptionView(),
-                isMissingContent = option.displayValue.isEmptyContent();
+            let optionView: ImageSelectorSelectedOptionView = <ImageSelectorSelectedOptionView>selectedOption.getOptionView();
+            let isMissingContent = option.displayValue.isEmptyContent();
 
             optionView.onRendered(() => {
                 this.handleOptionViewRendered(selectedOption, optionView);
@@ -159,7 +159,7 @@ module api.content.form.inputtype.image {
             let selectedOptions = this.getSelectedOptions();
             for (let i = 0; i < selectedOptions.length; i++) {
                 let view = <ImageSelectorSelectedOptionView>selectedOptions[i].getOptionView();
-                if (i != option.getIndex()) {
+                if (i !== option.getIndex()) {
                     view.getCheckbox().setChecked(false);
                 }
             }
@@ -181,10 +181,10 @@ module api.content.form.inputtype.image {
         private setActiveOption(option: SelectedOption<ImageSelectorDisplayValue>) {
 
             if (this.activeOption) {
-                this.activeOption.getOptionView().removeClass("editing");
+                this.activeOption.getOptionView().removeClass('editing');
             }
             this.activeOption = option;
-            option.getOptionView().addClass("editing");
+            option.getOptionView().addClass('editing');
 
             this.setOutsideClickListener();
         }
@@ -219,7 +219,7 @@ module api.content.form.inputtype.image {
         private setOutsideClickListener() {
             this.mouseClickListener = (event: MouseEvent) => {
                 for (let element = event.target; element; element = (<any>element).parentNode) {
-                    if (element == this.getHTMLElement()) {
+                    if (element === this.getHTMLElement()) {
                         return;
                     }
                 }
@@ -242,7 +242,7 @@ module api.content.form.inputtype.image {
             optionView.getIcon().onLoaded((event: UIEvent) => this.handleOptionViewImageLoaded(optionView));
 
             if (option.getOption().displayValue.isEmptyContent()) {
-                optionView.showError("No access to image.");
+                optionView.showError('No access to image.');
             }
         }
 
@@ -253,7 +253,7 @@ module api.content.form.inputtype.image {
 
             this.uncheckOthers(option);
 
-            if (document.activeElement == optionView.getEl().getHTMLElement() || this.activeOption == option) {
+            if (document.activeElement === optionView.getEl().getHTMLElement() || this.activeOption === option) {
                 optionView.getCheckbox().toggleChecked();
             } else {
                 optionView.getCheckbox().setChecked(true);
@@ -266,26 +266,30 @@ module api.content.form.inputtype.image {
             let checkbox = optionView.getCheckbox();
 
             switch (event.which) {
-            case 32: // Spacebar
-                checkbox.toggleChecked();
-                break;
-            case 8: // Backspace
-                checkbox.setChecked(false);
-                this.removeOptionViewAndRefocus(option);
-                event.preventDefault();
-                break;
-            case 46: // Delete
-                checkbox.setChecked(false);
-                this.removeOptionViewAndRefocus(option);
-                break;
-            case 13: // Enter
-                this.notifyEditSelectedOptions([option]);
-                break;
-            case 9: // tab
-                this.resetActiveOption();
-                break;
+                case 32: // Spacebar
+                    checkbox.toggleChecked();
+                    event.stopPropagation();
+                    break;
+                case 8: // Backspace
+                    checkbox.setChecked(false);
+                    this.removeOptionViewAndRefocus(option);
+                    event.preventDefault();
+                    event.stopPropagation();
+                    break;
+                case 46: // Delete
+                    checkbox.setChecked(false);
+                    this.removeOptionViewAndRefocus(option);
+                    event.stopPropagation();
+                    break;
+                case 13: // Enter
+                    this.notifyEditSelectedOptions([option]);
+                    event.stopPropagation();
+                    break;
+                case 9: // tab
+                    this.resetActiveOption();
+                    event.stopPropagation();
+                    break;
             }
-            event.stopPropagation();
         }
 
         private handleOptionViewChecked(checked: boolean, option: SelectedOption<ImageSelectorDisplayValue>,
@@ -323,19 +327,19 @@ module api.content.form.inputtype.image {
         }
 
         private isFirstInRow(index: number): boolean {
-            return index % this.numberOfOptionsPerRow == 0;
+            return index % this.numberOfOptionsPerRow === 0;
         }
 
         private isLastInRow(index: number): boolean {
-            return index % this.numberOfOptionsPerRow == 2;
+            return index % this.numberOfOptionsPerRow === 2;
         }
 
         private isFirst(index: number): boolean {
-            return index == 0;
+            return index === 0;
         }
 
         private isLast(index: number): boolean {
-            return index == this.getSelectedOptions().length - 1;
+            return index === this.getSelectedOptions().length - 1;
         }
 
         private notifyRemoveSelectedOptions(option: SelectedOption<ImageSelectorDisplayValue>[]) {
@@ -351,7 +355,7 @@ module api.content.form.inputtype.image {
         unRemoveSelectedOptions(listener: (option: SelectedOption<ImageSelectorDisplayValue>[]) => void) {
             this.removeSelectedOptionsListeners = this.removeSelectedOptionsListeners
                 .filter(function (curr: (option: SelectedOption<ImageSelectorDisplayValue>[]) => void) {
-                    return curr != listener;
+                    return curr !== listener;
                 });
         }
 
@@ -368,7 +372,7 @@ module api.content.form.inputtype.image {
         unEditSelectedOptions(listener: (option: SelectedOption<ImageSelectorDisplayValue>[]) => void) {
             this.editSelectedOptionsListeners = this.editSelectedOptionsListeners
                 .filter(function (curr: (option: SelectedOption<ImageSelectorDisplayValue>[]) => void) {
-                    return curr != listener;
+                    return curr !== listener;
                 });
         }
 

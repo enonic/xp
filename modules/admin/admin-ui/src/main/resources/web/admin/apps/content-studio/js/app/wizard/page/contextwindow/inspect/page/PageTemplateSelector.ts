@@ -1,7 +1,7 @@
-import "../../../../../../api.ts";
-import {PageTemplateOption} from "./PageTemplateOption";
-import {PageTemplateOptions} from "./PageTemplateOptions";
-import {PageTemplateOptionViewer} from "./PageTemplateOptionViewer";
+import '../../../../../../api.ts';
+import {PageTemplateOption} from './PageTemplateOption';
+import {PageTemplateOptions} from './PageTemplateOptions';
+import {PageTemplateOptionViewer} from './PageTemplateOptionViewer';
 
 import PropertyChangedEvent = api.PropertyChangedEvent;
 import ContentId = api.content.ContentId;
@@ -27,7 +27,7 @@ export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
     private customizedOption: Option<PageTemplateOption>;
 
     constructor() {
-        super("pageTemplate", <DropdownConfig<PageTemplateOption>>{
+        super('pageTemplate', <DropdownConfig<PageTemplateOption>>{
             optionDisplayValueViewer: new PageTemplateOptionViewer()
         });
     }
@@ -50,11 +50,9 @@ export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
 
             if (this.pageModel.isCustomized()) {
                 this.selectRow(options.length);
-            }
-            else if (this.pageModel.hasTemplate()) {
+            } else if (this.pageModel.hasTemplate()) {
                 this.selectTemplate(this.pageModel.getTemplateKey());
-            }
-            else {
+            } else {
                 this.selectOption(pageTemplateOptions.getDefault(), true);
             }
 
@@ -62,22 +60,20 @@ export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
                 let selectedOption = event.getOption().displayValue;
                 if (selectedOption.getPageTemplate() && selectedOption.isCustom()) {
                     this.notifyCustomizedSelected();
-                }
-                else {
+                } else {
                     this.notifySelection(selectedOption.getPageTemplate());
                 }
             });
 
             this.pageModel.onPropertyChanged((event: PropertyChangedEvent) => {
-                if (event.getPropertyName() == PageModel.PROPERTY_TEMPLATE && this !== event.getSource()) {
+                if (event.getPropertyName() === PageModel.PROPERTY_TEMPLATE && this !== event.getSource()) {
                     let pageTemplateKey = <PageTemplateKey>event.getNewValue();
                     if (pageTemplateKey) {
                         this.selectTemplate(pageTemplateKey);
                     } else {
                         this.selectOption(pageTemplateOptions.getDefault(), true);
                     }
-                }
-                else if (event.getPropertyName() == PageModel.PROPERTY_CONTROLLER && event.getNewValue()) {
+                } else if (event.getPropertyName() === PageModel.PROPERTY_CONTROLLER && event.getNewValue()) {
                     this.selectCustomized();
                 }
             });
@@ -108,7 +104,7 @@ export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
 
     unSelection(listener: (event: PageTemplate)=>void) {
         this.selectionListeners.filter((currentListener: (event: PageTemplate)=>void) => {
-            return listener != currentListener;
+            return listener !== currentListener;
         });
     }
 
@@ -135,7 +131,7 @@ export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
             .setDisplayName(pageTemplateDisplayName[pageTemplateDisplayName.Custom]))
             .build();
         let option = {
-            value: "Customized",
+            value: 'Customized',
             displayValue: new PageTemplateOption(pageTemplate, this.pageModel)
         };
 

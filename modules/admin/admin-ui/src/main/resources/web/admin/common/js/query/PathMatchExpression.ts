@@ -13,10 +13,10 @@ module api.query {
             let expression = FulltextSearchExpression.create(searchString, queryFields);
 
             let args = [];
-            args.push(ValueExpr.stringValue("_path"));
-            args.push(ValueExpr.stringValue("/content" + path));
+            args.push(ValueExpr.stringValue('_path'));
+            args.push(ValueExpr.stringValue('/content' + path));
 
-            let matchedExpr: FunctionExpr = new FunctionExpr("pathMatch", args);
+            let matchedExpr: FunctionExpr = new FunctionExpr('pathMatch', args);
             let matchedDynamicExpr: DynamicConstraintExpr = new DynamicConstraintExpr(matchedExpr);
 
             let booleanExpr: LogicalExpr = new LogicalExpr(expression, LogicalOperator.AND, matchedDynamicExpr);
@@ -49,4 +49,3 @@ module api.query {
     }
 
 }
-

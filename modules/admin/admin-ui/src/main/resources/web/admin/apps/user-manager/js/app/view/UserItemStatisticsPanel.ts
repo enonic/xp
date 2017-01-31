@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {UserTreeGridItem, UserTreeGridItemType} from "../browse/UserTreeGridItem";
+import '../../api.ts';
+import {UserTreeGridItem, UserTreeGridItemType} from '../browse/UserTreeGridItem';
 
 import ViewItem = api.app.view.ViewItem;
 import ItemStatisticsPanel = api.app.view.ItemStatisticsPanel;
@@ -16,9 +16,9 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
     private userDataContainer: api.dom.DivEl;
 
     constructor() {
-        super("principal-item-statistics-panel");
+        super('principal-item-statistics-panel');
 
-        this.userDataContainer = new api.dom.DivEl("user-data-container");
+        this.userDataContainer = new api.dom.DivEl('user-data-container');
         this.appendChild(this.userDataContainer);
     }
 
@@ -53,7 +53,6 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
                 }
             }
 
-
             super.setItem(item);
         }
     }
@@ -66,21 +65,21 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
 
     private appendUserMetadata(item: ViewItem<UserTreeGridItem>) {
         // Insert an empty data first to avoid blinking, after full data is loaded.
-        let userGroup = new ItemDataGroup("User", "user");
-        userGroup.addDataList("E-mail", " ");
+        let userGroup = new ItemDataGroup('User', 'user');
+        userGroup.addDataList('E-mail', ' ');
         this.userDataContainer.appendChild(userGroup);
 
-        let rolesAndGroupsGroup = new ItemDataGroup("Roles & Groups", "roles-and-groups");
-        rolesAndGroupsGroup.addDataArray("Roles", []);
-        rolesAndGroupsGroup.addDataArray("Groups", []);
+        let rolesAndGroupsGroup = new ItemDataGroup('Roles & Groups', 'roles-and-groups');
+        rolesAndGroupsGroup.addDataArray('Roles', []);
+        rolesAndGroupsGroup.addDataArray('Groups', []);
         this.userDataContainer.appendChild(rolesAndGroupsGroup);
 
         new GetPrincipalByKeyRequest(item.getModel().getPrincipal().getKey()).includeUserMemberships(true).sendAndParse().then(
             (principal: Principal) => {
-                userGroup = new ItemDataGroup("User", "user");
-                userGroup.addDataList("E-mail", principal.asUser().getEmail());
+                userGroup = new ItemDataGroup('User', 'user');
+                userGroup.addDataList('E-mail', principal.asUser().getEmail());
 
-                rolesAndGroupsGroup = new ItemDataGroup("Roles & Groups", "memeberships");
+                rolesAndGroupsGroup = new ItemDataGroup('Roles & Groups', 'memeberships');
 
                 let roles = principal.asUser().getMemberships().filter((el) => {
                     return el.isRole();
@@ -89,7 +88,7 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
                     viewer.setObject(el);
                     return viewer;
                 });
-                rolesAndGroupsGroup.addDataElements("Roles", roles);
+                rolesAndGroupsGroup.addDataElements('Roles', roles);
 
                 let groups = principal.asUser().getMemberships().filter((el) => {
                     return el.isGroup();
@@ -98,7 +97,7 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
                     viewer.setObject(el);
                     return viewer;
                 });
-                rolesAndGroupsGroup.addDataElements("Groups", groups);
+                rolesAndGroupsGroup.addDataElements('Groups', groups);
 
                 this.userDataContainer.removeChildren();
                 this.userDataContainer.appendChild(userGroup);
@@ -113,12 +112,12 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
         const type = PrincipalType[item.getModel().getPrincipal().getType()];
         const name = type.charAt(0) + type.slice(1).toLowerCase();
 
-        const groupAndRoleGroup = new ItemDataGroup(name, "group-and-role");
-        groupAndRoleGroup.appendChild(new api.dom.DivEl("description").setHtml(item.getModel().getPrincipal().getDescription()));
+        const groupAndRoleGroup = new ItemDataGroup(name, 'group-and-role');
+        groupAndRoleGroup.appendChild(new api.dom.DivEl('description').setHtml(item.getModel().getPrincipal().getDescription()));
         this.userDataContainer.appendChild(groupAndRoleGroup);
 
-        const membersGroup = new ItemDataGroup("Members", "members");
-        membersGroup.addDataArray("Members", []);
+        const membersGroup = new ItemDataGroup('Members', 'members');
+        membersGroup.addDataArray('Members', []);
         this.userDataContainer.appendChild(membersGroup);
 
         new GetPrincipalByKeyRequest(item.getModel().getPrincipal().getKey())
@@ -134,9 +133,9 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
 
                 wemQ.all(membersPromises).then((results: Principal[]) => {
 
-                    const newMembersGroup = new ItemDataGroup("Members", "members");
+                    const newMembersGroup = new ItemDataGroup('Members', 'members');
 
-                    newMembersGroup.addDataElements("Members", results.map((el) => {
+                    newMembersGroup.addDataElements('Members', results.map((el) => {
                         const viewer = new PrincipalViewer();
                         viewer.setObject(el);
                         return viewer;
@@ -148,7 +147,6 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
                 }).done();
-
 
             }).catch((reason: any) => {
             api.DefaultErrorHandler.handle(reason);

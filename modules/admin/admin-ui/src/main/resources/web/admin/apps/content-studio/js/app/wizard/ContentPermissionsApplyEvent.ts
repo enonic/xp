@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 import AccessControlList = api.security.acl.AccessControlList;
 import ContentId = api.content.ContentId;
 
@@ -47,7 +47,6 @@ export class ContentPermissionsApplyEvent extends api.event.Event {
     static un(handler?: (event: ContentPermissionsApplyEvent) => void, contextWindow: Window = window) {
         api.event.Event.unbind(api.ClassHelper.getFullName(this), handler, contextWindow);
     }
-
 
 }
 class Builder {

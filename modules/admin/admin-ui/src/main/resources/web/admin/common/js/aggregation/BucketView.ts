@@ -41,8 +41,8 @@ module api.aggregation {
 
         private resolveKey(): string {
             let key = this.bucket.getKey();
-            if (key.indexOf(":") > 0) {
-                return api.util.StringHelper.capitalize(key.substring(key.indexOf(":") + 1));
+            if (key.indexOf(':') > 0) {
+                return api.util.StringHelper.capitalize(key.substring(key.indexOf(':') + 1));
             }
 
             return key;
@@ -103,7 +103,7 @@ module api.aggregation {
         unSelectionChanged(listener: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
             this.selectionChangedListeners = this.selectionChangedListeners
                 .filter(function (curr: (event: api.aggregation.BucketViewSelectionChangedEvent) => void) {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 

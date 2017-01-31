@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 export class SaveSortedContentEvent extends api.event.Event {
 

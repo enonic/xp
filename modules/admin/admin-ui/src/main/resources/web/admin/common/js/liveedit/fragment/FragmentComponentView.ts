@@ -9,6 +9,7 @@ module api.liveedit.fragment {
     import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
     import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
     import HTMLAreaHelper = api.util.htmlarea.editor.HTMLAreaHelper;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
     export class FragmentComponentViewBuilder extends ComponentViewBuilder<FragmentComponent> {
 
@@ -30,11 +31,11 @@ module api.liveedit.fragment {
 
         private fragmentLoadErrorListeners: {(event: api.liveedit.FragmentLoadErrorEvent): void}[];
 
+        private editFragmentAction: api.ui.Action;
+
         constructor(builder: FragmentComponentViewBuilder) {
 
             super(builder.setViewer(new FragmentComponentViewer()).setInspectActionRequired(true));
-
-            this.addFragmentContextMenuActions();
 
             this.liveEditModel = builder.parentRegionView.getLiveEditModel();
             this.fragmentContainsLayout = false;
@@ -65,8 +66,8 @@ module api.liveedit.fragment {
                 });
                 if (deleted) {
                     this.notifyFragmentLoadError();
-                    new api.liveedit.ShowWarningLiveEditEvent("Fragment " + this.component.getFragment() +
-                                                              " is no longer available").fire();
+                    new api.liveedit.ShowWarningLiveEditEvent('Fragment ' + this.component.getFragment() +
+                                                              ' is no longer available').fire();
                     this.convertToBrokenFragmentView();
                 }
             };
@@ -93,11 +94,11 @@ module api.liveedit.fragment {
         }
 
         private convertToBrokenFragmentView() {
-            this.getEl().setAttribute("data-portal-placeholder", "true");
-            this.getEl().setAttribute("data-portal-placeholder-error", "true");
+            this.getEl().setAttribute('data-portal-placeholder', 'true');
+            this.getEl().setAttribute('data-portal-placeholder-error', 'true');
             this.removeChild(this.getFirstChild());
-            let errorSpan = new api.dom.SpanEl("data-portal-placeholder-error");
-            errorSpan.setHtml("Fragment content could not be found");
+            let errorSpan = new api.dom.SpanEl('data-portal-placeholder-error');
+            errorSpan.setHtml('Fragment content could not be found');
             this.prependChild(errorSpan);
         }
 
@@ -115,11 +116,17 @@ module api.liveedit.fragment {
             return null;
         }
 
+        getFragmentDisplayName(): string {
+            return this.fragmentContent ? this.fragmentContent.getDisplayName() : null;
+        }
+
         private loadFragmentContent() {
             let contentId = this.component.getFragment();
             if (contentId) {
                 if (!this.fragmentContent || !contentId.equals(this.fragmentContent.getContentId())) {
                     new GetContentByIdRequest(contentId).sendAndParse().then((content: Content)=> {
+                        let contentAndSummary = api.content.ContentSummaryAndCompareStatus.fromContentSummary(content);
+                        this.addFragmentContextMenuActions(contentAndSummary);
                         this.fragmentContent = content;
                         this.notifyFragmentContentLoaded();
                         new api.liveedit.FragmentComponentLoadedEvent(this).fire();
@@ -127,7 +134,7 @@ module api.liveedit.fragment {
                         this.fragmentContent = null;
                         this.notifyFragmentContentLoaded();
                         this.notifyFragmentLoadError();
-                        new api.liveedit.ShowWarningLiveEditEvent("Fragment " + contentId + " could not be found").fire();
+                        new api.liveedit.ShowWarningLiveEditEvent('Fragment ' + contentId + ' could not be found').fire();
                     }).done();
                 }
             } else {
@@ -136,19 +143,21 @@ module api.liveedit.fragment {
             }
         }
 
-        private addFragmentContextMenuActions() {
+        private addFragmentContextMenuActions(contentAndSummary: ContentSummaryAndCompareStatus) {
             if (this.component.isEmpty()) {
                 return;
             }
-            this.addContextMenuActions([
-                new api.ui.Action("Edit in new tab").onExecuted(() => {
-                    this.deselect();
-                    new GetContentByIdRequest(this.component.getFragment()).sendAndParse().then((content: Content)=> {
-                        let contentAndSummary = api.content.ContentSummaryAndCompareStatus.fromContentSummary(content);
-                        new api.content.event.EditContentEvent([contentAndSummary]).fire();
-                    });
-                })
-            ]);
+
+            if (this.editFragmentAction) {
+                this.removeContextMenuAction(this.editFragmentAction);
+            }
+
+            this.editFragmentAction = new api.ui.Action('Edit in new tab').onExecuted(() => {
+                this.deselect();
+                new api.content.event.EditContentEvent([contentAndSummary]).fire();
+            });
+
+            this.addContextMenuActions([this.editFragmentAction]);
         }
 
         private parseContentViews(parentElement?: api.dom.Element, parentType?: api.liveedit.ItemType) {
@@ -162,12 +171,17 @@ module api.liveedit.fragment {
 
                     // remove component-type attributes to avoid inner components of fragment to be affected by d&d sorting
                     let htmlElement = childElement.getHTMLElement();
-                    htmlElement.removeAttribute("data-" + ItemType.ATTRIBUTE_TYPE);
-                    htmlElement.removeAttribute("data-" + ItemType.ATTRIBUTE_REGION_NAME);
+                    let hasErrors = !!htmlElement.getAttribute('data-portal-placeholder-error');
+                    if (hasErrors) {
+                        this.getEl().setAttribute('data-portal-placeholder-error', 'true');
+                    }
+
+                    htmlElement.removeAttribute('data-' + ItemType.ATTRIBUTE_TYPE);
+                    htmlElement.removeAttribute('data-' + ItemType.ATTRIBUTE_REGION_NAME);
                 }
 
                 let isTextComponent = api.liveedit.text.TextItemType.get().equals(parentType);
-                if (isTextComponent && childElement.getEl().getTagName().toUpperCase() == 'SECTION') {
+                if (isTextComponent && childElement.getEl().getTagName().toUpperCase() === 'SECTION') {
                     // convert image urls in text component for web
                     childElement.setHtml(HTMLAreaHelper.prepareImgSrcsInValueForEdit(childElement.getHtml()), false);
                     return;
@@ -186,7 +200,7 @@ module api.liveedit.fragment {
 
         unFragmentContentLoaded(listener: (event: api.liveedit.FragmentComponentLoadedEvent) => void) {
             this.fragmentContentLoadedListeners = this.fragmentContentLoadedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 
@@ -203,7 +217,7 @@ module api.liveedit.fragment {
 
         unFragmentLoadError(listener: (event: api.liveedit.FragmentLoadErrorEvent) => void) {
             this.fragmentLoadErrorListeners = this.fragmentLoadErrorListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 

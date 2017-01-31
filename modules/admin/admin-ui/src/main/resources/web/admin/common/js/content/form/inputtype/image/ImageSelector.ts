@@ -56,8 +56,8 @@ module api.content.form.inputtype.image {
         private contentDeletedListener: (event: ContentDeletedEvent) => void;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
-            super("image-selector");
-            this.addClass("input-type-view");
+            super('image-selector');
+            this.addClass('input-type-view');
 
             this.config = config;
 
@@ -84,7 +84,7 @@ module api.content.form.inputtype.image {
 
         private handleContentDeletedEvent() {
             this.contentDeletedListener = (event) => {
-                if (this.selectedOptionsView.count() == 0) {
+                if (this.selectedOptionsView.count() === 0) {
                     return;
                 }
 
@@ -92,7 +92,7 @@ module api.content.form.inputtype.image {
                 this.selectedOptionsView.getSelectedOptions().forEach(
                     (selectedOption: any) => {
                         if (!!selectedOption.getOption().displayValue && !!selectedOption.getOption().displayValue.getContentId()) {
-                            selectedContentIdsMap[selectedOption.getOption().displayValue.getContentId().toString()] = "";
+                            selectedContentIdsMap[selectedOption.getOption().displayValue.getContentId().toString()] = '';
                         }
                     });
 
@@ -165,11 +165,11 @@ module api.content.form.inputtype.image {
             let inputMaximum = this.getInput().getOccurrences().getMaximum();
             let countSelected = this.countSelectedOptions();
             let rest = -1;
-            if (inputMaximum == 0) {
+            if (inputMaximum === 0) {
                 rest = 0;
             } else {
                 rest = inputMaximum - countSelected;
-                rest = (rest == 0) ? -1 : rest;
+                rest = (rest === 0) ? -1 : rest;
             }
 
             return rest;
@@ -216,8 +216,8 @@ module api.content.form.inputtype.image {
                     = ImageContentComboBox.create().setMaximumOccurrences(maximumOccurrences).setLoader(imageSelectorLoader).
                     setSelectedOptionsView(this.selectedOptionsView = this.createSelectedOptionsView()).
                     setValue(value).
-                    build(),
-                comboBox: ComboBox<ImageSelectorDisplayValue> = contentComboBox.getComboBox();
+                    build();
+            let comboBox: ComboBox<ImageSelectorDisplayValue> = contentComboBox.getComboBox();
 
             comboBox.onHidden((event: api.dom.ElementHiddenEvent) => {
                 // hidden on max occurrences reached
@@ -283,7 +283,7 @@ module api.content.form.inputtype.image {
                             input.getName()
                         );
 
-                        let comboBoxWrapper = new api.dom.DivEl("combobox-wrapper");
+                        let comboBoxWrapper = new api.dom.DivEl('combobox-wrapper');
 
                         comboBoxWrapper.appendChild(this.contentComboBox);
 
@@ -304,10 +304,10 @@ module api.content.form.inputtype.image {
         private removePropertyWithId(id: string) {
             let length = this.getPropertyArray().getSize();
             for (let i = 0; i < length; i++) {
-                if (this.getPropertyArray().get(i).getValue().getString() == id) {
+                if (this.getPropertyArray().get(i).getValue().getString() === id) {
                     this.getPropertyArray().remove(i);
-                    api.notify.NotifyManager.get().showWarning("Failed to load image with id " + id +
-                                                               ". The reference will be removed upon save.");
+                    api.notify.NotifyManager.get().showWarning('Failed to load image with id ' + id +
+                                                               '. The reference will be removed upon save.');
                     break;
                 }
             }
@@ -326,7 +326,7 @@ module api.content.form.inputtype.image {
         }
 
         private createUploader(): api.content.image.ImageUploaderEl {
-            let multiSelection = (this.getInput().getOccurrences().getMaximum() != 1);
+            let multiSelection = (this.getInput().getOccurrences().getMaximum() !== 1);
 
             this.uploader = new api.content.image.ImageUploaderEl({
                 params: {
@@ -392,7 +392,7 @@ module api.content.form.inputtype.image {
 
                 let selectedOption = this.selectedOptionsView.getById(item.getId());
                 if (!!selectedOption) {
-                    (<ImageSelectorSelectedOptionView> selectedOption.getOptionView()).showError("Upload failed");
+                    (<ImageSelectorSelectedOptionView> selectedOption.getOptionView()).showError('Upload failed');
                 }
 
                 this.uploader.setMaximumOccurrences(this.getRemainingOccurrences());
@@ -454,10 +454,9 @@ module api.content.form.inputtype.image {
 
             if (!this.getPropertyArray().containsValue(value)) {
                 this.ignorePropertyChange = true;
-                if (this.contentComboBox.countSelected() == 1) { // overwrite initial value
+                if (this.contentComboBox.countSelected() === 1) { // overwrite initial value
                     this.getPropertyArray().set(0, value);
-                }
-                else {
+                } else {
                     this.getPropertyArray().add(value);
                 }
                 this.ignorePropertyChange = false;
@@ -487,7 +486,7 @@ module api.content.form.inputtype.image {
         unEditContentRequest(listener: (content: ContentSummary) => void) {
             this.editContentRequestListeners = this.editContentRequestListeners
                 .filter(function (curr: (content: ContentSummary) => void) {
-                    return curr != listener;
+                    return curr !== listener;
                 });
         }
 
@@ -498,6 +497,6 @@ module api.content.form.inputtype.image {
         }
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("ImageSelector", ImageSelector));
+    api.form.inputtype.InputTypeManager.register(new api.Class('ImageSelector', ImageSelector));
 
 }

@@ -3,7 +3,7 @@ module api.app.wizard {
     export class SaveAndCloseAction extends api.ui.Action {
 
         constructor(wizardPanel: WizardPanel<any>) {
-            super("SaveAndClose", "mod+enter", true);
+            super('SaveAndClose', 'mod+enter', true);
 
             this.onExecuted(() => {
 

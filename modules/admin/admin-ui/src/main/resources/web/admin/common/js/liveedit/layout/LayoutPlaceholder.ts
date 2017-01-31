@@ -15,7 +15,7 @@ module api.liveedit.layout {
 
         constructor(layoutView: LayoutComponentView) {
             super();
-            this.addClassEx("layout-placeholder");
+            this.addClassEx('layout-placeholder');
             this.layoutComponentView = layoutView;
 
             this.comboBox = new LayoutDescriptorComboBox();

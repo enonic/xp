@@ -21,7 +21,7 @@ module api.form.inputtype.combobox {
         private selectedOptionsView: api.ui.selector.combobox.SelectedOptionsView<string>;
 
         constructor(context: api.form.inputtype.InputTypeViewContext) {
-            super("");
+            super('');
             this.context = context;
             this.readConfig(context.inputConfig);
         }
@@ -30,7 +30,8 @@ module api.form.inputtype.combobox {
             let options: ComboBoxOption[] = [];
 
             let optionValues = inputConfig['option'] || [];
-            let l = optionValues.length, optionValue;
+            let l = optionValues.length;
+            let optionValue;
             for (let i = 0; i < l; i++) {
                 optionValue = optionValues[i];
                 options.push({label: optionValue['value'], value: optionValue['@value']});
@@ -43,7 +44,7 @@ module api.form.inputtype.combobox {
         }
 
         availableSizeChanged() {
-            // console.log("ComboBox.availableSizeChanged(" + this.getEl().getWidth() + "x" + this.getEl().getWidth() + ")");
+            // console.log('ComboBox.availableSizeChanged(' + this.getEl().getWidth() + 'x' + this.getEl().getWidth() + ')');
         }
 
         getValueType(): ValueType {
@@ -145,18 +146,17 @@ module api.form.inputtype.combobox {
 
         private isExistingValue(value: string): boolean {
             return this.comboBoxOptions.some((option: ComboBoxOption) => {
-                return option.value == value;
+                return option.value === value;
             });
         }
 
         private comboBoxFilter(item: api.ui.selector.Option<string>, args: any) {
-            return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) == -1);
+            return !(args && args.searchString && item.displayValue.toUpperCase().indexOf(args.searchString.toUpperCase()) === -1);
         }
 
         protected getNumberOfValids(): number {
             return this.getPropertyArray().getSize();
         }
-
 
         onFocus(listener: (event: FocusEvent) => void) {
             this.comboBox.onFocus(listener);
@@ -176,5 +176,5 @@ module api.form.inputtype.combobox {
 
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("ComboBox", ComboBox));
+    api.form.inputtype.InputTypeManager.register(new api.Class('ComboBox', ComboBox));
 }

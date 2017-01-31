@@ -26,7 +26,7 @@ module api.content.page.region {
             this.config = builder.config;
             this.configChangedHandler = (event: PropertyEvent) => {
                 if (FragmentComponent.debug) {
-                    console.debug("FragmentComponent[" + this.getPath().toString() + "].config.onChanged: ", event);
+                    console.debug('FragmentComponent[' + this.getPath().toString() + '].config.onChanged: ', event);
                 }
                 if (!this.disableEventForwarding) {
                     this.notifyPropertyValueChanged(FragmentComponent.PROPERTY_CONFIG);
@@ -144,7 +144,6 @@ module api.content.page.region {
             }
 
             this.setName(json.name ? new ComponentName(json.name) : null);
-
 
             if (json.config) {
                 this.setConfig(PropertyTree.fromJson(json.config));

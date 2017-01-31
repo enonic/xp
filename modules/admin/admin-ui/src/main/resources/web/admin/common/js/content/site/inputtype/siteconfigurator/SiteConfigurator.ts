@@ -40,7 +40,7 @@ module api.content.site.inputtype.siteconfigurator {
         private readOnlyPromise: Promise<void>;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
-            super("site-configurator");
+            super('site-configurator');
             this.context = config;
             this.formContext = config.formContext;
 
@@ -89,7 +89,6 @@ module api.content.site.inputtype.siteconfigurator {
             return deferred.promise;
         }
 
-
         update(propertyArray: api.data.PropertyArray, unchangedOnly?: boolean): Q.Promise<void> {
             return super.update(propertyArray, unchangedOnly).then(() => {
                 this.siteConfigProvider.setPropertyArray(propertyArray);
@@ -104,7 +103,6 @@ module api.content.site.inputtype.siteconfigurator {
         reset() {
             this.comboBox.resetBaseValues();
         }
-
 
         private saveToSet(siteConfig: SiteConfig, index: number) {
 
@@ -174,7 +172,7 @@ module api.content.site.inputtype.siteconfigurator {
 
             comboBox.onSiteConfigFormDisplayed((applicationKey: ApplicationKey, formView: FormView) => {
                 let indexToRemove = siteConfigFormsToDisplay.indexOf(applicationKey.toString());
-                if (indexToRemove != -1) {
+                if (indexToRemove !== -1) {
                     siteConfigFormsToDisplay.splice(indexToRemove, 1);
                 }
 
@@ -187,21 +185,21 @@ module api.content.site.inputtype.siteconfigurator {
 
             let handleAppEvent = (view: SiteConfiguratorSelectedOptionView, hasUninstalledClass: boolean, hasStoppedClass) => {
                 if (view) {
-                    view.toggleClass("stopped", hasStoppedClass);
-                    view.toggleClass("uninstalled", hasUninstalledClass);
+                    view.toggleClass('stopped', hasStoppedClass);
+                    view.toggleClass('uninstalled', hasUninstalledClass);
                 }
             };
 
             ApplicationEvent.on((event: ApplicationEvent) => {
-                if (ApplicationEventType.STOPPED == event.getEventType()) {
+                if (ApplicationEventType.STOPPED === event.getEventType()) {
                     handleAppEvent(this.getMatchedOption(comboBox, event), false, true);
-                } else if (ApplicationEventType.STARTED == event.getEventType()) {
+                } else if (ApplicationEventType.STARTED === event.getEventType()) {
                     let view = this.getMatchedOption(comboBox, event);
                     handleAppEvent(view, false, false);
                     if (view && !!view.getOption().empty) {
-                        view.removeClass("empty");
+                        view.removeClass('empty');
                     }
-                } else if (ApplicationEventType.UNINSTALLED == event.getEventType()) {
+                } else if (ApplicationEventType.UNINSTALLED === event.getEventType()) {
                     handleAppEvent(this.getMatchedOption(comboBox, event), true, false);
                 }
             });
@@ -256,5 +254,5 @@ module api.content.site.inputtype.siteconfigurator {
 
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("SiteConfigurator", SiteConfigurator));
+    api.form.inputtype.InputTypeManager.register(new api.Class('SiteConfigurator', SiteConfigurator));
 }

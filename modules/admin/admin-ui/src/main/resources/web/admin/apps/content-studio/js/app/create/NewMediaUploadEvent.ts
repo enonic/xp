@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import Content = api.content.Content;
 import UploadItem = api.ui.uploader.UploadItem;

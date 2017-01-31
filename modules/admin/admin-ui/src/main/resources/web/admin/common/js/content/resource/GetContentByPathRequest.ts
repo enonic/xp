@@ -8,7 +8,7 @@ module api.content.resource {
 
         constructor(path: ContentPath) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
             this.contentPath = path;
         }
 
@@ -19,7 +19,7 @@ module api.content.resource {
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "bypath");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'bypath');
         }
 
         sendAndParse(): wemQ.Promise<Content> {

@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {UserTreeGridItem} from "./UserTreeGridItem";
+import '../../api.ts';
+import {UserTreeGridItem} from './UserTreeGridItem';
 
 export class BaseUserEvent extends api.event.Event {
 

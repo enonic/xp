@@ -14,7 +14,7 @@ module api.content.resource {
 
         constructor() {
             super();
-            super.setMethod("POST");
+            super.setMethod('POST');
         }
 
         setSilent(silent: boolean): OrderChildContentRequest {
@@ -44,17 +44,16 @@ module api.content.resource {
 
         getParams(): json.ReorderChildContentsJson {
             return {
-                "silent": this.silent,
-                "manualOrder": this.manualOrder,
-                "contentId": this.contentId.toString(),
-                "childOrder": this.childOrder ? this.childOrder.toJson() : undefined,
-                "reorderChildren": this.contentMovements.toArrayJson()
+                silent: this.silent,
+                manualOrder: this.manualOrder,
+                contentId: this.contentId.toString(),
+                childOrder: this.childOrder ? this.childOrder.toJson() : undefined,
+                reorderChildren: this.contentMovements.toArrayJson()
             };
         }
 
-
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), "reorderChildren");
+            return api.rest.Path.fromParent(super.getResourcePath(), 'reorderChildren');
         }
 
         sendAndParse(): wemQ.Promise<any> {

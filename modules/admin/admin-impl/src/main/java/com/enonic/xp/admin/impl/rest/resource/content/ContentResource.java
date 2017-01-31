@@ -553,6 +553,7 @@ public final class ContentResource
     {
         final ContentIds contentIds = ContentIds.from( params.getIds() );
         final ContentIds excludeContentIds = ContentIds.from( params.getExcludedIds() );
+        final ContentIds excludeChildrenIds = ContentIds.from( params.getExcludeChildrenIds() );
         final ContentPublishInfo contentPublishInfo = params.getSchedule() == null ? null : ContentPublishInfo.create().
             from( params.getSchedule().getPublishFrom() ).
             to( params.getSchedule().getPublishTo() ).
@@ -564,8 +565,8 @@ public final class ContentResource
             target( ContentConstants.BRANCH_MASTER ).
             contentIds( contentIds ).
             excludedContentIds( excludeContentIds ).
+            excludeChildrenIds( excludeChildrenIds ).
             contentPublishInfo( contentPublishInfo ).
-            includeChildren( params.isIncludeChildren() ).
             includeDependencies( true ).
             pushListener( new PublishContentProgressListener( progressReporter ) ).
             build() );
@@ -701,13 +702,14 @@ public final class ContentResource
         //Resolved the requested ContentPublishItem
         final ContentIds requestedContentIds = ContentIds.from( params.getIds() );
         final ContentIds excludeContentIds = ContentIds.from( params.getExcludedIds() );
+        final ContentIds excludeChildrenIds = ContentIds.from( params.getExcludeChildrenIds() );
 
         //Resolves the publish dependencies
         final CompareContentResults results = contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
             target( ContentConstants.BRANCH_MASTER ).
             contentIds( requestedContentIds ).
             excludedContentIds( excludeContentIds ).
-            includeChildren( params.includeChildren() ).
+            excludeChildrenIds( excludeChildrenIds ).
             build() );
 
         //Resolved the dependent ContentPublishItem

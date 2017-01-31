@@ -72,26 +72,26 @@ module api.util {
             if (StringHelper.isBlank(path)) {
                 return StringHelper.EMPTY_STRING;
             }
-            return path.charAt(0) == '/' ? path.substring(1) : path;
+            return path.charAt(0) === '/' ? path.substring(1) : path;
         }
 
         static isNavigatingOutsideOfXP(href: string, contentWindow: Window): boolean {
             // href should start with '/' or after replacing window's protocol and host not be equal to basic href value
-            return href.charAt(0) == '/' ? false : UriHelper.trimWindowProtocolAndPortFromHref(href, contentWindow) == href;
+            return href.charAt(0) === '/' ? false : UriHelper.trimWindowProtocolAndPortFromHref(href, contentWindow) === href;
         }
 
         static trimWindowProtocolAndPortFromHref(href: string, contentWindow: Window) {
             let location: Location = contentWindow.location;
-            return UriHelper.relativePath(href.replace(location.protocol + "//" + location.host, ""));
+            return UriHelper.relativePath(href.replace(location.protocol + '//' + location.host, ''));
         }
 
         static trimAnchor(trimMe: string): string {
-            let index = trimMe.lastIndexOf("#");
+            let index = trimMe.lastIndexOf('#');
             return index >= 0 ? UriHelper.relativePath(trimMe.substring(0, index)) : UriHelper.relativePath(trimMe);
         }
 
         static trimUrlParams(trimMe: string): string {
-            let index = trimMe.lastIndexOf("?");
+            let index = trimMe.lastIndexOf('?');
             return index >= 0 ? trimMe.substring(0, index) : trimMe;
         }
 
@@ -134,26 +134,26 @@ module api.util {
             }
             let urlArray = [];
             for (let key in params) {
-                if (params.hasOwnProperty(key) && params[key] != undefined) {
+                if (params.hasOwnProperty(key) && params[key] != null) {
                     let value = params[key];
-                    let prefixedKey = prefix ? prefix + "[" + key + "]" : key;
-                    if (typeof value == "object") {
+                    let prefixedKey = prefix ? prefix + '[' + key + ']' : key;
+                    if (typeof value === 'object') {
                         urlArray.push(this.encodeUrlParams(value, prefixedKey));
                     } else {
-                        urlArray.push(encodeURIComponent(prefixedKey) + "=" + encodeURIComponent(value));
+                        urlArray.push(encodeURIComponent(prefixedKey) + '=' + encodeURIComponent(value));
                     }
                 }
             }
-            return urlArray.join("&");
+            return urlArray.join('&');
         }
 
         static appendUrlParams(url: string, params: {[name: string]: any}): string {
-            if (!params || Object.keys(params).length == 0) {
+            if (!params || Object.keys(params).length === 0) {
                 return url;
             }
 
-            let urlParams = UriHelper.decodeUrlParams(url),
-                hasParams = Object.keys(urlParams).length > 0;
+            let urlParams = UriHelper.decodeUrlParams(url);
+            let hasParams = Object.keys(urlParams).length > 0;
 
             return url + (hasParams ? '&' : '?') + UriHelper.encodeUrlParams(params);
         }

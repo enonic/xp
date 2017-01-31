@@ -10,7 +10,7 @@ module api.application {
 
         constructor(applicationKey: ApplicationKey, skipCache: boolean = false) {
             super();
-            super.setMethod("GET");
+            super.setMethod('GET');
             this.applicationKey = applicationKey;
             this.skipCache = skipCache;
             this.setHeavyOperation(true);
@@ -32,8 +32,7 @@ module api.application {
             let appObj = this.skipCache ? null : cache.getByKey(this.applicationKey);
             if (appObj) {
                 return wemQ(appObj);
-            }
-            else {
+            } else {
                 return this.send().then((response: api.rest.JsonResponse<ApplicationJson>) => {
                     appObj = this.fromJsonToApplication(response.getResult());
                     cache.put(appObj);

@@ -4,7 +4,6 @@ import FormItemBuilder = api.ui.form.FormItemBuilder;
 import DivEl = api.dom.DivEl;
 import LabelEl = api.dom.LabelEl;
 
-
 export class UserStoreWizardStepForm extends api.app.wizard.WizardStepForm {
 
     private formView: api.form.FormView;
@@ -44,16 +43,16 @@ export class UserStoreWizardStepForm extends api.app.wizard.WizardStepForm {
         let isSystemUserStore = (!!userStore && userStore.getKey().isSystem()).toString();
         let formBuilder = new api.form.FormBuilder().
             addFormItem(new api.form.InputBuilder().
-                setName("description").
+                setName('description').
                 setInputType(api.form.inputtype.text.TextLine.getName()).
-                setLabel("Description").
+                setLabel('Description').
                 setOccurrences(new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).
                 setInputTypeConfig({}).
                 setMaximizeUIInputWidth(true).
                 build()).
             addFormItem(new api.form.InputBuilder().
-                setName("authConfig").
-                setInputType(new api.form.InputTypeName("AuthApplicationSelector", false)).setLabel("ID Provider").setOccurrences(
+                setName('authConfig').
+                setInputType(new api.form.InputTypeName('AuthApplicationSelector', false)).setLabel('ID Provider').setOccurrences(
             new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).setInputTypeConfig(
             {readOnly: [{value: isSystemUserStore}]}).
                 setMaximizeUIInputWidth(true).
@@ -61,13 +60,13 @@ export class UserStoreWizardStepForm extends api.app.wizard.WizardStepForm {
 
         this.propertySet = new api.data.PropertyTree().getRoot();
         if (userStore) {
-            this.propertySet.addString("description", userStore.getDescription());
+            this.propertySet.addString('description', userStore.getDescription());
             let authConfig = userStore.getAuthConfig();
             if (authConfig) {
                 let authConfigPropertySet = new api.data.PropertySet();
-                authConfigPropertySet.addString("applicationKey", authConfig.getApplicationKey().toString());
-                authConfigPropertySet.addPropertySet("config", authConfig.getConfig().getRoot());
-                this.propertySet.addPropertySet("authConfig", authConfigPropertySet);
+                authConfigPropertySet.addString('applicationKey', authConfig.getApplicationKey().toString());
+                authConfigPropertySet.addPropertySet('config', authConfig.getConfig().getRoot());
+                this.propertySet.addPropertySet('authConfig', authConfigPropertySet);
             }
         }
 
@@ -79,10 +78,10 @@ export class UserStoreWizardStepForm extends api.app.wizard.WizardStepForm {
     }
 
     getAuthConfig(): api.security.AuthConfig {
-        let authConfigPropertySet = this.propertySet.getPropertySet("authConfig");
+        let authConfigPropertySet = this.propertySet.getPropertySet('authConfig');
         if (authConfigPropertySet) {
-            let applicationKey = api.application.ApplicationKey.fromString(authConfigPropertySet.getString("applicationKey"));
-            let config = new api.data.PropertyTree(authConfigPropertySet.getPropertySet("config"));
+            let applicationKey = api.application.ApplicationKey.fromString(authConfigPropertySet.getString('applicationKey'));
+            let config = new api.data.PropertyTree(authConfigPropertySet.getPropertySet('config'));
             return api.security.AuthConfig.create().
                 setApplicationKey(applicationKey).
                 setConfig(config).
@@ -93,7 +92,7 @@ export class UserStoreWizardStepForm extends api.app.wizard.WizardStepForm {
     }
 
     getDescription(): string {
-        return this.propertySet.getString("description");
+        return this.propertySet.getString('description');
     }
 
     giveFocus(): boolean {

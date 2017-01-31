@@ -3,21 +3,21 @@ module api.content {
     export class ContentSummaryViewer extends api.ui.NamesAndIconViewer<ContentSummary> {
 
         constructor() {
-            super("content-summary-viewer");
+            super('content-summary-viewer');
         }
 
         resolveDisplayName(object: ContentSummary): string {
-            let contentName = object.getName(),
-                invalid = !object.isValid() || !object.getDisplayName() || contentName.isUnnamed(),
-                pendingDelete = object.getContentState().isPendingDelete();
-            this.toggleClass("invalid", invalid);
-            this.toggleClass("pending-delete", pendingDelete);
+            let contentName = object.getName();
+            let invalid = !object.isValid() || !object.getDisplayName() || contentName.isUnnamed();
+            let pendingDelete = object.getContentState().isPendingDelete();
+            this.toggleClass('invalid', invalid);
+            this.toggleClass('pending-delete', pendingDelete);
 
             return object.getDisplayName();
         }
 
         resolveUnnamedDisplayName(object: ContentSummary): string {
-            return object.getType() ? object.getType().getLocalName() : "";
+            return object.getType() ? object.getType().getLocalName() : '';
         }
 
         resolveSubName(object: ContentSummary, relativePath: boolean = false): string {

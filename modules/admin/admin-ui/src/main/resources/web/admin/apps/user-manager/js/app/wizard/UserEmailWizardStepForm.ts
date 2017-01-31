@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import Principal = api.security.Principal;
 
@@ -8,7 +8,6 @@ import Validators = api.ui.form.Validators;
 
 import DivEl = api.dom.DivEl;
 import LabelEl = api.dom.LabelEl;
-
 
 export class UserEmailWizardStepForm extends api.app.wizard.WizardStepForm {
 
@@ -39,7 +38,7 @@ export class UserEmailWizardStepForm extends api.app.wizard.WizardStepForm {
 
         form.onValidityChanged((event: api.ValidityChangedEvent) => {
             this.notifyValidityChanged(new api.app.wizard.WizardStepValidityChangedEvent(event.isValid()));
-            emailFormItem.toggleClass("invalid", !event.isValid());
+            emailFormItem.toggleClass('invalid', !event.isValid());
         });
 
         this.appendChild(form);

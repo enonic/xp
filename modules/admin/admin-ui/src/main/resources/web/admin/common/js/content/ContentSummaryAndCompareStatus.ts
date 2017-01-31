@@ -82,7 +82,7 @@ module api.content {
         getId(): string {
             return (this.contentSummary && this.contentSummary.getId()) ||
                    (this.uploadItem && this.uploadItem.getId()) ||
-                   "";
+                   '';
         }
 
         getPath(): ContentPath {
@@ -121,7 +121,7 @@ module api.content {
                 return false;
             }
 
-            if (this.compareStatus != other.compareStatus) {
+            if (this.compareStatus !== other.compareStatus) {
                 return false;
             }
 

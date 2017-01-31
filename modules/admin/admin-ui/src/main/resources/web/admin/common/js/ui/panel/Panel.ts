@@ -8,7 +8,7 @@ module api.ui.panel {
         private doOffset: boolean;
 
         constructor(className?: string) {
-            super("panel" + (className ? " " + className : ""));
+            super('panel' + (className ? ' ' + className : ''));
             this.doOffset = true;
 
             this.onAdded((event) => {

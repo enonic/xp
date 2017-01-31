@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 export interface ContentItemViewToolbarParams {
     editAction: api.ui.Action;

@@ -108,16 +108,15 @@ module api.data {
         }
 
         private checkType(type: ValueType) {
-
             if (!this.type.equals(type)) {
-                throw new Error("This PropertyArray expects only properties with value of type '" + this.type + "', got: " + type);
+                throw new Error(`This PropertyArray expects only properties with value of type '${this.type}', got: ${type}`);
             }
         }
 
         private checkIndex(index: number) {
 
             if (!(index <= this.array.length)) {
-                throw new Error("Index out of bounds: index: " + index + ", size: " + this.array.length);
+                throw new Error('Index out of bounds: index: ' + index + ', size: ' + this.array.length);
             }
         }
 
@@ -129,12 +128,12 @@ module api.data {
          * Application protected. Not to be used outside module.
          */
         addProperty(property: Property) {
-            api.util.assert(property.getName() == this.name,
-                "Expected name of added Property to be [" + this.name + "], got: " + property.getName());
+            api.util.assert(property.getName() === this.name,
+                'Expected name of added Property to be [' + this.name + '], got: ' + property.getName());
             api.util.assert(property.getType().equals(this.getType()),
-                "Expected type of added Property to be [" + this.type.toString() + "], got: " + property.getType().toString());
-            api.util.assert(property.getIndex() == this.array.length,
-                "Expected index of added Property to be [" + this.array.length + "], got: " + property.getIndex());
+                'Expected type of added Property to be [' + this.type.toString() + '], got: ' + property.getType().toString());
+            api.util.assert(property.getIndex() === this.array.length,
+                'Expected index of added Property to be [' + this.array.length + '], got: ' + property.getIndex());
 
             this.array.push(property);
 
@@ -183,8 +182,7 @@ module api.data {
             if (this.get(index) != null) {
                 property = this.array[index];
                 property.setValue(value);
-            }
-            else {
+            } else {
                 property = Property.create().
                     setArray(this).
                     setName(this.name).
@@ -213,7 +211,7 @@ module api.data {
 
             let propertyToRemove = this.get(index);
             if (!propertyToRemove) {
-                throw new Error("Property not found: " +
+                throw new Error('Property not found: ' +
                                 PropertyPath.fromParent(this.getParentPropertyPath(), new PropertyPathElement(name, index)));
             }
 
@@ -305,8 +303,8 @@ module api.data {
 
         private registerPropertyListeners(property: Property) {
             if (PropertyArray.debug) {
-                console.debug("PropertyArray[" + this.idForDebug() +
-                              "].registerPropertyListeners: " +
+                console.debug('PropertyArray[' + this.idForDebug() +
+                              '].registerPropertyListeners: ' +
                               property.getPath().toString());
             }
 
@@ -321,8 +319,8 @@ module api.data {
 
         private unregisterPropertyListeners(property: Property) {
             if (PropertyArray.debug) {
-                console.debug("PropertyArray[" + this.idForDebug() +
-                              "].unregisterPropertyListeners: " +
+                console.debug('PropertyArray[' + this.idForDebug() +
+                              '].unregisterPropertyListeners: ' +
                               property.getPath().toString());
             }
 
@@ -341,8 +339,8 @@ module api.data {
         registerPropertySetListeners(propertySet: PropertySet) {
 
             if (PropertyArray.debug) {
-                console.debug("PropertyArray[" + this.idForDebug() +
-                              "].registerPropertySetListeners: " +
+                console.debug('PropertyArray[' + this.idForDebug() +
+                              '].registerPropertySetListeners: ' +
                               propertySet.getPropertyPath().toString());
             }
 
@@ -368,14 +366,14 @@ module api.data {
 
         unPropertyAdded(listener: {(event: PropertyAddedEvent): void;}) {
             this.propertyAddedListeners =
-            this.propertyAddedListeners.filter((curr) => (curr != listener));
+            this.propertyAddedListeners.filter((curr) => (curr !== listener));
         }
 
         private notifyPropertyAdded(property: Property) {
             let event = new PropertyAddedEvent(property);
             if (PropertyArray.debug) {
-                console.debug("PropertyArray[" + this.idForDebug() +
-                              "].notifyPropertyAdded: " +
+                console.debug('PropertyArray[' + this.idForDebug() +
+                              '].notifyPropertyAdded: ' +
                               event.toString());
             }
             this.propertyAddedListeners.forEach((listener) => listener(event));
@@ -383,8 +381,8 @@ module api.data {
 
         private forwardPropertyAddedEvent(event: PropertyAddedEvent) {
             if (PropertyArray.debug) {
-                console.debug("PropertyArray[" + this.idForDebug() +
-                              "].forwardPropertyAddedEvent: " +
+                console.debug('PropertyArray[' + this.idForDebug() +
+                              '].forwardPropertyAddedEvent: ' +
                               event.toString());
             }
             this.propertyAddedListeners.forEach((listener) => listener(event));
@@ -396,14 +394,14 @@ module api.data {
 
         unPropertyRemoved(listener: {(event: PropertyRemovedEvent): void;}) {
             this.propertyRemovedListeners =
-            this.propertyRemovedListeners.filter((curr) => (curr != listener));
+            this.propertyRemovedListeners.filter((curr) => (curr !== listener));
         }
 
         private notifyPropertyRemoved(property: Property) {
             let event = new PropertyRemovedEvent(property);
             if (PropertyArray.debug) {
-                console.debug("PropertyArray[" + this.idForDebug() +
-                              "].notifyPropertyRemoved: " +
+                console.debug('PropertyArray[' + this.idForDebug() +
+                              '].notifyPropertyRemoved: ' +
                               event.toString());
             }
             this.propertyRemovedListeners.forEach((listener) => listener(event));
@@ -411,8 +409,8 @@ module api.data {
 
         private forwardPropertyRemovedEvent(event: PropertyRemovedEvent) {
             if (PropertyArray.debug) {
-                console.debug("PropertyArray[" + this.idForDebug() +
-                              "].forwardPropertyRemovedEvent: " +
+                console.debug('PropertyArray[' + this.idForDebug() +
+                              '].forwardPropertyRemovedEvent: ' +
                               event.toString());
             }
             this.propertyRemovedListeners.forEach((listener) => listener(event));
@@ -424,13 +422,13 @@ module api.data {
 
         unPropertyIndexChanged(listener: {(event: PropertyIndexChangedEvent): void;}) {
             this.propertyIndexChangedListeners =
-            this.propertyIndexChangedListeners.filter((curr) => (curr != listener));
+            this.propertyIndexChangedListeners.filter((curr) => (curr !== listener));
         }
 
         private forwardPropertyIndexChangedEvent(event: PropertyIndexChangedEvent) {
             if (PropertyArray.debug) {
-                console.debug("PropertyArray[" + this.idForDebug() +
-                              "].forwardPropertyIndexChangedEvent: " + event.toString());
+                console.debug('PropertyArray[' + this.idForDebug() +
+                              '].forwardPropertyIndexChangedEvent: ' + event.toString());
             }
             this.propertyIndexChangedListeners.forEach((listener) => listener(event));
         }
@@ -441,13 +439,13 @@ module api.data {
 
         unPropertyValueChanged(listener: {(event: PropertyValueChangedEvent): void;}) {
             this.propertyValueChangedListeners =
-            this.propertyValueChangedListeners.filter((curr) => (curr != listener));
+            this.propertyValueChangedListeners.filter((curr) => (curr !== listener));
         }
 
         private forwardPropertyValueChangedEvent(event: PropertyValueChangedEvent) {
             if (PropertyArray.debug) {
-                console.debug("PropertyArray[" + this.idForDebug() +
-                              "].forwardPropertyValueChangedEvent: : " + event.toString());
+                console.debug('PropertyArray[' + this.idForDebug() +
+                              '].forwardPropertyValueChangedEvent: : ' + event.toString());
             }
             this.propertyValueChangedListeners.forEach((listener) => listener(event));
         }
@@ -465,8 +463,7 @@ module api.data {
                     valuesJson.push(<PropertyValueJson>{
                         set: valueSetJson
                     });
-                }
-                else {
+                } else {
                     let valueJson = this.type.toJsonValue(property.getValue());
                     valuesJson.push(<PropertyValueJson>{
                         v: valueJson
@@ -482,7 +479,7 @@ module api.data {
         }
 
         private idForDebug(): string {
-            return this.getParentPropertyPath().toString() + "." + this.getName();
+            return this.getParentPropertyPath().toString() + '.' + this.getName();
         }
 
         public static fromJson(json: PropertyArrayJson, parentPropertySet: PropertySet, tree: PropertyTree): PropertyArray {
@@ -508,8 +505,7 @@ module api.data {
                     });
 
                     value = new Value(valueAsPropertySet, ValueTypes.DATA);
-                }
-                else {
+                } else {
                     value = type.fromJsonValue(propertyValueJson.v);
                 }
 

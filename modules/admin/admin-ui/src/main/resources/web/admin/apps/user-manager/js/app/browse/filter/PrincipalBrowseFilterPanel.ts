@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {PrincipalBrowseResetEvent} from "./PrincipalBrowseResetEvent";
-import {PrincipalBrowseSearchEvent} from "./PrincipalBrowseSearchEvent";
+import '../../../api.ts';
+import {PrincipalBrowseResetEvent} from './PrincipalBrowseResetEvent';
+import {PrincipalBrowseSearchEvent} from './PrincipalBrowseSearchEvent';
 
 import AggregationGroupView = api.aggregation.AggregationGroupView;
 import SearchInputValues = api.query.SearchInputValues;
@@ -9,7 +9,6 @@ import FindPrincipalsRequest = api.security.FindPrincipalsRequest;
 import PrincipalType = api.security.PrincipalType;
 
 export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel {
-
 
     constructor() {
 
@@ -35,7 +34,7 @@ export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilt
     }
 
     private resetFacets(supressEvent?: boolean) {
-        this.searchDataAndHandleResponse("", false);
+        this.searchDataAndHandleResponse('', false);
 
         if (!supressEvent) { // then fire usual reset event with content grid reloading
             new PrincipalBrowseResetEvent().fire();
@@ -43,8 +42,8 @@ export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilt
     }
 
     private searchFacets(isRefresh: boolean = false) {
-        let values = this.getSearchInputValues(),
-            searchText = values.getTextSearchFieldValue();
+        let values = this.getSearchInputValues();
+        let searchText = values.getTextSearchFieldValue();
         if (!searchText) {
             this.handleEmptyFilterInput(isRefresh);
             return;
@@ -76,6 +75,6 @@ export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilt
     }
 
     private initHitsCounter() {
-        this.searchDataAndHandleResponse("", false);
+        this.searchDataAndHandleResponse('', false);
     }
 }

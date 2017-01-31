@@ -14,7 +14,7 @@ module api.content.resource.result {
 
             this.getPublishStatusesResult.forEach((result: GetPublishStatusResult) => {
 
-                if (result.getId() == contentId) {
+                if (result.getId() === contentId) {
                     getPublishStatusResult = result;
                 }
             });

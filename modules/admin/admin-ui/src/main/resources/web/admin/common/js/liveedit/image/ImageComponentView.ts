@@ -53,11 +53,11 @@ module api.liveedit.image {
             let figureElChildren = this.getChildren();
             for (let i = 0; i < figureElChildren.length; i++) {
                 let image = figureElChildren[i];
-                if (image.getHTMLElement().tagName.toUpperCase() == 'IMG') {
+                if (image.getHTMLElement().tagName.toUpperCase() === 'IMG') {
                     this.image = image;
 
                     // no way to use ImgEl.onLoaded because all html tags are parsed as Element
-                    this.image.getEl().addEventListener("load", (event) => {
+                    this.image.getEl().addEventListener('load', (event) => {
                         // refresh shader and highlighter after image loaded
                         // if it's still selected
                         if (this.isSelected()) {
@@ -69,7 +69,6 @@ module api.liveedit.image {
                 return;
             }
         }
-
 
     }
 }

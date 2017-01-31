@@ -44,7 +44,7 @@ module api.content.resource {
         }
 
         resetSearchString() {
-            this.getRequest().setSearchString("");
+            this.getRequest().setSearchString('');
         }
 
         load(postLoad: boolean = false): wemQ.Promise<ContentSummary[]> {
@@ -65,7 +65,7 @@ module api.content.resource {
                     if (contents && contents.length > 0) {
                         /*
                          We don't need sorting on the client - items must be sorted on the server before they are fed to the pager
-                         if (!this.contentSummaryRequest.getSearchString() || this.contentSummaryRequest.getSearchString().length == 0) {
+                         if (!this.contentSummaryRequest.getSearchString() || this.contentSummaryRequest.getSearchString().length === 0) {
                          contents.sort(new api.content.util.ContentByPathComparator().compare);
                          }
                          */

@@ -16,7 +16,7 @@ module api.aggregation {
         private bucketSelectionChangedListeners: Function[] = [];
 
         constructor(name: string, displayName: string) {
-            super("aggregation-group-view");
+            super('aggregation-group-view');
 
             this.name = name;
             this.displayName = displayName;
@@ -53,7 +53,7 @@ module api.aggregation {
          */
         handlesAggregation(aggregation: api.aggregation.Aggregation) {
 
-            return aggregation.getName() == this.name;
+            return aggregation.getName() === this.name;
         }
 
         getSelectedValuesByAggregationName(): AggregationSelection[] {
@@ -119,8 +119,7 @@ module api.aggregation {
 
                 if (existingAggregationView == null) {
                     this.addAggregationView(api.aggregation.AggregationView.createAggregationView(aggregation, this));
-                }
-                else {
+                } else {
                     if (api.ObjectHelper.iFrameSafeInstanceOf(existingAggregationView, BucketAggregationView)) {
 
                         let bucketAggregationView: BucketAggregationView = <BucketAggregationView>existingAggregationView;
@@ -135,7 +134,7 @@ module api.aggregation {
 
             for (let i = 0; i < this.aggregationViews.length; i++) {
                 let aggregationView: api.aggregation.AggregationView = this.aggregationViews[i];
-                if (aggregationView.getName() == name) {
+                if (aggregationView.getName() === name) {
                     return aggregationView;
                 }
             }

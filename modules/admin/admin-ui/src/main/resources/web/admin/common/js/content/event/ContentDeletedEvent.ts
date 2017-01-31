@@ -14,7 +14,7 @@ module api.content.event {
         }
 
         addPendingItem(contentId: ContentId, contentPath: api.content.ContentPath): ContentDeletedEvent {
-            this.contentDeletedItems.push(new ContentDeletedItem(contentId, contentPath, "master", true));
+            this.contentDeletedItems.push(new ContentDeletedItem(contentId, contentPath, 'master', true));
             return this;
         }
 
@@ -23,7 +23,7 @@ module api.content.event {
         }
 
         isEmpty(): boolean {
-            return this.contentDeletedItems.length == 0;
+            return this.contentDeletedItems.length === 0;
         }
 
         fire(contextWindow: Window = window) {

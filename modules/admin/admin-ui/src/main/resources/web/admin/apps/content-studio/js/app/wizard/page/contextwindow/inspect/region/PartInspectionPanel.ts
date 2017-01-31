@@ -1,9 +1,9 @@
-import "../../../../../../api.ts";
+import '../../../../../../api.ts';
 import {
     DescriptorBasedComponentInspectionPanel,
     DescriptorBasedComponentInspectionPanelConfig
-} from "./DescriptorBasedComponentInspectionPanel";
-import {DescriptorBasedDropdownForm} from "./DescriptorBasedDropdownForm";
+} from './DescriptorBasedComponentInspectionPanel';
+import {DescriptorBasedDropdownForm} from './DescriptorBasedDropdownForm';
 
 import SiteModel = api.content.site.SiteModel;
 import PartDescriptor = api.content.page.region.PartDescriptor;
@@ -38,7 +38,7 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
 
     constructor() {
         super(<DescriptorBasedComponentInspectionPanelConfig>{
-            iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType("part", "icon-xlarge")
+            iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType('part', 'icon-xlarge')
         });
     }
 
@@ -47,14 +47,14 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
         this.removeChildren();
 
         this.selector = new PartDescriptorDropdown();
-        this.partForm = new DescriptorBasedDropdownForm(this.selector, "Part");
+        this.partForm = new DescriptorBasedDropdownForm(this.selector, 'Part');
 
         this.selector.loadDescriptors(this.liveEditModel.getSiteModel().getApplicationKeys());
 
         this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
 
             // Ensure displayed config form and selector option are removed when descriptor is removed
-            if (event.getPropertyName() == DescriptorBasedComponent.PROPERTY_DESCRIPTOR) {
+            if (event.getPropertyName() === DescriptorBasedComponent.PROPERTY_DESCRIPTOR) {
                 if (!this.partComponent.hasDescriptor()) {
                     this.setSelectorValue(null, false);
                 }

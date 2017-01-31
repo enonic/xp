@@ -36,7 +36,6 @@ module api.schema.mixin {
 
             let other = <Mixin>o;
 
-
             if (!api.ObjectHelper.stringEquals(this.schemaKey, other.schemaKey)) {
                 return false;
             }
@@ -83,7 +82,7 @@ module api.schema.mixin {
                     this.formItems.push(formItem);
                 }
             });
-            this.schemaKey = "mixin:" + this.name;
+            this.schemaKey = 'mixin:' + this.name;
             return this;
         }
 

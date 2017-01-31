@@ -35,7 +35,7 @@ module api.app {
             window.onmessage = (e: MessageEvent) => {
                 if (e.data.appLauncherEvent) {
                     let eventType: api.app.AppLauncherEventType = api.app.AppLauncherEventType[<string>e.data.appLauncherEvent];
-                    if (eventType == api.app.AppLauncherEventType.Show) {
+                    if (eventType === api.app.AppLauncherEventType.Show) {
                         this.activateCurrentKeyBindings();
                     }
                 }
@@ -68,7 +68,7 @@ module api.app {
         }
 
         protected createBrowsePanel(): api.app.browse.BrowsePanel<M> {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
     }
 }

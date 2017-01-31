@@ -2,7 +2,7 @@ module api.util {
 
     export class LocalTime implements api.Equitable {
 
-        private static TIME_SEPARATOR: string = ":";
+        private static TIME_SEPARATOR: string = ':';
 
         private hours: number;
 
@@ -69,12 +69,12 @@ module api.util {
 
         static fromString(s: string): LocalTime {
             if (!LocalTime.isValidString(s)) {
-                throw new Error("Cannot parse LocalTime from string: " + s);
+                throw new Error('Cannot parse LocalTime from string: ' + s);
             }
-            let localTime: string[] = s.split(':'),
-                hours = Number(localTime[0]),
-                minutes = Number(localTime[1]) || 0,
-                seconds = localTime.length > 2 ? Number(localTime[2]) : 0;
+            let localTime: string[] = s.split(':');
+            let hours = Number(localTime[0]);
+            let minutes = Number(localTime[1]) || 0;
+            let seconds = localTime.length > 2 ? Number(localTime[2]) : 0;
 
             return LocalTime.create()
                 .setHours(hours)

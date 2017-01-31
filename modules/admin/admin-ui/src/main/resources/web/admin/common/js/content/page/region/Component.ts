@@ -65,7 +65,7 @@ module api.content.page.region {
         }
 
         doReset() {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         reset() {
@@ -74,7 +74,7 @@ module api.content.page.region {
         }
 
         isEmpty(): boolean {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         getParent(): Region {
@@ -94,17 +94,17 @@ module api.content.page.region {
         }
 
         toJson(): ComponentTypeWrapperJson {
-            throw new Error("Must be implemented by inheritor: " + api.ClassHelper.getClassName(this));
+            throw new Error('Must be implemented by inheritor: ' + api.ClassHelper.getClassName(this));
         }
 
         toString(): string {
-            return "Component[" + (this.name ? this.name.toString() : "") + "]";
+            return 'Component[' + (this.name ? this.name.toString() : '') + ']';
         }
 
         toComponentJson(): ComponentJson {
 
             return {
-                "name": this.name ? this.name.toString() : null
+                name: this.name ? this.name.toString() : null
             };
         }
 
@@ -124,7 +124,7 @@ module api.content.page.region {
         }
 
         clone(): Component {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         onChanged(listener: (event: ComponentChangedEvent)=>void) {
@@ -134,7 +134,7 @@ module api.content.page.region {
         unChanged(listener: (event: ComponentChangedEvent)=>void) {
             this.changedListeners =
             this.changedListeners.filter((curr: (event: ComponentPropertyChangedEvent)=>void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
@@ -150,7 +150,7 @@ module api.content.page.region {
 
         unReset(listener: (event: ComponentResetEvent)=>void) {
             this.resetListeners = this.resetListeners.filter((curr: (event: ComponentResetEvent)=>void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
@@ -171,7 +171,7 @@ module api.content.page.region {
         unPropertyChanged(listener: (event: ComponentPropertyChangedEvent)=>void) {
             this.propertyChangedListeners =
             this.propertyChangedListeners.filter((curr: (event: ComponentPropertyChangedEvent)=>void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
@@ -199,7 +199,7 @@ module api.content.page.region {
         unPropertyValueChanged(listener: (event: ComponentPropertyValueChangedEvent)=>void) {
             this.propertyValueChangedListeners =
             this.propertyValueChangedListeners.filter((curr: (event: ComponentPropertyValueChangedEvent)=>void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
@@ -252,7 +252,7 @@ module api.content.page.region {
         }
 
         public build(): COMPONENT {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
     }
 }

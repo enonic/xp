@@ -158,10 +158,10 @@ module api.ui.time {
             }
 
             if (this.timezone) {
-                let timezoneContainer = new api.dom.LiEl("timezone");
+                let timezoneContainer = new api.dom.LiEl('timezone');
 
-                this.timezoneLocation = new api.dom.SpanEl("timezone-location").setHtml(this.timezone.getLocation());
-                this.timezoneOffset = new api.dom.SpanEl("timezone-offset").setHtml(this.getUTCString(this.timezone.getOffset()));
+                this.timezoneLocation = new api.dom.SpanEl('timezone-location').setHtml(this.timezone.getLocation());
+                this.timezoneOffset = new api.dom.SpanEl('timezone-offset').setHtml(this.getUTCString(this.timezone.getOffset()));
 
                 timezoneContainer.appendChild(this.timezoneLocation);
                 timezoneContainer.appendChild(this.timezoneOffset);
@@ -185,7 +185,7 @@ module api.ui.time {
 
         unSelectedTimeChanged(listener: (hours: number, minutes: number) => void) {
             this.timeChangedListeners = this.timeChangedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 
@@ -194,7 +194,7 @@ module api.ui.time {
             let delay = 400;
             let intervalFn = () => {
                 fn.apply(this, args);
-                if (++times % 5 == 0 && delay > 50) {
+                if (++times % 5 === 0 && delay > 50) {
                     // speed up after 5 occurrences but not faster than 50ms
                     this.stopInterval();
                     delay /= 2;
@@ -209,14 +209,13 @@ module api.ui.time {
         }
 
         private getUTCString(value: number) {
-            if (!value && value != 0) {
-                return "";
+            if (!value && value !== 0) {
+                return '';
             }
-            let result = "UTC";
-            result = value > 0 ? result + "+" : (value == 0 ? result + "-" : result);
+            let result = 'UTC';
+            result = value > 0 ? result + '+' : (value === 0 ? result + '-' : result);
             return result + value;
         }
-
 
         private addHour(add: number, silent?: boolean) {
             this.selectedHour += add;
@@ -265,7 +264,6 @@ module api.ui.time {
         public padNumber(value: number, pad: number): string {
             return Array(pad - String(value).length + 1).join('0') + value;
         }
-
 
         public isHoursValid(hours: number): boolean {
             return hours >= 0 && hours < 24;

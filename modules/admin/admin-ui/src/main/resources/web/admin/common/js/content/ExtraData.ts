@@ -55,7 +55,6 @@ module api.content {
             return new ExtraData(new MixinName(metadataJson.name), PropertyTree.fromJson(metadataJson.data));
         }
 
-
     }
 
 }

@@ -22,12 +22,12 @@ module api.content.image {
         private static STANDOUT_CLASS: string = 'standout';
 
         constructor(config: api.ui.uploader.MediaUploaderElConfig) {
-            if (config.allowTypes == undefined) {
+            if (config.allowTypes == null) {
                 config.allowTypes = [
                     {title: 'Image files', extensions: 'jpg,jpeg,gif,png,svg'}
                 ];
             }
-            if (config.selfIsDropzone == undefined) {
+            if (config.selfIsDropzone == null) {
                 config.selfIsDropzone = true;
             }
 
@@ -43,7 +43,7 @@ module api.content.image {
             this.initialWidth = 0;
             this.onShown(() => {
 
-                if (this.getEl().getWidth() == 0) {
+                if (this.getEl().getWidth() === 0) {
                     this.initialWidth = Math.max(this.getParentElement().getEl().getWidth(), this.initialWidth);
                     this.getEl().setMaxWidthPx(this.initialWidth);
                 }
@@ -90,13 +90,12 @@ module api.content.image {
         }
 
         private getSizeValue(content: api.content.Content, propertyName: string): number {
-            let value = 0,
-                metaData = content.getContentData().getProperty('metadata');
+            let value = 0;
+            let metaData = content.getContentData().getProperty('metadata');
 
             if (metaData && api.data.ValueTypes.DATA.equals(metaData.getType())) {
                 return parseInt(metaData.getPropertySet().getProperty(propertyName).getString(), 10);
-            }
-            else {
+            } else {
                 let allExtraData = content.getAllExtraData();
                 allExtraData.forEach((extraData: ExtraData) => {
                     if (!value && extraData.getData().getProperty(propertyName)) {
@@ -109,8 +108,8 @@ module api.content.image {
         }
 
         setOriginalDimensions(content: api.content.Content) {
-            this.originalWidth = this.getSizeValue(content, "imageWidth") || this.initialWidth;
-            this.originalHeight = this.getSizeValue(content, "imageHeight");
+            this.originalWidth = this.getSizeValue(content, 'imageWidth') || this.initialWidth;
+            this.originalHeight = this.getSizeValue(content, 'imageHeight');
         }
 
         private getProportionalHeight(): number {
@@ -131,8 +130,8 @@ module api.content.image {
 
         private createImageEditor(value: string): ImageEditor {
 
-            let contentId = new api.content.ContentId(value),
-                imgUrl = this.resolveImageUrl(value);
+            let contentId = new api.content.ContentId(value);
+            let imgUrl = this.resolveImageUrl(value);
 
             this.togglePlaceholder(true);
 
@@ -224,7 +223,7 @@ module api.content.image {
         protected refreshExistingItem(existingItem: api.dom.Element, value: string) {
             for (let i = 0; i < this.imageEditors.length; i++) {
                 let editor = this.imageEditors[i];
-                if (existingItem == editor) {
+                if (existingItem === editor) {
                     editor.setSrc(this.resolveImageUrl(value));
                     break;
                 }

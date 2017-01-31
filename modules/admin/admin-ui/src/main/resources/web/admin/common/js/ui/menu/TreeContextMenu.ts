@@ -6,7 +6,7 @@ module api.ui.menu {
         private actions: api.ui.Action[] = [];
 
         constructor(actions?: api.ui.Action[], appendToBody: boolean = true) {
-            super("context-menu");
+            super('context-menu');
 
             if (actions) {
                 actions.sort(function (action1: api.ui.Action, action2: api.ui.Action) {
@@ -44,8 +44,7 @@ module api.ui.menu {
                         subItems[i].toggleExpand();
                     }
                 });
-            }
-            else {
+            } else {
 
                 menuItem.onClicked((event: MouseEvent) => {
                     this.notifyItemClicked();
@@ -86,7 +85,7 @@ module api.ui.menu {
 
         unItemClicked(listener: () => void) {
             this.itemClickListeners = this.itemClickListeners.filter((currentListener: () => void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 

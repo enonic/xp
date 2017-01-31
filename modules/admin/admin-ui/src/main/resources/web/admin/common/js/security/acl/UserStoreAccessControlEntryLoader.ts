@@ -19,8 +19,8 @@ module api.security.acl {
 
         getParams(): Object {
             return {
-                /*"types": this.enumToStrings(this.allowedTypes),*/
-                "query": this.searchQuery
+                /*types: this.enumToStrings(this.allowedTypes),*/
+                query: this.searchQuery
             };
         }
 

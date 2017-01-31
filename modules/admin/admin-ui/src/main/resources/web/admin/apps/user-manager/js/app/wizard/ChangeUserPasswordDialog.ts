@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {OpenChangePasswordDialogEvent} from "./OpenChangePasswordDialogEvent";
+import '../../api.ts';
+import {OpenChangePasswordDialogEvent} from './OpenChangePasswordDialogEvent';
 
 import Principal = api.security.Principal;
 import PasswordGenerator = api.ui.text.PasswordGenerator;
@@ -18,12 +18,12 @@ export class ChangeUserPasswordDialog extends api.ui.dialog.ModalDialog {
     private changePasswordButton: DialogButton;
 
     constructor() {
-        super("Change password");
+        super('Change password');
 
-        this.getEl().addClass("change-password-dialog");
+        this.getEl().addClass('change-password-dialog');
 
-        this.userPath = new api.dom.H6El().addClass("user-path");
-        let descMessage = new api.dom.H6El().addClass("desc-message").setHtml("Password will be updated immediately after finishing");
+        this.userPath = new api.dom.H6El().addClass('user-path');
+        let descMessage = new api.dom.H6El().addClass('desc-message').setHtml('Password will be updated immediately after finishing');
 
         this.appendChildToContentPanel(this.userPath);
         this.appendChildToContentPanel(descMessage);
@@ -55,7 +55,7 @@ export class ChangeUserPasswordDialog extends api.ui.dialog.ModalDialog {
 
     private initializeActions() {
 
-        this.changePasswordButton = this.addAction(new api.ui.Action("Change Password", "").onExecuted(() => {
+        this.changePasswordButton = this.addAction(new api.ui.Action('Change Password', '').onExecuted(() => {
             new api.security.SetUserPasswordRequest().setKey(this.principal.getKey()).setPassword(
                 this.password.getValue()).sendAndParse().then((result) => {
                 api.notify.showFeedback('Password was changed!');
@@ -66,7 +66,7 @@ export class ChangeUserPasswordDialog extends api.ui.dialog.ModalDialog {
     }
 
     private toggleChangePasswordButton() {
-        if (this.password.getValue().length == 0) {
+        if (this.password.getValue().length === 0) {
             this.changePasswordButton.setEnabled(false);
         } else {
             this.changePasswordButton.setEnabled(true);
@@ -83,7 +83,7 @@ export class ChangeUserPasswordDialog extends api.ui.dialog.ModalDialog {
     }
 
     close() {
-        this.password.setValue("");
+        this.password.setValue('');
         super.close();
         this.remove();
     }

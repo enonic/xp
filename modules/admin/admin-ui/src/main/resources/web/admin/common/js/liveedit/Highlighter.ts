@@ -20,7 +20,7 @@ module api.liveedit {
         constructor(type?: HighlighterMode) {
             // Needs to be a SVG element as the css has pointer-events:none
             // CSS pointer-events only works for SVG in IE
-            let svgCls = api.StyleHelper.getCls("highlighter");
+            let svgCls = api.StyleHelper.getCls('highlighter');
             let html = `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="${svgCls}" style="top:-5000px;left:-5000px">
                            <rect width="150" height="150"/>
                            <path d=""/>
@@ -73,11 +73,11 @@ module api.liveedit {
         }
 
         setMode(mode: HighlighterMode): Highlighter {
-            if (this.mode != undefined) {
+            if (this.mode != null) {
                 this.getEl().removeClass(HighlighterMode[this.mode].toLowerCase());
             }
             this.mode = mode;
-            if (mode != undefined) {
+            if (mode != null) {
                 this.getEl().addClass(HighlighterMode[mode].toLowerCase());
             }
             return this;
@@ -110,11 +110,11 @@ module api.liveedit {
         }
 
         private resize(dimensions: ElementDimensions, style: HighlighterStyle): void {
-            let w = Math.round(dimensions.width),
-                h = Math.round(dimensions.height),
-                strokeW,
-                top = Math.round(dimensions.top),
-                left = Math.round(dimensions.left);
+            let w = Math.round(dimensions.width);
+            let h = Math.round(dimensions.height);
+            let strokeW;
+            let top = Math.round(dimensions.top);
+            let left = Math.round(dimensions.left);
 
             switch (this.mode) {
             case HighlighterMode.RECTANGLE:
@@ -128,11 +128,11 @@ module api.liveedit {
                 this.getEl().setWidthPx(w).setHeightPx(h).setTopPx(top).setLeftPx(left);
                 break;
             case HighlighterMode.CROSSHAIR:
-                let bodyEl = api.dom.Body.get().getEl(),
-                    screenH = bodyEl.getHeight(),
-                    screenW = bodyEl.getWidth();
+                let bodyEl = api.dom.Body.get().getEl();
+                let screenH = bodyEl.getHeight();
+                let screenW = bodyEl.getWidth();
 
-                strokeW = parseInt(window.getComputedStyle(this.path.getHTMLElement(), null).getPropertyValue("stroke-width"), 10);
+                strokeW = parseInt(window.getComputedStyle(this.path.getHTMLElement(), null).getPropertyValue('stroke-width'), 10);
 
                 this.path.getEl()
                     .setAttribute('d',

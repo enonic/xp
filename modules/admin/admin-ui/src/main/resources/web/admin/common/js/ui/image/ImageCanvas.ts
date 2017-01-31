@@ -97,7 +97,7 @@ module api.ui.image {
 
             this.renderCanvas();
 
-            if (this.pan.x == x && this.pan.y == y) {
+            if (this.pan.x === x && this.pan.y === y) {
                 // if they differ then notify has been called in renderCanvas
                 this.notifyPanChanged(this.pan.x, this.pan.y);
             }
@@ -112,7 +112,7 @@ module api.ui.image {
         }
 
         setZoom(value: number, override: boolean = true, x?: number, y?: number) {
-            if (this.zoom.factor != value) {
+            if (this.zoom.factor !== value) {
                 this.zoom.previous = this.zoom.factor;
                 this.zoom.factor = +value.toFixed(3);
             }
@@ -144,7 +144,7 @@ module api.ui.image {
                 if (!this.hasClass('draggable')) {
                     this.addClass('draggable');
                 }
-            } else if (this.zoom.factor == 1) {
+            } else if (this.zoom.factor === 1) {
                 // reset the pan override when zoom is turned off
                 this.pan.overrideZoom = false;
 
@@ -155,7 +155,7 @@ module api.ui.image {
 
             this.renderCanvas();
 
-            if (this.zoom.factor == value) {
+            if (this.zoom.factor === value) {
                 // if they differ then notify has been called in renderCanvas
                 this.notifyZoomChanged(this.zoom.factor);
             }
@@ -195,18 +195,19 @@ module api.ui.image {
 
             console.debug('canvas (' + this.canvasWidth + ', ' + this.canvasHeight + ')');
 
-            let oldZoomFactor = this.zoom.previous,
-                zoomFactor = Math.min(Math.max(this.zoom.factor, 1), 10);
+            let oldZoomFactor = this.zoom.previous;
+            let zoomFactor = Math.min(Math.max(this.zoom.factor, 1), 10);
 
             console.debug('old zoom factor = ' + oldZoomFactor + ', \nnew zoom factor after restraining = ' + zoomFactor);
 
             imgEl.setWidthPx(this.canvasWidth * zoomFactor);
 
-            let imgHeight = imgEl.getHeight(),
-                imgWidth = imgEl.getWidth();
+            let imgHeight = imgEl.getHeight();
+            let imgWidth = imgEl.getWidth();
             console.debug('image (' + imgWidth + ', ' + imgHeight + ')');
 
-            let panX, panY;
+            let panX;
+            let panY;
             if (!this.pan.overrideZoom) {
                 let zoomWidthPanFactor = (this.zoom.x - this.pan.x) / oldZoomFactor;
                 let zoomHeightPanFactor = (this.zoom.y - this.pan.y) / oldZoomFactor;
@@ -237,12 +238,12 @@ module api.ui.image {
 
             imgEl.setMarginLeft(panX * 100 + '%').setMarginTop(panY * 100 + '%');
 
-            if (panX != this.pan.x || panY != this.pan.y) {
+            if (panX !== this.pan.x || panY !== this.pan.y) {
                 this.pan.x = panX;
                 this.pan.y = panY;
                 this.notifyPanChanged(panX, panY);
             }
-            if (zoomFactor != this.zoom.factor) {
+            if (zoomFactor !== this.zoom.factor) {
                 this.zoom.factor = zoomFactor;
                 this.notifyZoomChanged(zoomFactor);
             }

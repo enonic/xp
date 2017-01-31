@@ -5,7 +5,7 @@ module api.ui {
      */
     export class NamesAndIconViewer<OBJECT> extends api.ui.Viewer<OBJECT> {
 
-        static EMPTY_DISPLAY_NAME: string = "<Display Name>";
+        static EMPTY_DISPLAY_NAME: string = '<Display Name>';
 
         private namesAndIconView: api.app.NamesAndIconView;
 
@@ -26,12 +26,11 @@ module api.ui {
             return super.setObject(object);
         }
 
-
         doLayout(object: OBJECT) {
             super.doLayout(object);
 
             if (NamesAndIconViewer.debug) {
-                console.debug("NamesAndIconViewer.doLayout");
+                console.debug('NamesAndIconViewer.doLayout');
             }
 
             if (!this.namesAndIconView) {
@@ -44,8 +43,9 @@ module api.ui {
                 const subName = this.resolveSubName(object, this.relativePath) || api.content.ContentUnnamed.prettifyUnnamed();
                 const subTitle = this.resolveSubTitle(object);
 
-                let iconUrl, iconClass,
-                    iconEl = this.resolveIconEl(object);
+                let iconUrl;
+                let iconClass;
+                let iconEl = this.resolveIconEl(object);
 
                 if (iconEl) {
                     this.namesAndIconView.setIconEl(iconEl);
@@ -75,27 +75,27 @@ module api.ui {
         }
 
         resolveDisplayName(object: OBJECT): string {
-            return "";
+            return '';
         }
 
         resolveUnnamedDisplayName(object: OBJECT): string {
-            return "";
+            return '';
         }
 
         resolveSubName(object: OBJECT, relativePath: boolean = false): string {
-            return "";
+            return '';
         }
 
         resolveSubTitle(object: OBJECT): string {
-            return "";
+            return '';
         }
 
         resolveIconClass(object: OBJECT): string {
-            return "";
+            return '';
         }
 
         resolveIconUrl(object: OBJECT): string {
-            return "";
+            return '';
         }
 
         resolveIconEl(object: OBJECT): api.dom.Element {

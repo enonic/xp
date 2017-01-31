@@ -18,7 +18,7 @@ module api.ui.text {
         private previousValue: string;
 
         constructor(className?: string, size?: string, originalValue?: string) {
-            super("text-input", 'text', api.StyleHelper.COMMON_PREFIX, originalValue);
+            super('text-input', 'text', api.StyleHelper.COMMON_PREFIX, originalValue);
             if (className) {
                 this.addClass(className);
             }
@@ -30,7 +30,7 @@ module api.ui.text {
             this.previousValue = this.getValue();
 
             this.onKeyUp((event: KeyboardEvent) => {
-                if (event.keyCode == 27) {
+                if (event.keyCode === 27) {
                     this.setPreviousValue();
                     this.getEl().blur();
                 }
@@ -91,8 +91,8 @@ module api.ui.text {
                 to = this.getValue().length;
             }
 
-            if (htmlEl.hasOwnProperty("createTextRange")) {
-                let selRange = htmlEl["createTextRange"];
+            if (htmlEl.hasOwnProperty('createTextRange')) {
+                let selRange = htmlEl['createTextRange'];
                 selRange.collapse(true);
                 selRange.moveStart('character', from);
                 selRange.moveEnd('character', to);
@@ -117,11 +117,11 @@ module api.ui.text {
 
         updateValidationStatusOnUserInput(isValid: boolean) {
             if (isValid) {
-                this.removeClass("invalid");
-                this.toggleClass("valid", !api.util.StringHelper.isEmpty(this.getValue()));
+                this.removeClass('invalid');
+                this.toggleClass('valid', !api.util.StringHelper.isEmpty(this.getValue()));
             } else {
-                this.removeClass("valid");
-                this.addClass("invalid");
+                this.removeClass('valid');
+                this.addClass('invalid');
             }
         }
 
@@ -137,13 +137,12 @@ module api.ui.text {
 
         private keyCodeAllowed(keyCode: number): boolean {
             for (let i = 0; i < this.allowedKeyCodes.length; i++) {
-                if (keyCode == this.allowedKeyCodes[i]) {
+                if (keyCode === this.allowedKeyCodes[i]) {
                     return true;
                 }
             }
             return false;
         }
-
 
     }
 }

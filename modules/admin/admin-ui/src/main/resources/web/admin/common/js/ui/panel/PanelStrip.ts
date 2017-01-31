@@ -15,7 +15,7 @@ module api.ui.panel {
         private panelShownListeners: {(event: PanelShownEvent):void}[] = [];
 
         constructor(scrollable?: api.dom.Element, className?: string) {
-            super("panel-strip" + (className ? " " + className : ""));
+            super('panel-strip' + (className ? ' ' + className : ''));
             if (scrollable) {
                 this.scrollable = scrollable;
                 this.scrollable.addClass('panel-strip-scrollable');
@@ -43,7 +43,7 @@ module api.ui.panel {
             let previousChildrenIndex = this.countExistingChildren(index);
             let headerEl;
             if (header) {
-                headerEl = new api.dom.H2El("panel-strip-panel-header");
+                headerEl = new api.dom.H2El('panel-strip-panel-header');
                 headerEl.getEl().setInnerHtml(header);
                 this.insertChild(headerEl, previousChildrenIndex);
             }
@@ -80,22 +80,22 @@ module api.ui.panel {
         }
 
         private updateLastPanelHeight() {
-            if (this.getSize() == 0) {
+            if (this.getSize() === 0) {
                 return;
             }
 
             if (this.getSize() > 1) {
                 // restore the one before last panel's height if needed
                 let beforeLastEl = this.getPanel(this.getSize() - 2).getEl();
-                let originalHeight = beforeLastEl.getData("originalHeight");
+                let originalHeight = beforeLastEl.getData('originalHeight');
                 if (originalHeight) {
                     beforeLastEl.setHeight(originalHeight);
                 }
             }
             // set the last panel height equal to that of the scrollable
             let lastEl = this.getPanel(this.getSize() - 1).getEl();
-            if (!lastEl.getData("originalHeight")) {
-                lastEl.setData("originalHeight", lastEl.getHTMLElement().style.height || "auto");
+            if (!lastEl.getData('originalHeight')) {
+                lastEl.setData('originalHeight', lastEl.getHTMLElement().style.height || 'auto');
             }
             lastEl.setHeightPx(this.scrollable.getEl().getHeight());
         }
@@ -113,12 +113,12 @@ module api.ui.panel {
 
             if (this.isEmpty()) {
                 this.panelShown = null;
-            } else if (panelToRemove == this.getPanelShown()) {
+            } else if (panelToRemove === this.getPanelShown()) {
                 // show either panel that has the same index now or the last panel
                 this.showPanelByIndex(Math.min(index, this.getSize() - 1));
             }
 
-            if (this.isVisible() && index == this.getSize() && !this.isEmpty()) {
+            if (this.isVisible() && index === this.getSize() && !this.isEmpty()) {
                 // update if last panel was removed and there are still left
                 this.updateLastPanelHeight();
             }
@@ -134,7 +134,7 @@ module api.ui.panel {
         }
 
         isEmpty(): boolean {
-            return this.panels.length == 0;
+            return this.panels.length === 0;
         }
 
         getSize(): number {
@@ -181,7 +181,7 @@ module api.ui.panel {
             }
 
             wemjq(this.scrollable.getHTMLElement()).animate({
-                scrollTop: index == 0 ? 0 : this.getScroll() - this.offset +
+                scrollTop: index === 0 ? 0 : this.getScroll() - this.offset +
                                             panelToShow.getEl().getOffsetToParent().top -
                                             this.headers[index].getEl().getHeightWithBorder()
             }, {
@@ -207,7 +207,7 @@ module api.ui.panel {
 
         unPanelShown(listener: (event: PanelShownEvent)=>void) {
             this.panelShownListeners = this.panelShownListeners.filter((currentListener: (event: PanelShownEvent) => void) => {
-                return  listener != currentListener;
+                return  listener !== currentListener;
             });
         }
 

@@ -47,14 +47,14 @@ module api.form {
 
         constructor(config: InputViewConfig) {
             super(<FormItemViewConfig>{
-                className: "input-view",
+                className: 'input-view',
                 context: config.context,
                 formItem: config.input,
                 parent: config.parent
             });
 
-            api.util.assertNotNull(config.parentDataSet, "parentDataSet not expected to be null");
-            api.util.assertNotNull(config.input, "input not expected to be null");
+            api.util.assertNotNull(config.parentDataSet, 'parentDataSet not expected to be null');
+            api.util.assertNotNull(config.input, 'input not expected to be null');
 
             this.input = config.input;
             this.parentPropertySet = config.parentDataSet;
@@ -63,12 +63,12 @@ module api.form {
 
         public layout(validate: boolean = true): wemQ.Promise<void> {
 
-            if (this.input.getInputType().getName().toLowerCase() !== "checkbox") { //checkbox input type generates clickable label itself
+            if (this.input.getInputType().getName().toLowerCase() !== 'checkbox') { //checkbox input type generates clickable label itself
                 if (this.input.getLabel()) {
                     let label = new InputLabel(this.input);
                     this.appendChild(label);
                 } else {
-                    this.addClass("no-label");
+                    this.addClass('no-label');
                 }
             }
 
@@ -79,7 +79,7 @@ module api.form {
             }
 
             if (this.input.isMaximizeUIInputWidth()) {
-                this.addClass("label-over-input");
+                this.addClass('label-over-input');
             }
 
             this.inputTypeView = this.createInputTypeView();
@@ -112,13 +112,13 @@ module api.form {
                         }
                     });
 
-                    this.addButton = new api.ui.button.Button("Add");
-                    this.addButton.addClass("small");
+                    this.addButton = new api.ui.button.Button('Add');
+                    this.addButton.addClass('small');
                     this.addButton.onClicked((event: MouseEvent) => {
                         inputTypeViewNotManagingAdd.createAndAddOccurrence();
                     });
 
-                    this.bottomButtonRow = new api.dom.DivEl("bottom-button-row");
+                    this.bottomButtonRow = new api.dom.DivEl('bottom-button-row');
                     this.appendChild(this.bottomButtonRow);
                     this.bottomButtonRow.appendChild(this.addButton);
                 }
@@ -182,10 +182,9 @@ module api.form {
 
             if (inputtype.InputTypeManager.isRegistered(inputType.getName())) {
                 return inputtype.InputTypeManager.createView(inputType.getName(), inputTypeViewContext);
-            }
-            else {
-                console.warn("Input type [" + inputType.getName() + "] needs to be registered first.");
-                return inputtype.InputTypeManager.createView("NoInputTypeFound", inputTypeViewContext);
+            } else {
+                console.warn('Input type [' + inputType.getName() + '] needs to be registered first.');
+                return inputtype.InputTypeManager.createView('NoInputTypeFound', inputTypeViewContext);
             }
         }
 
@@ -230,9 +229,9 @@ module api.form {
         private handleInputValidationRecording(inputRecording: api.form.inputtype.InputValidationRecording,
                                                silent: boolean = true): ValidationRecording {
 
-            let recording = new ValidationRecording(),
-                validationRecordingPath = this.resolveValidationRecordingPath(),
-                hasValidInput = this.hasValidUserInput();
+            let recording = new ValidationRecording();
+            let validationRecordingPath = this.resolveValidationRecordingPath();
+            let hasValidInput = this.hasValidUserInput();
 
             if (inputRecording.isMinimumOccurrencesBreached()) {
                 recording.breaksMinimumOccurrences(validationRecordingPath);
@@ -246,7 +245,7 @@ module api.form {
                     this.notifyValidityChanged(new RecordingValidityChangedEvent(recording,
                         validationRecordingPath).setInputValueBroken(!hasValidInput));
                 }
-                this.toggleClass("highlight-validity-change", this.highlightOnValidityChange());
+                this.toggleClass('highlight-validity-change', this.highlightOnValidityChange());
             }
 
             if (!silent && (recording.validityChanged(this.previousValidityRecording) || this.userInputValidityChanged(hasValidInput) )) {
@@ -262,7 +261,7 @@ module api.form {
         }
 
         userInputValidityChanged(currentState: boolean): boolean {
-            return this.userInputValid == undefined || this.userInputValid == null || !(this.userInputValid == currentState);
+            return this.userInputValid == null || this.userInputValid == null || !(this.userInputValid === currentState);
         }
 
         giveFocus(): boolean {
@@ -275,7 +274,7 @@ module api.form {
 
         unValidityChanged(listener: (event: RecordingValidityChangedEvent)=>void) {
             this.validityChangedListeners.filter((currentListener: (event: RecordingValidityChangedEvent)=>void) => {
-                return listener == currentListener;
+                return listener === currentListener;
             });
         }
 
@@ -292,12 +291,11 @@ module api.form {
             }
 
             if (recording.isValid() && this.hasValidUserInput()) {
-                this.removeClass("invalid");
-                this.addClass("valid");
-            }
-            else {
-                this.removeClass("valid");
-                this.addClass("invalid");
+                this.removeClass('invalid');
+                this.addClass('valid');
+            } else {
+                this.removeClass('valid');
+                this.addClass('invalid');
             }
 
             this.validationViewer.setObject(recording);
@@ -308,7 +306,7 @@ module api.form {
         }
 
         private mayRenderValidationError(): boolean {
-            return this.input.getInputType().getName() !== "SiteConfigurator";
+            return this.input.getInputType().getName() !== 'SiteConfigurator';
         }
 
         onFocus(listener: (event: FocusEvent) => void) {

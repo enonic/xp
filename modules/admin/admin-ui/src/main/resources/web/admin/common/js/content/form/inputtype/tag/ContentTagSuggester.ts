@@ -40,7 +40,7 @@ module api.content.form.inputtype.tag {
 
         suggest(value: string): wemQ.Promise<string[]> {
 
-            let fieldName = "data" + this.propertyPath.getParentPath().toString() + this.propertyPath.getLastElement().getName();
+            let fieldName = 'data' + this.propertyPath.getParentPath().toString() + this.propertyPath.getLastElement().getName();
 
             let fulltextExpression: api.query.expr.Expression = new api.query.FulltextSearchExpressionBuilder().
                 setSearchString(value).
@@ -67,7 +67,7 @@ module api.content.form.inputtype.tag {
                         propertySet.forEachProperty(this.propertyPath.getLastElement().getName(), (property: Property) => {
                             if (property.hasNonNullValue()) {
                                 let suggestedTag = property.getString();
-                                if (suggestedTag.search(new RegExp(value, "i")) == 0 && suggestedTags.indexOf(suggestedTag) < 0) {
+                                if (suggestedTag.search(new RegExp(value, 'i')) === 0 && suggestedTags.indexOf(suggestedTag) < 0) {
                                     suggestedTags.push(suggestedTag);
                                 }
                             }

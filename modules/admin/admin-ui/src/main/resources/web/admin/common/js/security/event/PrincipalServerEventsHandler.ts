@@ -34,20 +34,19 @@ module api.security.event {
             }
         }
 
-
         private principalServerEventHandler(event: PrincipalServerEvent) {
             if (PrincipalServerEventsHandler.debug) {
-                console.debug("PrincipalServerEventsHandler: received server event", event);
+                console.debug('PrincipalServerEventsHandler: received server event', event);
             }
 
-            if (event.getType() == NodeServerChangeType.DELETE) {
+            if (event.getType() === NodeServerChangeType.DELETE) {
                this.handleContentDeleted(this.extractContentPaths([event.getNodeChange()]));
             }
         }
 
         private handleContentDeleted(oldPaths: string[]) {
             if (PrincipalServerEventsHandler.debug) {
-                console.debug("ContentServerEventsHandler: deleted", oldPaths);
+                console.debug('ContentServerEventsHandler: deleted', oldPaths);
             }
             let contentDeletedEvent = new PrincipalDeletedEvent();
 
@@ -76,7 +75,7 @@ module api.security.event {
         unPrincipalDeleted(listener: (paths: string[])=>void) {
             this.principalDeletedListeners =
                 this.principalDeletedListeners.filter((currentListener: (paths: string[])=>void) => {
-                    return currentListener != listener;
+                    return currentListener !== listener;
                 });
         }
 

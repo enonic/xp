@@ -16,13 +16,13 @@ module api.data {
 
                 let propertyB = setB.getProperty(propertyA.getName(), index);
                 if (!propertyB) {
-                    console.log("Property A[" + propertyA.getPath().toString() + "] does not exist in B[" +
-                                setB.getPropertyPath().toString() + "]");
+                    console.log('Property A[' + propertyA.getPath().toString() + '] does not exist in B[' +
+                                setB.getPropertyPath().toString() + ']');
                 }
 
                 if (!propertyA.equals(propertyB)) {
-                    console.log("Property A[" + propertyA.getPath().toString() + "] is not equal B[" + propertyB.getPath().toString() +
-                                "]");
+                    console.log('Property A[' + propertyA.getPath().toString() + '] is not equal B[' + propertyB.getPath().toString() +
+                                ']');
                 }
 
                 if (propertyA.getValue().isPropertySet()) {
@@ -38,11 +38,10 @@ module api.data {
 
                 let propertyA = setA.getProperty(propertyB.getName(), index);
                 if (!propertyA) {
-                    console.log("Property B[" + propertyB.getPath().toString() + "] does not exist in A[" +
-                                setA.getPropertyPath().toString() + "]");
+                    console.log('Property B[' + propertyB.getPath().toString() + '] does not exist in A[' +
+                                setA.getPropertyPath().toString() + ']');
                 }
             });
-
 
         }
     }

@@ -1,16 +1,16 @@
-import "../api.ts";
-import {UserTreeGridItem, UserTreeGridItemType, UserTreeGridItemBuilder} from "./browse/UserTreeGridItem";
-import {UserItemWizardPanel} from "./wizard/UserItemWizardPanel";
-import {UserStoreWizardPanel} from "./wizard/UserStoreWizardPanel";
-import {PrincipalWizardPanel} from "./wizard/PrincipalWizardPanel";
-import {NewPrincipalEvent} from "./browse/NewPrincipalEvent";
-import {EditPrincipalEvent} from "./browse/EditPrincipalEvent";
-import {UserBrowsePanel} from "./browse/UserBrowsePanel";
-import {UserStoreWizardPanelParams} from "./wizard/UserStoreWizardPanelParams";
-import {PrincipalWizardPanelParams} from "./wizard/PrincipalWizardPanelParams";
-import {RoleWizardPanel} from "./wizard/RoleWizardPanel";
-import {UserWizardPanel} from "./wizard/UserWizardPanel";
-import {GroupWizardPanel} from "./wizard/GroupWizardPanel";
+import '../api.ts';
+import {UserTreeGridItem, UserTreeGridItemType, UserTreeGridItemBuilder} from './browse/UserTreeGridItem';
+import {UserItemWizardPanel} from './wizard/UserItemWizardPanel';
+import {UserStoreWizardPanel} from './wizard/UserStoreWizardPanel';
+import {PrincipalWizardPanel} from './wizard/PrincipalWizardPanel';
+import {NewPrincipalEvent} from './browse/NewPrincipalEvent';
+import {EditPrincipalEvent} from './browse/EditPrincipalEvent';
+import {UserBrowsePanel} from './browse/UserBrowsePanel';
+import {UserStoreWizardPanelParams} from './wizard/UserStoreWizardPanelParams';
+import {PrincipalWizardPanelParams} from './wizard/PrincipalWizardPanelParams';
+import {RoleWizardPanel} from './wizard/RoleWizardPanel';
+import {UserWizardPanel} from './wizard/UserWizardPanel';
+import {GroupWizardPanel} from './wizard/GroupWizardPanel';
 
 import AppBarTabMenuItem = api.app.bar.AppBarTabMenuItem;
 import AppBarTabMenuItemBuilder = api.app.bar.AppBarTabMenuItemBuilder;
@@ -65,8 +65,7 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
                             UserTreeGridItemType.USER_STORE).build()
                     ]).fire();
                 });
-            }
-            else {
+            } else {
                 new api.app.ShowBrowsePanelEvent().fire();
             }
             break;
@@ -107,7 +106,7 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
             tabMenuItem.setLabel(this.getWizardPanelItemDisplayName(wizardPanel));
 
             wizardPanel.getWizardHeader().onPropertyChanged((event: api.PropertyChangedEvent) => {
-                if (event.getPropertyName() === "displayName") {
+                if (event.getPropertyName() === 'displayName') {
                     let name = <string>event.getNewValue() || this.getPrettyNameForWizardPanel(wizardPanel);
                     tabMenuItem.setLabel(name, !<string>event.getNewValue());
                 }
@@ -137,14 +136,12 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
         return new UserBrowsePanel();
     }
 
-
     private handleWizardCreated(wizard: UserItemWizardPanel<api.Equitable>, tabName: string) {
         let tabMenuItem = new AppBarTabMenuItemBuilder()
             .setLabel(api.content.ContentUnnamed.prettifyUnnamed(tabName))
             .setTabId(wizard.getTabId())
             .setCloseAction(wizard.getCloseAction())
             .build();
-
 
         this.addWizardPanel(tabMenuItem, wizard);
 
@@ -183,17 +180,16 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
          }*/
     }
 
-
     private handleNew(event: NewPrincipalEvent) {
-        let userItem = event.getPrincipals()[0],
-            data: PrincipalData = this.resolvePrincipalData(userItem),
-            tabId = AppBarTabId.forNew(data.tabName),
-            tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
+        let userItem = event.getPrincipals()[0];
+        let data: PrincipalData = this.resolvePrincipalData(userItem);
+        let tabId = AppBarTabId.forNew(data.tabName);
+        let tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(tabId);
 
         if (tabMenuItem != null) {
             this.selectPanel(tabMenuItem);
         } else {
-            if (!userItem || userItem.getType() == UserTreeGridItemType.USER_STORE) {
+            if (!userItem || userItem.getType() === UserTreeGridItemType.USER_STORE) {
                 this.handleUserStoreNew(tabId, data.tabName);
             } else {
                 this.loadUserStoreIfNeeded(userItem).then((userStore: UserStore) => {
@@ -205,27 +201,27 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
     }
 
     private resolvePrincipalData(userItem: UserTreeGridItem): PrincipalData {
-        let principalType: PrincipalType,
-            principalPath = "",
-            tabName;
+        let principalType: PrincipalType;
+        let principalPath = '';
+        let tabName;
 
         if (userItem) {
             switch (userItem.getType()) {
 
             case UserTreeGridItemType.USERS:
                 principalType = PrincipalType.USER;
-                principalPath = PrincipalKey.ofUser(userItem.getUserStore().getKey(), "none").toPath(true);
-                tabName = "User";
+                principalPath = PrincipalKey.ofUser(userItem.getUserStore().getKey(), 'none').toPath(true);
+                tabName = 'User';
                 break;
             case UserTreeGridItemType.GROUPS:
                 principalType = PrincipalType.GROUP;
-                principalPath = PrincipalKey.ofGroup(userItem.getUserStore().getKey(), "none").toPath(true);
-                tabName = "Group";
+                principalPath = PrincipalKey.ofGroup(userItem.getUserStore().getKey(), 'none').toPath(true);
+                tabName = 'Group';
                 break;
             case UserTreeGridItemType.ROLES:
                 principalType = PrincipalType.ROLE;
-                principalPath = PrincipalKey.ofRole("none").toPath(true);
-                tabName = "Role";
+                principalPath = PrincipalKey.ofRole('none').toPath(true);
+                tabName = 'Role';
                 break;
             case UserTreeGridItemType.PRINCIPAL:
                 principalType = userItem.getPrincipal().getType();
@@ -234,12 +230,12 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
                 tabName = tabName[0] + tabName.slice(1).toLowerCase();
                 break;
             case UserTreeGridItemType.USER_STORE:
-                tabName = "User Store";
+                tabName = 'User Store';
                 break;
             }
 
         } else {
-            tabName = "User Store";
+            tabName = 'User Store';
         }
 
         return {
@@ -283,11 +279,11 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
 
     private handlePrincipalNew(tabId: AppBarTabId, data: PrincipalData, userStore: UserStore, userItem: UserTreeGridItem) {
         if (data.principalType === PrincipalType.USER && !this.areUsersEditable(userStore)) {
-            api.notify.showError("The ID Provider selected for this user store does not allow to create users.");
+            api.notify.showError('The ID Provider selected for this user store does not allow to create users.');
             return;
         }
         if (data.principalType === PrincipalType.GROUP && !this.areGroupsEditable(userStore)) {
-            api.notify.showError("The ID Provider selected for this user store does not allow to create groups.");
+            api.notify.showError('The ID Provider selected for this user store does not allow to create groups.');
             return;
         }
 
@@ -312,7 +308,6 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
         this.handleWizardCreated(new UserStoreWizardPanel(wizardParams), tabName);
     }
 
-
     private handleEdit(event: EditPrincipalEvent) {
         let userItems: UserTreeGridItem[] = event.getPrincipals();
 
@@ -329,7 +324,7 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
                 let tabId = this.getTabIdForUserItem(userItem);
                 if (userItem.getType() === UserTreeGridItemType.USER_STORE) {
                     this.handleUserStoreEdit(userItem.getUserStore(), tabId, tabMenuItem);
-                } else if (userItem.getType() == UserTreeGridItemType.PRINCIPAL) {
+                } else if (userItem.getType() === UserTreeGridItemType.PRINCIPAL) {
                     this.loadUserStoreIfNeeded(userItem).then((userStore) => {
                         this.handlePrincipalEdit(userItem.getPrincipal(), userStore, tabId, tabMenuItem);
                     });
@@ -354,12 +349,12 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
 
         let principalType = principal.getType();
 
-        if (PrincipalType.USER == principalType && !this.areUsersEditable(userStore)) {
-            api.notify.showError("The ID Provider selected for this user store does not allow to edit users.");
+        if (PrincipalType.USER === principalType && !this.areUsersEditable(userStore)) {
+            api.notify.showError('The ID Provider selected for this user store does not allow to edit users.');
             return;
 
-        } else if (PrincipalType.GROUP == principalType && !this.areGroupsEditable(userStore)) {
-            api.notify.showError("The ID Provider selected for this user store does not allow to edit groups.");
+        } else if (PrincipalType.GROUP === principalType && !this.areGroupsEditable(userStore)) {
+            api.notify.showError('The ID Provider selected for this user store does not allow to edit groups.');
             return;
 
         } else {
@@ -404,8 +399,8 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
 
     private handlePrincipalNamedEvent(event: api.event.Event) {
         let e = <api.security.PrincipalNamedEvent>event;
-        let wizard = e.getWizard(),
-            tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(wizard.getTabId());
+        let wizard = e.getWizard();
+        let tabMenuItem = this.getAppBarTabMenu().getNavigationItemById(wizard.getTabId());
         // update tab id so that new wizard for the same content type can be created
         let newTabId = api.app.bar.AppBarTabId.forEdit(e.getPrincipal().getKey().toString());
         tabMenuItem.setTabId(newTabId);
@@ -427,9 +422,9 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
 
     private getTabIdForUserItem(userItem: UserTreeGridItem): AppBarTabId {
         let appBarTabId: AppBarTabId;
-        if (UserTreeGridItemType.PRINCIPAL == userItem.getType()) {
+        if (UserTreeGridItemType.PRINCIPAL === userItem.getType()) {
             appBarTabId = AppBarTabId.forEdit(userItem.getPrincipal().getKey().toString());
-        } else if (UserTreeGridItemType.USER_STORE == userItem.getType()) {
+        } else if (UserTreeGridItemType.USER_STORE === userItem.getType()) {
             appBarTabId = AppBarTabId.forEdit(userItem.getUserStore().getKey().toString());
         }
         return appBarTabId;
@@ -437,12 +432,12 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
 
     private areUsersEditable(userStore: UserStore): boolean {
         let idProviderMode = userStore.getIdProviderMode();
-        return api.security.IdProviderMode.EXTERNAL != idProviderMode && api.security.IdProviderMode.MIXED != idProviderMode;
+        return api.security.IdProviderMode.EXTERNAL !== idProviderMode && api.security.IdProviderMode.MIXED !== idProviderMode;
     }
 
     private areGroupsEditable(userStore: UserStore): boolean {
         let idProviderMode = userStore.getIdProviderMode();
-        return api.security.IdProviderMode.EXTERNAL != idProviderMode;
+        return api.security.IdProviderMode.EXTERNAL !== idProviderMode;
     }
 
 }

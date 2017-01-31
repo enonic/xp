@@ -35,6 +35,7 @@ public class NodeExporterTest
         throws Exception
     {
         this.nodeService = new NodeServiceMock();
+        this.nodeService.createRootNode( null );
     }
 
     @Test
@@ -51,8 +52,9 @@ public class NodeExporterTest
             build().
             execute();
 
-        assertEquals( 1, result.size() );
+        assertEquals( 2, result.size() );
 
+        assertFileExists( "/myExport/_/node.xml" );
         assertFileExists( "/myExport/mynode/_/node.xml" );
     }
 
@@ -77,8 +79,9 @@ public class NodeExporterTest
             build().
             execute();
 
-        assertEquals( 8, result.size() );
+        assertEquals( 9, result.size() );
 
+        assertFileExists( "/myExport/_/node.xml" );
         assertFileExists( "/myExport/mynode/_/node.xml" );
         assertFileExists( "/myExport/mynode/child1/_/node.xml" );
         assertFileExists( "/myExport/mynode/child1/child1_1/_/node.xml" );
@@ -115,7 +118,7 @@ public class NodeExporterTest
             build().
             execute();
 
-        assertEquals( 7, result.size() );
+        assertEquals( 8, result.size() );
 
         assertFileExists( "/myExport/root/_/node.xml" );
         assertFileExists( "/myExport/root/_/manualChildOrder.txt" );
@@ -204,9 +207,10 @@ public class NodeExporterTest
             build().
             execute();
 
-        assertEquals( 1, result.getExportedNodes().getSize() );
+        assertEquals( 2, result.getExportedNodes().getSize() );
         assertEquals( 2, result.getExportedBinaries().size() );
 
+        assertFileExists( "/myExport/_/node.xml" );
         assertFileExists( "/myExport/my-node/_/node.xml" );
         assertFileExists( "/myExport/my-node/_/bin/image1.jpg" );
         assertFileExists( "/myExport/my-node/_/bin/image2.jpg" );

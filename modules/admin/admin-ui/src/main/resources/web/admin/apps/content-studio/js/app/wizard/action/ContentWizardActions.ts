@@ -1,14 +1,14 @@
-import "../../../api.ts";
-import {ContentWizardPanel} from "../ContentWizardPanel";
-import {DuplicateContentAction} from "./DuplicateContentAction";
-import {DeleteContentAction} from "./DeleteContentAction";
-import {PublishAction} from "./PublishAction";
-import {PublishTreeAction} from "./PublishTreeAction";
-import {UnpublishAction} from "./UnpublishAction";
-import {PreviewAction} from "./PreviewAction";
-import {ShowLiveEditAction} from "./ShowLiveEditAction";
-import {ShowFormAction} from "./ShowFormAction";
-import {ShowSplitEditAction} from "./ShowSplitEditAction";
+import '../../../api.ts';
+import {ContentWizardPanel} from '../ContentWizardPanel';
+import {DuplicateContentAction} from './DuplicateContentAction';
+import {DeleteContentAction} from './DeleteContentAction';
+import {PublishAction} from './PublishAction';
+import {PublishTreeAction} from './PublishTreeAction';
+import {UnpublishAction} from './UnpublishAction';
+import {PreviewAction} from './PreviewAction';
+import {ShowLiveEditAction} from './ShowLiveEditAction';
+import {ShowFormAction} from './ShowFormAction';
+import {ShowSplitEditAction} from './ShowSplitEditAction';
 import SaveAction = api.app.wizard.SaveAction;
 import CloseAction = api.app.wizard.CloseAction;
 import SaveAndCloseAction = api.app.wizard.SaveAndCloseAction;
@@ -45,7 +45,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
     constructor(wizardPanel: ContentWizardPanel) {
         super(
-            new SaveAction(wizardPanel, "Save draft"),
+            new SaveAction(wizardPanel, 'Save draft'),
             new DeleteContentAction(wizardPanel),
             new DuplicateContentAction(wizardPanel),
             new PreviewAction(wizardPanel),
@@ -88,7 +88,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
     }
 
     setDeleteOnlyMode(content: api.content.Content, valueOn: boolean = true) {
-        if (this.deleteOnlyMode == valueOn) {
+        if (this.deleteOnlyMode === valueOn) {
             return;
         }
         this.deleteOnlyMode = valueOn;
@@ -102,8 +102,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
         if (valueOn) {
             this.enableDeleteIfAllowed(content);
-        }
-        else {
+        } else {
             this.delete.setEnabled(true);
             this.enableActionsForExistingByPermissions(content);
         }
@@ -147,7 +146,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
                         let status = contentAndCompare.getCompareStatus();
                         let isPublished = status !== api.content.CompareStatus.NEW &&
-                                          status != api.content.CompareStatus.UNKNOWN;
+                                          status !== api.content.CompareStatus.UNKNOWN;
                     });
             }
 

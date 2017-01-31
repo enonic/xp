@@ -2,13 +2,13 @@ module api.util {
 
     export class LocalDateTime implements api.Equitable {
 
-        private static DATE_TIME_SEPARATOR: string = "T";
+        private static DATE_TIME_SEPARATOR: string = 'T';
 
-        private static DATE_SEPARATOR: string = "-";
+        private static DATE_SEPARATOR: string = '-';
 
-        private static TIME_SEPARATOR: string = ":";
+        private static TIME_SEPARATOR: string = ':';
 
-        private static FRACTION_SEPARATOR: string = ".";
+        private static FRACTION_SEPARATOR: string = '.';
 
         private year: number;
 
@@ -102,8 +102,8 @@ module api.util {
         private padNumber(num: number, length: number = 2): string {
             let numAsString = String(num);
 
-            while (numAsString.length < length){
-                numAsString = "0" + numAsString;
+            while (numAsString.length < length) {
+                numAsString = '0' + numAsString;
             }
 
             return numAsString;
@@ -121,7 +121,7 @@ module api.util {
 
         static fromString(s: string): LocalDateTime {
             if (!LocalDateTime.isValidDateTime(s)) {
-                throw new Error("Cannot parse LocalDateTime from string: " + s);
+                throw new Error('Cannot parse LocalDateTime from string: ' + s);
             }
 
             const date = DateHelper.parseLongDateTime(s,
@@ -132,7 +132,7 @@ module api.util {
             );
 
             if (!date) {
-                throw new Error("Cannot parse LocalDateTime from string: " + s);
+                throw new Error('Cannot parse LocalDateTime from string: ' + s);
             }
 
             return LocalDateTime.create()
@@ -158,12 +158,10 @@ module api.util {
                 .build();
         }
 
-
         public static create(): LocalDateTimeBuilder {
             return new LocalDateTimeBuilder();
         }
     }
-
 
     export class LocalDateTimeBuilder {
 

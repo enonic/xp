@@ -44,8 +44,8 @@ module api.content.resource.result {
 
         static fromJson(json: api.content.json.CompareContentResultJson): CompareContentResult {
 
-            let compareStatus: CompareStatus = <CompareStatus>CompareStatus[json.compareStatus],
-                publishStatus: PublishStatus = <PublishStatus>PublishStatus[json.publishStatus];
+            let compareStatus: CompareStatus = <CompareStatus>CompareStatus[json.compareStatus];
+            let publishStatus: PublishStatus = <PublishStatus>PublishStatus[json.publishStatus];
 
             return new CompareContentResult(json.id, compareStatus, publishStatus);
         }

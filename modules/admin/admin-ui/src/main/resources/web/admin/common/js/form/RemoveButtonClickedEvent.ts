@@ -4,7 +4,6 @@ module api.form {
 
         private view: V;
 
-
         constructor(view: V) {
             this.view = view;
         }

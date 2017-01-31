@@ -22,7 +22,7 @@ module api.ui.security.acl {
         private valueChangedListeners: {(event: api.ValueChangedEvent):void}[] = [];
 
         constructor() {
-            super("access-selector");
+            super('access-selector');
 
             UserStoreAccessSelector.OPTIONS.forEach((option: UserStoreAccessSelectorOption, index: number) => {
                 let menuItem = (<TabMenuItemBuilder>new TabMenuItemBuilder().setLabel(option.name)).build();
@@ -55,7 +55,7 @@ module api.ui.security.acl {
         private findOptionByValue(value: UserStoreAccess): UserStoreAccessSelectorOption {
             for (let i = 0; i < UserStoreAccessSelector.OPTIONS.length; i++) {
                 let option = UserStoreAccessSelector.OPTIONS[i];
-                if (option.value == value) {
+                if (option.value === value) {
                     return option;
                 }
             }

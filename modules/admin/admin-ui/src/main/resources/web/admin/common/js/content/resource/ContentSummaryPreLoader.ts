@@ -8,13 +8,12 @@ module api.content.resource {
     export class ContentSummaryPreLoader extends PostLoader<ContentQueryResultJson<ContentSummaryJson>, ContentSummary> {
 
         protected sendPreLoadRequest(ids: string): Q.Promise<ContentSummary[]> {
-            let contentIds = ids.split(";").map((id) => {
+            let contentIds = ids.split(';').map((id) => {
                 return new api.content.ContentId(id);
             });
 
             return new GetContentSummaryByIds(contentIds).sendAndParse();
         }
     }
-
 
 }

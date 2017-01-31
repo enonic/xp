@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {NewContentEvent} from "./NewContentEvent";
+import '../../api.ts';
+import {NewContentEvent} from './NewContentEvent';
 
 NewContentEvent.on((event: NewContentEvent) => {
         RecentItems.get().addItemName(event.getContentType());
@@ -26,7 +26,7 @@ export class RecentItems {
         let itemsNames = this.getRecentItemsNames();
         let name = contentType.getName();
 
-        itemsNames = itemsNames.filter((storedName: string) => storedName != name);
+        itemsNames = itemsNames.filter((storedName: string) => storedName !== name);
         itemsNames.unshift(name);
         itemsNames = itemsNames.slice(0, this.maximum);
 

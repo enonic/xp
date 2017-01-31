@@ -8,7 +8,7 @@ module api.form {
         private localDate: DateTimePicker;
 
         constructor(value?: Date) {
-            super("div");
+            super('div');
 
             let publishFromDateTimeBuilder = new DateTimePickerBuilder();
             if (value) {

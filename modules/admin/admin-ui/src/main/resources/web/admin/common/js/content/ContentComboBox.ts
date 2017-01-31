@@ -87,10 +87,10 @@ module api.content {
 
         doRender(): wemQ.Promise<boolean> {
 
-            let removeButtonEl = new api.dom.AEl("remove"),
-                message = new api.dom.H6El("missing-content");
+            let removeButtonEl = new api.dom.AEl('remove');
+            let message = new api.dom.H6El('missing-content');
 
-            message.setHtml("No access to content with id=" + this.id);
+            message.setHtml('No access to content with id=' + this.id);
 
             removeButtonEl.onClicked((event: Event) => {
                 this.notifyRemoveClicked();

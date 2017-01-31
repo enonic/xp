@@ -4,15 +4,15 @@ module api.util {
 
     export class DateTime implements api.Equitable {
 
-        private static DATE_TIME_SEPARATOR: string = "T";
+        private static DATE_TIME_SEPARATOR: string = 'T';
 
-        private static DATE_SEPARATOR: string = "-";
+        private static DATE_SEPARATOR: string = '-';
 
-        private static TIME_SEPARATOR: string = ":";
+        private static TIME_SEPARATOR: string = ':';
 
-        private static FRACTION_SEPARATOR: string = ".";
+        private static FRACTION_SEPARATOR: string = '.';
 
-        private static DEFAULT_TIMEZONE: string = "+00:00";
+        private static DEFAULT_TIMEZONE: string = '+00:00';
 
         private year: number;
 
@@ -120,8 +120,8 @@ module api.util {
         private padNumber(num: number, length: number = 2): string {
             let numAsString = String(num);
 
-            while (numAsString.length < length){
-                numAsString = "0" + numAsString;
+            while (numAsString.length < length) {
+                numAsString = '0' + numAsString;
             }
 
             return numAsString;
@@ -151,10 +151,11 @@ module api.util {
          */
         static fromString(s: string): DateTime {
             if (!DateTime.isValidDateTime(s)) {
-                throw new Error("Cannot parse DateTime from string: " + s);
+                throw new Error('Cannot parse DateTime from string: ' + s);
             }
 
-            let date, timezone;
+            let date;
+            let timezone;
 
             if(DateHelper.isUTCdate(s)) {
                 date = DateHelper.makeDateFromUTCString(s);
@@ -181,7 +182,7 @@ module api.util {
             }
 
             if (!date) {
-                throw new Error("Cannot parse DateTime from string: " + s);
+                throw new Error('Cannot parse DateTime from string: ' + s);
             }
 
             return DateTime.create()
@@ -219,8 +220,8 @@ module api.util {
             } else {
                 const dateStr = (value || '').trim();
 
-                if (dateStr.indexOf("+") > 0) { // case with positive offset
-                    const parts = dateStr.split("+");
+                if (dateStr.indexOf('+') > 0) { // case with positive offset
+                    const parts = dateStr.split('+');
                     if (parts.length === 2) {
                         const offsetPart = parts[1];
 
@@ -233,8 +234,8 @@ module api.util {
                     } else {
                         return 0;
                     }
-                } else if (dateStr.split("-").length === 4) { // case with negative offset ('2015-02-29T12:05:59-01:00')
-                    const parts = dateStr.split("-");
+                } else if (dateStr.split('-').length === 4) { // case with negative offset ('2015-02-29T12:05:59-01:00')
+                    const parts = dateStr.split('-');
                     const offsetPart = parts[3];
 
                     const offset = parseFloat(offsetPart);
@@ -250,15 +251,15 @@ module api.util {
         }
 
         private static trimTZ(dateString : string): string {
-            let tzStartIndex = dateString.indexOf("+");
+            let tzStartIndex = dateString.indexOf('+');
             if(tzStartIndex > 0) {
                 return dateString.substr(0, tzStartIndex);
-            } else if (dateString.split("-").length == 4) {
+            } else if (dateString.split('-').length === 4) {
                 // case when there is a negative tz (2015-02-29T12:05:59.001-01:00)
-                tzStartIndex = dateString.lastIndexOf("-");
+                tzStartIndex = dateString.lastIndexOf('-');
                 return dateString.substr(0, tzStartIndex);
             } else {
-                tzStartIndex = dateString.toLowerCase().indexOf("z");
+                tzStartIndex = dateString.toLowerCase().indexOf('z');
                 if (tzStartIndex > 0) {
                     return dateString.substr(0, tzStartIndex);
                 }

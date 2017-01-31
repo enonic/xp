@@ -1,21 +1,21 @@
-import "../../api.ts";
-import {MostPopularItem} from "./MostPopularItem";
-import {NewContentDialogList} from "./NewContentDialogList";
-import {NewContentDialogListItem} from "./NewContentDialogListItem";
-import {MostPopularItemsBlock} from "./MostPopularItemsBlock";
+import '../../api.ts';
+import {MostPopularItem} from './MostPopularItem';
+import {NewContentDialogList} from './NewContentDialogList';
+import {NewContentDialogListItem} from './NewContentDialogListItem';
+import {MostPopularItemsBlock} from './MostPopularItemsBlock';
 import ContentTypeSummary = api.schema.content.ContentTypeSummary;
 
 export class MostPopularItemsList extends NewContentDialogList {
 
     constructor() {
-        super("most-popular-content-types-list");
+        super('most-popular-content-types-list');
     }
 
     createItemView(item: MostPopularItem): api.dom.LiEl {
         let namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
         namesAndIconView
             .setIconUrl(item.getIconUrl())
-            .setMainName(item.getDisplayName() + " (" + item.getHits() + ")")
+            .setMainName(item.getDisplayName() + ' (' + item.getHits() + ')')
             .setSubName(item.getName())
             .setDisplayIconLabel(item.isSite());
 
@@ -24,7 +24,7 @@ export class MostPopularItemsList extends NewContentDialogList {
         itemEl.appendChild(namesAndIconView);
         itemEl.onClicked((event: MouseEvent) => this.notifySelected(item));
         itemEl.onKeyPressed((event: KeyboardEvent) => {
-            if (event.keyCode == 13) {
+            if (event.keyCode === 13) {
                 this.notifySelected(item);
             }
         });
@@ -36,14 +36,14 @@ export class MostPopularItemsList extends NewContentDialogList {
 
         let contentTypes = listItems.map((el) => el.getContentType());
 
-        let mostPopularItems: MostPopularItem[] = [],
-            allowedContentTypes: api.content.ContentSummary[] = directChildContents.filter((content: api.content.ContentSummary) => {
+        let mostPopularItems: MostPopularItem[] = [];
+        let allowedContentTypes: api.content.ContentSummary[] = directChildContents.filter((content: api.content.ContentSummary) => {
                 return this.isAllowedContentType(contentTypes, content);
-            }),
-            aggregatedList: ContentTypeInfo[] = this.getAggregatedItemList(allowedContentTypes);
+            });
+        let aggregatedList: ContentTypeInfo[] = this.getAggregatedItemList(allowedContentTypes);
 
         for (let i = 0; i < aggregatedList.length && i < MostPopularItemsBlock.DEFAULT_MAX_ITEMS; i++) {
-            let contentType: ContentTypeSummary = api.util.ArrayHelper.findElementByFieldValue(contentTypes, "name",
+            let contentType: ContentTypeSummary = api.util.ArrayHelper.findElementByFieldValue(contentTypes, 'name',
                 aggregatedList[i].contentType);
             mostPopularItems.push(new MostPopularItem(contentType, aggregatedList[i].count));
         }
@@ -53,7 +53,7 @@ export class MostPopularItemsList extends NewContentDialogList {
 
     private isAllowedContentType(allowedContentTypes: ContentTypeSummary[], content: api.content.ContentSummary) {
         return !content.getType().isMedia() && !content.getType().isDescendantOfMedia() &&
-               Boolean(api.util.ArrayHelper.findElementByFieldValue(allowedContentTypes, "id", content.getType().toString()));
+               Boolean(api.util.ArrayHelper.findElementByFieldValue(allowedContentTypes, 'id', content.getType().toString()));
     }
 
     private getAggregatedItemList(contentTypes: api.content.ContentSummary[]) {
@@ -61,15 +61,14 @@ export class MostPopularItemsList extends NewContentDialogList {
 
         contentTypes.forEach((content: api.content.ContentSummary) => {
             let contentType = content.getType().toString();
-            let existingContent = api.util.ArrayHelper.findElementByFieldValue(aggregatedList, "contentType", contentType);
+            let existingContent = api.util.ArrayHelper.findElementByFieldValue(aggregatedList, 'contentType', contentType);
 
             if (existingContent) {
                 existingContent.count++;
                 if (content.getModifiedTime() > existingContent.lastModified) {
                     existingContent.lastModified = content.getModifiedTime();
                 }
-            }
-            else {
+            } else {
                 aggregatedList.push({contentType: contentType, count: 1, lastModified: content.getModifiedTime()});
             }
         });
@@ -80,7 +79,7 @@ export class MostPopularItemsList extends NewContentDialogList {
     }
 
     private sortByCountAndDate(contentType1: ContentTypeInfo, contentType2: ContentTypeInfo) {
-        if (contentType2.count == contentType1.count) {
+        if (contentType2.count === contentType1.count) {
             return contentType2.lastModified > contentType1.lastModified ? 1 : -1;
         }
         return contentType2.count - contentType1.count;

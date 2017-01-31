@@ -13,10 +13,10 @@ module api.ui.mask {
 
         constructor(el: api.dom.Element) {
             super(el);
-            this.addClass("load-mask");
+            this.addClass('load-mask');
 
-            this.splash = new api.dom.DivEl("mask-splash");
-            this.spinner = new api.dom.DivEl("spinner");
+            this.splash = new api.dom.DivEl('mask-splash');
+            this.spinner = new api.dom.DivEl('spinner');
             this.splash.appendChild(this.spinner);
 
             this.appendChild(this.splash);
@@ -40,7 +40,7 @@ module api.ui.mask {
                 }
             } else {
                 if (!this.text) {
-                    this.text = new api.dom.SpanEl("text");
+                    this.text = new api.dom.SpanEl('text');
                     this.splash.appendChild(this.text);
                 }
                 this.text.getEl().setInnerHtml(text);
@@ -53,8 +53,8 @@ module api.ui.mask {
 
         private centerSplash() {
             let loaderEl = this.splash.getEl();
-            loaderEl.setMarginLeft("-" + loaderEl.getWidthWithBorder() / 2 + "px");
-            loaderEl.setMarginTop("-" + loaderEl.getHeightWithBorder() / 2 + "px");
+            loaderEl.setMarginLeft('-' + loaderEl.getWidthWithBorder() / 2 + 'px');
+            loaderEl.setMarginTop('-' + loaderEl.getHeightWithBorder() / 2 + 'px');
         }
     }
 

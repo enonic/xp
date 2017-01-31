@@ -15,5 +15,7 @@ public interface RepositoryEntryService
 
     Repository addBranchToRepositoryEntry( final RepositoryId repositoryId, final Branch branch );
 
+    Repository removeBranchFromRepositoryEntry( final RepositoryId repositoryId, final Branch branch );
+
     void deleteRepositoryEntry( RepositoryId repositoryId );
 }

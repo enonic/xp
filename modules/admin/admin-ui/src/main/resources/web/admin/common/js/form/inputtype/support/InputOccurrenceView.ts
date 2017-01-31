@@ -26,7 +26,7 @@ module api.form.inputtype.support {
         public static debug: boolean = false;
 
         constructor(inputOccurrence: InputOccurrence, baseInputTypeView: BaseInputTypeNotManagingAdd<any>, property: Property) {
-            super("input-occurrence-view", inputOccurrence);
+            super('input-occurrence-view', inputOccurrence);
 
             this.inputTypeView = baseInputTypeView;
             this.inputElement = this.inputTypeView.createInputOccurrenceElement(inputOccurrence.getIndex(), property);
@@ -36,7 +36,7 @@ module api.form.inputtype.support {
             let ignorePropertyChange = false;
             this.inputTypeView.onOccurrenceValueChanged((occurrence: api.dom.Element, value: api.data.Value) => {
                 // check if this is our occurrence because all views will receive occurrence value changed event
-                if (this.inputElement == occurrence) {
+                if (this.inputElement === occurrence) {
                     if (InputOccurrenceView.debug) {
                         console.debug('InputOccurrenceView: onOccurrenceValueChanged ', occurrence, value);
                     }
@@ -51,7 +51,7 @@ module api.form.inputtype.support {
 
                 let newStateOfRequiredContractBroken = this.inputTypeView.valueBreaksRequiredContract(event.getNewValue());
 
-                if (this.requiredContractBroken != newStateOfRequiredContractBroken) {
+                if (this.requiredContractBroken !== newStateOfRequiredContractBroken) {
                     this.requiredContractBroken = newStateOfRequiredContractBroken;
                     this.inputTypeView.notifyRequiredContractBroken(newStateOfRequiredContractBroken, inputOccurrence.getIndex());
                 }
@@ -68,10 +68,10 @@ module api.form.inputtype.support {
 
             this.inputOccurrence = inputOccurrence;
 
-            this.dragControl = new api.dom.DivEl("drag-control");
+            this.dragControl = new api.dom.DivEl('drag-control');
             this.appendChild(this.dragControl);
 
-            this.removeButtonEl = new api.dom.AEl("remove-button");
+            this.removeButtonEl = new api.dom.AEl('remove-button');
             this.appendChild(this.removeButtonEl);
             this.removeButtonEl.onClicked((event: MouseEvent) => {
                 this.notifyRemoveButtonClicked();
@@ -80,7 +80,7 @@ module api.form.inputtype.support {
                 return false;
             });
 
-            let inputWrapper = new api.dom.DivEl("input-wrapper");
+            let inputWrapper = new api.dom.DivEl('input-wrapper');
             this.appendChild(inputWrapper);
 
             inputWrapper.appendChild(this.inputElement);
@@ -121,10 +121,9 @@ module api.form.inputtype.support {
         refresh() {
 
             if (this.inputOccurrence.oneAndOnly()) {
-                this.addClass("single-occurrence").removeClass("multiple-occurrence");
-            }
-            else {
-                this.addClass("multiple-occurrence").removeClass("single-occurrence");
+                this.addClass('single-occurrence').removeClass('multiple-occurrence');
+            } else {
+                this.addClass('multiple-occurrence').removeClass('single-occurrence');
             }
 
             this.removeButtonEl.setVisible(this.inputOccurrence.isRemoveButtonRequiredStrict());

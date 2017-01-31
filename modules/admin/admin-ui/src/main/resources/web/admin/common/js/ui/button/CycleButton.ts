@@ -1,6 +1,5 @@
 module api.ui.button {
 
-
     export class CycleButton extends api.ui.button.Button {
 
         private actionList: Action[];
@@ -9,7 +8,7 @@ module api.ui.button {
 
         constructor(actions: Action[]) {
             super();
-            this.addClass("cycle-button icon-medium " + api.StyleHelper.getIconCls("monitor2"));
+            this.addClass('cycle-button icon-medium ' + api.StyleHelper.getIconCls('monitor2'));
             this.actionList = actions;
 
             if (this.actionList.length > 0) {
@@ -32,7 +31,7 @@ module api.ui.button {
 
         private removeAndHdeTitle() {
             if (this.actionList[this.active].getTitle()) {
-                this.setTitle("");
+                this.setTitle('');
             }
         }
 
@@ -44,16 +43,14 @@ module api.ui.button {
         }
 
         private updateActive() {
-            let name, prevName;
-
-            prevName = this.actionList[this.active] ? this.actionList[this.active].getLabel().toLowerCase() : "";
+            let prevName = this.actionList[this.active] ? this.actionList[this.active].getLabel().toLowerCase() : '';
 
             this.active++;
 
             if (this.active >= this.actionList.length) {
                 this.active = 0;
             }
-            name = this.actionList[this.active] ? this.actionList[this.active].getLabel().toLowerCase() : "";
+            let name = this.actionList[this.active] ? this.actionList[this.active].getLabel().toLowerCase() : '';
 
             if (prevName) {
                 this.removeClass(prevName);
@@ -73,8 +70,7 @@ module api.ui.button {
         }
 
         selectActiveAction(action: Action) {
-            let i, l = this.actionList.length;
-            for (i = 0; i < l; i++) {
+            for (let i = 0; i < this.actionList.length; i++) {
                 if (this.actionList[i] === action) {
                     this.active = i;
                     this.updateActive();

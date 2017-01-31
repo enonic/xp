@@ -22,7 +22,7 @@ module api.form {
         }
 
         getDataPath(): api.data.PropertyPath {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         public layout(validate: boolean = true): wemQ.Promise<void> {
@@ -35,7 +35,7 @@ module api.form {
 
         hasValidUserInput(): boolean {
 
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         onRemoveButtonClicked(listener: (event: RemoveButtonClickedEvent<FormItemOccurrenceView>)=>void) {
@@ -44,7 +44,7 @@ module api.form {
 
         unRemoveButtonClicked(listener: (event: RemoveButtonClickedEvent<FormItemOccurrenceView>)=>void) {
             this.removeButtonClickedListeners.filter((currentListener: (event: RemoveButtonClickedEvent<FormItemOccurrenceView>)=>void) => {
-                return currentListener != listener;
+                return currentListener !== listener;
             });
         }
 
@@ -59,7 +59,7 @@ module api.form {
         }
 
         refresh() {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         giveFocus(): boolean {

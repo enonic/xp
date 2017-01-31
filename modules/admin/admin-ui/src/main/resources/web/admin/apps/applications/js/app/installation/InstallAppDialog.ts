@@ -1,6 +1,6 @@
-import "../../api.ts";
-import {MarketAppPanel} from "./view/MarketAppPanel";
-import {ApplicationInput} from "./view/ApplicationInput";
+import '../../api.ts';
+import {MarketAppPanel} from './view/MarketAppPanel';
+import {ApplicationInput} from './view/ApplicationInput';
 
 import ApplicationKey = api.application.ApplicationKey;
 import FileUploadStartedEvent = api.ui.uploader.FileUploadStartedEvent;
@@ -25,29 +25,29 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
     private clearButton: api.dom.ButtonEl;
 
     constructor() {
-        super("Install Application");
+        super('Install Application');
 
-        this.addClass("install-application-dialog hidden");
+        this.addClass('install-application-dialog hidden');
 
         let loadedAppsAtLeastOnce = false;
 
         this.onMarketLoaded = api.util.AppHelper.debounce((() => {
-            if (this.marketAppPanel.getMarketAppsTreeGrid().getGrid().getDataView().getLength() == 0) {
-                this.statusMessage.addClass("empty");
-                this.statusMessage.setHtml("No applications found");
+            if (this.marketAppPanel.getMarketAppsTreeGrid().getGrid().getDataView().getLength() === 0) {
+                this.statusMessage.addClass('empty');
+                this.statusMessage.setHtml('No applications found');
             } else {
                 if (!loadedAppsAtLeastOnce) {
                     this.centerMyself();
                 }
-                this.statusMessage.removeClass("empty");
+                this.statusMessage.removeClass('empty');
                 loadedAppsAtLeastOnce = true;
             }
 
-            this.statusMessage.addClass("loaded");
+            this.statusMessage.addClass('loaded');
         }).bind(this), 150, false);
 
-        this.statusMessage = new api.dom.DivEl("status-message");
-        this.statusMessage.setHtml("Loading application list");
+        this.statusMessage = new api.dom.DivEl('status-message');
+        this.statusMessage.setHtml('Loading application list');
 
         api.dom.Body.get().appendChild(this);
     }
@@ -60,10 +60,10 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
         return super.doRender().then((rendered) => {
 
             this.applicationInput =
-                new ApplicationInput(this.getCancelAction(), 'large').setPlaceholder("Search Enonic Market, paste url or upload directly");
+                new ApplicationInput(this.getCancelAction(), 'large').setPlaceholder('Search Enonic Market, paste url or upload directly');
             this.onShown(() => {
                 this.applicationInput.giveFocus();
-                this.clearButton.addClass("hidden");
+                this.clearButton.addClass('hidden');
             });
 
             this.applicationInput.onKeyUp((event: KeyboardEvent) => {
@@ -73,11 +73,11 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
             });
 
             this.applicationInput.onTextValueChanged(() => {
-                this.clearButton.toggleClass("hidden", api.util.StringHelper.isEmpty(this.applicationInput.getValue()));
+                this.clearButton.toggleClass('hidden', api.util.StringHelper.isEmpty(this.applicationInput.getValue()));
             });
 
             this.applicationInput.onAppInstallFinished(() => {
-                this.clearButton.toggleClass("hidden", api.util.StringHelper.isEmpty(this.applicationInput.getValue()));
+                this.clearButton.toggleClass('hidden', api.util.StringHelper.isEmpty(this.applicationInput.getValue()));
             });
 
             this.initUploaderListeners();
@@ -91,7 +91,7 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
             this.initDragAndDropUploaderEvents();
 
             if (!this.marketAppPanel) {
-                this.marketAppPanel = new MarketAppPanel(this.applicationInput, "market-app-panel");
+                this.marketAppPanel = new MarketAppPanel(this.applicationInput, 'market-app-panel');
             }
 
             this.appendChildToContentPanel(this.applicationInput);
@@ -105,11 +105,11 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
     public createClearFilterButton(): api.dom.ButtonEl {
         let clearButton = new api.dom.ButtonEl();
-        clearButton.addClass("clear-button hidden");
+        clearButton.addClass('clear-button hidden');
         clearButton.onClicked(() => {
             this.applicationInput.reset();
             this.marketAppPanel.getMarketAppsTreeGrid().refresh();
-            clearButton.addClass("hidden");
+            clearButton.addClass('hidden');
             this.applicationInput.getTextInput().giveFocus();
         });
         return clearButton;
@@ -123,7 +123,7 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
         this.onDragEnter((event: DragEvent) => {
             let target = <HTMLElement> event.target;
 
-            if (!!dragOverEl || dragOverEl == this.getHTMLElement()) {
+            if (!!dragOverEl || dragOverEl === this.getHTMLElement()) {
                 this.dropzoneContainer.show();
             }
             dragOverEl = target;
@@ -157,16 +157,16 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
         this.marketAppPanel.getMarketAppsTreeGrid().onLoaded(this.onMarketLoaded);
         this.resetFileInputWithUploader();
         super.show();
-        this.removeClass("hidden");
+        this.removeClass('hidden');
         this.marketAppPanel.loadGrid();
     }
 
     hide() {
         this.marketAppPanel.getMarketAppsTreeGrid().unLoaded(this.onMarketLoaded);
-        this.statusMessage.removeClass("loaded");
+        this.statusMessage.removeClass('loaded');
         super.hide();
-        this.addClass("hidden");
-        this.removeClass("animated");
+        this.addClass('hidden');
+        this.removeClass('animated');
         this.applicationInput.reset();
     }
 

@@ -57,7 +57,7 @@ module api.content.form.inputtype.customselector {
             return this.send().then((response: api.rest.JsonResponse<CustomSelectorResponse>) => {
 
                 let result: CustomSelectorResponse = response.getResult();
-                if (this.start == 0) {
+                if (this.start === 0) {
                     this.results = [];
                 }
 
@@ -78,7 +78,7 @@ module api.content.form.inputtype.customselector {
 
         private validateResponse(result: CustomSelectorResponse) {
             const errors = [];
-            const isInvalid = (value) => value === undefined || value === null;
+            const isInvalid = (value) => value == null || value == null;
             if (isInvalid(result.total)) {
                 errors.push(`'total'`);
             }

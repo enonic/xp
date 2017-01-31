@@ -1,13 +1,13 @@
-import "../../../api.ts";
-import {WidgetView} from "./WidgetView";
-import {WidgetsSelectionRow} from "./WidgetsSelectionRow";
-import {VersionsWidgetItemView} from "./widget/version/VersionsWidgetItemView";
-import {DependenciesWidgetItemView} from "./widget/dependency/DependenciesWidgetItemView";
-import {StatusWidgetItemView} from "./widget/info/StatusWidgetItemView";
-import {PropertiesWidgetItemView} from "./widget/info/PropertiesWidgetItemView";
-import {AttachmentsWidgetItemView} from "./widget/info/AttachmentsWidgetItemView";
-import {UserAccessWidgetItemView} from "./widget/info/UserAccessWidgetItemView";
-import {ActiveDetailsPanelManager} from "../../view/detail/ActiveDetailsPanelManager";
+import '../../../api.ts';
+import {WidgetView} from './WidgetView';
+import {WidgetsSelectionRow} from './WidgetsSelectionRow';
+import {VersionsWidgetItemView} from './widget/version/VersionsWidgetItemView';
+import {DependenciesWidgetItemView} from './widget/dependency/DependenciesWidgetItemView';
+import {StatusWidgetItemView} from './widget/info/StatusWidgetItemView';
+import {PropertiesWidgetItemView} from './widget/info/PropertiesWidgetItemView';
+import {AttachmentsWidgetItemView} from './widget/info/AttachmentsWidgetItemView';
+import {UserAccessWidgetItemView} from './widget/info/UserAccessWidgetItemView';
+import {ActiveDetailsPanelManager} from '../../view/detail/ActiveDetailsPanelManager';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import Widget = api.content.Widget;
@@ -19,7 +19,7 @@ export class DetailsView extends api.dom.DivEl {
 
     private widgetViews: WidgetView[] = [];
     private viewer: ContentSummaryViewer;
-    private detailsContainer: api.dom.DivEl = new api.dom.DivEl("details-container");
+    private detailsContainer: api.dom.DivEl = new api.dom.DivEl('details-container');
     private widgetsSelectionRow: WidgetsSelectionRow;
 
     private loadMask: api.ui.mask.LoadMask;
@@ -37,10 +37,10 @@ export class DetailsView extends api.dom.DivEl {
     public static debug: boolean = false;
 
     constructor() {
-        super("details-panel-view");
+        super('details-panel-view');
 
         this.appendChild(this.loadMask = new api.ui.mask.LoadMask(this));
-        this.loadMask.addClass("details-panel-mask");
+        this.loadMask.addClass('details-panel-mask');
 
         this.initViewer();
         this.initDefaultWidgetView();
@@ -61,15 +61,15 @@ export class DetailsView extends api.dom.DivEl {
     private subscribeOnEvents() {
         ContentVersionSetEvent.on((event: ContentVersionSetEvent) => {
             if (ActiveDetailsPanelManager.getActiveDetailsPanel().isVisibleOrAboutToBeVisible() && !!this.activeWidget &&
-                this.activeWidget.getWidgetName() == "Version history") {
+                this.activeWidget.getWidgetName() === 'Version history') {
                 this.updateActiveWidget();
             }
         });
     }
 
     private initDivForNoSelection() {
-        this.divForNoSelection = new api.dom.DivEl("no-selection-message");
-        this.divForNoSelection.getEl().setInnerHtml("Select an item - and we'll show you the details!");
+        this.divForNoSelection = new api.dom.DivEl('no-selection-message');
+        this.divForNoSelection.getEl().setInnerHtml(`Select an item - and we'll show you the details!`);
         this.appendChild(this.divForNoSelection);
     }
 
@@ -98,8 +98,7 @@ export class DetailsView extends api.dom.DivEl {
                 this.alreadyFetchedCustomWidgets = true;
                 deferred.resolve(null);
             });
-        }
-        else {
+        } else {
             deferred.resolve(null);
         }
         return deferred.promise;
@@ -120,7 +119,7 @@ export class DetailsView extends api.dom.DivEl {
     }
 
     /*setActiveWidgetWithName(value: string) {
-     if (this.activeWidget && value == this.activeWidget.getWidgetName()) {
+     if (this.activeWidget && value === this.activeWidget.getWidgetName()) {
      return;
      }
 
@@ -130,7 +129,7 @@ export class DetailsView extends api.dom.DivEl {
 
      var widgetFound = false;
      this.widgetViews.forEach((widgetView: WidgetView) => {
-     if (widgetView.getWidgetName() == value) {
+     if (widgetView.getWidgetName() === value) {
      widgetView.setActive();
      widgetFound = true;
      }
@@ -153,7 +152,7 @@ export class DetailsView extends api.dom.DivEl {
     }
 
     isDefaultWidget(widgetView: WidgetView): boolean {
-        return widgetView == this.defaultWidgetView;
+        return widgetView === this.defaultWidgetView;
     }
 
     getDefaultWidget(): WidgetView {
@@ -162,7 +161,7 @@ export class DetailsView extends api.dom.DivEl {
 
     private initViewer() {
         this.viewer = new ContentSummaryViewer();
-        this.viewer.addClass("details-panel-label");
+        this.viewer.addClass('details-panel-label');
 
         this.appendChild(this.viewer);
     }
@@ -191,7 +190,7 @@ export class DetailsView extends api.dom.DivEl {
     }
 
     private getWidgetsInterfaceNames(): string[] {
-        return ["com.enonic.xp.content-manager.context-widget", "contentstudio.detailpanel"];
+        return ['com.enonic.xp.content-manager.context-widget', 'contentstudio.detailpanel'];
     }
 
     updateActiveWidget(): wemQ.Promise<any> {
@@ -225,7 +224,7 @@ export class DetailsView extends api.dom.DivEl {
 
     private initDefaultWidgetView() {
         let builder = WidgetView.create()
-            .setName("Info")
+            .setName('Info')
             .setDetailsView(this)
             .setWidgetItemViews([
                 new StatusWidgetItemView(),
@@ -239,13 +238,13 @@ export class DetailsView extends api.dom.DivEl {
 
     private initCommonWidgetViews() {
 
-        let versionsWidgetView = WidgetView.create().setName("Version history").setDetailsView(this)
+        let versionsWidgetView = WidgetView.create().setName('Version history').setDetailsView(this)
             .addWidgetItemView(new VersionsWidgetItemView()).build();
 
-        let dependenciesWidgetView = WidgetView.create().setName("Dependencies").setDetailsView(this)
+        let dependenciesWidgetView = WidgetView.create().setName('Dependencies').setDetailsView(this)
             .addWidgetItemView(new DependenciesWidgetItemView()).build();
 
-        dependenciesWidgetView.addClass("dependency-widget");
+        dependenciesWidgetView.addClass('dependency-widget');
 
         this.addWidgets([versionsWidgetView, dependenciesWidgetView]);
     }
@@ -269,10 +268,10 @@ export class DetailsView extends api.dom.DivEl {
     }
 
     setDetailsContainerHeight() {
-        let panelHeight = ActiveDetailsPanelManager.getActiveDetailsPanel().getEl().getHeight(),
-            panelOffset = ActiveDetailsPanelManager.getActiveDetailsPanel().getEl().getOffsetToParent(),
-            containerHeight = this.detailsContainer.getEl().getHeight(),
-            containerOffset = this.detailsContainer.getEl().getOffsetToParent();
+        let panelHeight = ActiveDetailsPanelManager.getActiveDetailsPanel().getEl().getHeight();
+        let panelOffset = ActiveDetailsPanelManager.getActiveDetailsPanel().getEl().getOffsetToParent();
+        let containerHeight = this.detailsContainer.getEl().getHeight();
+        let containerOffset = this.detailsContainer.getEl().getOffsetToParent();
 
         if (containerOffset.top > 0 && containerHeight !== (panelHeight - panelOffset.top - containerOffset.top)) {
             this.detailsContainer.getEl().setHeightPx(panelHeight - panelOffset.top - containerOffset.top);
@@ -304,7 +303,7 @@ export class DetailsView extends api.dom.DivEl {
             this.viewer.setVisible(!empty);
         }
         this.detailsContainer.setVisible(!empty);
-        this.toggleClass("no-selection", empty);
+        this.toggleClass('no-selection', empty);
     }
 
     onPanelSizeChanged(listener: () => void) {
@@ -315,4 +314,3 @@ export class DetailsView extends api.dom.DivEl {
         this.sizeChangedListeners.forEach((listener: ()=> void) => listener());
     }
 }
-

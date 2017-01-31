@@ -11,11 +11,11 @@ module api.data {
             this.type = type;
             if (value) {
                 let isValid = this.type.isValid(value);
-                if (isValid == undefined) {
-                    throw new Error(api.ClassHelper.getClassName(this.type) + ".isValid() did not return any value: " + isValid);
+                if (isValid == null) {
+                    throw new Error(api.ClassHelper.getClassName(this.type) + '.isValid() did not return any value: ' + isValid);
                 }
-                if (isValid == false) {
-                    throw new Error("Invalid value for type " + type.toString() + ": " + value);
+                if (isValid === false) {
+                    throw new Error('Invalid value for type ' + type.toString() + ': ' + value);
                 }
             }
         }
@@ -29,7 +29,7 @@ module api.data {
         }
 
         isNull(): boolean {
-            return this.value == null || this.value == undefined;
+            return this.value == null || this.value == null;
         }
 
         getObject(): Object {
@@ -44,7 +44,7 @@ module api.data {
         }
 
         isPropertySet(): boolean {
-            return ValueTypes.DATA.toString() == this.type.toString();
+            return ValueTypes.DATA.toString() === this.type.toString();
         }
 
         getPropertySet(): PropertySet {
@@ -53,7 +53,7 @@ module api.data {
             }
 
             api.util.assert(api.ObjectHelper.iFrameSafeInstanceOf(this.value, PropertySet),
-                "Expected value to be a PropertySet: " + api.ClassHelper.getClassName(this.value));
+                'Expected value to be a PropertySet: ' + api.ClassHelper.getClassName(this.value));
 
             return <PropertySet>this.value;
         }

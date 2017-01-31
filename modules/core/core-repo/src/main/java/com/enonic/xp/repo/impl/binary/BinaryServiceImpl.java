@@ -28,7 +28,7 @@ public class BinaryServiceImpl
     @Override
     public ByteSource get( final AttachedBinary attachedBinary )
     {
-        return blobStore.getRecord( NodeConstants.BINARY_SEGMENT, new BlobKey( attachedBinary.getBlobKey() ) ).getBytes();
+        return blobStore.getRecord( NodeConstants.BINARY_SEGMENT, BlobKey.from( attachedBinary.getBlobKey() ) ).getBytes();
     }
 
     @Reference

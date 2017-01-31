@@ -37,7 +37,7 @@ module api.content.event {
 
         constructor() {
             // if(instance)
-            // throw new Error("use static getInstance() method instead of creation new object"
+            // throw new Error('use static getInstance() method instead of creation new object');
         }
 
         static getInstance(): ContentServerEventsHandler {
@@ -58,23 +58,22 @@ module api.content.event {
             }
         }
 
-
         private contentServerEventHandler(event: BatchContentServerEvent) {
             if (ContentServerEventsHandler.debug) {
-                console.debug("ContentServerEventsHandler: received server event", event);
+                console.debug('ContentServerEventsHandler: received server event', event);
             }
 
             let changes = event.getEvents().map((change) => change.getNodeChange());
 
-            if (event.getType() == NodeServerChangeType.DELETE && this.hasDraftBranchChanges(changes)) {
+            if (event.getType() === NodeServerChangeType.DELETE && this.hasDraftBranchChanges(changes)) {
                 // content has already been deleted so no need to fetch summaries
                 let changeItems: ContentServerChangeItem[] = changes.reduce((total, change: ContentServerChange) => {
                     return total.concat(change.getChangeItems());
                 }, []);
 
-                let deletedItems = changeItems.filter(d => d.getBranch() == 'draft'),
-                    unpublishedItems = changeItems.filter(d => deletedItems.every(deleted => !api.ObjectHelper.equals(deleted.contentId,
-                        d.contentId)));
+                let deletedItems = changeItems.filter(d => d.getBranch() === 'draft');
+                let unpublishedItems = changeItems.filter(d => deletedItems.every(deleted => !api.ObjectHelper.equals(deleted.contentId,
+                    d.contentId)));
 
                 this.handleContentDeleted(deletedItems);
                 api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByPaths(unpublishedItems.map(item => item.getPath()))
@@ -82,7 +81,7 @@ module api.content.event {
                         this.handleContentUnpublished(summaries);
                     });
 
-            } else if (event.getType() == NodeServerChangeType.MOVE) {
+            } else if (event.getType() === NodeServerChangeType.MOVE) {
                 api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByPaths(this.extractNewContentPaths(changes))
                     .then((summaries) => {
                         this.handleContentMoved(summaries, this.extractContentPaths(changes));
@@ -91,7 +90,7 @@ module api.content.event {
                 api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByIds(this.extractContentIds(changes))
                     .then((summaries) => {
                         if (ContentServerEventsHandler.debug) {
-                            console.debug("ContentServerEventsHandler: fetched summaries", summaries);
+                            console.debug('ContentServerEventsHandler: fetched summaries', summaries);
                         }
                         switch (event.getType()) {
                         case NodeServerChangeType.CREATE:
@@ -133,7 +132,7 @@ module api.content.event {
         private hasDraftBranchChanges(changes: ContentServerChange[]): boolean {
             return changes.some((change: ContentServerChange) => {
                 return change.getChangeItems().some(changeItem => {
-                    return changeItem.getBranch() == 'draft';
+                    return changeItem.getBranch() === 'draft';
                 });
             });
         }
@@ -174,14 +173,14 @@ module api.content.event {
 
         private handleContentCreated(data: ContentSummaryAndCompareStatus[]) {
             if (ContentServerEventsHandler.debug) {
-                console.debug("ContentServerEventsHandler: created", data);
+                console.debug('ContentServerEventsHandler: created', data);
             }
             this.notifyContentCreated(data);
         }
 
         private handleContentUpdated(data: ContentSummaryAndCompareStatus[]) {
             if (ContentServerEventsHandler.debug) {
-                console.debug("ContentServerEventsHandler: updated", data);
+                console.debug('ContentServerEventsHandler: updated', data);
             }
             // TODO: refactor update event to contain multiple contents ?
             data.forEach((el) => {
@@ -193,14 +192,14 @@ module api.content.event {
 
         private handleContentRenamed(data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[]) {
             if (ContentServerEventsHandler.debug) {
-                console.debug("ContentServerEventsHandler: renamed", data, oldPaths);
+                console.debug('ContentServerEventsHandler: renamed', data, oldPaths);
             }
             this.notifyContentRenamed(data, oldPaths);
         }
 
         private handleContentDeleted(changeItems: ContentServerChangeItem[]) {
             if (ContentServerEventsHandler.debug) {
-                console.debug("ContentServerEventsHandler: deleted", changeItems);
+                console.debug('ContentServerEventsHandler: deleted', changeItems);
             }
             let contentDeletedEvent = new ContentDeletedEvent();
             changeItems.forEach((changeItem) => {
@@ -213,7 +212,7 @@ module api.content.event {
 
         private handleContentPending(data: ContentSummaryAndCompareStatus[]) {
             if (ContentServerEventsHandler.debug) {
-                console.debug("ContentServerEventsHandler: pending", data);
+                console.debug('ContentServerEventsHandler: pending', data);
             }
             let contentDeletedEvent = new ContentDeletedEvent();
 
@@ -229,14 +228,14 @@ module api.content.event {
 
         private handleContentDuplicated(data: ContentSummaryAndCompareStatus[]) {
             if (ContentServerEventsHandler.debug) {
-                console.debug("ContentServerEventsHandler: duplicated", data);
+                console.debug('ContentServerEventsHandler: duplicated', data);
             }
             this.notifyContentDuplicated(data);
         }
 
         private handleContentPublished(data: ContentSummaryAndCompareStatus[]) {
             if (ContentServerEventsHandler.debug) {
-                console.debug("ContentServerEventsHandler: published", data);
+                console.debug('ContentServerEventsHandler: published', data);
             }
 
             this.notifyContentPublished(data);
@@ -244,7 +243,7 @@ module api.content.event {
 
         private handleContentUnpublished(data: ContentSummaryAndCompareStatus[]) {
             if (ContentServerEventsHandler.debug) {
-                console.debug("ContentServerEventsHandler: unpublished", data);
+                console.debug('ContentServerEventsHandler: unpublished', data);
             }
 
             this.notifyContentUnpublished(data);
@@ -252,18 +251,17 @@ module api.content.event {
 
         private handleContentMoved(data: ContentSummaryAndCompareStatus[], oldPaths: ContentPath[]) {
             if (ContentServerEventsHandler.debug) {
-                console.debug("ContentServerEventsHandler: moved", data, oldPaths);
+                console.debug('ContentServerEventsHandler: moved', data, oldPaths);
             }
             this.notifyContentMoved(data, oldPaths);
         }
 
         private handleContentSorted(data: ContentSummaryAndCompareStatus[]) {
             if (ContentServerEventsHandler.debug) {
-                console.debug("ContentServerEventsHandler: sorted", data);
+                console.debug('ContentServerEventsHandler: sorted', data);
             }
             this.notifyContentSorted(data);
         }
-
 
         onContentCreated(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentCreatedListeners.push(listener);
@@ -272,7 +270,7 @@ module api.content.event {
         unContentCreated(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentCreatedListeners =
                 this.contentCreatedListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[])=>void) => {
-                    return currentListener != listener;
+                    return currentListener !== listener;
                 });
         }
 
@@ -289,7 +287,7 @@ module api.content.event {
         unContentUpdated(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentUpdatedListeners =
                 this.contentUpdatedListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[])=>void) => {
-                    return currentListener != listener;
+                    return currentListener !== listener;
                 });
         }
 
@@ -306,7 +304,7 @@ module api.content.event {
         unContentDeleted(listener: (paths: ContentServerChangeItem[], pending?: boolean)=>void) {
             this.contentDeletedListeners =
                 this.contentDeletedListeners.filter((currentListener: (paths: ContentServerChangeItem[], pending?: boolean)=>void) => {
-                    return currentListener != listener;
+                    return currentListener !== listener;
                 });
         }
 
@@ -324,7 +322,7 @@ module api.content.event {
             this.contentMovedListeners =
                 this.contentMovedListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[],
                                                                      oldPaths: ContentPath[])=>void) => {
-                    return currentListener != listener;
+                    return currentListener !== listener;
                 });
         }
 
@@ -342,7 +340,7 @@ module api.content.event {
             this.contentRenamedListeners =
                 this.contentRenamedListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[],
                                                                        oldPaths: ContentPath[])=>void) => {
-                    return currentListener != listener;
+                    return currentListener !== listener;
                 });
         }
 
@@ -359,7 +357,7 @@ module api.content.event {
         unContentDuplicated(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentDuplicateListeners =
                 this.contentDuplicateListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[])=>void) => {
-                    return currentListener != listener;
+                    return currentListener !== listener;
                 });
         }
 
@@ -376,7 +374,7 @@ module api.content.event {
         unContentPublished(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentPublishListeners =
                 this.contentPublishListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[])=>void) => {
-                    return currentListener != listener;
+                    return currentListener !== listener;
                 });
         }
 
@@ -393,7 +391,7 @@ module api.content.event {
         unContentUnpublished(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentUnpublishListeners =
                 this.contentUnpublishListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[])=>void) => {
-                    return currentListener != listener;
+                    return currentListener !== listener;
                 });
         }
 
@@ -410,7 +408,7 @@ module api.content.event {
         unContentPending(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentPendingListeners =
                 this.contentPendingListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[])=>void) => {
-                    return currentListener != listener;
+                    return currentListener !== listener;
                 });
         }
 
@@ -427,7 +425,7 @@ module api.content.event {
         unContentSorted(listener: (data: ContentSummaryAndCompareStatus[])=>void) {
             this.contentSortListeners =
                 this.contentSortListeners.filter((currentListener: (data: ContentSummaryAndCompareStatus[])=>void) => {
-                    return currentListener != listener;
+                    return currentListener !== listener;
                 });
         }
 

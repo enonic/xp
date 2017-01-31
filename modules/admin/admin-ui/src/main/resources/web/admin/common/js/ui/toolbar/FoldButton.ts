@@ -6,14 +6,14 @@ module api.ui.toolbar {
         private dropdown: api.dom.DivEl;
         private widthCache: number[] = [];
         private hostElement: api.dom.Element;
-        private static expandedCls: string = "expanded";
+        private static expandedCls: string = 'expanded';
 
-        constructor(caption: string = "Actions", hostElement?: api.dom.Element) {
+        constructor(caption: string = 'Actions', hostElement?: api.dom.Element) {
             super();
 
-            this.addClass("fold-button");
+            this.addClass('fold-button');
 
-            this.dropdown = new api.dom.DivEl("dropdown", api.StyleHelper.COMMON_PREFIX);
+            this.dropdown = new api.dom.DivEl('dropdown', api.StyleHelper.COMMON_PREFIX);
             this.appendChild(this.dropdown);
 
             this.span = new api.dom.SpanEl('fold-label');
@@ -90,7 +90,7 @@ module api.ui.toolbar {
         }
 
         isEmpty(): boolean {
-            return this.dropdown.getChildren().length == 0;
+            return this.dropdown.getChildren().length === 0;
         }
 
     }

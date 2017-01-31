@@ -38,7 +38,7 @@ module api.data {
                 return ValueTypeConverter.convertToBinaryReference(value);
             }
 
-            throw("Unknown ValueType: " + toType);
+            throw('Unknown ValueType: ' + toType);
         }
 
         private static convertToString(value: Value): Value {
@@ -49,9 +49,9 @@ module api.data {
         }
 
         private static convertToBoolean(value: any): Value {
-            if (typeof value == "boolean") {
+            if (typeof value === 'boolean') {
                 return ValueTypes.BOOLEAN.newBoolean(value);
-            } else if (typeof value == "string") {
+            } else if (typeof value === 'string') {
                 return ValueTypes.BOOLEAN.newValue(value);
             }
             return ValueTypes.BOOLEAN.newNullValue();
@@ -133,7 +133,7 @@ module api.data {
                 return ValueTypes.LOCAL_DATE_TIME.newValue(value.getString());
             } else if (value.getType() === ValueTypes.LOCAL_DATE && value.isNotNull()) { // from LocalDate
                 let localDate = <api.util.LocalDate>value.getObject();
-                return new Value(api.util.LocalDateTime.fromString(localDate.toString() + "T00:00:00"), ValueTypes.LOCAL_DATE_TIME);
+                return new Value(api.util.LocalDateTime.fromString(localDate.toString() + 'T00:00:00'), ValueTypes.LOCAL_DATE_TIME);
             } else if (value.getType() === ValueTypes.DATE_TIME && value.isNotNull()) { // from DateTime
                 let dateTime = value.getString();
                 return ValueTypes.LOCAL_DATE_TIME.newValue(dateTime.substr(0, 19));
@@ -145,7 +145,7 @@ module api.data {
             if (value.getType() === ValueTypes.STRING && ValueTypes.DATE_TIME.isConvertible(value.getString())) { // from string
                 return ValueTypes.DATE_TIME.newValue(value.getString());
             } else if (value.getType() === ValueTypes.LOCAL_DATE && value.isNotNull()) { // from LocalDate
-                return ValueTypes.DATE_TIME.newValue(value.getString() + "T00:00:00+00:00");
+                return ValueTypes.DATE_TIME.newValue(value.getString() + 'T00:00:00+00:00');
             } else if (value.getType() === ValueTypes.LOCAL_DATE_TIME && value.isNotNull()) { // from LocalDateTime
                 let dateTime = value.getString();
                 return ValueTypes.DATE_TIME.newValue(dateTime);
@@ -158,11 +158,11 @@ module api.data {
                 return ValueTypes.LOCAL_TIME.newValue(value.getString());
             } else if (value.getType() === ValueTypes.LOCAL_DATE_TIME && value.isNotNull()) { // from LocalDateTime
                 let localDateTime = <Date>value.getObject();
-                return ValueTypes.LOCAL_TIME.newValue(localDateTime.getHours() + ":" + localDateTime.getMinutes() + ":" +
+                return ValueTypes.LOCAL_TIME.newValue(localDateTime.getHours() + ':' + localDateTime.getMinutes() + ':' +
                                                       localDateTime.getSeconds());
             } else if (value.getType() === ValueTypes.DATE_TIME && value.isNotNull()) { // from DateTime
                 let dateTime = <api.util.DateTime> value.getObject();
-                return ValueTypes.LOCAL_TIME.newValue(dateTime.getHours() + ":" + dateTime.getMinutes() + ":" + dateTime.getSeconds());
+                return ValueTypes.LOCAL_TIME.newValue(dateTime.getHours() + ':' + dateTime.getMinutes() + ':' + dateTime.getSeconds());
             }
             return ValueTypes.LOCAL_TIME.newNullValue();
         }

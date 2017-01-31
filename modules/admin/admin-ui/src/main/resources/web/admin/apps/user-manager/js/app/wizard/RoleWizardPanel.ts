@@ -1,7 +1,7 @@
-import "../../api.ts";
-import {GroupRoleWizardPanel} from "./GroupRoleWizardPanel";
-import {PrincipalWizardPanelParams} from "./PrincipalWizardPanelParams";
-import {RoleMembersWizardStepForm} from "./RoleMembersWizardStepForm";
+import '../../api.ts';
+import {GroupRoleWizardPanel} from './GroupRoleWizardPanel';
+import {PrincipalWizardPanelParams} from './PrincipalWizardPanelParams';
+import {RoleMembersWizardStepForm} from './RoleMembersWizardStepForm';
 
 import Role = api.security.Role;
 import RoleBuilder = api.security.RoleBuilder;
@@ -20,7 +20,7 @@ export class RoleWizardPanel extends GroupRoleWizardPanel {
 
         super(new RoleMembersWizardStepForm(), params);
 
-        this.addClass("role-wizard-panel");
+        this.addClass('role-wizard-panel');
     }
 
     createSteps(principal?: Principal): WizardStep[] {
@@ -28,12 +28,12 @@ export class RoleWizardPanel extends GroupRoleWizardPanel {
 
         let descriptionStep = this.getDescriptionWizardStepForm();
 
-        steps.push(new WizardStep("Role", descriptionStep));
+        steps.push(new WizardStep('Role', descriptionStep));
 
         let principalKey: PrincipalKey = principal ? principal.getKey() : undefined;
         if (!RoleKeys.EVERYONE.equals(principalKey)) {
             let membersStep = this.getMembersWizardStepForm();
-            steps.push(new WizardStep("Grants", membersStep));
+            steps.push(new WizardStep('Grants', membersStep));
         }
 
         return steps;
@@ -52,34 +52,24 @@ export class RoleWizardPanel extends GroupRoleWizardPanel {
 
     produceCreateRoleRequest(): CreateRoleRequest {
         let wizardHeader = this.getWizardHeader();
-        let key = PrincipalKey.ofRole(wizardHeader.getName()),
-            name = wizardHeader.getDisplayName(),
-            members = this.getMembersWizardStepForm().getMembers().map((el) => {
-                return el.getKey();
-            }),
-            description = this.getDescriptionWizardStepForm().getDescription();
+        let key = PrincipalKey.ofRole(wizardHeader.getName());
+        let name = wizardHeader.getDisplayName();
+        let members = this.getMembersWizardStepForm().getMembers().map(el => el.getKey());
+        let description = this.getDescriptionWizardStepForm().getDescription();
         return new CreateRoleRequest().setKey(key).setDisplayName(name).setMembers(members).setDescription(description);
     }
 
     produceUpdateRequest(viewedPrincipal:Principal):UpdateRoleRequest {
-        let role = viewedPrincipal.asRole(),
-            key = role.getKey(),
-            displayName = role.getDisplayName(),
-            description = role.getDescription(),
-            oldMembers = this.getPersistedItem().asRole().getMembers(),
-            oldMembersIds = oldMembers.map((el) => {
-                return el.getId();
-            }),
-            newMembers = role.getMembers(),
-            newMembersIds = newMembers.map((el) => {
-                return el.getId();
-            }),
-            addMembers = newMembers.filter((el) => {
-                return oldMembersIds.indexOf(el.getId()) < 0;
-            }),
-            removeMembers = oldMembers.filter((el) => {
-                return newMembersIds.indexOf(el.getId()) < 0;
-            });
+        let role = viewedPrincipal.asRole();
+        let key = role.getKey();
+        let displayName = role.getDisplayName();
+        let description = role.getDescription();
+        let oldMembers = this.getPersistedItem().asRole().getMembers();
+        let oldMembersIds = oldMembers.map(el => el.getId());
+        let newMembers = role.getMembers();
+        let newMembersIds = newMembers.map(el => el.getId());
+        let addMembers = newMembers.filter(el => oldMembersIds.indexOf(el.getId()) < 0);
+        let removeMembers = oldMembers.filter(el => newMembersIds.indexOf(el.getId()) < 0);
 
         return new UpdateRoleRequest().setKey(key).setDisplayName(displayName).addMembers(addMembers).removeMembers(
             removeMembers).setDescription(description);

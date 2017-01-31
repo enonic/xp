@@ -1,6 +1,6 @@
-import "../../../../../../api.ts";
-import {ComponentInspectionPanel, ComponentInspectionPanelConfig} from "./ComponentInspectionPanel";
-import {FragmentSelectorForm} from "./FragmentSelectorForm";
+import '../../../../../../api.ts';
+import {ComponentInspectionPanel, ComponentInspectionPanelConfig} from './ComponentInspectionPanel';
+import {FragmentSelectorForm} from './FragmentSelectorForm';
 
 import FragmentComponent = api.content.page.region.FragmentComponent;
 import ContentSummary = api.content.ContentSummary;
@@ -20,6 +20,8 @@ import ValueExpr = api.query.expr.ValueExpr;
 import FragmentDropdown = api.content.page.region.FragmentDropdown;
 import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 import LiveEditModel = api.liveedit.LiveEditModel;
+import Component = api.content.page.region.Component;
+import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
 
 export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentComponent> {
 
@@ -37,7 +39,7 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
 
     constructor() {
         super(<ComponentInspectionPanelConfig>{
-            iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType("fragment")
+            iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType('fragment')
         });
     }
 
@@ -54,13 +56,13 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
         let sitePath = this.liveEditModel.getSiteModel().getSite().getPath().toString();
 
         this.fragmentSelector = new FragmentDropdown(sitePath, this.liveEditModel.getContent().getPath());
-        this.fragmentForm = new FragmentSelectorForm(this.fragmentSelector, "Fragment");
+        this.fragmentForm = new FragmentSelectorForm(this.fragmentSelector, 'Fragment');
 
         this.fragmentSelector.load();
 
         this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
             // Ensure displayed selector option is removed when fragment is removed
-            if (event.getPropertyName() == FragmentComponent.PROPERTY_FRAGMENT) {
+            if (event.getPropertyName() === FragmentComponent.PROPERTY_FRAGMENT) {
                 if (!this.fragmentComponent.hasFragment()) {
                     // this.fragmentSelector.setContent(null);
                     this.fragmentSelector.setSelection(null);
@@ -68,8 +70,24 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
             }
         };
 
+        this.handleContentUpdatedEvent();
         this.initSelectorListeners();
         this.appendChild(this.fragmentForm);
+    }
+
+    private handleContentUpdatedEvent() {
+        let contentUpdatedListener = (event: ContentUpdatedEvent) => {
+            // update currently selected option if this is the one updated
+            if (this.fragmentComponent && event.getContentId().equals(this.fragmentComponent.getFragment())) {
+                this.fragmentSelector.getSelectedOption().displayValue = event.getContentSummary();
+            }
+        };
+
+        ContentUpdatedEvent.on(contentUpdatedListener);
+
+        this.onRemoved((event) => {
+            ContentUpdatedEvent.un(contentUpdatedListener);
+        });
     }
 
     setFragmentComponent(fragmentView: FragmentComponentView) {
@@ -137,7 +155,7 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
 
                         if (fragmentComponent &&
                             api.ObjectHelper.iFrameSafeInstanceOf(fragmentComponent.getType(), LayoutComponentType)) {
-                            api.notify.showWarning("Layout within layout not allowed");
+                            api.notify.showWarning('Layout within layout not allowed');
 
                         } else {
                             this.fragmentComponent.setFragment(fragmentContent.getContentId(), fragmentContent.getDisplayName());

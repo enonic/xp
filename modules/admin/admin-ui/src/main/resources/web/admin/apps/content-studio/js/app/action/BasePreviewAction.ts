@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import Action = api.ui.Action;
 import RenderingMode = api.rendering.RenderingMode;
@@ -16,13 +16,13 @@ export class BasePreviewAction extends Action {
         super(label, shortcut, global);
         // Notification is shown not less than once in a minute, if triggered
         this.notifyBlocked = api.util.AppHelper.debounce(() => {
-            const message = "Pop-up Blocker is enabled in browser settings! Please add selected sites to the exception list.";
+            const message = 'Pop-up Blocker is enabled in browser settings! Please add selected sites to the exception list.';
             api.notify.showWarning(message, false);
         }, 60000, true);
     }
 
     private popupCheck(win: Window) {
-        const isBlocked = !win || win.closed || typeof win.closed == "undefined";
+        const isBlocked = !win || win.closed || typeof win.closed === 'undefined';
 
         if (isBlocked) {
             this.notifyBlocked();

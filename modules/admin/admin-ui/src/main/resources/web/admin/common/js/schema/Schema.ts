@@ -87,7 +87,7 @@ module api.schema {
         }
 
         fromSchemaJson(json: api.schema.SchemaJson): SchemaBuilder {
-            super.fromBaseItemJson(json, "name");
+            super.fromBaseItemJson(json, 'name');
 
             this.name = json.name;
             this.displayName = json.displayName;
@@ -105,6 +105,5 @@ module api.schema {
             return new Schema(this);
         }
     }
-
 
 }

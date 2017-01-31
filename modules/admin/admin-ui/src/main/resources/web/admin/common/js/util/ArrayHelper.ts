@@ -64,7 +64,7 @@ module api.util {
             let result: T = null;
 
             array.every((element: T) => {
-                if (element[field] == value) {
+                if (element[field] === value) {
                     result = element;
                     return false;
                 }

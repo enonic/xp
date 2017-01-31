@@ -97,7 +97,7 @@ module api.ui.selector.combobox {
         }
 
         protected createLoader(): api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE> {
-            throw "Must be implemented by inheritors";
+            throw 'Must be implemented by inheritors';
         }
 
         load() {
@@ -226,7 +226,7 @@ module api.ui.selector.combobox {
 
         clearCombobox() {
             this.clearSelection(true);
-            this.comboBox.getInput().getEl().setValue("");
+            this.comboBox.getInput().getEl().setValue('');
         }
 
         clearSelection(forceClear: boolean = false) {
@@ -237,7 +237,7 @@ module api.ui.selector.combobox {
             let selectedValues = this.getSelectedValues();
             let valueToFind = this.getDisplayValueId(value);
             for (let i = 0; i < selectedValues.length; i++) {
-                if (selectedValues[i] == valueToFind) {
+                if (selectedValues[i] === valueToFind) {
                     return true;
                 }
             }
@@ -246,7 +246,7 @@ module api.ui.selector.combobox {
 
         protected getDisplayValueId(value: Object): string {
             let val = value[this.identifierMethod]();
-            return typeof val == 'object' && val['toString'] ? val.toString() : val;
+            return typeof val === 'object' && val['toString'] ? val.toString() : val;
         }
 
         protected createOption(value: Object, readOnly?: boolean): Option<OPTION_DISPLAY_VALUE> {
@@ -271,7 +271,7 @@ module api.ui.selector.combobox {
 
             this.loader.onLoadingData((event: api.util.loader.event.LoadingDataEvent) => {
                 if (!event.isPostLoad()) {
-                    this.comboBox.setEmptyDropdownText("Searching...");
+                    this.comboBox.setEmptyDropdownText('Searching...');
                 }
                 this.notifyLoading();
             });
@@ -321,7 +321,6 @@ module api.ui.selector.combobox {
         unOptionSelected(listener: {(option: SelectedOptionEvent<OPTION_DISPLAY_VALUE>): void;}) {
             this.comboBox.unOptionSelected(listener);
         }
-
 
         onOptionMoved(listener: {(option: SelectedOption<OPTION_DISPLAY_VALUE>): void;}) {
             this.comboBox.onOptionMoved(listener);
@@ -406,14 +405,14 @@ module api.ui.selector.combobox {
         protected doSetValue(value: string, silent?: boolean) {
             if (!this.loader.isLoaded()) {
                 if (RichComboBox.debug) {
-                    console.debug(this.toString() + ".doSetValue: loader is not loaded, saving temp value = " + value);
+                    console.debug(this.toString() + '.doSetValue: loader is not loaded, saving temp value = ' + value);
                 }
                 this.tempValue = value;
             }
             this.doWhenLoaded(() => {
                 if (this.tempValue) {
                     if (RichComboBox.debug) {
-                        console.debug(this.toString() + ".doSetValue: clearing temp value = " + this.tempValue);
+                        console.debug(this.toString() + '.doSetValue: clearing temp value = ' + this.tempValue);
                     }
                     delete this.tempValue;
                 }
@@ -422,9 +421,9 @@ module api.ui.selector.combobox {
         }
 
         protected doGetValue(): string {
-            if (!this.loader.isLoaded() && this.tempValue != undefined) {
+            if (!this.loader.isLoaded() && this.tempValue != null) {
                 if (RichComboBox.debug) {
-                    console.debug("RichComboBox: loader is not loaded, returning temp value = " + this.tempValue);
+                    console.debug('RichComboBox: loader is not loaded, returning temp value = ' + this.tempValue);
                 }
                 return this.tempValue;
             } else {
@@ -484,7 +483,7 @@ module api.ui.selector.combobox {
 
         selectedOptionsView: SelectedOptionsView<T>;
 
-        identifierMethod: string = "getId";
+        identifierMethod: string = 'getId';
 
         maximumOccurrences: number = 0;
 
@@ -598,6 +597,5 @@ module api.ui.selector.combobox {
             return new RichComboBox(this);
         }
     }
-
 
 }

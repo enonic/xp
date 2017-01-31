@@ -12,13 +12,9 @@ module api.aggregation {
                 mask.show();
             });
 
-            // displayNameMap["user"] = "User";
-            //  displayNameMap["group"] = "Group";
             mask.remove();
 
-
         }
-
 
     }
 

@@ -25,7 +25,7 @@ module api.content {
         constructor(builder: ContentBuilder) {
             super(builder);
 
-            api.util.assertNotNull(builder.data, "data is required for Content");
+            api.util.assertNotNull(builder.data, 'data is required for Content');
             this.data = builder.data;
             this.attachments = builder.attachments;
             this.extraData = builder.extraData || [];
@@ -107,7 +107,8 @@ module api.content {
         }
 
         dataEquals(other: PropertyTree, ignoreEmptyValues: boolean = false): boolean {
-            let data, otherData;
+            let data;
+            let otherData;
             if (ignoreEmptyValues) {
                 data = this.trimPropertyTree(this.data);
                 otherData = this.trimPropertyTree(other);
@@ -119,7 +120,8 @@ module api.content {
         }
 
         extraDataEquals(other: ExtraData[], ignoreEmptyValues: boolean = false): boolean {
-            let extraData, otherExtraData;
+            let extraData;
+            let otherExtraData;
             if (ignoreEmptyValues) {
                 extraData = this.extraData.map((m) => this.trimExtraData(m)).filter((m) => !m.getData().isEmpty());
                 otherExtraData = other.map((m) => this.trimExtraData(m)).filter((m) => !m.getData().isEmpty());
@@ -190,8 +192,7 @@ module api.content {
 
             if (type.isSite()) {
                 return new site.SiteBuilder().fromContentJson(json).build();
-            }
-            else if (type.isPageTemplate()) {
+            } else if (type.isPageTemplate()) {
                 return new page.PageTemplateBuilder().fromContentJson(json).build();
             }
             return new ContentBuilder().fromContentJson(json).build();
@@ -254,7 +255,7 @@ module api.content {
             if (json.permissions) {
                 this.permissions = AccessControlList.fromJson(json);
             }
-            if (typeof json.inheritPermissions !== "undefined") {
+            if (typeof json.inheritPermissions !== 'undefined') {
                 this.inheritPermissions = json.inheritPermissions;
             }
 

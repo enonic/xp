@@ -12,8 +12,8 @@ module api.ui.security {
         constructor(builder: PrincipalComboBoxBuilder) {
             let richComboBoxBuilder = new api.ui.selector.combobox.RichComboBoxBuilder<Principal>().
             setMaximumOccurrences(builder.maxOccurrences).
-            setComboBoxName("principalSelector").
-            setIdentifierMethod("getKey").
+            setComboBoxName('principalSelector').
+            setIdentifierMethod('getKey').
             setLoader(builder.loader).
             setValue(builder.value).
             setDisplayMissingSelectedOptions(builder.displayMissing).
@@ -64,7 +64,6 @@ module api.ui.security {
         }
     }
 
-
     export class PrincipalSelectedOptionView extends PrincipalViewer implements api.ui.selector.combobox.SelectedOptionView<Principal> {
 
         private option: Option<Principal>;
@@ -72,8 +71,8 @@ module api.ui.security {
         constructor(option: Option<Principal>) {
             super();
             this.setOption(option);
-            this.setClass("principal-selected-option-view");
-            let removeButton = new api.dom.AEl("icon-close");
+            this.setClass('principal-selected-option-view');
+            let removeButton = new api.dom.AEl('icon-close');
             removeButton.onClicked((event: MouseEvent) => {
                 this.notifyRemoveClicked(event);
                 event.stopPropagation();
@@ -101,7 +100,7 @@ module api.ui.security {
     export class PrincipalSelectedOptionsView extends api.ui.selector.combobox.BaseSelectedOptionsView<Principal> {
 
         constructor() {
-            super("principal-selected-options-view");
+            super('principal-selected-options-view');
         }
 
         createSelectedOption(option: Option<Principal>, isEmpty?: boolean): SelectedOption<Principal> {
@@ -127,11 +126,11 @@ module api.ui.security {
 
         constructor(option: Option<Principal>) {
             super(option);
-            this.addClass("removed");
+            this.addClass('removed');
         }
 
         resolveSubName(object: Principal, relativePath: boolean = false): string {
-            return "This user is deleted";
+            return 'This user is deleted';
         }
     }
 

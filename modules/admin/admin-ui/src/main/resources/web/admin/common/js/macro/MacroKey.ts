@@ -2,7 +2,7 @@ module api.macro {
 
     export class MacroKey implements api.Equitable {
 
-        private static SEPARATOR: string = ":";
+        private static SEPARATOR: string = ':';
 
         private applicationKey: api.application.ApplicationKey;
 
@@ -18,8 +18,8 @@ module api.macro {
 
         public static fromString(str: string): MacroKey {
             let sepIndex: number = str.indexOf(this.SEPARATOR);
-            if (sepIndex == -1) {
-                throw new Error("MacroKey must contain separator '" + this.SEPARATOR + "':" + str);
+            if (sepIndex === -1) {
+                throw new Error(`MacroKey must contain separator '${this.SEPARATOR}':${str}`);
             }
 
             let applicationKey = str.substring(0, sepIndex);
@@ -27,7 +27,6 @@ module api.macro {
 
             return new MacroKey(api.application.ApplicationKey.fromString(applicationKey), name);
         }
-
 
         public getApplicationKey(): api.application.ApplicationKey {
             return this.applicationKey;
@@ -48,7 +47,7 @@ module api.macro {
 
             let other = <MacroKey>o;
 
-            if (this.name != other.name) {
+            if (this.name !== other.name) {
                 return false;
             }
 

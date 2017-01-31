@@ -118,8 +118,10 @@ public class PushNodesCommandTest
         final PushNodesResult result = pushNodes( NodeIds.from( node.id() ), WS_OTHER );
 
         assertEquals( 1, result.getFailed().size() );
+        assertEquals( 0, result.getSuccessful().getSize() );
         assertEquals( PushNodesResult.Reason.ALREADY_EXIST, result.getFailed().iterator().next().getReason() );
     }
+
 
     @Test
     public void push_rename_push_test()
@@ -434,6 +436,13 @@ public class PushNodesCommandTest
         assertTrue( prodNode != null );
     }
 
+
+    @Test
+    public void push_node_exists_in_target()
+        throws Exception
+    {
+
+    }
 
     private void renameNode( final Node node, final String newName )
     {

@@ -3,7 +3,7 @@ module api.data {
     export class ValueTypeXml extends ValueType {
 
         constructor() {
-            super("Xml");
+            super('Xml');
         }
 
         isValid(value: any): boolean {

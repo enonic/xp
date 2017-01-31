@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import Element = api.dom.Element;
 import ElementHelper = api.dom.ElementHelper;
@@ -33,21 +33,21 @@ export class SortContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus
 
     constructor() {
         super(new TreeGridBuilder<ContentSummaryAndCompareStatus>().setColumnConfig([{
-                name: "Name",
-                id: "displayName",
-                field: "contentSummary.displayName",
+                name: 'Name',
+                id: 'displayName',
+                field: 'contentSummary.displayName',
                 formatter: SortContentTreeGrid.nameFormatter,
                 style: {minWidth: 130},
-                behavior: "selectAndMove"
+                behavior: 'selectAndMove'
             }, {
-                name: "ModifiedTime",
-                id: "modifiedTime",
-                field: "contentSummary.modifiedTime",
+                name: 'ModifiedTime',
+                id: 'modifiedTime',
+                field: 'contentSummary.modifiedTime',
                 formatter: DateTimeFormatter.format,
-                style: {cssClass: "modified", minWidth: 150, maxWidth: 170},
-                behavior: "selectAndMove"
+                style: {cssClass: 'modified', minWidth: 150, maxWidth: 170},
+                behavior: 'selectAndMove'
             }]).setPartialLoadEnabled(true).setCheckableRows(false).setShowToolbar(false).setDragAndDrop(true).disableMultipleSelection(
-            true).prependClasses("content-tree-grid").setSelectedCellCssClass("selected-sort-row")
+            true).prependClasses('content-tree-grid').setSelectedCellCssClass('selected-sort-row')
         );
     }
 
@@ -58,7 +58,7 @@ export class SortContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus
             wrapper.getEl().setTitle(value);
         }
 
-        let icon = new api.dom.DivEl(api.StyleHelper.getCommonIconCls("menu") + " drag-icon");
+        let icon = new api.dom.DivEl(api.StyleHelper.getCommonIconCls('menu') + ' drag-icon');
         wrapper.getEl().setInnerHtml(icon.toString(), false);
         return wrapper.toString();
     }
@@ -66,17 +66,17 @@ export class SortContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus
     public static nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
         const data = node.getData();
         if (data.getContentSummary()) {
-            let viewer: ContentSummaryViewer = <ContentSummaryViewer>node.getViewer("name");
+            let viewer: ContentSummaryViewer = <ContentSummaryViewer>node.getViewer('name');
             if (!viewer) {
                 viewer = new ContentSummaryViewer();
                 viewer.setObject(node.getData().getContentSummary(), node.calcLevel() > 1);
-                node.setViewer("name", viewer);
+                node.setViewer('name', viewer);
             }
             return viewer.toString();
 
         }
 
-        return "";
+        return '';
     }
 
     isEmptyNode(node: TreeNode<ContentSummaryAndCompareStatus>): boolean {
@@ -139,6 +139,5 @@ export class SortContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus
     setChildOrder(value: ChildOrder) {
         this.curChildOrder = value;
     }
-
 
 }

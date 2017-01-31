@@ -11,7 +11,7 @@ module api.aggregation {
         public getBucketByName(name: string): api.aggregation.Bucket {
             for (let i = 0; i < this.buckets.length; i++) {
                 let bucket: api.aggregation.Bucket = this.buckets[i];
-                if (bucket.getKey() == name) {
+                if (bucket.getKey() === name) {
                     return bucket;
                 }
             }

@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import TreeNode = api.ui.treegrid.TreeNode;
 import ContentPath = api.content.ContentPath;
@@ -35,7 +35,7 @@ export class TreeNodesOfContentPath {
     }
 
     getId(): string {
-        return (this.hasNodes() && this.nodes[0].getData()) ? this.nodes[0].getData().getId() : "";
+        return (this.hasNodes() && this.nodes[0].getData()) ? this.nodes[0].getData().getId() : '';
     }
 
     updateNodeData(data: ContentSummaryAndCompareStatus) {

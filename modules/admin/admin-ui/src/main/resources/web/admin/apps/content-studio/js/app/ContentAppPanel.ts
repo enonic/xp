@@ -1,7 +1,7 @@
-import "../api.ts";
-import {ViewContentEvent} from "./browse/ViewContentEvent";
-import {ContentBrowsePanel} from "./browse/ContentBrowsePanel";
-import {NewContentEvent} from "./create/NewContentEvent";
+import '../api.ts';
+import {ViewContentEvent} from './browse/ViewContentEvent';
+import {ContentBrowsePanel} from './browse/ContentBrowsePanel';
+import {NewContentEvent} from './create/NewContentEvent';
 
 import ContentSummary = api.content.ContentSummary;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
@@ -24,7 +24,6 @@ export class ContentAppPanel extends AppPanel<ContentSummaryAndCompareStatus> {
         super();
         this.path = path;
     }
-
 
     doRender(): Q.Promise<boolean> {
         return super.doRender().then((rendered) => {

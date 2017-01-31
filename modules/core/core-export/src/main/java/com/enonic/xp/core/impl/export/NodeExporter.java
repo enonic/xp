@@ -70,22 +70,15 @@ public class NodeExporter
     {
         this.result.dryRun( this.dryRun );
 
-        if ( this.sourceNodePath.isRoot() )
+        final Node rootNode = this.nodeService.getByPath( this.sourceNodePath );
+
+        if ( rootNode != null )
         {
-            doExportChildNodes( this.sourceNodePath );
+            exportNode( rootNode );
         }
         else
         {
-            final Node rootNode = this.nodeService.getByPath( this.sourceNodePath );
-
-            if ( rootNode != null )
-            {
-                exportNode( rootNode );
-            }
-            else
-            {
-                addRootNodeNotFoundError();
-            }
+            addRootNodeNotFoundError();
         }
 
         writeExportProperties();

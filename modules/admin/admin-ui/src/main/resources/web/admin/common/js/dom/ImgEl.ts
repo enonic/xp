@@ -11,11 +11,11 @@ module api.dom {
         public static debug: boolean = false;
 
         /* 1px x 1px gif with a 1bit palette */
-        public static PLACEHOLDER: string = "data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+        public static PLACEHOLDER: string = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
 
         constructor(src?: string, className?: string, usePlaceholder: boolean = false) {
             super(new NewElementBuilder().
-                setTagName("img").
+                setTagName('img').
                 setHelper(ImgHelper.create()).
                 setClassName(className));
 
@@ -88,11 +88,11 @@ module api.dom {
         }
 
         private onImgElLoaded(listener: (event: UIEvent) => void) {
-            this.getEl().addEventListener("load", listener);
+            this.getEl().addEventListener('load', listener);
         }
 
         private onImgElError(listener: (event: UIEvent) => void) {
-            this.getEl().addEventListener("error", listener);
+            this.getEl().addEventListener('error', listener);
         }
 
         isLoaded(): boolean {
@@ -100,7 +100,7 @@ module api.dom {
         }
 
         isPlaceholder(): boolean {
-            return this.getCurrentSrc() == ImgEl.PLACEHOLDER;
+            return this.getCurrentSrc() === ImgEl.PLACEHOLDER;
         }
     }
 }

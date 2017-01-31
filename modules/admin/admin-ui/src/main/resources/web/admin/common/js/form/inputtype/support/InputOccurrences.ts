@@ -140,7 +140,7 @@ module api.form.inputtype.support {
             if (!property) {
                 let newInitialValue = this.baseInputTypeView.newInitialValue();
                 api.util.assertNotNull(newInitialValue,
-                    "InputTypeView-s extending BaseInputTypeNotManagingAdd must must return a Value from newInitialValue");
+                    'InputTypeView-s extending BaseInputTypeNotManagingAdd must must return a Value from newInitialValue');
                 property = this.propertyArray.add(newInitialValue);
             }
             return property;

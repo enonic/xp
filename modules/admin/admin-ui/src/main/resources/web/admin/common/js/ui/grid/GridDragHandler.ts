@@ -28,19 +28,17 @@ module api.ui.grid {
             this.contentGrid.getGrid().subscribeMoveRows(this.handleMoveRows.bind(this));
         }
 
-
         protected handleDragInit(event: DragEvent, data: DragEventData) {
             event.stopImmediatePropagation();
         }
 
-
         protected handleDragStart() {
-            let draggableClass = this.contentGrid.getOptions().getSelectedCellCssClass() || "";
-            draggableClass = (" " + draggableClass).replace(/\s/g, ".");
+            let draggableClass = this.contentGrid.getOptions().getSelectedCellCssClass() || '';
+            draggableClass = (' ' + draggableClass).replace(/\s/g, '.');
             let row = Element.fromString(draggableClass).getParentElement();
 
-            let nodes = this.contentGrid.getRoot().getCurrentRoot().treeToList(),
-                draggedNode = nodes[row.getSiblingIndex()];
+            let nodes = this.contentGrid.getRoot().getCurrentRoot().treeToList();
+            let draggedNode = nodes[row.getSiblingIndex()];
             draggedNode.setExpanded(false);
             this.contentGrid.refreshNode(draggedNode);
 
@@ -49,27 +47,24 @@ module api.ui.grid {
             this.draggableTop = row.getEl().getTopPx();
             this.draggableItem = Element.fromString(row.toString());
 
-            this.draggableItem.addClass("draggable");
-            row.getEl().setDisplay("none");
+            this.draggableItem.addClass('draggable');
+            row.getEl().setDisplay('none');
 
             this.rowHeight = row.getEl().getHeight();
-            let proxyEl = Element.fromString(".slick-reorder-proxy").getEl();
-            this.draggableItem.getEl().setTop(proxyEl.getTop()).setPosition("absolute");
-            let gridClasses = (" " + this.contentGrid.getGrid().getEl().getClass()).replace(/\s/g, ".");
+            let proxyEl = Element.fromString('.slick-reorder-proxy').getEl();
+            this.draggableItem.getEl().setTop(proxyEl.getTop()).setPosition('absolute');
+            let gridClasses = (' ' + this.contentGrid.getGrid().getEl().getClass()).replace(/\s/g, '.');
 
-
-            wemjq(".tree-grid " + gridClasses + " .slick-viewport").append(wemjq(this.draggableItem.getHTMLElement()));
+            wemjq('.tree-grid ' + gridClasses + ' .slick-viewport').append(wemjq(this.draggableItem.getHTMLElement()));
         }
-
 
         protected handleDrag(event: Event, data: DragEventData) {
             if (!this.draggableItem) {
                 this.handleDragStart();
             }
-            let top = Element.fromString(".slick-reorder-proxy").getEl().getTopPx();
+            let top = Element.fromString('.slick-reorder-proxy').getEl().getTopPx();
             this.draggableItem.getEl().setTopPx(top /*- this.rowHeight*//* / 2*/).setZindex(2);
         }
-
 
         protected handleDragEnd(event: Event, data: DragEventData) {
             this.draggableItem.remove();
@@ -82,8 +77,8 @@ module api.ui.grid {
             if (!this.draggableItem) {
                 this.handleDragStart();
             }
-            const gridClasses = (" " + this.contentGrid.getGrid().getEl().getClass()).replace(/\s/g, ".");
-            const children = Element.fromSelector(".tree-grid " + gridClasses + " .grid-canvas .slick-row", false);
+            const gridClasses = (' ' + this.contentGrid.getGrid().getEl().getClass()).replace(/\s/g, '.');
+            const children = Element.fromSelector('.tree-grid ' + gridClasses + ' .grid-canvas .slick-row', false);
 
             if (children && !children[0].getPreviousElement()) {
                 children.shift();
@@ -110,7 +105,6 @@ module api.ui.grid {
             this.contentGrid.scrollToRow(data.insertBefore);
             return true;
         }
-
 
         protected handleMoveRows(event: Event, args: DragEventData) {
             let dataView = this.contentGrid.getGrid().getDataView();
@@ -159,11 +153,11 @@ module api.ui.grid {
         }
 
         protected handleMovements(rowDataId: any, moveBeforeRowDataId: any) {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         protected getModelId(model: MODEL): any {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         onPositionChanged(listener: ()=>void) {
@@ -172,7 +166,7 @@ module api.ui.grid {
 
         unPositionChanged(listener: ()=>void) {
             this.positionChangedListeners = this.positionChangedListeners.filter((currentListener: ()=>void) => {
-                return currentListener != listener;
+                return currentListener !== listener;
             });
         }
 

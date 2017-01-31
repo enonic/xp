@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 
 import Content = api.content.Content;
 import ComboBox = api.ui.selector.combobox.ComboBox;
@@ -52,7 +52,7 @@ export class ContentSettingsModel implements api.Equitable {
 
     unPropertyChanged(listener: {(event: api.PropertyChangedEvent): void;}) {
         this.propertyChangedListeners =
-            this.propertyChangedListeners.filter((curr) => (curr != listener));
+            this.propertyChangedListeners.filter((curr) => (curr !== listener));
     }
 
     private notifyPropertyChanged(event: api.PropertyChangedEvent) {
@@ -64,7 +64,7 @@ export class ContentSettingsModel implements api.Equitable {
             return false;
         } else {
             let otherModel = <ContentSettingsModel> other;
-            return otherModel.owner == this.owner && otherModel.language == this.language;
+            return otherModel.owner === this.owner && otherModel.language === this.language;
         }
     }
 

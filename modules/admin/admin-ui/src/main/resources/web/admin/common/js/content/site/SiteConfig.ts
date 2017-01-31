@@ -77,9 +77,9 @@ module api.content.site {
         }
 
         fromData(propertySet: PropertySet): SiteConfigBuilder {
-            api.util.assertNotNull(propertySet, "data cannot be null");
-            let applicationKey = ApplicationKey.fromString(propertySet.getString("applicationKey"));
-            let siteConfig = propertySet.getPropertySet("config");
+            api.util.assertNotNull(propertySet, 'data cannot be null');
+            let applicationKey = ApplicationKey.fromString(propertySet.getString('applicationKey'));
+            let siteConfig = propertySet.getPropertySet('config');
             this.setApplicationKey(applicationKey);
             this.setConfig(siteConfig);
             return this;

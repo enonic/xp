@@ -1,11 +1,11 @@
-import "../../api.ts";
-import {ApplicationBrowseToolbar} from "./ApplicationBrowseToolbar";
-import {ApplicationBrowseActions} from "./ApplicationBrowseActions";
-import {ApplicationTreeGrid} from "./ApplicationTreeGrid";
-import {ApplicationBrowseItemPanel} from "./ApplicationBrowseItemPanel";
-import {StopApplicationEvent} from "./StopApplicationEvent";
-import {StartApplicationEvent} from "./StartApplicationEvent";
-import {UninstallApplicationEvent} from "./UninstallApplicationEvent";
+import '../../api.ts';
+import {ApplicationBrowseToolbar} from './ApplicationBrowseToolbar';
+import {ApplicationBrowseActions} from './ApplicationBrowseActions';
+import {ApplicationTreeGrid} from './ApplicationTreeGrid';
+import {ApplicationBrowseItemPanel} from './ApplicationBrowseItemPanel';
+import {StopApplicationEvent} from './StopApplicationEvent';
+import {StartApplicationEvent} from './StartApplicationEvent';
+import {UninstallApplicationEvent} from './UninstallApplicationEvent';
 
 import ApplicationKey = api.application.ApplicationKey;
 import Application = api.application.Application;
@@ -77,29 +77,28 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
             new StartApplicationRequest(applicationKeys).sendAndParse().done();
         });
 
-
         UninstallApplicationEvent.on((event: UninstallApplicationEvent) => {
             let applicationKeys = ApplicationKey.fromClusterApplications(event.getApplications());
             new UninstallApplicationRequest(applicationKeys).sendAndParse().done();
         });
 
         api.application.ApplicationEvent.on((event: ApplicationEvent) => {
-            if (ApplicationEventType.INSTALLED == event.getEventType()) {
+            if (ApplicationEventType.INSTALLED === event.getEventType()) {
                 this.treeGrid.placeApplicationNode(event.getApplicationKey()).then(() => {
                     setTimeout(() => { // timeout lets grid to remove UploadMockNode so that its not counted in the toolbar
                         this.treeGrid.triggerSelectionChangedListeners();
-                        let installedApp = this.treeGrid.getByApplicationKey(event.getApplicationKey()),
-                            installedAppName = !!installedApp ? installedApp.getDisplayName() : event.getApplicationKey();
-                        api.notify.showFeedback("Application '" + installedAppName + "' installed successfully");
+                        let installedApp = this.treeGrid.getByApplicationKey(event.getApplicationKey());
+                        let installedAppName = installedApp ? installedApp.getDisplayName() : event.getApplicationKey();
+                        api.notify.showFeedback(`Application '${installedAppName}' installed successfully`);
                     }, 200);
                 });
 
-            } else if (ApplicationEventType.UNINSTALLED == event.getEventType()) {
-                let uninstalledApp = this.treeGrid.getByApplicationKey(event.getApplicationKey()),
-                    uninstalledAppName = !!uninstalledApp ? uninstalledApp.getDisplayName() : event.getApplicationKey();
-                api.notify.showFeedback("Application '" + uninstalledAppName + "' uninstalled successfully");
+            } else if (ApplicationEventType.UNINSTALLED === event.getEventType()) {
+                let uninstalledApp = this.treeGrid.getByApplicationKey(event.getApplicationKey());
+                let uninstalledAppName = uninstalledApp ? uninstalledApp.getDisplayName() : event.getApplicationKey();
+                api.notify.showFeedback(`Application '${uninstalledAppName}' uninstalled successfully`);
                 this.treeGrid.deleteApplicationNode(event.getApplicationKey());
-            } else if (ApplicationEventType.STOPPED == event.getEventType()) {
+            } else if (ApplicationEventType.STOPPED === event.getEventType()) {
                 setTimeout(() => { // as uninstall usually follows stop event, lets wait to check if app still exists
                     let stoppedApp = this.treeGrid.getByApplicationKey(event.getApplicationKey());
                     // seems to be present in the grid and xp is running

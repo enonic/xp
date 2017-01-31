@@ -1,5 +1,5 @@
-import "../../../../../api.ts";
-import {WidgetItemView} from "../../WidgetItemView";
+import '../../../../../api.ts';
+import {WidgetItemView} from '../../WidgetItemView';
 
 import CompareStatus = api.content.CompareStatus;
 import PublishStatus = api.content.PublishStatus;
@@ -15,7 +15,7 @@ export class StatusWidgetItemView extends WidgetItemView {
     public static debug: boolean = false;
 
     constructor() {
-        super("status-widget-item-view");
+        super('status-widget-item-view');
     }
 
     public setContentAndUpdateView(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
@@ -25,7 +25,7 @@ export class StatusWidgetItemView extends WidgetItemView {
             console.debug('StatusWidgetItemView.setCompareStatus: ', compareStatus);
             console.debug('StatusWidgetItemView.setPublishStatus: ', publishStatus);
         }
-        if (compareStatus != this.compareStatus || publishStatus != this.publishStatus) {
+        if (compareStatus !== this.compareStatus || publishStatus !== this.publishStatus) {
             this.compareStatus = compareStatus;
             this.publishStatus = publishStatus;
             return this.layout();
@@ -39,15 +39,15 @@ export class StatusWidgetItemView extends WidgetItemView {
         }
 
         return super.layout().then(() => {
-            if (this.compareStatus != undefined) {
+            if (this.compareStatus != null) {
                 let statusEl = new api.dom.SpanEl();
 
-                statusEl.addClass(CompareStatus[this.compareStatus].toLowerCase().replace("_", "-") || "unknown");
+                statusEl.addClass(CompareStatus[this.compareStatus].toLowerCase().replace('_', '-') || 'unknown');
                 let statusElHtml = CompareStatusFormatter.formatStatus(this.compareStatus).toLocaleUpperCase();
 
                 if (PublishStatus.EXPIRED === this.publishStatus || PublishStatus.PENDING === this.publishStatus) {
-                    statusEl.addClass(PublishStatus[this.publishStatus].toLowerCase().replace("_", "-") || "unknown");
-                    statusElHtml += " (" + PublishStatusFormatter.formatStatus(this.publishStatus).toLocaleUpperCase() + ")";
+                    statusEl.addClass(PublishStatus[this.publishStatus].toLowerCase().replace('_', '-') || 'unknown');
+                    statusElHtml += ' (' + PublishStatusFormatter.formatStatus(this.publishStatus).toLocaleUpperCase() + ')';
                 }
 
                 statusEl.setHtml(statusElHtml);

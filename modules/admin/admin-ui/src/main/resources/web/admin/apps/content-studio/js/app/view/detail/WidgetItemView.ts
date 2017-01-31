@@ -1,4 +1,4 @@
-import "../../../api.ts";
+import '../../../api.ts';
 
 import Element = api.dom.Element;
 import LabelEl = api.dom.LabelEl;
@@ -8,10 +8,10 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 export class WidgetItemView extends api.dom.DivEl {
 
     public static debug: boolean = false;
-    private uid: string = "";
+    private uid: string = '';
 
     constructor(className?: string) {
-        super("widget-item-view" + (className ? " " + className : ""));
+        super('widget-item-view' + (className ? ' ' + className : ''));
     }
 
     public layout(): wemQ.Promise<any> {
@@ -26,16 +26,16 @@ export class WidgetItemView extends api.dom.DivEl {
     }
 
     private getFullWidgetUrl(url: string, uid: string, contentId: string) {
-        return url + "?uid=" + uid + "&contentId=" + contentId;
+        return url + '?uid=' + uid + '&contentId=' + contentId;
     }
 
     public setUrl(url: string, contentId: string, keepId: boolean = false): wemQ.Promise<void> {
-        let deferred = wemQ.defer<void>(),
-            uid = (!keepId || !this.uid) ? Date.now().toString() : this.uid,
-            linkEl = new LinkEl(this.getFullWidgetUrl(url, uid, contentId)).setAsync(),
-            el = this.getEl(),
-            onLinkLoaded = ((event: UIEvent) => {
-                let mainContainer = event.target["import"].body;
+        let deferred = wemQ.defer<void>();
+        let uid = (!keepId || !this.uid) ? Date.now().toString() : this.uid;
+        let linkEl = new LinkEl(this.getFullWidgetUrl(url, uid, contentId)).setAsync();
+        let el = this.getEl();
+        let onLinkLoaded = ((event: UIEvent) => {
+                let mainContainer = event.target['import'].body;
                 if (mainContainer) {
                     let html = this.stripOffAssets(mainContainer.innerHTML);
                     el.getHTMLElement().insertAdjacentHTML('beforeend', html);
@@ -62,10 +62,10 @@ export class WidgetItemView extends api.dom.DivEl {
     }
 
     private stripOffScripts(html: string): string {
-        return html.replace(/(?:<script\b[^>]*>[\s\S]*?<\/script>)/gm, "");
+        return html.replace(/(?:<script\b[^>]*>[\s\S]*?<\/script>)/gm, '');
     }
 
     private stripOffLinks(html: string): string {
-        return html.replace(/(?:<link\b[^<>]*[\\/]?>)/gm, "");
+        return html.replace(/(?:<link\b[^<>]*[\\/]?>)/gm, '');
     }
 }

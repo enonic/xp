@@ -11,10 +11,10 @@ module api.app.browse {
         private itemsLimit: number;
 
         constructor(itemsLimit?: number) {
-            super("items-selection-panel");
+            super('items-selection-panel');
             this.getEl().addClass('no-selection');
 
-            this.itemsContainer = new api.dom.DivEl("items-container");
+            this.itemsContainer = new api.dom.DivEl('items-container');
             this.appendChild(this.itemsContainer);
 
             this.itemsContainer.setHtml(this.messageForNoSelection);
@@ -167,8 +167,8 @@ module api.app.browse {
 
         private indexOf(item: BrowseItem<M>): number {
             for (let i = 0; i < this.items.length; i++) {
-                if (item.getPath() && item.getPath() == this.items[i].getPath() ||
-                    item.getId() == this.items[i].getId()) {
+                if (item.getPath() && item.getPath() === this.items[i].getPath() ||
+                    item.getId() === this.items[i].getId()) {
                     return i;
                 }
             }

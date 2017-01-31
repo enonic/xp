@@ -2,7 +2,7 @@ module api.util {
 
     export class BasePath<PATH> {
 
-        private static DEFAULT_ELEMENT_DIVIDER:string = "/";
+        private static DEFAULT_ELEMENT_DIVIDER:string = '/';
 
         private elementDivider:string;
 
@@ -16,18 +16,17 @@ module api.util {
 
             this.elementDivider = elementDivider != null ? elementDivider : BasePath.DEFAULT_ELEMENT_DIVIDER;
 
-            this.absolute = absolute == undefined ? true : absolute;
+            this.absolute = absolute == null ? true : absolute;
             elements.forEach((element:string, index:number) => {
                 if (element == null) {
-                    throw new Error("Path element was null at index: " + index);
-                }
-                else if (element.length == 0) {
-                    throw new Error("Path element was empty string at index: " + index);
+                    throw new Error('Path element was null at index: ' + index);
+                } else if (element.length === 0) {
+                    throw new Error('Path element was empty string at index: ' + index);
                 }
             });
             this.elements = elements;
 
-            this.refString = (this.absolute ? this.elementDivider : "") + this.elements.join(this.elementDivider);
+            this.refString = (this.absolute ? this.elementDivider : '') + this.elements.join(this.elementDivider);
         }
 
         isAbsolute():boolean {
@@ -61,7 +60,7 @@ module api.util {
         }
 
         newInstance(elements:string[], absolute:boolean):PATH {
-            throw new Error("Must be implemented by inheritor");
+            throw new Error('Must be implemented by inheritor');
         }
 
         toString() {

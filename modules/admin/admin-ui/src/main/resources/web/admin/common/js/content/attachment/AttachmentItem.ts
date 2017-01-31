@@ -9,7 +9,7 @@ module api.content.attachment {
         private value: string;
 
         constructor(contentId: string, value: string, removeCallback?: (value: any) => void) {
-            super("attachment-item");
+            super('attachment-item');
 
             this.value = value;
 
@@ -20,7 +20,7 @@ module api.content.attachment {
         }
 
         private initRemoveButton(callback?: (value: any) => void) {
-            this.removeEl = new api.dom.DivEl("icon remove");
+            this.removeEl = new api.dom.DivEl('icon remove');
 
             this.removeEl.onClicked(() => {
                 if (callback) {

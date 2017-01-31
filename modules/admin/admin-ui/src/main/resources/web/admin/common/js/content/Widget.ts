@@ -19,8 +19,8 @@ module api.content {
         }
 
         private makeWidgetDescriptorKey(key: string): WidgetDescriptorKey {
-            let applicationKey = key.split(":")[0],
-                descriptorKeyName = key.split(":")[1];
+            let applicationKey = key.split(':')[0];
+            let descriptorKeyName = key.split(':')[1];
             return new WidgetDescriptorKey(ApplicationKey.fromString(applicationKey), descriptorKeyName);
         }
 
@@ -47,7 +47,7 @@ module api.content {
 
     export class WidgetDescriptorKey implements api.Equitable {
 
-        private static SEPARATOR: string = ":";
+        private static SEPARATOR: string = ':';
 
         private applicationKey: ApplicationKey;
 
@@ -57,8 +57,8 @@ module api.content {
 
         public static fromString(str: string): WidgetDescriptorKey {
             let sepIndex: number = str.indexOf(WidgetDescriptorKey.SEPARATOR);
-            if (sepIndex == -1) {
-                throw new Error("WidgetDescriptorKey must contain separator '" + WidgetDescriptorKey.SEPARATOR + "':" + str);
+            if (sepIndex === -1) {
+                throw new Error(`WidgetDescriptorKey must contain separator '${WidgetDescriptorKey.SEPARATOR}':${str}`);
             }
 
             let applicationKey = str.substring(0, sepIndex);

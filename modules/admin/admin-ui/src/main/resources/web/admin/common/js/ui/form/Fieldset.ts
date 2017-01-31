@@ -53,7 +53,8 @@ module api.ui.form {
         }
 
         setFieldsetData(data: any) {
-            let input, inputValue;
+            let input;
+            let inputValue;
             this.items.forEach((item: api.ui.form.FormItem) => {
                 input = item.getInput();
                 inputValue = data[input.getName()];
@@ -64,7 +65,8 @@ module api.ui.form {
         }
 
         getFieldsetData(): any {
-            let input, data = {};
+            let input;
+            let data = {};
             this.items.forEach((item: api.ui.form.FormItem) => {
                 input = item.getInput();
                 data[input.getName()] = input.getValue();
@@ -110,7 +112,7 @@ module api.ui.form {
 
         unValidityChanged(listener: (event: ValidityChangedEvent)=>void) {
             this.validityChangedListeners = this.validityChangedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 

@@ -34,7 +34,7 @@ module api.ui.security.acl {
             super.doLayout(object);
 
             if (AccessControlEntryView.debug) {
-                console.debug("AccessControlEntryView.doLayout");
+                console.debug('AccessControlEntryView.doLayout');
             }
 
             // permissions will be set on access selector value change
@@ -46,7 +46,7 @@ module api.ui.security.acl {
             this.accessSelector.setValue(AccessControlEntryView.getAccessValueFromEntry(this.ace), true);
 
             if (!this.removeButton) {
-                this.removeButton = new api.dom.AEl("icon-close");
+                this.removeButton = new api.dom.AEl('icon-close');
                 this.removeButton.onClicked((event: MouseEvent) => {
                     this.notifyRemoveClicked(event);
                     event.stopPropagation();
@@ -59,28 +59,27 @@ module api.ui.security.acl {
             if (!this.permissionSelector) {
                 this.permissionSelector = new PermissionSelector();
                 this.permissionSelector.onValueChanged((event: api.ValueChangedEvent) => {
-                    this.toggleClass("dirty", event.getNewValue() != JSON.stringify({
+                    this.toggleClass('dirty', event.getNewValue() !== JSON.stringify({
                             allow: this.ace.getAllowedPermissions().sort(),
                             deny: this.ace.getDeniedPermissions().sort()
                         }));
                     this.notifyValueChanged(this.getAccessControlEntry());
                 });
 
-
-                // this.toggleClass("dirty", !ace.isInherited());
+                // this.toggleClass('dirty', !ace.isInherited());
 
                 this.accessSelector.onValueChanged((event: api.ValueChangedEvent) => {
-                    if (Access[event.getNewValue()] == Access.CUSTOM) {
+                    if (Access[event.getNewValue()] === Access.CUSTOM) {
                         this.permissionSelector.show();
                     } else {
-                        if (Access[event.getOldValue()] == Access.CUSTOM) {
+                        if (Access[event.getOldValue()] === Access.CUSTOM) {
                             this.permissionSelector.hide();
                         }
                         this.permissionSelector.setValue(this.getPermissionsValueFromAccess(Access[event.getNewValue()]));
                     }
                 });
 
-                if (this.accessSelector.getValue() == Access.CUSTOM) {
+                if (this.accessSelector.getValue() === Access.CUSTOM) {
                     this.permissionSelector.show();
                 }
                 this.appendChild(this.permissionSelector);
@@ -97,7 +96,7 @@ module api.ui.security.acl {
         }
 
         setEditable(editable: boolean) {
-            if (editable != this.editable) {
+            if (editable !== this.editable) {
                 this.permissionSelector.setEnabled(editable);
                 this.accessSelector.setEnabled(editable);
                 this.editable = editable;
@@ -114,7 +113,7 @@ module api.ui.security.acl {
 
         unValueChanged(listener: (item: AccessControlEntry) => void) {
             this.valueChangedListeners = this.valueChangedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 
@@ -143,7 +142,7 @@ module api.ui.security.acl {
 
         public static getAccessValueFromEntry(ace: AccessControlEntry): Access {
 
-            if (ace.getDeniedPermissions().length == 0) {
+            if (ace.getDeniedPermissions().length === 0) {
                 let allowedPermissions = ace.getAllowedPermissions();
                 if (this.onlyFullAccess(allowedPermissions)) {
                     return Access.FULL;
@@ -198,7 +197,6 @@ module api.ui.security.acl {
         private static onlyFullAccess(allowed: Permission[]): boolean {
             return this.isFullAccess(allowed) && allowed.length === 7;
         }
-
 
         private getPermissionsValueFromAccess(access: Access) {
             let permissions = {

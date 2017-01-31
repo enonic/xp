@@ -58,7 +58,7 @@ public class NodeVersionServiceImpl
 
     private NodeVersion doGetByVersionId( final NodeVersionId nodeVersionId )
     {
-        final BlobKey blobKey = new BlobKey( nodeVersionId.toString() );
+        final BlobKey blobKey = BlobKey.from( nodeVersionId.toString() );
 
         final NodeVersion nodeVersionFromBlob = getNodeVersionFromBlob( blobStore.getRecord( NodeConstants.NODE_SEGMENT, blobKey ) );
         return NodeVersion.create( nodeVersionFromBlob ).
@@ -72,7 +72,7 @@ public class NodeVersionServiceImpl
 
         for ( final NodeVersionId nodeVersionId : nodeVersionIds )
         {
-            final BlobRecord blob = blobStore.getRecord( NodeConstants.NODE_SEGMENT, new BlobKey( nodeVersionId.toString() ) );
+            final BlobRecord blob = blobStore.getRecord( NodeConstants.NODE_SEGMENT, BlobKey.from( nodeVersionId.toString() ) );
 
             if ( blob == null )
             {

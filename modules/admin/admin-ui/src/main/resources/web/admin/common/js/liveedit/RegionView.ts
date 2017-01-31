@@ -83,7 +83,7 @@ module api.liveedit {
                 new RegionViewContextMenuTitle(builder.region)));
 
             this.addRegionContextMenuActions();
-            this.addClassEx("region-view");
+            this.addClassEx('region-view');
 
             this.componentViews = [];
             this.componentIndex = 0;
@@ -132,7 +132,6 @@ module api.liveedit {
                 this.refreshEmptyState();
             };
 
-
             this.onMouseDown(this.memorizeLastMouseDownTarget.bind(this));
 
             this.mouseOverListener = (e: MouseEvent) => {
@@ -150,7 +149,7 @@ module api.liveedit {
             Checking if this region is where mouseover triggered to not highlight region's ancestor regions
         */
         private isElementOverRegion(element: HTMLElement): boolean {
-            while(!element.hasAttribute("data-portal-region")) {
+            while(!element.hasAttribute('data-portal-region')) {
                 element = element.parentElement;
             }
 
@@ -217,7 +216,7 @@ module api.liveedit {
         }
 
         getName(): string {
-            return this.getRegionName() ? this.getRegionName().toString() : "[No Name]";
+            return this.getRegionName() ? this.getRegionName().toString() : '[No Name]';
         }
 /*
         highlight() {
@@ -269,16 +268,16 @@ module api.liveedit {
         }
 
         toString() {
-            let extra = "";
+            let extra = '';
             if (this.getRegionPath()) {
-                extra = " : " + this.getRegionPath().toString();
+                extra = ' : ' + this.getRegionPath().toString();
             }
             return super.toString() + extra;
         }
 
         registerComponentView(componentView: ComponentView<Component>, index: number, isNew: boolean = false) {
             if (RegionView.debug) {
-                console.log('RegionView[' + this.toString() + '].registerComponentView: ' + componentView.toString() + " at " + index);
+                console.log('RegionView[' + this.toString() + '].registerComponentView: ' + componentView.toString() + ' at ' + index);
             }
 
             if (index >= 0) {
@@ -312,7 +311,7 @@ module api.liveedit {
 
             } else {
 
-                throw new Error("Did not find ComponentView to remove: " + componentView.getItemId().toString());
+                throw new Error('Did not find ComponentView to remove: ' + componentView.getItemId().toString());
             }
         }
 
@@ -322,7 +321,7 @@ module api.liveedit {
 
         addComponentView(componentView: ComponentView<Component>, index: number, isNew: boolean = false) {
             if (RegionView.debug) {
-                console.log('RegionView[' + this.toString() + ']addComponentView: ' + componentView.toString() + " at " + index);
+                console.log('RegionView[' + this.toString() + ']addComponentView: ' + componentView.toString() + ' at ' + index);
             }
             if (componentView.getComponent()) {
                 this.region.addComponent(componentView.getComponent(), index);
@@ -367,7 +366,7 @@ module api.liveedit {
 
             let firstLevelOfPath = path.getFirstLevel();
 
-            if (path.numberOfLevels() == 1) {
+            if (path.numberOfLevels() === 1) {
 
                 return this.componentViews[firstLevelOfPath.getComponentIndex()];
             }
@@ -406,7 +405,7 @@ module api.liveedit {
 
         empty() {
             if (RegionView.debug) {
-                console.debug("RegionView[" + this.toString() + "].empty()", this.componentViews);
+                console.debug('RegionView[' + this.toString() + '].empty()', this.componentViews);
             }
 
             while (this.componentViews.length > 0) {
@@ -438,7 +437,7 @@ module api.liveedit {
 
         unItemViewAdded(listener: (event: ItemViewAddedEvent) => void) {
             this.itemViewAddedListeners = this.itemViewAddedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 
@@ -461,7 +460,7 @@ module api.liveedit {
 
         unItemViewRemoved(listener: (event: ItemViewRemovedEvent) => void) {
             this.itemViewRemovedListeners = this.itemViewRemovedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 
@@ -496,7 +495,7 @@ module api.liveedit {
 
         static isRegionViewFromHTMLElement(htmlElement: HTMLElement): boolean {
 
-            let name = htmlElement.getAttribute("data-" + ItemType.ATTRIBUTE_REGION_NAME);
+            let name = htmlElement.getAttribute('data-' + ItemType.ATTRIBUTE_REGION_NAME);
             return !api.util.StringHelper.isBlank(name);
         }
 
@@ -519,7 +518,8 @@ module api.liveedit {
             children.forEach((childElement: api.dom.Element) => {
                 let itemType = ItemType.fromElement(childElement);
                 let isComponentView = api.ObjectHelper.iFrameSafeInstanceOf(childElement, ComponentView);
-                let component, componentView;
+                let component;
+                let componentView;
 
                 if (isComponentView) {
                     component = region.getComponentByIndex(this.componentIndex++);
@@ -533,7 +533,7 @@ module api.liveedit {
                     }
                 } else if (itemType) {
                     api.util.assert(itemType.isComponentType(),
-                        "Expected ItemView beneath a Region to be a Component: " + itemType.getShortName());
+                        'Expected ItemView beneath a Region to be a Component: ' + itemType.getShortName());
                     // components may be nested on different levels so use region wide var for count
                     component = region.getComponentByIndex(this.componentIndex++);
                     if (component) {
@@ -555,14 +555,14 @@ module api.liveedit {
         // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
         private handleDragEnter(event: DragEvent) {
             if (event.target === this.getHTMLElement()) {
-                console.log("ItemView.handleDragEnter", event, this.getHTMLElement());
+                console.log('ItemView.handleDragEnter', event, this.getHTMLElement());
             }
         }
 
         // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
         private handleDragLeave(event: DragEvent) {
             if (event.target === this.getHTMLElement()) {
-                console.log("ItemView.handleDragLeave", event, this.getHTMLElement());
+                console.log('ItemView.handleDragLeave', event, this.getHTMLElement());
             }
         }
 
@@ -570,7 +570,7 @@ module api.liveedit {
         private handleDragOver(event: DragEvent) {
             //var itemId = ItemView.parseItemId(<HTMLElement>event.target);
             if (event.target === this.getHTMLElement()) {
-                console.log("RegionView[" + this.toString() + "].handleDragOver: ", event.target, event.target);
+                console.log('RegionView[' + this.toString() + '].handleDragOver: ', event.target, event.target);
                 event.preventDefault();
             }
         }
@@ -579,11 +579,11 @@ module api.liveedit {
         private handleDrop(event: DragEvent) {
             if (event.target === this.getHTMLElement()) {
                 //var itemId = ItemView.parseItemId(<HTMLElement>event.target);
-                console.log("RegionView[" + this.toString() + "].handleDrop: ", event.target, this.getHTMLElement());
+                console.log('RegionView[' + this.toString() + '].handleDrop: ', event.target, this.getHTMLElement());
 
                 event.preventDefault();
 
-                let data = event.dataTransfer.getData("Text");
+                let data = event.dataTransfer.getData('Text');
                 //event.target.appendChild(document.getElementById(data));
             }
         }

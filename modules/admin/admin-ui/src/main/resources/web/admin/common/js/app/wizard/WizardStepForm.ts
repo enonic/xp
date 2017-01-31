@@ -14,7 +14,7 @@ module api.app.wizard {
 
         constructor(className?: string) {
             super(className);
-            this.addClass("wizard-step-form");
+            this.addClass('wizard-step-form');
         }
 
         /*
@@ -49,7 +49,6 @@ module api.app.wizard {
                 listener(event);
             });
         }
-
 
         onFocus(listener: (event: FocusEvent) => void) {
             this.focusListeners.push(listener);

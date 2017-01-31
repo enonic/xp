@@ -53,7 +53,7 @@ module api.application {
             let result = true;
             for (let name in this.filterObject) {
                 if (this.filterObject.hasOwnProperty(name)) {
-                    if (!application.hasOwnProperty(name) || this.filterObject[name] != application[name]) {
+                    if (!application.hasOwnProperty(name) || this.filterObject[name] !== application[name]) {
                         result = false;
                     }
                 }

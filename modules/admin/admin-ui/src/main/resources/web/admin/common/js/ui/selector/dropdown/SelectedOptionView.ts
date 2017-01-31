@@ -13,7 +13,7 @@ module api.ui.selector.dropdown {
         private openDropdownListeners: {(): void;}[] = [];
 
         constructor(objectViewer: Viewer<T>, skipExpandOnClick: boolean = false) {
-            super("selected-option");
+            super('selected-option');
             this.objectViewer = objectViewer;
             this.optionValueEl = new api.dom.DivEl('option-value');
             this.appendChild(this.optionValueEl);
@@ -22,8 +22,8 @@ module api.ui.selector.dropdown {
             if (!skipExpandOnClick) {
                 this.onClicked((event: MouseEvent)=> {
 
-                    if (document["selection"] && document["selection"].empty) {
-                        document["selection"].empty();
+                    if (document['selection'] && document['selection'].empty) {
+                        document['selection'].empty();
                     } else if (window.getSelection) {
                         let sel = window.getSelection();
                         sel.removeAllRanges();
@@ -34,7 +34,7 @@ module api.ui.selector.dropdown {
             }
 
             this.onKeyPressed((event:KeyboardEvent) => {
-                if (event.which == 32 || event.which == 13) { // space or enter
+                if (event.which === 32 || event.which === 13) { // space or enter
                     this.notifyOpenDropdown();
                 }
             });
@@ -65,7 +65,7 @@ module api.ui.selector.dropdown {
 
         unOpenDropdown(listener: {(): void;}) {
             this.openDropdownListeners = this.openDropdownListeners.filter(function (curr: {(): void;}) {
-                return curr != listener;
+                return curr !== listener;
             });
         }
     }

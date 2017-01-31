@@ -47,11 +47,9 @@ module api.liveedit {
         private droppedListeners: {(componentView: ComponentView<Component>, regionView: RegionView): void}[] = [];
         private canceledListeners: {(componentView: ComponentView<Component>): void}[] = [];
 
-
         public static init(pageView: PageView) {
             DragAndDrop.instance = new DragAndDrop(pageView);
         }
-
 
         public static get(): DragAndDrop {
             if (!DragAndDrop.instance) {
@@ -80,7 +78,6 @@ module api.liveedit {
             wemjq(this.REGION_SELECTOR).sortable('refresh');
         }
 
-
         private processMouseOverRegionView(regionView: RegionView) {
 
             // Make sure no other region has the over class
@@ -99,7 +96,6 @@ module api.liveedit {
             // Remove over class from region
             regionView.refreshEmptyState().removeClass(this.DRAGGED_OVER_CLASS);
         }
-
 
         createSortable(selector: any): void {
 
@@ -154,7 +150,7 @@ module api.liveedit {
 
         // Used by the Context Window when dragging above the IFrame
         destroyDraggable(jq: JQuery) {
-            jq.draggable("destroy");
+            jq.draggable('destroy');
             this.wasDestroyed = true;
         }
 
@@ -164,8 +160,8 @@ module api.liveedit {
          */
         handleDraggableStart(event: Event, ui: JQueryUI.DraggableEventUIParams) {
             if (DragAndDrop.debug) {
-                console.groupCollapsed((DragAndDrop.messageCounter++) + " DragDropSort.handleDraggableStart");
-                console.log("Event", event, "\nUI", ui);
+                console.groupCollapsed((DragAndDrop.messageCounter++) + ' DragDropSort.handleDraggableStart');
+                console.log('Event', event, '\nUI', ui);
                 console.groupEnd();
             }
 
@@ -178,8 +174,8 @@ module api.liveedit {
          */
         handleDraggableStop(event: Event, ui: JQueryUI.DraggableEventUIParams) {
             if (DragAndDrop.debug) {
-                console.groupCollapsed((DragAndDrop.messageCounter++) + " DragDropSort.handleDraggableStop");
-                console.log("Event", event, "\nUI", ui);
+                console.groupCollapsed((DragAndDrop.messageCounter++) + ' DragDropSort.handleDraggableStop');
+                console.log('Event', event, '\nUI', ui);
                 console.groupEnd();
             }
 
@@ -196,8 +192,8 @@ module api.liveedit {
         handleSortStart(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
 
             if (DragAndDrop.debug) {
-                console.groupCollapsed((DragAndDrop.messageCounter++) + " DragDropSort.handleSortStart");
-                console.log("Event", event, "\nUI", ui);
+                console.groupCollapsed((DragAndDrop.messageCounter++) + ' DragDropSort.handleSortStart');
+                console.log('Event', event, '\nUI', ui);
                 console.groupEnd();
             }
 
@@ -238,8 +234,8 @@ module api.liveedit {
          */
         handleBeforeStop(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
             if (DragAndDrop.debug) {
-                console.groupCollapsed((DragAndDrop.messageCounter++) + " DragDropSort.handleBeforeStop");
-                console.log("Event", event, "\nUI", ui);
+                console.groupCollapsed((DragAndDrop.messageCounter++) + ' DragDropSort.handleBeforeStop');
+                console.log('Event', event, '\nUI', ui);
                 console.groupEnd();
             }
 
@@ -251,8 +247,8 @@ module api.liveedit {
          */
         handleSortStop(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
             if (DragAndDrop.debug) {
-                console.groupCollapsed((DragAndDrop.messageCounter++) + " DragDropSort.handleSortStop");
-                console.log("Event", event, "\nUI", ui);
+                console.groupCollapsed((DragAndDrop.messageCounter++) + ' DragDropSort.handleSortStop');
+                console.log('Event', event, '\nUI', ui);
                 console.groupEnd();
             }
 
@@ -267,12 +263,12 @@ module api.liveedit {
             if (!DragHelper.get().isDropAllowed()) {
                 // Don't allow to drop if it is forbidden (i.e. layout on layout, or outside region)
                 if (DragAndDrop.debug) {
-                    console.log("DragAndDrop.handleStop: cancelling drag because it is not allowed to drop here...");
+                    console.log('DragAndDrop.handleStop: cancelling drag because it is not allowed to drop here...');
                 }
 
                 this.cancelDrag(<HTMLElement> event.target);
             } else {
-                let componentIndex = wemjq('>.drag-helper, >.' + api.StyleHelper.getCls("item-view"),
+                let componentIndex = wemjq('>.drag-helper, >.' + api.StyleHelper.getCls('item-view'),
                     regionView.getHTMLElement()).index(ui.item);
 
                 if (this.isDraggingFromContextWindow()) {
@@ -325,8 +321,8 @@ module api.liveedit {
          */
         handleActivate(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
             if (DragAndDrop.debug) {
-                console.groupCollapsed((DragAndDrop.messageCounter++) + " DragDropSort.handleActivate");
-                console.log("Event", event, "\nUI", ui);
+                console.groupCollapsed((DragAndDrop.messageCounter++) + ' DragDropSort.handleActivate');
+                console.log('Event', event, '\nUI', ui);
                 console.groupEnd();
             }
 
@@ -338,8 +334,8 @@ module api.liveedit {
          */
         handleDeactivate(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
             if (DragAndDrop.debug) {
-                console.groupCollapsed((DragAndDrop.messageCounter++) + " DragDropSort.handleDeactivate");
-                console.log("Event", event, "\nUI", ui);
+                console.groupCollapsed((DragAndDrop.messageCounter++) + ' DragDropSort.handleDeactivate');
+                console.log('Event', event, '\nUI', ui);
                 console.groupEnd();
             }
 
@@ -352,8 +348,8 @@ module api.liveedit {
         handleDragOver(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
 
             if (DragAndDrop.debug) {
-                console.groupCollapsed((DragAndDrop.messageCounter++) + " DragDropSort.handleDragOver");
-                console.log("Event", event, "\nUI", ui);
+                console.groupCollapsed((DragAndDrop.messageCounter++) + ' DragDropSort.handleDragOver');
+                console.log('Event', event, '\nUI', ui);
                 console.groupEnd();
             }
 
@@ -370,8 +366,8 @@ module api.liveedit {
         handleDragOut(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
 
             if (DragAndDrop.debug) {
-                console.groupCollapsed((DragAndDrop.messageCounter++) + " DragDropSort.handleDragOut");
-                console.log("Event", event, "\nUI", ui);
+                console.groupCollapsed((DragAndDrop.messageCounter++) + ' DragDropSort.handleDragOut');
+                console.log('Event', event, '\nUI', ui);
                 console.groupEnd();
             }
 
@@ -395,8 +391,8 @@ module api.liveedit {
          */
         handleSortChange(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
             if (DragAndDrop.debug) {
-                console.groupCollapsed((DragAndDrop.messageCounter++) + " DragDropSort.handleSortChange");
-                console.log("Event", event, "\nUI", ui);
+                console.groupCollapsed((DragAndDrop.messageCounter++) + ' DragDropSort.handleSortChange');
+                console.log('Event', event, '\nUI', ui);
                 console.groupEnd();
             }
 
@@ -407,8 +403,8 @@ module api.liveedit {
          */
         handleSortUpdate(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
             if (DragAndDrop.debug) {
-                console.groupCollapsed((DragAndDrop.messageCounter++) + " DragDropSort.handleSortUpdate");
-                console.log("Event", event, "\nUI", ui);
+                console.groupCollapsed((DragAndDrop.messageCounter++) + ' DragDropSort.handleSortUpdate');
+                console.log('Event', event, '\nUI', ui);
                 console.groupEnd();
             }
 
@@ -419,8 +415,8 @@ module api.liveedit {
          */
         handleRemove(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
             if (DragAndDrop.debug) {
-                console.groupCollapsed((DragAndDrop.messageCounter++) + " DragDropSort.handleRemove");
-                console.log("Event", event, "\nUI", ui);
+                console.groupCollapsed((DragAndDrop.messageCounter++) + ' DragDropSort.handleRemove');
+                console.log('Event', event, '\nUI', ui);
                 console.groupEnd();
             }
 
@@ -432,15 +428,14 @@ module api.liveedit {
         // The latter is the event target.
         handleReceive(event: JQueryEventObject, ui: JQueryUI.SortableUIParams): void {
             if (DragAndDrop.debug) {
-                console.groupCollapsed((DragAndDrop.messageCounter++) + " DragDropSort.handleReceive");
-                console.log("Event", event, "\nUI", ui);
+                console.groupCollapsed((DragAndDrop.messageCounter++) + ' DragDropSort.handleReceive');
+                console.log('Event', event, '\nUI', ui);
                 console.groupEnd();
             }
 
             let toRegionView = this.getRegionView(wemjq(event.target));
             toRegionView.refreshEmptyState();
         }
-
 
         private cancelDrag(sortable: HTMLElement) {
 
@@ -449,14 +444,13 @@ module api.liveedit {
             this.notifyCanceled(this.draggedComponentView);
         }
 
-
         onDragStarted(listener: (componentView: ComponentView<Component>) => void) {
             this.dragStartedListeners.push(listener);
         }
 
         unDragStarted(listener: (componentView: ComponentView<Component>) => void) {
             this.dragStartedListeners = this.dragStartedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 
@@ -480,7 +474,7 @@ module api.liveedit {
 
         unDragStopped(listener: (componentView: ComponentView<Component>) => void) {
             this.dragStoppedListeners = this.dragStoppedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 
@@ -504,7 +498,7 @@ module api.liveedit {
 
         unDropped(listener: (componentView: ComponentView<Component>, regionView: RegionView) => void) {
             this.droppedListeners = this.droppedListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 
@@ -527,7 +521,7 @@ module api.liveedit {
 
         unCanceled(listener: (componentView: ComponentView<Component>) => void) {
             this.canceledListeners = this.canceledListeners.filter((curr) => {
-                return curr != listener;
+                return curr !== listener;
             });
         }
 
@@ -543,7 +537,6 @@ module api.liveedit {
             new ComponentViewDragCanceledEvent(componentView).fire();
         }
 
-
         private updateHelperAndPlaceholder(regionView: RegionView, enter: boolean = true) {
             let helper = DragHelper.get();
             let placeholder = DragPlaceholder.get().setRegionView(enter ? regionView : null);
@@ -555,13 +548,12 @@ module api.liveedit {
                 helper.setDropAllowed(false);
             } else if (this.isDraggingLayoutOverLayout(regionView, this.getItemType())) {
                 helper.setDropAllowed(false);
-                placeholder.setText("Layout within layout not allowed");
+                placeholder.setText('Layout within layout not allowed');
                 placeholder.setDropAllowed(false);
             } else {
                 helper.setDropAllowed(true);
             }
         }
-
 
         private getItemType(): ItemType {
             if (this.draggedComponentView) {
@@ -573,14 +565,12 @@ module api.liveedit {
             }
         }
 
-
         private isDraggingFromContextWindow(): boolean {
             return !!this.newItemItemType;
         }
 
-
         private isDraggingLayoutOverLayout(regionView: RegionView, draggingItemType: ItemType): boolean {
-            let isLayout = regionView.hasParentLayoutComponentView() && draggingItemType.getShortName() == 'layout';
+            let isLayout = regionView.hasParentLayoutComponentView() && draggingItemType.getShortName() === 'layout';
             if (!isLayout) {
                 let itemType = this.getItemType();
                 if (api.liveedit.fragment.FragmentItemType.get().equals(itemType)) {
@@ -597,17 +587,15 @@ module api.liveedit {
             return isLayout;
         }
 
-
         private getComponentView(jq: JQuery): ComponentView<Component> {
             let comp = this.pageView.getComponentViewByElement(jq.get(0));
-            api.util.assertState(!!comp, "ComponentView is not expected to be null");
+            api.util.assertState(!!comp, 'ComponentView is not expected to be null');
             return comp;
         }
 
-
         private getRegionView(jq: JQuery): RegionView {
             let region = this.pageView.getRegionViewByElement(jq.get(0));
-            api.util.assertState(!!region, "RegionView is not expected to be null");
+            api.util.assertState(!!region, 'RegionView is not expected to be null');
             return region;
         }
 

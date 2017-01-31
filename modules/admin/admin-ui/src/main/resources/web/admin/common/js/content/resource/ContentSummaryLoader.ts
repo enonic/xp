@@ -40,7 +40,7 @@ module api.content.resource {
             return this.getRequest().isPartiallyLoaded();
         }
 
-        private setSearchQueryExpr(searchString: string = "") {
+        private setSearchQueryExpr(searchString: string = '') {
             this.getRequest().setSearchString(searchString);
         }
 
@@ -55,6 +55,5 @@ module api.content.resource {
         }
 
     }
-
 
 }

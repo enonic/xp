@@ -114,6 +114,13 @@ public class RepositoryEntryServiceImpl
     }
 
     @Override
+    public Repository removeBranchFromRepositoryEntry( final RepositoryId repositoryId, final Branch branch )
+    {
+        NodeEditor nodeEditor = RepositoryNodeTranslator.toDeleteBranchNodeEditor( branch );
+        return updateRepositoryEntry( repositoryId, nodeEditor );
+    }
+
+    @Override
     public void deleteRepositoryEntry( final RepositoryId repositoryId )
     {
 
@@ -165,6 +172,7 @@ public class RepositoryEntryServiceImpl
         if ( updatedNode != null )
         {
             eventPublisher.publish( NodeEvents.updated( updatedNode ) );
+            refresh();
             eventPublisher.publish( RepositoryClusterEvents.updated( repositoryId ) );
         }
 

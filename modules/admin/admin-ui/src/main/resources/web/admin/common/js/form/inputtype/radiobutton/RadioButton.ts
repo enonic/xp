@@ -16,7 +16,7 @@ module api.form.inputtype.radiobutton {
         private radioButtonOptions: {label: string; value: string;}[];
 
         constructor(config: api.form.inputtype.InputTypeViewContext) {
-            super(config, "radio-button");
+            super(config, 'radio-button');
             this.readConfig(config.inputConfig);
         }
 
@@ -24,7 +24,8 @@ module api.form.inputtype.radiobutton {
             let options: {label: string; value: string;}[] = [];
 
             let optionValues = inputConfig['option'] || [];
-            let l = optionValues.length, optionValue;
+            let l = optionValues.length;
+            let optionValue;
             for (let i = 0; i < l; i++) {
                 optionValue = optionValues[i];
                 options.push({label: optionValue['value'], value: optionValue['@value']});
@@ -60,7 +61,7 @@ module api.form.inputtype.radiobutton {
 
         updateProperty(property: api.data.Property, unchangedOnly: boolean): Q.Promise<void> {
             if ((!unchangedOnly || !this.selector.isDirty())) {
-                this.selector.setValue(property.hasNonNullValue() ? property.getString() : "");
+                this.selector.setValue(property.hasNonNullValue() ? property.getString() : '');
             }
             return wemQ<any>(null);
         }
@@ -120,7 +121,6 @@ module api.form.inputtype.radiobutton {
                 this.saveToProperty(ValueTypes.STRING.newValue(event.getNewValue()));
             });
 
-
             return radioGroup;
         }
 
@@ -141,5 +141,5 @@ module api.form.inputtype.radiobutton {
         }
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("RadioButton", RadioButton));
+    api.form.inputtype.InputTypeManager.register(new api.Class('RadioButton', RadioButton));
 }

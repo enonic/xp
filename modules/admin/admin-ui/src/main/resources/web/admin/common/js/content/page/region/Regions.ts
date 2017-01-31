@@ -26,8 +26,8 @@ module api.content.page.region {
             this.componentPropertyChangedEventHandler = (event) => this.forwardComponentPropertyChangedEvent(event);
 
             builder.regions.forEach((region: Region) => {
-                if (this.regionByName[region.getName()] != undefined) {
-                    throw new Error("Regions must be unique by name, duplicate found: " + region.getName());
+                if (this.regionByName[region.getName()] != null) {
+                    throw new Error('Regions must be unique by name, duplicate found: ' + region.getName());
                 }
 
                 this.addRegion(region);
@@ -45,7 +45,6 @@ module api.content.page.region {
             this.notifyRegionAdded(region.getPath());
             this.registerRegionListeners(region);
         }
-
 
         private registerRegionListeners(region: Region) {
             region.onChanged(this.regionChangedEventHandler);
@@ -87,12 +86,11 @@ module api.content.page.region {
             let region = this.getRegionByName(first.getRegionName());
             let component = region.getComponentByIndex(first.getComponentIndex());
 
-            if (path.numberOfLevels() == 1) {
+            if (path.numberOfLevels() === 1) {
                 return component;
-            }
-            else {
+            } else {
                 if (!api.ObjectHelper.iFrameSafeInstanceOf(component, LayoutComponent)) {
-                    throw new Error("Expected component to be a LayoutComponent: " + api.ClassHelper.getClassName(component));
+                    throw new Error('Expected component to be a LayoutComponent: ' + api.ClassHelper.getClassName(component));
                 }
 
                 let layoutComponent = <LayoutComponent> component;
@@ -112,7 +110,7 @@ module api.content.page.region {
                 filter((region: Region, index: number) => {
                     return !regionDescriptors.
                         some((regionDescriptor: RegionDescriptor) => {
-                            return regionDescriptor.getName() == region.getName();
+                            return regionDescriptor.getName() === region.getName();
                         });
                 });
             this.removeRegions(regionsToRemove);
@@ -146,7 +144,6 @@ module api.content.page.region {
 
             let other = <Regions>o;
 
-
             let thisRegions = this.getRegions();
             let otherRegions = other.getRegions();
 
@@ -168,13 +165,13 @@ module api.content.page.region {
         unChanged(listener: (event: BaseRegionChangedEvent) => void) {
             this.changedListeners =
             this.changedListeners.filter((curr: (event: BaseRegionChangedEvent) => void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
         private notifyChanged(event: RegionsChangedEvent) {
             if (Regions.debug) {
-                console.debug("Regions.notifyChanged");
+                console.debug('Regions.notifyChanged');
             }
             this.changedListeners.forEach((listener: (event: RegionsChangedEvent) => void) => {
                 listener(event);
@@ -188,7 +185,7 @@ module api.content.page.region {
         unComponentPropertyChanged(listener: (event: ComponentPropertyChangedEvent) => void) {
             this.componentPropertyChangedListeners =
             this.componentPropertyChangedListeners.filter((curr: (event: ComponentPropertyChangedEvent)=>void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
@@ -205,14 +202,14 @@ module api.content.page.region {
         unRegionChanged(listener: (event: RegionChangedEvent) => void) {
             this.regionChangedListeners =
             this.regionChangedListeners.filter((curr: (event: RegionChangedEvent) => void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
         private notifyRegionChanged(regionPath: RegionPath): void {
             let event = new RegionChangedEvent(regionPath);
             if (Regions.debug) {
-                console.debug("Regions.notifyRegionChanged: " + event.getRegionPath().toString());
+                console.debug('Regions.notifyRegionChanged: ' + event.getRegionPath().toString());
             }
             this.regionChangedListeners.forEach((listener: (event: RegionChangedEvent)=>void) => {
                 listener(event);
@@ -227,14 +224,14 @@ module api.content.page.region {
         unRegionAdded(listener: (event: RegionAddedEvent)=>void) {
             this.regionAddedListeners =
             this.regionAddedListeners.filter((curr: (event: RegionAddedEvent)=>void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
         private notifyRegionAdded(regionPath: RegionPath) {
             let event = new RegionAddedEvent(regionPath);
             if (Regions.debug) {
-                console.debug("Regions.notifyRegionAdded: " + event.getRegionPath().toString());
+                console.debug('Regions.notifyRegionAdded: ' + event.getRegionPath().toString());
             }
             this.regionAddedListeners.forEach((listener: (event: RegionAddedEvent)=>void) => {
                 listener(event);
@@ -249,14 +246,14 @@ module api.content.page.region {
         unRegionRemoved(listener: (event: RegionRemovedEvent)=>void) {
             this.regionRemovedListeners =
             this.regionRemovedListeners.filter((curr: (event: RegionRemovedEvent)=>void) => {
-                return listener != curr;
+                return listener !== curr;
             });
         }
 
         private notifyRegionRemoved(regionPath: RegionPath) {
             let event = new RegionRemovedEvent(regionPath);
             if (Regions.debug) {
-                console.debug("Regions.notifyRegionRemoved: " + event.getRegionPath().toString());
+                console.debug('Regions.notifyRegionRemoved: ' + event.getRegionPath().toString());
             }
             this.regionRemovedListeners.forEach((listener: (event: RegionRemovedEvent)=>void) => {
                 listener(event);

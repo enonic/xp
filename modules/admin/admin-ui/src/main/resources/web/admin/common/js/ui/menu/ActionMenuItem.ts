@@ -6,7 +6,7 @@ module api.ui.menu {
 
         constructor(action: api.ui.Action) {
 
-            super("action");
+            super('action');
             this.action = action;
 
             this.getEl().setInnerHtml(this.action.getLabel());
@@ -14,8 +14,7 @@ module api.ui.menu {
             this.action.onPropertyChanged(() => {
                 if (this.action.isEnabled()) {
                     this.show();
-                }
-                else if (!this.action.isEnabled()) {
+                } else if (!this.action.isEnabled()) {
                     this.hide();
                 }
             });

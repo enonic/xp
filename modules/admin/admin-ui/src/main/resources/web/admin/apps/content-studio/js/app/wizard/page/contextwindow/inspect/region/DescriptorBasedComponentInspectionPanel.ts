@@ -1,5 +1,5 @@
-import "../../../../../../api.ts";
-import {ComponentInspectionPanel, ComponentInspectionPanelConfig} from "./ComponentInspectionPanel";
+import '../../../../../../api.ts';
+import {ComponentInspectionPanel, ComponentInspectionPanelConfig} from './ComponentInspectionPanel';
 
 import FormView = api.form.FormView;
 import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
@@ -28,10 +28,9 @@ extends ComponentInspectionPanel<COMPONENT> {
         this.formView = null;
     }
 
-
     setModel(liveEditModel: LiveEditModel) {
 
-        if (this.liveEditModel != liveEditModel) {
+        if (this.liveEditModel !== liveEditModel) {
             if (this.liveEditModel != null && this.liveEditModel.getSiteModel() != null) {
                 let siteModel = this.liveEditModel.getSiteModel();
 
@@ -50,7 +49,7 @@ extends ComponentInspectionPanel<COMPONENT> {
     }
 
     protected layout() {
-        throw new Error("Must be implemented in inheritors");
+        throw new Error('Must be implemented in inheritors');
     }
 
     protected applicationUnavailableHandler() {

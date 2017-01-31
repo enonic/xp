@@ -4,19 +4,19 @@ module api.util.htmlarea.dialog {
 
     export class ImageCroppingOptions {
 
-        static SQUARE: ImageCroppingOption = new ImageCroppingOption("square", 1, 1);
+        static SQUARE: ImageCroppingOption = new ImageCroppingOption('square', 1, 1);
 
-        static REGULAR: ImageCroppingOption = new ImageCroppingOption("regular", 4, 3);
+        static REGULAR: ImageCroppingOption = new ImageCroppingOption('regular', 4, 3);
 
-        static WIDESCREEN: ImageCroppingOption = new ImageCroppingOption("widescreen", 16, 9);
+        static WIDESCREEN: ImageCroppingOption = new ImageCroppingOption('widescreen', 16, 9);
 
-        static CINEMA: ImageCroppingOption = new ImageCroppingOption("cinema", 21, 9);
+        static CINEMA: ImageCroppingOption = new ImageCroppingOption('cinema', 21, 9);
 
-        static PORTRAIT: ImageCroppingOption = new ImageCroppingOption("portrait", 3, 4);
+        static PORTRAIT: ImageCroppingOption = new ImageCroppingOption('portrait', 3, 4);
 
-        static TALL: ImageCroppingOption = new ImageCroppingOption("tall", 9, 16);
+        static TALL: ImageCroppingOption = new ImageCroppingOption('tall', 9, 16);
 
-        static SKYSCRAPER: ImageCroppingOption = new ImageCroppingOption("skyscraper", 9, 21);
+        static SKYSCRAPER: ImageCroppingOption = new ImageCroppingOption('skyscraper', 9, 21);
 
         static getOptions(): Option<ImageCroppingOption>[] {
 
@@ -47,11 +47,11 @@ module api.util.htmlarea.dialog {
         }
 
         static getOptionByProportion(proportion: string): ImageCroppingOption {
-            let imageCroppingOption: ImageCroppingOption = null,
-                imageCroppingOptions: ImageCroppingOption[] = ImageCroppingOptions.getCroppingOptions();
+            let imageCroppingOption: ImageCroppingOption = null;
+            let imageCroppingOptions: ImageCroppingOption[] = ImageCroppingOptions.getCroppingOptions();
 
             for (let i = 0; i < imageCroppingOptions.length; i++) {
-                if (imageCroppingOptions[i].getProportionString() == proportion) {
+                if (imageCroppingOptions[i].getProportionString() === proportion) {
                     imageCroppingOption = imageCroppingOptions[i];
                     break;
                 }

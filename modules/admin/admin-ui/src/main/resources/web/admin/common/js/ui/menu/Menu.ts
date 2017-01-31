@@ -7,7 +7,7 @@ module api.ui.menu {
         private itemClickListeners: {(item: MenuItem):void}[] = [];
 
         constructor(actions: api.ui.Action[] = []) {
-            super("menu");
+            super('menu');
 
             actions.forEach((action) => this.addAction(action));
 
@@ -73,7 +73,7 @@ module api.ui.menu {
 
         unItemClicked(listener: (item: MenuItem) => void) {
             this.itemClickListeners = this.itemClickListeners.filter((currentListener: (item: MenuItem) => void) => {
-                return listener != currentListener;
+                return listener !== currentListener;
             });
         }
 
@@ -99,14 +99,14 @@ module api.ui.menu {
 
         private removeMenuItem(menuItem: MenuItem) {
             this.menuItems = this.menuItems.filter((item) => {
-                return item != menuItem;
+                return item !== menuItem;
             });
         }
 
         private getMenuItem(action: api.ui.Action): MenuItem {
             for (let i = 0; i < this.menuItems.length; i++) {
                 let menuItem = this.menuItems[i];
-                if (menuItem.getAction() == action) {
+                if (menuItem.getAction() === action) {
                     return menuItem;
                 }
             }

@@ -1,6 +1,6 @@
-import "../../../api.ts";
-import {DetailsView} from "./DetailsView";
-import {WidgetView} from "./WidgetView";
+import '../../../api.ts';
+import {DetailsView} from './DetailsView';
+import {WidgetView} from './WidgetView';
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
 import ContentVersionSetEvent = api.content.event.ActiveContentVersionSetEvent;
@@ -14,11 +14,11 @@ export class DetailsPanel extends api.ui.panel.Panel {
     private detailsViewContainer: api.dom.DivEl;
 
     constructor(detailsView: DetailsView) {
-        super("details-panel");
+        super('details-panel');
         this.detailsView = detailsView;
         this.setDoOffset(false);
         this.subscribeOnEvents();
-        this.appendChild(this.detailsViewContainer = new api.dom.DivEl("details-view-container"));
+        this.appendChild(this.detailsViewContainer = new api.dom.DivEl('details-view-container'));
     }
 
     public setActive() {
@@ -34,7 +34,7 @@ export class DetailsPanel extends api.ui.panel.Panel {
     }
 
     public isVisibleOrAboutToBeVisible(): boolean {
-        throw new Error("Must be implemented by inheritors");
+        throw new Error('Must be implemented by inheritors');
     }
 
     public getActiveWidget(): WidgetView {
@@ -55,11 +55,11 @@ export class DetailsPanel extends api.ui.panel.Panel {
     }
 
     public getType(): DETAILS_PANEL_TYPE {
-        throw new Error("Must be implemented by inheritors");
+        throw new Error('Must be implemented by inheritors');
     }
 
     public isMobile(): boolean {
-        return this.getType() == DETAILS_PANEL_TYPE.MOBILE;
+        return this.getType() === DETAILS_PANEL_TYPE.MOBILE;
     }
 }
 

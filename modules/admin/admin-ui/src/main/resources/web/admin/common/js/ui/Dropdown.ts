@@ -18,7 +18,6 @@ module api.ui {
         }
     }
 
-
     export class DropdownOption extends api.dom.OptionEl {
         constructor(value: string, displayName: string) {
             super(value, displayName);

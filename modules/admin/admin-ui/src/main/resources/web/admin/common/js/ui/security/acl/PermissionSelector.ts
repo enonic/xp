@@ -42,7 +42,7 @@ module api.ui.security.acl {
         }
 
         setEnabled(enabled: boolean): PermissionSelector {
-            if (enabled != this.enabled) {
+            if (enabled !== this.enabled) {
                 this.toggleClass('disabled', !enabled);
                 this.toggles.forEach((toggle) => {
                     toggle.setEnabled(enabled);
@@ -113,7 +113,6 @@ module api.ui.security.acl {
         }
     }
 
-
     export class PermissionToggle extends api.dom.AEl {
 
         private static STATES: PermissionState[] = [PermissionState.ALLOW, PermissionState.DENY, PermissionState.INHERIT];
@@ -164,14 +163,14 @@ module api.ui.security.acl {
 
         setState(newState: PermissionState, silent?: boolean): PermissionToggle {
             let newStateIndex = PermissionToggle.STATES.indexOf(newState);
-            if (newStateIndex != this.stateIndex) {
+            if (newStateIndex !== this.stateIndex) {
                 if (this.originalStateIndex < 0) {
                     this.originalStateIndex = newStateIndex;
                 }
-                this.toggleClass('dirty', this.originalStateIndex >= 0 && this.originalStateIndex != newStateIndex);
+                this.toggleClass('dirty', this.originalStateIndex >= 0 && this.originalStateIndex !== newStateIndex);
 
                 let oldState = this.getState();
-                if (oldState != undefined) {
+                if (oldState != null) {
                     this.removeClass(PermissionState[oldState].toLowerCase());
                 }
                 this.addClass(PermissionState[newState].toLowerCase());

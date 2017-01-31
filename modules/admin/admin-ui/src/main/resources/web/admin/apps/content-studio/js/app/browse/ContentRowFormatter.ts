@@ -1,4 +1,4 @@
-import "../../api.ts";
+import '../../api.ts';
 import TreeNode = api.ui.treegrid.TreeNode;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
@@ -10,16 +10,16 @@ export class ContentRowFormatter {
     public static nameFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
         const data = node.getData();
         if (data.getContentSummary() || data.getUploadItem()) {
-            let viewer = <ContentSummaryAndCompareStatusViewer> node.getViewer("name");
+            let viewer = <ContentSummaryAndCompareStatusViewer> node.getViewer('name');
             if (!viewer) {
                 viewer = new ContentSummaryAndCompareStatusViewer();
-                node.setViewer("name", viewer);
+                node.setViewer('name', viewer);
             }
             viewer.setObject(node.getData(), node.calcLevel() > 1);
-            return viewer ? viewer.toString() : "";
+            return viewer ? viewer.toString() : '';
         }
 
-        return "";
+        return '';
     }
 
     public static orderFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {
@@ -35,12 +35,12 @@ export class ContentRowFormatter {
             if (!childOrder.isDefault()) {
                 if (!childOrder.isManual()) {
                     if (childOrder.isDesc()) {
-                        icon = new api.dom.DivEl("icon-arrow-up2 sort-dialog-trigger");
+                        icon = new api.dom.DivEl('icon-arrow-up2 sort-dialog-trigger');
                     } else {
-                        icon = new api.dom.DivEl("icon-arrow-down4 sort-dialog-trigger");
+                        icon = new api.dom.DivEl('icon-arrow-down4 sort-dialog-trigger');
                     }
                 } else {
-                    icon = new api.dom.DivEl(api.StyleHelper.getCommonIconCls("menu") + " sort-dialog-trigger");
+                    icon = new api.dom.DivEl(api.StyleHelper.getCommonIconCls('menu') + ' sort-dialog-trigger');
                 }
                 wrapper.getEl().setInnerHtml(icon.toString(), false);
             }
@@ -59,7 +59,7 @@ export class ContentRowFormatter {
 
             const compareStatusText = api.content.CompareStatusFormatter.formatStatus(compareStatus);
 
-            if (PublishStatus[publishStatus] && (publishStatus == PublishStatus.PENDING || publishStatus == PublishStatus.EXPIRED)) {
+            if (PublishStatus[publishStatus] && (publishStatus === PublishStatus.PENDING || publishStatus === PublishStatus.EXPIRED)) {
                 const statusEl = new api.dom.DivEl(ContentRowFormatter.makeClassName(CompareStatus[value]));
                 statusEl.getEl().setText(compareStatusText);
                 statusEl.addClass(ContentRowFormatter.makeClassName(PublishStatus[publishStatus]));
@@ -87,6 +87,6 @@ export class ContentRowFormatter {
     }
 
     private static makeClassName(entry: string): string {
-        return entry.toLowerCase().replace("_", "-") || "unknown";
+        return entry.toLowerCase().replace('_', '-') || 'unknown';
     }
 }

@@ -10,9 +10,9 @@ module api {
 
         constructor(name: string) {
 
-            api.util.assertNotNull(name, "Name cannot be null");
+            api.util.assertNotNull(name, 'Name cannot be null');
 
-            api.util.assert(!api.util.StringHelper.isEmpty(name), "Name cannot be empty");
+            api.util.assert(!api.util.StringHelper.isEmpty(name), 'Name cannot be empty');
 
             this.value = name;
         }
@@ -33,7 +33,7 @@ module api {
 
             let other = <Name>o;
 
-            if (this.value != other.value) {
+            if (this.value !== other.value) {
                 return false;
             }
 

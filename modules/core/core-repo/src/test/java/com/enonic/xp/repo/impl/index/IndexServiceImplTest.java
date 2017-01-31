@@ -47,6 +47,8 @@ public class IndexServiceImplTest
         this.indexService.setIndexServiceInternal( this.indexServiceInternal );
         this.indexService.setNodeVersionService( this.nodeDao );
         this.indexService.setIndexDataService( this.indexedDataService );
+        this.indexService.setIndexDataService( this.indexedDataService );
+        this.indexService.setRepositoryEntryService( this.repositoryEntryService );
 
         this.rootNode = this.createDefaultRootNode();
     }

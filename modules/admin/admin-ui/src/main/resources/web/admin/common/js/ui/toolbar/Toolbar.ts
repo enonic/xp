@@ -11,7 +11,7 @@ module api.ui.toolbar {
         protected actions: api.ui.Action[] = [];
 
         constructor(className?: string) {
-            super(!className ? "toolbar" : className + " toolbar");
+            super(!className ? 'toolbar' : className + ' toolbar');
 
             this.fold = new FoldButton();
             this.fold.hide();
@@ -39,7 +39,7 @@ module api.ui.toolbar {
             this.actions.forEach((action: api.ui.Action) => {
                 this.getChildren().forEach((element: api.dom.Element) => {
                     if (api.ObjectHelper.iFrameSafeInstanceOf(element, api.ui.button.ActionButton)) {
-                        if (action.getLabel() == (<api.ui.button.ActionButton>element).getLabel()) {
+                        if (action.getLabel() === (<api.ui.button.ActionButton>element).getLabel()) {
                             this.removeChild(element);
                         }
                     }
@@ -111,7 +111,7 @@ module api.ui.toolbar {
 
         private getVisibleButtonsWidth(includeFold: boolean = true): number {
             return this.getChildren().reduce((totalWidth: number, element: api.dom.Element) => {
-                return totalWidth + ( element.isVisible() && (includeFold || element != this.fold) ?
+                return totalWidth + ( element.isVisible() && (includeFold || element !== this.fold) ?
                                       element.getEl().getWidthWithMargin() : 0 );
             }, 0);
         }
@@ -121,7 +121,7 @@ module api.ui.toolbar {
         }
 
         private areAllActionsFolded(): boolean {
-            return this.actions.length == this.fold.getButtonsCount();
+            return this.actions.length === this.fold.getButtonsCount();
         }
 
     }

@@ -17,12 +17,12 @@ module api.query {
 
             args.push(ValueExpr.stringValue(queryFields.toString()));
             args.push(ValueExpr.stringValue(searchString));
-            args.push(ValueExpr.stringValue("AND"));
+            args.push(ValueExpr.stringValue('AND'));
 
-            let fulltextExp: FunctionExpr = new FunctionExpr("fulltext", args);
+            let fulltextExp: FunctionExpr = new FunctionExpr('fulltext', args);
             let fulltextDynamicExpr: DynamicConstraintExpr = new DynamicConstraintExpr(fulltextExp);
 
-            let nGramExpr: FunctionExpr = new FunctionExpr("ngram", args);
+            let nGramExpr: FunctionExpr = new FunctionExpr('ngram', args);
             let nGramDynamicExpr: DynamicConstraintExpr = new DynamicConstraintExpr(nGramExpr);
 
             let booleanExpr: LogicalExpr = new LogicalExpr(fulltextDynamicExpr, LogicalOperator.OR, nGramDynamicExpr);
@@ -53,4 +53,3 @@ module api.query {
     }
 
 }
-

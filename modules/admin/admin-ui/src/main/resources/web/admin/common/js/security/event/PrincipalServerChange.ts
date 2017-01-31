@@ -9,7 +9,7 @@ module api.security.event {
     export class PrincipalServerChangeItem extends NodeServerChangeItem<string> {
 
         static fromJson(node: NodeEventNodeJson): PrincipalServerChangeItem {
-            return new PrincipalServerChangeItem(node.path.substr("/identity".length), node.branch);
+            return new PrincipalServerChangeItem(node.path.substr('/identity'.length), node.branch);
         }
 
     }
@@ -20,23 +20,22 @@ module api.security.event {
             super(type, changeItems, newPrincipalPaths);
         }
 
-
         getChangeType(): NodeServerChangeType {
             return this.type;
         }
 
         toString(): string {
-            return NodeServerChangeType[this.type] + ": <" +
-                   this.changeItems.map((item) => item.getPath()).join(", ") + !!this.newNodePaths
-                ? this.newNodePaths.join(", ")
-                : "" +
-                  ">";
+            return NodeServerChangeType[this.type] + ': <' +
+                   this.changeItems.map((item) => item.getPath()).join(', ') + !!this.newNodePaths
+                ? this.newNodePaths.join(', ')
+                : '' +
+                  '>';
         }
 
         static fromJson(nodeEventJson: NodeEventJson): PrincipalServerChange {
 
             let changedItems = nodeEventJson.data.nodes.
-                filter((node) => node.path.indexOf("/identity") === 0).
+                filter((node) => node.path.indexOf('/identity') === 0).
                 map((node: NodeEventNodeJson) => PrincipalServerChangeItem.fromJson(node));
 
             if (changedItems.length === 0) {

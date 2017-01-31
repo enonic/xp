@@ -56,13 +56,13 @@ module api.query.aggregation {
     }
 
     export class TermsAggregationOrderDirection {
-        public static ASC: string = "ASC";
-        public static DESC: string = "DESC";
+        public static ASC: string = 'ASC';
+        public static DESC: string = 'DESC';
     }
 
     export class TermsAggregationOrderType {
-        public static DOC_COUNT: string = "DOC_COUNT";
-        public static TERM: string = "TERM";
+        public static DOC_COUNT: string = 'DOC_COUNT';
+        public static TERM: string = 'TERM';
     }
 
 }

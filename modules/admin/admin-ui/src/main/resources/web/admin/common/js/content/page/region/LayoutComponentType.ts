@@ -5,7 +5,7 @@ module api.content.page.region {
         private static INSTANCE: LayoutComponentType = new LayoutComponentType();
 
         constructor() {
-            super("layout");
+            super('layout');
         }
 
         newComponentBuilder(): LayoutComponentBuilder {

@@ -48,7 +48,7 @@ module api.liveedit.layout {
 
             for (let i = 0; i < this.regionViews.length; i++) {
                 let regionView = this.regionViews[i];
-                if (regionView.getRegionName() == name) {
+                if (regionView.getRegionName() === name) {
                     return regionView;
                 }
             }
@@ -61,11 +61,10 @@ module api.liveedit.layout {
 
             for (let i = 0; i < this.regionViews.length; i++) {
                 let regionView = this.regionViews[i];
-                if (firstLevelOfPath.getRegionName() == regionView.getRegionName()) {
-                    if (path.numberOfLevels() == 1) {
+                if (firstLevelOfPath.getRegionName() === regionView.getRegionName()) {
+                    if (path.numberOfLevels() === 1) {
                         return regionView.getComponentViewByIndex(firstLevelOfPath.getComponentIndex());
-                    }
-                    else {
+                    } else {
                         const index = firstLevelOfPath.getComponentIndex();
                         const layoutView: LayoutComponentView = <LayoutComponentView>regionView.getComponentViewByIndex(index);
                         return layoutView.getComponentViewByPath(path.removeFirstLevel());
@@ -127,7 +126,9 @@ module api.liveedit.layout {
             children.forEach((childElement: api.dom.Element) => {
                 let itemType = ItemType.fromElement(childElement);
                 let isRegionView = api.ObjectHelper.iFrameSafeInstanceOf(childElement, RegionView);
-                let region, regionName, regionView;
+                let region;
+                let regionName;
+                let regionView;
 
                 if (isRegionView) {
                     regionName = RegionItemType.getRegionName(childElement);

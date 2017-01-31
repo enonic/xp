@@ -12,7 +12,7 @@ module api.app {
         private appBar: api.app.bar.AppBar;
 
         constructor(appBar: api.app.bar.TabbedAppBar) {
-            super("navigated-panel");
+            super('navigated-panel');
 
             this.appBar = appBar;
 
@@ -85,8 +85,8 @@ module api.app {
             if (!this.browsePanel) {
                 this.browsePanel = browsePanel;
 
-                let browseMenuItem = new api.app.bar.AppBarTabMenuItemBuilder().setLabel("<Select>").setTabId(
-                    new api.app.bar.AppBarTabId("hidden", "____home")).build();
+                let browseMenuItem = new api.app.bar.AppBarTabMenuItemBuilder().setLabel('<Select>').setTabId(
+                    new api.app.bar.AppBarTabId('hidden', '____home')).build();
                 browseMenuItem.setVisibleInMenu(false);
                 this.addNavigablePanel(browseMenuItem, browsePanel);
 
@@ -101,9 +101,9 @@ module api.app {
         }
 
         private checkBrowsePanelNeedsToBeShown(index: number, panel: api.ui.panel.Panel) {
-            if (panel == this.browsePanel && index > -1) {
+            if (panel === this.browsePanel && index > -1) {
                 this.browsePanel = undefined;
-            } else if (this.getSize() == 0) {
+            } else if (this.getSize() === 0) {
                 // show browse panel if all others were removed
                 new ShowBrowsePanelEvent().fire();
             }

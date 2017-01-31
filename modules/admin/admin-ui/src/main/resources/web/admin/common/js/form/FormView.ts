@@ -41,7 +41,7 @@ module api.form {
 
         public static debug: boolean = false;
 
-        public static VALIDATION_CLASS: string = "display-validation-errors";
+        public static VALIDATION_CLASS: string = 'display-validation-errors';
 
         /**
          * @param context the form context.
@@ -49,7 +49,7 @@ module api.form {
          * @param data the data to back the form with.
          */
         constructor(context: FormContext, form: Form, data: PropertySet) {
-            super("form-view");
+            super('form-view');
             this.context = context;
             this.form = form;
             this.data = data;
@@ -73,8 +73,8 @@ module api.form {
             layoutPromise.then((formItemViews: FormItemView[]) => {
 
                 this.formItemViews = formItemViews;
-                api.util.assert(this.formItemViews.length == formItems.length,
-                    "Not all FormItemView-s was created. Expected " + formItems.length + ", was: " + formItemViews.length);
+                api.util.assert(this.formItemViews.length === formItems.length,
+                    'Not all FormItemView-s was created. Expected ' + formItems.length + ', was: ' + formItemViews.length);
 
                 deferred.resolve(null);
 
@@ -93,8 +93,7 @@ module api.form {
                             this.previousValidationRecording = event.getRecording();
                             this.notifyValidityChanged(new FormValidityChangedEvent(this.previousValidationRecording,
                                 event.isInputValueBroken()));
-                        }
-                        else {
+                        } else {
                             if (event.isValid()) {
                                 this.previousValidationRecording.removeByPath(event.getOrigin(), false, event.isIncludeChildren());
                             } else {
@@ -154,7 +153,7 @@ module api.form {
         }
 
         private isSizeChanged(): boolean {
-            return this.width != this.getEl().getWidth();
+            return this.width !== this.getEl().getWidth();
         }
 
         private broadcastFormSizeChanged() {
@@ -232,17 +231,17 @@ module api.form {
         unValidityChanged(listener: (event: FormValidityChangedEvent)=>void) {
             this.formValidityChangedListeners =
                 this.formValidityChangedListeners.filter((currentListener: (event: FormValidityChangedEvent)=>void)=> {
-                    return listener != currentListener;
+                    return listener !== currentListener;
                 });
         }
 
         private notifyValidityChanged(event: FormValidityChangedEvent) {
-            //console.log("FormView.validityChanged");
+            //console.log('FormView.validityChanged');
             //if (event.getRecording().isValid()) {
-            //    console.log(" valid: ");
+            //    console.log(' valid: ');
             //}
             //else {
-            //    console.log(" invalid: ");
+            //    console.log(' invalid: ');
             //    event.getRecording().print();
             //}
 

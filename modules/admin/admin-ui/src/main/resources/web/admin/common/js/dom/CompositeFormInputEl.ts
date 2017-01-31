@@ -7,7 +7,7 @@ module api.dom {
         private additionalElements: api.dom.Element[];
 
         constructor(input?: api.dom.FormInputEl) {
-            super("div", "composite-input");
+            super('div', 'composite-input');
 
             if (input) {
                 this.setWrappedInput(input);
@@ -34,7 +34,6 @@ module api.dom {
             this.wrappedInput.setValue(value, silent);
             return this;
         }
-
 
         setValue(value: string, silent?: boolean, userInput?: boolean): CompositeFormInputEl {
             this.wrappedInput.setValue(value, silent, userInput);

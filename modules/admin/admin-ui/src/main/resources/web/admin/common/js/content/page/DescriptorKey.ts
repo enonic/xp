@@ -2,7 +2,7 @@ module api.content.page {
 
     export class DescriptorKey implements api.Equitable {
 
-        private static SEPARATOR: string = ":";
+        private static SEPARATOR: string = ':';
 
         private applicationKey: api.application.ApplicationKey;
 
@@ -12,8 +12,8 @@ module api.content.page {
 
         public static fromString(str: string): DescriptorKey {
             let sepIndex: number = str.indexOf(DescriptorKey.SEPARATOR);
-            if (sepIndex == -1) {
-                throw new Error("DescriptorKey must contain separator '" + DescriptorKey.SEPARATOR + "':" + str);
+            if (sepIndex === -1) {
+                throw new Error(`DescriptorKey must contain separator '${DescriptorKey.SEPARATOR}':${str}`);
             }
 
             let applicationKey = str.substring(0, sepIndex);

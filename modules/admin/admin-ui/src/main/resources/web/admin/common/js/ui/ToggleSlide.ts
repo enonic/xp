@@ -24,7 +24,7 @@ module api.ui {
         private slideLeft: api.util.Animation;
         private slideRight: api.util.Animation;
 
-        private disabledClass: string = "disabled";
+        private disabledClass: string = 'disabled';
 
         constructor(actions: ToggleSlideActions) {
             super('toggle-slide');
@@ -46,8 +46,7 @@ module api.ui {
             let turnOn = actions.turnOnAction.isEnabled();
             if (turnOn) {
                 this.slideOn();
-            }
-            else {
+            } else {
                 this.slideOff();
             }
             this.isOn = turnOn;
@@ -94,7 +93,7 @@ module api.ui {
         }
 
         setEnabled(enabled: boolean) {
-            if (enabled != this.enabled) {
+            if (enabled !== this.enabled) {
                 if (!enabled) {
                     this.addClass(this.disabledClass);
                 } else {
@@ -124,9 +123,9 @@ module api.ui {
         }
 
         private calculateStyles() {
-            let sliderEl = this.slider.getEl(),
-                onLabelEl = this.onLabel.getEl(),
-                offLabelEl = this.offLabel.getEl();
+            let sliderEl = this.slider.getEl();
+            let onLabelEl = this.onLabel.getEl();
+            let offLabelEl = this.offLabel.getEl();
 
             // ToggleSlide width depends on width of longest label.
             // To have labels width calculated by browser they should be rendered into dom.

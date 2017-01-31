@@ -35,10 +35,10 @@ module api.data {
         private propertyValueChangedListeners: {(event: PropertyValueChangedEvent):void}[] = [];
 
         constructor(builder: PropertyBuilder) {
-            api.util.assertNotNull(builder.array, "array of a Property cannot be null");
-            api.util.assertNotNull(builder.name, "name of a Property cannot be null");
-            api.util.assertNotNull(builder.index, "index of a Property cannot be null");
-            api.util.assertNotNull(builder.value, "value of a Property cannot be null");
+            api.util.assertNotNull(builder.array, 'array of a Property cannot be null');
+            api.util.assertNotNull(builder.name, 'name of a Property cannot be null');
+            api.util.assertNotNull(builder.index, 'index of a Property cannot be null');
+            api.util.assertNotNull(builder.value, 'value of a Property cannot be null');
 
             this.array = builder.array;
             this.parent = builder.array.getParent();
@@ -62,7 +62,7 @@ module api.data {
             let oldIndex = this.index;
             this.index = newIndex;
 
-            if (oldIndex != newIndex) {
+            if (oldIndex !== newIndex) {
                 this.notifyPropertyIndexChangedEvent(oldIndex, newIndex);
             }
         }
@@ -74,7 +74,7 @@ module api.data {
          * @param value
          */
         setValue(value: Value) {
-            api.util.assertNotNull(value, "value of a Property cannot be null");
+            api.util.assertNotNull(value, 'value of a Property cannot be null');
             let oldValue = this.value;
             this.value = value;
 
@@ -141,8 +141,7 @@ module api.data {
         getPath(): PropertyPath {
             if (this.hasParentProperty()) {
                 return PropertyPath.fromParent(this.getParentProperty().getPath(), new PropertyPathElement(this.name, this.index));
-            }
-            else {
+            } else {
                 return PropertyPath.fromPathElement(new PropertyPathElement(this.name, this.index));
             }
         }
@@ -250,8 +249,7 @@ module api.data {
                 let destinationTree = destinationPropertyArray.getTree();
                 let copiedPropertySet = this.value.getPropertySet().copy(destinationTree);
                 value = new Value(copiedPropertySet, ValueTypes.DATA);
-            }
-            else {
+            } else {
                 value = this.value;
             }
 
@@ -269,13 +267,13 @@ module api.data {
 
         unPropertyIndexChanged(listener: {(event: PropertyIndexChangedEvent): void;}) {
             this.propertyIndexChangedListeners =
-            this.propertyIndexChangedListeners.filter((curr) => (curr != listener));
+            this.propertyIndexChangedListeners.filter((curr) => (curr !== listener));
         }
 
         private notifyPropertyIndexChangedEvent(previousIndex: number, newIndex: number) {
             let event = new PropertyIndexChangedEvent(this, previousIndex, newIndex);
             if (Property.debug) {
-                console.debug("Property[" + this.getPath().toString() + "].notifyPropertyIndexChangedEvent: " + event.toString());
+                console.debug('Property[' + this.getPath().toString() + '].notifyPropertyIndexChangedEvent: ' + event.toString());
             }
             this.propertyIndexChangedListeners.forEach((listener) => listener(event));
         }
@@ -286,29 +284,29 @@ module api.data {
 
         unPropertyValueChanged(listener: {(event: PropertyValueChangedEvent): void;}) {
             this.propertyValueChangedListeners =
-            this.propertyValueChangedListeners.filter((curr) => (curr != listener));
+            this.propertyValueChangedListeners.filter((curr) => (curr !== listener));
         }
 
         private notifyPropertyValueChangedEvent(previousValue: Value, newValue: Value) {
             let event = new PropertyValueChangedEvent(this, previousValue, newValue);
             if (Property.debug) {
-                console.debug("Property[" + this.getPath().toString() + "].notifyPropertyValueChangedEvent: " + event.toString());
+                console.debug('Property[' + this.getPath().toString() + '].notifyPropertyValueChangedEvent: ' + event.toString());
             }
             this.propertyValueChangedListeners.forEach((listener) => listener(event));
         }
 
         public static checkName(name: string) {
             if (name == null) {
-                throw new Error("Property name cannot be null");
+                throw new Error('Property name cannot be null');
             }
             if (api.util.StringHelper.isBlank(name)) {
-                throw new Error("Property name cannot be blank");
+                throw new Error('Property name cannot be blank');
             }
-            if (name.indexOf(".") >= 0) {
-                throw new Error("Property name cannot contain .");
+            if (name.indexOf('.') >= 0) {
+                throw new Error('Property name cannot contain .');
             }
-            if (name.indexOf("[") >= 0 || name.indexOf("]") >= 0) {
-                throw new Error("Property name cannot contain [ or ]");
+            if (name.indexOf('[') >= 0 || name.indexOf(']') >= 0) {
+                throw new Error('Property name cannot contain [ or ]');
             }
         }
 

@@ -10,17 +10,17 @@ module api.ui {
          * @param value the initial value (defaults to 0)
          */
         constructor(value?: number) {
-            super("progress-bar");
+            super('progress-bar');
             this.value = value || 0;
 
-            let progress = this.progress = new api.dom.DivEl("progress-indicator");
+            let progress = this.progress = new api.dom.DivEl('progress-indicator');
             this.getEl().appendChild(progress.getHTMLElement());
             this.setValue(this.value);
         }
 
         setValue(value: number) {
             let normalizedValue = this.isIntAndInRangeOf100(value) ? value / 100 : (value > 0 ? this.normalizeValue(value) : 0);
-            this.progress.getEl().setWidth(normalizedValue * 100 + "%");
+            this.progress.getEl().setWidth(normalizedValue * 100 + '%');
             this.value = normalizedValue;
         }
 

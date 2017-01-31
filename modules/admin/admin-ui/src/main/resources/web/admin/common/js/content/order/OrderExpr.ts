@@ -16,20 +16,20 @@ module api.content.order {
         }
 
         toJson(): OrderExprJson {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         toString(): string {
-            throw new Error("Must be implemented by inheritors");
+            throw new Error('Must be implemented by inheritors');
         }
 
         static toArrayJson(expressions: OrderExpr[]): OrderExprWrapperJson[] {
             let wrappers: OrderExprWrapperJson[] = [];
             expressions.forEach((expr: OrderExpr) => {
                 if (api.ObjectHelper.iFrameSafeInstanceOf(expr, FieldOrderExpr)) {
-                    wrappers.push(<OrderExprWrapperJson>{"FieldOrderExpr": expr.toJson()});
+                    wrappers.push(<OrderExprWrapperJson>{FieldOrderExpr: expr.toJson()});
                 } else if (api.ObjectHelper.iFrameSafeInstanceOf(expr, DynamicOrderExpr)) {
-                    wrappers.push(<OrderExprWrapperJson>{"DynamicOrderExpr": expr.toJson()});
+                    wrappers.push(<OrderExprWrapperJson>{DynamicOrderExpr: expr.toJson()});
                 }
             });
             return wrappers;
@@ -40,7 +40,7 @@ module api.content.order {
                 return false;
             }
             let other = <OrderExpr>o;
-            if (this.direction.toLowerCase() != other.getDirection().toLowerCase()) {
+            if (this.direction.toLowerCase() !== other.getDirection().toLowerCase()) {
                 return false;
             }
             return true;

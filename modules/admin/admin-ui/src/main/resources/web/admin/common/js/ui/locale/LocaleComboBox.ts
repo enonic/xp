@@ -15,8 +15,8 @@ module api.ui.locale {
             });
             let builder = new api.ui.selector.combobox.RichComboBoxBuilder<Locale>().
                 setMaximumOccurrences(maxOccurrences || 0).
-                setComboBoxName("localeSelector").
-                setIdentifierMethod("getTag").
+                setComboBoxName('localeSelector').
+                setIdentifierMethod('getTag').
                 setLoader(new LocaleLoader()).
                 setValue(value).
                 setSelectedOptionsView(localeSelectedOptionsView).
@@ -26,11 +26,10 @@ module api.ui.locale {
         }
 
         clearSelection(forceClear: boolean = false) {
-            this.getLoader().search("");
+            this.getLoader().search('');
             super.clearSelection(forceClear);
         }
     }
-
 
     class LocaleSelectedOptionView extends LocaleViewer implements api.ui.selector.combobox.SelectedOptionView<Locale> {
 
@@ -39,8 +38,8 @@ module api.ui.locale {
         constructor(option: Option<Locale>) {
             super();
             this.setOption(option);
-            this.setClass("locale-selected-option-view");
-            let removeButton = new api.dom.AEl("icon-close");
+            this.setClass('locale-selected-option-view');
+            let removeButton = new api.dom.AEl('icon-close');
             removeButton.onClicked((event: MouseEvent) => {
                 this.notifyRemoveClicked(event);
                 event.stopPropagation();
@@ -68,7 +67,7 @@ module api.ui.locale {
     class LocaleSelectedOptionsView extends api.ui.selector.combobox.BaseSelectedOptionsView<Locale> {
 
         constructor() {
-            super("locale-selected-options-view");
+            super('locale-selected-options-view');
         }
 
         createSelectedOption(option: Option<Locale>): SelectedOption<Locale> {

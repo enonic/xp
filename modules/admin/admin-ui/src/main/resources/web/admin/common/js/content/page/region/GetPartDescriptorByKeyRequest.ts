@@ -16,11 +16,11 @@ module api.content.page.region {
         }
 
         getParams(): Object {
-            throw new Error("Unexpected call");
+            throw new Error('Unexpected call');
         }
 
         getRequestPath(): api.rest.Path {
-            throw new Error("Unexpected call");
+            throw new Error('Unexpected call');
         }
 
         sendAndParse(): wemQ.Promise<PartDescriptor> {

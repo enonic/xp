@@ -1,4 +1,4 @@
-module api.form.json{
+module api.form.json {
 
     export class OccurrencesJson {
 

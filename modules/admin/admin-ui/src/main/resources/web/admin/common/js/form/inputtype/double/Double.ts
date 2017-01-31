@@ -26,11 +26,11 @@ module api.content.form.inputtype.double {
             }
 
             let inputEl = api.ui.text.TextInput.middle(undefined, this.getPropertyValue(property));
-            inputEl.setName(this.getInput().getName() + "-" + property.getIndex());
+            inputEl.setName(this.getInput().getName() + '-' + property.getIndex());
 
             inputEl.onValueChanged((event: api.ValueChangedEvent) => {
-                let isValid = this.isValid(event.getNewValue()),
-                    value = isValid ? ValueTypes.DOUBLE.newValue(event.getNewValue()) : this.newInitialValue();
+                let isValid = this.isValid(event.getNewValue());
+                let value = isValid ? ValueTypes.DOUBLE.newValue(event.getNewValue()) : this.newInitialValue();
 
                 this.notifyOccurrenceValueChanged(inputEl, value);
                 inputEl.updateValidationStatusOnUserInput(isValid);
@@ -82,5 +82,5 @@ module api.content.form.inputtype.double {
 
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class("Double", Double));
+    api.form.inputtype.InputTypeManager.register(new api.Class('Double', Double));
 }

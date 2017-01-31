@@ -5,12 +5,11 @@ module api.ui.uploader {
     import Element = api.dom.Element;
     import SelectionItem = api.app.browse.SelectionItem;
 
-
     export class FileUploaderEl<MODEL extends api.Equitable> extends UploaderEl<MODEL> {
 
         protected contentId: string;
 
-        static FILE_NAME_DELIMITER: string = "/";
+        static FILE_NAME_DELIMITER: string = '/';
 
         doSetValue(value: string, silent?: boolean): UploaderEl<MODEL> {
 
@@ -65,8 +64,8 @@ module api.ui.uploader {
         }
 
         private getItems(value: string) : {existingItems:Element[], newItems:Element[]} {
-            let newItems: Element[] = [],
-                existingItems:Element[] = [];
+            let newItems: Element[] = [];
+            let existingItems:Element[] = [];
 
             this.parseValues(value).forEach((parsedValue: string) => {
                 if (parsedValue) {

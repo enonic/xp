@@ -8,7 +8,7 @@ module api.schema {
         }
 
         public static getResourcePath(): api.rest.Path {
-            return api.rest.Path.fromString("schema/icon");
+            return api.rest.Path.fromString('schema/icon');
         }
     }
 }

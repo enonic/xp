@@ -8,7 +8,7 @@ module api.app.browse {
         private itemsSelectionPanel: BrowseItemsSelectionPanel<M>;
 
         constructor(grid?: TreeGrid<M>) {
-            super("browse-item-panel");
+            super('browse-item-panel');
 
             this.itemsSelectionPanel = this.createItemSelectionPanel(grid);
             this.itemStatisticsPanel = this.createItemStatisticsPanel();
@@ -58,7 +58,7 @@ module api.app.browse {
 
         updateDisplayedPanel() {
             let selectedItems = this.getItems();
-            if (selectedItems.length == 1) {
+            if (selectedItems.length === 1) {
                 this.showPanelByIndex(1);
                 this.itemStatisticsPanel.setItem(selectedItems[0].toViewItem());
             } else {

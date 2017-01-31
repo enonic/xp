@@ -41,8 +41,8 @@ module api.content.site.inputtype.siteconfigurator {
 
         makeEmptyOption(id: string): Option<Application> {
 
-            let key = ApplicationKey.fromString(id),
-                emptyApp = new api.application.ApplicationBuilder();
+            let key = ApplicationKey.fromString(id);
+            let emptyApp = new api.application.ApplicationBuilder();
             emptyApp.applicationKey = key;
             emptyApp.displayName = id;
 
@@ -78,7 +78,7 @@ module api.content.site.inputtype.siteconfigurator {
 
         unSiteConfigFormDisplayed(listener: {(applicationKey: ApplicationKey, formView: FormView): void;}) {
             this.siteConfigFormDisplayedListeners =
-                this.siteConfigFormDisplayedListeners.filter((curr) => (curr != listener));
+                this.siteConfigFormDisplayedListeners.filter((curr) => (curr !== listener));
         }
 
         private notifySiteConfigFormDisplayed(applicationKey: ApplicationKey, formView: FormView) {

@@ -24,14 +24,14 @@ module api.ui.security.acl {
         resolveIconClass(object: AccessControlEntry): string {
             switch (object.getPrincipalKey().getType()) {
             case PrincipalType.USER:
-                return "icon-user";
+                return 'icon-user';
             case PrincipalType.GROUP:
-                return "icon-users";
+                return 'icon-users';
             case PrincipalType.ROLE:
-                return "icon-masks";
+                return 'icon-masks';
             }
 
-            return "";
+            return '';
         }
     }
 

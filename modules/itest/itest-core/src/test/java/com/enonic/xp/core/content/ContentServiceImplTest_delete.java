@@ -253,7 +253,6 @@ public class ContentServiceImplTest_delete
         final PushContentsResult result = this.contentService.push( PushContentParams.create().
             contentIds( ContentIds.from( parent.getId() ) ).
             target( CTX_OTHER.getBranch() ).
-            includeChildren( true ).
             build() );
         assertEquals( 2, result.getPushedContents().getSize() );
 

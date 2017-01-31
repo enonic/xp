@@ -4,7 +4,7 @@ module api.util {
 
     export class LocalDate implements api.Equitable {
 
-        public static DATE_SEPARATOR: string = "-";
+        public static DATE_SEPARATOR: string = '-';
 
         private year: number;
 
@@ -55,7 +55,7 @@ module api.util {
             let numAsString = String(num);
 
             while (numAsString.length < length) {
-                numAsString = "0" + numAsString;
+                numAsString = '0' + numAsString;
             }
             return numAsString;
         }
@@ -84,7 +84,7 @@ module api.util {
 
         static fromISOString(s: string): LocalDate {
             if (!LocalDate.isValidISODateString(s)) {
-                throw new Error("Cannot parse LocalDate from string: " + s);
+                throw new Error('Cannot parse LocalDate from string: ' + s);
             }
 
             let date: string[] = s.split(LocalDate.DATE_SEPARATOR);
@@ -125,14 +125,13 @@ module api.util {
 
         validate() {
             if (!this.year) {
-                throw new Error("Invalid parameter. Year should be set");
-            } else if (this.month == undefined) {
-                throw new Error("Invalid parameter. Month should be set");
+                throw new Error('Invalid parameter. Year should be set');
+            } else if (this.month == null) {
+                throw new Error('Invalid parameter. Month should be set');
             } else if (!this.day) {
-                throw new Error("Invalid parameter. Day should be set");
+                throw new Error('Invalid parameter. Day should be set');
             }
         }
-
 
         public build(): LocalDate {
             this.validate();

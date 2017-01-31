@@ -1,6 +1,6 @@
-import "../../api.ts";
-import {LiveEditPageProxy} from "./page/LiveEditPageProxy";
-import {PageComponentsTreeGrid} from "./PageComponentsTreeGrid";
+import '../../api.ts';
+import {LiveEditPageProxy} from './page/LiveEditPageProxy';
+import {PageComponentsTreeGrid} from './PageComponentsTreeGrid';
 
 import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
 import ItemViewDeselectedEvent = api.liveedit.ItemViewDeselectedEvent;
@@ -78,7 +78,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
         this.onShown((event) => {
             this.constrainToParent();
-            this.getHTMLElement().style.display = "";
+            this.getHTMLElement().style.display = '';
             if (this.pageView && this.pageView.isLocked()) {
                 this.mask.show();
             }
@@ -310,11 +310,11 @@ export class PageComponentsView extends api.dom.DivEl {
                 return;
             }
 
-            let rowElement = event.target,
-                selected = false;
+            let rowElement = event.targetж;
+            let selected = false;
 
-            while (!rowElement.classList.contains("slick-row")) {
-                if (rowElement.classList.contains("selected")) {
+            while (!rowElement.classList.contains('slick-row')) {
+                if (rowElement.classList.contains('selected')) {
                     selected = true;
                 }
 
@@ -373,7 +373,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
     private removeFromInvalidItems(itemId: string) {
         this.invalidItemIds = this.invalidItemIds.filter((curr) => {
-            return curr != itemId;
+            return curr !== itemId;
         });
         this.highlightInvalidItems();
     }
@@ -384,7 +384,7 @@ export class PageComponentsView extends api.dom.DivEl {
     }
 
     private isMenuIcon(element: HTMLElement): boolean {
-        if (!!element && !!element.className && element.className.indexOf("menu-icon") > -1) {
+        if (!!element && !!element.className && element.className.indexOf('menu-icon') > -1) {
             return true;
         }
         return false;
@@ -409,7 +409,6 @@ export class PageComponentsView extends api.dom.DivEl {
             this.bindFragmentLoadErrorHandler(fragmentComponentView);
         });
     }
-
 
     private bindTreeTextNodeUpdateOnTextComponentModify(textComponentView: TextComponentView) {
         let handler = api.util.AppHelper.debounce((event) => {
@@ -451,7 +450,7 @@ export class PageComponentsView extends api.dom.DivEl {
                     if (PageComponentsView.debug) {
                         console.log('mouse down', this.mouseDown, event);
                     }
-                    if (!this.mouseDown && event.buttons == 1) {
+                    if (!this.mouseDown && event.buttons === 1) {
                         // left button was clicked
                         event.preventDefault();
                         event.stopPropagation();
@@ -482,7 +481,7 @@ export class PageComponentsView extends api.dom.DivEl {
             if (!this.mouseMoveListener) {
                 this.mouseMoveListener = (event: MouseEvent) => {
                     if (this.mouseDown) {
-                        if (event.buttons != 1) {
+                        if (event.buttons !== 1) {
                             // button was probably released outside browser window
                             this.mouseUpListener();
                             return;
@@ -490,16 +489,16 @@ export class PageComponentsView extends api.dom.DivEl {
                         event.preventDefault();
                         event.stopPropagation();
 
-                        let el = this.getEl(),
-                            newPos = {
-                                x: event.clientX,
-                                y: event.clientY
-                            },
-                            offset = el.getOffset(),
-                            newOffset = {
-                                top: offset.top + newPos.y - lastPos.y,
-                                left: offset.left + newPos.x - lastPos.x
-                            };
+                        let el = this.getEl();
+                        let newPos = {
+                            x: event.clientX,
+                            y: event.clientY
+                        };
+                        let offset = el.getOffset();
+                        let newOffset = {
+                            top: offset.top + newPos.y - lastPos.y,
+                            left: offset.left + newPos.x - lastPos.x
+                        };
 
                         this.constrainToParent(newOffset);
 
@@ -531,8 +530,7 @@ export class PageComponentsView extends api.dom.DivEl {
         if (this.getParentElement()) {
             parentEl = this.getParentElement().getEl();
             parentOffset = parentEl.getOffset();
-        }
-        else {
+        } else {
             parentEl = api.dom.WindowDOM.get();
             parentOffset = {
                 top: 0,
@@ -605,9 +603,8 @@ export class PageComponentsView extends api.dom.DivEl {
         }
     }
 
-
     private isMenuIconClicked(cellNumber: number): boolean {
-        return cellNumber == 1;
+        return cellNumber === 1;
     }
 
     private showContextMenu(row: number, clickPosition: api.liveedit.Position) {
@@ -638,7 +635,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
         this.contextMenu.getMenu().onBeforeAction((action: api.ui.Action) => {
             this.pageView.setDisabledContextMenu(true);
-            if (action.hasParentAction() && action.getParentAction().getLabel() == "Insert") {
+            if (action.hasParentAction() && action.getParentAction().getLabel() === 'Insert') {
                 this.notifyBeforeInsertAction();
             }
         });
@@ -665,21 +662,21 @@ export class PageComponentsView extends api.dom.DivEl {
     }
 
     private hidePageComponentsIfInMobileView(action: api.ui.Action) {
-        if (api.BrowserHelper.isMobile() && ((action.hasParentAction() && action.getParentAction().getLabel() == "Insert")
-                                             || action.getLabel() == "Inspect" || action.getLabel() == "Edit" ||
-                                             action.getLabel() == "Duplicate")) {
+        if (api.BrowserHelper.isMobile() && ((action.hasParentAction() && action.getParentAction().getLabel() === 'Insert')
+                                             || action.getLabel() === 'Inspect' || action.getLabel() === 'Edit' ||
+                                             action.getLabel() === 'Duplicate')) {
             this.hide();
         }
     }
 
     private setMenuOpenStyleOnMenuIcon(row: number) {
         let stylesHash: Slick.CellCssStylesHash = {};
-        stylesHash[row] = {menu: "menu-open"};
-        this.tree.getGrid().setCellCssStyles("menu-open", stylesHash);
+        stylesHash[row] = {menu: 'menu-open'};
+        this.tree.getGrid().setCellCssStyles('menu-open', stylesHash);
     }
 
     private removeMenuOpenStyleFromMenuIcon() {
-        this.tree.getGrid().removeCellCssStyles("menu-open");
+        this.tree.getGrid().removeCellCssStyles('menu-open');
     }
 
     private hideContextMenu() {
@@ -690,18 +687,17 @@ export class PageComponentsView extends api.dom.DivEl {
 
     private sameRowClicked(clickedRow: number): boolean {
         let currentlySelectedRow = this.tree.getGrid().getSelectedRows()[0];
-        return clickedRow == currentlySelectedRow;
+        return clickedRow === currentlySelectedRow;
     }
 
     private highlightRow(rowElement: HTMLElement, selected: boolean): void {
         if (selected) {
             Highlighter.get().hide();
-        }
-        else {
+        } else {
             let elementHelper = new api.dom.ElementHelper(rowElement);
             let dimensions = elementHelper.getDimensions();
-            let nodes = this.tree.getRoot().getCurrentRoot().treeToList(),
-                hoveredNode = nodes[new api.dom.ElementHelper(rowElement).getSiblingIndex()];
+            let nodes = this.tree.getRoot().getCurrentRoot().treeToList();
+            let hoveredNode = nodes[new api.dom.ElementHelper(rowElement).getSiblingIndex()];
 
             if (hoveredNode) {
                 let data = hoveredNode.getData();
@@ -722,7 +718,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
     unBeforeInsertAction(listener: (event: any) => void) {
         this.beforeInsertActionListeners = this.beforeInsertActionListeners.filter((currentListener: (event: any) => void) =>  {
-            return listener != currentListener;
+            return listener !== currentListener;
         });
     }
 
@@ -738,7 +734,7 @@ export class PageComponentsView extends api.dom.DivEl {
         let editAction: api.ui.Action;
 
         contextMenuActions.some((action: api.ui.Action) => {
-            if(action.getLabel() === "Edit") {
+            if(action.getLabel() === 'Edit') {
                 editAction = action;
                 return true;
             }

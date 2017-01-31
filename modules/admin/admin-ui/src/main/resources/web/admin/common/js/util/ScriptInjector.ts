@@ -6,18 +6,18 @@ module api.util {
             //check all existing script tags in the page for the url
             wemjq('script[type="text/javascript"]')
                 .each(function () {
-                    return load = (url != wemjq(this).attr('data-url'));
+                    return load = (url !== wemjq(this).attr('data-url'));
                 });
             if (load) {
                 //didn't find it in the page, so load it
                 wemjq.ajax(url, {
                     type: 'GET',
                     success: (data:any, status:string, xhr:JQueryXHR) => {
-                        let node = document.getElementsByTagName("head")[0] || document.body;
+                        let node = document.getElementsByTagName('head')[0] || document.body;
                         if (node) {
-                            let script = document.createElement("script");
-                            script.setAttribute("type", "text/javascript");
-                            script.setAttribute("data-url", url);
+                            let script = document.createElement('script');
+                            script.setAttribute('type', 'text/javascript');
+                            script.setAttribute('data-url', url);
                             script.innerHTML = data;
                             node.appendChild(script);
                         }
@@ -26,8 +26,7 @@ module api.util {
                     dataType: 'script',
                     cache: true
                 });
-            }
-            else {
+            } else {
                 callback();
             }
         }
