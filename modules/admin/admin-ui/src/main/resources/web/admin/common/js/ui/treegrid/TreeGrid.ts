@@ -234,7 +234,7 @@ module api.ui.treegrid {
         };
 
         private bindClickEvents() {
-            this.grid.subscribeOnClick((event, data) => {
+            var clickHandler = api.util.AppHelper.debounce(((event, data) => {
                 if (!this.isActive()) {
                     return;
                 }
@@ -288,7 +288,9 @@ module api.ui.treegrid {
                 if (!elem.hasClass('sort-dialog-trigger')) {
                     new TreeGridItemClickedEvent(!!this.highlightedNode || this.grid.getSelectedRows().length > 0).fire();
                 }
-            });
+            }).bind(this), 50, false);
+
+            this.grid.subscribeOnClick(clickHandler);
         }
 
         private onClickWithShift(event: any, data: Slick.OnClickEventData) {
