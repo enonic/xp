@@ -96,9 +96,9 @@ function initToolTip() {
             position: 'absolute', top, left
         }).show();
         };
-    wemjq(document).on('mouseenter', '*[title]:not([disabled]):visible', function (e: any) {
-        wemjq(window).data(DATA, wemjq(window).attr('title'));
-        wemjq(window).removeAttr('title').addClass(CLS_ON);
+    wemjq(document).on('mouseenter', '*[title]:not([title=""]):not([disabled]):visible', function (e: any) {
+        wemjq(this).data(DATA, wemjq(this).attr('title'));
+        wemjq(this).removeAttr('title').addClass(CLS_ON);
         wemjq(`<div id='${ID}' />`).appendTo('body');
         if (e.pageX) {
             pageX = e.pageX;
@@ -109,10 +109,10 @@ function initToolTip() {
         showAt(e);
     });
     wemjq(document).on('mouseleave click', '.' + CLS_ON, function (e: any) {
-        if (wemjq(window).data(DATA)) {
-            wemjq(window).attr('title', wemjq(window).data(DATA));
+        if (wemjq(this).data(DATA)) {
+            wemjq(this).attr('title', wemjq(this).data(DATA));
         }
-        wemjq(window).removeClass(CLS_ON);
+        wemjq(this).removeClass(CLS_ON);
         wemjq('#' + ID).remove();
     });
     if (FOLLOW) { wemjq(document).on('mousemove', '.' + CLS_ON, showAt); }
