@@ -7,6 +7,10 @@
   .@{_COMMON_PREFIX}button {
     border: none;
 
+    &.icon-cart:before {
+      font-size: 20px;
+    }
+
     &.@{_CLS_PREFIX}icon-loop {
       padding: 0 14px;
 
@@ -34,25 +38,22 @@
 
   .selection-controller {
     display: inline-block;
-    width: 45px;
-    height: 40px;
+    width: 13px;
+    line-height: 40px;
+    padding: 0 16px;
+    vertical-align: top;
 
-    box-sizing: border-box;
-    padding: 4px 8px;
 
     label {
       display: inline-block;
       width: 100%;
       height: 100%;
+      padding: 0;
       vertical-align: middle;
 
-      padding: 0;
-      position: relative;
-
       &:before {
-        position: absolute;
-        top: 7px;
-        left: 7px;
+        margin: 0;
+        position: static;
       }
     }
   }

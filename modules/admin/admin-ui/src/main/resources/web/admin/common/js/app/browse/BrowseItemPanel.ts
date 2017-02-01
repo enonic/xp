@@ -66,6 +66,10 @@ module api.app.browse {
             }
         }
 
+        toggleCartPanel(show: boolean = true) {
+            this.showPanelByIndex(show ? 0 : 1);
+        }
+
         setStatisticsItem(item: BrowseItem<M>) {
             this.itemStatisticsPanel.setItem(item.toViewItem());
         }
