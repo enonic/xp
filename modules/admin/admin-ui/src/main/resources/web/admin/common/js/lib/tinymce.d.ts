@@ -24,12 +24,15 @@ interface HtmlAreaEditor extends HtmlAreaObservable {
     getElement: () => Element;
     getDoc: () => Document;
     editorUpload: any;
+    dom: any;
+    schema: any;
 }
 
 interface HtmlAreaUndoManager {
     undo: () => any;
     clear: () => void;
     hasUndo: () => boolean;
+    add: () => void;
 }
 
 interface HtmlAreaEvent {
@@ -42,6 +45,8 @@ interface HtmlAreaStatic extends HtmlAreaObservable {
     activeEditor: HtmlAreaEditor;
     get: (id: string) => HtmlAreaEditor;
     triggerSave: () => void;
+    toArray: (o: any) => [any];
+    trim: (o : string) => string;
 }
 
 declare var tinymce: HtmlAreaStatic;

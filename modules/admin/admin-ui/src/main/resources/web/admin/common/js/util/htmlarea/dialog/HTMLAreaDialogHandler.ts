@@ -20,6 +20,9 @@ module api.util.htmlarea.dialog {
             case HtmlAreaDialogType.MACRO:
                 modalDialog = this.openMacroDialog(event.getConfig(), event.getContent(), event.getApplicationKeys());
                 break;
+            case HtmlAreaDialogType.SEARCHANDREPLACE:
+                modalDialog = this.openSearchAndReplaceDialog(event.getConfig());
+                break;
             }
 
             if (modalDialog) {
@@ -51,6 +54,10 @@ module api.util.htmlarea.dialog {
         private static openMacroDialog(config: HtmlAreaMacro, content: api.content.ContentSummary,
                                        applicationKeys: api.application.ApplicationKey[]): ModalDialog {
             return this.openDialog(new MacroModalDialog(config, content, applicationKeys));
+        }
+
+        private static openSearchAndReplaceDialog(editor: HtmlAreaEditor): ModalDialog {
+            return this.openDialog(new SearchAndReplaceModalDialog(editor));
         }
 
         private static openDialog(dialog: ModalDialog): ModalDialog {
