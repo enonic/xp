@@ -130,6 +130,8 @@ module api.form {
                         this.resetAllFormItems();
                         this.cleanValidationForThisOption();
                         this.requiresClean = false;
+                    } else if(this.isChildOfDeselectedParent()) {
+                        this.removeNonDefaultOptionFromSelectionArray();
                     }
                 });
 
@@ -295,8 +297,43 @@ module api.form {
             this.expand(this.isOptionSetExpandedByDefault());
             this.disableFormItems();
             this.cleanValidationForThisOption();
+            this.cleanSelectionMessageForThisOption();
             this.removeClass('selected');
             this.requiresClean = true;
+        }
+
+        private removeNonDefaultOptionFromSelectionArray() {
+            if(this.formOptionSetOption.isDefaultOption()) {
+                return;
+            }
+
+            if (this.isRadioSelection()) {
+                const selectedProperty = this.getSelectedOptionsArray().get(0);
+                const checked = !!selectedProperty && selectedProperty.getString() === this.getName();
+                if(checked) {
+                    this.getSelectedOptionsArray().remove(selectedProperty.getIndex());
+                    this.removeClass('selected');
+                }
+            } else if(this.checkbox.isChecked()) {
+                let property = this.getThisPropertyFromSelectedOptionsArray();
+                if (!!property) {
+                    this.getSelectedOptionsArray().remove(property.getIndex());
+                }
+                this.checkbox.setChecked(false, true);
+                this.removeClass('selected');
+            }
+        }
+
+        private isChildOfDeselectedParent(): boolean {
+            var result = false;
+
+            wemjq(this.getEl().getHTMLElement()).parents('.form-option-set-option-view').each((index, elem) => {
+                if(!wemjq(elem).hasClass('selected')) {
+                    result = true;
+                }
+            });
+
+            return result;
         }
 
         private cleanValidationForThisOption() {
@@ -310,6 +347,13 @@ module api.form {
             });
 
             this.removeClass('invalid');
+        }
+
+        private cleanSelectionMessageForThisOption() {
+
+            wemjq(this.getEl().getHTMLElement()).find('.selection-message').each((index, elem) => {
+                wemjq(elem).addClass('empty');
+            });
         }
 
         private isOptionSetExpandedByDefault(): boolean {

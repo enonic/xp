@@ -1416,8 +1416,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormOptionSetOption)) {
                 result = result.concat(this.getOptionSetsInForm(<any>item));
             } else if (api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormOptionSet)) {
-                let optionSet = <api.form.FormOptionSet> item;
-                result.push(optionSet);
+                result.push(<api.form.FormOptionSet> item);
+                result = result.concat(this.getOptionSetsInForm(<any>item));
             }
         });
 
