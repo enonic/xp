@@ -139,9 +139,9 @@ module api {
                 return false;
             }
 
-            return keysA.every((keyA: string) => {
-                const valueA: Equitable = mapA[keysA[keyA]];
-                const valueB: Equitable = mapB[keysA[keyA]];
+            return keysA.every((curKeyA: string) => {
+                const valueA: Equitable = mapA[curKeyA];
+                const valueB: Equitable = mapB[curKeyA];
 
                 return ObjectHelper.equals(valueA, valueB);
             });
