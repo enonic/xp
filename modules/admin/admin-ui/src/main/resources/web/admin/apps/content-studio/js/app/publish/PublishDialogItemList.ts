@@ -26,7 +26,7 @@ export class PublishDialogItemList extends DialogItemList {
     }
 
     private itemChangedHandler() {
-        this.toggleClass("contains-toggleable", this.getItemViews()
+        this.toggleClass('contains-toggleable', this.getItemViews()
             .some(item => item.getBrowseItem().getModel().getContentSummary().hasChildren()));
     }
 
@@ -99,7 +99,7 @@ export class PublicStatusSelectionItem extends StatusSelectionItem {
 
             if (hasChildren) {
 
-                this.addClass("toggleable");
+                this.addClass('toggleable');
 
                 this.toggler = new IncludeChildrenToggler();
                 this.toggler.insertAfterEl(this.removeEl);
