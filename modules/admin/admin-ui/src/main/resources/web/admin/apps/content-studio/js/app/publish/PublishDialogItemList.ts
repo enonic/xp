@@ -89,24 +89,26 @@ export class PublicStatusSelectionItem extends StatusSelectionItem {
 
     constructor(viewer: api.ui.Viewer<ContentSummaryAndCompareStatus>, item: BrowseItem<ContentSummaryAndCompareStatus>) {
         super(viewer, item);
+
+        if(item.getModel().getContentSummary().hasChildren()) {
+            this.toggler = new IncludeChildrenToggler();
+
+            this.addClass('toggleable');
+
+            this.toggler = new IncludeChildrenToggler();
+
+            this.toggler.onStateChanged((enabled: boolean) => {
+                this.notifyItemStateChanged(this.getBrowseItem().getModel().getContentId(), enabled);
+            });
+        }
     }
 
     public doRender(): wemQ.Promise<boolean> {
 
         return super.doRender().then((rendered) => {
 
-            const hasChildren = this.getBrowseItem().getModel().getContentSummary().hasChildren();
-
-            if (hasChildren) {
-
-                this.addClass('toggleable');
-
-                this.toggler = new IncludeChildrenToggler();
+            if (this.toggler) {
                 this.toggler.insertAfterEl(this.removeEl);
-
-                this.toggler.onStateChanged((enabled: boolean) => {
-                    this.notifyItemStateChanged(this.getBrowseItem().getModel().getContentId(), enabled);
-                });
             }
 
             return rendered;
