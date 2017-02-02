@@ -66,12 +66,6 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
                 this.clearButton.addClass('hidden');
             });
 
-            this.applicationInput.onKeyUp((event: KeyboardEvent) => {
-                if (event.keyCode === 27) {
-                    this.getCancelAction().execute();
-                }
-            });
-
             this.applicationInput.onTextValueChanged(() => {
                 this.clearButton.toggleClass('hidden', api.util.StringHelper.isEmpty(this.applicationInput.getValue()));
             });
