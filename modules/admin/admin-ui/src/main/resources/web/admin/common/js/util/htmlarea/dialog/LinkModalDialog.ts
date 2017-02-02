@@ -62,7 +62,15 @@ module api.util.htmlarea.dialog {
         }
 
         private getToolTip(): string {
-            return this.link ? this.link.getAttribute('title') : api.util.StringHelper.EMPTY_STRING;
+            if(this.link) {
+                const linkTitleAttrValue = this.link.getAttribute('title');
+
+                if(linkTitleAttrValue) {
+                    return linkTitleAttrValue;
+                }
+            }
+
+            return api.util.StringHelper.EMPTY_STRING;
         }
 
         private isContentLink(): boolean {
