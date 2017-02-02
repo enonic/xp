@@ -472,7 +472,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 let isThisValid = this.isValid(); // event.isValid() = false will prevent the call to this.isValid()
                 this.isContentFormValid = isThisValid;
                 let thumbnailUploader = this.getFormIcon();
-                thumbnailUploader.toggleClass('invalid', isThisValid);
+                thumbnailUploader.toggleClass('invalid', !isThisValid);
                 this.getContentWizardToolbarPublishControls().setContentCanBePublished(this.checkContentCanBePublished());
                 if (!this.formState.isNew()) {
                     this.displayValidationErrors();
