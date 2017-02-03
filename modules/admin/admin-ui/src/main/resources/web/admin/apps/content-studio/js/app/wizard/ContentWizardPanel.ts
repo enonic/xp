@@ -660,21 +660,18 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     private handleMissingApp() {
-        let appsIsMissing = this.missingOrStoppedAppKeys.length > 0;
+        const appsIsMissing = this.missingOrStoppedAppKeys.length > 0;
         const livePanel = this.getLivePanel();
+        const isRenderable = this.isContentRenderable();
 
         if (livePanel) {
             livePanel.toggleClass('no-preview', appsIsMissing);
         }
 
         this.getCycleViewModeButton().setEnabled(!appsIsMissing);
-        if (appsIsMissing) {
-            this.getMainToolbar().getComponentsViewToggler().hide();
-            this.getMainToolbar().getContextWindowToggler().hide();
-        } else {
-            this.getMainToolbar().getComponentsViewToggler().show();
-            this.getMainToolbar().getContextWindowToggler().show();
-        }
+
+        this.getComponentsViewToggler().setVisible(isRenderable && !appsIsMissing);
+        this.getContextWindowToggler().setVisible(isRenderable && !appsIsMissing);
     }
 
     saveChanges(): wemQ.Promise<Content> {
