@@ -78,6 +78,7 @@ import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
 import ContentNamedEvent = api.content.event.ContentNamedEvent;
 import ActiveContentVersionSetEvent = api.content.event.ActiveContentVersionSetEvent;
 import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
+import BeforeContentSavedEvent = api.content.event.BeforeContentSavedEvent;
 
 import DialogButton = api.ui.dialog.DialogButton;
 
@@ -681,6 +682,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         }
         this.setRequireValid(false);
         this.contentUpdateDisabled = true;
+        new BeforeContentSavedEvent().fire();
         return super.saveChanges().then((content: Content) => {
             if (liveFormPanel) {
                 this.liveEditModel.setContent(content);
@@ -1413,8 +1415,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormOptionSetOption)) {
                 result = result.concat(this.getOptionSetsInForm(<any>item));
             } else if (api.ObjectHelper.iFrameSafeInstanceOf(item, api.form.FormOptionSet)) {
-                let optionSet = <api.form.FormOptionSet> item;
-                result.push(optionSet);
+                result.push(<api.form.FormOptionSet> item);
+                result = result.concat(this.getOptionSetsInForm(<any>item));
             }
         });
 
