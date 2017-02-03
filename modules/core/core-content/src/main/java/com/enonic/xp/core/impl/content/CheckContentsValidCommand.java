@@ -34,13 +34,16 @@ public class CheckContentsValidCommand
             return true;
         }
 
+        final LogicalExpr contentIsUnnamed = LogicalExpr.
+            or( new NotExpr( CompareExpr.
+                like( FieldExpr.from( ContentPropertyNames.DISPLAY_NAME ), ValueExpr.string( "*" ) ) ), CompareExpr.
+                like( FieldExpr.from( ContentPropertyNames.NAME ), ValueExpr.string( ContentName.UNNAMED_PREFIX + "*" ) ) );
+
+        final CompareExpr contentIsInvalid = CompareExpr.
+            eq( FieldExpr.from( ContentPropertyNames.VALID ), ValueExpr.fromBoolean( false ) );
+
         final QueryExpr selectInvalidExpr = QueryExpr.from( LogicalExpr.
-            or( LogicalExpr.
-                    or( new NotExpr( CompareExpr.
-                        like( FieldExpr.from( ContentPropertyNames.DISPLAY_NAME ), ValueExpr.string( "*" ) ) ), CompareExpr.
-                        like( FieldExpr.from( ContentPropertyNames.NAME ), ValueExpr.string( ContentName.UNNAMED_PREFIX + "*" ) ) ),
-                CompareExpr.
-                    eq( FieldExpr.from( ContentPropertyNames.VALID ), ValueExpr.fromBoolean( false ) ) ) );
+            or( contentIsUnnamed, contentIsInvalid ) );
 
         final ContentQuery query = ContentQuery.create().
             queryExpr( selectInvalidExpr ).
