@@ -18,6 +18,8 @@ module api.util.htmlarea.dialog {
         private replaceAction: Action;
         private replaceAllAction: Action;
 
+        private findAction: Action;
+
         private searchAndReplaceHelper: SearchAndReplaceHelper;
 
         constructor(editor: HtmlAreaEditor) {
@@ -31,6 +33,8 @@ module api.util.htmlarea.dialog {
             this.searchAndReplaceHelper.onNavigationButtonsUpdated(() => {
                 this.updateButtonStates();
             });
+
+            this.setupListeners();
         }
 
         protected getMainFormItems(): FormItem[] {
@@ -43,9 +47,6 @@ module api.util.htmlarea.dialog {
             this.replaceInput = <TextInput>replaceField.getInput();
             this.matchCaseCheckbox = <Checkbox>matchCaseCheckbox.getInput();
             this.wholeWordsCheckbox = <Checkbox>wholeWordsCheckbox.getInput();
-
-            this.findInput.onKeyPressed(this.handleKeyPressed.bind(this));
-            this.replaceInput.onKeyPressed(this.handleKeyPressed.bind(this));
 
             this.setFirstFocusField(findField.getInput());
 
@@ -64,11 +65,26 @@ module api.util.htmlarea.dialog {
         }
 
         protected initializeActions() {
-            this.addAction(this.createFindAction());
             this.addAction(this.createReplaceAction());
             this.addAction(this.createReplaceAllAction());
             this.addAction(this.createPrevAction());
             this.addAction(this.createNextAction());
+
+            this.findAction = new Action('Submit');
+            this.findAction.onExecuted(() => {
+                this.searchAndReplaceHelper.submit(this.findInput.getValue(), this.matchCaseCheckbox.isChecked(),
+                    this.wholeWordsCheckbox.isChecked());
+            });
+
+            this.setSubmitAction(this.findAction);
+        }
+
+        private setupListeners() {
+            let debouncedKeyDownHandler: () => void = api.util.AppHelper.debounce(() => {
+                this.findAction.execute();
+            }, 100);
+
+            this.findInput.onValueChanged(debouncedKeyDownHandler);
         }
 
         private updateActions(enabled: boolean) {
@@ -76,17 +92,6 @@ module api.util.htmlarea.dialog {
             this.replaceAllAction.setEnabled(enabled);
             this.prevAction.setEnabled(enabled);
             this.nextAction.setEnabled(enabled);
-        }
-
-        private createFindAction(): Action {
-            const action: Action = new Action('Find');
-
-            action.onExecuted(() => {
-                this.searchAndReplaceHelper.submit(this.findInput.getValue(), this.matchCaseCheckbox.isChecked(),
-                    this.wholeWordsCheckbox.isChecked());
-            });
-
-            return action;
         }
 
         private createReplaceAction(): Action {
