@@ -20,11 +20,6 @@ module api.ui.uploader {
             return this.file.id + '';
         }
 
-        setId(id: string): UploadItem<MODEL> {
-            this.file.id = id;
-            return this;
-        }
-
         getModel(): MODEL {
             return this.model;
         }
@@ -90,7 +85,7 @@ module api.ui.uploader {
 
             if (this.file && other.file) {
 
-                if (!api.ObjectHelper.stringEquals(this.file.id, other.file.id) ||
+                if (!api.ObjectHelper.numberEquals(this.file.id, other.file.id) ||
                     !api.ObjectHelper.stringEquals(this.fileName, other.fileName) ||
                     !api.ObjectHelper.numberEquals(this.file.percent, other.file.percent) ||
                     //!api.ObjectHelper.stringEquals(this.file.type, other.file.type) ||
