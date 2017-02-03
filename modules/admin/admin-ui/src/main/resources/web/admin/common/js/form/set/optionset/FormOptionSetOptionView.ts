@@ -36,6 +36,8 @@ module api.form {
 
         private checkbox: api.ui.Checkbox;
 
+        private requiresClean: boolean;
+
         protected helpText: HelpTextContainer;
 
         private checkboxEnabledStatusHandler: () => void = (() => {
@@ -65,6 +67,8 @@ module api.form {
             this.addClass(this.formOptionSetOption.getPath().getElements().length % 2 ? 'even' : 'odd');
 
             this.formItemLayer = new FormItemLayer(config.context);
+
+            this.requiresClean = false;
         }
 
         toggleHelpText(show?: boolean) {
@@ -119,6 +123,14 @@ module api.form {
                         let summaryAndStatus = api.content.ContentSummaryAndCompareStatus.fromContentSummary(content);
                         new api.content.event.EditContentEvent([summaryAndStatus]).fire();
                     });
+                });
+
+                api.content.event.BeforeContentSavedEvent.on(() => {
+                    if (this.getThisPropertyFromSelectedOptionsArray() == null && this.requiresClean) {
+                        this.resetAllFormItems();
+                        this.cleanValidationForThisOption();
+                        this.requiresClean = false;
+                    }
                 });
 
                 deferred.resolve(null);
@@ -281,9 +293,10 @@ module api.form {
 
         private deselectHandle() {
             this.expand(this.isOptionSetExpandedByDefault());
-            this.disableAndResetAllFormItems();
+            this.disableFormItems();
             this.cleanValidationForThisOption();
             this.removeClass('selected');
+            this.requiresClean = true;
         }
 
         private cleanValidationForThisOption() {
@@ -321,8 +334,7 @@ module api.form {
                 });
         }
 
-        private disableAndResetAllFormItems(): void {
-            this.disableFormItems();
+        private resetAllFormItems(): void {
 
             const array = this.getOptionItemsPropertyArray(this.parentDataSet);
             array.getSet(0).forEach((property) => {
@@ -381,8 +393,11 @@ module api.form {
         private updateViewState() {
             this.expand(this.isOptionSetExpandedByDefault() || this.getThisPropertyFromSelectedOptionsArray() != null);
 
-            if (this.isOptionSetExpandedByDefault() && this.getThisPropertyFromSelectedOptionsArray() == null) {
-                this.disableFormItems();
+            if (this.getThisPropertyFromSelectedOptionsArray() == null) {
+                if (this.isOptionSetExpandedByDefault()) {
+                    this.disableFormItems();
+                }
+                this.cleanValidationForThisOption();
             }
 
             this.toggleClass('selected', this.getThisPropertyFromSelectedOptionsArray() != null);

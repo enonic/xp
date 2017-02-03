@@ -78,6 +78,7 @@ import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
 import ContentNamedEvent = api.content.event.ContentNamedEvent;
 import ActiveContentVersionSetEvent = api.content.event.ActiveContentVersionSetEvent;
 import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
+import BeforeContentSavedEvent = api.content.event.BeforeContentSavedEvent;
 
 import DialogButton = api.ui.dialog.DialogButton;
 
@@ -681,6 +682,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         }
         this.setRequireValid(false);
         this.contentUpdateDisabled = true;
+        new BeforeContentSavedEvent().fire();
         return super.saveChanges().then((content: Content) => {
             if (liveFormPanel) {
                 this.liveEditModel.setContent(content);
