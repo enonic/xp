@@ -27,6 +27,7 @@ module api.util.htmlarea.dialog {
 
             this.layout();
             this.initializeActions();
+            this.initializeListeners();
         }
 
         setSubmitAction(action: api.ui.Action) {
@@ -194,6 +195,29 @@ module api.util.htmlarea.dialog {
                 this.editor.focus();
             }
             this.remove();
+        }
+
+        private initializeListeners() {
+            if(this.submitAction) {
+                this.listenEnterKey();
+            }
+        }
+
+        private listenEnterKey() {
+            this.onKeyDown((event: KeyboardEvent) => {
+                if(event.which === 13) { // enter
+                    if(this.isTextInput(<Element>event.target)) {
+                        setTimeout(() => { // TinyMCE in FF behaves bad without timeout
+                            this.submitAction.execute();
+                        }, 50);
+
+                    }
+                }
+            });
+        }
+
+        private isTextInput(element: Element): boolean {
+            return element.tagName.toUpperCase() === 'INPUT' && element.id.indexOf('TextInput') > 0;
         }
     }
 
