@@ -38,6 +38,8 @@ module api.form {
 
         private requiresClean: boolean;
 
+        private isOptionSetExpandedByDefault: boolean;
+
         protected helpText: HelpTextContainer;
 
         private checkboxEnabledStatusHandler: () => void = (() => {
@@ -63,6 +65,8 @@ module api.form {
             this.parentDataSet = config.parentDataSet;
 
             this.formOptionSetOption = config.formOptionSetOption;
+
+            this.isOptionSetExpandedByDefault = (<FormOptionSet>config.formOptionSetOption.getParent()).isExpanded();
 
             this.addClass(this.formOptionSetOption.getPath().getElements().length % 2 ? 'even' : 'odd');
 
@@ -130,6 +134,8 @@ module api.form {
                         this.resetAllFormItems();
                         this.cleanValidationForThisOption();
                         this.requiresClean = false;
+                    } else if(this.isChildOfDeselectedParent()) {
+                        this.removeNonDefaultOptionFromSelectionArray();
                     }
                 });
 
@@ -292,11 +298,38 @@ module api.form {
         }
 
         private deselectHandle() {
-            this.expand(this.isOptionSetExpandedByDefault());
+            this.expand(this.isOptionSetExpandedByDefault);
             this.disableFormItems();
             this.cleanValidationForThisOption();
+            this.cleanSelectionMessageForThisOption();
             this.removeClass('selected');
             this.requiresClean = true;
+        }
+
+        private removeNonDefaultOptionFromSelectionArray() {
+            if(this.formOptionSetOption.isDefaultOption()) {
+                return;
+            }
+
+            if (this.isRadioSelection()) {
+                const selectedProperty = this.getSelectedOptionsArray().get(0);
+                const checked = !!selectedProperty && selectedProperty.getString() === this.getName();
+                if(checked) {
+                    this.getSelectedOptionsArray().remove(selectedProperty.getIndex());
+                    this.removeClass('selected');
+                }
+            } else if(this.checkbox.isChecked()) {
+                let property = this.getThisPropertyFromSelectedOptionsArray();
+                if (!!property) {
+                    this.getSelectedOptionsArray().remove(property.getIndex());
+                }
+                this.checkbox.setChecked(false, true);
+                this.removeClass('selected');
+            }
+        }
+
+        private isChildOfDeselectedParent(): boolean {
+            return wemjq(this.getEl().getHTMLElement()).parents('.form-option-set-option-view').not('.selected').length > 0;
         }
 
         private cleanValidationForThisOption() {
@@ -312,8 +345,8 @@ module api.form {
             this.removeClass('invalid');
         }
 
-        private isOptionSetExpandedByDefault(): boolean {
-            return (<FormOptionSet>this.formOptionSetOption.getParent()).isExpanded();
+        private cleanSelectionMessageForThisOption() {
+            wemjq(this.getEl().getHTMLElement()).find('.selection-message').addClass('empty');
         }
 
         private expand(condition: boolean = true) {
@@ -349,7 +382,7 @@ module api.form {
                 property.getPropertySet().forEach((prop) => {
                     this.removeNonDataProperties(prop);
                 });
-            } else {
+            } else if(property.getName() != '_selected') {
                 property.getParent().removeProperty(property.getName(), property.getIndex());
             }
         }
@@ -391,16 +424,16 @@ module api.form {
         }
 
         private updateViewState() {
-            this.expand(this.isOptionSetExpandedByDefault() || this.getThisPropertyFromSelectedOptionsArray() != null);
+            this.expand(this.isOptionSetExpandedByDefault || this.getThisPropertyFromSelectedOptionsArray() != null);
 
-            if (this.getThisPropertyFromSelectedOptionsArray() == null) {
-                if (this.isOptionSetExpandedByDefault()) {
+            if (!this.getThisPropertyFromSelectedOptionsArray()) {
+                if (this.isOptionSetExpandedByDefault) {
                     this.disableFormItems();
                 }
                 this.cleanValidationForThisOption();
             }
 
-            this.toggleClass('selected', this.getThisPropertyFromSelectedOptionsArray() != null);
+            this.toggleClass('selected', !!this.getThisPropertyFromSelectedOptionsArray());
         }
 
         broadcastFormSizeChanged() {
