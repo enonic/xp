@@ -234,7 +234,7 @@ module api.ui.treegrid {
         };
 
         private bindClickEvents() {
-            var clickHandler = api.util.AppHelper.debounce(((event, data) => {
+            let clickHandler = api.util.AppHelper.debounce(((event, data) => {
                 if (!this.isActive()) {
                     return;
                 }
