@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,8 @@ import com.enonic.xp.repo.impl.search.NodeSearchService;
 public class ResolveSyncWorkCommand
     extends AbstractNodeCommand
 {
+    private static final Logger LOG = LoggerFactory.getLogger( ResolveSyncWorkCommand.class );
+
     private final Branch target;
 
     private final boolean includeChildren;
@@ -47,8 +50,6 @@ public class ResolveSyncWorkCommand
     private final NodeIds excludedIds;
 
     private final ResolveSyncWorkResult.Builder result;
-
-    private static final Logger LOG = LoggerFactory.getLogger( ResolveSyncWorkCommand.class );
 
     private ResolveSyncWorkCommand( final Builder builder )
     {
@@ -85,7 +86,8 @@ public class ResolveSyncWorkCommand
 
         getAllPossibleNodesToBePublished();
         final ResolveSyncWorkResult result = this.result.build();
-        return result;
+
+        return this.addRequiredIds( result );
     }
 
     private void getAllPossibleNodesToBePublished()
@@ -171,9 +173,7 @@ public class ResolveSyncWorkCommand
 
     private void addNewAndMovedParents( final Set<NodeComparison> comparisons )
     {
-        final NodePaths parentPaths = getPathsFromComparisons( comparisons );
-
-        final NodeIds parentIds = getParentIdsFromPaths( parentPaths );
+        final NodeIds parentIds = getParentIds( comparisons );
 
         final NodeIds.Builder filteredParentIdsBuilder = NodeIds.create();
         getFilteredNewAndMovedParentComparisons( parentIds ).
@@ -232,7 +232,15 @@ public class ResolveSyncWorkCommand
         return parentIdBuilder.build();
     }
 
-    private NodePaths getPathsFromComparisons( final Set<NodeComparison> comparisons )
+    private NodeIds getParentIds( final Collection<NodeComparison> comparisons )
+    {
+
+        final NodePaths parentPaths = getPathsFromComparisons( comparisons );
+
+        return getParentIdsFromPaths( parentPaths );
+    }
+
+    private NodePaths getPathsFromComparisons( final Collection<NodeComparison> comparisons )
     {
         final NodePaths.Builder parentPathsBuilder = NodePaths.create();
 
@@ -242,6 +250,22 @@ public class ResolveSyncWorkCommand
         }
 
         return parentPathsBuilder.build();
+    }
+
+    private ResolveSyncWorkResult addRequiredIds( final ResolveSyncWorkResult result )
+    {
+        final NodeIds parentIds = getParentIds( result.getNodeComparisons().getComparisons() );
+        final NodeIds resultIds = result.getNodeComparisons().getNodeIds();
+
+        final Set<NodeId> requiredIds = parentIds.stream().
+            filter( resultIds::contains ).
+            filter( parentId -> !CompareStatus.NEWER.equals( result.getNodeComparisons().get( parentId ).getCompareStatus() ) ).
+            collect( Collectors.toSet() );
+
+        return ResolveSyncWorkResult.create().
+            addAll( result.getNodeComparisons().getComparisons() ).
+            addRequiredNodes( NodeIds.from( requiredIds ) ).
+            build();
     }
 
     private void markPendingDeleteChildrenForDeletion( final Set<NodeComparison> comparisons )

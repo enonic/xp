@@ -19,10 +19,13 @@ public class CompareContentResults
 
     private final Map<ContentId, CompareContentResult> compareContentResultsMap;
 
+    private final ContentIds requiredIds;
+
     private CompareContentResults( Builder builder )
     {
         compareContentResults = ImmutableSet.copyOf( builder.compareResults );
         compareContentResultsMap = ImmutableMap.copyOf( builder.compareResultsMap );
+        requiredIds = builder.requiredIds.build();
     }
 
     public static Builder create()
@@ -51,6 +54,11 @@ public class CompareContentResults
         return ContentIds.from( compareContentResultsMap.keySet() );
     }
 
+    public ContentIds getRequiredIds()
+    {
+        return requiredIds;
+    }
+
     public int size()
     {
         return compareContentResultsMap.size();
@@ -61,6 +69,8 @@ public class CompareContentResults
         private Set<CompareContentResult> compareResults = Sets.newHashSet();
 
         private Map<ContentId, CompareContentResult> compareResultsMap = Maps.newHashMap();
+
+        private ContentIds.Builder requiredIds = ContentIds.create();
 
         private Builder()
         {
@@ -84,6 +94,13 @@ public class CompareContentResults
 
             return this;
         }
+
+        public Builder addRequiredIds( final ContentIds ids )
+        {
+            this.requiredIds.addAll( ids );
+            return this;
+        }
+
 
         public CompareContentResults build()
         {

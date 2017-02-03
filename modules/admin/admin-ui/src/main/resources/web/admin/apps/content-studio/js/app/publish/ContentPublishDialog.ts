@@ -91,6 +91,10 @@ export class ContentPublishDialog extends ProgressBarDialog {
         return dependants;
     }
 
+    protected getDependantList(): PublishDialogDependantList {
+        return <PublishDialogDependantList>super.getDependantList();
+    }
+
     open() {
         this.excludedIds = [];
 
@@ -133,6 +137,9 @@ export class ContentPublishDialog extends ProgressBarDialog {
             this.getDependantList().toggleClass('contains-removable', result.isContainsRemovable());
 
             this.dependantIds = result.getDependants().slice();
+
+            this.getDependantList().setRequiredIds(result.getRequired());
+
             this.containsInvalid = result.isContainsInvalid();
 
             return this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {

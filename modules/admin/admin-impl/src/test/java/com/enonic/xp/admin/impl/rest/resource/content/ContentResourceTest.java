@@ -19,9 +19,13 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
+import com.enonic.xp.content.CompareContentResult;
+import com.enonic.xp.content.CompareContentResults;
+import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
@@ -80,6 +84,7 @@ import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.util.BinaryReferences;
+import com.enonic.xp.util.Reference;
 
 import static com.enonic.xp.security.acl.Permission.CREATE;
 import static com.enonic.xp.security.acl.Permission.DELETE;
@@ -747,6 +752,27 @@ public class ContentResourceTest
     }
 
     @Test
+    public void resolve_publish_contents()
+        throws Exception
+    {
+        final CompareContentResult requested = new CompareContentResult( CompareStatus.NEW, ContentId.from( "requested-contentId" ) );
+        final CompareContentResult dependant = new CompareContentResult( CompareStatus.NEW, ContentId.from( "dependant-contentId" ) );
+        final CompareContentResults results = CompareContentResults.create().
+            add( requested ).
+            add( dependant ).
+            addRequiredIds( ContentIds.from( ContentId.from( "required-contentId" ) ) ).
+            build();
+
+        Mockito.when( contentService.resolvePublishDependencies( Mockito.any() ) ).thenReturn( results );
+
+        String jsonString = request().path( "content/resolvePublishContent" ).
+            entity( "{\"ids\":[\"requested-contentId\"],\"excludedIds\":[],\"excludeChildrenIds\":[]}", MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "resolve_publish_content.json", jsonString );
+    }
+
+    @Test
     public void duplicate()
         throws Exception
     {
@@ -1177,6 +1203,23 @@ public class ContentResourceTest
     {
         final String userId = displayName.replace( " ", "" ).toLowerCase();
         return User.create().displayName( userId ).key( PrincipalKey.ofUser( SYSTEM, userId ) ).login( userId ).build();
+    }
+
+    private Content createContent( final String id, final PropertyTree data, final ContentTypeName contentTypeName )
+    {
+        return Content.create().
+            id( ContentId.from( id ) ).
+            data( data ).
+            parentPath( ContentPath.ROOT ).
+            name( id ).
+            valid( true ).
+            creator( PrincipalKey.from( "user:system:admin" ) ).
+            owner( PrincipalKey.from( "user:myStore:me" ) ).
+            language( Locale.ENGLISH ).
+            displayName( "My Content" ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
+            type( contentTypeName ).
+            build();
     }
 
     private Content createContent( final String id, final String name, final String contentTypeName )

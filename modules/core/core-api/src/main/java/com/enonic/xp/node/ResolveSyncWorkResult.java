@@ -11,9 +11,12 @@ public class ResolveSyncWorkResult
 {
     private NodeComparisons nodeComparisons;
 
+    private NodeIds requiredNodes;
+
     private ResolveSyncWorkResult( final Builder builder )
     {
         nodeComparisons = builder.comparisonsBuilder.build();
+        requiredNodes = builder.requiredNodes.build();
     }
 
     private ResolveSyncWorkResult( final Set<NodeComparison> nodeComparisons )
@@ -43,6 +46,11 @@ public class ResolveSyncWorkResult
         return nodeComparisons;
     }
 
+    public NodeIds getRequiredNodes()
+    {
+        return requiredNodes;
+    }
+
     @Override
     public Iterator<NodeComparison> iterator()
     {
@@ -53,6 +61,8 @@ public class ResolveSyncWorkResult
     {
         private NodeComparisons.Builder comparisonsBuilder = NodeComparisons.create();
 
+        private NodeIds.Builder requiredNodes = NodeIds.create();
+
         private Builder()
         {
         }
@@ -62,6 +72,13 @@ public class ResolveSyncWorkResult
             this.comparisonsBuilder.add( val );
             return this;
         }
+
+        public Builder addRequiredNodes( final NodeIds ids )
+        {
+            this.requiredNodes.addAll( ids );
+            return this;
+        }
+
 
         public Builder addAll( final Collection<NodeComparison> val )
         {

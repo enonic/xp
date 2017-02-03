@@ -7,12 +7,15 @@ module api.content.resource.result {
 
         dependentContents: ContentId[];
         requestedContents: ContentId[];
+        requiredContents: ContentId[];
         containsRemovable: boolean;
         containsInvalid: boolean;
 
-        constructor(dependants: ContentId[], requested: ContentId[], containsRemovable: boolean, containsInvalid: boolean) {
+        constructor(dependants: ContentId[], requested: ContentId[], required: ContentId[], containsRemovable: boolean,
+                    containsInvalid: boolean) {
             this.dependentContents = dependants;
             this.requestedContents = requested;
+            this.requiredContents = required;
             this.containsRemovable = containsRemovable;
             this.containsInvalid = containsInvalid;
         }
@@ -23,6 +26,10 @@ module api.content.resource.result {
 
         getRequested(): ContentId[] {
             return this.requestedContents;
+        }
+
+        getRequired(): ContentId[] {
+            return this.requiredContents;
         }
 
         isContainsRemovable(): boolean {
@@ -37,10 +44,11 @@ module api.content.resource.result {
 
             let dependants: ContentId[] = json.dependentContents.map(dependant => new ContentId(dependant.id));
             let requested: ContentId[] = json.requestedContents.map(dependant => new ContentId(dependant.id));
+            let required: ContentId[] = json.requiredContents.map(dependant => new ContentId(dependant.id));
             let containsRemovable: boolean = json.containsRemovable;
             let containsInvalid: boolean = json.containsInvalid;
 
-            return new ResolvePublishDependenciesResult(dependants, requested, containsRemovable, containsInvalid);
+            return new ResolvePublishDependenciesResult(dependants, requested, required, containsRemovable, containsInvalid);
         }
     }
 }

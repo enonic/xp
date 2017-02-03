@@ -58,6 +58,7 @@ public class ResolveContentsToBePublishedCommand
             final ResolveSyncWorkResult syncWorkResult = getWorkResult( contentId );
 
             this.resultBuilder.addAll( CompareResultTranslator.translate( syncWorkResult.getNodeComparisons() ) );
+            this.resultBuilder.addRequiredIds( ContentIds.from( syncWorkResult.getRequiredNodes().getAsStrings() ) );
         }
     }
 
