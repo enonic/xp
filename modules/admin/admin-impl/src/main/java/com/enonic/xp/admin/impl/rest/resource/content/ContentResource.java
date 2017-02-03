@@ -140,6 +140,7 @@ import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
+import com.enonic.xp.content.ResolveContentsToBePublishedCommandResult;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.SetActiveContentVersionResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
@@ -706,7 +707,8 @@ public final class ContentResource
         final ContentIds excludeChildrenIds = ContentIds.from( params.getExcludeChildrenIds() );
 
         //Resolves the publish dependencies
-        final CompareContentResults results = contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
+        final ResolveContentsToBePublishedCommandResult
+            result = contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
             target( ContentConstants.BRANCH_MASTER ).
             contentIds( requestedContentIds ).
             excludedContentIds( excludeContentIds ).
@@ -714,14 +716,14 @@ public final class ContentResource
             build() );
 
         //Resolved the dependent ContentPublishItem
-        final List<ContentId> dependentContentIdList = results.contentIds().
+        final List<ContentId> dependentContentIdList = result.getCompareContentResults().contentIds().
             stream().
             filter( contentId -> !requestedContentIds.contains( contentId ) ).
             collect( Collectors.toList() );
 
         final ContentIds dependentContentIds = ContentIds.from( dependentContentIdList );
 
-        final Boolean anyRemovable = this.isAnyContentRemovableFromPublish( dependentContentIds );
+        final Boolean anyRemovable = result.getRequiredIds().getSize() > 0;
 
         //sort all dependant content ids
         final ContentIds sortedDependentContentIds = this.contentService.find( ContentQuery.create().
@@ -733,9 +735,10 @@ public final class ContentResource
         //Returns the JSON result
         return ResolvePublishContentResultJson.create().
             setContainsRemovable( anyRemovable ).
+            setContainsInvalid( !this.isValidContent( result.getCompareContentResults() ) ).
             setRequestedContents( requestedContentIds ).
+            setRequiredContents( result.getRequiredIds() ).
             setDependentContents( sortedDependentContentIds ).
-            setContainsInvalid( !this.isValidContent( results ) ).
             build();
     }
 

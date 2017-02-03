@@ -15,6 +15,7 @@ import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.content.PushContentsResult;
+import com.enonic.xp.content.ResolveContentsToBePublishedCommandResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -66,7 +67,7 @@ public class PushContentCommand
         final CompareContentResults results;
         if ( resolveSyncWork )
         {
-            results = getSyncWork();
+            results = getSyncWork().getCompareContentResults();
         }
         else
         {
@@ -116,7 +117,7 @@ public class PushContentCommand
         doDeleteNodes( deletedNodesIds.build() );
     }
 
-    private CompareContentResults getSyncWork()
+    private ResolveContentsToBePublishedCommandResult getSyncWork()
     {
         return ResolveContentsToBePublishedCommand.create().
             contentIds( this.contentIds ).

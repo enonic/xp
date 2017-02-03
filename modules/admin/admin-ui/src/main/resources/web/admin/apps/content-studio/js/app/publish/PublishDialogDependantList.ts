@@ -3,17 +3,26 @@ import {DialogDependantList} from '../dialog/DependantItemsDialog';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
+import ContentIds = api.content.ContentIds;
 
 export class PublishDialogDependantList extends DialogDependantList {
+
+    private requiredIds: ContentIds;
 
     private itemClickListeners: {(item: ContentSummaryAndCompareStatus): void}[] = [];
 
     private removeClickListeners: {(item: ContentSummaryAndCompareStatus): void}[] = [];
 
+    constructor() {
+        super();
+
+        this.requiredIds = ContentIds.empty();
+    }
+
     createItemView(item: ContentSummaryAndCompareStatus, readOnly: boolean): api.dom.Element {
         let view = super.createItemView(item, readOnly);
 
-        if (CompareStatus.NEWER === item.getCompareStatus()) {
+        if (!this.requiredIds.contains(item.getContentId())) {
             view.addClass('removable');
         }
 
@@ -31,6 +40,10 @@ export class PublishDialogDependantList extends DialogDependantList {
         }
 
         return view;
+    }
+
+    setRequiredIds(value: ContentId[]) {
+        this.requiredIds = ContentIds.from(value);
     }
 
     onItemClicked(listener: (item: ContentSummaryAndCompareStatus) => void) {

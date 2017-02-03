@@ -1,15 +1,26 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Collection;
+import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicates;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareContentResults;
+import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPaths;
+import com.enonic.xp.content.ResolveContentsToBePublishedCommandResult;
+import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.SyncWorkResolverParams;
 
@@ -24,7 +35,7 @@ public class ResolveContentsToBePublishedCommand
 
     private final Branch target;
 
-    private final CompareContentResults.Builder resultBuilder;
+    private final ResolveContentsToBePublishedCommandResult.Builder resultBuilder;
 
     private final boolean includeDependencies;
 
@@ -34,7 +45,7 @@ public class ResolveContentsToBePublishedCommand
         this.contentIds = builder.contentIds;
         this.excludedContentIds = builder.excludedContentIds;
         this.target = builder.target;
-        this.resultBuilder = CompareContentResults.create();
+        this.resultBuilder = ResolveContentsToBePublishedCommandResult.create();
         this.excludeChildrenIds = builder.excludeChildrenIds;
         this.includeDependencies = builder.includeDependencies;
     }
@@ -44,7 +55,7 @@ public class ResolveContentsToBePublishedCommand
         return new Builder();
     }
 
-    CompareContentResults execute()
+    ResolveContentsToBePublishedCommandResult execute()
     {
         resolveDependencies();
 
@@ -57,7 +68,68 @@ public class ResolveContentsToBePublishedCommand
         {
             final ResolveSyncWorkResult syncWorkResult = getWorkResult( contentId );
 
-            this.resultBuilder.addAll( CompareResultTranslator.translate( syncWorkResult.getNodeComparisons() ) );
+            this.resultBuilder.addCompareContentResults( CompareResultTranslator.translate( syncWorkResult.getNodeComparisons() ) );
+            this.resultBuilder.addRequiredContentIds( getRequiredIds(syncWorkResult) );
+        }
+    }
+
+    private ContentIds getRequiredIds( final ResolveSyncWorkResult result )
+    {
+        final NodePaths parentPaths = getParentPaths( result.getNodeComparisons().getComparisons() );
+        final NodePaths resultPaths = result.getNodeComparisons().getSourcePaths();
+
+        final Set<ContentId> requiredIds = parentPaths.stream().
+            filter( resultPaths::contains ).
+            map( parentPath ->
+                 {
+                     final NodeComparison comparison = result.getNodeComparisons().getBySourcePath( parentPath );
+
+                     if ( !CompareStatus.NEWER.equals( comparison.getCompareStatus() ) )
+                     {
+                         return ContentId.from( comparison.getNodeId().toString() );
+                     }
+                     return null;
+                 } ).
+            filter(  contentId -> !contentIds.contains( contentId ) ).
+            collect( Collectors.toSet() );
+
+        return ContentIds.from( requiredIds );
+    }
+
+    private NodePaths getParentPaths( final Collection<NodeComparison> comparisons )
+    {
+
+        return getPathsFromComparisons( comparisons );
+
+    }
+
+    private NodePaths getPathsFromComparisons( final Collection<NodeComparison> comparisons )
+    {
+        final NodePaths.Builder parentPathsBuilder = NodePaths.create();
+
+        for ( final NodeComparison comparison : comparisons )
+        {
+            addParentPaths( parentPathsBuilder, comparison.getSourcePath() );
+        }
+
+        return parentPathsBuilder.build();
+    }
+
+    private void addParentPaths( final NodePaths.Builder parentPathsBuilder, final NodePath path )
+    {
+        if ( path.isRoot() )
+        {
+            return;
+        }
+
+        for ( NodePath parentPath : path.getParentPaths() )
+        {
+            if ( parentPath.isRoot() )
+            {
+                return;
+            }
+
+            parentPathsBuilder.addNodePath( parentPath );
         }
     }
 
