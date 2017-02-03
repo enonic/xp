@@ -266,14 +266,6 @@ module api.util.htmlarea.dialog {
 
             const contentSelector = api.content.ContentComboBox.create().setLoader(loader).setMaximumOccurrences(1).build();
 
-            contentSelector.onKeyDown((e: KeyboardEvent) => {
-                if (api.ui.KeyHelper.isEscKey(e) && !contentSelector.getComboBox().isDropdownShown()) {
-                    // Prevent modal dialog from closing on Esc key when dropdown is expanded
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-            });
-
             this.onAdded(() => {
                 contentSelector.setValue(getValueFn.call(this));
             });

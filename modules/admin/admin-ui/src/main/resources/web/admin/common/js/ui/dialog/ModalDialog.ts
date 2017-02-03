@@ -131,7 +131,7 @@ module api.ui.dialog {
         }
 
         private createDefaultCancelAction() {
-            let cancelAction = new api.ui.Action('Cancel', 'esc');
+            let cancelAction = new api.ui.Action('Cancel', 'esc', true);
             cancelAction.setIconClass('cancel-button-top');
             cancelAction.setLabel('');
             cancelAction.onExecuted(()=> {

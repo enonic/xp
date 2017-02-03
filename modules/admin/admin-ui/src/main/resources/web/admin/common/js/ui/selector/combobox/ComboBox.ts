@@ -813,6 +813,10 @@ module api.ui.selector.combobox {
             }
 
             if (!this.isDropdownShown()) {
+                if (event.which === 27) { // esc
+                    return;
+                }
+
                 this.showDropdown();
 
                 if (event.which === 40) { // down
@@ -875,6 +879,8 @@ module api.ui.selector.combobox {
                 break;
             case 27: // Esc
                 this.hideDropdown();
+                event.stopPropagation();
+                event.preventDefault();
                 break;
             }
 
