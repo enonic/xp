@@ -36,8 +36,8 @@ public class CheckContentsValidCommand
 
         final LogicalExpr contentIsUnnamed = LogicalExpr.
             or( new NotExpr( CompareExpr.
-                like( FieldExpr.from( ContentPropertyNames.DISPLAY_NAME ), ValueExpr.string( "*" ) ) ), CompareExpr.
-                like( FieldExpr.from( ContentPropertyNames.NAME ), ValueExpr.string( ContentName.UNNAMED_PREFIX + "*" ) ) );
+                    like( FieldExpr.from( ContentPropertyNames.DISPLAY_NAME ), ValueExpr.string( "*" ) ) ),
+                CompareExpr.like( FieldExpr.from( ContentPropertyNames.NAME ), ValueExpr.string( ContentName.UNNAMED_PREFIX + "*" ) ) );
 
         final CompareExpr contentIsInvalid = CompareExpr.
             eq( FieldExpr.from( ContentPropertyNames.VALID ), ValueExpr.fromBoolean( false ) );
