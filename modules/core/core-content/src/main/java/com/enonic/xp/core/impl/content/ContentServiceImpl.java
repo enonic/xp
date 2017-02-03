@@ -55,6 +55,7 @@ import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.GetActiveContentVersionsParams;
 import com.enonic.xp.content.GetActiveContentVersionsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.content.GetInvalidContentResult;
 import com.enonic.xp.content.GetPublishStatusResult;
 import com.enonic.xp.content.GetPublishStatusesParams;
 import com.enonic.xp.content.GetPublishStatusesResult;
@@ -380,9 +381,9 @@ public class ContentServiceImpl
     }
 
     @Override
-    public boolean isValidContent( ContentIds contentIds )
+    public GetInvalidContentResult getInvalidContent( ContentIds contentIds )
     {
-        return CheckContentsValidCommand.create().
+        return GetInvalidContentCommand.create().
             translator( this.translator ).
             nodeService( this.nodeService ).
             eventPublisher( this.eventPublisher ).
