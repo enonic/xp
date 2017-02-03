@@ -188,9 +188,10 @@ export class ContentPublishDialog extends ProgressBarDialog {
     }
 
     setIncludeChildItems(include: boolean, silent?: boolean) {
-        this.getItemList().getItemViews().forEach((itemView) => {
-            itemView.getIncludeChildrenToggler().toggle(include, silent);
-        });
+        this.getItemList().getItemViews()
+            .filter(itemView => itemView.getIncludeChildrenToggler())
+            .forEach(itemView => itemView.getIncludeChildrenToggler().toggle(include, silent)
+            );
         return this;
     }
 
