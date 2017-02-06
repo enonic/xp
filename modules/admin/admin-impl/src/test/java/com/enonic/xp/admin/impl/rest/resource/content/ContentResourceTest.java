@@ -13,14 +13,10 @@ import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
-import com.google.common.collect.Sets;
-
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.content.json.GetDescendantsOfContents;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishContentResultJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishDependenciesJson;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.CompareContentResult;
@@ -967,8 +963,10 @@ public class ContentResourceTest
         final ContentId contentId1 = ContentId.from( "content-id1" );
         final ContentId contentId2 = ContentId.from( "content-id2" );
 
-        final CompareContentResults res =
-            CompareContentResults.create().add( new CompareContentResult( CompareStatus.NEW, contentId1 ) ).build();
+        final CompareContentResults res = CompareContentResults.create().
+            add( new CompareContentResult( CompareStatus.NEW, contentId1 ) ).
+            add( new CompareContentResult( CompareStatus.NEW, contentId2 ) ).
+            build();
 
         Mockito.doReturn( res ).when( this.contentService ).resolvePublishDependencies(
             Mockito.isA( ResolvePublishDependenciesParams.class ) );
