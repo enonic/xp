@@ -310,7 +310,7 @@ export class PageComponentsView extends api.dom.DivEl {
                 return;
             }
 
-            let rowElement = event.targetж;
+            let rowElement = event.target;
             let selected = false;
 
             while (!rowElement.classList.contains('slick-row')) {
