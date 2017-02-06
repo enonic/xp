@@ -29,27 +29,20 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
         this.addClass('install-application-dialog hidden');
 
-        let loadedAppsAtLeastOnce = false;
-
         this.statusMessage = new api.dom.DivEl('status-message');
-        this.statusMessage.setHtml('Loading application list');
 
         this.onMarketLoaded = () => {
-
-            this.statusMessage.removeClass('failed');
+            this.refreshStatusMessage();
 
             if (this.marketAppPanel.getMarketAppsTreeGrid().getGrid().getDataView().getLength() === 0) {
                 this.statusMessage.addClass('empty');
                 this.statusMessage.setHtml('No applications found');
             } else {
-                if (!loadedAppsAtLeastOnce) {
-                    this.centerMyself();
-                }
                 this.statusMessage.removeClass('empty');
-                loadedAppsAtLeastOnce = true;
             }
-
             this.statusMessage.addClass('loaded');
+
+            this.centerMyself();
         };
 
         api.dom.Body.get().appendChild(this);
@@ -88,6 +81,8 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
                 this.statusMessage.addClass('empty failed');
                 this.statusMessage.setHtml(message);
+
+                setTimeout(this.centerMyself.bind(this), 100);
             });
 
             this.initUploaderListeners();
@@ -170,6 +165,8 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
         super.show();
         this.marketAppPanel.loadGrid();
+
+        this.refreshStatusMessage();
     }
 
     hide() {
@@ -189,5 +186,10 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
     private resetFileInputWithUploader() {
         this.applicationInput.reset();
+    }
+
+    private refreshStatusMessage() {
+        this.statusMessage.removeClass('failed');
+        this.statusMessage.setHtml('Loading application list');
     }
 }
