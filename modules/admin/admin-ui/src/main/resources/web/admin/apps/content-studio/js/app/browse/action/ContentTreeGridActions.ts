@@ -149,7 +149,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.DELETE_CONTENT.setEnabled(this.anyDeletable(contentSummaries));
         this.DUPLICATE_CONTENT.setEnabled(false);
         this.MOVE_CONTENT.setEnabled(true);
-        this.SORT_CONTENT.setEnabled(contentSummaries.length === 1);
+        this.SORT_CONTENT.setEnabled(contentSummaries.length === 1 && contentSummaries[0].hasChildren());
 
         this.PUBLISH_CONTENT.setEnabled(publishEnabled);
         this.PUBLISH_TREE_CONTENT.setEnabled(treePublishEnabled);
