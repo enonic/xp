@@ -2,6 +2,7 @@ package com.enonic.xp.inputtype;
 
 import org.junit.Test;
 
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
@@ -32,10 +33,15 @@ public class SiteConfiguratorTypeTest
     public void testCreateProperty()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
-        final Value value = this.type.createValue( ValueFactory.newString( "test" ), config );
+        final PropertySet siteConfig = new PropertySet();
+        siteConfig.setString( "applicationKey", "com.enonic.app.myapp" );
+        final PropertySet appConfig = new PropertySet();
+        appConfig.setString( "param", "value" );
+        siteConfig.setSet( "config", appConfig );
+        final Value value = this.type.createValue( ValueFactory.newPropertySet( siteConfig ), config );
 
         assertNotNull( value );
-        assertSame( ValueTypes.STRING, value.getType() );
+        assertSame( ValueTypes.PROPERTY_SET, value.getType() );
     }
 
     @Test
