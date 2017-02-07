@@ -138,7 +138,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         this.pageSkipReload = false;
         this.lockPageAfterProxyLoad = false;
 
-        this.liveEditPageProxy = new LiveEditPageProxy();
+        this.liveEditPageProxy = this.createLiveEditPageProxy();
 
         this.contextWindow = this.createContextWindow(this.liveEditPageProxy, this.liveEditModel);
 
@@ -147,6 +147,23 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             this.contextWindow,
             this.contentWizardPanel
         );
+    }
+
+    private createLiveEditPageProxy(): LiveEditPageProxy {
+        let liveEditPageProxy = new LiveEditPageProxy();
+        liveEditPageProxy.onLoaded(() => {
+            if (this.isRendered()) {
+                // If LiveEdit is not rendered yet, don't remove the spinner - WizardPanel will do that in onRendered()
+                this.contentWizardPanel.getLiveMask().hide();
+            }
+            this.pageLoading = false;
+            if (this.lockPageAfterProxyLoad) {
+                this.pageView.setLocked(true);
+                this.lockPageAfterProxyLoad = false;
+            }
+        });
+
+        return liveEditPageProxy;
     }
 
     private createContextWindow(proxy: LiveEditPageProxy, model: LiveEditModel): ContextWindow {
@@ -399,20 +416,16 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             if (this.isShown() && this.liveEditModel.isRenderableContent()) {
                 this.contentWizardPanel.getLiveMask().show();
             }
-            this.liveEditPageProxy.load();
-            this.liveEditPageProxy.onLoaded(() => {
-                if (this.isRendered()) {
-                    // If LiveEdit is not rendered yet, don't remove the spinner - WizardPanel will do that in onRendered()
-                    this.contentWizardPanel.getLiveMask().hide();
-                }
-                this.pageLoading = false;
-                if (this.lockPageAfterProxyLoad) {
-                    this.pageView.setLocked(true);
-                    this.lockPageAfterProxyLoad = false;
-                }
 
-                this.contextWindow.clearSelection(); //resetting selection, selected item may already be gone
-            });
+            this.liveEditPageProxy.load();
+
+            if (clearInspection) {
+                let clearInspectionFn = () => {
+                    this.contextWindow.clearSelection();
+                    this.liveEditPageProxy.unLoaded(clearInspectionFn);
+                };
+                this.liveEditPageProxy.onLoaded(clearInspectionFn);
+            }
         }
     }
 
@@ -457,7 +470,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         });
 
         this.liveEditPageProxy.onPageUnlocked((event: api.liveedit.PageUnlockedEvent) => {
-            this.contextWindow.clearSelection();
+            //this.contextWindow.clearSelection();
             this.minimizeContentFormPanelIfNeeded();
         });
 
