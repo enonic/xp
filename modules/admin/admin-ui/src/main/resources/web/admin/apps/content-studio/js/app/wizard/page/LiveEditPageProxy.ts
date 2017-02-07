@@ -314,6 +314,7 @@ export class LiveEditPageProxy {
         }
 
         if (liveEditWindow) {
+            this.liveEditWindow = liveEditWindow;
             if (liveEditWindow.wemjq) {
                 if (LiveEditPageProxy.debug) {
                     console.debug('LiveEditPageProxy.setting config for', liveEditWindow.document, CONFIG);
@@ -326,8 +327,6 @@ export class LiveEditPageProxy {
                 if (this.liveEditWindow) {
                     this.stopListening(this.liveEditWindow);
                 }
-
-                this.liveEditWindow = liveEditWindow;
 
                 this.listenToPage(this.liveEditWindow);
 
