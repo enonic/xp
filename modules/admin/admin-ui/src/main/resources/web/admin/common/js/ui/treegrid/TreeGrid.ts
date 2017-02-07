@@ -164,7 +164,6 @@ module api.ui.treegrid {
                     if (!this.grid.isRowSelected(row)) {
                         this.grid.selectRow(row);
                     }
-                    this.unhighlightCurrentRow(true); //we unhighlight row as it gets selected, so highlightNode gets empty
                 } else if (this.grid.getSelectedRows().length === 1) {
                     row = this.grid.getSelectedRows()[0];
                 }
