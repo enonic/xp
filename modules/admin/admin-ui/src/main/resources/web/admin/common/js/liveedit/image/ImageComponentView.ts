@@ -3,22 +3,24 @@ module api.liveedit.image {
     import ComponentView = api.liveedit.ComponentView;
     import ImageComponent = api.content.page.region.ImageComponent;
     import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
+    import ContentTypeName = api.schema.content.ContentTypeName;
 
-    export class ImageComponentViewBuilder extends ComponentViewBuilder<ImageComponent> {
+    export class ImageComponentViewBuilder extends ContentBackedComponentViewBuilder<ImageComponent> {
 
         constructor() {
             super();
             this.setType(ImageItemType.get());
+            this.setContentTypeName(ContentTypeName.IMAGE);
         }
     }
 
-    export class ImageComponentView extends ComponentView<ImageComponent> {
+    export class ImageComponentView extends ContentBackedComponentView<ImageComponent> {
 
         private image: api.dom.Element;
         protected component: ImageComponent;
 
         constructor(builder: ImageComponentViewBuilder) {
-            super(builder.
+            super(<ImageComponentViewBuilder>builder.
                 setViewer(new ImageComponentViewer()).
                 setInspectActionRequired(true));
 
@@ -29,6 +31,10 @@ module api.liveedit.image {
             this.initializeImage();
 
             this.handleContentRemovedEvent();
+        }
+
+        protected getContentId(): ContentId {
+            return this.component ? this.component.getImage() : null;
         }
 
         private handleContentRemovedEvent() {
