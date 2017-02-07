@@ -29,25 +29,21 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
         this.addClass('install-application-dialog hidden');
 
-        let loadedAppsAtLeastOnce = false;
+        this.statusMessage = new api.dom.DivEl('status-message');
 
-        this.onMarketLoaded = api.util.AppHelper.debounce((() => {
+        this.onMarketLoaded = () => {
+            this.refreshStatusMessage();
+
             if (this.marketAppPanel.getMarketAppsTreeGrid().getGrid().getDataView().getLength() === 0) {
                 this.statusMessage.addClass('empty');
                 this.statusMessage.setHtml('No applications found');
             } else {
-                if (!loadedAppsAtLeastOnce) {
-                    this.centerMyself();
-                }
                 this.statusMessage.removeClass('empty');
-                loadedAppsAtLeastOnce = true;
             }
-
             this.statusMessage.addClass('loaded');
-        }).bind(this), 150, false);
 
-        this.statusMessage = new api.dom.DivEl('status-message');
-        this.statusMessage.setHtml('Loading application list');
+            this.centerMyself();
+        };
 
         api.dom.Body.get().appendChild(this);
     }
@@ -72,6 +68,15 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
             this.applicationInput.onAppInstallFinished(() => {
                 this.clearButton.toggleClass('hidden', api.util.StringHelper.isEmpty(this.applicationInput.getValue()));
+            });
+
+            this.applicationInput.onAppInstallFailed((message: string) => {
+                this.clearButton.toggleClass('hidden', api.util.StringHelper.isEmpty(this.applicationInput.getValue()));
+
+                this.statusMessage.addClass('empty failed');
+                this.statusMessage.setHtml(message);
+
+                setTimeout(this.centerMyself.bind(this), 100);
             });
 
             this.initUploaderListeners();
@@ -130,8 +135,8 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
     private initUploaderListeners() {
 
         let uploadFailedHandler = (event: FileUploadFailedEvent<Application>, uploader: ApplicationUploaderEl) => {
-            this.applicationInput.showFailure(
-                uploader.getFailure());
+            api.notify.NotifyManager.get().showWarning(uploader.getFailure());
+
             this.resetFileInputWithUploader();
         };
 
@@ -150,15 +155,19 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
     show() {
         this.marketAppPanel.getMarketAppsTreeGrid().onLoaded(this.onMarketLoaded);
         this.resetFileInputWithUploader();
-        super.show();
         this.removeClass('hidden');
+
+        super.show();
         this.marketAppPanel.loadGrid();
+
+        this.refreshStatusMessage();
     }
 
     hide() {
+        super.hide();
+
         this.marketAppPanel.getMarketAppsTreeGrid().unLoaded(this.onMarketLoaded);
         this.statusMessage.removeClass('loaded');
-        super.hide();
         this.addClass('hidden');
         this.removeClass('animated');
         this.applicationInput.reset();
@@ -171,5 +180,10 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
     private resetFileInputWithUploader() {
         this.applicationInput.reset();
+    }
+
+    private refreshStatusMessage() {
+        this.statusMessage.removeClass('failed');
+        this.statusMessage.setHtml('Loading application list');
     }
 }
