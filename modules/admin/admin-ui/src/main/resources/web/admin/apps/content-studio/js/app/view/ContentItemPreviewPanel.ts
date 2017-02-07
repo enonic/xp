@@ -136,8 +136,8 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
         this.image.setSrc(imgUrl);
     }
 
-    public setItem(item: ViewItem<ContentSummaryAndCompareStatus>) {
-        if (item && !item.equals(this.item) && !this.skipNextSetItemCall) {
+    public setItem(item: ViewItem<ContentSummaryAndCompareStatus>, force: boolean = false) {
+        if (item && !this.skipNextSetItemCall && (!item.equals(this.item) || force)) {
             if (typeof item.isRenderable() === 'undefined') {
                 return;
             }
