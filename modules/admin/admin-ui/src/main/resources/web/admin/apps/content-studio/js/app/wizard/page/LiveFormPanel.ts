@@ -129,6 +129,8 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
     private liveEditPageProxy: LiveEditPageProxy;
 
+    private contentEventListener: (event: any) => void;
+
     constructor(config: LiveFormPanelConfig) {
         super('live-form-panel');
         this.contentWizardPanel = config.contentWizardPanel;
@@ -365,16 +367,23 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             this.contentWizardPanel.getContextWindowToggler().setActive(false, true);
         });
 
-        const contentEventListener = (event) => {
-            this.propagateEvent(event);
-        };
+        this.handleContentUpdatedEvent();
+    }
 
-        ContentDeletedEvent.on(contentEventListener);
-        ContentUpdatedEvent.on(contentEventListener);
-        this.onRemoved(() => {
-            ContentDeletedEvent.un(contentEventListener);
-            ContentUpdatedEvent.un(contentEventListener);
-        });
+    private handleContentUpdatedEvent() {
+        if (!this.contentEventListener) {
+            this.contentEventListener = (event) => {
+                this.propagateEvent(event);
+            };
+
+            ContentDeletedEvent.on(this.contentEventListener);
+            ContentUpdatedEvent.on(this.contentEventListener);
+
+            this.onRemoved(() => {
+                ContentDeletedEvent.un(this.contentEventListener);
+                ContentUpdatedEvent.un(this.contentEventListener);
+            });
+        }
     }
 
     skipNextReloadConfirmation(skip: boolean) {
