@@ -37,10 +37,19 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
 
     private componentPropertyChangedEventHandler: (event: ComponentPropertyChangedEvent) => void;
 
+    private contentUpdatedListener;
+
     constructor() {
         super(<ComponentInspectionPanelConfig>{
             iconClass: api.liveedit.ItemViewIconClassResolver.resolveByType('fragment')
         });
+
+        this.contentUpdatedListener = (event: ContentUpdatedEvent) => {
+            // update currently selected option if this is the one updated
+            if (this.fragmentComponent && event.getContentId().equals(this.fragmentComponent.getFragment())) {
+                this.fragmentSelector.getSelectedOption().displayValue = event.getContentSummary();
+            }
+        };
     }
 
     setModel(liveEditModel: LiveEditModel) {
@@ -76,17 +85,11 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
     }
 
     private handleContentUpdatedEvent() {
-        let contentUpdatedListener = (event: ContentUpdatedEvent) => {
-            // update currently selected option if this is the one updated
-            if (this.fragmentComponent && event.getContentId().equals(this.fragmentComponent.getFragment())) {
-                this.fragmentSelector.getSelectedOption().displayValue = event.getContentSummary();
-            }
-        };
-
-        ContentUpdatedEvent.on(contentUpdatedListener);
+        ContentUpdatedEvent.un(this.contentUpdatedListener);
+        ContentUpdatedEvent.on(this.contentUpdatedListener);
 
         this.onRemoved((event) => {
-            ContentUpdatedEvent.un(contentUpdatedListener);
+            ContentUpdatedEvent.un(this.contentUpdatedListener);
         });
     }
 

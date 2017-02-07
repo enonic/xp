@@ -129,6 +129,8 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
     private liveEditPageProxy: LiveEditPageProxy;
 
+    private contentEventListener;
+
     constructor(config: LiveFormPanelConfig) {
         super('live-form-panel');
         this.contentWizardPanel = config.contentWizardPanel;
@@ -141,6 +143,10 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         this.liveEditPageProxy = new LiveEditPageProxy();
 
         this.contextWindow = this.createContextWindow(this.liveEditPageProxy, this.liveEditModel);
+
+        this.contentEventListener = (event) => {
+            this.propagateEvent(event);
+        };
 
         // constructor to listen to live edit events during wizard rendering
         this.contextWindowController = new ContextWindowController(
@@ -365,15 +371,18 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             this.contentWizardPanel.getContextWindowToggler().setActive(false, true);
         });
 
-        const contentEventListener = (event) => {
-            this.propagateEvent(event);
-        };
+        this.handleContentUpdatedEvent();
+    }
 
-        ContentDeletedEvent.on(contentEventListener);
-        ContentUpdatedEvent.on(contentEventListener);
+    private handleContentUpdatedEvent() {
+        ContentDeletedEvent.un(this.contentEventListener);
+        ContentUpdatedEvent.un(this.contentEventListener);
+        ContentDeletedEvent.on(this.contentEventListener);
+        ContentUpdatedEvent.on(this.contentEventListener);
+
         this.onRemoved(() => {
-            ContentDeletedEvent.un(contentEventListener);
-            ContentUpdatedEvent.un(contentEventListener);
+            ContentDeletedEvent.un(this.contentEventListener);
+            ContentUpdatedEvent.un(this.contentEventListener);
         });
     }
 
