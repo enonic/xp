@@ -16,6 +16,7 @@ module api.util.htmlarea.dialog {
         private linkText: string;
         private onlyTextSelected: boolean;
         private textFormItem: FormItem;
+        private toolTipFormItem: FormItem;
 
         private content: api.content.ContentSummary;
 
@@ -48,6 +49,7 @@ module api.util.htmlarea.dialog {
             if (this.onlyTextSelected) {
                 this.setFirstFocusField(this.textFormItem.getInput());
             } else {
+                this.setFirstFocusField(this.toolTipFormItem.getInput());
                 this.textFormItem.hide();
                 this.textFormItem.removeValidator();
             }
@@ -207,9 +209,9 @@ module api.util.htmlarea.dialog {
 
         protected getMainFormItems(): FormItem [] {
             this.textFormItem = this.createFormItemWithPostponedValue('linkText', 'Text', this.getLinkText, Validators.required);
-            let toolTipFormItem = this.createFormItemWithPostponedValue('toolTip', 'Tooltip', this.getToolTip);
+            this.toolTipFormItem = this.createFormItemWithPostponedValue('toolTip', 'Tooltip', this.getToolTip);
 
-            return [this.textFormItem, toolTipFormItem];
+            return [this.textFormItem, this.toolTipFormItem];
         }
 
         private createDockedPanel(): DockedPanel {

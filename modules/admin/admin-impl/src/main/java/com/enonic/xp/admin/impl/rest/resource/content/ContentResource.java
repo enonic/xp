@@ -726,11 +726,8 @@ public final class ContentResource
         final Boolean anyRemovable = result.getRequiredIds().getSize() > 0;
 
         //sort all dependant content ids
-        final ContentIds sortedDependentContentIds = this.contentService.find( ContentQuery.create().
-            filterContentIds( dependentContentIds ).
-            queryExpr( QueryParser.parse( "order by _path asc" ) ).
-            size( -1 ).
-            build() ).getContentIds();
+        final ContentIds sortedDependentContentIds =
+            dependentContentIds.getSize() > 0 ? sortContentIds( dependentContentIds, "_path" ) : dependentContentIds;
 
         //Returns the JSON result
         return ResolvePublishContentResultJson.create().
@@ -740,6 +737,20 @@ public final class ContentResource
             setRequiredContents( result.getRequiredIds() ).
             setDependentContents( sortedDependentContentIds ).
             build();
+    }
+
+    private ContentIds sortContentIds( final ContentIds contentIds, final String field )
+    {
+        if ( StringUtils.isBlank( field ) )
+        {
+            return contentIds;
+        }
+
+        return this.contentService.find( ContentQuery.create().
+            filterContentIds( contentIds ).
+            queryExpr( QueryParser.parse( "order by " + field ) ).
+            size( -1 ).
+            build() ).getContentIds();
     }
 
     private boolean isValidContent( final CompareContentResults compareResults )

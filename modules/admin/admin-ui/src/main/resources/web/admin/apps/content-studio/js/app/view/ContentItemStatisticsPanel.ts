@@ -23,4 +23,7 @@ export class ContentItemStatisticsPanel extends api.app.view.ItemStatisticsPanel
         }
     }
 
+    getPreviewPanel(): ContentItemPreviewPanel {
+        return this.previewPanel;
+    }
 }

@@ -4,6 +4,7 @@ import {ContentBrowseToolbar} from './ContentBrowseToolbar';
 import {ContentTreeGrid} from './ContentTreeGrid';
 import {ContentBrowseFilterPanel} from './filter/ContentBrowseFilterPanel';
 import {ContentBrowseItemPanel} from './ContentBrowseItemPanel';
+import {ContentItemStatisticsPanel} from '../view/ContentItemStatisticsPanel';
 import {MobileContentItemStatisticsPanel} from '../view/MobileContentItemStatisticsPanel';
 import {FloatingDetailsPanel} from '../view/detail/FloatingDetailsPanel';
 import {DockedDetailsPanel} from '../view/detail/DockedDetailsPanel';
@@ -580,23 +581,33 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             return;
         }
 
-        let content: ContentSummaryAndCompareStatus;
-        let previewItemNeedsUpdate = data.some((contentItem: ContentSummaryAndCompareStatus) => {
-            if (contentItem.getPath().toString() === previewItem.getPath()) {
-                content = contentItem;
+        let toBrowseItem = (content: ContentSummaryAndCompareStatus, renderable: boolean) => {
+            let item = new BrowseItem<ContentSummaryAndCompareStatus>(content).setId(content.getId()).setDisplayName(
+                content.getDisplayName()).setPath(content.getPath().toString()).setIconUrl(
+                new api.content.util.ContentIconUrlResolver().setContent(content.getContentSummary()).resolve()).setRenderable(
+                renderable);
+
+            return item;
+        };
+
+        let isChildFragment = (possibleChildFragment: ContentSummaryAndCompareStatus, possibleParent: ContentSummaryAndCompareStatus) => {
+            return possibleChildFragment.getType().equals(api.schema.content.ContentTypeName.FRAGMENT) &&
+                possibleChildFragment.getPath().isChildOf(possibleParent.getPath());
+        };
+
+        data.some((content: ContentSummaryAndCompareStatus) => {
+            if (content.getPath().toString() === previewItem.getPath()) {
+                new api.content.page.IsRenderableRequest(content.getContentId()).sendAndParse().then((renderable: boolean) => {
+                    this.getBrowseItemPanel().setStatisticsItem(toBrowseItem(content, renderable));
+                });
+                return true;
+            } else if (isChildFragment(content, previewItem.getModel())) {
+                // child fragment was updated - preview refresh is needed
+                (<ContentItemStatisticsPanel>this.getBrowseItemPanel().getPanel(1)).getPreviewPanel().setItem(previewItem, true);
+                this.mobileContentItemStatisticsPanel.getPreviewPanel().setItem(previewItem, true);
                 return true;
             }
         });
-
-        if (previewItemNeedsUpdate) {
-            new api.content.page.IsRenderableRequest(content.getContentId()).sendAndParse().then((renderable: boolean) => {
-                let item = new BrowseItem<ContentSummaryAndCompareStatus>(content).setId(content.getId()).setDisplayName(
-                    content.getDisplayName()).setPath(content.getPath().toString()).setIconUrl(
-                    new api.content.util.ContentIconUrlResolver().setContent(content.getContentSummary()).resolve()).setRenderable(
-                    renderable);
-                this.getBrowseItemPanel().setStatisticsItem(item);
-            });
-        }
     }
 
     private updateDetailsPanel(data: ContentSummaryAndCompareStatus[]) {
