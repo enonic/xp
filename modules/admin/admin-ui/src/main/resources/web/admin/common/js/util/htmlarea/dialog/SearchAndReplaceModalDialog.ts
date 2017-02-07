@@ -61,6 +61,10 @@ module api.util.htmlarea.dialog {
         private createCheckbox(id: string, label: string): FormItem {
             let checkbox: Checkbox = Checkbox.create().setLabelText(label).setInputAlignment(InputAlignment.RIGHT).build();
 
+            checkbox.onValueChanged(() => {
+                this.findAction.execute();
+            })
+
             return this.createFormItem(id, null, null, null, checkbox);
         }
 
