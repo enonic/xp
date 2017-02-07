@@ -99,11 +99,11 @@ final class ValidateContentDataCommand
 
         if ( name == null || name.isUnnamed() )
         {
-            this.resultBuilder.add( new ValidationError( "name" ) );
+            this.resultBuilder.add( new ValidationError( "name is required" ) );
         }
         if ( StringUtils.isBlank( displayName ) )
         {
-            this.resultBuilder.add( new ValidationError( "displayName" ) );
+            this.resultBuilder.add( new ValidationError( "displayName is required" ) );
         }
     }
 
