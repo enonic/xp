@@ -1,0 +1,10 @@
+{
+  "containsInvalid" : true,
+  "containsRemovable" : false,
+  "dependentContents" : [ {
+    "id" : "content-id2"
+  } ],
+  "requestedContents" : [ {
+    "id" : "content-id1"
+  } ]
+}

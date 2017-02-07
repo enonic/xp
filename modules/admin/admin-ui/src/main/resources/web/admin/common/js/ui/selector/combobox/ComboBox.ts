@@ -450,22 +450,24 @@ module api.ui.selector.combobox {
                 .then((result: api.content.resource.result.ContentsExistResult) => {
 
                     optionIds.forEach((val) => {
-                        const option = this.getOptionByValue(val);
-                        if (option == null) {
-                            const contentExists = result.contentExists(val);
-                            if (this.displayMissingSelectedOptions && (contentExists || !this.removeMissingSelectedOptions)) {
-                                const selectedOption = (<BaseSelectedOptionsView<OPTION_DISPLAY_VALUE>> this.selectedOptionsView)
-                                    .makeEmptyOption(val);
-                                selectedOptions.push(selectedOption);
-                                this.selectOption(selectedOption, true);
-                            }
-                            if (!contentExists) {
-                                nonExistingIds.push(val);
+                        if (val.trim().length > 0) {
+                            const option = this.getOptionByValue(val);
+                            if (option == null) {
+                                const contentExists = result.contentExists(val);
+                                if (this.displayMissingSelectedOptions && (contentExists || !this.removeMissingSelectedOptions)) {
+                                    const selectedOption = (<BaseSelectedOptionsView<OPTION_DISPLAY_VALUE>> this.selectedOptionsView)
+                                        .makeEmptyOption(val);
+                                    selectedOptions.push(selectedOption);
+                                    this.selectOption(selectedOption, true);
+                                }
+                                if (!contentExists) {
+                                    nonExistingIds.push(val);
+                                }
                             }
                         }
                     });
 
-                    if (this.removeMissingSelectedOptions) {
+                    if (this.removeMissingSelectedOptions && nonExistingIds.length > 0) {
                         this.notifyContentMissing(nonExistingIds);
                     }
 
@@ -813,6 +815,10 @@ module api.ui.selector.combobox {
             }
 
             if (!this.isDropdownShown()) {
+                if (event.which === 27) { // esc
+                    return;
+                }
+
                 this.showDropdown();
 
                 if (event.which === 40) { // down
@@ -875,6 +881,8 @@ module api.ui.selector.combobox {
                 break;
             case 27: // Esc
                 this.hideDropdown();
+                event.stopPropagation();
+                event.preventDefault();
                 break;
             }
 

@@ -36,6 +36,10 @@ module api.form {
 
         private checkbox: api.ui.Checkbox;
 
+        private requiresClean: boolean;
+
+        private isOptionSetExpandedByDefault: boolean;
+
         protected helpText: HelpTextContainer;
 
         private checkboxEnabledStatusHandler: () => void = (() => {
@@ -62,9 +66,13 @@ module api.form {
 
             this.formOptionSetOption = config.formOptionSetOption;
 
+            this.isOptionSetExpandedByDefault = (<FormOptionSet>config.formOptionSetOption.getParent()).isExpanded();
+
             this.addClass(this.formOptionSetOption.getPath().getElements().length % 2 ? 'even' : 'odd');
 
             this.formItemLayer = new FormItemLayer(config.context);
+
+            this.requiresClean = false;
         }
 
         toggleHelpText(show?: boolean) {
@@ -119,6 +127,16 @@ module api.form {
                         let summaryAndStatus = api.content.ContentSummaryAndCompareStatus.fromContentSummary(content);
                         new api.content.event.EditContentEvent([summaryAndStatus]).fire();
                     });
+                });
+
+                api.content.event.BeforeContentSavedEvent.on(() => {
+                    if (this.getThisPropertyFromSelectedOptionsArray() == null && this.requiresClean) {
+                        this.resetAllFormItems();
+                        this.cleanValidationForThisOption();
+                        this.requiresClean = false;
+                    } else if(this.isChildOfDeselectedParent()) {
+                        this.removeNonDefaultOptionFromSelectionArray();
+                    }
                 });
 
                 deferred.resolve(null);
@@ -280,10 +298,38 @@ module api.form {
         }
 
         private deselectHandle() {
-            this.expand(this.isOptionSetExpandedByDefault());
-            this.disableAndResetAllFormItems();
+            this.expand(this.isOptionSetExpandedByDefault);
+            this.disableFormItems();
             this.cleanValidationForThisOption();
+            this.cleanSelectionMessageForThisOption();
             this.removeClass('selected');
+            this.requiresClean = true;
+        }
+
+        private removeNonDefaultOptionFromSelectionArray() {
+            if(this.formOptionSetOption.isDefaultOption()) {
+                return;
+            }
+
+            if (this.isRadioSelection()) {
+                const selectedProperty = this.getSelectedOptionsArray().get(0);
+                const checked = !!selectedProperty && selectedProperty.getString() === this.getName();
+                if(checked) {
+                    this.getSelectedOptionsArray().remove(selectedProperty.getIndex());
+                    this.removeClass('selected');
+                }
+            } else if(this.checkbox.isChecked()) {
+                let property = this.getThisPropertyFromSelectedOptionsArray();
+                if (!!property) {
+                    this.getSelectedOptionsArray().remove(property.getIndex());
+                }
+                this.checkbox.setChecked(false, true);
+                this.removeClass('selected');
+            }
+        }
+
+        private isChildOfDeselectedParent(): boolean {
+            return wemjq(this.getEl().getHTMLElement()).parents('.form-option-set-option-view').not('.selected').length > 0;
         }
 
         private cleanValidationForThisOption() {
@@ -299,8 +345,8 @@ module api.form {
             this.removeClass('invalid');
         }
 
-        private isOptionSetExpandedByDefault(): boolean {
-            return (<FormOptionSet>this.formOptionSetOption.getParent()).isExpanded();
+        private cleanSelectionMessageForThisOption() {
+            wemjq(this.getEl().getHTMLElement()).find('.selection-message').addClass('empty');
         }
 
         private expand(condition: boolean = true) {
@@ -321,8 +367,7 @@ module api.form {
                 });
         }
 
-        private disableAndResetAllFormItems(): void {
-            this.disableFormItems();
+        private resetAllFormItems(): void {
 
             const array = this.getOptionItemsPropertyArray(this.parentDataSet);
             array.getSet(0).forEach((property) => {
@@ -337,7 +382,7 @@ module api.form {
                 property.getPropertySet().forEach((prop) => {
                     this.removeNonDataProperties(prop);
                 });
-            } else {
+            } else if(property.getName() != '_selected') {
                 property.getParent().removeProperty(property.getName(), property.getIndex());
             }
         }
@@ -379,13 +424,16 @@ module api.form {
         }
 
         private updateViewState() {
-            this.expand(this.isOptionSetExpandedByDefault() || this.getThisPropertyFromSelectedOptionsArray() != null);
+            this.expand(this.isOptionSetExpandedByDefault || this.getThisPropertyFromSelectedOptionsArray() != null);
 
-            if (this.isOptionSetExpandedByDefault() && this.getThisPropertyFromSelectedOptionsArray() == null) {
-                this.disableFormItems();
+            if (!this.getThisPropertyFromSelectedOptionsArray()) {
+                if (this.isOptionSetExpandedByDefault) {
+                    this.disableFormItems();
+                }
+                this.cleanValidationForThisOption();
             }
 
-            this.toggleClass('selected', this.getThisPropertyFromSelectedOptionsArray() != null);
+            this.toggleClass('selected', !!this.getThisPropertyFromSelectedOptionsArray());
         }
 
         broadcastFormSizeChanged() {

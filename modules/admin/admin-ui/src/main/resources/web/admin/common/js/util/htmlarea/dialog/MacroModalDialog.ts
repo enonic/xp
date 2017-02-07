@@ -79,14 +79,6 @@ module api.util.htmlarea.dialog {
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
 
-            macroSelectorComboBox.onKeyDown((e: KeyboardEvent) => {
-                if (api.ui.KeyHelper.isEscKey(e) && !macroSelectorComboBox.isDropdownShown()) {
-                    // Prevent modal dialog from closing on Esc key when dropdown is expanded
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-            });
-
             return formItem;
         }
 

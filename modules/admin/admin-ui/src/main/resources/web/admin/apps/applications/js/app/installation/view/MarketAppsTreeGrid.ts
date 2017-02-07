@@ -40,7 +40,7 @@ declare var CONFIG;
 
 export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
 
-    static MAX_FETCH_SIZE: number = 10;
+    static MAX_FETCH_SIZE: number = 20;
 
     private installApplications: Application[];
 
@@ -112,6 +112,12 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
             showMask();
         });
         this.applicationInput.onAppInstallFinished(() => {
+            this.unmask();
+        });
+        this.applicationInput.onAppInstallFailed(() => {
+            this.invalidate();
+            this.initData([]);
+
             this.unmask();
         });
         this.applicationInput.getTextInput().getHTMLElement().onpaste = () => {
@@ -217,8 +223,6 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
             if ((elem.hasClass(MarketAppStatusFormatter.statusInstallCssClass) ||
                  elem.hasClass(MarketAppStatusFormatter.statusUpdateCssClass))) {
 
-                this.mask();
-
                 app.setStatus(MarketAppStatus.INSTALLING);
 
                 let row = this.getGrid().getDataView().getRowById(node.getId());
@@ -242,10 +246,8 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
                     } else {
                         elem.setHtml(MarketAppStatusFormatter.formatStatus(status));
                     }
-                    this.unmask();
 
                 }).catch((reason: any) => {
-                    this.unmask();
                     elem.setHtml(MarketAppStatusFormatter.formatStatus(status));
                     api.DefaultErrorHandler.handle(reason);
                 });

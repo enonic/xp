@@ -5,116 +5,139 @@
 /*jshint smarttabs:true, undef:true, latedef:true, curly:true, bitwise:true, camelcase:true */
 /*globals $code */
 
-(function (exports) {
-    "use strict";
+(function(exports) {
+	"use strict";
 
-    var html = "", baseDir;
-    var modules = {}, exposedModules = [], moduleCount = 0;
+	var html = "", baseDir;
+	var modules = {}, exposedModules = [], moduleCount = 0;
 
-    var scripts = document.getElementsByTagName('script');
-    for (var i = 0; i < scripts.length; i++) {
-        var src = scripts[i].src;
+	var scripts = document.getElementsByTagName('script');
+	for (var i = 0; i < scripts.length; i++) {
+		var src = scripts[i].src;
 
-        if (src.indexOf('/plugin.dev.js') != -1) {
-            baseDir = src.substring(0, src.lastIndexOf('/'));
-        }
-    }
+		if (src.indexOf('/plugin.dev.js') != -1) {
+			baseDir = src.substring(0, src.lastIndexOf('/'));
+		}
+	}
 
-    function require(ids, callback) {
-        var module, defs = [];
+	function require(ids, callback) {
+		var module, defs = [];
 
-        for (var i = 0; i < ids.length; ++i) {
-            module = modules[ids[i]] || resolve(ids[i]);
-            if (!module) {
-                throw 'module definition dependecy not found: ' + ids[i];
-            }
+		for (var i = 0; i < ids.length; ++i) {
+			module = modules[ids[i]] || resolve(ids[i]);
+			if (!module) {
+				throw 'module definition dependecy not found: ' + ids[i];
+			}
 
-            defs.push(module);
-        }
+			defs.push(module);
+		}
 
-        callback.apply(null, defs);
-    }
+		callback.apply(null, defs);
+	}
 
-    function resolve(id) {
-        var target = exports;
-        var fragments = id.split(/[.\/]/);
+	function resolve(id) {
+		if (exports.privateModules && id in exports.privateModules) {
+			return;
+		}
 
-        for (var fi = 0; fi < fragments.length; ++fi) {
-            if (!target[fragments[fi]]) {
-                return;
-            }
+		var target = exports;
+		var fragments = id.split(/[.\/]/);
 
-            target = target[fragments[fi]];
-        }
+		for (var fi = 0; fi < fragments.length; ++fi) {
+			if (!target[fragments[fi]]) {
+				return;
+			}
 
-        return target;
-    }
+			target = target[fragments[fi]];
+		}
 
-    function register(id) {
-        var target = exports;
-        var fragments = id.split(/[.\/]/);
+		return target;
+	}
 
-        for (var fi = 0; fi < fragments.length - 1; ++fi) {
-            if (target[fragments[fi]] === undefined) {
-                target[fragments[fi]] = {};
-            }
+	function register(id) {
+		var target = exports;
+		var fragments = id.split(/[.\/]/);
 
-            target = target[fragments[fi]];
-        }
+		for (var fi = 0; fi < fragments.length - 1; ++fi) {
+			if (target[fragments[fi]] === undefined) {
+				target[fragments[fi]] = {};
+			}
 
-        target[fragments[fragments.length - 1]] = modules[id];
-    }
+			target = target[fragments[fi]];
+		}
 
-    function define(id, dependencies, definition) {
-        if (typeof id !== 'string') {
-            throw 'invalid module definition, module id must be defined and be a string';
-        }
+		target[fragments[fragments.length - 1]] = modules[id];
+	}
 
-        if (dependencies === undefined) {
-            throw 'invalid module definition, dependencies must be specified';
-        }
+	function define(id, dependencies, definition) {
+		var privateModules, i;
 
-        if (definition === undefined) {
-            throw 'invalid module definition, definition function must be specified';
-        }
+		if (typeof id !== 'string') {
+			throw 'invalid module definition, module id must be defined and be a string';
+		}
 
-        require(dependencies, function () {
-            modules[id] = definition.apply(null, arguments);
-        });
+		if (dependencies === undefined) {
+			throw 'invalid module definition, dependencies must be specified';
+		}
 
-        if (--moduleCount === 0) {
-            for (var i = 0; i < exposedModules.length; i++) {
-                register(exposedModules[i]);
-            }
-        }
-    }
+		if (definition === undefined) {
+			throw 'invalid module definition, definition function must be specified';
+		}
 
-    function expose(ids) {
-        exposedModules = ids;
-    }
+		require(dependencies, function() {
+			modules[id] = definition.apply(null, arguments);
+		});
 
-    function writeScripts() {
-        document.write(html);
-    }
+		if (--moduleCount === 0) {
+			for (i = 0; i < exposedModules.length; i++) {
+				register(exposedModules[i]);
+			}
+		}
 
-    function load(path) {
-        html += '<script type="text/javascript" src="' + baseDir + '/' + path + '"></script>\n';
-        moduleCount++;
-    }
+		// Expose private modules for unit tests
+		if (exports.AMDLC_TESTS) {
+			privateModules = exports.privateModules || {};
 
-    // Expose globally
-    exports.define = define;
-    exports.require = require;
+			for (id in modules) {
+				privateModules[id] = modules[id];
+			}
 
-    expose(["tinymce/pasteplugin/Utils"]);
+			for (i = 0; i < exposedModules.length; i++) {
+				delete privateModules[exposedModules[i]];
+			}
 
-    load('classes/Utils.js');
-    load('classes/Clipboard.js');
-    load('classes/WordFilter.js');
-    load('classes/Quirks.js');
-    load('classes/Plugin.js');
+			exports.privateModules = privateModules;
+		}
 
-    writeScripts();
+	}
+
+	function expose(ids) {
+		exposedModules = ids;
+	}
+
+	function writeScripts() {
+		document.write(html);
+	}
+
+	function load(path) {
+		html += '<script type="text/javascript" src="' + baseDir + '/' + path + '"></script>\n';
+		moduleCount++;
+	}
+
+	// Expose globally
+	exports.define = define;
+	exports.require = require;
+
+	expose(["tinymce/pasteplugin/Utils"]);
+
+	load('classes/Utils.js');
+	load('classes/SmartPaste.js');
+	load('classes/Clipboard.js');
+	load('classes/WordFilter.js');
+	load('classes/Quirks.js');
+	load('classes/Plugin.js');
+
+	writeScripts();
 })(this);
 
-// $hash: eee82a60233ca209b9d162b8d91de650
+// $hash: 927ea31bd968149df6ad4de6f8f03e95

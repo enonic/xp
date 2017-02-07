@@ -103,12 +103,6 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
             this.allContentTypes.filter(this.fileInput.getValue());
         });
-
-        this.fileInput.onKeyUp((event: KeyboardEvent) => {
-            if (event.keyCode === 27) {
-                this.getCancelAction().execute();
-            }
-        });
     }
 
     private initLoadMask() {

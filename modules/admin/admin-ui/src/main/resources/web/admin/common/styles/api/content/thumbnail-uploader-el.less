@@ -26,4 +26,20 @@
     }
   }
 
+  &.invalid .result-container:after {
+    position: absolute;
+    content: "!";
+    background: @admin-red;
+    color: @admin-white;
+    top: 5px;
+    width: 20px;
+    height: 20px;
+    padding: 2px;
+    line-height: 18px;
+    border-radius: 14px;
+    font-size: 16px;
+    z-index: 1;
+    right: -10px;
+  }
+
 }

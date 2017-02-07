@@ -9,7 +9,7 @@ module api.ui.uploader {
     import ElementShownEvent = api.dom.ElementShownEvent;
 
     export interface FineUploaderFile {
-        id: string;
+        id: number;
         name: string;
         size: number;
         uuid: string;
@@ -488,17 +488,17 @@ module api.ui.uploader {
             return this.config.allowTypes;
         }
 
-        private findUploadItemById(id: string): UploadItem<MODEL> {
+        private findUploadItemById(id: number): UploadItem<MODEL> {
             for (let i = 0; i < this.uploadedItems.length; i++) {
                 let uploadItem = this.uploadedItems[i];
-                if (uploadItem.getId() === id) {
+                if (uploadItem.getId() === String(id)) {
                     return uploadItem;
                 }
             }
             return null;
         }
 
-        private submitCallback(id: string, name: string) {
+        private submitCallback(id: number, name: string) {
             let file: FineUploaderFile = this.uploader.getFile(id);
             file.id = id;
 
@@ -514,14 +514,14 @@ module api.ui.uploader {
             this.debouncedUploadStart();
         }
 
-        private statusChangeCallback(id: string, oldStatus: string, newStatus: string) {
+        private statusChangeCallback(id: number, oldStatus: string, newStatus: string) {
             let uploadItem = this.findUploadItemById(id);
             if (!!uploadItem) {
                 uploadItem.setStatus(newStatus);
             }
         }
 
-        private progressCallback(id: string, name: string, uploadedBytes: number, totalBytes: number) {
+        private progressCallback(id: number, name: string, uploadedBytes: number, totalBytes: number) {
             let percent = Math.round(uploadedBytes / totalBytes * 100);
 
             this.progress.setValue(percent);
@@ -533,7 +533,7 @@ module api.ui.uploader {
             }
         }
 
-        private fileCompleteCallback(id: string, name: string, response: any, xhrOrXdr: XMLHttpRequest) {
+        private fileCompleteCallback(id: number, name: string, response: any, xhrOrXdr: XMLHttpRequest) {
             if (xhrOrXdr && xhrOrXdr.status === 200) {
                 try {
                     let uploadItem = this.findUploadItemById(id);
@@ -548,7 +548,7 @@ module api.ui.uploader {
             }
         }
 
-        private errorCallback(id: string, name: string, errorReason: any, xhrOrXdr: XMLHttpRequest) {
+        private errorCallback(id: number, name: string, errorReason: any, xhrOrXdr: XMLHttpRequest) {
             if (xhrOrXdr && xhrOrXdr.status !== 200) {
                 try {
                     let responseObj = JSON.parse(xhrOrXdr.response);

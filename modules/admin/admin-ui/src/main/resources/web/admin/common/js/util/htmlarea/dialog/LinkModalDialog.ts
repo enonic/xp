@@ -16,6 +16,7 @@ module api.util.htmlarea.dialog {
         private linkText: string;
         private onlyTextSelected: boolean;
         private textFormItem: FormItem;
+        private toolTipFormItem: FormItem;
 
         private content: api.content.ContentSummary;
 
@@ -48,6 +49,7 @@ module api.util.htmlarea.dialog {
             if (this.onlyTextSelected) {
                 this.setFirstFocusField(this.textFormItem.getInput());
             } else {
+                this.setFirstFocusField(this.toolTipFormItem.getInput());
                 this.textFormItem.hide();
                 this.textFormItem.removeValidator();
             }
@@ -62,7 +64,15 @@ module api.util.htmlarea.dialog {
         }
 
         private getToolTip(): string {
-            return this.link ? this.link.getAttribute('title') : api.util.StringHelper.EMPTY_STRING;
+            if(this.link) {
+                const linkTitleAttrValue = this.link.getAttribute('title');
+
+                if(linkTitleAttrValue) {
+                    return linkTitleAttrValue;
+                }
+            }
+
+            return api.util.StringHelper.EMPTY_STRING;
         }
 
         private isContentLink(): boolean {
@@ -142,14 +152,15 @@ module api.util.htmlarea.dialog {
 
         private createContentPanel(): Panel {
             return this.createFormPanel([
-                this.createContentSelector('contentId', 'Target', this.getContentId),
+                this.createSelectorFormItem('contentId', 'Target', this.createContentSelector(this.getContentId), true),
                 this.createTargetCheckbox('contentTarget', this.isContentLink)
             ]);
         }
 
         private createDownloadPanel(): Panel {
             return this.createFormPanel([
-                this.createContentSelector('downloadId', 'Target', this.getDownloadId, api.schema.content.ContentTypeName.getMediaTypes())
+                this.createSelectorFormItem('downloadId', 'Target',
+                    this.createContentSelector(this.getDownloadId, api.schema.content.ContentTypeName.getMediaTypes()))
             ]);
         }
 
@@ -198,9 +209,9 @@ module api.util.htmlarea.dialog {
 
         protected getMainFormItems(): FormItem [] {
             this.textFormItem = this.createFormItemWithPostponedValue('linkText', 'Text', this.getLinkText, Validators.required);
-            let toolTipFormItem = this.createFormItemWithPostponedValue('toolTip', 'Tooltip', this.getToolTip);
+            this.toolTipFormItem = this.createFormItemWithPostponedValue('toolTip', 'Tooltip', this.getToolTip);
 
-            return [this.textFormItem, toolTipFormItem];
+            return [this.textFormItem, this.toolTipFormItem];
         }
 
         private createDockedPanel(): DockedPanel {
@@ -243,44 +254,54 @@ module api.util.htmlarea.dialog {
             super.initializeActions();
         }
 
-        private createContentSelector(id: string, label: string, getValueFn: Function,
-                                      contentTypeNames?: api.schema.content.ContentTypeName[]): FormItem {
-            let loader = new api.content.resource.ContentSummaryLoader();
+        private createContentSelector(getValueFn: Function,
+                                      contentTypeNames?: api.schema.content.ContentTypeName[]): api.content.ContentComboBox {
+            const loader = new api.content.resource.ContentSummaryLoader();
+
             loader.onLoadingData((event) => {
                 loader.setContentPath(this.content.getPath());
             });
-
-            let contentSelector = api.content.ContentComboBox.create().setLoader(loader).setMaximumOccurrences(1).build();
-            let contentSelectorComboBox = contentSelector.getComboBox();
 
             if (contentTypeNames) {
                 loader.setAllowedContentTypeNames(contentTypeNames);
             }
 
-            contentSelectorComboBox.onKeyDown((e: KeyboardEvent) => {
-                if (api.ui.KeyHelper.isEscKey(e) && !contentSelectorComboBox.isDropdownShown()) {
-                    // Prevent modal dialog from closing on Esc key when dropdown is expanded
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-            });
+            const contentSelector = api.content.ContentComboBox.create().setLoader(loader).setMaximumOccurrences(1).build();
 
             this.onAdded(() => {
                 contentSelector.setValue(getValueFn.call(this));
             });
 
+            return contentSelector;
+        }
+
+        private createSelectorFormItem(id: string, label: string, contentSelector: api.content.ContentComboBox,
+                                       addValueValidation: boolean = false): FormItem {
+
             const formItem = this.createFormItem(id, label, Validators.required, null, <api.dom.FormItemEl>contentSelector);
 
-            contentSelectorComboBox.onValueChanged((event) => {
+            if (!addValueValidation) {
+                return formItem;
+            }
+
+            contentSelector.onValueChanged((event) => {
                 this.centerMyself();
 
-                if (event.getNewValue()) {
-                    new api.content.page.IsRenderableRequest(
-                        new api.content.ContentId(event.getNewValue())).sendAndParse().then((renderable: boolean) => {
-                        formItem.setValidator(() => renderable ? '' : 'Only content items that support preview can be selected');
-                    });
-                } else {
-                    formItem.setValidator(Validators.required);
+                if(contentSelector.getLoader().isLoaded()) {
+
+                    if (event.getNewValue()) {
+                        const newValueContent = contentSelector.getContent(new api.content.ContentId(event.getNewValue()));
+
+                        const isMedia = !!newValueContent ? newValueContent.getType().isDescendantOfMedia() : false;
+
+                        new api.content.page.IsRenderableRequest(
+                            new api.content.ContentId(event.getNewValue())).sendAndParse().then((renderable: boolean) => {
+                            formItem.setValidator(() =>
+                                isMedia || renderable ? '' : 'Only content items that support preview can be selected');
+                        });
+                    } else {
+                        formItem.setValidator(Validators.required);
+                    }
                 }
             });
 
