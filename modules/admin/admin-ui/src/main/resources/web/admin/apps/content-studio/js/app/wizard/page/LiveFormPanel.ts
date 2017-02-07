@@ -1,21 +1,21 @@
-import "../../../api.ts";
-import {ContentWizardPanel} from "../ContentWizardPanel";
-import {DefaultModels} from "./DefaultModels";
-import {EmulatorPanel} from "./contextwindow/EmulatorPanel";
-import {LiveEditPageProxy} from "./LiveEditPageProxy";
-import {TextInspectionPanel} from "./contextwindow/inspect/region/TextInspectionPanel";
-import {ContentInspectionPanel} from "./contextwindow/inspect/ContentInspectionPanel";
-import {RegionInspectionPanel} from "./contextwindow/inspect/region/RegionInspectionPanel";
-import {ImageInspectionPanel} from "./contextwindow/inspect/region/ImageInspectionPanel";
-import {LayoutInspectionPanel} from "./contextwindow/inspect/region/LayoutInspectionPanel";
-import {FragmentInspectionPanel} from "./contextwindow/inspect/region/FragmentInspectionPanel";
-import {PartInspectionPanel} from "./contextwindow/inspect/region/PartInspectionPanel";
-import {PageInspectionPanel} from "./contextwindow/inspect/page/PageInspectionPanel";
-import {InspectionsPanel, InspectionsPanelConfig} from "./contextwindow/inspect/InspectionsPanel";
-import {InsertablesPanel} from "./contextwindow/insert/InsertablesPanel";
-import {ContextWindowController} from "./contextwindow/ContextWindowController";
-import {ContextWindow, ContextWindowConfig} from "./contextwindow/ContextWindow";
-import {ShowContentFormEvent} from "../ShowContentFormEvent";
+import '../../../api.ts';
+import {ContentWizardPanel} from '../ContentWizardPanel';
+import {DefaultModels} from './DefaultModels';
+import {EmulatorPanel} from './contextwindow/EmulatorPanel';
+import {LiveEditPageProxy} from './LiveEditPageProxy';
+import {TextInspectionPanel} from './contextwindow/inspect/region/TextInspectionPanel';
+import {ContentInspectionPanel} from './contextwindow/inspect/ContentInspectionPanel';
+import {RegionInspectionPanel} from './contextwindow/inspect/region/RegionInspectionPanel';
+import {ImageInspectionPanel} from './contextwindow/inspect/region/ImageInspectionPanel';
+import {LayoutInspectionPanel} from './contextwindow/inspect/region/LayoutInspectionPanel';
+import {FragmentInspectionPanel} from './contextwindow/inspect/region/FragmentInspectionPanel';
+import {PartInspectionPanel} from './contextwindow/inspect/region/PartInspectionPanel';
+import {PageInspectionPanel} from './contextwindow/inspect/page/PageInspectionPanel';
+import {InspectionsPanel, InspectionsPanelConfig} from './contextwindow/inspect/InspectionsPanel';
+import {InsertablesPanel} from './contextwindow/insert/InsertablesPanel';
+import {ContextWindowController} from './contextwindow/ContextWindowController';
+import {ContextWindow, ContextWindowConfig} from './contextwindow/ContextWindow';
+import {ShowContentFormEvent} from '../ShowContentFormEvent';
 
 import PageTemplate = api.content.page.PageTemplate;
 import PageTemplateKey = api.content.page.PageTemplateKey;
@@ -128,6 +128,8 @@ export class LiveFormPanel extends api.ui.panel.Panel {
     private contentWizardPanel: ContentWizardPanel;
 
     private liveEditPageProxy: LiveEditPageProxy;
+
+    private contentEventListener;
 
     constructor(config: LiveFormPanelConfig) {
         super("live-form-panel");
@@ -362,16 +364,23 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             this.contentWizardPanel.getContextWindowToggler().setActive(false, true);
         });
 
-        var contentEventListener = (event) => {
-            this.propagateEvent(event);
-        }
+        this.handleContentUpdatedEvent();
+    }
 
-        ContentDeletedEvent.on(contentEventListener);
-        ContentUpdatedEvent.on(contentEventListener);
-        this.onRemoved(() => {
-            ContentDeletedEvent.un(contentEventListener);
-            ContentUpdatedEvent.un(contentEventListener);
-        });
+    private handleContentUpdatedEvent() {
+        if (!this.contentEventListener) {
+            this.contentEventListener = (event) => {
+                this.propagateEvent(event);
+            };
+
+            ContentDeletedEvent.on(this.contentEventListener);
+            ContentUpdatedEvent.on(this.contentEventListener);
+
+            this.onRemoved(() => {
+                ContentDeletedEvent.un(this.contentEventListener);
+                ContentUpdatedEvent.un(this.contentEventListener);
+            });
+        }
     }
 
     skipNextReloadConfirmation(skip: boolean) {
