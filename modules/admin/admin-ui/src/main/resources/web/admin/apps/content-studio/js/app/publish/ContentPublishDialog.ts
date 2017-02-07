@@ -300,13 +300,8 @@ export class ContentPublishDialog extends ProgressBarDialog {
         return summaries.some((summary) => summary.getCompareStatus() === CompareStatus.NEW);
     }
 
-    private areAllValid(summaries: ContentSummaryAndCompareStatus[]): boolean {
-        return summaries.every((summary: ContentSummaryAndCompareStatus) => isContentSummaryValid(summary));
-    }
-
     private areItemsAndDependantsValid(): boolean {
-        return !this.containsInvalid &&
-               this.areAllValid(this.getItemList().getItems());
+        return !this.containsInvalid;
     }
 
     protected hasSubDialog(): boolean {

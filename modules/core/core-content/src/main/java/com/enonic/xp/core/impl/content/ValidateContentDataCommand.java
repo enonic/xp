@@ -1,17 +1,20 @@
 package com.enonic.xp.core.impl.content;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
-import com.enonic.xp.core.impl.content.validate.DataValidationErrors;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.core.impl.content.validate.OccurrenceValidator;
 import com.enonic.xp.core.impl.content.validate.SiteConfigValidationError;
+import com.enonic.xp.core.impl.content.validate.ValidationError;
+import com.enonic.xp.core.impl.content.validate.ValidationErrors;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.inputtype.InputTypes;
@@ -44,7 +47,11 @@ final class ValidateContentDataCommand
 
     private final ContentTypeName contentType;
 
-    private final DataValidationErrors.Builder resultBuilder;
+    private final ContentName name;
+
+    private final String displayName;
+
+    private final ValidationErrors.Builder resultBuilder;
 
     private ValidateContentDataCommand( Builder builder )
     {
@@ -54,7 +61,9 @@ final class ValidateContentDataCommand
         contentData = builder.contentData;
         extraDatas = builder.extraDatas;
         contentType = builder.contentType;
-        resultBuilder = DataValidationErrors.create();
+        name = builder.name;
+        displayName = builder.displayName;
+        resultBuilder = ValidationErrors.create();
     }
 
     public static Builder create()
@@ -63,12 +72,12 @@ final class ValidateContentDataCommand
     }
 
 
-    DataValidationErrors execute()
+    ValidationErrors execute()
     {
         return doExecute();
     }
 
-    DataValidationErrors doExecute()
+    ValidationErrors doExecute()
     {
         final PropertyTree contentData = this.contentData;
         final ContentTypeName contentTypeName = this.contentType;
@@ -80,8 +89,24 @@ final class ValidateContentDataCommand
         validateMetadata();
         validateSiteConfigs( contentType );
 
+        validateName( name, displayName );
+
         return this.resultBuilder.build();
     }
+
+    private void validateName( final ContentName name, final String displayName )
+    {
+
+        if ( name == null || name.isUnnamed() )
+        {
+            this.resultBuilder.add( new ValidationError( "name" ) );
+        }
+        if ( StringUtils.isBlank( displayName ) )
+        {
+            this.resultBuilder.add( new ValidationError( "displayName" ) );
+        }
+    }
+
 
     private void validateSiteConfigs( final ContentType contentType )
     {
@@ -176,6 +201,10 @@ final class ValidateContentDataCommand
 
         private ContentTypeName contentType;
 
+        private ContentName name;
+
+        private String displayName;
+
         private Builder()
         {
         }
@@ -213,6 +242,18 @@ final class ValidateContentDataCommand
         public Builder contentType( ContentTypeName contentType )
         {
             this.contentType = contentType;
+            return this;
+        }
+
+        public Builder name( ContentName name )
+        {
+            this.name = name;
+            return this;
+        }
+
+        public Builder displayName( String displayName )
+        {
+            this.displayName = displayName;
             return this;
         }
 
