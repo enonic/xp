@@ -40,16 +40,16 @@ public class MainWebHandlerTest
     {
         final WebRequest request = new WebRequest();
 
-        request.setPath( "/other" );
+        request.setRawPath( "/other" );
         assertFalse( this.handler.canHandle( request ) );
 
-        request.setPath( "/" );
+        request.setRawPath( "/" );
         assertTrue( this.handler.canHandle( request ) );
 
         final WebResponse response1 = this.handler.doHandle( request, null, null );
         assertRedirect( response1 );
 
-        request.setPath( "/admin" );
+        request.setRawPath( "/admin" );
         assertTrue( this.handler.canHandle( request ) );
 
         final WebResponse response2 = this.handler.doHandle( request, null, null );
@@ -70,7 +70,7 @@ public class MainWebHandlerTest
     {
         final WebRequest request = new WebRequest();
 
-        request.setPath( "/admin/assets/1234/test.txt" );
+        request.setRawPath( "/admin/assets/1234/test.txt" );
         assertTrue( this.handler.canHandle( request ) );
 
         final URL url = writeFile( "Hello World!" );
@@ -88,7 +88,7 @@ public class MainWebHandlerTest
     {
         final WebRequest request = new WebRequest();
 
-        request.setPath( "/admin/assets/1234/test.txt" );
+        request.setRawPath( "/admin/assets/1234/test.txt" );
         assertTrue( this.handler.canHandle( request ) );
 
         final WebResponse response = this.handler.doHandle( request, null, null );
