@@ -1,5 +1,5 @@
-var statusUrl = "/admin/rest/status";
-var adminToolUrl = "/admin/tool"
+var statusUrl = CONFIG.adminUrl + "/rest/status";
+var adminToolUrl = CONFIG.adminUrl + "/tool"
 var connectionLostMessageId;
 
 function doPoll() {
@@ -15,7 +15,7 @@ function doPoll() {
                 alertConnectionLost();
             }
         }
-    }
+    };
 
     request.send();
 }
@@ -51,4 +51,3 @@ function alertConnectionLost() {
 exports.startPolling = function () {
     setInterval(doPoll, 15000);
 };
-
