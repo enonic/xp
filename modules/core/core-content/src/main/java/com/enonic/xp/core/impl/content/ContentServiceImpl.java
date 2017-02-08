@@ -382,6 +382,21 @@ public class ContentServiceImpl
     @Override
     public boolean isValidContent( ContentIds contentIds )
     {
+        final ContentIds result = CheckContentsValidCommand.create().
+            translator( this.translator ).
+            nodeService( this.nodeService ).
+            eventPublisher( this.eventPublisher ).
+            contentTypeService( this.contentTypeService ).
+            contentIds( contentIds ).
+            build().
+            execute();
+
+        return result.isEmpty();
+    }
+
+    @Override
+    public ContentIds getInvalidContent( ContentIds contentIds )
+    {
         return CheckContentsValidCommand.create().
             translator( this.translator ).
             nodeService( this.nodeService ).

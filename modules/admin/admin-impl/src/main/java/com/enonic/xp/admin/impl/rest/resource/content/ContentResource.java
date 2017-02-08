@@ -706,7 +706,7 @@ public final class ContentResource
         final ContentIds excludeChildrenIds = ContentIds.from( params.getExcludeChildrenIds() );
 
         //Resolves the publish dependencies
-        final CompareContentResults results = contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
+        final CompareContentResults compareResults = contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
             target( ContentConstants.BRANCH_MASTER ).
             contentIds( requestedContentIds ).
             excludedContentIds( excludeContentIds ).
@@ -714,7 +714,7 @@ public final class ContentResource
             build() );
 
         //Resolved the dependent ContentPublishItem
-        final List<ContentId> dependentContentIdList = results.contentIds().
+        final List<ContentId> dependentContentIdList = compareResults.contentIds().
             stream().
             filter( contentId -> !requestedContentIds.contains( contentId ) ).
             collect( Collectors.toList() );
@@ -722,17 +722,21 @@ public final class ContentResource
         final ContentIds dependentContentIds = ContentIds.from( dependentContentIdList );
 
         final Boolean anyRemovable = this.isAnyContentRemovableFromPublish( dependentContentIds );
+        final ContentIds invalidContentIds = getInvalidContent( compareResults );
 
         //sort all dependant content ids
         final ContentIds sortedDependentContentIds =
             dependentContentIds.getSize() > 0 ? sortContentIds( dependentContentIds, "_path" ) : dependentContentIds;
 
+        final ContentIds sortedInvalidContentIds =
+            invalidContentIds.getSize() > 0 ? sortContentIds( invalidContentIds, "_path" ) : invalidContentIds;
+
         //Returns the JSON result
         return ResolvePublishContentResultJson.create().
             setContainsRemovable( anyRemovable ).
             setRequestedContents( requestedContentIds ).
-            setDependentContents( sortedDependentContentIds ).
-            setContainsInvalid( !this.isValidContent( results ) ).
+            setDependentContents( this.invalidDependantsOnTop( sortedDependentContentIds, requestedContentIds, sortedInvalidContentIds ) ).
+            setContainsInvalid( !invalidContentIds.isEmpty() ).
             build();
     }
 
@@ -750,9 +754,18 @@ public final class ContentResource
             build() ).getContentIds();
     }
 
-    private boolean isValidContent( final CompareContentResults compareResults )
+    private ContentIds invalidDependantsOnTop( final ContentIds dependentContentIdList, final ContentIds requestedContentIds,
+                                               final ContentIds invalidContentIds )
     {
-        return contentService.isValidContent(
+        return ContentIds.from( Stream.concat( invalidContentIds.stream().filter( ( e ) -> !requestedContentIds.contains( e ) ),
+                                               dependentContentIdList.stream().filter(
+                                                   ( e ) -> !invalidContentIds.contains( e ) && !requestedContentIds.contains( e ) ) ).
+            collect( Collectors.toList() ) );
+    }
+
+    private ContentIds getInvalidContent( final CompareContentResults compareResults )
+    {
+        return contentService.getInvalidContent(
             ContentIds.from( compareResults.stream().filter( ( result ) -> result.getCompareStatus() != CompareStatus.PENDING_DELETE ).
                 map( CompareContentResult::getContentId ).
                 collect( Collectors.toList() ) ) );
@@ -1038,13 +1051,12 @@ public final class ContentResource
 
         final List<String> result = new ArrayList<>();
 
-        permissions.forEach( permission ->
-                             {
-                                 if ( userHasPermission( authInfo, permission, contentsPermissions ) )
-                                 {
-                                     result.add( permission.name() );
-                                 }
-                             } );
+        permissions.forEach( permission -> {
+            if ( userHasPermission( authInfo, permission, contentsPermissions ) )
+            {
+                result.add( permission.name() );
+            }
+        } );
 
         return result;
     }

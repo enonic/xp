@@ -133,7 +133,7 @@ public class PushContentCommand
 
     private boolean checkIfAllContentsValid( final ContentIds pushContentsIds )
     {
-        return CheckContentsValidCommand.create().
+        final ContentIds invalidContentIds = CheckContentsValidCommand.create().
             translator( this.translator ).
             nodeService( this.nodeService ).
             eventPublisher( this.eventPublisher ).
@@ -141,6 +141,8 @@ public class PushContentCommand
             contentIds( pushContentsIds ).
             build().
             execute();
+
+        return invalidContentIds.isEmpty();
     }
 
 
