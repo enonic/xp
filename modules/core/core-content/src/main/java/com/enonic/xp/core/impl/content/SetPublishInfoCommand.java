@@ -16,6 +16,7 @@ import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.ExistsFilter;
 import com.enonic.xp.query.filter.IdFilter;
+import com.enonic.xp.security.User;
 
 public class SetPublishInfoCommand
     extends AbstractContentCommand
@@ -50,8 +51,7 @@ public class SetPublishInfoCommand
                 editor( toBeEdited -> {
 
                     toBeEdited.data.setInstant( ContentPropertyNames.MODIFIED_TIME, now );
-                    toBeEdited.data.setString( ContentPropertyNames.MODIFIER, ContextAccessor.current().
-                        getAuthInfo().getUser().getKey().toString() );
+                    toBeEdited.data.setString( ContentPropertyNames.MODIFIER, getCurrentUser().getKey().toString() );
 
                     PropertySet publishInfo = toBeEdited.data.getSet( ContentPropertyNames.PUBLISH_INFO );
                     if ( publishInfo == null )
@@ -73,6 +73,12 @@ public class SetPublishInfoCommand
         }
 
         this.nodeService.refresh( RefreshMode.ALL );
+    }
+
+    private User getCurrentUser()
+    {
+        final User user = ContextAccessor.current().getAuthInfo().getUser();
+        return user != null ? user : User.ANONYMOUS;
     }
 
     private NodeIds findNodesWithoutPublishInfo( final NodeIds nodesToPush )
