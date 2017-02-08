@@ -251,12 +251,13 @@ final class CreateContentCommand
     private CreateContentTranslatorParams createContentTranslatorParams( final CreateContentParams processedContent )
     {
         final CreateContentTranslatorParams.Builder builder = CreateContentTranslatorParams.create( processedContent );
-        builder.valid( validateNonBlockingChecks( processedContent ) );
         populateName( builder );
         populateCreator( builder );
         setChildOrder( builder );
         builder.owner( getDefaultOwner( processedContent ) );
         populateLanguage( builder );
+
+        populateValid( builder );
 
         return builder.build();
     }
@@ -357,14 +358,14 @@ final class CreateContentCommand
         builder.creator( currentUser.getKey() );
     }
 
-    private boolean validateNonBlockingChecks( final CreateContentParams contentParams )
+    private void populateValid( final CreateContentTranslatorParams.Builder builder )
     {
         final ValidationErrors validationErrors = ValidateContentDataCommand.create().
-            contentData( contentParams.getData() ).
-            contentType( contentParams.getType() ).
-            name( contentParams.getName() ).
-            displayName( contentParams.getDisplayName() ).
-            extradatas( contentParams.getExtraDatas() != null ? ExtraDatas.from( contentParams.getExtraDatas() ) : ExtraDatas.empty() ).
+            contentData( builder.getData() ).
+            contentType( builder.getType() ).
+            name( builder.getName() ).
+            displayName( builder.getDisplayName() ).
+            extradatas( builder.getExtraDatas() != null ? ExtraDatas.from( builder.getExtraDatas() ) : ExtraDatas.empty() ).
             mixinService( this.mixinService ).
             siteService( this.siteService ).
             contentTypeService( this.contentTypeService ).
@@ -383,11 +384,12 @@ final class CreateContentCommand
             }
             else
             {
-                return false;
+                builder.valid( false );
+                return;
             }
         }
 
-        return true;
+        builder.valid( true );
     }
 
     static class Builder
