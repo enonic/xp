@@ -33,6 +33,7 @@ import ContentPath = api.content.ContentPath;
 import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
 import DataChangedEvent = api.ui.treegrid.DataChangedEvent;
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
+import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
 
 export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
 
@@ -574,7 +575,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
     }
 
-    private updateStatisticsPanel(data: ContentSummaryAndCompareStatus[]) {
+    private updateStatisticsPanel(updatedContents: ContentSummaryAndCompareStatus[]) {
         let previewItem = this.getBrowseItemPanel().getStatisticsItem();
 
         if (!previewItem) {
@@ -595,7 +596,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                 possibleChildFragment.getPath().isChildOf(possibleParent.getPath());
         };
 
-        data.some((content: ContentSummaryAndCompareStatus) => {
+        var updatedPreviewItem = updatedContents.some((content: ContentSummaryAndCompareStatus) => {
             if (content.getPath().toString() === previewItem.getPath()) {
                 new api.content.page.IsRenderableRequest(content.getContentId()).sendAndParse().then((renderable: boolean) => {
                     this.getBrowseItemPanel().setStatisticsItem(toBrowseItem(content, renderable));
@@ -603,11 +604,34 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                 return true;
             } else if (isChildFragment(content, previewItem.getModel())) {
                 // child fragment was updated - preview refresh is needed
-                (<ContentItemStatisticsPanel>this.getBrowseItemPanel().getPanel(1)).getPreviewPanel().setItem(previewItem, true);
-                this.mobileContentItemStatisticsPanel.getPreviewPanel().setItem(previewItem, true);
+                this.forcePreviewRerender();
                 return true;
             }
         });
+        if (!updatedPreviewItem) {
+            this.rerenderPreviewedSiteIfReferencesUpdatedContent(updatedContents);
+        }
+    }
+
+    private rerenderPreviewedSiteIfReferencesUpdatedContent(updatedContents: ContentSummaryAndCompareStatus[]) {
+        const previewItem = this.getBrowseItemPanel().getStatisticsItem();
+        if (previewItem.getModel() && previewItem.getModel().getType().equals(api.schema.content.ContentTypeName.SITE)) {
+            new GetContentByIdRequest(previewItem.getModel().getContentId()).send().done((contentJsonResult) => {
+                const json: api.content.json.ContentJson = contentJsonResult.getResult();
+                updatedContents.some((content: ContentSummaryAndCompareStatus) => {
+                    if (json.page && json.page.regions && JSON.stringify(json.page.regions).indexOf(content.getId()) > -1) {
+                        this.forcePreviewRerender();
+                        return true;
+                    }
+                });
+            });
+        }
+    }
+
+    private forcePreviewRerender() {
+        let previewItem = this.getBrowseItemPanel().getStatisticsItem();
+        (<ContentItemStatisticsPanel>this.getBrowseItemPanel().getPanel(1)).getPreviewPanel().setItem(previewItem, true);
+        this.mobileContentItemStatisticsPanel.getPreviewPanel().setItem(previewItem, true);
     }
 
     private updateDetailsPanel(data: ContentSummaryAndCompareStatus[]) {
