@@ -389,7 +389,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         }
 
         return this.doHandleContentUpdate(data).then((changed) => {
-            this.updateStatisticsPanel(data);
+            this.updatePreviewPanel(data);
 
             return this.treeGrid.placeContentNodes(changed);
         });
@@ -575,8 +575,9 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
     }
 
-    private updateStatisticsPanel(updatedContents: ContentSummaryAndCompareStatus[]) {
+    private updatePreviewPanel(updatedContents: ContentSummaryAndCompareStatus[]) {
         let previewItem = this.getBrowseItemPanel().getStatisticsItem();
+        let previewRefreshed = false;
 
         if (!previewItem) {
             return;
@@ -591,41 +592,27 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             return item;
         };
 
-        let isChildFragment = (possibleChildFragment: ContentSummaryAndCompareStatus, possibleParent: ContentSummaryAndCompareStatus) => {
-            return possibleChildFragment.getType().equals(api.schema.content.ContentTypeName.FRAGMENT) &&
-                possibleChildFragment.getPath().isChildOf(possibleParent.getPath());
-        };
+        new GetContentByIdRequest(previewItem.getModel().getContentId()).sendAndParse().then((previewItemContent: Content) => {
+            updatedContents.some((content: ContentSummaryAndCompareStatus) => {
+                if (content.getPath().equals(previewItem.getModel().getPath())) {
+                    new api.content.page.IsRenderableRequest(content.getContentId()).sendAndParse().then((renderable: boolean) => {
+                        this.getBrowseItemPanel().setStatisticsItem(toBrowseItem(content, renderable));
+                    });
+                    return true;
+                }
 
-        var updatedPreviewItem = updatedContents.some((content: ContentSummaryAndCompareStatus) => {
-            if (content.getPath().toString() === previewItem.getPath()) {
-                new api.content.page.IsRenderableRequest(content.getContentId()).sendAndParse().then((renderable: boolean) => {
-                    this.getBrowseItemPanel().setStatisticsItem(toBrowseItem(content, renderable));
-                });
-                return true;
-            } else if (isChildFragment(content, previewItem.getModel())) {
-                // child fragment was updated - preview refresh is needed
-                this.forcePreviewRerender();
-                return true;
-            }
-        });
-        if (!updatedPreviewItem) {
-            this.rerenderPreviewedSiteIfReferencesUpdatedContent(updatedContents);
-        }
-    }
+                if (!previewRefreshed) {
+                    previewItemContent.containsChildContentId(content.getContentId()).then((containsId: boolean) => {
+                        if (containsId) {
+                            this.forcePreviewRerender();
+                            previewRefreshed = true;
+                        }
+                    });
+                }
 
-    private rerenderPreviewedSiteIfReferencesUpdatedContent(updatedContents: ContentSummaryAndCompareStatus[]) {
-        const previewItem = this.getBrowseItemPanel().getStatisticsItem();
-        if (previewItem.getModel() && previewItem.getModel().getType().equals(api.schema.content.ContentTypeName.SITE)) {
-            new GetContentByIdRequest(previewItem.getModel().getContentId()).send().done((contentJsonResult) => {
-                const json: api.content.json.ContentJson = contentJsonResult.getResult();
-                updatedContents.some((content: ContentSummaryAndCompareStatus) => {
-                    if (json.page && json.page.regions && JSON.stringify(json.page.regions).indexOf(content.getId()) > -1) {
-                        this.forcePreviewRerender();
-                        return true;
-                    }
-                });
+                return previewRefreshed;
             });
-        }
+        });
     }
 
     private forcePreviewRerender() {

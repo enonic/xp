@@ -2,6 +2,8 @@ module api.content.page {
 
     import PropertyTree = api.data.PropertyTree;
     import Component = api.content.page.region.Component;
+    import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
+    import Region = api.content.page.region.Region;
 
     export class Page implements api.Equitable, api.Cloneable {
 
@@ -103,6 +105,50 @@ module api.content.page {
         clone(): Page {
 
             return new PageBuilder(this).build();
+        }
+
+        public doRegionComponentsContainId(id: ContentId): wemQ.Promise<boolean> {
+            let fragments: ContentId[] = [];
+            let containsId = this.doRegionsContainId(this.getRegions().getRegions(), id, fragments);
+            if (!containsId && fragments.length > 0) {
+                return wemQ.all(fragments.map(fragmentId => new GetContentByIdRequest(fragmentId).sendAndParse()))
+                    .then((fragmentContents: Content[]) => {
+                        return fragmentContents.some((fragmentContent: Content) => {
+                            return fragmentContent.getPage().doesFragmentContainId(id);
+                        });
+                    });
+            } else {
+                return wemQ(containsId);
+            }
+        }
+
+        public doesFragmentContainId(id: ContentId): boolean {
+            let containsId = false;
+            let fragmentCmp = this.getFragment();
+            if (!!fragmentCmp && ObjectHelper.iFrameSafeInstanceOf(fragmentCmp.getType(), api.content.page.region.ImageComponentType)) {
+                containsId = (<api.content.page.region.ImageComponent>fragmentCmp).getImage().equals(id);
+            }
+
+            return containsId;
+        }
+
+        private doRegionsContainId(regions: Region[], id: ContentId, fragments: ContentId[] = []): boolean {
+            return regions.some((region: Region) => {
+                return region.getComponents().some((component: Component) => {
+                    if (ObjectHelper.iFrameSafeInstanceOf(component.getType(), api.content.page.region.FragmentComponentType)) {
+                        fragments.push((<api.content.page.region.FragmentComponent>component).getFragment());
+                    }
+                    if (ObjectHelper.iFrameSafeInstanceOf(component.getType(), api.content.page.region.ImageComponentType)) {
+                        return (<api.content.page.region.ImageComponent>component).getImage().equals(id);
+                    }
+                    if (ObjectHelper.iFrameSafeInstanceOf(component.getType(), api.content.page.region.LayoutComponentType)) {
+                        return this.doRegionsContainId((<api.content.page.region.LayoutComponent>component).getRegions().getRegions(),
+                                                        id,
+                                                        fragments);
+                    }
+                    return false;
+                });
+            });
         }
     }
 

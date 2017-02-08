@@ -908,62 +908,16 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         const page = this.getPersistedItem().getPage();
 
         if (page) {
-            if (this.doHtmlAreasContainId(contentId.toString()) ||
-                this.doesFragmentContainId(page, contentId)) {
+            if (this.doHtmlAreasContainId(contentId.toString())) {
                 return wemQ(true);
             }
 
-            return this.doImageComponentsContainId(contentId);
+            return this.getPersistedItem().containsChildContentId(contentId);
         }
 
         return wemQ(false);
     }
-
-    private doesFragmentContainId(fragmentPage: Page, id: ContentId): boolean {
-        let containsId = false;
-
-        if (fragmentPage) {
-            let fragmentCmp = fragmentPage.getFragment();
-            if (!!fragmentCmp && ObjectHelper.iFrameSafeInstanceOf(fragmentCmp.getType(), ImageComponentType)) {
-                containsId = (<ImageComponent>fragmentCmp).getImage().equals(id);
-            }
-        }
-        return containsId;
-    }
-
-    private doImageComponentsContainId(id: ContentId): wemQ.Promise<boolean> {
-        let page = this.getPersistedItem().getPage();
-        let fragments: ContentId[] = [];
-        let containsId = this.doRegionsContainId(page.getRegions().getRegions(), id, fragments);
-        if (!containsId && fragments.length > 0) {
-            return wemQ.all(fragments.map(fragmentId => new GetContentByIdRequest(fragmentId).sendAndParse()))
-                .then((fragmentContents: Content[]) => {
-                    return fragmentContents.some((fragmentContent: Content) => {
-                        return this.doesFragmentContainId(fragmentContent.getPage(), id);
-                    });
-                });
-        } else {
-            return wemQ(containsId);
-        }
-    }
-
-    private doRegionsContainId(regions: Region[], id: ContentId, fragments: ContentId[] = []): boolean {
-        return regions.some((region: Region) => {
-            return region.getComponents().some((component: Component) => {
-                if (ObjectHelper.iFrameSafeInstanceOf(component.getType(), FragmentComponentType)) {
-                    fragments.push((<FragmentComponent>component).getFragment());
-                }
-                if (ObjectHelper.iFrameSafeInstanceOf(component.getType(), ImageComponentType)) {
-                    return (<ImageComponent>component).getImage().equals(id);
-                }
-                if (ObjectHelper.iFrameSafeInstanceOf(component.getType(), LayoutComponentType)) {
-                    return this.doRegionsContainId((<LayoutComponent>component).getRegions().getRegions(), id, fragments);
-                }
-                return false;
-            });
-        });
-    }
-
+    
     private doHtmlAreasContainId(id: string): boolean {
         let areas = this.getHtmlAreasInForm(this.getContentType().getForm());
         let data: api.data.PropertyTree = this.getPersistedItem().getContentData();

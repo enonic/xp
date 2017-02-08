@@ -106,6 +106,20 @@ module api.content {
             return copy;
         }
 
+        public containsChildContentId(contentId: ContentId): wemQ.Promise<boolean> {
+            const page = this.getPage();
+
+            if (page) {
+                if (page.doesFragmentContainId(contentId)) {
+                    return wemQ(true);
+                }
+
+                return page.doRegionComponentsContainId(contentId);
+            }
+
+            return wemQ(false);
+        }
+
         dataEquals(other: PropertyTree, ignoreEmptyValues: boolean = false): boolean {
             let data;
             let otherData;
