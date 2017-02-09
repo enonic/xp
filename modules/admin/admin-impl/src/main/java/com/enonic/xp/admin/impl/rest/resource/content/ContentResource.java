@@ -723,8 +723,9 @@ public final class ContentResource
 
         final ContentIds dependentContentIds = ContentIds.from( dependentContentIdList );
 
-        final Boolean anyRemovable = this.isAnyContentRemovableFromPublish( dependentContentIds );
-        final ContentIds invalidContentIds = getInvalidContent( compareResults );
+        final Boolean anyRemovable = result.getRequiredIds().getSize() < dependentContentIds.getSize();
+
+        final ContentIds invalidContentIds = getInvalidContent( result.getCompareContentResults() );
 
         //sort all dependant content ids
         final ContentIds sortedDependentContentIds =

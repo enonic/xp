@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
-
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.content.json.GetDescendantsOfContents;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
@@ -976,8 +975,13 @@ public class ContentResourceTest
 
         Mockito.when( contentService.resolvePublishDependencies( Mockito.isA( ResolvePublishDependenciesParams.class ) ) ).thenReturn(
             result );
+        Mockito.when( contentService.compare( Mockito.isA( CompareContentsParams.class ) ) ).thenReturn(
+            result.getCompareContentResults() );
         Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
             FindContentIdsByQueryResult.create().contents( ContentIds.from( "dependant-contentId" ) ).totalHits( 1L ).build() );
+
+        Mockito.doReturn( ContentIds.from( "dependant-contentId", "required-contentId" ) ).when( this.contentService ).getInvalidContent(
+            Mockito.isA( ContentIds.class ) );
 
         String jsonString = request().path( "content/resolvePublishContent" ).
             entity( readFromFile( "resolve_publish_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
