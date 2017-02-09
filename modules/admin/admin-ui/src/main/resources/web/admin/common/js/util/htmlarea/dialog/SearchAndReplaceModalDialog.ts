@@ -63,7 +63,7 @@ module api.util.htmlarea.dialog {
 
             checkbox.onValueChanged(() => {
                 this.findAction.execute();
-            })
+            });
 
             return this.createFormItem(id, null, null, null, checkbox);
         }
@@ -169,6 +169,8 @@ module api.util.htmlarea.dialog {
 
         open() {
             super.open();
+            this.searchAndReplaceHelper.last = {};
+
             let selectedText: string = tinymce.trim(this.getEditor().selection.getContent({format: 'text'}));
             if(selectedText) {
                 this.findInput.setValue(selectedText);
@@ -215,7 +217,7 @@ module api.util.htmlarea.dialog {
             let count;
 
             if (!text.length) {
-                this.done();
+                this.done(false);
                 this.notifyActionButtonsEnabled(false);
                 return;
             }
@@ -246,9 +248,15 @@ module api.util.htmlarea.dialog {
             };
         }
 
+        private isMatchSpan(node: any) {
+            const matchIndex = this.getElmIndex(node);
+
+            return matchIndex !== null && matchIndex.length > 0;
+        }
+
         replace(text: string, forward?: boolean, all?: boolean) {
             let i: number;
-            let nodes: [any];
+            let nodes: any;
             let node: Element;
             let matchIndex: any;
             let currentMatchIndex: any;
@@ -258,13 +266,9 @@ module api.util.htmlarea.dialog {
             forward = forward !== false;
 
             node = this.editor.getBody();
-            nodes = tinymce.toArray(node.getElementsByTagName('span'));
+            nodes = tinymce.grep(tinymce.toArray(node.getElementsByTagName('span')), this.isMatchSpan.bind(this));
             for (i = 0; i < nodes.length; i++) {
                 let nodeIndex = this.getElmIndex(nodes[i]);
-
-                if (nodeIndex === null || !nodeIndex.length) {
-                    continue;
-                }
 
                 matchIndex = currentMatchIndex = parseInt(nodeIndex, 10);
                 if (all || matchIndex === this.currentIndex) {
@@ -276,11 +280,7 @@ module api.util.htmlarea.dialog {
                     }
 
                     while (nodes[++i]) {
-                        matchIndex = this.getElmIndex(nodes[i]);
-
-                        if (nodeIndex === null || !nodeIndex.length) {
-                            continue;
-                        }
+                        matchIndex = parseInt(this.getElmIndex(nodes[i]), 10);
 
                         if (matchIndex === currentMatchIndex) {
                             this.removeNode(nodes[i]);
@@ -312,6 +312,10 @@ module api.util.htmlarea.dialog {
             return !all && hasMore;
         };
 
+        private isContentEditableFalse(node: any): boolean {
+            return node && node.nodeType == 1 && node.contentEditable === 'false';
+        }
+
         private find(text: string, matchCase: boolean, wholeWord: boolean) {
             text = text.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
             text = wholeWord ? '\\b' + text + '\\b' : text;
@@ -337,7 +341,7 @@ module api.util.htmlarea.dialog {
             marker.className = 'mce-match-marker'; // IE 7 adds class="mce-match-marker" and class=mce-match-marker
             node = this.editor.getBody();
 
-            this.done();
+            this.done(false);
 
             return this.findAndReplaceDOMText(regex, node, marker, false, this.editor.schema);
         }
@@ -379,7 +383,14 @@ module api.util.htmlarea.dialog {
         };
 
         private removeNode(node: Node) {
-            node.parentNode.removeChild(node);
+            let dom = this.editor.dom;
+            let parent = node.parentNode;
+
+            dom.remove(node);
+
+            if (dom.isEmpty(parent)) {
+                dom.remove(parent);
+            }
         }
 
         private notFoundAlert() {
@@ -478,7 +489,7 @@ module api.util.htmlarea.dialog {
 
             if (regex.global) {
                 this.m = regex.exec(this.text);
-                while (this.m) {
+                while (!!this.m) {
                     this.matches.push(this.getMatchIndexes(this.m, captureGroup));
                     this.m = regex.exec(this.text);
                 }
@@ -496,7 +507,7 @@ module api.util.htmlarea.dialog {
         }
 
         private reset(node: Element, schema: any) {
-            this.m = [];
+            this.m = null;
             this.matches = [];
             this.text = null;
             this.count = 0;
@@ -542,6 +553,10 @@ module api.util.htmlarea.dialog {
 
             txt = '';
 
+            if (this.isContentEditableFalse(node)) {
+                return '\n';
+            }
+
             if (this.blockElementsMap[node.nodeName] || this.shortEndedElementsMap[node.nodeName]) {
                 txt += '\n';
             }
@@ -551,7 +566,7 @@ module api.util.htmlarea.dialog {
                 do {
                     txt += this.getText(node);
                     node = node.nextSibling;
-                } while (node);
+                } while (!!node);
             }
 
             return txt;
@@ -569,7 +584,8 @@ module api.util.htmlarea.dialog {
             let matchIndex: number = 0;
 
             out: while (true) {
-                if (this.blockElementsMap[curNode.nodeName] || this.shortEndedElementsMap[curNode.nodeName]) {
+                if (this.blockElementsMap[curNode.nodeName] || this.shortEndedElementsMap[curNode.nodeName] ||
+                    this.isContentEditableFalse(curNode)) {
                     atIndex++;
                 }
 
@@ -618,9 +634,11 @@ module api.util.htmlarea.dialog {
                     }
                 } else if ((!this.hiddenTextElementsMap[curNode.nodeName] || this.blockElementsMap[curNode.nodeName]) &&
                            curNode.firstChild) {
-                    // Move down
-                    curNode = curNode.firstChild;
-                    continue;
+                    if (!this.isContentEditableFalse(curNode)) {
+                        // Move down
+                        curNode = curNode.firstChild;
+                        continue;
+                    }
                 } else if (curNode.nextSibling) {
                     // Move forward:
                     curNode = curNode.nextSibling;
@@ -708,9 +726,9 @@ module api.util.htmlarea.dialog {
                 let elA = this.makeReplacementNode(startNode.data.substring(range.startNodeIndex), matchIndex);
                 let innerEls = [];
 
-                let i: number = 0;
-                let l: number = range.innerNodes.length;
-                for (;i < l; ++i) {
+                let i = 0;
+                let l = range.innerNodes.length;
+                for (; i < l; ++i) {
                     let innerNode = range.innerNodes[i];
                     let innerEl = this.makeReplacementNode(innerNode.data, matchIndex);
                     innerNode.parentNode.replaceChild(innerEl, innerNode);
