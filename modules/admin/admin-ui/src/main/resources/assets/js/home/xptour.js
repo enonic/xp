@@ -177,7 +177,7 @@ function createStep1() {
                '        <div class="subtitle-part-2">Complete this tour to get started with Enonic XP</div>' +
                '    </div>' +
                '    <div class="caption">Enonic XP - The Web Operating System</div>' +
-               '    <img src="/admin/common/images/app-icon.svg">' +
+               '    <img src="' +  CONFIG.adminUrl + '/common/images/app-icon.svg">' +
                '    <div class="text">' +
                '        <div class="paragraph1">Enonic XP is a powerful platform for building highly scalable, customer tailored applications and sites. It is five systems in one: </div>' +
                '        <ul>' +
@@ -201,7 +201,7 @@ function createStep2() {
                '        <div class="subtitle-part-2">You can build your own tools and add them to this menu!</div>' +
                '    </div>' +
                '    <div class="caption">Tools and Navigation</div>' +
-               '    <img src="/admin/common/images/launcher.svg">' +
+               '    <img src="' +  CONFIG.adminUrl + '/common/images/launcher.svg">' +
                '    <div class="text">' +
                '        <div class="paragraph1">XP admin is all about tools. You are currently in the ‘Home’ tool. Navigate to different tools using the menu icon which is available at the top right. The current tool is always highlighted.</div>' +
                '        <div class="paragraph2">Tools are launched in separate browser tabs so you can easily navigate between them later. Tools can also be bookmarked for direct access.</div>' +
@@ -218,7 +218,7 @@ function createStep3() {
                '        <div class="subtitle-part-2">You can contribute to Enonic Market by submitting your apps!</div>' +
                '    </div>' +
                '    <div class="caption">Applications and Enonic Market</div>' +
-               '    <img src="/admin/common/images/market.svg">' +
+               '    <img src="' +  CONFIG.adminUrl + '/common/images/market.svg">' +
                '    <div class="text">' +
                '        <div class="paragraph1">Enonic XP is all about applications. You can create your own apps or install ready-2-run applications from Enonic Market using the <a href="/admin/tool/com.enonic.xp.admin.ui/applications" target="_blank">Applications tool</a>.</div>' +
                '        <div class="paragraph2"><a href="https://market.enonic.com/" target="_blank">Enonic Market</a> also features libraries and starters for developers to get going quickly. Applications are primarily built with Javascript - but can also include Java since XP is running on the Java Virtual Machine.</div>' +
@@ -236,7 +236,7 @@ function createStep4() {
                '        <div class="subtitle-part-2">You can easily add 3rd party services like Google Analytics to the CMS</div>' +
                '    </div>' +
                '    <div class="caption">Embedded CMS - Content Studio</div>' +
-               '    <img src="/admin/common/images/studio.svg">' +
+               '    <img src="' +  CONFIG.adminUrl + '/common/images/studio.svg">' +
                '    <div class="text">' +
                '        <div class="paragraph1">A valuable part of XP is the <a href="/admin/tool/com.enonic.xp.admin.ui/content-studio" target="_blank">Content Studio tool</a> - its an awesome CMS that can be used to compose websites of any kind - or simply to make your applications more dynamic.</div>' +
                '        <div class="paragraph2">The interface is praised by users as it combines simplicity of use with powerful features - and it’s fully responsive too! It can also be extended with 3rd party services like the <a href="https://market.enonic.com/vendors/enonic/com.enonic.app.ga" target="_blank">Google Analytics app</a> for the enjoyment of your site’s editors.</div>' +

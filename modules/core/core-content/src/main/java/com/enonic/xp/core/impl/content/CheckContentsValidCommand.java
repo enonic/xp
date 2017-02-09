@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.stream.Collectors;
+
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.content.ContentPropertyNames;
@@ -22,11 +24,11 @@ public class CheckContentsValidCommand
         contentIds = builder.contentIds;
     }
 
-    public boolean execute()
+    public ContentIds execute()
     {
         if ( this.contentIds.getSize() == 0 )
         {
-            return true;
+            return ContentIds.empty();
         }
 
         final ContentQuery query = ContentQuery.create().
@@ -38,7 +40,7 @@ public class CheckContentsValidCommand
                 fieldName( ContentIndexPath.ID.getPath() ).
                 values( contentIds.asStrings() ).
                 build() ).
-            size( 0 ).
+            size( -1 ).
             build();
 
         final FindContentByQueryResult result = FindContentByQueryCommand.create().
@@ -53,7 +55,7 @@ public class CheckContentsValidCommand
             build().
             execute();
 
-        return result.getTotalHits() == 0;
+        return ContentIds.from( result.getContents().stream().map( content -> content.getId() ).collect( Collectors.toList() ) );
     }
 
     public static Builder create()

@@ -723,19 +723,23 @@ public final class ContentResource
 
         final ContentIds dependentContentIds = ContentIds.from( dependentContentIdList );
 
-        final Boolean anyRemovable = result.getRequiredIds().getSize() > 0;
+        final Boolean anyRemovable = this.isAnyContentRemovableFromPublish( dependentContentIds );
+        final ContentIds invalidContentIds = getInvalidContent( compareResults );
 
         //sort all dependant content ids
         final ContentIds sortedDependentContentIds =
             dependentContentIds.getSize() > 0 ? sortContentIds( dependentContentIds, "_path" ) : dependentContentIds;
 
+        final ContentIds sortedInvalidContentIds =
+            invalidContentIds.getSize() > 0 ? sortContentIds( invalidContentIds, "_path" ) : invalidContentIds;
+
         //Returns the JSON result
         return ResolvePublishContentResultJson.create().
-            setContainsRemovable( anyRemovable ).
-            setContainsInvalid( !this.isValidContent( result.getCompareContentResults() ) ).
             setRequestedContents( requestedContentIds ).
+            setDependentContents( this.invalidDependantsOnTop( sortedDependentContentIds, requestedContentIds, sortedInvalidContentIds ) ).
             setRequiredContents( result.getRequiredIds() ).
-            setDependentContents( sortedDependentContentIds ).
+            setContainsRemovable( anyRemovable ).
+            setContainsInvalid( !invalidContentIds.isEmpty() ).
             build();
     }
 
@@ -753,9 +757,18 @@ public final class ContentResource
             build() ).getContentIds();
     }
 
-    private boolean isValidContent( final CompareContentResults compareResults )
+    private ContentIds invalidDependantsOnTop( final ContentIds dependentContentIdList, final ContentIds requestedContentIds,
+                                               final ContentIds invalidContentIds )
     {
-        return contentService.isValidContent(
+        return ContentIds.from( Stream.concat( invalidContentIds.stream().filter( ( e ) -> !requestedContentIds.contains( e ) ),
+                                               dependentContentIdList.stream().filter(
+                                                   ( e ) -> !invalidContentIds.contains( e ) && !requestedContentIds.contains( e ) ) ).
+            collect( Collectors.toList() ) );
+    }
+
+    private ContentIds getInvalidContent( final CompareContentResults compareResults )
+    {
+        return contentService.getInvalidContent(
             ContentIds.from( compareResults.stream().filter( ( result ) -> result.getCompareStatus() != CompareStatus.PENDING_DELETE ).
                 map( CompareContentResult::getContentId ).
                 collect( Collectors.toList() ) ) );
@@ -1041,13 +1054,12 @@ public final class ContentResource
 
         final List<String> result = new ArrayList<>();
 
-        permissions.forEach( permission ->
-                             {
-                                 if ( userHasPermission( authInfo, permission, contentsPermissions ) )
-                                 {
-                                     result.add( permission.name() );
-                                 }
-                             } );
+        permissions.forEach( permission -> {
+            if ( userHasPermission( authInfo, permission, contentsPermissions ) )
+            {
+                result.add( permission.name() );
+            }
+        } );
 
         return result;
     }

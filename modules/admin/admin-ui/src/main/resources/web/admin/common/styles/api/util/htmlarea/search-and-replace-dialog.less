@@ -1,0 +1,27 @@
+.html-area-modal-dialog.search-and-replace-modal-dialog {
+  .dialog-buttons .button-container {
+    display: flex;
+    width: 100%;
+
+    button {
+      &:nth-child(1) {
+        margin-left: 0px;
+      }
+
+      &:nth-last-child(2) {
+        @media screen and (min-width: 470px) {
+          margin-left: auto;
+        }
+      }
+
+      &:hover:not(:disabled) {
+        background-color: @admin-button-blue2;
+      }
+
+      &:active:not(:disabled) {
+        background-color: @admin-button-blue1;
+      }
+    }
+  }
+}
+
