@@ -19,9 +19,9 @@ import com.enonic.xp.content.UpdateContentTranslatorParams;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.core.impl.content.processor.ProcessUpdateParams;
 import com.enonic.xp.core.impl.content.processor.ProcessUpdateResult;
-import com.enonic.xp.core.impl.content.validate.DataValidationError;
-import com.enonic.xp.core.impl.content.validate.DataValidationErrors;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
+import com.enonic.xp.core.impl.content.validate.ValidationError;
+import com.enonic.xp.core.impl.content.validate.ValidationErrors;
 import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
@@ -242,9 +242,11 @@ final class UpdateContentCommand
 
     private boolean validateNonBlockingChecks( final Content edited )
     {
-        final DataValidationErrors dataValidationErrors = ValidateContentDataCommand.create().
+        final ValidationErrors validationErrors = ValidateContentDataCommand.create().
             contentData( edited.getData() ).
             contentType( edited.getType() ).
+            name( edited.getName() ).
+            displayName( edited.getDisplayName() ).
             extradatas( edited.getAllExtraData() ).
             mixinService( this.mixinService ).
             siteService( this.siteService ).
@@ -252,16 +254,16 @@ final class UpdateContentCommand
             build().
             execute();
 
-        for ( DataValidationError error : dataValidationErrors )
+        for ( ValidationError error : validationErrors )
         {
             LOG.info( "*** DataValidationError: " + error.getErrorMessage() );
         }
 
-        if ( dataValidationErrors.hasErrors() )
+        if ( validationErrors.hasErrors() )
         {
             if ( this.params.isRequireValid() )
             {
-                throw new ContentDataValidationException( dataValidationErrors.getFirst().getErrorMessage() );
+                throw new ContentDataValidationException( validationErrors.getFirst().getErrorMessage() );
             }
             else
             {
