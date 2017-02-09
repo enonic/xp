@@ -34,7 +34,7 @@ public final class MainWebHandler
     protected boolean canHandle( final WebRequest req )
     {
         final String path = req.getRawPath();
-        return path.equals( "/" ) || path.equals( "/admin" ) || path.startsWith( "/admin/" ) || ASSET_PATTERN.matcher( path ).matches();
+        return path.equals("") || path.equals( "/" ) || path.equals( "/admin" ) || path.startsWith( "/admin/" ) || ASSET_PATTERN.matcher( path ).matches();
     }
 
     @Override
