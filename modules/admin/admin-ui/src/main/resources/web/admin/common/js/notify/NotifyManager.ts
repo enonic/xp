@@ -17,6 +17,8 @@ module api.notify {
         private registry: Object = {};
 
         constructor() {
+
+
             this.el = new NotificationContainer();
             api.dom.Body.get().appendChild(this.el);
 
@@ -156,11 +158,26 @@ module api.notify {
         }
 
         static get(): NotifyManager {
+
+            if (window != window.parent) {
+
+                return this.getFromParentIFrame();
+            }
+
             if (!NotifyManager.instance) {
                 NotifyManager.instance = new NotifyManager();
             }
 
             return NotifyManager.instance;
+        }
+
+        private static getFromParentIFrame(): NotifyManager {
+            let context = window;
+            while (context != window.parent) {
+                context = window.parent;
+            }
+
+            return context['api']['notify']['NotifyManager'].get();
         }
     }
 
