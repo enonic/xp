@@ -43,6 +43,8 @@ public interface ContentService
 
     boolean isValidContent( ContentIds contentIds );
 
+    ContentIds getInvalidContent( ContentIds contentIds );
+
     Content duplicate( DuplicateContentParams params );
 
     Content move( MoveContentParams params );

@@ -971,8 +971,10 @@ public class ContentResourceTest
         Mockito.doReturn( res ).when( this.contentService ).resolvePublishDependencies(
             Mockito.isA( ResolvePublishDependenciesParams.class ) );
         Mockito.doReturn( res ).when( this.contentService ).compare( Mockito.isA( CompareContentsParams.class ) );
-        Mockito.doReturn( FindContentIdsByQueryResult.create().contents( ContentIds.from(contentId2) ).totalHits( 1L ).build() ).when(
+        Mockito.doReturn( FindContentIdsByQueryResult.create().contents( ContentIds.from( contentId2 ) ).totalHits( 1L ).build() ).when(
             this.contentService ).find( Mockito.isA( ContentQuery.class ) );
+        Mockito.doReturn( ContentIds.from( contentId1, contentId2 ) ).when( this.contentService ).getInvalidContent(
+            Mockito.isA( ContentIds.class ) );
 
         String jsonString = request().path( "content/resolvePublishContent" ).
             entity( readFromFile( "resolve_publish_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
