@@ -581,6 +581,7 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
+            contentService( this ).
             build().
             execute();
     }
