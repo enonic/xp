@@ -18,7 +18,6 @@ module api.notify {
 
         constructor() {
 
-
             this.el = new NotificationContainer();
             api.dom.Body.get().appendChild(this.el);
 
