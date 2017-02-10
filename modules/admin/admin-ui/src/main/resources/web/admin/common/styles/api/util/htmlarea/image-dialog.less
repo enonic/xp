@@ -76,6 +76,12 @@
     fieldset.modal-dialog-fieldset {
       margin: 0px;
     }
+
+    @-moz-document url-prefix() { // FF Issue with fieldset width, fix for XP-4975
+      fieldset {
+        display: table-cell;
+      }
+    }
   }
 
   .toolbar {
