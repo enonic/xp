@@ -42,9 +42,11 @@ module api.content.resource.result {
 
         static fromJson(json: ResolvePublishContentResultJson): ResolvePublishDependenciesResult {
 
-            let dependants: ContentId[] = json.dependentContents.map(dependant => new ContentId(dependant.id));
-            let requested: ContentId[] = json.requestedContents.map(dependant => new ContentId(dependant.id));
-            let required: ContentId[] = json.requiredContents.map(dependant => new ContentId(dependant.id));
+            let dependants: ContentId[] = json.dependentContents
+                ? json.dependentContents.map(dependant => new ContentId(dependant.id))
+                : [];
+            let requested: ContentId[] = json.requestedContents ? json.requestedContents.map(dependant => new ContentId(dependant.id)) : [];
+            let required: ContentId[] = json.requiredContents ? json.requiredContents.map(dependant => new ContentId(dependant.id)) : [];
             let containsRemovable: boolean = json.containsRemovable;
             let containsInvalid: boolean = json.containsInvalid;
 
