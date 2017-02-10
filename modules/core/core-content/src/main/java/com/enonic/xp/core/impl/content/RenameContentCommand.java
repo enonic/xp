@@ -1,9 +1,13 @@
 package com.enonic.xp.core.impl.content;
 
+
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.RenameContentParams;
+import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.core.impl.content.validate.ValidationErrors;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
@@ -18,10 +22,18 @@ final class RenameContentCommand
 {
     private final RenameContentParams params;
 
+    private final ContentService contentService;
+
     private RenameContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
+        this.contentService = builder.contentService;
+    }
+
+    public static Builder create( final RenameContentParams params )
+    {
+        return new Builder( params );
     }
 
     Content execute()
@@ -42,20 +54,51 @@ final class RenameContentCommand
     private Content doExecute()
     {
         final NodeId nodeId = NodeId.from( params.getContentId() );
-        final Node existingNode = nodeService.getById( nodeId );
 
         final NodeName nodeName = NodeName.from( params.getNewName().toString() );
-        nodeService.rename( RenameNodeParams.create().
+
+        final Node node = nodeService.rename( RenameNodeParams.create().
             nodeId( nodeId ).
             nodeName( nodeName ).
             build() );
 
+        final Content content = translator.fromNode( node, false );
+
+        final boolean isValid = validateContent( content );
+
+        if ( content.isValid() != isValid )
+        {
+            return updateValidState( content, isValid );
+        }
+
         return getContent( params.getContentId() );
     }
 
-    public static Builder create( final RenameContentParams params )
+    private boolean validateContent( final Content content )
     {
-        return new Builder( params );
+        final ValidationErrors validationErrors = ValidateContentDataCommand.create().
+            contentData( content.getData() ).
+            contentType( content.getType() ).
+            name( content.getName() ).
+            displayName( content.getDisplayName() ).
+            extradatas( content.getAllExtraData() ).
+            contentTypeService( this.contentTypeService ).
+            build().
+            execute();
+
+        return validationErrors.hasErrors() ? false : true;
+    }
+
+    private Content updateValidState( final Content content, final boolean isValid )
+    {
+
+        final UpdateContentParams updateContentParams = new UpdateContentParams().
+            requireValid( false ).
+            contentId( content.getId() ).
+            modifier( content.getModifier() ).
+            editor( edit -> edit.valid = isValid );
+
+        return this.contentService.update( updateContentParams );
     }
 
     public static class Builder
@@ -63,9 +106,17 @@ final class RenameContentCommand
     {
         private final RenameContentParams params;
 
+        private ContentService contentService;
+
         public Builder( final RenameContentParams params )
         {
             this.params = params;
+        }
+
+        public RenameContentCommand.Builder contentService( ContentService contentService )
+        {
+            this.contentService = contentService;
+            return this;
         }
 
         @Override
