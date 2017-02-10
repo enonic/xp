@@ -631,6 +631,10 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                       update: boolean = true): TreeNode<ContentSummaryAndCompareStatus> {
         let parentNode = node.getParent();
 
+        if (this.isNodeHighlighted(node)) {
+            this.removeHighlighting();
+        }
+
         node.remove();
 
         let data = parentNode ? parentNode.getData() : null;
