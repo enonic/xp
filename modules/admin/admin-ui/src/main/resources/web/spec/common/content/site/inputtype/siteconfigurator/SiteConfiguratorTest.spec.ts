@@ -33,7 +33,7 @@ describe('api.content.site.inputtype.siteconfigurator.SiteConfigurator', () => {
     describe('constructor', () => {
 
         it('should correctly initialize form context', function () {
-            expect(globalFormContext).toEqual(globalConfigurator['globalFormContext']);
+            expect(globalFormContext).toEqual(globalConfigurator['formContext']);
         });
 
         describe('should correctly initialize input type context:', function () {
