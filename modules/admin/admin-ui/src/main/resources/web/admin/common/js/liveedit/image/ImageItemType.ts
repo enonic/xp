@@ -19,7 +19,7 @@ module api.liveedit.image {
         }
 
         createView(config: CreateItemViewConfig<RegionView,ImageComponent>): ImageComponentView {
-            return new ImageComponentView(new ImageComponentViewBuilder().
+            return new ImageComponentView(<ImageComponentViewBuilder>new ImageComponentViewBuilder().
                 setItemViewProducer(config.itemViewProducer).
                 setParentRegionView(config.parentView).
                 setParentElement(config.parentElement).
