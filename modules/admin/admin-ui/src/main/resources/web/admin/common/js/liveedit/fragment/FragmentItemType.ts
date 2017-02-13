@@ -19,7 +19,7 @@ module api.liveedit.fragment {
         }
 
         createView(config: CreateItemViewConfig<RegionView,FragmentComponent>): FragmentComponentView {
-            return new FragmentComponentView(new FragmentComponentViewBuilder().setItemViewProducer(
+            return new FragmentComponentView(<FragmentComponentViewBuilder>new FragmentComponentViewBuilder().setItemViewProducer(
                 config.itemViewProducer).setParentRegionView(config.parentView).setParentElement(config.parentElement).setElement(
                 config.element).setComponent(config.data).setPositionIndex(config.positionIndex));
         }
