@@ -1,0 +1,19 @@
+{
+  "containsInvalid": true,
+  "containsRemovable": false,
+  "dependentContents": [
+    {
+      "id": "dependant-contentId"
+    }
+  ],
+  "requestedContents": [
+    {
+      "id": "requested-contentId"
+    }
+  ],
+  "requiredContents": [
+    {
+      "id": "required-contentId"
+    }
+  ]
+}
