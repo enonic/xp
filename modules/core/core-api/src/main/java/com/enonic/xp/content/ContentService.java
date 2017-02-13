@@ -39,7 +39,7 @@ public interface ContentService
 
     UnpublishContentsResult unpublishContent( UnpublishContentParams params );
 
-    CompareContentResults resolvePublishDependencies( ResolvePublishDependenciesParams params );
+    ResolveContentsToBePublishedCommandResult resolvePublishDependencies( ResolvePublishDependenciesParams params );
 
     boolean isValidContent( ContentIds contentIds );
 

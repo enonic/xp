@@ -46,6 +46,7 @@ import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
+import com.enonic.xp.content.ResolveContentsToBePublishedCommandResult;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UpdateContentParams;
@@ -957,30 +958,36 @@ public class ContentResourceTest
     }
 
     @Test
-    public void resolvePublishContent_dependantContent()
+    public void resolve_publish_contents()
         throws Exception
     {
-        final ContentId contentId1 = ContentId.from( "content-id1" );
-        final ContentId contentId2 = ContentId.from( "content-id2" );
-
-        final CompareContentResults res = CompareContentResults.create().
-            add( new CompareContentResult( CompareStatus.NEW, contentId1 ) ).
-            add( new CompareContentResult( CompareStatus.NEW, contentId2 ) ).
+        final CompareContentResult requested = new CompareContentResult( CompareStatus.NEW, ContentId.from( "requested-contentId" ) );
+        final CompareContentResult dependant = new CompareContentResult( CompareStatus.NEW, ContentId.from( "dependant-contentId" ) );
+        final CompareContentResults results = CompareContentResults.create().
+            add( requested ).
+            add( dependant ).
             build();
 
-        Mockito.doReturn( res ).when( this.contentService ).resolvePublishDependencies(
-            Mockito.isA( ResolvePublishDependenciesParams.class ) );
-        Mockito.doReturn( res ).when( this.contentService ).compare( Mockito.isA( CompareContentsParams.class ) );
-        Mockito.doReturn( FindContentIdsByQueryResult.create().contents( ContentIds.from( contentId2 ) ).totalHits( 1L ).build() ).when(
-            this.contentService ).find( Mockito.isA( ContentQuery.class ) );
-        Mockito.doReturn( ContentIds.from( contentId1, contentId2 ) ).when( this.contentService ).getInvalidContent(
+        final ResolveContentsToBePublishedCommandResult result = ResolveContentsToBePublishedCommandResult.create().
+            addCompareContentResults( results ).
+            addRequiredContentId( ContentId.from( "required-contentId" ) ).
+            build();
+
+        Mockito.when( contentService.resolvePublishDependencies( Mockito.isA( ResolvePublishDependenciesParams.class ) ) ).thenReturn(
+            result );
+        Mockito.when( contentService.compare( Mockito.isA( CompareContentsParams.class ) ) ).thenReturn(
+            result.getCompareContentResults() );
+        Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
+            FindContentIdsByQueryResult.create().contents( ContentIds.from( "dependant-contentId" ) ).totalHits( 1L ).build() );
+
+        Mockito.doReturn( ContentIds.from( "dependant-contentId", "required-contentId" ) ).when( this.contentService ).getInvalidContent(
             Mockito.isA( ContentIds.class ) );
 
         String jsonString = request().path( "content/resolvePublishContent" ).
             entity( readFromFile( "resolve_publish_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
-        assertJson( "resolve_publish_content_result.json", jsonString );
+        assertJson( "resolve_publish_content.json", jsonString );
     }
 
     @Test
