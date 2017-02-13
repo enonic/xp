@@ -32,6 +32,7 @@ public final class AuthResource
     @Path("login")
     public LoginResultJson login( final LoginRequest request )
     {
+        addRandomDelay();
         final AuthHelper helper = new AuthHelper( this.securityService );
         final AuthenticationInfo authInfo =
             helper.login( request.getUser(), request.getPassword(), request.getUserStore(), request.isRememberMe() );
@@ -68,6 +69,18 @@ public final class AuthResource
 
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
         return new LoginResultJson( authInfo );
+    }
+
+    private void addRandomDelay()
+    {
+        try
+        {
+            Thread.sleep( (long) ( Math.random() * 130 + 20 ) );
+        }
+        catch ( InterruptedException e )
+        {
+            e.printStackTrace();
+        }
     }
 
     @Reference
