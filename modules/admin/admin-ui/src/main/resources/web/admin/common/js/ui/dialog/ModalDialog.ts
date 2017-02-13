@@ -29,6 +29,8 @@ module api.ui.dialog {
 
         private listOfClickIgnoredElements: api.dom.Element[] = [];
 
+        private static FOCUS_OUT_TIMEOUT: number = 10;
+
         public static debug: boolean = false;
 
         constructor(title: string = '', forceHorizontalCentering: boolean = false) {
@@ -97,7 +99,7 @@ module api.ui.dialog {
                         this.tabbable[this.tabbable.length - 1].giveFocus();
                     }
                 }
-            }, 50, false);
+            }, ModalDialog.FOCUS_OUT_TIMEOUT, false);
 
             this.buttonRow.onFocusIn((event) => {
                 this.buttonRowIsFocused = true;
@@ -107,7 +109,7 @@ module api.ui.dialog {
             this.buttonRow.onFocusOut((event) => {
                 buttonRowFocusOutTimeout = setTimeout(() => {
                     this.buttonRowIsFocused = false;
-                }, 15); // timeout should be > timeout for modal dialog to trigger after
+                }, ModalDialog.FOCUS_OUT_TIMEOUT + 5); // timeout should be > timeout for modal dialog to trigger after
             });
         }
 
