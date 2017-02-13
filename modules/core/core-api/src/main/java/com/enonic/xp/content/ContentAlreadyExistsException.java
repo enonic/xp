@@ -14,7 +14,7 @@ public final class ContentAlreadyExistsException
 
     public ContentAlreadyExistsException( final ContentPath path )
     {
-        super( MessageFormat.format( "Content at path [{0}] already exist", path.toString() ) );
+        super( MessageFormat.format( "Content at path [{0}] already exists", path.toString() ) );
         this.path = path;
     }
 

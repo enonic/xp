@@ -392,7 +392,7 @@ module api.content.form.inputtype.image {
 
                 let selectedOption = this.selectedOptionsView.getById(item.getId());
                 if (!!selectedOption) {
-                    (<ImageSelectorSelectedOptionView> selectedOption.getOptionView()).showError('Upload failed');
+                    this.selectedOptionsView.removeSelectedOptions([selectedOption]);
                 }
 
                 this.uploader.setMaximumOccurrences(this.getRemainingOccurrences());
