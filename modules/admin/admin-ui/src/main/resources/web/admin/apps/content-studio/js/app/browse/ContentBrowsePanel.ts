@@ -33,6 +33,7 @@ import ContentPath = api.content.ContentPath;
 import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
 import DataChangedEvent = api.ui.treegrid.DataChangedEvent;
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
+import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
 
 export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
 
@@ -388,7 +389,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         }
 
         return this.doHandleContentUpdate(data).then((changed) => {
-            this.updateStatisticsPanel(data);
+            this.updatePreviewPanel(data);
 
             return this.treeGrid.placeContentNodes(changed);
         });
@@ -574,8 +575,9 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
     }
 
-    private updateStatisticsPanel(data: ContentSummaryAndCompareStatus[]) {
+    private updatePreviewPanel(updatedContents: ContentSummaryAndCompareStatus[]) {
         let previewItem = this.getBrowseItemPanel().getStatisticsItem();
+        let previewRefreshed = false;
 
         if (!previewItem) {
             return;
@@ -590,24 +592,33 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             return item;
         };
 
-        let isChildFragment = (possibleChildFragment: ContentSummaryAndCompareStatus, possibleParent: ContentSummaryAndCompareStatus) => {
-            return possibleChildFragment.getType().equals(api.schema.content.ContentTypeName.FRAGMENT) &&
-                possibleChildFragment.getPath().isChildOf(possibleParent.getPath());
-        };
+        new GetContentByIdRequest(previewItem.getModel().getContentId()).sendAndParse().then((previewItemContent: Content) => {
+            updatedContents.some((content: ContentSummaryAndCompareStatus) => {
+                if (content.getPath().equals(previewItem.getModel().getPath())) {
+                    new api.content.page.IsRenderableRequest(content.getContentId()).sendAndParse().then((renderable: boolean) => {
+                        this.getBrowseItemPanel().setStatisticsItem(toBrowseItem(content, renderable));
+                    });
+                    return true;
+                }
 
-        data.some((content: ContentSummaryAndCompareStatus) => {
-            if (content.getPath().toString() === previewItem.getPath()) {
-                new api.content.page.IsRenderableRequest(content.getContentId()).sendAndParse().then((renderable: boolean) => {
-                    this.getBrowseItemPanel().setStatisticsItem(toBrowseItem(content, renderable));
-                });
-                return true;
-            } else if (isChildFragment(content, previewItem.getModel())) {
-                // child fragment was updated - preview refresh is needed
-                (<ContentItemStatisticsPanel>this.getBrowseItemPanel().getPanel(1)).getPreviewPanel().setItem(previewItem, true);
-                this.mobileContentItemStatisticsPanel.getPreviewPanel().setItem(previewItem, true);
-                return true;
-            }
+                if (!previewRefreshed) {
+                    previewItemContent.containsChildContentId(content.getContentId()).then((containsId: boolean) => {
+                        if (containsId) {
+                            this.forcePreviewRerender();
+                            previewRefreshed = true;
+                        }
+                    });
+                }
+
+                return previewRefreshed;
+            });
         });
+    }
+
+    private forcePreviewRerender() {
+        let previewItem = this.getBrowseItemPanel().getStatisticsItem();
+        (<ContentItemStatisticsPanel>this.getBrowseItemPanel().getPanel(1)).getPreviewPanel().setItem(previewItem, true);
+        this.mobileContentItemStatisticsPanel.getPreviewPanel().setItem(previewItem, true);
     }
 
     private updateDetailsPanel(data: ContentSummaryAndCompareStatus[]) {
