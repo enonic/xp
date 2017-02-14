@@ -16,7 +16,7 @@ module api.ui.treegrid.actions {
             this.treeGrid = builder.treeGrid;
 
             this.treeGrid.onSelectionChanged(() => {
-                if (this.treeGrid.isAllSelected()) {
+                if (this.treeGrid.isAllSelected() && !this.treeGrid.isEmpty()) {
                     this.setChecked(true, true);
                 } else {
                     if (this.isChecked()) {
@@ -29,11 +29,13 @@ module api.ui.treegrid.actions {
 
             this.onClicked((event) => {
 
-                if (this.isChecked()) {
-                    this.treeGrid.getRoot().clearStashedSelection();
-                    this.treeGrid.getGrid().clearSelection();
-                } else {
-                    this.treeGrid.selectAll();
+                if (!this.treeGrid.isEmpty()) {
+                    if (this.isChecked()) {
+                        this.treeGrid.getRoot().clearStashedSelection();
+                        this.treeGrid.getGrid().clearSelection();
+                    } else {
+                        this.treeGrid.selectAll();
+                    }
                 }
 
                 event.preventDefault();
