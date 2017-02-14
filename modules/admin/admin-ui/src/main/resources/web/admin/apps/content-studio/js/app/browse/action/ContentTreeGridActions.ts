@@ -155,7 +155,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.PUBLISH_TREE_CONTENT.setEnabled(treePublishEnabled);
         this.UNPUBLISH_CONTENT.setEnabled(unpublishEnabled);
         this.PUBLISH_CONTENT.setVisible(publishEnabled);
-        this.UNPUBLISH_CONTENT.setVisible(!publishEnabled);
+        this.UNPUBLISH_CONTENT.setVisible(unpublishEnabled);
     }
 
     private isEveryLeaf(contentSummaries: ContentSummary[]): boolean {
