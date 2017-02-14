@@ -145,13 +145,21 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
     }
 
+    private updateDetailsPanelOnItemChange(selection?: TreeNode<ContentSummaryAndCompareStatus>[]) {
+        let item = this.getFirstSelectedBrowseItem(selection);
+        this.doUpdateDetailsPanel(item ? item.getModel() : null);
+    }
+
     private subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager: NonMobileDetailsPanelsManager,
                                            contentPublishMenuButton: ContentPublishMenuButton) {
 
         this.getTreeGrid().onSelectionChanged((currentSelection: TreeNode<ContentSummaryAndCompareStatus>[],
                                                fullSelection: TreeNode<ContentSummaryAndCompareStatus>[]) => {
-            let item = this.getFirstSelectedBrowseItem(fullSelection);
-            this.doUpdateDetailsPanel(item ? item.getModel() : null);
+            this.updateDetailsPanelOnItemChange(fullSelection);
+        });
+
+        this.getTreeGrid().onHighlightingChanged((node: TreeNode<ContentSummaryAndCompareStatus>) => {
+            this.updateDetailsPanelOnItemChange();
         });
 
         ResponsiveManager.onAvailableSizeChanged(this.getFilterAndGridSplitPanel(), (item: ResponsiveItem) => {
