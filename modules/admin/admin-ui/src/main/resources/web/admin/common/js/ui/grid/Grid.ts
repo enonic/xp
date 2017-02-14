@@ -139,6 +139,10 @@ module api.ui.grid {
             return this.dataView;
         }
 
+        getDataLength(): number {
+            return this.slickGrid.getDataLength();
+        }
+
         setColumns(columns: GridColumn<T>[], toBegin: boolean = false) {
             if (this.checkboxSelectorPlugin) {
                 let pluginColumn = this.checkboxSelectorPlugin.getColumnDefinition();

@@ -902,6 +902,10 @@ module api.ui.treegrid {
             throw new Error('Must be implemented by inheritors');
         }
 
+        isEmpty(): boolean {
+            return this.getGrid().getDataLength() == 0;
+        }
+
         /**
          * Fetches a single element.
          * Can be used to update/add a single node without
