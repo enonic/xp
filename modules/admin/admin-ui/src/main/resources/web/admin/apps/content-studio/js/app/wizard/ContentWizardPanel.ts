@@ -917,7 +917,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         return wemQ(false);
     }
-    
+
     private doHtmlAreasContainId(id: string): boolean {
         let areas = this.getHtmlAreasInForm(this.getContentType().getForm());
         let data: api.data.PropertyTree = this.getPersistedItem().getContentData();
