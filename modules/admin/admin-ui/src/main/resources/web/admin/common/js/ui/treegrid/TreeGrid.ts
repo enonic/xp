@@ -286,7 +286,7 @@ module api.ui.treegrid {
                 }
 
                 if (!elem.hasClass('sort-dialog-trigger')) {
-                    new TreeGridItemClickedEvent(!!this.highlightedNode || this.grid.getSelectedRows().length > 0).fire();
+                    new TreeGridItemClickedEvent(!!this.getFirstSelectedOrHighlightedNode()).fire();
                 }
             }).bind(this), 50, false);
 
@@ -984,6 +984,8 @@ module api.ui.treegrid {
             let node = root.findNode(dataId);
 
             if (node) {
+                this.unhighlightCurrentRow(true);
+
                 let row = this.gridData.getRowById(node.getId());
                 this.grid.selectRow(row);
             }
@@ -1267,8 +1269,10 @@ module api.ui.treegrid {
         getParentNode(nextToSelection: boolean = false, stashedParentNode?: TreeNode<DATA>) {
             let root = stashedParentNode || this.root.getCurrentRoot();
             let parentNode: TreeNode<DATA>;
-            if (this.getSelectedNodes() && this.getSelectedNodes().length === 1) {
-                parentNode = root.findNode(this.getSelectedNodes()[0].getDataId());
+
+            parentNode = this.getFirstSelectedOrHighlightedNode();
+
+            if (parentNode) {
                 if (nextToSelection) {
                     parentNode = parentNode.getParent() || this.root.getCurrentRoot();
                 }
