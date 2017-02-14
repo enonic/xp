@@ -439,7 +439,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
     }
 
     selectNodeByPath(targetPath: ContentPath) {
-        let currentSelectedNode: TreeNode<ContentSummaryAndCompareStatus> = this.getSelectedNodes()[0];
+        let currentSelectedNode: TreeNode<ContentSummaryAndCompareStatus> = this.getFirstSelectedOrHighlightedNode();
         let nodeToSearchTargetIn: TreeNode<ContentSummaryAndCompareStatus>;
 
         if (currentSelectedNode && targetPath.isDescendantOf(currentSelectedNode.getData().getPath())) {

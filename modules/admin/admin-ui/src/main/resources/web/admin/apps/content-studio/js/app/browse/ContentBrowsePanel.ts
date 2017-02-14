@@ -332,7 +332,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         let path = this.getPathFromPreviewPath(contentPreviewPath);
         if (path) {
             let contentPath = api.content.ContentPath.fromString(path);
-            if (this.isSingleItemSelectedInGrid() && !this.isGivenPathSelectedInGrid(contentPath)) {
+            if (this.treeGrid.getFirstSelectedOrHighlightedNode() && !this.isGivenPathSelectedInGrid(contentPath)) {
                 this.selectContentInGridByPath(contentPath);
             }
         }
@@ -343,12 +343,13 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     }
 
     private isGivenPathSelectedInGrid(path: api.content.ContentPath): boolean {
-        let contentSummary: ContentSummaryAndCompareStatus = this.treeGrid.getSelectedNodes()[0].getData();
-        return contentSummary.getPath().equals(path);
-    }
+        const node = this.treeGrid.getFirstSelectedOrHighlightedNode();
 
-    private isSingleItemSelectedInGrid(): boolean {
-        return this.treeGrid.getSelectedNodes() && this.treeGrid.getSelectedNodes().length === 1;
+        if (node) {
+            const contentSummary: ContentSummaryAndCompareStatus = node.getData();
+            return contentSummary.getPath().equals(path);
+        }
+        return false;
     }
 
     private getPathFromPreviewPath(contentPreviewPath: string): string {
