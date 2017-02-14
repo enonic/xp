@@ -1205,9 +1205,13 @@ module api.ui.treegrid {
 
                         if (node.isVisible()) {
                             let selected = this.grid.isRowSelected(this.gridData.getRowById(node.getId()));
+                            let highlighted = this.isNodeHighlighted(node);
                             this.gridData.updateItem(node.getId(), node);
                             if (selected) {
                                 this.grid.addSelectedRow(this.gridData.getRowById(node.getId()));
+                            } else if (highlighted) {
+                                this.removeHighlighting(true);
+                                this.highlightRowByNode(node);
                             }
                         }
                     });
