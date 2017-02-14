@@ -1,5 +1,7 @@
 {
-  "ids": ["content-id1"],
+  "ids": [
+    "requested-contentId"
+  ],
   "excludedIds": [],
   "excludeChildrenIds": []
 }

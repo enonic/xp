@@ -141,6 +141,7 @@ import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
+import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SetActiveContentVersionResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UnpublishContentParams;
@@ -714,14 +715,19 @@ public final class ContentResource
             build() );
 
         //Resolved the dependent ContentPublishItem
-        final List<ContentId> dependentContentIdList = compareResults.contentIds().
+        final ContentIds dependentContentIds = ContentIds.from( compareResults.contentIds().
             stream().
             filter( contentId -> !requestedContentIds.contains( contentId ) ).
-            collect( Collectors.toList() );
+            collect( Collectors.toList() ) );
 
-        final ContentIds dependentContentIds = ContentIds.from( dependentContentIdList );
+        //Resolve required ids
+        final ContentIds requiredIds = this.contentService.resolveRequiredDependencies( ResolveRequiredDependenciesParams.create().
+            contentIds( dependentContentIds ).
+            target( ContentConstants.BRANCH_MASTER ).
+            build() );
 
-        final Boolean anyRemovable = this.isAnyContentRemovableFromPublish( dependentContentIds );
+        final Boolean anyRemovable = requiredIds.getSize() < dependentContentIds.getSize();
+
         final ContentIds invalidContentIds = getInvalidContent( compareResults );
 
         //sort all dependant content ids
@@ -733,9 +739,10 @@ public final class ContentResource
 
         //Returns the JSON result
         return ResolvePublishContentResultJson.create().
-            setContainsRemovable( anyRemovable ).
             setRequestedContents( requestedContentIds ).
             setDependentContents( this.invalidDependantsOnTop( sortedDependentContentIds, requestedContentIds, sortedInvalidContentIds ) ).
+            setRequiredContents( requiredIds ).
+            setContainsRemovable( anyRemovable ).
             setContainsInvalid( !invalidContentIds.isEmpty() ).
             build();
     }
@@ -1051,12 +1058,13 @@ public final class ContentResource
 
         final List<String> result = new ArrayList<>();
 
-        permissions.forEach( permission -> {
-            if ( userHasPermission( authInfo, permission, contentsPermissions ) )
-            {
-                result.add( permission.name() );
-            }
-        } );
+        permissions.forEach( permission ->
+                             {
+                                 if ( userHasPermission( authInfo, permission, contentsPermissions ) )
+                                 {
+                                     result.add( permission.name() );
+                                 }
+                             } );
 
         return result;
     }

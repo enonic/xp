@@ -70,6 +70,7 @@ import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.ReprocessContentParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
+import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SetActiveContentVersionResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UnpublishContentParams;
@@ -374,6 +375,19 @@ public class ContentServiceImpl
             contentIds( params.getContentIds() ).
             excludedContentIds( params.getExcludedContentIds() ).
             excludeChildrenIds( params.getExcludeChildrenIds() ).
+            target( params.getTarget() ).
+            build().
+            execute();
+    }
+
+    public ContentIds resolveRequiredDependencies( ResolveRequiredDependenciesParams params )
+    {
+        return ResolveRequiredDependenciesCommand.create().
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            contentIds( params.getContentIds() ).
             target( params.getTarget() ).
             build().
             execute();
