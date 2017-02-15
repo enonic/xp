@@ -4,6 +4,7 @@ import {ContentBrowseToolbar} from './ContentBrowseToolbar';
 import {ContentTreeGrid} from './ContentTreeGrid';
 import {ContentBrowseFilterPanel} from './filter/ContentBrowseFilterPanel';
 import {ContentBrowseItemPanel} from './ContentBrowseItemPanel';
+import {ContentItemStatisticsPanel} from '../view/ContentItemStatisticsPanel';
 import {MobileContentItemStatisticsPanel} from '../view/MobileContentItemStatisticsPanel';
 import {FloatingDetailsPanel} from '../view/detail/FloatingDetailsPanel';
 import {DockedDetailsPanel} from '../view/detail/DockedDetailsPanel';
