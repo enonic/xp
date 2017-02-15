@@ -1,4 +1,5 @@
 .tree-grid-toolbar {
+  position: relative;
   width: 100%;
   height: 40px;
   margin-top: -40px;
@@ -7,12 +8,17 @@
   .@{_COMMON_PREFIX}button {
     border: none;
 
-    &.icon-cart:before {
-      font-size: 20px;
+    &.icon-cart {
+      position: absolute;
+      left: 45%;
+      :before {
+        font-size: 20px;
+      }
     }
 
     &.@{_CLS_PREFIX}icon-loop {
-      padding: 0 14px;
+      float: right;
+      padding: 0 26px 0 14px;
 
       &:before {
         left: 0;
@@ -70,12 +76,35 @@
       }
     }
   }
+
 }
 
 body {
   &._0-240, &._240-360, &._360-540 {
+    .tree-grid-toolbar .@{_COMMON_PREFIX}button.@{_CLS_PREFIX}icon-loop {
+      float: left;
+      padding: 0 0 0 16px;
+    }
     .selection-controller {
       float: right;
     }
+  }
+}
+
+.content-grid-and-browse-split-panel.vertical .tree-grid {
+  &._0-240, &._240-360, &._360-540 {
+
+    .@{_CLS_PREFIX}icon-loop {
+      padding: 0 32px 0 14px;
+    }
+  }
+}
+
+.tree-grid {
+  &._0-240 .@{_COMMON_PREFIX}button.icon-cart {
+      left: 35%;
+  }
+  &._240-360 .@{_COMMON_PREFIX}button.icon-cart {
+      left: 40%;
   }
 }
