@@ -16,7 +16,12 @@ module api.ui.treegrid.actions {
             this.treeGrid = builder.treeGrid;
 
             this.treeGrid.onSelectionChanged(() => {
-                if (this.treeGrid.isAllSelected()) {
+
+                if (this.isDisabled() != this.treeGrid.isEmpty()) {
+                    this.setDisabled(this.treeGrid.isEmpty());
+                }
+
+                if (this.treeGrid.isAllSelected() && !this.treeGrid.isEmpty()) {
                     this.setChecked(true, true);
                 } else {
                     if (this.isChecked()) {
@@ -29,14 +34,18 @@ module api.ui.treegrid.actions {
 
             this.onClicked((event) => {
 
+                event.preventDefault();
+
+                if (this.isDisabled()) {
+                    return;
+                }
+
                 if (this.isChecked()) {
                     this.treeGrid.getRoot().clearStashedSelection();
                     this.treeGrid.getGrid().clearSelection();
                 } else {
                     this.treeGrid.selectAll();
                 }
-
-                event.preventDefault();
             });
 
             this.onRendered(() => {
