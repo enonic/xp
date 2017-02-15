@@ -26,9 +26,9 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.core.impl.content.processor.ProcessCreateParams;
 import com.enonic.xp.core.impl.content.processor.ProcessCreateResult;
-import com.enonic.xp.core.impl.content.validate.DataValidationError;
-import com.enonic.xp.core.impl.content.validate.DataValidationErrors;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
+import com.enonic.xp.core.impl.content.validate.ValidationError;
+import com.enonic.xp.core.impl.content.validate.ValidationErrors;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
@@ -61,6 +61,16 @@ final class CreateContentCommand
         this.params = builder.params;
         this.mediaInfo = builder.mediaInfo;
         this.formDefaultValuesProcessor = builder.formDefaultValuesProcessor;
+    }
+
+    static Builder create()
+    {
+        return new Builder();
+    }
+
+    static Builder create( AbstractCreatingOrUpdatingContentCommand source )
+    {
+        return new Builder( source );
     }
 
     Content execute()
@@ -241,12 +251,13 @@ final class CreateContentCommand
     private CreateContentTranslatorParams createContentTranslatorParams( final CreateContentParams processedContent )
     {
         final CreateContentTranslatorParams.Builder builder = CreateContentTranslatorParams.create( processedContent );
-        builder.valid( validateNonBlockingChecks( processedContent ) );
         populateName( builder );
         populateCreator( builder );
         setChildOrder( builder );
         builder.owner( getDefaultOwner( processedContent ) );
         populateLanguage( builder );
+
+        populateValid( builder );
 
         return builder.build();
     }
@@ -347,45 +358,38 @@ final class CreateContentCommand
         builder.creator( currentUser.getKey() );
     }
 
-    private boolean validateNonBlockingChecks( final CreateContentParams contentParams )
+    private void populateValid( final CreateContentTranslatorParams.Builder builder )
     {
-        final DataValidationErrors dataValidationErrors = ValidateContentDataCommand.create().
-            contentData( contentParams.getData() ).
-            contentType( contentParams.getType() ).
-            extradatas( contentParams.getExtraDatas() != null ? ExtraDatas.from( contentParams.getExtraDatas() ) : ExtraDatas.empty() ).
+        final ValidationErrors validationErrors = ValidateContentDataCommand.create().
+            contentData( builder.getData() ).
+            contentType( builder.getType() ).
+            name( builder.getName() ).
+            displayName( builder.getDisplayName() ).
+            extradatas( builder.getExtraDatas() != null ? ExtraDatas.from( builder.getExtraDatas() ) : ExtraDatas.empty() ).
             mixinService( this.mixinService ).
             siteService( this.siteService ).
             contentTypeService( this.contentTypeService ).
             build().
             execute();
 
-        for ( DataValidationError error : dataValidationErrors )
+        for ( ValidationError error : validationErrors )
         {
             LOG.info( "*** DataValidationError: " + error.getErrorMessage() );
         }
-        if ( dataValidationErrors.hasErrors() )
+        if ( validationErrors.hasErrors() )
         {
             if ( params.isRequireValid() )
             {
-                throw new ContentDataValidationException( dataValidationErrors.getFirst().getErrorMessage() );
+                throw new ContentDataValidationException( validationErrors.getFirst().getErrorMessage() );
             }
             else
             {
-                return false;
+                builder.valid( false );
+                return;
             }
         }
 
-        return true;
-    }
-
-    static Builder create()
-    {
-        return new Builder();
-    }
-
-    static Builder create( AbstractCreatingOrUpdatingContentCommand source )
-    {
-        return new Builder( source );
+        builder.valid( true );
     }
 
     static class Builder

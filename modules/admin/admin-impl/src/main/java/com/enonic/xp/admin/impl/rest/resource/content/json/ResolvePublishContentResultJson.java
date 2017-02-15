@@ -12,6 +12,8 @@ public class ResolvePublishContentResultJson
 
     private final List<ContentIdJson> dependentContents;
 
+    private final List<ContentIdJson> requiredContents;
+
     private final Boolean containsRemovable;
 
     private final Boolean containsInvalid;
@@ -20,8 +22,14 @@ public class ResolvePublishContentResultJson
     {
         requestedContents = builder.requestedContents.stream().map( item -> new ContentIdJson( item ) ).collect( Collectors.toList() );
         dependentContents = builder.dependentContents.stream().map( item -> new ContentIdJson( item ) ).collect( Collectors.toList() );
+        requiredContents = builder.requiredContents.stream().map( item -> new ContentIdJson( item ) ).collect( Collectors.toList() );
         containsRemovable = builder.containsRemovable;
         containsInvalid = builder.containsInvalid;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     @SuppressWarnings("unused")
@@ -36,6 +44,11 @@ public class ResolvePublishContentResultJson
         return dependentContents;
     }
 
+    public List<ContentIdJson> getRequiredContents()
+    {
+        return requiredContents;
+    }
+
     @SuppressWarnings("unused")
     public Boolean getContainsRemovable()
     {
@@ -48,17 +61,14 @@ public class ResolvePublishContentResultJson
         return containsInvalid;
     }
 
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
     public static final class Builder
     {
 
         private ContentIds requestedContents;
 
         private ContentIds dependentContents;
+
+        private ContentIds requiredContents;
 
         private Boolean containsRemovable;
 
@@ -77,6 +87,12 @@ public class ResolvePublishContentResultJson
         public Builder setDependentContents( final ContentIds dependentContents )
         {
             this.dependentContents = dependentContents;
+            return this;
+        }
+
+        public Builder setRequiredContents( final ContentIds requiredContents )
+        {
+            this.requiredContents = requiredContents;
             return this;
         }
 

@@ -17,7 +17,7 @@ final class SiteConfiguratorType
     @Override
     public Value createValue( final Value value, final InputTypeConfig config )
     {
-        return ValueFactory.newString( value.asString() );
+        return ValueFactory.newPropertySet( value.asData() );
     }
 
     @Override

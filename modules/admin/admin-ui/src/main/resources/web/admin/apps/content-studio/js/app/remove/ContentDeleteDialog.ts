@@ -70,6 +70,7 @@ export class ContentDeleteDialog extends ProgressBarDialog {
                 }).finally(() => {
                     this.loadMask.hide();
                 this.unlockControls();
+                this.updateTabbable();
                 this.actionButton.giveFocus();
                 });
         });

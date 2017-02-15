@@ -5,7 +5,9 @@
   "tag": "myTag",
   "contentSelector": "1234abc",
   "contentTypeFilter": "article",
-  "siteConfigurator": "my config here",
+  "siteConfigurator": {
+    "applicationKey": "com.enonic.app.myapp"
+  },
   "double": 1.1,
   "long": 12345678910,
   "stringArray": [

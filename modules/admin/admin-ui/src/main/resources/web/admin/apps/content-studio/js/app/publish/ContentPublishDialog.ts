@@ -91,6 +91,10 @@ export class ContentPublishDialog extends ProgressBarDialog {
         return dependants;
     }
 
+    protected getDependantList(): PublishDialogDependantList {
+        return <PublishDialogDependantList>super.getDependantList();
+    }
+
     open() {
         this.excludedIds = [];
 
@@ -133,6 +137,9 @@ export class ContentPublishDialog extends ProgressBarDialog {
             this.getDependantList().toggleClass('contains-removable', result.isContainsRemovable());
 
             this.dependantIds = result.getDependants().slice();
+
+            this.getDependantList().setRequiredIds(result.getRequired());
+
             this.containsInvalid = result.isContainsInvalid();
 
             return this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
@@ -188,9 +195,10 @@ export class ContentPublishDialog extends ProgressBarDialog {
     }
 
     setIncludeChildItems(include: boolean, silent?: boolean) {
-        this.getItemList().getItemViews().forEach((itemView) => {
-            itemView.getIncludeChildrenToggler().toggle(include, silent);
-        });
+        this.getItemList().getItemViews()
+            .filter(itemView => itemView.getIncludeChildrenToggler())
+            .forEach(itemView => itemView.getIncludeChildrenToggler().toggle(include, silent)
+            );
         return this;
     }
 
@@ -300,13 +308,8 @@ export class ContentPublishDialog extends ProgressBarDialog {
         return summaries.some((summary) => summary.getCompareStatus() === CompareStatus.NEW);
     }
 
-    private areAllValid(summaries: ContentSummaryAndCompareStatus[]): boolean {
-        return summaries.every((summary: ContentSummaryAndCompareStatus) => isContentSummaryValid(summary));
-    }
-
     private areItemsAndDependantsValid(): boolean {
-        return !this.containsInvalid &&
-               this.areAllValid(this.getItemList().getItems());
+        return !this.containsInvalid;
     }
 
     protected hasSubDialog(): boolean {

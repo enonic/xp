@@ -33,15 +33,15 @@ public final class MainWebHandler
     @Override
     protected boolean canHandle( final WebRequest req )
     {
-        final String path = req.getPath();
-        return path.equals( "/" ) || path.equals( "/admin" ) || path.startsWith( "/admin/" ) || ASSET_PATTERN.matcher( path ).matches();
+        final String path = req.getRawPath();
+        return path.equals("") || path.equals( "/" ) || path.equals( "/admin" ) || path.startsWith( "/admin/" ) || ASSET_PATTERN.matcher( path ).matches();
     }
 
     @Override
     protected WebResponse doHandle( final WebRequest req, final WebResponse res, final WebHandlerChain chain )
         throws Exception
     {
-        final String path = req.getPath();
+        final String path = req.getRawPath();
         Matcher matcher = VERSIONED_ASSET_PATTERN.matcher( path );
         if ( matcher.matches() )
         {

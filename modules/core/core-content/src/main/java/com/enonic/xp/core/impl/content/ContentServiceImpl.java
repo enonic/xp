@@ -70,6 +70,7 @@ import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.ReprocessContentParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
+import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SetActiveContentVersionResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UnpublishContentParams;
@@ -379,8 +380,36 @@ public class ContentServiceImpl
             execute();
     }
 
+    public ContentIds resolveRequiredDependencies( ResolveRequiredDependenciesParams params )
+    {
+        return ResolveRequiredDependenciesCommand.create().
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            contentIds( params.getContentIds() ).
+            target( params.getTarget() ).
+            build().
+            execute();
+    }
+
     @Override
     public boolean isValidContent( ContentIds contentIds )
+    {
+        final ContentIds result = CheckContentsValidCommand.create().
+            translator( this.translator ).
+            nodeService( this.nodeService ).
+            eventPublisher( this.eventPublisher ).
+            contentTypeService( this.contentTypeService ).
+            contentIds( contentIds ).
+            build().
+            execute();
+
+        return result.isEmpty();
+    }
+
+    @Override
+    public ContentIds getInvalidContent( ContentIds contentIds )
     {
         return CheckContentsValidCommand.create().
             translator( this.translator ).
@@ -566,6 +595,7 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
+            contentService( this ).
             build().
             execute();
     }

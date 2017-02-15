@@ -33,6 +33,7 @@ import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler
 import DataChangedEvent = api.ui.treegrid.DataChangedEvent;
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
 import TreeGridItemClickedEvent = api.ui.treegrid.TreeGridItemClickedEvent;
+import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
 
 export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
 
@@ -403,7 +404,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         }
 
         return this.doHandleContentUpdate(data).then((changed) => {
-            this.updateStatisticsPanel(data);
+            this.updatePreviewPanel(data);
 
             return this.treeGrid.placeContentNodes(changed);
         });
@@ -589,30 +590,50 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
     }
 
-    private updateStatisticsPanel(data: ContentSummaryAndCompareStatus[]) {
+    private updatePreviewPanel(updatedContents: ContentSummaryAndCompareStatus[]) {
         let previewItem = this.getBrowseItemPanel().getStatisticsItem();
+        let previewRefreshed = false;
 
         if (!previewItem) {
             return;
         }
 
-        let content: ContentSummaryAndCompareStatus;
-        let previewItemNeedsUpdate = data.some((contentItem: ContentSummaryAndCompareStatus) => {
-            if (contentItem.getPath().toString() === previewItem.getPath()) {
-                content = contentItem;
-                return true;
-            }
-        });
+        let toBrowseItem = (content: ContentSummaryAndCompareStatus, renderable: boolean) => {
+            let item = new BrowseItem<ContentSummaryAndCompareStatus>(content).setId(content.getId()).setDisplayName(
+                content.getDisplayName()).setPath(content.getPath().toString()).setIconUrl(
+                new api.content.util.ContentIconUrlResolver().setContent(content.getContentSummary()).resolve()).setRenderable(
+                renderable);
 
-        if (previewItemNeedsUpdate) {
-            new api.content.page.IsRenderableRequest(content.getContentId()).sendAndParse().then((renderable: boolean) => {
-                let item = new BrowseItem<ContentSummaryAndCompareStatus>(content).setId(content.getId()).setDisplayName(
-                    content.getDisplayName()).setPath(content.getPath().toString()).setIconUrl(
-                    new api.content.util.ContentIconUrlResolver().setContent(content.getContentSummary()).resolve()).setRenderable(
-                    renderable);
-                this.getBrowseItemPanel().setStatisticsItem(item);
+            return item;
+        };
+
+        new GetContentByIdRequest(previewItem.getModel().getContentId()).sendAndParse().then((previewItemContent: Content) => {
+            updatedContents.some((content: ContentSummaryAndCompareStatus) => {
+                if (content.getPath().equals(previewItem.getModel().getPath())) {
+                    new api.content.page.IsRenderableRequest(content.getContentId()).sendAndParse().then((renderable: boolean) => {
+                        this.getBrowseItemPanel().setStatisticsItem(toBrowseItem(content, renderable));
+                    });
+                    return true;
+                }
+
+                if (!previewRefreshed) {
+                    previewItemContent.containsChildContentId(content.getContentId()).then((containsId: boolean) => {
+                        if (containsId) {
+                            this.forcePreviewRerender();
+                            previewRefreshed = true;
+                        }
+                    });
+                }
+
+                return previewRefreshed;
             });
-        }
+        });
+    }
+
+    private forcePreviewRerender() {
+        let previewItem = this.getBrowseItemPanel().getStatisticsItem();
+        (<ContentItemStatisticsPanel>this.getBrowseItemPanel().getPanel(1)).getPreviewPanel().setItem(previewItem, true);
+        this.mobileContentItemStatisticsPanel.getPreviewPanel().setItem(previewItem, true);
     }
 
     private updateDetailsPanel(data: ContentSummaryAndCompareStatus[]) {

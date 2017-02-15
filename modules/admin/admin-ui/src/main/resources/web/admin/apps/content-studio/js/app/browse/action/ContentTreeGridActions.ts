@@ -150,13 +150,13 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.DELETE_CONTENT.setEnabled(this.anyDeletable(contentSummaries));
         this.DUPLICATE_CONTENT.setEnabled(contentSummaries.length === 1);
         this.MOVE_CONTENT.setEnabled(true);
-        this.SORT_CONTENT.setEnabled(contentSummaries.length === 1);
+        this.SORT_CONTENT.setEnabled(contentSummaries.length === 1 && contentSummaries[0].hasChildren());
 
         this.PUBLISH_CONTENT.setEnabled(publishEnabled);
         this.PUBLISH_TREE_CONTENT.setEnabled(treePublishEnabled);
         this.UNPUBLISH_CONTENT.setEnabled(unpublishEnabled);
         this.PUBLISH_CONTENT.setVisible(publishEnabled);
-        this.UNPUBLISH_CONTENT.setVisible(!publishEnabled);
+        this.UNPUBLISH_CONTENT.setVisible(unpublishEnabled);
     }
 
     private isEveryLeaf(contentSummaries: ContentSummary[]): boolean {

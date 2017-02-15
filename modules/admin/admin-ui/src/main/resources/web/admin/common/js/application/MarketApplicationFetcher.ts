@@ -33,8 +33,12 @@ module api.application {
         }
 
         private static compareVersionNumbers(v1: string, v2: string): number {
-            let v1parts = v1.split('.');
-            let v2parts = v2.split('.');
+            let v1parts = v1.split('.').map((el) => {
+                return parseInt(el, 10);
+            });
+            let v2parts = v2.split('.').map((el) => {
+                return parseInt(el, 10);
+            });
 
             for (let i = 0; i < v1parts.length; ++i) {
                 if (v2parts.length === i) {

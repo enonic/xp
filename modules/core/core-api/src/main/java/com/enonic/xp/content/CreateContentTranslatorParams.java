@@ -325,6 +325,31 @@ public class CreateContentTranslatorParams
             return this;
         }
 
+        public PropertyTree getData()
+        {
+            return data;
+        }
+
+        public ContentTypeName getType()
+        {
+            return type;
+        }
+
+        public ContentName getName()
+        {
+            return name;
+        }
+
+        public String getDisplayName()
+        {
+            return displayName;
+        }
+
+        public ExtraDatas getExtraDatas()
+        {
+            return extraDatas;
+        }
+
         private void validate()
         {
             Preconditions.checkNotNull( parent, "parentContentPath cannot be null" );

@@ -73,7 +73,7 @@ module ContentSummaryAndCompareStatusSpec {
                 });
 
                 it('returns id of UploadItem if set', function () {
-                    expect(cntntSmmrAndCmprSttsFrmUpldItm.getId()).toEqual('id');
+                    expect(cntntSmmrAndCmprSttsFrmUpldItm.getId()).toEqual('1');
                 });
 
                 it('returns empty string if nothing is set', function () {
@@ -173,8 +173,8 @@ module ContentSummaryAndCompareStatusSpec {
                 });
 
                 it('returns false when UploadItems are not equal', function () {
-                    let uploadItem1: UploadItem<ContentSummary> = createUploadItem(<FineUploaderFile>{id: 'id1', name: 'name1'});
-                    let uploadItem2: UploadItem<ContentSummary> = createUploadItem(<FineUploaderFile>{id: 'id2', name: 'name2'});
+                    let uploadItem1: UploadItem<ContentSummary> = createUploadItem(<FineUploaderFile>{id: 1, name: 'name1'});
+                    let uploadItem2: UploadItem<ContentSummary> = createUploadItem(<FineUploaderFile>{id: 2, name: 'name2'});
                     let contentSummaryAndCompareStatus1: ContentSummaryAndCompareStatus = ContentSummaryAndCompareStatus.fromUploadItem(
                         uploadItem1);
                     let contentSummaryAndCompareStatus2: ContentSummaryAndCompareStatus = ContentSummaryAndCompareStatus.fromUploadItem(
@@ -221,9 +221,9 @@ module ContentSummaryAndCompareStatusSpec {
 
                 it('returns true when UploadItems are equal', function () {
                     let uploadItem1: UploadItem<ContentSummary> = createUploadItem(
-                        <FineUploaderFile>{id: 'id1', name: 'name1', size: 1, uuid: 'uuid', status: 'ok', percent: 100});
+                        <FineUploaderFile>{id: 1, name: 'name1', size: 1, uuid: 'uuid', status: 'ok', percent: 100});
                     let uploadItem2: UploadItem<ContentSummary> = createUploadItem(
-                        <FineUploaderFile>{id: 'id1', name: 'name1', size: 1, uuid: 'uuid', status: 'ok', percent: 100});
+                        <FineUploaderFile>{id: 1, name: 'name1', size: 1, uuid: 'uuid', status: 'ok', percent: 100});
                     let contentSummaryAndCompareStatus1: ContentSummaryAndCompareStatus = ContentSummaryAndCompareStatus.fromUploadItem(
                         uploadItem1);
                     let contentSummaryAndCompareStatus2: ContentSummaryAndCompareStatus = ContentSummaryAndCompareStatus.fromUploadItem(
@@ -280,6 +280,6 @@ module ContentSummaryAndCompareStatusSpec {
             return new UploadItem<ContentSummary>(file);
         }
 
-        return new UploadItem<ContentSummary>(<FineUploaderFile>{id: 'id', name: 'name'});
+        return new UploadItem<ContentSummary>(<FineUploaderFile>{id: 1, name: 'name'});
     }
 }

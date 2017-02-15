@@ -6,7 +6,7 @@ module api.util {
         // be triggered. The function will be called after it stops being called for
         // N milliseconds. If `immediate` is passed, trigger the function on the
         // leading edge, instead of the trailing.
-        static debounce(func: Function, wait: number, immediate: boolean): (...args: any[]) => void {
+        static debounce(func: Function, wait: number, immediate: boolean = false): (...args: any[]) => void {
             let timeout;
             return function (...anyArgs: any[]) {
                 const context = this;

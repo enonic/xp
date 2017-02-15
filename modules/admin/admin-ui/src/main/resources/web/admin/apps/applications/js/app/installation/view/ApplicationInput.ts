@@ -18,7 +18,10 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
     private cancelAction: Action;
 
     private textValueChangedListeners: {(): void}[] = [];
+
     private appInstallFinishedListeners: {(): void}[] = [];
+
+    private appInstallFailedListeners: {(message: string): void}[] = [];
 
     private static APPLICATION_ADDRESS_MASK: string = '^(http|https)://\\S+';
 
@@ -68,9 +71,6 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
             clearTimeout(this.lastTimeKeyPressedTimer);
 
             switch (event.keyCode) {
-            case 13: //enter
-                this.startInstall();
-                break;
             case 27: //esc
                 break;
             case 9: //tab
@@ -99,25 +99,21 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
     }
 
     private installWithUrl(url: string) {
-        new api.application.InstallUrlApplicationRequest(url).sendAndParse().then((result: api.application.ApplicationInstallResult)=> {
+        new api.application.InstallUrlApplicationRequest(url).sendAndParse().then((result: api.application.ApplicationInstallResult) => {
 
             let failure = result.getFailure();
 
-            this.showFailure(failure);
             if (!failure) {
+                this.notifyAppInstallFinished();
                 this.cancelAction.execute();
+
+            } else {
+                this.notifyAppInstallFailed(failure);
             }
 
-            this.notifyAppInstallFinished();
         }).catch((reason: any) => {
             api.DefaultErrorHandler.handle(reason);
         });
-    }
-
-    showFailure(failure: string): void {
-        if (failure) {
-            api.notify.NotifyManager.get().showWarning(failure);
-        }
     }
 
     setPlaceholder(placeholder: string): ApplicationInput {
@@ -193,6 +189,22 @@ export class ApplicationInput extends api.dom.CompositeFormInputEl {
     private notifyAppInstallFinished() {
         this.appInstallFinishedListeners.forEach((listener) => {
             listener();
+        });
+    }
+
+    onAppInstallFailed(listener: (message: string) => void) {
+        this.appInstallFailedListeners.push(listener);
+    }
+
+    unAppInstallFailed(listener: (message: string) => void) {
+        this.appInstallFailedListeners = this.appInstallFailedListeners.filter((curr) => {
+            return listener !== curr;
+        });
+    }
+
+    private notifyAppInstallFailed(message: string) {
+        this.appInstallFailedListeners.forEach((listener) => {
+            listener(message);
         });
     }
 }

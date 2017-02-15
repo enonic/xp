@@ -16,6 +16,7 @@ module api.util.htmlarea.dialog {
         private linkText: string;
         private onlyTextSelected: boolean;
         private textFormItem: FormItem;
+        private toolTipFormItem: FormItem;
 
         private content: api.content.ContentSummary;
 
@@ -48,6 +49,7 @@ module api.util.htmlarea.dialog {
             if (this.onlyTextSelected) {
                 this.setFirstFocusField(this.textFormItem.getInput());
             } else {
+                this.setFirstFocusField(this.toolTipFormItem.getInput());
                 this.textFormItem.hide();
                 this.textFormItem.removeValidator();
             }
@@ -62,7 +64,15 @@ module api.util.htmlarea.dialog {
         }
 
         private getToolTip(): string {
-            return this.link ? this.link.getAttribute('title') : api.util.StringHelper.EMPTY_STRING;
+            if(this.link) {
+                const linkTitleAttrValue = this.link.getAttribute('title');
+
+                if(linkTitleAttrValue) {
+                    return linkTitleAttrValue;
+                }
+            }
+
+            return api.util.StringHelper.EMPTY_STRING;
         }
 
         private isContentLink(): boolean {
@@ -199,9 +209,9 @@ module api.util.htmlarea.dialog {
 
         protected getMainFormItems(): FormItem [] {
             this.textFormItem = this.createFormItemWithPostponedValue('linkText', 'Text', this.getLinkText, Validators.required);
-            let toolTipFormItem = this.createFormItemWithPostponedValue('toolTip', 'Tooltip', this.getToolTip);
+            this.toolTipFormItem = this.createFormItemWithPostponedValue('toolTip', 'Tooltip', this.getToolTip);
 
-            return [this.textFormItem, toolTipFormItem];
+            return [this.textFormItem, this.toolTipFormItem];
         }
 
         private createDockedPanel(): DockedPanel {
@@ -257,14 +267,6 @@ module api.util.htmlarea.dialog {
             }
 
             const contentSelector = api.content.ContentComboBox.create().setLoader(loader).setMaximumOccurrences(1).build();
-
-            contentSelector.onKeyDown((e: KeyboardEvent) => {
-                if (api.ui.KeyHelper.isEscKey(e) && !contentSelector.getComboBox().isDropdownShown()) {
-                    // Prevent modal dialog from closing on Esc key when dropdown is expanded
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-            });
 
             this.onAdded(() => {
                 contentSelector.setValue(getValueFn.call(this));
