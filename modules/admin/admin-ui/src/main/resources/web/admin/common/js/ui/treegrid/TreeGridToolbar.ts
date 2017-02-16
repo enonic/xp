@@ -21,8 +21,25 @@ module api.ui.treegrid {
             this.appendChild(this.cartButton);
 
             treeGrid.onSelectionChanged((currentSelection: TreeNode<any>[], fullSelection: TreeNode<any>[]) => {
-                this.cartButton.setEnabled(fullSelection.length == 1);
+                this.cartButton.setEnabled(fullSelection.length > 0);
                 this.cartButton.setActive(fullSelection.length > 1);
+
+                let oldLabel = this.cartButton.getLabel();
+                let newLabel = fullSelection.length ? fullSelection.length.toString() : '';
+
+                if (oldLabel == newLabel) {
+                    return;
+                }
+
+                this.cartButton.removeClass(`size-${oldLabel.length}`);
+                this.cartButton.setLabel(newLabel);
+                if (newLabel !== '') {
+                    this.cartButton.addClass(`size-${newLabel.length}`);
+                    this.cartButton.addClass('updated');
+                    setTimeout(() => {
+                        this.cartButton.removeClass('updated');
+                    }, 200);
+                }
             });
 
             this.refreshButton = new Button();
