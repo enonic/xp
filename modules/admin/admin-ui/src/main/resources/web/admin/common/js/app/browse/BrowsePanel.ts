@@ -49,14 +49,16 @@ module api.app.browse {
                                                     fullSelection: TreeNode<Object>[],
                                                     highlighted: boolean
                                                    ) => {
-                if (highlighted) {
+                let browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(fullSelection);
+                let changes = this.getBrowseItemPanel().setItems(browseItems, true);
+
+                if (highlighted && ((fullSelection.length == 0 && changes.getRemoved().length === 1) ||
+                                    (fullSelection.length == 1 && changes.getAdded().length === 1))) {
                     return;
                 }
-                let browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(fullSelection);
                 if(currentSelection.length <= 1) {
                     this.getBrowseItemPanel().getPanelShown().hide();
                 }
-                let changes = this.getBrowseItemPanel().setItems(browseItems, true);
                 this.getBrowseActions().updateActionsEnabledState(this.getBrowseItemPanel().getItems(), changes)
                     .then(() => {
                         this.getBrowseItemPanel().updateDisplayedPanel();
