@@ -148,7 +148,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     }
 
     private updateDetailsPanelOnItemChange(selection?: TreeNode<ContentSummaryAndCompareStatus>[]) {
-        let item = this.getFirstSelectedBrowseItem(selection);
+        let item = this.getFirstSelectedOrHighlightedBrowseItem(selection);
         this.doUpdateDetailsPanel(item ? item.getModel() : null);
     }
 
@@ -161,6 +161,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
 
         this.getTreeGrid().onHighlightingChanged((node: TreeNode<ContentSummaryAndCompareStatus>) => {
+            //    debugger;
             this.updateDetailsPanelOnItemChange();
         });
 
@@ -213,7 +214,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         this.mobileContentItemStatisticsPanel = new MobileContentItemStatisticsPanel(this.getBrowseActions(), detailsView);
 
         let updateMobilePanel = () => {
-            const browseItem = this.getFirstSelectedBrowseItem();
+            const browseItem = this.getFirstSelectedOrHighlightedBrowseItem();
             const item = browseItem.toViewItem();
 
             if (this.itemChanged()) {
@@ -247,24 +248,33 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
     private itemChanged(): boolean {
         const prevItem = this.mobileContentItemStatisticsPanel.getPreviewPanel().getItem();
-        const browseItem = this.getFirstSelectedBrowseItem();
+        const browseItem = this.getFirstSelectedOrHighlightedBrowseItem();
         return !prevItem || !prevItem.getModel() || prevItem.getModel().getId() !== browseItem.getId();
     }
 
     // tslint:disable-next-line:max-line-length
-    private getFirstSelectedBrowseItem(fullSelection?: TreeNode<ContentSummaryAndCompareStatus>[]): BrowseItem<ContentSummaryAndCompareStatus> {
+    private getFirstSelectedOrHighlightedBrowseItem(fullSelection?: TreeNode<ContentSummaryAndCompareStatus>[]): BrowseItem<ContentSummaryAndCompareStatus> {
         if (!fullSelection && !this.treeGrid.getFirstSelectedOrHighlightedNode()) {
             return null;
         }
-        let browseItems: BrowseItem<ContentSummaryAndCompareStatus>[] = this.treeNodesToBrowseItems(!!fullSelection
-                ? fullSelection
-                : [this.treeGrid.getFirstSelectedOrHighlightedNode()]);
+
+        let nodes = [];
+
+        if (fullSelection && fullSelection.length > 0) {
+            nodes = fullSelection;
+        }
+
+        if (this.treeGrid.getFirstSelectedOrHighlightedNode()) {
+            nodes = [this.treeGrid.getFirstSelectedOrHighlightedNode()];
+        }
+
+        let browseItems: BrowseItem<ContentSummaryAndCompareStatus>[] = this.treeNodesToBrowseItems(nodes);
 
         return (browseItems.length > 0) ? browseItems[0] : null;
     }
 
     private isSomethingSelected(): boolean {
-        return !!this.getFirstSelectedBrowseItem();
+        return !!this.getFirstSelectedOrHighlightedBrowseItem();
     }
 
     private isMobileMode(): boolean {
