@@ -104,9 +104,6 @@ module api.app.browse {
                 this.checkIfItemIsRenderable(browseItem).then(() => {
                     this.getBrowseItemPanel().togglePreviewForItem(browseItem);
                 });
-            } else {
-                this.getBrowseActions().updateActionsEnabledState([]);
-                this.getBrowseItemPanel().togglePreviewForItem();
             }
         }
 
