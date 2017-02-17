@@ -154,7 +154,6 @@ module api.ui.treegrid {
             }
 
             this.grid.subscribeOnClick((event, data) => {
-                debugger;
                 if (this.isActive()) {
                     this.setActive(false);
                     const elem = new ElementHelper(event.target);
