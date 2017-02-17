@@ -84,6 +84,10 @@ module api.app.browse {
                 }
             });
 
+            this.treeGrid.getToolbar().onCartButtonClicked(isActive => {
+                this.getBrowseItemPanel().toggleCartPanel(isActive);
+            });
+
             this.onShown(() => {
                 if (this.treeGrid.isFiltered()) {
                     this.filterPanel.refresh();
