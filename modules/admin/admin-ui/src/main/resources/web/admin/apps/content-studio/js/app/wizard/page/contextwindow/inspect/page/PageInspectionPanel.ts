@@ -21,6 +21,7 @@ import PageTemplate = api.content.page.PageTemplate;
 import PageDescriptor = api.content.page.PageDescriptor;
 import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
 import SetController = api.content.page.SetController;
+import PageTemplateDisplayName = api.content.page.PageTemplateDisplayName;
 
 export class PageInspectionPanel extends BaseInspectionPanel {
 
@@ -89,42 +90,44 @@ export class PageInspectionPanel extends BaseInspectionPanel {
             this.pageControllerForm).setPageTemplateForm(this.pageTemplateForm).setModel(this.liveEditModel);
 
         this.pageTemplateSelector.onSelection((pageTemplate: PageTemplate) => {
-                this.removeClass('customized');
-                this.pageModel.setCustomized(false);
+            const isCustomizedSelected: boolean = !!pageTemplate &&
+                                                  pageTemplate.getDisplayName() === PageTemplateDisplayName[PageTemplateDisplayName.Custom];
+            if (isCustomizedSelected) {
+                this.addClass('customized');
+                this.pageControllerForm.getSelector().reset();
+                this.pageControllerForm.show();
 
-                if (pageTemplate) {
-                    this.pageControllerForm.hide();
-                    new GetPageDescriptorByKeyRequest(pageTemplate.getController())
-                        .sendAndParse()
-                        .then((pageDescriptor: PageDescriptor) => {
-                            let setTemplate = new SetTemplate(this).setTemplate(pageTemplate, pageDescriptor);
-                            this.pageModel.setTemplate(setTemplate, true);
-                        }).catch((reason: any) => {
-                            api.DefaultErrorHandler.handle(reason);
-                        }).done();
-                } else if (this.pageModel.hasDefaultPageTemplate()) {
-                    this.pageControllerForm.hide();
-                    this.pageModel.setAutomaticTemplate(this, true);
-                } else {
-                    this.pageModel.reset(this);
-                }
+                this.pageModel.setCustomized(true);
+                this.pageModel.setTemplateContoller();
+                return;
             }
-        );
 
-        this.pageTemplateSelector.onCustomizedSelected(() => {
-            this.addClass('customized');
-            this.pageControllerForm.getSelector().reset();
-            this.pageControllerForm.show();
+            this.removeClass('customized');
+            this.pageModel.setCustomized(false);
 
-            this.pageModel.setCustomized(true);
-            this.pageModel.setTemplateContoller();
+            if (pageTemplate) {
+                this.pageControllerForm.hide();
+                new GetPageDescriptorByKeyRequest(pageTemplate.getController())
+                    .sendAndParse()
+                    .then((pageDescriptor: PageDescriptor) => {
+                        let setTemplate = new SetTemplate(this).setTemplate(pageTemplate, pageDescriptor);
+                        this.pageModel.setTemplate(setTemplate, true);
+                    }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).done();
+            } else if (this.pageModel.hasDefaultPageTemplate()) {
+                this.pageControllerForm.hide();
+                this.pageModel.setAutomaticTemplate(this, true);
+            } else {
+                this.pageModel.reset(this);
+            }
         });
 
         this.pageModel.onReset(this.modelResetListener.bind(this));
     }
 
     modelResetListener() {
-        if(this.pageControllerForm) {
+        if (this.pageControllerForm) {
             this.pageControllerForm.getSelector().reset();
         }
         if (!this.pageModel.isPageTemplate() && !(this.pageModel.isCustomized() && this.pageModel.hasController())) {
