@@ -3,11 +3,17 @@
   margin-bottom: 42px;
   overflow: visible !important;
 
-  &.no-selection, &.no-toolbar {
+  &.no-selection {
     margin-bottom: 0px;
 
     .toolbar {
       display: none;
+    }
+  }
+
+  &.no-toolbar {
+    .show-all, .fold-button {
+      display: none !important;
     }
   }
 

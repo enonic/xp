@@ -21,7 +21,7 @@ module api.ui.treegrid {
             this.appendChild(this.cartButton);
 
             treeGrid.onSelectionChanged((currentSelection: TreeNode<any>[], fullSelection: TreeNode<any>[]) => {
-                this.cartButton.setEnabled(fullSelection.length > 0);
+                this.cartButton.setEnabled(fullSelection.length === 1);
                 this.cartButton.setActive(fullSelection.length > 1);
 
                 let oldLabel = this.cartButton.getLabel();
@@ -42,6 +42,10 @@ module api.ui.treegrid {
                 }
             });
 
+            treeGrid.onHighlightingChanged(() => {
+                this.cartButton.setActive(false);
+            });
+            
             this.refreshButton = new Button();
             this.refreshButton
                 .addClass(api.StyleHelper.getIconCls('loop'))

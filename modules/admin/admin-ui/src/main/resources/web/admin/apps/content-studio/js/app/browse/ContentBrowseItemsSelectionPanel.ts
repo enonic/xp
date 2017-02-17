@@ -10,6 +10,7 @@ import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompa
 import ContentSummaryViewer = api.content.ContentSummaryViewer;
 import Toolbar = api.ui.toolbar.Toolbar;
 import BrowseItemsChanges = api.app.browse.BrowseItemsChanges;
+import ClearSelectionAction = api.ui.treegrid.actions.ClearSelectionAction;
 
 export class ContentBrowseItemsSelectionPanel extends BrowseItemsSelectionPanel<ContentSummaryAndCompareStatus> {
 
@@ -23,8 +24,10 @@ export class ContentBrowseItemsSelectionPanel extends BrowseItemsSelectionPanel<
 
     private initToolbar(grid: ContentTreeGrid) {
         this.toolbar = new Toolbar();
-        const action = new ShowAllAction(this, grid);
-        this.toolbar.addAction(action);
+        const showAllAction = new ShowAllAction(this, grid);
+        const clearAllAction =  new ClearSelectionAction<ContentSummaryAndCompareStatus>(grid);
+        this.toolbar.addAction(showAllAction).addClass("show-all");
+        this.toolbar.addAction(clearAllAction).addClass("clear-all");
         this.appendChild(this.toolbar);
         this.addClass('no-toolbar');
     }
