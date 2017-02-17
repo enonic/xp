@@ -154,6 +154,7 @@ module api.ui.treegrid {
             }
 
             this.grid.subscribeOnClick((event, data) => {
+                debugger;
                 if (this.isActive()) {
                     this.setActive(false);
                     const elem = new ElementHelper(event.target);
@@ -170,7 +171,7 @@ module api.ui.treegrid {
 
                     } else if (elem.hasAnyParentClass('slick-cell-checkboxsel')) {
                         this.setActive(true);
-                        if (elem.getAttribute('type') === 'checkbox') {
+                        if (elem.getTagName().toLowerCase() == 'label') {
                             this.grid.toggleRow(data.row);
 
                         }
