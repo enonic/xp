@@ -45,7 +45,7 @@ module api.ui.treegrid {
             treeGrid.onHighlightingChanged(() => {
                 this.cartButton.setActive(false);
             });
-            
+
             this.refreshButton = new Button();
             this.refreshButton
                 .addClass(api.StyleHelper.getIconCls('loop'))

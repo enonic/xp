@@ -26,8 +26,8 @@ export class ContentBrowseItemsSelectionPanel extends BrowseItemsSelectionPanel<
         this.toolbar = new Toolbar();
         const showAllAction = new ShowAllAction(this, grid);
         const clearAllAction =  new ClearSelectionAction<ContentSummaryAndCompareStatus>(grid);
-        this.toolbar.addAction(showAllAction).addClass("show-all");
-        this.toolbar.addAction(clearAllAction).addClass("clear-all");
+        this.toolbar.addAction(showAllAction).addClass('show-all');
+        this.toolbar.addAction(clearAllAction).addClass('clear-all');
         this.appendChild(this.toolbar);
         this.addClass('no-toolbar');
     }
