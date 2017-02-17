@@ -5,6 +5,8 @@ module api.app.browse {
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
     import TreeNode = api.ui.treegrid.TreeNode;
     import ActionButton = api.ui.button.ActionButton;
+    import BrowseItem = api.app.browse.BrowseItem;
+    import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
 
     export class BrowsePanel<M extends api.Equitable> extends api.ui.panel.Panel implements api.ui.ActionContainer {
 
@@ -40,22 +42,36 @@ module api.app.browse {
             super();
 
             this.treeGrid = this.createTreeGrid();
-            //this.browseItemPanel = this.createBrowseItemPanel();
             this.filterPanel = this.createFilterPanel();
             this.browseToolbar = this.createToolbar();
 
-            let selectionChangedDebouncedHandler = api.util.AppHelper.debounce(
-                (currentSelection: TreeNode<Object>[], fullSelection: TreeNode<Object>[]) => {
+            let selectionChangedDebouncedHandler = (currentSelection: TreeNode<Object>[],
+                                                    fullSelection: TreeNode<Object>[],
+                                                    highlighted: boolean
+                                                   ) => {
                 let browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(fullSelection);
-                let changes = this.browseItemPanel.setItems(browseItems);
-                this.treeGrid.getContextMenu().getActions()
-                    .updateActionsEnabledState(this.browseItemPanel.getItems(), changes)
+                let changes = this.getBrowseItemPanel().setItems(browseItems, true);
+
+                if (highlighted && ((fullSelection.length == 0 && changes.getRemoved().length === 1) ||
+                                    (fullSelection.length == 1 && changes.getAdded().length === 1))) {
+                    return;
+                }
+                if(currentSelection.length <= 1) {
+                    this.getBrowseItemPanel().getPanelShown().hide();
+                }
+                this.getBrowseActions().updateActionsEnabledState(this.getBrowseItemPanel().getItems(), changes)
                     .then(() => {
-                        this.browseItemPanel.updateDisplayedPanel();
+                        this.getBrowseItemPanel().updateDisplayedPanel();
                     }).catch(api.DefaultErrorHandler.handle);
-                }, 200, false);
+                };
 
             this.treeGrid.onSelectionChanged(selectionChangedDebouncedHandler);
+
+            let highlightingChangedDebouncedHandler = api.util.AppHelper.debounce(((node: TreeNode<Object>) => {
+                this.onHighlightingChanged(node);
+            }).bind(this), 200, false);
+
+            this.treeGrid.onHighlightingChanged(highlightingChangedDebouncedHandler);
 
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 this.checkFilterPanelToBeShownFullScreen(item);
@@ -75,6 +91,22 @@ module api.app.browse {
             });
         }
 
+        protected checkIfItemIsRenderable(browseItem: BrowseItem<M>): wemQ.Promise<boolean> {
+            let deferred = wemQ.defer<boolean>();
+            deferred.resolve(true);
+            return deferred.promise;
+        }
+
+        private onHighlightingChanged(node: TreeNode<Object>) {
+            if (node) {
+                let browseItem: BrowseItem<M> = this.treeNodesToBrowseItems([node])[0];
+                this.getBrowseActions().updateActionsEnabledState([browseItem]);
+                this.checkIfItemIsRenderable(browseItem).then(() => {
+                    this.getBrowseItemPanel().togglePreviewForItem(browseItem);
+                });
+            }
+        }
+
         protected createToolbar(): api.ui.toolbar.Toolbar {
             throw 'Must be implemented by inheritors';
         }
@@ -87,6 +119,10 @@ module api.app.browse {
             throw 'Must be implemented by inheritors';
         }
 
+        protected getBrowseActions(): TreeGridActions<M> {
+            return this.treeGrid.getContextMenu().getActions();
+        }
+
         private initBrowseItemPanel() {
 
             this.browseItemPanel.onDeselected((event: ItemDeselectedEvent<M>) => {
@@ -95,8 +131,7 @@ module api.app.browse {
                 let newSelectedCount = this.treeGrid.getGrid().getSelectedRows().length;
 
                 if (oldSelectedCount === newSelectedCount) {
-                    this.treeGrid.getContextMenu().getActions()
-                        .updateActionsEnabledState(this.browseItemPanel.getItems())
+                    this.getBrowseActions().updateActionsEnabledState(this.browseItemPanel.getItems())
                         .then(() => {
                             this.browseItemPanel.updateDisplayedPanel();
                         });
