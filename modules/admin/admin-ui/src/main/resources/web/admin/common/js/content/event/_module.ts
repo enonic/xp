@@ -9,3 +9,4 @@
 ///<reference path='ActiveContentVersionSetEvent.ts' />
 ///<reference path='ContentRequiresSaveEvent.ts' />
 ///<reference path='OpenEditPermissionsDialogEvent.ts' />
+///<reference path='BeforeContentSavedEvent.ts' />

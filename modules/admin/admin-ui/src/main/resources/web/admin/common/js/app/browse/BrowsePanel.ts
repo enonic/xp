@@ -51,6 +51,14 @@ module api.app.browse {
                                                    ) => {
                 let browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(fullSelection);
                 let changes = this.getBrowseItemPanel().setItems(browseItems, true);
+
+                if (highlighted && ((fullSelection.length == 0 && changes.getRemoved().length === 1) ||
+                                    (fullSelection.length == 1 && changes.getAdded().length === 1))) {
+                    return;
+                }
+                if(currentSelection.length <= 1) {
+                    this.getBrowseItemPanel().getPanelShown().hide();
+                }
                 this.getBrowseActions().updateActionsEnabledState(this.getBrowseItemPanel().getItems(), changes)
                     .then(() => {
                         this.getBrowseItemPanel().updateDisplayedPanel();

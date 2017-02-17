@@ -11,3 +11,4 @@
 ///<reference path='ImageCroppingOptions.ts' />
 ///<reference path='ImageCroppingOptionViewer.ts' />
 ///<reference path='ImageCroppingSelector.ts' />
+///<reference path='SearchAndReplaceModalDialog.ts' />

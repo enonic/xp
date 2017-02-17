@@ -22,11 +22,11 @@ import static java.lang.Math.toIntExact;
 
 public final class OccurrenceValidator
 {
+    private static final String OPTION_SET_SELECTION_ARRAY_NAME = "_selected";
+
     private final Form form;
 
-    private final List<DataValidationError> validationErrors = Lists.newArrayList();
-
-    private static final String OPTION_SET_SELECTION_ARRAY_NAME = "_selected";
+    private final List<ValidationError> validationErrors = Lists.newArrayList();
 
     public OccurrenceValidator( final Form form )
     {
@@ -34,12 +34,12 @@ public final class OccurrenceValidator
         this.form = form;
     }
 
-    public DataValidationErrors validate( final PropertySet propertySet )
+    public ValidationErrors validate( final PropertySet propertySet )
     {
 
         this.validate( this.form, propertySet );
 
-        return DataValidationErrors.from( validationErrors );
+        return ValidationErrors.from( validationErrors );
     }
 
     private void validate( final Form form, final PropertySet dataSet )

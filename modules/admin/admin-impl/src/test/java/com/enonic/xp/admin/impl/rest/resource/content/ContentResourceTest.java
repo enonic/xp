@@ -19,9 +19,14 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
+import com.enonic.xp.content.CompareContentResult;
+import com.enonic.xp.content.CompareContentResults;
+import com.enonic.xp.content.CompareContentsParams;
+import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
@@ -41,6 +46,8 @@ import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
+import com.enonic.xp.content.ResolvePublishDependenciesParams;
+import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.ContextAccessor;
@@ -107,7 +114,7 @@ public class ContentResourceTest
     private SecurityService securityService;
 
     @Override
-    protected Object getResourceInstance()
+    protected ContentResource getResourceInstance()
     {
         contentTypeService = Mockito.mock( ContentTypeService.class );
 
@@ -917,7 +924,7 @@ public class ContentResourceTest
         GetDescendantsOfContents json = new GetDescendantsOfContents();
         json.setContentPaths( contentPaths );
 
-        ContentResource contentResource = ( (ContentResource) getResourceInstance() );
+        ContentResource contentResource = getResourceInstance();
         Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
             FindContentIdsByQueryResult.create().totalHits( 0L ).build() );
 
@@ -930,7 +937,7 @@ public class ContentResourceTest
         GetDescendantsOfContents json = new GetDescendantsOfContents();
         json.setContentPaths( new HashSet<String>() );
 
-        ContentResource contentResource = ( (ContentResource) getResourceInstance() );
+        ContentResource contentResource = getResourceInstance();
 
         assertEquals( 0L, contentResource.countContentsWithDescendants( json ) );
     }
@@ -943,11 +950,44 @@ public class ContentResourceTest
         GetDescendantsOfContents json = new GetDescendantsOfContents();
         json.setContentPaths( contentPaths );
 
-        ContentResource contentResource = ( (ContentResource) getResourceInstance() );
+        ContentResource contentResource = getResourceInstance();
         Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
             FindContentIdsByQueryResult.create().totalHits( 0L ).build() );
 
         assertEquals( 3L, contentResource.countContentsWithDescendants( json ) );
+    }
+
+    @Test
+    public void resolve_publish_contents()
+        throws Exception
+    {
+        final ContentId requestedId = ContentId.from( "requested-contentId" );
+        final ContentId dependantId = ContentId.from( "dependant-contentId" );
+        final ContentId requiredId = ContentId.from( "required-contentId" );
+
+        final CompareContentResult requested = new CompareContentResult( CompareStatus.NEW, requestedId );
+        final CompareContentResult dependant = new CompareContentResult( CompareStatus.NEW, dependantId );
+        final CompareContentResults results = CompareContentResults.create().
+            add( requested ).
+            add( dependant ).
+            build();
+
+        Mockito.when( contentService.resolvePublishDependencies( Mockito.isA( ResolvePublishDependenciesParams.class ) ) ).thenReturn(
+            results );
+        Mockito.when( contentService.resolveRequiredDependencies( Mockito.isA( ResolveRequiredDependenciesParams.class ) ) ).thenReturn(
+            ContentIds.from( requiredId ) );
+        Mockito.when( contentService.compare( Mockito.isA( CompareContentsParams.class ) ) ).thenReturn( results );
+        Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
+            FindContentIdsByQueryResult.create().contents( ContentIds.from( dependantId ) ).totalHits( 1L ).build() );
+
+        Mockito.doReturn( ContentIds.from( dependantId, requiredId ) ).when( this.contentService ).getInvalidContent(
+            Mockito.isA( ContentIds.class ) );
+
+        String jsonString = request().path( "content/resolvePublishContent" ).
+            entity( readFromFile( "resolve_publish_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "resolve_publish_content.json", jsonString );
     }
 
     @Test
@@ -957,7 +997,7 @@ public class ContentResourceTest
         json.setContentIds( asList( "id1", "id2", "id3", "id4" ) );
         json.setParentContentPath( "/root" );
 
-        ContentResource contentResource = ( (ContentResource) getResourceInstance() );
+        ContentResource contentResource = getResourceInstance();
         Mockito.when( contentService.move( Mockito.any() ) ).thenThrow( new MoveContentException( "" ) ).thenReturn( null );
 
         MoveContentResultJson resultJson = contentResource.move( json );

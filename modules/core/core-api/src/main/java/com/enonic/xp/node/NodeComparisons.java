@@ -33,6 +33,14 @@ public class NodeComparisons
         return this.comparisonMap.get( nodeId );
     }
 
+    public NodeComparison getBySourcePath( final NodePath nodePath )
+    {
+        return this.comparisonMap.values().stream().
+            filter( comparison -> comparison.getSourcePath().equals( nodePath ) ).
+            findFirst().
+            get();
+    }
+
     @Override
     public Iterator<NodeComparison> iterator()
     {
@@ -48,6 +56,13 @@ public class NodeComparisons
     {
         return NodeIds.from( this.comparisonMap.values().stream().
             map( NodeComparison::getNodeId ).
+            collect( Collectors.toSet() ) );
+    }
+
+    public NodePaths getSourcePaths()
+    {
+        return NodePaths.from( this.comparisonMap.values().stream().
+            map( NodeComparison::getSourcePath ).
             collect( Collectors.toSet() ) );
     }
 

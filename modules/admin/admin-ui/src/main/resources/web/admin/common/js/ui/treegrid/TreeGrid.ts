@@ -160,11 +160,11 @@ module api.ui.treegrid {
             if (this.isActive()) {
                 let row;
                 if (this.highlightedNode) {
+                    this.recursivelyExpandHighlightedNode();
                     row = this.gridData.getRowById(this.highlightedNode.getId());
                     if (!this.grid.isRowSelected(row)) {
                         this.grid.selectRow(row);
                     }
-                    this.unhighlightCurrentRow(true); //we unhighlight row as it gets selected, so highlightNode gets empty
                 } else if (this.grid.getSelectedRows().length === 1) {
                     row = this.grid.getSelectedRows()[0];
                 }
@@ -234,7 +234,7 @@ module api.ui.treegrid {
         };
 
         private bindClickEvents() {
-            this.grid.subscribeOnClick((event, data) => {
+            let clickHandler = api.util.AppHelper.debounce(((event, data) => {
                 if (!this.isActive()) {
                     return;
                 }
@@ -286,14 +286,16 @@ module api.ui.treegrid {
                 }
 
                 if (!elem.hasClass('sort-dialog-trigger')) {
-                    new TreeGridItemClickedEvent(!!this.highlightedNode || this.grid.getSelectedRows().length > 0).fire();
+                    new TreeGridItemClickedEvent(!!this.getFirstSelectedOrHighlightedNode()).fire();
                 }
-            });
+            }).bind(this), 50, false);
+
+            this.grid.subscribeOnClick(clickHandler);
         }
 
         private onClickWithShift(event: any, data: Slick.OnClickEventData) {
             const node = this.gridData.getItem(data.row);
-            const thereIsHighlightedNode = this.highlightedNode != null && this.highlightedNode !== node;
+            const thereIsHighlightedNode = !!this.highlightedNode && !this.isNodeHighlighted(node) && this.highlightedNode.isVisible();
             const isMultiSelect = !this.gridOptions.isMultipleSelectionDisabled();
 
             if (!this.grid.isRowSelected(data.row) && (this.grid.getSelectedRows().length >= 1 || thereIsHighlightedNode)) {
@@ -347,13 +349,26 @@ module api.ui.treegrid {
             });
         }
 
+        private recursivelyExpandHighlightedNode() {
+            if (!this.highlightedNode || this.highlightedNode.isVisible()) {
+                return;
+            }
+            let parent: TreeNode<DATA> = this.highlightedNode.getParent();
+            while (!this.highlightedNode.isVisible()) {
+                this.expandNode(parent);
+                parent = parent.getParent();
+            }
+
+        }
+
         private onCollapse(elem: ElementHelper, data: Slick.OnClickEventData) {
             const node = this.gridData.getItem(data.row);
             elem.removeClass('collapse').addClass('expand');
             this.collapseNode(node);
+            /*
             if (!this.gridOptions.isMultipleSelectionDisabled()) {
                 this.highlightCurrentNode();
-            }
+            }*/
         }
 
         private onCheckboxClicked(data: Slick.OnClickEventData) {
@@ -428,6 +443,8 @@ module api.ui.treegrid {
 
         private onUpKeyPress() {
             if (this.isActive()) {
+                this.recursivelyExpandHighlightedNode();
+
                 if (this.contextMenu) {
                     this.contextMenu.hide();
                 }
@@ -441,6 +458,8 @@ module api.ui.treegrid {
 
         private onDownKeyPress() {
             if (this.isActive()) {
+                this.recursivelyExpandHighlightedNode();
+
                 if (this.contextMenu) {
                     this.contextMenu.hide();
                 }
@@ -458,6 +477,7 @@ module api.ui.treegrid {
                 return;
             }
 
+            this.recursivelyExpandHighlightedNode();
             if (this.contextMenu) {
                 this.contextMenu.hide();
             }
@@ -490,6 +510,7 @@ module api.ui.treegrid {
                 return;
             }
 
+            this.recursivelyExpandHighlightedNode();
             if (this.contextMenu) {
                 this.contextMenu.hide();
             }
@@ -521,6 +542,7 @@ module api.ui.treegrid {
 
         private onSpaceKeyPress() {
             if (this.highlightedNode) {
+                this.recursivelyExpandHighlightedNode();
                 let row = this.gridData.getRowById(this.highlightedNode.getId());
                 this.grid.toggleRow(row);
             } else if (this.grid.getSelectedRows().length > 0) {
@@ -544,7 +566,9 @@ module api.ui.treegrid {
                 event.preventDefault();
                 this.setActive(false);
                 let cell = this.grid.getCellFromEvent(event);
-                this.grid.selectRow(cell.row);
+                if (!this.grid.isRowSelected(cell.row)) {
+                    this.highlightRowByNode(this.gridData.getItem(cell.row));
+                }
                 this.contextMenu.showAt(event.pageX, event.pageY);
                 this.notifyContextMenuShown(event.pageX, event.pageY);
                 this.setActive(true);
@@ -596,6 +620,7 @@ module api.ui.treegrid {
             }
 
             this.highlightRowByNode(this.highlightedNode);
+            this.notifyHighlightingChanged();
         }
 
         private highlightRowByNode(node: TreeNode<DATA>) {
@@ -618,11 +643,15 @@ module api.ui.treegrid {
         }
 
         private unhighlightRow(row: JQuery, skipEvent: boolean = false) {
-            this.highlightedNode = null;
+            this.removeHighlighting(skipEvent);
             if (!row) {
                 return;
             }
             row.removeClass('selected');
+        }
+
+        removeHighlighting(skipEvent: boolean = false) {
+            this.highlightedNode = null;
 
             if (!skipEvent) {
                 this.notifyHighlightingChanged();
@@ -635,11 +664,7 @@ module api.ui.treegrid {
             }
 
             wemjq(this.grid.getHTMLElement()).find('.slick-row.selected').removeClass('selected');
-            this.highlightedNode = null;
-
-            if (!skipEvent) {
-                this.notifyHighlightingChanged();
-            }
+            this.removeHighlighting(skipEvent);
         }
 
         private unselectAllRows() {
@@ -877,6 +902,10 @@ module api.ui.treegrid {
             throw new Error('Must be implemented by inheritors');
         }
 
+        isEmpty(): boolean {
+            return this.getGrid().getDataLength() == 0;
+        }
+
         /**
          * Fetches a single element.
          * Can be used to update/add a single node without
@@ -959,6 +988,8 @@ module api.ui.treegrid {
             let node = root.findNode(dataId);
 
             if (node) {
+                this.unhighlightCurrentRow(true);
+
                 let row = this.gridData.getRowById(node.getId());
                 this.grid.selectRow(row);
             }
@@ -1032,7 +1063,7 @@ module api.ui.treegrid {
             let selection = this.root.getCurrentSelection();
 
             this.root.resetCurrentRoot(parentNodeData);
-            this.initData([]);
+            //this.initData([]);
 
             this.mask();
 
@@ -1042,6 +1073,7 @@ module api.ui.treegrid {
                     this.initData(this.root.getCurrentRoot().treeToList());
                     this.updateExpanded();
                 }).catch((reason: any) => {
+                    this.initData([]);
                     this.handleError(reason);
                 }).then(() => {
                     this.updateExpanded();
@@ -1179,9 +1211,13 @@ module api.ui.treegrid {
 
                         if (node.isVisible()) {
                             let selected = this.grid.isRowSelected(this.gridData.getRowById(node.getId()));
+                            let highlighted = this.isNodeHighlighted(node);
                             this.gridData.updateItem(node.getId(), node);
                             if (selected) {
                                 this.grid.addSelectedRow(this.gridData.getRowById(node.getId()));
+                            } else if (highlighted) {
+                                this.removeHighlighting(true);
+                                this.highlightRowByNode(node);
                             }
                         }
                     });
@@ -1237,8 +1273,10 @@ module api.ui.treegrid {
         getParentNode(nextToSelection: boolean = false, stashedParentNode?: TreeNode<DATA>) {
             let root = stashedParentNode || this.root.getCurrentRoot();
             let parentNode: TreeNode<DATA>;
-            if (this.getSelectedNodes() && this.getSelectedNodes().length === 1) {
-                parentNode = root.findNode(this.getSelectedNodes()[0].getDataId());
+
+            parentNode = this.getFirstSelectedOrHighlightedNode();
+
+            if (parentNode) {
                 if (nextToSelection) {
                     parentNode = parentNode.getParent() || this.root.getCurrentRoot();
                 }
@@ -1558,6 +1596,8 @@ module api.ui.treegrid {
 
         invalidate() {
             this.grid.invalidate();
+
+            this.highlightCurrentNode();
         }
 
         initAndRender() {
@@ -1571,6 +1611,10 @@ module api.ui.treegrid {
 
         sortNodeChildren(node: TreeNode<DATA>): void {
             // must be implemented by children
+        }
+
+        isNodeHighlighted(node: TreeNode<DATA>) {
+            return node == this.highlightedNode;
         }
 
         protected handleItemMetadata(row: number) {

@@ -69,11 +69,6 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
     private initSearchInput() {
         this.destinationSearchInput = new ContentMoveComboBox();
         this.destinationSearchInput.addClass('content-selector');
-        this.destinationSearchInput.onKeyUp((event: KeyboardEvent) => {
-            if (event.keyCode === 27) {
-                this.getCancelAction().execute();
-            }
-        });
         this.destinationSearchInput.onOptionSelected(() => {
             this.getButtonRow().focusDefaultAction();
         });

@@ -83,6 +83,10 @@
                 color: @admin-font-gray1;
               }
             }
+
+            .form-option-set-view.invalid {
+              outline: none;
+            }
           }
         }
       }
@@ -218,6 +222,10 @@
 
       }
 
+      &:not(.selected) .option-items-container * {
+        pointer-events: none;
+      }
+
       &:not(:last-child):not(.selected) {
         border-bottom: 1px solid @admin-bg-light-gray;
 
@@ -304,13 +312,6 @@
           &:before {
             margin-top: 10px;
             left: 10px;
-          }
-        }
-
-        input[type="checkbox"]:disabled + label {
-          color: @admin-font-gray1;
-          &:before {
-            background: url("../../../images/admin-unchecked-disabled.gif") -1px -2px no-repeat;
           }
         }
 

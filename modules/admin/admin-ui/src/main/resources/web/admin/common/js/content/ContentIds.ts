@@ -30,18 +30,28 @@ module api.content {
             });
         }
 
+        contains(contentId: ContentId): boolean {
+            return this.array.some((current: ContentId) => {
+                return current.equals(contentId);
+            });
+        }
+
         slice(from: number, to: number): ContentId[] {
             return this.array.slice(from, to);
         }
 
-        static from(contentIds: ContentId[]) : ContentIds {
+        static empty(): ContentIds {
+            return ContentIds.create().build();
+        }
+
+        static from(contentIds: ContentId[]): ContentIds {
             return ContentIds.create().fromContentIds(contentIds).build();
         }
 
-        static fromContents(contents: ContentSummary[]) : ContentIds {
+        static fromContents(contents: ContentSummary[]): ContentIds {
             let builder = ContentIds.create();
             contents.forEach((content) => {
-               builder.addContentId(content.getContentId());
+                builder.addContentId(content.getContentId());
             });
             return builder.build();
         }
@@ -75,7 +85,7 @@ module api.content {
 
         fromContentIds(contentIds: ContentId[]): ContentIdsBuilder {
             if (!!contentIds) {
-                contentIds.forEach((contentId: ContentId) => this.addContentId(contentId) );
+                contentIds.forEach((contentId: ContentId) => this.addContentId(contentId));
             }
             return this;
         }

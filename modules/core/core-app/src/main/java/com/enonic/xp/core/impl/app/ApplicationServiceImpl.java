@@ -428,8 +428,7 @@ public final class ApplicationServiceImpl
         }
         catch ( IOException e )
         {
-            LOG.error( "Failed to load application from " + url, e );
-            return null;
+            throw new RuntimeException( "Failed to load application from " + url );
         }
     }
 

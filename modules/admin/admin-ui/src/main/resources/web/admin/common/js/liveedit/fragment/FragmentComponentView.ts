@@ -10,16 +10,18 @@ module api.liveedit.fragment {
     import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
     import HTMLAreaHelper = api.util.htmlarea.editor.HTMLAreaHelper;
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+    import ContentTypeName = api.schema.content.ContentTypeName;
 
-    export class FragmentComponentViewBuilder extends ComponentViewBuilder<FragmentComponent> {
+    export class FragmentComponentViewBuilder extends ContentBasedComponentViewBuilder<FragmentComponent> {
 
         constructor() {
             super();
             this.setType(FragmentItemType.get());
+            this.setContentTypeName(ContentTypeName.FRAGMENT);
         }
     }
 
-    export class FragmentComponentView extends ComponentView<FragmentComponent> {
+    export class FragmentComponentView extends ContentBasedComponentView<FragmentComponent> {
 
         protected component: FragmentComponent;
 
@@ -35,7 +37,7 @@ module api.liveedit.fragment {
 
         constructor(builder: FragmentComponentViewBuilder) {
 
-            super(builder.setViewer(new FragmentComponentViewer()).setInspectActionRequired(true));
+            super(<FragmentComponentViewBuilder>builder.setViewer(new FragmentComponentViewer()).setInspectActionRequired(true));
 
             this.liveEditModel = builder.parentRegionView.getLiveEditModel();
             this.fragmentContainsLayout = false;
@@ -125,8 +127,6 @@ module api.liveedit.fragment {
             if (contentId) {
                 if (!this.fragmentContent || !contentId.equals(this.fragmentContent.getContentId())) {
                     new GetContentByIdRequest(contentId).sendAndParse().then((content: Content)=> {
-                        let contentAndSummary = api.content.ContentSummaryAndCompareStatus.fromContentSummary(content);
-                        this.addFragmentContextMenuActions(contentAndSummary);
                         this.fragmentContent = content;
                         this.notifyFragmentContentLoaded();
                         new api.liveedit.FragmentComponentLoadedEvent(this).fire();

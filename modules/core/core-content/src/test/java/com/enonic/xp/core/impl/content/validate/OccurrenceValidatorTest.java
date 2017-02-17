@@ -50,7 +50,7 @@ public class OccurrenceValidatorTest
         content.getData().setString( "myInput[1]", "2" );
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof MaximumOccurrencesValidationError );
         assertEquals( "Input [myInput] allows maximum 1 occurrence: 2", validationResults.getFirst().getErrorMessage() );
@@ -67,7 +67,7 @@ public class OccurrenceValidatorTest
         content.getData().setString( "myInput[2]", "3" );
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof MaximumOccurrencesValidationError );
         assertEquals( "Input [myInput] allows maximum 2 occurrences: 3", validationResults.getFirst().getErrorMessage() );
@@ -82,7 +82,7 @@ public class OccurrenceValidatorTest
         content.getData().setString( "myInput", "value" );
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertFalse( validationResults.hasErrors() );
     }
 
@@ -94,7 +94,7 @@ public class OccurrenceValidatorTest
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
     }
 
@@ -107,7 +107,7 @@ public class OccurrenceValidatorTest
         content.getData().setString( "myInput", "value" );
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof MinimumOccurrencesValidationError );
         assertEquals( "Input [myInput] requires minimum 2 occurrences: 1", validationResults.getFirst().getErrorMessage() );
@@ -123,7 +123,7 @@ public class OccurrenceValidatorTest
         content.getData().setString( "myInput[1]", "value 2" );
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof MinimumOccurrencesValidationError );
         assertEquals( "Input [myInput] requires minimum 3 occurrences: 2", validationResults.getFirst().getErrorMessage() );
@@ -138,7 +138,7 @@ public class OccurrenceValidatorTest
         Content content = Content.create().path( MY_CONTENT_PATH ).build();
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof MinimumOccurrencesValidationError );
     }
@@ -153,7 +153,7 @@ public class OccurrenceValidatorTest
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof MinimumOccurrencesValidationError );
     }
@@ -167,7 +167,7 @@ public class OccurrenceValidatorTest
         content.getData().setString( "mySet.myInput", "value" );
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertFalse( validationResults.hasErrors() );
     }
 
@@ -179,7 +179,7 @@ public class OccurrenceValidatorTest
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof MinimumOccurrencesValidationError );
         assertEquals( "FormItemSet [mySet] requires minimum 1 occurrence: 0", validationResults.getFirst().getErrorMessage() );
@@ -194,7 +194,7 @@ public class OccurrenceValidatorTest
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof MinimumOccurrencesValidationError );
     }
@@ -215,18 +215,18 @@ public class OccurrenceValidatorTest
         assertEquals( "mySet.myRequiredInput", mySet.getInput( "myRequiredInput" ).getPath().toString() );
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertEquals( 2, validationResults.size() );
         assertTrue( validationResults.getFirst() instanceof MinimumOccurrencesValidationError );
 
-        Iterator<DataValidationError> dataValidationErrorIterator = validationResults.iterator();
+        Iterator<ValidationError> dataValidationErrorIterator = validationResults.iterator();
 
-        DataValidationError nextDataValidationError = dataValidationErrorIterator.next();
+        DataValidationError nextDataValidationError = (DataValidationError) dataValidationErrorIterator.next();
         assertTrue( nextDataValidationError instanceof MinimumOccurrencesValidationError );
         assertEquals( "Input [mySet.myRequiredInput] requires minimum 1 occurrence: 0", nextDataValidationError.getErrorMessage() );
         assertNotNull( nextDataValidationError.getPath() );
-        nextDataValidationError = dataValidationErrorIterator.next();
+        nextDataValidationError = (DataValidationError) dataValidationErrorIterator.next();
         assertTrue( nextDataValidationError instanceof MinimumOccurrencesValidationError );
         assertEquals( "Input [myOtherRequiredInput] requires minimum 1 occurrence: 0", nextDataValidationError.getErrorMessage() );
     }
@@ -242,7 +242,7 @@ public class OccurrenceValidatorTest
         content.getData().setString( "myData", "1" );
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertFalse( validationResults.hasErrors() );
         assertEquals( 0, validationResults.size() );
     }
@@ -272,7 +272,7 @@ public class OccurrenceValidatorTest
         content.getData().setString( "crimes[1].year", "1990" );
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof MinimumOccurrencesValidationError );
         assertEquals( "FormItemSet [personalia] requires minimum 1 occurrence: 0", validationResults.getFirst().getErrorMessage() );
@@ -287,7 +287,7 @@ public class OccurrenceValidatorTest
         content.getData().setString( "myInput[1]", "2" );
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof MaximumOccurrencesValidationError );
     }
@@ -302,7 +302,7 @@ public class OccurrenceValidatorTest
         content.getData().setString( "myInput[2]", null );
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertFalse( validationResults.hasErrors() );
     }
 
@@ -315,7 +315,7 @@ public class OccurrenceValidatorTest
         content.getData().setString( "myInput[1]", null );
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertFalse( validationResults.hasErrors() );
     }
 
@@ -328,7 +328,7 @@ public class OccurrenceValidatorTest
         content.getData().setString( "myInput[1]", null );
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof MinimumOccurrencesValidationError );
     }
@@ -341,7 +341,7 @@ public class OccurrenceValidatorTest
         content.getData().setString( "myInput[0]", null );
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof MinimumOccurrencesValidationError );
     }
@@ -355,7 +355,7 @@ public class OccurrenceValidatorTest
         content.getData().setString( "myInput[1]", null );
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertFalse( validationResults.hasErrors() );
     }
 
@@ -367,7 +367,7 @@ public class OccurrenceValidatorTest
         content.getData().setString( "myInput[0]", null );
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof MinimumOccurrencesValidationError );
     }
@@ -385,7 +385,7 @@ public class OccurrenceValidatorTest
         content.getData().setString( "crimes[0].year", "1989" );
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof MinimumOccurrencesValidationError );
     }
@@ -404,7 +404,7 @@ public class OccurrenceValidatorTest
         content.getData().setString( "crimes[0].year[1]", "1990" );
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertFalse( validationResults.hasErrors() );
     }
 
@@ -431,7 +431,7 @@ public class OccurrenceValidatorTest
         content.getData().setString( "crimes[0].option1.year", "1989" );
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof MinimumOccurrencesValidationError );
     }
@@ -462,7 +462,7 @@ public class OccurrenceValidatorTest
         content.getData().setString( "crimes[0].option1.year[1]", "1990" );
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertFalse( validationResults.hasErrors() );
     }
 
@@ -486,7 +486,7 @@ public class OccurrenceValidatorTest
         content.getData().setString( "myOptionSet.option1.myInput", "value" );
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertFalse( validationResults.hasErrors() );
     }
 
@@ -508,7 +508,7 @@ public class OccurrenceValidatorTest
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof MinimumOccurrencesValidationError );
         assertEquals( "FormOptionSet [myOptionSet] requires minimum 1 occurrence: 0", validationResults.getFirst().getErrorMessage() );
@@ -534,7 +534,7 @@ public class OccurrenceValidatorTest
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof MinimumOccurrencesValidationError );
     }
@@ -567,19 +567,19 @@ public class OccurrenceValidatorTest
         //assertEquals( "myOptionSet.option1.myRequiredInput", myOptionSet.getInput( "myRequiredInput" ).getPath().toString() );
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertEquals( 2, validationResults.size() );
         assertTrue( validationResults.getFirst() instanceof MinimumOccurrencesValidationError );
 
-        Iterator<DataValidationError> dataValidationErrorIterator = validationResults.iterator();
+        Iterator<ValidationError> dataValidationErrorIterator = validationResults.iterator();
 
-        DataValidationError nextDataValidationError = dataValidationErrorIterator.next();
+        DataValidationError nextDataValidationError = (DataValidationError) dataValidationErrorIterator.next();
         assertTrue( nextDataValidationError instanceof MinimumOccurrencesValidationError );
         assertEquals( "Input [myOptionSet.option1.myRequiredInput] requires minimum 1 occurrence: 0",
                       nextDataValidationError.getErrorMessage() );
         assertNotNull( nextDataValidationError.getPath() );
-        nextDataValidationError = dataValidationErrorIterator.next();
+        nextDataValidationError = (DataValidationError) dataValidationErrorIterator.next();
         assertTrue( nextDataValidationError instanceof MinimumOccurrencesValidationError );
         assertEquals( "Input [myOtherRequiredInput] requires minimum 1 occurrence: 0", nextDataValidationError.getErrorMessage() );
     }
@@ -605,7 +605,7 @@ public class OccurrenceValidatorTest
         content.getData().setString( "myData", "1" );
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertFalse( validationResults.hasErrors() );
         assertEquals( 0, validationResults.size() );
     }
@@ -652,7 +652,7 @@ public class OccurrenceValidatorTest
         content.getData().setString( "crimes[1].option1..year", "1990" );
 
         // exercise
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof MinimumOccurrencesValidationError );
         assertEquals( "FormOptionSet [personalia] requires minimum 1 occurrence: 0", validationResults.getFirst().getErrorMessage() );
@@ -665,7 +665,7 @@ public class OccurrenceValidatorTest
 
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getData().setString( "myOptionSet.option1.myUnrequiredData", "1" );
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertFalse( validationResults.hasErrors() );
     }
 
@@ -678,7 +678,7 @@ public class OccurrenceValidatorTest
         content.getData().setString( "myOptionSet.option1.myUnrequiredData", "1" );
         content.getData().setString( "myOptionSet._selected", "1" );
         content.getData().removeProperty( "myOptionSet._selected" );
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof OptionSetSelectionValidationError );
         assertEquals( "OptionSet [myOptionSet] requires min 1 max 1 items selected: 0", validationResults.getFirst().getErrorMessage() );
@@ -695,7 +695,7 @@ public class OccurrenceValidatorTest
         content.getData().getSet( "myOptionSet" ).addString( "_selected", "option2" );
         content.getData().getSet( "myOptionSet" ).addString( "_selected", "option3" );
 
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof OptionSetSelectionValidationError );
         assertEquals( "OptionSet [myOptionSet] requires min 1 max 2 items selected: 3", validationResults.getFirst().getErrorMessage() );
@@ -711,7 +711,7 @@ public class OccurrenceValidatorTest
         content.getData().getSet( "myOptionSet" ).addString( "_selected", "option1" );
         content.getData().getSet( "myOptionSet" ).addString( "_selected", "option2" );
 
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof OptionSetSelectionValidationError );
         assertEquals( "OptionSet [myOptionSet] requires min 3 max 3 items selected: 2", validationResults.getFirst().getErrorMessage() );
@@ -724,7 +724,7 @@ public class OccurrenceValidatorTest
 
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getData().setString( "myOptionSet.option1.myUnrequiredData", "1" );
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof OptionSetSelectionValidationError );
         assertEquals( "OptionSet [myOptionSet] requires min 1 max 1 items selected: 2", validationResults.getFirst().getErrorMessage() );
@@ -738,7 +738,7 @@ public class OccurrenceValidatorTest
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getData().setString( "myOptionSet.option1.myUnrequiredData", "1" );
 
-        DataValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertTrue( validationResults.hasErrors() );
         assertTrue( validationResults.getFirst() instanceof OptionSetSelectionValidationError );
         assertEquals( "OptionSet [myOptionSet] requires min 1 max 1 items selected: 0", validationResults.getFirst().getErrorMessage() );

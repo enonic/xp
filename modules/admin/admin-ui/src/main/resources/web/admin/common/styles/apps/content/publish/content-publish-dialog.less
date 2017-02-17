@@ -4,20 +4,23 @@
     max-height: 200px;
   }
 
+  @toggler-width: 35px;
+
   .icon-tree {
-    font-size: 18px;
+    font-size: 20px;
     line-height: 32px;
 
     .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent, false);
 
     &.on {
       .button(@admin-button-blue1, transparent, @admin-button-blue1, transparent, false);
+
       padding: 0;
-      margin-right: 15px;
+      width: @toggler-width;
     }
 
     padding: 0;
-    margin-right: 15px;
+    width: @toggler-width;
   }
 
   .publish-dialog-item-list {
@@ -31,6 +34,13 @@
         order: 1;
         float: none;
         margin: 0 5px 0 12px;
+      }
+    }
+
+    &.contains-toggleable {
+
+      .browse-selection-item:not(.toggleable) {
+        margin-left: @toggler-width;
       }
     }
   }

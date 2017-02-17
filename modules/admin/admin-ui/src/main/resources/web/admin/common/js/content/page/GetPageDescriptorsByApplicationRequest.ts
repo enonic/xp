@@ -22,14 +22,16 @@ module api.content.page {
 
         sendAndParse(): wemQ.Promise<PageDescriptor[]> {
 
-            let cached = this.cache.getByApplication(this.applicationKey);
-            if (cached) {
-                return wemQ(cached);
-            } else {
-                return this.send().then((response: api.rest.JsonResponse<PageDescriptorsJson>) => {
-                    return this.fromJsonToPageDescriptors(response.getResult());
-                });
+            if (!api.BrowserHelper.isIE()) { // In case frame was reloaded in IE it can't use objects from cache
+                const cached = this.cache.getByApplication(this.applicationKey); // as they are from old unreachable for IE frame
+                if (cached) {
+                    return wemQ(cached);
+                }
             }
+
+            return this.send().then((response: api.rest.JsonResponse<PageDescriptorsJson>) => {
+                return this.fromJsonToPageDescriptors(response.getResult());
+            });
         }
     }
 }

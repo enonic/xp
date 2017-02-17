@@ -15,13 +15,9 @@ module api.ui.dialog {
 
         private actions: api.ui.Action[] = [];
 
-        private mouseClickListener: (event: MouseEvent) => void;
-
         private cancelButton: api.dom.DivEl;
 
         private static openDialogsCounter: number = 0;
-
-        private buttonRowIsFocused: boolean = false;
 
         private tabbable: api.dom.Element[];
 
@@ -59,7 +55,22 @@ module api.ui.dialog {
             this.buttonRow = new ModalDialogButtonRow();
             footer.appendChild(this.buttonRow);
 
-            this.mouseClickListener = (event: MouseEvent) => {
+            this.initListeners();
+        }
+
+        private initListeners() {
+            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item) => {
+                if (this.isVisible()) {
+                    this.centerMyself();
+                }
+            });
+
+            this.handleClickOutsideDialog();
+            this.handleFocusInOutEvents();
+        }
+
+        private handleClickOutsideDialog() {
+            const mouseClickListener: (event: MouseEvent) => void = (event: MouseEvent) => {
                 if (this.isVisible()) {
                     for (let element = event.target; element; element = (<any>element).parentNode) {
                         if (element === this.getHTMLElement() || this.isIgnoredElementClicked(<any>element)) {
@@ -73,50 +84,53 @@ module api.ui.dialog {
             };
 
             this.onRemoved(() => {
-                api.dom.Body.get().unMouseDown(this.mouseClickListener);
+                api.dom.Body.get().unMouseDown(mouseClickListener);
             });
+
             this.onAdded(() => {
-                api.dom.Body.get().onMouseDown(this.mouseClickListener);
+                api.dom.Body.get().onMouseDown(mouseClickListener);
             });
+        }
 
-            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item) => {
-                if (this.isVisible()) {
-                    this.centerMyself();
-                }
+        private handleFocusInOutEvents() {
+            let buttonRowIsFocused: boolean = false;
+            let buttonRowFocusOutTimeout: number;
+            const focusOutTimeout: number = 10;
+
+            this.onMouseDown(() => {
+                buttonRowIsFocused = false; // making dialog focusOut event give focus to last tabbable elem
             });
-
-            let buttonRowFocusOutTimeout;
 
             api.util.AppHelper.focusInOut(this, () => {
                 if (this.hasTabbable() && !this.hasSubDialog()) {
                     // last focusable - Cancel
                     // first focusable - X
-                    if (this.buttonRowIsFocused) { // last element lost focus
+                    if (buttonRowIsFocused) { // last element lost focus
                         this.tabbable[0].giveFocus();
                     } else {
                         this.tabbable[this.tabbable.length - 1].giveFocus();
                     }
                 }
-            }, 50, false);
+            }, focusOutTimeout, false);
 
             this.buttonRow.onFocusIn((event) => {
-                this.buttonRowIsFocused = true;
+                buttonRowIsFocused = true;
                 clearTimeout(buttonRowFocusOutTimeout);
             });
 
             this.buttonRow.onFocusOut((event) => {
                 buttonRowFocusOutTimeout = setTimeout(() => {
-                    this.buttonRowIsFocused = false;
-                }, 15); // timeout should be > timeout for modal dialog to trigger after
+                    buttonRowIsFocused = false;
+                }, focusOutTimeout + 5); // timeout should be > timeout for modal dialog to trigger after
             });
-        }
-
-        addClickIgnoredElement(elem: api.dom.Element) {
-            this.listOfClickIgnoredElements.push(elem);
         }
 
         protected createHeader(title: string): api.ui.dialog.ModalDialogHeader {
             return new api.ui.dialog.ModalDialogHeader(title);
+        }
+
+        addClickIgnoredElement(elem: api.dom.Element) {
+            this.listOfClickIgnoredElements.push(elem);
         }
 
         private isIgnoredElementClicked(element: HTMLElement): boolean {
@@ -131,7 +145,7 @@ module api.ui.dialog {
         }
 
         private createDefaultCancelAction() {
-            let cancelAction = new api.ui.Action('Cancel', 'esc');
+            let cancelAction = new api.ui.Action('Cancel', 'esc', true);
             cancelAction.setIconClass('cancel-button-top');
             cancelAction.setLabel('');
             cancelAction.onExecuted(()=> {
