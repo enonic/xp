@@ -159,7 +159,6 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
 
         this.getTreeGrid().onHighlightingChanged((node: TreeNode<ContentSummaryAndCompareStatus>) => {
-            //    debugger;
             this.updateDetailsPanelOnItemChange();
         });
 

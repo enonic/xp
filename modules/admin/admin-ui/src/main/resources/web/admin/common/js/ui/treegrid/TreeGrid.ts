@@ -1516,7 +1516,6 @@ module api.ui.treegrid {
         }
 
         private notifyHighlightingChanged(): void {
-            debugger;
             this.highlightingChangeListeners.forEach((listener: Function) => {
                 listener(this.highlightedNode);
             });
