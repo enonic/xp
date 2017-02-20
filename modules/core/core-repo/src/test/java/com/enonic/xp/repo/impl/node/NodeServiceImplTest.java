@@ -24,13 +24,8 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RenameNodeParams;
-import com.enonic.xp.node.RestoreParams;
-import com.enonic.xp.node.RestoreResult;
-import com.enonic.xp.node.SnapshotParams;
-import com.enonic.xp.node.SnapshotResult;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
-import com.enonic.xp.repo.impl.elasticsearch.snapshot.SnapshotException;
 import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.security.PrincipalKey;
@@ -58,7 +53,6 @@ public class NodeServiceImplTest
         super.setUp();
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( indexServiceInternal );
-        this.nodeService.setSnapshotService( this.snapshotService );
         this.nodeService.setNodeStorageService( this.storageService );
         this.nodeService.setNodeSearchService( this.searchService );
         this.nodeService.setRepositoryService( this.repositoryService );
@@ -190,67 +184,6 @@ public class NodeServiceImplTest
         assertTrue( node.getPermissions() != null );
         assertEquals( aclList, node.getPermissions() );
         assertEquals( childOrder, node.getChildOrder() );
-    }
-
-    @Test
-    public void snapshot_restore()
-        throws Exception
-    {
-        final Node node = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "myNode" ).
-            build() );
-
-        final Node node2 = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "myNode2" ).
-            build() );
-
-        final SnapshotResult result = this.nodeService.snapshot( SnapshotParams.create().
-            snapshotName( "my-snapshot" ).
-            repositoryId( CTX_DEFAULT.getRepositoryId() ).
-            build() );
-
-        assertEquals( SnapshotResult.State.SUCCESS, result.getState() );
-
-        doDeleteNode( node.id() );
-        doRename( node2.id(), "myNode2Renamed" );
-
-        assertNull( getNodeById( node.id() ) );
-        assertNull( getNodeByPath( node.path() ) );
-        assertNull( getNodeByPath( NodePath.create( "/myNode2" ).build() ) );
-        assertNotNull( getNodeByPath( NodePath.create( "/myNode2Renamed" ).build() ) );
-
-        this.nodeService.restore( RestoreParams.create().
-            snapshotName( "my-snapshot" ).
-            repositoryId( CTX_DEFAULT.getRepositoryId() ).
-            build() );
-
-        assertNotNull( getNodeById( node.id() ) );
-        assertNotNull( getNodeByPath( node.path() ) );
-        assertNotNull( getNodeByPath( NodePath.create( "/myNode2" ).build() ) );
-        assertNull( getNodeByPath( NodePath.create( "/myNode2Renamed" ).build() ) );
-    }
-
-    @Test(expected = SnapshotException.class)
-    public void non_existing_snapshot()
-        throws Exception
-    {
-        final Node node = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "myNode" ).
-            build() );
-
-        assertNotNull( getNodeById( node.id() ) );
-
-        final RestoreResult result = this.nodeService.restore( RestoreParams.create().
-            snapshotName( "my-snapshot" ).
-            repositoryId( CTX_DEFAULT.getRepositoryId() ).
-            build() );
-
-        assertTrue( result.isFailed() );
-
-        assertNotNull( getNodeById( node.id() ) );
     }
 
     @Test

@@ -14,8 +14,6 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
-import com.enonic.xp.node.DeleteSnapshotParams;
-import com.enonic.xp.node.DeleteSnapshotsResult;
 import com.enonic.xp.node.DuplicateNodeProcessor;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
@@ -50,22 +48,15 @@ import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.ResolveSyncWorkResult;
-import com.enonic.xp.node.RestoreParams;
-import com.enonic.xp.node.RestoreResult;
 import com.enonic.xp.node.SetNodeChildOrderParams;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.SetNodeStateResult;
-import com.enonic.xp.node.SnapshotParams;
-import com.enonic.xp.node.SnapshotResult;
-import com.enonic.xp.node.SnapshotResults;
 import com.enonic.xp.node.SyncWorkResolverParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.NodeEvents;
-import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
-import com.enonic.xp.repo.impl.snapshot.SnapshotService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.repository.Repository;
@@ -80,8 +71,6 @@ public class NodeServiceImpl
     implements NodeService
 {
     private IndexServiceInternal indexServiceInternal;
-
-    private SnapshotService snapshotService;
 
     private NodeStorageService nodeStorageService;
 
@@ -547,37 +536,6 @@ public class NodeServiceImpl
     }
 
     @Override
-    public SnapshotResult snapshot( final SnapshotParams params )
-    {
-        verifyContext();
-        return this.snapshotService.snapshot( params );
-    }
-
-    @Override
-    public RestoreResult restore( final RestoreParams params )
-    {
-        verifyContext();
-        final RestoreResult restoreResult = this.snapshotService.restore( params );
-        this.nodeStorageService.invalidate();
-        this.eventPublisher.publish( RepositoryEvents.restored() );
-        return restoreResult;
-    }
-
-    @Override
-    public DeleteSnapshotsResult deleteSnapshot( final DeleteSnapshotParams params )
-    {
-        verifyContext();
-        return this.snapshotService.delete( params );
-    }
-
-    @Override
-    public SnapshotResults listSnapshots()
-    {
-        verifyContext();
-        return this.snapshotService.list();
-    }
-
-    @Override
     public void refresh( final RefreshMode refreshMode )
     {
         verifyContext();
@@ -794,12 +752,6 @@ public class NodeServiceImpl
     public void setIndexServiceInternal( final IndexServiceInternal indexServiceInternal )
     {
         this.indexServiceInternal = indexServiceInternal;
-    }
-
-    @Reference
-    public void setSnapshotService( final SnapshotService snapshotService )
-    {
-        this.snapshotService = snapshotService;
     }
 
     @Reference
