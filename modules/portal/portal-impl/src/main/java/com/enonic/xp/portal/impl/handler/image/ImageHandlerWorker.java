@@ -24,6 +24,8 @@ import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.MediaTypes;
 
 import static org.apache.commons.lang.StringUtils.substringBeforeLast;
@@ -122,6 +124,12 @@ final class ImageHandlerWorker
             final boolean everyoneCanRead = publicAccessControlEntry != null && publicAccessControlEntry.isAllowed( Permission.READ );
             final boolean masterBranch = ContentConstants.BRANCH_MASTER.equals( request.getBranch() );
             setResponseCacheable( portalResponse, everyoneCanRead && masterBranch );
+        }
+
+        final Trace trace = Tracer.current();
+        if ( trace != null )
+        {
+            trace.put( "path", imageContent.getPath() );
         }
 
         return portalResponse.build();

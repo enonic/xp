@@ -17,6 +17,8 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.auth.AuthControllerService;
 import com.enonic.xp.portal.handler.EndpointHandler;
 import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.WebHandler;
@@ -72,7 +74,19 @@ public class IdentityHandler
         worker.idProviderFunction = idProviderFunction;
         worker.setContentService( this.contentService );
         worker.authControllerService = this.authControllerService;
-        return worker.execute();
+        final Trace trace = Tracer.newTrace( "portalRequest" );
+        if ( trace != null )
+        {
+            trace.put( "path", webRequest.getPath() );
+            trace.put( "method", webRequest.getMethod().toString() );
+            trace.put( "host", webRequest.getHost() );
+        }
+        return Tracer.traceEx( trace, () ->
+        {
+            final PortalResponse response = worker.execute();
+            addTraceInfo( trace, response );
+            return response;
+        } );
     }
 
     private void checkTicket( final PortalRequest req )

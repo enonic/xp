@@ -13,6 +13,8 @@ import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Tracer;
 
 final class ComponentHandlerWorker
     extends RenderHandlerWorker
@@ -102,6 +104,12 @@ final class ComponentHandlerWorker
         this.request.setPageDescriptor( null );
 
         final Renderer<Component> renderer = this.rendererFactory.getRenderer( component );
+        final Trace trace = Tracer.current();
+        if ( trace != null )
+        {
+            trace.put( "path", component.getPath() );
+            trace.put( "type", component.getType().toString() );
+        }
         final PortalResponse response = renderer.render( component, this.request );
         return this.postProcessor.processResponseInstructions( this.request, response );
     }

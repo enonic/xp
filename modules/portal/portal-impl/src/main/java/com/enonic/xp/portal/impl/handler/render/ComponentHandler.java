@@ -13,6 +13,8 @@ import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.impl.rendering.RendererFactory;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.region.ComponentPath;
+import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.WebHandler;
@@ -48,7 +50,7 @@ public final class ComponentHandler
         throws Exception
     {
         WebHandlerHelper.checkAdminAccess( webRequest );
-        
+
         final String restPath = findRestPath( webRequest );
 
         final ComponentHandlerWorker worker = new ComponentHandlerWorker( (PortalRequest) webRequest );
@@ -58,7 +60,8 @@ public final class ComponentHandler
         worker.pageDescriptorService = pageDescriptorService;
         worker.pageTemplateService = pageTemplateService;
         worker.postProcessor = postProcessor;
-        return worker.execute();
+        final Trace trace = Tracer.newTrace( "renderComponent" );
+        return Tracer.traceEx( trace, worker::execute );
     }
 
     @Reference

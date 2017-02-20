@@ -18,6 +18,8 @@ import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.site.filter.FilterDescriptor;
 import com.enonic.xp.site.filter.FilterDescriptors;
+import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpStatus;
 
 import static com.enonic.xp.portal.RenderMode.EDIT;
@@ -135,7 +137,16 @@ public final class PageRenderer
         PortalResponse filterResponse = portalResponse;
         for ( FilterDescriptor filter : filters )
         {
-            filterResponse = this.filterExecutor.executeResponseFilter( filter, portalRequest, filterResponse );
+            final Trace trace = Tracer.newTrace( "renderFilter" );
+            if ( trace != null )
+            {
+                trace.put( "app", filter.getApplication().toString() );
+                trace.put( "name", filter.getName() );
+                trace.put( "type", "filter" );
+            }
+            final PortalResponse filterPortalResponse = filterResponse;
+            filterResponse =
+                Tracer.trace( trace, () -> filterExecutor.executeResponseFilter( filter, portalRequest, filterPortalResponse ) );
             if ( !filterResponse.applyFilters() )
             {
                 break;
