@@ -33,6 +33,16 @@ public @interface JettyConfig
     int session_timeout() default 60;
 
     /**
+     * Max request header size (32K is default).
+     */
+    int http_requestHeaderSize() default 32 * 1024;
+
+    /**
+     * Max response header size (32K is default).
+     */
+    int http_responseHeaderSize() default 32 * 1024;
+
+    /**
      * Session cookie name.
      */
     String session_cookieName() default "JSESSIONID";
