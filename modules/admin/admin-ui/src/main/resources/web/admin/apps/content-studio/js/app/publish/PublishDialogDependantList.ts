@@ -21,14 +21,20 @@ export class PublishDialogDependantList extends DialogDependantList {
 
     createItemView(item: ContentSummaryAndCompareStatus, readOnly: boolean): api.dom.Element {
         let view = super.createItemView(item, readOnly);
+        let isRemovable = !this.requiredIds.contains(item.getContentId());
 
-        if (!this.requiredIds.contains(item.getContentId())) {
+        if (isRemovable) {
             view.addClass('removable');
         }
 
         view.onClicked((event) => {
             if (new api.dom.ElementHelper(<HTMLElement>event.target).hasClass('remove')) {
-                this.notifyItemRemoveClicked(item);
+                if (isRemovable) {
+                    this.notifyItemRemoveClicked(item);
+                }
+                else {
+                    console.log("This item cannot be deleted");
+                }
             } else {
                 this.notifyItemClicked(item);
             }

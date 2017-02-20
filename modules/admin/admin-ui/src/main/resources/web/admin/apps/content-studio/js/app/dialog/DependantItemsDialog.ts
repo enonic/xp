@@ -152,9 +152,6 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     setListItems(items: ContentSummaryAndCompareStatus[]) {
         this.itemList.setItems(items);
-        if (items.length === 1) {
-            (<StatusSelectionItem>this.getItemList().getItemView(items[0])).hideRemoveButton();
-        }
     }
 
     private extendsWindowHeightSize(): boolean {
@@ -290,16 +287,6 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
 export class DialogItemList extends ListBox<ContentSummaryAndCompareStatus> {
 
-    constructor(className?: string) {
-        super(className);
-
-        this.onItemsRemoved((items: ContentSummaryAndCompareStatus[]) => {
-            if (this.getItemCount() === 1) {
-                (<StatusSelectionItem>this.getItemViews()[0]).hideRemoveButton();
-            }
-        });
-    }
-
     createItemView(item: ContentSummaryAndCompareStatus, readOnly: boolean): StatusSelectionItem {
         let itemViewer = new ContentSummaryAndCompareStatusViewer();
 
@@ -312,7 +299,12 @@ export class DialogItemList extends ListBox<ContentSummaryAndCompareStatus> {
         let statusItem = this.createSelectionItem(itemViewer, browseItem);
 
         statusItem.onRemoveClicked((e: MouseEvent) => {
-            this.removeItem(item);
+            if (this.getItemCount() > 1) {
+                this.removeItem(item);
+            }
+            else {
+                console.log("This item cannot be deleted");
+            }
         });
 
         return statusItem;
