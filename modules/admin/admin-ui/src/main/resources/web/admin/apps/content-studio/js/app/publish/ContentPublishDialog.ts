@@ -85,7 +85,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
         dependants.onItemRemoveClicked((item: ContentSummaryAndCompareStatus) => {
             this.excludedIds.push(item.getContentId());
-            this.reloadPublishDependencies().done();
+            this.reloadPublishDependencies(true).done();
         });
 
         return dependants;
