@@ -1063,7 +1063,9 @@ module api.ui.treegrid {
             let selection = this.root.getCurrentSelection();
 
             this.root.resetCurrentRoot(parentNodeData);
-            //this.initData([]);
+            this.initData([]);
+
+            this.highlightedNode = null;
 
             this.mask();
 
@@ -1514,6 +1516,7 @@ module api.ui.treegrid {
         }
 
         private notifyHighlightingChanged(): void {
+            debugger;
             this.highlightingChangeListeners.forEach((listener: Function) => {
                 listener(this.highlightedNode);
             });
