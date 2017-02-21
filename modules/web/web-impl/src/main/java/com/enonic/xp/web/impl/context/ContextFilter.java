@@ -4,7 +4,6 @@ import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -26,9 +25,7 @@ public final class ContextFilter
         final Context context = ContextBuilder.create().build();
         context.getLocalScope().setAttribute( ContentConstants.BRANCH_DRAFT );
         context.getLocalScope().setAttribute( ContentConstants.CONTENT_REPO.getId() );
-
-        final HttpSession session = req.getSession( true );
-        context.getLocalScope().setSession( new SessionWrapper( session ) );
+        context.getLocalScope().setSession( new SessionWrapper( req ) );
 
         context.callWith( () -> {
             chain.doFilter( new HttpRequestDelegate( req ), res );
