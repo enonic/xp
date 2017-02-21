@@ -722,7 +722,7 @@ public final class ContentResource
 
         //Resolve required ids
         final ContentIds requiredIds = this.contentService.resolveRequiredDependencies( ResolveRequiredDependenciesParams.create().
-            contentIds( dependentContentIds ).
+            contentIds( ContentIds.create().addAll( dependentContentIds ).addAll( requestedContentIds ).build() ).
             target( ContentConstants.BRANCH_MASTER ).
             build() );
 
