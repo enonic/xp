@@ -31,8 +31,7 @@ public final class SessionConfigurator
 
     private int getTimeout()
     {
-        // TODO: Is this a bug? Seems to be in ms instead of sec.
-        return this.config.session_timeout() * 60 * 1000;
+        return this.config.session_timeout() * 60;
     }
 
     private String getCookieName()
