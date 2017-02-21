@@ -1,5 +1,6 @@
 import '../../api.ts';
 import {DialogDependantList} from '../dialog/DependantItemsDialog';
+import {StatusSelectionItem} from '../dialog/StatusSelectionItem';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
@@ -22,28 +23,19 @@ export class PublishDialogDependantList extends DialogDependantList {
 
     createItemView(item: ContentSummaryAndCompareStatus, readOnly: boolean): api.dom.Element {
         let view = super.createItemView(item, readOnly);
-        let isRemovable = !this.requiredIds.contains(item.getContentId());
 
-        if (isRemovable) {
+        if (!this.requiredIds.contains(item.getContentId())) {
             view.addClass('removable');
         }
 
-        let onViewClicked = api.util.AppHelper.debounce((event) => {
-            if (new api.dom.ElementHelper(<HTMLElement>event.target).hasClass('remove')) {
-                if (isRemovable) {
-                    this.notifyItemRemoveClicked(item);
-                } else {
-                    let tooltip = new Tooltip(api.dom.Element.fromHtmlElement(<HTMLElement>event.target), 'This item is required for publishing');
-                    tooltip.setTrigger(Tooltip.TRIGGER_NONE);
-                    tooltip.showFor(1500);
-                }
-            } else {
+        (<StatusSelectionItem>view).setIsRemovableFn(() => !this.requiredIds.contains(item.getContentId()));
+        (<StatusSelectionItem>view).setRemoveHandlerFn(() => this.notifyItemRemoveClicked(item));
+
+        view.onClicked((event) => {
+            if (!new api.dom.ElementHelper(<HTMLElement>event.target).hasClass('remove')) {
                 this.notifyItemClicked(item);
             }
-        }, 1000, true);
-
-
-        view.onClicked(onViewClicked);
+        });
 
         if (!isContentSummaryValid(item)) {
             view.addClass('invalid');

@@ -91,7 +91,7 @@ module api.ui {
                 appendTo.appendChild(this.tooltipEl);
 
                 if (!Tooltip.multipleAllowed) {
-                    this.hideOtherInstances();
+                    Tooltip.hideOtherInstances(this);
                 }
                 this.tooltipEl.show();
 
@@ -365,9 +365,9 @@ module api.ui {
             }
         }
 
-        private hideOtherInstances() {
+        static hideOtherInstances(thisToolTip?: Tooltip) {
             Tooltip.instances.forEach((tooltip: Tooltip) => {
-                if (tooltip !== this && tooltip.isVisible()) {
+                if (tooltip.isVisible() && (!thisToolTip || tooltip !== thisToolTip)) {
                     //console.log('Hiding tooltip because multiple instances are not allowed', tooltip);
                     tooltip.hide();
                 }

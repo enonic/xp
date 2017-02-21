@@ -299,17 +299,8 @@ export class DialogItemList extends ListBox<ContentSummaryAndCompareStatus> {
 
         let statusItem = this.createSelectionItem(itemViewer, browseItem);
 
-        let onRemoveCicked = api.util.AppHelper.debounce((event) => {
-            if (this.getItemCount() > 1) {
-                this.removeItem(item);
-            } else {
-                let tooltip = new Tooltip(statusItem.getRemoveButton(), 'This item is required for publishing');
-                tooltip.setTrigger(Tooltip.TRIGGER_NONE);
-                tooltip.showFor(1500);
-            }
-        }, 1000, true);
-
-        statusItem.onRemoveClicked(onRemoveCicked);
+        statusItem.setIsRemovableFn(() => this.getItemCount() > 1);
+        statusItem.setRemoveHandlerFn(() => this.removeItem(item));
 
         return statusItem;
     }
