@@ -272,7 +272,7 @@ module api.ui.treegrid {
 
                 // Checkbox is clicked
                 if (elem.hasAnyParentClass('slick-cell-checkboxsel')) {
-                    if (elem.getTagName().toLowerCase() == 'label') {
+                    if (elem.getAttribute('type') === 'checkbox' || elem.getTagName().toLowerCase() === 'label') {
                         this.onCheckboxClicked(data);
                     }
                     return;
