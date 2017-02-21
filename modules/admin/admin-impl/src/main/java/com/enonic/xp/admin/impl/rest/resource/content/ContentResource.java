@@ -726,7 +726,12 @@ public final class ContentResource
             target( ContentConstants.BRANCH_MASTER ).
             build() );
 
-        final Boolean anyRemovable = requiredIds.getSize() < dependentContentIds.getSize();
+        //filter required dependant ids
+        final ContentIds requiredDependantIds = ContentIds.from( requiredIds.stream().
+            filter( contentId -> !requestedContentIds.contains( contentId ) ).
+            collect( Collectors.toList() ) );
+
+        final Boolean anyRemovable = requiredDependantIds.getSize() < dependentContentIds.getSize();
 
         final ContentIds invalidContentIds = getInvalidContent( compareResults );
 
@@ -741,7 +746,7 @@ public final class ContentResource
         return ResolvePublishContentResultJson.create().
             setRequestedContents( requestedContentIds ).
             setDependentContents( this.invalidDependantsOnTop( sortedDependentContentIds, requestedContentIds, sortedInvalidContentIds ) ).
-            setRequiredContents( requiredIds ).
+            setRequiredContents( requiredDependantIds ).
             setContainsRemovable( anyRemovable ).
             setContainsInvalid( !invalidContentIds.isEmpty() ).
             build();
