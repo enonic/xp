@@ -26,9 +26,7 @@ public final class ContextFilter
         final Context context = ContextBuilder.create().build();
         context.getLocalScope().setAttribute( ContentConstants.BRANCH_DRAFT );
         context.getLocalScope().setAttribute( ContentConstants.CONTENT_REPO.getId() );
-
-        final HttpSession session = req.getSession( true );
-        context.getLocalScope().setSession( new SessionWrapper( session ) );
+        context.getLocalScope().setSession( new SessionWrapper( req ) );
 
         context.callWith( () -> {
             chain.doFilter( new HttpRequestDelegate( req ), res );
