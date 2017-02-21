@@ -1063,7 +1063,9 @@ module api.ui.treegrid {
             let selection = this.root.getCurrentSelection();
 
             this.root.resetCurrentRoot(parentNodeData);
-            //this.initData([]);
+            this.initData([]);
+
+            this.highlightedNode = null;
 
             this.mask();
 

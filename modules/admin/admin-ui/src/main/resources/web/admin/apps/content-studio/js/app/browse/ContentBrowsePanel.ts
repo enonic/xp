@@ -61,9 +61,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
     protected checkIfItemIsRenderable(browseItem: ContentBrowseItem): wemQ.Promise<any> {
         let previewHandler = this.getBrowseActions().getPreviewHandler();
-        return previewHandler.checkIfItemIsRenderable(browseItem).then(() => {
-            this.getBrowseItemPanel().togglePreviewForItem(browseItem);
-        });
+        return previewHandler.checkIfItemIsRenderable(browseItem);
     }
 
     protected getBrowseActions(): ContentTreeGridActions {
@@ -161,7 +159,6 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
 
         this.getTreeGrid().onHighlightingChanged((node: TreeNode<ContentSummaryAndCompareStatus>) => {
-            //    debugger;
             this.updateDetailsPanelOnItemChange();
         });
 
