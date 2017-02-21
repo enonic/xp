@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
 
 import com.enonic.xp.data.PropertySet;
@@ -89,9 +90,25 @@ public class ScriptValueTranslator
         {
             parent.addDouble( name, (Double) value );
         }
+        else if ( value instanceof Float )
+        {
+            parent.addDouble( name, ( (Float) value ).doubleValue() );
+        }
         else if ( value instanceof Integer )
         {
             parent.addLong( name, ( (Integer) value ).longValue() );
+        }
+        else if ( value instanceof Byte )
+        {
+            parent.addLong( name, ( (Byte) value ).longValue() );
+        }
+        else if ( value instanceof Long )
+        {
+            parent.addLong( name, ( (Long) value ) );
+        }
+        else if ( value instanceof Number )
+        {
+            parent.addDouble( name, ( ( (Number) value ).doubleValue() ) );
         }
         else if ( value instanceof Boolean )
         {
@@ -109,6 +126,10 @@ public class ScriptValueTranslator
         {
             parent.addLocalTime( name, (LocalTime) value );
         }
+        else if ( value instanceof Date )
+        {
+            parent.addInstant( name, ( (Date) value ).toInstant() );
+        }
         else if ( value instanceof Reference )
         {
             parent.addReference( name, (Reference) value );
@@ -120,13 +141,11 @@ public class ScriptValueTranslator
 
             if ( includeBinaryAttachments )
             {
-                this.binaryAttachmentsBuilder.add(
-                    new BinaryAttachment( binaryAttachment.getReference(), binaryAttachment.getByteSource() ) );
+                this.binaryAttachmentsBuilder.add( new BinaryAttachment( binaryAttachment.getReference(), binaryAttachment.getByteSource() ) );
             }
         }
 
         else
-
         {
             parent.addString( name, value.toString() );
         }
