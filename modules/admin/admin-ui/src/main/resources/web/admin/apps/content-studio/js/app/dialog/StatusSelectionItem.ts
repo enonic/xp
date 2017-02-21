@@ -32,7 +32,7 @@ export class StatusSelectionItem extends api.app.browse.SelectionItem<ContentSum
         if (!this.isRemovableFn || !this.removeHandlerFn) {
             return true;
         }
-        
+
         return this.isRemovableFn();
     }
 
@@ -43,7 +43,7 @@ export class StatusSelectionItem extends api.app.browse.SelectionItem<ContentSum
     setRemoveHandlerFn(fn: () => void) {
         this.removeHandlerFn = fn;
     }
-    
+
     doRender(): wemQ.Promise<boolean> {
         return super.doRender().then((rendered) => {
 
