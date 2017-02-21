@@ -3,6 +3,7 @@ package com.enonic.xp.web.impl.context;
 import java.util.Enumeration;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.google.common.collect.ImmutableMap;
@@ -13,25 +14,44 @@ import com.enonic.xp.session.SessionKey;
 final class SessionWrapper
     implements Session
 {
-    private final HttpSession httpSession;
+    private final HttpServletRequest request;
 
-    public SessionWrapper( final HttpSession httpSession )
+    private HttpSession session;
+
+    SessionWrapper( final HttpServletRequest request )
     {
-        this.httpSession = httpSession;
+        this.request = request;
+        this.session = this.request.getSession( false );
+    }
+
+    private void createSessionIfNeeded()
+    {
+        if ( this.session != null )
+        {
+            return;
+        }
+
+        this.session = this.request.getSession( true );
     }
 
     @Override
     public SessionKey getKey()
     {
-        return SessionKey.from( this.httpSession.getId() );
+        createSessionIfNeeded();
+        return SessionKey.from( this.session.getId() );
     }
 
     @Override
     public Object getAttribute( final String key )
     {
+        if ( this.session == null )
+        {
+            return null;
+        }
+
         try
         {
-            return this.httpSession.getAttribute( key );
+            return this.session.getAttribute( key );
         }
         catch ( IllegalStateException e )
         {
@@ -49,7 +69,8 @@ final class SessionWrapper
     @Override
     public void setAttribute( final String key, final Object value )
     {
-        this.httpSession.setAttribute( key, value );
+        createSessionIfNeeded();
+        this.session.setAttribute( key, value );
     }
 
     @Override
@@ -61,7 +82,12 @@ final class SessionWrapper
     @Override
     public void removeAttribute( final String key )
     {
-        this.httpSession.removeAttribute( key );
+        if ( this.session == null )
+        {
+            return;
+        }
+
+        this.session.removeAttribute( key );
     }
 
     @Override
@@ -74,12 +100,17 @@ final class SessionWrapper
     public Map<String, Object> getAttributes()
     {
         final ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
-        final Enumeration<String> names = this.httpSession.getAttributeNames();
+        if ( this.session == null )
+        {
+            return builder.build();
+        }
+
+        final Enumeration<String> names = this.session.getAttributeNames();
 
         while ( names.hasMoreElements() )
         {
             final String key = names.nextElement();
-            builder.put( key, this.httpSession.getAttribute( key ) );
+            builder.put( key, this.session.getAttribute( key ) );
         }
 
         return builder.build();
@@ -88,6 +119,11 @@ final class SessionWrapper
     @Override
     public void invalidate()
     {
-        this.httpSession.invalidate();
+        if ( this.session == null )
+        {
+            return;
+        }
+
+        this.session.invalidate();
     }
 }
