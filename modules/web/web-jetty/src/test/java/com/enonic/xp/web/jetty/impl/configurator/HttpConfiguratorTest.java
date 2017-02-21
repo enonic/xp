@@ -39,6 +39,8 @@ public class HttpConfiguratorTest
         assertEquals( false, configuration.getSendXPoweredBy() );
         assertEquals( false, configuration.getSendServerVersion() );
         assertNotNull( configuration.getCustomizer( ForwardedRequestCustomizer.class ) );
+        assertEquals( 32 * 1024, configuration.getRequestHeaderSize() );
+        assertEquals( 32 * 1024, configuration.getResponseHeaderSize() );
     }
 
     @Test
@@ -59,6 +61,8 @@ public class HttpConfiguratorTest
         Mockito.when( this.config.timeout() ).thenReturn( 10 );
         Mockito.when( this.config.http_port() ).thenReturn( 9999 );
         Mockito.when( this.config.sendServerHeader() ).thenReturn( true );
+        Mockito.when( this.config.http_requestHeaderSize() ).thenReturn( 8000 );
+        Mockito.when( this.config.http_responseHeaderSize() ).thenReturn( 9000 );
 
         configure();
 
@@ -77,5 +81,7 @@ public class HttpConfiguratorTest
         assertEquals( true, configuration.getSendXPoweredBy() );
         assertEquals( true, configuration.getSendServerVersion() );
         assertNotNull( configuration.getCustomizer( ForwardedRequestCustomizer.class ) );
+        assertEquals( 8000, configuration.getRequestHeaderSize() );
+        assertEquals( 9000, configuration.getResponseHeaderSize() );
     }
 }

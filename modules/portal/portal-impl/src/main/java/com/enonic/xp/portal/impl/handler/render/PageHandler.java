@@ -11,6 +11,8 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.impl.rendering.RendererFactory;
 import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.BaseWebHandler;
@@ -47,14 +49,15 @@ public final class PageHandler
         throws Exception
     {
         WebHandlerHelper.checkAdminAccess( webRequest );
-        
+
         final PageHandlerWorker worker = new PageHandlerWorker( (PortalRequest) webRequest );
         worker.setContentService( this.contentService );
         worker.rendererFactory = rendererFactory;
         worker.pageDescriptorService = pageDescriptorService;
         worker.pageTemplateService = pageTemplateService;
         worker.portalUrlService = portalUrlService;
-        return worker.execute();
+        final Trace trace = Tracer.newTrace( "renderComponent" );
+        return Tracer.traceEx( trace, worker::execute );
     }
 
     @Reference

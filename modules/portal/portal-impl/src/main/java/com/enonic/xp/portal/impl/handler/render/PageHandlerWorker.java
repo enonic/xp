@@ -16,6 +16,8 @@ import com.enonic.xp.portal.impl.rendering.RendererFactory;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.Reference;
 import com.enonic.xp.web.HttpStatus;
 
@@ -103,6 +105,12 @@ final class PageHandlerWorker
         this.request.setPageDescriptor( pageDescriptor );
 
         final Renderer<Content> renderer = this.rendererFactory.getRenderer( effectiveContent );
+        final Trace trace = Tracer.current();
+        if ( trace != null )
+        {
+            trace.put( "path", effectiveContent.getPath().toString() );
+            trace.put( "type", "page" );
+        }
         return renderer.render( effectiveContent, this.request );
     }
 

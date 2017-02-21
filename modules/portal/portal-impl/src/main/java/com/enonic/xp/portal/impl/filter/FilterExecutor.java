@@ -19,6 +19,8 @@ import com.enonic.xp.resource.ResourceNotFoundException;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.site.filter.FilterDescriptor;
+import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Tracer;
 
 public final class FilterExecutor
 {
@@ -62,22 +64,39 @@ public final class FilterExecutor
         PortalRequestAccessor.set( request );
         try
         {
-            final PortalRequestMapper requestMapper = new PortalRequestMapper( request );
-            final PortalResponseMapper responseMapper = new PortalResponseMapper( response );
-
-            final ScriptValue result = filterExports.executeMethod( RESPONSE_FILTER_METHOD, requestMapper, responseMapper );
-            final PortalResponseSerializer portalResponseSerializer = new PortalResponseSerializer( result );
-
-            if ( unmodifiedByteSourceBody( response, result ) )
-            {
-                portalResponseSerializer.body( response.getBody() );
-            }
-            return portalResponseSerializer.serialize();
+            return Tracer.trace( "controllerScript", () -> executeFilter( filterExports, request, response ) );
         }
         finally
         {
             PortalRequestAccessor.remove();
             request.setApplicationKey( previousApp );
+        }
+    }
+
+    private PortalResponse executeFilter( final ScriptExports filterExports, final PortalRequest request, final PortalResponse response )
+    {
+
+        final PortalRequestMapper requestMapper = new PortalRequestMapper( request );
+        final PortalResponseMapper responseMapper = new PortalResponseMapper( response );
+
+        final ScriptValue result = filterExports.executeMethod( RESPONSE_FILTER_METHOD, requestMapper, responseMapper );
+        final PortalResponseSerializer portalResponseSerializer = new PortalResponseSerializer( result );
+
+        if ( unmodifiedByteSourceBody( response, result ) )
+        {
+            portalResponseSerializer.body( response.getBody() );
+        }
+
+        addTraceInfo( Tracer.current(), filterExports );
+
+        return portalResponseSerializer.serialize();
+    }
+
+    private void addTraceInfo( final Trace trace, final ScriptExports scriptExports )
+    {
+        if ( trace != null )
+        {
+            trace.put( "script", scriptExports.getScript().toString() );
         }
     }
 

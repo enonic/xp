@@ -8,8 +8,6 @@ import com.enonic.xp.session.Session;
 public interface LocalScope
     extends MutableAttributes
 {
-    String id();
-
     Session getSession();
 
     void setSession( Session session );

@@ -28,6 +28,8 @@ public abstract class ConnectorConfigurator
         config.setSendDateHeader( true );
         config.setSendServerVersion( this.config.sendServerHeader() );
         config.setSendXPoweredBy( this.config.sendServerHeader() );
+        config.setRequestHeaderSize( this.config.http_requestHeaderSize() );
+        config.setResponseHeaderSize( this.config.http_responseHeaderSize() );
     }
 
     private String getHost()

@@ -21,6 +21,7 @@ import PrincipalKey = api.security.PrincipalKey;
 import UserStore = api.security.UserStore;
 import GetUserStoreByKeyRequest = api.security.GetUserStoreByKeyRequest;
 import UserStoreKey = api.security.UserStoreKey;
+import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
 
 interface PrincipalData {
 
@@ -130,6 +131,11 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
         EditPrincipalEvent.on((event) => {
             this.handleEdit(event);
         });
+    }
+
+    protected handleBrowse(event: ShowBrowsePanelEvent) {
+        super.handleBrowse(event);
+        this.getAppBarTabMenu().deselectNavigationItem();
     }
 
     protected createBrowsePanel() {
