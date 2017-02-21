@@ -4,6 +4,7 @@ import {DialogDependantList} from '../dialog/DependantItemsDialog';
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
 import ContentIds = api.content.ContentIds;
+import Tooltip = api.ui.Tooltip;
 
 export class PublishDialogDependantList extends DialogDependantList {
 
@@ -27,18 +28,22 @@ export class PublishDialogDependantList extends DialogDependantList {
             view.addClass('removable');
         }
 
-        view.onClicked((event) => {
+        let onViewClicked = api.util.AppHelper.debounce((event) => {
             if (new api.dom.ElementHelper(<HTMLElement>event.target).hasClass('remove')) {
                 if (isRemovable) {
                     this.notifyItemRemoveClicked(item);
-                }
-                else {
-                    console.log("This item cannot be deleted");
+                } else {
+                    let tooltip = new Tooltip(api.dom.Element.fromHtmlElement(<HTMLElement>event.target), 'This item is required for publishing');
+                    tooltip.setTrigger(Tooltip.TRIGGER_NONE);
+                    tooltip.showFor(1500);
                 }
             } else {
                 this.notifyItemClicked(item);
             }
-        });
+        }, 1000, true);
+
+
+        view.onClicked(onViewClicked);
 
         if (!isContentSummaryValid(item)) {
             view.addClass('invalid');

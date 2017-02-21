@@ -67,6 +67,10 @@ module api.app.browse {
                 });
             }
         }
+        
+        getRemoveButton(): api.dom.Element {
+            return this.removeEl;
+        }
     }
 
 }

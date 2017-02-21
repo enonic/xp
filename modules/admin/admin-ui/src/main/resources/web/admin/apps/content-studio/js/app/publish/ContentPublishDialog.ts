@@ -14,7 +14,6 @@ import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
 import BrowseItem = api.app.browse.BrowseItem;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
-import Tooltip = api.ui.Tooltip;
 
 /**
  * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.

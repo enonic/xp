@@ -55,8 +55,12 @@
     .content-status-mixin();
 
     &:only-child .remove {
-      opacity: 0.3;
+      color: lightgray;
       cursor: default;
+
+      .@{_COMMON_PREFIX}tooltip {
+        white-space: nowrap;
+      }
     }
   }
 
@@ -107,13 +111,13 @@
           .browse-selection-item {
             .remove {
               display: block;
-              opacity: 0.3;
+              color: lightgray;
               cursor: default;
             }
           }
           .removable {
             .remove {
-              opacity: 1;
+              color: @admin-dark-gray;
               cursor: pointer;
             }
           }
