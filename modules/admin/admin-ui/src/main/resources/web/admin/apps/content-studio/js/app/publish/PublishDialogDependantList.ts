@@ -5,7 +5,6 @@ import {StatusSelectionItem} from '../dialog/StatusSelectionItem';
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
 import ContentIds = api.content.ContentIds;
-import Tooltip = api.ui.Tooltip;
 
 export class PublishDialogDependantList extends DialogDependantList {
 
