@@ -97,6 +97,15 @@ public class ScriptValueTranslatorTest
     }
 
     @Test
+    public void date()
+        throws Exception
+    {
+        final PropertyTree properties = getPropertyTree( "date" );
+        assertNotNull( properties.getInstant( "myDate" ) );
+        validateType( properties, "myDate", ValueTypes.DATE_TIME );
+    }
+
+    @Test
     public void binary()
         throws Exception
     {
@@ -108,6 +117,94 @@ public class ScriptValueTranslatorTest
 
         final BinaryAttachments binaryAttachments = params.getBinaryAttachments();
         assertEquals( 1, binaryAttachments.getSize() );
+    }
+
+    @Test
+    public void integer()
+        throws Exception
+    {
+        final PropertyTree properties = getPropertyTree( "integer" );
+        assertNotNull( properties.getLong( "myInteger" ) );
+        validateType( properties, "myInteger", ValueTypes.LONG );
+    }
+
+    @Test
+    public void byteTest()
+        throws Exception
+    {
+        final PropertyTree properties = getPropertyTree( "byte" );
+        assertNotNull( properties.getLong( "myByte" ) );
+        validateType( properties, "myByte", ValueTypes.LONG );
+    }
+
+    @Test
+    public void longTest()
+        throws Exception
+    {
+        final PropertyTree properties = getPropertyTree( "long" );
+        assertNotNull( properties.getLong( "myLong" ) );
+        validateType( properties, "myLong", ValueTypes.LONG );
+    }
+
+    @Test
+    public void doubleTest()
+        throws Exception
+    {
+        final PropertyTree properties = getPropertyTree( "double" );
+        assertNotNull( properties.getDouble( "myDouble" ) );
+        validateType( properties, "myDouble", ValueTypes.DOUBLE );
+    }
+
+    @Test
+    public void floatTest()
+        throws Exception
+    {
+        final PropertyTree properties = getPropertyTree( "float" );
+        assertNotNull( properties.getDouble( "myFloat" ) );
+        validateType( properties, "myFloat", ValueTypes.DOUBLE );
+    }
+
+    @Test
+    public void numberTest()
+        throws Exception
+    {
+        final PropertyTree properties = getPropertyTree( "number" );
+        assertNotNull( properties.getDouble( "myNumber" ) );
+        validateType( properties, "myNumber", ValueTypes.DOUBLE );
+    }
+
+    @Test
+    public void defaultValue()
+        throws Exception
+    {
+        final PropertyTree properties = getPropertyTree( "defaultValue" );
+        assertNotNull( properties.getString( "myDefaultType" ) );
+        assertEquals( "SUNDAY", properties.getString( "myDefaultType" ) );
+        validateType( properties, "myDefaultType", ValueTypes.STRING );
+    }
+
+    @Test
+    public void arrayTest()
+        throws Exception
+    {
+        final PropertyTree properties = getPropertyTree( "array" );
+        assertNotNull( properties.getLong( "myArray" ) );
+        assertNotNull( properties.getLong( "myArray", 1 ) );
+        assertNotNull( properties.getLong( "myArray", 2 ) );
+        validateType( properties, "myArray", ValueTypes.LONG );
+    }
+
+    @Test
+    public void mapTest()
+        throws Exception
+    {
+        final PropertyTree properties = getPropertyTree( "map" );
+        assertNotNull( properties.getSet( "myMap" ) );
+        assertNotNull( properties.getSet( "myMap.a" ) );
+        assertNotNull( properties.getLong( "myMap.a.b" ) );
+        validateType( properties, "myMap", ValueTypes.PROPERTY_SET );
+        validateType( properties, "myMap.a", ValueTypes.PROPERTY_SET );
+        validateType( properties, "myMap.a.b", ValueTypes.LONG );
     }
 
     private void validateType( final PropertyTree properties, final String propertyName, final ValueType valueType )
