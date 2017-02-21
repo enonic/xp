@@ -14,8 +14,6 @@ public class ResolvePublishContentResultJson
 
     private final List<ContentIdJson> requiredContents;
 
-    private final Boolean containsRemovable;
-
     private final Boolean containsInvalid;
 
     private ResolvePublishContentResultJson( Builder builder )
@@ -23,7 +21,6 @@ public class ResolvePublishContentResultJson
         requestedContents = builder.requestedContents.stream().map( item -> new ContentIdJson( item ) ).collect( Collectors.toList() );
         dependentContents = builder.dependentContents.stream().map( item -> new ContentIdJson( item ) ).collect( Collectors.toList() );
         requiredContents = builder.requiredContents.stream().map( item -> new ContentIdJson( item ) ).collect( Collectors.toList() );
-        containsRemovable = builder.containsRemovable;
         containsInvalid = builder.containsInvalid;
     }
 
@@ -50,12 +47,6 @@ public class ResolvePublishContentResultJson
     }
 
     @SuppressWarnings("unused")
-    public Boolean getContainsRemovable()
-    {
-        return containsRemovable;
-    }
-
-    @SuppressWarnings("unused")
     public Boolean getContainsInvalid()
     {
         return containsInvalid;
@@ -69,8 +60,6 @@ public class ResolvePublishContentResultJson
         private ContentIds dependentContents;
 
         private ContentIds requiredContents;
-
-        private Boolean containsRemovable;
 
         private Boolean containsInvalid;
 
@@ -93,12 +82,6 @@ public class ResolvePublishContentResultJson
         public Builder setRequiredContents( final ContentIds requiredContents )
         {
             this.requiredContents = requiredContents;
-            return this;
-        }
-
-        public Builder setContainsRemovable( final Boolean containsRemovable )
-        {
-            this.containsRemovable = containsRemovable;
             return this;
         }
 

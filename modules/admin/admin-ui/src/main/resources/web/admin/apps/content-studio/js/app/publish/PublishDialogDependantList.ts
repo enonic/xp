@@ -1,5 +1,6 @@
 import '../../api.ts';
 import {DialogDependantList} from '../dialog/DependantItemsDialog';
+import {StatusSelectionItem} from '../dialog/StatusSelectionItem';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
@@ -26,10 +27,11 @@ export class PublishDialogDependantList extends DialogDependantList {
             view.addClass('removable');
         }
 
+        (<StatusSelectionItem>view).setIsRemovableFn(() => !this.requiredIds.contains(item.getContentId()));
+        (<StatusSelectionItem>view).setRemoveHandlerFn(() => this.notifyItemRemoveClicked(item));
+
         view.onClicked((event) => {
-            if (new api.dom.ElementHelper(<HTMLElement>event.target).hasClass('remove')) {
-                this.notifyItemRemoveClicked(item);
-            } else {
+            if (!new api.dom.ElementHelper(<HTMLElement>event.target).hasClass('remove')) {
                 this.notifyItemClicked(item);
             }
         });
