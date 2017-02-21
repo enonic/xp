@@ -55,6 +55,17 @@ export class PreviewContentHandler {
             }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
     }
 
+    public checkIfItemIsRenderable(contentBrowseItem: ContentBrowseItem): wemQ.Promise<any> {
+        let contentSummary = contentBrowseItem.getModel().getContentSummary();
+
+        return new api.content.page.IsRenderableRequest(contentSummary.getContentId()).sendAndParse()
+            .then((value: boolean) => {
+                contentBrowseItem.setRenderable(value);
+
+                return value;
+            }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
+    }
+
     private makeRenderableRequests(contentBrowseItems: ContentBrowseItem[],
                                    changes?: BrowseItemsChanges<ContentSummaryAndCompareStatus>): wemQ.Promise<any>[] {
 

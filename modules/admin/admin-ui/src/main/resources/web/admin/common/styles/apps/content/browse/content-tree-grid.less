@@ -18,6 +18,12 @@
       width: 45px;
       margin-right: 0;
     }
+
+    &:not(.selected) {
+      .slick-cell:not(.selected).status {
+        .content-status-mixin();
+      }
+    }
   }
 
   .@{_COMMON_PREFIX}icon-menu, .icon-arrow-down4, .icon-arrow-up2 {
@@ -26,10 +32,6 @@
 
   .grid .slick-row {
     .slick-cell {
-      &:not(.selected).status {
-          .content-status-mixin();
-      }
-
       &.status {
         text-align: center;
         div:not(.online) {
@@ -46,4 +48,5 @@
       }
     }
   }
+
 }
