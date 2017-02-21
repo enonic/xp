@@ -133,8 +133,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
         return resolveDependenciesRequest.sendAndParse().then((result: ResolvePublishDependenciesResult) => {
 
-            this.getDependantList().toggleClass('contains-removable', result.isContainsRemovable());
-
             this.dependantIds = result.getDependants().slice();
 
             this.getDependantList().setRequiredIds(result.getRequired());

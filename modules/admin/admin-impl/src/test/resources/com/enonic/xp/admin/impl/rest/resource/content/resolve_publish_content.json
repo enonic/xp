@@ -1,6 +1,5 @@
 {
   "containsInvalid": true,
-  "containsRemovable": false,
   "dependentContents": [
     {
       "id": "dependant-contentId"

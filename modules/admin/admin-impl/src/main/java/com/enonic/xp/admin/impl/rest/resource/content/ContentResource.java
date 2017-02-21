@@ -726,8 +726,6 @@ public final class ContentResource
             target( ContentConstants.BRANCH_MASTER ).
             build() );
 
-        final Boolean anyRemovable = requiredIds.getSize() < dependentContentIds.getSize();
-
         final ContentIds invalidContentIds = getInvalidContent( compareResults );
 
         //sort all dependant content ids
@@ -742,7 +740,6 @@ public final class ContentResource
             setRequestedContents( requestedContentIds ).
             setDependentContents( this.invalidDependantsOnTop( sortedDependentContentIds, requestedContentIds, sortedInvalidContentIds ) ).
             setRequiredContents( requiredIds ).
-            setContainsRemovable( anyRemovable ).
             setContainsInvalid( !invalidContentIds.isEmpty() ).
             build();
     }

@@ -103,21 +103,6 @@
       .dependant-list {
         margin-top: 10px;
 
-        &.contains-removable {
-          .browse-selection-item {
-            .remove {
-              display: block;
-              color: lightgray;
-              cursor: default;
-            }
-          }
-          .removable {
-            .remove {
-              color: @admin-dark-gray;
-              cursor: pointer;
-            }
-          }
-        }
         h6 {
           margin-bottom: 5px;
         }
@@ -126,13 +111,23 @@
           padding-left: 2px;
 
           .remove {
-            display: none;
+            display: block;
+            color: lightgray;
+            cursor: default;
+
             height: 20px;
             order: 1;
             float: none;
             margin: 0 5px 0 12px;
             &:before {
               font-size: 18px;
+            }
+          }
+
+          &.removable {
+            .remove {
+              color: @admin-dark-gray;
+              cursor: pointer;
             }
           }
 
