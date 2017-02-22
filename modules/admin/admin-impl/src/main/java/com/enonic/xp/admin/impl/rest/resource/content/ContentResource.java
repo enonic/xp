@@ -731,8 +731,6 @@ public final class ContentResource
             filter( contentId -> !requestedContentIds.contains( contentId ) ).
             collect( Collectors.toList() ) );
 
-        final Boolean anyRemovable = requiredDependantIds.getSize() < dependentContentIds.getSize();
-
         final ContentIds invalidContentIds = getInvalidContent( compareResults );
 
         //sort all dependant content ids
@@ -747,7 +745,6 @@ public final class ContentResource
             setRequestedContents( requestedContentIds ).
             setDependentContents( this.invalidDependantsOnTop( sortedDependentContentIds, requestedContentIds, sortedInvalidContentIds ) ).
             setRequiredContents( requiredDependantIds ).
-            setContainsRemovable( anyRemovable ).
             setContainsInvalid( !invalidContentIds.isEmpty() ).
             build();
     }
