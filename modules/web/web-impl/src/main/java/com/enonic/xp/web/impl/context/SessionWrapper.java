@@ -29,7 +29,8 @@ final class SessionWrapper
     {
         if ( request instanceof HttpServletRequestWrapper )
         {
-            return (HttpServletRequest) ( (HttpServletRequestWrapper) request ).getRequest();
+            final HttpServletRequest unwrapped = (HttpServletRequest) ( (HttpServletRequestWrapper) request ).getRequest();
+            return getUnwrappedRequest( unwrapped );
         }
 
         return request;
