@@ -3,7 +3,9 @@ apply plugin: 'maven'
 uploadArchives {
     repositories {
         mavenDeployer {
-            repository( url: 'http://repo.enonic.net/artifactory/public' )
+            repository( url: 'http://repo.enonic.com/public' ) {
+                authentication( userName: findProperty( 'repoUser' ), password: findProperty( 'repoPassword' ) )
+            }
         }
     }
 }
