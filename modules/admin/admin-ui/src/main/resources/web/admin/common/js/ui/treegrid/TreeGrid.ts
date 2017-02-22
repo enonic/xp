@@ -271,10 +271,8 @@ module api.ui.treegrid {
                 this.setActive(true);
 
                 // Checkbox is clicked
-                if (elem.hasAnyParentClass('slick-cell-checkboxsel')) {
-                    if (elem.getAttribute('type') === 'checkbox' || elem.getTagName().toLowerCase() === 'label') {
-                        this.onCheckboxClicked(data);
-                    }
+                if (elem.hasClass('slick-cell-checkboxsel') || elem.hasAnyParentClass('slick-cell-checkboxsel')) {
+                    this.onCheckboxClicked(data);
                     return;
                 }
 
