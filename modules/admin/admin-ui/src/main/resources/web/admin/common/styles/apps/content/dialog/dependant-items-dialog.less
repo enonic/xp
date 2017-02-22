@@ -53,6 +53,11 @@
     }
 
     .content-status-mixin();
+
+    &:only-child .remove {
+      color: lightgray;
+      cursor: default;
+    }
   }
 
   .dialog-content {
@@ -98,21 +103,6 @@
       .dependant-list {
         margin-top: 10px;
 
-        &.contains-removable {
-          .browse-selection-item {
-            .remove {
-              display: block;
-              order: 1;
-              float: none;
-              margin: 0 5px 0 12px;
-            }
-          }
-          .removable {
-            .remove {
-              visibility: visible;
-            }
-          }
-        }
         h6 {
           margin-bottom: 5px;
         }
@@ -121,9 +111,24 @@
           padding-left: 2px;
 
           .remove {
-            display: none;
-            visibility: hidden;
-            height: 16px;
+            display: block;
+            color: lightgray;
+            cursor: default;
+
+            height: 20px;
+            order: 1;
+            float: none;
+            margin: 0 5px 0 12px;
+            &:before {
+              font-size: 18px;
+            }
+          }
+
+          &.removable {
+            .remove {
+              color: @admin-dark-gray;
+              cursor: pointer;
+            }
           }
 
           &.invalid {

@@ -37,6 +37,11 @@ public final class TraceWebFilter
             trace.put( "host", req.getHost() );
         }
 
-        return Tracer.traceEx( trace, () -> chain.handle( req, res ) );
+        return Tracer.traceEx( trace, () ->
+        {
+            final WebResponse webResponse = chain.handle( req, res );
+            addTraceInfo( trace, webResponse );
+            return webResponse;
+        } );
     }
 }

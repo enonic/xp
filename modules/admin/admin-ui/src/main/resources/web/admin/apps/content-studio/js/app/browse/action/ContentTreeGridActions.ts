@@ -12,6 +12,7 @@ import {PublishContentAction} from './PublishContentAction';
 import {PublishTreeContentAction} from './PublishTreeContentAction';
 import {UnpublishContentAction} from './UnpublishContentAction';
 import {ContentBrowseItem} from '../ContentBrowseItem';
+import {PreviewContentHandler} from './handler/PreviewContentHandler';
 
 import Action = api.ui.Action;
 import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
@@ -65,12 +66,14 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             this.SORT_CONTENT, this.PREVIEW_CONTENT
         );
 
-        let previewHandler = (<PreviewContentAction>this.PREVIEW_CONTENT).getPreviewHandler();
-
-        previewHandler.onPreviewStateChanged((value) => {
+        this.getPreviewHandler().onPreviewStateChanged((value) => {
             this.PREVIEW_CONTENT.setEnabled(value);
         });
 
+    }
+
+    getPreviewHandler(): PreviewContentHandler {
+        return (<PreviewContentAction>this.PREVIEW_CONTENT).getPreviewHandler();
     }
 
     getAllActions(): api.ui.Action[] {
@@ -88,10 +91,8 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
         let deferred = wemQ.defer<ContentBrowseItem[]>();
 
-        let previewHandler = (<PreviewContentAction>this.PREVIEW_CONTENT).getPreviewHandler();
-
         let parallelPromises: wemQ.Promise<any>[] = [
-            previewHandler.updateState(contentBrowseItems, changes),
+            this.getPreviewHandler().updateState(contentBrowseItems, changes),
             this.doUpdateActionsEnabledState(contentBrowseItems)
         ];
 
@@ -147,7 +148,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(contentSummaries.length < 2);
         this.EDIT_CONTENT.setEnabled(this.anyEditable(contentSummaries));
         this.DELETE_CONTENT.setEnabled(this.anyDeletable(contentSummaries));
-        this.DUPLICATE_CONTENT.setEnabled(false);
+        this.DUPLICATE_CONTENT.setEnabled(contentSummaries.length === 1);
         this.MOVE_CONTENT.setEnabled(true);
         this.SORT_CONTENT.setEnabled(contentSummaries.length === 1 && contentSummaries[0].hasChildren());
 

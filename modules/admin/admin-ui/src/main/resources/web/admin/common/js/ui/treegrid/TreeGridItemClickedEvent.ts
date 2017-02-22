@@ -2,15 +2,15 @@ module api.ui.treegrid {
 
     export class TreeGridItemClickedEvent extends api.event.Event {
 
-        private repeatedSelection: boolean;
+        private selection: boolean;
 
-        constructor(repeatedSelection?: boolean) {
+        constructor(selection: boolean = false) {
             super();
-            this.repeatedSelection = repeatedSelection;
+            this.selection = selection;
         }
 
-        isRepeatedSelection(): boolean {
-            return this.repeatedSelection;
+        public hasSelection() {
+            return this.selection;
         }
 
         static on(handler: (event: TreeGridItemClickedEvent) => void) {

@@ -3,7 +3,7 @@
   margin-bottom: 42px;
   overflow: visible !important;
 
-  &.no-selection, &.no-toolbar {
+  &.no-selection {
     margin-bottom: 0px;
 
     .toolbar {
@@ -11,30 +11,9 @@
     }
   }
 
-  &:not(.no-selection) {
-    .items-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-start;
-    }
-  }
-
-  .items-container {
-    position: static;
-    box-sizing: border-box;
-    max-height: 100%;
-    padding-bottom: 15px;
-    overflow-y: auto;
-  }
-
-  .browse-selection-item {
-    display: block;
-    flex: 1 1 auto;
-    min-width: 100px;
-    max-width: 200px;
-
-    .viewer {
-      float: none;
+  &.no-toolbar {
+    .show-all, .fold-button {
+      display: none !important;
     }
   }
 

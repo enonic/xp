@@ -19,7 +19,14 @@
     }
   }
 
-  &.active:not(:disabled) {
+  &.active {
+
+    &:hover:not(:disabled) {
+
+      &:before, span {
+        color: darken(@activeColor, 10%);
+      }
+    }
 
     &:before, span {
       color: @activeColor;

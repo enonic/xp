@@ -1,8 +1,13 @@
 .browse-selection-item {
-  display: inline-block;
+  display: block;
+  flex: 1 1 auto;
   padding: 10px 10px 10px 5px;
   margin: 10px 10px 0 10px;
   overflow: hidden;
+
+  .viewer {
+    float: none;
+  }
 
   .remove {
     height: 32px;
@@ -11,7 +16,6 @@
     font-size: 20px;
     cursor: pointer;
     clear: right;
-    font-weight: bold;
     .icon-close2();
 
     &:before {
@@ -21,5 +25,9 @@
       margin: -10px 0 0;
       font-size: 20px;
     }
+  }
+
+  .@{_COMMON_PREFIX}tooltip {
+    white-space: nowrap;
   }
 }

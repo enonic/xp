@@ -3,27 +3,16 @@ module api.ui.treegrid.actions {
     import Action = api.ui.Action;
     import TreeGrid = api.ui.treegrid.TreeGrid;
 
-    export class TreeGridToolbarActions<M extends api.Equitable> implements TreeGridActions<M> {
+    export class TreeGridToolbarActions<M extends api.Equitable> {
 
-        public SELECT_ALL: api.ui.Action;
-        public CLEAR_SELECTION: ClearSelectionAction<M>;
-
-        private actions: api.ui.Action[] = [];
+        public selectionController: SelectionController<M>;
 
         constructor(grid: TreeGrid<any>) {
-            this.SELECT_ALL = new SelectAllAction(grid);
-            this.CLEAR_SELECTION = new ClearSelectionAction(grid);
-            this.actions.push(this.SELECT_ALL, this.CLEAR_SELECTION);
+            this.selectionController = SelectionController.create().setTreeGrid(grid).build();
         }
 
-        getAllActions(): api.ui.Action[] {
-            return this.actions;
-        }
-
-        updateActionsEnabledState(browseItems: api.app.browse.BrowseItem<M>[]): wemQ.Promise<api.app.browse.BrowseItem<M>[]> {
-            let deferred = wemQ.defer<api.app.browse.BrowseItem<M>[]>();
-            deferred.resolve(browseItems);
-            return deferred.promise;
+        getSelectionController(): SelectionController<M> {
+            return this.selectionController;
         }
     }
 }

@@ -28,7 +28,7 @@ public class SessionConfiguratorTest
     {
         configure();
 
-        assertEquals( 3600000, this.object.getMaxInactiveInterval() );
+        assertEquals( 3600, this.object.getMaxInactiveInterval() );
         assertEquals( "JSESSIONID", this.object.getSessionCookieConfig().getName() );
     }
 
@@ -40,7 +40,7 @@ public class SessionConfiguratorTest
 
         configure();
 
-        assertEquals( 60000, this.object.getMaxInactiveInterval() );
+        assertEquals( 60, this.object.getMaxInactiveInterval() );
         assertEquals( "mycookie", this.object.getSessionCookieConfig().getName() );
     }
 }

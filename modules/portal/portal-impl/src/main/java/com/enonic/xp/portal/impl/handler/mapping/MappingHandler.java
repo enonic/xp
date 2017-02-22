@@ -12,6 +12,8 @@ import com.enonic.xp.portal.impl.rendering.RendererFactory;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
+import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.BaseWebHandler;
@@ -49,7 +51,7 @@ public final class MappingHandler
         throws Exception
     {
         WebHandlerHelper.checkAdminAccess( webRequest );
-        
+
         PortalRequest portalRequest = (PortalRequest) webRequest;
         final ControllerMappingDescriptor mapping = new ControllerMappingsResolver( siteService, contentService ).resolve( portalRequest );
 
@@ -58,7 +60,8 @@ public final class MappingHandler
         worker.resourceService = this.resourceService;
         worker.controllerScriptFactory = this.controllerScriptFactory;
         worker.rendererFactory = rendererFactory;
-        return worker.execute();
+        final Trace trace = Tracer.newTrace( "renderComponent" );
+        return Tracer.traceEx( trace, worker::execute );
     }
 
     @Reference

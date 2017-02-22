@@ -11,6 +11,8 @@ import com.enonic.xp.portal.impl.rendering.RendererFactory;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
+import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Tracer;
 
 final class MappingHandlerWorker
     extends PortalHandlerWorker<PortalRequest>
@@ -35,6 +37,13 @@ final class MappingHandlerWorker
         final ControllerScript controllerScript = getScript();
 
         this.request.setApplicationKey( mappingDescriptor.getApplication() );
+
+        final Trace trace = Tracer.current();
+        if ( trace != null )
+        {
+            trace.put( "path", this.request.getContent().getPath().toString() );
+            trace.put( "type", "mapping" );
+        }
 
         if ( this.request.getContent().hasPage() )
         {

@@ -50,3 +50,74 @@ exports.binary = function () {
         myBinary: valueLib.binary("myFile", stream1)
     }
 };
+
+exports.date = function () {
+    return {
+        myDate: new Date(1995, 11, 17, 3, 24, 0)
+    }
+};
+
+exports.integer = function () {
+    var Integer = Java.type('java.lang.Integer');
+    return {
+        myInteger: new Integer(42)
+    }
+};
+
+exports.byte = function () {
+    var Byte = Java.type('java.lang.Byte');
+    return {
+        myByte: new Byte(42)
+    }
+};
+
+exports.long = function () {
+    var Long = Java.type('java.lang.Long');
+    return {
+        myLong: new Long(42)
+    }
+};
+
+exports.double = function () {
+    var Double = Java.type('java.lang.Double');
+    return {
+        myDouble: new Double(42)
+    }
+};
+
+exports.float = function () {
+    var Float = Java.type('java.lang.Float');
+    return {
+        myFloat: new Float(42)
+    }
+};
+
+exports.number = function () {
+    var BigDecimal = Java.type('java.math.BigDecimal');
+    return {
+        myNumber: BigDecimal.TEN
+    }
+};
+
+exports.defaultValue = function () {
+    var DayOfWeek = Java.type('java.time.DayOfWeek');
+    return {
+        myDefaultType: DayOfWeek.SUNDAY
+    }
+};
+
+exports.array = function () {
+    return {
+        myArray: [1, 2, 3]
+    }
+};
+
+exports.map = function () {
+    return {
+        myMap: {
+            a: {
+                b: 42
+            }
+        }
+    }
+};
