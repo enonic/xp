@@ -54,9 +54,15 @@
 
     .content-status-mixin();
 
-    &:only-child .remove {
+    .remove {
+      display: none;
       color: lightgray;
       cursor: default;
+      order: 1;
+      margin: 0 5px 0 12px;
+      &:before {
+        font-size: 18px;
+      }
     }
   }
 
@@ -111,17 +117,7 @@
           padding-left: 2px;
 
           .remove {
-            display: block;
-            color: lightgray;
-            cursor: default;
-
             height: 20px;
-            order: 1;
-            float: none;
-            margin: 0 5px 0 12px;
-            &:before {
-              font-size: 18px;
-            }
           }
 
           &.removable {
