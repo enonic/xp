@@ -722,9 +722,14 @@ public final class ContentResource
 
         //Resolve required ids
         final ContentIds requiredIds = this.contentService.resolveRequiredDependencies( ResolveRequiredDependenciesParams.create().
-            contentIds( dependentContentIds ).
+            contentIds( ContentIds.create().addAll( dependentContentIds ).addAll( requestedContentIds ).build() ).
             target( ContentConstants.BRANCH_MASTER ).
             build() );
+
+        //filter required dependant ids
+        final ContentIds requiredDependantIds = ContentIds.from( requiredIds.stream().
+            filter( contentId -> !requestedContentIds.contains( contentId ) ).
+            collect( Collectors.toList() ) );
 
         final ContentIds invalidContentIds = getInvalidContent( compareResults );
 
@@ -739,7 +744,7 @@ public final class ContentResource
         return ResolvePublishContentResultJson.create().
             setRequestedContents( requestedContentIds ).
             setDependentContents( this.invalidDependantsOnTop( sortedDependentContentIds, requestedContentIds, sortedInvalidContentIds ) ).
-            setRequiredContents( requiredIds ).
+            setRequiredContents( requiredDependantIds ).
             setContainsInvalid( !invalidContentIds.isEmpty() ).
             build();
     }
