@@ -270,7 +270,8 @@ module api.ui.treegrid {
                 this.setActive(true);
 
                 // Checkbox is clicked
-                if (this.gridOptions.isMultipleSelectionDisabled() || elem.hasClass('slick-cell-checkboxsel') || elem.hasAnyParentClass('slick-cell-checkboxsel')) {
+                if (this.gridOptions.isMultipleSelectionDisabled() || elem.hasClass('slick-cell-checkboxsel') ||
+                    elem.hasAnyParentClass('slick-cell-checkboxsel')) {
                     this.onRowSelected(data);
                     return;
                 }
@@ -358,9 +359,9 @@ module api.ui.treegrid {
             elem.removeClass('collapse').addClass('expand');
             this.collapseNode(node);
             /*
-            if (!this.gridOptions.isMultipleSelectionDisabled()) {
-                this.highlightCurrentNode();
-            }*/
+             if (!this.gridOptions.isMultipleSelectionDisabled()) {
+             this.highlightCurrentNode();
+             }*/
         }
 
         private onRowSelected(data: Slick.OnClickEventData) {
@@ -938,11 +939,7 @@ module api.ui.treegrid {
         }
 
         dataToTreeNode(data: DATA, parent: TreeNode<DATA>): TreeNode<DATA> {
-            return new TreeNodeBuilder<DATA>().
-                setData(data, this.getDataId(data)).
-                setExpanded(this.expandAll).
-                setParent(parent).
-                build();
+            return new TreeNodeBuilder<DATA>().setData(data, this.getDataId(data)).setExpanded(this.expandAll).setParent(parent).build();
         }
 
         dataToTreeNodes(dataArray: DATA[], parent: TreeNode<DATA>): TreeNode<DATA>[] {
@@ -1322,8 +1319,8 @@ module api.ui.treegrid {
                         }
                         deferred.resolve(null);
                     }).catch((reason: any) => {
-                        this.handleError(reason);
-                        deferred.reject(reason);
+                    this.handleError(reason);
+                    deferred.reject(reason);
                 });
             } else {
                 this.doInsertNodeToParentWithChildren(parentNode, data, root, index, stashedParentNode, isRootParentNode);
@@ -1437,9 +1434,9 @@ module api.ui.treegrid {
                             }
                             deferred.resolve(true);
                         }).catch((reason: any) => {
-                            this.handleError(reason);
-                            deferred.resolve(false);
-                        }).done(() => this.notifyLoaded());
+                        this.handleError(reason);
+                        deferred.resolve(false);
+                    }).done(() => this.notifyLoaded());
                 }
             }
 
