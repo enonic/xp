@@ -240,7 +240,6 @@ module api.ui.treegrid {
                 }
 
                 const elem = new ElementHelper(event.target);
-                const isMultiSelect = !this.gridOptions.isMultipleSelectionDisabled();
 
                 if (this.contextMenu) {
                     this.contextMenu.hide();
@@ -271,17 +270,12 @@ module api.ui.treegrid {
                 this.setActive(true);
 
                 // Checkbox is clicked
-                if (elem.hasClass('slick-cell-checkboxsel') || elem.hasAnyParentClass('slick-cell-checkboxsel')) {
-                    this.onCheckboxClicked(data);
+                if (this.gridOptions.isMultipleSelectionDisabled() || elem.hasClass('slick-cell-checkboxsel') || elem.hasAnyParentClass('slick-cell-checkboxsel')) {
+                    this.onRowSelected(data);
                     return;
                 }
 
-                // A cell in the row is clicked
-                if (isMultiSelect) {
-                    this.onCellClicked(elem, data);
-                } else {
-                    this.root.clearStashedSelection();
-                }
+                this.onRowHighlighted(elem, data);
 
                 if (!elem.hasClass('sort-dialog-trigger')) {
                     new TreeGridItemClickedEvent(!!this.getFirstSelectedOrHighlightedNode()).fire();
@@ -369,10 +363,12 @@ module api.ui.treegrid {
             }*/
         }
 
-        private onCheckboxClicked(data: Slick.OnClickEventData) {
+        private onRowSelected(data: Slick.OnClickEventData) {
             const node = this.gridData.getItem(data.row);
+
             if (this.gridOptions.isMultipleSelectionDisabled()) {
-                this.grid.toggleRow(data.row);
+                this.root.clearStashedSelection();
+                this.grid.selectRow(data.row);
                 return;
             }
 
@@ -385,7 +381,7 @@ module api.ui.treegrid {
             this.grid.toggleRow(data.row);
         }
 
-        private onCellClicked(elem: ElementHelper, data: Slick.OnClickEventData) {
+        private onRowHighlighted(elem: ElementHelper, data: Slick.OnClickEventData) {
             const node = this.gridData.getItem(data.row);
             const clickedRow = wemjq(elem.getHTMLElement()).closest('.slick-row');
             const isRowSelected = this.grid.isRowSelected(data.row);

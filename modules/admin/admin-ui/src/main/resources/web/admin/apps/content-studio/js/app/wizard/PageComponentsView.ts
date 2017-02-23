@@ -138,7 +138,8 @@ export class PageComponentsView extends api.dom.DivEl {
     private initMask() {
         this.mask = new Mask(this.tree);
         this.appendChild(this.mask);
-
+        this.applyMaskToTree();
+        
         if (this.pageView.isLocked()) {
             this.mask.show();
         }
@@ -364,7 +365,15 @@ export class PageComponentsView extends api.dom.DivEl {
         this.tree.onLoaded(() => {
             this.bindTextComponentViewsUpdateOnTextModify();
             this.subscribeOnFragmentLoadError();
+            this.applyMaskToTree();
         });
+    }
+
+    private applyMaskToTree() {
+        if (!this.mask || !this.tree) {
+            return;
+        }
+        this.mask.getEl().setHeightPx(this.tree.getEl().getHeight());
     }
 
     private highlightInvalidItems() {
