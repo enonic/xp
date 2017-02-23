@@ -7,6 +7,7 @@ module api.ui.dialog {
         private questionEl: api.dom.DivEl;
         private yesCallback: () => void;
         private noCallback: () => void;
+        private closeCallback: () => void;
 
         private yesAction: api.ui.Action;
         private noAction: api.ui.Action;
@@ -61,6 +62,19 @@ module api.ui.dialog {
         setNoCallback(callback: () => void): ConfirmationDialog {
             this.noCallback = callback;
             return this;
+        }
+
+        setCloseCallback(callback: () => void): ConfirmationDialog {
+            this.closeCallback = callback;
+            return this;
+        }
+
+        close() {
+            super.close();
+
+            if (this.closeCallback()) {
+                this.closeCallback();
+            }
         }
     }
 

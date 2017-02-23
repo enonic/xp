@@ -1,6 +1,5 @@
 import '../../../../../../api.ts';
 import {PageTemplateOption} from './PageTemplateOption';
-import {PageTemplateOptions} from './PageTemplateOptions';
 import {PageTemplateOptionViewer} from './PageTemplateOptionViewer';
 
 import PropertyChangedEvent = api.PropertyChangedEvent;
@@ -15,16 +14,19 @@ import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
 import PageModel = api.content.page.PageModel;
 import LiveEditModel = api.liveedit.LiveEditModel;
 import PageMode = api.content.page.PageMode;
+import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
+import GetPageTemplatesByCanRenderRequest = api.content.page.GetPageTemplatesByCanRenderRequest;
+import PageTemplateLoader = api.content.page.PageTemplateLoader;
 
 export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
 
     private pageModel: PageModel;
 
-    private selectionListeners: {(template: PageTemplate):void}[] = [];
-
-    private customizedSelectedListeners: {():void}[] = [];
+    private selectionListeners: {(template: PageTemplate): void}[] = [];
 
     private customizedOption: Option<PageTemplateOption>;
+
+    private autoOption: Option<PageTemplateOption>;
 
     constructor() {
         super('pageTemplate', <DropdownConfig<PageTemplateOption>>{
@@ -36,55 +38,122 @@ export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
 
         this.pageModel = liveEditModel.getPageModel();
 
-        let pageTemplateOptions = new PageTemplateOptions(liveEditModel.getSiteModel().getSiteId(),
-            liveEditModel.getContent().getType(), this.pageModel);
+        this.loadPageTemplates(liveEditModel).then((options: Option<PageTemplateOption>[]) => {
 
-        pageTemplateOptions.getOptions().then((options: Option<PageTemplateOption>[]) => {
+            this.initOptionsList(options);
 
-            options.forEach((option: Option<PageTemplateOption>) => {
-                this.addOption(option);
-            });
+            this.selectInitialOption(options.length);
 
-            this.customizedOption = this.createCustomizedOption();
-            this.addOption(this.customizedOption);
+            this.onOptionSelected(this.handleOptionSelected.bind(this));
 
-            if (this.pageModel.isCustomized()) {
-                this.selectRow(options.length);
-            } else if (this.pageModel.hasTemplate()) {
-                this.selectTemplate(this.pageModel.getTemplateKey());
-            } else {
-                this.selectOption(pageTemplateOptions.getDefault(), true);
-            }
-
-            this.onOptionSelected((event: OptionSelectedEvent<PageTemplateOption>) => {
-                let selectedOption = event.getOption().displayValue;
-                if (selectedOption.getPageTemplate() && selectedOption.isCustom()) {
-                    this.notifyCustomizedSelected();
-                } else {
-                    this.notifySelection(selectedOption.getPageTemplate());
-                }
-            });
-
-            this.pageModel.onPropertyChanged((event: PropertyChangedEvent) => {
-                if (event.getPropertyName() === PageModel.PROPERTY_TEMPLATE && this !== event.getSource()) {
-                    let pageTemplateKey = <PageTemplateKey>event.getNewValue();
-                    if (pageTemplateKey) {
-                        this.selectTemplate(pageTemplateKey);
-                    } else {
-                        this.selectOption(pageTemplateOptions.getDefault(), true);
-                    }
-                } else if (event.getPropertyName() === PageModel.PROPERTY_CONTROLLER && event.getNewValue()) {
-                    this.selectCustomized();
-                }
-            });
-
-            this.pageModel.onReset(() => {
-                this.selectOption(pageTemplateOptions.getDefault(), true);
-            });
+            this.initPageModelListeners();
 
         }).catch((reason: any) => {
             api.DefaultErrorHandler.handle(reason);
         }).done();
+    }
+
+    private loadPageTemplates(liveEditModel: LiveEditModel): wemQ.Promise<Option<PageTemplateOption>[]> {
+
+        let deferred = wemQ.defer<Option<PageTemplateOption>[]>();
+
+        let options: Option<PageTemplateOption>[] = [];
+
+        let loader = new PageTemplateLoader(new GetPageTemplatesByCanRenderRequest(liveEditModel.getSiteModel().getSiteId(),
+            liveEditModel.getContent().getType()));
+        loader.setComparator(new api.content.page.PageTemplateByDisplayNameComparator());
+        loader.onLoadedData((event: LoadedDataEvent<PageTemplate>) => {
+
+            event.getData().forEach((pageTemplate: PageTemplate) => {
+
+                let indices: string[] = [];
+                indices.push(pageTemplate.getName().toString());
+                indices.push(pageTemplate.getDisplayName());
+                indices.push(pageTemplate.getController().toString());
+
+                let option = {
+                    value: pageTemplate.getId().toString(),
+                    displayValue: new PageTemplateOption(pageTemplate, this.pageModel),
+                    indices: indices
+                };
+                options.push(option);
+            });
+
+            deferred.resolve(options);
+        });
+
+        loader.load();
+        return deferred.promise;
+    }
+
+    private initOptionsList(options: Option<PageTemplateOption>[]) {
+        this.autoOption = {value: '__auto__', displayValue: new PageTemplateOption(null, this.pageModel)};
+        this.addOption(this.autoOption);
+
+        options.forEach((option: Option<PageTemplateOption>) => {
+            this.addOption(option);
+        });
+
+        this.customizedOption = this.createCustomizedOption();
+        this.addOption(this.customizedOption);
+    }
+
+    private selectInitialOption(totalOptions: number) {
+        if (this.pageModel.isCustomized()) {
+            this.selectRow(totalOptions);
+        } else if (this.pageModel.hasTemplate()) {
+            this.selectTemplate(this.pageModel.getTemplateKey());
+        } else {
+            this.selectOption(this.autoOption, true);
+        }
+    }
+
+    private handleOptionSelected(event: OptionSelectedEvent<PageTemplateOption>) {
+        const selectedOption: PageTemplateOption = event.getOption().displayValue;
+        const previousOption: PageTemplateOption = event.getPreviousOption().displayValue;
+
+        if (selectedOption.equals(previousOption)) {
+            return;
+        }
+
+        if (selectedOption.isCustom()) { // no reload => no confirmation dialog
+            this.notifySelection(selectedOption.getPageTemplate());
+            return;
+        }
+
+        if (previousOption.isAuto() && selectedOption.isDefault()) { // auto to default => no reload => no confirmation dialog
+            this.notifySelection(selectedOption.getPageTemplate());
+            return;
+        }
+
+        api.ui.dialog.ConfirmationDialog.get()
+            .setQuestion(
+                'Switching to the page template will result in losing all custom changes made to the page. Are you sure?')
+            .setCloseCallback(() => {
+                this.selectOption(event.getPreviousOption(), true); // reverting selection back
+            })
+            .setYesCallback(() => {
+                this.notifySelection(selectedOption.getPageTemplate());
+            }).open();
+    }
+
+    private initPageModelListeners() {
+        this.pageModel.onPropertyChanged((event: PropertyChangedEvent) => {
+            if (event.getPropertyName() === PageModel.PROPERTY_TEMPLATE && this !== event.getSource()) {
+                let pageTemplateKey = <PageTemplateKey>event.getNewValue();
+                if (pageTemplateKey) {
+                    this.selectTemplate(pageTemplateKey);
+                } else {
+                    this.selectOption(this.autoOption, true);
+                }
+            } else if (event.getPropertyName() === PageModel.PROPERTY_CONTROLLER && event.getNewValue()) {
+                this.selectOption(this.customizedOption, true);
+            }
+        });
+
+        this.pageModel.onReset(() => {
+            this.selectOption(this.autoOption, true);
+        });
     }
 
     private selectTemplate(template: PageTemplateKey) {
@@ -92,10 +161,6 @@ export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
         if (optionToSelect) {
             this.selectOption(optionToSelect, true);
         }
-    }
-
-    private selectCustomized() {
-        this.selectOption(this.customizedOption, true);
     }
 
     onSelection(listener: (event: PageTemplate)=>void) {
@@ -111,16 +176,6 @@ export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
     private notifySelection(item: PageTemplate) {
         this.selectionListeners.forEach((listener: (event: PageTemplate)=>void) => {
             listener(item);
-        });
-    }
-
-    onCustomizedSelected(listener: ()=>void) {
-        this.customizedSelectedListeners.push(listener);
-    }
-
-    private notifyCustomizedSelected() {
-        this.customizedSelectedListeners.forEach((listener: ()=>void) => {
-            listener();
         });
     }
 

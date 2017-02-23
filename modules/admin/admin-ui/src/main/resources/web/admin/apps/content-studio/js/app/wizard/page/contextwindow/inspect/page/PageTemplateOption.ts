@@ -3,7 +3,7 @@ import '../../../../../../api.ts';
 import PageModel = api.content.page.PageModel;
 import PageTemplate = api.content.page.PageTemplate;
 
-export class PageTemplateOption {
+export class PageTemplateOption implements api.Equitable {
 
     private template: PageTemplate;
 
@@ -26,5 +26,28 @@ export class PageTemplateOption {
         let pageTemplateDisplayName = api.content.page.PageTemplateDisplayName;
 
         return this.template && this.template.getDisplayName() === pageTemplateDisplayName[pageTemplateDisplayName.Custom];
+    }
+
+    isAuto(): boolean {
+        return !this.template;
+    }
+
+    isDefault(): boolean {
+        return this.template && this.template.equals(this.pageModel.getDefaultPageTemplate());
+    }
+
+    equals(o: api.Equitable): boolean {
+
+        if (!api.ObjectHelper.iFrameSafeInstanceOf(o, PageTemplateOption)) {
+            return false;
+        }
+
+        let other = <PageTemplateOption>o;
+
+        if (this.isAuto() && other.isAuto()) {
+            return true;
+        }
+
+        return api.ObjectHelper.equals(this.template, other.getPageTemplate());
     }
 }

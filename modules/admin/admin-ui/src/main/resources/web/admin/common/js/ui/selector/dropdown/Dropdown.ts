@@ -265,12 +265,14 @@ module api.ui.selector.dropdown {
 
         selectOption(option: Option<OPTION_DISPLAY_VALUE>, silent: boolean = false, keyCode: number = -1) {
 
+            const previousOption: Option<OPTION_DISPLAY_VALUE> = this.getSelectedOption();
+
             this.dropdownList.markSelections([option]);
 
             this.selectedOptionView.setOption(option);
 
             if (!silent) {
-                this.notifyOptionSelected(option, keyCode);
+                this.notifyOptionSelected(option, previousOption, keyCode);
             }
 
             this.hideDropdown();
@@ -393,8 +395,8 @@ module api.ui.selector.dropdown {
             });
         }
 
-        private notifyOptionSelected(item: Option<OPTION_DISPLAY_VALUE>, keyCode: number = -1) {
-            let event = new OptionSelectedEvent<OPTION_DISPLAY_VALUE>(item, -1, keyCode);
+        private notifyOptionSelected(item: Option<OPTION_DISPLAY_VALUE>, previousItem: Option<OPTION_DISPLAY_VALUE>, keyCode: number = -1) {
+            let event = new OptionSelectedEvent<OPTION_DISPLAY_VALUE>(item, previousItem, -1, keyCode);
             this.optionSelectedListeners.forEach((listener: (event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
                 listener(event);
             });
