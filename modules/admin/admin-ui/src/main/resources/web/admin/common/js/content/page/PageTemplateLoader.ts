@@ -7,6 +7,8 @@ module api.content.page {
 
         constructor(request: PageTemplateResourceRequest<ListContentResult<ContentJson>, PageTemplate[]>) {
             super(request);
+
+            this.setComparator(new api.content.page.PageTemplateByDisplayNameComparator());
         }
 
         filterFn(template: PageTemplate) {

@@ -9,21 +9,19 @@ import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 
 export class PageControllerSelector extends api.content.page.PageDescriptorDropdown {
 
-    private pageModel: PageModel;
-
     constructor(model: LiveEditModel) {
         super(model);
 
-        this.pageModel = model.getPageModel();
+        const pageModel: PageModel = model.getPageModel();
 
         this.onLoadedData((event: LoadedDataEvent<PageDescriptor>) => {
 
-            if (this.pageModel.hasController() && this.pageModel.getController().getKey().toString() !== this.getValue()) {
-                this.selectController(this.pageModel.getController().getKey());
+            if (pageModel.hasController() && pageModel.getController().getKey().toString() !== this.getValue()) {
+                this.selectController(pageModel.getController().getKey());
             }
         });
 
-        this.pageModel.onPropertyChanged((event: PropertyChangedEvent) => {
+        pageModel.onPropertyChanged((event: PropertyChangedEvent) => {
             if (event.getPropertyName() === PageModel.PROPERTY_CONTROLLER && this !== event.getSource()) {
                 let descriptorKey = <DescriptorKey>event.getNewValue();
                 if (descriptorKey) {
@@ -32,6 +30,24 @@ export class PageControllerSelector extends api.content.page.PageDescriptorDropd
                 // TODO: Change class to extend a PageDescriptorComboBox instead, since we then can deselect.
             }
         });
+
+        pageModel.onReset(() => {
+            this.reset();
+        });
+
+        this.load();
+    }
+
+    protected handleOptionSelected(event: api.ui.selector.OptionSelectedEvent<api.content.page.PageDescriptor>) {
+        api.ui.dialog.ConfirmationDialog.get()
+            .setQuestion(
+                'Changing a page controller will result in losing changes made to the page. Are you sure?')
+            .setNoCallback(() => {
+                this.selectOption(event.getPreviousOption(), true); // reverting selection back
+            })
+            .setYesCallback(() => {
+                super.handleOptionSelected(event);
+            }).open();
     }
 
     private selectController(descriptorKey: DescriptorKey) {

@@ -13,8 +13,6 @@ module api.content.page {
 
         private liveEditModel: LiveEditModel;
 
-        protected loader: PageDescriptorLoader;
-
         constructor(model: LiveEditModel) {
             super({
                 optionDisplayValueViewer: new PageDescriptorViewer(),
@@ -28,7 +26,7 @@ module api.content.page {
         }
 
         load() {
-            this.loader.setApplicationKeys(this.liveEditModel.getSiteModel().getApplicationKeys());
+            (<PageDescriptorLoader>this.loader).setApplicationKeys(this.liveEditModel.getSiteModel().getApplicationKeys());
 
             super.load();
         }
@@ -43,11 +41,7 @@ module api.content.page {
         }
 
         private initListeners() {
-            this.onOptionSelected((event: api.ui.selector.OptionSelectedEvent<api.content.page.PageDescriptor>) => {
-                let pageDescriptor = event.getOption().displayValue;
-                let setController = new SetController(this).setDescriptor(pageDescriptor);
-                this.liveEditModel.getPageModel().setController(setController);
-            });
+            this.onOptionSelected(this.handleOptionSelected.bind(this));
 
             let onApplicationAddedHandler = () => {
                 this.load();
@@ -73,6 +67,12 @@ module api.content.page {
                 this.liveEditModel.getSiteModel().unApplicationAdded(onApplicationAddedHandler);
                 this.liveEditModel.getSiteModel().unApplicationRemoved(onApplicationRemovedHandler);
             });
+        }
+
+        protected handleOptionSelected(event: api.ui.selector.OptionSelectedEvent<api.content.page.PageDescriptor>) {
+            let pageDescriptor = event.getOption().displayValue;
+            let setController = new SetController(this).setDescriptor(pageDescriptor);
+            this.liveEditModel.getPageModel().setController(setController);
         }
 
         onLoadedData(listener: (event: LoadedDataEvent<PageDescriptor>) => void) {

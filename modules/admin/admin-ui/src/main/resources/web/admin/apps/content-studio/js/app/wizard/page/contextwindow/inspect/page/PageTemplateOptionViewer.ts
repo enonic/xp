@@ -1,10 +1,15 @@
 import '../../../../../../api.ts';
 import {PageTemplateOption} from './PageTemplateOption';
+import PageTemplate = api.content.page.PageTemplate;
 
 export class PageTemplateOptionViewer extends api.ui.NamesAndIconViewer<PageTemplateOption> {
 
-    constructor() {
+    private defaultPageTemplate: PageTemplate;
+
+    constructor(defaultPageTemplate: PageTemplate) {
         super();
+
+        this.defaultPageTemplate = defaultPageTemplate;
     }
 
     resolveDisplayName(object: PageTemplateOption): string {
@@ -22,8 +27,8 @@ export class PageTemplateOptionViewer extends api.ui.NamesAndIconViewer<PageTemp
             } else {
                 return object.getPageTemplate().getPath().toString();
             }
-        } else if (!!object.getPageModel().getDefaultPageTemplate()) {
-            return '(' + object.getPageModel().getDefaultPageTemplate().getDisplayName().toString() + ')';
+        } else if (this.defaultPageTemplate) {
+            return '(' + this.defaultPageTemplate.getDisplayName().toString() + ')';
         } else {
             return '( no default template found )';
         }
