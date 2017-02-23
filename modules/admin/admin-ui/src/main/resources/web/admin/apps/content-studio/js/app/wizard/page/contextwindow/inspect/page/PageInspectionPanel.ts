@@ -98,7 +98,7 @@ export class PageInspectionPanel extends BaseInspectionPanel {
         if (previousOption.isCustom()) { // show confirmation dialog
             api.ui.dialog.ConfirmationDialog.get()
                 .setQuestion(
-                    'Switching to the page template will result in losing all custom changes made to the page. Are you sure?')
+                    'Switching to a page template will discard all of the custom changes made to the page. Are you sure?')
                 .setNoCallback(() => {
                     this.pageTemplateSelector.selectOption(event.getPreviousOption(), true); // reverting selection back
                 })
