@@ -21,18 +21,28 @@ export class PreviewContentHandler {
     updateState(contentBrowseItems: ContentBrowseItem[],
                 changes?: BrowseItemsChanges<ContentSummaryAndCompareStatus>): wemQ.Promise<any> {
 
+        if (contentBrowseItems.length === 0) {
+            if (changes && changes.getRemoved().length > 0) {
+                // items have been removed from selection
+                this.removeRenderableIds(changes.getRemoved().map(item => item.getModel().getContentId()));
+            } else if (!changes) {
+                this.renderableIds = [];
+            }
+            this.notifyPreviewStateChangedIfNeeded();
+            return;
+        }
         if (PreviewContentHandler.BLOCK_COUNT < contentBrowseItems.length) {
             this.setBlocked(true);
             return;
-        } else {
-            if (this.isBlocked()) {
-                this.setRenderableIds([]);
-                if (changes) {
-                    changes.setAdded(contentBrowseItems);
-                }
-            }
-            this.setBlocked(false);
         }
+
+        if (this.isBlocked()) {
+            this.setRenderableIds([]);
+            if (changes) {
+                changes.setAdded(contentBrowseItems);
+            }
+        }
+        this.setBlocked(false);
 
         return this.getRenderablePromise(contentBrowseItems, changes);
     }

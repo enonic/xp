@@ -1003,7 +1003,7 @@ module api.ui.treegrid {
         }
 
         selectAll() {
-            this.unhighlightCurrentRow();
+            this.unhighlightCurrentRow(true);
             let rows = [];
             for (let i = 0; i < this.gridData.getLength(); i++) {
                 if (!api.util.StringHelper.isEmpty(this.gridData.getItem(i).getDataId())) {
@@ -1014,7 +1014,7 @@ module api.ui.treegrid {
         }
 
         deselectAll() {
-            this.unhighlightCurrentRow();
+            this.unhighlightCurrentRow(true);
             this.grid.clearSelection();
         }
 
