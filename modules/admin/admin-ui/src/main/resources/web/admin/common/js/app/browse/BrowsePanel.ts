@@ -102,13 +102,18 @@ module api.app.browse {
         }
 
         private onHighlightingChanged(node: TreeNode<Object>) {
-            if (node) {
-                let browseItem: BrowseItem<M> = this.treeNodesToBrowseItems([node])[0];
-                this.getBrowseActions().updateActionsEnabledState([browseItem]);
-                this.checkIfItemIsRenderable(browseItem).then(() => {
-                    this.getBrowseItemPanel().togglePreviewForItem(browseItem);
-                });
+            if (!node) {
+                this.getBrowseActions().updateActionsEnabledState([]);
+                this.getBrowseItemPanel().togglePreviewForItem();
+
+                return;
             }
+
+            let browseItem: BrowseItem<M> = this.treeNodesToBrowseItems([node])[0];
+            this.getBrowseActions().updateActionsEnabledState([browseItem]);
+            this.checkIfItemIsRenderable(browseItem).then(() => {
+                this.getBrowseItemPanel().togglePreviewForItem(browseItem);
+            });
         }
 
         protected createToolbar(): api.ui.toolbar.Toolbar {
