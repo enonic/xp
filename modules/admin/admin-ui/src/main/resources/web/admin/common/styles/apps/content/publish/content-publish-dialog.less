@@ -23,6 +23,10 @@
     width: @toggler-width;
   }
 
+  .browse-selection-item .remove {
+    display: block;
+  }
+
   .publish-dialog-item-list {
 
     .browse-selection-item {
@@ -30,11 +34,12 @@
       .status {
         line-height: 32px;
       }
-      .remove {
-        order: 1;
-        float: none;
-        margin: 0 5px 0 12px;
+
+      &:only-child .remove {
+        color: lightgray;
+        cursor: default;
       }
+
     }
 
     &.contains-toggleable {
