@@ -1,13 +1,9 @@
 module api.form.inputtype.radiobutton {
 
-    import Option = api.ui.selector.Option;
-    import ComboBox = api.ui.selector.combobox.ComboBox;
-    import SelectedOptionsView = api.ui.selector.combobox.SelectedOptionsView;
     import Property = api.data.Property;
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
-    import BaseSelectedOptionsView = api.ui.selector.combobox.BaseSelectedOptionsView;
 
     export class RadioButton extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<string> {
 
