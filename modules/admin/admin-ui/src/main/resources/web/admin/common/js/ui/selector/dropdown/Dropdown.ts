@@ -134,6 +134,10 @@ module api.ui.selector.dropdown {
             this.selectedOptionView.resetOption();
         }
 
+        resetActiveSelection() {
+            this.dropdownList.resetActiveSelection();
+        }
+
         private defaultFilter(option: Option<OPTION_DISPLAY_VALUE>, args: any) {
 
             if (!args.searchString || api.util.StringHelper.isEmpty(args.searchString)) {

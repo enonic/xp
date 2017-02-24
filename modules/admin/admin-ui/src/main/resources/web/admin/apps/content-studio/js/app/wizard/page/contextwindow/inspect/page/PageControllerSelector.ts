@@ -44,6 +44,7 @@ export class PageControllerSelector extends api.content.page.PageDescriptorDropd
                 'Changing a page controller will result in losing changes made to the page. Are you sure?')
             .setNoCallback(() => {
                 this.selectOption(event.getPreviousOption(), true); // reverting selection back
+                this.resetActiveSelection();
             })
             .setYesCallback(() => {
                 super.handleOptionSelected(event);

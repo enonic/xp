@@ -101,6 +101,7 @@ export class PageInspectionPanel extends BaseInspectionPanel {
                     'Switching to a page template will discard all of the custom changes made to the page. Are you sure?')
                 .setNoCallback(() => {
                     this.pageTemplateSelector.selectOption(event.getPreviousOption(), true); // reverting selection back
+                    this.pageTemplateSelector.resetActiveSelection();
                 })
                 .setYesCallback(() => {
                     this.doSelectTemplate(selectedOption);
