@@ -29,19 +29,40 @@ export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
 
     constructor(content: Content, pageView: PageView) {
         super(new TreeGridBuilder<ItemView>().setColumns([
-            new GridColumnBuilder<TreeNode<ItemView>>().setName('Name').setId('displayName').setField('displayName').setFormatter(
-                PageComponentsTreeGrid.nameFormatter.bind(null, content)).setMinWidth(250).setBehavior('selectAndMove').build(),
-            new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().setName('Menu').setId('menu').setMinWidth(45).setMaxWidth(
-                45).setField('menu').setCssClass('menu-cell').setFormatter(PageComponentsTreeGrid.menuFormatter).build()
+            new GridColumnBuilder<TreeNode<ItemView>>()
+                .setName('Name')
+                .setId('displayName')
+                .setField('displayName')
+                .setFormatter(PageComponentsTreeGrid.nameFormatter.bind(null, content))
+                .setMinWidth(250)
+                .setBehavior('selectAndMove')
+                .build(),
+            new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>()
+                .setName('Menu')
+                .setId('menu').setMinWidth(45)
+                .setMaxWidth(45)
+                .setField('menu')
+                .setCssClass('menu-cell')
+                .setFormatter(PageComponentsTreeGrid.menuFormatter).build()
         ]).setOptions(
-            new GridOptionsBuilder<TreeNode<ItemView>>().setAutoHeight(true).setShowHeaderRow(false).setHideColumnHeaders(
-                true).setForceFitColumns(true).setFullWidthRows(true).
-
-            // It is necessary to turn off the library key handling. It may cause
-            // the conflicts with Mousetrap, which leads to skipping the key events
-            // Do not set to true, if you are not fully aware of the result
-            setEnableCellNavigation(false).setSelectedCellCssClass('selected cell').setCheckableRows(false).disableMultipleSelection(
-                true).setMultiSelect(false).setRowHeight(45).setDragAndDrop(true).build()
+            new GridOptionsBuilder<TreeNode<ItemView>>()
+                .setAutoHeight(true)
+                .setShowHeaderRow(false)
+                .setHideColumnHeaders(true)
+                .setForceFitColumns(true)
+                .setFullWidthRows(true)
+                .setHeight("initial")
+                .setWidth("100%")
+                // It is necessary to turn off the library key handling. It may cause
+                // the conflicts with Mousetrap, which leads to skipping the key events
+                // Do not set to true, if you are not fully aware of the result
+                .setEnableCellNavigation(false)
+                .setSelectedCellCssClass('selected cell')
+                .setCheckableRows(false)
+                .disableMultipleSelection(true)
+                .setMultiSelect(false)
+                .setRowHeight(45)
+                .setDragAndDrop(true).build()
         ).setShowToolbar(false).setAutoLoad(true).setExpandAll(true).prependClasses('components-grid'));
 
         this.content = content;
