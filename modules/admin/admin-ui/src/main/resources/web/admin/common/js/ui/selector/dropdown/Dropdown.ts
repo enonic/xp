@@ -88,7 +88,7 @@ module api.ui.selector.dropdown {
 
             let filter = config.filter || this.defaultFilter;
 
-            this.dropdownList = new DropdownList(<DropdownListConfig<OPTION_DISPLAY_VALUE>>{
+            this.dropdownList = new DropdownList(<DropdownGridConfig<OPTION_DISPLAY_VALUE>>{
                 maxHeight: 200,
                 width: this.input.getEl().getWidth(),
                 optionDisplayValueViewer: config.optionDisplayValueViewer,
@@ -412,8 +412,7 @@ module api.ui.selector.dropdown {
         }
 
         private notifyOptionFilterInputValueChanged(oldValue: string, newValue: string) {
-            let event = new OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>(oldValue, newValue,
-                this.dropdownList.getDropdownGrid().getElement());
+            let event = new OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>(oldValue, newValue);
             this.optionFilterInputValueChangedListeners.forEach(
                 (listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
                     listener(event);
