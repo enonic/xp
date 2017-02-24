@@ -10,10 +10,13 @@ public class ContentPublishInfoJson
 
     private final Instant to;
 
+    private final Instant first;
+
     public ContentPublishInfoJson( final ContentPublishInfo publishInfo )
     {
         this.from = publishInfo.getFrom();
         this.to = publishInfo.getTo();
+        this.first = publishInfo.getFirst();
     }
 
     @SuppressWarnings("unused")
@@ -26,5 +29,11 @@ public class ContentPublishInfoJson
     public Instant getTo()
     {
         return to;
+    }
+
+    @SuppressWarnings("unused")
+    public Instant getFirst()
+    {
+        return first;
     }
 }
