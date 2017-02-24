@@ -1,9 +1,6 @@
 import '../../api.ts';
 
 import Content = api.content.Content;
-import ComboBox = api.ui.selector.combobox.ComboBox;
-import FormItemBuilder = api.ui.form.FormItemBuilder;
-import FormItem = api.ui.form.FormItem;
 
 export class ContentSettingsModel implements api.Equitable {
 

@@ -86,7 +86,7 @@ module api.ui.treegrid {
                 setForceFitColumns(true).
                 setHideColumnHeaders(true).
                 setCheckableRows(true).
-                setRowHeight(45).
+                setRowHeight(45).setHeight("100%").setWidth("100%").
                 build();
         }
 
