@@ -609,7 +609,7 @@ module api.ui.treegrid {
             return wemjq(cell).closest('.slick-row');
         }
 
-        private highlightCurrentNode() {
+        protected highlightCurrentNode(silent: boolean = false) {
             if (!this.highlightedNode) {
                 return;
             }
