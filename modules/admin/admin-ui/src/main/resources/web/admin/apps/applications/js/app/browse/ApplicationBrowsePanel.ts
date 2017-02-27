@@ -42,7 +42,7 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
     }
 
     protected createBrowseItemPanel(): ApplicationBrowseItemPanel {
-        return new ApplicationBrowseItemPanel();
+        return new ApplicationBrowseItemPanel(this.treeGrid);
     }
 
     treeNodesToBrowseItems(nodes: TreeNode<Application>[]): BrowseItem<Application>[] {

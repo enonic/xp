@@ -160,9 +160,9 @@
 
 ///<reference path='app/_module.ts' />
 ///<reference path='app/bar/_module.ts' />
+///<reference path='app/browse/action/_module.ts' />
 ///<reference path='app/browse/_module.ts' />
 ///<reference path='app/browse/filter/_module.ts' />
-///<reference path='app/browse/action/_module.ts' />
 
 ///<reference path='app/delete/_module.ts' />
 ///<reference path='app/view/_module.ts' />
