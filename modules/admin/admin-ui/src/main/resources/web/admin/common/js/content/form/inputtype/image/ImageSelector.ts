@@ -13,8 +13,6 @@ module api.content.form.inputtype.image {
     import ComboBox = api.ui.selector.combobox.ComboBox;
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
-    import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
-    import LoadingDataEvent = api.util.loader.event.LoadingDataEvent;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import Option = api.ui.selector.Option;
     import RelationshipTypeName = api.schema.relationshiptype.RelationshipTypeName;
