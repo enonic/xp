@@ -51,26 +51,25 @@ final class SecurityInitializer
 
     public final void initialize()
     {
-        runAsAdmin( () ->
-                    {
-                        if ( isInitialized() )
-                        {
-                            LOG.info( "System-repo [security] layout already initialized" );
-                            return;
-                        }
+        runAsAdmin( () -> {
+            if ( isInitialized() )
+            {
+                LOG.info( "System-repo [security] layout already initialized" );
+                return;
+            }
 
-                        LOG.info( "Initializing system-repo [security] layout" );
+            LOG.info( "Initializing system-repo [security] layout" );
 
-                        initializeUserStoreParentFolder();
-                        initializeRoleFolder();
-                        initializeSystemUserStore();
+            initializeUserStoreParentFolder();
+            initializeRoleFolder();
+            initializeSystemUserStore();
 
-                        createRoles();
-                        createUsers();
+            createRoles();
+            createUsers();
 
-                        LOG.info( "System-repo [security] layout successfully initialized" );
+            LOG.info( "System-repo [security] layout successfully initialized" );
 
-                    } );
+        } );
     }
 
     private boolean isInitialized()
