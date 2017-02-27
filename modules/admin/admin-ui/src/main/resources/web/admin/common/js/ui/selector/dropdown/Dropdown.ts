@@ -259,15 +259,15 @@ module api.ui.selector.dropdown {
             return this;
         }
 
-        selectRow(index: number, silent: boolean = false, keyCode: number = -1) {
+        selectRow(index: number, silent: boolean = false) {
             let option = this.getOptionByRow(index);
             if (option != null) {
-                this.selectOption(option, silent, keyCode);
+                this.selectOption(option, silent);
                 api.dom.FormEl.moveFocusToNextFocusable(this.input);
             }
         }
 
-        selectOption(option: Option<OPTION_DISPLAY_VALUE>, silent: boolean = false, keyCode: number = -1) {
+        selectOption(option: Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
 
             const previousOption: Option<OPTION_DISPLAY_VALUE> = this.getSelectedOption();
 
@@ -276,7 +276,7 @@ module api.ui.selector.dropdown {
             this.selectedOptionView.setOption(option);
 
             if (!silent) {
-                this.notifyOptionSelected(option, previousOption, keyCode);
+                this.notifyOptionSelected(option, previousOption);
             }
 
             this.hideDropdown();
@@ -374,7 +374,7 @@ module api.ui.selector.dropdown {
                 } else if (event.which === 40) { // down
                     this.dropdownList.navigateToNextRow();
                 } else if (event.which === 13) { // enter
-                    this.selectRow(this.dropdownList.getActiveRow(), false, 13);
+                    this.selectRow(this.dropdownList.getActiveRow(), false);
                     this.input.getEl().setValue('');
                 } else if (event.which === 27) { // esc
                     this.hideDropdown();
@@ -399,8 +399,8 @@ module api.ui.selector.dropdown {
             });
         }
 
-        private notifyOptionSelected(item: Option<OPTION_DISPLAY_VALUE>, previousItem: Option<OPTION_DISPLAY_VALUE>, keyCode: number = -1) {
-            let event = new OptionSelectedEvent<OPTION_DISPLAY_VALUE>(item, previousItem, -1, keyCode);
+        private notifyOptionSelected(item: Option<OPTION_DISPLAY_VALUE>, previousItem: Option<OPTION_DISPLAY_VALUE>) {
+            let event = new OptionSelectedEvent<OPTION_DISPLAY_VALUE>(item, previousItem, -1);
             this.optionSelectedListeners.forEach((listener: (event: OptionSelectedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
                 listener(event);
             });

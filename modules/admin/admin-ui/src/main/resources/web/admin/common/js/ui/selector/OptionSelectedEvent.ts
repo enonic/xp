@@ -8,14 +8,10 @@ module api.ui.selector {
 
         private index: number;
 
-        private keyCode: number;
-
-        constructor(option: Option<OPTION_DISPLAY_VALUE>, previousOption: Option<OPTION_DISPLAY_VALUE>, index: number = -1,
-                    keyCode: number = -1) {
+        constructor(option: Option<OPTION_DISPLAY_VALUE>, previousOption: Option<OPTION_DISPLAY_VALUE>, index: number = -1) {
             this.option = option;
             this.previousOption = previousOption;
             this.index = index;
-            this.keyCode = keyCode;
         }
 
         getOption(): Option<OPTION_DISPLAY_VALUE> {
@@ -28,10 +24,6 @@ module api.ui.selector {
 
         getIndex(): number {
             return this.index;
-        }
-
-        getKeyCode(): number {
-            return this.keyCode;
         }
     }
 }
