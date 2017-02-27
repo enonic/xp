@@ -6,6 +6,7 @@
 ///<reference path='SelectedOptionsView.ts' />
 ///<reference path='BaseSelectedOptionsView.ts' />
 ///<reference path='SelectedOption.ts' />
+///<reference path='LoaderComboBox.ts' />
 ///<reference path='RichComboBox.ts' />
 ///<reference path='RichSelectedOptionView.ts' />
 ///<reference path='SelectedOptionEvent.ts' />

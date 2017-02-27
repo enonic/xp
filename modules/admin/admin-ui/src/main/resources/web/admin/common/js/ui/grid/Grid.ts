@@ -5,9 +5,9 @@ module api.ui.grid {
 
     export class Grid<T extends Slick.SlickData> extends api.dom.DivEl {
 
-        private defaultHeight: number = 400;
+        private defaultHeight: string = '400px';
 
-        private defaultWidth: number = 800;
+        private defaultWidth: string = '800px';
 
         private defaultAutoRenderGridOnDataChanges: boolean = true;
 
@@ -54,8 +54,8 @@ module api.ui.grid {
                     cancelEditOnDrag: true
                 });
             }
-            this.getEl().setHeight((options.getHeight() || this.defaultHeight) + 'px');
-            this.getEl().setWidth((options.getWidth() || this.defaultWidth) + 'px');
+            this.getEl().setHeight(options.getHeight() || this.defaultHeight);
+            this.getEl().setWidth(options.getWidth() || this.defaultWidth);
             this.dataView = dataView;
             this.slickGrid = new Slick.Grid<T>(this.getHTMLElement(), dataView.slick(), columns, options);
             if (options.isAutoRenderGridOnDataChanges() ||

@@ -1,41 +1,26 @@
 module api.ui.selector {
 
-    export interface DropdownListConfig<DISPLAY_VALUE> {
-
-        maxHeight?: number;
-
-        width: number;
-
-        optionDisplayValueViewer?: Viewer<DISPLAY_VALUE>;
-
-        filter: (item: Option<DISPLAY_VALUE>, args: any) => boolean;
-
-        dataIdProperty?:string;
-    }
-
     export class DropdownList<OPTION_DISPLAY_VALUE> {
 
         private emptyDropdown: api.dom.DivEl;
 
         private dropdownGrid: DropdownGrid<OPTION_DISPLAY_VALUE>;
 
-        constructor(config: DropdownListConfig<OPTION_DISPLAY_VALUE>) {
+        constructor(config: DropdownGridConfig<OPTION_DISPLAY_VALUE>) {
 
             this.emptyDropdown = new api.dom.DivEl('empty-options');
             this.emptyDropdown.getEl().setInnerHtml('No matching items');
             this.emptyDropdown.hide();
 
-            this.dropdownGrid = new DropdownGrid<OPTION_DISPLAY_VALUE>(this.assembleGridConfig(config));
+            this.initDropdownGrid(config);
         }
 
-        assembleGridConfig(config: DropdownListConfig<OPTION_DISPLAY_VALUE>): DropdownGridConfig<OPTION_DISPLAY_VALUE> {
-            return <DropdownGridConfig<OPTION_DISPLAY_VALUE>> {
-                maxHeight: config.maxHeight,
-                width: config.width,
-                optionDisplayValueViewer: config.optionDisplayValueViewer,
-                filter: config.filter,
-                dataIdProperty: config.dataIdProperty
-            };
+        private initDropdownGrid(config: DropdownGridConfig<OPTION_DISPLAY_VALUE>) {
+            if (config.isDropdownGrid) {
+                this.dropdownGrid = new DropdownTreeGrid<OPTION_DISPLAY_VALUE>(config);
+            } else {
+                this.dropdownGrid = new DropdownListGrid<OPTION_DISPLAY_VALUE>(config);
+            }
         }
 
         getDropdownGrid(): DropdownGrid<OPTION_DISPLAY_VALUE> {
@@ -133,7 +118,6 @@ module api.ui.selector {
         }
 
         hideDropdown() {
-
             this.emptyDropdown.hide();
             this.dropdownGrid.hide();
         }

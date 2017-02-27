@@ -205,11 +205,11 @@ module api.dom {
             let classList: string[] = clsName.split(' ');
             for (let i = 0; i < classList.length; i++) {
                 let classItem = classList[i];
-                if (!this.el.classList || !this.el.classList.contains(classItem)) {
-                    return false;
+                if (this.el.classList && this.el.classList.contains(classItem)) {
+                    return true;
                 }
             }
-            return true;
+            return false;
         }
 
         removeClass(clsName: string): ElementHelper {
