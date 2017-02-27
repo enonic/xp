@@ -103,6 +103,22 @@ public class TextRendererTest
     }
 
     @Test
+    public void textComponentRendererRemovesEmptyFigCaptionTags()
+    {
+        // setup
+        String text = "<figure><img src=\"src\" />\n" + "<figcaption style=\"text-align: left;\"></figcaption>\n" + "</figure>";
+        textComponent = TextComponent.create().name( "myTextComponent" ).text( text ).build();
+        renderer = new TextRenderer();
+        renderer.setPortalUrlService( service );
+
+        // exercise
+        portalResponse = renderer.render( textComponent, portalRequest );
+
+        // verify
+        assertFalse( portalResponse.getAsString().contains( "figcaption" ) );
+    }
+
+    @Test
     public void textComponentWithSomeTextAndRenderModeEdit()
     {
         // setup
