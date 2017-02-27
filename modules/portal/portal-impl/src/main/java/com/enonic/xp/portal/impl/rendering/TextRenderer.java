@@ -1,6 +1,8 @@
 package com.enonic.xp.portal.impl.rendering;
 
 import java.text.MessageFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -31,6 +33,8 @@ public final class TextRenderer
     private static final String COMPONENT_EDIT_MODE_HTML = "<div " + PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\"><section>{1}</section></div>";
 
     private static final String COMPONENT_PREVIEW_MODE_HTML = "<section " + PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\">{1}</section>";
+
+    private static final Pattern EMPTY_FIGCAPTION_PATTERN = Pattern.compile( "<figcaption.*?></figcaption>" );
 
     @Override
     public Class<TextComponent> getType()
@@ -63,7 +67,7 @@ public final class TextRenderer
                 case PREVIEW:
                 default:
                     ProcessHtmlParams params = new ProcessHtmlParams().portalRequest( portalRequest ).value( textComponent.getText() );
-                    String processedHtml = service.processHtml( params );
+                    final String processedHtml = removeEmptyFigCaptionTags( service.processHtml( params ) );
                     portalResponseBuilder.body(
                         MessageFormat.format( COMPONENT_PREVIEW_MODE_HTML, textComponent.getType().toString(), processedHtml ) );
                     break;
@@ -96,6 +100,13 @@ public final class TextRenderer
     private RenderMode getRenderingMode( final PortalRequest portalRequest )
     {
         return portalRequest == null ? RenderMode.LIVE : portalRequest.getMode();
+    }
+
+    private String removeEmptyFigCaptionTags( final String text )
+    {
+        final Matcher matcher = EMPTY_FIGCAPTION_PATTERN.matcher( text );
+
+        return matcher.replaceAll( "" );
     }
 
     @Reference
