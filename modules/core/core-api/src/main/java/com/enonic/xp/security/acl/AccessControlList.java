@@ -1,5 +1,6 @@
 package com.enonic.xp.security.acl;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +27,26 @@ public final class AccessControlList
         this.entries = ImmutableMap.copyOf( builder.entries );
     }
 
+    public static AccessControlList empty()
+    {
+        return EMPTY;
+    }
+
+    public static AccessControlList of( final AccessControlEntry... entries )
+    {
+        return AccessControlList.create().addAll( entries ).build();
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static Builder create( final AccessControlList acl )
+    {
+        return new Builder( acl );
+    }
+
     public boolean isAllowedFor( final PrincipalKey principal, final Permission... permissions )
     {
         return doIsAllowedFor( principal, permissions );
@@ -50,7 +71,6 @@ public final class AccessControlList
         return entry != null && entry.isAllowed( permissions );
     }
 
-
     public PrincipalKeys getAllPrincipals()
     {
         final Set<PrincipalKey> principals = this.entries.values().stream().
@@ -71,6 +91,11 @@ public final class AccessControlList
     public AccessControlEntry getEntry( final PrincipalKey principalKey )
     {
         return this.entries.get( principalKey );
+    }
+
+    public Collection<AccessControlEntry> getEntries()
+    {
+        return this.entries.values();
     }
 
     public boolean contains( final PrincipalKey principalKey )
@@ -115,26 +140,6 @@ public final class AccessControlList
     public int hashCode()
     {
         return this.entries.hashCode();
-    }
-
-    public static AccessControlList empty()
-    {
-        return EMPTY;
-    }
-
-    public static AccessControlList of( final AccessControlEntry... entries )
-    {
-        return AccessControlList.create().addAll( entries ).build();
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
-    public static Builder create( final AccessControlList acl )
-    {
-        return new Builder( acl );
     }
 
     public static class Builder

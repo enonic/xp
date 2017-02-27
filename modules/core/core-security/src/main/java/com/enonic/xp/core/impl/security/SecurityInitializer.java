@@ -17,8 +17,11 @@ import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityConstants;
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.UserStoreAccessControlEntry;
 import com.enonic.xp.security.acl.UserStoreAccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -28,11 +31,11 @@ import static com.enonic.xp.security.acl.UserStoreAccess.READ;
 
 final class SecurityInitializer
 {
+    public static final PrincipalKey SUPER_USER = PrincipalKey.ofUser( UserStoreKey.system(), "su" );
+
     static final String SYSTEM_USER_STORE_DISPLAY_NAME = "System User Store";
 
     private static final Logger LOG = LoggerFactory.getLogger( SecurityInitializer.class );
-
-    public static final PrincipalKey SUPER_USER = PrincipalKey.ofUser( UserStoreKey.system(), "su" );
 
     private static final ApplicationKey SYSTEM_ID_PROVIDER_KEY = ApplicationKey.from( "com.enonic.xp.app.standardidprovider" );
 
@@ -87,10 +90,19 @@ final class SecurityInitializer
         final NodePath userStoreParentNodePath = UserStoreNodeTranslator.getUserStoresParentPath();
         LOG.info( "Initializing [" + userStoreParentNodePath.toString() + "] folder" );
 
+        final AccessControlEntry userManagerFullAccess = AccessControlEntry.create().
+            allowAll().
+            principal( RoleKeys.USER_MANAGER_ADMIN ).
+            build();
+
         nodeService.create( CreateNodeParams.create().
             parent( userStoreParentNodePath.getParentPath() ).
             name( userStoreParentNodePath.getLastElement().toString() ).
-            inheritPermissions( true ).
+            permissions( AccessControlList.create().
+                addAll( SystemConstants.SYSTEM_REPO_DEFAULT_ACL.getEntries() ).
+                add( userManagerFullAccess ).
+                build() ).
+            inheritPermissions( false ).
             build() );
     }
 
@@ -117,8 +129,9 @@ final class SecurityInitializer
 
         final UserStoreAccessControlList permissions =
             UserStoreAccessControlList.of( UserStoreAccessControlEntry.create().principal( RoleKeys.ADMIN ).access( ADMINISTRATOR ).build(),
-                                           UserStoreAccessControlEntry.create().principal( RoleKeys.AUTHENTICATED ).access(
-                                               READ ).build() );
+                                           UserStoreAccessControlEntry.create().principal( RoleKeys.AUTHENTICATED ).access( READ ).build(),
+                                           UserStoreAccessControlEntry.create().principal( RoleKeys.USER_MANAGER_ADMIN ).access(
+                                               ADMINISTRATOR ).build() );
 
         final CreateUserStoreParams createParams = CreateUserStoreParams.create().
             key( UserStoreKey.system() ).
