@@ -153,9 +153,6 @@ public class UnpublishContentCommand
                         {
                             publishInfo.removeProperty( ContentPropertyNames.PUBLISH_TO );
                         }
-
-
-                       // toBeEdited.data.getProperty( ContentPropertyNames.PUBLISH_INFO );
                     }
                 } ).
                 id( NodeId.from( contentId ) ).
