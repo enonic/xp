@@ -89,7 +89,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         const orderColumn = columns[3];
         const modifiedTimeColumn = columns[4];
 
-        let updateColumns = (force?: boolean) => {
+        let updateColumns = api.util.AppHelper.debounce((force?: boolean) => {
             if (force) {
                 let width = this.getEl().getWidth();
                 let checkSelIsMoved = ResponsiveRanges._360_540.isFitOrSmaller(api.dom.Body.get().getEl().getWidth());
@@ -123,7 +123,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                 this.highlightCurrentNode(true);
             }
             // re-set the selection to update selected rows presentation
-        };
+        }, 200, true);
 
         this.initEventHandlers(updateColumns);
     }
