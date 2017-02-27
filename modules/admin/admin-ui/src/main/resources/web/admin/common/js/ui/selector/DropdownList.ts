@@ -108,6 +108,10 @@ module api.ui.selector {
             this.dropdownGrid.resetCustomHeight();
         }
 
+        resetActiveSelection() {
+            this.dropdownGrid.resetActiveSelection();
+        }
+
         showDropdown(selectedOptions?: Option<OPTION_DISPLAY_VALUE>[], noOptionsText?: string) {
 
             if (this.hasOptions()) {

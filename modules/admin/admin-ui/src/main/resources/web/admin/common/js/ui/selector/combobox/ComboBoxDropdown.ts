@@ -67,10 +67,6 @@ module api.ui.selector.combobox {
             this.getDropdownGrid().toggleRowSelection(row, isMaximumReached);
         }
 
-        resetActiveSelection() {
-            this.getDropdownGrid().resetActiveSelection();
-        }
-
         applyMultipleSelection() {
             this.getDropdownGrid().applyMultipleSelection();
         }
