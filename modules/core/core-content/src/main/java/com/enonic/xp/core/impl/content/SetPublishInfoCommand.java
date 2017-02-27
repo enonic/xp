@@ -8,6 +8,7 @@ import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.node.FindNodesByQueryResult;
+import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeQuery;
@@ -35,8 +36,9 @@ public class SetPublishInfoCommand
     public void execute()
     {
         final NodeIds firstTimePublished = findNodesWithoutPublishInfo( nodeIds );
+        final NodeIds emptyPublishInfo = findNodesWithEmptyPublishInfo( nodeIds );
 
-        if ( firstTimePublished.getSize() == 0 )
+        if ( firstTimePublished.getSize() == 0 && emptyPublishInfo.getSize() == 0 )
         {
             return;
         }
@@ -45,29 +47,37 @@ public class SetPublishInfoCommand
         final Instant publishFrom = contentPublishInfo.getFrom() == null ? now : contentPublishInfo.getFrom();
         final Instant publishTo = contentPublishInfo.getTo();
 
-        for ( final NodeId id : firstTimePublished )
+        for ( final NodeId id : emptyPublishInfo )
         {
             this.nodeService.update( UpdateNodeParams.create().
-                editor( toBeEdited -> {
+                editor( toBeEdited ->
+                        {
 
-                    toBeEdited.data.setInstant( ContentPropertyNames.MODIFIED_TIME, now );
-                    toBeEdited.data.setString( ContentPropertyNames.MODIFIER, getCurrentUser().getKey().toString() );
+                            toBeEdited.data.setInstant( ContentPropertyNames.MODIFIED_TIME, now );
+                            toBeEdited.data.setString( ContentPropertyNames.MODIFIER, getCurrentUser().getKey().toString() );
 
-                    PropertySet publishInfo = toBeEdited.data.getSet( ContentPropertyNames.PUBLISH_INFO );
-                    if ( publishInfo == null )
-                    {
-                        publishInfo = toBeEdited.data.addSet( ContentPropertyNames.PUBLISH_INFO );
-                    }
-                    publishInfo.setInstant( ContentPropertyNames.PUBLISH_FROM, publishFrom );
-                    if ( publishTo == null )
-                    {
-                        publishInfo.removeProperty( ContentPropertyNames.PUBLISH_TO );
-                    }
-                    else
-                    {
-                        publishInfo.setInstant( ContentPropertyNames.PUBLISH_TO, publishTo );
-                    }
-                } ).
+                            PropertySet publishInfo = toBeEdited.data.getSet( ContentPropertyNames.PUBLISH_INFO );
+                            if ( publishInfo == null )
+                            {
+                                publishInfo = toBeEdited.data.addSet( ContentPropertyNames.PUBLISH_INFO );
+                            }
+                            publishInfo.setInstant( ContentPropertyNames.PUBLISH_FROM, publishFrom );
+                            if ( publishTo == null )
+                            {
+                                if(publishInfo.hasProperty( ContentPropertyNames.PUBLISH_TO ))
+                                {
+                                    publishInfo.removeProperty( ContentPropertyNames.PUBLISH_TO );
+                                }
+                            }
+                            else
+                            {
+                                publishInfo.setInstant( ContentPropertyNames.PUBLISH_TO, publishTo );
+                            }
+
+                            if(firstTimePublished.contains( id )) {
+                                publishInfo.setInstant( ContentPropertyNames.PUBLISH_FIRST, now );
+                            }
+                        } ).
                 id( id ).
                 build() );
         }
@@ -82,6 +92,31 @@ public class SetPublishInfoCommand
     }
 
     private NodeIds findNodesWithoutPublishInfo( final NodeIds nodesToPush )
+    {
+        if ( nodesToPush.isEmpty() )
+        {
+            return NodeIds.empty();
+        }
+
+        final NodeQuery query = NodeQuery.create().
+            addQueryFilter( BooleanFilter.create().
+                mustNot( ExistsFilter.create().
+                    fieldName( ContentIndexPath.PUBLISH_FIRST.getPath() ).
+                    build() ).
+                must( IdFilter.create().
+                    fieldName( ContentIndexPath.ID.getPath() ).
+                    values( nodesToPush ).
+                    build() ).
+                build() ).
+            size( NodeQuery.ALL_RESULTS_SIZE_FLAG ).
+            build();
+
+        final FindNodesByQueryResult result = this.nodeService.findByQuery( query );
+
+        return result.getNodeIds();
+    }
+
+    private NodeIds findNodesWithEmptyPublishInfo( final NodeIds nodesToPush )
     {
         if ( nodesToPush.isEmpty() )
         {
