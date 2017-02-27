@@ -10,6 +10,8 @@ import ContentResponse = api.content.resource.result.ContentResponse;
 import ContentIds = api.content.ContentIds;
 import MoveContentResult = api.content.resource.result.MoveContentResult;
 import MoveContentResultFailure = api.content.resource.result.MoveContentResultFailure;
+import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
+import TreeNode = api.ui.treegrid.TreeNode;
 
 export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
@@ -18,6 +20,8 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
     private movedContentSummaries: api.content.ContentSummary[];
 
     private contentPathSubHeader: api.dom.H6El;
+
+    private rootNode: TreeNode<api.content.ContentSummaryAndCompareStatus>;
 
     private moveMask: api.ui.mask.LoadMask;
 
@@ -47,6 +51,7 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
             this.movedContentSummaries = event.getContentSummaries();
             this.destinationSearchInput.clearCombobox();
+            this.rootNode = event.getRootNode();
 
             const contents = event.getContentSummaries();
 
@@ -75,19 +80,66 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
     }
 
     private initMoveAction() {
-
+        this.addClickIgnoredElement(ConfirmationDialog.get());
         this.addAction(new api.ui.Action('Move', '').onExecuted(() => {
-
             this.moveMask.show();
-
-            let parentContent = this.getParentContent();
-            this.moveContent(parentContent);
+            if (this.checkContentWillMoveOutOfSite()) {
+                this.showConfirmationDialog();
+            } else {
+                this.moveContent();
+            }
         }), true);
     }
 
-    private moveContent(parentContent: api.content.ContentSummary) {
-        let parentRoot = (!!parentContent) ? parentContent.getPath() : ContentPath.ROOT;
+    private showConfirmationDialog() {
+        const msg = 'You are about to move content out of its site which might make it unreachable. Are you sure?';
+        const confirmDialog: ConfirmationDialog = ConfirmationDialog.get();
+        confirmDialog
+            .setQuestion(msg)
+            .setYesCallback(() => this.moveContent())
+            .setNoCallback(() => this.moveMask.hide())
+            .open();
+        confirmDialog.getCancelAction().onExecuted(() => this.moveMask.hide());
+    }
 
+    private checkContentWillMoveOutOfSite(): boolean {
+        let result = false;
+        const targetContent = this.getParentContent();
+        let targetPath = (!!targetContent) ? targetContent.getPath() : ContentPath.ROOT;
+
+        for (let i = 0; i < this.movedContentSummaries.length; i++) {
+            let content = this.movedContentSummaries[i];
+            if (!content.isSite()
+                && (!targetContent || !content.getPath().isDescendantOf(targetPath))
+                && this.hasSiteAmongParents(content)) {
+                result = true;
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    private hasSiteAmongParents(content: ContentSummary): boolean {
+        const node = this.rootNode.findNode(content.getId());
+        if (!node) {
+            return false;
+        }
+
+        let nodeParent = node.getParent();
+        while (nodeParent) {
+            if (nodeParent.getData() && nodeParent.getData().getContentSummary().isSite()) {
+                return true;
+            }
+            nodeParent = nodeParent.getParent();
+        }
+
+        return false;
+    }
+
+    private moveContent() {
+        const parentContent = this.getParentContent();
+        let parentRoot = (!!parentContent) ? parentContent.getPath() : ContentPath.ROOT;
         let contentIds = ContentIds.create().fromContentIds(this.movedContentSummaries.map(summary => summary.getContentId())).build();
 
         new api.content.resource.MoveContentRequest(contentIds, parentRoot).sendAndParse().then((response: MoveContentResult) => {
