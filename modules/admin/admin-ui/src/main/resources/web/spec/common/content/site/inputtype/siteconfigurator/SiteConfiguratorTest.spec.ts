@@ -494,7 +494,8 @@ describe('api.content.site.inputtype.siteconfigurator.SiteConfigurator', () => {
                 requireValid: false,
                 publish: {
                     from: '2016-10-24T15:03:47.914Z',
-                    to: '2017-10-24T15:03:47.914Z'
+                    to: '2017-10-24T15:03:47.914Z',
+                    first: '2016-10-24T15:03:47.914Z'
                 }
             }
         );

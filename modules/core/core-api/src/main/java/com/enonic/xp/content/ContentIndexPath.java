@@ -20,6 +20,9 @@ public class ContentIndexPath
     public static final IndexPath PUBLISH_TO =
         IndexPath.from( PropertyPath.from( ContentPropertyNames.PUBLISH_INFO, ContentPropertyNames.PUBLISH_TO ).toString() );
 
+    public static final IndexPath PUBLISH_FIRST =
+        IndexPath.from( PropertyPath.from( ContentPropertyNames.PUBLISH_INFO, ContentPropertyNames.PUBLISH_FIRST ).toString() );
+
     public static final IndexPath REFERENCES = IndexPath.from( "_references" );
 
     public static final IndexPath ID = IndexPath.from( "_id" );
