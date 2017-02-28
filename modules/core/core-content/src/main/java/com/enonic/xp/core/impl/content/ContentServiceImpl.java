@@ -592,6 +592,8 @@ public class ContentServiceImpl
     {
         return RenameContentCommand.create( params ).
             nodeService( this.nodeService ).
+            mixinService( this.mixinService ).
+            siteService( this.siteService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
