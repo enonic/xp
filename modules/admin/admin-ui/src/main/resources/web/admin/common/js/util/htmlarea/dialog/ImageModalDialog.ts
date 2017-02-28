@@ -413,6 +413,11 @@ module api.util.htmlarea.dialog {
         private getDescriptionFromImageContent(imageContent: Content): string {
             let imageInfoMixin = new api.schema.mixin.MixinName('media:imageInfo');
             let imageInfoData = imageContent.getExtraData(imageInfoMixin);
+
+            if (!imageInfoData.getData()) {
+                return null;
+            }
+
             let descriptionProperty = imageInfoData.getData().getProperty('description');
 
             if (descriptionProperty) {
