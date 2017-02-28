@@ -22,7 +22,7 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
         super('application-item-statistics-panel');
 
         this.actionMenu =
-            new api.ui.menu.ActionMenu('Application actions', ApplicationBrowseActions.get().START_APPLICATION,
+            new api.ui.menu.ActionMenu('Stopped', ApplicationBrowseActions.get().START_APPLICATION,
                 ApplicationBrowseActions.get().STOP_APPLICATION);
 
         this.appendChild(this.actionMenu);
