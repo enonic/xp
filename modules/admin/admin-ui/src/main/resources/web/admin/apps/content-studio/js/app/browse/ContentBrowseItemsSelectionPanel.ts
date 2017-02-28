@@ -1,7 +1,6 @@
 import '../../api.ts';
 import {ContentBrowseItem} from './ContentBrowseItem';
 import {ContentTreeGrid} from './ContentTreeGrid';
-import {ShowAllAction} from './action/ShowAllAction';
 
 import BrowseItem = api.app.browse.BrowseItem;
 import BrowseItemsSelectionPanel = api.app.browse.BrowseItemsSelectionPanel;
@@ -14,28 +13,9 @@ import ClearSelectionAction = api.ui.treegrid.actions.ClearSelectionAction;
 
 export class ContentBrowseItemsSelectionPanel extends BrowseItemsSelectionPanel<ContentSummaryAndCompareStatus> {
 
-    private toolbar: Toolbar;
-
     constructor(grid: ContentTreeGrid) {
-        super();
+        super(grid);
         this.addClass('content-browse-items-selection-panel');
-        this.initToolbar(grid);
-    }
-
-    private initToolbar(grid: ContentTreeGrid) {
-        this.toolbar = new Toolbar();
-        const showAllAction = new ShowAllAction(this, grid);
-        const clearAllAction =  new ClearSelectionAction<ContentSummaryAndCompareStatus>(grid);
-        this.toolbar.addAction(showAllAction).addClass('show-all');
-        this.toolbar.addAction(clearAllAction).addClass('clear-all');
-        this.appendChild(this.toolbar);
-        this.addClass('no-toolbar');
-    }
-
-    showAll() {
-        this.toggleClass('no-toolbar', true);
-        this.setItemsLimit(Number.MAX_VALUE);
-        this.updateDisplayedSelection();
     }
 
     getDefaultLimit() {
@@ -46,16 +26,6 @@ export class ContentBrowseItemsSelectionPanel extends BrowseItemsSelectionPanel<
         let viewer = new ContentSummaryAndCompareStatusViewer();
         viewer.setObject(item.getModel());
         return viewer;
-    }
-
-    setItems(items: BrowseItem<ContentSummaryAndCompareStatus>[]): BrowseItemsChanges<ContentSummaryAndCompareStatus> {
-        const changes = super.setItems(items);
-
-        const count = this.getItems().length;
-        const hideToolbar = count <= this.getItemsLimit();
-        this.toggleClass('no-toolbar', hideToolbar);
-
-        return changes;
     }
 
 }
