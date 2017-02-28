@@ -61,7 +61,8 @@ module api.app.browse {
         }
 
         updateDisplayedSelection() {
-            this.itemsContainer.appendChildren(...this.selectionItems.slice(0, this.itemsLimit));
+            const displayed = this.itemsContainer.getChildren().length;
+            this.itemsContainer.appendChildren(...this.selectionItems.slice(displayed, this.itemsLimit));
         }
 
         setMobileView(mobileView: boolean) {
@@ -125,7 +126,12 @@ module api.app.browse {
                 this.resetLimit();
             }
 
-            if (this.items.length === 0) {
+            const displayed = this.itemsContainer.getChildren().length;
+            const selected = this.selectionItems.length;
+
+            if (displayed < selected && displayed < this.getItemsLimit()) {
+                this.updateDisplayedSelection();
+            } else if (this.items.length === 0) {
                 this.addClass('no-selection');
                 this.itemsContainer.setHtml(this.messageForNoSelection);
             }
