@@ -32,7 +32,8 @@ export class SortContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus
     static MAX_FETCH_SIZE: number = 30;
 
     constructor() {
-        super(new TreeGridBuilder<ContentSummaryAndCompareStatus>().setColumnConfig([{
+        super(new TreeGridBuilder<ContentSummaryAndCompareStatus>()
+            .setColumnConfig([{
                 name: 'Name',
                 id: 'displayName',
                 field: 'contentSummary.displayName',
@@ -46,9 +47,17 @@ export class SortContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus
                 formatter: DateTimeFormatter.format,
                 style: {cssClass: 'modified', minWidth: 150, maxWidth: 170},
                 behavior: 'selectAndMove'
-            }]).setPartialLoadEnabled(true).setCheckableRows(false).setShowToolbar(false).setDragAndDrop(true).disableMultipleSelection(
-            true).prependClasses('content-tree-grid').setSelectedCellCssClass('selected-sort-row')
+            }])
+            .setPartialLoadEnabled(true)
+            .setCheckableRows(false)
+            .setShowToolbar(false)
+            .setDragAndDrop(true)
+            .disableMultipleSelection(true)
+            .prependClasses('content-tree-grid')
+            .setSelectedCellCssClass('selected-sort-row')
         );
+
+        this.getOptions().setHeight('100%');
     }
 
     private dragFormatter(row: number, cell: number, value: any, columnDef: any, node: TreeNode<ContentSummaryAndCompareStatus>) {

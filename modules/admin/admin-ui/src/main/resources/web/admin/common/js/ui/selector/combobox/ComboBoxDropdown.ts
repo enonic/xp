@@ -2,25 +2,8 @@ module api.ui.selector.combobox {
 
     import Option = api.ui.selector.Option;
     import DropdownGridConfig = api.ui.selector.DropdownGridConfig;
-    import DropdownGrid = api.ui.selector.DropdownGrid;
-    import DropdownGridRowSelectedEvent = api.ui.selector.DropdownGridRowSelectedEvent;
-
-    export interface ComboBoxDropdownConfig<OPTION_DISPLAY_VALUE> extends DropdownListConfig<OPTION_DISPLAY_VALUE> {
-        multipleSelections: boolean;
-    }
 
     export class ComboBoxDropdown<OPTION_DISPLAY_VALUE> extends DropdownList<OPTION_DISPLAY_VALUE> {
-
-        assembleGridConfig(config: ComboBoxDropdownConfig<OPTION_DISPLAY_VALUE>): DropdownGridConfig<OPTION_DISPLAY_VALUE> {
-            return <DropdownGridConfig<OPTION_DISPLAY_VALUE>> {
-                maxHeight: config.maxHeight,
-                width: config.width,
-                optionDisplayValueViewer: config.optionDisplayValueViewer,
-                filter: config.filter,
-                dataIdProperty: config.dataIdProperty,
-                multipleSelections: config.multipleSelections
-            };
-        }
 
         setOptions(options: Option<OPTION_DISPLAY_VALUE>[], noOptionsText: string, selectedOptions: Option<OPTION_DISPLAY_VALUE>[] = [],
                    saveSelection?: boolean) {
@@ -67,8 +50,8 @@ module api.ui.selector.combobox {
             this.getDropdownGrid().toggleRowSelection(row, isMaximumReached);
         }
 
-        applyMultipleSelection() {
-            this.getDropdownGrid().applyMultipleSelection();
+        resetActiveSelection() {
+            this.getDropdownGrid().resetActiveSelection();
         }
 
         onMultipleSelection(listener: (event: DropdownGridMultipleSelectionEvent) => void) {
