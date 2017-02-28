@@ -1241,6 +1241,7 @@ public class ContentResourceTest
             publishInfo( ContentPublishInfo.create().
                 from( Instant.parse( "2016-11-02T10:36:00Z" ) ).
                 to( Instant.parse( "2016-11-22T10:36:00Z" ) ).
+                first( Instant.parse( "2016-11-02T10:36:00Z" ) ).
                 build() ).
             build();
     }

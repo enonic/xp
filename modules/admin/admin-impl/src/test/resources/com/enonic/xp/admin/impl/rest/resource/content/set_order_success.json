@@ -40,6 +40,7 @@
   "path": "/content-name",
   "permissions": [],
   "publish": {
+    "first" : "2016-11-02T10:36:00Z",
     "from": "2016-11-02T10:36:00Z",
     "to": "2016-11-22T10:36:00Z"
   },
