@@ -29,9 +29,9 @@ export class UnpublishAction extends api.ui.Action {
     }
 
     private fireContentUnpublishPromptEvent(): void {
-        let contentSummary = ContentSummaryAndCompareStatus.fromContentSummary(this.wizard.getPersistedItem());
-        contentSummary.setCompareStatus(this.wizard.getContentCompareStatus()).
-            setPublishStatus(this.wizard.getContentPublishStatus());
-        new ContentUnpublishPromptEvent([contentSummary]).fire();
+        let content = ContentSummaryAndCompareStatus.fromContentSummary(this.wizard.getPersistedItem());
+        content.setCompareStatus(this.wizard.getCompareStatus()).
+            setPublishStatus(this.wizard.getPublishStatus());
+        new ContentUnpublishPromptEvent([content]).fire();
     }
 }

@@ -4,6 +4,7 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 import CompareStatus = api.content.CompareStatus;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
 import PublishStatus = api.content.PublishStatus;
+import ContentSummary = api.content.ContentSummary;
 
 export class ContentRowFormatter {
 
@@ -54,15 +55,14 @@ export class ContentRowFormatter {
 
         // default node
         if (data.getContentSummary()) {
-            const compareStatus: CompareStatus = CompareStatus[CompareStatus[value]];
             const publishStatus: PublishStatus = data.getPublishStatus();
 
-            const compareStatusText = api.content.CompareStatusFormatter.formatStatus(compareStatus);
+            let compareStatusText = api.content.CompareStatusFormatter.formatStatusFromContent(data);
 
             if (PublishStatus[publishStatus] && (publishStatus === PublishStatus.PENDING || publishStatus === PublishStatus.EXPIRED)) {
-                const statusEl = new api.dom.DivEl(ContentRowFormatter.makeClassName(CompareStatus[value]));
+                const statusEl = new api.dom.DivEl(ContentRowFormatter.makeClassName(compareStatusText));
+
                 statusEl.getEl().setText(compareStatusText);
-                statusEl.addClass(ContentRowFormatter.makeClassName(PublishStatus[publishStatus]));
 
                 const publishStatusEl = new api.dom.DivEl();
                 const publishStatusText = api.content.PublishStatusFormatter.formatStatus(publishStatus);
@@ -75,7 +75,7 @@ export class ContentRowFormatter {
             } else {
                 const statusEl = new api.dom.SpanEl();
                 if (CompareStatus[value]) {
-                    statusEl.addClass(ContentRowFormatter.makeClassName(CompareStatus[value]));
+                    statusEl.addClass(ContentRowFormatter.makeClassName(compareStatusText));
                 }
                 statusEl.getEl().setText(compareStatusText);
                 return statusEl.toString();
