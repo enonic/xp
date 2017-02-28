@@ -44,6 +44,14 @@ module api.ui.selector.combobox {
         removeMissingSelectedOptions?: boolean;
 
         skipAutoDropShowOnValueChange?: boolean;
+
+        treegridDropdownEnabled?: boolean;
+
+        optionDataHelper?: OptionDataHelper<T>;
+
+        optionDataLoader?: OptionDataLoader<T>;
+
+        onDropdownShownCallback?: () => wemQ.Promise<void>;
     }
 
     export enum PositionType {
@@ -106,6 +114,8 @@ module api.ui.selector.combobox {
 
         private skipAutoDropShowOnValueChange: boolean = false;
 
+        private onDropdownShownCallback: () => wemQ.Promise<void>;
+
         public static debug: boolean = false;
 
         /**
@@ -147,6 +157,13 @@ module api.ui.selector.combobox {
                 this.skipAutoDropShowOnValueChange = config.skipAutoDropShowOnValueChange;
             }
 
+            this.onDropdownShownCallback = config.onDropdownShownCallback;
+            if (!config.onDropdownShownCallback) {
+                this.onDropdownShownCallback = () => {
+                    return api.util.PromiseHelper.newResolvedVoidPromise();
+                };
+            }
+
             this.noOptionsText = config.noOptionsText;
 
             this.input = new ComboBoxOptionFilterInput();
@@ -166,13 +183,16 @@ module api.ui.selector.combobox {
                 this.appendChild(this.applySelectionsButton);
             }
 
-            this.comboBoxDropdown = new ComboBoxDropdown(<ComboBoxDropdownConfig<OPTION_DISPLAY_VALUE>>{
+            this.comboBoxDropdown = new ComboBoxDropdown(<DropdownGridConfig<OPTION_DISPLAY_VALUE>>{
                 maxHeight: config.maxHeight ? config.maxHeight : 200,
                 width: this.input.getWidth(),
                 optionDisplayValueViewer: config.optionDisplayValueViewer,
                 filter: config.filter,
                 dataIdProperty: config.dataIdProperty,
-                multipleSelections: (this.selectedOptionsView && (config.maximumOccurrences !== 1))
+                multipleSelections: (this.selectedOptionsView && (config.maximumOccurrences !== 1)),
+                isDropdownGrid: config.treegridDropdownEnabled,
+                optionDataHelper: config.optionDataHelper,
+                optionDataLoader: config.optionDataLoader
             });
 
             this.appendChild(this.comboBoxDropdown.getEmptyDropdown());
@@ -351,7 +371,7 @@ module api.ui.selector.combobox {
             this.doUpdateDropdownTopPositionAndWidth();
         }
 
-        private isInputEmpty(): boolean {
+        isInputEmpty(): boolean {
             return this.input.getValue() === '';
         }
 
@@ -366,14 +386,6 @@ module api.ui.selector.combobox {
 
         isIgnoreNextFocus(): boolean {
             return this.ignoreNextFocus;
-        }
-
-        /**
-         * Invoked after
-         */
-        loadOptionsAfterShowDropdown(): wemQ.Promise<void> {
-
-            return api.util.PromiseHelper.newResolvedVoidPromise();
         }
 
         hasOptions(): boolean {
@@ -515,7 +527,7 @@ module api.ui.selector.combobox {
                     filteredOption.push(selectedOptions[k].value);
                 }
             }
-            this.comboBoxDropdown.getDropdownGrid().getElement().getSelectedRows().forEach((row: number) => {
+            this.comboBoxDropdown.getDropdownGrid().getGrid().getSelectedRows().forEach((row: number) => {
                 gridOptions.push(this.comboBoxDropdown.getDropdownGrid().getOptionByRow(row).value);
             });
 
@@ -733,10 +745,9 @@ module api.ui.selector.combobox {
                     } else {
                         this.showDropdown();
                         this.giveInputFocus();
-                        this.loadOptionsAfterShowDropdown().catch((reason: any) => {
+                        this.onDropdownShownCallback().catch((reason: any) => {
                             api.DefaultErrorHandler.handle(reason);
                         });
-
                     }
                 }
             });
@@ -763,7 +774,7 @@ module api.ui.selector.combobox {
 
                 if (!this.isDropdownShown()) {
                     this.showDropdown();
-                    this.loadOptionsAfterShowDropdown().then(() => {
+                    this.onDropdownShownCallback().then(() => {
                         this.comboBoxDropdown.navigateToRowIfNotActive();
                     }).catch((reason: any) => {
                         api.DefaultErrorHandler.handle(reason);
@@ -823,7 +834,7 @@ module api.ui.selector.combobox {
 
                 if (event.which === 40) { // down
 
-                    this.loadOptionsAfterShowDropdown().then(() => {
+                    this.onDropdownShownCallback().then(() => {
 
                         this.comboBoxDropdown.navigateToRowIfNotActive();
                         this.input.setReadOnly(true);
@@ -850,6 +861,12 @@ module api.ui.selector.combobox {
                         this.input.setReadOnly(true);
                     }
                 }
+                break;
+            case 37: //left
+                this.comboBoxDropdown.getDropdownGrid().collapseActiveRow();
+                break;
+            case 39: //right
+                this.comboBoxDropdown.getDropdownGrid().expandActiveRow();
                 break;
             case 40: // down
                 if (this.comboBoxDropdown.hasActiveRow()) {
@@ -947,7 +964,7 @@ module api.ui.selector.combobox {
 
             let gridOptions = [];
 
-            this.comboBoxDropdown.getDropdownGrid().getElement().getSelectedRows().forEach((row: number) => {
+            this.comboBoxDropdown.getDropdownGrid().getGrid().getSelectedRows().forEach((row: number) => {
                 gridOptions.push(this.comboBoxDropdown.getDropdownGrid().getOptionByRow(row).value);
             });
 
@@ -977,8 +994,7 @@ module api.ui.selector.combobox {
         }
 
         private notifyOptionFilterInputValueChanged(oldValue: string, newValue: string) {
-            let event = new OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>(oldValue, newValue,
-                this.comboBoxDropdown.getDropdownGrid().getElement());
+            let event = new OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>(oldValue, newValue);
             this.optionFilterInputValueChangedListeners.forEach(
                 (listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
                     listener(event);
@@ -1062,11 +1078,11 @@ module api.ui.selector.combobox {
         }
 
         onScrolled(listener: (event: WheelEvent) => void) {
-            this.comboBoxDropdown.getDropdownGrid().getElement().subscribeOnScrolled(listener);
+            this.comboBoxDropdown.getDropdownGrid().getGrid().subscribeOnScrolled(listener);
         }
 
         onScroll(listener: (event: Event) => void) {
-            this.comboBoxDropdown.getDropdownGrid().getElement().subscribeOnScroll(listener);
+            this.comboBoxDropdown.getDropdownGrid().getGrid().subscribeOnScroll(listener);
         }
     }
 

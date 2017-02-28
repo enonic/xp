@@ -57,8 +57,7 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
             const deferred = wemQ.defer<ContentType[]>();
             wemQ.all(contentTypeRequests).spread((...filterContentTypes: ContentType[]) => {
-                const filterContentPaths = contents.map((content)=> content.getPath());
-                this.destinationSearchInput.setFilterContentPaths(filterContentPaths);
+                this.destinationSearchInput.setFilterContents(contents);
                 this.destinationSearchInput.setFilterContentTypes(filterContentTypes);
                 this.contentPathSubHeader.setHtml(contents.length === 1 ? contents[0].getPath().toString() : '');
                 this.open();

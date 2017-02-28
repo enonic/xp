@@ -72,6 +72,8 @@ module api.ui.treegrid {
 
         private highlightedNode: TreeNode<DATA>;
 
+        protected highlightingEnabled: boolean = true;
+
         private interval: number;
 
         constructor(builder: TreeGridBuilder<DATA>) {
@@ -358,10 +360,6 @@ module api.ui.treegrid {
             const node = this.gridData.getItem(data.row);
             elem.removeClass('collapse').addClass('expand');
             this.collapseNode(node);
-            /*
-             if (!this.gridOptions.isMultipleSelectionDisabled()) {
-             this.highlightCurrentNode();
-             }*/
         }
 
         private onRowSelected(data: Slick.OnClickEventData) {
@@ -523,6 +521,16 @@ module api.ui.treegrid {
             }
         }
 
+        expandRow(row: number) {
+            let node = this.gridData.getItem(row);
+            this.expandNode(node);
+        }
+
+        collapseRow(row: number) {
+            let node = this.gridData.getItem(row);
+            this.collapseNode(node);
+        }
+
         private onAwithModKeyPress = (event: ExtendedKeyboardEvent) => {
             let selected = this.grid.getSelectedRows();
             if (selected.length === this.gridData.getLength()) {
@@ -619,6 +627,9 @@ module api.ui.treegrid {
         }
 
         private highlightRowByNode(node: TreeNode<DATA>) {
+            if (!this.highlightingEnabled) {
+                return;
+            }
             if (!this.highlightedNode || this.highlightedNode !== node) {
                 this.unhighlightCurrentRow();
                 this.highlightedNode = node;
