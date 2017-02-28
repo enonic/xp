@@ -34,7 +34,7 @@ export class ContentMoveComboBox extends api.ui.selector.combobox.RichComboBox<C
         this.getComboBox().getComboBoxDropdownGrid().setReadonlyChecker(this.readonlyChecker.isReadOnly.bind(this.readonlyChecker));
         this.onOptionDeselected(() => {
             this.getComboBox().getInput().reset();
-        })
+        });
     }
 
     getLoader(): MoveContentSummaryLoader {
