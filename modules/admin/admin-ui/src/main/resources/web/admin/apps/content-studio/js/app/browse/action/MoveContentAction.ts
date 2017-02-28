@@ -12,7 +12,7 @@ export class MoveContentAction extends Action {
         this.onExecuted(() => {
             let contents: api.content.ContentSummaryAndCompareStatus[]
                 = grid.getSelectedDataList();
-            new MoveContentEvent(contents).fire();
+            new MoveContentEvent(contents, grid.getRoot().getCurrentRoot()).fire();
         });
     }
 }
