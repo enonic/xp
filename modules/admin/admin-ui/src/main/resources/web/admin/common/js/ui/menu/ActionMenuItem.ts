@@ -12,16 +12,22 @@ module api.ui.menu {
             this.getEl().setInnerHtml(this.action.getLabel());
 
             this.action.onPropertyChanged(() => {
-                if (this.action.isEnabled()) {
-                    this.show();
-                } else if (!this.action.isEnabled()) {
-                    this.hide();
-                }
+                this.updateVisibilityState();
             });
 
             this.onClicked(() => {
                 this.action.execute();
             });
+
+            this.updateVisibilityState();
+        }
+
+        private updateVisibilityState() {
+            if (this.action.isEnabled()) {
+                this.show();
+            } else if (!this.action.isEnabled()) {
+                this.hide();
+            }
         }
     }
 }
