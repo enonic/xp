@@ -862,6 +862,12 @@ module api.ui.selector.combobox {
                     }
                 }
                 break;
+            case 37: //left
+                this.comboBoxDropdown.getDropdownGrid().collapseActiveRow();
+                break;
+            case 39: //right
+                this.comboBoxDropdown.getDropdownGrid().expandActiveRow();
+                break;
             case 40: // down
                 if (this.comboBoxDropdown.hasActiveRow()) {
                     this.comboBoxDropdown.navigateToNextRow();

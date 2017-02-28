@@ -80,10 +80,14 @@ module api.ui.treegrid {
                 // It is necessary to turn off the library key handling. It may cause
                 // the conflicts with Mousetrap, which leads to skipping the key events
                 // Do not set to true, if you are not fully aware of the result
-            setEnableCellNavigation(false).setEnableColumnReorder(false).setForceFitColumns(true).setHideColumnHeaders(
-                true).setCheckableRows(true).setRowHeight(
-                45).setHeight('100%').setWidth(
-                '100%').
+                setEnableCellNavigation(false).
+                setEnableColumnReorder(false).
+                setForceFitColumns(true).
+                setHideColumnHeaders(true).
+                setCheckableRows(true).
+                setRowHeight(45).
+                setHeight('100%').
+                setWidth('100%').
                 build();
         }
 

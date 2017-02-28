@@ -24,6 +24,9 @@ module api.ui.selector {
                     .setLoadBufferSize(20)// rows count
                     .setAutoLoad(false)
                     .prependClasses('dropdown-tree-grid')
+                    .setRowHeight(45)
+                    .setHotkeysEnabled(true)
+                    .disableMultipleSelection(true)
                     .setShowToolbar(false);
 
             builder.getOptions().setDataItemColumnValueExtractor(builder.nodeExtractor);
@@ -32,6 +35,8 @@ module api.ui.selector {
             this.loader = loader;
             this.treeDataHelper = treeDataHelper;
             this.isSelfManaging = true;
+            this.highlightingEnabled = false;
+
             this.initEventHandlers();
         }
 

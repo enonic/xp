@@ -94,7 +94,18 @@
   }
 }
 
-.dropdown-tree-grid .grid .slick-row.readonly {
-  opacity: 0.5;
-  pointer-events: none;
+.dropdown-tree-grid .grid {
+  .slick-row {
+    &.readonly {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    .toggle.icon {
+      margin-right: 0px;
+      &.expand, &.collapse {
+        padding-left: 10px;
+        margin-right: 10px;
+      }
+    }
+  }
 }

@@ -31,6 +31,20 @@ module api.ui.selector {
             super(config);
         }
 
+        expandActiveRow() {
+            if (!this.hasActiveRow()) {
+                return;
+            }
+            this.optionsTreeGrid.expandRow(this.getActiveRow());
+        }
+
+        collapseActiveRow() {
+            if (!this.hasActiveRow()) {
+                return;
+            }
+            this.optionsTreeGrid.collapseRow(this.getActiveRow());
+        }
+
         reload(): wemQ.Promise<void> {
             return this.optionsTreeGrid.reload();
         }

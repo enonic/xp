@@ -269,6 +269,14 @@ module api.ui.selector {
             return !activeCell ? -1 : activeCell.row;
         }
 
+        expandActiveRow() {
+            this.getGrid().navigateDown();
+        }
+
+        collapseActiveRow() {
+            this.getGrid().navigateUp();
+        }
+
         navigateToRow(row: number) {
             this.getGrid().setActiveCell(row, 0);
         }
