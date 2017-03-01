@@ -1,7 +1,19 @@
 .content-browse-toolbar {
   overflow: visible;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: flex-end;
+  align-content: stretch;
+
+  overflow: visible;
   .fold-button .@{_COMMON_PREFIX}dropdown .@{_COMMON_PREFIX}:hover {
     background-color: @admin-bg-light-gray;
+  }
+
+  button, .fold-button, .content-publish-menu {
+    flex: 0 0 auto;
   }
 }
 
@@ -34,8 +46,9 @@ button.icon-toolbar-settings {
   .non-mobile-details-panel-toggle-button {
     .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent, true);
     z-index: 2;
-    float: right;
     line-height: 22px;
+
+    order: 1;
 
     display: block;
     background-color: transparent;
