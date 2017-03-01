@@ -11,7 +11,7 @@ function handleGet() {
         assetsUri: portal.assetUrl({
             path: ''
         }),
-        appName: 'Users',
+        appName: 'Applications',
         appId: app.name,
         xpVersion: app.version
     };
