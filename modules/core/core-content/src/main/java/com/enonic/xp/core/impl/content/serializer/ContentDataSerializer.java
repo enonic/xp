@@ -42,6 +42,7 @@ import static com.enonic.xp.content.ContentPropertyNames.MODIFIED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.MODIFIER;
 import static com.enonic.xp.content.ContentPropertyNames.OWNER;
 import static com.enonic.xp.content.ContentPropertyNames.PAGE;
+import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_FIRST;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_FROM;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_INFO;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_TO;
@@ -156,6 +157,7 @@ public final class ContentDataSerializer
             final PropertySet publishInfo = contentAsData.addSet( PUBLISH_INFO );
             publishInfo.addInstant( PUBLISH_FROM, data.getFrom() );
             publishInfo.addInstant( PUBLISH_TO, data.getTo() );
+            publishInfo.addInstant( PUBLISH_FIRST, data.getFirst() );
         }
     }
 
@@ -193,6 +195,7 @@ public final class ContentDataSerializer
             builder.publishInfo( ContentPublishInfo.create().
                 from( publishInfo.getInstant( PUBLISH_FROM ) ).
                 to( publishInfo.getInstant( PUBLISH_TO ) ).
+                first( publishInfo.getInstant( PUBLISH_FIRST ) ).
                 build() );
         }
     }

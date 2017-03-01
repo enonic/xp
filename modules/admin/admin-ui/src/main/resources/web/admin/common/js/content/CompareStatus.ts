@@ -15,13 +15,24 @@ module api.content {
     }
 
     export class CompareStatusFormatter {
-        public static formatStatus(compareStatus: CompareStatus): string {
+
+        public static formatStatusFromContent(content: ContentSummaryAndCompareStatus): string {
+            if(content) {
+                return CompareStatusFormatter.formatStatus(content.getCompareStatus(), content.getContentSummary());
+            }
+        }
+
+        public static formatStatus(compareStatus: CompareStatus, content?:ContentSummary): string {
 
             let status;
 
             switch (compareStatus) {
             case CompareStatus.NEW:
-                status = 'Offline';
+                if(content && !content.getFirstPublishedTime()) {
+                    status = 'New';
+                } else {
+                    status = 'Offline';
+                }
                 break;
             case CompareStatus.NEWER:
                 status = 'Modified';
