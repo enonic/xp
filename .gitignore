@@ -4,6 +4,7 @@ temp/
 temp/*.*
 target/
 .gradle/
+node_modules/
 *.iws
 *.ids
 *.iml

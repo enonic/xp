@@ -111,6 +111,7 @@ addBundle( project( ':blobstore:blobstore-file' ), 22 )
 
 // Applications
 addBundle( project( ':app:app-standardidprovider' ), 32 )
+addBundle( project( ':app:app-users' ), 32 )
 
 def addBundle( dep, level )
 {

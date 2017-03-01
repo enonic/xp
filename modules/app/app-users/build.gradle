@@ -1,0 +1,23 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+apply plugin: 'com.moowork.node'
+
+dependencies {
+    include project( ":lib:lib-mustache" )
+    include project( ":lib:lib-portal" )
+    include project( ":lib:lib-admin" )
+}
+
+bundle {
+    instruction 'Bundle-Name', 'Admin Users App'
+    instruction 'X-Bundle-Type', 'system'
+    instruction 'Include-Resource', "assets/app=${buildDir}/app"
+}
+
+task webpack( type: NodeTask, dependsOn: npmInstall ) {
+    description = 'Build UI resources (ts, css, etc).'
+    inputs.dir 'src/main'
+    outputs.dir "${buildDir}/app"
+    script = file( './node_modules/.bin/webpack' )
+}
+
+jar.dependsOn += webpack
