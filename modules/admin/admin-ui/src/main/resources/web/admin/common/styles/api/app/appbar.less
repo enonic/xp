@@ -55,6 +55,14 @@
         color: rgba(255,255,255,0.5);
       }
     }
+
+    // Keep clickable and focusable in User Manager only
+    &:not(.icon-user-manager) {
+      &, &:focus {
+        opacity: 1.0 !important;
+        cursor: default;
+      }
+    }
   }
 }
 
