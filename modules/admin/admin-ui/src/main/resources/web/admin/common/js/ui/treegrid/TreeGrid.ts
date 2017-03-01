@@ -1455,7 +1455,21 @@ module api.ui.treegrid {
         }
 
         isAllSelected(): boolean {
-            return this.grid.isAllSelected();
+            if (this.grid.isAllSelected()) {
+                return true;
+            }
+
+            let selectedNodes = this.grid.getSelectedRows();
+
+            if (!selectedNodes) {
+                return false;
+            }
+
+            let nonEmptyNodes = this.gridData.getItems().filter((data: TreeNode<DATA>) => {
+                return (!!data && data.getDataId() !== '');
+            });
+
+            return nonEmptyNodes.length === selectedNodes.length;
         }
 
         protected updateExpanded() {
