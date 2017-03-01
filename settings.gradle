@@ -20,6 +20,7 @@ include 'core:core-macro'
 include 'core:core-task'
 
 include 'server:server-config'
+include 'server:server-deploy'
 include 'server:server-shell'
 include 'server:server-status'
 include 'server:server-udc'

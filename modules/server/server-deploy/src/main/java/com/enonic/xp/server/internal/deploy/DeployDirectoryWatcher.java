@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.app;
+package com.enonic.xp.server.internal.deploy;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -24,19 +24,13 @@ import com.google.common.io.Files;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.config.ConfigBuilder;
-import com.enonic.xp.config.ConfigInterpolator;
-import com.enonic.xp.config.Configuration;
+import com.enonic.xp.home.HomeDir;
 
-@Component(immediate = true, configurationPid = "com.enonic.xp.app.deploy")
-public class ApplicationDeployDirectoryWatcher
+@Component(immediate = true, configurationPid = "com.enonic.xp.server.deploy")
+public final class DeployDirectoryWatcher
     implements FileAlterationListener
 {
-    private final static Logger LOGGER = LoggerFactory.getLogger( ApplicationDeployDirectoryWatcher.class );
-
-    private static final String DEPLOY_PATH_PROPERTY_KEY = "deploy.path";
-
-    private static final String DEPLOY_INTERVAL_PROPERTY_KEY = "deploy.interval";
+    private final static Logger LOGGER = LoggerFactory.getLogger( DeployDirectoryWatcher.class );
 
     private static final IOFileFilter FILTER =
         FileFilterUtils.and( FileFilterUtils.fileFileFilter(), FileFilterUtils.suffixFileFilter( ".jar" ) );
@@ -47,36 +41,40 @@ public class ApplicationDeployDirectoryWatcher
 
     private ApplicationService applicationService;
 
-    private Configuration config;
-
     private FileAlterationMonitor monitor;
 
-
     @Activate
-    public void activate( final Map<String, String> map )
+    public void activate( final DeployConfig config )
         throws Exception
     {
-        config = ConfigBuilder.create().
-            load( getClass(), "default.properties" ).
-            addAll( map ).
-            build();
-        config = new ConfigInterpolator().interpolate( this.config );
-
-        final File deployFolder = new File( config.get( DEPLOY_PATH_PROPERTY_KEY ) );
+        final File deployFolder = getDeployFolder();
         final FileAlterationObserver observer = new FileAlterationObserver( deployFolder, FILTER );
         observer.addListener( this );
 
-        if ( deployFolder.exists() )
+        installApps( deployFolder );
+
+        this.monitor = new FileAlterationMonitor( config.interval(), observer );
+        this.monitor.start();
+    }
+
+    private void installApps( final File dir )
+        throws Exception
+    {
+        if ( !dir.exists() )
         {
-            for ( File deployedApplicationFile : deployFolder.listFiles( (FilenameFilter) FILTER ) )
-            {
-                installApplication( deployedApplicationFile );
-            }
+            return;
         }
 
-        final long interval = config.get( DEPLOY_INTERVAL_PROPERTY_KEY, Long.class );
-        monitor = new FileAlterationMonitor( interval, observer );
-        monitor.start();
+        final File[] files = dir.listFiles( (FilenameFilter) FILTER );
+        if ( files == null )
+        {
+            return;
+        }
+
+        for ( final File file : files )
+        {
+            installApplication( file );
+        }
     }
 
     @Deactivate
@@ -158,15 +156,16 @@ public class ApplicationDeployDirectoryWatcher
         //Installs the application
         final ByteSource byteSource = Files.asByteSource( file );
         final Application application =
-            ApplicationHelper.runAsAdmin( () -> applicationService.installLocalApplication( byteSource, file.getName() ) );
+            DeployHelper.runAsAdmin( () -> applicationService.installLocalApplication( byteSource, file.getName() ) );
         final ApplicationKey applicationKey = application.getKey();
         final String path = file.getPath();
 
         //Stores a mapping fileName -> applicationKey. Needed for uninstallation
-        applicationKeyByPath.put( path, applicationKey );
+        this.applicationKeyByPath.put( path, applicationKey );
 
         //Updates the mapping applicationKey -> stack<fileName>. Needed in some particular case for uninstallatioon
-        pathsByApplicationKey.compute( applicationKey, ( applicationKeyParam, fileNameStack ) -> {
+        this.pathsByApplicationKey.compute( applicationKey, ( applicationKeyParam, fileNameStack ) ->
+        {
             if ( fileNameStack == null )
             {
                 fileNameStack = new Stack<>();
@@ -184,7 +183,8 @@ public class ApplicationDeployDirectoryWatcher
         final String path = file.getPath();
         final ApplicationKey applicationKey = applicationKeyByPath.remove( path );
 
-        pathsByApplicationKey.computeIfPresent( applicationKey, ( applicationKeyParam, fileNameStack ) -> {
+        this.pathsByApplicationKey.computeIfPresent( applicationKey, ( applicationKeyParam, fileNameStack ) ->
+        {
 
             if ( fileNameStack == null )
             {
@@ -198,7 +198,7 @@ public class ApplicationDeployDirectoryWatcher
             if ( path.equals( lastInstalledFile ) )
             {
                 //Uninstall the corresponding application
-                ApplicationHelper.runAsAdmin( () -> this.applicationService.uninstallApplication( applicationKey, false ) );
+                DeployHelper.runAsAdmin( () -> this.applicationService.uninstallApplication( applicationKey, false ) );
                 fileNameStack.pop();
 
                 // If there is a previous file with the same applicationKey
@@ -207,7 +207,7 @@ public class ApplicationDeployDirectoryWatcher
                     //Installs this previous application
                     final String previousInstalledFile = fileNameStack.peek();
                     final ByteSource byteSource = Files.asByteSource( new File( previousInstalledFile ) );
-                    ApplicationHelper.runAsAdmin( () -> applicationService.installLocalApplication( byteSource, previousInstalledFile ) );
+                    DeployHelper.runAsAdmin( () -> applicationService.installLocalApplication( byteSource, previousInstalledFile ) );
                 }
             }
             else
@@ -223,5 +223,10 @@ public class ApplicationDeployDirectoryWatcher
     public void setApplicationService( final ApplicationService applicationService )
     {
         this.applicationService = applicationService;
+    }
+
+    private static File getDeployFolder()
+    {
+        return new File( HomeDir.get().toFile(), "deploy" );
     }
 }
