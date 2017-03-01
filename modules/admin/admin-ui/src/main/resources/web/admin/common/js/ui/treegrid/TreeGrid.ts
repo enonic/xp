@@ -236,7 +236,7 @@ module api.ui.treegrid {
         };
 
         private bindClickEvents() {
-            let clickHandler = api.util.AppHelper.debounce(((event, data) => {
+            let clickHandler = ((event, data) => {
                 if (!this.isActive()) {
                     return;
                 }
@@ -283,7 +283,7 @@ module api.ui.treegrid {
                 if (!elem.hasClass('sort-dialog-trigger')) {
                     new TreeGridItemClickedEvent(!!this.getFirstSelectedOrHighlightedNode()).fire();
                 }
-            }).bind(this), 50, false);
+            });
 
             this.grid.subscribeOnClick(clickHandler);
         }

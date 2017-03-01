@@ -11,10 +11,6 @@ module api.ui.grid {
 
         private defaultAutoRenderGridOnDataChanges: boolean = true;
 
-        private checkableRows: boolean;
-
-        private dragAndDrop: boolean;
-
         private slickGrid: Slick.Grid<T>;
 
         private dataView: DataView<T>;
@@ -26,6 +22,8 @@ module api.ui.grid {
         private loadMask: api.ui.mask.LoadMask;
 
         private debounceSelectionChange: boolean;
+
+        private onClickListeners: ((e: any, args: any) => void) [] = [];
 
         public static debug: boolean = false;
 
@@ -39,17 +37,15 @@ module api.ui.grid {
                 this.addClass('no-header');
             }
 
-            this.checkboxSelectorPlugin = null;
-            this.checkableRows = options.isCheckableRows() || false;
-            this.dragAndDrop = options.isDragAndDrop() || false;
-            if (this.checkableRows) {
+            if (options.isCheckableRows()) {
                 this.checkboxSelectorPlugin = new Slick.CheckboxSelectColumn({
                     cssClass: 'slick-cell-checkboxsel',
                     width: 40
                 });
                 columns.unshift(<GridColumn<T>>this.checkboxSelectorPlugin.getColumnDefinition());
             }
-            if (this.dragAndDrop) {
+
+            if (options.isDragAndDrop()) {
                 this.rowManagerPlugin = new Slick.RowMoveManager({
                     cancelEditOnDrag: true
                 });
@@ -75,6 +71,12 @@ module api.ui.grid {
 
             // The only way to dataIdProperty before adding items
             this.dataView.setItems([], options.getDataIdProperty());
+
+            let clickListener = api.util.AppHelper.debounce((e, args) => {
+                this.notifyClicked(e, args);
+            }, 50);
+
+            this.slickGrid.onClick.subscribe(clickListener);
         }
 
         protected createOptions(): api.ui.grid.GridOptions<any> {
@@ -508,12 +510,20 @@ module api.ui.grid {
             });
         }
 
-        subscribeOnClick(callback: (e: any, args: any) => void) {
-            this.slickGrid.onClick.subscribe(callback);
+        subscribeOnClick(listener: (e: any, args: any) => void) {
+            this.onClickListeners.push(listener);
         }
 
-        unsubscribeOnClick(callback: (e: any, args: any) => void) {
-            this.slickGrid.onClick.unsubscribe(callback);
+        unsubscribeOnClick(listener: (e: any, args: any) => void) {
+            this.onClickListeners = this.onClickListeners.filter(function (curr: (e: any, args: any) => void) {
+                return curr !== listener;
+            });
+        }
+
+        private notifyClicked(e: any, args: any) {
+            this.onClickListeners.forEach((listener: (e: any, args: any) => void) => {
+                listener(e, args);
+            });
         }
 
         subscribeOnDblClick(callback: (e: any, args: any) => void) {
