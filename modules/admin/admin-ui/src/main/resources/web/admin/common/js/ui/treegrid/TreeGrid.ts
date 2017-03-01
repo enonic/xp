@@ -72,6 +72,8 @@ module api.ui.treegrid {
 
         private highlightedNode: TreeNode<DATA>;
 
+        protected highlightingEnabled: boolean = true;
+
         private interval: number;
 
         constructor(builder: TreeGridBuilder<DATA>) {
@@ -240,7 +242,6 @@ module api.ui.treegrid {
                 }
 
                 const elem = new ElementHelper(event.target);
-                const isMultiSelect = !this.gridOptions.isMultipleSelectionDisabled();
 
                 if (this.contextMenu) {
                     this.contextMenu.hide();
@@ -271,17 +272,13 @@ module api.ui.treegrid {
                 this.setActive(true);
 
                 // Checkbox is clicked
-                if (elem.hasClass('slick-cell-checkboxsel') || elem.hasAnyParentClass('slick-cell-checkboxsel')) {
-                    this.onCheckboxClicked(data);
+                if (this.gridOptions.isMultipleSelectionDisabled() || elem.hasClass('slick-cell-checkboxsel') ||
+                    elem.hasAnyParentClass('slick-cell-checkboxsel')) {
+                    this.onRowSelected(data);
                     return;
                 }
 
-                // A cell in the row is clicked
-                if (isMultiSelect) {
-                    this.onCellClicked(elem, data);
-                } else {
-                    this.root.clearStashedSelection();
-                }
+                this.onRowHighlighted(elem, data);
 
                 if (!elem.hasClass('sort-dialog-trigger')) {
                     new TreeGridItemClickedEvent(!!this.getFirstSelectedOrHighlightedNode()).fire();
@@ -363,16 +360,14 @@ module api.ui.treegrid {
             const node = this.gridData.getItem(data.row);
             elem.removeClass('collapse').addClass('expand');
             this.collapseNode(node);
-            /*
-            if (!this.gridOptions.isMultipleSelectionDisabled()) {
-                this.highlightCurrentNode();
-            }*/
         }
 
-        private onCheckboxClicked(data: Slick.OnClickEventData) {
+        private onRowSelected(data: Slick.OnClickEventData) {
             const node = this.gridData.getItem(data.row);
+
             if (this.gridOptions.isMultipleSelectionDisabled()) {
-                this.grid.toggleRow(data.row);
+                this.root.clearStashedSelection();
+                this.grid.selectRow(data.row);
                 return;
             }
 
@@ -385,7 +380,7 @@ module api.ui.treegrid {
             this.grid.toggleRow(data.row);
         }
 
-        private onCellClicked(elem: ElementHelper, data: Slick.OnClickEventData) {
+        private onRowHighlighted(elem: ElementHelper, data: Slick.OnClickEventData) {
             const node = this.gridData.getItem(data.row);
             const clickedRow = wemjq(elem.getHTMLElement()).closest('.slick-row');
             const isRowSelected = this.grid.isRowSelected(data.row);
@@ -526,6 +521,16 @@ module api.ui.treegrid {
             }
         }
 
+        expandRow(row: number) {
+            let node = this.gridData.getItem(row);
+            this.expandNode(node);
+        }
+
+        collapseRow(row: number) {
+            let node = this.gridData.getItem(row);
+            this.collapseNode(node);
+        }
+
         private onAwithModKeyPress = (event: ExtendedKeyboardEvent) => {
             let selected = this.grid.getSelectedRows();
             if (selected.length === this.gridData.getLength()) {
@@ -612,7 +617,7 @@ module api.ui.treegrid {
             return wemjq(cell).closest('.slick-row');
         }
 
-        private highlightCurrentNode() {
+        protected highlightCurrentNode(silent: boolean = false) {
             if (!this.highlightedNode) {
                 return;
             }
@@ -622,6 +627,9 @@ module api.ui.treegrid {
         }
 
         private highlightRowByNode(node: TreeNode<DATA>) {
+            if (!this.highlightingEnabled) {
+                return;
+            }
             if (!this.highlightedNode || this.highlightedNode !== node) {
                 this.unhighlightCurrentRow();
                 this.highlightedNode = node;
@@ -942,11 +950,7 @@ module api.ui.treegrid {
         }
 
         dataToTreeNode(data: DATA, parent: TreeNode<DATA>): TreeNode<DATA> {
-            return new TreeNodeBuilder<DATA>().
-                setData(data, this.getDataId(data)).
-                setExpanded(this.expandAll).
-                setParent(parent).
-                build();
+            return new TreeNodeBuilder<DATA>().setData(data, this.getDataId(data)).setExpanded(this.expandAll).setParent(parent).build();
         }
 
         dataToTreeNodes(dataArray: DATA[], parent: TreeNode<DATA>): TreeNode<DATA>[] {
@@ -1003,7 +1007,7 @@ module api.ui.treegrid {
         }
 
         selectAll() {
-            this.unhighlightCurrentRow();
+            this.unhighlightCurrentRow(true);
             let rows = [];
             for (let i = 0; i < this.gridData.getLength(); i++) {
                 if (!api.util.StringHelper.isEmpty(this.gridData.getItem(i).getDataId())) {
@@ -1014,7 +1018,7 @@ module api.ui.treegrid {
         }
 
         deselectAll() {
-            this.unhighlightCurrentRow();
+            this.unhighlightCurrentRow(true);
             this.grid.clearSelection();
         }
 
@@ -1326,8 +1330,8 @@ module api.ui.treegrid {
                         }
                         deferred.resolve(null);
                     }).catch((reason: any) => {
-                        this.handleError(reason);
-                        deferred.reject(reason);
+                    this.handleError(reason);
+                    deferred.reject(reason);
                 });
             } else {
                 this.doInsertNodeToParentWithChildren(parentNode, data, root, index, stashedParentNode, isRootParentNode);
@@ -1441,9 +1445,9 @@ module api.ui.treegrid {
                             }
                             deferred.resolve(true);
                         }).catch((reason: any) => {
-                            this.handleError(reason);
-                            deferred.resolve(false);
-                        }).done(() => this.notifyLoaded());
+                        this.handleError(reason);
+                        deferred.resolve(false);
+                    }).done(() => this.notifyLoaded());
                 }
             }
 

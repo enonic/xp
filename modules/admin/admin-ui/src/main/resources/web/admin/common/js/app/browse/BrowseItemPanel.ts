@@ -7,7 +7,7 @@ module api.app.browse {
 
         private itemsSelectionPanel: BrowseItemsSelectionPanel<M>;
 
-        constructor(grid?: TreeGrid<M>) {
+        constructor(grid: TreeGrid<M>) {
             super('browse-item-panel');
 
             this.itemsSelectionPanel = this.createItemSelectionPanel(grid);
@@ -18,8 +18,8 @@ module api.app.browse {
             this.showPanelByIndex(0);
         }
 
-        createItemSelectionPanel(grid?: TreeGrid<M>): BrowseItemsSelectionPanel<M> {
-            return new BrowseItemsSelectionPanel<M>();
+        createItemSelectionPanel(grid: TreeGrid<M>): BrowseItemsSelectionPanel<M> {
+            return new BrowseItemsSelectionPanel<M>(grid);
         }
 
         createItemStatisticsPanel(): api.app.view.ItemStatisticsPanel<M> {

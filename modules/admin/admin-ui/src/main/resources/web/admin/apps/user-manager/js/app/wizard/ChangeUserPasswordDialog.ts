@@ -6,6 +6,7 @@ import PasswordGenerator = api.ui.text.PasswordGenerator;
 import DialogButton = api.ui.dialog.DialogButton;
 import FormItemBuilder = api.ui.form.FormItemBuilder;
 import Validators = api.ui.form.Validators;
+import DefaultErrorHandler = api.DefaultErrorHandler;
 
 export class ChangeUserPasswordDialog extends api.ui.dialog.ModalDialog {
 
@@ -60,7 +61,7 @@ export class ChangeUserPasswordDialog extends api.ui.dialog.ModalDialog {
                 this.password.getValue()).sendAndParse().then((result) => {
                 api.notify.showFeedback('Password was changed!');
                 this.close();
-            });
+            }).catch(DefaultErrorHandler.handle);
         }));
         this.changePasswordButton.setEnabled(false);
     }

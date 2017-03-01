@@ -138,6 +138,7 @@ export class PageComponentsView extends api.dom.DivEl {
     private initMask() {
         this.mask = new Mask(this.tree);
         this.appendChild(this.mask);
+        this.applyMaskToTree();
 
         if (this.pageView.isLocked()) {
             this.mask.show();
@@ -288,14 +289,14 @@ export class PageComponentsView extends api.dom.DivEl {
         };
 
         this.dblClickListener = (event, data) => {
-            if(this.pageView.isLocked()) {
+            if (this.pageView.isLocked()) {
                 return;
             }
 
             let clickedItemView: ItemView = this.tree.getGrid().getDataView().getItem(data.row).getData();
             let isTextComponent = api.ObjectHelper.iFrameSafeInstanceOf(clickedItemView, TextComponentView);
 
-            if(isTextComponent) {
+            if (isTextComponent) {
                 this.editTextComponent(clickedItemView);
             }
         };
@@ -364,7 +365,15 @@ export class PageComponentsView extends api.dom.DivEl {
         this.tree.onLoaded(() => {
             this.bindTextComponentViewsUpdateOnTextModify();
             this.subscribeOnFragmentLoadError();
+            this.applyMaskToTree();
         });
+    }
+
+    private applyMaskToTree() {
+        if (!this.mask || !this.tree) {
+            return;
+        }
+        this.mask.getEl().setHeightPx(this.tree.getEl().getHeight());
     }
 
     private highlightInvalidItems() {
@@ -717,7 +726,7 @@ export class PageComponentsView extends api.dom.DivEl {
     }
 
     unBeforeInsertAction(listener: (event: any) => void) {
-        this.beforeInsertActionListeners = this.beforeInsertActionListeners.filter((currentListener: (event: any) => void) =>  {
+        this.beforeInsertActionListeners = this.beforeInsertActionListeners.filter((currentListener: (event: any) => void) => {
             return listener !== currentListener;
         });
     }
@@ -734,13 +743,13 @@ export class PageComponentsView extends api.dom.DivEl {
         let editAction: api.ui.Action;
 
         contextMenuActions.some((action: api.ui.Action) => {
-            if(action.getLabel() === 'Edit') {
+            if (action.getLabel() === 'Edit') {
                 editAction = action;
                 return true;
             }
         });
 
-        if(editAction) {
+        if (editAction) {
             this.hide();
             editAction.execute();
         }

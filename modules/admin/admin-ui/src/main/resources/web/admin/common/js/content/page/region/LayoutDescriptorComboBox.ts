@@ -11,22 +11,20 @@ module api.content.page.region {
 
     export class LayoutDescriptorComboBox extends RichComboBox<LayoutDescriptor> {
 
-        protected loader: LayoutDescriptorLoader;
-
         constructor() {
-            super(new RichComboBoxBuilder<LayoutDescriptor>().setIdentifierMethod('getKey').setOptionDisplayValueViewer(
-                new LayoutDescriptorViewer()).setSelectedOptionsView(new LayoutDescriptorSelectedOptionsView()).setMaximumOccurrences(
-                1).setNextInputFocusWhenMaxReached(false).setNoOptionsText('No layouts available'));
-        }
-
-        protected createLoader(): LayoutDescriptorLoader {
-            return new LayoutDescriptorLoader();
+            super(new RichComboBoxBuilder<LayoutDescriptor>()
+                .setIdentifierMethod('getKey')
+                .setOptionDisplayValueViewer(new LayoutDescriptorViewer())
+                .setSelectedOptionsView(new LayoutDescriptorSelectedOptionsView())
+                .setLoader(new LayoutDescriptorLoader())
+                .setMaximumOccurrences(1)
+                .setNextInputFocusWhenMaxReached(false)
+                .setNoOptionsText('No layouts available'));
         }
 
         loadDescriptors(applicationKeys: ApplicationKey[]) {
-            this.loader.setApplicationKeys(applicationKeys);
-
-            super.load();
+            (<LayoutDescriptorLoader>this.loader).setApplicationKeys(applicationKeys);
+            this.loader.load();
         }
 
         getDescriptor(descriptorKey: DescriptorKey): LayoutDescriptor {

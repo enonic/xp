@@ -12,22 +12,19 @@ module api.content.page.region {
 
     export class PartDescriptorComboBox extends RichComboBox<PartDescriptor> {
 
-        protected loader: PartDescriptorLoader;
-
         constructor() {
-            super(new RichComboBoxBuilder<PartDescriptor>().setIdentifierMethod('getKey').setOptionDisplayValueViewer(
-                new PartDescriptorViewer()).setSelectedOptionsView(new PartDescriptorSelectedOptionsView()).setMaximumOccurrences(
-                1).setNextInputFocusWhenMaxReached(false).setNoOptionsText('No parts available'));
+            super(new RichComboBoxBuilder<PartDescriptor>()
+                .setIdentifierMethod('getKey')
+                .setOptionDisplayValueViewer(new PartDescriptorViewer())
+                .setSelectedOptionsView(new PartDescriptorSelectedOptionsView())
+                .setLoader(new PartDescriptorLoader())
+                .setMaximumOccurrences(1).setNextInputFocusWhenMaxReached(false)
+                .setNoOptionsText('No parts available'));
         }
 
         loadDescriptors(applicationKeys: ApplicationKey[]) {
-            this.loader.setApplicationKeys(applicationKeys);
-
-            super.load();
-        }
-
-        protected createLoader(): PartDescriptorLoader {
-            return new PartDescriptorLoader();
+            (<PartDescriptorLoader>this.loader).setApplicationKeys(applicationKeys);
+            this.loader.load();
         }
 
         getDescriptor(descriptorKey: DescriptorKey): PartDescriptor {

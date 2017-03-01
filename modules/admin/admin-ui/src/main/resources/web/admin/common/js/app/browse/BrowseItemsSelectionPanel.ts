@@ -1,5 +1,10 @@
 module api.app.browse {
 
+    import Toolbar = api.ui.toolbar.Toolbar;
+    import TreeGrid = api.ui.treegrid.TreeGrid;
+    import ClearSelectionAction = api.ui.treegrid.actions.ClearSelectionAction;
+    import ShowAllAction = api.app.browse.action.ShowAllAction;
+
     export class BrowseItemsSelectionPanel<M extends api.Equitable> extends api.ui.panel.Panel {
 
         private deselectedListeners: {(event: ItemDeselectedEvent<M>): void}[] = [];
@@ -9,8 +14,9 @@ module api.app.browse {
         private mobileView: boolean = false;
         private itemsContainer: api.dom.DivEl;
         private itemsLimit: number;
+        private toolbar: Toolbar;
 
-        constructor(itemsLimit?: number) {
+        constructor(grid: TreeGrid<M>) {
             super('items-selection-panel');
             this.getEl().addClass('no-selection');
 
@@ -20,6 +26,18 @@ module api.app.browse {
             this.itemsContainer.setHtml(this.messageForNoSelection);
 
             this.resetLimit();
+
+            this.initToolbar(grid);
+        }
+
+        private initToolbar(grid: TreeGrid<M>) {
+            this.toolbar = new Toolbar();
+            const showAllAction = new ShowAllAction(() => this.showAll(), grid);
+            const clearAllAction =  new ClearSelectionAction<M>(grid);
+            this.toolbar.addAction(showAllAction).addClass('show-all');
+            this.toolbar.addAction(clearAllAction).addClass('clear-all');
+            this.appendChild(this.toolbar);
+            this.addClass('no-toolbar');
         }
 
         getItemsLimit(): number {
@@ -43,7 +61,8 @@ module api.app.browse {
         }
 
         updateDisplayedSelection() {
-            this.itemsContainer.appendChildren(...this.selectionItems.slice(0, this.itemsLimit));
+            const displayed = this.itemsContainer.getChildren().length;
+            this.itemsContainer.appendChildren(...this.selectionItems.slice(displayed, this.itemsLimit));
         }
 
         setMobileView(mobileView: boolean) {
@@ -53,6 +72,12 @@ module api.app.browse {
             } else {
                 this.updateDisplayedSelection();
             }
+        }
+
+        showAll() {
+            this.toggleClass('no-toolbar', true);
+            this.setItemsLimit(Number.MAX_VALUE);
+            this.updateDisplayedSelection();
         }
 
         private addItem(item: BrowseItem<M>) {
@@ -101,7 +126,12 @@ module api.app.browse {
                 this.resetLimit();
             }
 
-            if (this.items.length === 0) {
+            const displayed = this.itemsContainer.getChildren().length;
+            const selected = this.selectionItems.length;
+
+            if (displayed < selected && displayed < this.getItemsLimit()) {
+                this.updateDisplayedSelection();
+            } else if (this.items.length === 0) {
                 this.addClass('no-selection');
                 this.itemsContainer.setHtml(this.messageForNoSelection);
             }
@@ -145,6 +175,9 @@ module api.app.browse {
 
             changes.setAdded(itemsToAdd);
             changes.setRemoved(itemsToRemove);
+
+            const hideToolbar = this.items.length <= this.getItemsLimit();
+            this.toggleClass('no-toolbar', hideToolbar);
 
             return changes;
         }

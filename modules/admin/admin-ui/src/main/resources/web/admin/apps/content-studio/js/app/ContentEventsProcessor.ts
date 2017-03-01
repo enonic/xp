@@ -88,6 +88,6 @@ export class ContentEventsProcessor {
     static handleMove(event: MoveContentEvent) {
 
         let contents: ContentSummaryAndCompareStatus[] = event.getModels();
-        new OpenMoveDialogEvent(contents.map(content => content.getContentSummary())).fire();
+        new OpenMoveDialogEvent(contents.map(content => content.getContentSummary()), event.getRootNode()).fire();
     }
 }
