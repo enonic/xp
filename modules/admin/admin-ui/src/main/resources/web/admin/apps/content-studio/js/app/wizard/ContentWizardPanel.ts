@@ -768,14 +768,13 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             });
         };
 
-        let updateHandler = (content:ContentSummaryAndCompareStatus) => {
+        let updateHandler = (updatedContent:ContentSummaryAndCompareStatus) => {
 
+            if (this.isCurrentContentId(updatedContent.getContentId())) {
 
-            if (this.isCurrentContentId(content.getContentId())) {
+                this.currentContent = updatedContent;
 
-                this.currentContent = content;
-
-               this.getContentWizardToolbarPublishControls().setContent(this.currentContent);
+                this.getContentWizardToolbarPublishControls().setContent(this.currentContent);
 
                 if (this.currentContent.getCompareStatus() != null) {
                     this.refreshScheduleWizardStep();
@@ -1641,7 +1640,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     getPublishStatus(): PublishStatus {
         return this.currentContent ? this.currentContent.getPublishStatus() : null;
     }
-
 
     private notifyContentNamed(content: api.content.Content) {
         this.contentNamedListeners.forEach((listener: (event: ContentNamedEvent) => void) => {

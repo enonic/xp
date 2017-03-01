@@ -26,12 +26,10 @@ module api.content {
 
             let status;
 
-            debugger;
-
             switch (compareStatus) {
             case CompareStatus.NEW:
                 if(content && !content.getFirstPublishedTime()) {
-                    status = "New";
+                    status = 'New';
                 } else {
                     status = 'Offline';
                 }
