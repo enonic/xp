@@ -240,7 +240,7 @@ public final class DeployDirectoryWatcher
 
     private static File getInstallDeployFolder()
     {
-        final File installDir = ServerInfo.get().getHomeDir();
-        return new File( installDir, "deploy" );
+        final File installDir = ServerInfo.get().getInstallDir();
+        return new File( installDir, "system/deploy" );
     }
 }

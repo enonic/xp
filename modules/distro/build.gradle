@@ -5,6 +5,9 @@ apply plugin: 'java-base'
 configurations {
     lib
     toolbox
+    deploy {
+        transitive = false
+    }
 }
 
 dependencies {
@@ -17,6 +20,11 @@ ext {
     bundlesDir = "$installDir/system"
     archiveBase = "enonic-xp-$version"
     bundleCopySpecs = []
+}
+
+// Dependencies
+dependencies {
+    deploy project( ':app:app-standardidprovider' )
 }
 
 // Core bundles
@@ -110,7 +118,7 @@ addBundle( project( ':admin:admin-impl' ), 30 )
 addBundle( project( ':blobstore:blobstore-file' ), 22 )
 
 // Applications
-addBundle( project( ':app:app-standardidprovider' ), 32 )
+// addBundle( project( ':app:app-standardidprovider' ), 32 )
 
 def addBundle( dep, level )
 {
@@ -145,6 +153,11 @@ def getOrCreateBundleConfig( level )
 task copyBundles( type: Copy ) {
     into bundlesDir
     with( bundleCopySpecs as CopySpec[] )
+}
+
+task copyDeploy( type: Copy ) {
+    from configurations.deploy
+    into "${bundlesDir}/deploy"
 }
 
 task copyResources( type: Copy ) {
@@ -192,7 +205,7 @@ task copyResources( type: Copy ) {
     }
 }
 
-task installDist( dependsOn: [copyResources, copyBundles] )
+task installDist( dependsOn: [copyResources, copyBundles, copyDeploy] )
 
 task distZip( type: Zip, dependsOn: installDist ) {
     from installDir
