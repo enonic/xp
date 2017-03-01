@@ -24,7 +24,7 @@ import com.google.common.io.Files;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.home.HomeDir;
+import com.enonic.xp.server.ServerInfo;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.server.deploy")
 public final class DeployDirectoryWatcher
@@ -47,14 +47,21 @@ public final class DeployDirectoryWatcher
     public void activate( final DeployConfig config )
         throws Exception
     {
-        final File deployFolder = getDeployFolder();
-        final FileAlterationObserver observer = new FileAlterationObserver( deployFolder, FILTER );
+        final FileAlterationObserver observer1 = addListenerDir( getDeployFolder() );
+        final FileAlterationObserver observer2 = addListenerDir( getInstallDeployFolder() );
+
+        this.monitor = new FileAlterationMonitor( config.interval(), observer1, observer2 );
+        this.monitor.start();
+    }
+
+    private FileAlterationObserver addListenerDir( final File dir )
+        throws Exception
+    {
+        final FileAlterationObserver observer = new FileAlterationObserver( dir, FILTER );
         observer.addListener( this );
 
-        installApps( deployFolder );
-
-        this.monitor = new FileAlterationMonitor( config.interval(), observer );
-        this.monitor.start();
+        installApps( dir );
+        return observer;
     }
 
     private void installApps( final File dir )
@@ -227,6 +234,13 @@ public final class DeployDirectoryWatcher
 
     private static File getDeployFolder()
     {
-        return new File( HomeDir.get().toFile(), "deploy" );
+        final File homeDir = ServerInfo.get().getHomeDir();
+        return new File( homeDir, "deploy" );
+    }
+
+    private static File getInstallDeployFolder()
+    {
+        final File installDir = ServerInfo.get().getHomeDir();
+        return new File( installDir, "deploy" );
     }
 }
