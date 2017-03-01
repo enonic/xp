@@ -13,6 +13,8 @@ import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.RenameNodeParams;
+import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.site.SiteService;
 
 import static com.enonic.xp.core.impl.content.ContentNodeHelper.translateNodePathToContentPath;
 
@@ -24,11 +26,17 @@ final class RenameContentCommand
 
     private final ContentService contentService;
 
+    private final MixinService mixinService;
+
+    private final SiteService siteService;
+
     private RenameContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.contentService = builder.contentService;
+        this.mixinService = builder.mixinService;
+        this.siteService = builder.siteService;
     }
 
     public static Builder create( final RenameContentParams params )
@@ -83,6 +91,8 @@ final class RenameContentCommand
             displayName( content.getDisplayName() ).
             extradatas( content.getAllExtraData() ).
             contentTypeService( this.contentTypeService ).
+            mixinService( this.mixinService ).
+            siteService( this.siteService ).
             build().
             execute();
 
@@ -108,6 +118,10 @@ final class RenameContentCommand
 
         private ContentService contentService;
 
+        private MixinService mixinService;
+
+        private SiteService siteService;
+
         public Builder( final RenameContentParams params )
         {
             this.params = params;
@@ -116,6 +130,18 @@ final class RenameContentCommand
         public RenameContentCommand.Builder contentService( ContentService contentService )
         {
             this.contentService = contentService;
+            return this;
+        }
+
+        public RenameContentCommand.Builder mixinService( final MixinService mixinService )
+        {
+            this.mixinService = mixinService;
+            return this;
+        }
+
+        public RenameContentCommand.Builder siteService( final SiteService siteService )
+        {
+            this.siteService = siteService;
             return this;
         }
 
