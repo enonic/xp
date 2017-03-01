@@ -48,9 +48,8 @@ public final class DeployDirectoryWatcher
         throws Exception
     {
         final FileAlterationObserver observer1 = addListenerDir( getDeployFolder() );
-        final FileAlterationObserver observer2 = addListenerDir( getInstallDeployFolder() );
 
-        this.monitor = new FileAlterationMonitor( config.interval(), observer1, observer2 );
+        this.monitor = new FileAlterationMonitor( config.interval(), observer1 );
         this.monitor.start();
     }
 
@@ -236,11 +235,5 @@ public final class DeployDirectoryWatcher
     {
         final File homeDir = ServerInfo.get().getHomeDir();
         return new File( homeDir, "deploy" );
-    }
-
-    private static File getInstallDeployFolder()
-    {
-        final File installDir = ServerInfo.get().getInstallDir();
-        return new File( installDir, "system/deploy" );
     }
 }
