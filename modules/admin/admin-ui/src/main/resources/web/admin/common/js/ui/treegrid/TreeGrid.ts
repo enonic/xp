@@ -272,8 +272,9 @@ module api.ui.treegrid {
                 this.setActive(true);
 
                 // Checkbox is clicked
-                if (this.gridOptions.isMultipleSelectionDisabled() || elem.hasClass('slick-cell-checkboxsel') ||
-                    elem.hasAnyParentClass('slick-cell-checkboxsel')) {
+                let isCheckboxClicked = elem.hasClass('slick-cell-checkboxsel') || elem.hasAnyParentClass('slick-cell-checkboxsel');
+
+                if (!this.highlightingEnabled || this.gridOptions.isMultipleSelectionDisabled() || isCheckboxClicked) {
                     this.onRowSelected(data);
                     return;
                 }
@@ -338,9 +339,7 @@ module api.ui.treegrid {
             const node = this.gridData.getItem(data.row);
             elem.removeClass('expand').addClass('collapse');
             this.expandNode(node).then(() => {
-                if (!this.gridOptions.isMultipleSelectionDisabled()) {
-                    this.highlightCurrentNode();
-                }
+                this.highlightCurrentNode();
             });
         }
 
@@ -394,8 +393,10 @@ module api.ui.treegrid {
                 return;
             }
 
-            if (this.grid.getSelectedRows().length > 0 || isRowHighlighted) {
+            if (this.isSelectionNotEmpty()) {
                 this.unselectAllRows();
+                this.root.clearStashedSelection();
+                this.triggerSelectionChangedListeners();
             }
 
             if (!(isRowHighlighted || isRowSelected)) {
@@ -403,6 +404,10 @@ module api.ui.treegrid {
             } else if (isMultipleRowsSelected) {
                 this.grid.selectRow(data.row);
             }
+        }
+
+        private isSelectionNotEmpty() {
+            return this.grid.getSelectedRows().length > 0 || this.root.getStashedSelection().length > 0;
         }
 
         private bindKeys(builder: TreeGridBuilder<DATA>, keyBindings: KeyBinding[]) {
