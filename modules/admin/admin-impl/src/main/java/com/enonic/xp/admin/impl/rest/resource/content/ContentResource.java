@@ -140,6 +140,7 @@ import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
+import com.enonic.xp.content.ResolveOfflineContentsParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SetActiveContentVersionResult;
@@ -715,10 +716,26 @@ public final class ContentResource
             build() );
 
         //Resolved the dependent ContentPublishItem
-        final ContentIds dependentContentIds = ContentIds.from( compareResults.contentIds().
+        final Set<ContentId> dependentContentIdsSet =  compareResults.contentIds().
             stream().
             filter( contentId -> !requestedContentIds.contains( contentId ) ).
-            collect( Collectors.toList() ) );
+            collect( Collectors.toSet() );
+
+        ContentIds dependentContentIds;
+
+        //filter offline items if needed
+        if(!params.includeOffline())
+        {
+            final ContentIds offlineIds = this.contentService.resolveOfflineContents( ResolveOfflineContentsParams.create().
+                contentIds( ContentIds.create().addAll( dependentContentIdsSet ).build() ).
+                target( ContentConstants.BRANCH_MASTER ).
+                build() );
+
+            dependentContentIdsSet.removeAll( offlineIds.getSet() );
+
+        }
+
+        dependentContentIds = ContentIds.from(dependentContentIdsSet);
 
         //Resolve required ids
         final ContentIds requiredIds = this.contentService.resolveRequiredDependencies( ResolveRequiredDependenciesParams.create().

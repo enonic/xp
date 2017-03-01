@@ -69,6 +69,7 @@ import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.ReprocessContentParams;
+import com.enonic.xp.content.ResolveOfflineContentsParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SetActiveContentVersionResult;
@@ -393,6 +394,20 @@ public class ContentServiceImpl
             execute();
     }
 
+    public ContentIds resolveOfflineContents( ResolveOfflineContentsParams params )
+    {
+        return ResolveOfflineContentsCommand.create().
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            contentService( this ).
+            contentIds( params.getContentIds() ).
+            target( params.getTarget() ).
+            build().
+            execute();
+    }
+
     @Override
     public boolean isValidContent( ContentIds contentIds )
     {
@@ -626,6 +641,7 @@ public class ContentServiceImpl
             build().
             execute();
     }
+
 
     @Override
     public CompareContentResult compare( final CompareContentParams params )
