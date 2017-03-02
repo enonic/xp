@@ -10,7 +10,9 @@ module api.ui.selector {
         private loader: OptionDataLoader<OPTION_DISPLAY_VALUE>;
         private treeDataHelper: OptionDataHelper<OPTION_DISPLAY_VALUE>;
         private readonlyChecker: (optionToCheck: OPTION_DISPLAY_VALUE) => boolean;
-        private isSelfManaging: boolean;
+        private isSelfLoading: boolean;
+        private dataToExpandOnReload: OPTION_DISPLAY_VALUE;
+        private hasAlreadyExpandedDataOnReload: boolean;
 
         constructor(columns: api.ui.grid.GridColumn<any>[],
                     gridOptions: api.ui.grid.GridOptions<any>,
@@ -34,14 +36,14 @@ module api.ui.selector {
             super(builder);
             this.loader = loader;
             this.treeDataHelper = treeDataHelper;
-            this.isSelfManaging = true;
+            this.isSelfLoading = true;
             this.highlightingEnabled = false;
 
             this.initEventHandlers();
         }
 
         setOptions(options: Option<OPTION_DISPLAY_VALUE>[]) {
-            this.isSelfManaging = false;
+            this.isSelfLoading = false;
             this.getGrid().getDataView().setItems(this.dataToTreeNodes(options, this.getRoot().getCurrentRoot()), 'dataId');
         }
 
@@ -53,6 +55,15 @@ module api.ui.selector {
             let gridClasses = (' ' + this.getGrid().getEl().getClass()).replace(/\s/g, '.');
             let viewport = api.dom.Element.fromString(gridClasses + ' .slick-viewport', false);
             return viewport;
+        }
+
+        reload(parentNodeData?: Option<OPTION_DISPLAY_VALUE>): wemQ.Promise<void> {
+            return super.reload(parentNodeData).then(() => {
+                if (this.dataToExpandOnReload && !this.hasAlreadyExpandedDataOnReload) {
+                    this.expandToNodeWithGivenData(this.getRoot().getCurrentRoot(), this.dataToExpandOnReload, 0);
+                    this.hasAlreadyExpandedDataOnReload = true;
+                }
+            });
         }
 
         private initEventHandlers() {
@@ -73,7 +84,7 @@ module api.ui.selector {
         }
 
         hasChildren(option: Option<OPTION_DISPLAY_VALUE>): boolean {
-            if (!this.isSelfManaging) {
+            if (!this.isSelfLoading) {
                 return false;
             }
             return this.treeDataHelper.hasChildren(option.displayValue);
@@ -94,7 +105,7 @@ module api.ui.selector {
         }
 
         fetchChildren(parentNode?: TreeNode<Option<OPTION_DISPLAY_VALUE>>): wemQ.Promise<Option<OPTION_DISPLAY_VALUE>[]> {
-            this.isSelfManaging = true;
+            this.isSelfLoading = true;
             parentNode = parentNode ? parentNode : this.getRoot().getCurrentRoot();
 
             let from = parentNode.getChildren().length;
@@ -104,13 +115,13 @@ module api.ui.selector {
             }
 
             return this.loader.fetchChildren(parentNode, from, OptionsTreeGrid.MAX_FETCH_SIZE).then(
-                (loadedeData: OptionDataLoaderData<OPTION_DISPLAY_VALUE>) => {
-                    let newOptions = this.optionsDataToTreeNodeOption(loadedeData.getData());
+                (loadedData: OptionDataLoaderData<OPTION_DISPLAY_VALUE>) => {
+                    let newOptions = this.optionsDataToTreeNodeOption(loadedData.getData());
                     let options = parentNode.getChildren().map((el) => el.getData()).slice(0, from).concat(newOptions);
 
-                    parentNode.setMaxChildren(loadedeData.getTotalHits());
+                    parentNode.setMaxChildren(loadedData.getTotalHits());
 
-                    return this.loader.checkReadonly(loadedeData.getData()).then((readonlyIds: string[]) => {
+                    return this.loader.checkReadonly(loadedData.getData()).then((readonlyIds: string[]) => {
                         newOptions.forEach((option: Option<OPTION_DISPLAY_VALUE>) => {
                             const markedReadonly = readonlyIds.some((id: string) => {
                                 if (this.treeDataHelper.getDataId(option.displayValue) === id) {
@@ -125,12 +136,54 @@ module api.ui.selector {
                             }
                         });
 
-                        if (from + loadedeData.getHits() < loadedeData.getTotalHits()) {
+                        if (from + loadedData.getHits() < loadedData.getTotalHits()) {
                             options.push(this.makeEmptyData());
                         }
                         return options;
                     });
                 });
+        }
+
+        expandToDataOnReload(data: OPTION_DISPLAY_VALUE) {
+            this.dataToExpandOnReload = data;
+            this.hasAlreadyExpandedDataOnReload = false;
+        }
+
+        private expandToNodeWithGivenData(nodeToSearchIn: TreeNode<Option<OPTION_DISPLAY_VALUE>>, targetData: OPTION_DISPLAY_VALUE,
+                                          startFrom: number) {
+            const length = nodeToSearchIn.getChildren().length;
+            for (let i = startFrom; i < length; i++) {
+                const child = nodeToSearchIn.getChildren()[i];
+                if (child.getData().displayValue) {
+                    if (this.treeDataHelper.getDataId(child.getData().displayValue) == this.treeDataHelper.getDataId(targetData)) {
+                        this.scrollToRow(this.getGrid().getDataView().getRowById(child.getId()), true); // found target data node
+                        return;
+                    } else if (this.treeDataHelper.isChildAndAncestor(targetData, child.getData().displayValue)) {
+                        // found ancestor of target data node
+                        this.expandNode(child).then(() => {
+                            this.expandToNodeWithGivenData(child, targetData, 0); // expand target data node ancestor and keep searching
+                        });
+                        return;
+                    }
+                }
+            }
+
+            // if reached here  - no matches were found, need to load more children
+            this.loadMoreChildrenToExpand(nodeToSearchIn, targetData);
+        }
+
+        private loadMoreChildrenToExpand(nodeToSearchIn: TreeNode<Option<OPTION_DISPLAY_VALUE>>, targetData: OPTION_DISPLAY_VALUE) {
+            const length = nodeToSearchIn.getChildren().length;
+            const from = nodeToSearchIn.getChildren()[length - 1].getData().displayValue ? length : length - 1;
+            if (from < nodeToSearchIn.getMaxChildren()) {
+                this.fetchChildren(nodeToSearchIn).then((children: Option<OPTION_DISPLAY_VALUE>[]) => {
+                    let fetchedChildrenNodes = this.dataToTreeNodes(children, nodeToSearchIn);
+                    nodeToSearchIn.setChildren(fetchedChildrenNodes);
+                    this.initData(this.getRoot().getCurrentRoot().treeToList());
+
+                    this.expandToNodeWithGivenData(nodeToSearchIn, targetData, from);
+                });
+            }
         }
 
         private optionsDataToTreeNodeOption(data: OPTION_DISPLAY_VALUE[]): Option<OPTION_DISPLAY_VALUE>[] {
@@ -158,7 +211,12 @@ module api.ui.selector {
             }
 
             if (node.getData().readOnly) {
-                return {cssClasses: "readonly' title='This content is read-only'"};
+                if (this.treeDataHelper.getDataId(node.getData().displayValue) !=
+                    this.treeDataHelper.getDataId(this.dataToExpandOnReload)) {
+                    return {cssClasses: "readonly' title='This content is read-only'"};
+                } else {
+                    return {cssClasses: "active readonly' title='This content is read-only'"};
+                }
             }
 
             return null;

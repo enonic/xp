@@ -53,6 +53,10 @@ module api.ui.selector {
             this.optionsTreeGrid.setReadonlyChecker(checker);
         }
 
+        expandToDataOnReload(data: OPTION_DISPLAY_VALUE) {
+            this.optionsTreeGrid.expandToDataOnReload(data);
+        }
+
         setOptions(options: Option<OPTION_DISPLAY_VALUE>[]) {
             this.optionsTreeGrid.setOptions(options);
         }
