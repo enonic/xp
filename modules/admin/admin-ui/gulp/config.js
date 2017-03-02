@@ -56,10 +56,7 @@ var CONFIG = {
                 spec: {src: '../spec/_spec.ts', dest: '../spec/_all.js'},
                 // webpack
                 home: {src: '/js/home/main.js', name: 'home', assets: true},
-                launcher: {src: '/js/launcher/main.js', name: 'launcher', assets: true},
-                applications: {src: '/apps/applications/js/main.ts', name: 'applications'},
-                content: {src: '/apps/content-studio/js/main.ts', name: 'content-studio'},
-                user: {src: '/apps/user-manager/js/main.ts', name: 'user-manager'}
+                launcher: {src: '/js/launcher/main.js', name: 'launcher', assets: true}
             },
             ts: {
                 target: 'ES5',
