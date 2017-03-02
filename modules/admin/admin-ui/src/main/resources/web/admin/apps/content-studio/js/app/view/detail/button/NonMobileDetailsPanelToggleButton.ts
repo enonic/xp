@@ -1,9 +1,9 @@
 import '../../../../api.ts';
 
-export class NonMobileDetailsPanelToggleButton extends api.dom.DivEl {
+export class NonMobileDetailsPanelToggleButton extends api.dom.ButtonEl {
 
     constructor() {
-        super('button', api.StyleHelper.COMMON_PREFIX);
+        super();
         this.addClass('non-mobile-details-panel-toggle-button');
 
         this.onClicked(() => {

@@ -37,9 +37,15 @@ module api.app.bar {
 
             this.addClass('home-button app-icon icon-' + app.getIconUrl());
 
-            this.onClicked((event: MouseEvent) => {
-                action.execute();
-            });
+            // Keep clickable in User Manager only
+            // Should be unclickable for all apps in future
+            if (app.getShortName() === 'UM') {
+                this.onClicked((event: MouseEvent) => {
+                    action.execute();
+                });
+            } else {
+                this.setEnabled(false);
+            }
         }
 
     }

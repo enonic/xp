@@ -61,7 +61,20 @@ input:not([type="radio"]), textarea, select {
 }
 
 input, textarea, select, button {
-  outline-width: 2px;
+  &:focus {
+    outline-width: 2px;
+    outline-style: auto;
+    outline-offset: -2px;
+    -moz-outline-radius: 3px;
+  }
+}
+
+@-moz-document url-prefix() {
+  input, textarea, select, button {
+    &:focus {
+      outline-color: rgba(66, 148, 222, 0.5);
+    }
+  }
 }
 
 h1, h2, h3, h4, h5, h6 {
