@@ -15,6 +15,7 @@ import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
@@ -136,7 +137,7 @@ public class UnpublishContentCommand
             this.nodeService.update( UpdateNodeParams.create().
                 editor( toBeEdited -> {
 
-                    if ( toBeEdited.data.hasProperty( ContentPropertyNames.PUBLISH_INFO ) )
+                    if ( toBeEdited.data.getInstant( ContentPropertyNames.PUBLISH_INFO + PropertyPath.ELEMENT_DIVIDER + ContentPropertyNames.PUBLISH_FROM ) != null )
                     {
                         toBeEdited.data.setInstant( ContentPropertyNames.MODIFIED_TIME, now );
                         toBeEdited.data.setString( ContentPropertyNames.MODIFIER, ContextAccessor.current().
@@ -152,6 +153,10 @@ public class UnpublishContentCommand
                         if(publishInfo.hasProperty( ContentPropertyNames.PUBLISH_TO ))
                         {
                             publishInfo.removeProperty( ContentPropertyNames.PUBLISH_TO );
+                        }
+                        
+                        if (publishInfo.getInstant( ContentPropertyNames.PUBLISH_FIRST ).compareTo( Instant.now()) > 0 ) {
+                            publishInfo.removeProperty( ContentPropertyNames.PUBLISH_FIRST );
                         }
                     }
                 } ).
