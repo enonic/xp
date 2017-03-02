@@ -17,6 +17,7 @@ function appendLauncherButton() {
     setTimeout(function() {
         var container = document.querySelector(".appbar") || document.getElementsByTagName("body")[0];
         container.appendChild(launcherButton);
+        launcherButton.focus();
     }, 700);
 }
 
@@ -98,7 +99,7 @@ function createLauncherLink(container) {
 
 function openWindow(windowArr, anchorEl) {
     var windowId = anchorEl.getAttribute("data-id");
-    
+
     if (windowArr[windowId] && !windowArr[windowId].closed) {
         windowArr[windowId].focus();
     }
@@ -111,7 +112,7 @@ function addLongClickHandler(container) {
     var longpress = false;
     var startTime, endTime;
     var toolWindows = [];
-    
+
     var appTiles = container.querySelector('.launcher-app-container').querySelectorAll("a");
     for (var i = 0; i < appTiles.length; i++) {
         appTiles[i].addEventListener("click", function (e) {
@@ -119,7 +120,7 @@ function addLongClickHandler(container) {
                 e.preventDefault();
                 return;
             }
-                
+
             if (longpress) {
                 e.preventDefault();
                 document.location.href = this.href;

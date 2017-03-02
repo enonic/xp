@@ -1,4 +1,15 @@
 .content-wizard-toolbar {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: flex-end;
+  align-content: stretch;
+
+  & > * {
+    flex: 0 0 auto;
+  }
+
   padding-right: 1px;
   height: @app-header-height;
   line-height: @app-header-height;
@@ -21,6 +32,7 @@
 
   .toolbar-publish-controls {
     display: none;
+    margin-left: auto;
   }
 
   .cycle-button.icon-medium:before {
@@ -42,6 +54,18 @@
       position: relative;
       top: 0px;
     }
+  }
+
+  .toggle-button.icon-clipboard {
+    order: 1;
+  }
+
+  .toggle-button.icon-cog {
+    order: 2;
+  }
+
+  .cycle-button {
+    order: 3;
   }
 
   &:not(.live) .toggle-button {

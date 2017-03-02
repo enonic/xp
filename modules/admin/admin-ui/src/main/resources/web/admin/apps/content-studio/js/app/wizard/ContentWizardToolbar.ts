@@ -63,10 +63,10 @@ export class ContentWizardToolbar extends api.ui.toolbar.Toolbar {
             params.publishAction, params.publishTreeAction, params.unpublishAction, params.publishMobileAction
         );
 
-        super.addElement(this.contentWizardToolbarPublishControls);
-        super.addElement(this.componentsViewToggler);
-        super.addElement(this.contextWindowToggler);
         super.addElement(this.cycleViewModeButton);
+        super.addElement(this.contextWindowToggler);
+        super.addElement(this.componentsViewToggler);
+        super.addElement(this.contentWizardToolbarPublishControls);
     }
 
     getCycleViewModeButton(): CycleButton {
