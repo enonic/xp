@@ -7,6 +7,11 @@ dependencies {
     include project( ":lib:lib-admin" )
 }
 
+node {
+    download = true
+    version = '6.9.2'
+}
+
 bundle {
     instruction 'Bundle-Name', 'Admin Applications App'
     instruction 'X-Bundle-Type', 'system'
