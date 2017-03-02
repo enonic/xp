@@ -10,6 +10,7 @@
     flex: 0 0 auto;
   }
 
+  padding-left: 15px;
   padding-right: 1px;
   height: @app-header-height;
   line-height: @app-header-height;
@@ -22,13 +23,7 @@
     line-height: 18px;
   }
 
-  .home-button {
-    background-image: url("../../../../../apps/content-studio/icons/icon-black.svg") !important;
-    background-position: 0 6px !important;
-    float: left;
-    width: 28px;
-    margin-left: 15px;
-  }
+  .app-icon-mixin(true, true);
 
   .toolbar-publish-controls {
     display: none;

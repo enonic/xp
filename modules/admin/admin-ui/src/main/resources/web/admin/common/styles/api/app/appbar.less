@@ -18,52 +18,7 @@
     .flexbox();
   }
 
-  .home-button {
-    .flex(0 0 auto);
-    .order(1);
-
-    height: 100%;
-    padding: 8px 25px;
-    border: none;
-    color: @admin-bg-light-gray;
-    background-color: transparent;
-    font-family: @admin-font-family;
-    cursor: pointer;
-    z-index: 1;
-
-    span {
-      padding-left: 10px;
-      font-size: 15px;
-      text-transform: uppercase;
-      line-height: inherit;
-    }
-
-    &:before {
-      position: relative;
-      top: 4px;
-      font-size: 24px;
-      font-family: 'icomoon';
-    }
-
-    &:before, span {
-      .color-transition();
-    }
-
-    &:hover {
-      background: none;
-      &:before, span {
-        color: rgba(255,255,255,0.5);
-      }
-    }
-
-    // Keep clickable and focusable in User Manager only
-    &:not(.icon-user-manager) {
-      &, &:focus {
-        opacity: 1.0 !important;
-        cursor: default;
-      }
-    }
-  }
+  .app-icon-mixin();
 }
 
 ._0-240, ._240-360, ._360-540 {
