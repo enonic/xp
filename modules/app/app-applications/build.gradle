@@ -18,11 +18,11 @@ bundle {
     instruction 'Include-Resource', "assets/app=${buildDir}/app"
 }
 
-task webpack( type: NpmTask, dependsOn: npmInstall ) {
+task webpack( type: NodeTask, dependsOn: npmInstall ) {
     description = 'Build UI resources (ts, css, etc).'
     inputs.dir 'src/main'
     outputs.dir "${buildDir}/app"
-    args = ['run', 'build']
+    script = file( './node_modules/webpack/bin/webpack' )
 }
 
 task cleanNode(type: Delete) {
