@@ -4,11 +4,11 @@ import {ContentVersionViewer} from './ContentVersionViewer';
 import ContentVersion = api.content.ContentVersion;
 import ContentId = api.content.ContentId;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+import CompareStatus = api.content.CompareStatus;
 
 export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
 
-    private contentId: ContentId;
-    private status: api.content.CompareStatus;
+    private content: ContentSummaryAndCompareStatus;
     private loadedListeners: {(): void}[] = [];
     private activeVersion: ContentVersion;
 
@@ -20,12 +20,15 @@ export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
     }
 
     setContentData(item: ContentSummaryAndCompareStatus) {
-        this.contentId = item.getContentId();
-        this.status = item.getCompareStatus();
+        this.content = item;
     }
 
     getContentId(): ContentId {
-        return this.contentId;
+        return this.content ? this.content.getContentId() : null;
+    }
+
+    getCompareStatus(): CompareStatus {
+        return this.content ? this.content.getCompareStatus() : null;
     }
 
     reload(): wemQ.Promise<void> {
@@ -66,8 +69,8 @@ export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
     }
 
     private loadData(): wemQ.Promise<ContentVersion[]> {
-        if (this.contentId) {
-            return new api.content.resource.GetContentVersionsForViewRequest(this.contentId).sendAndParse().then(
+        if (this.getContentId()) {
+            return new api.content.resource.GetContentVersionsForViewRequest(this.getContentId()).sendAndParse().then(
                 (contentVersions: api.content.ContentVersions) => {
                     this.activeVersion = contentVersions.getActiveVersion();
                     return contentVersions.getContentVersions();
@@ -84,7 +87,7 @@ export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
     }
 
     private getStatus(contentVersion: ContentVersion): ContentVersionStatus {
-        if (this.status == null) {
+        if (this.getCompareStatus() == null) {
             return null;
         }
         let result = null;
@@ -107,7 +110,7 @@ export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
         if (workspace === VersionsView.branchMaster) {
             return api.content.CompareStatusFormatter.formatStatus(api.content.CompareStatus.EQUAL);
         } else {
-            return api.content.CompareStatusFormatter.formatStatus(this.status);
+            return api.content.CompareStatusFormatter.formatStatusFromContent(this.content);
         }
     }
 
@@ -158,10 +161,10 @@ export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
             ? 'This version is active'
             : 'Restore this version').onExecuted((action: api.ui.Action) => {
             if (!isActive) {
-                new api.content.resource.SetActiveContentVersionRequest(item.id, this.contentId).sendAndParse().then(
+                new api.content.resource.SetActiveContentVersionRequest(item.id, this.getContentId()).sendAndParse().then(
                     (contentId: ContentId) => {
                     api.notify.NotifyManager.get().showFeedback(`Version successfully changed to ${item.id}`);
-                    new api.content.event.ActiveContentVersionSetEvent(this.contentId, item.id).fire();
+                    new api.content.event.ActiveContentVersionSetEvent(this.getContentId(), item.id).fire();
                 });
             }
         }), false);

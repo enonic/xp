@@ -398,7 +398,7 @@ module api.content {
             this.modifiedTime = json.modifiedTime ? new Date(Date.parse(json.modifiedTime)) : null;
             this.publishFromTime = json.publish && json.publish.from ? new Date(Date.parse(json.publish.from)) : null;
             this.publishToTime = json.publish && json.publish.to ? new Date(Date.parse(json.publish.to)) : null;
-            this.publishToTime = json.publish && json.publish.first ? new Date(Date.parse(json.publish.first)) : null;
+            this.firstPublishedTime = json.publish && json.publish.first ? new Date(Date.parse(json.publish.first)) : null;
 
             this.deletable = json.deletable;
             this.editable = json.editable;

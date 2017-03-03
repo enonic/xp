@@ -47,17 +47,23 @@ export class StatusSelectionItem extends api.app.browse.SelectionItem<ContentSum
     doRender(): wemQ.Promise<boolean> {
         return super.doRender().then((rendered) => {
 
-            let statusDiv = this.initStatusDiv(this.item.getModel().getCompareStatus(), this.item.getModel().getPublishStatus());
+            let statusDiv = this.initStatusDiv(this.item.getModel());
             this.appendChild(statusDiv);
 
             return rendered;
         });
     }
 
-    private initStatusDiv(compareStatus: CompareStatus, publishStatus: PublishStatus) {
+    private initStatusDiv(content:ContentSummaryAndCompareStatus) {
+
+        const compareStatus = content.getCompareStatus();
+        const publishStatus = content.getPublishStatus();
+
         let statusDiv = new api.dom.DivEl('status');
         let statusClass = '' + CompareStatus[compareStatus];
-        let compareStatusFormatted = api.content.CompareStatusFormatter.formatStatus(compareStatus);
+
+        let compareStatusFormatted = api.content.CompareStatusFormatter.formatStatusFromContent(content);
+
         if (publishStatus && (publishStatus === PublishStatus.PENDING || publishStatus === PublishStatus.EXPIRED)) {
             let publishStatusFormatted = api.content.PublishStatusFormatter.formatStatus(publishStatus);
             compareStatusFormatted += ` (${publishStatusFormatted})`;

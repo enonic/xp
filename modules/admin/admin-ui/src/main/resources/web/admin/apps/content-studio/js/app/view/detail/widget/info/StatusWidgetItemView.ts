@@ -9,8 +9,7 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 
 export class StatusWidgetItemView extends WidgetItemView {
 
-    private compareStatus: CompareStatus;
-    private publishStatus: PublishStatus;
+    private content: ContentSummaryAndCompareStatus;
 
     public static debug: boolean = false;
 
@@ -25,12 +24,19 @@ export class StatusWidgetItemView extends WidgetItemView {
             console.debug('StatusWidgetItemView.setCompareStatus: ', compareStatus);
             console.debug('StatusWidgetItemView.setPublishStatus: ', publishStatus);
         }
-        if (compareStatus !== this.compareStatus || publishStatus !== this.publishStatus) {
-            this.compareStatus = compareStatus;
-            this.publishStatus = publishStatus;
+        if (compareStatus !== this.getCompareStatus() || publishStatus !== this.getPublishStatus()) {
+            this.content = item;
             return this.layout();
         }
         return wemQ<any>(null);
+    }
+
+    private getCompareStatus() : CompareStatus {
+        return this.content ? this.content.getCompareStatus() : null;
+    }
+
+    private getPublishStatus() : PublishStatus {
+        return this.content ? this.content.getPublishStatus() : null;
     }
 
     public layout(): wemQ.Promise<any> {
@@ -39,15 +45,15 @@ export class StatusWidgetItemView extends WidgetItemView {
         }
 
         return super.layout().then(() => {
-            if (this.compareStatus != null) {
+            if (this.getCompareStatus() != null) {
                 let statusEl = new api.dom.SpanEl();
 
-                statusEl.addClass(CompareStatus[this.compareStatus].toLowerCase().replace('_', '-') || 'unknown');
-                let statusElHtml = CompareStatusFormatter.formatStatus(this.compareStatus).toLocaleUpperCase();
+                statusEl.addClass(CompareStatus[this.getCompareStatus()].toLowerCase().replace('_', '-') || 'unknown');
+                let statusElHtml = CompareStatusFormatter.formatStatusFromContent(this.content).toLocaleUpperCase();
 
-                if (PublishStatus.EXPIRED === this.publishStatus || PublishStatus.PENDING === this.publishStatus) {
-                    statusEl.addClass(PublishStatus[this.publishStatus].toLowerCase().replace('_', '-') || 'unknown');
-                    statusElHtml += ' (' + PublishStatusFormatter.formatStatus(this.publishStatus).toLocaleUpperCase() + ')';
+                if (PublishStatus.EXPIRED === this.getPublishStatus() || PublishStatus.PENDING === this.getPublishStatus()) {
+                    statusEl.addClass(PublishStatus[this.getPublishStatus()].toLowerCase().replace('_', '-') || 'unknown');
+                    statusElHtml += ' (' + PublishStatusFormatter.formatStatus(this.getPublishStatus()).toLocaleUpperCase() + ')';
                 }
 
                 statusEl.setHtml(statusElHtml);
