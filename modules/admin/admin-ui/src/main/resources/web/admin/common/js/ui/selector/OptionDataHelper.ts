@@ -7,5 +7,7 @@ module api.ui.selector {
         hasChildren(data: DATA): boolean;
 
         getDataId(data: DATA): string;
+
+        isDescendingPath(childOption: DATA, parentOption: DATA);
     }
 }

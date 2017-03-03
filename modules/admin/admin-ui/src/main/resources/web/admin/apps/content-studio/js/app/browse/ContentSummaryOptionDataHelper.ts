@@ -17,4 +17,8 @@ export class ContentSummaryOptionDataHelper implements OptionDataHelper<ContentS
     getDataId(data: ContentSummary): string {
         return data ? data.getId() : '';
     }
+
+    isDescendingPath(childOption: ContentSummary, parentOption: ContentSummary) {
+        return childOption.getPath().isDescendantOf(parentOption.getPath());
+    }
 }
