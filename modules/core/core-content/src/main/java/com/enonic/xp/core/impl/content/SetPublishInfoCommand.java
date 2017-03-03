@@ -6,9 +6,9 @@ import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.node.FindNodesByQueryResult;
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeQuery;
@@ -35,10 +35,9 @@ public class SetPublishInfoCommand
 
     public void execute()
     {
-        final NodeIds firstTimePublished = findNodesWithoutPublishInfo( nodeIds );
-        final NodeIds emptyPublishInfo = findNodesWithEmptyPublishInfo( nodeIds );
+        final NodeIds nodeIdsToUpdate = findNodesWithoutPublishFirstAndFrom( nodeIds );
 
-        if ( firstTimePublished.getSize() == 0 && emptyPublishInfo.getSize() == 0 )
+        if ( nodeIdsToUpdate.getSize() == 0 )
         {
             return;
         }
@@ -47,37 +46,51 @@ public class SetPublishInfoCommand
         final Instant publishFrom = contentPublishInfo.getFrom() == null ? now : contentPublishInfo.getFrom();
         final Instant publishTo = contentPublishInfo.getTo();
 
-        for ( final NodeId id : emptyPublishInfo )
+        for ( final NodeId id : nodeIdsToUpdate )
         {
             this.nodeService.update( UpdateNodeParams.create().
-                editor( toBeEdited ->
+                editor( toBeEdited -> {
+
+                    toBeEdited.data.setInstant( ContentPropertyNames.MODIFIED_TIME, now );
+                    toBeEdited.data.setString( ContentPropertyNames.MODIFIER, getCurrentUser().getKey().toString() );
+
+                    PropertySet publishInfo = toBeEdited.data.getSet( ContentPropertyNames.PUBLISH_INFO );
+                    if ( publishInfo == null )
+                    {
+                        publishInfo = toBeEdited.data.addSet( ContentPropertyNames.PUBLISH_INFO );
+                    }
+
+                    if ( publishInfo.getInstant( ContentPropertyNames.PUBLISH_FIRST ) == null )
+                    {
+                        final Instant publishFromPropertyValue = publishInfo.getInstant( ContentPropertyNames.PUBLISH_FROM );
+                        if ( publishFromPropertyValue == null )
                         {
+                            publishInfo.setInstant( ContentPropertyNames.PUBLISH_FIRST, publishFrom );
+                        }
+                        else
+                        {
+                            //TODO Special case for Enonic XP 6.7 and 6.8 contents. Remove after 7.0
+                            publishInfo.setInstant( ContentPropertyNames.PUBLISH_FIRST, publishFromPropertyValue );
+                        }
+                    }
 
-                            toBeEdited.data.setInstant( ContentPropertyNames.MODIFIED_TIME, now );
-                            toBeEdited.data.setString( ContentPropertyNames.MODIFIER, getCurrentUser().getKey().toString() );
+                    if ( publishInfo.getInstant( ContentPropertyNames.PUBLISH_FROM ) == null )
+                    {
+                        publishInfo.setInstant( ContentPropertyNames.PUBLISH_FROM, publishFrom );
+                        if ( publishTo == null )
+                        {
+                            if ( publishInfo.hasProperty( ContentPropertyNames.PUBLISH_TO ) )
+                            {
+                                publishInfo.removeProperty( ContentPropertyNames.PUBLISH_TO );
+                            }
+                        }
+                        else
+                        {
+                            publishInfo.setInstant( ContentPropertyNames.PUBLISH_TO, publishTo );
+                        }
+                    }
 
-                            PropertySet publishInfo = toBeEdited.data.getSet( ContentPropertyNames.PUBLISH_INFO );
-                            if ( publishInfo == null )
-                            {
-                                publishInfo = toBeEdited.data.addSet( ContentPropertyNames.PUBLISH_INFO );
-                            }
-                            publishInfo.setInstant( ContentPropertyNames.PUBLISH_FROM, publishFrom );
-                            if ( publishTo == null )
-                            {
-                                if(publishInfo.hasProperty( ContentPropertyNames.PUBLISH_TO ))
-                                {
-                                    publishInfo.removeProperty( ContentPropertyNames.PUBLISH_TO );
-                                }
-                            }
-                            else
-                            {
-                                publishInfo.setInstant( ContentPropertyNames.PUBLISH_TO, publishTo );
-                            }
-
-                            if(firstTimePublished.contains( id )) {
-                                publishInfo.setInstant( ContentPropertyNames.PUBLISH_FIRST, now );
-                            }
-                        } ).
+                } ).
                 id( id ).
                 build() );
         }
@@ -91,43 +104,21 @@ public class SetPublishInfoCommand
         return user != null ? user : User.ANONYMOUS;
     }
 
-    private NodeIds findNodesWithoutPublishInfo( final NodeIds nodesToPush )
+    private NodeIds findNodesWithoutPublishFirstAndFrom( final NodeIds nodesToPush )
     {
         if ( nodesToPush.isEmpty() )
         {
             return NodeIds.empty();
         }
 
-        final NodeQuery query = NodeQuery.create().
-            addQueryFilter( BooleanFilter.create().
-                mustNot( ExistsFilter.create().
-                    fieldName( ContentIndexPath.PUBLISH_FIRST.getPath() ).
-                    build() ).
-                must( IdFilter.create().
-                    fieldName( ContentIndexPath.ID.getPath() ).
-                    values( nodesToPush ).
-                    build() ).
-                build() ).
-            size( NodeQuery.ALL_RESULTS_SIZE_FLAG ).
+        final BooleanFilter containPublishFirstAndFromFilter = BooleanFilter.create().
+            must( ExistsFilter.create().fieldName( ContentIndexPath.PUBLISH_FIRST.getPath() ).build() ).
+            must( ExistsFilter.create().fieldName( ContentIndexPath.PUBLISH_FROM.getPath() ).build() ).
             build();
 
-        final FindNodesByQueryResult result = this.nodeService.findByQuery( query );
-
-        return result.getNodeIds();
-    }
-
-    private NodeIds findNodesWithEmptyPublishInfo( final NodeIds nodesToPush )
-    {
-        if ( nodesToPush.isEmpty() )
-        {
-            return NodeIds.empty();
-        }
-
         final NodeQuery query = NodeQuery.create().
             addQueryFilter( BooleanFilter.create().
-                mustNot( ExistsFilter.create().
-                    fieldName( ContentIndexPath.PUBLISH_FROM.getPath() ).
-                    build() ).
+                mustNot( containPublishFirstAndFromFilter ).
                 must( IdFilter.create().
                     fieldName( ContentIndexPath.ID.getPath() ).
                     values( nodesToPush ).

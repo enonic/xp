@@ -155,6 +155,7 @@ public final class ContentDataSerializer
         if ( data != null )
         {
             final PropertySet publishInfo = contentAsData.addSet( PUBLISH_INFO );
+            publishInfo.addInstant( PUBLISH_FIRST, data.getFirst() );
             publishInfo.addInstant( PUBLISH_FROM, data.getFrom() );
             publishInfo.addInstant( PUBLISH_TO, data.getTo() );
             publishInfo.addInstant( PUBLISH_FIRST, data.getFirst() );
@@ -193,6 +194,7 @@ public final class ContentDataSerializer
         if ( publishInfo != null )
         {
             builder.publishInfo( ContentPublishInfo.create().
+                first( publishInfo.getInstant( PUBLISH_FIRST ) ).
                 from( publishInfo.getInstant( PUBLISH_FROM ) ).
                 to( publishInfo.getInstant( PUBLISH_TO ) ).
                 first( publishInfo.getInstant( PUBLISH_FIRST ) ).

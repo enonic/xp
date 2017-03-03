@@ -39,7 +39,7 @@ public class ContentServiceImplTest_unpublish
             type( ContentTypeName.folder() ).
             build() );
 
-        this.contentService.push( PushContentParams.create().
+        this.contentService.publish( PushContentParams.create().
             target( ContentConstants.BRANCH_MASTER ).
             contentIds( ContentIds.from( content.getId() ) ).
             build() );
@@ -57,6 +57,10 @@ public class ContentServiceImplTest_unpublish
 
         assertNotNull( contentService.contentExists( content.getId() ) );
         assertFalse( masterContext.callWith( () -> contentService.contentExists( content.getId() ) ) );
+        final Content unpublishedContent = this.contentService.getById( content.getId() );
+        assertNull( unpublishedContent.getPublishInfo().getFrom() );
+        assertNull( unpublishedContent.getPublishInfo().getTo() );
+        assertNotNull( unpublishedContent.getPublishInfo().getFirst() );
     }
 
     @Test
