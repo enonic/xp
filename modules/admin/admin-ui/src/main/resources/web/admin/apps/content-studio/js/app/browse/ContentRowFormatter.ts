@@ -60,16 +60,16 @@ export class ContentRowFormatter {
             let compareStatusText = api.content.CompareStatusFormatter.formatStatusFromContent(data);
 
             if (PublishStatus[publishStatus] && (publishStatus === PublishStatus.PENDING || publishStatus === PublishStatus.EXPIRED)) {
-                const statusEl = new api.dom.DivEl(ContentRowFormatter.makeClassName(compareStatusText));
+                const compareStatusCls = ContentRowFormatter.makeClassName(CompareStatus[value]);
+                const publishStatusCls = ContentRowFormatter.makeClassName(PublishStatus[publishStatus]);
 
+                const statusEl = new api.dom.DivEl(compareStatusCls + ' ' + publishStatusCls);
                 statusEl.getEl().setText(compareStatusText);
 
-                const publishStatusEl = new api.dom.DivEl();
+                const publishStatusEl = new api.dom.DivEl(compareStatusCls + ' ' + publishStatusCls);
                 const publishStatusText = api.content.PublishStatusFormatter.formatStatus(publishStatus);
 
                 publishStatusEl.getEl().setText('(' + publishStatusText + ')');
-                publishStatusEl.addClass(ContentRowFormatter.makeClassName(CompareStatus[value]));
-                publishStatusEl.addClass(ContentRowFormatter.makeClassName(PublishStatus[publishStatus]));
 
                 return statusEl.toString() + publishStatusEl.toString();
             } else {
