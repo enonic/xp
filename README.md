@@ -3,6 +3,7 @@
 # Enonic XP
 
 [![Build Status](https://travis-ci.org/enonic/xp.svg?branch=master)](https://travis-ci.org/enonic/xp)
+[![Build status](https://ci.appveyor.com/api/projects/status/684752q4ui9aryt3?svg=true)](https://ci.appveyor.com/project/srs/xp-kij6x)
 [![codecov](https://codecov.io/gh/enonic/xp/branch/master/graph/badge.svg)](https://codecov.io/gh/enonic/xp)
 
 Welcome to the home of Enonic XP. Here you will find all source code for the product. To get started,
