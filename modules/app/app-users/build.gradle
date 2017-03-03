@@ -25,4 +25,8 @@ task webpack( type: NodeTask, dependsOn: npmInstall ) {
     script = file( './node_modules/.bin/webpack' )
 }
 
+task cleanNode(type: Delete) {
+    delete 'node_modules'
+}
+
 jar.dependsOn += webpack
