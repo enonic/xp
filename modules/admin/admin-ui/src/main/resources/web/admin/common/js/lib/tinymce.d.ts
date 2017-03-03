@@ -33,6 +33,7 @@ interface HtmlAreaUndoManager {
     clear: () => void;
     hasUndo: () => boolean;
     add: () => void;
+    transact: (o: any) => void;
 }
 
 interface HtmlAreaEvent {
