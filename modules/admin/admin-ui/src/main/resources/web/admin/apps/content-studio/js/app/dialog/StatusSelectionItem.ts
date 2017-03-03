@@ -1,4 +1,5 @@
 import '../../api.ts';
+import {ContentRowFormatter} from '../browse/ContentRowFormatter';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
@@ -66,8 +67,11 @@ export class StatusSelectionItem extends api.app.browse.SelectionItem<ContentSum
 
         if (publishStatus && (publishStatus === PublishStatus.PENDING || publishStatus === PublishStatus.EXPIRED)) {
             let publishStatusFormatted = api.content.PublishStatusFormatter.formatStatus(publishStatus);
+            statusClass += ' ' + PublishStatus[publishStatus] + ' ' + ContentRowFormatter.makeClassName(compareStatusFormatted);
             compareStatusFormatted += ` (${publishStatusFormatted})`;
             statusClass += ' ' + PublishStatus[publishStatus];
+        } else {
+            statusClass += ' ' + ContentRowFormatter.makeClassName(compareStatusFormatted);
         }
         statusDiv.setHtml(compareStatusFormatted);
         statusDiv.addClass(statusClass.toLowerCase());
