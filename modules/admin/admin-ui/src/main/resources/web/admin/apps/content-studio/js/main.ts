@@ -40,7 +40,7 @@ declare var CONFIG;
  */
 
 function getApplication(): api.app.Application {
-    let application = new api.app.Application('content-studio', 'Content Studio', 'CM', 'content-studio');
+    let application = new api.app.Application('content-studio', 'Content Studio', 'CM', CONFIG.appIconUrl);
     application.setPath(api.rest.Path.fromString(Router.getPath()));
     application.setWindow(window);
 

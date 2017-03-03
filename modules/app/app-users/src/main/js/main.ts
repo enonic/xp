@@ -1,10 +1,12 @@
-import "./api.ts";
-import {UserAppPanel} from "./app/UserAppPanel";
-import {ChangeUserPasswordDialog} from "./app/wizard/ChangeUserPasswordDialog";
-import {Router} from "./app/Router";
+declare var CONFIG;
+
+import './api.ts';
+import {UserAppPanel} from './app/UserAppPanel';
+import {ChangeUserPasswordDialog} from './app/wizard/ChangeUserPasswordDialog';
+import {Router} from './app/Router';
 
 function getApplication(): api.app.Application {
-    let application = new api.app.Application('user-manager', 'Users', 'UM', 'user-manager');
+    let application = new api.app.Application('user-manager', 'Users', 'UM', CONFIG.appIconUrl);
     application.setPath(api.rest.Path.fromString(Router.getPath()));
     application.setWindow(window);
 
@@ -34,6 +36,7 @@ function startApplication() {
 
     let application: api.app.Application = getApplication();
     let appBar = new api.app.bar.TabbedAppBar(application);
+    appBar.setHomeIconAction();
     let appPanel = new UserAppPanel(appBar, application.getPath());
 
     let body = api.dom.Body.get();

@@ -8,7 +8,7 @@ import {InstallAppPromptEvent} from './app/installation/InstallAppPromptEvent';
 import Application = api.application.Application;
 
 function getApplication(): api.app.Application {
-    let application = new api.app.Application('applications', 'Applications', 'AM', 'applications');
+    let application = new api.app.Application('applications', 'Applications', 'AM', CONFIG.appIconUrl);
     application.setPath(api.rest.Path.fromString('/'));
     application.setWindow(window);
 

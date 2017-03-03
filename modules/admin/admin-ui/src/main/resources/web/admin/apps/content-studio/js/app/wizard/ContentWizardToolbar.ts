@@ -3,7 +3,7 @@ import {ContentWizardToolbarPublishControls} from './ContentWizardToolbarPublish
 
 import CycleButton = api.ui.button.CycleButton;
 import TogglerButton = api.ui.button.TogglerButton;
-import HomeButton = api.app.bar.HomeButton;
+import AppIcon = api.app.bar.AppIcon;
 import Application = api.app.Application;
 import Action = api.ui.Action;
 
@@ -24,7 +24,7 @@ export interface ContentWizardToolbarParams {
 
 export class ContentWizardToolbar extends api.ui.toolbar.Toolbar {
 
-    private homeButton: HomeButton;
+    private homeButton: AppIcon;
     private contextWindowToggler: TogglerButton;
     private componentsViewToggler: TogglerButton;
     private cycleViewModeButton: CycleButton;
@@ -45,7 +45,7 @@ export class ContentWizardToolbar extends api.ui.toolbar.Toolbar {
             return wemQ(null);
         });
 
-        this.homeButton = new HomeButton(params.application, homeAction);
+        this.homeButton = new AppIcon(params.application, homeAction);
         super.addElement(this.homeButton);
 
         super.addAction(params.saveAction);
