@@ -86,7 +86,7 @@ export class ContentRowFormatter {
         }
     }
 
-    private static makeClassName(entry: string): string {
+    public static makeClassName(entry: string): string {
         return entry.toLowerCase().replace('_', '-').replace(' ', '_') || 'unknown';
     }
 }
