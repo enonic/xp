@@ -67,6 +67,10 @@ module api.ui.selector {
             return;
         }
 
+        presetDefaultOption(data: OPTION_DISPLAY_VALUE) {
+            return;
+        }
+
         protected initGridAndData() {
             throw new Error('Must be implemented by inheritors');
         }
