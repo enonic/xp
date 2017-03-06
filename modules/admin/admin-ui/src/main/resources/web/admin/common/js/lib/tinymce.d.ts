@@ -26,6 +26,7 @@ interface HtmlAreaEditor extends HtmlAreaObservable {
     editorUpload: any;
     dom: any;
     schema: any;
+    getParam: (name: string, defaultVal: any, type?: string) => any
 }
 
 interface HtmlAreaUndoManager {
@@ -49,6 +50,7 @@ interface HtmlAreaStatic extends HtmlAreaObservable {
     toArray: (o: any) => [any];
     trim: (o : string) => string;
     grep: (a: any, b: any) => void;
+    DOM: any;
 }
 
 declare var tinymce: HtmlAreaStatic;

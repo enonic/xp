@@ -15,7 +15,7 @@ module api.util.htmlarea.dialog {
         protected layout() {
             super.layout();
 
-            this.textArea = new TextArea('waaat');
+            this.textArea = new TextArea('source-textarea');
             this.appendChildToContentPanel(this.textArea);
         }
 
@@ -23,8 +23,17 @@ module api.util.htmlarea.dialog {
             super.open();
 
             this.textArea.setValue(this.getEditor().getContent({source_view: true}));
-            this.textArea.getEl().setHeightPx(this.textArea.getHTMLElement().scrollHeight + 5); // resizing text area to content size
+            this.getEl().setAttribute('spellcheck', 'false');
+            this.resetHeight();
+            this.textArea.giveFocus();
             this.centerMyself();
+        }
+
+        private resetHeight() {
+            // textarea has 'height' style property updated on focus, shown events etc, overriding it gently
+            const height: number = this.getEditor().getParam("code_dialog_height", Math.min(tinymce.DOM.getViewPort().h - 200, 500));
+            this.textArea.getEl().setMinHeightPx(height);
+            this.textArea.getEl().setMaxHeightPx(height);
         }
 
         protected initializeActions() {
