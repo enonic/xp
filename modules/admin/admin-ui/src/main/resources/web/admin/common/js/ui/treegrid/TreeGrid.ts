@@ -393,7 +393,8 @@ module api.ui.treegrid {
                 return;
             }
 
-            if (this.isSelectionNotEmpty()) {
+            // Clear selection and highlighting if something was selected or highlighted from before
+            if (this.isSelectionNotEmpty() || isRowHighlighted) {
                 this.unselectAllRows();
                 this.root.clearStashedSelection();
                 this.triggerSelectionChangedListeners();
