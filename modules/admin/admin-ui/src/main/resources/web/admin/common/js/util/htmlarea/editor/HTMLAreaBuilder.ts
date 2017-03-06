@@ -46,7 +46,8 @@ module api.util.htmlarea.editor {
             'table',
             'textcolor',
             'visualblocks',
-            'visualchars'
+            'visualchars',
+            'source'
         ];
 
         setEditableSourceCode(value: boolean): HTMLAreaBuilder {
@@ -249,7 +250,8 @@ module api.util.htmlarea.editor {
                     anchor: this.assetsUri + '/common/js/util/htmlarea/plugins/anchor.js',
                     image: this.assetsUri + '/common/js/util/htmlarea/plugins/image.js',
                     macro: this.assetsUri + '/common/js/util/htmlarea/plugins/macro.js',
-                    searchandreplace: this.assetsUri + '/common/js/util/htmlarea/plugins/searchandreplace.js'
+                    searchandreplace: this.assetsUri + '/common/js/util/htmlarea/plugins/searchandreplace.js',
+                    source: this.assetsUri + '/common/js/util/htmlarea/plugins/source.js'
                 },
                 object_resizing: 'table',
                 autoresize_min_height: 100,
@@ -261,6 +263,7 @@ module api.util.htmlarea.editor {
                     editor.addCommand('openImageDialog', this.notifyImageDialog, this);
                     editor.addCommand('openMacroDialog', this.notifyMacroDialog, this);
                     editor.addCommand('openSearchAndReplaceDialog', this.notifySearchAndReplaceDialog, this);
+                    editor.addCommand('openSourceDialog', this.notifySourceDialog, this);
 
                     editor.on('NodeChange', (e) => {
                         if (!!this.nodeChangeHandler) {
@@ -366,6 +369,12 @@ module api.util.htmlarea.editor {
         private notifySearchAndReplaceDialog(config: any) {
             let event = CreateHtmlAreaDialogEvent.create().setConfig(config).setType(
                 api.util.htmlarea.dialog.HtmlAreaDialogType.SEARCHANDREPLACE).build();
+            this.publishCreateDialogEvent(event);
+        }
+
+        private notifySourceDialog(config: any) {
+            let event = CreateHtmlAreaDialogEvent.create().setConfig(config).setType(
+                api.util.htmlarea.dialog.HtmlAreaDialogType.SOURCE).build();
             this.publishCreateDialogEvent(event);
         }
 

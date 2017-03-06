@@ -160,13 +160,6 @@ module api.util.htmlarea.dialog {
             return this.nextAction;
         }
 
-        private handleKeyPressed(event: KeyboardEvent) {
-            if (event.keyCode === 13) {
-                this.searchAndReplaceHelper.submit(this.findInput.getValue(), this.matchCaseCheckbox.isChecked(),
-                    this.wholeWordsCheckbox.isChecked());
-            }
-        }
-
         open() {
             super.open();
             this.searchAndReplaceHelper.last = {};
