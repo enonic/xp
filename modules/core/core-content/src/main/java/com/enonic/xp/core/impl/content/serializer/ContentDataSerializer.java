@@ -158,7 +158,6 @@ public final class ContentDataSerializer
             publishInfo.addInstant( PUBLISH_FIRST, data.getFirst() );
             publishInfo.addInstant( PUBLISH_FROM, data.getFrom() );
             publishInfo.addInstant( PUBLISH_TO, data.getTo() );
-            publishInfo.addInstant( PUBLISH_FIRST, data.getFirst() );
         }
     }
 

@@ -28,7 +28,7 @@ module api.content {
 
             switch (compareStatus) {
             case CompareStatus.NEW:
-                if(content && !content.getFirstPublishedTime()) {
+                if(content && !content.getPublishFirstTime()) {
                     status = 'New';
                 } else {
                     status = 'Offline';
