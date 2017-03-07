@@ -26,8 +26,8 @@ module api.util.htmlarea.dialog {
             case HtmlAreaDialogType.SOURCE:
                 modalDialog = this.openSourceDialog(event.getConfig());
                 break;
-            case HtmlAreaDialogType.SPECIALCHARS:
-                modalDialog = this.openSpecialCharsDialog(event.getConfig());
+            case HtmlAreaDialogType.CHARMAP:
+                modalDialog = this.openCharMapDialog(event.getConfig());
                 break;
             }
 
@@ -70,8 +70,8 @@ module api.util.htmlarea.dialog {
             return this.openDialog(new SourceDialog(editor));
         }
 
-        private static openSpecialCharsDialog(editor: HtmlAreaEditor): ModalDialog {
-            return this.openDialog(new SpecialCharsDialog(editor));
+        private static openCharMapDialog(editor: HtmlAreaEditor): ModalDialog {
+            return this.openDialog(new CharMapDialog(editor));
         }
 
         private static openDialog(dialog: ModalDialog): ModalDialog {

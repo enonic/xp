@@ -1,6 +1,6 @@
 module api.util.htmlarea.dialog {
 
-    export class SpecialCharsDialog extends ModalDialog {
+    export class CharMapDialog extends ModalDialog {
 
         constructor(editor: HtmlAreaEditor) {
             super(editor, 'Special character', 'special-chars-modal-dialog');

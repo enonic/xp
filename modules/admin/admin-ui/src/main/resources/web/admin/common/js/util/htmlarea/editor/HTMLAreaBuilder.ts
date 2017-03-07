@@ -28,7 +28,7 @@ module api.util.htmlarea.editor {
             'styleselect',
             'alignleft aligncenter alignright alignjustify',
             'bullist numlist outdent indent',
-            'specialchars anchor image macro link unlink',
+            'charmap anchor image macro link unlink',
             'table',
             'pastetext'
         ].join(' | ');
@@ -47,7 +47,7 @@ module api.util.htmlarea.editor {
             'visualblocks',
             'visualchars',
             'source',
-            'specialchars'
+            'charmap'
         ];
 
         setEditableSourceCode(value: boolean): HTMLAreaBuilder {
@@ -252,7 +252,7 @@ module api.util.htmlarea.editor {
                     macro: this.assetsUri + '/common/js/util/htmlarea/plugins/macro.js',
                     searchandreplace: this.assetsUri + '/common/js/util/htmlarea/plugins/searchandreplace.js',
                     source: this.assetsUri + '/common/js/util/htmlarea/plugins/source.js',
-                    specialchars: this.assetsUri + '/common/js/util/htmlarea/plugins/specialchars.js'
+                    charmap: this.assetsUri + '/common/js/util/htmlarea/plugins/charmap.js'
                 },
                 object_resizing: 'table',
                 autoresize_min_height: 100,
@@ -265,7 +265,7 @@ module api.util.htmlarea.editor {
                     editor.addCommand('openMacroDialog', this.notifyMacroDialog, this);
                     editor.addCommand('openSearchAndReplaceDialog', this.notifySearchAndReplaceDialog, this);
                     editor.addCommand('openSourceDialog', this.notifySourceDialog, this);
-                    editor.addCommand('openSpecialCharsDialog', this.notifySpecialCharsDialog, this);
+                    editor.addCommand('openCharMapDialog', this.notifyCharMapDialog, this);
 
                     editor.on('NodeChange', (e) => {
                         if (!!this.nodeChangeHandler) {
@@ -380,9 +380,9 @@ module api.util.htmlarea.editor {
             this.publishCreateDialogEvent(event);
         }
 
-        private notifySpecialCharsDialog(config: any) {
+        private notifyCharMapDialog(config: any) {
             let event = CreateHtmlAreaDialogEvent.create().setConfig(config).setType(
-                api.util.htmlarea.dialog.HtmlAreaDialogType.SPECIALCHARS).build();
+                api.util.htmlarea.dialog.HtmlAreaDialogType.CHARMAP).build();
             this.publishCreateDialogEvent(event);
         }
 

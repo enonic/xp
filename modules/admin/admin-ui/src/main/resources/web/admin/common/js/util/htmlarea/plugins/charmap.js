@@ -1,11 +1,11 @@
 /*global tinymce:true */
 
-tinymce.PluginManager.add('specialchars', function (editor) {
+tinymce.PluginManager.add('charmap', function (editor) {
     function showDialog() {
-        editor.execCommand("openSpecialCharsDialog", editor);
+        editor.execCommand("openCharMapDialog", editor);
     }
 
-    editor.addButton('specialchars', {
+    editor.addButton('charmap', {
         icon: 'charmap',
         tooltip: 'Special character',
         onclick: showDialog

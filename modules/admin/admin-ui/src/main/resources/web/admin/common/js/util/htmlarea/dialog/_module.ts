@@ -13,4 +13,4 @@
 ///<reference path='ImageCroppingSelector.ts' />
 ///<reference path='SearchAndReplaceModalDialog.ts' />
 ///<reference path='SourceDialog.ts' />
-///<reference path='SpecialCharsDialog.ts' />
+///<reference path='CharMapDialog.ts' />
