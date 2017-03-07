@@ -31,7 +31,7 @@ module api.util.htmlarea.dialog {
 
         private resetHeight() {
             // textarea has 'height' style property updated on focus, shown events etc, overriding it gently
-            const height: number = this.getEditor().getParam("code_dialog_height", Math.min(tinymce.DOM.getViewPort().h - 200, 500));
+            const height: number = this.getEditor().getParam('code_dialog_height', Math.min(tinymce.DOM.getViewPort().h - 200, 500));
             this.textArea.getEl().setMinHeightPx(height);
             this.textArea.getEl().setMaxHeightPx(height);
         }
