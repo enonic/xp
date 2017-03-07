@@ -249,7 +249,7 @@ module api.util.htmlarea.editor {
                     anchor: this.assetsUri + '/common/js/util/htmlarea/plugins/anchor.js',
                     image: this.assetsUri + '/common/js/util/htmlarea/plugins/image.js',
                     macro: this.assetsUri + '/common/js/util/htmlarea/plugins/macro.js',
-                    searchandreplace: this.assetsUri + '/common/js/util/htmlarea/plugins/searchandreplace.js',
+                    searchreplace: this.assetsUri + '/common/js/util/htmlarea/plugins/searchreplace.js',
                     code: this.assetsUri + '/common/js/util/htmlarea/plugins/code.js',
                     charmap: this.assetsUri + '/common/js/util/htmlarea/plugins/charmap.js'
                 },
@@ -262,7 +262,7 @@ module api.util.htmlarea.editor {
                     editor.addCommand('openAnchorDialog', this.notifyAnchorDialog, this);
                     editor.addCommand('openImageDialog', this.notifyImageDialog, this);
                     editor.addCommand('openMacroDialog', this.notifyMacroDialog, this);
-                    editor.addCommand('openSearchAndReplaceDialog', this.notifySearchAndReplaceDialog, this);
+                    editor.addCommand('openSearchReplaceDialog', this.notifySearchReplaceDialog, this);
                     editor.addCommand('openCodeDialog', this.notifyCodeDialog, this);
                     editor.addCommand('openCharMapDialog', this.notifyCharMapDialog, this);
 
@@ -367,9 +367,9 @@ module api.util.htmlarea.editor {
             this.publishCreateDialogEvent(event);
         }
 
-        private notifySearchAndReplaceDialog(config: any) {
+        private notifySearchReplaceDialog(config: any) {
             let event = CreateHtmlAreaDialogEvent.create().setConfig(config).setType(
-                api.util.htmlarea.dialog.HtmlAreaDialogType.SEARCHANDREPLACE).build();
+                api.util.htmlarea.dialog.HtmlAreaDialogType.SEARCHREPLACE).build();
             this.publishCreateDialogEvent(event);
         }
 
