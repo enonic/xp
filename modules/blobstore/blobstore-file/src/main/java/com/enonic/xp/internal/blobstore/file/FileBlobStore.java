@@ -53,7 +53,7 @@ public final class FileBlobStore
         }
         catch ( final IOException e )
         {
-            throw new BlobStoreException( "Failed to report blob", e );
+            throw new BlobStoreException( "Failed to add blob", e );
         }
     }
 
@@ -67,7 +67,7 @@ public final class FileBlobStore
         }
         catch ( IOException e )
         {
-            throw new BlobStoreException( "Failed to report blob", e );
+            throw new BlobStoreException( "Failed to add blob", e );
         }
     }
 

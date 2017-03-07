@@ -10,7 +10,6 @@ import com.enonic.xp.blob.Segment;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.ConfigInterpolator;
 import com.enonic.xp.config.Configuration;
-import com.enonic.xp.internal.blobstore.file.SegmentsMapFactory;
 import com.enonic.xp.util.ByteSizeParser;
 
 @Component(configurationPid = "com.enonic.xp.blobstore.file")

@@ -8,7 +8,6 @@ import com.google.common.io.Files;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 
-
 final class FileBlobRecord
     implements BlobRecord
 {
@@ -16,7 +15,7 @@ final class FileBlobRecord
 
     private final File file;
 
-    public FileBlobRecord( final BlobKey key, final File file )
+    FileBlobRecord( final BlobKey key, final File file )
     {
         this.key = key;
         this.file = file;

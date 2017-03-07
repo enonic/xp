@@ -1,4 +1,4 @@
-package com.enonic.xp.internal.blobstore.file;
+package com.enonic.xp.internal.blobstore.file.config;
 
 import java.util.Map;
 
@@ -9,9 +9,8 @@ import com.google.common.collect.Maps;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.config.Configuration;
 
-public final class SegmentsMapFactory
+final class SegmentsMapFactory
 {
-
     private final Configuration config;
 
     private final Segment[] requiredSegments;
@@ -28,12 +27,7 @@ public final class SegmentsMapFactory
         collectionPrefix = builder.collectionPrefix;
     }
 
-    public static Builder newBuilder()
-    {
-        return new Builder();
-    }
-
-    public Map<Segment, String> execute()
+    Map<Segment, String> execute()
     {
         final ImmutableMap.Builder<Segment, String> builder = ImmutableMap.builder();
 
@@ -78,7 +72,7 @@ public final class SegmentsMapFactory
     }
 
 
-    public static Builder create()
+    static Builder create()
     {
         return new Builder();
     }
@@ -97,39 +91,33 @@ public final class SegmentsMapFactory
         {
         }
 
-        public Builder configuration( final Configuration val )
+        Builder configuration( final Configuration val )
         {
             config = val;
             return this;
         }
 
-        public Builder requiredSegments( final Segment[] val )
+        Builder requiredSegments( final Segment[] val )
         {
             requiredSegments = val;
             return this;
         }
 
-        public Builder configName( final String val )
+        Builder configName( final String val )
         {
             configName = val;
             return this;
         }
 
-        public Builder collectionPrefix( final String val )
+        Builder collectionPrefix( final String val )
         {
             collectionPrefix = val;
             return this;
         }
 
-        public SegmentsMapFactory build()
+        SegmentsMapFactory build()
         {
             return new SegmentsMapFactory( this );
-        }
-
-        public Builder config( final Configuration val )
-        {
-            config = val;
-            return this;
         }
     }
 }
