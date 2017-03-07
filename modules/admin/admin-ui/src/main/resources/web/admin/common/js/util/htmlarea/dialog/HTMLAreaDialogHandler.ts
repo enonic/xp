@@ -23,6 +23,9 @@ module api.util.htmlarea.dialog {
             case HtmlAreaDialogType.SEARCHANDREPLACE:
                 modalDialog = this.openSearchAndReplaceDialog(event.getConfig());
                 break;
+            case HtmlAreaDialogType.SPECIALCHARS:
+                modalDialog = this.openSpecialCharsDialog(event.getConfig());
+                break;
             }
 
             if (modalDialog) {
@@ -58,6 +61,10 @@ module api.util.htmlarea.dialog {
 
         private static openSearchAndReplaceDialog(editor: HtmlAreaEditor): ModalDialog {
             return this.openDialog(new SearchAndReplaceModalDialog(editor));
+        }
+
+        private static openSpecialCharsDialog(editor: HtmlAreaEditor): ModalDialog {
+            return this.openDialog(new SpecialCharsDialog(editor));
         }
 
         private static openDialog(dialog: ModalDialog): ModalDialog {

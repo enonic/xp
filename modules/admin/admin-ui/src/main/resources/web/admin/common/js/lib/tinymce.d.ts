@@ -48,6 +48,7 @@ interface HtmlAreaStatic extends HtmlAreaObservable {
     toArray: (o: any) => [any];
     trim: (o : string) => string;
     grep: (a: any, b: any) => void;
+    util: any;
 }
 
 declare var tinymce: HtmlAreaStatic;
