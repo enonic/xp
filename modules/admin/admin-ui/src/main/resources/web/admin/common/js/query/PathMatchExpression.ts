@@ -5,12 +5,19 @@ module api.query {
     import DynamicConstraintExpr = api.query.expr.DynamicConstraintExpr;
     import LogicalExpr = api.query.expr.LogicalExpr;
     import LogicalOperator = api.query.expr.LogicalOperator;
+    import CompareExpr = api.query.expr.CompareExpr;
+    import FieldExpr = api.query.expr.FieldExpr;
 
     export class PathMatchExpression extends FulltextSearchExpression {
 
         static createWithPath(searchString: string, queryFields: QueryFields, path: string): api.query.expr.Expression {
 
-            let expression = FulltextSearchExpression.create(searchString, queryFields);
+            let nameExpr = FulltextSearchExpression.create(searchString, queryFields);
+
+            let pathExpr = CompareExpr.like(new FieldExpr('_path'),
+                ValueExpr.string('/content/*' + searchString + '*'));
+
+            let nameOrPathExpr: LogicalExpr = new LogicalExpr(nameExpr, LogicalOperator.OR, pathExpr);
 
             let args = [];
             args.push(ValueExpr.stringValue('_path'));
@@ -19,7 +26,7 @@ module api.query {
             let matchedExpr: FunctionExpr = new FunctionExpr('pathMatch', args);
             let matchedDynamicExpr: DynamicConstraintExpr = new DynamicConstraintExpr(matchedExpr);
 
-            let booleanExpr: LogicalExpr = new LogicalExpr(expression, LogicalOperator.AND, matchedDynamicExpr);
+            let booleanExpr: LogicalExpr = new LogicalExpr(nameOrPathExpr, LogicalOperator.AND, matchedDynamicExpr);
             return booleanExpr;
         }
     }
