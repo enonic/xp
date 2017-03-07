@@ -23,8 +23,8 @@ module api.util.htmlarea.dialog {
             case HtmlAreaDialogType.SEARCHANDREPLACE:
                 modalDialog = this.openSearchAndReplaceDialog(event.getConfig());
                 break;
-            case HtmlAreaDialogType.SOURCE:
-                modalDialog = this.openSourceDialog(event.getConfig());
+            case HtmlAreaDialogType.CODE:
+                modalDialog = this.openCodeDialog(event.getConfig());
                 break;
             case HtmlAreaDialogType.CHARMAP:
                 modalDialog = this.openCharMapDialog(event.getConfig());
@@ -66,8 +66,8 @@ module api.util.htmlarea.dialog {
             return this.openDialog(new SearchAndReplaceModalDialog(editor));
         }
 
-        private static openSourceDialog(editor: HtmlAreaEditor): ModalDialog {
-            return this.openDialog(new SourceDialog(editor));
+        private static openCodeDialog(editor: HtmlAreaEditor): ModalDialog {
+            return this.openDialog(new CodeDialog(editor));
         }
 
         private static openCharMapDialog(editor: HtmlAreaEditor): ModalDialog {

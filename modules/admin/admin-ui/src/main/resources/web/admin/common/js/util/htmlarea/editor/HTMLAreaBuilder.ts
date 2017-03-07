@@ -46,7 +46,6 @@ module api.util.htmlarea.editor {
             'textcolor',
             'visualblocks',
             'visualchars',
-            'source',
             'charmap'
         ];
 
@@ -251,7 +250,7 @@ module api.util.htmlarea.editor {
                     image: this.assetsUri + '/common/js/util/htmlarea/plugins/image.js',
                     macro: this.assetsUri + '/common/js/util/htmlarea/plugins/macro.js',
                     searchandreplace: this.assetsUri + '/common/js/util/htmlarea/plugins/searchandreplace.js',
-                    source: this.assetsUri + '/common/js/util/htmlarea/plugins/source.js',
+                    code: this.assetsUri + '/common/js/util/htmlarea/plugins/code.js',
                     charmap: this.assetsUri + '/common/js/util/htmlarea/plugins/charmap.js'
                 },
                 object_resizing: 'table',
@@ -264,7 +263,7 @@ module api.util.htmlarea.editor {
                     editor.addCommand('openImageDialog', this.notifyImageDialog, this);
                     editor.addCommand('openMacroDialog', this.notifyMacroDialog, this);
                     editor.addCommand('openSearchAndReplaceDialog', this.notifySearchAndReplaceDialog, this);
-                    editor.addCommand('openSourceDialog', this.notifySourceDialog, this);
+                    editor.addCommand('openCodeDialog', this.notifyCodeDialog, this);
                     editor.addCommand('openCharMapDialog', this.notifyCharMapDialog, this);
 
                     editor.on('NodeChange', (e) => {
@@ -374,9 +373,9 @@ module api.util.htmlarea.editor {
             this.publishCreateDialogEvent(event);
         }
 
-        private notifySourceDialog(config: any) {
+        private notifyCodeDialog(config: any) {
             let event = CreateHtmlAreaDialogEvent.create().setConfig(config).setType(
-                api.util.htmlarea.dialog.HtmlAreaDialogType.SOURCE).build();
+                api.util.htmlarea.dialog.HtmlAreaDialogType.CODE).build();
             this.publishCreateDialogEvent(event);
         }
 
