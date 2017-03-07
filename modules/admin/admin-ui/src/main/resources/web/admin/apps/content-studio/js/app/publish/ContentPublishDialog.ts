@@ -14,6 +14,7 @@ import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
 import BrowseItem = api.app.browse.BrowseItem;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
+import Checkbox = api.ui.Checkbox;
 
 /**
  * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
@@ -28,6 +29,8 @@ export class ContentPublishDialog extends ProgressBarDialog {
     private containsInvalid: boolean;
 
     private scheduleDialog: SchedulePublishDialog;
+
+    private includeOffline: Checkbox;
 
     protected showScheduleDialogButton: api.ui.dialog.DialogButton;
 
@@ -44,6 +47,8 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
         this.setAutoUpdateTitle(false);
         this.getEl().addClass('publish-dialog');
+
+        this.initIncludeOfflineCheckbox();
 
         this.initActions();
         this.addCancelButtonToBottom();
@@ -70,6 +75,17 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.actionButton = this.addAction(publishAction, true);
 
         this.lockControls();
+    }
+
+    private initIncludeOfflineCheckbox() {
+
+        let childrenCheckboxListener = () => this.reloadPublishDependencies(true).done();
+
+        this.includeOffline = api.ui.Checkbox.create().setLabelText('Include offline items').build();
+        this.includeOffline.addClass('include-offline');
+        this.includeOffline.onValueChanged(childrenCheckboxListener);
+
+        this.getButtonRow().appendChild(this.includeOffline);
     }
 
     protected createDependantList(): PublishDialogDependantList {
@@ -129,7 +145,8 @@ export class ContentPublishDialog extends ProgressBarDialog {
         let ids = this.getContentToPublishIds();
 
         let resolveDependenciesRequest = api.content.resource.ResolvePublishDependenciesRequest.create().setIds(ids).setExcludedIds(
-            this.excludedIds).setExcludeChildrenIds(this.getItemList().getExcludeChildrenIds()).build();
+            this.excludedIds).setExcludeChildrenIds(this.getItemList().getExcludeChildrenIds()).setIncludeOffline(
+            this.includeOffline.isChecked()).build();
 
         return resolveDependenciesRequest.sendAndParse().then((result: ResolvePublishDependenciesResult) => {
 

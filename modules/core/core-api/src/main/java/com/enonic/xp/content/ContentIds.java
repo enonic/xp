@@ -97,6 +97,12 @@ public final class ContentIds
             return this;
         }
 
+        public Builder addAll( final Collection<ContentId> contentIds )
+        {
+            this.contents.addAll( contentIds );
+            return this;
+        }
+
 
         public ContentIds build()
         {

@@ -43,6 +43,8 @@ public interface ContentService
 
     ContentIds resolveRequiredDependencies( ResolveRequiredDependenciesParams params );
 
+    ContentIds resolveOfflineContents( ResolveOfflineContentsParams params );
+
     boolean isValidContent( ContentIds contentIds );
 
     ContentIds getInvalidContent( ContentIds contentIds );
