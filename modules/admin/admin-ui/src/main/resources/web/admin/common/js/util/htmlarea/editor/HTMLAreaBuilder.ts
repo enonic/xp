@@ -28,14 +28,13 @@ module api.util.htmlarea.editor {
             'styleselect',
             'alignleft aligncenter alignright alignjustify',
             'bullist numlist outdent indent',
-            'charmap anchor image macro link unlink',
+            'specialchars anchor image macro link unlink',
             'table',
             'pastetext'
         ].join(' | ');
 
         private plugins: string[] = [
             'autoresize',
-            'charmap',
             'code',
             'directionality',
             'fullscreen',
@@ -47,7 +46,8 @@ module api.util.htmlarea.editor {
             'textcolor',
             'visualblocks',
             'visualchars',
-            'source'
+            'source',
+            'specialchars'
         ];
 
         setEditableSourceCode(value: boolean): HTMLAreaBuilder {
@@ -251,7 +251,8 @@ module api.util.htmlarea.editor {
                     image: this.assetsUri + '/common/js/util/htmlarea/plugins/image.js',
                     macro: this.assetsUri + '/common/js/util/htmlarea/plugins/macro.js',
                     searchandreplace: this.assetsUri + '/common/js/util/htmlarea/plugins/searchandreplace.js',
-                    source: this.assetsUri + '/common/js/util/htmlarea/plugins/source.js'
+                    source: this.assetsUri + '/common/js/util/htmlarea/plugins/source.js',
+                    specialchars: this.assetsUri + '/common/js/util/htmlarea/plugins/specialchars.js'
                 },
                 object_resizing: 'table',
                 autoresize_min_height: 100,
@@ -264,6 +265,7 @@ module api.util.htmlarea.editor {
                     editor.addCommand('openMacroDialog', this.notifyMacroDialog, this);
                     editor.addCommand('openSearchAndReplaceDialog', this.notifySearchAndReplaceDialog, this);
                     editor.addCommand('openSourceDialog', this.notifySourceDialog, this);
+                    editor.addCommand('openSpecialCharsDialog', this.notifySpecialCharsDialog, this);
 
                     editor.on('NodeChange', (e) => {
                         if (!!this.nodeChangeHandler) {
@@ -375,6 +377,12 @@ module api.util.htmlarea.editor {
         private notifySourceDialog(config: any) {
             let event = CreateHtmlAreaDialogEvent.create().setConfig(config).setType(
                 api.util.htmlarea.dialog.HtmlAreaDialogType.SOURCE).build();
+            this.publishCreateDialogEvent(event);
+        }
+
+        private notifySpecialCharsDialog(config: any) {
+            let event = CreateHtmlAreaDialogEvent.create().setConfig(config).setType(
+                api.util.htmlarea.dialog.HtmlAreaDialogType.SPECIALCHARS).build();
             this.publishCreateDialogEvent(event);
         }
 
