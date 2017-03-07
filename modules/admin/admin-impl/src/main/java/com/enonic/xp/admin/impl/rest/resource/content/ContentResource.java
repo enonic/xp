@@ -396,7 +396,7 @@ public final class ContentResource
                                                 "Content [%s] could not be updated. A content with that name already exists",
                                                 json.getRenameContentParams().getNewName().toString() );
         }
-        validate( json.getContentPublishInfo() );
+        validatePublishInfo( json );
 
         final UpdateContentParams updateParams = json.getUpdateContentParams();
 
@@ -802,17 +802,16 @@ public final class ContentResource
         // Sorts the contents by path and for each
         return contents.stream().
             // sorted( ( content1, content2 ) -> content1.getPath().compareTo( content2.getPath() ) ).
-                map( content ->
-                     {
-                         //Creates a ContentPublishItem
-                         final CompareContentResult compareContentResult = compareContentResultsMap.get( content.getId() );
-                         return ContentPublishItemJson.create().
-                             content( content ).
-                             compareStatus( compareContentResult.getCompareStatus().name() ).
-                             iconUrl( contentIconUrlResolver.resolve( content ) ).
-                             build();
-                     } ).
-                collect( Collectors.toList() );
+                map( content -> {
+                //Creates a ContentPublishItem
+                final CompareContentResult compareContentResult = compareContentResultsMap.get( content.getId() );
+                return ContentPublishItemJson.create().
+                    content( content ).
+                    compareStatus( compareContentResult.getCompareStatus().name() ).
+                    iconUrl( contentIconUrlResolver.resolve( content ) ).
+                    build();
+            } ).
+            collect( Collectors.toList() );
     }
 
     @POST
@@ -967,13 +966,12 @@ public final class ContentResource
 
         final List<String> result = new ArrayList<>();
 
-        contents.stream().forEach( content ->
-                                   {
-                                       if ( !content.getPermissions().isAllowedFor( authInfo.getPrincipals(), Permission.MODIFY ) )
-                                       {
-                                           result.add( content.getId().toString() );
-                                       }
-                                   } );
+        contents.stream().forEach( content -> {
+            if ( !content.getPermissions().isAllowedFor( authInfo.getPrincipals(), Permission.MODIFY ) )
+            {
+                result.add( content.getId().toString() );
+            }
+        } );
 
         return result;
     }
@@ -1060,13 +1058,12 @@ public final class ContentResource
 
         final List<String> result = new ArrayList<>();
 
-        permissions.forEach( permission ->
-                             {
-                                 if ( userHasPermission( authInfo, permission, contentsPermissions ) )
-                                 {
-                                     result.add( permission.name() );
-                                 }
-                             } );
+        permissions.forEach( permission -> {
+            if ( userHasPermission( authInfo, permission, contentsPermissions ) )
+            {
+                result.add( permission.name() );
+            }
+        } );
 
         return result;
     }
@@ -1614,12 +1611,13 @@ public final class ContentResource
         return true;
     }
 
-    private void validate( final ContentPublishInfo contentPublishInfo )
+    private void validatePublishInfo( final UpdateContentJson updateContentJson )
     {
-        final Instant publishToInstant = contentPublishInfo.getTo();
+
+        final Instant publishToInstant = updateContentJson.getPublishToInstant();
         if ( publishToInstant != null )
         {
-            final Instant publishFromInstant = contentPublishInfo.getFrom();
+            final Instant publishFromInstant = updateContentJson.getPublishFromInstant();
             if ( publishFromInstant == null )
             {
                 throw new WebApplicationException( "[Online to] date/time cannot be set without [Online from]",

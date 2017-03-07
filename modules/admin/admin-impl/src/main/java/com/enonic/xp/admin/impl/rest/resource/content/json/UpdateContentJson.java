@@ -29,7 +29,9 @@ public final class UpdateContentJson
 {
     final ContentName contentName;
 
-    final ContentPublishInfo contentPublishInfo;
+    final Instant publishFromInstant;
+    
+    final Instant publishToInstant;
 
     final UpdateContentParams updateContentParams;
 
@@ -49,14 +51,11 @@ public final class UpdateContentJson
                        @JsonProperty("overwriteChildPermissions") final boolean overwriteChildPermissions )
     {
         this.contentName = ContentName.from( contentName );
+        this.publishFromInstant = StringUtils.isNotEmpty( publishFrom ) ? Instant.parse( publishFrom ) : null;
+        this.publishToInstant = StringUtils.isNotEmpty( publishTo ) ? Instant.parse( publishTo ) : null;
 
         final PropertyTree contentData = PropertyTreeJson.fromJson( propertyArrayJsonList );
         final ExtraDatas extraDatas = parseExtradata( extraDataJsonList );
-
-        this.contentPublishInfo = ContentPublishInfo.create().
-            from( StringUtils.isNotEmpty( publishFrom ) ? Instant.parse( publishFrom ) : null ).
-            to( StringUtils.isNotEmpty( publishTo ) ? Instant.parse( publishTo ) : null ).
-            build();
 
         this.updateContentParams = new UpdateContentParams().
             requireValid( Boolean.valueOf( requireValid ) ).
@@ -68,7 +67,12 @@ public final class UpdateContentJson
                 edit.displayName = displayName;
                 edit.owner = StringUtils.isNotEmpty( owner ) ? PrincipalKey.from( owner ) : null;
                 edit.language = StringUtils.isNotEmpty( language ) ? Locale.forLanguageTag( language ) : null;
-                edit.publishInfo = this.contentPublishInfo;
+                                
+                edit.publishInfo = ContentPublishInfo.create().
+                    first( edit.publishInfo == null ? null : edit.publishInfo.getFirst() ).
+                    from( publishFromInstant ).
+                    to( publishToInstant ).
+                    build();
                 edit.language = StringUtils.isNotEmpty( language ) ? Locale.forLanguageTag( language ) : null;
                 edit.inheritPermissions = inheritPermissions;
                 edit.permissions = parseAcl( permissions );
@@ -111,9 +115,15 @@ public final class UpdateContentJson
     }
 
     @JsonIgnore
-    public ContentPublishInfo getContentPublishInfo()
+    public Instant getPublishFromInstant()
     {
-        return contentPublishInfo;
+        return publishFromInstant;
+    }
+
+    @JsonIgnore
+    public Instant getPublishToInstant()
+    {
+        return publishToInstant;
     }
 
     private ExtraDatas parseExtradata( final List<ExtraDataJson> extraDataJsonList )
