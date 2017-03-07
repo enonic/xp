@@ -13,6 +13,7 @@ import {PublishTreeContentAction} from './PublishTreeContentAction';
 import {UnpublishContentAction} from './UnpublishContentAction';
 import {ContentBrowseItem} from '../ContentBrowseItem';
 import {PreviewContentHandler} from './handler/PreviewContentHandler';
+import {UndoPendingDeleteContentAction} from './UndoPendingDeleteContentAction';
 
 import Action = api.ui.Action;
 import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
@@ -42,6 +43,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     public PUBLISH_TREE_CONTENT: Action;
     public UNPUBLISH_CONTENT: Action;
     public TOGGLE_SEARCH_PANEL: Action;
+    public UNDO_PENDING_DELETE: Action;
 
     private actions: api.ui.Action[] = [];
 
@@ -58,6 +60,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.PUBLISH_CONTENT = new PublishContentAction(grid);
         this.PUBLISH_TREE_CONTENT = new PublishTreeContentAction(grid);
         this.UNPUBLISH_CONTENT = new UnpublishContentAction(grid);
+        this.UNDO_PENDING_DELETE = new UndoPendingDeleteContentAction(grid);
 
         this.actions.push(
             this.SHOW_NEW_CONTENT_DIALOG_ACTION,
@@ -77,7 +80,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     }
 
     getAllActions(): api.ui.Action[] {
-        return [...this.actions, this.PUBLISH_CONTENT, this.UNPUBLISH_CONTENT];
+        return [...this.actions, this.PUBLISH_CONTENT, this.UNPUBLISH_CONTENT, this.UNDO_PENDING_DELETE];
     }
 
     getAllActionsNoPublish(): api.ui.Action[] {
@@ -85,7 +88,8 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     }
 
     // tslint:disable-next-line:max-line-length
-    updateActionsEnabledState(contentBrowseItems: ContentBrowseItem[], changes?: BrowseItemsChanges<ContentSummaryAndCompareStatus>): wemQ.Promise<BrowseItem<ContentSummaryAndCompareStatus>[]> {
+    updateActionsEnabledState(contentBrowseItems: ContentBrowseItem[],
+                              changes?: BrowseItemsChanges<ContentSummaryAndCompareStatus>): wemQ.Promise<BrowseItem<ContentSummaryAndCompareStatus>[]> {
 
         this.TOGGLE_SEARCH_PANEL.setVisible(false);
 
@@ -111,10 +115,11 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.DUPLICATE_CONTENT.setEnabled(false);
         this.MOVE_CONTENT.setEnabled(false);
         this.SORT_CONTENT.setEnabled(false);
+        this.UNDO_PENDING_DELETE.setEnabled(false);
 
+        this.PUBLISH_TREE_CONTENT.setEnabled(false);
         this.PUBLISH_CONTENT.setEnabled(false);
         this.PUBLISH_CONTENT.setVisible(true);
-        this.PUBLISH_TREE_CONTENT.setEnabled(false);
         this.UNPUBLISH_CONTENT.setEnabled(false);
         this.UNPUBLISH_CONTENT.setVisible(false);
     }
@@ -145,12 +150,16 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             unpublishEnabled = anyPublished;
         }
 
+        let undoDeleteEnabled = contentBrowseItems.length === 1 &&
+                                contentBrowseItems[0].getModel().getCompareStatus() === api.content.CompareStatus.PENDING_DELETE;
+
         this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(contentSummaries.length < 2);
         this.EDIT_CONTENT.setEnabled(this.anyEditable(contentSummaries));
         this.DELETE_CONTENT.setEnabled(this.anyDeletable(contentSummaries));
         this.DUPLICATE_CONTENT.setEnabled(contentSummaries.length === 1);
         this.MOVE_CONTENT.setEnabled(true);
         this.SORT_CONTENT.setEnabled(contentSummaries.length === 1 && contentSummaries[0].hasChildren());
+        this.UNDO_PENDING_DELETE.setEnabled(undoDeleteEnabled);
 
         this.PUBLISH_CONTENT.setEnabled(publishEnabled);
         this.PUBLISH_TREE_CONTENT.setEnabled(treePublishEnabled);
@@ -191,8 +200,8 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     }
 
     private updateActionsByPermissionsNoItemsSelected(): wemQ.Promise<any> {
-        return new api.content.resource.GetPermittedActionsRequest().addPermissionsToBeChecked(Permission.CREATE).sendAndParse().
-            then((allowedPermissions: Permission[]) => {
+        return new api.content.resource.GetPermittedActionsRequest().addPermissionsToBeChecked(Permission.CREATE).sendAndParse().then(
+            (allowedPermissions: Permission[]) => {
                 this.resetDefaultActionsNoItemsSelected();
 
                 let canCreate = allowedPermissions.indexOf(Permission.CREATE) > -1;
@@ -213,35 +222,33 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
     private updateActionsByPermissionsMultipleItemsSelected(contentBrowseItems: ContentBrowseItem[],
                                                             contentTypesAllowChildren: boolean = true): wemQ.Promise<any> {
-        return new api.content.resource.GetPermittedActionsRequest().
-            addContentIds(...contentBrowseItems.map(contentBrowseItem => contentBrowseItem.getModel().getContentId())).
-            addPermissionsToBeChecked(Permission.CREATE, Permission.DELETE, Permission.PUBLISH).
-            sendAndParse().
-            then((allowedPermissions: Permission[]) => {
-                this.resetDefaultActionsMultipleItemsSelected(contentBrowseItems);
+        return new api.content.resource.GetPermittedActionsRequest().addContentIds(
+            ...contentBrowseItems.map(contentBrowseItem => contentBrowseItem.getModel().getContentId())).addPermissionsToBeChecked(
+            Permission.CREATE, Permission.DELETE, Permission.PUBLISH).sendAndParse().then((allowedPermissions: Permission[]) => {
+            this.resetDefaultActionsMultipleItemsSelected(contentBrowseItems);
 
-                let canCreate = allowedPermissions.indexOf(Permission.CREATE) > -1;
+            let canCreate = allowedPermissions.indexOf(Permission.CREATE) > -1;
 
-                let canDelete = allowedPermissions.indexOf(Permission.DELETE) > -1;
+            let canDelete = allowedPermissions.indexOf(Permission.DELETE) > -1;
 
-                let canPublish = allowedPermissions.indexOf(Permission.PUBLISH) > -1;
+            let canPublish = allowedPermissions.indexOf(Permission.PUBLISH) > -1;
 
-                if (!contentTypesAllowChildren || !canCreate) {
-                    this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
-                    this.SORT_CONTENT.setEnabled(false);
-                }
+            if (!contentTypesAllowChildren || !canCreate) {
+                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
+                this.SORT_CONTENT.setEnabled(false);
+            }
 
-                if (!canDelete) {
-                    this.DELETE_CONTENT.setEnabled(false);
-                    this.MOVE_CONTENT.setEnabled(false);
-                }
+            if (!canDelete) {
+                this.DELETE_CONTENT.setEnabled(false);
+                this.MOVE_CONTENT.setEnabled(false);
+            }
 
-                if (!canPublish) {
-                    this.PUBLISH_CONTENT.setEnabled(false);
-                    this.PUBLISH_TREE_CONTENT.setEnabled(false);
-                    this.UNPUBLISH_CONTENT.setEnabled(false);
-                }
-            });
+            if (!canPublish) {
+                this.PUBLISH_CONTENT.setEnabled(false);
+                this.PUBLISH_TREE_CONTENT.setEnabled(false);
+                this.UNPUBLISH_CONTENT.setEnabled(false);
+            }
+        });
     }
 
     private checkIsChildrenAllowedByContentType(contentSummary: ContentSummary): wemQ.Promise<Boolean> {
