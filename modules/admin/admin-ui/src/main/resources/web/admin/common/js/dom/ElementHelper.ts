@@ -362,6 +362,16 @@ module api.dom {
             return this;
         }
 
+        setMinHeight(value: string): ElementHelper {
+            this.el.style.minHeight = value;
+            return this;
+        }
+
+        setMinHeightPx(value: number): ElementHelper {
+            this.setMinHeight(value + 'px');
+            return this;
+        }
+
         getHeightWithoutPadding(): number {
             return wemjq(this.el).height();
         }
