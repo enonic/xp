@@ -4,7 +4,7 @@ module api.util.htmlarea.dialog {
     import Validators = api.ui.form.Validators;
     import TextArea = api.ui.text.TextArea;
 
-    export class SourceDialog extends ModalDialog {
+    export class CodeDialog extends ModalDialog {
 
         private textArea: TextArea;
 
