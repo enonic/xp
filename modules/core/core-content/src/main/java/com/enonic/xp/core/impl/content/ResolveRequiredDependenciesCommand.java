@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -60,16 +61,16 @@ public class ResolveRequiredDependenciesCommand
 
         final Set<ContentId> requiredIds = parentPaths.stream().
             filter( resultPaths::contains ).
-            map( parentPath ->
-                 {
-                     final NodeComparison comparison = nodeComparisons.getBySourcePath( parentPath );
+            map( parentPath -> {
+                final NodeComparison comparison = nodeComparisons.getBySourcePath( parentPath );
 
-                     if ( !CompareStatus.NEWER.equals( comparison.getCompareStatus() ) )
-                     {
-                         return ContentId.from( comparison.getNodeId().toString() );
-                     }
-                     return null;
-                 } ).
+                if ( !CompareStatus.NEWER.equals( comparison.getCompareStatus() ) )
+                {
+                    return ContentId.from( comparison.getNodeId().toString() );
+                }
+                return null;
+            } ).
+            filter( Objects::nonNull ).
             collect( Collectors.toSet() );
 
         return ContentIds.from( requiredIds );
