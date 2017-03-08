@@ -622,6 +622,11 @@ module api.ui.treegrid {
                 // When search is applied content nodes get different Ids,
                 // so we should try to search by dataId and not by nodeId
 
+                let nodesByDataId = this.grid.getDataView().getItems().filter(item => item.getDataId() == node.getDataId());
+                if (!nodesByDataId || nodesByDataId.length === 0 || !nodesByDataId[0].isVisible()) {
+                    return null;
+                }
+
                 rowIndex = this.grid.getDataView().getItems().map(item => item.getDataId()).indexOf(node.getDataId());
             }
 
@@ -655,7 +660,9 @@ module api.ui.treegrid {
             }
 
             let row = this.getRowByNode(node);
-            row.addClass('selected');
+            if (!!row) {
+                row.addClass('selected');
+            }
         }
 
         private unhighlightCurrentRow(skipEvent: boolean = false) {
