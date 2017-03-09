@@ -35,7 +35,6 @@ module api.util.htmlarea.editor {
 
         private plugins: string[] = [
             'autoresize',
-            'code',
             'directionality',
             'fullscreen',
             'hr',
@@ -243,16 +242,8 @@ module api.util.htmlarea.editor {
                 browser_spellcheck: true,
                 verify_html: false,
                 verify_css_classes: false,
-                plugins: this.editableSourceCode ? this.plugins.concat('code') : this.plugins,
-                external_plugins: {
-                    link: this.assetsUri + '/common/js/util/htmlarea/plugins/link.js',
-                    anchor: this.assetsUri + '/common/js/util/htmlarea/plugins/anchor.js',
-                    image: this.assetsUri + '/common/js/util/htmlarea/plugins/image.js',
-                    macro: this.assetsUri + '/common/js/util/htmlarea/plugins/macro.js',
-                    searchreplace: this.assetsUri + '/common/js/util/htmlarea/plugins/searchreplace.js',
-                    code: this.assetsUri + '/common/js/util/htmlarea/plugins/code.js',
-                    charmap: this.assetsUri + '/common/js/util/htmlarea/plugins/charmap.js'
-                },
+                plugins: this.plugins,
+                external_plugins: this.getExternalPlugins(),
                 object_resizing: 'table',
                 autoresize_min_height: 100,
                 autoresize_bottom_margin: 0,
@@ -339,6 +330,23 @@ module api.util.htmlarea.editor {
                 }
             });
             return deferred.promise;
+        }
+
+        private getExternalPlugins(): any {
+            const externalPlugins: any = {
+                link: this.assetsUri + '/common/js/util/htmlarea/plugins/link.js',
+                anchor: this.assetsUri + '/common/js/util/htmlarea/plugins/anchor.js',
+                image: this.assetsUri + '/common/js/util/htmlarea/plugins/image.js',
+                macro: this.assetsUri + '/common/js/util/htmlarea/plugins/macro.js',
+                searchreplace: this.assetsUri + '/common/js/util/htmlarea/plugins/searchreplace.js',
+                charmap: this.assetsUri + '/common/js/util/htmlarea/plugins/charmap.js'
+            };
+
+            if (this.editableSourceCode) {
+                externalPlugins['code'] = this.assetsUri + '/common/js/util/htmlarea/plugins/code.js';
+            }
+
+            return externalPlugins;
         }
 
         private notifyLinkDialog(config: any) {
