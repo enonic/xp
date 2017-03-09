@@ -9,7 +9,8 @@ export class UndoPendingDeleteContentAction extends Action {
     constructor(grid: ContentTreeGrid) {
         super('Undo delete');
 
-        this.setEnabled(false);
+        this.setEnabled(true);
+        this.setVisible(false);
 
         this.onExecuted(() => {
             let contents: api.content.ContentSummaryAndCompareStatus[]
