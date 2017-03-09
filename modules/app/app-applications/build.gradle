@@ -2,6 +2,7 @@ apply from: "$rootDir/gradle/osgi.gradle"
 apply plugin: 'com.moowork.node'
 
 dependencies {
+    compile project( ":admin:admin-ui" )
     include project( ":lib:lib-mustache" )
     include project( ":lib:lib-portal" )
     include project( ":lib:lib-admin" )

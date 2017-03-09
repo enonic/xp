@@ -2,6 +2,7 @@ apply from: "$rootDir/gradle/osgi.gradle"
 apply plugin: 'com.moowork.node'
 
 dependencies {
+    compile project( ":admin:admin-ui" )
     include project( ":lib:lib-mustache" )
     include project( ":lib:lib-portal" )
     include project( ":lib:lib-admin" )
@@ -25,7 +26,7 @@ task webpack( type: NodeTask, dependsOn: npmInstall ) {
     script = file( './node_modules/webpack/bin/webpack' )
 }
 
-task cleanNode(type: Delete) {
+task cleanNode( type: Delete ) {
     delete 'node_modules'
 }
 
