@@ -4,15 +4,26 @@ import java.util.UUID;
 
 public class IssueId
 {
-    private final UUID id = UUID.randomUUID();
+    private final UUID id;
 
     private IssueId()
     {
+        id = UUID.randomUUID();
+    }
+
+    private IssueId( UUID id )
+    {
+        this.id = id;
     }
 
     public static IssueId create()
     {
         return new IssueId();
+    }
+
+    public static IssueId from( String uuid )
+    {
+        return new IssueId( UUID.fromString( uuid ) );
     }
 
     @Override

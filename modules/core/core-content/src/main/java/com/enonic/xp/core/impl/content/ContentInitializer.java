@@ -12,6 +12,8 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.issue.IssueConstants;
+import com.enonic.xp.issue.IssuePropertyNames;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeIds;
@@ -90,6 +92,7 @@ public final class ContentInitializer
                 initializeRepository();
                 createDraftBranch();
                 initContentNode();
+                initIssueNode();
             }
         } );
     }
@@ -141,6 +144,37 @@ public final class ContentInitializer
             nodeService.refresh( RefreshMode.ALL );
 
             nodeService.push( NodeIds.from( contentRoot.id() ), ContentConstants.BRANCH_DRAFT );
+        }
+    }
+
+    private void initIssueNode()
+    {
+        final Node issueRootNode = nodeService.getByPath( IssueConstants.ISSUE_ROOT_PATH );
+
+        final User user = ContextAccessor.current().getAuthInfo().getUser();
+
+        if ( issueRootNode == null )
+        {
+            LOG.info( "Issue root-node not found, creating" );
+
+            PropertyTree data = new PropertyTree();
+            data.setString( IssuePropertyNames.TITLE, "Root issue" );
+            data.setString( IssuePropertyNames.CREATOR, user.getKey().toString() );
+            data.setInstant( ContentPropertyNames.CREATED_TIME, Instant.now() );
+
+            final Node issueRoot = nodeService.create( CreateNodeParams.create().
+                data( data ).
+                name( IssueConstants.ISSUE_ROOT_NAME ).
+                parent( NodePath.ROOT ).
+                permissions( CONTENT_ROOT_DEFAULT_ACL ).
+                childOrder( IssueConstants.DEFAULT_CHILD_ORDER ).
+                build() );
+
+            LOG.info( "Created issue root-node: " + issueRoot.path() );
+
+            nodeService.refresh( RefreshMode.ALL );
+
+            nodeService.push( NodeIds.from( issueRoot.id() ), ContentConstants.BRANCH_DRAFT );
         }
     }
 
