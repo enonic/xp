@@ -116,6 +116,13 @@ export class UserTreeGridItem implements api.Equitable {
         return new UserTreeGridItemBuilder();
     }
 
+    static fromUserStore(userStore: UserStore): UserTreeGridItem {
+        return new UserTreeGridItemBuilder().setUserStore(userStore).setType(UserTreeGridItemType.USER_STORE).build();
+    }
+
+    static fromPrincipal(principal: Principal): UserTreeGridItem {
+        return new UserTreeGridItemBuilder().setPrincipal(principal).setType(UserTreeGridItemType.PRINCIPAL).build();
+    }
 }
 
 export class UserTreeGridItemBuilder {
