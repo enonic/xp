@@ -193,7 +193,6 @@ public abstract class AbstractNodeTest
     {
         NodeServiceImpl nodeService = new NodeServiceImpl();
         nodeService.setIndexServiceInternal( indexServiceInternal );
-        nodeService.setSnapshotService( this.snapshotService );
         nodeService.setNodeStorageService( this.storageService );
         nodeService.setNodeSearchService( this.searchService );
         nodeService.setBinaryService( this.binaryService );

@@ -24,7 +24,6 @@ import com.enonic.xp.impl.server.rest.model.SnapshotResultsJson;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.node.DeleteSnapshotsResult;
-import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RestoreParams;
 import com.enonic.xp.node.RestoreResult;
 import com.enonic.xp.node.SnapshotParams;
@@ -32,6 +31,7 @@ import com.enonic.xp.node.SnapshotResult;
 import com.enonic.xp.node.SnapshotResults;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.snapshot.SnapshotService;
 import com.enonic.xp.util.DateTimeHelper;
 
 @Path("/api/repo/snapshot")
@@ -41,7 +41,7 @@ import com.enonic.xp.util.DateTimeHelper;
 public final class SnapshotResource
     implements JaxRsComponent
 {
-    private NodeService nodeService;
+    private SnapshotService snapshotService;
 
     private static String createSnapshotName( final RepositoryId repositoryId )
     {
@@ -57,7 +57,7 @@ public final class SnapshotResource
     public SnapshotResultJson snapshot( final SnapshotRequestJson params )
         throws Exception
     {
-        final SnapshotResult result = this.nodeService.snapshot( SnapshotParams.create().
+        final SnapshotResult result = this.snapshotService.snapshot( SnapshotParams.create().
             snapshotName( createSnapshotName( params.getRepositoryId() ) ).
             setIncludeIndexedData( !params.isSkipIndexedData() ).
             repositoryId( params.getRepositoryId() ).
@@ -71,7 +71,7 @@ public final class SnapshotResource
     public RestoreResultJson restore( final RestoreRequestJson params )
         throws Exception
     {
-        final RestoreResult result = this.nodeService.restore( RestoreParams.create().
+        final RestoreResult result = this.snapshotService.restore( RestoreParams.create().
             snapshotName( params.getSnapshotName() ).
             setIncludeIndexedData( !params.isSkipIndexedData() ).
             repositoryId( params.getRepositoryId() ).
@@ -85,7 +85,7 @@ public final class SnapshotResource
     public DeleteSnapshotsResultJson delete( final DeleteSnapshotRequestJson params )
         throws Exception
     {
-        final DeleteSnapshotsResult result = this.nodeService.deleteSnapshot( DeleteSnapshotParams.create().
+        final DeleteSnapshotsResult result = this.snapshotService.delete( DeleteSnapshotParams.create().
             before( DateTimeHelper.parseIsoDateTime( params.getBefore() ) ).
             addAll( params.getSnapshotNames() ).
             build() );
@@ -98,14 +98,14 @@ public final class SnapshotResource
     public SnapshotResultsJson list()
         throws Exception
     {
-        final SnapshotResults snapshotResults = this.nodeService.listSnapshots();
+        final SnapshotResults snapshotResults = this.snapshotService.list();
 
         return SnapshotResultsJson.from( snapshotResults );
     }
 
     @Reference
-    public void setNodeService( final NodeService nodeService )
+    public void setSnapshotService( final SnapshotService snapshotService )
     {
-        this.nodeService = nodeService;
+        this.snapshotService = snapshotService;
     }
 }

@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.snapshot;
+package com.enonic.xp.snapshot;
 
 import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.node.DeleteSnapshotsResult;

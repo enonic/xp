@@ -32,8 +32,8 @@ import com.enonic.xp.node.SnapshotResult;
 import com.enonic.xp.node.SnapshotResults;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.node.NodeHelper;
-import com.enonic.xp.repo.impl.snapshot.SnapshotService;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.snapshot.SnapshotService;
 
 @Component
 public class SnapshotServiceImpl
