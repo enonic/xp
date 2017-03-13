@@ -13,9 +13,15 @@ node {
     version = '6.9.2'
 }
 
+ext {
+    resourcesDir = file( 'src/main/resources' )
+    buildResourcesDir = file( "${buildDir}/resources/main" )
+}
+
 bundle {
     instruction 'Bundle-Name', 'Admin Users App'
     instruction 'X-Bundle-Type', 'system'
+    instruction 'X-Source-Paths', "$resourcesDir,$buildResourcesDir"
 }
 
 task webpack( type: NodeTask, dependsOn: npmInstall ) {
