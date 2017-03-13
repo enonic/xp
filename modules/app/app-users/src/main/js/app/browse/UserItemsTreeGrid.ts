@@ -147,21 +147,12 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
         }
     }
 
-    deleteUserNodes(principals: api.security.Principal[], userStores: api.security.UserStore[]) {
-        if (principals) {
-            let principalItems = principals.map((principal) => {
-                return new UserTreeGridItemBuilder().setPrincipal(principal).setType(UserTreeGridItemType.PRINCIPAL).build();
-            });
-
-            this.deleteNodes(principalItems);
+    deleteNodes(userTreeGridItemsToDelete: UserTreeGridItem[]) {
+        if (this.isSingleItemSelected() && this.isHighlightedItemIn(userTreeGridItemsToDelete)) {
+            this.removeHighlighting();
         }
-        if (userStores) {
-            let userStoreItems = userStores.map((userStore) => {
-                return new UserTreeGridItemBuilder().setUserStore(userStore).setType(UserTreeGridItemType.USER_STORE).build();
-            });
 
-            this.deleteNodes(userStoreItems);
-        }
+        super.deleteNodes(userTreeGridItemsToDelete);
     }
 
     getDataId(item: UserTreeGridItem): string {
@@ -297,6 +288,20 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
             items.push(groupFolderItem);
         }
         return items;
+    }
+
+    private isSingleItemSelected(): boolean {
+        return this.getSelectedDataList().length === 1;
+    }
+
+    private isHighlightedItemIn(userTreeGridItems: UserTreeGridItem[]): boolean {
+        return userTreeGridItems.some((userTreeGridItem: UserTreeGridItem) => {
+            if (userTreeGridItem.getDataId() === this.getFirstSelectedOrHighlightedNode().getDataId()) {
+                return true;
+            }
+
+            return false;
+        });
     }
 
 }
