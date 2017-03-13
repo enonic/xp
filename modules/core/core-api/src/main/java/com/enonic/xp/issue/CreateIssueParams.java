@@ -11,15 +11,13 @@ import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
-public class Issue
+public class CreateIssueParams
 {
     private final IssueId id;
 
     private final String title;
 
     private final IssueName name;
-
-    private final IssuePath issuePath;
 
     private final String description;
 
@@ -31,24 +29,20 @@ public class Issue
 
     private final PrincipalKey creator;
 
-    private final PrincipalKey modifier;
-
     private final PrincipalKeys approverIds;
 
     private final ContentIds itemIds;
 
-    private Issue( Builder builder )
+    private CreateIssueParams( Builder builder )
     {
-        this.id = builder.id == null ? IssueId.create() : builder.id;
+        this.id = IssueId.create();
         this.title = builder.title;
         this.name = IssueName.from( NamePrettyfier.create( builder.title ) );
-        this.issuePath = IssuePath.from( this.name );
         this.description = builder.description;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
         this.issueStatus = builder.issueStatus;
         this.creator = builder.creator;
-        this.modifier = builder.modifier;
         this.approverIds = PrincipalKeys.from( builder.approverIds );
         this.itemIds = ContentIds.from( builder.itemIds );
     }
@@ -66,11 +60,6 @@ public class Issue
     public IssueName getName()
     {
         return name;
-    }
-
-    public IssuePath getPath()
-    {
-        return issuePath;
     }
 
     public String getDescription()
@@ -98,11 +87,6 @@ public class Issue
         return creator;
     }
 
-    public PrincipalKey getModifier()
-    {
-        return modifier;
-    }
-
     public PrincipalKeys getApproverIds()
     {
         return approverIds;
@@ -120,7 +104,6 @@ public class Issue
 
     public static class Builder
     {
-        private IssueId id;
 
         private String title;
 
@@ -134,23 +117,20 @@ public class Issue
 
         private PrincipalKey creator;
 
-        private PrincipalKey modifier;
-
         private List<PrincipalKey> approverIds;
 
         private List<ContentId> itemIds;
 
         public Builder()
         {
+            final Instant now = Instant.now();
+
+            this.createdTime = now;
+            this.modifiedTime = now;
+            this.issueStatus = IssueStatus.Open;
+
             this.approverIds = Lists.arrayList();
             this.itemIds = Lists.arrayList();
-            this.issueStatus = IssueStatus.Open;
-        }
-
-        public Builder id( final IssueId id )
-        {
-            this.id = id;
-            return this;
         }
 
         public Builder title( final String title )
@@ -165,33 +145,9 @@ public class Issue
             return this;
         }
 
-        public Builder createdTime( final Instant createdTime )
-        {
-            this.createdTime = createdTime;
-            return this;
-        }
-
-        public Builder modifiedTime( final Instant modifiedTime )
-        {
-            this.modifiedTime = modifiedTime;
-            return this;
-        }
-
-        public Builder status( final IssueStatus issueStatus )
-        {
-            this.issueStatus = issueStatus;
-            return this;
-        }
-
         public Builder creator( final PrincipalKey creator )
         {
             this.creator = creator;
-            return this;
-        }
-
-        public Builder modifier( final PrincipalKey modifier )
-        {
-            this.modifier = modifier;
             return this;
         }
 
@@ -207,9 +163,9 @@ public class Issue
             return this;
         }
 
-        public Issue build()
+        public CreateIssueParams build()
         {
-            return new Issue( this );
+            return new CreateIssueParams( this );
         }
     }
 }
