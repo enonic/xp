@@ -1,7 +1,7 @@
 module.exports = {
     entry: './src/main/js/main.ts',
     output: {
-        filename: './build/app/bundle.js'
+        filename: './build/resources/main/assets/app/bundle.js'
     },
     resolve: {
         extensions: ['.ts', '.js']

@@ -16,13 +16,12 @@ node {
 bundle {
     instruction 'Bundle-Name', 'Admin Users App'
     instruction 'X-Bundle-Type', 'system'
-    instruction 'Include-Resource', "assets/app=${buildDir}/app"
 }
 
 task webpack( type: NodeTask, dependsOn: npmInstall ) {
     description = 'Build UI resources (ts, css, etc).'
     inputs.dir 'src/main'
-    outputs.dir "${buildDir}/app"
+    outputs.dir "${buildDir}/resources/main"
     script = file( './node_modules/webpack/bin/webpack' )
 }
 
@@ -31,5 +30,4 @@ task cleanNode( type: Delete ) {
 }
 
 jar.dependsOn += webpack
-jar.inputs.dir 'src/main'
-jar.outputs.dir "${buildDir}/app"
+jar.outputs.dir "${buildDir}/resources/main"
