@@ -5,6 +5,8 @@ module api.util.htmlarea.dialog {
     import Action = api.ui.Action;
     import TextInput = api.ui.text.TextInput;
     import Checkbox = api.ui.Checkbox;
+    import ElementHelper = api.dom.ElementHelper;
+    import Element = api.dom.Element;
 
     export class SearchReplaceModalDialog extends ModalDialog {
 
@@ -423,7 +425,7 @@ module api.util.htmlarea.dialog {
             let spans = this.findSpansByIndex(testIndex);
             if (spans.length) {
                 dom.addClass(this.findSpansByIndex(testIndex), 'mce-match-marker-selected');
-                this.editor.selection.scrollIntoView(spans[0]);
+                Element.fromHtmlElement(spans[0]).getEl().scrollIntoView();
                 return testIndex;
             }
 
