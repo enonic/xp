@@ -25,10 +25,10 @@ import static com.enonic.xp.issue.IssuePropertyNames.STATUS;
 import static com.enonic.xp.issue.IssuePropertyNames.TITLE;
 import static org.junit.Assert.*;
 
-public class IssueNodeTranslatorImplTest
+public class IssueNodeTranslatorTest
 {
 
-    private static final IssueNodeTranslator ISSUE_NODE_TRANSLATOR = new IssueNodeTranslatorImpl();
+    private static final IssueNodeTranslator ISSUE_NODE_TRANSLATOR = new IssueNodeTranslator();
 
     @Test
     public void testFromNodeNotResolvingChildren()

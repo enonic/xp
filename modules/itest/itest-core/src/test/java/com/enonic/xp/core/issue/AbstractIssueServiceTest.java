@@ -15,7 +15,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.ContentInitializer;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
-import com.enonic.xp.core.impl.issue.IssueNodeTranslatorImpl;
 import com.enonic.xp.core.impl.issue.IssueServiceImpl;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
@@ -66,8 +65,6 @@ public class AbstractIssueServiceTest
     protected NodeServiceImpl nodeService;
 
     protected BinaryServiceImpl binaryService;
-
-    protected IssueNodeTranslatorImpl translator;
 
     private NodeVersionServiceImpl nodeDao;
 
@@ -165,10 +162,7 @@ public class AbstractIssueServiceTest
         Map<String, List<String>> metadata = Maps.newHashMap();
         metadata.put( HttpHeaders.CONTENT_TYPE, Lists.newArrayList( "image/jpg" ) );
 
-        this.translator = new IssueNodeTranslatorImpl();
-
         this.issueService.setNodeService( this.nodeService );
-        this.issueService.setTranslator( this.translator );
 
         initializeRepository();
     }

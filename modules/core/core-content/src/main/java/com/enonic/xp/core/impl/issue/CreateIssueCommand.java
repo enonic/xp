@@ -18,13 +18,10 @@ public class CreateIssueCommand
 
     private final CreateIssueParams params;
 
-    private final IssueNodeTranslator translator;
-
     private CreateIssueCommand( Builder builder )
     {
         this.params = builder.params;
         this.nodeService = builder.nodeService;
-        this.translator = builder.translator;
     }
 
     public Issue execute()
@@ -40,7 +37,7 @@ public class CreateIssueCommand
         final Node createdNode = nodeService.create( createNodeParams );
 
         nodeService.refresh( RefreshMode.SEARCH );
-        return translator.fromNode( createdNode );
+        return IssueNodeTranslator.fromNode( createdNode );
     }
 
     private void validateBlockingChecks()
@@ -71,8 +68,6 @@ public class CreateIssueCommand
 
         private NodeService nodeService;
 
-        private IssueNodeTranslator translator;
-
         public Builder params( final CreateIssueParams params )
         {
             this.params = params;
@@ -82,12 +77,6 @@ public class CreateIssueCommand
         public Builder nodeService( final NodeService nodeService )
         {
             this.nodeService = nodeService;
-            return this;
-        }
-
-        public Builder translator( final IssueNodeTranslator translator )
-        {
-            this.translator = translator;
             return this;
         }
 

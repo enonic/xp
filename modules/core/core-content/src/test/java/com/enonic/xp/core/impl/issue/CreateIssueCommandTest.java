@@ -28,14 +28,11 @@ public class CreateIssueCommandTest
 
     private NodeService nodeService;
 
-    private IssueNodeTranslator translator;
-
     @Before
     public void setUp()
         throws Exception
     {
         this.nodeService = Mockito.mock( NodeService.class );
-        this.translator = new IssueNodeTranslatorImpl();
 
         Mockito.when( this.nodeService.create( Mockito.any( CreateNodeParams.class ) ) ).thenAnswer( this::mockNodeServiceCreate );
     }
@@ -84,7 +81,6 @@ public class CreateIssueCommandTest
         return CreateIssueCommand.create().
             params( params ).
             nodeService( this.nodeService ).
-            translator( this.translator ).
             build();
     }
 

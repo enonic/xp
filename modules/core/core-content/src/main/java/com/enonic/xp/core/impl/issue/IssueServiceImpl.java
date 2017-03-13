@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.issue;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -15,28 +16,26 @@ public class IssueServiceImpl
 
     private NodeService nodeService;
 
-    private IssueNodeTranslator translator;
-
     @Override
     public Issue create( CreateIssueParams params )
     {
         return CreateIssueCommand.create().
             params( params ).
             nodeService( this.nodeService ).
-            translator( this.translator ).
             build().
             execute();
+    }
+
+    @SuppressWarnings("unused")
+    @Activate
+    public void initialize()
+    {
+        new IssueInitializer( this.nodeService ).initialize();
     }
 
     @Reference
     public void setNodeService( final NodeService nodeService )
     {
         this.nodeService = nodeService;
-    }
-
-    @Reference
-    public void setTranslator( final IssueNodeTranslator translator )
-    {
-        this.translator = translator;
     }
 }
