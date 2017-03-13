@@ -31,3 +31,5 @@ task cleanNode(type: Delete) {
 }
 
 jar.dependsOn += webpack
+jar.inputs.dir 'src/main'
+jar.outputs.dir "${buildDir}/app"
