@@ -6,6 +6,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.Issue;
+import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.IssueService;
 import com.enonic.xp.node.NodeService;
 
@@ -21,6 +22,16 @@ public class IssueServiceImpl
     {
         return CreateIssueCommand.create().
             params( params ).
+            nodeService( this.nodeService ).
+            build().
+            execute();
+    }
+
+    @Override
+    public Issue getIssue( final IssueId id )
+    {
+        return GetIssueByIdCommand.create().
+            issueId( id ).
             nodeService( this.nodeService ).
             build().
             execute();
