@@ -712,6 +712,7 @@ public final class ContentResource
             contentIds( requestedContentIds ).
             excludedContentIds( excludeContentIds ).
             excludeChildrenIds( excludeChildrenIds ).
+            includeOffline( params.isIncludeOffline() ).
             build() );
 
         //Resolved the dependent ContentPublishItem

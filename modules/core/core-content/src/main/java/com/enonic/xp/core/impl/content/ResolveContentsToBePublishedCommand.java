@@ -22,6 +22,8 @@ public class ResolveContentsToBePublishedCommand
 
     private final ContentIds excludeChildrenIds;
 
+    private final boolean includeOffline;
+
     private final Branch target;
 
     private final CompareContentResults.Builder resultBuilder;
@@ -36,6 +38,7 @@ public class ResolveContentsToBePublishedCommand
         this.target = builder.target;
         this.resultBuilder = CompareContentResults.create();
         this.excludeChildrenIds = builder.excludeChildrenIds;
+        this.includeOffline = builder.includeOffline;
         this.includeDependencies = builder.includeDependencies;
     }
 
@@ -88,6 +91,8 @@ public class ResolveContentsToBePublishedCommand
 
         private ContentIds excludeChildrenIds;
 
+        private boolean includeOffline;
+
         private Branch target;
 
         private boolean includeDependencies = true;
@@ -113,6 +118,12 @@ public class ResolveContentsToBePublishedCommand
         public Builder excludeChildrenIds( final ContentIds excludeChildrenIds )
         {
             this.excludeChildrenIds = excludeChildrenIds;
+            return this;
+        }
+
+        public Builder includeOffline( final boolean includeOffline )
+        {
+            this.includeOffline = includeOffline;
             return this;
         }
 
