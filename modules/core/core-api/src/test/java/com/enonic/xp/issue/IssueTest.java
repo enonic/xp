@@ -11,7 +11,7 @@ public class IssueTest
     public void testDefaultValuesSet()
     {
         Issue issue = Issue.create().
-            setTitle( "my issue" ).
+            title( "my issue" ).
             build();
 
         assertNotNull( issue.getId() );
@@ -26,11 +26,11 @@ public class IssueTest
     public void testIdsNotEqual()
     {
         Issue issue1 = Issue.create().
-            setTitle( "my issue" ).
+            title( "my issue" ).
             build();
 
         Issue issue2 = Issue.create().
-            setTitle( "my issue" ).
+            title( "my issue" ).
             build();
 
         assertNotEquals( issue1.getId(), issue2.getId() );
@@ -40,7 +40,7 @@ public class IssueTest
     public void testNamePrettifiedFromTitle()
     {
         Issue issue = Issue.create().
-            setTitle( "my issue" ).
+            title( "my issue" ).
             build();
 
         assertEquals( "my-issue", issue.getName().toString() );
@@ -50,7 +50,7 @@ public class IssueTest
     public void testIssuePathStartsWithPrefix()
     {
         Issue issue = Issue.create().
-            setTitle( "my issue" ).
+            title( "my issue" ).
             build();
 
         assertTrue( issue.getPath().getValue().startsWith( "/issue/" ) );
@@ -60,7 +60,7 @@ public class IssueTest
     public void testIssuePathIsBuiltFromTitle()
     {
         Issue issue = Issue.create().
-            setTitle( "my issue" ).
+            title( "my issue" ).
             build();
 
         assertEquals( "/issue/my-issue", issue.getPath().getValue() );
