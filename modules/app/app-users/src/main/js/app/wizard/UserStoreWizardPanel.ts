@@ -140,6 +140,10 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         });
     }
 
+    protected getPersistedItemPath(): string {
+        return "/" + this.getPersistedItem().getKey().toString();
+    }
+
     getUserItemType(): string {
         return 'User Store';
     }
@@ -220,15 +224,6 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         } else {
             let viewedUserStore = this.assembleViewedUserStore();
             return !this.getPersistedItem().equals(viewedUserStore);
-        }
-    }
-
-    resolveUserStoreNameForUpdateRequest(): string {
-        let wizardHeader = this.getWizardHeader();
-        if (api.util.StringHelper.isEmpty(wizardHeader.getName())) {
-            return this.getPersistedItem().getDisplayName();
-        } else {
-            return wizardHeader.getName();
         }
     }
 

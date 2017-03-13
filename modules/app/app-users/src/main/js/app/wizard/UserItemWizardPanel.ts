@@ -82,8 +82,26 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
                 responsiveItem.update();
             });
 
+            const deleteHandler = ((event: api.security.event.PrincipalDeletedEvent) => {
+                event.getDeletedItems().forEach((path: string) => {
+                    if (!!this.getPersistedItem() && this.getPersistedItemPath() === path) {
+                        this.close();
+                    }
+                });
+            });
+
+            api.security.event.PrincipalDeletedEvent.on(deleteHandler);
+
+            this.onRemoved(() => {
+                api.security.event.PrincipalDeletedEvent.un(deleteHandler);
+            });
+
             return nextRendered;
         });
+    }
+
+    protected getPersistedItemPath(): string {
+        throw new Error('To be implemented by inheritors');
     }
 
     getUserItemType(): string {
