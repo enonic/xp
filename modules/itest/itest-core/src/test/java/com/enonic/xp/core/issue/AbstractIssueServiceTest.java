@@ -18,6 +18,8 @@ import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.issue.IssueInitializer;
 import com.enonic.xp.core.impl.issue.IssueServiceImpl;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
+import com.enonic.xp.issue.CreateIssueParams;
+import com.enonic.xp.issue.Issue;
 import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
@@ -168,6 +170,10 @@ public class AbstractIssueServiceTest
         initializeRepository();
     }
 
+    protected Issue createIssue( CreateIssueParams.Builder builder )
+    {
+        return this.issueService.create( builder.build() );
+    }
 
     private void initializeRepository()
     {
