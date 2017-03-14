@@ -8,6 +8,7 @@ import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.IssueService;
+import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.node.NodeService;
 
 @Component(immediate = true)
@@ -21,6 +22,16 @@ public class IssueServiceImpl
     public Issue create( CreateIssueParams params )
     {
         return CreateIssueCommand.create().
+            params( params ).
+            nodeService( this.nodeService ).
+            build().
+            execute();
+    }
+
+    @Override
+    public Issue update( final UpdateIssueParams params )
+    {
+        return UpdateIssueCommand.create().
             params( params ).
             nodeService( this.nodeService ).
             build().
