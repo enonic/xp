@@ -88,6 +88,8 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishDepende
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetActiveVersionJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetChildOrderJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.TaskResultJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.UndoPendingDeleteContentJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.UndoPendingDeleteContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UnpublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UpdateContentJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
@@ -144,6 +146,7 @@ import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SetActiveContentVersionResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.UndoPendingDeleteContentParams;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
@@ -426,6 +429,16 @@ public final class ContentResource
                                                 "Content could not be renamed to [%s]. A content with that name already exists",
                                                 json.getRenameContentParams().getNewName().toString() );
         }
+    }
+
+    @POST
+    @Path("undoPendingDelete")
+    public UndoPendingDeleteContentResultJson undoPendingDelete( final UndoPendingDeleteContentJson params )
+    {
+        UndoPendingDeleteContentResultJson result = new UndoPendingDeleteContentResultJson();
+        int numberOfContents = this.contentService.undoPendingDelete(
+            new UndoPendingDeleteContentParams( ContentIds.from( params.getContentIds() ), ContentConstants.BRANCH_MASTER ) );
+        return result.setSuccess( numberOfContents );
     }
 
     @POST

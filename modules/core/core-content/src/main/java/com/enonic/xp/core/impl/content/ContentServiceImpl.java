@@ -73,6 +73,7 @@ import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SetActiveContentVersionResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.UndoPendingDeleteContentParams;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
@@ -317,6 +318,19 @@ public class ContentServiceImpl
     public DeleteContentsResult deleteWithoutFetch( final DeleteContentParams params )
     {
         return DeleteContentCommand.create().
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            params( params ).
+            build().
+            execute();
+    }
+
+    @Override
+    public int undoPendingDelete( UndoPendingDeleteContentParams params )
+    {
+        return UndoPendingDeleteContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
