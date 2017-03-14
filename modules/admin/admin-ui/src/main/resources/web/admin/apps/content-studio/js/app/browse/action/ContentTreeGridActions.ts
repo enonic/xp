@@ -91,9 +91,14 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     updateActionsEnabledState(contentBrowseItems: ContentBrowseItem[],
                               changes?: BrowseItemsChanges<ContentSummaryAndCompareStatus>): wemQ.Promise<BrowseItem<ContentSummaryAndCompareStatus>[]> {
 
-        this.TOGGLE_SEARCH_PANEL.setVisible(false);
-
         let deferred = wemQ.defer<ContentBrowseItem[]>();
+
+        if (!!changes && changes.getAdded().length == 0 && changes.getRemoved().length == 0) {
+            deferred.resolve(contentBrowseItems);
+            return deferred.promise;
+        }
+
+        this.TOGGLE_SEARCH_PANEL.setVisible(false);
 
         let parallelPromises: wemQ.Promise<any>[] = [
             this.getPreviewHandler().updateState(contentBrowseItems, changes),
@@ -132,22 +137,32 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         let treePublishEnabled = true;
         let unpublishEnabled = true;
 
-        let eachOnline = contentBrowseItems.every((browseItem) => {
-            return this.isOnline(browseItem.getModel().getCompareStatus());
+        let allAreOnline = contentBrowseItems.length > 0;
+        let allArePendingDelete = contentBrowseItems.length > 0;
+        let someArePublished = false;
+
+        contentBrowseItems.forEach((browseItem) => {
+            let compareStatus = browseItem.getModel().getCompareStatus();
+
+            if (allAreOnline && !this.isOnline(compareStatus)) {
+                allAreOnline = false;
+            }
+            if (allArePendingDelete && !this.isPendingDelete(compareStatus)) {
+                allArePendingDelete = false;
+            }
+            if (!someArePublished && this.isPublished(compareStatus)) {
+                someArePublished = true;
+            }
         });
 
-        let anyPublished = contentBrowseItems.some((browseItem) => {
-            return this.isPublished(browseItem.getModel().getCompareStatus());
-        });
-
-        const publishEnabled = !eachOnline;
+        const publishEnabled = !allAreOnline;
         if (this.isEveryLeaf(contentSummaries)) {
             treePublishEnabled = false;
-            unpublishEnabled = anyPublished;
+            unpublishEnabled = someArePublished;
         } else if (this.isOneNonLeaf(contentSummaries)) {
-            unpublishEnabled = anyPublished;
+            unpublishEnabled = someArePublished;
         } else if (this.isNonLeafInMany(contentSummaries)) {
-            unpublishEnabled = anyPublished;
+            unpublishEnabled = someArePublished;
         }
 
         let undoDeleteEnabled = contentBrowseItems.length === 1 &&
@@ -186,6 +201,10 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
     private isOnline(status: api.content.CompareStatus): boolean {
         return status === api.content.CompareStatus.EQUAL;
+    }
+
+    private isPendingDelete(status: api.content.CompareStatus): boolean {
+        return status === api.content.CompareStatus.PENDING_DELETE;
     }
 
     private doUpdateActionsEnabledState(contentBrowseItems: ContentBrowseItem[]): wemQ.Promise<any> {

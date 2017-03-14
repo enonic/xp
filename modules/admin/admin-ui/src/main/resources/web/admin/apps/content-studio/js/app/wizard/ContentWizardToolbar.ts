@@ -59,9 +59,7 @@ export class ContentWizardToolbar extends api.ui.toolbar.Toolbar {
         this.componentsViewToggler = new TogglerButton('icon-clipboard', 'Show Component View');
         this.contextWindowToggler = new TogglerButton('icon-cog', 'Show Inspection Panel');
 
-        this.contentWizardToolbarPublishControls = new ContentWizardToolbarPublishControls(
-            params.publishAction, params.publishTreeAction, params.unpublishAction, params.publishMobileAction
-        );
+        this.contentWizardToolbarPublishControls = new ContentWizardToolbarPublishControls(params);
 
         super.addElement(this.cycleViewModeButton);
         super.addElement(this.contextWindowToggler);
