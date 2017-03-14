@@ -15,10 +15,12 @@ import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.IssueName;
 import com.enonic.xp.issue.IssuePath;
 import com.enonic.xp.issue.IssueStatus;
+import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.security.PrincipalKey;
 
 import static com.enonic.xp.issue.IssuePropertyNames.CREATOR;
@@ -26,7 +28,7 @@ import static com.enonic.xp.issue.IssuePropertyNames.STATUS;
 import static com.enonic.xp.issue.IssuePropertyNames.TITLE;
 import static org.junit.Assert.*;
 
-public class GetIssueCommandTest
+public class UpdateIssueCommandTest
 {
 
     private NodeService nodeService;
@@ -36,14 +38,15 @@ public class GetIssueCommandTest
         throws Exception
     {
         this.nodeService = Mockito.mock( NodeService.class );
-
+        Mockito.when( this.nodeService.update( Mockito.any( UpdateNodeParams.class ) ) ).thenAnswer( this::mockNodeServiceUpdate );
         Mockito.when( this.nodeService.getById( Mockito.any( NodeId.class ) ) ).thenAnswer( this::mockNodeServiceGet );
     }
 
     @Test
-    public void getById()
+    public void update()
     {
-        final GetIssueByIdCommand command = getIssueCommand( IssueId.create() );
+        final UpdateIssueParams params = makeUpdateIssueParams();
+        final UpdateIssueCommand command = updateIssueCommand( params );
         final IssueName issueName = IssueName.from( NamePrettyfier.create( "title" ) );
 
         final Issue issue = command.execute();
@@ -54,12 +57,25 @@ public class GetIssueCommandTest
         assertEquals( IssuePath.from( issueName ), issue.getPath() );
     }
 
-    private GetIssueByIdCommand getIssueCommand( IssueId issueId )
+    private UpdateIssueParams makeUpdateIssueParams()
     {
-        return GetIssueByIdCommand.create().
-            issueId( issueId ).
+        return new UpdateIssueParams().id( IssueId.create() );
+    }
+
+    private UpdateIssueCommand updateIssueCommand( UpdateIssueParams params )
+    {
+        return UpdateIssueCommand.create().
+            params( params ).
             nodeService( this.nodeService ).
             build();
+    }
+
+    private Node mockNodeServiceUpdate( final InvocationOnMock invocation )
+        throws Throwable
+    {
+        UpdateNodeParams params = (UpdateNodeParams) invocation.getArguments()[0];
+
+        return createMockNode( params.getId() );
     }
 
     private Node mockNodeServiceGet( final InvocationOnMock invocation )
@@ -67,8 +83,13 @@ public class GetIssueCommandTest
     {
         NodeId nodeId = (NodeId) invocation.getArguments()[0];
 
+        return createMockNode( nodeId );
+    }
+
+    private Node createMockNode( NodeId nodeId )
+    {
         return Node.create().
-            id( nodeId != null ? nodeId : new NodeId() ).
+            id( nodeId ).
             parentPath( IssueConstants.ISSUE_ROOT_PATH ).
             name( "title" ).
             data( this.createMockData() ).
@@ -84,9 +105,9 @@ public class GetIssueCommandTest
         final PropertyTree propertyTree = new PropertyTree();
         final PropertySet issueAsData = propertyTree.getRoot();
 
-        issueAsData.ifNotNull().addString( TITLE, "title" );
         issueAsData.ifNotNull().addString( STATUS, IssueStatus.Open.toString() );
         issueAsData.ifNotNull().addString( CREATOR, PrincipalKey.from( "user:myStore:me" ).toString() );
+        issueAsData.ifNotNull().addString( TITLE, "title" );
 
         return propertyTree;
     }

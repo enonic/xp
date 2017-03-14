@@ -41,7 +41,7 @@ public class Issue
     {
         this.id = builder.id == null ? IssueId.create() : builder.id;
         this.title = builder.title;
-        this.name = IssueName.from( NamePrettyfier.create( builder.title ) );
+        this.name = builder.name == null ? IssueName.from( NamePrettyfier.create( builder.title ) ) : builder.name;
         this.issuePath = IssuePath.from( this.name );
         this.description = builder.description;
         this.createdTime = builder.createdTime;
@@ -122,6 +122,8 @@ public class Issue
     {
         private IssueId id;
 
+        private IssueName name;
+
         private String title;
 
         private String description;
@@ -150,6 +152,12 @@ public class Issue
         public Builder id( final IssueId id )
         {
             this.id = id;
+            return this;
+        }
+
+        public Builder name( final IssueName name )
+        {
+            this.name = name;
             return this;
         }
 
@@ -201,9 +209,21 @@ public class Issue
             return this;
         }
 
+        public Builder addApproverIds( final PrincipalKeys approverIds )
+        {
+            this.approverIds.addAll( approverIds.getSet() );
+            return this;
+        }
+
         public Builder addItemId( final ContentId itemId )
         {
             this.itemIds.add( itemId );
+            return this;
+        }
+
+        public Builder addItemIds( final ContentIds itemIds )
+        {
+            this.itemIds.addAll( itemIds.getSet() );
             return this;
         }
 

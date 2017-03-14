@@ -8,5 +8,7 @@ public interface IssueService
 {
     Issue create( CreateIssueParams params );
 
+    Issue update( UpdateIssueParams params );
+
     Issue getIssue( IssueId id );
 }

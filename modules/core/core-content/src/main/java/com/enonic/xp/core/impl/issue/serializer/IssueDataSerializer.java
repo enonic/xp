@@ -49,6 +49,28 @@ public class IssueDataSerializer
         return propertyTree;
     }
 
+    public PropertyTree toUpdateNodeData( final Issue editedIssue )
+    {
+        final PropertyTree propertyTree = new PropertyTree();
+
+        final PropertySet issueAsData = propertyTree.getRoot();
+
+        issueAsData.ifNotNull().addString( TITLE, editedIssue.getTitle() );
+        issueAsData.ifNotNull().addInstant( CREATED_TIME, editedIssue.getCreatedTime() );
+        issueAsData.ifNotNull().addInstant( MODIFIED_TIME, editedIssue.getModifiedTime() );
+        issueAsData.ifNotNull().addString( CREATOR, editedIssue.getCreator().toString() );
+        issueAsData.ifNotNull().addString( MODIFIER, editedIssue.getModifier().toString() );
+        issueAsData.ifNotNull().addString( STATUS, editedIssue.getStatus().toString() );
+        issueAsData.addString( DESCRIPTION, editedIssue.getDescription() );
+
+        issueAsData.addStrings( APPROVERS, editedIssue.getApproverIds().
+            stream().map( approver -> approver.toString() ).collect( Collectors.toList() ) );
+
+        issueAsData.addStrings( ITEMS, editedIssue.getItemIds().asStrings() );
+
+        return propertyTree;
+    }
+
     public Issue.Builder fromData( final PropertySet issueProperties )
     {
         final Issue.Builder builder = Issue.create();
