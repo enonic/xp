@@ -24,7 +24,6 @@ public class IssueServiceImplTest_create
         final CreateIssueParams params = CreateIssueParams.create().
             title( "title" ).
             description( "description" ).
-            creator( PrincipalKey.from( "user:myStore:me" ) ).
             addApproverId( PrincipalKey.from( "user:myStore:approver-1" ) ).
             addItemId( ContentId.from( "content-id" ) ).
             build();
@@ -36,7 +35,7 @@ public class IssueServiceImplTest_create
         assertEquals( "title", issue.getTitle() );
         assertEquals( "description", issue.getDescription() );
         assertEquals( IssueStatus.Open, issue.getStatus() );
-        assertEquals( PrincipalKey.from( "user:myStore:me" ), issue.getCreator() );
+        assertEquals( PrincipalKey.from( "user:system:test-user" ), issue.getCreator() );
         assertEquals( PrincipalKey.from( "user:myStore:approver-1" ), issue.getApproverIds().first() );
         assertEquals( ContentId.from( "content-id" ), issue.getItemIds().first() );
         assertEquals( issueName, issue.getName() );

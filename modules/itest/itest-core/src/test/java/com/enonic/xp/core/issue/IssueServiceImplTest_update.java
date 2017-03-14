@@ -44,7 +44,7 @@ public class IssueServiceImplTest_update
         assertEquals( "updated title", updatedIssue.getTitle() );
         assertEquals( "updated description", updatedIssue.getDescription() );
         assertEquals( IssueStatus.Closed, updatedIssue.getStatus() );
-        assertEquals( PrincipalKey.from( "user:myStore:me" ), updatedIssue.getCreator() );
+        assertEquals( PrincipalKey.from( "user:system:test-user" ), updatedIssue.getCreator() );
         assertEquals( PrincipalKey.from( "user:system:test-user" ), updatedIssue.getModifier() );
         assertEquals( PrincipalKey.from( "user:myStore:approver-1" ), updatedIssue.getApproverIds().first() );
         assertEquals( ContentId.from( "content-id1" ), updatedIssue.getItemIds().first() );
@@ -68,7 +68,7 @@ public class IssueServiceImplTest_update
         assertEquals( "title", updatedIssue.getTitle() );
         assertEquals( "description", updatedIssue.getDescription() );
         assertEquals( IssueStatus.Open, issue.getStatus() );
-        assertEquals( PrincipalKey.from( "user:myStore:me" ), updatedIssue.getCreator() );
+        assertEquals( PrincipalKey.from( "user:system:test-user" ), updatedIssue.getCreator() );
         assertEquals( PrincipalKey.from( "user:myStore:approver-1" ), updatedIssue.getApproverIds().first() );
         assertEquals( ContentId.from( "content-id" ), updatedIssue.getItemIds().first() );
         assertEquals( issueName, updatedIssue.getName() );
@@ -98,7 +98,6 @@ public class IssueServiceImplTest_update
         return this.createIssue( CreateIssueParams.create().
             title( "title" ).
             description( "description" ).
-            creator( PrincipalKey.from( "user:myStore:me" ) ).
             addApproverId( PrincipalKey.from( "user:myStore:approver-1" ) ).
             addItemId( ContentId.from( "content-id" ) ) );
     }

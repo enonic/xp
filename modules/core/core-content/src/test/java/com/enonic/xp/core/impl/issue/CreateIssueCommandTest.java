@@ -19,7 +19,6 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.Assert.*;
 
@@ -72,8 +71,7 @@ public class CreateIssueCommandTest
     private CreateIssueParams.Builder createIssueParams()
     {
         return CreateIssueParams.create().
-            title( "title" ).
-            creator( PrincipalKey.from( "user:myStore:me" ) );
+            title( "title" );
     }
 
     private CreateIssueCommand createIssueCommand( CreateIssueParams params )

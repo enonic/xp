@@ -24,7 +24,6 @@ public class IssueDataSerializerTest
         CreateIssueParams params = CreateIssueParams.create().
             title( "title" ).
             description( "descr" ).
-            creator( PrincipalKey.from( "user:myStore:me" ) ).
             addApproverId( PrincipalKey.from( "user:myStore:approver" ) ).
             addItemId( ContentId.from( "content-id" ) ).
             build();

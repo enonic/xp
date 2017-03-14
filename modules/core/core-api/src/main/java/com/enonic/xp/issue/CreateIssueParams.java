@@ -1,6 +1,5 @@
 package com.enonic.xp.issue;
 
-import java.time.Instant;
 import java.util.List;
 
 import org.codehaus.jparsec.util.Lists;
@@ -21,13 +20,7 @@ public class CreateIssueParams
 
     private final String description;
 
-    private final Instant createdTime;
-
-    private final Instant modifiedTime;
-
     private final IssueStatus issueStatus;
-
-    private final PrincipalKey creator;
 
     private final PrincipalKeys approverIds;
 
@@ -39,10 +32,7 @@ public class CreateIssueParams
         this.title = builder.title;
         this.name = IssueName.from( NamePrettyfier.create( builder.title ) );
         this.description = builder.description;
-        this.createdTime = builder.createdTime;
-        this.modifiedTime = builder.modifiedTime;
         this.issueStatus = builder.issueStatus;
-        this.creator = builder.creator;
         this.approverIds = PrincipalKeys.from( builder.approverIds );
         this.itemIds = ContentIds.from( builder.itemIds );
     }
@@ -67,24 +57,9 @@ public class CreateIssueParams
         return description;
     }
 
-    public Instant getCreatedTime()
-    {
-        return createdTime;
-    }
-
-    public Instant getModifiedTime()
-    {
-        return modifiedTime;
-    }
-
     public IssueStatus getStatus()
     {
         return issueStatus;
-    }
-
-    public PrincipalKey getCreator()
-    {
-        return creator;
     }
 
     public PrincipalKeys getApproverIds()
@@ -109,13 +84,7 @@ public class CreateIssueParams
 
         private String description;
 
-        private Instant createdTime;
-
-        private Instant modifiedTime;
-
         private IssueStatus issueStatus;
-
-        private PrincipalKey creator;
 
         private List<PrincipalKey> approverIds;
 
@@ -123,12 +92,7 @@ public class CreateIssueParams
 
         public Builder()
         {
-            final Instant now = Instant.now();
-
-            this.createdTime = now;
-            this.modifiedTime = now;
             this.issueStatus = IssueStatus.Open;
-
             this.approverIds = Lists.arrayList();
             this.itemIds = Lists.arrayList();
         }
@@ -142,12 +106,6 @@ public class CreateIssueParams
         public Builder description( final String description )
         {
             this.description = description;
-            return this;
-        }
-
-        public Builder creator( final PrincipalKey creator )
-        {
-            this.creator = creator;
             return this;
         }
 
