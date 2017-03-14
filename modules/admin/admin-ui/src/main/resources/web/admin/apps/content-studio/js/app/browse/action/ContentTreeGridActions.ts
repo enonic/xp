@@ -132,7 +132,6 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
         this.UNPUBLISH_CONTENT.setVisible(false);
         this.UNDO_PENDING_DELETE.setVisible(false);
-        this.CONFIRM_DELETE_CONTENT.setVisible(false);
 
         this.showDefaultActions();
     }
@@ -188,8 +187,6 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.PUBLISH_TREE_CONTENT.setEnabled(treePublishEnabled);
         this.UNPUBLISH_CONTENT.setEnabled(unpublishEnabled);
 
-        this.CONFIRM_DELETE_CONTENT.setVisible(allArePendingDelete);
-
         this.SHOW_NEW_CONTENT_DIALOG_ACTION.setVisible(!allArePendingDelete);
         this.MOVE_CONTENT.setVisible(!allArePendingDelete);
         this.SORT_CONTENT.setVisible(!allArePendingDelete);
@@ -199,9 +196,9 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             this.getAllActions().forEach(action => action.setVisible(false));
         } else {
             this.getAllActionsNoPublish().forEach(action => action.setVisible(true));
-            this.PUBLISH_CONTENT.setVisible(publishEnabled);
             this.UNPUBLISH_CONTENT.setVisible(unpublishEnabled);
         }
+        this.PUBLISH_CONTENT.setVisible(publishEnabled);
         this.UNDO_PENDING_DELETE.setVisible(allArePendingDelete);
     }
 
