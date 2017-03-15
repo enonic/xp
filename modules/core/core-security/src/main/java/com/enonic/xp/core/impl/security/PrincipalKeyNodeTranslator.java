@@ -24,7 +24,7 @@ class PrincipalKeyNodeTranslator
 
     public static NodeId toNodeId( final PrincipalKey principalKey )
     {
-        return NodeId.from( principalKey.toString() );
+        return NodeId.from( principalKey.toString().toLowerCase() );
     }
 
     public static PrincipalKey toKey( final Node node )
