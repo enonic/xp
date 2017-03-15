@@ -400,10 +400,8 @@ module api.ui.treegrid {
                 this.triggerSelectionChangedListeners();
             }
 
-            if (!(isRowHighlighted || isRowSelected)) {
+            if (!isRowHighlighted) {
                 this.highlightRowByNode(node);
-            } else if (isMultipleRowsSelected) {
-                this.grid.selectRow(data.row);
             }
         }
 
