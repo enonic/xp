@@ -3,18 +3,24 @@ module api.content.event {
     export class ContentDeletedEvent extends api.event.Event {
 
         private contentDeletedItems: ContentDeletedItem[] = [];
+        private undeletedItems: ContentDeletedItem[] = [];
 
         constructor() {
             super();
         }
 
         addItem(contentId: ContentId, contentPath: api.content.ContentPath, branch: string): ContentDeletedEvent {
-            this.contentDeletedItems.push(new ContentDeletedItem(contentId, contentPath, branch, false));
+            this.contentDeletedItems.push(new ContentDeletedItem(contentId, contentPath, branch));
             return this;
         }
 
-        addPendingItem(contentId: ContentId, contentPath: api.content.ContentPath): ContentDeletedEvent {
-            this.contentDeletedItems.push(new ContentDeletedItem(contentId, contentPath, 'master', true));
+        addPendingItem(contentSummary: ContentSummaryAndCompareStatus): ContentDeletedEvent {
+            this.contentDeletedItems.push(new ContentPendingDeleteItem(contentSummary, true));
+            return this;
+        }
+
+        addUndeletedItem(contentSummary: ContentSummaryAndCompareStatus): ContentDeletedEvent {
+            this.undeletedItems.push(new ContentPendingDeleteItem(contentSummary));
             return this;
         }
 
@@ -22,8 +28,12 @@ module api.content.event {
             return this.contentDeletedItems;
         }
 
+        getUndeletedItems(): ContentDeletedItem[] {
+            return this.undeletedItems;
+        }
+
         isEmpty(): boolean {
-            return this.contentDeletedItems.length === 0;
+            return this.contentDeletedItems.length === 0 && this.undeletedItems.length == 0;
         }
 
         fire(contextWindow: Window = window) {
@@ -45,15 +55,12 @@ module api.content.event {
 
         private contentPath: api.content.ContentPath;
 
-        private pending: boolean;
-
         private contentId: ContentId;
 
         private branch: string;
 
-        constructor(contentId: ContentId, contentPath: api.content.ContentPath, branch: string, pending: boolean = false) {
+        constructor(contentId: ContentId, contentPath: api.content.ContentPath, branch: string) {
             this.contentPath = contentPath;
-            this.pending = pending;
             this.contentId = contentId;
             this.branch = branch;
         }
@@ -71,7 +78,33 @@ module api.content.event {
         }
 
         public isPending(): boolean {
+            return false;
+        }
+
+        public getCompareStatus(): api.content.CompareStatus {
+            throw new Error('Must be overridden by inheritors');
+        }
+    }
+
+    export class ContentPendingDeleteItem extends ContentDeletedItem {
+
+        private pending: boolean;
+
+        private compareStatus: api.content.CompareStatus;
+
+        constructor(contentSummary: ContentSummaryAndCompareStatus, pending: boolean = false) {
+            super(contentSummary.getContentId(), contentSummary.getPath(), 'master');
+
+            this.compareStatus = contentSummary.getCompareStatus();
+            this.pending = pending;
+        }
+
+        public isPending(): boolean {
             return this.pending;
+        }
+
+        public getCompareStatus(): api.content.CompareStatus {
+            return this.compareStatus;
         }
     }
 }

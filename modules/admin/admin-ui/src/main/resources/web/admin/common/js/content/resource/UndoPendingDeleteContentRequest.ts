@@ -27,5 +27,15 @@ module api.content.resource {
                 return response.getResult().success;
             });
         }
+
+        static showResponse(result: number) {
+            if (result > 0) {
+                api.notify.showSuccess(result == 1 ?
+                                       `The item is successfully undeleted` :
+                                       `The items are successfully undeleted`);
+            } else {
+                api.notify.showWarning(`No items found to undelete`);
+            }
+        }
     }
 }

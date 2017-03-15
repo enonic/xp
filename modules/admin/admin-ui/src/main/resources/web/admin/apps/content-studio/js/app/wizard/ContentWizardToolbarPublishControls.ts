@@ -1,5 +1,5 @@
 import '../../api.ts';
-import {ContentWizardToolbarParams} from './ContentWizardToolbar';
+import {ContentWizardActions} from './action/ContentWizardActions';
 
 import Action = api.ui.Action;
 import DialogButton = api.ui.dialog.DialogButton;
@@ -24,14 +24,14 @@ export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
     private publishStatus: PublishStatus;
     private publishButtonForMobile: ActionButton;
 
-    constructor(actions: ContentWizardToolbarParams) {
+    constructor(actions: ContentWizardActions) {
         super('toolbar-publish-controls');
 
-        this.publishAction = actions.publishAction;
+        this.publishAction = actions.getPublishAction();
         this.publishAction.setIconClass('publish-action');
-        this.publishTreeAction = actions.publishTreeAction;
-        this.unpublishAction = actions.unpublishAction;
-        this.publishMobileAction = actions.publishMobileAction;
+        this.publishTreeAction = actions.getPublishTreeAction();
+        this.unpublishAction = actions.getUnpublishAction();
+        this.publishMobileAction = actions.getPublishMobileAction();
 
         this.publishButton = new MenuButton(this.publishAction, [this.publishTreeAction, this.unpublishAction]);
         this.publishButton.addClass('content-wizard-toolbar-publish-button');

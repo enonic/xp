@@ -376,20 +376,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     protected createMainToolbar(): Toolbar {
-        return new ContentWizardToolbar({
-            application: this.contentParams.application,
-            saveAction: this.wizardActions.getSaveAction(),
-            deleteAction: this.wizardActions.getDeleteAction(),
-            duplicateAction: this.wizardActions.getDuplicateAction(),
-            previewAction: this.wizardActions.getPreviewAction(),
-            publishAction: this.wizardActions.getPublishAction(),
-            publishTreeAction: this.wizardActions.getPublishTreeAction(),
-            unpublishAction: this.wizardActions.getUnpublishAction(),
-            showLiveEditAction: this.wizardActions.getShowLiveEditAction(),
-            showFormAction: this.wizardActions.getShowFormAction(),
-            showSplitEditAction: this.wizardActions.getShowSplitEditAction(),
-            publishMobileAction: this.wizardActions.getPublishMobileAction()
-        });
+        return new ContentWizardToolbar(this.contentParams.application, this.wizardActions);
     }
 
     public getMainToolbar(): ContentWizardToolbar {
@@ -732,30 +719,42 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     }
 
+    private setCompareStatus(compareStatus: CompareStatus) {
+        this.getContentWizardToolbarPublishControls().setCompareStatus(compareStatus);
+        this.persistedContentCompareStatus = this.currentContentCompareStatus = compareStatus;
+        this.wizardActions.refreshPendingDeleteDecorations();
+    }
+
     private listenToContentEvents() {
 
         let serverEvents = api.content.event.ContentServerEventsHandler.getInstance();
 
         let deleteHandler = (event: api.content.event.ContentDeletedEvent) => {
-            if (this.getPersistedItem()) {
-                event.getDeletedItems().filter((deletedItem) => {
-                    return !!deletedItem;
-                }).some((deletedItem) => {
-                    if (this.getPersistedItem().getPath().equals(deletedItem.getContentPath())) {
-                        if (deletedItem.isPending()) {
-                            let publishControls = this.getContentWizardToolbarPublishControls();
-                            publishControls.setContentCanBePublished(true, false);
-                            publishControls.setCompareStatus(CompareStatus.PENDING_DELETE);
-                            this.persistedContentCompareStatus = this.currentContentCompareStatus = CompareStatus.PENDING_DELETE;
-                        } else {
-                            this.contentDeleted = true;
-                            this.close();
-                        }
-
-                        return true;
-                    }
-                });
+            if (!this.getPersistedItem()) {
+                return;
             }
+
+            event.getDeletedItems().filter((deletedItem) => {
+                return !!deletedItem && this.getPersistedItem().getPath().equals(deletedItem.getContentPath());
+            }).some((deletedItem) => {
+                if (deletedItem.isPending()) {
+                    this.getContentWizardToolbarPublishControls().setContentCanBePublished(true, false);
+                    this.setCompareStatus(deletedItem.getCompareStatus());
+                } else {
+                    this.contentDeleted = true;
+                    this.close();
+                }
+
+                return true;
+            });
+
+            event.getUndeletedItems().filter((undeletedItem) => {
+                return !!undeletedItem && this.getPersistedItem().getPath().equals(undeletedItem.getContentPath());
+            }).some((undeletedItem) => {
+                this.setCompareStatus(undeletedItem.getCompareStatus());
+
+                return true;
+            });
         };
 
         let publishOrUnpublishHandler = (contents: ContentSummaryAndCompareStatus[]) => {
@@ -1788,6 +1787,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         let isRenderable = this.isContentRenderable();
 
         this.wizardActions.getPreviewAction().setEnabled(isRenderable);
+        this.wizardActions.refreshPendingDeleteDecorations();
         this.getContextWindowToggler().setEnabled(isRenderable);
         this.getComponentsViewToggler().setEnabled(isRenderable);
 

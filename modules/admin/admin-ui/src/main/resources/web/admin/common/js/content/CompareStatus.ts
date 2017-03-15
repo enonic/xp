@@ -58,4 +58,11 @@ module api.content {
             return status;
         }
     }
+
+    export class CompareStatusChecker {
+        public static isPendingDelete(compareStatus: CompareStatus): boolean {
+            return compareStatus == CompareStatus.PENDING_DELETE;
+        }
+    }
+
 }
