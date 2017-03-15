@@ -7,7 +7,7 @@ import Action = api.ui.Action;
 export class MoveContentAction extends Action {
 
     constructor(grid: ContentTreeGrid) {
-        super('Move');
+        super('Move...');
         this.setEnabled(false);
         this.onExecuted(() => {
             let contents: api.content.ContentSummaryAndCompareStatus[]

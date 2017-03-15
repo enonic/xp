@@ -30,7 +30,7 @@ module api.content {
                 status = 'Out-of-date';
                 break;
             case CompareStatus.PENDING_DELETE:
-                status = 'Pending delete';
+                status = 'Deleted';
                 break;
             case CompareStatus.EQUAL:
                 status = 'Online';

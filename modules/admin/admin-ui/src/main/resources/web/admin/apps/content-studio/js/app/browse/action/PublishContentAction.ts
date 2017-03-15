@@ -8,13 +8,13 @@ import PublishContentRequest = api.content.resource.PublishContentRequest;
 
 export class PublishContentAction extends Action {
 
-    constructor(grid: ContentTreeGrid) {
+    constructor(grid: ContentTreeGrid, includeChildItems: boolean = false) {
         super('Publish...');
         this.setEnabled(false);
         this.onExecuted(() => {
             let contents: api.content.ContentSummaryAndCompareStatus[]
                 = grid.getSelectedDataList();
-            new ContentPublishPromptEvent(contents).fire();
+            new ContentPublishPromptEvent(contents, includeChildItems).fire();
         });
     }
 }
