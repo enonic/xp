@@ -1,5 +1,7 @@
 package com.enonic.xp.core.content;
 
+import java.time.Instant;
+
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -7,6 +9,7 @@ import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.data.PropertyTree;
@@ -103,6 +106,33 @@ public class ContentServiceImplTest_resolvePublishDependencies
         assertFalse( result.contentIds().contains( child1.getId() ) );
         assertTrue( result.contentIds().contains( child3.getId() ) );
     }
+
+    @Test
+    public void resolve_offline()
+        throws Exception
+    {
+        final ResolvePublishDependenciesParams.Builder builder = getPushParamsWithDependenciesBuilder().
+            contentIds( ContentIds.from( content1.getId() ) );
+
+        final Content childOffline = this.contentService.create( CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "This is my offline child" ).
+            parent( content1.getPath() ).
+            type( ContentTypeName.folder() ).
+            contentPublishInfo( ContentPublishInfo.create().first( Instant.now() ).build() ).
+            build() );
+
+        refresh();
+
+        final CompareContentResults result = this.contentService.resolvePublishDependencies( builder.build() );
+        assertEquals( 2, result.contentIds().getSize() );
+
+        builder.includeOffline( true );
+        final CompareContentResults resultIncludingOffline = this.contentService.resolvePublishDependencies( builder.build() );
+        assertEquals( 3, resultIncludingOffline.contentIds().getSize() );
+        assertTrue( resultIncludingOffline.contentIds().contains( childOffline.getId() ) );
+    }
+
 
     private ResolvePublishDependenciesParams.Builder getPushParamsWithDependenciesBuilder()
     {
