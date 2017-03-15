@@ -163,6 +163,8 @@ export class LiveFormPanel extends api.ui.panel.Panel {
                 this.pageView.setLocked(true);
                 this.lockPageAfterProxyLoad = false;
             }
+
+            this.imageInspectionPanel.refresh();
         });
 
         return liveEditPageProxy;
