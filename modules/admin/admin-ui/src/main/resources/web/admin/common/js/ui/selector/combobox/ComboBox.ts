@@ -642,6 +642,10 @@ module api.ui.selector.combobox {
             }
         }
 
+        removeAllOptions() {
+            this.comboBoxDropdown.removeAllOptions();
+        }
+
         getSelectedOptions(): Option<OPTION_DISPLAY_VALUE>[] {
             if (this.selectedOptionsView) {
                 return this.selectedOptionsView.getSelectedOptions().map((selectedOption: SelectedOption<OPTION_DISPLAY_VALUE>) => {
