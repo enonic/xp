@@ -1081,8 +1081,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     liveFormPanel.setModel(this.liveEditModel);
                     liveFormPanel.loadPage();
                     this.setupWizardLiveEdit();
-
-                    this.updateButtonsState();
                     if (this.liveEditModel.getPageModel()) {
                         this.liveEditModel.getPageModel().onPageModeChanged(this.updateButtonsState.bind(this));
                     }
@@ -1110,6 +1108,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         let formContext = this.createFormContext(content);
 
         return this.initLiveEditor(formContext, content).then(() => {
+            this.updateButtonsState();
             return this.createSteps().then((schemas: Mixin[]) => {
 
                 let contentData = content.getContentData();

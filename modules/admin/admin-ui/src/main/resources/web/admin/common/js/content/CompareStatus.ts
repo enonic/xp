@@ -60,8 +60,17 @@ module api.content {
     }
 
     export class CompareStatusChecker {
+
         public static isPendingDelete(compareStatus: CompareStatus): boolean {
             return compareStatus == CompareStatus.PENDING_DELETE;
+        }
+
+        public static isPublished(compareStatus: CompareStatus): boolean {
+            return compareStatus !== CompareStatus.NEW && compareStatus !== CompareStatus.UNKNOWN;
+        }
+
+        public static isOnline(compareStatus: CompareStatus): boolean {
+            return compareStatus === CompareStatus.EQUAL;
         }
     }
 

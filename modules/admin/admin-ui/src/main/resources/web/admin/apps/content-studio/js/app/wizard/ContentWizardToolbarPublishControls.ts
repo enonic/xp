@@ -88,8 +88,7 @@ export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
     private refreshState() {
         let canBePublished = !this.isOnline() && this.contentCanBePublished && this.userCanPublish;
         let canTreeBePublished = !this.leafContent && this.contentCanBePublished && this.userCanPublish;
-        let canBeUnpublished = this.contentCompareStatus !== CompareStatus.NEW && this.contentCompareStatus !== CompareStatus.UNKNOWN &&
-                               this.userCanPublish;
+        let canBeUnpublished = api.content.CompareStatusChecker.isPublished(this.contentCompareStatus) && this.userCanPublish;
 
         this.publishAction.setEnabled(canBePublished);
         this.publishTreeAction.setEnabled(canTreeBePublished);
@@ -103,11 +102,11 @@ export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
     }
 
     public isOnline(): boolean {
-        return this.contentCompareStatus === CompareStatus.EQUAL;
+        return api.content.CompareStatusChecker.isOnline(this.contentCompareStatus);
     }
 
     public isPendingDelete(): boolean {
-        return this.contentCompareStatus === CompareStatus.PENDING_DELETE;
+        return api.content.CompareStatusChecker.isPendingDelete(this.contentCompareStatus);
     }
 
     public enableActionsForExisting(existing: api.content.Content) {

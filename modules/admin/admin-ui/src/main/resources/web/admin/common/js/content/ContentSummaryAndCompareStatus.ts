@@ -135,5 +135,17 @@ module api.content {
         isReadOnly(): boolean {
             return this.readOnly;
         }
+
+        isPendingDelete(): boolean {
+            return api.content.CompareStatusChecker.isPendingDelete(this.getCompareStatus());
+        }
+
+        isPublished(): boolean {
+            return api.content.CompareStatusChecker.isPublished(this.getCompareStatus());
+        }
+
+        isOnline(): boolean {
+            return api.content.CompareStatusChecker.isOnline(this.getCompareStatus());
+        }
     }
 }

@@ -153,15 +153,15 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         let someArePublished = false;
 
         contentBrowseItems.forEach((browseItem) => {
-            let compareStatus = browseItem.getModel().getCompareStatus();
+            let content = browseItem.getModel();
 
-            if (allAreOnline && !this.isOnline(compareStatus)) {
+            if (allAreOnline && !content.isOnline()) {
                 allAreOnline = false;
             }
-            if (allArePendingDelete && !this.isPendingDelete(compareStatus)) {
+            if (allArePendingDelete && !content.isPendingDelete()) {
                 allArePendingDelete = false;
             }
-            if (!someArePublished && this.isPublished(compareStatus)) {
+            if (!someArePublished && content.isPublished()) {
                 someArePublished = true;
             }
         });
@@ -212,18 +212,6 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
     private isNonLeafInMany(contentSummaries: ContentSummary[]): boolean {
         return contentSummaries.length > 1 && contentSummaries.some((obj: ContentSummary) => obj.hasChildren());
-    }
-
-    private isPublished(status: api.content.CompareStatus): boolean {
-        return status !== api.content.CompareStatus.NEW && status !== api.content.CompareStatus.UNKNOWN;
-    }
-
-    private isOnline(status: api.content.CompareStatus): boolean {
-        return status === api.content.CompareStatus.EQUAL;
-    }
-
-    private isPendingDelete(status: api.content.CompareStatus): boolean {
-        return status === api.content.CompareStatus.PENDING_DELETE;
     }
 
     private doUpdateActionsEnabledState(contentBrowseItems: ContentBrowseItem[]): wemQ.Promise<any> {
