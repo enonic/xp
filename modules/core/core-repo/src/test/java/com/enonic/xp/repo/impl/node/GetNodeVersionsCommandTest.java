@@ -70,8 +70,6 @@ public class GetNodeVersionsCommandTest
 
         refresh();
 
-        printVersionIndex();
-
         final NodeVersionQueryResult result = GetNodeVersionsCommand.create().
             from( 0 ).
             size( 100 ).
@@ -87,7 +85,15 @@ public class GetNodeVersionsCommandTest
 
         for ( final NodeVersionMetadata nodeVersionMetadata : nodeVersionsMetadata )
         {
-            assertTrue( previousTimestamp == null || nodeVersionMetadata.getTimestamp().isBefore( previousTimestamp ) );
+            if ( previousTimestamp != null )
+            {
+                if ( !nodeVersionMetadata.getTimestamp().isBefore( previousTimestamp ) )
+                {
+                    fail( "expected timestamp of current item to be before previous. Previous: [" + previousTimestamp + "], current: [" +
+                              nodeVersionMetadata.getTimestamp() + "]" );
+                }
+            }
+
             previousTimestamp = nodeVersionMetadata.getTimestamp();
         }
     }
