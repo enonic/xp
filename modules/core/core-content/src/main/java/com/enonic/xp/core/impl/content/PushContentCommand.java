@@ -122,6 +122,7 @@ public class PushContentCommand
             contentIds( this.contentIds ).
             excludedContentIds( this.excludedContentIds ).
             excludeChildrenIds( this.excludeChildrenIds ).
+            includeOffline( true ).
             target( this.target ).
             contentTypeService( this.contentTypeService ).
             eventPublisher( this.eventPublisher ).

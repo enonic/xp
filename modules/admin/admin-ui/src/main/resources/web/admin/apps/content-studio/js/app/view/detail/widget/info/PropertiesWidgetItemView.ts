@@ -100,8 +100,8 @@ export class PropertiesWidgetItemView extends WidgetItemView {
             this.content.getModifiedTime() ? new FieldString().setName('Modified').setValue(
                 DateTimeFormatter.createHtml(this.content.getModifiedTime())) : null,
 
-            this.content.getFirstPublishedTime() ? new FieldString().setName('First Published').setValue(
-                DateTimeFormatter.createHtml(this.content.getFirstPublishedTime())) : null,
+            this.content.getPublishFirstTime() ? new FieldString().setName('First Published').setValue(
+                DateTimeFormatter.createHtml(this.content.getPublishFirstTime())) : null,
 
             this.content.getPublishFromTime() ? new FieldString().setName('Publish From').setValue(
                 DateTimeFormatter.createHtml(this.content.getPublishFromTime())) : null,

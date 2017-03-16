@@ -134,6 +134,7 @@ public class PublishContentCommand
             contentIds( this.contentIds ).
             excludedContentIds( this.excludedContentIds ).
             excludeChildrenIds( this.excludeChildrenIds ).
+            includeOffline( true ).
             includeDependencies( this.includeDependencies ).
             target( this.target ).
             contentTypeService( this.contentTypeService ).
