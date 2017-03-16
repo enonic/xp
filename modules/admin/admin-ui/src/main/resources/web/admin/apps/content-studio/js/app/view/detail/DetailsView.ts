@@ -14,6 +14,9 @@ import Widget = api.content.Widget;
 import ContentSummaryViewer = api.content.ContentSummaryViewer;
 
 import ContentVersionSetEvent = api.content.event.ActiveContentVersionSetEvent;
+import GetWidgetsByInterfaceRequest = api.content.resource.GetWidgetsByInterfaceRequest;
+import ApplicationEvent = api.application.ApplicationEvent;
+import ApplicationEventType = api.application.ApplicationEventType;
 
 export class DetailsView extends api.dom.DivEl {
 
@@ -56,6 +59,10 @@ export class DetailsView extends api.dom.DivEl {
         this.layout();
 
         this.getCustomWidgetViewsAndUpdateDropdown();
+
+        const handleWindgetsUpdate = this.handleWindgetsUpdate.bind(this);
+        ApplicationEvent.on(handleWindgetsUpdate);
+        this.onRemoved(() => ApplicationEvent.un(handleWindgetsUpdate));
     }
 
     private subscribeOnEvents() {
@@ -89,10 +96,40 @@ export class DetailsView extends api.dom.DivEl {
         });
     }
 
+    private handleWindgetsUpdate(event: ApplicationEvent) {
+        const isWidgetUpdated = [
+            ApplicationEventType.STARTED,
+            ApplicationEventType.STOPPED,
+            ApplicationEventType.UPDATED
+        ].indexOf(event.getEventType()) > -1;
+
+        if (isWidgetUpdated) {
+            const activeWidgetName = this.activeWidget.getWidgetName();
+
+            this.removeAllWidgets();
+            this.initCommonWidgetViews();
+
+            this.getAndInitCustomWidgetViews().then(() => {
+                this.widgetsSelectionRow.updateWidgetsDropdown(this.widgetViews);
+
+                const activeIndex = this.widgetViews.map(view => view.getWidgetName()).indexOf(activeWidgetName);
+                const active = this.widgetViews[activeIndex];
+
+                if (!active && event.getEventType() === ApplicationEventType.STOPPED) {
+                    this.activateDefaultWidget();
+                    this.updateActiveWidget();
+                } else if (active) {
+                    this.setActiveWidget(active);
+                    this.updateActiveWidget();
+                }
+            });
+        }
+    }
+
     getCustomWidgetViewsAndUpdateDropdown(): wemQ.Promise<void> {
         let deferred = wemQ.defer<void>();
         if (!this.alreadyFetchedCustomWidgets) {
-            this.getAndInitCustomWidgetViews().done(() => {
+            this.getAndInitCustomWidgetViews().then(() => {
                 this.widgetsSelectionRow.updateWidgetsDropdown(this.widgetViews);
                 // this.updateActiveWidget();
                 this.alreadyFetchedCustomWidgets = true;
@@ -250,7 +287,7 @@ export class DetailsView extends api.dom.DivEl {
     }
 
     private getAndInitCustomWidgetViews(): wemQ.Promise<any> {
-        let getWidgetsByInterfaceRequest = new api.content.resource.GetWidgetsByInterfaceRequest(this.getWidgetsInterfaceNames());
+        let getWidgetsByInterfaceRequest = new GetWidgetsByInterfaceRequest(this.getWidgetsInterfaceNames());
 
         return getWidgetsByInterfaceRequest.sendAndParse().then((widgets: Widget[]) => {
             widgets.forEach((widget) => {
@@ -287,6 +324,11 @@ export class DetailsView extends api.dom.DivEl {
         widgetViews.forEach((widget) => {
             this.addWidget(widget);
         });
+    }
+
+    private removeAllWidgets() {
+        this.widgetViews.forEach(widget => widget.remove());
+        this.widgetViews = [];
     }
 
     updateViewer() {
