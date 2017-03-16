@@ -226,6 +226,10 @@ module api.ui.selector.combobox {
             this.comboBox.clearSelection(false, true, forceClear);
         }
 
+        removeAllOptions() {
+            this.comboBox.removeAllOptions();
+        }
+
         isSelected(value: OPTION_DISPLAY_VALUE): boolean {
             let selectedValues = this.getSelectedValues();
             let valueToFind = this.getDisplayValueId(value);

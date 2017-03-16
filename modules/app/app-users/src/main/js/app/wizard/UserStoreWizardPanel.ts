@@ -2,11 +2,11 @@ import '../../api.ts';
 import {UserItemWizardPanel} from './UserItemWizardPanel';
 import {SecurityWizardStepForm} from './SecurityWizardStepForm';
 import {UserStoreWizardPanelParams} from './UserStoreWizardPanelParams';
-import {UserStoreWizardActions} from './action/UserStoreWizardActions';
 import {UserStoreWizardToolbar} from './UserStoreWizardToolbar';
 import {UserStoreWizardStepForm} from './UserStoreWizardStepForm';
 import {Router} from '../Router';
 import {UserStoreWizardDataLoader} from './UserStoreWizardDataLoader';
+import {UserItemWizardActions} from './action/UserItemWizardActions';
 
 import UserStore = api.security.UserStore;
 import UserStoreKey = api.security.UserStoreKey;
@@ -29,12 +29,6 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
 
     private permissionsWizardStepForm: SecurityWizardStepForm;
 
-    //private userStoreParams: UserStoreWizardPanelParams;
-
-    isUserStoreFormValid: boolean;
-
-    userStoreNamedListeners: {(event: UserStoreNamedEvent): void}[];
-
     private defaultUserStore: UserStore;
 
     public static debug: boolean = false;
@@ -42,11 +36,6 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
     constructor(params: UserStoreWizardPanelParams) {
 
         super(params);
-
-        this.isUserStoreFormValid = false;
-        this.userStoreNamedListeners = [];
-
-        //this.userStoreParams = params;
 
         this.listenToUserItemEvents();
     }
@@ -64,14 +53,15 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
                 if (loader.userStore) {
                     this.formState.setIsNew(false);
                     this.setPersistedItem(loader.userStore);
+                    this.establishDeleteActionState(loader.userStore.getKey());
                 }
                 this.defaultUserStore = loader.defaultUserStore;
                 return loader.userStore;
             });
     }
 
-    protected createWizardActions(): UserStoreWizardActions {
-        return new UserStoreWizardActions(this);
+    protected createWizardActions(): UserItemWizardActions<UserStore> {
+        return new UserItemWizardActions(this);
     }
 
     protected createMainToolbar(): UserStoreWizardToolbar {
@@ -140,6 +130,10 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         });
     }
 
+    protected getPersistedItemPath(): string {
+        return "/" + this.getPersistedItem().getKey().toString();
+    }
+
     getUserItemType(): string {
         return 'User Store';
     }
@@ -200,9 +194,6 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
 
     updatePersistedItem(): wemQ.Promise<UserStore> {
         return this.produceUpdateUserStoreRequest(this.assembleViewedUserStore()).sendAndParse().then((userStore: UserStore) => {
-            if (!this.getPersistedItem().getDisplayName() && !!userStore.getDisplayName()) {
-                this.notifyUserStoreNamed(userStore);
-            }
             api.notify.showFeedback('UserStore was updated!');
             new api.security.UserItemUpdatedEvent(null, userStore).fire();
 
@@ -220,15 +211,6 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         } else {
             let viewedUserStore = this.assembleViewedUserStore();
             return !this.getPersistedItem().equals(viewedUserStore);
-        }
-    }
-
-    resolveUserStoreNameForUpdateRequest(): string {
-        let wizardHeader = this.getWizardHeader();
-        if (api.util.StringHelper.isEmpty(wizardHeader.getName())) {
-            return this.getPersistedItem().getDisplayName();
-        } else {
-            return wizardHeader.getName();
         }
     }
 
@@ -267,16 +249,6 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
             .setDescription(description)
             .setAuthConfig(authConfig)
             .setPermissions(permissions);
-    }
-
-    onUserStoreNamed(listener: (event: UserStoreNamedEvent)=>void) {
-        this.userStoreNamedListeners.push(listener);
-    }
-
-    notifyUserStoreNamed(userStore: UserStore) {
-        this.userStoreNamedListeners.forEach((listener: (event: UserStoreNamedEvent)=>void)=> {
-            listener.call(this, new UserStoreNamedEvent(this, userStore));
-        });
     }
 
     private listenToUserItemEvents() {
@@ -321,6 +293,14 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
             Router.setHash('edit/' + this.getPersistedItem().getKey());
         } else {
             Router.setHash('new/');
+        }
+    }
+
+    private establishDeleteActionState(key: api.security.UserStoreKey) {
+        if (key) {
+            UserStore.checkOnDeletable(key).then((result: boolean) => {
+                this.wizardActions.getDeleteAction().setEnabled(result);
+            });
         }
     }
 
