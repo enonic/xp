@@ -27,6 +27,8 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
     private containsInvalid: boolean;
 
+    private allPublishable: boolean;
+
     private scheduleDialog: SchedulePublishDialog;
 
     protected showScheduleDialogButton: api.ui.dialog.DialogButton;
@@ -138,6 +140,9 @@ export class ContentPublishDialog extends ProgressBarDialog {
             this.getDependantList().setRequiredIds(result.getRequired());
 
             this.containsInvalid = result.isContainsInvalid();
+            this.allPublishable = result.isAllPublishable();
+
+           this.updateButtonAction();
 
             return this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
                 if (resetDependantItems) { // just opened or first time loading children
@@ -171,7 +176,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
         this.updateSubTitle(count);
         this.updateShowScheduleDialogButton();
-        this.updateButtonCount('Publish', count);
+        this.updateButtonCount(this.allPublishable ? 'Publish' : 'Create Issue... ', count);
     }
 
     setDependantItems(items: api.content.ContentSummaryAndCompareStatus[]) {
@@ -219,6 +224,35 @@ export class ContentPublishDialog extends ProgressBarDialog {
         }
         this.scheduleDialog.open();
         this.addClass('masked');
+    }
+
+    private createIssue() {
+        //TODO: implement action
+    }
+
+    private updateButtonAction() {
+
+        let newAction;
+
+        if (this.allPublishable) {
+            if (api.ObjectHelper.iFrameSafeInstanceOf(this.actionButton.getAction(), CreateIssueDialogAction)) {
+                this.removeAction(this.actionButton);
+
+                newAction = new ContentPublishDialogAction();
+                newAction.onExecuted(this.doPublish.bind(this, false));
+
+                this.actionButton = this.addAction(newAction, true);
+            }
+        } else {
+            if (api.ObjectHelper.iFrameSafeInstanceOf(this.actionButton.getAction(), ContentPublishDialogAction)) {
+                this.removeAction(this.actionButton);
+
+                newAction = new CreateIssueDialogAction();
+                newAction.onExecuted(this.createIssue.bind(this));
+
+                this.actionButton = this.addAction(newAction, true);
+            }
+        }
     }
 
     private doPublish(scheduled: boolean = false) {
@@ -285,10 +319,19 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
         let canPublish = count > 0 && this.areItemsAndDependantsValid();
 
-        this.togglePublish(canPublish);
+        this.updateButtonStatus(canPublish);
+
         if (canPublish) {
             this.getButtonRow().focusDefaultAction();
             this.updateTabbable();
+        }
+    }
+
+    protected updateButtonStatus(enabled: boolean) {
+        if (api.ObjectHelper.iFrameSafeInstanceOf(this.actionButton.getAction(), ContentPublishDialogAction)) {
+            this.togglePublish(enabled);
+        } else {
+            this.togglePublish(true);
         }
     }
 
@@ -323,6 +366,13 @@ export class ContentPublishDialogAction extends api.ui.Action {
     constructor() {
         super('Publish');
         this.setIconClass('publish-action');
+    }
+}
+
+export class CreateIssueDialogAction extends api.ui.Action {
+    constructor() {
+        super('Create Issue... ');
+        this.setIconClass('create-issue-action');
     }
 }
 

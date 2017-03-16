@@ -720,11 +720,18 @@ public final class ContentResource
             filter( contentId -> !requestedContentIds.contains( contentId ) ).
             collect( Collectors.toList() ) );
 
+        final ContentIds fullPublishList = ContentIds.create().addAll( dependentContentIds ).addAll( requestedContentIds ).build();
+
         //Resolve required ids
         final ContentIds requiredIds = this.contentService.resolveRequiredDependencies( ResolveRequiredDependenciesParams.create().
-            contentIds( ContentIds.create().addAll( dependentContentIds ).addAll( requestedContentIds ).build() ).
+            contentIds( fullPublishList ).
             target( ContentConstants.BRANCH_MASTER ).
             build() );
+
+        //check if user has access to publish every content
+        final Boolean isAllPublishable = fullPublishList.stream().allMatch( id ->
+            this.contentService.getPermissionsById( id ).isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(), Permission.PUBLISH )
+         );
 
         //filter required dependant ids
         final ContentIds requiredDependantIds = ContentIds.from( requiredIds.stream().
@@ -745,6 +752,7 @@ public final class ContentResource
             setRequestedContents( requestedContentIds ).
             setDependentContents( this.invalidDependantsOnTop( sortedDependentContentIds, requestedContentIds, sortedInvalidContentIds ) ).
             setRequiredContents( requiredDependantIds ).
+            setAllPublishable( isAllPublishable ).
             setContainsInvalid( !invalidContentIds.isEmpty() ).
             build();
     }

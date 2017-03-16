@@ -187,6 +187,21 @@ module api.ui.dialog {
             return this.buttonRow.addAction(action, useDefault, prepend);
         }
 
+        removeAction(actionButton: DialogButton) {
+            if(!actionButton) {
+                return;
+            }
+
+            const action = actionButton.getAction();
+
+            const index = this.actions.indexOf(action);
+            if(index >= 0) {
+                this.actions.splice(index, 1);
+            }
+
+            this.buttonRow.removeAction(action);
+        }
+
         show() {
             api.dom.Body.get().getHTMLElement().classList.add('modal-dialog');
             this.centerMyself();
@@ -369,6 +384,25 @@ module api.ui.dialog {
                 button.setEnabled(action.isEnabled());
             });
             return button;
+        }
+
+        removeAction(action: api.ui.Action) {
+
+            if(this.defaultButton && this.defaultButton.getAction() == action) {
+                this.defaultButton = null;
+            }
+
+            const buttonToRemove = [];
+
+            this.buttonContainer.getChildren().forEach((button: DialogButton) => {
+                if(button.getAction() == action) {
+                    buttonToRemove.push(button);
+                }
+            });
+
+            buttonToRemove.forEach((button) => {
+                this.buttonContainer.removeChild(button);
+            });
         }
 
         focusDefaultAction() {
