@@ -12,8 +12,6 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.collect.ImmutableSet;
-
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.tool.json.AdminToolJson;
 import com.enonic.xp.admin.impl.rest.resource.tool.json.AdminToolKeyJson;
@@ -21,7 +19,6 @@ import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.jaxrs.JaxRsComponent;
-import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 
@@ -42,14 +39,13 @@ public class AdminToolResource
         final PrincipalKeys principals = ContextAccessor.current().
             getAuthInfo().
             getPrincipals();
-        final boolean isAdmin = principals.contains( RoleKeys.ADMIN );
         return adminToolDescriptorService.getAllowedAdminToolDescriptors( principals ).
             stream().
-            map( adminToolDescriptor -> mapAdminToolDescriptorToJson( adminToolDescriptor, isAdmin ) ).
+            map( this::mapAdminToolDescriptorToJson ).
             collect( Collectors.toList() );
     }
 
-    private AdminToolJson mapAdminToolDescriptorToJson( final AdminToolDescriptor adminToolDescriptor, final boolean mapAllowedPrincipals )
+    private AdminToolJson mapAdminToolDescriptorToJson( final AdminToolDescriptor adminToolDescriptor )
     {
         final AdminToolJson jsonEntry = new AdminToolJson();
         jsonEntry.key = new AdminToolKeyJson();
@@ -57,15 +53,6 @@ public class AdminToolResource
         jsonEntry.key.name = adminToolDescriptor.getKey().getName();
         jsonEntry.displayName = adminToolDescriptor.getDisplayName();
         jsonEntry.description = adminToolDescriptor.getDescription();
-        if ( mapAllowedPrincipals )
-        {
-            final ImmutableSet.Builder<String> allowedPrincipals = ImmutableSet.builder();
-            for ( PrincipalKey principalKey : adminToolDescriptor.getAllowedPrincipals() )
-            {
-                allowedPrincipals.add( principalKey.toString() );
-            }
-            jsonEntry.allow = allowedPrincipals.build();
-        }
         return jsonEntry;
     }
 
