@@ -1,20 +1,12 @@
 import '../../../api.ts';
-import {ContentPublishPromptEvent} from '../ContentPublishPromptEvent';
+import {PublishContentAction} from './PublishContentAction';
 import {ContentTreeGrid} from '../ContentTreeGrid';
 
-import Action = api.ui.Action;
-import ContentSummary = api.content.ContentSummary;
-import PublishContentRequest = api.content.resource.PublishContentRequest;
-
-export class PublishTreeContentAction extends Action {
+export class PublishTreeContentAction extends PublishContentAction {
 
     constructor(grid: ContentTreeGrid) {
-        super('Publish Tree');
-        this.setEnabled(false);
-        this.onExecuted(() => {
-            let contents: api.content.ContentSummaryAndCompareStatus[]
-                = grid.getSelectedDataList();
-            new ContentPublishPromptEvent(contents, true).fire();
-        });
+        super(grid, true);
+
+        this.setLabel('Publish Tree...');
     }
 }

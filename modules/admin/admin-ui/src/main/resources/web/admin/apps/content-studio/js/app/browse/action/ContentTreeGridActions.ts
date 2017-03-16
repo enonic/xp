@@ -66,7 +66,8 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             this.SHOW_NEW_CONTENT_DIALOG_ACTION,
             this.EDIT_CONTENT, this.DELETE_CONTENT,
             this.DUPLICATE_CONTENT, this.MOVE_CONTENT,
-            this.SORT_CONTENT, this.PREVIEW_CONTENT
+            this.SORT_CONTENT, this.PREVIEW_CONTENT,
+            this.UNDO_PENDING_DELETE
         );
 
         this.getPreviewHandler().onPreviewStateChanged((value) => {
@@ -79,8 +80,12 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         return (<PreviewContentAction>this.PREVIEW_CONTENT).getPreviewHandler();
     }
 
+    private getDefaultVisibleActions(): api.ui.Action[] {
+        return this.actions.filter(action => action !== this.UNDO_PENDING_DELETE).concat(this.PUBLISH_CONTENT);
+    }
+
     getAllActions(): api.ui.Action[] {
-        return [...this.actions, this.PUBLISH_CONTENT, this.UNPUBLISH_CONTENT, this.UNDO_PENDING_DELETE];
+        return [...this.actions, this.PUBLISH_CONTENT, this.UNPUBLISH_CONTENT];
     }
 
     getAllActionsNoPublish(): api.ui.Action[] {
@@ -91,9 +96,14 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     updateActionsEnabledState(contentBrowseItems: ContentBrowseItem[],
                               changes?: BrowseItemsChanges<ContentSummaryAndCompareStatus>): wemQ.Promise<BrowseItem<ContentSummaryAndCompareStatus>[]> {
 
-        this.TOGGLE_SEARCH_PANEL.setVisible(false);
-
         let deferred = wemQ.defer<ContentBrowseItem[]>();
+
+        if (!!changes && changes.getAdded().length == 0 && changes.getRemoved().length == 0) {
+            deferred.resolve(contentBrowseItems);
+            return deferred.promise;
+        }
+
+        this.TOGGLE_SEARCH_PANEL.setVisible(false);
 
         let parallelPromises: wemQ.Promise<any>[] = [
             this.getPreviewHandler().updateState(contentBrowseItems, changes),
@@ -115,13 +125,19 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.DUPLICATE_CONTENT.setEnabled(false);
         this.MOVE_CONTENT.setEnabled(false);
         this.SORT_CONTENT.setEnabled(false);
-        this.UNDO_PENDING_DELETE.setEnabled(false);
 
         this.PUBLISH_TREE_CONTENT.setEnabled(false);
         this.PUBLISH_CONTENT.setEnabled(false);
-        this.PUBLISH_CONTENT.setVisible(true);
         this.UNPUBLISH_CONTENT.setEnabled(false);
+
         this.UNPUBLISH_CONTENT.setVisible(false);
+        this.UNDO_PENDING_DELETE.setVisible(false);
+
+        this.showDefaultActions();
+    }
+
+    private showDefaultActions() {
+        this.getDefaultVisibleActions().forEach(action => action.setVisible(true));
     }
 
     private resetDefaultActionsMultipleItemsSelected(contentBrowseItems: ContentBrowseItem[]) {
@@ -132,26 +148,33 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         let treePublishEnabled = true;
         let unpublishEnabled = true;
 
-        let eachOnline = contentBrowseItems.every((browseItem) => {
-            return this.isOnline(browseItem.getModel().getCompareStatus());
+        let allAreOnline = contentBrowseItems.length > 0;
+        let allArePendingDelete = contentBrowseItems.length > 0;
+        let someArePublished = false;
+
+        contentBrowseItems.forEach((browseItem) => {
+            let content = browseItem.getModel();
+
+            if (allAreOnline && !content.isOnline()) {
+                allAreOnline = false;
+            }
+            if (allArePendingDelete && !content.isPendingDelete()) {
+                allArePendingDelete = false;
+            }
+            if (!someArePublished && content.isPublished()) {
+                someArePublished = true;
+            }
         });
 
-        let anyPublished = contentBrowseItems.some((browseItem) => {
-            return this.isPublished(browseItem.getModel().getCompareStatus());
-        });
-
-        const publishEnabled = !eachOnline;
+        const publishEnabled = !allAreOnline;
         if (this.isEveryLeaf(contentSummaries)) {
             treePublishEnabled = false;
-            unpublishEnabled = anyPublished;
+            unpublishEnabled = someArePublished;
         } else if (this.isOneNonLeaf(contentSummaries)) {
-            unpublishEnabled = anyPublished;
+            unpublishEnabled = someArePublished;
         } else if (this.isNonLeafInMany(contentSummaries)) {
-            unpublishEnabled = anyPublished;
+            unpublishEnabled = someArePublished;
         }
-
-        let undoDeleteEnabled = contentBrowseItems.length === 1 &&
-                                contentBrowseItems[0].getModel().getCompareStatus() === api.content.CompareStatus.PENDING_DELETE;
 
         this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(contentSummaries.length < 2);
         this.EDIT_CONTENT.setEnabled(this.anyEditable(contentSummaries));
@@ -159,13 +182,24 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.DUPLICATE_CONTENT.setEnabled(contentSummaries.length === 1);
         this.MOVE_CONTENT.setEnabled(true);
         this.SORT_CONTENT.setEnabled(contentSummaries.length === 1 && contentSummaries[0].hasChildren());
-        this.UNDO_PENDING_DELETE.setEnabled(undoDeleteEnabled);
 
         this.PUBLISH_CONTENT.setEnabled(publishEnabled);
         this.PUBLISH_TREE_CONTENT.setEnabled(treePublishEnabled);
         this.UNPUBLISH_CONTENT.setEnabled(unpublishEnabled);
+
+        this.SHOW_NEW_CONTENT_DIALOG_ACTION.setVisible(!allArePendingDelete);
+        this.MOVE_CONTENT.setVisible(!allArePendingDelete);
+        this.SORT_CONTENT.setVisible(!allArePendingDelete);
+        this.DELETE_CONTENT.setVisible(!allArePendingDelete);
+
+        if (allArePendingDelete) {
+            this.getAllActions().forEach(action => action.setVisible(false));
+        } else {
+            this.getAllActionsNoPublish().forEach(action => action.setVisible(true));
+            this.UNPUBLISH_CONTENT.setVisible(unpublishEnabled);
+        }
         this.PUBLISH_CONTENT.setVisible(publishEnabled);
-        this.UNPUBLISH_CONTENT.setVisible(unpublishEnabled);
+        this.UNDO_PENDING_DELETE.setVisible(allArePendingDelete);
     }
 
     private isEveryLeaf(contentSummaries: ContentSummary[]): boolean {
@@ -178,14 +212,6 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
     private isNonLeafInMany(contentSummaries: ContentSummary[]): boolean {
         return contentSummaries.length > 1 && contentSummaries.some((obj: ContentSummary) => obj.hasChildren());
-    }
-
-    private isPublished(status: api.content.CompareStatus): boolean {
-        return status !== api.content.CompareStatus.NEW && status !== api.content.CompareStatus.UNKNOWN;
-    }
-
-    private isOnline(status: api.content.CompareStatus): boolean {
-        return status === api.content.CompareStatus.EQUAL;
     }
 
     private doUpdateActionsEnabledState(contentBrowseItems: ContentBrowseItem[]): wemQ.Promise<any> {
@@ -222,33 +248,35 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
     private updateActionsByPermissionsMultipleItemsSelected(contentBrowseItems: ContentBrowseItem[],
                                                             contentTypesAllowChildren: boolean = true): wemQ.Promise<any> {
-        return new api.content.resource.GetPermittedActionsRequest().addContentIds(
-            ...contentBrowseItems.map(contentBrowseItem => contentBrowseItem.getModel().getContentId())).addPermissionsToBeChecked(
-            Permission.CREATE, Permission.DELETE, Permission.PUBLISH).sendAndParse().then((allowedPermissions: Permission[]) => {
-            this.resetDefaultActionsMultipleItemsSelected(contentBrowseItems);
+        return new api.content.resource.GetPermittedActionsRequest().
+            addContentIds(...contentBrowseItems.map(contentBrowseItem => contentBrowseItem.getModel().getContentId())).
+            addPermissionsToBeChecked(Permission.CREATE, Permission.DELETE, Permission.PUBLISH).
+            sendAndParse().
+            then((allowedPermissions: Permission[]) => {
+                this.resetDefaultActionsMultipleItemsSelected(contentBrowseItems);
 
-            let canCreate = allowedPermissions.indexOf(Permission.CREATE) > -1;
+                let canCreate = allowedPermissions.indexOf(Permission.CREATE) > -1;
 
-            let canDelete = allowedPermissions.indexOf(Permission.DELETE) > -1;
+                let canDelete = allowedPermissions.indexOf(Permission.DELETE) > -1;
 
-            let canPublish = allowedPermissions.indexOf(Permission.PUBLISH) > -1;
+                let canPublish = allowedPermissions.indexOf(Permission.PUBLISH) > -1;
 
-            if (!contentTypesAllowChildren || !canCreate) {
-                this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
-                this.SORT_CONTENT.setEnabled(false);
-            }
+                if (!contentTypesAllowChildren || !canCreate) {
+                    this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(false);
+                    this.SORT_CONTENT.setEnabled(false);
+                }
 
-            if (!canDelete) {
-                this.DELETE_CONTENT.setEnabled(false);
-                this.MOVE_CONTENT.setEnabled(false);
-            }
+                if (!canDelete) {
+                    this.DELETE_CONTENT.setEnabled(false);
+                    this.MOVE_CONTENT.setEnabled(false);
+                }
 
-            if (!canPublish) {
-                this.PUBLISH_CONTENT.setEnabled(false);
-                this.PUBLISH_TREE_CONTENT.setEnabled(false);
-                this.UNPUBLISH_CONTENT.setEnabled(false);
-            }
-        });
+                if (!canPublish) {
+                    this.PUBLISH_CONTENT.setEnabled(false);
+                    this.PUBLISH_TREE_CONTENT.setEnabled(false);
+                    this.UNPUBLISH_CONTENT.setEnabled(false);
+                }
+            });
     }
 
     private checkIsChildrenAllowedByContentType(contentSummary: ContentSummary): wemQ.Promise<Boolean> {

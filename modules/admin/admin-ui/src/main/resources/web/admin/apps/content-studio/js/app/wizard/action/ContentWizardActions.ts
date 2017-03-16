@@ -9,6 +9,7 @@ import {PreviewAction} from './PreviewAction';
 import {ShowLiveEditAction} from './ShowLiveEditAction';
 import {ShowFormAction} from './ShowFormAction';
 import {ShowSplitEditAction} from './ShowSplitEditAction';
+import {UndoPendingDeleteAction} from './UndoPendingDeleteAction';
 import SaveAction = api.app.wizard.SaveAction;
 import CloseAction = api.app.wizard.CloseAction;
 import SaveAndCloseAction = api.app.wizard.SaveAndCloseAction;
@@ -41,7 +42,11 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
     private showSplitEditAction: api.ui.Action;
 
+    private undoPendingDelete: api.ui.Action;
+
     private deleteOnlyMode: boolean = false;
+
+    private wizardPanel: ContentWizardPanel;
 
     constructor(wizardPanel: ContentWizardPanel) {
         super(
@@ -57,8 +62,11 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
             new ShowFormAction(wizardPanel),
             new ShowSplitEditAction(wizardPanel),
             new SaveAndCloseAction(wizardPanel),
-            new PublishAction(wizardPanel)
+            new PublishAction(wizardPanel),
+            new UndoPendingDeleteAction(wizardPanel)
         );
+
+        this.wizardPanel = wizardPanel;
 
         this.save = this.getActions()[0];
         this.delete = this.getActions()[1];
@@ -73,6 +81,22 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
         this.showSplitEditAction = this.getActions()[10];
         this.saveAndClose = this.getActions()[11];
         this.publishMobile = this.getActions()[12];
+        this.undoPendingDelete = this.getActions()[13];
+    }
+
+    refreshPendingDeleteDecorations() {
+        let compareStatus = this.wizardPanel.getContentCompareStatus();
+        let isPendingDelete = api.content.CompareStatusChecker.isPendingDelete(compareStatus);
+
+        this.undoPendingDelete.setVisible(isPendingDelete);
+        [
+            this.save,
+            this.delete,
+            this.duplicate,
+            this.unpublish
+        ].forEach(action => action.setVisible(!isPendingDelete));
+
+        this.preview.setVisible(this.preview.isEnabled() && !isPendingDelete);
     }
 
     enableActionsForNew() {
@@ -227,5 +251,9 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
     getPublishMobileAction():api.ui.Action {
         return this.publishMobile;
+    }
+
+    getUndoPendingDeleteAction(): api.ui.Action {
+        return this.undoPendingDelete;
     }
 }

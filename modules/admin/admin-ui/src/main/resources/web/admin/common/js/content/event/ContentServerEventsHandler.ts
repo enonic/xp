@@ -219,7 +219,12 @@ module api.content.event {
             data.filter((el) => {
                 return !!el;        // not sure if this check is necessary
             }).forEach((el) => {
-                contentDeletedEvent.addPendingItem(el.getContentId(), el.getPath());
+
+                if (api.content.CompareStatusChecker.isPendingDelete(el.getCompareStatus())) {
+                    contentDeletedEvent.addPendingItem(el);
+                } else {
+                    contentDeletedEvent.addUndeletedItem(el);
+                }
             });
             contentDeletedEvent.fire();
 

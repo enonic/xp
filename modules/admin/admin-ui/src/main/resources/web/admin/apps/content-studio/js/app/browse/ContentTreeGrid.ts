@@ -160,12 +160,14 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         this.getGrid().subscribeOnDblClick((event, data) => {
             if (this.isActive()) {
                 let node = this.getGrid().getDataView().getItem(data.row);
-                /*
-                 * Empty node double-clicked. Additional %MAX_FETCH_SIZE%
-                 * nodes will be loaded and displayed. If the any other
-                 * node is clicked, edit event will be triggered by default.
-                 */
-                this.editItem(node);
+                if (!node.getData().isPendingDelete()) {
+                    /*
+                     * Empty node double-clicked. Additional %MAX_FETCH_SIZE%
+                     * nodes will be loaded and displayed. If the any other
+                     * node is clicked, edit event will be triggered by default.
+                     */
+                    this.editItem(node);
+                }
             }
         });
 
