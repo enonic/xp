@@ -11,7 +11,8 @@ module api.content.resource.result {
         containsInvalid: boolean;
         allPublishable: boolean;
 
-        constructor(dependants: ContentId[], requested: ContentId[], required: ContentId[], containsInvalid: boolean, allPublishable: boolean) {
+        constructor(dependants: ContentId[], requested: ContentId[], required: ContentId[], containsInvalid: boolean,
+                    allPublishable: boolean) {
             this.dependentContents = dependants;
             this.requestedContents = requested;
             this.requiredContents = required;
@@ -35,7 +36,7 @@ module api.content.resource.result {
             return this.containsInvalid;
         }
 
-        isAllPublishable() : boolean {
+        isAllPublishable(): boolean {
             return this.allPublishable;
         }
 
