@@ -83,6 +83,10 @@ module api.content {
         public static isOnline(compareStatus: CompareStatus): boolean {
             return compareStatus === CompareStatus.EQUAL;
         }
+
+        public static isNew(compareStatus: CompareStatus): boolean {
+            return compareStatus === CompareStatus.NEW;
+        }
     }
 
 }

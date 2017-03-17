@@ -101,10 +101,6 @@ export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
         return this.content.isPendingDelete();
     }
 
-    private getCompareStatus(): CompareStatus {
-        return this.content ? this.content.getCompareStatus() : null;
-    }
-
     private getPublishStatus(): PublishStatus {
         return this.content ? this.content.getPublishStatus() : null;
     }

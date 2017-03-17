@@ -147,5 +147,9 @@ module api.content {
         isOnline(): boolean {
             return api.content.CompareStatusChecker.isOnline(this.getCompareStatus());
         }
+
+        isNew(): boolean {
+            return api.content.CompareStatusChecker.isNew(this.getCompareStatus());
+        }
     }
 }

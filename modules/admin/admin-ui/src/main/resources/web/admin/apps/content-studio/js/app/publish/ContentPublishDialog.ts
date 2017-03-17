@@ -69,6 +69,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.includeOfflineCheckbox = api.ui.Checkbox.create().setLabelText('Include offline items').build();
         this.includeOfflineCheckbox.addClass('include-offline');
         this.includeOfflineCheckbox.onValueChanged(childrenCheckboxListener);
+        this.includeOfflineCheckbox.setVisible(false);
 
         this.getButtonRow().appendChild(this.includeOfflineCheckbox);
     }
@@ -156,6 +157,10 @@ export class ContentPublishDialog extends ProgressBarDialog {
             this.getDependantList().setRequiredIds(result.getRequired());
 
             this.containsInvalid = result.isContainsInvalid();
+
+            this.includeOfflineCheckbox.setVisible(
+                this.getItemList().allIncludeChildrenTogglersAreEnabled() && this.dependantIds.length > 0
+            );
 
             return this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
                 if (resetDependantItems) { // just opened or first time loading children
