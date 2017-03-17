@@ -17,6 +17,7 @@ import ContentVersionSetEvent = api.content.event.ActiveContentVersionSetEvent;
 import GetWidgetsByInterfaceRequest = api.content.resource.GetWidgetsByInterfaceRequest;
 import ApplicationEvent = api.application.ApplicationEvent;
 import ApplicationEventType = api.application.ApplicationEventType;
+import AppHelper = api.util.AppHelper;
 
 export class DetailsView extends api.dom.DivEl {
 
@@ -60,9 +61,9 @@ export class DetailsView extends api.dom.DivEl {
 
         this.getCustomWidgetViewsAndUpdateDropdown();
 
-        const handleWindgetsUpdate = this.handleWindgetsUpdate.bind(this);
-        ApplicationEvent.on(handleWindgetsUpdate);
-        this.onRemoved(() => ApplicationEvent.un(handleWindgetsUpdate));
+        const handleWidgetsUpdate = AppHelper.debounce((e) => this.handleWindgetsUpdate(e), 1000);
+        ApplicationEvent.on(handleWidgetsUpdate);
+        this.onRemoved(() => ApplicationEvent.un(handleWidgetsUpdate));
     }
 
     private subscribeOnEvents() {
@@ -98,6 +99,8 @@ export class DetailsView extends api.dom.DivEl {
 
     private handleWindgetsUpdate(event: ApplicationEvent) {
         const isWidgetUpdated = [
+            ApplicationEventType.INSTALLED,
+            ApplicationEventType.UNINSTALLED,
             ApplicationEventType.STARTED,
             ApplicationEventType.STOPPED,
             ApplicationEventType.UPDATED
