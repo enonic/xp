@@ -29,9 +29,6 @@ public class IssueDataSerializer
         final PropertySet issueAsData = propertyTree.getRoot();
 
         issueAsData.ifNotNull().addString( TITLE, params.getTitle() );
-        issueAsData.ifNotNull().addInstant( CREATED_TIME, params.getCreatedTime() );
-        issueAsData.ifNotNull().addInstant( MODIFIED_TIME, params.getModifiedTime() );
-        issueAsData.ifNotNull().addString( CREATOR, params.getCreator().toString() );
         issueAsData.ifNotNull().addString( STATUS, params.getStatus().toString() );
         issueAsData.addString( DESCRIPTION, params.getDescription() );
 
