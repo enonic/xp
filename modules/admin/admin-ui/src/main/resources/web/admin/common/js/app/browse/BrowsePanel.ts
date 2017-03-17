@@ -84,7 +84,7 @@ module api.app.browse {
                 }
             });
 
-            this.treeGrid.getToolbar().onCartButtonClicked(isActive => {
+            this.treeGrid.getToolbar().getSelectionPanelToggler().onActiveChanged(isActive => {
                 this.getBrowseItemPanel().toggleCartPanel(isActive);
             });
 
