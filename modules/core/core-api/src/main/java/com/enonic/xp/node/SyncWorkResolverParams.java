@@ -1,5 +1,7 @@
 package com.enonic.xp.node;
 
+import java.util.function.Function;
+
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.branch.Branch;
@@ -17,6 +19,8 @@ public class SyncWorkResolverParams
 
     private final boolean includeDependencies;
 
+    private final Function<NodeIds, NodeIds> initialDiffFilter;
+
     private SyncWorkResolverParams( Builder builder )
     {
         branch = builder.branch;
@@ -24,6 +28,7 @@ public class SyncWorkResolverParams
         excludedNodeIds = builder.excludedNodeIds;
         includeChildren = builder.includeChildren;
         this.includeDependencies = builder.includeDependencies;
+        this.initialDiffFilter = builder.initialDiffFilter;
     }
 
     public Branch getBranch()
@@ -51,11 +56,15 @@ public class SyncWorkResolverParams
         return includeDependencies;
     }
 
+    public Function<NodeIds, NodeIds> getInitialDiffFilter()
+    {
+        return initialDiffFilter;
+    }
+
     public static Builder create()
     {
         return new Builder();
     }
-
 
     public static final class Builder
     {
@@ -68,6 +77,8 @@ public class SyncWorkResolverParams
         private boolean includeChildren;
 
         private boolean includeDependencies = true;
+
+        private Function<NodeIds, NodeIds> initialDiffFilter;
 
         private Builder()
         {
@@ -97,10 +108,15 @@ public class SyncWorkResolverParams
             return this;
         }
 
-
         public Builder includeDependencies( final boolean includeDependencies )
         {
             this.includeDependencies = includeDependencies;
+            return this;
+        }
+
+        public Builder initialDiffFilter( final Function<NodeIds, NodeIds> initialDiffFilter )
+        {
+            this.initialDiffFilter = initialDiffFilter;
             return this;
         }
 

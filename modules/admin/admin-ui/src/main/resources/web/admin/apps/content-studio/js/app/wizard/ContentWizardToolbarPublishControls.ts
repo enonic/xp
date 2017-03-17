@@ -8,6 +8,7 @@ import CompareStatus = api.content.CompareStatus;
 import PublishStatus = api.content.PublishStatus;
 import MenuButton = api.ui.button.MenuButton;
 import ActionButton = api.ui.button.ActionButton;
+import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
 export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
 
@@ -20,8 +21,7 @@ export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
     private contentCanBePublished: boolean = false;
     private userCanPublish: boolean = true;
     private leafContent: boolean = true;
-    private contentCompareStatus: CompareStatus;
-    private publishStatus: PublishStatus;
+    private content: ContentSummaryAndCompareStatus;
     private publishButtonForMobile: ActionButton;
 
     constructor(actions: ContentWizardActions) {
@@ -45,16 +45,8 @@ export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
         this.appendChildren(this.contentStateSpan, this.publishButton);
     }
 
-    public setCompareStatus(compareStatus: CompareStatus, refresh: boolean = true): ContentWizardToolbarPublishControls {
-        this.contentCompareStatus = compareStatus;
-        if (refresh) {
-            this.refreshState();
-        }
-        return this;
-    }
-
-    public setPublishStatus(publishStatus: PublishStatus, refresh: boolean = true): ContentWizardToolbarPublishControls {
-        this.publishStatus = publishStatus;
+    public setContent(content: ContentSummaryAndCompareStatus, refresh: boolean = true): ContentWizardToolbarPublishControls {
+        this.content = content;
         if (refresh) {
             this.refreshState();
         }
@@ -88,7 +80,7 @@ export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
     private refreshState() {
         let canBePublished = !this.isOnline() && this.contentCanBePublished && this.userCanPublish;
         let canTreeBePublished = !this.leafContent && this.contentCanBePublished && this.userCanPublish;
-        let canBeUnpublished = api.content.CompareStatusChecker.isPublished(this.contentCompareStatus) && this.userCanPublish;
+        let canBeUnpublished = this.content.isPublished() && this.userCanPublish;
 
         this.publishAction.setEnabled(canBePublished);
         this.publishTreeAction.setEnabled(canTreeBePublished);
@@ -96,17 +88,21 @@ export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
         this.publishMobileAction.setEnabled(canBePublished);
         this.publishMobileAction.setVisible(canBePublished);
 
-        this.contentStateSpan.setHtml(this.getContentStateValueForSpan(this.contentCompareStatus, this.publishStatus), false);
-        this.publishButtonForMobile.setLabel('Publish ' + api.content.CompareStatusFormatter.formatStatus(this.contentCompareStatus) +
+        this.contentStateSpan.setHtml(this.getContentStateValueForSpan(this.content), false);
+        this.publishButtonForMobile.setLabel('Publish ' + api.content.CompareStatusFormatter.formatStatusFromContent(this.content) +
                                              ' item');
     }
 
     public isOnline(): boolean {
-        return api.content.CompareStatusChecker.isOnline(this.contentCompareStatus);
+        return this.content.isOnline();
     }
 
     public isPendingDelete(): boolean {
-        return api.content.CompareStatusChecker.isPendingDelete(this.contentCompareStatus);
+        return this.content.isPendingDelete();
+    }
+
+    private getPublishStatus(): PublishStatus {
+        return this.content ? this.content.getPublishStatus() : null;
     }
 
     public enableActionsForExisting(existing: api.content.Content) {
@@ -117,17 +113,20 @@ export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
         });
     }
 
-    private getContentStateValueForSpan(compareStatus: CompareStatus, publishStatus: PublishStatus): string {
+    private getContentStateValueForSpan(content: ContentSummaryAndCompareStatus): string {
+
+        const publishStatus: PublishStatus = this.getPublishStatus();
+
         let status = new api.dom.SpanEl();
-        if (compareStatus === CompareStatus.EQUAL) {
+        if (this.isOnline()) {
             status.addClass('online');
         }
         if (publishStatus && (publishStatus === PublishStatus.PENDING || publishStatus === PublishStatus.EXPIRED)) {
             status.addClass(api.content.PublishStatusFormatter.formatStatus(publishStatus).toLowerCase());
-            status.setHtml(api.content.CompareStatusFormatter.formatStatus(compareStatus) + ' (' +
+            status.setHtml(api.content.CompareStatusFormatter.formatStatusFromContent(content) + ' (' +
                            api.content.PublishStatusFormatter.formatStatus(publishStatus) + ')');
         } else {
-            status.setHtml(api.content.CompareStatusFormatter.formatStatus(compareStatus));
+            status.setHtml(api.content.CompareStatusFormatter.formatStatusFromContent(content));
         }
         return 'Item is ' + status.toString();
     }

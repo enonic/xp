@@ -488,6 +488,7 @@ public class NodeServiceImpl
             excludedNodeIds( params.getExcludedNodeIds() ).
             includeChildren( params.isIncludeChildren() ).
             includeDependencies( params.isIncludeDependencies() ).
+            initialDiffFilter( params.getInitialDiffFilter() ).
             indexServiceInternal( indexServiceInternal ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).

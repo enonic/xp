@@ -13,8 +13,8 @@ export class DeleteContentAction extends api.ui.Action {
         this.onExecuted(() => {
             new ContentDeletePromptEvent([new ContentSummaryAndCompareStatus().
                 setContentSummary(wizardPanel.getPersistedItem()).
-                setCompareStatus(wizardPanel.getContentCompareStatus()).
-                setPublishStatus(wizardPanel.getContentPublishStatus())
+                setCompareStatus(wizardPanel.getCompareStatus()).
+                setPublishStatus(wizardPanel.getPublishStatus())
             ]).fire();
         });
     }

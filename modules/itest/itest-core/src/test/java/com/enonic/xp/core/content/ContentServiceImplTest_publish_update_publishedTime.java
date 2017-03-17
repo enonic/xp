@@ -40,13 +40,13 @@ public class ContentServiceImplTest_publish_update_publishedTime
 
         final Content storedContent = this.contentService.getById( content.getId() );
         assertNotNull( storedContent.getPublishInfo() );
+        assertNotNull( storedContent.getPublishInfo().getFirst() );
         assertNotNull( storedContent.getPublishInfo().getFrom() );
 
         final Content publishedContent = ContextBuilder.from( ContextAccessor.current() ).
             branch( WS_OTHER ).
             build().
             callWith( () -> this.contentService.getById( content.getId() ) );
-        assertNotNull( publishedContent.getPublishInfo() );
 
         assertEquals( storedContent.getPublishInfo(), publishedContent.getPublishInfo() );
     }
@@ -62,6 +62,7 @@ public class ContentServiceImplTest_publish_update_publishedTime
 
         final ContentPublishInfo publishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
         assertNotNull( publishInfo );
+        assertNotNull( publishInfo.getFirst() );
         assertNotNull( publishInfo.getFrom() );
 
         final UpdateContentParams updateContentParams = new UpdateContentParams();
@@ -74,8 +75,7 @@ public class ContentServiceImplTest_publish_update_publishedTime
         assertVersions( content.getId(), 3 );
 
         final ContentPublishInfo unUpdatedPublishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
-
-        assertEquals( publishInfo.getFrom(), unUpdatedPublishInfo.getFrom() );
+        assertEquals( publishInfo, unUpdatedPublishInfo );
     }
 
     @Test
@@ -101,7 +101,7 @@ public class ContentServiceImplTest_publish_update_publishedTime
     }
 
     @Test
-    public void publish_from_is_removed_on_duplicate()
+    public void publish_info_is_removed_on_duplicate()
         throws Exception
     {
 
