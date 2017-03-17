@@ -50,7 +50,7 @@ module api.app.browse {
                                                     highlighted: boolean
                                                    ) => {
                 let browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(fullSelection);
-                let changes = this.getBrowseItemPanel().setItems(browseItems, true);
+                let changes = this.getBrowseItemPanel().setItems(browseItems);
 
                 if (highlighted && ((fullSelection.length == 0 && changes.getRemoved().length === 1) ||
                                     (fullSelection.length == 1 && changes.getAdded().length === 1))) {
@@ -82,10 +82,6 @@ module api.app.browse {
                     }
                     this.togglePreviewPanelDependingOnScreenSize(item);
                 }
-            });
-
-            this.treeGrid.getToolbar().getSelectionPanelToggler().onActiveChanged(isActive => {
-                this.getBrowseItemPanel().toggleCartPanel(isActive);
             });
 
             this.onShown(() => {
