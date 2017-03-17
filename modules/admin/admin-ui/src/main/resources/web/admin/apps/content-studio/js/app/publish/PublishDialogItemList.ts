@@ -53,7 +53,9 @@ export class PublishDialogItemList extends DialogItemList {
     }
 
     public allIncludeChildrenTogglersAreEnabled(): boolean {
-        return this.getItemViews().every(itemView => itemView.getIncludeChildrenToggler().isEnabled());
+        return this.getItemViews().every(
+            itemView => !!itemView.getIncludeChildrenToggler() && itemView.getIncludeChildrenToggler().isEnabled()
+        );
     }
 
     public getItemViews(): PublicStatusSelectionItem[] {
