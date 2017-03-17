@@ -100,6 +100,14 @@ module api.ui {
             return this;
         }
 
+        setPartial(value: boolean) {
+            this.checkbox.toggleClass("partial", value);
+        }
+
+        isPartial(): boolean {
+            return this.checkbox.hasClass("partial");
+        }
+
         setDisabled(value: boolean, cls?: string): Checkbox {
             this.checkbox.getEl().setDisabled(value);
             if (cls) {

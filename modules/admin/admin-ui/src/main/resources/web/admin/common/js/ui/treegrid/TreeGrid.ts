@@ -1495,6 +1495,10 @@ module api.ui.treegrid {
             return nonEmptyNodes.length === selectedNodes.length;
         }
 
+        isAnySelected(): boolean {
+            return this.grid.isAnySelected();
+        }
+
         protected updateExpanded() {
             this.invalidate();
             this.setActive(true);
