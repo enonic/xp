@@ -61,7 +61,7 @@ export class DetailsView extends api.dom.DivEl {
 
         this.getCustomWidgetViewsAndUpdateDropdown();
 
-        const handleWidgetsUpdate = AppHelper.debounce((e) => this.handleWindgetsUpdate(e), 1000);
+        const handleWidgetsUpdate = AppHelper.debounce((e) => this.handleWidgetsUpdate(e), 1000);
         ApplicationEvent.on(handleWidgetsUpdate);
         this.onRemoved(() => ApplicationEvent.un(handleWidgetsUpdate));
     }
@@ -97,7 +97,7 @@ export class DetailsView extends api.dom.DivEl {
         });
     }
 
-    private handleWindgetsUpdate(event: ApplicationEvent) {
+    private handleWidgetsUpdate(event: ApplicationEvent) {
         const isWidgetUpdated = [
             ApplicationEventType.INSTALLED,
             ApplicationEventType.UNINSTALLED,
@@ -120,6 +120,7 @@ export class DetailsView extends api.dom.DivEl {
 
                 if (!active && event.getEventType() === ApplicationEventType.STOPPED) {
                     this.activateDefaultWidget();
+                    this.widgetsSelectionRow.updateState(this.activeWidget);
                     this.updateActiveWidget();
                 } else if (active) {
                     this.setActiveWidget(active);
