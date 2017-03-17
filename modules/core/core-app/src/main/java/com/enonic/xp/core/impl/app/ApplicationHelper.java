@@ -71,7 +71,7 @@ public final class ApplicationHelper
         return getAttribute( manifest, X_BUNDLE_TYPE, "" ).equals( APPLICATION_BUNDLE_TYPE );
     }
 
-    public static String getAttribute( final Manifest manifest, final String name, final String defValue )
+    static String getAttribute( final Manifest manifest, final String name, final String defValue )
     {
         if ( manifest == null )
         {
@@ -81,13 +81,13 @@ public final class ApplicationHelper
         return manifest.getMainAttributes().getValue( name ) != null ? manifest.getMainAttributes().getValue( name ) : defValue;
     }
 
-    public static String getHeader( final Bundle bundle, final String name, final String defValue )
+    static String getHeader( final Bundle bundle, final String name, final String defValue )
     {
         final String value = bundle.getHeaders().get( name );
         return Strings.isNullOrEmpty( value ) ? defValue : value;
     }
 
-    public static List<String> getSourcePaths( final Bundle bundle )
+    static List<String> getSourcePaths( final Bundle bundle )
     {
         final String value = getHeader( bundle, X_SOURCE_PATHS, "" );
         if ( Strings.isNullOrEmpty( value ) )
@@ -97,7 +97,7 @@ public final class ApplicationHelper
         return Lists.newArrayList( Splitter.on( ',' ).trimResults().split( value ) );
     }
 
-    public static VersionRange parseVersionRange( final String value )
+    static VersionRange parseVersionRange( final String value )
     {
         if ( value == null )
         {
@@ -130,12 +130,12 @@ public final class ApplicationHelper
             runWith( runnable );
     }
 
-    public static <T> T callWithContext( Callable<T> runnable )
+    static <T> T callWithContext( Callable<T> runnable )
     {
         return getContext().callWith( runnable );
     }
 
-    public static void runWithContext( Runnable runnable )
+    static void runWithContext( Runnable runnable )
     {
         getContext().runWith( runnable );
     }
@@ -145,5 +145,4 @@ public final class ApplicationHelper
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
         return ContextBuilder.from( ApplicationConstants.CONTEXT_APPLICATIONS ).authInfo( authInfo ).build();
     }
-
 }

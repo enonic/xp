@@ -28,6 +28,8 @@ module api.ui.menu {
                     this.addClass('expanded');
                 }
             });
+
+            api.dom.Body.get().onClicked((event: MouseEvent) => this.foldMenuOnOutsideClick(event));
         }
 
         setLabel(label: string) {
@@ -40,6 +42,13 @@ module api.ui.menu {
             actionMenuItem.onClicked(() => {
                 this.removeClass('expanded');
             });
+        }
+
+        private foldMenuOnOutsideClick(evt: Event): void {
+            if (!this.getEl().contains(<HTMLElement> evt.target)) {
+                // click outside menu
+                this.removeClass('expanded');
+            }
         }
     }
 }

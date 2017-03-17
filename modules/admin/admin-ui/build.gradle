@@ -42,6 +42,10 @@ task copyAll( type: Copy, dependsOn: gulpAll ) {
     into "$buildDir/resources/main"
 }
 
+task cleanNode(type: Delete) {
+    delete 'node_modules'
+}
+
 jar.dependsOn += copyAll
 clean.dependsOn += cleanSourceFiles
 build.dependsOn += lint

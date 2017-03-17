@@ -76,6 +76,8 @@
 ///<reference path='ui/toolbar/_module.ts' />
 ///<reference path='ui/mask/_module.ts' />
 
+///<reference path='ui/treegrid/actions/_module.ts' />
+///<reference path='ui/treegrid/_module.ts' />
 ///<reference path='ui/selector/_module.ts' />
 ///<reference path='ui/selector/list/_module.ts' />
 ///<reference path='ui/selector/combobox/_module.ts' />
@@ -83,8 +85,6 @@
 ///<reference path='ui/tags/_module.ts' />
 ///<reference path='ui/geo/_module.ts' />
 ///<reference path='ui/time/_module.ts' />
-///<reference path='ui/treegrid/actions/_module.ts' />
-///<reference path='ui/treegrid/_module.ts' />
 ///<reference path='ui/image/_module.ts' />
 ///<reference path='ui/security/_module.ts' />
 ///<reference path='ui/security/acl/_module.ts' />
@@ -160,9 +160,9 @@
 
 ///<reference path='app/_module.ts' />
 ///<reference path='app/bar/_module.ts' />
+///<reference path='app/browse/action/_module.ts' />
 ///<reference path='app/browse/_module.ts' />
 ///<reference path='app/browse/filter/_module.ts' />
-///<reference path='app/browse/action/_module.ts' />
 
 ///<reference path='app/delete/_module.ts' />
 ///<reference path='app/view/_module.ts' />

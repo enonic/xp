@@ -14,9 +14,11 @@ allprojects {
         mavenLocal()
         jcenter()
         maven {
-            url 'http://repo.enonic.com/public'
+            url 'https://repo.enonic.com/public'
         }
     }
+
+    apply plugin: 'com.enonic.defaults'
 }
 
 configure( javaProjects ) {

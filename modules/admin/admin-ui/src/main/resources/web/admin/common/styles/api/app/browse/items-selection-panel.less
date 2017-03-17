@@ -3,6 +3,10 @@
   &.no-selection {
     .watermark-text(21px, true);
     margin-top: -15px;
+
+    .toolbar {
+      display: none;
+    }
   }
 
   .items-container {
@@ -27,6 +31,39 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: flex-start;
+    }
+  }
+
+  &.no-toolbar {
+    .show-all, .fold-button {
+      display: none !important;
+    }
+  }
+
+  .toolbar {
+    background-color: @admin-bg-almost-white;
+    border-top: 1px solid @admin-bg-light-gray;
+    text-align: center;
+
+    .@{_COMMON_PREFIX}button {
+      &:active, span {
+        color: @admin-button-blue2;
+      }
+
+      &:hover:not(:disabled) {
+        span {
+          color: @admin-button-blue3;
+        }
+      }
+
+      &:focus {
+        box-shadow: none;
+        border: none;
+      }
+    }
+
+    .@{_COMMON_PREFIX}dropdown {
+      bottom: 32px;
     }
   }
 }

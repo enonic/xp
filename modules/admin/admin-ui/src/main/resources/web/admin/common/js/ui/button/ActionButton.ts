@@ -13,6 +13,7 @@ module api.ui.button {
             this.addClass('action-button');
 
             this.setEnabled(this.action.isEnabled());
+            this.setVisible(this.action.isVisible());
 
             if (this.action.getIconClass()) {
                 this.addClass(action.getIconClass());

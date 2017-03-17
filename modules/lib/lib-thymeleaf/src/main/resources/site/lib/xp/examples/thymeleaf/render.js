@@ -20,3 +20,12 @@ var result = thymeleafLib.render(view, model);
 // END
 
 assert.assertNotNull(result);
+
+// BEGIN
+// Render using options.
+result = thymeleafLib.render(view, model, {
+    mode: 'html'
+});
+// END
+
+assert.assertNotNull(result);

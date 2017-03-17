@@ -9,7 +9,7 @@ import Action = api.ui.Action;
 export class DeleteContentAction extends Action {
 
     constructor(grid: ContentTreeGrid) {
-        super('Delete', 'mod+del');
+        super('Delete...', 'mod+del');
         this.setEnabled(false);
         this.onExecuted(() => {
             let contents: api.content.ContentSummaryAndCompareStatus[]

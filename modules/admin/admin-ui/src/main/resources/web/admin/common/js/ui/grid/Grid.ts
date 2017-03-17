@@ -5,15 +5,11 @@ module api.ui.grid {
 
     export class Grid<T extends Slick.SlickData> extends api.dom.DivEl {
 
-        private defaultHeight: number = 400;
+        private defaultHeight: string = '400px';
 
-        private defaultWidth: number = 800;
+        private defaultWidth: string = '800px';
 
         private defaultAutoRenderGridOnDataChanges: boolean = true;
-
-        private checkableRows: boolean;
-
-        private dragAndDrop: boolean;
 
         private slickGrid: Slick.Grid<T>;
 
@@ -27,6 +23,8 @@ module api.ui.grid {
 
         private debounceSelectionChange: boolean;
 
+        private onClickListeners: ((e: any, args: any) => void) [] = [];
+
         public static debug: boolean = false;
 
         constructor(dataView: DataView<T>, gridColumns?: GridColumn<T>[], gridOptions?: GridOptions<T>) {
@@ -39,23 +37,21 @@ module api.ui.grid {
                 this.addClass('no-header');
             }
 
-            this.checkboxSelectorPlugin = null;
-            this.checkableRows = options.isCheckableRows() || false;
-            this.dragAndDrop = options.isDragAndDrop() || false;
-            if (this.checkableRows) {
+            if (options.isCheckableRows()) {
                 this.checkboxSelectorPlugin = new Slick.CheckboxSelectColumn({
                     cssClass: 'slick-cell-checkboxsel',
                     width: 40
                 });
                 columns.unshift(<GridColumn<T>>this.checkboxSelectorPlugin.getColumnDefinition());
             }
-            if (this.dragAndDrop) {
+
+            if (options.isDragAndDrop()) {
                 this.rowManagerPlugin = new Slick.RowMoveManager({
                     cancelEditOnDrag: true
                 });
             }
-            this.getEl().setHeight((options.getHeight() || this.defaultHeight) + 'px');
-            this.getEl().setWidth((options.getWidth() || this.defaultWidth) + 'px');
+            this.getEl().setHeight(options.getHeight() || this.defaultHeight);
+            this.getEl().setWidth(options.getWidth() || this.defaultWidth);
             this.dataView = dataView;
             this.slickGrid = new Slick.Grid<T>(this.getHTMLElement(), dataView.slick(), columns, options);
             if (options.isAutoRenderGridOnDataChanges() ||
@@ -75,6 +71,12 @@ module api.ui.grid {
 
             // The only way to dataIdProperty before adding items
             this.dataView.setItems([], options.getDataIdProperty());
+
+            let clickListener = api.util.AppHelper.debounce((e, args) => {
+                this.notifyClicked(e, args);
+            }, 50);
+
+            this.slickGrid.onClick.subscribe(clickListener);
         }
 
         protected createOptions(): api.ui.grid.GridOptions<any> {
@@ -508,12 +510,20 @@ module api.ui.grid {
             });
         }
 
-        subscribeOnClick(callback: (e: any, args: any) => void) {
-            this.slickGrid.onClick.subscribe(callback);
+        subscribeOnClick(listener: (e: any, args: any) => void) {
+            this.onClickListeners.push(listener);
         }
 
-        unsubscribeOnClick(callback: (e: any, args: any) => void) {
-            this.slickGrid.onClick.unsubscribe(callback);
+        unsubscribeOnClick(listener: (e: any, args: any) => void) {
+            this.onClickListeners = this.onClickListeners.filter(function (curr: (e: any, args: any) => void) {
+                return curr !== listener;
+            });
+        }
+
+        private notifyClicked(e: any, args: any) {
+            this.onClickListeners.forEach((listener: (e: any, args: any) => void) => {
+                listener(e, args);
+            });
         }
 
         subscribeOnDblClick(callback: (e: any, args: any) => void) {

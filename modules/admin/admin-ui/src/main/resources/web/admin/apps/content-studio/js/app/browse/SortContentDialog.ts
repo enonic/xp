@@ -59,9 +59,6 @@ export class SortContentDialog extends api.ui.dialog.ModalDialog {
 
     open() {
         if (!this.isOpen) {
-            if (this.contentGrid.getGrid().getDataView().getLength() > 0) {
-                this.contentGrid.getGrid().getEl().setHeightPx(45);//chrome invalid grid render fix
-            }
             this.contentGrid.getGrid().resizeCanvas();
             super.open();
             this.isOpen = true;

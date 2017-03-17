@@ -4,7 +4,7 @@ module api.ui.dialog {
 
         private static instance: ConfirmationDialog;
 
-        private questionEl: api.dom.DivEl;
+        private questionEl: api.dom.H6El;
         private yesCallback: () => void;
         private noCallback: () => void;
 
@@ -16,20 +16,19 @@ module api.ui.dialog {
 
             this.addClass('confirmation-dialog');
 
-            this.questionEl = new api.dom.DivEl('question');
+            this.questionEl = new api.dom.H6El('question');
             this.appendChildToContentPanel(this.questionEl);
 
             this.noAction = new api.ui.Action('No', 'esc');
             this.noAction.onExecuted(() => {
                 this.close();
-                if (this.noCallback) {
-                    this.noCallback();
-                }
             });
 
             this.yesAction = new api.ui.Action('Yes');
             this.yesAction.onExecuted(() => {
+                this.noCallback = null;
                 this.close();
+
                 if (this.yesCallback) {
                     this.yesCallback();
                 }
@@ -61,6 +60,14 @@ module api.ui.dialog {
         setNoCallback(callback: () => void): ConfirmationDialog {
             this.noCallback = callback;
             return this;
+        }
+
+        close() {
+            super.close();
+
+            if (this.noCallback) {
+                this.noCallback();
+            }
         }
     }
 

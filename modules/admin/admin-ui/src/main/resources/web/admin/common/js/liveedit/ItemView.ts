@@ -526,7 +526,7 @@ module api.liveedit {
                 return;
             }
 
-            let rightClicked = event.which === 3;
+            let rightClicked = event.which === 3 || event.ctrlKey;
 
             if (rightClicked) { // right click
                 event.preventDefault();

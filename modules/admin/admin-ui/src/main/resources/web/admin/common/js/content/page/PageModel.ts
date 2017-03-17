@@ -83,8 +83,6 @@ module api.content.page {
 
         private defaultTemplateDescriptor: PageDescriptor;
 
-        private defaultTypeDescriptor: PageDescriptor;
-
         private mode: PageMode;
 
         private controller: PageDescriptor;

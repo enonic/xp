@@ -9,10 +9,6 @@ module api.content.site.inputtype.siteconfigurator {
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
-    import InputOccurrences = api.form.inputtype.support.InputOccurrences;
-    import ComboBoxConfig = api.ui.selector.combobox.ComboBoxConfig;
-    import ComboBox = api.ui.selector.combobox.ComboBox;
-    import Option = api.ui.selector.Option;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import Application = api.application.Application;
     import SiteConfig = api.content.site.SiteConfig;

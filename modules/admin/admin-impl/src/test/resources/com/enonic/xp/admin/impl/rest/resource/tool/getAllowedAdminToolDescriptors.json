@@ -1,0 +1,18 @@
+[
+  {
+    "description": "Description desc1",
+    "displayName": "Display Name desc1",
+    "key": {
+      "application": "myapp",
+      "name": "desc1"
+    }
+  },
+  {
+    "description": "Description desc2",
+    "displayName": "Display Name desc2",
+    "key": {
+      "application": "myapp",
+      "name": "desc2"
+    }
+  }
+]

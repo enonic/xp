@@ -35,8 +35,6 @@ module api.util.htmlarea.editor {
 
         private plugins: string[] = [
             'autoresize',
-            'charmap',
-            'code',
             'directionality',
             'fullscreen',
             'hr',
@@ -46,7 +44,8 @@ module api.util.htmlarea.editor {
             'table',
             'textcolor',
             'visualblocks',
-            'visualchars'
+            'visualchars',
+            'charmap'
         ];
 
         setEditableSourceCode(value: boolean): HTMLAreaBuilder {
@@ -243,14 +242,8 @@ module api.util.htmlarea.editor {
                 browser_spellcheck: true,
                 verify_html: false,
                 verify_css_classes: false,
-                plugins: this.editableSourceCode ? this.plugins.concat('code') : this.plugins,
-                external_plugins: {
-                    link: this.assetsUri + '/common/js/util/htmlarea/plugins/link.js',
-                    anchor: this.assetsUri + '/common/js/util/htmlarea/plugins/anchor.js',
-                    image: this.assetsUri + '/common/js/util/htmlarea/plugins/image.js',
-                    macro: this.assetsUri + '/common/js/util/htmlarea/plugins/macro.js',
-                    searchandreplace: this.assetsUri + '/common/js/util/htmlarea/plugins/searchandreplace.js'
-                },
+                plugins: this.plugins,
+                external_plugins: this.getExternalPlugins(),
                 object_resizing: 'table',
                 autoresize_min_height: 100,
                 autoresize_bottom_margin: 0,
@@ -260,7 +253,9 @@ module api.util.htmlarea.editor {
                     editor.addCommand('openAnchorDialog', this.notifyAnchorDialog, this);
                     editor.addCommand('openImageDialog', this.notifyImageDialog, this);
                     editor.addCommand('openMacroDialog', this.notifyMacroDialog, this);
-                    editor.addCommand('openSearchAndReplaceDialog', this.notifySearchAndReplaceDialog, this);
+                    editor.addCommand('openSearchReplaceDialog', this.notifySearchReplaceDialog, this);
+                    editor.addCommand('openCodeDialog', this.notifyCodeDialog, this);
+                    editor.addCommand('openCharMapDialog', this.notifyCharMapDialog, this);
 
                     editor.on('NodeChange', (e) => {
                         if (!!this.nodeChangeHandler) {
@@ -337,6 +332,23 @@ module api.util.htmlarea.editor {
             return deferred.promise;
         }
 
+        private getExternalPlugins(): any {
+            const externalPlugins: any = {
+                link: this.assetsUri + '/common/js/util/htmlarea/plugins/link.js',
+                anchor: this.assetsUri + '/common/js/util/htmlarea/plugins/anchor.js',
+                image: this.assetsUri + '/common/js/util/htmlarea/plugins/image.js',
+                macro: this.assetsUri + '/common/js/util/htmlarea/plugins/macro.js',
+                searchreplace: this.assetsUri + '/common/js/util/htmlarea/plugins/searchreplace.js',
+                charmap: this.assetsUri + '/common/js/util/htmlarea/plugins/charmap.js'
+            };
+
+            if (this.editableSourceCode) {
+                externalPlugins['code'] = this.assetsUri + '/common/js/util/htmlarea/plugins/code.js';
+            }
+
+            return externalPlugins;
+        }
+
         private notifyLinkDialog(config: any) {
             let event = CreateHtmlAreaDialogEvent.create().setConfig(config).setType(
                 api.util.htmlarea.dialog.HtmlAreaDialogType.LINK).setContent(this.content).build();
@@ -363,9 +375,21 @@ module api.util.htmlarea.editor {
             this.publishCreateDialogEvent(event);
         }
 
-        private notifySearchAndReplaceDialog(config: any) {
+        private notifySearchReplaceDialog(config: any) {
             let event = CreateHtmlAreaDialogEvent.create().setConfig(config).setType(
-                api.util.htmlarea.dialog.HtmlAreaDialogType.SEARCHANDREPLACE).build();
+                api.util.htmlarea.dialog.HtmlAreaDialogType.SEARCHREPLACE).build();
+            this.publishCreateDialogEvent(event);
+        }
+
+        private notifyCodeDialog(config: any) {
+            let event = CreateHtmlAreaDialogEvent.create().setConfig(config).setType(
+                api.util.htmlarea.dialog.HtmlAreaDialogType.CODE).build();
+            this.publishCreateDialogEvent(event);
+        }
+
+        private notifyCharMapDialog(config: any) {
+            let event = CreateHtmlAreaDialogEvent.create().setConfig(config).setType(
+                api.util.htmlarea.dialog.HtmlAreaDialogType.CHARMAP).build();
             this.publishCreateDialogEvent(event);
         }
 

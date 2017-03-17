@@ -26,6 +26,7 @@ public class ThymeleafServiceTest
         final ThymeleafProcessor processor = this.service.newProcessor();
         processor.setView( ResourceKey.from( "myapp:/site/view/test.html" ) );
         processor.setModel( null );
+        processor.setMode( null );
         processor.process();
     }
 
@@ -35,6 +36,7 @@ public class ThymeleafServiceTest
         final ThymeleafProcessor processor = this.service.newProcessor();
         processor.setView( ResourceKey.from( "myapp:/site/view/error.html" ) );
         processor.setModel( null );
+        processor.setMode( null );
         processor.process();
     }
 }

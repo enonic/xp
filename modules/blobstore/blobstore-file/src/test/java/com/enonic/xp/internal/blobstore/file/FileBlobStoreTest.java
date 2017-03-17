@@ -32,14 +32,14 @@ public class FileBlobStoreTest
     public void getRecord()
     {
         final BlobKey key = createRecord( "hello" ).getKey();
-        final BlobRecord record = this.blobStore.getRecord( segment, key );
+        final BlobRecord record = this.blobStore.getRecord( this.segment, key );
         assertNotNull( record );
     }
 
     @Test
     public void getRecord_notFound()
     {
-        final BlobRecord record = this.blobStore.getRecord( segment, BlobKey.from( "aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d" ) );
+        final BlobRecord record = this.blobStore.getRecord( this.segment, BlobKey.from( "aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d" ) );
         assertNull( record );
     }
 
@@ -54,11 +54,13 @@ public class FileBlobStoreTest
         assertEquals( "aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d", record.getKey().toString() );
         assertEquals( 5, record.getLength() );
         assertEquals( "hello", new String( record.getBytes().read() ) );
+
+        this.blobStore.addRecord( this.segment, record );
     }
 
     private BlobRecord createRecord( final String str )
     {
         final ByteSource source = ByteSource.wrap( str.getBytes() );
-        return this.blobStore.addRecord( segment, source );
+        return this.blobStore.addRecord( this.segment, source );
     }
 }

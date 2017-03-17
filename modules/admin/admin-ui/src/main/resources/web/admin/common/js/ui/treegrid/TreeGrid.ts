@@ -72,6 +72,8 @@ module api.ui.treegrid {
 
         private highlightedNode: TreeNode<DATA>;
 
+        protected highlightingEnabled: boolean = true;
+
         private interval: number;
 
         constructor(builder: TreeGridBuilder<DATA>) {
@@ -161,7 +163,7 @@ module api.ui.treegrid {
                 let row;
                 if (this.highlightedNode) {
                     this.recursivelyExpandHighlightedNode();
-                    row = this.gridData.getRowById(this.highlightedNode.getId());
+                    row = this.getRowIndexByNode(this.highlightedNode);
                     if (!this.grid.isRowSelected(row)) {
                         this.grid.selectRow(row);
                     }
@@ -234,7 +236,7 @@ module api.ui.treegrid {
         };
 
         private bindClickEvents() {
-            let clickHandler = api.util.AppHelper.debounce(((event, data) => {
+            let clickHandler = ((event, data) => {
                 if (!this.isActive()) {
                     return;
                 }
@@ -270,8 +272,9 @@ module api.ui.treegrid {
                 this.setActive(true);
 
                 // Checkbox is clicked
-                if (this.gridOptions.isMultipleSelectionDisabled() || elem.hasClass('slick-cell-checkboxsel') ||
-                    elem.hasAnyParentClass('slick-cell-checkboxsel')) {
+                let isCheckboxClicked = elem.hasClass('slick-cell-checkboxsel') || elem.hasAnyParentClass('slick-cell-checkboxsel');
+
+                if (!this.highlightingEnabled || this.gridOptions.isMultipleSelectionDisabled() || isCheckboxClicked) {
                     this.onRowSelected(data);
                     return;
                 }
@@ -281,7 +284,7 @@ module api.ui.treegrid {
                 if (!elem.hasClass('sort-dialog-trigger')) {
                     new TreeGridItemClickedEvent(!!this.getFirstSelectedOrHighlightedNode()).fire();
                 }
-            }).bind(this), 50, false);
+            });
 
             this.grid.subscribeOnClick(clickHandler);
         }
@@ -298,7 +301,7 @@ module api.ui.treegrid {
                     let highlightTo;
 
                     if (thereIsHighlightedNode) {
-                        const highlightedRow = this.gridData.getRowById(this.highlightedNode.getId());
+                        const highlightedRow = this.getRowIndexByNode(this.highlightedNode);
                         highlightFrom = highlightedRow < data.row ? highlightedRow : data.row;
                         highlightTo = data.row > highlightedRow ? data.row : highlightedRow;
                     } else {
@@ -336,9 +339,7 @@ module api.ui.treegrid {
             const node = this.gridData.getItem(data.row);
             elem.removeClass('expand').addClass('collapse');
             this.expandNode(node).then(() => {
-                if (!this.gridOptions.isMultipleSelectionDisabled()) {
-                    this.highlightCurrentNode();
-                }
+                this.highlightCurrentNode();
             });
         }
 
@@ -358,10 +359,6 @@ module api.ui.treegrid {
             const node = this.gridData.getItem(data.row);
             elem.removeClass('collapse').addClass('expand');
             this.collapseNode(node);
-            /*
-             if (!this.gridOptions.isMultipleSelectionDisabled()) {
-             this.highlightCurrentNode();
-             }*/
         }
 
         private onRowSelected(data: Slick.OnClickEventData) {
@@ -396,15 +393,20 @@ module api.ui.treegrid {
                 return;
             }
 
-            if (this.grid.getSelectedRows().length > 0 || isRowHighlighted) {
+            // Clear selection and highlighting if something was selected or highlighted from before
+            if (this.isSelectionNotEmpty() || isRowHighlighted) {
                 this.unselectAllRows();
+                this.root.clearStashedSelection();
+                this.triggerSelectionChangedListeners();
             }
 
-            if (!(isRowHighlighted || isRowSelected)) {
+            if (!isRowHighlighted) {
                 this.highlightRowByNode(node);
-            } else if (isMultipleRowsSelected) {
-                this.grid.selectRow(data.row);
             }
+        }
+
+        private isSelectionNotEmpty() {
+            return this.grid.getSelectedRows().length > 0 || this.root.getStashedSelection().length > 0;
         }
 
         private bindKeys(builder: TreeGridBuilder<DATA>, keyBindings: KeyBinding[]) {
@@ -487,7 +489,7 @@ module api.ui.treegrid {
                 } else if (node.getParent() !== this.root.getCurrentRoot()) {
                     node = node.getParent();
                     this.setActive(false);
-                    let row = this.gridData.getRowById(node.getId());
+                    let row = this.getRowIndexByNode(node);
                     this.collapseNode(node);
                     if (selected[0]) {
                         this.unselectAllRows();
@@ -523,6 +525,16 @@ module api.ui.treegrid {
             }
         }
 
+        expandRow(row: number) {
+            let node = this.gridData.getItem(row);
+            this.expandNode(node);
+        }
+
+        collapseRow(row: number) {
+            let node = this.gridData.getItem(row);
+            this.collapseNode(node);
+        }
+
         private onAwithModKeyPress = (event: ExtendedKeyboardEvent) => {
             let selected = this.grid.getSelectedRows();
             if (selected.length === this.gridData.getLength()) {
@@ -538,7 +550,7 @@ module api.ui.treegrid {
         private onSpaceKeyPress() {
             if (this.highlightedNode) {
                 this.recursivelyExpandHighlightedNode();
-                let row = this.gridData.getRowById(this.highlightedNode.getId());
+                let row = this.getRowIndexByNode(this.highlightedNode);
                 this.grid.toggleRow(row);
             } else if (this.grid.getSelectedRows().length > 0) {
                 this.deselectAll();
@@ -578,7 +590,7 @@ module api.ui.treegrid {
             }
 
             let selectedIndex = this.highlightedNode ?
-                                this.gridData.getRowById(this.highlightedNode.getId()) : this.grid.getSelectedRows()[selectedCount - 1];
+                                this.getRowIndexByNode(this.highlightedNode) : this.grid.getSelectedRows()[selectedCount - 1];
 
             if (selectedIndex > 0) {
                 this.unselectAllRows();
@@ -589,7 +601,7 @@ module api.ui.treegrid {
         }
 
         private navigateDown() {
-            let selectedIndex = this.highlightedNode ? this.gridData.getRowById(this.highlightedNode.getId()) : -1;
+            let selectedIndex = this.highlightedNode ? this.getRowIndexByNode(this.highlightedNode) : -1;
             if (this.grid.getSelectedRows().length > 0) {
                 selectedIndex = this.grid.getSelectedRows()[0];
             }
@@ -602,14 +614,31 @@ module api.ui.treegrid {
             }
         }
 
-        private getRowByNode(node: TreeNode<DATA>): JQuery {
+        private getRowIndexByNode(node: TreeNode<DATA>): number {
             let rowIndex = this.gridData.getRowById(node.getId());
+            if (isNaN(rowIndex)) {
+                // When search is applied content nodes get different Ids,
+                // so we should try to search by dataId and not by nodeId
+
+                let nodesByDataId = this.grid.getDataView().getItems().filter(item => item.getDataId() == node.getDataId());
+                if (!nodesByDataId || nodesByDataId.length === 0 || !nodesByDataId[0].isVisible()) {
+                    return null;
+                }
+
+                rowIndex = this.grid.getDataView().getItems().map(item => item.getDataId()).indexOf(node.getDataId());
+            }
+
+            return rowIndex;
+        }
+
+        private getRowByNode(node: TreeNode<DATA>): JQuery {
+            let rowIndex = this.getRowIndexByNode(node);
             let cell = this.grid.getCellNode(rowIndex, 0);
 
             return wemjq(cell).closest('.slick-row');
         }
 
-        private highlightCurrentNode() {
+        protected highlightCurrentNode(silent: boolean = false) {
             if (!this.highlightedNode) {
                 return;
             }
@@ -619,6 +648,9 @@ module api.ui.treegrid {
         }
 
         private highlightRowByNode(node: TreeNode<DATA>) {
+            if (!this.highlightingEnabled) {
+                return;
+            }
             if (!this.highlightedNode || this.highlightedNode !== node) {
                 this.unhighlightCurrentRow();
                 this.highlightedNode = node;
@@ -626,7 +658,9 @@ module api.ui.treegrid {
             }
 
             let row = this.getRowByNode(node);
-            row.addClass('selected');
+            if (!!row) {
+                row.addClass('selected');
+            }
         }
 
         private unhighlightCurrentRow(skipEvent: boolean = false) {
@@ -837,7 +871,7 @@ module api.ui.treegrid {
         private select(fetchedChildren: TreeNode<DATA>[]) {
             let rowsToSelect: number[] = [];
             fetchedChildren.forEach((node: TreeNode<DATA>) => {
-                let row = this.gridData.getRowById(node.getId());
+                let row = this.getRowIndexByNode(node);
                 if (row) {
                     rowsToSelect.push(row);
                 }
@@ -848,7 +882,7 @@ module api.ui.treegrid {
         private areAllOldChildrenSelected(oldChildren: TreeNode<DATA>[]): boolean {
             if (oldChildren && oldChildren.length > 0) {
                 return oldChildren.every(node =>
-                    this.grid.isRowSelected(this.gridData.getRowById(node.getId()))
+                    this.grid.isRowSelected(this.getRowIndexByNode(node))
                 );
             } else {
                 return false;
@@ -981,7 +1015,7 @@ module api.ui.treegrid {
             if (node) {
                 this.unhighlightCurrentRow(true);
 
-                let row = this.gridData.getRowById(node.getId());
+                let row = this.getRowIndexByNode(node);
                 this.grid.selectRow(row);
             }
         }
@@ -1019,7 +1053,7 @@ module api.ui.treegrid {
             for (let i = 0; i < oldSelected.length; i++) {
                 if (dataIds.indexOf(oldSelected[i].getDataId()) < 0) {
                     newSelected.push(oldSelected[i]);
-                    newSelectedRows.push(this.grid.getDataView().getRowById(oldSelected[i].getId()));
+                    newSelectedRows.push(this.getRowIndexByNode(oldSelected[i]));
                 }
             }
 
@@ -1203,11 +1237,12 @@ module api.ui.treegrid {
                         node.clearViewers();
 
                         if (node.isVisible()) {
-                            let selected = this.grid.isRowSelected(this.gridData.getRowById(node.getId()));
+                            let rowIndex = this.getRowIndexByNode(node);
+                            let selected = this.grid.isRowSelected(rowIndex);
                             let highlighted = this.isNodeHighlighted(node);
                             this.gridData.updateItem(node.getId(), node);
                             if (selected) {
-                                this.grid.addSelectedRow(this.gridData.getRowById(node.getId()));
+                                this.grid.addSelectedRow(rowIndex);
                             } else if (highlighted) {
                                 this.removeHighlighting(true);
                                 this.highlightRowByNode(node);
@@ -1444,7 +1479,21 @@ module api.ui.treegrid {
         }
 
         isAllSelected(): boolean {
-            return this.grid.isAllSelected();
+            if (this.grid.isAllSelected()) {
+                return true;
+            }
+
+            let selectedNodes = this.grid.getSelectedRows();
+
+            if (!selectedNodes) {
+                return false;
+            }
+
+            let nonEmptyNodes = this.gridData.getItems().filter((data: TreeNode<DATA>) => {
+                return (!!data && data.getDataId() !== '');
+            });
+
+            return nonEmptyNodes.length === selectedNodes.length;
         }
 
         protected updateExpanded() {
@@ -1455,7 +1504,7 @@ module api.ui.treegrid {
         private updateSelectedNode(node: TreeNode<DATA>) {
             this.getGrid().clearSelection();
             this.refreshNode(node);
-            let row = this.gridData.getRowById(node.getId());
+            let row = this.getRowIndexByNode(node);
             this.grid.selectRow(row);
         }
 

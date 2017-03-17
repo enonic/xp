@@ -818,3 +818,49 @@
     font-style: italic;
   }
 }
+
+.app-icon-mixin(@hideText: false, @invertIcon: false) {
+  .home-button {
+    position: relative;
+    display: table;
+
+    height: 100%;
+    font-family: @admin-font-family;
+    color: @admin-bg-light-gray;
+    z-index: 1;
+    padding-right: 25px;
+
+    .app-icon {
+      width: 25px;
+      height: 28px;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+
+      & when (@invertIcon = true) {
+        filter: invert(100%);
+      }
+
+    }
+    .app-name {
+      display: table-cell;
+      vertical-align: middle;
+      padding-left: 35px;
+      font-size: 15px;
+      text-transform: uppercase;
+      line-height: inherit;
+
+      & when (@hideText = true) {
+        display: none;
+      }
+    }
+
+    &.clickable {
+      &:hover {
+        opacity: 0.5;
+      }
+      cursor: pointer;
+    }
+  }
+}

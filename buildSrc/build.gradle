@@ -5,6 +5,9 @@ repositories {
     maven {
         url 'https://plugins.gradle.org/m2/'
     }
+    maven {
+        url 'https://repo.enonic.com/public'
+    }
 }
 
 dependencies {
@@ -13,4 +16,5 @@ dependencies {
     compile 'org.eclipse.jgit:org.eclipse.jgit:3.7.0.201502260915-r'
     compile 'com.netflix.nebula:gradle-extra-configurations-plugin:2.2.2'
     compile 'com.gradle.publish:plugin-publish-plugin:0.9.3'
+    compile 'com.enonic.gradle:gradle-defaults:1.0.1'
 }

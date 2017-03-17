@@ -60,14 +60,6 @@ public interface NodeService
 
     ResolveSyncWorkResult resolveSyncWork( SyncWorkResolverParams params );
 
-    SnapshotResult snapshot( SnapshotParams params );
-
-    RestoreResult restore( RestoreParams params );
-
-    DeleteSnapshotsResult deleteSnapshot( DeleteSnapshotParams param );
-
-    SnapshotResults listSnapshots();
-
     void refresh( RefreshMode refreshMode );
 
     int applyPermissions( ApplyNodePermissionsParams params );

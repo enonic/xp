@@ -13,6 +13,7 @@ import {PublishTreeContentAction} from './PublishTreeContentAction';
 import {UnpublishContentAction} from './UnpublishContentAction';
 import {ContentBrowseItem} from '../ContentBrowseItem';
 import {PreviewContentHandler} from './handler/PreviewContentHandler';
+import {UndoPendingDeleteContentAction} from './UndoPendingDeleteContentAction';
 
 import Action = api.ui.Action;
 import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
@@ -42,6 +43,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     public PUBLISH_TREE_CONTENT: Action;
     public UNPUBLISH_CONTENT: Action;
     public TOGGLE_SEARCH_PANEL: Action;
+    public UNDO_PENDING_DELETE: Action;
 
     private actions: api.ui.Action[] = [];
 
@@ -58,12 +60,14 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.PUBLISH_CONTENT = new PublishContentAction(grid);
         this.PUBLISH_TREE_CONTENT = new PublishTreeContentAction(grid);
         this.UNPUBLISH_CONTENT = new UnpublishContentAction(grid);
+        this.UNDO_PENDING_DELETE = new UndoPendingDeleteContentAction(grid);
 
         this.actions.push(
             this.SHOW_NEW_CONTENT_DIALOG_ACTION,
             this.EDIT_CONTENT, this.DELETE_CONTENT,
             this.DUPLICATE_CONTENT, this.MOVE_CONTENT,
-            this.SORT_CONTENT, this.PREVIEW_CONTENT
+            this.SORT_CONTENT, this.PREVIEW_CONTENT,
+            this.UNDO_PENDING_DELETE
         );
 
         this.getPreviewHandler().onPreviewStateChanged((value) => {
@@ -76,6 +80,10 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         return (<PreviewContentAction>this.PREVIEW_CONTENT).getPreviewHandler();
     }
 
+    private getDefaultVisibleActions(): api.ui.Action[] {
+        return this.actions.filter(action => action !== this.UNDO_PENDING_DELETE).concat(this.PUBLISH_CONTENT);
+    }
+
     getAllActions(): api.ui.Action[] {
         return [...this.actions, this.PUBLISH_CONTENT, this.UNPUBLISH_CONTENT];
     }
@@ -85,11 +93,17 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     }
 
     // tslint:disable-next-line:max-line-length
-    updateActionsEnabledState(contentBrowseItems: ContentBrowseItem[], changes?: BrowseItemsChanges<ContentSummaryAndCompareStatus>): wemQ.Promise<BrowseItem<ContentSummaryAndCompareStatus>[]> {
-
-        this.TOGGLE_SEARCH_PANEL.setVisible(false);
+    updateActionsEnabledState(contentBrowseItems: ContentBrowseItem[],
+                              changes?: BrowseItemsChanges<ContentSummaryAndCompareStatus>): wemQ.Promise<BrowseItem<ContentSummaryAndCompareStatus>[]> {
 
         let deferred = wemQ.defer<ContentBrowseItem[]>();
+
+        if (!!changes && changes.getAdded().length == 0 && changes.getRemoved().length == 0) {
+            deferred.resolve(contentBrowseItems);
+            return deferred.promise;
+        }
+
+        this.TOGGLE_SEARCH_PANEL.setVisible(false);
 
         let parallelPromises: wemQ.Promise<any>[] = [
             this.getPreviewHandler().updateState(contentBrowseItems, changes),
@@ -112,11 +126,18 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.MOVE_CONTENT.setEnabled(false);
         this.SORT_CONTENT.setEnabled(false);
 
-        this.PUBLISH_CONTENT.setEnabled(false);
-        this.PUBLISH_CONTENT.setVisible(true);
         this.PUBLISH_TREE_CONTENT.setEnabled(false);
+        this.PUBLISH_CONTENT.setEnabled(false);
         this.UNPUBLISH_CONTENT.setEnabled(false);
+
         this.UNPUBLISH_CONTENT.setVisible(false);
+        this.UNDO_PENDING_DELETE.setVisible(false);
+
+        this.showDefaultActions();
+    }
+
+    private showDefaultActions() {
+        this.getDefaultVisibleActions().forEach(action => action.setVisible(true));
     }
 
     private resetDefaultActionsMultipleItemsSelected(contentBrowseItems: ContentBrowseItem[]) {
@@ -127,22 +148,32 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         let treePublishEnabled = true;
         let unpublishEnabled = true;
 
-        let eachOnline = contentBrowseItems.every((browseItem) => {
-            return this.isOnline(browseItem.getModel().getCompareStatus());
+        let allAreOnline = contentBrowseItems.length > 0;
+        let allArePendingDelete = contentBrowseItems.length > 0;
+        let someArePublished = false;
+
+        contentBrowseItems.forEach((browseItem) => {
+            let content = browseItem.getModel();
+
+            if (allAreOnline && !content.isOnline()) {
+                allAreOnline = false;
+            }
+            if (allArePendingDelete && !content.isPendingDelete()) {
+                allArePendingDelete = false;
+            }
+            if (!someArePublished && content.isPublished()) {
+                someArePublished = true;
+            }
         });
 
-        let anyPublished = contentBrowseItems.some((browseItem) => {
-            return this.isPublished(browseItem.getModel().getCompareStatus());
-        });
-
-        const publishEnabled = !eachOnline;
+        const publishEnabled = !allAreOnline;
         if (this.isEveryLeaf(contentSummaries)) {
             treePublishEnabled = false;
-            unpublishEnabled = anyPublished;
+            unpublishEnabled = someArePublished;
         } else if (this.isOneNonLeaf(contentSummaries)) {
-            unpublishEnabled = anyPublished;
+            unpublishEnabled = someArePublished;
         } else if (this.isNonLeafInMany(contentSummaries)) {
-            unpublishEnabled = anyPublished;
+            unpublishEnabled = someArePublished;
         }
 
         this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(contentSummaries.length < 2);
@@ -155,8 +186,20 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.PUBLISH_CONTENT.setEnabled(publishEnabled);
         this.PUBLISH_TREE_CONTENT.setEnabled(treePublishEnabled);
         this.UNPUBLISH_CONTENT.setEnabled(unpublishEnabled);
+
+        this.SHOW_NEW_CONTENT_DIALOG_ACTION.setVisible(!allArePendingDelete);
+        this.MOVE_CONTENT.setVisible(!allArePendingDelete);
+        this.SORT_CONTENT.setVisible(!allArePendingDelete);
+        this.DELETE_CONTENT.setVisible(!allArePendingDelete);
+
+        if (allArePendingDelete) {
+            this.getAllActions().forEach(action => action.setVisible(false));
+        } else {
+            this.getAllActionsNoPublish().forEach(action => action.setVisible(true));
+            this.UNPUBLISH_CONTENT.setVisible(unpublishEnabled);
+        }
         this.PUBLISH_CONTENT.setVisible(publishEnabled);
-        this.UNPUBLISH_CONTENT.setVisible(unpublishEnabled);
+        this.UNDO_PENDING_DELETE.setVisible(allArePendingDelete);
     }
 
     private isEveryLeaf(contentSummaries: ContentSummary[]): boolean {
@@ -171,14 +214,6 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         return contentSummaries.length > 1 && contentSummaries.some((obj: ContentSummary) => obj.hasChildren());
     }
 
-    private isPublished(status: api.content.CompareStatus): boolean {
-        return status !== api.content.CompareStatus.NEW && status !== api.content.CompareStatus.UNKNOWN;
-    }
-
-    private isOnline(status: api.content.CompareStatus): boolean {
-        return status === api.content.CompareStatus.EQUAL;
-    }
-
     private doUpdateActionsEnabledState(contentBrowseItems: ContentBrowseItem[]): wemQ.Promise<any> {
         switch (contentBrowseItems.length) {
         case 0:
@@ -191,8 +226,8 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     }
 
     private updateActionsByPermissionsNoItemsSelected(): wemQ.Promise<any> {
-        return new api.content.resource.GetPermittedActionsRequest().addPermissionsToBeChecked(Permission.CREATE).sendAndParse().
-            then((allowedPermissions: Permission[]) => {
+        return new api.content.resource.GetPermittedActionsRequest().addPermissionsToBeChecked(Permission.CREATE).sendAndParse().then(
+            (allowedPermissions: Permission[]) => {
                 this.resetDefaultActionsNoItemsSelected();
 
                 let canCreate = allowedPermissions.indexOf(Permission.CREATE) > -1;

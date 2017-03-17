@@ -78,6 +78,7 @@ addBundle( project( ':core:core-task' ), 22 )
 
 // Server bundles
 addBundle( project( ':server:server-config' ), 12 )
+addBundle( project( ':server:server-deploy' ), 30 )
 addBundle( project( ':server:server-shell' ), 17 )
 addBundle( project( ':server:server-status' ), 17 )
 addBundle( project( ':server:server-udc' ), 17 )
@@ -110,6 +111,8 @@ addBundle( project( ':blobstore:blobstore-file' ), 22 )
 
 // Applications
 addBundle( project( ':app:app-standardidprovider' ), 32 )
+addBundle( project( ':app:app-users' ), 32 )
+addBundle( project( ':app:app-applications' ), 32 )
 
 def addBundle( dep, level )
 {

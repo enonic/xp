@@ -112,7 +112,7 @@ module api.ui.toolbar {
         private getVisibleButtonsWidth(includeFold: boolean = true): number {
             return this.getChildren().reduce((totalWidth: number, element: api.dom.Element) => {
                 return totalWidth + ( element.isVisible() && (includeFold || element !== this.fold) ?
-                                      element.getEl().getWidthWithMargin() : 0 );
+                                      element.getEl().getWidthWithBorder() : 0 );
             }, 0);
         }
 

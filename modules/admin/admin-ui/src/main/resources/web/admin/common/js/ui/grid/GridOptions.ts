@@ -75,9 +75,9 @@ module api.ui.grid {
         // Additional properties
         hideColumnHeaders: boolean;
 
-        width: number;
+        width: string;
 
-        height: number;
+        height: string;
 
         dataIdProperty: string;
 
@@ -319,12 +319,12 @@ module api.ui.grid {
             return this;
         }
 
-        setWidth(width: number): GridOptionsBuilder<T> {
+        setWidth(width: string): GridOptionsBuilder<T> {
             this.width = width;
             return this;
         }
 
-        setHeight(height: number): GridOptionsBuilder<T> {
+        setHeight(height: string): GridOptionsBuilder<T> {
             this.height = height;
             return this;
         }
@@ -434,9 +434,9 @@ module api.ui.grid {
         // Additional properties
         hideColumnHeaders: boolean;
 
-        width: number;
+        width: string;
 
-        height: number;
+        height: string;
 
         dataIdProperty: string;
 
@@ -639,11 +639,11 @@ module api.ui.grid {
             return this.hideColumnHeaders;
         }
 
-        getWidth(): number {
+        getWidth(): string {
             return this.width;
         }
 
-        getHeight(): number {
+        getHeight(): string {
             return this.height;
         }
 
@@ -847,12 +847,12 @@ module api.ui.grid {
             return this;
         }
 
-        setWidth(width: number): GridOptions<T> {
+        setWidth(width: string): GridOptions<T> {
             this.width = width;
             return this;
         }
 
-        setHeight(height: number): GridOptions<T> {
+        setHeight(height: string): GridOptions<T> {
             this.height = height;
             return this;
         }

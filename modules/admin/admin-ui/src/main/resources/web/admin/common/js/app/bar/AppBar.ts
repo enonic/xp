@@ -6,7 +6,7 @@ module api.app.bar {
 
         protected application: Application;
 
-        private homeButton: HomeButton;
+        private appIcon: AppIcon;
 
         private showAppLauncherAction: ShowAppLauncherAction;
 
@@ -17,8 +17,8 @@ module api.app.bar {
 
             this.showAppLauncherAction = new ShowAppLauncherAction(this.application);
 
-            this.homeButton = new HomeButton(this.application, AppBarActions.SHOW_BROWSE_PANEL);
-            this.appendChild(this.homeButton);
+            this.appIcon = new AppIcon(this.application);
+            this.appendChild(this.appIcon);
 
             this.onRendered(() => {api.ui.responsive.ResponsiveManager.fireResizeEvent();});
 
@@ -27,16 +27,34 @@ module api.app.bar {
         getActions(): api.ui.Action[] {
             return [this.showAppLauncherAction];
         }
+
+        setHomeIconAction() {
+            this.appIcon.setAction(AppBarActions.SHOW_BROWSE_PANEL);
+        }
     }
 
-    export class HomeButton extends api.ui.button.Button {
+    export class AppIcon extends api.dom.DivEl {
 
-        constructor(app: Application, action: api.ui.Action) {
+        constructor(app: Application, action?: api.ui.Action) {
 
-            super(app.getName());
+            super('home-button');
 
-            this.addClass('home-button app-icon icon-' + app.getIconUrl());
+            if (app.getIconUrl()) {
+                let icon = new api.dom.ImgEl(app.getIconUrl(), 'app-icon');
+                this.appendChild(icon);
+            }
 
+            let span = new api.dom.SpanEl('app-name');
+            span.setHtml(app.getName());
+            this.appendChild(span);
+
+            if (action) {
+                this.setAction(action);
+            }
+        }
+
+        setAction(action: api.ui.Action) {
+            this.addClass('clickable');
             this.onClicked((event: MouseEvent) => {
                 action.execute();
             });

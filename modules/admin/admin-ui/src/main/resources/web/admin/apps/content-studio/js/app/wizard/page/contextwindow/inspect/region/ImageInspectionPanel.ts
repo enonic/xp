@@ -16,6 +16,7 @@ import Option = api.ui.selector.Option;
 import SelectedOption = api.ui.selector.combobox.SelectedOption;
 import PropertyTree = api.data.PropertyTree;
 import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
+import ContentSummaryBuilder = api.content.ContentSummaryBuilder;
 
 export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponent> {
 
@@ -157,6 +158,21 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
 
     getComponentView(): ImageComponentView {
         return this.imageView;
+    }
+
+    refresh() {
+        if (this.imageComponent) {
+            const contentId: ContentId = this.imageComponent.getImage();
+            if (contentId) {
+                const image: ContentSummary = this.imageSelector.getContent(contentId);
+                if (image) {
+                    const newImage: ContentSummary = new ContentSummaryBuilder(image).setIconUrl(image.getIconUrl() + '1').build();
+                    this.imageSelector.clearCombobox();
+                    this.imageSelector.removeAllOptions();
+                    this.setImage(newImage);
+                }
+            }
+        }
     }
 
 }

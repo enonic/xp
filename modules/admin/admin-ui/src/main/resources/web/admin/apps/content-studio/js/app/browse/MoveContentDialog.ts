@@ -10,6 +10,8 @@ import ContentResponse = api.content.resource.result.ContentResponse;
 import ContentIds = api.content.ContentIds;
 import MoveContentResult = api.content.resource.result.MoveContentResult;
 import MoveContentResultFailure = api.content.resource.result.MoveContentResultFailure;
+import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
+import TreeNode = api.ui.treegrid.TreeNode;
 
 export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
@@ -19,7 +21,7 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
     private contentPathSubHeader: api.dom.H6El;
 
-    private moveMask: api.ui.mask.LoadMask;
+    private rootNode: TreeNode<api.content.ContentSummaryAndCompareStatus>;
 
     constructor() {
         super('Move item with children');
@@ -29,7 +31,6 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
         this.contentPathSubHeader = new api.dom.H6El().addClass('content-path');
         let descMessage = new api.dom.H6El().addClass('desc-message').setHtml(
             'Moves selected items with all children and current permissions to selected destination');
-        this.moveMask = new api.ui.mask.LoadMask(this);
         this.initSearchInput();
         this.initMoveAction();
 
@@ -38,7 +39,6 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
         this.appendChildToContentPanel(this.contentPathSubHeader);
         this.appendChildToContentPanel(descMessage);
         this.appendChildToContentPanel(this.destinationSearchInput);
-        this.appendChildToContentPanel(this.moveMask);
         this.addCancelButtonToBottom();
     }
 
@@ -47,6 +47,7 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
             this.movedContentSummaries = event.getContentSummaries();
             this.destinationSearchInput.clearCombobox();
+            this.rootNode = event.getRootNode();
 
             const contents = event.getContentSummaries();
 
@@ -56,8 +57,7 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
             const deferred = wemQ.defer<ContentType[]>();
             wemQ.all(contentTypeRequests).spread((...filterContentTypes: ContentType[]) => {
-                const filterContentPaths = contents.map((content)=> content.getPath());
-                this.destinationSearchInput.setFilterContentPaths(filterContentPaths);
+                this.destinationSearchInput.setFilterContents(contents);
                 this.destinationSearchInput.setFilterContentTypes(filterContentTypes);
                 this.contentPathSubHeader.setHtml(contents.length === 1 ? contents[0].getPath().toString() : '');
                 this.open();
@@ -75,26 +75,72 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
     }
 
     private initMoveAction() {
-
+        this.addClickIgnoredElement(ConfirmationDialog.get());
         this.addAction(new api.ui.Action('Move', '').onExecuted(() => {
-
-            this.moveMask.show();
-
-            let parentContent = this.getParentContent();
-            this.moveContent(parentContent);
+            if (this.checkContentWillMoveOutOfSite()) {
+                this.showConfirmationDialog();
+            } else {
+                this.moveContent();
+            }
         }), true);
     }
 
-    private moveContent(parentContent: api.content.ContentSummary) {
-        let parentRoot = (!!parentContent) ? parentContent.getPath() : ContentPath.ROOT;
+    private showConfirmationDialog() {
+        const msg = 'You are about to move content out of its site which might make it unreachable. Are you sure?';
+        const confirmDialog: ConfirmationDialog = ConfirmationDialog.get();
+        this.close();
+        confirmDialog
+            .setQuestion(msg)
+            .setYesCallback(() => this.moveContent())
+            .setNoCallback(() => {
+                this.open();
+            })
+            .open();
+    }
 
+    private checkContentWillMoveOutOfSite(): boolean {
+        let result = false;
+        const targetContent = this.getParentContent();
+        const targetContentSite = targetContent ? (targetContent.isSite() ? targetContent : this.getParentSite(targetContent)) : null;
+
+        for (let i = 0; i < this.movedContentSummaries.length; i++) {
+            let content = this.movedContentSummaries[i];
+            let contentParentSite = content.isSite() ? null : this.getParentSite(content);
+            if (contentParentSite && (!targetContent || (!contentParentSite.equals(targetContentSite)))) {
+                result = true;
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    private getParentSite(content: ContentSummary): ContentSummary {
+        const node = this.rootNode.findNode(content.getId());
+        if (!node) {
+            return null;
+        }
+
+        let nodeParent = node.getParent();
+        while (nodeParent) {
+            if (nodeParent.getData() && nodeParent.getData().getContentSummary().isSite()) {
+                return nodeParent.getData().getContentSummary();
+            }
+            nodeParent = nodeParent.getParent();
+        }
+
+        return null;
+    }
+
+    private moveContent() {
+        const parentContent = this.getParentContent();
+        let parentRoot = (!!parentContent) ? parentContent.getPath() : ContentPath.ROOT;
         let contentIds = ContentIds.create().fromContentIds(this.movedContentSummaries.map(summary => summary.getContentId())).build();
 
         new api.content.resource.MoveContentRequest(contentIds, parentRoot).sendAndParse().then((response: MoveContentResult) => {
             if (parentContent) {
                 this.destinationSearchInput.deselect(parentContent);
             }
-            this.moveMask.hide();
 
             if (response.getMoved().length > 0) {
                 if (response.getMoved().length > 1) {
@@ -107,7 +153,9 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
             response.getMoveFailures().forEach((failure: MoveContentResultFailure) => {
                 api.notify.showWarning(failure.getReason());
             });
-            this.close();
+            if (this.isVisible()) {
+                this.close();
+            }
         }).catch((reason)=> {
             api.notify.showWarning(reason.getMessage());
             this.close();

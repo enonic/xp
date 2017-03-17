@@ -16,6 +16,7 @@ module api.schema.content.inputtype {
     import ApplicationKey = api.application.ApplicationKey;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
     import FocusSwitchEvent = api.ui.FocusSwitchEvent;
+    import BaseLoader = api.util.loader.BaseLoader;
 
     export class ContentTypeFilter extends api.form.inputtype.support.BaseInputTypeManagingAdd<string> {
 
@@ -39,17 +40,24 @@ module api.schema.content.inputtype {
             return null;
         }
 
-        private createPageTemplateLoader(): PageTemplateContentTypeLoader {
-            let contentId = this.context.site.getContentId();
-            let loader = new api.schema.content.PageTemplateContentTypeLoader(contentId);
+        private createLoader(): BaseLoader<ContentTypeSummaryListJson, ContentTypeSummary> {
+            let loader = this.context.formContext.getContentTypeName().isPageTemplate() ?
+                            this.createPageTemplateLoader() : new ContentTypeSummaryLoader();
 
             loader.setComparator(new api.content.ContentTypeSummaryByDisplayNameComparator());
 
             return loader;
         }
 
+        private createPageTemplateLoader(): PageTemplateContentTypeLoader {
+            let contentId = this.context.site.getContentId();
+            let loader = new api.schema.content.PageTemplateContentTypeLoader(contentId);
+
+            return loader;
+        }
+
         private createComboBox(): ContentTypeComboBox {
-            let loader = this.context.formContext.getContentTypeName().isPageTemplate() ? this.createPageTemplateLoader() : null;
+            let loader = this.createLoader();
             let comboBox = new ContentTypeComboBox(this.getInput().getOccurrences().getMaximum(), loader);
 
             comboBox.onLoaded(this.onContentTypesLoadedHandler);

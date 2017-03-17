@@ -10,28 +10,28 @@
 
     <!-- favicons -->
 
-    <link rel="apple-touch-icon" href="{{assetsUri}}/apps/{{appId}}/icons/favicons/apple-touch-icon-60x60.png" sizes="60x60">
-    <link rel="apple-touch-icon" href="{{assetsUri}}/apps/{{appId}}/icons/favicons/apple-touch-icon-76x76.png" sizes="76x76">
-    <link rel="apple-touch-icon" href="{{assetsUri}}/apps/{{appId}}/icons/favicons/apple-touch-icon-120x120.png" sizes="120x120">
-    <link rel="apple-touch-icon" href="{{assetsUri}}/apps/{{appId}}/icons/favicons/apple-touch-icon-152x152.png" sizes="152x152">
-    <link rel="apple-touch-icon" href="{{assetsUri}}/apps/{{appId}}/icons/favicons/apple-touch-icon-180x180.png" sizes="180x180">
+    <link rel="apple-touch-icon" href="{{assetsUri}}/icons/favicons/apple-touch-icon-60x60.png" sizes="60x60">
+    <link rel="apple-touch-icon" href="{{assetsUri}}/icons/favicons/apple-touch-icon-76x76.png" sizes="76x76">
+    <link rel="apple-touch-icon" href="{{assetsUri}}/icons/favicons/apple-touch-icon-120x120.png" sizes="120x120">
+    <link rel="apple-touch-icon" href="{{assetsUri}}/icons/favicons/apple-touch-icon-152x152.png" sizes="152x152">
+    <link rel="apple-touch-icon" href="{{assetsUri}}/icons/favicons/apple-touch-icon-180x180.png" sizes="180x180">
 
-    <link rel="icon" type="image/png" href="{{assetsUri}}/apps/{{appId}}/icons/favicons/android-128x128.png" sizes="128x128">
-    <link rel="icon" type="image/png" href="{{assetsUri}}/apps/{{appId}}/icons/favicons/android-196x196.png" sizes="196x196">
+    <link rel="icon" type="image/png" href="{{assetsUri}}/icons/favicons/android-128x128.png" sizes="128x128">
+    <link rel="icon" type="image/png" href="{{assetsUri}}/icons/favicons/android-196x196.png" sizes="196x196">
 
-    <link rel="icon" type="image/png" href="{{assetsUri}}/apps/{{appId}}/icons/favicons/favicon-16x16.png" sizes="16x16">
-    <link rel="icon" type="image/png" href="{{assetsUri}}/apps/{{appId}}/icons/favicons/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="{{assetsUri}}/apps/{{appId}}/icons/favicons/favicon-48x48.png" sizes="48x48">
-    <link rel="icon" type="image/png" href="{{assetsUri}}/apps/{{appId}}/icons/favicons/favicon-64x64.png" sizes="64x64">
-    <link rel="icon" type="image/png" href="{{assetsUri}}/apps/{{appId}}/icons/favicons/favicon-96x96.png" sizes="96x96">
-    <link rel="icon" type="image/png" href="{{assetsUri}}/apps/{{appId}}/icons/favicons/favicon-128x128.png" sizes="128x128">
+    <link rel="icon" type="image/png" href="{{assetsUri}}/icons/favicons/favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="{{assetsUri}}/icons/favicons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="{{assetsUri}}/icons/favicons/favicon-48x48.png" sizes="48x48">
+    <link rel="icon" type="image/png" href="{{assetsUri}}/icons/favicons/favicon-64x64.png" sizes="64x64">
+    <link rel="icon" type="image/png" href="{{assetsUri}}/icons/favicons/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="{{assetsUri}}/icons/favicons/favicon-128x128.png" sizes="128x128">
 
-    <link rel="manifest" href="{{assetsUri}}/apps/{{appId}}/icons/favicons/manifest.json">
-    <link rel="mask-icon" href="{{assetsUri}}/apps/{{appId}}/icons/icon-black.svg" color="#5bbad5">
+    <link rel="manifest" href="{{assetsUri}}/icons/favicons/manifest.json">
+    <link rel="mask-icon" href="{{assetsUri}}/icons/icon-black.svg" color="#5bbad5">
 
     <!-- Styles -->
-    <link rel="stylesheet" type="text/css" href="{{assetsUri}}/common/styles/_all.css">
-    <script type="text/javascript" src="{{assetsUri}}/common/lib/_all.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{adminAssetsUri}}/common/styles/_all.css">
+    <script type="text/javascript" src="{{adminAssetsUri}}/common/lib/_all.js"></script>
 
 </head>
 <body>
@@ -44,19 +44,20 @@
         {{/config}}
         baseUri: '{{baseUri}}',
         adminUrl: '{{adminUrl}}',
-        assetsUri: '{{assetsUri}}',
+        assetsUri: '{{adminAssetsUri}}',
         xpVersion: '{{xpVersion}}',
-        appId: '{{appId}}'
+        appId: '{{appId}}',
+        appIconUrl: '{{assetsUri}}/icons/icon-white.svg'
     };
 
 </script>
 
 <!-- App javascript -->
-<script type="text/javascript" src="{{assetsUri}}/common/js/_all.js"></script>
-<script type="text/javascript" src="{{assetsUri}}/apps/{{appId}}/js/_all.js"></script>
+<script type="text/javascript" src="{{adminAssetsUri}}/common/js/_all.js"></script>
+<script type="text/javascript" src="{{assetsUri}}/js/_all.js"></script>
 
 <!-- Append the launcher -->
-<script type="text/javascript" src="{{assetsUri}}/apps/launcher/js/_all.js" async></script>
+<script type="text/javascript" src="{{adminAssetsUri}}/apps/launcher/js/_all.js" async></script>
 
 </body>
 </html>

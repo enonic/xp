@@ -20,7 +20,7 @@ function handleGet(req) {
     });
 
     for (var i = 0; i < adminTools.length; i++) {
-        adminTools[i].appId = adminTools[i].key.name;
+        adminTools[i].appId = adminTools[i].key.application;
         adminTools[i].uri =
             uriScriptHelper.generateAdminToolUri(adminTools[i].key.application, adminTools[i].key.name);
     }

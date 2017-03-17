@@ -205,11 +205,11 @@ module api.dom {
             let classList: string[] = clsName.split(' ');
             for (let i = 0; i < classList.length; i++) {
                 let classItem = classList[i];
-                if (!this.el.classList || !this.el.classList.contains(classItem)) {
-                    return false;
+                if (this.el.classList && this.el.classList.contains(classItem)) {
+                    return true;
                 }
             }
-            return true;
+            return false;
         }
 
         removeClass(clsName: string): ElementHelper {
@@ -359,6 +359,16 @@ module api.dom {
 
         setMaxHeightPx(value: number): ElementHelper {
             this.setMaxHeight(value + 'px');
+            return this;
+        }
+
+        setMinHeight(value: string): ElementHelper {
+            this.el.style.minHeight = value;
+            return this;
+        }
+
+        setMinHeightPx(value: number): ElementHelper {
+            this.setMinHeight(value + 'px');
             return this;
         }
 

@@ -36,7 +36,7 @@ export class PreviewContentHandler {
             return;
         }
 
-        if (this.isBlocked()) {
+        if (this.isBlocked() || !changes) {
             this.setRenderableIds([]);
             if (changes) {
                 changes.setAdded(contentBrowseItems);
@@ -127,7 +127,7 @@ export class PreviewContentHandler {
         return this.renderableIds;
     }
 
-    addRenderableIds(contentIds: ContentId[], silent ?: boolean) {
+    private addRenderableIds(contentIds: ContentId[], silent ?: boolean) {
         if (contentIds) {
             contentIds.forEach((contentId) => {
                 if (this.renderableIds.indexOf(contentId.toString()) === -1) {
@@ -140,15 +140,17 @@ export class PreviewContentHandler {
         }
     }
 
-    removeRenderableIds(contentIds: ContentId[], silent ?: boolean) {
+    private removeRenderableIds(contentIds: ContentId[], silent ?: boolean) {
+        let wasRemoved = false;
         if (contentIds) {
             contentIds.forEach((contentId) => {
                 let index = this.renderableIds.indexOf(contentId.toString());
                 if (index >= 0) {
+                    wasRemoved = true;
                     this.renderableIds.splice(index, 1);
                 }
             });
-            if (!silent) {
+            if (!silent || wasRemoved) {
                 this.notifyPreviewStateChangedIfNeeded();
             }
         }

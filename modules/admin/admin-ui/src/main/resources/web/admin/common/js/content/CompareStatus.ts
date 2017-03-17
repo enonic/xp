@@ -41,7 +41,7 @@ module api.content {
                 status = 'Out-of-date';
                 break;
             case CompareStatus.PENDING_DELETE:
-                status = 'Pending delete';
+                status = 'Deleted';
                 break;
             case CompareStatus.EQUAL:
                 status = 'Online';
@@ -69,4 +69,20 @@ module api.content {
             return status;
         }
     }
+
+    export class CompareStatusChecker {
+
+        public static isPendingDelete(compareStatus: CompareStatus): boolean {
+            return compareStatus == CompareStatus.PENDING_DELETE;
+        }
+
+        public static isPublished(compareStatus: CompareStatus): boolean {
+            return compareStatus !== CompareStatus.NEW && compareStatus !== CompareStatus.UNKNOWN;
+        }
+
+        public static isOnline(compareStatus: CompareStatus): boolean {
+            return compareStatus === CompareStatus.EQUAL;
+        }
+    }
+
 }
