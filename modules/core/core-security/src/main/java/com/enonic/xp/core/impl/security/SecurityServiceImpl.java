@@ -95,8 +95,6 @@ import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
 import com.enonic.xp.security.auth.VerifiedEmailAuthToken;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 
-import static com.enonic.xp.core.impl.security.PrincipalKeyNodeTranslator.toNodeId;
-
 @Component(immediate = true)
 public final class SecurityServiceImpl
     implements SecurityService
@@ -202,7 +200,7 @@ public final class SecurityServiceImpl
     {
         try
         {
-            final Node node = callWithContext( () -> this.nodeService.getById( toNodeId( from ) ) );
+            final Node node = callWithContext( () -> this.nodeService.getByPath( from.toPath() ) );
             return PrincipalNodeTranslator.relationshipsFromNode( node );
         }
         catch ( NodeNotFoundException e )
@@ -613,7 +611,7 @@ public final class SecurityServiceImpl
 
         return callWithContext( () -> {
 
-            final Node node = callWithContext( () -> this.nodeService.getById( toNodeId( key ) ) );
+            final Node node = callWithContext( () -> this.nodeService.getByPath( key.toPath() ) );
 
             final User user = PrincipalNodeTranslator.userFromNode( node );
 
@@ -677,7 +675,7 @@ public final class SecurityServiceImpl
             final Node node;
             try
             {
-                node = this.nodeService.getById( toNodeId( updateUserParams.getKey() ) );
+                node = this.nodeService.getByPath( updateUserParams.getKey().toPath() );
             }
             catch ( NodeNotFoundException e )
             {
@@ -705,7 +703,7 @@ public final class SecurityServiceImpl
 
         try
         {
-            final Node node = callWithContext( () -> this.nodeService.getById( toNodeId( userKey ) ) );
+            final Node node = callWithContext( () -> this.nodeService.getByPath( userKey.toPath() ) );
             return Optional.ofNullable( PrincipalNodeTranslator.userFromNode( node ) );
         }
         catch ( NodeNotFoundException e )
@@ -749,7 +747,7 @@ public final class SecurityServiceImpl
             final Node node;
             try
             {
-                node = this.nodeService.getById( toNodeId( updateGroupParams.getKey() ) );
+                node = this.nodeService.getByPath( updateGroupParams.getKey().toPath() );
             }
             catch ( NodeNotFoundException e )
             {
@@ -776,7 +774,7 @@ public final class SecurityServiceImpl
 
         try
         {
-            final Node node = callWithContext( () -> this.nodeService.getById( toNodeId( groupKey ) ) );
+            final Node node = callWithContext( () -> this.nodeService.getByPath( groupKey.toPath() ) );
             return Optional.ofNullable( PrincipalNodeTranslator.groupFromNode( node ) );
         }
         catch ( NodeNotFoundException e )
@@ -820,7 +818,7 @@ public final class SecurityServiceImpl
             final Node node;
             try
             {
-                node = this.nodeService.getById( toNodeId( updateRoleParams.getKey() ) );
+                node = this.nodeService.getByPath( updateRoleParams.getKey().toPath() );
             }
             catch ( NodeNotFoundException e )
             {
@@ -847,7 +845,7 @@ public final class SecurityServiceImpl
 
         try
         {
-            final Node node = callWithContext( () -> this.nodeService.getById( toNodeId( roleKey ) ) );
+            final Node node = callWithContext( () -> this.nodeService.getByPath( roleKey.toPath() ) );
             return Optional.ofNullable( PrincipalNodeTranslator.roleFromNode( node ) );
         }
         catch ( NodeNotFoundException e )
@@ -882,7 +880,7 @@ public final class SecurityServiceImpl
             final Node node;
             try
             {
-                node = callWithContext( () -> this.nodeService.getById( toNodeId( key ) ) );
+                node = callWithContext( () -> this.nodeService.getByPath( key.toPath() ) );
             }
             catch ( NodeNotFoundException e )
             {
@@ -932,7 +930,7 @@ public final class SecurityServiceImpl
             doRemoveRelationships( principalKey );
             doRemoveMemberships( principalKey );
 
-            final NodeIds nodes = this.nodeService.deleteById( toNodeId( principalKey ) );
+            final NodeIds nodes = this.nodeService.deleteByPath( principalKey.toPath() );
             this.nodeService.refresh( RefreshMode.SEARCH );
             return nodes;
         } );

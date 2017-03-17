@@ -14,6 +14,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.security.Group;
@@ -91,7 +92,7 @@ abstract class PrincipalNodeTranslator
         final CreateNodeParams.Builder builder = CreateNodeParams.create().
             name( PrincipalKeyNodeTranslator.toNodeName( principal.getKey() ).toString() ).
             parent( principal.getKey().toPath().getParentPath() ).
-            setNodeId( PrincipalKeyNodeTranslator.toNodeId( principal.getKey() ) ).
+            setNodeId( NodeId.from( principal.getKey().toString().toLowerCase() ) ).
             inheritPermissions( true ).
             indexConfigDocument( PrincipalIndexConfigFactory.create() );
 
@@ -126,7 +127,7 @@ abstract class PrincipalNodeTranslator
         Preconditions.checkNotNull( principal );
 
         return UpdateNodeParams.create().
-            id( PrincipalKeyNodeTranslator.toNodeId( principal.getKey() ) ).
+            path( principal.getKey().toPath() ).
             editor( editableNode -> {
                 final PropertyTree nodeData = editableNode.data;
                 nodeData.setString( PrincipalPropertyNames.DISPLAY_NAME_KEY, principal.getDisplayName() );
@@ -151,7 +152,7 @@ abstract class PrincipalNodeTranslator
         Preconditions.checkNotNull( relationship );
 
         return UpdateNodeParams.create().
-            id( PrincipalKeyNodeTranslator.toNodeId( relationship.getFrom() ) ).
+            path( relationship.getFrom().toPath() ).
             editor( editableNode -> {
                 final PropertyTree nodeData = editableNode.data;
                 final String relationshipToKey = relationship.getTo().toString();
@@ -173,7 +174,7 @@ abstract class PrincipalNodeTranslator
         Preconditions.checkNotNull( relationship );
 
         return UpdateNodeParams.create().
-            id( PrincipalKeyNodeTranslator.toNodeId( relationship.getFrom() ) ).
+            path( relationship.getFrom().toPath() ).
             editor( editableNode -> {
                 final PropertyTree nodeData = editableNode.data;
                 final String relationshipToKey = relationship.getTo().toString();
@@ -194,7 +195,7 @@ abstract class PrincipalNodeTranslator
         Preconditions.checkNotNull( from );
 
         return UpdateNodeParams.create().
-            id( PrincipalKeyNodeTranslator.toNodeId( from ) ).
+            path( from.toPath() ).
             editor( editableNode -> {
                 final PropertyTree data = editableNode.data;
                 data.removeProperties( PrincipalPropertyNames.MEMBER_KEY );
