@@ -24,7 +24,7 @@ module api.ui.treegrid.actions {
                         this.setChecked(false, true);
                     }
                 }
-                this.setPartial(this.treeGrid.isAnySelected() && !this.treeGrid.isAllSelected());
+                this.setPartial(treeGrid.isAnySelected() && !treeGrid.isAllSelected());
 
                 this.tooltip.setText(this.isChecked() ? 'Clear selection' : 'Select all rows');
             });
@@ -38,8 +38,8 @@ module api.ui.treegrid.actions {
                 }
 
                 if (this.isChecked() || this.isPartial()) {
-                    this.treeGrid.getRoot().clearStashedSelection();
-                    this.treeGrid.getGrid().clearSelection();
+                    treeGrid.getRoot().clearStashedSelection();
+                    treeGrid.getGrid().clearSelection();
                 } else {
                     treeGrid.selectAll();
                 }

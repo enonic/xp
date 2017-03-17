@@ -20,11 +20,15 @@ module api.ui.treegrid.actions {
                     return;
                 }
 
+                this.removeClass('single-item');
                 this.removeClass(`size-${oldLabel.length}`);
                 this.setLabel(newLabel);
                 if (newLabel !== '') {
                     this.addClass(`size-${newLabel.length}`);
                     this.addClass('updated');
+                    if (fullSelection.length == 1) {
+                        this.addClass('single-item');
+                    }
                     setTimeout(() => {
                         this.removeClass('updated');
                     }, 200);

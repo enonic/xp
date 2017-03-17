@@ -9,6 +9,7 @@
     border: none;
 
     &.selection-toggler {
+      position: relative;
       padding: 0 7px;
 
       &:before {
@@ -60,6 +61,33 @@
 
       &.size-4 span {
         font-size: 7px;
+      }
+
+      &:after {
+        display: block;
+        content: "items";
+        font-size: 15px;
+        position: absolute;
+        top: 0;
+        left: 37px;
+        height: 39px;
+        width: 48px;
+      }
+
+      &.single-item:after {
+        content: 'item';
+      }
+
+      &:disabled:after {
+        display: none;
+      }
+
+      &.active:after {
+        color: @admin-button-blue2;
+      }
+
+      &:not(.active):after {
+        color: @admin-font-gray2;
       }
     }
 
@@ -132,8 +160,9 @@ body {
       padding-right: 17px;
     }
 
-    .selection-toggler {
+    .tree-grid-toolbar .@{_COMMON_PREFIX}button.selection-toggler {
       float: right;
+      padding-right: 50px;
     }
   }
 }
