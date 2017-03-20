@@ -196,15 +196,48 @@ public class BranchServiceImpl
 
     private NodeBranchEntry doGetByPath( final NodePath nodePath, final InternalContext context )
     {
-        final GetByIdRequest getByIdRequest = createGetByIdRequest( nodeId, context );
-        final GetResult getResult = this.storageDao.getById( getByIdRequest );
+        final String id = this.pathCache.get( new BranchPath( context.getRepositoryId(), context.getBranch(), nodePath ) );
 
-        if ( getResult.isEmpty() )
+        if ( id != null )
         {
-            return null;
+            final NodeId nodeId = createNodeId( id );
+            return doGetById( nodeId, context );
         }
 
-        return NodeBranchVersionFactory.create( getResult.getReturnValues() );
+        final NodeBranchQuery query = NodeBranchQuery.create().
+            addQueryFilter( ValueFilter.create().
+                fieldName( NodeIndexPath.PATH.getPath() ).
+                addValue( ValueFactory.newString( nodePath.toString() ) ).build() ).
+            size( 1 ).
+            build();
+
+        final SearchResult result = this.searchDao.search( SearchRequest.create().
+            settings( StorageSettings.create().
+                storageType( SearchStorageType.from( context.getBranch() ) ).
+                storageName( SearchStorageName.from( context.getRepositoryId() ) ).
+                build() ).
+            acl( context.getPrincipalsKeys() ).
+            query( query ).
+            build() );
+
+        if ( !result.isEmpty() )
+        {
+            final SearchHit firstHit = result.getResults().getFirstHit();
+
+            final NodeId nodeId = NodeId.from( firstHit.getId() );
+            final NodeBranchEntry nodeBranchEntry = doGetById( nodeId, context );
+
+            if ( nodeBranchEntry == null )
+            {
+                return null;
+            }
+
+            doCache( context, nodeBranchEntry.getNodePath(), nodeId );
+
+            return nodeBranchEntry;
+        }
+
+        return null;
     }
 
     private NodeId createNodeId( final String id )
