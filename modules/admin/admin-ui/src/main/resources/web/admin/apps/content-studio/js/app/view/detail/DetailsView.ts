@@ -117,12 +117,13 @@ export class DetailsView extends api.dom.DivEl {
 
                 const activeIndex = this.widgetViews.map(view => view.getWidgetName()).indexOf(activeWidgetName);
                 const active = this.widgetViews[activeIndex];
+                const isSameActive = active && (active.getWidgetName() === activeWidgetName);
 
                 if (!active && event.getEventType() === ApplicationEventType.STOPPED) {
                     this.activateDefaultWidget();
                     this.widgetsSelectionRow.updateState(this.activeWidget);
                     this.updateActiveWidget();
-                } else if (active) {
+                } else if (isSameActive) {
                     this.setActiveWidget(active);
                     this.updateActiveWidget();
                 }
