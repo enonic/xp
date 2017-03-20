@@ -152,6 +152,10 @@ export class WidgetView extends api.dom.DivEl {
         return this.widgetName;
     }
 
+    getWidgetKey(): string {
+        return this.widget ? this.widget.getWidgetDescriptorKey().getApplicationKey().getName() : null;
+    }
+
     slideOut() {
         this.getEl().setMaxHeightPx(this.getEl().getHeight()); // enables transition
         this.getEl().setMaxHeightPx(0);
