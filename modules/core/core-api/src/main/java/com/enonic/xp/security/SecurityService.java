@@ -66,6 +66,15 @@ public interface SecurityService
     PrincipalKeys getMemberships( PrincipalKey principalKey );
 
     /**
+     * Retrieve the list of principals (groups or roles) that have the specified principal as a member, directly or indirectly.
+     * The list returned will contain all memberships, including transitive dependencies (group of a group).
+     *
+     * @param principalKey principal key to obtain memberships of
+     * @return a list of {@link PrincipalKeys} containing the list of groups and roles that the principal is a member of
+     */
+    PrincipalKeys getAllMemberships( PrincipalKey principalKey );
+
+    /**
      * Creates a group on the specified user store.
      *
      * @param createGroupParams details of the group to be created

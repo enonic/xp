@@ -357,6 +357,12 @@ public final class SecurityServiceImpl
     }
 
     @Override
+    public PrincipalKeys getAllMemberships( PrincipalKey principalKey )
+    {
+        return resolveMemberships( principalKey );
+    }
+
+    @Override
     public AuthenticationInfo authenticate( final AuthenticationToken token )
     {
         if ( !( token instanceof VerifiedUsernameAuthToken ) && !( token instanceof VerifiedEmailAuthToken ) )
