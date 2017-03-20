@@ -7,11 +7,11 @@ module api.ui.treegrid.actions {
         constructor(treeGrid: TreeGrid<any>) {
             super('selection-toggler');
 
+            this.setEnabled(true);
+
             this.tooltip = new Tooltip(this, '', 1000);
 
             treeGrid.onSelectionChanged((currentSelection: TreeNode<any>[], fullSelection: TreeNode<any>[]) => {
-                this.setEnabled(fullSelection.length === 1);
-                this.setActive(fullSelection.length > 1);
 
                 let oldLabel = this.getLabel();
                 let newLabel = fullSelection.length ? fullSelection.length.toString() : '';
@@ -20,7 +20,7 @@ module api.ui.treegrid.actions {
                     return;
                 }
 
-                this.removeClass('single-item');
+                this.removeClass('single-item multiple-items');
                 this.removeClass(`size-${oldLabel.length}`);
                 this.setLabel(newLabel);
                 if (newLabel !== '') {
@@ -28,16 +28,14 @@ module api.ui.treegrid.actions {
                     this.addClass('updated');
                     if (fullSelection.length == 1) {
                         this.addClass('single-item');
+                    } else if (fullSelection.length > 1) {
+                        this.addClass('multiple-items');
                     }
                     setTimeout(() => {
                         this.removeClass('updated');
                     }, 200);
                 }
 
-            });
-
-            treeGrid.onHighlightingChanged(() => {
-                this.setActive(false);
             });
 
             this.onActiveChanged((isActive: boolean) => {

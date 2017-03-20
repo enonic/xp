@@ -84,6 +84,18 @@ module api.app.browse {
                 }
             });
 
+            this.treeGrid.getToolbar().getSelectionPanelToggler().onActiveChanged(isActive => {
+                if (this.filterPanel && this.filterPanel.hasFilterSet()) {
+                    this.filterPanel.reset(true);
+                }
+
+                if (isActive) {
+                    this.treeGrid.filter(this.treeGrid.getSelectedDataList());
+                } else {
+                    this.treeGrid.resetFilter();
+                }
+            });
+
             this.onShown(() => {
                 if (this.treeGrid.isFiltered()) {
                     this.filterPanel.refresh();

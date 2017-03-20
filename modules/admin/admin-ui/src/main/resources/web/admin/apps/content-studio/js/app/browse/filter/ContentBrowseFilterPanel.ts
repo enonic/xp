@@ -49,14 +49,6 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         super();
 
         this.initAggregationGroupView([this.contentTypeAggregation, this.lastModifiedAggregation]);
-
-        this.onReset(()=> {
-            this.resetFacets();
-        });
-
-        this.onShown(() => {
-            this.refresh();
-        });
     }
 
     protected getGroupViews(): api.aggregation.AggregationGroupView[] {
@@ -86,7 +78,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         this.addClass('has-dependency-item');
         this.dependenciesSection.setItem(item, inbound);
         if (this.dependenciesSection.isActive()) {
-            this.reset(true);
+            this.resetControls();
             this.search();
         }
     }
@@ -255,7 +247,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         }).done();
     }
 
-    private resetFacets(suppressEvent?: boolean, doResetAll?: boolean) {
+    protected resetFacets(suppressEvent?: boolean, doResetAll?: boolean) {
 
         let contentQuery: ContentQuery = this.buildAggregationsQuery();
 

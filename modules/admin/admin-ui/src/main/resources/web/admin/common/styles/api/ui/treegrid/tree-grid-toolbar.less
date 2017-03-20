@@ -63,9 +63,8 @@
         font-size: 7px;
       }
 
-      &:after {
+      &.single-item:after, &.multiple-items:after {
         display: block;
-        content: "items";
         font-size: 15px;
         position: absolute;
         top: 0;
@@ -76,6 +75,9 @@
 
       &.single-item:after {
         content: 'item';
+      }
+      &.multiple-items:after {
+        content: 'items';
       }
 
       &:disabled:after {

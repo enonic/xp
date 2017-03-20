@@ -11,16 +11,7 @@ import PrincipalType = api.security.PrincipalType;
 export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel {
 
     constructor() {
-
-        super(null);
-
-        this.onReset(()=> {
-            this.resetFacets();
-        });
-
-        this.onShown(() => {
-            this.refresh();
-        });
+        super();
 
         this.initHitsCounter();
     }
@@ -33,7 +24,7 @@ export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilt
         this.searchFacets();
     }
 
-    private resetFacets(supressEvent?: boolean) {
+    protected resetFacets(supressEvent?: boolean) {
         this.searchDataAndHandleResponse('', false);
 
         if (!supressEvent) { // then fire usual reset event with content grid reloading
