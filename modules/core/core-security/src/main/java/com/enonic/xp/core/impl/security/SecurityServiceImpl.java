@@ -605,9 +605,12 @@ public final class SecurityServiceImpl
         return callWithContext( () -> {
 
             final Node node = callWithContext( () -> this.nodeService.getByPath( key.toPath() ) );
+            if ( node == null )
+            {
+                throw new NodeNotFoundException( "setPassword failed, user with key " + key + " not found" );
+            }
 
             final User user = PrincipalNodeTranslator.userFromNode( node );
-
             if ( user == null )
             {
                 throw new NodeNotFoundException( "setPassword failed, user with key " + key + " not found" );
