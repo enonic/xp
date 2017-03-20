@@ -37,6 +37,8 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     private dependantList: ListBox<ContentSummaryAndCompareStatus>;
 
+    private dependantsHeaderText: string;
+
     protected loadMask: LoadMask;
 
     protected loading: boolean = false;
@@ -71,6 +73,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.itemList.onItemsRemoved(itemsChangedListener);
         this.itemList.onItemsAdded(itemsChangedListener);
 
+        this.dependantsHeaderText = dependantsName;
         this.dependantsHeader = new api.dom.H6El('dependants-header').setHtml(dependantsName, false);
 
         this.dependantList = this.createDependantList();
@@ -98,6 +101,10 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
             this.doPostLoad();
         });
 
+    }
+
+    protected updateDependantsHeader(header?: string) {
+        this.dependantsHeader.setHtml(header || this.dependantsHeaderText, false);
     }
 
     private initLoadMask() {
