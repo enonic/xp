@@ -124,6 +124,8 @@ public abstract class AbstractNodeTest
 
     private BlobStore blobStore;
 
+    protected NodeServiceImpl nodeService;
+
     @Before
     public void setUp()
         throws Exception
@@ -191,7 +193,7 @@ public abstract class AbstractNodeTest
 
     private void setUpRepositoryServices()
     {
-        NodeServiceImpl nodeService = new NodeServiceImpl();
+        nodeService = new NodeServiceImpl();
         nodeService.setIndexServiceInternal( indexServiceInternal );
         nodeService.setNodeStorageService( this.storageService );
         nodeService.setNodeSearchService( this.searchService );
@@ -214,6 +216,9 @@ public abstract class AbstractNodeTest
         this.repositoryService.setIndexServiceInternal( this.indexServiceInternal );
         this.repositoryService.setNodeRepositoryService( nodeRepositoryService );
         this.repositoryService.setNodeStorageService( this.storageService );
+
+        this.nodeService.setRepositoryService( this.repositoryService );
+
     }
 
     void createRepository( final Repository repository )
@@ -250,9 +255,13 @@ public abstract class AbstractNodeTest
 
     protected Node createDefaultRootNode()
     {
-        final AccessControlList rootPermissions =
-            AccessControlList.of( AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().build() );
-        final CreateRootNodeParams createRootParams = CreateRootNodeParams.create().permissions( rootPermissions ).
+        final AccessControlList rootPermissions = AccessControlList.of( AccessControlEntry.create().
+            principal( TEST_DEFAULT_USER.getKey() ).
+            allowAll().
+            build() );
+
+        final CreateRootNodeParams createRootParams = CreateRootNodeParams.create().
+            permissions( rootPermissions ).
             build();
 
         return CreateRootNodeCommand.create().

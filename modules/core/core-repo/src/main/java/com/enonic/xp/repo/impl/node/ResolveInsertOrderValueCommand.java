@@ -31,7 +31,7 @@ public class ResolveInsertOrderValueCommand
             execute();
 
         final ChildOrder childOrder =
-            insertManualStrategy.equals( InsertManualStrategy.LAST ) ? ChildOrder.reverseManualOrder() : ChildOrder.manualOrder();
+            InsertManualStrategy.LAST.equals( insertManualStrategy ) ? ChildOrder.reverseManualOrder() : ChildOrder.manualOrder();
 
         final FindNodesByParentResult findNodesByParentResult = doFindNodesByParent( FindNodesByParentParams.create().
             parentPath( parentPath ).

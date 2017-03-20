@@ -83,9 +83,17 @@ public final class NodeImporter
     {
         this.result.dryRun( this.dryRun );
 
-        verifyImportRoot();
-
-        processNodeFolder( this.exportRoot, ProcessNodeSettings.create() );
+        if ( !isNodeFolder( this.exportRoot ) )
+        {
+            importFromDirectoryLayout( this.exportRoot );
+        }
+        else
+        {
+            // Export root contains a node definition - should be created as the node
+            // given as importRoot
+            verifyImportRoot();
+            processNodeFolder( this.exportRoot, ProcessNodeSettings.create() );
+        }
 
         nodeService.refresh( RefreshMode.ALL );
 
@@ -178,6 +186,11 @@ public final class NodeImporter
 
     }
 
+    private boolean isNodeFolder( final VirtualFile folder )
+    {
+        return folder.resolve( folder.getPath().join( "_" ) ).exists();
+    }
+
     private Node processNodeSource( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings )
     {
         final VirtualFile nodeSource = this.exportReader.getNodeSource( nodeFolder );
@@ -237,9 +250,7 @@ public final class NodeImporter
             importPermissions( this.importPermissions ).
             build();
 
-        final ImportNodeResult importNodeResult = this.nodeService.importNode( importNodeParams );
-
-        return importNodeResult;
+        return this.nodeService.importNode( importNodeParams );
     }
 
     private List<String> processBinarySource( final VirtualFile nodeFolder )
