@@ -49,6 +49,10 @@ export class PublishDialogItemList extends DialogItemList {
             this.debonceNotifyListChanged();
         });
 
+        if(item.isRemovable()) {
+            item.addClass("removable");
+        }
+
         return item;
     }
 
