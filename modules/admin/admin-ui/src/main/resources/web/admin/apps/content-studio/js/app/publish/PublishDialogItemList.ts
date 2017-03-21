@@ -52,9 +52,9 @@ export class PublishDialogItemList extends DialogItemList {
         return item;
     }
 
-    public allIncludeChildrenTogglersAreEnabled(): boolean {
-        return this.getItemViews().every(
-            itemView => !!itemView.getIncludeChildrenToggler() && itemView.getIncludeChildrenToggler().isEnabled()
+    public childTogglersAvailable(): boolean {
+        return this.getItemViews().some(
+            itemView => !!itemView.getIncludeChildrenToggler()
         );
     }
 
