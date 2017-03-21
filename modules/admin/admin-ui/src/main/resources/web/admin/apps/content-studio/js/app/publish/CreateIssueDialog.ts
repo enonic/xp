@@ -78,10 +78,10 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
 
     private initElements() {
 
-        this.title = new TextInput("title");
+        this.title = new TextInput('title');
 
-        this.description = new TextArea("description");
-        this.description.addClass("description");
+        this.description = new TextArea('description');
+        this.description.addClass('description');
 
         const principalLoader = new api.security.PrincipalLoader().setAllowedTypes([PrincipalType.USER]);
 
@@ -136,7 +136,6 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
         this.displayValidationErrors(!valid);
 
         if (valid) {
-            debugger;
             const createIssueRequest = new CreateIssueRequest()
                 .setApprovers(this.selector.getSelectedValues().map(value => PrincipalKey.fromString(value)))
                 .setItems(this.items).setDescription(this.description.getValue()).setTitle(this.title.getValue());
@@ -144,7 +143,7 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
             createIssueRequest.sendAndParse().then(() => {
                 this.close();
                 this.onSuccessCallback();
-                api.notify.showSuccess("Issue was created");
+                api.notify.showSuccess('Issue was created');
             }).catch((reason) => {
                 if (reason && reason.message) {
                     api.notify.showError(reason.message);
@@ -154,9 +153,9 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
     }
 
     private reset() {
-        this.title.setValue("", true);
-        this.description.setValue("", true);
-        this.selector.setValue("", true);
+        this.title.setValue('', true);
+        this.description.setValue('', true);
+        this.selector.setValue('', true);
     }
 
     private initActions() {
@@ -193,4 +192,3 @@ export class CreateIssueAction extends api.ui.Action {
         this.setIconClass('create-issue-action');
     }
 }
-

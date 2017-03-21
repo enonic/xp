@@ -39,11 +39,10 @@ module api.issue.resource {
             return this;
         }
 
-
         getParams(): Object {
             return {
-                title: this.title ? this.title.toString() : "",
-                description: this.description ? this.description.toString() : "",
+                title: this.title ? this.title.toString() : '',
+                description: this.description ? this.description.toString() : '',
                 approvers: this.approvers.map((el) => {
                     return el.toString();
                 }),

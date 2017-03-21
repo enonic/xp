@@ -50,7 +50,7 @@ export class PublishDialogItemList extends DialogItemList {
         });
 
         if(item.isRemovable()) {
-            item.addClass("removable");
+            item.addClass('removable');
         }
 
         return item;
