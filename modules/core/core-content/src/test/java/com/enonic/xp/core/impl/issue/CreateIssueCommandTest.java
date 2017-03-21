@@ -59,14 +59,7 @@ public class CreateIssueCommandTest
         command.execute();
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testNoCreator()
-    {
-        final CreateIssueParams params = CreateIssueParams.create().
-            title( "title" ).build();
-        final CreateIssueCommand command = createIssueCommand( params );
-        command.execute();
-    }
+
 
     private CreateIssueParams.Builder createIssueParams()
     {
