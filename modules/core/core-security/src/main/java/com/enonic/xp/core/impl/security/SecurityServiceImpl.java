@@ -95,8 +95,6 @@ import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
 import com.enonic.xp.security.auth.VerifiedEmailAuthToken;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 
-import static com.enonic.xp.core.impl.security.PrincipalKeyNodeTranslator.toNodeId;
-
 @Component(immediate = true)
 public final class SecurityServiceImpl
     implements SecurityService
@@ -200,15 +198,8 @@ public final class SecurityServiceImpl
     @Override
     public PrincipalRelationships getRelationships( final PrincipalKey from )
     {
-        try
-        {
-            final Node node = callWithContext( () -> this.nodeService.getById( toNodeId( from ) ) );
-            return PrincipalNodeTranslator.relationshipsFromNode( node );
-        }
-        catch ( NodeNotFoundException e )
-        {
-            return PrincipalRelationships.empty();
-        }
+        final Node node = callWithContext( () -> this.nodeService.getByPath( from.toPath() ) );
+        return node == null ? PrincipalRelationships.empty() : PrincipalNodeTranslator.relationshipsFromNode( node );
     }
 
     @Override
@@ -613,10 +604,13 @@ public final class SecurityServiceImpl
 
         return callWithContext( () -> {
 
-            final Node node = callWithContext( () -> this.nodeService.getById( toNodeId( key ) ) );
+            final Node node = callWithContext( () -> this.nodeService.getByPath( key.toPath() ) );
+            if ( node == null )
+            {
+                throw new NodeNotFoundException( "setPassword failed, user with key " + key + " not found" );
+            }
 
             final User user = PrincipalNodeTranslator.userFromNode( node );
-
             if ( user == null )
             {
                 throw new NodeNotFoundException( "setPassword failed, user with key " + key + " not found" );
@@ -674,12 +668,8 @@ public final class SecurityServiceImpl
     {
         return callWithContext( () -> {
 
-            final Node node;
-            try
-            {
-                node = this.nodeService.getById( toNodeId( updateUserParams.getKey() ) );
-            }
-            catch ( NodeNotFoundException e )
+            final Node node = this.nodeService.getByPath( updateUserParams.getKey().toPath() );
+            if ( node == null )
             {
                 throw new PrincipalNotFoundException( updateUserParams.getKey() );
             }
@@ -703,15 +693,8 @@ public final class SecurityServiceImpl
     {
         Preconditions.checkArgument( userKey.isUser(), "Expected principal key of type User" );
 
-        try
-        {
-            final Node node = callWithContext( () -> this.nodeService.getById( toNodeId( userKey ) ) );
-            return Optional.ofNullable( PrincipalNodeTranslator.userFromNode( node ) );
-        }
-        catch ( NodeNotFoundException e )
-        {
-            return Optional.empty();
-        }
+        final Node node = callWithContext( () -> this.nodeService.getByPath( userKey.toPath() ) );
+        return node == null ? Optional.empty() : Optional.ofNullable( PrincipalNodeTranslator.userFromNode( node ) );
     }
 
     @Override
@@ -746,12 +729,8 @@ public final class SecurityServiceImpl
     {
         return callWithContext( () -> {
 
-            final Node node;
-            try
-            {
-                node = this.nodeService.getById( toNodeId( updateGroupParams.getKey() ) );
-            }
-            catch ( NodeNotFoundException e )
+            final Node node = this.nodeService.getByPath( updateGroupParams.getKey().toPath() );
+            if ( node == null )
             {
                 throw new PrincipalNotFoundException( updateGroupParams.getKey() );
             }
@@ -774,15 +753,8 @@ public final class SecurityServiceImpl
     {
         Preconditions.checkArgument( groupKey.isGroup(), "Expected principal key of type Group" );
 
-        try
-        {
-            final Node node = callWithContext( () -> this.nodeService.getById( toNodeId( groupKey ) ) );
-            return Optional.ofNullable( PrincipalNodeTranslator.groupFromNode( node ) );
-        }
-        catch ( NodeNotFoundException e )
-        {
-            return Optional.empty();
-        }
+        final Node node = callWithContext( () -> this.nodeService.getByPath( groupKey.toPath() ) );
+        return node == null ? Optional.empty() : Optional.ofNullable( PrincipalNodeTranslator.groupFromNode( node ) );
     }
 
     @Override
@@ -817,12 +789,8 @@ public final class SecurityServiceImpl
     {
         return callWithContext( () -> {
 
-            final Node node;
-            try
-            {
-                node = this.nodeService.getById( toNodeId( updateRoleParams.getKey() ) );
-            }
-            catch ( NodeNotFoundException e )
+            final Node node = this.nodeService.getByPath( updateRoleParams.getKey().toPath() );
+            if ( node == null )
             {
                 throw new PrincipalNotFoundException( updateRoleParams.getKey() );
             }
@@ -845,15 +813,8 @@ public final class SecurityServiceImpl
     {
         Preconditions.checkArgument( roleKey.isRole(), "Expected principal key of type Role" );
 
-        try
-        {
-            final Node node = callWithContext( () -> this.nodeService.getById( toNodeId( roleKey ) ) );
-            return Optional.ofNullable( PrincipalNodeTranslator.roleFromNode( node ) );
-        }
-        catch ( NodeNotFoundException e )
-        {
-            return Optional.empty();
-        }
+        final Node node = callWithContext( () -> this.nodeService.getByPath( roleKey.toPath() ) );
+        return node == null ? Optional.empty() : Optional.ofNullable( PrincipalNodeTranslator.roleFromNode( node ) );
     }
 
     @Override
@@ -879,12 +840,8 @@ public final class SecurityServiceImpl
         final ImmutableList.Builder<Principal> principals = ImmutableList.builder();
         for ( PrincipalKey key : principalKeys )
         {
-            final Node node;
-            try
-            {
-                node = callWithContext( () -> this.nodeService.getById( toNodeId( key ) ) );
-            }
-            catch ( NodeNotFoundException e )
+            final Node node = callWithContext( () -> this.nodeService.getByPath( key.toPath() ) );
+            if ( node == null )
             {
                 continue;
             }
@@ -932,7 +889,7 @@ public final class SecurityServiceImpl
             doRemoveRelationships( principalKey );
             doRemoveMemberships( principalKey );
 
-            final NodeIds nodes = this.nodeService.deleteById( toNodeId( principalKey ) );
+            final NodeIds nodes = this.nodeService.deleteByPath( principalKey.toPath() );
             this.nodeService.refresh( RefreshMode.SEARCH );
             return nodes;
         } );

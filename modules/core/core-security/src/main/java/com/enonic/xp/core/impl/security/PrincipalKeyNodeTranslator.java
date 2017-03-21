@@ -6,7 +6,6 @@ import com.google.common.collect.Sets;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.security.PrincipalKey;
@@ -20,11 +19,6 @@ class PrincipalKeyNodeTranslator
     public static NodeName toNodeName( final PrincipalKey principalKey )
     {
         return NodeName.from( principalKey.getId() );
-    }
-
-    public static NodeId toNodeId( final PrincipalKey principalKey )
-    {
-        return NodeId.from( principalKey.toString() );
     }
 
     public static PrincipalKey toKey( final Node node )
