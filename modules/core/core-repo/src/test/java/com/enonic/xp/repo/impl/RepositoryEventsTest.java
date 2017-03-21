@@ -15,6 +15,6 @@ public class RepositoryEventsTest
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
-        assertEquals( RepositoryEvents.REPOSITORY_RESTORED_EVENT, event.getType() );
+        assertEquals( RepositoryEvents.RESTORED_EVENT_TYPE, event.getType() );
     }
 }

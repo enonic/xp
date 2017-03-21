@@ -7,6 +7,7 @@ import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.node.RestoreParams;
 import com.enonic.xp.node.SnapshotParams;
@@ -26,13 +27,14 @@ import static org.junit.Assert.*;
 public class SnapshotServiceImplTest
     extends AbstractNodeTest
 {
-
     @Rule
     public TemporaryFolder snapshotRepo = new TemporaryFolder();
 
     private SnapshotServiceImpl snapshotService;
 
     private RepositoryServiceImpl repositoryService;
+
+    private EventPublisher eventPublisher;
 
     @Before
     public void setUp()
@@ -51,12 +53,15 @@ public class SnapshotServiceImplTest
         repositoryService.setNodeRepositoryService( nodeRepositoryService );
         repositoryService.setRepositoryEntryService( this.repositoryEntryService );
 
+        eventPublisher = Mockito.mock( EventPublisher.class );
+
         this.snapshotService.setRepositoryService( repositoryService );
         final RepoConfiguration configuration = Mockito.mock( RepoConfiguration.class );
         Mockito.when( configuration.getSnapshotsDir() ).thenReturn( snapshotRepo.getRoot() );
 
         this.snapshotService.setConfiguration( configuration );
         this.snapshotService.setClient( this.client );
+        this.snapshotService.setEventPublisher( eventPublisher );
     }
 
     @Test

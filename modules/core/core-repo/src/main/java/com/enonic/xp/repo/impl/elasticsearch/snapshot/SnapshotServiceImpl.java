@@ -23,6 +23,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Sets;
 
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.node.DeleteSnapshotsResult;
 import com.enonic.xp.node.RestoreParams;
@@ -30,6 +31,7 @@ import com.enonic.xp.node.RestoreResult;
 import com.enonic.xp.node.SnapshotParams;
 import com.enonic.xp.node.SnapshotResult;
 import com.enonic.xp.node.SnapshotResults;
+import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repository.RepositoryService;
@@ -46,6 +48,8 @@ public class SnapshotServiceImpl
     private RepoConfiguration configuration;
 
     private RepositoryService repositoryService;
+
+    private EventPublisher eventPublisher;
 
     @Override
     public SnapshotResult snapshot( final SnapshotParams snapshotParams )
@@ -78,7 +82,7 @@ public class SnapshotServiceImpl
         checkSnapshotRepository();
         validateSnapshot( restoreParams.getSnapshotName() );
 
-        return SnapshotRestoreExecutor.create().
+        final RestoreResult result = SnapshotRestoreExecutor.create().
             repositoryToRestore( restoreParams.getRepositoryId() ).
             snapshotName( restoreParams.getSnapshotName() ).
             client( this.client ).
@@ -86,6 +90,10 @@ public class SnapshotServiceImpl
             snapshotRepositoryName( SNAPSHOT_REPOSITORY_NAME ).
             build().
             execute();
+
+        this.eventPublisher.publish( RepositoryEvents.restored() );
+
+        return result;
     }
 
     @Override
@@ -275,5 +283,11 @@ public class SnapshotServiceImpl
     public void setRepositoryService( final RepositoryService repositoryService )
     {
         this.repositoryService = repositoryService;
+    }
+
+    @Reference
+    public void setEventPublisher( final EventPublisher eventPublisher )
+    {
+        this.eventPublisher = eventPublisher;
     }
 }
