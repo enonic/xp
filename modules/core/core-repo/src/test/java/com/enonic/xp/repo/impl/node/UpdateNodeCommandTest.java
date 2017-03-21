@@ -312,6 +312,28 @@ public class UpdateNodeCommandTest
         assertTrue( updatedNode.getTimestamp().isAfter( node.getTimestamp() ) );
     }
 
+    @Test
+    public void update_by_path()
+    {
+        final PropertyTree data = new PropertyTree();
+
+        final Node node = createNode( CreateNodeParams.create().
+            name( "myNode" ).
+            data( data ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        updateNode( UpdateNodeParams.create().
+            path( node.path() ).
+            editor( toBeEdited -> {
+                toBeEdited.data.addString( "another", "stuff" );
+            } ).
+            build() );
+
+        final Node updatedNode = getNodeById( node.id() );
+
+        assertTrue( updatedNode.getTimestamp().isAfter( node.getTimestamp() ) );
+    }
 
     @Test
     public void unchanged_node_not_updated()
