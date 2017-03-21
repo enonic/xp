@@ -38,6 +38,14 @@ abstract class AbstractNodeCommand
             execute();
     }
 
+    Node doGetByPath( final NodePath path )
+    {
+        return GetNodeByPathCommand.create( this ).
+            nodePath( path ).
+            build().
+            execute();
+    }
+
     FindNodesByParentResult doFindNodesByParent( final FindNodesByParentParams params )
     {
         return FindNodesByParentCommand.create( this ).
