@@ -147,7 +147,7 @@ export class DetailsView extends api.dom.DivEl {
         } else if (isUpdated) {
             this.fetchWidgetByKey(key).then((widget: Widget) => {
                 widgetView = WidgetView.create().setName(widget.getDisplayName()).setDetailsView(this).setWidget(widget).build();
-                this.upgradeWidget(widgetView);
+                this.updateWidget(widgetView);
 
                 updateView();
             });
@@ -372,7 +372,7 @@ export class DetailsView extends api.dom.DivEl {
         }
     }
 
-    private upgradeWidget(widget: WidgetView) {
+    private updateWidget(widget: WidgetView) {
         for (let i = 0; i < this.widgetViews.length; i++) {
             if (this.widgetViews[i].getWidgetName() === widget.getWidgetName()) {
                 this.widgetViews[i].replaceWith(widget);
