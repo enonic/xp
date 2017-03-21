@@ -37,24 +37,25 @@ public class UpdateIssueCommand
 
     private Issue doExecute()
     {
-        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create( editIssue() );
+        Issue editedIssue = editIssue( params.getEditor(), getIssue( params ) );
+
+        editedIssue = setModifiedTime( editedIssue );
+        editedIssue = setModifier( editedIssue );
+
+        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create( editedIssue );
         final Node updatedNode = this.nodeService.update( updateNodeParams );
 
         nodeService.refresh( RefreshMode.SEARCH );
         return IssueNodeTranslator.fromNode( updatedNode );
     }
 
-    private Issue editIssue()
+    private Issue editIssue( final IssueEditor editor, final Issue original )
     {
-        final Issue issueBeforeChange = getIssue( params );
-        final EditableIssue editableIssue = new EditableIssue( issueBeforeChange );
-        final IssueEditor issueEditor = params.getEditor();
-        if ( issueEditor != null )
+        final EditableIssue editableIssue = new EditableIssue( original );
+        if ( editor != null )
         {
-            issueEditor.edit( editableIssue );
+            editor.edit( editableIssue );
         }
-        editableIssue.modifier = getCurrentUser().getKey();
-        editableIssue.modifiedTime = Instant.now();
         return editableIssue.build();
     }
 
@@ -65,6 +66,20 @@ public class UpdateIssueCommand
             nodeService( this.nodeService ).
             build().
             execute();
+    }
+
+    private Issue setModifiedTime( final Issue issue )
+    {
+        return Issue.create( issue ).
+            modifiedTime( Instant.now() ).
+            build();
+    }
+
+    private Issue setModifier( final Issue issue )
+    {
+        return Issue.create( issue ).
+            modifier( getCurrentUser().getKey() ).
+            build();
     }
 
     User getCurrentUser()

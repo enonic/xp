@@ -120,6 +120,10 @@ module api.content.form.inputtype.principalselector {
             return this.getPropertyArray().getSize();
         }
 
+        static getName(): api.form.InputTypeName {
+            return new api.form.InputTypeName('PrincipalSelector', false);
+        }
+
         giveFocus(): boolean {
             if (this.comboBox.maximumOccurrencesReached()) {
                 return false;
