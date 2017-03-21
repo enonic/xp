@@ -23,6 +23,8 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     private dialogName: string;
 
+    private dialogSubName: string;
+
     private autoUpdateTitle: boolean = true;
 
     private ignoreItemsChanged: boolean;
@@ -53,9 +55,9 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.addClass('dependant-dialog');
 
         this.dialogName = dialogName;
+        this.dialogSubName = dialogSubName;
 
-        this.subTitle = new api.dom.H6El('sub-title')
-            .setHtml(dialogSubName, false);
+        this.subTitle = new api.dom.H6El('sub-title');
         this.appendChildToHeader(this.subTitle);
 
         this.itemList = this.createItemList();
@@ -181,8 +183,8 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.dependantList.addItems(items);
     }
 
-    setSubTitle(text: string) {
-        this.subTitle.setHtml(text);
+    setSubTitle(text?: string) {
+        this.subTitle.setHtml(text || this.dialogSubName, false);
     }
 
     protected updateButtonCount(actionString: string, count: number) {
