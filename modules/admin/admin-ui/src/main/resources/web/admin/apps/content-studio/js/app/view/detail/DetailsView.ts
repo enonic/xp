@@ -14,6 +14,10 @@ import Widget = api.content.Widget;
 import ContentSummaryViewer = api.content.ContentSummaryViewer;
 
 import ContentVersionSetEvent = api.content.event.ActiveContentVersionSetEvent;
+import GetWidgetsByInterfaceRequest = api.content.resource.GetWidgetsByInterfaceRequest;
+import ApplicationEvent = api.application.ApplicationEvent;
+import ApplicationEventType = api.application.ApplicationEventType;
+import AppHelper = api.util.AppHelper;
 
 export class DetailsView extends api.dom.DivEl {
 
@@ -33,6 +37,8 @@ export class DetailsView extends api.dom.DivEl {
     private alreadyFetchedCustomWidgets: boolean;
 
     private sizeChangedListeners: {(): void}[] = [];
+
+    private widgetsUpdateList: {[key: string]: (key: string, type: ApplicationEventType) => void } = {};
 
     public static debug: boolean = false;
 
@@ -56,6 +62,10 @@ export class DetailsView extends api.dom.DivEl {
         this.layout();
 
         this.getCustomWidgetViewsAndUpdateDropdown();
+
+        const handleWidgetsUpdate = (e) => this.handleWidgetsUpdate(e);
+        ApplicationEvent.on(handleWidgetsUpdate);
+        this.onRemoved(() => ApplicationEvent.un(handleWidgetsUpdate));
     }
 
     private subscribeOnEvents() {
@@ -89,10 +99,73 @@ export class DetailsView extends api.dom.DivEl {
         });
     }
 
+    private handleWidgetsUpdate(event: ApplicationEvent) {
+        const isWidgetUpdated = [
+            ApplicationEventType.INSTALLED,
+            ApplicationEventType.UNINSTALLED,
+            ApplicationEventType.STARTED,
+            ApplicationEventType.STOPPED,
+            ApplicationEventType.UPDATED
+        ].indexOf(event.getEventType()) > -1;
+
+        if (isWidgetUpdated) {
+            const key = event.getApplicationKey().getName();
+
+            if (!this.widgetsUpdateList[key]) {
+                this.widgetsUpdateList[key] = AppHelper.debounce((k, type) => this.handleWidgetUpdate(k, type), 1000);
+            }
+            this.widgetsUpdateList[key](key, event.getEventType());
+        }
+    }
+
+    private handleWidgetUpdate(key: string, type: ApplicationEventType) {
+        let widgetView = this.getWidgetByKey(key);
+        const isActive = widgetView && this.activeWidget.getWidgetName() === widgetView.getWidgetName();
+
+        const isRemoved = [
+            ApplicationEventType.UNINSTALLED,
+            ApplicationEventType.STOPPED
+        ].indexOf(type) > -1;
+
+        const isUpdated = !!widgetView;
+
+        const updateView = (useDefault?: boolean) => {
+            this.widgetsSelectionRow.updateWidgetsDropdown(this.widgetViews);
+            if (useDefault) {
+                this.activateDefaultWidget();
+            } else {
+                this.activeWidget.setActive();
+            }
+            this.widgetsSelectionRow.updateState(this.activeWidget);
+        };
+
+        if (isRemoved) {
+            this.removeWidgetByKey(key);
+
+            updateView(isActive);
+
+        } else if (isUpdated) {
+            this.fetchWidgetByKey(key).then((widget: Widget) => {
+                widgetView = WidgetView.create().setName(widget.getDisplayName()).setDetailsView(this).setWidget(widget).build();
+                this.updateWidget(widgetView);
+
+                updateView();
+            });
+        } else { // newly installed
+            this.fetchWidgetByKey(key).then((widget: Widget) => {
+                widgetView = WidgetView.create().setName(widget.getDisplayName()).setDetailsView(this).setWidget(widget).build();
+                this.addWidget(widgetView);
+
+                updateView();
+            });
+
+        }
+    }
+
     getCustomWidgetViewsAndUpdateDropdown(): wemQ.Promise<void> {
         let deferred = wemQ.defer<void>();
         if (!this.alreadyFetchedCustomWidgets) {
-            this.getAndInitCustomWidgetViews().done(() => {
+            this.fetchAndInitCustomWidgetViews().then(() => {
                 this.widgetsSelectionRow.updateWidgetsDropdown(this.widgetViews);
                 // this.updateActiveWidget();
                 this.alreadyFetchedCustomWidgets = true;
@@ -117,28 +190,6 @@ export class DetailsView extends api.dom.DivEl {
     getActiveWidget(): WidgetView {
         return this.activeWidget;
     }
-
-    /*setActiveWidgetWithName(value: string) {
-     if (this.activeWidget && value === this.activeWidget.getWidgetName()) {
-     return;
-     }
-
-     if (this.activeWidget) {
-     this.activeWidget.setInactive();
-     }
-
-     var widgetFound = false;
-     this.widgetViews.forEach((widgetView: WidgetView) => {
-     if (widgetView.getWidgetName() === value) {
-     widgetView.setActive();
-     widgetFound = true;
-     }
-     });
-
-     if (!widgetFound) {
-     this.activateDefaultWidget();
-     }
-     }*/
 
     resetActiveWidget() {
         this.activeWidget = null;
@@ -249,21 +300,36 @@ export class DetailsView extends api.dom.DivEl {
         this.addWidgets([versionsWidgetView, dependenciesWidgetView]);
     }
 
-    private getAndInitCustomWidgetViews(): wemQ.Promise<any> {
-        let getWidgetsByInterfaceRequest = new api.content.resource.GetWidgetsByInterfaceRequest(this.getWidgetsInterfaceNames());
+    private fetchCustomWidgetViews(): wemQ.Promise<Widget[]> {
+        let getWidgetsByInterfaceRequest = new GetWidgetsByInterfaceRequest(this.getWidgetsInterfaceNames());
 
-        return getWidgetsByInterfaceRequest.sendAndParse().then((widgets: Widget[]) => {
+        return getWidgetsByInterfaceRequest.sendAndParse();
+    }
+
+    private fetchAndInitCustomWidgetViews(): wemQ.Promise<any> {
+        return this.fetchCustomWidgetViews().then((widgets: Widget[]) => {
             widgets.forEach((widget) => {
                 let widgetView = WidgetView.create().setName(widget.getDisplayName()).setDetailsView(this).setWidget(widget).build();
-
                 this.addWidget(widgetView);
             });
         }).catch((reason: any) => {
-            if (reason && reason.message) {
-                api.notify.showError(reason.message);
-            } else {
-                api.notify.showError('Could not load widget descriptors.');
+            const msg = reason ? reason.message : 'Could not load widget descriptors.';
+            api.notify.showError(msg);
+        });
+    }
+
+    private fetchWidgetByKey(key: string): wemQ.Promise<Widget>  {
+        return this.fetchCustomWidgetViews().then((widgets: Widget[]) => {
+            for (let i = 0; i < widgets.length; i++) {
+                if (widgets[i].getWidgetDescriptorKey().getApplicationKey().getName() === key) {
+                    return widgets[i];
+                }
             }
+            return null;
+        }).catch((reason: any) => {
+            const msg = reason ? reason.message : 'Could not load widget descriptors.';
+            api.notify.showError(msg);
+            return null;
         });
     }
 
@@ -278,6 +344,15 @@ export class DetailsView extends api.dom.DivEl {
         }
     }
 
+    private getWidgetByKey(key: string): WidgetView {
+        for (let i = 0; i < this.widgetViews.length; i++) {
+            if (this.widgetViews[i].getWidgetKey() === key) {
+                return this.widgetViews[i];
+            }
+        }
+        return null;
+    }
+
     private addWidget(widget: WidgetView) {
         this.widgetViews.push(widget);
         this.detailsContainer.appendChild(widget);
@@ -287,6 +362,24 @@ export class DetailsView extends api.dom.DivEl {
         widgetViews.forEach((widget) => {
             this.addWidget(widget);
         });
+    }
+
+    private removeWidgetByKey(key: string) {
+        const widget = this.getWidgetByKey(key);
+        if (widget) {
+            this.widgetViews = this.widgetViews.filter((view) => view !== widget);
+            widget.remove();
+        }
+    }
+
+    private updateWidget(widget: WidgetView) {
+        for (let i = 0; i < this.widgetViews.length; i++) {
+            if (this.widgetViews[i].getWidgetName() === widget.getWidgetName()) {
+                this.widgetViews[i].replaceWith(widget);
+                this.widgetViews[i] = widget;
+                break;
+            }
+        }
     }
 
     updateViewer() {
