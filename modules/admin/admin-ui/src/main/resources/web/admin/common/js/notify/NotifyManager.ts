@@ -4,7 +4,7 @@ module api.notify {
 
         private static instance: NotifyManager;
 
-        private queueSize: number = 3;
+        private notificationLimit: number = 3;
 
         private queue: NotificationMessage[] = [];
 
@@ -50,26 +50,16 @@ module api.notify {
             const opts = NotifyOpts.buildOpts(message);
 
             const limitReached = this.queue.length > 0
-                                 || this.el.getWrapper().getChildren().length >= this.queueSize;
+                                 || this.el.getWrapper().getChildren().length >= this.notificationLimit;
             if (limitReached) {
-                // create
-                // place to queue
-                // subscribe to event -> render
-                // unsubscribe on shown
-                // notify on remove
-                const notificationEl = this.createNotification(opts);
-                this.renderNotification(notificationEl, opts.autoHide);
+                this.queue.push(this.createNotification(opts));
             } else {
-                // create
-                // render
-                // notify on remove
-                const notificationEl = this.createNotification(opts);
-                this.renderNotification(notificationEl, opts.autoHide);
+                this.renderNotification(this.createNotification(opts));
             }
         }
 
         private createNotification(opts: NotifyOpts): NotificationMessage {
-            const notificationEl = new NotificationMessage(opts.message);
+            const notificationEl = new NotificationMessage(opts.message, opts.autoHide);
             if (opts.type) {
                 notificationEl.addClass(opts.type);
             }
@@ -80,7 +70,7 @@ module api.notify {
             return notificationEl;
         }
 
-        private renderNotification(notification: NotificationMessage, autoHide: boolean): NotificationMessage {
+        private renderNotification(notification: NotificationMessage): NotificationMessage {
             this.el.getWrapper().appendChild(notification);
             notification.hide();
 
@@ -89,7 +79,7 @@ module api.notify {
                 },
                 this.slideDuration,
                 () => {
-                    if (autoHide) {
+                    if (notification.isAutoHide()) {
                         this.timers[notification.getEl().getId()] = {
                             remainingTime: this.lifetime
                         };
@@ -124,6 +114,15 @@ module api.notify {
                 opts.listeners.forEach((listener)=> {
                     el.onClicked(listener);
                 });
+            }
+
+            el.onRemoved(() => this.handleNotificationRemoved());
+        }
+
+        private handleNotificationRemoved() {
+            if (this.queue.length > 0) {
+                const notification = this.queue.shift();
+                this.renderNotification(notification);
             }
         }
 
