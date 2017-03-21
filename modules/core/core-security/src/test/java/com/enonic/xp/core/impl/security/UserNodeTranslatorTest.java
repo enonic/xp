@@ -28,22 +28,23 @@ public class UserNodeTranslatorTest
         throws Exception
     {
         final User user = User.create().
-            displayName( "displayname" ).
+            displayName( "Displayname" ).
             email( "rmy@enonic.com" ).
-            login( "login" ).
+            login( "Login" ).
             authenticationHash( "password" ).
-            key( PrincipalKey.ofUser( UserStoreKey.system(), "rmy" ) ).
+            key( PrincipalKey.ofUser( UserStoreKey.system(), "Rmy" ) ).
             modifiedTime( Instant.now( clock ) ).
             build();
 
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( user );
 
-        assertEquals( "rmy", createNodeParams.getName() );
+        assertEquals( NodeId.from( "user:" + UserStoreKey.system() + ":rmy" ), createNodeParams.getNodeId() );
+        assertEquals( "Rmy", createNodeParams.getName() );
 
         final PropertyTree rootDataSet = createNodeParams.getData();
         assertEquals( UserStoreKey.system().toString(), rootDataSet.getString( PrincipalPropertyNames.USER_STORE_KEY ) );
         assertEquals( PrincipalType.USER.toString(), rootDataSet.getString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY ) );
-        assertEquals( "displayname", rootDataSet.getString( PrincipalPropertyNames.DISPLAY_NAME_KEY ) );
+        assertEquals( "Displayname", rootDataSet.getString( PrincipalPropertyNames.DISPLAY_NAME_KEY ) );
         assertNotNull( rootDataSet );
         assertEquals( 7, rootDataSet.getTotalSize() );
     }
