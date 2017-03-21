@@ -27,7 +27,7 @@ final class JettyService
 
     protected JettyConfig config;
 
-    protected EventDispatcher eventDispatcher;
+    // protected EventDispatcher eventDispatcher;
 
     protected Servlet dispatcherServlet;
 
@@ -85,14 +85,14 @@ final class JettyService
         instrumentedHandler.setHandler( this.context );
 
         this.server.setHandler( instrumentedHandler );
-        this.eventDispatcher.setActive( true );
+        // this.eventDispatcher.setActive( true );
         this.server.start();
     }
 
     private void stopJetty()
         throws Exception
     {
-        this.eventDispatcher.setActive( false );
+        // this.eventDispatcher.setActive( false );
 
         this.server.stop();
         this.server = null;

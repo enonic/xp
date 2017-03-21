@@ -1,0 +1,9 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
+dependencies {
+    compile project( ':web:web-api' )
+}
+
+bundle {
+    instruction 'Bundle-Name', 'Enonic XP Web - Dispatch'
+}

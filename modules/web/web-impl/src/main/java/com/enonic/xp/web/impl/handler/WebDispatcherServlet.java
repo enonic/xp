@@ -35,7 +35,7 @@ import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketContextFactory;
 
 @Component(immediate = true, service = Servlet.class, property = {"osgi.http.whiteboard.servlet.pattern=/",
-    "osgi.http.whiteboard.servlet.pattern=/*"})
+    "osgi.http.whiteboard.servlet.pattern=/*", "service.ranking:Integer=-100"})
 public final class WebDispatcherServlet
     extends HttpServlet
 {

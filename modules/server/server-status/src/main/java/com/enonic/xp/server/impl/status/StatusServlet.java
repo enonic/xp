@@ -28,7 +28,7 @@ import com.google.common.net.MediaType;
 import com.enonic.xp.status.StatusReporter;
 
 @Component(immediate = true, service = Servlet.class, property = {"osgi.http.whiteboard.servlet.pattern=/status",
-    "osgi.http.whiteboard.servlet.pattern=/status/*"})
+    "osgi.http.whiteboard.servlet.pattern=/status/*", "service.ranking:Integer=200"})
 public final class StatusServlet
     extends HttpServlet
 {

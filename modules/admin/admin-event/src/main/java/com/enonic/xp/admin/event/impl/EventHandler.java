@@ -24,7 +24,7 @@ import com.enonic.xp.web.websocket.EndpointFactory;
 import com.enonic.xp.web.websocket.WebSocketService;
 
 @Component(immediate = true, service = {Servlet.class, WebSocketManager.class},
-    property = {"osgi.http.whiteboard.servlet.pattern=/admin/event"})
+    property = {"osgi.http.whiteboard.servlet.pattern=/admin/event", "service.ranking:Integer=100"})
 public final class EventHandler
     extends HttpServlet
     implements WebSocketManager, EndpointFactory
