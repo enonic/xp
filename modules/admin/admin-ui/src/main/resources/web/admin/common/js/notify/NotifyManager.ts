@@ -4,11 +4,13 @@ module api.notify {
 
         private static instance: NotifyManager;
 
-        private space: number = 3;
+        private queueSize: number = 3;
+
+        private queue: NotificationMessage[] = [];
 
         private lifetime: number = 5000;
 
-        private slideDuration: number = 1000;
+        private slideDuration: number = 500;
 
         private timers: Object = {};
 
@@ -24,29 +26,79 @@ module api.notify {
             this.el.getEl().setBottomPx(0);
         }
 
-        showFeedback(message: string, autoHide: boolean = true): string {
+        showFeedback(message: string, autoHide: boolean = true) {
             let feedback = Message.newInfo(message, autoHide);
-            return this.notify(feedback);
+            this.notify(feedback);
         }
 
-        showSuccess(message: string, autoHide: boolean = true): string {
+        showSuccess(message: string, autoHide: boolean = true) {
             let feedback = Message.newSuccess(message, autoHide);
-            return this.notify(feedback);
+            this.notify(feedback);
         }
 
-        showError(message: string, autoHide: boolean = true): string {
+        showError(message: string, autoHide: boolean = true) {
             let error = Message.newError(message, autoHide);
-            return this.notify(error);
+            this.notify(error);
         }
 
-        showWarning(message: string, autoHide: boolean = true): string {
+        showWarning(message: string, autoHide: boolean = true) {
             let warning = Message.newWarning(message, autoHide);
-            return this.notify(warning);
+            this.notify(warning);
         }
 
-        notify(message: Message): string {
-            let opts = NotifyOpts.buildOpts(message);
-            return this.doNotify(opts);
+        notify(message: Message) {
+            const opts = NotifyOpts.buildOpts(message);
+
+            const limitReached = this.queue.length > 0
+                                 || this.el.getWrapper().getChildren().length >= this.queueSize;
+            if (limitReached) {
+                // create
+                // place to queue
+                // subscribe to event -> render
+                // unsubscribe on shown
+                // notify on remove
+                const notificationEl = this.createNotification(opts);
+                this.renderNotification(notificationEl, opts.autoHide);
+            } else {
+                // create
+                // render
+                // notify on remove
+                const notificationEl = this.createNotification(opts);
+                this.renderNotification(notificationEl, opts.autoHide);
+            }
+        }
+
+        private createNotification(opts: NotifyOpts): NotificationMessage {
+            const notificationEl = new NotificationMessage(opts.message);
+            if (opts.type) {
+                notificationEl.addClass(opts.type);
+            }
+
+            this.registry[notificationEl.getEl().getId()] = notificationEl;
+            this.setListeners(notificationEl, opts);
+
+            return notificationEl;
+        }
+
+        private renderNotification(notification: NotificationMessage, autoHide: boolean): NotificationMessage {
+            this.el.getWrapper().appendChild(notification);
+            notification.hide();
+
+            wemjq(notification.getHTMLElement()).animate({
+                    height: 'toggle'
+                },
+                this.slideDuration,
+                () => {
+                    if (autoHide) {
+                        this.timers[notification.getEl().getId()] = {
+                            remainingTime: this.lifetime
+                        };
+
+                        this.startTimer(notification);
+                    }
+                });
+
+            return notification;
         }
 
         hide(messageId: string) {
@@ -54,28 +106,6 @@ module api.notify {
                 this.remove(this.registry[messageId]);
                 delete this.registry[messageId];
             }
-        }
-
-        private doNotify(opts: NotifyOpts): string {
-
-            let notificationEl = this.renderNotification(opts);
-            this.registry[notificationEl.getEl().getId()] = notificationEl;
-            this.setListeners(notificationEl, opts);
-
-            wemjq(notificationEl.getHTMLElement()).animate({
-                    height: 'toggle'
-                },
-                this.slideDuration,
-                () => {
-                    if (opts.autoHide) {
-                        this.timers[notificationEl.getEl().getId()] = {
-                            remainingTime: this.lifetime
-                        };
-
-                        this.startTimer(notificationEl);
-                    }
-                });
-            return notificationEl.getEl().getId();
         }
 
         private setListeners(el: NotificationMessage, opts: NotifyOpts) {
@@ -138,22 +168,6 @@ module api.notify {
             clearTimeout(timer.id);
             timer.id = null;
             timer.remainingTime -= Date.now() - timer.startTime;
-        }
-
-        private renderNotification(opts: NotifyOpts): NotificationMessage {
-            let style = {};
-
-            // create notification DOM element
-            let notifyDiv = new NotificationMessage(opts.message);
-            this.el.getWrapper().appendChild(notifyDiv);
-            notifyDiv.hide();
-
-            // set notification style
-            if (opts.type) {
-                notifyDiv.addClass(opts.type);
-            }
-
-            return notifyDiv;
         }
 
         static get(): NotifyManager {
