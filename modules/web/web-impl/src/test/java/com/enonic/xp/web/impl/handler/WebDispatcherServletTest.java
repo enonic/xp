@@ -36,6 +36,7 @@ public class WebDispatcherServletTest
         this.handler = new TestWebHandler();
 
         this.servlet = new WebDispatcherServlet();
+        this.servlet.setWebDispatcher( new WebDispatcherImpl() );
         this.servlet.addWebHandler( this.handler );
         this.servlet.setExceptionMapper( new ExceptionMapperImpl() );
         this.servlet.setExceptionRenderer( new ExceptionRendererImpl() );
