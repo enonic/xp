@@ -70,9 +70,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.showScheduleDialogButton = this.addAction(showScheduleAction, false);
         this.showScheduleDialogButton.setTitle('Schedule Publishing');
 
-        let publishAction = new ContentPublishDialogAction();
-        publishAction.onExecuted(this.doPublish.bind(this, false));
-        this.actionButton = this.addAction(publishAction, true);
+        this.setButtonAction(ContentPublishDialogAction, this.doPublish.bind(this, false));
 
         this.lockControls();
     }
@@ -259,28 +257,28 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.showCreateIssueDialog();
     }
 
+    private setButtonAction(dialogActionClass: { new(): api.ui.Action }, listener: (action: api.ui.Action) => wemQ.Promise<any>|void) {
+        if (!!this.actionButton && api.ObjectHelper.iFrameSafeInstanceOf(this.actionButton.getAction(), dialogActionClass)) {
+            return;
+        }
+
+        if (this.actionButton) {
+            this.removeAction(this.actionButton);
+        }
+
+        let newAction = new dialogActionClass();
+        newAction.onExecuted(listener);
+
+        this.actionButton = this.addAction(newAction, true);
+    }
+
     private updateButtonAction() {
-
-        let newAction;
-
         if (this.allPublishable) {
-            if (api.ObjectHelper.iFrameSafeInstanceOf(this.actionButton.getAction(), CreateIssueDialogAction)) {
-                this.removeAction(this.actionButton);
-
-                newAction = new ContentPublishDialogAction();
-                newAction.onExecuted(this.doPublish.bind(this, false));
-
-                this.actionButton = this.addAction(newAction, true);
-            }
+            this.setButtonAction(ContentPublishDialogAction, this.createIssue.bind(this));
+            this.updateDependantsHeader();
         } else {
-            if (api.ObjectHelper.iFrameSafeInstanceOf(this.actionButton.getAction(), ContentPublishDialogAction)) {
-                this.removeAction(this.actionButton);
-
-                newAction = new CreateIssueDialogAction();
-                newAction.onExecuted(this.createIssue.bind(this));
-
-                this.actionButton = this.addAction(newAction, true);
-            }
+            this.setButtonAction(CreateIssueDialogAction, this.doPublish.bind(this, false));
+            this.updateDependantsHeader('Other items that will be added to the Publishing Issue');
         }
     }
 
@@ -334,13 +332,14 @@ export class ContentPublishDialog extends ProgressBarDialog {
     private updateSubTitle(count: number) {
         let allValid = this.areItemsAndDependantsValid();
 
-        let subTitle = count === 0
-            ? 'No items to publish'
-            : allValid ? 'Your changes are ready for publishing'
-                           : 'Invalid item(s) prevent publish';
+        let subTitle = (count === 0) ?
+            'No items to publish' :
+            this.allPublishable ?
+              (allValid ? 'Your changes are ready for publishing' : 'Invalid item(s) prevent publishing') :
+              'Create a new Publishing Issue with selected item(s)';
 
         this.setSubTitle(subTitle);
-        this.toggleClass('invalid', !allValid);
+        this.toggleClass('invalid', !allValid && this.allPublishable);
     }
 
     protected updateButtonCount(actionString: string, count: number) {
