@@ -14,6 +14,7 @@ import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
 import BrowseItem = api.app.browse.BrowseItem;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
+import {CreateIssueDialog} from './CreateIssueDialog';
 
 /**
  * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
@@ -30,6 +31,8 @@ export class ContentPublishDialog extends ProgressBarDialog {
     private allPublishable: boolean;
 
     private scheduleDialog: SchedulePublishDialog;
+
+    private createIssueDialog: CreateIssueDialog;
 
     protected showScheduleDialogButton: api.ui.dialog.DialogButton;
 
@@ -142,7 +145,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
             this.containsInvalid = result.isContainsInvalid();
             this.allPublishable = result.isAllPublishable();
 
-           this.updateButtonAction();
+            this.updateButtonAction();
 
             return this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
                 if (resetDependantItems) { // just opened or first time loading children
@@ -226,8 +229,34 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.addClass('masked');
     }
 
+    private showCreateIssueDialog() {
+        if (!this.createIssueDialog) {
+
+            const idsToPublish = this.getContentToPublishIds();
+
+            this.createIssueDialog =
+                new CreateIssueDialog([].concat(idsToPublish ? idsToPublish : []).concat(this.dependantIds ? this.dependantIds : [])
+                );
+        }
+
+        this.createIssueDialog.onClose(() => {
+            this.removeClass('masked');
+            this.getEl().focus();
+        });
+
+        this.createIssueDialog.onSuccess(() => {
+            this.close();
+        });
+
+        this.addClickIgnoredElement(this.createIssueDialog);
+
+        this.createIssueDialog.open();
+        this.addClass('masked');
+    }
+
     private createIssue() {
         //TODO: implement action
+        this.showCreateIssueDialog();
     }
 
     private updateButtonAction() {
@@ -336,8 +365,12 @@ export class ContentPublishDialog extends ProgressBarDialog {
     }
 
     protected updateShowScheduleDialogButton() {
-        if (this.areSomeItemsOffline()) {
-            this.showScheduleDialogButton.show();
+        if (api.ObjectHelper.iFrameSafeInstanceOf(this.actionButton.getAction(), ContentPublishDialogAction)) {
+            if (this.areSomeItemsOffline()) {
+                this.showScheduleDialogButton.show();
+            } else {
+                this.showScheduleDialogButton.hide();
+            }
         } else {
             this.showScheduleDialogButton.hide();
         }
