@@ -57,7 +57,7 @@ export class ContextWindowController {
         });
 
         componentsView.onHidden((event: api.dom.ElementHiddenEvent) => {
-            this.componentsViewToggler.setActive(false, true);
+            this.componentsViewToggler.removeClass('active');
         });
 
         let liveEditShownHandler = () => {

@@ -56,9 +56,7 @@ module api.app.browse {
                                     (fullSelection.length == 1 && changes.getAdded().length === 1))) {
                     return;
                 }
-                if(currentSelection.length <= 1) {
-                    this.getBrowseItemPanel().getPanelShown().hide();
-                }
+
                 this.getBrowseActions().updateActionsEnabledState(this.getBrowseItemPanel().getItems(), changes)
                     .then(() => {
                         this.getBrowseItemPanel().updateDisplayedPanel();
@@ -90,6 +88,9 @@ module api.app.browse {
                 }
 
                 if (isActive) {
+                    if (this.filterPanel && !this.filterPanelIsHidden()) {
+                        this.hideFilterPanel();
+                    }
                     this.treeGrid.filter(this.treeGrid.getSelectedDataList());
                 } else {
                     this.treeGrid.resetFilter();
@@ -99,6 +100,18 @@ module api.app.browse {
             this.onShown(() => {
                 if (this.treeGrid.isFiltered()) {
                     this.filterPanel.refresh();
+                }
+            });
+
+            api.app.browse.filter.BrowseFilterResetEvent.on((event) => {
+                if (this.treeGrid.getToolbar().getSelectionPanelToggler().isActive()) {
+                    this.treeGrid.getToolbar().getSelectionPanelToggler().removeClass('active');
+                }
+            });
+
+            api.app.browse.filter.BrowseFilterSearchEvent.on((event) => {
+                if (this.treeGrid.getToolbar().getSelectionPanelToggler().isActive()) {
+                    this.treeGrid.getToolbar().getSelectionPanelToggler().removeClass('active');
                 }
             });
         }
