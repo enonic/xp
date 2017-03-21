@@ -116,9 +116,11 @@ public class ResolveSyncWorkCommand
 
     private NodeIds getInitialDiff()
     {
+        final NodeIds.Builder initialDiff = NodeIds.create().add( this.publishRootNode.id() );
+
         if ( !includeChildren && !forceCheckChildren() )
         {
-            return NodeIds.from( this.publishRootNode.id() );
+            return initialDiff.build();
         }
 
         final Stopwatch timer = Stopwatch.createStarted();
@@ -127,11 +129,17 @@ public class ResolveSyncWorkCommand
 
         LOG.debug( "Diff-query result in " + timer.stop() );
 
-        final NodeIds nodeIds = NodeIds.from( nodesWithVersionDifference.getNodesWithDifferences().stream().
+        NodeIds nodeIds = NodeIds.from( nodesWithVersionDifference.getNodesWithDifferences().stream().
             filter( ( nodeId ) -> !this.excludedIds.contains( nodeId ) ).
             collect( Collectors.toSet() ) );
 
-        return this.initialDiffFilter == null ? nodeIds : this.initialDiffFilter.apply( nodeIds );
+        if ( this.initialDiffFilter != null )
+        {
+            nodeIds = this.initialDiffFilter.apply( nodeIds );
+        }
+
+        return initialDiff.addAll( nodeIds ).
+            build();
     }
 
     private boolean forceCheckChildren()
