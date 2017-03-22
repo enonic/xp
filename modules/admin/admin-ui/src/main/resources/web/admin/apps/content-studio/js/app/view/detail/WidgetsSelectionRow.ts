@@ -112,9 +112,12 @@ export class WidgetSelectorDropdown extends Dropdown<WidgetViewOption> {
     }
 
     private isDefaultOptionDisplayValueViewer(object: Object) {
-        if (object && object['id']) {
-            let id = object['id'].toString();
-            return id.indexOf('DropdownHandle') < 0 && id.indexOf('InfoWidgetToggleButton') < 0;
+        if (object && object instanceof HTMLElement) {
+            const elem = <HTMLElement> object;
+            this.getSelectedOptionView().getEl().contains(object);
+            return elem.parentElement.className.indexOf('option-value') > -1
+                   && elem.id.indexOf('InfoWidgetToggleButton') === -1
+                   && elem.id.indexOf('DropdownHandle') === -1;
         }
         return false;
     }
