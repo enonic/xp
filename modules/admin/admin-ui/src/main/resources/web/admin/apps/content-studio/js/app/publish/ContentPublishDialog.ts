@@ -229,12 +229,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
     private showCreateIssueDialog() {
         if (!this.createIssueDialog) {
-
-            const idsToPublish = this.getContentToPublishIds();
-
-            this.createIssueDialog =
-                new CreateIssueDialog([].concat(idsToPublish ? idsToPublish : []).concat(this.dependantIds ? this.dependantIds : [])
-                );
+            this.createIssueDialog = new CreateIssueDialog();
         }
 
         this.createIssueDialog.onClose(() => {
@@ -248,7 +243,11 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
         this.addClickIgnoredElement(this.createIssueDialog);
 
+        const idsToPublish = this.getContentToPublishIds();
+        this.createIssueDialog.setItems([].concat(idsToPublish ? idsToPublish : []).concat(this.dependantIds ? this.dependantIds : []));
+
         this.createIssueDialog.open();
+
         this.addClass('masked');
     }
 
@@ -274,10 +273,10 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
     private updateButtonAction() {
         if (this.allPublishable) {
-            this.setButtonAction(ContentPublishDialogAction, this.createIssue.bind(this));
+            this.setButtonAction(ContentPublishDialogAction, this.doPublish.bind(this));
             this.updateDependantsHeader();
         } else {
-            this.setButtonAction(CreateIssueDialogAction, this.doPublish.bind(this, false));
+            this.setButtonAction(CreateIssueDialogAction, this.createIssue.bind(this, false));
             this.updateDependantsHeader('Other items that will be added to the Publishing Issue');
         }
     }
@@ -333,10 +332,10 @@ export class ContentPublishDialog extends ProgressBarDialog {
         let allValid = this.areItemsAndDependantsValid();
 
         let subTitle = (count === 0) ?
-            'No items to publish' :
-            this.allPublishable ?
-              (allValid ? 'Your changes are ready for publishing' : 'Invalid item(s) prevent publishing') :
-              'Create a new Publishing Issue with selected item(s)';
+                       'No items to publish' :
+                       this.allPublishable ?
+                       (allValid ? 'Your changes are ready for publishing' : 'Invalid item(s) prevent publishing') :
+                       'Create a new Publishing Issue with selected item(s)';
 
         this.setSubTitle(subTitle);
         this.toggleClass('invalid', !allValid && this.allPublishable);
