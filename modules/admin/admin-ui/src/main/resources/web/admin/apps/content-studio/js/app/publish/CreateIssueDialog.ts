@@ -35,10 +35,8 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
 
     private onSuccessCallback: () => void;
 
-    constructor(items: ContentId[]) {
+    constructor() {
         super('Create Issue');
-
-        this.items = items;
 
         this.getEl().addClass('create-issue-dialog');
 
@@ -50,6 +48,11 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
 
         this.addCancelButtonToBottom('< Back');
 
+    }
+
+    public setItems(items: ContentId[]) {
+        this.items = items;
+        (<CreateIssueAction>this.confirmButton.getAction()).updateLabel(this.items ? this.items.length : 0);
     }
 
     show() {
@@ -143,7 +146,7 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
             createIssueRequest.sendAndParse().then(() => {
                 this.close();
                 this.onSuccessCallback();
-                api.notify.showSuccess('Issue was created');
+                api.notify.showSuccess('New issue created successfully');
             }).catch((reason) => {
                 if (reason && reason.message) {
                     api.notify.showError(reason.message);
@@ -184,11 +187,16 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
 
 export class CreateIssueAction extends api.ui.Action {
     constructor(items: ContentId[]) {
-        let label = 'Create Issue... ';
-        if (items) {
-            label += '(' + items.length + ')';
-        }
-        super(label);
+        super();
+        this.updateLabel(items ? items.length : 0);
         this.setIconClass('create-issue-action');
+    }
+
+    public updateLabel(count: number) {
+        let label = 'Create Issue... ';
+        if (count) {
+            label += '(' + count + ')';
+        }
+        this.setLabel(label);
     }
 }
