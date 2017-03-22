@@ -12,8 +12,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.security.PrincipalKeys;
-import com.enonic.xp.security.Principals;
-import com.enonic.xp.security.Role;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
@@ -61,18 +59,8 @@ public final class RoleContentProcessor
     private boolean hasContentAdminRole( final User user )
     {
         return runAsAdmin( () -> {
-            PrincipalKeys principalKeys = securityService.getMemberships( user.getKey() );
-            final Principals principals = securityService.getPrincipals( principalKeys );
-
-            for ( Role role : principals.getRoles() )
-            {
-                if ( role.getKey().equals( RoleKeys.ADMIN ) || role.getKey().equals( RoleKeys.CONTENT_MANAGER_ADMIN ) )
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            PrincipalKeys principalKeys = securityService.getAllMemberships( user.getKey() );
+            return principalKeys.contains( RoleKeys.ADMIN ) || principalKeys.contains( RoleKeys.CONTENT_MANAGER_ADMIN );
         } );
 
     }

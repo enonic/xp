@@ -708,6 +708,58 @@ public class SecurityServiceImplTest
     }
 
     @Test
+    public void testGetAllMemberships()
+        throws Exception
+    {
+        runAsAdmin( () -> {
+            final PrincipalKey userKey = PrincipalKey.ofUser( SYSTEM, "user1" );
+            final CreateUserParams createUser = CreateUserParams.create().
+                userKey( userKey ).
+                displayName( "User 1" ).
+                email( "user1@enonic.com" ).
+                login( "user1" ).
+                password( "123456" ).
+                build();
+
+            final PrincipalKey groupKey1 = PrincipalKey.ofGroup( SYSTEM, "group-a" );
+            final CreateGroupParams createGroup1 = CreateGroupParams.create().
+                groupKey( groupKey1 ).
+                displayName( "Group A" ).
+                build();
+
+            final PrincipalKey groupKey2 = PrincipalKey.ofGroup( SYSTEM, "group-b" );
+            final CreateGroupParams createGroup2 = CreateGroupParams.create().
+                groupKey( groupKey2 ).
+                displayName( "Group B" ).
+                build();
+
+            final PrincipalKey roleKey1 = PrincipalKey.ofRole( "role-a" );
+            final CreateRoleParams createRole = CreateRoleParams.create().
+                roleKey( roleKey1 ).
+                displayName( "Role A" ).
+                description( "Group A Description" ).
+                build();
+
+            securityService.createUser( createUser );
+            securityService.createGroup( createGroup1 );
+            securityService.createGroup( createGroup2 );
+            securityService.createRole( createRole );
+            securityService.addRelationship( PrincipalRelationship.from( groupKey1 ).to( userKey ) );
+            securityService.addRelationship( PrincipalRelationship.from( groupKey2 ).to( groupKey1 ) );
+            securityService.addRelationship( PrincipalRelationship.from( roleKey1 ).to( groupKey2 ) );
+
+            refresh();
+
+            final PrincipalKeys memberships = securityService.getAllMemberships( userKey );
+
+            assertTrue( memberships.contains( groupKey1 ) );
+            assertTrue( memberships.contains( groupKey2 ) );
+            assertTrue( memberships.contains( roleKey1 ) );
+            assertEquals( 3, memberships.getSize() );
+        } );
+    }
+
+    @Test
     public void testCreateUserStore()
         throws Exception
     {
