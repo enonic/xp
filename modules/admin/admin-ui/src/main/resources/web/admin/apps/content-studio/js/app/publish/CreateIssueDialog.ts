@@ -46,7 +46,7 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
 
         this.initFormView();
 
-        this.addCancelButtonToBottom('< Back');
+        this.addCancelButtonToBottom('Back');
 
     }
 
@@ -56,11 +56,12 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
     }
 
     show() {
-        this.reset();
         this.displayValidationErrors(false);
 
         api.dom.Body.get().appendChild(this);
         super.show();
+
+        this.title.giveFocus();
     }
 
     close() {
@@ -155,7 +156,7 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
         }
     }
 
-    private reset() {
+    public reset() {
         this.title.setValue('', true);
         this.description.setValue('', true);
         this.selector.setValue('', true);
@@ -193,7 +194,7 @@ export class CreateIssueAction extends api.ui.Action {
     }
 
     public updateLabel(count: number) {
-        let label = 'Create Issue... ';
+        let label = 'Create Issue ';
         if (count) {
             label += '(' + count + ')';
         }

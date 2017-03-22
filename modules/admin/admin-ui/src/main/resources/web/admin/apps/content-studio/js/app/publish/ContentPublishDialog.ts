@@ -100,6 +100,10 @@ export class ContentPublishDialog extends ProgressBarDialog {
     open() {
         this.excludedIds = [];
 
+        if (this.createIssueDialog) {
+            this.createIssueDialog.reset();
+        }
+
         this.reloadPublishDependencies(true).done();
 
         super.open();
