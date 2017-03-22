@@ -14,6 +14,7 @@ import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
 import BrowseItem = api.app.browse.BrowseItem;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
+import {CreateIssueDialog} from './CreateIssueDialog';
 
 /**
  * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
@@ -30,6 +31,8 @@ export class ContentPublishDialog extends ProgressBarDialog {
     private allPublishable: boolean;
 
     private scheduleDialog: SchedulePublishDialog;
+
+    private createIssueDialog: CreateIssueDialog;
 
     protected showScheduleDialogButton: api.ui.dialog.DialogButton;
 
@@ -140,7 +143,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
             this.containsInvalid = result.isContainsInvalid();
             this.allPublishable = result.isAllPublishable();
 
-           this.updateButtonAction();
+            this.updateButtonAction();
 
             return this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
                 if (resetDependantItems) { // just opened or first time loading children
@@ -224,8 +227,33 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.addClass('masked');
     }
 
+    private showCreateIssueDialog() {
+        if (!this.createIssueDialog) {
+            this.createIssueDialog = new CreateIssueDialog();
+        }
+
+        this.createIssueDialog.onClose(() => {
+            this.removeClass('masked');
+            this.getEl().focus();
+        });
+
+        this.createIssueDialog.onSuccess(() => {
+            this.close();
+        });
+
+        this.addClickIgnoredElement(this.createIssueDialog);
+
+        const idsToPublish = this.getContentToPublishIds();
+        this.createIssueDialog.setItems([].concat(idsToPublish ? idsToPublish : []).concat(this.dependantIds ? this.dependantIds : []));
+
+        this.createIssueDialog.open();
+
+        this.addClass('masked');
+    }
+
     private createIssue() {
         //TODO: implement action
+        this.showCreateIssueDialog();
     }
 
     private setButtonAction(dialogActionClass: { new(): api.ui.Action }, listener: (action: api.ui.Action) => wemQ.Promise<any>|void) {
@@ -245,10 +273,10 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
     private updateButtonAction() {
         if (this.allPublishable) {
-            this.setButtonAction(ContentPublishDialogAction, this.createIssue.bind(this));
+            this.setButtonAction(ContentPublishDialogAction, this.doPublish.bind(this));
             this.updateDependantsHeader();
         } else {
-            this.setButtonAction(CreateIssueDialogAction, this.doPublish.bind(this, false));
+            this.setButtonAction(CreateIssueDialogAction, this.createIssue.bind(this, false));
             this.updateDependantsHeader('Other items that will be added to the Publishing Issue');
         }
     }
@@ -304,10 +332,10 @@ export class ContentPublishDialog extends ProgressBarDialog {
         let allValid = this.areItemsAndDependantsValid();
 
         let subTitle = (count === 0) ?
-            'No items to publish' :
-            this.allPublishable ?
-              (allValid ? 'Your changes are ready for publishing' : 'Invalid item(s) prevent publishing') :
-              'Create a new Publishing Issue with selected item(s)';
+                       'No items to publish' :
+                       this.allPublishable ?
+                       (allValid ? 'Your changes are ready for publishing' : 'Invalid item(s) prevent publishing') :
+                       'Create a new Publishing Issue with selected item(s)';
 
         this.setSubTitle(subTitle);
         this.toggleClass('invalid', !allValid && this.allPublishable);
@@ -335,8 +363,12 @@ export class ContentPublishDialog extends ProgressBarDialog {
     }
 
     protected updateShowScheduleDialogButton() {
-        if (this.areSomeItemsOffline()) {
-            this.showScheduleDialogButton.show();
+        if (api.ObjectHelper.iFrameSafeInstanceOf(this.actionButton.getAction(), ContentPublishDialogAction)) {
+            if (this.areSomeItemsOffline()) {
+                this.showScheduleDialogButton.show();
+            } else {
+                this.showScheduleDialogButton.hide();
+            }
         } else {
             this.showScheduleDialogButton.hide();
         }

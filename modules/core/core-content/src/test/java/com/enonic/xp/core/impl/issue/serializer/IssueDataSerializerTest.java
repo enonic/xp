@@ -34,7 +34,6 @@ public class IssueDataSerializerTest
         assertEquals( "title", data.getString( TITLE ) );
         assertEquals( "descr", data.getString( DESCRIPTION ) );
         assertEquals( "Open", data.getString( STATUS ) );
-        assertEquals( "user:myStore:me", data.getString( CREATOR ) );
         assertEquals( "user:myStore:approver", data.getStrings( APPROVERS ).iterator().next() );
         assertEquals( "content-id", data.getStrings( ITEMS ).iterator().next() );
     }

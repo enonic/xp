@@ -2,9 +2,13 @@ package com.enonic.xp.issue;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
 import org.codehaus.jparsec.util.Lists;
 
+import com.google.common.collect.Sets;
+
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.name.NamePrettyfier;
@@ -118,6 +122,10 @@ public class Issue
         return new Builder();
     }
 
+    public static Builder create( final Issue source ) {
+        return new Builder(source);
+    }
+
     public static class Builder
     {
         private IssueId id;
@@ -138,15 +146,30 @@ public class Issue
 
         private PrincipalKey modifier;
 
-        private List<PrincipalKey> approverIds;
+        private Set<PrincipalKey> approverIds;
 
-        private List<ContentId> itemIds;
+        private Set<ContentId> itemIds;
 
         public Builder()
         {
-            this.approverIds = Lists.arrayList();
-            this.itemIds = Lists.arrayList();
+            this.approverIds = Sets.newHashSet();
+            this.itemIds = Sets.newHashSet();
             this.issueStatus = IssueStatus.Open;
+        }
+
+        protected Builder( final Issue source )
+        {
+            this.id = source.id;
+            this.title = source.title;
+            this.name = source.name;
+            this.description = source.description;
+            this.createdTime = source.createdTime;
+            this.modifiedTime = source.modifiedTime;
+            this.issueStatus = source.issueStatus;
+            this.creator = source.creator;
+            this.modifier = source.modifier;
+            this.approverIds = source.approverIds != null ? source.approverIds.getSet() : Sets.newHashSet();
+            this.itemIds = source.itemIds != null ? source.itemIds.getSet() : Sets.newHashSet();
         }
 
         public Builder id( final IssueId id )
