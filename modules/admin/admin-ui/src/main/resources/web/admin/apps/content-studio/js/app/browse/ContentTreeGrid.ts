@@ -1,9 +1,6 @@
 import '../../api.ts';
 import {SortContentEvent} from './SortContentEvent';
 import {ContentTreeGridActions} from './action/ContentTreeGridActions';
-import {ContentBrowseSearchEvent} from './filter/ContentBrowseSearchEvent';
-import {ContentBrowseResetEvent} from './filter/ContentBrowseResetEvent';
-import {ContentBrowseRefreshEvent} from './filter/ContentBrowseRefreshEvent';
 import {TreeNodesOfContentPath} from './TreeNodesOfContentPath';
 import {TreeNodeParentOfContent} from './TreeNodeParentOfContent';
 import {ContentRowFormatter} from './ContentRowFormatter';
@@ -43,6 +40,9 @@ import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 import ContentIds = api.content.ContentIds;
 import ContentId = api.content.ContentId;
 import DataChangedEvent = api.ui.treegrid.DataChangedEvent;
+import BrowseFilterResetEvent = api.app.browse.filter.BrowseFilterResetEvent;
+import BrowseFilterRefreshEvent = api.app.browse.filter.BrowseFilterRefreshEvent;
+import BrowseFilterSearchEvent = api.app.browse.filter.BrowseFilterSearchEvent;
 
 export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
@@ -120,7 +120,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                 }
             } else {
                 this.getGrid().resizeCanvas();
-                this.highlightCurrentNode(true);
+                this.highlightCurrentNode();
             }
             // re-set the selection to update selected rows presentation
         };
@@ -174,11 +174,11 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         /*
          * Filter (search) events.
          */
-        ContentBrowseSearchEvent.on((event) => {
-            let contentQueryResult = <ContentQueryResult<ContentSummary,ContentSummaryJson>>event.getContentQueryResult();
+        BrowseFilterSearchEvent.on((event) => {
+            let contentQueryResult = <ContentQueryResult<ContentSummary,ContentSummaryJson>>event.getData().getContentQueryResult();
             let contentSummaries = contentQueryResult.getContents();
             let compareRequest = CompareContentRequest.fromContentSummaries(contentSummaries);
-            this.filterQuery = event.getContentQuery();
+            this.filterQuery = event.getData().getContentQuery();
             compareRequest.sendAndParse().then((compareResults: CompareContentResults) => {
                 let contents: ContentSummaryAndCompareStatus[] = ContentSummaryAndCompareStatusFetcher.updateCompareStatus(contentSummaries,
                     compareResults);
@@ -197,10 +197,10 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
             }).done();
         });
 
-        ContentBrowseResetEvent.on((event) => {
+        BrowseFilterResetEvent.on((event) => {
             this.resetFilter();
         });
-        ContentBrowseRefreshEvent.on((event) => {
+        BrowseFilterRefreshEvent.on((event) => {
             this.notifyLoaded();
         });
         ContentVersionSetEvent.on((event: ContentVersionSetEvent) => {

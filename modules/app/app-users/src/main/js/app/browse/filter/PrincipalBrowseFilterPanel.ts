@@ -1,26 +1,17 @@
 import '../../../api.ts';
-import {PrincipalBrowseResetEvent} from './PrincipalBrowseResetEvent';
-import {PrincipalBrowseSearchEvent} from './PrincipalBrowseSearchEvent';
 
 import AggregationGroupView = api.aggregation.AggregationGroupView;
 import SearchInputValues = api.query.SearchInputValues;
 import Principal = api.security.Principal;
 import FindPrincipalsRequest = api.security.FindPrincipalsRequest;
 import PrincipalType = api.security.PrincipalType;
+import BrowseFilterResetEvent = api.app.browse.filter.BrowseFilterResetEvent;
+import BrowseFilterSearchEvent = api.app.browse.filter.BrowseFilterSearchEvent;
 
 export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel {
 
     constructor() {
-
-        super(null);
-
-        this.onReset(()=> {
-            this.resetFacets();
-        });
-
-        this.onShown(() => {
-            this.refresh();
-        });
+        super();
 
         this.initHitsCounter();
     }
@@ -33,11 +24,11 @@ export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilt
         this.searchFacets();
     }
 
-    private resetFacets(supressEvent?: boolean) {
+    protected resetFacets(supressEvent?: boolean, doResetAll?: boolean) {
         this.searchDataAndHandleResponse('', false);
 
         if (!supressEvent) { // then fire usual reset event with content grid reloading
-            new PrincipalBrowseResetEvent().fire();
+            new BrowseFilterResetEvent().fire();
         }
     }
 
@@ -66,7 +57,7 @@ export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilt
 
             let principals = result.getPrincipals();
             if (fireEvent) {
-                new PrincipalBrowseSearchEvent(principals).fire();
+                new BrowseFilterSearchEvent(principals).fire();
             }
             this.updateHitsCounter(principals ? principals.length : 0, api.util.StringHelper.isBlank(searchString));
         }).catch((reason: any) => {
