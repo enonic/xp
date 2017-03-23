@@ -14,7 +14,6 @@ module api.ui.selector {
     import KeyBindings = api.ui.KeyBindings;
 
     import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
-    import TreeGridToolbarActions = api.ui.treegrid.actions.TreeGridToolbarActions;
     import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
     import AppHelper = api.util.AppHelper;
     import DataChangedEvent = api.ui.treegrid.DataChangedEvent;

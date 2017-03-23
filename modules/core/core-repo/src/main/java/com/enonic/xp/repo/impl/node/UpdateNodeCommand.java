@@ -46,11 +46,22 @@ public final class UpdateNodeCommand
 
     private Node doExecute()
     {
-        final Node persistedNode = doGetById( params.getId() );
-
-        if ( persistedNode == null )
+        final Node persistedNode;
+        if ( params.getId() != null )
         {
-            throw new NodeNotFoundException( "Cannot update node with id '" + params.getId() + "', node not found" );
+            persistedNode = doGetById( params.getId() );
+            if ( persistedNode == null )
+            {
+                throw new NodeNotFoundException( "Cannot update node with id '" + params.getId() + "', node not found" );
+            }
+        }
+        else
+        {
+            persistedNode = doGetByPath( params.getPath() );
+            if ( persistedNode == null )
+            {
+                throw new NodeNotFoundException( "Cannot update node with path '" + params.getPath() + "', node not found" );
+            }
         }
 
         requireContextUserPermissionOrAdmin( Permission.MODIFY, persistedNode );

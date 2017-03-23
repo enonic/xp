@@ -15,7 +15,6 @@ module api.ui.treegrid {
     import KeyBindings = api.ui.KeyBindings;
 
     import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
-    import TreeGridToolbarActions = api.ui.treegrid.actions.TreeGridToolbarActions;
     import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
     import AppHelper = api.util.AppHelper;
 
@@ -140,7 +139,7 @@ module api.ui.treegrid {
 
         private initToolbar(showToolbar: boolean) {
             if (showToolbar) {
-                this.toolbar = new TreeGridToolbar(new TreeGridToolbarActions(this), this);
+                this.toolbar = new TreeGridToolbar(this);
                 this.appendChild(this.toolbar);
                 // make sure it won't left from the cloned grid
                 this.removeClass('no-toolbar');
@@ -638,7 +637,7 @@ module api.ui.treegrid {
             return wemjq(cell).closest('.slick-row');
         }
 
-        protected highlightCurrentNode(silent: boolean = false) {
+        protected highlightCurrentNode() {
             if (!this.highlightedNode) {
                 return;
             }
@@ -1494,6 +1493,10 @@ module api.ui.treegrid {
             });
 
             return nonEmptyNodes.length === selectedNodes.length;
+        }
+
+        isAnySelected(): boolean {
+            return this.grid.isAnySelected();
         }
 
         protected updateExpanded() {

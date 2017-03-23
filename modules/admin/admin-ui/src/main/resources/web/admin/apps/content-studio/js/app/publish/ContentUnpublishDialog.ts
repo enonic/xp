@@ -41,6 +41,7 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
     }
 
     open() {
+        this.setSubTitle();
         this.reloadUnpublishDependencies();
 
         super.open();

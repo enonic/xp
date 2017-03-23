@@ -104,7 +104,7 @@ export class WidgetView extends api.dom.DivEl {
         let content = this.detailsView.getItem();
         let promises = [];
 
-        if (this.widgetShouldBeUpdated(force)) {
+        if (this.isActive() && this.widgetShouldBeUpdated(force)) {
             this.detailsView.showLoadMask();
             this.content = content;
 
@@ -150,6 +150,10 @@ export class WidgetView extends api.dom.DivEl {
 
     getWidgetName(): string {
         return this.widgetName;
+    }
+
+    getWidgetKey(): string {
+        return this.widget ? this.widget.getWidgetDescriptorKey().getApplicationKey().getName() : null;
     }
 
     slideOut() {

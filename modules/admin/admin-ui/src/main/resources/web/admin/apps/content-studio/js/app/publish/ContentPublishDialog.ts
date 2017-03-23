@@ -159,7 +159,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
             this.containsInvalid = result.isContainsInvalid();
 
             this.includeOfflineCheckbox.setVisible(
-                this.getItemList().allIncludeChildrenTogglersAreEnabled() && this.dependantIds.length > 0
+                this.getItemList().childTogglersAvailable() || this.dependantIds.length > 0
             );
 
             return this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
