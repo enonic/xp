@@ -1,13 +1,19 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareContentResults;
+import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.data.PropertyPath;
+import com.enonic.xp.node.NodeComparison;
+import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.ResolveSyncWorkResult;
@@ -21,6 +27,8 @@ public class ResolveContentsToBePublishedCommand
     private final ContentIds excludedContentIds;
 
     private final ContentIds excludeChildrenIds;
+
+    private final boolean includeOffline;
 
     private final Branch target;
 
@@ -36,6 +44,7 @@ public class ResolveContentsToBePublishedCommand
         this.target = builder.target;
         this.resultBuilder = CompareContentResults.create();
         this.excludeChildrenIds = builder.excludeChildrenIds;
+        this.includeOffline = builder.includeOffline;
         this.includeDependencies = builder.includeDependencies;
     }
 
@@ -75,8 +84,30 @@ public class ResolveContentsToBePublishedCommand
             includeDependencies( this.includeDependencies ).
             nodeId( NodeId.from( contentId.toString() ) ).
             excludedNodeIds( nodeIds ).
+            initialDiffFilter( this.includeOffline ? null : ( initialDiffNodeIds ) -> this.filterOfflineContents( initialDiffNodeIds ) ).
             branch( this.target ).
             build() );
+    }
+
+    private NodeIds filterOfflineContents( final NodeIds nodeIds )
+    {
+        final NodeComparisons nodeComparisons = nodeService.compare( nodeIds, this.target );
+        final Set<NodeId> filteredNodeIdSet = nodeIds.stream().
+            filter( nodeId -> {
+                final NodeComparison nodeComparison = nodeComparisons.get( nodeId );
+                if ( CompareStatus.NEW != nodeComparison.getCompareStatus() )
+                {
+                    return true;
+                }
+                final boolean hasFirstPublishProperty = nodeService.getById( nodeId ).data().getInstant(
+                    PropertyPath.from( ContentPropertyNames.PUBLISH_INFO, ContentPropertyNames.PUBLISH_FIRST ) ) != null;
+                if ( hasFirstPublishProperty )
+                {
+                    return false;
+                }
+                return true;
+            } ).collect( Collectors.toSet() );
+        return NodeIds.from( filteredNodeIdSet );
     }
 
     public static class Builder
@@ -87,6 +118,8 @@ public class ResolveContentsToBePublishedCommand
         private ContentIds excludedContentIds;
 
         private ContentIds excludeChildrenIds;
+
+        private boolean includeOffline;
 
         private Branch target;
 
@@ -113,6 +146,12 @@ public class ResolveContentsToBePublishedCommand
         public Builder excludeChildrenIds( final ContentIds excludeChildrenIds )
         {
             this.excludeChildrenIds = excludeChildrenIds;
+            return this;
+        }
+
+        public Builder includeOffline( final boolean includeOffline )
+        {
+            this.includeOffline = includeOffline;
             return this;
         }
 

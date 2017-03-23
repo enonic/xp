@@ -62,6 +62,7 @@ public final class ContentMapper
         {
             gen.value( "from", info.getFrom() );
             gen.value( "to", info.getTo() );
+            gen.value( "first", info.getFirst() );
         }
         gen.end();
     }

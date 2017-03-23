@@ -85,7 +85,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
     }
 
     refreshPendingDeleteDecorations() {
-        let compareStatus = this.wizardPanel.getContentCompareStatus();
+        let compareStatus = this.wizardPanel.getCompareStatus();
         let isPendingDelete = api.content.CompareStatusChecker.isPendingDelete(compareStatus);
 
         this.undoPendingDelete.setVisible(isPendingDelete);

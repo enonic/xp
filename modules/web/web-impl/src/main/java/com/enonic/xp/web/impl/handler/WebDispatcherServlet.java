@@ -39,7 +39,7 @@ import com.enonic.xp.web.websocket.WebSocketContextFactory;
 public final class WebDispatcherServlet
     extends HttpServlet
 {
-    private final WebDispatcher webDispatcher = new WebDispatcher();
+    private WebDispatcher webDispatcher;
 
     private ExceptionMapper exceptionMapper;
 
@@ -207,5 +207,11 @@ public final class WebDispatcherServlet
     public void removeWebHandler( final WebHandler webHandler )
     {
         this.webDispatcher.remove( webHandler );
+    }
+
+    @Reference
+    public void setWebDispatcher( final WebDispatcher webDispatcher )
+    {
+        this.webDispatcher = webDispatcher;
     }
 }

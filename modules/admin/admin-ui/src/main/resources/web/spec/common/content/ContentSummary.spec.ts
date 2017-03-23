@@ -60,6 +60,7 @@ module ContentSummarySpec {
             publish: {
                 from: '2016-11-02T10:36:00Z',
                 to: '2017-11-02T10:36:00Z',
+                first: '2016-11-02T10:36:00Z',
             },
             thumbnail: null,
             type: 'myapplication:my_type'

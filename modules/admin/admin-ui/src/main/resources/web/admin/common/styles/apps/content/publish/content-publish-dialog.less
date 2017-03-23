@@ -52,6 +52,10 @@
 
   .dialog-buttons {
 
+    .button-container {
+      display: flex;
+    }
+
     margin-top: 10px;
 
     button.publish-action {
@@ -73,6 +77,11 @@
     }
   }
 
+  .include-offline {
+    margin-top: 8px;
+    width: 150px;
+  }
+
   .progress-bar {
     display: none;
   }
@@ -92,11 +101,13 @@
 
     .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent, false);
 
-    .picker-icon("date", 22px, 0px, 8px, all);
+    .picker-icon("date", 22px, 3px, 8px, all);
 
     position: relative;
-    height: 28px;
-    padding-bottom: 8px;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    padding: 0;
   }
 
   &.masked {

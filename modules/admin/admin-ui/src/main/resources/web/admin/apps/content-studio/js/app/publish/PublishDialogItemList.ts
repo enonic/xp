@@ -52,6 +52,12 @@ export class PublishDialogItemList extends DialogItemList {
         return item;
     }
 
+    public childTogglersAvailable(): boolean {
+        return this.getItemViews().some(
+            itemView => !!itemView.getIncludeChildrenToggler()
+        );
+    }
+
     public getItemViews(): PublicStatusSelectionItem[] {
         return <PublicStatusSelectionItem[]>super.getItemViews();
     }

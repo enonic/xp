@@ -14,6 +14,7 @@ import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
 import BrowseItem = api.app.browse.BrowseItem;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
+import Checkbox = api.ui.Checkbox;
 
 /**
  * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
@@ -26,6 +27,8 @@ export class ContentPublishDialog extends ProgressBarDialog {
     private excludedIds: ContentId[] = [];
 
     private containsInvalid: boolean;
+
+    private includeOfflineCheckbox: Checkbox;
 
     private scheduleDialog: SchedulePublishDialog;
 
@@ -45,6 +48,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.setAutoUpdateTitle(false);
         this.getEl().addClass('publish-dialog');
 
+        this.initIncludeOfflineCheckbox();
         this.initActions();
         this.addCancelButtonToBottom();
 
@@ -57,6 +61,17 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.getItemList().onExcludeChildrenListChanged((excludedChildrenIds: ContentId[]) => {
             this.reloadPublishDependencies(true).done();
         });
+    }
+
+    private initIncludeOfflineCheckbox() {
+        let childrenCheckboxListener = () => this.reloadPublishDependencies(true).done();
+
+        this.includeOfflineCheckbox = api.ui.Checkbox.create().setLabelText('Include offline items').build();
+        this.includeOfflineCheckbox.addClass('include-offline');
+        this.includeOfflineCheckbox.onValueChanged(childrenCheckboxListener);
+        this.includeOfflineCheckbox.setVisible(false);
+
+        this.getButtonRow().appendChild(this.includeOfflineCheckbox);
     }
 
     private initActions() {
@@ -128,8 +143,12 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
         let ids = this.getContentToPublishIds();
 
-        let resolveDependenciesRequest = api.content.resource.ResolvePublishDependenciesRequest.create().setIds(ids).setExcludedIds(
-            this.excludedIds).setExcludeChildrenIds(this.getItemList().getExcludeChildrenIds()).build();
+        let resolveDependenciesRequest = api.content.resource.ResolvePublishDependenciesRequest.create().
+            setIds(ids).
+            setExcludedIds(this.excludedIds).
+            setExcludeChildrenIds(this.getItemList().getExcludeChildrenIds()).
+            setIncludeOffline(this.includeOfflineCheckbox.isChecked()).
+            build();
 
         return resolveDependenciesRequest.sendAndParse().then((result: ResolvePublishDependenciesResult) => {
 
@@ -138,6 +157,10 @@ export class ContentPublishDialog extends ProgressBarDialog {
             this.getDependantList().setRequiredIds(result.getRequired());
 
             this.containsInvalid = result.isContainsInvalid();
+
+            this.includeOfflineCheckbox.setVisible(
+                this.getItemList().childTogglersAvailable() || this.dependantIds.length > 0
+            );
 
             return this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
                 if (resetDependantItems) { // just opened or first time loading children

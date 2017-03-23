@@ -389,6 +389,7 @@ public class ContentServiceImpl
             contentIds( params.getContentIds() ).
             excludedContentIds( params.getExcludedContentIds() ).
             excludeChildrenIds( params.getExcludeChildrenIds() ).
+            includeOffline( params.isIncludeOffline() ).
             target( params.getTarget() ).
             build().
             execute();

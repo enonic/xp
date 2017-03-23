@@ -142,8 +142,7 @@ export class MobileContentItemStatisticsPanel extends api.app.view.ItemStatistic
     }
 
     private makeCompareStatus(item: ViewItem<ContentSummaryAndCompareStatus>): string {
-        let compareStatus = item.getModel().getCompareStatus();
-        return api.content.CompareStatusFormatter.formatStatus(compareStatus);
+        return api.content.CompareStatusFormatter.formatStatusFromContent(item.getModel());
     }
 
     getDetailsPanel(): MobileDetailsPanel {
