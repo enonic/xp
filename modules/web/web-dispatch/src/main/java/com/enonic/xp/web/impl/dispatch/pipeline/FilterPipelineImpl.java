@@ -1,7 +1,6 @@
 package com.enonic.xp.web.impl.dispatch.pipeline;
 
 import java.io.IOException;
-import java.util.Map;
 
 import javax.servlet.Filter;
 import javax.servlet.ServletException;
@@ -13,11 +12,13 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import com.enonic.xp.web.dispatch.FilterMapping;
 import com.enonic.xp.web.impl.dispatch.mapping.FilterDefinition;
+import com.enonic.xp.web.impl.dispatch.mapping.ResourceDefinitionFactory;
 
 @Component(service = FilterPipeline.class)
 public final class FilterPipelineImpl
-    extends ResourcePipelineImpl<Filter, FilterDefinition>
+    extends ResourcePipelineImpl<FilterDefinition>
     implements FilterPipeline
 {
     @Override
@@ -29,13 +30,24 @@ public final class FilterPipelineImpl
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    public void addFilter( final Filter filter, final Map<String, Object> serviceProps )
+    public void addFilter( final Filter filter )
     {
-        add( filter, FilterDefinition.create( filter ), serviceProps );
+        add( ResourceDefinitionFactory.create( filter ) );
     }
 
     public void removeFilter( final Filter filter )
     {
         remove( filter );
+    }
+
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+    public void addMapping( final FilterMapping mapping )
+    {
+        add( ResourceDefinitionFactory.create( mapping ) );
+    }
+
+    public void removeMapping( final FilterMapping mapping )
+    {
+        remove( mapping );
     }
 }

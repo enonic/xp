@@ -12,14 +12,14 @@ import com.google.common.collect.Maps;
 
 import com.enonic.xp.web.impl.dispatch.mapping.ResourceDefinition;
 
-public abstract class ResourcePipelineImpl<R, D extends ResourceDefinition<R>>
-    implements ResourcePipeline<D>
+public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
+    implements ResourcePipeline<T>
 {
     private ServletContext context;
 
-    private final Map<R, D> map;
+    private final Map<Object, T> map;
 
-    final List<D> list;
+    final List<T> list;
 
     ResourcePipelineImpl()
     {
@@ -41,15 +41,14 @@ public abstract class ResourcePipelineImpl<R, D extends ResourceDefinition<R>>
         this.list.forEach( ResourceDefinition::destroy );
     }
 
-    final void add( final R resource, final D def, final Map<String, Object> serviceProps )
+    final void add( final T def )
     {
-        def.configure( serviceProps );
-        if ( !def.isValid() )
+        if ( def == null )
         {
             return;
         }
 
-        this.map.put( resource, def );
+        this.map.put( def.getResource(), def );
         this.list.add( def );
         sortList();
 
@@ -59,9 +58,9 @@ public abstract class ResourcePipelineImpl<R, D extends ResourceDefinition<R>>
         }
     }
 
-    final void remove( final R resource )
+    final void remove( final Object key )
     {
-        final D def = this.map.remove( resource );
+        final T def = this.map.remove( key );
         if ( def == null )
         {
             return;
@@ -72,7 +71,7 @@ public abstract class ResourcePipelineImpl<R, D extends ResourceDefinition<R>>
     }
 
     @Override
-    public final Iterator<D> iterator()
+    public final Iterator<T> iterator()
     {
         return this.list.iterator();
     }
@@ -82,8 +81,8 @@ public abstract class ResourcePipelineImpl<R, D extends ResourceDefinition<R>>
         this.list.sort( this::compare );
     }
 
-    private int compare( final D def1, final D def2 )
+    private int compare( final T def1, final T def2 )
     {
-        return def2.getRanking() - def1.getRanking();
+        return def1.getOrder() - def2.getOrder();
     }
 }

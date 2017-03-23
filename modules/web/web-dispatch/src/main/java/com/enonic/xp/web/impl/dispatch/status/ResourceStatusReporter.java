@@ -31,10 +31,10 @@ public abstract class ResourceStatusReporter
     public final JsonNode getReport()
     {
         final ArrayNode json = JsonNodeFactory.instance.arrayNode();
-        for ( final ResourceDefinition def : getDefinitions() )
+        for ( final ResourceDefinition<?> def : getDefinitions() )
         {
             final ObjectNode node = json.addObject();
-            node.put( "ranking", def.getRanking() );
+            node.put( "order", def.getOrder() );
             node.put( "name", def.getName() );
             node.put( "class", def.getResource().getClass().getName() );
             node.set( "patterns", getPatterns( def.getUrlPatterns() ) );
