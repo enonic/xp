@@ -4,7 +4,6 @@ import java.util.Enumeration;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpSession;
 
 import com.google.common.collect.ImmutableMap;
@@ -21,19 +20,8 @@ final class SessionWrapper
 
     SessionWrapper( final HttpServletRequest request )
     {
-        this.request = getUnwrappedRequest( request );
+        this.request = request;
         this.session = this.request.getSession( false );
-    }
-
-    private static HttpServletRequest getUnwrappedRequest( final HttpServletRequest request )
-    {
-        if ( request instanceof HttpServletRequestWrapper )
-        {
-            final HttpServletRequest unwrapped = (HttpServletRequest) ( (HttpServletRequestWrapper) request ).getRequest();
-            return getUnwrappedRequest( unwrapped );
-        }
-
-        return request;
     }
 
     private void createSessionIfNeeded()
