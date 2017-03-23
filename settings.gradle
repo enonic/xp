@@ -35,6 +35,7 @@ include 'web:web-impl'
 include 'web:web-vhost'
 include 'web:web-jetty'
 include 'web:web-dos'
+include 'web:web-dispatch'
 
 include 'jaxrs:jaxrs-api'
 include 'jaxrs:jaxrs-impl'

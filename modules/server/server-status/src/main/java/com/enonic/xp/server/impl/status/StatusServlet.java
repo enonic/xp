@@ -8,6 +8,7 @@ import java.util.Set;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,10 +26,12 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.net.MediaType;
 
+import com.enonic.xp.annotation.Order;
 import com.enonic.xp.status.StatusReporter;
 
-@Component(immediate = true, service = Servlet.class, property = {"osgi.http.whiteboard.servlet.pattern=/status",
-    "osgi.http.whiteboard.servlet.pattern=/status/*"})
+@Component(immediate = true, service = Servlet.class)
+@Order(-200)
+@WebServlet({"/status", "/status/*"})
 public final class StatusServlet
     extends HttpServlet
 {

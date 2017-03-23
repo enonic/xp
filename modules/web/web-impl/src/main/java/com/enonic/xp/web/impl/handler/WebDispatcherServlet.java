@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +21,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.annotation.Order;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
@@ -34,8 +36,9 @@ import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketContextFactory;
 
-@Component(immediate = true, service = Servlet.class, property = {"osgi.http.whiteboard.servlet.pattern=/",
-    "osgi.http.whiteboard.servlet.pattern=/*"})
+@Component(immediate = true, service = Servlet.class)
+@Order(100)
+@WebServlet("/*")
 public final class WebDispatcherServlet
     extends HttpServlet
 {

@@ -3,8 +3,6 @@ package com.enonic.xp.jaxrs.impl;
 import java.util.Hashtable;
 import java.util.Iterator;
 
-import javax.servlet.Servlet;
-
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
@@ -13,6 +11,8 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.JaxRsService;
+import com.enonic.xp.web.dispatch.MappingBuilder;
+import com.enonic.xp.web.dispatch.ServletMapping;
 
 final class JaxRsServiceImpl
     implements JaxRsService, ServiceTrackerCustomizer<JaxRsComponent, JaxRsComponent>
@@ -27,7 +27,7 @@ final class JaxRsServiceImpl
 
     private final ServiceTracker tracker;
 
-    private ServiceRegistration<Servlet> registration;
+    private ServiceRegistration<ServletMapping> registration;
 
     JaxRsServiceImpl( final BundleContext context, final String group, final String path )
     {
@@ -44,8 +44,12 @@ final class JaxRsServiceImpl
         this.tracker.open( true );
 
         final Hashtable<String, Object> props = new Hashtable<>();
-        props.put( "osgi.http.whiteboard.servlet.pattern", new String[]{this.path, this.path + "/*"} );
-        this.registration = this.context.registerService( Servlet.class, this.servlet, props );
+
+        final ServletMapping mapping = MappingBuilder.newBuilder().
+            urlPatterns( this.path + "/*" ).
+            servlet( this.servlet );
+
+        this.registration = this.context.registerService( ServletMapping.class, mapping, props );
     }
 
     @Override

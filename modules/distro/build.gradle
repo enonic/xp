@@ -93,6 +93,7 @@ addBundle( project( ':web:web-jetty' ), 26 )
 addBundle( project( ':web:web-impl' ), 26 )
 addBundle( project( ':web:web-vhost' ), 26 )
 addBundle( project( ':web:web-dos' ), 26 )
+addBundle( project( ':web:web-dispatch' ), 26 )
 
 // JaxRs app
 addBundle( project( ':jaxrs:jaxrs-impl' ), 28 )
