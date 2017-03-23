@@ -101,7 +101,6 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         };
 
         filterPanel.onSearchStarted(showMask);
-        filterPanel.onReset(showMask);
         filterPanel.onRefreshStarted(showMask);
 
         return filterPanel;

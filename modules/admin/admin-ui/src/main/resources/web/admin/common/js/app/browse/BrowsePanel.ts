@@ -49,16 +49,18 @@ module api.app.browse {
                                                     fullSelection: TreeNode<Object>[],
                                                     highlighted: boolean
                                                    ) => {
+                if (this.treeGrid.getToolbar().getSelectionPanelToggler().isActive()) {
+                    this.updateSelectionModeShownItems(currentSelection, fullSelection);
+                }
+
                 let browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(fullSelection);
-                let changes = this.getBrowseItemPanel().setItems(browseItems, true);
+                let changes = this.getBrowseItemPanel().setItems(browseItems);
 
                 if (highlighted && ((fullSelection.length == 0 && changes.getRemoved().length === 1) ||
                                     (fullSelection.length == 1 && changes.getAdded().length === 1))) {
                     return;
                 }
-                if(currentSelection.length <= 1) {
-                    this.getBrowseItemPanel().getPanelShown().hide();
-                }
+
                 this.getBrowseActions().updateActionsEnabledState(this.getBrowseItemPanel().getItems(), changes)
                     .then(() => {
                         this.getBrowseItemPanel().updateDisplayedPanel();
@@ -84,13 +86,38 @@ module api.app.browse {
                 }
             });
 
-            this.treeGrid.getToolbar().onCartButtonClicked(isActive => {
-                this.getBrowseItemPanel().toggleCartPanel(isActive);
+            this.treeGrid.getToolbar().getSelectionPanelToggler().onActiveChanged(isActive => {
+                if (this.filterPanel && this.filterPanel.hasFilterSet()) {
+                    this.filterPanel.reset(true);
+                }
+
+                this.treeGrid.toggleClass('selection-mode', isActive);
+
+                if (isActive) {
+                    if (this.filterPanel && !this.filterPanelIsHidden()) {
+                        this.hideFilterPanel();
+                    }
+                    this.treeGrid.filter(this.treeGrid.getSelectedDataList());
+                } else {
+                    this.treeGrid.resetFilter();
+                }
             });
 
             this.onShown(() => {
                 if (this.treeGrid.isFiltered()) {
                     this.filterPanel.refresh();
+                }
+            });
+
+            api.app.browse.filter.BrowseFilterResetEvent.on((event) => {
+                if (this.treeGrid.getToolbar().getSelectionPanelToggler().isActive()) {
+                    this.treeGrid.getToolbar().getSelectionPanelToggler().removeClass('active');
+                }
+            });
+
+            api.app.browse.filter.BrowseFilterSearchEvent.on((event) => {
+                if (this.treeGrid.getToolbar().getSelectionPanelToggler().isActive()) {
+                    this.treeGrid.getToolbar().getSelectionPanelToggler().removeClass('active');
                 }
             });
         }
@@ -327,6 +354,18 @@ module api.app.browse {
                 if (this.gridAndItemsSplitPanel.isSecondPanelHidden()) {
                     this.gridAndItemsSplitPanel.showSecondPanel();
                     this.browseItemPanel.setMobileView(false);
+                }
+            }
+        }
+
+        private updateSelectionModeShownItems(currentSelection: TreeNode<Object>[],
+                                              fullSelection: TreeNode<Object>[]) {
+            if (currentSelection.length === fullSelection.length) { // to filter unwanted selection change events
+                let amountOfNodesShown: number = this.treeGrid.getRoot().getCurrentRoot().treeToList().length;
+                if (amountOfNodesShown > fullSelection.length) { // some item/items deselected
+                    this.treeGrid.filter(this.treeGrid.getSelectedDataList());
+                } else if (amountOfNodesShown === 0) { // all items deselected
+                    this.treeGrid.getToolbar().getSelectionPanelToggler().setActive(false);
                 }
             }
         }

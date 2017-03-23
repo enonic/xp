@@ -1,7 +1,5 @@
 import '../../../api.ts';
-import {ContentBrowseResetEvent} from './ContentBrowseResetEvent';
-import {ContentBrowseSearchEvent} from './ContentBrowseSearchEvent';
-import {ContentBrowseRefreshEvent} from './ContentBrowseRefreshEvent';
+import {ContentBrowseSearchData} from './ContentBrowseSearchData';
 
 import ContentQueryRequest = api.content.resource.ContentQueryRequest;
 import ContentTypeName = api.schema.content.ContentTypeName;
@@ -31,6 +29,9 @@ import QueryField = api.query.QueryField;
 import ContentSummaryViewer = api.content.ContentSummaryViewer;
 import ActionButton = api.ui.button.ActionButton;
 import Action = api.ui.Action;
+import BrowseFilterResetEvent = api.app.browse.filter.BrowseFilterResetEvent;
+import BrowseFilterRefreshEvent = api.app.browse.filter.BrowseFilterRefreshEvent;
+import BrowseFilterSearchEvent = api.app.browse.filter.BrowseFilterSearchEvent;
 
 export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel {
 
@@ -49,14 +50,6 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         super();
 
         this.initAggregationGroupView([this.contentTypeAggregation, this.lastModifiedAggregation]);
-
-        this.onReset(()=> {
-            this.resetFacets();
-        });
-
-        this.onShown(() => {
-            this.refresh();
-        });
     }
 
     protected getGroupViews(): api.aggregation.AggregationGroupView[] {
@@ -86,7 +79,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         this.addClass('has-dependency-item');
         this.dependenciesSection.setItem(item, inbound);
         if (this.dependenciesSection.isActive()) {
-            this.reset(true);
+            this.resetControls();
             this.search();
         }
     }
@@ -115,7 +108,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         if (isRefresh) {
 
             this.resetFacets(true, true).then(() => {
-                new ContentBrowseRefreshEvent().fire();
+                new BrowseFilterRefreshEvent().fire();
             }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
@@ -173,7 +166,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
             this.updateAggregations(aggregations, true);
             this.updateHitsCounter(contentQueryResult.getMetadata().getTotalHits());
             this.toggleAggregationsVisibility(contentQueryResult.getAggregations());
-            new ContentBrowseSearchEvent(contentQueryResult, contentQuery).fire();
+            new BrowseFilterSearchEvent(new ContentBrowseSearchData(contentQueryResult, contentQuery)).fire();
         });
     }
 
@@ -255,7 +248,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         }).done();
     }
 
-    private resetFacets(suppressEvent?: boolean, doResetAll?: boolean) {
+    protected resetFacets(suppressEvent?: boolean, doResetAll?: boolean) {
 
         let contentQuery: ContentQuery = this.buildAggregationsQuery();
 
@@ -268,9 +261,9 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
 
                 if (!suppressEvent) { // then fire usual reset event with content grid reloading
                     if (!!this.dependenciesSection && this.dependenciesSection.isActive()) {
-                        new ContentBrowseSearchEvent(contentQueryResult, contentQuery).fire();
+                        new BrowseFilterSearchEvent(new ContentBrowseSearchData(contentQueryResult, contentQuery)).fire();
                     } else {
-                        new ContentBrowseResetEvent().fire();
+                        new BrowseFilterResetEvent().fire();
                     }
                 }
             }

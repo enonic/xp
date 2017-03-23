@@ -4,8 +4,6 @@ module api.app.browse.filter {
 
         private searchStartedListeners: {():void}[] = [];
 
-        private resetListeners: {():void}[] = [];
-
         private hideFilterPanelButtonClickedListeners: {():void}[] = [];
 
         private showResultsButtonClickedListeners: {():void}[] = [];
@@ -26,7 +24,7 @@ module api.app.browse.filter {
 
         private refreshStartedListeners: {():void}[] = [];
 
-        constructor(aggregations?: api.aggregation.Aggregation[]) {
+        constructor() {
             super();
             this.addClass('filter-panel');
 
@@ -92,6 +90,7 @@ module api.app.browse.filter {
 
             this.onShown(() => {
                 setTimeout(this.aggregationContainer.show.bind(this.aggregationContainer), 100);
+                this.refresh();
             });
         }
 
@@ -159,13 +158,19 @@ module api.app.browse.filter {
             return;
         }
 
-        reset(silent: boolean = false) {
+        reset(suppressEvent?: boolean) {
+            this.resetControls();
+            this.resetFacets(suppressEvent);
+        }
+
+        resetControls() {
             this.searchField.clear(true);
             this.aggregationContainer.deselectAll(true);
             this.clearFilter.hide();
-            if (!silent) {
-                this.notifyReset();
-            }
+        }
+
+        protected resetFacets(suppressEvent?: boolean, doResetAll?: boolean) {
+            throw new Error('To be implemented by inheritors');
         }
 
         deselectAll() {
@@ -174,10 +179,6 @@ module api.app.browse.filter {
 
         onSearchStarted(listener: ()=> void) {
             this.searchStartedListeners.push(listener);
-        }
-
-        onReset(listener: ()=> void) {
-            this.resetListeners.push(listener);
         }
 
         onRefreshStarted(listener: ()=> void) {
@@ -196,13 +197,6 @@ module api.app.browse.filter {
             });
         }
 
-        unReset(listener: ()=> void) {
-            this.resetListeners = this.resetListeners.filter((currentListener: ()=>void) => {
-                return currentListener !== listener;
-            });
-
-        }
-
         onHideFilterPanelButtonClicked(listener: ()=> void) {
             this.hideFilterPanelButtonClickedListeners.push(listener);
         }
@@ -219,12 +213,6 @@ module api.app.browse.filter {
 
         protected notifyRefreshStarted() {
             this.refreshStartedListeners.forEach((listener: ()=> void) => {
-                listener.call(this);
-            });
-        }
-
-        private notifyReset() {
-            this.resetListeners.forEach((listener: ()=> void) => {
                 listener.call(this);
             });
         }

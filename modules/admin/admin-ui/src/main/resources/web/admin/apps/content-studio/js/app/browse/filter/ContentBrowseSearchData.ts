@@ -1,13 +1,13 @@
 import '../../../api.ts';
 
-export class ContentBrowseSearchEvent extends api.event.Event {
+export class ContentBrowseSearchData {
 
     private contentQueryResult: api.content.resource.result.ContentQueryResult<any,any>;
     private contentQuery: api.content.query.ContentQuery;
 
     constructor(contentQueryResult: api.content.resource.result.ContentQueryResult<any,any>,
                 contentQuery?: api.content.query.ContentQuery) {
-        super();
+
         this.contentQueryResult = contentQueryResult;
         this.contentQuery = contentQuery;
     }
@@ -18,13 +18,5 @@ export class ContentBrowseSearchEvent extends api.event.Event {
 
     getContentQuery(): api.content.query.ContentQuery {
         return this.contentQuery;
-    }
-
-    static on(handler: (event: ContentBrowseSearchEvent) => void) {
-        api.event.Event.bind(api.ClassHelper.getFullName(this), handler);
-    }
-
-    static un(handler?: (event: ContentBrowseSearchEvent) => void) {
-        api.event.Event.unbind(api.ClassHelper.getFullName(this), handler);
     }
 }

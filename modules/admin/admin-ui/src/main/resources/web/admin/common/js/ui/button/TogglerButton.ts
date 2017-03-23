@@ -28,11 +28,9 @@ module api.ui.button {
             });
         }
 
-        setActive(value: boolean, silent: boolean = false) {
+        setActive(value: boolean) {
             this.toggleClass('active', value);
-            if (!silent) {
-                this.notifyActiveChanged(value);
-            }
+            this.notifyActiveChanged(value);
         }
 
         setVisible(value: boolean): TogglerButton {
