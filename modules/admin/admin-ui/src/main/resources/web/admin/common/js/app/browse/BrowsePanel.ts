@@ -49,6 +49,10 @@ module api.app.browse {
                                                     fullSelection: TreeNode<Object>[],
                                                     highlighted: boolean
                                                    ) => {
+                if (this.treeGrid.getToolbar().getSelectionPanelToggler().isActive()) {
+                    this.updateSelectionModeShownItems(currentSelection, fullSelection);
+                }
+
                 let browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(fullSelection);
                 let changes = this.getBrowseItemPanel().setItems(browseItems);
 
@@ -86,6 +90,8 @@ module api.app.browse {
                 if (this.filterPanel && this.filterPanel.hasFilterSet()) {
                     this.filterPanel.reset(true);
                 }
+
+                this.treeGrid.toggleClass('selection-mode', isActive);
 
                 if (isActive) {
                     if (this.filterPanel && !this.filterPanelIsHidden()) {
@@ -348,6 +354,18 @@ module api.app.browse {
                 if (this.gridAndItemsSplitPanel.isSecondPanelHidden()) {
                     this.gridAndItemsSplitPanel.showSecondPanel();
                     this.browseItemPanel.setMobileView(false);
+                }
+            }
+        }
+
+        private updateSelectionModeShownItems(currentSelection: TreeNode<Object>[],
+                                              fullSelection: TreeNode<Object>[]) {
+            if (currentSelection.length === fullSelection.length) { // to filter unwanted selection change events
+                let amountOfNodesShown: number = this.treeGrid.getRoot().getCurrentRoot().treeToList().length;
+                if (amountOfNodesShown > fullSelection.length) { // some item/items deselected
+                    this.treeGrid.filter(this.treeGrid.getSelectedDataList());
+                } else if (amountOfNodesShown === 0) { // all items deselected
+                    this.treeGrid.getToolbar().getSelectionPanelToggler().setActive(false);
                 }
             }
         }

@@ -120,7 +120,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                 }
             } else {
                 this.getGrid().resizeCanvas();
-                this.highlightCurrentNode(true);
+                this.highlightCurrentNode();
             }
             // re-set the selection to update selected rows presentation
         };
