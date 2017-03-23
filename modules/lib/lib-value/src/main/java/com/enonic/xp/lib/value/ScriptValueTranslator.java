@@ -141,7 +141,8 @@ public class ScriptValueTranslator
 
             if ( includeBinaryAttachments )
             {
-                this.binaryAttachmentsBuilder.add( new BinaryAttachment( binaryAttachment.getReference(), binaryAttachment.getByteSource() ) );
+                this.binaryAttachmentsBuilder.add(
+                    new BinaryAttachment( binaryAttachment.getReference(), binaryAttachment.getByteSource() ) );
             }
         }
 

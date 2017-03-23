@@ -13,6 +13,8 @@ import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.expr.ConstraintExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
+import com.enonic.xp.query.filter.Filter;
+import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.script.ScriptValue;
@@ -32,6 +34,8 @@ public final class QueryContentHandler
 
     private List<String> contentTypes;
 
+    private Map<String, Object> filters;
+
     @Override
     protected Object doExecute()
     {
@@ -44,18 +48,23 @@ public final class QueryContentHandler
         final List<OrderExpr> orderExpressions = QueryParser.parseOrderExpressions( sort );
         final ConstraintExpr constraintExpr = QueryParser.parseCostraintExpression( query );
         final QueryExpr queryExpr = QueryExpr.from( constraintExpr, orderExpressions );
+        final Filters filters = FilterParamsFactory.create( this.filters );
 
         final Set<AggregationQuery> aggregations = new QueryAggregationParams().getAggregations( this.aggregations );
 
-        final ContentQuery contentQuery = ContentQuery.create().
+        final ContentQuery.Builder queryBuilder = ContentQuery.create().
             from( start ).
             size( count ).
             aggregationQueries( aggregations ).
             addContentTypeNames( contentTypeNames ).
-            queryExpr( queryExpr ).
-            build();
+            queryExpr( queryExpr );
 
-        final FindContentIdsByQueryResult queryResult = contentService.find( contentQuery );
+        for ( final Filter filter : filters )
+        {
+            queryBuilder.queryFilter( filter );
+        }
+
+        final FindContentIdsByQueryResult queryResult = contentService.find( queryBuilder.build() );
 
         return convert( queryResult );
     }
@@ -104,5 +113,10 @@ public final class QueryContentHandler
     public void setContentTypes( final ScriptValue value )
     {
         this.contentTypes = value != null ? value.getArray( String.class ) : null;
+    }
+
+    public void setFilters( final ScriptValue value )
+    {
+        this.filters = value != null ? value.getMap() : null;
     }
 }
