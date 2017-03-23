@@ -70,6 +70,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.showScheduleDialogButton = this.addAction(showScheduleAction, false);
         this.showScheduleDialogButton.setTitle('Schedule Publishing');
 
+        debugger;
         this.setButtonAction(ContentPublishDialogAction, this.doPublish.bind(this, false));
 
         this.lockControls();
@@ -260,7 +261,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.showCreateIssueDialog();
     }
 
-    private setButtonAction(dialogActionClass: { new(): api.ui.Action }, listener: (action: api.ui.Action) => wemQ.Promise<any>|void) {
+    private setButtonAction(dialogActionClass: { new(): api.ui.Action }, listener: () => wemQ.Promise<any>|void) {
         if (!!this.actionButton && api.ObjectHelper.iFrameSafeInstanceOf(this.actionButton.getAction(), dialogActionClass)) {
             return;
         }
@@ -270,17 +271,18 @@ export class ContentPublishDialog extends ProgressBarDialog {
         }
 
         let newAction = new dialogActionClass();
-        newAction.onExecuted(listener);
+        newAction.onExecuted(() => listener());
 
         this.actionButton = this.addAction(newAction, true);
     }
 
     private updateButtonAction() {
         if (this.allPublishable) {
-            this.setButtonAction(ContentPublishDialogAction, this.doPublish.bind(this));
+            debugger;
+            this.setButtonAction(ContentPublishDialogAction, this.doPublish.bind(this, false));
             this.updateDependantsHeader();
         } else {
-            this.setButtonAction(CreateIssueDialogAction, this.createIssue.bind(this, false));
+            this.setButtonAction(CreateIssueDialogAction, this.createIssue.bind(this));
             this.updateDependantsHeader('Other items that will be added to the Publishing Issue');
         }
     }
