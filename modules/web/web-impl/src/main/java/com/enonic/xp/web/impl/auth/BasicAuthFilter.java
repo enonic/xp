@@ -2,6 +2,7 @@ package com.enonic.xp.web.impl.auth;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -12,12 +13,13 @@ import com.google.common.base.Charsets;
 import com.google.common.io.BaseEncoding;
 import com.google.common.net.HttpHeaders;
 
+import com.enonic.xp.annotation.Order;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
 
-@Component(immediate = true, service = Filter.class,
-    property = {"osgi.http.whiteboard.filter.pattern=/*", "service.ranking:Integer=40", "osgi.http.whiteboard.filter.dispatcher=FORWARD",
-        "osgi.http.whiteboard.filter.dispatcher=REQUEST"})
+@Component(immediate = true, service = Filter.class)
+@Order(-40)
+@WebFilter("/*")
 public final class BasicAuthFilter
     extends OncePerRequestFilter
 {

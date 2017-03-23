@@ -16,7 +16,6 @@ import com.enonic.xp.web.dispatch.DispatchServlet;
 
 @Component(immediate = true, service = JettyController.class, configurationPid = "com.enonic.xp.web.jetty")
 public final class JettyActivator
-    // extends AbstractHttpActivator
     implements JettyController
 {
     private BundleContext context;
@@ -29,11 +28,6 @@ public final class JettyActivator
 
     private DispatchServlet dispatchServlet;
 
-    public JettyActivator()
-    {
-        // System.setProperty( "org.apache.felix.http.shared_servlet_context_attributes", "true" );
-    }
-
     @Activate
     public void activate( final BundleContext context, final JettyConfig config )
         throws Exception
@@ -45,11 +39,7 @@ public final class JettyActivator
         this.service = new JettyService();
         this.service.config = this.config;
 
-        // publishController();
-
         this.service.dispatcherServlet = this.dispatchServlet;
-        // this.service.eventDispatcher = getEventDispatcher();
-
         this.service.start();
 
         publishController();

@@ -2,20 +2,21 @@ package com.enonic.xp.web.impl.context;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.osgi.service.component.annotations.Component;
 
+import com.enonic.xp.annotation.Order;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
 
-@Component(immediate = true, service = Filter.class,
-    property = {"osgi.http.whiteboard.filter.pattern=/*", "service.ranking:Integer=180", "osgi.http.whiteboard.filter.dispatcher=FORWARD",
-        "osgi.http.whiteboard.filter.dispatcher=REQUEST"})
+@Component(immediate = true, service = Filter.class)
+@Order(-180)
+@WebFilter("/*")
 public final class ContextFilter
     extends OncePerRequestFilter
 {

@@ -2,21 +2,23 @@ package com.enonic.xp.portal.impl.auth;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.annotation.Order;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
 import com.enonic.xp.portal.auth.AuthControllerService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
 
-@Component(immediate = true, service = Filter.class,
-    property = {"osgi.http.whiteboard.filter.pattern=/*", "service.ranking:Integer=30", "osgi.http.whiteboard.filter.dispatcher=FORWARD",
-        "osgi.http.whiteboard.filter.dispatcher=REQUEST"})
+@Component(immediate = true, service = Filter.class)
+@Order(-30)
+@WebFilter("/*")
 public final class AuthFilter
     extends OncePerRequestFilter
 {

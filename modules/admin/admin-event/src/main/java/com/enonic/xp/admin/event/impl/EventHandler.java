@@ -7,6 +7,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,12 +20,14 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.annotation.Order;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.web.websocket.EndpointFactory;
 import com.enonic.xp.web.websocket.WebSocketService;
 
-@Component(immediate = true, service = {Servlet.class, WebSocketManager.class},
-    property = {"osgi.http.whiteboard.servlet.pattern=/admin/event", "service.ranking:Integer=100"})
+@Component(immediate = true, service = {Servlet.class, WebSocketManager.class})
+@Order( -100 )
+@WebServlet("/admin/event")
 public final class EventHandler
     extends HttpServlet
     implements WebSocketManager, EndpointFactory
