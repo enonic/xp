@@ -150,7 +150,7 @@ class IncludeChildrenToggler extends api.dom.DivEl {
     constructor() {
         super('icon icon-tree');
 
-        this.tooltip = new Tooltip(this, '', 1000);
+        this.tooltip = new Tooltip(this, 'Show child items', 1000);
 
         this.onClicked(() => {
             this.toggle();
@@ -159,8 +159,6 @@ class IncludeChildrenToggler extends api.dom.DivEl {
 
     toggle(condition?: boolean, silent?: boolean) {
         this.toggleClass('on', condition);
-
-        this.tooltip.setText(this.isEnabled() ? 'Exclude child items' : 'Include child items');
 
         this.notifyStateChanged(this.isEnabled());
     }
