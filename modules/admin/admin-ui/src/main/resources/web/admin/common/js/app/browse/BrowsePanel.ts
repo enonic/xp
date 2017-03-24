@@ -45,9 +45,9 @@ module api.app.browse {
             this.filterPanel = this.createFilterPanel();
             this.browseToolbar = this.createToolbar();
 
-            let selectionChangedDebouncedHandler = (currentSelection: TreeNode<Object>[],
-                                                    fullSelection: TreeNode<Object>[],
-                                                    highlighted: boolean
+            let selectionChangedHandler = (currentSelection: TreeNode<Object>[],
+                                           fullSelection: TreeNode<Object>[],
+                                           highlighted: boolean
                                                    ) => {
                 if (this.treeGrid.getToolbar().getSelectionPanelToggler().isActive()) {
                     this.updateSelectionModeShownItems(currentSelection, fullSelection);
@@ -63,11 +63,11 @@ module api.app.browse {
 
                 this.getBrowseActions().updateActionsEnabledState(this.getBrowseItemPanel().getItems(), changes)
                     .then(() => {
-                        this.getBrowseItemPanel().updateDisplayedPanel();
+                        this.getBrowseItemPanel().updatePreviewPanel();
                     }).catch(api.DefaultErrorHandler.handle);
                 };
 
-            this.treeGrid.onSelectionChanged(selectionChangedDebouncedHandler);
+            this.treeGrid.onSelectionChanged(selectionChangedHandler);
 
             let highlightingChangedDebouncedHandler = api.util.AppHelper.debounce(((node: TreeNode<Object>) => {
                 this.onHighlightingChanged(node);
@@ -113,12 +113,16 @@ module api.app.browse {
                 if (this.treeGrid.getToolbar().getSelectionPanelToggler().isActive()) {
                     this.treeGrid.getToolbar().getSelectionPanelToggler().removeClass('active');
                 }
+
+                this.treeGrid.removeClass('selection-mode');
             });
 
             api.app.browse.filter.BrowseFilterSearchEvent.on((event) => {
                 if (this.treeGrid.getToolbar().getSelectionPanelToggler().isActive()) {
                     this.treeGrid.getToolbar().getSelectionPanelToggler().removeClass('active');
                 }
+
+                this.treeGrid.removeClass('selection-mode');
             });
         }
 
@@ -159,22 +163,6 @@ module api.app.browse {
             return this.treeGrid.getContextMenu().getActions();
         }
 
-        private initBrowseItemPanel() {
-
-            this.browseItemPanel.onDeselected((event: ItemDeselectedEvent<M>) => {
-                let oldSelectedCount = this.treeGrid.getGrid().getSelectedRows().length;
-                this.treeGrid.deselectNodes([event.getBrowseItem().getId()]);
-                let newSelectedCount = this.treeGrid.getGrid().getSelectedRows().length;
-
-                if (oldSelectedCount === newSelectedCount) {
-                    this.getBrowseActions().updateActionsEnabledState(this.browseItemPanel.getItems())
-                        .then(() => {
-                            this.browseItemPanel.updateDisplayedPanel();
-                        });
-                }
-            });
-        }
-
         protected createFilterPanel(): api.app.browse.filter.BrowseFilterPanel {
             return null;
         }
@@ -183,7 +171,6 @@ module api.app.browse {
             return super.doRender().then((rendered) => {
                 if (!this.browseItemPanel) {
                     this.browseItemPanel = this.createBrowseItemPanel();
-                    this.initBrowseItemPanel();
                 }
                 this.gridAndItemsSplitPanel = new api.ui.panel.SplitPanelBuilder(this.treeGrid, this.browseItemPanel)
                     .setAlignmentTreshold(BrowsePanel.SPLIT_PANEL_ALIGNMENT_TRESHOLD)
@@ -348,12 +335,10 @@ module api.app.browse {
             if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
                 if (!this.gridAndItemsSplitPanel.isSecondPanelHidden()) {
                     this.gridAndItemsSplitPanel.hideSecondPanel();
-                    this.browseItemPanel.setMobileView(true);
                 }
             } else if (item.isInRangeOrBigger(ResponsiveRanges._540_720)) {
                 if (this.gridAndItemsSplitPanel.isSecondPanelHidden()) {
                     this.gridAndItemsSplitPanel.showSecondPanel();
-                    this.browseItemPanel.setMobileView(false);
                 }
             }
         }

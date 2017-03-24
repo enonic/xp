@@ -5,60 +5,43 @@ module api.app.browse {
 
         private itemStatisticsPanel: api.app.view.ItemStatisticsPanel<M>;
 
-        private itemsSelectionPanel: BrowseItemsSelectionPanel<M>;
+        private items: BrowseItem<M>[] = [];
 
-        constructor(grid: TreeGrid<M>) {
-            super('browse-item-panel');
+        private noSelectionContainer: api.dom.DivEl;
 
-            this.itemsSelectionPanel = this.createItemSelectionPanel(grid);
+        constructor() {
+            super('browse-item-panel no-selection');
+
             this.itemStatisticsPanel = this.createItemStatisticsPanel();
 
-            this.addPanel(this.itemsSelectionPanel);
-            this.addPanel(this.itemStatisticsPanel);
-            this.showPanelByIndex(0);
-        }
+            this.noSelectionContainer = new api.dom.DivEl('no-selection-container');
+            this.noSelectionContainer.setHtml('You are wasting this space - select something!');
 
-        createItemSelectionPanel(grid: TreeGrid<M>): BrowseItemsSelectionPanel<M> {
-            return new BrowseItemsSelectionPanel<M>(grid);
+            this.addPanel(this.itemStatisticsPanel);
+            this.appendChild(this.noSelectionContainer);
+
+            this.showPanelByIndex(0);
         }
 
         createItemStatisticsPanel(): api.app.view.ItemStatisticsPanel<M> {
             return new api.app.view.ItemStatisticsPanel<M>();
         }
 
-        setMobileView(mobileView: boolean) {
-            this.itemsSelectionPanel.setMobileView(mobileView);
-        }
-
-        setItems(items: api.app.browse.BrowseItem<M>[]): BrowseItemsChanges<M> {
-            return this.itemsSelectionPanel.setItems(items);
-        }
-
-        getItems(): BrowseItem<M>[] {
-            return this.itemsSelectionPanel.getItems();
-        }
-
-        updateItemViewers(items: BrowseItem<M>[]) {
-            this.itemsSelectionPanel.updateItemViewers(items);
-        }
-
         togglePreviewForItem(item?: BrowseItem<M>) {
             if (item) {
-                this.showPanelByIndex(1);
                 this.setStatisticsItem(item);
+                this.removeClass('no-selection');
             } else {
-                this.showPanelByIndex(0);
+                this.showNoSelectionMessage();
             }
         }
 
-        updateDisplayedPanel() {
-            let selectedItems = this.getItems();
-            if (selectedItems.length > 0) {
-                this.showPanelByIndex(1);
-                this.itemStatisticsPanel.setItem(selectedItems[selectedItems.length - 1].toViewItem());
-            } else {
-                this.showPanelByIndex(0);
-            }
+        updatePreviewPanel() {
+            this.togglePreviewForItem(this.items.length > 0 ? this.items[this.items.length - 1] : null);
+        }
+
+        private showNoSelectionMessage() {
+            this.addClass('no-selection');
         }
 
         setStatisticsItem(item: BrowseItem<M>) {
@@ -69,8 +52,93 @@ module api.app.browse {
             return this.itemStatisticsPanel.getItem();
         }
 
-        onDeselected(listener: (event: ItemDeselectedEvent<M>)=>void) {
-            this.itemsSelectionPanel.onDeselected(listener);
+        private addItem(item: BrowseItem<M>) {
+            const index = this.indexOf(item);
+            if (index >= 0) {
+                // item already exist
+                const currentItem = this.items[index];
+                if (!this.compareItems(currentItem, item)) {
+                    // update current item
+                    this.items[index] = item;
+                }
+                return;
+            }
+
+            this.items.push(item);
+        }
+
+        private removeItem(item: BrowseItem<M>) {
+            const index = this.indexOf(item);
+            if (index < 0) {
+                return;
+            }
+
+            this.items.splice(index, 1);
+        }
+
+        updateItems(items: BrowseItem<M>[]) {
+            items.forEach((item) => {
+                let index = this.indexOf(item);
+                if (index >= 0) {
+                    this.items[index] = item;
+                }
+            });
+        }
+
+        getItems(): BrowseItem<M>[] {
+            return this.items;
+        }
+
+        setItems(items: BrowseItem<M>[]): BrowseItemsChanges<M> {
+            let changes = new BrowseItemsChanges<M>();
+
+            let doFilter = (valueLeft: BrowseItem<M>, valueRight: BrowseItem<M>) => {
+                if (valueLeft.getPath() && valueLeft.getPath() === valueRight.getPath()) {
+                    return true;
+                } else if (valueLeft.getId() === valueRight.getId()) {
+                    return true;
+                }
+
+                return false;
+            };
+
+            let itemsToRemove = api.util.ArrayHelper.difference(this.items, items, doFilter);
+
+            let itemsToAdd = api.util.ArrayHelper.difference(items, this.items, doFilter);
+
+            let itemsUpdated = api.util.ArrayHelper.intersection(items, this.items, doFilter);
+
+            itemsToRemove.forEach((item: BrowseItem<M>) => {
+                this.removeItem(item);
+            });
+
+            itemsToAdd.forEach((item: BrowseItem<M>) => {
+                this.addItem(item);
+            });
+
+            itemsUpdated.forEach((item: BrowseItem<M>) => {
+                // addItem() will update the item, if there is a difference between them
+                this.addItem(item);
+            });
+
+            changes.setAdded(itemsToAdd);
+            changes.setRemoved(itemsToRemove);
+
+            return changes;
+        }
+
+        private indexOf(item: BrowseItem<M>): number {
+            for (let i = 0; i < this.items.length; i++) {
+                if (item.getPath() && item.getPath() === this.items[i].getPath() ||
+                    item.getId() === this.items[i].getId()) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        protected compareItems(currentItem: BrowseItem<M>, updatedItem: BrowseItem<M>): boolean {
+            return updatedItem.equals(currentItem);
         }
     }
 }

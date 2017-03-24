@@ -78,7 +78,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         treeGrid.onDataChanged((event: api.ui.treegrid.DataChangedEvent<ContentSummaryAndCompareStatus>) => {
             if (event.getType() === 'updated') {
                 let browseItems = this.treeNodesToBrowseItems(event.getTreeNodes());
-                this.getBrowseItemPanel().updateItemViewers(browseItems);
+                this.getBrowseItemPanel().updateItems(browseItems);
                 this.getBrowseActions().updateActionsEnabledState(
                     this.treeNodesToBrowseItems(this.treeGrid.getRoot().getFullSelection()));
             }
@@ -88,7 +88,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
     }
 
     protected createBrowseItemPanel(): ContentBrowseItemPanel {
-        return new ContentBrowseItemPanel(this.treeGrid);
+        return new ContentBrowseItemPanel();
     }
 
     protected createFilterPanel(): ContentBrowseFilterPanel {
