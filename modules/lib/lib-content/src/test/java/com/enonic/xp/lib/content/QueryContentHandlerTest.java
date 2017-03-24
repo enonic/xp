@@ -28,14 +28,6 @@ public class QueryContentHandlerTest
         runScript( "/site/lib/xp/examples/content/query.js" );
     }
 
-
-    @Test
-    public void testExampleWithFilter()
-    {
-        setupQuery( 2, false );
-        runScript( "/site/lib/xp/examples/content/query_filter.js" );
-    }
-
     @Test
     public void query()
         throws Exception
