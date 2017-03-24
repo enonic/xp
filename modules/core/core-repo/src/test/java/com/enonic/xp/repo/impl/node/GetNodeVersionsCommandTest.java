@@ -62,10 +62,13 @@ public class GetNodeVersionsCommandTest
             name( "my-node" ).
             parent( NodePath.ROOT ).
             build() );
-
+        sleep( 2 );
         doUpdateNode( node );
+        sleep( 2 );
         doUpdateNode( node );
+        sleep( 2 );
         doUpdateNode( node );
+        sleep( 2 );
         doUpdateNode( node );
 
         refresh();
@@ -95,6 +98,18 @@ public class GetNodeVersionsCommandTest
             }
 
             previousTimestamp = nodeVersionMetadata.getTimestamp();
+        }
+    }
+
+    private void sleep( int ms )
+    {
+        try
+        {
+            Thread.sleep( ms );
+        }
+        catch ( InterruptedException e )
+        {
+            e.printStackTrace();
         }
     }
 
