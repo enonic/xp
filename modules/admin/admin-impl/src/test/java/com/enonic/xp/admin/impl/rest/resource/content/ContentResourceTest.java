@@ -972,6 +972,14 @@ public class ContentResourceTest
             add( dependant ).
             build();
 
+        final Content content = Mockito.mock( Content.class );
+
+        Mockito.when( contentService.getById( requestedId )).thenReturn( content );
+
+        Mockito.when(content.getPath()).thenReturn( ContentPath.create().addElement( "requested-contentId" ).build() );
+
+        Mockito.when( contentService.find(Mockito.isA( ContentQuery.class)) ).thenReturn( FindContentIdsByQueryResult.create().build() );
+
         Mockito.when( contentService.resolvePublishDependencies( Mockito.isA( ResolvePublishDependenciesParams.class ) ) ).thenReturn(
             results );
         Mockito.when( contentService.resolveRequiredDependencies( Mockito.isA( ResolveRequiredDependenciesParams.class ) ) ).thenReturn(

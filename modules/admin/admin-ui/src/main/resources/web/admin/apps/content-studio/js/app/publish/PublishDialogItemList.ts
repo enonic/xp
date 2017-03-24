@@ -62,6 +62,14 @@ export class PublishDialogItemList extends DialogItemList {
         return <PublicStatusSelectionItem[]>super.getItemViews();
     }
 
+    public getItemViewById(contentId: ContentId): PublicStatusSelectionItem {
+        for(const view of <PublicStatusSelectionItem[]>super.getItemViews()) {
+            if(view.getContentId().equals(contentId)) {
+                return view;
+            }
+        }
+    }
+
     public getExcludeChildrenIds(): ContentId[] {
         return this.excludeChildrenIds;
     }
@@ -91,6 +99,8 @@ export class PublicStatusSelectionItem extends StatusSelectionItem {
 
     private chaListeners: {(itemId: ContentId, enabled: boolean): void}[] = [];
 
+    private id: ContentId;
+
     private toggler: IncludeChildrenToggler;
 
     constructor(viewer: api.ui.Viewer<ContentSummaryAndCompareStatus>, item: BrowseItem<ContentSummaryAndCompareStatus>) {
@@ -107,6 +117,8 @@ export class PublicStatusSelectionItem extends StatusSelectionItem {
                 this.notifyItemStateChanged(this.getBrowseItem().getModel().getContentId(), enabled);
             });
         }
+
+        this.id = item.getModel().getContentSummary().getContentId();
     }
 
     public doRender(): wemQ.Promise<boolean> {
@@ -123,6 +135,16 @@ export class PublicStatusSelectionItem extends StatusSelectionItem {
 
     getIncludeChildrenToggler(): IncludeChildrenToggler {
         return this.toggler;
+    }
+
+    getContentId(): ContentId {
+        return this.id;
+    }
+
+    setTogglerActive(value: boolean) {
+        if(this.toggler) {
+            this.toggler.setVisible(value);
+        }
     }
 
     public onItemStateChanged(listener: (item: ContentId, enabled: boolean) => void) {
