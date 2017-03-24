@@ -210,8 +210,7 @@ public class ResolveSyncWorkCommandTest
      * .......................node1_1_1_1      (New)
      * <p>
      * Contents created below look like pic above.
-     * ResolveSyncWorkCommand will return empty set for node1_1_1_1.id() when called with includeChildren=true,
-     * and will return all four when called with includeChildren=false, because:
+     * ResolveSyncWorkCommand will return all four when called both with includeChildren=true and with includeChildren=false
      * 1) FindNodesWithVersionDifferenceCommand will returns only actual nodes that have Moved status (such like node1)...
      * 2) ... though CompareContentCommand will return status Moved for all children of Moved content.
      * 3) When includeChildren=false ResolveSyncWorkCommand will resolve all parents against the passed node.
@@ -257,7 +256,7 @@ public class ResolveSyncWorkCommandTest
         final ResolveSyncWorkResult resultChildrenIncluded = resolveSyncWorkResult( node1_1_1_1.id(), true );
         final ResolveSyncWorkResult resultChildrenNotIncluded = resolveSyncWorkResult( node1_1_1_1.id(), false );
 
-        assertEquals( resultChildrenIncluded.getSize(), 0 );
+        assertEquals( resultChildrenIncluded.getSize(), 4 );
         assertEquals( resultChildrenNotIncluded.getSize(), 4 );
     }
 
@@ -271,8 +270,7 @@ public class ResolveSyncWorkCommandTest
      * .......................node1_1_1_1      (New)
      * <p>
      * Contents created below look like pic above.
-     * ResolveSyncWorkCommand will return empty set for node1_1_1.id() when called with includeChildren=true,
-     * and will return node1_1_1 and two of its parents when called with includeChildren=false, because:
+     * ResolveSyncWorkCommand will return node1_1_1 and two of its parents when called both with includeChildren=true and with includeChildren=false
      * 1) FindNodesWithVersionDifferenceCommand will returns only actual nodes that have Moved status (such like node1)...
      * 2) ... though CompareContentCommand will return status Moved for all children of Moved content.
      * 3) When includeChildren=false ResolveSyncWorkCommand will resolve all parents against the passed node.
@@ -318,7 +316,7 @@ public class ResolveSyncWorkCommandTest
         final ResolveSyncWorkResult resultChildrenIncluded = resolveSyncWorkResult( node1_1_1.id(), true );
         final ResolveSyncWorkResult resultChildrenNotIncluded = resolveSyncWorkResult( node1_1_1.id(), false );
 
-        assertEquals( resultChildrenIncluded.getSize(), 0 );
+        assertEquals( resultChildrenIncluded.getSize(), 3 );
         assertEquals( resultChildrenNotIncluded.getSize(), 3 );
 
     }
