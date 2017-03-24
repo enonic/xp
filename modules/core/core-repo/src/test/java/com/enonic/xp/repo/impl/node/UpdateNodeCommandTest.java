@@ -300,6 +300,15 @@ public class UpdateNodeCommandTest
             parent( NodePath.ROOT ).
             build() );
 
+        try
+        {
+            Thread.sleep( 2 );
+        }
+        catch ( InterruptedException e )
+        {
+            e.printStackTrace();
+        }
+
         updateNode( UpdateNodeParams.create().
             id( node.id() ).
             editor( toBeEdited -> {
