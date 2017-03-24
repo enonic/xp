@@ -17,6 +17,20 @@ import com.enonic.xp.query.filter.ValueFilter;
 
 public class FilterParamsFactory
 {
+    public static final String FIELDNAME_FIELD = "field";
+
+    public static final String NOT_EXISTS_FILTER = "notExists";
+
+    public static final String EXISTS_FILTER = "exists";
+
+    public static final String BOOLEAN_FILTER = "boolean";
+
+    public static final String HAS_VALUE_FILTER = "hasValue";
+
+    public static final String IDS_FILTER = "ids";
+
+    public static final String VALUES_FIELD = "values";
+
     static Filters create( final Map<String, Object> value )
     {
         return createFilters( value );
@@ -55,23 +69,23 @@ public class FilterParamsFactory
     {
         switch ( key )
         {
-            case "notExists":
+            case NOT_EXISTS_FILTER:
             {
                 return createNotExistsFilter( toMap( filter ) );
             }
-            case "exists":
+            case EXISTS_FILTER:
             {
                 return createExistsFilter( toMap( filter ) );
             }
-            case "boolean":
+            case BOOLEAN_FILTER:
             {
                 return createBoolFilter( toMap( filter ) );
             }
-            case "hasValue":
+            case HAS_VALUE_FILTER:
             {
                 return createValueFilter( toMap( filter ) );
             }
-            case "ids":
+            case IDS_FILTER:
             {
                 return createIdsFilter( toMap( filter ) );
             }
@@ -82,40 +96,40 @@ public class FilterParamsFactory
 
     private static Filter createIdsFilter( final Map<String, Object> idsFilter )
     {
-        requiredFields( idsFilter, "values" );
+        requiredFields( idsFilter, VALUES_FIELD );
 
         return IdFilter.create().
-            values( getStringValues( idsFilter.get( "values" ) ) ).
+            values( getStringValues( idsFilter.get( VALUES_FIELD ) ) ).
             build();
     }
 
     private static Filter createExistsFilter( final Map<String, Object> existsFilter )
     {
-        requiredFields( existsFilter, "fieldName" );
+        requiredFields( existsFilter, FIELDNAME_FIELD );
 
         return ExistsFilter.create().
-            fieldName( existsFilter.get( "fieldName" ).toString() ).
+            fieldName( existsFilter.get( FIELDNAME_FIELD ).toString() ).
             build();
     }
 
     private static Filter createNotExistsFilter( final Map<String, Object> existsFilter )
     {
-        requiredFields( existsFilter, "fieldName" );
+        requiredFields( existsFilter, FIELDNAME_FIELD );
 
         return BooleanFilter.create().
             mustNot( ExistsFilter.create().
-                fieldName( existsFilter.get( "fieldName" ).toString() ).
+                fieldName( existsFilter.get( FIELDNAME_FIELD ).toString() ).
                 build() ).
             build();
     }
 
     private static Filter createValueFilter( final Map<String, Object> valueFilter )
     {
-        requiredFields( valueFilter, "fieldName", "values" );
+        requiredFields( valueFilter, FIELDNAME_FIELD, VALUES_FIELD );
 
         final ValueFilter.Builder builder = ValueFilter.create().
-            fieldName( valueFilter.get( "fieldName" ).toString() ).
-            addAllValues( getValues( valueFilter.get( "values" ) ) );
+            fieldName( valueFilter.get( FIELDNAME_FIELD ).toString() ).
+            addAllValues( getValues( valueFilter.get( VALUES_FIELD ) ) );
 
         return builder.build();
     }

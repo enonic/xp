@@ -10,12 +10,12 @@ var result = contentLib.query({
         boolean: {
             must: {
                 exists: {
-                    fieldName: "modifiedTime"
+                    field: "modifiedTime"
                 }
             },
             mustNot: {
                 hasValue: {
-                    fieldName: "myField",
+                    field: "myField",
                     values: [
                         "cheese",
                         "fish",
@@ -25,7 +25,7 @@ var result = contentLib.query({
             }
         },
         notExists: {
-            fieldName: "unwantedField"
+            field: "unwantedField"
         },
         ids: {
             values: ["id1", "id2"]

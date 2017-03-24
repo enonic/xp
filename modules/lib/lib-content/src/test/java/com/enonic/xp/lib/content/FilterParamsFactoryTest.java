@@ -31,7 +31,7 @@ public class FilterParamsFactoryTest
         Map<String, Object> value = Maps.newHashMap();
 
         final HashMap<String, Object> existsFilter = Maps.newHashMap();
-        existsFilter.put( "fieldName", "myField" );
+        existsFilter.put( "field", "myField" );
 
         value.put( "exists", existsFilter );
 
@@ -48,7 +48,7 @@ public class FilterParamsFactoryTest
         Map<String, Object> value = Maps.newHashMap();
 
         final HashMap<String, Object> notExistsFilter = Maps.newHashMap();
-        notExistsFilter.put( "fieldName", "myField" );
+        notExistsFilter.put( "field", "myField" );
 
         value.put( "notExists", notExistsFilter );
 
@@ -69,7 +69,7 @@ public class FilterParamsFactoryTest
         Map<String, Object> value = Maps.newHashMap();
 
         final HashMap<String, Object> existsFilter = Maps.newHashMap();
-        existsFilter.put( "fieldName", "myField" );
+        existsFilter.put( "field", "myField" );
 
         final HashMap<String, Object> existsFilterWrapper = Maps.newHashMap();
         existsFilterWrapper.put( "exists", existsFilter );
@@ -97,7 +97,7 @@ public class FilterParamsFactoryTest
 
         List<String> values = Lists.newArrayList( "fisk", "ost", "løk" );
         final HashMap<String, Object> valueFilter = Maps.newHashMap();
-        valueFilter.put( "fieldName", "myField" );
+        valueFilter.put( "field", "myField" );
         valueFilter.put( "values", values );
 
         value.put( "hasValue", valueFilter );
