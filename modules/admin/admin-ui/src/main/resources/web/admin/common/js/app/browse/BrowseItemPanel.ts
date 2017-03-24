@@ -51,12 +51,12 @@ module api.app.browse {
             }
         }
 
-        updateDisplayedPanel() {
+        updateDisplayedPanel(highlighted: boolean = false) {
             let selectedItems = this.getItems();
             if (selectedItems.length > 0) {
                 this.showPanelByIndex(1);
                 this.itemStatisticsPanel.setItem(selectedItems[selectedItems.length - 1].toViewItem());
-            } else {
+            } else if (!highlighted) {
                 this.showPanelByIndex(0);
             }
         }
