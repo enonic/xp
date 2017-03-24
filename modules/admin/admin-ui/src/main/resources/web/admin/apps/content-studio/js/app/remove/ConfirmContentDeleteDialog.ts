@@ -50,7 +50,7 @@ export class ConfirmContentDeleteDialog extends api.ui.dialog.ModalDialog {
 
     private addSubtitle() {
         this.appendChildToHeader(new api.dom.H6El('confirm-delete-subtitle').setHtml(
-            'You are about to delete important content. This action cannot be undone.'));
+            'You are about to delete a site or multiple content items. This action cannot be undone.'));
     }
 
     private initConfirmDeleteAction() {
