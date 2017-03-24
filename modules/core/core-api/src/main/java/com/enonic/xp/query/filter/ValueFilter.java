@@ -62,6 +62,12 @@ public class ValueFilter
             return doAddValues( values );
         }
 
+        public Builder addAllValues( final Collection<Value> values )
+        {
+            this.values.addAll( values );
+            return this;
+        }
+
         private Builder doAddValues( final Collection<String> values )
         {
             this.values.addAll( Collections2.transform( values, ValueFactory::newString ) );

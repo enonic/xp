@@ -7,10 +7,14 @@ import org.junit.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.FindContentByQueryParams;
 import com.enonic.xp.content.FindContentByQueryResult;
+import com.enonic.xp.content.FindContentIdsByQueryResult;
+import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.query.parser.QueryParser;
 
 import static org.junit.Assert.*;
@@ -122,6 +126,28 @@ public class ContentServiceImplTest_find
             assertEquals( 1, result.getTotalHits() );
             return null;
         } );
+    }
+
+    @Test
+    public void multipleFilters()
+        throws Exception
+    {
+        createContent( ContentPath.ROOT, "title1" );
+        createContent( ContentPath.ROOT, "title2" );
+
+        FindContentIdsByQueryResult result = this.contentService.find( ContentQuery.create().
+            queryFilter( ValueFilter.create().
+                fieldName( ContentPropertyNames.DISPLAY_NAME ).
+                addValue( ValueFactory.newString( "title1" ) ).
+                build() ).
+            queryFilter( ValueFilter.create().
+                fieldName( ContentPropertyNames.DISPLAY_NAME ).
+                addValue( ValueFactory.newString( "title2" ) ).
+                build() ).
+            build() );
+
+        // Filters will be "must", and no entry matches both titles
+        assertEquals( 0, result.getHits() );
     }
 
     private FindContentByQueryResult createAndFindContent( final ContentPublishInfo publishInfo )

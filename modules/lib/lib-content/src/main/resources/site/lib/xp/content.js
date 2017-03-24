@@ -206,6 +206,7 @@ exports.create = function (params) {
  * @param {number} [params.start=0] Start index (used for paging).
  * @param {number} [params.count=10] Number of contents to fetch.
  * @param {string} params.query Query expression.
+ * @param {object} [params.filters] Filters to apply to query result
  * @param {string} [params.sort] Sorting expression.
  * @param {string} [params.aggregations] Aggregations expression.
  * @param {string[]} [params.contentTypes] Content types to filter on.
@@ -222,6 +223,7 @@ exports.query = function (params) {
     bean.sort = nullOrValue(params.sort);
     bean.aggregations = __.toScriptValue(params.aggregations);
     bean.contentTypes = __.toScriptValue(params.contentTypes);
+    bean.filters = __.toScriptValue(params.filters);
     return __.toNativeObject(bean.execute());
 };
 
