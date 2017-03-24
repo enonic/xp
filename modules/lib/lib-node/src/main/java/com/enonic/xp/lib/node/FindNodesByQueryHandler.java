@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.enonic.xp.lib.common.JsonToFilterMapper;
 import com.enonic.xp.lib.node.mapper.NodeQueryResultMapper;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeQuery;
@@ -11,8 +12,8 @@ import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.expr.ConstraintExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
+import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.parser.QueryParser;
-import com.enonic.xp.script.ScriptValue;
 
 @SuppressWarnings("unused")
 public final class FindNodesByQueryHandler
@@ -26,6 +27,8 @@ public final class FindNodesByQueryHandler
 
     private String sort;
 
+    private Map<String, Object> filters;
+
     private Map<String, Object> aggregations;
 
     private List<String> contentTypes;
@@ -33,10 +36,12 @@ public final class FindNodesByQueryHandler
     private FindNodesByQueryHandler( final Builder builder )
     {
         super( builder );
-        setStart( builder.start );
-        setCount( builder.count );
-        setQuery( builder.query );
-        setSort( builder.sort );
+        this.start = builder.start;
+        this.count = builder.count;
+        this.query = builder.query;
+        this.sort = builder.sort;
+        this.filters = builder.filters;
+
         aggregations = builder.aggregations;
         contentTypes = builder.contentTypes;
     }
@@ -56,6 +61,7 @@ public final class FindNodesByQueryHandler
         final List<OrderExpr> orderExpressions = QueryParser.parseOrderExpressions( sort );
         final ConstraintExpr constraintExpr = QueryParser.parseCostraintExpression( query );
         final QueryExpr queryExpr = QueryExpr.from( constraintExpr, orderExpressions );
+        final Filters filters = JsonToFilterMapper.create( this.filters );
 
         final Set<AggregationQuery> aggregations = new QueryAggregationParams().getAggregations( this.aggregations );
 
@@ -64,6 +70,7 @@ public final class FindNodesByQueryHandler
             size( count ).
             aggregationQueries( aggregations ).
             query( queryExpr ).
+            addQueryFilters( filters ).
             build();
 
         final FindNodesByQueryResult result = nodeService.findByQuery( nodeQuery );
@@ -71,36 +78,11 @@ public final class FindNodesByQueryHandler
         return convert( result );
     }
 
-
     private NodeQueryResultMapper convert( final FindNodesByQueryResult findQueryResult )
     {
         return new NodeQueryResultMapper( findQueryResult );
     }
 
-    public void setStart( final Integer start )
-    {
-        this.start = start;
-    }
-
-    public void setCount( final Integer count )
-    {
-        this.count = count;
-    }
-
-    public void setQuery( final String query )
-    {
-        this.query = query;
-    }
-
-    public void setSort( final String sort )
-    {
-        this.sort = sort;
-    }
-
-    public void setAggregations( final ScriptValue value )
-    {
-        this.aggregations = value != null ? value.getMap() : null;
-    }
 
     public static final class Builder
         extends AbstractNodeHandler.Builder<Builder>
@@ -114,6 +96,8 @@ public final class FindNodesByQueryHandler
         private String sort;
 
         private Map<String, Object> aggregations;
+
+        private Map<String, Object> filters;
 
         private List<String> contentTypes;
 
@@ -154,6 +138,12 @@ public final class FindNodesByQueryHandler
         public Builder contentTypes( final List<String> val )
         {
             contentTypes = val;
+            return this;
+        }
+
+        public Builder filters( final Map<String, Object> val )
+        {
+            this.filters = val;
             return this;
         }
 

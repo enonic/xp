@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.content;
+package com.enonic.xp.lib.common;
 
 import java.util.Collection;
 import java.util.List;
@@ -15,23 +15,23 @@ import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 
-public class FilterParamsFactory
+public class JsonToFilterMapper
 {
-    public static final String FIELDNAME_FIELD = "field";
+    private static final String FIELDNAME_FIELD = "field";
 
-    public static final String NOT_EXISTS_FILTER = "notExists";
+    private static final String NOT_EXISTS_FILTER = "notExists";
 
-    public static final String EXISTS_FILTER = "exists";
+    private static final String EXISTS_FILTER = "exists";
 
-    public static final String BOOLEAN_FILTER = "boolean";
+    private static final String BOOLEAN_FILTER = "boolean";
 
-    public static final String HAS_VALUE_FILTER = "hasValue";
+    private static final String HAS_VALUE_FILTER = "hasValue";
 
-    public static final String IDS_FILTER = "ids";
+    private static final String IDS_FILTER = "ids";
 
-    public static final String VALUES_FIELD = "values";
+    private static final String VALUES_FIELD = "values";
 
-    static Filters create( final Map<String, Object> value )
+    public static Filters create( final Map<String, Object> value )
     {
         return createFilters( value );
     }

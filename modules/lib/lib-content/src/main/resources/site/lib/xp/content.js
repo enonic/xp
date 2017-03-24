@@ -219,6 +219,7 @@ exports.create = function (params) {
  * This command queries content.
  *
  * @example-ref examples/content/query.js
+ * @example-ref examples/content/query_filter.js
  *
  * @param {object} params JSON with the parameters.
  * @param {number} [params.start=0] Start index (used for paging).

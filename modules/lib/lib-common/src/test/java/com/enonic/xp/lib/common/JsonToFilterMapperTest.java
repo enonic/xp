@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.content;
+package com.enonic.xp.lib.common;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +21,7 @@ import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.*;
 
 
-public class FilterParamsFactoryTest
+public class JsonToFilterMapperTest
 {
 
     @Test
@@ -35,7 +35,7 @@ public class FilterParamsFactoryTest
 
         value.put( "exists", existsFilter );
 
-        final Filters filters = FilterParamsFactory.create( value );
+        final Filters filters = com.enonic.xp.lib.common.JsonToFilterMapper.create( value );
 
         assertTrue( filters.get( 0 ) instanceof ExistsFilter );
         assertEquals( "myField", ( (ExistsFilter) filters.get( 0 ) ).getFieldName() );
@@ -52,7 +52,7 @@ public class FilterParamsFactoryTest
 
         value.put( "notExists", notExistsFilter );
 
-        final Filters filters = FilterParamsFactory.create( value );
+        final Filters filters = com.enonic.xp.lib.common.JsonToFilterMapper.create( value );
 
         assertTrue( filters.get( 0 ) instanceof BooleanFilter );
         final BooleanFilter booleanFilter = (BooleanFilter) filters.get( 0 );
@@ -79,7 +79,7 @@ public class FilterParamsFactoryTest
 
         value.put( "boolean", mustFilter );
 
-        final Filters filters = FilterParamsFactory.create( value );
+        final Filters filters = com.enonic.xp.lib.common.JsonToFilterMapper.create( value );
 
         assertTrue( filters.get( 0 ) instanceof BooleanFilter );
         final BooleanFilter booleanFilter = (BooleanFilter) filters.get( 0 );
@@ -102,7 +102,7 @@ public class FilterParamsFactoryTest
 
         value.put( "hasValue", valueFilter );
 
-        final Filters filters = FilterParamsFactory.create( value );
+        final Filters filters = com.enonic.xp.lib.common.JsonToFilterMapper.create( value );
 
         assertTrue( filters.get( 0 ) instanceof ValueFilter );
         assertEquals( "myField", ( (ValueFilter) filters.get( 0 ) ).getFieldName() );
@@ -121,7 +121,7 @@ public class FilterParamsFactoryTest
 
         value.put( "ids", valueFilter );
 
-        final Filters filters = FilterParamsFactory.create( value );
+        final Filters filters = com.enonic.xp.lib.common.JsonToFilterMapper.create( value );
 
         assertTrue( filters.get( 0 ) instanceof IdFilter );
         assertEquals( 3, ( (IdFilter) filters.get( 0 ) ).getValues().size() );
