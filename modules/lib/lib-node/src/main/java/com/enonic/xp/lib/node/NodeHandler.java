@@ -15,7 +15,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 
 public class NodeHandler
 {
-    protected final NodeService nodeService;
+    private final NodeService nodeService;
 
     private final Context context;
 
@@ -25,6 +25,7 @@ public class NodeHandler
         this.nodeService = nodeService;
     }
 
+    @SuppressWarnings("unused")
     public Object create( final ScriptValue params )
     {
         return execute( CreateNodeHandler.create().
@@ -33,6 +34,7 @@ public class NodeHandler
             build() );
     }
 
+    @SuppressWarnings("unused")
     public Object modify( final ScriptValue editor, String key )
     {
         return execute( ModifyNodeHandler.create().
@@ -42,6 +44,7 @@ public class NodeHandler
             build() );
     }
 
+    @SuppressWarnings("unused")
     public Object get( final String[] keys )
     {
         return execute( GetNodeHandler.create().
@@ -50,6 +53,7 @@ public class NodeHandler
             build() );
     }
 
+    @SuppressWarnings("unused")
     public Object delete( final String[] keys )
     {
         return execute( DeleteNodeHandler.create().
@@ -58,6 +62,7 @@ public class NodeHandler
             build() );
     }
 
+    @SuppressWarnings("unused")
     public Object push( final PushNodeHandlerParams params )
     {
         final PushNodeHandler handler = PushNodeHandler.create().
@@ -73,6 +78,7 @@ public class NodeHandler
         return execute( handler );
     }
 
+    @SuppressWarnings("unused")
     public Object diff( final DiffBranchesHandlerParams params )
     {
         return execute( DiffBranchesHandler.create().
@@ -83,6 +89,7 @@ public class NodeHandler
             build() );
     }
 
+    @SuppressWarnings("unused")
     public Object move( final String source, final String target )
     {
         return execute( MoveNodeHandler.create().
@@ -92,6 +99,7 @@ public class NodeHandler
             build() );
     }
 
+    @SuppressWarnings("unused")
     public Object query( final QueryNodeHandlerParams params )
     {
         return execute( FindNodesByQueryHandler.create().
@@ -100,10 +108,12 @@ public class NodeHandler
             count( params.getCount() ).
             start( params.getStart() ).
             sort( params.getSort() ).
+            filters( params.getFilters() ).
             nodeService( this.nodeService ).
             build() );
     }
 
+    @SuppressWarnings("unused")
     public Object findChildren( final FindChildrenHandlerParams params )
     {
         return execute( FindChildrenNodeHandler.create().
@@ -117,6 +127,7 @@ public class NodeHandler
             build() );
     }
 
+    @SuppressWarnings("unused")
     public Object setRootPermissions( final ScriptValue value )
     {
         final ScriptValueTranslatorResult translatorResult = new ScriptValueTranslator( false ).create( value );
@@ -141,6 +152,7 @@ public class NodeHandler
             build() );
     }
 
+    @SuppressWarnings("unused")
     public ByteSource getBinary( final String key, final String binaryReference )
     {
         return this.context.callWith( () -> GetBinaryHandler.create().
@@ -151,6 +163,7 @@ public class NodeHandler
             execute() );
     }
 
+    @SuppressWarnings("unused")
     public void refresh( final String mode )
     {
         this.context.runWith( () -> nodeService.refresh( RefreshMode.valueOf( mode ) ) );
