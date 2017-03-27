@@ -10,6 +10,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.context.Context;
