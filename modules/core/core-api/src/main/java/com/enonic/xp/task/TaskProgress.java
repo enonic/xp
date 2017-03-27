@@ -41,14 +41,11 @@ public final class TaskProgress
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
+        if ( !( o instanceof TaskProgress ) )
         {
             return false;
         }
+
         final TaskProgress that = (TaskProgress) o;
         return current == that.current && total == that.total && Objects.equals( info, that.info );
     }

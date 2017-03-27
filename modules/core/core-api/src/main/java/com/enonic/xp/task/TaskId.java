@@ -20,10 +20,6 @@ public final class TaskId
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
         if ( !( o instanceof TaskId ) )
         {
             return false;

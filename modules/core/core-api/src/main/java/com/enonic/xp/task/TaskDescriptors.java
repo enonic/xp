@@ -1,12 +1,10 @@
 package com.enonic.xp.task;
 
-import java.util.Collection;
-
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
-public class TaskDescriptors
+public final class TaskDescriptors
     extends AbstractImmutableEntityList<TaskDescriptor>
 {
     private TaskDescriptors( final ImmutableList<TaskDescriptor> list )
@@ -20,18 +18,13 @@ public class TaskDescriptors
         return new TaskDescriptors( list );
     }
 
-    public static TaskDescriptors from( final TaskDescriptor... TaskDescriptors )
+    public static TaskDescriptors from( final TaskDescriptor... descriptors )
     {
-        return new TaskDescriptors( ImmutableList.copyOf( TaskDescriptors ) );
+        return from( ImmutableList.copyOf( descriptors ) );
     }
 
-    public static TaskDescriptors from( final Iterable<? extends TaskDescriptor> TaskDescriptors )
+    public static TaskDescriptors from( final Iterable<TaskDescriptor> descriptors )
     {
-        return new TaskDescriptors( ImmutableList.copyOf( TaskDescriptors ) );
-    }
-
-    public static TaskDescriptors from( final Collection<? extends TaskDescriptor> TaskDescriptors )
-    {
-        return new TaskDescriptors( ImmutableList.copyOf( TaskDescriptors ) );
+        return new TaskDescriptors( ImmutableList.copyOf( descriptors ) );
     }
 }

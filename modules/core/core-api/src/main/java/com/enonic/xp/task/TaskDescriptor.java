@@ -5,7 +5,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.page.DescriptorKey;
 
-public class TaskDescriptor
+public final class TaskDescriptor
 {
     private final DescriptorKey key;
 
@@ -36,7 +36,12 @@ public class TaskDescriptor
         return form;
     }
 
-    private static class Builder
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public final static class Builder
     {
         private DescriptorKey key;
 
@@ -48,19 +53,19 @@ public class TaskDescriptor
         {
         }
 
-        public Builder setKey( final DescriptorKey key )
+        public Builder key( final DescriptorKey key )
         {
             this.key = key;
             return this;
         }
 
-        public Builder setDescription( final String description )
+        public Builder descriptor( final String description )
         {
             this.description = description;
             return this;
         }
 
-        public Builder setForm( final Form form )
+        public Builder form( final Form form )
         {
             this.form = form;
             return this;
