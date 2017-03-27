@@ -63,7 +63,9 @@ module api.app.browse {
 
                 this.getBrowseActions().updateActionsEnabledState(this.getBrowseItemPanel().getItems(), changes)
                     .then(() => {
-                        this.getBrowseItemPanel().updatePreviewPanel();
+                        if (this.getBrowseItemPanel().getItems().length > 0 || !highlighted) {
+                            this.getBrowseItemPanel().updatePreviewPanel();
+                        }
                     }).catch(api.DefaultErrorHandler.handle);
                 };
 

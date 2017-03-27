@@ -19,6 +19,7 @@ module api.ui.treegrid.actions {
                 if (oldLabel == newLabel) {
                     return;
                 }
+                this.tooltip.setText(this.isActive() ? 'Hide selection' : 'Show selection');
 
                 this.removeClass('single-item multiple-items');
                 this.removeClass(`size-${oldLabel.length}`);
@@ -39,7 +40,14 @@ module api.ui.treegrid.actions {
             });
 
             this.onActiveChanged((isActive: boolean) => {
-                this.tooltip.setText(isActive ? 'Hide selection' : 'Show 1 selected item');
+                let isVisible = this.tooltip.isVisible();
+                if (isVisible) {
+                    this.tooltip.hide();
+                }
+                this.tooltip.setText(isActive ? 'Hide selection' : 'Show selection');
+                if (isVisible) {
+                    this.tooltip.show();
+                }
             });
         }
     }
