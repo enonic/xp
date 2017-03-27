@@ -51,4 +51,10 @@ final class ScriptMapGenerator
     {
         NashornHelper.addToNativeArray( array, value );
     }
+
+    @Override
+    protected MapGeneratorBase newGenerator()
+    {
+        return new ScriptMapGenerator( this.helper );
+    }
 }
