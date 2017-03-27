@@ -16,3 +16,4 @@ npm-debug.log
 .tab
 .tmp
 generated-java
+classes/
