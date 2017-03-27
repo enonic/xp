@@ -726,6 +726,20 @@ public class NodeServiceImpl
             resolve( node );
     }
 
+    @Override
+    public boolean hasUnpublishedChildren( final NodeId parent, final Branch target )
+    {
+        verifyContext();
+        return HasUnpublishedChildrenCommand.create().
+            parent( parent ).
+            target( target ).
+            indexServiceInternal( indexServiceInternal ).
+            storageService( nodeStorageService ).
+            searchService( nodeSearchService ).
+            build().
+            execute();
+    }
+
     private void verifyContext()
     {
         verifyBranchExists( ContextAccessor.current().getBranch() );
