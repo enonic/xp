@@ -85,4 +85,6 @@ public interface NodeService
     boolean nodeExists( NodeId nodeId );
 
     boolean nodeExists( NodePath nodePath );
+
+    boolean hasUnpublishedChildren( NodeId parent, Branch target );
 }

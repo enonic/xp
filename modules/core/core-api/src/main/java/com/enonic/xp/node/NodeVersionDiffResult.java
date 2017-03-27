@@ -10,9 +10,12 @@ public class NodeVersionDiffResult
 {
     private final NodeIds nodesWithDifferences;
 
-    private NodeVersionDiffResult( final NodeIds nodesWithDifferences )
+    private final long totalHits;
+
+    private NodeVersionDiffResult( final Builder builder )
     {
-        this.nodesWithDifferences = nodesWithDifferences;
+        nodesWithDifferences = NodeIds.from( builder.nodeIds );
+        totalHits = builder.totalHits;
     }
 
     public NodeIds getNodesWithDifferences()
@@ -20,9 +23,14 @@ public class NodeVersionDiffResult
         return nodesWithDifferences;
     }
 
+    public long getTotalHits()
+    {
+        return totalHits;
+    }
+
     public static NodeVersionDiffResult empty()
     {
-        return new NodeVersionDiffResult( NodeIds.empty() );
+        return new NodeVersionDiffResult( create() );
     }
 
     public static Builder create()
@@ -32,7 +40,13 @@ public class NodeVersionDiffResult
 
     public static class Builder
     {
-        private Set<NodeId> nodeIds = Sets.newLinkedHashSet();
+        private final Set<NodeId> nodeIds = Sets.newLinkedHashSet();
+
+        private long totalHits;
+
+        private Builder()
+        {
+        }
 
         public Builder add( final NodeId nodeId )
         {
@@ -42,9 +56,14 @@ public class NodeVersionDiffResult
 
         public NodeVersionDiffResult build()
         {
-            return new NodeVersionDiffResult( NodeIds.from( nodeIds ) );
+            return new NodeVersionDiffResult( this );
         }
 
+        public Builder totalHits( final long val )
+        {
+            totalHits = val;
+            return this;
+        }
     }
 
 }
