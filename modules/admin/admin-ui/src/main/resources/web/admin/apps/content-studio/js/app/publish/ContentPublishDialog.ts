@@ -15,6 +15,8 @@ import LoadMask = api.ui.mask.LoadMask;
 import BrowseItem = api.app.browse.BrowseItem;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
 import Checkbox = api.ui.Checkbox;
+import HasUnpublishedChildrenResult = api.content.resource.result.HasUnpublishedChildrenResult;
+import HasUnpublishedChildrenRequest = api.content.resource.HasUnpublishedChildrenRequest;
 
 /**
  * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
@@ -161,6 +163,17 @@ export class ContentPublishDialog extends ProgressBarDialog {
             this.includeOfflineCheckbox.setVisible(
                 this.getItemList().childTogglersAvailable() || this.dependantIds.length > 0
             );
+
+            new HasUnpublishedChildrenRequest(ids).sendAndParse().then((result) => {
+                result.getResult().forEach((requestedResult) => {
+                    debugger;
+                    const item = this.getItemList().getItemViewById(requestedResult.getId());
+
+                    if(item) {
+                        item.setTogglerActive(requestedResult.getHasChildren());
+                    }
+                });
+            });
 
             return this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
                 if (resetDependantItems) { // just opened or first time loading children

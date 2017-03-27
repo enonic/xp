@@ -9,3 +9,4 @@
 ///<reference path='ContentsExistResult.ts' />
 ///<reference path='GetPublishStatusResult.ts' />
 ///<reference path='GetPublishStatusesResult.ts' />
+///<reference path='HasUnpublishedChildrenResult.ts' />
