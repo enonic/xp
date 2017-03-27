@@ -436,8 +436,10 @@ public final class ContentResource
     public UndoPendingDeleteContentResultJson undoPendingDelete( final UndoPendingDeleteContentJson params )
     {
         UndoPendingDeleteContentResultJson result = new UndoPendingDeleteContentResultJson();
-        int numberOfContents = this.contentService.undoPendingDelete(
-            new UndoPendingDeleteContentParams( ContentIds.from( params.getContentIds() ), ContentConstants.BRANCH_MASTER ) );
+        int numberOfContents = this.contentService.undoPendingDelete( UndoPendingDeleteContentParams.create().
+            contentIds( ContentIds.from( params.getContentIds() ) ).
+            target( ContentConstants.BRANCH_MASTER ).
+            build() );
         return result.setSuccess( numberOfContents );
     }
 
@@ -825,7 +827,7 @@ public final class ContentResource
                     iconUrl( contentIconUrlResolver.resolve( content ) ).
                     build();
             } ).
-            collect( Collectors.toList() );
+                collect( Collectors.toList() );
     }
 
     @POST

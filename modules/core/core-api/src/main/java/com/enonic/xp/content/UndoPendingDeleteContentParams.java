@@ -11,10 +11,15 @@ public final class UndoPendingDeleteContentParams
 
     private final Branch target;
 
-    public UndoPendingDeleteContentParams( final ContentIds contentIds, final Branch target )
+    private UndoPendingDeleteContentParams( final Builder builder )
     {
-        this.contentIds = contentIds;
-        this.target = target;
+        contentIds = builder.contentIds;
+        target = builder.target;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     public ContentIds getContentIds()
@@ -22,8 +27,37 @@ public final class UndoPendingDeleteContentParams
         return contentIds;
     }
 
-    public Branch getBranch()
+    public Branch getTarget()
     {
         return target;
+    }
+
+
+    public static final class Builder
+    {
+        private ContentIds contentIds;
+
+        private Branch target;
+
+        private Builder()
+        {
+        }
+
+        public Builder contentIds( final ContentIds val )
+        {
+            contentIds = val;
+            return this;
+        }
+
+        public Builder target( final Branch val )
+        {
+            target = val;
+            return this;
+        }
+
+        public UndoPendingDeleteContentParams build()
+        {
+            return new UndoPendingDeleteContentParams( this );
+        }
     }
 }
