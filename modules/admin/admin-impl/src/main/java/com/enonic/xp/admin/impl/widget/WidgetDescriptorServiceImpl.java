@@ -3,38 +3,40 @@ package com.enonic.xp.admin.impl.widget;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.admin.widget.WidgetDescriptorService;
-import com.enonic.xp.admin.widget.WidgetDescriptors;
-import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.descriptor.DescriptorService;
+import com.enonic.xp.descriptor.Descriptors;
 
 @Component(immediate = true)
 public final class WidgetDescriptorServiceImpl
     implements WidgetDescriptorService
 {
-    private ApplicationService applicationService;
-
-    private ResourceService resourceService;
+    private DescriptorService descriptorService;
 
     @Override
-    public WidgetDescriptors getByInterfaces( final String... interfaceNames )
+    public Descriptors<WidgetDescriptor> getByInterfaces( final String... interfaceNames )
     {
-        return new GetWidgetDescriptorsByInterfaceCommand().
-            applicationService( this.applicationService ).
-            resourceService( this.resourceService ).
-            interfaceNames( interfaceNames ).
-            execute();
+        return this.descriptorService.getAll( WidgetDescriptor.class ).
+            filter( w -> containsInterface( w, interfaceNames ) );
+    }
+
+    private boolean containsInterface( final WidgetDescriptor descriptor, final String... interfaceNames )
+    {
+        for ( final String interfaceName : interfaceNames )
+        {
+            if ( descriptor.getInterfaces().contains( interfaceName ) )
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Reference
-    public void setApplicationService( final ApplicationService applicationService )
+    public void setDescriptorService( final DescriptorService descriptorService )
     {
-        this.applicationService = applicationService;
-    }
-
-    @Reference
-    public void setResourceService( final ResourceService resourceService )
-    {
-        this.resourceService = resourceService;
+        this.descriptorService = descriptorService;
     }
 }

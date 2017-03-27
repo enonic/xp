@@ -2,8 +2,10 @@ package com.enonic.xp.admin.widget;
 
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.descriptor.Descriptors;
+
 @Beta
 public interface WidgetDescriptorService
 {
-    WidgetDescriptors getByInterfaces( final String... interfaceName );
+    Descriptors<WidgetDescriptor> getByInterfaces( final String... interfaceName );
 }

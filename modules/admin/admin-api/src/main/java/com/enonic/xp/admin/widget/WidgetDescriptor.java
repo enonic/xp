@@ -1,28 +1,24 @@
 package com.enonic.xp.admin.widget;
 
-
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
+import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.page.DescriptorKey;
 
 @Beta
 public final class WidgetDescriptor
+    extends Descriptor
 {
-    private final DescriptorKey key;
-
     private final String displayName;
 
-    private final ImmutableList<String> interfaces;
+    private final ImmutableSet<String> interfaces;
 
     private final ImmutableMap<String, String> config;
 
@@ -30,28 +26,20 @@ public final class WidgetDescriptor
 
     private WidgetDescriptor( final Builder builder )
     {
-        Preconditions.checkNotNull( builder.key, "key cannot be null" );
-        this.key = builder.key;
+        super( builder.key );
         this.displayName = builder.displayName;
-        this.interfaces = ImmutableList.copyOf( builder.interfaces );
+        this.interfaces = ImmutableSet.copyOf( builder.interfaces );
         this.config = ImmutableMap.copyOf( builder.config );
-    }
-
-    public DescriptorKey getKey()
-    {
-        return key;
     }
 
     public String getUrl()
     {
-        return new StringBuilder().append( URL_PREFIX ).append( this.key.getApplicationKey().toString() ).append( "/" ).append(
-            this.key.getName() ).toString();
+        return URL_PREFIX + getApplicationKey().toString() + "/" + getName();
     }
 
-    @JsonProperty("key")
     public String getKeyString()
     {
-        return key.toString();
+        return getKey().toString();
     }
 
     public String getDisplayName()
@@ -59,20 +47,14 @@ public final class WidgetDescriptor
         return displayName;
     }
 
-    public ImmutableList<String> getInterfaces()
+    public Set<String> getInterfaces()
     {
         return interfaces;
     }
 
-    public ImmutableMap<String, String> getConfig()
+    public Map<String, String> getConfig()
     {
         return config;
-    }
-
-    @JsonIgnore
-    public String getName()
-    {
-        return this.key.getName();
     }
 
     public static WidgetDescriptor.Builder create()
@@ -86,9 +68,9 @@ public final class WidgetDescriptor
 
         private String displayName;
 
-        public List<String> interfaces = new LinkedList<>();
+        public final Set<String> interfaces = Sets.newTreeSet();
 
-        public Map<String, String> config = new HashMap<>();
+        public final Map<String, String> config = Maps.newHashMap();
 
         private Builder()
         {

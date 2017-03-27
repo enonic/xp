@@ -1,10 +1,10 @@
 package com.enonic.xp.admin.impl.widget;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.app.ApplicationKey;
@@ -57,16 +57,12 @@ public class XmlWidgetDescriptorParserTest
         assertEquals( "myapplication:mywidget", result.getKeyString() );
         assertEquals( "_/widgets/myapplication/mywidget", result.getUrl() );
 
-        final ImmutableList<String> interfaces = result.getInterfaces();
+        final Set<String> interfaces = result.getInterfaces();
         assertNotNull( interfaces );
         assertEquals( 2, interfaces.size() );
-        assertTrue( interfaces.get( 0 ).startsWith( "com.enonic.xp.my-interface" ) );
-        assertTrue( interfaces.get( 1 ).startsWith( "com.enonic.xp.my-interface" ) );
 
-        final ImmutableMap<String, String> config = result.getConfig();
+        final Map<String, String> config = result.getConfig();
         assertNotNull( config );
         assertEquals( 2, config.size() );
-        assertTrue( config.get( "someValue" ).equals( "value1" ) );
-        assertTrue( config.get( "someBooleanValue" ).equals( "true" ) );
     }
 }
