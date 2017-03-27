@@ -6,7 +6,6 @@ dependencies {
     include project( ":lib:lib-mustache" )
     include project( ":lib:lib-portal" )
     include project( ":lib:lib-admin" )
-    include project( ":lib:lib-graphql" )
 }
 
 node {
