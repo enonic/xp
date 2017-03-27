@@ -114,7 +114,7 @@ public final class PartDescriptorServiceImpl
     {
         final PartDescriptor.Builder builder = PartDescriptor.create();
         parseXml( resource, builder );
-        builder.name( key.getName() ).key( key );
+        builder.key( key );
         return builder.build();
     }
 
@@ -123,7 +123,6 @@ public final class PartDescriptorServiceImpl
         return PartDescriptor.
             create().
             key( key ).
-            name( key.getName() ).
             displayName( key.getName() ).
             config( Form.create().build() ).
             build();

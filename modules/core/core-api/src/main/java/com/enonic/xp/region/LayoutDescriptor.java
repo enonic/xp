@@ -7,8 +7,8 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.ResourceKey;
 
 @Beta
-public class LayoutDescriptor
-    extends Descriptor<DescriptorKey>
+public final class LayoutDescriptor
+    extends ComponentDescriptor
 {
     private final RegionDescriptors regions;
 
@@ -46,8 +46,8 @@ public class LayoutDescriptor
         return ResourceKey.from( key.getApplicationKey(), "site/layouts/" + key.getName() + "/" + key.getName() + ".xml" );
     }
 
-    public static class Builder
-        extends BaseDescriptorBuilder<Builder, DescriptorKey>
+    public final static class Builder
+        extends BaseBuilder<Builder>
     {
         private RegionDescriptors regions;
 

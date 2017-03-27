@@ -7,8 +7,8 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.ResourceKey;
 
 @Beta
-public class PartDescriptor
-    extends Descriptor<DescriptorKey>
+public final class PartDescriptor
+    extends ComponentDescriptor
 {
     private PartDescriptor( final Builder builder )
     {
@@ -34,11 +34,11 @@ public class PartDescriptor
 
     public static PartDescriptor.Builder copyOf( final PartDescriptor partDescriptor )
     {
-        return new Builder(partDescriptor);
+        return new Builder( partDescriptor );
     }
 
-    public static class Builder
-        extends BaseDescriptorBuilder<Builder, DescriptorKey>
+    public final static class Builder
+        extends BaseBuilder<Builder>
     {
         private Builder()
         {

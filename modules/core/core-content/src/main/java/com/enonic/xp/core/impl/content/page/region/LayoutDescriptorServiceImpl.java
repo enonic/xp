@@ -113,7 +113,7 @@ public final class LayoutDescriptorServiceImpl
     {
         final LayoutDescriptor.Builder builder = LayoutDescriptor.create();
         parseXml( resource, builder );
-        builder.name( key.getName() ).key( key );
+        builder.key( key );
         return builder.build();
     }
 
