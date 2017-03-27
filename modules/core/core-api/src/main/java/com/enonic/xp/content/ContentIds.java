@@ -1,6 +1,7 @@
 package com.enonic.xp.content;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -10,6 +11,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
@@ -69,6 +71,30 @@ public final class ContentIds
     public static Builder create()
     {
         return new Builder();
+    }
+
+    public ContentIds remove( final String... ids )
+    {
+        return remove( parseIds( ids ) );
+    }
+
+    public ContentIds remove( final ContentPath... ids )
+    {
+        return remove( ImmutableSet.copyOf( ids ) );
+    }
+
+    public ContentIds remove( final Iterable ids )
+    {
+        return remove( ImmutableSet.copyOf( ids ) );
+    }
+
+    private ContentIds remove( final ImmutableSet ids )
+    {
+        final HashSet<ContentId> tmp = Sets.newHashSet();
+        tmp.addAll( this.set );
+        tmp.removeAll( (Set) ids.stream().map( ( item -> item instanceof ContentId ? item : ContentId.from( item.toString() ) ) ).collect(
+            Collectors.toSet() ) );
+        return ContentIds.from( ImmutableSet.copyOf( tmp ) );
     }
 
     private final static class ParseFunction

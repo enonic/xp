@@ -61,6 +61,24 @@ exports.get = function (params) {
 };
 
 /**
+ * This function fetches a content.
+ *
+ * @example-ref examples/content/get.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string[]} params.keys Paths or ids to the contents (can be mixed together).
+ * @param {string} [params.branch] Set by portal, depending on context, to either draft or master. May be overridden, but this is not recommended. Default is the current branch set in portal.
+ *
+ * @returns {object} The content (as JSON) fetched from the repository.
+ */
+exports.getContents = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.GetContentsHandler');
+    bean.keys = required(params, 'keys');
+    bean.branch = nullOrValue(params.branch);
+    return __.toNativeObject(bean.execute());
+};
+
+/**
  * This function returns a content attachments.
  *
  * @example-ref examples/content/getAttachments.js
