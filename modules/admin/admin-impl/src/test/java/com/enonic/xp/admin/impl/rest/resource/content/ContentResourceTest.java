@@ -958,6 +958,42 @@ public class ContentResourceTest
     }
 
     @Test
+    public void resolve_publish_contents_with_no_publishable_children() throws Exception {
+
+        final ContentId requestedId = ContentId.from( "requested-contentId" );
+
+        final CompareContentResult requested = new CompareContentResult( CompareStatus.NEW, requestedId );
+        final CompareContentResults results = CompareContentResults.create().
+            add( requested ).
+            build();
+
+        final Content content = Mockito.mock( Content.class );
+
+        Mockito.when( contentService.getById( requestedId )).thenReturn( content );
+
+        Mockito.when(content.getPath()).thenReturn( ContentPath.create().addElement( "requested-contentId" ).build() );
+
+        Mockito.when( contentService.find(Mockito.isA( ContentQuery.class)) ).thenReturn( FindContentIdsByQueryResult.create().build() );
+
+        Mockito.when( contentService.resolvePublishDependencies( Mockito.isA( ResolvePublishDependenciesParams.class ) ) ).thenReturn(
+            results );
+        Mockito.when( contentService.resolveRequiredDependencies( Mockito.isA( ResolveRequiredDependenciesParams.class ) ) ).thenReturn(
+            ContentIds.empty(  ) );
+        Mockito.when( contentService.compare( Mockito.isA( CompareContentsParams.class ) ) ).thenReturn( results );
+        Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
+            FindContentIdsByQueryResult.create().contents( ContentIds.empty(  ) ).totalHits( 1L ).build() );
+
+        Mockito.doReturn( ContentIds.empty() ).when( this.contentService ).getInvalidContent(
+            Mockito.isA( ContentIds.class ) );
+
+        String jsonString = request().path( "content/resolvePublishContent" ).
+            entity( readFromFile( "resolve_publish_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "resolve_publish_content_no_publishable_children.json", jsonString );
+    }
+
+    @Test
     public void resolve_publish_contents()
         throws Exception
     {

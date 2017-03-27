@@ -1,0 +1,11 @@
+{
+  "containsInvalid" : false,
+  "dependentContents" : [ ],
+  "requestedContents" : [ {
+    "hasChildren" : true,
+    "id" : {
+      "id" : "requested-contentId"
+    }
+  } ],
+  "requiredContents" : [ ]
+}
