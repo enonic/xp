@@ -4,7 +4,7 @@
  * @example
  * var xsltLib = require('/lib/xp/xslt');
  *
- * @module lib/xp/xslt
+ * @module xslt
  */
 
 var service = __.newBean('com.enonic.xp.lib.xslt.XsltService');

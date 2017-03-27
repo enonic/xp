@@ -4,7 +4,7 @@
  * @example
  * var contentLib = require('/lib/xp/content');
  *
- * @module lib/xp/content
+ * @module content
  */
 
 function required(params, name) {

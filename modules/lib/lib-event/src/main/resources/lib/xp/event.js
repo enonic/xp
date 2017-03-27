@@ -4,7 +4,7 @@
  * @example
  * var eventLib = require('/lib/xp/event');
  *
- * @module lib/xp/event
+ * @module event
  */
 
 /**

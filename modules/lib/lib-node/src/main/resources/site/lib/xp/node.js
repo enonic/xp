@@ -4,7 +4,7 @@
  * @example
  * var nodeLib = require('/lib/xp/node');
  *
- * @module lib/xp/node
+ * @module node
  */
 
 

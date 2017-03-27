@@ -4,7 +4,7 @@
  * @example
  * var authLib = require('/lib/xp/auth');
  *
- * @module lib/xp/auth
+ * @module auth
  */
 
 function required(params, name) {

@@ -4,7 +4,7 @@
  * @example
  * var i18nLib = require('/lib/xp/i18n');
  *
- * @module lib/xp/i18n
+ * @module i18n
  */
 
 /**

@@ -4,7 +4,7 @@
  * @example
  * var cacheLib = require('/lib/xp/cache');
  *
- * @module lib/xp/cache
+ * @module cache
  */
 
 /**

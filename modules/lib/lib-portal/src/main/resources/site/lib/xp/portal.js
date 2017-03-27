@@ -4,7 +4,7 @@
  * @example
  * var portalLib = require('/lib/xp/portal');
  *
- * @module lib/xp/portal
+ * @module portal
  */
 
 /**

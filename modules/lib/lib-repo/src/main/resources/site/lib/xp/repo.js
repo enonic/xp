@@ -12,7 +12,7 @@ function valueOrDefault(value, defaultValue) {
  * @example
  * var repoLib = require('/lib/xp/repo');
  *
- * @module lib/xp/repo
+ * @module repo
  */
 
 function required(params, name) {

@@ -4,7 +4,7 @@
  * @example
  * var valueLib = require('/lib/xp/value');
  *
- * @module lib/xp/value
+ * @module value
  */
 
 

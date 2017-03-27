@@ -4,7 +4,7 @@
  * @example
  * var contextLib = require('/lib/xp/context');
  *
- * @module lib/xp/context
+ * @module context
  */
 
 var bean = __.newBean('com.enonic.xp.lib.context.ContextHandlerBean');

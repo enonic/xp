@@ -4,7 +4,7 @@
  * @example
  * var thymeleafLib = require('/lib/xp/thymeleaf');
  *
- * @module lib/xp/thymeleaf
+ * @module thymeleaf
  */
 
 var service = __.newBean('com.enonic.xp.lib.thymeleaf.ThymeleafService');
