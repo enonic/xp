@@ -36,7 +36,9 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.admin.impl.json.content.AbstractContentListJson;
@@ -110,6 +112,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.content.ContentListMetaData;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
@@ -166,6 +169,7 @@ import com.enonic.xp.query.expr.LogicalExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
+import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
@@ -719,6 +723,8 @@ public final class ContentResource
         final ContentIds excludeContentIds = ContentIds.from( params.getExcludedIds() );
         final ContentIds excludeChildrenIds = ContentIds.from( params.getExcludeChildrenIds() );
 
+        final Map<ContentId, Boolean> hasChildrenMap = this.checkPublishableChildren( requestedContentIds, excludeContentIds, params.isIncludeOffline() );
+
         //Resolves the publish dependencies
         final CompareContentResults compareResults = contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
             target( ContentConstants.BRANCH_MASTER ).
@@ -756,7 +762,9 @@ public final class ContentResource
 
         //Returns the JSON result
         return ResolvePublishContentResultJson.create().
-            setRequestedContents( requestedContentIds ).
+            setRequestedContents( hasChildrenMap.entrySet().stream().
+                map( entry -> new ResolvePublishContentResultJson.RequestedContentJson( entry.getKey(), entry.getValue() ) ).
+                collect(Collectors.toList()) ).
             setDependentContents( this.invalidDependantsOnTop( sortedDependentContentIds, requestedContentIds, sortedInvalidContentIds ) ).
             setRequiredContents( requiredDependantIds ).
             setContainsInvalid( !invalidContentIds.isEmpty() ).
@@ -816,16 +824,71 @@ public final class ContentResource
         // Sorts the contents by path and for each
         return contents.stream().
             // sorted( ( content1, content2 ) -> content1.getPath().compareTo( content2.getPath() ) ).
-                map( content -> {
-                //Creates a ContentPublishItem
-                final CompareContentResult compareContentResult = compareContentResultsMap.get( content.getId() );
-                return ContentPublishItemJson.create().
-                    content( content ).
-                    compareStatus( compareContentResult.getCompareStatus().name() ).
-                    iconUrl( contentIconUrlResolver.resolve( content ) ).
-                    build();
-            } ).
-            collect( Collectors.toList() );
+                map( content ->
+                     {
+                         //Creates a ContentPublishItem
+                         final CompareContentResult compareContentResult = compareContentResultsMap.get( content.getId() );
+                         return ContentPublishItemJson.create().
+                             content( content ).
+                             compareStatus( compareContentResult.getCompareStatus().name() ).
+                             iconUrl( contentIconUrlResolver.resolve( content ) ).
+                             build();
+                     } ).
+                collect( Collectors.toList() );
+    }
+
+    private Map<ContentId, Boolean> checkPublishableChildren( final ContentIds requestedContentIds, final ContentIds excludeContentIds, final Boolean includeOffline )
+    {
+
+        final Map<ContentId, Boolean> result = Maps.newHashMap();
+
+        CompareContentResults compareResults = contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
+            target( ContentConstants.BRANCH_MASTER ).
+            contentIds( requestedContentIds ).
+            excludedContentIds( excludeContentIds ).
+            excludeChildrenIds( ContentIds.empty() ).
+            includeOffline( includeOffline ).
+            build() );
+
+        final ContentIds dependentFullIds = ContentIds.from( compareResults.contentIds().
+            stream().
+            filter( contentId -> !requestedContentIds.contains( contentId ) ).
+            collect( Collectors.toList() ) );
+
+        compareResults = contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
+            target( ContentConstants.BRANCH_MASTER ).
+            contentIds( requestedContentIds ).
+            excludedContentIds( excludeContentIds ).
+            excludeChildrenIds( requestedContentIds ).
+            includeOffline( includeOffline ).
+            build() );
+
+        final ContentIds dependentEmptyIds = ContentIds.from( compareResults.contentIds().
+            stream().
+            filter( contentId -> !requestedContentIds.contains( contentId ) ).
+            collect( Collectors.toList() ) );
+
+        final Set<ContentId> childrenIds = Sets.newHashSet(dependentFullIds.getSet());
+        childrenIds.removeAll( dependentEmptyIds.getSet() );
+
+        for(final ContentId requiredId : requestedContentIds) {
+            final Content content = contentService.getById( requiredId );
+
+            final FieldExpr fieldExpr = FieldExpr.from( "_path" );
+
+            final ConstraintExpr expr = CompareExpr.like( fieldExpr, ValueExpr.string( "/content" + content.getPath().toString() + "/*" ) );
+
+            final ContentQuery query = ContentQuery.create().
+                queryExpr( QueryExpr.from( expr, new FieldOrderExpr( fieldExpr, OrderExpr.Direction.ASC ) ) ).
+                queryFilter( IdFilter.create().
+                    fieldName( ContentIndexPath.ID.getPath() ).
+                    values( ContentIds.from( childrenIds ).asStrings() ).
+                    build() ).build();
+
+            result.put( requiredId, this.contentService.find(query).getTotalHits() > 0 );
+
+        }
+        return result;
     }
 
     @POST
@@ -980,12 +1043,13 @@ public final class ContentResource
 
         final List<String> result = new ArrayList<>();
 
-        contents.stream().forEach( content -> {
-            if ( !content.getPermissions().isAllowedFor( authInfo.getPrincipals(), Permission.MODIFY ) )
-            {
-                result.add( content.getId().toString() );
-            }
-        } );
+        contents.stream().forEach( content ->
+                                   {
+                                       if ( !content.getPermissions().isAllowedFor( authInfo.getPrincipals(), Permission.MODIFY ) )
+                                       {
+                                           result.add( content.getId().toString() );
+                                       }
+                                   } );
 
         return result;
     }
@@ -1072,12 +1136,13 @@ public final class ContentResource
 
         final List<String> result = new ArrayList<>();
 
-        permissions.forEach( permission -> {
-            if ( userHasPermission( authInfo, permission, contentsPermissions ) )
-            {
-                result.add( permission.name() );
-            }
-        } );
+        permissions.forEach( permission ->
+                             {
+                                 if ( userHasPermission( authInfo, permission, contentsPermissions ) )
+                                 {
+                                     result.add( permission.name() );
+                                 }
+                             } );
 
         return result;
     }

@@ -1,18 +1,15 @@
 {
-  "containsInvalid": true,
-  "dependentContents": [
-    {
-      "id": "dependant-contentId"
+  "containsInvalid" : true,
+  "dependentContents" : [ {
+    "id" : "dependant-contentId"
+  } ],
+  "requestedContents" : [ {
+    "hasChildren" : true,
+    "id" : {
+      "id" : "requested-contentId"
     }
-  ],
-  "requestedContents": [
-    {
-      "id": "requested-contentId"
-    }
-  ],
-  "requiredContents": [
-    {
-      "id": "required-contentId"
-    }
-  ]
+  } ],
+  "requiredContents" : [ {
+    "id" : "required-contentId"
+  } ]
 }

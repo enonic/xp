@@ -162,6 +162,14 @@ export class ContentPublishDialog extends ProgressBarDialog {
                 this.getItemList().childTogglersAvailable() || this.dependantIds.length > 0
             );
 
+            result.getRequested().forEach((requestedResult) => {
+                const item = this.getItemList().getItemViewById(requestedResult.getId());
+
+                if(item) {
+                    item.setTogglerActive(requestedResult.getHasChildren());
+                }
+            });
+
             return this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
                 if (resetDependantItems) { // just opened or first time loading children
                     this.setDependantItems(dependants);

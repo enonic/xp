@@ -133,10 +133,14 @@ public class NodeSearchServiceImpl
 
         if ( result.isEmpty() )
         {
-            return NodeVersionDiffResult.empty();
+            return NodeVersionDiffResult.create().
+                totalHits( result.getResults().getTotalHits() ).
+                build();
         }
 
         final NodeVersionDiffResult.Builder builder = NodeVersionDiffResult.create();
+
+        builder.totalHits( result.getResults().getTotalHits() );
 
         for ( final SearchHit hit : result.getResults() )
         {

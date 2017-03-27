@@ -408,7 +408,7 @@ class NodeServiceMock
         if ( importNode.isRoot() )
         {
             createdNode = createRootNode( null );
-            
+
         }
         else
         {
@@ -431,6 +431,12 @@ class NodeServiceMock
 
     @Override
     public Node setRootPermissions( final AccessControlList accessControlList, final boolean inheritPermissions )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public boolean hasUnpublishedChildren( final NodeId parent, final Branch target )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
