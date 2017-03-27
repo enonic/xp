@@ -51,11 +51,6 @@ module api.form {
                         return; // currentValidationState is initialized on validate() call which may not be triggered in some cases
                     }
 
-                    if (this.isNew()) {
-                        this.currentValidationState = new ValidationRecording();
-                        return;
-                    }
-
                     let previousValidState = this.currentValidationState.isValid();
                     if (event.isValid()) {
                         this.currentValidationState.removeByPath(event.getOrigin(), false, event.isIncludeChildren());
@@ -72,11 +67,6 @@ module api.form {
                 (<FormOptionSetOptionView> formItemView).onSelectionChanged(() => {
                     if (!this.currentValidationState) {
                         return; // currentValidationState is initialized on validate() call which may not be triggered in some cases
-                    }
-
-                    if (this.isNew()) {
-                        this.currentValidationState = new ValidationRecording();
-                        return;
                     }
 
                     let previousValidationValid = this.currentValidationState.isValid();
@@ -132,16 +122,6 @@ module api.form {
                     this.selectionValidationMessage.removeClass('empty');
                 }
             }
-        }
-
-        private isNew(): boolean {
-            if (api.ObjectHelper.iFrameSafeInstanceOf(this.context, api.content.form.ContentFormContext)) {
-                let contentFormContext = <api.content.form.ContentFormContext> this.context;
-                if (contentFormContext.getFormState() != null && contentFormContext.getFormState().isNew()) {
-                    return true;
-                }
-            }
-            return false;
         }
 
         private makeMultiselectionNote(): string {
