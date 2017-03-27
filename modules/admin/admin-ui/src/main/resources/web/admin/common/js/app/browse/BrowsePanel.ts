@@ -349,10 +349,10 @@ module api.app.browse {
                                               fullSelection: TreeNode<Object>[]) {
             if (currentSelection.length === fullSelection.length) { // to filter unwanted selection change events
                 let amountOfNodesShown: number = this.treeGrid.getRoot().getCurrentRoot().treeToList().length;
-                if (amountOfNodesShown > fullSelection.length) { // some item/items deselected
-                    this.treeGrid.filter(this.treeGrid.getSelectedDataList());
-                } else if (amountOfNodesShown === 0) { // all items deselected
+                if (currentSelection.length === 0 || amountOfNodesShown === 0) { // all items deselected
                     this.treeGrid.getToolbar().getSelectionPanelToggler().setActive(false);
+                } else if (amountOfNodesShown > fullSelection.length) { // some item/items deselected
+                    this.treeGrid.filter(this.treeGrid.getSelectedDataList());
                 }
             }
         }
