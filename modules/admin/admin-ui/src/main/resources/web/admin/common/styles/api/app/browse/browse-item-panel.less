@@ -2,4 +2,29 @@
   height: 100%;
   overflow-y: auto;
 
+  .no-selection-container {
+    display: none;
+  }
+
+  &.no-selection {
+    .no-selection-container {
+      display: block;
+      font-size: 21px;
+      font-family: "Open Sans", sans-serif;
+      color: lightgray;
+      top: 50%;
+      line-height: 30px;
+      text-align: center;
+      width: 100%;
+      position: absolute;
+      overflow: hidden;
+      white-space: pre;
+      text-overflow: ellipsis;
+      margin-top: -15px;
+    }
+
+    .item-statistics-panel {
+      display: none !important;
+    }
+  }
 }

@@ -56,7 +56,7 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
     }
 
     protected createBrowseItemPanel(): UserBrowseItemPanel {
-        return new UserBrowseItemPanel(this.treeGrid);
+        return new UserBrowseItemPanel();
     }
 
     protected createFilterPanel(): PrincipalBrowseFilterPanel {
