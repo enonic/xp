@@ -120,7 +120,7 @@ export class ContentDeleteDialog extends ProgressBarDialog {
     }
 
     private doDelete(ignoreConfirmation: boolean = false) {
-        if (!ignoreConfirmation && (this.getItemList().getItemCount() > 1 || this.isAnySiteToBeDeleted())) {
+        if (!ignoreConfirmation && (this.totalItemsToDelete > 1 || this.isAnySiteToBeDeleted())) {
             const totalItemsToDelete = this.totalItemsToDelete;
             const deleteRequest = this.createDeleteRequest();
             const content = this.getItemList().getItems().slice(0);
