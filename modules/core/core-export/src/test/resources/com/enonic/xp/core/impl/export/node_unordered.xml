@@ -24,7 +24,6 @@
     </property-set>
   </data>
   <indexConfigs>
-    <analyzer>myAnalyzer</analyzer>
     <defaultConfig>
       <decideByType>false</decideByType>
       <enabled>true</enabled>
