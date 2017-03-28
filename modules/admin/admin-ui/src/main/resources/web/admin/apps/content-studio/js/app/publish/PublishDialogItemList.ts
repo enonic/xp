@@ -25,6 +25,10 @@ export class PublishDialogItemList extends DialogItemList {
         }, 100, false);
     }
 
+    public setContainsToggleable(value: boolean) {
+        this.toggleClass('contains-toggleable', value);
+    }
+
     private itemChangedHandler() {
         this.toggleClass('contains-toggleable', this.getItemViews()
             .some(item => item.getBrowseItem().getModel().getContentSummary().hasChildren()));
@@ -63,8 +67,8 @@ export class PublishDialogItemList extends DialogItemList {
     }
 
     public getItemViewById(contentId: ContentId): PublicStatusSelectionItem {
-        for(const view of <PublicStatusSelectionItem[]>super.getItemViews()) {
-            if(view.getContentId().equals(contentId)) {
+        for (const view of <PublicStatusSelectionItem[]>super.getItemViews()) {
+            if (view.getContentId().equals(contentId)) {
                 return view;
             }
         }
@@ -106,7 +110,7 @@ export class PublicStatusSelectionItem extends StatusSelectionItem {
     constructor(viewer: api.ui.Viewer<ContentSummaryAndCompareStatus>, item: BrowseItem<ContentSummaryAndCompareStatus>) {
         super(viewer, item);
 
-        if(item.getModel().getContentSummary().hasChildren()) {
+        if (item.getModel().getContentSummary().hasChildren()) {
             this.toggler = new IncludeChildrenToggler();
 
             this.addClass('toggleable');
@@ -142,9 +146,7 @@ export class PublicStatusSelectionItem extends StatusSelectionItem {
     }
 
     setTogglerActive(value: boolean) {
-        if(this.toggler) {
-            this.toggler.toggleClass('hidden', !value);
-        }
+        this.toggleClass('toggleable', value);
     }
 
     public onItemStateChanged(listener: (item: ContentId, enabled: boolean) => void) {
@@ -171,6 +173,7 @@ class IncludeChildrenToggler extends api.dom.DivEl {
 
     constructor() {
         super('icon icon-tree');
+        this.addClass('include-children-toggler');
 
         this.tooltip = new Tooltip(this, '', 1000);
 

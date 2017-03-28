@@ -145,12 +145,9 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
         let ids = this.getContentToPublishIds();
 
-        let resolveDependenciesRequest = api.content.resource.ResolvePublishDependenciesRequest.create().
-            setIds(ids).
-            setExcludedIds(this.excludedIds).
-            setExcludeChildrenIds(this.getItemList().getExcludeChildrenIds()).
-            setIncludeOffline(this.includeOfflineCheckbox.isChecked()).
-            build();
+        let resolveDependenciesRequest = api.content.resource.ResolvePublishDependenciesRequest.create().setIds(ids).setExcludedIds(
+            this.excludedIds).setExcludeChildrenIds(this.getItemList().getExcludeChildrenIds()).setIncludeOffline(
+            this.includeOfflineCheckbox.isChecked()).build();
 
         return resolveDependenciesRequest.sendAndParse().then((result: ResolvePublishDependenciesResult) => {
 
@@ -165,10 +162,13 @@ export class ContentPublishDialog extends ProgressBarDialog {
             );
 
             new HasUnpublishedChildrenRequest(ids).sendAndParse().then((children) => {
+                const toggleable = children.getResult().some(requestedResult => requestedResult.getHasChildren());
+                this.getItemList().setContainsToggleable(toggleable);
+
                 children.getResult().forEach((requestedResult) => {
                     const item = this.getItemList().getItemViewById(requestedResult.getId());
 
-                    if(item) {
+                    if (item) {
                         item.setTogglerActive(requestedResult.getHasChildren());
                     }
                 });

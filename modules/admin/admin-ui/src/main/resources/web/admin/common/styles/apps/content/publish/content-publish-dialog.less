@@ -48,8 +48,10 @@
         margin-left: @toggler-width;
       }
 
-      .hidden {
-        visibility: hidden;
+    }
+    .browse-selection-item:not(.toggleable) {
+      .include-children-toggler {
+        display: none;
       }
     }
   }
