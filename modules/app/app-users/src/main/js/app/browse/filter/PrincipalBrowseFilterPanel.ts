@@ -1,5 +1,5 @@
 import '../../../api.ts';
-
+import {UserTreeGridItem} from '../UserTreeGridItem';
 import AggregationGroupView = api.aggregation.AggregationGroupView;
 import SearchInputValues = api.query.SearchInputValues;
 import Principal = api.security.Principal;
@@ -8,7 +8,7 @@ import PrincipalType = api.security.PrincipalType;
 import BrowseFilterResetEvent = api.app.browse.filter.BrowseFilterResetEvent;
 import BrowseFilterSearchEvent = api.app.browse.filter.BrowseFilterSearchEvent;
 
-export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel {
+export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel<UserTreeGridItem> {
 
     constructor() {
         super();
@@ -67,5 +67,9 @@ export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilt
 
     private initHitsCounter() {
         this.searchDataAndHandleResponse('', false);
+    }
+
+    protected createSelectedItemsSection(): api.app.browse.filter.SelectedItemsSection<UserTreeGridItem> {
+        return new api.app.browse.filter.SelectedItemsSection<UserTreeGridItem>();
     }
 }

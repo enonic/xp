@@ -1,6 +1,6 @@
 module api.app.browse.filter {
 
-    export class BrowseFilterPanel extends api.ui.panel.Panel {
+    export class BrowseFilterPanel<T> extends api.ui.panel.Panel {
 
         private searchStartedListeners: {():void}[] = [];
 
@@ -23,6 +23,8 @@ module api.app.browse.filter {
         protected filterPanelRefreshNeeded: boolean = false;
 
         private refreshStartedListeners: {():void}[] = [];
+
+        protected selectedItemsSection: SelectedItemsSection<T>;
 
         constructor() {
             super();
@@ -71,7 +73,7 @@ module api.app.browse.filter {
 
             this.onRendered((event) => {
                 this.appendChild(this.hideFilterPanelButton);
-                this.appendExtraSection();
+                this.appendExtraSections();
                 this.appendChild(this.searchField);
                 this.appendChild(hitsCounterAndClearButtonWrapper);
                 this.appendChild(this.aggregationContainer);
@@ -98,8 +100,32 @@ module api.app.browse.filter {
             return [];
         }
 
-        protected appendExtraSection() {
-            // must be implemented by children
+        protected appendExtraSections() {
+            this.appendSelectedItemsSection();
+        }
+
+        protected appendSelectedItemsSection() {
+            this.selectedItemsSection = this.createSelectedItemsSection();
+            this.selectedItemsSection.addClass('extra-section');
+            this.appendChild(this.selectedItemsSection);
+        }
+
+        setSelectedItems(items: T[]) {
+            this.selectedItemsSection.setSelectedItems(items);
+            if (this.selectedItemsSection.isActive()) {
+                this.resetControls();
+                this.search();
+                this.addClass('show-extra-section');
+            }
+        }
+
+        isInSelectionMode() {
+            return this.selectedItemsSection.isActive();
+        }
+        
+        protected createSelectedItemsSection(): SelectedItemsSection<T> {
+            //Must be implemented by inheritors
+            return null;
         }
 
         setRefreshOfFilterRequired() {
@@ -125,7 +151,7 @@ module api.app.browse.filter {
         }
 
         hasFilterSet(): boolean {
-            return this.aggregationContainer.hasSelectedBuckets() || this.hasSearchStringSet();
+            return this.aggregationContainer.hasSelectedBuckets() || this.hasSearchStringSet() || (!!this.selectedItemsSection && this.selectedItemsSection.isActive());
         }
 
         hasSearchStringSet(): boolean {
@@ -161,6 +187,8 @@ module api.app.browse.filter {
         reset(suppressEvent?: boolean) {
             this.resetControls();
             this.resetFacets(suppressEvent);
+            this.selectedItemsSection.reset();
+            this.removeClass('show-extra-section');
         }
 
         resetControls() {
@@ -248,4 +276,67 @@ module api.app.browse.filter {
         }
     }
 
+    export class SelectedItemsSection<T> extends api.dom.DivEl {
+
+        private label: api.dom.LabelEl = new api.dom.LabelEl('Selected Items');
+
+        protected selectedItems: T[];
+
+        private closeButton:  api.ui.button.ActionButton;
+        private closeCallback: () => void;
+
+        constructor(closeCallback?: () => void) {
+            super('selected-items-section');
+
+            this.checkVisibilityState();
+
+            this.closeCallback = closeCallback;
+
+            this.appendChildren(this.label);
+
+            this.closeButton = this.appendCloseButton();
+        }
+
+        private appendCloseButton():  api.ui.button.ActionButton {
+            let action = new api.ui.Action('').onExecuted(() => {
+                this.selectedItems = null;
+                this.checkVisibilityState();
+
+                if (!!this.closeCallback) {
+                    this.closeCallback();
+                }
+            });
+            let button = new  api.ui.button.ActionButton(action);
+
+            button.addClass('btn-close');
+            this.appendChild(button);
+
+            return button;
+        }
+
+        public reset() {
+            this.selectedItems = null;
+            this.checkVisibilityState();
+        }
+
+        public getItems(): T[] {
+            return this.selectedItems;
+        }
+
+        private checkVisibilityState() {
+            this.setVisible(this.isActive());
+        }
+
+        public isActive(): boolean {
+            return !!this.selectedItems;
+        }
+
+        public setSelectedItems(items: T[]) {
+
+            this.selectedItems = items;
+
+            this.checkVisibilityState();
+        }
+
+    }
 }

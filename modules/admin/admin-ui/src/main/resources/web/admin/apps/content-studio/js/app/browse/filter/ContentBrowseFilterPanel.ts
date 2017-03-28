@@ -32,8 +32,9 @@ import Action = api.ui.Action;
 import BrowseFilterResetEvent = api.app.browse.filter.BrowseFilterResetEvent;
 import BrowseFilterRefreshEvent = api.app.browse.filter.BrowseFilterRefreshEvent;
 import BrowseFilterSearchEvent = api.app.browse.filter.BrowseFilterSearchEvent;
+import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 
-export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel {
+export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel<ContentSummaryAndCompareStatus> {
 
     static CONTENT_TYPE_AGGREGATION_NAME: string = 'contentTypes';
     static LAST_MODIFIED_AGGREGATION_NAME: string = 'lastModified';
@@ -64,7 +65,8 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         return [this.contentTypeAggregation, this.lastModifiedAggregation];
     }
 
-    protected appendExtraSection() {
+    protected appendExtraSections() {
+        super.appendExtraSections();
         this.dependenciesSection = new DependenciesSection(this.removeDependencyItemCallback.bind(this));
         this.appendChild(this.dependenciesSection);
     }
@@ -82,6 +84,10 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
             this.resetControls();
             this.search();
         }
+    }
+
+    protected createSelectedItemsSection(): api.app.browse.filter.SelectedItemsSection<ContentSummaryAndCompareStatus> {
+        return new api.app.browse.filter.SelectedItemsSection<ContentSummaryAndCompareStatus>();
     }
 
     doRefresh() {
@@ -289,13 +295,32 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         let fulltextSearchExpression = this.makeFulltextSearchExpr(searchInputValues);
         let query: QueryExpr;
 
-        if (this.dependenciesSection.isActive() && this.dependenciesSection.isInbound()) {
+        if (this.selectedItemsSection.isActive()) {
+            query = new QueryExpr(new LogicalExpr(fulltextSearchExpression, LogicalOperator.AND, this.makeSelectedItemsSearchExpr()));
+        }
+        else if (this.dependenciesSection.isActive() && this.dependenciesSection.isInbound()) {
             query = new QueryExpr(new LogicalExpr(fulltextSearchExpression, LogicalOperator.AND, this.makeInboundDependenciesSearchExpr()));
         } else {
             query = new QueryExpr(fulltextSearchExpression);
         }
 
         contentQuery.setQueryExpr(query);
+    }
+
+    private makeSelectedItemsSearchExpr(): api.query.expr.Expression {
+        let selectedItems = this.selectedItemsSection.getItems();
+        let query: QueryExpr;
+
+        selectedItems.forEach((content: ContentSummaryAndCompareStatus) => {
+            if (!!query) {
+                query = new QueryExpr(new LogicalExpr(query, LogicalOperator.OR, CompareExpr.eq(new FieldExpr(QueryField.ID), ValueExpr.string(content.getId()))));
+            }
+            else {
+                query = new QueryExpr(CompareExpr.eq(new FieldExpr(QueryField.ID), ValueExpr.string(content.getId())));
+            }
+        });
+
+        return query;
     }
 
     private makeInboundDependenciesSearchExpr(): api.query.expr.Expression {
@@ -443,6 +468,7 @@ export class DependenciesSection extends api.dom.DivEl {
     constructor(closeCallback?: () => void) {
         super('dependencies-filter-section');
 
+        this.addClass('extra-section');
         this.checkVisibilityState();
 
         this.closeCallback = closeCallback;
