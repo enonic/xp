@@ -10,7 +10,7 @@ export class PreviewContentHandler {
 
     private renderableIds: string[] = [];
 
-    private anyRenderable: boolean;
+    private isPreviewAllowed: boolean;
 
     private previewStateChangedListeners: {(active: boolean): void}[] = [];
 
@@ -29,10 +29,13 @@ export class PreviewContentHandler {
                 this.renderableIds = [];
             }
             this.notifyPreviewStateChangedIfNeeded();
+            this.setBlocked(false);
+
             return;
         }
         if (PreviewContentHandler.BLOCK_COUNT < contentBrowseItems.length) {
             this.setBlocked(true);
+
             return;
         }
 
@@ -82,6 +85,7 @@ export class PreviewContentHandler {
         // check existing items if there are no changes
         // because selected items might have become (not) renderable
         let browseItems = changes && changes.getAdded().length > 0 ? changes.getAdded() : contentBrowseItems;
+        let silent = false;
 
         return browseItems.map((contentBrowseItem) => {
             let contentSummary = contentBrowseItem.getModel().getContentSummary();
@@ -94,7 +98,8 @@ export class PreviewContentHandler {
                     if (value) {
                         // item started being renderable or was added to selection
                         // add loudly to enable button as soon as first content is renderable
-                        this.addRenderableIds([contentSummary.getContentId()]);
+                        this.addRenderableIds([contentSummary.getContentId()], silent);
+                        silent = true;
                     } else {
                         // item stopped being renderable
                         // remove silently to avoid button to flickering, but keep renderableIds up to date
@@ -108,6 +113,7 @@ export class PreviewContentHandler {
 
     private setBlocked(blocked: boolean) {
         this.blocked = blocked;
+        this.isPreviewAllowed = (!blocked) && (this.renderableIds.length > 0);
 
         this.notifyPreviewStateChangedIfNeeded();
     }
@@ -157,10 +163,10 @@ export class PreviewContentHandler {
     }
 
     private notifyPreviewStateChangedIfNeeded() {
-        let newRenderable = this.isBlocked() || this.renderableIds.length > 0;
-        if (newRenderable !== this.anyRenderable) {
-            this.notifyPreviewStateChanged(newRenderable);
-            this.anyRenderable = newRenderable;
+        let hasRenderableItems = (this.renderableIds.length > 0);
+        if (hasRenderableItems !== this.isPreviewAllowed) {
+            this.notifyPreviewStateChanged(hasRenderableItems);
+            this.isPreviewAllowed = hasRenderableItems;
         }
     }
 
