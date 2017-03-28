@@ -70,7 +70,7 @@ public final class JsonExceptionMapper
         return Response.status( status ).entity( json ).type( MediaType.APPLICATION_JSON_TYPE ).build();
     }
 
-    private ObjectNode createErrorJson( final Throwable cause, final int status )
+    static ObjectNode createErrorJson( final Throwable cause, final int status )
     {
         final ObjectNode node = JsonNodeFactory.instance.objectNode();
         node.put( "status", status );
@@ -79,7 +79,7 @@ public final class JsonExceptionMapper
         return node;
     }
 
-    private ObjectNode createContextJson()
+    private static ObjectNode createContextJson()
     {
         final Context context = ContextAccessor.current();
         final AuthenticationInfo authInfo = context.getAuthInfo();
@@ -99,7 +99,7 @@ public final class JsonExceptionMapper
         return node;
     }
 
-    private void logErrorIfNeeded( final Throwable cause, final int status )
+    static void logErrorIfNeeded( final Throwable cause, final int status )
     {
         if ( !shouldLogAsError( status ) )
         {
@@ -110,7 +110,7 @@ public final class JsonExceptionMapper
         LOG.error( message != null ? message : cause.getClass().getSimpleName(), cause );
     }
 
-    private boolean shouldLogAsError( final int status )
+    static boolean shouldLogAsError( final int status )
     {
         if ( ( status >= 500 ) && ( status < 600 ) )
         {
