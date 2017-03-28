@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.support.AbstractEqualsTest;
 
 import static org.junit.Assert.*;

@@ -3,6 +3,7 @@ package com.enonic.xp.descriptor;
 import org.junit.Test;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.support.AbstractEqualsTest;
 
 public class DescriptorKeyTest
@@ -28,7 +29,7 @@ public class DescriptorKeyTest
             @Override
             public Object getObjectThatEqualsXButNotTheSame()
             {
-                return new DescriptorKey( ApplicationKey.from( "mainmodule" ), "partTemplateName" );
+                return DescriptorKey.from( ApplicationKey.from( "mainmodule" ), "partTemplateName" );
             }
 
             @Override

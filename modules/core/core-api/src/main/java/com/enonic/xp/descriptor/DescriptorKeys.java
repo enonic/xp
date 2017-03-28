@@ -8,6 +8,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 public final class DescriptorKeys

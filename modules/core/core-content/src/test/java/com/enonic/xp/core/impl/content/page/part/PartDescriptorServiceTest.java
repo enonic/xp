@@ -7,7 +7,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.core.impl.content.page.AbstractDescriptorServiceTest;
 import com.enonic.xp.core.impl.content.page.region.PartDescriptorServiceImpl;
-import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptors;
 

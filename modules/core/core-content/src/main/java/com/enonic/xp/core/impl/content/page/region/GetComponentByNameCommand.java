@@ -2,7 +2,7 @@ package com.enonic.xp.core.impl.content.page.region;
 
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.LayoutComponent;

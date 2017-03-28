@@ -8,7 +8,7 @@ import com.google.common.html.HtmlEscapers;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;

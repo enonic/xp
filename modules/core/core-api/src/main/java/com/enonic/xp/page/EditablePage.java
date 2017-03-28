@@ -4,7 +4,6 @@ package com.enonic.xp.page;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.region.Component;
 
 @Beta

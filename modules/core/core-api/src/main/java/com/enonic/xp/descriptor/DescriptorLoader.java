@@ -1,6 +1,7 @@
 package com.enonic.xp.descriptor;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 

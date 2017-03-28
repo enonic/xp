@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.enonic.xp.core.impl.content.page.AbstractDescriptorServiceTest;
-import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.service.ServiceDescriptor;
 
 public class ServiceDescriptorServiceTest

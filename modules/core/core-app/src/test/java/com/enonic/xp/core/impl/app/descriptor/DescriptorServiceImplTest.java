@@ -6,7 +6,7 @@ import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.core.impl.app.ApplicationTestSupport;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.descriptor.Descriptors;
-import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.page.DescriptorKey;
 
 import static org.junit.Assert.*;
 

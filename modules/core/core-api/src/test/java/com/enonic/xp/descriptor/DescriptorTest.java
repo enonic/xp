@@ -2,6 +2,8 @@ package com.enonic.xp.descriptor;
 
 import org.junit.Test;
 
+import com.enonic.xp.page.DescriptorKey;
+
 import static org.junit.Assert.*;
 
 public class DescriptorTest

@@ -7,7 +7,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.Region;

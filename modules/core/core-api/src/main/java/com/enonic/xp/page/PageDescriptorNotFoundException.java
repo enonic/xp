@@ -3,7 +3,6 @@ package com.enonic.xp.page;
 
 import com.google.common.annotations.Beta;
 
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.exception.NotFoundException;
 
 @Beta
