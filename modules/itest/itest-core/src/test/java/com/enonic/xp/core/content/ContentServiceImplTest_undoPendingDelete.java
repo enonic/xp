@@ -20,7 +20,7 @@ public class ContentServiceImplTest_undoPendingDelete
     extends AbstractContentServiceTest
 {
     @Test
-    public void test_default_state_content_not_updated()
+    public void not_deleted_not_resurrected()
         throws Exception
     {
         final CreateContentParams createContentParams = CreateContentParams.create().
@@ -33,37 +33,36 @@ public class ContentServiceImplTest_undoPendingDelete
 
         final Content content = this.contentService.create( createContentParams );
 
-        int result = this.contentService.undoPendingDelete(
-            new UndoPendingDeleteContentParams( ContentIds.from( content.getId() ), CTX_DEFAULT.getBranch() ) );
+        int result = resurrect( ContentIds.from( ContentIds.from( content.getId() ) ) );
         assertEquals( 0, result );
     }
 
     @Test
-    public void test_single_content_updated()
+    public void single_resurrected()
         throws Exception
     {
 
         final Content content = this.createTestContent( "myContent" );
 
-        int result = this.contentService.undoPendingDelete(
-            new UndoPendingDeleteContentParams( ContentIds.from( content.getId() ), CTX_OTHER.getBranch() ) );
+        int result = resurrect( ContentIds.from( ContentIds.from( content.getId() ) ) );
+
         assertEquals( 1, result );
     }
 
     @Test
-    public void test_two_contents_updated()
+    public void two_resurrected()
         throws Exception
     {
         final Content content1 = this.createTestContent( "myContent" );
         final Content content2 = this.createTestContent( "myOtherContent" );
 
-        int result = this.contentService.undoPendingDelete(
-            new UndoPendingDeleteContentParams( ContentIds.from( content1.getId(), content2.getId() ), CTX_OTHER.getBranch() ) );
+        int result = resurrect( ContentIds.from( ContentIds.from( content1.getId(), content2.getId() ) ) );
+
         assertEquals( 2, result );
     }
 
     @Test
-    public void test_child_content_also_updated()
+    public void child_resurrected()
         throws Exception
     {
         final Content parent = this.createTestContent( "myContent" );
@@ -76,9 +75,31 @@ public class ContentServiceImplTest_undoPendingDelete
             nodeState( NodeState.DEFAULT ).
             build() );
 
-        int result = this.contentService.undoPendingDelete(
-            new UndoPendingDeleteContentParams( ContentIds.from( parent.getId() ), CTX_OTHER.getBranch() ) );
+        int result = resurrect( ContentIds.from( parent.getId() ) );
         assertEquals( 2, result );
+    }
+
+    @Test
+    public void deleted_parents_resurrected()
+        throws Exception
+    {
+        final Content node1 = this.createTestContent( "node1", ContentPath.ROOT );
+        this.createTestContent( "node2", ContentPath.ROOT );
+        final Content node1_1 = this.createTestContent( "node1_1", node1.getPath() );
+        this.createTestContent( "node1_2", node1.getPath() );
+        final Content node1_1_1 = this.createTestContent( "node1_1_1", node1_1.getPath() );
+
+        final int result = resurrect( ContentIds.from( node1_1_1.getId() ) );
+
+        assertEquals( 3, result );
+    }
+
+    private int resurrect( final ContentIds contentIds )
+    {
+        return this.contentService.undoPendingDelete( UndoPendingDeleteContentParams.create().
+            contentIds( contentIds ).
+            target( CTX_OTHER.getBranch() ).
+            build() );
     }
 
     private Content createTestContent( final String name )
