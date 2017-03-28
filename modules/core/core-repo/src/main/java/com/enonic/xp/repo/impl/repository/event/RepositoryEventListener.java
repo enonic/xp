@@ -60,21 +60,22 @@ public class RepositoryEventListener
                 handleEventType( event, repositoryRestoredHandler );
                 break;
             case RepositoryEvents.UPDATED_EVENT_TYPE:
-                handleEventType( event, repositoryInvalidateByIdHandler );
+                if ( !event.isLocalOrigin() )
+                {
+                    handleEventType( event, repositoryInvalidateByIdHandler );
+                }
                 break;
             case RepositoryEvents.DELETED_EVENT_TYPE:
-                handleEventType( event, repositoryInvalidateByIdHandler );
+                if ( !event.isLocalOrigin() )
+                {
+                    handleEventType( event, repositoryInvalidateByIdHandler );
+                }
                 break;
         }
     }
 
     private void handleEventType( final Event event, final RepositoryEventHandler repositoryEventHandler )
     {
-        if ( event.isLocalOrigin() )
-        {
-            return;
-        }
-
         try
         {
             repositoryEventHandler.handleEvent( event, InternalContext.from( ContextAccessor.current() ) );
