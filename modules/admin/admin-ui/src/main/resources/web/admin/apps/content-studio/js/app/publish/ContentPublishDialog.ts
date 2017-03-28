@@ -164,9 +164,8 @@ export class ContentPublishDialog extends ProgressBarDialog {
                 this.getItemList().childTogglersAvailable() || this.dependantIds.length > 0
             );
 
-            new HasUnpublishedChildrenRequest(ids).sendAndParse().then((result) => {
-                result.getResult().forEach((requestedResult) => {
-                    debugger;
+            new HasUnpublishedChildrenRequest(ids).sendAndParse().then((children) => {
+                children.getResult().forEach((requestedResult) => {
                     const item = this.getItemList().getItemViewById(requestedResult.getId());
 
                     if(item) {

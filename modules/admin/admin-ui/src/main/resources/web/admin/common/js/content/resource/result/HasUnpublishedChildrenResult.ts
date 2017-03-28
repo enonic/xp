@@ -17,7 +17,6 @@ module api.content.resource.result {
 
         static fromJson(json: HasUnpublishedChildrenListJson): HasUnpublishedChildrenResult {
 
-            debugger;
             let contents: HasUnpublishedChildren[] = json.contents ? json.contents.map(
                 requestedJson => HasUnpublishedChildren.fromJson(requestedJson)) : [];
 
@@ -37,7 +36,6 @@ module api.content.resource.result {
         }
 
         public static fromJson(json: HasUnpublishedChildrenJson): HasUnpublishedChildren {
-            debugger;
             return new HasUnpublishedChildren(json.id.id, json.hasChildren);
         }
 
