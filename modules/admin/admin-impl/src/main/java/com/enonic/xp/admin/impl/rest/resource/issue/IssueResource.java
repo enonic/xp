@@ -19,7 +19,9 @@ import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.IssueService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.mail.MailService;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.SecurityService;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "issue")
@@ -32,11 +34,15 @@ public final class IssueResource
 
     private IssueService issueService;
 
+    private final IssueNotificationsSender issueNotificationsSender = new IssueNotificationsSender();
+
     @POST
     @Path("create")
     public IssueJson create( final CreateIssueJson params )
     {
         final Issue issue = issueService.create( params.getCreateIssueParams() );
+        issueNotificationsSender.notifyIssueCreated( issue );
+
         return new IssueJson( issue );
     }
 
@@ -64,5 +70,17 @@ public final class IssueResource
     public void setIssueService( final IssueService issueService )
     {
         this.issueService = issueService;
+    }
+
+    @Reference
+    public void setMailService( final MailService mailService )
+    {
+        this.issueNotificationsSender.setMailService( mailService );
+    }
+
+    @Reference
+    public void setSecurityService( final SecurityService securityService )
+    {
+        this.issueNotificationsSender.setSecurityService( securityService );
     }
 }

@@ -4,6 +4,7 @@ import {PublishDialogDependantList, isContentSummaryValid} from './PublishDialog
 import {ContentPublishPromptEvent} from '../browse/ContentPublishPromptEvent';
 import {SchedulePublishDialog} from './SchedulePublishDialog';
 import {PublishDialogItemList} from './PublishDialogItemList';
+import {CreateIssueDialog} from './CreateIssueDialog';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import PublishContentRequest = api.content.resource.PublishContentRequest;
@@ -14,7 +15,6 @@ import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
 import BrowseItem = api.app.browse.BrowseItem;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
-import {CreateIssueDialog} from './CreateIssueDialog';
 
 /**
  * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
@@ -70,7 +70,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.showScheduleDialogButton = this.addAction(showScheduleAction, false);
         this.showScheduleDialogButton.setTitle('Schedule Publishing');
 
-        debugger;
         this.setButtonAction(ContentPublishDialogAction, this.doPublish.bind(this, false));
 
         this.lockControls();
@@ -278,7 +277,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
     private updateButtonAction() {
         if (this.allPublishable) {
-            debugger;
+
             this.setButtonAction(ContentPublishDialogAction, this.doPublish.bind(this, false));
             this.updateDependantsHeader();
         } else {
