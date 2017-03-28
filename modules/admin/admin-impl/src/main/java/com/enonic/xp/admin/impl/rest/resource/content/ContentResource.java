@@ -77,6 +77,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.EffectivePermissionJs
 import com.enonic.xp.admin.impl.rest.resource.content.json.EffectivePermissionMemberJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.GetContentVersionsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.GetDescendantsOfContents;
+import com.enonic.xp.admin.impl.rest.resource.content.json.HasUnpublishedChildrenResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.LocaleListJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson;
@@ -133,6 +134,7 @@ import com.enonic.xp.content.GetActiveContentVersionsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.GetPublishStatusesParams;
 import com.enonic.xp.content.GetPublishStatusesResult;
+import com.enonic.xp.content.HasUnpublishedChildrenParams;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PublishContentResult;
@@ -710,6 +712,24 @@ public final class ContentResource
             default:
                 return unpublished + " items are unpublished";
         }
+    }
+
+
+    @POST
+    @Path("hasUnpublishedChildren")
+    public HasUnpublishedChildrenResultJson hasUnpublishedChildren( final ContentIdsJson ids )
+    {
+        final HasUnpublishedChildrenResultJson.Builder result = HasUnpublishedChildrenResultJson.create();
+
+        ids.getContentIds().forEach( contentId ->
+                     {
+                         final Boolean hasChildren = this.contentService.hasUnpublishedChildren(
+                             new HasUnpublishedChildrenParams( contentId, ContentConstants.BRANCH_MASTER ) );
+
+                         result.addHasChildren( contentId, hasChildren );
+                     } );
+
+        return result.build();
     }
 
     @POST

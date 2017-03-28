@@ -58,6 +58,7 @@ import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.GetPublishStatusResult;
 import com.enonic.xp.content.GetPublishStatusesParams;
 import com.enonic.xp.content.GetPublishStatusesResult;
+import com.enonic.xp.content.HasUnpublishedChildrenParams;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PublishContentResult;
@@ -776,6 +777,12 @@ public class ContentServiceImpl
         final ReorderChildNodesResult reorderChildNodesResult = this.nodeService.reorderChildren( builder.build() );
         this.nodeService.refresh( RefreshMode.SEARCH );
         return new ReorderChildContentsResult( reorderChildNodesResult.getSize() );
+    }
+
+    @Override
+    public Boolean hasUnpublishedChildren( final HasUnpublishedChildrenParams params )
+    {
+        return nodeService.hasUnpublishedChildren( NodeId.from(params.getContentId()),params.getTarget() ) ;
     }
 
     @Override

@@ -25,6 +25,10 @@ export class PublishDialogItemList extends DialogItemList {
         }, 100, false);
     }
 
+    public setContainsToggleable(value: boolean) {
+        this.toggleClass('contains-toggleable', value);
+    }
+
     private itemChangedHandler() {
         this.toggleClass('contains-toggleable', this.getItemViews()
             .some(item => item.getBrowseItem().getModel().getContentSummary().hasChildren()));
@@ -62,6 +66,14 @@ export class PublishDialogItemList extends DialogItemList {
         return <PublicStatusSelectionItem[]>super.getItemViews();
     }
 
+    public getItemViewById(contentId: ContentId): PublicStatusSelectionItem {
+        for (const view of <PublicStatusSelectionItem[]>super.getItemViews()) {
+            if (view.getContentId().equals(contentId)) {
+                return view;
+            }
+        }
+    }
+
     public getExcludeChildrenIds(): ContentId[] {
         return this.excludeChildrenIds;
     }
@@ -91,12 +103,14 @@ export class PublicStatusSelectionItem extends StatusSelectionItem {
 
     private chaListeners: {(itemId: ContentId, enabled: boolean): void}[] = [];
 
+    private id: ContentId;
+
     private toggler: IncludeChildrenToggler;
 
     constructor(viewer: api.ui.Viewer<ContentSummaryAndCompareStatus>, item: BrowseItem<ContentSummaryAndCompareStatus>) {
         super(viewer, item);
 
-        if(item.getModel().getContentSummary().hasChildren()) {
+        if (item.getModel().getContentSummary().hasChildren()) {
             this.toggler = new IncludeChildrenToggler();
 
             this.addClass('toggleable');
@@ -107,6 +121,8 @@ export class PublicStatusSelectionItem extends StatusSelectionItem {
                 this.notifyItemStateChanged(this.getBrowseItem().getModel().getContentId(), enabled);
             });
         }
+
+        this.id = item.getModel().getContentSummary().getContentId();
     }
 
     public doRender(): wemQ.Promise<boolean> {
@@ -123,6 +139,14 @@ export class PublicStatusSelectionItem extends StatusSelectionItem {
 
     getIncludeChildrenToggler(): IncludeChildrenToggler {
         return this.toggler;
+    }
+
+    getContentId(): ContentId {
+        return this.id;
+    }
+
+    setTogglerActive(value: boolean) {
+        this.toggleClass('toggleable', value);
     }
 
     public onItemStateChanged(listener: (item: ContentId, enabled: boolean) => void) {
@@ -149,6 +173,7 @@ class IncludeChildrenToggler extends api.dom.DivEl {
 
     constructor() {
         super('icon icon-tree');
+        this.addClass('include-children-toggler');
 
         this.tooltip = new Tooltip(this, 'Show child items', 1000);
 

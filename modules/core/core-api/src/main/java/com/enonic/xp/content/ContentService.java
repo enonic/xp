@@ -57,6 +57,8 @@ public interface ContentService
 
     ReorderChildContentsResult reorderChildren( ReorderChildContentsParams params );
 
+    Boolean hasUnpublishedChildren( final HasUnpublishedChildrenParams params );
+
     Future<Integer> applyPermissions( ApplyContentPermissionsParams params );
 
     Content getById( ContentId contentId );

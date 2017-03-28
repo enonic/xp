@@ -15,6 +15,8 @@ import LoadMask = api.ui.mask.LoadMask;
 import BrowseItem = api.app.browse.BrowseItem;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
 import Checkbox = api.ui.Checkbox;
+import HasUnpublishedChildrenResult = api.content.resource.result.HasUnpublishedChildrenResult;
+import HasUnpublishedChildrenRequest = api.content.resource.HasUnpublishedChildrenRequest;
 
 /**
  * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
@@ -143,12 +145,9 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
         let ids = this.getContentToPublishIds();
 
-        let resolveDependenciesRequest = api.content.resource.ResolvePublishDependenciesRequest.create().
-            setIds(ids).
-            setExcludedIds(this.excludedIds).
-            setExcludeChildrenIds(this.getItemList().getExcludeChildrenIds()).
-            setIncludeOffline(this.includeOfflineCheckbox.isChecked()).
-            build();
+        let resolveDependenciesRequest = api.content.resource.ResolvePublishDependenciesRequest.create().setIds(ids).setExcludedIds(
+            this.excludedIds).setExcludeChildrenIds(this.getItemList().getExcludeChildrenIds()).setIncludeOffline(
+            this.includeOfflineCheckbox.isChecked()).build();
 
         return resolveDependenciesRequest.sendAndParse().then((result: ResolvePublishDependenciesResult) => {
 
@@ -161,6 +160,19 @@ export class ContentPublishDialog extends ProgressBarDialog {
             this.includeOfflineCheckbox.setVisible(
                 this.getItemList().childTogglersAvailable() || this.dependantIds.length > 0
             );
+
+            new HasUnpublishedChildrenRequest(ids).sendAndParse().then((children) => {
+                const toggleable = children.getResult().some(requestedResult => requestedResult.getHasChildren());
+                this.getItemList().setContainsToggleable(toggleable);
+
+                children.getResult().forEach((requestedResult) => {
+                    const item = this.getItemList().getItemViewById(requestedResult.getId());
+
+                    if (item) {
+                        item.setTogglerActive(requestedResult.getHasChildren());
+                    }
+                });
+            });
 
             return this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
                 if (resetDependantItems) { // just opened or first time loading children
