@@ -16,12 +16,15 @@ public class ResolvePublishContentResultJson
 
     private final Boolean containsInvalid;
 
+    private final Boolean containsOffline;
+
     private ResolvePublishContentResultJson( Builder builder )
     {
         requestedContents = builder.requestedContents.stream().map( item -> new ContentIdJson( item ) ).collect( Collectors.toList() );
         dependentContents = builder.dependentContents.stream().map( item -> new ContentIdJson( item ) ).collect( Collectors.toList() );
         requiredContents = builder.requiredContents.stream().map( item -> new ContentIdJson( item ) ).collect( Collectors.toList() );
         containsInvalid = builder.containsInvalid;
+        containsOffline = builder.containsOffline;
     }
 
     public static Builder create()
@@ -52,6 +55,11 @@ public class ResolvePublishContentResultJson
         return containsInvalid;
     }
 
+    public Boolean getContainsOffline()
+    {
+        return containsOffline;
+    }
+
     public static final class Builder
     {
 
@@ -60,6 +68,8 @@ public class ResolvePublishContentResultJson
         private ContentIds dependentContents;
 
         private ContentIds requiredContents;
+
+        private Boolean containsOffline;
 
         private Boolean containsInvalid;
 
@@ -88,6 +98,12 @@ public class ResolvePublishContentResultJson
         public Builder setContainsInvalid( final Boolean containsInvalid )
         {
             this.containsInvalid = containsInvalid;
+            return this;
+        }
+
+        public Builder setContainsOffline( final Boolean containsOffline )
+        {
+            this.containsOffline = containsOffline;
             return this;
         }
 

@@ -1,5 +1,6 @@
 {
   "containsInvalid": true,
+  "containsOffline" : false,
   "dependentContents": [
     {
       "id": "dependant-contentId"
