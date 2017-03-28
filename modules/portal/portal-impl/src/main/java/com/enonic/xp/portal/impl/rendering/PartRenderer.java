@@ -3,7 +3,7 @@ package com.enonic.xp.portal.impl.rendering;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.region.PartComponent;

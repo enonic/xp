@@ -5,7 +5,7 @@ import java.util.Objects;
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 
 @Beta
 public abstract class DescriptorBasedComponent

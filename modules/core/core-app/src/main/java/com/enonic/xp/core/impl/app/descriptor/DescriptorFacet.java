@@ -4,7 +4,7 @@ import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.descriptor.Descriptors;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 
 public interface DescriptorFacet<T extends Descriptor>
 {

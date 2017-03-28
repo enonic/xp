@@ -1,7 +1,7 @@
 package com.enonic.xp.admin.impl.tool;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;

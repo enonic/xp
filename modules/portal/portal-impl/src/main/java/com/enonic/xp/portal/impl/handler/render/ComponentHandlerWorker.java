@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.handler.render;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.portal.PortalRequest;

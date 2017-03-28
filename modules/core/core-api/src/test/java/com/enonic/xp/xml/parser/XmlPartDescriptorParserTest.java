@@ -4,9 +4,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;
 
 import static org.junit.Assert.*;
@@ -26,7 +26,6 @@ public class XmlPartDescriptorParserTest
 
         this.builder = PartDescriptor.create();
         this.builder.key( DescriptorKey.from( "myapplication:mypart" ) );
-        this.builder.name( "mypart" );
         this.parser.builder( this.builder );
     }
 

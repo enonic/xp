@@ -13,7 +13,7 @@ import com.enonic.xp.admin.impl.json.content.page.region.RegionJson;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.data.PropertyArrayJson;
 import com.enonic.xp.data.PropertyTreeJson;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.page.UpdatePageParams;
 

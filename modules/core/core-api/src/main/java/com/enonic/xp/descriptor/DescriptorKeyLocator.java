@@ -1,4 +1,4 @@
-package com.enonic.xp.page;
+package com.enonic.xp.descriptor;
 
 import java.util.Set;
 

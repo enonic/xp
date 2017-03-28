@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.xml.parser.XmlModelParserTest;
 
 import static org.junit.Assert.*;

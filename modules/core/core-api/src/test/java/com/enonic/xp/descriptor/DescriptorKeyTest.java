@@ -1,4 +1,4 @@
-package com.enonic.xp.page;
+package com.enonic.xp.descriptor;
 
 import org.junit.Test;
 
@@ -7,7 +7,6 @@ import com.enonic.xp.support.AbstractEqualsTest;
 
 public class DescriptorKeyTest
 {
-
     @Test
     public void equals()
     {

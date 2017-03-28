@@ -7,7 +7,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.descriptor.DescriptorService;
 import com.enonic.xp.descriptor.Descriptors;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 
 import static org.junit.Assert.*;
 
