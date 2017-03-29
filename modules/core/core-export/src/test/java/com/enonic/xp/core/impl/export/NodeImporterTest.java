@@ -63,7 +63,7 @@ public class NodeImporterTest
             build().
             execute();
 
-        assertAddUpdateError( 1, 0, 0, result );
+        assertAddUpdateError( 1, 0, 1, result );
         assertNodeExists( "/mynode" );
     }
 
