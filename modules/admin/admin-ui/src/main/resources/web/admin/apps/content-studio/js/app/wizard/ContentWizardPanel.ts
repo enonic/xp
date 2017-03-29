@@ -772,7 +772,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
             if (this.isCurrentContentId(updatedContent.getContentId())) {
 
-                this.currentContent = updatedContent;
+                this.persistedContent = this.currentContent = updatedContent;
                 this.getContentWizardToolbarPublishControls().setContent(this.currentContent);
 
                 if (this.currentContent.getCompareStatus() != null) {
