@@ -188,7 +188,8 @@ public final class NodeImporter
 
     private boolean isNodeFolder( final VirtualFile folder )
     {
-        return folder.resolve( folder.getPath().join( "_" ) ).exists();
+        //return folder.resolve( folder.getPath().join( "_" ) ).exists();
+        return true;
     }
 
     private Node processNodeSource( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings )
