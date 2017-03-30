@@ -112,7 +112,15 @@ class BundleResource
     @Override
     public VirtualFile resolve( final VirtualFilePath path )
     {
-        return new BundleResource( this.bundle, this.bundle.getEntry( path.getPath() ).getPath() );
+        final URL entryUrl = this.bundle.getEntry( path.getPath() );
+
+        if ( entryUrl == null )
+        {
+            return new NullResource();
+        }
+
+        return new BundleResource( this.bundle, entryUrl.getPath() );
     }
+
 
 }
