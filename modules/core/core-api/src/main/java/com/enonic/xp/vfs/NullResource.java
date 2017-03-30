@@ -10,16 +10,39 @@ import com.google.common.io.CharSource;
 class NullResource
     implements VirtualFile
 {
+    private final String path;
+
+    private final VirtualFilePath virtualFilePath;
+
+    NullResource( final String path )
+    {
+        this.virtualFilePath = VirtualFilePaths.from( path, "/" );
+        this.path = path;
+    }
+
+    public NullResource( final VirtualFilePath virtualFilePath )
+    {
+        this.virtualFilePath = virtualFilePath;
+        this.path = virtualFilePath.getPath();
+    }
+
     @Override
     public String getName()
     {
-        return null;
+        if ( this.path.equals( "/" ) )
+        {
+            return "";
+        }
+        else
+        {
+            return this.path.substring( this.path.lastIndexOf( '/' ) + 1 );
+        }
     }
 
     @Override
     public VirtualFilePath getPath()
     {
-        return null;
+        return this.virtualFilePath;
     }
 
     @Override
@@ -67,6 +90,6 @@ class NullResource
     @Override
     public VirtualFile resolve( final VirtualFilePath path )
     {
-        return new NullResource();
+        return new NullResource( path.getPath() );
     }
 }

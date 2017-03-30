@@ -39,7 +39,7 @@ class BundleResource
         }
         else
         {
-            return this.path.substring( this.path.lastIndexOf( '/' ) );
+            return this.path.substring( this.path.lastIndexOf( '/' ) + 1 );
         }
     }
 
@@ -116,7 +116,7 @@ class BundleResource
 
         if ( entryUrl == null )
         {
-            return new NullResource();
+            return new NullResource( path );
         }
 
         return new BundleResource( this.bundle, entryUrl.getPath() );
