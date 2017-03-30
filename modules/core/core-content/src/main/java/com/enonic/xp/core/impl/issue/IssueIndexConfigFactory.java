@@ -9,9 +9,9 @@ import static com.enonic.xp.issue.IssuePropertyNames.APPROVERS;
 import static com.enonic.xp.issue.IssuePropertyNames.CREATED_TIME;
 import static com.enonic.xp.issue.IssuePropertyNames.CREATOR;
 import static com.enonic.xp.issue.IssuePropertyNames.DESCRIPTION;
-import static com.enonic.xp.issue.IssuePropertyNames.ITEMS;
 import static com.enonic.xp.issue.IssuePropertyNames.MODIFIED_TIME;
 import static com.enonic.xp.issue.IssuePropertyNames.MODIFIER;
+import static com.enonic.xp.issue.IssuePropertyNames.PUBLISH_REQUEST;
 import static com.enonic.xp.issue.IssuePropertyNames.STATUS;
 import static com.enonic.xp.issue.IssuePropertyNames.TITLE;
 
@@ -34,7 +34,7 @@ class IssueIndexConfigFactory
             add( STATUS, IndexConfig.MINIMAL ).
             add( DESCRIPTION, IndexConfig.MINIMAL ).
             add( APPROVERS, IndexConfig.NONE ).
-            add( ITEMS, IndexConfig.NONE ).
+            add( PUBLISH_REQUEST, IndexConfig.NONE ).
             defaultConfig( IndexConfig.BY_TYPE );
 
         return configDocumentBuilder.build();

@@ -49,6 +49,10 @@ export class PublishDialogItemList extends DialogItemList {
             this.debonceNotifyListChanged();
         });
 
+        if(!browseItem.getModel().getContentSummary().hasChildren()) {
+            this.excludeChildrenIds.push(browseItem.getModel().getContentId());
+        }
+
         if(item.isRemovable()) {
             item.addClass('removable');
         }

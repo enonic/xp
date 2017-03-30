@@ -21,5 +21,5 @@ public class IssuePropertyNames
 
     public static final String APPROVERS = "approver-ids";
 
-    public static final String ITEMS = "item-ids";
+    public static final String PUBLISH_REQUEST = "publishRequest";
 }

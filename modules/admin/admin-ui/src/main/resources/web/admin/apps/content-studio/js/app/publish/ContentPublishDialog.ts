@@ -70,7 +70,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.showScheduleDialogButton = this.addAction(showScheduleAction, false);
         this.showScheduleDialogButton.setTitle('Schedule Publishing');
 
-        debugger;
         this.setButtonAction(ContentPublishDialogAction, this.doPublish.bind(this, false));
 
         this.lockControls();
@@ -249,7 +248,10 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.addClickIgnoredElement(this.createIssueDialog);
 
         const idsToPublish = this.getContentToPublishIds();
-        this.createIssueDialog.setItems([].concat(idsToPublish ? idsToPublish : []).concat(this.dependantIds ? this.dependantIds : []));
+
+        this.createIssueDialog.setItems(idsToPublish, this.getItemList().getExcludeChildrenIds());
+        this.createIssueDialog.setExcludeIds(this.excludedIds);
+        this.createIssueDialog.setFullContentCount(idsToPublish.length + this.dependantIds.length );
 
         this.createIssueDialog.open();
 
@@ -278,7 +280,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
     private updateButtonAction() {
         if (this.allPublishable) {
-            debugger;
             this.setButtonAction(ContentPublishDialogAction, this.doPublish.bind(this, false));
             this.updateDependantsHeader();
         } else {

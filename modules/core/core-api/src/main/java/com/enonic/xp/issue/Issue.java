@@ -1,16 +1,10 @@
 package com.enonic.xp.issue;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Set;
-
-import org.codehaus.jparsec.util.Lists;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -39,7 +33,7 @@ public class Issue
 
     private final PrincipalKeys approverIds;
 
-    private final ContentIds itemIds;
+    private final PublishRequest publishRequest;
 
     private Issue( Builder builder )
     {
@@ -54,7 +48,7 @@ public class Issue
         this.creator = builder.creator;
         this.modifier = builder.modifier;
         this.approverIds = PrincipalKeys.from( builder.approverIds );
-        this.itemIds = ContentIds.from( builder.itemIds );
+        this.publishRequest = builder.publishRequest;
     }
 
     public IssueId getId()
@@ -112,9 +106,9 @@ public class Issue
         return approverIds;
     }
 
-    public ContentIds getItemIds()
+    public PublishRequest getPublishRequest()
     {
-        return itemIds;
+        return publishRequest;
     }
 
     public static Builder create()
@@ -148,12 +142,11 @@ public class Issue
 
         private Set<PrincipalKey> approverIds;
 
-        private Set<ContentId> itemIds;
+        private PublishRequest publishRequest;
 
         public Builder()
         {
             this.approverIds = Sets.newHashSet();
-            this.itemIds = Sets.newHashSet();
             this.issueStatus = IssueStatus.Open;
         }
 
@@ -169,7 +162,7 @@ public class Issue
             this.creator = source.creator;
             this.modifier = source.modifier;
             this.approverIds = source.approverIds != null ? source.approverIds.getSet() : Sets.newHashSet();
-            this.itemIds = source.itemIds != null ? source.itemIds.getSet() : Sets.newHashSet();
+            this.publishRequest = source.publishRequest;
         }
 
         public Builder id( final IssueId id )
@@ -238,15 +231,9 @@ public class Issue
             return this;
         }
 
-        public Builder addItemId( final ContentId itemId )
+        public Builder setPublishRequest( final PublishRequest publishRequest )
         {
-            this.itemIds.add( itemId );
-            return this;
-        }
-
-        public Builder addItemIds( final ContentIds itemIds )
-        {
-            this.itemIds.addAll( itemIds.getSet() );
+            this.publishRequest = publishRequest;
             return this;
         }
 
