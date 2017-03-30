@@ -1,7 +1,8 @@
 import '../../api.ts';
 import Principal = api.security.Principal;
+import UserItem = api.security.UserItem;
 
-export class UserItemWizardPanelParams<USER_ITEM_TYPE extends api.Equitable> {
+export class UserItemWizardPanelParams<USER_ITEM_TYPE extends UserItem> {
 
     tabId: api.app.bar.AppBarTabId;
 

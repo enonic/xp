@@ -18,8 +18,9 @@ import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWi
 import WizardStep = api.app.wizard.WizardStep;
 import Toolbar = api.ui.toolbar.Toolbar;
 import WizardActions = api.app.wizard.WizardActions;
+import UserItem = api.security.UserItem;
 
-export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends api.app.wizard.WizardPanel<USER_ITEM_TYPE> {
+export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem> extends api.app.wizard.WizardPanel<USER_ITEM_TYPE> {
 
     protected wizardActions: UserItemWizardActions<USER_ITEM_TYPE>;
 
@@ -37,15 +38,49 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
     }
 
     protected createWizardActions(): UserItemWizardActions<USER_ITEM_TYPE> {
-        throw Error('Override me');
+        return new UserItemWizardActions(this);
     }
 
     protected createMainToolbar(): Toolbar {
-        throw Error('Override me');
+        const toolbar: Toolbar = new Toolbar();
+
+        toolbar.addAction(this.wizardActions.getSaveAction());
+        toolbar.addAction(this.wizardActions.getDeleteAction());
+
+        return toolbar;
     }
 
     protected createWizardHeader(): WizardHeaderWithDisplayNameAndName {
-        throw Error('Override me');
+        let wizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().build();
+
+        let existing = this.getPersistedItem();
+        let displayName = '';
+        let name = '';
+
+        if (existing) {
+            displayName = existing.getDisplayName();
+            name = existing.getKey().getId();
+
+            wizardHeader.disableNameInput();
+            wizardHeader.setAutoGenerationEnabled(false);
+        } else {
+
+            wizardHeader.onPropertyChanged((event: api.PropertyChangedEvent) => {
+                let updateStatus = event.getPropertyName() === 'name' ||
+                                   (wizardHeader.isAutoGenerationEnabled()
+                                    && event.getPropertyName() === 'displayName');
+
+                if (updateStatus) {
+                    this.wizardActions.getSaveAction().setEnabled(!!event.getNewValue());
+                }
+            });
+
+        }
+
+        wizardHeader.setPath(this.getParams().persistedPath);
+        wizardHeader.initNames(displayName, name, false);
+
+        return wizardHeader;
     }
 
     public getWizardHeader(): WizardHeaderWithDisplayNameAndName {
@@ -102,6 +137,14 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends api.Equitable> extends a
 
     protected getPersistedItemPath(): string {
         throw new Error('To be implemented by inheritors');
+    }
+
+    protected setPersistedItem(newPersistedItem: USER_ITEM_TYPE): void {
+        super.setPersistedItem(newPersistedItem);
+
+        if (this.wizardHeader) {
+            (<WizardHeaderWithDisplayNameAndName>this.wizardHeader).disableNameInput();
+        }
     }
 
     getUserItemType(): string {

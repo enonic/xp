@@ -1,32 +1,18 @@
 module api.security {
 
-    export class UserStore implements api.Equitable {
-        private displayName: string;
-        private key: UserStoreKey;
-        private description: string;
+    export class UserStore extends UserItem {
+
         private authConfig: AuthConfig;
+
         private idProviderMode: IdProviderMode;
+
         private permissions: api.security.acl.UserStoreAccessControlList;
 
         constructor(builder: UserStoreBuilder) {
-            this.displayName = builder.displayName;
-            this.key = builder.key;
-            this.description = builder.description;
+            super(builder);
             this.authConfig = builder.authConfig;
             this.idProviderMode = builder.idProviderMode;
             this.permissions = builder.permissions || new api.security.acl.UserStoreAccessControlList();
-        }
-
-        getDisplayName(): string {
-            return this.displayName;
-        }
-
-        getKey(): UserStoreKey {
-            return this.key;
-        }
-
-        getDescription(): string {
-            return this.description;
         }
 
         getAuthConfig(): AuthConfig {
@@ -43,7 +29,7 @@ module api.security {
 
         isDeletable(): wemQ.Promise<boolean> {
             let deferred = wemQ.defer<boolean>();
-            new GetPrincipalsByUserStoreRequest(this.key,
+            new GetPrincipalsByUserStoreRequest(<UserStoreKey>this.getKey(),
                 [PrincipalType.USER, PrincipalType.GROUP]).
                 sendAndParse().then((principals: Principal[]) => {
                     if (principals.length > 0) {
@@ -63,6 +49,10 @@ module api.security {
             return !!key ? UserStore.create().setKey(key.toString()).build().isDeletable() : null;
         }
 
+        getKey(): UserStoreKey {
+            return <UserStoreKey>super.getKey();
+        }
+
         equals(o: api.Equitable): boolean {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, UserStore)) {
                 return false;
@@ -70,22 +60,17 @@ module api.security {
 
             let other = <UserStore> o;
 
-            return this.key.equals(other.key) &&
-                   this.displayName === other.displayName &&
-                   this.description === other.description &&
+            return super.equals(other) &&
                    ((!this.authConfig && !other.authConfig) || (this.authConfig && this.authConfig.equals(other.authConfig))) &&
                    this.permissions.equals(other.permissions);
         }
 
         clone(): UserStore {
-            return UserStore.create().
-                setDisplayName(this.displayName).
-                setKey(this.key.toString()).
-                setDescription(this.description).
-                setAuthConfig(this.authConfig ? this.authConfig.clone() : this.authConfig).
-                setIdProviderMode(this.idProviderMode).
-                setPermissions(this.permissions.clone()).
-                build();
+            return this.newBuilder().build();
+        }
+
+        newBuilder(): UserStoreBuilder {
+            return new UserStoreBuilder(this);
         }
 
         static create(): UserStoreBuilder {
@@ -97,18 +82,26 @@ module api.security {
         }
     }
 
-    export class UserStoreBuilder {
-        displayName: string;
-        key: UserStoreKey;
-        description: string;
+    export class UserStoreBuilder extends UserItemBuilder {
+
         authConfig: AuthConfig;
+
         idProviderMode: IdProviderMode;
+
         permissions: api.security.acl.UserStoreAccessControlList;
 
+        constructor(source?: UserStore) {
+            if (source) {
+                super(source);
+                this.idProviderMode = source.getIdProviderMode();
+                this.authConfig = !!source.getAuthConfig() ? source.getAuthConfig().clone() : null;
+                this.permissions = !!source.getPermissions() ? source.getPermissions().clone() : null;
+            }
+        }
+
         fromJson(json: api.security.UserStoreJson): UserStoreBuilder {
+            super.fromJson(json);
             this.key = new UserStoreKey(json.key);
-            this.displayName = json.displayName;
-            this.description = json.description;
             this.authConfig = json.authConfig ? AuthConfig.fromJson(json.authConfig) : null;
             this.idProviderMode = json.idProviderMode ? IdProviderMode[json.idProviderMode] : null;
             this.permissions = json.permissions ? api.security.acl.UserStoreAccessControlList.fromJson(json.permissions) : null;
@@ -116,17 +109,7 @@ module api.security {
         }
 
         setKey(key: string): UserStoreBuilder {
-            this.key = new UserStoreKey(key);
-            return this;
-        }
-
-        setDisplayName(displayName: string): UserStoreBuilder {
-            this.displayName = displayName;
-            return this;
-        }
-
-        setDescription(description: string): UserStoreBuilder {
-            this.description = description;
+            this.key = UserStoreKey.fromString(key);
             return this;
         }
 

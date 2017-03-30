@@ -1,26 +1,15 @@
 module api.security {
 
-    export class UserStoreKey implements api.Equitable {
+    export class UserStoreKey extends UserItemKey {
 
         public static SYSTEM: UserStoreKey = new UserStoreKey('system');
 
-        private id: string;
-
         constructor(id: string) {
-            api.util.assert(!api.util.StringHelper.isBlank(id), 'UserStoreKey id cannot be null or empty');
-            this.id = id;
+            super(id);
         }
 
         isSystem(): boolean {
-            return this.id === UserStoreKey.SYSTEM.id;
-        }
-
-        toString(): string {
-            return this.id;
-        }
-
-        getId(): string {
-            return this.id;
+            return this.getId() === UserStoreKey.SYSTEM.getId();
         }
 
         static fromString(value: string): UserStoreKey {
@@ -32,8 +21,7 @@ module api.security {
                 return false;
             }
 
-            let other = <UserStoreKey>o;
-            return this.id === other.id;
+            return super.equals(o);
         }
     }
 }
