@@ -29,8 +29,8 @@ module api.app.browse {
 
         togglePreviewForItem(item?: BrowseItem<M>) {
             if (item) {
-                this.setStatisticsItem(item);
                 this.removeClass('no-selection');
+                this.setStatisticsItem(item);
             } else {
                 this.showNoSelectionMessage();
             }
