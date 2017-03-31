@@ -134,7 +134,7 @@ public final class NodeImporter
                 insertManualStrategy( InsertManualStrategy.MANUAL ).
                 manualOrderValue( currentManualOrderValue );
 
-            if ( child != null )
+            if ( child != null && child.exists() )
             {
                 processNodeFolder( child, processNodeSettings );
             }
@@ -188,8 +188,7 @@ public final class NodeImporter
 
     private boolean isNodeFolder( final VirtualFile folder )
     {
-        //return folder.resolve( folder.getPath().join( "_" ) ).exists();
-        return true;
+        return folder.resolve( folder.getPath().join( "_" ) ).exists();
     }
 
     private Node processNodeSource( final VirtualFile nodeFolder, final ProcessNodeSettings.Builder processNodeSettings )

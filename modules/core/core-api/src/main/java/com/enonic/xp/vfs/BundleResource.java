@@ -39,7 +39,7 @@ class BundleResource
         }
         else
         {
-            return this.path.substring( this.path.lastIndexOf( '/' ) );
+            return this.path.substring( this.path.lastIndexOf( '/' ) + 1 );
         }
     }
 
@@ -112,7 +112,15 @@ class BundleResource
     @Override
     public VirtualFile resolve( final VirtualFilePath path )
     {
-        return new BundleResource( this.bundle, this.bundle.getEntry( path.getPath() ).getPath() );
+        final URL entryUrl = this.bundle.getEntry( path.getPath() );
+
+        if ( entryUrl == null )
+        {
+            return new NullResource( path );
+        }
+
+        return new BundleResource( this.bundle, entryUrl.getPath() );
     }
+
 
 }
