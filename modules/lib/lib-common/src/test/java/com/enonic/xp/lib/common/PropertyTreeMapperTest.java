@@ -23,7 +23,6 @@ public class PropertyTreeMapperTest
 {
     private ObjectMapper mapper;
 
-
     @Before
     public void setUp()
         throws Exception
@@ -41,8 +40,8 @@ public class PropertyTreeMapperTest
         final PropertyTree properties = new PropertyTree();
         properties.addDouble( "myDouble", 2.0 );
         properties.addLong( "myLong", 2L );
-        serializeAndAssert( "mapper-numbers", properties );
 
+        serializeAndAssert( "mapper-numbers", properties );
     }
 
     @Test
@@ -51,6 +50,7 @@ public class PropertyTreeMapperTest
     {
         final PropertyTree properties = new PropertyTree();
         properties.addStrings( "myValues", "value1", "value2", "value3" );
+
         serializeAndAssert( "mapper-array", properties );
     }
 
@@ -79,21 +79,17 @@ public class PropertyTreeMapperTest
         serializeAndAssert( "mapper-map-in-map", properties );
     }
 
-
     @Test
     public void list_of_maps()
         throws Exception
     {
         final PropertyTree properties = new PropertyTree();
-
         final PropertySet subSet1 = new PropertySet();
         subSet1.setString( "subSet1Value1", "fisk1" );
         subSet1.setString( "subSet2Value2", "ost1" );
-
         final PropertySet subSet2 = new PropertySet();
         subSet2.setString( "subSet2Value1", "fisk2" );
         subSet2.setString( "subSet2Value2", "ost2" );
-
         properties.addSets( "subSets", subSet1, subSet2 );
 
         serializeAndAssert( "mapper-list-of-maps", properties );
