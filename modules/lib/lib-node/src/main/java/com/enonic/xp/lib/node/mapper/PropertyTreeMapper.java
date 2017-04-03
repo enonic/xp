@@ -12,8 +12,17 @@ public final class PropertyTreeMapper
 {
     private final PropertyTree value;
 
+    private final boolean useRawValue;
+
     public PropertyTreeMapper( final PropertyTree value )
     {
+        this.value = value;
+        this.useRawValue = false;
+    }
+
+    public PropertyTreeMapper( final boolean useRawValue, final PropertyTree value )
+    {
+        this.useRawValue = useRawValue;
         this.value = value;
     }
 
@@ -23,13 +32,13 @@ public final class PropertyTreeMapper
         serialize( gen, this.value );
     }
 
-    private static void serialize( final MapGenerator gen, final PropertyTree value )
+    private void serialize( final MapGenerator gen, final PropertyTree value )
     {
         final Map<String, Object> map = value.toMap();
         serializeMap( gen, map );
     }
 
-    private static void serializeMap( final MapGenerator gen, final Map<?, ?> map )
+    private void serializeMap( final MapGenerator gen, final Map<?, ?> map )
     {
         for ( final Map.Entry<?, ?> entry : map.entrySet() )
         {
@@ -37,7 +46,7 @@ public final class PropertyTreeMapper
         }
     }
 
-    private static void serializeKeyValue( final MapGenerator gen, final String key, final Object value )
+    private void serializeKeyValue( final MapGenerator gen, final String key, final Object value )
     {
         if ( value instanceof List )
         {
@@ -49,11 +58,18 @@ public final class PropertyTreeMapper
         }
         else
         {
-            gen.value( key, value );
+            if ( this.useRawValue )
+            {
+                gen.rawValue( key, value );
+            }
+            else
+            {
+                gen.value( key, value );
+            }
         }
     }
 
-    private static void serializeList( final MapGenerator gen, final String key, final List<?> values )
+    private void serializeList( final MapGenerator gen, final String key, final List<?> values )
     {
         if ( values.isEmpty() )
         {
@@ -75,14 +91,14 @@ public final class PropertyTreeMapper
         gen.end();
     }
 
-    private static void serializeMap( final MapGenerator gen, final String key, final Map<?, ?> map )
+    private void serializeMap( final MapGenerator gen, final String key, final Map<?, ?> map )
     {
         gen.map( key );
         serializeMap( gen, map );
         gen.end();
     }
 
-    private static void serializeValue( final MapGenerator gen, final Object value )
+    private void serializeValue( final MapGenerator gen, final Object value )
     {
         if ( value instanceof Map )
         {
@@ -92,7 +108,14 @@ public final class PropertyTreeMapper
         }
         else
         {
-            gen.value( value );
+            if ( this.useRawValue )
+            {
+                gen.rawValue( value );
+            }
+            else
+            {
+                gen.value( value );
+            }
         }
     }
 }

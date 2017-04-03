@@ -21,11 +21,6 @@ public class QueryNodeHandlerParams
 
     private Map<String, Object> filters;
 
-    public void setAggregations( final Map<String, Object> aggregations )
-    {
-        this.aggregations = aggregations;
-    }
-
     Map<String, Object> getFilters()
     {
         return filters;

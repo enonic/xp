@@ -46,23 +46,7 @@ public final class UpdateNodeCommand
 
     private Node doExecute()
     {
-        final Node persistedNode;
-        if ( params.getId() != null )
-        {
-            persistedNode = doGetById( params.getId() );
-            if ( persistedNode == null )
-            {
-                throw new NodeNotFoundException( "Cannot update node with id '" + params.getId() + "', node not found" );
-            }
-        }
-        else
-        {
-            persistedNode = doGetByPath( params.getPath() );
-            if ( persistedNode == null )
-            {
-                throw new NodeNotFoundException( "Cannot update node with path '" + params.getPath() + "', node not found" );
-            }
-        }
+        final Node persistedNode = getPersistedNode();
 
         requireContextUserPermissionOrAdmin( Permission.MODIFY, persistedNode );
 
@@ -104,6 +88,28 @@ public final class UpdateNodeCommand
         }
 
         return updatedNode;
+    }
+
+    private Node getPersistedNode()
+    {
+        final Node persistedNode;
+        if ( params.getId() != null )
+        {
+            persistedNode = doGetById( params.getId() );
+            if ( persistedNode == null )
+            {
+                throw new NodeNotFoundException( "Cannot update node with id '" + params.getId() + "', node not found" );
+            }
+        }
+        else
+        {
+            persistedNode = doGetByPath( params.getPath() );
+            if ( persistedNode == null )
+            {
+                throw new NodeNotFoundException( "Cannot update node with path '" + params.getPath() + "', node not found" );
+            }
+        }
+        return persistedNode;
     }
 
     private Node createUpdatedNode( final Node editedNode )
