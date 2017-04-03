@@ -34,9 +34,7 @@ public class ModifyNodeHandler
     public Object execute()
     {
         final Node node = getExistingNode();
-
-        final ScriptValue value = this.editor.call( new NodeMapper( node ) );
-        final BinaryAttachments binaryAttachments = new BinaryAttachmentsParser().parse( value );
+        final BinaryAttachments binaryAttachments = getBinaryAttachments( node );
 
         final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
             id( node.id() ).
@@ -45,14 +43,20 @@ public class ModifyNodeHandler
             build();
 
         final Node updatedNode = this.nodeService.update( updateNodeParams );
+        return new NodeMapper( updatedNode, false );
+    }
 
-        return new NodeMapper( updatedNode );
+    private BinaryAttachments getBinaryAttachments( final Node node )
+    {
+        final NodeMapper nodeMapper = new NodeMapper( node, true );
+        final ScriptValue value = this.editor.call( nodeMapper );
+        return new BinaryAttachmentsParser().parse( value );
     }
 
     private NodeEditor createEditor()
     {
         return edit -> {
-            final ScriptValue value = this.editor.call( new NodeMapper( edit.source ) );
+            final ScriptValue value = this.editor.call( new NodeMapper( edit.source, true ) );
             if ( value != null )
             {
                 updateNode( edit, value );

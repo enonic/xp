@@ -1,5 +1,7 @@
 package com.enonic.xp.lib.node;
 
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import org.junit.Test;
@@ -19,6 +21,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
@@ -35,7 +38,10 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
+import com.enonic.xp.util.Link;
+import com.enonic.xp.util.Reference;
 
 import static org.junit.Assert.*;
 
@@ -46,19 +52,8 @@ public class ModifyNodeHandlerTest
     @Captor
     private ArgumentCaptor<UpdateNodeParams> updateCaptor;
 
-    private Node mockGetNode()
+    private void mockUpdateNode( final Node originalNode )
     {
-        final Node node = doCreateNode();
-        Mockito.when( this.nodeService.getById( Mockito.isA( NodeId.class ) ) ).
-            thenReturn( node );
-
-        return node;
-    }
-
-    private Node mockUpdateNode()
-    {
-        final Node node = doCreateNode();
-
         Mockito.when( this.nodeService.update( Mockito.isA( UpdateNodeParams.class ) ) ).
             then( new Answer<Node>()
             {
@@ -67,18 +62,14 @@ public class ModifyNodeHandlerTest
                     throws Throwable
                 {
                     final UpdateNodeParams updateNodeParams = (UpdateNodeParams) invocation.getArguments()[0];
-
-                    final EditableNode editableNode = new EditableNode( node );
+                    final EditableNode editableNode = new EditableNode( originalNode );
                     updateNodeParams.getEditor().edit( editableNode );
 
                     final Node editedNode = editableNode.build();
-
                     final Node.Builder builder = Node.create( editedNode );
 
                     final BinaryAttachments binaryAttachments = updateNodeParams.getBinaryAttachments();
-
                     final AttachedBinaries.Builder binariesBuilder = AttachedBinaries.create();
-
                     for ( final BinaryAttachment binaryAttachment : binaryAttachments )
                     {
                         binariesBuilder.add( new AttachedBinary( binaryAttachment.getReference(), "fisk" ) );
@@ -89,11 +80,16 @@ public class ModifyNodeHandlerTest
                         build();
                 }
             } );
-
-        return node;
     }
 
-    private Node doCreateNode()
+    private void mockGetNode( final Node node )
+    {
+        Mockito.when( this.nodeService.getById( Mockito.isA( NodeId.class ) ) ).
+            thenReturn( node );
+    }
+
+    @Test
+    public void testExample()
     {
         final PropertyTree data = new PropertyTree();
         data.setString( "notChanged", "originalValue" );
@@ -102,19 +98,15 @@ public class ModifyNodeHandlerTest
         final PropertySet mySet = data.addSet( "mySet" );
         mySet.setGeoPoint( "myGeoPoint", new GeoPoint( 30, -30 ) );
 
-        return Node.create().
+        final Node node = Node.create().
             id( NodeId.from( "abc" ) ).
             parentPath( NodePath.ROOT ).
             data( data ).
             name( "myNode" ).
             build();
-    }
 
-    @Test
-    public void testExample()
-    {
-        final Node node = mockGetNode();
-        mockUpdateNode();
+        mockGetNode( node );
+        mockUpdateNode( node );
 
         Mockito.when( this.repositoryService.get( RepositoryId.from( "cms-repo" ) ) ).
             thenReturn( Repository.create().
@@ -126,33 +118,87 @@ public class ModifyNodeHandlerTest
 
         Mockito.verify( this.nodeService ).update( updateCaptor.capture() );
         assertEquals( updateCaptor.getValue().getId(), NodeId.from( "abc" ) );
-        assertEditor( node );
-    }
 
-    private void assertEditor( final Node node )
-    {
-        final NodeEditor editor = updateCaptor.getValue().getEditor();
-
-        assertNotNull( editor );
-
-        final EditableNode editableNode = new EditableNode( node );
-        editor.edit( editableNode );
-        assertEquals( "modified", editableNode.data.getString( "myString" ) );
-        assertEquals( "originalValue", editableNode.data.getString( "notChanged" ) );
-        assertEquals( new GeoPoint( 0, 0 ), editableNode.data.getGeoPoint( "mySet.myGeoPoint" ) );
-        final Iterable<String> myArray = editableNode.data.getStrings( "myArray" );
+        final EditableNode editedNode = getEditedNode( node );
+        assertEquals( "modified", editedNode.data.getString( "myString" ) );
+        assertEquals( "originalValue", editedNode.data.getString( "notChanged" ) );
+        assertEquals( new GeoPoint( 0, 0 ), editedNode.data.getGeoPoint( "mySet.myGeoPoint" ) );
+        final Iterable<String> myArray = editedNode.data.getStrings( "myArray" );
         assertNotNull( myArray );
         final ArrayList<String> myArrayValues = Lists.newArrayList( myArray );
         assertEquals( 3, myArrayValues.size() );
         assertTrue( myArrayValues.containsAll( Lists.newArrayList( "modified1", "modified2", "modified3" ) ) );
 
-        final AccessControlList permissions = editableNode.permissions;
+        final AccessControlList permissions = editedNode.permissions;
         assertTrue( permissions.getEntry( PrincipalKey.from( "role:newRole" ) ).isAllowed( Permission.MODIFY ) );
         assertTrue( permissions.getEntry( PrincipalKey.from( "user:system:newUser" ) ).isAllowed( Permission.CREATE ) );
 
-        final IndexConfigDocument indexConfigDocument = editableNode.indexConfigDocument;
+        final IndexConfigDocument indexConfigDocument = editedNode.indexConfigDocument;
         assertFalse( indexConfigDocument.getConfigForPath( PropertyPath.from( "displayName" ) ).isEnabled() );
         assertTrue( indexConfigDocument.getConfigForPath( PropertyPath.from( "whatever" ) ).isFulltext() );
+    }
+
+    @Test
+    public void keep_original_value_types_when_not_touched()
+    {
+        final PropertyTree data = new PropertyTree();
+        data.setString( "myString", "originalValue" );
+        data.setString( "untouchedString", "originalValue" );
+        data.setBoolean( "untouchedBoolean", true );
+        data.setDouble( "untouchedDouble", 2.0 );
+        data.setLong( "untouchedLong", 2L );
+        data.setLink( "untouchedLink", Link.from( "myLink" ) );
+        data.setInstant( "untouchedInstant", Instant.parse( "2017-01-02T10:00:00Z" ) );
+        data.setBinaryReference( "untouchedBinaryRef", BinaryReference.from( "abcd" ) );
+        data.setGeoPoint( "untouchedGeoPoint", GeoPoint.from( "30,-30" ) );
+        data.setLocalDate( "untouchedLocalDate", LocalDate.parse( "2017-03-24" ) );
+        data.setReference( "untouchedReference", Reference.from( "myReference" ) );
+
+        final Node node = Node.create().
+            id( NodeId.from( "abc" ) ).
+            parentPath( NodePath.ROOT ).
+            data( data ).
+            name( "myNode" ).
+            build();
+
+        mockGetNode( node );
+        mockUpdateNode( node );
+
+        Mockito.when( this.repositoryService.get( RepositoryId.from( "cms-repo" ) ) ).
+            thenReturn( Repository.create().
+                id( RepositoryId.from( "cms-repo" ) ).
+                branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
+                build() );
+
+        runScript( "/site/lib/xp/examples/node/modify-keep-types.js" );
+
+        Mockito.verify( this.nodeService ).update( updateCaptor.capture() );
+        assertEquals( updateCaptor.getValue().getId(), NodeId.from( "abc" ) );
+
+        final EditableNode editedNode = getEditedNode( node );
+        assertEquals( "modifiedValue", editedNode.data.getString( "myString" ) );
+        // Validate that properties not changed keeps original type
+        assertTrue( editedNode.data.getProperty( "untouchedString" ).getType().equals( ValueTypes.STRING ) );
+        assertTrue( editedNode.data.getProperty( "untouchedBoolean" ).getType().equals( ValueTypes.BOOLEAN ) );
+        assertTrue( editedNode.data.getProperty( "untouchedDouble" ).getType().equals( ValueTypes.DOUBLE ) );
+        assertTrue( editedNode.data.getProperty( "untouchedLong" ).getType().equals( ValueTypes.DOUBLE ) );
+        assertTrue( editedNode.data.getProperty( "untouchedLink" ).getType().equals( ValueTypes.LINK ) );
+        assertTrue( editedNode.data.getProperty( "untouchedInstant" ).getType().equals( ValueTypes.DATE_TIME ) );
+        assertTrue( editedNode.data.getProperty( "untouchedGeoPoint" ).getType().equals( ValueTypes.GEO_POINT ) );
+        assertTrue( editedNode.data.getProperty( "untouchedLocalDate" ).getType().equals( ValueTypes.LOCAL_DATE ) );
+        assertTrue( editedNode.data.getProperty( "untouchedReference" ).getType().equals( ValueTypes.REFERENCE ) );
+        assertTrue( editedNode.data.getProperty( "untouchedBinaryRef" ).getType().equals( ValueTypes.BINARY_REFERENCE ) );
+    }
+
+    private EditableNode getEditedNode( final Node node )
+    {
+        final NodeEditor editor = updateCaptor.getValue().getEditor();
+        assertNotNull( editor );
+
+        final EditableNode editableNode = new EditableNode( node );
+        editor.edit( editableNode );
+
+        return editableNode;
     }
 
     @SuppressWarnings("unused")
