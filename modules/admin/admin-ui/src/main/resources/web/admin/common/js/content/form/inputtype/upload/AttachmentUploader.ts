@@ -69,6 +69,13 @@ module api.content.form.inputtype.upload {
             });
         }
 
+        public giveFocus(): boolean {
+            if (this.uploaderEl) {
+                return this.uploaderEl.giveFocus();
+            }
+            return false;
+        }
+
         protected getNumberOfValids(): number {
             return this.getPropertyArray().getProperties().length;
         }
