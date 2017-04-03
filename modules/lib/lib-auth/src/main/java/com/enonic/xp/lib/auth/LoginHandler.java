@@ -1,7 +1,9 @@
 package com.enonic.xp.lib.auth;
 
+import java.util.Comparator;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -85,7 +87,7 @@ public final class LoginHandler
 
     private AuthenticationInfo attemptLoginWithAllExistingUserStores()
     {
-        final UserStores userStores = runAsAuthenticated( securityService.get()::getUserStores );
+        final UserStores userStores = runAsAuthenticated( this::getSortedUserStores );
 
         for ( UserStore userStore : userStores )
         {
@@ -97,6 +99,14 @@ public final class LoginHandler
         }
 
         return AuthenticationInfo.unAuthenticated();
+    }
+
+    private UserStores getSortedUserStores()
+    {
+        UserStores userStores = securityService.get().getUserStores();
+        return UserStores.from( userStores.stream().
+            sorted( Comparator.comparing( u -> u.getKey().toString() ) ).
+            collect( Collectors.toList() ) );
     }
 
     private AuthenticationInfo attemptLogin()
