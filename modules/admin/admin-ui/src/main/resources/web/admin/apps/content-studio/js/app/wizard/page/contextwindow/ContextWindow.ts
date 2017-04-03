@@ -204,6 +204,7 @@ export class ContextWindow extends api.ui.panel.DockedPanel {
         this.animationTimer = setTimeout(() => {
             this.contextWindowState = ContextWindowState.SHOWN;
             this.updateFrameSize();
+            this.show(); // to notify listeners that elements are shown
             this.animationTimer = null;
         }, 100);
     }
