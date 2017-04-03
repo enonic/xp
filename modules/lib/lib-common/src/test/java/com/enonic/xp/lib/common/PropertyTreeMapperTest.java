@@ -13,41 +13,16 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.node.NodeService;
-import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.script.serializer.JsonMapGenerator;
 import com.enonic.xp.script.serializer.MapGenerator;
-import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.testing.script.ScriptTestSupport;
 import com.enonic.xp.util.GeoPoint;
 
 import static org.junit.Assert.*;
 
 public class PropertyTreeMapperTest
-    extends ScriptTestSupport
 {
     private ObjectMapper mapper;
 
-    protected NodeService nodeService;
-
-    protected RepositoryService repositoryService;
-
-    protected SecurityService securityService;
-
-    @Override
-    public void initialize()
-        throws Exception
-    {
-        super.initialize();
-
-        this.repositoryService = Mockito.mock( RepositoryService.class );
-        this.nodeService = Mockito.mock( NodeService.class );
-        this.securityService = Mockito.mock( SecurityService.class );
-
-        addService( NodeService.class, this.nodeService );
-        addService( RepositoryService.class, this.repositoryService );
-        addService( SecurityService.class, this.securityService );
-    }
 
     @Before
     public void setUp()
