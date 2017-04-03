@@ -1,50 +1,98 @@
 package com.enonic.xp.util;
 
-import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 import com.google.common.net.MediaType;
 
+import com.enonic.xp.media.MediaTypeProvider;
+import com.enonic.xp.media.MediaTypeService;
+
 @Beta
 public final class MediaTypes
-    extends HashMap<String, MediaType>
+    implements MediaTypeService
 {
     private final static MediaTypes INSTANCE = new MediaTypes();
 
     private final static MediaType DEFAULT = MediaType.OCTET_STREAM;
 
+    private final List<MediaTypeProvider> providers;
+
+    private final Map<String, MediaType> mediaTypes;
+
     private MediaTypes()
     {
-        put( "gif", MediaType.GIF );
-        put( "png", MediaType.PNG );
-        put( "jpeg", MediaType.JPEG );
-        put( "jpg", MediaType.JPEG );
-        put( "pdf", MediaType.PDF );
-        put( "json", MediaType.JSON_UTF_8.withoutParameters() );
-        put( "js", MediaType.JAVASCRIPT_UTF_8.withoutParameters() );
-        put( "css", MediaType.CSS_UTF_8.withoutParameters() );
-        put( "html", MediaType.HTML_UTF_8.withoutParameters() );
-        put( "xml", MediaType.XML_UTF_8.withoutParameters() );
-        put( "svg", MediaType.SVG_UTF_8.withoutParameters() );
-        put( "txt", MediaType.PLAIN_TEXT_UTF_8.withoutParameters() );
+        this.providers = Lists.newArrayList();
+        this.mediaTypes = Maps.newHashMap();
+
+        this.mediaTypes.put( "gif", MediaType.GIF );
+        this.mediaTypes.put( "png", MediaType.PNG );
+        this.mediaTypes.put( "jpeg", MediaType.JPEG );
+        this.mediaTypes.put( "jpg", MediaType.JPEG );
+        this.mediaTypes.put( "pdf", MediaType.PDF );
+        this.mediaTypes.put( "json", MediaType.JSON_UTF_8.withoutParameters() );
+        this.mediaTypes.put( "js", MediaType.JAVASCRIPT_UTF_8.withoutParameters() );
+        this.mediaTypes.put( "css", MediaType.CSS_UTF_8.withoutParameters() );
+        this.mediaTypes.put( "html", MediaType.HTML_UTF_8.withoutParameters() );
+        this.mediaTypes.put( "xml", MediaType.XML_UTF_8.withoutParameters() );
+        this.mediaTypes.put( "svg", MediaType.SVG_UTF_8.withoutParameters() );
+        this.mediaTypes.put( "txt", MediaType.PLAIN_TEXT_UTF_8.withoutParameters() );
+        this.mediaTypes.put( "mp4", MediaType.MP4_VIDEO );
     }
 
+    @Override
     public MediaType fromExt( final String ext )
     {
-        final MediaType type = get( ext );
+        for ( final MediaTypeProvider provider : this.providers )
+        {
+            final MediaType type = provider.fromExt( ext );
+            if ( type != null )
+            {
+                return type;
+            }
+        }
+
+        final MediaType type = this.mediaTypes.get( ext );
         return type != null ? type : DEFAULT;
     }
 
+    @Override
     public MediaType fromFile( final String fileName )
     {
         return fromExt( Files.getFileExtension( fileName ) );
     }
 
     @Override
-    public MediaType put( final String ext, final MediaType value )
+    public Map<String, MediaType> asMap()
     {
-        return super.put( ext, value.withoutParameters() );
+        final Map<String, MediaType> map = Maps.newHashMap( this.mediaTypes );
+        for ( final MediaTypeProvider provider : this.providers )
+        {
+            map.putAll( provider.asMap() );
+        }
+
+        return map;
+    }
+
+    public void addProvider( final MediaTypeProvider provider )
+    {
+        this.providers.add( provider );
+    }
+
+    public void removeProvider( final MediaTypeProvider provider )
+    {
+        this.providers.remove( provider );
+    }
+
+    @Override
+    public Iterator<MediaTypeProvider> iterator()
+    {
+        return this.providers.iterator();
     }
 
     public static MediaTypes instance()
