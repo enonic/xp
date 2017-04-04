@@ -104,6 +104,7 @@ public class IndexConfigFactory
         final Boolean nGram = settings.getBoolean( "nGram" );
         final Boolean fulltext = settings.getBoolean( "fulltext" );
         final Boolean includeInAllText = settings.getBoolean( "includeInAllText" );
+        final Boolean path = settings.getBoolean( "path" );
 
         final Iterable<String> indexValueProcessors = settings.getStrings( "indexValueProcessors" );
 
@@ -112,7 +113,8 @@ public class IndexConfigFactory
             enabled( enabled ).
             nGram( nGram ).
             fulltext( fulltext ).
-            includeInAllText( includeInAllText );
+            includeInAllText( includeInAllText ).
+            path( path );
 
         for ( final String indexValueProcessor : indexValueProcessors )
         {
