@@ -2,6 +2,7 @@ package com.enonic.xp.lib.node.mapper;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfigDocument;
+import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.lib.node.NodePropertyConstants;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.script.serializer.MapGenerator;
