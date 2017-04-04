@@ -1,6 +1,9 @@
 package com.enonic.xp.issue;
 
+import java.util.Objects;
+
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.region.Component;
 
 public class PublishRequestItem
 {
@@ -27,6 +30,29 @@ public class PublishRequestItem
     public static Builder create()
     {
         return new Builder();
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final PublishRequestItem that = (PublishRequestItem) o;
+
+        return Objects.equals( id, that.id ) && this.includeChildren == includeChildren;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( id, includeChildren );
     }
 
     public static class Builder
