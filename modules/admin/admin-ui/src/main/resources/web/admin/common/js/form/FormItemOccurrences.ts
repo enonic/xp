@@ -243,6 +243,9 @@ module api.form {
                 occurrenceView.giveFocus();
                 this.notifyOccurrenceRendered(occurrence, occurrenceView, validate);
                 return occurrenceView;
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+                return null;
             });
         }
 
