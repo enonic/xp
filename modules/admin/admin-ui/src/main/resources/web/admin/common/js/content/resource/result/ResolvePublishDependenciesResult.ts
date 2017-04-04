@@ -9,14 +9,12 @@ module api.content.resource.result {
         requestedContents: ContentId[];
         requiredContents: ContentId[];
         containsInvalid: boolean;
-        containsOffline: boolean;
 
         constructor(builder: Builder) {
             this.dependentContents = builder.dependentContents;
             this.requestedContents = builder.requestedContents;
             this.requiredContents = builder.requiredContents;
             this.containsInvalid = builder.containsInvalid;
-            this.containsOffline = builder.containsOffline;
         }
 
         getDependants(): ContentId[] {
@@ -35,10 +33,6 @@ module api.content.resource.result {
             return this.containsInvalid;
         }
 
-        isContainsOffline(): boolean {
-            return this.containsOffline;
-        }
-
         static fromJson(json: ResolvePublishContentResultJson): ResolvePublishDependenciesResult {
 
             let dependants: ContentId[] = json.dependentContents
@@ -47,13 +41,11 @@ module api.content.resource.result {
             let requested: ContentId[] = json.requestedContents ? json.requestedContents.map(dependant => new ContentId(dependant.id)) : [];
             let required: ContentId[] = json.requiredContents ? json.requiredContents.map(dependant => new ContentId(dependant.id)) : [];
             let containsInvalid: boolean = json.containsInvalid;
-            let containsOffline: boolean = json.containsOffline;
 
             return ResolvePublishDependenciesResult.create().setDependentContents(dependants).setRequestedContents(
                 requested)
                 .setRequiredContents(required)
                 .setContainsInvalid(containsInvalid)
-                .setContainsOffline(containsOffline)
                 .build();
         }
 
@@ -66,7 +58,6 @@ module api.content.resource.result {
         requestedContents: ContentId[];
         requiredContents: ContentId[];
         containsInvalid: boolean;
-        containsOffline: boolean;
         allPublishable: boolean;
 
         setDependentContents(value: ContentId[]): Builder {
@@ -86,11 +77,6 @@ module api.content.resource.result {
 
         setContainsInvalid(value: boolean): Builder {
             this.containsInvalid = value;
-            return this;
-        }
-
-        setContainsOffline(value: boolean): Builder {
-            this.containsOffline = value;
             return this;
         }
 

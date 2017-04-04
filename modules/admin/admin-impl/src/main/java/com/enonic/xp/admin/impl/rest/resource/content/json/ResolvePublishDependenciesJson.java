@@ -10,8 +10,6 @@ public class ResolvePublishDependenciesJson
 
     private Set<String> excludeChildrenIds;
 
-    private boolean includeOffline;
-
     public Set<String> getIds()
     {
         return ids;
@@ -42,15 +40,5 @@ public class ResolvePublishDependenciesJson
     public void setExcludeChildrenIds( final Set<String> excludeChildrenIds )
     {
         this.excludeChildrenIds = excludeChildrenIds;
-    }
-
-    public boolean isIncludeOffline()
-    {
-        return includeOffline;
-    }
-
-    public void setIncludeOffline( final boolean includeOffline )
-    {
-        this.includeOffline = includeOffline;
     }
 }

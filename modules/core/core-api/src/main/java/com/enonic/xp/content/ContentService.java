@@ -41,10 +41,7 @@ public interface ContentService
 
     UnpublishContentsResult unpublishContent( UnpublishContentParams params );
 
-    @Deprecated
     CompareContentResults resolvePublishDependencies( ResolvePublishDependenciesParams params );
-
-    ResolveContentsToBePublishedCommandResult resolvePublishDependenciesExtended( ResolvePublishDependenciesParams params );
 
     ContentIds resolveRequiredDependencies( ResolveRequiredDependenciesParams params );
 

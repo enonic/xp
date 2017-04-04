@@ -144,7 +144,6 @@ import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
-import com.enonic.xp.content.ResolveContentsToBePublishedCommandResult;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SetActiveContentVersionResult;
@@ -743,17 +742,15 @@ public final class ContentResource
         final ContentIds excludeChildrenIds = ContentIds.from( params.getExcludeChildrenIds() );
 
         //Resolves the publish dependencies
-        final ResolveContentsToBePublishedCommandResult
-            result = contentService.resolvePublishDependenciesExtended( ResolvePublishDependenciesParams.create().
+        final CompareContentResults compareResults = contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
             target( ContentConstants.BRANCH_MASTER ).
             contentIds( requestedContentIds ).
             excludedContentIds( excludeContentIds ).
             excludeChildrenIds( excludeChildrenIds ).
-            includeOffline( params.isIncludeOffline() ).
             build() );
 
         //Resolved the dependent ContentPublishItem
-        final ContentIds dependentContentIds = ContentIds.from( result.getCompareContentResults().contentIds().
+        final ContentIds dependentContentIds = ContentIds.from( compareResults.contentIds().
             stream().
             filter( contentId -> !requestedContentIds.contains( contentId ) ).
             collect( Collectors.toList() ) );
@@ -769,7 +766,7 @@ public final class ContentResource
             filter( contentId -> !requestedContentIds.contains( contentId ) ).
             collect( Collectors.toList() ) );
 
-        final ContentIds invalidContentIds = getInvalidContent( result.getCompareContentResults() );
+        final ContentIds invalidContentIds = getInvalidContent( compareResults );
 
         //sort all dependant content ids
         final ContentIds sortedDependentContentIds =
@@ -783,7 +780,6 @@ public final class ContentResource
             setRequestedContents( requestedContentIds ).
             setDependentContents( this.invalidDependantsOnTop( sortedDependentContentIds, requestedContentIds, sortedInvalidContentIds ) ).
             setRequiredContents( requiredDependantIds ).
-            setContainsOffline( result.getContainsOffline() ).
             setContainsInvalid( !invalidContentIds.isEmpty() ).
             build();
     }
