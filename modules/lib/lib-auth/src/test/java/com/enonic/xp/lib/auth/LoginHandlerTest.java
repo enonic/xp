@@ -1,7 +1,11 @@
 package com.enonic.xp.lib.auth;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
 import com.enonic.xp.context.ContextAccessor;
@@ -11,6 +15,8 @@ import com.enonic.xp.security.UserStore;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.UserStores;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.security.auth.AuthenticationToken;
+import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.session.Session;
 import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
@@ -106,5 +112,65 @@ public class LoginHandlerTest
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
         Assert.assertNull( sessionAuthInfo );
+    }
+
+    @Test
+    public void testLoginMultipleUserStoresInOrder()
+    {
+        final UserStore userStore1 = UserStore.create().displayName( "User Store 1" ).key( UserStoreKey.from( "userstore1" ) ).build();
+        final UserStore userStore3 = UserStore.create().displayName( "User Store 3" ).key( UserStoreKey.from( "userstore3" ) ).build();
+        final UserStore userStore2 = UserStore.create().displayName( "User Store 2" ).key( UserStoreKey.from( "userstore2" ) ).build();
+        final UserStores userStores = UserStores.from( userStore1, userStore3, userStore2 );
+
+        final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
+
+        final EmailPasswordAuthToken expectedAuthToken = new EmailPasswordAuthToken();
+        expectedAuthToken.setEmail( "user1@enonic.com" );
+        expectedAuthToken.setPassword( "pwd123" );
+        expectedAuthToken.setUserStore( userStore3.getKey() );
+
+        final AuthTokenMatcher matcher = new AuthTokenMatcher( expectedAuthToken );
+        Mockito.when( this.securityService.authenticate( Mockito.argThat( matcher ) ) ).thenReturn( authInfo );
+        Mockito.when( this.securityService.getUserStores() ).thenReturn( userStores );
+
+        runFunction( "/site/test/login-test.js", "loginMultipleUserStoresInOrder" );
+
+        final Session session = ContextAccessor.current().getLocalScope().getSession();
+        final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
+        Assert.assertEquals( authInfo, sessionAuthInfo );
+        Assert.assertEquals( 3, matcher.loginUserStoreAttempts.size());
+        Assert.assertEquals( "userstore1", matcher.loginUserStoreAttempts.get( 0 ).toString() );
+        Assert.assertEquals( "userstore2", matcher.loginUserStoreAttempts.get( 1 ).toString() );
+        Assert.assertEquals( "userstore3", matcher.loginUserStoreAttempts.get( 2 ).toString() );
+    }
+
+    private class AuthTokenMatcher
+        extends ArgumentMatcher<AuthenticationToken>
+    {
+        EmailPasswordAuthToken thisObject;
+
+        AuthTokenMatcher( EmailPasswordAuthToken thisObject )
+        {
+            this.thisObject = thisObject;
+        }
+
+        List<UserStoreKey> loginUserStoreAttempts = new ArrayList<>();
+
+        @Override
+        public boolean matches( Object argument )
+        {
+            if ( !( argument instanceof EmailPasswordAuthToken ) )
+            {
+                return false;
+            }
+
+            final EmailPasswordAuthToken authToken = (EmailPasswordAuthToken) argument;
+            loginUserStoreAttempts.add( authToken.getUserStore() );
+
+            return thisObject.getClass().equals( authToken.getClass() ) &&
+                this.thisObject.getUserStore().equals( authToken.getUserStore() ) &&
+                this.thisObject.getEmail().equals( authToken.getEmail() ) &&
+                this.thisObject.getPassword().equals( authToken.getPassword() );
+        }
     }
 }

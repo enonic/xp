@@ -31,7 +31,7 @@ function nullOrValue(value) {
  *
  * @param {object} params JSON parameters.
  * @param {string} params.user Name of user to log in.
- * @param {string} [params.userStore] Name of user-store where the user is stored. If not specified it will try all available user-stores in order.
+ * @param {string} [params.userStore] Name of user-store where the user is stored. If not specified it will try all available user-stores, in alphabetical order.
  * @param {string} [params.password] Password for the user. Ignored if skipAuth is set to true, mandatory otherwise.
  * @param {boolean} [params.skipAuth=false] Skip authentication.
  * @returns {object} Information for logged-in user.
