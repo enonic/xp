@@ -115,7 +115,6 @@ public class IndexConfigFactoryTest
                                                                "                        \"nGram\": false,\n" +
                                                                "                        \"fulltext\": false,\n" +
                                                                "                        \"includeInAllText\": true,\n" +
-                                                               "                        \"path\": true,\n" +
                                                                "                        \"indexValueProcessors\": [\n" +
                                                                "                            \"myProcessor\"\n" +
                                                                "                        ]\n" +

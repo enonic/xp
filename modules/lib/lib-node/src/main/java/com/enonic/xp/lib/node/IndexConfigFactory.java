@@ -109,12 +109,12 @@ public class IndexConfigFactory
         final Iterable<String> indexValueProcessors = settings.getStrings( "indexValueProcessors" );
 
         final IndexConfig.Builder builder = IndexConfig.create().
-            decideByType( decideByType ).
-            enabled( enabled ).
-            nGram( nGram ).
-            fulltext( fulltext ).
-            includeInAllText( includeInAllText ).
-            path( path );
+            decideByType( decideByType != null ? decideByType : false ).
+            enabled( enabled != null ? enabled : true ).
+            nGram( nGram != null ? nGram : false ).
+            fulltext( fulltext != null ? fulltext : false ).
+            includeInAllText( includeInAllText != null ? includeInAllText : false ).
+            path( path != null ? path : false );
 
         for ( final String indexValueProcessor : indexValueProcessors )
         {
