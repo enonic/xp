@@ -297,8 +297,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
 
         if (this.selectedItemsSection.isActive()) {
             query = new QueryExpr(new LogicalExpr(fulltextSearchExpression, LogicalOperator.AND, this.makeSelectedItemsSearchExpr()));
-        }
-        else if (this.dependenciesSection.isActive() && this.dependenciesSection.isInbound()) {
+        } else if (this.dependenciesSection.isActive() && this.dependenciesSection.isInbound()) {
             query = new QueryExpr(new LogicalExpr(fulltextSearchExpression, LogicalOperator.AND, this.makeInboundDependenciesSearchExpr()));
         } else {
             query = new QueryExpr(fulltextSearchExpression);
@@ -313,9 +312,9 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
 
         selectedItems.forEach((content: ContentSummaryAndCompareStatus) => {
             if (!!query) {
-                query = new QueryExpr(new LogicalExpr(query, LogicalOperator.OR, CompareExpr.eq(new FieldExpr(QueryField.ID), ValueExpr.string(content.getId()))));
-            }
-            else {
+                query = new QueryExpr(new LogicalExpr(query, LogicalOperator.OR,
+                    CompareExpr.eq(new FieldExpr(QueryField.ID), ValueExpr.string(content.getId()))));
+            } else {
                 query = new QueryExpr(CompareExpr.eq(new FieldExpr(QueryField.ID), ValueExpr.string(content.getId())));
             }
         });

@@ -122,7 +122,7 @@ module api.app.browse.filter {
         isInSelectionMode() {
             return this.selectedItemsSection.isActive();
         }
-        
+
         protected createSelectedItemsSection(): SelectedItemsSection<T> {
             //Must be implemented by inheritors
             return null;
@@ -151,7 +151,8 @@ module api.app.browse.filter {
         }
 
         hasFilterSet(): boolean {
-            return this.aggregationContainer.hasSelectedBuckets() || this.hasSearchStringSet() || (!!this.selectedItemsSection && this.selectedItemsSection.isActive());
+            return this.aggregationContainer.hasSelectedBuckets() || this.hasSearchStringSet() ||
+                   (!!this.selectedItemsSection && this.selectedItemsSection.isActive());
         }
 
         hasSearchStringSet(): boolean {
