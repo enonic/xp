@@ -69,7 +69,4 @@ export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilt
         this.searchDataAndHandleResponse('', false);
     }
 
-    protected createSelectedItemsSection(): api.app.browse.filter.SelectedItemsSection<UserTreeGridItem> {
-        return new api.app.browse.filter.SelectedItemsSection<UserTreeGridItem>();
-    }
 }

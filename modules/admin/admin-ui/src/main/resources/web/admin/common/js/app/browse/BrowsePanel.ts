@@ -104,7 +104,12 @@ module api.app.browse {
                     }
                     //this.treeGrid.filter(this.treeGrid.getSelectedDataList());
                 } else {
+                    this.filterPanel.resetSpecialMode();
                     this.treeGrid.resetFilter();
+
+                    if (this.filterPanel && !this.filterPanelIsHidden()) {
+                        this.hideFilterPanel();
+                    }
                 }
                 /*
                                 if (isActive) {
@@ -123,7 +128,7 @@ module api.app.browse {
                     this.filterPanel.refresh();
                 }
             });
-
+/*
             api.app.browse.filter.BrowseFilterResetEvent.on((event) => {
                 if (this.treeGrid.getToolbar().getSelectionPanelToggler().isActive()) {
                     this.treeGrid.getToolbar().getSelectionPanelToggler().removeClass('active');
@@ -131,6 +136,7 @@ module api.app.browse {
 
                 this.treeGrid.removeClass('selection-mode');
             });
+            */
 /*
             api.app.browse.filter.BrowseFilterSearchEvent.on((event) => {
                 if (this.filterPanel.isInSelectionMode()) {

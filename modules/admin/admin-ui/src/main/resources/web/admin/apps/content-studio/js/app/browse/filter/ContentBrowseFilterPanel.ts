@@ -86,12 +86,8 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         }
     }
 
-    protected createSelectedItemsSection(): api.app.browse.filter.SelectedItemsSection<ContentSummaryAndCompareStatus> {
-        return new api.app.browse.filter.SelectedItemsSection<ContentSummaryAndCompareStatus>();
-    }
-
     doRefresh() {
-        if (!this.isAnyFilterSet()) {
+        if (!this.hasFilterSetOrInSpecialMode()) {
             this.handleEmptyFilterInput(true);
         } else {
             this.refreshDataAndHandleResponse(this.createContentQuery());
@@ -99,15 +95,15 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     doSearch(elementChanged?: api.dom.Element) {
-        if (!this.isAnyFilterSet()) {
+        if (!this.hasFilterSetOrInSpecialMode()) {
             this.handleEmptyFilterInput();
         } else {
             this.searchDataAndHandleResponse(this.createContentQuery());
         }
     }
 
-    private isAnyFilterSet(): boolean {
-        return this.hasFilterSet() || this.dependenciesSection.isActive();
+    protected hasFilterSetOrInSpecialMode() {
+        return super.hasFilterSetOrInSpecialMode() || this.dependenciesSection.isActive();
     }
 
     private handleEmptyFilterInput(isRefresh?: boolean) {
@@ -292,13 +288,17 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private appendQueryExpression(searchInputValues: SearchInputValues, contentQuery: ContentQuery) {
+        let selectionMode = this.selectedItemsSection.isActive();
+        let inboundDependencyMode = this.dependenciesSection.isActive() && this.dependenciesSection.isInbound();
         let fulltextSearchExpression = this.makeFulltextSearchExpr(searchInputValues);
         let query: QueryExpr;
 
-        if (this.selectedItemsSection.isActive()) {
-            query = new QueryExpr(new LogicalExpr(fulltextSearchExpression, LogicalOperator.AND, this.makeSelectedItemsSearchExpr()));
-        } else if (this.dependenciesSection.isActive() && this.dependenciesSection.isInbound()) {
-            query = new QueryExpr(new LogicalExpr(fulltextSearchExpression, LogicalOperator.AND, this.makeInboundDependenciesSearchExpr()));
+        if (selectionMode || inboundDependencyMode) {
+            query = new QueryExpr(new LogicalExpr(fulltextSearchExpression,
+                                            LogicalOperator.AND,
+                                            selectionMode ?
+                                            this.makeSelectedItemsSearchExpr() : this.makeInboundDependenciesSearchExpr()
+                            ));
         } else {
             query = new QueryExpr(fulltextSearchExpression);
         }

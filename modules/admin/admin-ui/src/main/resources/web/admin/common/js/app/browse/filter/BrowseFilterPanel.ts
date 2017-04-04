@@ -123,9 +123,13 @@ module api.app.browse.filter {
             return this.selectedItemsSection.isActive();
         }
 
-        protected createSelectedItemsSection(): SelectedItemsSection<T> {
-            //Must be implemented by inheritors
-            return null;
+        protected createSelectedItemsSection(): api.app.browse.filter.SelectedItemsSection<T> {
+            return new api.app.browse.filter.SelectedItemsSection<T>(() => this.onCloseFilterInSpecialMode());
+        }
+
+        protected onCloseFilterInSpecialMode() {
+            //this.search();
+            this.notifyHidePanelButtonPressed();
         }
 
         setRefreshOfFilterRequired() {
@@ -151,8 +155,11 @@ module api.app.browse.filter {
         }
 
         hasFilterSet(): boolean {
-            return this.aggregationContainer.hasSelectedBuckets() || this.hasSearchStringSet() ||
-                   (!!this.selectedItemsSection && this.selectedItemsSection.isActive());
+            return this.aggregationContainer.hasSelectedBuckets() || this.hasSearchStringSet();
+        }
+
+        protected hasFilterSetOrInSpecialMode(): boolean {
+            return this.hasFilterSet() || this.selectedItemsSection.isActive();
         }
 
         hasSearchStringSet(): boolean {
@@ -185,10 +192,14 @@ module api.app.browse.filter {
             return;
         }
 
+        resetSpecialMode() {
+            this.selectedItemsSection.reset();
+            this.reset(true);
+        }
+        
         reset(suppressEvent?: boolean) {
             this.resetControls();
             this.resetFacets(suppressEvent);
-            this.selectedItemsSection.reset();
             this.removeClass('show-extra-section');
         }
 
@@ -300,9 +311,6 @@ module api.app.browse.filter {
 
         private appendCloseButton():  api.ui.button.ActionButton {
             let action = new api.ui.Action('').onExecuted(() => {
-                this.selectedItems = null;
-                this.checkVisibilityState();
-
                 if (!!this.closeCallback) {
                     this.closeCallback();
                 }
