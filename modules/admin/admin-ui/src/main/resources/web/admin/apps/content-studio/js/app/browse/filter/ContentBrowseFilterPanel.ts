@@ -279,7 +279,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         contentQuery.setQueryExpr(new QueryExpr(null));
         contentQuery.setSize(0);
 
-        this.appendInboundQueryExpr(contentQuery);
+        this.appendFilterByItems(contentQuery);
         this.appendContentTypesAggregationQuery(contentQuery);
         this.appendLastModifiedAggregationQuery(contentQuery);
         this.appendOutboundReferencesFilter(contentQuery);
@@ -288,7 +288,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private appendQueryExpression(searchInputValues: SearchInputValues, contentQuery: ContentQuery) {
-        let selectionMode = this.selectedItemsSection.isActive();
+        let selectionMode = this.isInSelectionMode();
         let inboundDependencyMode = this.dependenciesSection.isActive() && this.dependenciesSection.isInbound();
         let fulltextSearchExpression = this.makeFulltextSearchExpr(searchInputValues);
         let query: QueryExpr;
@@ -351,9 +351,17 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         contentQuery.setContentTypeNames(contentTypeNames);
     }
 
-    private appendInboundQueryExpr(contentQuery: ContentQuery): void {
+    private appendFilterByItems(contentQuery: ContentQuery): void {
         if (!!this.dependenciesSection && this.dependenciesSection.isActive() && this.dependenciesSection.isInbound()) {
             contentQuery.setQueryExpr(new QueryExpr(this.makeInboundDependenciesSearchExpr()));
+
+            return;
+        }
+
+        if (this.isInSelectionMode()) {
+            contentQuery.setQueryExpr(new QueryExpr(this.makeSelectedItemsSearchExpr()));
+
+            return;
         }
     }
 

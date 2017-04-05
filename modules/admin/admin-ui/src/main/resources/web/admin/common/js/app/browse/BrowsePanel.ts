@@ -67,7 +67,13 @@ module api.app.browse {
                             this.getBrowseItemPanel().updatePreviewPanel();
                         }
                     }).catch(api.DefaultErrorHandler.handle);
-                };
+
+                if (this.treeGrid.getToolbar().getSelectionPanelToggler().isActive() && changes.getRemoved().length > 0) {
+                    // Redo the search filter panel once items are removed from selection
+                    this.filterPanel.setSelectedItems(this.treeGrid.getSelectedDataList());
+                }
+
+            };
 
             this.treeGrid.onSelectionChanged(selectionChangedHandler);
 
@@ -89,12 +95,6 @@ module api.app.browse {
             });
 
             this.treeGrid.getToolbar().getSelectionPanelToggler().onActiveChanged(isActive => {
-                /*
-                if (this.filterPanel && this.filterPanel.hasFilterSet()) {
-                    this.filterPanel.reset(true);
-                }
-                */
-
                 this.treeGrid.toggleClass('selection-mode', isActive);
 
                 if (isActive) {
@@ -102,25 +102,10 @@ module api.app.browse {
                         this.filterPanel.setSelectedItems(this.treeGrid.getSelectedDataList());
                         this.showFilterPanel();
                     }
-                    //this.treeGrid.filter(this.treeGrid.getSelectedDataList());
                 } else {
                     this.filterPanel.resetSpecialMode();
                     this.treeGrid.resetFilter();
-
-                    if (this.filterPanel && !this.filterPanelIsHidden()) {
-                        this.hideFilterPanel();
-                    }
                 }
-                /*
-                                if (isActive) {
-                                    if (this.filterPanel && !this.filterPanelIsHidden()) {
-                                        this.hideFilterPanel();
-                                    }
-                                    this.treeGrid.filter(this.treeGrid.getSelectedDataList());
-                                } else {
-                                    this.treeGrid.resetFilter();
-                                }
-                                */
             });
 
             this.onShown(() => {
@@ -128,26 +113,7 @@ module api.app.browse {
                     this.filterPanel.refresh();
                 }
             });
-/*
-            api.app.browse.filter.BrowseFilterResetEvent.on((event) => {
-                if (this.treeGrid.getToolbar().getSelectionPanelToggler().isActive()) {
-                    this.treeGrid.getToolbar().getSelectionPanelToggler().removeClass('active');
-                }
 
-                this.treeGrid.removeClass('selection-mode');
-            });
-            */
-/*
-            api.app.browse.filter.BrowseFilterSearchEvent.on((event) => {
-                if (this.filterPanel.isInSelectionMode()) {
-                    if (this.treeGrid.getToolbar().getSelectionPanelToggler().isActive()) {
-                        this.treeGrid.getToolbar().getSelectionPanelToggler().setActive(false);
-                    }
-
-                    this.treeGrid.removeClass('selection-mode');
-                }
-            });
-            */
         }
 
         protected checkIfItemIsRenderable(browseItem: BrowseItem<M>): wemQ.Promise<boolean> {

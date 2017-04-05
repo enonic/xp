@@ -111,16 +111,20 @@ module api.app.browse.filter {
         }
 
         setSelectedItems(items: T[]) {
+            if (api.ObjectHelper.anyArrayEquals(items, this.selectedItemsSection.getItems())) {
+                return;
+            }
             this.selectedItemsSection.setSelectedItems(items);
             if (this.selectedItemsSection.isActive()) {
                 this.resetControls();
                 this.search();
                 this.addClass('show-extra-section');
+                setTimeout(this.giveFocusToSearch.bind(this), 100);
             }
         }
 
         isInSelectionMode() {
-            return this.selectedItemsSection.isActive();
+            return !!this.selectedItemsSection && this.selectedItemsSection.isActive();
         }
 
         protected createSelectedItemsSection(): api.app.browse.filter.SelectedItemsSection<T> {
@@ -128,7 +132,6 @@ module api.app.browse.filter {
         }
 
         protected onCloseFilterInSpecialMode() {
-            //this.search();
             this.notifyHidePanelButtonPressed();
         }
 
@@ -193,14 +196,14 @@ module api.app.browse.filter {
         }
 
         resetSpecialMode() {
+            this.removeClass('show-extra-section');
             this.selectedItemsSection.reset();
             this.reset(true);
         }
-        
+
         reset(suppressEvent?: boolean) {
             this.resetControls();
             this.resetFacets(suppressEvent);
-            this.removeClass('show-extra-section');
         }
 
         resetControls() {
@@ -270,14 +273,15 @@ module api.app.browse.filter {
         }
 
         updateHitsCounter(hits: number, emptyFilterValue: boolean = false) {
-            if (!emptyFilterValue) {
+            let unfilteredSelection = (this.isInSelectionMode() && hits === this.selectedItemsSection.getItems().length);
+            if (emptyFilterValue || unfilteredSelection) {
+                this.hitsCounterEl.setHtml(hits + ' total');
+            } else {
                 if (hits !== 1) {
                     this.hitsCounterEl.setHtml(hits + ' hits');
                 } else {
                     this.hitsCounterEl.setHtml(hits + ' hit');
                 }
-            } else {
-                this.hitsCounterEl.setHtml(hits + ' total');
             }
 
             if (hits !== 0) {

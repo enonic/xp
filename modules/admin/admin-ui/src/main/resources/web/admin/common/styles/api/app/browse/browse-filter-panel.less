@@ -83,8 +83,20 @@
     top: 8px;
   }
 
-  &.show-extra-section .hide-filter-panel-button {
-    top: 48px;
+  &.show-extra-section {
+    .hide-filter-panel-button {
+      display: none;
+    }
+
+    input.text-search-field {
+      margin-left: 6px;
+      padding-right: 27px;
+      width: 100%;
+    }
+
+    .hits-and-clear {
+      padding: 6px;
+    }
   }
 
   &.has-dependency-item .hide-filter-panel-button {
