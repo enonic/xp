@@ -2,8 +2,10 @@ package com.enonic.xp.issue;
 
 import java.util.Objects;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.region.Component;
+import com.enonic.xp.repository.RepositoryConstants;
 
 public class PublishRequestItem
 {
@@ -59,7 +61,7 @@ public class PublishRequestItem
     {
         private ContentId id;
 
-        private Boolean includeChildren;
+        private Boolean includeChildren = false;
 
         public Builder()
         {
@@ -77,8 +79,14 @@ public class PublishRequestItem
             return this;
         }
 
+        private void validate()
+        {
+            Preconditions.checkNotNull( id, "content id cannot be null" );
+        }
+
         public PublishRequestItem build()
         {
+            validate();
             return new PublishRequestItem( this );
         }
     }
