@@ -7,6 +7,14 @@ import FindPrincipalsRequest = api.security.FindPrincipalsRequest;
 import PrincipalType = api.security.PrincipalType;
 import BrowseFilterResetEvent = api.app.browse.filter.BrowseFilterResetEvent;
 import BrowseFilterSearchEvent = api.app.browse.filter.BrowseFilterSearchEvent;
+import QueryExpr = api.query.expr.QueryExpr;
+import CompareExpr = api.query.expr.CompareExpr;
+import LogicalExpr = api.query.expr.LogicalExpr;
+import ValueExpr = api.query.expr.ValueExpr;
+import LogicalOperator = api.query.expr.LogicalOperator;
+import LogicalExp = api.query.expr.LogicalExpr;
+import FieldExpr = api.query.expr.FieldExpr;
+import QueryField = api.query.QueryField;
 
 export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel<UserTreeGridItem> {
 
@@ -35,7 +43,7 @@ export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilt
     private searchFacets(isRefresh: boolean = false) {
         let values = this.getSearchInputValues();
         let searchText = values.getTextSearchFieldValue();
-        if (!searchText) {
+        if (!searchText && !this.isInSelectionMode()) {
             this.handleEmptyFilterInput(isRefresh);
             return;
         }
@@ -52,8 +60,22 @@ export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilt
     }
 
     private searchDataAndHandleResponse(searchString: string, fireEvent: boolean = true) {
-        new FindPrincipalsRequest().setAllowedTypes([PrincipalType.GROUP, PrincipalType.USER, PrincipalType.ROLE]).setSearchQuery(
-            searchString).sendAndParse().then((result: api.security.FindPrincipalsResult) => {
+
+        let findPrincipalsRequest = new FindPrincipalsRequest()
+            .setAllowedTypes([PrincipalType.GROUP, PrincipalType.USER, PrincipalType.ROLE])
+            .setSearchQuery(searchString);
+
+        if (this.isInSelectionMode()) {
+            let principalKeys = this.selectedItemsSection.getItems().map(key => key.getDataId());
+
+            findPrincipalsRequest.setResultFilter(
+                (principal: Principal) => principalKeys.some(pr => pr === principal.getKey().toString())
+            );
+        }
+
+        findPrincipalsRequest
+            .sendAndParse()
+            .then((result: api.security.FindPrincipalsResult) => {
 
             let principals = result.getPrincipals();
             if (fireEvent) {
