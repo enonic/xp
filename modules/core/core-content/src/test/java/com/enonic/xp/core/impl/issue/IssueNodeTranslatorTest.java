@@ -12,6 +12,8 @@ import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueName;
 import com.enonic.xp.issue.IssuePath;
 import com.enonic.xp.issue.IssueStatus;
+import com.enonic.xp.issue.PublishRequestItem;
+import com.enonic.xp.issue.PublishRequestPropertyNames;
 import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -20,7 +22,7 @@ import com.enonic.xp.security.PrincipalKey;
 import static com.enonic.xp.issue.IssuePropertyNames.APPROVERS;
 import static com.enonic.xp.issue.IssuePropertyNames.CREATOR;
 import static com.enonic.xp.issue.IssuePropertyNames.DESCRIPTION;
-import static com.enonic.xp.issue.IssuePropertyNames.ITEMS;
+import static com.enonic.xp.issue.IssuePropertyNames.PUBLISH_REQUEST;
 import static com.enonic.xp.issue.IssuePropertyNames.STATUS;
 import static com.enonic.xp.issue.IssuePropertyNames.TITLE;
 import static org.junit.Assert.*;
@@ -45,7 +47,10 @@ public class IssueNodeTranslatorTest
         assertEquals( IssueStatus.Open, issue.getStatus() );
         assertEquals( PrincipalKey.from( "user:myStore:me" ), issue.getCreator() );
         assertEquals( PrincipalKey.from( "user:myStore:approver-1" ), issue.getApproverIds().first() );
-        assertEquals( ContentId.from( "content-id1" ), issue.getItemIds().first() );
+        assertTrue( issue.getPublishRequest().getItems().contains(
+            PublishRequestItem.create().id( ContentId.from( "content-id1" ) ).includeChildren( false ).build() ) );
+        assertTrue( issue.getPublishRequest().getItems().contains(
+            PublishRequestItem.create().id( ContentId.from( "content-id2" ) ).includeChildren( true ).build() ) );
         assertEquals( issueName, issue.getName() );
         assertEquals( IssuePath.from( issueName ), issue.getPath() );
     }
@@ -62,7 +67,14 @@ public class IssueNodeTranslatorTest
         issueAsData.addString( DESCRIPTION, "description" );
 
         issueAsData.addStrings( APPROVERS, "user:myStore:approver-1", "user:myStore:approver-2" );
-        issueAsData.addStrings( ITEMS, "content-id1", "content-id2" );
+
+        final PropertySet publishRequestSet = new PropertySet();
+        final PropertySet itemsSet = new PropertySet();
+        itemsSet.addBoolean( "content-id1", false );
+        itemsSet.addBoolean( "content-id2", true );
+
+        publishRequestSet.addSet( PublishRequestPropertyNames.ITEMS, itemsSet );
+        issueAsData.addSet( PUBLISH_REQUEST, publishRequestSet );
 
         return Node.create().
             id( NodeId.from( UUID.randomUUID() ) ).

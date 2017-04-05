@@ -18,7 +18,6 @@ public class IssueTest
         assertNotNull( issue.getName() );
         assertNotNull( issue.getPath() );
         assertNotNull( issue.getApproverIds() );
-        assertNotNull( issue.getItemIds() );
         assertEquals( IssueStatus.Open, issue.getStatus() );
     }
 

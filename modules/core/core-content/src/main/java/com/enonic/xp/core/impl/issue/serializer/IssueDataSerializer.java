@@ -2,21 +2,27 @@ package com.enonic.xp.core.impl.issue.serializer;
 
 import java.util.stream.Collectors;
 
+import com.google.common.collect.Lists;
+
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.Issue;
+import com.enonic.xp.issue.PublishRequest;
+import com.enonic.xp.issue.PublishRequestItem;
 import com.enonic.xp.issue.IssueStatus;
+import com.enonic.xp.issue.PublishRequestPropertyNames;
 import com.enonic.xp.security.PrincipalKey;
 
 import static com.enonic.xp.issue.IssuePropertyNames.APPROVERS;
 import static com.enonic.xp.issue.IssuePropertyNames.CREATED_TIME;
 import static com.enonic.xp.issue.IssuePropertyNames.CREATOR;
 import static com.enonic.xp.issue.IssuePropertyNames.DESCRIPTION;
-import static com.enonic.xp.issue.IssuePropertyNames.ITEMS;
 import static com.enonic.xp.issue.IssuePropertyNames.MODIFIED_TIME;
 import static com.enonic.xp.issue.IssuePropertyNames.MODIFIER;
+import static com.enonic.xp.issue.IssuePropertyNames.PUBLISH_REQUEST;
 import static com.enonic.xp.issue.IssuePropertyNames.STATUS;
 import static com.enonic.xp.issue.IssuePropertyNames.TITLE;
 
@@ -38,9 +44,9 @@ public class IssueDataSerializer
                 stream().map( approver -> approver.toString() ).collect( Collectors.toList() ) );
         }
 
-        if ( params.getItemIds().getSize() > 0 )
+        if ( params.getPublishRequest() != null )
         {
-            issueAsData.addStrings( ITEMS, params.getItemIds().asStrings() );
+            addPublishRequest( issueAsData, params.getPublishRequest() );
         }
 
         return propertyTree;
@@ -63,7 +69,10 @@ public class IssueDataSerializer
         issueAsData.addStrings( APPROVERS, editedIssue.getApproverIds().
             stream().map( approver -> approver.toString() ).collect( Collectors.toList() ) );
 
-        issueAsData.addStrings( ITEMS, editedIssue.getItemIds().asStrings() );
+        if(editedIssue.getPublishRequest() != null)
+        {
+            addPublishRequest( issueAsData, editedIssue.getPublishRequest() );
+        }
 
         return propertyTree;
     }
@@ -83,6 +92,20 @@ public class IssueDataSerializer
         return builder;
     }
 
+    private void addPublishRequest( final PropertySet issueProperties, final PublishRequest publishRequest )
+    {
+        final PropertySet publishRequestSet = issueProperties.addSet( PUBLISH_REQUEST );
+
+        publishRequestSet.addStrings( PublishRequestPropertyNames.EXCLUDE_IDS, publishRequest.getExcludeIds().asStrings() );
+
+        final PropertySet itemsSet = publishRequestSet.addSet( PublishRequestPropertyNames.ITEMS );
+
+        for ( final PublishRequestItem item : publishRequest.getItems() )
+        {
+            itemsSet.addBoolean( item.getId().toString(), item.getIncludeChildren() );
+        }
+    }
+
     private void extractApprovers( final PropertySet issueProperties, final Issue.Builder builder )
     {
         for ( String approver : issueProperties.getStrings( APPROVERS ) )
@@ -92,11 +115,29 @@ public class IssueDataSerializer
     }
 
     private void extractItems( final PropertySet issueProperties, final Issue.Builder builder )
+
     {
-        for ( String item : issueProperties.getStrings( ITEMS ) )
-        {
-            builder.addItemId( ContentId.from( item ) );
+        final PropertySet publishRequestSet = issueProperties.getSet( PUBLISH_REQUEST );
+
+        if(publishRequestSet == null) {
+            return;
         }
+
+        final PublishRequest.Builder publishRequestBuilder = PublishRequest.create();
+
+        publishRequestBuilder.addExcludeIds(
+            ContentIds.from( Lists.newArrayList( publishRequestSet.getStrings( PublishRequestPropertyNames.EXCLUDE_IDS ) ) ) );
+
+        final PropertySet itemsSet = publishRequestSet.getSet( PublishRequestPropertyNames.ITEMS );
+
+        for ( final String id : itemsSet.getPropertyNames() )
+        {
+            publishRequestBuilder.addItem( PublishRequestItem.create().id( ContentId.from( id ) ).
+                includeChildren( itemsSet.getBoolean( id ) ).build() );
+        }
+
+        builder.setPublishRequest( publishRequestBuilder.build() );
+
     }
 
     private void extractUserInfo( final PropertySet issueProperties, final Issue.Builder builder )

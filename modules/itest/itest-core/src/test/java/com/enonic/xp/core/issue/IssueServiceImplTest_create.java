@@ -8,6 +8,8 @@ import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueName;
 import com.enonic.xp.issue.IssuePath;
 import com.enonic.xp.issue.IssueStatus;
+import com.enonic.xp.issue.PublishRequest;
+import com.enonic.xp.issue.PublishRequestItem;
 import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -25,7 +27,8 @@ public class IssueServiceImplTest_create
             title( "title" ).
             description( "description" ).
             addApproverId( PrincipalKey.from( "user:myStore:approver-1" ) ).
-            addItemId( ContentId.from( "content-id" ) ).
+            setPublishRequest( PublishRequest.create().addExcludeId( ContentId.from( "exclude-id" ) ).addItem(
+                PublishRequestItem.create().id( ContentId.from( "content-id" ) ).includeChildren( true ).build() ).build() ).
             build();
 
         final Issue issue = this.issueService.create( params );
@@ -37,7 +40,8 @@ public class IssueServiceImplTest_create
         assertEquals( IssueStatus.Open, issue.getStatus() );
         assertEquals( PrincipalKey.from( "user:system:test-user" ), issue.getCreator() );
         assertEquals( PrincipalKey.from( "user:myStore:approver-1" ), issue.getApproverIds().first() );
-        assertEquals( ContentId.from( "content-id" ), issue.getItemIds().first() );
+        assertEquals( ContentId.from( "content-id" ), issue.getPublishRequest().getItems().first().getId() );
+        assertEquals( ContentId.from( "exclude-id" ), issue.getPublishRequest().getExcludeIds().first() );
         assertEquals( issueName, issue.getName() );
         assertEquals( IssuePath.from( issueName ), issue.getPath() );
     }

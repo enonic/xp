@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.codehaus.jparsec.util.Lists;
 
-import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -24,7 +22,7 @@ public class CreateIssueParams
 
     private final PrincipalKeys approverIds;
 
-    private final ContentIds itemIds;
+    private final PublishRequest publishRequest;
 
     private CreateIssueParams( Builder builder )
     {
@@ -34,7 +32,7 @@ public class CreateIssueParams
         this.description = builder.description;
         this.issueStatus = builder.issueStatus;
         this.approverIds = PrincipalKeys.from( builder.approverIds );
-        this.itemIds = ContentIds.from( builder.itemIds );
+        this.publishRequest = builder.publishRequest;
     }
 
     public IssueId getId()
@@ -67,9 +65,9 @@ public class CreateIssueParams
         return approverIds;
     }
 
-    public ContentIds getItemIds()
+    public PublishRequest getPublishRequest()
     {
-        return itemIds;
+        return publishRequest;
     }
 
     public static Builder create()
@@ -88,13 +86,12 @@ public class CreateIssueParams
 
         private List<PrincipalKey> approverIds;
 
-        private List<ContentId> itemIds;
+        private PublishRequest publishRequest;
 
         public Builder()
         {
             this.issueStatus = IssueStatus.Open;
             this.approverIds = Lists.arrayList();
-            this.itemIds = Lists.arrayList();
         }
 
         public Builder title( final String title )
@@ -115,9 +112,9 @@ public class CreateIssueParams
             return this;
         }
 
-        public Builder addItemId( final ContentId itemId )
+        public Builder setPublishRequest( final PublishRequest publishRequest )
         {
-            this.itemIds.add( itemId );
+            this.publishRequest = publishRequest;
             return this;
         }
 

@@ -16,10 +16,16 @@ import Validators = api.ui.form.Validators;
 import ValidityChangedEvent = api.ValidityChangedEvent;
 import FormItem = api.ui.form.FormItem;
 import PrincipalKey = api.security.PrincipalKey;
+import PublishRequestItem = api.issue.PublishRequestItem;
+import PublishRequest = api.issue.PublishRequest;
 
 export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
 
-    private items: ContentId[];
+    private items: PublishRequestItem[];
+
+    private excludeIds: ContentId[];
+
+    private fullContentCount: number = 0;
 
     private selector: PrincipalComboBox;
 
@@ -50,9 +56,23 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
 
     }
 
-    public setItems(items: ContentId[]) {
-        this.items = items;
-        (<CreateIssueAction>this.confirmButton.getAction()).updateLabel(this.items ? this.items.length : 0);
+    public setFullContentCount(value: number) {
+        this.fullContentCount = value;
+    }
+
+    public setExcludeIds(excludeIds: ContentId[]) {
+        this.excludeIds = excludeIds;
+    }
+
+    public setItems(contentIds: ContentId[] = [], excludeChildrenIds: ContentId[] = []) {
+        this.items = contentIds.map(contentId => {
+            return PublishRequestItem.create()
+                .setId(contentId)
+                .setIncludeChildren(excludeChildrenIds.indexOf(contentId) < 0)
+                .build();
+        });
+
+        (<CreateIssueAction>this.confirmButton.getAction()).updateLabel(this.fullContentCount);
     }
 
     show() {
@@ -142,7 +162,9 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
         if (valid) {
             const createIssueRequest = new CreateIssueRequest()
                 .setApprovers(this.selector.getSelectedValues().map(value => PrincipalKey.fromString(value)))
-                .setItems(this.items).setDescription(this.description.getValue()).setTitle(this.title.getValue());
+                .setPublishRequest(
+                    PublishRequest.create().addPublishRequestItems(this.items).addExcludeIds(this.excludeIds).build()
+                ).setDescription(this.description.getValue()).setTitle(this.title.getValue());
 
             createIssueRequest.sendAndParse().then(() => {
                 this.close();
@@ -163,7 +185,7 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
     }
 
     private initActions() {
-        const createAction = new CreateIssueAction(this.items);
+        const createAction = new CreateIssueAction(this.fullContentCount);
         createAction.onExecuted(this.doCreateIssue.bind(this));
         this.confirmButton = this.addAction(createAction, true);
 
@@ -187,9 +209,9 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
 }
 
 export class CreateIssueAction extends api.ui.Action {
-    constructor(items: ContentId[]) {
+    constructor(itemCount: number) {
         super();
-        this.updateLabel(items ? items.length : 0);
+        this.updateLabel(itemCount);
         this.setIconClass('create-issue-action');
     }
 

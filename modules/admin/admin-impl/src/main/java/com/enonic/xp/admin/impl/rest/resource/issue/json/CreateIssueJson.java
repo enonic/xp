@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.content.ContentId;
+import com.enonic.xp.admin.impl.rest.resource.content.json.PublishRequestJson;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -17,7 +17,7 @@ public class CreateIssueJson
 
     @JsonCreator
     CreateIssueJson( @JsonProperty("title") final String title, @JsonProperty("description") final String description,
-                     @JsonProperty("approvers") final List<String> approverIds, @JsonProperty("items") final List<String> contentIds )
+                     @JsonProperty("approvers") final List<String> approverIds, @JsonProperty("publishRequest") final PublishRequestJson publishRequest )
     {
 
         final CreateIssueParams.Builder paramsBuilder = CreateIssueParams.create();
@@ -28,9 +28,9 @@ public class CreateIssueJson
         {
             approverIds.forEach( approverId -> paramsBuilder.addApproverId( PrincipalKey.from( approverId ) ) );
         }
-        if ( contentIds != null )
+        if ( publishRequest != null )
         {
-            contentIds.forEach( contentId -> paramsBuilder.addItemId( ContentId.from( contentId ) ) );
+           paramsBuilder.setPublishRequest( publishRequest.toRequest() );
         }
         this.createIssueParams = paramsBuilder.build();
     }

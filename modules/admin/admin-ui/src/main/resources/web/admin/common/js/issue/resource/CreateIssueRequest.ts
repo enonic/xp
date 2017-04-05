@@ -1,7 +1,7 @@
 module api.issue.resource {
 
     import LocalDateTime = api.util.LocalDateTime;
-    import IssueResourceRequest = api.security.IssueResourceRequest;
+    import IssueResourceRequest = api.issue.resource.IssueResourceRequest;
     import PrincipalKey = api.security.PrincipalKey;
 
     export class CreateIssueRequest extends IssueResourceRequest<api.task.TaskIdJson, api.task.TaskId> {
@@ -12,7 +12,7 @@ module api.issue.resource {
 
         private approvers: PrincipalKey[] = [];
 
-        private items: ContentId[] = [];
+        private publishRequest: PublishRequest;
 
         constructor() {
             super();
@@ -34,8 +34,8 @@ module api.issue.resource {
             return this;
         }
 
-        setItems(value: ContentId[]): CreateIssueRequest {
-            this.items = value;
+        setPublishRequest(value: PublishRequest): CreateIssueRequest {
+            this.publishRequest = value;
             return this;
         }
 
@@ -46,9 +46,7 @@ module api.issue.resource {
                 approvers: this.approvers.map((el) => {
                     return el.toString();
                 }),
-                items: this.items.map((el) => {
-                    return el.toString();
-                }),
+                publishRequest: this.publishRequest.toJson()
 
             };
         }

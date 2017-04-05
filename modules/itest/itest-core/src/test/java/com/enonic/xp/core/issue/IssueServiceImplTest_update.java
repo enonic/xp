@@ -9,6 +9,8 @@ import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueName;
 import com.enonic.xp.issue.IssuePath;
 import com.enonic.xp.issue.IssueStatus;
+import com.enonic.xp.issue.PublishRequest;
+import com.enonic.xp.issue.PublishRequestItem;
 import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.security.PrincipalKey;
@@ -28,14 +30,16 @@ public class IssueServiceImplTest_update
 
         final UpdateIssueParams updateIssueParams = new UpdateIssueParams().
             id( issue.getId() ).
-            editor( editMe -> {
-                editMe.title = "updated title";
-                editMe.description = "updated description";
-                editMe.approverIds =
-                    PrincipalKeys.from( PrincipalKey.from( "user:myStore:approver-1" ), PrincipalKey.from( "user:myStore:approver-2" ) );
-                editMe.itemIds = ContentIds.from( ContentId.from( "content-id1" ), ContentId.from( "content-id2" ) );
-                editMe.issueStatus = IssueStatus.Closed;
-            } );
+            editor( editMe ->
+                    {
+                        editMe.title = "updated title";
+                        editMe.description = "updated description";
+                        editMe.approverIds = PrincipalKeys.from( PrincipalKey.from( "user:myStore:approver-1" ),
+                                                                 PrincipalKey.from( "user:myStore:approver-2" ) );
+                        editMe.publishRequest = PublishRequest.create().addExcludeId( ContentId.from( "new-exclude-id" ) ).addItem(
+                            PublishRequestItem.create().id( ContentId.from( "new-content-id" ) ).includeChildren( true ).build() ).build();
+                        editMe.issueStatus = IssueStatus.Closed;
+                    } );
 
         final Issue updatedIssue = this.issueService.update( updateIssueParams );
         final IssueName issueName = IssueName.from( NamePrettyfier.create( "title" ) );
@@ -47,7 +51,9 @@ public class IssueServiceImplTest_update
         assertEquals( PrincipalKey.from( "user:system:test-user" ), updatedIssue.getCreator() );
         assertEquals( PrincipalKey.from( "user:system:test-user" ), updatedIssue.getModifier() );
         assertEquals( PrincipalKey.from( "user:myStore:approver-1" ), updatedIssue.getApproverIds().first() );
-        assertEquals( ContentId.from( "content-id1" ), updatedIssue.getItemIds().first() );
+        assertEquals( ContentId.from( "new-exclude-id" ), updatedIssue.getPublishRequest().getExcludeIds().first() );
+        assertEquals( ContentId.from( "new-content-id" ), updatedIssue.getPublishRequest().getItems().first().getId() );
+        assertEquals( true, updatedIssue.getPublishRequest().getItems().first().getIncludeChildren() );
         assertEquals( issueName, updatedIssue.getName() );
         assertEquals( IssuePath.from( issueName ), updatedIssue.getPath() );
         assertNotEquals( updatedIssue.getCreatedTime(), updatedIssue.getModifiedTime() );
@@ -70,7 +76,7 @@ public class IssueServiceImplTest_update
         assertEquals( IssueStatus.Open, issue.getStatus() );
         assertEquals( PrincipalKey.from( "user:system:test-user" ), updatedIssue.getCreator() );
         assertEquals( PrincipalKey.from( "user:myStore:approver-1" ), updatedIssue.getApproverIds().first() );
-        assertEquals( ContentId.from( "content-id" ), updatedIssue.getItemIds().first() );
+        assertEquals( ContentId.from( "content-id" ), updatedIssue.getPublishRequest().getItems().first().getId() );
         assertEquals( issueName, updatedIssue.getName() );
         assertEquals( IssuePath.from( issueName ), updatedIssue.getPath() );
     }
@@ -99,6 +105,7 @@ public class IssueServiceImplTest_update
             title( "title" ).
             description( "description" ).
             addApproverId( PrincipalKey.from( "user:myStore:approver-1" ) ).
-            addItemId( ContentId.from( "content-id" ) ) );
+            setPublishRequest( PublishRequest.create().addItem(
+                PublishRequestItem.create().id( ContentId.from( "content-id" ) ).includeChildren( true ).build() ).build() ) );
     }
 }

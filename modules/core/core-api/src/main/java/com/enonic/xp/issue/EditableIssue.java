@@ -1,6 +1,5 @@
 package com.enonic.xp.issue;
 
-import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.security.PrincipalKeys;
 
 public class EditableIssue
@@ -18,7 +17,7 @@ public class EditableIssue
 
     public PrincipalKeys approverIds;
 
-    public ContentIds itemIds;
+    public PublishRequest publishRequest;
 
     public EditableIssue( final Issue source )
     {
@@ -28,7 +27,7 @@ public class EditableIssue
         this.description = source.getDescription();
         this.issueStatus = source.getStatus();
         this.approverIds = source.getApproverIds();
-        this.itemIds = source.getItemIds();
+        this.publishRequest = source.getPublishRequest();
     }
 
     public Issue build()
@@ -44,7 +43,7 @@ public class EditableIssue
             createdTime( source.getCreatedTime() ).
             creator( source.getCreator() ).
             addApproverIds( approverIds ).
-            addItemIds( itemIds ).
+            setPublishRequest( publishRequest ).
             build();
     }
 }

@@ -3,7 +3,7 @@ package com.enonic.xp.admin.impl.json.issue;
 import java.time.Instant;
 import java.util.List;
 
-import com.enonic.xp.content.ContentId;
+import com.enonic.xp.admin.impl.rest.resource.content.json.PublishRequestJson;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -76,10 +76,8 @@ public class IssueJson
             collect( toList() );
     }
 
-    public List<String> getItemIds()
+    public PublishRequestJson getPublishRequest()
     {
-        return this.issue.getItemIds().stream().
-            map( ContentId::toString ).
-            collect( toList() );
+        return PublishRequestJson.from( this.issue.getPublishRequest());
     }
 }
