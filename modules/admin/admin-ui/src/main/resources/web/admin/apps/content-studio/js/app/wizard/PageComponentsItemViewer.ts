@@ -35,7 +35,13 @@ export class PageComponentsItemViewer extends api.ui.NamesAndIconViewer<ItemView
             if (fragmentComponent && api.ObjectHelper.iFrameSafeInstanceOf(fragmentComponent, TextComponent)) {
                 return this.extractTextFromTextComponent(<TextComponent>fragmentComponent) || fragmentComponent.getName().toString();
             }
-            return fragmentView.getFragmentDisplayName();
+            if (fragmentView.isLoaded()) {
+                return fragmentView.getFragmentDisplayName();
+            } else {
+                fragmentView.onFragmentContentLoaded(() => {
+                    return fragmentView.getFragmentDisplayName();
+                });
+            }
         }
 
         return object.getName();

@@ -35,6 +35,8 @@ module api.liveedit.fragment {
 
         private editFragmentAction: api.ui.Action;
 
+        private loaded: boolean = false;
+
         constructor(builder: FragmentComponentViewBuilder) {
 
             super(<FragmentComponentViewBuilder>builder.setViewer(new FragmentComponentViewer()).setInspectActionRequired(true));
@@ -122,6 +124,10 @@ module api.liveedit.fragment {
             return this.fragmentContent ? this.fragmentContent.getDisplayName() : null;
         }
 
+        isLoaded() : boolean {
+            return this.loaded;
+        }
+
         private loadFragmentContent() {
             let contentId = this.component.getFragment();
             if (contentId) {
@@ -205,6 +211,8 @@ module api.liveedit.fragment {
         }
 
         notifyFragmentContentLoaded() {
+            this.loaded = true;
+
             let event = new api.liveedit.FragmentComponentLoadedEvent(this);
             this.fragmentContentLoadedListeners.forEach((listener) => {
                 listener(event);
