@@ -46,6 +46,7 @@ var expected = {
             "nGram": false,
             "fulltext": false,
             "includeInAllText": false,
+            "path": false,
             "indexValueProcessors": []
         },
         "configs": []

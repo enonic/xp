@@ -1,0 +1,74 @@
+{
+  "analyzer": null,
+  "default": {
+    "decideByType": true,
+    "enabled": true,
+    "nGram": false,
+    "fulltext": false,
+    "includeInAllText": false,
+    "path": false,
+    "indexValueProcessors": []
+  },
+  "configs": [
+    {
+      "path": "minimal",
+      "config": {
+        "decideByType": false,
+        "enabled": true,
+        "nGram": false,
+        "fulltext": false,
+        "includeInAllText": false,
+        "path": false,
+        "indexValueProcessors": []
+      }
+    },
+    {
+      "path": "full",
+      "config": {
+        "decideByType": false,
+        "enabled": true,
+        "nGram": true,
+        "fulltext": true,
+        "includeInAllText": true,
+        "path": false,
+        "indexValueProcessors": []
+      }
+    },
+    {
+      "path": "none",
+      "config": {
+        "decideByType": false,
+        "enabled": false,
+        "nGram": false,
+        "fulltext": false,
+        "includeInAllText": false,
+        "path": false,
+        "indexValueProcessors": []
+      }
+    },
+    {
+      "path": "path",
+      "config": {
+        "decideByType": false,
+        "enabled": true,
+        "nGram": false,
+        "fulltext": false,
+        "includeInAllText": false,
+        "path": true,
+        "indexValueProcessors": []
+      }
+    },
+    {
+      "path": "byType",
+      "config": {
+        "decideByType": true,
+        "enabled": true,
+        "nGram": false,
+        "fulltext": false,
+        "includeInAllText": false,
+        "path": false,
+        "indexValueProcessors": []
+      }
+    }
+  ]
+}
