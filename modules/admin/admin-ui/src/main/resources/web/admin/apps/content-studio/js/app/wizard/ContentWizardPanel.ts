@@ -676,6 +676,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
             if (content.getType().isImage()) {
                 this.updateWizard(content);
+            } else if (this.isSecurityWizardStepFormAllowed) { // update security wizard to have new path/displayName etc.
+                this.securityWizardStepForm.update(content);
             }
 
             return content;
