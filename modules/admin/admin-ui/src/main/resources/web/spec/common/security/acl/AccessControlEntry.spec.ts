@@ -11,7 +11,8 @@ describe('api.security.acl.AccessControlEntry', () => {
 
     describe('equals', () => {
 
-        let principal1 = Principal.create().setKey(PrincipalKey.ofAnonymous()).setDisplayName('principal1').setModifiedTime(now).build();
+        let principal1: Principal = <Principal>Principal.create().setModifiedTime(now).setKey(PrincipalKey.ofAnonymous()).setDisplayName(
+            'principal1').build();
 
         it('given an equal then true is returned', () => {
 
