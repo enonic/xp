@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.media.MediaInfo;
@@ -18,11 +19,14 @@ final class UpdateMediaCommand
 
     private final MediaInfoService mediaInfoService;
 
+    private final ContentService contentService;
+
     private UpdateMediaCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.mediaInfoService = builder.mediaInfoService;
+        this.contentService = builder.contentService;
     }
 
     public static Builder create( final UpdateMediaParams params )
@@ -53,6 +57,10 @@ final class UpdateMediaCommand
             : isExecutableContentType( params.getMimeType(), params.getName() )
                 ? ContentTypeName.executableMedia()
                 : ContentTypeName.unknownMedia();
+
+        final Content existingContent = contentService.getById( params.getContent() );
+        Preconditions.checkArgument( existingContent.getType().equals( type ),
+                                     "Updated content must be of type: " + existingContent.getType() );
 
         final CreateAttachment mediaAttachment = CreateAttachment.create().
             name( params.getName() ).
@@ -95,6 +103,8 @@ final class UpdateMediaCommand
 
         private MediaInfoService mediaInfoService;
 
+        private ContentService contentService;
+
         public Builder( final UpdateMediaParams params )
         {
             this.params = params;
@@ -103,6 +113,12 @@ final class UpdateMediaCommand
         public Builder mediaInfoService( final MediaInfoService value )
         {
             this.mediaInfoService = value;
+            return this;
+        }
+
+        public Builder contentService( final ContentService value )
+        {
+            this.contentService = value;
             return this;
         }
 
