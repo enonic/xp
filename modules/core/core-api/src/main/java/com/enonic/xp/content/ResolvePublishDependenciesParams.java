@@ -13,8 +13,6 @@ public class ResolvePublishDependenciesParams
 
     private final ContentIds excludeChildrenIds;
 
-    private final boolean includeOffline;
-
     private final Branch target;
 
     private ResolvePublishDependenciesParams( Builder builder )
@@ -23,7 +21,6 @@ public class ResolvePublishDependenciesParams
         target = builder.target;
         excludeChildrenIds = builder.excludeChildrenIds;
         excludedContentIds = builder.excludedContentIds;
-        includeOffline = builder.includeOffline;
     }
 
     public static Builder create()
@@ -46,11 +43,6 @@ public class ResolvePublishDependenciesParams
         return excludeChildrenIds;
     }
 
-    public boolean isIncludeOffline()
-    {
-        return includeOffline;
-    }
-
     public Branch getTarget()
     {
         return target;
@@ -63,8 +55,6 @@ public class ResolvePublishDependenciesParams
         private ContentIds excludedContentIds;
 
         private ContentIds excludeChildrenIds;
-
-        private boolean includeOffline;
 
         private Branch target;
 
@@ -87,12 +77,6 @@ public class ResolvePublishDependenciesParams
         public Builder excludeChildrenIds( ContentIds excludeChildrenIds )
         {
             this.excludeChildrenIds = excludeChildrenIds;
-            return this;
-        }
-
-        public Builder includeOffline( boolean includeOffline )
-        {
-            this.includeOffline = includeOffline;
             return this;
         }
 

@@ -3,6 +3,5 @@
     "requested-contentId"
   ],
   "excludedIds": [],
-  "excludeChildrenIds": [],
-  "includeOffline": true
+  "excludeChildrenIds": []
 }
