@@ -24,7 +24,7 @@ module api.app.browse.filter {
 
         private refreshStartedListeners: {():void}[] = [];
 
-        private constraintSection: ConstraintSection<T>;
+        protected selectionSection: ConstraintSection<T>;
 
         constructor() {
             super();
@@ -101,34 +101,37 @@ module api.app.browse.filter {
         }
 
         protected appendExtraSections() {
-            this.appendConstraintSection();
+            this.appendSelectedItemsSection();
         }
 
-        protected appendConstraintSection() {
-            this.constraintSection = this.createConstraintSection();
-            this.constraintSection.addClass('extra-section');
-            this.appendChild(this.constraintSection);
+        protected appendSelectedItemsSection() {
+            this.selectionSection = this.createConstraintSection();
+            this.appendChild(this.selectionSection);
         }
 
-        protected getConstraintItems(): T[] {
-            return this.constraintSection.getItems();
+        protected getSelectionItems(): T[] {
+            return this.selectionSection.getItems();
         }
 
-        setSelectedItems(items: T[]) {
-            if (api.ObjectHelper.anyArrayEquals(items, this.constraintSection.getItems())) {
+        setConstraintItems(constraintSection: ConstraintSection<T>, items: T[]) {
+            if (api.ObjectHelper.anyArrayEquals(items, constraintSection.getItems())) {
                 return;
             }
-            this.constraintSection.setSelectedItems(items);
-            if (this.constraintSection.isActive()) {
+            constraintSection.setItems(items);
+            if (constraintSection.isActive()) {
                 this.resetControls();
                 this.search();
-                this.addClass('show-extra-section');
+                this.addClass('show-constraint');
                 setTimeout(this.giveFocusToSearch.bind(this), 100);
             }
         }
 
+        setSelectedItems(items: T[]) {
+            this.setConstraintItems(this.selectionSection, items);
+        }
+
         hasConstraint() {
-            return !!this.constraintSection && this.constraintSection.isActive();
+            return !!this.selectionSection && this.selectionSection.isActive();
         }
 
         protected createConstraintSection(): api.app.browse.filter.ConstraintSection<T> {
@@ -165,8 +168,8 @@ module api.app.browse.filter {
             return this.aggregationContainer.hasSelectedBuckets() || this.hasSearchStringSet();
         }
 
-        protected hasFilterSetOrInSpecialMode(): boolean {
-            return this.hasFilterSet() || this.constraintSection.isActive();
+        protected isFilteredOrConstrained(): boolean {
+            return this.hasFilterSet() || this.selectionSection.isActive();
         }
 
         hasSearchStringSet(): boolean {
@@ -199,9 +202,9 @@ module api.app.browse.filter {
             return;
         }
 
-        resetSpecialMode() {
-            this.removeClass('show-extra-section');
-            this.constraintSection.reset();
+        resetConstraints() {
+            this.removeClass('show-constraint');
+            this.selectionSection.reset();
             this.reset(true);
         }
 
@@ -277,7 +280,7 @@ module api.app.browse.filter {
         }
 
         updateHitsCounter(hits: number, emptyFilterValue: boolean = false) {
-            let unfilteredSelection = (this.hasConstraint() && hits === this.constraintSection.getItems().length);
+            let unfilteredSelection = (this.hasConstraint() && hits === this.getSelectionItems().length);
             if (emptyFilterValue || unfilteredSelection) {
                 this.hitsCounterEl.setHtml(hits + ' total');
             } else {
@@ -302,7 +305,7 @@ module api.app.browse.filter {
         protected items: T[];
 
         constructor(label: string, closeCallback?: () => void) {
-            super('selected-items-section');
+            super('constraint-section');
 
             this.checkVisibilityState();
 
@@ -341,11 +344,14 @@ module api.app.browse.filter {
             return !!this.items;
         }
 
-        public setSelectedItems(items: T[]) {
+        public setItems(items: T[]) {
 
             this.items = items;
-
             this.checkVisibilityState();
+        }
+
+        protected setLabel(text: string) {
+            this.label.setValue(text);
         }
 
     }

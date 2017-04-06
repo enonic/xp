@@ -72,22 +72,18 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private removeDependencyItemCallback() {
-        this.removeClass('has-dependency-item');
+        this.resetConstraints();
         this.dependenciesSection.reset();
         this.search();
     }
 
     public setDependencyItem(item: ContentSummary, inbound: boolean) {
-        this.addClass('has-dependency-item');
-        this.dependenciesSection.setItem(item, inbound);
-        if (this.dependenciesSection.isActive()) {
-            this.resetControls();
-            this.search();
-        }
+        this.dependenciesSection.setInbound(inbound);
+        this.setConstraintItems(this.dependenciesSection, [ContentSummaryAndCompareStatus.fromContentSummary(item)]);
     }
 
     doRefresh() {
-        if (!this.hasFilterSetOrInSpecialMode()) {
+        if (!this.isFilteredOrConstrained()) {
             this.handleEmptyFilterInput(true);
         } else {
             this.refreshDataAndHandleResponse(this.createContentQuery());
@@ -95,15 +91,21 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     doSearch(elementChanged?: api.dom.Element) {
-        if (!this.hasFilterSetOrInSpecialMode()) {
+        if (!this.isFilteredOrConstrained()) {
             this.handleEmptyFilterInput();
         } else {
             this.searchDataAndHandleResponse(this.createContentQuery());
         }
     }
 
-    protected hasFilterSetOrInSpecialMode() {
-        return super.hasFilterSetOrInSpecialMode() || this.dependenciesSection.isActive();
+    setSelectedItems(items: ContentSummaryAndCompareStatus[]) {
+        this.dependenciesSection.reset();
+
+        super.setSelectedItems(items);
+    }
+
+    protected isFilteredOrConstrained() {
+        return super.isFilteredOrConstrained() || this.dependenciesSection.isActive();
     }
 
     private handleEmptyFilterInput(isRefresh?: boolean) {
@@ -125,7 +127,9 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         let values = this.getSearchInputValues();
         this.appendQueryExpression(values, contentQuery);
         this.appendContentTypeFilter(values, contentQuery);
-        this.appendOutboundReferencesFilter(contentQuery);
+        if (!!this.dependenciesSection && this.dependenciesSection.isOutbound()) {
+            this.appendOutboundReferencesFilter(contentQuery);
+        }
 
         let lastModifiedFilter: api.query.filter.Filter = this.appendLastModifiedQuery(values);
         if (lastModifiedFilter != null) {
@@ -282,18 +286,19 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
         this.appendFilterByItems(contentQuery);
         this.appendContentTypesAggregationQuery(contentQuery);
         this.appendLastModifiedAggregationQuery(contentQuery);
-        this.appendOutboundReferencesFilter(contentQuery);
+        if (!!this.dependenciesSection && this.dependenciesSection.isOutbound()) {
+            this.appendOutboundReferencesFilter(contentQuery);
+        }
 
         return contentQuery;
     }
 
     private appendQueryExpression(searchInputValues: SearchInputValues, contentQuery: ContentQuery) {
         let selectionMode = this.hasConstraint();
-        let inboundDependencyMode = this.dependenciesSection.isActive() && this.dependenciesSection.isInbound();
         let fulltextSearchExpression = this.makeFulltextSearchExpr(searchInputValues);
         let query: QueryExpr;
 
-        if (selectionMode || inboundDependencyMode) {
+        if (selectionMode || this.dependenciesSection.isInbound()) {
             query = new QueryExpr(new LogicalExpr(fulltextSearchExpression,
                                             LogicalOperator.AND,
                                             selectionMode ?
@@ -307,7 +312,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private makeSelectedItemsSearchExpr(): api.query.expr.Expression {
-        let selectedItems = this.getConstraintItems();
+        let selectedItems = this.getSelectionItems();
         let query: QueryExpr;
 
         selectedItems.forEach((content: ContentSummaryAndCompareStatus) => {
@@ -352,7 +357,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private appendFilterByItems(contentQuery: ContentQuery): void {
-        if (!!this.dependenciesSection && this.dependenciesSection.isActive() && this.dependenciesSection.isInbound()) {
+        if (!!this.dependenciesSection && this.dependenciesSection.isInbound()) {
             contentQuery.setQueryExpr(new QueryExpr(this.makeInboundDependenciesSearchExpr()));
 
             return;
@@ -366,9 +371,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private appendOutboundReferencesFilter(contentQuery: ContentQuery): void {
-        if (!!this.dependenciesSection && this.dependenciesSection.isActive() && !this.dependenciesSection.isInbound()) {
-            contentQuery.setMustBeReferencedById(this.dependenciesSection.getDependencyId());
-        }
+        contentQuery.setMustBeReferencedById(this.dependenciesSection.getDependencyId());
     }
 
     private appendLastModifiedQuery(searchInputValues: api.query.SearchInputValues): api.query.filter.Filter {
@@ -459,95 +462,48 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
 
 }
 
-export class DependenciesSection extends api.dom.DivEl {
-
-    private inboundLabel: api.dom.LabelEl = new api.dom.LabelEl('Inbound Dependencies');
-    private outboundLabel: api.dom.LabelEl = new api.dom.LabelEl('Outbound Dependencies');
-
-    private dependencyItem: ContentSummary;
+export class DependenciesSection extends api.app.browse.filter.ConstraintSection<ContentSummaryAndCompareStatus> {
     private viewer: ContentSummaryViewer = new ContentSummaryViewer();
 
     private inbound: boolean = true;
 
-    private closeButton: ActionButton;
-    private closeCallback: () => void;
+    constructor(closeCallback: () => void) {
+        super('', closeCallback);
 
-    constructor(closeCallback?: () => void) {
-        super('dependencies-filter-section');
-
-        this.addClass('extra-section');
-        this.checkVisibilityState();
-
-        this.closeCallback = closeCallback;
-
-        this.inboundLabel.setVisible(false);
-        this.outboundLabel.setVisible(false);
-        this.appendChildren(this.inboundLabel, this.outboundLabel);
-
+        this.addClass('dependency');
         this.viewer.addClass('dependency-item');
         this.appendChild(this.viewer);
-
-        this.closeButton = this.appendCloseButton();
-    }
-
-    private appendCloseButton(): ActionButton {
-        let action = new Action('').onExecuted(() => {
-            this.dependencyItem = null;
-            this.checkVisibilityState();
-
-            if (!!this.closeCallback) {
-                this.closeCallback();
-            }
-        });
-        let button = new ActionButton(action);
-
-        button.addClass('btn-close');
-        this.appendChild(button);
-
-        return button;
-    }
-
-    public reset() {
-        this.dependencyItem = null;
-        this.checkVisibilityState();
     }
 
     public getDependencyId(): api.content.ContentId {
-        return this.dependencyItem.getContentId();
+        return this.getDependencyItem().getContentId();
     }
 
-    public getDependencyItem(): ContentSummary {
-        return this.dependencyItem;
-    }
-
-    private checkVisibilityState() {
-        this.setVisible(this.isActive());
-    }
-
-    public isActive(): boolean {
-        return !!this.dependencyItem;
+    public getDependencyItem(): ContentSummaryAndCompareStatus {
+        return this.getItems()[0];
     }
 
     public isInbound(): boolean {
-        return this.inbound;
+        return this.isActive() && this.inbound;
     }
 
-    public setItem(item: ContentSummary, inbound: boolean) {
+    public isOutbound(): boolean {
+        return this.isActive() && !this.inbound;
+    }
 
+    public setInbound(inbound: boolean) {
         this.inbound = inbound;
-        this.showRelevantLabel();
-
-        this.dependencyItem = item;
-
-        if (!!item) {
-            this.viewer.setObject(item);
-        }
-
-        this.checkVisibilityState();
+        this.setLabel(inbound ? 'Inbound Dependencies' : 'Outbound Dependencies');
     }
 
-    private showRelevantLabel() {
-        this.inboundLabel.setVisible(this.inbound);
-        this.outboundLabel.setVisible(!this.inbound);
+    public setItems(items: ContentSummaryAndCompareStatus[]) {
+
+        super.setItems(items);
+
+        let dependencyItem = this.getDependencyItem();
+
+        if (!!dependencyItem) {
+            this.viewer.setObject(dependencyItem.getContentSummary());
+        }
     }
 }

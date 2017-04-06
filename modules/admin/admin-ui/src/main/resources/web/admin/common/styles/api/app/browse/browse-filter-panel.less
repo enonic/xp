@@ -83,7 +83,7 @@
     top: 8px;
   }
 
-  &.show-extra-section {
+  &.show-constraint {
     .hide-filter-panel-button {
       display: none;
     }
@@ -97,10 +97,6 @@
     .hits-and-clear {
       padding: 6px;
     }
-  }
-
-  &.has-dependency-item .hide-filter-panel-button {
-    top: 94px;
   }
 
   .show-filter-results {
@@ -122,10 +118,9 @@
     }
   }
 
-  .extra-section {
+  .constraint-section {
 
     position: relative;
-    //padding-top: 2px;
     padding: 2px 0px 16px 5px;
 
     label {
@@ -135,12 +130,20 @@
       text-overflow: ellipsis;
     }
 
+    &.dependency label {
+      font-size: 15px;
+    }
+
+    .dependency-item {
+      padding-top: 12px;
+    }
+
     .action-button.btn-close {
       .icon-close2();
       position: absolute;
       padding: 0px;
       font-size: 18px;
-      top: 3px;
+      top: 4px;
       right: -20px;
       background-color: @admin-white;
       &:before {

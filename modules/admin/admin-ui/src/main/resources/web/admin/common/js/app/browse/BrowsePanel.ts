@@ -103,7 +103,7 @@ module api.app.browse {
                         this.showFilterPanel();
                     }
                 } else {
-                    this.filterPanel.resetSpecialMode();
+                    this.filterPanel.resetConstraints();
                     this.treeGrid.resetFilter();
                     this.hideFilterPanel();
                 }
