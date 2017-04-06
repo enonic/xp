@@ -105,6 +105,7 @@ module api.app.browse {
                 } else {
                     this.filterPanel.resetSpecialMode();
                     this.treeGrid.resetFilter();
+                    this.hideFilterPanel();
                 }
             });
 
