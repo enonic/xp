@@ -24,7 +24,7 @@ module api.app.browse.filter {
 
         private refreshStartedListeners: {():void}[] = [];
 
-        protected selectedItemsSection: SelectedItemsSection<T>;
+        private constraintSection: ConstraintSection<T>;
 
         constructor() {
             super();
@@ -101,21 +101,25 @@ module api.app.browse.filter {
         }
 
         protected appendExtraSections() {
-            this.appendSelectedItemsSection();
+            this.appendConstraintSection();
         }
 
-        protected appendSelectedItemsSection() {
-            this.selectedItemsSection = this.createSelectedItemsSection();
-            this.selectedItemsSection.addClass('extra-section');
-            this.appendChild(this.selectedItemsSection);
+        protected appendConstraintSection() {
+            this.constraintSection = this.createConstraintSection();
+            this.constraintSection.addClass('extra-section');
+            this.appendChild(this.constraintSection);
+        }
+
+        protected getConstraintItems(): T[] {
+            return this.constraintSection.getItems();
         }
 
         setSelectedItems(items: T[]) {
-            if (api.ObjectHelper.anyArrayEquals(items, this.selectedItemsSection.getItems())) {
+            if (api.ObjectHelper.anyArrayEquals(items, this.constraintSection.getItems())) {
                 return;
             }
-            this.selectedItemsSection.setSelectedItems(items);
-            if (this.selectedItemsSection.isActive()) {
+            this.constraintSection.setSelectedItems(items);
+            if (this.constraintSection.isActive()) {
                 this.resetControls();
                 this.search();
                 this.addClass('show-extra-section');
@@ -123,15 +127,15 @@ module api.app.browse.filter {
             }
         }
 
-        isInSelectionMode() {
-            return !!this.selectedItemsSection && this.selectedItemsSection.isActive();
+        hasConstraint() {
+            return !!this.constraintSection && this.constraintSection.isActive();
         }
 
-        protected createSelectedItemsSection(): api.app.browse.filter.SelectedItemsSection<T> {
-            return new api.app.browse.filter.SelectedItemsSection<T>(() => this.onCloseFilterInSpecialMode());
+        protected createConstraintSection(): api.app.browse.filter.ConstraintSection<T> {
+            return new api.app.browse.filter.ConstraintSection<T>('Selected Items', () => this.onCloseFilterInConstrainedMode());
         }
 
-        protected onCloseFilterInSpecialMode() {
+        protected onCloseFilterInConstrainedMode() {
             this.notifyHidePanelButtonPressed();
         }
 
@@ -162,7 +166,7 @@ module api.app.browse.filter {
         }
 
         protected hasFilterSetOrInSpecialMode(): boolean {
-            return this.hasFilterSet() || this.selectedItemsSection.isActive();
+            return this.hasFilterSet() || this.constraintSection.isActive();
         }
 
         hasSearchStringSet(): boolean {
@@ -197,7 +201,7 @@ module api.app.browse.filter {
 
         resetSpecialMode() {
             this.removeClass('show-extra-section');
-            this.selectedItemsSection.reset();
+            this.constraintSection.reset();
             this.reset(true);
         }
 
@@ -273,7 +277,7 @@ module api.app.browse.filter {
         }
 
         updateHitsCounter(hits: number, emptyFilterValue: boolean = false) {
-            let unfilteredSelection = (this.isInSelectionMode() && hits === this.selectedItemsSection.getItems().length);
+            let unfilteredSelection = (this.hasConstraint() && hits === this.constraintSection.getItems().length);
             if (emptyFilterValue || unfilteredSelection) {
                 this.hitsCounterEl.setHtml(hits + ' total');
             } else {
@@ -292,33 +296,26 @@ module api.app.browse.filter {
         }
     }
 
-    export class SelectedItemsSection<T> extends api.dom.DivEl {
+    export class ConstraintSection<T> extends api.dom.DivEl {
 
-        private label: api.dom.LabelEl = new api.dom.LabelEl('Selected Items');
+        private label: api.dom.LabelEl;
+        protected items: T[];
 
-        protected selectedItems: T[];
-
-        private closeButton:  api.ui.button.ActionButton;
-        private closeCallback: () => void;
-
-        constructor(closeCallback?: () => void) {
+        constructor(label: string, closeCallback?: () => void) {
             super('selected-items-section');
 
             this.checkVisibilityState();
 
-            this.closeCallback = closeCallback;
-
+            this.label = new api.dom.LabelEl(label);
             this.appendChildren(this.label);
 
-            this.closeButton = this.appendCloseButton();
+            if (!!closeCallback) {
+                this.appendCloseButton(closeCallback);
+            }
         }
 
-        private appendCloseButton():  api.ui.button.ActionButton {
-            let action = new api.ui.Action('').onExecuted(() => {
-                if (!!this.closeCallback) {
-                    this.closeCallback();
-                }
-            });
+        private appendCloseButton(closeCallback: () => void):  api.ui.button.ActionButton {
+            let action = new api.ui.Action('').onExecuted(() => closeCallback());
             let button = new  api.ui.button.ActionButton(action);
 
             button.addClass('btn-close');
@@ -328,12 +325,12 @@ module api.app.browse.filter {
         }
 
         public reset() {
-            this.selectedItems = null;
+            this.items = null;
             this.checkVisibilityState();
         }
 
         public getItems(): T[] {
-            return this.selectedItems;
+            return this.items;
         }
 
         private checkVisibilityState() {
@@ -341,12 +338,12 @@ module api.app.browse.filter {
         }
 
         public isActive(): boolean {
-            return !!this.selectedItems;
+            return !!this.items;
         }
 
         public setSelectedItems(items: T[]) {
 
-            this.selectedItems = items;
+            this.items = items;
 
             this.checkVisibilityState();
         }

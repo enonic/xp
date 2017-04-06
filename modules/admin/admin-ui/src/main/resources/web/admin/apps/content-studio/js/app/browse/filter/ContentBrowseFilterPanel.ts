@@ -288,7 +288,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private appendQueryExpression(searchInputValues: SearchInputValues, contentQuery: ContentQuery) {
-        let selectionMode = this.isInSelectionMode();
+        let selectionMode = this.hasConstraint();
         let inboundDependencyMode = this.dependenciesSection.isActive() && this.dependenciesSection.isInbound();
         let fulltextSearchExpression = this.makeFulltextSearchExpr(searchInputValues);
         let query: QueryExpr;
@@ -307,7 +307,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
     }
 
     private makeSelectedItemsSearchExpr(): api.query.expr.Expression {
-        let selectedItems = this.selectedItemsSection.getItems();
+        let selectedItems = this.getConstraintItems();
         let query: QueryExpr;
 
         selectedItems.forEach((content: ContentSummaryAndCompareStatus) => {
@@ -358,7 +358,7 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
             return;
         }
 
-        if (this.isInSelectionMode()) {
+        if (this.hasConstraint()) {
             contentQuery.setQueryExpr(new QueryExpr(this.makeSelectedItemsSearchExpr()));
 
             return;

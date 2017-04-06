@@ -43,7 +43,7 @@ export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilt
     private searchFacets(isRefresh: boolean = false) {
         let values = this.getSearchInputValues();
         let searchText = values.getTextSearchFieldValue();
-        if (!searchText && !this.isInSelectionMode()) {
+        if (!searchText && !this.hasConstraint()) {
             this.handleEmptyFilterInput(isRefresh);
             return;
         }
@@ -65,8 +65,8 @@ export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilt
             .setAllowedTypes([PrincipalType.GROUP, PrincipalType.USER, PrincipalType.ROLE])
             .setSearchQuery(searchString);
 
-        if (this.isInSelectionMode()) {
-            let principalKeys = this.selectedItemsSection.getItems().map(key => key.getDataId());
+        if (this.hasConstraint()) {
+            let principalKeys = this.getConstraintItems().map(key => key.getDataId());
 
             findPrincipalsRequest.setResultFilter(
                 (principal: Principal) => principalKeys.some(pr => pr === principal.getKey().toString())
