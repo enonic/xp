@@ -82,6 +82,18 @@ module api.liveedit {
             return hasApplications || hasController || hasDefaultPageTemplate;
         }
 
+        isFragmentAllowed(): boolean {
+            if (this.content.getType().isFragment()) {
+                return false;
+            }
+
+            if (this.content.getType().isPageTemplate()) {
+                return false;
+            }
+
+            return true;
+        }
+
         static create(): LiveEditModelBuilder {
             return new LiveEditModelBuilder();
         }
