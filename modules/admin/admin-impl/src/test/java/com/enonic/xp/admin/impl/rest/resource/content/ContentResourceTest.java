@@ -53,6 +53,7 @@ import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
+import com.enonic.xp.content.ResolveContentsToBePublishedCommandResult;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
@@ -1007,8 +1008,11 @@ public class ContentResourceTest
             add( dependant ).
             build();
 
-        Mockito.when( contentService.resolvePublishDependencies( Mockito.isA( ResolvePublishDependenciesParams.class ) ) ).thenReturn(
-            results );
+        final ResolveContentsToBePublishedCommandResult resolvedResult =
+            ResolveContentsToBePublishedCommandResult.create().addCompareContentResults( results ).setContainsOffline( false ).build();
+
+        Mockito.when( contentService.resolvePublishDependenciesExtended( Mockito.isA( ResolvePublishDependenciesParams.class ) ) ).thenReturn(
+            resolvedResult );
         Mockito.when( contentService.resolveRequiredDependencies( Mockito.isA( ResolveRequiredDependenciesParams.class ) ) ).thenReturn(
             ContentIds.from( requiredId ) );
         Mockito.when( contentService.compare( Mockito.isA( CompareContentsParams.class ) ) ).thenReturn( results );

@@ -6,5 +6,6 @@ module api.content.json {
         requestedContents: ContentIdBaseItemJson[];
         requiredContents: ContentIdBaseItemJson[];
         containsInvalid: boolean;
+        containsOffline: boolean;
     }
 }

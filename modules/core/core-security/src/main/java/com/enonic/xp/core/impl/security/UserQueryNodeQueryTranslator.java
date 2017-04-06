@@ -9,7 +9,7 @@ import static com.enonic.xp.core.impl.security.PrincipalPropertyNames.PRINCIPAL_
 
 final class UserQueryNodeQueryTranslator
 {
-    public static NodeQuery translate( final UserQuery userQuery )
+    static NodeQuery translate( final UserQuery userQuery )
     {
         final NodeQuery.Builder nodeQueryBuilder = NodeQuery.create().
             query( userQuery.getQueryExpr() ).

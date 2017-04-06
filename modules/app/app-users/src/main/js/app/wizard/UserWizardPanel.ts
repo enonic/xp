@@ -157,7 +157,7 @@ export class UserWizardPanel extends PrincipalWizardPanel {
 
     assembleViewedItem(): Principal {
         let wizardHeader = this.getWizardHeader();
-        return new UserBuilder(!!this.getPersistedItem() ? this.getPersistedItem().asUser() : null).setEmail(
+        return <Principal>new UserBuilder(!!this.getPersistedItem() ? this.getPersistedItem().asUser() : null).setEmail(
             this.userEmailWizardStepForm.getEmail()).setLogin(wizardHeader.getName()).setMemberships(
             this.userMembershipsWizardStepForm.getMemberships()).setDisplayName(
             wizardHeader.getDisplayName()).// setDisabled().

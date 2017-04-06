@@ -6,7 +6,7 @@ module api.security {
 
         constructor(builder: RoleBuilder) {
             super(builder);
-            api.util.assert(builder.key.isRole(), 'Expected PrincipalKey of type Role');
+            api.util.assert(this.getKey().isRole(), 'Expected PrincipalKey of type Role');
             this.members = builder.members || [];
         }
 

@@ -78,6 +78,7 @@ var expected = {
             "nGram": true,
             "fulltext": true,
             "includeInAllText": true,
+            "path": false,
             "indexValueProcessors": []
         },
         "configs": [
@@ -89,6 +90,7 @@ var expected = {
                     "nGram": false,
                     "fulltext": false,
                     "includeInAllText": false,
+                    "path": false,
                     "indexValueProcessors": []
                 }
             }

@@ -4,17 +4,12 @@ public class ResolveContentsToBePublishedCommandResult
 {
     private final CompareContentResults compareContentResults;
 
-    private final ContentIds requiredIds;
+    private final Boolean containsOffline;
 
-    private ResolveContentsToBePublishedCommandResult( final Builder builder )
+    public ResolveContentsToBePublishedCommandResult( final Builder builder )
     {
         this.compareContentResults = builder.compareContentResults.build();
-        this.requiredIds = builder.requiredIds.build();
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
+        this.containsOffline = builder.containsOffline;
     }
 
     public CompareContentResults getCompareContentResults()
@@ -22,39 +17,38 @@ public class ResolveContentsToBePublishedCommandResult
         return compareContentResults;
     }
 
-    public ContentIds getRequiredIds()
+    public Boolean getContainsOffline()
     {
-        return requiredIds;
+        return containsOffline;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     public static class Builder
 
     {
-        private final CompareContentResults.Builder compareContentResults = CompareContentResults.create();
+        private CompareContentResults.Builder compareContentResults = CompareContentResults.create();
 
-        private final ContentIds.Builder requiredIds = ContentIds.create();
+        private Boolean containsOffline = false;
 
-        public Builder addCompareContentResult( final CompareContentResult result )
+        public Builder addCompareContentResult( final CompareContentResult compareContentResult )
         {
-            this.compareContentResults.add( result );
+            this.compareContentResults.add( compareContentResult );
             return this;
         }
 
-        public Builder addCompareContentResults( final CompareContentResults results )
+        public Builder addCompareContentResults( final CompareContentResults compareContentResults )
         {
-            this.compareContentResults.addAll( results );
+            this.compareContentResults.addAll( compareContentResults );
             return this;
         }
 
-        public Builder addRequiredContentId( final ContentId contentId )
+        public Builder setContainsOffline( final Boolean containsOffline )
         {
-            this.requiredIds.add( contentId );
-            return this;
-        }
-
-        public Builder addRequiredContentIds( final ContentIds contentIds )
-        {
-            this.requiredIds.addAll( contentIds );
+            this.containsOffline = containsOffline;
             return this;
         }
 

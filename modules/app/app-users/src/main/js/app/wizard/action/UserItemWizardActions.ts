@@ -1,8 +1,9 @@
 import '../../../api.ts';
 import {UserItemWizardPanel} from '../UserItemWizardPanel';
 import {DeleteUserItemAction} from './DeleteUserItemAction';
+import UserItem = api.security.UserItem;
 
-export class UserItemWizardActions<USER_ITEM_TYPE extends api.Equitable> extends api.app.wizard.WizardActions<USER_ITEM_TYPE> {
+export class UserItemWizardActions<USER_ITEM_TYPE extends UserItem> extends api.app.wizard.WizardActions<USER_ITEM_TYPE> {
 
     private save: api.ui.Action;
 

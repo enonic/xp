@@ -142,7 +142,7 @@ public class PublishContentCommand
             translator( this.translator ).
             nodeService( this.nodeService ).
             build().
-            execute();
+            execute().getCompareContentResults();
     }
 
     private boolean checkIfAllContentsValid( final ContentIds pushContentsIds )

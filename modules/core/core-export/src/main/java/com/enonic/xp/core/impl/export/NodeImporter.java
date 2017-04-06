@@ -134,7 +134,7 @@ public final class NodeImporter
                 insertManualStrategy( InsertManualStrategy.MANUAL ).
                 manualOrderValue( currentManualOrderValue );
 
-            if ( child != null )
+            if ( child != null && child.exists() )
             {
                 processNodeFolder( child, processNodeSettings );
             }

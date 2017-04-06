@@ -46,6 +46,7 @@ public class IndexConfigFactoryTest
                                                  "                \"nGram\": false,\n" +
                                                  "                \"fulltext\": false,\n" +
                                                  "                \"includeInAllText\": false,\n" +
+                                                 "                \"path\": true,\n" +
                                                  "                \"indexValueProcessors\": []\n" +
                                                  "            }" +
                                                  "}" );
@@ -58,6 +59,7 @@ public class IndexConfigFactoryTest
         assertEquals( false, defaultConfig.isnGram() );
         assertEquals( false, defaultConfig.isFulltext() );
         assertEquals( false, defaultConfig.isIncludeInAllText() );
+        assertEquals( true, defaultConfig.isPath() );
     }
 
     @Test
@@ -126,6 +128,7 @@ public class IndexConfigFactoryTest
                                                                "                        \"nGram\": false,\n" +
                                                                "                        \"fulltext\": false,\n" +
                                                                "                        \"includeInAllText\": false,\n" +
+                                                               "                        \"path\": false,\n" +
                                                                "                        \"indexValueProcessors\": []\n" +
                                                                "                    }\n" +
                                                                "                }\n" +

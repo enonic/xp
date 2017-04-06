@@ -1,6 +1,6 @@
 module api.security {
 
-    export class PrincipalKey implements api.Equitable {
+    export class PrincipalKey extends UserItemKey {
 
         private static SEPARATOR: string = ':';
 
@@ -10,11 +10,9 @@ module api.security {
 
         private type: PrincipalType;
 
-        private principalId: string;
-
         private refString: string;
 
-        public static fromString(str: string): PrincipalKey {
+        static fromString(str: string): PrincipalKey {
             if (str === PrincipalKey.ANONYMOUS_PRINCIPAL.refString) {
                 return PrincipalKey.ANONYMOUS_PRINCIPAL;
             }
@@ -45,12 +43,13 @@ module api.security {
         }
 
         constructor(userStore: UserStoreKey, type: PrincipalType, principalId: string) {
+            super(principalId);
+
             api.util.assert(( type === PrincipalType.ROLE ) || (!!userStore), 'Principal user store cannot be null');
             api.util.assertNotNull(type, 'Principal type cannot be null');
-            api.util.assert(!api.util.StringHelper.isBlank(principalId), 'Principal id cannot be null or empty');
             this.userStore = userStore;
             this.type = type;
-            this.principalId = principalId;
+
             if (type === PrincipalType.ROLE) {
                 this.refString =
                 PrincipalType[type].toLowerCase() + PrincipalKey.SEPARATOR + principalId;
@@ -66,10 +65,6 @@ module api.security {
 
         getType(): PrincipalType {
             return this.type;
-        }
-
-        getId(): string {
-            return this.principalId;
         }
 
         isUser(): boolean {

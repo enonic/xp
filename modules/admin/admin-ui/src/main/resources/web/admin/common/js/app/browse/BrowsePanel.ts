@@ -124,8 +124,10 @@ module api.app.browse {
 
         private onHighlightingChanged(node: TreeNode<Object>) {
             if (!node) {
-                this.getBrowseActions().updateActionsEnabledState([]);
-                this.getBrowseItemPanel().togglePreviewForItem();
+                if (this.treeGrid.getSelectedDataList().length === 0) {
+                    this.getBrowseActions().updateActionsEnabledState([]);
+                    this.getBrowseItemPanel().togglePreviewForItem();
+                }
 
                 return;
             }
