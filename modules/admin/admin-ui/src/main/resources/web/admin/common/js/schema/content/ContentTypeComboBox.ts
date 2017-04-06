@@ -48,5 +48,9 @@ module api.schema.content {
             return content.getName();
         }
 
+        protected isEditButtonNeeded(): boolean {
+            return false;
+        }
+
     }
 }

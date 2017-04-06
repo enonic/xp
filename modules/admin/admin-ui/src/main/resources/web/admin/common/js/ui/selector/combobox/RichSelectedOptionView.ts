@@ -41,13 +41,17 @@ module api.ui.selector.combobox {
             if (this.draggable) {
                 buttons.push(new api.dom.DivEl('drag-control'));
             }
-            if (this.isEditable()) {
+            if (this.isEditButtonNeeded()) {
                 buttons.push(this.createEditButton(content));
             }
             if (this.removable) {
                 buttons.push(this.createRemoveButton());
             }
             return buttons;
+        }
+
+        protected isEditButtonNeeded(): boolean {
+            return this.isEditable();
         }
 
         protected createView(content: T): api.dom.Element {
