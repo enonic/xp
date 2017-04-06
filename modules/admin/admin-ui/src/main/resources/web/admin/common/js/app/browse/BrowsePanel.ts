@@ -16,7 +16,7 @@ module api.app.browse {
 
         protected treeGrid: api.ui.treegrid.TreeGrid<Object>;
 
-        protected filterPanel: api.app.browse.filter.BrowseFilterPanel;
+        protected filterPanel: api.app.browse.filter.BrowseFilterPanel<Object>;
 
         private gridAndToolbarPanel: api.ui.panel.Panel;
 
@@ -67,7 +67,13 @@ module api.app.browse {
                             this.getBrowseItemPanel().updatePreviewPanel();
                         }
                     }).catch(api.DefaultErrorHandler.handle);
-                };
+
+                if (this.treeGrid.getToolbar().getSelectionPanelToggler().isActive() && changes.getRemoved().length > 0) {
+                    // Redo the search filter panel once items are removed from selection
+                    this.filterPanel.setSelectedItems(this.treeGrid.getSelectedDataList());
+                }
+
+            };
 
             this.treeGrid.onSelectionChanged(selectionChangedHandler);
 
@@ -89,19 +95,17 @@ module api.app.browse {
             });
 
             this.treeGrid.getToolbar().getSelectionPanelToggler().onActiveChanged(isActive => {
-                if (this.filterPanel && this.filterPanel.hasFilterSet()) {
-                    this.filterPanel.reset(true);
-                }
-
                 this.treeGrid.toggleClass('selection-mode', isActive);
 
                 if (isActive) {
-                    if (this.filterPanel && !this.filterPanelIsHidden()) {
-                        this.hideFilterPanel();
+                    if (this.filterPanel) {
+                        this.filterPanel.setSelectedItems(this.treeGrid.getSelectedDataList());
+                        this.showFilterPanel();
                     }
-                    this.treeGrid.filter(this.treeGrid.getSelectedDataList());
                 } else {
+                    this.filterPanel.resetConstraints();
                     this.treeGrid.resetFilter();
+                    this.hideFilterPanel();
                 }
             });
 
@@ -111,21 +115,6 @@ module api.app.browse {
                 }
             });
 
-            api.app.browse.filter.BrowseFilterResetEvent.on((event) => {
-                if (this.treeGrid.getToolbar().getSelectionPanelToggler().isActive()) {
-                    this.treeGrid.getToolbar().getSelectionPanelToggler().removeClass('active');
-                }
-
-                this.treeGrid.removeClass('selection-mode');
-            });
-
-            api.app.browse.filter.BrowseFilterSearchEvent.on((event) => {
-                if (this.treeGrid.getToolbar().getSelectionPanelToggler().isActive()) {
-                    this.treeGrid.getToolbar().getSelectionPanelToggler().removeClass('active');
-                }
-
-                this.treeGrid.removeClass('selection-mode');
-            });
         }
 
         protected checkIfItemIsRenderable(browseItem: BrowseItem<M>): wemQ.Promise<boolean> {
@@ -167,7 +156,7 @@ module api.app.browse {
             return this.treeGrid.getContextMenu().getActions();
         }
 
-        protected createFilterPanel(): api.app.browse.filter.BrowseFilterPanel {
+        protected createFilterPanel(): api.app.browse.filter.BrowseFilterPanel<M> {
             return null;
         }
 
