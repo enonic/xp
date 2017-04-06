@@ -66,7 +66,7 @@ export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilt
             .setSearchQuery(searchString);
 
         if (this.hasConstraint()) {
-            let principalKeys = this.getConstraintItems().map(key => key.getDataId());
+            let principalKeys = this.getSelectionItems().map(key => key.getDataId());
 
             findPrincipalsRequest.setResultFilter(
                 (principal: Principal) => principalKeys.some(pr => pr === principal.getKey().toString())
