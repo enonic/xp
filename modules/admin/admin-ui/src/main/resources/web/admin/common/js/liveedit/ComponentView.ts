@@ -208,7 +208,8 @@ module api.liveedit {
             }
 
             let isFragmentComponent = this instanceof api.liveedit.fragment.FragmentComponentView;
-            if (!isFragmentComponent && !isFragmentContent) {
+            let isPageTemplateContent: boolean = this.liveEditModel.getContent().getType().isPageTemplate();
+            if (!isFragmentComponent && !isFragmentContent && !isPageTemplateContent) {
                 actions.push(new api.ui.Action('Create Fragment').onExecuted(() => {
                     this.deselect();
                     this.createFragment().then((content: Content): void => {
