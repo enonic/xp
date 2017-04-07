@@ -118,6 +118,8 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                     }
                     this.setColumns([nameColumn, orderColumn, compareStatusColumn, modifiedTimeColumn]);
                 }
+
+                this.getGrid().syncGridSelection(true);
             } else {
                 this.getGrid().resizeCanvas();
                 this.highlightCurrentNode();

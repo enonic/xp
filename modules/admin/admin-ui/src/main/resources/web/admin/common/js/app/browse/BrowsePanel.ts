@@ -100,7 +100,9 @@ module api.app.browse {
                 if (isActive) {
                     if (this.filterPanel) {
                         this.filterPanel.setSelectedItems(this.treeGrid.getSelectedDataList());
-                        this.showFilterPanel();
+                        if (!this.filterPanelToBeShownFullScreen) {
+                            this.showFilterPanel();
+                        }
                     }
                 } else {
                     this.filterPanel.resetConstraints();

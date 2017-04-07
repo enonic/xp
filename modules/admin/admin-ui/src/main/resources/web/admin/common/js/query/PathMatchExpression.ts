@@ -39,7 +39,7 @@ module api.query {
 
         private static createSearchString(searchString: string): string {
 
-            if (!!searchString && searchString.startsWith('/')) {
+            if (!!searchString && searchString.indexOf('/') == 0) {
                 searchString = searchString.slice(1);
             }
 
