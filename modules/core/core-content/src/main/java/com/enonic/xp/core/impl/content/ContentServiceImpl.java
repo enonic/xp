@@ -294,7 +294,6 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             mediaInfoService( this.mediaInfoService ).
-            contentService( this ).
             siteService( this.siteService ).
             mixinService( this.mixinService ).
             contentProcessors( this.contentProcessors ).
