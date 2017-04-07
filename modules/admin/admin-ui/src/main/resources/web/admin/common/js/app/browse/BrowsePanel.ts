@@ -112,8 +112,7 @@ module api.app.browse {
         private toggleSelectionMode(isActive: boolean) {
             if (isActive) {
                 this.enableSelectionMode();
-            }
-            else {
+            } else {
                 this.disableSelectionMode();
             }
         }
