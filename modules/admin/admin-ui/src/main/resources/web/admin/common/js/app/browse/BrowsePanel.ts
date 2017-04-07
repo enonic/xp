@@ -70,7 +70,9 @@ module api.app.browse {
 
                 if (this.treeGrid.getToolbar().getSelectionPanelToggler().isActive() && changes.getRemoved().length > 0) {
                     // Redo the search filter panel once items are removed from selection
-                    this.filterPanel.setSelectedItems(this.treeGrid.getSelectedDataList());
+                    if (this.filterPanel) {
+                        this.filterPanel.setSelectedItems(this.treeGrid.getSelectedDataList());
+                    }
                 }
 
             };
@@ -96,19 +98,7 @@ module api.app.browse {
 
             this.treeGrid.getToolbar().getSelectionPanelToggler().onActiveChanged(isActive => {
                 this.treeGrid.toggleClass('selection-mode', isActive);
-
-                if (isActive) {
-                    if (this.filterPanel) {
-                        this.filterPanel.setSelectedItems(this.treeGrid.getSelectedDataList());
-                        if (!this.filterPanelToBeShownFullScreen) {
-                            this.showFilterPanel();
-                        }
-                    }
-                } else {
-                    this.filterPanel.resetConstraints();
-                    this.treeGrid.resetFilter();
-                    this.hideFilterPanel();
-                }
+                this.toggleSelectionMode(isActive);
             });
 
             this.onShown(() => {
@@ -117,6 +107,34 @@ module api.app.browse {
                 }
             });
 
+        }
+
+        private toggleSelectionMode(isActive: boolean) {
+            if (isActive) {
+                this.enableSelectionMode();
+            }
+            else {
+                this.disableSelectionMode();
+            }
+        }
+
+        private enableSelectionMode() {
+            if (this.filterPanel) {
+                this.filterPanel.setSelectedItems(this.treeGrid.getSelectedDataList());
+                if (!this.filterPanelToBeShownFullScreen) {
+                    this.showFilterPanel();
+                }
+            } else {
+                this.treeGrid.filter(this.treeGrid.getSelectedDataList());
+            }
+        }
+
+        private disableSelectionMode() {
+            if (this.filterPanel) {
+                this.filterPanel.resetConstraints();
+                this.hideFilterPanel();
+            }
+            this.treeGrid.resetFilter();
         }
 
         protected checkIfItemIsRenderable(browseItem: BrowseItem<M>): wemQ.Promise<boolean> {
