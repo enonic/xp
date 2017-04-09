@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.net.MediaType;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -13,7 +15,10 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.util.MediaTypes;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -32,11 +37,15 @@ public final class AppHandler
 {
     private final static Pattern PATTERN = Pattern.compile( "/app/([^/]+)(.+)?" );
 
+    private final static String ROOT_ASSET_PREFIX = "assets/";
+
     private ControllerScriptFactory controllerScriptFactory;
 
     private ExceptionMapper exceptionMapper;
 
     private ExceptionRenderer exceptionRenderer;
+
+    private ResourceService resourceService;
 
     public AppHandler()
     {
@@ -59,7 +68,22 @@ public final class AppHandler
             return chain.handle( req, res );
         }
 
-        final PortalRequest portalRequest = createRequest( req, matcher );
+        final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( 1 ) );
+        final String restPath = matcher.group( 2 );
+
+        final WebResponse response = serveAsset( applicationKey, restPath );
+        if ( response != null )
+        {
+            return response;
+        }
+
+        return executeController( req, applicationKey );
+    }
+
+    private WebResponse executeController( final WebRequest req, final ApplicationKey applicationKey )
+        throws Exception
+    {
+        final PortalRequest portalRequest = createRequest( req, applicationKey );
 
         try
         {
@@ -75,10 +99,8 @@ public final class AppHandler
         }
     }
 
-    private PortalRequest createRequest( final WebRequest req, final Matcher matcher )
+    private PortalRequest createRequest( final WebRequest req, final ApplicationKey applicationKey )
     {
-        final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( 1 ) );
-
         final PortalRequest portalRequest = ( req instanceof PortalRequest ) ? (PortalRequest) req : new PortalRequest( req );
         portalRequest.setMode( RenderMode.APP );
         portalRequest.setApplicationKey( applicationKey );
@@ -123,6 +145,23 @@ public final class AppHandler
         return webResponse;
     }
 
+    private WebResponse serveAsset( final ApplicationKey applicationKey, final String path )
+    {
+        final ResourceKey key = ResourceKey.from( applicationKey, ROOT_ASSET_PREFIX + path );
+        final Resource resource = this.resourceService.getResource( key );
+
+        if ( !resource.exists() )
+        {
+            return null;
+        }
+
+        final String type = MediaTypes.instance().fromFile( key.getName() ).toString();
+        return PortalResponse.create().
+            body( resource ).
+            contentType( MediaType.parse( type ) ).
+            build();
+    }
+
     @Reference
     public void setControllerScriptFactory( final ControllerScriptFactory controllerScriptFactory )
     {
@@ -130,7 +169,7 @@ public final class AppHandler
     }
 
     @Reference
-    public void setWebExceptionMapper( final ExceptionMapper exceptionMapper )
+    public void setExceptionMapper( final ExceptionMapper exceptionMapper )
     {
         this.exceptionMapper = exceptionMapper;
     }
@@ -139,5 +178,11 @@ public final class AppHandler
     public void setExceptionRenderer( final ExceptionRenderer exceptionRenderer )
     {
         this.exceptionRenderer = exceptionRenderer;
+    }
+
+    @Reference
+    public void setResourceService( final ResourceService resourceService )
+    {
+        this.resourceService = resourceService;
     }
 }
