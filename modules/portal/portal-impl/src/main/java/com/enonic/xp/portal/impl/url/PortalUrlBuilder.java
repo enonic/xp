@@ -17,6 +17,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.exception.OutOfScopeException;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
@@ -169,7 +170,11 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
     protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
     {
         params.putAll( this.params.getParams() );
-        appendPart( url, getBranch().toString() );
+
+        if ( isPortalMode() )
+        {
+            appendPart( url, getBranch().toString() );
+        }
     }
 
     protected String postUriRewriting( final UriRewritingResult uriRewritingResult )
@@ -193,12 +198,32 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         }
     }
 
+    private boolean isAppMode()
+    {
+        return this.portalRequest.getMode() == RenderMode.APP;
+    }
+
+    private boolean isAdminMode()
+    {
+        return this.portalRequest.getMode() == RenderMode.ADMIN;
+    }
+
+    private boolean isPortalMode()
+    {
+        return !( isAppMode() || isAdminMode() );
+    }
+
     protected final String buildErrorUrl( final int code, final String message )
     {
         final StringBuilder str = new StringBuilder();
         appendPart( str, getBaseUri() );
-        appendPart( str, getBranch().toString() );
-        appendPart( str, this.portalRequest.getContentPath().toString() );
+
+        if ( isPortalMode() )
+        {
+            appendPart( str, getBranch().toString() );
+            appendPart( str, this.portalRequest.getContentPath().toString() );
+        }
+
         appendPart( str, "_" );
         appendPart( str, "error" );
         appendPart( str, String.valueOf( code ) );
