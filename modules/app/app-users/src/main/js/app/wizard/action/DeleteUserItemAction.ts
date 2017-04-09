@@ -1,12 +1,12 @@
 import '../../../api.ts';
-import {PrincipalWizardPanel} from '../PrincipalWizardPanel';
 
 import UserStore = api.security.UserStore;
 import Principal = api.security.Principal;
+import UserItem = api.security.UserItem;
 
 export class DeleteUserItemAction extends api.ui.Action {
 
-    constructor(wizardPanel: api.app.wizard.WizardPanel<api.Equitable>) {
+    constructor(wizardPanel: api.app.wizard.WizardPanel<UserItem>) {
         super('Delete', 'mod+del', true);
         this.onExecuted(() => {
             api.ui.dialog.ConfirmationDialog.get()
@@ -17,7 +17,7 @@ export class DeleteUserItemAction extends api.ui.Action {
                     wizardPanel.close();
 
                     let persistedItem = wizardPanel.getPersistedItem();
-                    let isPrincipal = (wizardPanel instanceof PrincipalWizardPanel) && !!persistedItem;
+                    let isPrincipal = !!persistedItem && (persistedItem instanceof Principal);
                     let userItemKey;
                     if (isPrincipal) {
                         userItemKey = (<Principal>persistedItem).getKey();

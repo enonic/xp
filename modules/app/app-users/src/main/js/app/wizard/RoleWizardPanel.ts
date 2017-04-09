@@ -76,7 +76,8 @@ export class RoleWizardPanel extends GroupRoleWizardPanel {
     }
 
     assembleViewedItem(): Principal {
-        return new RoleBuilder(this.getPersistedItem().asRole()).setMembers(this.getMembersWizardStepForm().getMembers().map((el) => {
+        return <Principal>new RoleBuilder(this.getPersistedItem().asRole()).setMembers(
+            this.getMembersWizardStepForm().getMembers().map((el) => {
             return el.getKey();
         })).setDisplayName(this.getWizardHeader().getDisplayName()).setDescription(
             this.getDescriptionWizardStepForm().getDescription()).build();

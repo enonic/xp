@@ -2,7 +2,6 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
@@ -14,8 +13,6 @@ import javax.ws.rs.core.MediaType;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentIdsJson;
@@ -53,7 +50,6 @@ import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
-import com.enonic.xp.content.ResolveContentsToBePublishedCommandResult;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
@@ -1008,11 +1004,9 @@ public class ContentResourceTest
             add( dependant ).
             build();
 
-        final ResolveContentsToBePublishedCommandResult resolvedResult =
-            ResolveContentsToBePublishedCommandResult.create().addCompareContentResults( results ).setContainsOffline( false ).build();
+        Mockito.when( contentService.resolvePublishDependencies( Mockito.isA( ResolvePublishDependenciesParams.class ) ) ).thenReturn(
+            results );
 
-        Mockito.when( contentService.resolvePublishDependenciesExtended( Mockito.isA( ResolvePublishDependenciesParams.class ) ) ).thenReturn(
-            resolvedResult );
         Mockito.when( contentService.resolveRequiredDependencies( Mockito.isA( ResolveRequiredDependenciesParams.class ) ) ).thenReturn(
             ContentIds.from( requiredId ) );
         Mockito.when( contentService.compare( Mockito.isA( CompareContentsParams.class ) ) ).thenReturn( results );

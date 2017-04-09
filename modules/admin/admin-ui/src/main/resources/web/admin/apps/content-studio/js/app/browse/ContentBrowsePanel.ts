@@ -321,6 +321,11 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         });
 
         ToggleSearchPanelWithDependenciesEvent.on((event: ToggleSearchPanelWithDependenciesEvent) => {
+
+            if (this.treeGrid.getToolbar().getSelectionPanelToggler().isActive()) {
+                this.treeGrid.getToolbar().getSelectionPanelToggler().setActive(false);
+            }
+
             this.showFilterPanel();
             this.filterPanel.setDependencyItem(event.getContent(), event.isInbound());
         });

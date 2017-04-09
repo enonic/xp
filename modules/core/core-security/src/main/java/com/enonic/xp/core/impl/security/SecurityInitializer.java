@@ -5,9 +5,13 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.query.expr.FieldOrderExpr;
+import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
@@ -95,6 +99,10 @@ final class SecurityInitializer
             principal( RoleKeys.USER_MANAGER_ADMIN ).
             build();
 
+        final ChildOrder childOrder = ChildOrder.create().
+            add( FieldOrderExpr.create( NodeIndexPath.NAME, OrderExpr.Direction.ASC ) ).
+            build();
+
         nodeService.create( CreateNodeParams.create().
             parent( userStoreParentNodePath.getParentPath() ).
             name( userStoreParentNodePath.getLastElement().toString() ).
@@ -103,6 +111,7 @@ final class SecurityInitializer
                 add( userManagerFullAccess ).
                 build() ).
             inheritPermissions( false ).
+            childOrder( childOrder ).
             build() );
     }
 

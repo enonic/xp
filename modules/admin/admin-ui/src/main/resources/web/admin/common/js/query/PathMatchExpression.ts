@@ -12,12 +12,11 @@ module api.query {
 
         static createWithPath(searchString: string, queryFields: QueryFields, path: string): api.query.expr.Expression {
 
-            let nameExpr = FulltextSearchExpression.create(searchString, queryFields);
+            let fulltextExpr = FulltextSearchExpression.create(searchString, queryFields);
 
-            let pathExpr = CompareExpr.like(new FieldExpr('_path'),
-                ValueExpr.string('/content/*' + searchString + '*'));
+            let pathExpr = this.createPathMatchExpression(searchString);
 
-            let nameOrPathExpr: LogicalExpr = new LogicalExpr(nameExpr, LogicalOperator.OR, pathExpr);
+            let nameOrPathExpr: LogicalExpr = new LogicalExpr(fulltextExpr, LogicalOperator.OR, pathExpr);
 
             let args = [];
             args.push(ValueExpr.stringValue('_path'));
@@ -28,6 +27,23 @@ module api.query {
 
             let booleanExpr: LogicalExpr = new LogicalExpr(nameOrPathExpr, LogicalOperator.AND, matchedDynamicExpr);
             return booleanExpr;
+        }
+
+        private static createPathMatchExpression(searchString: string): api.query.expr.Expression {
+
+            let pathExpr = CompareExpr.like(new FieldExpr('_path'),
+                ValueExpr.string(this.createSearchString(searchString)));
+
+            return pathExpr;
+        }
+
+        private static createSearchString(searchString: string): string {
+
+            if (!!searchString && searchString.indexOf('/') == 0) {
+                searchString = searchString.slice(1);
+            }
+
+            return '/content/*' + searchString + '*';
         }
     }
 

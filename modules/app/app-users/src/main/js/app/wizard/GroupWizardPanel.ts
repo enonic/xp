@@ -79,7 +79,7 @@ export class GroupWizardPanel extends GroupRoleWizardPanel {
     }
 
     assembleViewedItem(): Principal {
-        return new GroupBuilder(this.getPersistedItem().asGroup())
+        return <Principal>new GroupBuilder(this.getPersistedItem().asGroup())
             .setMembers(this.getMembersWizardStepForm().getMembers().map((el) => {
                 return el.getKey();
             }))

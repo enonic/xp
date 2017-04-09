@@ -122,14 +122,13 @@ public class PushContentCommand
             contentIds( this.contentIds ).
             excludedContentIds( this.excludedContentIds ).
             excludeChildrenIds( this.excludeChildrenIds ).
-            includeOffline( true ).
             target( this.target ).
             contentTypeService( this.contentTypeService ).
             eventPublisher( this.eventPublisher ).
             translator( this.translator ).
             nodeService( this.nodeService ).
             build().
-            execute().getCompareContentResults();
+            execute();
     }
 
     private boolean checkIfAllContentsValid( final ContentIds pushContentsIds )

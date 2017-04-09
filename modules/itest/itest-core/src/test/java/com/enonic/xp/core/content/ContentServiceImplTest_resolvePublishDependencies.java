@@ -107,33 +107,6 @@ public class ContentServiceImplTest_resolvePublishDependencies
         assertTrue( result.contentIds().contains( child3.getId() ) );
     }
 
-    @Test
-    public void resolve_offline()
-        throws Exception
-    {
-        final ResolvePublishDependenciesParams.Builder builder = getPushParamsWithDependenciesBuilder().
-            contentIds( ContentIds.from( content1.getId() ) );
-
-        final Content childOffline = this.contentService.create( CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "This is my offline child" ).
-            parent( content1.getPath() ).
-            type( ContentTypeName.folder() ).
-            contentPublishInfo( ContentPublishInfo.create().first( Instant.now() ).build() ).
-            build() );
-
-        refresh();
-
-        final CompareContentResults result = this.contentService.resolvePublishDependencies( builder.build() );
-        assertEquals( 2, result.contentIds().getSize() );
-
-        builder.includeOffline( true );
-        final CompareContentResults resultIncludingOffline = this.contentService.resolvePublishDependencies( builder.build() );
-        assertEquals( 3, resultIncludingOffline.contentIds().getSize() );
-        assertTrue( resultIncludingOffline.contentIds().contains( childOffline.getId() ) );
-    }
-
-
     private ResolvePublishDependenciesParams.Builder getPushParamsWithDependenciesBuilder()
     {
         this.content1 = this.contentService.create( CreateContentParams.create().

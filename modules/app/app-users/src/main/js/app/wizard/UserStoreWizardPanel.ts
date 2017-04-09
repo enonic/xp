@@ -2,11 +2,9 @@ import '../../api.ts';
 import {UserItemWizardPanel} from './UserItemWizardPanel';
 import {SecurityWizardStepForm} from './SecurityWizardStepForm';
 import {UserStoreWizardPanelParams} from './UserStoreWizardPanelParams';
-import {UserStoreWizardToolbar} from './UserStoreWizardToolbar';
 import {UserStoreWizardStepForm} from './UserStoreWizardStepForm';
 import {Router} from '../Router';
 import {UserStoreWizardDataLoader} from './UserStoreWizardDataLoader';
-import {UserItemWizardActions} from './action/UserItemWizardActions';
 
 import UserStore = api.security.UserStore;
 import UserStoreKey = api.security.UserStoreKey;
@@ -60,61 +58,11 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
             });
     }
 
-    protected createWizardActions(): UserItemWizardActions<UserStore> {
-        return new UserItemWizardActions(this);
-    }
-
-    protected createMainToolbar(): UserStoreWizardToolbar {
-        return new UserStoreWizardToolbar({
-            saveAction: this.wizardActions.getSaveAction(),
-            deleteAction: this.wizardActions.getDeleteAction()
-        });
-    }
-
-    public getMainToolbar(): api.ui.toolbar.Toolbar {
-        return <UserStoreWizardToolbar>super.getMainToolbar();
-    }
-
     protected createFormIcon(): api.app.wizard.FormIcon {
         let iconUrl = api.dom.ImgEl.PLACEHOLDER;
         let formIcon = new FormIcon(iconUrl, 'icon');
         formIcon.addClass('icon-xlarge icon-address-book');
         return formIcon;
-    }
-
-    protected createWizardHeader(): api.app.wizard.WizardHeaderWithDisplayNameAndName {
-        let wizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().build();
-
-        let existing = this.getPersistedItem();
-        let displayName = '';
-        let name = '';
-
-        if (existing) {
-            displayName = existing.getDisplayName();
-            name = existing.getKey().getId();
-
-            wizardHeader.disableNameInput();
-            wizardHeader.setAutoGenerationEnabled(false);
-        } else {
-            displayName = '';
-            name = '';
-
-            wizardHeader.onPropertyChanged((event: api.PropertyChangedEvent) => {
-                let updateStatus = event.getPropertyName() === 'name' ||
-                                   (wizardHeader.isAutoGenerationEnabled()
-                                    && event.getPropertyName() === 'displayName');
-
-                if (updateStatus) {
-                    this.wizardActions.getSaveAction().setEnabled(!!event.getNewValue());
-                }
-            });
-
-        }
-
-        wizardHeader.setPath(this.getParams().persistedPath);
-        wizardHeader.initNames(displayName, name, false);
-
-        return wizardHeader;
     }
 
     doRenderOnDataLoaded(rendered: boolean): Q.Promise<boolean> {
@@ -215,9 +163,10 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
     }
 
     private assembleViewedUserStore(): UserStore {
-        return new UserStoreBuilder().setDisplayName(this.getWizardHeader().getDisplayName()).setKey(
-            this.getPersistedItem().getKey().toString()).setDescription(this.userStoreWizardStepForm.getDescription()).setAuthConfig(
-            this.userStoreWizardStepForm.getAuthConfig()).setPermissions(this.permissionsWizardStepForm.getPermissions()).build();
+        return <UserStore>new UserStoreBuilder().setAuthConfig(
+            this.userStoreWizardStepForm.getAuthConfig()).setPermissions(this.permissionsWizardStepForm.getPermissions()).setKey(
+            this.getPersistedItem().getKey().toString()).setDisplayName(this.getWizardHeader().getDisplayName()).setDescription(
+            this.userStoreWizardStepForm.getDescription()).build();
     }
 
     private produceCreateUserStoreRequest(): CreateUserStoreRequest {

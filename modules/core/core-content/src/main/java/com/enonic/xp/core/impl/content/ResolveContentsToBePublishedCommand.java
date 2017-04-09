@@ -1,20 +1,13 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareContentResults;
-import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
-import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.content.ResolveContentsToBePublishedCommandResult;
-import com.enonic.xp.data.PropertyPath;
-import com.enonic.xp.node.NodeComparison;
-import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.ResolveSyncWorkResult;
@@ -29,11 +22,9 @@ public class ResolveContentsToBePublishedCommand
 
     private final ContentIds excludeChildrenIds;
 
-    private final boolean includeOffline;
-
     private final Branch target;
 
-    private final ResolveContentsToBePublishedCommandResult.Builder resultBuilder;
+    private final CompareContentResults.Builder resultBuilder;
 
     private final boolean includeDependencies;
 
@@ -43,9 +34,8 @@ public class ResolveContentsToBePublishedCommand
         this.contentIds = builder.contentIds;
         this.excludedContentIds = builder.excludedContentIds;
         this.target = builder.target;
-        this.resultBuilder = ResolveContentsToBePublishedCommandResult.create();
+        this.resultBuilder = CompareContentResults.create();
         this.excludeChildrenIds = builder.excludeChildrenIds;
-        this.includeOffline = builder.includeOffline;
         this.includeDependencies = builder.includeDependencies;
     }
 
@@ -54,7 +44,7 @@ public class ResolveContentsToBePublishedCommand
         return new Builder();
     }
 
-    ResolveContentsToBePublishedCommandResult execute()
+    CompareContentResults execute()
     {
         resolveDependencies();
 
@@ -67,7 +57,7 @@ public class ResolveContentsToBePublishedCommand
         {
             final ResolveSyncWorkResult syncWorkResult = getWorkResult( contentId );
 
-            this.resultBuilder.addCompareContentResults( CompareResultTranslator.translate( syncWorkResult.getNodeComparisons() ) );
+            this.resultBuilder.addAll( CompareResultTranslator.translate( syncWorkResult.getNodeComparisons() ) );
         }
     }
 
@@ -85,36 +75,8 @@ public class ResolveContentsToBePublishedCommand
             includeDependencies( this.includeDependencies ).
             nodeId( NodeId.from( contentId.toString() ) ).
             excludedNodeIds( nodeIds ).
-            initialDiffFilter( ( initialDiffNodeIds ) -> this.filterOfflineContents( initialDiffNodeIds ) ).
             branch( this.target ).
             build() );
-    }
-
-    private NodeIds filterOfflineContents( final NodeIds nodeIds )
-    {
-        final NodeComparisons nodeComparisons = nodeService.compare( nodeIds, this.target );
-        final Set<NodeId> filteredNodeIdSet = nodeIds.stream().
-            filter( nodeId ->
-                    {
-                        final NodeComparison nodeComparison = nodeComparisons.get( nodeId );
-                        if ( CompareStatus.NEW != nodeComparison.getCompareStatus() )
-                        {
-                            return true;
-                        }
-                        final boolean hasFirstPublishProperty = nodeService.getById( nodeId ).data().getInstant(
-                            PropertyPath.from( ContentPropertyNames.PUBLISH_INFO, ContentPropertyNames.PUBLISH_FIRST ) ) != null;
-                        if ( hasFirstPublishProperty )
-                        {
-                            this.resultBuilder.setContainsOffline( true );
-                            if ( this.includeOffline )
-                            {
-                                return true;
-                            }
-                            return false;
-                        }
-                        return true;
-                    } ).collect( Collectors.toSet() );
-        return NodeIds.from( filteredNodeIdSet );
     }
 
     public static class Builder
@@ -125,8 +87,6 @@ public class ResolveContentsToBePublishedCommand
         private ContentIds excludedContentIds;
 
         private ContentIds excludeChildrenIds;
-
-        private boolean includeOffline;
 
         private Branch target;
 
@@ -153,12 +113,6 @@ public class ResolveContentsToBePublishedCommand
         public Builder excludeChildrenIds( final ContentIds excludeChildrenIds )
         {
             this.excludeChildrenIds = excludeChildrenIds;
-            return this;
-        }
-
-        public Builder includeOffline( final boolean includeOffline )
-        {
-            this.includeOffline = includeOffline;
             return this;
         }
 

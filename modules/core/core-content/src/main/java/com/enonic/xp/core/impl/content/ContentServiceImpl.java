@@ -70,7 +70,6 @@ import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.ReprocessContentParams;
-import com.enonic.xp.content.ResolveContentsToBePublishedCommandResult;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SetActiveContentVersionResult;
@@ -391,24 +390,6 @@ public class ContentServiceImpl
             contentIds( params.getContentIds() ).
             excludedContentIds( params.getExcludedContentIds() ).
             excludeChildrenIds( params.getExcludeChildrenIds() ).
-            includeOffline( params.isIncludeOffline() ).
-            target( params.getTarget() ).
-            build().
-            execute().getCompareContentResults();
-    }
-
-    @Override
-    public ResolveContentsToBePublishedCommandResult resolvePublishDependenciesExtended( ResolvePublishDependenciesParams params )
-    {
-        return ResolveContentsToBePublishedCommand.create().
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            contentIds( params.getContentIds() ).
-            excludedContentIds( params.getExcludedContentIds() ).
-            excludeChildrenIds( params.getExcludeChildrenIds() ).
-            includeOffline( params.isIncludeOffline() ).
             target( params.getTarget() ).
             build().
             execute();

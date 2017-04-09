@@ -73,6 +73,7 @@ class IndexConfigDocMapper
         gen.value( "nGram", indexConfig.isnGram() );
         gen.value( "fulltext", indexConfig.isFulltext() );
         gen.value( "includeInAllText", indexConfig.isIncludeInAllText() );
+        gen.value( "path", indexConfig.isPath() );
         final ImmutableList<IndexValueProcessor> indexValueProcessors = indexConfig.getIndexValueProcessors();
         serialize( gen, indexValueProcessors );
     }

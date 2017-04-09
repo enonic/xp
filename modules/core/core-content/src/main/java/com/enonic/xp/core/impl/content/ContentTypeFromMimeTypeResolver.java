@@ -100,6 +100,8 @@ final class ContentTypeFromMimeTypeResolver
         // Presentation
         MAP.put( "application/vnd.openxmlformats-officedocument.presentationml.presentation", ContentTypeName.presentationMedia() );
         MAP.put( "application/vnd.ms-powerpoint", ContentTypeName.presentationMedia() );
+        MAP.put( "application/vnd.oasis.opendocument.presentation", ContentTypeName.presentationMedia() );
+        MAP.put( "application/vnd.apple.keynote", ContentTypeName.presentationMedia() );
 
         // Spreadsheet
         MAP.put( "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", ContentTypeName.spreadsheetMedia() );

@@ -134,7 +134,6 @@ public class PublishContentCommand
             contentIds( this.contentIds ).
             excludedContentIds( this.excludedContentIds ).
             excludeChildrenIds( this.excludeChildrenIds ).
-            includeOffline( true ).
             includeDependencies( this.includeDependencies ).
             target( this.target ).
             contentTypeService( this.contentTypeService ).
@@ -142,7 +141,7 @@ public class PublishContentCommand
             translator( this.translator ).
             nodeService( this.nodeService ).
             build().
-            execute().getCompareContentResults();
+            execute();
     }
 
     private boolean checkIfAllContentsValid( final ContentIds pushContentsIds )

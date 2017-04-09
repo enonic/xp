@@ -114,8 +114,7 @@ module api.ui.security {
 
             return <Option<Principal>>{
                 value: id,
-                displayValue: Principal.create().setDisplayName(key.getId()).
-                setKey(key).build(),
+                displayValue: <Principal>Principal.create().setKey(key).setDisplayName(key.getId()).build(),
                 empty: true
             };
         }

@@ -18,6 +18,7 @@ var repo = nodeLib.connect({
 var result1 = repo.create({
     _name: "myName",
     displayName: "This is brand new node",
+    myExtraPath: "/this/is/a/path",
     someData: {
         cars: [
             "skoda", "tesla model X"
@@ -44,6 +45,10 @@ var result1 = repo.create({
             {
                 path: "someData.cars",
                 config: "minimal"
+            },
+            {
+                path: "myExtraPath",
+                config: "path"
             }]
     },
     _permissions: [
@@ -80,6 +85,7 @@ var expected = {
                 "nGram": false,
                 "fulltext": false,
                 "includeInAllText": false,
+                "path": false,
                 "indexValueProcessors": []
             },
             "configs": [
@@ -91,6 +97,7 @@ var expected = {
                         "nGram": true,
                         "fulltext": true,
                         "includeInAllText": true,
+                        "path": false,
                         "indexValueProcessors": []
                     }
                 }

@@ -54,6 +54,10 @@ final class UpdateMediaCommand
                 ? ContentTypeName.executableMedia()
                 : ContentTypeName.unknownMedia();
 
+        final Content existingContent = getContent( params.getContent() );
+        Preconditions.checkArgument( existingContent.getType().equals( type ),
+                                     "Updated content must be of type: " + existingContent.getType() );
+
         final CreateAttachment mediaAttachment = CreateAttachment.create().
             name( params.getName() ).
             mimeType( params.getMimeType() ).

@@ -12,15 +12,12 @@ module api.content.resource {
 
         private excludeChildrenIds: ContentId[] = [];
 
-        private includeOffline: boolean;
-
         constructor(builder: ResolvePublishDependenciesRequestBuilder) {
             super();
             super.setMethod('POST');
             this.ids = builder.ids;
             this.excludedIds = builder.excludedIds;
             this.excludeChildrenIds = builder.excludeChildrenIds;
-            this.includeOffline = builder.includeOffline;
         }
 
         getParams(): Object {
@@ -33,8 +30,7 @@ module api.content.resource {
                 }),
                 excludeChildrenIds: this.excludeChildrenIds.map((el) => {
                     return el.toString();
-                }),
-                includeOffline: this.includeOffline
+                })
             };
         }
 
@@ -62,8 +58,6 @@ module api.content.resource {
 
         excludeChildrenIds: ContentId[] = [];
 
-        includeOffline: boolean = false;
-
         public setIds(value: ContentId[]): ResolvePublishDependenciesRequestBuilder {
             this.ids = value;
             return this;
@@ -76,11 +70,6 @@ module api.content.resource {
 
         public setExcludeChildrenIds(value: ContentId[]): ResolvePublishDependenciesRequestBuilder {
             this.excludeChildrenIds = value;
-            return this;
-        }
-
-        public setIncludeOffline(value: boolean): ResolvePublishDependenciesRequestBuilder {
-            this.includeOffline = value;
             return this;
         }
 

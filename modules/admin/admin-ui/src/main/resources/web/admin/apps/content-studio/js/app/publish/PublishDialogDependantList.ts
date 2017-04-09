@@ -21,13 +21,15 @@ export class PublishDialogDependantList extends DialogDependantList {
     }
 
     createItemView(item: ContentSummaryAndCompareStatus, readOnly: boolean): api.dom.Element {
-        let view = super.createItemView(item, readOnly);
+        const view = super.createItemView(item, readOnly);
+        const isPendingDelete = api.content.CompareStatusChecker.isPendingDelete(item.getCompareStatus());
+        const isRemovable = !this.requiredIds.contains(item.getContentId()) && !isPendingDelete;
 
-        if (!this.requiredIds.contains(item.getContentId())) {
+        if (isRemovable) {
             view.addClass('removable');
         }
 
-        (<StatusSelectionItem>view).setIsRemovableFn(() => !this.requiredIds.contains(item.getContentId()));
+        (<StatusSelectionItem>view).setIsRemovableFn(() => !this.requiredIds.contains(item.getContentId()) && !isPendingDelete);
         (<StatusSelectionItem>view).setRemoveHandlerFn(() => this.notifyItemRemoveClicked(item));
 
         view.onClicked((event) => {

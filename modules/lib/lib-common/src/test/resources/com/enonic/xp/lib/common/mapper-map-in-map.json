@@ -1,0 +1,8 @@
+{
+  "mySet" : {
+    "mySetValue" : "value",
+    "mySetInSet" : {
+      "mySetValue" : "value"
+    }
+  }
+}

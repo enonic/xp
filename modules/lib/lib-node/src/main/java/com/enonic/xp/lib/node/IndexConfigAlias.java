@@ -5,6 +5,7 @@ import com.enonic.xp.index.IndexConfig;
 public enum IndexConfigAlias
 {
     MINIMAL( IndexConfig.MINIMAL ),
+    PATH( IndexConfig.PATH ),
     BYTYPE( IndexConfig.BY_TYPE ),
     FULLTEXT( IndexConfig.FULLTEXT ),
     NONE( IndexConfig.NONE );

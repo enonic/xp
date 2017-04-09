@@ -30,8 +30,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
     private containsInvalid: boolean;
 
-    private includeOfflineCheckbox: Checkbox;
-
     private scheduleDialog: SchedulePublishDialog;
 
     protected showScheduleDialogButton: api.ui.dialog.DialogButton;
@@ -50,7 +48,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.setAutoUpdateTitle(false);
         this.getEl().addClass('publish-dialog');
 
-        this.initIncludeOfflineCheckbox();
         this.initActions();
         this.addCancelButtonToBottom();
 
@@ -63,17 +60,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
         this.getItemList().onExcludeChildrenListChanged((excludedChildrenIds: ContentId[]) => {
             this.reloadPublishDependencies(true).done();
         });
-    }
-
-    private initIncludeOfflineCheckbox() {
-        let childrenCheckboxListener = () => this.reloadPublishDependencies(true).done();
-
-        this.includeOfflineCheckbox = api.ui.Checkbox.create().setLabelText('Include offline items').build();
-        this.includeOfflineCheckbox.addClass('include-offline');
-        this.includeOfflineCheckbox.onValueChanged(childrenCheckboxListener);
-        this.includeOfflineCheckbox.setVisible(false);
-
-        this.getButtonRow().appendChild(this.includeOfflineCheckbox);
     }
 
     private initActions() {
@@ -146,8 +132,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
         let ids = this.getContentToPublishIds();
 
         let resolveDependenciesRequest = api.content.resource.ResolvePublishDependenciesRequest.create().setIds(ids).setExcludedIds(
-            this.excludedIds).setExcludeChildrenIds(this.getItemList().getExcludeChildrenIds()).setIncludeOffline(
-            this.includeOfflineCheckbox.isChecked()).build();
+            this.excludedIds).setExcludeChildrenIds(this.getItemList().getExcludeChildrenIds()).build();
 
         return resolveDependenciesRequest.sendAndParse().then((result: ResolvePublishDependenciesResult) => {
 
@@ -156,8 +141,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
             this.getDependantList().setRequiredIds(result.getRequired());
 
             this.containsInvalid = result.isContainsInvalid();
-
-            this.includeOfflineCheckbox.setVisible(result.isContainsOffline());
 
             new HasUnpublishedChildrenRequest(ids).sendAndParse().then((children) => {
                 const toggleable = children.getResult().some(requestedResult => requestedResult.getHasChildren());
