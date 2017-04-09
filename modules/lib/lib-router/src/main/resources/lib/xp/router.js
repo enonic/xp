@@ -7,7 +7,7 @@
  * // Creates a new router.
  * var router = require('/lib/xp/router')();
  *
- * @module lib/xp/router
+ * @module router
  */
 
 var config = {
