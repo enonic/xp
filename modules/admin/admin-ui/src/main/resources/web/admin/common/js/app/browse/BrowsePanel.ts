@@ -117,7 +117,7 @@ module api.app.browse {
             }
         }
 
-        private enableSelectionMode() {
+        protected enableSelectionMode() {
             if (this.filterPanel) {
                 this.filterPanel.setSelectedItems(this.treeGrid.getSelectedDataList());
                 if (!this.filterPanelToBeShownFullScreen) {
@@ -128,7 +128,7 @@ module api.app.browse {
             }
         }
 
-        private disableSelectionMode() {
+        protected disableSelectionMode() {
             if (this.filterPanel) {
                 this.filterPanel.resetConstraints();
                 this.hideFilterPanel();

@@ -63,6 +63,10 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
         return new PrincipalBrowseFilterPanel();
     }
 
+    protected enableSelectionMode() {
+        this.treeGrid.filter(this.treeGrid.getSelectedDataList());
+    }
+
     treeNodesToBrowseItems(nodes: TreeNode<UserTreeGridItem>[]): BrowseItem<UserTreeGridItem>[] {
         let browseItems: BrowseItem<UserTreeGridItem>[] = [];
 
