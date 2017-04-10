@@ -957,14 +957,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             let publishControls = this.getContentWizardToolbarPublishControls();
             let wizardHeader = this.getWizardHeader();
 
-            api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByContent(persistedContent).then((summaryAndStatus) => {
-                this.persistedContent = this.currentContent = summaryAndStatus;
-
-                wizardHeader.disableNameGeneration(this.currentContent.getCompareStatus() !== CompareStatus.NEW);
-
-                publishControls.setContent(this.currentContent).setLeafContent(!this.getPersistedItem().hasChildren());
-            });
-
             wizardHeader.setSimplifiedNameGeneration(persistedContent.getType().isDescendantOfMedia());
             publishControls.enableActionsForExisting(persistedContent);
 
@@ -1023,13 +1015,28 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     }
                 }
 
+                return this.updatePersistedContent(persistedContent);
+
             } else {
 
-                return this.doLayoutPersistedItem(persistedContent.clone());
+                return this.doLayoutPersistedItem(persistedContent.clone()).then(() => {
+                    return this.updatePersistedContent(persistedContent);
+                });
             }
 
         });
 
+    }
+
+    private updatePersistedContent(persistedContent: Content) {
+        return api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByContent(persistedContent).then((summaryAndStatus) => {
+            this.persistedContent = this.currentContent = summaryAndStatus;
+
+            this.getWizardHeader().disableNameGeneration(this.currentContent.getCompareStatus() !== CompareStatus.NEW);
+
+            this.getContentWizardToolbarPublishControls().setContent(this.currentContent).setLeafContent(
+                !this.getPersistedItem().hasChildren());
+        });
     }
 
     saveChangesWithoutValidation(): wemQ.Promise<Content> {
