@@ -19,7 +19,7 @@ public class UpdateIssueJson
     private final UpdateIssueParams updateIssueParams;
 
     @JsonCreator
-    UpdateIssueJson( @JsonProperty("id") final String issueId, @JsonProperty("title") final String title,
+    public UpdateIssueJson( @JsonProperty("id") final String issueId, @JsonProperty("title") final String title,
                      @JsonProperty("description") final String description, @JsonProperty("status") final String status,
                      @JsonProperty("approvers") final List<String> approverIds, @JsonProperty("publishRequest") final PublishRequestJson publishRequest )
     {

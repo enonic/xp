@@ -16,7 +16,7 @@ public class CreateIssueJson
     private final CreateIssueParams createIssueParams;
 
     @JsonCreator
-    CreateIssueJson( @JsonProperty("title") final String title, @JsonProperty("description") final String description,
+    public CreateIssueJson( @JsonProperty("title") final String title, @JsonProperty("description") final String description,
                      @JsonProperty("approvers") final List<String> approverIds, @JsonProperty("publishRequest") final PublishRequestJson publishRequest )
     {
 
