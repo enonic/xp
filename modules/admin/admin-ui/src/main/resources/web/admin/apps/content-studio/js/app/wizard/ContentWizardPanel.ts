@@ -766,8 +766,9 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         };
 
         let updateHandler = (updatedContent: ContentSummaryAndCompareStatus) => {
+            const contentId = updatedContent.getContentId();
 
-            if (this.isCurrentContentId(updatedContent.getContentId())) {
+            if (this.isCurrentContentId(contentId)) {
 
                 this.persistedContent = this.currentContent = updatedContent;
                 this.getContentWizardToolbarPublishControls().setContent(this.currentContent);
@@ -795,7 +796,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     }
                 });
             } else {
-                this.doComponentsContainId(this.currentContent.getContentId()).then((contains) => {
+                this.doComponentsContainId(contentId).then((contains) => {
                     if (contains) {
                         new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
                             this.updateWizard(content, true);
