@@ -511,6 +511,8 @@ module api.ui.uploader {
 
             this.setProgressVisible();
 
+            this.setBusy(true);
+
             this.debouncedUploadStart();
         }
 
@@ -564,6 +566,7 @@ module api.ui.uploader {
                     uploadItem.setModel(null);
                     this.notifyUploadFailed(uploadItem);
                 }
+                this.setBusy(false);
             }
         }
 
@@ -586,6 +589,8 @@ module api.ui.uploader {
             }
 
             this.uploadedItems.length = 0;
+
+            this.setBusy(false);
         }
 
         protected initUploader() {
@@ -625,7 +630,11 @@ module api.ui.uploader {
                     },
                     callbacks: {
                         //this submits the dropped files to uploader
-                        processingDroppedFilesComplete: (files, dropTarget) => uploader.addFiles(files),
+                        processingDroppedFilesComplete: (files, dropTarget) => {
+                            if (!this.isBusy()) {
+                                uploader.addFiles(files);
+                            }
+                        },
                         onDrop: (event: DragEvent) => this.notifyDropzoneDrop(event),
                         onDragEnter: (event: DragEvent) => this.notifyDropzoneDragEnter(event),
                         onDragLeave: (event: DragEvent) => this.notifyDropzoneDragLeave(event)
@@ -684,6 +693,14 @@ module api.ui.uploader {
                 let el = <HTMLInputElement>focusableElements.item(i);
                 el.tabIndex = -1;
             }
+        }
+
+        private setBusy(value: boolean) {
+            this.toggleClass('busy', value);
+        }
+
+        private isBusy(): boolean {
+            return this.hasClass('busy');
         }
 
         getUploadButton(): api.dom.DivEl {
