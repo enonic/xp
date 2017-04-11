@@ -30,6 +30,11 @@ final class UpdateMediaCommand
         return new Builder( params );
     }
 
+    public static Builder create( final UpdateMediaParams params, final AbstractCreatingOrUpdatingContentCommand source )
+    {
+        return new Builder( params, source );
+    }
+
     Content execute()
     {
         params.validate();
@@ -99,8 +104,14 @@ final class UpdateMediaCommand
 
         private MediaInfoService mediaInfoService;
 
-        public Builder( final UpdateMediaParams params )
+        Builder( final UpdateMediaParams params )
         {
+            this.params = params;
+        }
+
+        Builder( final UpdateMediaParams params, final AbstractCreatingOrUpdatingContentCommand source )
+        {
+            super( source );
             this.params = params;
         }
 
