@@ -511,7 +511,7 @@ module api.ui.uploader {
 
             this.setProgressVisible();
 
-            this.setBusy(true);
+            this.startUpload();
 
             this.debouncedUploadStart();
         }
@@ -566,7 +566,7 @@ module api.ui.uploader {
                     uploadItem.setModel(null);
                     this.notifyUploadFailed(uploadItem);
                 }
-                this.setBusy(false);
+                this.finishUpload();
             }
         }
 
@@ -590,7 +590,7 @@ module api.ui.uploader {
 
             this.uploadedItems.length = 0;
 
-            this.setBusy(false);
+            this.finishUpload();
         }
 
         protected initUploader() {
@@ -631,7 +631,7 @@ module api.ui.uploader {
                     callbacks: {
                         //this submits the dropped files to uploader
                         processingDroppedFilesComplete: (files, dropTarget) => {
-                            if (!this.isBusy()) {
+                            if (!this.isUploading()) {
                                 uploader.addFiles(files);
                             }
                         },
@@ -695,12 +695,16 @@ module api.ui.uploader {
             }
         }
 
-        private setBusy(value: boolean) {
-            this.toggleClass('busy', value);
+        private startUpload() {
+            this.toggleClass('uploading', true);
         }
 
-        private isBusy(): boolean {
-            return this.hasClass('busy');
+        private finishUpload() {
+            this.toggleClass('uploading', false);
+        }
+
+        private isUploading(): boolean {
+            return this.hasClass('uploading');
         }
 
         getUploadButton(): api.dom.DivEl {
