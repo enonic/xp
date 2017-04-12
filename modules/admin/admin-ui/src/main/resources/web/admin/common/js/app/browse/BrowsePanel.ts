@@ -30,7 +30,7 @@ module api.app.browse {
 
         private filterPanelForcedHidden: boolean = false;
 
-        private filterPanelToBeShownFullScreen: boolean = false;
+        protected filterPanelToBeShownFullScreen: boolean = false;
 
         private filterPanelIsHiddenByDefault: boolean = true;
 
@@ -70,9 +70,7 @@ module api.app.browse {
 
                 if (this.treeGrid.getToolbar().getSelectionPanelToggler().isActive() && changes.getRemoved().length > 0) {
                     // Redo the search filter panel once items are removed from selection
-                    if (this.filterPanel) {
-                        this.filterPanel.setSelectedItems(this.treeGrid.getSelectedDataList());
-                    }
+                    this.updateFilterPanelOnSelectionChange();
                 }
 
             };
@@ -109,6 +107,10 @@ module api.app.browse {
 
         }
 
+        protected updateFilterPanelOnSelectionChange() {
+            // TO BE IMPLEMENTED BY INHERITORS
+        }
+
         private toggleSelectionMode(isActive: boolean) {
             if (isActive) {
                 this.enableSelectionMode();
@@ -117,22 +119,11 @@ module api.app.browse {
             }
         }
 
-        private enableSelectionMode() {
-            if (this.filterPanel) {
-                this.filterPanel.setSelectedItems(this.treeGrid.getSelectedDataList());
-                if (!this.filterPanelToBeShownFullScreen) {
-                    this.showFilterPanel();
-                }
-            } else {
-                this.treeGrid.filter(this.treeGrid.getSelectedDataList());
-            }
+        protected enableSelectionMode() {
+            this.treeGrid.filter(this.treeGrid.getSelectedDataList());
         }
 
-        private disableSelectionMode() {
-            if (this.filterPanel) {
-                this.filterPanel.resetConstraints();
-                this.hideFilterPanel();
-            }
+        protected disableSelectionMode() {
             this.treeGrid.resetFilter();
         }
 
@@ -290,7 +281,7 @@ module api.app.browse {
             this.toggleFilterPanelButton.removeClass('filtered');
         }
 
-        private hideFilterPanel() {
+        protected hideFilterPanel() {
             this.filterPanelForcedShown = false;
             this.filterPanelForcedHidden = true;
             this.filterAndGridSplitPanel.showSecondPanel();
