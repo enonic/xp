@@ -292,6 +292,8 @@ module api.form {
             let thisElSelector = `div[id='${this.getEl().getId()}']`;
             this.expand();
             this.enableFormItems();
+
+            this.optionItemsContainer.show();
             api.dom.FormEl.moveFocusToNextFocusable(input,
                 thisElSelector + ' input, ' + thisElSelector + ' select, ' + thisElSelector + ' textarea');
             this.addClass('selected');
@@ -300,6 +302,10 @@ module api.form {
         private deselectHandle() {
             this.expand(this.isOptionSetExpandedByDefault);
             this.disableFormItems();
+
+            if(!this.isOptionSetExpandedByDefault) {
+                this.optionItemsContainer.hide();
+            }
             this.cleanValidationForThisOption();
             this.cleanSelectionMessageForThisOption();
             this.removeClass('selected');
