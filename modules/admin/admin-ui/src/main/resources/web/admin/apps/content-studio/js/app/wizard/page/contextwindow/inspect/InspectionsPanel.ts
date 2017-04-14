@@ -36,8 +36,6 @@ export class InspectionsPanel extends api.ui.panel.Panel {
     private fragmentInspectionPanel: FragmentInspectionPanel;
     private textInspectionPanel: TextInspectionPanel;
 
-    private saveRequestListeners: {() : void}[] = [];
-
     constructor(config: InspectionsPanelConfig) {
         super('inspections-panel');
 

@@ -114,7 +114,6 @@ module api.liveedit {
         private mouseOverViewListener: () => void;
         private mouseLeaveViewListener: () => void;
         private shaderClickedListener: (event: MouseEvent) => void;
-        private pageItemViewAddedListener: (event: ItemViewAddedEvent) => void;
         private mouseEnterListener: (event: MouseEvent) => void;
         private mouseLeaveListener: (event: MouseEvent) => void;
         private mouseClickedListener: (event: MouseEvent) => void;

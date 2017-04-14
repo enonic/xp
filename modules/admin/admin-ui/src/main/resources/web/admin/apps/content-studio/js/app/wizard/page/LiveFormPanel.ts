@@ -46,6 +46,7 @@ import GetPartDescriptorsByApplicationsRequest = api.content.page.region.GetPart
 import GetLayoutDescriptorsByApplicationsRequest = api.content.page.region.GetLayoutDescriptorsByApplicationsRequest;
 import RenderingMode = api.rendering.RenderingMode;
 
+import ItemView = api.liveedit.ItemView;
 import RegionView = api.liveedit.RegionView;
 import ComponentView = api.liveedit.ComponentView;
 import PageView = api.liveedit.PageView;
@@ -79,6 +80,8 @@ import LiveEditPageViewReadyEvent = api.liveedit.LiveEditPageViewReadyEvent;
 import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
 import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
 import FragmentComponentReloadRequiredEvent = api.liveedit.FragmentComponentReloadRequiredEvent;
+import BeforeContentSavedEvent = api.content.event.BeforeContentSavedEvent;
+import ComponentPath = api.content.page.region.ComponentPath;
 
 export interface LiveFormPanelConfig {
 
@@ -475,7 +478,6 @@ export class LiveFormPanel extends api.ui.panel.Panel {
     }
 
     private liveEditListen() {
-
         this.liveEditPageProxy.onPageLocked((event: api.liveedit.PageLockedEvent) => {
             this.inspectPage();
         });
@@ -485,10 +487,34 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             this.minimizeContentFormPanelIfNeeded();
         });
 
+        let path;
+        BeforeContentSavedEvent.on(() => {
+            const selected = this.pageView.getSelectedView();
+            if (api.ObjectHelper.iFrameSafeInstanceOf(selected, ComponentView)) {
+                path = (<ComponentView<any>>selected).getComponentPath();
+            } else if (api.ObjectHelper.iFrameSafeInstanceOf(selected, RegionView)) {
+                path = (<RegionView>selected).getRegionPath();
+            } else {
+                path = null;
+            }
+        });
+
+        const restoreSelection = () => {
+            if (path) {
+                const selected = api.ObjectHelper.iFrameSafeInstanceOf(path, ComponentPath) ?
+                                 this.pageView.getComponentViewByPath(path) :
+                                 this.pageView.getRegionViewByPath(path);
+                if (selected) {
+                    selected.selectWithoutMenu();
+                }
+            }
+        };
+
         this.liveEditPageProxy.onLiveEditPageViewReady((event: api.liveedit.LiveEditPageViewReadyEvent) => {
             this.pageView = event.getPageView();
             if (this.pageView) {
                 this.insertablesPanel.setPageView(this.pageView);
+                restoreSelection();
             }
         });
 
