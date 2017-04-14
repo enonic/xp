@@ -17,6 +17,7 @@ export class PublishDialogDependantList extends DialogDependantList {
     constructor() {
         super();
 
+        this.addClass('publish-dialog-dependant-list');
         this.requiredIds = ContentIds.empty();
     }
 
