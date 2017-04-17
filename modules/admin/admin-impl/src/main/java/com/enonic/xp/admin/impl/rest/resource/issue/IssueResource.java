@@ -93,7 +93,7 @@ public final class IssueResource
 
     private Issue createMockIssue( final String title, final PrincipalKey creator, final Instant modifiedTime )
     {
-        return Issue.create().id( IssueId.create() ).title( title ).creator( creator ).modifiedTime( modifiedTime ).build();
+        return Issue.create().title( title ).creator( creator ).modifiedTime( modifiedTime ).build();
     }
 
     @Reference

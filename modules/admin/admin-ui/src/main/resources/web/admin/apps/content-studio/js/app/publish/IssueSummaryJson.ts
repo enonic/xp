@@ -1,10 +1,10 @@
 export interface IssueSummaryJson {
 
-    id: string;
+    id: any;
 
     title: string;
 
-    creator: string;
+    creator: any;
 
     modifiedTime: string;
 }
