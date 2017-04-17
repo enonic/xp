@@ -1,0 +1,64 @@
+.issue-list-dialog {
+
+  .docked-panel {
+    width: auto;
+    box-shadow: none;
+    position: inherit !important;
+    margin-top: 15px;
+
+    .deck-panel {
+      margin-top: 12px;
+    }
+  }
+
+  .panel {
+    position: inherit;
+
+    .issue-list-item {
+
+      &:hover {
+        background-color: @admin-bg-light-gray;
+      }
+
+      &:focus {
+        outline: none;
+      }
+
+      padding: 5px;
+      display: flex;
+
+      .names-and-icon-view {
+        flex: 1 auto;
+      }
+
+      button {
+        border-radius: 20px;
+        width: 100px;
+        text-align: center;
+        background: @admin-green;
+
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+
+    .no-issues-message {
+      .watermark-text(21px, true);
+
+      top: 65%;
+    }
+  }
+}
+
+.browse-toolbar {
+  .show-issues-dialog-button {
+    margin-bottom: 1px;
+
+    &:before {
+      font-size: 20px;
+    }
+
+    .icon-signup();
+  }
+}
