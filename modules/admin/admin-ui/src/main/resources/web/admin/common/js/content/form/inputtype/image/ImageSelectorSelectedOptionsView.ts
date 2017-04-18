@@ -11,6 +11,7 @@ module api.content.form.inputtype.image {
     import LoadMask = api.ui.mask.LoadMask;
     import Tooltip = api.ui.Tooltip;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
+    import Promise = Q.Promise;
 
     export class ImageSelectorSelectedOptionsView extends api.ui.selector.combobox.BaseSelectedOptionsView<ImageSelectorDisplayValue> {
 
@@ -49,7 +50,9 @@ module api.content.form.inputtype.image {
             this.toolbar.onRemoveClicked(() => {
                 this.removeSelectedOptions(this.selection);
             });
-            this.appendChild(this.toolbar);
+            this.onRendered(() => {
+                this.toolbar.insertAfterEl(this);
+            });
         }
 
         private addOptionMovedEventHandler() {
@@ -124,8 +127,7 @@ module api.content.form.inputtype.image {
                 this.handleOptionViewRendered(selectedOption, optionView);
                 optionView.setOption(option);
             });
-
-            optionView.insertBeforeEl(this.toolbar);
+            this.appendChild(optionView);
 
             if (!silent) {
                 this.notifyOptionSelected(new SelectedOptionEvent(selectedOption, keyCode));
