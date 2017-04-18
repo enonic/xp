@@ -108,7 +108,7 @@ final class PageHandlerWorker
         final Trace trace = Tracer.current();
         if ( trace != null )
         {
-            trace.put( "path", effectiveContent.getPath().toString() );
+            trace.put( "contentPath", effectiveContent.getPath().toString() );
             trace.put( "type", "page" );
         }
         return renderer.render( effectiveContent, this.request );

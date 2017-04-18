@@ -129,7 +129,8 @@ final class ImageHandlerWorker
         final Trace trace = Tracer.current();
         if ( trace != null )
         {
-            trace.put( "path", imageContent.getPath() );
+            trace.put( "contentPath", imageContent.getPath() );
+            trace.put( "type", "image" );
         }
 
         return portalResponse.build();
