@@ -112,9 +112,6 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
     protected enableSelectionMode() {
         this.filterPanel.setSelectedItems(this.treeGrid.getSelectedDataList());
-        if (!this.filterPanelToBeShownFullScreen) {
-            this.showFilterPanel();
-        }
     }
 
     protected disableSelectionMode() {
