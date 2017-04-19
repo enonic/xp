@@ -13,21 +13,19 @@ import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.security.User;
 
 public class UpdateIssueCommand
+    extends AbstractIssueCommand
 {
-    private final NodeService nodeService;
-
     private final UpdateIssueParams params;
 
     private UpdateIssueCommand( Builder builder )
     {
+        super( builder );
         this.params = builder.params;
-        this.nodeService = builder.nodeService;
     }
 
     public Issue execute()
@@ -95,21 +93,14 @@ public class UpdateIssueCommand
     }
 
     static class Builder
+        extends AbstractIssueCommand.Builder<Builder>
     {
 
         private UpdateIssueParams params;
 
-        private NodeService nodeService;
-
         public Builder params( final UpdateIssueParams params )
         {
             this.params = params;
-            return this;
-        }
-
-        public Builder nodeService( final NodeService nodeService )
-        {
-            this.nodeService = nodeService;
             return this;
         }
 
