@@ -119,7 +119,7 @@ public final class ComponentInstruction
         final Trace trace = Tracer.newTrace( "renderComponent" );
         if ( trace != null )
         {
-            trace.put( "path", component.getPath() );
+            trace.put( "componentPath", component.getPath() );
             trace.put( "type", component.getType().toString() );
         }
 
