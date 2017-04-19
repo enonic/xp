@@ -49,7 +49,7 @@ public final class AppHandler
 
     public AppHandler()
     {
-        super( -40 );
+        super( 200 );
     }
 
     @Override
@@ -77,25 +77,24 @@ public final class AppHandler
             return response;
         }
 
-        return executeController( req, applicationKey );
+        final PortalRequest portalRequest = createRequest( req, applicationKey );
+        return handleRequest( portalRequest );
     }
 
-    private WebResponse executeController( final WebRequest req, final ApplicationKey applicationKey )
+    private WebResponse handleRequest( final PortalRequest req )
         throws Exception
     {
-        final PortalRequest portalRequest = createRequest( req, applicationKey );
-
         try
         {
-            PortalRequestAccessor.set( portalRequest.getRawRequest(), portalRequest );
+            PortalRequestAccessor.set( req.getRawRequest(), req );
 
-            final WebResponse returnedWebResponse = doHandle( portalRequest );
+            final WebResponse returnedWebResponse = executeController( req );
             exceptionMapper.throwIfNeeded( returnedWebResponse );
             return returnedWebResponse;
         }
         catch ( Exception e )
         {
-            return handleError( portalRequest, e );
+            return handleError( req, e );
         }
     }
 
@@ -109,7 +108,7 @@ public final class AppHandler
         return portalRequest;
     }
 
-    private PortalResponse doHandle( final PortalRequest req )
+    private PortalResponse executeController( final PortalRequest req )
         throws Exception
     {
         final ControllerScript script = getScript( req.getApplicationKey() );
@@ -141,7 +140,6 @@ public final class AppHandler
         final WebException webException = exceptionMapper.map( e );
         final WebResponse webResponse = exceptionRenderer.render( webRequest, webException );
         webRequest.getRawRequest().setAttribute( "error.handled", Boolean.TRUE );
-
         return webResponse;
     }
 
