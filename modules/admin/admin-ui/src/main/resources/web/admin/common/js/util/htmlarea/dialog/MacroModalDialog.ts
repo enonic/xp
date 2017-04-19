@@ -7,6 +7,7 @@ module api.util.htmlarea.dialog {
     import FormContext = api.form.FormContext;
     import ApplicationKey = api.application.ApplicationKey;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
+    import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 
     export class MacroModalDialog extends ModalDialog {
 
@@ -23,6 +24,22 @@ module api.util.htmlarea.dialog {
 
             this.macroSelector.getLoader().setApplicationKeys(applicationKeys);
             this.macroDockedPanel.setContent(content);
+
+            let onResize = api.util.AppHelper.debounce(() => {
+                let formView = this.macroDockedPanel.getConfigForm();
+
+                if (!formView) {
+                    return;
+                }
+
+                let dialogHeight = this.getEl().getHeight();
+                if (dialogHeight >= (wemjq('body').height() - 100)) {
+                    formView.getEl().setHeightPx(0.5 * dialogHeight);
+                    this.centerMyself();
+                }
+            }, 500, true);
+
+            ResponsiveManager.onAvailableSizeChanged(this, onResize);
         }
 
         protected layout() {
