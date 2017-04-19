@@ -51,10 +51,12 @@ button.icon-toolbar-settings {
     order: 1;
 
     display: block;
-    background-color: transparent;
+    position: relative;
+    padding: 9px 12px 7px 12px;
     border: 0px transparent;
     border-bottom: 1px transparent;
-    position: relative;
+    line-height: 22px;
+    background-color: transparent;
 
     @media screen and (max-width: 540px) {
       display: none !important;
@@ -95,20 +97,9 @@ button.icon-toolbar-settings {
       }
     }
 
-    &:not(.expanded) {
-      padding: 9px 12px 7px 12px;
-    }
-
     &.expanded {
 
-      .icon-close2();
-      &:before {
-        font-size: 21px;
-      }
-
       z-index: 3;
-      padding: 10px;
-      padding-left: 9px;
       height: 40px;
 
       &.floating-mode {
@@ -157,6 +148,11 @@ button.icon-toolbar-settings {
         position: fixed;
         right: 0px;
         top: @app-header-height;
+        background: @admin-white;
+
+        &::before {
+          color: @admin-button-blue1;
+        }
       }
     }
 

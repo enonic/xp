@@ -48,11 +48,10 @@ export class DetailsView extends api.dom.DivEl {
         this.appendChild(this.loadMask = new api.ui.mask.LoadMask(this));
         this.loadMask.addClass('details-panel-mask');
 
-        this.initViewer();
-        this.initDefaultWidgetView();
         this.initCommonWidgetViews();
         this.initDivForNoSelection();
         this.initWidgetsSelectionRow();
+        this.initViewer();
 
         this.appendChild(this.detailsContainer);
         this.appendChild(this.divForNoSelection);
@@ -196,18 +195,9 @@ export class DetailsView extends api.dom.DivEl {
     }
 
     activateDefaultWidget() {
-        let defaultWidget = this.getDefaultWidget();
-        if (defaultWidget) {
-            defaultWidget.setActive();
+        if (this.defaultWidgetView) {
+            this.defaultWidgetView.setActive();
         }
-    }
-
-    isDefaultWidget(widgetView: WidgetView): boolean {
-        return widgetView === this.defaultWidgetView;
-    }
-
-    getDefaultWidget(): WidgetView {
-        return this.defaultWidgetView;
     }
 
     private initViewer() {
@@ -273,31 +263,27 @@ export class DetailsView extends api.dom.DivEl {
         this.loadMask.hide();
     }
 
-    private initDefaultWidgetView() {
-        let builder = WidgetView.create()
-            .setName('Info')
-            .setDetailsView(this)
+    private initCommonWidgetViews() {
+
+        this.defaultWidgetView = WidgetView.create().setName('Details').setDetailsView(this)
             .setWidgetItemViews([
                 new StatusWidgetItemView(),
                 new UserAccessWidgetItemView(),
                 new PropertiesWidgetItemView(),
                 new AttachmentsWidgetItemView()
-            ]);
+            ]).build();
 
-        this.detailsContainer.appendChild(this.activeWidget = this.defaultWidgetView = builder.build());
-    }
-
-    private initCommonWidgetViews() {
-
-        let versionsWidgetView = WidgetView.create().setName('Version history').setDetailsView(this)
+        const versionsWidgetView = WidgetView.create().setName('Version history').setDetailsView(this)
             .addWidgetItemView(new VersionsWidgetItemView()).build();
 
-        let dependenciesWidgetView = WidgetView.create().setName('Dependencies').setDetailsView(this)
+        const dependenciesWidgetView = WidgetView.create().setName('Dependencies').setDetailsView(this)
             .addWidgetItemView(new DependenciesWidgetItemView()).build();
 
         dependenciesWidgetView.addClass('dependency-widget');
 
-        this.addWidgets([versionsWidgetView, dependenciesWidgetView]);
+        this.addWidgets([this.defaultWidgetView, versionsWidgetView, dependenciesWidgetView]);
+
+        this.activeWidget = this.defaultWidgetView;
     }
 
     private fetchCustomWidgetViews(): wemQ.Promise<Widget[]> {

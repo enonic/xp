@@ -1,4 +1,4 @@
-@widget-selector-height: 35px;
+@widget-selector-height: 40px;
 
 .details-panel {
   // common details panel styles
@@ -84,58 +84,14 @@
     background-color: @admin-white;
     height: @widget-selector-height;
 
-    .info-widget-toggle-button {
-      cursor: pointer;
-      display: inline-block;
-      font-size: 16px;
-      float: left;
-      padding: 10px 11px 9px 11px;
-      border-right: 1px solid #cccccc;
-      border-left: 1px solid #cccccc;
-      box-sizing: border-box;
-      height: @widget-selector-height;
-
-      .icon-list();
-
-      &:hover:not(.active) {
-        background-color: @admin-bg-light-gray;
-      }
-
-      &.active {
-        background-color: @admin-blue;
-        &:before {
-          color: @admin-white;
-        }
-      }
-    }
-
     .widget-selector {
 
-      width: calc(~'100% - 2px');
-      border: 1px solid #cccccc;
-      border-left: 0px;
+      height: @widget-selector-height;
+      border-bottom: 1px solid #cccccc;
       max-width: none;
 
-      input {
-        cursor: pointer;
-      }
-
-      &.non-default-selected {
-        .selected-option {
-          background-color: @admin-blue;
-          color: @admin-white;
-          &:hover {
-            background-color: @admin-blue;
-          }
-        }
-
-        .@{_COMMON_PREFIX}dropdown-handle {
-          background-color: @admin-white;
-
-          &:hover {
-            background-color: @admin-bg-light-gray;
-          }
-        }
+      .option-filter-input {
+        height: @widget-selector-height + 2px;
       }
 
       &.single-optioned {
@@ -148,10 +104,14 @@
       }
 
       .@{_COMMON_PREFIX}dropdown-handle {
-        border-left: 1px solid #cccccc;
-        border-right: 1px solid #cccccc;
+        box-sizing: border-box;
+        width: 40px;
+        left: 0;
+        right: initial;
+        border-left: 1px solid @admin-medium-gray-border;
+        border-right: 1px solid @admin-medium-gray-border;
         max-height: @widget-selector-height;
-        width: 38px;
+        background: @admin-white;
 
         &:after {
           margin: -5px 0 0 -5px;
@@ -160,18 +120,14 @@
 
       .selected-option {
         background: none;
-        width: calc(~'100% - 40px');
         max-height: @widget-selector-height;
         display: inline-block !important;
         border: 0px;
-        position: absolute;
-
-        &:hover {
-          background-color: @admin-bg-light-gray;
-        }
 
         .option-value {
-          margin: 0px 37px 0px 0px;
+          margin: 0 0 0 40px;
+          width: calc(~'100% - ' 81px);
+          border-right: 1px solid @admin-medium-gray-border;
 
           .viewer {
             line-height: @widget-selector-height;
@@ -182,7 +138,7 @@
       .viewer {
         font-size: 14px;
         text-align: center;
-        cursor: pointer;
+        cursor: default;
       }
 
       .options-container {
