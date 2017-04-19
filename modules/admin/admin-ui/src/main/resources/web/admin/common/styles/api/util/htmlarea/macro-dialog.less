@@ -38,6 +38,15 @@
 
   &.shows-preview {
 
+    .dialog-content {
+      overflow-y: auto;
+
+      .form-view .input-view:last-child {
+        margin-bottom: 15px;
+      }
+
+    }
+
     .dialog-content > .docked-panel {
       display: block;
 
@@ -64,6 +73,19 @@
 
   .form-view {
     .input-view {
+
+      .input-type-view {
+        display: inline-block;
+
+        &.html-area .input-wrapper>div {
+          width: 100%;
+        }
+
+        .selected-options {
+          margin: 0 5px;
+        }
+      }
+
       .@{_COMMON_PREFIX}combobox, .content-combo-box {
         .options-container {
           position: absolute !important;

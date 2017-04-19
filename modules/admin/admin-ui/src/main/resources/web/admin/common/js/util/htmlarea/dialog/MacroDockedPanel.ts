@@ -156,6 +156,10 @@ module api.util.htmlarea.dialog {
             return previewFrame;
         }
 
+        public getConfigForm(): FormView {
+            return <FormView>(this.configPanel.getFirstChild());
+        }
+
         public validateMacroForm(): boolean {
             let isValid = true;
             let form = <FormView>(this.configPanel.getFirstChild());
