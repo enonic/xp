@@ -6,19 +6,18 @@ import com.enonic.xp.issue.IssueNotFoundException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
-import com.enonic.xp.node.NodeService;
 import com.enonic.xp.util.Exceptions;
 
 public class GetIssueByIdCommand
+    extends AbstractIssueCommand
 {
-    private final NodeService nodeService;
 
     private final IssueId issueId;
 
     private GetIssueByIdCommand( Builder builder )
     {
+        super( builder );
         this.issueId = builder.issueId;
-        this.nodeService = builder.nodeService;
     }
 
     public Issue execute()
@@ -46,11 +45,10 @@ public class GetIssueByIdCommand
     }
 
     static class Builder
+        extends AbstractIssueCommand.Builder<Builder>
     {
 
         private IssueId issueId;
-
-        private NodeService nodeService;
 
         private Builder()
         {
@@ -59,12 +57,6 @@ public class GetIssueByIdCommand
         public Builder issueId( final IssueId issueId )
         {
             this.issueId = issueId;
-            return this;
-        }
-
-        public Builder nodeService( final NodeService nodeService )
-        {
-            this.nodeService = nodeService;
             return this;
         }
 

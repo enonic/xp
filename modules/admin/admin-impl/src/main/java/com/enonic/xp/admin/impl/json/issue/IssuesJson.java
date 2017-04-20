@@ -15,11 +15,20 @@ public class IssuesJson
         this.issues = new ArrayList<>();
     }
 
+    public IssuesJson( final List<Issue> issues )
+    {
+        this.issues = issues;
+    }
+
     public void addIssue( Issue issue )
     {
         this.issues.add( issue );
     }
 
+    public void addIssues( List<Issue> issues )
+    {
+        this.issues.addAll( issues );
+    }
     public List<Issue> getIssues()
     {
         return issues;

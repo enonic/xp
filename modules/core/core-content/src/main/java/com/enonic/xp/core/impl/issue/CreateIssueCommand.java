@@ -13,7 +13,6 @@ import com.enonic.xp.issue.IssueConstants;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.security.User;
 
@@ -22,15 +21,14 @@ import static com.enonic.xp.issue.IssuePropertyNames.CREATOR;
 import static com.enonic.xp.issue.IssuePropertyNames.MODIFIED_TIME;
 
 public class CreateIssueCommand
+    extends AbstractIssueCommand
 {
-    private final NodeService nodeService;
-
     private final CreateIssueParams params;
 
     private CreateIssueCommand( Builder builder )
     {
+        super( builder );
         this.params = builder.params;
-        this.nodeService = builder.nodeService;
     }
 
     public Issue execute()
@@ -74,21 +72,14 @@ public class CreateIssueCommand
     }
 
     static class Builder
+        extends AbstractIssueCommand.Builder<Builder>
     {
 
         private CreateIssueParams params;
 
-        private NodeService nodeService;
-
         public Builder params( final CreateIssueParams params )
         {
             this.params = params;
-            return this;
-        }
-
-        public Builder nodeService( final NodeService nodeService )
-        {
-            this.nodeService = nodeService;
             return this;
         }
 

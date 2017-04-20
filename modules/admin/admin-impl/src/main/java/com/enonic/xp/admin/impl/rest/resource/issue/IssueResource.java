@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
 import java.time.Instant;
+import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
@@ -20,12 +21,17 @@ import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.GetIssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueJson;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueId;
+import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.IssueService;
+import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "issue")
@@ -77,18 +83,38 @@ public final class IssueResource
     @Path("bytype")
     public IssuesJson getIssuesByType( @QueryParam("type") final String type )
     {
-        final IssuesJson result = new IssuesJson();
-        if ( type.equals( "CLOSED" ) || type.endsWith( "ASSIGNED_TO_ME" ) )
+        final List<Issue> issues = this.issueService.findIssues( createIssuesByTypeQuery( type ) );
+
+        return new IssuesJson( issues );
+    }
+
+    private IssueQuery createIssuesByTypeQuery( final String type )
+    {
+        final IssueQuery.Builder builder = IssueQuery.create();
+
+        if ( type.equalsIgnoreCase( "CLOSED" ) )
         {
-            return result;
+            return builder.status( IssueStatus.Closed ).build();
         }
 
-        result.addIssue( createMockIssue( "New messaging on the front page", PrincipalKey.ofAnonymous(), Instant.now() ) );
-        result.addIssue( createMockIssue( "Removing the old product", PrincipalKey.ofAnonymous(), Instant.now() ) );
-        result.addIssue( createMockIssue( "More pictures", PrincipalKey.ofAnonymous(), Instant.now() ) );
-        result.addIssue( createMockIssue( "Adding header and footer to the site", PrincipalKey.ofAnonymous(), Instant.now() ) );
+        if ( type.equalsIgnoreCase( "OPEN" ) )
+        {
+            return builder.status( IssueStatus.Open ).build();
+        }
 
-        return result;
+        if ( type.equalsIgnoreCase( "CREATED_BY_ME" ) )
+        {
+            final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+            return builder.creator( authInfo.getUser().getKey() ).build();
+        }
+
+        if ( type.equalsIgnoreCase( "ASSIGNED_TO_ME" ) )
+        {
+            final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+            return builder.approvers( PrincipalKeys.from( authInfo.getUser().getKey() ) ).build();
+        }
+
+        return builder.build();
     }
 
     private Issue createMockIssue( final String title, final PrincipalKey creator, final Instant modifiedTime )
