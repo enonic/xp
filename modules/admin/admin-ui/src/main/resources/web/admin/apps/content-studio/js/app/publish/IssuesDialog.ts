@@ -65,6 +65,7 @@ export class IssuesDialog extends ModalDialog {
                         const issueList: IssueList = new IssueList();
                         issueList.addItems(issues);
                         panel.appendChild(issueList);
+                        this.centerMyself();
                     } else {
                         panel.appendChild(new PEl('no-issues-message').setHtml('No issues found'));
                     }
