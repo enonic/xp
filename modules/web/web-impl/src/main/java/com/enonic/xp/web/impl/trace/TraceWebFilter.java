@@ -22,7 +22,7 @@ public final class TraceWebFilter
     @Override
     protected boolean canHandle( final WebRequest req )
     {
-        return req.getPath().startsWith( "/portal/" ) || req.getPath().startsWith( "/admin/portal/" );
+        return req.getRawPath().startsWith( "/portal/" ) || req.getRawPath().startsWith( "/admin/portal/" );
     }
 
     @Override
