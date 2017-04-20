@@ -93,10 +93,6 @@ public class ContentIndexConfigFactoryTest
         final Form form = Form.create().
             addFormItem( myOuterSet ).build();
 
-        System.out.println( form );
-
-        System.out.println( htmlInput1.getPath() );
-
         final ContentType contentType =
             ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test" ).form( form ).build();
         Mockito.when( contentTypeService.getByName( Mockito.any() ) ).thenReturn( contentType );
