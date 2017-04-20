@@ -508,6 +508,7 @@ module api.ui.grid {
             this.slickGrid.onSelectedRowsChanged.subscribe((e, args) => {
                 if (this.debounceSelectionChange) {
                     debouncedCallback(e, args);
+                    this.debounceSelectionChange = false;
                 } else {
                     callback(e, args);
                 }

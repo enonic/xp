@@ -1068,11 +1068,15 @@ module api.ui.treegrid {
         }
 
         getSelectedDataList(): DATA[] {
-            return this.highlightedNode ?
-                [this.highlightedNode.getData()] :
-                   this.root.getFullSelection().map((node: TreeNode<DATA>) => {
-                       return node.getData();
-                   });
+            let selectedItems = this.root.getFullSelection();
+
+            if (!!this.highlightedNode && selectedItems.length <= 1) {
+                return [this.highlightedNode.getData()];
+            }
+
+            return selectedItems.map((node: TreeNode<DATA>) => {
+                return node.getData();
+            });
         }
 
         // Hard reset

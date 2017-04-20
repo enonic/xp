@@ -17,29 +17,36 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
     private destinationSearchInput: ContentMoveComboBox;
 
-    private movedContentSummaries: api.content.ContentSummary[];
+    private movedContentSummaries: api.content.ContentSummary[] = [];
 
     private contentPathSubHeader: api.dom.H6El;
 
     private rootNode: TreeNode<api.content.ContentSummaryAndCompareStatus>;
 
+    private descriptionHeader: api.dom.H6El;
+
     constructor() {
-        super('Move item with children');
+        super('');
 
         this.addClass('move-content-dialog');
 
         this.contentPathSubHeader = new api.dom.H6El().addClass('content-path');
-        let descMessage = new api.dom.H6El().addClass('desc-message').setHtml(
-            'Moves selected items with all children and current permissions to selected destination');
+        this.descriptionHeader = new api.dom.H6El().addClass('desc-message');
         this.initSearchInput();
         this.initMoveAction();
 
         this.listenOpenMoveDialogEvent();
 
         this.appendChildToContentPanel(this.contentPathSubHeader);
-        this.appendChildToContentPanel(descMessage);
+        this.appendChildToContentPanel(this.descriptionHeader);
         this.appendChildToContentPanel(this.destinationSearchInput);
         this.addCancelButtonToBottom();
+    }
+
+    private updateHeaderAndDescription() {
+        this.setTitle(`Move ${this.movedContentSummaries.length > 1 ? 'items' : 'item'} with children`);
+        this.descriptionHeader.setHtml(`Moves selected ${this.movedContentSummaries.length > 1 ? 'items' : 'item'}
+                                            with all children and current permissions to selected destination`);
     }
 
     private listenOpenMoveDialogEvent() {
@@ -48,6 +55,8 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
             this.movedContentSummaries = event.getContentSummaries();
             this.destinationSearchInput.clearCombobox();
             this.rootNode = event.getRootNode();
+
+            this.updateHeaderAndDescription();
 
             const contents = event.getContentSummaries();
 
