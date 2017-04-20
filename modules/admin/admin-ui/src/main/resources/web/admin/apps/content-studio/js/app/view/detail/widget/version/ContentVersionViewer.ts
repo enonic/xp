@@ -74,11 +74,14 @@ export class ContentVersionViewer extends api.ui.Viewer<api.content.ContentVersi
         return elements;
     }
 
-    setObject(contentVersion: api.content.ContentVersion, row?: number) {
+    private resolveDisplayName(contentVersion: api.content.ContentVersion) {
+        return contentVersion.modifierDisplayName || '<Unnamed User>';
+    }
 
+    setObject(contentVersion: api.content.ContentVersion, row?: number) {
         //TODO: use content version image and number instead of row
         this.namesAndIconView
-            .setMainName(contentVersion.modifierDisplayName)
+            .setMainName(this.resolveDisplayName(contentVersion))
             .setSubNameElements(this.getSubNameElements(contentVersion))
             .setIconClass('icon-user');
 
