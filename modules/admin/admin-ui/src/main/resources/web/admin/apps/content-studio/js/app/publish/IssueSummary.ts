@@ -57,7 +57,7 @@ export class IssueSummaryBuilder {
     fromIssueSummaryJson(json: IssueSummaryJson): IssueSummaryBuilder {
         this.id = json.id;
         this.title = json.title;
-        this.creator = json.creator;
+        this.creator = json.creator.id;
         this.modifiedTime = json.modifiedTime ? new Date(Date.parse(json.modifiedTime)) : null;
 
         return this;

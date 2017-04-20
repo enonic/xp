@@ -11,6 +11,7 @@ import Panel = api.ui.panel.Panel;
 import TabBarItem = api.ui.tab.TabBarItem;
 import LoadMask = api.ui.mask.LoadMask;
 import PEl = api.dom.PEl;
+import SpanEl = api.dom.SpanEl;
 
 export class IssuesDialog extends ModalDialog {
 
@@ -33,6 +34,7 @@ export class IssuesDialog extends ModalDialog {
     doRender(): Q.Promise<boolean> {
         return super.doRender().then((rendered: boolean) => {
             this.appendChildToContentPanel(this.dockedPanel = this.createDockedPanel());
+            this.appendChildToContentPanel(new SpanEl().addClass('new-issue-button'));
             return rendered;
         });
     }
