@@ -10,9 +10,9 @@ import com.google.common.base.Preconditions;
 @Beta
 public class NodeId
 {
-    private final String value;
+    public static final String VALID_NODE_ID_PATTERN = "([a-z0-9A-Z_\\-\\.:]*)";
 
-    private static final String VALID_NODE_ID_PATTERN = "([a-z0-9A-Z_\\-\\.:])*";
+    private final String value;
 
     public NodeId()
     {
@@ -26,6 +26,17 @@ public class NodeId
         Preconditions.checkArgument( value.matches( "^" + VALID_NODE_ID_PATTERN + "$" ), "NodeId format incorrect: " + value );
 
         this.value = value;
+    }
+
+    public static NodeId from( String string )
+    {
+        return new NodeId( string );
+    }
+
+    public static NodeId from( Object object )
+    {
+        Preconditions.checkNotNull( object, "object cannot be null" );
+        return new NodeId( object.toString() );
     }
 
     @Override
@@ -54,16 +65,5 @@ public class NodeId
     public String toString()
     {
         return value;
-    }
-
-    public static NodeId from( String string )
-    {
-        return new NodeId( string );
-    }
-
-    public static NodeId from( Object object )
-    {
-        Preconditions.checkNotNull( object, "object cannot be null" );
-        return new NodeId( object.toString() );
     }
 }
