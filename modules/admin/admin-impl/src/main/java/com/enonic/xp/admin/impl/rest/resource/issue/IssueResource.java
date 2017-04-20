@@ -1,6 +1,5 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
-import java.time.Instant;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
@@ -28,7 +27,6 @@ import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.IssueService;
 import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.jaxrs.JaxRsComponent;
-import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -115,11 +113,6 @@ public final class IssueResource
         }
 
         return builder.build();
-    }
-
-    private Issue createMockIssue( final String title, final PrincipalKey creator, final Instant modifiedTime )
-    {
-        return Issue.create().title( title ).creator( creator ).modifiedTime( modifiedTime ).build();
     }
 
     @Reference

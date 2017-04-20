@@ -7,14 +7,15 @@
     margin-top: 15px;
 
     .deck-panel {
-      margin-top: 12px;
-      max-height: 200px;
+      margin-top: 6px;
+      max-height: 215px;
       overflow: auto;
     }
   }
 
   .panel {
     position: inherit;
+    cursor: pointer;
 
     .issue-list-item {
 
@@ -27,28 +28,29 @@
       }
 
       padding: 5px;
-      display: flex;
 
-      .names-and-icon-view {
-        flex: 1 auto;
+      .@{_COMMON_PREFIX}names-view .@{_COMMON_PREFIX}main-name, .@{_COMMON_PREFIX}sub-name {
+        &:hover {
+          cursor: pointer;
+        }
       }
 
-      button {
-        border-radius: 20px;
-        width: 100px;
-        text-align: center;
-        background: @admin-green;
-
-        &:focus {
-          outline: none;
-        }
+      .@{_COMMON_PREFIX}main-name {
+        height: 17px;
+        font-weight: bold;
       }
     }
 
     .no-issues-message {
-      .watermark-text(21px, true);
+      .watermark-text(18px, true);
 
       top: 65%;
+      left: 3%;
+    }
+
+    &.OPEN .creator {
+      color: @admin-black;
+      font-weight: bold;
     }
   }
 

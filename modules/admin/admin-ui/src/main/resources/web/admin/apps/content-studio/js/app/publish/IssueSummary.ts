@@ -9,6 +9,8 @@ export class IssueSummary {
 
     private creator: string;
 
+    private description: string;
+
     private modifiedTime: Date;
 
     constructor(builder: IssueSummaryBuilder) {
@@ -16,6 +18,7 @@ export class IssueSummary {
         this.title = builder.title;
         this.creator = builder.creator;
         this.modifiedTime = builder.modifiedTime;
+        this.description = builder.description;
     }
 
     static fromJson(json: IssueSummaryJson): IssueSummary {
@@ -42,6 +45,10 @@ export class IssueSummary {
         return this.modifiedTime;
     }
 
+    getDescription(): string {
+        return this.description;
+    }
+
 }
 
 export class IssueSummaryBuilder {
@@ -54,11 +61,14 @@ export class IssueSummaryBuilder {
 
     modifiedTime: Date;
 
+    description: string;
+
     fromIssueSummaryJson(json: IssueSummaryJson): IssueSummaryBuilder {
         this.id = json.id;
         this.title = json.title;
-        this.creator = json.creator.id;
+        this.creator = json.creator;
         this.modifiedTime = json.modifiedTime ? new Date(Date.parse(json.modifiedTime)) : null;
+        this.description = json.description;
 
         return this;
     }
@@ -80,6 +90,11 @@ export class IssueSummaryBuilder {
 
     setModifiedTime(modifiedTime: Date): IssueSummaryBuilder {
         this.modifiedTime = modifiedTime;
+        return this;
+    }
+
+    setDescription(description: string): IssueSummaryBuilder {
+        this.description = description;
         return this;
     }
 

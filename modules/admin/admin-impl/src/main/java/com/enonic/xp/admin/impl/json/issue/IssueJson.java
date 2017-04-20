@@ -66,7 +66,7 @@ public class IssueJson
 
     public String getModifier()
     {
-        return this.issue.getModifier().toString();
+        return this.issue.getModifier() != null ? this.issue.getModifier().toString() : null;
     }
 
     public List<String> getApproverIds()
@@ -78,6 +78,6 @@ public class IssueJson
 
     public PublishRequestJson getPublishRequest()
     {
-        return PublishRequestJson.from( this.issue.getPublishRequest());
+        return this.issue.getPublishRequest() != null ? PublishRequestJson.from( this.issue.getPublishRequest() ) : null;
     }
 }

@@ -7,4 +7,6 @@ export interface IssueSummaryJson {
     creator: any;
 
     modifiedTime: string;
+
+    description: string;
 }
