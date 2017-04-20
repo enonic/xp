@@ -12,6 +12,7 @@ import TabBarItem = api.ui.tab.TabBarItem;
 import LoadMask = api.ui.mask.LoadMask;
 import PEl = api.dom.PEl;
 import SpanEl = api.dom.SpanEl;
+import Element = api.dom.Element;
 
 export class IssuesDialog extends ModalDialog {
 
@@ -25,7 +26,7 @@ export class IssuesDialog extends ModalDialog {
     private loadMask: LoadMask;
 
     constructor() {
-        super('Issues');
+        super('Publishing Issues');
         this.addClass('issue-list-dialog');
         this.loadMask = new LoadMask(this.getContentPanel());
         api.dom.Body.get().appendChild(this);
@@ -34,7 +35,7 @@ export class IssuesDialog extends ModalDialog {
     doRender(): Q.Promise<boolean> {
         return super.doRender().then((rendered: boolean) => {
             this.appendChildToContentPanel(this.dockedPanel = this.createDockedPanel());
-            this.appendChildToContentPanel(new SpanEl().addClass('new-issue-button'));
+            this.appendChildToContentPanel(this.createNewIssueButton());
             return rendered;
         });
     }
@@ -50,7 +51,7 @@ export class IssuesDialog extends ModalDialog {
     }
 
     private createIssuePanel(issueType: IssueType): Panel {
-        const panel: Panel = new Panel();
+        const panel: Panel = new Panel(IssueType[issueType]);
 
         panel.onShown(() => {
             const panelHasChildren = panel.getChildren().length > 0;
@@ -129,5 +130,11 @@ export class IssuesDialog extends ModalDialog {
         this.createdByMeIssuesPanel.removeChildren();
         this.openIssuesPanel.removeChildren();
         this.closedIssuesPanel.removeChildren();
+    }
+
+    private createNewIssueButton(): Element {
+        const newIssueButton: SpanEl = new SpanEl().addClass('new-issue-button');
+        newIssueButton.getEl().setTitle('Create an issue');
+        return newIssueButton;
     }
 }

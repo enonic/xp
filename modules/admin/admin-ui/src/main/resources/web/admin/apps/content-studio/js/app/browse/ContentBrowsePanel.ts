@@ -140,8 +140,10 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
             this.subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager, contentPublishMenuButton);
 
-            //this.browseToolbar.addAction(new ShowIssuesDialogAction());
-            this.browseToolbar.appendChild(new ActionButton(new ShowIssuesDialogAction()).addClass('show-issues-dialog-button'));
+            const showIssuesDialogButton: ActionButton = new ActionButton(new ShowIssuesDialogAction());
+            showIssuesDialogButton.addClass('show-issues-dialog-button');
+            showIssuesDialogButton.getEl().setTitle('Publishing Issues');
+            this.browseToolbar.appendChild(showIssuesDialogButton);
 
             return rendered;
         }).catch((error) => {
