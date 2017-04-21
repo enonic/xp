@@ -353,7 +353,9 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                 this.invalidate();
             }
 
-            api.notify.showFeedback(data.getContentSummary().getType().toString() + " \"" + item.getName() + "\" created successfully");
+            api.notify.showFeedback(
+                data.getContentSummary().getType().toString() + " \"" + item.getName().substr(0, item.getName().lastIndexOf(".")) +
+                "\" created successfully");
         });
         item.onFailed(() => {
             this.deleteNode(data);
