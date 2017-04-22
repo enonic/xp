@@ -61,6 +61,11 @@ public final class ValueExpr
         return new ValueExpr( ValueFactory.newGeoPoint( ValueTypes.GEO_POINT.convert( value ) ) );
     }
 
+    public static ValueExpr fromBoolean( final Boolean value )
+    {
+        return new ValueExpr( ValueFactory.newBoolean( value ) );
+    }
+
     public Value getValue()
     {
         return this.value;

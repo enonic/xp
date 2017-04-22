@@ -4,13 +4,18 @@ import java.util.stream.Collectors;
 
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentIndexPath;
+import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.FindContentByQueryParams;
 import com.enonic.xp.content.FindContentByQueryResult;
-import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.query.expr.CompareExpr;
+import com.enonic.xp.query.expr.FieldExpr;
+import com.enonic.xp.query.expr.LogicalExpr;
+import com.enonic.xp.query.expr.NotExpr;
+import com.enonic.xp.query.expr.QueryExpr;
+import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.filter.IdFilter;
-import com.enonic.xp.query.filter.ValueFilter;
 
 public class CheckContentsValidCommand
     extends AbstractContentCommand
@@ -31,11 +36,19 @@ public class CheckContentsValidCommand
             return ContentIds.empty();
         }
 
+        final LogicalExpr contentIsUnnamed = LogicalExpr.
+            or( new NotExpr( CompareExpr.
+                    like( FieldExpr.from( ContentPropertyNames.DISPLAY_NAME ), ValueExpr.string( "*" ) ) ),
+                CompareExpr.like( FieldExpr.from( ContentPropertyNames.NAME ), ValueExpr.string( ContentName.UNNAMED_PREFIX + "*" ) ) );
+
+        final CompareExpr contentIsInvalid = CompareExpr.
+            eq( FieldExpr.from( ContentPropertyNames.VALID ), ValueExpr.fromBoolean( false ) );
+
+        final QueryExpr selectInvalidExpr = QueryExpr.from( LogicalExpr.
+            or( contentIsUnnamed, contentIsInvalid ) );
+
         final ContentQuery query = ContentQuery.create().
-            queryFilter( ValueFilter.create().
-                fieldName( ContentPropertyNames.VALID ).
-                addValue( ValueFactory.newBoolean( false ) ).
-                build() ).
+            queryExpr( selectInvalidExpr ).
             queryFilter( IdFilter.create().
                 fieldName( ContentIndexPath.ID.getPath() ).
                 values( contentIds.asStrings() ).

@@ -10,7 +10,7 @@ import com.enonic.xp.name.Name;
 public final class ContentName
     extends Name
 {
-    private final static String UNNAMED_PREFIX = "__unnamed__";
+    public final static String UNNAMED_PREFIX = "__unnamed__";
 
     private ContentName( final String name )
     {
