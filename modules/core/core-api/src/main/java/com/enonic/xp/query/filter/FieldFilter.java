@@ -6,7 +6,7 @@ import com.google.common.annotations.Beta;
 public abstract class FieldFilter
     extends Filter
 {
-    private final String fieldName;
+    protected final String fieldName;
 
     protected FieldFilter( final Builder builder )
     {
