@@ -62,6 +62,8 @@ public final class HttpRequestHandler
 
     private String authPassword;
 
+    private OkHttpClient client = new OkHttpClient();
+
     public ResponseMapper request()
         throws IOException
     {
@@ -72,12 +74,13 @@ public final class HttpRequestHandler
     private Response sendRequest( final Request request )
         throws IOException
     {
-        final OkHttpClient.Builder client = new OkHttpClient.Builder();
-        client.readTimeout( this.readTimeout, TimeUnit.MILLISECONDS );
-        client.connectTimeout( this.connectionTimeout, TimeUnit.MILLISECONDS );
-        setupProxy( client );
-        setupAuthentication( client );
-        return client.build().newCall( request ).execute();
+        final OkHttpClient.Builder clientBuilder = client.newBuilder();
+        clientBuilder.readTimeout( this.readTimeout, TimeUnit.MILLISECONDS );
+        clientBuilder.connectTimeout( this.connectionTimeout, TimeUnit.MILLISECONDS );
+        setupProxy( clientBuilder );
+        setupAuthentication( clientBuilder );
+
+        return clientBuilder.build().newCall( request ).execute();
     }
 
     private Request getRequest()
@@ -221,6 +224,18 @@ public final class HttpRequestHandler
         client.proxy( new Proxy( Proxy.Type.HTTP, new InetSocketAddress( proxyHost, proxyPort ) ) );
     }
 
+
+    private Proxy createProxy()
+    {
+        if ( proxyHost == null || proxyHost.trim().isEmpty() )
+        {
+            return null;
+        }
+        int proxyPort = this.proxyPort == null ? DEFAULT_PROXY_PORT : this.proxyPort;
+        return new Proxy( Proxy.Type.HTTP, new InetSocketAddress( proxyHost, proxyPort ) );
+    }
+
+
     private void setupAuthentication( final OkHttpClient.Builder client )
     {
         final String authUser = this.authUser;
@@ -233,7 +248,35 @@ public final class HttpRequestHandler
             return;
         }
 
-        Authenticator authenticator = new Authenticator()
+        Authenticator authenticator = createAuthenticator();
+
+        Authenticator proxyAuthenticator = createProxyAuthenticator();
+
+        client.authenticator( authenticator );
+        client.proxyAuthenticator( proxyAuthenticator );
+    }
+
+    private Authenticator createProxyAuthenticator()
+    {
+        return new Authenticator()
+        {
+            @Override
+            public Request authenticate( final Route route, final Response response )
+                throws IOException
+            {
+                if ( proxyUser == null || proxyUser.trim().isEmpty() )
+                {
+                    return null;
+                }
+                String credential = Credentials.basic( proxyUser, proxyPassword );
+                return response.request().newBuilder().header( "Proxy-Authorization", credential ).build();
+            }
+        };
+    }
+
+    private Authenticator createAuthenticator()
+    {
+        return new Authenticator()
         {
             @Override
             public Request authenticate( final Route route, final Response response )
@@ -251,24 +294,6 @@ public final class HttpRequestHandler
                 return response.request().newBuilder().header( "Authorization", credential ).build();
             }
         };
-
-        Authenticator proxyAuthenticator = new Authenticator()
-        {
-            @Override
-            public Request authenticate( final Route route, final Response response )
-                throws IOException
-            {
-                if ( proxyUser == null || proxyUser.trim().isEmpty() )
-                {
-                    return null;
-                }
-                String credential = Credentials.basic( proxyUser, proxyPassword );
-                return response.request().newBuilder().header( "Proxy-Authorization", credential ).build();
-            }
-        };
-
-        client.authenticator( authenticator );
-        client.proxyAuthenticator( proxyAuthenticator );
     }
 
 

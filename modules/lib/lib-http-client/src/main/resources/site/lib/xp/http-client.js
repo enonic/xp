@@ -1,3 +1,6 @@
+var bean = __.newBean('com.enonic.xp.lib.http.HttpRequestHandler');
+
+
 /**
  * HTTP Client related functions.
  *
@@ -56,8 +59,6 @@ function checkRequired(params, name) {
  * @return {Response} response HTTP response received.
  */
 exports.request = function (params) {
-
-    var bean = __.newBean('com.enonic.xp.lib.http.HttpRequestHandler');
 
     checkRequired(params, 'url');
 
