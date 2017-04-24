@@ -59,17 +59,19 @@
     .notSelectable();
   }
 
+  .default-widget .details-panel-label {
+    display: block;
+  }
+
   .details-panel-label {
+    display: none;
+    position: absolute;
+    top: 3px;
+    left: 45px;
+    width: calc(~'100% - 90px');
     background-color: @admin-bg-almost-white;
     line-height: 20px;
-    padding: 15px 0 0 10px;
-    display: block;
     font-size: 14px;
-    border-bottom: 1px transparent;
-
-    .@{_COMMON_PREFIX}sub-name, .@{_COMMON_PREFIX}main-name {
-      padding-right: 40px;
-    }
   }
 
   .label {

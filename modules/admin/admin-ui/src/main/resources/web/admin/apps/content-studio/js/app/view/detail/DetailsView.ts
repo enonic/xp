@@ -143,22 +143,15 @@ export class DetailsView extends api.dom.DivEl {
 
             updateView(isActive);
 
-        } else if (isUpdated) {
-            this.fetchWidgetByKey(key).then((widget: Widget) => {
-                widgetView = WidgetView.create().setName(widget.getDisplayName()).setDetailsView(this).setWidget(widget).build();
-                this.updateWidget(widgetView);
-
-                updateView();
-            });
-        } else { // newly installed
-            this.fetchWidgetByKey(key).then((widget: Widget) => {
-                widgetView = WidgetView.create().setName(widget.getDisplayName()).setDetailsView(this).setWidget(widget).build();
-                this.addWidget(widgetView);
-
-                updateView();
-            });
-
+            return;
         }
+
+        this.fetchWidgetByKey(key).then((widget: Widget) => {
+            widgetView = WidgetView.create().setName(widget.getDisplayName()).setDetailsView(this).setWidget(widget).build();
+            isUpdated ? this.updateWidget(widgetView) : this.addWidget(widgetView);
+
+            updateView();
+        });
     }
 
     getCustomWidgetViewsAndUpdateDropdown(): wemQ.Promise<void> {
@@ -166,7 +159,6 @@ export class DetailsView extends api.dom.DivEl {
         if (!this.alreadyFetchedCustomWidgets) {
             this.fetchAndInitCustomWidgetViews().then(() => {
                 this.widgetsSelectionRow.updateWidgetsDropdown(this.widgetViews);
-                // this.updateActiveWidget();
                 this.alreadyFetchedCustomWidgets = true;
                 deferred.resolve(null);
             });
@@ -183,7 +175,11 @@ export class DetailsView extends api.dom.DivEl {
 
         this.activeWidget = widgetView;
 
-        this.widgetsSelectionRow.updateState(this.activeWidget);
+        this.toggleClass('default-widget', this.defaultWidgetView.isActive());
+
+        if (this.widgetsSelectionRow) {
+            this.widgetsSelectionRow.updateState(this.activeWidget);
+        }
     }
 
     getActiveWidget(): WidgetView {
@@ -265,7 +261,7 @@ export class DetailsView extends api.dom.DivEl {
 
     private initCommonWidgetViews() {
 
-        this.defaultWidgetView = WidgetView.create().setName('Details').setDetailsView(this)
+        this.defaultWidgetView = WidgetView.create().setName('Details').setDetailsView(this).setIsDefault(true)
             .setWidgetItemViews([
                 new StatusWidgetItemView(),
                 new UserAccessWidgetItemView(),
@@ -283,7 +279,7 @@ export class DetailsView extends api.dom.DivEl {
 
         this.addWidgets([this.defaultWidgetView, versionsWidgetView, dependenciesWidgetView]);
 
-        this.activeWidget = this.defaultWidgetView;
+        this.setActiveWidget(this.defaultWidgetView);
     }
 
     private fetchCustomWidgetViews(): wemQ.Promise<Widget[]> {
@@ -377,9 +373,6 @@ export class DetailsView extends api.dom.DivEl {
     private layout(empty: boolean = true) {
         if (this.widgetsSelectionRow) {
             this.widgetsSelectionRow.setVisible(!empty);
-        }
-        if (this.viewer) {
-            this.viewer.setVisible(!empty);
         }
         this.detailsContainer.setVisible(!empty);
         this.toggleClass('no-selection', empty);
