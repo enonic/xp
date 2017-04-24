@@ -59,14 +59,14 @@
     .notSelectable();
   }
 
-  .default-widget .details-panel-label {
+  .default-widget .details-panel-label&:not(.no-selection) {
     display: block;
   }
 
   .details-panel-label {
     display: none;
     position: absolute;
-    top: 3px;
+    top: 4px;
     left: 45px;
     width: calc(~'100% - 90px');
     background-color: @admin-bg-almost-white;

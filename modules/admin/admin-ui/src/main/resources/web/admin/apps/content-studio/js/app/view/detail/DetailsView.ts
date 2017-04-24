@@ -261,7 +261,7 @@ export class DetailsView extends api.dom.DivEl {
 
     private initCommonWidgetViews() {
 
-        this.defaultWidgetView = WidgetView.create().setName('Details').setDetailsView(this).setIsDefault(true)
+        this.defaultWidgetView = WidgetView.create().setName('Details').setDetailsView(this)
             .setWidgetItemViews([
                 new StatusWidgetItemView(),
                 new UserAccessWidgetItemView(),
