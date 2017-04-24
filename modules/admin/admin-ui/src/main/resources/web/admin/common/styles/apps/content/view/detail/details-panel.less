@@ -18,8 +18,14 @@
     display: none;
   }
 
+  .details-view-container {
+    height: 100%;
+  }
+
   .details-panel-view {
     &.no-selection {
+      height: 100%;
+      background-color: @admin-white;
       .no-selection-message {
         display: block;
       }
@@ -59,7 +65,7 @@
     .notSelectable();
   }
 
-  .default-widget .details-panel-label&:not(.no-selection) {
+  .default-widget:not(.no-selection) .details-panel-label {
     display: block;
   }
 
@@ -105,8 +111,7 @@
       .@{_COMMON_PREFIX}dropdown-handle {
         box-sizing: border-box;
         width: 40px;
-        left: 0;
-        right: initial;
+        right: 0;
         border-left: 1px solid @admin-medium-gray-border;
         border-right: 1px solid @admin-medium-gray-border;
         max-height: @widget-selector-height;
@@ -127,6 +132,7 @@
           margin: 0 0 0 40px;
           width: calc(~'100% - ' 81px);
           border-right: 1px solid @admin-medium-gray-border;
+          border-left: 1px solid @admin-medium-gray-border;
 
           .viewer {
             line-height: @widget-selector-height;
