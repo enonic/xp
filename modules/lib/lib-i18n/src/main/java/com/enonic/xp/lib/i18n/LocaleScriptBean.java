@@ -2,7 +2,6 @@ package com.enonic.xp.lib.i18n;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.function.Supplier;
 
 import com.google.common.base.Strings;
@@ -15,6 +14,7 @@ import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
+import com.enonic.xp.script.serializer.MapSerializable;
 
 public final class LocaleScriptBean
     implements ScriptBean
@@ -26,9 +26,9 @@ public final class LocaleScriptBean
         return getMessageBundle( locale ).localize( key, toArray( values ) );
     }
 
-    public Map<String, String> getPhrases( final String locale )
+    public MapSerializable getPhrases( final String locale )
     {
-        return getMessageBundle( locale ).asMap();
+        return new MapMapper( getMessageBundle( locale ).asMap() );
     }
 
     private MessageBundle getMessageBundle( final String locale )
