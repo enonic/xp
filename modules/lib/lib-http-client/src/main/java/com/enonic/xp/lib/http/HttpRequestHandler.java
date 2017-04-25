@@ -19,11 +19,11 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.Route;
 import okhttp3.internal.http.HttpMethod;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 
+@SuppressWarnings("WeakerAccess")
 public final class HttpRequestHandler
 {
     private final static int DEFAULT_PROXY_PORT = 8080;
@@ -62,8 +62,9 @@ public final class HttpRequestHandler
 
     private String authPassword;
 
-    private OkHttpClient client = new OkHttpClient();
+    private final OkHttpClient client = new OkHttpClient();
 
+    @SuppressWarnings("unused")
     public ResponseMapper request()
         throws IOException
     {
@@ -182,25 +183,17 @@ public final class HttpRequestHandler
     private HttpUrl addParams( final HttpUrl url, final Map<String, Object> params )
     {
         HttpUrl.Builder urlBuilder = url.newBuilder();
-        for ( Map.Entry<String, Object> header : params.entrySet() )
-        {
-            if ( header.getValue() != null )
-            {
-                urlBuilder.addEncodedQueryParameter( header.getKey(), header.getValue().toString() );
-            }
-        }
+        params.entrySet().stream().
+            filter( header -> header.getValue() != null ).
+            forEach( header -> urlBuilder.addEncodedQueryParameter( header.getKey(), header.getValue().toString() ) );
         return urlBuilder.build();
     }
 
     private void addParams( final FormBody.Builder formBody, final Map<String, Object> params )
     {
-        for ( Map.Entry<String, Object> header : params.entrySet() )
-        {
-            if ( header.getValue() != null )
-            {
-                formBody.add( header.getKey(), header.getValue().toString() );
-            }
-        }
+        params.entrySet().stream().
+            filter( header -> header.getValue() != null ).
+            forEach( header -> formBody.add( header.getKey(), header.getValue().toString() ) );
     }
 
     private void addHeaders( final Request.Builder request, final Map<String, String> headers )
@@ -224,18 +217,6 @@ public final class HttpRequestHandler
         client.proxy( new Proxy( Proxy.Type.HTTP, new InetSocketAddress( proxyHost, proxyPort ) ) );
     }
 
-
-    private Proxy createProxy()
-    {
-        if ( proxyHost == null || proxyHost.trim().isEmpty() )
-        {
-            return null;
-        }
-        int proxyPort = this.proxyPort == null ? DEFAULT_PROXY_PORT : this.proxyPort;
-        return new Proxy( Proxy.Type.HTTP, new InetSocketAddress( proxyHost, proxyPort ) );
-    }
-
-
     private void setupAuthentication( final OkHttpClient.Builder client )
     {
         final String authUser = this.authUser;
@@ -248,52 +229,30 @@ public final class HttpRequestHandler
             return;
         }
 
-        Authenticator authenticator = createAuthenticator();
+        Authenticator authenticator = ( route, response ) -> {
+            if ( authUser == null || authUser.trim().isEmpty() )
+            {
+                return null;
+            }
+            String credential = Credentials.basic( authUser, authPassword );
+            if ( credential.equals( response.request().header( "Authorization" ) ) )
+            {
+                return null; // If we already failed with these credentials, don't retry
+            }
+            return response.request().newBuilder().header( "Authorization", credential ).build();
+        };
 
-        Authenticator proxyAuthenticator = createProxyAuthenticator();
+        Authenticator proxyAuthenticator = ( route, response ) -> {
+            if ( proxyUser == null || proxyUser.trim().isEmpty() )
+            {
+                return null;
+            }
+            String credential = Credentials.basic( proxyUser, proxyPassword );
+            return response.request().newBuilder().header( "Proxy-Authorization", credential ).build();
+        };
 
         client.authenticator( authenticator );
         client.proxyAuthenticator( proxyAuthenticator );
-    }
-
-    private Authenticator createProxyAuthenticator()
-    {
-        return new Authenticator()
-        {
-            @Override
-            public Request authenticate( final Route route, final Response response )
-                throws IOException
-            {
-                if ( proxyUser == null || proxyUser.trim().isEmpty() )
-                {
-                    return null;
-                }
-                String credential = Credentials.basic( proxyUser, proxyPassword );
-                return response.request().newBuilder().header( "Proxy-Authorization", credential ).build();
-            }
-        };
-    }
-
-    private Authenticator createAuthenticator()
-    {
-        return new Authenticator()
-        {
-            @Override
-            public Request authenticate( final Route route, final Response response )
-                throws IOException
-            {
-                if ( authUser == null || authUser.trim().isEmpty() )
-                {
-                    return null;
-                }
-                String credential = Credentials.basic( authUser, authPassword );
-                if ( credential.equals( response.request().header( "Authorization" ) ) )
-                {
-                    return null; // If we already failed with these credentials, don't retry
-                }
-                return response.request().newBuilder().header( "Authorization", credential ).build();
-            }
-        };
     }
 
 
@@ -306,11 +265,13 @@ public final class HttpRequestHandler
         }
     }
 
+    @SuppressWarnings("unused")
     public void setContentType( final String contentType )
     {
         this.contentType = contentType;
     }
 
+    @SuppressWarnings("unused")
     public void setBody( final Object value )
     {
         this.bodyStream = null;
@@ -329,21 +290,25 @@ public final class HttpRequestHandler
         }
     }
 
+    @SuppressWarnings("unused")
     public void setHeaders( final Map<String, String> headers )
     {
         this.headers = headers;
     }
 
+    @SuppressWarnings("unused")
     public void setUrl( final String value )
     {
         this.url = value;
     }
 
+    @SuppressWarnings("unused")
     public void setParams( final Map<String, Object> params )
     {
         this.params = params;
     }
 
+    @SuppressWarnings("unused")
     public void setMethod( final String value )
     {
         if ( value != null )
@@ -352,6 +317,7 @@ public final class HttpRequestHandler
         }
     }
 
+    @SuppressWarnings("unused")
     public void setConnectionTimeout( final Integer value )
     {
         if ( value != null )
@@ -360,6 +326,7 @@ public final class HttpRequestHandler
         }
     }
 
+    @SuppressWarnings("unused")
     public void setReadTimeout( final Integer value )
     {
         if ( value != null )
@@ -368,36 +335,43 @@ public final class HttpRequestHandler
         }
     }
 
+    @SuppressWarnings("unused")
     public void setMultipart( final List<Map<String, Object>> multipart )
     {
         this.multipart = multipart;
     }
 
+    @SuppressWarnings("unused")
     public void setProxyHost( final String proxyHost )
     {
         this.proxyHost = proxyHost;
     }
 
+    @SuppressWarnings("unused")
     public void setProxyPort( final Integer proxyPort )
     {
         this.proxyPort = proxyPort;
     }
 
+    @SuppressWarnings("unused")
     public void setProxyUser( final String proxyUser )
     {
         this.proxyUser = proxyUser;
     }
 
+    @SuppressWarnings("unused")
     public void setProxyPassword( final String proxyPassword )
     {
         this.proxyPassword = proxyPassword;
     }
 
+    @SuppressWarnings("unused")
     public void setAuthUser( final String authUser )
     {
         this.authUser = authUser;
     }
 
+    @SuppressWarnings("unused")
     public void setAuthPassword( final String authPassword )
     {
         this.authPassword = authPassword;
