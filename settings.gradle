@@ -88,6 +88,7 @@ include 'blobstore:blobstore-file'
 include 'app:app-standardidprovider'
 include 'app:app-users'
 include 'app:app-applications'
+include 'app:app-contentstudio'
 
 include 'repack:repack-attoparser'
 include 'repack:repack-elasticsearch'

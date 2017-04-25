@@ -1,7 +1,7 @@
 {
-  "name": "app-applications",
+  "name": "app-contentstudio",
   "version": "1.0.0",
-  "description": "Enonix XP - Applications App",
+  "description": "Enonix XP - Content Studio App",
   "scripts": {
     "build": "webpack"
   },

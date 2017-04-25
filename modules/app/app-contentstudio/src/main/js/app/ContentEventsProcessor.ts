@@ -14,7 +14,7 @@ import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
 export class ContentEventsProcessor {
 
     static openWizardTab(params: ContentWizardPanelParams, tabId: AppBarTabId): Window {
-        let wizardUrl = 'content-studio#/' + params.toString();
+        let wizardUrl = 'main#/' + params.toString();
         let isNew = !params.contentId;
         let wizardId;
         if (!isNew && navigator.userAgent.search('Chrome') > -1) {
