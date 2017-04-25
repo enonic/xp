@@ -32,11 +32,6 @@ public final class JsObjectConverter
             return toJs( (List) value );
         }
 
-        if ( value instanceof Map )
-        {
-            return toJs( (Map) value );
-        }
-
         return value;
     }
 
@@ -67,17 +62,6 @@ public final class JsObjectConverter
         }
 
         return array;
-    }
-
-    private Object toJs( final Map<?, ?> map )
-    {
-        final Object object = this.helper.newJsObject();
-        for ( final Map.Entry<?, ?> entry : map.entrySet() )
-        {
-            NashornHelper.addToNativeObject( object, entry.getKey().toString(), toJs( entry.getValue() ) );
-        }
-
-        return object;
     }
 
     public Object fromJs( final Object value )
