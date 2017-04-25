@@ -99,27 +99,14 @@ export class NonMobileDetailsPanelsManager {
 
         if (this.requiresFloatingPanelDueToShortWidth()) {
             this.switchToFloatingMode(canSetActivePanel, onResize);
-
-            setTimeout(() => {
-                this.splitPanelWithGridAndDetails.removeClass('details-panel-expanded');
-                this.ensureButtonHasCorrectState();
-            }, this.isExpanded() ? 300 : 0);
-
         } else {
             this.switchToDockedMode(canSetActivePanel);
-
-            if (this.isExpanded()) {
-                setTimeout(() => {
-                    this.splitPanelWithGridAndDetails.toggleClass('details-panel-expanded', !this.isExpanded());
-                    this.ensureButtonHasCorrectState();
-                }, 300);
-            } else {
-                this.toggleButton.addClass('expanded');
-                setTimeout(() => {
-                    this.splitPanelWithGridAndDetails.addClass('details-panel-expanded');
-                }, 50);
-            }
         }
+
+        setTimeout(() => {
+            this.ensureButtonHasCorrectState();
+            this.splitPanelWithGridAndDetails.toggleClass('details-panel-expanded', this.isExpanded());
+        }, this.isExpanded() ? 300 : 0);
     }
 
     private switchToDockedMode(canSetActivePanel: boolean = true) {
