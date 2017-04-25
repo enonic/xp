@@ -62,7 +62,7 @@ public final class HttpRequestHandler
 
     private String authPassword;
 
-    private final OkHttpClient client = new OkHttpClient();
+    private final static OkHttpClient CLIENT = new OkHttpClient();
 
     @SuppressWarnings("unused")
     public ResponseMapper request()
@@ -75,7 +75,7 @@ public final class HttpRequestHandler
     private Response sendRequest( final Request request )
         throws IOException
     {
-        final OkHttpClient.Builder clientBuilder = client.newBuilder();
+        final OkHttpClient.Builder clientBuilder = CLIENT.newBuilder();
         clientBuilder.readTimeout( this.readTimeout, TimeUnit.MILLISECONDS );
         clientBuilder.connectTimeout( this.connectionTimeout, TimeUnit.MILLISECONDS );
         setupProxy( clientBuilder );
