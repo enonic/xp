@@ -133,7 +133,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             let contentPublishMenuButton = new ContentPublishMenuButton(this.getBrowseActions());
 
             this.browseToolbar.appendChild(contentPublishMenuButton);
-            this.browseToolbar.appendChild(nonMobileDetailsPanelsManager.getToggleButton());
+            detailsView.appendChild(nonMobileDetailsPanelsManager.getToggleButton());
 
             this.subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager, contentPublishMenuButton);
 
@@ -171,6 +171,8 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                 if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
                     nonMobileDetailsPanelsManager.hideActivePanel();
                     ActiveDetailsPanelManager.setActiveDetailsPanel(this.mobileContentItemStatisticsPanel.getDetailsPanel());
+                } else {
+                    nonMobileDetailsPanelsManager.setActivePanel();
                 }
             } else {
                 contentPublishMenuButton.minimize();

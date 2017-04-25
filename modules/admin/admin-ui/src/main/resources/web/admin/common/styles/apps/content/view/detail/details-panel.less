@@ -1,4 +1,4 @@
-@widget-selector-height: 35px;
+@widget-selector-height: 40px;
 
 .details-panel {
   // common details panel styles
@@ -10,16 +10,21 @@
   top: 0px;
   right: -280px;
   box-shadow: 0 4px 20px -8px #000000, 0 0 0 0 rgba(0, 0, 0, 0.3);
-  opacity: 0.9;
-  background-color: @admin-bg-almost-white;
+  background-color: rgba(250, 250, 250, 0.9);
   .transition(all 0.5s ease-in-out);
 
   @media screen and (max-width: 540px) {
     display: none;
   }
 
+  .details-view-container {
+    height: 100%;
+  }
+
   .details-panel-view {
     &.no-selection {
+      height: 100%;
+      background-color: @admin-white;
       .no-selection-message {
         display: block;
       }
@@ -32,9 +37,6 @@
     }
 
     .content-summary-viewer {
-      padding-top: 5px;
-      padding-bottom: 2px;
-
       .font-icon-default {
         width: 26px;
         height: 26px;
@@ -44,6 +46,68 @@
         font-size: 13px;
       }
     }
+
+
+    .non-mobile-details-panel-toggle-button {
+      .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent, true);
+      z-index: 2;
+      line-height: 22px;
+
+      order: 1;
+
+      display: block;
+      padding: 9px 12px 7px 12px;
+      border: 0px transparent;
+      border-bottom: 1px solid @admin-medium-gray-border;
+      background-color: transparent;
+
+      position: fixed;
+      right: 0;
+      top: @app-header-height;
+      height: 40px;
+
+      @media screen and (max-width: 540px) {
+        display: none !important;
+      }
+
+      &:focus {
+        box-shadow: none;
+      }
+
+      * {
+        vertical-align: top;
+      }
+
+      &:before {
+        font-size: 16px;
+      }
+
+      .icon-list();
+
+      animation-duration: 0.5s;
+      animation-timing-function: linear;
+      animation-delay: 0s;
+
+      &.expanded {
+
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        background: @admin-white;
+        z-index: 3;
+        border-bottom: none;
+
+        &::before {
+          color: @admin-button-blue1;
+        }
+        &:hover::before {
+          color: @admin-button-blue2;
+        }
+
+      }
+
+    }
+
   }
 
   .details-container {
@@ -62,17 +126,19 @@
     .notSelectable();
   }
 
-  .details-panel-label {
-    background-color: @admin-bg-almost-white;
-    line-height: 20px;
-    padding: 10px 0px 10px 15px;
+  .default-widget:not(.no-selection) .details-panel-label {
     display: block;
-    font-size: 14px;
-    border-bottom: 1px transparent;
+  }
 
-    .@{_COMMON_PREFIX}sub-name, .@{_COMMON_PREFIX}main-name {
-      padding-right: 40px;
-    }
+  .details-panel-label {
+    display: none;
+    position: absolute;
+    top: 4px;
+    left: 45px;
+    width: calc(~'100% - 90px');
+    background-color: @admin-white;
+    line-height: 20px;
+    font-size: 14px;
   }
 
   .label {
@@ -84,58 +150,14 @@
     background-color: @admin-white;
     height: @widget-selector-height;
 
-    .info-widget-toggle-button {
-      cursor: pointer;
-      display: inline-block;
-      font-size: 16px;
-      float: left;
-      padding: 10px 11px 9px 11px;
-      border-right: 1px solid #cccccc;
-      border-left: 1px solid #cccccc;
-      box-sizing: border-box;
-      height: @widget-selector-height;
-
-      .icon-list();
-
-      &:hover:not(.active) {
-        background-color: @admin-bg-light-gray;
-      }
-
-      &.active {
-        background-color: @admin-blue;
-        &:before {
-          color: @admin-white;
-        }
-      }
-    }
-
     .widget-selector {
 
-      width: calc(~'100% - 2px');
-      border: 1px solid #cccccc;
-      border-left: 0px;
+      height: @widget-selector-height;
+      border-bottom: 1px solid @admin-medium-gray-border;
       max-width: none;
 
-      input {
-        cursor: pointer;
-      }
-
-      &.non-default-selected {
-        .selected-option {
-          background-color: @admin-blue;
-          color: @admin-white;
-          &:hover {
-            background-color: @admin-blue;
-          }
-        }
-
-        .@{_COMMON_PREFIX}dropdown-handle {
-          background-color: @admin-white;
-
-          &:hover {
-            background-color: @admin-bg-light-gray;
-          }
-        }
+      .option-filter-input {
+        height: @widget-selector-height + 2px;
       }
 
       &.single-optioned {
@@ -148,10 +170,12 @@
       }
 
       .@{_COMMON_PREFIX}dropdown-handle {
-        border-left: 1px solid #cccccc;
-        border-right: 1px solid #cccccc;
+        box-sizing: border-box;
+        width: 40px;
+        right: 0;
+        border-right: 1px solid transparent;
         max-height: @widget-selector-height;
-        width: 38px;
+        background: @admin-white;
 
         &:after {
           margin: -5px 0 0 -5px;
@@ -160,18 +184,15 @@
 
       .selected-option {
         background: none;
-        width: calc(~'100% - 40px');
         max-height: @widget-selector-height;
         display: inline-block !important;
         border: 0px;
-        position: absolute;
-
-        &:hover {
-          background-color: @admin-bg-light-gray;
-        }
 
         .option-value {
-          margin: 0px 37px 0px 0px;
+          margin: 0 0 0 40px;
+          width: calc(~'100% - ' 82px);
+          border-right: 1px solid @admin-medium-gray-border;
+          border-left: 1px solid @admin-medium-gray-border;
 
           .viewer {
             line-height: @widget-selector-height;
@@ -182,7 +203,7 @@
       .viewer {
         font-size: 14px;
         text-align: center;
-        cursor: pointer;
+        cursor: default;
       }
 
       .options-container {
@@ -210,18 +231,5 @@
 
     position: fixed;
     top: @app-header-height;
-
-    .widget-selector {
-      position: absolute;
-      .@{_COMMON_PREFIX}dropdown-handle.down {
-        right: 5px;
-      }
-      .selected-option {
-        width: calc(~'100% - 45px');
-      }
-      .grid {
-        width: calc(~'100% - 6px') !important;
-      }
-    }
   }
 }

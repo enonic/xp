@@ -13,14 +13,11 @@ export class WidgetsSelectionRow extends api.dom.DivEl {
     private detailsView: DetailsView;
 
     private widgetSelectorDropdown: WidgetSelectorDropdown;
-    private infoWidgetToggleButton: InfoWidgetToggleButton;
 
     constructor(detailsView: DetailsView) {
         super('widgets-selection-row');
 
         this.detailsView = detailsView;
-
-        this.infoWidgetToggleButton = new InfoWidgetToggleButton(detailsView);
 
         this.widgetSelectorDropdown = new WidgetSelectorDropdown(detailsView);
         this.widgetSelectorDropdown.addClass('widget-selector');
@@ -30,26 +27,12 @@ export class WidgetsSelectionRow extends api.dom.DivEl {
             widgetView.setActive();
         });
 
-        this.infoWidgetToggleButton.onClicked(() => {
-            if (this.widgetSelectorDropdown.isDropdownShown()) {
-                this.widgetSelectorDropdown.hideDropdown();
-            }
-        });
-
-        this.widgetSelectorDropdown.prependChild(this.infoWidgetToggleButton);
         this.appendChild(this.widgetSelectorDropdown);
     }
 
     updateState(widgetView: WidgetView) {
-        if (this.detailsView.isDefaultWidget(widgetView)) {
-            this.infoWidgetToggleButton.setActive();
-            this.widgetSelectorDropdown.removeClass('non-default-selected');
-        } else {
-            this.widgetSelectorDropdown.addClass('non-default-selected');
-            this.infoWidgetToggleButton.setInactive();
-            if (this.widgetSelectorDropdown.getValue() !== widgetView.getWidgetName()) {
-                this.widgetSelectorDropdown.setValue(widgetView.getWidgetName());
-            }
+        if (this.widgetSelectorDropdown.getValue() !== widgetView.getWidgetName()) {
+            this.widgetSelectorDropdown.setValue(widgetView.getWidgetName());
         }
         if (this.widgetSelectorDropdown.getSelectedOption()) {
             this.widgetSelectorDropdown.getSelectedOptionView().getEl().setDisplay('inline-block');
