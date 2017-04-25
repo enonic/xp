@@ -1,6 +1,7 @@
 var admin = require('/lib/xp/admin');
 var mustache = require('/lib/xp/mustache');
 var portal = require('/lib/xp/portal');
+var i18n = require('/lib/xp/i18n');
 
 function handleGet() {
     var view = resolve('./main.html');
@@ -13,7 +14,8 @@ function handleGet() {
         }),
         appName: 'Users',
         appId: app.name,
-        xpVersion: app.version
+        xpVersion: app.version,
+        messages: JSON.stringify(i18n.getPhrases())
     };
 
     return {

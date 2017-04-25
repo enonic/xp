@@ -15,6 +15,7 @@ import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.script.serializer.MapSerializable;
+import com.enonic.xp.site.Site;
 
 public final class LocaleScriptBean
     implements ScriptBean
@@ -46,9 +47,11 @@ public final class LocaleScriptBean
     private Locale resolveLocaleFromSite()
     {
         final PortalRequest request = getRequest();
-        if ( request.getSite().getLanguage() != null )
+        final Site site = request.getSite();
+
+        if ( site != null )
         {
-            return request.getSite().getLanguage();
+            return site.getLanguage();
         }
 
         return null;
