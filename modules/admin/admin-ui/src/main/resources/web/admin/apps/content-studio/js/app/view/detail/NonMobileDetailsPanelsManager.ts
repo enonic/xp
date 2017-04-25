@@ -38,9 +38,14 @@ export class NonMobileDetailsPanelsManager {
     }
 
     private doHandleResizeEvent() {
-        if (!this.resizeEventMonitorLocked && this.nonMobileDetailsPanelIsActive() && this.contentBrowsePanelIsVisible()) {
+
+        if (this.resizeEventMonitorLocked) {
+            return;
+        }
+
+        if (this.nonMobileDetailsPanelIsActive() && this.contentBrowsePanelIsVisible()) {
             this.resizeEventMonitorLocked = true;
-            if (this.needsSwitchToFloatingMode() || this.needsSwitchToDockedMode()) {
+            if (this.needsModeSwitch()) {
                 this.doPanelAnimation(true, true);
             } else if (!this.splitPanelWithGridAndDetails.isSecondPanelHidden()) {
                 this.dockedDetailsPanel.notifyPanelSizeChanged();
@@ -50,6 +55,7 @@ export class NonMobileDetailsPanelsManager {
             setTimeout(() => {
                 this.resizeEventMonitorLocked = false;
             }, 600);
+
         } else {
 
             if (this.isExpanded() && !this.isFloatingDetailsPanelActive() && !this.nonMobileDetailsPanelIsActive()) {
@@ -59,6 +65,10 @@ export class NonMobileDetailsPanelsManager {
 
             return;
         }
+    }
+
+    private needsModeSwitch() {
+        return (this.needsSwitchToFloatingMode() || this.needsSwitchToDockedMode());
     }
 
     private contentBrowsePanelIsVisible(): boolean {
@@ -74,29 +84,21 @@ export class NonMobileDetailsPanelsManager {
                ActiveDetailsPanelManager.getActiveDetailsPanel() === this.floatingDetailsPanel;
     }
 
+    public setActivePanel() {
+        if (this.nonMobileDetailsPanelIsActive()) {
+            return;
+        }
+
+        ActiveDetailsPanelManager.setActiveDetailsPanel(this.requiresFloatingPanelDueToShortWidth() ?
+                                                        this.floatingDetailsPanel : this.dockedDetailsPanel);
+    }
+
     private doPanelAnimation(canSetActivePanel: boolean = true, onResize: boolean = false) {
 
         this.splitPanelWithGridAndDetails.addClass('sliding');
 
         if (this.requiresFloatingPanelDueToShortWidth()) {
-            this.toggleButton.addClass('floating-mode');
-            if (!this.splitPanelWithGridAndDetails.isSecondPanelHidden()) {
-                this.dockedToFloatingSync();
-            }
-
-            if (canSetActivePanel) {
-                ActiveDetailsPanelManager.setActiveDetailsPanel(this.floatingDetailsPanel);
-            }
-
-            if (!this.isExpanded() || onResize) {
-                this.floatingDetailsPanel.resetWidgetsWidth();
-                this.floatingDetailsPanel.slideIn();
-                this.floatingDetailsPanel.notifyPanelSizeChanged();
-            } else {
-                this.floatingDetailsPanel.slideOut();
-            }
-            this.splitPanelWithGridAndDetails.setActiveWidthPxOfSecondPanel(this.floatingDetailsPanel.getActualWidth());
-            this.splitPanelWithGridAndDetails.removeClass('sliding');
+            this.switchToFloatingMode(canSetActivePanel, onResize);
 
             setTimeout(() => {
                 this.splitPanelWithGridAndDetails.removeClass('details-panel-expanded');
@@ -104,47 +106,83 @@ export class NonMobileDetailsPanelsManager {
             }, this.isExpanded() ? 300 : 0);
 
         } else {
-            this.toggleButton.removeClass('floating-mode');
-            if (this.floatingPanelIsShown()) {
-                this.floatingToDockedSync();
-            }
-
-            if (canSetActivePanel) {
-                ActiveDetailsPanelManager.setActiveDetailsPanel(this.dockedDetailsPanel);
-            }
-
-            this.dockedDetailsPanel.addClass('left-bordered');
+            this.switchToDockedMode(canSetActivePanel);
 
             if (this.isExpanded()) {
-                if (!this.splitPanelWithGridAndDetails.isSecondPanelHidden()) {
-                    this.splitPanelWithGridAndDetails.foldSecondPanel();
-                }
                 setTimeout(() => {
                     this.splitPanelWithGridAndDetails.toggleClass('details-panel-expanded', !this.isExpanded());
                     this.ensureButtonHasCorrectState();
                 }, 300);
             } else {
-                this.splitPanelWithGridAndDetails.showSecondPanel(false);
+                this.toggleButton.addClass('expanded');
                 setTimeout(() => {
-                    this.toggleButton.addClass('expanded');
                     this.splitPanelWithGridAndDetails.addClass('details-panel-expanded');
                 }, 50);
             }
+        }
+    }
 
-            setTimeout(() => {
-                this.dockedDetailsPanel.removeClass('left-bordered');
-                if (this.isExpanded()) {
-                    this.splitPanelWithGridAndDetails.showSplitter();
-                    this.dockedDetailsPanel.notifyPanelSizeChanged();
-                }
-                this.splitPanelWithGridAndDetails.removeClass('sliding');
-            }, 600);
+    private switchToDockedMode(canSetActivePanel: boolean = true) {
+        this.toggleButton.removeClass('floating-mode');
+        if (this.floatingPanelIsShown()) {
+            this.floatingToDockedSync();
         }
 
+        if (canSetActivePanel) {
+            ActiveDetailsPanelManager.setActiveDetailsPanel(this.dockedDetailsPanel);
+        }
+
+        this.dockedDetailsPanel.addClass('left-bordered');
+
+        if (this.isExpanded()) {
+            if (!this.splitPanelWithGridAndDetails.isSecondPanelHidden()) {
+                this.splitPanelWithGridAndDetails.foldSecondPanel();
+            }
+        } else {
+            this.splitPanelWithGridAndDetails.showSecondPanel(false);
+        }
+
+        setTimeout(() => {
+            this.dockedDetailsPanel.removeClass('left-bordered');
+            if (this.isExpanded()) {
+                this.splitPanelWithGridAndDetails.showSplitter();
+                this.dockedDetailsPanel.notifyPanelSizeChanged();
+            }
+            this.splitPanelWithGridAndDetails.removeClass('sliding');
+        }, 600);
+    }
+
+    private switchToFloatingMode(canSetActivePanel: boolean = true, onResize: boolean = false) {
+        if (!canSetActivePanel && !this.floatingPanelIsShown()) {
+            return;
+        }
+
+        this.toggleButton.addClass('floating-mode');
+        if (!this.splitPanelWithGridAndDetails.isSecondPanelHidden()) {
+            this.dockedToFloatingSync();
+        }
+
+        if (canSetActivePanel) {
+            ActiveDetailsPanelManager.setActiveDetailsPanel(this.floatingDetailsPanel);
+        }
+
+        if (!this.isExpanded() || onResize) {
+            this.floatingDetailsPanel.resetWidgetsWidth();
+            this.floatingDetailsPanel.slideIn();
+            this.floatingDetailsPanel.notifyPanelSizeChanged();
+        } else {
+            this.floatingDetailsPanel.slideOut();
+        }
+        this.splitPanelWithGridAndDetails.setActiveWidthPxOfSecondPanel(this.floatingDetailsPanel.getActualWidth());
+        this.splitPanelWithGridAndDetails.removeClass('sliding');
+
+        setTimeout(() => {
+            this.splitPanelWithGridAndDetails.removeClass('details-panel-expanded');
+            this.ensureButtonHasCorrectState();
+        }, this.isExpanded() ? 300 : 0);
     }
 
     hideActivePanel() {
-        /*this.toggleButton.removeClass('expanded');*/
         this.doPanelAnimation(false);
     }
 
@@ -177,15 +215,14 @@ export class NonMobileDetailsPanelsManager {
     }
 
     private needsSwitchToFloatingMode(): boolean {
-        if (this.requiresFloatingPanelDueToShortWidth() && !this.splitPanelWithGridAndDetails.isSecondPanelHidden() && this.nonMobileDetailsPanelIsActive()) {
+        if (this.requiresFloatingPanelDueToShortWidth() && !this.splitPanelWithGridAndDetails.isSecondPanelHidden()) {
             return true;
         }
         return false;
     }
 
     private needsSwitchToDockedMode(): boolean {
-        if (!this.requiresFloatingPanelDueToShortWidth() && this.splitPanelWithGridAndDetails.isSecondPanelHidden() &&
-            this.isExpanded()) {
+        if (!this.requiresFloatingPanelDueToShortWidth() && this.splitPanelWithGridAndDetails.isSecondPanelHidden() && this.isExpanded()) {
             return true;
         }
         return false;
@@ -198,6 +235,9 @@ export class NonMobileDetailsPanelsManager {
     }
 
     private floatingPanelIsShown(): boolean {
+        if (!this.nonMobileDetailsPanelIsActive()) {
+            return false;
+        }
         let right = this.floatingDetailsPanel.getHTMLElement().style.right;
         if (right && right.indexOf('px') > -1) {
             right = right.substring(0, right.indexOf('px'));

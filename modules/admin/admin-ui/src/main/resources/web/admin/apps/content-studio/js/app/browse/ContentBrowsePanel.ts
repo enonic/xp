@@ -171,6 +171,8 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                 if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
                     nonMobileDetailsPanelsManager.hideActivePanel();
                     ActiveDetailsPanelManager.setActiveDetailsPanel(this.mobileContentItemStatisticsPanel.getDetailsPanel());
+                } else {
+                    nonMobileDetailsPanelsManager.setActivePanel();
                 }
             } else {
                 contentPublishMenuButton.minimize();

@@ -7,8 +7,12 @@
   align-items: flex-end;
   align-content: stretch;
 
+  width: 100%;
 
-  width: calc(~'100% - 40px');
+  @media screen and (min-width: 540px) {
+    width: calc(~'100% - 40px');
+  }
+
 
   overflow: visible;
   .fold-button .@{_COMMON_PREFIX}dropdown .@{_COMMON_PREFIX}:hover {
@@ -27,9 +31,7 @@
     }
   }
 
-
-  &.details-panel-expanded .content-browse-toolbar,
-  .content-browse-toolbar._240-360, .content-browse-toolbar._360-540 {
+  &.details-panel-expanded .content-browse-toolbar {
     width: 100%;
   }
 }

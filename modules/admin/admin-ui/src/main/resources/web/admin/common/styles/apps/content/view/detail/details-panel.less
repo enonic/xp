@@ -67,7 +67,6 @@
       top: @app-header-height;
       height: 40px;
 
-
       @media screen and (max-width: 540px) {
         display: none !important;
       }
@@ -101,6 +100,9 @@
 
         &::before {
           color: @admin-button-blue1;
+        }
+        &:hover::before {
+          color: @admin-button-blue2;
         }
 
       }
