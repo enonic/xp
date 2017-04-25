@@ -47,6 +47,66 @@
         font-size: 13px;
       }
     }
+
+
+    .non-mobile-details-panel-toggle-button {
+      .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent, true);
+      z-index: 2;
+      line-height: 22px;
+
+      order: 1;
+
+      display: block;
+      padding: 9px 12px 7px 12px;
+      border: 0px transparent;
+      border-bottom: 1px solid @admin-medium-gray-border;
+      background-color: transparent;
+
+      position: fixed;
+      right: 0;
+      top: @app-header-height;
+      height: 40px;
+
+
+      @media screen and (max-width: 540px) {
+        display: none !important;
+      }
+
+      &:focus {
+        box-shadow: none;
+      }
+
+      * {
+        vertical-align: top;
+      }
+
+      &:before {
+        font-size: 16px;
+      }
+
+      .icon-list();
+
+      animation-duration: 0.5s;
+      animation-timing-function: linear;
+      animation-delay: 0s;
+
+      &.expanded {
+
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        background: @admin-white;
+        z-index: 3;
+        border-bottom: none;
+
+        &::before {
+          color: @admin-button-blue1;
+        }
+
+      }
+
+    }
+
   }
 
   .details-container {
@@ -92,7 +152,7 @@
     .widget-selector {
 
       height: @widget-selector-height;
-      border-bottom: 1px solid #cccccc;
+      border-bottom: 1px solid @admin-medium-gray-border;
       max-width: none;
 
       .option-filter-input {
@@ -170,18 +230,5 @@
 
     position: fixed;
     top: @app-header-height;
-
-    .widget-selector {
-      position: absolute;
-      .@{_COMMON_PREFIX}dropdown-handle.down {
-        right: 5px;
-      }
-      .selected-option {
-        width: calc(~'100% - 45px');
-      }
-      .grid {
-        width: calc(~'100% - 6px') !important;
-      }
-    }
   }
 }
