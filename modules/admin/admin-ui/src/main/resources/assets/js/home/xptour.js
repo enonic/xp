@@ -203,7 +203,7 @@ function createStep2() {
                '    <div class="caption">Tools and Navigation</div>' +
                '    <img src="' +  CONFIG.adminUrl + '/common/images/launcher.svg">' +
                '    <div class="text">' +
-               '        <div class="paragraph1">XP admin is all about tools. You are currently in the ‘Home’ tool. Navigate to different tools using the menu icon which is available at the top right. The current tool is always highlighted.</div>' +
+               '        <div class="paragraph1">XP admin is all about admin.tools. You are currently in the ‘Home’ tool. Navigate to different tools using the menu icon which is available at the top right. The current tool is always highlighted.</div>' +
                '        <div class="paragraph2">Tools are launched in separate browser tabs so you can easily navigate between them later. Tools can also be bookmarked for direct access.</div>' +
                '    </div>' +
                '</div>';

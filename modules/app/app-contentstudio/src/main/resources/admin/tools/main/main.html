@@ -39,22 +39,15 @@
 <!-- Configuration -->
 <script type="text/javascript">
     var CONFIG = {
-        {{#config}}
-        {{key}}: '{{value}}',
-        {{/config}}
-        baseUri: '{{baseUri}}',
-        adminUrl: '{{adminUrl}}',
-        assetsUri: '{{adminAssetsUri}}',
-        xpVersion: '{{xpVersion}}',
         appId: '{{appId}}',
+        xpVersion: '{{xpVersion}}',
         appIconUrl: '{{assetsUri}}/icons/icon-white.svg'
     };
-
 </script>
 
 <!-- App javascript -->
 <script type="text/javascript" src="{{adminAssetsUri}}/common/js/_all.js"></script>
-<script type="text/javascript" src="{{assetsUri}}/js/_all.js"></script>
+<script type="text/javascript" src="{{assetsUri}}/app/bundle.js"></script>
 
 <!-- Append the launcher -->
 <script type="text/javascript" src="{{adminAssetsUri}}/apps/launcher/js/_all.js" async></script>
