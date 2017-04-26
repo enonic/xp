@@ -173,7 +173,7 @@ export class LiveEditPageProxy {
 
     private createPlaceholderIFrame(): api.dom.IFrameEl {
         let placeholderIFrame = new api.dom.IFrameEl('live-edit-frame-blank');
-        placeholderIFrame.setSrc(CONFIG.assetsUri + '/live-edit/js/_blank.html');
+        placeholderIFrame.setSrc(CONFIG.adminAssetsUri + '/live-edit/js/_blank.html');
 
         return placeholderIFrame;
     }

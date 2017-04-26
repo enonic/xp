@@ -2,6 +2,8 @@ import '../../../../api.ts';
 import {LiveEditPageProxy} from '../LiveEditPageProxy';
 import {EmulatorGrid} from './EmulatorGrid';
 
+declare var CONFIG;
+
 export interface EmulatorPanelConfig {
 
     liveEditPage: LiveEditPageProxy;
@@ -59,7 +61,7 @@ export class EmulatorPanel extends api.ui.panel.Panel {
 
     private getData(): void {
         wemjq.ajax({
-            url: api.util.UriHelper.getAdminUri('apps/content-studio/js/data/context-window/devices.json'),
+            url: CONFIG.assetsUri + '/data/devices.json',
             success: (data: any, textStatus: string, jqXHR: JQueryXHR) => {
                 this.dataView.setItems(EmulatorGrid.toSlickData(data));
                 this.grid.setActiveCell(0, 0); // select first option
