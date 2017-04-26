@@ -1,4 +1,4 @@
-package com.enonic.xp.admin.impl.postprocess;
+package com.enonic.xp.app.contentstudio;
 
 import java.util.Collections;
 import java.util.List;
