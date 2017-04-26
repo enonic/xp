@@ -7,6 +7,13 @@
   align-items: flex-end;
   align-content: stretch;
 
+  width: 100%;
+
+  @media screen and (min-width: 540px) {
+    width: calc(~'100% - 40px');
+  }
+
+
   overflow: visible;
   .fold-button .@{_COMMON_PREFIX}dropdown .@{_COMMON_PREFIX}:hover {
     background-color: @admin-bg-light-gray;
@@ -22,6 +29,10 @@
     .content-browse-toolbar {
       overflow: hidden; // To hide the Publish button jumping under the toolbar when reducing toolbar width
     }
+  }
+
+  &.details-panel-expanded .content-browse-toolbar {
+    width: 100%;
   }
 }
 
@@ -43,124 +54,6 @@ button.icon-toolbar-settings {
 }
 
 .browse-toolbar {
-  .non-mobile-details-panel-toggle-button {
-    .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent, true);
-    z-index: 2;
-    line-height: 22px;
-
-    order: 1;
-
-    display: block;
-    background-color: transparent;
-    border: 0px transparent;
-    border-bottom: 1px transparent;
-    position: relative;
-
-    @media screen and (max-width: 540px) {
-      display: none !important;
-    }
-
-    &:focus {
-      box-shadow: none;
-    }
-
-    * {
-      vertical-align: top;
-    }
-
-    &:before {
-      font-size: 16px;
-    }
-
-    .icon-list();
-
-    animation-duration: 0.5s;
-    animation-timing-function: linear;
-    animation-delay: 0s;
-
-    &:not(.floating-mode) {
-      animation-name: d-slide;
-      @keyframes d-slide {
-        0% {
-          width: 0px;
-          padding-right: 0px;
-          padding-left: 0px;
-        }
-        50% {
-          width: 0px;
-        }
-        100% {
-          width: auto;
-        }
-      }
-    }
-
-    &:not(.expanded) {
-      padding: 9px 12px 7px 12px;
-    }
-
-    &.expanded {
-
-      .icon-close2();
-      &:before {
-        font-size: 21px;
-      }
-
-      z-index: 3;
-      padding: 10px;
-      padding-left: 9px;
-      height: 40px;
-
-      &.floating-mode {
-        animation-name: f-slide;
-        @keyframes f-slide {
-          0% {
-            opacity: 0;
-            z-index: 2;
-          }
-          50% {
-            opacity: 0;
-            z-index: 2;
-          }
-          100% {
-            z-index: 3;
-            opacity: 100;
-          }
-        }
-      }
-
-      &:not(.floating-mode) {
-        animation-name: slide;
-        @keyframes slide {
-          0% {
-            opacity: 0;
-            z-index: 2;
-            width: auto;
-            position: relative;
-            border: 0px;
-          }
-          50% {
-            opacity: 0;
-            z-index: 2;
-            width: 0px;
-            position: relative;
-            border: 0px;
-          }
-          100% {
-            z-index: 3;
-            opacity: 100;
-            width: auto;
-            position: fixed;
-            border: 0px;
-          }
-        }
-        position: fixed;
-        right: 0px;
-        top: @app-header-height;
-      }
-    }
-
-  }
 
   .icon-search.filtered {
     border-radius: 17px;

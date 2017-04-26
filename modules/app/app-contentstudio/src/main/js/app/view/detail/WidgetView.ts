@@ -193,7 +193,7 @@ export class WidgetView extends api.dom.DivEl {
         this.slideOut();
     }
 
-    private isActive() {
+    isActive() {
         return this.detailsView.getActiveWidget() === this;
     }
 
