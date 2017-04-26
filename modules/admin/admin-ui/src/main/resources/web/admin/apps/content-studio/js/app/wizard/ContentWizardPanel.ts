@@ -608,6 +608,17 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
             this.setSteps(steps);
 
+            // Content can be moved from its Site, but persisted content can still have metadata
+            // Such content needs update
+            const updateHandler = () => {
+                const needUpdate = !this.getPersistedItem().extraDataEquals(this.getExtraDataFromMetadata());
+                if (needUpdate) {
+                    this.saveChanges();
+                }
+                this.unRendered(updateHandler);
+            };
+            this.onRendered(updateHandler);
+
             return mixins;
         });
     }
@@ -1104,7 +1115,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             this.updateButtonsState();
             return this.createSteps().then((schemas: Mixin[]) => {
 
-                let contentData = content.getContentData();
+                const contentData = content.getContentData();
 
                 contentData.onChanged(this.dataChangedListener);
 
@@ -1420,8 +1431,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         if (persistedContent == null) {
             return true;
         } else {
-
-            let viewedContent = this.assembleViewedContent(new ContentBuilder(persistedContent), true).build();
+            let viewedContent = this.assembleViewedContent(persistedContent.newBuilder(), true).build();
 
             // ignore empty values for auto-created content that hasn't been updated yet because it doesn't have data at all
             let ignoreEmptyValues = !persistedContent.getModifiedTime() || !persistedContent.getCreatedTime() ||
@@ -1443,6 +1453,17 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         }
     }
 
+    private getExtraDataFromMetadata(): ExtraData[] {
+        const extraData: ExtraData[] = [];
+        for (let key in this.metadataStepFormByName) {
+            if (this.metadataStepFormByName.hasOwnProperty(key)) {
+                extraData.push(new ExtraData(new MixinName(key), this.metadataStepFormByName[key].getData()));
+            }
+        }
+
+        return extraData;
+    }
+
     private assembleViewedContent(viewedContentBuilder: ContentBuilder, cleanFormRedundantData: boolean = false): ContentBuilder {
 
         viewedContentBuilder.setName(this.resolveContentNameForUpdateRequest());
@@ -1456,14 +1477,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             }
         }
 
-        let extraData: ExtraData[] = [];
-        for (let key in this.metadataStepFormByName) {
-            if (this.metadataStepFormByName.hasOwnProperty(key)) {
-                extraData.push(new ExtraData(new MixinName(key), this.metadataStepFormByName[key].getData()));
-            }
-        }
-
-        viewedContentBuilder.setExtraData(extraData);
+        viewedContentBuilder.setExtraData(this.getExtraDataFromMetadata());
 
         this.settingsWizardStepForm.apply(viewedContentBuilder);
         this.scheduleWizardStepForm.apply(viewedContentBuilder);
