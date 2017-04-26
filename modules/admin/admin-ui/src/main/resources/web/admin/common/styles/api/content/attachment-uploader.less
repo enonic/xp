@@ -1,0 +1,57 @@
+@attachment-uploader-height: 38px;
+
+.attachment-uploader {
+
+  .uploader-wrapper {
+
+    position: relative;
+
+    .upload-button {
+      position: absolute;
+      right: 2px;
+      top: 2px;
+    }
+
+    .uploader-el.attachment-uploader-el {
+      width: 100%;
+      height: (@attachment-uploader-height + 4px);
+      padding-right: @attachment-uploader-height;
+      box-sizing: border-box;
+      border: 2px solid transparent;
+
+      &.dz-dragover {
+        .dropzone-dragover-glow();
+      }
+
+      .result-container {
+        position: relative;
+        min-height: @attachment-uploader-height;
+
+        &:empty::before {
+          content: "< No attachment found >";
+          position: absolute;
+          display: block;
+          width: 100%;
+          font-size: 1.25em;
+          color: @admin-font-gray2;
+          line-height: @attachment-uploader-height;
+          text-align: center;
+        }
+
+        .attachment-item {
+          margin: 10px 0;
+          a {
+            text-overflow: ellipsis;
+            overflow: hidden;
+            padding-right: 2px;
+          }
+        }
+      }
+
+      .progress-bar {
+        height: @attachment-uploader-height;
+      }
+    }
+  }
+
+}
