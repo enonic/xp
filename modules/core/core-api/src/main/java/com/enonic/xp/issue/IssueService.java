@@ -16,4 +16,6 @@ public interface IssueService
 
     List<Issue> findIssues( IssueQuery query );
 
+    Long countIssues( IssueQuery query );
+
 }

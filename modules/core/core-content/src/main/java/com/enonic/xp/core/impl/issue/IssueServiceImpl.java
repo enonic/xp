@@ -61,6 +61,16 @@ public class IssueServiceImpl
             execute();
     }
 
+    @Override
+    public Long countIssues( final IssueQuery query )
+    {
+        return CountIssuesCommand.create().
+            nodeService( nodeService ).
+            query( query ).
+            build().
+            execute();
+    }
+
     @SuppressWarnings("unused")
     @Activate
     public void initialize()

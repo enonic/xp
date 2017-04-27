@@ -25,6 +25,8 @@ export class IssuesDialog extends ModalDialog {
 
     private loadMask: LoadMask;
 
+    private stats: IssueStatsJson;
+
     constructor() {
         super('Publishing Issues');
         this.addClass('issue-list-dialog');
@@ -59,10 +61,10 @@ export class IssuesDialog extends ModalDialog {
             if (!panelHasChildren && panel.isVisible()) { // to not reload after tab is loaded and swithcing between tabs
                 this.loadMask.show();
 
-                IssueFetcher.fetchIssuesByType(issueType).then((issues: IssueSummary[]) => {
+                IssueFetcher.fetchIssuesByType(issueType, 0, IssueList.MAX_FETCH_SIZE).then((issues: IssueSummary[]) => {
 
                     if (issues.length > 0) {
-                        const issueList: IssueList = new IssueList();
+                        const issueList: IssueList = new IssueList(issueType, this.getTotalByType(issueType));
                         issueList.addItems(issues);
                         panel.appendChild(issueList);
                         this.centerMyself();
@@ -92,8 +94,9 @@ export class IssuesDialog extends ModalDialog {
 
     private reloadIssueData() {
         IssueFetcher.fetchIssueStats().then((stats: IssueStatsJson) => {
-            this.updateTabLabels(stats);
-            this.showFirstNonEmptyTab(stats);
+            this.stats = stats;
+            this.updateTabLabels();
+            this.showFirstNonEmptyTab();
         }).catch((reason: any) => {
             api.DefaultErrorHandler.handle(reason);
         }).finally(() => {
@@ -101,25 +104,25 @@ export class IssuesDialog extends ModalDialog {
         });
     }
 
-    private updateTabLabels(stats: IssueStatsJson) {
-        this.updateTabLabel(this.dockedPanel.getNavigator().getNavigationItem(0), 'Assigned to me', stats.assignedToMe);
-        this.updateTabLabel(this.dockedPanel.getNavigator().getNavigationItem(1), 'My issues', stats.createdByMe);
-        this.updateTabLabel(this.dockedPanel.getNavigator().getNavigationItem(2), 'Open', stats.open);
-        this.updateTabLabel(this.dockedPanel.getNavigator().getNavigationItem(3), 'Closed', stats.closed);
+    private updateTabLabels() {
+        this.updateTabLabel(this.dockedPanel.getNavigator().getNavigationItem(0), 'Assigned to me', this.stats.assignedToMe);
+        this.updateTabLabel(this.dockedPanel.getNavigator().getNavigationItem(1), 'My issues', this.stats.createdByMe);
+        this.updateTabLabel(this.dockedPanel.getNavigator().getNavigationItem(2), 'Open', this.stats.open);
+        this.updateTabLabel(this.dockedPanel.getNavigator().getNavigationItem(3), 'Closed', this.stats.closed);
     }
 
     private updateTabLabel(tabBarItem: TabBarItem, label: string, issuesFound: number) {
         tabBarItem.setLabel(issuesFound > 0 ? (label + ' (' + issuesFound + ')') : label);
     }
 
-    private showFirstNonEmptyTab(stats: IssueStatsJson) {
-        if (stats.assignedToMe > 0) {
+    private showFirstNonEmptyTab() {
+        if (this.stats.assignedToMe > 0) {
             this.dockedPanel.selectPanel(this.assignedToMeIssuesPanel);
-        } else if (stats.createdByMe > 0) {
+        } else if (this.stats.createdByMe > 0) {
             this.dockedPanel.selectPanel(this.createdByMeIssuesPanel);
-        } else if (stats.open > 0) {
+        } else if (this.stats.open > 0) {
             this.dockedPanel.selectPanel(this.openIssuesPanel);
-        } else if (stats.closed > 0) {
+        } else if (this.stats.closed > 0) {
             this.dockedPanel.selectPanel(this.closedIssuesPanel);
         } else {
             this.dockedPanel.selectPanel(this.assignedToMeIssuesPanel);
@@ -137,5 +140,23 @@ export class IssuesDialog extends ModalDialog {
         const newIssueButton: SpanEl = new SpanEl().addClass('new-issue-button');
         newIssueButton.getEl().setTitle('Create an issue');
         return newIssueButton;
+    }
+
+    private getTotalByType(type: IssueType): number {
+        if (type === IssueType.ASSIGNED_TO_ME) {
+            return this.stats.assignedToMe;
+        }
+
+        if (type === IssueType.CREATED_BY_ME) {
+            return this.stats.createdByMe;
+        }
+
+        if (type === IssueType.OPEN) {
+            return this.stats.open;
+        }
+
+        if (type === IssueType.CLOSED) {
+            return this.stats.closed;
+        }
     }
 }

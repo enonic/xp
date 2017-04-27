@@ -8,8 +8,6 @@
 
     .deck-panel {
       margin-top: 6px;
-      max-height: 215px;
-      overflow: auto;
     }
   }
 
@@ -17,27 +15,32 @@
     position: inherit;
     cursor: pointer;
 
-    .issue-list-item {
+    .issue-list {
+      max-height: 215px;
+      overflow: auto;
 
-      &:hover {
-        background-color: @admin-bg-light-gray;
-      }
+      .issue-list-item {
 
-      &:focus {
-        outline: none;
-      }
-
-      padding: 5px;
-
-      .@{_COMMON_PREFIX}names-view .@{_COMMON_PREFIX}main-name, .@{_COMMON_PREFIX}sub-name {
         &:hover {
-          cursor: pointer;
+          background-color: @admin-bg-light-gray;
         }
-      }
 
-      .@{_COMMON_PREFIX}main-name {
-        height: 17px;
-        font-weight: bold;
+        &:focus {
+          outline: none;
+        }
+
+        padding: 5px;
+
+        .@{_COMMON_PREFIX}names-view .@{_COMMON_PREFIX}main-name, .@{_COMMON_PREFIX}sub-name {
+          &:hover {
+            cursor: pointer;
+          }
+        }
+
+        .@{_COMMON_PREFIX}main-name {
+          height: 17px;
+          font-weight: bold;
+        }
       }
     }
 

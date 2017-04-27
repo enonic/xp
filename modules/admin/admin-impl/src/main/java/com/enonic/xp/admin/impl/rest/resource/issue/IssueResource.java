@@ -3,6 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.issue;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -39,6 +40,9 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 public final class IssueResource
     implements JaxRsComponent
 {
+    private static final String DEFAULT_FROM_PARAM = "0";
+
+    private static final String DEFAULT_SIZE_PARAM = "10";
 
     private IssueService issueService;
 
@@ -74,45 +78,58 @@ public final class IssueResource
     @Path("stats")
     public IssueStatsJson getStats()
     {
-        return new IssueStatsJson( 0, 4, 4, 0 ); // mock for now
+        final long assignedToMe = this.issueService.countIssues( createIssuesByTypeQuery( "ASSIGNED_TO_ME" ).build() );
+        final long createdByMe = this.issueService.countIssues( createIssuesByTypeQuery( "CREATED_BY_ME" ).build() );
+        final long open = this.issueService.countIssues( createIssuesByTypeQuery( "OPEN" ).build() );
+        final long closed = this.issueService.countIssues( createIssuesByTypeQuery( "CLOSED" ).build() );
+
+        return IssueStatsJson.create().assignedToMe( assignedToMe ).createdByMe( createdByMe ).open( open ).closed( closed ).build();
     }
 
     @GET
-    @Path("bytype")
-    public IssuesJson getIssuesByType( @QueryParam("type") final String type )
+    @Path("list")
+    public IssuesJson listIssues( @QueryParam("type") final String type,
+                                  @QueryParam("from") @DefaultValue(DEFAULT_FROM_PARAM) final Integer fromParam,
+                                  @QueryParam("size") @DefaultValue(DEFAULT_SIZE_PARAM) final Integer sizeParam )
     {
-        final List<Issue> issues = this.issueService.findIssues( createIssuesByTypeQuery( type ) );
+        final IssueQuery issueQuery = createIssuesByTypeQuery( type ).from( fromParam ).size( sizeParam ).build();
+        final List<Issue> issues = this.issueService.findIssues( issueQuery );
 
         return new IssuesJson( issues );
     }
 
-    private IssueQuery createIssuesByTypeQuery( final String type )
+    private IssueQuery.Builder createIssuesByTypeQuery( final String type )
     {
         final IssueQuery.Builder builder = IssueQuery.create();
 
+        if ( type == null )
+        {
+            return builder;
+        }
+
         if ( type.equalsIgnoreCase( "CLOSED" ) )
         {
-            return builder.status( IssueStatus.Closed ).build();
+            return builder.status( IssueStatus.Closed );
         }
 
         if ( type.equalsIgnoreCase( "OPEN" ) )
         {
-            return builder.status( IssueStatus.Open ).build();
+            return builder.status( IssueStatus.Open );
         }
 
         if ( type.equalsIgnoreCase( "CREATED_BY_ME" ) )
         {
             final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-            return builder.creator( authInfo.getUser().getKey() ).build();
+            return builder.creator( authInfo.getUser().getKey() );
         }
 
         if ( type.equalsIgnoreCase( "ASSIGNED_TO_ME" ) )
         {
             final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-            return builder.approvers( PrincipalKeys.from( authInfo.getUser().getKey() ) ).build();
+            return builder.approvers( PrincipalKeys.from( authInfo.getUser().getKey() ) );
         }
 
-        return builder.build();
+        return builder;
     }
 
     @Reference
