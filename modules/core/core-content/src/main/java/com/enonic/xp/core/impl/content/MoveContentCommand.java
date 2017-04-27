@@ -7,8 +7,10 @@ import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentParams;
+import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
@@ -17,6 +19,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.site.Site;
 
 final class MoveContentCommand
     extends AbstractContentCommand
@@ -86,9 +89,28 @@ final class MoveContentCommand
             throw new IllegalArgumentException( String.format( "Content with id [%s] not found", params.getContentId() ) );
         }
 
+        final Site nearestSite = contentService.getNearestSite( params.getContentId() );
+
         final Node movedNode = nodeService.move( sourceNodeId, NodePath.create( ContentConstants.CONTENT_ROOT_PATH ).elements(
             params.getParentContentPath().toString() ).build() );
-        return translator.fromNode( movedNode, true );
+        final Content movedContent = translator.fromNode( movedNode, true );
+
+        final boolean isOutOfSite = nearestSite != null && !movedContent.getPath().isChildOf( nearestSite.getPath() );
+
+        if ( isOutOfSite )
+        {
+            final UpdateContentParams p =
+                new UpdateContentParams().contentId( params.getContentId() ).modifier( params.getCreator() ).editor(
+                    edit -> edit.extraDatas = this.updateExtraData( nearestSite, movedContent ) );
+            return contentService.update( p );
+        }
+        return movedContent;
+    }
+
+    private ExtraDatas updateExtraData( Site site, Content content )
+    {
+        return ExtraDatas.from( content.getAllExtraData().stream().filter(
+            extraData -> site.getSiteConfigs().get( extraData.getName().getApplicationKey() ) == null ) );
     }
 
     public static class Builder
