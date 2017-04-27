@@ -20,6 +20,7 @@ import {ContentPreviewPathChangedEvent} from '../view/ContentPreviewPathChangedE
 import {ContentPublishMenuButton} from './ContentPublishMenuButton';
 import {TreeNodeParentOfContent} from './TreeNodeParentOfContent';
 import {TreeNodesOfContentPath} from './TreeNodesOfContentPath';
+import {ShowIssuesDialogAction} from './action/ShowIssuesDialogAction';
 
 import TreeNode = api.ui.treegrid.TreeNode;
 import BrowseItem = api.app.browse.BrowseItem;
@@ -35,6 +36,7 @@ import DataChangedEvent = api.ui.treegrid.DataChangedEvent;
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
 import TreeGridItemClickedEvent = api.ui.treegrid.TreeGridItemClickedEvent;
 import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
+import ActionButton = api.ui.button.ActionButton;
 
 export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
 
@@ -137,6 +139,11 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             this.browseToolbar.appendChild(nonMobileDetailsPanelsManager.getToggleButton());
 
             this.subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager, contentPublishMenuButton);
+
+            const showIssuesDialogButton: ActionButton = new ActionButton(new ShowIssuesDialogAction());
+            showIssuesDialogButton.addClass('show-issues-dialog-button');
+            showIssuesDialogButton.getEl().setTitle('Publishing Issues');
+            this.browseToolbar.appendChild(showIssuesDialogButton);
 
             return rendered;
         }).catch((error) => {

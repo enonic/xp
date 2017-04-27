@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.issue;
 
+import java.util.List;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -7,6 +9,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueId;
+import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.IssueService;
 import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.node.NodeService;
@@ -44,6 +47,16 @@ public class IssueServiceImpl
         return GetIssueByIdCommand.create().
             issueId( id ).
             nodeService( this.nodeService ).
+            build().
+            execute();
+    }
+
+    @Override
+    public List<Issue> findIssues( final IssueQuery query )
+    {
+        return FindIssuesCommand.create().
+            query( query ).
+            nodeService( nodeService ).
             build().
             execute();
     }
