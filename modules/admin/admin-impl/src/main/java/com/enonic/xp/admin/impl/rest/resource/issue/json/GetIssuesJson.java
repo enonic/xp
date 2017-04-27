@@ -14,7 +14,7 @@ public class GetIssuesJson
     private final List<IssueId> issueIds;
 
     @JsonCreator
-    GetIssuesJson( @JsonProperty("ids") final List<String> ids )
+    public GetIssuesJson( @JsonProperty("ids") final List<String> ids )
     {
 
         this.issueIds = new ArrayList<>();

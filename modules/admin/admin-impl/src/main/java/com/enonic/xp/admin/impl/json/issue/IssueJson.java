@@ -61,7 +61,8 @@ public class IssueJson
 
     public String getCreator()
     {
-        return this.issue.getCreator().toString();
+        return this.issue.getCreator() != null ? this.issue.getCreator().toString() : null;
+
     }
 
     public String getModifier()

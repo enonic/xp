@@ -1,4 +1,5 @@
-import '../../api.ts';
+import "../../api.ts";
+import {Issue} from "./Issue";
 import PrincipalComboBox = api.ui.security.PrincipalComboBox;
 import TextArea = api.ui.text.TextArea;
 import TextInput = api.ui.text.TextInput;
@@ -26,12 +27,20 @@ export class CreateIssueDialogForm extends api.ui.form.Form {
         this.initFormView();
     }
 
+    public doRender(): wemQ.Promise<boolean> {
+        return super.doRender().then(() => {
+            return this.selector.getLoader().load().then(() => {
+                return true;
+            });
+        });
+    }
+
     show() {
         super.show();
 
         this.displayValidationErrors(false);
 
-        this.title.giveFocus();
+        // this.title.giveFocus();
     }
 
     private initElements() {
@@ -69,6 +78,37 @@ export class CreateIssueDialogForm extends api.ui.form.Form {
         });
 
         this.add(fieldSet);
+    }
+
+    public setReadOnly(readOnly: boolean) {
+        this.title.setReadOnly(readOnly);
+        this.description.setReadOnly(readOnly);
+        this.selector.setReadOnly(readOnly);
+
+        const titleFormItem = <FormItem>this.title.getParentElement();
+        titleFormItem.setVisible(!readOnly);
+
+        const selectorFormItem = <FormItem>this.selector.getParentElement();
+        selectorFormItem.setLabel(readOnly ? 'Assignees:' : 'Invite users to work on issue');
+    }
+
+    public setIssue(issue: Issue) {
+        if (this.isRendered()) {
+            this.doSetIssue(issue);
+        } else {
+            this.onRendered(() => {
+                this.doSetIssue(issue);
+            });
+        }
+    }
+
+    private doSetIssue(issue: Issue) {
+        this.title.setValue(issue.getTitle());
+        this.description.setValue(issue.getDescription());
+
+        issue.getApprovers().forEach((approver) => {
+            this.selector.selectOptionByValue(approver.toString());
+        });
     }
 
     public displayValidationErrors(value: boolean) {

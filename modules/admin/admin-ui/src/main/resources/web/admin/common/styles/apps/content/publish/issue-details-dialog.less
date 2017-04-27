@@ -1,0 +1,113 @@
+.issue-details-dialog {
+
+  @toggler-width: 35px;
+
+  .icon-tree {
+    font-size: 20px;
+    line-height: 32px;
+
+    .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent, false);
+
+    &.on {
+      .button(@admin-button-blue1, transparent, @admin-button-blue1, transparent, false);
+
+      padding: 0;
+      width: @toggler-width;
+    }
+
+    padding: 0;
+    width: @toggler-width;
+  }
+
+  &.is-publishing {
+    .create-issue-dialog-form,
+    .dialog-header a.edit,
+    .items-header,
+    .dialog-buttons div.checkbox {
+      display: none;
+    }
+
+    .button-container .cancel-button-bottom {
+      float: none;
+    }
+
+    .sub-title {
+      display: block;
+    }
+  }
+
+  .required {
+    &:after {
+      display: none;
+    }
+  }
+
+  .title {
+    display: inline-block;
+  }
+
+  .sub-title {
+    display: none;
+  }
+
+  .edit {
+    display: inline-block;
+    line-height: 24px;
+    float: right;
+    .icon-pencil2;
+  }
+
+  .browse-selection-item .remove {
+    display: none;
+  }
+
+  .publish-dialog-item-list {
+
+    .browse-selection-item {
+
+      .status {
+        line-height: 32px;
+      }
+    }
+
+    &.contains-toggleable {
+
+      .browse-selection-item:not(.toggleable) {
+        margin-left: @toggler-width;
+      }
+
+      .include-children-toggler {
+        cursor: default;
+        &:hover {
+          &:before {
+            color: @admin-font-gray2;
+          }
+          &.on {
+            &:before {
+              color: @admin-button-blue1;
+            }
+          }
+        }
+      }
+    }
+  }
+  .button-container {
+    width: 100%;
+
+    .cancel-button-bottom {
+      float: left;
+      margin: 0px;
+    }
+    .publish-action {
+      float: right;
+    }
+
+    .checkbox {
+      float: right;
+      line-height: 24px;
+    }
+    .show-schedule-action {
+      float: right;
+    }
+  }
+}

@@ -1,6 +1,6 @@
-import '../../api.ts';
-import {StatusSelectionItem} from './StatusSelectionItem';
-import {DependantItemViewer} from './DependantItemViewer';
+import "../../api.ts";
+import {StatusSelectionItem} from "./StatusSelectionItem";
+import {DependantItemViewer} from "./DependantItemViewer";
 
 import ContentSummary = api.content.ContentSummary;
 import ContentIds = api.content.ContentIds;
@@ -23,8 +23,6 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     private dialogName: string;
 
-    private autoUpdateTitle: boolean = true;
-
     private ignoreItemsChanged: boolean;
 
     private subTitle: api.dom.H6El;
@@ -41,6 +39,8 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     protected loadMask: LoadMask;
 
+    protected autoUpdateTitle: boolean = true;
+
     protected loading: boolean = false;
 
     protected loadingRequested: boolean = false;
@@ -49,7 +49,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     protected dependantIds: ContentId[] = [];
 
-    constructor(dialogName: string, dialogSubName: string, dependantsName: string) {
+    constructor(dialogName: string = '', dialogSubName: string = '', dependantsName: string = '') {
         super(dialogName);
 
         this.addClass('dependant-dialog');

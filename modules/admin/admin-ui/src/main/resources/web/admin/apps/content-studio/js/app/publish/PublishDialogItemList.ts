@@ -1,5 +1,5 @@
-import {DialogItemList} from '../dialog/DependantItemsDialog';
-import {StatusSelectionItem} from '../dialog/StatusSelectionItem';
+import {DialogItemList} from "../dialog/DependantItemsDialog";
+import {StatusSelectionItem} from "../dialog/StatusSelectionItem";
 
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
 import BrowseItem = api.app.browse.BrowseItem;
@@ -60,6 +60,12 @@ export class PublishDialogItemList extends DialogItemList {
         return item;
     }
 
+    public setReadOnly(value: boolean) {
+        this.getItemViews().forEach((item) => {
+            item.setReadOnly(value);
+        });
+    }
+
     public getItemViews(): PublicStatusSelectionItem[] {
         return <PublicStatusSelectionItem[]>super.getItemViews();
     }
@@ -99,8 +105,6 @@ export class PublicStatusSelectionItem extends StatusSelectionItem {
         super(viewer, item);
 
         if(item.getModel().getContentSummary().hasChildren()) {
-            this.toggler = new IncludeChildrenToggler();
-
             this.addClass('toggleable');
 
             this.toggler = new IncludeChildrenToggler();
@@ -121,6 +125,12 @@ export class PublicStatusSelectionItem extends StatusSelectionItem {
 
             return rendered;
         });
+    }
+
+    public setReadOnly(value: boolean) {
+        if (this.toggler) {
+            this.toggler.setReadOnly(value);
+        }
     }
 
     getIncludeChildrenToggler(): IncludeChildrenToggler {
@@ -149,8 +159,11 @@ class IncludeChildrenToggler extends api.dom.DivEl {
 
     private tooltip: Tooltip;
 
+    private readOnly: boolean;
+
     constructor() {
         super('icon icon-tree');
+        this.addClass('include-children-toggler');
 
         this.tooltip = new Tooltip(this, '', 1000);
 
@@ -160,11 +173,20 @@ class IncludeChildrenToggler extends api.dom.DivEl {
     }
 
     toggle(condition?: boolean, silent?: boolean) {
-        this.toggleClass('on', condition);
+        if (!this.readOnly) {
+            this.toggleClass('on', condition);
 
-        this.tooltip.setText(this.isEnabled() ? 'Exclude child items' : 'Include child items');
+            this.tooltip.setText(this.isEnabled() ? 'Exclude child items' : 'Include child items');
 
-        this.notifyStateChanged(this.isEnabled());
+            if (!silent) {
+                this.notifyStateChanged(this.isEnabled());
+            }
+        }
+    }
+
+    setReadOnly(value: boolean) {
+        this.readOnly = value;
+        this.tooltip.setActive(!value);
     }
 
     isEnabled(): boolean {

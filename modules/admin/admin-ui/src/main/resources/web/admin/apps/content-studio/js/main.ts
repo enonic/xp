@@ -1,23 +1,23 @@
-import './api.ts';
-import {Router} from './app/Router';
-import {ContentAppPanel} from './app/ContentAppPanel';
-import {ContentDeletePromptEvent} from './app/browse/ContentDeletePromptEvent';
-import {ContentPublishPromptEvent} from './app/browse/ContentPublishPromptEvent';
-import {ContentUnpublishPromptEvent} from './app/browse/ContentUnpublishPromptEvent';
-import {ContentDeleteDialog} from './app/remove/ContentDeleteDialog';
-import {ContentPublishDialog} from './app/publish/ContentPublishDialog';
-import {ContentUnpublishDialog} from './app/publish/ContentUnpublishDialog';
-import {NewContentDialog} from './app/create/NewContentDialog';
-import {ShowNewContentDialogEvent} from './app/browse/ShowNewContentDialogEvent';
-import {SortContentDialog} from './app/browse/SortContentDialog';
-import {MoveContentDialog} from './app/browse/MoveContentDialog';
-import {EditPermissionsDialog} from './app/wizard/EditPermissionsDialog';
-import {ContentWizardPanelParams} from './app/wizard/ContentWizardPanelParams';
-import {ContentWizardPanel} from './app/wizard/ContentWizardPanel';
-import {ContentEventsListener} from './app/ContentEventsListener';
-import {ContentEventsProcessor} from './app/ContentEventsProcessor';
-import {IssuesDialog} from './app/publish/IssuesDialog';
-import {ShowIssuesDialogEvent} from './app/browse/ShowIssuesDialogEvent';
+import "./api.ts";
+import {Router} from "./app/Router";
+import {ContentAppPanel} from "./app/ContentAppPanel";
+import {ContentDeletePromptEvent} from "./app/browse/ContentDeletePromptEvent";
+import {ContentPublishPromptEvent} from "./app/browse/ContentPublishPromptEvent";
+import {ContentUnpublishPromptEvent} from "./app/browse/ContentUnpublishPromptEvent";
+import {ContentDeleteDialog} from "./app/remove/ContentDeleteDialog";
+import {ContentPublishDialog} from "./app/publish/ContentPublishDialog";
+import {ContentUnpublishDialog} from "./app/publish/ContentUnpublishDialog";
+import {NewContentDialog} from "./app/create/NewContentDialog";
+import {ShowNewContentDialogEvent} from "./app/browse/ShowNewContentDialogEvent";
+import {SortContentDialog} from "./app/browse/SortContentDialog";
+import {MoveContentDialog} from "./app/browse/MoveContentDialog";
+import {EditPermissionsDialog} from "./app/wizard/EditPermissionsDialog";
+import {ContentWizardPanelParams} from "./app/wizard/ContentWizardPanelParams";
+import {ContentWizardPanel} from "./app/wizard/ContentWizardPanel";
+import {ContentEventsListener} from "./app/ContentEventsListener";
+import {ContentEventsProcessor} from "./app/ContentEventsProcessor";
+import {IssuesDialog} from "./app/publish/IssuesDialog";
+import {ShowIssuesDialogEvent} from "./app/browse/ShowIssuesDialogEvent";
 import UriHelper = api.util.UriHelper;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import ContentId = api.content.ContentId;
@@ -97,7 +97,7 @@ function initToolTip() {
         wemjq('#' + ID).html(tooltipText).css({
             position: 'absolute', top, left
         }).show();
-        };
+    };
     wemjq(document).on('mouseenter', '*[title]:not([title=""]):not([disabled]):visible', function (e: any) {
         wemjq(e.target).data(DATA, wemjq(e.target).attr('title'));
         wemjq(e.target).removeAttr('title').addClass(CLS_ON);
@@ -274,7 +274,7 @@ function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDe
         if (wizard.hasUnsavedChanges()) {
             let message = 'Wizard has unsaved changes. Continue without saving ?';
             // Hack for IE. returnValue is boolean
-            const e: any = event || window.event || { returnValue: '' };
+            const e: any = event || window.event || {returnValue: ''};
             e['returnValue'] = message;
             return message;
         }

@@ -1,9 +1,9 @@
-import '../../api.ts';
-import {ProgressBarDialog} from '../dialog/ProgressBarDialog';
-import {PublishDialogDependantList, isContentSummaryValid} from './PublishDialogDependantList';
-import {ContentPublishPromptEvent} from '../browse/ContentPublishPromptEvent';
-import {SchedulePublishDialog} from './SchedulePublishDialog';
-import {PublishDialogItemList} from './PublishDialogItemList';
+import "../../api.ts";
+import {PublishDialogDependantList, isContentSummaryValid} from "./PublishDialogDependantList";
+import {ContentPublishPromptEvent} from "../browse/ContentPublishPromptEvent";
+import {PublishDialogItemList} from "./PublishDialogItemList";
+import {CreateIssueDialog} from "./CreateIssueDialog";
+import {SchedulableDialog} from "../dialog/SchedulableDialog";
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import PublishContentRequest = api.content.resource.PublishContentRequest;
@@ -14,7 +14,6 @@ import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
 import BrowseItem = api.app.browse.BrowseItem;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
-import {CreateIssueDialog} from './CreateIssueDialog';
 
 /**
  * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
@@ -22,7 +21,7 @@ import {CreateIssueDialog} from './CreateIssueDialog';
  * Dependant items number will change depending on includeChildren checkbox state as
  * resolved dependencies usually differ in that case.
  */
-export class ContentPublishDialog extends ProgressBarDialog {
+export class ContentPublishDialog extends SchedulableDialog {
 
     private excludedIds: ContentId[] = [];
 
@@ -30,11 +29,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
     private allPublishable: boolean;
 
-    private scheduleDialog: SchedulePublishDialog;
-
     private createIssueDialog: CreateIssueDialog;
-
-    protected showScheduleDialogButton: api.ui.dialog.DialogButton;
 
     constructor() {
         super(
@@ -64,12 +59,8 @@ export class ContentPublishDialog extends ProgressBarDialog {
         });
     }
 
-    private initActions() {
-        let showScheduleAction = new ShowSchedulePublishDialogAction();
-        showScheduleAction.onExecuted(this.showScheduleDialog.bind(this));
-        this.showScheduleDialogButton = this.addAction(showScheduleAction, false);
-        this.showScheduleDialogButton.setTitle('Schedule Publishing');
-
+    protected initActions() {
+        super.initActions();
         this.setButtonAction(ContentPublishDialogAction, this.doPublish.bind(this, false));
 
         this.lockControls();
@@ -112,16 +103,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
     close() {
         super.close();
         this.getItemList().clearExcludeChildrenIds();
-    }
-
-    protected lockControls() {
-        super.lockControls();
-        this.showScheduleDialogButton.setEnabled(false);
-    }
-
-    protected unlockControls() {
-        super.unlockControls();
-        this.showScheduleDialogButton.setEnabled(true);
     }
 
     private reloadPublishDependencies(resetDependantItems?: boolean): wemQ.Promise<void> {
@@ -215,22 +196,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
         });
     }
 
-    private showScheduleDialog() {
-        if (!this.scheduleDialog) {
-            this.scheduleDialog = new SchedulePublishDialog();
-            this.scheduleDialog.onClose(() => {
-                this.removeClass('masked');
-                this.getEl().focus();
-            });
-            this.scheduleDialog.onSchedule(() => {
-                this.doPublish(true);
-            });
-            this.addClickIgnoredElement(this.scheduleDialog);
-        }
-        this.scheduleDialog.open();
-        this.addClass('masked');
-    }
-
     private showCreateIssueDialog() {
         if (!this.createIssueDialog) {
             this.createIssueDialog = new CreateIssueDialog();
@@ -251,7 +216,7 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
         this.createIssueDialog.setItems(idsToPublish, this.getItemList().getExcludeChildrenIds());
         this.createIssueDialog.setExcludeIds(this.excludedIds);
-        this.createIssueDialog.setFullContentCount(idsToPublish.length + this.dependantIds.length );
+        this.createIssueDialog.setFullContentCount(idsToPublish.length + this.dependantIds.length);
 
         this.createIssueDialog.open();
 
@@ -292,7 +257,8 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
         this.lockControls();
 
-        this.setSubTitle(this.countTotal() + ' items are being published...');
+        this.setSubTitle(this.countTotal() + '' +
+                         ' items are being published...');
 
         let selectedIds = this.getContentToPublishIds();
 
@@ -302,8 +268,8 @@ export class ContentPublishDialog extends ProgressBarDialog {
             .setExcludeChildrenIds(this.getItemList().getExcludeChildrenIds());
 
         if (scheduled) {
-            publishRequest.setPublishFrom(this.scheduleDialog.getFromDate());
-            publishRequest.setPublishTo(this.scheduleDialog.getToDate());
+            publishRequest.setPublishFrom(this.getFromDate());
+            publishRequest.setPublishTo(this.getToDate());
         }
 
         publishRequest.sendAndParse().then((taskId: api.task.TaskId) => {
@@ -323,16 +289,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
     protected getItemList(): PublishDialogItemList {
         return <PublishDialogItemList>super.getItemList();
-    }
-
-    protected countTotal(): number {
-        return this.countToPublish(this.getItemList().getItems()) + this.getDependantIds().length;
-    }
-
-    private countToPublish(summaries: ContentSummaryAndCompareStatus[]): number {
-        return summaries.reduce((count, summary: ContentSummaryAndCompareStatus) => {
-            return summary.getCompareStatus() !== CompareStatus.EQUAL ? ++count : count;
-        }, 0);
     }
 
     private updateSubTitle(count: number) {
@@ -363,22 +319,20 @@ export class ContentPublishDialog extends ProgressBarDialog {
 
     protected updateButtonStatus(enabled: boolean) {
         if (api.ObjectHelper.iFrameSafeInstanceOf(this.actionButton.getAction(), ContentPublishDialogAction)) {
-            this.togglePublish(enabled);
+            this.toggleAction(enabled);
         } else {
-            this.togglePublish(true);
+            this.toggleAction(true);
         }
     }
 
-    protected updateShowScheduleDialogButton() {
-        if (api.ObjectHelper.iFrameSafeInstanceOf(this.actionButton.getAction(), ContentPublishDialogAction)) {
-            if (this.areSomeItemsOffline()) {
-                this.showScheduleDialogButton.show();
-            } else {
-                this.showScheduleDialogButton.hide();
-            }
-        } else {
-            this.showScheduleDialogButton.hide();
-        }
+    protected doScheduledAction() {
+        this.doPublish(true);
+    }
+
+    protected isScheduleButtonAllowed(): boolean {
+
+        return api.ObjectHelper.iFrameSafeInstanceOf(this.actionButton.getAction(), ContentPublishDialogAction) &&
+               this.areSomeItemsOffline();
     }
 
     private areSomeItemsOffline(): boolean {
@@ -393,11 +347,6 @@ export class ContentPublishDialog extends ProgressBarDialog {
     protected hasSubDialog(): boolean {
         return true;
     }
-
-    private togglePublish(enable: boolean) {
-        this.toggleControls(enable);
-        this.toggleClass('no-publish', !enable);
-    }
 }
 
 export class ContentPublishDialogAction extends api.ui.Action {
@@ -411,12 +360,5 @@ export class CreateIssueDialogAction extends api.ui.Action {
     constructor() {
         super('Create Issue... ');
         this.setIconClass('create-issue-action');
-    }
-}
-
-export class ShowSchedulePublishDialogAction extends api.ui.Action {
-    constructor() {
-        super();
-        this.setIconClass('show-schedule-action');
     }
 }

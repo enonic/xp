@@ -1,10 +1,12 @@
-import '../../api.ts';
+import "../../api.ts";
+import {CreateIssueDialogForm} from "./CreateIssueDialogForm";
 import PublishRequestItem = api.issue.PublishRequestItem;
-import {CreateIssueDialogForm} from './CreateIssueDialogForm';
 import CreateIssueRequest = api.issue.resource.CreateIssueRequest;
 import PublishRequest = api.issue.PublishRequest;
 
 export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
+
+    private form: CreateIssueDialogForm;
 
     private items: PublishRequestItem[];
 
@@ -13,8 +15,6 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
     private fullContentCount: number = 0;
 
     private confirmButton: api.ui.dialog.DialogButton;
-
-    private form: CreateIssueDialogForm;
 
     private onCloseCallback: () => void;
 
@@ -59,8 +59,6 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
 
         api.dom.Body.get().appendChild(this);
         super.show();
-
-        this.form.giveFocus();
     }
 
     close() {
