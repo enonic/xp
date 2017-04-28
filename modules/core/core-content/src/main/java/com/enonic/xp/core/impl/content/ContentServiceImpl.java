@@ -305,7 +305,6 @@ public class ContentServiceImpl
     {
         return DeleteAndFetchContentCommand.create().
             nodeService( this.nodeService ).
-            contentService( this ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
@@ -470,8 +469,11 @@ public class ContentServiceImpl
     public Site getNearestSite( final ContentId contentId )
     {
         return GetNearestSiteCommand.create().
-            contentService( this ).
             contentId( contentId ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }
@@ -612,7 +614,7 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
-            contentService( this ).
+            contentProcessors( this.contentProcessors ).
             build().
             execute();
     }
@@ -902,7 +904,10 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
-            contentService( this ).
+            mediaInfoService( this.mediaInfoService ).
+            siteService( this.siteService ).
+            mixinService( this.mixinService ).
+            contentProcessors( this.contentProcessors ).
             build().
             execute();
     }

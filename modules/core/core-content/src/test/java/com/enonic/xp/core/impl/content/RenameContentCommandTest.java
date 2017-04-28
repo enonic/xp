@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Iterator;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -10,16 +12,21 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.core.impl.content.processor.ContentProcessor;
+import com.enonic.xp.core.impl.content.processor.ContentProcessors;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RenameNodeParams;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.security.PrincipalKey;
 
 public class RenameContentCommandTest
 {
@@ -37,6 +44,10 @@ public class RenameContentCommandTest
 
     private ContentType contentType;
 
+    private MixinService mixinService;
+
+    private ContentProcessors contentProcessors;
+
     @Before
     public void setUp()
         throws Exception
@@ -46,6 +57,8 @@ public class RenameContentCommandTest
         this.nodeService = Mockito.mock( NodeService.class );
         this.eventPublisher = Mockito.mock( EventPublisher.class );
         this.translator = Mockito.mock( ContentNodeTranslator.class );
+        this.mixinService = Mockito.mock( MixinService.class );
+        this.contentProcessors = Mockito.mock( ContentProcessors.class );
 
         contentType = ContentType.create().
             superType( ContentTypeName.documentMedia() ).
@@ -68,14 +81,18 @@ public class RenameContentCommandTest
 
         final Content content = createContent( true );
 
+        Mockito.when( this.nodeService.getById( Mockito.any( NodeId.class ) ) ).thenReturn( mockNode );
         Mockito.when( translator.fromNode( mockNode, false ) ).thenReturn( content );
+        Mockito.when( translator.fromNode( mockNode, true ) ).thenReturn( content );
+        Iterator<ContentProcessor> contentProcessorIterator = Mockito.mock( Iterator.class );
+        Mockito.when( contentProcessors.iterator() ).thenReturn( contentProcessorIterator );
 
         final RenameContentParams params =
             RenameContentParams.create().contentId( content.getId() ).newName( ContentName.unnamed() ).build();
 
         createCommand( params ).execute();
 
-        Mockito.verify( contentService, Mockito.times( 1 ) ).update( Mockito.isA( UpdateContentParams.class ) );
+        Mockito.verify( nodeService, Mockito.times( 1 ) ).update( Mockito.isA( UpdateNodeParams.class ) );
 
     }
 
@@ -103,6 +120,7 @@ public class RenameContentCommandTest
         return Content.create().
             id( ContentId.from( "testId" ) ).
             path( "/mycontent" ).
+            creator( PrincipalKey.from( "user:system:anonymous" ) ).
             type( ContentTypeName.folder() ).
             data( new PropertyTree() ).
             valid( valid ).
@@ -113,10 +131,11 @@ public class RenameContentCommandTest
     {
         return RenameContentCommand.create( params ).
             contentTypeService( this.contentTypeService ).
-            contentService( this.contentService ).
             nodeService( this.nodeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
+            mixinService( this.mixinService ).
+            contentProcessors( this.contentProcessors ).
             build();
     }
 

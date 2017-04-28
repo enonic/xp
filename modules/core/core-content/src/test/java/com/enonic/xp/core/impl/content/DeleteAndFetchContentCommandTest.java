@@ -10,7 +10,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.event.EventPublisher;
@@ -27,6 +26,7 @@ import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.SetNodeStateResult;
+import com.enonic.xp.schema.content.ContentTypeService;
 
 import static org.junit.Assert.*;
 
@@ -34,19 +34,18 @@ public class DeleteAndFetchContentCommandTest
 {
     private NodeService nodeService;
 
-    private ContentService contentService;
-
     private ContentNodeTranslator translator;
 
     private EventPublisher eventPublisher;
 
+    private ContentTypeService contentTypeService;
 
     @Before
     public void setUp()
         throws Exception
     {
+        this.contentTypeService = Mockito.mock( ContentTypeService.class );
         this.nodeService = Mockito.mock( NodeService.class );
-        this.contentService = Mockito.mock( ContentService.class );
         this.translator = Mockito.mock( ContentNodeTranslator.class );
         this.eventPublisher = Mockito.mock( EventPublisher.class );
     }
@@ -91,16 +90,14 @@ public class DeleteAndFetchContentCommandTest
                 addUpdatedNode( node ).
                 build() );
 
-        Mockito.when( this.translator.fromNode( node, false ) ).thenReturn( content );
-
-        Mockito.when( this.contentService.getByPath( ContentPath.from( "myContent" ) ) ).thenReturn( content );
+        Mockito.when( this.translator.fromNode( node, true ) ).thenReturn( content );
 
         final Contents result = DeleteAndFetchContentCommand.create().
             params( DeleteContentParams.create().
-                contentPath( ContentPath.from( "myContent" ) ).
+                contentPath( ContentPath.from( "/myContent" ) ).
                 build() ).
+            contentTypeService( this.contentTypeService ).
             nodeService( this.nodeService ).
-            contentService( this.contentService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             build().
@@ -148,17 +145,15 @@ public class DeleteAndFetchContentCommandTest
         Mockito.when( this.nodeService.deleteById( node.id() ) ).
             thenReturn( NodeIds.from( id ) );
 
-        Mockito.when( this.translator.fromNode( node, false ) ).thenReturn( content );
-
-        Mockito.when( this.contentService.getByPath( ContentPath.from( "myContent" ) ) ).thenReturn( content );
+        Mockito.when( this.translator.fromNode( node, true ) ).thenReturn( content );
 
         final Contents result = DeleteAndFetchContentCommand.create().
             params( DeleteContentParams.create().
-                contentPath( ContentPath.from( "myContent" ) ).
+                contentPath( ContentPath.from( "/myContent" ) ).
                 deleteOnline( true ).
                 build() ).
+            contentTypeService( this.contentTypeService ).
             nodeService( this.nodeService ).
-            contentService( this.contentService ).
             eventPublisher( this.eventPublisher ).
             translator( this.translator ).
             build().

@@ -8,7 +8,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
@@ -32,13 +31,10 @@ final class DeleteAndFetchContentCommand
 {
     private final DeleteContentParams params;
 
-    private final ContentService contentService;
-
     private DeleteAndFetchContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
-        contentService = builder.contentService;
     }
 
     public static Builder create()
@@ -64,7 +60,7 @@ final class DeleteAndFetchContentCommand
 
     private Contents doExecute()
     {
-        final Content content = this.contentService.getByPath( this.params.getContentPath() );
+        final Content content = this.getContent( this.params.getContentPath() );
         NodeId id = NodeId.from( content.getId().toString() );
 
         final DeleteContentsResult.Builder nodesToDelete = DeleteContentsResult.create();
@@ -143,17 +139,9 @@ final class DeleteAndFetchContentCommand
     {
         private DeleteContentParams params;
 
-        private ContentService contentService;
-
         public Builder params( final DeleteContentParams params )
         {
             this.params = params;
-            return this;
-        }
-
-        public Builder contentService( ContentService contentService )
-        {
-            this.contentService = contentService;
             return this;
         }
 
