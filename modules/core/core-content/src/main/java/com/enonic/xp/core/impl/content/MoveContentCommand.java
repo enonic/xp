@@ -64,7 +64,37 @@ final class MoveContentCommand
 
     private Content doExecute()
     {
-        final ContentPath destinationPath = params.getParentContentPath();
+        this.verifyIntegrity( params.getParentContentPath() );
+
+        final NodeId sourceNodeId = NodeId.from( params.getContentId().toString() );
+        final Node sourceNode = nodeService.getById( sourceNodeId );
+        if ( sourceNode == null )
+        {
+            throw new IllegalArgumentException( String.format( "Content with id [%s] not found", params.getContentId() ) );
+        }
+
+        final Site nearestSite = contentService.getNearestSite( params.getContentId() );
+
+        final NodePath nodePath = NodePath.create( ContentConstants.CONTENT_ROOT_PATH ).
+            elements( params.getParentContentPath().toString() ).
+            build();
+        final Node movedNode = nodeService.move( sourceNodeId, nodePath );
+        final Content movedContent = translator.fromNode( movedNode, true );
+
+        final boolean isOutOfSite = nearestSite != null && !movedContent.getPath().isChildOf( nearestSite.getPath() );
+
+        if ( isOutOfSite )
+        {
+            final UpdateContentParams updateParams = new UpdateContentParams().
+                contentId( params.getContentId() ).
+                modifier( params.getCreator() ).
+                editor( edit -> edit.extraDatas = this.updateExtraData( nearestSite, movedContent ) );
+            return contentService.update( updateParams );
+        }
+        return movedContent;
+    }
+
+    private void verifyIntegrity( ContentPath destinationPath ) {
         if ( !destinationPath.isRoot() )
         {
             final Content parent = contentService.getByPath( destinationPath );
@@ -81,30 +111,6 @@ final class MoveContentCommand
                     "Content could not be moved. Children not allowed in destination [" + destinationPath.toString() + "]" );
             }
         }
-
-        final NodeId sourceNodeId = NodeId.from( params.getContentId().toString() );
-        final Node sourceNode = nodeService.getById( sourceNodeId );
-        if ( sourceNode == null )
-        {
-            throw new IllegalArgumentException( String.format( "Content with id [%s] not found", params.getContentId() ) );
-        }
-
-        final Site nearestSite = contentService.getNearestSite( params.getContentId() );
-
-        final Node movedNode = nodeService.move( sourceNodeId, NodePath.create( ContentConstants.CONTENT_ROOT_PATH ).elements(
-            params.getParentContentPath().toString() ).build() );
-        final Content movedContent = translator.fromNode( movedNode, true );
-
-        final boolean isOutOfSite = nearestSite != null && !movedContent.getPath().isChildOf( nearestSite.getPath() );
-
-        if ( isOutOfSite )
-        {
-            final UpdateContentParams p =
-                new UpdateContentParams().contentId( params.getContentId() ).modifier( params.getCreator() ).editor(
-                    edit -> edit.extraDatas = this.updateExtraData( nearestSite, movedContent ) );
-            return contentService.update( p );
-        }
-        return movedContent;
     }
 
     private ExtraDatas updateExtraData( Site site, Content content )
