@@ -2,6 +2,8 @@
 
 .attachment-uploader {
 
+  position: relative;
+
   .uploader-wrapper {
 
     position: relative;
@@ -27,15 +29,8 @@
         position: relative;
         min-height: @attachment-uploader-height;
 
-        &:empty::before {
-          content: "< No attachment found >";
-          position: absolute;
+        &:empty + .no-attachments-description {
           display: block;
-          width: 100%;
-          font-size: 1.25em;
-          color: @admin-font-gray2;
-          line-height: @attachment-uploader-height;
-          text-align: center;
         }
 
         .attachment-item {
@@ -46,6 +41,18 @@
             padding-right: 2px;
           }
         }
+      }
+
+      .no-attachments-description {
+        position: absolute;
+        display: none;
+        top: 0;
+        width: calc(~'100%' - @attachment-uploader-height);
+        font-size: 1.25em;
+        color: @admin-font-gray2;
+        line-height: @attachment-uploader-height;
+        text-align: center;
+        z-index: -1;
       }
 
       .progress-bar {
