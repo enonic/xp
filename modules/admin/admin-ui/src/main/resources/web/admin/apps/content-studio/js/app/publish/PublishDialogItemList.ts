@@ -1,5 +1,5 @@
-import {DialogItemList} from "../dialog/DependantItemsDialog";
-import {StatusSelectionItem} from "../dialog/StatusSelectionItem";
+import {DialogItemList} from '../dialog/DependantItemsDialog';
+import {StatusSelectionItem} from '../dialog/StatusSelectionItem';
 
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
 import BrowseItem = api.app.browse.BrowseItem;

@@ -1,11 +1,11 @@
-import "../../api.ts";
-import {PublishDialogDependantList} from "./PublishDialogDependantList";
-import {ContentPublishPromptEvent} from "../browse/ContentPublishPromptEvent";
-import {PublishDialogItemList, PublicStatusSelectionItem} from "./PublishDialogItemList";
-import {Issue} from "./Issue";
-import {CreateIssueDialogForm} from "./CreateIssueDialogForm";
-import {ContentPublishDialogAction} from "./ContentPublishDialog";
-import {SchedulableDialog} from "../dialog/SchedulableDialog";
+import '../../api.ts';
+import {PublishDialogDependantList} from './PublishDialogDependantList';
+import {ContentPublishPromptEvent} from '../browse/ContentPublishPromptEvent';
+import {PublishDialogItemList, PublicStatusSelectionItem} from './PublishDialogItemList';
+import {Issue} from './Issue';
+import {CreateIssueDialogForm} from './CreateIssueDialogForm';
+import {ContentPublishDialogAction} from './ContentPublishDialog';
+import {SchedulableDialog} from '../dialog/SchedulableDialog';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import PublishContentRequest = api.content.resource.PublishContentRequest;

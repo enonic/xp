@@ -1,6 +1,6 @@
-import "../../api.ts";
-import {IssueSummary, IssueSummaryBuilder} from "./IssueSummary";
-import {IssueJson} from "./IssueJson";
+import '../../api.ts';
+import {IssueSummary, IssueSummaryBuilder} from './IssueSummary';
+import {IssueJson} from './IssueJson';
 import PublishRequest = api.issue.PublishRequest;
 import PrincipalKey = api.security.PrincipalKey;
 

@@ -1,12 +1,12 @@
-import "../../api.ts";
-import {IssueFetcher} from "./IssueFetcher";
-import {IssueStatsJson} from "./IssueStatsJson";
-import {IssueSummary} from "./IssueSummary";
-import {IssueList} from "./IssueList";
-import {IssueType} from "./IssueType";
-import {IssueDetailsDialog} from "./IssueDetailsDialog";
-import {GetIssueRequest} from "./GetIssueRequest";
-import {Issue} from "./Issue";
+import '../../api.ts';
+import {IssueFetcher} from './IssueFetcher';
+import {IssueStatsJson} from './IssueStatsJson';
+import {IssueSummary} from './IssueSummary';
+import {IssueList} from './IssueList';
+import {IssueType} from './IssueType';
+import {IssueDetailsDialog} from './IssueDetailsDialog';
+import {GetIssueRequest} from './GetIssueRequest';
+import {Issue} from './Issue';
 
 import ModalDialog = api.ui.dialog.ModalDialog;
 import DockedPanel = api.ui.panel.DockedPanel;

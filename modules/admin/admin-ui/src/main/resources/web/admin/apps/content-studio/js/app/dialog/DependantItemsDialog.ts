@@ -1,6 +1,6 @@
-import "../../api.ts";
-import {StatusSelectionItem} from "./StatusSelectionItem";
-import {DependantItemViewer} from "./DependantItemViewer";
+import '../../api.ts';
+import {StatusSelectionItem} from './StatusSelectionItem';
+import {DependantItemViewer} from './DependantItemViewer';
 
 import ContentSummary = api.content.ContentSummary;
 import ContentIds = api.content.ContentIds;

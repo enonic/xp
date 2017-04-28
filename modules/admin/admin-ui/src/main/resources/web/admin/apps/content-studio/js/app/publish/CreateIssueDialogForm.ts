@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {Issue} from "./Issue";
+import '../../api.ts';
+import {Issue} from './Issue';
 import PrincipalComboBox = api.ui.security.PrincipalComboBox;
 import TextArea = api.ui.text.TextArea;
 import TextInput = api.ui.text.TextInput;

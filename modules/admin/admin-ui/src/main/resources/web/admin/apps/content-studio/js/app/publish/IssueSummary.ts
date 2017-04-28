@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {IssueSummaryJson} from "./IssueSummaryJson";
+import '../../api.ts';
+import {IssueSummaryJson} from './IssueSummaryJson';
 
 export class IssueSummary {
 

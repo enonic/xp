@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {IssueSummary} from "./IssueSummary";
+import '../../api.ts';
+import {IssueSummary} from './IssueSummary';
 import ListBox = api.ui.selector.list.ListBox;
 import DateHelper = api.util.DateHelper;
 import NamesView = api.app.NamesView;

@@ -7,8 +7,8 @@ import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
 import BrowseItem = api.app.browse.BrowseItem;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
-import {ProgressBarDialog} from "./ProgressBarDialog";
-import {SchedulePublishDialog} from "../publish/SchedulePublishDialog";
+import {ProgressBarDialog} from './ProgressBarDialog';
+import {SchedulePublishDialog} from '../publish/SchedulePublishDialog';
 
 export abstract class SchedulableDialog extends ProgressBarDialog {
 

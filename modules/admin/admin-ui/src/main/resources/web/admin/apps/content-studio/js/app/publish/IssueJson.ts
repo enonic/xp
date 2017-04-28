@@ -1,4 +1,4 @@
-import {IssueSummaryJson} from "./IssueSummaryJson";
+import {IssueSummaryJson} from './IssueSummaryJson';
 import PublishRequestJson = api.issue.resource.PublishRequestJson;
 
 export interface IssueJson extends IssueSummaryJson {

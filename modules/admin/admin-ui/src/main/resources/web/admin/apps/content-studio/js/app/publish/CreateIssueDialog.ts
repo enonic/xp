@@ -1,5 +1,5 @@
-import "../../api.ts";
-import {CreateIssueDialogForm} from "./CreateIssueDialogForm";
+import '../../api.ts';
+import {CreateIssueDialogForm} from './CreateIssueDialogForm';
 import PublishRequestItem = api.issue.PublishRequestItem;
 import CreateIssueRequest = api.issue.resource.CreateIssueRequest;
 import PublishRequest = api.issue.PublishRequest;

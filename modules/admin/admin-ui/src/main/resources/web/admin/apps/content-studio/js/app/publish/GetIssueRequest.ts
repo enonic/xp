@@ -1,6 +1,6 @@
-import "../../api.ts";
-import {IssueJson} from "./IssueJson";
-import {Issue} from "./Issue";
+import '../../api.ts';
+import {IssueJson} from './IssueJson';
+import {Issue} from './Issue';
 import IssueResourceRequest = api.issue.resource.IssueResourceRequest;
 
 export class GetIssueRequest extends IssueResourceRequest<IssueJson, Issue> {
