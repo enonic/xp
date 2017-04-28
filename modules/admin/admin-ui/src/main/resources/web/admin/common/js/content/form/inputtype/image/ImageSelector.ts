@@ -28,6 +28,9 @@ module api.content.form.inputtype.image {
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
 
     import FocusSwitchEvent = api.ui.FocusSwitchEvent;
+    import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
+    import ServerEventsListener = api.app.ServerEventsListener;
+    import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
 
     export class ImageSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<ContentId> {
 
@@ -43,7 +46,7 @@ module api.content.form.inputtype.image {
 
         private uploader: api.content.image.ImageUploaderEl;
 
-        private editContentRequestListeners: {(content: ContentSummary): void }[] = [];
+        private editContentRequestListeners: {(content: ContentSummary): void}[] = [];
 
         private relationshipType: string;
 
@@ -78,11 +81,66 @@ module api.content.form.inputtype.image {
             });
 
             this.handleContentDeletedEvent();
+            this.handleContentUpdatedEvent();
+        }
+
+        private handleContentUpdatedEvent() {
+            let contentUpdatedOrMovedListener = (statuses: ContentSummaryAndCompareStatus[], oldPaths?: ContentPath[]) => {
+
+                if (this.contentComboBox.getSelectedOptions().length == 0) {
+                    return;
+                }
+
+                statuses.forEach((status, index) => {
+                    let option;
+                    if (oldPaths) {
+                        option = this.findOptionByContentPath(oldPaths[index]);
+                    } else {
+                        option = this.findOptionByContentId(status.getContentId());
+                    }
+                    if (option) {
+                        this.contentComboBox.updateOption(option, status.getContentSummary());
+                    }
+                });
+            };
+
+            let handler = ContentServerEventsHandler.getInstance();
+            handler.onContentMoved(contentUpdatedOrMovedListener);
+            handler.onContentRenamed(contentUpdatedOrMovedListener);
+            handler.onContentUpdated(contentUpdatedOrMovedListener);
+
+            this.onRemoved(event => {
+                handler.unContentUpdated(contentUpdatedOrMovedListener);
+                handler.unContentRenamed(contentUpdatedOrMovedListener);
+                handler.unContentMoved(contentUpdatedOrMovedListener);
+            });
+        }
+
+        private findOptionByContentPath(contentPath: ContentPath): Option<ImageSelectorDisplayValue> {
+            let selectedOptions = this.contentComboBox.getSelectedOptions();
+            for (let i = 0; i < selectedOptions.length; i++) {
+                let option = selectedOptions[i].getOption();
+                if (contentPath.equals(option.displayValue.getContentPath())) {
+                    return option;
+                }
+            }
+            return null;
+        }
+
+        private findOptionByContentId(contentId: ContentId): Option<ImageSelectorDisplayValue> {
+            let selectedOptions = this.contentComboBox.getSelectedOptions();
+            for (let i = 0; i < selectedOptions.length; i++) {
+                let option = selectedOptions[i].getOption();
+                if (contentId.equals(option.displayValue.getContentId())) {
+                    return option;
+                }
+            }
+            return null;
         }
 
         private handleContentDeletedEvent() {
             this.contentDeletedListener = (event) => {
-                if (this.selectedOptionsView.count() === 0) {
+                if (this.countSelectedOptions() == 0) {
                     return;
                 }
 
@@ -97,11 +155,11 @@ module api.content.form.inputtype.image {
                 event.getDeletedItems().filter(deletedItem => !deletedItem.isPending() &&
                                                               selectedContentIdsMap.hasOwnProperty(
                                                                   deletedItem.getContentId().toString())).forEach((deletedItem) => {
-                        let option = this.selectedOptionsView.getById(deletedItem.getContentId().toString());
-                        if (option != null) {
-                            this.selectedOptionsView.removeSelectedOptions([option]);
-                        }
-                    });
+                    let option = this.selectedOptionsView.getById(deletedItem.getContentId().toString());
+                    if (option != null) {
+                        this.selectedOptionsView.removeSelectedOptions([option]);
+                    }
+                });
             };
 
             ContentDeletedEvent.on(this.contentDeletedListener);
@@ -115,7 +173,7 @@ module api.content.form.inputtype.image {
             return this.contentComboBox;
         }
 
-        private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
+        private readConfig(inputConfig: {[element: string]: {[name: string]: string}[];}): void {
             let relationshipTypeConfig = inputConfig['relationshipType'] ? inputConfig['relationshipType'][0] : {};
             this.relationshipType = relationshipTypeConfig['value'];
 
@@ -203,18 +261,14 @@ module api.content.form.inputtype.image {
                                relationshipAllowedContentTypes.length ? relationshipAllowedContentTypes :
                                    [ContentTypeName.IMAGE.toString(), ContentTypeName.MEDIA_VECTOR.toString()];
 
-            let imageSelectorLoader = ImageSelectorLoader.create().setContent(this.config.content).
-                setInputName(inputName).
-                setAllowedContentPaths(this.allowedContentPaths).
-                setContentTypeNames(contentTypes).
-                setRelationshipType(this.relationshipType).
-                build();
+            let imageSelectorLoader = ImageSelectorLoader.create().setContent(this.config.content).setInputName(
+                inputName).setAllowedContentPaths(this.allowedContentPaths).setContentTypeNames(contentTypes).setRelationshipType(
+                this.relationshipType).build();
 
             let contentComboBox: ImageContentComboBox
-                    = ImageContentComboBox.create().setMaximumOccurrences(maximumOccurrences).setLoader(imageSelectorLoader).
-                    setSelectedOptionsView(this.selectedOptionsView = this.createSelectedOptionsView()).
-                    setValue(value).
-                    build();
+                = ImageContentComboBox.create().setMaximumOccurrences(maximumOccurrences).setLoader(
+                imageSelectorLoader).setSelectedOptionsView(this.selectedOptionsView = this.createSelectedOptionsView()).setValue(
+                value).build();
             let comboBox: ComboBox<ImageSelectorDisplayValue> = contentComboBox.getComboBox();
 
             comboBox.onHidden((event: api.dom.ElementHiddenEvent) => {
