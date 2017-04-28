@@ -2,7 +2,6 @@ package com.enonic.xp.core.content;
 
 import org.junit.Test;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ExtraData;
@@ -12,8 +11,6 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.site.SiteConfig;
-import com.enonic.xp.site.SiteConfigs;
 
 import static org.junit.Assert.*;
 
@@ -67,7 +64,8 @@ public class ContentServiceImplTest_move
 
     }
 
-    private ExtraDatas createExtraDatas() {
+    private ExtraDatas createExtraDatas()
+    {
         return ExtraDatas.create().
             add( new ExtraData( MixinName.from( "com.enonic.app.test:mixin" ), new PropertyTree() ) ).
             build();
