@@ -2,12 +2,14 @@ import '../../api.ts';
 import {IssueSummary} from './IssueSummary';
 import {IssueType} from './IssueType';
 import {IssueFetcher} from './IssueFetcher';
+import {IssueResponse} from './IssueResponse';
 import ListBox = api.ui.selector.list.ListBox;
 import DateHelper = api.util.DateHelper;
 import NamesView = api.app.NamesView;
 import Button = api.ui.button.Button;
 import Element = api.dom.Element;
 import LoadMask = api.ui.mask.LoadMask;
+import PEl = api.dom.PEl;
 
 export class IssueList extends ListBox<IssueSummary> {
 
@@ -23,13 +25,29 @@ export class IssueList extends ListBox<IssueSummary> {
 
     private loading: boolean = false;
 
-    constructor(issueType: IssueType, total: number) {
+    constructor(issueType: IssueType) {
         super('issue-list');
         this.issueType = issueType;
-        this.totalItems = total;
         this.appendChild(this.loadMask = new LoadMask(this));
-
+        this.onRendered(this.initList.bind(this));
         this.setupLazyLoading();
+    }
+
+    private initList() {
+        this.loadMask.show();
+
+        IssueFetcher.fetchIssuesByType(this.issueType, 0, IssueList.MAX_FETCH_SIZE).then((response: IssueResponse) => {
+            this.totalItems = response.getMetadata().getTotalHits();
+            if (response.getIssues().length > 0) {
+                this.addItems(response.getIssues());
+            } else {
+                this.appendChild(new PEl('no-issues-message').setHtml('No issues found'));
+            }
+        }).catch((reason: any) => {
+            api.DefaultErrorHandler.handle(reason);
+        }).finally(() => {
+            this.loadMask.hide();
+        });
     }
 
     private setupLazyLoading() {
@@ -49,9 +67,10 @@ export class IssueList extends ListBox<IssueSummary> {
             this.loadMask.show();
             this.loading = true;
 
-            IssueFetcher.fetchIssuesByType(this.issueType, this.getItemCount(), IssueList.MAX_FETCH_SIZE).then((issues: IssueSummary[]) => {
-                this.addItems(issues);
-            }).catch((reason: any) => {
+            IssueFetcher.fetchIssuesByType(this.issueType, this.getItemCount(), IssueList.MAX_FETCH_SIZE).then(
+                (response: IssueResponse) => {
+                    this.addItems(response.getIssues());
+                }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).finally(() => {
                 this.loading = false;

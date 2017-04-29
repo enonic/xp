@@ -1,10 +1,12 @@
 import IssueResourceRequest = api.issue.resource.IssueResourceRequest;
-import {IssuesJson} from './IssuesJson';
 import {IssueSummary} from './IssueSummary';
 import {IssueJson} from './IssueJson';
 import {IssueType} from './IssueType';
+import {ListIssuesResult} from './ListIssuesResult';
+import {IssueResponse} from './IssueResponse';
+import {IssueMetadata} from './IssueMetadata';
 
-export class ListIssuesRequest extends IssueResourceRequest<IssuesJson, IssueSummary[]> {
+export class ListIssuesRequest extends IssueResourceRequest<ListIssuesResult, IssueResponse> {
 
     private issueType: IssueType;
 
@@ -43,11 +45,15 @@ export class ListIssuesRequest extends IssueResourceRequest<IssuesJson, IssueSum
         return api.rest.Path.fromParent(super.getResourcePath(), 'list');
     }
 
-    sendAndParse(): wemQ.Promise<IssueSummary[]> {
-        return this.send().then((response: api.rest.JsonResponse<IssuesJson>) => {
-            return response.getResult().issues.map((issueJson: IssueJson) => {
+    sendAndParse(): wemQ.Promise<IssueResponse> {
+        return this.send().then((response: api.rest.JsonResponse<ListIssuesResult>) => {
+            const issues: IssueSummary[] = response.getResult().issues.map((issueJson: IssueJson) => {
                 return IssueSummary.fromJson(issueJson);
             });
+            const metadata: IssueMetadata = new IssueMetadata(response.getResult().metadata['hits'],
+                response.getResult().metadata['totalHits']);
+
+            return new IssueResponse(issues, metadata);
         });
     }
 }

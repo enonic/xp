@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.issue;
 
 import java.util.List;
 
+import com.enonic.xp.issue.FindIssuesResult;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.IssueQueryNodeQueryTranslator;
@@ -20,7 +21,7 @@ public class FindIssuesCommand
         this.query = builder.query;
     }
 
-    public List<Issue> execute()
+    public FindIssuesResult execute()
     {
         final NodeQuery nodeQuery = IssueQueryNodeQueryTranslator.translate( this.query );
 
@@ -30,7 +31,7 @@ public class FindIssuesCommand
 
         final List<Issue> issues = IssueNodeTranslator.fromNodes( foundNodes );
 
-        return issues;
+        return FindIssuesResult.create().issues( issues ).hits( result.getHits() ).totalHits( result.getTotalHits() ).build();
     }
 
     public static Builder create()

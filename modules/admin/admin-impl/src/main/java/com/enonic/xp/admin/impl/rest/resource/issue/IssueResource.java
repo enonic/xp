@@ -1,7 +1,5 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
-import java.util.List;
-
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -15,6 +13,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.impl.json.issue.IssueJson;
+import com.enonic.xp.admin.impl.json.issue.IssueListJson;
 import com.enonic.xp.admin.impl.json.issue.IssueStatsJson;
 import com.enonic.xp.admin.impl.json.issue.IssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
@@ -22,8 +21,10 @@ import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.GetIssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueJson;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.issue.FindIssuesResult;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueId;
+import com.enonic.xp.issue.IssueListMetaData;
 import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.IssueService;
 import com.enonic.xp.issue.IssueStatus;
@@ -78,24 +79,26 @@ public final class IssueResource
     @Path("stats")
     public IssueStatsJson getStats()
     {
-        final long assignedToMe = this.issueService.countIssues( createIssuesByTypeQuery( "ASSIGNED_TO_ME" ).build() );
-        final long createdByMe = this.issueService.countIssues( createIssuesByTypeQuery( "CREATED_BY_ME" ).build() );
-        final long open = this.issueService.countIssues( createIssuesByTypeQuery( "OPEN" ).build() );
-        final long closed = this.issueService.countIssues( createIssuesByTypeQuery( "CLOSED" ).build() );
+        final long assignedToMe =
+            this.issueService.findIssues( createIssuesByTypeQuery( "ASSIGNED_TO_ME" ).count( true ).build() ).getTotalHits();
+        final long createdByMe =
+            this.issueService.findIssues( createIssuesByTypeQuery( "CREATED_BY_ME" ).count( true ).build() ).getTotalHits();
+        final long open = this.issueService.findIssues( createIssuesByTypeQuery( "OPEN" ).count( true ).build() ).getTotalHits();
+        final long closed = this.issueService.findIssues( createIssuesByTypeQuery( "CLOSED" ).count( true ).build() ).getTotalHits();
 
         return IssueStatsJson.create().assignedToMe( assignedToMe ).createdByMe( createdByMe ).open( open ).closed( closed ).build();
     }
 
     @GET
     @Path("list")
-    public IssuesJson listIssues( @QueryParam("type") final String type,
-                                  @QueryParam("from") @DefaultValue(DEFAULT_FROM_PARAM) final Integer fromParam,
-                                  @QueryParam("size") @DefaultValue(DEFAULT_SIZE_PARAM) final Integer sizeParam )
+    public IssueListJson listIssues( @QueryParam("type") final String type,
+                                     @QueryParam("from") @DefaultValue(DEFAULT_FROM_PARAM) final Integer fromParam,
+                                     @QueryParam("size") @DefaultValue(DEFAULT_SIZE_PARAM) final Integer sizeParam )
     {
         final IssueQuery issueQuery = createIssuesByTypeQuery( type ).from( fromParam ).size( sizeParam ).build();
-        final List<Issue> issues = this.issueService.findIssues( issueQuery );
-
-        return new IssuesJson( issues );
+        final FindIssuesResult result = this.issueService.findIssues( issueQuery );
+        final IssueListMetaData metaData = IssueListMetaData.create().hits( result.getHits() ).totalHits( result.getTotalHits() ).build();
+        return new IssueListJson( result.getIssues(), metaData );
     }
 
     private IssueQuery.Builder createIssuesByTypeQuery( final String type )

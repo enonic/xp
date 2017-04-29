@@ -17,6 +17,8 @@ public class IssueQuery
 
     private final int size;
 
+    private final boolean count;
+
     private IssueQuery( final Builder builder )
     {
         this.creator = builder.creator;
@@ -24,6 +26,7 @@ public class IssueQuery
         this.status = builder.status;
         this.from = builder.from;
         this.size = builder.size;
+        this.count = builder.count;
     }
 
     public PrincipalKey getCreator()
@@ -51,6 +54,11 @@ public class IssueQuery
         return size;
     }
 
+    public boolean isCount()
+    {
+        return count;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -68,6 +76,8 @@ public class IssueQuery
         private int from = 0;
 
         private int size = DEFAULT_FETCH_SIZE;
+
+        private boolean count = false;
 
         public Builder creator( final PrincipalKey creator )
         {
@@ -98,6 +108,13 @@ public class IssueQuery
             this.size = size;
             return this;
         }
+
+        public Builder count( final boolean value )
+        {
+            this.count = value;
+            return this;
+        }
+
 
         public IssueQuery build()
         {

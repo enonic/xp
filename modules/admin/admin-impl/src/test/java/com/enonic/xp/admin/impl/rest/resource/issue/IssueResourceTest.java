@@ -2,6 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.issue;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.UUID;
 
 import javax.ws.rs.core.MediaType;
@@ -9,18 +10,29 @@ import javax.ws.rs.core.MediaType;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.google.common.collect.Lists;
+
 import com.enonic.xp.admin.impl.json.issue.PublishRequestItemJson;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishRequestJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueJson;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.LocalScope;
+import com.enonic.xp.issue.FindIssuesResult;
 import com.enonic.xp.issue.Issue;
+import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.IssueService;
 import com.enonic.xp.issue.PublishRequest;
 import com.enonic.xp.issue.PublishRequestItem;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
+import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.session.SessionKey;
+import com.enonic.xp.session.SimpleSession;
 
 public class IssueResourceTest
     extends AdminResourceTestSupport
@@ -49,6 +61,38 @@ public class IssueResourceTest
 
         Mockito.verify( issueService, Mockito.times( 1 ) ).create( params.getCreateIssueParams() );
 
+    }
+
+    @Test
+    public void test_get_stats()
+        throws Exception
+    {
+        createLocalSession();
+
+        final IssueResource issueResource = getResourceInstance();
+        final FindIssuesResult result = FindIssuesResult.create().hits( 2 ).totalHits( 4 ).build();
+        Mockito.when( issueService.findIssues( Mockito.any( IssueQuery.class ) ) ).thenReturn( result );
+
+        issueResource.getStats();
+
+        Mockito.verify( issueService, Mockito.times( 4 ) ).findIssues( Mockito.any( IssueQuery.class ) );
+    }
+
+    @Test
+    public void test_list_issues()
+        throws Exception
+    {
+        createLocalSession();
+
+        final Issue issue = createIssue();
+        final List<Issue> issues = Lists.newArrayList( issue );
+        final IssueResource issueResource = getResourceInstance();
+        final FindIssuesResult result = FindIssuesResult.create().hits( 2 ).totalHits( 4 ).issues( issues ).build();
+        Mockito.when( issueService.findIssues( Mockito.any( IssueQuery.class ) ) ).thenReturn( result );
+
+        issueResource.listIssues( "OPEN", 0, 10 );
+
+        Mockito.verify( issueService, Mockito.times( 1 ) ).findIssues( Mockito.any( IssueQuery.class ) );
     }
 
     @Test
@@ -102,5 +146,20 @@ public class IssueResourceTest
             setPublishRequest( PublishRequest.create().addExcludeId( ContentId.from( "exclude-id" ) ).addItem(
                 PublishRequestItem.create().id( ContentId.from( "content-id" ) ).includeChildren( true ).build() ).build() ).build();
 
+    }
+
+    private void createLocalSession()
+    {
+        final User user = User.create().
+            key( PrincipalKey.ofUser( UserStoreKey.system(), "user1" ) ).
+            displayName( "User 1" ).
+            email( "user1@enonic.com" ).
+            login( "user1" ).
+            build();
+
+        final LocalScope localScope = ContextAccessor.current().getLocalScope();
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().user( user ).principals( RoleKeys.ADMIN ).build();
+        localScope.setAttribute( authInfo );
+        localScope.setSession( new SimpleSession( SessionKey.generate() ) );
     }
 }

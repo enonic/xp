@@ -16,11 +16,6 @@ public class IssuesJson
         this.issues = new ArrayList<>();
     }
 
-    public IssuesJson( final List<Issue> issues )
-    {
-        this.issues = issues.stream().map( IssueJson::new ).collect( Collectors.toList() );
-    }
-
     public void addIssue( final Issue issue )
     {
         this.issues.add( new IssueJson( issue ) );
