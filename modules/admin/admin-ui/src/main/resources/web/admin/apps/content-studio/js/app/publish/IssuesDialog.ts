@@ -2,7 +2,7 @@ import '../../api.ts';
 import {IssueFetcher} from './IssueFetcher';
 import {IssueStatsJson} from './IssueStatsJson';
 import {IssueSummary} from './IssueSummary';
-import {IssueList} from './IssueList';
+import {IssueList, IssueListItem} from './IssueList';
 import {IssueType} from './IssueType';
 import {IssueDetailsDialog} from './IssueDetailsDialog';
 import {GetIssueRequest} from './GetIssueRequest';
@@ -71,8 +71,8 @@ export class IssuesDialog extends ModalDialog {
                         issueList.addItems(issues);
                         panel.appendChild(issueList);
 
-                        issueList.onIssueSelected((issueId) => {
-                            this.showIssueDetailsDialog(issueId);
+                        issueList.onIssueSelected((issueListItem) => {
+                            this.showIssueDetailsDialog(issueListItem);
                         });
                         this.centerMyself();
                     } else {
@@ -99,7 +99,7 @@ export class IssuesDialog extends ModalDialog {
 
     }
 
-    showIssueDetailsDialog(issueId: string) {
+    showIssueDetailsDialog(issueListItem: IssueListItem) {
         if (!this.issueDetailsDialog) {
             this.issueDetailsDialog = new IssueDetailsDialog();
 
@@ -110,10 +110,12 @@ export class IssuesDialog extends ModalDialog {
                 this.removeClass('masked');
                 this.getEl().focus();
             });
+
+            this.issueDetailsDialog.setSubTitle(issueListItem.getStatusInfo(), false);
         }
         this.addClass('masked');
 
-        new GetIssueRequest(issueId).sendAndParse().then((issue: Issue) => {
+        new GetIssueRequest(issueListItem.getIssue().getId()).sendAndParse().then((issue: Issue) => {
             this.issueDetailsDialog.setIssue(issue);
             this.issueDetailsDialog.open();
         });

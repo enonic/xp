@@ -2,6 +2,10 @@
 
   @toggler-width: 35px;
 
+  .dialog-header {
+    margin-bottom: 0px;
+  }
+
   .icon-tree {
     font-size: 20px;
     line-height: 32px;
@@ -19,23 +23,6 @@
     width: @toggler-width;
   }
 
-  &.is-publishing {
-    .create-issue-dialog-form,
-    .dialog-header a.edit,
-    .items-header,
-    .dialog-buttons div.checkbox {
-      display: none;
-    }
-
-    .button-container .cancel-button-bottom {
-      float: none;
-    }
-
-    .sub-title {
-      display: block;
-    }
-  }
-
   .required {
     &:after {
       display: none;
@@ -43,18 +30,37 @@
   }
 
   .title {
-    display: inline-block;
+    display: block;
   }
 
   .sub-title {
-    display: none;
+    display: inline-block;
+
+    margin: 10px 0 15px;
+    font-size: 14px;
+
   }
 
   .edit {
     display: inline-block;
-    line-height: 24px;
+    //  line-height: 24px;
     float: right;
     .icon-pencil2;
+
+    text-decoration: none;
+  }
+
+  .issue-dialog-form {
+    margin-bottom: 15px;
+    padding: 0 !important;
+
+    .description-text {
+      margin: 15px 0;
+    }
+
+    label {
+      font-size: 14px;
+    }
   }
 
   .browse-selection-item .remove {
@@ -108,6 +114,26 @@
     }
     .show-schedule-action {
       float: right;
+    }
+  }
+
+  &.is-publishing {
+    .issue-dialog-form,
+    .dialog-header a.edit,
+    .items-header,
+    .dialog-buttons div.checkbox {
+      display: none;
+    }
+
+    .button-container .cancel-button-bottom {
+      float: none;
+    }
+    .title {
+      padding-bottom: 10px;
+    }
+
+    .sub-title {
+      display: none;
     }
   }
 }

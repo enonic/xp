@@ -9,18 +9,22 @@ import Validators = api.ui.form.Validators;
 import FormItem = api.ui.form.FormItem;
 import ValidityChangedEvent = api.ValidityChangedEvent;
 import PrincipalKey = api.security.PrincipalKey;
+import PEl = api.dom.PEl;
+import StringHelper = api.util.StringHelper;
 
-export class CreateIssueDialogForm extends api.ui.form.Form {
+export class IssueDialogForm extends api.ui.form.Form {
 
     private selector: PrincipalComboBox;
 
     private description: TextArea;
 
+    private descriptionText: PEl;
+
     private title: TextInput;
 
     constructor() {
 
-        super('create-issue-dialog-form');
+        super('issue-dialog-form');
 
         this.initElements();
 
@@ -50,6 +54,8 @@ export class CreateIssueDialogForm extends api.ui.form.Form {
         this.description = new TextArea('description');
         this.description.addClass('description');
 
+        this.descriptionText = new PEl('description-text');
+
         const principalLoader = new api.security.PrincipalLoader().setAllowedTypes([PrincipalType.USER]);
         this.selector = api.ui.security.PrincipalComboBox.create().setLoader(principalLoader).setMaxOccurences(0).build();
     }
@@ -64,6 +70,8 @@ export class CreateIssueDialogForm extends api.ui.form.Form {
 
         const descriptionFormItem = this.addValidationViewer(new FormItemBuilder(this.description).setLabel('Description').build());
         fieldSet.add(descriptionFormItem);
+
+        fieldSet.appendChild(this.descriptionText);
 
         const selectorFormItem = this.addValidationViewer(
             new FormItemBuilder(this.selector).setLabel('Invite users to work on issue').setValidator(Validators.required).build());
@@ -88,23 +96,36 @@ export class CreateIssueDialogForm extends api.ui.form.Form {
         const titleFormItem = <FormItem>this.title.getParentElement();
         titleFormItem.setVisible(!readOnly);
 
+        const descFormItem = <FormItem>this.description.getParentElement();
+        descFormItem.setVisible(!readOnly);
+
+        this.descriptionText.setVisible(readOnly && !StringHelper.isBlank(this.descriptionText.getHtml()));
+
         const selectorFormItem = <FormItem>this.selector.getParentElement();
         selectorFormItem.setLabel(readOnly ? 'Assignees:' : 'Invite users to work on issue');
     }
 
-    public setIssue(issue: Issue) {
+    public setIssue(issue: Issue): wemQ.Promise<void> {
+        const deferred = wemQ.defer<void>();
+
         if (this.isRendered()) {
             this.doSetIssue(issue);
+            deferred.resolve(null);
         } else {
             this.onRendered(() => {
                 this.doSetIssue(issue);
+                deferred.resolve(null);
             });
         }
+
+        return deferred.promise;
     }
 
     private doSetIssue(issue: Issue) {
+
         this.title.setValue(issue.getTitle());
         this.description.setValue(issue.getDescription());
+        this.descriptionText.setHtml(issue.getDescription());
 
         issue.getApprovers().forEach((approver) => {
             this.selector.selectOptionByValue(approver.toString());
@@ -141,6 +162,7 @@ export class CreateIssueDialogForm extends api.ui.form.Form {
     public reset() {
         this.title.setValue('', true);
         this.description.setValue('', true);
+        this.descriptionText.setHtml('');
         this.selector.setValue('', true);
     }
 

@@ -1,12 +1,12 @@
 import '../../api.ts';
-import {CreateIssueDialogForm} from './CreateIssueDialogForm';
+import {IssueDialogForm} from './IssueDialogForm';
 import PublishRequestItem = api.issue.PublishRequestItem;
 import CreateIssueRequest = api.issue.resource.CreateIssueRequest;
 import PublishRequest = api.issue.PublishRequest;
 
 export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
 
-    private form: CreateIssueDialogForm;
+    private form: IssueDialogForm;
 
     private items: PublishRequestItem[];
 
@@ -78,7 +78,7 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
     }
 
     private initForm() {
-        this.form = new CreateIssueDialogForm();
+        this.form = new IssueDialogForm();
     }
 
     private initFormView() {

@@ -224,7 +224,7 @@ function startApplication() {
     ContentPublishPromptEvent.on((event) => {
         contentPublishDialog
             .setContentToPublish(event.getModels())
-            .setIncludeChildItems(event.isIncludeChildItems(), true)
+            .setIncludeChildItems(event.isIncludeChildItems())
             .open();
     });
 

@@ -52,7 +52,17 @@
   }
 
   .dialog-buttons {
+
+    .button-container {
+      width: 100%;
+    }
+
+    button.cancel-button-bottom {
+      float: left;
+    }
+
     button.confirm-schedule-action {
+      float: right;
       .dialog-button(@form-button-font, @admin-green, @form-button-font, lighten(@admin-green, 10%));
     }
   }

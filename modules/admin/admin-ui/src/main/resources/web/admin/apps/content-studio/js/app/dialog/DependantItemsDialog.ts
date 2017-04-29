@@ -188,8 +188,8 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.dependantList.addItems(items);
     }
 
-    setSubTitle(text: string) {
-        this.subTitle.setHtml(text);
+    setSubTitle(text: string, escapeHtml?: boolean) {
+        this.subTitle.setHtml(text, escapeHtml);
     }
 
     protected updateButtonCount(actionString: string, count: number) {

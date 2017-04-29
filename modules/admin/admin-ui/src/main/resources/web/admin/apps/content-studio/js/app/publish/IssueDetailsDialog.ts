@@ -3,7 +3,7 @@ import {PublishDialogDependantList} from './PublishDialogDependantList';
 import {ContentPublishPromptEvent} from '../browse/ContentPublishPromptEvent';
 import {PublishDialogItemList, PublicStatusSelectionItem} from './PublishDialogItemList';
 import {Issue} from './Issue';
-import {CreateIssueDialogForm} from './CreateIssueDialogForm';
+import {IssueDialogForm} from './IssueDialogForm';
 import {ContentPublishDialogAction} from './ContentPublishDialog';
 import {SchedulableDialog} from '../dialog/SchedulableDialog';
 
@@ -24,7 +24,7 @@ import AEl = api.dom.AEl;
 
 export class IssueDetailsDialog extends SchedulableDialog {
 
-    private form: CreateIssueDialogForm;
+    private form: IssueDialogForm;
 
     private issue: Issue;
 
@@ -45,7 +45,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
         this.autoUpdateTitle = false;
 
-        this.form = new CreateIssueDialogForm();
+        this.form = new IssueDialogForm();
         this.prependChildToContentPanel(this.form);
 
         if (!this.editButton) {
@@ -67,10 +67,11 @@ export class IssueDetailsDialog extends SchedulableDialog {
             this.lockControls();
         }
 
-        this.form.setIssue(issue);
-        this.setTitle(issue.getTitle());
+        this.form.setIssue(issue).then(()=> {
+            this.form.setReadOnly(true);
+        });
 
-        this.form.setReadOnly(true);
+        this.setTitle(issue.getTitle());
 
         if (this.getItemList().isRendered()) {
             this.initItemList();
