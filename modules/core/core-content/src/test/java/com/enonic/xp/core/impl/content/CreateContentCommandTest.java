@@ -118,6 +118,86 @@ public class CreateContentCommandTest
     }
 
     @Test
+    public void createContentInValidPageTemplate()
+    {
+
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
+            thenReturn( ContentType.create().
+                superType( ContentTypeName.structured() ).
+                name( ContentTypeName.pageTemplate() ).
+                allowChildContent( false ).
+                build() );
+
+        final NodePath sitePath = initContent( ContentTypeName.site(),"site", ContentConstants.CONTENT_ROOT_PATH );
+        final NodePath templatePath =
+            initContent( ContentTypeName.pageTemplate(),"template", sitePath );
+
+        final CreateContentParams params = CreateContentParams.create().
+            type( ContentTypeName.folder() ).
+            name( "folder" ).
+            parent( ContentPath.from( "/site/template" ) ).
+            contentData( new PropertyTree() ).
+            displayName( "displayName" ).
+            build();
+
+        CreateContentCommand command = createContentCommand( params );
+
+        final Content content = command.execute();
+        assertNotNull( content );
+        assertEquals( content.getParentPath(), ContentPath.from( ContentPath.ROOT, "site" ) );
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void createContentInInvalidPageTemplate()
+    {
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
+            thenReturn( ContentType.create().
+                superType( ContentTypeName.structured() ).
+                name( ContentTypeName.pageTemplate() ).
+                allowChildContent( false ).
+                build() );
+
+        initContent( ContentTypeName.pageTemplate(),"template", ContentConstants.CONTENT_ROOT_PATH );
+
+        final CreateContentParams params = CreateContentParams.create().
+            type( ContentTypeName.folder() ).
+            name( "folder" ).
+            parent( ContentPath.from( "/template" ) ).
+            contentData( new PropertyTree() ).
+            displayName( "displayName" ).
+            build();
+
+        CreateContentCommand command = createContentCommand( params );
+
+        command.execute();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void createContentForDisallowedContentType()
+    {
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
+            thenReturn( ContentType.create().
+                superType( ContentTypeName.structured() ).
+                name( ContentTypeName.folder() ).
+                allowChildContent( false ).
+                build() );
+
+        initContent( ContentTypeName.folder(),"folder", ContentConstants.CONTENT_ROOT_PATH );
+
+        final CreateContentParams params = CreateContentParams.create().
+            type( ContentTypeName.folder() ).
+            name( "folder" ).
+            parent( ContentPath.from( "/folder" ) ).
+            contentData( new PropertyTree() ).
+            displayName( "displayName" ).
+            build();
+
+        CreateContentCommand command = createContentCommand( params );
+
+        command.execute();
+    }
+
+    @Test
     public void unnamedContent()
     {
         final CreateContentParams params = createContentParams().name( (ContentName) null ).displayName( null ).build();
@@ -365,4 +445,25 @@ public class CreateContentCommandTest
             timestamp( Instant.now() ).
             build();
     }
+
+    private NodePath initContent( final ContentTypeName contentTypeName, final String name, final NodePath parentPath )
+    {
+        final PropertyTree nodeData = new PropertyTree();
+        nodeData.setString( ContentPropertyNames.TYPE, contentTypeName.toString() );
+        nodeData.setSet( ContentPropertyNames.DATA, new PropertySet() );
+        nodeData.setString( ContentPropertyNames.CREATOR, "user:myuserstore:user1" );
+
+        final Node node = Node.create().
+            id( NodeId.from( name ) ).
+            name( name ).
+            parentPath(parentPath ).
+            data( nodeData ).
+            build();
+
+        Mockito.when( nodeService.getByPath( Mockito.eq( node.path() ) ) ).thenReturn( node );
+        Mockito.when( nodeService.getById( Mockito.eq( node.id() ) ) ).thenReturn( node );
+
+        return node.path();
+    }
+
 }

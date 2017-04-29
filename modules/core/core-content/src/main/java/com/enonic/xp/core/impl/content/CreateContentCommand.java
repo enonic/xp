@@ -15,6 +15,7 @@ import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDataValidationException;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
@@ -43,6 +44,7 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.site.Site;
 
 final class CreateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -118,7 +120,6 @@ final class CreateContentCommand
     {
         validateSpecificChecks( params );
         validateContentType( params );
-        validateCreationAllowance( params );
         validatePropertyTree( params );
     }
 
@@ -197,27 +198,6 @@ final class CreateContentCommand
         }
     }
 
-    private void validateCreationAllowance( final CreateContentParams params )
-    {
-        final ContentPath parentPath = params.getParent();
-        if ( !parentPath.isRoot() )
-        {
-            final Content parent = getContent( parentPath );
-            if ( parent == null )
-            {
-                throw new IllegalArgumentException(
-                    "Content could not be created. Children not allowed in parent [" + parentPath.toString() + "]" );
-            }
-            final ContentType parentContentType =
-                contentTypeService.getByName( new GetContentTypeParams().contentTypeName( parent.getType() ) );
-            if ( !parentContentType.allowChildContent() )
-            {
-                throw new IllegalArgumentException(
-                    "Content could not be created. Children not allowed in parent [" + parentPath.toString() + "]" );
-            }
-        }
-    }
-
     private void validatePropertyTree( final CreateContentParams params )
     {
         if ( !params.getType().isUnstructured() )
@@ -251,6 +231,7 @@ final class CreateContentCommand
     private CreateContentTranslatorParams createContentTranslatorParams( final CreateContentParams processedContent )
     {
         final CreateContentTranslatorParams.Builder builder = CreateContentTranslatorParams.create( processedContent );
+        populateParentPath( builder );
         populateName( builder );
         populateCreator( builder );
         setChildOrder( builder );
@@ -260,6 +241,18 @@ final class CreateContentCommand
         populateValid( builder );
 
         return builder.build();
+    }
+
+    private Site getNearestSite( final ContentId id )
+    {
+        return GetNearestSiteCommand.create().
+            nodeService( nodeService ).
+            contentTypeService( contentTypeService ).
+            translator( translator ).
+            eventPublisher( eventPublisher ).
+            contentId( id ).
+            build().
+            execute();
     }
 
     private void setChildOrder( final CreateContentTranslatorParams.Builder builder )
@@ -334,6 +327,39 @@ final class CreateContentCommand
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
 
         return authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.ofAnonymous();
+    }
+
+    private void populateParentPath( final CreateContentTranslatorParams.Builder builder )
+    {
+        final ContentPath parentPath = params.getParent();
+        if ( !parentPath.isRoot() )
+        {
+            final Content parent = getContent( parentPath );
+
+            final ContentType parentContentType =
+                contentTypeService.getByName( new GetContentTypeParams().contentTypeName( parent.getType() ) );
+            if ( !parentContentType.allowChildContent() )
+            {
+                if ( parentContentType.getName().isPageTemplate() )
+                {
+
+                    final Site nearestSite = getNearestSite( parent.getId() );
+
+                    if ( nearestSite == null )
+                    {
+                        throw new IllegalArgumentException(
+                            "Content could not be created. No valid site for page template [" + parentPath.toString() + "]" );
+                    }
+
+                    builder.parent( nearestSite.getPath() );
+                    return;
+
+
+                }
+                throw new IllegalArgumentException(
+                    "Content could not be created. Children not allowed in parent [" + parentPath.toString() + "]" );
+            }
+        }
     }
 
     private void populateName( final CreateContentTranslatorParams.Builder builder )
