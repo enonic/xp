@@ -1,1 +1,30 @@
-{"issues":[{"approverIds":["user:system:anonymous"],"createdTime":null,"creator":"user:system:anonymous","description":"desc","id":"${id}","issuePath":"/issue/title","issueStatus":"Open","modifiedTime":null,"modifier":"user:system:anonymous","name":"title","publishRequest":{"excludeIds":["exclude-id"],"items":[{"id":"content-id","includeChildren":true}]},"title":"title"}]}
+{
+  "issues": [
+    {
+      "approverIds": [
+        "user:system:anonymous"
+      ],
+      "createdTime": null,
+      "creator": "user:system:anonymous",
+      "description": "desc",
+      "id": "${id}",
+      "issuePath": "/issue/title",
+      "issueStatus": "Open",
+      "modifiedTime": null,
+      "modifier": "user:system:anonymous",
+      "name": "title",
+      "publishRequest": {
+        "excludeIds": [
+          "exclude-id"
+        ],
+        "items": [
+          {
+            "id": "content-id",
+            "includeChildren": true
+          }
+        ]
+      },
+      "title": "title"
+    }
+  ]
+}
