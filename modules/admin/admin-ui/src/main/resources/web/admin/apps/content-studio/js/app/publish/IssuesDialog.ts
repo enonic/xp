@@ -1,7 +1,6 @@
 import '../../api.ts';
 import {IssueFetcher} from './IssueFetcher';
 import {IssueStatsJson} from './IssueStatsJson';
-import {IssueSummary} from './IssueSummary';
 import {IssueList, IssueListItem} from './IssueList';
 import {IssueType} from './IssueType';
 import {IssueDetailsDialog} from './IssueDetailsDialog';
@@ -31,7 +30,6 @@ export class IssuesDialog extends ModalDialog {
     constructor() {
         super('Publishing Issues');
         this.addClass('issue-list-dialog');
-        this.loadMask = new LoadMask(this.getContentPanel());
         api.dom.Body.get().appendChild(this);
 
         this.initIssueDetailsDialog();
@@ -61,29 +59,13 @@ export class IssuesDialog extends ModalDialog {
         panel.onShown(() => {
             const panelHasChildren = panel.getChildren().length > 0;
 
-            if (!panelHasChildren && panel.isVisible()) { // to not reload after tab is loaded and swithcing between tabs
-                this.loadMask.show();
+            if (!panelHasChildren && panel.isVisible()) { // to not reload after tab is loaded and switching between tabs
+                const issueList: IssueList = new IssueList(issueType);
+                panel.appendChild(issueList);
 
-                IssueFetcher.fetchIssuesByType(issueType).then((issues: IssueSummary[]) => {
-
-                    if (issues.length > 0) {
-                        const issueList: IssueList = new IssueList();
-                        issueList.addItems(issues);
-                        panel.appendChild(issueList);
-
-                        issueList.onIssueSelected((issueListItem) => {
-                            this.showIssueDetailsDialog(issueListItem);
-                        });
-                        this.centerMyself();
-                    } else {
-                        panel.appendChild(new PEl('no-issues-message').setHtml('No issues found'));
-                    }
-                }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
-                }).finally(() => {
-                    this.loadMask.hide();
+                issueList.onIssueSelected((issueListItem) => {
+                    this.showIssueDetailsDialog(issueListItem);
                 });
-
             }
         });
 
@@ -93,10 +75,7 @@ export class IssuesDialog extends ModalDialog {
     show() {
         this.cleanPanels();
         super.show();
-        this.appendChildToContentPanel(this.loadMask);
-        this.loadMask.show();
         this.reloadIssueData();
-
     }
 
     private initIssueDetailsDialog() {
@@ -128,8 +107,6 @@ export class IssuesDialog extends ModalDialog {
             this.showFirstNonEmptyTab(stats);
         }).catch((reason: any) => {
             api.DefaultErrorHandler.handle(reason);
-        }).finally(() => {
-            this.loadMask.hide();
         });
     }
 
@@ -170,4 +147,5 @@ export class IssuesDialog extends ModalDialog {
         newIssueButton.getEl().setTitle('Create an issue');
         return newIssueButton;
     }
+
 }

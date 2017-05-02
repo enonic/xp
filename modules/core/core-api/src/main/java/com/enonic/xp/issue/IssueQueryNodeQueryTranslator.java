@@ -3,6 +3,7 @@ package com.enonic.xp.issue;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -22,6 +23,11 @@ public final class IssueQueryNodeQueryTranslator
             fieldName( NodeIndexPath.NODE_TYPE.getPath() ).
             addValue( ValueFactory.newString( IssueConstants.ISSUE_NODE_COLLECTION.getName() ) ).
             build();
+
+        if ( issueQuery.isCount() )
+        {
+            builder.searchMode( SearchMode.COUNT );
+        }
 
         builder.
             from( issueQuery.getFrom() ).

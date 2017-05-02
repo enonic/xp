@@ -223,7 +223,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     private doPostLoad() {
         if (this.previousScrollTop !== this.getContentPanel().getEl().getScrollTop()) {
-            setTimeout(this.postLoad.bind(this), 100);
+            setTimeout(this.postLoad.bind(this), 150);
         }
     }
 
