@@ -185,6 +185,13 @@ module api.ui.selector.combobox {
             this.comboBox.selectOption(option, silent);
         }
 
+        selectOptionByValue(value: string, silent: boolean = false) {
+            const option: Option<OPTION_DISPLAY_VALUE> = this.getOptionByValue(value);
+            if (option) {
+                this.selectOption(option, silent);
+            }
+        }
+
         hasOptions(): boolean {
             return this.comboBox.hasOptions();
         }

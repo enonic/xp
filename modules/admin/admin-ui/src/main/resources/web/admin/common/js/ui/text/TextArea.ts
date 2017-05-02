@@ -43,6 +43,16 @@ module api.ui.text {
                 this.getEl().setHeightPx(this.clone.getEl().getHeightWithBorder());
             }
         }
+
+        setReadOnly(readOnly: boolean) {
+            super.setReadOnly(readOnly);
+
+            if (readOnly) {
+                this.getEl().setAttribute('readonly', 'readonly');
+            } else {
+                this.getEl().removeAttribute('readonly');
+            }
+        }
     }
 
 }

@@ -97,7 +97,7 @@ function initToolTip() {
         wemjq('#' + ID).html(tooltipText).css({
             position: 'absolute', top, left
         }).show();
-        };
+    };
     wemjq(document).on('mouseenter', '*[title]:not([title=""]):not([disabled]):visible', function (e: any) {
         wemjq(e.target).data(DATA, wemjq(e.target).attr('title'));
         wemjq(e.target).removeAttr('title').addClass(CLS_ON);
@@ -224,7 +224,7 @@ function startApplication() {
     ContentPublishPromptEvent.on((event) => {
         contentPublishDialog
             .setContentToPublish(event.getModels())
-            .setIncludeChildItems(event.isIncludeChildItems(), true)
+            .setIncludeChildItems(event.isIncludeChildItems())
             .open();
     });
 
@@ -274,7 +274,7 @@ function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDe
         if (wizard.hasUnsavedChanges()) {
             let message = 'Wizard has unsaved changes. Continue without saving ?';
             // Hack for IE. returnValue is boolean
-            const e: any = event || window.event || { returnValue: '' };
+            const e: any = event || window.event || {returnValue: ''};
             e['returnValue'] = message;
             return message;
         }

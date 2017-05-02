@@ -57,15 +57,6 @@
     }
   }
 
-  .dialog-buttons {
-
-    margin-top: 10px;
-
-    button.publish-action {
-      .dialog-button(@form-button-font, @admin-green, @form-button-font, lighten(@admin-green, 10%));
-    }
-  }
-
   .include-child-check {
     position: absolute;
     bottom: 40px;
@@ -77,81 +68,6 @@
 
     @media screen and (max-height: 360px) {
       bottom: 25px;
-    }
-  }
-
-  .progress-bar {
-    display: none;
-  }
-
-  &.is-publishing {
-    .is-processing-mixin();
-
-    .item-list,
-    .include-child-check,
-    .dialog-buttons button.publish-action,
-    .dialog-buttons button.show-schedule-action {
-      display: none;
-    }
-  }
-
-  .dialog-buttons .@{_COMMON_PREFIX}button.show-schedule-action {
-
-    .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent, false);
-
-    .picker-icon("date", 22px, 0px, 8px, all);
-
-    position: relative;
-    height: 28px;
-    padding-bottom: 8px;
-  }
-
-  &.masked {
-    opacity: 0;
-  }
-}
-
-.schedule-publish-dialog {
-  max-width: 580px;
-
-  .schedule-publish-dialog-subtitle {
-    margin-top: 20px;
-    background-color: @form-button-bg;
-    padding: 10px 20px;
-    color: @admin-white;
-  }
-
-  .dialog-buttons {
-    button.confirm-schedule-action {
-      .dialog-button(@form-button-font, @admin-green, @form-button-font, lighten(@admin-green, 10%));
-    }
-  }
-
-  .dialog-content {
-    .date-time-picker {
-      margin: 5px 0px 10px 0px;
-
-      input {
-        .input-glow();
-      }
-
-      &.invalid {
-        input {
-          .input-error();
-        }
-      }
-
-    }
-
-    .publish-from-label, .publish-to-label {
-      font-size: 14px;
-    }
-
-    .publish-from-label {
-      &:after {
-        content: '*';
-        color: @input-red-text;
-      }
     }
   }
 }

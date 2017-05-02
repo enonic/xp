@@ -1,6 +1,7 @@
 module api.issue {
 
     import PublishRequestJson = api.issue.resource.PublishRequestJson;
+
     export class PublishRequest {
 
         private excludeIds: ContentId[];
@@ -10,6 +11,24 @@ module api.issue {
         constructor(builder: PublishRequestBuilder) {
             this.excludeIds = builder.excludeIds;
             this.items = builder.issueItems;
+        }
+
+        public getExcludeIds(): ContentId[] {
+            return this.excludeIds;
+        }
+
+        public getItems(): PublishRequestItem[] {
+            return this.items;
+        }
+
+        public getItemsIds(): ContentId[] {
+            return this.items ?
+                   this.items.map(item => item.getId()) : [];
+        }
+
+        public getExcludeChildrenIds(): ContentId[] {
+            return this.items ?
+                   this.items.filter(item => !item.isIncludeChildren()).map(item => item.getId()) : [];
         }
 
         toJson(): PublishRequestJson {
@@ -30,6 +49,14 @@ module api.issue {
         excludeIds: ContentId[] = [];
 
         issueItems: PublishRequestItem[] = [];
+
+        fromJson(json: PublishRequestJson): PublishRequestBuilder {
+            this.excludeIds = json.excludeIds ? json.excludeIds.map(excludeId => new ContentId(excludeId)) : [];
+            this.issueItems = json.items ?
+                              json.items.map(itemJson => PublishRequestItem.create().fromJson(itemJson).build()) : [];
+
+            return this;
+        }
 
         public addExcludeId(id: ContentId): PublishRequestBuilder {
             this.excludeIds.push(id);

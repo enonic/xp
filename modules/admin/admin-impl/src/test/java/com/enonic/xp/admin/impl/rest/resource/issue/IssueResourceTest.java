@@ -3,14 +3,16 @@ package com.enonic.xp.admin.impl.rest.resource.issue;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang.text.StrSubstitutor;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import com.enonic.xp.admin.impl.json.issue.PublishRequestItemJson;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
@@ -55,7 +57,8 @@ public class IssueResourceTest
     public void test_create()
         throws Exception
     {
-        final CreateIssueJson params = new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest() );
+        final CreateIssueJson params =
+            new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest() );
 
         getResourceInstance().create( params );
 
@@ -96,18 +99,24 @@ public class IssueResourceTest
     }
 
     @Test
-    public void test_getIssues()
+    public void test_getIssue()
         throws Exception
     {
         final Issue issue = createIssue();
 
         Mockito.when( this.issueService.getIssue( issue.getId() ) ).thenReturn( issue );
 
+        final Map params = Maps.newHashMap();
+        params.put( "id", issue.getId().toString() );
+
+        final String expected = new StrSubstitutor( params ).replace( readFromFile( "get_issues_result.json" ) );
+
+
         String jsonString = request().path( "issue/getIssues" ).
-            entity( "{\"ids\":[\"" + issue.getId() + "\",\"" + UUID.randomUUID() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
+            entity( "{\"ids\":[\"" + issue.getId() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
-        assertJson( "get_issues_result.json", jsonString );
+        assertEquals( expected, jsonString );
     }
 
     @Test
@@ -134,7 +143,7 @@ public class IssueResourceTest
         final PublishRequestJson publishRequestJson = new PublishRequestJson();
 
         publishRequestJson.setItems( new HashSet( Arrays.asList( publishRequestItemJson ) ) );
-        publishRequestJson.setExcludeIds( new HashSet( Arrays.asList( "exclude-id"  ) ) );
+        publishRequestJson.setExcludeIds( new HashSet( Arrays.asList( "exclude-id" ) ) );
         return publishRequestJson;
     }
 

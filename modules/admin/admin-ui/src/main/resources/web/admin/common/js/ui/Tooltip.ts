@@ -34,6 +34,8 @@ module api.ui {
         private side: string;
         private mode: string;
 
+        private active: boolean = true;
+
         /*
          * Widget to show floating tooltips
          * Tooltip position can be adjusted in css using left,top attributes
@@ -71,8 +73,17 @@ module api.ui {
             Tooltip.instances.push(this);
         }
 
+        setActive(value: boolean) {
+            this.active = value;
+        }
+
         show() {
             this.stopTimeout();
+
+            if (!this.active) {
+                return;
+            }
+
             if (!this.tooltipEl) {
                 this.tooltipEl = new api.dom.DivEl('tooltip', api.StyleHelper.COMMON_PREFIX);
                 this.tooltipEl.addClass(this.side);

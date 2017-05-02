@@ -1,0 +1,145 @@
+.issue-details-dialog {
+
+  @toggler-width: 35px;
+
+  .dialog-header {
+    margin-bottom: 0px;
+    position: relative;
+  }
+
+  .icon-tree {
+    font-size: 20px;
+    line-height: 32px;
+
+    .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent, false);
+
+    &.on {
+      .button(@admin-button-blue1, transparent, @admin-button-blue1, transparent, false);
+
+      padding: 0;
+      width: @toggler-width;
+    }
+
+    padding: 0;
+    width: @toggler-width;
+  }
+
+  .required {
+    &:after {
+      display: none;
+    }
+  }
+
+  .title {
+    display: block;
+  }
+
+  .sub-title {
+    display: inline-block;
+
+    margin: 10px 0 15px;
+    font-size: 13px;
+
+  }
+
+  .edit {
+    .icon-pencil2;
+    text-decoration: none;
+    position: absolute;
+    right: 15px;
+    top: 5px;
+    font-size: 18px;
+    color: @admin-font-gray2;
+
+    &:hover {
+      color: @admin-font-gray3;
+    }
+  }
+
+  .issue-dialog-form {
+    margin-bottom: 15px;
+    padding: 0 !important;
+
+    .description-text {
+      margin-bottom: 15px;
+    }
+
+    label {
+      font-size: 14px;
+    }
+  }
+
+  .browse-selection-item .remove {
+    display: none;
+  }
+
+  .publish-dialog-item-list {
+
+    .browse-selection-item {
+
+      .status {
+        line-height: 32px;
+      }
+    }
+
+    &.contains-toggleable {
+
+      .browse-selection-item:not(.toggleable) {
+        margin-left: @toggler-width;
+      }
+
+      .include-children-toggler {
+        cursor: default;
+        &:hover {
+          &:before {
+            color: @admin-font-gray2;
+          }
+          &.on {
+            &:before {
+              color: @admin-button-blue1;
+            }
+          }
+        }
+      }
+    }
+  }
+  .button-container {
+    width: 100%;
+
+    .cancel-button-bottom {
+      float: left;
+      margin: 0px;
+    }
+    .publish-action {
+      float: right;
+    }
+
+    .checkbox {
+      float: right;
+      line-height: 24px;
+    }
+    .show-schedule-action {
+      float: right;
+    }
+  }
+
+  &.is-publishing {
+    .issue-dialog-form,
+    .dialog-header a.edit,
+    .items-header,
+    .dialog-buttons div.checkbox {
+      display: none;
+    }
+
+    .button-container .cancel-button-bottom {
+      float: none;
+    }
+    .title {
+      padding-bottom: 10px;
+    }
+
+    .sub-title {
+      display: none;
+    }
+  }
+}

@@ -1,8 +1,11 @@
 import '../../api.ts';
 import {IssueFetcher} from './IssueFetcher';
 import {IssueStatsJson} from './IssueStatsJson';
-import {IssueList} from './IssueList';
+import {IssueList, IssueListItem} from './IssueList';
 import {IssueType} from './IssueType';
+import {IssueDetailsDialog} from './IssueDetailsDialog';
+import {GetIssueRequest} from './GetIssueRequest';
+import {Issue} from './Issue';
 
 import ModalDialog = api.ui.dialog.ModalDialog;
 import DockedPanel = api.ui.panel.DockedPanel;
@@ -21,6 +24,8 @@ export class IssuesDialog extends ModalDialog {
     private createdByMeIssuesPanel: Panel;
     private openIssuesPanel: Panel;
     private closedIssuesPanel: Panel;
+
+    private issueDetailsDialog: IssueDetailsDialog;
 
     constructor() {
         super('Publishing Issues');
@@ -53,7 +58,12 @@ export class IssuesDialog extends ModalDialog {
             const panelHasChildren = panel.getChildren().length > 0;
 
             if (!panelHasChildren && panel.isVisible()) { // to not reload after tab is loaded and switching between tabs
-                panel.appendChild(new IssueList(issueType));
+                const issueList: IssueList = new IssueList(issueType);
+                panel.appendChild(issueList);
+
+                issueList.onIssueSelected((issueListItem) => {
+                    this.showIssueDetailsDialog(issueListItem);
+                });
             }
         });
 
@@ -64,6 +74,32 @@ export class IssuesDialog extends ModalDialog {
         this.cleanPanels();
         super.show();
         this.reloadIssueData();
+    }
+
+    showIssueDetailsDialog(issueListItem: IssueListItem) {
+        if (!this.issueDetailsDialog) {
+            this.issueDetailsDialog = new IssueDetailsDialog();
+
+            this.issueDetailsDialog.addBackButton();
+            this.addClickIgnoredElement(this.issueDetailsDialog);
+
+            this.issueDetailsDialog.onClose(() => {
+                this.removeClass('masked');
+                this.getEl().focus();
+            });
+
+            this.issueDetailsDialog.setSubTitle(issueListItem.getStatusInfo(), false);
+        }
+        this.addClass('masked');
+
+        new GetIssueRequest(issueListItem.getIssue().getId()).sendAndParse().then((issue: Issue) => {
+            this.issueDetailsDialog.setIssue(issue);
+            this.issueDetailsDialog.open();
+        });
+    }
+
+    protected hasSubDialog(): boolean {
+        return true;
     }
 
     private reloadIssueData() {

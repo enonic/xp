@@ -2,6 +2,7 @@ module api.ui.dialog {
 
     import DivEl = api.dom.DivEl;
     import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
+    import Element = api.dom.Element;
 
     export class ModalDialog extends api.dom.DivEl {
 
@@ -148,7 +149,7 @@ module api.ui.dialog {
             let cancelAction = new api.ui.Action('Cancel', 'esc', true);
             cancelAction.setIconClass('cancel-button-top');
             cancelAction.setLabel('');
-            cancelAction.onExecuted(()=> {
+            cancelAction.onExecuted(() => {
                 this.close();
             });
             this.actions.push(cancelAction);
@@ -174,6 +175,10 @@ module api.ui.dialog {
             this.contentPanel.appendChild(child);
         }
 
+        prependChildToContentPanel(child: api.dom.Element) {
+            this.contentPanel.prependChild(child);
+        }
+
         appendChildToHeader(child: api.dom.Element) {
             this.header.appendChild(child);
         }
@@ -188,14 +193,14 @@ module api.ui.dialog {
         }
 
         removeAction(actionButton: DialogButton) {
-            if(!actionButton) {
+            if (!actionButton) {
                 return;
             }
 
             const action = actionButton.getAction();
 
             const index = this.actions.indexOf(action);
-            if(index >= 0) {
+            if (index >= 0) {
                 this.actions.splice(index, 1);
             }
 
@@ -368,6 +373,10 @@ module api.ui.dialog {
             this.appendChild(this.buttonContainer);
         }
 
+        addElement(element: Element) {
+            this.buttonContainer.appendChild(element);
+        }
+
         addAction(action: api.ui.Action, useDefault?: boolean, prepend?: boolean): DialogButton {
             let button = new DialogButton(action);
             if (useDefault) {
@@ -388,14 +397,14 @@ module api.ui.dialog {
 
         removeAction(action: api.ui.Action) {
 
-            if(this.defaultButton && this.defaultButton.getAction() == action) {
+            if (this.defaultButton && this.defaultButton.getAction() == action) {
                 this.defaultButton = null;
             }
 
             const buttonToRemove = [];
 
             this.buttonContainer.getChildren().forEach((button: DialogButton) => {
-                if(button.getAction() == action) {
+                if (button.getAction() == action) {
                     buttonToRemove.push(button);
                 }
             });

@@ -68,6 +68,14 @@ public final class IssueResource
         return result;
     }
 
+    @GET
+    @Path("id")
+    public IssueJson getById( @QueryParam("id") final String id )
+    {
+        final Issue issue = issueService.getIssue( IssueId.from( id ) );
+        return new IssueJson( issue );
+    }
+
     @POST
     @Path("update")
     public IssueJson update( final UpdateIssueJson params )

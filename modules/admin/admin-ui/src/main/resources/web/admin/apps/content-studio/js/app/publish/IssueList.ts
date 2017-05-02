@@ -25,6 +25,8 @@ export class IssueList extends ListBox<IssueSummary> {
 
     private loading: boolean = false;
 
+    private issueSelectedListeners: {(id: IssueListItem): void}[] = [];
+
     constructor(issueType: IssueType) {
         super('issue-list');
         this.issueType = issueType;
@@ -80,16 +82,22 @@ export class IssueList extends ListBox<IssueSummary> {
     }
 
     protected createItemView(issue: IssueSummary): api.dom.Element {
-        let namesView: NamesView = new NamesView(false).setMainName(issue.getTitle());
-        namesView.setSubNameElements([Element.fromString(this.makeSubName(issue))]);
 
-        let itemEl = new api.dom.LiEl('issue-list-item');
+        const itemEl = new IssueListItem(issue, 'issue-list-item');
         itemEl.getEl().setTabIndex(0);
-        itemEl.appendChild(namesView);
+
+        itemEl.onClicked(() => {
+            this.notifyIssueSelected(itemEl);
+        });
 
         if (issue.getDescription()) {
             itemEl.getEl().setTitle(issue.getDescription());
         }
+
+        const namesView: NamesView = new NamesView(false).setMainName(issue.getTitle());
+        namesView.setSubNameElements([Element.fromString(this.makeSubName(itemEl))]);
+
+        itemEl.appendChild(namesView);
 
         return itemEl;
     }
@@ -98,9 +106,24 @@ export class IssueList extends ListBox<IssueSummary> {
         return issue.getId();
     }
 
-    private makeSubName(issue: IssueSummary): string {
-        return '\<span\>#' + issue.getId() + ' - Opened by ' + '\<span class="creator"\>' + issue.getCreator() + '\</span\> ' +
-               DateHelper.getModifiedString(issue.getModifiedTime()) + '\</span\>';
+    private makeSubName(issueListItem: IssueListItem): string {
+        return '\<span\>#' + issueListItem.getIssue().getId() + ' - ' + issueListItem.getStatusInfo() + '\</span\>';
+    }
+
+    onIssueSelected(listener: (id: IssueListItem) => void) {
+        this.issueSelectedListeners.push(listener);
+    }
+
+    unIssueSelected(listener: (id: IssueListItem) => void) {
+        this.issueSelectedListeners = this.issueSelectedListeners.filter((curr) => {
+            return curr !== listener;
+        });
+    }
+
+    private notifyIssueSelected(issueListItem: IssueListItem) {
+        this.issueSelectedListeners.forEach(listener => {
+            listener(issueListItem);
+        });
     }
 
     private isScrolledToBottom(): boolean {
@@ -110,6 +133,26 @@ export class IssueList extends ListBox<IssueSummary> {
 
     private isAllItemsLoaded(): boolean {
         return this.getItemCount() >= this.totalItems;
+    }
+}
+
+export class IssueListItem extends api.dom.LiEl {
+
+    private issue: IssueSummary;
+
+    constructor(issue: IssueSummary, className: string) {
+        super(className);
+
+        this.issue = issue;
+    }
+
+    public getIssue(): IssueSummary {
+        return this.issue;
+    }
+
+    public getStatusInfo(): string {
+        return 'Opened by ' + '\<span class="creator"\>' + this.issue.getCreator() + '\</span\> ' +
+               DateHelper.getModifiedString(this.issue.getModifiedTime());
     }
 
 }

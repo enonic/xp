@@ -51,8 +51,6 @@
 
 ///<reference path='icon/_module.ts' />
 
-///<reference path='issue/_module.ts' />
-
 ///<reference path='security/_module.ts' />
 ///<reference path='security/acl/_module.ts' />
 ///<reference path='security/auth/_module.ts' />
@@ -155,6 +153,8 @@
 ///<reference path='content/site/inputtype/siteconfigurator/_module.ts' />
 ///<reference path='content/form/inputtype/authappselector/_module.ts' />
 ///<reference path='content/form/inputtype/customselector/_module.ts' />
+
+///<reference path='issue/_module.ts' />
 
 ///<reference path='aggregation/_module.ts' />
 
