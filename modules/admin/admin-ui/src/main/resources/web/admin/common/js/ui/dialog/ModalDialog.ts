@@ -6,7 +6,6 @@ module api.ui.dialog {
 
     export interface ModalDialogConfig {
         title?: string,
-        forceHorizontalCentering?: boolean,
         buttonRow?: ModalDialogButtonRow,
     }
 
@@ -28,8 +27,6 @@ module api.ui.dialog {
 
         private tabbable: api.dom.Element[];
 
-        private forceHorizontalCentering: boolean;
-
         private listOfClickIgnoredElements: api.dom.Element[] = [];
 
         private onClosedListeners: {(): void;}[] = [];
@@ -38,8 +35,6 @@ module api.ui.dialog {
 
         constructor(config: ModalDialogConfig = <ModalDialogConfig>{}) {
             super('modal-dialog', api.StyleHelper.COMMON_PREFIX);
-
-            this.forceHorizontalCentering = !!config.forceHorizontalCentering;
 
             let wrapper = new api.dom.DivEl('modal-dialog-content-wrapper');
             this.appendChild(wrapper);
@@ -122,12 +117,12 @@ module api.ui.dialog {
                 }
             }, focusOutTimeout, false);
 
-            this.buttonRow.onFocusIn((event) => {
+            this.buttonRow.onFocusIn(() => {
                 buttonRowIsFocused = true;
                 clearTimeout(buttonRowFocusOutTimeout);
             });
 
-            this.buttonRow.onFocusOut((event) => {
+            this.buttonRow.onFocusOut(() => {
                 buttonRowFocusOutTimeout = setTimeout(() => {
                     buttonRowIsFocused = false;
                 }, focusOutTimeout + 5); // timeout should be > timeout for modal dialog to trigger after
@@ -231,10 +226,10 @@ module api.ui.dialog {
             if (ModalDialog.debug) {
                 console.debug('ModalDialog.centerMyself', api.ClassHelper.getClassName(this));
             }
-            let el = this.getEl();
-            el.setMarginTop('-' + (el.getHeightWithBorder() / 2) + 'px');
+            const el = this.getEl();
+            el.setMarginTop(`-${ el.getHeightWithBorder() / 2 }px`);
 
-            if (this.forceHorizontalCentering || ResponsiveRanges._540_720.isFitOrBigger(this.getEl().getWidthWithBorder())) {
+            if (ResponsiveRanges._540_720.isFitOrBigger(this.getEl().getWidthWithBorder())) {
                 this.centerHorisontally();
             } else {
                 el.setMarginLeft('0px');
@@ -243,8 +238,8 @@ module api.ui.dialog {
         }
 
         centerHorisontally() {
-            let el = this.getEl();
-            el.setMarginLeft('-' + (el.getWidthWithBorder() / 2) + 'px');
+            const el = this.getEl();
+            el.setMarginTop(`-${ el.getWidthWithBorder() / 2 }px`);
             el.addClass('centered_horizontally');
         }
 

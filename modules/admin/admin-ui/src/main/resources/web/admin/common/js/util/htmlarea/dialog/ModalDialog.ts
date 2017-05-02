@@ -13,8 +13,6 @@ module api.util.htmlarea.dialog {
         private firstFocusField: api.dom.Element;
         private submitAction: api.ui.Action;
 
-        protected static VALIDATION_CLASS: string = 'display-validation-errors';
-
         public static CLASS_NAME: string = 'html-area-modal-dialog';
 
         constructor(editor: HtmlAreaEditor, title: string, cls?: string) {
