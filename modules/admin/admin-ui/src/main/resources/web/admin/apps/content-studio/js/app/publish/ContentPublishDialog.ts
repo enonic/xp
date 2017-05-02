@@ -231,7 +231,7 @@ export class ContentPublishDialog extends SchedulableDialog {
     }
 
     private setButtonAction(dialogActionClass: { new(): api.ui.Action }, listener: () => wemQ.Promise<any>|void) {
-        if (!!this.actionButton && api.ObjectHelper.iFrameSafeInstanceOf(this.actionButton.getAction(), dialogActionClass)) {
+        if (this.actionButton && api.ObjectHelper.iFrameSafeInstanceOf(this.actionButton.getAction(), dialogActionClass)) {
             return;
         }
 

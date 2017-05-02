@@ -12,7 +12,7 @@ module api.ui.dialog {
         private noAction: api.ui.Action;
 
         constructor() {
-            super('Confirmation');
+            super(<api.ui.dialog.ModalDialogConfig>{title: 'Confirmation'});
 
             this.addClass('confirmation-dialog');
 

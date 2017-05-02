@@ -19,7 +19,7 @@ module api.util.htmlarea.dialog {
 
         constructor(editor: HtmlAreaEditor, title: string, cls?: string) {
 
-            super(title);
+            super(<api.ui.dialog.ModalDialogConfig>{title});
 
             this.editor = editor;
 

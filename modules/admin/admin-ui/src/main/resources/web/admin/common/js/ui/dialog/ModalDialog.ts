@@ -4,6 +4,12 @@ module api.ui.dialog {
     import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
     import Element = api.dom.Element;
 
+    export interface ModalDialogConfig {
+        title?: string,
+        forceHorizontalCentering?: boolean,
+        buttonRow?: ModalDialogButtonRow,
+    }
+
     export class ModalDialog extends api.dom.DivEl {
 
         protected header: api.ui.dialog.ModalDialogHeader;
@@ -30,10 +36,10 @@ module api.ui.dialog {
 
         public static debug: boolean = false;
 
-        constructor(title: string = '', forceHorizontalCentering: boolean = false) {
+        constructor(config: ModalDialogConfig = <ModalDialogConfig>{}) {
             super('modal-dialog', api.StyleHelper.COMMON_PREFIX);
 
-            this.forceHorizontalCentering = forceHorizontalCentering;
+            this.forceHorizontalCentering = !!config.forceHorizontalCentering;
 
             let wrapper = new api.dom.DivEl('modal-dialog-content-wrapper');
             this.appendChild(wrapper);
@@ -43,7 +49,7 @@ module api.ui.dialog {
             this.cancelButton.onClicked(() => this.cancelAction.execute());
             wrapper.appendChild(this.cancelButton);
 
-            this.header = this.createHeader(title);
+            this.header = this.createHeader(config.title || '');
             wrapper.appendChild(this.header);
 
             this.contentPanel = new ModalDialogContentPanel();
@@ -55,14 +61,14 @@ module api.ui.dialog {
             let footer = new api.dom.DivEl('modal-dialog-footer');
             this.appendChild(footer);
 
-            this.buttonRow = new ModalDialogButtonRow();
+            this.buttonRow = config.buttonRow || new ModalDialogButtonRow();
             footer.appendChild(this.buttonRow);
 
             this.initListeners();
         }
 
         private initListeners() {
-            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item) => {
+            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, () => {
                 if (this.isVisible()) {
                     this.centerMyself();
                 }
