@@ -26,6 +26,8 @@ module api.ui.dialog {
 
         private listOfClickIgnoredElements: api.dom.Element[] = [];
 
+        private onClosedListeners: {(): void;}[] = [];
+
         public static debug: boolean = false;
 
         constructor(title: string = '', forceHorizontalCentering: boolean = false) {
@@ -160,11 +162,11 @@ module api.ui.dialog {
             return this.cancelAction;
         }
 
-        addCancelButtonToBottom(buttonLabel: string = 'Cancel') {
+        addCancelButtonToBottom(buttonLabel: string = 'Cancel'): DialogButton {
             let cancelAction = new api.ui.Action(buttonLabel);
             cancelAction.setIconClass('cancel-button-bottom');
             cancelAction.onExecuted(() => this.cancelAction.execute());
-            this.buttonRow.addAction(cancelAction);
+            return this.buttonRow.addAction(cancelAction);
         }
 
         setTitle(value: string) {
@@ -333,6 +335,23 @@ module api.ui.dialog {
             api.ui.KeyBindings.get().unshelveBindings();
 
             ModalDialog.openDialogsCounter--;
+            this.notifyClosed();
+        }
+
+        onClosed(onCloseCallback: () => void) {
+            this.onClosedListeners.push(onCloseCallback);
+        }
+
+        unClosed(listener: {(): void;}) {
+            this.onClosedListeners = this.onClosedListeners.filter(function (curr: {(): void;}) {
+                return curr !== listener;
+            });
+        }
+
+        private notifyClosed() {
+            this.onClosedListeners.forEach((listener) => {
+                listener();
+            });
         }
     }
 

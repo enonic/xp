@@ -21,6 +21,9 @@ import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSumma
 import Checkbox = api.ui.Checkbox;
 import InputAlignment = api.ui.InputAlignment;
 import AEl = api.dom.AEl;
+import {IssueListItem} from './IssueList';
+import {Router} from '../Router';
+import DialogButton = api.ui.dialog.DialogButton;
 
 export class IssueDetailsDialog extends SchedulableDialog {
 
@@ -30,9 +33,11 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
     private editButton: AEl;
 
+    private backButton: DialogButton;
+
     private closeOnPublishCheckbox: Checkbox;
 
-    private onCloseCallback: () => void;
+    private static INSTANCE: IssueDetailsDialog = new IssueDetailsDialog();
 
     constructor() {
         super('Issue Details', 'Resolving items...',
@@ -45,19 +50,31 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
         this.autoUpdateTitle = false;
 
+        this.initRouting();
+
         this.form = new IssueDialogForm();
         this.prependChildToContentPanel(this.form);
 
-        if (!this.editButton) {
-            this.appendChildToHeader(this.createEditButton());
-        }
+        this.createEditButton();
+        this.createBackButton();
 
         new api.dom.H6El().addClass('items-header').setHtml('Items:').insertBeforeEl(this.getItemList());
+
+
     }
 
-    addBackButton() {
-        this.addCancelButtonToBottom('Back');
+    public static get(): IssueDetailsDialog {
+        return IssueDetailsDialog.INSTANCE;
     }
+
+    private initRouting() {
+        this.onShown(() => {
+            Router.setHash('issue/' + this.issue.getId());
+        });
+
+        this.onClosed(Router.back);
+    }
+
 
     setIssue(issue: Issue): IssueDetailsDialog {
         this.issue = issue;
@@ -72,6 +89,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
         });
 
         this.setTitle(issue.getTitle());
+        this.initStatusInfo();
 
         if (this.getItemList().isRendered()) {
             this.initItemList();
@@ -87,6 +105,15 @@ export class IssueDetailsDialog extends SchedulableDialog {
         });
 
         return this;
+    }
+
+    public toggleNested(value: boolean): IssueDetailsDialog {
+        this.toggleClass('nested', value);
+        return this;
+    }
+
+    private initStatusInfo() {
+        this.setSubTitle(new IssueListItem(this.issue, 'issue').getStatusInfo(), false);
     }
 
     private initItemList() {
@@ -115,7 +142,12 @@ export class IssueDetailsDialog extends SchedulableDialog {
     }
 
     private createEditButton(): api.dom.AEl {
-        return this.editButton = new api.dom.AEl('edit').setTitle('Edit Issue');
+        this.appendChildToHeader(this.editButton = new api.dom.AEl('edit').setTitle('Edit Issue'));
+        return this.editButton;
+    }
+
+    private createBackButton(): DialogButton {
+        return this.backButton = this.addCancelButtonToBottom('Back');
     }
 
     private doPublish(scheduled: boolean) {
@@ -161,6 +193,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
         return <PublishDialogDependantList>super.getDependantList();
     }
 
+
     open() {
         this.form.giveFocus();
         this.reloadPublishDependencies().done();
@@ -168,17 +201,10 @@ export class IssueDetailsDialog extends SchedulableDialog {
     }
 
     close() {
-        super.close();
         this.getItemList().clearExcludeChildrenIds();
-
-        if (this.onCloseCallback) {
-            this.onCloseCallback();
-        }
+        super.close();
     }
 
-    onClose(onCloseCallback: () => void) {
-        this.onCloseCallback = onCloseCallback;
-    }
 
     private reloadPublishDependencies(): wemQ.Promise<void> {
 
