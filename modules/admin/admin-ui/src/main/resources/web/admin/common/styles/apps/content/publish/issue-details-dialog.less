@@ -4,6 +4,7 @@
 
   .dialog-header {
     margin-bottom: 0px;
+    position: relative;
   }
 
   .icon-tree {
@@ -37,17 +38,22 @@
     display: inline-block;
 
     margin: 10px 0 15px;
-    font-size: 14px;
+    font-size: 13px;
 
   }
 
   .edit {
-    display: inline-block;
-    //  line-height: 24px;
-    float: right;
     .icon-pencil2;
-
     text-decoration: none;
+    position: absolute;
+    right: 15px;
+    top: 5px;
+    font-size: 18px;
+    color: @admin-font-gray2;
+
+    &:hover {
+      color: @admin-font-gray3;
+    }
   }
 
   .issue-dialog-form {
@@ -55,7 +61,7 @@
     padding: 0 !important;
 
     .description-text {
-      margin: 15px 0;
+      margin-bottom: 15px;
     }
 
     label {

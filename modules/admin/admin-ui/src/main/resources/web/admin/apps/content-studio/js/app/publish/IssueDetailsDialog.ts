@@ -115,7 +115,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
     }
 
     private createEditButton(): api.dom.AEl {
-        return this.editButton = new api.dom.AEl('edit');
+        return this.editButton = new api.dom.AEl('edit').setTitle('Edit Issue');
     }
 
     private doPublish(scheduled: boolean) {
