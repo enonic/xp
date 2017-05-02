@@ -22,7 +22,7 @@ export class IssueSummary {
     }
 
     static fromJson(json: IssueSummaryJson): IssueSummary {
-        return new IssueSummaryBuilder().fromIssueSummaryJson(json).build();
+        return new IssueSummaryBuilder().fromJson(json).build();
     }
 
     static create(): IssueSummaryBuilder {
@@ -63,7 +63,7 @@ export class IssueSummaryBuilder {
 
     description: string;
 
-    fromIssueSummaryJson(json: IssueSummaryJson): IssueSummaryBuilder {
+    fromJson(json: IssueSummaryJson): IssueSummaryBuilder {
         this.id = json.id;
         this.title = json.title;
         this.creator = json.creator;

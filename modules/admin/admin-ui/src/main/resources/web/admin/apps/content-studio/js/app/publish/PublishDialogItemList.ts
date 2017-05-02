@@ -12,7 +12,7 @@ export class PublishDialogItemList extends DialogItemList {
 
     private chaListeners: {(items: ContentId[]): void}[] = [];
 
-    private debonceNotifyListChanged: Function;
+    private debounceNotifyListChanged: Function;
 
     constructor() {
         super('publish-dialog-item-list');
@@ -20,7 +20,7 @@ export class PublishDialogItemList extends DialogItemList {
         this.onItemsAdded(this.itemChangedHandler.bind(this));
         this.onItemsRemoved(this.itemChangedHandler.bind(this));
 
-        this.debonceNotifyListChanged = api.util.AppHelper.debounce(() => {
+        this.debounceNotifyListChanged = api.util.AppHelper.debounce(() => {
             this.notifyExcludeChildrenListChanged(this.excludeChildrenIds);
         }, 100, false);
     }
@@ -46,18 +46,22 @@ export class PublishDialogItemList extends DialogItemList {
                     this.excludeChildrenIds.push(contentId);
                 }
             }
-            this.debonceNotifyListChanged();
+            this.debounceNotifyListChanged();
         });
 
-        if(!browseItem.getModel().getContentSummary().hasChildren()) {
-            this.excludeChildrenIds.push(browseItem.getModel().getContentId());
-        }
+        this.excludeChildrenIds.push(browseItem.getModel().getContentId());
 
-        if(item.isRemovable()) {
+        if (item.isRemovable()) {
             item.addClass('removable');
         }
 
         return item;
+    }
+
+    public setReadOnly(value: boolean) {
+        this.getItemViews().forEach((item) => {
+            item.setReadOnly(value);
+        });
     }
 
     public getItemViews(): PublicStatusSelectionItem[] {
@@ -91,16 +95,14 @@ export class PublishDialogItemList extends DialogItemList {
 
 export class PublicStatusSelectionItem extends StatusSelectionItem {
 
-    private chaListeners: {(itemId: ContentId, enabled: boolean): void}[] = [];
+    private itemStateChangedListeners: {(itemId: ContentId, enabled: boolean): void}[] = [];
 
     private toggler: IncludeChildrenToggler;
 
     constructor(viewer: api.ui.Viewer<ContentSummaryAndCompareStatus>, item: BrowseItem<ContentSummaryAndCompareStatus>) {
         super(viewer, item);
 
-        if(item.getModel().getContentSummary().hasChildren()) {
-            this.toggler = new IncludeChildrenToggler();
-
+        if (item.getModel().getContentSummary().hasChildren()) {
             this.addClass('toggleable');
 
             this.toggler = new IncludeChildrenToggler();
@@ -123,22 +125,28 @@ export class PublicStatusSelectionItem extends StatusSelectionItem {
         });
     }
 
+    public setReadOnly(value: boolean) {
+        if (this.toggler) {
+            this.toggler.setReadOnly(value);
+        }
+    }
+
     getIncludeChildrenToggler(): IncludeChildrenToggler {
         return this.toggler;
     }
 
     public onItemStateChanged(listener: (item: ContentId, enabled: boolean) => void) {
-        this.chaListeners.push(listener);
+        this.itemStateChangedListeners.push(listener);
     }
 
     public unItemStateChanged(listener: (item: ContentId, enabled: boolean) => void) {
-        this.chaListeners = this.chaListeners.filter((current) => {
+        this.itemStateChangedListeners = this.itemStateChangedListeners.filter((current) => {
             return current !== listener;
         });
     }
 
     private notifyItemStateChanged(item: ContentId, enabled: boolean) {
-        this.chaListeners.forEach((listener) => {
+        this.itemStateChangedListeners.forEach((listener) => {
             listener(item, enabled);
         });
     }
@@ -149,8 +157,11 @@ class IncludeChildrenToggler extends api.dom.DivEl {
 
     private tooltip: Tooltip;
 
+    private readOnly: boolean;
+
     constructor() {
         super('icon icon-tree');
+        this.addClass('include-children-toggler');
 
         this.tooltip = new Tooltip(this, '', 1000);
 
@@ -160,11 +171,20 @@ class IncludeChildrenToggler extends api.dom.DivEl {
     }
 
     toggle(condition?: boolean, silent?: boolean) {
-        this.toggleClass('on', condition);
+        if (!this.readOnly) {
+            this.toggleClass('on', condition);
 
-        this.tooltip.setText(this.isEnabled() ? 'Exclude child items' : 'Include child items');
+            this.tooltip.setText(this.isEnabled() ? 'Exclude child items' : 'Include child items');
 
-        this.notifyStateChanged(this.isEnabled());
+            if (!silent) {
+                this.notifyStateChanged(this.isEnabled());
+            }
+        }
+    }
+
+    setReadOnly(value: boolean) {
+        this.readOnly = value;
+        this.tooltip.setActive(!value);
     }
 
     isEnabled(): boolean {
