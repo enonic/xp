@@ -342,19 +342,14 @@ final class CreateContentCommand
             {
                 if ( parentContentType.getName().isPageTemplate() )
                 {
-
                     final Site nearestSite = getNearestSite( parent.getId() );
-
                     if ( nearestSite == null )
                     {
                         throw new IllegalArgumentException(
                             "Content could not be created. No valid site for page template [" + parentPath.toString() + "]" );
                     }
-
                     builder.parent( nearestSite.getPath() );
                     return;
-
-
                 }
                 throw new IllegalArgumentException(
                     "Content could not be created. Children not allowed in parent [" + parentPath.toString() + "]" );

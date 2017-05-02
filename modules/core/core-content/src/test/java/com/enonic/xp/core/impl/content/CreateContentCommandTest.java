@@ -120,7 +120,6 @@ public class CreateContentCommandTest
     @Test
     public void createContentInValidPageTemplate()
     {
-
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
             thenReturn( ContentType.create().
                 superType( ContentTypeName.structured() ).
@@ -193,7 +192,6 @@ public class CreateContentCommandTest
             build();
 
         CreateContentCommand command = createContentCommand( params );
-
         command.execute();
     }
 
