@@ -240,7 +240,7 @@ module api.ui.dialog {
 
         centerHorisontally() {
             const el = this.getEl();
-            el.setMarginTop(`-${ el.getWidthWithBorder() / 2 }px`);
+            el.setMarginLeft(`-${ el.getWidthWithBorder() / 2 }px`);
             el.addClass('centered_horizontally');
         }
 
@@ -383,9 +383,9 @@ module api.ui.dialog {
 
     export class ModalDialogButtonRow extends DivEl {
 
-        private defaultButton: DialogButton;
+        protected defaultButton: api.dom.Element;
 
-        private buttonContainer: DivEl;
+        protected buttonContainer: DivEl;
 
         constructor() {
             super('dialog-buttons');
@@ -399,10 +399,11 @@ module api.ui.dialog {
         }
 
         addAction(action: Action, useDefault?: boolean, prepend?: boolean): DialogButton {
-            let button = new DialogButton(action);
+            const button = new DialogButton(action);
             if (useDefault) {
                 this.defaultButton = button;
             }
+
             if (prepend) {
                 this.buttonContainer.prependChild(button);
             } else {
@@ -413,26 +414,19 @@ module api.ui.dialog {
                 button.setLabel(action.getLabel());
                 button.setEnabled(action.isEnabled());
             });
+
             return button;
         }
 
         removeAction(action: Action) {
-
-            if (this.defaultButton && this.defaultButton.getAction() == action) {
-                this.defaultButton = null;
-            }
-
-            const buttonToRemove = [];
-
-            this.buttonContainer.getChildren().forEach((button: DialogButton) => {
-                if (button.getAction() == action) {
-                    buttonToRemove.push(button);
-                }
-            });
-
-            buttonToRemove.forEach((button) => {
-                this.buttonContainer.removeChild(button);
-            });
+            this.buttonContainer.getChildren()
+                .filter((button: DialogButton) => button.getAction() == action)
+                .forEach((button: DialogButton) => {
+                    if (this.defaultButton == button) {
+                        this.defaultButton = null;
+                    }
+                    this.buttonContainer.removeChild(button);
+                });
         }
 
         focusDefaultAction() {
