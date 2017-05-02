@@ -7,10 +7,10 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.ReprocessContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.UpdateNodeParams;
 
@@ -18,22 +18,22 @@ import static com.enonic.xp.content.ContentPropertyNames.MODIFIED_TIME;
 
 
 final class ReprocessContentCommand
-    extends AbstractContentCommand
+    extends AbstractCreatingOrUpdatingContentCommand
 {
     private final ReprocessContentParams params;
 
-    private final ContentService contentService;
+    private final MediaInfoService mediaInfoService;
 
     private ReprocessContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
-        this.contentService = builder.contentService;
+        this.mediaInfoService = builder.mediaInfoService;
     }
 
     Content execute()
     {
-        final Content source = this.contentService.getById( params.getContentId() );
+        final Content source = this.getContent( params.getContentId() );
 
         if ( !source.getType().isDescendantOfMedia() )
         {
@@ -52,13 +52,14 @@ final class ReprocessContentCommand
             return media;
         }
         final ContentId id = media.getId();
-        final ByteSource binary = contentService.getBinary( id, source.getBinaryReference() );
-        final UpdateMediaParams update = new UpdateMediaParams().
+        final ByteSource binary = GetBinaryCommand.create( id, source.getBinaryReference(), this ).build().execute();
+        final UpdateMediaParams updateMediaParams = new UpdateMediaParams().
             byteSource( binary ).
             mimeType( source.getMimeType() ).
             content( id ).
             name( source.getName() );
-        return contentService.update( update );
+
+        return UpdateMediaCommand.create( updateMediaParams, this ).mediaInfoService( mediaInfoService ).build().execute();
     }
 
     private Content revertModifiedTime( final Content content, final Instant modifiedTime )
@@ -68,7 +69,7 @@ final class ReprocessContentCommand
             editor( ( node ) -> node.data.getRoot().setInstant( MODIFIED_TIME, modifiedTime ) ).
             build();
         this.nodeService.update( update );
-        return contentService.getById( content.getId() );
+        return this.getContent( content.getId() );
     }
 
     public static Builder create( final ReprocessContentParams params )
@@ -77,20 +78,20 @@ final class ReprocessContentCommand
     }
 
     public static class Builder
-        extends AbstractContentCommand.Builder<Builder>
+        extends AbstractCreatingOrUpdatingContentCommand.Builder<Builder>
     {
         private final ReprocessContentParams params;
 
-        private ContentService contentService;
+        private MediaInfoService mediaInfoService;
 
         private Builder( final ReprocessContentParams params )
         {
             this.params = params;
         }
 
-        public Builder contentService( final ContentService contentService )
+        public Builder mediaInfoService( final MediaInfoService value )
         {
-            this.contentService = contentService;
+            this.mediaInfoService = value;
             return this;
         }
 
