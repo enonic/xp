@@ -20,8 +20,6 @@ module api.ui.dialog {
 
         private cancelAction: Action;
 
-        private actions: Action[] = [];
-
         private cancelButton: DivEl;
 
         private static openDialogsCounter: number = 0;
@@ -40,6 +38,8 @@ module api.ui.dialog {
             let wrapper = new DivEl('modal-dialog-content-wrapper');
             this.appendChild(wrapper);
 
+            this.buttonRow = config.buttonRow || new ModalDialogButtonRow();
+
             this.cancelAction = this.createDefaultCancelAction();
             this.cancelButton = new DivEl('cancel-button-top');
             this.cancelButton.onClicked(() => this.cancelAction.execute());
@@ -57,7 +57,6 @@ module api.ui.dialog {
             let footer = new DivEl('modal-dialog-footer');
             this.appendChild(footer);
 
-            this.buttonRow = config.buttonRow || new ModalDialogButtonRow();
             footer.appendChild(this.buttonRow);
 
             this.initListeners();
@@ -156,7 +155,7 @@ module api.ui.dialog {
             cancelAction.onExecuted(() => {
                 this.close();
             });
-            this.actions.push(cancelAction);
+            this.buttonRow.addToActions(cancelAction);
             return cancelAction;
         }
 
@@ -192,7 +191,6 @@ module api.ui.dialog {
         }
 
         addAction(action: Action, useDefault?: boolean, prepend?: boolean): DialogButton {
-            this.actions.push(action);
             return this.buttonRow.addAction(action, useDefault, prepend);
         }
 
@@ -202,11 +200,6 @@ module api.ui.dialog {
             }
 
             const action = actionButton.getAction();
-
-            const index = this.actions.indexOf(action);
-            if (index >= 0) {
-                this.actions.splice(index, 1);
-            }
 
             this.buttonRow.removeAction(action);
         }
@@ -303,7 +296,7 @@ module api.ui.dialog {
 
             this.show();
 
-            let keyBindings = Action.getKeyBindings(this.actions);
+            let keyBindings = Action.getKeyBindings(this.buttonRow.getActions());
 
             this.updateTabbable();
 
@@ -387,6 +380,8 @@ module api.ui.dialog {
 
         private buttonContainer: DivEl;
 
+        private actions: Action[] = [];
+
         constructor() {
             super('dialog-buttons');
 
@@ -396,6 +391,14 @@ module api.ui.dialog {
 
         addElement(element: Element) {
             this.buttonContainer.appendChild(element);
+        }
+
+        getActions(): Action[] {
+            return this.actions;
+        }
+
+        addToActions(action: Action) {
+            this.actions.push(action);
         }
 
         addAction(action: Action, useDefault?: boolean, prepend?: boolean): DialogButton {
@@ -415,10 +418,17 @@ module api.ui.dialog {
                 button.setEnabled(action.isEnabled());
             });
 
+            this.actions.push(action);
+
             return button;
         }
 
         removeAction(action: Action) {
+            const index = this.actions.indexOf(action);
+            if (index >= 0) {
+                this.actions.splice(index, 1);
+            }
+
             this.buttonContainer.getChildren()
                 .filter((button: DialogButton) => button.getAction() == action)
                 .forEach((button: DialogButton) => {

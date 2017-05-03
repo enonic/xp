@@ -33,6 +33,10 @@ module api.ui.button {
             this.actionButton = new ActionButton(action);
         }
 
+        getActionButton(): ActionButton {
+            return this.actionButton;
+        }
+
         private initMenu(actions: Action[]) {
             this.menu = new Menu(actions);
             this.setDropdownHandleEnabled(actions.length > 0);

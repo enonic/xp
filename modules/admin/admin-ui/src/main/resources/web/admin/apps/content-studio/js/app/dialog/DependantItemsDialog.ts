@@ -49,7 +49,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
     protected dependantIds: ContentId[] = [];
 
     constructor(title: string = '', dialogSubName: string = '', dependantsName: string = '', buttonRow?: ModalDialogButtonRow) {
-        super(<api.ui.dialog.ModalDialogConfig>{title});
+        super(<api.ui.dialog.ModalDialogConfig>{title, buttonRow});
 
         this.addClass('dependant-dialog');
 
@@ -189,7 +189,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.subTitle.setHtml(text, escapeHtml);
     }
 
-    protected updateButtonCount(actionString: string, count: number) {
+    protected updateButtonCount(actionString: string, count: number) { //
         this.actionButton.setLabel(count > 1 ? actionString + ' (' + count + ')' : actionString);
     }
 
@@ -269,12 +269,12 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         }
     }
 
-    protected lockControls() {
+    protected lockControls() { //
         this.addClass('locked');
         this.actionButton.setEnabled(false);
     }
 
-    protected unlockControls() {
+    protected unlockControls() { //
         this.removeClass('locked');
         this.actionButton.setEnabled(true);
     }
