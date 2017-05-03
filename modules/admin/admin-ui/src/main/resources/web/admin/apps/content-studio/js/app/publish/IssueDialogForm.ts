@@ -106,20 +106,8 @@ export class IssueDialogForm extends api.ui.form.Form {
         selectorFormItem.setLabel(readOnly ? 'Assignees:' : 'Invite users to work on issue');
     }
 
-    public setIssue(issue: Issue): wemQ.Promise<void> {
-        const deferred = wemQ.defer<void>();
-
-        if (this.isRendered()) {
-            this.doSetIssue(issue);
-            deferred.resolve(null);
-        } else {
-            this.onRendered(() => {
-                this.doSetIssue(issue);
-                deferred.resolve(null);
-            });
-        }
-
-        return deferred.promise;
+    public setIssue(issue: Issue) {
+        this.doSetIssue(issue);
     }
 
     private doSetIssue(issue: Issue) {

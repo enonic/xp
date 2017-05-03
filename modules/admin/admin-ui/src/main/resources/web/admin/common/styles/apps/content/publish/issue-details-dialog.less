@@ -107,6 +107,8 @@
     width: 100%;
 
     .cancel-button-bottom {
+      display: none;
+
       float: left;
       margin: 0px;
     }
@@ -120,6 +122,12 @@
     }
     .show-schedule-action {
       float: right;
+    }
+  }
+
+  &.nested {
+    .button-container .cancel-button-bottom {
+      display: block;
     }
   }
 

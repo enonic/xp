@@ -81,20 +81,20 @@ export class IssueList extends ListBox<IssueSummary> {
         }
     }
 
-    protected createItemView(issue: IssueSummary): api.dom.Element {
+    protected createItemView(issueSummary: IssueSummary): api.dom.Element {
 
-        const itemEl = new IssueListItem(issue, 'issue-list-item');
+        const itemEl = new IssueListItem(issueSummary, 'issue-list-item');
         itemEl.getEl().setTabIndex(0);
 
         itemEl.onClicked(() => {
             this.notifyIssueSelected(itemEl);
         });
 
-        if (issue.getDescription()) {
-            itemEl.getEl().setTitle(issue.getDescription());
+        if (issueSummary.getDescription()) {
+            itemEl.getEl().setTitle(issueSummary.getDescription());
         }
 
-        const namesView: NamesView = new NamesView(false).setMainName(issue.getTitle());
+        const namesView: NamesView = new NamesView(false).setMainName(issueSummary.getTitle());
         namesView.setSubNameElements([Element.fromString(this.makeSubName(itemEl))]);
 
         itemEl.appendChild(namesView);

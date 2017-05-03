@@ -25,12 +25,14 @@ export class IssuesDialog extends ModalDialog {
     private openIssuesPanel: Panel;
     private closedIssuesPanel: Panel;
 
-    private issueDetailsDialog: IssueDetailsDialog;
+    private loadMask: LoadMask;
 
     constructor() {
         super('Publishing Issues');
         this.addClass('issue-list-dialog');
         api.dom.Body.get().appendChild(this);
+
+        this.initIssueDetailsDialog();
     }
 
     doRender(): Q.Promise<boolean> {
@@ -76,25 +78,22 @@ export class IssuesDialog extends ModalDialog {
         this.reloadIssueData();
     }
 
-    showIssueDetailsDialog(issueListItem: IssueListItem) {
-        if (!this.issueDetailsDialog) {
-            this.issueDetailsDialog = new IssueDetailsDialog();
+    private initIssueDetailsDialog() {
+        this.addClickIgnoredElement(IssueDetailsDialog.get());
 
-            this.issueDetailsDialog.addBackButton();
-            this.addClickIgnoredElement(this.issueDetailsDialog);
-
-            this.issueDetailsDialog.onClose(() => {
-                this.removeClass('masked');
+        IssueDetailsDialog.get().onClosed(() => {
+            this.removeClass('masked');
+            if(this.isVisible()) {
                 this.getEl().focus();
-            });
+            }
+        });
+    }
 
-            this.issueDetailsDialog.setSubTitle(issueListItem.getStatusInfo(), false);
-        }
+    showIssueDetailsDialog(issueListItem: IssueListItem) {
         this.addClass('masked');
 
         new GetIssueRequest(issueListItem.getIssue().getId()).sendAndParse().then((issue: Issue) => {
-            this.issueDetailsDialog.setIssue(issue);
-            this.issueDetailsDialog.open();
+            IssueDetailsDialog.get().setIssue(issue).toggleNested(true).open();
         });
     }
 
