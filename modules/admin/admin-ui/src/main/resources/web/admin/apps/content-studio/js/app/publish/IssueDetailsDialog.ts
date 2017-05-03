@@ -82,9 +82,8 @@ export class IssueDetailsDialog extends SchedulableDialog {
             this.lockControls();
         }
 
-        this.form.setIssue(issue).then(() => {
-            this.form.setReadOnly(true);
-        });
+        this.form.setIssue(issue);
+        this.form.setReadOnly(true);
 
         this.setTitle(issue.getTitle());
         this.initStatusInfo();
