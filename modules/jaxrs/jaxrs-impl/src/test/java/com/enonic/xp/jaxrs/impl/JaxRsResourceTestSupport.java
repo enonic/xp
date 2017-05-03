@@ -62,7 +62,13 @@ public abstract class JaxRsResourceTestSupport
     protected final void assertJson( final String fileName, final String actualJson )
         throws Exception
     {
-        final JsonNode expectedNode = parseJson( readFromFile( fileName ) );
+        assertStringJson( readFromFile( fileName ), actualJson );
+    }
+
+    protected final void assertStringJson( final String expectedJson, final String actualJson )
+        throws Exception
+    {
+        final JsonNode expectedNode = parseJson( expectedJson );
         final JsonNode actualNode = parseJson( actualJson );
 
         final String expectedStr = toJson( expectedNode );

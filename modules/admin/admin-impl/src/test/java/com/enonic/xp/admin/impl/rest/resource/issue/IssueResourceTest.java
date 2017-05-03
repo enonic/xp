@@ -109,14 +109,33 @@ public class IssueResourceTest
         final Map params = Maps.newHashMap();
         params.put( "id", issue.getId().toString() );
 
-        final String expected = new StrSubstitutor( params ).replace( readFromFile( "get_issues_result.json" ) );
+        final String expected = new StrSubstitutor( params ).replace( readFromFile( "get_issue_result.json" ) );
 
+        String jsonString = request().path( "issue/id" ).
+            queryParam( "id", issue.getId().toString() ).
+            get().getAsString();
+
+        assertStringJson( expected, jsonString );
+    }
+
+    @Test
+    public void test_getIssues()
+        throws Exception
+    {
+        final Issue issue = createIssue();
+
+        Mockito.when( this.issueService.getIssue( issue.getId() ) ).thenReturn( issue );
+
+        final Map params = Maps.newHashMap();
+        params.put( "id", issue.getId().toString() );
+
+        final String expected = new StrSubstitutor( params ).replace( readFromFile( "get_issues_result.json" ) );
 
         String jsonString = request().path( "issue/getIssues" ).
             entity( "{\"ids\":[\"" + issue.getId() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
-        assertEquals( expected, jsonString );
+        assertStringJson( expected, jsonString );
     }
 
     @Test
