@@ -2,6 +2,7 @@ import '../../api.ts';
 import {DependantItemsDialog} from '../dialog/DependantItemsDialog';
 import {MenuButtonProgressBarManager} from '../browse/MenuButtonProgressBarManager';
 import TaskState = api.task.TaskState;
+import ModalDialogButtonRow = api.ui.dialog.ModalDialogButtonRow;
 
 export class ProcessingStats {
     // If the content is still being processed after this time, show the progress bar (in ms)
@@ -9,6 +10,15 @@ export class ProcessingStats {
 
     // Interval of task polling when processing the content (in ms)
     static pollInterval: number = 500;
+}
+
+export interface ProgressBarConfig {
+    dialogName: string,
+    dialogSubName: string,
+    dependantsName: string,
+    isProcessingClass: string,
+    processHandler: () => void,
+    buttonRow?: ModalDialogButtonRow,
 }
 
 export class ProgressBarDialog extends DependantItemsDialog {
@@ -19,10 +29,10 @@ export class ProgressBarDialog extends DependantItemsDialog {
 
     private processHandler: () => void;
 
-    constructor(dialogName: string, dialogSubName: string, dependantsName: string, isProcessingClass: string, processHandler: () => void) {
-        super(dialogName, dialogSubName, dependantsName);
-        this.isProcessingClass = isProcessingClass;
-        this.processHandler = processHandler;
+    constructor(config: ProgressBarConfig) {
+        super(config.dialogName, config.dialogSubName, config.dependantsName, config.buttonRow);
+        this.isProcessingClass = config.isProcessingClass;
+        this.processHandler = config.processHandler;
     }
 
     protected createProgressBar() {

@@ -383,9 +383,9 @@ module api.ui.dialog {
 
     export class ModalDialogButtonRow extends DivEl {
 
-        protected defaultButton: api.dom.Element;
+        private defaultElement: api.dom.Element;
 
-        protected buttonContainer: DivEl;
+        private buttonContainer: DivEl;
 
         constructor() {
             super('dialog-buttons');
@@ -401,7 +401,7 @@ module api.ui.dialog {
         addAction(action: Action, useDefault?: boolean, prepend?: boolean): DialogButton {
             const button = new DialogButton(action);
             if (useDefault) {
-                this.defaultButton = button;
+                this.setDefaultElement(button);
             }
 
             if (prepend) {
@@ -422,16 +422,24 @@ module api.ui.dialog {
             this.buttonContainer.getChildren()
                 .filter((button: DialogButton) => button.getAction() == action)
                 .forEach((button: DialogButton) => {
-                    if (this.defaultButton == button) {
-                        this.defaultButton = null;
+                    if (this.defaultElement == button) {
+                        this.resetDefaultElement();
                     }
                     this.buttonContainer.removeChild(button);
                 });
         }
 
+        setDefaultElement(element: api.dom.Element) {
+            this.defaultElement = element;
+        }
+
+        resetDefaultElement() {
+            this.defaultElement = null;
+        }
+
         focusDefaultAction() {
-            if (this.defaultButton) {
-                this.defaultButton.giveFocus();
+            if (this.defaultElement) {
+                this.defaultElement.giveFocus();
             }
         }
     }

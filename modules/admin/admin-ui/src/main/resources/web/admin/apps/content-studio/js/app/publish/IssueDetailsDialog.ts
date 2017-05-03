@@ -24,6 +24,7 @@ import AEl = api.dom.AEl;
 import {IssueListItem} from './IssueList';
 import {Router} from '../Router';
 import DialogButton = api.ui.dialog.DialogButton;
+import {ProgressBarConfig} from '../dialog/ProgressBarDialog';
 
 export class IssueDetailsDialog extends SchedulableDialog {
 
@@ -42,12 +43,17 @@ export class IssueDetailsDialog extends SchedulableDialog {
     private static INSTANCE: IssueDetailsDialog = new IssueDetailsDialog();
 
     constructor() {
-        super('Issue Details', 'Resolving items...',
-            null,
-            'is-publishing',
-            () => {
-                new ContentPublishPromptEvent([]).fire();
-            });
+        super(<ProgressBarConfig> {
+                dialogName: 'Issue Details',
+                dialogSubName: 'Resolving items...',
+                dependantsName: '',
+                isProcessingClass: 'is-publishing',
+                processHandler: () => {
+                    new ContentPublishPromptEvent([]).fire();
+                },
+            }
+        );
+
         this.addClass('issue-details-dialog');
 
         this.autoUpdateTitle = false;

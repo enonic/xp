@@ -16,6 +16,7 @@ import LoadMask = api.ui.mask.LoadMask;
 import DialogButton = api.ui.dialog.DialogButton;
 import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
+import ModalDialogButtonRow = api.ui.dialog.ModalDialogButtonRow;
 
 export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
@@ -47,7 +48,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     protected dependantIds: ContentId[] = [];
 
-    constructor(title: string = '', dialogSubName: string = '', dependantsName: string = '') {
+    constructor(title: string = '', dialogSubName: string = '', dependantsName: string = '', buttonRow?: ModalDialogButtonRow) {
         super(<api.ui.dialog.ModalDialogConfig>{title});
 
         this.addClass('dependant-dialog');

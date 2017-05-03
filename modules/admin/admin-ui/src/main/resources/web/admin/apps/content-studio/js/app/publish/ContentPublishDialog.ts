@@ -1,4 +1,6 @@
 import '../../api.ts';
+
+import {ProgressBarConfig} from '../dialog/ProgressBarDialog';
 import {PublishDialogDependantList, isContentSummaryValid} from './PublishDialogDependantList';
 import {ContentPublishPromptEvent} from '../browse/ContentPublishPromptEvent';
 import {PublishDialogItemList} from './PublishDialogItemList';
@@ -14,6 +16,8 @@ import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
 import BrowseItem = api.app.browse.BrowseItem;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
+import ModalDialogButtonRow = api.ui.dialog.ModalDialogButtonRow;
+import MenuButton = api.ui.button.MenuButton;
 
 /**
  * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
@@ -32,13 +36,14 @@ export class ContentPublishDialog extends SchedulableDialog {
     private createIssueDialog: CreateIssueDialog;
 
     constructor() {
-        super(
-            'Publishing Wizard',
-            'Resolving items...',
-            'Other items that will be published',
-            'is-publishing',
-            () => {
-                new ContentPublishPromptEvent([]).fire();
+        super(<ProgressBarConfig> {
+                dialogName: 'Publishing Wizard',
+                dialogSubName: 'Resolving items...',
+                dependantsName: 'Other items that will be published',
+                isProcessingClass: 'is-publishing',
+                processHandler: () => {
+                    new ContentPublishPromptEvent([]).fire();
+                },
             }
         );
 
@@ -245,7 +250,7 @@ export class ContentPublishDialog extends SchedulableDialog {
         this.actionButton = this.addAction(newAction, true);
     }
 
-    private updateButtonAction() {
+    private updateButtonAction() { //
         if (this.allPublishable) {
             this.setButtonAction(ContentPublishDialogAction, this.doPublish.bind(this, false));
             this.updateDependantsHeader();
@@ -348,6 +353,24 @@ export class ContentPublishDialog extends SchedulableDialog {
 
     protected hasSubDialog(): boolean {
         return true;
+    }
+}
+
+export class ContentPublishDialogButtonRow extends ModalDialogButtonRow {
+
+    private actionButton: MenuButton;
+
+    constructor() {
+        super();
+
+        const mainAction = new ContentPublishDialogAction();
+        const menuActions = [ new CreateIssueDialogAction() ];
+
+        this.actionButton = new MenuButton(mainAction, menuActions);
+
+        this.setDefaultElement(this.actionButton);
+
+        this.appendChild(this.actionButton);
     }
 }
 

@@ -1,5 +1,5 @@
 import '../../api.ts';
-import {ProgressBarDialog} from '../dialog/ProgressBarDialog';
+import {ProgressBarDialog, ProgressBarConfig} from '../dialog/ProgressBarDialog';
 import {ContentUnpublishPromptEvent} from '../browse/ContentUnpublishPromptEvent';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
@@ -14,13 +14,14 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
 
     constructor() {
 
-        super(
-            'Unpublish item',
-            '<b>Take offline?</b> - Unpublishing selected item(s) will set status back to offline',
-            'Dependent items - Clean up references to selected item(s) or click unpublish to take all items offline',
-            'is-unpublishing',
-            () => {
-                new ContentUnpublishPromptEvent([]).fire();
+        super(<ProgressBarConfig> {
+                dialogName: 'Unpublish item',
+                dialogSubName: '<b>Take offline?</b> - Unpublishing selected item(s) will set status back to offline',
+                dependantsName: 'Dependent items - Clean up references to selected item(s) or click unpublish to take all items offline',
+                isProcessingClass: 'is-unpublishing',
+                processHandler: () => {
+                    new ContentUnpublishPromptEvent([]).fire();
+                }
             }
         );
 
