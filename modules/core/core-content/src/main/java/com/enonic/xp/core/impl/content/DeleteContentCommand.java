@@ -9,6 +9,7 @@ import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.context.Context;
@@ -65,6 +66,11 @@ final class DeleteContentCommand
 
         final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( this.params.getContentPath() );
         final Node nodeToDelete = this.nodeService.getByPath( nodePath );
+
+        if ( nodeToDelete == null )
+        {
+            throw new ContentNotFoundException( this.params.getContentPath(), ContextAccessor.current().getBranch() );
+        }
 
         final DeleteContentsResult deletedContents = doDeleteContent( nodeToDelete.id() );
 
