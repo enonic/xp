@@ -60,7 +60,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
         new api.dom.H6El().addClass('items-header').setHtml('Items:').insertBeforeEl(this.getItemList());
 
-
     }
 
     public static get(): IssueDetailsDialog {
@@ -74,7 +73,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
         this.onClosed(Router.back);
     }
-
 
     setIssue(issue: Issue): IssueDetailsDialog {
         this.issue = issue;
@@ -193,7 +191,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
         return <PublishDialogDependantList>super.getDependantList();
     }
 
-
     open() {
         this.form.giveFocus();
         this.reloadPublishDependencies().done();
@@ -204,7 +201,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
         this.getItemList().clearExcludeChildrenIds();
         super.close();
     }
-
 
     private reloadPublishDependencies(): wemQ.Promise<void> {
 

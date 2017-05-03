@@ -58,7 +58,6 @@ export class ContentAppPanel extends AppPanel<ContentSummaryAndCompareStatus> {
             break;
         case 'issue' :
             new ShowBrowsePanelEvent().fire();
-            
             if (id) {
                 new GetIssueRequest(id).sendAndParse().then(
                     (issue: Issue) => {
