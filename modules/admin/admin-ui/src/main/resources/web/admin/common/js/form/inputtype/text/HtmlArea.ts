@@ -59,7 +59,7 @@ module api.form.inputtype.text {
                 });
         }
 
-        private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
+        private readConfig(inputConfig: {[element: string]: {[name: string]: string}[];}): void {
             this.tools.include = inputConfig['include'];
             this.tools.exclude = inputConfig['exclude'];
         }
@@ -78,12 +78,17 @@ module api.form.inputtype.text {
             }
 
             let value = HTMLAreaHelper.prepareImgSrcsInValueForEdit(property.getString());
-            let textAreaEl = new api.ui.text.TextArea(this.getInput().getName() + '-' + index, value);
+            let textAreaEl = new api.dom.DivEl('text-area');
+            textAreaEl.setHtml(value, false);
 
-            let editorId = textAreaEl.getId();
+            let editorId = this.getInput().getName() + '-' + index;
+            textAreaEl.setId(editorId);
 
-            let clazz = editorId.replace(/\./g, '_');
-            textAreaEl.addClass(clazz);
+            let toolbarContainer = new api.dom.DivEl('text-area-toolbar');
+            toolbarContainer.setId(editorId + '-toolbar');
+
+            let editorClass = editorId.replace(/\./g, '_');
+            textAreaEl.addClass(editorClass);
 
             let textAreaWrapper = new api.dom.DivEl();
 
@@ -102,7 +107,7 @@ module api.form.inputtype.text {
                 this.destroyEditor(editorId);
             });
 
-            textAreaWrapper.appendChild(textAreaEl);
+            textAreaWrapper.appendChildren(toolbarContainer, textAreaEl);
 
             this.setFocusOnEditorAfterCreate(textAreaWrapper, editorId);
 
@@ -198,33 +203,47 @@ module api.form.inputtype.text {
                 textAreaWrapper.addClass(focusedEditorCls);
             };
 
-            new HTMLAreaBuilder().setSelector('textarea.' + id.replace(/\./g, '_')).setAssetsUri(baseUrl).setInline(false).onCreateDialog(
-                createDialogHandler).setFocusHandler(focusHandler.bind(this)).setBlurHandler(blurHandler.bind(this)).setKeydownHandler(
-                keydownHandler).setKeyupHandler(notifyValueChanged).setNodeChangeHandler(
-                notifyValueChanged).setContentPath(this.contentPath).setContent(this.content).setApplicationKeys(
-                this.applicationKeys).setTools(this.tools).setEditableSourceCode(this.editableSourceCode).createEditor().then(
-                (editor: HtmlAreaEditor) => {
+            let editorId = id.replace(/\./g, '_');
+
+            new HTMLAreaBuilder()
+                .setSelector('#' + editorId)
+                .setFixedToolbarContainer('#' + editorId + '-toolbar')
+                .setAssetsUri(baseUrl)
+                .setInline(true)
+                .onCreateDialog(createDialogHandler)
+                .setFocusHandler(focusHandler.bind(this))
+                .setBlurHandler(blurHandler.bind(this))
+                .setKeydownHandler(keydownHandler)
+                .setKeyupHandler(notifyValueChanged)
+                .setNodeChangeHandler(notifyValueChanged)
+                .setContentPath(this.contentPath)
+                .setContent(this.content)
+                .setApplicationKeys(this.applicationKeys)
+                .setTools(this.tools)
+                .setEditableSourceCode(this.editableSourceCode)
+                .createEditor()
+                .then((editor: HtmlAreaEditor) => {
                     this.setEditorContent(id, property);
                     if (this.notInLiveEdit()) {
                         this.setupStickyEditorToolbarForInputOccurence(textAreaWrapper, id);
                     }
                     this.removeTooltipFromEditorArea(textAreaWrapper);
 
-                let removeButtonEL = wemjq(textAreaWrapper.getParentElement().getParentElement().getHTMLElement()).find(
-                    '.remove-button')[0];
-                removeButtonEL.addEventListener('mouseover', () => {
-                    isMouseOverRemoveOccurenceButton = true;
-                });
-                removeButtonEL.addEventListener('mouseleave', () => {
-                    isMouseOverRemoveOccurenceButton = false;
-                });
+                    let removeButtonEL = wemjq(textAreaWrapper.getParentElement().getParentElement().getHTMLElement()).find(
+                        '.remove-button')[0];
+                    removeButtonEL.addEventListener('mouseover', () => {
+                        isMouseOverRemoveOccurenceButton = true;
+                    });
+                    removeButtonEL.addEventListener('mouseleave', () => {
+                        isMouseOverRemoveOccurenceButton = false;
+                    });
 
                     this.onShown((event) => {
                         // invoke auto resize on shown in case contents have been updated while inactive
                         if (!!editor['contentAreaContainer'] || !!editor['bodyElement']) {
                             editor.execCommand('mceAutoResize', false, null, {skip_focus: true});
                         }
-                });
+                    });
                 });
         }
 
