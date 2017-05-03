@@ -7,6 +7,7 @@
   min-height: 52px;
   max-height: 400px;
   box-sizing: border-box;
+  overflow: auto;
 }
 
 .text-area + .autosize-attendant {
@@ -18,4 +19,8 @@
     word-break: break-word;
     white-space: pre-wrap;
   }
+}
+
+.mce-tinymce-inline .mce-flow-layout {
+  white-space: normal !important; // allow toolbar to wrap to next line
 }
