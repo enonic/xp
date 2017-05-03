@@ -198,19 +198,21 @@ export class ContentPublishDialog extends SchedulableDialog {
 
     private showCreateIssueDialog() {
         if (!this.createIssueDialog) {
-            this.createIssueDialog = new CreateIssueDialog();
+            this.createIssueDialog = CreateIssueDialog.get();
+
+            this.createIssueDialog.onClosed(() => {
+                this.removeClass('masked');
+                this.getEl().focus();
+            });
+
+            this.createIssueDialog.onSucceed(() => {
+                if(this.isVisible()) {
+                    this.close();
+                }
+            });
+
+            this.addClickIgnoredElement(this.createIssueDialog);
         }
-
-        this.createIssueDialog.onClose(() => {
-            this.removeClass('masked');
-            this.getEl().focus();
-        });
-
-        this.createIssueDialog.onSuccess(() => {
-            this.close();
-        });
-
-        this.addClickIgnoredElement(this.createIssueDialog);
 
         const idsToPublish = this.getContentToPublishIds();
 

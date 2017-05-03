@@ -15,17 +15,22 @@ import LoadMask = api.ui.mask.LoadMask;
 import PEl = api.dom.PEl;
 import SpanEl = api.dom.SpanEl;
 import Element = api.dom.Element;
+import {CreateIssueDialog} from './CreateIssueDialog';
+import {IssuesPanel} from './IssuesPanel';
 
 export class IssuesDialog extends ModalDialog {
 
     private dockedPanel: DockedPanel;
 
-    private assignedToMeIssuesPanel: Panel;
-    private createdByMeIssuesPanel: Panel;
-    private openIssuesPanel: Panel;
-    private closedIssuesPanel: Panel;
+    private assignedToMeIssuesPanel: IssuesPanel;
 
-    private loadMask: LoadMask;
+    private createdByMeIssuesPanel: IssuesPanel;
+
+    private openIssuesPanel: IssuesPanel;
+
+    private closedIssuesPanel: IssuesPanel;
+
+    private createIssueDialog: CreateIssueDialog;
 
     constructor() {
         super('Publishing Issues');
@@ -44,38 +49,36 @@ export class IssuesDialog extends ModalDialog {
     }
 
     private createDockedPanel(): DockedPanel {
-        let dockedPanel = new DockedPanel();
-        dockedPanel.addItem('Assigned to me', true, this.assignedToMeIssuesPanel = this.createIssuePanel(IssueType.ASSIGNED_TO_ME));
-        dockedPanel.addItem('My issues', true, this.createdByMeIssuesPanel = this.createIssuePanel(IssueType.CREATED_BY_ME));
-        dockedPanel.addItem('Open', true, this.openIssuesPanel = this.createIssuePanel(IssueType.OPEN));
-        dockedPanel.addItem('Closed', true, this.closedIssuesPanel = this.createIssuePanel(IssueType.CLOSED));
+        const dockedPanel = new DockedPanel();
+
+        this.assignedToMeIssuesPanel = this.createIssuePanel(IssueType.ASSIGNED_TO_ME);
+        this.createdByMeIssuesPanel = this.createIssuePanel(IssueType.CREATED_BY_ME);
+        this.openIssuesPanel = this.createIssuePanel(IssueType.OPEN);
+        this.closedIssuesPanel = this.createIssuePanel(IssueType.CLOSED);
+
+        this.assignedToMeIssuesPanel.onIssueSelected(this.showIssueDetailsDialog.bind(this));
+        this.createdByMeIssuesPanel.onIssueSelected(this.showIssueDetailsDialog.bind(this));
+        this.openIssuesPanel.onIssueSelected(this.showIssueDetailsDialog.bind(this));
+        this.closedIssuesPanel.onIssueSelected(this.showIssueDetailsDialog.bind(this));
+
+        dockedPanel.addItem('Assigned to me', true, this.assignedToMeIssuesPanel);
+        dockedPanel.addItem('My issues', true, this.createdByMeIssuesPanel);
+        dockedPanel.addItem('Open', true,this.openIssuesPanel );
+        dockedPanel.addItem('Closed', true, this.closedIssuesPanel);
 
         return dockedPanel;
     }
 
-    private createIssuePanel(issueType: IssueType): Panel {
-        const panel: Panel = new Panel(IssueType[issueType]);
-
-        panel.onShown(() => {
-            const panelHasChildren = panel.getChildren().length > 0;
-
-            if (!panelHasChildren && panel.isVisible()) { // to not reload after tab is loaded and switching between tabs
-                const issueList: IssueList = new IssueList(issueType);
-                panel.appendChild(issueList);
-
-                issueList.onIssueSelected((issueListItem) => {
-                    this.showIssueDetailsDialog(issueListItem);
-                });
-            }
-        });
-
-        return panel;
+    private reloadDockPanel() {
+        this.assignedToMeIssuesPanel.reload();
+        this.createdByMeIssuesPanel.reload();
+        this.openIssuesPanel.reload();
+        this.closedIssuesPanel.reload();
     }
 
     show() {
-        this.cleanPanels();
+        this.reload();
         super.show();
-        this.reloadIssueData();
     }
 
     private initIssueDetailsDialog() {
@@ -83,7 +86,7 @@ export class IssuesDialog extends ModalDialog {
 
         IssueDetailsDialog.get().onClosed(() => {
             this.removeClass('masked');
-            if(this.isVisible()) {
+            if (this.isVisible()) {
                 this.getEl().focus();
             }
         });
@@ -101,10 +104,11 @@ export class IssuesDialog extends ModalDialog {
         return true;
     }
 
-    private reloadIssueData() {
+    public reload() {
         IssueFetcher.fetchIssueStats().then((stats: IssueStatsJson) => {
             this.updateTabLabels(stats);
             this.showFirstNonEmptyTab(stats);
+            this.reloadDockPanel();
         }).catch((reason: any) => {
             api.DefaultErrorHandler.handle(reason);
         });
@@ -135,17 +139,38 @@ export class IssuesDialog extends ModalDialog {
         }
     }
 
-    private cleanPanels() {
-        this.assignedToMeIssuesPanel.removeChildren();
-        this.createdByMeIssuesPanel.removeChildren();
-        this.openIssuesPanel.removeChildren();
-        this.closedIssuesPanel.removeChildren();
-    }
-
     private createNewIssueButton(): Element {
         const newIssueButton: SpanEl = new SpanEl().addClass('new-issue-button');
         newIssueButton.getEl().setTitle('Create an issue');
+
+        newIssueButton.onClicked(() => {
+            if (!this.createIssueDialog) {
+                this.createIssueDialog = CreateIssueDialog.get();
+
+                this.createIssueDialog.onClosed(() => {
+                    this.removeClass('masked');
+                    this.getEl().focus();
+                });
+
+                this.createIssueDialog.onSucceed(() => {
+                    this.createIssueDialog.reset();
+                    this.reload();
+                });
+
+                this.addClickIgnoredElement(this.createIssueDialog);
+            }
+
+            this.addClass('masked');
+
+            this.createIssueDialog.reset();
+            this.createIssueDialog.open();
+        });
+
         return newIssueButton;
     }
 
+    private createIssuePanel(issueType: IssueType): IssuesPanel {
+        return new IssuesPanel(issueType);
+
+    }
 }
