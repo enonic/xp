@@ -1,5 +1,4 @@
 import '../../api.ts';
-
 import {ProgressBarConfig} from '../dialog/ProgressBarDialog';
 import {PublishDialogDependantList, isContentSummaryValid} from './PublishDialogDependantList';
 import {ContentPublishPromptEvent} from '../browse/ContentPublishPromptEvent';
@@ -18,6 +17,7 @@ import BrowseItem = api.app.browse.BrowseItem;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
 import ModalDialogButtonRow = api.ui.dialog.ModalDialogButtonRow;
 import MenuButton = api.ui.button.MenuButton;
+import PublishableStatus = api.content.PublishableStatus;
 
 /**
  * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
@@ -31,7 +31,7 @@ export class ContentPublishDialog extends SchedulableDialog {
 
     private containsInvalid: boolean;
 
-    private allPublishable: boolean;
+    private publishableStatus: PublishableStatus;
 
     private createIssueDialog: CreateIssueDialog;
 
@@ -131,7 +131,7 @@ export class ContentPublishDialog extends SchedulableDialog {
             this.getDependantList().setRequiredIds(result.getRequired());
 
             this.containsInvalid = result.isContainsInvalid();
-            this.allPublishable = result.isAllPublishable();
+            this.publishableStatus = result.getPublishableStatus();
 
             this.updateButtonAction();
 
@@ -164,10 +164,11 @@ export class ContentPublishDialog extends SchedulableDialog {
 
     private updateSubTitleShowScheduleAndButtonCount() {
         let count = this.countTotal();
+        const allPublishable = this.publishableStatus === PublishableStatus.ALL;
 
         this.updateSubTitle(count);
         this.updateShowScheduleDialogButton();
-        this.updateButtonCount(this.allPublishable ? 'Publish' : 'Create Issue... ', count);
+        this.updateButtonCount(allPublishable ? 'Publish' : 'Create Issue... ', count);
     }
 
     setDependantItems(items: api.content.ContentSummaryAndCompareStatus[]) {
@@ -250,11 +251,13 @@ export class ContentPublishDialog extends SchedulableDialog {
         this.actionButton = this.addAction(newAction, true);
     }
 
-    private updateButtonAction() { //
-        if (this.allPublishable) {
+    private updateButtonAction() {
+        switch (this.publishableStatus) {
+        case PublishableStatus.ALL:
             this.setButtonAction(ContentPublishDialogAction, this.doPublish.bind(this, false));
             this.updateDependantsHeader();
-        } else {
+            break;
+        default:
             this.setButtonAction(CreateIssueDialogAction, this.createIssue.bind(this));
             this.updateDependantsHeader('Other items that will be added to the Publishing Issue');
         }
@@ -301,14 +304,15 @@ export class ContentPublishDialog extends SchedulableDialog {
     private updateSubTitle(count: number) {
         let allValid = this.areItemsAndDependantsValid();
 
+        const allPublishable = this.publishableStatus === PublishableStatus.ALL;
         let subTitle = (count === 0) ?
                        'No items to publish' :
-                       this.allPublishable ?
+                       allPublishable ?
                        (allValid ? 'Your changes are ready for publishing' : 'Invalid item(s) prevent publishing') :
                        'Create a new Publishing Issue with selected item(s)';
 
         this.setSubTitle(subTitle);
-        this.toggleClass('invalid', !allValid && this.allPublishable);
+        this.toggleClass('invalid', !allValid && allPublishable);
     }
 
     protected updateButtonCount(actionString: string, count: number) {

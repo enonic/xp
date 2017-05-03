@@ -13,12 +13,12 @@ export class ProcessingStats {
 }
 
 export interface ProgressBarConfig {
-    dialogName: string,
-    dialogSubName: string,
-    dependantsName: string,
-    isProcessingClass: string,
-    processHandler: () => void,
-    buttonRow?: ModalDialogButtonRow,
+    dialogName: string;
+    dialogSubName: string;
+    dependantsName: string;
+    isProcessingClass: string;
+    processHandler: () => void;
+    buttonRow?: ModalDialogButtonRow;
 }
 
 export class ProgressBarDialog extends DependantItemsDialog {

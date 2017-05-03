@@ -1,11 +1,11 @@
 {
-  "allPublishable" : false,
   "containsInvalid": true,
   "dependentContents": [
     {
       "id": "dependant-contentId"
     }
   ],
+  "publishableStatus" : "NONE",
   "requestedContents": [
     {
       "id": "requested-contentId"

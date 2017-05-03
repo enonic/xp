@@ -6,8 +6,8 @@ module api.ui.dialog {
     import Element = api.dom.Element;
 
     export interface ModalDialogConfig {
-        title?: string,
-        buttonRow?: ModalDialogButtonRow,
+        title?: string;
+        buttonRow?: ModalDialogButtonRow;
     }
 
     export class ModalDialog extends DivEl {

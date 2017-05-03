@@ -9,15 +9,16 @@ module api.content.resource.result {
         requestedContents: ContentId[];
         requiredContents: ContentId[];
         containsInvalid: boolean;
-        allPublishable: boolean;
+        publishableStatus: PublishableStatus;
 
-        constructor(dependants: ContentId[], requested: ContentId[], required: ContentId[], containsInvalid: boolean,
-                    allPublishable: boolean) {
+        constructor(dependants: ContentId[], requested: ContentId[],
+                    required: ContentId[], containsInvalid: boolean,
+                    publishableStatus: PublishableStatus) {
             this.dependentContents = dependants;
             this.requestedContents = requested;
             this.requiredContents = required;
             this.containsInvalid = containsInvalid;
-            this.allPublishable = allPublishable;
+            this.publishableStatus = publishableStatus;
         }
 
         getDependants(): ContentId[] {
@@ -36,8 +37,8 @@ module api.content.resource.result {
             return this.containsInvalid;
         }
 
-        isAllPublishable(): boolean {
-            return this.allPublishable;
+        getPublishableStatus(): PublishableStatus {
+            return this.publishableStatus;
         }
 
         static fromJson(json: ResolvePublishContentResultJson): ResolvePublishDependenciesResult {
@@ -48,9 +49,9 @@ module api.content.resource.result {
             let requested: ContentId[] = json.requestedContents ? json.requestedContents.map(dependant => new ContentId(dependant.id)) : [];
             let required: ContentId[] = json.requiredContents ? json.requiredContents.map(dependant => new ContentId(dependant.id)) : [];
             let containsInvalid: boolean = json.containsInvalid;
-            let allPublishable: boolean = json.allPublishable;
+            let pubslishableStatus: PublishableStatus = <PublishableStatus>PublishableStatus[json.publishableStatus];
 
-            return new ResolvePublishDependenciesResult(dependants, requested, required, containsInvalid, allPublishable);
+            return new ResolvePublishDependenciesResult(dependants, requested, required, containsInvalid, pubslishableStatus);
         }
     }
 }

@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import com.enonic.xp.admin.impl.json.content.ContentIdJson;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.PublishableStatus;
 
 public class ResolvePublishContentResultJson
 {
@@ -16,7 +17,7 @@ public class ResolvePublishContentResultJson
 
     private final Boolean containsInvalid;
 
-    private final Boolean allPublishable;
+    private final PublishableStatus publishableStatus;
 
     private ResolvePublishContentResultJson( Builder builder )
     {
@@ -24,7 +25,7 @@ public class ResolvePublishContentResultJson
         dependentContents = builder.dependentContents.stream().map( item -> new ContentIdJson( item ) ).collect( Collectors.toList() );
         requiredContents = builder.requiredContents.stream().map( item -> new ContentIdJson( item ) ).collect( Collectors.toList() );
         containsInvalid = builder.containsInvalid;
-        allPublishable = builder.allPublishable;
+        publishableStatus = builder.publishableStatus;
     }
 
     public static Builder create()
@@ -55,9 +56,9 @@ public class ResolvePublishContentResultJson
         return containsInvalid;
     }
 
-    public Boolean isAllPublishable()
+    public PublishableStatus getPublishableStatus()
     {
-        return allPublishable;
+        return publishableStatus;
     }
 
     public static final class Builder
@@ -71,7 +72,7 @@ public class ResolvePublishContentResultJson
 
         private Boolean containsInvalid;
 
-        private Boolean allPublishable;
+        private PublishableStatus publishableStatus;
 
         private Builder()
         {
@@ -101,9 +102,9 @@ public class ResolvePublishContentResultJson
             return this;
         }
 
-        public Builder setAllPublishable( final Boolean allPublishable )
+        public Builder setPublishableStatus( final PublishableStatus publishableStatus )
         {
-            this.allPublishable = allPublishable;
+            this.publishableStatus = publishableStatus;
             return this;
         }
 

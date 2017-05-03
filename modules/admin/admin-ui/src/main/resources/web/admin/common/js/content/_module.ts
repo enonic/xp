@@ -13,6 +13,7 @@
 ///<reference path='ContentComboBox.ts' />
 ///<reference path='CompareStatus.ts' />
 ///<reference path='PublishStatus.ts' />
+///<reference path='PublishableStatus.ts' />
 ///<reference path='Branch.ts' />
 ///<reference path='ContentSummaryAndCompareStatus.ts' />
 ///<reference path='ContentSummaryAndCompareStatusViewer.ts' />
