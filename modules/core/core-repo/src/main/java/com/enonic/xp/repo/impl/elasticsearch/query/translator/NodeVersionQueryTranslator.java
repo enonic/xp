@@ -3,46 +3,48 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator;
 import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.xp.data.ValueFactory;
-import com.enonic.xp.query.Query;
+import com.enonic.xp.node.SearchOptimizer;
 import com.enonic.xp.query.filter.ValueFilter;
-import com.enonic.xp.repo.impl.StorageSettings;
-import com.enonic.xp.repo.impl.elasticsearch.aggregation.query.AggregationQueryBuilderFactory;
-import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.FilterBuilderFactory;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.QueryBuilderFactory;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.SortQueryBuilderFactory;
-import com.enonic.xp.repo.impl.search.SearchRequest;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.QueryBuilderFactory;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.StoreQueryFieldNameResolver;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repo.impl.version.search.NodeVersionQuery;
 
-public class NodeVersionQueryTranslator
+class NodeVersionQueryTranslator
+    implements QueryTypeTranslator
 {
+    private final NodeVersionQuery query;
+
     private final QueryFieldNameResolver fieldNameResolver = new StoreQueryFieldNameResolver();
 
-    private final SortQueryBuilderFactory sortBuilder = new SortQueryBuilderFactory( fieldNameResolver );
-
-    private final FilterBuilderFactory filterBuilderFactory = new FilterBuilderFactory( fieldNameResolver );
-
-    private final AggregationQueryBuilderFactory aggregationsBuilder = new AggregationQueryBuilderFactory( fieldNameResolver );
-
-    private static void addNodeIdFilter( final NodeVersionQuery nodeVersionQuery, final QueryBuilderFactory.Builder queryBuilderBuilder )
+    NodeVersionQueryTranslator( final NodeVersionQuery query )
     {
-        if ( nodeVersionQuery.getNodeId() != null )
-        {
-            queryBuilderBuilder.addQueryFilter( ValueFilter.create().
-                fieldName( VersionIndexPath.NODE_ID.getPath() ).
-                addValue( ValueFactory.newString( nodeVersionQuery.getNodeId().toString() ) ).
-                build() );
-        }
+        this.query = query;
     }
 
-    public ElasticsearchQuery translate( final SearchRequest searchRequest )
+    @Override
+    public QueryFieldNameResolver getFieldNameResolver()
     {
-        final NodeVersionQuery nodeVersionQuery = (NodeVersionQuery) searchRequest.getQuery();
+        return this.fieldNameResolver;
+    }
 
-        final QueryBuilder queryBuilder = createQueryBuilder( nodeVersionQuery );
+    @Override
+    public int getBatchSize()
+    {
+        return query.getSize();
+    }
 
-        return doCreateEsQuery( nodeVersionQuery, searchRequest, queryBuilder );
+    @Override
+    public SearchOptimizer getSearchOptimizer()
+    {
+        return query.getSearchOptimizer();
+    }
+
+    @Override
+    public QueryBuilder createQueryBuilder()
+    {
+        return createQueryBuilder( this.query );
     }
 
     private QueryBuilder createQueryBuilder( final NodeVersionQuery nodeVersionQuery )
@@ -57,21 +59,14 @@ public class NodeVersionQueryTranslator
         return queryBuilderBuilder.build().create();
     }
 
-    private ElasticsearchQuery doCreateEsQuery( final Query query, final SearchRequest searchRequest, final QueryBuilder queryWithFilters )
+    private void addNodeIdFilter( final NodeVersionQuery nodeVersionQuery, final QueryBuilderFactory.Builder queryBuilderBuilder )
     {
-        final StorageSettings settings = searchRequest.getSettings();
-
-        final ElasticsearchQuery.Builder queryBuilder = ElasticsearchQuery.create().
-            addIndexName( settings.getStorageName().getName() ).
-            addIndexType( settings.getStorageType().getName() ).
-            query( queryWithFilters ).
-            setAggregations( aggregationsBuilder.create( query.getAggregationQueries() ) ).
-            sortBuilders( sortBuilder.create( query.getOrderBys() ) ).
-            filter( filterBuilderFactory.create( query.getPostFilters() ) ).
-            setReturnFields( searchRequest.getReturnFields() ).
-            from( query.getFrom() ).
-            size( query.getSize() );
-
-        return queryBuilder.build();
+        if ( nodeVersionQuery.getNodeId() != null )
+        {
+            queryBuilderBuilder.addQueryFilter( ValueFilter.create().
+                fieldName( VersionIndexPath.NODE_ID.getPath() ).
+                addValue( ValueFactory.newString( nodeVersionQuery.getNodeId().toString() ) ).
+                build() );
+        }
     }
 }

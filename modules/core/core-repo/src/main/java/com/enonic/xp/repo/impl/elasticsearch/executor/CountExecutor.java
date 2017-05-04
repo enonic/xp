@@ -7,7 +7,7 @@ import org.elasticsearch.client.Client;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 
-public class CountExecutor
+class CountExecutor
     extends AbstractExecutor
 {
 

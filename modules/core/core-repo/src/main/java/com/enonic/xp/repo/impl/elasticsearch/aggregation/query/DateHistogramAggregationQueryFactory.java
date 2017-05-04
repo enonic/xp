@@ -5,8 +5,8 @@ import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogram;
 import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramBuilder;
 
 import com.enonic.xp.query.aggregation.DateHistogramAggregationQuery;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.QueryFieldNameResolver;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.AbstractBuilderFactory;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AbstractBuilderFactory;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 
 class DateHistogramAggregationQueryFactory

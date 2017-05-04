@@ -5,52 +5,45 @@ import org.elasticsearch.index.query.QueryBuilder;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.SearchOptimizer;
 import com.enonic.xp.query.Query;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.ValueFilter;
-import com.enonic.xp.repo.impl.StorageSettings;
-import com.enonic.xp.repo.impl.elasticsearch.aggregation.query.AggregationQueryBuilderFactory;
-import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.AclFilterBuilderFactory;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.FilterBuilderFactory;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.QueryBuilderFactory;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.SortQueryBuilderFactory;
-import com.enonic.xp.repo.impl.search.SearchRequest;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AclFilterBuilderFactory;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.QueryBuilderFactory;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
 import com.enonic.xp.security.PrincipalKeys;
 
-public class NodeQueryTranslator
+class NodeQueryTranslator
+    implements QueryTypeTranslator
 {
     private final QueryFieldNameResolver fieldNameResolver = new SearchQueryFieldNameResolver();
 
-    private final SortQueryBuilderFactory sortBuilder = new SortQueryBuilderFactory( fieldNameResolver );
+    private final NodeQuery nodeQuery;
 
-    private final FilterBuilderFactory filterBuilderFactory = new FilterBuilderFactory( fieldNameResolver );
+    private final PrincipalKeys acl;
 
-    private final AggregationQueryBuilderFactory aggregationsBuilder = new AggregationQueryBuilderFactory( fieldNameResolver );
-
-    public ElasticsearchQuery translate( final SearchRequest request )
+    NodeQueryTranslator( final NodeQuery nodeQuery, final PrincipalKeys acl )
     {
-        final NodeQuery query = (NodeQuery) request.getQuery();
-
-        final QueryBuilder queryBuilder = createQueryWithFilters( query, request.getAcl() );
-
-        final StorageSettings settings = request.getSettings();
-
-        final ElasticsearchQuery.Builder esQuery = ElasticsearchQuery.create().
-            addIndexName( settings.getStorageName().getName() ).
-            addIndexType( settings.getStorageType().getName() ).
-            query( queryBuilder ).
-            setAggregations( aggregationsBuilder.create( query.getAggregationQueries() ) ).
-            sortBuilders( sortBuilder.create( query.getOrderBys() ) ).
-            filter( filterBuilderFactory.create( query.getPostFilters() ) ).
-            setReturnFields( request.getReturnFields() ).
-            from( query.getFrom() ).
-            size( query.getSize() );
-
-        return esQuery.build();
+        this.nodeQuery = nodeQuery;
+        this.acl = acl;
     }
 
-    private QueryBuilder createQueryWithFilters( final NodeQuery nodeQuery, final PrincipalKeys acl )
+    @Override
+    public int getBatchSize()
+    {
+        return nodeQuery.getBatchSize();
+    }
+
+    @Override
+    public SearchOptimizer getSearchOptimizer()
+    {
+        return nodeQuery.getSearchOptimizer();
+    }
+
+    @Override
+    public QueryBuilder createQueryBuilder()
     {
         final QueryBuilderFactory.Builder queryBuilderBuilder = createQuery( nodeQuery );
 
@@ -95,5 +88,11 @@ public class NodeQueryTranslator
                 addValue( ValueFactory.newString( nodeQuery.getParent().toString() ) ).
                 build() );
         }
+    }
+
+    @Override
+    public QueryFieldNameResolver getFieldNameResolver()
+    {
+        return fieldNameResolver;
     }
 }

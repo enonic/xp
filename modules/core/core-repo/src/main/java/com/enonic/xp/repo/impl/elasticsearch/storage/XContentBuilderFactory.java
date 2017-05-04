@@ -10,9 +10,8 @@ import com.enonic.xp.repo.impl.storage.StoreRequest;
 import com.enonic.xp.repository.IndexException;
 
 class XContentBuilderFactory
-
 {
-    public static XContentBuilder create( final StoreRequest doc )
+    static XContentBuilder create( final StoreRequest doc )
     {
         try
         {

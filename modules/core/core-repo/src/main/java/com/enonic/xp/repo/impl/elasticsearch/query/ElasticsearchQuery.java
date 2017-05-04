@@ -161,9 +161,9 @@ public class ElasticsearchQuery
 
         private FilterBuilder filter;
 
-        private Set<String> indexTypes = Sets.newHashSet();
+        private final Set<String> indexTypes = Sets.newHashSet();
 
-        private Set<String> indexNames = Sets.newHashSet();
+        private final Set<String> indexNames = Sets.newHashSet();
 
         private List<SortBuilder> sortBuilders = Lists.newArrayList();
 

@@ -7,8 +7,8 @@ import com.enonic.xp.query.aggregation.metric.MaxAggregationQuery;
 import com.enonic.xp.query.aggregation.metric.MinAggregationQuery;
 import com.enonic.xp.query.aggregation.metric.StatsAggregationQuery;
 import com.enonic.xp.query.aggregation.metric.ValueCountAggregationQuery;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.QueryFieldNameResolver;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.AbstractBuilderFactory;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AbstractBuilderFactory;
 
 class MetricAggregationQueryBuilderFactory
     extends AbstractBuilderFactory

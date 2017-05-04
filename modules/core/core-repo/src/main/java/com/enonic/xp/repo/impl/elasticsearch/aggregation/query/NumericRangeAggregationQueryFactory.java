@@ -7,8 +7,8 @@ import com.google.common.base.Strings;
 
 import com.enonic.xp.query.aggregation.NumericRange;
 import com.enonic.xp.query.aggregation.NumericRangeAggregationQuery;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.QueryFieldNameResolver;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.AbstractBuilderFactory;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AbstractBuilderFactory;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 
 class NumericRangeAggregationQueryFactory

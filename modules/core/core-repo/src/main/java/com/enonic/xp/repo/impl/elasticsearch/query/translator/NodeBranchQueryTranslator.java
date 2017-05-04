@@ -2,56 +2,50 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator;
 
 import org.elasticsearch.index.query.QueryBuilder;
 
-import com.enonic.xp.repo.impl.ReturnFields;
+import com.enonic.xp.node.SearchOptimizer;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
-import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
-import com.enonic.xp.repo.impl.elasticsearch.aggregation.query.AggregationQueryBuilderFactory;
-import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.FilterBuilderFactory;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.QueryBuilderFactory;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.SortQueryBuilderFactory;
-import com.enonic.xp.repo.impl.search.SearchRequest;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.QueryBuilderFactory;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.StoreQueryFieldNameResolver;
 
-public class NodeBranchQueryTranslator
+class NodeBranchQueryTranslator
+    implements QueryTypeTranslator
 {
     private final QueryFieldNameResolver fieldNameResolver = new StoreQueryFieldNameResolver();
 
-    private final SortQueryBuilderFactory sortBuilder = new SortQueryBuilderFactory( fieldNameResolver );
+    private final NodeBranchQuery query;
 
-    private final FilterBuilderFactory filterBuilderFactory = new FilterBuilderFactory( fieldNameResolver );
-
-    private final AggregationQueryBuilderFactory aggregationsBuilder = new AggregationQueryBuilderFactory( fieldNameResolver );
-
-
-    public ElasticsearchQuery translate( final SearchRequest request )
+    NodeBranchQueryTranslator( final NodeBranchQuery query )
     {
-        final NodeBranchQuery query = (NodeBranchQuery) request.getQuery();
-
-        final QueryBuilder queryBuilder = createQueryBuilder( query );
-
-        return ElasticsearchQuery.create().
-            addIndexName( request.getSettings().getStorageName().getName() ).
-            addIndexType( request.getSettings().getStorageType().getName() ).
-            query( queryBuilder ).
-            setReturnFields(
-                ReturnFields.from( BranchIndexPath.NODE_ID, BranchIndexPath.VERSION_ID, BranchIndexPath.TIMESTAMP, BranchIndexPath.PATH,
-                                   BranchIndexPath.STATE ) ).
-            setAggregations( aggregationsBuilder.create( query.getAggregationQueries() ) ).
-            sortBuilders( sortBuilder.create( query.getOrderBys() ) ).
-            filter( filterBuilderFactory.create( query.getPostFilters() ) ).
-            size( query.getSize() ).
-            from( query.getFrom() ).
-            build();
+        this.query = query;
     }
 
+    @Override
+    public QueryFieldNameResolver getFieldNameResolver()
+    {
+        return this.fieldNameResolver;
+    }
 
-    private QueryBuilder createQueryBuilder( final NodeBranchQuery nodeBranchQuery )
+    @Override
+    public int getBatchSize()
+    {
+        return this.query.getBatchSize();
+    }
+
+    @Override
+    public SearchOptimizer getSearchOptimizer()
+    {
+        return this.query.getSearchOptimizer();
+    }
+
+    @Override
+    public QueryBuilder createQueryBuilder()
     {
         final QueryBuilderFactory.Builder queryBuilderBuilder = QueryBuilderFactory.newBuilder().
-            queryExpr( nodeBranchQuery.getQuery() ).
-            addQueryFilters( nodeBranchQuery.getQueryFilters() ).
+            queryExpr( this.query.getQuery() ).
+            addQueryFilters( this.query.getQueryFilters() ).
             fieldNameResolver( this.fieldNameResolver );
+
         return queryBuilderBuilder.build().create();
     }
-
 }

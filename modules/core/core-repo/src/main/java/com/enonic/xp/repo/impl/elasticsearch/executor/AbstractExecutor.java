@@ -28,7 +28,7 @@ abstract class AbstractExecutor
 
     final Client client;
 
-    final ExecutorProgressListener progressReporter;
+    private final ExecutorProgressListener progressReporter;
 
     final String searchPreference = "_local";
 
@@ -121,7 +121,7 @@ abstract class AbstractExecutor
         client.clearScroll( clearScrollRequest ).actionGet();
     }
 
-    protected void reportProgress( final int count )
+    void reportProgress( final int count )
     {
         if ( progressReporter != null )
         {
