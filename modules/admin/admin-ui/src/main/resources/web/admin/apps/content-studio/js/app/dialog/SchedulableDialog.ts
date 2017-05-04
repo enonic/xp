@@ -35,6 +35,7 @@ export abstract class SchedulableDialog extends ProgressBarDialog {
             showScheduleAction.onExecuted(this.showScheduleDialog.bind(this));
             this.showScheduleDialogButton = this.addAction(showScheduleAction, false);
             this.showScheduleDialogButton.setTitle('Schedule Publishing');
+            this.showScheduleDialogButton.addClass('no-animation');
         }
     }
 

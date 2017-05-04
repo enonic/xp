@@ -83,6 +83,8 @@ export class ContentPublishDialog extends SchedulableDialog {
         this.actionButton = actionMenu.getActionButton();
         this.publishButton = actionMenu.getActionButton();
 
+        this.updatePublishableStatus();
+
         this.lockControls();
     }
 
@@ -257,6 +259,10 @@ export class ContentPublishDialog extends SchedulableDialog {
         this.showCreateIssueDialog();
     }
 
+    private updatePublishableStatus() {
+        this.toggleClass('publishable', this.isAllPublishable());
+    }
+
     private updateButtonAction() {
         const allPublishable = this.isAllPublishable();
         const header = allPublishable ? null : 'Other items that will be added to the Publishing Issue';
@@ -265,8 +271,7 @@ export class ContentPublishDialog extends SchedulableDialog {
         const defaultFocusElement = allPublishable ? this.getButtonRow().getActionMenu().getActionButton() : this.createIssueButton;
         this.getButtonRow().setDefaultElement(defaultFocusElement);
 
-        this.publishButton.setVisible(allPublishable);
-        this.createIssueButton.setVisible(!allPublishable);
+        this.updatePublishableStatus();
     }
 
     private doPublish(scheduled: boolean = false) {
@@ -340,11 +345,8 @@ export class ContentPublishDialog extends SchedulableDialog {
     }
 
     protected updateButtonStatus(enabled: boolean) {
-        if (this.isAllPublishable()) {
-            this.toggleAction(enabled);
-        } else {
-            this.toggleAction(true);
-        }
+        const allPublishable = this.isAllPublishable();
+        this.toggleAction(!allPublishable || enabled);
     }
 
     protected doScheduledAction() {
@@ -370,14 +372,14 @@ export class ContentPublishDialog extends SchedulableDialog {
 
     protected lockControls() {
         super.lockControls();
-        this.publishButton.getAction().setEnabled(false);
-        this.createIssueButton.getAction().setEnabled(false);
+        this.getButtonRow().getActionMenu().setEnabled(false);
+        this.createIssueButton.setEnabled(false);
     }
 
     protected unlockControls() {
         super.unlockControls();
-        this.publishButton.getAction().setEnabled(true);
-        this.createIssueButton.getAction().setEnabled(true);
+        this.getButtonRow().getActionMenu().setEnabled(true);
+        this.createIssueButton.setEnabled(true);
     }
 }
 
@@ -394,6 +396,7 @@ export class ContentPublishDialogButtonRow extends ModalDialogButtonRow {
             }
 
             this.actionMenu.addClass('publish-dialog-menu');
+            this.actionMenu.getDropdownHandle().addClass('no-animation');
             this.addElement(this.actionMenu);
         }
 

@@ -27,7 +27,7 @@ module api.ui.menu {
         }
 
         addAction(action: api.ui.Action): Menu {
-            let menuItem = this.createMenuItem(action);
+            const menuItem = this.createMenuItem(action);
             this.appendChild(menuItem);
             return this;
         }

@@ -71,8 +71,16 @@
     }
   }
 
-  .create-issue-action {
-    display: none;
+  &.publishable {
+    .create-issue-action {
+      display: none !important;;
+    }
+  }
+
+  &:not(.publishable) {
+    .publish-dialog-menu {
+      display: none !important;
+    }
   }
 
   .publish-dialog-menu {
