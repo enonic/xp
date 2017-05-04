@@ -17,7 +17,6 @@ import BrowseItem = api.app.browse.BrowseItem;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
 import ModalDialogButtonRow = api.ui.dialog.ModalDialogButtonRow;
 import MenuButton = api.ui.button.MenuButton;
-import PublishableStatus = api.content.PublishableStatus;
 import Action = api.ui.Action;
 import ActionButton = api.ui.button.ActionButton;
 
@@ -33,7 +32,7 @@ export class ContentPublishDialog extends SchedulableDialog {
 
     private containsInvalid: boolean;
 
-    private publishableStatus: PublishableStatus;
+    private allPublishable: boolean;
 
     private createIssueDialog: CreateIssueDialog;
 
@@ -114,10 +113,6 @@ export class ContentPublishDialog extends SchedulableDialog {
         return <ContentPublishDialogButtonRow>super.getButtonRow();
     }
 
-    private isAllPublishable(): boolean {
-        return this.publishableStatus === PublishableStatus.ALL;
-    }
-
     open() {
         this.excludedIds = [];
 
@@ -156,7 +151,7 @@ export class ContentPublishDialog extends SchedulableDialog {
             this.getDependantList().setRequiredIds(result.getRequired());
 
             this.containsInvalid = result.isContainsInvalid();
-            this.publishableStatus = result.getPublishableStatus();
+            this.allPublishable = result.isAllPublishable();
 
             this.updateButtonAction();
 
@@ -260,15 +255,14 @@ export class ContentPublishDialog extends SchedulableDialog {
     }
 
     private updatePublishableStatus() {
-        this.toggleClass('publishable', this.isAllPublishable());
+        this.toggleClass('publishable', this.allPublishable);
     }
 
     private updateButtonAction() {
-        const allPublishable = this.isAllPublishable();
-        const header = allPublishable ? null : 'Other items that will be added to the Publishing Issue';
+        const header = this.allPublishable ? null : 'Other items that will be added to the Publishing Issue';
         this.updateDependantsHeader(header);
 
-        const defaultFocusElement = allPublishable ? this.getButtonRow().getActionMenu().getActionButton() : this.createIssueButton;
+        const defaultFocusElement = this.allPublishable ? this.getButtonRow().getActionMenu().getActionButton() : this.createIssueButton;
         this.getButtonRow().setDefaultElement(defaultFocusElement);
 
         this.updatePublishableStatus();
@@ -312,12 +306,11 @@ export class ContentPublishDialog extends SchedulableDialog {
     }
 
     private updateSubTitle(count: number) {
-        const allPublishable = this.isAllPublishable();
         const allValid = this.areItemsAndDependantsValid();
 
         let subTitle = (count === 0) ?
                             'No items to publish' :
-                            allPublishable ?
+                            this.allPublishable ?
                                 (allValid ?
                                     'Your changes are ready for publishing' :
                                     'Invalid item(s) prevent publishing'
@@ -325,7 +318,7 @@ export class ContentPublishDialog extends SchedulableDialog {
                                 'Create a new Publishing Issue with selected item(s)';
 
         this.setSubTitle(subTitle);
-        this.toggleClass('invalid', !allValid && allPublishable);
+        this.toggleClass('invalid', !allValid && this.allPublishable);
     }
 
     protected updateButtonCount(actionString: string, count: number) {
@@ -338,15 +331,14 @@ export class ContentPublishDialog extends SchedulableDialog {
             this.updateTabbable();
         }
 
-        const labelWithNumber = (count, label) => `${label}${count > 1 ? ` (${count})` : '' }`;
+        const labelWithNumber = (num, label) => `${label}${num > 1 ? ` (${num})` : '' }`;
 
         this.publishButton.getAction().setLabel(labelWithNumber(count, 'Publish'));
         this.createIssueButton.getAction().setLabel(labelWithNumber(count, 'Create Issue... '));
     }
 
     protected updateButtonStatus(enabled: boolean) {
-        const allPublishable = this.isAllPublishable();
-        this.toggleAction(!allPublishable || enabled);
+        this.toggleAction(!this.allPublishable || enabled);
     }
 
     protected doScheduledAction() {
@@ -354,7 +346,7 @@ export class ContentPublishDialog extends SchedulableDialog {
     }
 
     protected isScheduleButtonAllowed(): boolean {
-        return this.isAllPublishable() && this.areSomeItemsOffline();
+        return this.allPublishable && this.areSomeItemsOffline();
     }
 
     private areSomeItemsOffline(): boolean {

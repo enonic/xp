@@ -134,7 +134,6 @@ import com.enonic.xp.content.GetPublishStatusesResult;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PublishContentResult;
-import com.enonic.xp.content.PublishableStatus;
 import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
@@ -729,17 +728,10 @@ public final class ContentResource
             target( ContentConstants.BRANCH_MASTER ).
             build() );
 
-        PublishableStatus publishableStatus;
         //check if user has access to publish every content
-        final Boolean isAllPublishable = fullPublishList.stream().allMatch(this::isPublishable);
-
-        if (isAllPublishable) {
-            publishableStatus = PublishableStatus.ALL;
-        } else {
-            final Boolean isSomePublishable = fullPublishList.stream().anyMatch(this::isPublishable);
-            publishableStatus = isSomePublishable ? PublishableStatus.SOME : PublishableStatus.NONE;
-        }
-
+        final Boolean isAllPublishable = fullPublishList.stream().allMatch( id ->
+                                                                                this.contentService.getPermissionsById( id ).isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(), Permission.PUBLISH )
+        );
 
         //filter required dependant ids
         final ContentIds requiredDependantIds = ContentIds.from( requiredIds.stream().
@@ -760,14 +752,9 @@ public final class ContentResource
             setRequestedContents( requestedContentIds ).
             setDependentContents( this.invalidDependantsOnTop( sortedDependentContentIds, requestedContentIds, sortedInvalidContentIds ) ).
             setRequiredContents( requiredDependantIds ).
-            setPublishableStatus( publishableStatus ).
+            setAllPublishable( isAllPublishable ).
             setContainsInvalid( !invalidContentIds.isEmpty() ).
             build();
-    }
-
-    private final Boolean isPublishable( ContentId id )
-    {
-        return this.contentService.getPermissionsById( id ).isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(), Permission.PUBLISH );
     }
 
     private ContentIds sortContentIds( final ContentIds contentIds, final String field )
