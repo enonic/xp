@@ -16,11 +16,11 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
 
     private confirmButton: api.ui.dialog.DialogButton;
 
-    private onCloseCallback: () => void;
+    private onSucceedListeners: {(): void;}[] = [];
 
-    private onSuccessCallback: () => void;
+    private static INSTANCE: CreateIssueDialog;
 
-    constructor() {
+    private constructor() {
         super('Create Issue');
 
         this.getEl().addClass('create-issue-dialog');
@@ -33,6 +33,13 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
 
         this.addCancelButtonToBottom('Back');
 
+    }
+
+    static get(): CreateIssueDialog {
+        if (!CreateIssueDialog.INSTANCE) {
+            CreateIssueDialog.INSTANCE = new CreateIssueDialog();
+        }
+        return CreateIssueDialog.INSTANCE;
     }
 
     public setFullContentCount(value: number) {
@@ -54,6 +61,11 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
         (<CreateIssueAction>this.confirmButton.getAction()).updateLabel(this.fullContentCount);
     }
 
+    open() {
+        super.open();
+        this.form.giveFocus();
+    }
+
     show() {
         this.displayValidationErrors(false);
 
@@ -64,17 +76,6 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
     close() {
         super.close();
         this.remove();
-        if (this.onCloseCallback) {
-            this.onCloseCallback();
-        }
-    }
-
-    onClose(onCloseCallback: () => void) {
-        this.onCloseCallback = onCloseCallback;
-    }
-
-    onSuccess(onSuccessCallback: () => void) {
-        this.onSuccessCallback = onSuccessCallback;
     }
 
     private initForm() {
@@ -107,7 +108,7 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
 
             createIssueRequest.sendAndParse().then(() => {
                 this.close();
-                this.onSuccessCallback();
+                this.notifySucceed();
                 api.notify.showSuccess('New issue created successfully');
             }).catch((reason) => {
                 if (reason && reason.message) {
@@ -119,6 +120,10 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
 
     public reset() {
         this.form.reset();
+
+        this.items = [];
+        this.excludeIds = [];
+        this.fullContentCount = 0;
     }
 
     private initActions() {
@@ -131,9 +136,26 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
     protected hasSubDialog(): boolean {
         return false;
     }
+
+    onSucceed(onSucceedListener: () => void) {
+        this.onSucceedListeners.push(onSucceedListener);
+    }
+
+    unSucceed(listener: {(): void;}) {
+        this.onSucceedListeners = this.onSucceedListeners.filter(function (curr: {(): void;}) {
+            return curr !== listener;
+        });
+    }
+
+    private notifySucceed() {
+        this.onSucceedListeners.forEach((listener) => {
+            listener();
+        });
+    }
 }
 
 export class CreateIssueAction extends api.ui.Action {
+
     constructor(itemCount: number) {
         super();
         this.updateLabel(itemCount);

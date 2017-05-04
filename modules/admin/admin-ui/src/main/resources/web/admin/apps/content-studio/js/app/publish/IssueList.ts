@@ -35,6 +35,11 @@ export class IssueList extends ListBox<IssueSummary> {
         this.setupLazyLoading();
     }
 
+    public reload() {
+        this.removeChildren();
+        this.initList();
+    }
+
     private initList() {
         this.loadMask.show();
 
