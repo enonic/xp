@@ -37,6 +37,8 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
     private closeOnPublishCheckbox: Checkbox;
 
+    private itemsHeader: api.dom.H6El;
+
     private static INSTANCE: IssueDetailsDialog = new IssueDetailsDialog();
 
     constructor() {
@@ -58,7 +60,9 @@ export class IssueDetailsDialog extends SchedulableDialog {
         this.createEditButton();
         this.createBackButton();
 
-        new api.dom.H6El().addClass('items-header').setHtml('Items:').insertBeforeEl(this.getItemList());
+        this.initActions();
+
+        this.itemsHeader = new api.dom.H6El().addClass('items-header').setHtml('Items:').insertBeforeEl(this.getItemList());
 
     }
 
@@ -78,7 +82,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
         this.issue = issue;
 
         if (this.issue.getPublishRequest().getItemsIds().length > 0) {
-            this.initActions();
+            //this.initActions();
             this.lockControls();
         }
 
@@ -203,29 +207,50 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
     private reloadPublishDependencies(): wemQ.Promise<void> {
 
+        const deferred = wemQ.defer<void>();
+
         this.loadMask.show();
 
-        let resolveDependenciesRequest = ResolvePublishDependenciesRequest.create().setIds(
+        const isItemsEmpty = this.issue.getPublishRequest().getItemsIds().length == 0;
+
+        this.itemsHeader.setVisible(!isItemsEmpty);
+
+        //no need to make request
+        if(isItemsEmpty) {
+            this.dependantIds = [];
+            this.setDependantItems([]);
+
+            this.updateButtonCount('Publish', 0);
+            this.toggleAction(false);
+
+            deferred.resolve(null);
+        }
+
+        const resolveDependenciesRequest = ResolvePublishDependenciesRequest.create().setIds(
             this.issue.getPublishRequest().getItemsIds()).setExcludedIds(
             this.issue.getPublishRequest().getExcludeIds()).setExcludeChildrenIds(
             this.issue.getPublishRequest().getExcludeChildrenIds()).build();
 
-        return resolveDependenciesRequest.sendAndParse().then((result: ResolvePublishDependenciesResult) => {
+        resolveDependenciesRequest.sendAndParse().then((result: ResolvePublishDependenciesResult) => {
 
             this.dependantIds = result.getDependants().slice();
 
             this.toggleAction(!result.isContainsInvalid());
 
-            return this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
+            this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
                 this.setDependantItems(dependants);
                 this.loadMask.hide();
 
                 const countToPublish = this.countTotal();
-                countToPublish > 0 ? this.updateButtonCount('Publish', countToPublish) : this.toggleAction(false);
+                this.updateButtonCount('Publish', countToPublish);
+
+                this.toggleAction(countToPublish > 0);
 
                 this.centerMyself();
+                deferred.resolve(null);
             });
         });
+        return deferred.promise;
     }
 
     protected toggleAction(enable: boolean) {

@@ -58,6 +58,8 @@ export class IssueDialogForm extends api.ui.form.Form {
         this.descriptionText = new PEl('description-text');
 
         const principalLoader = new api.security.PrincipalLoader().setAllowedTypes([PrincipalType.USER]);
+        principalLoader.load();
+
         this.selector = api.ui.security.PrincipalComboBox.create().setLoader(principalLoader).setMaxOccurences(0).build();
     }
 
@@ -115,6 +117,8 @@ export class IssueDialogForm extends api.ui.form.Form {
         this.title.setValue(issue.getTitle());
         this.description.setValue(issue.getDescription());
         this.descriptionText.setHtml(issue.getDescription());
+
+        this.selector.clearSelection();
 
         issue.getApprovers().forEach((approver) => {
             this.selector.selectOptionByValue(approver.toString());
