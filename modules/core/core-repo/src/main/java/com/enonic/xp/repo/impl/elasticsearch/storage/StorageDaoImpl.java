@@ -15,27 +15,15 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
-import org.elasticsearch.index.query.FilterBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.node.NodeIndexPath;
-import com.enonic.xp.query.filter.Filters;
-import com.enonic.xp.query.filter.IdFilter;
-import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.StorageSettings;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 import com.enonic.xp.repo.impl.elasticsearch.executor.CopyExecutor;
 import com.enonic.xp.repo.impl.elasticsearch.executor.StoreExecutor;
-import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.FilterBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.result.GetResultFactory;
 import com.enonic.xp.repo.impl.elasticsearch.result.GetResultsFactory;
-import com.enonic.xp.repo.impl.repository.IndexNameResolver;
-import com.enonic.xp.repo.impl.search.SearchStorageType;
 import com.enonic.xp.repo.impl.storage.CopyRequest;
 import com.enonic.xp.repo.impl.storage.DeleteRequest;
 import com.enonic.xp.repo.impl.storage.DeleteRequests;
@@ -201,31 +189,8 @@ public class StorageDaoImpl
             return;
         }
 
-        final IdFilter idFilter = IdFilter.create().
-            fieldName( NodeIndexPath.ID.getPath() ).
-            values( request.getNodeIds() ).
-            build();
-
-        final FilterBuilder idFilterBuilder = new FilterBuilderFactory( new SearchQueryFieldNameResolver() ).
-            create( Filters.from( idFilter ) );
-
-        QueryBuilder query = QueryBuilders.matchAllQuery();
-
-        final ElasticsearchQuery esQuery = ElasticsearchQuery.create().
-            query( QueryBuilders.filteredQuery( query, idFilterBuilder ) ).
-            addIndexName( request.getStorageSettings().getStorageName().getName() ).
-            addIndexType( request.getStorageSettings().getStorageType().getName() ).
-            size( request.getNodeIds().getSize() ).
-            batchSize( 1_000 ).
-            from( 0 ).
-            setReturnFields( ReturnFields.from( NodeIndexPath.SOURCE ) ).
-            build();
-
         CopyExecutor.create( this.client ).
-            query( esQuery ).
-            targetIndex( IndexNameResolver.resolveSearchIndexName( request.getTargetRepo() ) ).
-            targetType( SearchStorageType.from( request.getTargetBranch() ).getName() ).
-            progressReporter( request ).
+            request( request ).
             build().
             execute();
     }
