@@ -24,8 +24,8 @@ public class CountExecutor
     public SearchResult execute( final ElasticsearchQuery query )
     {
         SearchRequestBuilder searchRequestBuilder = new SearchRequestBuilder( this.client ).
-            setIndices( query.getIndexName() ).
-            setTypes( query.getIndexType() ).
+            setIndices( query.getIndexNames() ).
+            setTypes( query.getIndexTypes() ).
             setQuery( query.getQuery() ).
             setSearchType( SearchType.COUNT ).
             setPreference( searchPreference );

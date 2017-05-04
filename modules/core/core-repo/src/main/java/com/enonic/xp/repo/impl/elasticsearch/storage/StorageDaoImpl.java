@@ -213,8 +213,8 @@ public class StorageDaoImpl
 
         final ElasticsearchQuery esQuery = ElasticsearchQuery.create().
             query( QueryBuilders.filteredQuery( query, idFilterBuilder ) ).
-            index( request.getStorageSettings().getStorageName().getName() ).
-            indexType( request.getStorageSettings().getStorageType().getName() ).
+            addIndexName( request.getStorageSettings().getStorageName().getName() ).
+            addIndexType( request.getStorageSettings().getStorageType().getName() ).
             size( request.getNodeIds().getSize() ).
             batchSize( 1_000 ).
             from( 0 ).

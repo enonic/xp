@@ -25,9 +25,9 @@ public class ElasticsearchQuery
 
     private final FilterBuilder filter;
 
-    private final String indexType;
+    private final Set<String> indexTypes;
 
-    private final String indexName;
+    private final Set<String> indexNames;
 
     private final ImmutableSet<SortBuilder> sortBuilders;
 
@@ -49,8 +49,8 @@ public class ElasticsearchQuery
     {
         this.query = builder.queryBuilder;
         this.filter = builder.filter;
-        this.indexType = builder.indexType;
-        this.indexName = builder.indexName;
+        this.indexTypes = builder.indexTypes;
+        this.indexNames = builder.indexNames;
         this.sortBuilders = ImmutableSet.copyOf( builder.sortBuilders );
         this.size = builder.size;
         this.batchSize = builder.batchSize;
@@ -81,14 +81,14 @@ public class ElasticsearchQuery
         return filter;
     }
 
-    public String getIndexType()
+    public String[] getIndexTypes()
     {
-        return indexType;
+        return this.indexTypes.toArray( new String[this.indexTypes.size()] );
     }
 
-    public String getIndexName()
+    public String[] getIndexNames()
     {
-        return this.indexName;
+        return this.indexNames.toArray( new String[this.indexNames.size()] );
     }
 
     public int getFrom()
@@ -136,8 +136,8 @@ public class ElasticsearchQuery
             ", size=" + size +
             ", from=" + from +
             ", filter=" + filter +
-            ", indexType=" + indexType +
-            ", index=" + indexName +
+            ", indexType=" + indexTypes +
+            ", index=" + indexNames +
             ", sortBuilders=" + sortBuildersAsString +
             ", aggregations= " + aggregations +
             '}';
@@ -161,9 +161,9 @@ public class ElasticsearchQuery
 
         private FilterBuilder filter;
 
-        private String indexType;
+        private Set<String> indexTypes = Sets.newHashSet();
 
-        private String indexName;
+        private Set<String> indexNames = Sets.newHashSet();
 
         private List<SortBuilder> sortBuilders = Lists.newArrayList();
 
@@ -193,15 +193,15 @@ public class ElasticsearchQuery
             return this;
         }
 
-        public Builder indexType( final String indexType )
+        public Builder addIndexType( final String indexType )
         {
-            this.indexType = indexType;
+            this.indexTypes.add( indexType );
             return this;
         }
 
-        public Builder index( final String indexName )
+        public Builder addIndexName( final String indexName )
         {
-            this.indexName = indexName;
+            this.indexNames.add( indexName );
             return this;
         }
 

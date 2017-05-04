@@ -37,8 +37,8 @@ public class NodeQueryTranslator
         final StorageSettings settings = request.getSettings();
 
         final ElasticsearchQuery.Builder esQuery = ElasticsearchQuery.create().
-            index( settings.getStorageName().getName() ).
-            indexType( settings.getStorageType().getName() ).
+            addIndexName( settings.getStorageName().getName() ).
+            addIndexType( settings.getStorageType().getName() ).
             query( queryBuilder ).
             setAggregations( aggregationsBuilder.create( query.getAggregationQueries() ) ).
             sortBuilders( sortBuilder.create( query.getOrderBys() ) ).

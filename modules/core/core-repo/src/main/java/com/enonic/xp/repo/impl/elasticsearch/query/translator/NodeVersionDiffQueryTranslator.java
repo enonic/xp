@@ -21,8 +21,8 @@ public class NodeVersionDiffQueryTranslator
             execute();
 
         return ElasticsearchQuery.create().
-            index( request.getSettings().getStorageName().getName() ).
-            indexType( request.getSettings().getStorageType().getName() ).
+            addIndexName( request.getSettings().getStorageName().getName() ).
+            addIndexType( request.getSettings().getStorageType().getName() ).
             query( queryBuilder ).
             setReturnFields( request.getReturnFields() ).
             size( query.getSize() ).

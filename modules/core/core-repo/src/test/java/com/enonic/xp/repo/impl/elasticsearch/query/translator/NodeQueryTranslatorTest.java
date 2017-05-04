@@ -32,8 +32,8 @@ public class NodeQueryTranslatorTest
                 build() ).
             build() );
 
-        assertEquals( "search-my-repo", esQuery.getIndexName() );
-        assertEquals( "myBranch", esQuery.getIndexType() );
+        assertEquals( "search-my-repo", esQuery.getIndexNames()[0] );
+        assertEquals( "myBranch", esQuery.getIndexTypes()[0] );
         assertNotNull( esQuery.getQuery() );
         assertNull( esQuery.getFilter() );
         assertNull( esQuery.getReturnFields() );

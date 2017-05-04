@@ -30,8 +30,8 @@ public class NodeBranchQueryTranslator
         final QueryBuilder queryBuilder = createQueryBuilder( query );
 
         return ElasticsearchQuery.create().
-            index( request.getSettings().getStorageName().getName() ).
-            indexType( request.getSettings().getStorageType().getName() ).
+            addIndexName( request.getSettings().getStorageName().getName() ).
+            addIndexType( request.getSettings().getStorageType().getName() ).
             query( queryBuilder ).
             setReturnFields(
                 ReturnFields.from( BranchIndexPath.NODE_ID, BranchIndexPath.VERSION_ID, BranchIndexPath.TIMESTAMP, BranchIndexPath.PATH,

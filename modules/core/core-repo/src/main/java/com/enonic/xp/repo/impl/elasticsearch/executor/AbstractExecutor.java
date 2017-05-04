@@ -82,8 +82,8 @@ abstract class AbstractExecutor
 
     SearchRequestBuilder createScrollRequest( final ElasticsearchQuery query )
     {
-        final SearchRequestBuilder searchRequestBuilder = client.prepareSearch( query.getIndexName() ).
-            setTypes( query.getIndexType() ).
+        final SearchRequestBuilder searchRequestBuilder = client.prepareSearch( query.getIndexNames() ).
+            setTypes( query.getIndexTypes() ).
             setScroll( defaultScrollTime ).
             setQuery( query.getQuery() ).
             setPostFilter( query.getFilter() ).
