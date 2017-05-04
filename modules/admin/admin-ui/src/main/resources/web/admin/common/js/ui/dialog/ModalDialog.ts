@@ -4,6 +4,7 @@ module api.ui.dialog {
     import Action = api.ui.Action;
     import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
     import Element = api.dom.Element;
+    import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 
     export interface ModalDialogConfig {
         title?: string;
@@ -63,11 +64,18 @@ module api.ui.dialog {
         }
 
         private initListeners() {
-            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, () => {
+            ResponsiveManager.onAvailableSizeChanged(this, () => {
                 if (this.isVisible()) {
                     this.centerMyself();
                 }
             });
+
+            // Set the ResponsiveRanges on first show() call
+            const firstTimeResize = () => {
+                ResponsiveManager.fireResizeEvent();
+                this.unShown(firstTimeResize);
+            };
+            this.onShown(firstTimeResize);
 
             this.handleClickOutsideDialog();
             this.handleFocusInOutEvents();
