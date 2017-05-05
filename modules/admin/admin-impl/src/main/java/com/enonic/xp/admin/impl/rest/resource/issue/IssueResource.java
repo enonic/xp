@@ -1,16 +1,20 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.admin.impl.json.issue.IssueJson;
 import com.enonic.xp.admin.impl.json.issue.IssueListJson;
@@ -29,10 +33,8 @@ import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.IssueService;
 import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.jaxrs.JaxRsComponent;
-import com.enonic.xp.mail.MailService;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @SuppressWarnings("UnusedDeclaration")
@@ -49,14 +51,14 @@ public final class IssueResource
 
     private IssueService issueService;
 
-    private final IssueNotificationsSender issueNotificationsSender = new IssueNotificationsSender();
+    private IssueNotificationsSender issueNotificationsSender;
 
     @POST
     @Path("create")
-    public IssueJson create( final CreateIssueJson params )
+    public IssueJson create( final CreateIssueJson params, @Context HttpServletRequest request )
     {
         final Issue issue = issueService.create( params.getCreateIssueParams() );
-        issueNotificationsSender.notifyIssueCreated( issue );
+        issueNotificationsSender.notifyIssueCreated( issue, request.getHeader( HttpHeaders.REFERER ) );
 
         return new IssueJson( issue );
     }
@@ -156,14 +158,8 @@ public final class IssueResource
     }
 
     @Reference
-    public void setMailService( final MailService mailService )
+    public void setIssueNotificationsSender( final IssueNotificationsSender issueNotificationsSender )
     {
-        this.issueNotificationsSender.setMailService( mailService );
-    }
-
-    @Reference
-    public void setSecurityService( final SecurityService securityService )
-    {
-        this.issueNotificationsSender.setSecurityService( securityService );
+        this.issueNotificationsSender = issueNotificationsSender;
     }
 }

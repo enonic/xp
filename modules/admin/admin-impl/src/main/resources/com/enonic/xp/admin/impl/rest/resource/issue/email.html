@@ -1,0 +1,50 @@
+<div style="font-family: 'Open Sans', sans-serif;">
+    <div style="margin-bottom: 25px; font-size: 0;">
+        <div style="
+            border-radius: 20px;
+            background: #4294de;
+            color: #fff;
+            height: 40px;
+            width: 40px;
+            display: inline-block;
+            text-align: center;
+            font-size: 16px;
+            line-height: 40px;">${creator}
+        </div>
+        <div style="
+			display: inline-block;
+			border-bottom: 10px solid #eee;
+            border-left: 10px solid transparent;
+            margin-right: -5px;
+            margin-left: 3px;"></div>
+        <div style="
+            background-color: #eee;
+            position: relative;
+            display: inline-block;
+            padding: 3px 20px;
+            margin-left: -5px;
+            min-width: 300px;
+            max-width: 80%;
+            font-size: 16px;
+            line-height: 40px;">
+            <span>${description}</span>
+        </div>
+    </div>
+    <div style="margin-bottom: 40px;">
+        <a href="${url}">
+            <button title="${id}" style="background-color: #2c76e9;padding: 4px 19px 4px 19px; border: none; cursor: pointer;">
+                <span style="
+                    color: white;
+                    line-height: 24px;
+                    font-size: 14px;
+                    white-space: pre !important;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    max-width: 150px;
+                    display: inline-block;">Show details #${idShort}...</span>
+            </button>
+        </a>
+    </div>
+    <div style="margin-bottom: 15px;">Issue Items (${issuesNum})</div>
+    ${items}
+</div>

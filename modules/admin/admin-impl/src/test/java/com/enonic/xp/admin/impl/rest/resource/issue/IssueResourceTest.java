@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.text.StrSubstitutor;
@@ -41,6 +42,8 @@ public class IssueResourceTest
 {
     private IssueService issueService;
 
+    private IssueNotificationsSender issueNotificationsSender;
+
     @Override
     protected IssueResource getResourceInstance()
     {
@@ -48,8 +51,11 @@ public class IssueResourceTest
 
         issueService = Mockito.mock( IssueService.class );
 
+        issueNotificationsSender = Mockito.mock( IssueNotificationsSender.class );
+
         resource.setIssueService( issueService );
 
+        resource.setIssueNotificationsSender( issueNotificationsSender );
         return resource;
     }
 
@@ -60,7 +66,8 @@ public class IssueResourceTest
         final CreateIssueJson params =
             new CreateIssueJson( "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest() );
 
-        getResourceInstance().create( params );
+        final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
+        getResourceInstance().create( params, request );
 
         Mockito.verify( issueService, Mockito.times( 1 ) ).create( params.getCreateIssueParams() );
 
