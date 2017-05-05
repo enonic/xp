@@ -21,7 +21,7 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
     private static INSTANCE: CreateIssueDialog;
 
     private constructor() {
-        super('Create Issue');
+        super(<api.ui.dialog.ModalDialogConfig>{title: 'Create Issue'});
 
         this.getEl().addClass('create-issue-dialog');
 

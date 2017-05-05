@@ -730,8 +730,8 @@ public final class ContentResource
 
         //check if user has access to publish every content
         final Boolean isAllPublishable = fullPublishList.stream().allMatch( id ->
-            this.contentService.getPermissionsById( id ).isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(), Permission.PUBLISH )
-         );
+                                                                                this.contentService.getPermissionsById( id ).isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(), Permission.PUBLISH )
+        );
 
         //filter required dependant ids
         final ContentIds requiredDependantIds = ContentIds.from( requiredIds.stream().

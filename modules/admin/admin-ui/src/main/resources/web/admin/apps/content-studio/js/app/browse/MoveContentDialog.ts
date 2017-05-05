@@ -24,7 +24,7 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
     private rootNode: TreeNode<api.content.ContentSummaryAndCompareStatus>;
 
     constructor() {
-        super('Move item with children');
+        super(<api.ui.dialog.ModalDialogConfig>{title: 'Move item with children'});
 
         this.addClass('move-content-dialog');
 

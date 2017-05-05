@@ -20,7 +20,7 @@
 
   &.locked:not(.no-action) {
     .dialog-buttons {
-      button:not(.cancel-button-bottom) {
+      button:not(.cancel-button-bottom):not(.no-animation) {
         &:after {
           .animation(rotate360, .5s, .0s, linear);
           content: "\e007";

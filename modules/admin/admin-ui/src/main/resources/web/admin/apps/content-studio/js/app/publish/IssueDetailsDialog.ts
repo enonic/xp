@@ -6,6 +6,7 @@ import {Issue} from './Issue';
 import {IssueDialogForm} from './IssueDialogForm';
 import {ContentPublishDialogAction} from './ContentPublishDialog';
 import {SchedulableDialog} from '../dialog/SchedulableDialog';
+import {ProgressBarConfig} from '../dialog/ProgressBarDialog';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import PublishContentRequest = api.content.resource.PublishContentRequest;
@@ -42,12 +43,17 @@ export class IssueDetailsDialog extends SchedulableDialog {
     private static INSTANCE: IssueDetailsDialog = new IssueDetailsDialog();
 
     constructor() {
-        super('Issue Details', 'Resolving items...',
-            null,
-            'is-publishing',
-            () => {
-                new ContentPublishPromptEvent([]).fire();
-            });
+        super(<ProgressBarConfig> {
+                dialogName: 'Issue Details',
+                dialogSubName: 'Resolving items...',
+                dependantsName: '',
+                isProcessingClass: 'is-publishing',
+                processHandler: () => {
+                    new ContentPublishPromptEvent([]).fire();
+                },
+            }
+        );
+
         this.addClass('issue-details-dialog');
 
         this.autoUpdateTitle = false;
@@ -131,7 +137,8 @@ export class IssueDetailsDialog extends SchedulableDialog {
     }
 
     protected initActions() {
-        this.setButtonAction(ContentPublishDialogAction, this.doPublish.bind(this, false));
+        const publishAction = new ContentPublishDialogAction(this.doPublish.bind(this, false));
+        this.actionButton = this.addAction(publishAction, true);
 
         super.initActions();
 
@@ -271,21 +278,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
             .forEach(itemView => itemView.getIncludeChildrenToggler().toggle(include, silent)
             );
         return this;
-    }
-
-    private setButtonAction(dialogActionClass: { new(): api.ui.Action }, listener: () => wemQ.Promise<any>|void) {
-        if (!!this.actionButton && api.ObjectHelper.iFrameSafeInstanceOf(this.actionButton.getAction(), dialogActionClass)) {
-            return;
-        }
-
-        if (this.actionButton) {
-            this.removeAction(this.actionButton);
-        }
-
-        let newAction = new dialogActionClass();
-        newAction.onExecuted(() => listener());
-
-        this.actionButton = this.addAction(newAction, true);
     }
 
     private areSomeItemsOffline(): boolean {

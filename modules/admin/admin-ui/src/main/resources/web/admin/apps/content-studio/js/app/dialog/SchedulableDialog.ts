@@ -7,7 +7,7 @@ import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
 import BrowseItem = api.app.browse.BrowseItem;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
-import {ProgressBarDialog} from './ProgressBarDialog';
+import {ProgressBarDialog, ProgressBarConfig} from './ProgressBarDialog';
 import {SchedulePublishDialog} from '../publish/SchedulePublishDialog';
 
 export abstract class SchedulableDialog extends ProgressBarDialog {
@@ -16,10 +16,9 @@ export abstract class SchedulableDialog extends ProgressBarDialog {
 
     protected showScheduleDialogButton: api.ui.dialog.DialogButton;
 
-    constructor(dialogName: string, dialogSubName: string, dependantsName: string, isProcessingClass: string, processHandler: () => void) {
-        super(dialogName, dialogSubName, dependantsName, isProcessingClass, processHandler);
+    constructor(config: ProgressBarConfig) {
+        super(config);
         this.addClass('schedulable-dialog');
-        // this.initActions();
     }
 
     protected getFromDate(): Date {
@@ -36,6 +35,7 @@ export abstract class SchedulableDialog extends ProgressBarDialog {
             showScheduleAction.onExecuted(this.showScheduleDialog.bind(this));
             this.showScheduleDialogButton = this.addAction(showScheduleAction, false);
             this.showScheduleDialogButton.setTitle('Schedule Publishing');
+            this.showScheduleDialogButton.addClass('no-animation');
         }
     }
 

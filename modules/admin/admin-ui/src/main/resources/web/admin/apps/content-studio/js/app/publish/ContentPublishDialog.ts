@@ -1,4 +1,5 @@
 import '../../api.ts';
+import {ProgressBarConfig} from '../dialog/ProgressBarDialog';
 import {PublishDialogDependantList, isContentSummaryValid} from './PublishDialogDependantList';
 import {ContentPublishPromptEvent} from '../browse/ContentPublishPromptEvent';
 import {PublishDialogItemList} from './PublishDialogItemList';
@@ -14,6 +15,10 @@ import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
 import BrowseItem = api.app.browse.BrowseItem;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
+import ModalDialogButtonRow = api.ui.dialog.ModalDialogButtonRow;
+import MenuButton = api.ui.button.MenuButton;
+import Action = api.ui.Action;
+import ActionButton = api.ui.button.ActionButton;
 
 /**
  * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
@@ -31,14 +36,20 @@ export class ContentPublishDialog extends SchedulableDialog {
 
     private createIssueDialog: CreateIssueDialog;
 
+    private publishButton: ActionButton;
+
+    private createIssueButton: ActionButton;
+
     constructor() {
-        super(
-            'Publishing Wizard',
-            'Resolving items...',
-            'Other items that will be published',
-            'is-publishing',
-            () => {
-                new ContentPublishPromptEvent([]).fire();
+        super(<ProgressBarConfig> {
+                dialogName: 'Publishing Wizard',
+                dialogSubName: 'Resolving items...',
+                dependantsName: 'Other items that will be published',
+                isProcessingClass: 'is-publishing',
+                processHandler: () => {
+                    new ContentPublishPromptEvent([]).fire();
+                },
+                buttonRow: new ContentPublishDialogButtonRow(),
             }
         );
 
@@ -48,20 +59,30 @@ export class ContentPublishDialog extends SchedulableDialog {
         this.initActions();
         this.addCancelButtonToBottom();
 
-        this.getItemList().onItemsRemoved((items: ContentSummaryAndCompareStatus[]) => {
+        this.getItemList().onItemsRemoved(() => {
             if (!this.isIgnoreItemsChanged()) {
                 this.reloadPublishDependencies().done();
             }
         });
 
-        this.getItemList().onExcludeChildrenListChanged((excludedChildrenIds: ContentId[]) => {
+        this.getItemList().onExcludeChildrenListChanged(() => {
             this.reloadPublishDependencies(true).done();
         });
     }
 
     protected initActions() {
         super.initActions();
-        this.setButtonAction(ContentPublishDialogAction, this.doPublish.bind(this, false));
+
+        const publishAction = new ContentPublishDialogAction(this.doPublish.bind(this, false));
+        const createIssueAction = new CreateIssueDialogAction(this.createIssue.bind(this));
+
+        const actionMenu: MenuButton = this.getButtonRow().makeActionMenu(publishAction, [createIssueAction]);
+        this.createIssueButton = this.getButtonRow().addAction(createIssueAction);
+
+        this.actionButton = actionMenu.getActionButton();
+        this.publishButton = actionMenu.getActionButton();
+
+        this.updatePublishableStatus();
 
         this.lockControls();
     }
@@ -86,6 +107,10 @@ export class ContentPublishDialog extends SchedulableDialog {
 
     protected getDependantList(): PublishDialogDependantList {
         return <PublishDialogDependantList>super.getDependantList();
+    }
+
+    getButtonRow(): ContentPublishDialogButtonRow {
+        return <ContentPublishDialogButtonRow>super.getButtonRow();
     }
 
     open() {
@@ -159,10 +184,9 @@ export class ContentPublishDialog extends SchedulableDialog {
 
     private updateSubTitleShowScheduleAndButtonCount() {
         let count = this.countTotal();
-
         this.updateSubTitle(count);
         this.updateShowScheduleDialogButton();
-        this.updateButtonCount(this.allPublishable ? 'Publish' : 'Create Issue... ', count);
+        this.updateButtonCount(null, count);
     }
 
     setDependantItems(items: api.content.ContentSummaryAndCompareStatus[]) {
@@ -230,37 +254,25 @@ export class ContentPublishDialog extends SchedulableDialog {
         this.showCreateIssueDialog();
     }
 
-    private setButtonAction(dialogActionClass: { new(): api.ui.Action }, listener: () => wemQ.Promise<any>|void) {
-        if (!!this.actionButton && api.ObjectHelper.iFrameSafeInstanceOf(this.actionButton.getAction(), dialogActionClass)) {
-            return;
-        }
-
-        if (this.actionButton) {
-            this.removeAction(this.actionButton);
-        }
-
-        let newAction = new dialogActionClass();
-        newAction.onExecuted(() => listener());
-
-        this.actionButton = this.addAction(newAction, true);
+    private updatePublishableStatus() {
+        this.toggleClass('publishable', this.allPublishable);
     }
 
     private updateButtonAction() {
-        if (this.allPublishable) {
-            this.setButtonAction(ContentPublishDialogAction, this.doPublish.bind(this, false));
-            this.updateDependantsHeader();
-        } else {
-            this.setButtonAction(CreateIssueDialogAction, this.createIssue.bind(this));
-            this.updateDependantsHeader('Other items that will be added to the Publishing Issue');
-        }
+        const header = this.allPublishable ? null : 'Other items that will be added to the Publishing Issue';
+        this.updateDependantsHeader(header);
+
+        const defaultFocusElement = this.allPublishable ? this.getButtonRow().getActionMenu().getActionButton() : this.createIssueButton;
+        this.getButtonRow().setDefaultElement(defaultFocusElement);
+
+        this.updatePublishableStatus();
     }
 
     private doPublish(scheduled: boolean = false) {
 
         this.lockControls();
 
-        this.setSubTitle(this.countTotal() + '' +
-                         ' items are being published...');
+        this.setSubTitle(`${this.countTotal()} items are being published...`);
 
         let selectedIds = this.getContentToPublishIds();
 
@@ -294,22 +306,23 @@ export class ContentPublishDialog extends SchedulableDialog {
     }
 
     private updateSubTitle(count: number) {
-        let allValid = this.areItemsAndDependantsValid();
+        const allValid = this.areItemsAndDependantsValid();
 
         let subTitle = (count === 0) ?
-                       'No items to publish' :
-                       this.allPublishable ?
-                       (allValid ? 'Your changes are ready for publishing' : 'Invalid item(s) prevent publishing') :
-                       'Create a new Publishing Issue with selected item(s)';
+                            'No items to publish' :
+                            this.allPublishable ?
+                                (allValid ?
+                                    'Your changes are ready for publishing' :
+                                    'Invalid item(s) prevent publishing'
+                                ) :
+                                'Create a new Publishing Issue with selected item(s)';
 
         this.setSubTitle(subTitle);
         this.toggleClass('invalid', !allValid && this.allPublishable);
     }
 
     protected updateButtonCount(actionString: string, count: number) {
-        super.updateButtonCount(actionString, count);
-
-        let canPublish = count > 0 && this.areItemsAndDependantsValid();
+        const canPublish = count > 0 && this.areItemsAndDependantsValid();
 
         this.updateButtonStatus(canPublish);
 
@@ -317,14 +330,15 @@ export class ContentPublishDialog extends SchedulableDialog {
             this.getButtonRow().focusDefaultAction();
             this.updateTabbable();
         }
+
+        const labelWithNumber = (num, label) => `${label}${num > 1 ? ` (${num})` : '' }`;
+
+        this.publishButton.getAction().setLabel(labelWithNumber(count, 'Publish'));
+        this.createIssueButton.getAction().setLabel(labelWithNumber(count, 'Create Issue... '));
     }
 
     protected updateButtonStatus(enabled: boolean) {
-        if (api.ObjectHelper.iFrameSafeInstanceOf(this.actionButton.getAction(), ContentPublishDialogAction)) {
-            this.toggleAction(enabled);
-        } else {
-            this.toggleAction(true);
-        }
+        this.toggleAction(!this.allPublishable || enabled);
     }
 
     protected doScheduledAction() {
@@ -332,9 +346,7 @@ export class ContentPublishDialog extends SchedulableDialog {
     }
 
     protected isScheduleButtonAllowed(): boolean {
-
-        return api.ObjectHelper.iFrameSafeInstanceOf(this.actionButton.getAction(), ContentPublishDialogAction) &&
-               this.areSomeItemsOffline();
+        return this.allPublishable && this.areSomeItemsOffline();
     }
 
     private areSomeItemsOffline(): boolean {
@@ -349,18 +361,57 @@ export class ContentPublishDialog extends SchedulableDialog {
     protected hasSubDialog(): boolean {
         return true;
     }
+
+    protected lockControls() {
+        super.lockControls();
+        this.getButtonRow().getActionMenu().setEnabled(false);
+        this.createIssueButton.setEnabled(false);
+    }
+
+    protected unlockControls() {
+        super.unlockControls();
+        this.getButtonRow().getActionMenu().setEnabled(true);
+        this.createIssueButton.setEnabled(true);
+    }
+}
+
+export class ContentPublishDialogButtonRow extends ModalDialogButtonRow {
+
+    private actionMenu: MenuButton;
+
+    makeActionMenu(mainAction: Action, menuActions: Action[], useDefault: boolean = true): MenuButton {
+        if (!this.actionMenu) {
+            this.actionMenu = new MenuButton(mainAction, menuActions);
+
+            if (useDefault) {
+                this.setDefaultElement(this.actionMenu);
+            }
+
+            this.actionMenu.addClass('publish-dialog-menu');
+            this.actionMenu.getDropdownHandle().addClass('no-animation');
+            this.addElement(this.actionMenu);
+        }
+
+        return this.actionMenu;
+    }
+
+    getActionMenu(): MenuButton {
+        return this.actionMenu;
+    }
 }
 
 export class ContentPublishDialogAction extends api.ui.Action {
-    constructor() {
+    constructor(handler: () => wemQ.Promise<any>|void) {
         super('Publish');
         this.setIconClass('publish-action');
+        this.onExecuted(handler);
     }
 }
 
 export class CreateIssueDialogAction extends api.ui.Action {
-    constructor() {
+    constructor(handler: () => wemQ.Promise<any>|void) {
         super('Create Issue... ');
         this.setIconClass('create-issue-action');
+        this.onExecuted(handler);
     }
 }

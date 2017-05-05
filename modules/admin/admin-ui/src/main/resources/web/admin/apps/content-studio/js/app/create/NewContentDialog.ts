@@ -42,7 +42,7 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     protected header: NewContentDialogHeader;
 
     constructor() {
-        super('Create Content');
+        super(<api.ui.dialog.ModalDialogConfig>{title: 'Create Content'});
 
         this.addClass('new-content-dialog');
 

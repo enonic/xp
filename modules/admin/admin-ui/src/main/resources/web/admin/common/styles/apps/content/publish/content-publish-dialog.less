@@ -70,6 +70,36 @@
       bottom: 25px;
     }
   }
+
+  &.publishable {
+    .create-issue-action {
+      display: none !important;;
+    }
+  }
+
+  &:not(.publishable) {
+    .publish-dialog-menu {
+      display: none !important;
+    }
+  }
+
+  .publish-dialog-menu {
+    height: initial;
+    .@{_COMMON_PREFIX}dropdown-handle {
+      top: 6px;
+      width: 36px;
+      height: 36px;
+      &:disabled {
+        display: none;
+        & ~ .action-button {
+          margin-left: 0 !important;
+        }
+      }
+    }
+    .action-button {
+      margin-left: 37px !important;
+    }
+  }
 }
 
 .@{_COMMON_PREFIX}modal-dialog {

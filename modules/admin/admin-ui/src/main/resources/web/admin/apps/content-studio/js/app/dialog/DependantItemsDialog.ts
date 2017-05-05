@@ -16,12 +16,11 @@ import LoadMask = api.ui.mask.LoadMask;
 import DialogButton = api.ui.dialog.DialogButton;
 import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
+import ModalDialogButtonRow = api.ui.dialog.ModalDialogButtonRow;
 
 export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     protected actionButton: DialogButton;
-
-    private dialogName: string;
 
     private ignoreItemsChanged: boolean;
 
@@ -49,12 +48,10 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     protected dependantIds: ContentId[] = [];
 
-    constructor(dialogName: string = '', dialogSubName: string = '', dependantsName: string = '') {
-        super(dialogName);
+    constructor(title: string = '', dialogSubName: string = '', dependantsName: string = '', buttonRow?: ModalDialogButtonRow) {
+        super(<api.ui.dialog.ModalDialogConfig>{title, buttonRow});
 
         this.addClass('dependant-dialog');
-
-        this.dialogName = dialogName;
 
         this.subTitle = new api.dom.H6El('sub-title')
             .setHtml(dialogSubName, false);
@@ -64,10 +61,10 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.itemList.addClass('item-list');
         this.appendChildToContentPanel(this.itemList);
 
-        let itemsChangedListener = (items) => {
+        let itemsChangedListener = () => {
             let count = this.itemList.getItemCount();
             if (this.autoUpdateTitle) {
-                this.setTitle(this.dialogName + (count > 1 ? 's' : ''));
+                this.setTitle(title + (count > 1 ? 's' : ''));
             }
         };
         this.itemList.onItemsRemoved(itemsChangedListener);

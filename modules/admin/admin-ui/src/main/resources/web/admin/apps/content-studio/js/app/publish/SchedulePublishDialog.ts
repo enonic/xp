@@ -17,7 +17,7 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
     private onScheduleCallback: () => void;
 
     constructor() {
-        super('Scheduled Publishing');
+        super(<api.ui.dialog.ModalDialogConfig>{title: 'Scheduled Publishing'});
 
         this.getEl().addClass('schedule-publish-dialog');
 

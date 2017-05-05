@@ -33,7 +33,7 @@ export class IssuesDialog extends ModalDialog {
     private createIssueDialog: CreateIssueDialog;
 
     constructor() {
-        super('Publishing Issues');
+        super(<api.ui.dialog.ModalDialogConfig>{title: 'Publishing Issues'});
         this.addClass('issue-list-dialog');
         api.dom.Body.get().appendChild(this);
 

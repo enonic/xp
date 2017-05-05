@@ -7,8 +7,8 @@ module api.ui.menu {
         constructor(action:api.ui.Action) {
             super('menu-item');
             this.action = action;
-            this.getEl().setInnerHtml(this.action.getLabel());
-            this.onClicked((event: MouseEvent) => {
+            this.setLabel(this.action.getLabel());
+            this.onClicked(() => {
                 if (action.isEnabled()) {
                     this.action.execute();
                 }
@@ -18,7 +18,12 @@ module api.ui.menu {
             action.onPropertyChanged((changedAction: api.ui.Action) => {
                 this.setEnabled(changedAction.isEnabled());
                 this.setVisible(changedAction.isVisible());
+                this.setLabel(changedAction.getLabel());
             });
+        }
+
+        setLabel(label: string) {
+            this.getEl().setInnerHtml(label);
         }
 
         getAction(): api.ui.Action {

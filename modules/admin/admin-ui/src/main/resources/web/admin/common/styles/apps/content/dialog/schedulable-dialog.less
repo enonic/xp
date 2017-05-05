@@ -23,19 +23,25 @@
 
     margin-top: 10px;
 
+    .publish-dialog-menu, .@{_COMMON_PREFIX}button {
+      padding-top: 6px !important;
+      padding-bottom: 6px !important;
+    }
+
     .@{_COMMON_PREFIX}button.show-schedule-action {
 
       .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent, false);
 
-      .picker-icon("date", 22px, 0px, 8px, all);
+      .picker-icon("date", 22px, 2px, 8px, all);
 
       position: relative;
-      height: 28px;
+      height: 26px;
       padding-bottom: 8px;
     }
 
     button.publish-action {
       .dialog-button(@form-button-font, @admin-green, @form-button-font, lighten(@admin-green, 10%));
+      min-width: 113px;
     }
   }
 
