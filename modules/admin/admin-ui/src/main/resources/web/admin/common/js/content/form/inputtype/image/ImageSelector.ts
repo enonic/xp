@@ -31,41 +31,23 @@ module api.content.form.inputtype.image {
     import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
     import ServerEventsListener = api.app.ServerEventsListener;
     import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
+    import ContentInputTypeManagingAdd = api.content.form.inputtype.ContentInputTypeManagingAdd;
 
-    export class ImageSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<ContentId> {
-
-        private config: api.content.form.inputtype.ContentInputTypeViewContext;
-
-        private relationshipTypeName: RelationshipTypeName;
+    export class ImageSelector extends ContentInputTypeManagingAdd<ImageSelectorDisplayValue> {
 
         private contentComboBox: ImageContentComboBox;
 
         private selectedOptionsView: ImageSelectorSelectedOptionsView;
 
-        private contentRequestsAllowed: boolean;
+        // requests aren't allowed until allowed contentTypes are specified
+        private contentRequestsAllowed: boolean = false;
 
         private uploader: api.content.image.ImageUploaderEl;
 
         private editContentRequestListeners: {(content: ContentSummary): void}[] = [];
 
-        private relationshipType: string;
-
-        private allowedContentTypes: string[];
-
-        private allowedContentPaths: string[];
-
-        private contentDeletedListener: (event: ContentDeletedEvent) => void;
-
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
-            super('image-selector');
-            this.addClass('input-type-view');
-
-            this.config = config;
-
-            // requests aren't allowed until allowed contentTypes are specified
-            this.contentRequestsAllowed = false;
-
-            this.readConfig(config.inputConfig);
+            super('image-selector', config);
 
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 this.availableSizeChanged();
@@ -79,115 +61,14 @@ module api.content.form.inputtype.image {
             this.onShown(() => {
                 this.updateSelectedItemsIcons();
             });
-
-            this.handleContentDeletedEvent();
-            this.handleContentUpdatedEvent();
-        }
-
-        private handleContentUpdatedEvent() {
-            let contentUpdatedOrMovedListener = (statuses: ContentSummaryAndCompareStatus[], oldPaths?: ContentPath[]) => {
-
-                if (this.contentComboBox.getSelectedOptions().length == 0) {
-                    return;
-                }
-
-                statuses.forEach((status, index) => {
-                    let option;
-                    if (oldPaths) {
-                        option = this.findOptionByContentPath(oldPaths[index]);
-                    } else {
-                        option = this.findOptionByContentId(status.getContentId());
-                    }
-                    if (option) {
-                        this.contentComboBox.updateOption(option, status.getContentSummary());
-                    }
-                });
-            };
-
-            let handler = ContentServerEventsHandler.getInstance();
-            handler.onContentMoved(contentUpdatedOrMovedListener);
-            handler.onContentRenamed(contentUpdatedOrMovedListener);
-            handler.onContentUpdated(contentUpdatedOrMovedListener);
-
-            this.onRemoved(event => {
-                handler.unContentUpdated(contentUpdatedOrMovedListener);
-                handler.unContentRenamed(contentUpdatedOrMovedListener);
-                handler.unContentMoved(contentUpdatedOrMovedListener);
-            });
-        }
-
-        private findOptionByContentPath(contentPath: ContentPath): Option<ImageSelectorDisplayValue> {
-            let selectedOptions = this.contentComboBox.getSelectedOptions();
-            for (let i = 0; i < selectedOptions.length; i++) {
-                let option = selectedOptions[i].getOption();
-                if (contentPath.equals(option.displayValue.getContentPath())) {
-                    return option;
-                }
-            }
-            return null;
-        }
-
-        private findOptionByContentId(contentId: ContentId): Option<ImageSelectorDisplayValue> {
-            let selectedOptions = this.contentComboBox.getSelectedOptions();
-            for (let i = 0; i < selectedOptions.length; i++) {
-                let option = selectedOptions[i].getOption();
-                if (contentId.equals(option.displayValue.getContentId())) {
-                    return option;
-                }
-            }
-            return null;
-        }
-
-        private handleContentDeletedEvent() {
-            this.contentDeletedListener = (event) => {
-                if (this.countSelectedOptions() == 0) {
-                    return;
-                }
-
-                let selectedContentIdsMap: {} = {};
-                this.selectedOptionsView.getSelectedOptions().forEach(
-                    (selectedOption: any) => {
-                        if (!!selectedOption.getOption().displayValue && !!selectedOption.getOption().displayValue.getContentId()) {
-                            selectedContentIdsMap[selectedOption.getOption().displayValue.getContentId().toString()] = '';
-                        }
-                    });
-
-                event.getDeletedItems().filter(deletedItem => !deletedItem.isPending() &&
-                                                              selectedContentIdsMap.hasOwnProperty(
-                                                                  deletedItem.getContentId().toString())).forEach((deletedItem) => {
-                    let option = this.selectedOptionsView.getById(deletedItem.getContentId().toString());
-                    if (option != null) {
-                        this.selectedOptionsView.removeSelectedOptions([option]);
-                    }
-                });
-            };
-
-            ContentDeletedEvent.on(this.contentDeletedListener);
-
-            this.onRemoved((event) => {
-                ContentDeletedEvent.un(this.contentDeletedListener);
-            });
         }
 
         public getContentComboBox(): ImageContentComboBox {
             return this.contentComboBox;
         }
 
-        private readConfig(inputConfig: {[element: string]: {[name: string]: string}[];}): void {
-            let relationshipTypeConfig = inputConfig['relationshipType'] ? inputConfig['relationshipType'][0] : {};
-            this.relationshipType = relationshipTypeConfig['value'];
-
-            if (this.relationshipType) {
-                this.relationshipTypeName = new RelationshipTypeName(this.relationshipType);
-            } else {
-                this.relationshipTypeName = RelationshipTypeName.REFERENCE;
-            }
-
-            let allowContentTypeConfig = inputConfig['allowContentType'] || [];
-            this.allowedContentTypes = allowContentTypeConfig.map((cfg) => cfg['value']).filter((val) => !!val);
-
-            let allowContentPathConfig = inputConfig['allowPath'] || [];
-            this.allowedContentPaths = allowContentPathConfig.map((cfg) => cfg['value']).filter((val) => !!val);
+        protected getContentPath(raw: ImageSelectorDisplayValue): api.content.ContentPath {
+            return raw.getContentPath();
         }
 
         private updateSelectedItemsIcons() {
@@ -213,13 +94,9 @@ module api.content.form.inputtype.image {
             return null;
         }
 
-        private countSelectedOptions(): number {
-            return this.selectedOptionsView.count();
-        }
-
         private getRemainingOccurrences(): number {
             let inputMaximum = this.getInput().getOccurrences().getMaximum();
-            let countSelected = this.countSelectedOptions();
+            let countSelected = this.selectedOptionsView.count();
             let rest = -1;
             if (inputMaximum === 0) {
                 rest = 0;

@@ -15,24 +15,13 @@ module api.content.form.inputtype.contentselector {
     import Deferred = Q.Deferred;
     import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
     import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
+    import ContentInputTypeManagingAdd = api.content.form.inputtype.ContentInputTypeManagingAdd;
 
-    export class ContentSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<api.content.ContentId> {
-
-        private config: api.content.form.inputtype.ContentInputTypeViewContext;
-
-        private relationshipTypeName: api.schema.relationshiptype.RelationshipTypeName;
+    export class ContentSelector extends ContentInputTypeManagingAdd<api.content.ContentSummary> {
 
         private contentComboBox: api.content.ContentComboBox;
 
         private draggingIndex: number;
-
-        private relationshipType: string;
-
-        private allowedContentTypes: string[];
-
-        private allowedContentPaths: string[];
-
-        private contentDeletedListener: (event: ContentDeletedEvent) => void;
 
         private static contentIdBatch: ContentId[] = [];
 
@@ -43,118 +32,19 @@ module api.content.form.inputtype.contentselector {
             10, false);
 
         constructor(config?: api.content.form.inputtype.ContentInputTypeViewContext) {
-            super('relationship');
-            this.addClass('input-type-view');
-            this.config = config;
-            this.readConfig(config.inputConfig);
-            this.handleContentDeletedEvent();
-            this.handleContentUpdatedEvent();
+            super('relationship', config);
         }
 
         public getContentComboBox(): ContentComboBox {
             return this.contentComboBox;
         }
 
-        private handleContentUpdatedEvent() {
-            let contentUpdatedOrMovedListener = (statuses: ContentSummaryAndCompareStatus[], oldPaths?: ContentPath[]) => {
-
-                if (this.contentComboBox.getSelectedOptions().length == 0) {
-                    return;
-                }
-
-                statuses.forEach((status, index) => {
-                    let option;
-                    if (oldPaths) {
-                        option = this.findOptionByContentPath(oldPaths[index]);
-                    } else {
-                        option = this.findOptionByContentId(status.getContentId());
-                    }
-                    if (option) {
-                        this.contentComboBox.updateOption(option, status.getContentSummary());
-                    }
-                });
-            };
-
-            let handler = ContentServerEventsHandler.getInstance();
-            handler.onContentMoved(contentUpdatedOrMovedListener);
-            handler.onContentRenamed(contentUpdatedOrMovedListener);
-            handler.onContentUpdated(contentUpdatedOrMovedListener);
-
-            this.onRemoved(event => {
-                handler.unContentUpdated(contentUpdatedOrMovedListener);
-                handler.unContentRenamed(contentUpdatedOrMovedListener);
-                handler.unContentMoved(contentUpdatedOrMovedListener);
-            });
+        protected getSelectedOptionsView(): ContentSelectedOptionsView {
+            return <ContentSelectedOptionsView> this.contentComboBox.getSelectedOptionView();
         }
 
-        private findOptionByContentPath(contentPath: ContentPath): Option<ContentSummary> {
-            let selectedOptions = this.contentComboBox.getSelectedOptions();
-            for (let i = 0; i < selectedOptions.length; i++) {
-                let option = selectedOptions[i].getOption();
-                if (contentPath.equals(option.displayValue.getPath())) {
-                    return option;
-                }
-            }
-            return null;
-        }
-
-        private findOptionByContentId(contentId: ContentId): Option<ContentSummary> {
-            let selectedOptions = this.contentComboBox.getSelectedOptions();
-            for (let i = 0; i < selectedOptions.length; i++) {
-                let option = selectedOptions[i].getOption();
-                if (contentId.equals(option.displayValue.getContentId())) {
-                    return option;
-                }
-            }
-            return null;
-        }
-
-        private handleContentDeletedEvent() {
-            this.contentDeletedListener = (event) => {
-                if (this.contentComboBox.getSelectedOptionView().count() === 0) {
-                    return;
-                }
-
-                let selectedContentIdsMap: {} = {};
-                this.contentComboBox.getSelectedOptionView().getSelectedOptions().forEach(
-                    (selectedOption: any) => {
-                        if (!!selectedOption.getOption().displayValue && !!selectedOption.getOption().displayValue.getContentId()) {
-                            selectedContentIdsMap[selectedOption.getOption().displayValue.getContentId().toString()] = '';
-                        }
-                    });
-
-                event.getDeletedItems().filter(deletedItem => !deletedItem.isPending() &&
-                                                              selectedContentIdsMap.hasOwnProperty(
-                                                                  deletedItem.getContentId().toString())).forEach((deletedItem) => {
-                    let option = this.contentComboBox.getSelectedOptionView().getById(deletedItem.getContentId().toString());
-                    if (option != null) {
-                        this.contentComboBox.getSelectedOptionView().removeOption(option.getOption(), false);
-                    }
-                });
-            };
-
-            ContentDeletedEvent.on(this.contentDeletedListener);
-
-            this.onRemoved((event) => {
-                ContentDeletedEvent.un(this.contentDeletedListener);
-            });
-        }
-
-        private readConfig(inputConfig: {[element: string]: {[name: string]: string}[];}): void {
-            let relationshipTypeConfig = inputConfig['relationshipType'] ? inputConfig['relationshipType'][0] : {};
-            this.relationshipType = relationshipTypeConfig['value'];
-
-            if (this.relationshipType) {
-                this.relationshipTypeName = new RelationshipTypeName(this.relationshipType);
-            } else {
-                this.relationshipTypeName = RelationshipTypeName.REFERENCE;
-            }
-
-            let allowContentTypeConfig = inputConfig['allowContentType'] || [];
-            this.allowedContentTypes = allowContentTypeConfig.map((cfg) => cfg['value']).filter((val) => !!val);
-
-            let allowContentPathConfig = inputConfig['allowPath'] || [];
-            this.allowedContentPaths = allowContentPathConfig.map((cfg) => cfg['value']).filter((val) => !!val);
+        protected getContentPath(raw: api.content.ContentSummary): api.content.ContentPath {
+            return raw.getPath();
         }
 
         availableSizeChanged() {
