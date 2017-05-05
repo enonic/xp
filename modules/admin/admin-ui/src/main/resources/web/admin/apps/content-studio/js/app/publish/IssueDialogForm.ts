@@ -121,11 +121,13 @@ export class IssueDialogForm extends api.ui.form.Form {
         this.description.setValue(issue.getDescription());
         this.descriptionText.setHtml(issue.getDescription());
 
-        this.selector.clearSelection();
-
-        issue.getApprovers().forEach((approver) => {
-            this.selector.selectOptionByValue(approver.toString());
-        });
+        if (this.selector.isRendered()) {
+            this.setApprovers(issue.getApprovers());
+        } else {
+            this.selector.onRendered(() => {
+                this.setApprovers(issue.getApprovers());
+            });
+        }
     }
 
     public displayValidationErrors(value: boolean) {
@@ -172,5 +174,15 @@ export class IssueDialogForm extends api.ui.form.Form {
         });
 
         return formItem;
+    }
+
+    private setApprovers(approvers: PrincipalKey[]) {
+        this.selector.clearSelection();
+
+        if (approvers) {
+            approvers.forEach((approver) => {
+                this.selector.selectOptionByValue(approver.toString());
+            });
+        }
     }
 }
