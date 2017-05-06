@@ -106,6 +106,14 @@ public final class IssueResource
     }
 
     @GET
+    @Path("notifyPublished")
+    public void notifyIssuePublished( @QueryParam("id") final String id, @Context HttpServletRequest request )
+    {
+        final Issue issue = issueService.getIssue( IssueId.from( id ) );
+        issueNotificationsSender.notifyIssuePublished( issue, request.getHeader( HttpHeaders.REFERER ) );
+    }
+
+    @GET
     @Path("list")
     public IssueListJson listIssues( @QueryParam("type") final String type,
                                      @QueryParam("from") @DefaultValue(DEFAULT_FROM_PARAM) final Integer fromParam,

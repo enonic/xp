@@ -7,6 +7,8 @@ import {IssueDialogForm} from './IssueDialogForm';
 import {ContentPublishDialogAction} from './ContentPublishDialog';
 import {SchedulableDialog} from '../dialog/SchedulableDialog';
 import {ProgressBarConfig} from '../dialog/ProgressBarDialog';
+import {IssueListItem} from './IssueList';
+import {Router} from '../Router';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import PublishContentRequest = api.content.resource.PublishContentRequest;
@@ -22,9 +24,8 @@ import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSumma
 import Checkbox = api.ui.Checkbox;
 import InputAlignment = api.ui.InputAlignment;
 import AEl = api.dom.AEl;
-import {IssueListItem} from './IssueList';
-import {Router} from '../Router';
 import DialogButton = api.ui.dialog.DialogButton;
+import IssuePublishedNotificationRequest = api.issue.resource.IssuePublishedNotificationRequest;
 
 export class IssueDetailsDialog extends SchedulableDialog {
 
@@ -175,6 +176,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
         }
 
         publishRequest.sendAndParse().then((taskId: api.task.TaskId) => {
+            this.notifyIssuePublished();
             this.pollTask(taskId);
         }).catch((reason) => {
             this.unlockControls();
@@ -296,6 +298,10 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
     protected hasSubDialog(): boolean {
         return true;
+    }
+
+    private notifyIssuePublished() {
+        new IssuePublishedNotificationRequest(this.issue.getId()).send();
     }
 }
 
