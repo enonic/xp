@@ -1,0 +1,51 @@
+<div style="font-family: 'Open Sans', sans-serif;">
+    <div style="margin-bottom: 25px; font-size: 20px; display: flex; align-items: center;">
+        <div style="
+            flex-shrink: 0;
+            border-radius: 20px;
+            background: #4294de;
+            color: #fff;
+            height: 40px;
+            width: 40px;
+            text-align: center;
+            font-size: 14px;
+            line-height: 40px;
+            text-transform: uppercase;">${creator}
+        </div>
+        <div style="
+            display: inline-block;
+            margin-left: 15px;
+            width: 100%;
+            font-size: 20px;">
+            <b>${title}</b> (#${id})
+        </div>
+    </div>
+    <div style="
+        display: ${description-block-visibility};
+        margin-bottom: 25px;
+        background-color: #eee;
+        position: relative;
+        padding: 3px 20px;
+        font-size: 16px;
+        line-height: 40px;">
+        <span>${description}</span>
+    </div>
+    <div style="margin-bottom: 40px;">
+        <a href="${url}">
+            <button title="${id}" style="background-color: #2c76e9;padding: 4px 19px 4px 19px; border: none; cursor: pointer;">
+                <span style="
+                    color: white;
+                    line-height: 24px;
+                    font-size: 14px;
+                    white-space: pre !important;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    max-width: 150px;
+                    display: inline-block;">Show details...</span>
+            </button>
+        </a>
+    </div>
+    <div style="margin-bottom: 15px; font-size: 16px; display: ${issue-block-visibility};">Issue Items (${issuesNum})</div>
+    <div style="font-size: 16px; color: #aaa; display: ${no-issues-block-visibility};">This issue has no items</div>
+    ${items}
+</div>

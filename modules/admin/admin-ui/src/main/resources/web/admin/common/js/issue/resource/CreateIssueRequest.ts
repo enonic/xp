@@ -47,7 +47,6 @@ module api.issue.resource {
                     return el.toString();
                 }),
                 publishRequest: this.publishRequest.toJson()
-
             };
         }
 

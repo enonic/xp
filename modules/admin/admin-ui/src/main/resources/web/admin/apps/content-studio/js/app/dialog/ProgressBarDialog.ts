@@ -89,6 +89,15 @@ export class ProgressBarDialog extends DependantItemsDialog {
         }
     }
 
+    protected onFinished() {
+        this.setProgressValue(100);
+        this.onProcessingComplete();
+    }
+
+    protected onFailed() {
+        this.onProcessingComplete();
+    }
+
     protected pollTask(taskId: api.task.TaskId, elapsed: number = 0) {
         const interval = ProcessingStats.pollInterval;
         setTimeout(() => {
@@ -106,12 +115,11 @@ export class ProgressBarDialog extends DependantItemsDialog {
 
                 switch (state) {
                 case TaskState.FINISHED:
-                    this.setProgressValue(100);
-                    this.onProcessingComplete();
+                    this.onFinished();
                     api.notify.showSuccess(progress.getInfo());
                     break;
                 case TaskState.FAILED:
-                    this.onProcessingComplete();
+                    this.onFailed();
                     api.notify.showError('Processing failed: ' + progress.getInfo());
                     break;
                 default:

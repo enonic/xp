@@ -1,16 +1,20 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.admin.impl.json.issue.IssueJson;
 import com.enonic.xp.admin.impl.json.issue.IssueListJson;
@@ -47,11 +51,15 @@ public final class IssueResource
 
     private IssueService issueService;
 
+    private IssueNotificationsSender issueNotificationsSender;
+
     @POST
     @Path("create")
-    public IssueJson create( final CreateIssueJson params )
+    public IssueJson create( final CreateIssueJson params, @Context HttpServletRequest request )
     {
         final Issue issue = issueService.create( params.getCreateIssueParams() );
+        issueNotificationsSender.notifyIssueCreated( issue, request.getHeader( HttpHeaders.REFERER ) );
+
         return new IssueJson( issue );
     }
 
@@ -95,6 +103,14 @@ public final class IssueResource
         final long closed = this.issueService.findIssues( createIssuesByTypeQuery( "CLOSED" ).count( true ).build() ).getTotalHits();
 
         return IssueStatsJson.create().assignedToMe( assignedToMe ).createdByMe( createdByMe ).open( open ).closed( closed ).build();
+    }
+
+    @GET
+    @Path("notifyPublished")
+    public void notifyIssuePublished( @QueryParam("id") final String id, @Context HttpServletRequest request )
+    {
+        final Issue issue = issueService.getIssue( IssueId.from( id ) );
+        issueNotificationsSender.notifyIssuePublished( issue, request.getHeader( HttpHeaders.REFERER ) );
     }
 
     @GET
@@ -147,5 +163,11 @@ public final class IssueResource
     public void setIssueService( final IssueService issueService )
     {
         this.issueService = issueService;
+    }
+
+    @Reference
+    public void setIssueNotificationsSender( final IssueNotificationsSender issueNotificationsSender )
+    {
+        this.issueNotificationsSender = issueNotificationsSender;
     }
 }

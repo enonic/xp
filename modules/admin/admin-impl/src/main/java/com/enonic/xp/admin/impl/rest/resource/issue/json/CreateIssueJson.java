@@ -12,12 +12,12 @@ import com.enonic.xp.security.PrincipalKey;
 
 public class CreateIssueJson
 {
-
     private final CreateIssueParams createIssueParams;
 
     @JsonCreator
     public CreateIssueJson( @JsonProperty("title") final String title, @JsonProperty("description") final String description,
-                     @JsonProperty("approvers") final List<String> approverIds, @JsonProperty("publishRequest") final PublishRequestJson publishRequest )
+                            @JsonProperty("approvers") final List<String> approverIds,
+                            @JsonProperty("publishRequest") final PublishRequestJson publishRequest )
     {
 
         final CreateIssueParams.Builder paramsBuilder = CreateIssueParams.create();
@@ -40,4 +40,5 @@ public class CreateIssueJson
     {
         return createIssueParams;
     }
+
 }

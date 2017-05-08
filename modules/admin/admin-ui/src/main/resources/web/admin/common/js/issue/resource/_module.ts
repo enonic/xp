@@ -2,3 +2,4 @@
 ///<reference path='CreateIssueRequest.ts' />
 ///<reference path='PublishRequestJson.ts' />
 ///<reference path='PublishRequestItemJson.ts' />
+///<reference path='IssuePublishedNotificationRequest.ts' />
