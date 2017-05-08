@@ -48,6 +48,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
         final Map messageParams = Maps.newHashMap();
         messageParams.put( "id", params.getIssue().getId().toString() );
         messageParams.put( "idShort", params.getIssue().getId().toString().substring( 0, 9 ) );
+        messageParams.put( "title", params.getIssue().getTitle() );
         messageParams.put( "creator", params.getIssue().getCreator().getId() );
         messageParams.put( "issuesNum", params.getIssue().getPublishRequest().getItems().getSize() );
         messageParams.put( "description", params.getIssue().getDescription() );

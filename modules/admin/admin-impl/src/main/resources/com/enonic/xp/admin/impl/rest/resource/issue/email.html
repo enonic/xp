@@ -1,4 +1,7 @@
 <div style="font-family: 'Open Sans', sans-serif;">
+    <div style="margin-bottom: 25px; font-size: 20px;">
+        <b>${title}</b> (#${id})
+    </div>
     <div style="margin-bottom: 25px; font-size: 0;">
         <div style="
             border-radius: 20px;
@@ -41,10 +44,10 @@
                     overflow: hidden;
                     text-overflow: ellipsis;
                     max-width: 150px;
-                    display: inline-block;">Show details #${idShort}...</span>
+                    display: inline-block;">Show details...</span>
             </button>
         </a>
     </div>
-    <div style="margin-bottom: 15px;">Issue Items (${issuesNum})</div>
+    <div style="margin-bottom: 15px; font-size: 16px;">Issue Items (${issuesNum})</div>
     ${items}
 </div>
