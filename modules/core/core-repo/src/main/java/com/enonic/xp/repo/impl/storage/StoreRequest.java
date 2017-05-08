@@ -3,13 +3,13 @@ package com.enonic.xp.repo.impl.storage;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.repo.impl.StorageSettings;
+import com.enonic.xp.repo.impl.StorageSource;
 
 public class StoreRequest
 {
     private final StorageData data;
 
-    private final StorageSettings settings;
+    private final StorageSource settings;
 
     private final boolean forceRefresh;
 
@@ -46,7 +46,7 @@ public class StoreRequest
         return this.data.getValues();
     }
 
-    public StorageSettings getSettings()
+    public StorageSource getSettings()
     {
         return settings;
     }
@@ -85,7 +85,7 @@ public class StoreRequest
     {
         private StorageData data;
 
-        private StorageSettings settings;
+        private StorageSource settings;
 
         private boolean forceRefresh = false;
 
@@ -109,7 +109,7 @@ public class StoreRequest
             return this;
         }
 
-        public Builder settings( StorageSettings settings )
+        public Builder settings( StorageSource settings )
         {
             this.settings = settings;
             return this;

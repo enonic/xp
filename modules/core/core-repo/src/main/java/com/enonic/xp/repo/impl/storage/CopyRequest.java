@@ -2,14 +2,14 @@ package com.enonic.xp.repo.impl.storage;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.repo.impl.StorageSettings;
+import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.elasticsearch.executor.ExecutorProgressListener;
 import com.enonic.xp.repository.RepositoryId;
 
 public class CopyRequest
     implements ExecutorProgressListener
 {
-    private final StorageSettings storageSettings;
+    private final StorageSource storageSource;
 
     private final NodeIds nodeIds;
 
@@ -21,16 +21,16 @@ public class CopyRequest
 
     private CopyRequest( final Builder builder )
     {
-        storageSettings = builder.storageSettings;
+        storageSource = builder.storageSource;
         nodeIds = builder.nodeIds;
         targetBranch = builder.targetBranch;
         targetRepo = builder.targetRepo;
         progressListener = builder.progressListener;
     }
 
-    public StorageSettings getStorageSettings()
+    public StorageSource getStorageSource()
     {
-        return storageSettings;
+        return storageSource;
     }
 
     public NodeIds getNodeIds()
@@ -70,7 +70,7 @@ public class CopyRequest
 
     public static final class Builder
     {
-        private StorageSettings storageSettings;
+        private StorageSource storageSource;
 
         private NodeIds nodeIds;
 
@@ -84,9 +84,9 @@ public class CopyRequest
         {
         }
 
-        public Builder storageSettings( final StorageSettings val )
+        public Builder storageSettings( final StorageSource val )
         {
-            storageSettings = val;
+            storageSource = val;
             return this;
         }
 

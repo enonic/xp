@@ -2,11 +2,11 @@ package com.enonic.xp.repo.impl.storage;
 
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.SearchPreference;
-import com.enonic.xp.repo.impl.StorageSettings;
+import com.enonic.xp.repo.impl.StorageSource;
 
 public abstract class AbstractGetRequest
 {
-    private final StorageSettings storageSettings;
+    private final StorageSource storageSource;
 
     private final SearchPreference searchPreference;
 
@@ -19,15 +19,15 @@ public abstract class AbstractGetRequest
     AbstractGetRequest( final Builder builder )
     {
         this.searchPreference = builder.searchPreference;
-        this.storageSettings = builder.storageSettings;
+        this.storageSource = builder.storageSource;
         this.returnFields = builder.returnFields;
         this.routing = builder.routing;
         this.timeout = builder.timeout;
     }
 
-    public StorageSettings getStorageSettings()
+    public StorageSource getStorageSource()
     {
-        return storageSettings;
+        return storageSource;
     }
 
     public SearchPreference getSearchPreference()
@@ -54,7 +54,7 @@ public abstract class AbstractGetRequest
     {
         private SearchPreference searchPreference = SearchPreference.LOCAL;
 
-        private StorageSettings storageSettings;
+        private StorageSource storageSource;
 
         private ReturnFields returnFields;
 
@@ -78,9 +78,9 @@ public abstract class AbstractGetRequest
         }
 
         @SuppressWarnings("unchecked")
-        public B storageSettings( StorageSettings storageSettings )
+        public B storageSettings( StorageSource storageSource )
         {
-            this.storageSettings = storageSettings;
+            this.storageSource = storageSource;
             return (B) this;
         }
 

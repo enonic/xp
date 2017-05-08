@@ -3,7 +3,7 @@ package com.enonic.xp.repo.impl;
 import com.enonic.xp.repository.RepositoryId;
 
 public class SingleRepoStorageSource
-    implements DataSource
+    implements SearchSource
 {
     public enum Type
     {

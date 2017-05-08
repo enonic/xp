@@ -5,7 +5,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKeys;
 
 public class SingleRepoSearchSource
-    implements DataSource
+    implements SearchSource
 {
     private final RepositoryId repositoryId;
 

@@ -10,9 +10,7 @@ import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
-import com.enonic.xp.repo.impl.StorageName;
-import com.enonic.xp.repo.impl.StorageSettings;
-import com.enonic.xp.repo.impl.StorageType;
+import com.enonic.xp.repo.impl.SingleRepoStorageSource;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResult;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
@@ -21,8 +19,6 @@ import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResultFactory;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
-import com.enonic.xp.repo.impl.storage.StaticStorageType;
-import com.enonic.xp.repo.impl.storage.StoreStorageName;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
 import com.enonic.xp.repo.impl.version.search.NodeVersionQuery;
@@ -56,7 +52,7 @@ public class NodeSearchServiceImpl
     private NodeQueryResult doQuery( final NodeQuery query, final ReturnFields returnFields, final InternalContext context )
     {
         final SearchRequest searchRequest = SearchRequest.create().
-            dataSource( SingleRepoSearchSource.from( context ) ).
+            searchSource( SingleRepoSearchSource.from( context ) ).
             query( query ).
             returnFields( returnFields ).
             build();
@@ -69,11 +65,8 @@ public class NodeSearchServiceImpl
     @Override
     public NodeBranchQueryResult query( final NodeBranchQuery nodeBranchQuery, final InternalContext context )
     {
-        final StorageType storageType = StaticStorageType.BRANCH;
-        final StorageName storageName = StoreStorageName.from( context.getRepositoryId() );
-
         final SearchRequest searchRequest = SearchRequest.create().
-            settings( createSettings( storageType, storageName ) ).
+            searchSource( new SingleRepoStorageSource( context.getRepositoryId(), SingleRepoStorageSource.Type.BRANCH ) ).
             returnFields( BRANCH_RETURN_FIELDS ).
             query( nodeBranchQuery ).
             build();
@@ -91,11 +84,8 @@ public class NodeSearchServiceImpl
     @Override
     public NodeVersionQueryResult query( final NodeVersionQuery query, final InternalContext context )
     {
-        final StorageType storageType = StaticStorageType.VERSION;
-        final StorageName storageName = StoreStorageName.from( context.getRepositoryId() );
-
         final SearchRequest searchRequest = SearchRequest.create().
-            settings( createSettings( storageType, storageName ) ).
+            searchSource( new SingleRepoStorageSource( context.getRepositoryId(), SingleRepoStorageSource.Type.VERSION ) ).
             returnFields( VERSION_RETURN_FIELDS ).
             query( query ).
             build();
@@ -113,11 +103,8 @@ public class NodeSearchServiceImpl
     @Override
     public NodeVersionDiffResult query( final NodeVersionDiffQuery query, final InternalContext context )
     {
-        final StorageType storageType = StaticStorageType.VERSION;
-        final StorageName storageName = StoreStorageName.from( context.getRepositoryId() );
-
         final SearchRequest searchRequest = SearchRequest.create().
-            settings( createSettings( storageType, storageName ) ).
+            searchSource( new SingleRepoStorageSource( context.getRepositoryId(), SingleRepoStorageSource.Type.VERSION ) ).
             returnFields( VERSION_RETURN_FIELDS ).
             query( query ).
             build();
@@ -141,15 +128,6 @@ public class NodeSearchServiceImpl
         }
 
         return builder.build();
-    }
-
-
-    private StorageSettings createSettings( final StorageType storageType, final StorageName storageName )
-    {
-        return StorageSettings.create().
-            storageName( storageName ).
-            storageType( storageType ).
-            build();
     }
 
     @Reference

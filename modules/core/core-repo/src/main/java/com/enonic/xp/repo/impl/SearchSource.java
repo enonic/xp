@@ -1,5 +1,5 @@
 package com.enonic.xp.repo.impl;
 
-public interface DataSource
+public interface SearchSource
 {
 }

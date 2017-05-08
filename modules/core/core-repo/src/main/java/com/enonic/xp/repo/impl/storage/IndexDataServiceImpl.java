@@ -11,7 +11,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.ReturnValues;
-import com.enonic.xp.repo.impl.StorageSettings;
+import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.elasticsearch.NodeStoreDocumentFactory;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 import com.enonic.xp.repo.impl.search.SearchStorageName;
@@ -34,7 +34,7 @@ public class IndexDataServiceImpl
     private GetByIdRequest createGetByIdRequest( final NodeId nodeId, final ReturnFields returnFields, final InternalContext context )
     {
         return GetByIdRequest.create().
-            storageSettings( StorageSettings.create().
+            storageSettings( StorageSource.create().
                 storageType( SearchStorageType.from( context.getBranch() ) ).
                 storageName( SearchStorageName.from( context.getRepositoryId() ) ).
                 build() ).
@@ -74,7 +74,7 @@ public class IndexDataServiceImpl
     public void delete( final NodeId nodeId, final InternalContext context )
     {
         this.storageDao.delete( DeleteRequest.create().
-            settings( StorageSettings.create().
+            settings( StorageSource.create().
                 storageType( SearchStorageType.from( context.getBranch() ) ).
                 storageName( SearchStorageName.from( context.getRepositoryId() ) ).
                 build() ).
@@ -87,7 +87,7 @@ public class IndexDataServiceImpl
     public void delete( final NodeIds nodeIds, final InternalContext context )
     {
         this.storageDao.delete( DeleteRequests.create().
-            settings( StorageSettings.create().
+            settings( StorageSource.create().
                 storageType( SearchStorageType.from( context.getBranch() ) ).
                 storageName( SearchStorageName.from( context.getRepositoryId() ) ).
                 build() ).
@@ -113,7 +113,7 @@ public class IndexDataServiceImpl
     public void push( final IndexPushNodeParams pushNodeParams, final InternalContext context )
     {
         this.storageDao.copy( CopyRequest.create().
-            storageSettings( StorageSettings.create().
+            storageSettings( StorageSource.create().
                 storageName( SearchStorageName.from( context.getRepositoryId() ) ).
                 storageType( SearchStorageType.from( context.getBranch() ) ).
                 build() ).

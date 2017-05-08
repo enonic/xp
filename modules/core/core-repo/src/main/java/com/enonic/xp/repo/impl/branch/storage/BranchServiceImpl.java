@@ -22,7 +22,8 @@ import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
-import com.enonic.xp.repo.impl.StorageSettings;
+import com.enonic.xp.repo.impl.SingleRepoStorageSource;
+import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResult;
@@ -211,7 +212,7 @@ public class BranchServiceImpl
             build();
 
         final SearchResult result = this.searchDao.search( SearchRequest.create().
-            dataSource( SingleRepoSearchSource.from( context ) ).
+            searchSource( SingleRepoSearchSource.from( context ) ).
             query( query ).
             build() );
 
@@ -304,7 +305,7 @@ public class BranchServiceImpl
                 size( nodeIds.getSize() ).
                 build() ).
             returnFields( BRANCH_RETURN_FIELDS ).
-            settings( createStorageSettings( context ) ).
+            searchSource( new SingleRepoStorageSource( context.getRepositoryId(), SingleRepoStorageSource.Type.BRANCH ) ).
             build() );
 
         final NodeBranchQueryResult nodeBranchEntries = NodeBranchQueryResultFactory.create( results );
@@ -321,9 +322,9 @@ public class BranchServiceImpl
             build();
     }
 
-    private StorageSettings createStorageSettings( final InternalContext context )
+    private StorageSource createStorageSettings( final InternalContext context )
     {
-        return StorageSettings.create().
+        return StorageSource.create().
             storageName( StoreStorageName.from( context.getRepositoryId() ) ).
             storageType( StaticStorageType.BRANCH ).
             build();

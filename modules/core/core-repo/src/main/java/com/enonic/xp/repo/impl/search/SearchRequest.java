@@ -1,31 +1,31 @@
 package com.enonic.xp.repo.impl.search;
 
 import com.enonic.xp.query.Query;
-import com.enonic.xp.repo.impl.DataSource;
 import com.enonic.xp.repo.impl.ReturnFields;
-import com.enonic.xp.repo.impl.StorageSettings;
+import com.enonic.xp.repo.impl.SearchSource;
+import com.enonic.xp.repo.impl.StorageSource;
 
 public class SearchRequest
 {
-    private final StorageSettings settings;
+    private final StorageSource settings;
 
     private final Query query;
 
     private final ReturnFields returnFields;
 
-    private final DataSource dataSource;
+    private final SearchSource searchSource;
 
     private SearchRequest( Builder builder )
     {
         this.settings = builder.settings;
         this.query = builder.query;
         this.returnFields = builder.returnFields;
-        this.dataSource = builder.dataSource;
+        this.searchSource = builder.searchSource;
     }
 
-    public DataSource getDataSource()
+    public SearchSource getSearchSource()
     {
-        return dataSource;
+        return searchSource;
     }
 
     public static Builder create()
@@ -33,7 +33,7 @@ public class SearchRequest
         return new Builder();
     }
 
-    public StorageSettings getSettings()
+    public StorageSource getSettings()
     {
         return settings;
     }
@@ -50,27 +50,27 @@ public class SearchRequest
 
     public static final class Builder
     {
-        private StorageSettings settings;
+        private StorageSource settings;
 
         private Query query;
 
         private ReturnFields returnFields;
 
-        private DataSource dataSource;
+        private SearchSource searchSource;
 
         private Builder()
         {
         }
 
-        public Builder settings( StorageSettings settings )
+        public Builder settings( StorageSource settings )
         {
             this.settings = settings;
             return this;
         }
 
-        public Builder dataSource( final DataSource dataSource )
+        public Builder searchSource( final SearchSource searchSource )
         {
-            this.dataSource = dataSource;
+            this.searchSource = searchSource;
             return this;
         }
 

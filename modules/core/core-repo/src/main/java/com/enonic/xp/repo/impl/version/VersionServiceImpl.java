@@ -6,7 +6,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
-import com.enonic.xp.repo.impl.StorageSettings;
+import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.storage.GetByIdRequest;
 import com.enonic.xp.repo.impl.storage.GetResult;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
@@ -52,9 +52,9 @@ public class VersionServiceImpl
         return NodeVersionFactory.create( getResult );
     }
 
-    private StorageSettings createStorageSettings( final InternalContext context )
+    private StorageSource createStorageSettings( final InternalContext context )
     {
-        return StorageSettings.create().
+        return StorageSource.create().
             storageName( StoreStorageName.from( context.getRepositoryId() ) ).
             storageType( StaticStorageType.VERSION ).
             build();

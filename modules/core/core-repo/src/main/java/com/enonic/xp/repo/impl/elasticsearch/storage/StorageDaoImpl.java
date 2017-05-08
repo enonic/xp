@@ -18,7 +18,7 @@ import org.elasticsearch.client.Requests;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.repo.impl.StorageSettings;
+import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 import com.enonic.xp.repo.impl.elasticsearch.executor.CopyExecutor;
 import com.enonic.xp.repo.impl.elasticsearch.executor.StoreExecutor;
@@ -43,7 +43,7 @@ public class StorageDaoImpl
     @Override
     public String store( final StoreRequest request )
     {
-        final StorageSettings settings = request.getSettings();
+        final StorageSource settings = request.getSettings();
 
         final IndexRequest indexRequest = Requests.indexRequest().
             index( settings.getStorageName().getName() ).
@@ -76,7 +76,7 @@ public class StorageDaoImpl
     @Override
     public boolean delete( final DeleteRequest request )
     {
-        final StorageSettings settings = request.getSettings();
+        final StorageSource settings = request.getSettings();
         final String id = request.getId();
 
         final DeleteRequestBuilder builder = new DeleteRequestBuilder( this.client ).
@@ -94,7 +94,7 @@ public class StorageDaoImpl
     @Override
     public boolean delete( final DeleteRequests request )
     {
-        final StorageSettings settings = request.getSettings();
+        final StorageSource settings = request.getSettings();
 
         final BulkRequestBuilder bulkRequest = new BulkRequestBuilder( this.client );
 
@@ -122,9 +122,9 @@ public class StorageDaoImpl
     @Override
     public GetResult getById( final GetByIdRequest request )
     {
-        final StorageSettings storageSettings = request.getStorageSettings();
-        final GetRequest getRequest = new GetRequest( storageSettings.getStorageName().getName() ).
-            type( storageSettings.getStorageType().getName() ).
+        final StorageSource storageSource = request.getStorageSource();
+        final GetRequest getRequest = new GetRequest( storageSource.getStorageName().getName() ).
+            type( storageSource.getStorageType().getName() ).
             preference( request.getSearchPreference().getName() ).
             id( request.getId() );
 
@@ -156,10 +156,10 @@ public class StorageDaoImpl
 
         for ( final GetByIdRequest request : requests.getRequests() )
         {
-            final StorageSettings storageSettings = request.getStorageSettings();
+            final StorageSource storageSource = request.getStorageSource();
 
             final MultiGetRequest.Item item =
-                new MultiGetRequest.Item( storageSettings.getStorageName().getName(), storageSettings.getStorageType().getName(),
+                new MultiGetRequest.Item( storageSource.getStorageName().getName(), storageSource.getStorageType().getName(),
                                           request.getId() );
 
             if ( request.getReturnFields().isNotEmpty() )

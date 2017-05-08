@@ -52,8 +52,8 @@ public class CopyExecutor
 
         return ElasticsearchQuery.create().
             query( QueryBuilders.filteredQuery( query, idFilterBuilder ) ).
-            addIndexName( copyRequest.getStorageSettings().getStorageName().getName() ).
-            addIndexType( copyRequest.getStorageSettings().getStorageType().getName() ).
+            addIndexName( copyRequest.getStorageSource().getStorageName().getName() ).
+            addIndexType( copyRequest.getStorageSource().getStorageType().getName() ).
             size( copyRequest.getNodeIds().getSize() ).
             batchSize( 1_000 ).
             from( 0 ).

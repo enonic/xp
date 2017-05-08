@@ -1,12 +1,12 @@
 package com.enonic.xp.repo.impl;
 
-public class StorageSettings
+public class StorageSource
 {
     private final StorageName storageName;
 
     private final StorageType storageType;
 
-    private StorageSettings( final Builder builder )
+    private StorageSource( final Builder builder )
     {
         this.storageName = builder.storageName;
         this.storageType = builder.storageType;
@@ -49,9 +49,9 @@ public class StorageSettings
             return this;
         }
 
-        public StorageSettings build()
+        public StorageSource build()
         {
-            return new StorageSettings( this );
+            return new StorageSource( this );
         }
     }
 
