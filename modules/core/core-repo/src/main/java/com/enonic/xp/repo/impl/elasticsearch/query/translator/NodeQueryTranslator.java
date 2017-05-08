@@ -7,13 +7,11 @@ import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.SearchOptimizer;
 import com.enonic.xp.query.Query;
-import com.enonic.xp.query.filter.Filter;
+import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.filter.ValueFilter;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AclFilterBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.QueryBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
-import com.enonic.xp.security.PrincipalKeys;
 
 class NodeQueryTranslator
     implements QueryTypeTranslator
@@ -22,12 +20,9 @@ class NodeQueryTranslator
 
     private final NodeQuery nodeQuery;
 
-    private final PrincipalKeys acl;
-
-    NodeQueryTranslator( final NodeQuery nodeQuery, final PrincipalKeys acl )
+    NodeQueryTranslator( final NodeQuery nodeQuery )
     {
         this.nodeQuery = nodeQuery;
-        this.acl = acl;
     }
 
     @Override
@@ -43,17 +38,10 @@ class NodeQueryTranslator
     }
 
     @Override
-    public QueryBuilder createQueryBuilder()
+    public QueryBuilder createQueryBuilder( final Filters additionalFilters )
     {
         final QueryBuilderFactory.Builder queryBuilderBuilder = createQuery( nodeQuery );
-
-        final Filter aclFilter = AclFilterBuilderFactory.create( acl );
-
-        if ( aclFilter != null )
-        {
-            queryBuilderBuilder.addQueryFilter( aclFilter );
-        }
-
+        queryBuilderBuilder.addQueryFilters( additionalFilters );
         addParentFilter( nodeQuery, queryBuilderBuilder );
         addPathFilter( nodeQuery, queryBuilderBuilder );
 

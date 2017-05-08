@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.query;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -199,11 +200,25 @@ public class ElasticsearchQuery
             return this;
         }
 
+        public Builder addIndexTypes( final Collection<String> indexTypes )
+        {
+            this.indexTypes.addAll( indexTypes );
+            return this;
+        }
+
+
         public Builder addIndexName( final String indexName )
         {
             this.indexNames.add( indexName );
             return this;
         }
+
+        public Builder addIndexNames( final Collection<String> indexNames )
+        {
+            this.indexNames.addAll( indexNames );
+            return this;
+        }
+
 
         public Builder addSortBuilder( final SortBuilder sortBuilder )
         {

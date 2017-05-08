@@ -21,6 +21,7 @@ import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
+import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.StorageSettings;
 import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
@@ -31,8 +32,6 @@ import com.enonic.xp.repo.impl.cache.PathCache;
 import com.enonic.xp.repo.impl.cache.PathCacheImpl;
 import com.enonic.xp.repo.impl.search.SearchDao;
 import com.enonic.xp.repo.impl.search.SearchRequest;
-import com.enonic.xp.repo.impl.search.SearchStorageName;
-import com.enonic.xp.repo.impl.search.SearchStorageType;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.DeleteRequests;
@@ -212,11 +211,7 @@ public class BranchServiceImpl
             build();
 
         final SearchResult result = this.searchDao.search( SearchRequest.create().
-            settings( StorageSettings.create().
-                storageType( SearchStorageType.from( context.getBranch() ) ).
-                storageName( SearchStorageName.from( context.getRepositoryId() ) ).
-                build() ).
-            acl( context.getPrincipalsKeys() ).
+            dataSource( SingleRepoSearchSource.from( context ) ).
             query( query ).
             build() );
 

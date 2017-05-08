@@ -9,6 +9,7 @@ import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
+import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.StorageName;
 import com.enonic.xp.repo.impl.StorageSettings;
 import com.enonic.xp.repo.impl.StorageType;
@@ -54,13 +55,8 @@ public class NodeSearchServiceImpl
 
     private NodeQueryResult doQuery( final NodeQuery query, final ReturnFields returnFields, final InternalContext context )
     {
-        final StorageType storageType = SearchStorageType.from( context.getBranch() );
-
-        final StorageName storageName = SearchStorageName.from( context.getRepositoryId() );
-
         final SearchRequest searchRequest = SearchRequest.create().
-            settings( createSettings( storageType, storageName ) ).
-            acl( context.getPrincipalsKeys() ).
+            dataSource( SingleRepoSearchSource.from( context ) ).
             query( query ).
             returnFields( returnFields ).
             build();
@@ -79,7 +75,6 @@ public class NodeSearchServiceImpl
         final SearchRequest searchRequest = SearchRequest.create().
             settings( createSettings( storageType, storageName ) ).
             returnFields( BRANCH_RETURN_FIELDS ).
-            acl( context.getPrincipalsKeys() ).
             query( nodeBranchQuery ).
             build();
 
@@ -102,7 +97,6 @@ public class NodeSearchServiceImpl
         final SearchRequest searchRequest = SearchRequest.create().
             settings( createSettings( storageType, storageName ) ).
             returnFields( VERSION_RETURN_FIELDS ).
-            acl( context.getPrincipalsKeys() ).
             query( query ).
             build();
 
@@ -125,7 +119,6 @@ public class NodeSearchServiceImpl
         final SearchRequest searchRequest = SearchRequest.create().
             settings( createSettings( storageType, storageName ) ).
             returnFields( VERSION_RETURN_FIELDS ).
-            acl( context.getPrincipalsKeys() ).
             query( query ).
             build();
 

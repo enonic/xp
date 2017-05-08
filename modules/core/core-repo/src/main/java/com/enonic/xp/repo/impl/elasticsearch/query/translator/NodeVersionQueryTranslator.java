@@ -4,6 +4,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.SearchOptimizer;
+import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.QueryBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
@@ -42,19 +43,15 @@ class NodeVersionQueryTranslator
     }
 
     @Override
-    public QueryBuilder createQueryBuilder()
-    {
-        return createQueryBuilder( this.query );
-    }
-
-    private QueryBuilder createQueryBuilder( final NodeVersionQuery nodeVersionQuery )
+    public QueryBuilder createQueryBuilder( final Filters additionalFilters )
     {
         final QueryBuilderFactory.Builder queryBuilderBuilder = QueryBuilderFactory.newBuilder().
-            queryExpr( nodeVersionQuery.getQuery() ).
-            addQueryFilters( nodeVersionQuery.getQueryFilters() ).
+            queryExpr( this.query.getQuery() ).
+            addQueryFilters( this.query.getQueryFilters() ).
+            addQueryFilters( additionalFilters ).
             fieldNameResolver( this.fieldNameResolver );
 
-        addNodeIdFilter( nodeVersionQuery, queryBuilderBuilder );
+        addNodeIdFilter( this.query, queryBuilderBuilder );
 
         return queryBuilderBuilder.build().create();
     }

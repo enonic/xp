@@ -6,20 +6,13 @@ import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.ValueFilter;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class AclFilterBuilderFactory
-    extends AbstractBuilderFactory
 {
-    public AclFilterBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
-    {
-        super( fieldNameResolver );
-    }
-
     public static Filter create( final PrincipalKeys principalsKeys )
     {
         if ( isSuperUser() )

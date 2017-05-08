@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator;
 import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.xp.node.SearchOptimizer;
+import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.DiffQueryFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.StoreQueryFieldNameResolver;
@@ -22,7 +23,7 @@ class NodeVersionDiffQueryTranslator
     }
 
     @Override
-    public QueryBuilder createQueryBuilder()
+    public QueryBuilder createQueryBuilder( final Filters additionalFilters )
     {
         return DiffQueryFactory.create().
             query( query ).

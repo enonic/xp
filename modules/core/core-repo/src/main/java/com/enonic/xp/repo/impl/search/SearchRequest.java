@@ -1,9 +1,9 @@
 package com.enonic.xp.repo.impl.search;
 
 import com.enonic.xp.query.Query;
+import com.enonic.xp.repo.impl.DataSource;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.StorageSettings;
-import com.enonic.xp.security.PrincipalKeys;
 
 public class SearchRequest
 {
@@ -13,14 +13,19 @@ public class SearchRequest
 
     private final ReturnFields returnFields;
 
-    private final PrincipalKeys acl;
+    private final DataSource dataSource;
 
     private SearchRequest( Builder builder )
     {
         this.settings = builder.settings;
         this.query = builder.query;
         this.returnFields = builder.returnFields;
-        this.acl = builder.acl;
+        this.dataSource = builder.dataSource;
+    }
+
+    public DataSource getDataSource()
+    {
+        return dataSource;
     }
 
     public static Builder create()
@@ -31,11 +36,6 @@ public class SearchRequest
     public StorageSettings getSettings()
     {
         return settings;
-    }
-
-    public PrincipalKeys getAcl()
-    {
-        return acl;
     }
 
     public Query getQuery()
@@ -56,8 +56,7 @@ public class SearchRequest
 
         private ReturnFields returnFields;
 
-        private PrincipalKeys acl;
-
+        private DataSource dataSource;
 
         private Builder()
         {
@@ -66,6 +65,12 @@ public class SearchRequest
         public Builder settings( StorageSettings settings )
         {
             this.settings = settings;
+            return this;
+        }
+
+        public Builder dataSource( final DataSource dataSource )
+        {
+            this.dataSource = dataSource;
             return this;
         }
 
@@ -78,12 +83,6 @@ public class SearchRequest
         public Builder returnFields( final ReturnFields returnFields )
         {
             this.returnFields = returnFields;
-            return this;
-        }
-
-        public Builder acl( final PrincipalKeys acl )
-        {
-            this.acl = acl;
             return this;
         }
 
