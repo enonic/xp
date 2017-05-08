@@ -1,37 +1,34 @@
 <div style="font-family: 'Open Sans', sans-serif;">
-    <div style="margin-bottom: 25px; font-size: 20px;">
-        <b>${title}</b> (#${id})
-    </div>
-    <div style="margin-bottom: 25px; font-size: 0;">
+    <div style="margin-bottom: 25px; font-size: 20px; display: flex; align-items: center;">
         <div style="
+            flex-shrink: 0;
             border-radius: 20px;
             background: #4294de;
             color: #fff;
             height: 40px;
             width: 40px;
-            display: inline-block;
             text-align: center;
-            font-size: 16px;
-            line-height: 40px;">${creator}
+            font-size: 14px;
+            line-height: 40px;
+            text-transform: uppercase;">${creator}
         </div>
         <div style="
-			display: inline-block;
-			border-bottom: 10px solid #eee;
-            border-left: 10px solid transparent;
-            margin-right: -5px;
-            margin-left: 3px;"></div>
-        <div style="
-            background-color: #eee;
-            position: relative;
             display: inline-block;
-            padding: 3px 20px;
-            margin-left: -5px;
-            min-width: 300px;
-            max-width: 80%;
-            font-size: 16px;
-            line-height: 40px;">
-            <span>${description}</span>
+            margin-left: 15px;
+            width: 100%;
+            font-size: 20px;">
+            <b>${title}</b> (#${id})
         </div>
+    </div>
+    <div style="
+        display: ${description-block-visibility};
+        margin-bottom: 25px;
+        background-color: #eee;
+        position: relative;
+        padding: 3px 20px;
+        font-size: 16px;
+        line-height: 40px;">
+        <span>${description}</span>
     </div>
     <div style="margin-bottom: 40px;">
         <a href="${url}">
@@ -48,6 +45,7 @@
             </button>
         </a>
     </div>
-    <div style="margin-bottom: 15px; font-size: 16px;">Issue Items (${issuesNum})</div>
+    <div style="margin-bottom: 15px; font-size: 16px; display: ${issue-block-visibility};">Issue Items (${issuesNum})</div>
+    <div style="font-size: 16px; color: #aaa; display: ${no-issues-block-visibility};">This issue has no items</div>
     ${items}
 </div>

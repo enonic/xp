@@ -176,7 +176,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
         }
 
         publishRequest.sendAndParse().then((taskId: api.task.TaskId) => {
-            this.notifyIssuePublished();
             this.pollTask(taskId);
         }).catch((reason) => {
             this.unlockControls();
@@ -185,6 +184,12 @@ export class IssueDetailsDialog extends SchedulableDialog {
                 api.notify.showError(reason.message);
             }
         });
+    }
+
+    protected onFinished() {
+        super.onFinished();
+
+        this.notifyIssuePublished();
     }
 
     protected createItemList(): ListBox<ContentSummaryAndCompareStatus> {

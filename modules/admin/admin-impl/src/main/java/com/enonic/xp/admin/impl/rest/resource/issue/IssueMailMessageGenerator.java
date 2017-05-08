@@ -28,32 +28,50 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
     {
         return msg ->
         {
-            msg.setFrom( new InternetAddress( params.getCreator().getEmail(), params.getCreator().getEmail() ) );
-            msg.setRecipients( Message.RecipientType.TO, generateRecipients() );
+            msg.setFrom( new InternetAddress( getSender(), "Issue Manager" ) );
+            msg.addRecipients( Message.RecipientType.TO, generateRecipients() );
+            msg.addRecipients( Message.RecipientType.CC, getCopyRecepients() );
             msg.setSubject( generateMessageSubject() );
-            msg.setContent( genereateMessageBody(), "text/html" );
+            msg.setContent( generateMessageBody(), "text/html" );
         };
     }
 
-    private String generateRecipients()
+    protected abstract String generateMessageSubject();
+
+    protected abstract String generateRecipients();
+
+    protected abstract String getSender();
+
+    protected abstract String getCopyRecepients();
+
+    protected String getApproverEmails()
     {
         return params.getApprovers().stream().map( approver -> approver.getEmail() ).reduce(
             ( email1, email2 ) -> email1 + "," + email2 ).get();
     }
 
-    protected abstract String generateMessageSubject();
+    protected String getCreatorEmail()
+    {
+        return params.getCreator().getEmail();
+    }
 
-    private String genereateMessageBody()
+    private String generateMessageBody()
     {
         final Map messageParams = Maps.newHashMap();
+        final int itemCount = params.getIssue().getPublishRequest().getItems().getSize();
+        final String description = params.getIssue().getDescription();
+
         messageParams.put( "id", params.getIssue().getId().toString() );
         messageParams.put( "idShort", params.getIssue().getId().toString().substring( 0, 9 ) );
         messageParams.put( "title", params.getIssue().getTitle() );
         messageParams.put( "creator", params.getIssue().getCreator().getId() );
-        messageParams.put( "issuesNum", params.getIssue().getPublishRequest().getItems().getSize() );
-        messageParams.put( "description", params.getIssue().getDescription() );
+        messageParams.put( "issuesNum", itemCount );
+        messageParams.put( "description", description );
         messageParams.put( "url", params.getUrl() + "#/issue/" + params.getIssue().getId().toString() );
         messageParams.put( "items", generateItemsHtml() );
+        messageParams.put( "description-block-visibility", description.length() == 0 ? "none" : "block" );
+        messageParams.put( "issue-block-visibility", itemCount == 0 ? "none" : "block" );
+        messageParams.put( "no-issues-block-visibility", itemCount == 0 ? "block" : "none" );
 
         return new StrSubstitutor( messageParams ).replace( load( "email.html" ) );
     }
