@@ -1,5 +1,7 @@
 package com.enonic.xp.node;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKeys;
@@ -22,6 +24,21 @@ public class SearchTarget
     public static Builder create()
     {
         return new Builder();
+    }
+
+    public RepositoryId getRepositoryId()
+    {
+        return repositoryId;
+    }
+
+    public Branch getBranch()
+    {
+        return branch;
+    }
+
+    public PrincipalKeys getPrincipalKeys()
+    {
+        return principalKeys;
     }
 
     public static final class Builder
@@ -54,8 +71,16 @@ public class SearchTarget
             return this;
         }
 
+        private void validate()
+        {
+            Preconditions.checkNotNull( this.principalKeys, "Auth info must be set" );
+            Preconditions.checkNotNull( this.branch, "Branch must be set" );
+            Preconditions.checkNotNull( this.repositoryId, "RepositoryId must be set" );
+        }
+
         public SearchTarget build()
         {
+            validate();
             return new SearchTarget( this );
         }
     }

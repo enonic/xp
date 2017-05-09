@@ -1,0 +1,58 @@
+{
+  "from" : 0,
+  "size" : 10,
+  "query" : {
+    "filtered" : {
+      "query" : {
+        "match_all" : { }
+      },
+      "filter" : {
+        "bool" : {
+          "must" : [ {
+            "bool" : {
+              "should" : [ {
+                "indices" : {
+                  "indices" : [ "search-repo2" ],
+                  "filter" : {
+                    "bool" : {
+                      "must" : [ {
+                        "terms" : {
+                          "_permissions.read" : [ "user:system:repo-user-1" ]
+                        }
+                      }, {
+                        "terms" : {
+                          "_type" : [ "master" ]
+                        }
+                      } ]
+                    }
+                  }
+                }
+              }, {
+                "indices" : {
+                  "indices" : [ "search-repo1" ],
+                  "filter" : {
+                    "bool" : {
+                      "must" : [ {
+                        "terms" : {
+                          "_permissions.read" : [ "user:system:repo-user-1" ]
+                        }
+                      }, {
+                        "terms" : {
+                          "_type" : [ "master" ]
+                        }
+                      } ]
+                    }
+                  }
+                }
+              } ]
+            }
+          }, {
+            "terms" : {
+              "_parentpath" : [ "/" ]
+            }
+          } ]
+        }
+      }
+    }
+  }
+}

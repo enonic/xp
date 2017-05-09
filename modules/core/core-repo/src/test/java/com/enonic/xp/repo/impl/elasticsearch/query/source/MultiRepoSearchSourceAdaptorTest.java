@@ -20,7 +20,6 @@ import static org.junit.Assert.*;
 
 public class MultiRepoSearchSourceAdaptorTest
 {
-
     @Test
     public void single_repo()
         throws Exception
@@ -36,7 +35,6 @@ public class MultiRepoSearchSourceAdaptorTest
         assertEquals( "search-repo1", source.getIndexNames().iterator().next() );
         assertEquals( "branch1", source.getIndexTypes().iterator().next() );
     }
-
 
     @Test
     public void multiple_repos()
@@ -63,7 +61,7 @@ public class MultiRepoSearchSourceAdaptorTest
         assertEquals( 1, filters.getSize() );
         final Filter allFilters = filters.get( 0 );
         assert ( allFilters instanceof BooleanFilter );
-        final ImmutableSet<Filter> shouldFilters = ( (BooleanFilter) allFilters ).getShould();
+        final ImmutableSet<Filter> shouldFilters = ( (BooleanFilter) allFilters ).getMust();
         assertEquals( 2, shouldFilters.size() );
     }
 }

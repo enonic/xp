@@ -7,10 +7,8 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.node.NodeVersionQueryResult;
-import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
-import com.enonic.xp.repo.impl.SingleRepoSearchSource;
-import com.enonic.xp.repo.impl.SingleRepoStorageSource;
+import com.enonic.xp.repo.impl.SearchSource;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResult;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
@@ -38,21 +36,21 @@ public class NodeSearchServiceImpl
     private SearchDao searchDao;
 
     @Override
-    public NodeQueryResult query( final NodeQuery query, final InternalContext context )
+    public NodeQueryResult query( final NodeQuery query, final SearchSource source )
     {
-        return doQuery( query, ReturnFields.empty(), context );
+        return doQuery( query, ReturnFields.empty(), source );
     }
 
     @Override
-    public NodeQueryResult query( final NodeQuery query, ReturnFields returnFields, final InternalContext context )
+    public NodeQueryResult query( final NodeQuery query, ReturnFields returnFields, final SearchSource source )
     {
-        return doQuery( query, returnFields, context );
+        return doQuery( query, returnFields, source );
     }
 
-    private NodeQueryResult doQuery( final NodeQuery query, final ReturnFields returnFields, final InternalContext context )
+    private NodeQueryResult doQuery( final NodeQuery query, final ReturnFields returnFields, final SearchSource source )
     {
         final SearchRequest searchRequest = SearchRequest.create().
-            searchSource( SingleRepoSearchSource.from( context ) ).
+            searchSource( source ).
             query( query ).
             returnFields( returnFields ).
             build();
@@ -63,10 +61,10 @@ public class NodeSearchServiceImpl
     }
 
     @Override
-    public NodeBranchQueryResult query( final NodeBranchQuery nodeBranchQuery, final InternalContext context )
+    public NodeBranchQueryResult query( final NodeBranchQuery nodeBranchQuery, final SearchSource source )
     {
         final SearchRequest searchRequest = SearchRequest.create().
-            searchSource( new SingleRepoStorageSource( context.getRepositoryId(), SingleRepoStorageSource.Type.BRANCH ) ).
+            searchSource( source ).
             returnFields( BRANCH_RETURN_FIELDS ).
             query( nodeBranchQuery ).
             build();
@@ -82,10 +80,10 @@ public class NodeSearchServiceImpl
     }
 
     @Override
-    public NodeVersionQueryResult query( final NodeVersionQuery query, final InternalContext context )
+    public NodeVersionQueryResult query( final NodeVersionQuery query, final SearchSource source )
     {
         final SearchRequest searchRequest = SearchRequest.create().
-            searchSource( new SingleRepoStorageSource( context.getRepositoryId(), SingleRepoStorageSource.Type.VERSION ) ).
+            searchSource( source ).
             returnFields( VERSION_RETURN_FIELDS ).
             query( query ).
             build();
@@ -101,10 +99,10 @@ public class NodeSearchServiceImpl
     }
 
     @Override
-    public NodeVersionDiffResult query( final NodeVersionDiffQuery query, final InternalContext context )
+    public NodeVersionDiffResult query( final NodeVersionDiffQuery query, final SearchSource source )
     {
         final SearchRequest searchRequest = SearchRequest.create().
-            searchSource( new SingleRepoStorageSource( context.getRepositoryId(), SingleRepoStorageSource.Type.VERSION ) ).
+            searchSource( source ).
             returnFields( VERSION_RETURN_FIELDS ).
             query( query ).
             build();

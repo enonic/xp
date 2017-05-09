@@ -11,7 +11,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.SearchMode;
-import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
 
 public class FindNodesByParentCommand
@@ -68,7 +68,7 @@ public class FindNodesByParentCommand
             searchMode( params.isCountOnly() ? SearchMode.COUNT : SearchMode.SEARCH ).
             setOrderExpressions( order.getOrderExpressions() ).
             accurateScoring( true ).
-            build(), InternalContext.from( ContextAccessor.current() ) );
+            build(), SingleRepoSearchSource.from( ContextAccessor.current() ) );
 
         if ( nodeQueryResult.getHits() == 0 )
         {

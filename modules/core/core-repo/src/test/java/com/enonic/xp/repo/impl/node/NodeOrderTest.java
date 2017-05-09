@@ -24,7 +24,7 @@ import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
-import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
 import com.enonic.xp.util.GeoPoint;
 
@@ -57,7 +57,8 @@ public class NodeOrderTest
                 OrderExpr.Direction.ASC ) ) ).
             build();
 
-        final NodeQueryResult nodeQueryResult = searchService.query( distanceQuery, InternalContext.from( ContextAccessor.current() ) );
+        final NodeQueryResult nodeQueryResult =
+            searchService.query( distanceQuery, SingleRepoSearchSource.from( ContextAccessor.current() ) );
 
         final Iterator<NodeId> iterator = nodeQueryResult.getNodeIds().iterator();
         assertEquals( node4.id(), iterator.next() );
@@ -88,7 +89,8 @@ public class NodeOrderTest
 
         printContentRepoIndex();
 
-        final NodeQueryResult nodeQueryResult = searchService.query( fulltextQuery, InternalContext.from( ContextAccessor.current() ) );
+        final NodeQueryResult nodeQueryResult =
+            searchService.query( fulltextQuery, SingleRepoSearchSource.from( ContextAccessor.current() ) );
 
         assertEquals( 4, nodeQueryResult.getHits() );
 

@@ -10,6 +10,7 @@ import com.enonic.xp.query.expr.OrderExpressions;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AclFilterBuilderFactory;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
 
@@ -76,7 +77,7 @@ public class FindNodeBranchEntriesByIdCommand
         }
 
         final NodeQueryResult result = this.nodeSearchService.query( queryBuilder.
-            build(), InternalContext.from( ContextAccessor.current() ) );
+            build(), SingleRepoSearchSource.from( ContextAccessor.current() ) );
 
         return result.getNodeIds();
     }

@@ -28,6 +28,7 @@ import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.SingleRepoStorageSource;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResult;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
@@ -101,7 +102,7 @@ public class IndexServiceImpl
                 query( QueryExpr.from( compareExpr ) ).
                 batchSize( BATCH_SIZE ).
                 size( NodeSearchService.GET_ALL_SIZE_FLAG ).
-                build(), InternalContext.from( reindexContext ) );
+                build(), SingleRepoStorageSource.create( reindexContext.getRepositoryId(), SingleRepoStorageSource.Type.BRANCH ) );
 
             long nodeIndex = 1;
             final long total = results.getSize();

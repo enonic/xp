@@ -14,7 +14,7 @@ import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.filter.Filters;
-import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 
@@ -75,8 +75,8 @@ public class FindNodeIdsByParentCommand
             build().
             resolve();
 
-        final NodeQueryResult nodeQueryResult =
-            this.nodeSearchService.query( createFindChildrenQuery( parentPath, order ), InternalContext.from( ContextAccessor.current() ) );
+        final NodeQueryResult nodeQueryResult = this.nodeSearchService.query( createFindChildrenQuery( parentPath, order ),
+                                                                              SingleRepoSearchSource.from( ContextAccessor.current() ) );
 
         if ( nodeQueryResult.getHits() == 0 )
         {

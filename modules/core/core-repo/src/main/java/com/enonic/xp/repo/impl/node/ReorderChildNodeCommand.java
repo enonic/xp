@@ -16,7 +16,7 @@ import com.enonic.xp.query.expr.LogicalExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
-import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
 
 public class ReorderChildNodeCommand
@@ -101,7 +101,7 @@ public class ReorderChildNodeCommand
     {
         final NodeQuery query = createFirstNodeBeforeInsertQuery( nodeAfterOrderValue );
 
-        return nodeSearchService.query( query, InternalContext.from( ContextAccessor.current() ) );
+        return nodeSearchService.query( query, SingleRepoSearchSource.from( ContextAccessor.current() ) );
     }
 
     private Node doUpdateNodeOrderValue( final Long newOrderValue )

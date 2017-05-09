@@ -2,20 +2,22 @@ package com.enonic.xp.repo.impl.node;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.FindNodesByQueryResult;
+import com.enonic.xp.node.MultiRepoNodeQuery;
 import com.enonic.xp.node.NodeHit;
-import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.SearchTarget;
+import com.enonic.xp.node.SearchTargets;
+import com.enonic.xp.repo.impl.MultiRepoSearchSource;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResultEntry;
 
-public class FindNodesByQueryCommand
+public class FindNodesByMultiRepoQueryCommand
     extends AbstractNodeCommand
 {
-    private final NodeQuery query;
+    private final MultiRepoNodeQuery query;
 
-    private FindNodesByQueryCommand( Builder builder )
+    private FindNodesByMultiRepoQueryCommand( Builder builder )
     {
         super( builder );
         query = builder.query;
@@ -33,7 +35,20 @@ public class FindNodesByQueryCommand
 
     public FindNodesByQueryResult execute()
     {
-        final NodeQueryResult nodeQueryResult = nodeSearchService.query( query, SingleRepoSearchSource.from( ContextAccessor.current() ) );
+        final SearchTargets searchTargets = query.getSearchTargets();
+
+        final MultiRepoSearchSource.Builder searchSourceBuilder = MultiRepoSearchSource.create();
+
+        for ( final SearchTarget searchTarget : searchTargets )
+        {
+            searchSourceBuilder.add( SingleRepoSearchSource.create().
+                branch( searchTarget.getBranch() ).
+                repositoryId( searchTarget.getRepositoryId() ).
+                acl( searchTarget.getPrincipalKeys() ).
+                build() );
+        }
+
+        final NodeQueryResult nodeQueryResult = nodeSearchService.query( query.getNodeQuery(), searchSourceBuilder.build() );
 
         final FindNodesByQueryResult.Builder resultBuilder = FindNodesByQueryResult.create().
             hits( nodeQueryResult.getHits() ).
@@ -51,7 +66,7 @@ public class FindNodesByQueryCommand
     public static final class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
-        private NodeQuery query;
+        private MultiRepoNodeQuery query;
 
         private Builder()
         {
@@ -63,7 +78,7 @@ public class FindNodesByQueryCommand
             super( source );
         }
 
-        public Builder query( NodeQuery query )
+        public Builder query( MultiRepoNodeQuery query )
         {
             this.query = query;
             return this;
@@ -76,10 +91,10 @@ public class FindNodesByQueryCommand
             Preconditions.checkNotNull( this.query );
         }
 
-        public FindNodesByQueryCommand build()
+        public FindNodesByMultiRepoQueryCommand build()
         {
             this.validate();
-            return new FindNodesByQueryCommand( this );
+            return new FindNodesByMultiRepoQueryCommand( this );
         }
     }
 }

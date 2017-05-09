@@ -383,7 +383,7 @@ public abstract class AbstractNodeTest
 
     protected void printBranchIndex()
     {
-        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.BRANCH.getName() );
+        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( ContextAccessor.current().getRepositoryId() ), IndexType.BRANCH.getName() );
     }
 
     protected void printVersionIndex()

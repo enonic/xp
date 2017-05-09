@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKeys;
 
@@ -42,17 +43,30 @@ public class SingleRepoSearchSource
         return create( context ).build();
     }
 
+    public static SingleRepoSearchSource from( final Context context )
+    {
+        return create( context ).build();
+    }
+
     public static Builder create()
     {
         return new Builder();
     }
 
-    public static Builder create( final InternalContext context )
+    private static Builder create( final InternalContext context )
     {
         return create().
             repositoryId( context.getRepositoryId() ).
             branch( context.getBranch() ).
             acl( context.getPrincipalsKeys() );
+    }
+
+    private static Builder create( final Context context )
+    {
+        return create().
+            repositoryId( context.getRepositoryId() ).
+            branch( context.getBranch() ).
+            acl( context.getAuthInfo().getPrincipals() );
     }
 
     public static final class Builder

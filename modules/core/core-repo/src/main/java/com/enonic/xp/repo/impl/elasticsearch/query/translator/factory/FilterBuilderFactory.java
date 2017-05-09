@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.elasticsearch.index.query.BoolFilterBuilder;
 import org.elasticsearch.index.query.ExistsFilterBuilder;
 import org.elasticsearch.index.query.FilterBuilder;
+import org.elasticsearch.index.query.IndicesFilterBuilder;
 import org.elasticsearch.index.query.RangeFilterBuilder;
 import org.elasticsearch.index.query.TermsFilterBuilder;
 
@@ -20,6 +21,7 @@ import com.enonic.xp.query.filter.ExistsFilter;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.filter.IdFilter;
+import com.enonic.xp.query.filter.IndicesFilter;
 import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
@@ -66,37 +68,57 @@ public class FilterBuilderFactory
     {
         for ( final Filter filter : queryFilters )
         {
-            if ( filter instanceof ExistsFilter )
+            final FilterBuilder filterBuilder = doCreateFilterBuilder( filter );
+            if ( filterBuilder != null )
             {
-                filtersToApply.add( createExistsFilter( (ExistsFilter) filter ) );
-            }
-            else if ( filter instanceof ValueFilter )
-            {
-                final FilterBuilder termFilter = createTermFilter( (ValueFilter) filter );
-
-                if ( termFilter != null )
-                {
-                    filtersToApply.add( termFilter );
-                }
-            }
-            else if ( filter instanceof RangeFilter )
-            {
-                filtersToApply.add( createRangeFilter( (RangeFilter) filter ) );
-            }
-            else if ( filter instanceof BooleanFilter )
-            {
-                filtersToApply.add( createBooleanFilter( (BooleanFilter) filter ) );
-            }
-            else if ( filter instanceof IdFilter )
-            {
-                final FilterBuilder idFilter = createIdFilter( (IdFilter) filter );
-
-                if ( idFilter != null )
-                {
-                    filtersToApply.add( idFilter );
-                }
+                filtersToApply.add( filterBuilder );
             }
         }
+    }
+
+    private FilterBuilder doCreateFilterBuilder( final Filter filter )
+    {
+        if ( filter instanceof ExistsFilter )
+        {
+            return createExistsFilter( (ExistsFilter) filter );
+        }
+        else if ( filter instanceof ValueFilter )
+        {
+            return createTermFilter( (ValueFilter) filter );
+        }
+        else if ( filter instanceof RangeFilter )
+        {
+            return createRangeFilter( (RangeFilter) filter );
+        }
+        else if ( filter instanceof BooleanFilter )
+        {
+            return createBooleanFilter( (BooleanFilter) filter );
+        }
+        else if ( filter instanceof IdFilter )
+        {
+            return createIdFilter( (IdFilter) filter );
+        }
+        else if ( filter instanceof IndicesFilter )
+        {
+            return createIndicesFilter( (IndicesFilter) filter );
+        }
+        else
+        {
+            throw new IllegalArgumentException( String.format( "Filter of type %s not supported", filter.getClass() ) );
+        }
+    }
+
+    private FilterBuilder createIndicesFilter( final IndicesFilter indicesFilter )
+    {
+        final IndicesFilterBuilder builder =
+            new IndicesFilterBuilder( doCreateFilterBuilder( indicesFilter.getFilter() ), indicesFilter.getIndices() );
+
+        if ( indicesFilter.getNoMatchFilter() != null )
+        {
+            builder.noMatchFilter( doCreateFilterBuilder( indicesFilter.getNoMatchFilter() ) );
+        }
+
+        return builder;
     }
 
     private FilterBuilder createIdFilter( final IdFilter idFilter )

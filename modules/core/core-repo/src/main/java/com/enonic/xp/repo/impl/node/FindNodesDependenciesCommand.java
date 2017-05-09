@@ -12,9 +12,9 @@ import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.filter.ExistsFilter;
 import com.enonic.xp.query.filter.IdFilter;
-import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.ReturnValue;
+import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResultEntry;
 
@@ -94,7 +94,7 @@ public class FindNodesDependenciesCommand
                 build() ).
             from( 0 ).
             size( nonProcessedNodes.size() ).
-            build(), ReturnFields.from( NodeIndexPath.REFERENCE ), InternalContext.from( ContextAccessor.current() ) );
+            build(), ReturnFields.from( NodeIndexPath.REFERENCE ), SingleRepoSearchSource.from( ContextAccessor.current() ));
 
     }
 

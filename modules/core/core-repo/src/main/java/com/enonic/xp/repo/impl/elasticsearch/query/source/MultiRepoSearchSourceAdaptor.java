@@ -7,13 +7,13 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.Filter;
+import com.enonic.xp.query.filter.IndicesFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.MultiRepoSearchSource;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AclFilterBuilderFactory;
-import com.enonic.xp.repository.RepositoryId;
 
-public class MultiRepoSearchSourceAdaptor
+class MultiRepoSearchSourceAdaptor
     extends AbstractSourceAdapter
 {
 
@@ -46,7 +46,7 @@ public class MultiRepoSearchSourceAdaptor
 
         for ( final SingleRepoSearchSource source : sources )
         {
-            sourceFilters.should( createSourceFilter( source ) );
+            sourceFilters.must( createSourceFilter( source ) );
         }
 
         return sourceFilters.build();
@@ -54,18 +54,12 @@ public class MultiRepoSearchSourceAdaptor
 
     private static Filter createSourceFilter( final SingleRepoSearchSource source )
     {
-        return BooleanFilter.create().
-            must( AclFilterBuilderFactory.create( source.getAcl() ) ).
-            must( createRepoFilter( source.getRepositoryId() ) ).
-            must( createBranchFilter( source.getBranch() ) ).
-            build();
-    }
-
-    private static Filter createRepoFilter( final RepositoryId repositoryId )
-    {
-        return ValueFilter.create().
-            fieldName( "_index" ).
-            addValue( ValueFactory.newString( createSearchIndexName( repositoryId ) ) ).
+        return IndicesFilter.create().
+            addIndex( createSearchIndexName( source.getRepositoryId() ) ).
+            filter( BooleanFilter.create().
+                must( AclFilterBuilderFactory.create( source.getAcl() ) ).
+                must( createBranchFilter( source.getBranch() ) ).
+                build() ).
             build();
     }
 

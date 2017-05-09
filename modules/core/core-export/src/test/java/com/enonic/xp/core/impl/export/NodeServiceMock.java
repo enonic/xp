@@ -28,6 +28,7 @@ import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
+import com.enonic.xp.node.MultiRepoNodeQuery;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
@@ -437,6 +438,12 @@ class NodeServiceMock
 
     @Override
     public boolean hasUnpublishedChildren( final NodeId parent, final Branch target )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public FindNodesByQueryResult findByQuery( final MultiRepoNodeQuery nodeQuery )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }

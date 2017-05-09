@@ -72,7 +72,7 @@ public class SearchExecutor
             build().
             create();
 
-        //System.out.println( "######################\n\r" + searchRequestBuilder.toString() );
+        System.out.println( "######################\n\r" + searchRequestBuilder.toString() );
 
         return doSearchRequest( searchRequestBuilder );
     }

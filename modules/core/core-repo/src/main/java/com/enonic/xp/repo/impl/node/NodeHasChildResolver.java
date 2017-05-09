@@ -6,7 +6,7 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
 import com.enonic.xp.node.SearchMode;
-import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 
@@ -42,7 +42,7 @@ public class NodeHasChildResolver
         final NodeQueryResult nodeQueryResult = this.nodeSearchService.query( NodeQuery.create().
             parent( node.path() ).
             searchMode( SearchMode.COUNT ).
-            build(), InternalContext.from( ContextAccessor.current() ) );
+            build(), SingleRepoSearchSource.from( ContextAccessor.current() ) );
 
         return nodeQueryResult.getTotalHits() > 0;
     }

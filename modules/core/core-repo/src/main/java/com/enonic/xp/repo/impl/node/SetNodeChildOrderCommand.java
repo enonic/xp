@@ -12,7 +12,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.query.expr.QueryExpr;
-import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.security.acl.Permission;
@@ -80,7 +80,7 @@ public class SetNodeChildOrderCommand
             size( NodeSearchService.GET_ALL_SIZE_FLAG ).
             batchSize( BATCH_SIZE ).
             searchMode( SearchMode.SEARCH ).
-            build(), InternalContext.from( ContextAccessor.current() ) );
+            build(), SingleRepoSearchSource.from( ContextAccessor.current() ) );
 
         final List<NodeId> childNodeIds = childNodeResult.getNodeQueryResultSet().getNodeIds();
 

@@ -8,6 +8,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.SingleRepoStorageSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repo.impl.version.search.ExcludeEntries;
@@ -61,7 +62,7 @@ public class FindNodesWithVersionDifferenceCommand
             excludes( excludeEntries ).
             size( this.size ).
             batchSize( batchSize ).
-            build(), context );
+            build(), SingleRepoStorageSource.create( ContextAccessor.current().getRepositoryId(), SingleRepoStorageSource.Type.VERSION ) );
     }
 
     private ExcludeEntries getExcludePaths( final InternalContext context )
