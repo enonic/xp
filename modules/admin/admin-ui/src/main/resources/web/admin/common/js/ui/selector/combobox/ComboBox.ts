@@ -379,6 +379,14 @@ module api.ui.selector.combobox {
             this.comboBoxDropdown.addOption(option);
         }
 
+        updateOption(option: Option<OPTION_DISPLAY_VALUE>, newOption: Option<OPTION_DISPLAY_VALUE>) {
+            let selectedOptions = this.getSelectedOptions();
+            if (selectedOptions.indexOf(option) >= 0) {
+                this.selectedOptionsView.updateOption(option, newOption);
+                this.comboBoxDropdown.markSelections(selectedOptions);
+            }
+        }
+
         setIgnoreNextFocus(value: boolean): ComboBox<OPTION_DISPLAY_VALUE> {
             this.ignoreNextFocus = value;
             return this;
@@ -454,7 +462,8 @@ module api.ui.selector.combobox {
         }
 
         // tslint:disable-next-line:max-line-length
-        private selectExistingAndHandleMissing(optionIds: string[], missingOptionIds: string[]): wemQ.Promise<Option<OPTION_DISPLAY_VALUE>[]> {
+        private selectExistingAndHandleMissing(optionIds: string[],
+                                               missingOptionIds: string[]): wemQ.Promise<Option<OPTION_DISPLAY_VALUE>[]> {
             const nonExistingIds: string[] = [];
             const selectedOptions = this.selectExistingOptions(optionIds);
 
@@ -824,7 +833,7 @@ module api.ui.selector.combobox {
                 this.hideDropdown();
                 return;
 
-            // shift or ctrl or alt or super
+                // shift or ctrl or alt or super
             } else if (event.which === 16 || event.which === 17 || event.which === 18 || event.which === 91) {
                 return;
             }
@@ -978,21 +987,21 @@ module api.ui.selector.combobox {
 
         }
 
-        onOptionSelected(listener: (event: SelectedOptionEvent<OPTION_DISPLAY_VALUE>)=>void) {
+        onOptionSelected(listener: (event: SelectedOptionEvent<OPTION_DISPLAY_VALUE>) => void) {
             this.selectedOptionsView.onOptionSelected(listener);
         }
 
-        unOptionSelected(listener: (event: SelectedOptionEvent<OPTION_DISPLAY_VALUE>)=>void) {
+        unOptionSelected(listener: (event: SelectedOptionEvent<OPTION_DISPLAY_VALUE>) => void) {
             this.selectedOptionsView.unOptionSelected(listener);
         }
 
-        onOptionFilterInputValueChanged(listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) {
+        onOptionFilterInputValueChanged(listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>) => void) {
             this.optionFilterInputValueChangedListeners.push(listener);
         }
 
-        unOptionFilterInputValueChanged(listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) {
+        unOptionFilterInputValueChanged(listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>) => void) {
             this.optionFilterInputValueChangedListeners.filter(
-                (currentListener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
+                (currentListener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>) => void) => {
                     return listener !== currentListener;
                 });
         }
@@ -1000,24 +1009,24 @@ module api.ui.selector.combobox {
         private notifyOptionFilterInputValueChanged(oldValue: string, newValue: string) {
             let event = new OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>(oldValue, newValue);
             this.optionFilterInputValueChangedListeners.forEach(
-                (listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>)=>void) => {
+                (listener: (event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>) => void) => {
                     listener(event);
                 });
         }
 
-        onExpanded(listener: (event: api.ui.selector.DropdownExpandedEvent)=>void) {
+        onExpanded(listener: (event: api.ui.selector.DropdownExpandedEvent) => void) {
             this.expandedListeners.push(listener);
         }
 
         private notifyExpanded(expanded: boolean) {
             const grid: api.dom.Element = <api.dom.Element>this.comboBoxDropdown.getDropdownGrid().getElement();
             const event = new api.ui.selector.DropdownExpandedEvent(grid, expanded);
-            this.expandedListeners.forEach((listener: (event: api.ui.selector.DropdownExpandedEvent)=>void) => {
+            this.expandedListeners.forEach((listener: (event: api.ui.selector.DropdownExpandedEvent) => void) => {
                 listener(event);
             });
         }
 
-        onContentMissing(listener: (ids: string[])=>void) {
+        onContentMissing(listener: (ids: string[]) => void) {
             this.contentMissingListeners.push(listener);
         }
 
@@ -1028,7 +1037,7 @@ module api.ui.selector.combobox {
         }
 
         private notifyContentMissing(ids: string[]) {
-            this.contentMissingListeners.forEach((listener: (ids: string[])=>void) => {
+            this.contentMissingListeners.forEach((listener: (ids: string[]) => void) => {
                 listener(ids);
             });
         }

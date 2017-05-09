@@ -28,41 +28,26 @@ module api.content.form.inputtype.image {
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
 
     import FocusSwitchEvent = api.ui.FocusSwitchEvent;
+    import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
+    import ServerEventsListener = api.app.ServerEventsListener;
+    import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
+    import ContentInputTypeManagingAdd = api.content.form.inputtype.ContentInputTypeManagingAdd;
 
-    export class ImageSelector extends api.form.inputtype.support.BaseInputTypeManagingAdd<ContentId> {
-
-        private config: api.content.form.inputtype.ContentInputTypeViewContext;
-
-        private relationshipTypeName: RelationshipTypeName;
+    export class ImageSelector extends ContentInputTypeManagingAdd<ImageSelectorDisplayValue> {
 
         private contentComboBox: ImageContentComboBox;
 
         private selectedOptionsView: ImageSelectorSelectedOptionsView;
 
-        private contentRequestsAllowed: boolean;
+        // requests aren't allowed until allowed contentTypes are specified
+        private contentRequestsAllowed: boolean = false;
 
         private uploader: api.content.image.ImageUploaderEl;
 
-        private editContentRequestListeners: {(content: ContentSummary): void }[] = [];
-
-        private relationshipType: string;
-
-        private allowedContentTypes: string[];
-
-        private allowedContentPaths: string[];
-
-        private contentDeletedListener: (event: ContentDeletedEvent) => void;
+        private editContentRequestListeners: {(content: ContentSummary): void}[] = [];
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
-            super('image-selector');
-            this.addClass('input-type-view');
-
-            this.config = config;
-
-            // requests aren't allowed until allowed contentTypes are specified
-            this.contentRequestsAllowed = false;
-
-            this.readConfig(config.inputConfig);
+            super('image-selector', config);
 
             ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
                 this.availableSizeChanged();
@@ -76,60 +61,14 @@ module api.content.form.inputtype.image {
             this.onShown(() => {
                 this.updateSelectedItemsIcons();
             });
-
-            this.handleContentDeletedEvent();
-        }
-
-        private handleContentDeletedEvent() {
-            this.contentDeletedListener = (event) => {
-                if (this.selectedOptionsView.count() === 0) {
-                    return;
-                }
-
-                let selectedContentIdsMap: {} = {};
-                this.selectedOptionsView.getSelectedOptions().forEach(
-                    (selectedOption: any) => {
-                        if (!!selectedOption.getOption().displayValue && !!selectedOption.getOption().displayValue.getContentId()) {
-                            selectedContentIdsMap[selectedOption.getOption().displayValue.getContentId().toString()] = '';
-                        }
-                    });
-
-                event.getDeletedItems().filter(deletedItem => !deletedItem.isPending() &&
-                                                              selectedContentIdsMap.hasOwnProperty(
-                                                                  deletedItem.getContentId().toString())).forEach((deletedItem) => {
-                        let option = this.selectedOptionsView.getById(deletedItem.getContentId().toString());
-                        if (option != null) {
-                            this.selectedOptionsView.removeSelectedOptions([option]);
-                        }
-                    });
-            };
-
-            ContentDeletedEvent.on(this.contentDeletedListener);
-
-            this.onRemoved((event) => {
-                ContentDeletedEvent.un(this.contentDeletedListener);
-            });
         }
 
         public getContentComboBox(): ImageContentComboBox {
             return this.contentComboBox;
         }
 
-        private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
-            let relationshipTypeConfig = inputConfig['relationshipType'] ? inputConfig['relationshipType'][0] : {};
-            this.relationshipType = relationshipTypeConfig['value'];
-
-            if (this.relationshipType) {
-                this.relationshipTypeName = new RelationshipTypeName(this.relationshipType);
-            } else {
-                this.relationshipTypeName = RelationshipTypeName.REFERENCE;
-            }
-
-            let allowContentTypeConfig = inputConfig['allowContentType'] || [];
-            this.allowedContentTypes = allowContentTypeConfig.map((cfg) => cfg['value']).filter((val) => !!val);
-
-            let allowContentPathConfig = inputConfig['allowPath'] || [];
-            this.allowedContentPaths = allowContentPathConfig.map((cfg) => cfg['value']).filter((val) => !!val);
+        protected getContentPath(raw: ImageSelectorDisplayValue): api.content.ContentPath {
+            return raw.getContentPath();
         }
 
         private updateSelectedItemsIcons() {
@@ -155,13 +94,9 @@ module api.content.form.inputtype.image {
             return null;
         }
 
-        private countSelectedOptions(): number {
-            return this.selectedOptionsView.count();
-        }
-
         private getRemainingOccurrences(): number {
             let inputMaximum = this.getInput().getOccurrences().getMaximum();
-            let countSelected = this.countSelectedOptions();
+            let countSelected = this.selectedOptionsView.count();
             let rest = -1;
             if (inputMaximum === 0) {
                 rest = 0;
@@ -203,18 +138,14 @@ module api.content.form.inputtype.image {
                                relationshipAllowedContentTypes.length ? relationshipAllowedContentTypes :
                                    [ContentTypeName.IMAGE.toString(), ContentTypeName.MEDIA_VECTOR.toString()];
 
-            let imageSelectorLoader = ImageSelectorLoader.create().setContent(this.config.content).
-                setInputName(inputName).
-                setAllowedContentPaths(this.allowedContentPaths).
-                setContentTypeNames(contentTypes).
-                setRelationshipType(this.relationshipType).
-                build();
+            let imageSelectorLoader = ImageSelectorLoader.create().setContent(this.config.content).setInputName(
+                inputName).setAllowedContentPaths(this.allowedContentPaths).setContentTypeNames(contentTypes).setRelationshipType(
+                this.relationshipType).build();
 
             let contentComboBox: ImageContentComboBox
-                    = ImageContentComboBox.create().setMaximumOccurrences(maximumOccurrences).setLoader(imageSelectorLoader).
-                    setSelectedOptionsView(this.selectedOptionsView = this.createSelectedOptionsView()).
-                    setValue(value).
-                    build();
+                = ImageContentComboBox.create().setMaximumOccurrences(maximumOccurrences).setLoader(
+                imageSelectorLoader).setSelectedOptionsView(this.selectedOptionsView = this.createSelectedOptionsView()).setValue(
+                value).build();
             let comboBox: ComboBox<ImageSelectorDisplayValue> = contentComboBox.getComboBox();
 
             comboBox.onHidden((event: api.dom.ElementHiddenEvent) => {

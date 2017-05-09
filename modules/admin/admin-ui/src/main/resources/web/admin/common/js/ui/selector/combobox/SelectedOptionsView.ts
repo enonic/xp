@@ -10,6 +10,8 @@ module api.ui.selector.combobox {
 
         addOption(option: api.ui.selector.Option<T>, silent: boolean, keyCode: number): boolean;
 
+        updateOption(option: api.ui.selector.Option<T>, newOption: api.ui.selector.Option<T>, silent?: boolean);
+
         removeOption(optionToRemove: api.ui.selector.Option<T>, silent: boolean);
 
         count(): number;
