@@ -34,7 +34,12 @@
 
 }
 
-.mce-fullscreen .mce-toolbar-grp{
-  width: inherit !important;
-  position: static !important;
+.mce-fullscreen {
+  .panel {
+    overflow: visible; // to allow deeply nested mce container to be shown fullscreen
+  }
+  .mce-toolbar-grp {
+    width: inherit !important;
+    position: static !important;
+  }
 }

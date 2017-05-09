@@ -3,19 +3,17 @@ package com.enonic.xp.core.impl.content;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.site.Site;
 
 final class GetNearestSiteCommand
+    extends AbstractContentCommand
 {
     private final ContentId contentId;
 
-    private final ContentService contentService;
-
     private GetNearestSiteCommand( Builder builder )
     {
+        super( builder );
         contentId = builder.contentId;
-        contentService = builder.contentService;
     }
 
     public static Builder create()
@@ -25,7 +23,7 @@ final class GetNearestSiteCommand
 
     public Site execute()
     {
-        final Content content = contentService.getById( this.contentId );
+        final Content content = getContent( this.contentId );
 
         if ( content.isSite() )
         {
@@ -46,7 +44,7 @@ final class GetNearestSiteCommand
             return null;
         }
 
-        final Content content = this.contentService.getByPath( contentPath );
+        final Content content = getContent( contentPath );
 
         if ( content.isSite() )
         {
@@ -60,10 +58,9 @@ final class GetNearestSiteCommand
     }
 
     public static final class Builder
+        extends AbstractContentCommand.Builder<Builder>
     {
         private ContentId contentId;
-
-        private ContentService contentService;
 
         private Builder()
         {
@@ -72,12 +69,6 @@ final class GetNearestSiteCommand
         public Builder contentId( ContentId contentId )
         {
             this.contentId = contentId;
-            return this;
-        }
-
-        public Builder contentService( ContentService contentService )
-        {
-            this.contentService = contentService;
             return this;
         }
 

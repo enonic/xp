@@ -48,11 +48,10 @@ export class DetailsView extends api.dom.DivEl {
         this.appendChild(this.loadMask = new api.ui.mask.LoadMask(this));
         this.loadMask.addClass('details-panel-mask');
 
-        this.initViewer();
-        this.initDefaultWidgetView();
         this.initCommonWidgetViews();
         this.initDivForNoSelection();
         this.initWidgetsSelectionRow();
+        this.initViewer();
 
         this.appendChild(this.detailsContainer);
         this.appendChild(this.divForNoSelection);
@@ -144,22 +143,15 @@ export class DetailsView extends api.dom.DivEl {
 
             updateView(isActive);
 
-        } else if (isUpdated) {
-            this.fetchWidgetByKey(key).then((widget: Widget) => {
-                widgetView = WidgetView.create().setName(widget.getDisplayName()).setDetailsView(this).setWidget(widget).build();
-                this.updateWidget(widgetView);
-
-                updateView();
-            });
-        } else { // newly installed
-            this.fetchWidgetByKey(key).then((widget: Widget) => {
-                widgetView = WidgetView.create().setName(widget.getDisplayName()).setDetailsView(this).setWidget(widget).build();
-                this.addWidget(widgetView);
-
-                updateView();
-            });
-
+            return;
         }
+
+        this.fetchWidgetByKey(key).then((widget: Widget) => {
+            widgetView = WidgetView.create().setName(widget.getDisplayName()).setDetailsView(this).setWidget(widget).build();
+            isUpdated ? this.updateWidget(widgetView) : this.addWidget(widgetView);
+
+            updateView();
+        });
     }
 
     getCustomWidgetViewsAndUpdateDropdown(): wemQ.Promise<void> {
@@ -167,7 +159,6 @@ export class DetailsView extends api.dom.DivEl {
         if (!this.alreadyFetchedCustomWidgets) {
             this.fetchAndInitCustomWidgetViews().then(() => {
                 this.widgetsSelectionRow.updateWidgetsDropdown(this.widgetViews);
-                // this.updateActiveWidget();
                 this.alreadyFetchedCustomWidgets = true;
                 deferred.resolve(null);
             });
@@ -184,7 +175,11 @@ export class DetailsView extends api.dom.DivEl {
 
         this.activeWidget = widgetView;
 
-        this.widgetsSelectionRow.updateState(this.activeWidget);
+        this.toggleClass('default-widget', this.defaultWidgetView.isActive());
+
+        if (this.widgetsSelectionRow) {
+            this.widgetsSelectionRow.updateState(this.activeWidget);
+        }
     }
 
     getActiveWidget(): WidgetView {
@@ -196,18 +191,9 @@ export class DetailsView extends api.dom.DivEl {
     }
 
     activateDefaultWidget() {
-        let defaultWidget = this.getDefaultWidget();
-        if (defaultWidget) {
-            defaultWidget.setActive();
+        if (this.defaultWidgetView) {
+            this.defaultWidgetView.setActive();
         }
-    }
-
-    isDefaultWidget(widgetView: WidgetView): boolean {
-        return widgetView === this.defaultWidgetView;
-    }
-
-    getDefaultWidget(): WidgetView {
-        return this.defaultWidgetView;
     }
 
     private initViewer() {
@@ -273,31 +259,27 @@ export class DetailsView extends api.dom.DivEl {
         this.loadMask.hide();
     }
 
-    private initDefaultWidgetView() {
-        let builder = WidgetView.create()
-            .setName('Info')
-            .setDetailsView(this)
+    private initCommonWidgetViews() {
+
+        this.defaultWidgetView = WidgetView.create().setName('Details').setDetailsView(this)
             .setWidgetItemViews([
                 new StatusWidgetItemView(),
                 new UserAccessWidgetItemView(),
                 new PropertiesWidgetItemView(),
                 new AttachmentsWidgetItemView()
-            ]);
+            ]).build();
 
-        this.detailsContainer.appendChild(this.activeWidget = this.defaultWidgetView = builder.build());
-    }
-
-    private initCommonWidgetViews() {
-
-        let versionsWidgetView = WidgetView.create().setName('Version history').setDetailsView(this)
+        const versionsWidgetView = WidgetView.create().setName('Version history').setDetailsView(this)
             .addWidgetItemView(new VersionsWidgetItemView()).build();
 
-        let dependenciesWidgetView = WidgetView.create().setName('Dependencies').setDetailsView(this)
+        const dependenciesWidgetView = WidgetView.create().setName('Dependencies').setDetailsView(this)
             .addWidgetItemView(new DependenciesWidgetItemView()).build();
 
         dependenciesWidgetView.addClass('dependency-widget');
 
-        this.addWidgets([versionsWidgetView, dependenciesWidgetView]);
+        this.addWidgets([this.defaultWidgetView, versionsWidgetView, dependenciesWidgetView]);
+
+        this.setActiveWidget(this.defaultWidgetView);
     }
 
     private fetchCustomWidgetViews(): wemQ.Promise<Widget[]> {
@@ -391,9 +373,6 @@ export class DetailsView extends api.dom.DivEl {
     private layout(empty: boolean = true) {
         if (this.widgetsSelectionRow) {
             this.widgetsSelectionRow.setVisible(!empty);
-        }
-        if (this.viewer) {
-            this.viewer.setVisible(!empty);
         }
         this.detailsContainer.setVisible(!empty);
         this.toggleClass('no-selection', empty);

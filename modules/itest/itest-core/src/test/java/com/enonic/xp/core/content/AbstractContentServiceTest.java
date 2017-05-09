@@ -31,6 +31,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentByQueryResult;
@@ -269,8 +270,9 @@ public class AbstractContentServiceTest
         this.contentService.setContentTypeService( contentTypeService );
         this.contentService.setMixinService( mixinService );
         this.contentService.setTranslator( this.translator );
-        this.contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
-        } );
+        this.contentService.setFormDefaultValuesProcessor( ( form, data ) ->
+                                                           {
+                                                           } );
 
         initializeRepository();
     }
@@ -302,23 +304,25 @@ public class AbstractContentServiceTest
     }
 
 
-    protected Content createContent( final ContentPath parentPath, final String displayName )
-        throws Exception
-    {
-        return doCreateContent( parentPath, displayName, new PropertyTree() );
-    }
-
     protected Content createContent( ContentPath parentPath )
         throws Exception
     {
-        return doCreateContent( parentPath, "This is my test content #" + UUID.randomUUID().toString(), new PropertyTree() );
+        return doCreateContent( parentPath, "This is my test content #" + UUID.randomUUID().toString(), new PropertyTree(),
+                                ExtraDatas.empty(), ContentTypeName.folder() );
+    }
+
+    protected Content createContent( final ContentPath parentPath, final String displayName )
+        throws Exception
+    {
+        return doCreateContent( parentPath, displayName, new PropertyTree(), ExtraDatas.empty(), ContentTypeName.folder() );
     }
 
     protected Content createContent( ContentPath parentPath, final ContentPublishInfo publishInfo )
         throws Exception
     {
         final CreateContentParams.Builder builder =
-            createContentBuilder( parentPath, "This is my test content #" + UUID.randomUUID().toString(), new PropertyTree() ).
+            createContentBuilder( parentPath, "This is my test content #" + UUID.randomUUID().toString(), new PropertyTree(),
+                                  ExtraDatas.empty(), ContentTypeName.folder() ).
                 contentPublishInfo( publishInfo );
 
         return doCreateContent( builder );
@@ -328,12 +332,27 @@ public class AbstractContentServiceTest
         throws Exception
     {
 
-        return doCreateContent( parentPath, displayName, data );
+        return doCreateContent( parentPath, displayName, data, ExtraDatas.empty(), ContentTypeName.folder() );
     }
 
-    private Content doCreateContent( final ContentPath parentPath, final String displayName, final PropertyTree data )
+    protected Content createContent( final ContentPath parentPath, final String displayName, final PropertyTree data, ContentTypeName type )
+        throws Exception
     {
-        final CreateContentParams.Builder builder = createContentBuilder( parentPath, displayName, data );
+        return doCreateContent( parentPath, displayName, data, ExtraDatas.empty(), type );
+    }
+
+    protected Content createContent( final ContentPath parentPath, final String displayName, final PropertyTree data,
+                                     final ExtraDatas extraDatas )
+        throws Exception
+    {
+
+        return doCreateContent( parentPath, displayName, data, extraDatas, ContentTypeName.folder() );
+    }
+
+    private Content doCreateContent( final ContentPath parentPath, final String displayName, final PropertyTree data,
+                                     final ExtraDatas extraDatas, ContentTypeName type )
+    {
+        final CreateContentParams.Builder builder = createContentBuilder( parentPath, displayName, data, extraDatas, type );
         return doCreateContent( builder );
     }
 
@@ -343,14 +362,14 @@ public class AbstractContentServiceTest
     }
 
     private CreateContentParams.Builder createContentBuilder( final ContentPath parentPath, final String displayName,
-                                                              final PropertyTree data )
+                                                              final PropertyTree data, final ExtraDatas extraDatas, ContentTypeName type )
     {
         return CreateContentParams.create().
-            contentData( data ).
             displayName( displayName ).
             parent( parentPath ).
             contentData( data ).
-            type( ContentTypeName.folder() );
+            extraDatas( extraDatas ).
+            type( type );
     }
 
     protected PropertyTree createPropertyTreeForAllInputTypes()

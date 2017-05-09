@@ -196,20 +196,16 @@
 
       .widget-selector {
         max-width: none;
-        margin-left: 1px;
 
-        .viewer {
-          font-size: 12px;
-        }
-
-        .selected-option {
-          width: calc(~'100% - 42px');
+        .selected-option .option-value {
+          margin-left: 0;
+          padding-left: 42px;
+          width: calc(~'100% - 84px');
+          border-left: none;
         }
 
         .@{_COMMON_PREFIX}dropdown-handle {
-          &.down {
-            right: 2px;
-          }
+          border-left: none;
         }
       }
     }
@@ -247,7 +243,6 @@
 
       margin: 0 0 2px 0;
 
-      margin-left: 5px;
       overflow: hidden;
       .transition(all 0.1s ease-in-out);
 

@@ -3,6 +3,7 @@ package com.enonic.xp.content;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
@@ -53,6 +54,11 @@ public final class ExtraDatas
     public static ExtraDatas from( final Iterable<? extends ExtraData> extradatas )
     {
         return new ExtraDatas( ImmutableSet.copyOf( extradatas ) );
+    }
+
+    public static ExtraDatas from( final Stream<? extends ExtraData> extradatas )
+    {
+        return new ExtraDatas( ImmutableSet.copyOf( extradatas.collect( Collectors.toSet() ) ) );
     }
 
     public static ExtraDatas from( final ExtraDatas extraDatas, final ExtraData extraData )
