@@ -1,11 +1,13 @@
 import '../../api.ts';
 import {IssueFetcher} from './IssueFetcher';
 import {IssueStatsJson} from './IssueStatsJson';
-import {IssueList, IssueListItem} from './IssueList';
+import {IssueListItem} from './IssueList';
 import {IssueType} from './IssueType';
 import {IssueDetailsDialog} from './IssueDetailsDialog';
 import {GetIssueRequest} from './GetIssueRequest';
 import {Issue} from './Issue';
+import {CreateIssueDialog} from './CreateIssueDialog';
+import {IssuesPanel} from './IssuesPanel';
 
 import ModalDialog = api.ui.dialog.ModalDialog;
 import DockedPanel = api.ui.panel.DockedPanel;
@@ -15,8 +17,6 @@ import LoadMask = api.ui.mask.LoadMask;
 import PEl = api.dom.PEl;
 import SpanEl = api.dom.SpanEl;
 import Element = api.dom.Element;
-import {CreateIssueDialog} from './CreateIssueDialog';
-import {IssuesPanel} from './IssuesPanel';
 
 export class IssuesDialog extends ModalDialog {
 

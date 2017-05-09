@@ -57,7 +57,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
         this.addClass('issue-details-dialog');
 
-        this.autoUpdateTitle = false;
+        this.setAutoUpdateTitle(false);
 
         this.initRouting();
 
@@ -89,7 +89,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
         this.issue = issue;
 
         if (this.issue.getPublishRequest().getItemsIds().length > 0) {
-            //this.initActions();
             this.lockControls();
         }
 

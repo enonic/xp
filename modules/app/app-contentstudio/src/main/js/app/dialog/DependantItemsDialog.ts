@@ -22,10 +22,6 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     protected actionButton: DialogButton;
 
-    private dialogName: string;
-
-    private dialogSubName: string;
-
     private autoUpdateTitle: boolean = true;
 
     private ignoreItemsChanged: boolean;
@@ -44,8 +40,6 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     protected loadMask: LoadMask;
 
-    protected autoUpdateTitle: boolean = true;
-
     protected loading: boolean = false;
 
     protected loadingRequested: boolean = false;
@@ -54,13 +48,10 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     protected dependantIds: ContentId[] = [];
 
-    constructor(dialogName: string, dialogSubName: string, dependantsName: string) {
-        super(dialogName);
+    constructor(title: string = '', dialogSubName: string = '', dependantsName: string = '', buttonRow?: ModalDialogButtonRow) {
+        super(<api.ui.dialog.ModalDialogConfig>{title, buttonRow});
 
         this.addClass('dependant-dialog');
-
-        this.dialogName = dialogName;
-        this.dialogSubName = dialogSubName;
 
         this.subTitle = new api.dom.H6El('sub-title')
             .setHtml(dialogSubName, false);
@@ -73,7 +64,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         let itemsChangedListener = (items) => {
             let count = this.itemList.getItemCount();
             if (this.autoUpdateTitle) {
-                this.setTitle(this.dialogName + (count > 1 ? 's' : ''));
+                this.setTitle(title + (count > 1 ? 's' : ''));
             }
         };
         this.itemList.onItemsRemoved(itemsChangedListener);
@@ -194,8 +185,8 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.dependantList.addItems(items);
     }
 
-    setSubTitle(text?: string) {
-        this.subTitle.setHtml(text || this.dialogSubName, false);
+    setSubTitle(text: string, escapeHtml?: boolean) {
+        this.subTitle.setHtml(text, escapeHtml);
     }
 
     protected updateButtonCount(actionString: string, count: number) {

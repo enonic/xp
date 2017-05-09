@@ -92,7 +92,6 @@
   .publish-dialog-menu {
     height: initial;
     .@{_COMMON_PREFIX}dropdown-handle {
-      top: 6px;
       width: 36px;
       height: 36px;
       &:disabled {
@@ -104,6 +103,9 @@
     }
     .action-button {
       margin-left: 37px !important;
+    }
+  }
+
   .progress-bar {
     display: none;
   }
@@ -118,12 +120,12 @@
       display: none;
     }
   }
-
+/*
   .dialog-buttons .@{_COMMON_PREFIX}button.show-schedule-action {
 
     .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent, false);
 
-    .picker-icon("date", 22px, 3px, 8px, all);
+    .picker-icon("date", 22px, 5px, 8px, all);
 
     position: relative;
     width: 32px;
@@ -131,7 +133,7 @@
     line-height: 32px;
     padding: 0;
   }
-
+*/
   &.masked {
     opacity: 0;
   }

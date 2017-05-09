@@ -1,7 +1,5 @@
 package com.enonic.xp.core.content;
 
-import java.time.Instant;
-
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -9,7 +7,6 @@ import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.data.PropertyTree;

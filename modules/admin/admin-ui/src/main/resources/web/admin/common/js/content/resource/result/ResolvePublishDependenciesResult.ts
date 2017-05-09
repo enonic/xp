@@ -53,6 +53,7 @@ module api.content.resource.result {
                 requested)
                 .setRequiredContents(required)
                 .setContainsInvalid(containsInvalid)
+                .setAllPublishable(allPublishable)
                 .build();
         }
 

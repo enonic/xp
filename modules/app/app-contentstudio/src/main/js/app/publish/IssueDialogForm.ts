@@ -11,9 +11,6 @@ import ValidityChangedEvent = api.ValidityChangedEvent;
 import PrincipalKey = api.security.PrincipalKey;
 import PEl = api.dom.PEl;
 import StringHelper = api.util.StringHelper;
-import IsAuthenticatedRequest = api.security.auth.IsAuthenticatedRequest;
-import PrincipalLoader = api.security.PrincipalLoader;
-import LoginResult = api.security.auth.LoginResult;
 
 export class IssueDialogForm extends api.ui.form.Form {
 
@@ -36,14 +33,10 @@ export class IssueDialogForm extends api.ui.form.Form {
 
     public doRender(): wemQ.Promise<boolean> {
         return super.doRender().then(() => {
-            return new IsAuthenticatedRequest().sendAndParse();
-        }).then((loginResult: LoginResult) => {
-            const currentPrincipalKey = loginResult.getUser().getKey();
-            const loader = <PrincipalLoader> this.selector.getLoader();
-            return loader.skipPrincipal(currentPrincipalKey).load();
-        }).then(() => {
-            this.title.giveFocus();
-            return true;
+            return this.selector.getLoader().load().then(() => {
+                this.title.giveFocus();
+                return true;
+            });
         });
     }
 
@@ -61,7 +54,8 @@ export class IssueDialogForm extends api.ui.form.Form {
 
         this.descriptionText = new PEl('description-text');
 
-        const principalLoader = new PrincipalLoader().setAllowedTypes([PrincipalType.USER]);
+        const principalLoader = new api.security.PrincipalLoader().setAllowedTypes([PrincipalType.USER]);
+        principalLoader.load();
 
         this.selector = api.ui.security.PrincipalComboBox.create().setLoader(principalLoader).setMaxOccurences(0).build();
     }
