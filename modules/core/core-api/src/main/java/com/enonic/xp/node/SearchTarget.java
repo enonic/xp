@@ -2,7 +2,7 @@ package com.enonic.xp.node;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.security.PrincipalKeys;
 
 public class SearchTarget
 {
@@ -10,23 +10,23 @@ public class SearchTarget
 
     private final Branch branch;
 
-    private final AuthenticationInfo authenticationInfo;
+    private final PrincipalKeys principalKeys;
 
     private SearchTarget( final Builder builder )
     {
-        authenticationInfo = builder.authenticationInfo;
+        principalKeys = builder.principalKeys;
         branch = builder.branch;
         repositoryId = builder.repositoryId;
     }
 
-    public static Builder newBuilder()
+    public static Builder create()
     {
         return new Builder();
     }
 
     public static final class Builder
     {
-        private AuthenticationInfo authenticationInfo;
+        private PrincipalKeys principalKeys;
 
         private Branch branch;
 
@@ -36,9 +36,9 @@ public class SearchTarget
         {
         }
 
-        public Builder authenticationInfo( final AuthenticationInfo val )
+        public Builder principalKeys( final PrincipalKeys val )
         {
-            authenticationInfo = val;
+            principalKeys = val;
             return this;
         }
 

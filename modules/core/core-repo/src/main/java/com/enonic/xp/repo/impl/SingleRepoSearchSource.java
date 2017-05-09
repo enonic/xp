@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKeys;
@@ -83,8 +85,16 @@ public class SingleRepoSearchSource
             return this;
         }
 
+        private void validate()
+        {
+            Preconditions.checkNotNull( repositoryId, "RepositoryId must be set in search-source" );
+            Preconditions.checkNotNull( branch, "Branch must be set in search-source" );
+            Preconditions.checkNotNull( acl, "ACL must be set in search-source" );
+        }
+
         public SingleRepoSearchSource build()
         {
+            validate();
             return new SingleRepoSearchSource( this );
         }
     }

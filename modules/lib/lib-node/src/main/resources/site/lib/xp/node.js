@@ -10,6 +10,8 @@
 
 var factory = __.newBean('com.enonic.xp.lib.node.NodeHandleFactory');
 
+var multiRepoConnectfactory = __.newBean('com.enonic.xp.lib.node.MultiRepoNodeHandleFactory');
+
 function required(params, name) {
     var value = params[name];
     if (value === undefined) {
@@ -56,8 +58,19 @@ function argsToStringArray(argsArray) {
  * @constructor
  * @private
  */
-function RepoConnection(native) {
-    this.native = native;
+function RepoConnection(repoConnection) {
+    this.repoConnection = repoConnection;
+}
+
+/**
+ * Creates a new multirepo-connection.
+ *
+ * @returns {*} native Native multirepo-connection object.
+ * @constructor
+ * @private
+ */
+function MultiRepoConnection(multiRepoConnection) {
+    this.multiRepoConnection = multiRepoConnection;
 }
 
 /**
@@ -82,9 +95,8 @@ function RepoConnection(native) {
  */
 RepoConnection.prototype.create = function (params) {
     var scriptValue = __.toScriptValue(params);
-    return __.toNativeObject(this.native.create(scriptValue));
+    return __.toNativeObject(this.repoConnection.create(scriptValue));
 };
-
 
 /**
  * This function modifies a node.
@@ -100,7 +112,7 @@ RepoConnection.prototype.create = function (params) {
 RepoConnection.prototype.modify = function (params) {
     var editor = __.toScriptValue(params.editor);
     var key = required(params, 'key');
-    return __.toNativeObject(this.native.modify(editor, key));
+    return __.toNativeObject(this.repoConnection.modify(editor, key));
 };
 
 /**
@@ -114,7 +126,7 @@ RepoConnection.prototype.modify = function (params) {
  * @returns {object} The node or node array (as JSON) fetched from the repository.
  */
 RepoConnection.prototype.get = function (keys) {
-    return __.toNativeObject(this.native.get(argsToStringArray(arguments)));
+    return __.toNativeObject(this.repoConnection.get(argsToStringArray(arguments)));
 };
 
 /**
@@ -127,7 +139,7 @@ RepoConnection.prototype.get = function (keys) {
  * @returns {boolean} True if deleted, false otherwise.
  */
 RepoConnection.prototype.delete = function (keys) {
-    return __.toNativeObject(this.native.delete(argsToStringArray(arguments)));
+    return __.toNativeObject(this.repoConnection.delete(argsToStringArray(arguments)));
 };
 
 /**
@@ -160,7 +172,7 @@ RepoConnection.prototype.push = function (params) {
     handlerParams.exclude = nullOrValue(params.exclude);
     handlerParams.resolve = valueOrDefault(params.resolve, true);
 
-    return __.toNativeObject(this.native.push(handlerParams));
+    return __.toNativeObject(this.repoConnection.push(handlerParams));
 };
 
 /**
@@ -182,7 +194,7 @@ RepoConnection.prototype.diff = function (params) {
     handlerParams.targetBranch = required(params, 'target');
     handlerParams.includeChildren = valueOrDefault(params.includeChildren, false);
 
-    return __.toNativeObject(this.native.diff(handlerParams));
+    return __.toNativeObject(this.repoConnection.diff(handlerParams));
 };
 
 /**
@@ -198,7 +210,7 @@ RepoConnection.prototype.diff = function (params) {
 RepoConnection.prototype.getBinary = function (params) {
     var key = required(params, 'key');
     var binaryReference = params.binaryReference;
-    return this.native.getBinary(key, binaryReference);
+    return this.repoConnection.getBinary(key, binaryReference);
 };
 
 /**
@@ -217,7 +229,7 @@ RepoConnection.prototype.getBinary = function (params) {
 RepoConnection.prototype.move = function (params) {
     var source = required(params, 'source');
     var target = required(params, 'target');
-    return __.toNativeObject(this.native.move(source, target));
+    return __.toNativeObject(this.repoConnection.move(source, target));
 };
 
 /**
@@ -242,7 +254,33 @@ RepoConnection.prototype.query = function (params) {
     handlerParams.sort = valueOrDefault(params.sort, "_score DESC");
     handlerParams.aggregations = __.toScriptValue(params.aggregations);
     handlerParams.filters = __.toScriptValue(params.filters);
-    return __.toNativeObject(this.native.query(handlerParams));
+    return __.toNativeObject(this.repoConnection.query(handlerParams));
+};
+
+
+/**
+ * This command queries nodes.
+ *
+ * @example-ref examples/node/query.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {number} [params.start=0] Start index (used for paging).
+ * @param {number} [params.count=10] Number of contents to fetch.
+ * @param {string} params.query Query expression.
+ * @param {object} [params.filters] Query filters
+ * @param {string} [params.sort='_score DESC'] Sorting expression.
+ * @param {string} [params.aggregations] Aggregations expression.
+ * @returns {object} Result of query.
+ */
+MultiRepoConnection.prototype.query = function (params) {
+    var handlerParams = __.newBean('com.enonic.xp.lib.node.QueryNodeHandlerParams');
+    handlerParams.start = params.start;
+    handlerParams.count = params.count;
+    handlerParams.query = nullOrValue(params.query);
+    handlerParams.sort = valueOrDefault(params.sort, "_score DESC");
+    handlerParams.aggregations = __.toScriptValue(params.aggregations);
+    handlerParams.filters = __.toScriptValue(params.filters);
+    return __.toNativeObject(this.multiRepoConnection.query(handlerParams));
 };
 
 /**
@@ -267,7 +305,7 @@ RepoConnection.prototype.findChildren = function (params) {
     handlerParams.childOrder = nullOrValue(params.childOrder);
     handlerParams.countOnly = valueOrDefault(params.countOnly, false);
     handlerParams.recursive = valueOrDefault(params.recursive, false);
-    return __.toNativeObject(this.native.findChildren(handlerParams));
+    return __.toNativeObject(this.repoConnection.findChildren(handlerParams));
 };
 
 /**
@@ -278,7 +316,7 @@ RepoConnection.prototype.findChildren = function (params) {
  * @param {string} [mode]=ALL Refresh all (ALL) data, or just the search-index (SEARCH) or the storage-index (STORAGE)
  */
 RepoConnection.prototype.refresh = function (mode) {
-    this.native.refresh(valueOrDefault(mode, "ALL"));
+    this.repoConnection.refresh(valueOrDefault(mode, "ALL"));
 };
 
 
@@ -295,7 +333,7 @@ RepoConnection.prototype.refresh = function (mode) {
  */
 RepoConnection.prototype.setRootPermissions = function (params) {
     required(params, "_permissions");
-    return __.toNativeObject(this.native.setRootPermissions(__.toScriptValue(params)));
+    return __.toNativeObject(this.repoConnection.setRootPermissions(__.toScriptValue(params)));
 };
 
 
@@ -333,4 +371,31 @@ exports.connect = function (params) {
     }
 
     return new RepoConnection(factory.create(nodeHandleContext));
+};
+
+/**
+ * Creates a connection to several repositories with a given branch and authentication info.
+ *
+ * @example-ref examples/node/multiRepoConnect.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {object[]} params.sources array of sources to connect to
+ * @param {object} params.sources.repoId repository id
+ * @param {object} params.sources.branch branch id
+ * @param {object} [params.sources.user] User to execute the callback with. Default is the current user.
+ * @param {string} params.sources.user.login Login of the user.
+ * @param {string} [params.sources.user.userStore] User store containing the user. By default, all the user stores will be used.
+ * @param {string[]} [params.sources.principals] Additional principals to execute the callback with.
+ *
+ * @returns {MultiRepoConnection} Returns a new multirepo-connection.
+ */
+exports.multiRepoConnect = function (params) {
+
+    var multiRepoNodeHandleContext = __.newBean('com.enonic.xp.lib.node.MultiRepoNodeHandleContext');
+
+    params.sources.forEach(function (source) {
+        multiRepoNodeHandleContext.addSource(source.repoId, source.branch, source.principals);
+    });
+
+    return new MultiRepoConnection(multiRepoConnectfactory.create(multiRepoNodeHandleContext));
 };
