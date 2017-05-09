@@ -1259,6 +1259,9 @@ module api.ui.treegrid {
         }
 
         deleteNode(data: DATA): void {
+            if (this.highlightedNode && this.highlightedNode.getDataId() == this.getDataId(data)) {
+                this.unhighlightCurrentRow();
+            }
             this.deleteRootNode(this.root.getDefaultRoot(), data);
             if (this.root.isFiltered()) {
                 this.deleteRootNode(this.root.getFilteredRoot(), data);
