@@ -126,7 +126,8 @@ module api.ui.security.acl {
         public setAccessControlEntry(ace: AccessControlEntry, silent?: boolean) {
             this.ace = ace;
 
-            let principal = Principal.create().setKey(ace.getPrincipalKey()).setDisplayName(ace.getPrincipalDisplayName()).build();
+            let principal: Principal = <Principal>Principal.create().setKey(ace.getPrincipalKey()).setDisplayName(
+                ace.getPrincipalDisplayName()).build();
             this.setObject(principal);
 
             this.doLayout(principal);

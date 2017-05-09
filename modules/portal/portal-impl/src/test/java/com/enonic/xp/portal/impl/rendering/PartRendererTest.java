@@ -120,7 +120,6 @@ public class PartRendererTest
     public void htmlResponseComponentEditMode()
     {
         final PartDescriptor partDescriptor = PartDescriptor.create().
-            name( "myPartComponent" ).
             displayName( "My part component" ).
             config( Form.create().build() ).
             key( DescriptorKey.from( "module:myPartComponent" ) ).
@@ -161,7 +160,6 @@ public class PartRendererTest
     public void htmlResponseComponentEditModeNoMethodToHandleReq()
     {
         final PartDescriptor partDescriptor = PartDescriptor.create().
-            name( "myPartComponent" ).
             displayName( "My part component" ).
             config( Form.create().build() ).
             key( DescriptorKey.from( "module:myPartComponent" ) ).
@@ -201,7 +199,6 @@ public class PartRendererTest
     public void nullResponseComponentEditMode()
     {
         final PartDescriptor partDescriptor = PartDescriptor.create().
-            name( "myPartComponent" ).
             displayName( "My part component" ).
             config( Form.create().build() ).
             key( DescriptorKey.from( "module:myPartComponent" ) ).

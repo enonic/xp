@@ -6,8 +6,8 @@ import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.enonic.xp.form.Form;
 import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.form.Form;
 
 import static org.junit.Assert.*;
 
@@ -20,21 +20,18 @@ public class PartDescriptorsTest
     public static void initRegionDescriptors()
     {
         final PartDescriptor partDescriptor1 = PartDescriptor.create().
-            name( "news-part" ).
             displayName( "News part" ).
             config( Form.create().build() ).
             key( DescriptorKey.from( "module:new-part" ) ).
             build();
 
         final PartDescriptor partDescriptor2 = PartDescriptor.create().
-            name( "news-part2" ).
             displayName( "News part2" ).
             config( Form.create().build() ).
             key( DescriptorKey.from( "module:new-part2" ) ).
             build();
 
         final PartDescriptor partDescriptor3 = PartDescriptor.create().
-            name( "news-part3" ).
             displayName( "News part3" ).
             config( Form.create().build() ).
             key( DescriptorKey.from( "module:new-part3" ) ).

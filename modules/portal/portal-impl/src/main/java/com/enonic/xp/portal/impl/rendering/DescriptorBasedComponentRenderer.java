@@ -15,7 +15,7 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.region.Component;
-import com.enonic.xp.region.Descriptor;
+import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.region.DescriptorBasedComponent;
 import com.enonic.xp.web.HttpStatus;
 
@@ -55,7 +55,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
 
     private PortalResponse doRender( final R component, final PortalRequest portalRequest )
     {
-        final Descriptor descriptor = resolveDescriptor( component );
+        final ComponentDescriptor descriptor = resolveDescriptor( component );
         if ( descriptor == null )
         {
             return renderEmptyComponent( component, portalRequest );
@@ -152,13 +152,13 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
             build();
     }
 
-    private Descriptor resolveDescriptor( final DescriptorBasedComponent component )
+    private ComponentDescriptor resolveDescriptor( final DescriptorBasedComponent component )
     {
         final DescriptorKey descriptorKey = component.getDescriptor();
         return descriptorKey == null ? null : getComponentDescriptor( descriptorKey );
     }
 
-    protected abstract Descriptor getComponentDescriptor( final DescriptorKey descriptorKey );
+    protected abstract ComponentDescriptor getComponentDescriptor( final DescriptorKey descriptorKey );
 
     private RenderMode getRenderingMode( final PortalRequest portalRequest )
     {

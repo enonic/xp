@@ -107,7 +107,7 @@ final class ComponentHandlerWorker
         final Trace trace = Tracer.current();
         if ( trace != null )
         {
-            trace.put( "path", component.getPath() );
+            trace.put( "componentPath", component.getPath() );
             trace.put( "type", component.getType().toString() );
         }
         final PortalResponse response = renderer.render( component, this.request );

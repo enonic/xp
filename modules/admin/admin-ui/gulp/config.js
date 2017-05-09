@@ -56,8 +56,7 @@ var CONFIG = {
                 spec: {src: '../spec/_spec.ts', dest: '../spec/_all.js'},
                 // webpack
                 home: {src: '/js/home/main.js', name: 'home', assets: true},
-                launcher: {src: '/js/launcher/main.js', name: 'launcher', assets: true},
-                content: {src: '/apps/content-studio/js/main.ts', name: 'content-studio'}
+                launcher: {src: '/js/launcher/main.js', name: 'launcher', assets: true}
             },
             ts: {
                 target: 'ES5',

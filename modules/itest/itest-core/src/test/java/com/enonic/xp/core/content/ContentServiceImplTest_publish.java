@@ -1,5 +1,7 @@
 package com.enonic.xp.core.content;
 
+import java.time.Instant;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -12,6 +14,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.MoveContentParams;
@@ -34,7 +37,7 @@ public class ContentServiceImplTest_publish
 
     private static final String LINE_SEPARATOR = System.getProperty( "line.separator" );
 
-    private Content content1, content2, content1_1, content2_1;
+    private Content content1, content2, content1_1, content1_2_offline, content2_1;
 
     @Override
     public void setUp()
@@ -144,6 +147,21 @@ public class ContentServiceImplTest_publish
         assertEquals( 4, result.getPushedContents().getSize() );
     }
 
+    @Test
+    public void push_with_children()
+        throws Exception
+    {
+        createContentTree();
+
+        final PushContentParams pushParams = PushContentParams.create().
+            contentIds( ContentIds.from( content1.getId() ) ).
+            target( WS_OTHER ).
+            build();
+
+        final PublishContentResult result = this.contentService.publish( pushParams );
+        assertEquals( 3, result.getPushedContents().getSize() );
+    }
+
     /**
      * ./content1
      * ../content1_1 -> Ref:content2_1_1
@@ -151,7 +169,7 @@ public class ContentServiceImplTest_publish
      * ../content2_1
      * ../../content2_1_1
      * ./content3
-     **/
+     */
     @Test
     public void push_parent_of_dependencies()
         throws Exception
@@ -423,6 +441,7 @@ public class ContentServiceImplTest_publish
     /**
      * /content1
      * /content1_1
+     * /content1_2_offline
      * /content2
      * /content2_1 -> ref:content1_1
      */
@@ -447,6 +466,14 @@ public class ContentServiceImplTest_publish
             displayName( "content1_1" ).
             parent( content1.getPath() ).
             type( ContentTypeName.folder() ).
+            build() );
+
+        this.content1_2_offline = this.contentService.create( CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "content1_2_offline" ).
+            parent( content1.getPath() ).
+            type( ContentTypeName.folder() ).
+            contentPublishInfo( ContentPublishInfo.create().first( Instant.now() ).build() ).
             build() );
 
         final PropertyTree data = new PropertyTree();

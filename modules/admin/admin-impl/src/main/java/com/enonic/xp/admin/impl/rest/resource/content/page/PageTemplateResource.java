@@ -34,6 +34,8 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteService;
 
 @javax.ws.rs.Path(ResourceConstants.REST_ROOT + "content/page/template")
 @Produces(MediaType.APPLICATION_JSON)
@@ -42,9 +44,11 @@ import com.enonic.xp.security.SecurityService;
 public final class PageTemplateResource
     implements JaxRsComponent
 {
-    protected PageTemplateService pageTemplateService;
+    private PageTemplateService pageTemplateService;
 
     private ContentService contentService;
+
+    private SiteService siteService;
 
     private ContentTypeService contentTypeService;
 
@@ -121,7 +125,7 @@ public final class PageTemplateResource
                 return true;
             }
 
-            final Content nearestSite = this.contentService.getNearestSite( contentId );
+            final Site nearestSite = this.contentService.getNearestSite( contentId );
 
             if ( nearestSite != null )
             {
@@ -143,6 +147,11 @@ public final class PageTemplateResource
 
                 final Page page = content.getPage();
                 if ( page != null && page.hasController() )
+                {
+                    return true;
+                }
+
+                if ( new ControllerMappingsResolver( siteService ).canRender( content, nearestSite ) )
                 {
                     return true;
                 }
@@ -182,5 +191,11 @@ public final class PageTemplateResource
     public void setSecurityService( final SecurityService securityService )
     {
         this.principalsResolver = new ContentPrincipalsResolver( securityService );
+    }
+
+    @Reference
+    public void setSiteService( final SiteService siteService )
+    {
+        this.siteService = siteService;
     }
 }

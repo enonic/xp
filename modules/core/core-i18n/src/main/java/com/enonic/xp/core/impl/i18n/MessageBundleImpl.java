@@ -2,9 +2,9 @@ package com.enonic.xp.core.impl.i18n;
 
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
-import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -19,13 +19,13 @@ final class MessageBundleImpl
 
     private static final String LATIN_1_ENCODING = "ISO-8859-1";
 
-    public static final String MISSING_VALUE_MESSAGE = "NOT_TRANSLATED";
+    static final String MISSING_VALUE_MESSAGE = "NOT_TRANSLATED";
 
     private final static Logger LOG = LoggerFactory.getLogger( MessageBundleImpl.class );
 
     private final Properties properties;
 
-    public MessageBundleImpl( Properties properties )
+    MessageBundleImpl( final Properties properties )
     {
         this.properties = properties;
     }
@@ -33,17 +33,13 @@ final class MessageBundleImpl
     @Override
     public Set<String> getKeys()
     {
-        HashSet set = new HashSet<String>();
-        this.properties.keySet().forEach( set::add );
-
-        return set;
+        return this.properties.keySet().stream().map( Object::toString ).collect( Collectors.toSet() );
     }
 
     @Override
     public String localize( final String key, final Object... args )
     {
-        String message = (String) handleGetObject( key );
-
+        final String message = (String) handleGetObject( key );
         return StringUtils.isNotEmpty( message ) ? format( message, args ) : MISSING_VALUE_MESSAGE;
     }
 
@@ -68,7 +64,7 @@ final class MessageBundleImpl
         {
             return new String( localizedPhrase.getBytes( LATIN_1_ENCODING ), UTF_8_ENCODING );
         }
-        catch ( UnsupportedEncodingException e )
+        catch ( final UnsupportedEncodingException e )
         {
             LOG.error( "Parsing localized phrase: " + localizedPhrase + " failed", e );
             return null;

@@ -4,7 +4,7 @@
  * @example
  * var mustacheLib = require('/lib/xp/mustache');
  *
- * @module lib/xp/mustache
+ * @module mustache
  */
 
 var service = __.newBean('com.enonic.xp.lib.mustache.MustacheService');

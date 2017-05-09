@@ -850,11 +850,11 @@ module api.dom {
 
         private notifyRemoved(parent: Element, target?: Element) {
             let removedEvent = new ElementRemovedEvent(this, parent, target);
-            this.removedListeners.forEach((listener) => {
-                listener(removedEvent);
-            });
             this.children.forEach((child: Element) => {
                 child.notifyRemoved(removedEvent.getParent(), removedEvent.getTarget());
+            });
+            this.removedListeners.forEach((listener) => {
+                listener(removedEvent);
             });
         }
 

@@ -42,7 +42,7 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
     }
 
     protected createBrowseItemPanel(): ApplicationBrowseItemPanel {
-        return new ApplicationBrowseItemPanel(this.treeGrid);
+        return new ApplicationBrowseItemPanel();
     }
 
     treeNodesToBrowseItems(nodes: TreeNode<Application>[]): BrowseItem<Application>[] {
@@ -82,7 +82,7 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
             new UninstallApplicationRequest(applicationKeys).sendAndParse().done();
         });
 
-        api.application.ApplicationEvent.on((event: ApplicationEvent) => {
+        ApplicationEvent.on((event: ApplicationEvent) => {
             if (ApplicationEventType.INSTALLED === event.getEventType()) {
                 this.treeGrid.placeApplicationNode(event.getApplicationKey()).then(() => {
                     setTimeout(() => { // timeout lets grid to remove UploadMockNode so that its not counted in the toolbar

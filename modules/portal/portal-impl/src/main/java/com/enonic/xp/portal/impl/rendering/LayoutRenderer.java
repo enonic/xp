@@ -5,7 +5,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
-import com.enonic.xp.region.Descriptor;
+import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutDescriptorService;
 
@@ -22,7 +22,7 @@ public final class LayoutRenderer
     }
 
     @Override
-    protected Descriptor getComponentDescriptor( final DescriptorKey descriptorKey )
+    protected ComponentDescriptor getComponentDescriptor( final DescriptorKey descriptorKey )
     {
         return layoutDescriptorService.getByKey( descriptorKey );
     }

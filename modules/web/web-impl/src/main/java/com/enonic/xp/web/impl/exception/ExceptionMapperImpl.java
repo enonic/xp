@@ -36,7 +36,9 @@ public final class ExceptionMapperImpl
         throws WebException
     {
         final HttpStatus status = res.getStatus();
-        if ( isError( status ) )
+        final Object body = res.getBody();
+
+        if ( isError( status ) && ( body == null ) )
         {
             throw new WebException( status, status.getReasonPhrase() );
         }

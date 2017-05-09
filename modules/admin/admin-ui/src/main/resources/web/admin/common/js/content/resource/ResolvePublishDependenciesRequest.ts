@@ -4,7 +4,7 @@ module api.content.resource {
     import ResolvePublishDependenciesResult = api.content.resource.result.ResolvePublishDependenciesResult;
 
     export class ResolvePublishDependenciesRequest
-    extends ContentResourceRequest<ResolvePublishContentResultJson, ResolvePublishDependenciesResult> {
+            extends ContentResourceRequest<ResolvePublishContentResultJson, ResolvePublishDependenciesResult> {
 
         private ids: ContentId[] = [];
 

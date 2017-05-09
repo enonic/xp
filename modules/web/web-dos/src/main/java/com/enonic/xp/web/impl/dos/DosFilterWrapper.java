@@ -8,13 +8,17 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 
 import org.eclipse.jetty.servlets.DoSFilter;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 
-@Component(immediate = true, service = Filter.class, configurationPid = "com.enonic.xp.web.dos",
-    property = {"osgi.http.whiteboard.filter.pattern=/", "service.ranking:Integer=400", "osgi.http.whiteboard.filter.dispatcher=REQUEST"})
+import com.enonic.xp.annotation.Order;
+
+@Component(immediate = true, service = Filter.class, configurationPid = "com.enonic.xp.web.dos")
+@Order(-400)
+@WebFilter("/*")
 public final class DosFilterWrapper
     implements Filter
 {

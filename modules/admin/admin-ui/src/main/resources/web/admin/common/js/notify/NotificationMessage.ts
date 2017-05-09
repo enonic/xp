@@ -4,8 +4,11 @@ module api.notify {
 
         private notificationInner: api.dom.DivEl;
 
-        constructor(message: string) {
+        private autoHide: boolean;
+
+        constructor(message: string, autoHide: boolean = false) {
             super('notification');
+            this.autoHide = autoHide;
             this.notificationInner = new api.dom.DivEl('notification-inner');
             let notificationRemove = new api.dom.SpanEl('notification-remove');
             notificationRemove.setHtml('X');
@@ -15,5 +18,8 @@ module api.notify {
             this.appendChild(this.notificationInner);
         }
 
+        isAutoHide(): boolean {
+            return this.autoHide;
+        }
     }
 }

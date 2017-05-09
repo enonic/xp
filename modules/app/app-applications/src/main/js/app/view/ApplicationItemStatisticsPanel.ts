@@ -52,14 +52,6 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
 
         this.actionMenu.setLabel(api.util.StringHelper.capitalize(currentApplication.getState()));
 
-        if (currentApplication.isStarted()) {
-            ApplicationBrowseActions.get().START_APPLICATION.setEnabled(false);
-            ApplicationBrowseActions.get().STOP_APPLICATION.setEnabled(true);
-        } else {
-            ApplicationBrowseActions.get().START_APPLICATION.setEnabled(true);
-            ApplicationBrowseActions.get().STOP_APPLICATION.setEnabled(false);
-        }
-
         this.applicationDataContainer.removeChildren();
 
         let infoGroup = new ItemDataGroup('Info', 'info');

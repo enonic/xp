@@ -4,7 +4,7 @@
  * @example
  * var taskLib = require('/lib/xp/task');
  *
- * @module lib/xp/task
+ * @module task
  */
 
 function checkRequired(params, name) {

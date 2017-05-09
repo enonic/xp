@@ -414,7 +414,7 @@ module api.util.htmlarea.dialog {
             let imageInfoMixin = new api.schema.mixin.MixinName('media:imageInfo');
             let imageInfoData = imageContent.getExtraData(imageInfoMixin);
 
-            if (!imageInfoData.getData()) {
+            if (!imageInfoData || !imageInfoData.getData()) {
                 return null;
             }
 

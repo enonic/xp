@@ -12,6 +12,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 
+import static com.enonic.xp.content.ContentPropertyNames.APPLICATION_KEY;
 import static com.enonic.xp.content.ContentPropertyNames.ATTACHMENT;
 import static com.enonic.xp.content.ContentPropertyNames.ATTACHMENT_TEXT_COMPONENT;
 import static com.enonic.xp.content.ContentPropertyNames.CREATED_TIME;
@@ -24,10 +25,13 @@ import static com.enonic.xp.content.ContentPropertyNames.OWNER;
 import static com.enonic.xp.content.ContentPropertyNames.PAGE;
 import static com.enonic.xp.content.ContentPropertyNames.PAGE_TEXT_COMPONENT_PROPERTY_PATH_PATTERN;
 import static com.enonic.xp.content.ContentPropertyNames.SITE;
+import static com.enonic.xp.content.ContentPropertyNames.SITECONFIG;
 import static com.enonic.xp.content.ContentPropertyNames.TYPE;
 
 class ContentIndexConfigFactory
 {
+
+
     public static IndexConfigDocument create( final CreateContentTranslatorParams params, final ContentTypeService contentTypeService )
     {
         return doCreateIndexConfig( getForm( contentTypeService, params.getType() ), params.getType() );
@@ -48,6 +52,7 @@ class ContentIndexConfigFactory
             add( MODIFIED_TIME, IndexConfig.MINIMAL ).
             add( OWNER, IndexConfig.MINIMAL ).
             add( PAGE, IndexConfig.NONE ).
+            add( PropertyPath.from( DATA, SITECONFIG, APPLICATION_KEY ), IndexConfig.MINIMAL ).
             add( PAGE_TEXT_COMPONENT_PROPERTY_PATH_PATTERN, IndexConfig.FULLTEXT ).
             add( PropertyPath.from( PAGE, "regions" ), IndexConfig.NONE ).
             add( SITE, IndexConfig.NONE ).

@@ -17,7 +17,7 @@ import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.widget.json.WidgetDescriptorJson;
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.admin.widget.WidgetDescriptorService;
-import com.enonic.xp.admin.widget.WidgetDescriptors;
+import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.RoleKeys;
 
@@ -45,9 +45,9 @@ public class WidgetDescriptorResource
         this.widgetDescriptorService = widgetDescriptorService;
     }
 
-    private List<WidgetDescriptorJson> widgetDescriptorsToJsonList( final WidgetDescriptors widgetDescriptors )
+    private List<WidgetDescriptorJson> widgetDescriptorsToJsonList( final Descriptors<WidgetDescriptor> descriptors )
     {
-        return widgetDescriptors.stream().map( this::mapWidgetDescriptorToJson ).collect( toList() );
+        return descriptors.stream().map( this::mapWidgetDescriptorToJson ).collect( toList() );
     }
 
     private WidgetDescriptorJson mapWidgetDescriptorToJson( final WidgetDescriptor widgetDescriptor )

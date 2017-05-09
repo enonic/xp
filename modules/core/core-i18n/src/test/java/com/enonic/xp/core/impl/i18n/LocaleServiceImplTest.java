@@ -57,6 +57,25 @@ public class LocaleServiceImplTest
     }
 
     @Test
+    public void get_bundle_no_application()
+        throws Exception
+    {
+        final MessageBundle bundle = localeService.getBundle( null, Locale.ENGLISH );
+        assertNull( bundle );
+    }
+    
+    @Test
+    public void get_bundle_no_locale()
+        throws Exception
+    {
+        final MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "myapplication" ), null );
+
+        assertNotNull( bundle );
+        assertEquals( 7, bundle.getKeys().size() );
+        assertEquals( "default", bundle.localize( "msg" ) );
+    }
+
+    @Test
     public void get_bundle_with_country()
         throws Exception
     {

@@ -4,5 +4,6 @@ module api.content.json {
 
         from: string;
         to: string;
+        first: string;
     }
 }

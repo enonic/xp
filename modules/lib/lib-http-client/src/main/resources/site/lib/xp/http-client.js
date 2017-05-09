@@ -1,10 +1,11 @@
+
 /**
  * HTTP Client related functions.
  *
  * @example
  * var httpClientLib = require('/lib/xp/http-client');
  *
- * @module lib/xp/http-client
+ * @module http-client
  */
 
 function checkRequired(params, name) {

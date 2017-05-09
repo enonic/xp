@@ -1,26 +1,25 @@
 import '../../../api.ts';
-import {PrincipalBrowseResetEvent} from './PrincipalBrowseResetEvent';
-import {PrincipalBrowseSearchEvent} from './PrincipalBrowseSearchEvent';
-
+import {UserTreeGridItem} from '../UserTreeGridItem';
 import AggregationGroupView = api.aggregation.AggregationGroupView;
 import SearchInputValues = api.query.SearchInputValues;
 import Principal = api.security.Principal;
 import FindPrincipalsRequest = api.security.FindPrincipalsRequest;
 import PrincipalType = api.security.PrincipalType;
+import BrowseFilterResetEvent = api.app.browse.filter.BrowseFilterResetEvent;
+import BrowseFilterSearchEvent = api.app.browse.filter.BrowseFilterSearchEvent;
+import QueryExpr = api.query.expr.QueryExpr;
+import CompareExpr = api.query.expr.CompareExpr;
+import LogicalExpr = api.query.expr.LogicalExpr;
+import ValueExpr = api.query.expr.ValueExpr;
+import LogicalOperator = api.query.expr.LogicalOperator;
+import LogicalExp = api.query.expr.LogicalExpr;
+import FieldExpr = api.query.expr.FieldExpr;
+import QueryField = api.query.QueryField;
 
-export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel {
+export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel<UserTreeGridItem> {
 
     constructor() {
-
-        super(null);
-
-        this.onReset(()=> {
-            this.resetFacets();
-        });
-
-        this.onShown(() => {
-            this.refresh();
-        });
+        super();
 
         this.initHitsCounter();
     }
@@ -33,18 +32,18 @@ export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilt
         this.searchFacets();
     }
 
-    private resetFacets(supressEvent?: boolean) {
+    protected resetFacets(supressEvent?: boolean, doResetAll?: boolean) {
         this.searchDataAndHandleResponse('', false);
 
         if (!supressEvent) { // then fire usual reset event with content grid reloading
-            new PrincipalBrowseResetEvent().fire();
+            new BrowseFilterResetEvent().fire();
         }
     }
 
     private searchFacets(isRefresh: boolean = false) {
         let values = this.getSearchInputValues();
         let searchText = values.getTextSearchFieldValue();
-        if (!searchText) {
+        if (!searchText && !this.hasConstraint()) {
             this.handleEmptyFilterInput(isRefresh);
             return;
         }
@@ -61,12 +60,26 @@ export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilt
     }
 
     private searchDataAndHandleResponse(searchString: string, fireEvent: boolean = true) {
-        new FindPrincipalsRequest().setAllowedTypes([PrincipalType.GROUP, PrincipalType.USER, PrincipalType.ROLE]).setSearchQuery(
-            searchString).sendAndParse().then((result: api.security.FindPrincipalsResult) => {
+
+        let findPrincipalsRequest = new FindPrincipalsRequest()
+            .setAllowedTypes([PrincipalType.GROUP, PrincipalType.USER, PrincipalType.ROLE])
+            .setSearchQuery(searchString);
+
+        if (this.hasConstraint()) {
+            let principalKeys = this.getSelectionItems().map(key => key.getDataId());
+
+            findPrincipalsRequest.setResultFilter(
+                (principal: Principal) => principalKeys.some(pr => pr === principal.getKey().toString())
+            );
+        }
+
+        findPrincipalsRequest
+            .sendAndParse()
+            .then((result: api.security.FindPrincipalsResult) => {
 
             let principals = result.getPrincipals();
             if (fireEvent) {
-                new PrincipalBrowseSearchEvent(principals).fire();
+                new BrowseFilterSearchEvent(principals).fire();
             }
             this.updateHitsCounter(principals ? principals.length : 0, api.util.StringHelper.isBlank(searchString));
         }).catch((reason: any) => {
@@ -77,4 +90,5 @@ export class PrincipalBrowseFilterPanel extends api.app.browse.filter.BrowseFilt
     private initHitsCounter() {
         this.searchDataAndHandleResponse('', false);
     }
+
 }

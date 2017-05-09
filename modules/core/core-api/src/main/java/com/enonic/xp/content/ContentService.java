@@ -32,6 +32,8 @@ public interface ContentService
 
     DeleteContentsResult deleteWithoutFetch( DeleteContentParams params );
 
+    int undoPendingDelete( UndoPendingDeleteContentParams params );
+
     @Deprecated
     PushContentsResult push( PushContentParams params );
 
@@ -54,6 +56,8 @@ public interface ContentService
     Content setChildOrder( SetContentChildOrderParams params );
 
     ReorderChildContentsResult reorderChildren( ReorderChildContentsParams params );
+
+    Boolean hasUnpublishedChildren( final HasUnpublishedChildrenParams params );
 
     Future<Integer> applyPermissions( ApplyContentPermissionsParams params );
 

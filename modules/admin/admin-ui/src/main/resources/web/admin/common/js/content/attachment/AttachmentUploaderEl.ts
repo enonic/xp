@@ -37,6 +37,10 @@ module api.content.attachment {
                 this.addCallback = config.attachmentAddCallback;
             }
 
+            const noAttachmentsDescription = new api.dom.DivEl('no-attachments-description');
+            noAttachmentsDescription.setHtml('< No attachment found >');
+            noAttachmentsDescription.insertAfterEl(this.getResultContainer());
+
             this.addClass('attachment-uploader-el');
         }
 

@@ -48,7 +48,6 @@ public class LayoutDescriptorResourceTest
             build();
 
         final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create().
-            name( "fancy-layout" ).
             displayName( "Fancy layout" ).
             config( layoutForm ).
             regions( RegionDescriptors.create().
@@ -75,7 +74,6 @@ public class LayoutDescriptorResourceTest
             build();
 
         final LayoutDescriptor layoutDescriptor1 = LayoutDescriptor.create().
-            name( "fancy-layout" ).
             displayName( "Fancy layout" ).
             config( layoutForm ).
             regions( RegionDescriptors.create().
@@ -86,7 +84,6 @@ public class LayoutDescriptorResourceTest
             build();
 
         final LayoutDescriptor layoutDescriptor2 = LayoutDescriptor.create().
-            name( "putty-layout" ).
             displayName( "Putty layout" ).
             config( layoutForm ).
             regions( RegionDescriptors.create().

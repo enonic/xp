@@ -24,7 +24,7 @@ public class QueryContentHandlerTest
     @Test
     public void testExample()
     {
-        setupQuery( 2 );
+        setupQuery( 2, true );
         runScript( "/site/lib/xp/examples/content/query.js" );
     }
 
@@ -32,11 +32,11 @@ public class QueryContentHandlerTest
     public void query()
         throws Exception
     {
-        setupQuery( 3 );
+        setupQuery( 3, true );
         runFunction( "/site/test/QueryContentHandlerTest.js", "query" );
     }
 
-    private void setupQuery( final int count )
+    private void setupQuery( final int count, final boolean aggs )
     {
         final Contents contents = TestDataFixtures.newContents( count );
 
@@ -74,7 +74,7 @@ public class QueryContentHandlerTest
             hits( contents.getSize() ).
             totalHits( 20 ).
             contents( contents.getIds() ).
-            aggregations( aggregations ).
+            aggregations( aggs ? aggregations : null ).
             build();
         Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( findResult );
         Mockito.when( this.contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( contents );

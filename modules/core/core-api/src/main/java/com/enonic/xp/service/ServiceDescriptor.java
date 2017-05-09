@@ -7,7 +7,7 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
-public class ServiceDescriptor
+public final class ServiceDescriptor
 {
     private final static String ROOT_SERVICE_PREFIX = "services/";
 
@@ -52,7 +52,6 @@ public class ServiceDescriptor
     {
         return new Builder();
     }
-
 
     public static final class Builder
     {

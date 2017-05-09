@@ -1,9 +1,7 @@
 import '../../api.ts';
 import {UserItemWizardPanel} from './UserItemWizardPanel';
 import {PrincipalWizardPanelParams} from './PrincipalWizardPanelParams';
-import {UserItemWizardActions} from './action/UserItemWizardActions';
 import {Router} from '../Router';
-import {PrincipalWizardToolbar} from './PrincipalWizardToolbar';
 import {PrincipalWizardDataLoader} from './PrincipalWizardDataLoader';
 
 import Principal = api.security.Principal;
@@ -70,50 +68,8 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
         }
     }
 
-    protected createWizardActions(): UserItemWizardActions<Principal> {
-        return new UserItemWizardActions(this);
-    }
-
-    protected createMainToolbar(): PrincipalWizardToolbar {
-        return new PrincipalWizardToolbar({
-            saveAction: this.wizardActions.getSaveAction(),
-            deleteAction: this.wizardActions.getDeleteAction()
-        });
-    }
-
-    public getMainToolbar(): PrincipalWizardToolbar {
-        return <PrincipalWizardToolbar>super.getMainToolbar();
-    }
-
-    protected createWizardHeader(): WizardHeaderWithDisplayNameAndName {
-        let wizardHeader = new WizardHeaderWithDisplayNameAndNameBuilder().build();
-
-        let existing = this.getPersistedItem();
-        let displayName = '';
-        let name = '';
-        if (existing) {
-            displayName = existing.getDisplayName();
-            name = existing.getKey().getId();
-
-            wizardHeader.disableNameInput();
-            wizardHeader.setAutoGenerationEnabled(false);
-        } else {
-
-            wizardHeader.onPropertyChanged((event: api.PropertyChangedEvent) => {
-                let updateStatus = event.getPropertyName() === 'name' ||
-                                   (wizardHeader.isAutoGenerationEnabled()
-                                    && event.getPropertyName() === 'displayName');
-
-                if (updateStatus) {
-                    this.wizardActions.getSaveAction().setEnabled(!!event.getNewValue());
-                }
-            });
-        }
-
-        wizardHeader.setPath(this.getParams().persistedPath);
-        wizardHeader.initNames(displayName, name, false);
-
-        return wizardHeader;
+    protected getPersistedItemPath(): string {
+        return this.getPersistedItem().getKey().toPath();
     }
 
     doRenderOnDataLoaded(rendered: boolean): Q.Promise<boolean> {
@@ -134,20 +90,6 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
                 this.formIcon.addClass('icon-masks');
                 break;
             }
-
-            const deleteHandler = ((event: api.security.event.PrincipalDeletedEvent) => {
-                event.getDeletedItems().forEach((path: string) => {
-                    if (!!this.getPersistedItem() && this.getPersistedItem().getKey().toPath() === path) {
-                        this.close();
-                    }
-                });
-            });
-
-            api.security.event.PrincipalDeletedEvent.on(deleteHandler);
-
-            this.onRemoved(() => {
-                api.security.event.PrincipalDeletedEvent.un(deleteHandler);
-            });
 
             return nextRendered;
         });

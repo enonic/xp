@@ -49,3 +49,5 @@
 ///<reference path='GetDescendantsOfContentsRequest.ts' />
 ///<reference path='GetEffectivePermissionsRequest.ts' />
 ///<reference path='GetContentIdsByParentRequest.ts' />
+///<reference path='UndoPendingDeleteContentRequest.ts' />
+///<reference path='HasUnpublishedChildrenRequest.ts' />

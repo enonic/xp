@@ -59,14 +59,11 @@ public final class TaskInfo
     @Override
     public boolean equals( final Object o )
     {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
+        if ( !( o instanceof TaskInfo ) )
         {
             return false;
         }
+
         final TaskInfo taskInfo = (TaskInfo) o;
         return Objects.equals( id, taskInfo.id ) && Objects.equals( description, taskInfo.description ) && state == taskInfo.state &&
             Objects.equals( progress, taskInfo.progress );

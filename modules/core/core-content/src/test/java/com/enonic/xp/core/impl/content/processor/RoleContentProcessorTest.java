@@ -107,7 +107,7 @@ public class RoleContentProcessorTest
         Content originalContent = this.createContent( oldValue );
         Content editedContent = this.createContent( newValue );
 
-        Mockito.when( this.securityService.getMemberships( Mockito.eq( modifier.getKey() ) ) ).thenReturn( roleKeys );
+        Mockito.when( this.securityService.getAllMemberships( Mockito.eq( modifier.getKey() ) ) ).thenReturn( roleKeys );
         Mockito.when( this.securityService.getPrincipals( Mockito.eq( roleKeys ) ) ).thenReturn( roles );
 
         return ProcessUpdateParams.create().

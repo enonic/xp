@@ -3,19 +3,34 @@ package com.enonic.xp.query.filter;
 import java.util.Collection;
 import java.util.List;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeIndexPath;
 
 public class IdFilter
     extends FieldFilter
 {
     private final List<String> values;
 
+    private final String defaultIdFieldName = NodeIndexPath.ID.getPath();
+
     private IdFilter( final Builder builder )
     {
         super( builder );
         values = builder.values;
+    }
+
+    @Override
+    public String getFieldName()
+    {
+        if ( Strings.isNullOrEmpty( this.fieldName ) )
+        {
+            return defaultIdFieldName;
+        }
+
+        return this.fieldName;
     }
 
     public List<String> getValues()

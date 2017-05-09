@@ -14,26 +14,32 @@ describe('api.security.Principal', () => {
 
         it('given an equal then true is returned', () => {
 
-            let principal1 = Principal.create().setKey(PrincipalKey.ofAnonymous()).setDisplayName('Anon').setModifiedTime(now).build();
-            let principal2 = Principal.create().setKey(PrincipalKey.ofAnonymous()).setDisplayName('Anon').setModifiedTime(now).build();
+            let principal1: Principal = <Principal>Principal.create().setModifiedTime(now).setKey(
+                PrincipalKey.ofAnonymous()).setDisplayName('Anon').build();
+            let principal2: Principal = <Principal>Principal.create().setModifiedTime(now).setKey(
+                PrincipalKey.ofAnonymous()).setDisplayName('Anon').build();
 
             expect(principal1.equals(principal2)).toBeTruthy();
         });
 
         it('given unequal displayName then false is returned', () => {
 
-            let principal1 = Principal.create().setKey(PrincipalKey.ofAnonymous()).setDisplayName('Anon').setModifiedTime(now).build();
-            let principal2 = Principal.create().setKey(PrincipalKey.ofAnonymous()).setDisplayName('Other').setModifiedTime(now).build();
+            let principal1: Principal = <Principal>Principal.create().setModifiedTime(now).setKey(
+                PrincipalKey.ofAnonymous()).setDisplayName('Anon').build();
+            let principal2: Principal = <Principal>Principal.create().setModifiedTime(now).setKey(
+                PrincipalKey.ofAnonymous()).setDisplayName('Other').build();
 
             expect(principal1.equals(principal2)).toBeFalsy();
         });
 
         it('given unequal type then false is returned', () => {
 
-            let principal1 = Principal.create().setKey(PrincipalKey.fromString('user:mystore:other')).setDisplayName(
-                'Anon').setModifiedTime(now).build();
-            let principal2 = Principal.create().setKey(PrincipalKey.fromString('user:mystore:other')).setDisplayName(
-                'Anon').setModifiedTime(later).build();
+            let principal1: Principal = <Principal>Principal.create().setModifiedTime(now).setKey(
+                PrincipalKey.fromString('user:mystore:other')).setDisplayName(
+                'Anon').build();
+            let principal2: Principal = <Principal>Principal.create().setModifiedTime(later).setKey(
+                PrincipalKey.fromString('user:mystore:other')).setDisplayName(
+                'Anon').build();
 
             expect(principal1.equals(principal2)).toBeFalsy();
         });

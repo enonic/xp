@@ -15,6 +15,8 @@ public class UpdateNodeParams
 {
     private final NodeId id;
 
+    private final NodePath path;
+
     private final NodeEditor editor;
 
     private final BinaryAttachments binaryAttachments;
@@ -24,6 +26,7 @@ public class UpdateNodeParams
     private UpdateNodeParams( final Builder builder )
     {
         this.id = builder.id;
+        this.path = builder.path;
         this.editor = builder.editor;
         this.binaryAttachments = new BinaryAttachments( ImmutableSet.copyOf( builder.binaryAttachments ) );
         this.dryRun = builder.dryRun;
@@ -44,6 +47,11 @@ public class UpdateNodeParams
         return id;
     }
 
+    public NodePath getPath()
+    {
+        return path;
+    }
+
     public NodeEditor getEditor()
     {
         return editor;
@@ -58,6 +66,8 @@ public class UpdateNodeParams
     {
         private NodeId id;
 
+        private NodePath path;
+
         private NodeEditor editor;
 
         private Set<BinaryAttachment> binaryAttachments = Sets.newHashSet();
@@ -71,6 +81,12 @@ public class UpdateNodeParams
         public Builder id( final NodeId id )
         {
             this.id = id;
+            return this;
+        }
+
+        public Builder path( final NodePath path )
+        {
+            this.path = path;
             return this;
         }
 
@@ -106,7 +122,10 @@ public class UpdateNodeParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( this.id, "id cannot be null" );
+            if ( this.id == null && this.path == null )
+            {
+                throw new NullPointerException( "id and path cannot be both null" );
+            }
             Preconditions.checkNotNull( this.editor, "editor cannot be null" );
         }
     }

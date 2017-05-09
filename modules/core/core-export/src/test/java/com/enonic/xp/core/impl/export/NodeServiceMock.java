@@ -18,8 +18,6 @@ import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
-import com.enonic.xp.node.DeleteSnapshotParams;
-import com.enonic.xp.node.DeleteSnapshotsResult;
 import com.enonic.xp.node.DuplicateNodeProcessor;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.FindNodesByParentParams;
@@ -53,14 +51,9 @@ import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.ResolveSyncWorkResult;
-import com.enonic.xp.node.RestoreParams;
-import com.enonic.xp.node.RestoreResult;
 import com.enonic.xp.node.SetNodeChildOrderParams;
 import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.SetNodeStateResult;
-import com.enonic.xp.node.SnapshotParams;
-import com.enonic.xp.node.SnapshotResult;
-import com.enonic.xp.node.SnapshotResults;
 import com.enonic.xp.node.SyncWorkResolverParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -376,30 +369,6 @@ class NodeServiceMock
     }
 
     @Override
-    public SnapshotResult snapshot( final SnapshotParams params )
-    {
-        throw new UnsupportedOperationException( "Not implemented in mock" );
-    }
-
-    @Override
-    public RestoreResult restore( final RestoreParams params )
-    {
-        throw new UnsupportedOperationException( "Not implemented in mock" );
-    }
-
-    @Override
-    public SnapshotResults listSnapshots()
-    {
-        throw new UnsupportedOperationException( "Not implemented in mock" );
-    }
-
-    @Override
-    public DeleteSnapshotsResult deleteSnapshot( final DeleteSnapshotParams param )
-    {
-        throw new UnsupportedOperationException( "Not implemented in mock" );
-    }
-
-    @Override
     public boolean nodeExists( final NodeId nodeId )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
@@ -439,7 +408,7 @@ class NodeServiceMock
         if ( importNode.isRoot() )
         {
             createdNode = createRootNode( null );
-            
+
         }
         else
         {
@@ -462,6 +431,12 @@ class NodeServiceMock
 
     @Override
     public Node setRootPermissions( final AccessControlList accessControlList, final boolean inheritPermissions )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public boolean hasUnpublishedChildren( final NodeId parent, final Branch target )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }

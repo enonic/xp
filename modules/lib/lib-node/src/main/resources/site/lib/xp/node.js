@@ -4,7 +4,7 @@
  * @example
  * var nodeLib = require('/lib/xp/node');
  *
- * @module lib/xp/node
+ * @module node
  */
 
 
@@ -229,6 +229,7 @@ RepoConnection.prototype.move = function (params) {
  * @param {number} [params.start=0] Start index (used for paging).
  * @param {number} [params.count=10] Number of contents to fetch.
  * @param {string} params.query Query expression.
+ * @param {object} [params.filters] Query filters
  * @param {string} [params.sort='_score DESC'] Sorting expression.
  * @param {string} [params.aggregations] Aggregations expression.
  * @returns {object} Result of query.
@@ -240,6 +241,7 @@ RepoConnection.prototype.query = function (params) {
     handlerParams.query = nullOrValue(params.query);
     handlerParams.sort = valueOrDefault(params.sort, "_score DESC");
     handlerParams.aggregations = __.toScriptValue(params.aggregations);
+    handlerParams.filters = __.toScriptValue(params.filters);
     return __.toNativeObject(this.native.query(handlerParams));
 };
 

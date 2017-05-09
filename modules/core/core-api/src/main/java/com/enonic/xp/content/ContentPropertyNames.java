@@ -11,6 +11,10 @@ public class ContentPropertyNames
 
     public static final String PAGE_TEXT_COMPONENT_PROPERTY_PATH_PATTERN = "page.region.**.text";
 
+    public static final String SITECONFIG = "siteconfig";
+
+    public static final String APPLICATION_KEY = "applicationkey";
+
     public static final String ATTACHMENT_TEXT_COMPONENT = "attachment.text";
 
     public static final String FORM = "form";
@@ -62,6 +66,8 @@ public class ContentPropertyNames
     public static final String PUBLISH_FROM = "from";
 
     public static final String PUBLISH_TO = "to";
+
+    public static final String PUBLISH_FIRST = "first";
 
     public static final String ATTACHMENT_MIMETYPE = "mimeType";
 

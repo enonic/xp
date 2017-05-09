@@ -17,5 +17,9 @@ public interface MapGenerator
 
     MapGenerator value( String key, Object value );
 
+    MapGenerator rawValue( Object value );
+
+    MapGenerator rawValue( String key, Object value );
+
     MapGenerator end();
 }

@@ -1,7 +1,7 @@
 {
-  "name": "app-users",
+  "name": "app-applications",
   "version": "1.0.0",
-  "description": "Enonix XP - Users App",
+  "description": "Enonix XP - Applications App",
   "scripts": {
     "build": "webpack"
   },

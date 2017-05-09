@@ -27,7 +27,6 @@ public class XmlLayoutDescriptorParserTest
 
         this.builder = LayoutDescriptor.create();
         this.builder.key( DescriptorKey.from( "myapplication:mylayout" ) );
-        this.builder.name( "mylayout" );
         this.parser.builder( this.builder );
     }
 

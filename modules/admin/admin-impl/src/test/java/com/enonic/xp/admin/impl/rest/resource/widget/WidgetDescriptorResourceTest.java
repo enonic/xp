@@ -8,7 +8,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.admin.widget.WidgetDescriptorService;
-import com.enonic.xp.admin.widget.WidgetDescriptors;
+import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.page.DescriptorKey;
 
 
@@ -47,7 +47,7 @@ public class WidgetDescriptorResourceTest
             addProperty( "key1", "value1" ).
             build();
 
-        WidgetDescriptors widgetDescriptors = WidgetDescriptors.from( widgetDescriptor1, widgetDescriptor2 );
+        final Descriptors<WidgetDescriptor> widgetDescriptors = Descriptors.from( widgetDescriptor1, widgetDescriptor2 );
 
         Mockito.when( widgetDescriptorService.getByInterfaces( Mockito.any() ) ).thenReturn( widgetDescriptors );
 
@@ -55,5 +55,6 @@ public class WidgetDescriptorResourceTest
                                                                                  MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
 
         assertJson( "get_widgets_by_interface.json", jsonString );
+
     }
 }

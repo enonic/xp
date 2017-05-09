@@ -1,23 +1,15 @@
 module api.security {
 
-    export class Principal implements api.Equitable {
-
-        private key: PrincipalKey;
-
-        private displayName: string;
+    export class Principal extends UserItem {
 
         private type: PrincipalType;
 
         private modifiedTime: Date;
 
-        private description: string;
-
         constructor(builder: PrincipalBuilder) {
-            this.key = builder.key;
-            this.displayName = builder.displayName || '';
-            this.type = builder.key.getType();
+            super(builder);
+            this.type = (<PrincipalKey>builder.key).getType();
             this.modifiedTime = builder.modifiedTime;
-            this.description = builder.description;
         }
 
         static fromPrincipal(principal: Principal): Principal {
@@ -26,25 +18,17 @@ module api.security {
 
         toJson(): PrincipalJson {
             return {
-                displayName: this.displayName,
-                key: this.key.toString()
+                displayName: this.getDisplayName(),
+                key: this.getKey().toString()
             };
-        }
-
-        getKey(): PrincipalKey {
-            return this.key;
-        }
-
-        getDisplayName(): string {
-            return this.displayName;
-        }
-
-        getDescription(): string {
-            return this.description;
         }
 
         getType(): PrincipalType {
             return this.type;
+        }
+
+        getKey(): PrincipalKey {
+            return <PrincipalKey>super.getKey();
         }
 
         getTypeName(): string {
@@ -95,19 +79,11 @@ module api.security {
 
             let other = <Principal> o;
 
-            if (!api.ObjectHelper.equals(this.key, other.key)) {
-                return false;
-            }
-
-            if (!api.ObjectHelper.stringEquals(this.displayName, other.displayName)) {
+            if (!super.equals(o)) {
                 return false;
             }
 
             if (!api.ObjectHelper.dateEquals(this.modifiedTime, other.modifiedTime)) {
-                return false;
-            }
-
-            if (!api.ObjectHelper.stringEquals(this.description, other.description)) {
                 return false;
             }
 
@@ -131,29 +107,21 @@ module api.security {
         }
     }
 
-    export class PrincipalBuilder {
-        key: PrincipalKey;
-
-        displayName: string;
+    export class PrincipalBuilder extends UserItemBuilder {
 
         modifiedTime: Date;
 
-        description: string;
-
         constructor(source?: Principal) {
             if (source) {
-                this.key = source.getKey();
-                this.displayName = source.getDisplayName();
+                super(source);
                 this.modifiedTime = source.getModifiedTime();
-                this.description = source.getDescription();
             }
         }
 
         fromJson(json: api.security.PrincipalJson): PrincipalBuilder {
+            super.fromJson(json);
             this.key = PrincipalKey.fromString(json.key);
-            this.displayName = json.displayName;
             this.modifiedTime = json.modifiedTime ? new Date(Date.parse(json.modifiedTime)) : null;
-            this.description = json.description;
             return this;
         }
 
@@ -162,18 +130,8 @@ module api.security {
             return this;
         }
 
-        setDisplayName(displayName: string): PrincipalBuilder {
-            this.displayName = displayName;
-            return this;
-        }
-
         setModifiedTime(modifiedTime: Date): PrincipalBuilder {
             this.modifiedTime = modifiedTime;
-            return this;
-        }
-
-        setDescription(description: string): PrincipalBuilder {
-            this.description = description;
             return this;
         }
 

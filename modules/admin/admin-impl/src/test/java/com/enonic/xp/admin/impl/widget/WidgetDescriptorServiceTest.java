@@ -1,38 +1,50 @@
 package com.enonic.xp.admin.impl.widget;
 
-import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
-import com.enonic.xp.admin.widget.WidgetDescriptors;
-import com.enonic.xp.core.impl.app.ApplicationTestSupport;
+import com.enonic.xp.admin.widget.WidgetDescriptor;
+import com.enonic.xp.descriptor.DescriptorService;
+import com.enonic.xp.descriptor.Descriptors;
+import com.enonic.xp.page.DescriptorKey;
+
+import static org.junit.Assert.*;
 
 public class WidgetDescriptorServiceTest
-    extends ApplicationTestSupport
 {
-    protected WidgetDescriptorServiceImpl service;
+    private DescriptorService descriptorService;
 
-    @Override
-    protected void initialize()
-        throws Exception
+    private WidgetDescriptorServiceImpl service;
+
+    @Before
+    public void setup()
     {
-        this.service = new WidgetDescriptorServiceImpl();
-        this.service.setApplicationService( this.applicationService );
-        this.service.setResourceService( this.resourceService );
+        this.descriptorService = Mockito.mock( DescriptorService.class );
 
-        addApplication( "myapp1", "/apps/myapp1" );
-        addApplication( "myapp2", "/apps/myapp2" );
+        this.service = new WidgetDescriptorServiceImpl();
+        this.service.setDescriptorService( this.descriptorService );
     }
 
     @Test
     public void getByInterface()
         throws Exception
     {
-        WidgetDescriptors result = this.service.getByInterfaces( "com.enonic.xp.my-interface" );
-        Assert.assertNotNull( result );
-        Assert.assertEquals( 2, result.getSize() );
+        final WidgetDescriptor desc1 = WidgetDescriptor.create().key( DescriptorKey.from( "app:a" ) ).
+            addInterface( "com.enonic.xp.my-interface" ).build();
 
-        result = this.service.getByInterfaces( "com.enonic.xp.unknown-interface" );
-        Assert.assertNotNull( result );
-        Assert.assertEquals( 0, result.getSize() );
+        final WidgetDescriptor desc2 = WidgetDescriptor.create().key( DescriptorKey.from( "app:b" ) ).
+            addInterface( "com.enonic.xp.my-interface" ).build();
+
+        final Descriptors<WidgetDescriptor> real = Descriptors.from( desc1, desc2 );
+        Mockito.when( this.descriptorService.getAll( WidgetDescriptor.class ) ).thenReturn( real );
+
+        final Descriptors<WidgetDescriptor> result1 = this.service.getByInterfaces( "com.enonic.xp.my-interface" );
+        assertNotNull( result1 );
+        assertEquals( 2, result1.getSize() );
+
+        final Descriptors<WidgetDescriptor> result2 = this.service.getByInterfaces( "unknown" );
+        assertNotNull( result2 );
+        assertEquals( 0, result2.getSize() );
     }
 }

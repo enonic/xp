@@ -319,6 +319,10 @@ module api.ui.grid {
             return this.slickGrid.getDataLength() === this.getSelectedRows().length;
         }
 
+        isAnySelected(): boolean {
+            return this.getSelectedRows().length > 0;
+        }
+
         resetActiveCell() {
             if (this.slickGrid.getActiveCell()) {
                 this.slickGrid.resetActiveCell();
@@ -504,6 +508,7 @@ module api.ui.grid {
             this.slickGrid.onSelectedRowsChanged.subscribe((e, args) => {
                 if (this.debounceSelectionChange) {
                     debouncedCallback(e, args);
+                    this.debounceSelectionChange = false;
                 } else {
                     callback(e, args);
                 }

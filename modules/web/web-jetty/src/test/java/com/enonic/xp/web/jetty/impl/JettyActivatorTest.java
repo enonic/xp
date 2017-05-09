@@ -2,8 +2,6 @@ package com.enonic.xp.web.jetty.impl;
 
 import java.util.Hashtable;
 
-import javax.servlet.ServletContext;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -14,6 +12,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.Filter;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
+
+import com.enonic.xp.web.dispatch.DispatchServlet;
 
 import static org.junit.Assert.*;
 
@@ -41,6 +41,8 @@ public class JettyActivatorTest
         Mockito.when( this.bundleContext.getBundle() ).thenReturn( bundle );
 
         this.activator = new JettyActivator();
+        this.activator.setDispatchServlet( Mockito.mock( DispatchServlet.class ) );
+
         this.config = new JettyConfigMockFactory().newConfig();
         Mockito.when( this.config.http_port() ).thenReturn( 0 );
     }
@@ -81,21 +83,5 @@ public class JettyActivatorTest
         final ServiceReference ref = Mockito.mock( ServiceReference.class );
         Mockito.when( ref.getProperty( "service.id" ) ).thenReturn( 1L );
         return ref;
-    }
-
-    @Test
-    public void testSharedContext()
-        throws Exception
-    {
-        this.activator.activate( this.bundleContext, this.config );
-
-        final ServletContext parentContext = this.activator.service.context.getServletHandler().getServletContext();
-        final ServletContext childContext = this.activator.service.dispatcherServlet.getServletConfig().getServletContext();
-
-        assertNull( childContext.getAttribute( getClass().getName() ) );
-        parentContext.setAttribute( getClass().getName(), true );
-        assertEquals( true, childContext.getAttribute( getClass().getName() ) );
-
-        this.activator.deactivate();
     }
 }

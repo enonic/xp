@@ -18,7 +18,7 @@ final class ServletConfigImpl
 
     private final Map<String, String> params;
 
-    public ServletConfigImpl( final String name, final ServletContext context )
+    ServletConfigImpl( final String name, final ServletContext context )
     {
         this.name = name;
         this.context = context;
@@ -49,7 +49,7 @@ final class ServletConfigImpl
         return Collections.enumeration( this.params.keySet() );
     }
 
-    public void setInitParameter( final String name, final String value )
+    void setInitParameter( final String name, final String value )
     {
         this.params.put( name, value );
     }

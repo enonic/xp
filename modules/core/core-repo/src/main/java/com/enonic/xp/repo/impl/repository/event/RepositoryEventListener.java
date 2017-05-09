@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.repository.event;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import com.enonic.xp.event.EventListener;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
+import com.enonic.xp.repository.RepositoryService;
 
 @Component(immediate = true)
 public class RepositoryEventListener
@@ -18,9 +20,20 @@ public class RepositoryEventListener
 {
     private NodeStorageService storageService;
 
+    private RepositoryService repositoryService;
+
     private final static Logger LOG = LoggerFactory.getLogger( RepositoryEventListener.class );
 
-    private final RepositoryRestoredHandler repositoryRestoredHandler = new RepositoryRestoredHandler();
+    private RepositoryRestoredHandler repositoryRestoredHandler;
+
+    private RepositoryInvalidateByIdHandler repositoryInvalidateByIdHandler;
+
+    @Activate
+    public void initialize()
+    {
+        this.repositoryRestoredHandler = new RepositoryRestoredHandler( repositoryService, storageService );
+        this.repositoryInvalidateByIdHandler = new RepositoryInvalidateByIdHandler( repositoryService );
+    }
 
     @Override
     public int getOrder()
@@ -33,14 +46,8 @@ public class RepositoryEventListener
     {
         if ( event != null )
         {
-            if ( event.isLocalOrigin() )
-            {
-                return;
-            }
-
             doHandleEvent( event );
         }
-
     }
 
     private void doHandleEvent( final Event event )
@@ -49,8 +56,20 @@ public class RepositoryEventListener
 
         switch ( type )
         {
-            case RepositoryEvents.REPOSITORY_RESTORED_EVENT:
+            case RepositoryEvents.RESTORED_EVENT_TYPE:
                 handleEventType( event, repositoryRestoredHandler );
+                break;
+            case RepositoryEvents.UPDATED_EVENT_TYPE:
+                if ( !event.isLocalOrigin() )
+                {
+                    handleEventType( event, repositoryInvalidateByIdHandler );
+                }
+                break;
+            case RepositoryEvents.DELETED_EVENT_TYPE:
+                if ( !event.isLocalOrigin() )
+                {
+                    handleEventType( event, repositoryInvalidateByIdHandler );
+                }
                 break;
         }
     }
@@ -59,7 +78,7 @@ public class RepositoryEventListener
     {
         try
         {
-            repositoryEventHandler.handleEvent( this.storageService, event, InternalContext.from( ContextAccessor.current() ) );
+            repositoryEventHandler.handleEvent( event, InternalContext.from( ContextAccessor.current() ) );
         }
         catch ( Exception e )
         {
@@ -71,5 +90,11 @@ public class RepositoryEventListener
     public void setStorageService( final NodeStorageService storageService )
     {
         this.storageService = storageService;
+    }
+
+    @Reference
+    public void setRepositoryService( final RepositoryService repositoryService )
+    {
+        this.repositoryService = repositoryService;
     }
 }

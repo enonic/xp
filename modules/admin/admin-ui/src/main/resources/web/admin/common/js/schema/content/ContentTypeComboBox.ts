@@ -11,8 +11,7 @@ module api.schema.content {
 
     export class ContentTypeComboBox extends RichComboBox<ContentTypeSummary> {
 
-        constructor(maximumOccurrences: number = 0,
-                    loader: BaseLoader<ContentTypeSummaryListJson, ContentTypeSummary> = new ContentTypeSummaryLoader()) {
+        constructor(maximumOccurrences: number = 0, loader: BaseLoader<ContentTypeSummaryListJson, ContentTypeSummary>) {
             super(new RichComboBoxBuilder<ContentTypeSummary>()
                 .setLoader(loader)
                 .setSelectedOptionsView(new ContentTypeSelectedOptionsView())
@@ -47,6 +46,10 @@ module api.schema.content {
 
         resolveSubTitle(content: ContentTypeSummary): string {
             return content.getName();
+        }
+
+        protected isEditButtonNeeded(): boolean {
+            return false;
         }
 
     }

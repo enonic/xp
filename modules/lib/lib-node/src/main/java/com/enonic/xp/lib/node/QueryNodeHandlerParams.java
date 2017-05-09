@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 
 import com.enonic.xp.script.ScriptValue;
 
+@SuppressWarnings("unused")
 public class QueryNodeHandlerParams
 {
     private Integer start;
@@ -18,18 +19,31 @@ public class QueryNodeHandlerParams
 
     private Map<String, Object> aggregations;
 
+    private Map<String, Object> filters;
 
-    public Integer getStart()
+    Map<String, Object> getFilters()
+    {
+        return filters;
+    }
+
+    @SuppressWarnings("unused")
+    public void setFilters( final ScriptValue filters )
+    {
+        this.filters = filters != null ? filters.getMap() : Maps.newHashMap();
+    }
+
+    Integer getStart()
     {
         return start;
     }
 
+    @SuppressWarnings("unused")
     public void setStart( final Integer start )
     {
         this.start = start;
     }
 
-    public Integer getCount()
+    Integer getCount()
     {
         return count;
     }
@@ -39,31 +53,34 @@ public class QueryNodeHandlerParams
         this.count = count;
     }
 
-    public String getQuery()
+    String getQuery()
     {
         return query;
     }
 
+    @SuppressWarnings("unused")
     public void setQuery( final String query )
     {
         this.query = query;
     }
 
-    public String getSort()
+    String getSort()
     {
         return sort;
     }
 
+    @SuppressWarnings("unused")
     public void setSort( final String sort )
     {
         this.sort = sort;
     }
 
-    public Map<String, Object> getAggregations()
+    Map<String, Object> getAggregations()
     {
         return aggregations;
     }
 
+    @SuppressWarnings("unused")
     public void setAggregations( final ScriptValue aggregations )
     {
         this.aggregations = aggregations != null ? aggregations.getMap() : Maps.newHashMap();

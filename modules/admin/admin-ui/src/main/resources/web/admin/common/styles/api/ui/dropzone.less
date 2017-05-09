@@ -130,15 +130,17 @@
 
 .image-uploader-input-dz-dragover() {
   .image-uploader-el {
-    &.dz-dragover {
-      &:after {
-        .dropcircle(140px);
-        z-index: @z-index-modal-dialog;
-        margin-top: -111px; // -140 + 58/2 ( half of the sticky toolbar to be centered over image )
-        font-size: 25px;
-        text-align: center;
-        content: 'Drop image here!';
-        margin-left: 0px;
+    &:not(.uploading) {
+      &.dz-dragover {
+        &:after {
+          .dropcircle(140px);
+          z-index: @z-index-modal-dialog;
+          margin-top: -111px; // -140 + 58/2 ( half of the sticky toolbar to be centered over image )
+          font-size: 25px;
+          text-align: center;
+          content: 'Drop image here!';
+          margin-left: 0px;
+        }
       }
     }
   }

@@ -14,7 +14,6 @@ import com.fasterxml.jackson.databind.node.TextNode;
 
 import com.enonic.xp.status.JsonStatusReporter;
 import com.enonic.xp.status.StatusReporter;
-import com.enonic.xp.util.Exceptions;
 
 @Component(immediate = true, service = StatusReporter.class)
 public final class OsgiServiceReporter
@@ -68,7 +67,7 @@ public final class OsgiServiceReporter
         }
         catch ( final Exception e )
         {
-            throw Exceptions.unchecked( e );
+            return new ServiceReference[0];
         }
     }
 

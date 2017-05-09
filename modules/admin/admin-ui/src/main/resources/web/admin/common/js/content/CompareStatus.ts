@@ -15,13 +15,24 @@ module api.content {
     }
 
     export class CompareStatusFormatter {
-        public static formatStatus(compareStatus: CompareStatus): string {
+
+        public static formatStatusFromContent(content: ContentSummaryAndCompareStatus): string {
+            if(content) {
+                return CompareStatusFormatter.formatStatus(content.getCompareStatus(), content.getContentSummary());
+            }
+        }
+
+        public static formatStatus(compareStatus: CompareStatus, content?:ContentSummary): string {
 
             let status;
 
             switch (compareStatus) {
             case CompareStatus.NEW:
-                status = 'Offline';
+                if(content && !content.getPublishFirstTime()) {
+                    status = 'New';
+                } else {
+                    status = 'Offline';
+                }
                 break;
             case CompareStatus.NEWER:
                 status = 'Modified';
@@ -30,7 +41,7 @@ module api.content {
                 status = 'Out-of-date';
                 break;
             case CompareStatus.PENDING_DELETE:
-                status = 'Pending delete';
+                status = 'Deleted';
                 break;
             case CompareStatus.EQUAL:
                 status = 'Online';
@@ -58,4 +69,24 @@ module api.content {
             return status;
         }
     }
+
+    export class CompareStatusChecker {
+
+        public static isPendingDelete(compareStatus: CompareStatus): boolean {
+            return compareStatus == CompareStatus.PENDING_DELETE;
+        }
+
+        public static isPublished(compareStatus: CompareStatus): boolean {
+            return compareStatus !== CompareStatus.NEW && compareStatus !== CompareStatus.UNKNOWN;
+        }
+
+        public static isOnline(compareStatus: CompareStatus): boolean {
+            return compareStatus === CompareStatus.EQUAL;
+        }
+
+        public static isNew(compareStatus: CompareStatus): boolean {
+            return compareStatus === CompareStatus.NEW;
+        }
+    }
+
 }

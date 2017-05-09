@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -48,6 +49,8 @@ public class ResolveSyncWorkCommand
 
     private final ResolveSyncWorkResult.Builder result;
 
+    private final Function<NodeIds, NodeIds> initialDiffFilter;
+
     private static final Logger LOG = LoggerFactory.getLogger( ResolveSyncWorkCommand.class );
 
     private ResolveSyncWorkCommand( final Builder builder )
@@ -59,6 +62,7 @@ public class ResolveSyncWorkCommand
         this.processedIds = Sets.newHashSet();
         this.excludedIds = builder.excludedIds;
         this.includeDependencies = builder.includeDependencies;
+        this.initialDiffFilter = builder.initialDiffFilter;
 
         final Node publishRootNode = doGetById( builder.nodeId );
 
@@ -112,9 +116,11 @@ public class ResolveSyncWorkCommand
 
     private NodeIds getInitialDiff()
     {
+        final NodeIds.Builder initialDiff = NodeIds.create().add( this.publishRootNode.id() );
+
         if ( !includeChildren && !forceCheckChildren() )
         {
-            return NodeIds.from( this.publishRootNode.id() );
+            return initialDiff.build();
         }
 
         final Stopwatch timer = Stopwatch.createStarted();
@@ -123,9 +129,17 @@ public class ResolveSyncWorkCommand
 
         LOG.debug( "Diff-query result in " + timer.stop() );
 
-        return NodeIds.from( nodesWithVersionDifference.getNodesWithDifferences().stream().
+        NodeIds nodeIds = NodeIds.from( nodesWithVersionDifference.getNodesWithDifferences().stream().
             filter( ( nodeId ) -> !this.excludedIds.contains( nodeId ) ).
             collect( Collectors.toSet() ) );
+
+        if ( this.initialDiffFilter != null )
+        {
+            nodeIds = this.initialDiffFilter.apply( nodeIds );
+        }
+
+        return initialDiff.addAll( nodeIds ).
+            build();
     }
 
     private boolean forceCheckChildren()
@@ -366,6 +380,8 @@ public class ResolveSyncWorkCommand
 
         private boolean includeDependencies = true;
 
+        private Function<NodeIds, NodeIds> initialDiffFilter;
+
         private Builder()
         {
         }
@@ -400,6 +416,12 @@ public class ResolveSyncWorkCommand
         public Builder includeDependencies( final boolean includeDependencies )
         {
             this.includeDependencies = includeDependencies;
+            return this;
+        }
+
+        public Builder initialDiffFilter( final Function<NodeIds, NodeIds> initialDiffFilter )
+        {
+            this.initialDiffFilter = initialDiffFilter;
             return this;
         }
 

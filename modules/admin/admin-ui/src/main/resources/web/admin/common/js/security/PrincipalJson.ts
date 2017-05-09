@@ -1,13 +1,8 @@
 module api.security {
 
-    export interface PrincipalJson {
-
-        key: string;
-
-        displayName: string;
+    export interface PrincipalJson extends UserItemJson {
 
         modifiedTime?: string;
 
-        description?: string;
     }
 }

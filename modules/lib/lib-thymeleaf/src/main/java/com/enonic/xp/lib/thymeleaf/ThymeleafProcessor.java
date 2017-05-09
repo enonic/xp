@@ -3,8 +3,10 @@ package com.enonic.xp.lib.thymeleaf;
 import java.util.Map;
 
 import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.TemplateSpec;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.exceptions.TemplateProcessingException;
+import org.thymeleaf.templatemode.TemplateMode;
 
 import com.google.common.collect.Maps;
 
@@ -19,6 +21,8 @@ public final class ThymeleafProcessor
     private ResourceKey view;
 
     private final Map<String, Object> parameters;
+
+    private TemplateMode mode;
 
     public ThymeleafProcessor( final TemplateEngine engine, final ThymeleafViewFunctions viewFunctions )
     {
@@ -41,13 +45,27 @@ public final class ThymeleafProcessor
         }
     }
 
+    public void setMode( final String mode )
+    {
+        try
+        {
+            this.mode = TemplateMode.valueOf( mode.toUpperCase() );
+        }
+        catch ( final Exception e )
+        {
+            this.mode = TemplateMode.HTML;
+        }
+    }
+
     public String process()
     {
         try
         {
             final Context context = new Context();
             context.setVariables( this.parameters );
-            return this.engine.process( this.view.toString(), context );
+
+            final TemplateSpec spec = new TemplateSpec( this.view.toString(), this.mode );
+            return this.engine.process( spec, context );
         }
         catch ( final RuntimeException e )
         {

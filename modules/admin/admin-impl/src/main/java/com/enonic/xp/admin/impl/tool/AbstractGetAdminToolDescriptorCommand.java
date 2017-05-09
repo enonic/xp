@@ -5,7 +5,7 @@ import java.util.Set;
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.page.DescriptorKeyLocator;
+import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;

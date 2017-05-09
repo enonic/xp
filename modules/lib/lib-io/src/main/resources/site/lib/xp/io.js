@@ -4,7 +4,7 @@
  * @example
  * var ioLib = require('/lib/xp/io');
  *
- * @module lib/xp/io
+ * @module io
  */
 
 var bean = __.newBean('com.enonic.xp.lib.io.IOHandlerBean');

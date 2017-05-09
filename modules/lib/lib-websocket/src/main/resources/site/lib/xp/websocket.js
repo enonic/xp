@@ -4,7 +4,7 @@
  * @example
  * var webSocketLib = require('/lib/xp/websocket');
  *
- * @module lib/xp/websocket
+ * @module websocket
  */
 
 /**

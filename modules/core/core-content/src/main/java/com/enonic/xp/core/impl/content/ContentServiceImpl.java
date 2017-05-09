@@ -28,7 +28,6 @@ import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -58,7 +57,7 @@ import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.GetPublishStatusResult;
 import com.enonic.xp.content.GetPublishStatusesParams;
 import com.enonic.xp.content.GetPublishStatusesResult;
-import com.enonic.xp.content.MoveContentException;
+import com.enonic.xp.content.HasUnpublishedChildrenParams;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PublishStatus;
@@ -73,6 +72,7 @@ import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SetActiveContentVersionResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.UndoPendingDeleteContentParams;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
@@ -87,10 +87,8 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.media.MediaInfoService;
-import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
-import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
@@ -101,10 +99,8 @@ import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.SetNodeChildOrderParams;
 import com.enonic.xp.repository.RepositoryService;
-import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -303,7 +299,6 @@ public class ContentServiceImpl
     {
         return DeleteAndFetchContentCommand.create().
             nodeService( this.nodeService ).
-            contentService( this ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
@@ -317,6 +312,19 @@ public class ContentServiceImpl
     public DeleteContentsResult deleteWithoutFetch( final DeleteContentParams params )
     {
         return DeleteContentCommand.create().
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            params( params ).
+            build().
+            execute();
+    }
+
+    @Override
+    public int undoPendingDelete( UndoPendingDeleteContentParams params )
+    {
+        return UndoPendingDeleteContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
@@ -455,8 +463,11 @@ public class ContentServiceImpl
     public Site getNearestSite( final ContentId contentId )
     {
         return GetNearestSiteCommand.create().
-            contentService( this ).
             contentId( contentId ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
             build().
             execute();
     }
@@ -542,49 +553,14 @@ public class ContentServiceImpl
     @Override
     public Content move( final MoveContentParams params )
     {
-        final ContentPath destinationPath = params.getParentContentPath();
-        if ( !destinationPath.isRoot() )
-        {
-            final Content parent = this.getByPath( destinationPath );
-            if ( parent == null )
-            {
-                throw new IllegalArgumentException(
-                    "Content could not be moved. Children not allowed in destination [" + destinationPath.toString() + "]" );
-            }
-            final ContentType parentContentType =
-                contentTypeService.getByName( new GetContentTypeParams().contentTypeName( parent.getType() ) );
-            if ( !parentContentType.allowChildContent() )
-            {
-                throw new IllegalArgumentException(
-                    "Content could not be moved. Children not allowed in destination [" + destinationPath.toString() + "]" );
-            }
-        }
-
-        try
-        {
-            final NodeId sourceNodeId = NodeId.from( params.getContentId().toString() );
-            final Node sourceNode = nodeService.getById( sourceNodeId );
-            if ( sourceNode == null )
-            {
-                throw new IllegalArgumentException( String.format( "Content with id [%s] not found", params.getContentId() ) );
-            }
-
-            final Node movedNode = nodeService.move( sourceNodeId, NodePath.create( ContentConstants.CONTENT_ROOT_PATH ).elements(
-                params.getParentContentPath().toString() ).build() );
-            return translator.fromNode( movedNode, true );
-        }
-        catch ( MoveNodeException e )
-        {
-            throw new MoveContentException( e.getMessage() );
-        }
-        catch ( NodeAlreadyExistAtPathException e )
-        {
-            throw new MoveContentException( "Content already exists at path: " + e.getNode().toString() );
-        }
-        catch ( NodeAccessException e )
-        {
-            throw new ContentAccessException( e );
-        }
+        return MoveContentCommand.create( params ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            contentService( this ).
+            build().
+            execute();
     }
 
     @Override
@@ -597,7 +573,7 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
-            contentService( this ).
+            contentProcessors( this.contentProcessors ).
             build().
             execute();
     }
@@ -764,6 +740,12 @@ public class ContentServiceImpl
     }
 
     @Override
+    public Boolean hasUnpublishedChildren( final HasUnpublishedChildrenParams params )
+    {
+        return nodeService.hasUnpublishedChildren( NodeId.from(params.getContentId()),params.getTarget() ) ;
+    }
+
+    @Override
     public Future<Integer> applyPermissions( final ApplyContentPermissionsParams params )
     {
         final ApplyContentPermissionsCommand applyPermissionsCommand = ApplyContentPermissionsCommand.create( params ).
@@ -881,7 +863,10 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
-            contentService( this ).
+            mediaInfoService( this.mediaInfoService ).
+            siteService( this.siteService ).
+            mixinService( this.mixinService ).
+            contentProcessors( this.contentProcessors ).
             build().
             execute();
     }

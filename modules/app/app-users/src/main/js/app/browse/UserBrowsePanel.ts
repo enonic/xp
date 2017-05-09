@@ -33,7 +33,10 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
              Deleting content won't trigger browsePanel.onShow event,
              because we are left on the same panel. We need to refresh manually.
              */
-            this.treeGrid.deleteUserNodes(event.getPrincipals(), event.getUserStores());
+            const userTreeGridItems: UserTreeGridItem[] = this.convertUserItemsToUserTreeGridItems(event.getPrincipals(),
+                event.getUserStores());
+
+            this.treeGrid.deleteNodes(userTreeGridItems);
             this.refreshFilter();
         });
 
@@ -53,11 +56,15 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
     }
 
     protected createBrowseItemPanel(): UserBrowseItemPanel {
-        return new UserBrowseItemPanel(this.treeGrid);
+        return new UserBrowseItemPanel();
     }
 
     protected createFilterPanel(): PrincipalBrowseFilterPanel {
         return new PrincipalBrowseFilterPanel();
+    }
+
+    protected enableSelectionMode() {
+        this.treeGrid.filter(this.treeGrid.getSelectedDataList());
     }
 
     treeNodesToBrowseItems(nodes: TreeNode<UserTreeGridItem>[]): BrowseItem<UserTreeGridItem>[] {
@@ -105,5 +112,24 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
             return 'icon-folder icon-large';
         }
 
+    }
+
+    private convertUserItemsToUserTreeGridItems(principals: api.security.Principal[],
+                                                userStores: api.security.UserStore[]): UserTreeGridItem[] {
+        let userTreeGridItems: UserTreeGridItem[] = [];
+
+        if (principals) {
+            userTreeGridItems = userTreeGridItems.concat(principals.map((principal) => {
+                return UserTreeGridItem.fromPrincipal(principal);
+            }));
+        }
+
+        if (userStores) {
+            userTreeGridItems = userTreeGridItems.concat(userStores.map((userStore) => {
+                return UserTreeGridItem.fromUserStore(userStore);
+            }));
+        }
+
+        return userTreeGridItems;
     }
 }

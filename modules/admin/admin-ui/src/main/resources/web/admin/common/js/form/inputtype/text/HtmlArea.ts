@@ -128,7 +128,7 @@ module api.form.inputtype.text {
 
         private initEditor(id: string, property: Property, textAreaWrapper: Element): void {
             let focusedEditorCls = 'html-area-focused';
-            let baseUrl = CONFIG.assetsUri;
+            let baseUrl = CONFIG.adminAssetsUri;
 
             let focusHandler = (e) => {
                 this.resetInputHeight();

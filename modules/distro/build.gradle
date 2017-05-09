@@ -93,6 +93,7 @@ addBundle( project( ':web:web-jetty' ), 26 )
 addBundle( project( ':web:web-impl' ), 26 )
 addBundle( project( ':web:web-vhost' ), 26 )
 addBundle( project( ':web:web-dos' ), 26 )
+addBundle( project( ':web:web-dispatch' ), 26 )
 
 // JaxRs app
 addBundle( project( ':jaxrs:jaxrs-impl' ), 28 )
@@ -113,6 +114,7 @@ addBundle( project( ':blobstore:blobstore-file' ), 22 )
 addBundle( project( ':app:app-standardidprovider' ), 32 )
 addBundle( project( ':app:app-users' ), 32 )
 addBundle( project( ':app:app-applications' ), 32 )
+addBundle( project( ':app:app-contentstudio' ), 32 )
 
 def addBundle( dep, level )
 {

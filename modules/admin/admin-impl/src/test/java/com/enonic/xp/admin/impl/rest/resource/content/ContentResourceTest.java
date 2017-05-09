@@ -2,6 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Optional;
@@ -14,7 +15,9 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
+import com.enonic.xp.admin.impl.rest.resource.content.json.ContentIdsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.GetDescendantsOfContents;
+import com.enonic.xp.admin.impl.rest.resource.content.json.HasUnpublishedChildrenResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson;
 import com.enonic.xp.app.ApplicationKey;
@@ -41,6 +44,7 @@ import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.content.HasUnpublishedChildrenParams;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
@@ -958,6 +962,34 @@ public class ContentResourceTest
     }
 
     @Test
+    public void has_unpublished_children()
+        throws Exception
+    {
+        final Content contentA = Mockito.mock( Content.class );
+        final Content contentB = Mockito.mock( Content.class );
+
+        Mockito.when( contentA.getId() ).thenReturn( ContentId.from( "aaa" ) );
+        Mockito.when( contentB.getId() ).thenReturn( ContentId.from( "bbb" ) );
+
+        ContentResource contentResource = getResourceInstance();
+
+        Mockito.when( contentService.hasUnpublishedChildren(
+            new HasUnpublishedChildrenParams( contentA.getId(), ContentConstants.BRANCH_MASTER ) ) ).thenReturn( true );
+        Mockito.when( contentService.hasUnpublishedChildren(
+            new HasUnpublishedChildrenParams( contentB.getId(), ContentConstants.BRANCH_MASTER ) ) ).thenReturn( false );
+
+        final HasUnpublishedChildrenResultJson result = contentResource.hasUnpublishedChildren(
+            new ContentIdsJson( Arrays.asList( contentA.getId().toString(), contentB.getId().toString() ) ) );
+
+        assertEquals(
+            result.getContents().contains( new HasUnpublishedChildrenResultJson.HasUnpublishedChildrenJson( contentA.getId(), true ) ),
+            true );
+        assertEquals(
+            result.getContents().contains( new HasUnpublishedChildrenResultJson.HasUnpublishedChildrenJson( contentB.getId(), false ) ),
+            true );
+    }
+
+    @Test
     public void resolve_publish_contents()
         throws Exception
     {
@@ -974,6 +1006,7 @@ public class ContentResourceTest
 
         Mockito.when( contentService.resolvePublishDependencies( Mockito.isA( ResolvePublishDependenciesParams.class ) ) ).thenReturn(
             results );
+
         Mockito.when( contentService.resolveRequiredDependencies( Mockito.isA( ResolveRequiredDependenciesParams.class ) ) ).thenReturn(
             ContentIds.from( requiredId ) );
         Mockito.when( contentService.compare( Mockito.isA( CompareContentsParams.class ) ) ).thenReturn( results );
@@ -1220,14 +1253,14 @@ public class ContentResourceTest
         return User.create().displayName( userId ).key( PrincipalKey.ofUser( SYSTEM, userId ) ).login( userId ).build();
     }
 
-    private Content createContent( final String id, final String name, final String contentTypeName )
+    private Content createContent( final String id, final ContentPath parentPath, final String name, final String contentTypeName )
     {
         final PropertyTree metadata = new PropertyTree();
         metadata.setLong( "myProperty", 1L );
 
         return Content.create().
             id( ContentId.from( id ) ).
-            parentPath( ContentPath.ROOT ).
+            parentPath( parentPath ).
             name( name ).
             valid( true ).
             createdTime( Instant.parse( this.currentTime ) ).
@@ -1242,8 +1275,14 @@ public class ContentResourceTest
             publishInfo( ContentPublishInfo.create().
                 from( Instant.parse( "2016-11-02T10:36:00Z" ) ).
                 to( Instant.parse( "2016-11-22T10:36:00Z" ) ).
+                first( Instant.parse( "2016-11-02T10:36:00Z" ) ).
                 build() ).
             build();
+    }
+
+    private Content createContent( final String id, final String name, final String contentTypeName )
+    {
+        return this.createContent( id, ContentPath.ROOT, name, contentTypeName );
     }
 
     private Site createSite( final String id, final String name, final String contentTypeName, SiteConfigs siteConfigs )

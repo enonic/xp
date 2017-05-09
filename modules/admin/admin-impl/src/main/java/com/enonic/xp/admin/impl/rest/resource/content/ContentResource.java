@@ -77,6 +77,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.EffectivePermissionJs
 import com.enonic.xp.admin.impl.rest.resource.content.json.EffectivePermissionMemberJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.GetContentVersionsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.GetDescendantsOfContents;
+import com.enonic.xp.admin.impl.rest.resource.content.json.HasUnpublishedChildrenResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.LocaleListJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentResultJson;
@@ -88,6 +89,8 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishDepende
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetActiveVersionJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetChildOrderJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.TaskResultJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.UndoPendingDeleteContentJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.UndoPendingDeleteContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UnpublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UpdateContentJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
@@ -131,6 +134,7 @@ import com.enonic.xp.content.GetActiveContentVersionsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.GetPublishStatusesParams;
 import com.enonic.xp.content.GetPublishStatusesResult;
+import com.enonic.xp.content.HasUnpublishedChildrenParams;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PublishContentResult;
@@ -144,6 +148,7 @@ import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SetActiveContentVersionResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.UndoPendingDeleteContentParams;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
@@ -396,7 +401,7 @@ public final class ContentResource
                                                 "Content [%s] could not be updated. A content with that name already exists",
                                                 json.getRenameContentParams().getNewName().toString() );
         }
-        validate( json.getContentPublishInfo() );
+        validatePublishInfo( json );
 
         final UpdateContentParams updateParams = json.getUpdateContentParams();
 
@@ -426,6 +431,18 @@ public final class ContentResource
                                                 "Content could not be renamed to [%s]. A content with that name already exists",
                                                 json.getRenameContentParams().getNewName().toString() );
         }
+    }
+
+    @POST
+    @Path("undoPendingDelete")
+    public UndoPendingDeleteContentResultJson undoPendingDelete( final UndoPendingDeleteContentJson params )
+    {
+        UndoPendingDeleteContentResultJson result = new UndoPendingDeleteContentResultJson();
+        int numberOfContents = this.contentService.undoPendingDelete( UndoPendingDeleteContentParams.create().
+            contentIds( ContentIds.from( params.getContentIds() ) ).
+            target( ContentConstants.BRANCH_MASTER ).
+            build() );
+        return result.setSuccess( numberOfContents );
     }
 
     @POST
@@ -697,6 +714,24 @@ public final class ContentResource
         }
     }
 
+
+    @POST
+    @Path("hasUnpublishedChildren")
+    public HasUnpublishedChildrenResultJson hasUnpublishedChildren( final ContentIdsJson ids )
+    {
+        final HasUnpublishedChildrenResultJson.Builder result = HasUnpublishedChildrenResultJson.create();
+
+        ids.getContentIds().forEach( contentId ->
+                     {
+                         final Boolean hasChildren = this.contentService.hasUnpublishedChildren(
+                             new HasUnpublishedChildrenParams( contentId, ContentConstants.BRANCH_MASTER ) );
+
+                         result.addHasChildren( contentId, hasChildren );
+                     } );
+
+        return result.build();
+    }
+
     @POST
     @Path("resolvePublishContent")
     public ResolvePublishContentResultJson resolvePublishContent( final ResolvePublishDependenciesJson params )
@@ -810,16 +845,15 @@ public final class ContentResource
         // Sorts the contents by path and for each
         return contents.stream().
             // sorted( ( content1, content2 ) -> content1.getPath().compareTo( content2.getPath() ) ).
-                map( content ->
-                     {
-                         //Creates a ContentPublishItem
-                         final CompareContentResult compareContentResult = compareContentResultsMap.get( content.getId() );
-                         return ContentPublishItemJson.create().
-                             content( content ).
-                             compareStatus( compareContentResult.getCompareStatus().name() ).
-                             iconUrl( contentIconUrlResolver.resolve( content ) ).
-                             build();
-                     } ).
+                map( content -> {
+                //Creates a ContentPublishItem
+                final CompareContentResult compareContentResult = compareContentResultsMap.get( content.getId() );
+                return ContentPublishItemJson.create().
+                    content( content ).
+                    compareStatus( compareContentResult.getCompareStatus().name() ).
+                    iconUrl( contentIconUrlResolver.resolve( content ) ).
+                    build();
+            } ).
                 collect( Collectors.toList() );
     }
 
@@ -975,13 +1009,12 @@ public final class ContentResource
 
         final List<String> result = new ArrayList<>();
 
-        contents.stream().forEach( content ->
-                                   {
-                                       if ( !content.getPermissions().isAllowedFor( authInfo.getPrincipals(), Permission.MODIFY ) )
-                                       {
-                                           result.add( content.getId().toString() );
-                                       }
-                                   } );
+        contents.stream().forEach( content -> {
+            if ( !content.getPermissions().isAllowedFor( authInfo.getPrincipals(), Permission.MODIFY ) )
+            {
+                result.add( content.getId().toString() );
+            }
+        } );
 
         return result;
     }
@@ -1068,13 +1101,12 @@ public final class ContentResource
 
         final List<String> result = new ArrayList<>();
 
-        permissions.forEach( permission ->
-                             {
-                                 if ( userHasPermission( authInfo, permission, contentsPermissions ) )
-                                 {
-                                     result.add( permission.name() );
-                                 }
-                             } );
+        permissions.forEach( permission -> {
+            if ( userHasPermission( authInfo, permission, contentsPermissions ) )
+            {
+                result.add( permission.name() );
+            }
+        } );
 
         return result;
     }
@@ -1622,12 +1654,13 @@ public final class ContentResource
         return true;
     }
 
-    private void validate( final ContentPublishInfo contentPublishInfo )
+    private void validatePublishInfo( final UpdateContentJson updateContentJson )
     {
-        final Instant publishToInstant = contentPublishInfo.getTo();
+
+        final Instant publishToInstant = updateContentJson.getPublishToInstant();
         if ( publishToInstant != null )
         {
-            final Instant publishFromInstant = contentPublishInfo.getFrom();
+            final Instant publishFromInstant = updateContentJson.getPublishFromInstant();
             if ( publishFromInstant == null )
             {
                 throw new WebApplicationException( "[Online to] date/time cannot be set without [Online from]",

@@ -97,4 +97,10 @@ public final class JsonMapGenerator
 
         return TextNode.valueOf( value.toString() );
     }
+
+    @Override
+    protected MapGeneratorBase newGenerator()
+    {
+        return new JsonMapGenerator();
+    }
 }

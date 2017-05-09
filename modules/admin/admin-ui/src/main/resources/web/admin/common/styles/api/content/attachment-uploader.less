@@ -1,0 +1,64 @@
+@attachment-uploader-height: 38px;
+
+.attachment-uploader {
+
+  position: relative;
+
+  .uploader-wrapper {
+
+    position: relative;
+
+    .upload-button {
+      position: absolute;
+      right: 2px;
+      top: 2px;
+    }
+
+    .uploader-el.attachment-uploader-el {
+      width: 100%;
+      height: (@attachment-uploader-height + 4px);
+      padding-right: @attachment-uploader-height;
+      box-sizing: border-box;
+      border: 2px solid transparent;
+
+      &.dz-dragover {
+        .dropzone-dragover-glow();
+      }
+
+      .result-container {
+        position: relative;
+        min-height: @attachment-uploader-height;
+
+        &:empty + .no-attachments-description {
+          display: block;
+        }
+
+        .attachment-item {
+          margin: 10px 0;
+          a {
+            text-overflow: ellipsis;
+            overflow: hidden;
+            padding-right: 2px;
+          }
+        }
+      }
+
+      .no-attachments-description {
+        position: absolute;
+        display: none;
+        top: 0;
+        width: calc(~'100%' - @attachment-uploader-height);
+        font-size: 1.25em;
+        color: @admin-font-gray2;
+        line-height: @attachment-uploader-height;
+        text-align: center;
+        z-index: -1;
+      }
+
+      .progress-bar {
+        height: @attachment-uploader-height;
+      }
+    }
+  }
+
+}

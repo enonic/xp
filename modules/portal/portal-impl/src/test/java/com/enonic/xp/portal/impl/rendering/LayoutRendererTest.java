@@ -10,8 +10,8 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.Form;
 import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
@@ -122,7 +122,6 @@ public class LayoutRendererTest
     public void htmlResponseComponentEditMode()
     {
         final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create().
-            name( "myLayoutComponent" ).
             displayName( "My layout component" ).
             config( Form.create().build() ).
             key( DescriptorKey.from( "module:myLayoutComponent" ) ).
@@ -169,7 +168,6 @@ public class LayoutRendererTest
     public void nullResponseComponentEditMode()
     {
         final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create().
-            name( "myLayoutComponent" ).
             displayName( "My layout component" ).
             config( Form.create().build() ).
             key( DescriptorKey.from( "module:myLayoutComponent" ) ).

@@ -83,8 +83,20 @@
     top: 8px;
   }
 
-  &.has-dependency-item .hide-filter-panel-button {
-    top: 94px;
+  &.show-constraint {
+    .hide-filter-panel-button {
+      display: none;
+    }
+
+    input.text-search-field {
+      margin-left: 6px;
+      padding-right: 27px;
+      width: 100%;
+    }
+
+    .hits-and-clear {
+      padding: 6px;
+    }
   }
 
   .show-filter-results {
@@ -106,17 +118,43 @@
     }
   }
 
-  .dependencies-filter-section {
+  .constraint-section {
 
     position: relative;
-    padding-top: 2px;
+    padding: 2px 0px 16px 5px;
 
     label {
-      font-size: 14px;
+      font-size: 16px;
       overflow: hidden;
       white-space: pre;
       text-overflow: ellipsis;
     }
+
+    &.dependency label {
+      font-size: 15px;
+    }
+
+    .dependency-item {
+      padding-top: 12px;
+    }
+
+    .action-button.btn-close {
+      .icon-close2();
+      position: absolute;
+      padding: 0px;
+      font-size: 18px;
+      top: 4px;
+      right: -20px;
+      background-color: @admin-white;
+      &:before {
+        color: @admin-font-gray2;
+      }
+    }
+  }
+
+  .dependencies-filter-section {
+
+    padding-bottom: 0px;
 
     .dependency-item {
       margin: 15px 0px 17px 0px;
@@ -134,17 +172,5 @@
       }
     }
 
-    .action-button.btn-close {
-      .icon-close2();
-      position: absolute;
-      padding: 0px;
-      font-size: 18px;
-      top: 3px;
-      right: -20px;
-      background-color: @admin-white;
-      &:before {
-        color: @admin-font-gray2;
-      }
-    }
   }
 }

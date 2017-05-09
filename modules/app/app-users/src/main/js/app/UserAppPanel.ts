@@ -22,6 +22,7 @@ import UserStore = api.security.UserStore;
 import GetUserStoreByKeyRequest = api.security.GetUserStoreByKeyRequest;
 import UserStoreKey = api.security.UserStoreKey;
 import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
+import UserItem = api.security.UserItem;
 
 interface PrincipalData {
 
@@ -142,7 +143,7 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
         return new UserBrowsePanel();
     }
 
-    private handleWizardCreated(wizard: UserItemWizardPanel<api.Equitable>, tabName: string) {
+    private handleWizardCreated(wizard: UserItemWizardPanel<UserItem>, tabName: string) {
         let tabMenuItem = new AppBarTabMenuItemBuilder()
             .setLabel(api.content.ContentUnnamed.prettifyUnnamed(tabName))
             .setTabId(wizard.getTabId())
@@ -153,7 +154,7 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
 
     }
 
-    private getWizardPanelItemDisplayName(wizardPanel: api.app.wizard.WizardPanel<api.Equitable>): string {
+    private getWizardPanelItemDisplayName(wizardPanel: api.app.wizard.WizardPanel<UserItem>): string {
         let displayName;
         if (!!wizardPanel.getPersistedItem()) {
             displayName = (<any>wizardPanel.getPersistedItem()).getDisplayName();
@@ -162,11 +163,11 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
         return displayName || this.getPrettyNameForWizardPanel(wizardPanel);
     }
 
-    private getPrettyNameForWizardPanel(wizard: api.app.wizard.WizardPanel<api.Equitable>): string {
-        return api.content.ContentUnnamed.prettifyUnnamed((<UserItemWizardPanel<api.Equitable>>wizard).getUserItemType());
+    private getPrettyNameForWizardPanel(wizard: api.app.wizard.WizardPanel<UserItem>): string {
+        return api.content.ContentUnnamed.prettifyUnnamed((<UserItemWizardPanel<UserItem>>wizard).getUserItemType());
     }
 
-    private handleWizardUpdated(wizard: UserItemWizardPanel<api.Equitable>, tabMenuItem: AppBarTabMenuItem) {
+    private handleWizardUpdated(wizard: UserItemWizardPanel<UserItem>, tabMenuItem: AppBarTabMenuItem) {
 
         if (tabMenuItem != null) {
             this.getAppBarTabMenu().deselectNavigationItem();

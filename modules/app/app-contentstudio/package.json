@@ -1,0 +1,13 @@
+{
+  "name": "app-contentstudio",
+  "version": "1.0.0",
+  "description": "Enonix XP - Content Studio App",
+  "scripts": {
+    "build": "webpack"
+  },
+  "dependencies": {
+    "ts-loader": "^2.0.1",
+    "typescript": "2.0.10",
+    "webpack": "^2.2.1"
+  }
+}

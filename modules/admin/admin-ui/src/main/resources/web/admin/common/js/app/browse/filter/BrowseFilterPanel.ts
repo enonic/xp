@@ -1,10 +1,8 @@
 module api.app.browse.filter {
 
-    export class BrowseFilterPanel extends api.ui.panel.Panel {
+    export class BrowseFilterPanel<T> extends api.ui.panel.Panel {
 
         private searchStartedListeners: {():void}[] = [];
-
-        private resetListeners: {():void}[] = [];
 
         private hideFilterPanelButtonClickedListeners: {():void}[] = [];
 
@@ -26,7 +24,9 @@ module api.app.browse.filter {
 
         private refreshStartedListeners: {():void}[] = [];
 
-        constructor(aggregations?: api.aggregation.Aggregation[]) {
+        protected selectionSection: ConstraintSection<T>;
+
+        constructor() {
             super();
             this.addClass('filter-panel');
 
@@ -73,7 +73,7 @@ module api.app.browse.filter {
 
             this.onRendered((event) => {
                 this.appendChild(this.hideFilterPanelButton);
-                this.appendExtraSection();
+                this.appendExtraSections();
                 this.appendChild(this.searchField);
                 this.appendChild(hitsCounterAndClearButtonWrapper);
                 this.appendChild(this.aggregationContainer);
@@ -92,6 +92,7 @@ module api.app.browse.filter {
 
             this.onShown(() => {
                 setTimeout(this.aggregationContainer.show.bind(this.aggregationContainer), 100);
+                this.refresh();
             });
         }
 
@@ -99,8 +100,46 @@ module api.app.browse.filter {
             return [];
         }
 
-        protected appendExtraSection() {
-            // must be implemented by children
+        protected appendExtraSections() {
+            this.appendSelectedItemsSection();
+        }
+
+        protected appendSelectedItemsSection() {
+            this.selectionSection = this.createConstraintSection();
+            this.appendChild(this.selectionSection);
+        }
+
+        protected getSelectionItems(): T[] {
+            return this.selectionSection.getItems();
+        }
+
+        setConstraintItems(constraintSection: ConstraintSection<T>, items: T[]) {
+            if (api.ObjectHelper.anyArrayEquals(items, constraintSection.getItems())) {
+                return;
+            }
+            constraintSection.setItems(items);
+            if (constraintSection.isActive()) {
+                this.resetControls();
+                this.search();
+                this.addClass('show-constraint');
+                setTimeout(this.giveFocusToSearch.bind(this), 100);
+            }
+        }
+
+        setSelectedItems(items: T[]) {
+            this.setConstraintItems(this.selectionSection, items);
+        }
+
+        hasConstraint() {
+            return !!this.selectionSection && this.selectionSection.isActive();
+        }
+
+        protected createConstraintSection(): api.app.browse.filter.ConstraintSection<T> {
+            return new api.app.browse.filter.ConstraintSection<T>('Selected Items', () => this.onCloseFilterInConstrainedMode());
+        }
+
+        protected onCloseFilterInConstrainedMode() {
+            this.notifyHidePanelButtonPressed();
         }
 
         setRefreshOfFilterRequired() {
@@ -127,6 +166,10 @@ module api.app.browse.filter {
 
         hasFilterSet(): boolean {
             return this.aggregationContainer.hasSelectedBuckets() || this.hasSearchStringSet();
+        }
+
+        protected isFilteredOrConstrained(): boolean {
+            return this.hasFilterSet() || this.selectionSection.isActive();
         }
 
         hasSearchStringSet(): boolean {
@@ -159,13 +202,25 @@ module api.app.browse.filter {
             return;
         }
 
-        reset(silent: boolean = false) {
+        resetConstraints() {
+            this.removeClass('show-constraint');
+            this.selectionSection.reset();
+            this.reset(true);
+        }
+
+        reset(suppressEvent?: boolean) {
+            this.resetControls();
+            this.resetFacets(suppressEvent);
+        }
+
+        resetControls() {
             this.searchField.clear(true);
             this.aggregationContainer.deselectAll(true);
             this.clearFilter.hide();
-            if (!silent) {
-                this.notifyReset();
-            }
+        }
+
+        protected resetFacets(suppressEvent?: boolean, doResetAll?: boolean) {
+            throw new Error('To be implemented by inheritors');
         }
 
         deselectAll() {
@@ -174,10 +229,6 @@ module api.app.browse.filter {
 
         onSearchStarted(listener: ()=> void) {
             this.searchStartedListeners.push(listener);
-        }
-
-        onReset(listener: ()=> void) {
-            this.resetListeners.push(listener);
         }
 
         onRefreshStarted(listener: ()=> void) {
@@ -194,13 +245,6 @@ module api.app.browse.filter {
             this.searchStartedListeners = this.searchStartedListeners.filter((currentListener: ()=> void) => {
                 return currentListener !== listener;
             });
-        }
-
-        unReset(listener: ()=> void) {
-            this.resetListeners = this.resetListeners.filter((currentListener: ()=>void) => {
-                return currentListener !== listener;
-            });
-
         }
 
         onHideFilterPanelButtonClicked(listener: ()=> void) {
@@ -223,12 +267,6 @@ module api.app.browse.filter {
             });
         }
 
-        private notifyReset() {
-            this.resetListeners.forEach((listener: ()=> void) => {
-                listener.call(this);
-            });
-        }
-
         private notifyHidePanelButtonPressed() {
             this.hideFilterPanelButtonClickedListeners.forEach((listener: ()=> void) => {
                 listener.call(this);
@@ -242,14 +280,15 @@ module api.app.browse.filter {
         }
 
         updateHitsCounter(hits: number, emptyFilterValue: boolean = false) {
-            if (!emptyFilterValue) {
+            let unfilteredSelection = (this.hasConstraint() && hits === this.getSelectionItems().length);
+            if (emptyFilterValue || unfilteredSelection) {
+                this.hitsCounterEl.setHtml(hits + ' total');
+            } else {
                 if (hits !== 1) {
                     this.hitsCounterEl.setHtml(hits + ' hits');
                 } else {
                     this.hitsCounterEl.setHtml(hits + ' hit');
                 }
-            } else {
-                this.hitsCounterEl.setHtml(hits + ' total');
             }
 
             if (hits !== 0) {
@@ -260,4 +299,60 @@ module api.app.browse.filter {
         }
     }
 
+    export class ConstraintSection<T> extends api.dom.DivEl {
+
+        private label: api.dom.LabelEl;
+        protected items: T[];
+
+        constructor(label: string, closeCallback?: () => void) {
+            super('constraint-section');
+
+            this.checkVisibilityState();
+
+            this.label = new api.dom.LabelEl(label);
+            this.appendChildren(this.label);
+
+            if (!!closeCallback) {
+                this.appendCloseButton(closeCallback);
+            }
+        }
+
+        private appendCloseButton(closeCallback: () => void):  api.ui.button.ActionButton {
+            let action = new api.ui.Action('').onExecuted(() => closeCallback());
+            let button = new  api.ui.button.ActionButton(action);
+
+            button.addClass('btn-close');
+            this.appendChild(button);
+
+            return button;
+        }
+
+        public reset() {
+            this.items = null;
+            this.checkVisibilityState();
+        }
+
+        public getItems(): T[] {
+            return this.items;
+        }
+
+        private checkVisibilityState() {
+            this.setVisible(this.isActive());
+        }
+
+        public isActive(): boolean {
+            return !!this.items;
+        }
+
+        public setItems(items: T[]) {
+
+            this.items = items;
+            this.checkVisibilityState();
+        }
+
+        protected setLabel(text: string) {
+            this.label.setValue(text);
+        }
+
+    }
 }

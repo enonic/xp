@@ -4,7 +4,7 @@
  * @example
  * var mailLib = require('/lib/xp/mail');
  *
- * @module lib/xp/mail
+ * @module mail
  */
 
 function checkRequired(params, name) {

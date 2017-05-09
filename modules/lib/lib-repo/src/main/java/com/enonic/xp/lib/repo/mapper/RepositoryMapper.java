@@ -6,6 +6,7 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.lib.common.JsonToPropertyTreeTranslator;
+import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.repository.IndexDefinition;
 import com.enonic.xp.repository.IndexDefinitions;
 import com.enonic.xp.repository.Repository;
@@ -29,7 +30,6 @@ public class RepositoryMapper
         gen.value( "id", repository.getId() );
         serialize( gen, repository.getBranches() );
         serialize( gen, repository.getSettings() );
-
     }
 
     private void serialize( final MapGenerator gen, final Branches branches )

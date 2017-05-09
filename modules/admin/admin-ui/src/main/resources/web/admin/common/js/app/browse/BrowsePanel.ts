@@ -16,7 +16,7 @@ module api.app.browse {
 
         protected treeGrid: api.ui.treegrid.TreeGrid<Object>;
 
-        protected filterPanel: api.app.browse.filter.BrowseFilterPanel;
+        protected filterPanel: api.app.browse.filter.BrowseFilterPanel<Object>;
 
         private gridAndToolbarPanel: api.ui.panel.Panel;
 
@@ -30,7 +30,7 @@ module api.app.browse {
 
         private filterPanelForcedHidden: boolean = false;
 
-        private filterPanelToBeShownFullScreen: boolean = false;
+        protected filterPanelToBeShownFullScreen: boolean = false;
 
         private filterPanelIsHiddenByDefault: boolean = true;
 
@@ -45,27 +45,37 @@ module api.app.browse {
             this.filterPanel = this.createFilterPanel();
             this.browseToolbar = this.createToolbar();
 
-            let selectionChangedDebouncedHandler = (currentSelection: TreeNode<Object>[],
-                                                    fullSelection: TreeNode<Object>[],
-                                                    highlighted: boolean
+            let selectionChangedHandler = (currentSelection: TreeNode<Object>[],
+                                           fullSelection: TreeNode<Object>[],
+                                           highlighted: boolean
                                                    ) => {
+                if (this.treeGrid.getToolbar().getSelectionPanelToggler().isActive()) {
+                    this.updateSelectionModeShownItems(currentSelection, fullSelection);
+                }
+
                 let browseItems: api.app.browse.BrowseItem<M>[] = this.treeNodesToBrowseItems(fullSelection);
-                let changes = this.getBrowseItemPanel().setItems(browseItems, true);
+                let changes = this.getBrowseItemPanel().setItems(browseItems);
 
                 if (highlighted && ((fullSelection.length == 0 && changes.getRemoved().length === 1) ||
                                     (fullSelection.length == 1 && changes.getAdded().length === 1))) {
                     return;
                 }
-                if(currentSelection.length <= 1) {
-                    this.getBrowseItemPanel().getPanelShown().hide();
-                }
+
                 this.getBrowseActions().updateActionsEnabledState(this.getBrowseItemPanel().getItems(), changes)
                     .then(() => {
-                        this.getBrowseItemPanel().updateDisplayedPanel();
+                        if (this.getBrowseItemPanel().getItems().length > 0 || !highlighted) {
+                            this.getBrowseItemPanel().updatePreviewPanel();
+                        }
                     }).catch(api.DefaultErrorHandler.handle);
-                };
 
-            this.treeGrid.onSelectionChanged(selectionChangedDebouncedHandler);
+                if (this.treeGrid.getToolbar().getSelectionPanelToggler().isActive() && changes.getRemoved().length > 0) {
+                    // Redo the search filter panel once items are removed from selection
+                    this.updateFilterPanelOnSelectionChange();
+                }
+
+            };
+
+            this.treeGrid.onSelectionChanged(selectionChangedHandler);
 
             let highlightingChangedDebouncedHandler = api.util.AppHelper.debounce(((node: TreeNode<Object>) => {
                 this.onHighlightingChanged(node);
@@ -84,8 +94,9 @@ module api.app.browse {
                 }
             });
 
-            this.treeGrid.getToolbar().onCartButtonClicked(isActive => {
-                this.getBrowseItemPanel().toggleCartPanel(isActive);
+            this.treeGrid.getToolbar().getSelectionPanelToggler().onActiveChanged(isActive => {
+                this.treeGrid.toggleClass('selection-mode', isActive);
+                this.toggleSelectionMode(isActive);
             });
 
             this.onShown(() => {
@@ -93,6 +104,27 @@ module api.app.browse {
                     this.filterPanel.refresh();
                 }
             });
+
+        }
+
+        protected updateFilterPanelOnSelectionChange() {
+            // TO BE IMPLEMENTED BY INHERITORS
+        }
+
+        private toggleSelectionMode(isActive: boolean) {
+            if (isActive) {
+                this.enableSelectionMode();
+            } else {
+                this.disableSelectionMode();
+            }
+        }
+
+        protected enableSelectionMode() {
+            this.treeGrid.filter(this.treeGrid.getSelectedDataList());
+        }
+
+        protected disableSelectionMode() {
+            this.treeGrid.resetFilter();
         }
 
         protected checkIfItemIsRenderable(browseItem: BrowseItem<M>): wemQ.Promise<boolean> {
@@ -103,8 +135,10 @@ module api.app.browse {
 
         private onHighlightingChanged(node: TreeNode<Object>) {
             if (!node) {
-                this.getBrowseActions().updateActionsEnabledState([]);
-                this.getBrowseItemPanel().togglePreviewForItem();
+                if (this.treeGrid.getSelectedDataList().length === 0) {
+                    this.getBrowseActions().updateActionsEnabledState([]);
+                    this.getBrowseItemPanel().togglePreviewForItem();
+                }
 
                 return;
             }
@@ -132,23 +166,7 @@ module api.app.browse {
             return this.treeGrid.getContextMenu().getActions();
         }
 
-        private initBrowseItemPanel() {
-
-            this.browseItemPanel.onDeselected((event: ItemDeselectedEvent<M>) => {
-                let oldSelectedCount = this.treeGrid.getGrid().getSelectedRows().length;
-                this.treeGrid.deselectNodes([event.getBrowseItem().getId()]);
-                let newSelectedCount = this.treeGrid.getGrid().getSelectedRows().length;
-
-                if (oldSelectedCount === newSelectedCount) {
-                    this.getBrowseActions().updateActionsEnabledState(this.browseItemPanel.getItems())
-                        .then(() => {
-                            this.browseItemPanel.updateDisplayedPanel();
-                        });
-                }
-            });
-        }
-
-        protected createFilterPanel(): api.app.browse.filter.BrowseFilterPanel {
+        protected createFilterPanel(): api.app.browse.filter.BrowseFilterPanel<M> {
             return null;
         }
 
@@ -156,7 +174,6 @@ module api.app.browse {
             return super.doRender().then((rendered) => {
                 if (!this.browseItemPanel) {
                     this.browseItemPanel = this.createBrowseItemPanel();
-                    this.initBrowseItemPanel();
                 }
                 this.gridAndItemsSplitPanel = new api.ui.panel.SplitPanelBuilder(this.treeGrid, this.browseItemPanel)
                     .setAlignmentTreshold(BrowsePanel.SPLIT_PANEL_ALIGNMENT_TRESHOLD)
@@ -264,7 +281,7 @@ module api.app.browse {
             this.toggleFilterPanelButton.removeClass('filtered');
         }
 
-        private hideFilterPanel() {
+        protected hideFilterPanel() {
             this.filterPanelForcedShown = false;
             this.filterPanelForcedHidden = true;
             this.filterAndGridSplitPanel.showSecondPanel();
@@ -321,12 +338,22 @@ module api.app.browse {
             if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
                 if (!this.gridAndItemsSplitPanel.isSecondPanelHidden()) {
                     this.gridAndItemsSplitPanel.hideSecondPanel();
-                    this.browseItemPanel.setMobileView(true);
                 }
             } else if (item.isInRangeOrBigger(ResponsiveRanges._540_720)) {
                 if (this.gridAndItemsSplitPanel.isSecondPanelHidden()) {
                     this.gridAndItemsSplitPanel.showSecondPanel();
-                    this.browseItemPanel.setMobileView(false);
+                }
+            }
+        }
+
+        private updateSelectionModeShownItems(currentSelection: TreeNode<Object>[],
+                                              fullSelection: TreeNode<Object>[]) {
+            if (currentSelection.length === fullSelection.length) { // to filter unwanted selection change events
+                let amountOfNodesShown: number = this.treeGrid.getRoot().getCurrentRoot().treeToList().length;
+                if (currentSelection.length === 0 || amountOfNodesShown === 0) { // all items deselected
+                    this.treeGrid.getToolbar().getSelectionPanelToggler().setActive(false);
+                } else if (amountOfNodesShown > fullSelection.length) { // some item/items deselected
+                    this.treeGrid.filter(this.treeGrid.getSelectedDataList());
                 }
             }
         }

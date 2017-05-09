@@ -13,7 +13,9 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
+import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
 public class ScriptValueTranslator
@@ -134,6 +136,15 @@ public class ScriptValueTranslator
         {
             parent.addReference( name, (Reference) value );
         }
+        else if ( value instanceof BinaryReference )
+        {
+            parent.addBinaryReference( name, (BinaryReference) value );
+        }
+        else if ( value instanceof Link )
+        {
+            parent.addLink( name, (Link) value );
+        }
+
         else if ( value instanceof BinaryAttachment )
         {
             final BinaryAttachment binaryAttachment = (BinaryAttachment) value;
@@ -141,7 +152,8 @@ public class ScriptValueTranslator
 
             if ( includeBinaryAttachments )
             {
-                this.binaryAttachmentsBuilder.add( new BinaryAttachment( binaryAttachment.getReference(), binaryAttachment.getByteSource() ) );
+                this.binaryAttachmentsBuilder.add(
+                    new BinaryAttachment( binaryAttachment.getReference(), binaryAttachment.getByteSource() ) );
             }
         }
 

@@ -2,7 +2,6 @@ package com.enonic.xp.web.jetty.impl;
 
 import javax.servlet.Servlet;
 
-import org.apache.felix.http.base.internal.EventDispatcher;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -26,8 +25,6 @@ final class JettyService
     protected Server server;
 
     protected JettyConfig config;
-
-    protected EventDispatcher eventDispatcher;
 
     protected Servlet dispatcherServlet;
 
@@ -85,15 +82,12 @@ final class JettyService
         instrumentedHandler.setHandler( this.context );
 
         this.server.setHandler( instrumentedHandler );
-        this.eventDispatcher.setActive( true );
         this.server.start();
     }
 
     private void stopJetty()
         throws Exception
     {
-        this.eventDispatcher.setActive( false );
-
         this.server.stop();
         this.server = null;
         LOG.info( "Stopped Jetty" );

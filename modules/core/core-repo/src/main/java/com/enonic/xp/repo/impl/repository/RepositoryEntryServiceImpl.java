@@ -20,6 +20,7 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeEvents;
+import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.DeleteNodeByIdCommand;
@@ -61,7 +62,7 @@ public class RepositoryEntryServiceImpl
         {
             eventPublisher.publish( NodeEvents.created( createdNode ) );
             refresh();
-            eventPublisher.publish( RepositoryClusterEvents.created( repository.getId() ) );
+            eventPublisher.publish( RepositoryEvents.created( repository.getId() ) );
         }
     }
 
@@ -136,7 +137,7 @@ public class RepositoryEntryServiceImpl
         {
             eventPublisher.publish( NodeEvents.deleted( deletedNodes ) );
             refresh();
-            eventPublisher.publish( RepositoryClusterEvents.deleted( repositoryId ) );
+            eventPublisher.publish( RepositoryEvents.deleted( repositoryId ) );
         }
     }
 
@@ -173,7 +174,7 @@ public class RepositoryEntryServiceImpl
         {
             eventPublisher.publish( NodeEvents.updated( updatedNode ) );
             refresh();
-            eventPublisher.publish( RepositoryClusterEvents.updated( repositoryId ) );
+            eventPublisher.publish( RepositoryEvents.updated( repositoryId ) );
         }
 
         return RepositoryNodeTranslator.toRepository( updatedNode );

@@ -4,7 +4,7 @@
  * @example
  * var adminLib = require('/lib/xp/admin');
  *
- * @module lib/xp/admin
+ * @module admin
  */
 
 var helper = __.newBean('com.enonic.xp.lib.admin.AdminLibHelper');

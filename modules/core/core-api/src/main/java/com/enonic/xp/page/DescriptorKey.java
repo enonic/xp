@@ -20,7 +20,7 @@ public final class DescriptorKey
 
     private final String refString;
 
-    public DescriptorKey( final ApplicationKey applicationKey, final String name )
+    private DescriptorKey( final ApplicationKey applicationKey, final String name )
     {
         this.applicationKey = applicationKey;
         this.name = CharacterChecker.check( name, "Not a valid name for DescriptorKey [" + name + "]" );
@@ -66,10 +66,10 @@ public final class DescriptorKey
         return refString;
     }
 
-    public static DescriptorKey from( final String s )
+    public static DescriptorKey from( final String key )
     {
-        final String applicationKey = StringUtils.substringBefore( s, SEPARATOR );
-        final String descriptorName = StringUtils.substringAfter( s, SEPARATOR );
+        final String applicationKey = StringUtils.substringBefore( key, SEPARATOR );
+        final String descriptorName = StringUtils.substringAfter( key, SEPARATOR );
         return new DescriptorKey( ApplicationKey.from( applicationKey ), descriptorName );
     }
 

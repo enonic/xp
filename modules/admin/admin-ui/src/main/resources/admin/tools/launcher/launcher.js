@@ -13,10 +13,7 @@ function handleGet(req) {
 
     //Retrieves the Admin tools
     var adminTools = getAdminTools().sort(function (tool1, tool2) {
-        if (tool1.key.displayName > tool2.key.displayName) {
-            return -1;
-        }
-        return 1;
+        return (tool1.displayName > tool2.displayName) ? 1 : -1;
     });
 
     for (var i = 0; i < adminTools.length; i++) {

@@ -34,7 +34,8 @@ public class HtmlStripperTest
     @Test
     public void process()
     {
-        assertEquals( ValueFactory.newString( "ValueWithoutTags" ), this.htmlStripper.process( ValueFactory.newString( "ValueWithoutTags" ) ) );
+        assertEquals( ValueFactory.newString( "ValueWithoutTags" ),
+                      this.htmlStripper.process( ValueFactory.newString( "ValueWithoutTags" ) ) );
         assertEquals( ValueFactory.newString( " Value " ), this.htmlStripper.process( ValueFactory.newString( "<a>Value</a>" ) ) );
         assertEquals( ValueFactory.newString( " TextBefore TextBetween TextAfter " ), this.htmlStripper.process( ValueFactory.newString(
             "<!-- Comment -->TextBefore<tag param=\"paramValue\">TextBetween</tag>TextAfter<EmptyNode/><SecondEmptyNode/>" ) ) );
@@ -62,5 +63,14 @@ public class HtmlStripperTest
         assertEquals( valueToProcess, this.htmlStripper.process( valueToProcess ) );
         valueToProcess = ValueFactory.newLocalDateTime( LocalDateTime.of( 2012, 1, 1, 12, 0, 0 ) );
         assertEquals( valueToProcess, this.htmlStripper.process( valueToProcess ) );
+    }
+
+    @Test
+    public void processEscapedCharacters()
+    {
+        Value valueToProcess = ValueFactory.newString( "&lt;tag value=\"&aelig;&oslash;&aring;\"/&gt;" );
+        assertEquals( ValueFactory.newString( "<tag value=\"æøå\"/>" ), this.htmlStripper.process( valueToProcess ) );
+        valueToProcess = ValueFactory.newXml( "&lt;tag value=\"&aelig;&oslash;&aring;\"/&gt;" );
+        assertEquals( ValueFactory.newXml( "<tag value=\"æøå\"/>" ), this.htmlStripper.process( valueToProcess ) );
     }
 }

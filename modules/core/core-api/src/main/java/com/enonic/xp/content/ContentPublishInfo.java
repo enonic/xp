@@ -9,10 +9,13 @@ public class ContentPublishInfo
 
     private Instant to;
 
+    private Instant first;
+
     private ContentPublishInfo( final Builder builder )
     {
         from = builder.from;
         to = builder.to;
+        first = builder.first;
     }
 
     public static Builder create()
@@ -30,11 +33,18 @@ public class ContentPublishInfo
         return to;
     }
 
+    public Instant getFirst()
+    {
+        return first;
+    }
+
     public static final class Builder
     {
         private Instant from;
 
         private Instant to;
+
+        private Instant first;
 
         private Builder()
         {
@@ -49,6 +59,12 @@ public class ContentPublishInfo
         public Builder to( final Instant val )
         {
             to = val;
+            return this;
+        }
+
+        public Builder first( final Instant val )
+        {
+            first = val;
             return this;
         }
 
@@ -71,13 +87,13 @@ public class ContentPublishInfo
         }
 
         final ContentPublishInfo that = (ContentPublishInfo) o;
-        return Objects.equals( from, that.from ) & Objects.equals( to, that.to );
+        return Objects.equals( from, that.from ) & Objects.equals( to, that.to ) & Objects.equals( first, that.first );
 
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( from, to );
+        return Objects.hash( from, to, first );
     }
 }

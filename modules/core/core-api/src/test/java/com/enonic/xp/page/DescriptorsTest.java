@@ -13,7 +13,6 @@ import static org.junit.Assert.*;
 
 public class DescriptorsTest
 {
-
     @Test
     public void pageDescriptor()
     {
@@ -41,7 +40,6 @@ public class DescriptorsTest
             build();
 
         final PartDescriptor partDescriptor = PartDescriptor.create().
-            name( "news-part" ).
             displayName( "News part" ).
             config( partForm ).
             key( DescriptorKey.from( "module:new-part" ) ).
@@ -61,7 +59,6 @@ public class DescriptorsTest
             build();
 
         final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create().
-            name( "fancy-layout" ).
             displayName( "Fancy layout" ).
             config( layoutForm ).
             regions( RegionDescriptors.create().build() ).
@@ -74,7 +71,5 @@ public class DescriptorsTest
         assertEquals( layoutForm, layoutDescriptor.getConfig() );
         assertEquals( layoutDescriptor.getComponentPath(), copy.getComponentPath() );
         assertEquals( layoutDescriptor.getRegions(), copy.getRegions() );
-
     }
-
 }

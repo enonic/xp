@@ -1,0 +1,73 @@
+package com.enonic.xp.admin.impl.widget;
+
+import org.junit.Test;
+
+import com.enonic.xp.admin.widget.WidgetDescriptor;
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.app.ApplicationTestSupport;
+import com.enonic.xp.descriptor.DescriptorKeys;
+import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
+
+import static org.junit.Assert.*;
+
+public class WidgetDescriptorLoaderTest
+    extends ApplicationTestSupport
+{
+    private WidgetDescriptorLoader loader;
+
+    @Override
+    protected void initialize()
+        throws Exception
+    {
+        this.loader = new WidgetDescriptorLoader();
+        this.loader.setResourceService( this.resourceService );
+
+        addApplication( "myapp1", "/apps/myapp1" );
+    }
+
+    @Test
+    public void testGetType()
+    {
+        assertEquals( WidgetDescriptor.class, this.loader.getType() );
+    }
+
+    @Test
+    public void testPostProcess()
+    {
+        final WidgetDescriptor descriptor = WidgetDescriptor.create().key( DescriptorKey.from( "myapp:a" ) ).build();
+        assertSame( descriptor, this.loader.postProcess( descriptor ) );
+    }
+
+    @Test
+    public void testCreateDefault()
+    {
+        final DescriptorKey key = DescriptorKey.from( "myapp1:widget1" );
+        final WidgetDescriptor descriptor = this.loader.createDefault( key );
+
+        assertEquals( key, descriptor.getKey() );
+        assertEquals( "widget1", descriptor.getName() );
+    }
+
+    @Test
+    public void testFind()
+    {
+        final DescriptorKeys keys = this.loader.find( ApplicationKey.from( "myapp1" ) );
+        assertEquals( "[myapp1:widget1, myapp1:widget2]", keys.toString() );
+    }
+
+    @Test
+    public void testLoad()
+    {
+        final DescriptorKey descriptorKey = DescriptorKey.from( "myapp1:widget1" );
+
+        final ResourceKey resourceKey = this.loader.toResource( descriptorKey );
+        assertEquals( "myapp1:/admin/widgets/widget1/widget1.xml", resourceKey.toString() );
+
+        final Resource resource = this.resourceService.getResource( resourceKey );
+        final WidgetDescriptor descriptor = this.loader.load( descriptorKey, resource );
+
+        assertEquals( "MyWidget", descriptor.getDisplayName() );
+    }
+}

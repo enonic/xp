@@ -2,6 +2,7 @@ package com.enonic.xp.lib.node.mapper;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfigDocument;
+import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.lib.node.NodePropertyConstants;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.script.serializer.MapGenerator;
@@ -12,9 +13,19 @@ public class NodeMapper
 {
     private final Node node;
 
+    private final boolean useRawValues;
+
+
     public NodeMapper( final Node node )
     {
         this.node = node;
+        this.useRawValues = false;
+    }
+
+    public NodeMapper( final Node node, final boolean useRawValues )
+    {
+        this.node = node;
+        this.useRawValues = useRawValues;
     }
 
     @Override
@@ -34,21 +45,20 @@ public class NodeMapper
         serializeData( gen, node.data() );
     }
 
-    private static void serializeData( final MapGenerator gen, final PropertyTree value )
+    private void serializeData( final MapGenerator gen, final PropertyTree value )
     {
-        new PropertyTreeMapper( value ).serialize( gen );
+        new PropertyTreeMapper( this.useRawValues, value ).serialize( gen );
     }
 
-    private static void serializeIndexConfigDocument( final MapGenerator gen, final IndexConfigDocument value )
+    private void serializeIndexConfigDocument( final MapGenerator gen, final IndexConfigDocument value )
     {
         gen.map( NodePropertyConstants.INDEX_CONFIG );
         new IndexConfigDocMapper( value ).serialize( gen );
         gen.end();
     }
 
-    private static void serializePermissions( final MapGenerator gen, final Node node )
+    private void serializePermissions( final MapGenerator gen, final Node node )
     {
-
         new PermissionsMapper( node ).serialize( gen );
     }
 

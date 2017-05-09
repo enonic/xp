@@ -9,7 +9,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 final class HttpRequestDelegate
     extends HttpServletRequestWrapper
 {
-    public HttpRequestDelegate( final HttpServletRequest req )
+    HttpRequestDelegate( final HttpServletRequest req )
     {
         super( req );
     }

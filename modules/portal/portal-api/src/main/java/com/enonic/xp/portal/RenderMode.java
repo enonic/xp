@@ -6,10 +6,7 @@ import com.google.common.annotations.Beta;
 @Beta
 public enum RenderMode
 {
-    EDIT( "edit" ),
-    PREVIEW( "preview" ),
-    LIVE( "live" ),
-    ADMIN( "admin" );
+    EDIT( "edit" ), PREVIEW( "preview" ), LIVE( "live" ), ADMIN( "admin" ), APP( "app" );
 
     private final String name;
 
