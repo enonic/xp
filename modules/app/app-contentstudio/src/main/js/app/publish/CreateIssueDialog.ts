@@ -44,6 +44,8 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
 
     public setFullContentCount(value: number) {
         this.fullContentCount = value;
+
+        (<CreateIssueAction>this.confirmButton.getAction()).updateLabel(this.fullContentCount);
     }
 
     public setExcludeIds(excludeIds: ContentId[]) {
@@ -57,8 +59,6 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
                 .setIncludeChildren(excludeChildrenIds.indexOf(contentId) < 0)
                 .build();
         });
-
-        (<CreateIssueAction>this.confirmButton.getAction()).updateLabel(this.fullContentCount);
     }
 
     open() {
