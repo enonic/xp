@@ -63,5 +63,6 @@ function startApplication() {
 }
 
 window.onload = function () {
+    api.util.i18nInit(CONFIG.messages);
     startApplication();
 };

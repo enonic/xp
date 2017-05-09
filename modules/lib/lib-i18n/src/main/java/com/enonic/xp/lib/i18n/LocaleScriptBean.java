@@ -2,6 +2,7 @@ package com.enonic.xp.lib.i18n;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Supplier;
 
 import com.google.common.base.Strings;
 
@@ -13,21 +14,29 @@ import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
+import com.enonic.xp.script.serializer.MapSerializable;
+import com.enonic.xp.site.Site;
 
 public final class LocaleScriptBean
     implements ScriptBean
 {
-    private LocaleService localeService;
-
-    private PortalRequest request;
+    private Supplier<LocaleService> localeService;
 
     public String localize( final String key, final String locale, final ScriptValue values )
     {
-        final ApplicationKey applicationKey = this.request.getApplicationKey();
-        final Locale resolvedLocale = resolveLocale( locale );
+        return getMessageBundle( locale ).localize( key, toArray( values ) );
+    }
 
-        final MessageBundle bundle = this.localeService.getBundle( applicationKey, resolvedLocale );
-        return bundle.localize( key, toArray( values ) );
+    public MapSerializable getPhrases( final String locale )
+    {
+        return new MapMapper( getMessageBundle( locale ).asMap() );
+    }
+
+    private MessageBundle getMessageBundle( final String locale )
+    {
+        final ApplicationKey applicationKey = getRequest().getApplicationKey();
+        final Locale resolvedLocale = resolveLocale( locale );
+        return this.localeService.get().getBundle( applicationKey, resolvedLocale );
     }
 
     private Locale resolveLocale( final String locale )
@@ -37,9 +46,12 @@ public final class LocaleScriptBean
 
     private Locale resolveLocaleFromSite()
     {
-        if ( this.request.getSite().getLanguage() != null )
+        final PortalRequest request = getRequest();
+        final Site site = request.getSite();
+
+        if ( site != null )
         {
-            return this.request.getSite().getLanguage();
+            return site.getLanguage();
         }
 
         return null;
@@ -60,15 +72,14 @@ public final class LocaleScriptBean
         return value.toArray( new String[value.size()] );
     }
 
-    public void setLocaleService( final LocaleService localeService )
-    {
-        this.localeService = localeService;
-    }
-
     @Override
     public void initialize( final BeanContext context )
     {
-        this.localeService = context.getService( LocaleService.class ).get();
-        this.request = PortalRequestAccessor.get();
+        this.localeService = context.getService( LocaleService.class );
+    }
+
+    private PortalRequest getRequest()
+    {
+        return PortalRequestAccessor.get();
     }
 }

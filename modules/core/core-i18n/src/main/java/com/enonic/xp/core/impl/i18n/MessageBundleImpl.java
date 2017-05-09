@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.i18n;
 
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -9,6 +10,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Maps;
 
 import com.enonic.xp.i18n.MessageBundle;
 
@@ -69,5 +72,17 @@ final class MessageBundleImpl
             LOG.error( "Parsing localized phrase: " + localizedPhrase + " failed", e );
             return null;
         }
+    }
+
+    @Override
+    public Map<String, String> asMap()
+    {
+        final Map<String, String> map = Maps.newHashMap();
+        for ( final Object key : this.properties.keySet() )
+        {
+            map.put( key.toString(), this.properties.getProperty( key.toString() ) );
+        }
+
+        return map;
     }
 }

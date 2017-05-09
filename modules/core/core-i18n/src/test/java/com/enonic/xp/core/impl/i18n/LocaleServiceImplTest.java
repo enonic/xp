@@ -63,7 +63,7 @@ public class LocaleServiceImplTest
         final MessageBundle bundle = localeService.getBundle( null, Locale.ENGLISH );
         assertNull( bundle );
     }
-    
+
     @Test
     public void get_bundle_no_locale()
         throws Exception

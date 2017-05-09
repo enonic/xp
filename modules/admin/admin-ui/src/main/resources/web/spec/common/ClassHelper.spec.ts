@@ -40,7 +40,7 @@ describe('api.ClassHelper', function () {
         });
 
         it('returns full module path for given exported function', function () {
-            expect(ClassHelper.getModuleName(api.i18n.setLocale)).toBe('api.i18n');
+            expect(ClassHelper.getModuleName(api.util.i18n)).toBe('api.util');
         });
 
     });
@@ -57,7 +57,7 @@ describe('api.ClassHelper', function () {
         });
 
         it('returns full name for given exported function', function () {
-            expect(ClassHelper.getFullName(api.i18n.setLocale)).toBe('api.i18n.setLocale');
+            expect(ClassHelper.getFullName(api.util.i18n)).toBe('api.util.i18n');
         });
 
         it('correctly resolves classes with equal names', function () {
