@@ -33,7 +33,7 @@ class IssueIndexConfigFactory
             add( MODIFIED_TIME, IndexConfig.MINIMAL ).
             add( STATUS, IndexConfig.MINIMAL ).
             add( DESCRIPTION, IndexConfig.MINIMAL ).
-            add( APPROVERS, IndexConfig.NONE ).
+            add( APPROVERS, IndexConfig.MINIMAL ).
             add( PUBLISH_REQUEST, IndexConfig.NONE ).
             defaultConfig( IndexConfig.BY_TYPE );
 
