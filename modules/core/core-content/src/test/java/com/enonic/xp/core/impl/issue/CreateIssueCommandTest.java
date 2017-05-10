@@ -13,7 +13,6 @@ import com.enonic.xp.issue.IssueConstants;
 import com.enonic.xp.issue.IssueName;
 import com.enonic.xp.issue.IssuePath;
 import com.enonic.xp.issue.IssueStatus;
-import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -41,14 +40,14 @@ public class CreateIssueCommandTest
     {
         final CreateIssueParams params = createIssueParams().build();
         final CreateIssueCommand command = createIssueCommand( params );
-        final IssueName issueName = IssueName.from( NamePrettyfier.create( "title" ) );
 
         final Issue issue = command.execute();
+
         assertNotNull( issue );
         assertEquals( "title", issue.getTitle() );
         assertEquals( IssueStatus.Open, issue.getStatus() );
-        assertEquals( issueName, issue.getName() );
-        assertEquals( IssuePath.from( issueName ), issue.getPath() );
+        assertEquals( IssueName.from( issue.getId().toString() ), issue.getName() );
+        assertEquals( IssuePath.from( IssueName.from( issue.getId().toString() ) ), issue.getPath() );
     }
 
     @Test(expected = IllegalArgumentException.class)

@@ -3,7 +3,6 @@ package com.enonic.xp.core.issue;
 import org.junit.Test;
 
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueName;
@@ -42,7 +41,6 @@ public class IssueServiceImplTest_update
                     } );
 
         final Issue updatedIssue = this.issueService.update( updateIssueParams );
-        final IssueName issueName = IssueName.from( NamePrettyfier.create( "title" ) );
 
         assertNotNull( updatedIssue );
         assertEquals( "updated title", updatedIssue.getTitle() );
@@ -54,8 +52,8 @@ public class IssueServiceImplTest_update
         assertEquals( ContentId.from( "new-exclude-id" ), updatedIssue.getPublishRequest().getExcludeIds().first() );
         assertEquals( ContentId.from( "new-content-id" ), updatedIssue.getPublishRequest().getItems().first().getId() );
         assertEquals( true, updatedIssue.getPublishRequest().getItems().first().getIncludeChildren() );
-        assertEquals( issueName, updatedIssue.getName() );
-        assertEquals( IssuePath.from( issueName ), updatedIssue.getPath() );
+        assertEquals( IssueName.from( issue.getId().toString() ), updatedIssue.getName() );
+        assertEquals( IssuePath.from( IssueName.from( issue.getId().toString() ) ), updatedIssue.getPath() );
         assertNotEquals( updatedIssue.getCreatedTime(), updatedIssue.getModifiedTime() );
     }
 
@@ -77,8 +75,8 @@ public class IssueServiceImplTest_update
         assertEquals( PrincipalKey.from( "user:system:test-user" ), updatedIssue.getCreator() );
         assertEquals( PrincipalKey.from( "user:myStore:approver-1" ), updatedIssue.getApproverIds().first() );
         assertEquals( ContentId.from( "content-id" ), updatedIssue.getPublishRequest().getItems().first().getId() );
-        assertEquals( issueName, updatedIssue.getName() );
-        assertEquals( IssuePath.from( issueName ), updatedIssue.getPath() );
+        assertEquals( IssueName.from( issue.getId().toString() ), updatedIssue.getName() );
+        assertEquals( IssuePath.from( IssueName.from( issue.getId().toString() ) ), updatedIssue.getPath() );
     }
 
     @Test
@@ -92,11 +90,10 @@ public class IssueServiceImplTest_update
             editor( edit -> edit.title = "new title" );
 
         final Issue updatedIssue = this.issueService.update( updateIssueParams );
-        final IssueName issueName = IssueName.from( NamePrettyfier.create( "title" ) );
 
         assertNotNull( updatedIssue );
         assertEquals( "new title", updatedIssue.getTitle() );
-        assertEquals( issueName, updatedIssue.getName() );
+        assertEquals( IssueName.from( issue.getId().toString() ), updatedIssue.getName() );
     }
 
     private Issue createIssue()

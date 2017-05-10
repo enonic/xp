@@ -11,7 +11,6 @@ import com.enonic.xp.issue.IssuePath;
 import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.issue.PublishRequest;
 import com.enonic.xp.issue.PublishRequestItem;
-import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.Assert.*;
@@ -32,7 +31,6 @@ public class IssueServiceImplTest_getIssue
                 PublishRequestItem.create().id( ContentId.from( "content-id" ) ).includeChildren( true ).build() ).build())).getId();
 
         final Issue issue = this.issueService.getIssue( issueId );
-        final IssueName issueName = IssueName.from( NamePrettyfier.create( "title" ) );
 
         assertNotNull( issue );
         assertEquals( "title", issue.getTitle() );
@@ -41,7 +39,7 @@ public class IssueServiceImplTest_getIssue
         assertEquals( PrincipalKey.from( "user:system:test-user" ), issue.getCreator() );
         assertEquals( PrincipalKey.from( "user:myStore:approver-1" ), issue.getApproverIds().first() );
         assertEquals( ContentId.from( "content-id" ), issue.getPublishRequest().getItems().first().getId() );
-        assertEquals( issueName, issue.getName() );
-        assertEquals( IssuePath.from( issueName ), issue.getPath() );
+        assertEquals( IssueName.from( issueId.toString() ), issue.getName() );
+        assertEquals( IssuePath.from( IssueName.from( issueId.toString() ) ), issue.getPath() );
     }
 }

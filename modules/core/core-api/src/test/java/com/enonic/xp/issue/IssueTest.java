@@ -36,16 +36,6 @@ public class IssueTest
     }
 
     @Test
-    public void testNamePrettifiedFromTitle()
-    {
-        Issue issue = Issue.create().
-            title( "my issue" ).
-            build();
-
-        assertEquals( "my-issue", issue.getName().toString() );
-    }
-
-    @Test
     public void testIssuePathStartsWithPrefix()
     {
         Issue issue = Issue.create().
@@ -56,18 +46,13 @@ public class IssueTest
     }
 
     @Test
-    public void testIssuePathIsBuiltFromTitle()
+    public void testIssuePathIsBuiltFromId()
     {
-        Issue issue = Issue.create().
-            title( "my issue" ).
+        final IssueId issueId = IssueId.create();
+        final Issue issue = Issue.create().
+            id( issueId ).
             build();
 
-        assertEquals( "/issue/my-issue", issue.getPath().getValue() );
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testMissingTitleCausesException()
-    {
-        Issue.create().build();
+        assertEquals( "/issue/" + issueId.toString(), issue.getPath().getValue() );
     }
 }

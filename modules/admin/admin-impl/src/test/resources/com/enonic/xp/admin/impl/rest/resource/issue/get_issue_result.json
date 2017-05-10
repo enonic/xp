@@ -6,11 +6,11 @@
   "creator": "user:system:anonymous",
   "description": "desc",
   "id": "${id}",
-  "issuePath": "/issue/title",
+  "issuePath": "/issue/${id}",
   "issueStatus": "Open",
   "modifiedTime": null,
   "modifier": "user:system:anonymous",
-  "name": "title",
+  "name": "${id}",
   "publishRequest": {
     "excludeIds": [
       "exclude-id"
