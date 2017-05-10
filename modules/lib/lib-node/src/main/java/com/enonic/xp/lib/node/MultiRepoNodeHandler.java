@@ -5,10 +5,11 @@ import java.util.Set;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.SearchTarget;
+import com.enonic.xp.node.SearchTargets;
 
 public class MultiRepoNodeHandler
 {
-    private final Set<SearchTarget> searchTargets;
+    private final SearchTargets searchTargets;
 
     private final Context context;
 
@@ -16,7 +17,7 @@ public class MultiRepoNodeHandler
 
     private MultiRepoNodeHandler( final Builder builder )
     {
-        searchTargets = builder.searchTargets;
+        searchTargets = SearchTargets.from( builder.searchTargets );
         context = builder.context;
         nodeService = builder.nodeService;
     }
@@ -29,7 +30,8 @@ public class MultiRepoNodeHandler
     @SuppressWarnings("unused")
     public Object query( final QueryNodeHandlerParams params )
     {
-        return execute( FindNodesByQueryHandler.create().
+        return execute( FindNodesByMultiNodeQueryHandler.create().
+            searchTargets( this.searchTargets ).
             query( params.getQuery() ).
             aggregations( params.getAggregations() ).
             count( params.getCount() ).
@@ -44,7 +46,6 @@ public class MultiRepoNodeHandler
     {
         return this.context.callWith( handler::execute );
     }
-
 
     public static final class Builder
     {

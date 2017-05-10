@@ -229,9 +229,24 @@ public class FindNodesByMultiRepoQueryCommandTest
 
     private void assertNodes( final FindNodesByMultiRepoQueryResult result, final NodeId... nodeIds )
     {
+        final MultiRepoNodeHits nodeHits = result.getNodeHits();
+
         for ( final NodeId nodeId : nodeIds )
         {
-            assertTrue( "Missing node '" + nodeId + "'", result.getNodeIds().contains( nodeId ) );
+            boolean found = false;
+            for ( final MultiRepoNodeHit nodeHit : nodeHits )
+            {
+                if ( nodeHit.getNodeId().equals( nodeId ) )
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            if ( !found )
+            {
+                fail( "Missing nodeId '" + nodeId + " in result" );
+            }
         }
     }
 

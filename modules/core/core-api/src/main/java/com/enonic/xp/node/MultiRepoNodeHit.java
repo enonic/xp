@@ -4,17 +4,21 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 
 public class MultiRepoNodeHit
-    extends NodeHit
 {
+    private final NodeId nodeId;
+
+    private final float score;
+
     private final RepositoryId repositoryId;
 
     private final Branch branch;
 
     private MultiRepoNodeHit( final Builder builder )
     {
-        super( builder.nodeId, builder.score );
-        branch = builder.branch;
-        repositoryId = builder.repositoryId;
+        this.nodeId = builder.nodeId;
+        this.score = builder.score;
+        this.branch = builder.branch;
+        this.repositoryId = builder.repositoryId;
     }
 
     public RepositoryId getRepositoryId()
@@ -25,6 +29,16 @@ public class MultiRepoNodeHit
     public Branch getBranch()
     {
         return branch;
+    }
+
+    public NodeId getNodeId()
+    {
+        return nodeId;
+    }
+
+    public float getScore()
+    {
+        return score;
     }
 
     public static Builder create()

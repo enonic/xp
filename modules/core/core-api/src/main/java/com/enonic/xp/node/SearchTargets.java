@@ -1,5 +1,6 @@
 package com.enonic.xp.node;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -8,7 +9,12 @@ import com.google.common.collect.Sets;
 public class SearchTargets
     implements Iterable<SearchTarget>
 {
-    private final Set<SearchTarget> targets;
+    private final Collection<SearchTarget> targets;
+
+    private SearchTargets( final Collection<SearchTarget> targets )
+    {
+        this.targets = targets;
+    }
 
     private SearchTargets( final Builder builder )
     {
@@ -20,12 +26,16 @@ public class SearchTargets
         return new Builder();
     }
 
+    public static SearchTargets from( final Collection<SearchTarget> searchTargets )
+    {
+        return new SearchTargets( searchTargets );
+    }
+
     @Override
     public Iterator<SearchTarget> iterator()
     {
         return targets.iterator();
     }
-
 
     public static final class Builder
     {
@@ -33,12 +43,6 @@ public class SearchTargets
 
         private Builder()
         {
-        }
-
-        public Builder targets( final Set<SearchTarget> val )
-        {
-            targets = val;
-            return this;
         }
 
         public Builder add( final SearchTarget target )

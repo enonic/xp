@@ -28,11 +28,6 @@ public class FindNodesByMultiRepoQueryResult
         return new Builder();
     }
 
-    public NodeIds getNodeIds()
-    {
-        return this.nodeHits.getNodeIds();
-    }
-
     public MultiRepoNodeHits getNodeHits()
     {
         return nodeHits;
