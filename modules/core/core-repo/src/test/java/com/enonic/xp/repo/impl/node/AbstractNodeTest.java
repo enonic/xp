@@ -376,14 +376,15 @@ public abstract class AbstractNodeTest
         printAllIndexContent( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId() ), WS_DEFAULT.getValue() );
     }
 
-    protected void printContentRepoIndex( final RepositoryId repositoryId, final Branch branch )
+    protected void printSearchIndex( final RepositoryId repositoryId, final Branch branch )
     {
         printAllIndexContent( IndexNameResolver.resolveSearchIndexName( repositoryId ), branch.getValue() );
     }
 
     protected void printBranchIndex()
     {
-        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( ContextAccessor.current().getRepositoryId() ), IndexType.BRANCH.getName() );
+        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( ContextAccessor.current().getRepositoryId() ),
+                              IndexType.BRANCH.getName() );
     }
 
     protected void printVersionIndex()

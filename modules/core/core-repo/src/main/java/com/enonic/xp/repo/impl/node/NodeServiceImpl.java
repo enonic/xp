@@ -15,6 +15,7 @@ import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.DuplicateNodeProcessor;
+import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
@@ -204,7 +205,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public FindNodesByQueryResult findByQuery( final MultiRepoNodeQuery nodeQuery )
+    public FindNodesByMultiRepoQueryResult findByQuery( final MultiRepoNodeQuery nodeQuery )
     {
         verifyContext();
         return FindNodesByMultiRepoQueryCommand.create().

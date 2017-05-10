@@ -10,6 +10,10 @@ public class SearchHit
 
     private final String id;
 
+    private final String indexName;
+
+    private final String indexType;
+
     private final ReturnValues returnValues;
 
     private SearchHit( final Builder builder )
@@ -17,6 +21,8 @@ public class SearchHit
         this.score = builder.score;
         this.id = builder.id;
         this.returnValues = builder.returnValues;
+        this.indexName = builder.indexName;
+        this.indexType = builder.indexType;
     }
 
     public static Builder create()
@@ -32,6 +38,16 @@ public class SearchHit
     public String getId()
     {
         return id;
+    }
+
+    public String getIndexName()
+    {
+        return indexName;
+    }
+
+    public String getIndexType()
+    {
+        return indexType;
     }
 
     public ReturnValue getField( final String fieldName )
@@ -97,6 +113,10 @@ public class SearchHit
 
         private String id;
 
+        private String indexName;
+
+        private String indexType;
+
         private ReturnValues returnValues;
 
         public Builder score( final float score )
@@ -114,6 +134,18 @@ public class SearchHit
         public Builder returnValues( final ReturnValues returnValues )
         {
             this.returnValues = returnValues;
+            return this;
+        }
+
+        public Builder indexName( final String indexName )
+        {
+            this.indexName = indexName;
+            return this;
+        }
+
+        public Builder indexType( final String indexType )
+        {
+            this.indexType = indexType;
             return this;
         }
 

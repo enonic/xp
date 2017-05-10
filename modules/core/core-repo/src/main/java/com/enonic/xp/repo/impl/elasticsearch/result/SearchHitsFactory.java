@@ -15,6 +15,8 @@ public class SearchHitsFactory
             final SearchHit resultEntry = SearchHit.create().
                 id( hit.id() ).
                 score( hit.score() ).
+                indexName( hit.getIndex() ).
+                indexType( hit.getType() ).
                 returnValues( ReturnValuesFactory.create( hit ) ).
                 build();
 

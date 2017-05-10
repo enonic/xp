@@ -2,9 +2,9 @@ package com.enonic.xp.repo.impl.node;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.node.FindNodesByQueryResult;
+import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
+import com.enonic.xp.node.MultiRepoNodeHit;
 import com.enonic.xp.node.MultiRepoNodeQuery;
-import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.SearchTarget;
 import com.enonic.xp.node.SearchTargets;
 import com.enonic.xp.repo.impl.MultiRepoSearchSource;
@@ -33,7 +33,7 @@ public class FindNodesByMultiRepoQueryCommand
         return new Builder( source );
     }
 
-    public FindNodesByQueryResult execute()
+    public FindNodesByMultiRepoQueryResult execute()
     {
         final SearchTargets searchTargets = query.getSearchTargets();
 
@@ -50,17 +50,27 @@ public class FindNodesByMultiRepoQueryCommand
 
         final NodeQueryResult nodeQueryResult = nodeSearchService.query( query.getNodeQuery(), searchSourceBuilder.build() );
 
-        final FindNodesByQueryResult.Builder resultBuilder = FindNodesByQueryResult.create().
+        final FindNodesByMultiRepoQueryResult.Builder resultBuilder = FindNodesByMultiRepoQueryResult.create().
             hits( nodeQueryResult.getHits() ).
             totalHits( nodeQueryResult.getTotalHits() ).
             aggregations( nodeQueryResult.getAggregations() );
 
         for ( final NodeQueryResultEntry resultEntry : nodeQueryResult.getEntries() )
         {
-            resultBuilder.addNodeHit( new NodeHit( resultEntry.getId(), resultEntry.getScore() ) );
+            createResultEntry( resultBuilder, resultEntry );
         }
 
         return resultBuilder.build();
+    }
+
+    private void createResultEntry( final FindNodesByMultiRepoQueryResult.Builder resultBuilder, final NodeQueryResultEntry resultEntry )
+    {
+        resultBuilder.addNodeHit( MultiRepoNodeHit.create().
+            nodeId( resultEntry.getId() ).
+            score( resultEntry.getScore() ).
+            repositoryId( resultEntry.getRepositoryId() ).
+            branch( resultEntry.getBranch() ).
+            build() );
     }
 
     public static final class Builder

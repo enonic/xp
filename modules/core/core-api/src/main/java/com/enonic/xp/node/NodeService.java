@@ -42,7 +42,7 @@ public interface NodeService
 
     FindNodesByQueryResult findByQuery( NodeQuery nodeQuery );
 
-    FindNodesByQueryResult findByQuery( MultiRepoNodeQuery nodeQuery );
+    FindNodesByMultiRepoQueryResult findByQuery( MultiRepoNodeQuery nodeQuery );
 
     NodeComparison compare( NodeId id, Branch target );
 

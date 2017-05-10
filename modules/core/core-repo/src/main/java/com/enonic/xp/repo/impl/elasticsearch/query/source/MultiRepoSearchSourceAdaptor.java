@@ -4,11 +4,10 @@ import java.util.stream.Collectors;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
-import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.Filter;
+import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.query.filter.IndicesFilter;
-import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.MultiRepoSearchSource;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AclFilterBuilderFactory;
@@ -65,9 +64,10 @@ class MultiRepoSearchSourceAdaptor
 
     private static Filter createBranchFilter( final Branch branch )
     {
-        return ValueFilter.create().
+        // USE ID-FILTER TO KEEP CASE
+        return IdFilter.create().
             fieldName( "_type" ).
-            addValue( ValueFactory.newString( createSearchTypeName( branch ) ) ).
+            value( createSearchTypeName( branch ) ).
             build();
     }
 }
