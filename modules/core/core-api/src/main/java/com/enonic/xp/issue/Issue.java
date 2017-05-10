@@ -5,7 +5,6 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
@@ -39,7 +38,7 @@ public class Issue
     {
         this.id = builder.id == null ? IssueId.create() : builder.id;
         this.title = builder.title;
-        this.name = builder.name == null ? IssueName.from( NamePrettyfier.create( builder.title ) ) : builder.name;
+        this.name = builder.name == null ? IssueName.from( this.id.toString() ) : builder.name;
         this.issuePath = IssuePath.from( this.name );
         this.description = builder.description;
         this.createdTime = builder.createdTime;
