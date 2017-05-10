@@ -1,9 +1,9 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.source;
 
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
 import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.IdFilter;
@@ -11,25 +11,13 @@ import com.enonic.xp.query.filter.IndicesFilter;
 import com.enonic.xp.repo.impl.MultiRepoSearchSource;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AclFilterBuilderFactory;
+import com.enonic.xp.repository.RepositoryId;
 
 class MultiRepoSearchSourceAdaptor
     extends AbstractSourceAdapter
 {
-
-    public static ESSource adapt( final MultiRepoSearchSource source )
+    static ESSource adapt( final MultiRepoSearchSource source )
     {
-        boolean needsBranchFilter = false;
-
-        boolean needsSeparateAclFilter = false;
-
-        final Branches allBranches = source.getAllBranches();
-
-        if ( allBranches.getSize() > 1 )
-        {
-            needsBranchFilter = true;
-        }
-
-        // TODO: Optimize the filters, only apply when needed
         final ESSource.Builder esSourceBuilder = ESSource.create().
             indexNames(
                 source.getRepositoryIds().stream().map( AbstractSourceAdapter::createSearchIndexName ).collect( Collectors.toSet() ) ).
@@ -41,23 +29,49 @@ class MultiRepoSearchSourceAdaptor
 
     private static Filter createSourceFilters( final MultiRepoSearchSource sources )
     {
+        final RepoBranchAclMap repoBranchAclMap = RepoBranchAclMap.from( sources );
+
         final BooleanFilter.Builder sourceFilters = BooleanFilter.create();
 
-        for ( final SingleRepoSearchSource source : sources )
+        for ( final RepositoryId repoId : repoBranchAclMap )
         {
-            sourceFilters.must( createSourceFilter( source ) );
+            sourceFilters.must( createRepoFilter( repoId, repoBranchAclMap.getBranchAclEntries( repoId ) ) );
         }
 
         return sourceFilters.build();
     }
 
-    private static Filter createSourceFilter( final SingleRepoSearchSource source )
+    private static Filter createRepoFilter( final RepositoryId repoId, final Collection<BranchAclEntry> branchAclEntries )
+    {
+        if ( branchAclEntries.size() == 1 )
+        {
+            final BranchAclEntry entry = branchAclEntries.iterator().next();
+            return doCreateAclEntryFilter( repoId, entry );
+        }
+
+        return createFilterForSeveralBranchesInSameRepo( repoId, branchAclEntries );
+    }
+
+    private static Filter createFilterForSeveralBranchesInSameRepo( final RepositoryId repoId,
+                                                                    final Collection<BranchAclEntry> branchAclEntries )
+    {
+        final BooleanFilter.Builder builder = BooleanFilter.create();
+
+        for ( final BranchAclEntry entry : branchAclEntries )
+        {
+            builder.should( doCreateAclEntryFilter( repoId, entry ) );
+        }
+
+        return builder.build();
+    }
+
+    private static Filter doCreateAclEntryFilter( final RepositoryId repoId, final BranchAclEntry entry )
     {
         return IndicesFilter.create().
-            addIndex( createSearchIndexName( source.getRepositoryId() ) ).
+            addIndex( createSearchIndexName( repoId ) ).
             filter( BooleanFilter.create().
-                must( AclFilterBuilderFactory.create( source.getAcl() ) ).
-                must( createBranchFilter( source.getBranch() ) ).
+                must( AclFilterBuilderFactory.create( entry.getAcl() ) ).
+                must( createBranchFilter( entry.getBranch() ) ).
                 build() ).
             build();
     }

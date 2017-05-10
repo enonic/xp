@@ -20,6 +20,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.DuplicateNodeProcessor;
 import com.enonic.xp.node.EditableNode;
+import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
@@ -443,7 +444,7 @@ class NodeServiceMock
     }
 
     @Override
-    public FindNodesByQueryResult findByQuery( final MultiRepoNodeQuery nodeQuery )
+    public FindNodesByMultiRepoQueryResult findByQuery( final MultiRepoNodeQuery nodeQuery )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }

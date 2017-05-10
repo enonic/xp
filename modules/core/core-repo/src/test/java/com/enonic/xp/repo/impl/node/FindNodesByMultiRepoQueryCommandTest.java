@@ -116,7 +116,7 @@ public class FindNodesByMultiRepoQueryCommandTest
     }
 
     @Test
-    public void multi_repo_search_different_branches_from_several_branches()
+    public void multi_repo_search_different_branches_same_repo()
         throws Exception
     {
         final Repository repo1 = createRepo( REPO_USER_1, "repo1" );
@@ -172,7 +172,7 @@ public class FindNodesByMultiRepoQueryCommandTest
         final FindNodesByMultiRepoQueryResult result = doQuery( query, targets );
 
         assertEquals( 1L, result.getTotalHits() );
-        assertRepos( result, repo1.getId(), repo2.getId() );
+        assertRepos( result, repo1.getId() );
         assertBranches( result, MASTER_BRANCH );
     }
 
@@ -209,7 +209,7 @@ public class FindNodesByMultiRepoQueryCommandTest
     {
         final MultiRepoNodeHits nodeHits = result.getNodeHits();
         final Set<RepositoryId> repositories = nodeHits.stream().map( MultiRepoNodeHit::getRepositoryId ).collect( Collectors.toSet() );
-        assertEquals( repositoryIds.length, repositories.size() );
+        assertEquals( "Wrong number of repositories", repositoryIds.length, repositories.size() );
         for ( final RepositoryId repoId : repositoryIds )
         {
             assertTrue( "missing repo '" + repoId + "' in result set", repositories.contains( repoId ) );
