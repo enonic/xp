@@ -140,8 +140,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private contentNamedListeners: {(event: ContentNamedEvent): void}[];
 
-    private isSecurityWizardStepFormAllowed: boolean;
-
     private inMobileViewMode: boolean;
 
     private skipValidation: boolean;
@@ -185,7 +183,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.loadData();
 
         this.isContentFormValid = false;
-        this.isSecurityWizardStepFormAllowed = false;
 
         this.requireValid = false;
         this.skipValidation = false;
@@ -602,9 +599,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             this.scheduleWizardStepIndex = steps.length;
             steps.push(this.scheduleWizardStep);
 
-            if (this.isSecurityWizardStepFormAllowed) {
-                steps.push(new WizardStep('Security', this.securityWizardStepForm));
-            }
+            steps.push(new WizardStep('Security', this.securityWizardStepForm));
 
             this.setSteps(steps);
 
@@ -676,7 +671,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
             if (content.getType().isImage()) {
                 this.updateWizard(content);
-            } else if (this.isSecurityWizardStepFormAllowed) { // update security wizard to have new path/displayName etc.
+            } else if (this.securityWizardStepForm) { // update security wizard to have new path/displayName etc.
                 this.securityWizardStepForm.update(content);
             }
 
@@ -771,8 +766,9 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         };
 
         let updateHandler = (updatedContent: ContentSummaryAndCompareStatus) => {
+            const contentId = updatedContent.getContentId();
 
-            if (this.isCurrentContentId(updatedContent.getContentId())) {
+            if (this.isCurrentContentId(contentId)) {
 
                 this.persistedContent = this.currentContent = updatedContent;
                 this.getContentWizardToolbarPublishControls().setContent(this.currentContent);
@@ -800,7 +796,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     }
                 });
             } else {
-                this.doComponentsContainId(this.currentContent.getContentId()).then((contains) => {
+                this.doComponentsContainId(contentId).then((contains) => {
                     if (contains) {
                         new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
                             this.updateWizard(content, true);
@@ -957,14 +953,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             let publishControls = this.getContentWizardToolbarPublishControls();
             let wizardHeader = this.getWizardHeader();
 
-            api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByContent(persistedContent).then((summaryAndStatus) => {
-                this.persistedContent = this.currentContent = summaryAndStatus;
-
-                wizardHeader.disableNameGeneration(this.currentContent.getCompareStatus() !== CompareStatus.NEW);
-
-                publishControls.setContent(this.currentContent).setLeafContent(!this.getPersistedItem().hasChildren());
-            });
-
             wizardHeader.setSimplifiedNameGeneration(persistedContent.getType().isDescendantOfMedia());
             publishControls.enableActionsForExisting(persistedContent);
 
@@ -1023,13 +1011,28 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     }
                 }
 
+                return this.updatePersistedContent(persistedContent);
+
             } else {
 
-                return this.doLayoutPersistedItem(persistedContent.clone());
+                return this.doLayoutPersistedItem(persistedContent.clone()).then(() => {
+                    return this.updatePersistedContent(persistedContent);
+                });
             }
 
         });
 
+    }
+
+    private updatePersistedContent(persistedContent: Content) {
+        return api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByContent(persistedContent).then((summaryAndStatus) => {
+            this.persistedContent = this.currentContent = summaryAndStatus;
+
+            this.getWizardHeader().disableNameGeneration(this.currentContent.getCompareStatus() !== CompareStatus.NEW);
+
+            this.getContentWizardToolbarPublishControls().setContent(this.currentContent).setLeafContent(
+                !this.getPersistedItem().hasChildren());
+        });
     }
 
     saveChangesWithoutValidation(): wemQ.Promise<Content> {
@@ -1118,10 +1121,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 this.scheduleWizardStepForm.layout(content);
                 this.scheduleWizardStepForm.onPropertyChanged(this.dataChangedListener);
                 this.refreshScheduleWizardStep();
-
-                if (this.isSecurityWizardStepFormAllowed) {
-                    this.securityWizardStepForm.layout(content);
-                }
+                this.securityWizardStepForm.layout(content);
 
                 schemas.forEach((schema: Mixin, index: number) => {
                     let extraData = content.getExtraData(schema.getMixinName());
@@ -1656,20 +1656,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     private checkSecurityWizardStepFormAllowed(loginResult: api.security.auth.LoginResult) {
-
-        if (this.getPersistedItem().isAnyPrincipalAllowed(loginResult.getPrincipals(), Permission.WRITE_PERMISSIONS)) {
-            this.isSecurityWizardStepFormAllowed = true;
-        }
-    }
-
-    private isPrincipalPresent(principalKey: api.security.PrincipalKey,
-                               accessEntriesToCheck: AccessControlEntry[]): boolean {
-
-        return accessEntriesToCheck.some((entry: AccessControlEntry) => {
-            if (entry.getPrincipalKey().equals(principalKey)) {
-                return true;
-            }
-        });
+        const noWritePermission = !this.getPersistedItem().isAnyPrincipalAllowed(loginResult.getPrincipals(), Permission.WRITE_PERMISSIONS);
+        this.securityWizardStepForm.toggleClass('no-write-permissions', noWritePermission);
     }
 
     /**
@@ -1720,10 +1708,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         this.settingsWizardStepForm.update(contentCopy, unchangedOnly);
         this.scheduleWizardStepForm.update(contentCopy, unchangedOnly);
-
-        if (this.isSecurityWizardStepFormAllowed) {
-            this.securityWizardStepForm.update(contentCopy, unchangedOnly);
-        }
+        this.securityWizardStepForm.update(contentCopy, unchangedOnly);
     }
 
     private updateWizardHeader(content: Content) {

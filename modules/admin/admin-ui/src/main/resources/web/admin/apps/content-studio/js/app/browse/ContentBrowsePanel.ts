@@ -106,6 +106,20 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         return filterPanel;
     }
 
+    protected updateFilterPanelOnSelectionChange() {
+        this.filterPanel.setSelectedItems(this.treeGrid.getSelectedDataList());
+    }
+
+    protected enableSelectionMode() {
+        this.filterPanel.setSelectedItems(this.treeGrid.getSelectedDataList());
+    }
+
+    protected disableSelectionMode() {
+        this.filterPanel.resetConstraints();
+        this.hideFilterPanel();
+        super.disableSelectionMode();
+    }
+
     doRender(): wemQ.Promise<boolean> {
         return super.doRender().then((rendered) => {
 

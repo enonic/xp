@@ -53,6 +53,12 @@ export class PublishDialogItemList extends DialogItemList {
             this.debonceNotifyListChanged();
         });
 
+        this.onItemsRemoved(() => {
+            this.getItemViews().forEach(view => this.updateRemovableState(view));
+        });
+
+        this.updateRemovableState(item);
+
         return item;
     }
 
@@ -80,6 +86,10 @@ export class PublishDialogItemList extends DialogItemList {
 
     public clearExcludeChildrenIds() {
         this.excludeChildrenIds = [];
+    }
+
+    private updateRemovableState(view: PublicStatusSelectionItem) {
+        view.toggleClass('removable', this.getItems().length > 1);
     }
 
     public onExcludeChildrenListChanged(listener: (items: ContentId[]) => void) {

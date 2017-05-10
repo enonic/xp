@@ -214,7 +214,10 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
     close() {
         this.fileInput.reset();
-        super.close();
+
+        if(this.isVisible()) {
+            super.close();
+        }
     }
 
     private loadContentTypes() {
