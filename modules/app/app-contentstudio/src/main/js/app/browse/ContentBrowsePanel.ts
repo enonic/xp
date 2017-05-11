@@ -21,6 +21,8 @@ import {ContentPublishMenuButton} from './ContentPublishMenuButton';
 import {TreeNodeParentOfContent} from './TreeNodeParentOfContent';
 import {TreeNodesOfContentPath} from './TreeNodesOfContentPath';
 import {ShowIssuesDialogAction} from './action/ShowIssuesDialogAction';
+import {IssueFetcher} from '../publish/IssueFetcher';
+import {IssueStatsJson} from '../publish/IssueStatsJson';
 
 import TreeNode = api.ui.treegrid.TreeNode;
 import BrowseItem = api.app.browse.BrowseItem;
@@ -156,7 +158,15 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             const showIssuesDialogButton: ActionButton = new ActionButton(new ShowIssuesDialogAction());
             showIssuesDialogButton.addClass('show-issues-dialog-button');
             showIssuesDialogButton.getEl().setTitle('Publishing Issues');
+            IssueFetcher.fetchIssueStats().then((stats: IssueStatsJson) => {
+                if (stats.assignedToMe > 0) {
+                    showIssuesDialogButton.addClass('has-assigned-issues');
+                }
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+            });
             this.browseToolbar.appendChild(showIssuesDialogButton);
+
 
             return rendered;
         }).catch((error) => {
