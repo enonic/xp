@@ -3,25 +3,29 @@ import {IssueDialogForm} from './IssueDialogForm';
 import PublishRequestItem = api.issue.PublishRequestItem;
 import CreateIssueRequest = api.issue.resource.CreateIssueRequest;
 import PublishRequest = api.issue.PublishRequest;
+import {DependantItemsDialog} from "../dialog/DependantItemsDialog";
+import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
+import {PublishProcessor} from "./PublishProcessor";
+import ListBox = api.ui.selector.list.ListBox;
+import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+import {PublishDialogItemList} from "./PublishDialogItemList";
+import {PublishDialogDependantList} from "./PublishDialogDependantList";
+import ContentId = api.content.ContentId;
 
-export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
+export class CreateIssueDialog extends DependantItemsDialog {
 
     private form: IssueDialogForm;
 
-    private items: PublishRequestItem[];
-
-    private excludeIds: ContentId[];
-
-    private fullContentCount: number = 0;
-
-    private confirmButton: api.ui.dialog.DialogButton;
+    private publishProcessor: PublishProcessor;
 
     private onSucceedListeners: {(): void;}[] = [];
 
     private static INSTANCE: CreateIssueDialog;
 
     private constructor() {
-        super(<api.ui.dialog.ModalDialogConfig>{title: 'Create Issue'});
+        super('Create Issue');
+
+        this.publishProcessor = new PublishProcessor(this.getItemList(), this.getDependantList());
 
         this.getEl().addClass('create-issue-dialog');
 
@@ -33,6 +37,23 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
 
         this.addCancelButtonToBottom('Back');
 
+        this.publishProcessor.onLoadingStarted(()=> {
+            this.updateButtonCount('Create Issue', 0);
+            this.loadMask.show();
+        });
+
+        this.publishProcessor.onLoadingFinished(()=> {
+            this.updateButtonCount('Create Issue', this.countTotal());
+            this.loadMask.hide();
+        })
+
+        this.onRendered(()=> {
+            this.publishProcessor.reloadPublishDependencies(true).then(()=> {
+                this.form.setContentItems(this.publishProcessor.getContentToPublishIds(), true);
+                this.form.giveFocus();
+                this.loadMask.hide();
+            });
+        });
     }
 
     static get(): CreateIssueDialog {
@@ -42,23 +63,26 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
         return CreateIssueDialog.INSTANCE;
     }
 
-    public setFullContentCount(value: number) {
-        this.fullContentCount = value;
+    public setItems(items: ContentSummaryAndCompareStatus[]) {
 
-        (<CreateIssueAction>this.confirmButton.getAction()).updateLabel(this.fullContentCount);
+        this.setListItems(items);
+        (<CreateIssueAction>this.actionButton.getAction()).updateLabel(this.countTotal());
     }
 
-    public setExcludeIds(excludeIds: ContentId[]) {
-        this.excludeIds = excludeIds;
+    public setExcludeChildrenIds(ids: ContentId[]) {
+        this.getItemList().setExcludeChildrenIds(ids);
     }
 
-    public setItems(contentIds: ContentId[] = [], excludeChildrenIds: ContentId[] = []) {
-        this.items = contentIds.map(contentId => {
-            return PublishRequestItem.create()
-                .setId(contentId)
-                .setIncludeChildren(excludeChildrenIds.indexOf(contentId) < 0)
-                .build();
-        });
+    public setExcludedIds(ids: ContentId[]) {
+        this.publishProcessor.setExcludedIds(ids);
+    }
+
+    public getExcludedIds(): ContentId[] {
+        return this.publishProcessor.getExcludedIds();
+    }
+
+    public countTotal(): number {
+        return this.publishProcessor.countTotal();
     }
 
     open() {
@@ -80,10 +104,20 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
 
     private initForm() {
         this.form = new IssueDialogForm();
+
+        this.form.onContentItemsChanged((items) => {
+            ContentSummaryAndCompareStatusFetcher.fetchByIds(
+                items.map(summary => summary.getContentId())).then((result) => {
+
+                this.setListItems(result);
+
+                this.publishProcessor.reloadPublishDependencies(true);
+            });
+        });
     }
 
     private initFormView() {
-        this.appendChildToContentPanel(this.form);
+        this.prependChildToContentPanel(this.form);
         this.centerMyself();
     }
 
@@ -103,7 +137,10 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
             const createIssueRequest = new CreateIssueRequest()
                 .setApprovers(this.form.getApprovers())
                 .setPublishRequest(
-                    PublishRequest.create().addPublishRequestItems(this.items).addExcludeIds(this.excludeIds).build()
+                    PublishRequest.create()
+                        .addExcludeIds(this.getExcludedIds())
+                        .addPublishRequestItems(this.createPublishRequestItems())
+                        .build()
                 ).setDescription(this.form.getDescription()).setTitle(this.form.getTitle());
 
             createIssueRequest.sendAndParse().then(() => {
@@ -120,16 +157,61 @@ export class CreateIssueDialog extends api.ui.dialog.ModalDialog {
 
     public reset() {
         this.form.reset();
+        this.publishProcessor.reset();
 
-        this.items = [];
-        this.excludeIds = [];
-        this.fullContentCount = 0;
+        this.form.giveFocus();
     }
 
+    private createPublishRequestItems(): PublishRequestItem[] {
+        return this.getItemList().getItems().map(item => {
+            return item.getContentId();
+        }).map(contentId => {
+            return PublishRequestItem.create()
+                .setId(contentId)
+                .setIncludeChildren(this.getItemList().getExcludeChildrenIds().indexOf(contentId) < 0)
+                .build();
+        });
+    }
+
+    public lockPublishItems() {
+        this.getItemList().setReadOnly(true);
+        this.getDependantList().setReadOnly(true);
+        this.form.toggleContentItemsSelector(false);
+    }
+
+    public unlockPublishItems() {
+        this.getItemList().setReadOnly(false);
+        this.getDependantList().setReadOnly(false);
+        this.form.toggleContentItemsSelector(true);
+    }
+
+    protected getDependantIds(): ContentId[] {
+        return this.publishProcessor.getDependantIds();
+    }
+
+    protected createItemList(): ListBox<ContentSummaryAndCompareStatus> {
+        return new PublishDialogItemList();
+    }
+
+    protected getItemList(): PublishDialogItemList {
+        return <PublishDialogItemList>super.getItemList();
+    }
+
+    protected createDependantList(): PublishDialogDependantList {
+        let dependants = new PublishDialogDependantList();
+
+        return dependants;
+    }
+
+    protected getDependantList(): PublishDialogDependantList {
+        return <PublishDialogDependantList>super.getDependantList();
+    }
+
+
     private initActions() {
-        const createAction = new CreateIssueAction(this.fullContentCount);
+        const createAction = new CreateIssueAction(this.countTotal());
         createAction.onExecuted(this.doCreateIssue.bind(this));
-        this.confirmButton = this.addAction(createAction, true);
+        this.actionButton = this.addAction(createAction, true);
 
     }
 

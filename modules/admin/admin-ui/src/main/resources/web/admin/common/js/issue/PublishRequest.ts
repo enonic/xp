@@ -1,6 +1,7 @@
 module api.issue {
 
     import PublishRequestJson = api.issue.resource.PublishRequestJson;
+    import ContentId = api.content.ContentId;
 
     export class PublishRequest {
 

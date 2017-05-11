@@ -11,6 +11,11 @@ import ValidityChangedEvent = api.ValidityChangedEvent;
 import PrincipalKey = api.security.PrincipalKey;
 import PEl = api.dom.PEl;
 import StringHelper = api.util.StringHelper;
+import ContentSelector = api.content.form.inputtype.contentselector.ContentSelector;
+import ContentSummary = api.content.ContentSummary;
+import IsAuthenticatedRequest = api.security.auth.IsAuthenticatedRequest;
+import LoginResult = api.security.auth.LoginResult;
+import PrincipalLoader = api.security.PrincipalLoader;
 
 export class IssueDialogForm extends api.ui.form.Form {
 
@@ -18,9 +23,13 @@ export class IssueDialogForm extends api.ui.form.Form {
 
     private description: TextArea;
 
+    private contentItemsSelector: api.content.ContentComboBox;
+
     private descriptionText: PEl;
 
     private title: TextInput;
+
+    private contentItemsChangedListeners: {(items: ContentSummary[]): void}[] = [];
 
     constructor() {
 
@@ -34,8 +43,10 @@ export class IssueDialogForm extends api.ui.form.Form {
     public doRender(): wemQ.Promise<boolean> {
         return super.doRender().then(() => {
             return this.selector.getLoader().load().then(() => {
-                this.title.giveFocus();
-                return true;
+                return this.contentItemsSelector.getLoader().load().then(() => {
+                    this.title.giveFocus();
+                    return true;
+                });
             });
         });
     }
@@ -54,10 +65,21 @@ export class IssueDialogForm extends api.ui.form.Form {
 
         this.descriptionText = new PEl('description-text');
 
-        const principalLoader = new api.security.PrincipalLoader().setAllowedTypes([PrincipalType.USER]);
-        principalLoader.load();
+        const principalLoader = new PrincipalLoader().setAllowedTypes([PrincipalType.USER]);
 
         this.selector = api.ui.security.PrincipalComboBox.create().setLoader(principalLoader).setMaxOccurences(0).build();
+
+        this.contentItemsSelector = api.content.ContentComboBox.create().setLoader(new api.content.resource.ContentSummaryLoader()).build();
+
+        this.contentItemsSelector.onOptionSelected(() => {
+            this.notifyContentItemsChanged(
+                this.contentItemsSelector.getSelectedDisplayValues())
+        });
+
+        this.contentItemsSelector.onOptionDeselected(() => {
+            this.notifyContentItemsChanged(
+                this.contentItemsSelector.getSelectedDisplayValues())
+        });
     }
 
     private initFormView() {
@@ -76,6 +98,10 @@ export class IssueDialogForm extends api.ui.form.Form {
         const selectorFormItem = this.addValidationViewer(
             new FormItemBuilder(this.selector).setLabel('Invite users to work on issue').setValidator(Validators.required).build());
         fieldSet.add(selectorFormItem);
+
+        const contentItemsFormItem =
+            new FormItemBuilder(this.contentItemsSelector).setLabel('Items:').build();
+        fieldSet.add(contentItemsFormItem);
 
         this.title.onValueChanged(() => {
             this.validate(true);
@@ -103,6 +129,14 @@ export class IssueDialogForm extends api.ui.form.Form {
 
         const selectorFormItem = <FormItem>this.selector.getParentElement();
         selectorFormItem.setLabel(readOnly ? 'Assignees:' : 'Invite users to work on issue');
+
+        const contentItemsFormItem = <FormItem>this.contentItemsSelector.getParentElement();
+        contentItemsFormItem.setVisible(!readOnly);
+    }
+
+    toggleContentItemsSelector(enabled: boolean) {
+        const contentItemsFormItem = <FormItem>this.contentItemsSelector.getParentElement();
+        contentItemsFormItem.setVisible(enabled);
     }
 
     public setIssue(issue: Issue) {
@@ -156,6 +190,17 @@ export class IssueDialogForm extends api.ui.form.Form {
         this.description.setValue('', true);
         this.descriptionText.setHtml('');
         this.selector.setValue('', true);
+
+        this.contentItemsSelector.setValue('', true);
+        this.contentItemsSelector.clearSelection();
+        this.toggleContentItemsSelector(true);
+    }
+
+    public setContentItems(ids: ContentId[], silent: boolean = false) {
+        this.contentItemsSelector.clearSelection();
+        ids.forEach((id) => {
+            this.contentItemsSelector.selectOptionByValue(id.toString(), silent);
+        })
     }
 
     private addValidationViewer(formItem: FormItem): FormItem {
@@ -178,5 +223,21 @@ export class IssueDialogForm extends api.ui.form.Form {
                 this.selector.selectOptionByValue(approver.toString());
             });
         }
+    }
+
+    onContentItemsChanged(listener: (items: ContentSummary[]) => void) {
+        this.contentItemsChangedListeners.push(listener);
+    }
+
+    unContentItemsChanged(listener: (items: ContentSummary[]) => void) {
+        this.contentItemsChangedListeners = this.contentItemsChangedListeners.filter((current) => {
+            return listener !== current;
+        });
+    }
+
+    private notifyContentItemsChanged(items: ContentSummary[]) {
+        this.contentItemsChangedListeners.forEach((listener) => {
+            listener(items);
+        });
     }
 }

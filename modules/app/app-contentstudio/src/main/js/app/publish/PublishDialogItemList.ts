@@ -5,6 +5,7 @@ import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompa
 import BrowseItem = api.app.browse.BrowseItem;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import Tooltip = api.ui.Tooltip;
+import ObjectHelper = api.ObjectHelper;
 
 export class PublishDialogItemList extends DialogItemList {
 
@@ -40,20 +41,22 @@ export class PublishDialogItemList extends DialogItemList {
         const item = new PublicStatusSelectionItem(viewer, browseItem);
         item.onItemStateChanged((contentId, enabled) => {
 
-            const index = this.excludeChildrenIds.indexOf(contentId);
+            const exist = ObjectHelper.contains(this.excludeChildrenIds, contentId);
             if (enabled) {
-                if (index >= 0) {
-                    this.excludeChildrenIds.splice(index, 1);
+                if (exist) {
+                    this.excludeChildrenIds = <ContentId[]>ObjectHelper.filter(this.excludeChildrenIds, contentId);
                 }
             } else {
-                if (index < 0) {
+                if (!exist) {
                     this.excludeChildrenIds.push(contentId);
                 }
             }
             this.debounceNotifyListChanged();
         });
 
-        this.excludeChildrenIds.push(browseItem.getModel().getContentId());
+        if (!ObjectHelper.contains(this.excludeChildrenIds, browseItem.getModel().getContentId())) {
+            this.excludeChildrenIds.push(browseItem.getModel().getContentId());
+        }
 
         if (item.isRemovable()) {
             item.addClass('removable');
@@ -75,6 +78,7 @@ export class PublishDialogItemList extends DialogItemList {
     }
 
     public setReadOnly(value: boolean) {
+        this.toggleClass('readonly', value);
         this.getItemViews().forEach((item) => {
             item.setReadOnly(value);
         });
@@ -92,8 +96,18 @@ export class PublishDialogItemList extends DialogItemList {
         }
     }
 
+    public setExcludeChildrenIds(ids: ContentId[]) {
+        this.excludeChildrenIds = ids;
+
+        this.getItemViews().forEach(itemView => {
+            itemView.getIncludeChildrenToggler().toggle(ids.indexOf(itemView.getContentId()) < 0, true);
+        });
+
+        this.debounceNotifyListChanged();
+    }
+
     public getExcludeChildrenIds(): ContentId[] {
-        return this.excludeChildrenIds;
+        return this.excludeChildrenIds.slice();
     }
 
     public clearExcludeChildrenIds() {
@@ -224,6 +238,8 @@ class IncludeChildrenToggler extends api.dom.DivEl {
     setReadOnly(value: boolean) {
         this.readOnly = value;
         this.tooltip.setActive(!value);
+
+        this.toggleClass('readonly',this.readOnly);
     }
 
     isEnabled(): boolean {

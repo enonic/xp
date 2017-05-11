@@ -1,5 +1,56 @@
 .create-issue-dialog {
 
+  @toggler-width: 35px;
+
+  .dialog-content {
+    max-height: 350px;
+    overflow-y: auto;
+
+    .issue-dialog-form {
+      margin: 0px 0px;
+    }
+
+    .content-combo-box {
+      .selected-options {
+        display: none;
+      }
+    }
+
+    .publish-dialog-item-list {
+
+      .browse-selection-item {
+
+        .status {
+          line-height: 32px;
+        }
+      }
+
+      &.contains-toggleable {
+
+        .browse-selection-item:not(.toggleable) {
+          margin-left: @toggler-width;
+        }
+
+        .include-children-toggler {
+          cursor: pointer;
+          &.readonly{
+            cursor: default;
+          }
+          &:hover {
+            &:before {
+              color: @admin-font-gray2;
+            }
+            &.on {
+              &:before {
+                color: @admin-button-blue1;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
   .button-container {
 
     width: 100%;

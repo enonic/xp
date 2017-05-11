@@ -85,6 +85,12 @@ export class IssueDetailsDialog extends SchedulableDialog {
         this.onClosed(Router.back);
     }
 
+    setReadOnly(value: boolean) {
+        this.form.setReadOnly(value);
+        this.getItemList().setReadOnly(value);
+        this.getDependantList().setReadOnly(value);
+    }
+
     setIssue(issue: Issue): IssueDetailsDialog {
         this.issue = issue;
 
@@ -93,7 +99,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
         }
 
         this.form.setIssue(issue);
-        this.form.setReadOnly(true);
+        this.setReadOnly(true);
 
         this.setTitle(issue.getTitle());
         this.initStatusInfo();

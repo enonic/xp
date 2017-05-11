@@ -24,7 +24,7 @@ module api.ui.selector.list {
         }
 
         getItems(): I[] {
-            return this.items;
+            return this.items.slice();
         }
 
         getItem(id: string): I {
