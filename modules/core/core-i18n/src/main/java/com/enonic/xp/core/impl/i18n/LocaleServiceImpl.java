@@ -20,7 +20,9 @@ import com.enonic.xp.resource.ResourceService;
 public final class LocaleServiceImpl
     implements LocaleService
 {
-    private static final String PHRASE_FOLDER = "site/i18n/phrases";
+    private static final String ROOT_FOLDER = "i18n/phrases";
+
+    private static final String SITE_FOLDER = "site/i18n/phrases";
 
     private static final String DELIMITER = "_";
 
@@ -75,9 +77,16 @@ public final class LocaleServiceImpl
 
     private Properties loadBundle( final ApplicationKey applicationKey, final String bundleExtension )
     {
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
+        properties.putAll( loadBundle( applicationKey, bundleExtension, ROOT_FOLDER ) );
+        properties.putAll( loadBundle( applicationKey, bundleExtension, SITE_FOLDER ) );
+        return properties;
+    }
 
-        final ResourceKey resourceKey = ResourceKey.from( applicationKey, PHRASE_FOLDER + bundleExtension + ".properties" );
+    private Properties loadBundle( final ApplicationKey applicationKey, final String bundleExtension, final String folder )
+    {
+        final Properties properties = new Properties();
+        final ResourceKey resourceKey = ResourceKey.from( applicationKey, folder + bundleExtension + ".properties" );
         final Resource resource = resourceService.getResource( resourceKey );
 
         if ( resource.exists() )

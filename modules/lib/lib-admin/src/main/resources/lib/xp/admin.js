@@ -26,3 +26,13 @@ exports.getBaseUri = function () {
 exports.getAssetsUri = function () {
     return helper.getAssetsUri();
 };
+
+/**
+ * Returns the current locale based on request or server.
+ *
+ * @returns {string} Current locale.
+ */
+exports.getLocale = function () {
+    return helper.getLocale();
+};
+

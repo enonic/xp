@@ -7,6 +7,8 @@
  * @module i18n
  */
 
+var bean = __.newBean('com.enonic.xp.lib.i18n.LocaleScriptBean');
+
 /**
  * This function localizes a phrase.
  *
@@ -20,6 +22,16 @@
  * @returns {string} The localized string.
  */
 exports.localize = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.i18n.LocaleScriptBean');
     return bean.localize(params.key, __.nullOrValue(params.locale), __.toScriptValue(params.values));
+};
+
+/**
+ * This function returns all phrases.
+ *
+ * @param {string} [locale] A string-representation of a locale. If the locale is not set, the site language is used.
+ *
+ * @returns {object} An object of all phrases.
+ */
+exports.getPhrases = function (locale) {
+    return __.toNativeObject(bean.getPhrases(__.nullOrValue(locale)));
 };

@@ -181,6 +181,10 @@ module api.ui.selector.combobox {
             this.comboBox.addOption(option);
         }
 
+        updateOption(option: Option<OPTION_DISPLAY_VALUE>, displayValue: Object) {
+            this.comboBox.updateOption(option, this.createOption(displayValue));
+        }
+
         selectOption(option: Option<OPTION_DISPLAY_VALUE>, silent: boolean = false) {
             this.comboBox.selectOption(option, silent);
         }
