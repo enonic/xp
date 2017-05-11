@@ -3,12 +3,9 @@ package com.enonic.xp.repo.impl.search;
 import com.enonic.xp.query.Query;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.SearchSource;
-import com.enonic.xp.repo.impl.StorageSource;
 
 public class SearchRequest
 {
-    private final StorageSource settings;
-
     private final Query query;
 
     private final ReturnFields returnFields;
@@ -17,7 +14,6 @@ public class SearchRequest
 
     private SearchRequest( Builder builder )
     {
-        this.settings = builder.settings;
         this.query = builder.query;
         this.returnFields = builder.returnFields;
         this.searchSource = builder.searchSource;
@@ -33,11 +29,6 @@ public class SearchRequest
         return new Builder();
     }
 
-    public StorageSource getSettings()
-    {
-        return settings;
-    }
-
     public Query getQuery()
     {
         return query;
@@ -50,8 +41,6 @@ public class SearchRequest
 
     public static final class Builder
     {
-        private StorageSource settings;
-
         private Query query;
 
         private ReturnFields returnFields;
@@ -60,12 +49,6 @@ public class SearchRequest
 
         private Builder()
         {
-        }
-
-        public Builder settings( StorageSource settings )
-        {
-            this.settings = settings;
-            return this;
         }
 
         public Builder searchSource( final SearchSource searchSource )
