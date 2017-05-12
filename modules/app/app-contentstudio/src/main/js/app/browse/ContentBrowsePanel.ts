@@ -157,11 +157,13 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
             const showIssuesDialogButton: ActionButton = new ActionButton(new ShowIssuesDialogAction());
             showIssuesDialogButton.addClass('show-issues-dialog-button');
-            showIssuesDialogButton.getEl().setTitle('Publishing Issues');
             IssueFetcher.fetchIssueStats().then((stats: IssueStatsJson) => {
                 if (stats.assignedToMe > 0) {
                     showIssuesDialogButton.addClass('has-assigned-issues');
                 }
+                showIssuesDialogButton.getEl().setTitle((stats.assignedToMe == 0) ?
+                                                        'Publishing Issues' :
+                                                        'You have unclosed Publishing Issues');
             }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             });
