@@ -49,10 +49,10 @@
     .no-issues-message {
       .watermark-text(18px, true);
 
-      left: 3%;
+      left: 0;
     }
 
-    &.OPEN .creator {
+    .creator {
       color: @admin-black;
       font-weight: bold;
     }
@@ -81,9 +81,26 @@
 .browse-toolbar {
   .show-issues-dialog-button {
     margin-bottom: 1px;
+    padding-right: 14px;
 
     &:before {
       font-size: 20px;
+    }
+
+    &.has-assigned-issues {
+      padding-right: 2px;
+
+      &:after {
+        content: "";
+        background: @admin-blue;
+        position: relative;
+        bottom: 16px;
+        right: 7px;
+        padding: 6px;
+        border-radius: 8px;
+        font-size: 0px;
+        z-index: 1;
+      }
     }
 
     .icon-signup();
