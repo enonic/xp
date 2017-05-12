@@ -5,6 +5,7 @@ import {ContentPublishPromptEvent} from '../browse/ContentPublishPromptEvent';
 import {PublishDialogItemList} from './PublishDialogItemList';
 import {CreateIssueDialog} from './CreateIssueDialog';
 import {SchedulableDialog} from '../dialog/SchedulableDialog';
+import {PublishProcessor} from './PublishProcessor';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import PublishContentRequest = api.content.resource.PublishContentRequest;
@@ -22,7 +23,6 @@ import ModalDialogButtonRow = api.ui.dialog.ModalDialogButtonRow;
 import MenuButton = api.ui.button.MenuButton;
 import Action = api.ui.Action;
 import ActionButton = api.ui.button.ActionButton;
-import {PublishProcessor} from "./PublishProcessor";
 
 /**
  * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
@@ -237,7 +237,6 @@ export class ContentPublishDialog extends SchedulableDialog {
             this.addClickIgnoredElement(this.createIssueDialog);
         }
 
-        debugger;
         this.createIssueDialog.setItems(this.getItemList().getItems()/*idsToPublish, this.getItemList().getExcludeChildrenIds()*/);
         this.createIssueDialog.setExcludedIds(this.getExcludedIds());
         this.createIssueDialog.setExcludeChildrenIds(this.getItemList().getExcludeChildrenIds());
