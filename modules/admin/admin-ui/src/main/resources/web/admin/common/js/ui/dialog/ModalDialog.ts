@@ -373,7 +373,7 @@ module api.ui.dialog {
         setTitle(value: string) {
             this.titleEl.setHtml(value);
         }
-        
+
         appendElement(el: Element) {
             el.insertAfterEl(this.titleEl);
         }
