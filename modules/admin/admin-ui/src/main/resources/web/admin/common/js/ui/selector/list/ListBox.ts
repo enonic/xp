@@ -93,6 +93,21 @@ module api.ui.selector.list {
             }
         }
 
+        replaceItem(item: I, append: boolean = false) {
+            const index = this.items.map(value => this.getItemId(value)).indexOf(this.getItemId(item));
+            if (index > -1) {
+                if (append) {
+                    const newItems = this.items.slice(0, index).concat(this.items.slice(index + 1));
+                    newItems.unshift(item);
+                    this.items = newItems;
+                } else {
+                    this.items[index] = item;
+                }
+            } else if (append) {
+                this.items.unshift(item);
+            }
+        }
+
         getItemCount(): number {
             return this.items.length;
         }

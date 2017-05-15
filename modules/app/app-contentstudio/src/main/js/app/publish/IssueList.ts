@@ -37,7 +37,15 @@ export class IssueList extends ListBox<IssueSummary> {
 
     public reload() {
         this.removeChildren();
+        this.clearItems(true);
         this.initList();
+    }
+
+    refreshList() {
+        super.refreshList();
+        if (this.getItemCount() === 0) {
+            this.appendChild(new PEl('no-issues-message').setHtml('No issues found'));
+        }
     }
 
     private initList() {

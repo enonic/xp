@@ -31,6 +31,10 @@ export class IssuesPanel extends Panel {
         this.issuesList.reload();
     }
 
+    public refresh() {
+        this.issuesList.refreshList();
+    }
+
     public onIssueSelected(listener: (id: IssueListItem) => void) {
         this.issueSelectedListeners.push(listener);
     }
