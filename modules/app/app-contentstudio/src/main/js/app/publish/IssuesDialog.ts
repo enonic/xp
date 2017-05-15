@@ -90,6 +90,10 @@ export class IssuesDialog extends ModalDialog {
                 this.getEl().focus();
             }
         });
+
+        IssueDetailsDialog.get().onIssueClosed((issue: Issue) => {
+            this.reload();
+        });
     }
 
     showIssueDetailsDialog(issueListItem: IssueListItem) {
