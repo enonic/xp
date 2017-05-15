@@ -10,9 +10,9 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.Issue;
+import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.issue.PublishRequest;
 import com.enonic.xp.issue.PublishRequestItem;
-import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.issue.PublishRequestPropertyNames;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -20,6 +20,7 @@ import static com.enonic.xp.issue.IssuePropertyNames.APPROVERS;
 import static com.enonic.xp.issue.IssuePropertyNames.CREATED_TIME;
 import static com.enonic.xp.issue.IssuePropertyNames.CREATOR;
 import static com.enonic.xp.issue.IssuePropertyNames.DESCRIPTION;
+import static com.enonic.xp.issue.IssuePropertyNames.INDEX;
 import static com.enonic.xp.issue.IssuePropertyNames.MODIFIED_TIME;
 import static com.enonic.xp.issue.IssuePropertyNames.MODIFIER;
 import static com.enonic.xp.issue.IssuePropertyNames.PUBLISH_REQUEST;
@@ -58,6 +59,7 @@ public class IssueDataSerializer
 
         final PropertySet issueAsData = propertyTree.getRoot();
 
+        issueAsData.ifNotNull().addLong( INDEX, editedIssue.getIndex() );
         issueAsData.ifNotNull().addString( TITLE, editedIssue.getTitle() );
         issueAsData.ifNotNull().addInstant( CREATED_TIME, editedIssue.getCreatedTime() );
         issueAsData.ifNotNull().addInstant( MODIFIED_TIME, editedIssue.getModifiedTime() );
@@ -84,6 +86,7 @@ public class IssueDataSerializer
         builder.title( issueProperties.getString( TITLE ) );
         builder.description( issueProperties.getString( DESCRIPTION ) );
         builder.status( IssueStatus.valueOf( issueProperties.getString( STATUS ) ) );
+        builder.index( issueProperties.getLong( INDEX ) );
 
         extractUserInfo( issueProperties, builder );
         extractApprovers( issueProperties, builder );

@@ -16,7 +16,6 @@ public class IssueTest
 
         assertNotNull( issue.getId() );
         assertNotNull( issue.getName() );
-        assertNotNull( issue.getPath() );
         assertNotNull( issue.getApproverIds() );
         assertEquals( IssueStatus.Open, issue.getStatus() );
     }
@@ -33,26 +32,5 @@ public class IssueTest
             build();
 
         assertNotEquals( issue1.getId(), issue2.getId() );
-    }
-
-    @Test
-    public void testIssuePathStartsWithPrefix()
-    {
-        Issue issue = Issue.create().
-            title( "my issue" ).
-            build();
-
-        assertTrue( issue.getPath().getValue().startsWith( "/issue/" ) );
-    }
-
-    @Test
-    public void testIssuePathIsBuiltFromId()
-    {
-        final IssueId issueId = IssueId.create();
-        final Issue issue = Issue.create().
-            id( issueId ).
-            build();
-
-        assertEquals( "/issue/" + issueId.toString(), issue.getPath().getValue() );
     }
 }

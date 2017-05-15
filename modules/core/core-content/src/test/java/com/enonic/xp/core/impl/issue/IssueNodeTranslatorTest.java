@@ -10,7 +10,6 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueName;
-import com.enonic.xp.issue.IssuePath;
 import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.issue.PublishRequestItem;
 import com.enonic.xp.issue.PublishRequestPropertyNames;
@@ -22,6 +21,7 @@ import com.enonic.xp.security.PrincipalKey;
 import static com.enonic.xp.issue.IssuePropertyNames.APPROVERS;
 import static com.enonic.xp.issue.IssuePropertyNames.CREATOR;
 import static com.enonic.xp.issue.IssuePropertyNames.DESCRIPTION;
+import static com.enonic.xp.issue.IssuePropertyNames.INDEX;
 import static com.enonic.xp.issue.IssuePropertyNames.PUBLISH_REQUEST;
 import static com.enonic.xp.issue.IssuePropertyNames.STATUS;
 import static com.enonic.xp.issue.IssuePropertyNames.TITLE;
@@ -52,7 +52,6 @@ public class IssueNodeTranslatorTest
         assertTrue( issue.getPublishRequest().getItems().contains(
             PublishRequestItem.create().id( ContentId.from( "content-id2" ) ).includeChildren( true ).build() ) );
         assertEquals( issueName, issue.getName() );
-        assertEquals( IssuePath.from( issueName ), issue.getPath() );
     }
 
     private Node createNode()
@@ -65,6 +64,7 @@ public class IssueNodeTranslatorTest
         issueAsData.addString( CREATOR, "user:myStore:me" );
         issueAsData.addString( STATUS, IssueStatus.Open.toString() );
         issueAsData.addString( DESCRIPTION, "description" );
+        issueAsData.addLong( INDEX, 1L );
 
         issueAsData.addStrings( APPROVERS, "user:myStore:approver-1", "user:myStore:approver-2" );
 

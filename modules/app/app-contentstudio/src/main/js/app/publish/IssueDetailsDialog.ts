@@ -95,7 +95,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
         this.form.setIssue(issue);
         this.form.setReadOnly(true);
 
-        this.setTitle(issue.getTitle());
+        this.setTitle(issue.getTitle() + ' #' + issue.getIndex());
         this.initStatusInfo();
 
         if (this.getItemList().isRendered()) {

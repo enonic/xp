@@ -24,6 +24,11 @@ public class IssueJson
         return issue.getId().toString();
     }
 
+    public long getIndex()
+    {
+        return issue.getIndex();
+    }
+
     public String getTitle()
     {
         return this.issue.getTitle();
@@ -32,11 +37,6 @@ public class IssueJson
     public String getName()
     {
         return this.issue.getName().toString();
-    }
-
-    public String getIssuePath()
-    {
-        return this.issue.getPath().toString();
     }
 
     public String getDescription()
