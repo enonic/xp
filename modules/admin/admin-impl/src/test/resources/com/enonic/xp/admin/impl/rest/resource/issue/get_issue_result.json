@@ -6,7 +6,7 @@
   "creator": "user:system:anonymous",
   "description": "desc",
   "id": "${id}",
-  "issuePath": "/issue/${id}",
+  "index": 0,
   "issueStatus": "Open",
   "modifiedTime": null,
   "modifier": "user:system:anonymous",

@@ -11,12 +11,13 @@ import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueConstants;
 import com.enonic.xp.issue.IssueName;
-import com.enonic.xp.issue.IssuePath;
 import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 
 import static org.junit.Assert.*;
@@ -40,6 +41,8 @@ public class CreateIssueCommandTest
     {
         final CreateIssueParams params = createIssueParams().build();
         final CreateIssueCommand command = createIssueCommand( params );
+        Mockito.when( this.nodeService.findByQuery( Mockito.any( NodeQuery.class ) ) ).thenReturn(
+            FindNodesByQueryResult.create().build() );
 
         final Issue issue = command.execute();
 
@@ -47,7 +50,6 @@ public class CreateIssueCommandTest
         assertEquals( "title", issue.getTitle() );
         assertEquals( IssueStatus.Open, issue.getStatus() );
         assertEquals( IssueName.from( issue.getId().toString() ), issue.getName() );
-        assertEquals( IssuePath.from( IssueName.from( issue.getId().toString() ) ), issue.getPath() );
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -57,7 +59,6 @@ public class CreateIssueCommandTest
         final CreateIssueCommand command = createIssueCommand( params );
         command.execute();
     }
-
 
 
     private CreateIssueParams.Builder createIssueParams()

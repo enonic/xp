@@ -112,7 +112,7 @@ export class IssueList extends ListBox<IssueSummary> {
     }
 
     private makeSubName(issueListItem: IssueListItem): string {
-        return '\<span\>#' + issueListItem.getIssue().getId() + ' - ' + issueListItem.getStatusInfo() + '\</span\>';
+        return '\<span\>#' + issueListItem.getIssue().getIndex() + ' - ' + issueListItem.getStatusInfo() + '\</span\>';
     }
 
     onIssueSelected(listener: (id: IssueListItem) => void) {

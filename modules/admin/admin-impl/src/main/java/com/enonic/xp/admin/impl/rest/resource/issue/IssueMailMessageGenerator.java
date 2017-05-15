@@ -62,6 +62,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
         final String description = params.getIssue().getDescription();
 
         messageParams.put( "id", params.getIssue().getId().toString() );
+        messageParams.put( "index", params.getIssue().getIndex() );
         messageParams.put( "idShort", params.getIssue().getId().toString().substring( 0, 9 ) );
         messageParams.put( "title", params.getIssue().getTitle() );
         messageParams.put( "creator", params.getIssue().getCreator().getId() );

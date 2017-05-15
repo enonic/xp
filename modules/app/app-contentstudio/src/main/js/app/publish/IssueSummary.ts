@@ -5,6 +5,8 @@ export class IssueSummary {
 
     private id: string;
 
+    private index: number;
+
     private title: string;
 
     private creator: string;
@@ -15,6 +17,7 @@ export class IssueSummary {
 
     constructor(builder: IssueSummaryBuilder) {
         this.id = builder.id;
+        this.index = builder.index;
         this.title = builder.title;
         this.creator = builder.creator;
         this.modifiedTime = builder.modifiedTime;
@@ -31,6 +34,10 @@ export class IssueSummary {
 
     getId(): string {
         return this.id;
+    }
+
+    getIndex(): number {
+        return this.index;
     }
 
     getTitle(): string {
@@ -55,6 +62,8 @@ export class IssueSummaryBuilder {
 
     id: string;
 
+    index: number;
+
     title: string;
 
     creator: string;
@@ -65,6 +74,7 @@ export class IssueSummaryBuilder {
 
     fromJson(json: IssueSummaryJson): IssueSummaryBuilder {
         this.id = json.id;
+        this.index = json.index;
         this.title = json.title;
         this.creator = json.creator;
         this.modifiedTime = json.modifiedTime ? new Date(Date.parse(json.modifiedTime)) : null;
@@ -75,6 +85,11 @@ export class IssueSummaryBuilder {
 
     setId(id: string): IssueSummaryBuilder {
         this.id = id;
+        return this;
+    }
+
+    setIndex(index: number): IssueSummaryBuilder {
+        this.index = index;
         return this;
     }
 

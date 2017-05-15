@@ -40,6 +40,8 @@ export class IssueDetailsDialog extends SchedulableDialog {
     private closeOnPublishCheckbox: Checkbox;
 
     private itemsHeader: api.dom.H6El;
+    
+    private issueIdEl: api.dom.EmEl;
 
     private static INSTANCE: IssueDetailsDialog = new IssueDetailsDialog();
 
@@ -71,6 +73,9 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
         this.itemsHeader = new api.dom.H6El().addClass('items-header').setHtml('Items:').insertBeforeEl(this.getItemList());
 
+        this.issueIdEl = new api.dom.EmEl('issue-id');
+        this.header.appendElement(this.issueIdEl);
+
     }
 
     public static get(): IssueDetailsDialog {
@@ -96,6 +101,9 @@ export class IssueDetailsDialog extends SchedulableDialog {
         this.form.setReadOnly(true);
 
         this.setTitle(issue.getTitle());
+
+        this.issueIdEl.setHtml('#' + issue.getIndex());
+        
         this.initStatusInfo();
 
         if (this.getItemList().isRendered()) {
