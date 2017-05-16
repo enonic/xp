@@ -9,7 +9,6 @@ import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.query.filter.IndicesFilter;
 import com.enonic.xp.repo.impl.MultiRepoSearchSource;
-import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AclFilterBuilderFactory;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -67,11 +66,18 @@ class MultiRepoSearchSourceAdaptor
 
     private static Filter doCreateAclEntryFilter( final RepositoryId repoId, final BranchAclEntry entry )
     {
+        final BooleanFilter.Builder filters = BooleanFilter.create().
+            must( createBranchFilter( entry.getBranch() ) );
+
+        final Filter aclFilter = AclFilterBuilderFactory.create( entry.getAcl() );
+        if ( aclFilter != null )
+        {
+            filters.must( aclFilter );
+        }
+
         return IndicesFilter.create().
             addIndex( createSearchIndexName( repoId ) ).
-            filter( BooleanFilter.create().
-                must( AclFilterBuilderFactory.create( entry.getAcl() ) ).
-                must( createBranchFilter( entry.getBranch() ) ).
+            filter( filters.
                 build() ).
             build();
     }

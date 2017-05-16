@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.query.filter.Filter;
@@ -9,13 +7,12 @@ import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class AclFilterBuilderFactory
 {
     public static Filter create( final PrincipalKeys principalsKeys )
     {
-        if ( isSuperUser() )
+        if ( isSuperUser( principalsKeys ) )
         {
             return null;
         }
@@ -44,12 +41,8 @@ public class AclFilterBuilderFactory
             build();
     }
 
-    private static boolean isSuperUser()
+    private static boolean isSuperUser( final PrincipalKeys principalsKeys )
     {
-        final Context context = ContextAccessor.current();
-
-        final AuthenticationInfo authInfo = context.getAuthInfo();
-
-        return authInfo != null && authInfo.hasRole( RoleKeys.ADMIN );
+        return principalsKeys.contains( RoleKeys.ADMIN );
     }
 }

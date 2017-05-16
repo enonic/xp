@@ -40,7 +40,7 @@ public final class NodeMultiRepoQueryResultMapper
             gen.map();
             gen.value( "id", nodeHit.getNodeId() );
             gen.value( "score", Float.isNaN( nodeHit.getScore() ) ? 0.0 : nodeHit.getScore() );
-            gen.value( "repositoryId", nodeHit.getRepositoryId().toString() );
+            gen.value( "repoId", nodeHit.getRepositoryId().toString() );
             gen.value( "branch", nodeHit.getBranch().getValue() );
             gen.end();
         }
