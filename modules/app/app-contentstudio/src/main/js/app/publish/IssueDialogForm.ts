@@ -19,7 +19,7 @@ import PrincipalLoader = api.security.PrincipalLoader;
 
 export class IssueDialogForm extends api.ui.form.Form {
 
-    private selector: PrincipalComboBox;
+    private approversSelector: PrincipalComboBox;
 
     private description: TextArea;
 
@@ -29,7 +29,9 @@ export class IssueDialogForm extends api.ui.form.Form {
 
     private title: TextInput;
 
-    private contentItemsChangedListeners: {(items: ContentSummary[]): void}[] = [];
+    private contentItemsAddedListeners: {(items: ContentSummary[]): void}[] = [];
+
+    private contentItemsRemovedListeners: {(items: ContentSummary[]): void}[] = [];
 
     constructor() {
 
@@ -42,7 +44,7 @@ export class IssueDialogForm extends api.ui.form.Form {
 
     public doRender(): wemQ.Promise<boolean> {
         return super.doRender().then(() => {
-            return this.selector.getLoader().load().then(() => {
+            return this.approversSelector.getLoader().load().then(() => {
                 return this.contentItemsSelector.getLoader().load().then(() => {
                     this.title.giveFocus();
                     return true;
@@ -67,18 +69,18 @@ export class IssueDialogForm extends api.ui.form.Form {
 
         const principalLoader = new PrincipalLoader().setAllowedTypes([PrincipalType.USER]);
 
-        this.selector = api.ui.security.PrincipalComboBox.create().setLoader(principalLoader).setMaxOccurences(0).build();
+        this.approversSelector = api.ui.security.PrincipalComboBox.create().setLoader(principalLoader).setMaxOccurences(0).build();
 
         this.contentItemsSelector = api.content.ContentComboBox.create().setLoader(new api.content.resource.ContentSummaryLoader()).build();
 
-        this.contentItemsSelector.onOptionSelected(() => {
-            this.notifyContentItemsChanged(
-                this.contentItemsSelector.getSelectedDisplayValues())
+        this.contentItemsSelector.onOptionSelected((option) => {
+            this.notifyContentItemsAdded(
+               [option.getSelectedOption().getOption().displayValue])
         });
 
-        this.contentItemsSelector.onOptionDeselected(() => {
-            this.notifyContentItemsChanged(
-                this.contentItemsSelector.getSelectedDisplayValues())
+        this.contentItemsSelector.onOptionDeselected((option) => {
+            this.notifyContentItemsRemoved(
+                [option.getSelectedOption().getOption().displayValue])
         });
     }
 
@@ -96,18 +98,18 @@ export class IssueDialogForm extends api.ui.form.Form {
         fieldSet.appendChild(this.descriptionText);
 
         const selectorFormItem = this.addValidationViewer(
-            new FormItemBuilder(this.selector).setLabel('Invite users to work on issue').setValidator(Validators.required).build());
+            new FormItemBuilder(this.approversSelector).setLabel('Invite users to work on issue').setValidator(Validators.required).build());
         fieldSet.add(selectorFormItem);
 
         const contentItemsFormItem =
-            new FormItemBuilder(this.contentItemsSelector).setLabel('Items:').build();
+            new FormItemBuilder(this.contentItemsSelector).setLabel('Items that will be added to the issue:').build();
         fieldSet.add(contentItemsFormItem);
 
         this.title.onValueChanged(() => {
             this.validate(true);
         });
 
-        this.selector.onValueChanged(() => {
+        this.approversSelector.onValueChanged(() => {
             this.validate(true);
         });
 
@@ -117,7 +119,7 @@ export class IssueDialogForm extends api.ui.form.Form {
     public setReadOnly(readOnly: boolean) {
         this.title.setReadOnly(readOnly);
         this.description.setReadOnly(readOnly);
-        this.selector.setReadOnly(readOnly);
+        this.approversSelector.setReadOnly(readOnly);
 
         const titleFormItem = <FormItem>this.title.getParentElement();
         titleFormItem.setVisible(!readOnly);
@@ -127,7 +129,7 @@ export class IssueDialogForm extends api.ui.form.Form {
 
         this.descriptionText.setVisible(readOnly && !StringHelper.isBlank(this.descriptionText.getHtml()));
 
-        const selectorFormItem = <FormItem>this.selector.getParentElement();
+        const selectorFormItem = <FormItem>this.approversSelector.getParentElement();
         selectorFormItem.setLabel(readOnly ? 'Assignees:' : 'Invite users to work on issue');
 
         const contentItemsFormItem = <FormItem>this.contentItemsSelector.getParentElement();
@@ -149,10 +151,10 @@ export class IssueDialogForm extends api.ui.form.Form {
         this.description.setValue(issue.getDescription());
         this.descriptionText.setHtml(issue.getDescription());
 
-        if (this.selector.isRendered()) {
+        if (this.approversSelector.isRendered()) {
             this.setApprovers(issue.getApprovers());
         } else {
-            this.selector.onRendered(() => {
+            this.approversSelector.onRendered(() => {
                 this.setApprovers(issue.getApprovers());
             });
         }
@@ -175,7 +177,7 @@ export class IssueDialogForm extends api.ui.form.Form {
     }
 
     public getApprovers(): PrincipalKey[] {
-        return this.selector.getSelectedValues().map(value => PrincipalKey.fromString(value));
+        return this.approversSelector.getSelectedValues().map(value => PrincipalKey.fromString(value));
     }
 
     public giveFocus(): boolean {
@@ -189,9 +191,9 @@ export class IssueDialogForm extends api.ui.form.Form {
         this.title.setValue('', true);
         this.description.setValue('', true);
         this.descriptionText.setHtml('');
-        this.selector.setValue('', true);
+        this.approversSelector.clearCombobox();
 
-        this.contentItemsSelector.setValue('', true);
+        this.contentItemsSelector.clearCombobox();
         this.contentItemsSelector.clearSelection();
         this.toggleContentItemsSelector(true);
     }
@@ -201,6 +203,24 @@ export class IssueDialogForm extends api.ui.form.Form {
         ids.forEach((id) => {
             this.contentItemsSelector.selectOptionByValue(id.toString(), silent);
         })
+    }
+
+    public selectContentItems(contents: ContentSummary[], silent: boolean = false) {
+        if (!contents) {
+            return;
+        }
+        contents.forEach((value) => {
+            this.contentItemsSelector.select(value, false, silent);
+        });
+    }
+
+    public deselectContentItems(contents: ContentSummary[], silent: boolean = false) {
+        if (!contents) {
+            return;
+        }
+        contents.forEach((value) => {
+            this.contentItemsSelector.deselect(value, silent);
+        });
     }
 
     private addValidationViewer(formItem: FormItem): FormItem {
@@ -216,27 +236,43 @@ export class IssueDialogForm extends api.ui.form.Form {
     }
 
     private setApprovers(approvers: PrincipalKey[]) {
-        this.selector.clearSelection();
+        this.approversSelector.clearSelection();
 
         if (approvers) {
             approvers.forEach((approver) => {
-                this.selector.selectOptionByValue(approver.toString());
+                this.approversSelector.selectOptionByValue(approver.toString());
             });
         }
     }
 
-    onContentItemsChanged(listener: (items: ContentSummary[]) => void) {
-        this.contentItemsChangedListeners.push(listener);
+    onContentItemsAdded(listener: (items: ContentSummary[]) => void) {
+        this.contentItemsAddedListeners.push(listener);
     }
 
-    unContentItemsChanged(listener: (items: ContentSummary[]) => void) {
-        this.contentItemsChangedListeners = this.contentItemsChangedListeners.filter((current) => {
+    unContentItemsAdded(listener: (items: ContentSummary[]) => void) {
+        this.contentItemsAddedListeners = this.contentItemsAddedListeners.filter((current) => {
             return listener !== current;
         });
     }
 
-    private notifyContentItemsChanged(items: ContentSummary[]) {
-        this.contentItemsChangedListeners.forEach((listener) => {
+    private notifyContentItemsAdded(items: ContentSummary[]) {
+        this.contentItemsAddedListeners.forEach((listener) => {
+            listener(items);
+        });
+    }
+
+    onContentItemsRemoved(listener: (items: ContentSummary[]) => void) {
+        this.contentItemsRemovedListeners.push(listener);
+    }
+
+    unContentItemsRemoved(listener: (items: ContentSummary[]) => void) {
+        this.contentItemsRemovedListeners = this.contentItemsRemovedListeners.filter((current) => {
+            return listener !== current;
+        });
+    }
+
+    private notifyContentItemsRemoved(items: ContentSummary[]) {
+        this.contentItemsRemovedListeners.forEach((listener) => {
             listener(items);
         });
     }

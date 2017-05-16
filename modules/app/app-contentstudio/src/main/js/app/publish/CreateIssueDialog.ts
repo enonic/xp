@@ -11,6 +11,8 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 import {PublishDialogItemList} from "./PublishDialogItemList";
 import {PublishDialogDependantList} from "./PublishDialogDependantList";
 import ContentId = api.content.ContentId;
+import ObjectHelper = api.ObjectHelper;
+import ContentSummary = api.content.ContentSummary;
 
 export class CreateIssueDialog extends DependantItemsDialog {
 
@@ -37,22 +39,32 @@ export class CreateIssueDialog extends DependantItemsDialog {
 
         this.addCancelButtonToBottom('Back');
 
-        this.publishProcessor.onLoadingStarted(()=> {
+        this.publishProcessor.onLoadingStarted(() => {
             this.updateButtonCount('Create Issue', 0);
             this.loadMask.show();
         });
 
-        this.publishProcessor.onLoadingFinished(()=> {
+        this.publishProcessor.onLoadingFinished(() => {
             this.updateButtonCount('Create Issue', this.countTotal());
             this.loadMask.hide();
         })
 
-        this.onRendered(()=> {
-            this.publishProcessor.reloadPublishDependencies(true).then(()=> {
+        this.onRendered(() => {
+            this.publishProcessor.reloadPublishDependencies(true).then(() => {
                 this.form.setContentItems(this.publishProcessor.getContentToPublishIds(), true);
                 this.form.giveFocus();
                 this.loadMask.hide();
             });
+        });
+
+        this.getItemList().setCanBeEmpty(true);
+
+        this.getItemList().onItemsRemoved((items) => {
+            this.form.deselectContentItems(items.map(item => item.getContentSummary()), true);
+        });
+
+        this.getItemList().onItemsAdded((items) => {
+            this.form.selectContentItems(items.map(item => item.getContentSummary()), true);
         });
     }
 
@@ -105,14 +117,26 @@ export class CreateIssueDialog extends DependantItemsDialog {
     private initForm() {
         this.form = new IssueDialogForm();
 
-        this.form.onContentItemsChanged((items) => {
+        this.form.onContentItemsAdded((items: ContentSummary[]) => {
             ContentSummaryAndCompareStatusFetcher.fetchByIds(
                 items.map(summary => summary.getContentId())).then((result) => {
 
-                this.setListItems(result);
+                this.setListItems(result.concat(this.getItemList().getItems()), true);
 
                 this.publishProcessor.reloadPublishDependencies(true);
             });
+        });
+
+        this.form.onContentItemsRemoved((items) => {
+
+            const filteredItems = this.getItemList().getItems().filter((oldItem: ContentSummaryAndCompareStatus) => {
+                return !ObjectHelper.contains(items, oldItem.getContentSummary());
+            });
+
+            this.setListItems(filteredItems, true);
+
+            this.publishProcessor.reloadPublishDependencies(true);
+
         });
     }
 

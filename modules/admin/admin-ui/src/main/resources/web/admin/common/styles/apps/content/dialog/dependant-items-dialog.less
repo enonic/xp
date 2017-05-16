@@ -65,17 +65,20 @@
 
   .publish-dialog-item-list {
 
+    &:not(.readonly) {
+      .browse-selection-item {
+        .remove {
+          display: block;
+        }
+      }
+    }
+
     .browse-selection-item {
       &.removable {
         .remove {
           color: @admin-dark-gray;
           cursor: pointer;
         }
-      }
-
-      &:only-child .remove {
-        color: lightgray;
-        cursor: default;
       }
     }
   }
