@@ -29,6 +29,8 @@ export class ProgressBarDialog extends DependantItemsDialog {
 
     private processHandler: () => void;
 
+    private progressCompleteListeners: ((taskState: TaskState) => void)[] = [];
+
     constructor(config: ProgressBarConfig) {
         super(config.dialogName, config.dialogSubName, config.dependantsName, config.buttonRow);
         this.isProcessingClass = config.isProcessingClass;
@@ -79,7 +81,7 @@ export class ProgressBarDialog extends DependantItemsDialog {
         super.show(this.isProgressBarEnabled());
     }
 
-    onProcessingComplete() {
+    handleProcessingComplete() {
         if (this.isProgressBarEnabled()) {
             this.disableProgressBar();
         }
@@ -89,13 +91,29 @@ export class ProgressBarDialog extends DependantItemsDialog {
         }
     }
 
-    protected onFinished() {
+    protected handleSucceeded() {
         this.setProgressValue(100);
-        this.onProcessingComplete();
+        this.handleProcessingComplete();
     }
 
-    protected onFailed() {
-        this.onProcessingComplete();
+    protected handleFailed() {
+        this.handleProcessingComplete();
+    }
+
+    onProgressComplete(listener: (taskState: TaskState) => void) {
+        this.progressCompleteListeners.push(listener);
+    }
+
+    unProgressComplete(listener: (taskState: TaskState) => void) {
+        this.progressCompleteListeners = this.progressCompleteListeners.filter(function (curr: (taskState: TaskState) => void) {
+            return curr !== listener;
+        });
+    }
+
+    private notifyProgressComplete(taskState: TaskState) {
+        this.progressCompleteListeners.forEach((listener) => {
+            listener(taskState);
+        });
     }
 
     protected pollTask(taskId: api.task.TaskId, elapsed: number = 0) {
@@ -111,23 +129,25 @@ export class ProgressBarDialog extends DependantItemsDialog {
                     return; // task probably expired, stop polling
                 }
 
-                let progress = task.getProgress();
+                const progress = task.getProgress();
 
                 switch (state) {
                 case TaskState.FINISHED:
-                    this.onFinished();
+                    this.handleSucceeded();
                     api.notify.showSuccess(progress.getInfo());
+                    this.notifyProgressComplete(TaskState.FINISHED);
                     break;
                 case TaskState.FAILED:
-                    this.onFailed();
-                    api.notify.showError('Processing failed: ' + progress.getInfo());
+                    this.handleFailed();
+                    api.notify.showError(`Processing failed: ${progress.getInfo()}`);
+                    this.notifyProgressComplete(TaskState.FAILED);
                     break;
                 default:
                     this.setProgressValue(task.getProgressPercentage());
                     this.pollTask(taskId, elapsed + interval);
                 }
             }).catch((reason: any) => {
-                this.onProcessingComplete();
+                this.handleProcessingComplete();
 
                 api.DefaultErrorHandler.handle(reason);
             }).done();

@@ -63,7 +63,7 @@ export class IssuesDialog extends ModalDialog {
 
         dockedPanel.addItem('Assigned to me', true, this.assignedToMeIssuesPanel);
         dockedPanel.addItem('My issues', true, this.createdByMeIssuesPanel);
-        dockedPanel.addItem('Open', true,this.openIssuesPanel );
+        dockedPanel.addItem('Open', true, this.openIssuesPanel );
         dockedPanel.addItem('Closed', true, this.closedIssuesPanel);
 
         return dockedPanel;
@@ -74,6 +74,13 @@ export class IssuesDialog extends ModalDialog {
         this.createdByMeIssuesPanel.reload();
         this.openIssuesPanel.reload();
         this.closedIssuesPanel.reload();
+    }
+
+    private refreshDockPanel() {
+        this.assignedToMeIssuesPanel.refresh();
+        this.createdByMeIssuesPanel.refresh();
+        this.openIssuesPanel.refresh();
+        this.closedIssuesPanel.refresh();
     }
 
     show() {
@@ -89,6 +96,12 @@ export class IssuesDialog extends ModalDialog {
             if (this.isVisible()) {
                 this.getEl().focus();
             }
+        });
+
+        IssueDetailsDialog.get().onIssueClosed((issue: Issue) => {
+            this.refresh(issue).then(() => {
+                this.dockedPanel.selectPanel(this.closedIssuesPanel);
+            });
         });
     }
 
@@ -109,6 +122,23 @@ export class IssuesDialog extends ModalDialog {
             this.updateTabLabels(stats);
             this.showFirstNonEmptyTab(stats);
             this.reloadDockPanel();
+        }).catch((reason: any) => {
+            api.DefaultErrorHandler.handle(reason);
+        });
+    }
+
+    public refresh(issue: Issue): wemQ.Promise<void> {
+        return IssueFetcher.fetchIssueStats().then((stats: IssueStatsJson) => {
+            this.updateTabLabels(stats);
+
+            // Refresh panels
+            this.openIssuesPanel.getIssuesList().removeItem(issue);
+
+            this.closedIssuesPanel.getIssuesList().replaceItem(issue, true);
+            this.assignedToMeIssuesPanel.getIssuesList().replaceItem(issue, true);
+            this.createdByMeIssuesPanel.getIssuesList().replaceItem(issue, true);
+
+            this.refreshDockPanel();
         }).catch((reason: any) => {
             api.DefaultErrorHandler.handle(reason);
         });

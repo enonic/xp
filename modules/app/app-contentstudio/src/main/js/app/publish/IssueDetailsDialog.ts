@@ -9,6 +9,8 @@ import {SchedulableDialog} from '../dialog/SchedulableDialog';
 import {ProgressBarConfig} from '../dialog/ProgressBarDialog';
 import {IssueListItem} from './IssueList';
 import {Router} from '../Router';
+import {UpdateIssueRequest} from './UpdateIssueRequest';
+import {IssueStatus} from './IssueStatus';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import PublishContentRequest = api.content.resource.PublishContentRequest;
@@ -26,6 +28,7 @@ import InputAlignment = api.ui.InputAlignment;
 import AEl = api.dom.AEl;
 import DialogButton = api.ui.dialog.DialogButton;
 import IssuePublishedNotificationRequest = api.issue.resource.IssuePublishedNotificationRequest;
+import TaskState = api.task.TaskState;
 
 export class IssueDetailsDialog extends SchedulableDialog {
 
@@ -42,6 +45,8 @@ export class IssueDetailsDialog extends SchedulableDialog {
     private itemsHeader: api.dom.H6El;
     
     private issueIdEl: api.dom.EmEl;
+
+    private issueClosedListeners: ((issue: Issue) => void)[] = [];
 
     private static INSTANCE: IssueDetailsDialog = new IssueDetailsDialog();
 
@@ -183,6 +188,24 @@ export class IssueDetailsDialog extends SchedulableDialog {
         }
 
         publishRequest.sendAndParse().then((taskId: api.task.TaskId) => {
+            const issue = this.issue;
+            const closeIssue = this.closeOnPublishCheckbox.isChecked();
+            const issuePublishedHandler = (taskState: TaskState) => {
+                if (taskState === TaskState.FINISHED && closeIssue) {
+                    new UpdateIssueRequest(issue.getId())
+                        .setStatus(IssueStatus.CLOSED)
+                        .sendAndParse()
+                        .then((updatedIssue: Issue) => {
+                            this.notifyIssueClosed(updatedIssue);
+                            api.notify.showFeedback(`Issue "${updatedIssue.getTitle()}" is closed`);
+                        }).catch(() => {
+                        api.notify.showError(`Can not close issue "${issue.getTitle()}"`);
+                    }).finally(() => {
+                        this.unProgressComplete(issuePublishedHandler);
+                    });
+                }
+            };
+            this.onProgressComplete(issuePublishedHandler);
             this.pollTask(taskId);
         }).catch((reason) => {
             this.unlockControls();
@@ -193,10 +216,10 @@ export class IssueDetailsDialog extends SchedulableDialog {
         });
     }
 
-    protected onFinished() {
-        super.onFinished();
+    protected handleSucceeded() {
+        super.handleSucceeded();
 
-        this.notifyIssuePublished();
+        this.sendIssuePublishedNotification();
     }
 
     protected createItemList(): ListBox<ContentSummaryAndCompareStatus> {
@@ -312,8 +335,24 @@ export class IssueDetailsDialog extends SchedulableDialog {
         return true;
     }
 
-    private notifyIssuePublished() {
-        new IssuePublishedNotificationRequest(this.issue.getId()).send();
+    private sendIssuePublishedNotification() {
+        return new IssuePublishedNotificationRequest(this.issue.getId()).send();
+    }
+
+    onIssueClosed(listener: (issue: Issue) => void) {
+        this.issueClosedListeners.push(listener);
+    }
+
+    unIssueClosed(listener: (issue: Issue) => void) {
+        this.issueClosedListeners = this.issueClosedListeners.filter((curr: (issue: Issue) => void) => {
+            return curr !== listener;
+        });
+    }
+
+    private notifyIssueClosed(issue: Issue) {
+        this.issueClosedListeners.forEach((listener) => {
+            listener(issue);
+        });
     }
 }
 
