@@ -99,7 +99,9 @@ export class IssuesDialog extends ModalDialog {
         });
 
         IssueDetailsDialog.get().onIssueClosed((issue: Issue) => {
-            this.refresh(issue);
+            this.refresh(issue).then(() => {
+                this.dockedPanel.selectPanel(this.closedIssuesPanel);
+            });
         });
     }
 
@@ -125,8 +127,8 @@ export class IssuesDialog extends ModalDialog {
         });
     }
 
-    public refresh(issue: Issue) {
-        IssueFetcher.fetchIssueStats().then((stats: IssueStatsJson) => {
+    public refresh(issue: Issue): wemQ.Promise<void> {
+        return IssueFetcher.fetchIssueStats().then((stats: IssueStatsJson) => {
             this.updateTabLabels(stats);
 
             // Refresh panels
