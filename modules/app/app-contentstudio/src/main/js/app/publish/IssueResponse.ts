@@ -1,19 +1,19 @@
 import '../../api.ts';
 import {IssueMetadata} from './IssueMetadata';
-import {IssueSummary} from './IssueSummary';
+import {Issue} from './Issue';
 
 export class IssueResponse {
 
-    private issues: IssueSummary[];
+    private issues: Issue[];
 
     private metadata: IssueMetadata;
 
-    constructor(issues: IssueSummary[], metadata: IssueMetadata) {
+    constructor(issues: Issue[], metadata: IssueMetadata) {
         this.issues = issues;
         this.metadata = metadata;
     }
 
-    getIssues(): IssueSummary[] {
+    getIssues(): Issue[] {
         return this.issues;
     }
 

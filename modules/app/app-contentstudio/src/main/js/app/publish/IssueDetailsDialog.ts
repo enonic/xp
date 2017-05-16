@@ -7,7 +7,6 @@ import {IssueDialogForm} from './IssueDialogForm';
 import {ContentPublishDialogAction} from './ContentPublishDialog';
 import {SchedulableDialog} from '../dialog/SchedulableDialog';
 import {ProgressBarConfig} from '../dialog/ProgressBarDialog';
-import {IssueListItem} from './IssueList';
 import {Router} from '../Router';
 import {UpdateIssueRequest} from './UpdateIssueRequest';
 import {IssueStatus} from './IssueStatus';
@@ -28,6 +27,7 @@ import InputAlignment = api.ui.InputAlignment;
 import AEl = api.dom.AEl;
 import DialogButton = api.ui.dialog.DialogButton;
 import IssuePublishedNotificationRequest = api.issue.resource.IssuePublishedNotificationRequest;
+import DateHelper = api.util.DateHelper;
 import TaskState = api.task.TaskState;
 
 export class IssueDetailsDialog extends SchedulableDialog {
@@ -133,7 +133,12 @@ export class IssueDetailsDialog extends SchedulableDialog {
     }
 
     private initStatusInfo() {
-        this.setSubTitle(new IssueListItem(this.issue, 'issue').getStatusInfo(), false);
+        this.setSubTitle(this.makeStatusInfo(), false);
+    }
+
+    private makeStatusInfo(): string {
+        return 'Opened by ' + '\<span class="creator"\>' + this.issue.getCreator() + '\</span\> ' +
+               DateHelper.getModifiedString(this.issue.getModifiedTime());
     }
 
     private initItemList() {
