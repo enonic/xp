@@ -1,10 +1,10 @@
 import IssueResourceRequest = api.issue.resource.IssueResourceRequest;
-import {IssueSummary} from './IssueSummary';
 import {IssueJson} from './IssueJson';
 import {IssueType} from './IssueType';
 import {ListIssuesResult} from './ListIssuesResult';
 import {IssueResponse} from './IssueResponse';
 import {IssueMetadata} from './IssueMetadata';
+import {Issue} from './Issue';
 
 export class ListIssuesRequest extends IssueResourceRequest<ListIssuesResult, IssueResponse> {
 
@@ -47,8 +47,8 @@ export class ListIssuesRequest extends IssueResourceRequest<ListIssuesResult, Is
 
     sendAndParse(): wemQ.Promise<IssueResponse> {
         return this.send().then((response: api.rest.JsonResponse<ListIssuesResult>) => {
-            const issues: IssueSummary[] = response.getResult().issues.map((issueJson: IssueJson) => {
-                return IssueSummary.fromJson(issueJson);
+            const issues: Issue[] = response.getResult().issues.map((issueJson: IssueJson) => {
+                return Issue.fromJson(issueJson);
             });
             const metadata: IssueMetadata = new IssueMetadata(response.getResult().metadata['hits'],
                 response.getResult().metadata['totalHits']);

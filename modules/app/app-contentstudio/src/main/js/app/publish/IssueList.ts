@@ -1,8 +1,8 @@
 import '../../api.ts';
-import {IssueSummary} from './IssueSummary';
 import {IssueType} from './IssueType';
 import {IssueFetcher} from './IssueFetcher';
 import {IssueResponse} from './IssueResponse';
+import {Issue} from './Issue';
 import ListBox = api.ui.selector.list.ListBox;
 import DateHelper = api.util.DateHelper;
 import NamesView = api.app.NamesView;
@@ -10,8 +10,10 @@ import Button = api.ui.button.Button;
 import Element = api.dom.Element;
 import LoadMask = api.ui.mask.LoadMask;
 import PEl = api.dom.PEl;
+import User = api.security.User;
+import SpanEl = api.dom.SpanEl;
 
-export class IssueList extends ListBox<IssueSummary> {
+export class IssueList extends ListBox<Issue> {
 
     public static MAX_FETCH_SIZE: number = 10;
 
@@ -26,6 +28,8 @@ export class IssueList extends ListBox<IssueSummary> {
     private loading: boolean = false;
 
     private issueSelectedListeners: {(id: IssueListItem): void}[] = [];
+
+    private currentUser: User;
 
     constructor(issueType: IssueType) {
         super('issue-list');
@@ -51,17 +55,21 @@ export class IssueList extends ListBox<IssueSummary> {
     private initList() {
         this.loadMask.show();
 
-        IssueFetcher.fetchIssuesByType(this.issueType, 0, IssueList.MAX_FETCH_SIZE).then((response: IssueResponse) => {
-            this.totalItems = response.getMetadata().getTotalHits();
-            if (response.getIssues().length > 0) {
-                this.addItems(response.getIssues());
-            } else {
-                this.appendChild(new PEl('no-issues-message').setHtml('No issues found'));
-            }
-        }).catch((reason: any) => {
-            api.DefaultErrorHandler.handle(reason);
-        }).finally(() => {
-            this.loadMask.hide();
+        return new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult) => {
+            this.currentUser = loginResult.getUser();
+
+            IssueFetcher.fetchIssuesByType(this.issueType, 0, IssueList.MAX_FETCH_SIZE).then((response: IssueResponse) => {
+                this.totalItems = response.getMetadata().getTotalHits();
+                if (response.getIssues().length > 0) {
+                    this.addItems(response.getIssues());
+                } else {
+                    this.appendChild(new PEl('no-issues-message').setHtml('No issues found'));
+                }
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+            }).finally(() => {
+                this.loadMask.hide();
+            });
         });
     }
 
@@ -94,33 +102,19 @@ export class IssueList extends ListBox<IssueSummary> {
         }
     }
 
-    protected createItemView(issueSummary: IssueSummary): api.dom.Element {
+    protected createItemView(issue: Issue): api.dom.Element {
 
-        const itemEl = new IssueListItem(issueSummary, 'issue-list-item');
-        itemEl.getEl().setTabIndex(0);
+        const itemEl = new IssueListItem(issue, this.issueType, this.currentUser);
 
         itemEl.onClicked(() => {
             this.notifyIssueSelected(itemEl);
         });
 
-        if (issueSummary.getDescription()) {
-            itemEl.getEl().setTitle(issueSummary.getDescription());
-        }
-
-        const namesView: NamesView = new NamesView(false).setMainName(issueSummary.getTitle());
-        namesView.setSubNameElements([Element.fromString(this.makeSubName(itemEl))]);
-
-        itemEl.appendChild(namesView);
-
         return itemEl;
     }
 
-    protected getItemId(issue: IssueSummary): string {
+    protected getItemId(issue: Issue): string {
         return issue.getId();
-    }
-
-    private makeSubName(issueListItem: IssueListItem): string {
-        return '\<span\>#' + issueListItem.getIssue().getIndex() + ' - ' + issueListItem.getStatusInfo() + '\</span\>';
     }
 
     onIssueSelected(listener: (id: IssueListItem) => void) {
@@ -151,21 +145,92 @@ export class IssueList extends ListBox<IssueSummary> {
 
 export class IssueListItem extends api.dom.LiEl {
 
-    private issue: IssueSummary;
+    private issue: Issue;
 
-    constructor(issue: IssueSummary, className: string) {
-        super(className);
+    private issueType: IssueType;
+
+    private currentUser: User;
+
+    private assignedToMePattern: string = '#{0} - Opened by {1} {2}';
+
+    private createdByMePattern: string = '#{0} - Opened {1}. Assigned to {2}';
+
+    private openAndClosedPattern: string = '#{0} - Opened by {1} {2}. Assigned to {3}';
+
+    constructor(issue: Issue, issueType: IssueType, currentUser: User) {
+        super('issue-list-item');
 
         this.issue = issue;
+        this.issueType = issueType;
+        this.currentUser = currentUser;
     }
 
-    public getIssue(): IssueSummary {
+    public getIssue(): Issue {
         return this.issue;
     }
 
-    public getStatusInfo(): string {
-        return 'Opened by ' + '\<span class="creator"\>' + this.issue.getCreator() + '\</span\> ' +
-               DateHelper.getModifiedString(this.issue.getModifiedTime());
+    doRender(): Q.Promise<boolean> {
+        return super.doRender().then((rendered) => {
+            this.getEl().setTabIndex(0);
+
+            if (this.issue.getDescription()) {
+                this.getEl().setTitle(this.issue.getDescription());
+            }
+
+            const namesView: NamesView = new NamesView(false).setMainName(this.issue.getTitle());
+            namesView.setSubNameElements([new SpanEl().setHtml(this.makeSubName(), false)]);
+
+            this.appendChild(namesView);
+
+            return rendered;
+        });
+    }
+
+    private makeSubName(): string {
+        const modifiedDateString: string = DateHelper.getModifiedString(this.issue.getModifiedTime());
+
+        if (this.issueType === IssueType.ASSIGNED_TO_ME) {
+            return api.util.StringHelper.format(this.assignedToMePattern, this.issue.getIndex(), this.modifiedBy(), modifiedDateString);
+        }
+
+        if (this.issueType === IssueType.OPEN || this.issueType === IssueType.CLOSED) {
+            return api.util.StringHelper.format(this.openAndClosedPattern, this.issue.getIndex(), this.modifiedBy(), modifiedDateString,
+                this.assignedTo());
+        }
+
+        return api.util.StringHelper.format(this.createdByMePattern, this.issue.getIndex(), modifiedDateString, this.assignedTo());
+    }
+
+    private modifiedBy(): string {
+        return '\<span class="creator"\>' + this.getModifiedBy() + '\</span\>'
+    }
+
+    private getModifiedBy(): string {
+        if (this.issue.getCreator() === this.currentUser.getKey().toString()) {
+            return 'me';
+        }
+
+        return this.issue.getCreator();
+    }
+
+    private assignedTo(): string {
+        return '\<span class="assignee"\>' + this.getAssignedTo() + '\</span\>' + (this.issue.getApprovers().length > 1
+                ? ' users'
+                : '');
+    }
+
+    private getAssignedTo(): string {
+        if (this.issue.getApprovers().length > 1) {
+            return this.issue.getApprovers().length.toString();
+        }
+
+        const assignee: string = this.issue.getApprovers()[0].toString();
+
+        if (assignee === this.currentUser.getKey().toString()) {
+            return 'me';
+        }
+
+        return this.issue.getApprovers()[0].toString();
     }
 
 }
