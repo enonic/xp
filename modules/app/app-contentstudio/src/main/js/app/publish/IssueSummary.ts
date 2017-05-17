@@ -11,6 +11,8 @@ export class IssueSummary {
 
     private creator: string;
 
+    private modifier: string;
+
     private description: string;
 
     private modifiedTime: Date;
@@ -20,6 +22,7 @@ export class IssueSummary {
         this.index = builder.index;
         this.title = builder.title;
         this.creator = builder.creator;
+        this.modifier = builder.modifier;
         this.modifiedTime = builder.modifiedTime;
         this.description = builder.description;
     }
@@ -48,6 +51,10 @@ export class IssueSummary {
         return this.creator;
     }
 
+    getModifier(): string {
+        return this.modifier;
+    }
+
     getModifiedTime(): Date {
         return this.modifiedTime;
     }
@@ -68,6 +75,8 @@ export class IssueSummaryBuilder {
 
     creator: string;
 
+    modifier: string;
+
     modifiedTime: Date;
 
     description: string;
@@ -77,6 +86,7 @@ export class IssueSummaryBuilder {
         this.index = json.index;
         this.title = json.title;
         this.creator = json.creator;
+        this.modifier = json.modifier;
         this.modifiedTime = json.modifiedTime ? new Date(Date.parse(json.modifiedTime)) : null;
         this.description = json.description;
 
@@ -100,6 +110,11 @@ export class IssueSummaryBuilder {
 
     setCreator(creator: string): IssueSummaryBuilder {
         this.creator = creator;
+        return this;
+    }
+
+    setModifier(modifier: string): IssueSummaryBuilder {
+        this.modifier = modifier;
         return this;
     }
 
