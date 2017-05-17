@@ -7,7 +7,7 @@ function log(fails) {
 
     if (fails.length > 0) {
         const title = `Linter found ${fails.length} error.`;
-        const message = 'Run "npm run prelint" to check again.';
+        const message = 'Run "npm run lint:quick" to check again.';
 
         notifier.notify({title, message});
         console.log('\n' + title);

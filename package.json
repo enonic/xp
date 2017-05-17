@@ -1,0 +1,24 @@
+{
+  "name": "xp",
+  "version": "6.10.2",
+  "description": "Enonix XP",
+  "scripts": {
+    "build": "npm-run-all --parallel build:*",
+    "build:common": "npm run --prefix modules/admin/admin-ui/ build",
+    "build:contentstudio": "npm run --prefix modules/app/app-contentstudio/ build",
+    "build:applications": "npm run --prefix modules/app/app-applications/ build",
+    "build:users": "npm run --prefix modules/app/app-users/ build",
+    "clean": "npm-run-all --parallel clean:*",
+    "clean:common": "npm run --prefix modules/admin/admin-ui/ clean",
+    "clean:contentstudio": "npm run --prefix modules/app/app-contentstudio/ clean",
+    "clean:applications": "npm run --prefix modules/app/app-applications/ clean",
+    "clean:users": "npm run --prefix modules/app/app-users/ clean"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.0.2"
+  },
+  "engines": {
+    "node": ">= 6.9.2",
+    "npm": ">= 3.10.9"
+  }
+}
