@@ -6,7 +6,9 @@ const CONFIG = require('../config');
 
 const root = path.resolve(__dirname, '../..');
 
-const tslintConfig = JSON.parse(fs.readFileSync('tslint.json', 'utf8'));
+const configPath = path.resolve('../../../tslint.json');
+
+const tslintConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 
 const tslint = new Linter(CONFIG.tslint.options);
 

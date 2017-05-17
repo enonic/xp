@@ -5,8 +5,8 @@
   "scripts": {
     "build": "gulp all",
     "clean": "gulp clean",
-    "lint": "tslint src/main/resources/web/{admin,spec}/**/*.ts --exclude **/*.d.ts",
-    "lint:fix": "tslint src/main/resources/web/{admin,spec}/**/*.ts --fix --exclude **/*.d.ts || exit 0",
+    "lint": "tslint -c ../../../tslint.json src/main/resources/web/{admin,spec}/**/*.ts --exclude **/*.d.ts",
+    "lint:fix": "tslint -c ../../../tslint.json src/main/resources/web/{admin,spec}/**/*.ts --fix --exclude **/*.d.ts || exit 0",
     "lint:quick": "runwith gulp/scripts/lint.js --prop=diff",
     "postinstall": "gulp resources"
   },
@@ -42,7 +42,7 @@
     "simple-git": "^1.64.0",
     "through": "^2.3.8",
     "ts-loader": "1.3.3",
-    "tslint": "5.2.0",
+    "tslint": "4.2.0",
     "typescript": "2.0.10",
     "vinyl": "^2.0.1",
     "webpack": "^1.13.3",

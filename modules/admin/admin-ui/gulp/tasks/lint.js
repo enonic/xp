@@ -10,7 +10,7 @@ const src = [
     ...tsFilePattern(CONFIG.spec.src),
 ];
 
-const configuration = path.resolve('tslint.json');
+const configuration = path.resolve('../../../tslint.json');
 
 gulp.task('lint', () =>
     gulp.src(src, { base: './' })
