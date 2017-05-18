@@ -13,12 +13,15 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 import ContentId = api.content.ContentId;
 import ObjectHelper = api.ObjectHelper;
 import ContentSummary = api.content.ContentSummary;
+import LabelEl = api.dom.LabelEl;
 
 export class CreateIssueDialog extends DependantItemsDialog {
 
     private form: IssueDialogForm;
 
     private publishProcessor: PublishProcessor;
+
+    private itemsLabel:LabelEl;
 
     private onSucceedListeners: {(): void;}[] = [];
 
@@ -47,7 +50,7 @@ export class CreateIssueDialog extends DependantItemsDialog {
         this.publishProcessor.onLoadingFinished(() => {
             this.updateButtonCount('Create Issue', this.countTotal());
             this.loadMask.hide();
-        })
+        });
 
         this.onRendered(() => {
             this.publishProcessor.reloadPublishDependencies(true).then(() => {
@@ -67,6 +70,9 @@ export class CreateIssueDialog extends DependantItemsDialog {
         this.getItemList().onItemsAdded((items) => {
             this.form.selectContentItems(items.map(item => item.getContentSummary()), true);
         });
+
+        this.itemsLabel = new LabelEl('Items that will be added to the issue:', this.getItemList());
+        this.itemsLabel.insertBeforeEl(this.getItemList());
     }
 
     static get(): CreateIssueDialog {
@@ -122,7 +128,7 @@ export class CreateIssueDialog extends DependantItemsDialog {
             ContentSummaryAndCompareStatusFetcher.fetchByIds(
                 items.map(summary => summary.getContentId())).then((result) => {
 
-                this.setListItems(result.concat(this.getItemList().getItems()), true);
+                this.setListItems(result.concat(this.getItemList().getItems()));
 
                 this.publishProcessor.reloadPublishDependencies(true).then(() => this.centerMyself());
             });
@@ -199,12 +205,16 @@ export class CreateIssueDialog extends DependantItemsDialog {
     }
 
     public lockPublishItems() {
+        this.itemsLabel.show();
+
         this.getItemList().setReadOnly(true);
         this.getDependantList().setReadOnly(true);
         this.form.toggleContentItemsSelector(false);
     }
 
     public unlockPublishItems() {
+        this.itemsLabel.hide();
+
         this.getItemList().setReadOnly(false);
         this.getDependantList().setReadOnly(false);
         this.form.toggleContentItemsSelector(true);

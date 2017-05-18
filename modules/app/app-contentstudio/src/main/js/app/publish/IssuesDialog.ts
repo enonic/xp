@@ -163,6 +163,8 @@ export class IssuesDialog extends ModalDialog {
             this.addClass('masked');
 
             this.createIssueDialog.reset();
+            this.createIssueDialog.unlockPublishItems();
+
             this.createIssueDialog.open();
         });
 

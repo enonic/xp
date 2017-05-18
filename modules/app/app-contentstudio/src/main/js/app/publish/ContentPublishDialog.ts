@@ -241,9 +241,8 @@ export class ContentPublishDialog extends SchedulableDialog {
         this.createIssueDialog.setExcludedIds(this.getExcludedIds());
         this.createIssueDialog.setExcludeChildrenIds(this.getItemList().getExcludeChildrenIds());
 
-        this.createIssueDialog.open();
-
         this.createIssueDialog.lockPublishItems();
+        this.createIssueDialog.open();
 
         this.addClass('masked');
     }
