@@ -51,6 +51,10 @@ export class PublishDialogDependantList extends DialogDependantList {
         this.requiredIds = ContentIds.from(value);
     }
 
+    public setReadOnly(value: boolean) {
+        this.toggleClass('readonly', value);
+    }
+
     onItemClicked(listener: (item: ContentSummaryAndCompareStatus) => void) {
         this.itemClickListeners.push(listener);
     }
