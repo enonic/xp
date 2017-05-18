@@ -79,7 +79,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
     }
 
     protected getPersistedItemPath(): string {
-        return "/" + this.getPersistedItem().getKey().toString();
+        return `/${this.getPersistedItem().getKey().toString()}`;
     }
 
     getUserItemType(): string {

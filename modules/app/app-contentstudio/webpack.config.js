@@ -1,3 +1,5 @@
+const RelativeErrorsWebpackPlugin = require('../../../scripts/util/relativeErrorsWebpackPlugin');
+
 module.exports = {
     entry: './src/main/js/main.ts',
     output: {
@@ -11,5 +13,8 @@ module.exports = {
             {test: /\.tsx?$/, loader: "ts-loader"}
         ]
     },
+    plugins: [
+        RelativeErrorsWebpackPlugin
+    ],
     devtool: 'source-map'
 };
