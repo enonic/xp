@@ -13,7 +13,6 @@ import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueConstants;
 import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.IssueName;
-import com.enonic.xp.issue.IssuePath;
 import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.node.Node;
@@ -22,6 +21,7 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.security.PrincipalKey;
 
 import static com.enonic.xp.issue.IssuePropertyNames.CREATOR;
+import static com.enonic.xp.issue.IssuePropertyNames.INDEX;
 import static com.enonic.xp.issue.IssuePropertyNames.STATUS;
 import static com.enonic.xp.issue.IssuePropertyNames.TITLE;
 import static org.junit.Assert.*;
@@ -51,7 +51,6 @@ public class GetIssueCommandTest
         assertEquals( "title", issue.getTitle() );
         assertEquals( IssueStatus.Open, issue.getStatus() );
         assertEquals( issueName, issue.getName() );
-        assertEquals( IssuePath.from( issueName ), issue.getPath() );
     }
 
     private GetIssueByIdCommand getIssueCommand( IssueId issueId )
@@ -87,6 +86,7 @@ public class GetIssueCommandTest
         issueAsData.ifNotNull().addString( TITLE, "title" );
         issueAsData.ifNotNull().addString( STATUS, IssueStatus.Open.toString() );
         issueAsData.ifNotNull().addString( CREATOR, PrincipalKey.from( "user:myStore:me" ).toString() );
+        issueAsData.ifNotNull().addLong( INDEX, 1L );
 
         return propertyTree;
     }

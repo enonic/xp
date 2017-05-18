@@ -147,13 +147,13 @@ public final class IssueResource
         if ( type.equalsIgnoreCase( "CREATED_BY_ME" ) )
         {
             final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-            return builder.creator( authInfo.getUser().getKey() );
+            return builder.creator( authInfo.getUser().getKey() ).status( IssueStatus.Open );
         }
 
         if ( type.equalsIgnoreCase( "ASSIGNED_TO_ME" ) )
         {
             final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-            return builder.approvers( PrincipalKeys.from( authInfo.getUser().getKey() ) );
+            return builder.approvers( PrincipalKeys.from( authInfo.getUser().getKey() ) ).status( IssueStatus.Open );
         }
 
         return builder;

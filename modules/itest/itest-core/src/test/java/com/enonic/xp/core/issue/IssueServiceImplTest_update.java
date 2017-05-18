@@ -6,7 +6,6 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueName;
-import com.enonic.xp.issue.IssuePath;
 import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.issue.PublishRequest;
 import com.enonic.xp.issue.PublishRequestItem;
@@ -53,7 +52,6 @@ public class IssueServiceImplTest_update
         assertEquals( ContentId.from( "new-content-id" ), updatedIssue.getPublishRequest().getItems().first().getId() );
         assertEquals( true, updatedIssue.getPublishRequest().getItems().first().getIncludeChildren() );
         assertEquals( IssueName.from( issue.getId().toString() ), updatedIssue.getName() );
-        assertEquals( IssuePath.from( IssueName.from( issue.getId().toString() ) ), updatedIssue.getPath() );
         assertNotEquals( updatedIssue.getCreatedTime(), updatedIssue.getModifiedTime() );
     }
 
@@ -76,7 +74,6 @@ public class IssueServiceImplTest_update
         assertEquals( PrincipalKey.from( "user:myStore:approver-1" ), updatedIssue.getApproverIds().first() );
         assertEquals( ContentId.from( "content-id" ), updatedIssue.getPublishRequest().getItems().first().getId() );
         assertEquals( IssueName.from( issue.getId().toString() ), updatedIssue.getName() );
-        assertEquals( IssuePath.from( IssueName.from( issue.getId().toString() ) ), updatedIssue.getPath() );
     }
 
     @Test

@@ -17,6 +17,8 @@ public class IssuePropertyNames
 
     public static final String DESCRIPTION = "description";
 
+    public static final String INDEX = "index";
+
     public static final String STATUS = "status";
 
     public static final String APPROVERS = "approver-ids";

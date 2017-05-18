@@ -5,9 +5,13 @@ export class IssueSummary {
 
     private id: string;
 
+    private index: number;
+
     private title: string;
 
     private creator: string;
+
+    private modifier: string;
 
     private description: string;
 
@@ -15,8 +19,10 @@ export class IssueSummary {
 
     constructor(builder: IssueSummaryBuilder) {
         this.id = builder.id;
+        this.index = builder.index;
         this.title = builder.title;
         this.creator = builder.creator;
+        this.modifier = builder.modifier;
         this.modifiedTime = builder.modifiedTime;
         this.description = builder.description;
     }
@@ -33,12 +39,20 @@ export class IssueSummary {
         return this.id;
     }
 
+    getIndex(): number {
+        return this.index;
+    }
+
     getTitle(): string {
         return this.title;
     }
 
     getCreator(): string {
         return this.creator;
+    }
+
+    getModifier(): string {
+        return this.modifier;
     }
 
     getModifiedTime(): Date {
@@ -55,9 +69,13 @@ export class IssueSummaryBuilder {
 
     id: string;
 
+    index: number;
+
     title: string;
 
     creator: string;
+
+    modifier: string;
 
     modifiedTime: Date;
 
@@ -65,8 +83,10 @@ export class IssueSummaryBuilder {
 
     fromJson(json: IssueSummaryJson): IssueSummaryBuilder {
         this.id = json.id;
+        this.index = json.index;
         this.title = json.title;
         this.creator = json.creator;
+        this.modifier = json.modifier;
         this.modifiedTime = json.modifiedTime ? new Date(Date.parse(json.modifiedTime)) : null;
         this.description = json.description;
 
@@ -78,6 +98,11 @@ export class IssueSummaryBuilder {
         return this;
     }
 
+    setIndex(index: number): IssueSummaryBuilder {
+        this.index = index;
+        return this;
+    }
+
     setTitle(title: string): IssueSummaryBuilder {
         this.title = title;
         return this;
@@ -85,6 +110,11 @@ export class IssueSummaryBuilder {
 
     setCreator(creator: string): IssueSummaryBuilder {
         this.creator = creator;
+        return this;
+    }
+
+    setModifier(modifier: string): IssueSummaryBuilder {
+        this.modifier = modifier;
         return this;
     }
 

@@ -7,7 +7,6 @@ import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.IssueName;
-import com.enonic.xp.issue.IssuePath;
 import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.issue.PublishRequest;
 import com.enonic.xp.issue.PublishRequestItem;
@@ -40,6 +39,5 @@ public class IssueServiceImplTest_getIssue
         assertEquals( PrincipalKey.from( "user:myStore:approver-1" ), issue.getApproverIds().first() );
         assertEquals( ContentId.from( "content-id" ), issue.getPublishRequest().getItems().first().getId() );
         assertEquals( IssueName.from( issueId.toString() ), issue.getName() );
-        assertEquals( IssuePath.from( IssueName.from( issueId.toString() ) ), issue.getPath() );
     }
 }

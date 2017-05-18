@@ -12,11 +12,11 @@ public class Issue
 {
     private final IssueId id;
 
+    private final long index;
+
     private final String title;
 
     private final IssueName name;
-
-    private final IssuePath issuePath;
 
     private final String description;
 
@@ -37,9 +37,9 @@ public class Issue
     private Issue( Builder builder )
     {
         this.id = builder.id == null ? IssueId.create() : builder.id;
+        this.index = builder.index;
         this.title = builder.title;
         this.name = builder.name == null ? IssueName.from( this.id.toString() ) : builder.name;
-        this.issuePath = IssuePath.from( this.name );
         this.description = builder.description;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
@@ -55,6 +55,11 @@ public class Issue
         return id;
     }
 
+    public long getIndex()
+    {
+        return index;
+    }
+
     public String getTitle()
     {
         return title;
@@ -63,11 +68,6 @@ public class Issue
     public IssueName getName()
     {
         return name;
-    }
-
-    public IssuePath getPath()
-    {
-        return issuePath;
     }
 
     public String getDescription()
@@ -123,6 +123,8 @@ public class Issue
     {
         private IssueId id;
 
+        private long index;
+
         private IssueName name;
 
         private String title;
@@ -167,6 +169,12 @@ public class Issue
         public Builder id( final IssueId id )
         {
             this.id = id;
+            return this;
+        }
+
+        public Builder index( final long index )
+        {
+            this.index = index;
             return this;
         }
 

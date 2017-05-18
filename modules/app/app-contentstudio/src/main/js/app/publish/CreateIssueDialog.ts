@@ -254,8 +254,8 @@ export class CreateIssueDialog extends DependantItemsDialog {
         return false;
     }
 
-    onSucceed(onSucceedListener: () => void) {
-        this.onSucceedListeners.push(onSucceedListener);
+    onSucceed(listener: () => void) {
+        this.onSucceedListeners.push(listener);
     }
 
     unSucceed(listener: {(): void;}) {

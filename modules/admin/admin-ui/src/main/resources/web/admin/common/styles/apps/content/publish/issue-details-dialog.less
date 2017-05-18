@@ -9,6 +9,50 @@
   .dialog-header {
     margin-bottom: 0px;
     position: relative;
+
+    .title {
+      display: block;
+      max-width: calc(~'100% - 140px');
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      line-height: 36px;
+      float: left;
+    }
+
+    .issue-id {
+      color: @admin-font-gray1;
+      font-size: 30px;
+      line-height: 36px;
+      padding-left: 10px;
+    }
+
+    .sub-title {
+      display: inline-block;
+      margin: 10px 0 15px;
+      font-size: 13px;
+      float: left;
+      clear: both;
+
+      .creator, .assignee {
+        color: @admin-black;
+        font-weight: bold;
+      }
+    }
+
+    .edit {
+      .icon-pencil2;
+      text-decoration: none;
+      position: absolute;
+      right: 15px;
+      top: 8px;
+      font-size: 18px;
+      color: @admin-font-gray2;
+
+      &:hover {
+        color: @admin-font-gray3;
+      }
+    }
   }
 
   .icon-tree {
@@ -31,32 +75,6 @@
   .required {
     &:after {
       display: none;
-    }
-  }
-
-  .title {
-    display: block;
-  }
-
-  .sub-title {
-    display: inline-block;
-
-    margin: 10px 0 15px;
-    font-size: 13px;
-
-  }
-
-  .edit {
-    .icon-pencil2;
-    text-decoration: none;
-    position: absolute;
-    right: 15px;
-    top: 5px;
-    font-size: 18px;
-    color: @admin-font-gray2;
-
-    &:hover {
-      color: @admin-font-gray3;
     }
   }
 

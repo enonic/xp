@@ -10,14 +10,19 @@ import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueConstants;
+import com.enonic.xp.issue.IssueQuery;
+import com.enonic.xp.issue.IssueQueryNodeQueryTranslator;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.security.User;
 
 import static com.enonic.xp.issue.IssuePropertyNames.CREATED_TIME;
 import static com.enonic.xp.issue.IssuePropertyNames.CREATOR;
+import static com.enonic.xp.issue.IssuePropertyNames.INDEX;
 import static com.enonic.xp.issue.IssuePropertyNames.MODIFIED_TIME;
 
 public class CreateIssueCommand
@@ -40,7 +45,8 @@ public class CreateIssueCommand
     {
         validateBlockingChecks();
 
-        final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( this.params, this.getCurrentUser() );
+        final long index = countTotalIssues() + 1;
+        final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( this.params, this.getCurrentUser(), index );
         final Node createdNode = nodeService.create( createNodeParams );
 
         nodeService.refresh( RefreshMode.SEARCH );
@@ -64,6 +70,17 @@ public class CreateIssueCommand
     {
         final Context context = ContextAccessor.current();
         return context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser() : User.ANONYMOUS;
+    }
+
+    private long countTotalIssues()
+    {
+        final IssueQuery query = IssueQuery.create().count( true ).build();
+
+        final NodeQuery nodeQuery = IssueQueryNodeQueryTranslator.translate( query );
+
+        final FindNodesByQueryResult result = nodeService.findByQuery( nodeQuery );
+
+        return result.getTotalHits();
     }
 
     public static Builder create()
@@ -98,7 +115,7 @@ public class CreateIssueCommand
 
         private static final IssueDataSerializer ISSUE_DATA_SERIALIZER = new IssueDataSerializer();
 
-        public static CreateNodeParams create( final CreateIssueParams params, final User creator )
+        public static CreateNodeParams create( final CreateIssueParams params, final User creator, final long index )
         {
             final Instant now = Instant.now();
             final PropertyTree contentAsData = ISSUE_DATA_SERIALIZER.toCreateNodeData( params );
@@ -106,6 +123,7 @@ public class CreateIssueCommand
             contentAsData.getRoot().ifNotNull().addInstant( CREATED_TIME, now );
             contentAsData.getRoot().ifNotNull().addInstant( MODIFIED_TIME, now );
             contentAsData.getRoot().ifNotNull().addString( CREATOR, creator.getKey().toString() );
+            contentAsData.getRoot().ifNotNull().addLong( INDEX, index );
 
             final IndexConfigDocument indexConfigDocument = IssueIndexConfigFactory.create();
 
