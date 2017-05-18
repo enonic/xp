@@ -8,6 +8,7 @@ import {GetIssueRequest} from './GetIssueRequest';
 import {Issue} from './Issue';
 import {CreateIssueDialog} from './CreateIssueDialog';
 import {IssuesPanel} from './IssuesPanel';
+import {ShowIssuesDialogEvent} from '../browse/ShowIssuesDialogEvent';
 
 import ModalDialog = api.ui.dialog.ModalDialog;
 import DockedPanel = api.ui.panel.DockedPanel;
@@ -30,14 +31,20 @@ export class IssuesDialog extends ModalDialog {
 
     private closedIssuesPanel: IssuesPanel;
 
-    private createIssueDialog: CreateIssueDialog;
+    private showCreatedByMePanelAfterLoad: boolean = false;
 
     constructor() {
         super(<api.ui.dialog.ModalDialogConfig>{title: 'Publishing Issues'});
         this.addClass('issue-list-dialog');
-        api.dom.Body.get().appendChild(this);
 
         this.initIssueDetailsDialog();
+        this.initCreateIssueDialog();
+
+        ShowIssuesDialogEvent.on((event) => {
+            this.open();
+        });
+
+        api.dom.Body.get().appendChild(this);
     }
 
     doRender(): Q.Promise<boolean> {
@@ -105,6 +112,25 @@ export class IssuesDialog extends ModalDialog {
         });
     }
 
+    private initCreateIssueDialog() {
+        this.addClickIgnoredElement(CreateIssueDialog.get());
+
+        CreateIssueDialog.get().onClosed(() => {
+            this.removeClass('masked');
+            this.getEl().focus();
+        });
+
+        CreateIssueDialog.get().onSucceed(() => {
+            CreateIssueDialog.get().reset();
+            this.showCreatedByMePanelAfterLoad = true;
+            if (this.isVisible()) {
+                this.reload();
+            } else {
+                this.open();
+            }
+        });
+    }
+
     showIssueDetailsDialog(issueListItem: IssueListItem) {
         this.addClass('masked');
 
@@ -156,7 +182,10 @@ export class IssuesDialog extends ModalDialog {
     }
 
     private showFirstNonEmptyTab(stats: IssueStatsJson) {
-        if (stats.assignedToMe > 0) {
+        if (this.showCreatedByMePanelAfterLoad) {
+            this.dockedPanel.selectPanel(this.createdByMeIssuesPanel);
+            this.showCreatedByMePanelAfterLoad = false;
+        } else if (stats.assignedToMe > 0) {
             this.dockedPanel.selectPanel(this.assignedToMeIssuesPanel);
         } else if (stats.createdByMe > 0) {
             this.dockedPanel.selectPanel(this.createdByMeIssuesPanel);
@@ -174,26 +203,10 @@ export class IssuesDialog extends ModalDialog {
         newIssueButton.getEl().setTitle('Create an issue');
 
         newIssueButton.onClicked(() => {
-            if (!this.createIssueDialog) {
-                this.createIssueDialog = CreateIssueDialog.get();
-
-                this.createIssueDialog.onClosed(() => {
-                    this.removeClass('masked');
-                    this.getEl().focus();
-                });
-
-                this.createIssueDialog.onSucceed(() => {
-                    this.createIssueDialog.reset();
-                    this.reload();
-                });
-
-                this.addClickIgnoredElement(this.createIssueDialog);
-            }
-
             this.addClass('masked');
 
-            this.createIssueDialog.reset();
-            this.createIssueDialog.open();
+            CreateIssueDialog.get().reset();
+            CreateIssueDialog.get().open();
         });
 
         return newIssueButton;
