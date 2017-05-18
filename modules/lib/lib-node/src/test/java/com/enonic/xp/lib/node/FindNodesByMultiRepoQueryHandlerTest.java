@@ -20,14 +20,14 @@ public class FindNodesByMultiRepoQueryHandlerTest
             thenReturn( FindNodesByMultiRepoQueryResult.create().
                 totalHits( 12902 ).
                 addNodeHit( MultiRepoNodeHit.create().
-                    branch( Branch.from( "myBranch" ) ).
+                    branch( Branch.from( "master" ) ).
                     repositoryId( RepositoryId.from( "my-repo" ) ).
                     nodeId( NodeId.from( "b186d24f-ac38-42ca-a6db-1c1bda6c6c26" ) ).
                     score( 1.23f ).
                     build() ).
                 addNodeHit( MultiRepoNodeHit.create().
-                    branch( Branch.from( "master" ) ).
-                    repositoryId( RepositoryId.from( "my-other-repo" ) ).
+                    branch( Branch.from( "draft" ) ).
+                    repositoryId( RepositoryId.from( "cms-repo" ) ).
                     nodeId( NodeId.from( "350ba4a6-589c-498b-8af0-f183850e1120" ) ).
                     score( 1.40f ).
                     build() ).

@@ -259,7 +259,7 @@ RepoConnection.prototype.query = function (params) {
 
 
 /**
- * This command queries nodes.
+ * This command queries nodes in a multi-repo connection.
  *
  * @example-ref examples/node/multiRepoQuery.js
  *
@@ -283,30 +283,6 @@ MultiRepoConnection.prototype.query = function (params) {
     return __.toNativeObject(this.multiRepoConnection.query(handlerParams));
 };
 
-/**
- * This command queries nodes.
- *
- * @example-ref examples/node/query.js
- *
- * @param {object} params JSON with the parameters.
- * @param {number} [params.start=0] Start index (used for paging).
- * @param {number} [params.count=10] Number of contents to fetch.
- * @param {string} params.query Query expression.
- * @param {object} [params.filters] Query filters
- * @param {string} [params.sort='_score DESC'] Sorting expression.
- * @param {string} [params.aggregations] Aggregations expression.
- * @returns {object} Result of query.
- */
-MultiRepoConnection.prototype.query = function (params) {
-    var handlerParams = __.newBean('com.enonic.xp.lib.node.QueryNodeHandlerParams');
-    handlerParams.start = params.start;
-    handlerParams.count = params.count;
-    handlerParams.query = nullOrValue(params.query);
-    handlerParams.sort = valueOrDefault(params.sort, "_score DESC");
-    handlerParams.aggregations = __.toScriptValue(params.aggregations);
-    handlerParams.filters = __.toScriptValue(params.filters);
-    return __.toNativeObject(this.multiRepoConnection.query(handlerParams));
-};
 
 /**
  * Get children for given node.
@@ -418,7 +394,7 @@ exports.multiRepoConnect = function (params) {
     var multiRepoNodeHandleContext = __.newBean('com.enonic.xp.lib.node.MultiRepoNodeHandleContext');
 
     params.sources.forEach(function (source) {
-        multiRepoNodeHandleContext.addSource(source.repoId, source.branch, source.principals);
+        multiRepoNodeHandleContext.addSource(required(source, "repoId"), required(source, "branch"), required(source, "principals"));
     });
 
     return new MultiRepoConnection(multiRepoConnectfactory.create(multiRepoNodeHandleContext));

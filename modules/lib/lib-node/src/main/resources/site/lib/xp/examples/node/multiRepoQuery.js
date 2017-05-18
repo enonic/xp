@@ -2,8 +2,6 @@ var nodeLib = require('/lib/xp/node');
 var assert = require('/lib/xp/assert');
 
 
-// BEGIN
-// Connect to repo 'myRepo', branch 'master'.
 var multiRepoConnection = nodeLib.multiRepoConnect({
     sources: [
         {
@@ -19,7 +17,8 @@ var multiRepoConnection = nodeLib.multiRepoConnect({
     ]
 });
 
-
+// BEGIN
+// Query multi-repo connection.
 var result = multiRepoConnection.query({
     start: 0,
     count: 2,
@@ -51,7 +50,31 @@ var result = multiRepoConnection.query({
     }
 });
 
-
 log.info("result %s", JSON.stringify(result, null, 4));
-
 // END
+
+
+// BEGIN
+// Result set returned.
+var expected = {
+    "total": 12902,
+    "count": 2,
+    "hits": [
+        {
+            "id": "b186d24f-ac38-42ca-a6db-1c1bda6c6c26",
+            "score": 1.2300000190734863,
+            "repoId": "my-repo",
+            "branch": "master"
+        },
+        {
+            "id": "350ba4a6-589c-498b-8af0-f183850e1120",
+            "score": 1.399999976158142,
+            "repoId": "cms-repo",
+            "branch": "draft"
+        }
+    ]
+};
+// END
+
+assert.assertJsonEquals(expected, result);
+
