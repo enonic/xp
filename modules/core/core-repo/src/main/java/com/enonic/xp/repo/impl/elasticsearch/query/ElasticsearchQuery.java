@@ -30,6 +30,8 @@ public class ElasticsearchQuery
 
     private final Set<String> indexNames;
 
+    private final boolean explain;
+
     private final ImmutableSet<SortBuilder> sortBuilders;
 
     private final int from;
@@ -60,6 +62,7 @@ public class ElasticsearchQuery
         this.returnFields = builder.returnFields;
         this.searchMode = builder.searchMode;
         this.searchOptimizer = builder.searchOptimizer;
+        this.explain = builder.explain;
     }
 
     public static Builder create()
@@ -127,6 +130,11 @@ public class ElasticsearchQuery
         return searchOptimizer;
     }
 
+    public boolean isExplain()
+    {
+        return explain;
+    }
+
     @Override
     public String toString()
     {
@@ -181,6 +189,8 @@ public class ElasticsearchQuery
         private SearchMode searchMode = SearchMode.SEARCH;
 
         private SearchOptimizer searchOptimizer = SearchOptimizer.DEFAULT;
+
+        private boolean explain = false;
 
         public Builder query( final QueryBuilder queryBuilder )
         {
@@ -271,6 +281,12 @@ public class ElasticsearchQuery
         public Builder searchOptimizer( final SearchOptimizer searchOptimizer )
         {
             this.searchOptimizer = searchOptimizer;
+            return this;
+        }
+
+        public Builder explain( final boolean explain )
+        {
+            this.explain = explain;
             return this;
         }
 
