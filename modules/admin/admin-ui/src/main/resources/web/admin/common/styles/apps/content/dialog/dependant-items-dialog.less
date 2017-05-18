@@ -1,5 +1,24 @@
 .dependant-dialog {
 
+  @toggler-width: 35px;
+
+  .icon-tree {
+    font-size: 20px;
+    line-height: 32px;
+
+    .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent, false);
+
+    &.on {
+      .button(@admin-button-blue1, transparent, @admin-button-blue1, transparent, false);
+
+      padding: 0;
+      width: @toggler-width;
+    }
+
+    padding: 0;
+    width: @toggler-width;
+  }
+
   &.invalid {
     .sub-title {
       color: @admin-red;
@@ -34,6 +53,38 @@
 
   .sub-title {
     margin-top: 20px;
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  .publish-dialog-dependant-list:not(.readonly) {
+    .browse-selection-item {
+      .remove {
+        display: block;
+      }
+    }
+  }
+
+  .publish-dialog-item-list {
+
+    &:not(.readonly) {
+      .browse-selection-item {
+        .remove {
+          display: block;
+        }
+      }
+    }
+
+    .browse-selection-item {
+      &.removable {
+        .remove {
+          color: @admin-dark-gray;
+          cursor: pointer;
+        }
+      }
+    }
   }
 
   .browse-selection-item {

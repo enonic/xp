@@ -216,12 +216,12 @@ module api.ui.selector.combobox {
             return this.comboBox.countSelectedOptions();
         }
 
-        select(value: OPTION_DISPLAY_VALUE, readOnly?: boolean) {
-            this.comboBox.selectOption(this.createOption(value, readOnly));
+        select(value: OPTION_DISPLAY_VALUE, readOnly?: boolean, silent?: boolean) {
+            this.comboBox.selectOption(this.createOption(value, readOnly),silent);
         }
 
-        deselect(value: OPTION_DISPLAY_VALUE) {
-            this.comboBox.deselectOption(this.createOption(value));
+        deselect(value: OPTION_DISPLAY_VALUE, silent?: boolean) {
+            this.comboBox.deselectOption(this.createOption(value), silent);
         }
 
         clearCombobox() {

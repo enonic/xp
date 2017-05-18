@@ -154,8 +154,8 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.autoUpdateTitle = value;
     }
 
-    setListItems(items: ContentSummaryAndCompareStatus[]) {
-        this.itemList.setItems(items);
+    setListItems(items: ContentSummaryAndCompareStatus[], silent?: boolean) {
+        this.itemList.setItems(items, silent);
     }
 
     private extendsWindowHeightSize(): boolean {

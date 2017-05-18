@@ -206,6 +206,8 @@ export class IssuesDialog extends ModalDialog {
             this.addClass('masked');
 
             CreateIssueDialog.get().reset();
+
+            this.createIssueDialog.unlockPublishItems();
             CreateIssueDialog.get().open();
         });
 

@@ -5,12 +5,15 @@ import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompa
 import BrowseItem = api.app.browse.BrowseItem;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import Tooltip = api.ui.Tooltip;
+import ObjectHelper = api.ObjectHelper;
 
 export class PublishDialogItemList extends DialogItemList {
 
     private excludeChildrenIds: ContentId[] = [];
 
     private chaListeners: {(items: ContentId[]): void}[] = [];
+
+    private canBeEmpty: boolean = false;
 
     private debounceNotifyListChanged: Function;
 
@@ -19,6 +22,10 @@ export class PublishDialogItemList extends DialogItemList {
 
         this.onItemsAdded(this.itemChangedHandler.bind(this));
         this.onItemsRemoved(this.itemChangedHandler.bind(this));
+
+        this.onItemsRemoved(() => {
+            this.getItemViews().forEach(view => this.updateRemovableState(view));
+        });
 
         this.debounceNotifyListChanged = api.util.AppHelper.debounce(() => {
             this.notifyExcludeChildrenListChanged(this.excludeChildrenIds);
@@ -29,41 +36,49 @@ export class PublishDialogItemList extends DialogItemList {
         this.toggleClass('contains-toggleable', value);
     }
 
+    public setCanBeEmpty(value: boolean) {
+        this.canBeEmpty = value;
+    }
+
     private itemChangedHandler() {
         this.toggleClass('contains-toggleable', this.getItemViews()
             .some(item => item.getBrowseItem().getModel().getContentSummary().hasChildren()));
     }
 
+    createItemView(item: ContentSummaryAndCompareStatus, readOnly: boolean): PublicStatusSelectionItem {
+        const itemView = <PublicStatusSelectionItem>super.createItemView(item, readOnly);
+
+        if (this.canBeEmpty) {
+            itemView.setIsRemovableFn(() => true);
+        }
+
+        this.updateRemovableState(itemView);
+
+        return itemView;
+    }
+
     protected createSelectionItem(viewer: ContentSummaryAndCompareStatusViewer,
-                                  browseItem: BrowseItem<ContentSummaryAndCompareStatus>): StatusSelectionItem {
+                                  browseItem: BrowseItem<ContentSummaryAndCompareStatus>): PublicStatusSelectionItem {
 
         const item = new PublicStatusSelectionItem(viewer, browseItem);
         item.onItemStateChanged((contentId, enabled) => {
 
-            const index = this.excludeChildrenIds.indexOf(contentId);
+            const exist = ObjectHelper.contains(this.excludeChildrenIds, contentId);
             if (enabled) {
-                if (index >= 0) {
-                    this.excludeChildrenIds.splice(index, 1);
+                if (exist) {
+                    this.excludeChildrenIds = <ContentId[]>ObjectHelper.filter(this.excludeChildrenIds, contentId);
                 }
             } else {
-                if (index < 0) {
+                if (!exist) {
                     this.excludeChildrenIds.push(contentId);
                 }
             }
             this.debounceNotifyListChanged();
         });
 
-        this.excludeChildrenIds.push(browseItem.getModel().getContentId());
-
-        if (item.isRemovable()) {
-            item.addClass('removable');
+        if (!ObjectHelper.contains(this.excludeChildrenIds, browseItem.getModel().getContentId())) {
+            this.excludeChildrenIds.push(browseItem.getModel().getContentId());
         }
-
-        this.onItemsRemoved(() => {
-            this.getItemViews().forEach(view => this.updateRemovableState(view));
-        });
-
-        this.updateRemovableState(item);
 
         return item;
     }
@@ -75,6 +90,7 @@ export class PublishDialogItemList extends DialogItemList {
     }
 
     public setReadOnly(value: boolean) {
+        this.toggleClass('readonly', value);
         this.getItemViews().forEach((item) => {
             item.setReadOnly(value);
         });
@@ -92,8 +108,20 @@ export class PublishDialogItemList extends DialogItemList {
         }
     }
 
+    public setExcludeChildrenIds(ids: ContentId[]) {
+        this.excludeChildrenIds = ids;
+
+        this.getItemViews().forEach(itemView => {
+            if (itemView.getIncludeChildrenToggler()) {
+                itemView.getIncludeChildrenToggler().toggle(ids.indexOf(itemView.getContentId()) < 0, true);
+            }
+        });
+
+        this.debounceNotifyListChanged();
+    }
+
     public getExcludeChildrenIds(): ContentId[] {
-        return this.excludeChildrenIds;
+        return this.excludeChildrenIds.slice();
     }
 
     public clearExcludeChildrenIds() {
@@ -101,7 +129,7 @@ export class PublishDialogItemList extends DialogItemList {
     }
 
     private updateRemovableState(view: PublicStatusSelectionItem) {
-        view.toggleClass('removable', this.getItems().length > 1);
+        view.toggleClass('removable', view.isRemovable());
     }
 
     public onExcludeChildrenListChanged(listener: (items: ContentId[]) => void) {
@@ -135,7 +163,7 @@ export class PublicStatusSelectionItem extends StatusSelectionItem {
         if (item.getModel().getContentSummary().hasChildren()) {
             this.toggler = new IncludeChildrenToggler();
             this.addClass('toggleable');
-            
+
             this.toggler.onStateChanged((enabled: boolean) => {
                 this.notifyItemStateChanged(this.getBrowseItem().getModel().getContentId(), enabled);
             });
@@ -224,6 +252,8 @@ class IncludeChildrenToggler extends api.dom.DivEl {
     setReadOnly(value: boolean) {
         this.readOnly = value;
         this.tooltip.setActive(!value);
+
+        this.toggleClass('readonly', this.readOnly);
     }
 
     isEnabled(): boolean {

@@ -6,23 +6,6 @@
 
   @toggler-width: 35px;
 
-  .icon-tree {
-    font-size: 20px;
-    line-height: 32px;
-
-    .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent, false);
-
-    &.on {
-      .button(@admin-button-blue1, transparent, @admin-button-blue1, transparent, false);
-
-      padding: 0;
-      width: @toggler-width;
-    }
-
-    padding: 0;
-    width: @toggler-width;
-  }
-
   .browse-selection-item .remove {
     display: block;
   }
@@ -33,18 +16,6 @@
 
       .status {
         line-height: 32px;
-      }
-
-      &.removable {
-        .remove {
-          color: @admin-dark-gray;
-          cursor: pointer;
-        }
-      }
-
-      &:only-child .remove {
-        color: lightgray;
-        cursor: default;
       }
 
     }

@@ -13,18 +13,20 @@ module api.ui.selector.list {
             super(className);
         }
 
-        setItems(items: I[]) {
-            this.clearItems();
+        setItems(items: I[], silent?:boolean) {
+            this.clearItems(silent);
 
             this.items = items;
             if (items.length > 0) {
                 this.layoutList(items);
-                this.notifyItemsAdded(items);
+                if(!silent) {
+                    this.notifyItemsAdded(items);
+                }
             }
         }
 
         getItems(): I[] {
-            return this.items;
+            return this.items.slice();
         }
 
         getItem(id: string): I {
