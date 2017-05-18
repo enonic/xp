@@ -8,6 +8,8 @@ export interface IssueSummaryJson {
 
     creator: any;
 
+    modifier: any;
+
     modifiedTime: string;
 
     description: string;

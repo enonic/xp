@@ -151,12 +151,6 @@ export class IssueListItem extends api.dom.LiEl {
 
     private currentUser: User;
 
-    private assignedToMePattern: string = '#{0} - Opened by {1} {2}';
-
-    private createdByMePattern: string = '#{0} - Opened {1}. Assigned to {2}';
-
-    private openAndClosedPattern: string = '#{0} - Opened by {1} {2}. Assigned to {3}';
-
     constructor(issue: Issue, issueType: IssueType, currentUser: User) {
         super('issue-list-item');
 
@@ -187,30 +181,91 @@ export class IssueListItem extends api.dom.LiEl {
     }
 
     private makeSubName(): string {
+        return IssueListItemSubNameGenerator.create().setIssue(this.issue).setIssueType(this.issueType).setCurrentUser(
+            this.currentUser).generate();
+    }
+}
+
+export class IssueListItemSubNameGenerator {
+
+    private issue: Issue;
+
+    private issueType: IssueType;
+
+    private currentUser: User;
+
+    private assignedToMePattern: string = '#{0} - {1} by {2} {3}'; // id, status, modifier, date
+
+    private createdByMePattern: string = '#{0} - {1} {2}. Assigned to {3}'; //id, status, date, assignees
+
+    private openPattern: string = '#{0} - {1} by {2} {3}. Assigned to {4}'; //id, status, modifier, date, assignees
+
+    private closedPattern: string = '#{0} - Closed by {1} {2}. Assigned to {3}'; //id, modifier, date, assignees
+
+    private constructor() {
+    }
+
+    public static create(): IssueListItemSubNameGenerator {
+        return new IssueListItemSubNameGenerator();
+    }
+
+    public setIssue(issue: Issue): IssueListItemSubNameGenerator {
+        this.issue = issue;
+        return this;
+    }
+
+    public setIssueType(issueType: IssueType): IssueListItemSubNameGenerator {
+        this.issueType = issueType;
+        return this;
+    }
+
+    public setCurrentUser(currentUser: User): IssueListItemSubNameGenerator {
+        this.currentUser = currentUser;
+        return this;
+    }
+
+    public generate(): string {
         const modifiedDateString: string = DateHelper.getModifiedString(this.issue.getModifiedTime());
 
         if (this.issueType === IssueType.ASSIGNED_TO_ME) {
-            return api.util.StringHelper.format(this.assignedToMePattern, this.issue.getIndex(), this.modifiedBy(), modifiedDateString);
+            return api.util.StringHelper.format(this.assignedToMePattern, this.issue.getIndex(), this.getStatus(), this.getLastModifiedBy(),
+                modifiedDateString);
         }
 
-        if (this.issueType === IssueType.OPEN || this.issueType === IssueType.CLOSED) {
-            return api.util.StringHelper.format(this.openAndClosedPattern, this.issue.getIndex(), this.modifiedBy(), modifiedDateString,
+        if (this.issueType === IssueType.OPEN) {
+            return api.util.StringHelper.format(this.openPattern, this.issue.getIndex(), this.getStatus(), this.getLastModifiedBy(),
+                modifiedDateString, this.assignedTo());
+        }
+
+        if (this.issueType === IssueType.CLOSED) {
+            return api.util.StringHelper.format(this.closedPattern, this.issue.getIndex(), this.getLastModifiedBy(), modifiedDateString,
                 this.assignedTo());
         }
 
-        return api.util.StringHelper.format(this.createdByMePattern, this.issue.getIndex(), modifiedDateString, this.assignedTo());
+        return api.util.StringHelper.format(this.createdByMePattern, this.issue.getIndex(), this.getStatus(), modifiedDateString,
+            this.assignedTo());
     }
 
-    private modifiedBy(): string {
+    private getStatus(): string {
+        if (this.issue.getModifier()) {
+            return 'Updated'
+        }
+
+        return 'Opened';
+    }
+
+    private getLastModifiedBy(): string {
         return '\<span class="creator"\>' + this.getModifiedBy() + '\</span\>'
     }
 
     private getModifiedBy(): string {
-        if (this.issue.getCreator() === this.currentUser.getKey().toString()) {
+        const lastModifiedBy: string = !!this.issue.getModifier() ? this.issue.getModifier() : this.issue.getCreator();
+
+        if (lastModifiedBy === this.currentUser.getKey().toString()) {
             return 'me';
         }
 
-        return this.issue.getCreator();
+        return lastModifiedBy;
     }
 
     private assignedTo(): string {
