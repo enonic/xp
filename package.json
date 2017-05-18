@@ -4,18 +4,26 @@
   "description": "Enonix XP",
   "scripts": {
     "build": "npm-run-all --parallel build:*",
-    "build:common": "npm run --prefix modules/admin/admin-ui/ build",
+    "clean": "npm-run-all --parallel clean:*",
+    "clean+build": "npm-run-all clean build",
+    "lint:quick": "runwith scripts/lint.js --prop=diff",
     "build:contentstudio": "npm run --prefix modules/app/app-contentstudio/ build",
     "build:applications": "npm run --prefix modules/app/app-applications/ build",
     "build:users": "npm run --prefix modules/app/app-users/ build",
-    "clean": "npm-run-all --parallel clean:*",
-    "clean:common": "npm run --prefix modules/admin/admin-ui/ clean",
+    "build:common": "npm run --prefix modules/admin/admin-ui/ build",
     "clean:contentstudio": "npm run --prefix modules/app/app-contentstudio/ clean",
     "clean:applications": "npm run --prefix modules/app/app-applications/ clean",
-    "clean:users": "npm run --prefix modules/app/app-users/ clean"
+    "clean:users": "npm run --prefix modules/app/app-users/ clean",
+    "clean:common": "npm run --prefix modules/admin/admin-ui/ clean",
+    "lint": "tslint modules/{admin/admin-ui,app}/**/src/main/{js,resources}/**/*.ts --exclude **/*.d.ts",
+    "lint:fix": "tslint modules/{admin/admin-ui,app}/**/src/main/{js,resources}/**/*.ts --fix --exclude **/*.d.ts || exit 0"
   },
   "devDependencies": {
-    "npm-run-all": "^4.0.2"
+    "npm-run-all": "^4.0.2",
+    "runwith": "^0.3.0",
+    "simple-git": "^1.72.0",
+    "tslint": "^4.2.0",
+    "typescript": "^2.0.10"
   },
   "engines": {
     "node": ">= 6.9.2",

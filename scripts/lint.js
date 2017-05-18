@@ -1,17 +1,13 @@
-const notifier = require('node-notifier');
-const git = require('../util/git');
-const lint = require('../util/linter').lint;
+const git = require('./util/git');
+const lint = require('./util/linter').lint;
 
 function log(fails) {
     fails.forEach(fail => fail.log());
 
     if (fails.length > 0) {
-        const title = `Linter found ${fails.length} error.`;
-        const message = 'Run "npm run lint:quick" to check again.';
+        const message = `Linter found ${fails.length} error.`;
 
-        notifier.notify({title, message});
-        console.log('\n' + title);
-        console.log(message);
+        console.log('\n' + message);
 
         process.exit(1);
     }

@@ -2,15 +2,11 @@ const path = require('path');
 const fs = require('fs');
 const Linter = require('tslint').Linter;
 
-const CONFIG = require('../config');
-
-const root = path.resolve(__dirname, '../..');
-
-const configPath = path.resolve('../../../tslint.json');
+const configPath = path.resolve('tslint.json');
 
 const tslintConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 
-const tslint = new Linter(CONFIG.tslint.options);
+const tslint = new Linter({fix: true});
 
 function lintFile(linter, name, linkString, tslintConfig) {
     // results are accumulate in `linter.getResult()` instance
@@ -36,9 +32,8 @@ function Fail(name, position, reason, fixed) {
 }
 
 function lint(files) {
-    const fails = files.map((file) => {
+    const fails = files.map((name) => {
         return new Promise((resolve, reject) => {
-            const name = path.resolve('../../..', file);
             fs.readFile(name, 'utf8', (err, linkString) => {
                 if (err) {
                     reject(err);
@@ -57,8 +52,7 @@ function lint(files) {
         const finalFails = failsList[failsList.length - 1] || [];
 
         return finalFails.map((fail) => {
-            const filePath = path.relative(root, fail.fileName);
-            return new Fail(filePath, fail.startPosition, fail.failure, fail.fix);
+            return new Fail(fail.fileName, fail.startPosition, fail.failure, fail.fix);
         });
     });
 }
