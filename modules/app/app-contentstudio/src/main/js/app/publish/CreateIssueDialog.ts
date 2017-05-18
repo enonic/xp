@@ -1,15 +1,15 @@
 import '../../api.ts';
 import {IssueDialogForm} from './IssueDialogForm';
+import {DependantItemsDialog} from '../dialog/DependantItemsDialog';
+import {PublishProcessor} from './PublishProcessor';
+import {PublishDialogItemList} from './PublishDialogItemList';
+import {PublishDialogDependantList} from './PublishDialogDependantList';
 import PublishRequestItem = api.issue.PublishRequestItem;
 import CreateIssueRequest = api.issue.resource.CreateIssueRequest;
 import PublishRequest = api.issue.PublishRequest;
-import {DependantItemsDialog} from "../dialog/DependantItemsDialog";
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
-import {PublishProcessor} from "./PublishProcessor";
 import ListBox = api.ui.selector.list.ListBox;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import {PublishDialogItemList} from "./PublishDialogItemList";
-import {PublishDialogDependantList} from "./PublishDialogDependantList";
 import ContentId = api.content.ContentId;
 import ObjectHelper = api.ObjectHelper;
 import ContentSummary = api.content.ContentSummary;
@@ -61,6 +61,7 @@ export class CreateIssueDialog extends DependantItemsDialog {
 
         this.getItemList().onItemsRemoved((items) => {
             this.form.deselectContentItems(items.map(item => item.getContentSummary()), true);
+            this.centerMyself();
         });
 
         this.getItemList().onItemsAdded((items) => {
@@ -123,7 +124,7 @@ export class CreateIssueDialog extends DependantItemsDialog {
 
                 this.setListItems(result.concat(this.getItemList().getItems()), true);
 
-                this.publishProcessor.reloadPublishDependencies(true);
+                this.publishProcessor.reloadPublishDependencies(true).then(() => this.centerMyself());
             });
         });
 
