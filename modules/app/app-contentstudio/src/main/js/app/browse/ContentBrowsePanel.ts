@@ -20,9 +20,7 @@ import {ContentPreviewPathChangedEvent} from '../view/ContentPreviewPathChangedE
 import {ContentPublishMenuButton} from './ContentPublishMenuButton';
 import {TreeNodeParentOfContent} from './TreeNodeParentOfContent';
 import {TreeNodesOfContentPath} from './TreeNodesOfContentPath';
-import {ShowIssuesDialogAction} from './action/ShowIssuesDialogAction';
-import {IssueFetcher} from '../publish/IssueFetcher';
-import {IssueStatsJson} from '../publish/IssueStatsJson';
+import {ShowIssuesDialogButton} from '../publish/ShowIssuesDialogButton';
 
 import TreeNode = api.ui.treegrid.TreeNode;
 import BrowseItem = api.app.browse.BrowseItem;
@@ -39,6 +37,7 @@ import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSumma
 import TreeGridItemClickedEvent = api.ui.treegrid.TreeGridItemClickedEvent;
 import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
 import ActionButton = api.ui.button.ActionButton;
+import IssueServerEventsHandler = api.issue.event.IssueServerEventsHandler;
 
 export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
 
@@ -155,20 +154,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
             this.subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager, contentPublishMenuButton);
 
-            const showIssuesDialogButton: ActionButton = new ActionButton(new ShowIssuesDialogAction());
-            showIssuesDialogButton.addClass('show-issues-dialog-button');
-            IssueFetcher.fetchIssueStats().then((stats: IssueStatsJson) => {
-                if (stats.assignedToMe > 0) {
-                    showIssuesDialogButton.addClass('has-assigned-issues');
-                }
-                showIssuesDialogButton.getEl().setTitle((stats.assignedToMe == 0) ?
-                                                        'Publishing Issues' :
-                                                        'You have unclosed Publishing Issues');
-            }).catch((reason: any) => {
-                api.DefaultErrorHandler.handle(reason);
-            });
-            this.browseToolbar.appendChild(showIssuesDialogButton);
-
+            this.browseToolbar.appendChild(new ShowIssuesDialogButton());
 
             return rendered;
         }).catch((error) => {

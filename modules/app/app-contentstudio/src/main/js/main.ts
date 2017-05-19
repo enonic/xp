@@ -239,6 +239,7 @@ function startApplication() {
     application.setLoaded(true);
 
     api.content.event.ContentServerEventsHandler.getInstance().start();
+    api.issue.event.IssueServerEventsHandler.getInstance().start();
 }
 
 function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDetector: LostConnectionDetector) {
