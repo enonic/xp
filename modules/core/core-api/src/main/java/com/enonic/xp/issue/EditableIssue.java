@@ -34,6 +34,7 @@ public class EditableIssue
     {
         return Issue.create().
             id( source.getId() ).
+            index( source.getIndex() ).
             name( name ).
             title( title ).
             description( description ).
