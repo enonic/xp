@@ -11,13 +11,13 @@ import com.enonic.xp.security.PrincipalKeys;
 
 public class MultiRepoNodeHandleContext
 {
-    private Set<SearchTarget> searchTargets = Sets.newHashSet();
+    private final Set<SearchTarget> searchTargets = Sets.newHashSet();
 
     public MultiRepoNodeHandleContext()
     {
-        this.searchTargets = searchTargets;
     }
 
+    @SuppressWarnings("unused")
     public void addSource( final String repoId, final String branchId, final String[] principalKeys )
     {
         this.searchTargets.add( SearchTarget.create().
@@ -27,7 +27,7 @@ public class MultiRepoNodeHandleContext
             build() );
     }
 
-    public Set<SearchTarget> getSearchTargets()
+    Set<SearchTarget> getSearchTargets()
     {
         return this.searchTargets;
     }

@@ -72,6 +72,7 @@ public class ESQueryTranslator
             query( queryBuilder ).
             from( query.getFrom() ).
             size( query.getSize() ).
+            explain( query.isExplain() ).
             setReturnFields( request.getReturnFields() ).
             setAggregations( aggregations ).
             sortBuilders( sortBuilders ).

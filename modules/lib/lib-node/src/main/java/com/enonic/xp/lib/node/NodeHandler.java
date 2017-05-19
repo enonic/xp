@@ -109,6 +109,7 @@ public class NodeHandler
             start( params.getStart() ).
             sort( params.getSort() ).
             filters( params.getFilters() ).
+            explain( params.isExplain() ).
             nodeService( this.nodeService ).
             build() );
     }
@@ -147,7 +148,7 @@ public class NodeHandler
 
         return execute( SetRootPermissionsHandler.create().
             permissions( permissions ).
-
+            inheritPermissions( inheritPermissions ).
             nodeService( this.nodeService ).
             build() );
     }

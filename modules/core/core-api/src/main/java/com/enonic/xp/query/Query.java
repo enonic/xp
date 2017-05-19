@@ -26,4 +26,6 @@ public interface Query
 
     SearchMode getSearchMode();
 
+    boolean isExplain();
+
 }

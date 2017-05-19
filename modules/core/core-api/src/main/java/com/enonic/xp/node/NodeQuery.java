@@ -1,6 +1,5 @@
 package com.enonic.xp.node;
 
-
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.security.Principals;
@@ -51,8 +50,6 @@ public class NodeQuery
         private NodePath parent;
 
         private NodePath path;
-
-        private Principals principals;
 
         private boolean accurateScoring = false;
 

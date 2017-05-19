@@ -28,16 +28,18 @@ abstract class AbstractFindNodesQueryHandler
 
     private final Map<String, Object> aggregations;
 
+    private final boolean explain;
 
     AbstractFindNodesQueryHandler( final Builder builder )
     {
         super( builder );
-        start = builder.start;
-        count = builder.count;
-        query = builder.query;
-        sort = builder.sort;
-        filters = builder.filters;
-        aggregations = builder.aggregations;
+        this.start = builder.start;
+        this.count = builder.count;
+        this.query = builder.query;
+        this.sort = builder.sort;
+        this.filters = builder.filters;
+        this.aggregations = builder.aggregations;
+        this.explain = builder.explain;
     }
 
     NodeQuery createNodeQuery()
@@ -60,6 +62,7 @@ abstract class AbstractFindNodesQueryHandler
             aggregationQueries( aggregations ).
             query( queryExpr ).
             addQueryFilters( filters ).
+            explain( this.explain ).
             build();
     }
 
@@ -77,6 +80,8 @@ abstract class AbstractFindNodesQueryHandler
         private Map<String, Object> filters;
 
         private Map<String, Object> aggregations;
+
+        private boolean explain = false;
 
         Builder()
         {
@@ -121,6 +126,13 @@ abstract class AbstractFindNodesQueryHandler
         public B aggregations( final Map<String, Object> val )
         {
             aggregations = val;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B explain( final boolean explain )
+        {
+            this.explain = explain;
             return (B) this;
         }
     }

@@ -1,18 +1,18 @@
-package com.enonic.xp.repo.impl.search.result;
+package com.enonic.xp.query;
 
 import java.util.ArrayList;
 
 import com.google.common.collect.Lists;
 
-public class SearchExplanation
+public class QueryExplanation
 {
-    private float value;
+    private final float value;
 
-    private String description;
+    private final String description;
 
-    private ArrayList<SearchExplanation> details;
+    private final ArrayList<QueryExplanation> details;
 
-    private SearchExplanation( final Builder builder )
+    private QueryExplanation( final Builder builder )
     {
         value = builder.value;
         description = builder.description;
@@ -29,7 +29,7 @@ public class SearchExplanation
         return description;
     }
 
-    public ArrayList<SearchExplanation> getDetails()
+    public ArrayList<QueryExplanation> getDetails()
     {
         return details;
     }
@@ -45,7 +45,7 @@ public class SearchExplanation
 
         private String description;
 
-        private ArrayList<SearchExplanation> details = Lists.newArrayList();
+        private final ArrayList<QueryExplanation> details = Lists.newArrayList();
 
         private Builder()
         {
@@ -63,15 +63,15 @@ public class SearchExplanation
             return this;
         }
 
-        public Builder addDetail( final SearchExplanation val )
+        public Builder addDetail( final QueryExplanation val )
         {
             details.add( val );
             return this;
         }
 
-        public SearchExplanation build()
+        public QueryExplanation build()
         {
-            return new SearchExplanation( this );
+            return new QueryExplanation( this );
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.search.result;
 
+import com.enonic.xp.query.QueryExplanation;
 import com.enonic.xp.repo.impl.ReturnValue;
 import com.enonic.xp.repo.impl.ReturnValues;
 import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
@@ -16,7 +17,7 @@ public class SearchHit
 
     private final ReturnValues returnValues;
 
-    private final SearchExplanation explanation;
+    private final QueryExplanation explanation;
 
     private SearchHit( final Builder builder )
     {
@@ -53,7 +54,7 @@ public class SearchHit
         return indexType;
     }
 
-    public SearchExplanation getExplanation()
+    public QueryExplanation getExplanation()
     {
         return explanation;
     }
@@ -127,7 +128,7 @@ public class SearchHit
 
         private ReturnValues returnValues;
 
-        private SearchExplanation explanation;
+        private QueryExplanation explanation;
 
         public Builder score( final float score )
         {
@@ -159,7 +160,7 @@ public class SearchHit
             return this;
         }
 
-        public Builder explanation( final SearchExplanation explanation )
+        public Builder explanation( final QueryExplanation explanation )
         {
             this.explanation = explanation;
             return this;

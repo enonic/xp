@@ -15,9 +15,13 @@ class FindNodesByQueryResultFactory
             totalHits( result.getTotalHits() ).
             aggregations( result.getAggregations() );
 
-        for ( final SearchHit resultEntry : result.getHits() )
+        for ( final SearchHit hit : result.getHits() )
         {
-            resultBuilder.addNodeHit( new NodeHit( NodeId.from( resultEntry.getId() ), resultEntry.getScore() ) );
+            resultBuilder.addNodeHit( NodeHit.create().
+                nodeId( NodeId.from( hit.getId() ) ).
+                score( hit.getScore() ).
+                explanation( hit.getExplanation() ).
+                build() );
         }
 
         return resultBuilder.build();

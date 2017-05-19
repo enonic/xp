@@ -1,28 +1,26 @@
 package com.enonic.xp.node;
 
+import com.enonic.xp.query.QueryExplanation;
+
 public class NodeHit
 {
     private final NodeId nodeId;
 
     private final float score;
 
-    public NodeHit( final NodeId nodeId, final float score )
+    private final QueryExplanation explanation;
+
+    private NodeHit( final Builder builder )
     {
-        this.nodeId = nodeId;
-        this.score = score;
+        nodeId = builder.nodeId;
+        score = builder.score;
+        explanation = builder.explanation;
     }
 
-    public static NodeHit from( final String nodeId, final float score )
+    public static Builder create()
     {
-        return new NodeHit( NodeId.from( nodeId ), score );
+        return new Builder();
     }
-
-
-    public static NodeHit from( final String nodeId )
-    {
-        return new NodeHit( NodeId.from( nodeId ), 0 );
-    }
-
 
     public NodeId getNodeId()
     {
@@ -32,5 +30,46 @@ public class NodeHit
     public float getScore()
     {
         return score;
+    }
+
+    public QueryExplanation getExplanation()
+    {
+        return explanation;
+    }
+
+    public static final class Builder
+    {
+        private NodeId nodeId;
+
+        private float score;
+
+        private QueryExplanation explanation;
+
+        private Builder()
+        {
+        }
+
+        public Builder nodeId( final NodeId val )
+        {
+            nodeId = val;
+            return this;
+        }
+
+        public Builder score( final float val )
+        {
+            score = val;
+            return this;
+        }
+
+        public Builder explanation( final QueryExplanation val )
+        {
+            explanation = val;
+            return this;
+        }
+
+        public NodeHit build()
+        {
+            return new NodeHit( this );
+        }
     }
 }

@@ -21,6 +21,8 @@ public class QueryNodeHandlerParams
 
     private Map<String, Object> filters;
 
+    private boolean explain = false;
+
     Map<String, Object> getFilters()
     {
         return filters;
@@ -35,6 +37,11 @@ public class QueryNodeHandlerParams
     Integer getStart()
     {
         return start;
+    }
+
+    public boolean isExplain()
+    {
+        return explain;
     }
 
     @SuppressWarnings("unused")
@@ -86,4 +93,8 @@ public class QueryNodeHandlerParams
         this.aggregations = aggregations != null ? aggregations.getMap() : Maps.newHashMap();
     }
 
+    public void setExplain( final boolean explain )
+    {
+        this.explain = explain;
+    }
 }

@@ -33,6 +33,7 @@ class FindNodesByMultiRepoQueryResultFactory
             repositoryId( getRepoId( hit ) ).
             nodeId( NodeId.from( hit.getId() ) ).
             score( hit.getScore() ).
+            explanation( hit.getExplanation() ).
             build();
     }
 
