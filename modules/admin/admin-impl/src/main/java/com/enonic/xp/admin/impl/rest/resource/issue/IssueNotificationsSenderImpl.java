@@ -69,6 +69,16 @@ public class IssueNotificationsSenderImpl
         sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
     }
 
+    public void notifyIssueUpdated( final Issue issue, final String url )
+    {
+        final User modifier = getCurrentUser();
+        final IssueUpdatedMailMessageParams params =
+            IssueUpdatedMailMessageParams.create( modifier, createMessageParams( issue, url ) ).build();
+        final MailMessage mailMessage = new IssueUpdatedMailMessageGenerator( params ).generateMessage();
+
+        sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+    }
+
     private IssueMailMessageParams createMessageParams( final Issue issue, final String url )
     {
         final User creator = securityService.getUser( issue.getCreator() ).get();

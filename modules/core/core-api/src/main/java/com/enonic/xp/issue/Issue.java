@@ -154,6 +154,7 @@ public class Issue
         protected Builder( final Issue source )
         {
             this.id = source.id;
+            this.index = source.index;
             this.title = source.title;
             this.name = source.name;
             this.description = source.description;

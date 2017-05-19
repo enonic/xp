@@ -26,7 +26,6 @@ import Checkbox = api.ui.Checkbox;
 import InputAlignment = api.ui.InputAlignment;
 import AEl = api.dom.AEl;
 import DialogButton = api.ui.dialog.DialogButton;
-import IssuePublishedNotificationRequest = api.issue.resource.IssuePublishedNotificationRequest;
 import DateHelper = api.util.DateHelper;
 import TaskState = api.task.TaskState;
 
@@ -205,6 +204,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
                 if (taskState === TaskState.FINISHED && closeIssue) {
                     new UpdateIssueRequest(issue.getId())
                         .setStatus(IssueStatus.CLOSED)
+                        .setIsPublish(true)
                         .sendAndParse()
                         .then((updatedIssue: Issue) => {
                             this.notifyIssueClosed(updatedIssue);
@@ -225,12 +225,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
                 api.notify.showError(reason.message);
             }
         });
-    }
-
-    protected handleSucceeded() {
-        super.handleSucceeded();
-
-        this.sendIssuePublishedNotification();
     }
 
     protected createItemList(): ListBox<ContentSummaryAndCompareStatus> {
@@ -344,10 +338,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
     protected hasSubDialog(): boolean {
         return true;
-    }
-
-    private sendIssuePublishedNotification() {
-        return new IssuePublishedNotificationRequest(this.issue.getId()).send();
     }
 
     onIssueClosed(listener: (issue: Issue) => void) {

@@ -70,7 +70,8 @@ public class IssueResourceTest
         getResourceInstance().create( params, request );
 
         Mockito.verify( issueService, Mockito.times( 1 ) ).create( params.getCreateIssueParams() );
-
+        Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssueCreated( Mockito.any( Issue.class ),
+                                                                                           Mockito.anyString() );
     }
 
     @Test
@@ -151,12 +152,30 @@ public class IssueResourceTest
         final Issue issue = createIssue();
 
         final UpdateIssueJson params =
-            new UpdateIssueJson( issue.getId().toString(), "title", "desc", "Status", Arrays.asList( "approver-1" ),
+            new UpdateIssueJson( issue.getId().toString(), "title", "desc", "Status", false, Arrays.asList( "approver-1" ),
                                  createPublishRequest() );
 
-        getResourceInstance().update( params );
+        getResourceInstance().update( params, Mockito.mock( HttpServletRequest.class ) );
 
         Mockito.verify( issueService, Mockito.times( 1 ) ).update( params.getUpdateIssueParams() );
+        Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssueUpdated( Mockito.any( Issue.class ),
+                                                                                           Mockito.anyString() );
+    }
+
+    @Test
+    public void test_update_is_publish()
+    {
+        final Issue issue = createIssue();
+
+        final UpdateIssueJson params =
+            new UpdateIssueJson( issue.getId().toString(), "title", "desc", "Status", true, Arrays.asList( "approver-1" ),
+                                 createPublishRequest() );
+
+        getResourceInstance().update( params, Mockito.mock( HttpServletRequest.class ) );
+
+        Mockito.verify( issueService, Mockito.times( 1 ) ).update( params.getUpdateIssueParams() );
+        Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssuePublished( Mockito.any( Issue.class ),
+                                                                                             Mockito.anyString() );
     }
 
 
