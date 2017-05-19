@@ -75,8 +75,9 @@ module api.util.htmlarea.dialog {
         private createMacroSelector(id: string): FormItem {
             let loader = new api.macro.resource.MacrosLoader();
             let macroSelector = api.macro.MacroComboBox.create().setLoader(loader).setMaximumOccurrences(1).build();
-            let formItem = this.createFormItem(id, 'Macro', Validators.required, api.util.StringHelper.EMPTY_STRING,
-                    <api.dom.FormItemEl>macroSelector);
+            const formItemBuilder = new ModalDialogFormItemBuilder(id, 'Macro').setValidator(Validators.required).setInputEl(macroSelector);
+            const formItem = this.createFormItem(formItemBuilder);
+
             let macroSelectorComboBox = macroSelector.getComboBox();
 
             this.macroSelector = macroSelector;
