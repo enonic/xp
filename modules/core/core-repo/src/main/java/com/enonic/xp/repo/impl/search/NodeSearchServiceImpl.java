@@ -3,22 +3,15 @@ package com.enonic.xp.repo.impl.search;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.NodeVersionDiffResult;
-import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.SearchSource;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
-import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResult;
-import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
-import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
 import com.enonic.xp.repo.impl.version.search.NodeVersionQuery;
-import com.enonic.xp.repo.impl.version.search.NodeVersionQueryResultFactory;
 
 @Component
 public class NodeSearchServiceImpl
@@ -57,7 +50,7 @@ public class NodeSearchServiceImpl
     }
 
     @Override
-    public NodeBranchQueryResult query( final NodeBranchQuery nodeBranchQuery, final SearchSource source )
+    public SearchResult query( final NodeBranchQuery nodeBranchQuery, final SearchSource source )
     {
         final SearchRequest searchRequest = SearchRequest.create().
             searchSource( source ).
@@ -65,18 +58,11 @@ public class NodeSearchServiceImpl
             query( nodeBranchQuery ).
             build();
 
-        final SearchResult result = searchDao.search( searchRequest );
-
-        if ( result.isEmpty() )
-        {
-            return NodeBranchQueryResult.empty();
-        }
-
-        return NodeBranchQueryResultFactory.create( result );
+        return searchDao.search( searchRequest );
     }
 
     @Override
-    public NodeVersionQueryResult query( final NodeVersionQuery query, final SearchSource source )
+    public SearchResult query( final NodeVersionQuery query, final SearchSource source )
     {
         final SearchRequest searchRequest = SearchRequest.create().
             searchSource( source ).
@@ -84,18 +70,11 @@ public class NodeSearchServiceImpl
             query( query ).
             build();
 
-        final SearchResult result = searchDao.search( searchRequest );
-
-        if ( result.isEmpty() )
-        {
-            return NodeVersionQueryResult.empty();
-        }
-
-        return NodeVersionQueryResultFactory.create( query, result );
+        return searchDao.search( searchRequest );
     }
 
     @Override
-    public NodeVersionDiffResult query( final NodeVersionDiffQuery query, final SearchSource source )
+    public SearchResult query( final NodeVersionDiffQuery query, final SearchSource source )
     {
         final SearchRequest searchRequest = SearchRequest.create().
             searchSource( source ).
@@ -103,25 +82,7 @@ public class NodeSearchServiceImpl
             query( query ).
             build();
 
-        final SearchResult result = searchDao.search( searchRequest );
-
-        if ( result.isEmpty() )
-        {
-            return NodeVersionDiffResult.create().
-                totalHits( result.getTotalHits() ).
-                build();
-        }
-
-        final NodeVersionDiffResult.Builder builder = NodeVersionDiffResult.create();
-
-        builder.totalHits( result.getTotalHits() );
-
-        for ( final SearchHit hit : result.getHits() )
-        {
-            builder.add( NodeId.from( hit.getField( VersionIndexPath.NODE_ID.toString() ).getSingleValue().toString() ) );
-        }
-
-        return builder.build();
+        return searchDao.search( searchRequest );
     }
 
     @Reference

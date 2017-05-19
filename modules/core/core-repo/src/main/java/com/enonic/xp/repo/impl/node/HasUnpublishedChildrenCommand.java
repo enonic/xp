@@ -4,8 +4,8 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.repo.impl.SingleRepoStorageSource;
+import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.version.search.ExcludeEntries;
 import com.enonic.xp.repo.impl.version.search.ExcludeEntry;
 import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
@@ -28,7 +28,7 @@ public class HasUnpublishedChildrenCommand
     {
         final Node parentNode = doGetById( parent );
 
-        final NodeVersionDiffResult result = nodeSearchService.query( NodeVersionDiffQuery.create().
+        final SearchResult result = nodeSearchService.query( NodeVersionDiffQuery.create().
             source( ContextAccessor.current().getBranch() ).
             target( target ).
             nodePath( parentNode.path() ).

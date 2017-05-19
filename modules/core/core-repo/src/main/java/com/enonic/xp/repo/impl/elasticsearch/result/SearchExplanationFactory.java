@@ -5,7 +5,7 @@ import org.elasticsearch.search.SearchHit;
 
 import com.enonic.xp.repo.impl.search.result.SearchExplanation;
 
-public class SearchExplanationFactory
+class SearchExplanationFactory
 {
     static SearchExplanation create( final SearchHit searchHit )
     {

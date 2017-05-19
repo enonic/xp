@@ -31,6 +31,7 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.SingleRepoStorageSource;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResult;
+import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionService;
@@ -39,6 +40,7 @@ import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.repository.IndexResourceProvider;
 import com.enonic.xp.repo.impl.repository.RepositoryEntryService;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
+import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.IndexDataService;
 import com.enonic.xp.repository.IndexMapping;
 import com.enonic.xp.repository.IndexSettings;
@@ -98,20 +100,22 @@ public class IndexServiceImpl
                 branch( branch ).
                 build();
 
-            final NodeBranchQueryResult results = this.nodeSearchService.query( NodeBranchQuery.create().
+            final SearchResult searchResult = this.nodeSearchService.query( NodeBranchQuery.create().
                 query( QueryExpr.from( compareExpr ) ).
                 batchSize( BATCH_SIZE ).
                 size( NodeSearchService.GET_ALL_SIZE_FLAG ).
                 build(), SingleRepoStorageSource.create( reindexContext.getRepositoryId(), SingleRepoStorageSource.Type.BRANCH ) );
 
+            final NodeBranchQueryResult result = NodeBranchQueryResultFactory.create( searchResult );
+
             long nodeIndex = 1;
-            final long total = results.getSize();
+            final long total = result.getSize();
             final long logStep = total < 10 ? 1 : total < 100 ? 10 : total < 1000 ? 100 : 1000;
 
             LOG.info( "Starting reindexing '" + branch + "' branch in '" + params.getRepositoryId() + "' repository: " + total +
                           " items to process" );
 
-            for ( final NodeBranchEntry nodeBranchEntry : results )
+            for ( final NodeBranchEntry nodeBranchEntry : result )
             {
                 if ( nodeIndex % logStep == 0 )
                 {

@@ -8,6 +8,11 @@ public class NodeBranchQueryResultFactory
 {
     public static NodeBranchQueryResult create( final SearchResult searchResult )
     {
+        if ( searchResult.isEmpty() )
+        {
+            return NodeBranchQueryResult.empty();
+        }
+
         final NodeBranchQueryResult.Builder builder = NodeBranchQueryResult.create();
 
         for ( final SearchHit result : searchResult.getHits() )
