@@ -37,10 +37,8 @@ import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSumma
 import TreeGridItemClickedEvent = api.ui.treegrid.TreeGridItemClickedEvent;
 import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
 import ActionButton = api.ui.button.ActionButton;
-import IssueStatsJson = api.issue.json.IssueStatsJson;
-import IssueFetcher = api.issue.IssueFetcher;
 import IssueServerEventsHandler = api.issue.event.IssueServerEventsHandler;
-import {ShowIssuesDialogButton} from "../publish/ShowIssuesDialogButton";
+import {ShowIssuesDialogButton} from "../issue/view/ShowIssuesDialogButton";
 
 export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
 

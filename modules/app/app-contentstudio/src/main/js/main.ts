@@ -16,7 +16,7 @@ import {ContentWizardPanelParams} from './app/wizard/ContentWizardPanelParams';
 import {ContentWizardPanel} from './app/wizard/ContentWizardPanel';
 import {ContentEventsListener} from './app/ContentEventsListener';
 import {ContentEventsProcessor} from './app/ContentEventsProcessor';
-import {IssueListDialog} from './app/issue/IssueListDialog';
+import {IssueListDialog} from './app/issue/view/IssueListDialog';
 import UriHelper = api.util.UriHelper;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import ContentId = api.content.ContentId;

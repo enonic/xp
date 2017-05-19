@@ -3,7 +3,7 @@ import {ProgressBarConfig} from '../dialog/ProgressBarDialog';
 import {PublishDialogDependantList, isContentSummaryValid} from './PublishDialogDependantList';
 import {ContentPublishPromptEvent} from '../browse/ContentPublishPromptEvent';
 import {PublishDialogItemList} from './PublishDialogItemList';
-import {CreateIssueDialog} from '../issue/CreateIssueDialog';
+import {CreateIssueDialog} from '../issue/view/CreateIssueDialog';
 import {SchedulableDialog} from '../dialog/SchedulableDialog';
 import {PublishProcessor} from './PublishProcessor';
 
