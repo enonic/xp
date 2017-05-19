@@ -1,10 +1,11 @@
 module api.issue.resource {
 
-    import LocalDateTime = api.util.LocalDateTime;
-    import IssueResourceRequest = api.issue.resource.IssueResourceRequest;
+    import IssueJson = api.issue.json.IssueJson;
+    import Path = api.rest.Path;
+    import JsonResponse = api.rest.JsonResponse;
     import PrincipalKey = api.security.PrincipalKey;
 
-    export class CreateIssueRequest extends IssueResourceRequest<api.task.TaskIdJson, api.task.TaskId> {
+    export class CreateIssueRequest extends IssueResourceRequest<IssueJson, Issue> {
 
         private title: string;
 
@@ -50,13 +51,13 @@ module api.issue.resource {
             };
         }
 
-        getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), 'create');
+        getRequestPath(): Path {
+            return Path.fromParent(super.getResourcePath(), 'create');
         }
 
-        sendAndParse(): wemQ.Promise<api.task.TaskId> {
-            return this.send().then((response: api.rest.JsonResponse<api.task.TaskIdJson>) => {
-                return api.task.TaskId.fromJson(response.getResult());
+        sendAndParse(): wemQ.Promise<Issue> {
+            return this.send().then((response: JsonResponse<IssueJson>) => {
+                return Issue.fromJson(response.getResult());
             });
         }
     }

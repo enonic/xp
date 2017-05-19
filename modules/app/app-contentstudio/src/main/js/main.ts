@@ -16,7 +16,7 @@ import {ContentWizardPanelParams} from './app/wizard/ContentWizardPanelParams';
 import {ContentWizardPanel} from './app/wizard/ContentWizardPanel';
 import {ContentEventsListener} from './app/ContentEventsListener';
 import {ContentEventsProcessor} from './app/ContentEventsProcessor';
-import {IssuesDialog} from './app/publish/IssuesDialog';
+import {IssueListDialog} from './app/issue/IssueListDialog';
 import UriHelper = api.util.UriHelper;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import ContentId = api.content.ContentId;
@@ -331,7 +331,7 @@ function startContentApplication(application: api.app.Application) {
         }
     });
 
-    let issuesDialog = new IssuesDialog();
+    let issuesDialog = new IssueListDialog();
     let sortDialog = new SortContentDialog();
     let moveDialog = new MoveContentDialog();
 }

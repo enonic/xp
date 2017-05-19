@@ -1,5 +1,9 @@
+///<reference path='IssueResponse.ts' />
 ///<reference path='IssueResourceRequest.ts' />
-///<reference path='CreateIssueRequest.ts' />
-///<reference path='PublishRequestJson.ts' />
-///<reference path='PublishRequestItemJson.ts' />
 ///<reference path='IssuePublishedNotificationRequest.ts' />
+///<reference path='CreateIssueRequest.ts' />
+///<reference path='GetIssueRequest.ts' />
+///<reference path='GetIssueStatsRequest.ts' />
+///<reference path='ListIssuesRequest.ts' />
+///<reference path='ListIssuesResult.ts' />
+///<reference path='UpdateIssueRequest.ts' />

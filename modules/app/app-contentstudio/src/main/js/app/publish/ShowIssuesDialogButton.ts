@@ -1,9 +1,9 @@
 import '../../api.ts';
 import {ShowIssuesDialogAction} from '../browse/action/ShowIssuesDialogAction';
-import {IssueFetcher} from './IssueFetcher';
-import {IssueStatsJson} from './IssueStatsJson';
 import ActionButton = api.ui.button.ActionButton;
 import IssueServerEventsHandler = api.issue.event.IssueServerEventsHandler;
+import IssueFetcher = api.issue.IssueFetcher;
+import IssueStatsJson = api.issue.json.IssueStatsJson;
 
 export class ShowIssuesDialogButton extends ActionButton {
 
