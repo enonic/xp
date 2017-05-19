@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Enonix XP - Applications App",
   "scripts": {
-    "build": "webpack",
+    "build": "webpack --config ../../../scripts/util/webpack.config.js",
     "clean": "rimraf ./build/resources/main/assets/app/bundle.*"
   },
   "devDependencies": {

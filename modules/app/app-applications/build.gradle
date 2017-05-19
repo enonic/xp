@@ -1,6 +1,7 @@
 apply from: "$rootDir/gradle/osgi.gradle"
 apply plugin: 'com.moowork.node'
 
+
 dependencies {
     compile project( ":admin:admin-ui" )
     include project( ":lib:lib-mustache" )
@@ -22,14 +23,13 @@ ext {
 bundle {
     instruction 'Bundle-Name', 'Admin Applications App'
     instruction 'X-Bundle-Type', 'system'
-    instruction 'X-Source-Paths', "$resourcesDir,$buildResourcesDir"
+    instruction 'X-Source-Paths', "$resourcesDir, $buildResourcesDir"
 }
 
 task webpack( type: NodeTask, dependsOn: npmInstall ) {
     description = 'Build UI resources (ts, css, etc).'
-    inputs.dir 'src/main'
-    outputs.dir "${buildDir}/resources/main"
     script = file( './node_modules/webpack/bin/webpack' )
+    args = ['--config', "$rootDir/scripts/util/webpack.config.js"]
 }
 
 task cleanNode( type: Delete ) {

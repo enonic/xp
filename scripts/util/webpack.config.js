@@ -1,4 +1,4 @@
-const RelativeErrorsWebpackPlugin = require('../../../scripts/util/relativeErrorsWebpackPlugin');
+const RelativeErrorsWebpackPlugin = require('./relativeErrorsWebpackPlugin');
 
 module.exports = {
     entry: './src/main/js/main.ts',
@@ -9,9 +9,11 @@ module.exports = {
         extensions: ['.ts', '.js']
     },
     module: {
-        loaders: [
-            {test: /\.tsx?$/, loader: "ts-loader"}
-        ]
+        rules: [{
+            test: /\.ts$/,
+            loader: 'ts-loader',
+            exclude: /node_modules/,
+        }]
     },
     plugins: [
         RelativeErrorsWebpackPlugin
