@@ -12,17 +12,17 @@ abstract class AbstractSourceAdapter
     private final static String DIVIDER = "-";
 
 
-    protected static String createSearchIndexName( final RepositoryId repositoryId )
+    static String createSearchIndexName( final RepositoryId repositoryId )
     {
         return SEARCH_INDEX_PREFIX + DIVIDER + repositoryId.toString();
     }
 
-    protected static String createStorageIndexName( final RepositoryId repositoryId )
+    static String createStorageIndexName( final RepositoryId repositoryId )
     {
         return STORAGE_INDEX_PREFIX + DIVIDER + repositoryId.toString();
     }
 
-    protected static String createSearchTypeName( final Branch branch )
+    static String createSearchTypeName( final Branch branch )
     {
         return branch.getValue();
     }
