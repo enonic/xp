@@ -1,8 +1,6 @@
 module api.issue {
 
-    import PublishRequestJson = api.issue.resource.PublishRequestJson;
-    import ContentId = api.content.ContentId;
-
+    import PublishRequestJson = api.issue.json.PublishRequestJson;
     export class PublishRequest {
 
         private excludeIds: ContentId[];
