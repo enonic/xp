@@ -4,6 +4,7 @@
   "description": "Enonix XP - Admin UI module",
   "scripts": {
     "build": "gulp all",
+    "css": "gulp css",
     "clean": "gulp clean",
     "postinstall": "gulp resources"
   },

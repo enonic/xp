@@ -4,6 +4,7 @@
   "description": "Enonix XP",
   "scripts": {
     "build": "npm-run-all build:common --parallel build:app-*",
+    "css": "npm run --prefix modules/admin/admin-ui/ css",
     "clean": "npm-run-all --parallel clean:*",
     "clean+build": "npm-run-all clean build",
     "lint:quick": "runwith scripts/lint.js --prop=diff",
