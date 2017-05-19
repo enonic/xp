@@ -85,7 +85,7 @@ public class SearchExecutor
                 build().
                 execute( query );
 
-            return safeLongToInt( countResult.getResults().getTotalHits() );
+            return safeLongToInt( countResult.getTotalHits() );
         }
         else
         {

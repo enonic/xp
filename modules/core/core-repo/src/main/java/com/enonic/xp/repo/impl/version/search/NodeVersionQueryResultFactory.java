@@ -22,8 +22,8 @@ public class NodeVersionQueryResultFactory
     {
         final NodeVersionQueryResult.Builder findNodeVersionsResult = NodeVersionQueryResult.create();
 
-        findNodeVersionsResult.hits( searchResult.getResults().getSize() );
-        findNodeVersionsResult.totalHits( searchResult.getResults().getTotalHits() );
+        findNodeVersionsResult.hits( searchResult.getHits().getSize() );
+        findNodeVersionsResult.totalHits( searchResult.getTotalHits() );
         findNodeVersionsResult.from( query.getFrom() );
         findNodeVersionsResult.to( query.getSize() );
 
@@ -38,7 +38,7 @@ public class NodeVersionQueryResultFactory
     {
         final NodeVersionsMetadata.Builder entityVersionsBuilder = NodeVersionsMetadata.create( query.getNodeId() );
 
-        for ( final SearchHit searchHit : searchResult.getResults() )
+        for ( final SearchHit searchHit : searchResult.getHits() )
         {
             entityVersionsBuilder.add( createVersionEntry( searchHit ) );
         }

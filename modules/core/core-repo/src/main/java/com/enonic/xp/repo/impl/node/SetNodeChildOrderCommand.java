@@ -9,12 +9,13 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
-import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
+import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.security.acl.Permission;
 
 public class SetNodeChildOrderCommand
@@ -74,7 +75,7 @@ public class SetNodeChildOrderCommand
 
     private void orderChildNodes( final Node parentNode )
     {
-        final NodeQueryResult childNodeResult = nodeSearchService.query( NodeQuery.create().
+        final SearchResult result = nodeSearchService.query( NodeQuery.create().
             parent( parentNode.path() ).
             query( new QueryExpr( parentNode.getChildOrder().getOrderExpressions() ) ).
             size( NodeSearchService.GET_ALL_SIZE_FLAG ).
@@ -82,7 +83,7 @@ public class SetNodeChildOrderCommand
             searchMode( SearchMode.SEARCH ).
             build(), SingleRepoSearchSource.from( ContextAccessor.current() ) );
 
-        final List<NodeId> childNodeIds = childNodeResult.getNodeQueryResultSet().getNodeIds();
+        final NodeIds childNodeIds = NodeIds.from( result.getIds() );
 
         final List<NodeManualOrderValueResolver.NodeIdOrderValue> orderedNodeIds = NodeManualOrderValueResolver.resolve( childNodeIds );
 

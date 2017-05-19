@@ -39,7 +39,7 @@ class ScrollExecutor
             execute().
             actionGet();
 
-        final SearchHits.Builder searchHitsBuilder = SearchHits.create( scrollResp.getHits().totalHits() );
+        final SearchHits.Builder searchHitsBuilder = SearchHits.create();
 
         while ( true )
         {
@@ -61,6 +61,8 @@ class ScrollExecutor
 
         return SearchResult.create().
             hits( searchHitsBuilder.build() ).
+            totalHits( scrollResp.getHits().getTotalHits() ).
+            maxScore( scrollResp.getHits().maxScore() ).
             build();
     }
 

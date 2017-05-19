@@ -7,8 +7,7 @@ public class SearchHitsFactory
 {
     public static SearchHits create( final org.elasticsearch.search.SearchHits searchHits )
     {
-        final SearchHits.Builder builder = SearchHits.create( searchHits.getTotalHits() ).
-            maxScore( searchHits.maxScore() );
+        final SearchHits.Builder builder = SearchHits.create();
 
         for ( final org.elasticsearch.search.SearchHit hit : searchHits )
         {

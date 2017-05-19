@@ -218,7 +218,7 @@ public class BranchServiceImpl
 
         if ( !result.isEmpty() )
         {
-            final SearchHit firstHit = result.getResults().getFirstHit();
+            final SearchHit firstHit = result.getHits().getFirst();
 
             final NodeId nodeId = NodeId.from( firstHit.getId() );
             final NodeBranchEntry nodeBranchEntry = doGetById( nodeId, context );

@@ -11,9 +11,9 @@ public class SearchResultFactory
     {
         return SearchResult.create().
             hits( SearchHitsFactory.create( searchResponse.getHits() ) ).
+            totalHits( searchResponse.getHits().getTotalHits() ).
+            maxScore( searchResponse.getHits().maxScore() ).
             aggregations( AggregationsFactory.create( searchResponse.getAggregations() ) ).
             build();
     }
-
-
 }

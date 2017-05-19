@@ -3,14 +3,12 @@ package com.enonic.xp.repo.impl.node;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
-import com.enonic.xp.node.MultiRepoNodeHit;
 import com.enonic.xp.node.MultiRepoNodeQuery;
 import com.enonic.xp.node.SearchTarget;
 import com.enonic.xp.node.SearchTargets;
 import com.enonic.xp.repo.impl.MultiRepoSearchSource;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
-import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
-import com.enonic.xp.repo.impl.index.query.NodeQueryResultEntry;
+import com.enonic.xp.repo.impl.search.result.SearchResult;
 
 public class FindNodesByMultiRepoQueryCommand
     extends AbstractNodeCommand
@@ -48,29 +46,9 @@ public class FindNodesByMultiRepoQueryCommand
                 build() );
         }
 
-        final NodeQueryResult nodeQueryResult = nodeSearchService.query( query.getNodeQuery(), searchSourceBuilder.build() );
+        final SearchResult result = nodeSearchService.query( this.query.getNodeQuery(), searchSourceBuilder.build() );
 
-        final FindNodesByMultiRepoQueryResult.Builder resultBuilder = FindNodesByMultiRepoQueryResult.create().
-            hits( nodeQueryResult.getHits() ).
-            totalHits( nodeQueryResult.getTotalHits() ).
-            aggregations( nodeQueryResult.getAggregations() );
-
-        for ( final NodeQueryResultEntry resultEntry : nodeQueryResult.getEntries() )
-        {
-            createResultEntry( resultBuilder, resultEntry );
-        }
-
-        return resultBuilder.build();
-    }
-
-    private void createResultEntry( final FindNodesByMultiRepoQueryResult.Builder resultBuilder, final NodeQueryResultEntry resultEntry )
-    {
-        resultBuilder.addNodeHit( MultiRepoNodeHit.create().
-            nodeId( resultEntry.getId() ).
-            score( resultEntry.getScore() ).
-            repositoryId( resultEntry.getRepositoryId() ).
-            branch( resultEntry.getBranch() ).
-            build() );
+        return FindNodesByMultiRepoQueryResultFactory.create( result );
     }
 
     public static final class Builder

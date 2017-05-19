@@ -4,7 +4,6 @@ import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
-import com.enonic.xp.repo.impl.index.query.IndexQueryBuilderException;
 
 class CompareExpressionBuilder
 {

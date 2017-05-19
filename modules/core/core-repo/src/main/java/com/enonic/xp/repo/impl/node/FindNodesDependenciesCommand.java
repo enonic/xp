@@ -15,8 +15,8 @@ import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.ReturnValue;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
-import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
-import com.enonic.xp.repo.impl.index.query.NodeQueryResultEntry;
+import com.enonic.xp.repo.impl.search.result.SearchHit;
+import com.enonic.xp.repo.impl.search.result.SearchResult;
 
 public class FindNodesDependenciesCommand
     extends AbstractNodeCommand
@@ -60,13 +60,13 @@ public class FindNodesDependenciesCommand
             return NodeIds.empty();
         }
 
-        final NodeQueryResult result = getReferences( nonProcessedNodes );
+        final SearchResult result = getReferences( nonProcessedNodes );
 
         this.processed.addAll( nonProcessedNodes );
 
         final NodeIds.Builder builder = NodeIds.create();
 
-        if ( result.getHits() == 0 )
+        if ( result.isEmpty() )
         {
             return NodeIds.empty();
         }
@@ -82,7 +82,7 @@ public class FindNodesDependenciesCommand
         return builder.build();
     }
 
-    private NodeQueryResult getReferences( final Set<NodeId> nonProcessedNodes )
+    private SearchResult getReferences( final Set<NodeId> nonProcessedNodes )
     {
         return this.nodeSearchService.query( NodeQuery.create().
             addQueryFilter( ExistsFilter.create().
@@ -94,15 +94,15 @@ public class FindNodesDependenciesCommand
                 build() ).
             from( 0 ).
             size( nonProcessedNodes.size() ).
-            build(), ReturnFields.from( NodeIndexPath.REFERENCE ), SingleRepoSearchSource.from( ContextAccessor.current() ));
+            build(), ReturnFields.from( NodeIndexPath.REFERENCE ), SingleRepoSearchSource.from( ContextAccessor.current() ) );
 
     }
 
-    private void addNodeIdsFromReferenceReturnValues( final NodeQueryResult result, final NodeIds.Builder builder )
+    private void addNodeIdsFromReferenceReturnValues( final SearchResult result, final NodeIds.Builder builder )
     {
-        for ( NodeQueryResultEntry entry : result )
+        for ( SearchHit hit : result.getHits() )
         {
-            final ReturnValue returnValue = entry.getReturnValues().get( NodeIndexPath.REFERENCE.getPath() );
+            final ReturnValue returnValue = hit.getReturnValues().get( NodeIndexPath.REFERENCE.getPath() );
 
             if ( returnValue == null || returnValue.getValues().isEmpty() )
             {

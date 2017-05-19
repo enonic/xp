@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 
 public class NodeManualOrderValueResolver
 {
@@ -12,7 +13,7 @@ public class NodeManualOrderValueResolver
 
     public static final Long START_ORDER_VALUE = 0L;
 
-    public static List<NodeIdOrderValue> resolve( final List<NodeId> orderedNodeIds )
+    public static List<NodeIdOrderValue> resolve( final NodeIds orderedNodeIds )
     {
         final List<NodeIdOrderValue> result = Lists.newArrayList();
 

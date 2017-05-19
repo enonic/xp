@@ -10,7 +10,7 @@ public class NodeBranchQueryResultFactory
     {
         final NodeBranchQueryResult.Builder builder = NodeBranchQueryResult.create();
 
-        for ( final SearchHit result : searchResult.getResults() )
+        for ( final SearchHit result : searchResult.getHits() )
         {
             builder.add( NodeBranchVersionFactory.create( result.getReturnValues() ) );
         }

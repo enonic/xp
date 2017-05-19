@@ -13,8 +13,6 @@ import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResult;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
-import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
-import com.enonic.xp.repo.impl.index.query.NodeQueryResultFactory;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
@@ -36,18 +34,18 @@ public class NodeSearchServiceImpl
     private SearchDao searchDao;
 
     @Override
-    public NodeQueryResult query( final NodeQuery query, final SearchSource source )
+    public SearchResult query( final NodeQuery query, final SearchSource source )
     {
         return doQuery( query, ReturnFields.empty(), source );
     }
 
     @Override
-    public NodeQueryResult query( final NodeQuery query, ReturnFields returnFields, final SearchSource source )
+    public SearchResult query( final NodeQuery query, ReturnFields returnFields, final SearchSource source )
     {
         return doQuery( query, returnFields, source );
     }
 
-    private NodeQueryResult doQuery( final NodeQuery query, final ReturnFields returnFields, final SearchSource source )
+    private SearchResult doQuery( final NodeQuery query, final ReturnFields returnFields, final SearchSource source )
     {
         final SearchRequest searchRequest = SearchRequest.create().
             searchSource( source ).
@@ -55,9 +53,7 @@ public class NodeSearchServiceImpl
             returnFields( returnFields ).
             build();
 
-        final SearchResult result = searchDao.search( searchRequest );
-
-        return NodeQueryResultFactory.create( result );
+        return searchDao.search( searchRequest );
     }
 
     @Override
@@ -112,15 +108,15 @@ public class NodeSearchServiceImpl
         if ( result.isEmpty() )
         {
             return NodeVersionDiffResult.create().
-                totalHits( result.getResults().getTotalHits() ).
+                totalHits( result.getTotalHits() ).
                 build();
         }
 
         final NodeVersionDiffResult.Builder builder = NodeVersionDiffResult.create();
 
-        builder.totalHits( result.getResults().getTotalHits() );
+        builder.totalHits( result.getTotalHits() );
 
-        for ( final SearchHit hit : result.getResults() )
+        for ( final SearchHit hit : result.getHits() )
         {
             builder.add( NodeId.from( hit.getField( VersionIndexPath.NODE_ID.toString() ).getSingleValue().toString() ) );
         }
