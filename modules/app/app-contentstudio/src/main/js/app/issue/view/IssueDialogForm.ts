@@ -149,7 +149,7 @@ export class IssueDialogForm extends api.ui.form.Form {
         this.description.setValue(issue.getDescription());
 
         this.descriptionText.setHtml(issue.getDescription());
-        this.descriptionText.toggleClass('empty', !!issue.getDescription());
+        this.descriptionText.toggleClass('empty', !issue.getDescription());
 
         if (this.isRendered()) {
             this.setApprovers(issue.getApprovers());
