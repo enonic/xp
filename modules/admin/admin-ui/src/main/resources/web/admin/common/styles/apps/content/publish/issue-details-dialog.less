@@ -172,4 +172,20 @@
       display: none;
     }
   }
+
+  &.no-action {
+    .button-container {
+      .show-schedule-action,.publish-action, .checkbox{
+        display: none !important;
+      }
+      &:after {
+        content: 'No items to publish';
+
+        display: block;
+        text-align: center;
+        line-height: 32px;
+        font-size: 13px;
+      }
+    }
+  }
 }
