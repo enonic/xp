@@ -123,16 +123,20 @@ export class IssueDetailsDialog extends SchedulableDialog {
          });
          }*/
 
-        ContentSummaryAndCompareStatusFetcher.fetchByIds(
-            this.issue.getPublishRequest().getItemsIds()).then((result) => {
-            this.setListItems(result);
+        this.reloadPublishDependencies().then(() => {
+            ContentSummaryAndCompareStatusFetcher.fetchByIds(
+                this.issue.getPublishRequest().getItemsIds()).then((result) => {
+                this.setListItems(result);
 
-            if (this.issue.getPublishRequest().getItemsIds().length > 0) {
-                this.unlockControls();
-            } else {
-                this.lockControls();
-            }
+                if (this.issue.getPublishRequest().getItemsIds().length > 0) {
+                    this.unlockControls();
+                } else {
+                    this.lockControls();
+                }
+            });
         });
+
+
 
         return this;
     }

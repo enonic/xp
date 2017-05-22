@@ -155,6 +155,7 @@ public class Issue
         {
             this.id = source.id;
             this.title = source.title;
+            this.index = source.index;
             this.name = source.name;
             this.description = source.description;
             this.createdTime = source.createdTime;

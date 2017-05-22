@@ -15,7 +15,7 @@ export class UpdateIssueDialog extends IssueDialog {
 
         this.getEl().addClass('update-issue-dialog');
 
-        this.addCancelButtonToBottom('Close');
+        this.addCancelButtonToBottom('Cancel');
 
         this.publishProcessor.onLoadingStarted(()=> {
             this.loadMask.show();
