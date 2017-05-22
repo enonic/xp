@@ -112,7 +112,7 @@ export class PublishDialogItemList extends DialogItemList {
         this.excludeChildrenIds = ids;
 
         this.getItemViews().forEach(itemView => {
-            if (itemView.getIncludeChildrenToggler()) {
+            if(itemView.getIncludeChildrenToggler()) {
                 itemView.getIncludeChildrenToggler().toggle(ids.indexOf(itemView.getContentId()) < 0, true);
             }
         });

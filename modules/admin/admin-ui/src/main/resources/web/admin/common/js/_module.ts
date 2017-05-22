@@ -155,7 +155,6 @@
 ///<reference path='content/form/inputtype/customselector/_module.ts' />
 
 ///<reference path='issue/event/_module.ts' />
-///<reference path='issue/_module.ts' />
 
 ///<reference path='aggregation/_module.ts' />
 
