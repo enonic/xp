@@ -1,15 +1,15 @@
-import {DependantItemsDialog} from "../../dialog/DependantItemsDialog";
-import {IssueDialogForm} from "./IssueDialogForm";
-import {PublishProcessor} from "../../publish/PublishProcessor";
-import {Issue} from "../Issue";
+import {DependantItemsDialog} from '../../dialog/DependantItemsDialog';
+import {IssueDialogForm} from './IssueDialogForm';
+import {PublishProcessor} from '../../publish/PublishProcessor';
+import {Issue} from '../Issue';
+import {PublishRequestItem} from '../PublishRequestItem';
+import {PublishDialogItemList} from '../../publish/PublishDialogItemList';
+import {PublishDialogDependantList} from '../../publish/PublishDialogDependantList';
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import ContentSummary = api.content.ContentSummary;
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
 import ObjectHelper = api.ObjectHelper;
-import {PublishRequestItem} from "../PublishRequestItem";
 import ListBox = api.ui.selector.list.ListBox;
-import {PublishDialogItemList} from "../../publish/PublishDialogItemList";
-import {PublishDialogDependantList} from "../../publish/PublishDialogDependantList";
 export abstract class IssueDialog extends DependantItemsDialog {
 
     protected form: IssueDialogForm;
@@ -104,7 +104,7 @@ export abstract class IssueDialog extends DependantItemsDialog {
             ContentSummaryAndCompareStatusFetcher.fetchByIds(
                 items.map(summary => summary.getContentId())).then((result) => {
 
-                this.setListItems(result.concat(this.getItemList().getItems()), true);
+                this.setListItems(result.concat(this.getItemList().getItems()));
 
                 this.publishProcessor.reloadPublishDependencies(true);
             });

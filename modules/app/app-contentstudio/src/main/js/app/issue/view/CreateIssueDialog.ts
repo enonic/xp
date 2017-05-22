@@ -1,8 +1,8 @@
-import {IssueDialog} from "./IssueDialog";
+import {IssueDialog} from './IssueDialog';
+import {CreateIssueRequest} from '../resource/CreateIssueRequest';
+import {PublishRequest} from '../PublishRequest';
 import LabelEl = api.dom.LabelEl;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import {CreateIssueRequest} from "../resource/CreateIssueRequest";
-import {PublishRequest} from "../PublishRequest";
 
 export class CreateIssueDialog extends IssueDialog {
 
@@ -25,6 +25,7 @@ export class CreateIssueDialog extends IssueDialog {
         this.publishProcessor.onLoadingFinished(() => {
             (<CreateIssueAction>this.actionButton.getAction()).updateLabel(this.countTotal());
             this.loadMask.hide();
+            this.centerMyself();
         });
 
         this.itemsLabel = new LabelEl('Items that will be added to the issue:', this.getItemList());
