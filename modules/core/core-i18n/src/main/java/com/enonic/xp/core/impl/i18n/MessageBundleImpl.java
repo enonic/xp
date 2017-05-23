@@ -60,7 +60,7 @@ final class MessageBundleImpl
     {
         if ( StringUtils.isBlank( localizedPhrase ) )
         {
-            return null;
+            return "";
         }
 
         try
@@ -69,8 +69,7 @@ final class MessageBundleImpl
         }
         catch ( final UnsupportedEncodingException e )
         {
-            LOG.error( "Parsing localized phrase: " + localizedPhrase + " failed", e );
-            return null;
+            return localizedPhrase;
         }
     }
 
