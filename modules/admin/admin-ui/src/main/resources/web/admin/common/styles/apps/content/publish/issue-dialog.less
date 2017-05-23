@@ -2,12 +2,6 @@
 
   @toggler-width: 35px;
 
-  @media screen and (max-height: 720px) {
-    .dialog-content {
-      max-height: 450px;
-    }
-  }
-
   .dialog-content {
     max-height: 600px;
     overflow-y: auto;
@@ -76,6 +70,12 @@
 
     .create-issue-action {
       float: right;
+    }
+  }
+
+  @media screen and (max-height: 720px) {
+    .dialog-content {
+      max-height: 450px;
     }
   }
 }
