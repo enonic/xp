@@ -86,9 +86,20 @@ public final class IssueResource
 
     @POST
     @Path("update")
-    public IssueJson update( final UpdateIssueJson params )
+    public IssueJson update( final UpdateIssueJson params, @Context HttpServletRequest request )
     {
-        return new IssueJson( issueService.update( params.getUpdateIssueParams() ) );
+        final Issue issue = issueService.update( params.getUpdateIssueParams() );
+
+        if ( params.isPublish() )
+        {
+            issueNotificationsSender.notifyIssuePublished( issue, request.getHeader( HttpHeaders.REFERER ) );
+        }
+        else
+        {
+            issueNotificationsSender.notifyIssueUpdated( issue, request.getHeader( HttpHeaders.REFERER ) );
+        }
+
+        return new IssueJson( issue );
     }
 
     @GET
@@ -103,14 +114,6 @@ public final class IssueResource
         final long closed = this.issueService.findIssues( createIssuesByTypeQuery( "CLOSED" ).count( true ).build() ).getTotalHits();
 
         return IssueStatsJson.create().assignedToMe( assignedToMe ).createdByMe( createdByMe ).open( open ).closed( closed ).build();
-    }
-
-    @GET
-    @Path("notifyPublished")
-    public void notifyIssuePublished( @QueryParam("id") final String id, @Context HttpServletRequest request )
-    {
-        final Issue issue = issueService.getIssue( IssueId.from( id ) );
-        issueNotificationsSender.notifyIssuePublished( issue, request.getHeader( HttpHeaders.REFERER ) );
     }
 
     @GET

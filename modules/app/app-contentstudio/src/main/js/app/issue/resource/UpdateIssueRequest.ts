@@ -1,8 +1,8 @@
-import {IssueResourceRequest} from "./IssueResourceRequest";
-import {IssueJson} from "../json/IssueJson";
-import {Issue} from "../Issue";
-import {IssueStatus, IssueStatusFormatter} from "../IssueStatus";
-import {PublishRequest} from "../PublishRequest";
+import {IssueResourceRequest} from './IssueResourceRequest';
+import {IssueJson} from '../json/IssueJson';
+import {Issue} from '../Issue';
+import {IssueStatus, IssueStatusFormatter} from '../IssueStatus';
+import {PublishRequest} from '../PublishRequest';
 import PrincipalKey = api.security.PrincipalKey;
 
 export class UpdateIssueRequest extends IssueResourceRequest<IssueJson, Issue> {
@@ -14,6 +14,8 @@ export class UpdateIssueRequest extends IssueResourceRequest<IssueJson, Issue> {
     private description: string;
 
     private status: IssueStatus;
+
+    private isPublish: boolean = false;
 
     private approvers: PrincipalKey[];
 
@@ -45,6 +47,11 @@ export class UpdateIssueRequest extends IssueResourceRequest<IssueJson, Issue> {
         return this;
     }
 
+    setIsPublish(value: boolean): UpdateIssueRequest {
+        this.isPublish = value;
+        return this;
+    }
+
     setApprovers(approvers: PrincipalKey[]): UpdateIssueRequest {
         this.approvers = approvers;
         return this;
@@ -63,6 +70,7 @@ export class UpdateIssueRequest extends IssueResourceRequest<IssueJson, Issue> {
             title: this.title,
             description: this.description,
             status: IssueStatusFormatter.formatStatus(this.status),
+            isPublish: this.isPublish,
             approvers,
             publishRequest,
         };
