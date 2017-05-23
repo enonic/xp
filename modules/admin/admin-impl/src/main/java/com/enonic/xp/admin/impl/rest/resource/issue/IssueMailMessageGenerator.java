@@ -45,11 +45,6 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
 
     protected abstract String getCopyRecepients();
 
-    protected boolean isStatusShown()
-    {
-        return false;
-    }
-
     protected String getApproverEmails()
     {
         return params.getApprovers().stream().map( approver -> approver.getEmail() ).reduce(
@@ -80,7 +75,6 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
         messageParams.put( "items", generateItemsHtml() );
         messageParams.put( "description-block-visibility", description.length() == 0 ? "none" : "block" );
         messageParams.put( "issue-block-visibility", itemCount == 0 ? "none" : "block" );
-        messageParams.put( "issue-status-visibility", isStatusShown() ? "inline-block" : "none" );
         messageParams.put( "no-issues-block-visibility", itemCount == 0 ? "block" : "none" );
 
         return new StrSubstitutor( messageParams ).replace( load( "email.html" ) );

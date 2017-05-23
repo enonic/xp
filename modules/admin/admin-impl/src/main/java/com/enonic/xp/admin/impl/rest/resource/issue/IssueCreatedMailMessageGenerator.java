@@ -11,7 +11,7 @@ public class IssueCreatedMailMessageGenerator
     @Override
     protected String generateMessageSubject()
     {
-        return "You were assigned a new issue \"" + params.getIssue().getTitle() + "\"";
+        return "You were assigned a new issue \"" + params.getIssue().getTitle() + "\" by " + params.getCreator().getDisplayName();
     }
 
     @Override
