@@ -1,28 +1,27 @@
-import {IssueDialogForm} from "./IssueDialogForm";
-import {SchedulableDialog} from "../../dialog/SchedulableDialog";
-import {Issue} from "../Issue";
+import {IssueDialogForm} from './IssueDialogForm';
+import {SchedulableDialog} from '../../dialog/SchedulableDialog';
+import {Issue} from '../Issue';
+import {UpdateIssueDialog} from './UpdateIssueDialog';
+import {ProgressBarConfig} from '../../dialog/ProgressBarDialog';
+import {ContentPublishPromptEvent} from '../../browse/ContentPublishPromptEvent';
+import {Router} from '../../Router';
+import {PublicStatusSelectionItem, PublishDialogItemList} from '../../publish/PublishDialogItemList';
+import {ContentPublishDialogAction} from '../../publish/ContentPublishDialog';
+import {PublishDialogDependantList} from '../../publish/PublishDialogDependantList';
+import {UpdateIssueRequest} from '../resource/UpdateIssueRequest';
+import {IssueStatus} from '../IssueStatus';
 import AEl = api.dom.AEl;
 import DialogButton = api.ui.dialog.DialogButton;
 import Checkbox = api.ui.Checkbox;
-import {UpdateIssueDialog} from "./UpdateIssueDialog";
-import {ProgressBarConfig} from "../../dialog/ProgressBarDialog";
-import {ContentPublishPromptEvent} from "../../browse/ContentPublishPromptEvent";
-import {Router} from "../../Router";
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
-import {PublicStatusSelectionItem, PublishDialogItemList} from "../../publish/PublishDialogItemList";
-import {ContentPublishDialogAction} from "../../publish/ContentPublishDialog";
 import InputAlignment = api.ui.InputAlignment;
 import PublishContentRequest = api.content.resource.PublishContentRequest;
 import TaskState = api.task.TaskState;
 import ListBox = api.ui.selector.list.ListBox;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import {PublishDialogDependantList} from "../../publish/PublishDialogDependantList";
 import ResolvePublishDependenciesResult = api.content.resource.result.ResolvePublishDependenciesResult;
 import CompareStatus = api.content.CompareStatus;
-import {UpdateIssueRequest} from "../resource/UpdateIssueRequest";
-import {IssueStatus} from "../IssueStatus";
 import ResolvePublishDependenciesRequest = api.content.resource.ResolvePublishDependenciesRequest;
-import {IssuePublishedNotificationRequest} from "../resource/IssuePublishedNotificationRequest";
 import DateHelper = api.util.DateHelper;
 
 export class IssueDetailsDialog extends SchedulableDialog {
@@ -136,8 +135,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
             });
         });
 
-
-
         return this;
     }
 
@@ -159,7 +156,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
         this.getItemList().getItemViews()
             .filter(itemView => itemView.getIncludeChildrenToggler())
             .forEach(itemView => itemView.getIncludeChildrenToggler().toggle(this.isChildrenIncluded(itemView)));
-
 
     }
 
@@ -218,6 +214,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
                 if (taskState === TaskState.FINISHED && closeIssue) {
                     new UpdateIssueRequest(issue.getId())
                         .setStatus(IssueStatus.CLOSED)
+                        .setIsPublish(true)
                         .sendAndParse()
                         .then((updatedIssue: Issue) => {
                             this.notifyIssueClosed(updatedIssue);
@@ -264,12 +261,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
         this.updateIssueDialog.setExcludeChildrenIds(this.getItemList().getExcludeChildrenIds());
 
         this.addClass('masked');
-    }
-
-    protected handleSucceeded() {
-        super.handleSucceeded();
-
-        this.sendIssuePublishedNotification();
     }
 
     protected createItemList(): ListBox<ContentSummaryAndCompareStatus> {
@@ -383,10 +374,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
     protected hasSubDialog(): boolean {
         return true;
-    }
-
-    private sendIssuePublishedNotification() {
-        return new IssuePublishedNotificationRequest(this.issue.getId()).send();
     }
 
     onIssueClosed(listener: (issue: Issue) => void) {

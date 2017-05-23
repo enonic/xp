@@ -18,11 +18,15 @@ public class UpdateIssueJson
 {
     private final UpdateIssueParams updateIssueParams;
 
+    private final boolean isPublish;
+
     @JsonCreator
     public UpdateIssueJson( @JsonProperty("id") final String issueId, @JsonProperty("title") final String title,
-                     @JsonProperty("description") final String description, @JsonProperty("status") final String status,
-                     @JsonProperty("approvers") final List<String> approverIds, @JsonProperty("publishRequest") final PublishRequestJson publishRequest )
+                            @JsonProperty("description") final String description, @JsonProperty("status") final String status,
+                            @JsonProperty("isPublish") final boolean isPublish, @JsonProperty("approvers") final List<String> approverIds,
+                            @JsonProperty("publishRequest") final PublishRequestJson publishRequest )
     {
+        this.isPublish = isPublish;
 
         updateIssueParams = new UpdateIssueParams().
             id( IssueId.from( issueId ) ).
@@ -56,6 +60,12 @@ public class UpdateIssueJson
     public UpdateIssueParams getUpdateIssueParams()
     {
         return updateIssueParams;
+    }
+
+    @JsonIgnore
+    public boolean isPublish()
+    {
+        return isPublish;
     }
 
 }
