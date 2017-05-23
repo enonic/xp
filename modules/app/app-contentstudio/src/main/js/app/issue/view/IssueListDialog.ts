@@ -139,9 +139,11 @@ export class IssueListDialog extends ModalDialog {
     }
 
     private initDeboundcedReloadFunc() {
-        this.reload = api.util.AppHelper.debounce(() => {
+        this.reload = api.util.AppHelper.debounce((showNotification: boolean = false) => {
             this.doReload().then(() => {
-                api.notify.NotifyManager.get().showFeedback('The list of issues was updated');
+                if (showNotification) {
+                    api.notify.NotifyManager.get().showFeedback('The list of issues was updated');
+                }
             });
         }, 3000, true);
     }
@@ -150,13 +152,13 @@ export class IssueListDialog extends ModalDialog {
 
         IssueServerEventsHandler.getInstance().onIssueCreated(() => {
             if (this.isVisible()) {
-                this.reload();
+                this.reload(true);
             }
         });
 
         IssueServerEventsHandler.getInstance().onIssueUpdated(() => {
             if (this.isVisible()) {
-                this.reload();
+                this.reload(true);
             }
         });
     }
