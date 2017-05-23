@@ -24,8 +24,6 @@ final class MessageBundleImpl
 
     static final String MISSING_VALUE_MESSAGE = "NOT_TRANSLATED";
 
-    private final static Logger LOG = LoggerFactory.getLogger( MessageBundleImpl.class );
-
     private final Properties properties;
 
     MessageBundleImpl( final Properties properties )
