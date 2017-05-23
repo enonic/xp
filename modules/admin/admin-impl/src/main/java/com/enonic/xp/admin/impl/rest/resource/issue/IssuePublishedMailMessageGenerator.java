@@ -31,4 +31,9 @@ public class IssuePublishedMailMessageGenerator
         return super.getApproverEmails();
     }
 
+    @Override
+    protected boolean isStatusShown()
+    {
+        return true;
+    }
 }
