@@ -36,12 +36,6 @@ public class LocaleServiceImplTest
         final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
         final String path = resourceKey.getName();
         final URL url = getClass().getResource( path.substring( path.lastIndexOf( '/' ) + 1 ) );
-
-        if ( url == null )
-        {
-            throw new IllegalArgumentException( "Could not find resource [" + path + "]" );
-        }
-
         return new UrlResource( resourceKey, url );
     }
 
@@ -109,5 +103,19 @@ public class LocaleServiceImplTest
         assertEquals( "ŁĄŻĘĆŃŚŹ", bundle.localize( "polish" ) );
         assertEquals( "ЯБГДЖЙ", bundle.localize( "russian" ) );
         assertEquals( "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃ", bundle.localize( "japanese" ) );
+
+        assertEquals( "{msg=en, a=en, german=ÄäÜüß, japanese=ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃ, c=none, russian=ЯБГДЖЙ, polish=ŁĄŻĘĆŃŚŹ, norwegian=æøå}", bundle.asMap().toString() );
+    }
+
+    @Test
+    public void get_bundle_multi()
+        throws Exception
+    {
+        final MessageBundle bundle =
+            localeService.getBundle( ApplicationKey.from( "myapplication" ), Locale.ENGLISH, "/phrases", "/override" );
+
+        assertNotNull( bundle );
+        assertEquals( 9, bundle.getKeys().size() );
+        assertEquals( "override", bundle.localize( "msg" ) );
     }
 }

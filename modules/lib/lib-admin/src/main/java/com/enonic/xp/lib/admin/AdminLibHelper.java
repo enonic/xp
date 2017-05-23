@@ -39,7 +39,8 @@ public final class AdminLibHelper
     public String getLocale()
     {
         final HttpServletRequest req = ServletRequestHolder.getRequest();
-        return req != null ? req.getLocale().toString() : Locale.getDefault().toString();
+        final Locale locale = req != null ? req.getLocale() : Locale.getDefault();
+        return locale.getCountry().toLowerCase();
     }
 
     private static String generateVersion()

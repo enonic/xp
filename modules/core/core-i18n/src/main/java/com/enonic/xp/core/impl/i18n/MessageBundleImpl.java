@@ -80,7 +80,7 @@ final class MessageBundleImpl
         final Map<String, String> map = Maps.newHashMap();
         for ( final Object key : this.properties.keySet() )
         {
-            map.put( key.toString(), this.properties.getProperty( key.toString() ) );
+            map.put( key.toString(), handleGetObject( key.toString() ).toString() );
         }
 
         return map;

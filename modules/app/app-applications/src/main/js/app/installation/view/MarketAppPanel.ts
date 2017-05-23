@@ -1,6 +1,6 @@
 import '../../../api.ts';
 import {MarketAppsTreeGrid} from './MarketAppsTreeGrid';
-import {ApplicationInput} from './../view/ApplicationInput';
+import {ApplicationInput} from './ApplicationInput';
 
 import Application = api.application.Application;
 

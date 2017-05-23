@@ -28,10 +28,11 @@ exports.localize = function (params) {
 /**
  * This function returns all phrases.
  *
- * @param {string} [locale] A string-representation of a locale. If the locale is not set, the site language is used.
+ * @param {string} locale A string-representation of a locale.
+ * @param {string[]} bundles List of bundle names.
  *
  * @returns {object} An object of all phrases.
  */
-exports.getPhrases = function (locale) {
-    return __.toNativeObject(bean.getPhrases(__.nullOrValue(locale)));
+exports.getPhrases = function (locale, bundles) {
+    return __.toNativeObject(bean.getPhrases(__.nullOrValue(locale), bundles));
 };
