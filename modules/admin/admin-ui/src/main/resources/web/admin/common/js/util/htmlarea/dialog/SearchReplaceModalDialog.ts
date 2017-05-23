@@ -39,8 +39,8 @@ module api.util.htmlarea.dialog {
         }
 
         protected getMainFormItems(): FormItem[] {
-            const findField = this.createFormItem('find', 'Find');
-            const replaceField = this.createFormItem('replace', 'Replace with');
+            const findField = this.createFormItem(new ModalDialogFormItemBuilder('find', 'Find'));
+            const replaceField = this.createFormItem(new ModalDialogFormItemBuilder('replace', 'Replace with'));
             const matchCaseCheckbox = this.createCheckbox('matchcase', 'Match case');
             const wholeWordsCheckbox = this.createCheckbox('wholewords', 'Whole words');
 
@@ -66,7 +66,9 @@ module api.util.htmlarea.dialog {
                 this.findAction.execute();
             });
 
-            return this.createFormItem(id, null, null, null, checkbox);
+            const formItemBuilder = new ModalDialogFormItemBuilder(id).setInputEl(checkbox);
+
+            return this.createFormItem(formItemBuilder);
         }
 
         protected initializeActions() {

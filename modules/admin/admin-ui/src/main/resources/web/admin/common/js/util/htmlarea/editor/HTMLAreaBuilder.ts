@@ -295,14 +295,8 @@ module api.util.htmlarea.editor {
                         } else if (e.keyCode === 46 || e.keyCode === 8) { // DELETE
                             let selectedNode = editor.selection.getRng().startContainer;
                             if (/^(FIGURE)$/.test(selectedNode.nodeName)) {
-                                let previousEl = selectedNode.previousSibling;
                                 e.preventDefault();
                                 selectedNode.remove();
-                                if (previousEl) {
-                                    editor.selection.setNode(previousEl);
-                                } else {
-                                    editor.focus();
-                                }
                             }
                         }
 

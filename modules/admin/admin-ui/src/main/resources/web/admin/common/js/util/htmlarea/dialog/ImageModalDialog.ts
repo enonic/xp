@@ -95,8 +95,8 @@ module api.util.htmlarea.dialog {
             this.addUploaderAndPreviewControls();
             this.setFirstFocusField(this.imageSelectorFormItem.getInput());
 
-            this.imageCaptionField = this.createFormItem('caption', 'Caption', null);
-            this.imageAltTextField = this.createFormItem('altText', 'Alternative text', null);
+            this.imageCaptionField = this.createFormItem(new ModalDialogFormItemBuilder('caption', 'Caption'));
+            this.imageAltTextField = this.createFormItem(new ModalDialogFormItemBuilder('altText', 'Alternative text'));
 
             this.imageCaptionField.addClass('caption').hide();
             this.imageAltTextField.addClass('alttext').hide();
@@ -110,8 +110,11 @@ module api.util.htmlarea.dialog {
 
         private createImageSelector(id: string): FormItem {
             let imageSelector = api.content.ContentComboBox.create().setMaximumOccurrences(1).build();
-            let formItem = this.createFormItem(id, 'Image', Validators.required, api.util.StringHelper.EMPTY_STRING,
-                    <api.dom.FormItemEl>imageSelector);
+            let formItemBuilder = new ModalDialogFormItemBuilder(id, 'Image').
+                                    setValidator(Validators.required).
+                                    setInputEl(imageSelector);
+
+            let formItem = this.createFormItem(formItemBuilder);
             let imageSelectorComboBox = imageSelector.getComboBox();
 
             imageSelector.getComboBox().getInput().setPlaceholder('Type to search or drop image here...');
