@@ -1,11 +1,11 @@
-import {IssueType} from "../IssueType";
-import {Issue} from "../Issue";
+import {IssueType} from '../IssueType';
+import {Issue} from '../Issue';
+import {IssueFetcher} from '../IssueFetcher';
+import {IssueResponse} from '../resource/IssueResponse';
 import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
 import User = api.security.User;
 import PEl = api.dom.PEl;
-import {IssueFetcher} from "../IssueFetcher";
-import {IssueResponse} from "../resource/IssueResponse";
 import NamesView = api.app.NamesView;
 import SpanEl = api.dom.SpanEl;
 import DateHelper = api.util.DateHelper;
@@ -36,10 +36,10 @@ export class IssueList extends ListBox<Issue> {
         this.setupLazyLoading();
     }
 
-    public reload() {
+    public reload(): wemQ.Promise<void> {
         this.removeChildren();
         this.clearItems(true);
-        this.initList();
+        return this.initList();
     }
 
     refreshList() {
@@ -49,13 +49,13 @@ export class IssueList extends ListBox<Issue> {
         }
     }
 
-    private initList() {
+    private initList(): wemQ.Promise<void> {
         this.loadMask.show();
 
         return new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult) => {
             this.currentUser = loginResult.getUser();
 
-            IssueFetcher.fetchIssuesByType(this.issueType, 0, IssueList.MAX_FETCH_SIZE).then((response: IssueResponse) => {
+            return IssueFetcher.fetchIssuesByType(this.issueType, 0, IssueList.MAX_FETCH_SIZE).then((response: IssueResponse) => {
                 this.totalItems = response.getMetadata().getTotalHits();
                 if (response.getIssues().length > 0) {
                     this.addItems(response.getIssues());

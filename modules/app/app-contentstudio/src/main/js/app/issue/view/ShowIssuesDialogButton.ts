@@ -1,8 +1,8 @@
 
 import ActionButton = api.ui.button.ActionButton;
-import {ShowIssuesDialogAction} from "../../browse/action/ShowIssuesDialogAction";
-import {IssueStatsJson} from "../json/IssueStatsJson";
-import {IssueFetcher} from "../IssueFetcher";
+import {ShowIssuesDialogAction} from '../../browse/action/ShowIssuesDialogAction';
+import {IssueStatsJson} from '../json/IssueStatsJson';
+import {IssueFetcher} from '../IssueFetcher';
 import IssueServerEventsHandler = api.issue.event.IssueServerEventsHandler;
 
 export class ShowIssuesDialogButton extends ActionButton {
@@ -19,15 +19,11 @@ export class ShowIssuesDialogButton extends ActionButton {
 
     private initEventsListeners() {
         IssueServerEventsHandler.getInstance().onIssueCreated(() => {
-            setTimeout(() => {  // giving a chance for backend to refresh indexes so we get correct stats
-                this.updateShowIssuesDialogButton();
-            }, 1000)
+            this.updateShowIssuesDialogButton();
         });
 
         IssueServerEventsHandler.getInstance().onIssueUpdated(() => {
-            setTimeout(() => { // giving a chance for backend to refresh indexes so we get correct stats
-                this.updateShowIssuesDialogButton();
-            }, 1000)
+            this.updateShowIssuesDialogButton();
         });
     }
 
