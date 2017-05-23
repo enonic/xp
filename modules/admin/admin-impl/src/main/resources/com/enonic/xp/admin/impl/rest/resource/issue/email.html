@@ -19,19 +19,17 @@
             font-size: 20px;">
             <b>${title}</b> (#${index})
         </div>
-    </div>
-    <div style="
-        display: ${issue-status-visibility};
-        margin-bottom: 20px;">
+        <div style="display: ${issue-status-visibility};flex-shrink: 0;">
         <span style="
-            margin-right: 8px;
-            padding: 4px 8px;
+            font-size: 14px;
+            padding: 6px 15px;
             font-weight: 600;
-            line-height: 20px;
+            line-height: 24px;
             color: #fff;
             text-align: center;
             border-radius: 3px;
             background-color: ${statusBgColor};">${status}</span>
+        </div>
     </div>
     <div style="
         display: ${description-block-visibility};

@@ -11,8 +11,7 @@ public class IssueUpdatedMailMessageGenerator
     @Override
     protected String generateMessageSubject()
     {
-        return "Issue \"" + params.getIssue().getTitle() + "\"(#" + params.getIssue().getIndex() + ") was updated by " +
-            params.getModifier().getDisplayName();
+        return "Issue \"" + params.getIssue().getTitle() + "\" was updated by " + params.getModifier().getDisplayName();
     }
 
     @Override
