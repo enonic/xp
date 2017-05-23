@@ -149,11 +149,15 @@ export class IssueListDialog extends ModalDialog {
     private handleIssueGlobalEvents() {
 
         IssueServerEventsHandler.getInstance().onIssueCreated(() => {
-            this.reload();
+            if (this.isVisible()) {
+                this.reload();
+            }
         });
 
         IssueServerEventsHandler.getInstance().onIssueUpdated(() => {
-            this.reload();
+            if (this.isVisible()) {
+                this.reload();
+            }
         });
     }
 
