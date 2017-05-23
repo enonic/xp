@@ -114,24 +114,23 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
         this.initStatusInfo();
 
-        /* if (this.getItemList().isRendered()) {
-         this.initItemList();
-         } else {
-         this.getItemList().onItemsAdded(() => {
-         this.initItemList();
-         });
-         }*/
-
         this.reloadPublishDependencies().then(() => {
             ContentSummaryAndCompareStatusFetcher.fetchByIds(
                 this.issue.getPublishRequest().getItemsIds()).then((result) => {
                 this.setListItems(result);
+
+                const countToPublish = this.countTotal();
+                this.updateButtonCount('Publish', countToPublish);
+
+                this.toggleAction(countToPublish > 0);
+
 
                 if (this.issue.getPublishRequest().getItemsIds().length > 0) {
                     this.unlockControls();
                 } else {
                     this.lockControls();
                 }
+                this.centerMyself();
             });
         });
 
@@ -156,6 +155,8 @@ export class IssueDetailsDialog extends SchedulableDialog {
         this.getItemList().getItemViews()
             .filter(itemView => itemView.getIncludeChildrenToggler())
             .forEach(itemView => itemView.getIncludeChildrenToggler().toggle(this.isChildrenIncluded(itemView)));
+
+        this.setReadOnly(true);
 
     }
 
@@ -326,12 +327,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
                 this.setDependantItems(dependants);
                 this.loadMask.hide();
 
-                const countToPublish = this.countTotal();
-                this.updateButtonCount('Publish', countToPublish);
 
-                this.toggleAction(countToPublish > 0);
-
-                this.centerMyself();
                 deferred.resolve(null);
             });
         });
