@@ -10,6 +10,7 @@ import {ContentPublishDialogAction} from '../../publish/ContentPublishDialog';
 import {PublishDialogDependantList} from '../../publish/PublishDialogDependantList';
 import {UpdateIssueRequest} from '../resource/UpdateIssueRequest';
 import {IssueStatus} from '../IssueStatus';
+import {GetIssueRequest} from '../resource/GetIssueRequest';
 import AEl = api.dom.AEl;
 import DialogButton = api.ui.dialog.DialogButton;
 import Checkbox = api.ui.Checkbox;
@@ -23,6 +24,7 @@ import ResolvePublishDependenciesResult = api.content.resource.result.ResolvePub
 import CompareStatus = api.content.CompareStatus;
 import ResolvePublishDependenciesRequest = api.content.resource.ResolvePublishDependenciesRequest;
 import DateHelper = api.util.DateHelper;
+import IssueServerEventsHandler = api.issue.event.IssueServerEventsHandler;
 
 export class IssueDetailsDialog extends SchedulableDialog {
 
@@ -71,6 +73,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
         this.createBackButton();
 
         this.initActions();
+        this.handleIssueGlobalEvents();
 
         this.itemsHeader = new api.dom.H6El().addClass('items-header').setHtml('Items:').insertBeforeEl(this.getItemList());
 
@@ -95,6 +98,27 @@ export class IssueDetailsDialog extends SchedulableDialog {
         });
 
         this.onClosed(Router.back);
+    }
+
+    private handleIssueGlobalEvents() {
+        const updateHandler: Function = api.util.AppHelper.debounce(() => {
+            this.loadMask.show();
+            new GetIssueRequest(this.issue.getId()).sendAndParse().then((issue: Issue) => {
+                this.setIssue(issue);
+            }).catch((reason: any) => {
+                api.DefaultErrorHandler.handle(reason);
+            }).finally(() => {
+                this.loadMask.hide();
+            });
+        }, 3000, true);
+
+        IssueServerEventsHandler.getInstance().onIssueUpdated((issueIds: string[]) => {
+            if (this.isVisible()) {
+                if (issueIds.some((id) => id === this.issue.getId())) {
+                    updateHandler();
+                }
+            }
+        });
     }
 
     setReadOnly(value: boolean) {
@@ -245,10 +269,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
             this.updateIssueDialog.onClosed(() => {
                 this.removeClass('masked');
                 this.getEl().focus();
-            });
-
-            this.updateIssueDialog.onSucceed((issue: Issue) => {
-                this.setIssue(issue);
             });
 
             this.addClickIgnoredElement(this.updateIssueDialog);
