@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.i18n;
 
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -9,6 +10,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Maps;
 
 import com.enonic.xp.i18n.MessageBundle;
 
@@ -20,8 +23,6 @@ final class MessageBundleImpl
     private static final String LATIN_1_ENCODING = "ISO-8859-1";
 
     static final String MISSING_VALUE_MESSAGE = "NOT_TRANSLATED";
-
-    private final static Logger LOG = LoggerFactory.getLogger( MessageBundleImpl.class );
 
     private final Properties properties;
 
@@ -57,7 +58,7 @@ final class MessageBundleImpl
     {
         if ( StringUtils.isBlank( localizedPhrase ) )
         {
-            return null;
+            return "";
         }
 
         try
@@ -66,8 +67,19 @@ final class MessageBundleImpl
         }
         catch ( final UnsupportedEncodingException e )
         {
-            LOG.error( "Parsing localized phrase: " + localizedPhrase + " failed", e );
-            return null;
+            return localizedPhrase;
         }
+    }
+
+    @Override
+    public Map<String, String> asMap()
+    {
+        final Map<String, String> map = Maps.newHashMap();
+        for ( final Object key : this.properties.keySet() )
+        {
+            map.put( key.toString(), handleGetObject( key.toString() ).toString() );
+        }
+
+        return map;
     }
 }

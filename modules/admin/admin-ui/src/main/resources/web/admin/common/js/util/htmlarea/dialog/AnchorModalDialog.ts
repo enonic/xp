@@ -11,7 +11,8 @@ module api.util.htmlarea.dialog {
         }
 
         protected getMainFormItems(): FormItem[] {
-            let nameField = this.createFormItem('name', 'Name', Validators.required);
+            let formItemBuilder = new ModalDialogFormItemBuilder('name', 'Name').setValidator(Validators.required);
+            let nameField = this.createFormItem(formItemBuilder);
 
             this.setFirstFocusField(nameField.getInput());
 

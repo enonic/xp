@@ -2,23 +2,24 @@ import '../../api.ts';
 import {UninstallApplicationEvent} from './UninstallApplicationEvent';
 import Application = api.application.Application;
 import Action = api.ui.Action;
+import i18n = api.util.i18n;
 
 export class UninstallApplicationDialog extends api.ui.dialog.ModalDialog {
 
     private applications: Application[];
 
-    private yesAction: Action = new Action('Yes');
+    private yesAction: Action = new Action(i18n('action.yes'));
 
-    private noAction: Action = new Action('No');
+    private noAction: Action = new Action(i18n('action.no'));
 
     constructor(applications: Application[]) {
-        super('Uninstall Applications');
+        super(i18n('dialog.uninstall'));
 
         this.applications = applications;
         this.addClass('uninstall-dialog');
 
         let message = new api.dom.H6El();
-        message.getEl().setInnerHtml('Are you sure you want to uninstall selected application(s)?');
+        message.getEl().setInnerHtml(i18n('dialog.uninstall.question'));
         this.appendChildToContentPanel(message);
 
         this.yesAction.onExecuted(() => {

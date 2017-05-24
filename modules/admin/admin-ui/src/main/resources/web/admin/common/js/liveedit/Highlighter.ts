@@ -136,9 +136,9 @@ module api.liveedit {
 
                 this.path.getEl()
                     .setAttribute('d',
-                    this.generatePath(left + strokeW / 2, top + strokeW / 2,
+                    this.generatePath(strokeW / 2, top + strokeW / 2,
                         w - strokeW, h - strokeW,
-                        screenW - strokeW, screenH - strokeW))
+                        screenW - strokeW, screenH - strokeW, left))
                     .setStroke(style.stroke)
                     .setStrokeDasharray(style.strokeDasharray)
                     .setFill('transparent');
@@ -146,18 +146,18 @@ module api.liveedit {
                 this.rectangle.getEl()
                     .setAttribute('width', w + '')
                     .setAttribute('height', h + '')
-                    .setAttribute('x', left + '')
+                    .setAttribute('x', '0')
                     .setAttribute('y', top + '')
                     .setStroke(style.stroke)
                     .setFill(style.fill);
 
-                this.getEl().setWidthPx(screenW).setHeightPx(screenH).setTopPx(0).setLeftPx(0);
+                this.getEl().setWidthPx(screenW).setHeightPx(screenH).setTopPx(0).setLeftPx(left);
                 break;
             }
         }
 
-        private generatePath(x: number, y: number, w: number, h: number, screenW: number, screenH: number): string {
-            return `M ${x} 0 v ${screenH} m ${w} 0 v -${screenH} M ${screenW} ${y} h -${screenW} m 0 ${h} h ${screenW}`;
+        private generatePath(x: number, y: number, w: number, h: number, screenW: number, screenH: number, left: number): string {
+            return `M ${x} 0 v ${screenH} m ${w} 0 v -${screenH} M ${screenW+left} ${y} h -${screenW+2*left} m 0 ${h} h ${screenW+2*left}`;
         }
 
     }

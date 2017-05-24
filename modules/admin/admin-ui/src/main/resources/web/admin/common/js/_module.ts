@@ -34,8 +34,6 @@
 ///<reference path='util/loader/event/_module.ts' />
 ///<reference path='util/loader/_module.ts' />
 
-///<reference path='i18n/_module.ts' />
-
 ///<reference path='cache/_module.ts' />
 
 ///<reference path='event/_module.ts' />

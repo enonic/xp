@@ -196,9 +196,14 @@ task copyResources( type: Copy ) {
     }
 }
 
-task installDist( dependsOn: [copyResources, copyBundles] )
+task installDist( dependsOn: [copyResources, copyBundles] ) {
+    description = 'Update distribution without creating zip.'
+    group = 'Dist'
+}
 
 task distZip( type: Zip, dependsOn: installDist ) {
+    description = 'Build full distribution zip.'
+    group = 'Dist'
     from installDir
     into archiveBase
 }
@@ -209,6 +214,7 @@ artifacts {
 
 task run( type: Exec, dependsOn: 'installDist' ) {
     description = 'Starts the server (use -Pdev for dev-mode or -Pdebug for debug-mode).'
+    group = 'Dist'
     workingDir "$buildDir/install/bin"
 
     doFirst {

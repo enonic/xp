@@ -130,6 +130,15 @@ module api.ui.selector.combobox {
             return true;
         }
 
+        updateOption(optionToUpdate: api.ui.selector.Option<T>, newOption: api.ui.selector.Option<T>, silent: boolean = false) {
+            api.util.assertNotNull(optionToUpdate, 'optionToRemove cannot be null');
+
+            let selectedOption = this.getByOption(optionToUpdate);
+            api.util.assertNotNull(selectedOption, 'Did not find any selected option to update from option: ' + optionToUpdate.value);
+
+            selectedOption.getOptionView().setOption(newOption);
+        }
+
         removeOption(optionToRemove: api.ui.selector.Option<T>, silent: boolean = false) {
             api.util.assertNotNull(optionToRemove, 'optionToRemove cannot be null');
 

@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.i18n;
 
+import java.util.Map;
 import java.util.Properties;
 
 import org.junit.Test;
@@ -43,6 +44,15 @@ public class MessageBundleImplTest
     {
         MessageBundle resourceBundle = new MessageBundleImpl( new Properties() );
         assertEquals( resourceBundle.localize( "dummyKey" ), MessageBundleImpl.MISSING_VALUE_MESSAGE );
+    }
+
+    @Test
+    public void testAsMap()
+    {
+        final MessageBundle resourceBundle = createDefault();
+        final Map<String, String> map = resourceBundle.asMap();
+
+        assertEquals( 6, map.size() );
     }
 
     @Test

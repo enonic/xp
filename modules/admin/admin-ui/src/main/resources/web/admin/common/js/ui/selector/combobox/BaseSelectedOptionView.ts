@@ -20,6 +20,7 @@ module api.ui.selector.combobox {
             if (this.optionValueEl) {
                 this.optionValueEl.getEl().setInnerHtml(option.displayValue.toString());
             }
+            this.option = option;
         }
 
         getOption(): api.ui.selector.Option<T> {
