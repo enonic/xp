@@ -17,12 +17,24 @@ module api.ui.tab {
             super.setVisible(value);
         }
 
+        static create(): TabMenuItemBuilder {
+            return new TabMenuItemBuilder();
+        }
+
     }
 
     export class TabMenuItemBuilder extends TabItemBuilder {
 
         build(): TabMenuItem {
             return new TabMenuItem(this);
+        }
+
+        setLabel(label: string): TabMenuItemBuilder {
+            return <TabMenuItemBuilder>super.setLabel(label);
+        }
+
+        setAddLabelTitleAttribute(addLabelTitleAttribute: boolean): TabMenuItemBuilder {
+            return <TabMenuItemBuilder>super.setAddLabelTitleAttribute(addLabelTitleAttribute);
         }
 
     }
