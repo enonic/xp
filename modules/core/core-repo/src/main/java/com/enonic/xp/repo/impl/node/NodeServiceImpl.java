@@ -599,6 +599,21 @@ public class NodeServiceImpl
     }
 
     @Override
+    public ByteSource getBinary( final NodeVersionId nodeVersionId, final BinaryReference reference )
+    {
+        verifyContext();
+        return GetBinaryByVersionCommand.create().
+            binaryReference( reference ).
+            nodeVersionId( nodeVersionId ).
+            indexServiceInternal( this.indexServiceInternal ).
+            binaryService( this.binaryService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
+            build().
+            execute();
+    }
+
+    @Override
     public String getBinaryKey( final NodeId nodeId, final BinaryReference reference )
     {
         verifyContext();

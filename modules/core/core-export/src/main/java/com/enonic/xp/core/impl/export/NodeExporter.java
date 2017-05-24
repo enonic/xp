@@ -2,6 +2,9 @@ package com.enonic.xp.core.impl.export;
 
 import java.nio.file.Path;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.context.ContextAccessor;
@@ -13,9 +16,13 @@ import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
+import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.util.BinaryReference;
 
@@ -45,7 +52,11 @@ public class NodeExporter
 
     private final boolean exportTimestamp;
 
+    private final boolean exportVersions;
+
     private final NodeExportResult.Builder result = NodeExportResult.create();
+
+    private final static Logger LOG = LoggerFactory.getLogger( NodeExporter.class );
 
     private NodeExporter( final Builder builder )
     {
@@ -59,11 +70,7 @@ public class NodeExporter
         this.dryRun = builder.dryRun;
         this.exportNodeIds = builder.exportNodeIds;
         this.exportTimestamp = builder.exportTimestamp;
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
+        this.exportVersions = builder.exportVersions;
     }
 
     public NodeExportResult execute()
@@ -85,6 +92,82 @@ public class NodeExporter
 
         return result.build();
     }
+
+
+    private void exportNode( final Node node )
+    {
+        writeNode( node );
+        result.addNodePath( node.path() );
+        doExportChildNodes( node.path() );
+    }
+
+    private void writeNode( final Node node )
+    {
+        writeVersion( node, resolveNodeDataFolder( node ) );
+
+        if ( exportVersions )
+        {
+            writeVersions( node );
+        }
+    }
+
+    private void writeVersions( final Node node )
+    {
+        if ( node.isRoot() )
+        {
+            return;
+        }
+
+        // TODO: Batch this?
+        final NodeVersionQueryResult versions = this.nodeService.findVersions( GetNodeVersionsParams.create().
+            from( 0 ).
+            size( -1 ).
+            nodeId( node.id() ).
+            build() );
+
+        for ( final NodeVersionMetadata version : versions.getNodeVersionsMetadata() )
+        {
+            if ( version.getNodeVersionId().equals( node.getNodeVersionId() ) )
+            {
+                continue;
+            }
+
+            final NodeVersion nodeVersion = this.nodeService.getByNodeVersion( version );
+
+            final Node exportNode = NodeFromNodeVersionBuilder.create( version, nodeVersion );
+
+            writeVersion( exportNode, resolveNodeVersionBasePath( node, version ) );
+        }
+    }
+
+    private Path resolveNodeVersionBasePath( final Node originalNode, final NodeVersionMetadata nodeVersion )
+    {
+        final Path dataFolder = resolveNodeDataFolder( originalNode );
+        return NodeExportPathResolver.resolveNodeVersionPath( dataFolder, nodeVersion.getNodeVersionId(), nodeVersion.getNodePath() );
+    }
+
+    private void writeVersion( final Node node, final Path baseFolder )
+    {
+        final NodePath newParentPath = resolveNewParentPath( node );
+
+        final Node relativeNode = Node.create( node ).parentPath( newParentPath ).build();
+
+        final XmlNodeSerializer serializer = new XmlNodeSerializer();
+        serializer.exportNodeIds( this.exportNodeIds );
+        serializer.node( relativeNode );
+        final String serializedNode = serializer.serialize();
+
+        //   final Path nodeDataFolder = resolveNodeDataFolder( node );
+
+        if ( !dryRun )
+        {
+            final Path nodeXmlPath = NodeExportPathResolver.resolveNodeXmlPath( baseFolder );
+            exportWriter.writeElement( nodeXmlPath, serializedNode );
+        }
+
+        exportNodeBinaries( relativeNode, baseFolder );
+    }
+
 
     private void doExportChildNodes( final NodePath parentPath )
     {
@@ -127,40 +210,13 @@ public class NodeExporter
             }
             catch ( Exception e )
             {
+                LOG.error( String.format( "Failed to export node with path [%s]", child.path() ), e );
                 result.addError( new ExportError( e.toString() ) );
             }
         }
         return childrenBatch;
     }
 
-    private void exportNode( final Node node )
-    {
-        writeNode( node );
-        result.addNodePath( node.path() );
-        doExportChildNodes( node.path() );
-    }
-
-    private void writeNode( final Node node )
-    {
-        final NodePath newParentPath = resolveNewParentPath( node );
-
-        final Node relativeNode = Node.create( node ).parentPath( newParentPath ).build();
-
-        final XmlNodeSerializer serializer = new XmlNodeSerializer();
-        serializer.exportNodeIds( this.exportNodeIds );
-        serializer.node( relativeNode );
-        final String serializedNode = serializer.serialize();
-
-        final Path nodeDataFolder = resolveNodeDataFolder( node );
-
-        if ( !dryRun )
-        {
-            final Path nodeXmlPath = NodeExportPathResolver.resolveNodeXmlPath( nodeDataFolder );
-            exportWriter.writeElement( nodeXmlPath, serializedNode );
-        }
-
-        exportNodeBinaries( relativeNode, nodeDataFolder );
-    }
 
     private NodePath resolveNewParentPath( final Node node )
     {
@@ -182,7 +238,7 @@ public class NodeExporter
         for ( final AttachedBinary attachedBinary : relativeNode.getAttachedBinaries() )
         {
             final BinaryReference reference = attachedBinary.getBinaryReference();
-            final ByteSource byteSource = this.nodeService.getBinary( relativeNode.id(), reference );
+            final ByteSource byteSource = this.nodeService.getBinary( relativeNode.getNodeVersionId(), reference );
 
             if ( !dryRun )
             {
@@ -258,6 +314,11 @@ public class NodeExporter
                 "', nothing to export" ) );
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
     public static final class Builder
     {
         private NodePath sourceNodePath;
@@ -279,6 +340,8 @@ public class NodeExporter
         private boolean exportNodeIds = true;
 
         private boolean exportTimestamp = true;
+
+        private boolean exportVersions = false;
 
         private Builder()
         {
@@ -341,6 +404,12 @@ public class NodeExporter
         public Builder exportNodeIds( final boolean exportNodeIds )
         {
             this.exportNodeIds = exportNodeIds;
+            return this;
+        }
+
+        public Builder exportVersions( final boolean exportVersions )
+        {
+            this.exportVersions = exportVersions;
             return this;
         }
 

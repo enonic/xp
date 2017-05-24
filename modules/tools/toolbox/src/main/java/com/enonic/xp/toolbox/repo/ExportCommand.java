@@ -19,8 +19,13 @@ public final class ExportCommand
     @Option(name = "-s", description = "Path of data to export. Format: <repo-name>:<branch-name>:<node-path>.", required = true)
     public String sourceRepoPath;
 
+    @Option(name = "--versions", description = "Include all versions of a node in export.", required = false)
+    public boolean includeVersions = false;
+
+
     @Option(name = "--skipids", description = "Flag that skips ids in data when exporting.", required = false)
     public boolean skipids = false;
+
 
     @Override
     protected void execute()
@@ -36,6 +41,7 @@ public final class ExportCommand
         json.put( "sourceRepoPath", this.sourceRepoPath );
         json.put( "exportName", this.exportName );
         json.put( "exportWithIds", !this.skipids );
+        json.put( "includeVersions", this.includeVersions );
         return json;
     }
 }

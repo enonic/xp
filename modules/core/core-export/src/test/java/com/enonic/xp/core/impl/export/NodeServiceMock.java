@@ -401,6 +401,12 @@ class NodeServiceMock
     }
 
     @Override
+    public ByteSource getBinary( final NodeVersionId nodeVersionId, final BinaryReference reference )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
     public ImportNodeResult importNode( final ImportNodeParams params )
     {
         final Node importNode = params.getNode();
@@ -410,7 +416,6 @@ class NodeServiceMock
         if ( importNode.isRoot() )
         {
             createdNode = createRootNode( null );
-
         }
         else
         {
