@@ -11,6 +11,7 @@ import {PublishDialogDependantList} from '../../publish/PublishDialogDependantLi
 import {UpdateIssueRequest} from '../resource/UpdateIssueRequest';
 import {IssueStatus, IssueStatusFormatter} from '../IssueStatus';
 import {GetIssueRequest} from '../resource/GetIssueRequest';
+import {IssueStatusSelector} from './IssueStatusSelector';
 import AEl = api.dom.AEl;
 import DialogButton = api.ui.dialog.DialogButton;
 import Checkbox = api.ui.Checkbox;
@@ -27,7 +28,6 @@ import DateHelper = api.util.DateHelper;
 import H6El = api.dom.H6El;
 import PEl = api.dom.PEl;
 import SpanEl = api.dom.SpanEl;
-import {IssueStatusSelector} from "./IssueStatusSelector";
 import DivEl = api.dom.DivEl;
 import IssueServerEventsHandler = api.issue.event.IssueServerEventsHandler;
 
@@ -178,7 +178,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
             new UpdateIssueRequest(this.issue.getId())
                 .setStatus(IssueStatusFormatter.fromString(event.getNewValue())).sendAndParse().then(() => {
-                api.notify.showFeedback(`Issue is ` + event.getNewValue());
+                api.notify.showFeedback(`The issue is ` + event.getNewValue());
 
             }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
         });

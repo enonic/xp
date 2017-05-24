@@ -1,4 +1,4 @@
-import {IssueStatus, IssueStatusFormatter} from "../IssueStatus";
+import {IssueStatus, IssueStatusFormatter} from '../IssueStatus';
 import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
 import TabMenuItem = api.ui.tab.TabMenuItem;
 import TabMenu = api.ui.tab.TabMenu;
@@ -59,7 +59,6 @@ export class IssueStatusSelector extends TabMenu {
     }
 
     protected showMenu() {
-        debugger;
         if (this.getSelectedNavigationItem().isVisibleInMenu()) {
             this.resetItemsVisibility();
             this.getSelectedNavigationItem().setVisibleInMenu(false);
