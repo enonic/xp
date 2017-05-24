@@ -178,7 +178,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
             new UpdateIssueRequest(this.issue.getId())
                 .setStatus(IssueStatusFormatter.fromString(event.getNewValue())).sendAndParse().then(() => {
-                api.notify.showFeedback(`The issue is ` + event.getNewValue());
+                api.notify.showFeedback(`The issue is ` + event.getNewValue().toLowerCase());
 
             }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
         });
