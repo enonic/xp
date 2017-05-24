@@ -51,7 +51,7 @@ export class IssueStatusSelector extends TabMenu {
 
             if (!silent) {
                 this.notifyValueChanged(
-                    new api.ValueChangedEvent(IssueStatusFormatter.formatStatus(this.value), IssueStatusFormatter.formatStatus(value).toLowerCase()));
+                    new api.ValueChangedEvent(IssueStatusFormatter.formatStatus(this.value), IssueStatusFormatter.formatStatus(value)));
             }
             this.value = value;
         }
