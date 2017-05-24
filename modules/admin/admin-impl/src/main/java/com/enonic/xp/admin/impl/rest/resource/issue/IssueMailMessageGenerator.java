@@ -115,13 +115,14 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
         final CompareStatus status = params.getCompareResults().getCompareContentResultsMap().get( item.getId() ).getCompareStatus();
         final boolean isOnline = status.equals( CompareStatus.EQUAL );
 
-        final Map params = Maps.newHashMap();
-        params.put( "displayName", item.getDisplayName() );
-        params.put( "path", item.getPath() );
-        params.put( "status", status.getFormattedStatus() );
-        params.put( "bgcolor", even ? "#f5f5f5" : "initial" );
-        params.put( "statusColor", isOnline ? "#609e24" : "initial" );
+        final Map itemParams = Maps.newHashMap();
+        itemParams.put( "displayName", item.getDisplayName() );
+        itemParams.put( "path", item.getPath() );
+        itemParams.put( "icon", params.getIcons().getOrDefault( item.getId(), "" ) );
+        itemParams.put( "status", status.getFormattedStatus() );
+        itemParams.put( "bgcolor", even ? "#f5f5f5" : "initial" );
+        itemParams.put( "statusColor", isOnline ? "#609e24" : "initial" );
 
-        return new StrSubstitutor( params ).replace( template );
+        return new StrSubstitutor( itemParams ).replace( template );
     }
 }

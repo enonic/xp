@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -11,20 +12,26 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
+import com.enonic.xp.admin.impl.rest.resource.schema.SchemaImageHelper;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.icon.Icon;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.mail.MailMessage;
 import com.enonic.xp.mail.MailService;
+import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 
@@ -32,11 +39,15 @@ import com.enonic.xp.security.User;
 public class IssueNotificationsSenderImpl
     implements IssueNotificationsSender
 {
+    private static final SchemaImageHelper HELPER = new SchemaImageHelper();
+
     private MailService mailService;
 
     private SecurityService securityService;
 
     private ContentService contentService;
+
+    private ContentTypeIconResolver contentTypeIconResolver;
 
     private ExecutorService sendMailExecutor;
 
@@ -88,9 +99,26 @@ public class IssueNotificationsSenderImpl
         final CompareContentResults compareResults = contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_MASTER ) );
         final List<User> approvers =
             issue.getApproverIds().stream().map( principalKey -> securityService.getUser( principalKey ).get() ).collect( Collectors.toList() );
+        final Map<ContentId, String> icons = getIcons( contents );
 
-        return IssueMailMessageParams.create().issue( issue ).creator( creator ).approvers( approvers ).items( contents ).url(
-            url ).compareResults( compareResults ).build();
+        return IssueMailMessageParams.create().issue( issue ).creator( creator ).approvers( approvers ).items( contents ).url( url ).icons(
+            icons ).compareResults( compareResults ).build();
+    }
+
+    private Map<ContentId, String> getIcons( final Contents contents )
+    {
+        final Map<ContentId, String> icons = Maps.newHashMap();
+
+        contents.stream().forEach( content ->
+                                   {
+                                       final Icon icon = this.contentTypeIconResolver.resolveIcon( content.getType() );
+                                       if ( icon != null && HELPER.isSvg( icon ) )
+                                       {
+                                           icons.put( content.getId(), new String( icon.toByteArray() ) );
+                                       }
+                                   } );
+
+        return icons;
     }
 
     private User getCurrentUser()
@@ -115,5 +143,11 @@ public class IssueNotificationsSenderImpl
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
+    }
+
+    @Reference
+    public void setContentTypeService( final ContentTypeService contentTypeService )
+    {
+        this.contentTypeIconResolver = new ContentTypeIconResolver( contentTypeService );
     }
 }
