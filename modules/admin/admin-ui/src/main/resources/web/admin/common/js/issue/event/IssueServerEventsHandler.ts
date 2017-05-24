@@ -55,12 +55,16 @@ module api.issue.event {
 
         private handleIssueCreate(issueIds: string[]) {
             // currently no Issue object needed, but when needed then need to fetch those and pass Issue objects
-            this.notifyIssueCreated(issueIds);
+            setTimeout(() => { // giving a chance for backend to refresh indexes so we get correct results on requests
+                this.notifyIssueCreated(issueIds);
+            }, 1000);
         }
 
         private handleIssueUpdate(issueIds: string[]) {
             // currently no Issue object needed, but when needed then need to fetch those and pass Issue objects
-            this.notifyIssueUpdated(issueIds);
+            setTimeout(() => { // giving a chance for backend to refresh indexes so we get correct results on requests
+                this.notifyIssueUpdated(issueIds);
+            }, 1000);
         }
 
         onIssueCreated(listener: (issueIds: string[])=>void) {

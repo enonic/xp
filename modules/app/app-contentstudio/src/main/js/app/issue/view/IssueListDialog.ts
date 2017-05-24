@@ -1,19 +1,21 @@
 import DockedPanel = api.ui.panel.DockedPanel;
 import ModalDialog = api.ui.dialog.ModalDialog;
-import {IssuesPanel} from "./IssuesPanel";
-import {ShowIssuesDialogEvent} from "../../browse/ShowIssuesDialogEvent";
-import {IssueType} from "../IssueType";
-import {IssueDetailsDialog} from "./IssueDetailsDialog";
-import {UpdateIssueDialog} from "./UpdateIssueDialog";
-import {Issue} from "../Issue";
-import {CreateIssueDialog} from "./CreateIssueDialog";
-import {IssueListItem} from "./IssueList";
-import {IssueFetcher} from "../IssueFetcher";
-import {IssueStatsJson} from "../json/IssueStatsJson";
+import {IssuesPanel} from './IssuesPanel';
+import {ShowIssuesDialogEvent} from '../../browse/ShowIssuesDialogEvent';
+import {IssueType} from '../IssueType';
+import {IssueDetailsDialog} from './IssueDetailsDialog';
+import {UpdateIssueDialog} from './UpdateIssueDialog';
+import {Issue} from '../Issue';
+import {CreateIssueDialog} from './CreateIssueDialog';
+import {IssueListItem} from './IssueList';
+import {IssueFetcher} from '../IssueFetcher';
+import {IssueStatsJson} from '../json/IssueStatsJson';
+import {GetIssueRequest} from '../resource/GetIssueRequest';
 import TabBarItem = api.ui.tab.TabBarItem;
 import SpanEl = api.dom.SpanEl;
-import {GetIssueRequest} from "../resource/GetIssueRequest";
 import Element = api.dom.Element;
+import IssueServerEventsHandler = api.issue.event.IssueServerEventsHandler;
+import LoadMask = api.ui.mask.LoadMask;
 
 export class IssueListDialog extends ModalDialog {
 
@@ -29,12 +31,18 @@ export class IssueListDialog extends ModalDialog {
 
     private showCreatedByMePanelAfterLoad: boolean = false;
 
+    private reload: Function;
+
+    private loadMask: LoadMask;
+
     constructor() {
         super(<api.ui.dialog.ModalDialogConfig>{title: 'Publishing Issues'});
         this.addClass('issue-list-dialog');
 
-        this.initIssueDetailsDialog();
-        this.initCreateIssueDialog();
+        this.initDeboundcedReloadFunc();
+        this.handleIssueDetailsDialogEvents();
+        this.handleCreateIssueDialogEvents();
+        this.handleIssueGlobalEvents();
 
         ShowIssuesDialogEvent.on((event) => {
             this.open();
@@ -47,6 +55,7 @@ export class IssueListDialog extends ModalDialog {
         return super.doRender().then((rendered: boolean) => {
             this.appendChildToContentPanel(this.dockedPanel = this.createDockedPanel());
             this.appendChildToContentPanel(this.createNewIssueButton());
+            this.getContentPanel().getParentElement().appendChild(this.loadMask = new LoadMask(this));
             return rendered;
         });
     }
@@ -72,11 +81,15 @@ export class IssueListDialog extends ModalDialog {
         return dockedPanel;
     }
 
-    private reloadDockPanel() {
-        this.assignedToMeIssuesPanel.reload();
-        this.createdByMeIssuesPanel.reload();
-        this.openIssuesPanel.reload();
-        this.closedIssuesPanel.reload();
+    private reloadDockPanel(): wemQ.Promise<any> {
+        let promises: wemQ.Promise<any>[] = [
+            this.assignedToMeIssuesPanel.reload(),
+            this.createdByMeIssuesPanel.reload(),
+            this.openIssuesPanel.reload(),
+            this.closedIssuesPanel.reload()
+        ]
+
+        return wemQ.all(promises);
     }
 
     private refreshDockPanel() {
@@ -87,11 +100,11 @@ export class IssueListDialog extends ModalDialog {
     }
 
     show() {
-        this.reload();
         super.show();
+        this.reload();
     }
 
-    private initIssueDetailsDialog() {
+    private handleIssueDetailsDialogEvents() {
         this.addClickIgnoredElement(IssueDetailsDialog.get());
         this.addClickIgnoredElement(UpdateIssueDialog.get());
 
@@ -109,7 +122,7 @@ export class IssueListDialog extends ModalDialog {
         });
     }
 
-    private initCreateIssueDialog() {
+    private handleCreateIssueDialogEvents() {
         this.addClickIgnoredElement(CreateIssueDialog.get());
 
         CreateIssueDialog.get().onClosed(() => {
@@ -118,12 +131,34 @@ export class IssueListDialog extends ModalDialog {
         });
 
         CreateIssueDialog.get().onSucceed(() => {
-            CreateIssueDialog.get().reset();
             this.showCreatedByMePanelAfterLoad = true;
-            if (this.isVisible()) {
-                this.reload();
-            } else {
+            if (!this.isVisible()) {
                 this.open();
+            }
+        });
+    }
+
+    private initDeboundcedReloadFunc() {
+        this.reload = api.util.AppHelper.debounce((showNotification: boolean = false) => {
+            this.doReload().then(() => {
+                if (showNotification) {
+                    api.notify.NotifyManager.get().showFeedback('The list of issues was updated');
+                }
+            });
+        }, 3000, true);
+    }
+
+    private handleIssueGlobalEvents() {
+
+        IssueServerEventsHandler.getInstance().onIssueCreated(() => {
+            if (this.isVisible()) {
+                this.reload(true);
+            }
+        });
+
+        IssueServerEventsHandler.getInstance().onIssueUpdated(() => {
+            if (this.isVisible()) {
+                this.reload(true);
             }
         });
     }
@@ -140,13 +175,16 @@ export class IssueListDialog extends ModalDialog {
         return true;
     }
 
-    public reload() {
-        IssueFetcher.fetchIssueStats().then((stats: IssueStatsJson) => {
+    private doReload(): wemQ.Promise<void> {
+        this.loadMask.show();
+        return IssueFetcher.fetchIssueStats().then((stats: IssueStatsJson) => {
             this.updateTabLabels(stats);
             this.showFirstNonEmptyTab(stats);
-            this.reloadDockPanel();
+            return this.reloadDockPanel();
         }).catch((reason: any) => {
             api.DefaultErrorHandler.handle(reason);
+        }).finally(() => {
+            this.loadMask.hide();
         });
     }
 

@@ -1,6 +1,6 @@
 import Panel = api.ui.panel.Panel;
-import {IssueType} from "../IssueType";
-import {IssueList, IssueListItem} from "./IssueList";
+import {IssueType} from '../IssueType';
+import {IssueList, IssueListItem} from './IssueList';
 export class IssuesPanel extends Panel {
 
     private issuesType: IssueType;
@@ -26,8 +26,8 @@ export class IssuesPanel extends Panel {
         return this.issuesList;
     }
 
-    public reload() {
-        this.issuesList.reload();
+    public reload(): wemQ.Promise<void> {
+        return this.issuesList.reload();
     }
 
     public refresh() {
