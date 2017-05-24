@@ -336,6 +336,7 @@ function startContentApplication(application: api.app.Application) {
     let moveDialog = new MoveContentDialog();
 }
 
+api.util.i18nInit(CONFIG.messages);
 preLoadApplication();
 
 let body = api.dom.Body.get();

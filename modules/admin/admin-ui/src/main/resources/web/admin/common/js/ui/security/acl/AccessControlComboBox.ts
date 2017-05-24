@@ -125,6 +125,10 @@ module api.ui.security.acl {
             return true;
         }
 
+        updateOption(option: Option<AccessControlEntry>, newOption: Option<AccessControlEntry>) {
+            //TODO
+        }
+
         removeOption(optionToRemove: Option<AccessControlEntry>, silent: boolean = false) {
             api.util.assertNotNull(optionToRemove, 'optionToRemove cannot be null');
 

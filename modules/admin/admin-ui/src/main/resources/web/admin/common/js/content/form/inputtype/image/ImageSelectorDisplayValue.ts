@@ -58,6 +58,10 @@ module api.content.form.inputtype.image {
             return this.content ? this.content.getContentId() : null;
         }
 
+        getContentPath(): api.content.ContentPath {
+            return this.content ? this.content.getPath() : null;
+        }
+
         getImageUrl(): string {
             return this.content ? new api.content.util.ContentIconUrlResolver().setContent(this.content).resolve() : null;
         }

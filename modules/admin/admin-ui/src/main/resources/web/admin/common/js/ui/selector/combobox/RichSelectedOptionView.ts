@@ -1,5 +1,6 @@
 module api.ui.selector.combobox {
 
+    import NamesAndIconView = api.app.NamesAndIconView;
     export class RichSelectedOptionView<T> extends api.ui.selector.combobox.BaseSelectedOptionView<T> {
 
         private optionDisplayValue: T;
@@ -8,6 +9,8 @@ module api.ui.selector.combobox {
 
         private draggable: boolean;
         private removable: boolean;
+
+        private namesAndIconView: NamesAndIconView;
 
         constructor(builder: RichSelectedOptionViewBuilder<T>) {
             super(builder.option);
@@ -56,20 +59,29 @@ module api.ui.selector.combobox {
 
         protected createView(content: T): api.dom.Element {
 
-            let namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(this.size).build();
+            this.namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(this.size).build();
 
-            namesAndIconView
-                .setMainName(this.resolveTitle(content))
-                .setSubName(this.resolveSubTitle(content));
+            this.setValues(content);
 
-            let url = this.resolveIconUrl(content);
+            return this.namesAndIconView;
+        }
+
+        setOption(option: api.ui.selector.Option<T>): any {
+            super.setOption(option);
+
+            this.setValues(option.displayValue);
+        }
+
+        private setValues(values: T) {
+            this.namesAndIconView.setMainName(this.resolveTitle(values))
+                .setSubName(this.resolveSubTitle(values));
+
+            let url = this.resolveIconUrl(values);
             if (!api.util.StringHelper.isBlank(url)) {
-                namesAndIconView.setIconUrl(this.resolveIconUrl(content) + '?crop=false');
+                this.namesAndIconView.setIconUrl(this.resolveIconUrl(values) + '?crop=false');
             } else {
-                namesAndIconView.setIconClass(this.resolveIconClass(content));
+                this.namesAndIconView.setIconClass(this.resolveIconClass(values));
             }
-
-            return namesAndIconView;
         }
 
         protected createEditButton(content: T): api.dom.AEl {

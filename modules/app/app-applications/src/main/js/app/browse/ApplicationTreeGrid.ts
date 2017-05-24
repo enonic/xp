@@ -16,23 +16,24 @@ import TreeGridContextMenu = api.ui.treegrid.TreeGridContextMenu;
 
 import UploadItem = api.ui.uploader.UploadItem;
 import ApplicationKey = api.application.ApplicationKey;
+import i18n = api.util.i18n;
 
 export class ApplicationTreeGrid extends TreeGrid<Application> {
 
     constructor() {
         super(new TreeGridBuilder<Application>().setColumnConfig([{
-                name: 'Name',
+                name: i18n('field.name'),
                 id: 'displayName',
                 field: 'displayName',
                 formatter: ApplicationRowFormatter.nameFormatter,
                 style: {minWidth: 250}
             }, {
-                name: 'Version',
+                name: i18n('field.version'),
                 id: 'version',
                 field: 'version',
                 style: {cssClass: 'version', minWidth: 50, maxWidth: 130}
             }, {
-                name: 'State',
+                name: i18n('field.state'),
                 id: 'state',
                 field: 'state',
                 formatter: ApplicationRowFormatter.stateFormatter,

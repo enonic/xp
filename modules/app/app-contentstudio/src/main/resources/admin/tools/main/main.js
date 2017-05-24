@@ -13,7 +13,8 @@ function handleGet() {
         }),
         appName: 'Content Studio',
         appId: app.name,
-        xpVersion: app.version
+        xpVersion: app.version,
+        messages: admin.getPhrases()
     };
 
     return {

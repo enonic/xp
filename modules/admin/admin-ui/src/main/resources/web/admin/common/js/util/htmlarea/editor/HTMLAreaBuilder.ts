@@ -23,6 +23,7 @@ module api.util.htmlarea.editor {
         private hasActiveDialog: boolean = false;
         private customToolConfig: any;
         private editableSourceCode: boolean;
+        private forcedRootBlock: string;
 
         private tools: string = [
             'styleselect',
@@ -173,6 +174,12 @@ module api.util.htmlarea.editor {
             return this;
         }
 
+        setForcedRootBlock(el: string): HTMLAreaBuilder {
+            this.forcedRootBlock = el;
+
+            return this;
+        }
+
         private checkRequiredFieldsAreSet() {
             if (!this.assetsUri || !this.selector || !this.content) {
                 throw new Error('some required fields are missing for tinymce editor');
@@ -190,7 +197,7 @@ module api.util.htmlarea.editor {
 
             tinymce.init({
                 selector: this.selector,
-                forced_root_block : 'div',
+                forced_root_block : this.forcedRootBlock,
                 document_base_url: this.assetsUri + '/common/lib/tinymce/',
                 skin_url: this.assetsUri + '/common/lib/tinymce/skins/lightgray',
                 content_css: this.assetsUri + '/common/styles/api/util/htmlarea/html-editor.css',
@@ -288,14 +295,8 @@ module api.util.htmlarea.editor {
                         } else if (e.keyCode === 46 || e.keyCode === 8) { // DELETE
                             let selectedNode = editor.selection.getRng().startContainer;
                             if (/^(FIGURE)$/.test(selectedNode.nodeName)) {
-                                let previousEl = selectedNode.previousSibling;
                                 e.preventDefault();
                                 selectedNode.remove();
-                                if (previousEl) {
-                                    editor.selection.setNode(previousEl);
-                                } else {
-                                    editor.focus();
-                                }
                             }
                         }
 

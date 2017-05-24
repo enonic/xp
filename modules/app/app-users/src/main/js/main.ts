@@ -1,9 +1,9 @@
 declare var CONFIG;
 
-import './api.ts';
-import {UserAppPanel} from './app/UserAppPanel';
-import {ChangeUserPasswordDialog} from './app/wizard/ChangeUserPasswordDialog';
-import {Router} from './app/Router';
+import "./api.ts";
+import {UserAppPanel} from "./app/UserAppPanel";
+import {ChangeUserPasswordDialog} from "./app/wizard/ChangeUserPasswordDialog";
+import {Router} from "./app/Router";
 
 function getApplication(): api.app.Application {
     let application = new api.app.Application('user-manager', 'Users', 'UM', CONFIG.appIconUrl);
@@ -57,5 +57,6 @@ function startApplication() {
 }
 
 window.onload = function () {
+    api.util.i18nInit(CONFIG.messages);
     startApplication();
 };

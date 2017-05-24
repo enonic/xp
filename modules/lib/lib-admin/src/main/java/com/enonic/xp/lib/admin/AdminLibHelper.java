@@ -1,6 +1,11 @@
 package com.enonic.xp.lib.admin;
 
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
+
 import com.enonic.xp.server.VersionInfo;
+import com.enonic.xp.web.servlet.ServletRequestHolder;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 public final class AdminLibHelper
@@ -29,6 +34,13 @@ public final class AdminLibHelper
     public String getAssetsUri()
     {
         return rewriteUri( ADMIN_ASSETS_URI_PREFIX + this.version );
+    }
+
+    public String getLocale()
+    {
+        final HttpServletRequest req = ServletRequestHolder.getRequest();
+        final Locale locale = req != null ? req.getLocale() : Locale.getDefault();
+        return locale.getCountry().toLowerCase();
     }
 
     private static String generateVersion()

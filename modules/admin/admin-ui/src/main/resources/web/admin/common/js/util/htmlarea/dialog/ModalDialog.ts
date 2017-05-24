@@ -5,6 +5,48 @@ module api.util.htmlarea.dialog {
     import FormItem = api.ui.form.FormItem;
     import FormItemBuilder = api.ui.form.FormItemBuilder;
 
+    export class ModalDialogFormItemBuilder {
+
+        id: string;
+
+        label: string;
+
+        validator: (input: api.dom.FormInputEl) => string;
+
+        value: string;
+
+        placeholder: string;
+
+        inputEl: api.dom.FormItemEl;
+
+        constructor(id: string, label?: string) {
+            this.id = id;
+            this.label = label;
+
+            return this;
+        }
+
+        setValue(value: string): ModalDialogFormItemBuilder {
+            this.value = value;
+            return this;
+        }
+
+        setPlaceholder(placeholder: string): ModalDialogFormItemBuilder {
+            this.placeholder = placeholder;
+            return this;
+        }
+
+        setValidator(validator: (input: api.dom.FormInputEl) => string): ModalDialogFormItemBuilder {
+            this.validator = validator;
+            return this;
+        }
+
+        setInputEl(inputEl: api.dom.Element): ModalDialogFormItemBuilder {
+            this.inputEl = <api.dom.FormItemEl>inputEl;
+            return this;
+        }
+    }
+
     export class ModalDialog extends api.ui.dialog.ModalDialog {
         private fields: { [id: string]: api.dom.FormItemEl } = {};
         private validated: boolean = false;
@@ -139,9 +181,22 @@ module api.util.htmlarea.dialog {
             }
         }
 
-        protected createFormItem(id: string, label: string, validator?: (input: api.dom.FormInputEl) => string, value?: string,
-                                 inputEl?: api.dom.FormItemEl): FormItem {
-            let formItemEl = inputEl || new api.ui.text.TextInput();
+        private createTextInput(placeholder?: string): api.ui.text.TextInput {
+            const textInput = new api.ui.text.TextInput();
+
+            if (placeholder) {
+                textInput.setPlaceholder(placeholder);
+            }
+
+            return textInput;
+        }
+
+        protected createFormItem(modalDialogFormItemBuilder: ModalDialogFormItemBuilder): FormItem {
+            let label = modalDialogFormItemBuilder.label;
+            let id = modalDialogFormItemBuilder.id;
+            let value = modalDialogFormItemBuilder.value;
+            let validator = modalDialogFormItemBuilder.validator;
+            let formItemEl = modalDialogFormItemBuilder.inputEl ||this.createTextInput(modalDialogFormItemBuilder.placeholder);
             let formItemBuilder = new FormItemBuilder(formItemEl).setLabel(label);
             let inputWrapper = new api.dom.DivEl('input-wrapper');
             let formItem;

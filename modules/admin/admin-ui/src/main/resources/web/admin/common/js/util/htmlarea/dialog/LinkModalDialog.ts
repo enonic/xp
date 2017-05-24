@@ -166,7 +166,7 @@ module api.util.htmlarea.dialog {
 
         private createUrlPanel(): Panel {
             return this.createFormPanel([
-                this.createFormItemWithPostponedValue('url', 'Url', this.getUrl, Validators.required),
+                this.createFormItemWithPostponedValue('url', 'Url', this.getUrl, Validators.required, 'https://example.com/mypage'),
                 this.createTargetCheckbox('urlTarget', this.isUrl)
             ]);
         }
@@ -204,7 +204,8 @@ module api.util.htmlarea.dialog {
                 checkbox.setChecked(this.getTarget(isTabSelectedFn.call(this)));
             });
 
-            return this.createFormItem(id, null, null, null, checkbox);
+            let formItemBuilder = new ModalDialogFormItemBuilder(id).setInputEl(checkbox);
+            return this.createFormItem(formItemBuilder);
         }
 
         protected getMainFormItems(): FormItem [] {
@@ -278,7 +279,8 @@ module api.util.htmlarea.dialog {
         private createSelectorFormItem(id: string, label: string, contentSelector: api.content.ContentComboBox,
                                        addValueValidation: boolean = false): FormItem {
 
-            const formItem = this.createFormItem(id, label, Validators.required, null, <api.dom.FormItemEl>contentSelector);
+            const formItemBuilder = new ModalDialogFormItemBuilder(id, label).setValidator(Validators.required).setInputEl(contentSelector);
+            const formItem = this.createFormItem(formItemBuilder);
 
             if (!addValueValidation) {
                 return formItem;
@@ -319,7 +321,11 @@ module api.util.htmlarea.dialog {
                 dropDown.setValue(this.getAnchor());
             }
 
-            return this.createFormItem('anchor', 'Anchor', Validators.required, null, <api.dom.FormItemEl>dropDown);
+            const formItemBuilder = new ModalDialogFormItemBuilder('anchor', 'Anchor').
+                                        setValidator(Validators.required).
+                                        setInputEl(dropDown);
+
+            return this.createFormItem(formItemBuilder);
         }
 
         private validateDockPanel(): boolean {
@@ -434,9 +440,19 @@ module api.util.htmlarea.dialog {
         }
 
         protected createFormItemWithPostponedValue(id: string, label: string, getValueFn: Function,
-                                                   validator?: (input: api.dom.FormInputEl) => string): FormItem {
+                                                   validator?: (input: api.dom.FormInputEl) => string, placeholder?: string): FormItem {
 
-            let formItem = super.createFormItem(id, label, validator);
+            const formItemBuilder = new ModalDialogFormItemBuilder(id, label);
+
+            if (validator) {
+                formItemBuilder.setValidator(validator);
+            }
+
+            if (placeholder) {
+                formItemBuilder.setPlaceholder(placeholder);
+            }
+
+            const formItem = this.createFormItem(formItemBuilder);
 
             this.onAdded(() => {
                 (<api.dom.InputEl>formItem.getInput()).setValue(getValueFn.call(this));

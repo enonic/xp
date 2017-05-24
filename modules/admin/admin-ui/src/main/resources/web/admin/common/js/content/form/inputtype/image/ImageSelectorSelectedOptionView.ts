@@ -27,11 +27,11 @@ module api.content.form.inputtype.image {
         setOption(option: api.ui.selector.Option<ImageSelectorDisplayValue>) {
             super.setOption(option);
 
-            let content: ImageSelectorDisplayValue = this.getOption().displayValue;
+            let displayValue: ImageSelectorDisplayValue = option.displayValue;
 
-            if (content.getContentSummary()) {
-                this.updateIconSrc(content);
-                this.label.getEl().setInnerHtml(content.getLabel());
+            if (displayValue.getContentSummary()) {
+                this.updateIconSrc(displayValue);
+                this.label.getEl().setInnerHtml(displayValue.getDisplayName());
             } else {
                 this.showProgress();
             }

@@ -12,6 +12,7 @@ import ItemDataGroup = api.app.view.ItemDataGroup;
 import ApplicationKey = api.application.ApplicationKey;
 import Application = api.application.Application;
 import MacroDescriptor = api.macro.MacroDescriptor;
+import i18n = api.util.i18n;
 
 export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.application.Application> {
 
@@ -22,7 +23,7 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
         super('application-item-statistics-panel');
 
         this.actionMenu =
-            new api.ui.menu.ActionMenu('Stopped', ApplicationBrowseActions.get().START_APPLICATION,
+            new api.ui.menu.ActionMenu(i18n('action.stopped'), ApplicationBrowseActions.get().START_APPLICATION,
                 ApplicationBrowseActions.get().STOP_APPLICATION);
 
         this.appendChild(this.actionMenu);
@@ -54,12 +55,11 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
 
         this.applicationDataContainer.removeChildren();
 
-        let infoGroup = new ItemDataGroup('Info', 'info');
-        infoGroup.addDataList('Build date', 'TBA');
-        infoGroup.addDataList('Version', currentApplication.getVersion());
-        infoGroup.addDataList('Key', currentApplication.getApplicationKey().toString());
-        infoGroup.addDataList('System Required',
-            '>= ' + currentApplication.getMinSystemVersion() + ' and < ' + currentApplication.getMaxSystemVersion());
+        let infoGroup = new ItemDataGroup(i18n('field.info'), 'info');
+        infoGroup.addDataList(i18n('field.buildDate'), 'TBA');
+        infoGroup.addDataList(i18n('field.version'), currentApplication.getVersion());
+        infoGroup.addDataList(i18n('field.key'), currentApplication.getApplicationKey().toString());
+        infoGroup.addDataList(i18n('field.systemRequired'), i18n('field.systemRequired.value', currentApplication.getMinSystemVersion(), currentApplication.getMaxSystemVersion()));
 
         let descriptorResponse = this.initDescriptors(currentApplication.getApplicationKey());
         let schemaResponse = this.initSchemas(currentApplication.getApplicationKey());
@@ -98,7 +98,7 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
 
         return wemQ.all(macroPromises).spread((macros: MacroDescriptor[])=> {
 
-            let macrosGroup = new ItemDataGroup('Macros', 'macros');
+            let macrosGroup = new ItemDataGroup(i18n('field.macros'), 'macros');
 
             let macroNames = macros.
             filter((macro: MacroDescriptor) => {
@@ -106,7 +106,7 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
             }).map((macro: MacroDescriptor) => {
                 return macro.getDisplayName();
             });
-            macrosGroup.addDataArray('Name', macroNames);
+            macrosGroup.addDataArray(i18n('field.name'), macroNames);
 
             return macrosGroup;
         }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
@@ -123,19 +123,19 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
         return wemQ.all(descriptorPromises).spread(
             (pageDescriptors: PageDescriptor[], partDescriptors: PartDescriptor[], layoutDescriptors: LayoutDescriptor[]) => {
 
-                let descriptorsGroup = new ItemDataGroup('Descriptors', 'descriptors');
+                let descriptorsGroup = new ItemDataGroup(i18n('field.descriptors'), 'descriptors');
 
                 let pageNames = pageDescriptors.map((descriptor: PageDescriptor) => descriptor.getName().toString()).sort(
                     this.sortAlphabeticallyAsc);
-                descriptorsGroup.addDataArray('Page', pageNames);
+                descriptorsGroup.addDataArray(i18n('field.page'), pageNames);
 
                 let partNames = partDescriptors.map((descriptor: PartDescriptor) => descriptor.getName().toString()).sort(
                     this.sortAlphabeticallyAsc);
-                descriptorsGroup.addDataArray('Part', partNames);
+                descriptorsGroup.addDataArray(i18n('field.part'), partNames);
 
                 let layoutNames = layoutDescriptors.map((descriptor: LayoutDescriptor) => descriptor.getName().toString()).sort(
                     this.sortAlphabeticallyAsc);
-                descriptorsGroup.addDataArray('Layout', layoutNames);
+                descriptorsGroup.addDataArray(i18n('field.layout'), layoutNames);
 
                 return descriptorsGroup;
             }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
@@ -151,19 +151,19 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
 
         return wemQ.all(schemaPromises).spread<any>(
             (contentTypes: ContentTypeSummary[], mixins: Mixin[], relationshipTypes: RelationshipType[]) => {
-                let schemasGroup = new ItemDataGroup('Schemas', 'schemas');
+                let schemasGroup = new ItemDataGroup(i18n('field.schemas'), 'schemas');
 
                 let contentTypeNames = contentTypes.map(
                     (contentType: ContentTypeSummary) => contentType.getContentTypeName().getLocalName()).sort(this.sortAlphabeticallyAsc);
-                schemasGroup.addDataArray('Content Types', contentTypeNames);
+                schemasGroup.addDataArray(i18n('field.contentTypes'), contentTypeNames);
 
                 let mixinsNames = mixins.map((mixin: Mixin) => mixin.getMixinName().getLocalName()).sort(this.sortAlphabeticallyAsc);
-                schemasGroup.addDataArray('Mixins', mixinsNames);
+                schemasGroup.addDataArray(i18n('field.mixins'), mixinsNames);
 
                 let relationshipTypeNames = relationshipTypes.map(
                     (relationshipType: RelationshipType) => relationshipType.getRelationshiptypeName().getLocalName()).sort(
                     this.sortAlphabeticallyAsc);
-                schemasGroup.addDataArray('RelationshipTypes', relationshipTypeNames);
+                schemasGroup.addDataArray(i18n('field.relationshipTypes'), relationshipTypeNames);
 
                 return schemasGroup;
 
@@ -176,10 +176,10 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
         return wemQ.all(providersPromises).spread<ItemDataGroup>(
             (application: Application) => {
                 if(application) {
-                    let providersGroup = new ItemDataGroup('ID Providers', 'providers');
+                    let providersGroup = new ItemDataGroup('field.idProviders', 'providers');
 
-                    providersGroup.addDataList('Key', application.getApplicationKey().toString());
-                    providersGroup.addDataList('Name', application.getDisplayName());
+                    providersGroup.addDataList('field.key', application.getApplicationKey().toString());
+                    providersGroup.addDataList('field.name', application.getDisplayName());
 
                     return providersGroup;
                 }

@@ -9,6 +9,7 @@ import ApplicationUploaderEl = api.application.ApplicationUploaderEl;
 import Application = api.application.Application;
 
 import DockedPanel = api.ui.panel.DockedPanel;
+import i18n = api.util.i18n;
 
 export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
@@ -25,7 +26,7 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
     private clearButton: api.dom.ButtonEl;
 
     constructor() {
-        super('Install Application');
+        super(i18n('dialog.install'));
 
         this.addClass('install-application-dialog hidden');
 
@@ -36,7 +37,7 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
             if (this.marketAppPanel.getMarketAppsTreeGrid().getGrid().getDataView().getLength() === 0) {
                 this.statusMessage.addClass('empty');
-                this.statusMessage.setHtml('No applications found');
+                this.statusMessage.setHtml(i18n('market.noAppsFound'));
             } else {
                 this.statusMessage.removeClass('empty');
             }
@@ -56,7 +57,7 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
         return super.doRender().then((rendered) => {
 
             this.applicationInput =
-                new ApplicationInput(this.getCancelAction(), 'large').setPlaceholder('Search Enonic Market, paste url or upload directly');
+                new ApplicationInput(this.getCancelAction(), 'large').setPlaceholder(i18n('dialog.install.search'));
             this.onShown(() => {
                 this.applicationInput.giveFocus();
                 this.clearButton.addClass('hidden');
@@ -184,6 +185,6 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
     private refreshStatusMessage() {
         this.statusMessage.removeClass('failed');
-        this.statusMessage.setHtml('Loading application list');
+        this.statusMessage.setHtml(i18n('market.loadAppList'));
     }
 }

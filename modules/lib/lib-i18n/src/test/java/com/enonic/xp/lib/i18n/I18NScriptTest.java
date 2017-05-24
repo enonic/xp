@@ -2,10 +2,13 @@ package com.enonic.xp.lib.i18n;
 
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Map;
 
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+
+import com.google.common.collect.Maps;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentName;
@@ -33,7 +36,7 @@ public class I18NScriptTest
         final LocaleService localeService = Mockito.mock( LocaleService.class );
 
         final MessageBundle bundle = Mockito.mock( MessageBundle.class, (Answer) this::answer );
-        Mockito.when( localeService.getBundle( Mockito.any( ApplicationKey.class ), Mockito.any( Locale.class ) ) ).
+        Mockito.when( localeService.getBundle( Mockito.any( ApplicationKey.class ), Mockito.any( Locale.class ), Mockito.any( String[].class ) ) ).
             thenAnswer( mock -> bundle );
 
         addService( LocaleService.class, localeService );
@@ -48,6 +51,14 @@ public class I18NScriptTest
     private Object answer( final InvocationOnMock invocation )
     {
         final Object[] arguments = invocation.getArguments();
+        if ( invocation.getMethod().getName().equals( "asMap" ) )
+        {
+            final Map<String, String> map = Maps.newHashMap();
+            map.put( "a", "1" );
+            map.put( "b", "2" );
+            return map;
+        }
+
         return Arrays.toString( arguments );
     }
 }

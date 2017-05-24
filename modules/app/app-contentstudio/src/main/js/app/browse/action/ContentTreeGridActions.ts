@@ -47,7 +47,10 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
     private actions: api.ui.Action[] = [];
 
+    private grid: ContentTreeGrid;
+
     constructor(grid: ContentTreeGrid) {
+        this.grid = grid;
         this.TOGGLE_SEARCH_PANEL = new ToggleSearchPanelAction();
 
         this.SHOW_NEW_CONTENT_DIALOG_ACTION = new ShowNewContentDialogAction(grid);
@@ -180,7 +183,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.EDIT_CONTENT.setEnabled(this.anyEditable(contentSummaries));
         this.DELETE_CONTENT.setEnabled(this.anyDeletable(contentSummaries));
         this.DUPLICATE_CONTENT.setEnabled(contentSummaries.length === 1);
-        this.MOVE_CONTENT.setEnabled(true);
+        this.MOVE_CONTENT.setEnabled(!this.isAllItemsSelected(contentBrowseItems.length));
         this.SORT_CONTENT.setEnabled(contentSummaries.length === 1 && contentSummaries[0].hasChildren());
 
         this.PUBLISH_CONTENT.setEnabled(publishEnabled);
@@ -312,5 +315,9 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             });
 
         });
+    }
+
+    private isAllItemsSelected(items: number): boolean {
+        return items === this.grid.getRoot().getDefaultRoot().treeToList(false, false).length;
     }
 }
