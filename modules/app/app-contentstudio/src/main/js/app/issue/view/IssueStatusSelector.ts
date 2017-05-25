@@ -33,6 +33,8 @@ export class IssueStatusSelector extends TabMenu {
             let item: api.ui.tab.TabMenuItem = <api.ui.tab.TabMenuItem> event.getItem();
             this.setValue(IssueStatusSelector.OPTIONS[item.getIndex()].value);
         });
+
+       this.handleClickOutside();
     }
 
     getValue(): IssueStatus {
@@ -93,6 +95,27 @@ export class IssueStatusSelector extends TabMenu {
             }
         }
         return undefined;
+    }
+
+    private handleClickOutside() {
+        const mouseClickListener: (event: MouseEvent) => void = (event: MouseEvent) => {
+            if (this.isVisible()) {
+                for (let element = event.target; element; element = (<any>element).parentNode) {
+                    if (element === this.getHTMLElement()) {
+                        return;
+                    }
+                }
+               this.hideMenu();
+            }
+        };
+
+        this.onRemoved(() => {
+            api.dom.Body.get().unMouseDown(mouseClickListener);
+        });
+
+        this.onAdded(() => {
+            api.dom.Body.get().onMouseDown(mouseClickListener);
+        });
     }
 
     onValueChanged(listener: (event: api.ValueChangedEvent)=>void) {
