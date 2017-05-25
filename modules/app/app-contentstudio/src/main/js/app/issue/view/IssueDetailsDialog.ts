@@ -176,14 +176,19 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
         title.onIssueStatusChanged((event) => {
 
+            const newStatus = IssueStatusFormatter.fromString(event.getNewValue());
+
             new UpdateIssueRequest(this.issue.getId())
-                .setStatus(IssueStatusFormatter.fromString(event.getNewValue())).sendAndParse().then(() => {
+                .setStatus(newStatus).sendAndParse().then(() => {
                 api.notify.showFeedback(`The issue is ` + event.getNewValue().toLowerCase());
+
+                this.toggleControlsAccordingToStatus(newStatus);
 
             }).catch((reason: any) => api.DefaultErrorHandler.handle(reason));
         });
 
         this.setSubTitleEl(title);
+        this.toggleControlsAccordingToStatus(this.issue.getIssueStatus());
     }
 
 
@@ -377,13 +382,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
         this.closeOnPublishCheckbox.setDisabled(!enable);
     }
 
-    private filterDependantItems(dependants: ContentSummaryAndCompareStatus[]) {
-        let itemsToRemove = this.getDependantList().getItems().filter(
-            (oldDependantItem: ContentSummaryAndCompareStatus) => !dependants.some(
-                (newDependantItem) => oldDependantItem.equals(newDependantItem)));
-        this.getDependantList().removeItems(itemsToRemove);
-    }
-
     setIncludeChildItems(include: boolean, silent?: boolean) {
         this.getItemList().getItemViews()
             .filter(itemView => itemView.getIncludeChildrenToggler())
@@ -400,6 +398,15 @@ export class IssueDetailsDialog extends SchedulableDialog {
     protected doScheduledAction() {
         this.doPublish(true);
         this.close();
+    }
+
+    private toggleControlsAccordingToStatus(status: IssueStatus) {
+        if(status == IssueStatus.CLOSED) {
+            this.toggleClass('closed', true);
+        }
+        if(status == IssueStatus.OPEN) {
+            this.toggleClass('closed', false);
+        }
     }
 
     protected isScheduleButtonAllowed(): boolean {

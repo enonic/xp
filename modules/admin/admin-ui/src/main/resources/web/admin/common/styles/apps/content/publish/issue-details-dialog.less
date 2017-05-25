@@ -259,4 +259,14 @@
       }
     }
   }
+  &.closed {
+    .button-container {
+      .show-schedule-action, .publish-action, .checkbox {
+        display: none !important;
+      }
+    }
+    a.edit {
+      display: none;
+    }
+  }
 }
