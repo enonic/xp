@@ -44,7 +44,6 @@ export class ContentMoveComboBox extends api.ui.selector.combobox.RichComboBox<C
     setFilterContents(contents: ContentSummary[]) {
         this.getLoader().setFilterContentPaths(contents.map((content) => content.getPath()));
         this.readonlyChecker.setFilterContentIds(contents.map((content) => content.getContentId()));
-        this.getComboBox().getComboBoxDropdownGrid().presetDefaultOption(contents[0]);
     }
 
     setFilterContentTypes(contentTypes: api.schema.content.ContentType[]) {

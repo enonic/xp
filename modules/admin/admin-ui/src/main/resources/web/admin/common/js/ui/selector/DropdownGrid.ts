@@ -41,6 +41,8 @@ module api.ui.selector {
 
         protected multipleSelectionListeners: {(event: DropdownGridMultipleSelectionEvent): void}[];
 
+        protected rowCountChangedListeners: {(): void}[] = [];
+
         protected multipleSelections: boolean;
 
         protected config: DropdownGridConfig<OPTION_DISPLAY_VALUE>;
@@ -367,6 +369,22 @@ module api.ui.selector {
             const event = new DropdownGridMultipleSelectionEvent(rowsSelected);
             this.multipleSelectionListeners.forEach((listener: (event: DropdownGridMultipleSelectionEvent) => void) => {
                 listener(event);
+            });
+        }
+
+        onRowCountChanged(listener: () => void) {
+            this.rowCountChangedListeners.push(listener);
+        }
+
+        unRowCountChanged(listener: () => void) {
+            this.rowCountChangedListeners.filter((currentListener: () => void) => {
+                return listener !== currentListener;
+            });
+        }
+
+        notifyRowCountChanged() {
+            this.rowCountChangedListeners.forEach((listener: () => void) => {
+                listener();
             });
         }
     }

@@ -324,7 +324,7 @@ module api.ui.selector.combobox {
             this.input.giveFocus();
         }
 
-        getComboBoxDropdownGrid() {
+        getComboBoxDropdownGrid(): DropdownGrid<OPTION_DISPLAY_VALUE> {
             return this.comboBoxDropdown.getDropdownGrid();
         }
 
@@ -809,6 +809,13 @@ module api.ui.selector.combobox {
                     this.handleSelectedOptionMoved();
                 });
             }
+
+            this.comboBoxDropdown.getDropdownGrid().onRowCountChanged(() => {
+                if (this.comboBoxDropdown.isDropdownShown()) {
+                    this.comboBoxDropdown.getDropdownGrid().adjustGridHeight();
+                    this.doUpdateDropdownTopPositionAndWidth();
+                }
+            });
         }
 
         private handleInputValueChanged() {
