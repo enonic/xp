@@ -76,6 +76,11 @@ export class UpdateIssueDialog extends IssueDialog {
         updateAction.onExecuted(this.doUpdateIssue.bind(this));
         this.actionButton = this.addAction(updateAction, true);
     }
+
+    close() {
+        this.reset();
+        super.close();
+    }
 }
 
 export class UpdateIssueAction extends api.ui.Action {

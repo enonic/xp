@@ -145,6 +145,7 @@ export class ContentPublishDialog extends SchedulableDialog {
     close() {
         super.close();
         this.getItemList().clearExcludeChildrenIds();
+        this.createIssueDialog.reset();
     }
 
     private updateSubTitleShowScheduleAndButtonCount() {
