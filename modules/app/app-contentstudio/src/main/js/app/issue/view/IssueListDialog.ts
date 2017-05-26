@@ -7,17 +7,17 @@ import {IssueDetailsDialog} from './IssueDetailsDialog';
 import {UpdateIssueDialog} from './UpdateIssueDialog';
 import {Issue} from '../Issue';
 import {CreateIssueDialog} from './CreateIssueDialog';
-import {IssueListItem} from './IssueList';
-import {IssueFetcher} from '../IssueFetcher';
-import {IssueStatsJson} from '../json/IssueStatsJson';
-import {GetIssueRequest} from '../resource/GetIssueRequest';
+import {IssueServerEventsHandler} from '../event/IssueServerEventsHandler';
+import {IssueStatus} from '../IssueStatus';
 import TabBarItem = api.ui.tab.TabBarItem;
 import SpanEl = api.dom.SpanEl;
 import Element = api.dom.Element;
-import IssueServerEventsHandler = api.issue.event.IssueServerEventsHandler;
 import LoadMask = api.ui.mask.LoadMask;
+import User = api.security.User;
 
 export class IssueListDialog extends ModalDialog {
+
+    private static INSTANCE: IssueListDialog = new IssueListDialog();
 
     private dockedPanel: DockedPanel;
 
@@ -29,13 +29,13 @@ export class IssueListDialog extends ModalDialog {
 
     private closedIssuesPanel: IssuesPanel;
 
-    private showCreatedByMePanelAfterLoad: boolean = false;
-
     private reload: Function;
 
     private loadMask: LoadMask;
 
-    constructor() {
+    private currentUser: User;
+
+    private constructor() {
         super(<api.ui.dialog.ModalDialogConfig>{title: 'Publishing Issues'});
         this.addClass('issue-list-dialog');
 
@@ -48,7 +48,19 @@ export class IssueListDialog extends ModalDialog {
             this.open();
         });
 
+        this.loadCurrentUser();
+
         api.dom.Body.get().appendChild(this);
+    }
+
+    public static get(): IssueListDialog {
+        return IssueListDialog.INSTANCE;
+    }
+
+    private loadCurrentUser() {
+        return new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult) => {
+            this.currentUser = loginResult.getUser();
+        });
     }
 
     doRender(): Q.Promise<boolean> {
@@ -67,11 +79,6 @@ export class IssueListDialog extends ModalDialog {
         this.createdByMeIssuesPanel = this.createIssuePanel(IssueType.CREATED_BY_ME);
         this.openIssuesPanel = this.createIssuePanel(IssueType.OPEN);
         this.closedIssuesPanel = this.createIssuePanel(IssueType.CLOSED);
-
-        this.assignedToMeIssuesPanel.onIssueSelected(this.showIssueDetailsDialog.bind(this));
-        this.createdByMeIssuesPanel.onIssueSelected(this.showIssueDetailsDialog.bind(this));
-        this.openIssuesPanel.onIssueSelected(this.showIssueDetailsDialog.bind(this));
-        this.closedIssuesPanel.onIssueSelected(this.showIssueDetailsDialog.bind(this));
 
         dockedPanel.addItem('Assigned to me', true, this.assignedToMeIssuesPanel);
         dockedPanel.addItem('My issues', true, this.createdByMeIssuesPanel);
@@ -92,13 +99,6 @@ export class IssueListDialog extends ModalDialog {
         return wemQ.all(promises);
     }
 
-    private refreshDockPanel() {
-        this.assignedToMeIssuesPanel.refresh();
-        this.createdByMeIssuesPanel.refresh();
-        this.openIssuesPanel.refresh();
-        this.closedIssuesPanel.refresh();
-    }
-
     show() {
         super.show();
         this.reload();
@@ -114,12 +114,6 @@ export class IssueListDialog extends ModalDialog {
                 this.getEl().focus();
             }
         });
-
-        IssueDetailsDialog.get().onIssueClosed((issue: Issue) => {
-            this.refresh(issue).then(() => {
-                this.dockedPanel.selectPanel(this.closedIssuesPanel);
-            });
-        });
     }
 
     private handleCreateIssueDialogEvents() {
@@ -129,19 +123,14 @@ export class IssueListDialog extends ModalDialog {
             this.removeClass('masked');
             this.getEl().focus();
         });
-
-        CreateIssueDialog.get().onSucceed(() => {
-            this.showCreatedByMePanelAfterLoad = true;
-            if (!this.isVisible()) {
-                this.open();
-            }
-        });
     }
 
     private initDeboundcedReloadFunc() {
-        this.reload = api.util.AppHelper.debounce((showNotification: boolean = false) => {
+        this.reload = api.util.AppHelper.debounce((issues?: Issue[]) => {
             this.doReload().then(() => {
-                if (showNotification) {
+                this.updateTabLabels();
+                this.openTab(issues);
+                if (this.isNotificationToBeShown(issues)) {
                     api.notify.NotifyManager.get().showFeedback('The list of issues was updated');
                 }
             });
@@ -150,25 +139,78 @@ export class IssueListDialog extends ModalDialog {
 
     private handleIssueGlobalEvents() {
 
-        IssueServerEventsHandler.getInstance().onIssueCreated(() => {
+        IssueServerEventsHandler.getInstance().onIssueCreated((issues: Issue[]) => {
             if (this.isVisible()) {
-                this.reload(true);
+                this.reload(issues);
+            }
+            else if (issues.some((issue) => this.isIssueCreatedByCurrentUser(issue))) {
+                this.open();
             }
         });
 
-        IssueServerEventsHandler.getInstance().onIssueUpdated(() => {
+        IssueServerEventsHandler.getInstance().onIssueUpdated((issues: Issue[]) => {
             if (this.isVisible()) {
-                this.reload(true);
+                this.reload(issues);
             }
         });
     }
 
-    showIssueDetailsDialog(issueListItem: IssueListItem) {
-        this.addClass('masked');
+    private isNotificationToBeShown(issues?: Issue[]): boolean {
+        if (!issues) {
+            return false;
+        }
 
-        new GetIssueRequest(issueListItem.getIssue().getId()).sendAndParse().then((issue: Issue) => {
-            IssueDetailsDialog.get().setIssue(issue).toggleNested(true).open();
-        });
+        if (issues[0].getModifier()) {
+            if (this.isIssueModifiedByCurrentUser(issues[0])) {
+                return false;
+            }
+
+            return true;
+        }
+
+        if (this.isIssueCreatedByCurrentUser(issues[0])) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private isIssueModifiedByCurrentUser(issue: Issue): boolean {
+        return issue.getModifier() === this.currentUser.getKey().toString();
+    }
+
+    private isIssueCreatedByCurrentUser(issue: Issue): boolean {
+        if (!issue.getCreator()) {
+            return false;
+        }
+
+        return issue.getCreator() === this.currentUser.getKey().toString();
+    }
+
+    private openTab(issues?: Issue[]) {
+        this.dockedPanel.selectPanel(this.getTabToOpen(issues));
+    }
+
+    private getTabToOpen(issues?: Issue[]): IssuesPanel {
+        if (!issues) {
+            return this.getFirstNonEmptyTab();
+        }
+
+        if (issues[0].getModifier()) {
+            if (this.isIssueModifiedByCurrentUser(issues[0])) {
+                if (issues[0].getIssueStatus() === IssueStatus.CLOSED) {
+                    return this.closedIssuesPanel;
+                }
+            }
+
+            return <IssuesPanel>this.dockedPanel.getDeck().getPanelShown();
+        }
+
+        if (this.isIssueCreatedByCurrentUser(issues[0])) {
+            return this.createdByMeIssuesPanel;
+        }
+
+        return <IssuesPanel>this.dockedPanel.getDeck().getPanelShown();
     }
 
     protected hasSubDialog(): boolean {
@@ -177,59 +219,35 @@ export class IssueListDialog extends ModalDialog {
 
     private doReload(): wemQ.Promise<void> {
         this.loadMask.show();
-        return IssueFetcher.fetchIssueStats().then((stats: IssueStatsJson) => {
-            this.updateTabLabels(stats);
-            this.showFirstNonEmptyTab(stats);
-            return this.reloadDockPanel();
-        }).catch((reason: any) => {
+        return this.reloadDockPanel().catch((reason: any) => {
             api.DefaultErrorHandler.handle(reason);
         }).finally(() => {
             this.loadMask.hide();
         });
     }
 
-    public refresh(issue: Issue): wemQ.Promise<void> {
-        return IssueFetcher.fetchIssueStats().then((stats: IssueStatsJson) => {
-            this.updateTabLabels(stats);
-
-            // Refresh panels
-            this.openIssuesPanel.getIssuesList().removeItem(issue);
-
-            this.closedIssuesPanel.getIssuesList().replaceItem(issue, true);
-            this.assignedToMeIssuesPanel.getIssuesList().replaceItem(issue, true);
-            this.createdByMeIssuesPanel.getIssuesList().replaceItem(issue, true);
-
-            this.refreshDockPanel();
-        }).catch((reason: any) => {
-            api.DefaultErrorHandler.handle(reason);
-        });
+    private updateTabLabels() {
+        this.updateTabLabel(0, 'Assigned to me', this.assignedToMeIssuesPanel.getTotalItems());
+        this.updateTabLabel(1, 'My issues', this.createdByMeIssuesPanel.getTotalItems());
+        this.updateTabLabel(2, 'Open', this.openIssuesPanel.getTotalItems());
+        this.updateTabLabel(3, 'Closed', this.closedIssuesPanel.getTotalItems());
     }
 
-    private updateTabLabels(stats: IssueStatsJson) {
-        this.updateTabLabel(this.dockedPanel.getNavigator().getNavigationItem(0), 'Assigned to me', stats.assignedToMe);
-        this.updateTabLabel(this.dockedPanel.getNavigator().getNavigationItem(1), 'My issues', stats.createdByMe);
-        this.updateTabLabel(this.dockedPanel.getNavigator().getNavigationItem(2), 'Open', stats.open);
-        this.updateTabLabel(this.dockedPanel.getNavigator().getNavigationItem(3), 'Closed', stats.closed);
+    private updateTabLabel(tabIndex: number, label: string, issuesFound: number) {
+        this.dockedPanel.getNavigator().getNavigationItem(tabIndex).setLabel(issuesFound > 0 ? (label + ' (' + issuesFound + ')') : label);
     }
 
-    private updateTabLabel(tabBarItem: TabBarItem, label: string, issuesFound: number) {
-        tabBarItem.setLabel(issuesFound > 0 ? (label + ' (' + issuesFound + ')') : label);
-    }
-
-    private showFirstNonEmptyTab(stats: IssueStatsJson) {
-        if (this.showCreatedByMePanelAfterLoad) {
-            this.dockedPanel.selectPanel(this.createdByMeIssuesPanel);
-            this.showCreatedByMePanelAfterLoad = false;
-        } else if (stats.assignedToMe > 0) {
-            this.dockedPanel.selectPanel(this.assignedToMeIssuesPanel);
-        } else if (stats.createdByMe > 0) {
-            this.dockedPanel.selectPanel(this.createdByMeIssuesPanel);
-        } else if (stats.open > 0) {
-            this.dockedPanel.selectPanel(this.openIssuesPanel);
-        } else if (stats.closed > 0) {
-            this.dockedPanel.selectPanel(this.closedIssuesPanel);
+    private getFirstNonEmptyTab(): IssuesPanel {
+        if (this.assignedToMeIssuesPanel.getItemCount() > 0) {
+            return this.assignedToMeIssuesPanel;
+        } else if (this.createdByMeIssuesPanel.getItemCount() > 0) {
+            return this.createdByMeIssuesPanel;
+        } else if (this.openIssuesPanel.getItemCount() > 0) {
+            return this.openIssuesPanel;
+        } else if (this.closedIssuesPanel.getItemCount() > 0) {
+            return this.closedIssuesPanel;
         } else {
-            this.dockedPanel.selectPanel(this.assignedToMeIssuesPanel);
+            return this.assignedToMeIssuesPanel;
         }
     }
 
@@ -241,7 +259,6 @@ export class IssueListDialog extends ModalDialog {
             this.addClass('masked');
 
             CreateIssueDialog.get().reset();
-
             CreateIssueDialog.get().unlockPublishItems();
             CreateIssueDialog.get().open();
         });
@@ -251,6 +268,5 @@ export class IssueListDialog extends ModalDialog {
 
     private createIssuePanel(issueType: IssueType): IssuesPanel {
         return new IssuesPanel(issueType);
-
     }
 }

@@ -75,21 +75,6 @@ public class IssueResourceTest
     }
 
     @Test
-    public void test_get_stats()
-        throws Exception
-    {
-        createLocalSession();
-
-        final IssueResource issueResource = getResourceInstance();
-        final FindIssuesResult result = FindIssuesResult.create().hits( 2 ).totalHits( 4 ).build();
-        Mockito.when( issueService.findIssues( Mockito.any( IssueQuery.class ) ) ).thenReturn( result );
-
-        issueResource.getStats();
-
-        Mockito.verify( issueService, Mockito.times( 4 ) ).findIssues( Mockito.any( IssueQuery.class ) );
-    }
-
-    @Test
     public void test_list_issues()
         throws Exception
     {
