@@ -394,7 +394,8 @@ module api.form {
         }
 
         private isSelectionLimitReached(): boolean {
-            return this.getSelectedOptionsArray().getSize() >= this.getMultiselection().getMaximum();
+            return this.getMultiselection().getMaximum() !== 0 &&
+                   this.getMultiselection().getMaximum() <= this.getSelectedOptionsArray().getSize();
         }
 
         private isRadioSelection(): boolean {
