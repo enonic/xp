@@ -3,12 +3,13 @@ import {CreateIssueRequest} from '../resource/CreateIssueRequest';
 import {PublishRequest} from '../PublishRequest';
 import LabelEl = api.dom.LabelEl;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+import ObjectHelper = api.ObjectHelper;
 
 export class CreateIssueDialog extends IssueDialog {
 
     private static INSTANCE: CreateIssueDialog;
 
-    private itemsLabel:LabelEl;
+    private itemsLabel: LabelEl;
 
     protected constructor() {
         super('Create Issue');
@@ -40,9 +41,11 @@ export class CreateIssueDialog extends IssueDialog {
         return CreateIssueDialog.INSTANCE;
     }
 
-    public setItems(items: ContentSummaryAndCompareStatus[]) {
+    public setItems(items: ContentSummaryAndCompareStatus[]): CreateIssueDialog {
         super.setItems(items);
         (<CreateIssueAction>this.actionButton.getAction()).updateLabel(this.countTotal());
+
+        return this;
     }
 
     private doCreateIssue() {

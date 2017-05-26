@@ -31,6 +31,8 @@ import ImgEl = api.dom.ImgEl;
 import LostConnectionDetector = api.system.LostConnectionDetector;
 import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
 import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
+import {CreateIssueDialog} from './app/issue/view/CreateIssueDialog';
+import {CreateIssuePromptEvent} from './app/browse/CreateIssuePromptEvent';
 
 declare var CONFIG;
 
@@ -231,6 +233,13 @@ function startApplication() {
     ContentUnpublishPromptEvent.on((event) => {
         contentUnpublishDialog
             .setContentToUnpublish(event.getModels())
+            .open();
+    });
+
+    const createIssueDialog = CreateIssueDialog.get();
+    CreateIssuePromptEvent.on((event) => {
+        createIssueDialog
+            .setItems(event.getModels())
             .open();
     });
 
