@@ -1,7 +1,6 @@
 import {DependantItemsDialog} from '../../dialog/DependantItemsDialog';
 import {IssueDialogForm} from './IssueDialogForm';
 import {PublishProcessor} from '../../publish/PublishProcessor';
-import {Issue} from '../Issue';
 import {PublishRequestItem} from '../PublishRequestItem';
 import {PublishDialogItemList} from '../../publish/PublishDialogItemList';
 import {PublishDialogDependantList} from '../../publish/PublishDialogDependantList';
@@ -10,13 +9,12 @@ import ContentSummary = api.content.ContentSummary;
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
 import ObjectHelper = api.ObjectHelper;
 import ListBox = api.ui.selector.list.ListBox;
+
 export abstract class IssueDialog extends DependantItemsDialog {
 
     protected form: IssueDialogForm;
 
     protected publishProcessor: PublishProcessor;
-
-    private onSucceedListeners: {(issue: Issue): void;}[] = [];
 
     protected constructor(title: string) {
         super(title);
@@ -183,21 +181,6 @@ export abstract class IssueDialog extends DependantItemsDialog {
         return false;
     }
 
-    onSucceed(listener: (issue: Issue) => void) {
-        this.onSucceedListeners.push(listener);
-    }
-
-    unSucceed(listener: {(issue: Issue): void;}) {
-        this.onSucceedListeners = this.onSucceedListeners.filter(function (curr: {(): void;}) {
-            return curr !== listener;
-        });
-    }
-
-    protected notifySucceed(issue: Issue) {
-        this.onSucceedListeners.forEach((listener) => {
-            listener(issue);
-        });
-    }
 }
 
 

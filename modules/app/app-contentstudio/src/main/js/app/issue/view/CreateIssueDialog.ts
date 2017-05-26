@@ -65,7 +65,6 @@ export class CreateIssueDialog extends IssueDialog {
                 this.close();
                 this.reset();
 
-                this.notifySucceed(issue);
                 api.notify.showSuccess('New issue created successfully');
             }).catch((reason) => {
                 if (reason && reason.message) {

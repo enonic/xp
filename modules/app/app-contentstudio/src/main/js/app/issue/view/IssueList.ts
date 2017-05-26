@@ -2,6 +2,8 @@ import {IssueType} from '../IssueType';
 import {Issue} from '../Issue';
 import {IssueFetcher} from '../IssueFetcher';
 import {IssueResponse} from '../resource/IssueResponse';
+import {IssueDetailsDialog} from './IssueDetailsDialog';
+import {IssueListDialog} from './IssueListDialog';
 import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
 import User = api.security.User;
@@ -18,13 +20,7 @@ export class IssueList extends ListBox<Issue> {
 
     private totalItems: number;
 
-    private scrollHandler: {(): void};
-
     private loadMask: LoadMask;
-
-    private loading: boolean = false;
-
-    private issueSelectedListeners: {(id: IssueListItem): void}[] = [];
 
     private currentUser: User;
 
@@ -32,7 +28,7 @@ export class IssueList extends ListBox<Issue> {
         super('issue-list');
         this.issueType = issueType;
         this.appendChild(this.loadMask = new LoadMask(this));
-        this.onRendered(this.initList.bind(this));
+        this.loadCurrentUser();
         this.setupLazyLoading();
     }
 
@@ -52,40 +48,46 @@ export class IssueList extends ListBox<Issue> {
     private initList(): wemQ.Promise<void> {
         this.loadMask.show();
 
+        return IssueFetcher.fetchIssuesByType(this.issueType, 0, IssueList.MAX_FETCH_SIZE).then((response: IssueResponse) => {
+            this.totalItems = response.getMetadata().getTotalHits();
+            if (response.getIssues().length > 0) {
+                this.addItems(response.getIssues());
+            } else {
+                this.appendChild(new PEl('no-issues-message').setHtml('No issues found'));
+            }
+        }).catch((reason: any) => {
+            api.DefaultErrorHandler.handle(reason);
+        }).finally(() => {
+            this.loadMask.hide();
+        });
+
+    }
+
+    public getTotalItems(): number {
+        return this.totalItems;
+    }
+
+    private loadCurrentUser() {
         return new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult) => {
             this.currentUser = loginResult.getUser();
-
-            return IssueFetcher.fetchIssuesByType(this.issueType, 0, IssueList.MAX_FETCH_SIZE).then((response: IssueResponse) => {
-                this.totalItems = response.getMetadata().getTotalHits();
-                if (response.getIssues().length > 0) {
-                    this.addItems(response.getIssues());
-                } else {
-                    this.appendChild(new PEl('no-issues-message').setHtml('No issues found'));
-                }
-            }).catch((reason: any) => {
-                api.DefaultErrorHandler.handle(reason);
-            }).finally(() => {
-                this.loadMask.hide();
-            });
         });
     }
 
     private setupLazyLoading() {
-        this.scrollHandler = api.util.AppHelper.debounce(this.handleScroll.bind(this), 100, false);
+        const scrollHandler: Function = api.util.AppHelper.debounce(this.handleScroll.bind(this), 100, false);
 
         this.onScrolled(() => {
-            this.scrollHandler();
+            scrollHandler();
         });
 
         this.onScroll(() => {
-            this.scrollHandler();
+            scrollHandler();
         });
     }
 
     private handleScroll() {
         if (this.isScrolledToBottom() && !this.isAllItemsLoaded()) {
             this.loadMask.show();
-            this.loading = true;
 
             IssueFetcher.fetchIssuesByType(this.issueType, this.getItemCount(), IssueList.MAX_FETCH_SIZE).then(
                 (response: IssueResponse) => {
@@ -93,7 +95,6 @@ export class IssueList extends ListBox<Issue> {
                 }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).finally(() => {
-                this.loading = false;
                 this.loadMask.hide();
             });
         }
@@ -104,7 +105,7 @@ export class IssueList extends ListBox<Issue> {
         const itemEl = new IssueListItem(issue, this.issueType, this.currentUser);
 
         itemEl.onClicked(() => {
-            this.notifyIssueSelected(itemEl);
+            this.handleIssueSelected(itemEl);
         });
 
         return itemEl;
@@ -114,20 +115,9 @@ export class IssueList extends ListBox<Issue> {
         return issue.getId();
     }
 
-    onIssueSelected(listener: (id: IssueListItem) => void) {
-        this.issueSelectedListeners.push(listener);
-    }
-
-    unIssueSelected(listener: (id: IssueListItem) => void) {
-        this.issueSelectedListeners = this.issueSelectedListeners.filter((curr) => {
-            return curr !== listener;
-        });
-    }
-
-    private notifyIssueSelected(issueListItem: IssueListItem) {
-        this.issueSelectedListeners.forEach(listener => {
-            listener(issueListItem);
-        });
+    private handleIssueSelected(issueListItem: IssueListItem) {
+        IssueListDialog.get().addClass('masked');
+        IssueDetailsDialog.get().setIssue(issueListItem.getIssue()).toggleNested(true).open();
     }
 
     private isScrolledToBottom(): boolean {
