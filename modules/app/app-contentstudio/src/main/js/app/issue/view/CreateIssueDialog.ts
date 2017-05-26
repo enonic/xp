@@ -63,7 +63,6 @@ export class CreateIssueDialog extends IssueDialog {
 
             createIssueRequest.sendAndParse().then((issue) => {
                 this.close();
-                this.notifySucceed(issue);
                 api.notify.showSuccess('New issue created successfully');
             }).catch((reason) => {
                 if (reason && reason.message) {

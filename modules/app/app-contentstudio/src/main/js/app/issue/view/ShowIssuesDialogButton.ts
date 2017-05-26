@@ -1,9 +1,10 @@
 
 import ActionButton = api.ui.button.ActionButton;
 import {ShowIssuesDialogAction} from '../../browse/action/ShowIssuesDialogAction';
-import {IssueStatsJson} from '../json/IssueStatsJson';
 import {IssueFetcher} from '../IssueFetcher';
-import IssueServerEventsHandler = api.issue.event.IssueServerEventsHandler;
+import {IssueServerEventsHandler} from '../event/IssueServerEventsHandler';
+import {IssueType} from '../IssueType';
+import {IssueResponse} from '../resource/IssueResponse';
 
 export class ShowIssuesDialogButton extends ActionButton {
 
@@ -28,9 +29,9 @@ export class ShowIssuesDialogButton extends ActionButton {
     }
 
     private updateShowIssuesDialogButton() {
-        IssueFetcher.fetchIssueStats().then((stats: IssueStatsJson) => {
-            this.toggleClass('has-assigned-issues', stats.assignedToMe > 0);
-            this.getEl().setTitle((stats.assignedToMe == 0) ?
+        IssueFetcher.fetchIssuesByType(IssueType.ASSIGNED_TO_ME, 0, 1).then((response: IssueResponse) => {
+            this.toggleClass('has-assigned-issues', response.getMetadata().getTotalHits() > 0);
+            this.getEl().setTitle((response.getMetadata().getTotalHits() === 0) ?
                                   'Publishing Issues' :
                                   'You have unclosed Publishing Issues');
         }).catch((reason: any) => {
