@@ -30,6 +30,7 @@ import PEl = api.dom.PEl;
 import SpanEl = api.dom.SpanEl;
 import DivEl = api.dom.DivEl;
 import IssueServerEventsHandler = api.issue.event.IssueServerEventsHandler;
+import RequestError = api.rest.RequestError;
 
 export class IssueDetailsDialog extends SchedulableDialog {
 
@@ -144,23 +145,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
         this.initStatusInfo();
 
         this.reloadPublishDependencies().then(() => {
-            ContentSummaryAndCompareStatusFetcher.fetchByIds(
-                this.issue.getPublishRequest().getItemsIds()).then((result) => {
-                this.setListItems(result);
-
-                const countToPublish = this.countTotal();
-                this.updateButtonCount('Publish', countToPublish);
-
-                this.toggleAction(countToPublish > 0);
-
-
-                if (this.issue.getPublishRequest().getItemsIds().length > 0) {
-                    this.unlockControls();
-                } else {
-                    this.lockControls();
-                }
-                this.centerMyself();
-            });
+            this.centerMyself();
         });
 
         return this;
@@ -241,7 +226,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
     private doPublish(scheduled: boolean) {
 
-        const selectedIds = this.issue.getPublishRequest().getItemsIds();
+        const selectedIds = this.getItemList().getItems().map(item => item.getContentId());
         const excludedIds = this.issue.getPublishRequest().getExcludeIds();
         const excludedChildrenIds = this.issue.getPublishRequest().getExcludeChildrenIds();
 
@@ -325,7 +310,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
     open() {
         this.form.giveFocus();
-        this.reloadPublishDependencies().done();
         super.open();
     }
 
@@ -355,25 +339,42 @@ export class IssueDetailsDialog extends SchedulableDialog {
             deferred.resolve(null);
         }
 
-        const resolveDependenciesRequest = ResolvePublishDependenciesRequest.create().setIds(
-            this.issue.getPublishRequest().getItemsIds()).setExcludedIds(
-            this.issue.getPublishRequest().getExcludeIds()).setExcludeChildrenIds(
-            this.issue.getPublishRequest().getExcludeChildrenIds()).build();
+        ContentSummaryAndCompareStatusFetcher.fetchByIds(
+            this.issue.getPublishRequest().getItemsIds()).then((result) => {
 
-        resolveDependenciesRequest.sendAndParse().then((result: ResolvePublishDependenciesResult) => {
+            if (result.length != this.issue.getPublishRequest().getItemsIds().length) {
+                api.notify.showWarning('One or more items from the issue cannot be found');
+            }
 
-            this.dependantIds = result.getDependants().slice();
+            this.setListItems(result);
 
-            this.toggleAction(!result.isContainsInvalid());
+            const resolveDependenciesRequest = ResolvePublishDependenciesRequest.create().setIds(
+                result.map(content => content.getContentId())).setExcludedIds(
+                this.issue.getPublishRequest().getExcludeIds()).setExcludeChildrenIds(
+                this.issue.getPublishRequest().getExcludeChildrenIds()).build();
 
-            this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
-                this.setDependantItems(dependants);
+            resolveDependenciesRequest.sendAndParse().then((result: ResolvePublishDependenciesResult) => {
+                this.dependantIds = result.getDependants().slice();
+
+                const countToPublish = this.countTotal();
+                this.updateButtonCount('Publish', countToPublish);
+
+                this.toggleAction(countToPublish > 0 && !result.isContainsInvalid());
+
+                this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
+                    this.setDependantItems(dependants);
+
+                    this.loadMask.hide();
+                    this.centerMyself();
+
+                    deferred.resolve(null);
+                });
+            }).catch((reason: RequestError) => {
                 this.loadMask.hide();
-
-
-                deferred.resolve(null);
+                deferred.reject(reason);
             });
         });
+
         return deferred.promise;
     }
 
