@@ -17,6 +17,7 @@ import DialogButton = api.ui.dialog.DialogButton;
 import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
 import ModalDialogButtonRow = api.ui.dialog.ModalDialogButtonRow;
+import DivEl = api.dom.DivEl;
 
 export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
@@ -26,7 +27,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     private ignoreItemsChanged: boolean;
 
-    private subTitle: api.dom.H6El;
+    private subTitle: api.dom.DivEl;
 
     private itemList: ListBox<ContentSummaryAndCompareStatus>;
 
@@ -187,6 +188,14 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     setSubTitle(text: string, escapeHtml?: boolean) {
         this.subTitle.setHtml(text, escapeHtml);
+    }
+
+    setSubTitleEl(el: DivEl) {
+        if (this.subTitle) {
+            this.subTitle.remove();
+        }
+        this.subTitle = el;
+        this.appendChildToHeader(this.subTitle);
     }
 
     protected updateButtonCount(actionString: string, count: number) {
