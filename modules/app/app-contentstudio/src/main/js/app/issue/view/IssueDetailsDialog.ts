@@ -401,12 +401,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
     }
 
     private toggleControlsAccordingToStatus(status: IssueStatus) {
-        if(status == IssueStatus.CLOSED) {
-            this.toggleClass('closed', true);
-        }
-        if(status == IssueStatus.OPEN) {
-            this.toggleClass('closed', false);
-        }
+        this.toggleClass('closed', (status == IssueStatus.CLOSED));
     }
 
     protected isScheduleButtonAllowed(): boolean {
