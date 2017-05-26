@@ -1,6 +1,7 @@
 module api.ui.tab {
 
     import AppHelper = api.util.AppHelper;
+
     export class TabMenu extends api.dom.DivEl implements api.ui.Navigator {
 
         private tabMenuButton: TabMenuButton;

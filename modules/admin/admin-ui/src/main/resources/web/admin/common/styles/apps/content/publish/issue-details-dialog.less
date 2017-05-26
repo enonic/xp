@@ -28,6 +28,70 @@
       line-height: 36px;
       padding-left: 10px;
     }
+    .issue-details-sub-title {
+      display: inline-block;
+      margin: 10px 0 15px;
+      font-size: 13px;
+      float: left;
+      clear: both;
+
+      .creator, .assignee {
+        color: @admin-black;
+        font-weight: bold;
+      }
+
+      .issue-status-selector {
+        width: 80px;
+        display: inline-block;
+        min-width: inherit;
+        margin: 0px;
+        margin-right: 15px;
+
+        vertical-align: middle;
+
+        &.open {
+          .tab-menu-button {
+            background-color: @admin-green;
+          }
+        }
+        &.closed {
+          .tab-menu-button {
+            background-color: @admin-font-gray2;
+          }
+        }
+
+        .tab-menu-button {
+          display: inline-block;
+          color: white;
+          font-weight: bold;
+
+          padding: 4px 14px;
+
+          border-radius: 4px;
+
+          &:before {
+            content: '';
+          }
+
+          .label {
+            margin: 0px;
+          }
+        }
+
+        .menu {
+          text-align: center;
+          min-width: inherit;
+          width: 80px;
+          li {
+            padding: 1px 5px;
+          }
+        }
+      }
+
+      span {
+        vertical-align: middle;
+      }
+    }
 
     .sub-title {
       display: inline-block;
@@ -184,7 +248,7 @@
 
   &.no-action {
     .button-container {
-      .show-schedule-action,.publish-action, .checkbox{
+      .show-schedule-action, .publish-action, .checkbox {
         display: none !important;
       }
       &:after {
@@ -195,6 +259,16 @@
         line-height: 32px;
         font-size: 15px;
       }
+    }
+  }
+  &.closed {
+    .button-container {
+      .show-schedule-action, .publish-action, .checkbox {
+        display: none !important;
+      }
+    }
+    a.edit {
+      display: none;
     }
   }
 }
