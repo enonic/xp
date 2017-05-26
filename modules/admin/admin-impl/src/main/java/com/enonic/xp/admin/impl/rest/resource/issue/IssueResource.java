@@ -18,7 +18,6 @@ import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.admin.impl.json.issue.IssueJson;
 import com.enonic.xp.admin.impl.json.issue.IssueListJson;
-import com.enonic.xp.admin.impl.json.issue.IssueStatsJson;
 import com.enonic.xp.admin.impl.json.issue.IssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueJson;
@@ -100,20 +99,6 @@ public final class IssueResource
         }
 
         return new IssueJson( issue );
-    }
-
-    @GET
-    @Path("stats")
-    public IssueStatsJson getStats()
-    {
-        final long assignedToMe =
-            this.issueService.findIssues( createIssuesByTypeQuery( "ASSIGNED_TO_ME" ).count( true ).build() ).getTotalHits();
-        final long createdByMe =
-            this.issueService.findIssues( createIssuesByTypeQuery( "CREATED_BY_ME" ).count( true ).build() ).getTotalHits();
-        final long open = this.issueService.findIssues( createIssuesByTypeQuery( "OPEN" ).count( true ).build() ).getTotalHits();
-        final long closed = this.issueService.findIssues( createIssuesByTypeQuery( "CLOSED" ).count( true ).build() ).getTotalHits();
-
-        return IssueStatsJson.create().assignedToMe( assignedToMe ).createdByMe( createdByMe ).open( open ).closed( closed ).build();
     }
 
     @GET
