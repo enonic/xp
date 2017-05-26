@@ -88,13 +88,6 @@ export abstract class IssueDialog extends DependantItemsDialog {
         super.show();
     }
 
-    close() {
-        this.reset();
-
-        super.close();
-        this.remove();
-    }
-
     private initForm() {
         this.form = new IssueDialogForm();
 
