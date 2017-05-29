@@ -27,13 +27,19 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
 
     public MailMessage generateMessage()
     {
+        final String sender = getSender();
+        final String recipients = generateRecipients();
+        final String copyRecipients = getCopyRecepients();
+        final String messageSubject = generateMessageSubject();
+        final String messageBody = generateMessageBody();
+
         return msg ->
         {
-            msg.setFrom( new InternetAddress( getSender(), "Issue Manager" ) );
-            msg.addRecipients( Message.RecipientType.TO, generateRecipients() );
-            msg.addRecipients( Message.RecipientType.CC, getCopyRecepients() );
-            msg.setSubject( generateMessageSubject() );
-            msg.setContent( generateMessageBody(), "text/html" );
+            msg.setFrom( new InternetAddress( sender, "Issue Manager" ) );
+            msg.addRecipients( Message.RecipientType.TO, recipients );
+            msg.addRecipients( Message.RecipientType.CC, copyRecipients );
+            msg.setSubject( messageSubject );
+            msg.setContent( messageBody, "text/html" );
         };
     }
 
@@ -115,13 +121,14 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
         final CompareStatus status = params.getCompareResults().getCompareContentResultsMap().get( item.getId() ).getCompareStatus();
         final boolean isOnline = status.equals( CompareStatus.EQUAL );
 
-        final Map params = Maps.newHashMap();
-        params.put( "displayName", item.getDisplayName() );
-        params.put( "path", item.getPath() );
-        params.put( "status", status.getFormattedStatus() );
-        params.put( "bgcolor", even ? "#f5f5f5" : "initial" );
-        params.put( "statusColor", isOnline ? "#609e24" : "initial" );
+        final Map itemParams = Maps.newHashMap();
+        itemParams.put( "displayName", item.getDisplayName() );
+        itemParams.put( "path", item.getPath() );
+        itemParams.put( "icon", params.getIcons().getOrDefault( item.getId(), "" ) );
+        itemParams.put( "status", status.getFormattedStatus() );
+        itemParams.put( "bgcolor", even ? "#f5f5f5" : "initial" );
+        itemParams.put( "statusColor", isOnline ? "#609e24" : "initial" );
 
-        return new StrSubstitutor( params ).replace( template );
+        return new StrSubstitutor( itemParams ).replace( template );
     }
 }

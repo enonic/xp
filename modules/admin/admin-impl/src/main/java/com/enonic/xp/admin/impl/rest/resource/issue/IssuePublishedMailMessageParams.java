@@ -18,11 +18,6 @@ public class IssuePublishedMailMessageParams
         return publisher;
     }
 
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
     public static Builder create( final User publisher, final IssueMailMessageParams source )
     {
         return new Builder( publisher, source );
@@ -33,20 +28,10 @@ public class IssuePublishedMailMessageParams
     {
         private User publisher;
 
-        private Builder()
-        {
-        }
-
         private Builder( final User publisher, final IssueMailMessageParams source )
         {
             super( source );
             this.publisher = publisher;
-        }
-
-        public Builder modifier( final User modifier )
-        {
-            this.publisher = modifier;
-            return this;
         }
 
         public IssuePublishedMailMessageParams build()
