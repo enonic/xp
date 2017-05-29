@@ -3,7 +3,6 @@ import {CreateIssueRequest} from '../resource/CreateIssueRequest';
 import {PublishRequest} from '../PublishRequest';
 import LabelEl = api.dom.LabelEl;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import ObjectHelper = api.ObjectHelper;
 
 export class CreateIssueDialog extends IssueDialog {
 

@@ -16,6 +16,8 @@ export abstract class IssueDialog extends DependantItemsDialog {
 
     protected publishProcessor: PublishProcessor;
 
+    private resetOnClose: boolean = false;
+
     protected constructor(title: string) {
         super(title);
 
@@ -88,6 +90,15 @@ export abstract class IssueDialog extends DependantItemsDialog {
         super.show();
     }
 
+
+    close() {
+        if (this.resetOnClose) {
+            this.resetOnClose = false;
+            this.reset();
+        }
+        super.close();
+    }
+
     private initForm() {
         this.form = new IssueDialogForm();
 
@@ -130,6 +141,13 @@ export abstract class IssueDialog extends DependantItemsDialog {
         this.publishProcessor.reset();
 
         this.form.giveFocus();
+    }
+
+
+    public forceResetOnClose(value: boolean): IssueDialog {
+        this.resetOnClose = value;
+
+        return this;
     }
 
     protected createPublishRequestItems(): PublishRequestItem[] {

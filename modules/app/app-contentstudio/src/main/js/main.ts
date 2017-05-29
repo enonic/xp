@@ -241,6 +241,7 @@ function startApplication() {
     CreateIssuePromptEvent.on((event) => {
         createIssueDialog
             .setItems(event.getModels())
+            .forceResetOnClose(true)
             .open();
     });
 
