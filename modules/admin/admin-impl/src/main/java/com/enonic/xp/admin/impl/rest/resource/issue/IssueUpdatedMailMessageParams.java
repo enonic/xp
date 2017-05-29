@@ -18,11 +18,6 @@ public class IssueUpdatedMailMessageParams
         return modifier;
     }
 
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
     public static Builder create( final User modifier, final IssueMailMessageParams source )
     {
         return new Builder( modifier, source );
@@ -33,20 +28,10 @@ public class IssueUpdatedMailMessageParams
     {
         private User modifier;
 
-        private Builder()
-        {
-        }
-
         private Builder( final User modifier, final IssueMailMessageParams source )
         {
             super( source );
             this.modifier = modifier;
-        }
-
-        public Builder modifier( final User modifier )
-        {
-            this.modifier = modifier;
-            return this;
         }
 
         public IssueUpdatedMailMessageParams build()

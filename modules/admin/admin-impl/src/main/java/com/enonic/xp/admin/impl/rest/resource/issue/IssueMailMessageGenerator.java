@@ -27,13 +27,19 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
 
     public MailMessage generateMessage()
     {
+        final String sender = getSender();
+        final String recipients = generateRecipients();
+        final String copyRecipients = getCopyRecepients();
+        final String messageSubject = generateMessageSubject();
+        final String messageBody = generateMessageBody();
+
         return msg ->
         {
-            msg.setFrom( new InternetAddress( getSender(), "Issue Manager" ) );
-            msg.addRecipients( Message.RecipientType.TO, generateRecipients() );
-            msg.addRecipients( Message.RecipientType.CC, getCopyRecepients() );
-            msg.setSubject( generateMessageSubject() );
-            msg.setContent( generateMessageBody(), "text/html" );
+            msg.setFrom( new InternetAddress( sender, "Issue Manager" ) );
+            msg.addRecipients( Message.RecipientType.TO, recipients );
+            msg.addRecipients( Message.RecipientType.CC, copyRecipients );
+            msg.setSubject( messageSubject );
+            msg.setContent( messageBody, "text/html" );
         };
     }
 
