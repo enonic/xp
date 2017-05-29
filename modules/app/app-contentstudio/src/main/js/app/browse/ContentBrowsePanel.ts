@@ -20,7 +20,7 @@ import {ContentPreviewPathChangedEvent} from '../view/ContentPreviewPathChangedE
 import {ContentPublishMenuButton} from './ContentPublishMenuButton';
 import {TreeNodeParentOfContent} from './TreeNodeParentOfContent';
 import {TreeNodesOfContentPath} from './TreeNodesOfContentPath';
-import {ShowIssuesDialogAction} from './action/ShowIssuesDialogAction';
+import {ShowIssuesDialogButton} from '../issue/view/ShowIssuesDialogButton';
 
 import TreeNode = api.ui.treegrid.TreeNode;
 import BrowseItem = api.app.browse.BrowseItem;
@@ -37,8 +37,6 @@ import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSumma
 import TreeGridItemClickedEvent = api.ui.treegrid.TreeGridItemClickedEvent;
 import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
 import ActionButton = api.ui.button.ActionButton;
-import IssueServerEventsHandler = api.issue.event.IssueServerEventsHandler;
-import {ShowIssuesDialogButton} from "../issue/view/ShowIssuesDialogButton";
 
 export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
 

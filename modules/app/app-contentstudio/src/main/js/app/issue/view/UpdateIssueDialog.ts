@@ -1,8 +1,8 @@
-import {IssueDialog} from "./IssueDialog";
-import {Issue} from "../Issue";
+import {IssueDialog} from './IssueDialog';
+import {Issue} from '../Issue';
+import {UpdateIssueRequest} from '../resource/UpdateIssueRequest';
+import {PublishRequest} from '../PublishRequest';
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import {UpdateIssueRequest} from "../resource/UpdateIssueRequest";
-import {PublishRequest} from "../PublishRequest";
 
 export class UpdateIssueDialog extends IssueDialog {
 
@@ -60,7 +60,6 @@ export class UpdateIssueDialog extends IssueDialog {
                 );
 
             updateIssueRequest.sendAndParse().then((issue) => {
-                this.notifySucceed(issue);
                 api.notify.showSuccess('Issue has been updated');
                 this.close();
             }).catch((reason) => {
@@ -75,6 +74,11 @@ export class UpdateIssueDialog extends IssueDialog {
         const updateAction = new UpdateIssueAction();
         updateAction.onExecuted(this.doUpdateIssue.bind(this));
         this.actionButton = this.addAction(updateAction, true);
+    }
+
+    close() {
+        this.reset();
+        super.close();
     }
 }
 

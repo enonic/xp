@@ -6,6 +6,8 @@ import {PublishDialogItemList} from './PublishDialogItemList';
 import {CreateIssueDialog} from '../issue/view/CreateIssueDialog';
 import {SchedulableDialog} from '../dialog/SchedulableDialog';
 import {PublishProcessor} from './PublishProcessor';
+import {IssueServerEventsHandler} from '../issue/event/IssueServerEventsHandler';
+import {Issue} from '../issue/Issue';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import PublishContentRequest = api.content.resource.PublishContentRequest;
@@ -23,6 +25,7 @@ import ModalDialogButtonRow = api.ui.dialog.ModalDialogButtonRow;
 import MenuButton = api.ui.button.MenuButton;
 import Action = api.ui.Action;
 import ActionButton = api.ui.button.ActionButton;
+import User = api.security.User;
 
 /**
  * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
@@ -39,6 +42,8 @@ export class ContentPublishDialog extends SchedulableDialog {
     private createIssueButton: ActionButton;
 
     private publishProcessor: PublishProcessor;
+
+    private currentUser: User;
 
     constructor() {
         super(<ProgressBarConfig> {
@@ -91,6 +96,33 @@ export class ContentPublishDialog extends SchedulableDialog {
 
         this.initActions();
         this.addCancelButtonToBottom();
+        this.loadCurrentUser();
+        this.handleIssueGlobalEvents();
+    }
+
+    private loadCurrentUser() {
+        return new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult) => {
+            this.currentUser = loginResult.getUser();
+        });
+    }
+
+    private handleIssueGlobalEvents() {
+
+        IssueServerEventsHandler.getInstance().onIssueCreated((issues: Issue[]) => {
+            if (this.isVisible()) {
+                if (issues.some((issue) => this.isIssueCreatedByCurrentUser(issue))) {
+                    this.close();
+                }
+            }
+        });
+    }
+
+    isIssueCreatedByCurrentUser(issue: Issue): boolean {
+        if (!issue.getCreator()) {
+            return false;
+        }
+
+        return issue.getCreator() === this.currentUser.getKey().toString();
     }
 
     protected initActions() {
@@ -145,6 +177,7 @@ export class ContentPublishDialog extends SchedulableDialog {
     close() {
         super.close();
         this.getItemList().clearExcludeChildrenIds();
+        this.createIssueDialog.reset();
     }
 
     private updateSubTitleShowScheduleAndButtonCount() {
@@ -226,12 +259,6 @@ export class ContentPublishDialog extends SchedulableDialog {
             this.createIssueDialog.onClosed(() => {
                 this.removeClass('masked');
                 this.getEl().focus();
-            });
-
-            this.createIssueDialog.onSucceed(() => {
-                if (this.isVisible()) {
-                    this.close();
-                }
             });
 
             this.addClickIgnoredElement(this.createIssueDialog);

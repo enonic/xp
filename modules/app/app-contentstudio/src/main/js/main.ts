@@ -17,6 +17,7 @@ import {ContentWizardPanel} from './app/wizard/ContentWizardPanel';
 import {ContentEventsListener} from './app/ContentEventsListener';
 import {ContentEventsProcessor} from './app/ContentEventsProcessor';
 import {IssueListDialog} from './app/issue/view/IssueListDialog';
+import {IssueServerEventsHandler} from './app/issue/event/IssueServerEventsHandler';
 import UriHelper = api.util.UriHelper;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import ContentId = api.content.ContentId;
@@ -248,7 +249,7 @@ function startApplication() {
     application.setLoaded(true);
 
     api.content.event.ContentServerEventsHandler.getInstance().start();
-    api.issue.event.IssueServerEventsHandler.getInstance().start();
+    IssueServerEventsHandler.getInstance().start();
 }
 
 function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDetector: LostConnectionDetector) {
@@ -340,7 +341,7 @@ function startContentApplication(application: api.app.Application) {
         }
     });
 
-    let issuesDialog = new IssueListDialog();
+    IssueListDialog.get();
     let sortDialog = new SortContentDialog();
     let moveDialog = new MoveContentDialog();
 }
