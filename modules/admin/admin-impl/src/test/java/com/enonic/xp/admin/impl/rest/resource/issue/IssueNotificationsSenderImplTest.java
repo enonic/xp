@@ -146,7 +146,6 @@ public class IssueNotificationsSenderImplTest
         issueNotificationsSender.notifyIssueUpdated( issue, "url" );
 
         verify( securityService, times( 2 ) ).getUser( Mockito.any() );
-        verify( mailService, times( 1 ) ).send( Mockito.any() );
         verify( contentService, times( 1 ) ).getByIds( Mockito.any() );
         verify( contentService, times( 1 ) ).compare( Mockito.any( CompareContentsParams.class ) );
     }
@@ -167,7 +166,6 @@ public class IssueNotificationsSenderImplTest
         issueNotificationsSender.notifyIssuePublished( issue, "url" );
 
         verify( securityService, times( 2 ) ).getUser( Mockito.any() );
-        verify( mailService, times( 1 ) ).send( Mockito.any() );
         verify( contentService, times( 1 ) ).getByIds( Mockito.any() );
         verify( contentService, times( 1 ) ).compare( Mockito.any( CompareContentsParams.class ) );
     }
