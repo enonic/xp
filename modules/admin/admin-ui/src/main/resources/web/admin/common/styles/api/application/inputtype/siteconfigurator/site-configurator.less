@@ -145,10 +145,15 @@
     }
   }
 
+  &.scrollable {
+    .dialog-content {
+      overflow-y: auto;
+    }
+  }
+
   .dialog-content {
 
     max-height: 500px;
-    overflow-y: auto;
 
     @media screen and (max-height: 720px) {
       max-height: 400px;
