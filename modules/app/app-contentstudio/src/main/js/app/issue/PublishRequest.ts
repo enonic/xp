@@ -38,8 +38,8 @@
             };
         }
 
-        public static create(): PublishRequestBuilder {
-            return new PublishRequestBuilder();
+        public static create(source?: PublishRequest): PublishRequestBuilder {
+            return new PublishRequestBuilder(source);
         }
 
     }
@@ -49,6 +49,13 @@
         excludeIds: ContentId[] = [];
 
         issueItems: PublishRequestItem[] = [];
+
+        constructor(source?: PublishRequest) {
+            if(source) {
+                this.excludeIds = !!source.getExcludeIds() ? source.getExcludeIds().slice() : [];
+                this.issueItems = !!source.getItems() ? source.getItems().slice() : [];
+            }
+        }
 
         fromJson(json: PublishRequestJson): PublishRequestBuilder {
             this.excludeIds = json.excludeIds ? json.excludeIds.map(excludeId => new ContentId(excludeId)) : [];
@@ -75,6 +82,11 @@
 
         public addPublishRequestItems(items: PublishRequestItem[] = []): PublishRequestBuilder {
             this.issueItems = this.issueItems.concat(items);
+            return this;
+        }
+
+        public setPublishRequestItems(items: PublishRequestItem[] = []): PublishRequestBuilder {
+            this.issueItems = items.slice();
             return this;
         }
 

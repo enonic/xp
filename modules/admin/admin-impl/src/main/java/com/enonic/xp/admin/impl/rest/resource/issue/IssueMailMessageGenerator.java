@@ -1,10 +1,12 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.mail.Message;
 import javax.mail.internet.InternetAddress;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrSubstitutor;
 
 import com.google.common.base.Charsets;
@@ -53,8 +55,10 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
 
     protected String getApproverEmails()
     {
-        return params.getApprovers().stream().map( approver -> approver.getEmail() ).reduce(
-            ( email1, email2 ) -> email1 + "," + email2 ).get();
+        return params.getApprovers().stream().
+            filter( approver -> StringUtils.isNotBlank( approver.getEmail() ) ).
+            map( approver -> approver.getEmail() ).
+            collect( Collectors.joining( ", "));
     }
 
     protected String getCreatorEmail()

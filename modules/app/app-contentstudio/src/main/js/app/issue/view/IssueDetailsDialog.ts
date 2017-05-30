@@ -30,6 +30,9 @@ import PEl = api.dom.PEl;
 import SpanEl = api.dom.SpanEl;
 import DivEl = api.dom.DivEl;
 import RequestError = api.rest.RequestError;
+import {PublishRequest} from "../PublishRequest";
+import ObjectHelper = api.ObjectHelper;
+import {PublishRequestItem} from "../PublishRequestItem";
 
 export class IssueDetailsDialog extends SchedulableDialog {
 
@@ -158,8 +161,15 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
             const newStatus = IssueStatusFormatter.fromString(event.getNewValue());
 
+            const publishRequest = PublishRequest
+                .create(this.issue.getPublishRequest())
+                .setPublishRequestItems(this.getExistPublishItems())
+                .build();
+
             new UpdateIssueRequest(this.issue.getId())
-                .setStatus(newStatus).sendAndParse().then(() => {
+                .setStatus(newStatus)
+                .setPublishRequest(publishRequest)
+                .sendAndParse().then(() => {
                 api.notify.showFeedback(`The issue is ` + event.getNewValue().toLowerCase());
 
                 this.toggleControlsAccordingToStatus(newStatus);
@@ -171,6 +181,10 @@ export class IssueDetailsDialog extends SchedulableDialog {
         this.toggleControlsAccordingToStatus(this.issue.getIssueStatus());
     }
 
+    private getExistPublishItems(): PublishRequestItem[] {
+        return this.issue.getPublishRequest().getItems().filter(publishRequestItem =>
+            ObjectHelper.contains(this.getItemList().getItemsIds(), publishRequestItem.getId()));
+    }
 
     private makeStatusInfo(): DetailsDialogSubTitle {
         return DetailsDialogSubTitle.create().setCreator(this.issue.getCreator()).setModifiedTime(
