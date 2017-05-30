@@ -60,8 +60,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
         this.addClass('issue-details-dialog');
 
-        this.setAutoUpdateTitle(false);
-
         this.initRouting();
 
         this.form = new IssueDialogForm();
@@ -212,7 +210,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
     private createBackButton() {
 
         const backButton: api.dom.AEl = new api.dom.AEl('back-button').setTitle('Back');
-        this.appendChildToHeader(backButton);
+        this.prependChildToHeader(backButton);
 
         backButton.onClicked(() => {
             this.close();

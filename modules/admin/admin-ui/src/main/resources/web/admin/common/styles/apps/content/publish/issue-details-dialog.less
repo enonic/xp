@@ -105,6 +105,24 @@
         font-weight: bold;
       }
     }
+
+    .back-button {
+      float: left;
+      text-decoration: none;
+      background-color: @admin-white;
+      cursor: pointer;
+      margin-right: 15px;
+      margin-top: 5px;
+
+      &:before {
+        color: @admin-blue;
+      }
+
+      .icon-medium();
+      .icon-arrow-right3();
+      .transform(rotate(180deg));
+    }
+
   }
 
   .icon-tree {

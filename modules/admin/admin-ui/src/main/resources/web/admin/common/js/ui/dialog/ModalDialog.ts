@@ -194,6 +194,10 @@ module api.ui.dialog {
             this.header.appendChild(child);
         }
 
+        prependChildToHeader(child: api.dom.Element) {
+            this.header.prependChild(child);
+        }
+
         removeChildFromContentPanel(child: api.dom.Element) {
             this.contentPanel.removeChild(child);
         }

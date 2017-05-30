@@ -23,7 +23,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     protected actionButton: DialogButton;
 
-    private autoUpdateTitle: boolean = true;
+    protected autoUpdateTitle: boolean = false;
 
     private ignoreItemsChanged: boolean;
 
