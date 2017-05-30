@@ -59,17 +59,16 @@
     }
   }
 
-  &:not(.cancel-enabled) .button-container {
+  &.create-issue-dialog&:not(.cancel-enabled) .button-container {
     width: 100%;
 
     .create-issue-action {
       float: right;
     }
 
-    .cancel-button-bottom {
+    .@{_COMMON_PREFIX}button.cancel-button-bottom {
       margin-left: 0;
     }
-
   }
 
   .button-container {

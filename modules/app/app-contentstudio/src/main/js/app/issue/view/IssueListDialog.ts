@@ -253,31 +253,17 @@ export class IssueListDialog extends ModalDialog {
         }
     }
 
-    private createNewIssueButton2(): Element {
-        const newIssueButton: SpanEl = new SpanEl().addClass('new-issue-button');
-        newIssueButton.getEl().setTitle('Create an issue');
-
-        newIssueButton.onClicked(() => {
-            this.addClass('masked');
-
-            CreateIssueDialog.get().reset();
-            CreateIssueDialog.get().unlockPublishItems();
-            CreateIssueDialog.get().open();
-        });
-
-        return newIssueButton;
-    }
-
-
     private createNewIssueButton(): Element {
         let createIssueAction = new Action('Create Issue...');
 
         createIssueAction.onExecuted(() => {
             this.addClass('masked');
+            let createIssueDialog = CreateIssueDialog.get();
 
-            CreateIssueDialog.get().reset();
-            CreateIssueDialog.get().unlockPublishItems();
-            CreateIssueDialog.get().open();
+            createIssueDialog.enableCancelButton();
+            createIssueDialog.reset();
+            createIssueDialog.unlockPublishItems();
+            createIssueDialog.open();
         });
         
         return this.getButtonRow().addAction(createIssueAction);

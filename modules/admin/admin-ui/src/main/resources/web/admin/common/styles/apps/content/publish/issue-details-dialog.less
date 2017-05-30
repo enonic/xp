@@ -105,20 +105,6 @@
         font-weight: bold;
       }
     }
-
-    .edit {
-      .icon-pencil2;
-      text-decoration: none;
-      position: absolute;
-      right: 15px;
-      top: 8px;
-      font-size: 18px;
-      color: @admin-font-gray2;
-
-      &:hover {
-        color: @admin-font-gray3;
-      }
-    }
   }
 
   .icon-tree {
@@ -218,6 +204,15 @@
     .show-schedule-action {
       float: right;
     }
+
+    .edit-issue {
+      .button-background();
+      margin-left: 0;
+    }
+
+    + .no-action-message {
+      display: none;
+    }
   }
 
   &.nested {
@@ -228,7 +223,7 @@
 
   &.is-publishing {
     .issue-dialog-form,
-    .dialog-header a.edit,
+    .edit-issue,
     .items-header,
     .dialog-buttons div.checkbox {
       display: none;
@@ -251,13 +246,16 @@
       .show-schedule-action, .publish-action, .checkbox {
         display: none !important;
       }
-      &:after {
-        content: 'No items to publish';
 
+      + .no-action-message {
         display: block;
+        width: 100%;
         text-align: center;
-        line-height: 32px;
+        position: absolute;
+        margin-top: 10px;
+        left: 0;
         font-size: 15px;
+        pointer-events: none;
       }
     }
   }
@@ -267,7 +265,7 @@
         display: none !important;
       }
     }
-    a.edit {
+    .edit-issue {
       display: none;
     }
   }

@@ -30,6 +30,7 @@ import PEl = api.dom.PEl;
 import SpanEl = api.dom.SpanEl;
 import DivEl = api.dom.DivEl;
 import RequestError = api.rest.RequestError;
+import Action = api.ui.Action;
 
 export class IssueDetailsDialog extends SchedulableDialog {
 
@@ -68,6 +69,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
         this.createEditButton();
         this.createBackButton();
+        this.createNoActionMessage();
 
         this.initActions();
         this.handleUpdateIssueDialogEvents();
@@ -80,6 +82,10 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
         this.getItemList().onItemsAdded(() => {
             this.initItemList();
+        });
+        
+        this.getDependantList().onItemsAdded(() => {
+            setTimeout(() => this.centerMyself(), 100);
         });
 
         this.setReadOnly(true);
@@ -139,9 +145,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
         this.initStatusInfo();
 
-        this.reloadPublishDependencies().then(() => {
-            this.centerMyself();
-        });
+        this.reloadPublishDependencies();
 
         return this;
     }
@@ -205,17 +209,32 @@ export class IssueDetailsDialog extends SchedulableDialog {
         }
     }
 
-    private createEditButton() {
-        const editButton: api.dom.AEl = new api.dom.AEl('edit').setTitle('Edit Issue');
-        this.appendChildToHeader(editButton);
+    private createBackButton() {
 
-        editButton.onClicked(() => {
+        const backButton: api.dom.AEl = new api.dom.AEl('back-button').setTitle('Back');
+        this.appendChildToHeader(backButton);
+
+        backButton.onClicked(() => {
+            this.close();
+        });
+    }
+
+    private createEditButton() {
+        const editIssueAction = new Action('Edit');
+        const editButton = this.getButtonRow().addAction(editIssueAction);
+        editButton.addClass('edit-issue force-enabled');
+
+        editIssueAction.onExecuted(() => {
             this.showUpdateIssueDialog();
         });
     }
 
-    private createBackButton() {
-        this.addCancelButtonToBottom('Back');
+    private createNoActionMessage() {
+        const divEl = new api.dom.DivEl('no-action-message');
+
+        divEl.setHtml('No items to publish');
+
+        this.getButtonRow().appendChild(divEl);
     }
 
     private doPublish(scheduled: boolean) {
@@ -345,7 +364,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
                     this.setDependantItems(dependants);
 
                     this.loadMask.hide();
-                    this.centerMyself();
 
                     deferred.resolve(null);
                 });
