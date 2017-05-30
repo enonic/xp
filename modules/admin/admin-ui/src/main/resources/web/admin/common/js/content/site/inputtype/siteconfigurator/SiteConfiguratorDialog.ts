@@ -14,6 +14,7 @@ module api.content.site.inputtype.siteconfigurator {
     import CreateHtmlAreaDialogEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
     import Application = api.application.Application;
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
+    import HtmlAreaResizeEvent = api.form.inputtype.text.HtmlAreaResizeEvent;
 
     export class SiteConfiguratorDialog extends api.ui.dialog.ModalDialog {
 
@@ -58,7 +59,13 @@ module api.content.site.inputtype.siteconfigurator {
             };
 
             ResponsiveManager.onAvailableSizeChanged(this, availableSizeChangedListener);
-            this.onRemoved(() => ResponsiveManager.unAvailableSizeChanged(this));
+            HtmlAreaResizeEvent.on(availableSizeChangedListener);
+            this.onRemoved(() => {
+                ResponsiveManager.unAvailableSizeChanged(this);
+                HtmlAreaResizeEvent.un(availableSizeChangedListener);
+            });
+
+
         }
 
         doRender(): Q.Promise<boolean> {

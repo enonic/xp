@@ -265,17 +265,17 @@ module api.util.htmlarea.editor {
                     editor.addCommand('openCharMapDialog', this.notifyCharMapDialog, this);
 
                     editor.on('NodeChange', (e) => {
-                        if (!!this.nodeChangeHandler) {
+                        if (this.nodeChangeHandler) {
                             this.nodeChangeHandler(e);
                         }
                     });
                     editor.on('keyup', (e) => {
-                        if (!!this.keyupHandler) {
+                        if (this.keyupHandler) {
                             this.keyupHandler(e);
                         }
                     });
                     editor.on('focus', (e) => {
-                        if (!!this.focusHandler) {
+                        if (this.focusHandler) {
                             this.focusHandler(e);
                         }
                     });
@@ -284,7 +284,7 @@ module api.util.htmlarea.editor {
                             e.stopImmediatePropagation();
                             this.hasActiveDialog = false;
                         }
-                        if (!!this.blurHandler) {
+                        if (this.blurHandler) {
                             this.blurHandler(e);
                         }
                     });
@@ -300,7 +300,7 @@ module api.util.htmlarea.editor {
                             }
                         }
 
-                        if (!!this.keydownHandler) {
+                        if (this.keydownHandler) {
                             this.keydownHandler(e);
                         }
                     });

@@ -19,6 +19,8 @@ module api.form.inputtype.text {
     import RoleKeys = api.security.RoleKeys;
     import LoginResult = api.security.auth.LoginResult;
     import Promise = Q.Promise;
+    import ResponsiveManager = api.ui.responsive.ResponsiveManager;
+    import AppHelper = api.util.AppHelper;
 
     export class HtmlArea extends support.BaseInputTypeNotManagingAdd<string> {
 
@@ -127,17 +129,22 @@ module api.form.inputtype.text {
 
                 this.notifyFocused(e);
 
-                api.util.AppHelper.dispatchCustomEvent('focusin', this);
+                AppHelper.dispatchCustomEvent('focusin', this);
                 new api.ui.selector.SelectorOnBlurEvent(this).fire();
             };
 
-            let notifyValueChanged = this.notifyValueChanged.bind(this, id, textAreaWrapper);
+            const debouncedResize = AppHelper.debounce(() => new HtmlAreaResizeEvent(this).fire(), 50);
+
+            const notifyValueChanged = () => {
+                this.notifyValueChanged(id, textAreaWrapper);
+                debouncedResize();
+            };
 
             let isMouseOverRemoveOccurenceButton = false;
 
             let blurHandler = (e) => {
                 //checking if remove occurence button clicked or not
-                api.util.AppHelper.dispatchCustomEvent('focusout', this);
+                AppHelper.dispatchCustomEvent('focusout', this);
 
                 if (!isMouseOverRemoveOccurenceButton) {
                     this.setStaticInputHeight();
@@ -225,9 +232,9 @@ module api.form.inputtype.text {
                         isMouseOverRemoveOccurenceButton = false;
                     });
 
-                        this.onShown((event) => {
+                this.onShown(() => {
                             // invoke auto resize on shown in case contents have been updated while inactive
-                            if (!!editor['contentAreaContainer'] || !!editor['bodyElement']) {
+                    if (editor['contentAreaContainer'] || editor['bodyElement']) {
                                 editor.execCommand('mceAutoResize', false, null, {skip_focus: true});
                             }
                     });
@@ -247,7 +254,7 @@ module api.form.inputtype.text {
         }
 
         private setupStickyEditorToolbarForInputOccurence(inputOccurence: Element, editorId: string) {
-            let scrollHandler = api.util.AppHelper.debounce((e) => {
+            let scrollHandler = AppHelper.debounce((e) => {
                 this.updateStickyEditorToolbar(inputOccurence, this.getEditorInfo(editorId));
             }, 20, false);
 
