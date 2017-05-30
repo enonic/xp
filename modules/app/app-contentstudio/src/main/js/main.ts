@@ -18,6 +18,8 @@ import {ContentEventsListener} from './app/ContentEventsListener';
 import {ContentEventsProcessor} from './app/ContentEventsProcessor';
 import {IssueListDialog} from './app/issue/view/IssueListDialog';
 import {IssueServerEventsHandler} from './app/issue/event/IssueServerEventsHandler';
+import {CreateIssueDialog} from './app/issue/view/CreateIssueDialog';
+import {CreateIssuePromptEvent} from './app/browse/CreateIssuePromptEvent';
 import UriHelper = api.util.UriHelper;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import ContentId = api.content.ContentId;
@@ -232,6 +234,15 @@ function startApplication() {
     ContentUnpublishPromptEvent.on((event) => {
         contentUnpublishDialog
             .setContentToUnpublish(event.getModels())
+            .open();
+    });
+
+    const createIssueDialog = CreateIssueDialog.get();
+    CreateIssuePromptEvent.on((event) => {
+        createIssueDialog.enableCancelButton();
+        createIssueDialog
+            .setItems(event.getModels())
+            .forceResetOnClose(true)
             .open();
     });
 

@@ -3,19 +3,22 @@ import {CreateIssueRequest} from '../resource/CreateIssueRequest';
 import {PublishRequest} from '../PublishRequest';
 import LabelEl = api.dom.LabelEl;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+import DialogButton = api.ui.dialog.DialogButton;
 
 export class CreateIssueDialog extends IssueDialog {
 
     private static INSTANCE: CreateIssueDialog;
 
-    private itemsLabel:LabelEl;
+    private itemsLabel: LabelEl;
+
+    private cancelButton: DialogButton;
 
     protected constructor() {
         super('Create Issue');
 
         this.getEl().addClass('create-issue-dialog');
 
-        this.addCancelButtonToBottom('Back');
+        this.cancelButton = this.addCancelButtonToBottom('Back');
 
         this.publishProcessor.onLoadingStarted(() => {
             (<CreateIssueAction>this.actionButton.getAction()).updateLabel(0);
@@ -40,9 +43,11 @@ export class CreateIssueDialog extends IssueDialog {
         return CreateIssueDialog.INSTANCE;
     }
 
-    public setItems(items: ContentSummaryAndCompareStatus[]) {
+    public setItems(items: ContentSummaryAndCompareStatus[]): CreateIssueDialog {
         super.setItems(items);
         (<CreateIssueAction>this.actionButton.getAction()).updateLabel(this.countTotal());
+
+        return this;
     }
 
     private doCreateIssue() {
@@ -80,7 +85,7 @@ export class CreateIssueDialog extends IssueDialog {
         super.lockPublishItems();
     }
 
-    public  unlockPublishItems() {
+    public unlockPublishItems() {
         this.itemsLabel.hide();
         super.unlockPublishItems();
     }
@@ -89,6 +94,23 @@ export class CreateIssueDialog extends IssueDialog {
         const createAction = new CreateIssueAction(this.countTotal());
         createAction.onExecuted(this.doCreateIssue.bind(this));
         this.actionButton = this.addAction(createAction, true);
+    }
+
+    public enableCancelButton() {
+        this.addClass('cancel-enabled');
+        this.cancelButton.setLabel('Cancel');
+    }
+
+    private disableCancelButton() {
+        if (this.hasClass('cancel-enabled')) {
+            this.removeClass('cancel-enabled');
+            this.cancelButton.setLabel('Back');
+        }
+    }
+
+    close() {
+        super.close();
+        this.disableCancelButton();
     }
 }
 

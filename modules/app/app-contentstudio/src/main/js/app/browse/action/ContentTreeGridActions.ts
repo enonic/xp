@@ -29,6 +29,7 @@ import ContentId = api.content.ContentId;
 import ContentAccessControlList = api.security.acl.ContentAccessControlList;
 import Permission = api.security.acl.Permission;
 import GetContentByPathRequest = api.content.resource.GetContentByPathRequest;
+import {CreateIssueAction} from './CreateIssueAction';
 
 export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAndCompareStatus> {
 
@@ -42,6 +43,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
     public PUBLISH_CONTENT: Action;
     public PUBLISH_TREE_CONTENT: Action;
     public UNPUBLISH_CONTENT: Action;
+    public CREATE_ISSUE: Action;
     public TOGGLE_SEARCH_PANEL: Action;
     public UNDO_PENDING_DELETE: Action;
 
@@ -63,6 +65,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.PUBLISH_CONTENT = new PublishContentAction(grid);
         this.PUBLISH_TREE_CONTENT = new PublishTreeContentAction(grid);
         this.UNPUBLISH_CONTENT = new UnpublishContentAction(grid);
+        this.CREATE_ISSUE = new CreateIssueAction(grid);
         this.UNDO_PENDING_DELETE = new UndoPendingDeleteContentAction(grid);
 
         this.actions.push(
@@ -136,6 +139,8 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.UNPUBLISH_CONTENT.setVisible(false);
         this.UNDO_PENDING_DELETE.setVisible(false);
 
+        this.CREATE_ISSUE.setEnabled(false);
+
         this.showDefaultActions();
     }
 
@@ -179,6 +184,8 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             unpublishEnabled = someArePublished;
         }
 
+        const createIssueEnabled = !allAreOnline || this.isNonLeafInMany(contentSummaries);
+
         this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(contentSummaries.length < 2);
         this.EDIT_CONTENT.setEnabled(this.anyEditable(contentSummaries));
         this.DELETE_CONTENT.setEnabled(this.anyDeletable(contentSummaries));
@@ -189,6 +196,8 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.PUBLISH_CONTENT.setEnabled(publishEnabled);
         this.PUBLISH_TREE_CONTENT.setEnabled(treePublishEnabled);
         this.UNPUBLISH_CONTENT.setEnabled(unpublishEnabled);
+
+        this.CREATE_ISSUE.setEnabled(createIssueEnabled);
 
         this.SHOW_NEW_CONTENT_DIALOG_ACTION.setVisible(!allArePendingDelete);
         this.MOVE_CONTENT.setVisible(!allArePendingDelete);
@@ -278,6 +287,8 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
                     this.PUBLISH_CONTENT.setEnabled(false);
                     this.PUBLISH_TREE_CONTENT.setEnabled(false);
                     this.UNPUBLISH_CONTENT.setEnabled(false);
+
+                    this.CREATE_ISSUE.setEnabled(false);
                 }
             });
     }
