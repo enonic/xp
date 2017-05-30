@@ -30,6 +30,11 @@ import PEl = api.dom.PEl;
 import SpanEl = api.dom.SpanEl;
 import DivEl = api.dom.DivEl;
 import RequestError = api.rest.RequestError;
+import MenuButton = api.ui.button.MenuButton;
+import Action = api.ui.Action;
+import DropdownButtonRow = api.ui.dialog.DropdownButtonRow;
+import {IssueDetailsDialogButtonRow} from './IssueDetailsDialogDropdownButtonRow';
+
 
 export class IssueDetailsDialog extends SchedulableDialog {
 
@@ -51,6 +56,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
                 dialogSubName: 'Resolving items...',
                 dependantsName: '',
                 isProcessingClass: 'is-publishing',
+                buttonRow: new IssueDetailsDialogButtonRow(),
                 processHandler: () => {
                     new ContentPublishPromptEvent([]).fire();
                 },
@@ -151,6 +157,10 @@ export class IssueDetailsDialog extends SchedulableDialog {
         return this;
     }
 
+    getButtonRow(): IssueDetailsDialogButtonRow {
+        return <IssueDetailsDialogButtonRow>super.getButtonRow();
+    }
+
     private initStatusInfo() {
         const title = this.makeStatusInfo();
 
@@ -193,10 +203,13 @@ export class IssueDetailsDialog extends SchedulableDialog {
     }
 
     protected initActions() {
-        const publishAction = new ContentPublishDialogAction(this.doPublish.bind(this, false));
-        this.actionButton = this.addAction(publishAction, true);
-
         super.initActions();
+
+        const publishAction = new ContentPublishDialogAction(this.doPublish.bind(this, false));
+        const actionMenu: MenuButton = this.getButtonRow().makeActionMenu(publishAction, [this.showScheduleAction]);
+
+
+        this.actionButton = actionMenu.getActionButton();
 
         if (!this.closeOnPublishCheckbox) {
             this.closeOnPublishCheckbox =

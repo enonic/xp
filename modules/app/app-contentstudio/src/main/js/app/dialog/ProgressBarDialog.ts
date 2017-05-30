@@ -2,7 +2,7 @@ import '../../api.ts';
 import {DependantItemsDialog} from '../dialog/DependantItemsDialog';
 import {MenuButtonProgressBarManager} from '../browse/MenuButtonProgressBarManager';
 import TaskState = api.task.TaskState;
-import ModalDialogButtonRow = api.ui.dialog.ModalDialogButtonRow;
+import ModalDialogButtonRow = api.ui.dialog.ButtonRow;
 
 export class ProcessingStats {
     // If the content is still being processed after this time, show the progress bar (in ms)

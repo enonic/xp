@@ -14,7 +14,7 @@ export abstract class SchedulableDialog extends ProgressBarDialog {
 
     private scheduleDialog: SchedulePublishDialog;
 
-    protected showScheduleDialogButton: api.ui.dialog.DialogButton;
+    protected showScheduleAction: ShowSchedulePublishDialogAction;
 
     constructor(config: ProgressBarConfig) {
         super(config);
@@ -30,23 +30,20 @@ export abstract class SchedulableDialog extends ProgressBarDialog {
     }
 
     protected initActions() {
-        if (!this.showScheduleDialogButton) {
-            const showScheduleAction = new ShowSchedulePublishDialogAction();
-            showScheduleAction.onExecuted(this.showScheduleDialog.bind(this));
-            this.showScheduleDialogButton = this.addAction(showScheduleAction, false);
-            this.showScheduleDialogButton.setTitle('Schedule Publishing');
-            this.showScheduleDialogButton.addClass('no-animation');
+        if (!this.showScheduleAction) {
+            this.showScheduleAction = new ShowSchedulePublishDialogAction();
+            this.showScheduleAction.onExecuted(this.showScheduleDialog.bind(this));
         }
     }
 
     protected lockControls() {
         super.lockControls();
-        this.showScheduleDialogButton.setEnabled(false);
+        this.showScheduleAction.setEnabled(false);
     }
 
     protected unlockControls() {
         super.unlockControls();
-        this.showScheduleDialogButton.setEnabled(true);
+        this.showScheduleAction.setEnabled(true);
     }
 
     protected toggleAction(enable: boolean) {
@@ -83,9 +80,9 @@ export abstract class SchedulableDialog extends ProgressBarDialog {
 
     protected updateShowScheduleDialogButton() {
         if (this.isScheduleButtonAllowed()) {
-            this.showScheduleDialogButton.show();
+            this.showScheduleAction.setVisible(true);
         } else {
-            this.showScheduleDialogButton.hide();
+            this.showScheduleAction.setVisible(false);
         }
     }
 
@@ -104,7 +101,7 @@ export abstract class SchedulableDialog extends ProgressBarDialog {
 
 export class ShowSchedulePublishDialogAction extends api.ui.Action {
     constructor() {
-        super();
+        super('Schedule...');
         this.setIconClass('show-schedule-action');
     }
 }

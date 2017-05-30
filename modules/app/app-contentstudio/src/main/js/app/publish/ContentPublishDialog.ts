@@ -21,11 +21,12 @@ import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompa
 import Checkbox = api.ui.Checkbox;
 import HasUnpublishedChildrenResult = api.content.resource.result.HasUnpublishedChildrenResult;
 import HasUnpublishedChildrenRequest = api.content.resource.HasUnpublishedChildrenRequest;
-import ModalDialogButtonRow = api.ui.dialog.ModalDialogButtonRow;
+import ModalDialogButtonRow = api.ui.dialog.ButtonRow;
 import MenuButton = api.ui.button.MenuButton;
 import Action = api.ui.Action;
 import ActionButton = api.ui.button.ActionButton;
 import User = api.security.User;
+import DropdownButtonRow = api.ui.dialog.DropdownButtonRow;
 
 /**
  * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
@@ -131,7 +132,7 @@ export class ContentPublishDialog extends SchedulableDialog {
         const publishAction = new ContentPublishDialogAction(this.doPublish.bind(this, false));
         const createIssueAction = new CreateIssueDialogAction(this.createIssue.bind(this));
 
-        const actionMenu: MenuButton = this.getButtonRow().makeActionMenu(publishAction, [createIssueAction]);
+        const actionMenu: MenuButton = this.getButtonRow().makeActionMenu(publishAction, [createIssueAction, this.showScheduleAction]);
         this.createIssueButton = this.getButtonRow().addAction(createIssueAction);
 
         this.actionButton = actionMenu.getActionButton();
@@ -404,29 +405,14 @@ export class ContentPublishDialog extends SchedulableDialog {
     }
 }
 
-export class ContentPublishDialogButtonRow extends ModalDialogButtonRow {
-
-    private actionMenu: MenuButton;
+export class ContentPublishDialogButtonRow extends DropdownButtonRow {
 
     makeActionMenu(mainAction: Action, menuActions: Action[], useDefault: boolean = true): MenuButton {
-        if (!this.actionMenu) {
-            this.actionMenu = new MenuButton(mainAction, menuActions);
+        super.makeActionMenu(mainAction, menuActions, useDefault);
 
-            if (useDefault) {
-                this.setDefaultElement(this.actionMenu);
-            }
-
-            this.actionMenu.addClass('publish-dialog-menu');
-            this.actionMenu.getDropdownHandle().addClass('no-animation');
-            this.addElement(this.actionMenu);
-        }
-
-        return this.actionMenu;
+        return <MenuButton>this.actionMenu.addClass('publish-dialog-menu');
     }
 
-    getActionMenu(): MenuButton {
-        return this.actionMenu;
-    }
 }
 
 export class ContentPublishDialogAction extends api.ui.Action {
