@@ -12,6 +12,8 @@ import {UpdateIssueRequest} from '../resource/UpdateIssueRequest';
 import {IssueStatus, IssueStatusFormatter} from '../IssueStatus';
 import {IssueStatusSelector} from './IssueStatusSelector';
 import {IssueServerEventsHandler} from '../event/IssueServerEventsHandler';
+import {IssueType} from '../IssueType';
+import {IssueStatusInfoGenerator} from './IssueStatusInfoGenerator';
 import AEl = api.dom.AEl;
 import DialogButton = api.ui.dialog.DialogButton;
 import Checkbox = api.ui.Checkbox;
@@ -30,6 +32,7 @@ import PEl = api.dom.PEl;
 import SpanEl = api.dom.SpanEl;
 import DivEl = api.dom.DivEl;
 import RequestError = api.rest.RequestError;
+import User = api.security.User;
 
 export class IssueDetailsDialog extends SchedulableDialog {
 
@@ -42,6 +45,8 @@ export class IssueDetailsDialog extends SchedulableDialog {
     private itemsHeader: api.dom.H6El;
 
     private issueIdEl: api.dom.EmEl;
+
+    private currentUser: User;
 
     private static INSTANCE: IssueDetailsDialog = new IssueDetailsDialog();
 
@@ -56,6 +61,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
                 },
             }
         );
+        this.loadCurrentUser();
 
         this.addClass('issue-details-dialog');
 
@@ -87,6 +93,12 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
     public static get(): IssueDetailsDialog {
         return IssueDetailsDialog.INSTANCE;
+    }
+
+    private loadCurrentUser() {
+        return new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult) => {
+            this.currentUser = loginResult.getUser();
+        });
     }
 
     private initRouting() {
@@ -173,9 +185,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
 
     private makeStatusInfo(): DetailsDialogSubTitle {
-        return DetailsDialogSubTitle.create().setCreator(this.issue.getCreator()).setModifiedTime(
-            this.issue.getModifiedTime()).setIssueStatus(this.issue.getIssueStatus()).build();
-
+        return new DetailsDialogSubTitle(this.issue, this.currentUser);
     }
 
     private initItemList() {
@@ -396,34 +406,28 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
 class DetailsDialogSubTitle extends DivEl {
 
-    private creator: string;
+    private issue: Issue;
 
-    private modifiedTime: Date;
-
-    private status: IssueStatus;
+    private currentUser: User;
 
     private issueStatusChangedListeners: {(event: api.ValueChangedEvent): void}[] = [];
 
-    constructor(builder: DetailsDialogSubTitleBuilder) {
+    constructor(issue: Issue, currentUser: User) {
         super('issue-details-sub-title');
-        this.creator = builder.creator;
-        this.modifiedTime = builder.modifiedTime;
-        this.status = builder.status;
+        this.issue = issue;
+        this.currentUser = currentUser;
     }
 
     doRender(): wemQ.Promise<boolean> {
 
         return super.doRender().then(() => {
-            const issueStatusSelector = new IssueStatusSelector().setValue(this.status);
+            const issueStatusSelector = new IssueStatusSelector().setValue(this.issue.getIssueStatus());
             issueStatusSelector.onValueChanged((event) => {
                 this.notifyIssueStatusChanged(event);
             });
 
             this.appendChild(issueStatusSelector);
-
-            this.appendChild(new SpanEl().setHtml('Opened by '));
-            this.appendChild(new SpanEl('creator').setHtml(this.creator + ' '));
-            this.appendChild(new SpanEl().setHtml(DateHelper.getModifiedString(this.modifiedTime)));
+            this.appendChild(new SpanEl('status-info').setHtml(this.makeStatusInfo(), false));
 
             return wemQ(true);
         });
@@ -445,42 +449,9 @@ class DetailsDialogSubTitle extends DivEl {
         });
     }
 
-    static create(): DetailsDialogSubTitleBuilder {
-        return new DetailsDialogSubTitleBuilder();
-    }
-
-}
-class DetailsDialogSubTitleBuilder {
-
-    creator: string;
-
-    modifiedTime: Date;
-
-    status: IssueStatus;
-
-    setCreator(value: string): DetailsDialogSubTitleBuilder {
-        this.creator = value;
-        return this;
-    }
-
-    setModifiedTime(value: Date): DetailsDialogSubTitleBuilder {
-        this.modifiedTime = value;
-        return this;
-    }
-
-    setIssueStatus(value: IssueStatus): DetailsDialogSubTitleBuilder {
-        this.status = value;
-        return this;
-    }
-
-    build() {
-        return new DetailsDialogSubTitle(this);
-    }
-}
-
-export class ShowIssueDetailsDialogAction extends api.ui.Action {
-    constructor() {
-        super();
-        this.setIconClass('show-schedule-action');
+    private makeStatusInfo(): string {
+        const issueType: IssueType = this.issue.getIssueStatus() === IssueStatus.OPEN ? IssueType.OPEN : IssueType.CLOSED;
+        return IssueStatusInfoGenerator.create().setIssue(this.issue).setIssueType(issueType).setCurrentUser(
+            this.currentUser).generate();
     }
 }
