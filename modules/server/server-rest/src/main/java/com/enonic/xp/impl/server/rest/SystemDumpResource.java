@@ -18,7 +18,8 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.export.ExportNodesParams;
+import com.enonic.xp.dump.DumpParams;
+import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.ImportNodesParams;
 import com.enonic.xp.export.NodeExportResult;
@@ -51,6 +52,9 @@ public final class SystemDumpResource
     private RepositoryService repositoryService;
 
     private NodeRepositoryService nodeRepositoryService;
+
+    private DumpService dumpService;
+
 
     private java.nio.file.Path getDumpDirectory( final String name )
     {
@@ -162,12 +166,21 @@ public final class SystemDumpResource
         final java.nio.file.Path rootDir = getDumpDirectory( dumpName );
         final java.nio.file.Path exportPath = rootDir.resolve( repoName ).resolve( branch );
 
+        this.dumpService.dump( DumpParams.create().
+            dumpName( dumpName ).
+            repositoryId( RepositoryId.from( repoName ) ).
+            build() );
+
+        return NodeExportResult.create().
+            build();
+        /*
         return getContext( branch, repoName ).callWith( () -> exportService.exportNodes( ExportNodesParams.create().
             includeNodeIds( true ).
             rootDirectory( rootDir.toString() ).
             targetDirectory( exportPath.toString() ).
             sourceNodePath( NodePath.ROOT ).
             build() ) );
+        */
     }
 
     private Context getContext( final String branchName, final String repositoryName )
@@ -195,5 +208,11 @@ public final class SystemDumpResource
     public void setNodeRepositoryService( final NodeRepositoryService nodeRepositoryService )
     {
         this.nodeRepositoryService = nodeRepositoryService;
+    }
+
+    @Reference
+    public void setDumpService( final DumpService dumpService )
+    {
+        this.dumpService = dumpService;
     }
 }

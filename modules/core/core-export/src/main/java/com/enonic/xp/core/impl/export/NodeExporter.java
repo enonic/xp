@@ -132,7 +132,7 @@ public class NodeExporter
                 continue;
             }
 
-            final NodeVersion nodeVersion = this.nodeService.getByNodeVersion( version );
+            final NodeVersion nodeVersion = this.nodeService.getByNodeVersion( version.getNodeVersionId() );
 
             final Node exportNode = NodeFromNodeVersionBuilder.create( version, nodeVersion );
 

@@ -39,7 +39,6 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
@@ -487,10 +486,10 @@ public class NodeServiceImpl
     }
 
     @Override
-    public NodeVersion getByNodeVersion( final NodeVersionMetadata nodeVersionMetadata )
+    public NodeVersion getByNodeVersion( final NodeVersionId nodeVersionId )
     {
         verifyContext();
-        return this.nodeStorageService.get( nodeVersionMetadata );
+        return this.nodeStorageService.get( nodeVersionId );
     }
 
     @Override

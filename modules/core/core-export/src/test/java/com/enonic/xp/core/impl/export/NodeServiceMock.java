@@ -42,7 +42,6 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
@@ -308,7 +307,7 @@ class NodeServiceMock
     }
 
     @Override
-    public NodeVersion getByNodeVersion( final NodeVersionMetadata nodeVersionMetadata )
+    public NodeVersion getByNodeVersion( final NodeVersionId nodeVersionId )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }

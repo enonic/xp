@@ -219,9 +219,9 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public NodeVersion get( final NodeVersionMetadata nodeVersionMetadata )
+    public NodeVersion get( final NodeVersionId nodeVersionId )
     {
-        return this.nodeVersionService.get( nodeVersionMetadata.getNodeVersionId() );
+        return this.nodeVersionService.get( nodeVersionId );
     }
 
     @Override

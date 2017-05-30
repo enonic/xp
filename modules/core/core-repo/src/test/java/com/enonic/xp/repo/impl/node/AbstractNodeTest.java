@@ -73,7 +73,7 @@ public abstract class AbstractNodeTest
     public static final User TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( UserStoreKey.system(), "test-user" ) ).login( "test-user" ).build();
 
-    public static final AuthenticationInfo TEST_DEFAULT_USER_AUTHINFO = AuthenticationInfo.create().
+    private static final AuthenticationInfo TEST_DEFAULT_USER_AUTHINFO = AuthenticationInfo.create().
         principals( RoleKeys.AUTHENTICATED ).
         user( TEST_DEFAULT_USER ).
         build();
@@ -102,19 +102,19 @@ public abstract class AbstractNodeTest
 
     protected NodeVersionServiceImpl nodeDao;
 
-    protected VersionServiceImpl versionService;
+    private VersionServiceImpl versionService;
 
-    protected BranchServiceImpl branchService;
+    private BranchServiceImpl branchService;
 
     protected IndexServiceInternalImpl indexServiceInternal;
 
-    protected SnapshotServiceImpl snapshotService;
+    private SnapshotServiceImpl snapshotService;
 
     protected NodeStorageServiceImpl storageService;
 
     protected NodeSearchServiceImpl searchService;
 
-    protected SearchDaoImpl searchDao;
+    private SearchDaoImpl searchDao;
 
     protected IndexDataServiceImpl indexedDataService;
 
@@ -122,7 +122,7 @@ public abstract class AbstractNodeTest
 
     protected RepositoryServiceImpl repositoryService;
 
-    private BlobStore blobStore;
+    protected BlobStore blobStore;
 
     protected NodeServiceImpl nodeService;
 
@@ -221,7 +221,7 @@ public abstract class AbstractNodeTest
 
     }
 
-    void createRepository( final Repository repository )
+    private void createRepository( final Repository repository )
     {
         final AccessControlList rootPermissions = AccessControlList.of( AccessControlEntry.create().
             principal( TEST_DEFAULT_USER.getKey() ).
