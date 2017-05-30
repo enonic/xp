@@ -254,7 +254,7 @@ export class IssueListDialog extends ModalDialog {
     }
 
     private createNewIssueButton(): Element {
-        let createIssueAction = new Action('Create Issue...');
+        let createIssueAction = new Action('New Issue...');
 
         createIssueAction.onExecuted(() => {
             this.addClass('masked');
