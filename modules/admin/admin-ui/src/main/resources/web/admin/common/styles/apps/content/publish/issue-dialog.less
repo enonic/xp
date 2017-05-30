@@ -59,17 +59,25 @@
     }
   }
 
+  &:not(.cancel-enabled) .button-container {
+    width: 100%;
+
+    .create-issue-action {
+      float: right;
+    }
+
+    .cancel-button-bottom {
+      margin-left: 0;
+    }
+
+  }
+
   .button-container {
 
-    width: 100%;
     box-sizing: border-box;
 
     .back-action {
       float: left;
-    }
-
-    .create-issue-action {
-      float: right;
     }
   }
 

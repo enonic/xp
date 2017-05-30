@@ -146,6 +146,7 @@ export abstract class IssueDialog extends DependantItemsDialog {
 
     public forceResetOnClose(value: boolean): IssueDialog {
         this.resetOnClose = value;
+        this.getEl().toggleClass('issue-dialog', value);
 
         return this;
     }

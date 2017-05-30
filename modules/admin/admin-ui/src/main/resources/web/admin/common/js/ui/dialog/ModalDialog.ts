@@ -21,7 +21,7 @@ module api.ui.dialog {
 
         private cancelAction: Action;
 
-        private cancelButton: DivEl;
+        private closeIcon: DivEl;
 
         private static openDialogsCounter: number = 0;
 
@@ -42,9 +42,9 @@ module api.ui.dialog {
             this.buttonRow = config.buttonRow || new ModalDialogButtonRow();
 
             this.cancelAction = this.createDefaultCancelAction();
-            this.cancelButton = new DivEl('cancel-button-top');
-            this.cancelButton.onClicked(() => this.cancelAction.execute());
-            wrapper.appendChild(this.cancelButton);
+            this.closeIcon = new DivEl('cancel-button-top');
+            this.closeIcon.onClicked(() => this.cancelAction.execute());
+            wrapper.appendChild(this.closeIcon);
 
             this.header = this.createHeader(config.title || '');
             wrapper.appendChild(this.header);
