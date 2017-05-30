@@ -58,7 +58,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
         return params.getApprovers().stream().
             filter( approver -> StringUtils.isNotBlank( approver.getEmail() ) ).
             map( approver -> approver.getEmail() ).
-            collect( Collectors.joining( ", "));
+            collect( Collectors.joining( ","));
     }
 
     protected String getCreatorEmail()
