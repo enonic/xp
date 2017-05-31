@@ -13,20 +13,16 @@ public class DumpEntryJson
     @JsonProperty("nodeId")
     private String nodeId;
 
-    @JsonProperty("currentVersion")
-    private MetaJson currentVersion;
-
-    @JsonProperty("otherVersions")
-    private Collection<MetaJson> otherVersions;
+    @JsonProperty("versions")
+    private Collection<MetaJson> versions;
 
     public DumpEntryJson()
     {
     }
 
-    public DumpEntryJson( final Collection<MetaJson> otherVersions, final MetaJson currentVersion, final String nodeId )
+    private DumpEntryJson( final Collection<MetaJson> versions, final String nodeId )
     {
-        this.otherVersions = otherVersions;
-        this.currentVersion = currentVersion;
+        this.versions = versions;
         this.nodeId = nodeId;
     }
 
@@ -34,33 +30,27 @@ public class DumpEntryJson
     {
         return DumpEntry.create().
             nodeId( NodeId.from( json.getNodeId() ) ).
-            currentVersion( MetaJson.fromJson( json.currentVersion ) ).
-            setVersions( json.getOtherVersions().stream().map( MetaJson::fromJson ).collect( Collectors.toList() ) ).
+            setVersions( json.getVersions().stream().map( MetaJson::fromJson ).collect( Collectors.toList() ) ).
             build();
     }
 
     public static DumpEntryJson from( final DumpEntry dumpEntry )
     {
         String nodeId = dumpEntry.getNodeId().toString();
-        MetaJson currentVersion = MetaJson.from( dumpEntry.getCurrentVersion() );
-        Collection<MetaJson> otherVersions = dumpEntry.getOtherVersions().stream().map( MetaJson::from ).collect( Collectors.toList() );
+        Collection<MetaJson> otherVersions = dumpEntry.getVersions().stream().map( MetaJson::from ).collect( Collectors.toList() );
 
-        return new DumpEntryJson( otherVersions, currentVersion, nodeId );
+        return new DumpEntryJson( otherVersions, nodeId );
     }
 
-    public String getNodeId()
+    private String getNodeId()
     {
         return nodeId;
     }
 
-    public MetaJson getCurrentVersion()
-    {
-        return currentVersion;
-    }
 
-    public Collection<MetaJson> getOtherVersions()
+    private Collection<MetaJson> getVersions()
     {
-        return otherVersions;
+        return versions;
     }
 
 

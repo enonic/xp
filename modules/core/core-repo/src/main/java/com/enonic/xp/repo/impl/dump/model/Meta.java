@@ -16,12 +16,15 @@ public class Meta
 
     private final NodeState nodeState;
 
+    private final boolean current;
+
     private Meta( final Builder builder )
     {
         nodePath = builder.nodePath;
         timestamp = builder.timestamp;
         version = builder.version;
         nodeState = builder.nodeState;
+        current = builder.current;
     }
 
     public NodePath getNodePath()
@@ -44,6 +47,11 @@ public class Meta
         return nodeState;
     }
 
+    public boolean isCurrent()
+    {
+        return current;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -58,6 +66,8 @@ public class Meta
         private NodeVersionId version;
 
         private NodeState nodeState;
+
+        private boolean current;
 
         private Builder()
         {
@@ -84,6 +94,12 @@ public class Meta
         public Builder nodeState( final NodeState val )
         {
             nodeState = val;
+            return this;
+        }
+
+        public Builder current( final boolean val )
+        {
+            current = val;
             return this;
         }
 

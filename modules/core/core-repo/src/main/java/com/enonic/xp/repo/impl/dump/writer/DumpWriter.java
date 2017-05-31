@@ -4,6 +4,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.dump.model.DumpEntry;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -13,9 +14,9 @@ public interface DumpWriter
 
     void close();
 
-    void write( final DumpEntry dumpEntry );
+    void writeMetaData( final DumpEntry dumpEntry );
 
-    void writeVersion( final BlobKey blobKey, final ByteSource source );
+    void writeVersion( final NodeVersionId nodeVersionId );
 
     void writeBinary( final BlobKey blobKey, final ByteSource source );
 

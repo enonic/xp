@@ -24,6 +24,9 @@ public class MetaJson
     @JsonProperty("nodeState")
     private String nodeState;
 
+    @JsonProperty("current")
+    private boolean current;
+
     public MetaJson()
     {
     }
@@ -34,6 +37,7 @@ public class MetaJson
         timestamp = builder.timestamp;
         version = builder.version;
         nodeState = builder.nodeState;
+        current = builder.current;
     }
 
     public static Meta fromJson( final MetaJson json )
@@ -55,7 +59,7 @@ public class MetaJson
             build();
     }
 
-    public static Builder create()
+    private static Builder create()
     {
         return new Builder();
     }
@@ -65,19 +69,24 @@ public class MetaJson
         return nodePath;
     }
 
-    public String getTimestamp()
+    private String getTimestamp()
     {
         return timestamp;
     }
 
-    public String getVersion()
+    private String getVersion()
     {
         return version;
     }
 
-    public String getNodeState()
+    private String getNodeState()
     {
         return nodeState;
+    }
+
+    public boolean isCurrent()
+    {
+        return current;
     }
 
     public static final class Builder
@@ -89,6 +98,8 @@ public class MetaJson
         private String version;
 
         private String nodeState;
+
+        private boolean current;
 
         private Builder()
         {
@@ -115,6 +126,12 @@ public class MetaJson
         public Builder nodeState( final String val )
         {
             nodeState = val;
+            return this;
+        }
+
+        public Builder current( final boolean val )
+        {
+            current = val;
             return this;
         }
 

@@ -31,21 +31,24 @@ public class DumpServiceImpl
     @Override
     public void dump( final DumpParams params )
     {
-        RepoDumper.create().
-            writer( new FileDumpWriter( BASE_PATH, params.getDumpName() ) ).
-            blobStore( this.blobStore ).
+        final DumpResult result = RepoDumper.create().
+            writer( FileDumpWriter.create().
+                basePath( BASE_PATH ).
+                dumpName( params.getDumpName() ).
+                blobStore( this.blobStore ).
+                build() ).
             nodeService( this.nodeService ).
             repositoryService( this.repositoryService ).
             repositoryId( params.getRepositoryId() ).
             build().
             execute();
+
+        System.out.println( result );
     }
 
     @Override
     public void load( final LoadParams params )
     {
-        System.out.println( "Starting load of dump " + params.getDumpName() );
-
         RepoLoader.create().
             reader( new FileDumpReader( BASE_PATH, params.getDumpName() ) ).
             nodeService( this.nodeService ).

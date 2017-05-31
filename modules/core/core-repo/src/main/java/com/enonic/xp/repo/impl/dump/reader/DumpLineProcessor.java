@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.dump.reader;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import com.google.common.io.LineProcessor;
 
@@ -10,7 +11,6 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.dump.model.DumpEntry;
 import com.enonic.xp.repo.impl.dump.model.Meta;
@@ -42,25 +42,28 @@ public class DumpLineProcessor
         // Deserialize to DumpEntry
         final DumpEntry dumpEntry = this.serializer.deSerialize( line );
 
-        final Meta meta = dumpEntry.getCurrentVersion();
+        final Collection<Meta> versions = dumpEntry.getVersions();
 
-        final NodeVersionId version = meta.getVersion();
+        for ( final Meta version : versions )
+        {
+            if ( version.isCurrent() )
+            {
+                final NodeVersion nodeVersion = this.dumpReader.get( version.getVersion() );
 
-        final NodeVersion nodeVersion = this.dumpReader.get( version );
+                final Node node = NodeFactory.create( nodeVersion, NodeBranchEntry.create().
+                    nodeId( dumpEntry.getNodeId() ).
+                    nodePath( version.getNodePath() ).
+                    nodeVersionId( version.getVersion() ).
+                    timestamp( version.getTimestamp() ).
+                    nodeState( version.getNodeState() ).
+                    build() );
 
-        // TODO: Add state
-        final Node node = NodeFactory.create( nodeVersion, NodeBranchEntry.create().
-            nodeId( dumpEntry.getNodeId() ).
-            nodePath( meta.getNodePath() ).
-            nodeVersionId( meta.getVersion() ).
-            timestamp( meta.getTimestamp() ).
-            nodeState( meta.getNodeState() ).
-            build() );
-
-        final ImportNodeResult result = this.nodeService.importNode( ImportNodeParams.create().
-            importNode( node ).
-            importPermissions( true ).
-            build() );
+                final ImportNodeResult result = this.nodeService.importNode( ImportNodeParams.create().
+                    importNode( node ).
+                    importPermissions( true ).
+                    build() );
+            }
+        }
 
         return true;
     }

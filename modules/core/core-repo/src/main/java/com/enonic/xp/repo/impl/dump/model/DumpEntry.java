@@ -1,24 +1,23 @@
 package com.enonic.xp.repo.impl.dump.model;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeVersionId;
 
 public class DumpEntry
 {
     private final NodeId nodeId;
 
-    private final Meta currentVersion;
-
-    private final Collection<Meta> otherVersions;
+    private final Collection<Meta> versions;
 
     private DumpEntry( final Builder builder )
     {
         nodeId = builder.nodeId;
-        currentVersion = builder.currentVersion;
-        otherVersions = builder.otherVersions;
+        versions = builder.otherVersions;
     }
 
     public NodeId getNodeId()
@@ -26,14 +25,14 @@ public class DumpEntry
         return nodeId;
     }
 
-    public Meta getCurrentVersion()
+    public Collection<Meta> getVersions()
     {
-        return currentVersion;
+        return versions;
     }
 
-    public Collection<Meta> getOtherVersions()
+    public Collection<NodeVersionId> getAllVersionIds()
     {
-        return otherVersions;
+        return versions.stream().map( Meta::getVersion ).collect( Collectors.toList() );
     }
 
     public static Builder create()
@@ -45,8 +44,6 @@ public class DumpEntry
     {
         private NodeId nodeId;
 
-        private Meta currentVersion;
-
         private Collection<Meta> otherVersions = Lists.newArrayList();
 
         private Builder()
@@ -56,12 +53,6 @@ public class DumpEntry
         public Builder nodeId( final NodeId val )
         {
             nodeId = val;
-            return this;
-        }
-
-        public Builder currentVersion( final Meta val )
-        {
-            currentVersion = val;
             return this;
         }
 

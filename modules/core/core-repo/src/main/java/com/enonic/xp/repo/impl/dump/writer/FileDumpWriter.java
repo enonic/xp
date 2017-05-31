@@ -11,26 +11,31 @@ import java.nio.file.Paths;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.dump.DumpBlobStore;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.model.DumpEntry;
 import com.enonic.xp.repo.impl.dump.serializer.DumpEntrySerializer;
 import com.enonic.xp.repo.impl.dump.serializer.json.DumpEntryJsonSerializer;
+import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repository.RepositoryId;
 
 public class FileDumpWriter
     implements DumpWriter
 {
+    private final static Segment DUMP_SEGMENT_VERSION = Segment.from( "version" );
+
+    private final static Segment DUMP_SEGMENT_BINARY = Segment.from( "binary" );
+
     private final static String LINE_SEPARATOR = System.lineSeparator();
 
     private final BlobStore dumpBlobStore;
 
-    private final static Segment version = Segment.from( "version" );
-
-    private final static Segment BINARY = Segment.from( "binary" );
+    private final BlobStore blobStore;
 
     private final Path dumpDirectory;
 
@@ -38,14 +43,15 @@ public class FileDumpWriter
 
     private BufferedWriter metaFileWriter;
 
-    public FileDumpWriter( final Path basePath, final String dumpName )
+    private FileDumpWriter( final Builder builder )
     {
-        this.dumpDirectory = getDumpDirectory( basePath, dumpName );
+        this.dumpDirectory = getDumpDirectory( builder.basePath, builder.dumpName );
         this.dumpBlobStore = new DumpBlobStore( this.dumpDirectory.toFile() );
         this.serializer = new DumpEntryJsonSerializer();
+        this.blobStore = builder.blobStore;
     }
 
-    private java.nio.file.Path getDumpDirectory( final Path basePath, final String name )
+    private Path getDumpDirectory( final Path basePath, final String name )
     {
         return Paths.get( basePath.toString(), name ).toAbsolutePath();
     }
@@ -107,9 +113,8 @@ public class FileDumpWriter
         }
     }
 
-
     @Override
-    public void write( final DumpEntry dumpEntry )
+    public void writeMetaData( final DumpEntry dumpEntry )
     {
         try
         {
@@ -122,16 +127,57 @@ public class FileDumpWriter
     }
 
     @Override
-    public void writeVersion( final BlobKey blobKey, final ByteSource source )
+    public void writeVersion( final NodeVersionId nodeVersionId )
     {
-        this.dumpBlobStore.addRecord( version, source );
-    }
+        final BlobRecord existingVersion = blobStore.getRecord( NodeConstants.NODE_SEGMENT, BlobKey.from( nodeVersionId.toString() ) );
 
+        this.dumpBlobStore.addRecord( DUMP_SEGMENT_VERSION, existingVersion.getBytes() );
+    }
 
     @Override
     public void writeBinary( final BlobKey blobKey, final ByteSource source )
     {
-        this.dumpBlobStore.addRecord( BINARY, source );
+        this.dumpBlobStore.addRecord( DUMP_SEGMENT_BINARY, source );
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static final class Builder
+    {
+        private Path basePath;
+
+        private String dumpName;
+
+        private BlobStore blobStore;
+
+        private Builder()
+        {
+        }
+
+        public Builder basePath( final Path basePath )
+        {
+            this.basePath = basePath;
+            return this;
+        }
+
+        public Builder dumpName( final String dumpName )
+        {
+            this.dumpName = dumpName;
+            return this;
+        }
+
+        public Builder blobStore( final BlobStore val )
+        {
+            blobStore = val;
+            return this;
+        }
+
+        public FileDumpWriter build()
+        {
+            return new FileDumpWriter( this );
+        }
+    }
 }
