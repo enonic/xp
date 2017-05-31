@@ -29,7 +29,7 @@
 
     .dialog-buttons {
 
-      button:not(.cancel-button-bottom) {
+      button:not(.force-enabled) {
         font-family: 'icomoon';
         pointer-events: none;
         opacity: 0.5;
@@ -39,7 +39,7 @@
 
   &.locked:not(.no-action) {
     .dialog-buttons {
-      button:not(.cancel-button-bottom):not(.no-animation) {
+      button:not(.force-enabled):not(.no-animation) {
         &:after {
           .animation(rotate360, .5s, .0s, linear);
           content: "\e007";
@@ -54,10 +54,6 @@
   .sub-title {
     margin-top: 20px;
     margin-bottom: -10px;
-
-    &:empty {
-      display: none;
-    }
   }
 
   .publish-dialog-dependant-list {

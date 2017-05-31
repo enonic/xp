@@ -14,6 +14,7 @@ import SpanEl = api.dom.SpanEl;
 import Element = api.dom.Element;
 import LoadMask = api.ui.mask.LoadMask;
 import User = api.security.User;
+import Action = api.ui.Action;
 
 export class IssueListDialog extends ModalDialog {
 
@@ -69,8 +70,8 @@ export class IssueListDialog extends ModalDialog {
 
     doRender(): Q.Promise<boolean> {
         return super.doRender().then((rendered: boolean) => {
+            this.createNewIssueButton();
             this.appendChildToContentPanel(this.dockedPanel);
-            this.appendChildToContentPanel(this.createNewIssueButton());
             return rendered;
         });
     }
@@ -262,20 +263,21 @@ export class IssueListDialog extends ModalDialog {
     }
 
     private createNewIssueButton(): Element {
-        const newIssueButton: SpanEl = new SpanEl().addClass('new-issue-button');
-        newIssueButton.getEl().setTitle('Create an issue');
+        let createIssueAction = new Action('New Issue...');
 
-        newIssueButton.onClicked(() => {
+        createIssueAction.onExecuted(() => {
             this.addClass('masked');
+            let createIssueDialog = CreateIssueDialog.get();
 
-            CreateIssueDialog.get().reset();
-            CreateIssueDialog.get().unlockPublishItems();
-            CreateIssueDialog.get().open();
+            createIssueDialog.enableCancelButton();
+            createIssueDialog.reset();
+            createIssueDialog.unlockPublishItems();
+            createIssueDialog.open();
         });
-
-        return newIssueButton;
+        
+        return this.getButtonRow().addAction(createIssueAction);
     }
-
+    
     private createIssuePanel(issueType: IssueType): IssuesPanel {
         return new IssuesPanel(issueType);
     }
