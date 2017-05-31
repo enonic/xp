@@ -41,15 +41,28 @@
 
         padding: 5px;
 
-        .@{_COMMON_PREFIX}names-view .@{_COMMON_PREFIX}main-name, .@{_COMMON_PREFIX}sub-name {
-          &:hover {
-            cursor: pointer;
-          }
-        }
+        .names-and-icon-view {
+          cursor: pointer;
 
-        .@{_COMMON_PREFIX}main-name {
-          height: 17px;
-          font-weight: bold;
+          .icon-signup {
+            color: @admin-font-gray2;
+            &:not(.closed) {
+              color: @admin-green;
+            }
+
+            font-size: 26px;
+          }
+
+          .@{_COMMON_PREFIX}names-view .@{_COMMON_PREFIX}main-name, .@{_COMMON_PREFIX}sub-name {
+            &:hover {
+              cursor: pointer;
+            }
+          }
+
+          .@{_COMMON_PREFIX}main-name {
+            height: 17px;
+            font-weight: bold;
+          }
         }
       }
     }

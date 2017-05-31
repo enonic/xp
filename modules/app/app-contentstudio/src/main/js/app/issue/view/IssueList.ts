@@ -158,10 +158,13 @@ export class IssueListItem extends api.dom.LiEl {
                 this.getEl().setTitle(this.issue.getDescription());
             }
 
-            const namesView: NamesView = new NamesView(false).setMainName(this.issue.getTitle());
-            namesView.setSubNameElements([new SpanEl().setHtml(this.makeSubName(), false)]);
+            const namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
+            namesAndIconView
+                .setMainName(this.issue.getTitle())
+                .setIconClass(this.issueType === IssueType.CLOSED ? 'icon-signup closed' : 'icon-signup')
+                .setSubNameElements([new SpanEl().setHtml(this.makeSubName(), false)]);
 
-            this.appendChild(namesView);
+            this.appendChild(namesAndIconView);
 
             return rendered;
         });
