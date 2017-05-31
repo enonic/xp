@@ -4,13 +4,13 @@ import {IssueFetcher} from '../IssueFetcher';
 import {IssueResponse} from '../resource/IssueResponse';
 import {IssueDetailsDialog} from './IssueDetailsDialog';
 import {IssueListDialog} from './IssueListDialog';
+import {IssueStatusInfoGenerator} from './IssueStatusInfoGenerator';
 import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
 import User = api.security.User;
 import PEl = api.dom.PEl;
 import NamesView = api.app.NamesView;
 import SpanEl = api.dom.SpanEl;
-import DateHelper = api.util.DateHelper;
 
 export class IssueList extends ListBox<Issue> {
 
@@ -168,111 +168,7 @@ export class IssueListItem extends api.dom.LiEl {
     }
 
     private makeSubName(): string {
-        return IssueListItemSubNameGenerator.create().setIssue(this.issue).setIssueType(this.issueType).setCurrentUser(
+        return IssueStatusInfoGenerator.create().setIssue(this.issue).setIssueType(this.issueType).setCurrentUser(
             this.currentUser).generate();
     }
-}
-
-export class IssueListItemSubNameGenerator {
-
-    private issue: Issue;
-
-    private issueType: IssueType;
-
-    private currentUser: User;
-
-    private assignedToMePattern: string = '#{0} - {1} by {2} {3}'; // id, status, modifier, date
-
-    private createdByMePattern: string = '#{0} - {1} {2}. Assigned to {3}'; //id, status, date, assignees
-
-    private openPattern: string = '#{0} - {1} by {2} {3}. Assigned to {4}'; //id, status, modifier, date, assignees
-
-    private closedPattern: string = '#{0} - Closed by {1} {2}. Assigned to {3}'; //id, modifier, date, assignees
-
-    private constructor() {
-    }
-
-    public static create(): IssueListItemSubNameGenerator {
-        return new IssueListItemSubNameGenerator();
-    }
-
-    public setIssue(issue: Issue): IssueListItemSubNameGenerator {
-        this.issue = issue;
-        return this;
-    }
-
-    public setIssueType(issueType: IssueType): IssueListItemSubNameGenerator {
-        this.issueType = issueType;
-        return this;
-    }
-
-    public setCurrentUser(currentUser: User): IssueListItemSubNameGenerator {
-        this.currentUser = currentUser;
-        return this;
-    }
-
-    public generate(): string {
-        const modifiedDateString: string = DateHelper.getModifiedString(this.issue.getModifiedTime());
-
-        if (this.issueType === IssueType.ASSIGNED_TO_ME) {
-            return api.util.StringHelper.format(this.assignedToMePattern, this.issue.getIndex(), this.getStatus(), this.getLastModifiedBy(),
-                modifiedDateString);
-        }
-
-        if (this.issueType === IssueType.OPEN) {
-            return api.util.StringHelper.format(this.openPattern, this.issue.getIndex(), this.getStatus(), this.getLastModifiedBy(),
-                modifiedDateString, this.assignedTo());
-        }
-
-        if (this.issueType === IssueType.CLOSED) {
-            return api.util.StringHelper.format(this.closedPattern, this.issue.getIndex(), this.getLastModifiedBy(), modifiedDateString,
-                this.assignedTo());
-        }
-
-        return api.util.StringHelper.format(this.createdByMePattern, this.issue.getIndex(), this.getStatus(), modifiedDateString,
-            this.assignedTo());
-    }
-
-    private getStatus(): string {
-        if (this.issue.getModifier()) {
-            return 'Updated'
-        }
-
-        return 'Opened';
-    }
-
-    private getLastModifiedBy(): string {
-        return '\<span class="creator"\>' + this.getModifiedBy() + '\</span\>'
-    }
-
-    private getModifiedBy(): string {
-        const lastModifiedBy: string = !!this.issue.getModifier() ? this.issue.getModifier() : this.issue.getCreator();
-
-        if (lastModifiedBy === this.currentUser.getKey().toString()) {
-            return 'me';
-        }
-
-        return lastModifiedBy;
-    }
-
-    private assignedTo(): string {
-        return '\<span class="assignee"\>' + this.getAssignedTo() + '\</span\>' + (this.issue.getApprovers().length > 1
-                ? ' users'
-                : '');
-    }
-
-    private getAssignedTo(): string {
-        if (this.issue.getApprovers().length > 1) {
-            return this.issue.getApprovers().length.toString();
-        }
-
-        const assignee: string = this.issue.getApprovers()[0].toString();
-
-        if (assignee === this.currentUser.getKey().toString()) {
-            return 'me';
-        }
-
-        return this.issue.getApprovers()[0].toString();
-    }
-
 }
