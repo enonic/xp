@@ -20,6 +20,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.dump.DumpParams;
 import com.enonic.xp.dump.DumpService;
+import com.enonic.xp.dump.LoadParams;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.ImportNodesParams;
 import com.enonic.xp.export.NodeExportResult;
@@ -55,7 +56,6 @@ public final class SystemDumpResource
 
     private DumpService dumpService;
 
-
     private java.nio.file.Path getDumpDirectory( final String name )
     {
         return Paths.get( HomeDir.get().toString(), "data", "dump", name ).toAbsolutePath();
@@ -75,10 +75,9 @@ public final class SystemDumpResource
 
         for ( Repository repository : repositoryService.list() )
         {
-            for ( Branch branch : repository.getBranches() )
-            {
-                results.add( exportRepoBranch( repository.getId().toString(), branch.getValue(), request.getName() ) );
-            }
+
+            results.add( exportRepoBranch( repository.getId().toString(), request.getName() ) );
+
         }
 
         return NodeExportResultsJson.from( results );
@@ -97,7 +96,11 @@ public final class SystemDumpResource
         for ( Repository repository : repositoryService.list() )
         {
             initializeRepo( repository );
-            importRepoBranches( request.getName(), results, repository );
+            this.dumpService.load( LoadParams.create().
+                dumpName( request.getName() ).
+                repositoryId( repository.getId() ).
+                build() );
+            // importRepoBranches( request.getName(), results, repository );
         }
 
         return NodeImportResultsJson.from( results );
@@ -161,11 +164,8 @@ public final class SystemDumpResource
     }
 
 
-    private NodeExportResult exportRepoBranch( final String repoName, final String branch, final String dumpName )
+    private NodeExportResult exportRepoBranch( final String repoName, final String dumpName )
     {
-        final java.nio.file.Path rootDir = getDumpDirectory( dumpName );
-        final java.nio.file.Path exportPath = rootDir.resolve( repoName ).resolve( branch );
-
         this.dumpService.dump( DumpParams.create().
             dumpName( dumpName ).
             repositoryId( RepositoryId.from( repoName ) ).
@@ -173,14 +173,6 @@ public final class SystemDumpResource
 
         return NodeExportResult.create().
             build();
-        /*
-        return getContext( branch, repoName ).callWith( () -> exportService.exportNodes( ExportNodesParams.create().
-            includeNodeIds( true ).
-            rootDirectory( rootDir.toString() ).
-            targetDirectory( exportPath.toString() ).
-            sourceNodePath( NodePath.ROOT ).
-            build() ) );
-        */
     }
 
     private Context getContext( final String branchName, final String repositoryName )
