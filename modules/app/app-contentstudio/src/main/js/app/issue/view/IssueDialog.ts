@@ -9,6 +9,7 @@ import ContentSummary = api.content.ContentSummary;
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
 import ObjectHelper = api.ObjectHelper;
 import ListBox = api.ui.selector.list.ListBox;
+import ModalDialog = api.ui.dialog.ModalDialog;
 
 export abstract class IssueDialog extends DependantItemsDialog {
 
@@ -17,6 +18,8 @@ export abstract class IssueDialog extends DependantItemsDialog {
     protected publishProcessor: PublishProcessor;
 
     private resetOnClose: boolean = false;
+
+    private opener: ModalDialog;
 
     protected constructor(title: string) {
         super(title);
@@ -48,6 +51,8 @@ export abstract class IssueDialog extends DependantItemsDialog {
         this.getItemList().onItemsAdded((items) => {
             this.form.selectContentItems(items.map(item => item.getContentSummary()), true);
         });
+
+        this.closeIcon.onClicked(() => this.opener ? this.opener.close() : true);
     }
 
     static get(): IssueDialog {
@@ -78,9 +83,11 @@ export abstract class IssueDialog extends DependantItemsDialog {
         return this.publishProcessor.countTotal();
     }
 
-    open() {
+    open(opener?: ModalDialog) {
         super.open();
         this.form.giveFocus();
+
+        this.opener = opener;
     }
 
     show() {
