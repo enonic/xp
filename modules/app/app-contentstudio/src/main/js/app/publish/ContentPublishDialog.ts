@@ -91,7 +91,6 @@ export class ContentPublishDialog extends SchedulableDialog {
             this.centerMyself();
         });
 
-        this.setAutoUpdateTitle(false);
         this.getEl().addClass('publish-dialog');
 
         this.initActions();

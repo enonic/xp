@@ -20,6 +20,8 @@ export class ContentDeleteDialog extends ProgressBarDialog {
 
     private totalItemsToDelete: number;
 
+    protected autoUpdateTitle: boolean = true;
+
     constructor() {
         super(<ProgressBarConfig> {
                 dialogName: 'Delete item',
