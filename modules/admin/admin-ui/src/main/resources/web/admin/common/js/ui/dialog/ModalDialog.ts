@@ -253,7 +253,7 @@ module api.ui.dialog {
             return this.buttonRow;
         }
 
-        protected getContentPanel(): ModalDialogContentPanel {
+        getContentPanel(): ModalDialogContentPanel {
             return this.contentPanel;
         }
 

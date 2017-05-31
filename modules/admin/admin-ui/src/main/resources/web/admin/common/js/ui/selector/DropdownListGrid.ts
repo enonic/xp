@@ -20,6 +20,8 @@ module api.ui.selector {
             }
 
             this.grid = new api.ui.grid.Grid<Option<OPTION_DISPLAY_VALUE>>(this.gridData, this.createColumns(), this.createOptions());
+
+            this.gridData.onRowCountChanged(() => this.notifyRowCountChanged());
         }
 
         getElement(): Element {

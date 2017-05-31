@@ -28,6 +28,8 @@ module api.ui.selector {
 
         constructor(config: DropdownGridConfig<OPTION_DISPLAY_VALUE>) {
             super(config);
+
+            this.optionsTreeGrid.getGrid().getDataView().onRowCountChanged(() => this.notifyRowCountChanged());
         }
 
         expandActiveRow() {
