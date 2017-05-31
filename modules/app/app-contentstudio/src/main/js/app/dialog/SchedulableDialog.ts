@@ -9,6 +9,7 @@ import BrowseItem = api.app.browse.BrowseItem;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
 import {ProgressBarDialog, ProgressBarConfig} from './ProgressBarDialog';
 import {SchedulePublishDialog} from '../publish/SchedulePublishDialog';
+import DropdownButtonRow = api.ui.dialog.DropdownButtonRow;
 
 export abstract class SchedulableDialog extends ProgressBarDialog {
 
@@ -79,11 +80,13 @@ export abstract class SchedulableDialog extends ProgressBarDialog {
     }
 
     protected updateShowScheduleDialogButton() {
-        if (this.isScheduleButtonAllowed()) {
-            this.showScheduleAction.setVisible(true);
-        } else {
-            this.showScheduleAction.setVisible(false);
-        }
+        const scheduleMenuItem = this.getButtonRow().getActionMenu().getMenuItem(this.showScheduleAction);
+
+        scheduleMenuItem.setEnabled(this.isScheduleButtonAllowed());
+    }
+
+    getButtonRow(): DropdownButtonRow {
+        return <DropdownButtonRow>super.getButtonRow();
     }
 
     protected doScheduledAction() {

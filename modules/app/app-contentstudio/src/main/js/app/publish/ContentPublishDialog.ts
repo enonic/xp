@@ -40,7 +40,7 @@ export class ContentPublishDialog extends SchedulableDialog {
 
     private publishButton: ActionButton;
 
-    private createIssueButton: ActionButton;
+    private createIssueAction: Action;
 
     private publishProcessor: PublishProcessor;
 
@@ -129,10 +129,9 @@ export class ContentPublishDialog extends SchedulableDialog {
         super.initActions();
 
         const publishAction = new ContentPublishDialogAction(this.doPublish.bind(this, false));
-        const createIssueAction = new CreateIssueDialogAction(this.createIssue.bind(this));
+        this.createIssueAction = new CreateIssueDialogAction(this.createIssue.bind(this));
 
-        const actionMenu: MenuButton = this.getButtonRow().makeActionMenu(publishAction, [createIssueAction, this.showScheduleAction]);
-        this.createIssueButton = this.getButtonRow().addAction(createIssueAction);
+        const actionMenu: MenuButton = this.getButtonRow().makeActionMenu(publishAction, [this.createIssueAction, this.showScheduleAction]);
 
         this.actionButton = actionMenu.getActionButton();
         this.publishButton = actionMenu.getActionButton();
@@ -289,11 +288,6 @@ export class ContentPublishDialog extends SchedulableDialog {
         const header = this.isAllPublishable() ? null : 'Other items that will be added to the Publishing Issue';
         this.updateDependantsHeader(header);
 
-        const defaultFocusElement = this.isAllPublishable()
-            ? this.getButtonRow().getActionMenu().getActionButton()
-            : this.createIssueButton;
-        this.getButtonRow().setDefaultElement(defaultFocusElement);
-
         this.updatePublishableStatus();
     }
 
@@ -363,7 +357,9 @@ export class ContentPublishDialog extends SchedulableDialog {
         const labelWithNumber = (num, label) => `${label}${num > 1 ? ` (${num})` : '' }`;
 
         this.publishButton.getAction().setLabel(labelWithNumber(count, 'Publish'));
-        this.createIssueButton.getAction().setLabel(labelWithNumber(count, 'Create Issue... '));
+
+        this.showScheduleAction.setLabel(labelWithNumber(count, 'Schedule... '));
+        this.createIssueAction.setLabel(labelWithNumber(count, 'Create Issue... '));
     }
 
     protected updateButtonStatus(enabled: boolean) {
@@ -394,13 +390,11 @@ export class ContentPublishDialog extends SchedulableDialog {
     protected lockControls() {
         super.lockControls();
         this.getButtonRow().getActionMenu().setEnabled(false);
-        this.createIssueButton.setEnabled(false);
     }
 
     protected unlockControls() {
         super.unlockControls();
         this.getButtonRow().getActionMenu().setEnabled(true);
-        this.createIssueButton.setEnabled(true);
     }
 }
 

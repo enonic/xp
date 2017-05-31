@@ -162,7 +162,9 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
         this.initStatusInfo();
 
-        this.reloadPublishDependencies();
+        this.reloadPublishDependencies().then(() => {
+            this.updateShowScheduleDialogButton();
+        });
 
         return this;
     }
@@ -431,6 +433,13 @@ export class IssueDetailsDialog extends SchedulableDialog {
     protected doScheduledAction() {
         this.doPublish(true);
         this.close();
+    }
+
+    protected updateButtonCount(actionString: string, count: number) {
+        super.updateButtonCount(actionString, count);
+
+        const labelWithNumber = (num, label) => `${label}${num > 1 ? ` (${num})` : '' }`;
+        this.showScheduleAction.setLabel(labelWithNumber(count, 'Schedule... '));
     }
 
     private toggleControlsAccordingToStatus(status: IssueStatus) {
