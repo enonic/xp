@@ -12,6 +12,8 @@ import {UpdateIssueRequest} from '../resource/UpdateIssueRequest';
 import {IssueStatus, IssueStatusFormatter} from '../IssueStatus';
 import {IssueStatusSelector} from './IssueStatusSelector';
 import {IssueServerEventsHandler} from '../event/IssueServerEventsHandler';
+import {PublishRequest} from '../PublishRequest';
+import {PublishRequestItem} from '../PublishRequestItem';
 import {IssueType} from '../IssueType';
 import {IssueStatusInfoGenerator} from './IssueStatusInfoGenerator';
 import AEl = api.dom.AEl;
@@ -32,6 +34,7 @@ import PEl = api.dom.PEl;
 import SpanEl = api.dom.SpanEl;
 import DivEl = api.dom.DivEl;
 import RequestError = api.rest.RequestError;
+import ObjectHelper = api.ObjectHelper;
 import Action = api.ui.Action;
 import User = api.security.User;
 
@@ -87,7 +90,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
         this.getItemList().onItemsAdded(() => {
             this.initItemList();
         });
-        
+
         this.getDependantList().onItemsAdded(() => {
             setTimeout(() => this.centerMyself(), 100);
         });
@@ -172,8 +175,15 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
             const newStatus = IssueStatusFormatter.fromString(event.getNewValue());
 
+            const publishRequest = PublishRequest
+                .create(this.issue.getPublishRequest())
+                .setPublishRequestItems(this.getExistingPublishItems())
+                .build();
+
             new UpdateIssueRequest(this.issue.getId())
-                .setStatus(newStatus).sendAndParse().then(() => {
+                .setStatus(newStatus)
+                .setPublishRequest(publishRequest)
+                .sendAndParse().then(() => {
                 api.notify.showFeedback(`The issue is ` + event.getNewValue().toLowerCase());
 
                 this.toggleControlsAccordingToStatus(newStatus);
@@ -185,6 +195,11 @@ export class IssueDetailsDialog extends SchedulableDialog {
         this.toggleControlsAccordingToStatus(this.issue.getIssueStatus());
     }
 
+    private getExistingPublishItems(): PublishRequestItem[] {
+        let itemIds = this.getItemList().getItemsIds();
+        return this.issue.getPublishRequest().getItems().filter(publishRequestItem =>
+            ObjectHelper.contains(itemIds, publishRequestItem.getId()));
+    }
 
     private makeStatusInfo(): DetailsDialogSubTitle {
         return new DetailsDialogSubTitle(this.issue, this.currentUser);
