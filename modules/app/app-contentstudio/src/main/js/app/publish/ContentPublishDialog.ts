@@ -35,8 +35,6 @@ import User = api.security.User;
  */
 export class ContentPublishDialog extends SchedulableDialog {
 
-    private createIssueDialog: CreateIssueDialog;
-
     private publishButton: ActionButton;
 
     private createIssueButton: ActionButton;
@@ -97,6 +95,8 @@ export class ContentPublishDialog extends SchedulableDialog {
         this.addCancelButtonToBottom();
         this.loadCurrentUser();
         this.handleIssueGlobalEvents();
+
+        this.addClickIgnoredElement(CreateIssueDialog.get());
     }
 
     private loadCurrentUser() {
@@ -164,9 +164,7 @@ export class ContentPublishDialog extends SchedulableDialog {
     open() {
         this.publishProcessor.resetExcludedIds();
 
-        if (this.createIssueDialog) {
-            this.createIssueDialog.reset();
-        }
+        CreateIssueDialog.get().reset();
 
         this.reloadPublishDependencies(true).done();
 
@@ -176,9 +174,8 @@ export class ContentPublishDialog extends SchedulableDialog {
     close() {
         super.close();
         this.getItemList().clearExcludeChildrenIds();
-        if (this.createIssueDialog) {
-            this.createIssueDialog.reset();
-        }
+
+        CreateIssueDialog.get().reset();
     }
 
     private updateSubTitleShowScheduleAndButtonCount() {
@@ -254,25 +251,14 @@ export class ContentPublishDialog extends SchedulableDialog {
     }
 
     private showCreateIssueDialog() {
-        if (!this.createIssueDialog) {
-            this.createIssueDialog = CreateIssueDialog.get();
+        let createIssueDialog = CreateIssueDialog.get();
 
-            this.createIssueDialog.onClosed(() => {
-                this.removeClass('masked');
-                this.getEl().focus();
-            });
+        createIssueDialog.setItems(this.getItemList().getItems()/*idsToPublish, this.getItemList().getExcludeChildrenIds()*/);
+        createIssueDialog.setExcludedIds(this.getExcludedIds());
+        createIssueDialog.setExcludeChildrenIds(this.getItemList().getExcludeChildrenIds());
 
-            this.addClickIgnoredElement(this.createIssueDialog);
-        }
-
-        this.createIssueDialog.setItems(this.getItemList().getItems()/*idsToPublish, this.getItemList().getExcludeChildrenIds()*/);
-        this.createIssueDialog.setExcludedIds(this.getExcludedIds());
-        this.createIssueDialog.setExcludeChildrenIds(this.getItemList().getExcludeChildrenIds());
-
-        this.createIssueDialog.lockPublishItems();
-        this.createIssueDialog.open(this);
-
-        this.addClass('masked');
+        createIssueDialog.lockPublishItems();
+        createIssueDialog.open(this);
     }
 
     private createIssue() {
