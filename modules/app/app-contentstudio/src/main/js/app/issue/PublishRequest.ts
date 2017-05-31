@@ -1,5 +1,5 @@
-    import {PublishRequestItem} from "./PublishRequestItem";
-    import {PublishRequestJson} from "./json/PublishRequestJson";
+    import {PublishRequestItem} from './PublishRequestItem';
+    import {PublishRequestJson} from './json/PublishRequestJson';
     import ContentId = api.content.ContentId;
 
     export class PublishRequest {

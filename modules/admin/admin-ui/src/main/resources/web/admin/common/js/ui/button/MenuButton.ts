@@ -37,6 +37,10 @@ module api.ui.button {
             return this.actionButton;
         }
 
+        getMenuItem(action: api.ui.Action): MenuItem {
+            return this.menu.getMenuItem(action);
+        }
+
         getDropdownHandle(): DropdownHandle {
             return this.dropdownHandle;
         }

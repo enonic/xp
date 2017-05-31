@@ -16,7 +16,7 @@ import LoadMask = api.ui.mask.LoadMask;
 import DialogButton = api.ui.dialog.DialogButton;
 import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
-import ModalDialogButtonRow = api.ui.dialog.ModalDialogButtonRow;
+import ModalDialogButtonRow = api.ui.dialog.ButtonRow;
 import DivEl = api.dom.DivEl;
 
 export class DependantItemsDialog extends api.ui.dialog.ModalDialog {

@@ -30,7 +30,7 @@
     }
     .issue-details-sub-title {
       display: inline-block;
-      margin: 10px 0 15px;
+      margin: 15px 0;
       font-size: 13px;
       float: left;
       clear: both;
@@ -115,7 +115,13 @@
       margin-top: 5px;
 
       &:before {
-        color: @admin-blue;
+        color: @admin-font-gray2;
+      }
+
+      &:hover {
+        &:before {
+          color: lighten(@admin-font-gray2, 10%);
+        }
       }
 
       .icon-medium();
@@ -205,6 +211,9 @@
   .button-container {
     width: 100%;
 
+    .dropdown-dialog-menu {
+      float: right;
+    }
     .cancel-button-bottom {
       display: none;
 
@@ -257,30 +266,24 @@
 
   &.no-action {
     .button-container {
-      .show-schedule-action, .publish-action, .checkbox {
+      .show-schedule-action, .publish-action, .@{_COMMON_PREFIX}dropdown-handle {
         display: none !important;
       }
+    }
+    .no-action-message {
+      display: block;
+      width: 100%;
+      text-align: center;
+      position: absolute;
+      margin-top: 10px;
+      left: 0;
+      font-size: 15px;
+      pointer-events: none;
+    }
+  }
 
-      + .no-action-message {
-        display: block;
-        width: 100%;
-        text-align: center;
-        position: absolute;
-        margin-top: 10px;
-        left: 0;
-        font-size: 15px;
-        pointer-events: none;
-      }
-    }
+  &.closed .modal-dialog-footer {
+    display: none;
   }
-  &.closed {
-    .button-container {
-      .show-schedule-action, .publish-action, .checkbox {
-        display: none !important;
-      }
-    }
-    .edit-issue {
-      display: none !important;
-    }
-  }
+
 }

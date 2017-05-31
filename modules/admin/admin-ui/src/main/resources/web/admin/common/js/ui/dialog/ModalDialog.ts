@@ -8,7 +8,7 @@ module api.ui.dialog {
 
     export interface ModalDialogConfig {
         title?: string;
-        buttonRow?: ModalDialogButtonRow;
+        buttonRow?: ButtonRow;
     }
 
     export class ModalDialog extends DivEl {
@@ -17,7 +17,7 @@ module api.ui.dialog {
 
         private contentPanel: ModalDialogContentPanel;
 
-        private buttonRow: ModalDialogButtonRow;
+        private buttonRow: ButtonRow;
 
         private cancelAction: Action;
 
@@ -39,7 +39,7 @@ module api.ui.dialog {
             let wrapper = new DivEl('modal-dialog-content-wrapper');
             this.appendChild(wrapper);
 
-            this.buttonRow = config.buttonRow || new ModalDialogButtonRow();
+            this.buttonRow = config.buttonRow || new ButtonRow();
 
             this.cancelAction = this.createDefaultCancelAction();
             this.closeIcon = new DivEl('cancel-button-top');
@@ -249,7 +249,7 @@ module api.ui.dialog {
             el.addClass('centered_horizontally');
         }
 
-        getButtonRow(): ModalDialogButtonRow {
+        getButtonRow(): ButtonRow {
             return this.buttonRow;
         }
 
@@ -390,7 +390,7 @@ module api.ui.dialog {
         }
     }
 
-    export class ModalDialogButtonRow extends DivEl {
+    export class ButtonRow extends DivEl {
 
         private defaultElement: api.dom.Element;
 

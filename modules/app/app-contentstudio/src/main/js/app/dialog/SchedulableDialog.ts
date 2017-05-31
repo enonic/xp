@@ -9,12 +9,13 @@ import BrowseItem = api.app.browse.BrowseItem;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
 import {ProgressBarDialog, ProgressBarConfig} from './ProgressBarDialog';
 import {SchedulePublishDialog} from '../publish/SchedulePublishDialog';
+import DropdownButtonRow = api.ui.dialog.DropdownButtonRow;
 
 export abstract class SchedulableDialog extends ProgressBarDialog {
 
     private scheduleDialog: SchedulePublishDialog;
 
-    protected showScheduleDialogButton: api.ui.dialog.DialogButton;
+    protected showScheduleAction: ShowSchedulePublishDialogAction;
 
     constructor(config: ProgressBarConfig) {
         super(config);
@@ -30,23 +31,20 @@ export abstract class SchedulableDialog extends ProgressBarDialog {
     }
 
     protected initActions() {
-        if (!this.showScheduleDialogButton) {
-            const showScheduleAction = new ShowSchedulePublishDialogAction();
-            showScheduleAction.onExecuted(this.showScheduleDialog.bind(this));
-            this.showScheduleDialogButton = this.addAction(showScheduleAction, false);
-            this.showScheduleDialogButton.setTitle('Schedule Publishing');
-            this.showScheduleDialogButton.addClass('no-animation');
+        if (!this.showScheduleAction) {
+            this.showScheduleAction = new ShowSchedulePublishDialogAction();
+            this.showScheduleAction.onExecuted(this.showScheduleDialog.bind(this));
         }
     }
 
     protected lockControls() {
         super.lockControls();
-        this.showScheduleDialogButton.setEnabled(false);
+        this.showScheduleAction.setEnabled(false);
     }
 
     protected unlockControls() {
         super.unlockControls();
-        this.showScheduleDialogButton.setEnabled(true);
+        this.showScheduleAction.setEnabled(true);
     }
 
     protected toggleAction(enable: boolean) {
@@ -82,11 +80,13 @@ export abstract class SchedulableDialog extends ProgressBarDialog {
     }
 
     protected updateShowScheduleDialogButton() {
-        if (this.isScheduleButtonAllowed()) {
-            this.showScheduleDialogButton.show();
-        } else {
-            this.showScheduleDialogButton.hide();
-        }
+        const scheduleMenuItem = this.getButtonRow().getActionMenu().getMenuItem(this.showScheduleAction);
+
+        scheduleMenuItem.setEnabled(this.isScheduleButtonAllowed());
+    }
+
+    getButtonRow(): DropdownButtonRow {
+        return <DropdownButtonRow>super.getButtonRow();
     }
 
     protected doScheduledAction() {
@@ -104,7 +104,7 @@ export abstract class SchedulableDialog extends ProgressBarDialog {
 
 export class ShowSchedulePublishDialogAction extends api.ui.Action {
     constructor() {
-        super();
+        super('Schedule...');
         this.setIconClass('show-schedule-action');
     }
 }

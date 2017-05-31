@@ -16,6 +16,7 @@ import {PublishRequest} from '../PublishRequest';
 import {PublishRequestItem} from '../PublishRequestItem';
 import {IssueType} from '../IssueType';
 import {IssueStatusInfoGenerator} from './IssueStatusInfoGenerator';
+import {IssueDetailsDialogButtonRow} from './IssueDetailsDialogDropdownButtonRow';
 import AEl = api.dom.AEl;
 import DialogButton = api.ui.dialog.DialogButton;
 import Checkbox = api.ui.Checkbox;
@@ -33,8 +34,10 @@ import PEl = api.dom.PEl;
 import SpanEl = api.dom.SpanEl;
 import DivEl = api.dom.DivEl;
 import RequestError = api.rest.RequestError;
-import ObjectHelper = api.ObjectHelper;
+import MenuButton = api.ui.button.MenuButton;
 import Action = api.ui.Action;
+import DropdownButtonRow = api.ui.dialog.DropdownButtonRow;
+import ObjectHelper = api.ObjectHelper;
 import User = api.security.User;
 import ModalDialog = api.ui.dialog.ModalDialog;
 
@@ -62,6 +65,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
                 dialogSubName: 'Resolving items...',
                 dependantsName: '',
                 isProcessingClass: 'is-publishing',
+                buttonRow: new IssueDetailsDialogButtonRow(),
                 processHandler: () => {
                     new ContentPublishPromptEvent([]).fire();
                 },
@@ -162,7 +166,9 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
         this.initStatusInfo();
 
-        this.reloadPublishDependencies();
+        this.reloadPublishDependencies().then(() => {
+            this.updateShowScheduleDialogButton();
+        });
 
         return this;
     }
@@ -170,6 +176,10 @@ export class IssueDetailsDialog extends SchedulableDialog {
     public toggleNested(value: boolean): IssueDetailsDialog {
         this.toggleClass('nested', value);
         return this;
+    }
+
+    getButtonRow(): IssueDetailsDialogButtonRow {
+        return <IssueDetailsDialogButtonRow>super.getButtonRow();
     }
 
     private initStatusInfo() {
@@ -224,10 +234,12 @@ export class IssueDetailsDialog extends SchedulableDialog {
     }
 
     protected initActions() {
-        const publishAction = new ContentPublishDialogAction(this.doPublish.bind(this, false));
-        this.actionButton = this.addAction(publishAction, true);
-
         super.initActions();
+
+        const publishAction = new ContentPublishDialogAction(this.doPublish.bind(this, false));
+        const actionMenu: MenuButton = this.getButtonRow().makeActionMenu(publishAction, [this.showScheduleAction]);
+
+        this.actionButton = actionMenu.getActionButton();
     }
 
     private createBackButton() {
@@ -415,6 +427,13 @@ export class IssueDetailsDialog extends SchedulableDialog {
     protected doScheduledAction() {
         this.doPublish(true);
         this.close();
+    }
+
+    protected updateButtonCount(actionString: string, count: number) {
+        super.updateButtonCount(actionString, count);
+
+        const labelWithNumber = (num, label) => `${label}${num > 1 ? ` (${num})` : '' }`;
+        this.showScheduleAction.setLabel(labelWithNumber(count, 'Schedule... '));
     }
 
     private toggleControlsAccordingToStatus(status: IssueStatus) {

@@ -14,6 +14,7 @@ import {UnpublishContentAction} from './UnpublishContentAction';
 import {ContentBrowseItem} from '../ContentBrowseItem';
 import {PreviewContentHandler} from './handler/PreviewContentHandler';
 import {UndoPendingDeleteContentAction} from './UndoPendingDeleteContentAction';
+import {CreateIssueAction} from './CreateIssueAction';
 
 import Action = api.ui.Action;
 import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
@@ -29,7 +30,6 @@ import ContentId = api.content.ContentId;
 import ContentAccessControlList = api.security.acl.ContentAccessControlList;
 import Permission = api.security.acl.Permission;
 import GetContentByPathRequest = api.content.resource.GetContentByPathRequest;
-import {CreateIssueAction} from './CreateIssueAction';
 
 export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAndCompareStatus> {
 
