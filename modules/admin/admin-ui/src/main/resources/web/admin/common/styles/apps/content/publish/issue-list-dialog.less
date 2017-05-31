@@ -2,6 +2,10 @@
 
   height: 400px;
 
+  .dialog-buttons {
+    margin-top: 11px;
+  }
+
   .docked-panel {
     width: auto;
     box-shadow: none;
@@ -33,15 +37,28 @@
 
         padding: 5px;
 
-        .@{_COMMON_PREFIX}names-view .@{_COMMON_PREFIX}main-name, .@{_COMMON_PREFIX}sub-name {
-          &:hover {
-            cursor: pointer;
-          }
-        }
+        .names-and-icon-view {
+          cursor: pointer;
 
-        .@{_COMMON_PREFIX}main-name {
-          height: 17px;
-          font-weight: bold;
+          .icon-signup {
+            color: @admin-font-gray2;
+            &:not(.closed) {
+              color: @admin-green;
+            }
+
+            font-size: 26px;
+          }
+
+          .@{_COMMON_PREFIX}names-view .@{_COMMON_PREFIX}main-name, .@{_COMMON_PREFIX}sub-name {
+            &:hover {
+              cursor: pointer;
+            }
+          }
+
+          .@{_COMMON_PREFIX}main-name {
+            height: 17px;
+            font-weight: bold;
+          }
         }
       }
     }
@@ -56,21 +73,6 @@
       color: @admin-black;
       font-weight: bold;
     }
-  }
-
-  .new-issue-button {
-    position: absolute;
-    top: 28px;
-    right: 44px;
-    background-color: @admin-white;
-    cursor: pointer;
-
-    &:before {
-      color: @admin-blue;
-    }
-
-    .icon-large();
-    .icon-plus-circle();
   }
 
   &.masked {

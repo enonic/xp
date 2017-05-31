@@ -12,6 +12,11 @@ import {UpdateIssueRequest} from '../resource/UpdateIssueRequest';
 import {IssueStatus, IssueStatusFormatter} from '../IssueStatus';
 import {IssueStatusSelector} from './IssueStatusSelector';
 import {IssueServerEventsHandler} from '../event/IssueServerEventsHandler';
+import {PublishRequest} from '../PublishRequest';
+import {PublishRequestItem} from '../PublishRequestItem';
+import {IssueType} from '../IssueType';
+import {IssueStatusInfoGenerator} from './IssueStatusInfoGenerator';
+import {IssueDetailsDialogButtonRow} from './IssueDetailsDialogDropdownButtonRow';
 import AEl = api.dom.AEl;
 import DialogButton = api.ui.dialog.DialogButton;
 import Checkbox = api.ui.Checkbox;
@@ -33,8 +38,9 @@ import RequestError = api.rest.RequestError;
 import MenuButton = api.ui.button.MenuButton;
 import Action = api.ui.Action;
 import DropdownButtonRow = api.ui.dialog.DropdownButtonRow;
-import {IssueDetailsDialogButtonRow} from './IssueDetailsDialogDropdownButtonRow';
-
+import ObjectHelper = api.ObjectHelper;
+import Action = api.ui.Action;
+import User = api.security.User;
 
 export class IssueDetailsDialog extends SchedulableDialog {
 
@@ -47,6 +53,8 @@ export class IssueDetailsDialog extends SchedulableDialog {
     private itemsHeader: api.dom.H6El;
 
     private issueIdEl: api.dom.EmEl;
+
+    private currentUser: User;
 
     private static INSTANCE: IssueDetailsDialog = new IssueDetailsDialog();
 
@@ -62,10 +70,9 @@ export class IssueDetailsDialog extends SchedulableDialog {
                 },
             }
         );
+        this.loadCurrentUser();
 
         this.addClass('issue-details-dialog');
-
-        this.setAutoUpdateTitle(false);
 
         this.initRouting();
 
@@ -74,6 +81,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
         this.createEditButton();
         this.createBackButton();
+        this.createNoActionMessage();
 
         this.initActions();
         this.handleUpdateIssueDialogEvents();
@@ -88,11 +96,21 @@ export class IssueDetailsDialog extends SchedulableDialog {
             this.initItemList();
         });
 
+        this.getDependantList().onItemsAdded(() => {
+            setTimeout(() => this.centerMyself(), 100);
+        });
+
         this.setReadOnly(true);
     }
 
     public static get(): IssueDetailsDialog {
         return IssueDetailsDialog.INSTANCE;
+    }
+
+    private loadCurrentUser() {
+        return new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult) => {
+            this.currentUser = loginResult.getUser();
+        });
     }
 
     private initRouting() {
@@ -145,9 +163,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
         this.initStatusInfo();
 
-        this.reloadPublishDependencies().then(() => {
-            this.centerMyself();
-        });
+        this.reloadPublishDependencies();
 
         return this;
     }
@@ -168,8 +184,15 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
             const newStatus = IssueStatusFormatter.fromString(event.getNewValue());
 
+            const publishRequest = PublishRequest
+                .create(this.issue.getPublishRequest())
+                .setPublishRequestItems(this.getExistingPublishItems())
+                .build();
+
             new UpdateIssueRequest(this.issue.getId())
-                .setStatus(newStatus).sendAndParse().then(() => {
+                .setStatus(newStatus)
+                .setPublishRequest(publishRequest)
+                .sendAndParse().then(() => {
                 api.notify.showFeedback(`The issue is ` + event.getNewValue().toLowerCase());
 
                 this.toggleControlsAccordingToStatus(newStatus);
@@ -181,11 +204,14 @@ export class IssueDetailsDialog extends SchedulableDialog {
         this.toggleControlsAccordingToStatus(this.issue.getIssueStatus());
     }
 
+    private getExistingPublishItems(): PublishRequestItem[] {
+        let itemIds = this.getItemList().getItemsIds();
+        return this.issue.getPublishRequest().getItems().filter(publishRequestItem =>
+            ObjectHelper.contains(itemIds, publishRequestItem.getId()));
+    }
 
     private makeStatusInfo(): DetailsDialogSubTitle {
-        return DetailsDialogSubTitle.create().setCreator(this.issue.getCreator()).setModifiedTime(
-            this.issue.getModifiedTime()).setIssueStatus(this.issue.getIssueStatus()).build();
-
+        return new DetailsDialogSubTitle(this.issue, this.currentUser);
     }
 
     private initItemList() {
@@ -218,17 +244,32 @@ export class IssueDetailsDialog extends SchedulableDialog {
         }
     }
 
-    private createEditButton() {
-        const editButton: api.dom.AEl = new api.dom.AEl('edit').setTitle('Edit Issue');
-        this.appendChildToHeader(editButton);
+    private createBackButton() {
 
-        editButton.onClicked(() => {
+        const backButton: api.dom.AEl = new api.dom.AEl('back-button').setTitle('Back');
+        this.prependChildToHeader(backButton);
+
+        backButton.onClicked(() => {
+            this.close();
+        });
+    }
+
+    private createEditButton() {
+        const editIssueAction = new Action('Edit');
+        const editButton = this.getButtonRow().addAction(editIssueAction);
+        editButton.addClass('edit-issue force-enabled');
+
+        editIssueAction.onExecuted(() => {
             this.showUpdateIssueDialog();
         });
     }
 
-    private createBackButton() {
-        this.addCancelButtonToBottom('Back');
+    private createNoActionMessage() {
+        const divEl = new api.dom.DivEl('no-action-message');
+
+        divEl.setHtml('No items to publish');
+
+        this.getButtonRow().appendChild(divEl);
     }
 
     private doPublish(scheduled: boolean) {
@@ -358,7 +399,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
                     this.setDependantItems(dependants);
 
                     this.loadMask.hide();
-                    this.centerMyself();
 
                     deferred.resolve(null);
                 });
@@ -409,34 +449,28 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
 class DetailsDialogSubTitle extends DivEl {
 
-    private creator: string;
+    private issue: Issue;
 
-    private modifiedTime: Date;
-
-    private status: IssueStatus;
+    private currentUser: User;
 
     private issueStatusChangedListeners: {(event: api.ValueChangedEvent): void}[] = [];
 
-    constructor(builder: DetailsDialogSubTitleBuilder) {
+    constructor(issue: Issue, currentUser: User) {
         super('issue-details-sub-title');
-        this.creator = builder.creator;
-        this.modifiedTime = builder.modifiedTime;
-        this.status = builder.status;
+        this.issue = issue;
+        this.currentUser = currentUser;
     }
 
     doRender(): wemQ.Promise<boolean> {
 
         return super.doRender().then(() => {
-            const issueStatusSelector = new IssueStatusSelector().setValue(this.status);
+            const issueStatusSelector = new IssueStatusSelector().setValue(this.issue.getIssueStatus());
             issueStatusSelector.onValueChanged((event) => {
                 this.notifyIssueStatusChanged(event);
             });
 
             this.appendChild(issueStatusSelector);
-
-            this.appendChild(new SpanEl().setHtml('Opened by '));
-            this.appendChild(new SpanEl('creator').setHtml(this.creator + ' '));
-            this.appendChild(new SpanEl().setHtml(DateHelper.getModifiedString(this.modifiedTime)));
+            this.appendChild(new SpanEl('status-info').setHtml(this.makeStatusInfo(), false));
 
             return wemQ(true);
         });
@@ -458,42 +492,9 @@ class DetailsDialogSubTitle extends DivEl {
         });
     }
 
-    static create(): DetailsDialogSubTitleBuilder {
-        return new DetailsDialogSubTitleBuilder();
-    }
-
-}
-class DetailsDialogSubTitleBuilder {
-
-    creator: string;
-
-    modifiedTime: Date;
-
-    status: IssueStatus;
-
-    setCreator(value: string): DetailsDialogSubTitleBuilder {
-        this.creator = value;
-        return this;
-    }
-
-    setModifiedTime(value: Date): DetailsDialogSubTitleBuilder {
-        this.modifiedTime = value;
-        return this;
-    }
-
-    setIssueStatus(value: IssueStatus): DetailsDialogSubTitleBuilder {
-        this.status = value;
-        return this;
-    }
-
-    build() {
-        return new DetailsDialogSubTitle(this);
-    }
-}
-
-export class ShowIssueDetailsDialogAction extends api.ui.Action {
-    constructor() {
-        super();
-        this.setIconClass('show-schedule-action');
+    private makeStatusInfo(): string {
+        const issueType: IssueType = this.issue.getIssueStatus() === IssueStatus.OPEN ? IssueType.OPEN : IssueType.CLOSED;
+        return IssueStatusInfoGenerator.create().setIssue(this.issue).setIssueType(issueType).setCurrentUser(
+            this.currentUser).generate();
     }
 }

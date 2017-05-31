@@ -21,7 +21,7 @@ module api.ui.dialog {
 
         private cancelAction: Action;
 
-        private cancelButton: DivEl;
+        private closeIcon: DivEl;
 
         private static openDialogsCounter: number = 0;
 
@@ -42,9 +42,9 @@ module api.ui.dialog {
             this.buttonRow = config.buttonRow || new ButtonRow();
 
             this.cancelAction = this.createDefaultCancelAction();
-            this.cancelButton = new DivEl('cancel-button-top');
-            this.cancelButton.onClicked(() => this.cancelAction.execute());
-            wrapper.appendChild(this.cancelButton);
+            this.closeIcon = new DivEl('cancel-button-top');
+            this.closeIcon.onClicked(() => this.cancelAction.execute());
+            wrapper.appendChild(this.closeIcon);
 
             this.header = this.createHeader(config.title || '');
             wrapper.appendChild(this.header);
@@ -173,7 +173,7 @@ module api.ui.dialog {
 
         addCancelButtonToBottom(buttonLabel: string = 'Cancel'): DialogButton {
             let cancelAction = new Action(buttonLabel);
-            cancelAction.setIconClass('cancel-button-bottom');
+            cancelAction.setIconClass('cancel-button-bottom force-enabled');
             cancelAction.onExecuted(() => this.cancelAction.execute());
             return this.buttonRow.addAction(cancelAction);
         }
@@ -192,6 +192,10 @@ module api.ui.dialog {
 
         appendChildToHeader(child: api.dom.Element) {
             this.header.appendChild(child);
+        }
+
+        prependChildToHeader(child: api.dom.Element) {
+            this.header.prependChild(child);
         }
 
         removeChildFromContentPanel(child: api.dom.Element) {

@@ -2,6 +2,10 @@
   max-height: none;
   @toggler-width: 35px;
 
+  .sub-title {
+    margin-bottom: -10px;
+  }
+
   .dialog-content {
     max-height: 60vh;
     overflow-y: auto;
@@ -21,6 +25,11 @@
       padding: 0 15px 0 0;
     }
 
+
+    .browse-selection-item .remove {
+      margin-right: 10px;
+    }
+
     .publish-dialog-item-list {
 
       max-height: none;
@@ -29,6 +38,7 @@
 
         .status {
           line-height: 32px;
+          white-space: nowrap;
         }
       }
 
@@ -58,17 +68,24 @@
     }
   }
 
+  &.create-issue-dialog&:not(.cancel-enabled) .button-container {
+    width: 100%;
+
+    .create-issue-action {
+      float: right;
+    }
+
+    .@{_COMMON_PREFIX}button.cancel-button-bottom {
+      margin-left: 0;
+    }
+  }
+
   .button-container {
 
-    width: 100%;
     box-sizing: border-box;
 
     .back-action {
       float: left;
-    }
-
-    .create-issue-action {
-      float: right;
     }
   }
 
