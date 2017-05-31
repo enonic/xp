@@ -173,7 +173,7 @@ module api.ui.dialog {
 
         addCancelButtonToBottom(buttonLabel: string = 'Cancel'): DialogButton {
             let cancelAction = new Action(buttonLabel);
-            cancelAction.setIconClass('cancel-button-bottom');
+            cancelAction.setIconClass('cancel-button-bottom force-enabled');
             cancelAction.onExecuted(() => this.cancelAction.execute());
             return this.buttonRow.addAction(cancelAction);
         }
@@ -192,6 +192,10 @@ module api.ui.dialog {
 
         appendChildToHeader(child: api.dom.Element) {
             this.header.appendChild(child);
+        }
+
+        prependChildToHeader(child: api.dom.Element) {
+            this.header.prependChild(child);
         }
 
         removeChildFromContentPanel(child: api.dom.Element) {
