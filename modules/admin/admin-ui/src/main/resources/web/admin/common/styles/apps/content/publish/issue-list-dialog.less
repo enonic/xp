@@ -2,6 +2,14 @@
 
   height: 400px;
 
+  .modal-dialog-content-wrapper {
+    margin-bottom: -4em;
+  }
+
+  .dialog-buttons {
+    margin-top: 11px;
+  }
+
   .docked-panel {
     width: auto;
     box-shadow: none;
@@ -68,21 +76,6 @@
       color: @admin-black;
       font-weight: bold;
     }
-  }
-
-  .new-issue-button {
-    position: absolute;
-    top: 28px;
-    right: 44px;
-    background-color: @admin-white;
-    cursor: pointer;
-
-    &:before {
-      color: @admin-blue;
-    }
-
-    .icon-large();
-    .icon-plus-circle();
   }
 
   &.masked {

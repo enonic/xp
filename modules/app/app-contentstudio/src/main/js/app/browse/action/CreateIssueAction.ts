@@ -1,9 +1,8 @@
 import '../../../api.ts';
-import {ContentUnpublishPromptEvent} from '../ContentUnpublishPromptEvent';
 import {ContentTreeGrid} from '../ContentTreeGrid';
+import {CreateIssuePromptEvent} from '../CreateIssuePromptEvent';
 
 import Action = api.ui.Action;
-import {CreateIssuePromptEvent} from '../CreateIssuePromptEvent';
 
 export class CreateIssueAction extends Action {
 

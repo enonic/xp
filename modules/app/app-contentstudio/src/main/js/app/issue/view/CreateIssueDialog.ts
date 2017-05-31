@@ -14,7 +14,7 @@ export class CreateIssueDialog extends IssueDialog {
     private cancelButton: DialogButton;
 
     protected constructor() {
-        super('Create Issue');
+        super('New Issue');
 
         this.getEl().addClass('create-issue-dialog');
 

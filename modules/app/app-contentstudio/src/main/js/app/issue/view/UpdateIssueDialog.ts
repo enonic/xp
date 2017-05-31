@@ -24,6 +24,10 @@ export class UpdateIssueDialog extends IssueDialog {
         this.publishProcessor.onLoadingFinished(() => {
             this.loadMask.hide();
         });
+
+        this.getDependantList().onItemsAdded(() => {
+            setTimeout(() => this.centerMyself(), 100);
+        });
     }
 
     static get(): UpdateIssueDialog {

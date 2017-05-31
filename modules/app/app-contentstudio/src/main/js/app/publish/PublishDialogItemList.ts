@@ -11,7 +11,7 @@ export class PublishDialogItemList extends DialogItemList {
 
     private excludeChildrenIds: ContentId[] = [];
 
-    private chaListeners: {(items: ContentId[]): void}[] = [];
+    private excludeChildrenListChangedListeners: {(items: ContentId[]): void}[] = [];
 
     private canBeEmpty: boolean = false;
 
@@ -133,17 +133,17 @@ export class PublishDialogItemList extends DialogItemList {
     }
 
     public onExcludeChildrenListChanged(listener: (items: ContentId[]) => void) {
-        this.chaListeners.push(listener);
+        this.excludeChildrenListChangedListeners.push(listener);
     }
 
     public unExcludeChildrenListChanged(listener: (items: ContentId[]) => void) {
-        this.chaListeners = this.chaListeners.filter((current) => {
+        this.excludeChildrenListChangedListeners = this.excludeChildrenListChangedListeners.filter((current) => {
             return current !== listener;
         });
     }
 
     private notifyExcludeChildrenListChanged(items: ContentId[]) {
-        this.chaListeners.forEach((listener) => {
+        this.excludeChildrenListChangedListeners.forEach((listener) => {
             listener(items);
         });
     }
