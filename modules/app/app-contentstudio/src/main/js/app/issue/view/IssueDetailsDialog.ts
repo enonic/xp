@@ -44,8 +44,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
     private issue: Issue;
 
-    private closeOnPublishCheckbox: Checkbox;
-
     private itemsHeader: api.dom.H6El;
 
     private issueIdEl: api.dom.EmEl;
@@ -224,12 +222,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
         this.actionButton = this.addAction(publishAction, true);
 
         super.initActions();
-
-        if (!this.closeOnPublishCheckbox) {
-            this.closeOnPublishCheckbox =
-                Checkbox.create().setInputAlignment(InputAlignment.RIGHT).setLabelText('Close issue on publish').build();
-            this.getButtonRow().addElement(this.closeOnPublishCheckbox);
-        }
     }
 
     private createBackButton() {
@@ -278,9 +270,8 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
         publishRequest.sendAndParse().then((taskId: api.task.TaskId) => {
             const issue = this.issue;
-            const closeIssue = this.closeOnPublishCheckbox.isChecked();
             const issuePublishedHandler = (taskState: TaskState) => {
-                if (taskState === TaskState.FINISHED && closeIssue) {
+                if (taskState === TaskState.FINISHED) {
                     new UpdateIssueRequest(issue.getId())
                         .setStatus(IssueStatus.CLOSED)
                         .setIsPublish(true)
@@ -288,7 +279,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
                         .then((updatedIssue: Issue) => {
                             api.notify.showFeedback(`Issue "${updatedIssue.getTitle()}" is closed`);
                         }).catch(() => {
-                        api.notify.showError(`Can not close issue "${issue.getTitle()}"`);
+                        api.notify.showError(`Failed to close issue "${issue.getTitle()}"`);
                     }).finally(() => {
                         this.unProgressComplete(issuePublishedHandler);
                     });
@@ -397,11 +388,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
         });
 
         return deferred.promise;
-    }
-
-    protected toggleAction(enable: boolean) {
-        super.toggleAction(enable);
-        this.closeOnPublishCheckbox.setDisabled(!enable);
     }
 
     setIncludeChildItems(include: boolean, silent?: boolean) {
