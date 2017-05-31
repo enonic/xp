@@ -28,7 +28,6 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 import ResolvePublishDependenciesResult = api.content.resource.result.ResolvePublishDependenciesResult;
 import CompareStatus = api.content.CompareStatus;
 import ResolvePublishDependenciesRequest = api.content.resource.ResolvePublishDependenciesRequest;
-import DateHelper = api.util.DateHelper;
 import H6El = api.dom.H6El;
 import PEl = api.dom.PEl;
 import SpanEl = api.dom.SpanEl;
@@ -37,6 +36,7 @@ import RequestError = api.rest.RequestError;
 import ObjectHelper = api.ObjectHelper;
 import Action = api.ui.Action;
 import User = api.security.User;
+import ModalDialog = api.ui.dialog.ModalDialog;
 
 export class IssueDetailsDialog extends SchedulableDialog {
 
@@ -44,11 +44,15 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
     private issue: Issue;
 
-    private itemsHeader: api.dom.H6El;
+    private itemsHeader: H6El;
 
     private issueIdEl: api.dom.EmEl;
 
     private currentUser: User;
+
+    private opener: ModalDialog;
+
+    private backButton: AEl;
 
     private static INSTANCE: IssueDetailsDialog = new IssueDetailsDialog();
 
@@ -94,6 +98,8 @@ export class IssueDetailsDialog extends SchedulableDialog {
         });
 
         this.setReadOnly(true);
+
+        this.closeIcon.onClicked(() => this.opener ? this.opener.close() : true);
     }
 
     public static get(): IssueDetailsDialog {
@@ -226,10 +232,10 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
     private createBackButton() {
 
-        const backButton: api.dom.AEl = new api.dom.AEl('back-button').setTitle('Back');
-        this.prependChildToHeader(backButton);
+        this.backButton = new AEl('back-button').setTitle('Back');
+        this.prependChildToHeader(this.backButton);
 
-        backButton.onClicked(() => {
+        this.backButton.onClicked(() => {
             this.close();
         });
     }
@@ -321,7 +327,10 @@ export class IssueDetailsDialog extends SchedulableDialog {
         return <PublishDialogDependantList>super.getDependantList();
     }
 
-    open() {
+    open(opener?: ModalDialog) {
+        this.opener = opener;
+        this.opener ? this.backButton.show() : this.backButton.hide();
+
         this.form.giveFocus();
         super.open();
     }

@@ -21,7 +21,7 @@ module api.ui.dialog {
 
         private cancelAction: Action;
 
-        private closeIcon: DivEl;
+        protected closeIcon: DivEl;
 
         private static openDialogsCounter: number = 0;
 
