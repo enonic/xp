@@ -272,7 +272,7 @@ export class IssueListDialog extends ModalDialog {
             createIssueDialog.enableCancelButton();
             createIssueDialog.reset();
             createIssueDialog.unlockPublishItems();
-            createIssueDialog.open();
+            createIssueDialog.open(this);
         });
         
         return this.getButtonRow().addAction(createIssueAction);

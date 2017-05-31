@@ -29,7 +29,6 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 import ResolvePublishDependenciesResult = api.content.resource.result.ResolvePublishDependenciesResult;
 import CompareStatus = api.content.CompareStatus;
 import ResolvePublishDependenciesRequest = api.content.resource.ResolvePublishDependenciesRequest;
-import DateHelper = api.util.DateHelper;
 import H6El = api.dom.H6El;
 import PEl = api.dom.PEl;
 import SpanEl = api.dom.SpanEl;
@@ -40,6 +39,7 @@ import Action = api.ui.Action;
 import DropdownButtonRow = api.ui.dialog.DropdownButtonRow;
 import ObjectHelper = api.ObjectHelper;
 import User = api.security.User;
+import ModalDialog = api.ui.dialog.ModalDialog;
 
 export class IssueDetailsDialog extends SchedulableDialog {
 
@@ -47,13 +47,15 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
     private issue: Issue;
 
-    private closeOnPublishCheckbox: Checkbox;
-
-    private itemsHeader: api.dom.H6El;
+    private itemsHeader: H6El;
 
     private issueIdEl: api.dom.EmEl;
 
     private currentUser: User;
+
+    private opener: ModalDialog;
+
+    private backButton: AEl;
 
     private static INSTANCE: IssueDetailsDialog = new IssueDetailsDialog();
 
@@ -100,6 +102,8 @@ export class IssueDetailsDialog extends SchedulableDialog {
         });
 
         this.setReadOnly(true);
+
+        this.closeIcon.onClicked(() => this.opener ? this.opener.close() : true);
     }
 
     public static get(): IssueDetailsDialog {
@@ -235,22 +239,15 @@ export class IssueDetailsDialog extends SchedulableDialog {
         const publishAction = new ContentPublishDialogAction(this.doPublish.bind(this, false));
         const actionMenu: MenuButton = this.getButtonRow().makeActionMenu(publishAction, [this.showScheduleAction]);
 
-
         this.actionButton = actionMenu.getActionButton();
-
-        if (!this.closeOnPublishCheckbox) {
-            this.closeOnPublishCheckbox =
-                Checkbox.create().setInputAlignment(InputAlignment.RIGHT).setLabelText('Close issue on publish').build();
-            this.getButtonRow().addElement(this.closeOnPublishCheckbox);
-        }
     }
 
     private createBackButton() {
 
-        const backButton: api.dom.AEl = new api.dom.AEl('back-button').setTitle('Back');
-        this.prependChildToHeader(backButton);
+        this.backButton = new AEl('back-button').setTitle('Back');
+        this.prependChildToHeader(this.backButton);
 
-        backButton.onClicked(() => {
+        this.backButton.onClicked(() => {
             this.close();
         });
     }
@@ -291,9 +288,8 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
         publishRequest.sendAndParse().then((taskId: api.task.TaskId) => {
             const issue = this.issue;
-            const closeIssue = this.closeOnPublishCheckbox.isChecked();
             const issuePublishedHandler = (taskState: TaskState) => {
-                if (taskState === TaskState.FINISHED && closeIssue) {
+                if (taskState === TaskState.FINISHED) {
                     new UpdateIssueRequest(issue.getId())
                         .setStatus(IssueStatus.CLOSED)
                         .setIsPublish(true)
@@ -301,7 +297,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
                         .then((updatedIssue: Issue) => {
                             api.notify.showFeedback(`Issue "${updatedIssue.getTitle()}" is closed`);
                         }).catch(() => {
-                        api.notify.showError(`Can not close issue "${issue.getTitle()}"`);
+                        api.notify.showError(`Failed to close issue "${issue.getTitle()}"`);
                     }).finally(() => {
                         this.unProgressComplete(issuePublishedHandler);
                     });
@@ -343,7 +339,10 @@ export class IssueDetailsDialog extends SchedulableDialog {
         return <PublishDialogDependantList>super.getDependantList();
     }
 
-    open() {
+    open(opener?: ModalDialog) {
+        this.opener = opener;
+        this.opener ? this.backButton.show() : this.backButton.hide();
+
         this.form.giveFocus();
         super.open();
     }
@@ -410,11 +409,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
         });
 
         return deferred.promise;
-    }
-
-    protected toggleAction(enable: boolean) {
-        super.toggleAction(enable);
-        this.closeOnPublishCheckbox.setDisabled(!enable);
     }
 
     setIncludeChildItems(include: boolean, silent?: boolean) {
