@@ -39,7 +39,6 @@ import MenuButton = api.ui.button.MenuButton;
 import Action = api.ui.Action;
 import DropdownButtonRow = api.ui.dialog.DropdownButtonRow;
 import ObjectHelper = api.ObjectHelper;
-import Action = api.ui.Action;
 import User = api.security.User;
 
 export class IssueDetailsDialog extends SchedulableDialog {
