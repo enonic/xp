@@ -47,6 +47,7 @@ public class MetaJson
             timestamp( Instant.parse( json.getTimestamp() ) ).
             version( NodeVersionId.from( json.getVersion() ) ).
             nodeState( NodeState.from( json.getNodeState() ) ).
+            current( json.isCurrent() ).
             build();
     }
 
@@ -56,6 +57,7 @@ public class MetaJson
             nodePath( meta.getNodePath().toString() ).
             timestamp( meta.getTimestamp().toString() ).
             version( meta.getVersion().toString() ).
+            current( meta.isCurrent() ).
             build();
     }
 

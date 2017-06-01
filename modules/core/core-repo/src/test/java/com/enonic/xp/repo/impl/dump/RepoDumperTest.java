@@ -1,19 +1,29 @@
 package com.enonic.xp.repo.impl.dump;
 
 
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.io.ByteSource;
+
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.AttachedBinary;
+import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.dump.model.DumpEntry;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.NodeHelper;
+import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.Assert.*;
 
@@ -49,12 +59,12 @@ public class RepoDumperTest
     }
 
     @Test
-    public void several_versions()
+    public void node_versions_stored()
         throws Exception
     {
         final Node node1 = createNode( NodePath.ROOT, "myNode" );
 
-        updateNode( UpdateNodeParams.create().
+        final Node updatedNode = updateNode( UpdateNodeParams.create().
             id( node1.id() ).
             editor( ( node ) -> node.data.setString( "fisk", "Ost" ) ).
             build() );
@@ -63,11 +73,46 @@ public class RepoDumperTest
 
         doDump( writer );
 
+        assertTrue( writer.hasVersions( node1.getNodeVersionId(), updatedNode.getNodeVersionId() ) );
+    }
+
+    @Test
+    public void node_versions_meta_data_stored()
+        throws Exception
+    {
+        final Node node1 = createNode( NodePath.ROOT, "myNode" );
+
+        final Node updatedNode = updateNode( UpdateNodeParams.create().
+            id( node1.id() ).
+            editor( ( node ) -> node.data.setString( "fisk", "Ost" ) ).
+            build() );
+
+        final TestDumpWriter writer = new TestDumpWriter();
+
+        doDump( writer );
+
+        assertTrue( hasVersionMeta( writer, node1.id(), node1.getNodeVersionId(), updatedNode.getNodeVersionId() ) );
+    }
+
+    private boolean hasVersionMeta( final TestDumpWriter writer, final NodeId nodeId, final NodeVersionId... versionIds )
+    {
         final List<DumpEntry> dumpedEntries = writer.get( CTX_DEFAULT.getRepositoryId(), CTX_DEFAULT.getBranch() );
 
-        assertEquals( 1, dumpedEntries.size() );
-        final DumpEntry node1Dump = dumpedEntries.get( 0 );
-        assertEquals( 2, node1Dump.getVersions().size() );
+        for ( final NodeVersionId versionId : versionIds )
+        {
+            final Iterator<DumpEntry> iterator = dumpedEntries.iterator();
+
+            while ( iterator.hasNext() )
+            {
+                final DumpEntry entry = iterator.next();
+
+                if ( entry.getNodeId().equals( nodeId ) )
+                {
+                    return entry.getAllVersionIds().containsAll( Arrays.asList( versionIds ) );
+                }
+            }
+        }
+        return false;
     }
 
     @Test
@@ -93,6 +138,31 @@ public class RepoDumperTest
         assertEquals( 2, node1Dump.getVersions().size() );
         //  assertEquals( newName.toString(), node1Dump.getVersions().iterator().next().getNodePath().getName() );
         //  assertEquals( node1.name().toString(), node1Dump.getOtherVersions().get( 0 ).getNodePath().getName() );
+    }
+
+    @Test
+    public void binaries()
+        throws Exception
+    {
+        final BinaryReference fiskRef = BinaryReference.from( "fisk" );
+
+        final PropertyTree data = new PropertyTree();
+        data.addBinaryReference( "myBinaryRef", fiskRef );
+
+        final Node node1 = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "myName" ).
+            data( data ).
+            attachBinary( fiskRef, ByteSource.wrap( "myBinaryData".getBytes() ) ).
+            build() );
+
+        final AttachedBinary attachedBinary = node1.getAttachedBinaries().getByBinaryReference( fiskRef );
+
+        final TestDumpWriter writer = new TestDumpWriter();
+
+        doDump( writer );
+
+        assertTrue( writer.getBinaries().contains( attachedBinary.getBlobKey() ) );
     }
 
     private void doDump( final TestDumpWriter writer )

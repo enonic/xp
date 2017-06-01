@@ -1,14 +1,14 @@
 package com.enonic.xp.repo.impl.dump;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.google.common.io.ByteSource;
+import com.google.common.collect.Sets;
 
-import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.branch.Branch;
-
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.dump.model.DumpEntry;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
@@ -21,6 +21,9 @@ class TestDumpWriter
 
     private RepoBranchEntry current;
 
+    private final Set<String> binaries = Sets.newHashSet();
+
+    private final Set<NodeVersionId> nodeVersions = Sets.newHashSet();
 
     public TestDumpWriter()
     {
@@ -48,18 +51,33 @@ class TestDumpWriter
     @Override
     public void writeVersion( final NodeVersionId nodeVersionId )
     {
-
+        nodeVersions.add( nodeVersionId );
     }
 
     @Override
-    public void writeBinary( final BlobKey blobKey, final ByteSource source )
+    public void writeBinary( final String key )
     {
-
+        binaries.add( key );
     }
 
     public List<DumpEntry> get( final RepositoryId repoId, final Branch branch )
     {
         return this.entries.get( new RepoBranchEntry( repoId, branch ) );
+    }
+
+    public Set<String> getBinaries()
+    {
+        return binaries;
+    }
+
+    public boolean hasVersions( final NodeVersionId... versions )
+    {
+        return this.nodeVersions.containsAll( Arrays.asList( versions ) );
+    }
+
+    public Set<NodeVersionId> getNodeVersions()
+    {
+        return nodeVersions;
     }
 
     class RepoBranchEntry

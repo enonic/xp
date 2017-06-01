@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.dump.model;
 
 import java.time.Instant;
+import java.util.Collection;
 
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
@@ -103,9 +104,55 @@ public class Meta
             return this;
         }
 
+
         public Meta build()
         {
             return new Meta( this );
         }
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final Meta meta = (Meta) o;
+
+        if ( current != meta.current )
+        {
+            return false;
+        }
+        if ( nodePath != null ? !nodePath.equals( meta.nodePath ) : meta.nodePath != null )
+        {
+            return false;
+        }
+        if ( timestamp != null ? !timestamp.equals( meta.timestamp ) : meta.timestamp != null )
+        {
+            return false;
+        }
+        if ( version != null ? !version.equals( meta.version ) : meta.version != null )
+        {
+            return false;
+        }
+        return nodeState == meta.nodeState;
+
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = nodePath != null ? nodePath.hashCode() : 0;
+        result = 31 * result + ( timestamp != null ? timestamp.hashCode() : 0 );
+        result = 31 * result + ( version != null ? version.hashCode() : 0 );
+        result = 31 * result + ( nodeState != null ? nodeState.hashCode() : 0 );
+        result = 31 * result + ( current ? 1 : 0 );
+        return result;
     }
 }

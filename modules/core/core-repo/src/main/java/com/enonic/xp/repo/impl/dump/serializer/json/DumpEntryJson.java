@@ -16,30 +16,34 @@ public class DumpEntryJson
     @JsonProperty("versions")
     private Collection<MetaJson> versions;
 
+    @JsonProperty("binaries")
+    private Collection<String> binaries;
+
     public DumpEntryJson()
     {
     }
 
-    private DumpEntryJson( final Collection<MetaJson> versions, final String nodeId )
+    private DumpEntryJson( final Collection<MetaJson> versions, final String nodeId, final Collection<String> binaries )
     {
         this.versions = versions;
         this.nodeId = nodeId;
+        this.binaries = binaries;
     }
 
     public static DumpEntry fromJson( final DumpEntryJson json )
     {
         return DumpEntry.create().
             nodeId( NodeId.from( json.getNodeId() ) ).
-            setVersions( json.getVersions().stream().map( MetaJson::fromJson ).collect( Collectors.toList() ) ).
+            setVersions( json.getVersions().stream().map( MetaJson::fromJson ).collect( Collectors.toSet() ) ).
+            setBinaryReferences( json.getBinaries() ).
             build();
     }
 
     public static DumpEntryJson from( final DumpEntry dumpEntry )
     {
         String nodeId = dumpEntry.getNodeId().toString();
-        Collection<MetaJson> otherVersions = dumpEntry.getVersions().stream().map( MetaJson::from ).collect( Collectors.toList() );
-
-        return new DumpEntryJson( otherVersions, nodeId );
+        Collection<MetaJson> otherVersions = dumpEntry.getVersions().stream().map( MetaJson::from ).collect( Collectors.toSet() );
+        return new DumpEntryJson( otherVersions, nodeId, dumpEntry.getBinaryReferences() );
     }
 
     private String getNodeId()
@@ -53,5 +57,8 @@ public class DumpEntryJson
         return versions;
     }
 
-
+    public Collection<String> getBinaries()
+    {
+        return binaries;
+    }
 }

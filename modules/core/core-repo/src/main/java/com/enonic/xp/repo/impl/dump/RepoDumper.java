@@ -1,20 +1,26 @@
 package com.enonic.xp.repo.impl.dump;
 
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.blob.BlobStore;
+import com.google.common.base.Stopwatch;
+
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.repo.impl.dump.model.DumpEntry;
@@ -40,6 +46,8 @@ public class RepoDumper
     private final Logger LOG = LoggerFactory.getLogger( RepoDumper.class );
 
     private final DumpResult.Builder dumpResult;
+
+    private ProgressReporter reporter;
 
     private RepoDumper( final Builder builder )
     {
@@ -83,6 +91,8 @@ public class RepoDumper
 
     private void doExecute()
     {
+        this.reporter = new ProgressReporter();
+
         final BranchDumpResult.Builder branchDumpResult = BranchDumpResult.create( ContextAccessor.current().getBranch() );
 
         try
@@ -99,6 +109,8 @@ public class RepoDumper
         {
             writer.close();
         }
+
+        System.out.println( "Creating dump-entries: " + this.reporter );
 
         this.dumpResult.add( branchDumpResult.build() );
     }
@@ -122,8 +134,18 @@ public class RepoDumper
     private void doDumpNode( final NodeId nodeId, final BranchDumpResult.Builder dumpResult )
     {
         final DumpEntry dumpEntry = createDumpEntry( nodeId );
+
+        final Stopwatch metaTimer = Stopwatch.createStarted();
         writer.writeMetaData( dumpEntry );
+        this.reporter.writeMetaData( metaTimer.stop().elapsed( TimeUnit.NANOSECONDS ) );
+
+        final Stopwatch versionTimer = Stopwatch.createStarted();
         dumpEntry.getAllVersionIds().forEach( writer::writeVersion );
+        this.reporter.writeVersion( versionTimer.stop().elapsed( TimeUnit.NANOSECONDS ) );
+
+        final Stopwatch binaryTimer = Stopwatch.createStarted();
+        dumpEntry.getBinaryReferences().forEach( writer::writeBinary );
+        this.reporter.writeBinary( binaryTimer.stop().elapsed( TimeUnit.NANOSECONDS ) );
 
         dumpResult.metaWritten();
         dumpResult.addedVersions( dumpEntry.getAllVersionIds().size() );
@@ -131,12 +153,16 @@ public class RepoDumper
 
     private DumpEntry createDumpEntry( final NodeId nodeId )
     {
+        Stopwatch timer = Stopwatch.createStarted();
+
         final DumpEntry.Builder builder = DumpEntry.create().
             nodeId( nodeId );
 
         final Node currentNode = this.nodeService.getById( nodeId );
 
         builder.addVersion( MetaFactory.create( currentNode ) );
+        builder.addBinaryReferences(
+            currentNode.getAttachedBinaries().stream().map( AttachedBinary::getBlobKey ).collect( Collectors.toSet() ) );
 
         if ( this.includeVersions )
         {
@@ -148,12 +174,29 @@ public class RepoDumper
 
             for ( final NodeVersionMetadata metaData : result.getNodeVersionsMetadata() )
             {
-                if ( !metaData.getNodeVersionId().equals( currentNode.getNodeVersionId() ) )
+                if ( metaData.getNodeVersionId().equals( currentNode.getNodeVersionId() ) )
+                {
+                    continue;
+                }
+
+                if ( this.includeBinaries )
+                {
+                    final NodeVersion nodeVersion = this.nodeService.getByNodeVersion( metaData.getNodeVersionId() );
+                    builder.addVersion( MetaFactory.create( metaData, nodeVersion ) );
+                    builder.addBinaryReferences(
+                        nodeVersion.getAttachedBinaries().stream().map( AttachedBinary::getBlobKey ).collect( Collectors.toSet() ) );
+                }
+                else
                 {
                     builder.addVersion( MetaFactory.create( metaData ) );
                 }
             }
         }
+
+        timer.stop();
+
+        reporter.createdDumpEntry( timer.elapsed( TimeUnit.NANOSECONDS ) );
+
         return builder.build();
     }
 
@@ -173,8 +216,6 @@ public class RepoDumper
         private NodeService nodeService;
 
         private RepositoryService repositoryService;
-
-        private BlobStore blobStore;
 
         private DumpWriter writer;
 

@@ -8,8 +8,6 @@ import java.io.OutputStreamWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import com.google.common.io.ByteSource;
-
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
@@ -135,9 +133,11 @@ public class FileDumpWriter
     }
 
     @Override
-    public void writeBinary( final BlobKey blobKey, final ByteSource source )
+    public void writeBinary( final String blobKey )
     {
-        this.dumpBlobStore.addRecord( DUMP_SEGMENT_BINARY, source );
+        final BlobRecord binaryRecord = blobStore.getRecord( NodeConstants.BINARY_SEGMENT, BlobKey.from( blobKey ) );
+
+        this.dumpBlobStore.addRecord( DUMP_SEGMENT_BINARY, binaryRecord.getBytes() );
     }
 
     public static Builder create()
