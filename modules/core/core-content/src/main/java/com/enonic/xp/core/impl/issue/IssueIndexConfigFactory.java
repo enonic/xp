@@ -26,13 +26,13 @@ class IssueIndexConfigFactory
     {
         final PatternIndexConfigDocument.Builder configDocumentBuilder = PatternIndexConfigDocument.create().
             analyzer( ContentConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
-            add( TITLE, IndexConfig.MINIMAL ).
+            add( TITLE, IndexConfig.FULLTEXT ).
             add( CREATOR, IndexConfig.MINIMAL ).
             add( MODIFIER, IndexConfig.MINIMAL ).
             add( CREATED_TIME, IndexConfig.MINIMAL ).
             add( MODIFIED_TIME, IndexConfig.MINIMAL ).
             add( STATUS, IndexConfig.MINIMAL ).
-            add( DESCRIPTION, IndexConfig.MINIMAL ).
+            add( DESCRIPTION, IndexConfig.FULLTEXT ).
             add( APPROVERS, IndexConfig.MINIMAL ).
             add( PUBLISH_REQUEST, IndexConfig.NONE ).
             defaultConfig( IndexConfig.BY_TYPE );
