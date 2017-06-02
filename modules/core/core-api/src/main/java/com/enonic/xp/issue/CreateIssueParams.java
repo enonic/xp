@@ -13,8 +13,6 @@ public class CreateIssueParams
 
     private final String title;
 
-    private final IssueName name;
-
     private final String description;
 
     private final IssueStatus issueStatus;
@@ -27,7 +25,6 @@ public class CreateIssueParams
     {
         this.id = IssueId.create();
         this.title = builder.title;
-        this.name = IssueName.from( this.id.toString() );
         this.description = builder.description;
         this.issueStatus = builder.issueStatus;
         this.approverIds = PrincipalKeys.from( builder.approverIds );
@@ -42,11 +39,6 @@ public class CreateIssueParams
     public String getTitle()
     {
         return title;
-    }
-
-    public IssueName getName()
-    {
-        return name;
     }
 
     public String getDescription()

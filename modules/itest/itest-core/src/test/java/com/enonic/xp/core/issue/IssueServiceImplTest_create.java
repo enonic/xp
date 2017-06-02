@@ -3,9 +3,9 @@ package com.enonic.xp.core.issue;
 import org.junit.Test;
 
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.core.impl.issue.IssueNameFactory;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.Issue;
-import com.enonic.xp.issue.IssueName;
 import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.issue.PublishRequest;
 import com.enonic.xp.issue.PublishRequestItem;
@@ -16,7 +16,6 @@ import static org.junit.Assert.*;
 public class IssueServiceImplTest_create
     extends AbstractIssueServiceTest
 {
-
     @Test
     public void create_issue()
         throws Exception
@@ -39,6 +38,6 @@ public class IssueServiceImplTest_create
         assertEquals( PrincipalKey.from( "user:myStore:approver-1" ), issue.getApproverIds().first() );
         assertEquals( ContentId.from( "content-id" ), issue.getPublishRequest().getItems().first().getId() );
         assertEquals( ContentId.from( "exclude-id" ), issue.getPublishRequest().getExcludeIds().first() );
-        assertEquals( IssueName.from( issue.getId().toString() ), issue.getName() );
+        assertEquals( IssueNameFactory.create( issue.getIndex() ), issue.getName() );
     }
 }

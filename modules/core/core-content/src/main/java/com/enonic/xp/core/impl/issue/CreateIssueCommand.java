@@ -9,12 +9,15 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.Issue;
+import com.enonic.xp.issue.IssueAlreadyExistsException;
 import com.enonic.xp.issue.IssueConstants;
+import com.enonic.xp.issue.IssueName;
 import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.IssueQueryNodeQueryTranslator;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
@@ -46,8 +49,20 @@ public class CreateIssueCommand
         validateBlockingChecks();
 
         final long index = countTotalIssues() + 1;
-        final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( this.params, this.getCurrentUser(), index );
-        final Node createdNode = nodeService.create( createNodeParams );
+
+        final IssueName issueName = IssueNameFactory.create( index );
+
+        final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( this.params, this.getCurrentUser(), index, issueName );
+
+        final Node createdNode;
+        try
+        {
+            createdNode = nodeService.create( createNodeParams );
+        }
+        catch ( NodeAlreadyExistAtPathException e )
+        {
+            throw new IssueAlreadyExistsException( IssueName.from( createNodeParams.getName() ) );
+        }
 
         nodeService.refresh( RefreshMode.SEARCH );
         return IssueNodeTranslator.fromNode( createdNode );
@@ -74,7 +89,10 @@ public class CreateIssueCommand
 
     private long countTotalIssues()
     {
-        final IssueQuery query = IssueQuery.create().count( true ).build();
+        final IssueQuery query = IssueQuery.create().
+            size( 0 ).
+            count( true ).
+            build();
 
         final NodeQuery nodeQuery = IssueQueryNodeQueryTranslator.translate( query );
 
@@ -115,7 +133,8 @@ public class CreateIssueCommand
 
         private static final IssueDataSerializer ISSUE_DATA_SERIALIZER = new IssueDataSerializer();
 
-        public static CreateNodeParams create( final CreateIssueParams params, final User creator, final long index )
+        public static CreateNodeParams create( final CreateIssueParams params, final User creator, final long index,
+                                               final IssueName issueName )
         {
             final Instant now = Instant.now();
             final PropertyTree contentAsData = ISSUE_DATA_SERIALIZER.toCreateNodeData( params );
@@ -129,7 +148,7 @@ public class CreateIssueCommand
 
             final CreateNodeParams.Builder builder = CreateNodeParams.create().
                 setNodeId( NodeId.from( params.getId().toString() ) ).
-                name( params.getName().toString() ).
+                name( issueName.toString() ).
                 parent( IssueConstants.ISSUE_ROOT_PATH ).
                 data( contentAsData ).
                 indexConfigDocument( indexConfigDocument ).

@@ -3,10 +3,10 @@ package com.enonic.xp.core.issue;
 import org.junit.Test;
 
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.core.impl.issue.IssueNameFactory;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueId;
-import com.enonic.xp.issue.IssueName;
 import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.issue.PublishRequest;
 import com.enonic.xp.issue.PublishRequestItem;
@@ -27,7 +27,7 @@ public class IssueServiceImplTest_getIssue
             description( "description" ).
             addApproverId( PrincipalKey.from( "user:myStore:approver-1" ) ).
             setPublishRequest( PublishRequest.create().addExcludeId( ContentId.from( "exclude-id" ) ).addItem(
-                PublishRequestItem.create().id( ContentId.from( "content-id" ) ).includeChildren( true ).build() ).build())).getId();
+                PublishRequestItem.create().id( ContentId.from( "content-id" ) ).includeChildren( true ).build() ).build() ) ).getId();
 
         final Issue issue = this.issueService.getIssue( issueId );
 
@@ -38,6 +38,6 @@ public class IssueServiceImplTest_getIssue
         assertEquals( PrincipalKey.from( "user:system:test-user" ), issue.getCreator() );
         assertEquals( PrincipalKey.from( "user:myStore:approver-1" ), issue.getApproverIds().first() );
         assertEquals( ContentId.from( "content-id" ), issue.getPublishRequest().getItems().first().getId() );
-        assertEquals( IssueName.from( issueId.toString() ), issue.getName() );
+        assertEquals( IssueNameFactory.create( issue.getIndex() ), issue.getName() );
     }
 }
