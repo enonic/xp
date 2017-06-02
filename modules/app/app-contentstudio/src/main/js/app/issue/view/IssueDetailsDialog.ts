@@ -14,7 +14,6 @@ import {IssueStatusSelector} from './IssueStatusSelector';
 import {IssueServerEventsHandler} from '../event/IssueServerEventsHandler';
 import {PublishRequest} from '../PublishRequest';
 import {PublishRequestItem} from '../PublishRequestItem';
-import {IssueType} from '../IssueType';
 import {IssueStatusInfoGenerator} from './IssueStatusInfoGenerator';
 import {IssueDetailsDialogButtonRow} from './IssueDetailsDialogDropdownButtonRow';
 import AEl = api.dom.AEl;
@@ -495,8 +494,7 @@ class DetailsDialogSubTitle extends DivEl {
     }
 
     private makeStatusInfo(): string {
-        const issueType: IssueType = this.issue.getIssueStatus() === IssueStatus.OPEN ? IssueType.OPEN : IssueType.CLOSED;
-        return IssueStatusInfoGenerator.create().setIssue(this.issue).setIssueType(issueType).setCurrentUser(
-            this.currentUser).generate();
+        return IssueStatusInfoGenerator.create().setIssue(this.issue).setIssueStatus(this.issue.getIssueStatus()).setCurrentUser(
+            this.currentUser).setIsIdShown(false).generate();
     }
 }

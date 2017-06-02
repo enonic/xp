@@ -3,18 +3,30 @@
   height: 400px;
 
   .dialog-buttons {
-    margin-top: 11px;
+    margin-top: 15px;
   }
 
   .docked-panel {
     width: auto;
     box-shadow: none;
     position: inherit !important;
-    margin-top: 15px;
 
     .deck-panel {
       margin-top: 6px;
     }
+  }
+
+  .checkbox {
+    padding: 5px 5px 5px 0px;
+
+    &.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  }
+
+  .assigned-to-me-filter {
+    margin-top: 10px;
   }
 
   .panel {
@@ -22,7 +34,7 @@
     cursor: pointer;
 
     .issue-list {
-      max-height: 265px;
+      max-height: 215px;
       overflow: auto;
 
       .issue-list-item {

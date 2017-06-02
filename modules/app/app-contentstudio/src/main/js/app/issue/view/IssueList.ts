@@ -1,10 +1,10 @@
-import {IssueType} from '../IssueType';
 import {Issue} from '../Issue';
-import {IssueFetcher} from '../IssueFetcher';
 import {IssueResponse} from '../resource/IssueResponse';
 import {IssueDetailsDialog} from './IssueDetailsDialog';
 import {IssueListDialog} from './IssueListDialog';
 import {IssueStatusInfoGenerator} from './IssueStatusInfoGenerator';
+import {IssueStatus} from '../IssueStatus';
+import {ListIssuesRequest} from '../resource/ListIssuesRequest';
 import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
 import User = api.security.User;
@@ -14,9 +14,7 @@ import SpanEl = api.dom.SpanEl;
 
 export class IssueList extends ListBox<Issue> {
 
-    public static MAX_FETCH_SIZE: number = 10;
-
-    private issueType: IssueType;
+    private issueStatus: IssueStatus;
 
     private totalItems: number;
 
@@ -24,9 +22,9 @@ export class IssueList extends ListBox<Issue> {
 
     private currentUser: User;
 
-    constructor(issueType: IssueType) {
+    constructor(issueStatus: IssueStatus) {
         super('issue-list');
-        this.issueType = issueType;
+        this.issueStatus = issueStatus;
         this.appendChild(this.loadMask = new LoadMask(this));
         this.loadCurrentUser();
         this.setupLazyLoading();
@@ -48,7 +46,7 @@ export class IssueList extends ListBox<Issue> {
     private initList(): wemQ.Promise<void> {
         this.loadMask.show();
 
-        return IssueFetcher.fetchIssuesByType(this.issueType, 0, IssueList.MAX_FETCH_SIZE).then((response: IssueResponse) => {
+        return this.fetchItems().then((response: IssueResponse) => {
             this.totalItems = response.getMetadata().getTotalHits();
             if (response.getIssues().length > 0) {
                 this.addItems(response.getIssues());
@@ -85,14 +83,24 @@ export class IssueList extends ListBox<Issue> {
         });
     }
 
+    private fetchItems(): wemQ.Promise<IssueResponse> {
+        const listIssuesRequest: ListIssuesRequest = new ListIssuesRequest();
+
+        listIssuesRequest.setIssueStatus(this.issueStatus);
+        listIssuesRequest.setAssignedToMe(IssueListDialog.get().isAssignedToMeChecked());
+        listIssuesRequest.setCreatedByMe(IssueListDialog.get().isMyIssuesChecked());
+        listIssuesRequest.setFrom(this.getItemCount());
+
+        return listIssuesRequest.sendAndParse();
+    }
+
     private handleScroll() {
         if (this.isScrolledToBottom() && !this.isAllItemsLoaded()) {
             this.loadMask.show();
 
-            IssueFetcher.fetchIssuesByType(this.issueType, this.getItemCount(), IssueList.MAX_FETCH_SIZE).then(
-                (response: IssueResponse) => {
-                    this.addItems(response.getIssues());
-                }).catch((reason: any) => {
+            this.fetchItems().then((response: IssueResponse) => {
+                this.addItems(response.getIssues());
+            }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).finally(() => {
                 this.loadMask.hide();
@@ -102,7 +110,7 @@ export class IssueList extends ListBox<Issue> {
 
     protected createItemView(issue: Issue): api.dom.Element {
 
-        const itemEl = new IssueListItem(issue, this.issueType, this.currentUser);
+        const itemEl = new IssueListItem(issue, this.issueStatus, this.currentUser);
 
         itemEl.onClicked(() => {
             this.handleIssueSelected(itemEl);
@@ -134,15 +142,15 @@ export class IssueListItem extends api.dom.LiEl {
 
     private issue: Issue;
 
-    private issueType: IssueType;
+    private issueStatus: IssueStatus;
 
     private currentUser: User;
 
-    constructor(issue: Issue, issueType: IssueType, currentUser: User) {
+    constructor(issue: Issue, issueStatus: IssueStatus, currentUser: User) {
         super('issue-list-item');
 
         this.issue = issue;
-        this.issueType = issueType;
+        this.issueStatus = issueStatus;
         this.currentUser = currentUser;
     }
 
@@ -161,7 +169,7 @@ export class IssueListItem extends api.dom.LiEl {
             const namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
             namesAndIconView
                 .setMainName(this.issue.getTitle())
-                .setIconClass(this.issueType === IssueType.CLOSED ? 'icon-signup closed' : 'icon-signup')
+                .setIconClass(this.issueStatus === IssueStatus.CLOSED ? 'icon-signup closed' : 'icon-signup')
                 .setSubNameElements([new SpanEl().setHtml(this.makeSubName(), false)]);
 
             this.appendChild(namesAndIconView);
@@ -171,7 +179,7 @@ export class IssueListItem extends api.dom.LiEl {
     }
 
     private makeSubName(): string {
-        return IssueStatusInfoGenerator.create().setIssue(this.issue).setIssueType(this.issueType).setCurrentUser(
+        return IssueStatusInfoGenerator.create().setIssue(this.issue).setIssueStatus(this.issueStatus).setCurrentUser(
             this.currentUser).generate();
     }
 }

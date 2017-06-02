@@ -1,5 +1,5 @@
 import {Issue} from '../Issue';
-import {IssueType} from '../IssueType';
+import {IssueStatus} from '../IssueStatus';
 import DateHelper = api.util.DateHelper;
 import User = api.security.User;
 
@@ -7,9 +7,11 @@ export class IssueStatusInfoGenerator {
 
     private issue: Issue;
 
-    private issueType: IssueType;
+    private issueStatus: IssueStatus;
 
     private currentUser: User;
+
+    private isIdShown: boolean = true;
 
     private constructor() {
     }
@@ -23,8 +25,8 @@ export class IssueStatusInfoGenerator {
         return this;
     }
 
-    public setIssueType(issueType: IssueType): IssueStatusInfoGenerator {
-        this.issueType = issueType;
+    public setIssueStatus(issueStatus: IssueStatus): IssueStatusInfoGenerator {
+        this.issueStatus = issueStatus;
         return this;
     }
 
@@ -33,66 +35,46 @@ export class IssueStatusInfoGenerator {
         return this;
     }
 
+    public setIsIdShown(isIdShown: boolean): IssueStatusInfoGenerator {
+        this.isIdShown = isIdShown;
+        return this;
+    }
+
     public generate(): string {
-        if (this.issueType === IssueType.ASSIGNED_TO_ME) {
-            return this.generateAssignedToMe();
-        }
-
-        if (this.issueType === IssueType.OPEN) {
-            return this.generateOpen();
-        }
-
-        if (this.issueType === IssueType.CLOSED) {
+        if (this.issueStatus === IssueStatus.CLOSED) {
             return this.generateClosed();
         }
 
-        return this.generateCreatedByMe();
-    }
-
-    private generateAssignedToMe(): string {
-        const modifiedDateString: string = DateHelper.getModifiedString(this.issue.getModifiedTime());
-        const pattern: string = '#{0} - {1} by {2} {3}'; // id, status, modifier, date
-
-        return api.util.StringHelper.format(pattern, this.issue.getIndex(), this.getStatus(), this.getLastModifiedBy(), modifiedDateString);
+        return this.generateOpen();
     }
 
     private generateOpen(): string {
-        const modifiedDateString: string = DateHelper.getModifiedString(this.issue.getModifiedTime());
-        const issueNotModifiedPattern: string = '#{0} - {1} by {2} {3}. Assigned to {4}'; // id, status, modifier, date, assignees
-        const issueModifiedPattern: string = '#{0} - Assigned to {1}. {2} by {3} {4}'; // id, assignees, status, modifier, date
+        const assignedToText: string = 'Assigned to ' + this.assignedTo();
+        const statusText: string = api.util.StringHelper.format('{0} by {1} {2}', this.getStatus(), this.getLastModifiedBy(),
+            this.getModifiedDate());
 
-        if (this.issue.getModifier()) {
-            return api.util.StringHelper.format(issueModifiedPattern, this.issue.getIndex(), this.assignedTo(), this.getStatus(),
-                this.getLastModifiedBy(), modifiedDateString);
+        const result: string = !!this.issue.getModifier() ? (assignedToText + '. ' + statusText) : (statusText + '. ' + assignedToText);
+
+        if (this.isIdShown) {
+            return api.util.StringHelper.format('#{0} - {1}', this.issue.getIndex(), result);
         }
-        else {
-            return api.util.StringHelper.format(issueNotModifiedPattern, this.issue.getIndex(), this.getStatus(), this.getLastModifiedBy(),
-                modifiedDateString, this.assignedTo());
-        }
+
+        return result;
     }
 
     private generateClosed(): string {
-        const modifiedDateString: string = DateHelper.getModifiedString(this.issue.getModifiedTime());
-        const pattern: string = '#{0} - Assigned to {1}. Closed by {2} {3}'; //id, modifier, date, assignees
+        const pattern: string = 'Assigned to {0}. Closed by {1} {2}'; //id, modifier, date, assignees
+        const result: string = api.util.StringHelper.format(pattern, this.assignedTo(), this.getLastModifiedBy(), this.getModifiedDate());
 
-        return api.util.StringHelper.format(pattern, this.issue.getIndex(), this.assignedTo(), this.getLastModifiedBy(),
-            modifiedDateString,
-        );
+        if (this.isIdShown) {
+            return api.util.StringHelper.format('#{0} - {1}', this.issue.getIndex(), result);
+        }
+
+        return result;
     }
 
-    private generateCreatedByMe(): string {
-        const modifiedDateString: string = DateHelper.getModifiedString(this.issue.getModifiedTime());
-        const issueNotModifiedPattern: string = '#{0} - {1} {2}. Assigned to {3}'; //id, status, date, assignees
-        const issueModifiedPattern: string = '#{0} - Assigned to {1}. {2} {3} '; //id, assignees, status, date
-
-        if (this.issue.getModifier()) {
-            return api.util.StringHelper.format(issueModifiedPattern, this.issue.getIndex(), this.assignedTo(), this.getStatus(),
-                modifiedDateString);
-        }
-        else {
-            return api.util.StringHelper.format(issueNotModifiedPattern, this.issue.getIndex(), this.getStatus(), modifiedDateString,
-                this.assignedTo());
-        }
+    private getModifiedDate(): string {
+        return DateHelper.getModifiedString(this.issue.getModifiedTime());
     }
 
     private getStatus(): string {

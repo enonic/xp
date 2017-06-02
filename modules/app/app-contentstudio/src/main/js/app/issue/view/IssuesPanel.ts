@@ -1,14 +1,15 @@
 import Panel = api.ui.panel.Panel;
-import {IssueType} from '../IssueType';
 import {IssueList} from './IssueList';
+import {IssueStatus} from '../IssueStatus';
+
 export class IssuesPanel extends Panel {
 
     private issuesList: IssueList;
 
-    constructor(issuesType: IssueType) {
-        super(IssueType[issuesType]);
+    constructor(issueStatus: IssueStatus) {
+        super(IssueStatus[issueStatus]);
 
-        this.issuesList = new IssueList(issuesType);
+        this.issuesList = new IssueList(issueStatus);
         this.appendChild(this.issuesList);
     }
 

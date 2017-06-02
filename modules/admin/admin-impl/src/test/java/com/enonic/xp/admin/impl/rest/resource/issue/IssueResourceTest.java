@@ -19,6 +19,7 @@ import com.enonic.xp.admin.impl.json.issue.PublishRequestItemJson;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishRequestJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueJson;
+import com.enonic.xp.admin.impl.rest.resource.issue.json.ListIssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueJson;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.context.ContextAccessor;
@@ -86,7 +87,7 @@ public class IssueResourceTest
         final FindIssuesResult result = FindIssuesResult.create().hits( 2 ).totalHits( 4 ).issues( issues ).build();
         Mockito.when( issueService.findIssues( Mockito.any( IssueQuery.class ) ) ).thenReturn( result );
 
-        issueResource.listIssues( "OPEN", 0, 10 );
+        issueResource.listIssues( new ListIssuesJson( "OPEN", false, false, 0, 10 ) );
 
         Mockito.verify( issueService, Mockito.times( 1 ) ).findIssues( Mockito.any( IssueQuery.class ) );
     }
