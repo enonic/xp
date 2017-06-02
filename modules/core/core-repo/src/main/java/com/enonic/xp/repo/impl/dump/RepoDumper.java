@@ -25,6 +25,7 @@ import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.repo.impl.dump.model.DumpEntry;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
+import com.enonic.xp.repo.impl.node.executor.BatchedGetChildrenExecutor;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
