@@ -24,8 +24,6 @@ final class MessageBundleImpl
 
     static final String MISSING_VALUE_MESSAGE = "NOT_TRANSLATED";
 
-    private final static Logger LOG = LoggerFactory.getLogger( MessageBundleImpl.class );
-
     private final Properties properties;
 
     MessageBundleImpl( final Properties properties )
@@ -60,7 +58,7 @@ final class MessageBundleImpl
     {
         if ( StringUtils.isBlank( localizedPhrase ) )
         {
-            return null;
+            return "";
         }
 
         try
@@ -69,8 +67,7 @@ final class MessageBundleImpl
         }
         catch ( final UnsupportedEncodingException e )
         {
-            LOG.error( "Parsing localized phrase: " + localizedPhrase + " failed", e );
-            return null;
+            return localizedPhrase;
         }
     }
 
@@ -80,7 +77,7 @@ final class MessageBundleImpl
         final Map<String, String> map = Maps.newHashMap();
         for ( final Object key : this.properties.keySet() )
         {
-            map.put( key.toString(), this.properties.getProperty( key.toString() ) );
+            map.put( key.toString(), handleGetObject( key.toString() ).toString() );
         }
 
         return map;

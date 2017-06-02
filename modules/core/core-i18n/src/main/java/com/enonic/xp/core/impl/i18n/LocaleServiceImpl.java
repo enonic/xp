@@ -20,10 +20,6 @@ import com.enonic.xp.resource.ResourceService;
 public final class LocaleServiceImpl
     implements LocaleService
 {
-    private static final String ROOT_FOLDER = "i18n/phrases";
-
-    private static final String SITE_FOLDER = "site/i18n/phrases";
-
     private static final String DELIMITER = "_";
 
     private ResourceService resourceService;
@@ -31,62 +27,78 @@ public final class LocaleServiceImpl
     @Override
     public MessageBundle getBundle( final ApplicationKey applicationKey, final Locale locale )
     {
+        return getBundle( applicationKey, locale, "site/i18n/phrases" );
+    }
+
+    @Override
+    public MessageBundle getBundle( final ApplicationKey applicationKey, final Locale locale, final String... bundleNames )
+    {
         if ( applicationKey == null )
         {
             return null;
         }
 
-        return createMessageBundle( applicationKey, locale );
+        return createMessageBundle( applicationKey, locale, bundleNames );
     }
 
-    private MessageBundle createMessageBundle( final ApplicationKey applicationKey, final Locale locale )
+    private MessageBundle createMessageBundle( final ApplicationKey applicationKey, final Locale locale, final String... bundleNames )
+    {
+        final Properties props = new Properties();
+        for ( final String bundleName : bundleNames )
+        {
+            props.putAll( loadBundles( applicationKey, locale, bundleName ) );
+        }
+
+        return new MessageBundleImpl( props );
+    }
+
+    private Properties loadBundles( final ApplicationKey applicationKey, final Locale locale, final String bundleName )
     {
         final Properties props = new Properties();
 
         if ( locale == null )
         {
-            props.putAll( loadBundle( applicationKey, "" ) );
-            return new MessageBundleImpl( props );
+            props.putAll( loadBundle( applicationKey, bundleName, "" ) );
+            return props;
         }
 
         String lang = locale.getLanguage();
         String country = locale.getCountry();
         String variant = locale.getVariant();
 
-        props.putAll( loadBundle( applicationKey, "" ) );
+        props.putAll( loadBundle( applicationKey, bundleName, "" ) );
 
         if ( StringUtils.isNotEmpty( lang ) )
         {
             lang = lang.toLowerCase();
-            props.putAll( loadBundle( applicationKey, DELIMITER + lang ) );
+            props.putAll( loadBundle( applicationKey, bundleName, DELIMITER + lang ) );
         }
 
         if ( StringUtils.isNotEmpty( country ) )
         {
-            props.putAll( loadBundle( applicationKey, DELIMITER + lang + DELIMITER + country ) );
+            props.putAll( loadBundle( applicationKey, bundleName, DELIMITER + lang + DELIMITER + country ) );
         }
 
         if ( StringUtils.isNotEmpty( variant ) )
         {
             variant = variant.toLowerCase();
-            props.putAll( loadBundle( applicationKey, DELIMITER + lang + DELIMITER + country + DELIMITER + variant ) );
+            props.putAll( loadBundle( applicationKey, bundleName, DELIMITER + lang + DELIMITER + country + DELIMITER + variant ) );
         }
 
-        return new MessageBundleImpl( props );
+        return props;
     }
 
-    private Properties loadBundle( final ApplicationKey applicationKey, final String bundleExtension )
+    private Properties loadBundle( final ApplicationKey applicationKey, final String bundleName, final String bundleExtension )
     {
         final Properties properties = new Properties();
-        properties.putAll( loadBundle( applicationKey, bundleExtension, ROOT_FOLDER ) );
-        properties.putAll( loadBundle( applicationKey, bundleExtension, SITE_FOLDER ) );
+        properties.putAll( loadSingleBundle( applicationKey, bundleName, bundleExtension ) );
         return properties;
     }
 
-    private Properties loadBundle( final ApplicationKey applicationKey, final String bundleExtension, final String folder )
+    private Properties loadSingleBundle( final ApplicationKey applicationKey, final String bundleName, final String bundleExtension )
     {
         final Properties properties = new Properties();
-        final ResourceKey resourceKey = ResourceKey.from( applicationKey, folder + bundleExtension + ".properties" );
+        final ResourceKey resourceKey = ResourceKey.from( applicationKey, bundleName + bundleExtension + ".properties" );
         final Resource resource = resourceService.getResource( resourceKey );
 
         if ( resource.exists() )

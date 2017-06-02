@@ -35,6 +35,7 @@ import MarketApplicationsFetcher = api.application.MarketApplicationsFetcher;
 import MarketApplicationResponse = api.application.MarketApplicationResponse;
 import MarketApplicationBuilder = api.application.MarketApplicationBuilder;
 import ProgressBar = api.ui.ProgressBar;
+import i18n = api.util.i18n;
 
 declare var CONFIG;
 
@@ -332,8 +333,8 @@ export class MarketAppsTreeGrid extends TreeGrid<MarketApplication> {
                 }
                 return applications;
             }).catch((reason: any) => {
-            let status500Message = 'Woops... The server seems to be experiencing problems. Please try again later.';
-            let defaultErrorMessage = 'Enonic Market is temporarily unavailable. Please try again later.';
+            let status500Message = i18n('market.error.500');
+            let defaultErrorMessage = i18n('market.error.default');
             this.handleError(reason, reason.getStatusCode() === 500 ? status500Message : defaultErrorMessage);
             return [];
         });

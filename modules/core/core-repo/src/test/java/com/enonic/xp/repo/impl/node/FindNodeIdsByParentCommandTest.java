@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.io.IOException;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -111,6 +113,45 @@ public class FindNodeIdsByParentCommandTest
             execute();
 
         assertEquals( 0, children.getNodeIds().getSize() );
-
     }
+
+    @Test
+    public void findByParent_recursive()
+        throws IOException
+    {
+        /*
+                |-node1
+                    |-node1_1
+                        |-node1_1_1
+                            |-node1_1_1_1
+                    |-node1_1_dummy
+                    |-node1_2
+         */
+
+        final Node node = createNode( NodePath.ROOT, "node1" );
+        final Node node1_1 = createNode( node.path(), "node1_1" );
+        createNode( node.path(), "node1_1_dummy" );
+        createNode( node.path(), "node1_2" );
+        final Node node1_1_1 = createNode( node1_1.path(), "node1_1_1" );
+        final Node node_1_1_1_1 = createNode( node1_1_1.path(), "node1_1_1_1" );
+
+        assertEquals( 6, getByParentRecursive( Node.ROOT_UUID ).getHits() );
+        assertEquals( 5, getByParentRecursive( node.id() ).getHits() );
+        assertEquals( 2, getByParentRecursive( node1_1.id() ).getHits() );
+        assertEquals( 1, getByParentRecursive( node1_1_1.id() ).getHits() );
+        assertEquals( 0, getByParentRecursive( node_1_1_1_1.id() ).getHits() );
+    }
+
+    private FindNodesByParentResult getByParentRecursive( final NodeId nodeId )
+    {
+        return FindNodeIdsByParentCommand.create().
+            parentId( nodeId ).
+            recursive( true ).
+            searchService( this.searchService ).
+            storageService( this.storageService ).
+            indexServiceInternal( this.indexServiceInternal ).
+            build().
+            execute();
+    }
+
 }

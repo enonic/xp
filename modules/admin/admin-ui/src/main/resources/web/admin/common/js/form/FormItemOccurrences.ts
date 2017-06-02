@@ -275,7 +275,9 @@ module api.form {
             this.resetOccurrenceIndexes();
             this.refreshOccurrenceViews();
 
-            this.propertyArray.remove(indexToRemove);
+            if (this.propertyArray.get(indexToRemove)) { // if not already removed
+                this.propertyArray.remove(indexToRemove);
+            }
 
             this.notifyOccurrenceRemoved(occurrenceToRemove, occurrenceViewToRemove);
         }

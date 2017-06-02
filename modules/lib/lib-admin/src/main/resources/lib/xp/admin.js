@@ -7,6 +7,7 @@
  * @module admin
  */
 
+var i18n = require('/lib/xp/i18n');
 var helper = __.newBean('com.enonic.xp.lib.admin.AdminLibHelper');
 
 /**
@@ -36,3 +37,11 @@ exports.getLocale = function () {
     return helper.getLocale();
 };
 
+/**
+ * Returns all i18n phrases.
+ *
+ * @returns {string} Current locale.
+ */
+exports.getPhrases = function () {
+    return JSON.stringify(i18n.getPhrases(helper.getLocale(), ['admin/i18n/common', 'admin/i18n/phrases']));
+};

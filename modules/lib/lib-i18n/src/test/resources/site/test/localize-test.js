@@ -32,7 +32,7 @@ exports.testGetPhrases = function () {
         "a": "1",
         "b": "2"
     };
-    var result = i18n.getPhrases();
+    var result = i18n.getPhrases('en', null);
 
     assert.assertJsonEquals(actual, result);
 };

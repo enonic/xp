@@ -1,7 +1,6 @@
 var admin = require('/lib/xp/admin');
 var mustache = require('/lib/xp/mustache');
 var portal = require('/lib/xp/portal');
-var i18n = require('/lib/xp/i18n');
 
 function getPhrases() {
     return JSON.stringify(i18n.getPhrases(admin.getLocale()));
@@ -19,7 +18,7 @@ function handleGet() {
         appName: 'Users',
         appId: app.name,
         xpVersion: app.version,
-        messages: getPhrases()
+        messages: admin.getPhrases()
     };
 
     return {

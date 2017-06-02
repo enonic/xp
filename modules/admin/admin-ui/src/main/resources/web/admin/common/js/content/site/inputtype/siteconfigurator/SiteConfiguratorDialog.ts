@@ -13,6 +13,8 @@ module api.content.site.inputtype.siteconfigurator {
     import ComboBox = api.ui.selector.combobox.ComboBox;
     import CreateHtmlAreaDialogEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
     import Application = api.application.Application;
+    import ResponsiveManager = api.ui.responsive.ResponsiveManager;
+    import HtmlAreaResizeEvent = api.form.inputtype.text.HtmlAreaResizeEvent;
 
     export class SiteConfiguratorDialog extends api.ui.dialog.ModalDialog {
 
@@ -24,7 +26,7 @@ module api.content.site.inputtype.siteconfigurator {
 
         private cancelCallback: () => void;
 
-        constructor(application:Application, formView:FormView, okCallback?:() => void, cancelCallback?:() => void) {
+        constructor(application: Application, formView: FormView, okCallback?: () => void, cancelCallback?: () => void) {
             super();
 
             this.appendChildToHeader(this.getHeaderContent(application));
@@ -43,6 +45,26 @@ module api.content.site.inputtype.siteconfigurator {
                     this.removeClass('masked');
                 });
             });
+
+            const availableSizeChangedListener = () => {
+                const content = this.getContentPanel();
+                const contentHeight = content.getEl().getHeightWithoutPadding();
+                const contentChildrenHeight = content.getChildren().reduce((prev, curr) => {
+                    return prev + curr.getEl().getHeightWithMargin();
+                }, 0);
+
+                const isScrollable = contentHeight < contentChildrenHeight;
+
+                this.toggleClass('scrollable', isScrollable);
+            };
+
+            ResponsiveManager.onAvailableSizeChanged(this, availableSizeChangedListener);
+            HtmlAreaResizeEvent.on(availableSizeChangedListener);
+            this.onRemoved(() => {
+                ResponsiveManager.unAvailableSizeChanged(this);
+                HtmlAreaResizeEvent.un(availableSizeChangedListener);
+            });
+
         }
 
         doRender(): Q.Promise<boolean> {
@@ -67,6 +89,8 @@ module api.content.site.inputtype.siteconfigurator {
 
                     this.handleSelectorsDropdowns(this.formView);
                     this.handleDialogClose(this.formView);
+
+                    ResponsiveManager.fireResizeEvent();
 
                     return rendered;
                 });

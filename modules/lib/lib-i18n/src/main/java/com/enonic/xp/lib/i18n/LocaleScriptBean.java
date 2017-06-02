@@ -24,19 +24,19 @@ public final class LocaleScriptBean
 
     public String localize( final String key, final String locale, final ScriptValue values )
     {
-        return getMessageBundle( locale ).localize( key, toArray( values ) );
+        return getMessageBundle( locale, "site/i18n/phrases" ).localize( key, toArray( values ) );
     }
 
-    public MapSerializable getPhrases( final String locale )
+    public MapSerializable getPhrases( final String locale, final String... bundleNames )
     {
-        return new MapMapper( getMessageBundle( locale ).asMap() );
+        return new MapMapper( getMessageBundle( locale, bundleNames ).asMap() );
     }
 
-    private MessageBundle getMessageBundle( final String locale )
+    private MessageBundle getMessageBundle( final String locale, final String... bundleNames )
     {
         final ApplicationKey applicationKey = getRequest().getApplicationKey();
         final Locale resolvedLocale = resolveLocale( locale );
-        return this.localeService.get().getBundle( applicationKey, resolvedLocale );
+        return this.localeService.get().getBundle( applicationKey, resolvedLocale, bundleNames );
     }
 
     private Locale resolveLocale( final String locale )

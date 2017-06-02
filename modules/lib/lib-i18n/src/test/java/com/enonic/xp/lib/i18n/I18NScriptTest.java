@@ -36,7 +36,7 @@ public class I18NScriptTest
         final LocaleService localeService = Mockito.mock( LocaleService.class );
 
         final MessageBundle bundle = Mockito.mock( MessageBundle.class, (Answer) this::answer );
-        Mockito.when( localeService.getBundle( Mockito.any( ApplicationKey.class ), Mockito.any( Locale.class ) ) ).
+        Mockito.when( localeService.getBundle( Mockito.any( ApplicationKey.class ), Mockito.any( Locale.class ), Mockito.any( String[].class ) ) ).
             thenAnswer( mock -> bundle );
 
         addService( LocaleService.class, localeService );
