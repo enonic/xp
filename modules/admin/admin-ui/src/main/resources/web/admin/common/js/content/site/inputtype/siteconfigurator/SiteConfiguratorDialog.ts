@@ -26,7 +26,7 @@ module api.content.site.inputtype.siteconfigurator {
 
         private cancelCallback: () => void;
 
-        constructor(application:Application, formView:FormView, okCallback?:() => void, cancelCallback?:() => void) {
+        constructor(application: Application, formView: FormView, okCallback?: () => void, cancelCallback?: () => void) {
             super();
 
             this.appendChildToHeader(this.getHeaderContent(application));
@@ -64,7 +64,6 @@ module api.content.site.inputtype.siteconfigurator {
                 ResponsiveManager.unAvailableSizeChanged(this);
                 HtmlAreaResizeEvent.un(availableSizeChangedListener);
             });
-
 
         }
 
