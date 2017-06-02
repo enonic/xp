@@ -4,13 +4,15 @@ import java.time.Duration;
 
 public class ProgressReporter
 {
-    Duration writeMetaData = Duration.ZERO;
+    private Duration writeMetaData = Duration.ZERO;
 
-    Duration creatingDumpEntries = Duration.ZERO;
+    private Duration creatingDumpEntries = Duration.ZERO;
 
-    Duration writeVersion = Duration.ZERO;
+    private Duration writeVersion = Duration.ZERO;
 
-    Duration writeBinary = Duration.ZERO;
+    private Duration writeBinary = Duration.ZERO;
+
+    private Duration fetchChildren = Duration.ZERO;
 
     void createdDumpEntry( final long nanoseconds )
     {
@@ -32,6 +34,11 @@ public class ProgressReporter
         this.writeBinary = writeBinary.plusNanos( nanoseconds );
     }
 
+    void fetchChildren( final long nanoseconds )
+    {
+        this.fetchChildren = fetchChildren.plusNanos( nanoseconds );
+    }
+
     @Override
     public String toString()
     {
@@ -40,6 +47,7 @@ public class ProgressReporter
             ", creatingDumpEntries=" + creatingDumpEntries +
             ", writeVersion=" + writeVersion +
             ", writeBinary=" + writeBinary +
+            ", fetchChildren=" + fetchChildren +
             '}';
     }
 }

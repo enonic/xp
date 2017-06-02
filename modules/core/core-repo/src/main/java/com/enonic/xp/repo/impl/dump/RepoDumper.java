@@ -13,12 +13,12 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.AttachedBinary;
-import com.enonic.xp.node.FindNodesByParentParams;
-import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionMetadata;
@@ -117,17 +117,23 @@ public class RepoDumper
 
     private void dumpNode( final NodeId nodeId, final BranchDumpResult.Builder dumpResult )
     {
-        // TODO: Dump root node?
-        final FindNodesByParentResult result = this.nodeService.findByParent( FindNodesByParentParams.create().
-            from( 0 ).
-            size( -1 ).
+        final BatchedGetChildrenExecutor executor = BatchedGetChildrenExecutor.create().
+            nodeService( this.nodeService ).
             parentId( nodeId ).
-            build() );
+            batchSize( 5000 ).
+            childOrder( ChildOrder.from( "_path asc" ) ).
+            build();
 
-        for ( final NodeId child : result.getNodeIds() )
+        while ( executor.hasMore() )
         {
-            doDumpNode( child, dumpResult );
-            dumpNode( child, dumpResult );
+            final Stopwatch timer = Stopwatch.createStarted();
+            final NodeIds children = executor.execute();
+            this.reporter.fetchChildren( timer.stop().elapsed( TimeUnit.NANOSECONDS ) );
+
+            for ( final NodeId child : children )
+            {
+                doDumpNode( child, dumpResult );
+            }
         }
     }
 
