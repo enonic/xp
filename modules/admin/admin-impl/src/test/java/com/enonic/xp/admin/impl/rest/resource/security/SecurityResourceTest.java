@@ -4,6 +4,7 @@ import java.net.URLEncoder;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import javax.ws.rs.WebApplicationException;
@@ -17,7 +18,10 @@ import org.mockito.Mockito;
 import com.google.common.collect.Iterables;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
+import com.enonic.xp.admin.impl.rest.resource.security.json.CreateGroupJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.CreateRoleJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateUserJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.CreateUserStoreJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdatePasswordJson;
 import com.enonic.xp.security.CreateGroupParams;
 import com.enonic.xp.security.CreateRoleParams;
@@ -179,6 +183,26 @@ public class SecurityResourceTest
             post().getAsString();
 
         assertJson( "createUserStoreSuccess.json", jsonString );
+    }
+
+    @Test
+    public void createUserStoreThrowsExceptionWhenNameIsOccupied()
+        throws Exception
+    {
+        final SecurityResource resource = (SecurityResource) getResourceInstance();
+        final CreateUserStoreJson params = new CreateUserStoreJson( "ustore1", "ustore1", "", null, new ArrayList<>() );
+        final UserStore userStore = UserStore.create().
+            key( UserStoreKey.from( "enonic" ) ).
+            displayName( "Enonic User Store" ).
+            description( "user store description" ).
+            build();
+
+        Mockito.when( securityService.getUserStore( Mockito.any( UserStoreKey.class ) ) ).thenReturn( userStore );
+
+        exception.expect( WebApplicationException.class );
+        exception.expectMessage( "User Store [ustore1] could not be created. A User Store with that name already exists" );
+
+        resource.createUserStore( params );
     }
 
     @Test
@@ -408,6 +432,7 @@ public class SecurityResourceTest
             build();
 
         Mockito.when( securityService.createUser( Mockito.any( CreateUserParams.class ) ) ).thenReturn( user );
+        Mockito.when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) ).thenReturn( Optional.empty() );
 
         String jsonString = request().
             path( "security/principals/createUser" ).
@@ -415,6 +440,27 @@ public class SecurityResourceTest
             post().getAsString();
 
         assertJson( "createUserSuccess.json", jsonString );
+    }
+
+    @Test
+    public void createUserThrowsExceptionWhenNameIsOccupied()
+        throws Exception
+    {
+        final SecurityResource resource = (SecurityResource) getResourceInstance();
+        final CreateUserJson params = new CreateUserJson();
+        params.userKey = "user:system:user1";
+        params.displayName = "user1";
+        params.email = "test@enonic.com";
+        params.login = "test";
+        params.password = "pass";
+
+        Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) ).thenReturn(
+            Optional.ofNullable( User.ANONYMOUS ) );
+
+        exception.expect( WebApplicationException.class );
+        exception.expectMessage( "Principal [user1] could not be created. A principal with that name already exists" );
+
+        resource.createUser( params );
     }
 
     @Test
@@ -429,6 +475,7 @@ public class SecurityResourceTest
             build();
 
         Mockito.when( securityService.createGroup( Mockito.any( CreateGroupParams.class ) ) ).thenReturn( group );
+        Mockito.when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) ).thenReturn( Optional.empty() );
 
         String jsonString = request().
             path( "security/principals/createGroup" ).
@@ -436,6 +483,25 @@ public class SecurityResourceTest
             post().getAsString();
 
         assertJson( "createGroupSuccess.json", jsonString );
+    }
+
+    @Test
+    public void createGroupThrowsExceptionWhenNameIsOccupied()
+        throws Exception
+    {
+        final SecurityResource resource = (SecurityResource) getResourceInstance();
+        final CreateGroupJson params = new CreateGroupJson();
+        params.userKey = "group:system:group1";
+        params.displayName = "group1";
+        params.description = "descr";
+
+        Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) ).thenReturn(
+            Optional.ofNullable( User.ANONYMOUS ) );
+
+        exception.expect( WebApplicationException.class );
+        exception.expectMessage( "Principal [group1] could not be created. A principal with that name already exists" );
+
+        resource.createGroup( params );
     }
 
     @Test
@@ -450,6 +516,7 @@ public class SecurityResourceTest
             build();
 
         Mockito.when( securityService.createRole( Mockito.any( CreateRoleParams.class ) ) ).thenReturn( role );
+        Mockito.when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) ).thenReturn( Optional.empty() );
 
         String jsonString = request().
             path( "security/principals/createRole" ).
@@ -457,6 +524,25 @@ public class SecurityResourceTest
             post().getAsString();
 
         assertJson( "createRoleSuccess.json", jsonString );
+    }
+
+    @Test
+    public void createRoleThrowsExceptionWhenNameIsOccupied()
+        throws Exception
+    {
+        final SecurityResource resource = (SecurityResource) getResourceInstance();
+        final CreateRoleJson params = new CreateRoleJson();
+        params.userKey = "role:admin";
+        params.displayName = "admin";
+        params.description = "descr";
+
+        Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) ).thenReturn(
+            Optional.ofNullable( User.ANONYMOUS ) );
+
+        exception.expect( WebApplicationException.class );
+        exception.expectMessage( "Principal [admin] could not be created. A principal with that name already exists" );
+
+        resource.createRole( params );
     }
 
     @Test
