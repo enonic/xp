@@ -1,7 +1,6 @@
 import '../../api.ts';
 
 import Content = api.content.Content;
-import Site = api.content.site.Site;
 import PageCUDRequest = api.content.page.PageCUDRequest;
 import CreatePageRequest = api.content.page.CreatePageRequest;
 import UpdatePageRequest = api.content.page.UpdatePageRequest;

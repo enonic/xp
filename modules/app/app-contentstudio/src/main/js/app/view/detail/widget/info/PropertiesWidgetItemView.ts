@@ -1,15 +1,24 @@
 import '../../../../../api.ts';
 import {WidgetItemView} from '../../WidgetItemView';
+import {PageTemplateOption} from '../../../../wizard/page/contextwindow/inspect/page/PageTemplateOption';
 
 import ContentSummary = api.content.ContentSummary;
 import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
 import Application = api.application.Application;
 import ApplicationKey = api.application.ApplicationKey;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+import GetNearestSiteRequest = api.content.resource.GetNearestSiteRequest;
+import GetPageTemplatesByCanRenderRequest = api.content.page.GetPageTemplatesByCanRenderRequest;
+import PageTemplate = api.content.page.PageTemplate;
+import Site = api.content.site.Site;
+import Tooltip = api.ui.Tooltip;
+import EditContentEvent = api.content.event.EditContentEvent;
 
 export class PropertiesWidgetItemView extends WidgetItemView {
 
     private content: ContentSummary;
+
+    private pageTemplate: PageTemplate;
 
     private list: api.dom.DlEl;
 
@@ -26,7 +35,8 @@ export class PropertiesWidgetItemView extends WidgetItemView {
                 this.initListeners();
             }
             this.content = content;
-            return this.layout();
+
+            return this.loadPageTemplate().then(() => this.layout());
         }
 
         return wemQ<any>(null);
@@ -82,37 +92,41 @@ export class PropertiesWidgetItemView extends WidgetItemView {
         }
         this.list = new api.dom.DlEl();
 
-        let strings: FieldString[];
+        const strings: Field[] = [
+            new Field().setName('Type')
+                .setValue(
+                    this.content.getType().getLocalName() ? this.content.getType().getLocalName() : this.content.getType().toString()),
 
-        strings = [
-            new FieldString().setName('Type').setValue(this.content.getType().getLocalName()
-                ? this.content.getType().getLocalName() : this.content.getType().toString()),
+            new Field().setName('Application')
+                .setValue(application ? application.getDisplayName() : this.content.getType().getApplicationKey().getName()),
 
-            new FieldString().setName('Application').setValue(application ? application.getDisplayName() :
-                                                              this.content.getType().getApplicationKey().getName()),
+            this.content.getLanguage() ? new Field().setName('Language').setValue(this.content.getLanguage()) : null,
 
-            this.content.getLanguage() ? new FieldString().setName('Language').setValue(this.content.getLanguage()) : null,
+            this.content.getOwner() ? new Field().setName('Owner').setValue(this.content.getOwner().getId()) : null,
 
-            this.content.getOwner() ? new FieldString().setName('Owner').setValue(this.content.getOwner().getId()) : null,
+            new Field().setName('Created').setValue(DateTimeFormatter.createHtml(this.content.getCreatedTime())),
 
-            new FieldString().setName('Created').setValue(DateTimeFormatter.createHtml(this.content.getCreatedTime())),
+            this.content.getModifiedTime() ? new Field().setName('Modified')
+                                               .setValue(DateTimeFormatter.createHtml(this.content.getModifiedTime())) : null,
 
-            this.content.getModifiedTime() ? new FieldString().setName('Modified').setValue(
-                DateTimeFormatter.createHtml(this.content.getModifiedTime())) : null,
+            this.content.getPublishFirstTime() ? new Field().setName('First Published')
+                                                   .setValue(DateTimeFormatter.createHtml(this.content.getPublishFirstTime())) : null,
 
-            this.content.getPublishFirstTime() ? new FieldString().setName('First Published').setValue(
-                DateTimeFormatter.createHtml(this.content.getPublishFirstTime())) : null,
+            this.content.getPublishFromTime() ? new Field().setName('Publish From')
+                                                  .setValue(DateTimeFormatter.createHtml(this.content.getPublishFromTime())) : null,
 
-            this.content.getPublishFromTime() ? new FieldString().setName('Publish From').setValue(
-                DateTimeFormatter.createHtml(this.content.getPublishFromTime())) : null,
+            this.content.getPublishToTime() ? new Field().setName('Publish To')
+                                                .setValue(DateTimeFormatter.createHtml(this.content.getPublishToTime())) : null,
 
-            this.content.getPublishToTime() ? new FieldString().setName('Publish To').setValue(
-                DateTimeFormatter.createHtml(this.content.getPublishToTime())) : null,
+            new Field().setName('Id').setValue(this.content.getId()),
 
-            new FieldString().setName('Id').setValue(this.content.getId())
+            this.pageTemplate ? new Field().setName('Page Template')
+                                  .setValue(this.getPageTemplateName())
+                                  .setTooltip(this.isPageTemplateAutogenerated() ? 'Automatic' : null)
+                                  .setContent(this.isPageTemplateEditable() ? this.pageTemplate : null) : null
         ];
 
-        strings.forEach((stringItem: FieldString) => {
+        strings.forEach((stringItem: Field) => {
             if (stringItem) {
                 stringItem.layout(this.list);
             }
@@ -120,28 +134,101 @@ export class PropertiesWidgetItemView extends WidgetItemView {
         this.removeChildren();
         this.appendChild(this.list);
     }
+
+    private loadPageTemplate(): wemQ.Promise<void> {
+        this.pageTemplate = null;
+        if (this.content.isPage() || this.content.isSite()) {
+
+            const contentId = this.content.getContentId();
+            const contentType = this.content.getType();
+
+            return new GetNearestSiteRequest(contentId).sendAndParse().then((site: Site) => {
+                return new GetPageTemplatesByCanRenderRequest(site.getContentId(), contentType).sendAndParse();
+            }).then((templates: PageTemplate[]) => {
+                if (templates.length > 0) {
+                    this.pageTemplate = templates[0];
+
+                }
+            });
+        }
+
+        this.pageTemplate = null;
+
+        return wemQ<any>(null);
+    }
+
+    private getPageTemplateName(): string {
+        if (this.pageTemplate) {
+            const templateMeta = new PageTemplateOption(this.pageTemplate);
+            if (templateMeta.isCustom()) {
+                return 'custom';
+            } else { // templateMeta.isAuto() || other
+                return this.pageTemplate.getDisplayName();
+            }
+        }
+        return 'not used';
+    }
+
+    private isPageTemplateEditable(): boolean {
+        if (this.pageTemplate) {
+            const templateMeta = new PageTemplateOption(this.pageTemplate);
+            return templateMeta.isAuto() || !templateMeta.isCustom();
+        }
+        return false;
+    }
+
+    private isPageTemplateAutogenerated(): boolean {
+        return !!this.pageTemplate && new PageTemplateOption(this.pageTemplate).isAuto();
+    }
 }
 
-class FieldString {
+class Field {
 
-    private fieldName: string;
+    private name: string;
 
     private value: string;
 
-    public setName(name: string): FieldString {
-        this.fieldName = name;
+    private tooltip: string;
+
+    private content: ContentSummary;
+
+    setName(name: string): Field {
+        this.name = name;
         return this;
     }
 
-    public setValue(value: string): FieldString {
+    setValue(value: string): Field {
         this.value = value;
         return this;
     }
 
-    public layout(parentEl: api.dom.Element) {
-        let valueEl = new api.dom.DdDtEl('dt').setHtml(this.value);
-        let spanEl = new api.dom.DdDtEl('dd').setHtml(this.fieldName + ': ');
-        parentEl.appendChildren(spanEl, valueEl);
+    setTooltip(tooltip: string): Field {
+        this.tooltip = tooltip;
+        return this;
     }
 
+    setContent(content: ContentSummary): Field {
+        this.content = content;
+        return this;
+    }
+
+    layout(parentEl: api.dom.Element) {
+        const term = new api.dom.DdDtEl('dt').setHtml(this.name);
+        const definition = new api.dom.DdDtEl('dd');
+
+        if (this.content) {
+            const link = new api.dom.AEl();
+            link.setHtml(this.value);
+            link.onClicked(() => {
+                new EditContentEvent([ContentSummaryAndCompareStatus.fromContentSummary(this.content)]).fire();
+            });
+            definition.appendChild(link);
+        } else {
+            definition.setHtml(this.value);
+        }
+        if (this.tooltip) {
+            new Tooltip(definition, this.tooltip, 50);
+        }
+        parentEl.appendChildren(term, definition);
+    }
 }
