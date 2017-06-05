@@ -219,15 +219,15 @@ class Field {
         if (this.content) {
             const link = new api.dom.AEl();
             link.setHtml(this.value);
+            if (this.tooltip) {
+                link.setTitle(this.tooltip);
+            }
             link.onClicked(() => {
                 new EditContentEvent([ContentSummaryAndCompareStatus.fromContentSummary(this.content)]).fire();
             });
             definition.appendChild(link);
         } else {
             definition.setHtml(this.value);
-        }
-        if (this.tooltip) {
-            new Tooltip(definition, this.tooltip, 50);
         }
         parentEl.appendChildren(term, definition);
     }
