@@ -13,7 +13,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 public class IssueConstants
 {
 
-    public static final String ISSUE_ROOT_NAME = "issue";
+    public static final String ISSUE_ROOT_NAME = "issues";
 
     public static final NodePath ISSUE_ROOT_PARENT = NodePath.ROOT;
 
