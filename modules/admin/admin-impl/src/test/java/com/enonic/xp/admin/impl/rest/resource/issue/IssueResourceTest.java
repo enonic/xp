@@ -87,7 +87,7 @@ public class IssueResourceTest
         final FindIssuesResult result = FindIssuesResult.create().hits( 2 ).totalHits( 4 ).issues( issues ).build();
         Mockito.when( issueService.findIssues( Mockito.any( IssueQuery.class ) ) ).thenReturn( result );
 
-        issueResource.listIssues( new ListIssuesJson( "OPEN", false, false, 0, 10 ) );
+        issueResource.listIssues( new ListIssuesJson( "OPEN", true, true, 0, 10 ) );
 
         Mockito.verify( issueService, Mockito.times( 1 ) ).findIssues( Mockito.any( IssueQuery.class ) );
     }
