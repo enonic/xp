@@ -6,9 +6,16 @@ module api.ui.dialog {
     import Element = api.dom.Element;
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 
+    export interface ConfirmationConfig {
+        question?: string;
+        yesCallback: () => void;
+        noCallback?: () => void;
+    }
+
     export interface ModalDialogConfig {
         title?: string;
         buttonRow?: ButtonRow;
+        confirmation?: ConfirmationConfig;
     }
 
     export class ModalDialog extends DivEl {
@@ -22,6 +29,8 @@ module api.ui.dialog {
         private cancelAction: Action;
 
         protected closeIcon: DivEl;
+
+        protected confirmationDialog: ConfirmationDialog;
 
         private static openDialogsCounter: number = 0;
 
@@ -60,7 +69,23 @@ module api.ui.dialog {
 
             footer.appendChild(this.buttonRow);
 
+            this.initConfirmationDialog(config.confirmation);
             this.initListeners();
+        }
+
+        private initConfirmationDialog(confirmation: ConfirmationConfig) {
+            if (confirmation) {
+                const {yesCallback, noCallback, question = 'You have made changes to the form, do you want to apply them?'} = confirmation;
+
+                this.confirmationDialog = new ConfirmationDialog()
+                    .setQuestion(question)
+                    .setYesCallback(yesCallback || (() => {
+                            this.close();
+                        }));
+                if (noCallback) {
+                    this.confirmationDialog.setNoCallback(noCallback);
+                }
+            }
         }
 
         private initListeners() {
@@ -83,7 +108,8 @@ module api.ui.dialog {
 
         private handleClickOutsideDialog() {
             const mouseClickListener: (event: MouseEvent) => void = (event: MouseEvent) => {
-                if (this.isVisible()) {
+                const noConfirmationDialog = !this.confirmationDialog || !this.confirmationDialog.isVisible();
+                if (this.isVisible() && noConfirmationDialog) {
                     for (let element = event.target; element; element = (<any>element).parentNode) {
                         if (element === this.getHTMLElement() || this.isIgnoredElementClicked(<any>element)) {
                             return;
@@ -161,7 +187,7 @@ module api.ui.dialog {
             cancelAction.setIconClass('cancel-button-top');
             cancelAction.setLabel('');
             cancelAction.onExecuted(() => {
-                this.close();
+                this.confirmBeforeClose();
             });
             this.buttonRow.addToActions(cancelAction);
             return cancelAction;
@@ -332,8 +358,18 @@ module api.ui.dialog {
             ModalDialog.openDialogsCounter++;
         }
 
+        confirmBeforeClose() {
+            if (this.confirmationDialog) {
+                this.confirmationDialog.open();
+            } else {
+                this.close();
+            }
+        }
+
         close() {
-            if (ModalDialog.openDialogsCounter === 1) {
+            const isSingleDialogGroup = ModalDialog.openDialogsCounter === 1 ||
+                                        (ModalDialog.openDialogsCounter === 2 && !!this.confirmationDialog);
+            if (isSingleDialogGroup) {
                 api.ui.mask.BodyMask.get().hide();
             }
 

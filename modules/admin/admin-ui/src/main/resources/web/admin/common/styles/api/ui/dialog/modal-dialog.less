@@ -137,10 +137,15 @@
 .confirmation-dialog {
   width: 700px;
   border: 1px solid @admin-shadow-gray;
-  z-index: @z-index-modal-dialog + 1;
+  z-index: @z-index-modal-dialog + 2;
 
   .question {
     font-size: 14px;
     line-height: 16px;
   }
 }
+
+.confirmation-dialog-mask {
+  z-index: @z-index-modal-dialog + 1;
+}
+

@@ -15,6 +15,7 @@ module api.content.site.inputtype.siteconfigurator {
     import Application = api.application.Application;
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import HtmlAreaResizeEvent = api.form.inputtype.text.HtmlAreaResizeEvent;
+    import ModalDialogConfig = api.ui.dialog.ModalDialogConfig;
 
     export class SiteConfiguratorDialog extends api.ui.dialog.ModalDialog {
 
@@ -27,7 +28,19 @@ module api.content.site.inputtype.siteconfigurator {
         private cancelCallback: () => void;
 
         constructor(application: Application, formView: FormView, okCallback?: () => void, cancelCallback?: () => void) {
-            super();
+            super(<ModalDialogConfig>{
+                confirmation: {
+                    yesCallback: () => {
+                        if (okCallback) {
+                            okCallback();
+                        }
+                        this.close();
+                    },
+                    noCallback: () => {
+                        this.close();
+                    }
+                }
+            });
 
             this.appendChildToHeader(this.getHeaderContent(application));
 

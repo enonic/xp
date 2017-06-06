@@ -62,8 +62,14 @@ module api.ui.dialog {
             return this;
         }
 
+        open() {
+            super.open();
+            api.ui.mask.BodyMask.get().addClass('confirmation-dialog-mask');
+        }
+
         close() {
             super.close();
+            api.ui.mask.BodyMask.get().removeClass('confirmation-dialog-mask');
 
             if (this.noCallback) {
                 this.noCallback();
