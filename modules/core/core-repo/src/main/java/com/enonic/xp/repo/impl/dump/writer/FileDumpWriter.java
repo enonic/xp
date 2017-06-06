@@ -5,8 +5,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import com.google.common.io.Files;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
@@ -17,8 +20,10 @@ import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.dump.DumpBlobStore;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.model.DumpEntry;
+import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.serializer.DumpEntrySerializer;
 import com.enonic.xp.repo.impl.dump.serializer.json.DumpEntryJsonSerializer;
+import com.enonic.xp.repo.impl.dump.serializer.json.DumpMetaJsonSerializer;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -52,6 +57,25 @@ public class FileDumpWriter
     private Path getDumpDirectory( final Path basePath, final String name )
     {
         return Paths.get( basePath.toString(), name ).toAbsolutePath();
+    }
+
+
+    @Override
+    public void writeDumpMeta( final DumpMeta dumpMeta )
+    {
+        final Path dumpMetaFile = Paths.get( this.dumpDirectory.toString(), "dump.json" );
+
+        final String serialized = new DumpMetaJsonSerializer().serialize( dumpMeta );
+
+        try
+        {
+            Files.write( serialized, dumpMetaFile.toFile(), Charset.defaultCharset() );
+        }
+        catch ( IOException e )
+        {
+            throw new RepoDumpException( "Cannot write dump-meta file", e );
+        }
+
     }
 
     @Override

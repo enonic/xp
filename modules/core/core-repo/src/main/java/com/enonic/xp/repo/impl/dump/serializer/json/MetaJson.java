@@ -86,7 +86,7 @@ public class MetaJson
         return nodeState;
     }
 
-    public boolean isCurrent()
+    private boolean isCurrent()
     {
         return current;
     }

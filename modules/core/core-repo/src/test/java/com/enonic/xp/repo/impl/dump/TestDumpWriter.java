@@ -11,6 +11,7 @@ import com.google.common.collect.Sets;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.dump.model.DumpEntry;
+import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -25,9 +26,17 @@ class TestDumpWriter
 
     private final Set<NodeVersionId> nodeVersions = Sets.newHashSet();
 
+    private DumpMeta dumpMeta;
+
     public TestDumpWriter()
     {
         this.entries = ArrayListMultimap.create();
+    }
+
+    @Override
+    public void writeDumpMeta( final DumpMeta dumpMeta )
+    {
+        this.dumpMeta = dumpMeta;
     }
 
     @Override
@@ -68,6 +77,11 @@ class TestDumpWriter
     public Set<String> getBinaries()
     {
         return binaries;
+    }
+
+    public DumpMeta getDumpMeta()
+    {
+        return dumpMeta;
     }
 
     public boolean hasVersions( final NodeVersionId... versions )

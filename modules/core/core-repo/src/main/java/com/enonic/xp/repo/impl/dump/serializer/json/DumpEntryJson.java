@@ -57,7 +57,7 @@ public class DumpEntryJson
         return versions;
     }
 
-    public Collection<String> getBinaries()
+    private Collection<String> getBinaries()
     {
         return binaries;
     }

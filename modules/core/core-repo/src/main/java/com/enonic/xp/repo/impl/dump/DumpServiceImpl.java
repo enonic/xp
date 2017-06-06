@@ -3,6 +3,8 @@ package com.enonic.xp.repo.impl.dump;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.osgi.service.component.ComponentContext;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -26,7 +28,18 @@ public class DumpServiceImpl
 
     private RepositoryService repositoryService;
 
+    private String xpVersion;
+
     private final static Path BASE_PATH = Paths.get( HomeDir.get().toString(), "data", "dump" );
+
+    @Activate
+    public void activate( final ComponentContext context )
+    {
+        xpVersion = context.getBundleContext().
+            getBundle().
+            getVersion().
+            toString();
+    }
 
     @Override
     public void dump( final DumpParams params )
@@ -40,6 +53,7 @@ public class DumpServiceImpl
             nodeService( this.nodeService ).
             repositoryService( this.repositoryService ).
             repositoryId( params.getRepositoryId() ).
+            xpVersion( this.xpVersion ).
             build().
             execute();
 

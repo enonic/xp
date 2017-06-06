@@ -182,22 +182,27 @@ public class RepoDumperTest
         assertTrue( writer.getBinaries().contains( updateBinary.getBlobKey() ) );
     }
 
+    @Test
+    public void dumpMeta()
+        throws Exception
+    {
+        createNode( NodePath.ROOT, "myNode" );
+        final TestDumpWriter writer = new TestDumpWriter();
+        doDump( writer );
+
+        assertNotNull( writer.getDumpMeta() );
+        assertEquals( "x-y-z", writer.getDumpMeta().getXpVersion() );
+    }
+
     private boolean hasVersionMeta( final TestDumpWriter writer, final NodeId nodeId, final NodeVersionId... versionIds )
     {
         final List<DumpEntry> dumpedEntries = writer.get( CTX_DEFAULT.getRepositoryId(), CTX_DEFAULT.getBranch() );
 
-        for ( final NodeVersionId versionId : versionIds )
+        for ( final DumpEntry entry : dumpedEntries )
         {
-            final Iterator<DumpEntry> iterator = dumpedEntries.iterator();
-
-            while ( iterator.hasNext() )
+            if ( entry.getNodeId().equals( nodeId ) )
             {
-                final DumpEntry entry = iterator.next();
-
-                if ( entry.getNodeId().equals( nodeId ) )
-                {
-                    return entry.getAllVersionIds().containsAll( Arrays.asList( versionIds ) );
-                }
+                return entry.getAllVersionIds().containsAll( Arrays.asList( versionIds ) );
             }
         }
         return false;
@@ -212,6 +217,7 @@ public class RepoDumperTest
             includeBinaries( true ).
             includeVersions( true ).
             repositoryId( CTX_DEFAULT.getRepositoryId() ).
+            xpVersion( "x-y-z" ).
             build().
             execute() );
     }

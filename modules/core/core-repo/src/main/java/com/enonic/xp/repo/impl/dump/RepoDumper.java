@@ -22,6 +22,7 @@ import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.repo.impl.dump.model.DumpEntry;
+import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
 import com.enonic.xp.repo.impl.node.executor.BatchedGetChildrenExecutor;
 import com.enonic.xp.repository.Repository;
@@ -46,15 +47,18 @@ public class RepoDumper
 
     private final DumpResult.Builder dumpResult;
 
+    private final String xpVersion;
+
     private RepoDumper( final Builder builder )
     {
-        repositoryId = builder.repositoryId;
-        includeVersions = builder.includeVersions;
-        includeBinaries = builder.includeBinaries;
-        nodeService = builder.nodeService;
-        repositoryService = builder.repositoryService;
+        this.repositoryId = builder.repositoryId;
+        this.includeVersions = builder.includeVersions;
+        this.includeBinaries = builder.includeBinaries;
+        this.nodeService = builder.nodeService;
+        this.repositoryService = builder.repositoryService;
         this.writer = builder.writer;
-        this.dumpResult = DumpResult.create();
+        this.xpVersion = builder.xpVersion;
+        this.dumpResult = DumpResult.create( this.repositoryId );
     }
 
     public DumpResult execute()
@@ -89,6 +93,8 @@ public class RepoDumper
     private void doExecute()
     {
         final BranchDumpResult.Builder branchDumpResult = BranchDumpResult.create( ContextAccessor.current().getBranch() );
+
+        writer.writeDumpMeta( new DumpMeta( this.xpVersion ) );
 
         try
         {
@@ -190,7 +196,6 @@ public class RepoDumper
 
     private void addVersionWithBinaries( final DumpEntry.Builder builder, final NodeVersionMetadata metaData )
     {
-        // TODO: Do this with query instead?
         final NodeVersion nodeVersion = this.nodeService.getByNodeVersion( metaData.getNodeVersionId() );
         builder.addVersion( MetaFactory.create( metaData, nodeVersion ) );
         builder.addBinaryReferences(
@@ -215,6 +220,8 @@ public class RepoDumper
         private RepositoryService repositoryService;
 
         private DumpWriter writer;
+
+        private String xpVersion;
 
         private Builder()
         {
@@ -253,6 +260,12 @@ public class RepoDumper
         public Builder writer( final DumpWriter writer )
         {
             this.writer = writer;
+            return this;
+        }
+
+        public Builder xpVersion( final String xpVersion )
+        {
+            this.xpVersion = xpVersion;
             return this;
         }
 

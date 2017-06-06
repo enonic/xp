@@ -27,7 +27,7 @@ public class FileDumpReader
 
     private final BlobStore dumpBlobStore;
 
-    private NodeVersionFactory factory;
+    private final NodeVersionFactory factory;
 
     public FileDumpReader( final Path basePath, final String dumpName )
     {

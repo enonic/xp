@@ -7,12 +7,9 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.base.Stopwatch;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.repository.RepositoryId;
 
 public class BranchDumpResult
 {
-    private final RepositoryId repositoryId;
-
     private final Branch branch;
 
     private final Long numberOfNodes;
@@ -23,16 +20,10 @@ public class BranchDumpResult
 
     private BranchDumpResult( final Builder builder )
     {
-        this.repositoryId = builder.repositoryId;
         this.branch = builder.branch;
         this.numberOfNodes = builder.numberOfNodes;
         this.numberOfVersions = builder.numberOfVersions;
         this.timeUsed = Duration.ofMillis( builder.timer.elapsed( TimeUnit.MILLISECONDS ) );
-    }
-
-    public RepositoryId getRepositoryId()
-    {
-        return repositoryId;
     }
 
     public Branch getBranch()
@@ -59,8 +50,6 @@ public class BranchDumpResult
     {
         private final Stopwatch timer;
 
-        private RepositoryId repositoryId;
-
         private final Branch branch;
 
         private Long numberOfNodes = 0L;
@@ -72,13 +61,6 @@ public class BranchDumpResult
             this.timer = Stopwatch.createStarted();
             this.branch = branch;
         }
-
-        public Builder repositoryId( final RepositoryId val )
-        {
-            repositoryId = val;
-            return this;
-        }
-
 
         public Builder metaWritten()
         {
@@ -103,8 +85,7 @@ public class BranchDumpResult
     public String toString()
     {
         return "BranchDumpResult{" +
-            "repositoryId=" + repositoryId +
-            ", branch=" + branch +
+            "branch=" + branch +
             ", numberOfNodes=" + numberOfNodes +
             ", numberOfVersions=" + numberOfVersions +
             ", timeUsed=" + timeUsed +
