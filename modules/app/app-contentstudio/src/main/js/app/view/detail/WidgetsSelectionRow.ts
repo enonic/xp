@@ -34,6 +34,7 @@ export class WidgetsSelectionRow extends api.dom.DivEl {
         if (this.widgetSelectorDropdown.getValue() !== widgetView.getWidgetName()) {
             this.widgetSelectorDropdown.setValue(widgetView.getWidgetName());
         }
+
         if (this.widgetSelectorDropdown.getSelectedOption()) {
             this.widgetSelectorDropdown.getSelectedOptionView().getEl().setDisplay('inline-block');
         }
@@ -44,7 +45,7 @@ export class WidgetsSelectionRow extends api.dom.DivEl {
 
         widgetViews.forEach((view: WidgetView) => {
 
-            let option = {
+            const option = {
                 value: view.getWidgetName(),
                 displayValue: new WidgetViewOption(view)
             };
@@ -56,13 +57,13 @@ export class WidgetsSelectionRow extends api.dom.DivEl {
             this.widgetSelectorDropdown.addClass('single-optioned');
         }
 
-        let visisbleNow = this.isVisible();
+        const visibleNow = this.isVisible();
 
-        if (visisbleNow) {
+        if (visibleNow) {
             this.setVisible(false);
         }
         this.widgetSelectorDropdown.selectRow(0, true);
-        if (visisbleNow) {
+        if (visibleNow) {
             this.setVisible(true);
         }
     }
