@@ -94,27 +94,6 @@ public class RepoDumperTest
         assertTrue( hasVersionMeta( writer, node1.id(), node1.getNodeVersionId(), updatedNode.getNodeVersionId() ) );
     }
 
-    private boolean hasVersionMeta( final TestDumpWriter writer, final NodeId nodeId, final NodeVersionId... versionIds )
-    {
-        final List<DumpEntry> dumpedEntries = writer.get( CTX_DEFAULT.getRepositoryId(), CTX_DEFAULT.getBranch() );
-
-        for ( final NodeVersionId versionId : versionIds )
-        {
-            final Iterator<DumpEntry> iterator = dumpedEntries.iterator();
-
-            while ( iterator.hasNext() )
-            {
-                final DumpEntry entry = iterator.next();
-
-                if ( entry.getNodeId().equals( nodeId ) )
-                {
-                    return entry.getAllVersionIds().containsAll( Arrays.asList( versionIds ) );
-                }
-            }
-        }
-        return false;
-    }
-
     @Test
     public void renamed()
         throws Exception
@@ -163,6 +142,65 @@ public class RepoDumperTest
         doDump( writer );
 
         assertTrue( writer.getBinaries().contains( attachedBinary.getBlobKey() ) );
+    }
+
+
+    @Test
+    public void binaries_with_versions()
+        throws Exception
+    {
+        final BinaryReference ref1 = BinaryReference.from( "fisk" );
+        final BinaryReference ref2 = BinaryReference.from( "fisk2" );
+
+        final PropertyTree data = new PropertyTree();
+        data.addBinaryReference( "myBinaryRef", ref1 );
+
+        final Node node1 = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "myName" ).
+            data( data ).
+            attachBinary( ref1, ByteSource.wrap( "myBinaryData".getBytes() ) ).
+            build() );
+
+        final AttachedBinary originalBinary = node1.getAttachedBinaries().getByBinaryReference( ref1 );
+
+        final Node updatedNode = updateNode( UpdateNodeParams.create().
+            id( node1.id() ).
+            editor( ( e ) -> {
+
+            } ).
+            attachBinary( ref2, ByteSource.wrap( "myOtherBinaryData".getBytes() ) ).
+            build() );
+
+        final AttachedBinary updateBinary = updatedNode.getAttachedBinaries().getByBinaryReference( ref1 );
+
+        final TestDumpWriter writer = new TestDumpWriter();
+
+        doDump( writer );
+
+        assertTrue( writer.getBinaries().contains( originalBinary.getBlobKey() ) );
+        assertTrue( writer.getBinaries().contains( updateBinary.getBlobKey() ) );
+    }
+
+    private boolean hasVersionMeta( final TestDumpWriter writer, final NodeId nodeId, final NodeVersionId... versionIds )
+    {
+        final List<DumpEntry> dumpedEntries = writer.get( CTX_DEFAULT.getRepositoryId(), CTX_DEFAULT.getBranch() );
+
+        for ( final NodeVersionId versionId : versionIds )
+        {
+            final Iterator<DumpEntry> iterator = dumpedEntries.iterator();
+
+            while ( iterator.hasNext() )
+            {
+                final DumpEntry entry = iterator.next();
+
+                if ( entry.getNodeId().equals( nodeId ) )
+                {
+                    return entry.getAllVersionIds().containsAll( Arrays.asList( versionIds ) );
+                }
+            }
+        }
+        return false;
     }
 
     private void doDump( final TestDumpWriter writer )

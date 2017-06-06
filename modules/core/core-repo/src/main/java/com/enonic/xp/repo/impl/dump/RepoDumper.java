@@ -1,12 +1,9 @@
 package com.enonic.xp.repo.impl.dump;
 
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Stopwatch;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -21,6 +18,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.repo.impl.dump.model.DumpEntry;
@@ -47,8 +45,6 @@ public class RepoDumper
     private final Logger LOG = LoggerFactory.getLogger( RepoDumper.class );
 
     private final DumpResult.Builder dumpResult;
-
-    private ProgressReporter reporter;
 
     private RepoDumper( final Builder builder )
     {
@@ -92,8 +88,6 @@ public class RepoDumper
 
     private void doExecute()
     {
-        this.reporter = new ProgressReporter();
-
         final BranchDumpResult.Builder branchDumpResult = BranchDumpResult.create( ContextAccessor.current().getBranch() );
 
         try
@@ -104,14 +98,12 @@ public class RepoDumper
         }
         catch ( Exception e )
         {
-            throw new RepoDumpException( "Error occured when dumping repository " + repositoryId, e );
+            throw new RepoDumpException( "Error occurred when dumping repository " + repositoryId, e );
         }
         finally
         {
             writer.close();
         }
-
-        System.out.println( "Creating dump-entries: " + this.reporter );
 
         this.dumpResult.add( branchDumpResult.build() );
     }
@@ -121,16 +113,14 @@ public class RepoDumper
         final BatchedGetChildrenExecutor executor = BatchedGetChildrenExecutor.create().
             nodeService( this.nodeService ).
             parentId( nodeId ).
+            recursive( true ).
             batchSize( 5000 ).
             childOrder( ChildOrder.from( "_path asc" ) ).
             build();
 
         while ( executor.hasMore() )
         {
-            final Stopwatch timer = Stopwatch.createStarted();
             final NodeIds children = executor.execute();
-            this.reporter.fetchChildren( timer.stop().elapsed( TimeUnit.NANOSECONDS ) );
-
             for ( final NodeId child : children )
             {
                 doDumpNode( child, dumpResult );
@@ -141,70 +131,70 @@ public class RepoDumper
     private void doDumpNode( final NodeId nodeId, final BranchDumpResult.Builder dumpResult )
     {
         final DumpEntry dumpEntry = createDumpEntry( nodeId );
-
-        final Stopwatch metaTimer = Stopwatch.createStarted();
         writer.writeMetaData( dumpEntry );
-        this.reporter.writeMetaData( metaTimer.stop().elapsed( TimeUnit.NANOSECONDS ) );
-
-        final Stopwatch versionTimer = Stopwatch.createStarted();
         dumpEntry.getAllVersionIds().forEach( writer::writeVersion );
-        this.reporter.writeVersion( versionTimer.stop().elapsed( TimeUnit.NANOSECONDS ) );
-
-        final Stopwatch binaryTimer = Stopwatch.createStarted();
         dumpEntry.getBinaryReferences().forEach( writer::writeBinary );
-        this.reporter.writeBinary( binaryTimer.stop().elapsed( TimeUnit.NANOSECONDS ) );
-
         dumpResult.metaWritten();
         dumpResult.addedVersions( dumpEntry.getAllVersionIds().size() );
     }
 
     private DumpEntry createDumpEntry( final NodeId nodeId )
     {
-        Stopwatch timer = Stopwatch.createStarted();
-
         final DumpEntry.Builder builder = DumpEntry.create().
             nodeId( nodeId );
 
         final Node currentNode = this.nodeService.getById( nodeId );
 
         builder.addVersion( MetaFactory.create( currentNode ) );
-        builder.addBinaryReferences(
-            currentNode.getAttachedBinaries().stream().map( AttachedBinary::getBlobKey ).collect( Collectors.toSet() ) );
+
+        if ( this.includeBinaries )
+        {
+            builder.addBinaryReferences(
+                currentNode.getAttachedBinaries().stream().map( AttachedBinary::getBlobKey ).collect( Collectors.toSet() ) );
+        }
 
         if ( this.includeVersions )
         {
-            final NodeVersionQueryResult result = this.nodeService.findVersions( GetNodeVersionsParams.create().
-                size( -1 ).
-                from( 0 ).
-                nodeId( nodeId ).
-                build() );
-
-            for ( final NodeVersionMetadata metaData : result.getNodeVersionsMetadata() )
-            {
-                if ( metaData.getNodeVersionId().equals( currentNode.getNodeVersionId() ) )
-                {
-                    continue;
-                }
-
-                if ( this.includeBinaries )
-                {
-                    final NodeVersion nodeVersion = this.nodeService.getByNodeVersion( metaData.getNodeVersionId() );
-                    builder.addVersion( MetaFactory.create( metaData, nodeVersion ) );
-                    builder.addBinaryReferences(
-                        nodeVersion.getAttachedBinaries().stream().map( AttachedBinary::getBlobKey ).collect( Collectors.toSet() ) );
-                }
-                else
-                {
-                    builder.addVersion( MetaFactory.create( metaData ) );
-                }
-            }
+            addVersions( nodeId, builder, currentNode.getNodeVersionId() );
         }
 
-        timer.stop();
-
-        reporter.createdDumpEntry( timer.elapsed( TimeUnit.NANOSECONDS ) );
-
         return builder.build();
+    }
+
+    private void addVersions( final NodeId nodeId, final DumpEntry.Builder builder, final NodeVersionId currentVersion )
+    {
+        final NodeVersionQueryResult result = this.nodeService.findVersions( GetNodeVersionsParams.create().
+            size( -1 ).
+            from( 0 ).
+            nodeId( nodeId ).
+            build() );
+
+        for ( final NodeVersionMetadata metaData : result.getNodeVersionsMetadata() )
+        {
+            if ( metaData.getNodeVersionId().equals( currentVersion ) )
+            {
+                // Skip current, since this is dumped anyway
+                continue;
+            }
+
+            if ( this.includeBinaries )
+            {
+                addVersionWithBinaries( builder, metaData );
+            }
+            else
+            {
+                builder.addVersion( MetaFactory.create( metaData ) );
+            }
+        }
+    }
+
+    private void addVersionWithBinaries( final DumpEntry.Builder builder, final NodeVersionMetadata metaData )
+    {
+        // TODO: Do this with query instead?
+        final NodeVersion nodeVersion = this.nodeService.getByNodeVersion( metaData.getNodeVersionId() );
+        builder.addVersion( MetaFactory.create( metaData, nodeVersion ) );
+        builder.addBinaryReferences(
+            nodeVersion.getAttachedBinaries().stream().map( AttachedBinary::getBlobKey ).collect( Collectors.toSet() ) );
     }
 
     public static Builder create()
