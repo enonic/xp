@@ -1,9 +1,11 @@
-package com.enonic.xp.repo.impl.dump;
+package com.enonic.xp.dump;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 
 public class DumpResult
@@ -54,6 +56,15 @@ public class DumpResult
         {
             return new DumpResult( this );
         }
+    }
+
+
+    public BranchDumpResult get( final Branch branch )
+    {
+        final Optional<BranchDumpResult> branchDumpEntry =
+            this.branchResults.stream().filter( ( entry ) -> entry.getBranch().equals( branch ) ).findFirst();
+
+        return branchDumpEntry.isPresent() ? branchDumpEntry.get() : null;
     }
 
     @Override

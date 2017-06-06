@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.dump;
+package com.enonic.xp.dump;
 
 
 import java.time.Duration;

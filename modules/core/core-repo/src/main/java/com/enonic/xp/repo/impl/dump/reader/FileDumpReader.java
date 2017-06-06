@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.google.common.io.LineProcessor;
 
@@ -14,6 +16,7 @@ import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.dump.DumpBlobStore;
@@ -39,6 +42,28 @@ public class FileDumpReader
     private java.nio.file.Path getDumpDirectory( final Path basePath, final String name )
     {
         return Paths.get( basePath.toString(), name ).toAbsolutePath();
+    }
+
+    @Override
+    public Branches getBranches( final RepositoryId repositoryId )
+    {
+        final Path repoPath = Paths.get( this.dumpDirectory.toString(), repositoryId.toString() );
+
+        if ( !repoPath.toFile().exists() )
+        {
+            throw new RepoDumpException( String.format( "Repository %s does not exist in dump %s", repositoryId, this.dumpDirectory ) );
+        }
+
+        final String[] branchFiles = repoPath.toFile().list();
+
+        final List<Branch> branches = Lists.newArrayList();
+
+        for ( final String branch : branchFiles )
+        {
+            branches.add( Branch.from( branch ) );
+        }
+
+        return Branches.from( branches );
     }
 
     @Override

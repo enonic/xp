@@ -18,24 +18,4 @@ public class RepoLoaderTest
         createDefaultRootNode();
     }
 
-    @Test
-    public void name()
-        throws Exception
-    {
-
-        final TestDumpReader reader = new TestDumpReader();
-
-        NodeHelper.runAsAdmin( () -> RepoLoader.create().
-            nodeService( this.nodeService ).
-            repositoryService( this.repositoryService ).
-            reader( reader ).
-            includeBinaries( true ).
-            includeVersions( true ).
-            repositoryId( CTX_DEFAULT.getRepositoryId() ).
-            build().
-            execute() );
-
-
-
-    }
 }

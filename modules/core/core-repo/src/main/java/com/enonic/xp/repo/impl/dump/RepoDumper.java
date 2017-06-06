@@ -10,6 +10,8 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.dump.BranchDumpResult;
+import com.enonic.xp.dump.DumpResult;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.GetNodeVersionsParams;
@@ -29,7 +31,7 @@ import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 
-public class RepoDumper
+class RepoDumper
 {
     private final RepositoryId repositoryId;
 

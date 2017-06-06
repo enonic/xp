@@ -10,10 +10,12 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.dump.DumpParams;
+import com.enonic.xp.dump.DumpResult;
 import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.dump.LoadParams;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.repo.impl.SecurityHelper;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
 import com.enonic.xp.repo.impl.dump.writer.FileDumpWriter;
 import com.enonic.xp.repository.RepositoryService;
@@ -30,7 +32,7 @@ public class DumpServiceImpl
 
     private String xpVersion;
 
-    private final static Path BASE_PATH = Paths.get( HomeDir.get().toString(), "data", "dump" );
+    private Path basePath = Paths.get( HomeDir.get().toString(), "data", "dump" );
 
     @Activate
     public void activate( final ComponentContext context )
@@ -42,11 +44,17 @@ public class DumpServiceImpl
     }
 
     @Override
-    public void dump( final DumpParams params )
+    public DumpResult dump( final DumpParams params )
     {
-        final DumpResult result = RepoDumper.create().
+
+        if ( !SecurityHelper.isAdmin() )
+        {
+            throw new RepoDumpException( "Only admin role users can dump repositories" );
+        }
+
+        return RepoDumper.create().
             writer( FileDumpWriter.create().
-                basePath( BASE_PATH ).
+                basePath( basePath ).
                 dumpName( params.getDumpName() ).
                 blobStore( this.blobStore ).
                 build() ).
@@ -56,15 +64,18 @@ public class DumpServiceImpl
             xpVersion( this.xpVersion ).
             build().
             execute();
-
-        System.out.println( result );
     }
 
     @Override
     public void load( final LoadParams params )
     {
+        if ( !SecurityHelper.isAdmin() )
+        {
+            throw new RepoDumpException( "Only admin role users can dump repositories" );
+        }
+
         RepoLoader.create().
-            reader( new FileDumpReader( BASE_PATH, params.getDumpName() ) ).
+            reader( new FileDumpReader( basePath, params.getDumpName() ) ).
             nodeService( this.nodeService ).
             repositoryService( this.repositoryService ).
             repositoryId( params.getRepositoryId() ).
@@ -88,5 +99,10 @@ public class DumpServiceImpl
     public void setRepositoryService( final RepositoryService repositoryService )
     {
         this.repositoryService = repositoryService;
+    }
+
+    public void setBasePath( final Path basePath )
+    {
+        this.basePath = basePath;
     }
 }
