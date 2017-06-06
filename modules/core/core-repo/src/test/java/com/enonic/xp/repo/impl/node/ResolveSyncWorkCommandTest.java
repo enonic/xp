@@ -10,6 +10,7 @@ import org.junit.Test;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -1289,6 +1290,34 @@ public class ResolveSyncWorkCommandTest
         assertNodes( result, ExpectedNodes.create().
             implicit( "s1" ).
             child( "a1", "a2", "a2_1", "a2_1_1" ) );
+    }
+
+
+    @Test
+    public void change_child_order_manual_yields_children_changed()
+    {
+        final Node node1 = createNode( NodePath.ROOT, "node1" );
+        createNode( node1.path(), "node1_1" );
+        createNode( node1.path(), "node1_2" );
+        createNode( node1.path(), "node1_3" );
+        createNode( node1.path(), "node1_4" );
+
+        pushNodes( NodeIds.from( ROOT_UUID.toString(), "node1", "node1_1", "node1_2", "node1_3", "node1_4" ), WS_OTHER );
+
+        SetNodeChildOrderCommand.create().
+            nodeId( node1.id() ).
+            childOrder( ChildOrder.manualOrder() ).
+            indexServiceInternal( this.indexServiceInternal ).
+            searchService( this.searchService ).
+            storageService( this.storageService ).
+            build().
+            execute();
+
+        final ResolveSyncWorkResult result = resolveSyncWorkResult( node1.id(), NodeIds.empty(), true, false );
+
+        assertNodes( result, ExpectedNodes.create().
+            implicit( node1.id() ).
+            child( "node1_1", "node1_2", "node1_3", "node1_4" ) );
     }
 
 
