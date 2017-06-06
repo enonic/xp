@@ -51,6 +51,11 @@ module api.form {
                             this.resolveValidationRecordingPath()).setIncludeChildren(true));
                     }
                 });
+
+                formItemView.onEditContentRequest((content: api.content.ContentSummary) => {
+                    const summaryAndStatus = api.content.ContentSummaryAndCompareStatus.fromContentSummary(content);
+                    new api.content.event.EditContentEvent([summaryAndStatus]).fire();
+                });
             });
         }
 
