@@ -8,6 +8,7 @@ import Principal = api.security.Principal;
 
 import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
 import WizardStep = api.app.wizard.WizardStep;
+import i18n = api.util.i18n;
 
 export class GroupRoleWizardPanel extends PrincipalWizardPanel {
 
@@ -44,9 +45,8 @@ export class GroupRoleWizardPanel extends PrincipalWizardPanel {
                     console.warn(' viewedPrincipal: ', viewedPrincipal);
                     console.warn(' persistedPrincipal: ', persistedPrincipal);
 
-                    const msg = 'Received Principal from server differs from what you have. Would you like to load changes from server?';
                     ConfirmationDialog.get()
-                        .setQuestion(msg)
+                        .setQuestion(i18n('dialog.principal.update'))
                         .setYesCallback(() => this.doLayoutPersistedItem(persistedPrincipal ? persistedPrincipal.clone() : null))
                         .setNoCallback(() => { /* empty */ })
                         .show();

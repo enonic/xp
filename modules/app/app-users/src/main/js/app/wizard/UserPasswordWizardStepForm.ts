@@ -13,6 +13,7 @@ import Validators = api.ui.form.Validators;
 import FormItem = api.ui.form.FormItem;
 import Fieldset = api.ui.form.Fieldset;
 import Button = api.ui.button.Button;
+import i18n = api.util.i18n;
 
 export class UserPasswordWizardStepForm extends api.app.wizard.WizardStepForm {
 
@@ -33,12 +34,14 @@ export class UserPasswordWizardStepForm extends api.app.wizard.WizardStepForm {
 
         this.password = new PasswordGenerator();
 
-        this.changePasswordButton = new Button('Change Password');
+        this.changePasswordButton = new Button(i18n('action.changePassword'));
         this.changePasswordButton.addClass('change-password-button');
 
-        this.createPasswordFormItem = new FormItemBuilder(this.password).setLabel('Password').setValidator(Validators.required).build();
+        this.createPasswordFormItem = new FormItemBuilder(this.password)
+            .setLabel(i18n('field.password')).setValidator(Validators.required).build();
 
-        this.updatePasswordFormItem = new FormItemBuilder(this.changePasswordButton).setLabel('Password').build();
+        this.updatePasswordFormItem = new FormItemBuilder(this.changePasswordButton)
+            .setLabel(i18n('field.password')).build();
 
         this.fieldSet = new Fieldset();
         this.fieldSet.add(this.createPasswordFormItem);

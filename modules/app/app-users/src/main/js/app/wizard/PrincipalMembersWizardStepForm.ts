@@ -11,6 +11,7 @@ import PrincipalComboBox = api.ui.security.PrincipalComboBox;
 
 import DivEl = api.dom.DivEl;
 import LabelEl = api.dom.LabelEl;
+import i18n = api.util.i18n;
 
 export class PrincipalMembersWizardStepForm extends api.app.wizard.WizardStepForm {
 
@@ -35,7 +36,7 @@ export class PrincipalMembersWizardStepForm extends api.app.wizard.WizardStepFor
         };
         this.principals.onLoaded(handler);
 
-        let principalsFormItem = new FormItemBuilder(this.principals).setLabel('Members').build();
+        let principalsFormItem = new FormItemBuilder(this.principals).setLabel(i18n('field.members')).build();
 
         let fieldSet = new api.ui.form.Fieldset();
         fieldSet.add(principalsFormItem);

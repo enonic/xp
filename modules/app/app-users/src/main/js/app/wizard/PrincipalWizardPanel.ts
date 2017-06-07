@@ -20,6 +20,7 @@ import WizardStep = api.app.wizard.WizardStep;
 import SecurityResourceRequest = api.security.SecurityResourceRequest;
 import StringHelper = api.util.StringHelper;
 import PrincipalJson = api.security.PrincipalJson;
+import i18n = api.util.i18n;
 
 export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
 
@@ -98,11 +99,11 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
     getUserItemType(): string {
         switch (this.getParams().persistedType) {
         case PrincipalType.USER:
-            return 'User';
+            return i18n('field.user');
         case PrincipalType.GROUP:
-            return 'Group';
+            return i18n('field.group');
         case PrincipalType.ROLE:
-            return 'Role';
+            return i18n('field.role');
         default:
             return '';
         }
@@ -134,9 +135,8 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
                     console.warn(' viewedPrincipal: ', viewedPrincipal);
                     console.warn(' persistedPrincipal: ', persistedPrincipal);
 
-                    const msg = 'Received Principal from server differs from what you have. Would you like to load changes from server?';
                     ConfirmationDialog.get()
-                        .setQuestion(msg)
+                        .setQuestion(i18n('dialog.principal.update'))
                         .setYesCallback(() => this.doLayoutPersistedItem(persistedPrincipal ? persistedPrincipal.clone() : null))
                         .setNoCallback(() => { /* empty */ })
                         .show();
@@ -170,8 +170,8 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
                 this.notifyPrincipalNamed(principal);
             }
 
-            let principalTypeName = StringHelper.capitalize(PrincipalType[principal.getType()].toLowerCase());
-            api.notify.showFeedback(`${principalTypeName} '${principal.getDisplayName()}' was updated!`);
+            const principalTypeName = i18n(`field.${PrincipalType[principal.getType()].toLowerCase()}`);
+            api.notify.showFeedback(i18n('notify.update.any', principalTypeName, principal.getDisplayName()));
             new api.security.UserItemUpdatedEvent(principal, this.getUserStore()).fire();
 
             return principal;

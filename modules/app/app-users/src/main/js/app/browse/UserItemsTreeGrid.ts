@@ -22,6 +22,7 @@ import PrincipalType = api.security.PrincipalType;
 import UserStoreKey = api.security.UserStoreKey;
 import BrowseFilterResetEvent = api.app.browse.filter.BrowseFilterResetEvent;
 import BrowseFilterSearchEvent = api.app.browse.filter.BrowseFilterSearchEvent;
+import i18n = api.util.i18n;
 
 export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
 
@@ -30,13 +31,13 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
     constructor() {
 
         super(new TreeGridBuilder<UserTreeGridItem>().setColumnConfig([{
-                name: 'Name',
+                name: i18n('field.name'),
                 id: 'name',
                 field: 'displayName',
                 formatter: UserItemsRowFormatter.nameFormatter,
                 style: {minWidth: 250}
             }, {
-                name: 'ModifiedTime',
+                name: i18n('field.modifiedTime'),
                 id: 'modifiedTime',
                 field: 'modifiedTime',
                 formatter: DateTimeFormatter.format,
@@ -296,11 +297,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
 
     private isHighlightedItemIn(userTreeGridItems: UserTreeGridItem[]): boolean {
         return userTreeGridItems.some((userTreeGridItem: UserTreeGridItem) => {
-            if (userTreeGridItem.getDataId() === this.getFirstSelectedOrHighlightedNode().getDataId()) {
-                return true;
-            }
-
-            return false;
+            return userTreeGridItem.getDataId() === this.getFirstSelectedOrHighlightedNode().getDataId();
         });
     }
 

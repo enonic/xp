@@ -3,15 +3,16 @@ import {UserItemsTreeGrid} from '../UserItemsTreeGrid';
 import {UserTreeGridItemType, UserTreeGridItem} from '../UserTreeGridItem';
 
 import Action = api.ui.Action;
+import i18n = api.util.i18n;
 
 export class DeletePrincipalAction extends Action {
 
     constructor(grid: UserItemsTreeGrid) {
-        super('Delete', 'mod+del');
+        super(i18n('action.delete'), 'mod+del');
         this.setEnabled(false);
         this.onExecuted(() => {
             api.ui.dialog.ConfirmationDialog.get()
-                .setQuestion('Are you sure you want to delete this user item?')
+                .setQuestion(i18n('dialog.delete.question'))
                 .setNoCallback(null)
                 .setYesCallback(() => {
 
@@ -47,7 +48,7 @@ export class DeletePrincipalAction extends Action {
                                 if (json.results && json.results.length > 0) {
                                     let key = json.results[0].principalKey;
 
-                                    api.notify.showFeedback('Principal [' + key + '] deleted!');
+                                    api.notify.showFeedback(i18n('notify.deleted.principal', key));
                                     api.security.UserItemDeletedEvent.create().setPrincipals(principalItems).build().fire();
                                 }
                             });
@@ -63,7 +64,7 @@ export class DeletePrincipalAction extends Action {
                                 if (json.results && json.results.length > 0) {
                                     let key = json.results[0].userStoreKey;
 
-                                    api.notify.showFeedback('UserStore [' + key + '] deleted!');
+                                    api.notify.showFeedback(i18n('notify.deleted.userstore', key));
                                     api.security.UserItemDeletedEvent.create().setUserStores(userStoreItems).build().fire();
                                 }
                             });
