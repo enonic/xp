@@ -16,14 +16,17 @@ import com.enonic.xp.security.acl.Permission;
 abstract class AbstractDeleteNodeCommand
     extends AbstractNodeCommand
 {
+    private final boolean allowDeleteRootNode;
+
     AbstractDeleteNodeCommand( final Builder builder )
     {
         super( builder );
+        this.allowDeleteRootNode = builder.allowDeleteRoot;
     }
 
     NodeBranchEntries deleteNodeWithChildren( final Node node, final Context context )
     {
-        if ( node.isRoot() )
+        if ( node.isRoot() && !allowDeleteRootNode )
         {
             throw new OperationNotPermittedException( "Not allowed to delete root-node" );
         }
@@ -88,6 +91,8 @@ abstract class AbstractDeleteNodeCommand
     public static class Builder<B extends Builder>
         extends AbstractNodeCommand.Builder<B>
     {
+        boolean allowDeleteRoot = false;
+
         public Builder()
         {
             super();
@@ -97,5 +102,13 @@ abstract class AbstractDeleteNodeCommand
         {
             super( source );
         }
+
+        @SuppressWarnings("unchecked")
+        public B allowDeleteRoot( final boolean allowDeleteRoot )
+        {
+            this.allowDeleteRoot = allowDeleteRoot;
+            return (B) this;
+        }
+
     }
 }

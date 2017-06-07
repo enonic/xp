@@ -216,6 +216,7 @@ public abstract class AbstractNodeTest
         this.repositoryService.setIndexServiceInternal( this.indexServiceInternal );
         this.repositoryService.setNodeRepositoryService( nodeRepositoryService );
         this.repositoryService.setNodeStorageService( this.storageService );
+        this.repositoryService.setNodeSearchService( this.searchService );
 
         this.nodeService.setRepositoryService( this.repositoryService );
 

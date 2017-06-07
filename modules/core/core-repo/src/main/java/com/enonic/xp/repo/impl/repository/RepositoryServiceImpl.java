@@ -19,12 +19,13 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
+import com.enonic.xp.repo.impl.node.DeleteNodeByIdCommand;
 import com.enonic.xp.repo.impl.node.RefreshCommand;
+import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.repository.CreateBranchParams;
@@ -56,6 +57,8 @@ public class RepositoryServiceImpl
     private NodeRepositoryService nodeRepositoryService;
 
     private NodeStorageService nodeStorageService;
+
+    private NodeSearchService nodeSearchService;
 
     @SuppressWarnings("unused")
     @Activate
@@ -308,9 +311,18 @@ public class RepositoryServiceImpl
 
     private void deleteRootNode( final Branch branch )
     {
-        final Context context = ContextAccessor.current();
-        final InternalContext internalContext = InternalContext.create( context ).branch( branch ).build();
-        this.nodeStorageService.delete( NodeIds.from( Node.ROOT_UUID ), internalContext );
+        ContextBuilder.from( ContextAccessor.current() ).
+            branch( branch ).
+            build().
+            runWith( () -> DeleteNodeByIdCommand.create().
+                nodeId( Node.ROOT_UUID ).
+                storageService( this.nodeStorageService ).
+                searchService( this.nodeSearchService ).
+                indexServiceInternal( this.indexServiceInternal ).
+                allowDeleteRoot( true ).
+                build().
+                execute() );
+
         doRefresh();
     }
 
@@ -345,5 +357,11 @@ public class RepositoryServiceImpl
     public void setNodeStorageService( final NodeStorageService nodeStorageService )
     {
         this.nodeStorageService = nodeStorageService;
+    }
+
+    @Reference
+    public void setNodeSearchService( final NodeSearchService nodeSearchService )
+    {
+        this.nodeSearchService = nodeSearchService;
     }
 }

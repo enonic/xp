@@ -6,9 +6,13 @@ import org.junit.Test;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
+import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
+import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
+import com.enonic.xp.repository.DeleteBranchParams;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKey;
@@ -79,9 +83,7 @@ public class RepositoryServiceImplTest
         final AccessControlList acl = rootNode.getPermissions();
 
         System.out.println( acl.toString() );
-
     }
-
 
     @Test
     public void get()
@@ -91,6 +93,16 @@ public class RepositoryServiceImplTest
 
         final Repository persistedRepo = ADMIN_CONTEXT.callWith( () -> this.repositoryService.get( repo.getId() ) );
         assertNotNull( persistedRepo );
+    }
+
+    @Test
+    public void delete_branch()
+        throws Exception
+    {
+        final Node myNode = createNode( NodePath.ROOT, "myNode" );
+        NodeHelper.runAsAdmin( () -> this.repositoryService.deleteBranch( DeleteBranchParams.from( CTX_DEFAULT.getBranch() ) ) );
+        NodeHelper.runAsAdmin( () -> this.repositoryService.createBranch( CreateBranchParams.from( CTX_DEFAULT.getBranch().toString() ) ) );
+        assertNull( getNode( myNode.id() ) );
     }
 
     private Repository doCreateRepo( final String id )
