@@ -42,9 +42,9 @@ public class GetNodeVersionsParams
     {
         private NodeId nodeId;
 
-        private int from;
+        private int from = 0;
 
-        private int size;
+        private int size = 10;
 
         private Builder()
         {

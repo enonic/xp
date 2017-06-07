@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.dump;
 
+import java.time.Instant;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -10,8 +12,11 @@ import com.enonic.xp.dump.BranchDumpResult;
 import com.enonic.xp.dump.DumpParams;
 import com.enonic.xp.dump.DumpResult;
 import com.enonic.xp.dump.LoadParams;
+import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersionQueryResult;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repository.DeleteBranchParams;
@@ -66,7 +71,6 @@ public class DumpServiceImplTest
         final RepositoryId currentRepoId = CTX_DEFAULT.getRepositoryId();
 
         NodeHelper.runAsAdmin( () -> {
-
             this.dumpService.dump( DumpParams.create().
                 repositoryId( currentRepoId ).
                 dumpName( "testDump" ).
@@ -83,7 +87,54 @@ public class DumpServiceImplTest
             assertTrue( this.repositoryService.get( currentRepoId ).getBranches().contains( branch ) );
             assertNotNull( this.nodeService.getById( node.id() ) );
         } );
+    }
 
+    @Test
+    public void versions()
+        throws Exception
+    {
+        final RepositoryId currentRepoId = CTX_DEFAULT.getRepositoryId();
+        final Branch branch = CTX_DEFAULT.getBranch();
+
+        final Node node = createNode( NodePath.ROOT, "myNode" );
+        updateNode( node );
+        updateNode( node );
+        refresh();
+
+        NodeHelper.runAsAdmin( () -> {
+            final DumpResult result = this.dumpService.dump( DumpParams.create().
+                repositoryId( currentRepoId ).
+                dumpName( "myTestDump" ).
+                includeVersions( true ).
+                includeBinaries( true ).
+                build() );
+
+            assertEquals( new Long( 3 ), result.get( CTX_DEFAULT.getBranch() ).
+                getNumberOfVersions() );
+
+            this.repositoryService.deleteBranch( DeleteBranchParams.from( branch ) );
+            refresh();
+
+            this.dumpService.load( LoadParams.create().
+                dumpName( "myTestDump" ).
+                repositoryId( currentRepoId ).
+                build() );
+
+            final NodeVersionQueryResult versionResult2 = this.nodeService.findVersions( GetNodeVersionsParams.create().
+                nodeId( node.id() ).
+                build() );
+
+            assertEquals( 3, versionResult2.getTotalHits() );
+        } );
+
+    }
+
+    private void updateNode( final Node node )
+    {
+        updateNode( UpdateNodeParams.create().
+            id( node.id() ).
+            editor( ( n ) -> n.data.setInstant( "timestamp", Instant.now() ) ).
+            build() );
     }
 
 }

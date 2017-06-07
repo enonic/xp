@@ -46,7 +46,6 @@ public class DumpServiceImpl
     @Override
     public DumpResult dump( final DumpParams params )
     {
-
         if ( !SecurityHelper.isAdmin() )
         {
             throw new RepoDumpException( "Only admin role users can dump repositories" );
@@ -58,6 +57,8 @@ public class DumpServiceImpl
                 dumpName( params.getDumpName() ).
                 blobStore( this.blobStore ).
                 build() ).
+            includeVersions( params.isIncludeVersions() ).
+            includeBinaries( params.isIncludeBinaries() ).
             nodeService( this.nodeService ).
             repositoryService( this.repositoryService ).
             repositoryId( params.getRepositoryId() ).

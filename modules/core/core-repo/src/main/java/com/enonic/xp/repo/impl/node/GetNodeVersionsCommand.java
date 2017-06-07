@@ -48,7 +48,7 @@ public class GetNodeVersionsCommand
 
         if ( result.isEmpty() )
         {
-            return NodeVersionQueryResult.empty();
+            return NodeVersionQueryResult.empty( result.getTotalHits() );
         }
 
         return NodeVersionQueryResultFactory.create( query, result );
