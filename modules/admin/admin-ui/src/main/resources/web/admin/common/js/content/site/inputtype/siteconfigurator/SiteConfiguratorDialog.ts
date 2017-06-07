@@ -221,5 +221,9 @@ module api.content.site.inputtype.siteconfigurator {
             super.close();
             this.remove();
         }
+
+        isDirty(): boolean {
+            return this.formView.isDirty();
+        }
     }
 }

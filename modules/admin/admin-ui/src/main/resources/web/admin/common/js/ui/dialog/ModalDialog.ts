@@ -358,8 +358,12 @@ module api.ui.dialog {
             ModalDialog.openDialogsCounter++;
         }
 
+        isDirty(): boolean {
+            return false;
+        }
+
         confirmBeforeClose() {
-            if (this.confirmationDialog) {
+            if (this.confirmationDialog && this.isDirty()) {
                 this.confirmationDialog.open();
             } else {
                 this.close();
