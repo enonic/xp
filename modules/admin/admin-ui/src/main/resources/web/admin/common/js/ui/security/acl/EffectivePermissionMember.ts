@@ -1,6 +1,7 @@
 module api.ui.security.acl {
 
     import PrincipalKey = api.security.PrincipalKey;
+    import Principal = api.security.Principal;
 
     export class EffectivePermissionMember {
 
@@ -19,6 +20,10 @@ module api.ui.security.acl {
 
         getDisplayName(): string {
             return this.displayName;
+        }
+
+        toPrincipal(): Principal {
+            return <Principal>Principal.create().setKey(this.userKey).setDisplayName(this.displayName).build();
         }
 
         static fromJson(json: api.content.json.EffectivePermissionMemberJson) {
