@@ -106,11 +106,24 @@ public class FindNodeIdsByParentCommand
         }
         else
         {
-            final ValueExpr parentPathExpr = ValueExpr.string( parentPath.toString() + "/*" );
-            builder.query( QueryExpr.from( CompareExpr.like( FieldExpr.from( NodeIndexPath.PATH ), parentPathExpr ) ) );
+            createParentFilter( parentPath, builder );
         }
 
         return builder.build();
+    }
+
+    private void createParentFilter( final NodePath parentPath, final NodeQuery.Builder builder )
+    {
+        if ( parentPath.isRoot() )
+        {
+            final ValueExpr parentPathExpr = ValueExpr.string( "/*" );
+            builder.query( QueryExpr.from( CompareExpr.like( FieldExpr.from( NodeIndexPath.PARENT_PATH ), parentPathExpr ) ) );
+        }
+        else
+        {
+            final ValueExpr parentPathExpr = ValueExpr.string( parentPath.toString() + "/*" );
+            builder.query( QueryExpr.from( CompareExpr.like( FieldExpr.from( NodeIndexPath.PATH ), parentPathExpr ) ) );
+        }
     }
 
     private NodePath getParentPath()
