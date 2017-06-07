@@ -64,7 +64,6 @@ module api.content.site.inputtype.siteconfigurator {
                 ResponsiveManager.unAvailableSizeChanged(this);
                 HtmlAreaResizeEvent.un(availableSizeChangedListener);
             });
-
         }
 
         doRender(): Q.Promise<boolean> {

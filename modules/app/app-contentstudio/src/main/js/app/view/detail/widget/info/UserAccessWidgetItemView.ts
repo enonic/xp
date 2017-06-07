@@ -11,6 +11,7 @@ import Permission = api.security.acl.Permission;
 import User = api.security.User;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import OpenEditPermissionsDialogEvent = api.content.event.OpenEditPermissionsDialogEvent;
+import LoginResult = api.security.auth.LoginResult;
 
 export class UserAccessWidgetItemView extends WidgetItemView {
 
@@ -22,7 +23,7 @@ export class UserAccessWidgetItemView extends WidgetItemView {
 
     private bottomEl: api.dom.AEl;
 
-    private currentUser: User;// TODO: need to implement caching for current user value;
+    private loginResult: LoginResult;// TODO: need to implement caching for current user value;
 
     private everyoneAccessValue: Access;
 
@@ -79,6 +80,11 @@ export class UserAccessWidgetItemView extends WidgetItemView {
             this.removeChild(this.bottomEl);
         }
 
+        if (!content.isAnyPrincipalAllowed(this.loginResult.getPrincipals(),
+                api.security.acl.Permission.WRITE_PERMISSIONS)) {
+            return;
+        }
+
         this.bottomEl = new api.dom.AEl('edit-permissions-link');
         this.bottomEl.setHtml('Edit Permissions');
 
@@ -130,17 +136,13 @@ export class UserAccessWidgetItemView extends WidgetItemView {
     private layoutUserAccess(): wemQ.Promise<any> {
         return new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult) => {
 
-            this.currentUser = loginResult.getUser();
+            this.loginResult = loginResult;
             if (this.contentId) {
                 return new api.content.resource.GetContentByIdRequest(this.contentId).sendAndParse().then((content: Content) => {
                     if (content) {
                         this.layoutHeader(content);
                         return this.layoutList(content).then(() => {
-                            if (content.isAnyPrincipalAllowed(loginResult.getPrincipals(),
-                                    api.security.acl.Permission.WRITE_PERMISSIONS)) {
-
-                                this.layoutBottom(content);
-                            }
+                            this.layoutBottom(content);
                         });
                     }
                 });
@@ -154,7 +156,7 @@ export class UserAccessWidgetItemView extends WidgetItemView {
                                       item.getPermissionAccess().getCount() > 0).map((item: api.ui.security.acl.EffectivePermission) => {
             let view = new UserAccessListItemView();
             view.setObject(item);
-            view.setCurrentUser(this.currentUser);
+            view.setCurrentUser(this.loginResult.getUser());
             return view;
         });
     }
