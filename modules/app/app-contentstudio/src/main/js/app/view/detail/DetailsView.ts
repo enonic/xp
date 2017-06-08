@@ -7,6 +7,7 @@ import {StatusWidgetItemView} from './widget/info/StatusWidgetItemView';
 import {PropertiesWidgetItemView} from './widget/info/PropertiesWidgetItemView';
 import {AttachmentsWidgetItemView} from './widget/info/AttachmentsWidgetItemView';
 import {UserAccessWidgetItemView} from './widget/info/UserAccessWidgetItemView';
+import {PageTemplateWidgetItemView} from './widget/info/PageTemplateWidgetItemView';
 import {ActiveDetailsPanelManager} from '../../view/detail/ActiveDetailsPanelManager';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
@@ -266,6 +267,7 @@ export class DetailsView extends api.dom.DivEl {
                 new StatusWidgetItemView(),
                 new UserAccessWidgetItemView(),
                 new PropertiesWidgetItemView(),
+                new PageTemplateWidgetItemView(),
                 new AttachmentsWidgetItemView()
             ]).build();
 
