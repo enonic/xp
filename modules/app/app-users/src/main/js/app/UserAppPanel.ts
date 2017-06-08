@@ -283,11 +283,13 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
 
     private handlePrincipalNew(tabId: AppBarTabId, data: PrincipalData, userStore: UserStore, userItem: UserTreeGridItem) {
         if (data.principalType === PrincipalType.USER && !this.areUsersEditable(userStore)) {
-            api.notify.showError(i18n('notify.invalid.idProvider', i18n('action.create').toLowerCase(), i18n('field.users').toLowerCase()));
+            api.notify.showError(i18n('notify.invalid.idProvider', i18n('action.create').toLowerCase(),
+                i18n('field.users').toLowerCase()));
             return;
         }
         if (data.principalType === PrincipalType.GROUP && !this.areGroupsEditable(userStore)) {
-            api.notify.showError(i18n('notify.invalid.idProvider', i18n('action.create').toLowerCase(), i18n('field.groups').toLowerCase()));
+            api.notify.showError(i18n('notify.invalid.idProvider', i18n('action.create').toLowerCase(),
+                i18n('field.groups').toLowerCase()));
             return;
         }
 
