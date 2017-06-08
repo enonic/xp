@@ -81,6 +81,8 @@ public class RepositoryServiceImplTest
 
         final Node rootNode = ADMIN_CONTEXT.callWith( () -> this.nodeService.getRoot() );
         final AccessControlList acl = rootNode.getPermissions();
+
+        System.out.println( acl.toString() );
     }
 
     @Test
@@ -93,20 +95,20 @@ public class RepositoryServiceImplTest
         assertNotNull( persistedRepo );
     }
 
-    private Repository doCreateRepo( final String id )
-    {
-        return ADMIN_CONTEXT.callWith( () -> this.repositoryService.createRepository( CreateRepositoryParams.create().
-            repositoryId( RepositoryId.from( id ) ).
-            build() ) );
-    }
-
     @Test
     public void delete_branch()
         throws Exception
     {
         final Node myNode = createNode( NodePath.ROOT, "myNode" );
-        NodeHelper.runAsAdmin( () -> this.repositoryService.deleteBranch( DeleteBranchParams.from( CTX_DEFAULT.getBranch() ) )  );
+        NodeHelper.runAsAdmin( () -> this.repositoryService.deleteBranch( DeleteBranchParams.from( CTX_DEFAULT.getBranch() ) ) );
         NodeHelper.runAsAdmin( () -> this.repositoryService.createBranch( CreateBranchParams.from( CTX_DEFAULT.getBranch().toString() ) ) );
         assertNull( getNode( myNode.id() ) );
+    }
+
+    private Repository doCreateRepo( final String id )
+    {
+        return ADMIN_CONTEXT.callWith( () -> this.repositoryService.createRepository( CreateRepositoryParams.create().
+            repositoryId( RepositoryId.from( id ) ).
+            build() ) );
     }
 }

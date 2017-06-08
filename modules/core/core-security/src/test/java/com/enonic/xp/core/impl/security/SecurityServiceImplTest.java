@@ -134,6 +134,7 @@ public class SecurityServiceImplTest
         this.repositoryService.setIndexServiceInternal( this.indexServiceInternal );
         this.repositoryService.setNodeRepositoryService( nodeRepositoryService );
         this.repositoryService.setNodeStorageService( storageService );
+        this.repositoryService.setNodeSearchService( searchService );
         this.repositoryService.initialize();
 
         this.eventPublisher = Mockito.mock( EventPublisher.class );
