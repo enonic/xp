@@ -12,7 +12,6 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
@@ -30,16 +29,16 @@ public class NodeVersionServiceImpl
     private BlobStore blobStore;
 
     @Override
-    public NodeVersionId store( final Node node )
+    public NodeVersionId store( final NodeVersion nodeVersion )
     {
-        final BlobRecord blob = doStoreNodeAsBlob( node );
+        final BlobRecord blob = doStoreNodeAsBlob( nodeVersion );
 
         return NodeVersionId.from( blob.getKey().toString() );
     }
 
-    private BlobRecord doStoreNodeAsBlob( final Node node )
+    private BlobRecord doStoreNodeAsBlob( final NodeVersion nodeVersion )
     {
-        final String serializedNode = this.nodeVersionJsonSerializer.toString( NodeVersion.from( node ) );
+        final String serializedNode = this.nodeVersionJsonSerializer.toString( nodeVersion );
         final ByteSource source = ByteSource.wrap( serializedNode.getBytes( StandardCharsets.UTF_8 ) );
         return blobStore.addRecord( NodeConstants.NODE_SEGMENT, source );
     }

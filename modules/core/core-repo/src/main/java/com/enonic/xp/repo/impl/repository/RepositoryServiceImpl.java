@@ -184,7 +184,7 @@ public class RepositoryServiceImpl
             nodeRepositoryService.delete( repositoryId );
             return null;
         } );
-        doRefresh();
+
         return repositoryId;
     }
 

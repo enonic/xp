@@ -8,10 +8,13 @@ public class LoadParams
 
     private final RepositoryId repositoryId;
 
+    private final boolean includeVersions;
+
     private LoadParams( final Builder builder )
     {
         dumpName = builder.dumpName;
         repositoryId = builder.repositoryId;
+        includeVersions = builder.includeVersions;
     }
 
     public String getDumpName()
@@ -24,6 +27,11 @@ public class LoadParams
         return repositoryId;
     }
 
+    public boolean isIncludeVersions()
+    {
+        return includeVersions;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -34,6 +42,8 @@ public class LoadParams
         private String dumpName;
 
         private RepositoryId repositoryId;
+
+        private boolean includeVersions = false;
 
         private Builder()
         {
@@ -48,6 +58,12 @@ public class LoadParams
         public Builder repositoryId( final RepositoryId val )
         {
             repositoryId = val;
+            return this;
+        }
+
+        public Builder includeVersions( final boolean val )
+        {
+            includeVersions = val;
             return this;
         }
 

@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.dump;
 
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Before;
@@ -192,6 +191,19 @@ public class RepoDumperTest
 
         assertNotNull( writer.getDumpMeta() );
         assertEquals( "x-y-z", writer.getDumpMeta().getXpVersion() );
+    }
+
+    @Test
+    public void markedAsCurrent()
+        throws Exception
+    {
+        createNode( NodePath.ROOT, "myNode" );
+        final TestDumpWriter writer = new TestDumpWriter();
+        doDump( writer );
+
+        final List<DumpEntry> result = writer.get( CTX_DEFAULT.getRepositoryId(), CTX_DEFAULT.getBranch() );
+        final DumpEntry entry = result.get( 0 );
+        assertTrue( entry.getVersions().iterator().next().isCurrent() );
     }
 
     private boolean hasVersionMeta( final TestDumpWriter writer, final NodeId nodeId, final NodeVersionId... versionIds )

@@ -8,19 +8,20 @@ import java.util.List;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
+import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 import com.google.common.io.LineProcessor;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
-import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.dump.DumpBlobStore;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
+import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repository.RepositoryId;
 
 public class FileDumpReader
@@ -84,7 +85,7 @@ public class FileDumpReader
     @Override
     public NodeVersion get( final NodeVersionId nodeVersionId )
     {
-        final BlobRecord record = this.dumpBlobStore.getRecord( Segment.from( "version" ), BlobKey.from( nodeVersionId.toString() ) );
+        final BlobRecord record = this.dumpBlobStore.getRecord( NodeConstants.NODE_SEGMENT, BlobKey.from( nodeVersionId.toString() ) );
 
         if ( record == null )
         {
@@ -92,6 +93,19 @@ public class FileDumpReader
         }
 
         return this.factory.create( record.getBytes() );
+    }
+
+    @Override
+    public ByteSource getBinary( final String blobKey )
+    {
+        final BlobRecord record = this.dumpBlobStore.getRecord( NodeConstants.BINARY_SEGMENT, BlobKey.from( blobKey ) );
+
+        if ( record == null )
+        {
+            throw new RepoDumpException( "Cannot find referred blob id " + blobKey + " in dump" );
+        }
+
+        return record.getBytes();
     }
 
     private File getMetaFile( final RepositoryId repositoryId, final Branch branch )

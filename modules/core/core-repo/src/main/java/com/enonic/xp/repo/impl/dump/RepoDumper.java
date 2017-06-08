@@ -33,6 +33,8 @@ import com.enonic.xp.repository.RepositoryService;
 
 class RepoDumper
 {
+    private static final int DEFAULT_BATCH_SIZE = 5000;
+
     private final RepositoryId repositoryId;
 
     private final boolean includeVersions;
@@ -122,7 +124,7 @@ class RepoDumper
             nodeService( this.nodeService ).
             parentId( nodeId ).
             recursive( true ).
-            batchSize( 5000 ).
+            batchSize( DEFAULT_BATCH_SIZE ).
             childOrder( ChildOrder.from( "_path asc" ) ).
             build();
 
@@ -153,7 +155,7 @@ class RepoDumper
 
         final Node currentNode = this.nodeService.getById( nodeId );
 
-        builder.addVersion( MetaFactory.create( currentNode ) );
+        builder.addVersion( MetaFactory.create( currentNode, true ) );
 
         if ( this.includeBinaries )
         {
@@ -191,7 +193,7 @@ class RepoDumper
             }
             else
             {
-                builder.addVersion( MetaFactory.create( metaData ) );
+                builder.addVersion( MetaFactory.create( metaData, false ) );
             }
         }
     }
@@ -199,7 +201,7 @@ class RepoDumper
     private void addVersionWithBinaries( final DumpEntry.Builder builder, final NodeVersionMetadata metaData )
     {
         final NodeVersion nodeVersion = this.nodeService.getByNodeVersion( metaData.getNodeVersionId() );
-        builder.addVersion( MetaFactory.create( metaData, nodeVersion ) );
+        builder.addVersion( MetaFactory.create( metaData, false ) );
         builder.addBinaryReferences(
             nodeVersion.getAttachedBinaries().stream().map( AttachedBinary::getBlobKey ).collect( Collectors.toSet() ) );
     }

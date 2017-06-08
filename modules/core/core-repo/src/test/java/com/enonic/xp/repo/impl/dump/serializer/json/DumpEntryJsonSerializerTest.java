@@ -34,7 +34,7 @@ public class DumpEntryJsonSerializerTest
             addVersion( Meta.create().
                 nodeState( NodeState.DEFAULT ).
                 nodePath( NodePath.create( "/fisk/katt" ).build() ).
-                current( true ).
+                current( false ).
                 timestamp( Instant.now() ).
                 version( NodeVersionId.from( "katt" ) ).
                 build() ).
@@ -48,4 +48,6 @@ public class DumpEntryJsonSerializerTest
 
         assertEquals( dumpEntry, newDumpEntry );
     }
+
+
 }

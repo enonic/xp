@@ -153,7 +153,7 @@ public class FileDumpWriter
     {
         final BlobRecord existingVersion = blobStore.getRecord( NodeConstants.NODE_SEGMENT, BlobKey.from( nodeVersionId.toString() ) );
 
-        this.dumpBlobStore.addRecord( DUMP_SEGMENT_VERSION, existingVersion.getBytes() );
+        this.dumpBlobStore.addRecord( NodeConstants.NODE_SEGMENT, existingVersion.getBytes() );
     }
 
     @Override
@@ -161,7 +161,7 @@ public class FileDumpWriter
     {
         final BlobRecord binaryRecord = blobStore.getRecord( NodeConstants.BINARY_SEGMENT, BlobKey.from( blobKey ) );
 
-        this.dumpBlobStore.addRecord( DUMP_SEGMENT_BINARY, binaryRecord.getBytes() );
+        this.dumpBlobStore.addRecord( NodeConstants.BINARY_SEGMENT, binaryRecord.getBytes() );
     }
 
     public static Builder create()

@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.dump.reader;
 
+import com.google.common.io.ByteSource;
 import com.google.common.io.LineProcessor;
 
 import com.enonic.xp.branch.Branch;
@@ -15,5 +16,7 @@ public interface DumpReader
     void load( final RepositoryId repositoryId, final Branch branch, final LineProcessor<EntryLoadResult> processor );
 
     NodeVersion get( final NodeVersionId nodeVersionId );
+
+    ByteSource getBinary( final String blobKey );
 
 }

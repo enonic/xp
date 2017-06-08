@@ -48,7 +48,7 @@ public class NodeStorageServiceImpl
     @Override
     public Node store( final Node node, final InternalContext context )
     {
-        final NodeVersionId nodeVersionId = nodeVersionService.store( node );
+        final NodeVersionId nodeVersionId = nodeVersionService.store( NodeVersion.from( node ) );
 
         storeVersionMetadata( node, context, nodeVersionId );
 
@@ -59,6 +59,19 @@ public class NodeStorageServiceImpl
         return Node.create( node ).
             nodeVersionId( nodeVersionId ).
             build();
+    }
+
+    @Override
+    public void storeVersion( final StoreNodeVersionParams params, final InternalContext context )
+    {
+        final NodeVersionId nodeVersionId = this.nodeVersionService.store( params.getNodeVersion() );
+
+        this.versionService.store( NodeVersionMetadata.create().
+            nodeVersionId( nodeVersionId ).
+            nodeId( params.getNodeId() ).
+            nodePath( params.getNodePath() ).
+            timestamp( params.getTimestamp() ).
+            build(), context );
     }
 
     @Override
@@ -75,7 +88,7 @@ public class NodeStorageServiceImpl
         }
         else
         {
-            nodeVersionId = nodeVersionService.store( params.getNode() );
+            nodeVersionId = nodeVersionService.store( NodeVersion.from( params.getNode() ) );
         }
 
         storeVersionMetadata( params.getNode(), context, nodeVersionId );

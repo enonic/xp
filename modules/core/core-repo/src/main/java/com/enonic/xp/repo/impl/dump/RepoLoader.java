@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.dump;
 
-import java.nio.file.Path;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +13,7 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repo.impl.dump.reader.DumpLineProcessor;
 import com.enonic.xp.repo.impl.dump.reader.DumpReader;
 import com.enonic.xp.repository.CreateBranchParams;
+import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
@@ -29,7 +28,6 @@ class RepoLoader
 
     private final NodeService nodeService;
 
-
     private final DumpReader reader;
 
     private final DumpLineProcessor processor;
@@ -40,7 +38,11 @@ class RepoLoader
         repositoryService = builder.repositoryService;
         nodeService = builder.nodeService;
         reader = builder.reader;
-        this.processor = new DumpLineProcessor( this.nodeService, this.reader );
+        this.processor = DumpLineProcessor.create().
+            dumpReader( this.reader ).
+            nodeService( this.nodeService ).
+            includeVersions( builder.includeVersions ).
+            build();
     }
 
     public DumpResult execute()
@@ -69,15 +71,33 @@ class RepoLoader
     {
         final Branch branch = ContextAccessor.current().getBranch();
 
-        final Repository currentRepo = this.repositoryService.get( this.repositoryId );
+        getOrCreateRepositoryAndBranch( branch );
+
+        this.reader.load( repositoryId, branch, this.processor );
+    }
+
+    private void getOrCreateRepositoryAndBranch( final Branch branch )
+    {
+        Repository currentRepo = this.repositoryService.get( this.repositoryId );
+
+        if ( currentRepo == null )
+        {
+            currentRepo = createRepository( this.repositoryId );
+        }
 
         if ( !currentRepo.getBranches().contains( branch ) )
         {
             LOG.info( String.format( "Creating branch [%s] from dump", branch ) );
             this.repositoryService.createBranch( CreateBranchParams.from( branch.toString() ) );
         }
+    }
 
-        this.reader.load( repositoryId, branch, this.processor );
+    private Repository createRepository( final RepositoryId repositoryId )
+    {
+        // TODO: Root node properties (childOrder, indexConfig etc)
+        return this.repositoryService.createRepository( CreateRepositoryParams.create().
+            repositoryId( repositoryId ).
+            build() );
     }
 
     public static Builder create()
@@ -93,13 +113,7 @@ class RepoLoader
 
         private NodeService nodeService;
 
-        private Branches branches;
-
-        private boolean includeVersions;
-
-        private boolean includeBinaries;
-
-        private Path sourcePath;
+        private boolean includeVersions = false;
 
         private DumpReader reader;
 
@@ -125,27 +139,9 @@ class RepoLoader
             return this;
         }
 
-        public Builder branches( final Branches val )
-        {
-            branches = val;
-            return this;
-        }
-
         public Builder includeVersions( final boolean val )
         {
             includeVersions = val;
-            return this;
-        }
-
-        public Builder includeBinaries( final boolean val )
-        {
-            includeBinaries = val;
-            return this;
-        }
-
-        public Builder sourcePath( final Path val )
-        {
-            sourcePath = val;
             return this;
         }
 

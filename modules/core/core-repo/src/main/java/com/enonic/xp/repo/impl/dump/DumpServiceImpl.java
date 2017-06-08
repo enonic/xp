@@ -15,6 +15,7 @@ import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.dump.LoadParams;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.SecurityHelper;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
 import com.enonic.xp.repo.impl.dump.writer.FileDumpWriter;
@@ -51,6 +52,8 @@ public class DumpServiceImpl
             throw new RepoDumpException( "Only admin role users can dump repositories" );
         }
 
+        this.nodeService.refresh( RefreshMode.ALL );
+
         return RepoDumper.create().
             writer( FileDumpWriter.create().
                 basePath( basePath ).
@@ -78,10 +81,13 @@ public class DumpServiceImpl
         RepoLoader.create().
             reader( new FileDumpReader( basePath, params.getDumpName() ) ).
             nodeService( this.nodeService ).
+            includeVersions( params.isIncludeVersions() ).
             repositoryService( this.repositoryService ).
             repositoryId( params.getRepositoryId() ).
             build().
             execute();
+
+        this.nodeService.refresh( RefreshMode.ALL );
     }
 
     @Reference

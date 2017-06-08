@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.dump;
 
+import com.google.common.io.ByteSource;
 import com.google.common.io.LineProcessor;
 
 import com.enonic.xp.branch.Branch;
@@ -32,4 +33,14 @@ public class TestDumpReader
     {
         return null;
     }
+
+
+    @Override
+    public ByteSource getBinary( final String blobKey )
+    {
+        return null;
+    }
 }
+
+
+

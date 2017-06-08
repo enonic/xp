@@ -24,6 +24,7 @@ import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
+import com.enonic.xp.node.ImportNodeVersionParams;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.MultiRepoNodeQuery;
 import com.enonic.xp.node.Node;
@@ -765,6 +766,23 @@ public class NodeServiceImpl
             indexServiceInternal( indexServiceInternal ).
             storageService( nodeStorageService ).
             searchService( nodeSearchService ).
+            build().
+            execute();
+    }
+
+    @Override
+    public void importNodeVersion( final ImportNodeVersionParams params )
+    {
+        verifyContext();
+
+        ImportNodeVersionCommand.create().
+            nodeId( params.getNodeId() ).
+            nodePath( params.getNodePath() ).
+            nodeVersion( params.getNodeVersion() ).
+            timestamp( params.getTimestamp() ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
     }
