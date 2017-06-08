@@ -7,6 +7,7 @@ module api.ui.security {
     import BaseSelectedOptionView = api.ui.selector.combobox.BaseSelectedOptionView;
     import BaseSelectedOptionsView = api.ui.selector.combobox.BaseSelectedOptionsView;
     import PrincipalKey = api.security.PrincipalKey;
+    import User = api.security.User;
 
     export class PrincipalComboBox extends api.ui.selector.combobox.RichComboBox<Principal> {
         constructor(builder: PrincipalComboBoxBuilder) {
@@ -16,8 +17,8 @@ module api.ui.security {
             setIdentifierMethod('getKey').
             setLoader(builder.loader).
             setValue(builder.value).
-            setDisplayMissingSelectedOptions(builder.displayMissing).
-            setSelectedOptionsView(new PrincipalSelectedOptionsView()).
+            setDisplayMissingSelectedOptions(builder.displayMissing).setSelectedOptionsView(
+                builder.compactView ? <any>new PrincipalSelectedOptionsViewCompact() : new PrincipalSelectedOptionsView()).
             setOptionDisplayValueViewer(new PrincipalViewer()).
             setDelayedInputValueChangedHandling(500);
 
@@ -39,6 +40,8 @@ module api.ui.security {
 
         displayMissing: boolean = false;
 
+        compactView: boolean = false;
+
         setLoader(value: PrincipalLoader): PrincipalComboBoxBuilder {
             this.loader = value;
             return this;
@@ -56,6 +59,11 @@ module api.ui.security {
 
         setDisplayMissing(value: boolean): PrincipalComboBoxBuilder {
             this.displayMissing = value;
+            return this;
+        }
+
+        setCompactView(value: boolean): PrincipalComboBoxBuilder {
+            this.compactView = value;
             return this;
         }
 
@@ -105,7 +113,7 @@ module api.ui.security {
 
         createSelectedOption(option: Option<Principal>, isEmpty?: boolean): SelectedOption<Principal> {
             let optionView = !option.empty ? new PrincipalSelectedOptionView(option) : new RemovedPrincipalSelectedOptionView(option);
-            return new api.ui.selector.combobox.SelectedOption<Principal>(optionView, this.count());
+            return new api.ui.selector.combobox.SelectedOption<Principal>(<any>optionView, this.count());
         }
 
         makeEmptyOption(id: string): Option<Principal> {
@@ -131,6 +139,60 @@ module api.ui.security {
         resolveSubName(object: Principal, relativePath: boolean = false): string {
             return 'This user is deleted';
         }
+    }
+
+    export class PrincipalSelectedOptionViewCompact extends PrincipalViewerCompact implements api.ui.selector.combobox.SelectedOptionView<Principal> {
+
+        private option: Option<Principal>;
+
+        constructor(option: Option<Principal>) {
+            super();
+            this.setOption(option);
+            this.addClass('principal-selected-option-view-compact');
+        }
+
+        setEditable(editable: boolean) {
+            // must be implemented by children
+        }
+
+        setOption(option: api.ui.selector.Option<Principal>) {
+            this.option = option;
+            this.setObject(option.displayValue);
+        }
+
+        getOption(): api.ui.selector.Option<Principal> {
+            return this.option;
+        }
+
+        onRemoveClicked(listener: (event: MouseEvent) => void) {
+        }
+
+        unRemoveClicked(listener: (event: MouseEvent) => void) {
+        }
+
+    }
+
+    export class PrincipalSelectedOptionsViewCompact extends api.ui.selector.combobox.BaseSelectedOptionsView<Principal> {
+
+        private currentUser: User;
+
+        constructor() {
+            super('principal-selected-options-view-compact');
+            this.loadCurrentUser();
+        }
+
+        private loadCurrentUser() {
+            return new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult) => {
+                this.currentUser = loginResult.getUser();
+            });
+        }
+
+        createSelectedOption(option: Option<Principal>, isEmpty?: boolean): SelectedOption<Principal> {
+            let optionView = new PrincipalSelectedOptionViewCompact(option);
+            optionView.setCurrentUser(this.currentUser);
+            return new api.ui.selector.combobox.SelectedOption<Principal>(<any>optionView, this.count());
+        }
+
     }
 
 }
