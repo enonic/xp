@@ -8,11 +8,12 @@ import PrincipalType = api.security.PrincipalType;
 import FormItemBuilder = api.ui.form.FormItemBuilder;
 import Validators = api.ui.form.Validators;
 import FormItem = api.ui.form.FormItem;
-import {Issue} from "../Issue";
+import {Issue} from '../Issue';
 import ValidityChangedEvent = api.ValidityChangedEvent;
 import StringHelper = api.util.StringHelper;
 import PrincipalKey = api.security.PrincipalKey;
 import ContentId = api.content.ContentId;
+
 export class IssueDialogForm extends api.ui.form.Form {
 
     private approversSelector: PrincipalComboBox;
@@ -25,13 +26,17 @@ export class IssueDialogForm extends api.ui.form.Form {
 
     private title: TextInput;
 
+    private compactAssigneesView: boolean;
+
     private contentItemsAddedListeners: {(items: ContentSummary[]): void}[] = [];
 
     private contentItemsRemovedListeners: {(items: ContentSummary[]): void}[] = [];
 
-    constructor() {
+    constructor(compactAssigneesView?: boolean) {
 
         super('issue-dialog-form');
+
+        this.compactAssigneesView = !!compactAssigneesView;
 
         this.initElements();
 
@@ -66,7 +71,8 @@ export class IssueDialogForm extends api.ui.form.Form {
 
         const principalLoader = new PrincipalLoader().setAllowedTypes([PrincipalType.USER]);
 
-        this.approversSelector = api.ui.security.PrincipalComboBox.create().setLoader(principalLoader).setMaxOccurences(0).build();
+        this.approversSelector = api.ui.security.PrincipalComboBox.create().setLoader(principalLoader).setMaxOccurences(0).setCompactView(
+            this.compactAssigneesView).build();
 
         this.contentItemsSelector = api.content.ContentComboBox.create().setLoader(new api.content.resource.ContentSummaryLoader()).build();
 
