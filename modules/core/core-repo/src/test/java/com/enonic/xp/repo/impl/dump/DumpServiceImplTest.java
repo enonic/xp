@@ -1,12 +1,14 @@
 package com.enonic.xp.repo.impl.dump;
 
 import java.time.Instant;
+import java.util.TreeSet;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
@@ -73,6 +75,7 @@ public class DumpServiceImplTest
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( repoId, true ) );
 
         final Node currentStoredNode = this.nodeService.getById( node.id() );
+        assertEquals( node.getTimestamp(), currentStoredNode.getTimestamp() );
         assertEquals( node.id(), currentStoredNode.id() );
         assertEquals( node.path(), currentStoredNode.path() );
         assertEquals( node.getManualOrderValue(), currentStoredNode.getManualOrderValue() );
@@ -120,16 +123,29 @@ public class DumpServiceImplTest
         final Node node = createNode( NodePath.ROOT, "myNode" );
         final Node updatedNode = updateNode( node );
         final Node currentNode = updateNode( updatedNode );
+        refresh();
+
+        final NodeVersionQueryResult versionsBeforeDump = this.nodeService.findVersions( GetNodeVersionsParams.create().
+            nodeId( node.id() ).
+            build() );
 
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( repoId, true ) );
 
-        final NodeVersionQueryResult versions = this.nodeService.findVersions( GetNodeVersionsParams.create().
+        final NodeVersionQueryResult versionsAfterLoad = this.nodeService.findVersions( GetNodeVersionsParams.create().
             nodeId( node.id() ).
             build() );
-        assertEquals( 3, versions.getTotalHits() );
+        assertEquals( 3, versionsAfterLoad.getTotalHits() );
 
         final Node currentStoredNode = this.nodeService.getById( node.id() );
         assertEquals( currentNode.data(), currentStoredNode.data() );
+        assertEquals( getOrderedTimestamps( versionsBeforeDump ), getOrderedTimestamps( versionsAfterLoad ) );
+    }
+
+    private TreeSet<Instant> getOrderedTimestamps( final NodeVersionQueryResult result )
+    {
+        TreeSet<Instant> timestamps = Sets.newTreeSet();
+        result.getNodeVersionsMetadata().forEach( version -> timestamps.add( version.getTimestamp() ) );
+        return timestamps;
     }
 
     @Test
@@ -185,7 +201,6 @@ public class DumpServiceImplTest
         final NodeVersionQueryResult versions = this.nodeService.findVersions( GetNodeVersionsParams.create().
             nodeId( node.id() ).
             build() );
-
         assertEquals( 2, versions.getHits() );
 
         verifyBinaries( node, updatedNode, versions );
