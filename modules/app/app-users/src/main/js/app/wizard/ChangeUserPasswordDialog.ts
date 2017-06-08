@@ -36,7 +36,9 @@ export class ChangeUserPasswordDialog extends api.ui.dialog.ModalDialog {
 
         this.onShown(() => this.toggleChangePasswordButton());
 
-        let passwordFormItem = new FormItemBuilder(this.password).setLabel(i18n('field.password')).setValidator(Validators.required).build();
+        let passwordFormItem = new FormItemBuilder(this.password)
+            .setLabel(i18n('field.password'))
+            .setValidator(Validators.required).build();
 
         let fieldSet = new api.ui.form.Fieldset();
         fieldSet.add(passwordFormItem);

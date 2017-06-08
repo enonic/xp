@@ -55,11 +55,13 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
 
         this.applicationDataContainer.removeChildren();
 
-        let infoGroup = new ItemDataGroup(i18n('field.info'), 'info');
+        const infoGroup = new ItemDataGroup(i18n('field.info'), 'info');
+        const minVersion = currentApplication.getMinSystemVersion();
+        const maxVersion = currentApplication.getMaxSystemVersion();
         infoGroup.addDataList(i18n('field.buildDate'), 'TBA');
         infoGroup.addDataList(i18n('field.version'), currentApplication.getVersion());
         infoGroup.addDataList(i18n('field.key'), currentApplication.getApplicationKey().toString());
-        infoGroup.addDataList(i18n('field.systemRequired'), i18n('field.systemRequired.value', currentApplication.getMinSystemVersion(), currentApplication.getMaxSystemVersion()));
+        infoGroup.addDataList(i18n('field.systemRequired'), i18n('field.systemRequired.value', minVersion, maxVersion));
 
         let descriptorResponse = this.initDescriptors(currentApplication.getApplicationKey());
         let schemaResponse = this.initSchemas(currentApplication.getApplicationKey());
