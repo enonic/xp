@@ -3,6 +3,7 @@ import FormItemBuilder = api.ui.form.FormItemBuilder;
 
 import DivEl = api.dom.DivEl;
 import LabelEl = api.dom.LabelEl;
+import i18n = api.util.i18n;
 
 export class UserStoreWizardStepForm extends api.app.wizard.WizardStepForm {
 
@@ -45,16 +46,17 @@ export class UserStoreWizardStepForm extends api.app.wizard.WizardStepForm {
             addFormItem(new api.form.InputBuilder().
                 setName('description').
                 setInputType(api.form.inputtype.text.TextLine.getName()).
-                setLabel('Description').
+                setLabel(i18n('field.description')).
                 setOccurrences(new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).
                 setInputTypeConfig({}).
                 setMaximizeUIInputWidth(true).
                 build()).
             addFormItem(new api.form.InputBuilder().
                 setName('authConfig').
-                setInputType(new api.form.InputTypeName('AuthApplicationSelector', false)).setLabel('ID Provider').setOccurrences(
-            new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).setInputTypeConfig(
-            {readOnly: [{value: isSystemUserStore}]}).
+                setInputType(new api.form.InputTypeName('AuthApplicationSelector', false)).
+                setLabel(i18n('field.idProvider')).
+                setOccurrences(new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).
+                setInputTypeConfig({readOnly: [{value: isSystemUserStore}]}).
                 setMaximizeUIInputWidth(true).
                 build());
 

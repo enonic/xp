@@ -3,14 +3,15 @@ import '../../../api.ts';
 import UserStore = api.security.UserStore;
 import Principal = api.security.Principal;
 import UserItem = api.security.UserItem;
+import i18n = api.util.i18n;
 
 export class DeleteUserItemAction extends api.ui.Action {
 
     constructor(wizardPanel: api.app.wizard.WizardPanel<UserItem>) {
-        super('Delete', 'mod+del', true);
+        super(i18n('action.delete'), 'mod+del', true);
         this.onExecuted(() => {
             api.ui.dialog.ConfirmationDialog.get()
-                .setQuestion('Are you sure you want to delete this item?')
+                .setQuestion(i18n('dialog.delete.question'))
                 .setNoCallback(null)
                 .setYesCallback(() => {
 
@@ -30,7 +31,7 @@ export class DeleteUserItemAction extends api.ui.Action {
                                 if (json.results && json.results.length > 0) {
                                     let key = json.results[0].principalKey;
 
-                                    api.notify.showFeedback('Principal [' + key + '] deleted!');
+                                    api.notify.showFeedback(i18n('notify.deleted.principal', key));
                                     api.security.UserItemDeletedEvent.create().setPrincipals([<Principal>persistedItem]).build().fire();
                                 }
                             });
@@ -45,7 +46,7 @@ export class DeleteUserItemAction extends api.ui.Action {
                                 if (json.results && json.results.length > 0) {
                                     let key = json.results[0].userStoreKey;
 
-                                    api.notify.showFeedback('UserStore [' + key + '] deleted!');
+                                    api.notify.showFeedback(i18n('notify.deleted.userstore', key));
                                     api.security.UserItemDeletedEvent.create().setUserStores([<UserStore>persistedItem]).build().fire();
                                 }
                             });

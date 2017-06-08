@@ -1,22 +1,23 @@
 import WizardPanel = api.app.wizard.WizardPanel;
 import ModalDialog = api.ui.dialog.ModalDialog;
 import Action = api.ui.Action;
+import i18n = api.util.i18n;
 
 export class SaveBeforeCloseDialog extends ModalDialog {
 
     private wizardPanel: WizardPanel<any>;
 
-    private yesAction: Action = new Action('Yes', 'y');
+    private yesAction: Action = new Action(i18n('action.yes'), 'y');
 
-    private noAction: Action = new Action('No', 'n');
+    private noAction: Action = new Action(i18n('action.no'), 'n');
 
     constructor(wizardPanel: WizardPanel<any>) {
-        super('Close wizard');
+        super(i18n('dialog.saveBeforeClose.title'));
 
         this.wizardPanel = wizardPanel;
 
         let message = new api.dom.H6El();
-        message.getEl().setInnerHtml('There are unsaved changes, do you want to save them before closing?');
+        message.getEl().setInnerHtml(i18n('dialog.saveBeforeClose.msg'));
         this.appendChildToContentPanel(message);
 
         this.yesAction.setMnemonic('y');

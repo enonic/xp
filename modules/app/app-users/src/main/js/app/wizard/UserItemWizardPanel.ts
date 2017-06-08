@@ -19,6 +19,7 @@ import WizardStep = api.app.wizard.WizardStep;
 import Toolbar = api.ui.toolbar.Toolbar;
 import WizardActions = api.app.wizard.WizardActions;
 import UserItem = api.security.UserItem;
+import i18n = api.util.i18n;
 
 export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem> extends api.app.wizard.WizardPanel<USER_ITEM_TYPE> {
 
@@ -158,7 +159,7 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem> extends api.ap
     saveChanges(): wemQ.Promise<USER_ITEM_TYPE> {
         if (this.isRendered() && !this.getWizardHeader().getName()) {
             let deferred = wemQ.defer<USER_ITEM_TYPE>();
-            api.notify.showError('Name can not be empty');
+            api.notify.showError(i18n('notify.empty.name'));
             deferred.reject(new Error('Name can not be empty'));
             return deferred.promise;
         } else {

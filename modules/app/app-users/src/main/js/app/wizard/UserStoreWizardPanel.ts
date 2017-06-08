@@ -20,6 +20,7 @@ import WizardStep = api.app.wizard.WizardStep;
 import FormIcon = api.app.wizard.FormIcon;
 import WizardHeaderWithDisplayNameAndName = api.app.wizard.WizardHeaderWithDisplayNameAndName;
 import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
+import i18n = api.util.i18n;
 
 export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
 
@@ -83,7 +84,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
     }
 
     getUserItemType(): string {
-        return 'User Store';
+        return i18n('field.userStore');
     }
 
     createSteps(persistedItem: UserStore): WizardStep[] {
@@ -92,8 +93,8 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         this.userStoreWizardStepForm = new UserStoreWizardStepForm();
         this.permissionsWizardStepForm = new SecurityWizardStepForm();
 
-        steps.push(new WizardStep('User Store', this.userStoreWizardStepForm));
-        steps.push(new WizardStep('Permissions', this.permissionsWizardStepForm));
+        steps.push(new WizardStep(i18n('field.userStore'), this.userStoreWizardStepForm));
+        steps.push(new WizardStep(i18n('field.permissions'), this.permissionsWizardStepForm));
 
         return steps;
     }

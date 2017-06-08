@@ -2,21 +2,19 @@ import '../../api.ts';
 
 import UserStoreAccessControlList = api.security.acl.UserStoreAccessControlList;
 import UserStoreAccessControlComboBox = api.ui.security.acl.UserStoreAccessControlComboBox;
-import Content = api.content.Content;
 import UserStore = api.security.UserStore;
 import FormItemBuilder = api.ui.form.FormItemBuilder;
 import Validators = api.ui.form.Validators;
 
 import DivEl = api.dom.DivEl;
 import LabelEl = api.dom.LabelEl;
+import i18n = api.util.i18n;
 
 export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
 
     private inheritance: DivEl;
     private comboBox: UserStoreAccessControlComboBox;
     private userStore: UserStore;
-
-    private content: Content;
 
     constructor() {
         super('security-wizard-step-form');
@@ -26,7 +24,9 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
         this.comboBox = new UserStoreAccessControlComboBox();
         this.comboBox.addClass('principal-combobox');
 
-        let accessComboBoxFormItem = new FormItemBuilder(this.comboBox).setValidator(Validators.required).setLabel('Permissions').build();
+        let accessComboBoxFormItem = new FormItemBuilder(this.comboBox)
+            .setValidator(Validators.required)
+            .setLabel(i18n('field.permissions')).build();
 
         let fieldSet = new api.ui.form.Fieldset();
         fieldSet.add(accessComboBoxFormItem);
