@@ -5,17 +5,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
-import com.google.common.io.Files;
 import com.google.common.net.MediaType;
 
 import okhttp3.Headers;
 import okhttp3.Response;
 
+import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
@@ -93,7 +94,7 @@ public final class ResponseMapper
             if ( bodyLength == -1 || bodyLength > MAX_IN_MEMORY_BODY_STREAM_BYTES )
             {
                 final File tempFile = writeAsTmpFile( response.body().byteStream() );
-                return Files.asByteSource( tempFile );
+                return new TemporaryFileByteSource( tempFile );
             }
             return ByteSource.wrap( this.response.body().bytes() );
         }
@@ -103,10 +104,19 @@ public final class ResponseMapper
         }
     }
 
+    private static File getTmpDirectory()
+    {
+        final String homeDir = HomeDir.get().toString();
+        return Paths.get( homeDir, "temp", "xphttp" ).toAbsolutePath().toFile();
+    }
+
     private static File writeAsTmpFile( final InputStream inputStream )
         throws IOException
     {
-        final File tempFile = File.createTempFile( "xphttp", ".tmp" );
+        final File tempDir = getTmpDirectory();
+        tempDir.mkdirs();
+        final File tempFile = File.createTempFile( "xphttp", ".tmp", tempDir );
+
         tempFile.deleteOnExit();
         java.nio.file.Files.copy( inputStream, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING );
         return tempFile;
