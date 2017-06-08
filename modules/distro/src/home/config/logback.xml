@@ -3,9 +3,11 @@
 
   <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <file>${xp.home}/logs/server.log</file>
-    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>${xp.home}/logs/server.%d{yyyy-MM-dd}.log</fileNamePattern>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${xp.home}/logs/server.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+      <maxFileSize>100MB</maxFileSize>
       <maxHistory>7</maxHistory>
+      <totalSizeCap>3GB</totalSizeCap>
     </rollingPolicy>
     <encoder>
       <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
