@@ -26,10 +26,6 @@ task cleanSourceFiles( type: Delete ) {
     delete fileTree( dir: '.', includes: ['*.tmp.txt'] )
 }
 
-task lint( type: NpmTask, dependsOn: npmInstall ) {
-    args = ['run', 'lint']
-}
-
 task gulpAll( type: GulpTask, dependsOn: npmInstall ) {
     description = 'Build admin UI resources (ts, css, etc).'
     inputs.files fileTree( dir: 'src/main/resources', exclude: '**/_all.*' )
@@ -48,4 +44,3 @@ task cleanNode(type: Delete) {
 
 jar.dependsOn += copyAll
 clean.dependsOn += cleanSourceFiles
-build.dependsOn += lint
