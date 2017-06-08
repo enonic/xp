@@ -14,10 +14,11 @@ import com.google.common.io.Files;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
-import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.repo.impl.dump.AbstractFileProcessor;
 import com.enonic.xp.repo.impl.dump.DumpBlobStore;
+import com.enonic.xp.repo.impl.dump.DumpConstants;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.model.DumpEntry;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
@@ -28,12 +29,9 @@ import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repository.RepositoryId;
 
 public class FileDumpWriter
+    extends AbstractFileProcessor
     implements DumpWriter
 {
-    private final static Segment DUMP_SEGMENT_VERSION = Segment.from( "version" );
-
-    private final static Segment DUMP_SEGMENT_BINARY = Segment.from( "binary" );
-
     private final static String LINE_SEPARATOR = System.lineSeparator();
 
     private final BlobStore dumpBlobStore;
@@ -45,6 +43,7 @@ public class FileDumpWriter
     private final DumpEntrySerializer serializer;
 
     private BufferedWriter metaFileWriter;
+
 
     private FileDumpWriter( final Builder builder )
     {
@@ -58,7 +57,6 @@ public class FileDumpWriter
     {
         return Paths.get( basePath.toString(), name ).toAbsolutePath();
     }
-
 
     @Override
     public void writeDumpMeta( final DumpMeta dumpMeta )
@@ -75,7 +73,6 @@ public class FileDumpWriter
         {
             throw new RepoDumpException( "Cannot write dump-meta file", e );
         }
-
     }
 
     @Override
@@ -94,7 +91,7 @@ public class FileDumpWriter
 
     private File createMetaFile( final RepositoryId repositoryId, final Branch branch )
     {
-        final File metaFile = createMetaPath( repositoryId, branch ).toFile();
+        final File metaFile = createMetaPath( this.dumpDirectory, repositoryId, branch ).toFile();
 
         if ( metaFile.exists() )
         {
@@ -109,11 +106,6 @@ public class FileDumpWriter
         }
 
         return metaFile;
-    }
-
-    private Path createMetaPath( final RepositoryId repositoryId, final Branch branch )
-    {
-        return Paths.get( this.dumpDirectory.toString(), repositoryId.toString(), branch.toString() );
     }
 
     @Override
@@ -151,7 +143,13 @@ public class FileDumpWriter
     @Override
     public void writeVersion( final NodeVersionId nodeVersionId )
     {
-        final BlobRecord existingVersion = blobStore.getRecord( NodeConstants.NODE_SEGMENT, BlobKey.from( nodeVersionId.toString() ) );
+        final BlobRecord existingVersion =
+            blobStore.getRecord( DumpConstants.DUMP_SEGMENT_NODES, BlobKey.from( nodeVersionId.toString() ) );
+
+        if ( existingVersion == null )
+        {
+            throw new RepoDumpException( "Cannot write node version with key [" + nodeVersionId + "], not found in blobstore" );
+        }
 
         this.dumpBlobStore.addRecord( NodeConstants.NODE_SEGMENT, existingVersion.getBytes() );
     }
@@ -159,7 +157,12 @@ public class FileDumpWriter
     @Override
     public void writeBinary( final String blobKey )
     {
-        final BlobRecord binaryRecord = blobStore.getRecord( NodeConstants.BINARY_SEGMENT, BlobKey.from( blobKey ) );
+        final BlobRecord binaryRecord = blobStore.getRecord( DumpConstants.DUMP_SEGMENT_BINARIES, BlobKey.from( blobKey ) );
+
+        if ( binaryRecord == null )
+        {
+            throw new RepoDumpException( "Cannot write binary with key [" + blobKey + "], not found in blobstore" );
+        }
 
         this.dumpBlobStore.addRecord( NodeConstants.BINARY_SEGMENT, binaryRecord.getBytes() );
     }

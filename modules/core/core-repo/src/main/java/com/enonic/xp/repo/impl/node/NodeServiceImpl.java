@@ -25,6 +25,8 @@ import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.ImportNodeVersionParams;
+import com.enonic.xp.node.LoadNodeParams;
+import com.enonic.xp.node.LoadNodeResult;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.MultiRepoNodeQuery;
 import com.enonic.xp.node.Node;
@@ -720,6 +722,18 @@ public class NodeServiceImpl
         }
 
         return importNodeResult;
+    }
+
+    @Override
+    public LoadNodeResult loadNode( final LoadNodeParams params )
+    {
+        return LoadNodeCommand.create().
+            params( params ).
+            searchService( this.nodeSearchService ).
+            storageService( this.nodeStorageService ).
+            indexServiceInternal( this.indexServiceInternal ).
+            build().
+            execute();
     }
 
     @Override

@@ -29,6 +29,9 @@ import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
+import com.enonic.xp.node.ImportNodeVersionParams;
+import com.enonic.xp.node.LoadNodeParams;
+import com.enonic.xp.node.LoadNodeResult;
 import com.enonic.xp.node.MultiRepoNodeQuery;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeComparison;
@@ -87,6 +90,18 @@ class NodeServiceMock
     private Node doCreate( final CreateNodeParams params )
     {
         return doCreate( params, null );
+    }
+
+    @Override
+    public void importNodeVersion( final ImportNodeVersionParams params )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public LoadNodeResult loadNode( final LoadNodeParams params )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
     }
 
     private Node doCreate( final CreateNodeParams params, final Instant timestamp )

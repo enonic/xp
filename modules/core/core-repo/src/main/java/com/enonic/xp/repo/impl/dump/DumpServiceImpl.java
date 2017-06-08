@@ -22,6 +22,7 @@ import com.enonic.xp.repo.impl.dump.writer.FileDumpWriter;
 import com.enonic.xp.repository.RepositoryService;
 
 @Component(immediate = true)
+@SuppressWarnings("WeakerAccess")
 public class DumpServiceImpl
     implements DumpService
 {
@@ -81,6 +82,7 @@ public class DumpServiceImpl
         RepoLoader.create().
             reader( new FileDumpReader( basePath, params.getDumpName() ) ).
             nodeService( this.nodeService ).
+            blobStore( this.blobStore ).
             includeVersions( params.isIncludeVersions() ).
             repositoryService( this.repositoryService ).
             repositoryId( params.getRepositoryId() ).

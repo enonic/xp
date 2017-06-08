@@ -82,6 +82,8 @@ public interface NodeService
 
     ImportNodeResult importNode( ImportNodeParams params );
 
+    LoadNodeResult loadNode( final LoadNodeParams params );
+
     NodesHasChildrenResult hasChildren( Nodes nodes );
 
     boolean hasChildren( Node node );
@@ -92,6 +94,6 @@ public interface NodeService
 
     boolean hasUnpublishedChildren( NodeId parent, Branch target );
 
-    void importNodeVersion( final ImportNodeVersionParams params);
+    void importNodeVersion( final ImportNodeVersionParams params );
 
 }

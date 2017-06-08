@@ -3,27 +3,32 @@ package com.enonic.xp.repo.impl.dump.reader;
 import java.io.IOException;
 import java.util.Collection;
 
+import com.google.common.io.ByteSource;
 import com.google.common.io.LineProcessor;
 
-import com.enonic.xp.node.AttachedBinaries;
-import com.enonic.xp.node.BinaryAttachment;
-import com.enonic.xp.node.BinaryAttachments;
-import com.enonic.xp.node.ImportNodeParams;
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobRecord;
+import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.node.ImportNodeVersionParams;
+import com.enonic.xp.node.LoadNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
+import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.model.DumpEntry;
 import com.enonic.xp.repo.impl.dump.model.Meta;
 import com.enonic.xp.repo.impl.dump.serializer.DumpEntrySerializer;
 import com.enonic.xp.repo.impl.dump.serializer.json.DumpEntryJsonSerializer;
+import com.enonic.xp.repo.impl.node.NodeConstants;
 
 public class DumpLineProcessor
     implements LineProcessor<EntryLoadResult>
 {
     private final EntryLoadResult result;
+
+    private final BlobStore blobStore;
 
     private final NodeService nodeService;
 
@@ -38,6 +43,7 @@ public class DumpLineProcessor
         result = builder.result;
         nodeService = builder.nodeService;
         dumpReader = builder.dumpReader;
+        blobStore = builder.blobStore;
         serializer = new DumpEntryJsonSerializer();
         includeVersions = builder.includeVersions;
     }
@@ -55,7 +61,6 @@ public class DumpLineProcessor
             if ( meta.isCurrent() )
             {
                 final NodeVersion nodeVersion = this.dumpReader.get( meta.getVersion() );
-                final BinaryAttachments.Builder binaryAttachments = getBinaryAttachments( nodeVersion );
 
                 final Node node = NodeFactory.create( nodeVersion, NodeBranchEntry.create().
                     nodeId( dumpEntry.getNodeId() ).
@@ -65,11 +70,11 @@ public class DumpLineProcessor
                     nodeState( meta.getNodeState() ).
                     build() );
 
-                this.nodeService.importNode( ImportNodeParams.create().
-                    importNode( node ).
-                    importPermissions( true ).
-                    binaryAttachments( binaryAttachments.build() ).
+                this.nodeService.loadNode( LoadNodeParams.create().
+                    node( node ).
                     build() );
+
+                validateOrAddBinary( nodeVersion );
             }
             else if ( includeVersions )
             {
@@ -81,19 +86,33 @@ public class DumpLineProcessor
                     nodePath( meta.getNodePath() ).
                     nodeVersion( nodeVersion ).
                     build() );
+
+                validateOrAddBinary( nodeVersion );
             }
         }
 
         return true;
     }
 
-    private BinaryAttachments.Builder getBinaryAttachments( final NodeVersion nodeVersion )
+    private void validateOrAddBinary( final NodeVersion nodeVersion )
     {
-        final BinaryAttachments.Builder binaryAttachments = BinaryAttachments.create();
-        final AttachedBinaries attachedBinaries = nodeVersion.getAttachedBinaries();
-        attachedBinaries.forEach( attachedBinary -> binaryAttachments.add(
-            new BinaryAttachment( attachedBinary.getBinaryReference(), this.dumpReader.getBinary( attachedBinary.getBlobKey() ) ) ) );
-        return binaryAttachments;
+        nodeVersion.getAttachedBinaries().forEach( binary -> {
+            
+            final BlobRecord existingRecord = this.blobStore.getRecord( NodeConstants.BINARY_SEGMENT, BlobKey.from( binary.getBlobKey() ) );
+
+            if ( existingRecord == null )
+            {
+                final ByteSource dumpBinary = this.dumpReader.getBinary( binary.getBlobKey() );
+
+                if ( dumpBinary == null )
+                {
+                    throw new RepoDumpException(
+                        "Cannot load binary, missing in existing blobstore, and not present in dump: " + binary.getBlobKey() );
+                }
+
+                this.blobStore.addRecord( NodeConstants.BINARY_SEGMENT, dumpBinary );
+            }
+        } );
     }
 
     @Override
@@ -114,6 +133,8 @@ public class DumpLineProcessor
         private NodeService nodeService;
 
         private DumpReader dumpReader;
+
+        private BlobStore blobStore;
 
         private boolean includeVersions;
 
@@ -142,6 +163,12 @@ public class DumpLineProcessor
         public Builder includeVersions( final boolean val )
         {
             includeVersions = val;
+            return this;
+        }
+
+        public Builder blobStore( final BlobStore blobStore )
+        {
+            this.blobStore = blobStore;
             return this;
         }
 

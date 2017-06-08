@@ -7,7 +7,6 @@ import java.util.Iterator;
 import org.junit.Before;
 import org.mockito.Mockito;
 
-import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
@@ -122,7 +121,7 @@ public abstract class AbstractNodeTest
 
     protected RepositoryServiceImpl repositoryService;
 
-    protected BlobStore blobStore;
+    protected MemoryBlobStore blobStore;
 
     protected NodeServiceImpl nodeService;
 

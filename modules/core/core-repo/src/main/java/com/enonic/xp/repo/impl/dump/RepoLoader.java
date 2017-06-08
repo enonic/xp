@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.dump;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
@@ -42,6 +43,7 @@ class RepoLoader
             dumpReader( this.reader ).
             nodeService( this.nodeService ).
             includeVersions( builder.includeVersions ).
+            blobStore( builder.blobStore ).
             build();
     }
 
@@ -117,6 +119,9 @@ class RepoLoader
 
         private DumpReader reader;
 
+        private BlobStore blobStore;
+
+
         private Builder()
         {
         }
@@ -138,6 +143,13 @@ class RepoLoader
             nodeService = val;
             return this;
         }
+
+        public Builder blobStore( final BlobStore val )
+        {
+            blobStore = val;
+            return this;
+        }
+
 
         public Builder includeVersions( final boolean val )
         {

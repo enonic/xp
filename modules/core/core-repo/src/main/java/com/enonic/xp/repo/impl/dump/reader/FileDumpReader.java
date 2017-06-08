@@ -19,12 +19,14 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.repo.impl.dump.AbstractFileProcessor;
 import com.enonic.xp.repo.impl.dump.DumpBlobStore;
+import com.enonic.xp.repo.impl.dump.DumpConstants;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
-import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repository.RepositoryId;
 
 public class FileDumpReader
+    extends AbstractFileProcessor
     implements DumpReader
 {
     private final Path dumpDirectory;
@@ -48,7 +50,7 @@ public class FileDumpReader
     @Override
     public Branches getBranches( final RepositoryId repositoryId )
     {
-        final Path repoPath = Paths.get( this.dumpDirectory.toString(), repositoryId.toString() );
+        final Path repoPath = createRepoDumpPath( this.dumpDirectory, repositoryId );
 
         if ( !repoPath.toFile().exists() )
         {
@@ -85,7 +87,8 @@ public class FileDumpReader
     @Override
     public NodeVersion get( final NodeVersionId nodeVersionId )
     {
-        final BlobRecord record = this.dumpBlobStore.getRecord( NodeConstants.NODE_SEGMENT, BlobKey.from( nodeVersionId.toString() ) );
+        final BlobRecord record =
+            this.dumpBlobStore.getRecord( DumpConstants.DUMP_SEGMENT_NODES, BlobKey.from( nodeVersionId.toString() ) );
 
         if ( record == null )
         {
@@ -98,7 +101,7 @@ public class FileDumpReader
     @Override
     public ByteSource getBinary( final String blobKey )
     {
-        final BlobRecord record = this.dumpBlobStore.getRecord( NodeConstants.BINARY_SEGMENT, BlobKey.from( blobKey ) );
+        final BlobRecord record = this.dumpBlobStore.getRecord( DumpConstants.DUMP_SEGMENT_BINARIES, BlobKey.from( blobKey ) );
 
         if ( record == null )
         {
@@ -110,7 +113,7 @@ public class FileDumpReader
 
     private File getMetaFile( final RepositoryId repositoryId, final Branch branch )
     {
-        final File metaFile = createMetaPath( repositoryId, branch ).toFile();
+        final File metaFile = createMetaPath( this.dumpDirectory, repositoryId, branch ).toFile();
 
         if ( !metaFile.exists() )
         {
@@ -120,9 +123,5 @@ public class FileDumpReader
         return metaFile;
     }
 
-    private Path createMetaPath( final RepositoryId repositoryId, final Branch branch )
-    {
-        return Paths.get( this.dumpDirectory.toString(), repositoryId.toString(), branch.toString() );
-    }
 
 }
