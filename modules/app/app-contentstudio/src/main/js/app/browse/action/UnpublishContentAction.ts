@@ -3,11 +3,12 @@ import {ContentUnpublishPromptEvent} from '../ContentUnpublishPromptEvent';
 import {ContentTreeGrid} from '../ContentTreeGrid';
 
 import Action = api.ui.Action;
+import i18n = api.util.i18n;
 
 export class UnpublishContentAction extends Action {
 
     constructor(grid: ContentTreeGrid) {
-        super('Unpublish...');
+        super(i18n('action.unpublishMore'));
 
         this.setEnabled(false);
 

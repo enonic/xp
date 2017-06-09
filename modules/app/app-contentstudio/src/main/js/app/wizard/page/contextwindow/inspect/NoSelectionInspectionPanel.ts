@@ -1,4 +1,5 @@
 import '../../../../../api.ts';
+import i18n = api.util.i18n;
 
 export class NoSelectionInspectionPanel extends api.ui.panel.Panel {
 
@@ -7,7 +8,7 @@ export class NoSelectionInspectionPanel extends api.ui.panel.Panel {
     constructor() {
         super('inspection-panel');
 
-        this.header = new api.app.NamesView().setMainName('No item selected');
+        this.header = new api.app.NamesView().setMainName(i18n('field.inspection.empty'));
 
         this.appendChild(this.header);
     }

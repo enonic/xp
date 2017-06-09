@@ -7,6 +7,7 @@ import TogglerButton = api.ui.button.TogglerButton;
 import AppIcon = api.app.bar.AppIcon;
 import Application = api.app.Application;
 import Action = api.ui.Action;
+import i18n = api.util.i18n;
 
 export class ContentWizardToolbar extends api.ui.toolbar.Toolbar {
 
@@ -62,8 +63,8 @@ export class ContentWizardToolbar extends api.ui.toolbar.Toolbar {
 
     private addTogglerButtons(actions: ContentWizardActions) {
         this.cycleViewModeButton = new CycleButton([actions.getShowLiveEditAction(), actions.getShowFormAction()]);
-        this.componentsViewToggler = new TogglerButton('icon-clipboard', 'Show Component View');
-        this.contextWindowToggler = new TogglerButton('icon-cog', 'Show Inspection Panel');
+        this.componentsViewToggler = new TogglerButton('icon-clipboard', i18n('field.showComponent'));
+        this.contextWindowToggler = new TogglerButton('icon-cog', i18n('field.showInspection'));
 
         super.addElement(this.cycleViewModeButton);
         super.addElement(this.contextWindowToggler);

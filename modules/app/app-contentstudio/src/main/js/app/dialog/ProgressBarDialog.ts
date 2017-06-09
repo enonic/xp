@@ -3,6 +3,7 @@ import {DependantItemsDialog} from '../dialog/DependantItemsDialog';
 import {MenuButtonProgressBarManager} from '../browse/MenuButtonProgressBarManager';
 import TaskState = api.task.TaskState;
 import ModalDialogButtonRow = api.ui.dialog.ButtonRow;
+import i18n = api.util.i18n;
 
 export class ProcessingStats {
     // If the content is still being processed after this time, show the progress bar (in ms)
@@ -139,7 +140,7 @@ export class ProgressBarDialog extends DependantItemsDialog {
                     break;
                 case TaskState.FAILED:
                     this.handleFailed();
-                    api.notify.showError(`Processing failed: ${progress.getInfo()}`);
+                    api.notify.showError(i18n('notify.process.failed', progress.getInfo()));
                     this.notifyProgressComplete(TaskState.FAILED);
                     break;
                 default:

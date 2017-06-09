@@ -43,6 +43,7 @@ import DataChangedEvent = api.ui.treegrid.DataChangedEvent;
 import BrowseFilterResetEvent = api.app.browse.filter.BrowseFilterResetEvent;
 import BrowseFilterRefreshEvent = api.app.browse.filter.BrowseFilterRefreshEvent;
 import BrowseFilterSearchEvent = api.app.browse.filter.BrowseFilterSearchEvent;
+import i18n = api.util.i18n;
 
 export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
 
@@ -756,7 +757,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         }
 
         if (node.getData().isReadOnly()) {
-            return {cssClasses: "readonly' title='This content is read-only'"};
+            return {cssClasses: `readonly' title='${i18n('field.readOnly')}'`};
         }
 
         return null;

@@ -17,6 +17,7 @@ import SelectedOption = api.ui.selector.combobox.SelectedOption;
 import PropertyTree = api.data.PropertyTree;
 import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
 import ContentSummaryBuilder = api.content.ContentSummaryBuilder;
+import i18n = api.util.i18n;
 
 export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponent> {
 
@@ -44,7 +45,7 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
         this.loader.setAllowedContentTypeNames([ContentTypeName.IMAGE, ContentTypeName.MEDIA_VECTOR]);
         this.imageSelector = ContentComboBox.create().setMaximumOccurrences(1).setLoader(this.loader).build();
 
-        this.imageSelectorForm = new ImageSelectorForm(this.imageSelector, 'Image');
+        this.imageSelectorForm = new ImageSelectorForm(this.imageSelector, i18n('field.image'));
 
         this.componentPropertyChangedEventHandler = (event: ComponentPropertyChangedEvent) => {
             // Ensure displayed config form and selector option are removed when image is removed

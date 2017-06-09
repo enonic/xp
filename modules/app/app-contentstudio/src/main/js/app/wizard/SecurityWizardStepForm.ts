@@ -12,6 +12,7 @@ import LabelEl = api.dom.LabelEl;
 import Button = api.ui.button.Button;
 import OpenEditPermissionsDialogEvent = api.content.event.OpenEditPermissionsDialogEvent;
 import ContentPath = api.content.ContentPath;
+import i18n = api.util.i18n;
 
 export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
 
@@ -46,7 +47,7 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
         this.accessListView = new AccessControlListView();
         this.accessListView.setItemsEditable(false);
 
-        this.editLink = new Button('Edit Permissions');
+        this.editLink = new Button(i18n('action.editPermissions'));
         this.editLink.addClass('edit-permissions');
 
         this.editLink.onFocus((event) => {
@@ -115,7 +116,7 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
 
         let inheritsText = '';
         if (this.inheritPermissions && this.contentPath.isRoot() === false) {
-            inheritsText = 'Inherits permissions from parent';
+            inheritsText = i18n('field.permissions.inheritsParent');
             this.inheritance.addClass('inheritance');
         } else {
             this.inheritance.removeClass('inheritance');

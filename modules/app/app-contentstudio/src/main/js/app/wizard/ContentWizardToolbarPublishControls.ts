@@ -9,8 +9,10 @@ import PublishStatus = api.content.PublishStatus;
 import MenuButton = api.ui.button.MenuButton;
 import ActionButton = api.ui.button.ActionButton;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+import i18n = api.util.i18n;
 
-export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
+export class ContentWizardToolbarPublishControls
+    extends api.dom.DivEl {
 
     private publishButton: MenuButton;
     private publishAction: Action;
@@ -89,8 +91,8 @@ export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
         this.publishMobileAction.setVisible(canBePublished);
 
         this.contentStateSpan.setHtml(this.getContentStateValueForSpan(this.content), false);
-        this.publishButtonForMobile.setLabel('Publish ' + api.content.CompareStatusFormatter.formatStatusFromContent(this.content) +
-                                             ' item');
+        this.publishButtonForMobile.setLabel(
+            i18n('field.publish.item', api.content.CompareStatusFormatter.formatStatusFromContent(this.content)));
     }
 
     public isOnline(): boolean {
@@ -128,7 +130,7 @@ export class ContentWizardToolbarPublishControls extends api.dom.DivEl {
         } else {
             status.setHtml(api.content.CompareStatusFormatter.formatStatusFromContent(content));
         }
-        return 'Item is ' + status.toString();
+        return i18n('field.publish.status', status.toString());
     }
 
     public getPublishButtonForMobile(): ActionButton {

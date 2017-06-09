@@ -11,6 +11,7 @@ import PageView = api.liveedit.PageView;
 import LiveEditPageViewReadyEvent = api.liveedit.LiveEditPageViewReadyEvent;
 import Content = api.content.Content;
 import PageMode = api.content.page.PageMode;
+import i18n = api.util.i18n;
 
 export interface ComponentTypesPanelConfig {
 
@@ -46,7 +47,7 @@ export class InsertablesPanel extends api.ui.panel.Panel {
         this.liveEditPageProxy = config.liveEditPage;
 
         let topDescription = new api.dom.PEl();
-        topDescription.getEl().setInnerHtml('Drag and drop components into the page');
+        topDescription.getEl().setInnerHtml(i18n('field.insertables'));
 
         this.insertablesDataView = new api.ui.grid.DataView<Insertable>();
         this.insertablesGrid = new InsertablesGrid(this.insertablesDataView, {draggableRows: true, rowClass: 'comp'});

@@ -1,9 +1,10 @@
 import '../../../api.ts';
+import i18n = api.util.i18n;
 
 export class DuplicateContentAction extends api.ui.Action {
 
     constructor(wizardPanel: api.app.wizard.WizardPanel<api.content.Content>) {
-        super('Duplicate');
+        super(i18n('action.duplicate'));
         this.onExecuted(() => {
             let source = wizardPanel.getPersistedItem();
             new api.content.resource.DuplicateContentRequest(source.getContentId()).sendAndParse().then((content: api.content.Content) => {

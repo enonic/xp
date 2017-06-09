@@ -5,6 +5,7 @@ import {StatusSelectionItem} from '../dialog/StatusSelectionItem';
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
 import ContentIds = api.content.ContentIds;
+import i18n = api.util.i18n;
 
 export class PublishDialogDependantList extends DialogDependantList {
 
@@ -41,7 +42,7 @@ export class PublishDialogDependantList extends DialogDependantList {
 
         if (!isContentSummaryValid(item)) {
             view.addClass('invalid');
-            view.getEl().setTitle('Edit invalid content');
+            view.getEl().setTitle(i18n('dialog.publish.editInvalid'));
         }
 
         return view;

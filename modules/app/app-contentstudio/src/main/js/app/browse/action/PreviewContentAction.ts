@@ -7,13 +7,15 @@ import Action = api.ui.Action;
 import RenderingMode = api.rendering.RenderingMode;
 import ContentSummary = api.content.ContentSummary;
 import ContentId = api.content.ContentId;
+import i18n = api.util.i18n;
 
-export class PreviewContentAction extends BasePreviewAction {
+export class PreviewContentAction
+    extends BasePreviewAction {
 
     private previewContentHandler: PreviewContentHandler;
 
     constructor(grid: ContentTreeGrid) {
-        super('Preview', '');
+        super(i18n('action.preview'), '');
         this.setEnabled(false);
 
         this.previewContentHandler = new PreviewContentHandler();
@@ -25,8 +27,7 @@ export class PreviewContentAction extends BasePreviewAction {
 
                 this.openWindows(contentSummaries);
             } else {
-                api.notify.showWarning('Number of selected items exceeds maximum number allowed for preview ('
-                                       + PreviewContentHandler.BLOCK_COUNT + '). Please deselect some of the items.');
+                api.notify.showWarning(i18n('notify.preview', PreviewContentHandler.BLOCK_COUNT));
             }
         });
     }

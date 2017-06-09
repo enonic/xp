@@ -1,5 +1,6 @@
 import '../../api.ts';
 import {RecentItemsList} from './RecentItemsList';
+import i18n = api.util.i18n;
 
 export class RecentItemsBlock extends api.dom.AsideEl {
 
@@ -7,7 +8,7 @@ export class RecentItemsBlock extends api.dom.AsideEl {
 
     private title: api.dom.H1El;
 
-    constructor(title: string = 'Recently Used') {
+    constructor(title: string = i18n('field.recentlyUsed')) {
         super('column');
 
         this.title = new api.dom.H1El();

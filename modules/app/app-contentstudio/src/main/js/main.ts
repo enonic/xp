@@ -45,7 +45,7 @@ declare var CONFIG;
  */
 
 function getApplication(): api.app.Application {
-    let application = new api.app.Application('content-studio', 'Content Studio', 'CM', CONFIG.appIconUrl);
+    let application = new api.app.Application('content-studio', i18n('app.name'), i18n('app.abbr'), CONFIG.appIconUrl);
     application.setPath(api.rest.Path.fromString(Router.getPath()));
     application.setWindow(window);
 
@@ -124,7 +124,7 @@ function initToolTip() {
 }
 
 function updateTabTitle(title: string) {
-    wemjq('title').html(`${title} / Content Studio`);
+    wemjq('title').html(`${title} / ${i18n('app.name')}`);
 }
 
 function shouldUpdateFavicon(contentTypeName: ContentTypeName): boolean {
@@ -285,7 +285,7 @@ function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDe
             return;
         }
         if (wizard.hasUnsavedChanges()) {
-            let message = 'Wizard has unsaved changes. Continue without saving ?';
+            let message = i18n('dialog.confirm.unsavedChanges');
             // Hack for IE. returnValue is boolean
             const e: any = event || window.event || {returnValue: ''};
             e['returnValue'] = message;

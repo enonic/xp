@@ -95,6 +95,7 @@ import LayoutComponentType = api.content.page.region.LayoutComponentType;
 import LayoutComponent = api.content.page.region.LayoutComponent;
 import FragmentComponent = api.content.page.region.FragmentComponent;
 import FragmentComponentType = api.content.page.region.FragmentComponentType;
+import i18n = api.util.i18n;
 
 export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
@@ -274,7 +275,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             if (isAppFromSiteModelUnavailable) {
                 this.missingOrStoppedAppKeys.push(event.getApplicationKey());
 
-                let message = 'Required application ' + event.getApplicationKey().toString() + ' not available.';
+                let message = i18n('notify.app.missing', event.getApplicationKey().toString());
 
                 if (this.isVisible()) {
                     api.notify.showWarning(message);
@@ -592,14 +593,14 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     steps.splice(index + 1, 0, new WizardStep(mixin.getDisplayName(), stepForm));
                 }
             });
-            this.settingsWizardStep = new WizardStep('Settings', this.settingsWizardStepForm);
+            this.settingsWizardStep = new WizardStep(i18n('field.settings'), this.settingsWizardStepForm);
             steps.push(this.settingsWizardStep);
 
-            this.scheduleWizardStep = new WizardStep('Schedule', this.scheduleWizardStepForm);
+            this.scheduleWizardStep = new WizardStep(i18n('field.schedule'), this.scheduleWizardStepForm);
             this.scheduleWizardStepIndex = steps.length;
             steps.push(this.scheduleWizardStep);
 
-            steps.push(new WizardStep('Security', this.securityWizardStepForm));
+            steps.push(new WizardStep(i18n('field.security'), this.securityWizardStepForm));
 
             this.setSteps(steps);
 
@@ -1001,9 +1002,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     if (persistedContent.getType().isDescendantOfMedia()) {
                         this.updateMetadataAndMetadataStepForms(persistedContent);
                     } else {
-                        const msg = 'Received Content from server differs from what you have. Would you like to load changes from server?';
                         new ConfirmationDialog()
-                            .setQuestion(msg)
+                            .setQuestion(i18n('dialog.confirm.contentDiffers'))
                             .setYesCallback(() => this.doLayoutPersistedItem(persistedContent.clone()))
                             .setNoCallback(() => { /* empty */
                             })
@@ -1316,7 +1316,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     persistNewItem(): wemQ.Promise<Content> {
         return new PersistNewContentRoutine(this).setCreateContentRequestProducer(this.produceCreateContentRequest).execute().then(
             (content: Content) => {
-                api.notify.showFeedback('Content created');
+                api.notify.showFeedback(i18n('notify.content.created'));
                 return content;
             });
     }

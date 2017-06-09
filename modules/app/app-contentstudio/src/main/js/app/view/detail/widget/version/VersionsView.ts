@@ -5,11 +5,13 @@ import ContentVersion = api.content.ContentVersion;
 import ContentId = api.content.ContentId;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
+import i18n = api.util.i18n;
 
-export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
+export class VersionsView
+    extends api.ui.selector.list.ListBox<ContentVersion> {
 
     private content: ContentSummaryAndCompareStatus;
-    private loadedListeners: {(): void}[] = [];
+    private loadedListeners: { (): void }[] = [];
     private activeVersion: ContentVersion;
 
     private static branchMaster: string = 'master';
@@ -146,28 +148,29 @@ export class VersionsView extends api.ui.selector.list.ListBox<ContentVersion> {
         let versionInfoDiv = new api.dom.DivEl('version-info hidden');
 
         let timestampDiv = new api.dom.DivEl('version-info-timestamp');
-        timestampDiv.appendChildren(new api.dom.SpanEl('label').setHtml('Timestamp: '),
+        timestampDiv.appendChildren(new api.dom.SpanEl('label').setHtml(i18n('field.timestamp') + ': '),
             new api.dom.SpanEl().setHtml(api.ui.treegrid.DateTimeFormatter.createHtml(item.modified)));
 
         let versionIdDiv = new api.dom.DivEl('version-info-version-id');
-        versionIdDiv.appendChildren(new api.dom.SpanEl('label').setHtml('Version Id: '), new api.dom.SpanEl().setHtml(item.id));
+        versionIdDiv.appendChildren(new api.dom.SpanEl('label').setHtml(i18n('field.version.id') + ': '),
+            new api.dom.SpanEl().setHtml(item.id));
 
         let displayNameDiv = new api.dom.DivEl('version-info-display-name');
-        displayNameDiv.appendChildren(new api.dom.SpanEl('label').setHtml('Display name: '),
+        displayNameDiv.appendChildren(new api.dom.SpanEl('label').setHtml(i18n('field.displayName') + ': '),
             new api.dom.SpanEl().setHtml(item.displayName));
 
         let isActive = item.id === this.activeVersion.id;
-        let restoreButton = new api.ui.button.ActionButton(new api.ui.Action(isActive
-            ? 'This version is active'
-            : 'Restore this version').onExecuted((action: api.ui.Action) => {
-            if (!isActive) {
-                new api.content.resource.SetActiveContentVersionRequest(item.id, this.getContentId()).sendAndParse().then(
-                    (contentId: ContentId) => {
-                    api.notify.NotifyManager.get().showFeedback(`Version successfully changed to ${item.id}`);
-                    new api.content.event.ActiveContentVersionSetEvent(this.getContentId(), item.id).fire();
-                });
-            }
-        }), false);
+        let restoreButton = new api.ui.button.ActionButton(
+            new api.ui.Action(isActive ? i18n('field.version.active') : i18n('field.version.restore'))
+                .onExecuted((action: api.ui.Action) => {
+                    if (!isActive) {
+                        new api.content.resource.SetActiveContentVersionRequest(item.id, this.getContentId()).sendAndParse().then(
+                            (contentId: ContentId) => {
+                                api.notify.NotifyManager.get().showFeedback(i18n('notify.version.changed', item.id));
+                                new api.content.event.ActiveContentVersionSetEvent(this.getContentId(), item.id).fire();
+                            });
+                    }
+                }), false);
 
         if (isActive) {
             restoreButton.addClass('active');

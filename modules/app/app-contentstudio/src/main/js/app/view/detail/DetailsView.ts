@@ -19,6 +19,7 @@ import GetWidgetsByInterfaceRequest = api.content.resource.GetWidgetsByInterface
 import ApplicationEvent = api.application.ApplicationEvent;
 import ApplicationEventType = api.application.ApplicationEventType;
 import AppHelper = api.util.AppHelper;
+import i18n = api.util.i18n;
 
 export class DetailsView extends api.dom.DivEl {
 
@@ -71,7 +72,7 @@ export class DetailsView extends api.dom.DivEl {
     private subscribeOnEvents() {
         ContentVersionSetEvent.on((event: ContentVersionSetEvent) => {
             if (ActiveDetailsPanelManager.getActiveDetailsPanel().isVisibleOrAboutToBeVisible() && !!this.activeWidget &&
-                this.activeWidget.getWidgetName() === 'Version history') {
+                this.activeWidget.getWidgetName() === i18n('field.widget.versionHistory')) {
                 this.updateActiveWidget();
             }
         });
@@ -79,7 +80,7 @@ export class DetailsView extends api.dom.DivEl {
 
     private initDivForNoSelection() {
         this.divForNoSelection = new api.dom.DivEl('no-selection-message');
-        this.divForNoSelection.getEl().setInnerHtml(`Select an item - and we'll show you the details!`);
+        this.divForNoSelection.getEl().setInnerHtml(i18n('field.details.empty'));
         this.appendChild(this.divForNoSelection);
     }
 
@@ -262,7 +263,7 @@ export class DetailsView extends api.dom.DivEl {
 
     private initCommonWidgetViews() {
 
-        this.defaultWidgetView = WidgetView.create().setName('Details').setDetailsView(this)
+        this.defaultWidgetView = WidgetView.create().setName(i18n('field.details')).setDetailsView(this)
             .setWidgetItemViews([
                 new StatusWidgetItemView(),
                 new UserAccessWidgetItemView(),
@@ -271,10 +272,10 @@ export class DetailsView extends api.dom.DivEl {
                 new AttachmentsWidgetItemView()
             ]).build();
 
-        const versionsWidgetView = WidgetView.create().setName('Version history').setDetailsView(this)
+        const versionsWidgetView = WidgetView.create().setName(i18n('field.details.versionHistory')).setDetailsView(this)
             .addWidgetItemView(new VersionsWidgetItemView()).build();
 
-        const dependenciesWidgetView = WidgetView.create().setName('Dependencies').setDetailsView(this)
+        const dependenciesWidgetView = WidgetView.create().setName(i18n('field.details.dependencies')).setDetailsView(this)
             .addWidgetItemView(new DependenciesWidgetItemView()).build();
 
         dependenciesWidgetView.addClass('dependency-widget');
@@ -297,7 +298,7 @@ export class DetailsView extends api.dom.DivEl {
                 this.addWidget(widgetView);
             });
         }).catch((reason: any) => {
-            const msg = reason ? reason.message : 'Could not load widget descriptors.';
+            const msg = reason ? reason.message : i18n('notify.widget.error');
             api.notify.showError(msg);
         });
     }
@@ -311,7 +312,7 @@ export class DetailsView extends api.dom.DivEl {
             }
             return null;
         }).catch((reason: any) => {
-            const msg = reason ? reason.message : 'Could not load widget descriptors.';
+            const msg = reason ? reason.message : i18n('notify.widget.error');
             api.notify.showError(msg);
             return null;
         });

@@ -1,5 +1,6 @@
 import '../../api.ts';
 import {MostPopularItemsList} from './MostPopularItemsList';
+import i18n = api.util.i18n;
 
 export class MostPopularItemsBlock extends api.dom.DivEl {
 
@@ -9,7 +10,7 @@ export class MostPopularItemsBlock extends api.dom.DivEl {
 
     private title: api.dom.H2El;
 
-    constructor(title: string = 'Most Popular') {
+    constructor(title: string = i18n('field.mostPopular')) {
         super('most-popular-content-types-container');
 
         this.title = new api.dom.H2El();

@@ -12,8 +12,10 @@ import Validators = api.ui.form.Validators;
 import PrincipalComboBox = api.ui.security.PrincipalComboBox;
 import LocaleComboBox = api.ui.locale.LocaleComboBox;
 import WizardStepValidityChangedEvent = api.app.wizard.WizardStepValidityChangedEvent;
+import i18n = api.util.i18n;
 
-export class ScheduleWizardStepForm extends api.app.wizard.WizardStepForm {
+export class ScheduleWizardStepForm
+    extends api.app.wizard.WizardStepForm {
 
     private content: Content;
     private updateUnchangedOnly: boolean = false;
@@ -42,24 +44,34 @@ export class ScheduleWizardStepForm extends api.app.wizard.WizardStepForm {
         this.formView.reset();
     }
 
-    onPropertyChanged(listener: {(): void;}) {
+    onPropertyChanged(listener: { (): void; }) {
         this.propertySet.onChanged(listener);
     }
 
-    unPropertyChanged(listener: {(): void;}) {
+    unPropertyChanged(listener: { (): void; }) {
         this.propertySet.unChanged(listener);
     }
 
     private initFormView(content: api.content.Content) {
-        let formBuilder = new api.form.FormBuilder().addFormItem(
-            new api.form.InputBuilder().setName('from').setInputType(api.content.form.inputtype.publish.PublishFrom.getName()).setLabel(
-                'Online from').setHelpText('Offline items will go online at the specified time').setOccurrences(
-                new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).setInputTypeConfig({}).setMaximizeUIInputWidth(
-                true).build()).addFormItem(
-            new api.form.InputBuilder().setName('to').setInputType(api.content.form.inputtype.publish.PublishToFuture.getName()).setLabel(
-                'Online to').setHelpText('Online items will be taken offline at the specified time').setOccurrences(
-                new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).setInputTypeConfig({}).setMaximizeUIInputWidth(
-                true).build());
+        let formBuilder = new api.form.FormBuilder()
+            .addFormItem(new api.form.InputBuilder()
+                .setName('from')
+                .setInputType(api.content.form.inputtype.publish.PublishFrom.getName())
+                .setLabel(i18n('field.onlineFrom'))
+                .setHelpText(i18n('field.onlineFrom.help'))
+                .setOccurrences(new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build())
+                .setInputTypeConfig({})
+                .setMaximizeUIInputWidth(true)
+                .build())
+            .addFormItem(new api.form.InputBuilder()
+                .setName('to')
+                .setInputType(api.content.form.inputtype.publish.PublishToFuture.getName())
+                .setLabel(i18n('field.onlineTo'))
+                .setHelpText(i18n('field.onlineTo.help'))
+                .setOccurrences(new api.form.OccurrencesBuilder().setMinimum(0).setMaximum(1).build())
+                .setInputTypeConfig({})
+                .setMaximizeUIInputWidth(true)
+                .build());
 
         this.initPropertySet(content);
         this.formView = new api.form.FormView(api.form.FormContext.create().build(), formBuilder.build(), this.propertySet);

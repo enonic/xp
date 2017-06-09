@@ -5,11 +5,12 @@ import {ContentDeletePromptEvent} from '../ContentDeletePromptEvent';
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
 import Action = api.ui.Action;
+import i18n = api.util.i18n;
 
 export class DeleteContentAction extends Action {
 
     constructor(grid: ContentTreeGrid) {
-        super('Delete...', 'mod+del');
+        super(i18n('action.deleteMore'), 'mod+del');
         this.setEnabled(false);
         this.onExecuted(() => {
             let contents: api.content.ContentSummaryAndCompareStatus[]

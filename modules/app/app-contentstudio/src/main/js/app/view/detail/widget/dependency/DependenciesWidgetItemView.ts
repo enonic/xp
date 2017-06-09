@@ -10,6 +10,7 @@ import ActionButton = api.ui.button.ActionButton;
 import Action = api.ui.Action;
 import NamesAndIconViewSize = api.app.NamesAndIconViewSize;
 import NamesAndIconViewBuilder = api.app.NamesAndIconViewBuilder;
+import i18n = api.util.i18n;
 
 export class DependenciesWidgetItemView extends WidgetItemView {
 
@@ -29,9 +30,9 @@ export class DependenciesWidgetItemView extends WidgetItemView {
     constructor() {
         super('dependency-widget-item-view');
 
-        this.inboundButton = this.appendButton('Show Inbound', 'btn-inbound');
+        this.inboundButton = this.appendButton(i18n('field.details.showInbound'), 'btn-inbound');
         this.appendMainContainer();
-        this.outboundButton = this.appendButton('Show Outbound', 'btn-outbound');
+        this.outboundButton = this.appendButton(i18n('field.details.showOutbound'), 'btn-outbound');
         this.manageButtonClick();
     }
 

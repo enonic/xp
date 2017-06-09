@@ -2,11 +2,12 @@ import '../../../api.ts';
 import {ContentTreeGrid} from '../ContentTreeGrid';
 
 import Action = api.ui.Action;
+import i18n = api.util.i18n;
 
 export class DuplicateContentAction extends Action {
 
     constructor(grid: ContentTreeGrid) {
-        super('Duplicate');
+        super(i18n('action.duplicate'));
         this.setEnabled(false);
         this.onExecuted(() => {
             grid.getSelectedDataList().forEach((elem) => {

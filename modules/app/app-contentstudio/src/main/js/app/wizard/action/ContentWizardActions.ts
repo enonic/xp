@@ -13,6 +13,7 @@ import {UndoPendingDeleteAction} from './UndoPendingDeleteAction';
 import SaveAction = api.app.wizard.SaveAction;
 import CloseAction = api.app.wizard.CloseAction;
 import SaveAndCloseAction = api.app.wizard.SaveAndCloseAction;
+import i18n = api.util.i18n;
 
 export class ContentWizardActions extends api.app.wizard.WizardActions<api.content.Content> {
 
@@ -50,7 +51,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
     constructor(wizardPanel: ContentWizardPanel) {
         super(
-            new SaveAction(wizardPanel, 'Save draft'),
+            new SaveAction(wizardPanel, i18n('action.saveDraft')),
             new DeleteContentAction(wizardPanel),
             new DuplicateContentAction(wizardPanel),
             new PreviewAction(wizardPanel),

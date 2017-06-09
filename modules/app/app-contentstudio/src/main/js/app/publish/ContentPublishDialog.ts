@@ -27,6 +27,7 @@ import Action = api.ui.Action;
 import ActionButton = api.ui.button.ActionButton;
 import User = api.security.User;
 import DropdownButtonRow = api.ui.dialog.DropdownButtonRow;
+import i18n = api.util.i18n;
 
 /**
  * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
@@ -397,7 +398,7 @@ export class ContentPublishDialogButtonRow extends DropdownButtonRow {
 
 export class ContentPublishDialogAction extends api.ui.Action {
     constructor(handler: () => wemQ.Promise<any>|void) {
-        super('Publish');
+        super(i18n('action.publish'));
         this.setIconClass('publish-action');
         this.onExecuted(handler);
     }
