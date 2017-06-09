@@ -180,6 +180,11 @@
 
     .@{_COMMON_PREFIX}sub-name {
       margin-top: 3px;
+      line-height: 16px;
+
+      &:empty {
+        display: none;
+      }
     }
 
     .no-template {
@@ -189,6 +194,18 @@
     .icon-newspaper {
       font-size: 36px;
       margin-top: -2px;
+    }
+
+    .names-and-icon-view {
+      height: 32px;
+      padding: 0 0 2px 2px;
+
+      .@{_COMMON_PREFIX}names-view {
+        min-height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
     }
 
   }
