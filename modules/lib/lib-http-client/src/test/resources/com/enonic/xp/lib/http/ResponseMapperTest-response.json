@@ -1,0 +1,10 @@
+{
+  "status": 200,
+  "message": "Ok",
+  "body": "{\"ok\": true}",
+  "bodyStream": "ByteSource.wrap(7B226F6B223A20747275657D)",
+  "contentType": "application/json",
+  "headers": {
+    "Content-Type": "application/json"
+  }
+}
