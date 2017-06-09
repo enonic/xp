@@ -47,14 +47,19 @@
         docLinkPrefix: '{{docLinkPrefix}}'
 
     };
+
+    function lazyFadeIn(imgEl) {
+        imgEl.remove();
+        document.getElementById('background-image').classList.remove('empty');
+    }
 </script>
 
 <script type="text/javascript" src="{{assetsUri}}/common/js/_all.js"></script>
 <script type="text/javascript" src="{{assetsUri}}/apps/home/js/_all.js"></script>
 
 <div class="home-main-container" tabindex="100" style="">
-    <div id="background-image" class="lazy-image empty"
-         style="background-image: url(&quot;{{backgroundUri}}&quot;);"></div>
+    <img style="opacity: 0;" src="{{backgroundUri}}" onload="lazyFadeIn(this);">
+    <div id="background-image" style="background-image: url(&quot;{{backgroundUri}}&quot;);" class="lazy-image empty"></div>
 
     <div class="home-main-dashboard">
         <div class="xp-tour dashboard-item">
