@@ -55,20 +55,16 @@ module api.ui.security.acl {
             if (object) {
                 this.accessLine.setHtml(this.getOptionName(object.getAccess()));
 
-                object.getMembers().forEach((principal: EffectivePermissionMember) => {
+                object.getMembers().map((epm: EffectivePermissionMember) => epm.toPrincipal()).forEach((principal: Principal) => {
+                    const principalViewer: PrincipalViewerCompact = new PrincipalViewerCompact();
+                    principalViewer.setObject(principal);
+                    principalViewer.setCurrentUser(this.currentUser);
 
-                    let display = principal.getDisplayName().split(' ').map(word => word.substring(0, 1).toUpperCase());
-
-                    let icon = new api.dom.SpanEl('user-icon').setHtml(display.length >= 2
-                        ? display.join('').substring(0, 2)
-                        : principal.getDisplayName().substring(0, 2).toUpperCase());
-                    if (this.currentUser && this.currentUser.getKey().equals(principal.getUserKey())) {
-                        icon.addClass('active');
-                        this.userLine.insertChild(icon, 0);
+                    if (this.currentUser && this.currentUser.getKey().equals(principal.getKey())) {
+                        this.userLine.insertChild(principalViewer, 0);
                     } else {
-                        this.userLine.appendChild(icon);
+                        this.userLine.appendChild(principalViewer);
                     }
-                    new Tooltip(icon, principal.getDisplayName(), 200).setMode(Tooltip.MODE_GLOBAL_STATIC);
                 });
             }
         }

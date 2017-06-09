@@ -77,7 +77,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
         this.initRouting();
 
-        this.form = new IssueDialogForm();
+        this.form = new IssueDialogForm(true);
         this.prependChildToContentPanel(this.form);
 
         this.createEditButton();
