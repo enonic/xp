@@ -106,7 +106,10 @@ exports.sendWithAttachments = function () {
             {
                 fileName: 'image.png',
                 mimeType: 'image/png',
-                data: testInstance.createByteSource('image data')
+                data: testInstance.createByteSource('image data'),
+                headers: {
+                    'Content-ID': '<myimg>'
+                }
             },
             {
                 fileName: 'text.txt',

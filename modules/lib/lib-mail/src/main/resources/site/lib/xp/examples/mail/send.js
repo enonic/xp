@@ -32,7 +32,10 @@ var flag2 = mailLib.send({
         {
             fileName: 'logo.png',
             mimeType: 'image/png',
-            data: stream1
+            data: stream1,
+            headers: {
+                'Content-ID': 'logo-img'
+            }
         },
         {
             fileName: 'text.txt',

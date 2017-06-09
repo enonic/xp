@@ -100,7 +100,8 @@ public class SendMailScriptTest
     public void testFailSendMail()
         throws Exception
     {
-        final MailService mailService = message -> {
+        final MailService mailService = message ->
+        {
             throw new RuntimeException( "Error sending mail" );
         };
         addService( MailService.class, mailService );
@@ -129,7 +130,8 @@ public class SendMailScriptTest
     public void testFailMissingFrom()
         throws Exception
     {
-        final MailService mailService = message -> {
+        final MailService mailService = message ->
+        {
             throw new RuntimeException( "Error sending mail" );
         };
         addService( MailService.class, mailService );
@@ -151,7 +153,8 @@ public class SendMailScriptTest
     public void testFailMissingTo()
         throws Exception
     {
-        final MailService mailService = message -> {
+        final MailService mailService = message ->
+        {
             throw new RuntimeException( "Error sending mail" );
         };
         addService( MailService.class, mailService );
@@ -197,6 +200,8 @@ public class SendMailScriptTest
         assertEquals( "text/plain; charset=UTF-8", first.getContentType() );
         assertTrue( second.getContentType().startsWith( "image/png" ) );
         assertTrue( third.getContentType().startsWith( "text/plain" ) );
+
+        assertEquals( "<myimg>", second.getHeader( "Content-ID" )[0] );
     }
 
     private InternetAddress[] toAddresses( final String... addresses )
