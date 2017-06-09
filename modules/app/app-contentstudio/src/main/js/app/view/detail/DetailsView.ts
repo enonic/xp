@@ -201,7 +201,7 @@ export class DetailsView extends api.dom.DivEl {
         this.viewer = new ContentSummaryViewer();
         this.viewer.addClass('details-panel-label');
 
-        this.appendChild(this.viewer);
+        this.detailsContainer.insertChild(this.viewer, 0);
     }
 
     public setItem(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {

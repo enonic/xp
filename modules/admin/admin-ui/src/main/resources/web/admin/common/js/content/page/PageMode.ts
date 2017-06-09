@@ -11,7 +11,6 @@ module api.content.page {
 
     export enum PageTemplateDisplayName {
         Automatic,
-        Custom,
-        Manual
+        Custom
     }
 }

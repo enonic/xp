@@ -10,7 +10,6 @@ import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyReques
 import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
 import PageTemplate = api.content.page.PageTemplate;
 import Site = api.content.site.Site;
-import Tooltip = api.ui.Tooltip;
 import EditContentEvent = api.content.event.EditContentEvent;
 import PageDescriptor = api.content.page.PageDescriptor;
 import PageMode = api.content.page.PageMode;
@@ -21,12 +20,12 @@ export class PageTemplateWidgetItemView extends WidgetItemView {
 
     private content: ContentSummary;
 
-    private pageTemplateObj: PageTemplateObj;
+    private pageTemplateViewer: PageTemplateViewer;
 
     public static debug: boolean = false;
 
     constructor() {
-        super('properties-widget-item-view');
+        super('page-template-widget-item-view');
     }
 
     public setContentAndUpdateView(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
@@ -37,7 +36,7 @@ export class PageTemplateWidgetItemView extends WidgetItemView {
             }
             this.content = content;
 
-            return this.loadPageTemplate().then((pageTemplateObj) => this.layout());
+            return this.loadPageTemplate().then((pageTemplateViewer) => this.layout());
         }
 
         return wemQ<any>(null);
@@ -69,38 +68,38 @@ export class PageTemplateWidgetItemView extends WidgetItemView {
 
         return super.layout().then(() => {
             this.removeChildren();
-            if (this.pageTemplateObj) {
-                this.appendChild(this.pageTemplateObj.render());
+            if (this.pageTemplateViewer) {
+                this.appendChild(this.pageTemplateViewer.render());
             }
         });
     }
 
-    private getPageTemplateInfo(content: Content): wemQ.Promise<PageTemplateObj> {
-        let pageTemplateObj = new PageTemplateObj();
+    private getPageTemplateInfo(content: Content): wemQ.Promise<PageTemplateViewer> {
+        let pageTemplateViewer = new PageTemplateViewer();
 
         if (content.getType().isFragment()) {
-            pageTemplateObj.setPageMode(api.content.page.PageMode.FRAGMENT);
-            return wemQ(pageTemplateObj);
+            pageTemplateViewer.setPageMode(api.content.page.PageMode.FRAGMENT);
+            return wemQ(pageTemplateViewer);
         }
 
         if (content.isPage()) {
 
             if (content.getPage().hasTemplate()) {
-                pageTemplateObj.setPageMode(api.content.page.PageMode.FORCED_TEMPLATE);
+                pageTemplateViewer.setPageMode(api.content.page.PageMode.FORCED_TEMPLATE);
 
                 return new GetPageTemplateByKeyRequest(content.getPage().getTemplate()).sendAndParse().then((pageTemplate: PageTemplate) => {
-                    pageTemplateObj.setPageTemplate(pageTemplate);
+                    pageTemplateViewer.setPageTemplate(pageTemplate);
 
-                    return wemQ(pageTemplateObj);
+                    return wemQ(pageTemplateViewer);
                 });
             }
 
-            pageTemplateObj.setPageMode(api.content.page.PageMode.FORCED_CONTROLLER);
+            pageTemplateViewer.setPageMode(api.content.page.PageMode.FORCED_CONTROLLER);
 
             return new GetPageDescriptorByKeyRequest(content.getPage().getController()).sendAndParse().then((pageDescriptor: PageDescriptor) => {
-                pageTemplateObj.setPageController(pageDescriptor);
+                pageTemplateViewer.setPageController(pageDescriptor);
 
-                return wemQ(pageTemplateObj);
+                return wemQ(pageTemplateViewer);
             });
         }
 
@@ -109,11 +108,11 @@ export class PageTemplateWidgetItemView extends WidgetItemView {
             return this.loadDefaultModels(site, content.getType()).then((defaultModels: DefaultModels) => {
 
                 if (defaultModels && defaultModels.hasPageTemplate()) {
-                    pageTemplateObj.setPageMode(PageMode.AUTOMATIC);
-                    pageTemplateObj.setPageTemplate(defaultModels.getPageTemplate());
+                    pageTemplateViewer.setPageMode(PageMode.AUTOMATIC);
+                    pageTemplateViewer.setPageTemplate(defaultModels.getPageTemplate());
                 }
 
-                return wemQ<PageTemplateObj>(pageTemplateObj);
+                return wemQ<PageTemplateViewer>(pageTemplateViewer);
             });
         });
     }
@@ -136,17 +135,17 @@ export class PageTemplateWidgetItemView extends WidgetItemView {
     }
 
     private loadPageTemplate(): wemQ.Promise<void> {
-        this.pageTemplateObj = null;
+        this.pageTemplateViewer = null;
 
         return new GetContentByIdRequest(this.content.getContentId()).sendAndParse().then((content: Content) => {
-            return this.getPageTemplateInfo(content).then((pageTemplateObj: PageTemplateObj) => {
-                this.pageTemplateObj = pageTemplateObj;
+            return this.getPageTemplateInfo(content).then((pageTemplateViewer: PageTemplateViewer) => {
+                this.pageTemplateViewer = pageTemplateViewer;
             });
         });
     }
 }
 
-class PageTemplateObj {
+class PageTemplateViewer {
     private pageMode: PageMode;
     private pageTemplate: PageTemplate;
     private pageController: PageDescriptor;
@@ -174,103 +173,84 @@ class PageTemplateObj {
             case PageMode.FORCED_CONTROLLER:
                 return 'Custom';
             case PageMode.FORCED_TEMPLATE:
-                return 'Template';
+                return 'Page Template';
             case PageMode.FRAGMENT:
                 return 'Fragment';
             default:
-                return 'Not used';
+                return 'Page Template is not used';
         }
     }
 
-    private isRenderable() {
-        return this.pageMode !== PageMode.FRAGMENT && this.pageMode !== PageMode.NO_CONTROLLER;
+    private isRenderable(): boolean {
+        return this.pageMode !== PageMode.NO_CONTROLLER;
     }
 
-    private getDescriptorString() {
+    private getPageTemplateLinkEl(): api.dom.AEl {
+        const pageTemplateEl = new api.dom.AEl();
+        pageTemplateEl.setHtml(this.pageTemplate.getDisplayName());
+        pageTemplateEl.setTitle(this.pageTemplate.getPath().toString());
+
+        pageTemplateEl.onClicked(() => {
+            new EditContentEvent([ContentSummaryAndCompareStatus.fromContentSummary(this.pageTemplate)]).fire();
+        });
+
+        return pageTemplateEl;
+    }
+    
+    private getDescriptorEl(): api.dom.Element {
 
         if (!(this.pageTemplate || this.pageController)) {
-            return '';
+            return;
         }
         
-        return (this.pageTemplate || this.pageController).getDisplayName();
+        if (this.pageTemplate) {
+            return this.getPageTemplateLinkEl();
+        }
+        
+        const spanEl = new api.dom.SpanEl();
+        spanEl.setHtml(this.pageController.getDisplayName());
+        spanEl.getEl().setTitle(this.pageController.getKey().toString());
+
+        return spanEl;
     }
 
     render(): api.dom.DivEl {
-        let divEl = new api.dom.DivEl();
+        let divEl = new api.dom.DivEl('page-template-viewer');
 
-        const page = new api.dom.DdDtEl('dt').setHtml('Page:');
-        const pageValue = new api.dom.DdDtEl('dd').setHtml(this.getPageModeString());
+        if (!this.isRenderable()) {
+            const noTemplateText = new api.dom.PEl('no-template');
+            noTemplateText.setHtml(this.getPageModeString());
+            
+            divEl.appendChild(noTemplateText);
 
-        divEl.appendChildren(page, pageValue);
-
-        if (this.isRenderable()) {
-
-            const descriptor = new api.dom.DdDtEl('dt').setHtml(this.pageTemplate ? 'Page Template:' : 'Controller:');
-            const descriptorValue = new api.dom.DdDtEl('dd').setHtml(this.getDescriptorString());
-
-            divEl.appendChildren(descriptor, descriptorValue);
+            return divEl;
         }
+
+        let pageTemplateView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
+        
+        pageTemplateView.setMainName(this.getPageModeString());
+
+        if (this.pageMode == PageMode.FRAGMENT) {
+            pageTemplateView.setIconClass(api.StyleHelper.getCommonIconCls('fragment'));
+        }
+        else {
+            const descriptorEl = this.getDescriptorEl();
+            if (descriptorEl) {
+                pageTemplateView.setSubNameElements([descriptorEl]);
+            }
+            if (this.pageMode == PageMode.AUTOMATIC) {
+                pageTemplateView.setIconClass('icon-wand');
+            }
+            else if (this.pageMode == PageMode.FORCED_TEMPLATE) {
+                pageTemplateView.setIconClass('icon-newspaper');
+            }
+            else if (this.pageMode == PageMode.FORCED_CONTROLLER) {
+                pageTemplateView.setIconClass('icon-cog');
+            }
+        }
+
+        divEl.appendChildren(pageTemplateView);
 
         return divEl;
-    }
-}
-
-class Field {
-
-    protected name: string;
-
-    protected value: string;
-
-    setName(name: string): Field {
-        this.name = name;
-        return this;
-    }
-
-    setValue(value: string): Field {
-        this.value = value;
-        return this;
-    }
-
-    layout(parentEl: api.dom.Element) {
-        const term = new api.dom.DdDtEl('dt').setHtml(this.name);
-        const definition = new api.dom.DdDtEl('dd').setHtml(this.value);
-        parentEl.appendChildren(term, definition);
-    }
-}
-
-class FieldLink extends Field {
-
-    private tooltip: string;
-
-    private content: ContentSummary;
-
-    setTooltip(tooltip: string): FieldLink {
-        this.tooltip = tooltip;
-        return this;
-    }
-
-    setContent(content: ContentSummary): FieldLink {
-        this.content = content;
-        return this;
-    }
-
-    layout(parentEl: api.dom.Element) {
-        const term = new api.dom.DdDtEl('dt').setHtml(this.name);
-        const definition = new api.dom.DdDtEl('dd');
-
-        if (this.content) {
-            const link = new api.dom.AEl();
-            link.setHtml(this.value);
-            if (this.tooltip) {
-                link.setTitle(this.tooltip);
-            }
-            link.onClicked(() => {
-                new EditContentEvent([ContentSummaryAndCompareStatus.fromContentSummary(this.content)]).fire();
-            });
-            definition.appendChild(link);
-        } else {
-            definition.setHtml(this.value);
-        }
-        parentEl.appendChildren(term, definition);
     }
 }
