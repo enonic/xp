@@ -28,7 +28,7 @@ export class ShowIssuesDialogButton extends ActionButton {
     }
 
     private updateShowIssuesDialogButton() {
-        new ListIssuesRequest().setAssignedToMe(true).setSize(1).sendAndParse().then((response: IssueResponse) => {
+        new ListIssuesRequest().setAssignedToMe(true).setSize(0).sendAndParse().then((response: IssueResponse) => {
             this.toggleClass('has-assigned-issues', response.getMetadata().getTotalHits() > 0);
             this.getEl().setTitle((response.getMetadata().getTotalHits() === 0) ?
                                   'Publishing Issues' :

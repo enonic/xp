@@ -8,6 +8,8 @@ import {Issue} from '../Issue';
 import {CreateIssueDialog} from './CreateIssueDialog';
 import {IssueServerEventsHandler} from '../event/IssueServerEventsHandler';
 import {IssueStatus} from '../IssueStatus';
+import {ListIssuesRequest} from '../resource/ListIssuesRequest';
+import {IssueResponse} from '../resource/IssueResponse';
 import TabBarItem = api.ui.tab.TabBarItem;
 import SpanEl = api.dom.SpanEl;
 import Element = api.dom.Element;
@@ -21,10 +23,6 @@ export class IssueListDialog extends ModalDialog {
     private static INSTANCE: IssueListDialog = new IssueListDialog();
 
     private dockedPanel: DockedPanel;
-
-    private assignedToMeCheckbox: Checkbox;
-
-    private myIssuesCheckbox: Checkbox;
 
     private openIssuesPanel: IssuesPanel;
 
@@ -63,17 +61,7 @@ export class IssueListDialog extends ModalDialog {
         });
     }
 
-    isAssignedToMeChecked(): boolean {
-        return this.assignedToMeCheckbox.isChecked();
-    }
-
-    isMyIssuesChecked(): boolean {
-        return this.myIssuesCheckbox.isChecked();
-    }
-
     private initElements() {
-        this.assignedToMeCheckbox = this.createAssignedToMeCheckbox();
-        this.myIssuesCheckbox = this.createMyIssuesCheckbox();
         this.loadMask = new LoadMask(this);
         this.openIssuesPanel = this.createIssuePanel(IssueStatus.OPEN);
         this.closedIssuesPanel = this.createIssuePanel(IssueStatus.CLOSED);
@@ -83,8 +71,6 @@ export class IssueListDialog extends ModalDialog {
     doRender(): Q.Promise<boolean> {
         return super.doRender().then((rendered: boolean) => {
             this.createNewIssueButton();
-            this.appendChildToContentPanel(this.assignedToMeCheckbox);
-            this.appendChildToContentPanel(this.myIssuesCheckbox);
             this.appendChildToContentPanel(this.dockedPanel);
             return rendered;
         });
@@ -97,28 +83,6 @@ export class IssueListDialog extends ModalDialog {
         dockedPanel.addItem('Closed', true, this.closedIssuesPanel);
 
         return dockedPanel;
-    }
-
-    private createAssignedToMeCheckbox(): Checkbox {
-        const assignedToMeCheckbox: Checkbox = Checkbox.create().build();
-        assignedToMeCheckbox.addClass('assigned-to-me-filter');
-        assignedToMeCheckbox.onValueChanged(() => {
-            this.doReload();
-        });
-        assignedToMeCheckbox.setLabel('Assigned to Me');
-
-        return assignedToMeCheckbox;
-    }
-
-    private createMyIssuesCheckbox(): Checkbox {
-        const myIssuesCheckbox: Checkbox = Checkbox.create().build();
-        myIssuesCheckbox.addClass('my-issues-filter');
-        myIssuesCheckbox.onValueChanged(() => {
-            this.doReload();
-        });
-        myIssuesCheckbox.setLabel('My Issues');
-
-        return myIssuesCheckbox;
     }
 
     private reloadDockPanel(): wemQ.Promise<any> {
@@ -139,6 +103,8 @@ export class IssueListDialog extends ModalDialog {
 
     close() {
         super.close();
+        this.openIssuesPanel.resetFilters();
+        this.closedIssuesPanel.resetFilters();
         this.remove();
     }
 
@@ -172,7 +138,6 @@ export class IssueListDialog extends ModalDialog {
     private doReload(updatedIssues?: Issue[]) {
         this.loadData().then(() => {
             this.updateTabLabels();
-            this.updateFilters();
             this.openTab(this.getTabToOpen(updatedIssues));
             if (this.isNotificationToBeShown(updatedIssues)) {
                 api.notify.NotifyManager.get().showFeedback('The list of issues was updated');
@@ -270,29 +235,28 @@ export class IssueListDialog extends ModalDialog {
     }
 
     private updateTabLabels() {
-        this.updateTabLabel(0, 'Open', this.openIssuesPanel.getTotalItems());
-        this.updateTabLabel(1, 'Closed', this.closedIssuesPanel.getTotalItems());
+        this.countIssuesByStatus(IssueStatus.OPEN).then((total: number) => {
+            this.updateTabLabel(0, 'Open', total);
+        }).catch((reason: any) => {
+            api.DefaultErrorHandler.handle(reason);
+        });
+
+        this.countIssuesByStatus(IssueStatus.CLOSED).then((total: number) => {
+            this.updateTabLabel(1, 'Closed', total);
+        }).catch((reason: any) => {
+            api.DefaultErrorHandler.handle(reason);
+        });
     }
 
     private updateTabLabel(tabIndex: number, label: string, issuesFound: number) {
         this.dockedPanel.getNavigator().getNavigationItem(tabIndex).setLabel(issuesFound > 0 ? (label + ' (' + issuesFound + ')') : label);
     }
 
-    private updateFilters() {
-        const noData: boolean = this.openIssuesPanel.getTotalItems() === 0 && this.closedIssuesPanel.getTotalItems() === 0;
-
-        if (noData) {
-            if (!this.myIssuesCheckbox.isChecked()) {
-                this.myIssuesCheckbox.addClass('disabled');
-            }
-            if (!this.assignedToMeCheckbox.isChecked()) {
-                this.assignedToMeCheckbox.addClass('disabled');
-            }
-        }
-        else {
-            this.assignedToMeCheckbox.removeClass('disabled');
-            this.myIssuesCheckbox.removeClass('disabled');
-        }
+    private countIssuesByStatus(issueStatus: IssueStatus): wemQ.Promise<number> {
+        return new ListIssuesRequest().setIssueStatus(issueStatus).setSize(0).sendAndParse().then(
+            (response: IssueResponse) => {
+                return response.getMetadata().getTotalHits();
+            });
     }
 
     private getFirstNonEmptyTab(): IssuesPanel {

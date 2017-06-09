@@ -16,26 +16,31 @@
     }
   }
 
-  .checkbox {
-    padding: 5px 5px 5px 0px;
-
-    &.disabled {
-      opacity: 0.5;
-      pointer-events: none;
-    }
-  }
-
-  .assigned-to-me-filter {
-    margin-top: 10px;
-  }
-
   .panel {
     position: inherit;
-    cursor: pointer;
+
+    .filters {
+      .flexbox();
+
+      .checkbox {
+        padding: 8px 5px 8px 0px;
+
+        &.disabled {
+          opacity: 0.5;
+          pointer-events: none;
+        }
+      }
+
+      .my-issues-filter {
+        margin-left: 52px;
+        margin-right: 15px;
+      }
+    }
 
     .issue-list {
-      max-height: 215px;
+      max-height: 220px;
       overflow: auto;
+      cursor: pointer;
 
       .issue-list-item {
 
