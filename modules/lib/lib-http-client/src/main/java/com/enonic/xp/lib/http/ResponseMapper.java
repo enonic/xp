@@ -10,7 +10,6 @@ import java.nio.file.StandardCopyOption;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
-import com.google.common.io.Files;
 import com.google.common.net.MediaType;
 
 import okhttp3.Headers;
@@ -85,7 +84,7 @@ public final class ResponseMapper
         }
     }
 
-    public ByteSource getResponseBodyStream()
+    private ByteSource getResponseBodyStream()
     {
         try
         {
@@ -93,7 +92,7 @@ public final class ResponseMapper
             if ( bodyLength == -1 || bodyLength > MAX_IN_MEMORY_BODY_STREAM_BYTES )
             {
                 final File tempFile = writeAsTmpFile( response.body().byteStream() );
-                return Files.asByteSource( tempFile );
+                return new RefFileByteSource( tempFile );
             }
             return ByteSource.wrap( this.response.body().bytes() );
         }
@@ -103,7 +102,7 @@ public final class ResponseMapper
         }
     }
 
-    private static File writeAsTmpFile( final InputStream inputStream )
+    private File writeAsTmpFile( final InputStream inputStream )
         throws IOException
     {
         final File tempFile = File.createTempFile( "xphttp", ".tmp" );
