@@ -16,6 +16,7 @@ module api.ui.dialog {
         title?: string;
         buttonRow?: ButtonRow;
         confirmation?: ConfirmationConfig;
+        closeIconCallback?: () => void;
     }
 
     export class ModalDialog extends DivEl {
@@ -51,8 +52,9 @@ module api.ui.dialog {
             this.buttonRow = config.buttonRow || new ButtonRow();
 
             this.cancelAction = this.createDefaultCancelAction();
+            const {closeIconCallback = () => this.cancelAction.execute()} = config;
             this.closeIcon = new DivEl('cancel-button-top');
-            this.closeIcon.onClicked(() => this.cancelAction.execute());
+            this.closeIcon.onClicked(closeIconCallback);
             wrapper.appendChild(this.closeIcon);
 
             this.header = this.createHeader(config.title || '');
