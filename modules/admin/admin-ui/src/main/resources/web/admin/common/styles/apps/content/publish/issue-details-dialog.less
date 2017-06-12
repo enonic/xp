@@ -278,6 +278,10 @@
     }
   }
 
+  .dialog-buttons {
+    position: relative;
+  }
+
   &.no-action {
     .button-container {
       .show-schedule-action, .publish-action, .@{_COMMON_PREFIX}dropdown-handle {
@@ -287,12 +291,18 @@
     .no-action-message {
       display: block;
       width: 100%;
-      text-align: center;
+      text-align: right;
       position: absolute;
       margin-top: 10px;
       left: 0;
       font-size: 15px;
       pointer-events: none;
+    }
+    .issue-dialog-form {
+      margin-bottom: 0px;
+    }
+    .publish-dialog-item-list, .items-header {
+      display: none !important;
     }
   }
 

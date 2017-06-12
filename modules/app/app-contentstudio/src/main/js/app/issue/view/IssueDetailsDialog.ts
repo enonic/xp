@@ -245,7 +245,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
     }
 
     private createEditButton() {
-        const editIssueAction = new Action('Edit');
+        const editIssueAction = new Action('Edit Issue');
         const editButton = this.getButtonRow().addAction(editIssueAction);
         editButton.addClass('edit-issue force-enabled');
 
