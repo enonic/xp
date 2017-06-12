@@ -85,7 +85,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
         this.handleUpdateIssueDialogEvents();
         this.handleIssueGlobalEvents();
 
-        this.itemsHeader = new api.dom.H6El().addClass('items-header').setHtml('Items:').insertBeforeEl(this.getItemList());
+        this.itemsHeader = new api.dom.H6El().addClass('items-header').setHtml('Items').insertBeforeEl(this.getItemList());
 
         this.getItemList().onItemsAdded(() => {
             this.initItemList();

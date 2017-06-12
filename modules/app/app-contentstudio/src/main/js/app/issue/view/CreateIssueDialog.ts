@@ -31,7 +31,7 @@ export class CreateIssueDialog extends IssueDialog {
             this.centerMyself();
         });
 
-        this.itemsLabel = new LabelEl('Items that will be added to the issue:', this.getItemList());
+        this.itemsLabel = new LabelEl('Items', this.getItemList());
         this.itemsLabel.insertBeforeEl(this.getItemList());
 
     }
