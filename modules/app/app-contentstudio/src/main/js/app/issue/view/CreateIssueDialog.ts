@@ -20,17 +20,13 @@ export class CreateIssueDialog extends IssueDialog {
 
         this.cancelButton = this.addCancelButtonToBottom('Back');
 
-        this.publishProcessor.onLoadingStarted(() => {
-            (<CreateIssueAction>this.actionButton.getAction()).updateLabel(0);
-            this.loadMask.show();
-        });
-
-        this.publishProcessor.onLoadingFinished(() => {
-            (<CreateIssueAction>this.actionButton.getAction()).updateLabel(this.countTotal());
-            this.loadMask.hide();
-            this.centerMyself();
-        });
-
+        let onItemsChanged = (items) => {
+            (<CreateIssueAction>this.actionButton.getAction()).updateLabel(items.length);
+        };
+        
+        this.getItemList().onItemsAdded(onItemsChanged);
+        this.getItemList().onItemsRemoved(onItemsChanged);
+        
         this.itemsLabel = new LabelEl('Items', this.getItemList());
         this.itemsLabel.insertBeforeEl(this.getItemList());
 
@@ -124,7 +120,7 @@ export class CreateIssueAction extends api.ui.Action {
 
     public updateLabel(count: number) {
         let label = 'Create Issue ';
-        if (count) {
+        if (count > 1) {
             label += '(' + count + ')';
         }
         this.setLabel(label);

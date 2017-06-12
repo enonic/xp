@@ -345,7 +345,7 @@ export class ContentPublishDialog extends SchedulableDialog {
         this.publishButton.getAction().setLabel(labelWithNumber(count, 'Publish'));
 
         this.showScheduleAction.setLabel(labelWithNumber(count, 'Schedule... '));
-        this.createIssueAction.setLabel(labelWithNumber(count, 'Create Issue... '));
+        this.createIssueAction.setLabel(labelWithNumber(this.getItemList().getItemCount(), 'Create Issue... '));
     }
 
     protected updateButtonStatus(enabled: boolean) {

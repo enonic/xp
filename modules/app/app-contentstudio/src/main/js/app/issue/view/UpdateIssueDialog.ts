@@ -11,23 +11,11 @@ export class UpdateIssueDialog extends IssueDialog {
     private persistedIssue: Issue;
 
     protected constructor() {
-        super('Update Issue');
+        super('Edit Issue');
 
         this.getEl().addClass('update-issue-dialog');
 
         this.addCancelButtonToBottom('Cancel');
-
-        this.publishProcessor.onLoadingStarted(()=> {
-            this.loadMask.show();
-        });
-
-        this.publishProcessor.onLoadingFinished(() => {
-            this.loadMask.hide();
-        });
-
-        this.getDependantList().onItemsAdded(() => {
-            setTimeout(() => this.centerMyself(), 100);
-        });
     }
 
     static get(): UpdateIssueDialog {

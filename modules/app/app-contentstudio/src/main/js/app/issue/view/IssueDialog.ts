@@ -44,6 +44,14 @@ export abstract class IssueDialog extends DependantItemsDialog {
 
         this.getItemList().setCanBeEmpty(true);
 
+        this.publishProcessor.onLoadingStarted(()=> {
+            this.loadMask.show();
+        });
+
+        this.publishProcessor.onLoadingFinished(() => {
+            this.loadMask.hide();
+        });
+        
         this.getItemList().onItemsRemoved((items) => {
             this.form.deselectContentItems(items.map(item => item.getContentSummary()), true);
         });
@@ -52,6 +60,10 @@ export abstract class IssueDialog extends DependantItemsDialog {
             this.form.selectContentItems(items.map(item => item.getContentSummary()), true);
         });
 
+        this.getDependantList().onItemsAdded(() => {
+            setTimeout(() => this.centerMyself(), 100);
+        });
+        
         this.closeIcon.onClicked(() => this.opener ? this.opener.close() : true);
     }
 
@@ -80,7 +92,7 @@ export abstract class IssueDialog extends DependantItemsDialog {
     }
 
     public countTotal(): number {
-        return this.publishProcessor.countTotal();
+        return this.getItemList().getItemCount();
     }
 
     open(opener?: ModalDialog) {
@@ -93,7 +105,6 @@ export abstract class IssueDialog extends DependantItemsDialog {
     show() {
         this.displayValidationErrors(false);
 
-        api.dom.Body.get().appendChild(this);
         super.show();
     }
 
