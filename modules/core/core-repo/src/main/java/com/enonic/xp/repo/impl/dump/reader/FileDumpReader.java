@@ -1,15 +1,20 @@
 package com.enonic.xp.repo.impl.dump.reader;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
-import com.google.common.base.Charsets;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.io.output.ByteArrayOutputStream;
+
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
-import com.google.common.io.Files;
 import com.google.common.io.LineProcessor;
 
 import com.enonic.xp.blob.BlobKey;
@@ -72,16 +77,49 @@ public class FileDumpReader
     @Override
     public void load( final RepositoryId repositoryId, final Branch branch, final LineProcessor<EntryLoadResult> processor )
     {
-        final File metaFile = getMetaFile( repositoryId, branch );
+
+        final Path metaPath = createMetaPath( this.dumpDirectory, repositoryId, branch );
+        final File tarFile = metaPath.toFile();
+
+        if ( !tarFile.exists() )
+        {
+            throw new RepoDumpException( "File doesnt " + metaPath + " exists" );
+        }
 
         try
         {
-            Files.readLines( metaFile, Charsets.UTF_8, processor );
+            final FileInputStream fileInputStream = new FileInputStream( tarFile );
+            final GZIPInputStream gzipInputStream = new GZIPInputStream( fileInputStream );
+            final TarArchiveInputStream tarInputStream = new TarArchiveInputStream( gzipInputStream );
+
+            TarArchiveEntry entry = tarInputStream.getNextTarEntry();
+
+            while ( entry != null )
+            {
+                String content = readEntry( tarInputStream );
+                processor.processLine( content );
+                entry = tarInputStream.getNextTarEntry();
+            }
         }
         catch ( IOException e )
         {
-            e.printStackTrace();
+            throw new RepoDumpException( "Cannot read meta-data", e );
         }
+    }
+
+    private String readEntry( final TarArchiveInputStream tarInputStream )
+        throws IOException
+    {
+        byte[] bytesToRead = new byte[1024];
+        ByteArrayOutputStream entryAsByteStream = new ByteArrayOutputStream();
+        int length;
+        while ( ( length = tarInputStream.read( bytesToRead ) ) != -1 )
+        {
+            entryAsByteStream.write( bytesToRead, 0, length );
+        }
+        entryAsByteStream.close();
+
+        return entryAsByteStream.toString( StandardCharsets.UTF_8.name() );
     }
 
     @Override
@@ -110,18 +148,4 @@ public class FileDumpReader
 
         return record.getBytes();
     }
-
-    private File getMetaFile( final RepositoryId repositoryId, final Branch branch )
-    {
-        final File metaFile = createMetaPath( this.dumpDirectory, repositoryId, branch ).toFile();
-
-        if ( !metaFile.exists() )
-        {
-            throw new RepoDumpException( "Meta-file with path [" + metaFile.getPath() + "] does not exists" );
-        }
-
-        return metaFile;
-    }
-
-
 }

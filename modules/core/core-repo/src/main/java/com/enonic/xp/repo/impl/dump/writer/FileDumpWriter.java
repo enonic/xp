@@ -1,14 +1,20 @@
 package com.enonic.xp.repo.impl.dump.writer;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.zip.GZIPOutputStream;
 
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
 import com.enonic.xp.blob.BlobKey;
@@ -32,7 +38,7 @@ public class FileDumpWriter
     extends AbstractFileProcessor
     implements DumpWriter
 {
-    private final static String LINE_SEPARATOR = System.lineSeparator();
+    private final static Logger LOG = LoggerFactory.getLogger( FileDumpWriter.class );
 
     private final BlobStore dumpBlobStore;
 
@@ -42,8 +48,11 @@ public class FileDumpWriter
 
     private final DumpEntrySerializer serializer;
 
-    private BufferedWriter metaFileWriter;
+    private GZIPOutputStream gzipOut;
 
+    private FileOutputStream fileOut;
+
+    private TarArchiveOutputStream tarOutputStream;
 
     private FileDumpWriter( final Builder builder )
     {
@@ -81,7 +90,9 @@ public class FileDumpWriter
         try
         {
             final File metaFile = createMetaFile( repositoryId, branch );
-            this.metaFileWriter = new BufferedWriter( new OutputStreamWriter( new FileOutputStream( metaFile, true ), "UTF-8" ) );
+            this.fileOut = new FileOutputStream( metaFile );
+            this.gzipOut = new GZIPOutputStream( fileOut );
+            this.tarOutputStream = new TarArchiveOutputStream( gzipOut );
         }
         catch ( Exception e )
         {
@@ -109,30 +120,18 @@ public class FileDumpWriter
     }
 
     @Override
-    public void close()
-    {
-        if ( this.metaFileWriter == null )
-        {
-            return;
-        }
-
-        try
-        {
-            this.metaFileWriter.flush();
-            this.metaFileWriter.close();
-        }
-        catch ( IOException e )
-        {
-            throw new RepoDumpException( "Could not close meta-file", e );
-        }
-    }
-
-    @Override
     public void writeMetaData( final DumpEntry dumpEntry )
     {
+        final String serializedEntry = serializer.serialize( dumpEntry );
+
         try
         {
-            metaFileWriter.write( serializer.serialize( dumpEntry ) + LINE_SEPARATOR );
+            final TarArchiveEntry entry = new TarArchiveEntry( dumpEntry.getNodeId().toString() + ".json" );
+            final byte[] data = serializedEntry.getBytes( Charsets.UTF_8 );
+            entry.setSize( data.length );
+            tarOutputStream.putArchiveEntry( entry );
+            tarOutputStream.write( data );
+            tarOutputStream.closeArchiveEntry();
         }
         catch ( IOException e )
         {
@@ -165,6 +164,32 @@ public class FileDumpWriter
         }
 
         this.dumpBlobStore.addRecord( NodeConstants.BINARY_SEGMENT, binaryRecord.getBytes() );
+    }
+
+    @Override
+    public void close()
+    {
+        closeStream( this.tarOutputStream );
+        closeStream( this.gzipOut );
+        closeStream( this.fileOut );
+    }
+
+    private void closeStream( final OutputStream stream )
+    {
+        if ( stream == null )
+        {
+            return;
+        }
+
+        try
+        {
+            stream.flush();
+            stream.close();
+        }
+        catch ( IOException e )
+        {
+            LOG.warn( "Cannot close stream [" + stream.getClass().getName() + "]", e );
+        }
     }
 
     public static Builder create()

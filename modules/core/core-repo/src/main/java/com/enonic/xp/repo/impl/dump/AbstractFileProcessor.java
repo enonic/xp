@@ -15,6 +15,6 @@ public abstract class AbstractFileProcessor
 
     protected Path createMetaPath( final Path basePath, final RepositoryId repositoryId, final Branch branch )
     {
-        return Paths.get( createRepoDumpPath( basePath, repositoryId ).toString(), branch.toString(), "meta" );
+        return Paths.get( createRepoDumpPath( basePath, repositoryId ).toString(), branch.toString(), "meta.tar.gz" );
     }
 }
