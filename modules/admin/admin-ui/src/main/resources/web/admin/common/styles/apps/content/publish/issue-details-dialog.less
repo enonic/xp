@@ -14,23 +14,18 @@
 
     .title {
       display: block;
-      max-width: calc(~'100% - 140px');
       white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      line-height: 36px;
       float: left;
+      font-size: 24px;
+      max-width: 100%;
+      line-height: 30px;
+      margin-top: -5px;
+      .ellipsis();
     }
 
-    .issue-id {
-      color: @admin-font-gray1;
-      font-size: 30px;
-      line-height: 36px;
-      padding-left: 10px;
-    }
     .issue-details-sub-title {
       display: inline-block;
-      margin: 15px 0;
+      margin: 10px 0;
       font-size: 13px;
       float: left;
       clear: both;
@@ -111,11 +106,11 @@
       text-decoration: none;
       background-color: @admin-white;
       cursor: pointer;
-      margin-right: 15px;
-      margin-top: 5px;
+      margin: -11px 0px 0px -13px;
 
       &:before {
         color: @admin-font-gray2;
+        font-size: 44px !important;
       }
 
       &:hover {
@@ -125,8 +120,7 @@
       }
 
       .icon-medium();
-      .icon-arrow-right3();
-      .transform(rotate(180deg));
+      .icon-arrow-left2();
     }
 
   }

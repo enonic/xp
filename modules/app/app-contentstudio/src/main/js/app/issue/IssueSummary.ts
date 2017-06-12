@@ -1,5 +1,5 @@
-import {IssueStatus, IssueStatusFormatter} from "./IssueStatus";
-import {IssueSummaryJson} from "./json/IssueSummaryJson";
+import {IssueStatus, IssueStatusFormatter} from './IssueStatus';
+import {IssueSummaryJson} from './json/IssueSummaryJson';
 export class IssueSummary {
 
     private id: string;
@@ -47,6 +47,10 @@ export class IssueSummary {
 
     getTitle(): string {
         return this.title;
+    }
+
+    getTitleWithId(): string {
+        return `${this.title} (#${this.index})`;
     }
 
     getCreator(): string {

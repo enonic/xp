@@ -48,8 +48,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
     private itemsHeader: H6El;
 
-    private issueIdEl: api.dom.EmEl;
-
     private currentUser: User;
 
     private opener: ModalDialog;
@@ -88,9 +86,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
         this.handleIssueGlobalEvents();
 
         this.itemsHeader = new api.dom.H6El().addClass('items-header').setHtml('Items:').insertBeforeEl(this.getItemList());
-
-        this.issueIdEl = new api.dom.EmEl('issue-id');
-        this.header.appendElement(this.issueIdEl);
 
         this.getItemList().onItemsAdded(() => {
             this.initItemList();
@@ -159,9 +154,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
         this.form.setIssue(issue);
 
-        this.setTitle(issue.getTitle());
-
-        this.issueIdEl.setHtml('#' + issue.getIndex());
+        this.setTitle(issue.getTitleWithId());
 
         this.initStatusInfo();
 
