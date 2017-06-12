@@ -56,7 +56,7 @@ module api.ui.dialog {
             this.cancelAction = this.createDefaultCancelAction();
             this.closeIconCallback = config.closeIconCallback || (() => {
                     if (this.cancelAction) {
-                        this.cancelAction.execute();
+                        this.confirmBeforeClose();
                     }
                 });
             this.closeIcon = new DivEl('cancel-button-top');
@@ -193,7 +193,7 @@ module api.ui.dialog {
             cancelAction.setIconClass('cancel-button-top');
             cancelAction.setLabel('');
             cancelAction.onExecuted(() => {
-                this.confirmBeforeClose();
+                this.close();
             });
             this.buttonRow.addToActions(cancelAction);
             return cancelAction;
