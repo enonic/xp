@@ -6,7 +6,6 @@ import {ShowSplitEditEvent} from '../ShowSplitEditEvent';
 declare var CONFIG;
 
 import Content = api.content.Content;
-import Site = api.content.site.Site;
 import PageModel = api.content.page.PageModel;
 import SiteModel = api.content.site.SiteModel;
 import LiveEditModel = api.liveedit.LiveEditModel;

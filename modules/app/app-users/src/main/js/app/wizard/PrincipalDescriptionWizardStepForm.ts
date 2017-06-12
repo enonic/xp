@@ -1,4 +1,5 @@
 import '../../api.ts';
+import i18n = api.util.i18n;
 
 export class PrincipalDescriptionWizardStepForm extends api.app.wizard.WizardStepForm {
 
@@ -16,7 +17,7 @@ export class PrincipalDescriptionWizardStepForm extends api.app.wizard.WizardSte
         });
         let formView = new api.dom.DivEl('form-view');
         let inputView = new api.dom.DivEl('input-view valid');
-        let label = new api.dom.LabelEl('Description', this.description, 'input-label');
+        let label = new api.dom.LabelEl(i18n('field.description'), this.description, 'input-label');
         let inputTypeView = new api.dom.DivEl('input-type-view');
         let inputOccurrenceView = new api.dom.DivEl('input-occurrence-view single-occurrence');
         let inputWrapper = new api.dom.DivEl('input-wrapper');

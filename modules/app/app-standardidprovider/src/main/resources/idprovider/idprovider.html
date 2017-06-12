@@ -25,18 +25,20 @@
     <link rel="manifest" href="{{imageUrl}}/favicons/manifest.json">
     <link rel="mask-icon" href="{{imageUrl}}/icon-black.svg" color="#5bbad5">
     <link rel="stylesheet" type="text/css" href="{{appLoginCssUrl}}">
-    <style>
-        #lazy-image {
-            background-image: url('{{appLoginBackgroundUrl}}');
-        }
-    </style>
 
     {{{config}}}
     <script src="{{jQueryUrl}}"></script>
+    <script>
+        function lazyFadeIn(imgEl) {
+            imgEl.remove();
+            $('#background-image').removeClass('empty');
+        }
+    </script>
 </head>
 <body>
 <div class="home-main-container">
-    <div id="lazy-image" class="lazy-image"></div>
+    <img style="opacity: 0;" src="{{appLoginBackgroundUrl}}" onload="lazyFadeIn(this);">
+    <div id="background-image" style="background-image: url(&quot;{{appLoginBackgroundUrl}}&quot;);" class="lazy-image empty"></div>
     <div class="center-panel">
         <div id="branding" class="branding">
             <h1>Enonic XP - Login</h1>

@@ -7,6 +7,7 @@ import DialogButton = api.ui.dialog.DialogButton;
 import FormItemBuilder = api.ui.form.FormItemBuilder;
 import Validators = api.ui.form.Validators;
 import DefaultErrorHandler = api.DefaultErrorHandler;
+import i18n = api.util.i18n;
 
 export class ChangeUserPasswordDialog extends api.ui.dialog.ModalDialog {
 
@@ -19,12 +20,12 @@ export class ChangeUserPasswordDialog extends api.ui.dialog.ModalDialog {
     private changePasswordButton: DialogButton;
 
     constructor() {
-        super('Change password');
+        super(i18n('dialog.changePassword.title'));
 
         this.getEl().addClass('change-password-dialog');
 
         this.userPath = new api.dom.H6El().addClass('user-path');
-        let descMessage = new api.dom.H6El().addClass('desc-message').setHtml('Password will be updated immediately after finishing');
+        let descMessage = new api.dom.H6El().addClass('desc-message').setHtml(i18n('dialog.changePassword.msg'));
 
         this.appendChildToContentPanel(this.userPath);
         this.appendChildToContentPanel(descMessage);
@@ -35,7 +36,9 @@ export class ChangeUserPasswordDialog extends api.ui.dialog.ModalDialog {
 
         this.onShown(() => this.toggleChangePasswordButton());
 
-        let passwordFormItem = new FormItemBuilder(this.password).setLabel('Password').setValidator(Validators.required).build();
+        let passwordFormItem = new FormItemBuilder(this.password)
+            .setLabel(i18n('field.password'))
+            .setValidator(Validators.required).build();
 
         let fieldSet = new api.ui.form.Fieldset();
         fieldSet.add(passwordFormItem);
@@ -56,10 +59,10 @@ export class ChangeUserPasswordDialog extends api.ui.dialog.ModalDialog {
 
     private initializeActions() {
 
-        this.changePasswordButton = this.addAction(new api.ui.Action('Change Password', '').onExecuted(() => {
+        this.changePasswordButton = this.addAction(new api.ui.Action(i18n('action.changePassword'), '').onExecuted(() => {
             new api.security.SetUserPasswordRequest().setKey(this.principal.getKey()).setPassword(
                 this.password.getValue()).sendAndParse().then((result) => {
-                api.notify.showFeedback('Password was changed!');
+                api.notify.showFeedback(i18n('notify.change.password'));
                 this.close();
             }).catch(DefaultErrorHandler.handle);
         }));

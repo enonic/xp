@@ -91,7 +91,10 @@ public class SetNodeChildOrderCommand
         {
             final Node node = doGetById( nodeIdOrderValue.getNodeId() );
 
-            final Node editedNode = Node.create( node ).manualOrderValue( nodeIdOrderValue.getManualOrderValue() ).build();
+            final Node editedNode = Node.create( node ).
+                manualOrderValue( nodeIdOrderValue.getManualOrderValue() ).
+                timestamp( Instant.now() ).
+                build();
 
             StoreNodeCommand.create( this ).
                 node( editedNode ).

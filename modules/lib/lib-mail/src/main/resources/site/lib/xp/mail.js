@@ -41,6 +41,7 @@ function checkRequired(params, name) {
  * @param {string} message.attachments.fileName Attachment file name.
  * @param {*} message.attachments.data Attachment stream.
  * @param {string} [message.attachments.mimeType] Attachment content type. If not specified will be inferred from the file extension.
+ * @param {object} [message.attachments.headers] Attachment headers, in the form of name-value pairs.
  *
  * @returns {boolean} True if the message was sent successfully, false otherwise.
  */
