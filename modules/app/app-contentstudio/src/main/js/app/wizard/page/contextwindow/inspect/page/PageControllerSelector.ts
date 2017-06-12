@@ -39,7 +39,7 @@ export class PageControllerSelector extends api.content.page.PageDescriptorDropd
     }
 
     protected handleOptionSelected(event: api.ui.selector.OptionSelectedEvent<api.content.page.PageDescriptor>) {
-        api.ui.dialog.ConfirmationDialog.get()
+        new api.ui.dialog.ConfirmationDialog()
             .setQuestion(
                 'Changing a page controller will result in losing changes made to the page. Are you sure?')
             .setNoCallback(() => {
