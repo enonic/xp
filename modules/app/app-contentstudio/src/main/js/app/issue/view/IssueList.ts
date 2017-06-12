@@ -151,7 +151,7 @@ export class IssueListItem extends api.dom.LiEl {
 
             const namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
             namesAndIconView
-                .setMainName(this.issue.getTitle())
+                .setMainName(this.issue.getTitleWithId())
                 .setIconClass(this.issue.getIssueStatus() === IssueStatus.CLOSED ? 'icon-signup closed' : 'icon-signup')
                 .setSubNameElements([new SpanEl().setHtml(this.makeSubName(), false)]);
 

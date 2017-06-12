@@ -488,6 +488,6 @@ class DetailsDialogSubTitle extends DivEl {
 
     private makeStatusInfo(): string {
         return IssueStatusInfoGenerator.create().setIssue(this.issue).setIssueStatus(this.issue.getIssueStatus()).setCurrentUser(
-            this.currentUser).setIsIdShown(false).generate();
+            this.currentUser).generate();
     }
 }

@@ -11,8 +11,6 @@ export class IssueStatusInfoGenerator {
 
     private currentUser: User;
 
-    private isIdShown: boolean = true;
-
     private constructor() {
     }
 
@@ -35,11 +33,6 @@ export class IssueStatusInfoGenerator {
         return this;
     }
 
-    public setIsIdShown(isIdShown: boolean): IssueStatusInfoGenerator {
-        this.isIdShown = isIdShown;
-        return this;
-    }
-
     public generate(): string {
         if (this.issueStatus === IssueStatus.CLOSED) {
             return this.generateClosed();
@@ -55,20 +48,12 @@ export class IssueStatusInfoGenerator {
 
         const result: string = !!this.issue.getModifier() ? (assignedToText + '. ' + statusText) : (statusText + '. ' + assignedToText);
 
-        if (this.isIdShown) {
-            return api.util.StringHelper.format('#{0} - {1}', this.issue.getIndex(), result);
-        }
-
         return result;
     }
 
     private generateClosed(): string {
         const pattern: string = 'Assigned to {0}. Closed by {1} {2}'; //id, modifier, date, assignees
         const result: string = api.util.StringHelper.format(pattern, this.assignedTo(), this.getLastModifiedBy(), this.getModifiedDate());
-
-        if (this.isIdShown) {
-            return api.util.StringHelper.format('#{0} - {1}', this.issue.getIndex(), result);
-        }
 
         return result;
     }
