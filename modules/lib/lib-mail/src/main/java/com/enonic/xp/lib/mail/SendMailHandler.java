@@ -171,6 +171,10 @@ public final class SendMailHandler
                 DataSource source = new ByteSourceDataSource( attachment.data, attachment.name, attachment.mimeType );
                 messageBodyPart.setDataHandler( new DataHandler( source ) );
                 messageBodyPart.setFileName( attachment.name );
+                for ( String headerName : attachment.headers.keySet() )
+                {
+                    messageBodyPart.addHeader( headerName, attachment.headers.get( headerName ) );
+                }
                 multipart.addBodyPart( messageBodyPart );
             }
             message.setContent( multipart );
@@ -209,10 +213,11 @@ public final class SendMailHandler
             final String name = getValue( attachmentObject, "fileName", String.class );
             final ByteSource data = getValue( attachmentObject, "data", ByteSource.class );
             String mimeType = getValue( attachmentObject, "mimeType", String.class );
+            final Map headers = getValue( attachmentObject, "headers", Map.class );
             if ( name != null && data != null )
             {
                 mimeType = mimeType == null ? getMimeType( name ) : mimeType;
-                attachments.add( new Attachment( name, data, mimeType ) );
+                attachments.add( new Attachment( name, data, mimeType, headers ) );
             }
         }
         return attachments;
@@ -254,11 +259,14 @@ public final class SendMailHandler
 
         public final String mimeType;
 
-        public Attachment( final String name, final ByteSource data, final String mimeType )
+        public final Map<String, String> headers;
+
+        public Attachment( final String name, final ByteSource data, final String mimeType, final Map<String, String> headers )
         {
             this.name = name;
             this.data = data;
             this.mimeType = mimeType;
+            this.headers = headers == null ? Collections.emptyMap() : headers;
         }
     }
 }

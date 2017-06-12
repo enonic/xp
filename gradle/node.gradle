@@ -1,0 +1,16 @@
+apply plugin: 'com.moowork.node'
+
+node {
+    download = true
+    version = '6.9.2'
+}
+
+task lint( type: NpmTask, dependsOn: npmInstall ) {
+    args = ['run', 'lint']
+}
+
+task cleanNode(type: Delete) {
+    delete 'node_modules'
+}
+
+build.dependsOn += lint

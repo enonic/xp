@@ -13,6 +13,7 @@ import PrincipalKey = api.security.PrincipalKey;
 import PrincipalLoader = api.security.PrincipalLoader;
 
 import WizardStep = api.app.wizard.WizardStep;
+import i18n = api.util.i18n;
 
 export class GroupWizardPanel extends GroupRoleWizardPanel {
 
@@ -29,8 +30,8 @@ export class GroupWizardPanel extends GroupRoleWizardPanel {
         let descriptionStep = this.getDescriptionWizardStepForm();
         let membersStep = this.getMembersWizardStepForm();
 
-        steps.push(new WizardStep('Group', descriptionStep));
-        steps.push(new WizardStep('Grants', membersStep));
+        steps.push(new WizardStep(i18n('field.groups'), descriptionStep));
+        steps.push(new WizardStep(i18n('field.grants'), membersStep));
 
         return steps;
     }
@@ -39,7 +40,7 @@ export class GroupWizardPanel extends GroupRoleWizardPanel {
 
         return this.produceCreateGroupRequest().sendAndParse().then((principal: Principal) => {
 
-            api.notify.showFeedback('Group was created!');
+            api.notify.showFeedback(i18n('notify.create.group'));
             new api.security.UserItemCreatedEvent(principal, this.getUserStore(), this.isParentOfSameType()).fire();
             this.notifyPrincipalNamed(principal);
 

@@ -1,9 +1,10 @@
+import i18n = api.util.i18n;
 declare var CONFIG;
 
-import "./api.ts";
-import {UserAppPanel} from "./app/UserAppPanel";
-import {ChangeUserPasswordDialog} from "./app/wizard/ChangeUserPasswordDialog";
-import {Router} from "./app/Router";
+import './api.ts';
+import {UserAppPanel} from './app/UserAppPanel';
+import {ChangeUserPasswordDialog} from './app/wizard/ChangeUserPasswordDialog';
+import {Router} from './app/Router';
 
 function getApplication(): api.app.Application {
     let application = new api.app.Application('user-manager', 'Users', 'UM', CONFIG.appIconUrl);
@@ -19,7 +20,7 @@ function startLostConnectionDetector() {
     lostConnectionDetector.setAuthenticated(true);
     lostConnectionDetector.onConnectionLost(() => {
         api.notify.NotifyManager.get().hide(messageId);
-        messageId = api.notify.showError('Lost connection to server - Please wait until connection is restored', false);
+        messageId = api.notify.showError(i18n('notify.connection.loss'), false);
     });
     lostConnectionDetector.onSessionExpired(() => {
         api.notify.NotifyManager.get().hide(messageId);

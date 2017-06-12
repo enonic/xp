@@ -50,6 +50,7 @@ public class SnapshotServiceImplTest
         this.repositoryService = new RepositoryServiceImpl();
         repositoryService.setIndexServiceInternal( this.indexServiceInternal );
         repositoryService.setNodeStorageService( this.storageService );
+        repositoryService.setNodeSearchService( this.searchService );
         repositoryService.setNodeRepositoryService( nodeRepositoryService );
         repositoryService.setRepositoryEntryService( this.repositoryEntryService );
 

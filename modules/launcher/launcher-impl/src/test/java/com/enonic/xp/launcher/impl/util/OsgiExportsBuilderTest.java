@@ -38,7 +38,7 @@ public class OsgiExportsBuilderTest
     public void expandExports_wildcard()
     {
         final String exports = this.builder.expandExports( "org.slf4j.*" );
-        assertEquals( "org.slf4j,org.slf4j.bridge,org.slf4j.helpers,org.slf4j.impl,org.slf4j.spi", sort( exports ) );
+        assertEquals( "org.slf4j,org.slf4j.bridge,org.slf4j.event,org.slf4j.helpers,org.slf4j.impl,org.slf4j.spi", sort( exports ) );
     }
 
     private String sort( final String str )

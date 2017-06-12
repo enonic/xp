@@ -34,6 +34,7 @@ import ImgEl = api.dom.ImgEl;
 import LostConnectionDetector = api.system.LostConnectionDetector;
 import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
 import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
+import i18n = api.util.i18n;
 
 declare var CONFIG;
 
@@ -57,7 +58,7 @@ function startLostConnectionDetector(): LostConnectionDetector {
     lostConnectionDetector.setAuthenticated(true);
     lostConnectionDetector.onConnectionLost(() => {
         api.notify.NotifyManager.get().hide(messageId);
-        messageId = api.notify.showError('Lost connection to server - Please wait until connection is restored', false);
+        messageId = api.notify.showError(i18n('notify.connection.loss'), false);
     });
     lostConnectionDetector.onSessionExpired(() => {
         api.notify.NotifyManager.get().hide(messageId);

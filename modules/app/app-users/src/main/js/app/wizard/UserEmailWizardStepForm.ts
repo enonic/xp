@@ -8,6 +8,7 @@ import Validators = api.ui.form.Validators;
 
 import DivEl = api.dom.DivEl;
 import LabelEl = api.dom.LabelEl;
+import i18n = api.util.i18n;
 
 export class UserEmailWizardStepForm extends api.app.wizard.WizardStepForm {
 
@@ -22,7 +23,7 @@ export class UserEmailWizardStepForm extends api.app.wizard.WizardStepForm {
         this.email = new EmailInput();
         this.email.setUserStoreKey(this.userStoreKey);
 
-        let emailFormItem = new FormItemBuilder(this.email).setLabel('Email').setValidator(Validators.required).build();
+        let emailFormItem = new FormItemBuilder(this.email).setLabel(i18n('field.email')).setValidator(Validators.required).build();
 
         let fieldSet = new api.ui.form.Fieldset();
         fieldSet.add(emailFormItem);

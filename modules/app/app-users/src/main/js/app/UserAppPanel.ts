@@ -23,6 +23,7 @@ import GetUserStoreByKeyRequest = api.security.GetUserStoreByKeyRequest;
 import UserStoreKey = api.security.UserStoreKey;
 import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
 import UserItem = api.security.UserItem;
+import i18n = api.util.i18n;
 
 interface PrincipalData {
 
@@ -73,9 +74,6 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
             break;
         case 'view':
             id = path.getElement(1);
-            if (id) {
-                //TODO
-            }
             break;
         default:
             new api.app.ShowBrowsePanelEvent().fire();
@@ -218,31 +216,30 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
             case UserTreeGridItemType.USERS:
                 principalType = PrincipalType.USER;
                 principalPath = PrincipalKey.ofUser(userItem.getUserStore().getKey(), 'none').toPath(true);
-                tabName = 'User';
+                tabName = i18n('field.user');
                 break;
             case UserTreeGridItemType.GROUPS:
                 principalType = PrincipalType.GROUP;
                 principalPath = PrincipalKey.ofGroup(userItem.getUserStore().getKey(), 'none').toPath(true);
-                tabName = 'Group';
+                tabName = i18n('field.group');
                 break;
             case UserTreeGridItemType.ROLES:
                 principalType = PrincipalType.ROLE;
                 principalPath = PrincipalKey.ofRole('none').toPath(true);
-                tabName = 'Role';
+                tabName = i18n('field.role');
                 break;
             case UserTreeGridItemType.PRINCIPAL:
                 principalType = userItem.getPrincipal().getType();
                 principalPath = userItem.getPrincipal().getKey().toPath(true);
-                tabName = PrincipalType[principalType];
-                tabName = tabName[0] + tabName.slice(1).toLowerCase();
+                tabName = i18n(`field.${PrincipalType[principalType].toLowerCase()}`);
                 break;
             case UserTreeGridItemType.USER_STORE:
-                tabName = 'User Store';
+                tabName = i18n('field.userStore');
                 break;
             }
 
         } else {
-            tabName = 'User Store';
+            tabName = i18n('field.userStore');
         }
 
         return {
@@ -286,11 +283,13 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
 
     private handlePrincipalNew(tabId: AppBarTabId, data: PrincipalData, userStore: UserStore, userItem: UserTreeGridItem) {
         if (data.principalType === PrincipalType.USER && !this.areUsersEditable(userStore)) {
-            api.notify.showError('The ID Provider selected for this user store does not allow to create users.');
+            api.notify.showError(i18n('notify.invalid.idProvider', i18n('action.create').toLowerCase(),
+                i18n('field.users').toLowerCase()));
             return;
         }
         if (data.principalType === PrincipalType.GROUP && !this.areGroupsEditable(userStore)) {
-            api.notify.showError('The ID Provider selected for this user store does not allow to create groups.');
+            api.notify.showError(i18n('notify.invalid.idProvider', i18n('action.create').toLowerCase(),
+                i18n('field.groups').toLowerCase()));
             return;
         }
 
@@ -343,7 +342,7 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
     private handleUserStoreEdit(userStore: UserStore, tabId: AppBarTabId, tabMenuItem: AppBarTabMenuItem) {
 
         let wizardParams = new UserStoreWizardPanelParams()
-            .setUserStoreKey(userStore.getKey())    // use key to load persisted item
+            .setUserStoreKey(userStore.getKey()) // use key to load persisted item
             .setTabId(tabId)
             .setPersistedDisplayName(userStore.getDisplayName());
 
@@ -357,11 +356,11 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
         let principalType = principal.getType();
 
         if (PrincipalType.USER === principalType && !this.areUsersEditable(userStore)) {
-            api.notify.showError('The ID Provider selected for this user store does not allow to edit users.');
+            api.notify.showError(i18n('notify.invalid.idProvider', i18n('action.edit').toLowerCase(), i18n('field.users').toLowerCase()));
             return;
 
         } else if (PrincipalType.GROUP === principalType && !this.areGroupsEditable(userStore)) {
-            api.notify.showError('The ID Provider selected for this user store does not allow to edit groups.');
+            api.notify.showError(i18n('notify.invalid.idProvider', i18n('action.edit').toLowerCase(), i18n('field.groups').toLowerCase()));
             return;
 
         } else {
@@ -375,7 +374,7 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
 
         let wizardParams = <PrincipalWizardPanelParams> new PrincipalWizardPanelParams()
             .setUserStore(userStore)
-            .setPrincipalKey(principal.getKey())    // user principal key to load persisted item
+            .setPrincipalKey(principal.getKey()) // user principal key to load persisted item
             .setPersistedType(principal.getType())
             .setPersistedPath(principal.getKey().toPath(true))
             .setTabId(tabId)

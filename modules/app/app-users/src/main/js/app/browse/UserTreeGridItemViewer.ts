@@ -1,5 +1,6 @@
 import '../../api.ts';
 import {UserTreeGridItem, UserTreeGridItemType} from './UserTreeGridItem';
+import i18n = api.util.i18n;
 
 export class UserTreeGridItemViewer extends api.ui.NamesAndIconViewer<UserTreeGridItem> {
 
@@ -13,7 +14,7 @@ export class UserTreeGridItemViewer extends api.ui.NamesAndIconViewer<UserTreeGr
 
     resolveUnnamedDisplayName(object: UserTreeGridItem): string {
         return object.getPrincipal() ? object.getPrincipal().getTypeName()
-            : object.getUserStore() ? 'User Store' : '';
+            : object.getUserStore() ? i18n('field.userStore') : '';
     }
 
     resolveSubName(object: UserTreeGridItem, relativePath: boolean = false): string {

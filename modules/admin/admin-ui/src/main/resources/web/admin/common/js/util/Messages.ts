@@ -7,7 +7,7 @@ module api.util {
     }
 
     export function i18n(key: string, ...args: any[]): string {
-        let message = key;
+        let message = '#' + key + '#';
 
         if ((messages != null) && (messages[key] != null)) {
             message = messages[key];

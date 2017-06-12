@@ -13,6 +13,7 @@ import PrincipalComboBox = api.ui.security.PrincipalComboBox;
 
 import DivEl = api.dom.DivEl;
 import LabelEl = api.dom.LabelEl;
+import i18n = api.util.i18n;
 
 export class UserMembershipsWizardStepForm extends api.app.wizard.WizardStepForm {
 
@@ -55,9 +56,9 @@ export class UserMembershipsWizardStepForm extends api.app.wizard.WizardStepForm
         this.groups.onLoaded(groupsHandler);
         this.roles.onLoaded(rolesHandler);
 
-        let groupsFormItem = new FormItemBuilder(this.groups).setLabel('Groups').build();
+        let groupsFormItem = new FormItemBuilder(this.groups).setLabel(i18n('field.groups')).build();
 
-        let rolesFormItem = new FormItemBuilder(this.roles).setLabel('Roles').build();
+        let rolesFormItem = new FormItemBuilder(this.roles).setLabel(i18n('field.roles')).build();
 
         let fieldSet = new api.ui.form.Fieldset();
         fieldSet.add(groupsFormItem);

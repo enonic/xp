@@ -226,6 +226,7 @@ public class AbstractContentServiceTest
         this.repositoryService.setIndexServiceInternal( elasticsearchIndexService );
         this.repositoryService.setNodeRepositoryService( nodeRepositoryService );
         this.repositoryService.setNodeStorageService( this.storageService );
+        this.repositoryService.setNodeSearchService( this.searchService );
         this.repositoryService.initialize();
 
         this.nodeService = new NodeServiceImpl();
@@ -270,9 +271,8 @@ public class AbstractContentServiceTest
         this.contentService.setContentTypeService( contentTypeService );
         this.contentService.setMixinService( mixinService );
         this.contentService.setTranslator( this.translator );
-        this.contentService.setFormDefaultValuesProcessor( ( form, data ) ->
-                                                           {
-                                                           } );
+        this.contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
+        } );
 
         initializeRepository();
     }
