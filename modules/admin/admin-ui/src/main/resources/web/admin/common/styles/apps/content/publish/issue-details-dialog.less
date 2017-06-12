@@ -85,6 +85,7 @@
 
       .status-info {
         vertical-align: middle;
+        color: @admin-font-gray1;
       }
     }
 
@@ -149,18 +150,23 @@
   }
 
   .issue-dialog-form {
-    margin-bottom: 0px;
-    padding: 0 !important;
+    margin-bottom: 10px;
+    background-color: @admin-bg-light-gray;
 
     input-view:not(:last-child) {
       margin-bottom: 0px;
     }
 
     .description-text {
-      margin-bottom: 15px;
+      margin-top: 15px;
+      font-style: italic;
       &.empty {
         display: none !important;
       }
+    }
+
+    .issue-approver-selector {
+      margin-bottom: 0;
     }
 
     label {

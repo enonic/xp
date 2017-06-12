@@ -98,11 +98,10 @@ export class IssueDialogForm extends api.ui.form.Form {
         const descriptionFormItem = this.addValidationViewer(new FormItemBuilder(this.description).setLabel('Description').build());
         fieldSet.add(descriptionFormItem);
 
-        fieldSet.appendChild(this.descriptionText);
-
         const selectorFormItem = this.addValidationViewer(
             new FormItemBuilder(this.approversSelector).setLabel('Invite users to work on issue').setValidator(
                 Validators.required).build());
+        selectorFormItem.addClass('issue-approver-selector');
         fieldSet.add(selectorFormItem);
 
         const contentItemsFormItem =
@@ -116,6 +115,8 @@ export class IssueDialogForm extends api.ui.form.Form {
         this.approversSelector.onValueChanged(() => {
             this.validate(true);
         });
+
+        fieldSet.appendChild(this.descriptionText);
 
         this.add(fieldSet);
     }
