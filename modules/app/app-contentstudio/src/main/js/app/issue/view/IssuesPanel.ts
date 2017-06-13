@@ -83,7 +83,7 @@ export class IssuesPanel extends Panel {
         let promises: wemQ.Promise<any>[] = [
             this.updateAssignedToMeCheckbox(),
             this.updateMyIssuesCheckbox()
-        ]
+        ];
 
         return wemQ.all(promises);
     }

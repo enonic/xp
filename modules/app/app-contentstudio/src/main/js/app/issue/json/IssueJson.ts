@@ -1,5 +1,5 @@
-import {PublishRequestJson} from "./PublishRequestJson";
-import {IssueSummaryJson} from "./IssueSummaryJson";
+import {PublishRequestJson} from './PublishRequestJson';
+import {IssueSummaryJson} from './IssueSummaryJson';
 
 export interface IssueJson extends IssueSummaryJson {
 

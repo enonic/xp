@@ -2,8 +2,6 @@ module api.ui.dialog {
 
     export class ConfirmationDialog extends ModalDialog {
 
-        private static instance: ConfirmationDialog;
-
         private questionEl: api.dom.H6El;
         private yesCallback: () => void;
         private noCallback: () => void;
@@ -11,8 +9,12 @@ module api.ui.dialog {
         private yesAction: api.ui.Action;
         private noAction: api.ui.Action;
 
-        constructor() {
-            super(<api.ui.dialog.ModalDialogConfig>{title: 'Confirmation'});
+        constructor(config: ModalDialogConfig = {}) {
+            super((() => {
+                config.title = config.title || 'Confirmation';
+                config.closeIconCallback = config.closeIconCallback || (() => this.closeWithoutCallback());
+                return config;
+            })());
 
             this.addClass('confirmation-dialog');
 
@@ -37,14 +39,6 @@ module api.ui.dialog {
             this.addAction(this.yesAction, true);
             this.addAction(this.noAction);
 
-            api.dom.Body.get().appendChild(this);
-        }
-
-        static get(): ConfirmationDialog {
-            if (!ConfirmationDialog.instance) {
-                ConfirmationDialog.instance = new ConfirmationDialog();
-            }
-            return ConfirmationDialog.instance;
         }
 
         setQuestion(question: string): ConfirmationDialog {
@@ -62,12 +56,24 @@ module api.ui.dialog {
             return this;
         }
 
+        open() {
+            api.ui.mask.BodyMask.get().addClass('confirmation-dialog-mask');
+            api.dom.Body.get().appendChild(this);
+            super.open();
+        }
+
         close() {
-            super.close();
+            this.closeWithoutCallback();
 
             if (this.noCallback) {
                 this.noCallback();
             }
+        }
+
+        private closeWithoutCallback() {
+            super.close();
+            api.ui.mask.BodyMask.get().removeClass('confirmation-dialog-mask');
+            this.remove();
         }
     }
 

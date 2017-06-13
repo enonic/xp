@@ -326,7 +326,6 @@ export class DialogItemList extends ListBox<ContentSummaryAndCompareStatus> {
         return item.getContentSummary().getId();
     }
 
-
     getItemsIds(): ContentId[] {
         return this.getItems().map(item => item.getContentId());
     }

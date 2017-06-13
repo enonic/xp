@@ -6,9 +6,17 @@ module api.ui.dialog {
     import Element = api.dom.Element;
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 
+    export interface ConfirmationConfig {
+        question?: string;
+        yesCallback: () => void;
+        noCallback?: () => void;
+    }
+
     export interface ModalDialogConfig {
         title?: string;
         buttonRow?: ButtonRow;
+        confirmation?: ConfirmationConfig;
+        closeIconCallback?: () => void;
     }
 
     export class ModalDialog extends DivEl {
@@ -23,6 +31,8 @@ module api.ui.dialog {
 
         protected closeIcon: DivEl;
 
+        protected confirmationDialog: ConfirmationDialog;
+
         private static openDialogsCounter: number = 0;
 
         private tabbable: api.dom.Element[];
@@ -30,6 +40,8 @@ module api.ui.dialog {
         private listOfClickIgnoredElements: api.dom.Element[] = [];
 
         private onClosedListeners: {(): void;}[] = [];
+
+        private closeIconCallback: () => void;
 
         public static debug: boolean = false;
 
@@ -42,8 +54,13 @@ module api.ui.dialog {
             this.buttonRow = config.buttonRow || new ButtonRow();
 
             this.cancelAction = this.createDefaultCancelAction();
+            this.closeIconCallback = config.closeIconCallback || (() => {
+                    if (this.cancelAction) {
+                        this.confirmBeforeClose();
+                    }
+                });
             this.closeIcon = new DivEl('cancel-button-top');
-            this.closeIcon.onClicked(() => this.cancelAction.execute());
+            this.closeIcon.onClicked(this.closeIconCallback);
             wrapper.appendChild(this.closeIcon);
 
             this.header = this.createHeader(config.title || '');
@@ -60,7 +77,23 @@ module api.ui.dialog {
 
             footer.appendChild(this.buttonRow);
 
+            this.initConfirmationDialog(config.confirmation);
             this.initListeners();
+        }
+
+        private initConfirmationDialog(confirmation: ConfirmationConfig) {
+            if (confirmation) {
+                const {yesCallback, noCallback, question = 'You have made changes to the form, do you want to apply them?'} = confirmation;
+
+                this.confirmationDialog = new ConfirmationDialog()
+                    .setQuestion(question)
+                    .setYesCallback(yesCallback || (() => {
+                            this.close();
+                        }));
+                if (noCallback) {
+                    this.confirmationDialog.setNoCallback(noCallback);
+                }
+            }
         }
 
         private initListeners() {
@@ -83,15 +116,14 @@ module api.ui.dialog {
 
         private handleClickOutsideDialog() {
             const mouseClickListener: (event: MouseEvent) => void = (event: MouseEvent) => {
-                if (this.isVisible()) {
+                const noConfirmationDialog = !this.confirmationDialog || !this.confirmationDialog.isVisible();
+                if (this.isVisible() && noConfirmationDialog) {
                     for (let element = event.target; element; element = (<any>element).parentNode) {
                         if (element === this.getHTMLElement() || this.isIgnoredElementClicked(<any>element)) {
                             return;
                         }
                     }
-                    if (this.cancelAction) {
-                        this.cancelAction.execute();
-                    }
+                    this.closeIconCallback();
                 }
             };
 
@@ -332,8 +364,22 @@ module api.ui.dialog {
             ModalDialog.openDialogsCounter++;
         }
 
+        isDirty(): boolean {
+            return false;
+        }
+
+        confirmBeforeClose() {
+            if (this.confirmationDialog && this.isDirty()) {
+                this.confirmationDialog.open();
+            } else {
+                this.close();
+            }
+        }
+
         close() {
-            if (ModalDialog.openDialogsCounter === 1) {
+            const isSingleDialogGroup = ModalDialog.openDialogsCounter === 1 ||
+                                        (ModalDialog.openDialogsCounter === 2 && !!this.confirmationDialog);
+            if (isSingleDialogGroup) {
                 api.ui.mask.BodyMask.get().hide();
             }
 

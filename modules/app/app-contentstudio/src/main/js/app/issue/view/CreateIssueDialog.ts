@@ -23,10 +23,10 @@ export class CreateIssueDialog extends IssueDialog {
         let onItemsChanged = (items) => {
             (<CreateIssueAction>this.actionButton.getAction()).updateLabel(items.length);
         };
-        
+
         this.getItemList().onItemsAdded(onItemsChanged);
         this.getItemList().onItemsRemoved(onItemsChanged);
-        
+
         this.itemsLabel = new LabelEl('Items', this.getItemList());
         this.itemsLabel.insertBeforeEl(this.getItemList());
 

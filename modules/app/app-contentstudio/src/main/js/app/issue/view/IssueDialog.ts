@@ -51,7 +51,7 @@ export abstract class IssueDialog extends DependantItemsDialog {
         this.publishProcessor.onLoadingFinished(() => {
             this.loadMask.hide();
         });
-        
+
         this.getItemList().onItemsRemoved((items) => {
             this.form.deselectContentItems(items.map(item => item.getContentSummary()), true);
         });
@@ -63,7 +63,7 @@ export abstract class IssueDialog extends DependantItemsDialog {
         this.getDependantList().onItemsAdded(() => {
             setTimeout(() => this.centerMyself(), 100);
         });
-        
+
         this.closeIcon.onClicked(() => this.opener ? this.opener.close() : true);
     }
 
@@ -107,7 +107,6 @@ export abstract class IssueDialog extends DependantItemsDialog {
 
         super.show();
     }
-
 
     close() {
         if (this.resetOnClose) {
@@ -160,7 +159,6 @@ export abstract class IssueDialog extends DependantItemsDialog {
 
         this.form.giveFocus();
     }
-
 
     public forceResetOnClose(value: boolean): IssueDialog {
         this.resetOnClose = value;
@@ -219,5 +217,3 @@ export abstract class IssueDialog extends DependantItemsDialog {
     }
 
 }
-
-

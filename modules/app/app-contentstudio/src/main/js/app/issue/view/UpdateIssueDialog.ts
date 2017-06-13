@@ -81,4 +81,3 @@ export class UpdateIssueAction extends api.ui.Action {
         this.setLabel('Save');
     }
 }
-

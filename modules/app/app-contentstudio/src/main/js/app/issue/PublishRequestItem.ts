@@ -1,4 +1,4 @@
-import {PublishRequestItemJson} from "./json/PublishRequestItemJson";
+import {PublishRequestItemJson} from './json/PublishRequestItemJson';
 import ContentId = api.content.ContentId;
 
 export class PublishRequestItem {

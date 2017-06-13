@@ -11,8 +11,7 @@ export class IssueStatusInfoGenerator {
 
     private currentUser: User;
 
-    private constructor() {
-    }
+    private constructor() { /* empty */}
 
     public static create(): IssueStatusInfoGenerator {
         return new IssueStatusInfoGenerator();
@@ -64,14 +63,14 @@ export class IssueStatusInfoGenerator {
 
     private getStatus(): string {
         if (this.issue.getModifier()) {
-            return 'Updated'
+            return 'Updated';
         }
 
         return 'Opened';
     }
 
     private getLastModifiedBy(): string {
-        return '\<span class="creator"\>' + this.getModifiedBy() + '\</span\>'
+        return '\<span class="creator"\>' + this.getModifiedBy() + '\</span\>';
     }
 
     private getModifiedBy(): string {

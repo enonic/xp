@@ -3,10 +3,11 @@ import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
 import TabMenuItem = api.ui.tab.TabMenuItem;
 import TabMenu = api.ui.tab.TabMenu;
 
+type IssueOptions = [{value: IssueStatus, name: String}];
 
 export class IssueStatusSelector extends TabMenu {
 
-    private static OPTIONS = [
+    private static OPTIONS:IssueOptions = [
         {value: IssueStatus.OPEN, name: 'Open'},
         {value: IssueStatus.CLOSED, name: 'Closed'}
     ];
@@ -25,7 +26,6 @@ export class IssueStatusSelector extends TabMenu {
                 .build();
 
             this.addNavigationItem(menuItem);
-
 
         });
 

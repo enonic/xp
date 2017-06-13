@@ -1,5 +1,5 @@
-import {IssueMetadata} from "../IssueMetadata";
-import {Issue} from "../Issue";
+import {IssueMetadata} from '../IssueMetadata';
+import {Issue} from '../Issue';
 
 export class IssueResponse {
 

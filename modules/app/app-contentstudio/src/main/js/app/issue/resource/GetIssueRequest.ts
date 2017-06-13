@@ -1,6 +1,6 @@
-import {Issue} from "../Issue";
-import {IssueJson} from "../json/IssueJson";
-import {IssueResourceRequest} from "./IssueResourceRequest";
+import {Issue} from '../Issue';
+import {IssueJson} from '../json/IssueJson';
+import {IssueResourceRequest} from './IssueResourceRequest';
 
 export class GetIssueRequest extends IssueResourceRequest<IssueJson, Issue> {
 
