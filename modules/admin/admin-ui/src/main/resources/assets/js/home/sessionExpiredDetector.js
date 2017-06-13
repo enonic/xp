@@ -43,7 +43,7 @@ function logout() {
 
 function alertConnectionLost() {
     if (!connectionLostMessageId) {
-        connectionLostMessageId = api.notify.showError(api.util.i18n('notify.connection.loss'), false);
+        connectionLostMessageId = api.notify.showError(api.util.i18n('notify.connection.loss'));
     }
 
 }

@@ -64,39 +64,72 @@
     }
   }
 
+  @keyframes close-icon-animation-before {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(-45deg);
+    }
+  }
+
+  @keyframes close-icon-animation-after {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(-135deg);
+    }
+  }
+
   .cancel-button-top {
-    &:extend(.icon);
-    .icon-close;
-
     position: absolute;
-    top: 5px;
-    right: 5px;
+    top: -40px;
+    right: -40px;
     z-index: -1;
-
-    width: 26px;
-    height: 26px;
-    line-height: 26px;
-    text-align: center;
-
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
     padding: 0;
-    background-color: white;
+    cursor: pointer;
+    box-sizing: border-box;
+    display: inline-block;
+
+    &:before, &:after {
+      @width: 25px;
+      @height: 3px;
+      transform: rotate(0deg);
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin-top: @height/2;
+      margin-left: -@width/2;
+      display: block;
+      height: @height;
+      width: @width;
+      background-color: @admin-white;
+      transition: all 0.25s ease-out;
+    }
 
     &:before {
-      color: #53585f;
+      -webkit-animation: close-icon-animation-before 500ms forwards; /* Safari 4+ */
+      -moz-animation:    close-icon-animation-before 500ms forwards; /* Fx 5+ */
+      -o-animation:      close-icon-animation-before 500ms forwards; /* Opera 12+ */
+      animation:         close-icon-animation-before 500ms forwards; /* IE 10+, Fx 29+ */
+    }
+
+    &:after {
+      -webkit-animation: close-icon-animation-after 500ms forwards; /* Safari 4+ */
+      -moz-animation:    close-icon-animation-after 500ms forwards; /* Fx 5+ */
+      -o-animation:      close-icon-animation-after 500ms forwards; /* Opera 12+ */
+      animation:         close-icon-animation-after 500ms forwards; /* IE 10+, Fx 29+ */
     }
 
     &:hover {
-      background-color: white;
-      cursor: pointer;
-
-      &:before, span {
-        color: #53585f;
+      &:before, &:after {
+        background-color: @admin-medium-gray-border;
       }
-    }
-
-    &:focus:not(:disabled) {
-      box-shadow: 0px 0px 5px white;
-      border: 1px solid white;
     }
   }
 
@@ -124,7 +157,7 @@
     margin-right: 10px;
     padding-left: 30px;
     padding-right: 30px;
-    width: 85.185%;
+    width: 80.185%;
   }
 
   &.centered_horizontally {
@@ -150,3 +183,32 @@
   z-index: @z-index-modal-dialog + 1;
 }
 
+body {
+  &._0-240, &._240-360, &._360-540, &._540-720 {
+    .cancel-button-top {
+
+      top: 16px;
+      right: 0px;
+      width: 26px;
+      height: 26px;
+      line-height: 26px;
+      background-color: white;
+
+      &:before, &:after {
+        background-color: @admin-font-gray2;
+        margin: 0;
+        top: 0;
+        left: 0;
+        height: 3px;
+        width: 15px;
+      }
+
+      &:hover {
+        background-color: @admin-white;
+        &:before, &:after {
+          background-color: @admin-font-gray2;
+        }
+      }
+    }
+  }
+}
