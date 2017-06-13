@@ -78,12 +78,12 @@ export class IssueDialogForm extends api.ui.form.Form {
 
         this.contentItemsSelector.onOptionSelected((option) => {
             this.notifyContentItemsAdded(
-                [option.getSelectedOption().getOption().displayValue])
+                [option.getSelectedOption().getOption().displayValue]);
         });
 
         this.contentItemsSelector.onOptionDeselected((option) => {
             this.notifyContentItemsRemoved(
-                [option.getSelectedOption().getOption().displayValue])
+                [option.getSelectedOption().getOption().displayValue]);
         });
     }
 
@@ -209,7 +209,7 @@ export class IssueDialogForm extends api.ui.form.Form {
         this.contentItemsSelector.clearSelection();
         ids.forEach((id) => {
             this.contentItemsSelector.selectOptionByValue(id.toString(), silent);
-        })
+        });
     }
 
     public selectContentItems(contents: ContentSummary[], silent: boolean = false) {

@@ -379,13 +379,13 @@ export class IssueDetailsDialog extends SchedulableDialog {
                 this.issue.getPublishRequest().getExcludeIds()).setExcludeChildrenIds(
                 this.issue.getPublishRequest().getExcludeChildrenIds()).build();
 
-            resolveDependenciesRequest.sendAndParse().then((result: ResolvePublishDependenciesResult) => {
-                this.dependantIds = result.getDependants().slice();
+            resolveDependenciesRequest.sendAndParse().then((depResult: ResolvePublishDependenciesResult) => {
+                this.dependantIds = depResult.getDependants().slice();
 
                 const countToPublish = this.countTotal();
                 this.updateButtonCount('Publish', countToPublish);
 
-                this.toggleAction(countToPublish > 0 && !result.isContainsInvalid());
+                this.toggleAction(countToPublish > 0 && !depResult.isContainsInvalid());
 
                 this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
                     this.setDependantItems(dependants);

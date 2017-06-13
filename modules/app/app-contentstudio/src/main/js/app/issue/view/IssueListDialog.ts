@@ -89,7 +89,7 @@ export class IssueListDialog extends ModalDialog {
         let promises: wemQ.Promise<any>[] = [
             this.openIssuesPanel.reload(),
             this.closedIssuesPanel.reload()
-        ]
+        ];
 
         return wemQ.all(promises);
     }
@@ -150,8 +150,7 @@ export class IssueListDialog extends ModalDialog {
         IssueServerEventsHandler.getInstance().onIssueCreated((issues: Issue[]) => {
             if (this.isVisible()) {
                 this.reload(issues);
-            }
-            else if (issues.some((issue) => this.isIssueCreatedByCurrentUser(issue))) {
+            } else if (issues.some((issue) => this.isIssueCreatedByCurrentUser(issue))) {
                 this.open();
             }
         });
@@ -281,7 +280,7 @@ export class IssueListDialog extends ModalDialog {
             createIssueDialog.unlockPublishItems();
             createIssueDialog.open(this);
         });
-        
+
         return this.getButtonRow().addAction(createIssueAction);
     }
 

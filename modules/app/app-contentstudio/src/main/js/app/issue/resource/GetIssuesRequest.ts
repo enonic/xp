@@ -26,7 +26,7 @@ export class GetIssuesRequest extends IssueResourceRequest<IssuesJson, Issue[]> 
         return this.send().then((response: api.rest.JsonResponse<IssuesJson>) => {
             return response.getResult().issues.map((issueJson: IssueJson) => {
                 return Issue.fromJson(issueJson);
-            })
+            });
         });
     }
 }

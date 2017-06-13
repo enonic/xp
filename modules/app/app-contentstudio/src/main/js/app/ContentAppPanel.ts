@@ -16,8 +16,8 @@ import AppBarTabMenuItemBuilder = api.app.bar.AppBarTabMenuItemBuilder;
 import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
 import UriHelper = api.util.UriHelper;
 import AppPanel = api.app.AppPanel;
-import {GetIssueRequest} from "./issue/resource/GetIssueRequest";
-import {Issue} from "./issue/Issue";
+import {GetIssueRequest} from './issue/resource/GetIssueRequest';
+import {Issue} from './issue/Issue';
 
 export class ContentAppPanel extends AppPanel<ContentSummaryAndCompareStatus> {
 

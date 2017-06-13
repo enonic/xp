@@ -1,4 +1,4 @@
-import {IssueJson} from "./IssueJson";
+import {IssueJson} from './IssueJson';
 
 export interface IssuesJson {
 

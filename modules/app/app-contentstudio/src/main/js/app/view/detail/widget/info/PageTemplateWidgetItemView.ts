@@ -87,20 +87,22 @@ export class PageTemplateWidgetItemView extends WidgetItemView {
             if (content.getPage().hasTemplate()) {
                 pageTemplateViewer.setPageMode(api.content.page.PageMode.FORCED_TEMPLATE);
 
-                return new GetPageTemplateByKeyRequest(content.getPage().getTemplate()).sendAndParse().then((pageTemplate: PageTemplate) => {
-                    pageTemplateViewer.setPageTemplate(pageTemplate);
+                return new GetPageTemplateByKeyRequest(content.getPage().getTemplate()).sendAndParse()
+                    .then((pageTemplate: PageTemplate) => {
+                        pageTemplateViewer.setPageTemplate(pageTemplate);
 
-                    return wemQ(pageTemplateViewer);
-                });
+                        return wemQ(pageTemplateViewer);
+                    });
             }
 
             pageTemplateViewer.setPageMode(api.content.page.PageMode.FORCED_CONTROLLER);
 
-            return new GetPageDescriptorByKeyRequest(content.getPage().getController()).sendAndParse().then((pageDescriptor: PageDescriptor) => {
-                pageTemplateViewer.setPageController(pageDescriptor);
+            return new GetPageDescriptorByKeyRequest(content.getPage().getController()).sendAndParse()
+                .then((pageDescriptor: PageDescriptor) => {
+                    pageTemplateViewer.setPageController(pageDescriptor);
 
-                return wemQ(pageTemplateViewer);
-            });
+                    return wemQ(pageTemplateViewer);
+                });
         }
 
         return new GetNearestSiteRequest(this.content.getContentId()).sendAndParse().then((site: Site) => {
@@ -126,11 +128,11 @@ export class PageTemplateWidgetItemView extends WidgetItemView {
                 applications: site.getApplicationKeys()
             });
         }
-        
+
         if (contentType.isSite()) {
             return wemQ<DefaultModels>(new DefaultModels(null, null));
         }
-        
+
         return wemQ<DefaultModels>(null);
     }
 
@@ -196,17 +198,17 @@ class PageTemplateViewer {
 
         return pageTemplateEl;
     }
-    
+
     private getDescriptorEl(): api.dom.Element {
 
         if (!(this.pageTemplate || this.pageController)) {
             return;
         }
-        
+
         if (this.pageTemplate) {
             return this.getPageTemplateLinkEl();
         }
-        
+
         const spanEl = new api.dom.SpanEl();
         spanEl.setHtml(this.pageController.getDisplayName());
         spanEl.getEl().setTitle(this.pageController.getKey().toString());
@@ -220,31 +222,28 @@ class PageTemplateViewer {
         if (!this.isRenderable()) {
             const noTemplateText = new api.dom.PEl('no-template');
             noTemplateText.setHtml(this.getPageModeString());
-            
+
             divEl.appendChild(noTemplateText);
 
             return divEl;
         }
 
         let pageTemplateView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
-        
+
         pageTemplateView.setMainName(this.getPageModeString());
 
         if (this.pageMode == PageMode.FRAGMENT) {
             pageTemplateView.setIconClass(api.StyleHelper.getCommonIconCls('fragment'));
-        }
-        else {
+        } else {
             const descriptorEl = this.getDescriptorEl();
             if (descriptorEl) {
                 pageTemplateView.setSubNameElements([descriptorEl]);
             }
             if (this.pageMode == PageMode.AUTOMATIC) {
                 pageTemplateView.setIconClass('icon-wand');
-            }
-            else if (this.pageMode == PageMode.FORCED_TEMPLATE) {
+            } else if (this.pageMode == PageMode.FORCED_TEMPLATE) {
                 pageTemplateView.setIconClass('icon-newspaper');
-            }
-            else if (this.pageMode == PageMode.FORCED_CONTROLLER) {
+            } else if (this.pageMode == PageMode.FORCED_CONTROLLER) {
                 pageTemplateView.setIconClass('icon-cog');
             }
         }

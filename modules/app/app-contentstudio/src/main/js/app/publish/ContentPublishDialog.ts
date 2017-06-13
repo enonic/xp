@@ -219,9 +219,7 @@ export class ContentPublishDialog extends SchedulableDialog {
         if (this.isProgressBarEnabled()) {
             return wemQ<void>(null);
         }
-        return this.publishProcessor.reloadPublishDependencies(resetDependantItems).then(() => {
-
-        });
+        return this.publishProcessor.reloadPublishDependencies(resetDependantItems);
 
     }
 

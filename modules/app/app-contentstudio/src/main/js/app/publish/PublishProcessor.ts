@@ -1,5 +1,5 @@
-import {PublishDialogItemList} from "./PublishDialogItemList";
-import {PublishDialogDependantList, isContentSummaryValid} from "./PublishDialogDependantList";
+import {PublishDialogItemList} from './PublishDialogItemList';
+import {PublishDialogDependantList, isContentSummaryValid} from './PublishDialogDependantList';
 import ResolvePublishDependenciesResult = api.content.resource.result.ResolvePublishDependenciesResult;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
@@ -72,7 +72,6 @@ export class PublishProcessor {
             this.containsInvalid = result.isContainsInvalid();
             this.allPublishable = result.isAllPublishable();
 
-
             return this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
                 if (resetDependantItems) { // just opened or first time loading children
                     this.dependantList.setItems(dependants);
@@ -106,7 +105,6 @@ export class PublishProcessor {
     public countTotal(): number {
         return this.countToPublish(this.itemList.getItems()) + this.dependantIds.length;
     }
-
 
     public isAllPublishable() {
         return this.allPublishable;
@@ -190,4 +188,3 @@ export class PublishProcessor {
     }
 
 }
-

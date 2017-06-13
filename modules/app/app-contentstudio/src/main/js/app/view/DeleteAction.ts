@@ -5,7 +5,6 @@ export class DeleteAction extends api.ui.Action {
     constructor(itemViewPanel: api.app.view.ItemViewPanel<api.content.ContentSummaryAndCompareStatus>) {
         super('Delete', 'mod+del');
 
-
         let contentToDelete = itemViewPanel.getItem().getModel().getContentSummary();
 
         const confirmation = new api.ui.dialog.ConfirmationDialog()

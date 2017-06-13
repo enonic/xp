@@ -39,7 +39,6 @@ module api.ui.dialog {
             this.addAction(this.yesAction, true);
             this.addAction(this.noAction);
 
-
         }
 
         setQuestion(question: string): ConfirmationDialog {
