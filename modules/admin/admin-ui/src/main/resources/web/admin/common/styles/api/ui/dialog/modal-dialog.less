@@ -103,7 +103,6 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      margin-top: @height/2;
       margin-left: -@width/2;
       display: block;
       height: @height;
@@ -181,6 +180,12 @@
 
 .confirmation-dialog-mask {
   z-index: @z-index-modal-dialog + 1;
+}
+
+.body-mask.confirmation-dialog-mask + .@{_COMMON_PREFIX}modal-dialog {
+  .cancel-button-top {
+    display: none;
+  }
 }
 
 body {
