@@ -1,18 +1,18 @@
 import {IssueMetadata} from '../IssueMetadata';
-import {Issue} from '../Issue';
+import {IssueWithAssignees} from '../IssueWithAssignees';
 
 export class IssueResponse {
 
-    private issues: Issue[];
+    private issues: IssueWithAssignees[];
 
     private metadata: IssueMetadata;
 
-    constructor(issues: Issue[], metadata: IssueMetadata) {
+    constructor(issues: IssueWithAssignees[], metadata: IssueMetadata) {
         this.issues = issues;
         this.metadata = metadata;
     }
 
-    getIssues(): Issue[] {
+    getIssues(): IssueWithAssignees[] {
         return this.issues;
     }
 

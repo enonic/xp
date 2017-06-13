@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
@@ -32,6 +33,7 @@ import com.enonic.xp.issue.PublishRequest;
 import com.enonic.xp.issue.PublishRequestItem;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -45,18 +47,21 @@ public class IssueResourceTest
 
     private IssueNotificationsSender issueNotificationsSender;
 
+    private SecurityService securityService;
+
     @Override
     protected IssueResource getResourceInstance()
     {
         final IssueResource resource = new IssueResource();
 
         issueService = Mockito.mock( IssueService.class );
-
         issueNotificationsSender = Mockito.mock( IssueNotificationsSender.class );
+        securityService = Mockito.mock( SecurityService.class );
 
         resource.setIssueService( issueService );
-
         resource.setIssueNotificationsSender( issueNotificationsSender );
+        resource.setSecurityService( securityService );
+
         return resource;
     }
 
@@ -86,8 +91,9 @@ public class IssueResourceTest
         final IssueResource issueResource = getResourceInstance();
         final FindIssuesResult result = FindIssuesResult.create().hits( 2 ).totalHits( 4 ).issues( issues ).build();
         Mockito.when( issueService.findIssues( Mockito.any( IssueQuery.class ) ) ).thenReturn( result );
+        Mockito.when( securityService.getUser( Mockito.any( PrincipalKey.class ) ) ).thenReturn( Optional.empty() );
 
-        issueResource.listIssues( new ListIssuesJson( "OPEN", true, true, 0, 10 ) );
+        issueResource.listIssues( new ListIssuesJson( "OPEN", true, true, true, 0, 10 ) );
 
         Mockito.verify( issueService, Mockito.times( 1 ) ).findIssues( Mockito.any( IssueQuery.class ) );
     }

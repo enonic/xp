@@ -13,18 +13,22 @@ public final class ListIssuesJson
 
     private final boolean createdByMe;
 
+    private final boolean resolveAssignees;
+
     private final Integer fromParam;
 
     private final Integer sizeParam;
 
     @JsonCreator
     public ListIssuesJson( @JsonProperty("type") final String type, @JsonProperty("assignedToMe") final boolean assignedToMe,
-                           @JsonProperty("createdByMe") final boolean createdByMe, @JsonProperty("from") final Integer fromParam,
+                           @JsonProperty("createdByMe") final boolean createdByMe,
+                           @JsonProperty("resolveAssignees") final boolean resolveAssignees, @JsonProperty("from") final Integer fromParam,
                            @JsonProperty("size") final Integer sizeParam )
     {
         this.status = parseIssueStatus( type );
         this.assignedToMe = assignedToMe;
         this.createdByMe = createdByMe;
+        this.resolveAssignees = resolveAssignees;
         this.fromParam = fromParam;
         this.sizeParam = sizeParam;
     }
@@ -62,6 +66,11 @@ public final class ListIssuesJson
     public boolean isCreatedByMe()
     {
         return createdByMe;
+    }
+
+    public boolean isResolveAssignees()
+    {
+        return resolveAssignees;
     }
 
     public Integer getFromParam()

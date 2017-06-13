@@ -43,6 +43,8 @@
       cursor: pointer;
 
       .issue-list-item {
+        .flexbox();
+        justify-content: space-between;
 
         &:hover {
           background-color: @admin-bg-light-gray;
@@ -76,6 +78,24 @@
             height: 17px;
             font-weight: bold;
           }
+        }
+
+        .assignees-line {
+          .flexbox();
+
+          .principal-viewer-compact {
+            position: relative;
+            top: 3px;
+
+            &:last-child {
+              margin-right: 13px;
+            }
+          }
+        }
+
+        .all-assignees-tooltip {
+          font-size: 16px;
+          align-self: flex-end;
         }
       }
     }
