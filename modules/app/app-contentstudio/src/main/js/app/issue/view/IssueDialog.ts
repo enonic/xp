@@ -113,6 +113,10 @@ export abstract class IssueDialog extends DependantItemsDialog {
             this.resetOnClose = false;
             this.reset();
         }
+        if (this.opener) {
+            this.opener.removeClass('masked');
+        }
+
         super.close();
     }
 

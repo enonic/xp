@@ -257,6 +257,8 @@ export class ContentPublishDialog extends SchedulableDialog {
 
         createIssueDialog.lockPublishItems();
         createIssueDialog.open(this);
+
+        this.addClass('masked');
     }
 
     private createIssue() {
