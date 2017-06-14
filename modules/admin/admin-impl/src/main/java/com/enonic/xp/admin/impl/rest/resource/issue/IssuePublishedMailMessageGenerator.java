@@ -11,8 +11,8 @@ public class IssuePublishedMailMessageGenerator
     @Override
     protected String generateMessageSubject()
     {
-        return "Issue \"" + params.getIssue().getTitle() + "\" was published by " +
-            params.getPublisher().getDisplayName();
+        return String.format( "Issue \"%s\" (#%d) was published by %s", params.getIssue().getTitle(), params.getIssue().getIndex(),
+                              params.getPublisher().getDisplayName() );
     }
 
     @Override

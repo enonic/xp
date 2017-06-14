@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,7 @@ import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.mail.MailMessage;
+import com.enonic.xp.security.User;
 
 public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams>
 {
@@ -37,7 +39,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
 
         return msg ->
         {
-            msg.setFrom( new InternetAddress( sender, "Issue Manager" ) );
+            msg.setFrom( new InternetAddress( sender, "Content Studio" ) );
             msg.addRecipients( Message.RecipientType.TO, recipients );
             msg.addRecipients( Message.RecipientType.CC, copyRecipients );
             msg.setSubject( messageSubject );
@@ -58,7 +60,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
         return params.getApprovers().stream().
             filter( approver -> StringUtils.isNotBlank( approver.getEmail() ) ).
             map( approver -> approver.getEmail() ).
-            collect( Collectors.joining( ","));
+            collect( Collectors.joining( "," ) );
     }
 
     protected String getCreatorEmail()
@@ -83,6 +85,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
         messageParams.put( "description", description );
         messageParams.put( "url", params.getUrl() + "#/issue/" + params.getIssue().getId().toString() );
         messageParams.put( "items", generateItemsHtml() );
+        messageParams.put( "approvers", generateApproversHtml() );
         messageParams.put( "description-block-visibility", description.length() == 0 ? "none" : "block" );
         messageParams.put( "issue-block-visibility", itemCount == 0 ? "none" : "block" );
         messageParams.put( "no-issues-block-visibility", itemCount == 0 ? "block" : "none" );
@@ -134,5 +137,33 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
         itemParams.put( "statusColor", isOnline ? "#609e24" : "initial" );
 
         return new StrSubstitutor( itemParams ).replace( template );
+    }
+
+    private String generateApproversHtml()
+    {
+        final String template = load( "approver.html" );
+
+        return params.getApprovers().stream().map( approver -> generateAppoverHtml( approver, template ) ).collect( Collectors.joining() );
+    }
+
+    private String generateAppoverHtml( final User approver, final String template )
+    {
+        final Map params = Maps.newHashMap();
+        params.put( "approver", makeShortName( approver.getDisplayName() ) );
+        params.put( "displayName", approver.getDisplayName() );
+
+        return new StrSubstitutor( params ).replace( template );
+    }
+
+    private String makeShortName( final String displayName )
+    {
+        final String[] nameParts = displayName.split( " " );
+
+        if ( nameParts.length < 2 )
+        {
+            return displayName.substring( 0, 2 ).toUpperCase();
+        }
+
+        return Arrays.stream( nameParts ).map( namePart -> namePart.substring( 0, 1 ).toUpperCase() ).collect( Collectors.joining() );
     }
 }
