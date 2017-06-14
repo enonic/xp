@@ -181,6 +181,6 @@ public class IssueNotificationsSenderImplTest
     {
         final String userId = UUID.randomUUID().toString();
         return User.create().key( PrincipalKey.ofUser( UserStoreKey.createDefault(), userId ) ).login( userId ).email(
-            "kitamo@tut.by" ).build();
+            "kitamo@tut.by" ).displayName( "Some User" ).build();
     }
 }
