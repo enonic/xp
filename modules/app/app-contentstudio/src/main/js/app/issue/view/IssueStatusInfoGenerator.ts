@@ -11,7 +11,10 @@ export class IssueStatusInfoGenerator {
 
     private currentUser: User;
 
-    private constructor() { /* empty */}
+    private isIdShown: boolean = true;
+
+    private constructor() {
+    }
 
     public static create(): IssueStatusInfoGenerator {
         return new IssueStatusInfoGenerator();
@@ -32,6 +35,11 @@ export class IssueStatusInfoGenerator {
         return this;
     }
 
+    public setIsIdShown(isIdShown: boolean): IssueStatusInfoGenerator {
+        this.isIdShown = isIdShown;
+        return this;
+    }
+
     public generate(): string {
         if (this.issueStatus === IssueStatus.CLOSED) {
             return this.generateClosed();
@@ -41,18 +49,23 @@ export class IssueStatusInfoGenerator {
     }
 
     private generateOpen(): string {
-        const assignedToText: string = 'Assigned to ' + this.assignedTo();
         const statusText: string = api.util.StringHelper.format('{0} by {1} {2}', this.getStatus(), this.getLastModifiedBy(),
             this.getModifiedDate());
 
-        const result: string = !!this.issue.getModifier() ? (assignedToText + '. ' + statusText) : (statusText + '. ' + assignedToText);
+        if (this.isIdShown) {
+            return api.util.StringHelper.format('#{0} - {1}', this.issue.getIndex(), statusText);
+        }
 
-        return result;
+        return statusText;
     }
 
     private generateClosed(): string {
-        const pattern: string = 'Assigned to {0}. Closed by {1} {2}'; //id, modifier, date, assignees
-        const result: string = api.util.StringHelper.format(pattern, this.assignedTo(), this.getLastModifiedBy(), this.getModifiedDate());
+        const pattern: string = 'Closed by {0} {1}'; //id, modifier, date, assignees
+        const result: string = api.util.StringHelper.format(pattern, this.getLastModifiedBy(), this.getModifiedDate());
+
+        if (this.isIdShown) {
+            return api.util.StringHelper.format('#{0} - {1}', this.issue.getIndex(), result);
+        }
 
         return result;
     }
@@ -81,26 +94,6 @@ export class IssueStatusInfoGenerator {
         }
 
         return lastModifiedBy;
-    }
-
-    private assignedTo(): string {
-        return '\<span class="assignee"\>' + this.getAssignedTo() + '\</span\>' + (this.issue.getApprovers().length > 1
-                ? ' users'
-                : '');
-    }
-
-    private getAssignedTo(): string {
-        if (this.issue.getApprovers().length > 1) {
-            return this.issue.getApprovers().length.toString();
-        }
-
-        const assignee: string = this.issue.getApprovers()[0].toString();
-
-        if (assignee === this.currentUser.getKey().toString()) {
-            return 'me';
-        }
-
-        return this.issue.getApprovers()[0].toString();
     }
 
 }

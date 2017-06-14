@@ -1,5 +1,9 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -13,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.collect.Maps;
 import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.admin.impl.json.issue.IssueJson;
@@ -33,6 +38,8 @@ import com.enonic.xp.issue.IssueService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @SuppressWarnings("UnusedDeclaration")
@@ -46,6 +53,8 @@ public final class IssueResource
     private IssueService issueService;
 
     private IssueNotificationsSender issueNotificationsSender;
+
+    private SecurityService securityService;
 
     @POST
     @Path("create")
@@ -103,7 +112,15 @@ public final class IssueResource
         final IssueQuery issueQuery = createIssueQuery( params );
         final FindIssuesResult result = this.issueService.findIssues( issueQuery );
         final IssueListMetaData metaData = IssueListMetaData.create().hits( result.getHits() ).totalHits( result.getTotalHits() ).build();
-        return new IssueListJson( result.getIssues(), metaData );
+
+        if ( params.isResolveAssignees() )
+        {
+            return new IssueListJson( fetchAssigneesForIssues( result.getIssues() ), metaData );
+        }
+        else
+        {
+            return new IssueListJson( result.getIssues(), metaData );
+        }
     }
 
     private IssueQuery createIssueQuery( final ListIssuesJson params )
@@ -129,6 +146,20 @@ public final class IssueResource
         return builder.build();
     }
 
+    private Map<Issue, List<User>> fetchAssigneesForIssues( final List<Issue> issues )
+    {
+        final Map<Issue, List<User>> issuesWithAssignees = Maps.newHashMap();
+
+        issues.stream().forEach( issue -> issuesWithAssignees.put( issue, doFetchAssignees( issue ) ) );
+
+        return issuesWithAssignees;
+    }
+
+    private List<User> doFetchAssignees( final Issue issue )
+    {
+        return issue.getApproverIds().stream().map( key -> securityService.getUser( key ).orElse( null ) ).collect( Collectors.toList() );
+    }
+
     @Reference
     public void setIssueService( final IssueService issueService )
     {
@@ -139,5 +170,11 @@ public final class IssueResource
     public void setIssueNotificationsSender( final IssueNotificationsSender issueNotificationsSender )
     {
         this.issueNotificationsSender = issueNotificationsSender;
+    }
+
+    @Reference
+    public void setSecurityService( final SecurityService securityService )
+    {
+        this.securityService = securityService;
     }
 }

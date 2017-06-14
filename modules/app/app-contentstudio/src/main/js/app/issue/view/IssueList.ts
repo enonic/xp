@@ -5,14 +5,19 @@ import {IssueListDialog} from './IssueListDialog';
 import {IssueStatusInfoGenerator} from './IssueStatusInfoGenerator';
 import {IssueStatus} from '../IssueStatus';
 import {ListIssuesRequest} from '../resource/ListIssuesRequest';
+import {IssueWithAssignees} from '../IssueWithAssignees';
 import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
 import User = api.security.User;
 import PEl = api.dom.PEl;
 import NamesView = api.app.NamesView;
 import SpanEl = api.dom.SpanEl;
+import PrincipalViewerCompact = api.ui.security.PrincipalViewerCompact;
+import DivEl = api.dom.DivEl;
+import Tooltip = api.ui.Tooltip;
+import Element = api.dom.Element;
 
-export class IssueList extends ListBox<Issue> {
+export class IssueList extends ListBox<IssueWithAssignees> {
 
     private issueStatus: IssueStatus;
 
@@ -56,7 +61,6 @@ export class IssueList extends ListBox<Issue> {
         }).catch((reason: any) => {
             api.DefaultErrorHandler.handle(reason);
         });
-
     }
 
     private loadCurrentUser() {
@@ -83,6 +87,7 @@ export class IssueList extends ListBox<Issue> {
         listIssuesRequest.setIssueStatus(this.issueStatus);
         listIssuesRequest.setAssignedToMe(this.loadAssignedToMe);
         listIssuesRequest.setCreatedByMe(this.loadMyIssues);
+        listIssuesRequest.setResolveAssignees(true);
         listIssuesRequest.setFrom(this.getItemCount());
 
         return listIssuesRequest.sendAndParse();
@@ -94,9 +99,9 @@ export class IssueList extends ListBox<Issue> {
         }
     }
 
-    protected createItemView(issue: Issue): api.dom.Element {
+    protected createItemView(issueWithAssignees: IssueWithAssignees): api.dom.Element {
 
-        const itemEl = new IssueListItem(issue, this.currentUser);
+        const itemEl = new IssueListItem(issueWithAssignees, this.currentUser);
 
         itemEl.onClicked(() => {
             this.handleIssueSelected(itemEl);
@@ -105,8 +110,8 @@ export class IssueList extends ListBox<Issue> {
         return itemEl;
     }
 
-    protected getItemId(issue: Issue): string {
-        return issue.getId();
+    protected getItemId(issueWithAssignees: IssueWithAssignees): string {
+        return issueWithAssignees.getIssue().getId();
     }
 
     private handleIssueSelected(issueListItem: IssueListItem) {
@@ -128,12 +133,17 @@ export class IssueListItem extends api.dom.LiEl {
 
     private issue: Issue;
 
+    private assignees: User[];
+
     private currentUser: User;
 
-    constructor(issue: Issue, currentUser: User) {
+    constructor(issueWithAssignees: IssueWithAssignees, currentUser: User) {
         super('issue-list-item');
 
-        this.issue = issue;
+        this.issue = issueWithAssignees.getIssue();
+
+        this.assignees = issueWithAssignees.getAssignees();
+
         this.currentUser = currentUser;
     }
 
@@ -145,17 +155,18 @@ export class IssueListItem extends api.dom.LiEl {
         return super.doRender().then((rendered) => {
             this.getEl().setTabIndex(0);
 
-            if (this.issue.getDescription()) {
-                this.getEl().setTitle(this.issue.getDescription());
-            }
-
             const namesAndIconView = new api.app.NamesAndIconViewBuilder().setSize(api.app.NamesAndIconViewSize.small).build();
             namesAndIconView
                 .setMainName(this.issue.getTitleWithId())
                 .setIconClass(this.issue.getIssueStatus() === IssueStatus.CLOSED ? 'icon-signup closed' : 'icon-signup')
                 .setSubNameElements([new SpanEl().setHtml(this.makeSubName(), false)]);
 
+            if (this.issue.getDescription().length) {
+                new Tooltip(namesAndIconView, this.issue.getDescription(), 200).setMode(Tooltip.MODE_GLOBAL_STATIC);
+            }
+
             this.appendChild(namesAndIconView);
+            this.appendChild(new AssigneesLine(this.assignees, this.currentUser));
 
             return rendered;
         });
@@ -164,5 +175,55 @@ export class IssueListItem extends api.dom.LiEl {
     private makeSubName(): string {
         return IssueStatusInfoGenerator.create().setIssue(this.issue).setIssueStatus(this.issue.getIssueStatus()).setCurrentUser(
             this.currentUser).generate();
+    }
+}
+
+class AssigneesLine extends DivEl {
+
+    private assignees: User[];
+
+    private currentUser: User;
+
+    private limitToShow: number = 2;
+
+    constructor(assignees: User[], currentUser?: User) {
+        super('assignees-line');
+
+        this.assignees = assignees;
+        this.currentUser = currentUser;
+    }
+
+    doRender(): Q.Promise<boolean> {
+        return super.doRender().then((rendered) => {
+            if (this.assignees.length > this.limitToShow) {
+                for (let i = 0; i < this.limitToShow; i++) {
+                    this.appendChild(this.createPrincipalViewer(this.assignees[i]));
+                }
+                this.appendChild(this.createElemWithAssigneesAsTooltip());
+            } else {
+                this.assignees.forEach((assignee: User) => {
+                    this.appendChild(this.createPrincipalViewer(assignee));
+                });
+            }
+
+            return rendered;
+        });
+    }
+
+    private createPrincipalViewer(assignee: User): PrincipalViewerCompact {
+        const principalViewer: PrincipalViewerCompact = new PrincipalViewerCompact();
+        principalViewer.setObject(assignee);
+        principalViewer.setCurrentUser(this.currentUser);
+
+        return principalViewer;
+    }
+
+    private createElemWithAssigneesAsTooltip(): Element {
+        const span: SpanEl = new SpanEl('all-assignees-tooltip');
+        span.setHtml('...');
+        new Tooltip(span, this.assignees.map(user => user.getDisplayName()).join('\n'), 200).setMode(
+            Tooltip.MODE_GLOBAL_STATIC);
+
+        return span;
     }
 }

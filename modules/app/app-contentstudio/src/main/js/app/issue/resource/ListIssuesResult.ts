@@ -1,9 +1,9 @@
-import {IssueJson} from '../json/IssueJson';
 import {IssueMetadata} from '../IssueMetadata';
+import {IssueWithAssigneesJson} from '../json/IssueWithAssigneesJson';
 
 export interface ListIssuesResult {
 
-    issues: IssueJson[];
+    issues: IssueWithAssigneesJson[];
 
     metadata: IssueMetadata;
 }

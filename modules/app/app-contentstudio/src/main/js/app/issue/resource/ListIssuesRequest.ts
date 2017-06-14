@@ -1,10 +1,10 @@
 import {IssueResponse} from './IssueResponse';
 import {ListIssuesResult} from './ListIssuesResult';
-import {IssueJson} from '../json/IssueJson';
 import {IssueMetadata} from '../IssueMetadata';
-import {Issue} from '../Issue';
 import {IssueResourceRequest} from './IssueResourceRequest';
 import {IssueStatus} from '../IssueStatus';
+import {IssueWithAssigneesJson} from '../json/IssueWithAssigneesJson';
+import {IssueWithAssignees} from '../IssueWithAssignees';
 
 export class ListIssuesRequest extends IssueResourceRequest<ListIssuesResult, IssueResponse> {
 
@@ -19,6 +19,8 @@ export class ListIssuesRequest extends IssueResourceRequest<ListIssuesResult, Is
     private assignedToMe: boolean = false;
 
     private createdByMe: boolean = false;
+
+    private resolveAssignees: boolean = false;
 
     constructor() {
         super();
@@ -50,13 +52,19 @@ export class ListIssuesRequest extends IssueResourceRequest<ListIssuesResult, Is
         return this;
     }
 
+    setResolveAssignees(value: boolean): ListIssuesRequest {
+        this.resolveAssignees = value;
+        return this;
+    }
+
     getParams(): Object {
         return {
             type: IssueStatus[this.issueStatus],
             from: this.from,
             size: this.size,
             assignedToMe: this.assignedToMe,
-            createdByMe: this.createdByMe
+            createdByMe: this.createdByMe,
+            resolveAssignees: this.resolveAssignees
         };
     }
 
@@ -66,13 +74,19 @@ export class ListIssuesRequest extends IssueResourceRequest<ListIssuesResult, Is
 
     sendAndParse(): wemQ.Promise<IssueResponse> {
         return this.send().then((response: api.rest.JsonResponse<ListIssuesResult>) => {
-            const issues: Issue[] = response.getResult().issues.map((issueJson: IssueJson) => {
-                return Issue.fromJson(issueJson);
+            const issuesWithAssignees: IssueWithAssignees[] = response.getResult().issues.map(
+                (issueWithAssigneesJson: IssueWithAssigneesJson) => {
+                    return IssueWithAssignees.fromJson(issueWithAssigneesJson);
+                });
+
+            issuesWithAssignees.sort((a, b) => {
+                return b.getIssue().getModifiedTime().getTime() - a.getIssue().getModifiedTime().getTime();
             });
+
             const metadata: IssueMetadata = new IssueMetadata(response.getResult().metadata['hits'],
                 response.getResult().metadata['totalHits']);
 
-            return new IssueResponse(issues, metadata);
+            return new IssueResponse(issuesWithAssignees, metadata);
         });
     }
 }

@@ -32,7 +32,7 @@
       }
 
       .my-issues-filter {
-        margin-left: 52px;
+        margin-left: 15px;
         margin-right: 15px;
       }
     }
@@ -43,6 +43,8 @@
       cursor: pointer;
 
       .issue-list-item {
+        .flexbox();
+        justify-content: space-between;
 
         &:hover {
           background-color: @admin-bg-light-gray;
@@ -75,7 +77,28 @@
           .@{_COMMON_PREFIX}main-name {
             height: 17px;
             font-weight: bold;
+            text-transform: capitalize;
           }
+        }
+
+        .assignees-line {
+          .flexbox();
+
+          .principal-viewer-compact {
+            position: relative;
+            top: 3px;
+
+            &:last-child {
+              margin-right: 18px;
+            }
+          }
+        }
+
+        .all-assignees-tooltip {
+          font-size: 16px;
+          align-self: flex-end;
+          padding-bottom: 5px;
+          margin-left: 5px;
         }
       }
     }

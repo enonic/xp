@@ -12,7 +12,7 @@ public class ListIssuesJsonTest
     public void testParseIssueStatusOpen()
         throws Exception
     {
-        final ListIssuesJson json = new ListIssuesJson( "OPEN", true, true, 0, 10 );
+        final ListIssuesJson json = new ListIssuesJson( "OPEN", true, true, true, 0, 10 );
 
         assertEquals( json.getStatus(), IssueStatus.Open );
     }
@@ -21,7 +21,7 @@ public class ListIssuesJsonTest
     public void testParseIssueStatusClosed()
         throws Exception
     {
-        final ListIssuesJson json = new ListIssuesJson( "CLOSED", true, true, 0, 10 );
+        final ListIssuesJson json = new ListIssuesJson( "CLOSED", true, true, true, 0, 10 );
 
         assertEquals( json.getStatus(), IssueStatus.Closed );
     }
@@ -30,7 +30,7 @@ public class ListIssuesJsonTest
     public void testParseIssueStatusNull()
         throws Exception
     {
-        final ListIssuesJson json = new ListIssuesJson( null, true, true, 0, 10 );
+        final ListIssuesJson json = new ListIssuesJson( null, true, true, true, 0, 10 );
 
         assertEquals( json.getStatus(), null );
     }
@@ -39,7 +39,7 @@ public class ListIssuesJsonTest
     public void testParseIssueStatusUnknown()
         throws Exception
     {
-        final ListIssuesJson json = new ListIssuesJson( "SomeUnknownStatus", true, true, 0, 10 );
+        final ListIssuesJson json = new ListIssuesJson( "SomeUnknownStatus", true, true, true, 0, 10 );
 
         assertEquals( json.getStatus(), null );
     }
