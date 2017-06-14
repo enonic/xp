@@ -161,7 +161,9 @@ export class IssueListItem extends api.dom.LiEl {
                 .setIconClass(this.issue.getIssueStatus() === IssueStatus.CLOSED ? 'icon-signup closed' : 'icon-signup')
                 .setSubNameElements([new SpanEl().setHtml(this.makeSubName(), false)]);
 
-            new Tooltip(namesAndIconView, this.issue.getDescription(), 200).setMode(Tooltip.MODE_GLOBAL_STATIC);
+            if (this.issue.getDescription().length) {
+                new Tooltip(namesAndIconView, this.issue.getDescription(), 200).setMode(Tooltip.MODE_GLOBAL_STATIC);
+            }
 
             this.appendChild(namesAndIconView);
             this.appendChild(new AssigneesLine(this.assignees, this.currentUser));

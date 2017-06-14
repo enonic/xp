@@ -66,7 +66,7 @@ export class IssueSummary {
     }
 
     getDescription(): string {
-        return this.description;
+        return this.description.trim();
     }
 
     getIssueStatus(): IssueStatus {
