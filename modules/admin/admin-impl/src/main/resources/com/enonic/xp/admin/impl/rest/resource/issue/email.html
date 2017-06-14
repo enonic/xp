@@ -58,19 +58,19 @@
             background-color: ${statusBgColor};">${status}</span>
         </div>
     </div>
-    <div>
-        <div>Assignees:</div>
-        <div style="padding: 10px 0px;">${approvers}</div>
-    </div>
     <div style="
-        display: ${description-block-visibility};
         margin-bottom: 25px;
         background-color: #eee;
         position: relative;
-        padding: 3px 20px;
+        padding: 10px;">
+        <div style="padding: 10px 0px;">${approvers}</div>
+        <div style="
+        display: ${description-block-visibility};
         font-size: 16px;
+        margin-left: 3px;
         line-height: 40px;">
-        <span>${description}</span>
+            <span>${description}</span>
+        </div>
     </div>
     <div style="margin-bottom: 40px;">
         <a href="${url}">
