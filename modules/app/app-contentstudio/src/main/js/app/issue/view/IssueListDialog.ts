@@ -39,7 +39,6 @@ export class IssueListDialog extends ModalDialog {
         this.addClass('issue-list-dialog');
 
         this.initDeboundcedReloadFunc();
-        this.handleIssueDetailsDialogEvents();
         this.handleCreateIssueDialogEvents();
         this.handleIssueGlobalEvents();
         this.initElements();
@@ -72,6 +71,8 @@ export class IssueListDialog extends ModalDialog {
         return super.doRender().then((rendered: boolean) => {
             this.createNewIssueButton();
             this.appendChildToContentPanel(this.dockedPanel);
+            this.addClickIgnoredElement(IssueDetailsDialog.get());
+            this.addClickIgnoredElement(UpdateIssueDialog.get());
             return rendered;
         });
     }
@@ -106,22 +107,6 @@ export class IssueListDialog extends ModalDialog {
         this.openIssuesPanel.resetFilters();
         this.closedIssuesPanel.resetFilters();
         this.remove();
-    }
-
-    private handleIssueDetailsDialogEvents() {
-        this.addClickIgnoredElement(IssueDetailsDialog.get());
-        this.addClickIgnoredElement(UpdateIssueDialog.get());
-
-        IssueDetailsDialog.get().onClosed(() => {
-            this.removeClass('masked');
-            if (this.isVisible()) {
-                this.getEl().focus();
-            }
-        });
-
-        IssueDetailsDialog.get().onShown(() => {
-            this.addClass('masked');
-        });
     }
 
     private handleCreateIssueDialogEvents() {
