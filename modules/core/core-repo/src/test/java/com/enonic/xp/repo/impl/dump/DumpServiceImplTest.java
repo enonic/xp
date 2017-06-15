@@ -303,7 +303,7 @@ public class DumpServiceImplTest
 
         for ( final Repository repository : repositories )
         {
-            if ( !repository.getId().equals( SystemConstants.SYSTEM_REPO.getId() ))
+            if ( !repository.getId().equals( SystemConstants.SYSTEM_REPO.getId() ) )
             {
                 this.repositoryService.deleteRepository( DeleteRepositoryParams.from( repository.getId() ) );
             }
@@ -314,7 +314,6 @@ public class DumpServiceImplTest
             this.blobStore.clear();
         }
 
-        System.out.println( "------------ initialize system-repo -----------" );
         new SystemRepoInitializer( this.repositoryService, this.storageService ).initialize();
 
         this.dumpService.loadSystemDump( LoadParams.create().
