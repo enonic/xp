@@ -1,6 +1,7 @@
 import {IssueDialog} from './IssueDialog';
 import {CreateIssueRequest} from '../resource/CreateIssueRequest';
 import {PublishRequest} from '../PublishRequest';
+import {IssueDetailsDialog} from './IssueDetailsDialog';
 import LabelEl = api.dom.LabelEl;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import DialogButton = api.ui.dialog.DialogButton;
@@ -65,8 +66,8 @@ export class CreateIssueDialog extends IssueDialog {
             createIssueRequest.sendAndParse().then((issue) => {
                 this.close();
                 this.reset();
-
                 api.notify.showSuccess('New issue created successfully');
+                IssueDetailsDialog.get().setIssue(issue).open();
             }).catch((reason) => {
                 if (reason && reason.message) {
                     api.notify.showError(reason.message);

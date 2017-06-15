@@ -118,6 +118,10 @@ export class IssueListDialog extends ModalDialog {
                 this.getEl().focus();
             }
         });
+
+        IssueDetailsDialog.get().onShown(() => {
+            this.addClass('masked');
+        });
     }
 
     private handleCreateIssueDialogEvents() {
@@ -150,8 +154,6 @@ export class IssueListDialog extends ModalDialog {
         IssueServerEventsHandler.getInstance().onIssueCreated((issues: Issue[]) => {
             if (this.isVisible()) {
                 this.reload(issues);
-            } else if (issues.some((issue) => this.isIssueCreatedByCurrentUser(issue))) {
-                this.open();
             }
         });
 
