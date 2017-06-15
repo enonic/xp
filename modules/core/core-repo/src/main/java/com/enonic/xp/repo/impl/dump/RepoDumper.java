@@ -96,13 +96,14 @@ class RepoDumper
 
     private void doExecute()
     {
-        final BranchDumpResult.Builder branchDumpResult = BranchDumpResult.create( ContextAccessor.current().getBranch() );
+        final Branch branch = ContextAccessor.current().getBranch();
+        LOG.info( "Dumping repository [" + this.repositoryId + "], branch [" + branch );
 
         writer.writeDumpMeta( new DumpMeta( this.xpVersion ) );
-
+        final BranchDumpResult.Builder branchDumpResult = BranchDumpResult.create( branch );
         try
         {
-            writer.open( this.repositoryId, ContextAccessor.current().getBranch() );
+            writer.open( this.repositoryId, branch );
             final Node rootNode = this.nodeService.getRoot();
             doDumpNode( rootNode.id(), branchDumpResult );
             dumpChildren( rootNode.id(), branchDumpResult );

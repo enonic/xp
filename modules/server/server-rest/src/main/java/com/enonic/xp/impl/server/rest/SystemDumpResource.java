@@ -83,9 +83,49 @@ public final class SystemDumpResource
         return NodeExportResultsJson.from( results );
     }
 
+
+    @POST
+    @Path("systemDump")
+    public NodeExportResultsJson systemDump( final SystemDumpRequestJson request )
+        throws Exception
+    {
+        final List<NodeExportResult> results = Lists.newArrayList();
+
+        this.dumpService.dumpSystem( DumpParams.create().
+            dumpName( request.getName() ).
+            includeBinaries( true ).
+            includeVersions( true ).
+            build() );
+
+        return NodeExportResultsJson.from( results );
+    }
+
     @POST
     @Path("load")
     public NodeImportResultsJson load( final SystemLoadRequestJson request )
+    {
+        final List<NodeImportResult> results = Lists.newArrayList();
+
+        //importSystemRepo( request, results );
+
+        this.repositoryService.invalidateAll();
+
+        for ( Repository repository : repositoryService.list() )
+        {
+            initializeRepo( repository );
+            this.dumpService.loadSystemDump( LoadParams.create().
+                dumpName( request.getName() ).
+                repositoryId( repository.getId() ).
+                build() );
+            // importRepoBranches( request.getName(), results, repository );
+        }
+
+        return NodeImportResultsJson.from( results );
+    }
+
+    @POST
+    @Path("systemLoad")
+    public NodeImportResultsJson systemLoad( final SystemLoadRequestJson request )
     {
         final List<NodeImportResult> results = Lists.newArrayList();
 
