@@ -30,7 +30,6 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class IssueInitializer
 {
-
     private final NodeService nodeService;
 
     private final static Logger LOG = LoggerFactory.getLogger( IssueInitializer.class );
@@ -62,7 +61,7 @@ public class IssueInitializer
 
     public final void initialize()
     {
-        runAsAdmin( () -> initIssueNode() );
+        runAsAdmin( this::initIssueNode );
     }
 
     private void initIssueNode()

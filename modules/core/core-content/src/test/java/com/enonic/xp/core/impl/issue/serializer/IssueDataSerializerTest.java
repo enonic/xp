@@ -1,8 +1,13 @@
 package com.enonic.xp.core.impl.issue.serializer;
 
+import java.util.ArrayList;
+
 import org.junit.Test;
 
+import com.google.common.collect.Lists;
+
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.PublishRequest;
@@ -39,7 +44,13 @@ public class IssueDataSerializerTest
         assertEquals( "descr", data.getString( DESCRIPTION ) );
         assertEquals( "Open", data.getString( STATUS ) );
         assertEquals( "user:myStore:approver", data.getStrings( APPROVERS ).iterator().next() );
-        assertEquals( "exclude-id", data.getSet( PUBLISH_REQUEST ).getStrings( PublishRequestPropertyNames.EXCLUDE_IDS ).iterator().next() );
-        assertEquals( false, data.getSet( PUBLISH_REQUEST ).getSet( PublishRequestPropertyNames.ITEMS ).getBoolean( "content-id" ) );
+        assertEquals( "exclude-id",
+                      data.getSet( PUBLISH_REQUEST ).getStrings( PublishRequestPropertyNames.EXCLUDE_IDS ).iterator().next() );
+        final Iterable<PropertySet> itemSets = data.getSet( PUBLISH_REQUEST ).getSets( PublishRequestPropertyNames.ITEMS );
+
+        final ArrayList<PropertySet> itemSetsAsList = Lists.newArrayList( itemSets );
+        assertEquals( 1, itemSetsAsList.size() );
+        assertFalse( itemSetsAsList.get( 0 ).getBoolean( PublishRequestPropertyNames.ITEM_RECURSIVE ) );
+
     }
 }

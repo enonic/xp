@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.issue.serializer;
 
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
@@ -42,7 +43,7 @@ public class IssueDataSerializer
         if ( params.getApproverIds().getSize() > 0 )
         {
             issueAsData.addStrings( APPROVERS, params.getApproverIds().
-                stream().map( approver -> approver.toString() ).collect( Collectors.toList() ) );
+                stream().map( PrincipalKey::toString ).collect( Collectors.toList() ) );
         }
 
         if ( params.getPublishRequest() != null )
@@ -69,9 +70,9 @@ public class IssueDataSerializer
         issueAsData.addString( DESCRIPTION, editedIssue.getDescription() );
 
         issueAsData.addStrings( APPROVERS, editedIssue.getApproverIds().
-            stream().map( approver -> approver.toString() ).collect( Collectors.toList() ) );
+            stream().map( PrincipalKey::toString ).collect( Collectors.toList() ) );
 
-        if(editedIssue.getPublishRequest() != null)
+        if ( editedIssue.getPublishRequest() != null )
         {
             addPublishRequest( issueAsData, editedIssue.getPublishRequest() );
         }
@@ -101,12 +102,16 @@ public class IssueDataSerializer
 
         publishRequestSet.addStrings( PublishRequestPropertyNames.EXCLUDE_IDS, publishRequest.getExcludeIds().asStrings() );
 
-        final PropertySet itemsSet = publishRequestSet.addSet( PublishRequestPropertyNames.ITEMS );
-
+        final Collection<PropertySet> itemSets = Lists.newArrayList();
         for ( final PublishRequestItem item : publishRequest.getItems() )
         {
-            itemsSet.addBoolean( item.getId().toString(), item.getIncludeChildren() );
+            final PropertySet itemSet = new PropertySet();
+            itemSet.setString( PublishRequestPropertyNames.ITEM_ID, item.getId().toString() );
+            itemSet.setBoolean( PublishRequestPropertyNames.ITEM_RECURSIVE, item.getIncludeChildren() );
+            itemSets.add( itemSet );
         }
+
+        publishRequestSet.addSets( PublishRequestPropertyNames.ITEMS, itemSets.toArray( new PropertySet[itemSets.size()] ) );
     }
 
     private void extractApprovers( final PropertySet issueProperties, final Issue.Builder builder )
@@ -122,7 +127,8 @@ public class IssueDataSerializer
     {
         final PropertySet publishRequestSet = issueProperties.getSet( PUBLISH_REQUEST );
 
-        if(publishRequestSet == null) {
+        if ( publishRequestSet == null )
+        {
             return;
         }
 
@@ -131,16 +137,17 @@ public class IssueDataSerializer
         publishRequestBuilder.addExcludeIds(
             ContentIds.from( Lists.newArrayList( publishRequestSet.getStrings( PublishRequestPropertyNames.EXCLUDE_IDS ) ) ) );
 
-        final PropertySet itemsSet = publishRequestSet.getSet( PublishRequestPropertyNames.ITEMS );
+        final Iterable<PropertySet> itemSets = publishRequestSet.getSets( PublishRequestPropertyNames.ITEMS );
 
-        for ( final String id : itemsSet.getPropertyNames() )
+        for ( final PropertySet itemSet : itemSets )
         {
-            publishRequestBuilder.addItem( PublishRequestItem.create().id( ContentId.from( id ) ).
-                includeChildren( itemsSet.getBoolean( id ) ).build() );
+            publishRequestBuilder.addItem( PublishRequestItem.create().
+                id( ContentId.from( itemSet.getString( PublishRequestPropertyNames.ITEM_ID ) ) ).
+                includeChildren( itemSet.getBoolean( PublishRequestPropertyNames.ITEM_RECURSIVE ) ).
+                build() );
         }
 
         builder.setPublishRequest( publishRequestBuilder.build() );
-
     }
 
     private void extractUserInfo( final PropertySet issueProperties, final Issue.Builder builder )

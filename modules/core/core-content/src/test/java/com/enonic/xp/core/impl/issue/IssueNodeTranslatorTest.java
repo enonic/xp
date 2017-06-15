@@ -1,8 +1,11 @@
 package com.enonic.xp.core.impl.issue;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.junit.Test;
+
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
@@ -30,15 +33,13 @@ import static org.junit.Assert.*;
 public class IssueNodeTranslatorTest
 {
 
-    private static final IssueNodeTranslator ISSUE_NODE_TRANSLATOR = new IssueNodeTranslator();
-
     @Test
     public void testFromNodeNotResolvingChildren()
         throws Exception
     {
         final Node node = createNode();
 
-        final Issue issue = this.ISSUE_NODE_TRANSLATOR.fromNode( node );
+        final Issue issue = IssueNodeTranslator.fromNode( node );
         final IssueName issueName = IssueName.from( NamePrettyfier.create( "title" ) );
 
         assertNotNull( issue );
@@ -69,11 +70,11 @@ public class IssueNodeTranslatorTest
         issueAsData.addStrings( APPROVERS, "user:myStore:approver-1", "user:myStore:approver-2" );
 
         final PropertySet publishRequestSet = new PropertySet();
-        final PropertySet itemsSet = new PropertySet();
-        itemsSet.addBoolean( "content-id1", false );
-        itemsSet.addBoolean( "content-id2", true );
 
-        publishRequestSet.addSet( PublishRequestPropertyNames.ITEMS, itemsSet );
+        List<PropertySet> propertySetList = Lists.newArrayList();
+        propertySetList.add( createItemSet( "content-id1", false ) );
+        propertySetList.add( createItemSet( "content-id2", true ) );
+        publishRequestSet.addSets( PublishRequestPropertyNames.ITEMS, propertySetList.toArray( new PropertySet[propertySetList.size()] ) );
         issueAsData.addSet( PUBLISH_REQUEST, publishRequestSet );
 
         return Node.create().
@@ -82,5 +83,13 @@ public class IssueNodeTranslatorTest
             parentPath( ContentConstants.CONTENT_ROOT_PATH ).
             data( propertyTree ).
             build();
+    }
+
+    private PropertySet createItemSet( final String id, final boolean recursive )
+    {
+        final PropertySet itemSet = new PropertySet();
+        itemSet.addString( PublishRequestPropertyNames.ITEM_ID, id );
+        itemSet.addBoolean( PublishRequestPropertyNames.ITEM_RECURSIVE, recursive );
+        return itemSet;
     }
 }
