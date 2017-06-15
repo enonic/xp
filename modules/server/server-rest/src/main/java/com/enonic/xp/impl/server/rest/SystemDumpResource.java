@@ -21,6 +21,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.dump.DumpParams;
 import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.dump.LoadParams;
+import com.enonic.xp.export.ExportNodesParams;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.ImportNodesParams;
 import com.enonic.xp.export.NodeExportResult;
@@ -75,9 +76,10 @@ public final class SystemDumpResource
 
         for ( Repository repository : repositoryService.list() )
         {
-
-            results.add( exportRepoBranch( repository.getId().toString(), request.getName() ) );
-
+            for ( Branch branch : repository.getBranches() )
+            {
+                results.add( exportRepoBranch( repository.getId().toString(), branch.getValue(), request.getName() ) );
+            }
         }
 
         return NodeExportResultsJson.from( results );
@@ -106,18 +108,30 @@ public final class SystemDumpResource
     {
         final List<NodeImportResult> results = Lists.newArrayList();
 
-        //importSystemRepo( request, results );
-
+        results.add( importRepoBranch( SystemConstants.SYSTEM_REPO.getId().toString(), SystemConstants.BRANCH_SYSTEM.toString(),
+                                       request.getName() ) );
         this.repositoryService.invalidateAll();
 
         for ( Repository repository : repositoryService.list() )
         {
-            initializeRepo( repository );
-            this.dumpService.loadSystemDump( LoadParams.create().
-                dumpName( request.getName() ).
-                repositoryId( repository.getId() ).
-                build() );
-            // importRepoBranches( request.getName(), results, repository );
+            if ( !this.nodeRepositoryService.isInitialized( repository.getId() ) )
+            {
+                final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
+                    repositoryId( repository.getId() ).
+                    repositorySettings( repository.getSettings() ).
+                    build();
+                this.nodeRepositoryService.create( createRepositoryParams );
+            }
+
+            for ( Branch branch : repository.getBranches() )
+            {
+                if ( SystemConstants.SYSTEM_REPO.equals( repository ) && SystemConstants.BRANCH_SYSTEM.equals( branch ) )
+                {
+                    continue;
+                }
+
+                results.add( importRepoBranch( repository.getId().toString(), branch.getValue(), request.getName() ) );
+            }
         }
 
         return NodeImportResultsJson.from( results );
@@ -129,19 +143,10 @@ public final class SystemDumpResource
     {
         final List<NodeImportResult> results = Lists.newArrayList();
 
-        //importSystemRepo( request, results );
-
-        this.repositoryService.invalidateAll();
-
-        for ( Repository repository : repositoryService.list() )
-        {
-            initializeRepo( repository );
-            this.dumpService.loadSystemDump( LoadParams.create().
-                dumpName( request.getName() ).
-                repositoryId( repository.getId() ).
-                build() );
-            // importRepoBranches( request.getName(), results, repository );
-        }
+        this.dumpService.loadSystemDump( LoadParams.create().
+            dumpName( request.getName() ).
+            includeVersions( true ).
+            build() );
 
         return NodeImportResultsJson.from( results );
     }
@@ -204,14 +209,17 @@ public final class SystemDumpResource
     }
 
 
-    private NodeExportResult exportRepoBranch( final String repoName, final String dumpName )
+    private NodeExportResult exportRepoBranch( final String repoName, final String branch, final String dumpName )
     {
-        this.dumpService.dumpSystem( DumpParams.create().
-            dumpName( dumpName ).
-            build() );
+        final java.nio.file.Path rootDir = getDumpDirectory( dumpName );
+        final java.nio.file.Path exportPath = rootDir.resolve( repoName ).resolve( branch );
 
-        return NodeExportResult.create().
-            build();
+        return getContext( branch, repoName ).callWith( () -> exportService.exportNodes( ExportNodesParams.create().
+            includeNodeIds( true ).
+            rootDirectory( rootDir.toString() ).
+            targetDirectory( exportPath.toString() ).
+            sourceNodePath( NodePath.ROOT ).
+            build() ) );
     }
 
     private Context getContext( final String branchName, final String repositoryName )

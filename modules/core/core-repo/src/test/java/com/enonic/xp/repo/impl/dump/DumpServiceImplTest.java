@@ -164,7 +164,6 @@ public class DumpServiceImplTest
 
             this.dumpService.loadSystemDump( LoadParams.create().
                 dumpName( "testDump" ).
-                repositoryId( currentRepoId ).
                 build() );
 
             assertTrue( this.repositoryService.get( currentRepoId ).getBranches().contains( branch ) );
@@ -316,7 +315,6 @@ public class DumpServiceImplTest
 
         this.dumpService.loadSystemDump( LoadParams.create().
             dumpName( "myTestDump" ).
-            repositoryId( currentRepoId ).
             includeVersions( true ).
             build() );
 

@@ -97,7 +97,7 @@ class RepoDumper
     private void doExecute()
     {
         final Branch branch = ContextAccessor.current().getBranch();
-        LOG.info( "Dumping repository [" + this.repositoryId + "], branch [" + branch );
+        LOG.info( "Dumping repository [" + this.repositoryId + "], branch [" + branch + "]  " );
 
         writer.writeDumpMeta( new DumpMeta( this.xpVersion ) );
         final BranchDumpResult.Builder branchDumpResult = BranchDumpResult.create( branch );
