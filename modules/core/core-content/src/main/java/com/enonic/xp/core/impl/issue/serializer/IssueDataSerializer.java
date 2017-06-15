@@ -15,7 +15,9 @@ import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.issue.PublishRequest;
 import com.enonic.xp.issue.PublishRequestItem;
 import com.enonic.xp.issue.PublishRequestPropertyNames;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.util.Reference;
 
 import static com.enonic.xp.issue.IssuePropertyNames.APPROVERS;
 import static com.enonic.xp.issue.IssuePropertyNames.CREATED_TIME;
@@ -106,7 +108,7 @@ public class IssueDataSerializer
         for ( final PublishRequestItem item : publishRequest.getItems() )
         {
             final PropertySet itemSet = new PropertySet();
-            itemSet.setString( PublishRequestPropertyNames.ITEM_ID, item.getId().toString() );
+            itemSet.setReference( PublishRequestPropertyNames.ITEM_ID, new Reference( NodeId.from( item.getId() ) ) );
             itemSet.setBoolean( PublishRequestPropertyNames.ITEM_RECURSIVE, item.getIncludeChildren() );
             itemSets.add( itemSet );
         }
@@ -142,7 +144,7 @@ public class IssueDataSerializer
         for ( final PropertySet itemSet : itemSets )
         {
             publishRequestBuilder.addItem( PublishRequestItem.create().
-                id( ContentId.from( itemSet.getString( PublishRequestPropertyNames.ITEM_ID ) ) ).
+                id( ContentId.from( itemSet.getReference( PublishRequestPropertyNames.ITEM_ID ) ) ).
                 includeChildren( itemSet.getBoolean( PublishRequestPropertyNames.ITEM_RECURSIVE ) ).
                 build() );
         }
