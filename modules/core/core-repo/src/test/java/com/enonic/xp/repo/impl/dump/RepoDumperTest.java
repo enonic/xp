@@ -54,7 +54,7 @@ public class RepoDumperTest
 
         final List<DumpEntry> dumpEntries = writer.get( CTX_DEFAULT.getRepositoryId(), CTX_DEFAULT.getBranch() );
 
-        assertEquals( 4, dumpEntries.size() );
+        assertEquals( 5, dumpEntries.size() );
     }
 
     @Test
@@ -111,7 +111,7 @@ public class RepoDumperTest
 
         final List<DumpEntry> dumpedEntries = writer.get( CTX_DEFAULT.getRepositoryId(), CTX_DEFAULT.getBranch() );
 
-        assertEquals( 1, dumpedEntries.size() );
+        assertEquals( 2, dumpedEntries.size() );
         final DumpEntry node1Dump = dumpedEntries.get( 0 );
         assertEquals( 2, node1Dump.getVersions().size() );
         //  assertEquals( newName.toString(), node1Dump.getVersions().iterator().next().getNodePath().getName() );
@@ -191,19 +191,6 @@ public class RepoDumperTest
 
         assertNotNull( writer.getDumpMeta() );
         assertEquals( "x-y-z", writer.getDumpMeta().getXpVersion() );
-    }
-
-    @Test
-    public void markedAsCurrent()
-        throws Exception
-    {
-        createNode( NodePath.ROOT, "myNode" );
-        final TestDumpWriter writer = new TestDumpWriter();
-        doDump( writer );
-
-        final List<DumpEntry> result = writer.get( CTX_DEFAULT.getRepositoryId(), CTX_DEFAULT.getBranch() );
-        final DumpEntry entry = result.get( 0 );
-        assertTrue( entry.getVersions().iterator().next().isCurrent() );
     }
 
     private boolean hasVersionMeta( final TestDumpWriter writer, final NodeId nodeId, final NodeVersionId... versionIds )

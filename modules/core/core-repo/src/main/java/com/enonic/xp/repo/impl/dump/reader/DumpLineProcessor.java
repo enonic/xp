@@ -97,7 +97,7 @@ public class DumpLineProcessor
     private void validateOrAddBinary( final NodeVersion nodeVersion )
     {
         nodeVersion.getAttachedBinaries().forEach( binary -> {
-            
+
             final BlobRecord existingRecord = this.blobStore.getRecord( NodeConstants.BINARY_SEGMENT, BlobKey.from( binary.getBlobKey() ) );
 
             if ( existingRecord == null )
@@ -107,7 +107,7 @@ public class DumpLineProcessor
                 if ( dumpBinary == null )
                 {
                     throw new RepoDumpException(
-                        "Cannot load binary, missing in existing blobstore, and not present in dump: " + binary.getBlobKey() );
+                        "Cannot load binary, missing in existing blobStore, and not present in dump: " + binary.getBlobKey() );
                 }
 
                 this.blobStore.addRecord( NodeConstants.BINARY_SEGMENT, dumpBinary );

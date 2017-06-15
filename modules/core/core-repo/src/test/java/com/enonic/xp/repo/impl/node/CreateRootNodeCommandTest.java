@@ -32,5 +32,8 @@ public class CreateRootNodeCommandTest
             execute();
 
         assertNotNull( rootNode );
+        assertNotNull( rootNode.getNodeVersionId() );
+        assertNotNull( rootNode.getChildOrder() );
+        assertNotNull( rootNode.path() );
     }
 }

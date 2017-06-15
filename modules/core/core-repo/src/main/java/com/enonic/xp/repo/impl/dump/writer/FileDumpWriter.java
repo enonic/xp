@@ -147,7 +147,7 @@ public class FileDumpWriter
 
         if ( existingVersion == null )
         {
-            throw new RepoDumpException( "Cannot write node version with key [" + nodeVersionId + "], not found in blobstore" );
+            throw new RepoDumpException( "Cannot write node version with key [" + nodeVersionId + "], not found in blobStore" );
         }
 
         this.dumpBlobStore.addRecord( NodeConstants.NODE_SEGMENT, existingVersion.getBytes() );
@@ -160,7 +160,7 @@ public class FileDumpWriter
 
         if ( binaryRecord == null )
         {
-            throw new RepoDumpException( "Cannot write binary with key [" + blobKey + "], not found in blobstore" );
+            throw new RepoDumpException( "Cannot write binary with key [" + blobKey + "], not found in blobStore" );
         }
 
         this.dumpBlobStore.addRecord( NodeConstants.BINARY_SEGMENT, binaryRecord.getBytes() );

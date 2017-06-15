@@ -12,11 +12,15 @@ import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.BranchDumpResult;
 import com.enonic.xp.dump.DumpParams;
-import com.enonic.xp.dump.DumpResult;
+import com.enonic.xp.dump.DumpResults;
 import com.enonic.xp.dump.LoadParams;
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.Node;
@@ -27,9 +31,18 @@ import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.NodeHelper;
+import com.enonic.xp.repo.impl.repository.SystemRepoInitializer;
+import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.DeleteBranchParams;
 import com.enonic.xp.repository.DeleteRepositoryParams;
+import com.enonic.xp.repository.Repositories;
+import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.SystemConstants;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.Assert.*;
@@ -55,6 +68,22 @@ public class DumpServiceImplTest
         this.dumpService.setBasePath( tempFolder.getRoot().toPath() );
     }
 
+
+    @Test
+    public void repositories_loaded()
+        throws Exception
+    {
+        final RepositoryId repoId = CTX_DEFAULT.getRepositoryId();
+
+        final Repositories repositoriesBefore = NodeHelper.runAsAdmin( () -> this.repositoryService.list() );
+
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( repoId, true ) );
+
+        final Repositories repositoriesAfter = NodeHelper.runAsAdmin( () -> this.repositoryService.list() );
+
+        assertEquals( repositoriesBefore.getIds(), repositoriesAfter.getIds() );
+    }
+
     @Test
     public void dumpAndLoad()
         throws Exception
@@ -63,14 +92,13 @@ public class DumpServiceImplTest
 
         final Node node = createNode( NodePath.ROOT, "myNode" );
 
-        final DumpResult dumpResult = NodeHelper.runAsAdmin( () -> this.dumpService.dump( DumpParams.create().
-            repositoryId( repoId ).
+        final DumpResults dumpResults = NodeHelper.runAsAdmin( () -> this.dumpService.dumpSystem( DumpParams.create().
             dumpName( "testDump" ).
             build() ) );
 
-        final BranchDumpResult result = dumpResult.get( CTX_DEFAULT.getBranch() );
+        final BranchDumpResult result = dumpResults.get( CTX_DEFAULT.getRepositoryId() ).get( CTX_DEFAULT.getBranch() );
         assertNotNull( result );
-        assertEquals( new Long( 1 ), result.getNumberOfNodes() );
+        assertEquals( new Long( 2 ), result.getNumberOfNodes() );
 
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( repoId, true ) );
 
@@ -88,6 +116,37 @@ public class DumpServiceImplTest
     }
 
     @Test
+    public void root_node_gets_correct_properties()
+        throws Exception
+    {
+        final AccessControlList newRepoACL = AccessControlList.create().
+            add( AccessControlEntry.create().
+                principal( RoleKeys.EVERYONE ).
+                allowAll().
+                build() ).
+            build();
+
+        final Repository newRepo = NodeHelper.runAsAdmin( () -> this.repositoryService.createRepository( CreateRepositoryParams.create().
+            repositoryId( RepositoryId.from( "my-new-repo" ) ).
+            rootChildOrder( ChildOrder.manualOrder() ).
+            rootPermissions( newRepoACL ).
+            build() ) );
+
+        final Context newContext = ContextBuilder.from( ContextAccessor.current() ).
+            repositoryId( newRepo.getId() ).
+            branch( RepositoryConstants.MASTER_BRANCH ).
+            build();
+
+        newContext.runWith( () -> createNode( NodePath.ROOT, "myNode" ) );
+
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( newRepo.getId(), true ) );
+
+        final Node loadedRootNode = newContext.callWith( () -> this.nodeService.getRoot() );
+
+        assertEquals( newRepoACL, loadedRootNode.getPermissions() );
+    }
+
+    @Test
     public void branch_created_if_missing()
         throws Exception
     {
@@ -96,15 +155,14 @@ public class DumpServiceImplTest
         final RepositoryId currentRepoId = CTX_DEFAULT.getRepositoryId();
 
         NodeHelper.runAsAdmin( () -> {
-            this.dumpService.dump( DumpParams.create().
-                repositoryId( currentRepoId ).
+            this.dumpService.dumpSystem( DumpParams.create().
                 dumpName( "testDump" ).
                 build() );
 
             this.repositoryService.deleteBranch( DeleteBranchParams.from( branch ) );
             assertFalse( this.repositoryService.get( currentRepoId ).getBranches().contains( branch ) );
 
-            this.dumpService.load( LoadParams.create().
+            this.dumpService.loadSystemDump( LoadParams.create().
                 dumpName( "testDump" ).
                 repositoryId( currentRepoId ).
                 build() );
@@ -130,6 +188,8 @@ public class DumpServiceImplTest
             build() );
 
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( repoId, true ) );
+
+        refresh();
 
         final NodeVersionQueryResult versionsAfterLoad = this.nodeService.findVersions( GetNodeVersionsParams.create().
             nodeId( node.id() ).
@@ -233,25 +293,37 @@ public class DumpServiceImplTest
 
     private void dumpDeleteAndLoad( final RepositoryId currentRepoId, final boolean clearBlobStore )
     {
-        this.dumpService.dump( DumpParams.create().
-            repositoryId( currentRepoId ).
+        this.dumpService.dumpSystem( DumpParams.create().
             dumpName( "myTestDump" ).
             includeVersions( true ).
             includeBinaries( true ).
             build() );
 
-        this.repositoryService.deleteRepository( DeleteRepositoryParams.from( currentRepoId ) );
+        final Repositories repositories = this.repositoryService.list();
+
+        for ( final Repository repository : repositories )
+        {
+            if ( !repository.getId().equals( SystemConstants.SYSTEM_REPO.getId() ))
+            {
+                this.repositoryService.deleteRepository( DeleteRepositoryParams.from( repository.getId() ) );
+            }
+        }
 
         if ( clearBlobStore )
         {
             this.blobStore.clear();
         }
 
-        this.dumpService.load( LoadParams.create().
+        System.out.println( "------------ initialize system-repo -----------" );
+        new SystemRepoInitializer( this.repositoryService, this.storageService ).initialize();
+
+        this.dumpService.loadSystemDump( LoadParams.create().
             dumpName( "myTestDump" ).
             repositoryId( currentRepoId ).
             includeVersions( true ).
             build() );
+
+        refresh();
     }
 
     private Node updateNode( final Node node )

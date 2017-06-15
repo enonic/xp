@@ -29,6 +29,7 @@ import com.enonic.xp.repo.impl.dump.DumpBlobStore;
 import com.enonic.xp.repo.impl.dump.DumpConstants;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryIds;
 
 public class FileDumpReader
     extends AbstractFileProcessor
@@ -43,6 +44,12 @@ public class FileDumpReader
     public FileDumpReader( final Path basePath, final String dumpName )
     {
         this.dumpDirectory = getDumpDirectory( basePath, dumpName );
+
+        if ( !this.dumpDirectory.toFile().exists() )
+        {
+            throw new RepoDumpException( "Dump directory does not exist: [" + this.dumpDirectory + "]" );
+        }
+
         this.dumpBlobStore = new DumpBlobStore( this.dumpDirectory.toFile() );
         this.factory = new NodeVersionFactory();
     }
@@ -53,16 +60,38 @@ public class FileDumpReader
     }
 
     @Override
+    public RepositoryIds getRepositories()
+    {
+        final Path repoRootPath = createRepoRootPath( this.dumpDirectory );
+
+        if ( !repoRootPath.toFile().exists() )
+        {
+            throw new RepoDumpException( String.format( "Folder 'meta' does not exist in dump directory %s", this.dumpDirectory ) );
+        }
+
+        final String[] repoIds = repoRootPath.toFile().list();
+
+        final List<RepositoryId> repositories = Lists.newArrayList();
+
+        for ( final String repoId : repoIds )
+        {
+            repositories.add( RepositoryId.from( repoId ) );
+        }
+
+        return RepositoryIds.from( repositories );
+    }
+
+    @Override
     public Branches getBranches( final RepositoryId repositoryId )
     {
-        final Path repoPath = createRepoDumpPath( this.dumpDirectory, repositoryId );
+        final Path branchRootPath = createBranchRootPath( this.dumpDirectory, repositoryId );
 
-        if ( !repoPath.toFile().exists() )
+        if ( !branchRootPath.toFile().exists() )
         {
             throw new RepoDumpException( String.format( "Repository %s does not exist in dump %s", repositoryId, this.dumpDirectory ) );
         }
 
-        final String[] branchFiles = repoPath.toFile().list();
+        final String[] branchFiles = branchRootPath.toFile().list();
 
         final List<Branch> branches = Lists.newArrayList();
 

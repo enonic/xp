@@ -6,15 +6,21 @@ public class CreateBranchParams
 {
     private final Branch branch;
 
-    private CreateBranchParams( final String branchId )
+    public CreateBranchParams( final Branch branch )
     {
-        this.branch = Branch.from( branchId );
+        this.branch = branch;
     }
 
     public static CreateBranchParams from( final String branchId )
     {
-        return new CreateBranchParams( branchId );
+        return new CreateBranchParams( Branch.from( branchId ) );
     }
+
+    public static CreateBranchParams from( final Branch branch )
+    {
+        return new CreateBranchParams( branch );
+    }
+
 
     public Branch getBranch()
     {

@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.dump.model;
 
 import java.time.Instant;
-import java.util.Collection;
 
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;

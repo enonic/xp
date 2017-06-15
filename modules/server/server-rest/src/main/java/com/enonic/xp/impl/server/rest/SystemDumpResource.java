@@ -89,14 +89,14 @@ public final class SystemDumpResource
     {
         final List<NodeImportResult> results = Lists.newArrayList();
 
-        importSystemRepo( request, results );
+        //importSystemRepo( request, results );
 
         this.repositoryService.invalidateAll();
 
         for ( Repository repository : repositoryService.list() )
         {
             initializeRepo( repository );
-            this.dumpService.load( LoadParams.create().
+            this.dumpService.loadSystemDump( LoadParams.create().
                 dumpName( request.getName() ).
                 repositoryId( repository.getId() ).
                 build() );
@@ -166,9 +166,8 @@ public final class SystemDumpResource
 
     private NodeExportResult exportRepoBranch( final String repoName, final String dumpName )
     {
-        this.dumpService.dump( DumpParams.create().
+        this.dumpService.dumpSystem( DumpParams.create().
             dumpName( dumpName ).
-            repositoryId( RepositoryId.from( repoName ) ).
             build() );
 
         return NodeExportResult.create().

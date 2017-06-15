@@ -44,8 +44,8 @@ public class MetaJson
     {
         return Meta.create().
             nodePath( NodePath.create( json.nodePath ).build() ).
-            timestamp( Instant.parse( json.getTimestamp() ) ).
-            version( NodeVersionId.from( json.getVersion() ) ).
+            timestamp( json.getTimestamp() != null ? Instant.parse( json.getTimestamp() ) : null ).
+            version( json.getVersion() != null ? NodeVersionId.from( json.getVersion() ) : null ).
             nodeState( NodeState.from( json.getNodeState() ) ).
             current( json.isCurrent() ).
             build();
@@ -55,8 +55,8 @@ public class MetaJson
     {
         return MetaJson.create().
             nodePath( meta.getNodePath().toString() ).
-            timestamp( meta.getTimestamp().toString() ).
-            version( meta.getVersion().toString() ).
+            timestamp( meta.getTimestamp() != null ? meta.getTimestamp().toString() : null ).
+            version( meta.getVersion() != null ? meta.getVersion().toString() : null ).
             current( meta.isCurrent() ).
             build();
     }

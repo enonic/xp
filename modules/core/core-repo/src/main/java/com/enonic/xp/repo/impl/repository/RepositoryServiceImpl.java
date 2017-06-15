@@ -83,7 +83,9 @@ public class RepositoryServiceImpl
     {
         //If the repository entry already exists, throws an exception
         final RepositoryId repositoryId = params.getRepositoryId();
-        if ( previousRepository != null || repositoryEntryService.getRepositoryEntry( repositoryId ) != null )
+        final boolean repoAlreadyInitialized = this.nodeRepositoryService.isInitialized( repositoryId );
+
+        if ( previousRepository != null && repoAlreadyInitialized )
         {
             throw new RepositoryAlreadyExistException( repositoryId );
         }
@@ -151,9 +153,7 @@ public class RepositoryServiceImpl
     {
         requireAdminRole();
         final ImmutableList.Builder<Repository> repositories = ImmutableList.builder();
-        repositoryEntryService.
-            findRepositoryEntryIds().
-            stream().
+        repositoryEntryService.findRepositoryEntryIds().stream().
             map( repositoryId -> repositoryEntryService.getRepositoryEntry( repositoryId ) ).
             filter( Objects::nonNull ).
             forEach( repositories::add );
@@ -164,7 +164,8 @@ public class RepositoryServiceImpl
     public boolean isInitialized( final RepositoryId repositoryId )
     {
         requireAdminRole();
-        return this.get( repositoryId ) != null;
+        final Repository repository = this.get( repositoryId );
+        return repository != null && this.nodeRepositoryService.isInitialized( repositoryId );
     }
 
     @Override
@@ -275,6 +276,7 @@ public class RepositoryServiceImpl
             repositoryId( params.getRepositoryId() ).
             branch( RepositoryConstants.MASTER_BRANCH ).
             build();
+
         final InternalContext rootNodeInternalContext = InternalContext.create( rootNodeContext ).build();
 
         final Node rootNode = this.nodeStorageService.store( Node.createRoot().

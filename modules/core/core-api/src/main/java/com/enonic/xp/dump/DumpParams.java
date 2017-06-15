@@ -1,12 +1,8 @@
 package com.enonic.xp.dump;
 
-import com.enonic.xp.repository.RepositoryId;
-
 public class DumpParams
 {
     private final String dumpName;
-
-    private final RepositoryId repositoryId;
 
     private final boolean includeVersions;
 
@@ -15,7 +11,6 @@ public class DumpParams
     private DumpParams( final Builder builder )
     {
         dumpName = builder.dumpName;
-        repositoryId = builder.repositoryId;
         includeVersions = builder.includeVersions;
         includeBinaries = builder.includeBinaries;
     }
@@ -23,11 +18,6 @@ public class DumpParams
     public String getDumpName()
     {
         return dumpName;
-    }
-
-    public RepositoryId getRepositoryId()
-    {
-        return repositoryId;
     }
 
     public static Builder create()
@@ -49,8 +39,6 @@ public class DumpParams
     {
         private String dumpName;
 
-        private RepositoryId repositoryId;
-
         private boolean includeVersions = false;
 
         private boolean includeBinaries = true;
@@ -62,12 +50,6 @@ public class DumpParams
         public Builder dumpName( final String val )
         {
             dumpName = val;
-            return this;
-        }
-
-        public Builder repositoryId( final RepositoryId val )
-        {
-            repositoryId = val;
             return this;
         }
 

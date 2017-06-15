@@ -14,7 +14,6 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repo.impl.dump.reader.DumpLineProcessor;
 import com.enonic.xp.repo.impl.dump.reader.DumpReader;
 import com.enonic.xp.repository.CreateBranchParams;
-import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
@@ -71,36 +70,24 @@ class RepoLoader
 
     private void doExecute()
     {
-        final Branch branch = ContextAccessor.current().getBranch();
+        final Branch currentBranch = ContextAccessor.current().getBranch();
+        verifyOrCreateBranch( currentBranch );
 
-        getOrCreateRepositoryAndBranch( branch );
-
-        this.reader.load( repositoryId, branch, this.processor );
+        this.reader.load( repositoryId, currentBranch, this.processor );
     }
 
-    private void getOrCreateRepositoryAndBranch( final Branch branch )
+    private void verifyOrCreateBranch( final Branch branch )
     {
-        Repository currentRepo = this.repositoryService.get( this.repositoryId );
+        final Repository currentRepo = this.repositoryService.get( this.repositoryId );
 
-        if ( currentRepo == null )
+        if ( currentRepo.getBranches().contains( branch ) )
         {
-            currentRepo = createRepository( this.repositoryId );
+            return;
         }
 
-        if ( !currentRepo.getBranches().contains( branch ) )
-        {
-            LOG.info( String.format( "Creating branch [%s] from dump", branch ) );
-            this.repositoryService.createBranch( CreateBranchParams.from( branch.toString() ) );
-        }
+        this.repositoryService.createBranch( CreateBranchParams.from( branch ) );
     }
 
-    private Repository createRepository( final RepositoryId repositoryId )
-    {
-        // TODO: Root node properties (childOrder, indexConfig etc)
-        return this.repositoryService.createRepository( CreateRepositoryParams.create().
-            repositoryId( repositoryId ).
-            build() );
-    }
 
     public static Builder create()
     {

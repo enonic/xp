@@ -35,6 +35,8 @@ class RepoDumper
 {
     private static final int DEFAULT_BATCH_SIZE = 5000;
 
+    private final Logger LOG = LoggerFactory.getLogger( RepoDumper.class );
+
     private final RepositoryId repositoryId;
 
     private final boolean includeVersions;
@@ -46,8 +48,6 @@ class RepoDumper
     private final RepositoryService repositoryService;
 
     private final DumpWriter writer;
-
-    private final Logger LOG = LoggerFactory.getLogger( RepoDumper.class );
 
     private final DumpResult.Builder dumpResult;
 
@@ -104,7 +104,8 @@ class RepoDumper
         {
             writer.open( this.repositoryId, ContextAccessor.current().getBranch() );
             final Node rootNode = this.nodeService.getRoot();
-            dumpNode( rootNode.id(), branchDumpResult );
+            doDumpNode( rootNode.id(), branchDumpResult );
+            dumpChildren( rootNode.id(), branchDumpResult );
         }
         catch ( Exception e )
         {
@@ -118,7 +119,7 @@ class RepoDumper
         this.dumpResult.add( branchDumpResult.build() );
     }
 
-    private void dumpNode( final NodeId nodeId, final BranchDumpResult.Builder dumpResult )
+    private void dumpChildren( final NodeId nodeId, final BranchDumpResult.Builder dumpResult )
     {
         final BatchedGetChildrenExecutor executor = BatchedGetChildrenExecutor.create().
             nodeService( this.nodeService ).
@@ -183,7 +184,7 @@ class RepoDumper
         {
             if ( metaData.getNodeVersionId().equals( currentVersion ) )
             {
-                // Skip current, since this is dumped anyway
+                // Skip current, since this will be dumped anyway
                 continue;
             }
 

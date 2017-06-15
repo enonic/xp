@@ -73,7 +73,7 @@ public abstract class AbstractNodeTest
         User.create().key( PrincipalKey.ofUser( UserStoreKey.system(), "test-user" ) ).login( "test-user" ).build();
 
     private static final AuthenticationInfo TEST_DEFAULT_USER_AUTHINFO = AuthenticationInfo.create().
-        principals( RoleKeys.AUTHENTICATED ).
+        principals( RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE ).
         user( TEST_DEFAULT_USER ).
         build();
 
