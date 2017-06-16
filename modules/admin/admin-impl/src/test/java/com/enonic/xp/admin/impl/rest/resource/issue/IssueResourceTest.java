@@ -16,6 +16,7 @@ import org.mockito.Mockito;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import com.enonic.xp.admin.impl.json.issue.IssueStatsJson;
 import com.enonic.xp.admin.impl.json.issue.PublishRequestItemJson;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishRequestJson;
@@ -39,6 +40,8 @@ import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
+
+import static org.junit.Assert.*;
 
 public class IssueResourceTest
     extends AdminResourceTestSupport
@@ -78,6 +81,20 @@ public class IssueResourceTest
         Mockito.verify( issueService, Mockito.times( 1 ) ).create( params.getCreateIssueParams() );
         Mockito.verify( issueNotificationsSender, Mockito.times( 1 ) ).notifyIssueCreated( Mockito.any( Issue.class ),
                                                                                            Mockito.anyString() );
+    }
+
+    @Test
+    public void test_getStats()
+        throws Exception
+    {
+        createLocalSession();
+        final FindIssuesResult findIssuesResult = FindIssuesResult.create().hits( 2 ).totalHits( 4 ).build();
+        final IssueResource issueResource = getResourceInstance();
+        Mockito.when( issueService.findIssues( Mockito.any( IssueQuery.class ) ) ).thenReturn( findIssuesResult );
+        final IssueStatsJson result = issueResource.getStats();
+
+        assertNotNull( result );
+        Mockito.verify( issueService, Mockito.times( 6 ) ).findIssues( Mockito.any( IssueQuery.class ) );
     }
 
     @Test

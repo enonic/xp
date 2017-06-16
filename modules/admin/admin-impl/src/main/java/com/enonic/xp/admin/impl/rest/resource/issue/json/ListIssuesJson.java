@@ -3,21 +3,14 @@ package com.enonic.xp.admin.impl.rest.resource.issue.json;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.enonic.xp.issue.FindIssuesParams;
 import com.enonic.xp.issue.IssueStatus;
 
 public final class ListIssuesJson
 {
-    private final IssueStatus status;
-
-    private final boolean assignedToMe;
-
-    private final boolean createdByMe;
+    private final FindIssuesParams findIssuesParams;
 
     private final boolean resolveAssignees;
-
-    private final Integer fromParam;
-
-    private final Integer sizeParam;
 
     @JsonCreator
     public ListIssuesJson( @JsonProperty("type") final String type, @JsonProperty("assignedToMe") final boolean assignedToMe,
@@ -25,12 +18,11 @@ public final class ListIssuesJson
                            @JsonProperty("resolveAssignees") final boolean resolveAssignees, @JsonProperty("from") final Integer fromParam,
                            @JsonProperty("size") final Integer sizeParam )
     {
-        this.status = parseIssueStatus( type );
-        this.assignedToMe = assignedToMe;
-        this.createdByMe = createdByMe;
+        this.findIssuesParams =
+            FindIssuesParams.create().status( parseIssueStatus( type ) ).assignedToMe( assignedToMe ).createdByMe( createdByMe ).from(
+                fromParam ).size( sizeParam ).build();
+
         this.resolveAssignees = resolveAssignees;
-        this.fromParam = fromParam;
-        this.sizeParam = sizeParam;
     }
 
     private IssueStatus parseIssueStatus( final String type )
@@ -53,33 +45,13 @@ public final class ListIssuesJson
         return null;
     }
 
-    public IssueStatus getStatus()
+    public FindIssuesParams getFindIssuesParams()
     {
-        return status;
-    }
-
-    public boolean isAssignedToMe()
-    {
-        return assignedToMe;
-    }
-
-    public boolean isCreatedByMe()
-    {
-        return createdByMe;
+        return findIssuesParams;
     }
 
     public boolean isResolveAssignees()
     {
         return resolveAssignees;
-    }
-
-    public Integer getFromParam()
-    {
-        return fromParam;
-    }
-
-    public Integer getSizeParam()
-    {
-        return sizeParam;
     }
 }

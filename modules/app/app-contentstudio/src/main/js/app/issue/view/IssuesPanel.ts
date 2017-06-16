@@ -1,8 +1,6 @@
 import Panel = api.ui.panel.Panel;
 import {IssueList} from './IssueList';
 import {IssueStatus} from '../IssueStatus';
-import {ListIssuesRequest} from '../resource/ListIssuesRequest';
-import {IssueResponse} from '../resource/IssueResponse';
 import Checkbox = api.ui.Checkbox;
 import DivEl = api.dom.DivEl;
 
@@ -43,9 +41,7 @@ export class IssuesPanel extends Panel {
     }
 
     public reload(): wemQ.Promise<void> {
-        return this.updateFilters().then(() => {
-            return this.issuesList.reload();
-        });
+        return this.issuesList.reload();
     }
 
     public resetFilters() {
@@ -79,43 +75,22 @@ export class IssuesPanel extends Panel {
         return myIssuesCheckbox;
     }
 
-    private updateFilters(): wemQ.Promise<any> {
-        let promises: wemQ.Promise<any>[] = [
-            this.updateAssignedToMeCheckbox(),
-            this.updateMyIssuesCheckbox()
-        ];
-
-        return wemQ.all(promises);
+    public updateAssignedToMeCheckbox(total: number) {
+        this.assignedToMeCheckbox.toggleClass('disabled', total === 0);
+        this.assignedToMeCheckbox.setLabel(this.makeFilterLabel('Assigned to Me', total));
+        if (total === 0) {
+            this.assignedToMeCheckbox.setChecked(false, true);
+            this.issuesList.setLoadAssignedToMe(false);
+        }
     }
 
-    private updateAssignedToMeCheckbox(): wemQ.Promise<void> {
-        return new ListIssuesRequest().setIssueStatus(this.issueStatus).setAssignedToMe(true).setSize(0).sendAndParse().then(
-            (response: IssueResponse) => {
-                const total: number = response.getMetadata().getTotalHits();
-                this.assignedToMeCheckbox.toggleClass('disabled', total === 0);
-                this.assignedToMeCheckbox.setLabel(this.makeFilterLabel('Assigned to Me', total));
-                if (total === 0) {
-                    this.assignedToMeCheckbox.setChecked(false, true);
-                    this.issuesList.setLoadAssignedToMe(false);
-                }
-            }).catch((reason: any) => {
-            api.DefaultErrorHandler.handle(reason);
-        });
-    }
-
-    private updateMyIssuesCheckbox(): wemQ.Promise<void> {
-        return new ListIssuesRequest().setIssueStatus(this.issueStatus).setCreatedByMe(true).setSize(0).sendAndParse().then(
-            (response: IssueResponse) => {
-                const total: number = response.getMetadata().getTotalHits();
-                this.myIssuesCheckbox.toggleClass('disabled', total === 0);
-                this.myIssuesCheckbox.setLabel(this.makeFilterLabel('My Issues', total));
-                if (total === 0) {
-                    this.myIssuesCheckbox.setChecked(false, true);
-                    this.issuesList.setLoadMyIssues(false);
-                }
-            }).catch((reason: any) => {
-            api.DefaultErrorHandler.handle(reason);
-        });
+    public updateMyIssuesCheckbox(total: number) {
+        this.myIssuesCheckbox.toggleClass('disabled', total === 0);
+        this.myIssuesCheckbox.setLabel(this.makeFilterLabel('My Issues', total));
+        if (total === 0) {
+            this.myIssuesCheckbox.setChecked(false, true);
+            this.issuesList.setLoadMyIssues(false);
+        }
     }
 
     private makeFilterLabel(label: string, count: number): string {
