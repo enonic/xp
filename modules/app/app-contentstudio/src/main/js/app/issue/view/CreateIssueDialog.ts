@@ -5,6 +5,7 @@ import {IssueDetailsDialog} from './IssueDetailsDialog';
 import LabelEl = api.dom.LabelEl;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import DialogButton = api.ui.dialog.DialogButton;
+import AEl = api.dom.AEl;
 
 export class CreateIssueDialog extends IssueDialog {
 
@@ -14,23 +15,15 @@ export class CreateIssueDialog extends IssueDialog {
 
     private cancelButton: DialogButton;
 
+    private backButton: AEl;
+
     protected constructor() {
         super('New Issue');
 
         this.getEl().addClass('create-issue-dialog');
 
-        this.cancelButton = this.addCancelButtonToBottom('Back');
-
-        let onItemsChanged = (items) => {
-            (<CreateIssueAction>this.actionButton.getAction()).updateLabel(items.length);
-        };
-
-        this.getItemList().onItemsAdded(onItemsChanged);
-        this.getItemList().onItemsRemoved(onItemsChanged);
-
-        this.itemsLabel = new LabelEl('Items', this.getItemList());
-        this.itemsLabel.insertBeforeEl(this.getItemList());
-
+        this.initElements();
+        this.initElementsListeners();
     }
 
     static get(): CreateIssueDialog {
@@ -38,6 +31,29 @@ export class CreateIssueDialog extends IssueDialog {
             CreateIssueDialog.INSTANCE = new CreateIssueDialog();
         }
         return CreateIssueDialog.INSTANCE;
+    }
+
+    private initElements() {
+        this.cancelButton = this.addCancelButtonToBottom();
+        this.itemsLabel = new LabelEl('Items', this.getItemList());
+        this.backButton = this.createBackButton();
+    }
+
+    private initElementsListeners() {
+        let onItemsChanged = (items) => {
+            (<CreateIssueAction>this.actionButton.getAction()).updateLabel(items.length);
+        };
+
+        this.getItemList().onItemsAdded(onItemsChanged);
+        this.getItemList().onItemsRemoved(onItemsChanged);
+    }
+
+    doRender(): Q.Promise<boolean> {
+        return super.doRender().then((rendered: boolean) => {
+            this.itemsLabel.insertBeforeEl(this.getItemList());
+            this.prependChildToHeader(this.backButton);
+            return rendered;
+        });
     }
 
     public setItems(items: ContentSummaryAndCompareStatus[]): CreateIssueDialog {
@@ -93,21 +109,31 @@ export class CreateIssueDialog extends IssueDialog {
         this.actionButton = this.addAction(createAction, true);
     }
 
-    public enableCancelButton() {
-        this.addClass('cancel-enabled');
-        this.cancelButton.setLabel('Cancel');
+    public enableBackButton() {
+        this.backButton.show();
+        this.cancelButton.hide();
     }
 
-    private disableCancelButton() {
-        if (this.hasClass('cancel-enabled')) {
-            this.removeClass('cancel-enabled');
-            this.cancelButton.setLabel('Back');
-        }
+    private disableBackButton() {
+        this.backButton.hide();
+        this.cancelButton.show();
+    }
+
+    private createBackButton(): AEl {
+        const backButton: AEl = new AEl('back-button').setTitle('Back');
+
+        backButton.hide();
+
+        backButton.onClicked(() => {
+            this.close();
+        });
+
+        return backButton;
     }
 
     close() {
         super.close();
-        this.disableCancelButton();
+        this.disableBackButton();
     }
 }
 

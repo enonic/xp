@@ -262,7 +262,6 @@ export class IssueListDialog extends ModalDialog {
             this.addClass('masked');
             let createIssueDialog = CreateIssueDialog.get();
 
-            createIssueDialog.enableCancelButton();
             createIssueDialog.reset();
             createIssueDialog.unlockPublishItems();
             createIssueDialog.open(this);

@@ -334,8 +334,8 @@ export class IssueDetailsDialog extends SchedulableDialog {
     }
 
     open() {
+        IssueListDialog.get().addClass('masked');
         if (!IssueListDialog.get().isVisible()) {
-            IssueListDialog.get().addClass('masked');
             IssueListDialog.get().open();
         }
 

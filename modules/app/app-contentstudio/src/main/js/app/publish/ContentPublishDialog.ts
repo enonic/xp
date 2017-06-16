@@ -251,6 +251,7 @@ export class ContentPublishDialog extends SchedulableDialog {
     private showCreateIssueDialog() {
         let createIssueDialog = CreateIssueDialog.get();
 
+        createIssueDialog.enableBackButton();
         createIssueDialog.setItems(this.getItemList().getItems()/*idsToPublish, this.getItemList().getExcludeChildrenIds()*/);
         createIssueDialog.setExcludedIds(this.getExcludedIds());
         createIssueDialog.setExcludeChildrenIds(this.getItemList().getExcludeChildrenIds());

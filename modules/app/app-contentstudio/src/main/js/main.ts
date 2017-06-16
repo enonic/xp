@@ -240,7 +240,6 @@ function startApplication() {
 
     const createIssueDialog = CreateIssueDialog.get();
     CreateIssuePromptEvent.on((event) => {
-        createIssueDialog.enableCancelButton();
         createIssueDialog.unlockPublishItems();
         createIssueDialog
             .setItems(event.getModels())
