@@ -2,30 +2,36 @@ package com.enonic.xp.admin.impl.json.issue;
 
 public class IssueStatsJson
 {
-    private final long assignedToMe;
+    private final long openAssignedToMe;
 
-    private final long createdByMe;
+    private final long openCreatedByMe;
 
     private final long open;
 
     private final long closed;
 
+    private final long closedAssignedToMe;
+
+    private final long closedCreatedByMe;
+
     private IssueStatsJson( final Builder builder )
     {
-        this.assignedToMe = builder.assignedToMe;
-        this.createdByMe = builder.createdByMe;
+        this.openAssignedToMe = builder.openAssignedToMe;
+        this.openCreatedByMe = builder.openCreatedByMe;
         this.open = builder.open;
         this.closed = builder.closed;
+        this.closedAssignedToMe = builder.closedAssignedToMe;
+        this.closedCreatedByMe = builder.closedCreatedByMe;
     }
 
-    public long getAssignedToMe()
+    public long getOpenAssignedToMe()
     {
-        return assignedToMe;
+        return openAssignedToMe;
     }
 
-    public long getCreatedByMe()
+    public long getOpenCreatedByMe()
     {
-        return createdByMe;
+        return openCreatedByMe;
     }
 
     public long getOpen()
@@ -38,6 +44,16 @@ public class IssueStatsJson
         return closed;
     }
 
+    public long getClosedAssignedToMe()
+    {
+        return closedAssignedToMe;
+    }
+
+    public long getClosedCreatedByMe()
+    {
+        return closedCreatedByMe;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -45,27 +61,31 @@ public class IssueStatsJson
 
     public static class Builder
     {
-        private long assignedToMe = 0;
+        private long openAssignedToMe = 0;
 
-        private long createdByMe = 0;
+        private long openCreatedByMe = 0;
 
         private long open = 0;
 
         private long closed = 0;
 
+        private long closedAssignedToMe = 0;
+
+        private long closedCreatedByMe = 0;
+
         private Builder()
         {
         }
 
-        public Builder assignedToMe( final long value )
+        public Builder openAssignedToMe( final long value )
         {
-            this.assignedToMe = value;
+            this.openAssignedToMe = value;
             return this;
         }
 
-        public Builder createdByMe( final long value )
+        public Builder openCreatedByMe( final long value )
         {
-            this.createdByMe = value;
+            this.openCreatedByMe = value;
             return this;
         }
 
@@ -78,6 +98,18 @@ public class IssueStatsJson
         public Builder closed( final long value )
         {
             this.closed = value;
+            return this;
+        }
+
+        public Builder closedAssignedToMe( final long value )
+        {
+            this.closedAssignedToMe = value;
+            return this;
+        }
+
+        public Builder closedCreatedByMe( final long value )
+        {
+            this.closedCreatedByMe = value;
             return this;
         }
 

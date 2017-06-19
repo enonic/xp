@@ -22,6 +22,7 @@ import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.admin.impl.json.issue.IssueJson;
 import com.enonic.xp.admin.impl.json.issue.IssueListJson;
+import com.enonic.xp.admin.impl.json.issue.IssueStatsJson;
 import com.enonic.xp.admin.impl.json.issue.IssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueJson;
@@ -29,12 +30,14 @@ import com.enonic.xp.admin.impl.rest.resource.issue.json.GetIssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.ListIssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueJson;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.issue.FindIssuesParams;
 import com.enonic.xp.issue.FindIssuesResult;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.IssueListMetaData;
 import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.IssueService;
+import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
@@ -105,11 +108,18 @@ public final class IssueResource
         return new IssueJson( issue );
     }
 
+    @GET
+    @Path("stats")
+    public IssueStatsJson getStats()
+    {
+        return countIssues();
+    }
+
     @POST
     @Path("list")
     public IssueListJson listIssues( final ListIssuesJson params )
     {
-        final IssueQuery issueQuery = createIssueQuery( params );
+        final IssueQuery issueQuery = createIssueQuery( params.getFindIssuesParams() );
         final FindIssuesResult result = this.issueService.findIssues( issueQuery );
         final IssueListMetaData metaData = IssueListMetaData.create().hits( result.getHits() ).totalHits( result.getTotalHits() ).build();
 
@@ -123,13 +133,13 @@ public final class IssueResource
         }
     }
 
-    private IssueQuery createIssueQuery( final ListIssuesJson params )
+    private IssueQuery createIssueQuery( final FindIssuesParams params )
     {
         final IssueQuery.Builder builder = IssueQuery.create();
 
         builder.status( params.getStatus() );
-        builder.from( params.getFromParam() );
-        builder.size( params.getSizeParam() );
+        builder.from( params.getFrom() );
+        builder.size( params.getSize() );
 
         if ( params.isCreatedByMe() )
         {
@@ -145,6 +155,31 @@ public final class IssueResource
 
         return builder.build();
     }
+
+    private IssueStatsJson countIssues()
+    {
+        final long open =
+            this.issueService.findIssues( createIssueQuery( FindIssuesParams.create().status( IssueStatus.Open ).build() ) ).getTotalHits();
+
+        final long openAssignedToMe = this.issueService.findIssues(
+            createIssueQuery( FindIssuesParams.create().status( IssueStatus.Open ).assignedToMe( true ).build() ) ).getTotalHits();
+
+        final long openCreatedByMe = this.issueService.findIssues(
+            createIssueQuery( FindIssuesParams.create().status( IssueStatus.Open ).createdByMe( true ).build() ) ).getTotalHits();
+
+        final long closed = this.issueService.findIssues(
+            createIssueQuery( FindIssuesParams.create().status( IssueStatus.Closed ).build() ) ).getTotalHits();
+
+        final long closedAssignedToMe = this.issueService.findIssues(
+            createIssueQuery( FindIssuesParams.create().status( IssueStatus.Closed ).assignedToMe( true ).build() ) ).getTotalHits();
+
+        final long closedCreatedByMe = this.issueService.findIssues(
+            createIssueQuery( FindIssuesParams.create().status( IssueStatus.Closed ).createdByMe( true ).build() ) ).getTotalHits();
+
+        return IssueStatsJson.create().open( open ).openAssignedToMe( openAssignedToMe ).openCreatedByMe( openCreatedByMe ).closed(
+            closed ).closedAssignedToMe( closedAssignedToMe ).closedCreatedByMe( closedCreatedByMe ).build();
+    }
+
 
     private Map<Issue, List<User>> fetchAssigneesForIssues( final List<Issue> issues )
     {

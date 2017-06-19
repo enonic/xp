@@ -8,8 +8,8 @@ import {Issue} from '../Issue';
 import {CreateIssueDialog} from './CreateIssueDialog';
 import {IssueServerEventsHandler} from '../event/IssueServerEventsHandler';
 import {IssueStatus} from '../IssueStatus';
-import {ListIssuesRequest} from '../resource/ListIssuesRequest';
-import {IssueResponse} from '../resource/IssueResponse';
+import {GetIssueStatsRequest} from '../resource/GetIssueStatsRequest';
+import {IssueStatsJson} from '../json/IssueStatsJson';
 import TabBarItem = api.ui.tab.TabBarItem;
 import SpanEl = api.dom.SpanEl;
 import Element = api.dom.Element;
@@ -126,7 +126,7 @@ export class IssueListDialog extends ModalDialog {
 
     private doReload(updatedIssues?: Issue[]) {
         this.loadData().then(() => {
-            this.updateTabLabels();
+            this.updateTabAndFiltersLabels();
             this.openTab(this.getTabToOpen(updatedIssues));
             if (this.isNotificationToBeShown(updatedIssues)) {
                 api.notify.NotifyManager.get().showFeedback('The list of issues was updated');
@@ -220,15 +220,14 @@ export class IssueListDialog extends ModalDialog {
         });
     }
 
-    private updateTabLabels() {
-        this.countIssuesByStatus(IssueStatus.OPEN).then((total: number) => {
-            this.updateTabLabel(0, 'Open', total);
-        }).catch((reason: any) => {
-            api.DefaultErrorHandler.handle(reason);
-        });
-
-        this.countIssuesByStatus(IssueStatus.CLOSED).then((total: number) => {
-            this.updateTabLabel(1, 'Closed', total);
+    private updateTabAndFiltersLabels() {
+        new GetIssueStatsRequest().sendAndParse().then((stats: IssueStatsJson) => {
+            this.updateTabLabel(0, 'Open', stats.open);
+            this.updateTabLabel(1, 'Closed', stats.closed);
+            this.openIssuesPanel.updateMyIssuesCheckbox(stats.openCreatedByMe);
+            this.openIssuesPanel.updateAssignedToMeCheckbox(stats.openAssignedToMe);
+            this.closedIssuesPanel.updateMyIssuesCheckbox(stats.closedCreatedByMe);
+            this.closedIssuesPanel.updateAssignedToMeCheckbox(stats.closedAssignedToMe);
         }).catch((reason: any) => {
             api.DefaultErrorHandler.handle(reason);
         });
@@ -236,13 +235,6 @@ export class IssueListDialog extends ModalDialog {
 
     private updateTabLabel(tabIndex: number, label: string, issuesFound: number) {
         this.dockedPanel.getNavigator().getNavigationItem(tabIndex).setLabel(issuesFound > 0 ? (label + ' (' + issuesFound + ')') : label);
-    }
-
-    private countIssuesByStatus(issueStatus: IssueStatus): wemQ.Promise<number> {
-        return new ListIssuesRequest().setIssueStatus(issueStatus).setSize(0).sendAndParse().then(
-            (response: IssueResponse) => {
-                return response.getMetadata().getTotalHits();
-            });
     }
 
     private getFirstNonEmptyTab(): IssuesPanel {
