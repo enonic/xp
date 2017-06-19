@@ -167,6 +167,7 @@
     }
 
     &:after {
+      content: attr(data-regex-status);
       position: absolute;
       top: 7px;
       right: 7px;
@@ -175,13 +176,13 @@
 
   &.valid-regexp {
     &:after {
-      content: 'Valid';
+      color: @admin-level-1;
     }
   }
 
   &.invalid-regexp {
     &:after {
-      content: 'Invalid value';
+      color: @admin-level-3;
     }
   }
 

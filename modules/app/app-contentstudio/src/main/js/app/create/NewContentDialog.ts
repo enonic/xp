@@ -299,7 +299,7 @@ export class NewContentDialogHeader extends api.ui.dialog.ModalDialogHeader {
         super(title);
 
         this.pathEl = new api.dom.PEl('path');
-        this.pathEl.getEl().setAttribute('data-desc', `${i18n('dialog.newContent.pathDescription')}:`)
+        this.pathEl.getEl().setAttribute('data-desc', `${i18n('dialog.newContent.pathDescription')}:`);
         this.pathEl.setHtml(path);
         this.appendChild(this.pathEl);
     }

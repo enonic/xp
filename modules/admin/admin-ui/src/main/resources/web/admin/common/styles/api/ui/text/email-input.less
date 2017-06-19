@@ -1,7 +1,3 @@
-@notavailable-color: #ca3319;
-@checking-color: #bd8d05;
-@available-color: #008424;
-
 .email-input {
   position: relative;
 
@@ -23,8 +19,8 @@
 
   &.checking {
     .form-input {
-      .input-border(@checking-color);
-      .input-glow(@checking-color);
+      .input-border(@admin-level-2);
+      .input-glow(@admin-level-2);
     }
 
     &:after {
@@ -34,12 +30,12 @@
 
   &.notavailable {
     .form-input {
-      .input-border(@notavailable-color);
-      .input-glow(@notavailable-color);
+      .input-border(@admin-level-3);
+      .input-glow(@admin-level-3);
     }
 
     &:after {
-      color: (@notavailable-color);
+      color: @admin-level-3;
       content: 'Not available';
     }
   }
@@ -47,12 +43,12 @@
   &.available {
     &:not(.just-shown) {
       .form-input {
-        .input-border(@available-color);
-        .input-glow(@available-color);
+        .input-border(@admin-level-1);
+        .input-glow(@admin-level-1);
       }
 
       &:after {
-        color: (@available-color);
+        color: @admin-level-1;
         content: 'Available';
       }
     }
@@ -60,8 +56,8 @@
 
   &.error {
     .form-input {
-      .input-border(@notavailable-color);
-      .input-glow(@notavailable-color);
+      .input-border(@admin-level-3);
+      .input-glow(@admin-level-3);
     }
 
     &:after {
