@@ -8,11 +8,17 @@ public class DumpParams
 
     private final boolean includeBinaries;
 
+    private final Integer maxAge;
+
+    private final Integer maxVersions;
+
     private DumpParams( final Builder builder )
     {
         dumpName = builder.dumpName;
         includeVersions = builder.includeVersions;
         includeBinaries = builder.includeBinaries;
+        maxAge = builder.maxAge;
+        maxVersions = builder.maxVersions;
     }
 
     public String getDumpName()
@@ -35,13 +41,27 @@ public class DumpParams
         return includeBinaries;
     }
 
+    public Integer getMaxAge()
+    {
+        return maxAge;
+    }
+
+    public Integer getMaxVersions()
+    {
+        return maxVersions;
+    }
+
     public static final class Builder
     {
         private String dumpName;
 
-        private boolean includeVersions = false;
+        private boolean includeVersions = true;
 
         private boolean includeBinaries = true;
+
+        private Integer maxAge;
+
+        private Integer maxVersions;
 
         private Builder()
         {
@@ -62,6 +82,18 @@ public class DumpParams
         public Builder includeBinaries( final boolean val )
         {
             includeBinaries = val;
+            return this;
+        }
+
+        public Builder maxAge( final Integer val )
+        {
+            maxAge = val;
+            return this;
+        }
+
+        public Builder maxVersions( final Integer val )
+        {
+            maxVersions = val;
             return this;
         }
 

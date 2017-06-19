@@ -10,7 +10,7 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.QueryBuild
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.StoreQueryFieldNameResolver;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
-import com.enonic.xp.repo.impl.version.search.NodeVersionQuery;
+import com.enonic.xp.node.NodeVersionQuery;
 
 class NodeVersionQueryTranslator
     implements QueryTypeTranslator

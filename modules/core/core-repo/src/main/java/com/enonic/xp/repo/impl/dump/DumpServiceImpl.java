@@ -50,6 +50,7 @@ public class DumpServiceImpl
 
     private final static Logger LOG = LoggerFactory.getLogger( DumpServiceImpl.class );
 
+    @SuppressWarnings("unused")
     @Activate
     public void activate( final ComponentContext context )
     {
@@ -89,6 +90,8 @@ public class DumpServiceImpl
                 repositoryService( this.repositoryService ).
                 repositoryId( repository.getId() ).
                 xpVersion( this.xpVersion ).
+                maxVersions( params.getMaxVersions() ).
+                maxAge( params.getMaxAge() ).
                 build().
                 execute() );
         }

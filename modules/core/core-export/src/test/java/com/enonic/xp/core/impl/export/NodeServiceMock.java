@@ -45,6 +45,7 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
@@ -100,6 +101,12 @@ class NodeServiceMock
 
     @Override
     public LoadNodeResult loadNode( final LoadNodeParams params )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public NodeVersionQueryResult findVersions( final NodeVersionQuery nodeVersionQuery )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
@@ -273,7 +280,7 @@ class NodeServiceMock
 
         return resultBuilder.hits( nodes.getSize() ).
             nodeIds( NodeIds.from( nodes.getSet().stream().
-                map( ( node ) -> node.id() ).
+                map( Node::id ).
                 collect( Collectors.toList() ) ) ).
             totalHits( nodes.getSize() ).
             build();

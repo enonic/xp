@@ -14,8 +14,12 @@ import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.query.expr.FieldOrderExpr;
+import com.enonic.xp.query.expr.OrderExpr;
+import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -34,8 +38,7 @@ import static org.junit.Assert.*;
 public class ApplyNodePermissionsCommandTest
     extends AbstractNodeTest
 {
-
-    public static final UserStoreKey USK = UserStoreKey.system();
+    private static final UserStoreKey USK = UserStoreKey.system();
 
     @Before
     public void setUp()
@@ -156,8 +159,15 @@ public class ApplyNodePermissionsCommandTest
 
     private void assertVersions( final Node node )
     {
-        final NodeVersionQueryResult versions = GetNodeVersionsCommand.create().
+        final NodeVersionQuery query = NodeVersionQuery.create().
+            size( 100 ).
+            from( 0 ).
             nodeId( node.id() ).
+            addOrderBy( FieldOrderExpr.create( VersionIndexPath.TIMESTAMP, OrderExpr.Direction.DESC ) ).
+            build();
+
+        final NodeVersionQueryResult versions = FindNodeVersionsCommand.create().
+            query( query ).
             searchService( this.searchService ).
             build().
             execute();

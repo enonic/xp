@@ -42,6 +42,7 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
@@ -57,11 +58,14 @@ import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.SetNodeStateResult;
 import com.enonic.xp.node.SyncWorkResolverParams;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.query.expr.FieldOrderExpr;
+import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
+import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
@@ -441,10 +445,28 @@ public class NodeServiceImpl
     public NodeVersionQueryResult findVersions( final GetNodeVersionsParams params )
     {
         verifyContext();
-        return GetNodeVersionsCommand.create().
-            nodeId( params.getNodeId() ).
-            from( params.getFrom() ).
+
+        final NodeVersionQuery query = NodeVersionQuery.create().
             size( params.getSize() ).
+            from( params.getFrom() ).
+            nodeId( params.getNodeId() ).
+            addOrderBy( FieldOrderExpr.create( VersionIndexPath.TIMESTAMP, OrderExpr.Direction.DESC ) ).
+            build();
+
+        return FindNodeVersionsCommand.create().
+            query( query ).
+            searchService( this.nodeSearchService ).
+            build().
+            execute();
+    }
+
+    @Override
+    public NodeVersionQueryResult findVersions( final NodeVersionQuery query )
+    {
+        verifyContext();
+
+        return FindNodeVersionsCommand.create().
+            query( query ).
             searchService( this.nodeSearchService ).
             build().
             execute();

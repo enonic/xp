@@ -18,8 +18,6 @@ import com.enonic.xp.toolbox.repo.ReprocessContentCommand;
 import com.enonic.xp.toolbox.repo.RestoreCommand;
 import com.enonic.xp.toolbox.repo.SetReplicasCommand;
 import com.enonic.xp.toolbox.repo.SnapshotCommand;
-import com.enonic.xp.toolbox.repo.SystemDumpCommand;
-import com.enonic.xp.toolbox.repo.SystemLoadCommand;
 import com.enonic.xp.toolbox.upgrade.UpgradeCommand;
 
 public final class Main
@@ -31,9 +29,7 @@ public final class Main
         builder.withDefaultCommand( Help.class );
         builder.withCommand( Help.class );
         builder.withCommand( DumpCommand.class );
-        builder.withCommand( SystemDumpCommand.class );
         builder.withCommand( LoadCommand.class );
-        builder.withCommand( SystemLoadCommand.class );
         builder.withCommand( ExportCommand.class );
         builder.withCommand( ImportCommand.class );
         builder.withCommand( ReindexCommand.class );

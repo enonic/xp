@@ -11,18 +11,17 @@ import com.enonic.xp.toolbox.util.JsonHelper;
 public final class ExportCommand
     extends RepoCommand
 {
-    public static final String EXPORT_REST_PATH = "/api/repo/export";
+    private static final String EXPORT_REST_PATH = "/api/repo/export";
 
+    @SuppressWarnings("WeakerAccess")
     @Option(name = "-t", description = "Target name to save export.", required = true)
     public String exportName;
 
+    @SuppressWarnings("WeakerAccess")
     @Option(name = "-s", description = "Path of data to export. Format: <repo-name>:<branch-name>:<node-path>.", required = true)
     public String sourceRepoPath;
 
-    @Option(name = "--versions", description = "Include all versions of a node in export.", required = false)
-    public boolean includeVersions = false;
-
-
+    @SuppressWarnings("WeakerAccess")
     @Option(name = "--skipids", description = "Flag that skips ids in data when exporting.", required = false)
     public boolean skipids = false;
 
@@ -41,7 +40,6 @@ public final class ExportCommand
         json.put( "sourceRepoPath", this.sourceRepoPath );
         json.put( "exportName", this.exportName );
         json.put( "exportWithIds", !this.skipids );
-        json.put( "includeVersions", this.includeVersions );
         return json;
     }
 }

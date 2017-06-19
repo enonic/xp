@@ -38,7 +38,6 @@ public class ExportCommandTest
         json.put( "sourceRepoPath", "<draft>:<master>:<root/node1>" );
         json.put( "exportName", "myexport" );
         json.put( "exportWithIds", true );
-        json.put( "includeVersions", false );
         return json;
     }
 

@@ -21,7 +21,6 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.dump.DumpParams;
 import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.dump.LoadParams;
-import com.enonic.xp.export.ExportNodesParams;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.ImportNodesParams;
 import com.enonic.xp.export.NodeExportResult;
@@ -69,25 +68,6 @@ public final class SystemDumpResource
 
     @POST
     @Path("dump")
-    public NodeExportResultsJson dump( final SystemDumpRequestJson request )
-        throws Exception
-    {
-        final List<NodeExportResult> results = Lists.newArrayList();
-
-        for ( Repository repository : repositoryService.list() )
-        {
-            for ( Branch branch : repository.getBranches() )
-            {
-                results.add( exportRepoBranch( repository.getId().toString(), branch.getValue(), request.getName() ) );
-            }
-        }
-
-        return NodeExportResultsJson.from( results );
-    }
-
-
-    @POST
-    @Path("systemDump")
     public NodeExportResultsJson systemDump( final SystemDumpRequestJson request )
         throws Exception
     {
@@ -96,7 +76,9 @@ public final class SystemDumpResource
         this.dumpService.dumpSystem( DumpParams.create().
             dumpName( request.getName() ).
             includeBinaries( true ).
-            includeVersions( true ).
+            includeVersions( request.isIncludeVersions() ).
+            maxAge( request.getMaxAge() ).
+            maxVersions( request.getMaxVersions() ).
             build() );
 
         return NodeExportResultsJson.from( results );
@@ -106,40 +88,41 @@ public final class SystemDumpResource
     @Path("load")
     public NodeImportResultsJson load( final SystemLoadRequestJson request )
     {
+        if ( isExport( request ) )
+        {
+            return doLoadFromExport( request );
+        }
+
+        return doLoadFromSystemDump( request );
+    }
+
+    private boolean isExport( final SystemLoadRequestJson request )
+    {
+        final java.nio.file.Path rootDir = getDumpRoot( request.getName() );
+
+        final java.nio.file.Path exportProperties = Paths.get( rootDir.toString(), "export.properties" );
+
+        return exportProperties.toFile().exists();
+    }
+
+    private NodeImportResultsJson doLoadFromExport( final SystemLoadRequestJson request )
+    {
         final List<NodeImportResult> results = Lists.newArrayList();
 
-        results.add( importRepoBranch( SystemConstants.SYSTEM_REPO.getId().toString(), SystemConstants.BRANCH_SYSTEM.toString(),
-                                       request.getName() ) );
+        importSystemRepo( request, results );
+
         this.repositoryService.invalidateAll();
 
         for ( Repository repository : repositoryService.list() )
         {
-            if ( !this.nodeRepositoryService.isInitialized( repository.getId() ) )
-            {
-                final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
-                    repositoryId( repository.getId() ).
-                    repositorySettings( repository.getSettings() ).
-                    build();
-                this.nodeRepositoryService.create( createRepositoryParams );
-            }
-
-            for ( Branch branch : repository.getBranches() )
-            {
-                if ( SystemConstants.SYSTEM_REPO.equals( repository ) && SystemConstants.BRANCH_SYSTEM.equals( branch ) )
-                {
-                    continue;
-                }
-
-                results.add( importRepoBranch( repository.getId().toString(), branch.getValue(), request.getName() ) );
-            }
+            initializeRepo( repository );
+            importRepoBranches( request.getName(), results, repository );
         }
 
         return NodeImportResultsJson.from( results );
     }
 
-    @POST
-    @Path("systemLoad")
-    public NodeImportResultsJson systemLoad( final SystemLoadRequestJson request )
+    private NodeImportResultsJson doLoadFromSystemDump( final SystemLoadRequestJson request )
     {
         final List<NodeImportResult> results = Lists.newArrayList();
 
@@ -159,7 +142,6 @@ public final class SystemDumpResource
             {
                 continue;
             }
-
             results.add( importRepoBranch( repository.getId().toString(), branch.getValue(), dumpName ) );
         }
     }
@@ -191,12 +173,7 @@ public final class SystemDumpResource
 
     private NodeImportResult importRepoBranch( final String repoName, final String branch, final String dumpName )
     {
-        final java.nio.file.Path rootDir = getDumpDirectory( dumpName );
-
-        if ( !rootDir.toFile().exists() )
-        {
-            throw new IllegalArgumentException( "No dump with name '" + dumpName + "' found in " + getDataHome() );
-        }
+        final java.nio.file.Path rootDir = getDumpRoot( dumpName );
 
         final java.nio.file.Path importPath = rootDir.resolve( repoName ).resolve( branch );
 
@@ -208,18 +185,15 @@ public final class SystemDumpResource
             build() ) );
     }
 
-
-    private NodeExportResult exportRepoBranch( final String repoName, final String branch, final String dumpName )
+    private java.nio.file.Path getDumpRoot( final String dumpName )
     {
         final java.nio.file.Path rootDir = getDumpDirectory( dumpName );
-        final java.nio.file.Path exportPath = rootDir.resolve( repoName ).resolve( branch );
 
-        return getContext( branch, repoName ).callWith( () -> exportService.exportNodes( ExportNodesParams.create().
-            includeNodeIds( true ).
-            rootDirectory( rootDir.toString() ).
-            targetDirectory( exportPath.toString() ).
-            sourceNodePath( NodePath.ROOT ).
-            build() ) );
+        if ( !rootDir.toFile().exists() )
+        {
+            throw new IllegalArgumentException( "No dump with name '" + dumpName + "' found in " + getDataHome() );
+        }
+        return rootDir;
     }
 
     private Context getContext( final String branchName, final String repositoryName )
@@ -230,25 +204,28 @@ public final class SystemDumpResource
             build();
     }
 
-    @SuppressWarnings("UnusedDeclaration")
+    @SuppressWarnings("WeakerAccess")
     @Reference
     public void setExportService( final ExportService exportService )
     {
         this.exportService = exportService;
     }
 
+    @SuppressWarnings("WeakerAccess")
     @Reference
     public void setRepositoryService( final RepositoryService repositoryService )
     {
         this.repositoryService = repositoryService;
     }
 
+    @SuppressWarnings("WeakerAccess")
     @Reference
     public void setNodeRepositoryService( final NodeRepositoryService nodeRepositoryService )
     {
         this.nodeRepositoryService = nodeRepositoryService;
     }
 
+    @SuppressWarnings("WeakerAccess")
     @Reference
     public void setDumpService( final DumpService dumpService )
     {

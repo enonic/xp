@@ -17,6 +17,7 @@ import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -426,8 +427,14 @@ public class MoveNodeCommandTest
 
     private NodeVersionQueryResult getVersions( final Node node )
     {
-        return GetNodeVersionsCommand.create().
+        final NodeVersionQuery query = NodeVersionQuery.create().
+            size( 100 ).
+            from( 0 ).
             nodeId( node.id() ).
+            build();
+
+        return FindNodeVersionsCommand.create().
+            query( query ).
             searchService( this.searchService ).
             build().
             execute();

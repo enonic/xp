@@ -3,46 +3,27 @@ package com.enonic.xp.repo.impl.node;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersionQueryResult;
-import com.enonic.xp.query.expr.FieldOrderExpr;
-import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repo.impl.SingleRepoStorageSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
-import com.enonic.xp.repo.impl.version.VersionIndexPath;
-import com.enonic.xp.repo.impl.version.search.NodeVersionQuery;
+import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.repo.impl.version.search.NodeVersionQueryResultFactory;
 
-public class GetNodeVersionsCommand
+public class FindNodeVersionsCommand
 {
-    private final static int DEFAULT_SIZE = 10;
-
-    private final NodeId nodeId;
-
-    private final int from;
-
-    private final int size;
-
     private final NodeSearchService nodeSearchService;
 
-    private GetNodeVersionsCommand( Builder builder )
+    private final NodeVersionQuery query;
+
+    private FindNodeVersionsCommand( Builder builder )
     {
-        nodeId = builder.nodeId;
-        from = builder.from;
-        size = builder.size;
-        nodeSearchService = builder.nodeSearchService;
+        this.query = builder.query;
+        this.nodeSearchService = builder.nodeSearchService;
     }
 
     public NodeVersionQueryResult execute()
     {
-        final NodeVersionQuery query = NodeVersionQuery.create().
-            nodeId( this.nodeId ).
-            from( this.from ).
-            size( this.size ).
-            addOrderBy( FieldOrderExpr.create( VersionIndexPath.TIMESTAMP, OrderExpr.Direction.DESC ) ).
-            build();
-
         final SearchResult result = this.nodeSearchService.query( query, SingleRepoStorageSource.create(
             ContextAccessor.current().getRepositoryId(), SingleRepoStorageSource.Type.VERSION ) );
 
@@ -61,11 +42,7 @@ public class GetNodeVersionsCommand
 
     public static final class Builder
     {
-        private NodeId nodeId;
-
-        private int from = 0;
-
-        private int size = DEFAULT_SIZE;
+        private NodeVersionQuery query;
 
         private NodeSearchService nodeSearchService;
 
@@ -73,21 +50,9 @@ public class GetNodeVersionsCommand
         {
         }
 
-        public Builder nodeId( NodeId nodeId )
+        public Builder query( final NodeVersionQuery nodeVersionQuery )
         {
-            this.nodeId = nodeId;
-            return this;
-        }
-
-        public Builder from( int from )
-        {
-            this.from = from;
-            return this;
-        }
-
-        public Builder size( int size )
-        {
-            this.size = size;
+            this.query = nodeVersionQuery;
             return this;
         }
 
@@ -100,13 +65,13 @@ public class GetNodeVersionsCommand
         private void validate()
         {
             Preconditions.checkNotNull( this.nodeSearchService, "SearchService must be set" );
-            Preconditions.checkNotNull( this.nodeId, "NodeId must be set" );
+            Preconditions.checkNotNull( this.query, "Query must be set" );
         }
 
-        public GetNodeVersionsCommand build()
+        public FindNodeVersionsCommand build()
         {
             this.validate();
-            return new GetNodeVersionsCommand( this );
+            return new FindNodeVersionsCommand( this );
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.dump;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -10,11 +12,12 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.Value;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.dump.BranchDumpResult;
 import com.enonic.xp.dump.DumpResult;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.AttachedBinary;
-import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -22,7 +25,9 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
+import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.repo.impl.dump.model.DumpEntry;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
@@ -42,6 +47,10 @@ class RepoDumper
     private final boolean includeVersions;
 
     private final boolean includeBinaries;
+
+    private final Integer maxAge;
+
+    private final Integer maxVersions;
 
     private final NodeService nodeService;
 
@@ -63,6 +72,8 @@ class RepoDumper
         this.writer = builder.writer;
         this.xpVersion = builder.xpVersion;
         this.dumpResult = DumpResult.create( this.repositoryId );
+        this.maxAge = builder.maxAge;
+        this.maxVersions = builder.maxVersions;
     }
 
     public DumpResult execute()
@@ -175,11 +186,7 @@ class RepoDumper
 
     private void addVersions( final NodeId nodeId, final DumpEntry.Builder builder, final NodeVersionId currentVersion )
     {
-        final NodeVersionQueryResult result = this.nodeService.findVersions( GetNodeVersionsParams.create().
-            size( -1 ).
-            from( 0 ).
-            nodeId( nodeId ).
-            build() );
+        final NodeVersionQueryResult result = getVersions( nodeId );
 
         for ( final NodeVersionMetadata metaData : result.getNodeVersionsMetadata() )
         {
@@ -198,6 +205,23 @@ class RepoDumper
                 builder.addVersion( MetaFactory.create( metaData, false ) );
             }
         }
+    }
+
+    private NodeVersionQueryResult getVersions( final NodeId nodeId )
+    {
+        final NodeVersionQuery.Builder queryBuilder = NodeVersionQuery.create().
+            nodeId( nodeId ).
+            size( this.maxVersions != null ? this.maxVersions : -1 );
+
+        if ( this.maxAge != null )
+        {
+            final Value ageValue = ValueFactory.newDateTime( Instant.now().minus( Duration.ofDays( this.maxAge ) ) );
+            queryBuilder.addQueryFilter( RangeFilter.create().
+                from( ageValue ).
+                build() );
+        }
+
+        return this.nodeService.findVersions( queryBuilder.build() );
     }
 
     private void addVersionWithBinaries( final DumpEntry.Builder builder, final NodeVersionMetadata metaData )
@@ -228,6 +252,10 @@ class RepoDumper
         private DumpWriter writer;
 
         private String xpVersion;
+
+        private Integer maxAge;
+
+        private Integer maxVersions;
 
         private Builder()
         {
@@ -272,6 +300,18 @@ class RepoDumper
         public Builder xpVersion( final String xpVersion )
         {
             this.xpVersion = xpVersion;
+            return this;
+        }
+
+        public Builder maxAge( final Integer maxAge )
+        {
+            this.maxAge = maxAge;
+            return this;
+        }
+
+        public Builder maxVersions( final Integer maxVersions )
+        {
+            this.maxVersions = maxVersions;
             return this;
         }
 

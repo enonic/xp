@@ -73,11 +73,9 @@ public class DumpServiceImplTest
     public void repositories_loaded()
         throws Exception
     {
-        final RepositoryId repoId = CTX_DEFAULT.getRepositoryId();
-
         final Repositories repositoriesBefore = NodeHelper.runAsAdmin( () -> this.repositoryService.list() );
 
-        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( repoId, true ) );
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
 
         final Repositories repositoriesAfter = NodeHelper.runAsAdmin( () -> this.repositoryService.list() );
 
@@ -88,8 +86,6 @@ public class DumpServiceImplTest
     public void dumpAndLoad()
         throws Exception
     {
-        final RepositoryId repoId = CTX_DEFAULT.getRepositoryId();
-
         final Node node = createNode( NodePath.ROOT, "myNode" );
 
         final DumpResults dumpResults = NodeHelper.runAsAdmin( () -> this.dumpService.dumpSystem( DumpParams.create().
@@ -100,7 +96,7 @@ public class DumpServiceImplTest
         assertNotNull( result );
         assertEquals( new Long( 2 ), result.getNumberOfNodes() );
 
-        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( repoId, true ) );
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
 
         final Node currentStoredNode = this.nodeService.getById( node.id() );
         assertEquals( node.getTimestamp(), currentStoredNode.getTimestamp() );
@@ -139,7 +135,7 @@ public class DumpServiceImplTest
 
         newContext.runWith( () -> createNode( NodePath.ROOT, "myNode" ) );
 
-        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( newRepo.getId(), true ) );
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
 
         final Node loadedRootNode = newContext.callWith( () -> this.nodeService.getRoot() );
 
@@ -175,8 +171,6 @@ public class DumpServiceImplTest
     public void versions()
         throws Exception
     {
-        final RepositoryId repoId = CTX_DEFAULT.getRepositoryId();
-
         final Node node = createNode( NodePath.ROOT, "myNode" );
         final Node updatedNode = updateNode( node );
         final Node currentNode = updateNode( updatedNode );
@@ -186,7 +180,7 @@ public class DumpServiceImplTest
             nodeId( node.id() ).
             build() );
 
-        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( repoId, true ) );
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
 
         refresh();
 
@@ -211,8 +205,6 @@ public class DumpServiceImplTest
     public void binaries()
         throws Exception
     {
-        final RepositoryId repoId = CTX_DEFAULT.getRepositoryId();
-
         final PropertyTree data = new PropertyTree();
         final BinaryReference binaryRef = BinaryReference.from( "binaryRef" );
         data.addBinaryReference( "myBinary", binaryRef );
@@ -224,18 +216,40 @@ public class DumpServiceImplTest
             attachBinary( binaryRef, ByteSource.wrap( "this is binary data".getBytes() ) ).
             build() );
 
-        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( repoId, true ) );
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
 
         final Node currentStoredNode = this.nodeService.getById( node.id() );
         assertEquals( node.getAttachedBinaries(), currentStoredNode.getAttachedBinaries() );
     }
 
     @Test
+    public void limit_number_of_versions()
+        throws Exception
+    {
+        final Node node = createNode( NodePath.ROOT, "myNode" );
+
+        for ( int i = 0; i < 10; i++ )
+        {
+            updateNode( node );
+        }
+
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true, DumpParams.create().
+            dumpName( "myTestDump" ).
+            maxVersions( 5 ).
+            build() ) );
+
+        final NodeVersionQueryResult versionsAfterLoad = this.nodeService.findVersions( GetNodeVersionsParams.create().
+            nodeId( node.id() ).
+            size( -1 ).
+            build() );
+
+        assertEquals( 6, versionsAfterLoad.getHits() );
+    }
+
+    @Test
     public void binaries_in_versions()
         throws Exception
     {
-        final RepositoryId repoId = CTX_DEFAULT.getRepositoryId();
-
         final PropertyTree data = new PropertyTree();
         final BinaryReference binaryRef = BinaryReference.from( "binaryRef" );
         data.addBinaryReference( "myBinary", binaryRef );
@@ -255,7 +269,7 @@ public class DumpServiceImplTest
             attachBinary( binaryRef2, ByteSource.wrap( "anotherBinary".getBytes() ) ).
             build() );
 
-        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( repoId, true ) );
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
 
         final NodeVersionQueryResult versions = this.nodeService.findVersions( GetNodeVersionsParams.create().
             nodeId( node.id() ).
@@ -264,6 +278,7 @@ public class DumpServiceImplTest
 
         verifyBinaries( node, updatedNode, versions );
     }
+
 
     private void verifyBinaries( final Node node, final Node updatedNode, final NodeVersionQueryResult versions )
     {
@@ -288,13 +303,20 @@ public class DumpServiceImplTest
         }
     }
 
-    private void dumpDeleteAndLoad( final RepositoryId currentRepoId, final boolean clearBlobStore )
+    private void dumpDeleteAndLoad( final boolean clearBlobStore )
     {
-        this.dumpService.dumpSystem( DumpParams.create().
+        final DumpParams params = DumpParams.create().
             dumpName( "myTestDump" ).
             includeVersions( true ).
             includeBinaries( true ).
-            build() );
+            build();
+
+        dumpDeleteAndLoad( clearBlobStore, params );
+    }
+
+    private void dumpDeleteAndLoad( final boolean clearBlobStore, final DumpParams params )
+    {
+        this.dumpService.dumpSystem( params );
 
         final Repositories repositories = this.repositoryService.list();
 

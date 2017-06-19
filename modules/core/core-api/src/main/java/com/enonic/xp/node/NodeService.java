@@ -50,6 +50,8 @@ public interface NodeService
 
     NodeVersionQueryResult findVersions( GetNodeVersionsParams params );
 
+    NodeVersionQueryResult findVersions( NodeVersionQuery nodeVersionQuery );
+
     GetActiveNodeVersionsResult getActiveVersions( GetActiveNodeVersionsParams params );
 
     NodeVersionId setActiveVersion( NodeId nodeId, NodeVersionId nodeVersionId );
