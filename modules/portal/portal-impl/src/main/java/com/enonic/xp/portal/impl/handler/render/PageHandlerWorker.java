@@ -1,10 +1,15 @@
 package com.enonic.xp.portal.impl.handler.render;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Multimap;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.Property;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
@@ -124,7 +129,9 @@ final class PageHandlerWorker
         }
 
         final PageUrlParams pageUrlParams = new PageUrlParams().id( target.toString() ).portalRequest( this.request );
-        pageUrlParams.getParams().putAll( this.request.getParams() );
+        final Multimap<String, String> params = pageUrlParams.getParams();
+        params.putAll( this.request.getParams() );
+        params.putAll( getShortcutParameters( content ) );
 
         final String targetUrl = this.portalUrlService.pageUrl( pageUrlParams );
 
@@ -143,5 +150,29 @@ final class PageHandlerWorker
         }
 
         return pageDescriptor;
+    }
+
+    private Multimap<String, String> getShortcutParameters( final Content content )
+    {
+        final Multimap<String, String> params = HashMultimap.create();
+        final ImmutableList<Property> paramsProperties = content.getData().getProperties( "parameters" );
+
+        if ( paramsProperties != null )
+        {
+            for ( Property paramsProperty : paramsProperties )
+            {
+                final PropertySet paramsSet = paramsProperty.getSet();
+                if ( paramsSet != null )
+                {
+                    final String name = paramsSet.getString( "name" );
+                    final String value = paramsSet.getString( "value" );
+                    if ( name != null && value != null )
+                    {
+                        params.put( name, value );
+                    }
+                }
+            }
+        }
+        return params;
     }
 }
