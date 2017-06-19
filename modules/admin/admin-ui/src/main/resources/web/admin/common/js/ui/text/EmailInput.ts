@@ -3,6 +3,7 @@ module api.ui.text {
     import InputEl = api.dom.InputEl;
     import StringHelper = api.util.StringHelper;
     import CheckEmailAvailabilityRequest = api.security.CheckEmailAvailabilityRequest;
+    import i18n = api.util.i18n;
 
     export class EmailInput extends api.dom.CompositeFormInputEl {
 
@@ -90,6 +91,9 @@ module api.ui.text {
             let status;
             let isValid = this.input.isValid();
             this.toggleClass('invalid', !isValid);
+            if (!isValid) {
+                this.getEl().setAttribute('data-status', i18n('field.emailInput.invalid'));
+            }
 
             if (!StringHelper.isEmpty(email) && isValid) {
                 status = 'checking';
@@ -117,6 +121,7 @@ module api.ui.text {
             if (!StringHelper.isEmpty(status)) {
                 this.status = status;
                 this.addClass(this.status);
+                this.getEl().setAttribute('data-status', i18n(`field.emailInput.${status}`));
             }
         }
 
