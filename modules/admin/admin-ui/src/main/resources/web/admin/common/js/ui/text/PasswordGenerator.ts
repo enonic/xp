@@ -3,6 +3,7 @@ module api.ui.text {
     import StringHelper = api.util.StringHelper;
     import NumberHelper = api.util.NumberHelper;
     import ArrayHelper = api.util.ArrayHelper;
+    import i18n = api.util.i18n;
 
     enum CharType {
         SPECIAL,
@@ -31,10 +32,10 @@ module api.ui.text {
         constructor() {
             super('div', 'password-generator');
 
-            let inputWrapper = new api.dom.DivEl('input-wrapper');
+            const inputWrapper = new api.dom.DivEl('input-wrapper');
             this.appendChild(inputWrapper);
 
-            let strengthMeter = new api.dom.DivEl('strength-meter');
+            const strengthMeter = new api.dom.DivEl('strength-meter');
             inputWrapper.appendChild(strengthMeter);
 
             this.input = new PasswordInput();
@@ -46,10 +47,12 @@ module api.ui.text {
             inputWrapper.appendChild(this.input);
 
             this.showLink = new api.dom.AEl('show-link');
+            this.showLink.getEl().setAttribute('data-i18n', i18n('field.pswGenerator.show'));
             this.initFocusEvents(this.showLink);
             this.showLink.onClicked((event: MouseEvent) => {
-                let unlocked = this.hasClass('unlocked');
+                const unlocked = this.hasClass('unlocked');
                 this.toggleClass('unlocked', !unlocked);
+                this.showLink.getEl().setAttribute('data-i18n', i18n(`field.pswGenerator.${unlocked ? 'hide' : 'show'}`));
                 this.input.setType(unlocked ? 'password' : 'text');
                 event.stopPropagation();
                 event.preventDefault();
@@ -58,7 +61,7 @@ module api.ui.text {
             this.appendChild(this.showLink);
 
             this.generateLink = new api.dom.AEl();
-            this.generateLink.setHtml('Generate');
+            this.generateLink.setHtml(i18n('field.pswGenerator.generate'));
             this.initFocusEvents(this.generateLink);
             this.generateLink.onClicked((event: MouseEvent) => {
                 this.generatePassword();
@@ -115,6 +118,7 @@ module api.ui.text {
             }
             if (this.complexity) {
                 this.addClass(this.complexity);
+                this.getEl().setAttribute('data-i18n', i18n(`field.pswGenerator.complexity.${this.complexity}`));
             }
         }
 
