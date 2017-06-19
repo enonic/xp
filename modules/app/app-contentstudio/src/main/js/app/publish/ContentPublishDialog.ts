@@ -27,6 +27,7 @@ import Action = api.ui.Action;
 import ActionButton = api.ui.button.ActionButton;
 import User = api.security.User;
 import DropdownButtonRow = api.ui.dialog.DropdownButtonRow;
+import i18n = api.util.i18n;
 
 /**
  * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
@@ -50,6 +51,7 @@ export class ContentPublishDialog extends SchedulableDialog {
                 dialogSubName: 'Resolving items...',
                 dependantsName: 'Other items that will be published',
                 isProcessingClass: 'is-publishing',
+                processingLabel: `${i18n('field.progress.publishing')}...`,
                 processHandler: () => {
                     new ContentPublishPromptEvent([]).fire();
                 },

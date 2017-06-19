@@ -40,6 +40,7 @@ import DropdownButtonRow = api.ui.dialog.DropdownButtonRow;
 import ObjectHelper = api.ObjectHelper;
 import User = api.security.User;
 import ModalDialog = api.ui.dialog.ModalDialog;
+import i18n = api.util.i18n;
 
 export class IssueDetailsDialog extends SchedulableDialog {
 
@@ -59,6 +60,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
                 dialogSubName: 'Resolving items...',
                 dependantsName: '',
                 isProcessingClass: 'is-publishing',
+                processingLabel: `${i18n('field.progress.publishing')}...`,
                 buttonRow: new IssueDetailsDialogButtonRow(),
                 processHandler: () => {
                     new ContentPublishPromptEvent([]).fire();

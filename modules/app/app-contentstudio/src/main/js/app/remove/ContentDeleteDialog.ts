@@ -9,6 +9,7 @@ import CompareStatus = api.content.CompareStatus;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import DialogButton = api.ui.dialog.DialogButton;
 import ListBox = api.ui.selector.list.ListBox;
+import i18n = api.util.i18n;
 
 export class ContentDeleteDialog extends ProgressBarDialog {
 
@@ -28,6 +29,7 @@ export class ContentDeleteDialog extends ProgressBarDialog {
                 dialogSubName: 'Delete selected items and their children',
                 dependantsName: 'Other items that will be deleted',
                 isProcessingClass: 'is-deleting',
+                processingLabel:  `${i18n('field.progress.deleting')}...`,
                 processHandler: () => {
                     new ContentDeletePromptEvent([]).fire();
                 }
