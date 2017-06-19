@@ -16,7 +16,8 @@ import PageMode = api.content.page.PageMode;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
 
-export class PageTemplateWidgetItemView extends WidgetItemView {
+export class PageTemplateWidgetItemView
+    extends WidgetItemView {
 
     private content: ContentSummary;
 
@@ -170,16 +171,16 @@ class PageTemplateViewer {
 
     private getPageModeString(): string {
         switch (this.pageMode) {
-            case PageMode.AUTOMATIC:
-                return 'Automatic';
-            case PageMode.FORCED_CONTROLLER:
-                return 'Custom';
-            case PageMode.FORCED_TEMPLATE:
-                return 'Page Template';
-            case PageMode.FRAGMENT:
-                return 'Fragment';
-            default:
-                return 'Page Template is not used';
+        case PageMode.AUTOMATIC:
+            return 'Automatic';
+        case PageMode.FORCED_CONTROLLER:
+            return 'Custom';
+        case PageMode.FORCED_TEMPLATE:
+            return 'Page Template';
+        case PageMode.FRAGMENT:
+            return 'Fragment';
+        default:
+            return 'Page Template is not used';
         }
     }
 
