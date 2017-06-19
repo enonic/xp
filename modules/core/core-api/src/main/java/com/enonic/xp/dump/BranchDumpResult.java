@@ -2,9 +2,6 @@ package com.enonic.xp.dump;
 
 
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
-
-import com.google.common.base.Stopwatch;
 
 import com.enonic.xp.branch.Branch;
 
@@ -23,7 +20,7 @@ public class BranchDumpResult
         this.branch = builder.branch;
         this.numberOfNodes = builder.numberOfNodes;
         this.numberOfVersions = builder.numberOfVersions;
-        this.timeUsed = Duration.ofMillis( builder.timer.elapsed( TimeUnit.MILLISECONDS ) );
+        this.timeUsed = Duration.ofMillis( builder.endTime - builder.startTime );
     }
 
     public Branch getBranch()
@@ -41,6 +38,11 @@ public class BranchDumpResult
         return numberOfVersions;
     }
 
+    public Duration getTimeUsed()
+    {
+        return timeUsed;
+    }
+
     public static Builder create( final Branch branch )
     {
         return new Builder( branch );
@@ -48,7 +50,9 @@ public class BranchDumpResult
 
     public static final class Builder
     {
-        private final Stopwatch timer;
+        private final Long startTime;
+
+        private Long endTime;
 
         private final Branch branch;
 
@@ -58,13 +62,19 @@ public class BranchDumpResult
 
         private Builder( final Branch branch )
         {
-            this.timer = Stopwatch.createStarted();
+            this.startTime = System.currentTimeMillis();
             this.branch = branch;
         }
 
-        public Builder metaWritten()
+        public Builder addNode()
         {
             numberOfNodes++;
+            return this;
+        }
+
+        public Builder addedNodes( final long val )
+        {
+            numberOfNodes = val;
             return this;
         }
 
@@ -76,7 +86,7 @@ public class BranchDumpResult
 
         public BranchDumpResult build()
         {
-            timer.stop();
+            this.endTime = System.currentTimeMillis();
             return new BranchDumpResult( this );
         }
     }

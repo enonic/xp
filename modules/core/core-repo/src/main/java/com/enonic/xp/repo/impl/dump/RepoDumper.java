@@ -157,7 +157,7 @@ class RepoDumper
         writer.writeMetaData( dumpEntry );
         dumpEntry.getAllVersionIds().forEach( writer::writeVersion );
         dumpEntry.getBinaryReferences().forEach( writer::writeBinary );
-        dumpResult.metaWritten();
+        dumpResult.addNode();
         dumpResult.addedVersions( dumpEntry.getAllVersionIds().size() );
     }
 

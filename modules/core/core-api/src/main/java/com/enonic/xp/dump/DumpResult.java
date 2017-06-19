@@ -1,5 +1,7 @@
 package com.enonic.xp.dump;
 
+import java.time.Duration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,15 +11,19 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 
 public class DumpResult
+    implements Iterable<BranchDumpResult>
 {
     private final List<BranchDumpResult> branchResults;
 
     private final RepositoryId repositoryId;
 
+    private final Duration duration;
+
     private DumpResult( final Builder builder )
     {
         this.branchResults = builder.branchResults;
         this.repositoryId = builder.repositoryId;
+        this.duration = Duration.ofMillis( builder.endTime - builder.startTime );
     }
 
     public List<BranchDumpResult> getBranchResults()
@@ -28,6 +34,17 @@ public class DumpResult
     public RepositoryId getRepositoryId()
     {
         return repositoryId;
+    }
+
+    public String getDuration()
+    {
+        return duration.toString();
+    }
+
+    @Override
+    public Iterator<BranchDumpResult> iterator()
+    {
+        return this.branchResults.iterator();
     }
 
     public static Builder create( final RepositoryId repositoryId )
@@ -41,9 +58,14 @@ public class DumpResult
 
         private final RepositoryId repositoryId;
 
+        private final Long startTime;
+
+        private Long endTime;
+
         private Builder( final RepositoryId repositoryId )
         {
             this.repositoryId = repositoryId;
+            this.startTime = System.currentTimeMillis();
         }
 
         public Builder add( final BranchDumpResult val )
@@ -54,6 +76,7 @@ public class DumpResult
 
         public DumpResult build()
         {
+            this.endTime = System.currentTimeMillis();
             return new DumpResult( this );
         }
     }

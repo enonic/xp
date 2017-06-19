@@ -19,16 +19,16 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.dump.DumpParams;
+import com.enonic.xp.dump.DumpResults;
 import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.dump.LoadParams;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.ImportNodesParams;
-import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.home.HomeDir;
-import com.enonic.xp.impl.server.rest.model.NodeExportResultsJson;
 import com.enonic.xp.impl.server.rest.model.NodeImportResultsJson;
 import com.enonic.xp.impl.server.rest.model.SystemDumpRequestJson;
+import com.enonic.xp.impl.server.rest.model.SystemDumpResultJson;
 import com.enonic.xp.impl.server.rest.model.SystemLoadRequestJson;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.node.NodePath;
@@ -68,12 +68,10 @@ public final class SystemDumpResource
 
     @POST
     @Path("dump")
-    public NodeExportResultsJson systemDump( final SystemDumpRequestJson request )
+    public SystemDumpResultJson systemDump( final SystemDumpRequestJson request )
         throws Exception
     {
-        final List<NodeExportResult> results = Lists.newArrayList();
-
-        this.dumpService.dumpSystem( DumpParams.create().
+        final DumpResults dumpResults = this.dumpService.dumpSystem( DumpParams.create().
             dumpName( request.getName() ).
             includeBinaries( true ).
             includeVersions( request.isIncludeVersions() ).
@@ -81,7 +79,7 @@ public final class SystemDumpResource
             maxVersions( request.getMaxVersions() ).
             build() );
 
-        return NodeExportResultsJson.from( results );
+        return SystemDumpResultJson.from( dumpResults );
     }
 
     @POST
