@@ -6,6 +6,7 @@ module api.content.image {
     import Point = api.ui.image.Point;
     import Rect = api.ui.image.Rect;
     import ImageEditor = api.ui.image.ImageEditor;
+    import i18n = api.util.i18n;
 
     export class ImageUploaderEl extends api.ui.uploader.MediaUploaderEl {
 
@@ -39,6 +40,8 @@ module api.content.image {
             this.cropAutoPositionedListeners = [];
 
             this.addClass('image-uploader-el');
+            this.getEl().setAttribute('data-drop', i18n('drop.image'));
+            this.getResultContainer().getEl().setAttribute('data-drop', i18n('drop.file.short'));
 
             this.initialWidth = 0;
             this.onShown(() => {

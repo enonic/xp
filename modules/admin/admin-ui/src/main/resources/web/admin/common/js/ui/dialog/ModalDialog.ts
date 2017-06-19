@@ -5,6 +5,7 @@ module api.ui.dialog {
     import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
     import Element = api.dom.Element;
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
+    import i18n = api.util.i18n;
 
     export interface ConfirmationConfig {
         question?: string;
@@ -207,7 +208,10 @@ module api.ui.dialog {
             let cancelAction = new Action(buttonLabel);
             cancelAction.setIconClass('cancel-button-bottom force-enabled');
             cancelAction.onExecuted(() => this.cancelAction.execute());
-            return this.buttonRow.addAction(cancelAction);
+
+            const cancelButton = this.buttonRow.addAction(cancelAction);
+            cancelButton.getEl().setAttribute('data-button-text', i18n('action.ok'));
+            return cancelButton;
         }
 
         setTitle(value: string) {

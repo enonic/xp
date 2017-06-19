@@ -114,7 +114,7 @@
   height: 2 * @radius;
   line-height: 2 * @radius;
   color: #fff;
-  content: 'Drop files to upload!';
+  content: attr(data-drop);
   font-weight: normal;
 
   .box-sizing(border-box);
@@ -795,7 +795,7 @@
         display: none;
       }
       &:after {
-        content: 'OK';
+        content: attr(data-button-text);
         color: @admin-white;
         width: 100px;
         line-height: 24px;
