@@ -237,7 +237,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
     }
 
     private createBackButton() {
-        const backButton: AEl = new AEl('back-button').setTitle('Back');
+        const backButton: AEl = new AEl('back-button').setTitle('To Issue List');
 
         this.prependChildToHeader(backButton);
 
