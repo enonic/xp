@@ -13,6 +13,7 @@ import ValidityChangedEvent = api.ValidityChangedEvent;
 import StringHelper = api.util.StringHelper;
 import PrincipalKey = api.security.PrincipalKey;
 import ContentId = api.content.ContentId;
+import UserStoreKey = api.security.UserStoreKey;
 
 export class IssueDialogForm extends api.ui.form.Form {
 
@@ -69,7 +70,8 @@ export class IssueDialogForm extends api.ui.form.Form {
 
         this.descriptionText = new PEl('description-text');
 
-        const principalLoader = new PrincipalLoader().setAllowedTypes([PrincipalType.USER]);
+        const principalLoader = new PrincipalLoader().setAllowedTypes([PrincipalType.USER]).skipPrincipals(
+            [PrincipalKey.ofAnonymous(), PrincipalKey.ofUser(UserStoreKey.SYSTEM, 'su')]);
 
         this.approversSelector = api.ui.security.PrincipalComboBox.create().setLoader(principalLoader).setMaxOccurences(0).setCompactView(
             this.compactAssigneesView).build();
