@@ -15,6 +15,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jparsec.util.Lists;
@@ -57,6 +58,10 @@ import com.enonic.xp.jaxrs.JaxRsExceptions;
 import com.enonic.xp.portal.auth.AuthControllerExecutionParams;
 import com.enonic.xp.portal.auth.AuthControllerService;
 import com.enonic.xp.security.AuthConfig;
+import com.enonic.xp.security.CreateGroupParams;
+import com.enonic.xp.security.CreateRoleParams;
+import com.enonic.xp.security.CreateUserParams;
+import com.enonic.xp.security.CreateUserStoreParams;
 import com.enonic.xp.security.Group;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
@@ -142,7 +147,9 @@ public final class SecurityResource
     @Path("userstore/create")
     public UserStoreJson createUserStore( final CreateUserStoreJson params )
     {
-        final UserStore userStore = securityService.createUserStore( params.getCreateUserStoreParams() );
+        final CreateUserStoreParams createUserStoreParams = params.getCreateUserStoreParams();
+        verifyUserStoreNotAlreadyExists( createUserStoreParams.getKey() );
+        final UserStore userStore = securityService.createUserStore( createUserStoreParams );
         final UserStoreAccessControlList permissions = securityService.getUserStorePermissions( userStore.getKey() );
 
         final AuthDescriptorMode idProviderMode = retrieveIdProviderMode( userStore );
@@ -324,7 +331,9 @@ public final class SecurityResource
             throw new WebApplicationException( "Password has not been set." );
         }
 
-        final User user = this.securityService.createUser( params.toCreateUserParams() );
+        final CreateUserParams createUserParams = params.toCreateUserParams();
+        verifyPrincipalNotAlreadyExists( createUserParams.getKey() );
+        final User user = this.securityService.createUser( createUserParams );
         final PrincipalKey userKey = user.getKey();
 
         this.securityService.setPassword( userKey, params.password );
@@ -343,7 +352,9 @@ public final class SecurityResource
     @Path("principals/createGroup")
     public GroupJson createGroup( final CreateGroupJson params )
     {
-        final Group group = securityService.createGroup( params.toCreateGroupParams() );
+        final CreateGroupParams createGroupParams = params.toCreateGroupParams();
+        verifyPrincipalNotAlreadyExists( createGroupParams.getKey() );
+        final Group group = securityService.createGroup( createGroupParams );
         final PrincipalKey groupKey = group.getKey();
         final PrincipalKeys members = params.toMemberKeys();
 
@@ -360,7 +371,9 @@ public final class SecurityResource
     @Path("principals/createRole")
     public RoleJson createRole( final CreateRoleJson params )
     {
-        final Role role = securityService.createRole( params.toCreateRoleParams() );
+        final CreateRoleParams createRoleParams = params.toCreateRoleParams();
+        verifyPrincipalNotAlreadyExists( createRoleParams.getKey() );
+        final Role role = securityService.createRole( createRoleParams );
         final PrincipalKey roleKey = role.getKey();
         final PrincipalKeys members = params.toMemberKeys();
 
@@ -453,6 +466,28 @@ public final class SecurityResource
             }
         } );
         return resultsJson;
+    }
+
+    private void verifyPrincipalNotAlreadyExists( final PrincipalKey principalKey )
+    {
+        final Optional<? extends Principal> principalResult = securityService.getPrincipal( principalKey );
+
+        if ( principalResult.isPresent() )
+        {
+            throw JaxRsExceptions.newException( Response.Status.CONFLICT, String.format(
+                "Principal [%s] could not be created. A principal with that name already exists", principalKey.getId() ) );
+        }
+    }
+
+    private void verifyUserStoreNotAlreadyExists( final UserStoreKey userStoreKey )
+    {
+        final UserStore userStore = securityService.getUserStore( userStoreKey );
+
+        if ( userStore != null )
+        {
+            throw JaxRsExceptions.newException( Response.Status.CONFLICT, String.format(
+                "User Store [%s] could not be created. A User Store with that name already exists", userStoreKey ) );
+        }
     }
 
     private void updateMemberships( final PrincipalKey target, PrincipalKeys membersToRemove, PrincipalKeys membersToAdd )
