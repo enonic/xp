@@ -128,7 +128,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
     persistNewItem(): wemQ.Promise<UserStore> {
         return this.produceCreateUserStoreRequest().sendAndParse().then((userStore: UserStore) => {
 
-            api.notify.showFeedback('UserStore was created!');
+            api.notify.showFeedback('User store was created');
             new api.security.UserItemCreatedEvent(null, userStore).fire();
 
             return userStore;
@@ -143,7 +143,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
 
     updatePersistedItem(): wemQ.Promise<UserStore> {
         return this.produceUpdateUserStoreRequest(this.assembleViewedUserStore()).sendAndParse().then((userStore: UserStore) => {
-            api.notify.showFeedback('UserStore was updated!');
+            api.notify.showFeedback('User store was updated');
             new api.security.UserItemUpdatedEvent(null, userStore).fire();
 
             return userStore;
