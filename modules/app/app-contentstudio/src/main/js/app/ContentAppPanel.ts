@@ -3,6 +3,8 @@ import {ViewContentEvent} from './browse/ViewContentEvent';
 import {ContentBrowsePanel} from './browse/ContentBrowsePanel';
 import {NewContentEvent} from './create/NewContentEvent';
 import {IssueDetailsDialog} from './issue/view/IssueDetailsDialog';
+import {GetIssueRequest} from './issue/resource/GetIssueRequest';
+import {Issue} from './issue/Issue';
 
 import ContentSummary = api.content.ContentSummary;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
@@ -16,8 +18,6 @@ import AppBarTabMenuItemBuilder = api.app.bar.AppBarTabMenuItemBuilder;
 import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
 import UriHelper = api.util.UriHelper;
 import AppPanel = api.app.AppPanel;
-import {GetIssueRequest} from './issue/resource/GetIssueRequest';
-import {Issue} from './issue/Issue';
 
 export class ContentAppPanel extends AppPanel<ContentSummaryAndCompareStatus> {
 
@@ -61,7 +61,7 @@ export class ContentAppPanel extends AppPanel<ContentSummaryAndCompareStatus> {
             if (id) {
                 new GetIssueRequest(id).sendAndParse().then(
                     (issue: Issue) => {
-                        IssueDetailsDialog.get().setIssue(issue).toggleNested(false).open();
+                        IssueDetailsDialog.get().setIssue(issue).open();
                     });
             }
             break;

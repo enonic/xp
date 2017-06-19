@@ -39,7 +39,6 @@ export class IssueListDialog extends ModalDialog {
         this.addClass('issue-list-dialog');
 
         this.initDeboundcedReloadFunc();
-        this.handleIssueDetailsDialogEvents();
         this.handleCreateIssueDialogEvents();
         this.handleIssueGlobalEvents();
         this.initElements();
@@ -72,6 +71,8 @@ export class IssueListDialog extends ModalDialog {
         return super.doRender().then((rendered: boolean) => {
             this.createNewIssueButton();
             this.appendChildToContentPanel(this.dockedPanel);
+            this.addClickIgnoredElement(IssueDetailsDialog.get());
+            this.addClickIgnoredElement(UpdateIssueDialog.get());
             return rendered;
         });
     }
@@ -108,18 +109,6 @@ export class IssueListDialog extends ModalDialog {
         this.remove();
     }
 
-    private handleIssueDetailsDialogEvents() {
-        this.addClickIgnoredElement(IssueDetailsDialog.get());
-        this.addClickIgnoredElement(UpdateIssueDialog.get());
-
-        IssueDetailsDialog.get().onClosed(() => {
-            this.removeClass('masked');
-            if (this.isVisible()) {
-                this.getEl().focus();
-            }
-        });
-    }
-
     private handleCreateIssueDialogEvents() {
         this.addClickIgnoredElement(CreateIssueDialog.get());
 
@@ -150,8 +139,6 @@ export class IssueListDialog extends ModalDialog {
         IssueServerEventsHandler.getInstance().onIssueCreated((issues: Issue[]) => {
             if (this.isVisible()) {
                 this.reload(issues);
-            } else if (issues.some((issue) => this.isIssueCreatedByCurrentUser(issue))) {
-                this.open();
             }
         });
 
@@ -275,7 +262,6 @@ export class IssueListDialog extends ModalDialog {
             this.addClass('masked');
             let createIssueDialog = CreateIssueDialog.get();
 
-            createIssueDialog.enableCancelButton();
             createIssueDialog.reset();
             createIssueDialog.unlockPublishItems();
             createIssueDialog.open(this);

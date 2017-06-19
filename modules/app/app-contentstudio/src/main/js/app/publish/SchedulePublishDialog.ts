@@ -2,6 +2,7 @@ import '../../api.ts';
 
 import DateTimePickerBuilder = api.ui.time.DateTimePickerBuilder;
 import DateTimePicker = api.ui.time.DateTimePicker;
+import AEl = api.dom.AEl;
 
 export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
 
@@ -27,7 +28,7 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
 
         this.initFormView();
 
-        this.addCancelButtonToBottom('Back');
+        this.createBackButton();
     }
 
     show() {
@@ -79,6 +80,16 @@ export class SchedulePublishDialog extends api.ui.dialog.ModalDialog {
             this.appendChildToContentPanel(this.formView);
             this.centerMyself();
 
+        });
+    }
+
+    private createBackButton() {
+        const backButton: AEl = new AEl('back-button').setTitle('Back');
+
+        this.prependChildToHeader(backButton);
+
+        backButton.onClicked(() => {
+            this.close();
         });
     }
 

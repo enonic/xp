@@ -16,6 +16,7 @@ import {PublishRequest} from '../PublishRequest';
 import {PublishRequestItem} from '../PublishRequestItem';
 import {IssueStatusInfoGenerator} from './IssueStatusInfoGenerator';
 import {IssueDetailsDialogButtonRow} from './IssueDetailsDialogDropdownButtonRow';
+import {IssueListDialog} from './IssueListDialog';
 import AEl = api.dom.AEl;
 import DialogButton = api.ui.dialog.DialogButton;
 import Checkbox = api.ui.Checkbox;
@@ -50,10 +51,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
     private currentUser: User;
 
-    private opener: ModalDialog;
-
-    private backButton: AEl;
-
     private static INSTANCE: IssueDetailsDialog = new IssueDetailsDialog();
 
     private constructor() {
@@ -68,25 +65,29 @@ export class IssueDetailsDialog extends SchedulableDialog {
                 },
             }
         );
-        this.loadCurrentUser();
-
         this.addClass('issue-details-dialog');
 
+        this.loadCurrentUser();
         this.initRouting();
-
-        this.form = new IssueDialogForm(true);
-        this.prependChildToContentPanel(this.form);
-
-        this.createEditButton();
-        this.createBackButton();
-        this.createNoActionMessage();
-
-        this.initActions();
         this.handleUpdateIssueDialogEvents();
         this.handleIssueGlobalEvents();
+        this.initElements();
+        this.initElementsListeners();
 
-        this.itemsHeader = new api.dom.H6El().addClass('items-header').setHtml('Items').insertBeforeEl(this.getItemList());
+        this.setReadOnly(true);
+    }
 
+    public static get(): IssueDetailsDialog {
+        return IssueDetailsDialog.INSTANCE;
+    }
+
+    private initElements() {
+        this.form = new IssueDialogForm(true);
+        this.itemsHeader = new api.dom.H6El().addClass('items-header').setHtml('Items');
+        this.initActions();
+    }
+
+    private initElementsListeners() {
         this.getItemList().onItemsAdded(() => {
             this.initItemList();
         });
@@ -95,13 +96,21 @@ export class IssueDetailsDialog extends SchedulableDialog {
             setTimeout(() => this.centerMyself(), 100);
         });
 
-        this.setReadOnly(true);
-
-        this.closeIcon.onClicked(() => this.opener ? this.opener.close() : true);
+        this.closeIcon.onClicked(() => {
+            IssueListDialog.get().close();
+        });
     }
 
-    public static get(): IssueDetailsDialog {
-        return IssueDetailsDialog.INSTANCE;
+    doRender(): Q.Promise<boolean> {
+        return super.doRender().then((rendered: boolean) => {
+            this.prependChildToContentPanel(this.form);
+            this.createEditButton();
+            this.createBackButton();
+            this.createNoActionMessage();
+            this.itemsHeader.insertBeforeEl(this.getItemList());
+            this.addClickIgnoredElement(UpdateIssueDialog.get());
+            return rendered;
+        });
     }
 
     private loadCurrentUser() {
@@ -133,8 +142,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
     }
 
     private handleUpdateIssueDialogEvents() {
-        this.addClickIgnoredElement(UpdateIssueDialog.get());
-
         UpdateIssueDialog.get().onClosed(() => {
             this.removeClass('masked');
             if (this.isVisible()) {
@@ -162,11 +169,6 @@ export class IssueDetailsDialog extends SchedulableDialog {
             this.updateShowScheduleDialogButton();
         });
 
-        return this;
-    }
-
-    public toggleNested(value: boolean): IssueDetailsDialog {
-        this.toggleClass('nested', value);
         return this;
     }
 
@@ -235,18 +237,18 @@ export class IssueDetailsDialog extends SchedulableDialog {
     }
 
     private createBackButton() {
+        const backButton: AEl = new AEl('back-button').setTitle('To Issue List');
 
-        this.backButton = new AEl('back-button').setTitle('Back');
-        this.prependChildToHeader(this.backButton);
+        this.prependChildToHeader(backButton);
 
-        this.backButton.onClicked(() => {
+        backButton.onClicked(() => {
             this.close();
         });
     }
 
     private createEditButton() {
         const editIssueAction = new Action('Edit Issue');
-        const editButton = this.getButtonRow().addAction(editIssueAction);
+        const editButton: DialogButton = this.getButtonRow().addAction(editIssueAction);
         editButton.addClass('edit-issue force-enabled');
 
         editIssueAction.onExecuted(() => {
@@ -331,9 +333,11 @@ export class IssueDetailsDialog extends SchedulableDialog {
         return <PublishDialogDependantList>super.getDependantList();
     }
 
-    open(opener?: ModalDialog) {
-        this.opener = opener;
-        this.opener ? this.backButton.show() : this.backButton.hide();
+    open() {
+        IssueListDialog.get().addClass('masked');
+        if (!IssueListDialog.get().isVisible()) {
+            IssueListDialog.get().open();
+        }
 
         this.form.giveFocus();
         super.open();
@@ -342,6 +346,11 @@ export class IssueDetailsDialog extends SchedulableDialog {
     close() {
         this.getItemList().clearExcludeChildrenIds();
         super.close();
+
+        IssueListDialog.get().removeClass('masked');
+        if (IssueListDialog.get().isVisible()) {
+            IssueListDialog.get().getEl().focus();
+        }
     }
 
     private reloadPublishDependencies(): wemQ.Promise<void> {

@@ -116,7 +116,7 @@ export class IssueList extends ListBox<IssueWithAssignees> {
 
     private handleIssueSelected(issueListItem: IssueListItem) {
         IssueListDialog.get().addClass('masked');
-        IssueDetailsDialog.get().setIssue(issueListItem.getIssue()).toggleNested(true).open(IssueListDialog.get());
+        IssueDetailsDialog.get().setIssue(issueListItem.getIssue()).open();
     }
 
     private isScrolledToBottom(): boolean {
