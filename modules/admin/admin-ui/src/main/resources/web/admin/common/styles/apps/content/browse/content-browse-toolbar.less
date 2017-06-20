@@ -10,9 +10,9 @@
   width: 100%;
 
   @media screen and (min-width: 540px) {
-    width: calc(~'100% - 40px');
+    //width: calc(~'100% - 40px');
+    padding-right: 40px;
   }
-
 
   overflow: visible;
   .fold-button .@{_COMMON_PREFIX}dropdown .@{_COMMON_PREFIX}:hover {
@@ -27,7 +27,8 @@
 .split-panel {
 
   &.details-panel-expanded .content-browse-toolbar {
-    width: 100%;
+    //width: 100%;
+    padding-right: 0;
   }
 }
 

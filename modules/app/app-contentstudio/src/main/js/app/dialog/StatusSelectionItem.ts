@@ -29,7 +29,7 @@ export class StatusSelectionItem extends api.app.browse.SelectionItem<ContentSum
         this.onRemoveClicked(onRemoveClicked);
     }
 
-    private isRemovable(): boolean {
+    public isRemovable(): boolean {
         if (!this.isRemovableFn || !this.removeHandlerFn) {
             return true;
         }

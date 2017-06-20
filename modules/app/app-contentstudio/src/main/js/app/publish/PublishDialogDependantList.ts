@@ -17,6 +17,7 @@ export class PublishDialogDependantList extends DialogDependantList {
     constructor() {
         super();
 
+        this.addClass('publish-dialog-dependant-list');
         this.requiredIds = ContentIds.empty();
     }
 
@@ -48,6 +49,10 @@ export class PublishDialogDependantList extends DialogDependantList {
 
     setRequiredIds(value: ContentId[]) {
         this.requiredIds = ContentIds.from(value);
+    }
+
+    public setReadOnly(value: boolean) {
+        this.toggleClass('readonly', value);
     }
 
     onItemClicked(listener: (item: ContentSummaryAndCompareStatus) => void) {

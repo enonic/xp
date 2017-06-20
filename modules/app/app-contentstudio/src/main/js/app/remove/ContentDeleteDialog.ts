@@ -1,7 +1,7 @@
 import '../../api.ts';
 import {ContentDeleteDialogAction} from './ContentDeleteDialogAction';
 import {ConfirmContentDeleteDialog} from './ConfirmContentDeleteDialog';
-import {ProgressBarDialog} from '../dialog/ProgressBarDialog';
+import {ProgressBarDialog, ProgressBarConfig} from '../dialog/ProgressBarDialog';
 import {ContentDeletePromptEvent} from '../browse/ContentDeletePromptEvent';
 
 import ContentSummary = api.content.ContentSummary;
@@ -20,13 +20,17 @@ export class ContentDeleteDialog extends ProgressBarDialog {
 
     private totalItemsToDelete: number;
 
+    protected autoUpdateTitle: boolean = true;
+
     constructor() {
-        super('Delete item',
-            'Delete selected items and their children',
-            'Other items that will be deleted',
-            'is-deleting',
-            () => {
-                new ContentDeletePromptEvent([]).fire();
+        super(<ProgressBarConfig> {
+                dialogName: 'Delete item',
+                dialogSubName: 'Delete selected items and their children',
+                dependantsName: 'Other items that will be deleted',
+                isProcessingClass: 'is-deleting',
+                processHandler: () => {
+                    new ContentDeletePromptEvent([]).fire();
+                }
             }
         );
 

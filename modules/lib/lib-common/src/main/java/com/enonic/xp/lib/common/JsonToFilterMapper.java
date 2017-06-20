@@ -7,7 +7,6 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.data.Value;
-import com.enonic.xp.lib.common.ObjectToValueMapper;
 import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.ExistsFilter;
 import com.enonic.xp.query.filter.Filter;

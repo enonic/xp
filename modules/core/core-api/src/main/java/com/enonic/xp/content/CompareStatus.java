@@ -5,26 +5,28 @@ import com.google.common.annotations.Beta;
 @Beta
 public enum CompareStatus
 {
-    NEW( false ),
-    NEW_TARGET( false ),
-    NEWER( false ),
-    OLDER( false ),
-    PENDING_DELETE( false ),
-    PENDING_DELETE_TARGET( false ),
-    EQUAL( false ),
-    MOVED( false ),
-    CONFLICT_PATH_EXISTS( true ),
-    CONFLICT_VERSION_BRANCH_DIVERGS( true );
+    NEW( false, "Offline" ), NEW_TARGET( false, "New in prod" ), NEWER( false, "Modified" ), OLDER( false, "Out-of-date" ), PENDING_DELETE(
+    false, "Pending delete" ), PENDING_DELETE_TARGET( false, "Deleted in prod" ), EQUAL( false, "Online" ), MOVED( false,
+                                                                                                                   "Moved" ), CONFLICT_PATH_EXISTS(
+    true, "Conflict" ), CONFLICT_VERSION_BRANCH_DIVERGS( true, "Conflict version" );
 
     private final boolean conflict;
 
-    CompareStatus( final boolean conflict )
+    private final String status;
+
+    CompareStatus( final boolean conflict, final String formattedStatus )
     {
         this.conflict = conflict;
+        this.status = formattedStatus;
     }
 
     public boolean isConflict()
     {
         return this.conflict;
+    }
+
+    public String getFormattedStatus()
+    {
+        return this.status;
     }
 }

@@ -16,20 +16,18 @@ import LoadMask = api.ui.mask.LoadMask;
 import DialogButton = api.ui.dialog.DialogButton;
 import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
+import ModalDialogButtonRow = api.ui.dialog.ButtonRow;
+import DivEl = api.dom.DivEl;
 
 export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     protected actionButton: DialogButton;
 
-    private dialogName: string;
-
-    private dialogSubName: string;
-
-    private autoUpdateTitle: boolean = true;
+    protected autoUpdateTitle: boolean = false;
 
     private ignoreItemsChanged: boolean;
 
-    private subTitle: api.dom.H6El;
+    private subTitle: api.dom.DivEl;
 
     private itemList: ListBox<ContentSummaryAndCompareStatus>;
 
@@ -38,6 +36,8 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
     private dependantsHeader: api.dom.H6El;
 
     private dependantList: ListBox<ContentSummaryAndCompareStatus>;
+
+    private dependantsHeaderText: string;
 
     protected loadMask: LoadMask;
 
@@ -49,15 +49,13 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     protected dependantIds: ContentId[] = [];
 
-    constructor(dialogName: string, dialogSubName: string, dependantsName: string) {
-        super(dialogName);
+    constructor(title: string = '', dialogSubName: string = '', dependantsName: string = '', buttonRow?: ModalDialogButtonRow) {
+        super(<api.ui.dialog.ModalDialogConfig>{title, buttonRow});
 
         this.addClass('dependant-dialog');
 
-        this.dialogName = dialogName;
-        this.dialogSubName = dialogSubName;
-
-        this.subTitle = new api.dom.H6El('sub-title');
+        this.subTitle = new api.dom.H6El('sub-title')
+            .setHtml(dialogSubName, false);
         this.appendChildToHeader(this.subTitle);
 
         this.itemList = this.createItemList();
@@ -67,12 +65,13 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         let itemsChangedListener = (items) => {
             let count = this.itemList.getItemCount();
             if (this.autoUpdateTitle) {
-                this.setTitle(this.dialogName + (count > 1 ? 's' : ''));
+                this.setTitle(title + (count > 1 ? 's' : ''));
             }
         };
         this.itemList.onItemsRemoved(itemsChangedListener);
         this.itemList.onItemsAdded(itemsChangedListener);
 
+        this.dependantsHeaderText = dependantsName;
         this.dependantsHeader = new api.dom.H6El('dependants-header').setHtml(dependantsName, false);
 
         this.dependantList = this.createDependantList();
@@ -100,6 +99,10 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
             this.doPostLoad();
         });
 
+    }
+
+    protected updateDependantsHeader(header?: string) {
+        this.dependantsHeader.setHtml(header || this.dependantsHeaderText, false);
     }
 
     private initLoadMask() {
@@ -152,8 +155,8 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.autoUpdateTitle = value;
     }
 
-    setListItems(items: ContentSummaryAndCompareStatus[]) {
-        this.itemList.setItems(items);
+    setListItems(items: ContentSummaryAndCompareStatus[], silent?: boolean) {
+        this.itemList.setItems(items, silent);
     }
 
     private extendsWindowHeightSize(): boolean {
@@ -183,8 +186,16 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
         this.dependantList.addItems(items);
     }
 
-    setSubTitle(text?: string) {
-        this.subTitle.setHtml(text || this.dialogSubName, false);
+    setSubTitle(text: string, escapeHtml?: boolean) {
+        this.subTitle.setHtml(text, escapeHtml);
+    }
+
+    setSubTitleEl(el: DivEl) {
+        if (this.subTitle) {
+            this.subTitle.remove();
+        }
+        this.subTitle = el;
+        this.appendChildToHeader(this.subTitle);
     }
 
     protected updateButtonCount(actionString: string, count: number) {
@@ -218,7 +229,7 @@ export class DependantItemsDialog extends api.ui.dialog.ModalDialog {
 
     private doPostLoad() {
         if (this.previousScrollTop !== this.getContentPanel().getEl().getScrollTop()) {
-            setTimeout(this.postLoad.bind(this), 100);
+            setTimeout(this.postLoad.bind(this), 150);
         }
     }
 
@@ -313,6 +324,14 @@ export class DialogItemList extends ListBox<ContentSummaryAndCompareStatus> {
 
     getItemId(item: ContentSummaryAndCompareStatus): string {
         return item.getContentSummary().getId();
+    }
+
+    getItemsIds(): ContentId[] {
+        return this.getItems().map(item => item.getContentId());
+    }
+
+    getItems(): ContentSummaryAndCompareStatus[] {
+        return <ContentSummaryAndCompareStatus[]>super.getItems();
     }
 }
 

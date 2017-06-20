@@ -80,7 +80,7 @@ module api.form.inputtype.text {
 
             let textAreaWrapper = new api.dom.DivEl();
 
-            this.editors.push({id: editorId, textAreaWrapper: textAreaWrapper, property: property, hasStickyToolbar: false});
+            this.editors.push({id: editorId, textAreaWrapper, textAreaEl, property, hasStickyToolbar: false});
 
             textAreaEl.onRendered(() => {
                 if (this.authRequest.isFulfilled()) {
@@ -349,6 +349,12 @@ module api.form.inputtype.text {
             return tinymce.get(editorId);
         }
 
+        isDirty(): boolean {
+            return this.editors.some((editor: HtmlAreaOccurrenceInfo) => {
+                return this.getEditor(editor.id).getContent() !== editor.textAreaEl.getValue();
+            });
+        }
+
         private setEditorContent(editorId: string, property: Property): void {
             let editor = this.getEditor(editorId);
             if (editor) {
@@ -472,6 +478,7 @@ module api.form.inputtype.text {
     export interface HtmlAreaOccurrenceInfo {
         id: string;
         textAreaWrapper: Element;
+        textAreaEl: api.ui.text.TextArea;
         property: Property;
         hasStickyToolbar: boolean;
     }

@@ -149,6 +149,10 @@ module api.app {
                     event = api.security.event.PrincipalServerEvent.fromJson(<api.event.NodeEventJson>eventJson);
                 }
 
+                if (api.issue.event.IssueServerEvent.is(<api.event.NodeEventJson>eventJson)) {
+                    event = api.issue.event.IssueServerEvent.fromJson(<api.event.NodeEventJson>eventJson);
+                }
+
                 if (event && event.getNodeChange()) {
                     return event;
                 }

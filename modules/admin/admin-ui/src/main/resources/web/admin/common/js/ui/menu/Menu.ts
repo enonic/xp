@@ -27,7 +27,7 @@ module api.ui.menu {
         }
 
         addAction(action: api.ui.Action): Menu {
-            let menuItem = this.createMenuItem(action);
+            const menuItem = this.createMenuItem(action);
             this.appendChild(menuItem);
             return this;
         }
@@ -103,7 +103,7 @@ module api.ui.menu {
             });
         }
 
-        private getMenuItem(action: api.ui.Action): MenuItem {
+        public getMenuItem(action: api.ui.Action): MenuItem {
             for (let i = 0; i < this.menuItems.length; i++) {
                 let menuItem = this.menuItems[i];
                 if (menuItem.getAction() === action) {

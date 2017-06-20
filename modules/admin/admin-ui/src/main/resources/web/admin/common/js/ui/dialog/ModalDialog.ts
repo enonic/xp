@@ -1,69 +1,114 @@
 module api.ui.dialog {
 
     import DivEl = api.dom.DivEl;
+    import Action = api.ui.Action;
     import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
+    import Element = api.dom.Element;
+    import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 
-    export class ModalDialog extends api.dom.DivEl {
+    export interface ConfirmationConfig {
+        question?: string;
+        yesCallback: () => void;
+        noCallback?: () => void;
+    }
+
+    export interface ModalDialogConfig {
+        title?: string;
+        buttonRow?: ButtonRow;
+        confirmation?: ConfirmationConfig;
+        closeIconCallback?: () => void;
+    }
+
+    export class ModalDialog extends DivEl {
 
         protected header: api.ui.dialog.ModalDialogHeader;
 
         private contentPanel: ModalDialogContentPanel;
 
-        private buttonRow: ModalDialogButtonRow;
+        private buttonRow: ButtonRow;
 
-        private cancelAction: api.ui.Action;
+        private cancelAction: Action;
 
-        private actions: api.ui.Action[] = [];
+        protected closeIcon: DivEl;
 
-        private cancelButton: api.dom.DivEl;
+        protected confirmationDialog: ConfirmationDialog;
 
         private static openDialogsCounter: number = 0;
 
         private tabbable: api.dom.Element[];
 
-        private forceHorizontalCentering: boolean;
-
         private listOfClickIgnoredElements: api.dom.Element[] = [];
+
+        private onClosedListeners: {(): void;}[] = [];
+
+        private closeIconCallback: () => void;
 
         public static debug: boolean = false;
 
-        constructor(title: string = '', forceHorizontalCentering: boolean = false) {
+        constructor(config: ModalDialogConfig = <ModalDialogConfig>{}) {
             super('modal-dialog', api.StyleHelper.COMMON_PREFIX);
 
-            this.forceHorizontalCentering = forceHorizontalCentering;
-
-            let wrapper = new api.dom.DivEl('modal-dialog-content-wrapper');
+            let wrapper = new DivEl('modal-dialog-content-wrapper');
             this.appendChild(wrapper);
 
-            this.cancelAction = this.createDefaultCancelAction();
-            this.cancelButton = new api.dom.DivEl('cancel-button-top');
-            this.cancelButton.onClicked(() => this.cancelAction.execute());
-            wrapper.appendChild(this.cancelButton);
+            this.buttonRow = config.buttonRow || new ButtonRow();
 
-            this.header = this.createHeader(title);
+            this.cancelAction = this.createDefaultCancelAction();
+            this.closeIconCallback = config.closeIconCallback || (() => {
+                    if (this.cancelAction) {
+                        this.confirmBeforeClose();
+                    }
+                });
+            this.closeIcon = new DivEl('cancel-button-top');
+            this.closeIcon.onClicked(this.closeIconCallback);
+            wrapper.appendChild(this.closeIcon);
+
+            this.header = this.createHeader(config.title || '');
             wrapper.appendChild(this.header);
 
             this.contentPanel = new ModalDialogContentPanel();
             wrapper.appendChild(this.contentPanel);
 
-            let push = new api.dom.DivEl('modal-dialog-content-push');
+            let push = new DivEl('modal-dialog-content-push');
             wrapper.appendChild(push);
 
-            let footer = new api.dom.DivEl('modal-dialog-footer');
+            let footer = new DivEl('modal-dialog-footer');
             this.appendChild(footer);
 
-            this.buttonRow = new ModalDialogButtonRow();
             footer.appendChild(this.buttonRow);
 
+            this.initConfirmationDialog(config.confirmation);
             this.initListeners();
         }
 
+        private initConfirmationDialog(confirmation: ConfirmationConfig) {
+            if (confirmation) {
+                const {yesCallback, noCallback, question = 'You have made changes to the form, do you want to apply them?'} = confirmation;
+
+                this.confirmationDialog = new ConfirmationDialog()
+                    .setQuestion(question)
+                    .setYesCallback(yesCallback || (() => {
+                            this.close();
+                        }));
+                if (noCallback) {
+                    this.confirmationDialog.setNoCallback(noCallback);
+                }
+            }
+        }
+
         private initListeners() {
-            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item) => {
+            ResponsiveManager.onAvailableSizeChanged(this, () => {
                 if (this.isVisible()) {
                     this.centerMyself();
                 }
             });
+
+            // Set the ResponsiveRanges on first show() call
+            const firstTimeResize = () => {
+                ResponsiveManager.fireResizeEvent();
+                this.unShown(firstTimeResize);
+            };
+            this.onShown(firstTimeResize);
 
             this.handleClickOutsideDialog();
             this.handleFocusInOutEvents();
@@ -71,15 +116,14 @@ module api.ui.dialog {
 
         private handleClickOutsideDialog() {
             const mouseClickListener: (event: MouseEvent) => void = (event: MouseEvent) => {
-                if (this.isVisible()) {
+                const noConfirmationDialog = !this.confirmationDialog || !this.confirmationDialog.isVisible();
+                if (this.isVisible() && noConfirmationDialog) {
                     for (let element = event.target; element; element = (<any>element).parentNode) {
                         if (element === this.getHTMLElement() || this.isIgnoredElementClicked(<any>element)) {
                             return;
                         }
                     }
-                    if (this.cancelAction) {
-                        this.cancelAction.execute();
-                    }
+                    this.closeIconCallback();
                 }
             };
 
@@ -113,12 +157,12 @@ module api.ui.dialog {
                 }
             }, focusOutTimeout, false);
 
-            this.buttonRow.onFocusIn((event) => {
+            this.buttonRow.onFocusIn(() => {
                 buttonRowIsFocused = true;
                 clearTimeout(buttonRowFocusOutTimeout);
             });
 
-            this.buttonRow.onFocusOut((event) => {
+            this.buttonRow.onFocusOut(() => {
                 buttonRowFocusOutTimeout = setTimeout(() => {
                     buttonRowIsFocused = false;
                 }, focusOutTimeout + 5); // timeout should be > timeout for modal dialog to trigger after
@@ -135,7 +179,7 @@ module api.ui.dialog {
 
         private isIgnoredElementClicked(element: HTMLElement): boolean {
             let ignoredElementClicked = false;
-            if (!!element && !!element.className && !!element.className.indexOf) {
+            if (element && element.className && element.className.indexOf) {
                 ignoredElementClicked = element.className.indexOf('mce-') > -1 || element.className.indexOf('html-area-modal-dialog') > -1;
             }
             ignoredElementClicked = ignoredElementClicked || this.listOfClickIgnoredElements.some((elem: api.dom.Element) => {
@@ -145,25 +189,25 @@ module api.ui.dialog {
         }
 
         private createDefaultCancelAction() {
-            let cancelAction = new api.ui.Action('Cancel', 'esc', true);
+            let cancelAction = new Action('Cancel', 'esc', true);
             cancelAction.setIconClass('cancel-button-top');
             cancelAction.setLabel('');
-            cancelAction.onExecuted(()=> {
+            cancelAction.onExecuted(() => {
                 this.close();
             });
-            this.actions.push(cancelAction);
+            this.buttonRow.addToActions(cancelAction);
             return cancelAction;
         }
 
-        getCancelAction(): api.ui.Action {
+        getCancelAction(): Action {
             return this.cancelAction;
         }
 
-        addCancelButtonToBottom(buttonLabel: string = 'Cancel') {
-            let cancelAction = new api.ui.Action(buttonLabel);
-            cancelAction.setIconClass('cancel-button-bottom');
+        addCancelButtonToBottom(buttonLabel: string = 'Cancel'): DialogButton {
+            let cancelAction = new Action(buttonLabel);
+            cancelAction.setIconClass('cancel-button-bottom force-enabled');
             cancelAction.onExecuted(() => this.cancelAction.execute());
-            this.buttonRow.addAction(cancelAction);
+            return this.buttonRow.addAction(cancelAction);
         }
 
         setTitle(value: string) {
@@ -174,17 +218,34 @@ module api.ui.dialog {
             this.contentPanel.appendChild(child);
         }
 
+        prependChildToContentPanel(child: api.dom.Element) {
+            this.contentPanel.prependChild(child);
+        }
+
         appendChildToHeader(child: api.dom.Element) {
             this.header.appendChild(child);
+        }
+
+        prependChildToHeader(child: api.dom.Element) {
+            this.header.prependChild(child);
         }
 
         removeChildFromContentPanel(child: api.dom.Element) {
             this.contentPanel.removeChild(child);
         }
 
-        addAction(action: api.ui.Action, useDefault?: boolean, prepend?: boolean): DialogButton {
-            this.actions.push(action);
+        addAction(action: Action, useDefault?: boolean, prepend?: boolean): DialogButton {
             return this.buttonRow.addAction(action, useDefault, prepend);
+        }
+
+        removeAction(actionButton: DialogButton) {
+            if (!actionButton) {
+                return;
+            }
+
+            const action = actionButton.getAction();
+
+            this.buttonRow.removeAction(action);
         }
 
         show() {
@@ -203,10 +264,10 @@ module api.ui.dialog {
             if (ModalDialog.debug) {
                 console.debug('ModalDialog.centerMyself', api.ClassHelper.getClassName(this));
             }
-            let el = this.getEl();
-            el.setMarginTop('-' + (el.getHeightWithBorder() / 2) + 'px');
+            const el = this.getEl();
+            el.setMarginTop(`-${ el.getHeightWithBorder() / 2 }px`);
 
-            if (this.forceHorizontalCentering || ResponsiveRanges._540_720.isFitOrBigger(this.getEl().getWidthWithBorder())) {
+            if (ResponsiveRanges._540_720.isFitOrBigger(this.getEl().getWidthWithBorder())) {
                 this.centerHorisontally();
             } else {
                 el.setMarginLeft('0px');
@@ -215,12 +276,12 @@ module api.ui.dialog {
         }
 
         centerHorisontally() {
-            let el = this.getEl();
-            el.setMarginLeft('-' + (el.getWidthWithBorder() / 2) + 'px');
+            const el = this.getEl();
+            el.setMarginLeft(`-${ el.getWidthWithBorder() / 2 }px`);
             el.addClass('centered_horizontally');
         }
 
-        getButtonRow(): ModalDialogButtonRow {
+        getButtonRow(): ButtonRow {
             return this.buttonRow;
         }
 
@@ -279,7 +340,7 @@ module api.ui.dialog {
 
             this.show();
 
-            let keyBindings = api.ui.Action.getKeyBindings(this.actions);
+            let keyBindings = Action.getKeyBindings(this.buttonRow.getActions());
 
             this.updateTabbable();
 
@@ -303,8 +364,22 @@ module api.ui.dialog {
             ModalDialog.openDialogsCounter++;
         }
 
+        isDirty(): boolean {
+            return false;
+        }
+
+        confirmBeforeClose() {
+            if (this.confirmationDialog && this.isDirty()) {
+                this.confirmationDialog.open();
+            } else {
+                this.close();
+            }
+        }
+
         close() {
-            if (ModalDialog.openDialogsCounter === 1) {
+            const isSingleDialogGroup = ModalDialog.openDialogsCounter === 1 ||
+                                        (ModalDialog.openDialogsCounter === 2 && !!this.confirmationDialog);
+            if (isSingleDialogGroup) {
                 api.ui.mask.BodyMask.get().hide();
             }
 
@@ -313,10 +388,27 @@ module api.ui.dialog {
             api.ui.KeyBindings.get().unshelveBindings();
 
             ModalDialog.openDialogsCounter--;
+            this.notifyClosed();
+        }
+
+        onClosed(onCloseCallback: () => void) {
+            this.onClosedListeners.push(onCloseCallback);
+        }
+
+        unClosed(listener: {(): void;}) {
+            this.onClosedListeners = this.onClosedListeners.filter(function (curr: {(): void;}) {
+                return curr !== listener;
+            });
+        }
+
+        private notifyClosed() {
+            this.onClosedListeners.forEach((listener) => {
+                listener();
+            });
         }
     }
 
-    export class ModalDialogHeader extends api.dom.DivEl {
+    export class ModalDialogHeader extends DivEl {
 
         private titleEl: api.dom.H2El;
 
@@ -331,33 +423,52 @@ module api.ui.dialog {
         setTitle(value: string) {
             this.titleEl.setHtml(value);
         }
+
+        appendElement(el: Element) {
+            el.insertAfterEl(this.titleEl);
+        }
     }
 
-    export class ModalDialogContentPanel extends api.dom.DivEl {
+    export class ModalDialogContentPanel extends DivEl {
 
         constructor() {
             super('dialog-content');
         }
     }
 
-    export class ModalDialogButtonRow extends api.dom.DivEl {
+    export class ButtonRow extends DivEl {
 
-        private defaultButton: DialogButton;
+        private defaultElement: api.dom.Element;
 
-        private buttonContainer: api.dom.DivEl;
+        private buttonContainer: DivEl;
+
+        private actions: Action[] = [];
 
         constructor() {
             super('dialog-buttons');
 
-            this.buttonContainer = new api.dom.DivEl('button-container');
+            this.buttonContainer = new DivEl('button-container');
             this.appendChild(this.buttonContainer);
         }
 
-        addAction(action: api.ui.Action, useDefault?: boolean, prepend?: boolean): DialogButton {
-            let button = new DialogButton(action);
+        addElement(element: Element) {
+            this.buttonContainer.appendChild(element);
+        }
+
+        getActions(): Action[] {
+            return this.actions;
+        }
+
+        addToActions(action: Action) {
+            this.actions.push(action);
+        }
+
+        addAction(action: Action, useDefault?: boolean, prepend?: boolean): DialogButton {
+            const button = new DialogButton(action);
             if (useDefault) {
-                this.defaultButton = button;
+                this.setDefaultElement(button);
             }
+
             if (prepend) {
                 this.buttonContainer.prependChild(button);
             } else {
@@ -368,17 +479,40 @@ module api.ui.dialog {
                 button.setLabel(action.getLabel());
                 button.setEnabled(action.isEnabled());
             });
+
+            this.actions.push(action);
+
             return button;
         }
 
-        focusDefaultAction() {
-            if (this.defaultButton) {
-                this.defaultButton.giveFocus();
+        removeAction(action: Action) {
+            const index = this.actions.indexOf(action);
+            if (index >= 0) {
+                this.actions.splice(index, 1);
             }
+
+            this.buttonContainer.getChildren()
+                .filter((button: DialogButton) => button.getAction() == action)
+                .forEach((button: DialogButton) => {
+                    if (this.defaultElement == button) {
+                        this.resetDefaultElement();
+                    }
+                    this.buttonContainer.removeChild(button);
+                });
         }
 
-        getLastButton(): api.dom.Element {
-            return this.buttonContainer.getLastChild();
+        setDefaultElement(element: api.dom.Element) {
+            this.defaultElement = element;
+        }
+
+        resetDefaultElement() {
+            this.defaultElement = null;
+        }
+
+        focusDefaultAction() {
+            if (this.defaultElement) {
+                this.defaultElement.giveFocus();
+            }
         }
     }
 

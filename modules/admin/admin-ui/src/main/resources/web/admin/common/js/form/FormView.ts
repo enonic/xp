@@ -7,6 +7,7 @@ module api.form {
     import ValueTypes = api.data.ValueTypes;
     import PropertyTree = api.data.PropertyTree;
     import PropertySet = api.data.PropertySet;
+    import FormInputEl = api.dom.FormInputEl;
 
     /**
      * Creates a UI component representing the given [[Form]] backed by given [[api.data.PropertySet]].
@@ -55,6 +56,21 @@ module api.form {
             this.data = data;
 
             this.formItemLayer = new FormItemLayer(context);
+        }
+
+        isDirty(): boolean {
+            const checkDirty = (el: api.dom.Element) => {
+                // Check isDirty() on element, except FormView itself to prevent recursion
+                const canCheckForDirty = (!(el instanceof FormView) && typeof el['isDirty'] === 'function');
+                if (canCheckForDirty) {
+                    return el['isDirty']();
+                } else if (el.getChildren().length > 0) {
+                    return el.getChildren().some(checkDirty);
+                }
+                return false;
+            };
+
+            return checkDirty(this);
         }
 
         /**

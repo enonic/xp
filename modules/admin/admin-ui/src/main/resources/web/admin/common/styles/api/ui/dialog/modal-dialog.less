@@ -8,16 +8,19 @@
   .reset(true);
 
   display: none;
-  background-color: white;
+  position: fixed;
+  top: 50%;
+  z-index: @z-index-modal-dialog;
   margin: 10px;
   padding: 30px;
   width: 85.185%;
   min-width: 230px;
   max-width: 660px;
   max-height: 660px;
-  z-index: @z-index-modal-dialog;
-  position: fixed;
-  top: 50%;
+  background-color: white;
+  background-clip: padding-box;
+  border: 1px solid @admin-dialog-border;
+  box-sizing: border-box;
 
   .modal-dialog-content-wrapper {
     min-height: 100%;
@@ -30,7 +33,7 @@
 
   .dialog-header {
     .clearfix();
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 
     h2 {
       line-height: 0.8em;
@@ -101,7 +104,6 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      margin-top: @height/2;
       margin-left: -@width/2;
       display: block;
       height: @height;
@@ -131,12 +133,9 @@
     }
   }
 
-  .@{_COMMON_PREFIX}button {
-    &.cancel-button-bottom {
-      .button();
-      padding: 4px 19px 4px 19px;
-      margin-left: 11px;
-    }
+  .@{_COMMON_PREFIX}button.cancel-button-bottom {
+      .button-background();
+    margin-left: 11px;
   }
 
   &._0-240, &._240-360 {
@@ -172,12 +171,21 @@
 
 .confirmation-dialog {
   width: 700px;
-  border: 1px solid @admin-shadow-gray;
-  z-index: @z-index-modal-dialog + 1;
+  z-index: @z-index-modal-dialog + 2;
 
   .question {
     font-size: 14px;
     line-height: 16px;
+  }
+}
+
+.confirmation-dialog-mask {
+  z-index: @z-index-modal-dialog + 1;
+}
+
+.body-mask.confirmation-dialog-mask + .@{_COMMON_PREFIX}modal-dialog {
+  .cancel-button-top {
+    display: none;
   }
 }
 

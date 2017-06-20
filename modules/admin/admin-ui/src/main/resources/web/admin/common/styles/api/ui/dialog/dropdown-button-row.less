@@ -1,0 +1,19 @@
+.dropdown-button-row {
+
+  .dropdown-dialog-menu {
+    height: initial;
+    .@{_COMMON_PREFIX}dropdown-handle {
+      width: 36px;
+      height: 36px;
+      &:disabled {
+        display: none;
+        & ~ .action-button {
+          margin-left: 0 !important;
+        }
+      }
+    }
+    .action-button {
+      margin-left: 37px !important;
+    }
+  }
+}

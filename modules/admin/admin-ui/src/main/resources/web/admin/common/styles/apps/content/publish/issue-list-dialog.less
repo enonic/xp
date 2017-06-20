@@ -1,0 +1,150 @@
+.issue-list-dialog {
+
+  height: 430px;
+
+  .dialog-buttons {
+    margin-top: 15px;
+  }
+
+  .docked-panel {
+    width: auto;
+    box-shadow: none;
+    position: inherit !important;
+
+    .deck-panel {
+      margin-top: 6px;
+    }
+  }
+
+  .panel {
+    position: inherit;
+
+    .filters {
+      .flexbox();
+
+      .checkbox {
+        padding: 8px 5px 8px 0px;
+
+        &.disabled {
+          opacity: 0.5;
+          pointer-events: none;
+        }
+      }
+
+      .my-issues-filter {
+        margin-left: 15px;
+        margin-right: 15px;
+      }
+    }
+
+    .issue-list {
+      max-height: 220px;
+      overflow: auto;
+      cursor: pointer;
+
+      .issue-list-item {
+        .flexbox();
+        justify-content: space-between;
+
+        &:hover {
+          background-color: @admin-bg-light-gray;
+        }
+
+        &:focus {
+          outline: none;
+        }
+
+        padding: 5px;
+
+        .names-and-icon-view {
+          cursor: pointer;
+
+          .icon-signup {
+            color: @admin-font-gray2;
+            &:not(.closed) {
+              color: @admin-green;
+            }
+
+            font-size: 26px;
+          }
+
+          .@{_COMMON_PREFIX}names-view .@{_COMMON_PREFIX}main-name, .@{_COMMON_PREFIX}sub-name {
+            &:hover {
+              cursor: pointer;
+            }
+          }
+
+          .@{_COMMON_PREFIX}main-name {
+            height: 17px;
+            font-weight: bold;
+            text-transform: capitalize;
+          }
+        }
+
+        .assignees-line {
+          .flexbox();
+
+          .principal-viewer-compact {
+            position: relative;
+            top: 3px;
+
+            &:last-child {
+              margin-right: 18px;
+            }
+          }
+        }
+
+        .all-assignees-tooltip {
+          font-size: 16px;
+          align-self: flex-end;
+          padding-bottom: 5px;
+          margin-left: 5px;
+        }
+      }
+    }
+
+    .no-issues-message {
+      .watermark-text(18px, true);
+
+      left: 0;
+    }
+
+    .creator, .assignee {
+      color: @admin-black;
+      font-weight: bold;
+    }
+  }
+
+  &.masked {
+    opacity: 0;
+  }
+}
+
+.browse-toolbar {
+  .show-issues-dialog-button {
+    margin-bottom: 1px;
+    padding-right: 14px;
+
+    &:before {
+      font-size: 20px;
+    }
+
+    &.has-assigned-issues {
+      padding-right: 2px;
+
+      &:after {
+        content: "";
+        background: @admin-blue;
+        position: relative;
+        bottom: 16px;
+        right: 7px;
+        padding: 6px;
+        border-radius: 8px;
+        font-size: 0px;
+        z-index: 1;
+      }
+    }
+
+    .icon-signup();
+  }
+}

@@ -232,6 +232,40 @@ module api.util {
         static numDaysInMonth(year: number, month: number): number {
             return new Date(year, month + 1, 0).getDate();
         }
+
+        static getModifiedString(modified: Date): string {
+            let timeDiff = Math.abs(Date.now() - modified.getTime());
+            let secInMs = 1000;
+            let minInMs = secInMs * 60;
+            let hrInMs = minInMs * 60;
+            let dayInMs = hrInMs * 24;
+            let monInMs = dayInMs * 31;
+            let yrInMs = dayInMs * 365;
+
+            if (timeDiff < minInMs) {
+                return 'less than a minute ago';
+            } else if (timeDiff < 2 * minInMs) {
+                return 'a minute ago';
+            } else if (timeDiff < hrInMs) {
+                return ~~(timeDiff / minInMs) + ' minutes ago';
+            } else if (timeDiff < 2 * hrInMs) {
+                return 'over an hour ago';
+            } else if (timeDiff < dayInMs) {
+                return 'over ' + ~~(timeDiff / hrInMs) + ' hours ago';
+            } else if (timeDiff < 2 * dayInMs) {
+                return 'over a day ago';
+            } else if (timeDiff < monInMs) {
+                return 'over ' + ~~(timeDiff / dayInMs) + ' days ago';
+            } else if (timeDiff < 2 * monInMs) {
+                return 'over a month ago';
+            } else if (timeDiff < yrInMs) {
+                return 'over ' + ~~(timeDiff / monInMs) + ' months ago';
+            } else if (timeDiff < 2 * yrInMs) {
+                return 'over a year ago';
+            }
+
+            return 'over ' + ~~(timeDiff / yrInMs) + ' years ago';
+        }
     }
 
     interface Time {

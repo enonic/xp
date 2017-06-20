@@ -16,6 +16,10 @@ import {ContentWizardPanelParams} from './app/wizard/ContentWizardPanelParams';
 import {ContentWizardPanel} from './app/wizard/ContentWizardPanel';
 import {ContentEventsListener} from './app/ContentEventsListener';
 import {ContentEventsProcessor} from './app/ContentEventsProcessor';
+import {IssueListDialog} from './app/issue/view/IssueListDialog';
+import {IssueServerEventsHandler} from './app/issue/event/IssueServerEventsHandler';
+import {CreateIssueDialog} from './app/issue/view/CreateIssueDialog';
+import {CreateIssuePromptEvent} from './app/browse/CreateIssuePromptEvent';
 import UriHelper = api.util.UriHelper;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import ContentId = api.content.ContentId;
@@ -96,7 +100,7 @@ function initToolTip() {
         wemjq('#' + ID).html(tooltipText).css({
             position: 'absolute', top, left
         }).show();
-        };
+    };
     wemjq(document).on('mouseenter', '*[title]:not([title=""]):not([disabled]):visible', function (e: any) {
         wemjq(e.target).data(DATA, wemjq(e.target).attr('title'));
         wemjq(e.target).removeAttr('title').addClass(CLS_ON);
@@ -223,7 +227,7 @@ function startApplication() {
     ContentPublishPromptEvent.on((event) => {
         contentPublishDialog
             .setContentToPublish(event.getModels())
-            .setIncludeChildItems(event.isIncludeChildItems(), true)
+            .setIncludeChildItems(event.isIncludeChildItems())
             .open();
     });
 
@@ -234,11 +238,21 @@ function startApplication() {
             .open();
     });
 
+    const createIssueDialog = CreateIssueDialog.get();
+    CreateIssuePromptEvent.on((event) => {
+        createIssueDialog.unlockPublishItems();
+        createIssueDialog
+            .setItems(event.getModels())
+            .forceResetOnClose(true)
+            .open();
+    });
+
     let editPermissionsDialog = new EditPermissionsDialog();
 
     application.setLoaded(true);
 
     api.content.event.ContentServerEventsHandler.getInstance().start();
+    IssueServerEventsHandler.getInstance().start();
 }
 
 function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDetector: LostConnectionDetector) {
@@ -273,7 +287,7 @@ function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDe
         if (wizard.hasUnsavedChanges()) {
             let message = 'Wizard has unsaved changes. Continue without saving ?';
             // Hack for IE. returnValue is boolean
-            const e: any = event || window.event || { returnValue: '' };
+            const e: any = event || window.event || {returnValue: ''};
             e['returnValue'] = message;
             return message;
         }
@@ -330,6 +344,7 @@ function startContentApplication(application: api.app.Application) {
         }
     });
 
+    IssueListDialog.get();
     let sortDialog = new SortContentDialog();
     let moveDialog = new MoveContentDialog();
 }

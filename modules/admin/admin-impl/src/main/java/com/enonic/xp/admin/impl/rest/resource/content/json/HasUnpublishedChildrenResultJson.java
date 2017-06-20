@@ -7,7 +7,6 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.admin.impl.json.content.ContentIdJson;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.HasUnpublishedChildrenParams;
 
 public class HasUnpublishedChildrenResultJson
 {

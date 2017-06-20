@@ -1002,7 +1002,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                         this.updateMetadataAndMetadataStepForms(persistedContent);
                     } else {
                         const msg = 'Received Content from server differs from what you have. Would you like to load changes from server?';
-                        ConfirmationDialog.get()
+                        new ConfirmationDialog()
                             .setQuestion(msg)
                             .setYesCallback(() => this.doLayoutPersistedItem(persistedContent.clone()))
                             .setNoCallback(() => { /* empty */
