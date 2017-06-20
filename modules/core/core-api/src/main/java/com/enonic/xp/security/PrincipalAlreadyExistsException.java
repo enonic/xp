@@ -13,7 +13,7 @@ public class PrincipalAlreadyExistsException
 
     public PrincipalAlreadyExistsException( final PrincipalKey principalKey )
     {
-        super( "Principal [{0}] already exists", principalKey );
+        super( "Principal [{0}] could not be created. A principal with that name already exists", principalKey.getId() );
         this.principalKey = principalKey;
     }
 

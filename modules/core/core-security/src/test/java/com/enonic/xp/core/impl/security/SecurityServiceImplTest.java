@@ -31,6 +31,7 @@ import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.CreateUserStoreParams;
 import com.enonic.xp.security.Group;
+import com.enonic.xp.security.PrincipalAlreadyExistsException;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.PrincipalQuery;
@@ -46,6 +47,7 @@ import com.enonic.xp.security.UpdateUserParams;
 import com.enonic.xp.security.UpdateUserStoreParams;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStore;
+import com.enonic.xp.security.UserStoreAlreadyExistsException;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.UserStoreAccessControlEntry;
 import com.enonic.xp.security.acl.UserStoreAccessControlList;
@@ -204,6 +206,26 @@ public class SecurityServiceImplTest
         } );
     }
 
+    @Test(expected = PrincipalAlreadyExistsException.class)
+    public void testCreateUserThrowsExceptionWhenNameIsOccupied()
+        throws Exception
+    {
+        runAsAdmin( () ->
+                    {
+                        final PrincipalKey userKey1 = PrincipalKey.ofUser( SYSTEM, "User1" );
+                        final CreateUserParams createUser1 = CreateUserParams.create().
+                            userKey( userKey1 ).
+                            displayName( "User 1" ).
+                            email( "user1@enonic.com" ).
+                            login( "User1" ).
+                            password( "123456" ).
+                            build();
+
+                        securityService.createUser( createUser1 );
+                        securityService.createUser( createUser1 );
+                    } );
+    }
+
     @Test
     public void testUpdateUser()
         throws Exception
@@ -273,6 +295,24 @@ public class SecurityServiceImplTest
         } );
     }
 
+    @Test(expected = PrincipalAlreadyExistsException.class)
+    public void testCreateGroupThrowsExceptionWhenNameIsOccupied()
+        throws Exception
+    {
+        runAsAdmin( () ->
+                    {
+                        final PrincipalKey groupKey1 = PrincipalKey.ofGroup( SYSTEM, "Group-a" );
+                        final CreateGroupParams createGroup = CreateGroupParams.create().
+                            groupKey( groupKey1 ).
+                            displayName( "Group A" ).
+                            description( "Group A Description" ).
+                            build();
+
+                        securityService.createGroup( createGroup );
+                        securityService.createGroup( createGroup );
+                    } );
+    }
+
     @Test
     public void testUpdateGroup()
         throws Exception
@@ -335,6 +375,24 @@ public class SecurityServiceImplTest
             assertNull( role2.getDescription() );
             assertNull( createdRole2.getDescription() );
         } );
+    }
+
+    @Test(expected = PrincipalAlreadyExistsException.class)
+    public void testCreateRoleThrowsExceptionWhenNameIsOccupied()
+        throws Exception
+    {
+        runAsAdmin( () ->
+                    {
+                        final PrincipalKey roleKey1 = PrincipalKey.ofRole( "Role-a" );
+                        final CreateRoleParams createRole = CreateRoleParams.create().
+                            roleKey( roleKey1 ).
+                            displayName( "Role A" ).
+                            description( "Group A Description" ).
+                            build();
+
+                        securityService.createRole( createRole );
+                        securityService.createRole( createRole );
+                    } );
     }
 
     @Test
@@ -792,6 +850,30 @@ public class SecurityServiceImplTest
             assertEquals( ADMINISTRATOR, createdPermissions.getEntry( groupKey1 ).getAccess() );
             assertEquals( WRITE_USERS, createdPermissions.getEntry( groupKey2 ).getAccess() );
         } );
+    }
+
+    @Test(expected = UserStoreAlreadyExistsException.class)
+    public void testCreateUserStoreThrowsExceptionWhenNameIsOccupied()
+        throws Exception
+    {
+        runAsAdmin( () ->
+                    {
+                        final PrincipalKey userKey = PrincipalKey.ofUser( SYSTEM, "User1" );
+
+                        final UserStoreAccessControlList permissions = UserStoreAccessControlList.of(
+                            UserStoreAccessControlEntry.create().principal( userKey ).access( CREATE_USERS ).build() );
+
+                        final CreateUserStoreParams createUserStore = CreateUserStoreParams.create().
+                            key( UserStoreKey.from( "enonic" ) ).
+                            displayName( "Enonic User Store" ).
+                            permissions( permissions ).
+                            description( "user store description" ).
+                            build();
+
+                        securityService.createUserStore( createUserStore );
+                        securityService.createUserStore( createUserStore );
+
+                    } );
     }
 
     @Test
