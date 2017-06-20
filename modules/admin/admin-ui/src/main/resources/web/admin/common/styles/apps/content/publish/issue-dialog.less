@@ -1,0 +1,115 @@
+.issue-dialog {
+  max-height: none;
+  @toggler-width: 35px;
+
+  &.create-issue-dialog .dialog-header .title {
+    margin-top: -2px;
+  }
+
+  .sub-title {
+    margin-bottom: -10px;
+  }
+
+  .dialog-content {
+    max-height: 60vh;
+    overflow-y: auto;
+
+    .issue-dialog-form {
+      margin: 0px 0px;
+      padding: 0 !important;
+    }
+
+    .content-combo-box {
+      .selected-options {
+        display: none;
+      }
+    }
+
+    .principal-selected-options-view {
+      padding: 0 15px 0 0;
+    }
+
+
+    .browse-selection-item .remove {
+      margin-right: 10px;
+    }
+
+    .publish-dialog-item-list {
+
+      max-height: none;
+      padding: 0;
+
+      .browse-selection-item {
+        &:first-child {
+          padding-top: 0px;
+        }
+
+        .status {
+          line-height: 32px;
+          white-space: nowrap;
+        }
+      }
+
+      &.contains-toggleable {
+
+        .browse-selection-item:not(.toggleable) {
+          margin-left: @toggler-width;
+        }
+
+        .include-children-toggler {
+          cursor: pointer;
+          &.readonly{
+            cursor: default;
+          }
+          &:hover {
+            &:before {
+              color: @admin-font-gray2;
+            }
+            &.on {
+              &:before {
+                color: @admin-button-blue1;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .button-container {
+
+    box-sizing: border-box;
+
+    .back-action {
+      float: left;
+    }
+  }
+
+  @media screen and (max-height: 720px) {
+    .dialog-content {
+      max-height: 450px;
+    }
+  }
+}
+
+.back-button {
+  float: left;
+  text-decoration: none;
+  background-color: @admin-white;
+  cursor: pointer;
+  margin: -11px 0px 0px -13px;
+
+  &:before {
+    color: @admin-font-gray2;
+    font-size: 44px !important;
+  }
+
+  &:hover {
+    &:before {
+      color: lighten(@admin-font-gray2, 10%);
+    }
+  }
+
+  .icon-medium();
+  .icon-arrow-left2();
+}

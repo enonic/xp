@@ -1010,6 +1010,7 @@ public class ContentResourceTest
         Mockito.when( contentService.resolveRequiredDependencies( Mockito.isA( ResolveRequiredDependenciesParams.class ) ) ).thenReturn(
             ContentIds.from( requiredId ) );
         Mockito.when( contentService.compare( Mockito.isA( CompareContentsParams.class ) ) ).thenReturn( results );
+        Mockito.when( contentService.getPermissionsById( Mockito.isA( ContentId.class ) ) ).thenReturn( AccessControlList.empty() );
         Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
             FindContentIdsByQueryResult.create().contents( ContentIds.from( dependantId ) ).totalHits( 1L ).build() );
 

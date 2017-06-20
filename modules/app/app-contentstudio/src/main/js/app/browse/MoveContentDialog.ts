@@ -25,6 +25,8 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
     private descriptionHeader: api.dom.H6El;
 
+    private moveConfirmationDialog: ConfirmationDialog;
+
     constructor() {
         super('');
 
@@ -32,6 +34,7 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
         this.contentPathSubHeader = new api.dom.H6El().addClass('content-path');
         this.descriptionHeader = new api.dom.H6El().addClass('desc-message');
+        this.initMoveConfirmationDialog();
         this.initSearchInput();
         this.initMoveAction();
 
@@ -75,6 +78,16 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
         });
     }
 
+    private initMoveConfirmationDialog() {
+        const msg = 'You are about to move content out of its site which might make it unreachable. Are you sure?';
+        this.moveConfirmationDialog = new ConfirmationDialog()
+            .setQuestion(msg)
+            .setYesCallback(() => this.moveContent())
+            .setNoCallback(() => {
+                this.open();
+            });
+    }
+
     private initSearchInput() {
         this.destinationSearchInput = new ContentMoveComboBox();
         this.destinationSearchInput.addClass('content-selector');
@@ -84,7 +97,7 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
     }
 
     private initMoveAction() {
-        this.addClickIgnoredElement(ConfirmationDialog.get());
+        this.addClickIgnoredElement(this.moveConfirmationDialog);
         this.addAction(new api.ui.Action('Move', '').onExecuted(() => {
             if (this.checkContentWillMoveOutOfSite()) {
                 this.showConfirmationDialog();
@@ -95,16 +108,8 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
     }
 
     private showConfirmationDialog() {
-        const msg = 'You are about to move content out of its site which might make it unreachable. Are you sure?';
-        const confirmDialog: ConfirmationDialog = ConfirmationDialog.get();
         this.close();
-        confirmDialog
-            .setQuestion(msg)
-            .setYesCallback(() => this.moveContent())
-            .setNoCallback(() => {
-                this.open();
-            })
-            .open();
+        this.moveConfirmationDialog.open();
     }
 
     private checkContentWillMoveOutOfSite(): boolean {

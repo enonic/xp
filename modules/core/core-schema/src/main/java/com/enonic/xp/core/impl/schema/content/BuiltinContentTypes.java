@@ -10,6 +10,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.core.impl.schema.SchemaHelper;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -60,6 +61,23 @@ final class BuiltinContentTypes
             inputType( InputTypeName.CONTENT_SELECTOR ).
             inputTypeProperty( InputTypeProperty.create( "relationshipType", RelationshipTypeName.REFERENCE.toString() ).build() ).
             required( true ).
+            build() ).
+        addFormItem( FormItemSet.create().name( "parameters" ).label( "Parameters" ).helpText( "HTTP Parameters" ).
+            multiple( true ).required( false ).
+            addFormItem( Input.create().
+                name( "name" ).
+                label( "Name" ).
+                helpText( "HTTP parameter name" ).
+                inputType( InputTypeName.TEXT_LINE ).
+                occurrences( 1, 1 ).
+                build() ).
+            addFormItem( Input.create().
+                name( "value" ).
+                label( "Value" ).
+                helpText( "HTTP parameter value" ).
+                inputType( InputTypeName.TEXT_LINE ).
+                occurrences( 1, 1 ).
+                build() ).
             build() ).
         build();
 

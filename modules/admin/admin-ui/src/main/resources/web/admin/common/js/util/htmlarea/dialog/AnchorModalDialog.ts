@@ -16,9 +16,7 @@ module api.util.htmlarea.dialog {
 
             this.setFirstFocusField(nameField.getInput());
 
-            return [
-                nameField
-            ];
+            return [nameField];
         }
 
         protected initializeActions() {

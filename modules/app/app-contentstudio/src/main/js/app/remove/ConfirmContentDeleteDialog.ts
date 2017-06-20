@@ -20,7 +20,7 @@ export class ConfirmContentDeleteDialog extends api.ui.dialog.ModalDialog {
     private deleteConfig: ConfirmContentDeleteDialogConfig;
 
     constructor(deleteConfig: ConfirmContentDeleteDialogConfig) {
-        super('Confirm delete');
+        super(<api.ui.dialog.ModalDialogConfig>{title: 'Confirm delete'});
 
         this.deleteConfig = deleteConfig;
 

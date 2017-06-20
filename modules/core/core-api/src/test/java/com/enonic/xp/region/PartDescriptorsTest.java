@@ -6,8 +6,8 @@ import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.page.DescriptorKey;
 
 import static org.junit.Assert.*;
 

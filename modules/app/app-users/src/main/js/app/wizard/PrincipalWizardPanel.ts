@@ -135,7 +135,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
                     console.warn(' viewedPrincipal: ', viewedPrincipal);
                     console.warn(' persistedPrincipal: ', persistedPrincipal);
 
-                    ConfirmationDialog.get()
+                    new ConfirmationDialog()
                         .setQuestion(i18n('dialog.principal.update'))
                         .setYesCallback(() => this.doLayoutPersistedItem(persistedPrincipal ? persistedPrincipal.clone() : null))
                         .setNoCallback(() => { /* empty */ })

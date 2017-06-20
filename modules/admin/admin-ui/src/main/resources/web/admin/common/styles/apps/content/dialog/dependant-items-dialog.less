@@ -1,5 +1,24 @@
 .dependant-dialog {
 
+  @toggler-width: 35px;
+
+  .icon-tree {
+    font-size: 20px;
+    line-height: 32px;
+
+    .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent, false);
+
+    &.on {
+      .button(@admin-button-blue1, transparent, @admin-button-blue1, transparent, false);
+
+      padding: 0;
+      width: @toggler-width;
+    }
+
+    padding: 0;
+    width: @toggler-width;
+  }
+
   &.invalid {
     .sub-title {
       color: @admin-red;
@@ -10,7 +29,7 @@
 
     .dialog-buttons {
 
-      button:not(.cancel-button-bottom) {
+      button:not(.force-enabled) {
         font-family: 'icomoon';
         pointer-events: none;
         opacity: 0.5;
@@ -18,9 +37,9 @@
     }
   }
 
-  &.locked:not(.no-publish) {
+  &.locked:not(.no-action) {
     .dialog-buttons {
-      button:not(.cancel-button-bottom) {
+      button:not(.force-enabled):not(.no-animation) {
         &:after {
           .animation(rotate360, .5s, .0s, linear);
           content: "\e007";
@@ -34,6 +53,44 @@
 
   .sub-title {
     margin-top: 20px;
+    margin-bottom: -10px;
+  }
+
+  .publish-dialog-dependant-list {
+
+    &:not(.readonly) {
+      .browse-selection-item {
+        .remove {
+          display: block;
+        }
+      }
+    }
+  }
+
+  .publish-dialog-item-list {
+    padding: 5px 0;
+
+    &:not(.readonly) {
+      .browse-selection-item {
+        .remove {
+          display: block;
+        }
+      }
+    }
+
+    &:not(.contains-toggleable) + .dependants > .publish-dialog-dependant-list {
+      padding-left: 5px;
+    }
+
+    .browse-selection-item {
+      padding: 6px 0;
+      &.removable {
+        .remove {
+          color: @admin-dark-gray;
+          cursor: pointer;
+        }
+      }
+    }
   }
 
   .browse-selection-item {
@@ -102,12 +159,11 @@
     .dependants {
       display: none;
 
-      .dependants-header {
-        margin: 20px 0 10px 0;
+      .dependants-header:not(:empty) {
+        margin: 10px 0;
       }
 
       .dependant-list {
-        margin-top: 10px;
 
         h6 {
           margin-bottom: 5px;

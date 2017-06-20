@@ -20,6 +20,7 @@ import {ContentPreviewPathChangedEvent} from '../view/ContentPreviewPathChangedE
 import {ContentPublishMenuButton} from './ContentPublishMenuButton';
 import {TreeNodeParentOfContent} from './TreeNodeParentOfContent';
 import {TreeNodesOfContentPath} from './TreeNodesOfContentPath';
+import {ShowIssuesDialogButton} from '../issue/view/ShowIssuesDialogButton';
 
 import TreeNode = api.ui.treegrid.TreeNode;
 import BrowseItem = api.app.browse.BrowseItem;
@@ -35,6 +36,7 @@ import DataChangedEvent = api.ui.treegrid.DataChangedEvent;
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
 import TreeGridItemClickedEvent = api.ui.treegrid.TreeGridItemClickedEvent;
 import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
+import ActionButton = api.ui.button.ActionButton;
 
 export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummaryAndCompareStatus> {
 
@@ -150,6 +152,8 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             detailsView.appendChild(nonMobileDetailsPanelsManager.getToggleButton());
 
             this.subscribeDetailsPanelsOnEvents(nonMobileDetailsPanelsManager, contentPublishMenuButton);
+
+            this.browseToolbar.appendChild(new ShowIssuesDialogButton());
 
             return rendered;
         }).catch((error) => {

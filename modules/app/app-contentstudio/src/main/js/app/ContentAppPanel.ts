@@ -2,6 +2,9 @@ import '../api.ts';
 import {ViewContentEvent} from './browse/ViewContentEvent';
 import {ContentBrowsePanel} from './browse/ContentBrowsePanel';
 import {NewContentEvent} from './create/NewContentEvent';
+import {IssueDetailsDialog} from './issue/view/IssueDetailsDialog';
+import {GetIssueRequest} from './issue/resource/GetIssueRequest';
+import {Issue} from './issue/Issue';
 
 import ContentSummary = api.content.ContentSummary;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
@@ -50,6 +53,15 @@ export class ContentAppPanel extends AppPanel<ContentSummaryAndCompareStatus> {
                 api.content.resource.ContentSummaryAndCompareStatusFetcher.fetch(new ContentId(id)).done(
                     (content: ContentSummaryAndCompareStatus) => {
                         new ViewContentEvent([content]).fire();
+                    });
+            }
+            break;
+        case 'issue' :
+            new ShowBrowsePanelEvent().fire();
+            if (id) {
+                new GetIssueRequest(id).sendAndParse().then(
+                    (issue: Issue) => {
+                        IssueDetailsDialog.get().setIssue(issue).open();
                     });
             }
             break;

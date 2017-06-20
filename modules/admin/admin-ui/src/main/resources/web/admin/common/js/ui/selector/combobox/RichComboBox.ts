@@ -189,6 +189,13 @@ module api.ui.selector.combobox {
             this.comboBox.selectOption(option, silent);
         }
 
+        selectOptionByValue(value: string, silent: boolean = false) {
+            const option: Option<OPTION_DISPLAY_VALUE> = this.getOptionByValue(value);
+            if (option) {
+                this.selectOption(option, silent);
+            }
+        }
+
         hasOptions(): boolean {
             return this.comboBox.hasOptions();
         }
@@ -213,12 +220,12 @@ module api.ui.selector.combobox {
             return this.comboBox.countSelectedOptions();
         }
 
-        select(value: OPTION_DISPLAY_VALUE, readOnly?: boolean) {
-            this.comboBox.selectOption(this.createOption(value, readOnly));
+        select(value: OPTION_DISPLAY_VALUE, readOnly?: boolean, silent?: boolean) {
+            this.comboBox.selectOption(this.createOption(value, readOnly),silent);
         }
 
-        deselect(value: OPTION_DISPLAY_VALUE) {
-            this.comboBox.deselectOption(this.createOption(value));
+        deselect(value: OPTION_DISPLAY_VALUE, silent?: boolean) {
+            this.comboBox.deselectOption(this.createOption(value), silent);
         }
 
         clearCombobox() {

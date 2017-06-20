@@ -6,23 +6,6 @@
 
   @toggler-width: 35px;
 
-  .icon-tree {
-    font-size: 20px;
-    line-height: 32px;
-
-    .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent, false);
-
-    &.on {
-      .button(@admin-button-blue1, transparent, @admin-button-blue1, transparent, false);
-
-      padding: 0;
-      width: @toggler-width;
-    }
-
-    padding: 0;
-    width: @toggler-width;
-  }
-
   .browse-selection-item .remove {
     display: block;
   }
@@ -33,18 +16,7 @@
 
       .status {
         line-height: 32px;
-      }
-
-      &:only-child .remove {
-        color: lightgray;
-        cursor: default;
-      }
-
-      &.removable {
-        .remove {
-          color: @admin-dark-gray;
-          cursor: pointer;
-        }
+        white-space: nowrap;
       }
 
     }
@@ -63,19 +35,6 @@
     }
   }
 
-  .dialog-buttons {
-
-    .button-container {
-      display: flex;
-    }
-
-    margin-top: 10px;
-
-    button.publish-action {
-      .dialog-button(@form-button-font, @admin-green, @form-button-font, lighten(@admin-green, 10%));
-    }
-  }
-
   .include-child-check {
     position: absolute;
     bottom: 40px;
@@ -87,6 +46,18 @@
 
     @media screen and (max-height: 360px) {
       bottom: 25px;
+    }
+  }
+
+  &.publishable {
+    .create-issue-action {
+      display: none !important;;
+    }
+  }
+
+  &:not(.publishable) {
+    .dropdown-dialog-menu {
+      display: none !important;
     }
   }
 
@@ -105,19 +76,6 @@
     }
   }
 
-  .dialog-buttons .@{_COMMON_PREFIX}button.show-schedule-action {
-
-    .button(@admin-font-gray2, transparent, @admin-font-gray3, transparent, false);
-
-    .picker-icon("date", 22px, 3px, 8px, all);
-
-    position: relative;
-    width: 32px;
-    height: 32px;
-    line-height: 32px;
-    padding: 0;
-  }
-
   &.masked {
     opacity: 0;
   }
@@ -126,11 +84,18 @@
 .schedule-publish-dialog {
   max-width: 580px;
 
-  .schedule-publish-dialog-subtitle {
-    margin-top: 20px;
-    background-color: @form-button-bg;
-    padding: 10px 20px;
-    color: @admin-white;
+  .dialog-header {
+    .title {
+      margin-top: -2px;
+    }
+
+    .schedule-publish-dialog-subtitle {
+      margin-top: 20px;
+      background-color: @form-button-bg;
+      padding: 10px 20px;
+      color: @admin-white;
+      line-height: 22px;
+    }
   }
 
   .dialog-buttons {

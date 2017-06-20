@@ -40,6 +40,12 @@ module api.ui.form {
             }
         }
 
+        setLabel(value: string) {
+            if (this.label) {
+                this.label.setValue(value);
+            }
+        }
+
         getLabel(): api.dom.LabelEl {
             return this.label;
         }
