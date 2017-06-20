@@ -1,7 +1,7 @@
 package com.enonic.xp.impl.server.rest;
 
 import java.nio.file.Paths;
-import java.util.List;
+import java.time.Duration;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.POST;
@@ -12,24 +12,25 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.dump.DumpParams;
-import com.enonic.xp.dump.DumpResults;
+import com.enonic.xp.dump.BranchLoadResult;
 import com.enonic.xp.dump.DumpService;
-import com.enonic.xp.dump.LoadParams;
+import com.enonic.xp.dump.RepoLoadResult;
+import com.enonic.xp.dump.SystemDumpParams;
+import com.enonic.xp.dump.SystemDumpResult;
+import com.enonic.xp.dump.SystemLoadParams;
+import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.ImportNodesParams;
 import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.home.HomeDir;
-import com.enonic.xp.impl.server.rest.model.NodeImportResultsJson;
 import com.enonic.xp.impl.server.rest.model.SystemDumpRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemDumpResultJson;
 import com.enonic.xp.impl.server.rest.model.SystemLoadRequestJson;
+import com.enonic.xp.impl.server.rest.model.SystemLoadResultJson;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.CreateRepositoryParams;
@@ -71,7 +72,7 @@ public final class SystemDumpResource
     public SystemDumpResultJson systemDump( final SystemDumpRequestJson request )
         throws Exception
     {
-        final DumpResults dumpResults = this.dumpService.dumpSystem( DumpParams.create().
+        final SystemDumpResult systemDumpResult = this.dumpService.systemDump( SystemDumpParams.create().
             dumpName( request.getName() ).
             includeBinaries( true ).
             includeVersions( request.isIncludeVersions() ).
@@ -79,15 +80,16 @@ public final class SystemDumpResource
             maxVersions( request.getMaxVersions() ).
             build() );
 
-        return SystemDumpResultJson.from( dumpResults );
+        return SystemDumpResultJson.from( systemDumpResult );
     }
 
     @POST
     @Path("load")
-    public NodeImportResultsJson load( final SystemLoadRequestJson request )
+    public SystemLoadResultJson load( final SystemLoadRequestJson request )
     {
         if ( isExport( request ) )
         {
+
             return doLoadFromExport( request );
         }
 
@@ -103,45 +105,52 @@ public final class SystemDumpResource
         return exportProperties.toFile().exists();
     }
 
-    private NodeImportResultsJson doLoadFromExport( final SystemLoadRequestJson request )
+    private SystemLoadResultJson doLoadFromExport( final SystemLoadRequestJson request )
     {
-        final List<NodeImportResult> results = Lists.newArrayList();
+        final SystemLoadResult.Builder builder = SystemLoadResult.create();
 
-        importSystemRepo( request, results );
+        final BranchLoadResult branchLoadResult = importSystemRepo( request );
 
         this.repositoryService.invalidateAll();
 
         for ( Repository repository : repositoryService.list() )
         {
             initializeRepo( repository );
-            importRepoBranches( request.getName(), results, repository );
+            builder.add( importRepoBranches( request.getName(), repository ) );
         }
 
-        return NodeImportResultsJson.from( results );
+        return SystemLoadResultJson.from( builder.build() );
     }
 
-    private NodeImportResultsJson doLoadFromSystemDump( final SystemLoadRequestJson request )
+    private SystemLoadResultJson doLoadFromSystemDump( final SystemLoadRequestJson request )
     {
-        final List<NodeImportResult> results = Lists.newArrayList();
-
-        this.dumpService.loadSystemDump( LoadParams.create().
+        final SystemLoadResult systemLoadResult = this.dumpService.loadSystemDump( SystemLoadParams.create().
             dumpName( request.getName() ).
             includeVersions( true ).
             build() );
 
-        return NodeImportResultsJson.from( results );
+        return SystemLoadResultJson.from( systemLoadResult );
     }
 
-    private void importRepoBranches( final String dumpName, final List<NodeImportResult> results, final Repository repository )
+    private RepoLoadResult importRepoBranches( final String dumpName, final Repository repository )
     {
+        final RepoLoadResult.Builder builder = RepoLoadResult.create( repository.getId() );
+
         for ( Branch branch : repository.getBranches() )
         {
             if ( isSystemRepoMaster( repository, branch ) )
             {
                 continue;
             }
-            results.add( importRepoBranch( repository.getId().toString(), branch.getValue(), dumpName ) );
+
+            final long startTime = System.currentTimeMillis();
+            final NodeImportResult nodeImportResult = importRepoBranch( repository.getId().toString(), branch.getValue(), dumpName );
+
+            builder.add( NodeImportResultTranslator.translate( nodeImportResult, branch,
+                                                               Duration.ofMillis( System.currentTimeMillis() - startTime ) ) );
         }
+
+        return builder.build();
     }
 
     private boolean isSystemRepoMaster( final Repository repository, final Branch branch )
@@ -161,12 +170,14 @@ public final class SystemDumpResource
         }
     }
 
-    private void importSystemRepo( final SystemLoadRequestJson request, final List<NodeImportResult> results )
+    private BranchLoadResult importSystemRepo( final SystemLoadRequestJson request )
     {
+        final long start = System.currentTimeMillis();
         final NodeImportResult systemRepoImport =
             importRepoBranch( SystemConstants.SYSTEM_REPO.getId().toString(), SystemConstants.BRANCH_SYSTEM.toString(), request.getName() );
 
-        results.add( systemRepoImport );
+        return NodeImportResultTranslator.translate( systemRepoImport, SystemConstants.BRANCH_SYSTEM,
+                                                     Duration.ofMillis( System.currentTimeMillis() - start ) );
     }
 
     private NodeImportResult importRepoBranch( final String repoName, final String branch, final String dumpName )

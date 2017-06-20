@@ -22,6 +22,7 @@ import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
+import com.enonic.xp.dump.BranchLoadResult;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.dump.AbstractFileProcessor;
@@ -104,8 +105,9 @@ public class FileDumpReader
     }
 
     @Override
-    public void load( final RepositoryId repositoryId, final Branch branch, final LineProcessor<EntryLoadResult> processor )
+    public BranchLoadResult load( final RepositoryId repositoryId, final Branch branch, final LineProcessor<EntryLoadResult> processor )
     {
+        final BranchLoadResult.Builder result = BranchLoadResult.create( branch );
 
         final Path metaPath = createMetaPath( this.dumpDirectory, repositoryId, branch );
         final File tarFile = metaPath.toFile();
@@ -127,8 +129,13 @@ public class FileDumpReader
             {
                 String content = readEntry( tarInputStream );
                 processor.processLine( content );
+                final EntryLoadResult entryResult = processor.getResult();
+                result.addedNode();
+                result.addedVersions( entryResult.getVersions() );
                 entry = tarInputStream.getNextTarEntry();
             }
+
+            return result.build();
         }
         catch ( IOException e )
         {

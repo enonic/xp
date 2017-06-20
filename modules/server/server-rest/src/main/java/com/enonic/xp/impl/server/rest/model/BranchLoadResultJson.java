@@ -1,8 +1,8 @@
 package com.enonic.xp.impl.server.rest.model;
 
-import com.enonic.xp.dump.BranchDumpResult;
+import com.enonic.xp.dump.BranchLoadResult;
 
-public class BranchDumpResultJson
+public class BranchLoadResultJson
 {
     private final String branch;
 
@@ -10,23 +10,23 @@ public class BranchDumpResultJson
 
     private final Long numberOfVersions;
 
-    private final String timeUsed;
+    private final String duration;
 
-    private BranchDumpResultJson( final Builder builder )
+    private BranchLoadResultJson( final Builder builder )
     {
         branch = builder.branch;
         numberOfNodes = builder.numberOfNodes;
         numberOfVersions = builder.numberOfVersions;
-        timeUsed = builder.timeUsed;
+        duration = builder.duration;
     }
 
-    public static BranchDumpResultJson from( final BranchDumpResult result )
+    public static BranchLoadResultJson from( final BranchLoadResult result )
     {
-        return BranchDumpResultJson.create().
+        return BranchLoadResultJson.create().
             branch( result.getBranch().toString() ).
+            duration( result.getDuration().toString() ).
             numberOfNodes( result.getNumberOfNodes() ).
             numberOfVersions( result.getNumberOfVersions() ).
-            timeUsed( result.getDuration().toString() ).
             build();
     }
 
@@ -49,9 +49,9 @@ public class BranchDumpResultJson
     }
 
     @SuppressWarnings( "unused" )
-    public String getTimeUsed()
+    public String getDuration()
     {
-        return timeUsed;
+        return duration;
     }
 
     private static Builder create()
@@ -67,7 +67,7 @@ public class BranchDumpResultJson
 
         private Long numberOfVersions;
 
-        private String timeUsed;
+        private String duration;
 
         private Builder()
         {
@@ -91,15 +91,15 @@ public class BranchDumpResultJson
             return this;
         }
 
-        public Builder timeUsed( final String val )
+        public Builder duration( final String val )
         {
-            timeUsed = val;
+            duration = val;
             return this;
         }
 
-        public BranchDumpResultJson build()
+        public BranchLoadResultJson build()
         {
-            return new BranchDumpResultJson( this );
+            return new BranchLoadResultJson( this );
         }
     }
 }

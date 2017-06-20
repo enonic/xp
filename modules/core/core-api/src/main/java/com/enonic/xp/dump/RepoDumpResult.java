@@ -10,7 +10,7 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 
-public class DumpResult
+public class RepoDumpResult
     implements Iterable<BranchDumpResult>
 {
     private final List<BranchDumpResult> branchResults;
@@ -19,7 +19,7 @@ public class DumpResult
 
     private final Duration duration;
 
-    private DumpResult( final Builder builder )
+    private RepoDumpResult( final Builder builder )
     {
         this.branchResults = builder.branchResults;
         this.repositoryId = builder.repositoryId;
@@ -74,10 +74,10 @@ public class DumpResult
             return this;
         }
 
-        public DumpResult build()
+        public RepoDumpResult build()
         {
             this.endTime = System.currentTimeMillis();
-            return new DumpResult( this );
+            return new RepoDumpResult( this );
         }
     }
 

@@ -15,7 +15,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.dump.BranchDumpResult;
-import com.enonic.xp.dump.DumpResult;
+import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.Node;
@@ -58,7 +58,7 @@ class RepoDumper
 
     private final DumpWriter writer;
 
-    private final DumpResult.Builder dumpResult;
+    private final RepoDumpResult.Builder dumpResult;
 
     private final String xpVersion;
 
@@ -71,16 +71,14 @@ class RepoDumper
         this.repositoryService = builder.repositoryService;
         this.writer = builder.writer;
         this.xpVersion = builder.xpVersion;
-        this.dumpResult = DumpResult.create( this.repositoryId );
+        this.dumpResult = RepoDumpResult.create( this.repositoryId );
         this.maxAge = builder.maxAge;
         this.maxVersions = builder.maxVersions;
     }
 
-    public DumpResult execute()
+    public RepoDumpResult execute()
     {
-        getBranches().forEach( ( branch ) -> {
-            setContext( branch ).runWith( this::doExecute );
-        } );
+        getBranches().forEach( ( branch ) -> setContext( branch ).runWith( this::doExecute ) );
 
         return this.dumpResult.build();
     }
@@ -157,7 +155,7 @@ class RepoDumper
         writer.writeMetaData( dumpEntry );
         dumpEntry.getAllVersionIds().forEach( writer::writeVersion );
         dumpEntry.getBinaryReferences().forEach( writer::writeBinary );
-        dumpResult.addNode();
+        dumpResult.addedNode();
         dumpResult.addedVersions( dumpEntry.getAllVersionIds().size() );
     }
 

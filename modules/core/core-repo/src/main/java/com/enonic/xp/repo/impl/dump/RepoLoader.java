@@ -9,7 +9,8 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.dump.DumpResult;
+import com.enonic.xp.dump.BranchLoadResult;
+import com.enonic.xp.dump.RepoLoadResult;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repo.impl.dump.reader.DumpLineProcessor;
 import com.enonic.xp.repo.impl.dump.reader.DumpReader;
@@ -46,13 +47,13 @@ class RepoLoader
             build();
     }
 
-    public DumpResult execute()
+    public RepoLoadResult execute()
     {
-        getBranches().forEach( ( branch ) -> {
-            setContext( branch ).runWith( this::doExecute );
-        } );
+        final RepoLoadResult.Builder loadResult = RepoLoadResult.create( this.repositoryId );
 
-        return null;
+        getBranches().forEach( ( branch ) -> setContext( branch ).runWith( () -> doExecute( loadResult ) ) );
+
+        return loadResult.build();
     }
 
     private Branches getBranches()
@@ -68,12 +69,14 @@ class RepoLoader
             build();
     }
 
-    private void doExecute()
+    private void doExecute( final RepoLoadResult.Builder result )
     {
         final Branch currentBranch = ContextAccessor.current().getBranch();
         verifyOrCreateBranch( currentBranch );
 
-        this.reader.load( repositoryId, currentBranch, this.processor );
+        final BranchLoadResult branchLoadResult = this.reader.load( repositoryId, currentBranch, this.processor );
+
+        result.add( branchLoadResult );
     }
 
     private void verifyOrCreateBranch( final Branch branch )
@@ -87,7 +90,6 @@ class RepoLoader
 
         this.repositoryService.createBranch( CreateBranchParams.from( branch ) );
     }
-
 
     public static Builder create()
     {
@@ -107,7 +109,6 @@ class RepoLoader
         private DumpReader reader;
 
         private BlobStore blobStore;
-
 
         private Builder()
         {
@@ -137,7 +138,6 @@ class RepoLoader
             return this;
         }
 
-
         public Builder includeVersions( final boolean val )
         {
             includeVersions = val;
@@ -149,7 +149,6 @@ class RepoLoader
             reader = val;
             return this;
         }
-
 
         public RepoLoader build()
         {

@@ -17,9 +17,9 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.BranchDumpResult;
-import com.enonic.xp.dump.DumpParams;
-import com.enonic.xp.dump.DumpResults;
-import com.enonic.xp.dump.LoadParams;
+import com.enonic.xp.dump.SystemDumpParams;
+import com.enonic.xp.dump.SystemDumpResult;
+import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.GetNodeVersionsParams;
@@ -88,11 +88,11 @@ public class DumpServiceImplTest
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
 
-        final DumpResults dumpResults = NodeHelper.runAsAdmin( () -> this.dumpService.dumpSystem( DumpParams.create().
+        final SystemDumpResult systemDumpResult = NodeHelper.runAsAdmin( () -> this.dumpService.systemDump( SystemDumpParams.create().
             dumpName( "testDump" ).
             build() ) );
 
-        final BranchDumpResult result = dumpResults.get( CTX_DEFAULT.getRepositoryId() ).get( CTX_DEFAULT.getBranch() );
+        final BranchDumpResult result = systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).get( CTX_DEFAULT.getBranch() );
         assertNotNull( result );
         assertEquals( new Long( 2 ), result.getNumberOfNodes() );
 
@@ -151,14 +151,14 @@ public class DumpServiceImplTest
         final RepositoryId currentRepoId = CTX_DEFAULT.getRepositoryId();
 
         NodeHelper.runAsAdmin( () -> {
-            this.dumpService.dumpSystem( DumpParams.create().
+            this.dumpService.systemDump( SystemDumpParams.create().
                 dumpName( "testDump" ).
                 build() );
 
             this.repositoryService.deleteBranch( DeleteBranchParams.from( branch ) );
             assertFalse( this.repositoryService.get( currentRepoId ).getBranches().contains( branch ) );
 
-            this.dumpService.loadSystemDump( LoadParams.create().
+            this.dumpService.loadSystemDump( SystemLoadParams.create().
                 dumpName( "testDump" ).
                 build() );
 
@@ -233,7 +233,7 @@ public class DumpServiceImplTest
             updateNode( node );
         }
 
-        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true, DumpParams.create().
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true, SystemDumpParams.create().
             dumpName( "myTestDump" ).
             maxVersions( 5 ).
             build() ) );
@@ -305,7 +305,7 @@ public class DumpServiceImplTest
 
     private void dumpDeleteAndLoad( final boolean clearBlobStore )
     {
-        final DumpParams params = DumpParams.create().
+        final SystemDumpParams params = SystemDumpParams.create().
             dumpName( "myTestDump" ).
             includeVersions( true ).
             includeBinaries( true ).
@@ -314,9 +314,9 @@ public class DumpServiceImplTest
         dumpDeleteAndLoad( clearBlobStore, params );
     }
 
-    private void dumpDeleteAndLoad( final boolean clearBlobStore, final DumpParams params )
+    private void dumpDeleteAndLoad( final boolean clearBlobStore, final SystemDumpParams params )
     {
-        this.dumpService.dumpSystem( params );
+        this.dumpService.systemDump( params );
 
         final Repositories repositories = this.repositoryService.list();
 
@@ -335,7 +335,7 @@ public class DumpServiceImplTest
 
         new SystemRepoInitializer( this.repositoryService, this.storageService ).initialize();
 
-        this.dumpService.loadSystemDump( LoadParams.create().
+        this.dumpService.loadSystemDump( SystemLoadParams.create().
             dumpName( "myTestDump" ).
             includeVersions( true ).
             build() );

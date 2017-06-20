@@ -1,12 +1,12 @@
 package com.enonic.xp.dump;
 
-public class LoadParams
+public class SystemLoadParams
 {
     private final String dumpName;
 
     private final boolean includeVersions;
 
-    private LoadParams( final Builder builder )
+    private SystemLoadParams( final Builder builder )
     {
         dumpName = builder.dumpName;
         includeVersions = builder.includeVersions;
@@ -49,9 +49,9 @@ public class LoadParams
             return this;
         }
 
-        public LoadParams build()
+        public SystemLoadParams build()
         {
-            return new LoadParams( this );
+            return new SystemLoadParams( this );
         }
     }
 }

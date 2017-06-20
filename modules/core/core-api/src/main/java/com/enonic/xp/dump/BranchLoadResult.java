@@ -1,11 +1,10 @@
 package com.enonic.xp.dump;
 
-
 import java.time.Duration;
 
 import com.enonic.xp.branch.Branch;
 
-public class BranchDumpResult
+public class BranchLoadResult
 {
     private final Branch branch;
 
@@ -15,11 +14,11 @@ public class BranchDumpResult
 
     private final Duration duration;
 
-    private BranchDumpResult( final Builder builder )
+    private BranchLoadResult( final Builder builder )
     {
-        this.branch = builder.branch;
-        this.numberOfNodes = builder.numberOfNodes;
-        this.numberOfVersions = builder.numberOfVersions;
+        branch = builder.branch;
+        numberOfNodes = builder.numberOfNodes;
+        numberOfVersions = builder.numberOfVersions;
         this.duration = builder.duration != null ? builder.duration : Duration.ofMillis( builder.endTime - builder.startTime );
     }
 
@@ -50,37 +49,37 @@ public class BranchDumpResult
 
     public static final class Builder
     {
-        private final Long startTime;
-
-        private Long endTime;
-
         private final Branch branch;
 
         private Long numberOfNodes = 0L;
 
         private Long numberOfVersions = 0L;
 
+        private final Long startTime;
+
+        private Long endTime;
+
         private Duration duration;
 
         private Builder( final Branch branch )
         {
-            this.startTime = System.currentTimeMillis();
             this.branch = branch;
+            this.startTime = System.currentTimeMillis();
         }
 
         public Builder addedNode()
         {
-            numberOfNodes++;
+            this.numberOfNodes += 1;
             return this;
         }
 
-        public Builder addedNodes( final long val )
+        public Builder addedNodes( final Long val )
         {
-            numberOfNodes = val;
+            numberOfNodes += val;
             return this;
         }
 
-        public Builder addedVersions( final long val )
+        public Builder addedVersions( final Long val )
         {
             numberOfVersions += val;
             return this;
@@ -92,22 +91,10 @@ public class BranchDumpResult
             return this;
         }
 
-        public BranchDumpResult build()
+        public BranchLoadResult build()
         {
             this.endTime = System.currentTimeMillis();
-            return new BranchDumpResult( this );
+            return new BranchLoadResult( this );
         }
     }
-
-    @Override
-    public String toString()
-    {
-        return "BranchDumpResult{" +
-            "branch=" + branch +
-            ", numberOfNodes=" + numberOfNodes +
-            ", numberOfVersions=" + numberOfVersions +
-            ", timeUsed=" + duration +
-            '}';
-    }
-
 }

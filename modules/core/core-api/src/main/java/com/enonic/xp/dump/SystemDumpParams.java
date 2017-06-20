@@ -1,6 +1,6 @@
 package com.enonic.xp.dump;
 
-public class DumpParams
+public class SystemDumpParams
 {
     private final String dumpName;
 
@@ -12,7 +12,7 @@ public class DumpParams
 
     private final Integer maxVersions;
 
-    private DumpParams( final Builder builder )
+    private SystemDumpParams( final Builder builder )
     {
         dumpName = builder.dumpName;
         includeVersions = builder.includeVersions;
@@ -97,9 +97,9 @@ public class DumpParams
             return this;
         }
 
-        public DumpParams build()
+        public SystemDumpParams build()
         {
-            return new DumpParams( this );
+            return new SystemDumpParams( this );
         }
     }
 }

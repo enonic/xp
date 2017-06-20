@@ -26,7 +26,7 @@ import com.enonic.xp.repo.impl.node.NodeConstants;
 public class DumpLineProcessor
     implements LineProcessor<EntryLoadResult>
 {
-    private final EntryLoadResult result;
+    private EntryLoadResult result;
 
     private final BlobStore blobStore;
 
@@ -52,6 +52,8 @@ public class DumpLineProcessor
     public boolean processLine( final String line )
         throws IOException
     {
+        final EntryLoadResult.Builder result = EntryLoadResult.create();
+
         final DumpEntry dumpEntry = this.serializer.deSerialize( line );
 
         final Collection<Meta> versions = dumpEntry.getVersions();
@@ -75,6 +77,8 @@ public class DumpLineProcessor
                     build() );
 
                 validateOrAddBinary( nodeVersion );
+
+                result.addedVersion();
             }
             else if ( includeVersions )
             {
@@ -88,9 +92,12 @@ public class DumpLineProcessor
                     build() );
 
                 validateOrAddBinary( nodeVersion );
+
+                result.addedVersion();
             }
         }
 
+        this.result = result.build();
         return true;
     }
 

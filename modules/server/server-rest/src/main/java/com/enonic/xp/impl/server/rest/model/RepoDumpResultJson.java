@@ -6,7 +6,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.dump.BranchDumpResult;
-import com.enonic.xp.dump.DumpResult;
+import com.enonic.xp.dump.RepoDumpResult;
 
 public class RepoDumpResultJson
 {
@@ -23,17 +23,17 @@ public class RepoDumpResultJson
         this.duration = builder.duration.toString();
     }
 
-    public static RepoDumpResultJson from( final DumpResult dumpResult )
+    public static RepoDumpResultJson from( final RepoDumpResult repoDumpResult )
     {
         final Builder builder = RepoDumpResultJson.create();
 
-        for ( final BranchDumpResult result : dumpResult )
+        for ( final BranchDumpResult result : repoDumpResult )
         {
             builder.add( BranchDumpResultJson.from( result ) );
-            builder.addDuration( result.getTimeUsed() );
+            builder.addDuration( result.getDuration() );
         }
 
-        builder.repository = dumpResult.getRepositoryId().toString();
+        builder.repository = repoDumpResult.getRepositoryId().toString();
 
         return builder.build();
     }
@@ -56,7 +56,7 @@ public class RepoDumpResultJson
         return duration;
     }
 
-    public static Builder create()
+    private static Builder create()
     {
         return new Builder();
     }

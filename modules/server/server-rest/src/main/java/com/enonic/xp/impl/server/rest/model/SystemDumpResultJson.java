@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.codehaus.jparsec.util.Lists;
 
-import com.enonic.xp.dump.DumpResult;
-import com.enonic.xp.dump.DumpResults;
+import com.enonic.xp.dump.RepoDumpResult;
+import com.enonic.xp.dump.SystemDumpResult;
 
 public class SystemDumpResultJson
 {
@@ -20,11 +20,11 @@ public class SystemDumpResultJson
         this.duration = builder.duration.toString();
     }
 
-    public static SystemDumpResultJson from( final DumpResults dumpResults )
+    public static SystemDumpResultJson from( final SystemDumpResult systemDumpResult )
     {
         final SystemDumpResultJson.Builder builder = SystemDumpResultJson.create();
 
-        for ( final DumpResult result : dumpResults )
+        for ( final RepoDumpResult result : systemDumpResult )
         {
             builder.add( RepoDumpResultJson.from( result ) );
             builder.addDuration( Duration.parse( result.getDuration() ) );
@@ -45,7 +45,7 @@ public class SystemDumpResultJson
         return duration;
     }
 
-    public static Builder create()
+    private static Builder create()
     {
         return new Builder();
     }

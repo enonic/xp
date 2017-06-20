@@ -15,10 +15,11 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.dump.DumpParams;
-import com.enonic.xp.dump.DumpResults;
+import com.enonic.xp.dump.SystemDumpParams;
+import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.DumpService;
-import com.enonic.xp.dump.LoadParams;
+import com.enonic.xp.dump.SystemLoadParams;
+import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
@@ -61,7 +62,7 @@ public class DumpServiceImpl
     }
 
     @Override
-    public DumpResults dumpSystem( final DumpParams params )
+    public SystemDumpResult systemDump( final SystemDumpParams params )
     {
         if ( !SecurityHelper.isAdmin() )
         {
@@ -78,7 +79,7 @@ public class DumpServiceImpl
 
         final Repositories repositories = this.repositoryService.list();
 
-        final DumpResults.Builder dumpResults = DumpResults.create();
+        final SystemDumpResult.Builder dumpResults = SystemDumpResult.create();
 
         for ( final Repository repository : repositories )
         {
@@ -100,8 +101,10 @@ public class DumpServiceImpl
     }
 
     @Override
-    public void loadSystemDump( final LoadParams params )
+    public SystemLoadResult loadSystemDump( final SystemLoadParams params )
     {
+        final SystemLoadResult.Builder results = SystemLoadResult.create();
+
         if ( !SecurityHelper.isAdmin() )
         {
             throw new RepoDumpException( "Only admin role users can dump repositories" );
@@ -116,7 +119,7 @@ public class DumpServiceImpl
             throw new SystemDumpException( "Cannot load system-dump; dump does not contain system repository" );
         }
 
-        initializeSystemRepo( params, dumpReader );
+        initializeSystemRepo( params, dumpReader, results );
 
         final List<Repository> repositoriesToLoad = repositoryService.list().stream().
             filter( ( repo ) -> !repo.getId().equals( SystemConstants.SYSTEM_REPO.getId() ) ).
@@ -125,13 +128,15 @@ public class DumpServiceImpl
         for ( Repository repository : repositoriesToLoad )
         {
             initializeRepo( repository );
-            doLoadRepository( repository.getId(), params.isIncludeVersions(), dumpReader );
+            doLoadRepository( repository.getId(), params.isIncludeVersions(), dumpReader, results );
         }
+
+        return results.build();
     }
 
-    private void initializeSystemRepo( final LoadParams params, final FileDumpReader dumpReader )
+    private void initializeSystemRepo( final SystemLoadParams params, final FileDumpReader dumpReader, final SystemLoadResult.Builder results )
     {
-        doLoadRepository( SystemConstants.SYSTEM_REPO.getId(), params.isIncludeVersions(), dumpReader );
+        doLoadRepository( SystemConstants.SYSTEM_REPO.getId(), params.isIncludeVersions(), dumpReader, results );
 
         this.repositoryService.invalidateAll();
 
@@ -154,11 +159,12 @@ public class DumpServiceImpl
         }
     }
 
-    private void doLoadRepository( final RepositoryId repositoryId, final boolean includeVersions, final FileDumpReader dumpReader )
+    private void doLoadRepository( final RepositoryId repositoryId, final boolean includeVersions, final FileDumpReader dumpReader,
+                                   final SystemLoadResult.Builder builder )
     {
         LOG.info( "Loading repository [" + repositoryId + "]" );
 
-        RepoLoader.create().
+        builder.add( RepoLoader.create().
             reader( dumpReader ).
             nodeService( this.nodeService ).
             blobStore( this.blobStore ).
@@ -166,7 +172,7 @@ public class DumpServiceImpl
             repositoryService( this.repositoryService ).
             repositoryId( repositoryId ).
             build().
-            execute();
+            execute() );
     }
 
     @Reference
