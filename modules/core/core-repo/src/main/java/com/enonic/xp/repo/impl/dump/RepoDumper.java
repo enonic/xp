@@ -16,6 +16,7 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.dump.BranchDumpResult;
 import com.enonic.xp.dump.RepoDumpResult;
+import com.enonic.xp.dump.SystemDumpListener;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.Node;
@@ -62,6 +63,8 @@ class RepoDumper
 
     private final String xpVersion;
 
+    private final SystemDumpListener listener;
+
     private RepoDumper( final Builder builder )
     {
         this.repositoryId = builder.repositoryId;
@@ -74,6 +77,7 @@ class RepoDumper
         this.dumpResult = RepoDumpResult.create( this.repositoryId );
         this.maxAge = builder.maxAge;
         this.maxVersions = builder.maxVersions;
+        this.listener = builder.listener;
     }
 
     public RepoDumpResult execute()
@@ -106,7 +110,7 @@ class RepoDumper
     private void doExecute()
     {
         final Branch branch = ContextAccessor.current().getBranch();
-        LOG.info( "Dumping repository [" + this.repositoryId + "], branch [" + branch + "]  " );
+        reportDumpingBranch( branch );
 
         writer.writeDumpMeta( new DumpMeta( this.xpVersion ) );
         final BranchDumpResult.Builder branchDumpResult = BranchDumpResult.create( branch );
@@ -129,6 +133,7 @@ class RepoDumper
         this.dumpResult.add( branchDumpResult.build() );
     }
 
+
     private void dumpChildren( final NodeId nodeId, final BranchDumpResult.Builder dumpResult )
     {
         final BatchedGetChildrenExecutor executor = BatchedGetChildrenExecutor.create().
@@ -142,6 +147,12 @@ class RepoDumper
         while ( executor.hasMore() )
         {
             final NodeIds children = executor.execute();
+
+            if ( this.listener != null )
+            {
+                this.listener.setTotal( executor.getTotalHits() );
+            }
+
             for ( final NodeId child : children )
             {
                 doDumpNode( child, dumpResult );
@@ -157,6 +168,16 @@ class RepoDumper
         dumpEntry.getBinaryReferences().forEach( writer::writeBinary );
         dumpResult.addedNode();
         dumpResult.addedVersions( dumpEntry.getAllVersionIds().size() );
+
+        reportNodeDumped();
+    }
+
+    private void reportNodeDumped()
+    {
+        if ( this.listener != null )
+        {
+            this.listener.nodeDumped();
+        }
     }
 
     private DumpEntry createDumpEntry( final NodeId nodeId )
@@ -230,6 +251,18 @@ class RepoDumper
             nodeVersion.getAttachedBinaries().stream().map( AttachedBinary::getBlobKey ).collect( Collectors.toSet() ) );
     }
 
+    private void reportDumpingBranch( final Branch branch )
+    {
+        if ( this.listener != null )
+        {
+            this.listener.dumpingBranch( this.repositoryId, branch );
+        }
+        else
+        {
+            LOG.info( "Dumping repository [" + this.repositoryId + "], branch [" + branch + "]  " );
+        }
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -254,6 +287,8 @@ class RepoDumper
         private Integer maxAge;
 
         private Integer maxVersions;
+
+        private SystemDumpListener listener;
 
         private Builder()
         {
@@ -310,6 +345,12 @@ class RepoDumper
         public Builder maxVersions( final Integer maxVersions )
         {
             this.maxVersions = maxVersions;
+            return this;
+        }
+
+        public Builder listener( final SystemDumpListener listener )
+        {
+            this.listener = listener;
             return this;
         }
 

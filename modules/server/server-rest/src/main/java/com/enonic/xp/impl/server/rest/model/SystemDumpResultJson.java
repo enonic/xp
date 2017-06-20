@@ -33,13 +33,13 @@ public class SystemDumpResultJson
         return builder.build();
     }
 
-    @SuppressWarnings( "unused" )
+    @SuppressWarnings("unused")
     public List<RepoDumpResultJson> getRepositories()
     {
         return repositories;
     }
 
-    @SuppressWarnings( "unused" )
+    @SuppressWarnings("unused")
     public String getDuration()
     {
         return duration;

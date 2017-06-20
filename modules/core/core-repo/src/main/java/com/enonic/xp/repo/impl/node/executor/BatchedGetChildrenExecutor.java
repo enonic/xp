@@ -20,11 +20,13 @@ public class BatchedGetChildrenExecutor
 
     private boolean hasMore = true;
 
-    private Filters filters;
+    private final Filters filters;
 
-    private ChildOrder childOrder;
+    private final ChildOrder childOrder;
 
-    private boolean recursive;
+    private final boolean recursive;
+
+    private Long totalHits;
 
     private BatchedGetChildrenExecutor( final Builder builder )
     {
@@ -41,6 +43,8 @@ public class BatchedGetChildrenExecutor
         final FindNodesByParentParams queryParams = createQuery();
 
         final FindNodesByParentResult result = this.nodeService.findByParent( queryParams );
+
+        this.totalHits = result.getTotalHits();
 
         if ( result.isEmpty() )
         {
@@ -75,6 +79,11 @@ public class BatchedGetChildrenExecutor
 
         return queryBuilder.
             build();
+    }
+
+    public Long getTotalHits()
+    {
+        return totalHits;
     }
 
     public boolean hasMore()
@@ -122,7 +131,6 @@ public class BatchedGetChildrenExecutor
             nodeService = val;
             return this;
         }
-
 
         public Builder filters( final Filters val )
         {

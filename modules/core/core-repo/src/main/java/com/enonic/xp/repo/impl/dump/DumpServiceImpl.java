@@ -15,9 +15,9 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
-import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.home.HomeDir;
@@ -93,6 +93,7 @@ public class DumpServiceImpl
                 xpVersion( this.xpVersion ).
                 maxVersions( params.getMaxVersions() ).
                 maxAge( params.getMaxAge() ).
+                listener( params.getListener() ).
                 build().
                 execute() );
         }
@@ -134,7 +135,8 @@ public class DumpServiceImpl
         return results.build();
     }
 
-    private void initializeSystemRepo( final SystemLoadParams params, final FileDumpReader dumpReader, final SystemLoadResult.Builder results )
+    private void initializeSystemRepo( final SystemLoadParams params, final FileDumpReader dumpReader,
+                                       final SystemLoadResult.Builder results )
     {
         doLoadRepository( SystemConstants.SYSTEM_REPO.getId(), params.isIncludeVersions(), dumpReader, results );
 

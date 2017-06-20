@@ -279,7 +279,6 @@ public class DumpServiceImplTest
         verifyBinaries( node, updatedNode, versions );
     }
 
-
     private void verifyBinaries( final Node node, final Node updatedNode, final NodeVersionQueryResult versions )
     {
         versions.getNodeVersionsMetadata().forEach( ( version ) -> verifyVersionBinaries( node, updatedNode, version ) );

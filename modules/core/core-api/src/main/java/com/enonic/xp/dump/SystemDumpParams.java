@@ -12,6 +12,8 @@ public class SystemDumpParams
 
     private final Integer maxVersions;
 
+    private final SystemDumpListener listener;
+
     private SystemDumpParams( final Builder builder )
     {
         dumpName = builder.dumpName;
@@ -19,6 +21,7 @@ public class SystemDumpParams
         includeBinaries = builder.includeBinaries;
         maxAge = builder.maxAge;
         maxVersions = builder.maxVersions;
+        this.listener = builder.listener;
     }
 
     public String getDumpName()
@@ -51,6 +54,11 @@ public class SystemDumpParams
         return maxVersions;
     }
 
+    public SystemDumpListener getListener()
+    {
+        return listener;
+    }
+
     public static final class Builder
     {
         private String dumpName;
@@ -62,6 +70,8 @@ public class SystemDumpParams
         private Integer maxAge;
 
         private Integer maxVersions;
+
+        private SystemDumpListener listener;
 
         private Builder()
         {
@@ -94,6 +104,12 @@ public class SystemDumpParams
         public Builder maxVersions( final Integer val )
         {
             maxVersions = val;
+            return this;
+        }
+
+        public Builder listener( final SystemDumpListener listener )
+        {
+            this.listener = listener;
             return this;
         }
 

@@ -40,6 +40,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
+import com.enonic.xp.task.TaskService;
 import com.enonic.xp.vfs.VirtualFiles;
 
 @Path("/api/system")
@@ -57,6 +58,8 @@ public final class SystemDumpResource
 
     private DumpService dumpService;
 
+    private TaskService taskService;
+
     private java.nio.file.Path getDumpDirectory( final String name )
     {
         return Paths.get( HomeDir.get().toString(), "data", "dump", name ).toAbsolutePath();
@@ -72,16 +75,37 @@ public final class SystemDumpResource
     public SystemDumpResultJson systemDump( final SystemDumpRequestJson request )
         throws Exception
     {
-        final SystemDumpResult systemDumpResult = this.dumpService.systemDump( SystemDumpParams.create().
+        final SystemDumpParams params = SystemDumpParams.create().
             dumpName( request.getName() ).
             includeBinaries( true ).
             includeVersions( request.isIncludeVersions() ).
             maxAge( request.getMaxAge() ).
             maxVersions( request.getMaxVersions() ).
-            build() );
+            build();
 
-        return SystemDumpResultJson.from( systemDumpResult );
+        final SystemDumpResult result = this.dumpService.systemDump( params );
+        return SystemDumpResultJson.from( result );
     }
+
+    private void doTaskStuff( final SystemDumpRequestJson request )
+        throws InterruptedException
+    {
+        /*
+        final RunnableTask runnableTask = ( id, progressReporter ) -> systemDumpTask( request, progressReporter );
+        final TaskId taskId = taskService.submitTask( runnableTask, "Publish content" );
+
+        TaskInfo taskInfo = taskService.getTaskInfo( taskId );
+
+        while ( taskInfo.isRunning() )
+        {
+            System.out.println( "State: " + taskInfo.getState() );
+            System.out.println( "Progress: " + taskInfo.getProgress() );
+            Thread.sleep( 1000 );
+            taskInfo = taskService.getTaskInfo( taskId );
+        }
+        */
+    }
+
 
     @POST
     @Path("load")
@@ -109,7 +133,7 @@ public final class SystemDumpResource
     {
         final SystemLoadResult.Builder builder = SystemLoadResult.create();
 
-        final BranchLoadResult branchLoadResult = importSystemRepo( request );
+        builder.add( importSystemRepo( request ) );
 
         this.repositoryService.invalidateAll();
 
@@ -170,14 +194,19 @@ public final class SystemDumpResource
         }
     }
 
-    private BranchLoadResult importSystemRepo( final SystemLoadRequestJson request )
+    private RepoLoadResult importSystemRepo( final SystemLoadRequestJson request )
     {
+        final RepoLoadResult.Builder builder = RepoLoadResult.create( SystemConstants.SYSTEM_REPO.getId() );
+
         final long start = System.currentTimeMillis();
         final NodeImportResult systemRepoImport =
             importRepoBranch( SystemConstants.SYSTEM_REPO.getId().toString(), SystemConstants.BRANCH_SYSTEM.toString(), request.getName() );
 
-        return NodeImportResultTranslator.translate( systemRepoImport, SystemConstants.BRANCH_SYSTEM,
-                                                     Duration.ofMillis( System.currentTimeMillis() - start ) );
+        final BranchLoadResult branchLoadResult = NodeImportResultTranslator.translate( systemRepoImport, SystemConstants.BRANCH_SYSTEM,
+                                                                                        Duration.ofMillis(
+                                                                                            System.currentTimeMillis() - start ) );
+        builder.add( branchLoadResult );
+        return builder.build();
     }
 
     private NodeImportResult importRepoBranch( final String repoName, final String branch, final String dumpName )
@@ -239,5 +268,12 @@ public final class SystemDumpResource
     public void setDumpService( final DumpService dumpService )
     {
         this.dumpService = dumpService;
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    @Reference
+    public void setTaskService( final TaskService taskService )
+    {
+        this.taskService = taskService;
     }
 }
