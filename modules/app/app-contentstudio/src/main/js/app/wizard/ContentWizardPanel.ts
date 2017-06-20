@@ -97,7 +97,8 @@ import FragmentComponent = api.content.page.region.FragmentComponent;
 import FragmentComponentType = api.content.page.region.FragmentComponentType;
 import i18n = api.util.i18n;
 
-export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
+export class ContentWizardPanel
+    extends api.app.wizard.WizardPanel<Content> {
 
     protected wizardActions: ContentWizardActions;
 
@@ -131,7 +132,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private securityWizardStepForm: SecurityWizardStepForm;
 
-    private metadataStepFormByName: {[name: string]: ContentWizardStepForm;};
+    private metadataStepFormByName: { [name: string]: ContentWizardStepForm; };
 
     private displayNameScriptExecutor: DisplayNameScriptExecutor;
 
@@ -139,7 +140,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private isContentFormValid: boolean;
 
-    private contentNamedListeners: {(event: ContentNamedEvent): void}[];
+    private contentNamedListeners: { (event: ContentNamedEvent): void }[];
 
     private inMobileViewMode: boolean;
 
@@ -501,9 +502,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.setPersistedItem(newPersistedContent);
         this.updateMetadataAndMetadataStepForms(newPersistedContent);
         this.updateThumbnailWithContent(newPersistedContent);
-        let contentToDisplay = (newPersistedContent.getDisplayName() && newPersistedContent.getDisplayName().length > 0) ?
-                               `"${newPersistedContent.getDisplayName()}"` : 'Content';
-        api.notify.showFeedback(`${contentToDisplay} saved`);
+        let contentToDisplay = (newPersistedContent.getDisplayName() && newPersistedContent.getDisplayName().length > 0)
+            ? `"${newPersistedContent.getDisplayName()}"`
+            : i18n('field.content');
+        api.notify.showFeedback(i18n('notify.item.saved', contentToDisplay));
     }
 
     private handleSiteConfigApply() {
@@ -621,7 +623,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         new GetMixinByQualifiedNameRequest(name).sendAndParse().then((mixin) => {
             deferred.resolve(mixin);
         }).catch((reason) => {
-            const msg = `Content cannot be opened. Required mixin '${name.toString()}' not found.`;
+            const msg = i18n('notify.wizard.noMixin', name.toString());
             deferred.reject(new api.Exception(msg, api.ExceptionType.WARNING));
         }).done();
         return deferred.promise;
@@ -1381,9 +1383,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             if (persistedContent.getName().isUnnamed() && !content.getName().isUnnamed()) {
                 this.notifyContentNamed(content);
             }
-            let contentToDisplay = (content.getDisplayName() && content.getDisplayName().length > 0) ?
-                                   `"${content.getDisplayName()}"` : 'Content';
-            api.notify.showFeedback(contentToDisplay + ' saved');
+            let contentToDisplay = (content.getDisplayName() && content.getDisplayName().length > 0)
+                ? `"${content.getDisplayName()}"`
+                : i18n('field.content');
+            api.notify.showFeedback(i18n('notify.item.saved', contentToDisplay));
             this.getWizardHeader().resetBaseValues();
 
             return content;

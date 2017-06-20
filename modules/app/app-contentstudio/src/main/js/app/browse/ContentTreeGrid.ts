@@ -45,7 +45,8 @@ import BrowseFilterRefreshEvent = api.app.browse.filter.BrowseFilterRefreshEvent
 import BrowseFilterSearchEvent = api.app.browse.filter.BrowseFilterSearchEvent;
 import i18n = api.util.i18n;
 
-export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
+export class ContentTreeGrid
+    extends TreeGrid<ContentSummaryAndCompareStatus> {
 
     static MAX_FETCH_SIZE: number = 10;
 
@@ -178,7 +179,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
          * Filter (search) events.
          */
         BrowseFilterSearchEvent.on((event) => {
-            let contentQueryResult = <ContentQueryResult<ContentSummary,ContentSummaryJson>>event.getData().getContentQueryResult();
+            let contentQueryResult = <ContentQueryResult<ContentSummary, ContentSummaryJson>>event.getData().getContentQueryResult();
             let contentSummaries = contentQueryResult.getContents();
             let compareRequest = CompareContentRequest.fromContentSummaries(contentSummaries);
             this.filterQuery = event.getData().getContentQuery();
@@ -263,9 +264,9 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         } else {
             this.filterQuery.setFrom(from);
             this.filterQuery.setSize(ContentTreeGrid.MAX_FETCH_SIZE);
-            return new ContentQueryRequest<ContentSummaryJson,ContentSummary>(this.filterQuery).setExpand(
+            return new ContentQueryRequest<ContentSummaryJson, ContentSummary>(this.filterQuery).setExpand(
                 api.rest.Expand.SUMMARY).sendAndParse().then(
-                (contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
+                (contentQueryResult: ContentQueryResult<ContentSummary, ContentSummaryJson>) => {
                     let contentSummaries = contentQueryResult.getContents();
                     let compareRequest = CompareContentRequest.fromContentSummaries(contentSummaries);
                     return compareRequest.sendAndParse().then((compareResults: CompareContentResults) => {
@@ -309,9 +310,9 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
         } else {
             this.filterQuery.setFrom(0);
             this.filterQuery.setSize(size + 1);
-            return new ContentQueryRequest<ContentSummaryJson,ContentSummary>(this.filterQuery).setExpand(
+            return new ContentQueryRequest<ContentSummaryJson, ContentSummary>(this.filterQuery).setExpand(
                 api.rest.Expand.SUMMARY).sendAndParse().then(
-                (contentQueryResult: ContentQueryResult<ContentSummary,ContentSummaryJson>) => {
+                (contentQueryResult: ContentQueryResult<ContentSummary, ContentSummaryJson>) => {
                     return contentQueryResult.getContents().map((content => content.getContentId()));
                 });
         }
@@ -362,7 +363,7 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                 this.invalidate();
             }
 
-            api.notify.showFeedback(`${data.getContentSummary().getType().toString()} "${item.getName()}" created successfully`);
+            api.notify.showFeedback(i18n('notify.item.created', data.getContentSummary().getType().toString(), item.getName()));
         });
         item.onFailed(() => {
             this.deleteNode(data);
@@ -426,8 +427,8 @@ export class ContentTreeGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
                 for (let j = 0; j < all.length; j++) {
                     let treeNode = all[j];
                     let path = (treeNode.getData() && treeNode.getData().getContentSummary())
-                            ? treeNode.getData().getContentSummary().getPath()
-                            : null;
+                        ? treeNode.getData().getContentSummary().getPath()
+                        : null;
                     if (path && path.equals(node.getPath())) {
                         node.getNodes().push(treeNode);
                     }

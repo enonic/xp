@@ -29,7 +29,7 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
     private moveConfirmationDialog: ConfirmationDialog;
 
     constructor() {
-        super('');
+        super();
 
         this.addClass('move-content-dialog');
 
@@ -48,9 +48,8 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
     }
 
     private updateHeaderAndDescription() {
-        this.setTitle(`Move ${this.movedContentSummaries.length > 1 ? 'items' : 'item'} with children`);
-        this.descriptionHeader.setHtml(`Moves selected ${this.movedContentSummaries.length > 1 ? 'items' : 'item'}
-                                            with all children and current permissions to selected destination`);
+        this.setTitle(i18n('dialog.move'));
+        this.descriptionHeader.setHtml(i18n('dialog.move.subname'));
     }
 
     private listenOpenMoveDialogEvent() {
@@ -158,9 +157,9 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
             if (response.getMoved().length > 0) {
                 if (response.getMoved().length > 1) {
-                    api.notify.showFeedback(`${response.getMoved().length} items moved`);
+                    api.notify.showFeedback(i18n('notify.item.movedMultiple', response.getMoved().length));
                 } else {
-                    api.notify.showFeedback(`"${response.getMoved()[0]}" moved`);
+                    api.notify.showFeedback(i18n('notify.item.moved', response.getMoved()[0]));
                 }
             }
 

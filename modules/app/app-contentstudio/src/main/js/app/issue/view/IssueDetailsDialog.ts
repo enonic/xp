@@ -40,6 +40,7 @@ import DropdownButtonRow = api.ui.dialog.DropdownButtonRow;
 import ObjectHelper = api.ObjectHelper;
 import User = api.security.User;
 import ModalDialog = api.ui.dialog.ModalDialog;
+import i18n = api.util.i18n;
 
 export class IssueDetailsDialog extends SchedulableDialog {
 
@@ -55,8 +56,8 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
     private constructor() {
         super(<ProgressBarConfig> {
-                dialogName: 'Issue Details',
-                dialogSubName: 'Resolving items...',
+            dialogName: i18n('dialog.issue'),
+            dialogSubName: i18n('dialog.issue.resolving'),
                 dependantsName: '',
                 isProcessingClass: 'is-publishing',
                 buttonRow: new IssueDetailsDialogButtonRow(),
@@ -83,7 +84,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
     private initElements() {
         this.form = new IssueDialogForm(true);
-        this.itemsHeader = new api.dom.H6El().addClass('items-header').setHtml('Items');
+        this.itemsHeader = new api.dom.H6El().addClass('items-header').setHtml(i18n('field.items'));
         this.initActions();
     }
 
@@ -192,7 +193,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
                 .setStatus(newStatus)
                 .setPublishRequest(publishRequest)
                 .sendAndParse().then(() => {
-                api.notify.showFeedback(`The issue is ` + event.getNewValue().toLowerCase());
+                api.notify.showFeedback(i18n('notify.issue.status', event.getNewValue().toLowerCase()));
 
                 this.toggleControlsAccordingToStatus(newStatus);
 
@@ -237,7 +238,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
     }
 
     private createBackButton() {
-        const backButton: AEl = new AEl('back-button').setTitle('To Issue List');
+        const backButton: AEl = new AEl('back-button').setTitle(i18n('dialog.issue.back'));
 
         this.prependChildToHeader(backButton);
 
@@ -247,7 +248,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
     }
 
     private createEditButton() {
-        const editIssueAction = new Action('Edit Issue');
+        const editIssueAction = new Action(i18n('action.editIssue'));
         const editButton: DialogButton = this.getButtonRow().addAction(editIssueAction);
         editButton.addClass('edit-issue force-enabled');
 
@@ -259,7 +260,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
     private createNoActionMessage() {
         const divEl = new api.dom.DivEl('no-action-message');
 
-        divEl.setHtml('No items to publish');
+        divEl.setHtml(i18n('dialog.issue.noItems'));
 
         this.getButtonRow().appendChild(divEl);
     }
@@ -289,9 +290,9 @@ export class IssueDetailsDialog extends SchedulableDialog {
                         .setIsPublish(true)
                         .sendAndParse()
                         .then((updatedIssue: Issue) => {
-                            api.notify.showFeedback(`Issue "${updatedIssue.getTitle()}" is closed`);
+                            api.notify.showFeedback(i18n('notify.issue.closed', updatedIssue.getTitle()));
                         }).catch(() => {
-                        api.notify.showError(`Failed to close issue "${issue.getTitle()}"`);
+                        api.notify.showError(i18n('notify.issue.closeError', issue.getTitle()));
                     }).finally(() => {
                         this.unProgressComplete(issuePublishedHandler);
                     });
@@ -368,7 +369,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
             this.dependantIds = [];
             this.setDependantItems([]);
 
-            this.updateButtonCount('Publish', 0);
+            this.updateButtonCount(i18n('action.publish'), 0);
             this.toggleAction(false);
 
             deferred.resolve(null);
@@ -378,7 +379,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
             this.issue.getPublishRequest().getItemsIds()).then((result) => {
 
             if (result.length != this.issue.getPublishRequest().getItemsIds().length) {
-                api.notify.showWarning('One or more items from the issue cannot be found');
+                api.notify.showWarning(i18n('notify.issue.itemNotFound'));
             }
 
             this.setListItems(result);
@@ -392,7 +393,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
                 this.dependantIds = depResult.getDependants().slice();
 
                 const countToPublish = this.countTotal();
-                this.updateButtonCount('Publish', countToPublish);
+                this.updateButtonCount(i18n('action.publish'), countToPublish);
 
                 this.toggleAction(countToPublish > 0 && !depResult.isContainsInvalid());
 
@@ -434,7 +435,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
         super.updateButtonCount(actionString, count);
 
         const labelWithNumber = (num, label) => `${label}${num > 1 ? ` (${num})` : '' }`;
-        this.showScheduleAction.setLabel(labelWithNumber(count, 'Schedule... '));
+        this.showScheduleAction.setLabel(labelWithNumber(count, i18n('action.scheduleMore')));
     }
 
     private toggleControlsAccordingToStatus(status: IssueStatus) {

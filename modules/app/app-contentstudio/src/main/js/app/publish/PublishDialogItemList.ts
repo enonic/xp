@@ -242,7 +242,7 @@ class IncludeChildrenToggler extends api.dom.DivEl {
         if (!this.readOnly) {
             this.toggleClass('on', condition);
 
-            this.tooltip.setText(this.isEnabled() ? 'Exclude child items' : 'Include child items');
+            this.tooltip.setText(this.isEnabled() ? i18n('dialog.publish.excludeChildren') : i18n('dialog.publish.includeChildren'));
 
             if (!silent) {
                 this.notifyStateChanged(this.isEnabled());

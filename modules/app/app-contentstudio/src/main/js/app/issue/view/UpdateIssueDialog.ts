@@ -3,6 +3,7 @@ import {Issue} from '../Issue';
 import {UpdateIssueRequest} from '../resource/UpdateIssueRequest';
 import {PublishRequest} from '../PublishRequest';
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+import i18n = api.util.i18n;
 
 export class UpdateIssueDialog extends IssueDialog {
 
@@ -11,11 +12,11 @@ export class UpdateIssueDialog extends IssueDialog {
     private persistedIssue: Issue;
 
     protected constructor() {
-        super('Edit Issue');
+        super(i18n('action.editIssue'));
 
         this.getEl().addClass('update-issue-dialog');
 
-        this.addCancelButtonToBottom('Cancel');
+        this.addCancelButtonToBottom(i18n('action.cancel'));
     }
 
     static get(): UpdateIssueDialog {
@@ -52,7 +53,7 @@ export class UpdateIssueDialog extends IssueDialog {
                 );
 
             updateIssueRequest.sendAndParse().then((issue) => {
-                api.notify.showSuccess('Issue has been updated');
+                api.notify.showSuccess(i18n('notify.issue.updated'));
                 this.close();
             }).catch((reason) => {
                 if (reason && reason.message) {
@@ -78,6 +79,6 @@ export class UpdateIssueAction extends api.ui.Action {
     constructor() {
         super();
         this.setIconClass('update-issue-action');
-        this.setLabel('Save');
+        this.setLabel(i18n('action.save'));
     }
 }

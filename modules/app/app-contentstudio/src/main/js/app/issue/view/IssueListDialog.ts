@@ -17,6 +17,7 @@ import LoadMask = api.ui.mask.LoadMask;
 import User = api.security.User;
 import Action = api.ui.Action;
 import Checkbox = api.ui.Checkbox;
+import i18n = api.util.i18n;
 
 export class IssueListDialog extends ModalDialog {
 
@@ -80,8 +81,8 @@ export class IssueListDialog extends ModalDialog {
     private createDockedPanel(): DockedPanel {
         const dockedPanel = new DockedPanel();
 
-        dockedPanel.addItem('Open', true, this.openIssuesPanel);
-        dockedPanel.addItem('Closed', true, this.closedIssuesPanel);
+        dockedPanel.addItem(i18n('field.status.open'), true, this.openIssuesPanel);
+        dockedPanel.addItem(i18n('field.status.closed'), true, this.closedIssuesPanel);
 
         return dockedPanel;
     }
@@ -129,7 +130,7 @@ export class IssueListDialog extends ModalDialog {
             this.updateTabAndFiltersLabels();
             this.openTab(this.getTabToOpen(updatedIssues));
             if (this.isNotificationToBeShown(updatedIssues)) {
-                api.notify.NotifyManager.get().showFeedback('The list of issues was updated');
+                api.notify.NotifyManager.get().showFeedback(i18n('notify.issue.listUpdated'));
             }
         });
     }
@@ -222,8 +223,8 @@ export class IssueListDialog extends ModalDialog {
 
     private updateTabAndFiltersLabels() {
         new GetIssueStatsRequest().sendAndParse().then((stats: IssueStatsJson) => {
-            this.updateTabLabel(0, 'Open', stats.open);
-            this.updateTabLabel(1, 'Closed', stats.closed);
+            this.updateTabLabel(0, i18n('field.status.open'), stats.open);
+            this.updateTabLabel(1, i18n('field.status.closed'), stats.closed);
             this.openIssuesPanel.updateMyIssuesCheckbox(stats.openCreatedByMe);
             this.openIssuesPanel.updateAssignedToMeCheckbox(stats.openAssignedToMe);
             this.closedIssuesPanel.updateMyIssuesCheckbox(stats.closedCreatedByMe);
@@ -248,7 +249,7 @@ export class IssueListDialog extends ModalDialog {
     }
 
     private createNewIssueButton(): Element {
-        let createIssueAction = new Action('New Issue...');
+        let createIssueAction = new Action(i18n('action.newIssueMore'));
 
         createIssueAction.onExecuted(() => {
             this.addClass('masked');

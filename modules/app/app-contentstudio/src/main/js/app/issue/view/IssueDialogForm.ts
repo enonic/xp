@@ -14,6 +14,7 @@ import StringHelper = api.util.StringHelper;
 import PrincipalKey = api.security.PrincipalKey;
 import ContentId = api.content.ContentId;
 import UserStoreKey = api.security.UserStoreKey;
+import i18n = api.util.i18n;
 
 export class IssueDialogForm extends api.ui.form.Form {
 
@@ -94,14 +95,15 @@ export class IssueDialogForm extends api.ui.form.Form {
         const fieldSet: api.ui.form.Fieldset = new api.ui.form.Fieldset();
 
         const titleFormItem = this.addValidationViewer(
-            new FormItemBuilder(this.title).setLabel('Title').setValidator(Validators.required).build());
+            new FormItemBuilder(this.title).setLabel(i18n('field.title')).setValidator(Validators.required).build());
         fieldSet.add(titleFormItem);
 
-        const descriptionFormItem = this.addValidationViewer(new FormItemBuilder(this.description).setLabel('Description').build());
+        const descriptionFormItem = this.addValidationViewer(
+            new FormItemBuilder(this.description).setLabel(i18n('field.description')).build());
         fieldSet.add(descriptionFormItem);
 
         const selectorFormItem = this.addValidationViewer(
-            new FormItemBuilder(this.approversSelector).setLabel('Assignees').setValidator(
+            new FormItemBuilder(this.approversSelector).setLabel(i18n('field.assignees')).setValidator(
                 Validators.required).build());
         selectorFormItem.addClass('issue-approver-selector');
         fieldSet.add(selectorFormItem);
@@ -109,7 +111,7 @@ export class IssueDialogForm extends api.ui.form.Form {
         fieldSet.appendChild(this.descriptionText);
 
         const contentItemsFormItem =
-            new FormItemBuilder(this.contentItemsSelector).setLabel('Items').build();
+            new FormItemBuilder(this.contentItemsSelector).setLabel(i18n('field.items')).build();
         fieldSet.add(contentItemsFormItem);
 
         this.title.onValueChanged(() => {
@@ -137,7 +139,7 @@ export class IssueDialogForm extends api.ui.form.Form {
         this.descriptionText.setVisible(readOnly);
 
         const selectorFormItem = <FormItem>this.approversSelector.getParentElement();
-        selectorFormItem.setLabel(readOnly ? 'Assignees:' : 'Invite users to work on issue');
+        selectorFormItem.setLabel(readOnly ? i18n('field.assignees') + ':' : i18n('dialog.issue.inviteUsers'));
 
         const contentItemsFormItem = <FormItem>this.contentItemsSelector.getParentElement();
         contentItemsFormItem.setVisible(!readOnly);

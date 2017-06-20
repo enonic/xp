@@ -19,7 +19,7 @@ export class DuplicateContentAction extends Action {
     private duplicate(source: api.content.ContentSummary) {
         new api.content.resource.DuplicateContentRequest(source.getContentId()).sendAndParse().then((content: api.content.Content) => {
             // TODO: Replace the returning content with an id
-            api.notify.showFeedback(`"${source.getDisplayName()}" duplicated`);
+            api.notify.showFeedback(i18n('notify.item.duplicated', source.getDisplayName()));
         });
     }
 }

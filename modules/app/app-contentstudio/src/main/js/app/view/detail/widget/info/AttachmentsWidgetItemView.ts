@@ -7,6 +7,7 @@ import Attachment = api.content.attachment.Attachment;
 import ContentId = api.content.ContentId;
 import AttachmentName = api.content.attachment.AttachmentName;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+import i18n = api.util.i18n;
 
 export class AttachmentsWidgetItemView extends WidgetItemView {
 
@@ -75,7 +76,7 @@ export class AttachmentsWidgetItemView extends WidgetItemView {
                     this.appendChild(this.list);
 
                 } else {
-                    this.placeholder = new api.dom.SpanEl('att-placeholder').setHtml('This item has no attachments');
+                    this.placeholder = new api.dom.SpanEl('att-placeholder').setHtml(i18n('field.widget.noAttachments'));
                     this.appendChild(this.placeholder);
                 }
 
