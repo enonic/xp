@@ -52,6 +52,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -239,6 +240,7 @@ public class AbstractContentServiceTest
         this.nodeService.initialize();
 
         this.mixinService = Mockito.mock( MixinService.class );
+        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).thenReturn( Form.create().build() );
 
         Map<String, List<String>> metadata = Maps.newHashMap();
         metadata.put( HttpHeaders.CONTENT_TYPE, Lists.newArrayList( "image/jpg" ) );
