@@ -9,6 +9,7 @@ import com.google.common.net.MediaType;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
@@ -208,6 +209,44 @@ public class PageHandlerTest
         assertNotNull( res );
         assertEquals( HttpStatus.TEMPORARY_REDIRECT, res.getStatus() );
         assertEquals( "/master/site/otherpath", res.getHeaders().get( "Location" ) );
+    }
+
+    @Test
+    public void getContentShortcutWithParams()
+        throws Exception
+    {
+        final PropertyTree rootDataSet = new PropertyTree();
+        rootDataSet.addReference( "target", Reference.from( "ref" ) );
+
+        final PropertySet shortcutParam1 = new PropertySet();
+        shortcutParam1.addString( "name", "product" );
+        shortcutParam1.addString( "value", "123456" );
+        final PropertySet shortcutParam2 = new PropertySet();
+        shortcutParam2.addString( "name", "order" );
+        shortcutParam2.addString( "value", "abcdef" );
+        rootDataSet.addSet( "parameters", shortcutParam1 );
+        rootDataSet.addSet( "parameters", shortcutParam2 );
+
+        final Content content = Content.create().
+            id( ContentId.from( "id" ) ).
+            path( ContentPath.from( "site/somepath/shortcut" ) ).
+            owner( PrincipalKey.from( "user:myStore:me" ) ).
+            displayName( "My Content" ).
+            modifier( PrincipalKey.from( "user:system:admin" ) ).
+            type( ContentTypeName.shortcut() ).
+            data( rootDataSet ).
+            build();
+
+        Mockito.when( this.contentService.getByPath( content.getPath().asAbsolute() ) ).thenReturn( content );
+        Mockito.when( this.portalUrlService.pageUrl( Mockito.any( PageUrlParams.class ) ) ).thenReturn(
+            "/master/site/otherpath?product=123456&order=abcdef" );
+
+        this.request.setContentPath( ContentPath.from( "/site/somepath/shortcut" ) );
+
+        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertNotNull( res );
+        assertEquals( HttpStatus.TEMPORARY_REDIRECT, res.getStatus() );
+        assertEquals( "/master/site/otherpath?product=123456&order=abcdef", res.getHeaders().get( "Location" ) );
     }
 
     @Test
