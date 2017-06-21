@@ -434,9 +434,9 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
 
         let dateRangeAgg = new DateRangeAggregationQuery((ContentBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_NAME));
         dateRangeAgg.setFieldName(QueryField.MODIFIED_TIME);
-        dateRangeAgg.addRange(new DateRange('now-1h', null, i18n('field.modifiedTime.lessHour')));
-        dateRangeAgg.addRange(new DateRange('now-1d', null, i18n('field.modifiedTime.lessDay')));
-        dateRangeAgg.addRange(new DateRange('now-1w', null, i18n('field.modifiedTime.lessWeek')));
+        dateRangeAgg.addRange(new DateRange('now-1h', null, i18n('field.lastModified.lessHour')));
+        dateRangeAgg.addRange(new DateRange('now-1d', null, i18n('field.lastModified.lessDay')));
+        dateRangeAgg.addRange(new DateRange('now-1w', null, i18n('field.lastModified.lessWeek')));
 
         contentQuery.addAggregationQuery(dateRangeAgg);
     }

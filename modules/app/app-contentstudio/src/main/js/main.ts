@@ -1,3 +1,9 @@
+import i18n = api.util.i18n;
+
+declare const CONFIG;
+// init should go before imports to correctly translate their static fields etc.
+api.util.i18nInit(CONFIG.messages);
+
 import './api.ts';
 import {Router} from './app/Router';
 import {ContentAppPanel} from './app/ContentAppPanel';
@@ -34,9 +40,6 @@ import ImgEl = api.dom.ImgEl;
 import LostConnectionDetector = api.system.LostConnectionDetector;
 import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
 import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
-import i18n = api.util.i18n;
-
-declare var CONFIG;
 
 /*
  module components {
@@ -349,7 +352,6 @@ function startContentApplication(application: api.app.Application) {
     let moveDialog = new MoveContentDialog();
 }
 
-api.util.i18nInit(CONFIG.messages);
 preLoadApplication();
 
 let body = api.dom.Body.get();

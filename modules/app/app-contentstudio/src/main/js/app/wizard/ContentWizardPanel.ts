@@ -503,7 +503,7 @@ export class ContentWizardPanel
         this.updateMetadataAndMetadataStepForms(newPersistedContent);
         this.updateThumbnailWithContent(newPersistedContent);
         let contentToDisplay = (newPersistedContent.getDisplayName() && newPersistedContent.getDisplayName().length > 0)
-            ? `"${newPersistedContent.getDisplayName()}"`
+            ? newPersistedContent.getDisplayName()
             : i18n('field.content');
         api.notify.showFeedback(i18n('notify.item.saved', contentToDisplay));
     }
@@ -1384,7 +1384,7 @@ export class ContentWizardPanel
                 this.notifyContentNamed(content);
             }
             let contentToDisplay = (content.getDisplayName() && content.getDisplayName().length > 0)
-                ? `"${content.getDisplayName()}"`
+                ? content.getDisplayName()
                 : i18n('field.content');
             api.notify.showFeedback(i18n('notify.item.saved', contentToDisplay));
             this.getWizardHeader().resetBaseValues();
