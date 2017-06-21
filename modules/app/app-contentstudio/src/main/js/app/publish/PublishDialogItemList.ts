@@ -6,6 +6,7 @@ import BrowseItem = api.app.browse.BrowseItem;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import Tooltip = api.ui.Tooltip;
 import ObjectHelper = api.ObjectHelper;
+import i18n = api.util.i18n;
 
 export class PublishDialogItemList extends DialogItemList {
 
@@ -230,7 +231,7 @@ class IncludeChildrenToggler extends api.dom.DivEl {
         super('icon icon-tree');
         this.addClass('include-children-toggler');
 
-        this.tooltip = new Tooltip(this, 'Show child items', 1000);
+        this.tooltip = new Tooltip(this, i18n('dialog.publish.showChildren'), 1000);
 
         this.onClicked(() => {
             this.toggle();
@@ -241,7 +242,7 @@ class IncludeChildrenToggler extends api.dom.DivEl {
         if (!this.readOnly) {
             this.toggleClass('on', condition);
 
-            this.tooltip.setText(this.isEnabled() ? 'Exclude child items' : 'Include child items');
+            this.tooltip.setText(this.isEnabled() ? i18n('dialog.publish.excludeChildren') : i18n('dialog.publish.includeChildren'));
 
             if (!silent) {
                 this.notifyStateChanged(this.isEnabled());

@@ -2,6 +2,7 @@ import {Issue} from '../Issue';
 import {IssueStatus} from '../IssueStatus';
 import DateHelper = api.util.DateHelper;
 import User = api.security.User;
+import i18n = api.util.i18n;
 
 export class IssueStatusInfoGenerator {
 
@@ -34,37 +35,20 @@ export class IssueStatusInfoGenerator {
     }
 
     public generate(): string {
+        let textKey;
         if (this.issueStatus === IssueStatus.CLOSED) {
-            return this.generateClosed();
+            textKey = 'field.issue.closed';
+        } else if (this.issue.getModifier()) {
+            textKey = 'field.issue.updated';
+        } else {
+            textKey = 'field.issue.opened';
         }
 
-        return this.generateOpen();
-    }
-
-    private generateOpen(): string {
-        const statusText: string = api.util.StringHelper.format('{0} by {1} {2}', this.getStatus(), this.getLastModifiedBy(),
-            this.getModifiedDate());
-
-        return statusText;
-    }
-
-    private generateClosed(): string {
-        const pattern: string = 'Closed by {0} {1}'; //id, modifier, date, assignees
-        const result: string = api.util.StringHelper.format(pattern, this.getLastModifiedBy(), this.getModifiedDate());
-
-        return result;
+        return i18n(textKey, this.getLastModifiedBy(), this.getModifiedDate());
     }
 
     private getModifiedDate(): string {
         return DateHelper.getModifiedString(this.issue.getModifiedTime());
-    }
-
-    private getStatus(): string {
-        if (this.issue.getModifier()) {
-            return 'Updated';
-        }
-
-        return 'Opened';
     }
 
     private getLastModifiedBy(): string {
@@ -75,7 +59,7 @@ export class IssueStatusInfoGenerator {
         const lastModifiedBy: string = !!this.issue.getModifier() ? this.issue.getModifier() : this.issue.getCreator();
 
         if (lastModifiedBy === this.currentUser.getKey().toString()) {
-            return 'me';
+            return i18n('field.me');
         }
 
         return lastModifiedBy;

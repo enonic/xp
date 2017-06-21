@@ -12,6 +12,7 @@ import ContentSummary = api.content.ContentSummary;
 import ChildOrder = api.content.order.ChildOrder;
 import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
 import DialogButton = api.ui.dialog.DialogButton;
+import i18n = api.util.i18n;
 
 export class SortContentDialog extends api.ui.dialog.ModalDialog {
 
@@ -34,7 +35,9 @@ export class SortContentDialog extends api.ui.dialog.ModalDialog {
     private saveButton: DialogButton;
 
     constructor() {
-        super(<api.ui.dialog.ModalDialogConfig>{title: 'Sort items'});
+        super(<api.ui.dialog.ModalDialogConfig>{
+            title: i18n('dialog.sort')
+        });
 
         this.initTabMenu();
 
@@ -104,7 +107,7 @@ export class SortContentDialog extends api.ui.dialog.ModalDialog {
 
     private initTabMenu() {
         let menu = new api.ui.tab.TabMenu();
-        let tabMenuItem = (<TabMenuItemBuilder>new TabMenuItemBuilder().setLabel('(sorting type)')).build();
+        let tabMenuItem = (<TabMenuItemBuilder>new TabMenuItemBuilder().setLabel(i18n('field.sortType'))).build();
         tabMenuItem.setActive(true);
         menu.addNavigationItem(tabMenuItem);
         menu.selectNavigationItem(0);
@@ -135,7 +138,7 @@ export class SortContentDialog extends api.ui.dialog.ModalDialog {
 
     private populateContentPanel() {
         let header = new api.dom.H6El();
-        header.setHtml('Sort content by selecting default sort above, or drag and drop for manual sorting');
+        header.setHtml(i18n('dialog.sort.preface'));
         this.appendChildToContentPanel(header);
         this.appendChildToContentPanel(this.contentGrid);
     }

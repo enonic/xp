@@ -1,6 +1,7 @@
 import '../../../../../../api.ts';
 import {PageTemplateOption} from './PageTemplateOption';
 import PageTemplate = api.content.page.PageTemplate;
+import i18n = api.util.i18n;
 
 export class PageTemplateOptionViewer extends api.ui.NamesAndIconViewer<PageTemplateOption> {
 
@@ -23,7 +24,7 @@ export class PageTemplateOptionViewer extends api.ui.NamesAndIconViewer<PageTemp
     resolveSubName(object: PageTemplateOption, relativePath: boolean = false): string {
         if (!!object.getPageTemplate()) {
             if (object.isCustom()) {
-                return 'Set up your own page';
+                return i18n('field.page.template.help');
             }
             return object.getPageTemplate().getPath().toString();
         }
@@ -32,7 +33,7 @@ export class PageTemplateOptionViewer extends api.ui.NamesAndIconViewer<PageTemp
             return '(' + this.defaultPageTemplate.getDisplayName().toString() + ')';
         }
 
-        return '( no default template found )';
+        return i18n('field.page.template.noDefault');
     }
 
     resolveIconClass(object: PageTemplateOption): string {

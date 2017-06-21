@@ -25,6 +25,7 @@ import Option = api.ui.selector.Option;
 import SelectedOption = api.ui.selector.combobox.SelectedOption;
 import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
+import i18n = api.util.i18n;
 
 export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPanel<LayoutComponent, LayoutDescriptor> {
 
@@ -51,7 +52,7 @@ export class LayoutInspectionPanel extends DescriptorBasedComponentInspectionPan
         this.removeChildren();
 
         this.selector = new LayoutDescriptorDropdown();
-        this.layoutForm = new DescriptorBasedDropdownForm(this.selector, 'Layout');
+        this.layoutForm = new DescriptorBasedDropdownForm(this.selector, i18n('field.layout'));
 
         this.selector.loadDescriptors(this.liveEditModel.getSiteModel().getApplicationKeys());
 

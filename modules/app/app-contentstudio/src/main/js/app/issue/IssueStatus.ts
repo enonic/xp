@@ -1,3 +1,4 @@
+import i18n = api.util.i18n;
 export enum IssueStatus {
     OPEN, CLOSED
 }
@@ -9,17 +10,17 @@ export class IssueStatusFormatter {
 
         switch (issueStatus) {
         case IssueStatus.OPEN:
-            status = 'Open';
+            status = i18n('issue.status.open');
             break;
         case IssueStatus.CLOSED:
-            status = 'Closed';
+            status = i18n('issue.status.closed');
             break;
         default:
-            status = 'Unknown';
+            status = i18n('issue.status.unknown');
         }
 
         if (IssueStatus[status]) {
-            return 'Unknown';
+            return i18n('issue.status.unknown');
         }
 
         return status;
@@ -27,9 +28,9 @@ export class IssueStatusFormatter {
 
     public static fromString(value: string): IssueStatus {
         switch (value) {
-        case 'Open':
+        case i18n('issue.status.open'):
             return IssueStatus.OPEN;
-        case 'Closed':
+        case i18n('issue.status.closed'):
             return IssueStatus.CLOSED;
         default:
             return null;

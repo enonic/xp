@@ -9,15 +9,17 @@ import ResolvePublishDependenciesResult = api.content.resource.result.ResolvePub
 import CompareStatus = api.content.CompareStatus;
 import ContentId = api.content.ContentId;
 import ListBox = api.ui.selector.list.ListBox;
+import i18n = api.util.i18n;
 
-export class ContentUnpublishDialog extends ProgressBarDialog {
+export class ContentUnpublishDialog
+    extends ProgressBarDialog {
 
     constructor() {
 
         super(<ProgressBarConfig> {
-                dialogName: 'Unpublish item',
-                dialogSubName: '<b>Take offline?</b> - Unpublishing selected item(s) will set status back to offline',
-                dependantsName: 'Dependent items - Clean up references to selected item(s) or click unpublish to take all items offline',
+                dialogName: i18n('dialog.unpublish'),
+                dialogSubName: i18n('dialog.unpublish.subname'),
+                dependantsName: i18n('dialog.unpublish.dependants'),
                 isProcessingClass: 'is-unpublishing',
                 processHandler: () => {
                     new ContentUnpublishPromptEvent([]).fire();
@@ -55,18 +57,17 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
         this.getDependantList().clearItems();
         this.lockControls();
 
-        return this.loadDescendantIds([CompareStatus.EQUAL,CompareStatus.NEWER,CompareStatus.PENDING_DELETE]).then(() => {
-            this.loadDescendants(0, 20).
-                then((items: ContentSummaryAndCompareStatus[]) => {
-                    this.setDependantItems(items);
+        return this.loadDescendantIds([CompareStatus.EQUAL, CompareStatus.NEWER, CompareStatus.PENDING_DELETE]).then(() => {
+            this.loadDescendants(0, 20).then((items: ContentSummaryAndCompareStatus[]) => {
+                this.setDependantItems(items);
 
-                    // do not set requested contents as they are never going to change
+                // do not set requested contents as they are never going to change
 
                 this.unlockControls();
-                }).finally(() => {
-                    this.loadMask.hide();
-                    this.centerMyself();
-                });
+            }).finally(() => {
+                this.loadMask.hide();
+                this.centerMyself();
+            });
         });
 
     }
@@ -82,13 +83,13 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
     setDependantItems(items: ContentSummaryAndCompareStatus[]) {
         super.setDependantItems(this.filterUnpublishableItems(items));
 
-        this.updateButtonCount('Unpublish', this.countTotal());
+        this.updateButtonCount(i18n('action.unpublish'), this.countTotal());
     }
 
     addDependantItems(items: ContentSummaryAndCompareStatus[]) {
         super.addDependantItems(this.filterUnpublishableItems(items));
 
-        this.updateButtonCount('Unpublish', this.countTotal());
+        this.updateButtonCount(i18n('action.unpublish'), this.countTotal());
     }
 
     setContentToUnpublish(contents: ContentSummaryAndCompareStatus[]) {
@@ -108,7 +109,7 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
 
         this.lockControls();
 
-        this.setSubTitle(this.countTotal() + ' items are being unpublished...');
+        this.setSubTitle(i18n('dialog.unpublish.beingUnpublished', this.countTotal()));
 
         let selectedIds = this.getContentToUnpublishIds();
 
@@ -128,9 +129,10 @@ export class ContentUnpublishDialog extends ProgressBarDialog {
     }
 }
 
-export class ContentUnpublishDialogAction extends api.ui.Action {
+export class ContentUnpublishDialogAction
+    extends api.ui.Action {
     constructor() {
-        super('Unpublish');
+        super(i18n('action.unpublish'));
         this.setIconClass('unpublish-action');
     }
 }

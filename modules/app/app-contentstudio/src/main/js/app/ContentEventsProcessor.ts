@@ -10,6 +10,7 @@ import Content = api.content.Content;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
 import ShowBrowsePanelEvent = api.app.ShowBrowsePanelEvent;
+import i18n = api.util.i18n;
 
 export class ContentEventsProcessor {
 
@@ -65,8 +66,7 @@ export class ContentEventsProcessor {
             let win = ContentEventsProcessor.openWizardTab(wizardParams, tabId);
 
             if (ContentEventsProcessor.popupBlocked(win)) {
-                const message = 'Pop-up Blocker is enabled in browser settings! Please add the XP admin to the exception list.';
-                api.notify.showWarning(message, false);
+                api.notify.showWarning(i18n('notify.popupBlocker.admin'), false);
 
                 return false;
             }

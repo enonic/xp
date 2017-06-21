@@ -22,6 +22,7 @@ import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
 import LiveEditModel = api.liveedit.LiveEditModel;
 import Component = api.content.page.region.Component;
 import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
+import i18n = api.util.i18n;
 
 export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentComponent> {
 
@@ -58,7 +59,7 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
         let sitePath = this.liveEditModel.getSiteModel().getSite().getPath().toString();
 
         this.fragmentSelector = new FragmentDropdown(sitePath, this.liveEditModel.getContent().getPath());
-        this.fragmentForm = new FragmentSelectorForm(this.fragmentSelector, 'Fragment');
+        this.fragmentForm = new FragmentSelectorForm(this.fragmentSelector, i18n('field.fragment'));
 
         this.fragmentSelector.load();
 
@@ -158,7 +159,7 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
 
                         if (fragmentComponent &&
                             api.ObjectHelper.iFrameSafeInstanceOf(fragmentComponent.getType(), LayoutComponentType)) {
-                            api.notify.showWarning('Layout within layout not allowed');
+                            api.notify.showWarning(i18n('notify.nestedLayouts'));
 
                         } else {
                             this.fragmentComponent.setFragment(fragmentContent.getContentId(), fragmentContent.getDisplayName());

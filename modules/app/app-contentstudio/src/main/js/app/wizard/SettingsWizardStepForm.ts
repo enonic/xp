@@ -12,6 +12,7 @@ import Validators = api.ui.form.Validators;
 import PrincipalComboBox = api.ui.security.PrincipalComboBox;
 import LocaleComboBox = api.ui.locale.LocaleComboBox;
 import WizardStepValidityChangedEvent = api.app.wizard.WizardStepValidityChangedEvent;
+import i18n = api.util.i18n;
 
 export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
 
@@ -50,14 +51,14 @@ export class SettingsWizardStepForm extends api.app.wizard.WizardStepForm {
         this.content = content;
 
         this.localeCombo = new LocaleComboBox(1, content.getLanguage());
-        let localeFormItem = new FormItemBuilder(this.localeCombo).setLabel('Language').build();
+        let localeFormItem = new FormItemBuilder(this.localeCombo).setLabel(i18n('field.lang')).build();
 
         let loader = new PrincipalLoader().setAllowedTypes([PrincipalType.USER]);
 
         this.ownerCombo = PrincipalComboBox.create().setLoader(loader).setMaxOccurences(1).setValue(
             content.getOwner() ? content.getOwner().toString() : undefined).setDisplayMissing(true).build();
 
-        let ownerFormItem = new FormItemBuilder(this.ownerCombo).setLabel('Owner').build();
+        let ownerFormItem = new FormItemBuilder(this.ownerCombo).setLabel(i18n('field.owner')).build();
 
         let fieldSet = new api.ui.form.Fieldset();
         fieldSet.add(localeFormItem);

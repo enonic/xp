@@ -3,6 +3,7 @@ import {IssueList} from './IssueList';
 import {IssueStatus} from '../IssueStatus';
 import Checkbox = api.ui.Checkbox;
 import DivEl = api.dom.DivEl;
+import i18n = api.util.i18n;
 
 export class IssuesPanel extends Panel {
 
@@ -58,7 +59,7 @@ export class IssuesPanel extends Panel {
             this.issuesList.setLoadAssignedToMe(assignedToMeCheckbox.isChecked());
             this.issuesList.reload();
         });
-        assignedToMeCheckbox.setLabel('Assigned to Me');
+        assignedToMeCheckbox.setLabel(i18n('field.assignedToMe'));
 
         return assignedToMeCheckbox;
     }
@@ -70,14 +71,14 @@ export class IssuesPanel extends Panel {
             this.issuesList.setLoadMyIssues(myIssuesCheckbox.isChecked());
             this.issuesList.reload();
         });
-        myIssuesCheckbox.setLabel('My Issues');
+        myIssuesCheckbox.setLabel(i18n('field.myIssues'));
 
         return myIssuesCheckbox;
     }
 
     public updateAssignedToMeCheckbox(total: number) {
         this.assignedToMeCheckbox.toggleClass('disabled', total === 0);
-        this.assignedToMeCheckbox.setLabel(this.makeFilterLabel('Assigned to Me', total));
+        this.assignedToMeCheckbox.setLabel(this.makeFilterLabel(i18n('field.assignedToMe'), total));
         if (total === 0) {
             this.assignedToMeCheckbox.setChecked(false, true);
             this.issuesList.setLoadAssignedToMe(false);
@@ -86,7 +87,7 @@ export class IssuesPanel extends Panel {
 
     public updateMyIssuesCheckbox(total: number) {
         this.myIssuesCheckbox.toggleClass('disabled', total === 0);
-        this.myIssuesCheckbox.setLabel(this.makeFilterLabel('My Issues', total));
+        this.myIssuesCheckbox.setLabel(this.makeFilterLabel(i18n('field.myIssues'), total));
         if (total === 0) {
             this.myIssuesCheckbox.setChecked(false, true);
             this.issuesList.setLoadMyIssues(false);

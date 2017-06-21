@@ -7,9 +7,10 @@ import ListBox = api.ui.selector.list.ListBox;
 import LoadMask = api.ui.mask.LoadMask;
 import BrowseItem = api.app.browse.BrowseItem;
 import ContentSummaryAndCompareStatusViewer = api.content.ContentSummaryAndCompareStatusViewer;
-import {ProgressBarDialog, ProgressBarConfig} from './ProgressBarDialog';
+import {ProgressBarConfig, ProgressBarDialog} from './ProgressBarDialog';
 import {SchedulePublishDialog} from '../publish/SchedulePublishDialog';
 import DropdownButtonRow = api.ui.dialog.DropdownButtonRow;
+import i18n = api.util.i18n;
 
 export abstract class SchedulableDialog extends ProgressBarDialog {
 
@@ -104,7 +105,7 @@ export abstract class SchedulableDialog extends ProgressBarDialog {
 
 export class ShowSchedulePublishDialogAction extends api.ui.Action {
     constructor() {
-        super('Schedule...');
+        super(i18n('action.scheduleMore'));
         this.setIconClass('show-schedule-action');
     }
 }

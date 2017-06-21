@@ -6,6 +6,7 @@ import CompareStatus = api.content.CompareStatus;
 import PublishStatus = api.content.PublishStatus;
 import BrowseItem = api.app.browse.BrowseItem;
 import Tooltip = api.ui.Tooltip;
+import i18n = api.util.i18n;
 
 export class StatusSelectionItem extends api.app.browse.SelectionItem<ContentSummaryAndCompareStatus> {
 
@@ -20,7 +21,7 @@ export class StatusSelectionItem extends api.app.browse.SelectionItem<ContentSum
             if (this.isRemovable()) {
                 this.removeHandlerFn();
             } else {
-                let tooltip = new Tooltip(this.getRemoveButton(), 'This item is required for publishing');
+                let tooltip = new Tooltip(this.getRemoveButton(), i18n('dialog.publish.itemRequired'));
                 tooltip.setTrigger(Tooltip.TRIGGER_NONE);
                 tooltip.showFor(1500);
             }

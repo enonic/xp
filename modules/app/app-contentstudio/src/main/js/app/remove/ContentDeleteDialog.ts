@@ -9,8 +9,10 @@ import CompareStatus = api.content.CompareStatus;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import DialogButton = api.ui.dialog.DialogButton;
 import ListBox = api.ui.selector.list.ListBox;
+import i18n = api.util.i18n;
 
-export class ContentDeleteDialog extends ProgressBarDialog {
+export class ContentDeleteDialog
+    extends ProgressBarDialog {
 
     private instantDeleteCheckbox: api.ui.Checkbox;
 
@@ -24,9 +26,9 @@ export class ContentDeleteDialog extends ProgressBarDialog {
 
     constructor() {
         super(<ProgressBarConfig> {
-                dialogName: 'Delete item',
-                dialogSubName: 'Delete selected items and their children',
-                dependantsName: 'Other items that will be deleted',
+                dialogName: i18n('dialog.delete'),
+                dialogSubName: i18n('dialog.delete.subname'),
+                dependantsName: i18n('dialog.delete.dependants'),
                 isProcessingClass: 'is-deleting',
                 processHandler: () => {
                     new ContentDeletePromptEvent([]).fire();
@@ -44,7 +46,7 @@ export class ContentDeleteDialog extends ProgressBarDialog {
 
         this.addCancelButtonToBottom();
 
-        this.instantDeleteCheckbox = api.ui.Checkbox.create().setLabelText('Instantly delete published items').build();
+        this.instantDeleteCheckbox = api.ui.Checkbox.create().setLabelText(i18n('dialog.delete.instantly')).build();
         this.instantDeleteCheckbox.addClass('instant-delete-check');
 
         this.appendChild(this.instantDeleteCheckbox);
@@ -65,18 +67,17 @@ export class ContentDeleteDialog extends ProgressBarDialog {
         this.lockControls();
 
         return this.loadDescendantIds().then(() => {
-            this.loadDescendants(0, 20).
-                then((descendants: ContentSummaryAndCompareStatus[]) => {
-                    this.setDependantItems(descendants);
+            this.loadDescendants(0, 20).then((descendants: ContentSummaryAndCompareStatus[]) => {
+                this.setDependantItems(descendants);
                 this.manageInstantDeleteStatus(this.getItemList().getItems());
-                    this.countItemsToDeleteAndUpdateButtonCounter();
-                    this.centerMyself();
-                }).finally(() => {
-                    this.loadMask.hide();
+                this.countItemsToDeleteAndUpdateButtonCounter();
+                this.centerMyself();
+            }).finally(() => {
+                this.loadMask.hide();
                 this.unlockControls();
                 this.updateTabbable();
                 this.actionButton.giveFocus();
-                });
+            });
         });
     }
 
@@ -165,10 +166,10 @@ export class ContentDeleteDialog extends ProgressBarDialog {
     }
 
     private countItemsToDeleteAndUpdateButtonCounter() {
-        this.actionButton.setLabel('Delete ');
+        this.actionButton.setLabel(i18n('action.delete'));
 
         this.totalItemsToDelete = this.countTotal();
-        this.updateButtonCount('Delete', this.totalItemsToDelete);
+        this.updateButtonCount(i18n('action.delete'), this.totalItemsToDelete);
     }
 
     private createDeleteRequest(): api.content.resource.DeleteContentRequest {
@@ -183,7 +184,7 @@ export class ContentDeleteDialog extends ProgressBarDialog {
         return deleteRequest;
     }
 
-    protected updateButtonCount(actionString: string, count:number) {
+    protected updateButtonCount(actionString: string, count: number) {
         super.updateButtonCount(actionString, count);
     }
 
@@ -220,7 +221,7 @@ export class ContentDeleteDialog extends ProgressBarDialog {
         if (!this.doAnyHaveChildren(items)) {
             super.setSubTitle('');
         } else {
-            super.setSubTitle(`Delete selected items and ${count > 1 ? 'their' : 'its'} child content`);
+            super.setSubTitle(i18n('dialog.delete.subname'));
         }
     }
 

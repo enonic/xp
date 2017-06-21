@@ -95,8 +95,10 @@ import LayoutComponentType = api.content.page.region.LayoutComponentType;
 import LayoutComponent = api.content.page.region.LayoutComponent;
 import FragmentComponent = api.content.page.region.FragmentComponent;
 import FragmentComponentType = api.content.page.region.FragmentComponentType;
+import i18n = api.util.i18n;
 
-export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
+export class ContentWizardPanel
+    extends api.app.wizard.WizardPanel<Content> {
 
     protected wizardActions: ContentWizardActions;
 
@@ -130,7 +132,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private securityWizardStepForm: SecurityWizardStepForm;
 
-    private metadataStepFormByName: {[name: string]: ContentWizardStepForm;};
+    private metadataStepFormByName: { [name: string]: ContentWizardStepForm; };
 
     private displayNameScriptExecutor: DisplayNameScriptExecutor;
 
@@ -138,7 +140,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private isContentFormValid: boolean;
 
-    private contentNamedListeners: {(event: ContentNamedEvent): void}[];
+    private contentNamedListeners: { (event: ContentNamedEvent): void }[];
 
     private inMobileViewMode: boolean;
 
@@ -274,7 +276,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             if (isAppFromSiteModelUnavailable) {
                 this.missingOrStoppedAppKeys.push(event.getApplicationKey());
 
-                let message = 'Required application ' + event.getApplicationKey().toString() + ' not available.';
+                let message = i18n('notify.app.missing', event.getApplicationKey().toString());
 
                 if (this.isVisible()) {
                     api.notify.showWarning(message);
@@ -500,9 +502,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         this.setPersistedItem(newPersistedContent);
         this.updateMetadataAndMetadataStepForms(newPersistedContent);
         this.updateThumbnailWithContent(newPersistedContent);
-        let contentToDisplay = (newPersistedContent.getDisplayName() && newPersistedContent.getDisplayName().length > 0) ?
-                               `"${newPersistedContent.getDisplayName()}"` : 'Content';
-        api.notify.showFeedback(`${contentToDisplay} saved`);
+        let contentToDisplay = (newPersistedContent.getDisplayName() && newPersistedContent.getDisplayName().length > 0)
+            ? `"${newPersistedContent.getDisplayName()}"`
+            : i18n('field.content');
+        api.notify.showFeedback(i18n('notify.item.saved', contentToDisplay));
     }
 
     private handleSiteConfigApply() {
@@ -592,14 +595,14 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     steps.splice(index + 1, 0, new WizardStep(mixin.getDisplayName(), stepForm));
                 }
             });
-            this.settingsWizardStep = new WizardStep('Settings', this.settingsWizardStepForm);
+            this.settingsWizardStep = new WizardStep(i18n('field.settings'), this.settingsWizardStepForm);
             steps.push(this.settingsWizardStep);
 
-            this.scheduleWizardStep = new WizardStep('Schedule', this.scheduleWizardStepForm);
+            this.scheduleWizardStep = new WizardStep(i18n('field.schedule'), this.scheduleWizardStepForm);
             this.scheduleWizardStepIndex = steps.length;
             steps.push(this.scheduleWizardStep);
 
-            steps.push(new WizardStep('Security', this.securityWizardStepForm));
+            steps.push(new WizardStep(i18n('field.security'), this.securityWizardStepForm));
 
             this.setSteps(steps);
 
@@ -620,7 +623,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         new GetMixinByQualifiedNameRequest(name).sendAndParse().then((mixin) => {
             deferred.resolve(mixin);
         }).catch((reason) => {
-            const msg = `Content cannot be opened. Required mixin '${name.toString()}' not found.`;
+            const msg = i18n('notify.wizard.noMixin', name.toString());
             deferred.reject(new api.Exception(msg, api.ExceptionType.WARNING));
         }).done();
         return deferred.promise;
@@ -1001,9 +1004,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     if (persistedContent.getType().isDescendantOfMedia()) {
                         this.updateMetadataAndMetadataStepForms(persistedContent);
                     } else {
-                        const msg = 'Received Content from server differs from what you have. Would you like to load changes from server?';
                         new ConfirmationDialog()
-                            .setQuestion(msg)
+                            .setQuestion(i18n('dialog.confirm.contentDiffers'))
                             .setYesCallback(() => this.doLayoutPersistedItem(persistedContent.clone()))
                             .setNoCallback(() => { /* empty */
                             })
@@ -1316,7 +1318,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     persistNewItem(): wemQ.Promise<Content> {
         return new PersistNewContentRoutine(this).setCreateContentRequestProducer(this.produceCreateContentRequest).execute().then(
             (content: Content) => {
-                api.notify.showFeedback('Content created');
+                api.notify.showFeedback(i18n('notify.content.created'));
                 return content;
             });
     }
@@ -1381,9 +1383,10 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
             if (persistedContent.getName().isUnnamed() && !content.getName().isUnnamed()) {
                 this.notifyContentNamed(content);
             }
-            let contentToDisplay = (content.getDisplayName() && content.getDisplayName().length > 0) ?
-                                   `"${content.getDisplayName()}"` : 'Content';
-            api.notify.showFeedback(contentToDisplay + ' saved');
+            let contentToDisplay = (content.getDisplayName() && content.getDisplayName().length > 0)
+                ? `"${content.getDisplayName()}"`
+                : i18n('field.content');
+            api.notify.showFeedback(i18n('notify.item.saved', contentToDisplay));
             this.getWizardHeader().resetBaseValues();
 
             return content;

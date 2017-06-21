@@ -8,6 +8,7 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 import UriHelper = api.util.UriHelper;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import PEl = api.dom.PEl;
+import i18n = api.util.i18n;
 
 enum PREVIEW_TYPE {
     IMAGE,
@@ -223,13 +224,12 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
             }
             case PREVIEW_TYPE.EMPTY:
             {
-                this.showPreviewMessage('Preview not available');
+                this.showPreviewMessage(i18n('field.preview.notAvailable'));
                 break;
             }
             case PREVIEW_TYPE.FAILED:
             {
-                this.showPreviewMessage(
-                    'Failed to render content preview.<br/> Please check logs for errors or open preview in a new window');
+                this.showPreviewMessage(i18n('field.preview.failed'));
                 break;
             }
             case PREVIEW_TYPE.BLANK:
@@ -250,8 +250,7 @@ export class ContentItemPreviewPanel extends api.app.view.ItemPreviewPanel {
     private showPreviewMessage(value: string, escapeHtml: boolean = false) {
         this.getEl().addClass('no-preview');
 
-        this.appendChild(this.previewMessageEl = new PEl('no-preview-message').setHtml(
-            value, false));
+        this.appendChild(this.previewMessageEl = new PEl('no-preview-message').setHtml(value, false));
 
         this.frame.setSrc('about:blank');
     }

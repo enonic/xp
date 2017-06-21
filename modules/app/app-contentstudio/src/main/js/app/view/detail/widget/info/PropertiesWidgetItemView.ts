@@ -6,6 +6,7 @@ import DateTimeFormatter = api.ui.treegrid.DateTimeFormatter;
 import Application = api.application.Application;
 import ApplicationKey = api.application.ApplicationKey;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+import i18n = api.util.i18n;
 
 export class PropertiesWidgetItemView extends WidgetItemView {
 
@@ -85,31 +86,31 @@ export class PropertiesWidgetItemView extends WidgetItemView {
         let strings: FieldString[];
 
         strings = [
-            new FieldString().setName('Type').setValue(this.content.getType().getLocalName()
+            new FieldString().setName(i18n('field.type')).setValue(this.content.getType().getLocalName()
                 ? this.content.getType().getLocalName() : this.content.getType().toString()),
 
-            new FieldString().setName('Application').setValue(application ? application.getDisplayName() :
-                                                              this.content.getType().getApplicationKey().getName()),
+            new FieldString().setName(i18n('field.app')).setValue(
+                application ? application.getDisplayName() : this.content.getType().getApplicationKey().getName()),
 
-            this.content.getLanguage() ? new FieldString().setName('Language').setValue(this.content.getLanguage()) : null,
+            this.content.getLanguage() ? new FieldString().setName(i18n('field.lang')).setValue(this.content.getLanguage()) : null,
 
-            this.content.getOwner() ? new FieldString().setName('Owner').setValue(this.content.getOwner().getId()) : null,
+            this.content.getOwner() ? new FieldString().setName(i18n('field.owner')).setValue(this.content.getOwner().getId()) : null,
 
-            new FieldString().setName('Created').setValue(DateTimeFormatter.createHtml(this.content.getCreatedTime())),
+            new FieldString().setName(i18n('field.created')).setValue(DateTimeFormatter.createHtml(this.content.getCreatedTime())),
 
-            this.content.getModifiedTime() ? new FieldString().setName('Modified').setValue(
+            this.content.getModifiedTime() ? new FieldString().setName(i18n('field.modified')).setValue(
                 DateTimeFormatter.createHtml(this.content.getModifiedTime())) : null,
 
-            this.content.getPublishFirstTime() ? new FieldString().setName('First Published').setValue(
+            this.content.getPublishFirstTime() ? new FieldString().setName(i18n('field.firstPublished')).setValue(
                 DateTimeFormatter.createHtml(this.content.getPublishFirstTime())) : null,
 
-            this.content.getPublishFromTime() ? new FieldString().setName('Publish From').setValue(
+            this.content.getPublishFromTime() ? new FieldString().setName(i18n('field.publishFrom')).setValue(
                 DateTimeFormatter.createHtml(this.content.getPublishFromTime())) : null,
 
-            this.content.getPublishToTime() ? new FieldString().setName('Publish To').setValue(
+            this.content.getPublishToTime() ? new FieldString().setName(i18n('field.publishTo')).setValue(
                 DateTimeFormatter.createHtml(this.content.getPublishToTime())) : null,
 
-            new FieldString().setName('Id').setValue(this.content.getId())
+            new FieldString().setName(i18n('field.id')).setValue(this.content.getId())
         ];
 
         strings.forEach((stringItem: FieldString) => {

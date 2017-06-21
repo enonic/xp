@@ -1,6 +1,7 @@
 import '../../../../api.ts';
 import {LiveEditPageProxy} from '../LiveEditPageProxy';
 import {EmulatorGrid} from './EmulatorGrid';
+import i18n = api.util.i18n;
 
 declare var CONFIG;
 
@@ -22,7 +23,7 @@ export class EmulatorPanel extends api.ui.panel.Panel {
         this.liveEditPage = config.liveEditPage;
 
         let text = new api.dom.PEl();
-        text.getEl().setInnerHtml(`Emulate different client's physical sizes`);
+        text.getEl().setInnerHtml(i18n('field.emulator'));
         this.appendChild(text);
 
         this.dataView = new api.ui.grid.DataView<any>();
