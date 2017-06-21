@@ -91,6 +91,7 @@ export class ApplicationBrowsePanel extends api.app.browse.BrowsePanel<Applicati
                         let installedApp = this.treeGrid.getByApplicationKey(event.getApplicationKey());
                         let installedAppName = installedApp ? installedApp.getDisplayName() : event.getApplicationKey();
                         api.notify.showFeedback(i18n('notify.installed', installedAppName));
+                        this.treeGrid.refresh();
                     }, 200);
                 });
 
