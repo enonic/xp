@@ -78,6 +78,12 @@ public class UrlServiceScriptTest
     }
 
     @Test
+    public void imagePlaceholderTest()
+    {
+        Assert.assertTrue( execute( "imagePlaceholderTest" ) );
+    }
+
+    @Test
     public void testExample_assetUrl()
     {
         runScript( "/site/lib/xp/examples/portal/assetUrl.js" );
@@ -123,5 +129,11 @@ public class UrlServiceScriptTest
     public void testExample_processHtml()
     {
         runScript( "/site/lib/xp/examples/portal/processHtml.js" );
+    }
+
+    @Test
+    public void testExample_imagePlaceholder()
+    {
+        runScript( "/site/lib/xp/examples/portal/imagePlaceholder.js" );
     }
 }
