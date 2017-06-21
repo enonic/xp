@@ -45,6 +45,13 @@ export class StatusSelectionItem extends api.app.browse.SelectionItem<ContentSum
         this.removeHandlerFn = fn;
     }
 
+    setRemoveButtonTooltip(tooltipText: string) {
+        this.removeEl.getEl().setTitle(tooltipText);
+        this.removeEl.onMouseMove(e => { // stop propagating move event to parents, otherwise parent's tooltip shown
+            e.stopPropagation();
+        });
+    }
+
     doRender(): wemQ.Promise<boolean> {
         return super.doRender().then((rendered) => {
 
