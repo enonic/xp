@@ -1,0 +1,8 @@
+{
+  "status": 200,
+  "message": "Ok",
+  "body": null,
+  "bodyStream": "ByteSource.wrap(7B226F6B223A20747275657D)",
+  "contentType": null,
+  "headers": {}
+}
