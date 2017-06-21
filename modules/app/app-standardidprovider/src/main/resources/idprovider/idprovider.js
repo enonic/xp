@@ -1,6 +1,7 @@
 var mustacheLib = require('/lib/xp/mustache');
 var portalLib = require('/lib/xp/portal');
 var authLib = require('/lib/xp/auth');
+var admin = require('/lib/xp/admin');
 
 exports.handle401 = function (req) {
     var body = generateLoginPage();
@@ -59,12 +60,14 @@ function generateLoginPage(redirectUrl) {
     var appLoginBackgroundUrl = portalLib.assetUrl({path: "common/images/background-1920.jpg"});
     var appLoginServiceUrl = portalLib.serviceUrl({service: "login"});
     var imageUrl = portalLib.assetUrl({path: "common/images/"});
+    var i18nJsUrl = portalLib.assetUrl({path: "js/i18n.js"});
 
     var configView = resolve('idprovider-config.txt');
     var config = mustacheLib.render(configView, {
         appLoginServiceUrl: appLoginServiceUrl,
         userStoreKey: userStoreKey,
-        redirectUrl: redirectUrl
+        redirectUrl: redirectUrl,
+        messages: admin.getPhrases()
     });
 
     var view = resolve('idprovider.html');
@@ -72,6 +75,7 @@ function generateLoginPage(redirectUrl) {
         jQueryUrl: jQueryUrl,
         appLoginJsUrl: appLoginJsUrl,
         appLoginCssUrl: appLoginCssUrl,
+        i18nJsUrl: i18nJsUrl,
         appLoginBackgroundUrl: appLoginBackgroundUrl,
         imageUrl: imageUrl,
         config: config

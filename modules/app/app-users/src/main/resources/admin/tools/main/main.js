@@ -2,10 +2,6 @@ var admin = require('/lib/xp/admin');
 var mustache = require('/lib/xp/mustache');
 var portal = require('/lib/xp/portal');
 
-function getPhrases() {
-    return JSON.stringify(i18n.getPhrases(admin.getLocale()));
-}
-
 function handleGet() {
     var view = resolve('./main.html');
 

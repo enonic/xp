@@ -6,7 +6,7 @@ function handleAuthenticateResponse(loginResult) {
             location.reload();
         }
     } else {
-        $("#message-container").html("Login failed!");
+        $("#message-container").html(i18n('notify.login.failed'));
         $("#password-input").focus();
         $("#username-input, #password-input, #login-button").addClass("invalid");
     }
@@ -23,7 +23,7 @@ function loginButtonClick() {
         user: $("#username-input").val(),
         password: $("#password-input").val(),
         userStore: CONFIG.userStoreKey
-    }
+    };
     $.ajax({
         url: CONFIG.appLoginServiceUrl,
         type: 'post',
