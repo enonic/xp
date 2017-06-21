@@ -69,6 +69,7 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
         this.initFileInput();
         this.initDragAndDropUploaderEvents();
         this.initLoadMask();
+        this.initButtonRow();
     }
 
     private initContentTypesLists() {
@@ -110,6 +111,10 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
     private initLoadMask() {
         this.loadMask = new LoadMask(this);
+    }
+
+    private initButtonRow() {
+        this.getButtonRow().getEl().setAttribute('data-drop', i18n('drop.file.long'));
     }
 
     // in order to toggle appropriate handlers during drag event
@@ -296,6 +301,7 @@ export class NewContentDialogHeader extends api.ui.dialog.ModalDialogHeader {
         super(title);
 
         this.pathEl = new api.dom.PEl('path');
+        this.pathEl.getEl().setAttribute('data-desc', `${i18n('dialog.newContent.pathDescription')}:`);
         this.pathEl.setHtml(path);
         this.appendChild(this.pathEl);
     }

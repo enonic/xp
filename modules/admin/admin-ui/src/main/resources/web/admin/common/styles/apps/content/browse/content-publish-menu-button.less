@@ -41,6 +41,9 @@ body.is-publishing, body.is-unpublishing {
         text-align: center;
       }
     }
+    .progress-label {
+      line-height: 40px;
+    }
   }
 
   .content-publish-menu.minimized {
@@ -51,22 +54,6 @@ body.is-publishing, body.is-unpublishing {
         margin: 0 15px;
         left: 0;
       }
-    }
-  }
-}
-
-body.is-publishing {
-  .content-publish-menu {
-    .progress-bar:after {
-      content: 'Publishing...';
-    }
-  }
-}
-
-body.is-unpublishing {
-  .content-publish-menu {
-    .progress-bar:after {
-      content: 'Unpublishing...';
     }
   }
 }

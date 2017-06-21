@@ -21,6 +21,7 @@ export class ContentUnpublishDialog
                 dialogSubName: i18n('dialog.unpublish.subname'),
                 dependantsName: i18n('dialog.unpublish.dependants'),
                 isProcessingClass: 'is-unpublishing',
+                processingLabel: `${i18n('field.progress.unpublishing')}...`,
                 processHandler: () => {
                     new ContentUnpublishPromptEvent([]).fire();
                 }

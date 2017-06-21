@@ -51,6 +51,7 @@ export class ContentPublishDialog extends SchedulableDialog {
             dialogSubName: i18n('dialog.publish.resolving'),
             dependantsName: i18n('dialog.publish.dependants'),
                 isProcessingClass: 'is-publishing',
+                processingLabel: `${i18n('field.progress.publishing')}...`,
                 processHandler: () => {
                     new ContentPublishPromptEvent([]).fire();
                 },

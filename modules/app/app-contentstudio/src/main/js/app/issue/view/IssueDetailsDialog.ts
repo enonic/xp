@@ -60,6 +60,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
             dialogSubName: i18n('dialog.issue.resolving'),
                 dependantsName: '',
                 isProcessingClass: 'is-publishing',
+                processingLabel: `${i18n('field.progress.publishing')}...`,
                 buttonRow: new IssueDetailsDialogButtonRow(),
                 processHandler: () => {
                     new ContentPublishPromptEvent([]).fire();

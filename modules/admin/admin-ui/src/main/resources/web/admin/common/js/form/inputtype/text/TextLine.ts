@@ -5,6 +5,7 @@ module api.form.inputtype.text {
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
+    import i18n = api.util.i18n;
 
     export class TextLine extends support.BaseInputTypeNotManagingAdd<string> {
 
@@ -78,7 +79,7 @@ module api.form.inputtype.text {
         private isValid(value: string, textInput: api.ui.text.TextInput, silent: boolean = false): boolean {
             let parent = textInput.getParentElement();
             if (!this.regexpStr || api.util.StringHelper.isEmpty(value)) {
-                parent.removeClass('valid-regexp').removeClass('invalid-regexp');
+                parent.removeClass('valid-regexp invalid-regexp');
                 return true;
             }
             if (!this.regexp) {
@@ -88,6 +89,7 @@ module api.form.inputtype.text {
             if (!silent) {
                 parent.toggleClass('valid-regexp', valid);
                 parent.toggleClass('invalid-regexp', !valid);
+                parent.getEl().setAttribute('data-regex-status', i18n(`field.${valid ? 'valid' : 'invalid'}`));
             }
             return valid;
         }

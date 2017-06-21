@@ -1,5 +1,6 @@
 module api.ui.treegrid.actions {
 
+    import i18n = api.util.i18n;
     export class SelectionPanelToggler extends api.ui.button.TogglerButton {
 
         private tooltip: Tooltip;
@@ -19,18 +20,18 @@ module api.ui.treegrid.actions {
                 if (oldLabel == newLabel) {
                     return;
                 }
-                this.tooltip.setText(this.isActive() ? 'Hide selection' : 'Show selection');
+                this.tooltip.setText(this.isActive() ? i18n('field.selection.hide') : i18n('field.selection.show'));
 
-                this.removeClass('single-item multiple-items');
+                this.removeClass('any-selected');
                 this.removeClass(`size-${oldLabel.length}`);
                 this.setLabel(newLabel);
                 if (newLabel !== '') {
                     this.addClass(`size-${newLabel.length}`);
                     this.addClass('updated');
-                    if (fullSelection.length == 1) {
-                        this.addClass('single-item');
-                    } else if (fullSelection.length > 1) {
-                        this.addClass('multiple-items');
+                    const itemCount = fullSelection.length;
+                    if (itemCount >= 1) {
+                        this.addClass('any-selected');
+                        this.getEl().setAttribute('data-label', i18n(`field.item.${itemCount === 1 ? 'single' : 'multiple'}`));
                     }
                     setTimeout(() => {
                         this.removeClass('updated');

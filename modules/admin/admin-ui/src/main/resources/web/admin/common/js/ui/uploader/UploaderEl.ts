@@ -7,6 +7,7 @@ module api.ui.uploader {
     import Element = api.dom.Element;
     import ElementRenderedEvent = api.dom.ElementRenderedEvent;
     import ElementShownEvent = api.dom.ElementShownEvent;
+    import i18n = api.util.i18n;
 
     export interface FineUploaderFile {
         id: number;
@@ -892,6 +893,8 @@ module api.ui.uploader {
             this.dropzone = new api.dom.AEl('dropzone');
             this.dropzone.setId('uploader-dropzone-' + new Date().getTime());
             this.dropzone.getEl().setTabIndex(-1);// for mac default settings
+            this.dropzone.getEl().setAttribute('data-drop', i18n('drop.file.normal'));
+            this.dropzone.getEl().setAttribute('data-drop-default', i18n('drop.clickable'));
             this.getEl().setTabIndex(0);
             this.appendChild(this.dropzone);
         }

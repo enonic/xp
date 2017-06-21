@@ -12,8 +12,7 @@ export class IssueStatusInfoGenerator {
 
     private currentUser: User;
 
-    private constructor() {
-    }
+    private constructor() { /* empty */}
 
     public static create(): IssueStatusInfoGenerator {
         return new IssueStatusInfoGenerator();
