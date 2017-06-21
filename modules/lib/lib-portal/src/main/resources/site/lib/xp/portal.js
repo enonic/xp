@@ -346,3 +346,21 @@ exports.getMultipartText = function (name, index) {
     var bean = __.newBean('com.enonic.xp.lib.portal.multipart.MultipartHandler');
     return bean.getText(name, index || 0);
 };
+
+/**
+ * This function generates a URL to an image placeholder.
+ *
+ * @example-ref examples/portal/imagePlaceholder.js
+ *
+ * @param {object} params Image parameters as JSON.
+ * @param {number} params.width Width of the image in pixels.
+ * @param {number} params.height Height of the image in pixels.
+ *
+ * @returns {string} Placeholder image URL.
+ */
+exports.imagePlaceholder = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.portal.url.ImagePlaceholderHandler');
+    bean.width = params.width || 0;
+    bean.height = params.height || 0;
+    return bean.createImagePlaceholder();
+};

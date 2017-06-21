@@ -99,3 +99,13 @@ exports.processHtmlTest = function () {
                         'href="content://3e266eea-9875-4cb7-b259-41ad152f8532" target="_blank">link</a></p>}', result);
     return true;
 };
+
+exports.imagePlaceholderTest = function () {
+    var result = portal.imagePlaceholder({
+        width: 32,
+        height: 10
+    });
+
+    assert.assertEquals('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAKCAYAAADVTVykAAAAEklEQVR42mNgGAWjYBSMgpEOAAUKAAEVKR6qAAAAAElFTkSuQmCC', result);
+    return true;
+};
