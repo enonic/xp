@@ -14,6 +14,7 @@ import Component = api.content.page.region.Component;
 import DragHelper = api.ui.DragHelper;
 import ElementHelper = api.dom.ElementHelper;
 import Element = api.dom.Element;
+import TreeGrid = api.ui.treegrid.TreeGrid;
 
 export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
 
@@ -31,6 +32,7 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
     protected handleDragStart() {
         super.handleDragStart();
 
+        api.ui.mask.BodyMask.get().show();
         api.liveedit.Highlighter.get().hide();
         this.getDraggableItem().getChildren().forEach((childEl: api.dom.Element) => {
             childEl.removeClass('selected');
@@ -46,6 +48,7 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
     }
 
     protected handleDragEnd(event: Event, data: any) {
+        api.ui.mask.BodyMask.get().hide();
         api.dom.Body.get().unMouseMove(this.handleHelperMove);
         api.dom.Body.get().removeChild(DragHelper.get());
 
