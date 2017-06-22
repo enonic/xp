@@ -2,6 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.issue;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
@@ -192,7 +193,8 @@ public final class IssueResource
 
     private List<User> doFetchAssignees( final Issue issue )
     {
-        return issue.getApproverIds().stream().map( key -> securityService.getUser( key ).orElse( null ) ).collect( Collectors.toList() );
+        return issue.getApproverIds().stream().map( key -> securityService.getUser( key ).orElse( null ) ).filter(
+            Objects::nonNull ).collect( Collectors.toList() );
     }
 
     @Reference
