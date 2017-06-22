@@ -47,7 +47,7 @@ public class CreateIssueCommandTest
 
         assertNotNull( issue );
         assertEquals( "title", issue.getTitle() );
-        assertEquals( IssueStatus.Open, issue.getStatus() );
+        assertEquals( IssueStatus.OPEN, issue.getStatus() );
         assertEquals( IssueNameFactory.create( issue.getIndex() ), issue.getName() );
     }
 

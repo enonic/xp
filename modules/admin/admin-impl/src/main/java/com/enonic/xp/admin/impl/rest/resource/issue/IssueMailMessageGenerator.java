@@ -79,7 +79,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
         messageParams.put( "idShort", params.getIssue().getId().toString().substring( 0, 9 ) );
         messageParams.put( "title", params.getIssue().getTitle() );
         messageParams.put( "status", params.getIssue().getStatus() );
-        messageParams.put( "statusBgColor", params.getIssue().getStatus() == IssueStatus.Open ? "#609e24" : "#777" );
+        messageParams.put( "statusBgColor", params.getIssue().getStatus() == IssueStatus.OPEN ? "#609e24" : "#777" );
         messageParams.put( "creator", params.getIssue().getCreator().getId() );
         messageParams.put( "issuesNum", itemCount );
         messageParams.put( "description", description );

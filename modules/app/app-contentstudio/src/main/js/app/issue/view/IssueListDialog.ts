@@ -81,8 +81,8 @@ export class IssueListDialog extends ModalDialog {
     private createDockedPanel(): DockedPanel {
         const dockedPanel = new DockedPanel();
 
-        dockedPanel.addItem(i18n('field.status.open'), true, this.openIssuesPanel);
-        dockedPanel.addItem(i18n('field.status.closed'), true, this.closedIssuesPanel);
+        dockedPanel.addItem(i18n('field.issue.status.open'), true, this.openIssuesPanel);
+        dockedPanel.addItem(i18n('field.issue.status.closed'), true, this.closedIssuesPanel);
 
         return dockedPanel;
     }
@@ -223,8 +223,8 @@ export class IssueListDialog extends ModalDialog {
 
     private updateTabAndFiltersLabels() {
         new GetIssueStatsRequest().sendAndParse().then((stats: IssueStatsJson) => {
-            this.updateTabLabel(0, i18n('field.status.open'), stats.open);
-            this.updateTabLabel(1, i18n('field.status.closed'), stats.closed);
+            this.updateTabLabel(0, i18n('field.issue.status.open'), stats.open);
+            this.updateTabLabel(1, i18n('field.issue.status.closed'), stats.closed);
             this.openIssuesPanel.updateMyIssuesCheckbox(stats.openCreatedByMe);
             this.openIssuesPanel.updateAssignedToMeCheckbox(stats.openAssignedToMe);
             this.closedIssuesPanel.updateMyIssuesCheckbox(stats.closedCreatedByMe);

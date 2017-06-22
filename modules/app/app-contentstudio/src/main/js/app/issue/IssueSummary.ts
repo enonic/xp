@@ -101,7 +101,7 @@ export class IssueSummaryBuilder {
         this.modifier = json.modifier;
         this.modifiedTime = json.modifiedTime ? new Date(Date.parse(json.modifiedTime)) : null;
         this.description = json.description;
-        this.issueStatus = IssueStatusFormatter.fromString(json.issueStatus);
+        this.issueStatus = IssueStatusFormatter.parseStatus(json.issueStatus);
 
         return this;
     }

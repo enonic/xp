@@ -7,7 +7,7 @@
   "description": "desc",
   "id": "${id}",
   "index": 0,
-  "issueStatus": "Open",
+  "issueStatus": "OPEN",
   "modifiedTime": null,
   "modifier": "user:system:anonymous",
   "name": "${id}",

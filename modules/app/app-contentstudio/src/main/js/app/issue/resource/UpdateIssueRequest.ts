@@ -1,7 +1,7 @@
 import {IssueResourceRequest} from './IssueResourceRequest';
 import {IssueJson} from '../json/IssueJson';
 import {Issue} from '../Issue';
-import {IssueStatus, IssueStatusFormatter} from '../IssueStatus';
+import {IssueStatus} from '../IssueStatus';
 import {PublishRequest} from '../PublishRequest';
 import PrincipalKey = api.security.PrincipalKey;
 
@@ -69,7 +69,7 @@ export class UpdateIssueRequest extends IssueResourceRequest<IssueJson, Issue> {
             id: this.id,
             title: this.title,
             description: this.description,
-            status: IssueStatusFormatter.formatStatus(this.status),
+            status: IssueStatus[this.status],
             isPublish: this.isPublish,
             approvers,
             publishRequest,
