@@ -6,30 +6,61 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
+import org.elasticsearch.index.query.FilterBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Stopwatch;
 
+import com.enonic.xp.node.NodeIndexPath;
+import com.enonic.xp.query.filter.Filters;
+import com.enonic.xp.query.filter.IdFilter;
+import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.FilterBuilderFactory;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
+import com.enonic.xp.repo.impl.repository.IndexNameResolver;
+import com.enonic.xp.repo.impl.search.SearchStorageType;
+import com.enonic.xp.repo.impl.storage.CopyRequest;
 
 public class CopyExecutor
     extends AbstractExecutor
 {
     private final static Logger LOG = LoggerFactory.getLogger( CopyExecutor.class );
 
-    private final String targetType;
+    public static final int BATCH_SIZE = 1_000;
 
-    private final String targetIndex;
-
-    private final ElasticsearchQuery query;
+    private final CopyRequest copyRequest;
 
     private CopyExecutor( final Builder builder )
     {
         super( builder );
-        targetType = builder.targetType;
-        targetIndex = builder.targetIndex;
-        query = builder.query;
+        this.copyRequest = builder.request;
+    }
+
+    private ElasticsearchQuery createQuery()
+    {
+        final IdFilter idFilter = IdFilter.create().
+            fieldName( NodeIndexPath.ID.getPath() ).
+            values( copyRequest.getNodeIds() ).
+            build();
+
+        final FilterBuilder idFilterBuilder = new FilterBuilderFactory( new SearchQueryFieldNameResolver() ).
+            create( Filters.from( idFilter ) );
+
+        QueryBuilder query = QueryBuilders.matchAllQuery();
+
+        return ElasticsearchQuery.create().
+            query( QueryBuilders.filteredQuery( query, idFilterBuilder ) ).
+            addIndexName( copyRequest.getStorageSource().getStorageName().getName() ).
+            addIndexType( copyRequest.getStorageSource().getStorageType().getName() ).
+            size( copyRequest.getNodeIds().getSize() ).
+            batchSize( BATCH_SIZE ).
+            from( 0 ).
+            setReturnFields( ReturnFields.from( NodeIndexPath.SOURCE ) ).
+            build();
     }
 
     public static Builder create( final Client client )
@@ -39,7 +70,7 @@ public class CopyExecutor
 
     public void execute()
     {
-        final SearchRequestBuilder searchRequestBuilder = createScrollRequest( this.query );
+        final SearchRequestBuilder searchRequestBuilder = createScrollRequest( createQuery() );
 
         SearchResponse scrollResp = searchRequestBuilder.
             execute().
@@ -78,8 +109,8 @@ public class CopyExecutor
         {
             bulkRequest.add( Requests.indexRequest().
                 id( hit.id() ).
-                index( this.targetIndex ).
-                type( this.targetType ).
+                index( IndexNameResolver.resolveSearchIndexName( copyRequest.getTargetRepo() ) ).
+                type( SearchStorageType.from( copyRequest.getTargetBranch() ).getName() ).
                 source( hit.source() ).
                 refresh( false ) );
         }
@@ -94,32 +125,16 @@ public class CopyExecutor
     public static final class Builder
         extends AbstractExecutor.Builder<Builder>
     {
-        private String targetType;
-
-        private String targetIndex;
-
-        private ElasticsearchQuery query;
+        private CopyRequest request;
 
         private Builder( final Client client )
         {
             super( client );
         }
 
-        public Builder targetType( final String val )
+        public Builder request( final CopyRequest request )
         {
-            targetType = val;
-            return this;
-        }
-
-        public Builder targetIndex( final String val )
-        {
-            targetIndex = val;
-            return this;
-        }
-
-        public Builder query( final ElasticsearchQuery val )
-        {
-            query = val;
+            this.request = request;
             return this;
         }
 

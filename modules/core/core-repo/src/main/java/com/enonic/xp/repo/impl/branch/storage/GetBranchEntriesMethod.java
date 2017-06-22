@@ -7,7 +7,7 @@ import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
-import com.enonic.xp.repo.impl.StorageSettings;
+import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.cache.PathCache;
 import com.enonic.xp.repo.impl.storage.GetByIdRequest;
 import com.enonic.xp.repo.impl.storage.GetByIdsRequest;
@@ -50,7 +50,7 @@ class GetBranchEntriesMethod
         {
             getByIdsRequest.add( GetByIdRequest.create().
                 id( new BranchDocumentId( nodeId, context.getBranch() ).toString() ).
-                storageSettings( StorageSettings.create().
+                storageSettings( StorageSource.create().
                     storageName( StoreStorageName.from( context.getRepositoryId() ) ).
                     storageType( StaticStorageType.BRANCH ).
                     build() ).

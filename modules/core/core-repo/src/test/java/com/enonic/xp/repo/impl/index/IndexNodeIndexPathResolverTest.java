@@ -13,7 +13,7 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.ValueExpr;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.SearchQueryFieldNameResolver;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
 
 @RunWith(value = Parameterized.class)
 public class IndexNodeIndexPathResolverTest

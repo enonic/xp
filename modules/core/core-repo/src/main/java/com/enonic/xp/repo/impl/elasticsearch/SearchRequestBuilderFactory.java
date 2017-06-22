@@ -33,8 +33,9 @@ public class SearchRequestBuilderFactory
             query.getSearchOptimizer().equals( SearchOptimizer.ACCURACY ) ? SearchType.DFS_QUERY_THEN_FETCH : SearchType.DEFAULT;
 
         final SearchRequestBuilder searchRequestBuilder = new SearchRequestBuilder( this.client ).
-            setIndices( query.getIndexName() ).
-            setTypes( query.getIndexType() ).
+            setExplain( query.isExplain() ).
+            setIndices( query.getIndexNames() ).
+            setTypes( query.getIndexTypes() ).
             setSearchType( searchType ).
             setQuery( query.getQuery() ).
             setPostFilter( query.getFilter() ).

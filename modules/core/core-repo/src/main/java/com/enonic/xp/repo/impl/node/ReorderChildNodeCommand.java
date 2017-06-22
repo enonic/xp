@@ -16,8 +16,8 @@ import com.enonic.xp.query.expr.LogicalExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
-import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
+import com.enonic.xp.repo.impl.SingleRepoSearchSource;
+import com.enonic.xp.repo.impl.search.result.SearchResult;
 
 public class ReorderChildNodeCommand
     extends AbstractNodeCommand
@@ -63,11 +63,11 @@ public class ReorderChildNodeCommand
             throw new IllegalArgumentException( "Node with id [" + nodeToMoveBefore.id() + "] missing manual order value" );
         }
 
-        final NodeQueryResult result = findLastNodeBeforeInsert( nodeAfterOrderValue );
+        final SearchResult result = findLastNodeBeforeInsert( nodeAfterOrderValue );
 
         final Long newOrderValue;
 
-        if ( result.getNodeQueryResultSet().isEmpty() )
+        if ( result.isEmpty() )
         {
             newOrderValue = resolveInsertFirstOrderValue( nodeAfterOrderValue );
         }
@@ -81,11 +81,11 @@ public class ReorderChildNodeCommand
 
     private Node doMoveLast()
     {
-        final NodeQueryResult result = findLastNodeBeforeInsert( Long.MIN_VALUE );
+        final SearchResult result = findLastNodeBeforeInsert( Long.MIN_VALUE );
 
         final Long newOrderValue;
 
-        if ( result.getNodeQueryResultSet().isEmpty() )
+        if ( result.isEmpty() )
         {
             newOrderValue = resoleOnlyNodeOrderValue();
         }
@@ -97,11 +97,11 @@ public class ReorderChildNodeCommand
         return doUpdateNodeOrderValue( newOrderValue );
     }
 
-    private NodeQueryResult findLastNodeBeforeInsert( final Long nodeAfterOrderValue )
+    private SearchResult findLastNodeBeforeInsert( final Long nodeAfterOrderValue )
     {
         final NodeQuery query = createFirstNodeBeforeInsertQuery( nodeAfterOrderValue );
 
-        return nodeSearchService.query( query, InternalContext.from( ContextAccessor.current() ) );
+        return nodeSearchService.query( query, SingleRepoSearchSource.from( ContextAccessor.current() ) );
     }
 
     private Node doUpdateNodeOrderValue( final Long newOrderValue )
@@ -134,9 +134,9 @@ public class ReorderChildNodeCommand
             build();
     }
 
-    private Long resolveInsertInbetweenOrderValue( final Long nodeAfterOrderValue, final NodeQueryResult result )
+    private Long resolveInsertInbetweenOrderValue( final Long nodeAfterOrderValue, final SearchResult result )
     {
-        final NodeId nodeBeforeInsertId = result.getNodeQueryResultSet().first();
+        final NodeId nodeBeforeInsertId = NodeId.from( result.getHits().getFirst().getId() );
         final Node nodeBeforeInsert = doGetById( nodeBeforeInsertId );
 
         return ( nodeAfterOrderValue + nodeBeforeInsert.getManualOrderValue() ) / 2;
@@ -147,9 +147,9 @@ public class ReorderChildNodeCommand
         return nodeAfterOrderValue + NodeManualOrderValueResolver.ORDER_SPACE;
     }
 
-    private Long resolveInsertLastOrderValue( final NodeQueryResult result )
+    private Long resolveInsertLastOrderValue( final SearchResult result )
     {
-        final NodeId lastNodeId = result.getNodeQueryResultSet().first();
+        final NodeId lastNodeId = NodeId.from( result.getHits().getFirst().getId() );
         final Node lastNode = doGetById( lastNodeId );
 
         if ( lastNode.getManualOrderValue() == null )

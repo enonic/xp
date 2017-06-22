@@ -10,8 +10,9 @@ import com.enonic.xp.query.expr.OrderExpressions;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.AclFilterBuilderFactory;
-import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
+import com.enonic.xp.repo.impl.SingleRepoSearchSource;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AclFilterBuilderFactory;
+import com.enonic.xp.repo.impl.search.result.SearchResult;
 
 public class FindNodeBranchEntriesByIdCommand
     extends AbstractNodeCommand
@@ -75,10 +76,10 @@ public class FindNodeBranchEntriesByIdCommand
             queryBuilder.setOrderExpressions( this.orderExpressions );
         }
 
-        final NodeQueryResult result = this.nodeSearchService.query( queryBuilder.
-            build(), InternalContext.from( ContextAccessor.current() ) );
+        final SearchResult result = this.nodeSearchService.query( queryBuilder.
+            build(), SingleRepoSearchSource.from( ContextAccessor.current() ) );
 
-        return result.getNodeIds();
+        return NodeIds.from( result.getIds() );
     }
 
     public static final class Builder

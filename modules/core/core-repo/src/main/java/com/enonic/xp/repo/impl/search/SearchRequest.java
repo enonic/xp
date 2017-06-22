@@ -2,40 +2,31 @@ package com.enonic.xp.repo.impl.search;
 
 import com.enonic.xp.query.Query;
 import com.enonic.xp.repo.impl.ReturnFields;
-import com.enonic.xp.repo.impl.StorageSettings;
-import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.repo.impl.SearchSource;
 
 public class SearchRequest
 {
-    private final StorageSettings settings;
-
     private final Query query;
 
     private final ReturnFields returnFields;
 
-    private final PrincipalKeys acl;
+    private final SearchSource searchSource;
 
     private SearchRequest( Builder builder )
     {
-        this.settings = builder.settings;
         this.query = builder.query;
         this.returnFields = builder.returnFields;
-        this.acl = builder.acl;
+        this.searchSource = builder.searchSource;
+    }
+
+    public SearchSource getSearchSource()
+    {
+        return searchSource;
     }
 
     public static Builder create()
     {
         return new Builder();
-    }
-
-    public StorageSettings getSettings()
-    {
-        return settings;
-    }
-
-    public PrincipalKeys getAcl()
-    {
-        return acl;
     }
 
     public Query getQuery()
@@ -50,21 +41,19 @@ public class SearchRequest
 
     public static final class Builder
     {
-        private StorageSettings settings;
-
         private Query query;
 
         private ReturnFields returnFields;
 
-        private PrincipalKeys acl;
+        private SearchSource searchSource;
 
         private Builder()
         {
         }
 
-        public Builder settings( StorageSettings settings )
+        public Builder searchSource( final SearchSource searchSource )
         {
-            this.settings = settings;
+            this.searchSource = searchSource;
             return this;
         }
 
@@ -77,12 +66,6 @@ public class SearchRequest
         public Builder returnFields( final ReturnFields returnFields )
         {
             this.returnFields = returnFields;
-            return this;
-        }
-
-        public Builder acl( final PrincipalKeys acl )
-        {
-            this.acl = acl;
             return this;
         }
 

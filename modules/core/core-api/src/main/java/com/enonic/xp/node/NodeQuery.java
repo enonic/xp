@@ -1,6 +1,5 @@
 package com.enonic.xp.node;
 
-
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.security.Principals;
@@ -15,8 +14,6 @@ public class NodeQuery
 
     private final NodePath path;
 
-    private final Principals principals;
-
     private final boolean accurateScoring;
 
     private NodeQuery( final Builder builder )
@@ -24,7 +21,6 @@ public class NodeQuery
         super( builder );
         this.parent = builder.parent;
         this.path = builder.path;
-        this.principals = builder.principals;
         this.accurateScoring = builder.accurateScoring;
     }
 
@@ -36,11 +32,6 @@ public class NodeQuery
     public NodePath getPath()
     {
         return path;
-    }
-
-    public Principals getPrincipals()
-    {
-        return principals;
     }
 
     public boolean isAccurateScoring()
@@ -60,8 +51,6 @@ public class NodeQuery
 
         private NodePath path;
 
-        private Principals principals;
-
         private boolean accurateScoring = false;
 
         public Builder()
@@ -78,12 +67,6 @@ public class NodeQuery
         public Builder path( final NodePath path )
         {
             this.path = path;
-            return this;
-        }
-
-        public Builder principals( final Principals principals )
-        {
-            this.principals = principals;
             return this;
         }
 

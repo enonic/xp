@@ -14,7 +14,6 @@ import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsReques
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequestBuilder;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
-import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -182,7 +181,7 @@ public class IndexServiceInternalImpl
 
         try
         {
-            final PutMappingResponse response = this.client.admin().
+            this.client.admin().
                 indices().
                 putMapping( mappingRequest ).
                 actionGet( APPLY_MAPPING_TIMEOUT );

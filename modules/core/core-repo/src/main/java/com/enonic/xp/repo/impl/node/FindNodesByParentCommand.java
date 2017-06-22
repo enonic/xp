@@ -11,8 +11,8 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.SearchMode;
-import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
+import com.enonic.xp.repo.impl.SingleRepoSearchSource;
+import com.enonic.xp.repo.impl.search.result.SearchResult;
 
 public class FindNodesByParentCommand
     extends AbstractNodeCommand
@@ -60,7 +60,7 @@ public class FindNodesByParentCommand
             build().
             resolve();
 
-        final NodeQueryResult nodeQueryResult = this.nodeSearchService.query( NodeQuery.create().
+        final SearchResult result = this.nodeSearchService.query( NodeQuery.create().
             parent( parentPath ).
             addQueryFilters( params.getQueryFilters() ).
             from( params.getFrom() ).
@@ -68,21 +68,21 @@ public class FindNodesByParentCommand
             searchMode( params.isCountOnly() ? SearchMode.COUNT : SearchMode.SEARCH ).
             setOrderExpressions( order.getOrderExpressions() ).
             accurateScoring( true ).
-            build(), InternalContext.from( ContextAccessor.current() ) );
+            build(), SingleRepoSearchSource.from( ContextAccessor.current() ) );
 
-        if ( nodeQueryResult.getHits() == 0 )
+        if ( result.isEmpty() )
         {
             return FindNodesByParentResult.create().
                 hits( 0 ).
-                totalHits( nodeQueryResult.getTotalHits() ).
+                totalHits( result.getTotalHits() ).
                 nodeIds( NodeIds.empty() ).
                 build();
         }
 
         return FindNodesByParentResult.create().
-            nodeIds( nodeQueryResult.getNodeIds() ).
-            totalHits( nodeQueryResult.getTotalHits() ).
-            hits( nodeQueryResult.getHits() ).
+            nodeIds( NodeIds.from( result.getIds() ) ).
+            totalHits( result.getTotalHits() ).
+            hits( result.getNumberOfHits() ).
             build();
     }
 

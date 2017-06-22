@@ -18,15 +18,32 @@ public class Filters
         super( set );
     }
 
-    public static Filters from( final Filter... filter )
+    public static Filters empty()
     {
-        return new Filters( ImmutableList.copyOf( filter ) );
+        return new Filters( ImmutableList.of() );
+    }
+
+    public static Filters from( final Filter... filters )
+    {
+        if ( filters == null || filters.length == 0 )
+        {
+            return empty();
+        }
+
+        return new Filters( ImmutableList.copyOf( filters ) );
     }
 
     public static Builder create()
     {
         return new Builder();
     }
+
+    public static Builder create( final Filters filters )
+    {
+        return new Builder().
+            addAll( filters.getList() );
+    }
+
 
     public static class Builder
     {

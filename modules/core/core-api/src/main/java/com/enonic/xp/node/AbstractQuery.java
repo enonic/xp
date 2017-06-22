@@ -42,6 +42,8 @@ public class AbstractQuery
 
     private final ImmutableList<OrderExpr> orderBys;
 
+    private final boolean explain;
+
     @SuppressWarnings("unchecked")
     protected AbstractQuery( Builder builder )
     {
@@ -55,6 +57,7 @@ public class AbstractQuery
         this.postFilters = builder.postFilters.build();
         this.queryFilters = builder.queryFilters.build();
         this.searchOptimizer = builder.searchOptimizer;
+        this.explain = builder.explain;
     }
 
     private ImmutableList<OrderExpr> setOrderExpressions( final Builder builder )
@@ -106,6 +109,11 @@ public class AbstractQuery
         return size;
     }
 
+    public boolean isExplain()
+    {
+        return explain;
+    }
+
     public int getBatchSize()
     {
         return batchSize;
@@ -142,6 +150,8 @@ public class AbstractQuery
         private SearchMode searchMode = SearchMode.SEARCH;
 
         private SearchOptimizer searchOptimizer = SearchOptimizer.SPEED;
+
+        private boolean explain = false;
 
         protected Builder()
         {
@@ -215,6 +225,13 @@ public class AbstractQuery
         public B batchSize( int batchSize )
         {
             this.batchSize = batchSize;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B explain( boolean explain )
+        {
+            this.explain = explain;
             return (B) this;
         }
 

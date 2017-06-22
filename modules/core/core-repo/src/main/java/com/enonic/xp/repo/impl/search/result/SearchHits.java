@@ -1,28 +1,19 @@
 package com.enonic.xp.repo.impl.search.result;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
+
+import com.google.common.collect.Lists;
 
 public class SearchHits
     implements Iterable<SearchHit>
 {
     private final List<SearchHit> hits;
 
-    private final long totalHits;
-
-    private final float maxScore;
-
     private SearchHits( final Builder builder )
     {
         this.hits = builder.hits;
-        this.totalHits = builder.totalHits;
-        this.maxScore = builder.maxScore;
-    }
-
-    public static Builder create( final Long totalHits )
-    {
-        return new Builder( totalHits );
     }
 
     public long getSize()
@@ -30,19 +21,14 @@ public class SearchHits
         return hits.size();
     }
 
-    public float getMaxScore()
-    {
-        return maxScore;
-    }
-
-    public long getTotalHits()
-    {
-        return totalHits;
-    }
-
-    public SearchHit getFirstHit()
+    public SearchHit getFirst()
     {
         return this.hits.get( 0 );
+    }
+
+    public Stream<SearchHit> stream()
+    {
+        return this.hits.stream();
     }
 
     @Override
@@ -51,19 +37,15 @@ public class SearchHits
         return this.hits.iterator();
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
     public static class Builder
     {
-        private final List<SearchHit> hits;
+        private final List<SearchHit> hits = Lists.newArrayList();
 
-        private long totalHits = 0L;
-
-        private float maxScore = 0;
-
-        public Builder( final Long totalHits )
-        {
-            this.totalHits = totalHits;
-            this.hits = new ArrayList<>( totalHits.intValue() );
-        }
 
         public Builder add( final SearchHit entry )
         {
@@ -77,17 +59,6 @@ public class SearchHits
             return this;
         }
 
-        public Builder totalHits( final long totalHits )
-        {
-            this.totalHits = totalHits;
-            return this;
-        }
-
-        public Builder maxScore( final float maxScore )
-        {
-            this.maxScore = maxScore;
-            return this;
-        }
 
         public SearchHits build()
         {

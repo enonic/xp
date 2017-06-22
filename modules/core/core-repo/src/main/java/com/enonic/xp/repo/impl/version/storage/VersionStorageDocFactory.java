@@ -3,7 +3,7 @@ package com.enonic.xp.repo.impl.version.storage;
 import java.time.Instant;
 
 import com.enonic.xp.node.NodeVersionMetadata;
-import com.enonic.xp.repo.impl.StorageSettings;
+import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repo.impl.storage.StorageData;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
@@ -27,7 +27,7 @@ public class VersionStorageDocFactory
             nodePath( nodeVersion.getNodePath() ).
             id( createId( nodeVersion ) ).
             forceRefresh( false ).
-            settings( StorageSettings.create().
+            settings( StorageSource.create().
                 storageName( StoreStorageName.from( repositoryId ) ).
                 storageType( StaticStorageType.VERSION ).
                 build() ).

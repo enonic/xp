@@ -7,18 +7,23 @@ public class SearchHitsFactory
 {
     public static SearchHits create( final org.elasticsearch.search.SearchHits searchHits )
     {
-        final SearchHits.Builder builder = SearchHits.create( searchHits.getTotalHits() ).
-            maxScore( searchHits.maxScore() );
+        final SearchHits.Builder builder = SearchHits.create();
 
         for ( final org.elasticsearch.search.SearchHit hit : searchHits )
         {
-            final SearchHit resultEntry = SearchHit.create().
+            final SearchHit.Builder hitBuilder = SearchHit.create().
                 id( hit.id() ).
                 score( hit.score() ).
-                returnValues( ReturnValuesFactory.create( hit ) ).
-                build();
+                indexName( hit.getIndex() ).
+                indexType( hit.getType() ).
+                returnValues( ReturnValuesFactory.create( hit ) );
 
-            builder.add( resultEntry );
+            if ( hit.getExplanation() != null )
+            {
+                hitBuilder.explanation( SearchExplanationFactory.create( hit ) );
+            }
+
+            builder.add( hitBuilder.build() );
         }
 
         return builder.build();

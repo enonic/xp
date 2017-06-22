@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.search.result;
 
+import com.enonic.xp.query.QueryExplanation;
 import com.enonic.xp.repo.impl.ReturnValue;
 import com.enonic.xp.repo.impl.ReturnValues;
 import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
@@ -10,13 +11,22 @@ public class SearchHit
 
     private final String id;
 
+    private final String indexName;
+
+    private final String indexType;
+
     private final ReturnValues returnValues;
+
+    private final QueryExplanation explanation;
 
     private SearchHit( final Builder builder )
     {
         this.score = builder.score;
         this.id = builder.id;
         this.returnValues = builder.returnValues;
+        this.indexName = builder.indexName;
+        this.indexType = builder.indexType;
+        this.explanation = builder.explanation;
     }
 
     public static Builder create()
@@ -32,6 +42,21 @@ public class SearchHit
     public String getId()
     {
         return id;
+    }
+
+    public String getIndexName()
+    {
+        return indexName;
+    }
+
+    public String getIndexType()
+    {
+        return indexType;
+    }
+
+    public QueryExplanation getExplanation()
+    {
+        return explanation;
     }
 
     public ReturnValue getField( final String fieldName )
@@ -97,7 +122,13 @@ public class SearchHit
 
         private String id;
 
+        private String indexName;
+
+        private String indexType;
+
         private ReturnValues returnValues;
+
+        private QueryExplanation explanation;
 
         public Builder score( final float score )
         {
@@ -114,6 +145,24 @@ public class SearchHit
         public Builder returnValues( final ReturnValues returnValues )
         {
             this.returnValues = returnValues;
+            return this;
+        }
+
+        public Builder indexName( final String indexName )
+        {
+            this.indexName = indexName;
+            return this;
+        }
+
+        public Builder indexType( final String indexType )
+        {
+            this.indexType = indexType;
+            return this;
+        }
+
+        public Builder explanation( final QueryExplanation explanation )
+        {
+            this.explanation = explanation;
             return this;
         }
 

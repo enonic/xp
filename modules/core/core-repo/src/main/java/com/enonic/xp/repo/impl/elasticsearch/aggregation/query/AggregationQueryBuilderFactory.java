@@ -14,7 +14,7 @@ import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.aggregation.BucketAggregationQuery;
 import com.enonic.xp.query.aggregation.MetricAggregationQuery;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.QueryFieldNameResolver;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 
 public class AggregationQueryBuilderFactory
 {

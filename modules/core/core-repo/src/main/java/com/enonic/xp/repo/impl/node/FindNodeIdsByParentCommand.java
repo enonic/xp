@@ -5,6 +5,7 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
@@ -14,9 +15,9 @@ import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.filter.Filters;
-import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
+import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
+import com.enonic.xp.repo.impl.search.result.SearchResult;
 
 public class FindNodeIdsByParentCommand
     extends AbstractNodeCommand
@@ -75,18 +76,18 @@ public class FindNodeIdsByParentCommand
             build().
             resolve();
 
-        final NodeQueryResult nodeQueryResult =
-            this.nodeSearchService.query( createFindChildrenQuery( parentPath, order ), InternalContext.from( ContextAccessor.current() ) );
+        final SearchResult result = this.nodeSearchService.query( createFindChildrenQuery( parentPath, order ),
+                                                                  SingleRepoSearchSource.from( ContextAccessor.current() ) );
 
-        if ( nodeQueryResult.getHits() == 0 )
+        if ( result.getNumberOfHits() == 0 )
         {
             return FindNodesByParentResult.empty();
         }
 
         return FindNodesByParentResult.create().
-            nodeIds( nodeQueryResult.getNodeIds() ).
-            totalHits( nodeQueryResult.getTotalHits() ).
-            hits( nodeQueryResult.getHits() ).
+            nodeIds( NodeIds.from( result.getIds() ) ).
+            totalHits( result.getTotalHits() ).
+            hits( result.getNumberOfHits() ).
             build();
     }
 

@@ -5,8 +5,8 @@ import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
 import org.elasticsearch.search.aggregations.bucket.histogram.HistogramBuilder;
 
 import com.enonic.xp.query.aggregation.HistogramAggregationQuery;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.QueryFieldNameResolver;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.builder.AbstractBuilderFactory;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AbstractBuilderFactory;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 
 class NumericHistogramAggregationQueryBuilderFactory

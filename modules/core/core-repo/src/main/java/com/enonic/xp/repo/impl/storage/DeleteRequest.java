@@ -1,12 +1,12 @@
 package com.enonic.xp.repo.impl.storage;
 
-import com.enonic.xp.repo.impl.StorageSettings;
+import com.enonic.xp.repo.impl.StorageSource;
 
 public class DeleteRequest
 {
     private final String id;
 
-    private final StorageSettings settings;
+    private final StorageSource settings;
 
     private final boolean forceRefresh;
 
@@ -30,7 +30,7 @@ public class DeleteRequest
         return id;
     }
 
-    public StorageSettings getSettings()
+    public StorageSource getSettings()
     {
         return settings;
     }
@@ -54,7 +54,7 @@ public class DeleteRequest
     {
         private String id;
 
-        private StorageSettings settings;
+        private StorageSource settings;
 
         private boolean forceRefresh = false;
 
@@ -70,7 +70,7 @@ public class DeleteRequest
             return this;
         }
 
-        public Builder settings( StorageSettings settings )
+        public Builder settings( StorageSource settings )
         {
             this.settings = settings;
             return this;

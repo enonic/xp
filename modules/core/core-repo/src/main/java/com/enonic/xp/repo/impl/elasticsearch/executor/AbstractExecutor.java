@@ -28,7 +28,7 @@ abstract class AbstractExecutor
 
     final Client client;
 
-    final ExecutorProgressListener progressReporter;
+    private final ExecutorProgressListener progressReporter;
 
     final String searchPreference = "_local";
 
@@ -67,7 +67,6 @@ abstract class AbstractExecutor
         }
     }
 
-
     private String createQueryString( final SearchRequestBuilder searchRequestBuilder )
     {
         final String queryAsString = searchRequestBuilder.toString();
@@ -82,8 +81,8 @@ abstract class AbstractExecutor
 
     SearchRequestBuilder createScrollRequest( final ElasticsearchQuery query )
     {
-        final SearchRequestBuilder searchRequestBuilder = client.prepareSearch( query.getIndexName() ).
-            setTypes( query.getIndexType() ).
+        final SearchRequestBuilder searchRequestBuilder = client.prepareSearch( query.getIndexNames() ).
+            setTypes( query.getIndexTypes() ).
             setScroll( defaultScrollTime ).
             setQuery( query.getQuery() ).
             setPostFilter( query.getFilter() ).
@@ -121,7 +120,7 @@ abstract class AbstractExecutor
         client.clearScroll( clearScrollRequest ).actionGet();
     }
 
-    protected void reportProgress( final int count )
+    void reportProgress( final int count )
     {
         if ( progressReporter != null )
         {

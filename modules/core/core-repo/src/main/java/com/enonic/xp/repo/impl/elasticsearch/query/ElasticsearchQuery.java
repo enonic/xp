@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.query;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -25,9 +26,11 @@ public class ElasticsearchQuery
 
     private final FilterBuilder filter;
 
-    private final String indexType;
+    private final Set<String> indexTypes;
 
-    private final String indexName;
+    private final Set<String> indexNames;
+
+    private final boolean explain;
 
     private final ImmutableSet<SortBuilder> sortBuilders;
 
@@ -49,8 +52,8 @@ public class ElasticsearchQuery
     {
         this.query = builder.queryBuilder;
         this.filter = builder.filter;
-        this.indexType = builder.indexType;
-        this.indexName = builder.indexName;
+        this.indexTypes = builder.indexTypes;
+        this.indexNames = builder.indexNames;
         this.sortBuilders = ImmutableSet.copyOf( builder.sortBuilders );
         this.size = builder.size;
         this.batchSize = builder.batchSize;
@@ -59,6 +62,7 @@ public class ElasticsearchQuery
         this.returnFields = builder.returnFields;
         this.searchMode = builder.searchMode;
         this.searchOptimizer = builder.searchOptimizer;
+        this.explain = builder.explain;
     }
 
     public static Builder create()
@@ -81,14 +85,14 @@ public class ElasticsearchQuery
         return filter;
     }
 
-    public String getIndexType()
+    public String[] getIndexTypes()
     {
-        return indexType;
+        return this.indexTypes.toArray( new String[this.indexTypes.size()] );
     }
 
-    public String getIndexName()
+    public String[] getIndexNames()
     {
-        return this.indexName;
+        return this.indexNames.toArray( new String[this.indexNames.size()] );
     }
 
     public int getFrom()
@@ -126,6 +130,11 @@ public class ElasticsearchQuery
         return searchOptimizer;
     }
 
+    public boolean isExplain()
+    {
+        return explain;
+    }
+
     @Override
     public String toString()
     {
@@ -136,8 +145,8 @@ public class ElasticsearchQuery
             ", size=" + size +
             ", from=" + from +
             ", filter=" + filter +
-            ", indexType=" + indexType +
-            ", index=" + indexName +
+            ", indexType=" + indexTypes +
+            ", index=" + indexNames +
             ", sortBuilders=" + sortBuildersAsString +
             ", aggregations= " + aggregations +
             '}';
@@ -161,9 +170,9 @@ public class ElasticsearchQuery
 
         private FilterBuilder filter;
 
-        private String indexType;
+        private final Set<String> indexTypes = Sets.newHashSet();
 
-        private String indexName;
+        private final Set<String> indexNames = Sets.newHashSet();
 
         private List<SortBuilder> sortBuilders = Lists.newArrayList();
 
@@ -181,6 +190,8 @@ public class ElasticsearchQuery
 
         private SearchOptimizer searchOptimizer = SearchOptimizer.DEFAULT;
 
+        private boolean explain = false;
+
         public Builder query( final QueryBuilder queryBuilder )
         {
             this.queryBuilder = queryBuilder;
@@ -193,17 +204,31 @@ public class ElasticsearchQuery
             return this;
         }
 
-        public Builder indexType( final String indexType )
+        public Builder addIndexType( final String indexType )
         {
-            this.indexType = indexType;
+            this.indexTypes.add( indexType );
             return this;
         }
 
-        public Builder index( final String indexName )
+        public Builder addIndexTypes( final Collection<String> indexTypes )
         {
-            this.indexName = indexName;
+            this.indexTypes.addAll( indexTypes );
             return this;
         }
+
+
+        public Builder addIndexName( final String indexName )
+        {
+            this.indexNames.add( indexName );
+            return this;
+        }
+
+        public Builder addIndexNames( final Collection<String> indexNames )
+        {
+            this.indexNames.addAll( indexNames );
+            return this;
+        }
+
 
         public Builder addSortBuilder( final SortBuilder sortBuilder )
         {
@@ -256,6 +281,12 @@ public class ElasticsearchQuery
         public Builder searchOptimizer( final SearchOptimizer searchOptimizer )
         {
             this.searchOptimizer = searchOptimizer;
+            return this;
+        }
+
+        public Builder explain( final boolean explain )
+        {
+            this.explain = explain;
             return this;
         }
 

@@ -2,32 +2,51 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator;
 
 import org.elasticsearch.index.query.QueryBuilder;
 
-import com.enonic.xp.repo.impl.elasticsearch.query.DiffQueryFactory;
-import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
-import com.enonic.xp.repo.impl.search.SearchRequest;
+import com.enonic.xp.node.SearchOptimizer;
+import com.enonic.xp.query.filter.Filters;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.DiffQueryFactory;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.StoreQueryFieldNameResolver;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
 
-public class NodeVersionDiffQueryTranslator
+class NodeVersionDiffQueryTranslator
+    implements QueryTypeTranslator
 {
-    public ElasticsearchQuery translate( final SearchRequest request )
-    {
-        final NodeVersionDiffQuery query = (NodeVersionDiffQuery) request.getQuery();
+    private final NodeVersionDiffQuery query;
 
-        final QueryBuilder queryBuilder = DiffQueryFactory.create().
+    private final QueryFieldNameResolver fieldNameResolver = new StoreQueryFieldNameResolver();
+
+    NodeVersionDiffQueryTranslator( final NodeVersionDiffQuery query )
+    {
+        this.query = query;
+    }
+
+    @Override
+    public QueryBuilder createQueryBuilder( final Filters additionalFilters )
+    {
+        return DiffQueryFactory.create().
             query( query ).
             childStorageType( StaticStorageType.BRANCH ).
             build().
             execute();
+    }
 
-        return ElasticsearchQuery.create().
-            index( request.getSettings().getStorageName().getName() ).
-            indexType( request.getSettings().getStorageType().getName() ).
-            query( queryBuilder ).
-            setReturnFields( request.getReturnFields() ).
-            size( query.getSize() ).
-            batchSize( query.getBatchSize() ).
-            from( query.getFrom() ).
-            build();
+    @Override
+    public QueryFieldNameResolver getFieldNameResolver()
+    {
+        return this.fieldNameResolver;
+    }
+
+    @Override
+    public int getBatchSize()
+    {
+        return query.getBatchSize();
+    }
+
+    @Override
+    public SearchOptimizer getSearchOptimizer()
+    {
+        return query.getSearchOptimizer();
     }
 }

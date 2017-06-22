@@ -13,6 +13,7 @@ import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
@@ -20,8 +21,9 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
+import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
+import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.MoveNodeParams;
 import com.enonic.xp.security.acl.Permission;
 
@@ -157,13 +159,13 @@ public class MoveNodeCommand
     {
         final Node persistedNode = doGetById( id );
 
-        final NodeQueryResult nodeQueryResult = this.nodeSearchService.query( NodeQuery.create().
+        final SearchResult result = this.nodeSearchService.query( NodeQuery.create().
             parent( persistedNode.path() ).
             from( 0 ).
             size( NodeSearchService.GET_ALL_SIZE_FLAG ).
-            build(), InternalContext.from( ContextAccessor.current() ) );
+            build(), SingleRepoSearchSource.from( ContextAccessor.current() ) );
 
-        final NodeBranchEntries nodeBranchEntries = this.nodeStorageService.getBranchNodeVersions( nodeQueryResult.getNodeIds(), false,
+        final NodeBranchEntries nodeBranchEntries = this.nodeStorageService.getBranchNodeVersions( NodeIds.from( result.getIds() ), false,
                                                                                                    InternalContext.from(
                                                                                                        ContextAccessor.current() ) );
 

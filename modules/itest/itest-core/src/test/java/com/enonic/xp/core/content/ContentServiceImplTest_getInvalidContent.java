@@ -10,6 +10,7 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -116,7 +117,7 @@ public class ContentServiceImplTest_getInvalidContent
     {
 
         NodeServiceImpl nodeService = Mockito.spy( this.nodeService );
-        Mockito.verify( nodeService, times( 0 ) ).findByQuery( Mockito.any() );
+        Mockito.verify( nodeService, times( 0 ) ).findByQuery( Mockito.isA( NodeQuery.class ) );
 
         assertTrue( this.contentService.getInvalidContent( ContentIds.empty() ).isEmpty() );
     }

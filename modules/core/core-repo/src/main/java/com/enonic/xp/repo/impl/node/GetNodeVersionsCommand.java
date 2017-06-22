@@ -7,10 +7,12 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
-import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.SingleRepoStorageSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
+import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repo.impl.version.search.NodeVersionQuery;
+import com.enonic.xp.repo.impl.version.search.NodeVersionQueryResultFactory;
 
 public class GetNodeVersionsCommand
 {
@@ -41,7 +43,15 @@ public class GetNodeVersionsCommand
             addOrderBy( FieldOrderExpr.create( VersionIndexPath.TIMESTAMP, OrderExpr.Direction.DESC ) ).
             build();
 
-        return this.nodeSearchService.query( query, InternalContext.from( ContextAccessor.current() ) );
+        final SearchResult result = this.nodeSearchService.query( query, SingleRepoStorageSource.create(
+            ContextAccessor.current().getRepositoryId(), SingleRepoStorageSource.Type.VERSION ) );
+
+        if ( result.isEmpty() )
+        {
+            return NodeVersionQueryResult.empty();
+        }
+
+        return NodeVersionQueryResultFactory.create( query, result );
     }
 
     public static Builder create()

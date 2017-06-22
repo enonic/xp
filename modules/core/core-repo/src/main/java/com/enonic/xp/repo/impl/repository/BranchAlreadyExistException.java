@@ -7,7 +7,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.exception.BaseException;
 
 @Beta
-public class BranchAlreadyExistException
+class BranchAlreadyExistException
     extends BaseException
 {
     private final Branch branch;

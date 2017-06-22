@@ -8,6 +8,7 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 
 import static org.junit.Assert.*;
 
@@ -25,7 +26,8 @@ public class NodeManualOrderValueResolverTest
             nodeIds.add( NodeId.from( i ) );
         }
 
-        final List<NodeManualOrderValueResolver.NodeIdOrderValue> resolvedOrder = NodeManualOrderValueResolver.resolve( nodeIds );
+        final List<NodeManualOrderValueResolver.NodeIdOrderValue> resolvedOrder =
+            NodeManualOrderValueResolver.resolve( NodeIds.from( nodeIds ) );
 
         double previousValue = NodeManualOrderValueResolver.START_ORDER_VALUE + 1;
 

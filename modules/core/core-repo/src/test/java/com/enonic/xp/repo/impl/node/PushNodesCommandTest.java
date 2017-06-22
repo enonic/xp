@@ -4,11 +4,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RenameNodeParams;
@@ -73,6 +75,38 @@ public class PushNodesCommandTest
         assertTrue( prodNode != null );
     }
 
+    @Test
+    public void only_selected_node_pushed()
+        throws Exception
+    {
+        final Node node = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "my-node" ).
+            build() );
+
+        createNode( CreateNodeParams.create().
+            parent( node.path() ).
+            name( "my-child" ).
+            build() );
+
+        createNode( CreateNodeParams.create().
+            parent( node.path() ).
+            name( "my-child2" ).
+            build() );
+
+        final PushNodesResult result = pushNodes( NodeIds.from( node.id() ), WS_OTHER );
+        assertEquals( 1, result.getSuccessful().getSize() );
+
+        final FindNodesByQueryResult allNodesInOther = CTX_OTHER.callWith( () -> FindNodesByQueryCommand.create().
+            query( NodeQuery.create().build() ).
+            indexServiceInternal( this.indexServiceInternal ).
+            searchService( this.searchService ).
+            storageService( this.storageService ).
+            build().
+            execute() );
+
+        assertEquals( 2L, allNodesInOther.getTotalHits() );
+    }
 
     @Test
     public void push_child_missing_permission()
@@ -434,14 +468,6 @@ public class PushNodesCommandTest
         final Node prodNode = CTX_OTHER.callWith( () -> getNodeById( child.id() ) );
 
         assertTrue( prodNode != null );
-    }
-
-
-    @Test
-    public void push_node_exists_in_target()
-        throws Exception
-    {
-
     }
 
     private void renameNode( final Node node, final String newName )

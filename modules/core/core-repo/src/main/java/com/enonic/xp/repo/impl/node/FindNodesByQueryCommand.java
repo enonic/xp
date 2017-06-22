@@ -4,11 +4,9 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.FindNodesByQueryResult;
-import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.index.query.NodeQueryResult;
-import com.enonic.xp.repo.impl.index.query.NodeQueryResultEntry;
+import com.enonic.xp.repo.impl.SingleRepoSearchSource;
+import com.enonic.xp.repo.impl.search.result.SearchResult;
 
 public class FindNodesByQueryCommand
     extends AbstractNodeCommand
@@ -33,19 +31,9 @@ public class FindNodesByQueryCommand
 
     public FindNodesByQueryResult execute()
     {
-        final NodeQueryResult nodeQueryResult = nodeSearchService.query( query, InternalContext.from( ContextAccessor.current() ) );
+        final SearchResult result = nodeSearchService.query( this.query, SingleRepoSearchSource.from( ContextAccessor.current() ) );
 
-        final FindNodesByQueryResult.Builder resultBuilder = FindNodesByQueryResult.create().
-            hits( nodeQueryResult.getHits() ).
-            totalHits( nodeQueryResult.getTotalHits() ).
-            aggregations( nodeQueryResult.getAggregations() );
-
-        for ( final NodeQueryResultEntry resultEntry : nodeQueryResult.getEntries() )
-        {
-            resultBuilder.addNodeHit( new NodeHit( resultEntry.getId(), resultEntry.getScore() ) );
-        }
-
-        return resultBuilder.build();
+        return FindNodesByQueryResultFactory.create( result );
     }
 
     public static final class Builder

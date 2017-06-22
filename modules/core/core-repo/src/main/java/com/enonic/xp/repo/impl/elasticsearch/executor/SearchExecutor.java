@@ -8,7 +8,9 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.repo.impl.elasticsearch.SearchRequestBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.ESQueryTranslator;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
+import com.enonic.xp.repo.impl.search.SearchRequest;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 
 public class SearchExecutor
@@ -28,8 +30,10 @@ public class SearchExecutor
         return new Builder( client );
     }
 
-    public SearchResult execute( final ElasticsearchQuery query )
+    public SearchResult execute( final SearchRequest searchRequest )
     {
+        final ElasticsearchQuery query = ESQueryTranslator.translate( searchRequest );
+
         final SearchMode searchMode = query.getSearchMode();
         final int size = query.getSize();
         final boolean anyAggregations = !query.getAggregations().isEmpty();
@@ -56,16 +60,21 @@ public class SearchExecutor
             }
         }
 
-        final SearchRequestBuilder searchRequest = SearchRequestBuilderFactory.newFactory().
+        return doSearch( query );
+    }
+
+    private SearchResult doSearch( final ElasticsearchQuery query )
+    {
+        final SearchRequestBuilder searchRequestBuilder = SearchRequestBuilderFactory.newFactory().
             query( query ).
             client( this.client ).
             resolvedSize( resolveSize( query ) ).
             build().
             create();
 
-        //System.out.println( "######################\n\r" + searchRequest.toString() );
+        //System.out.println( "######################\n\r" + searchRequestBuilder.toString() );
 
-        return doSearchRequest( searchRequest );
+        return doSearchRequest( searchRequestBuilder );
     }
 
     private int resolveSize( final ElasticsearchQuery query )
@@ -76,7 +85,7 @@ public class SearchExecutor
                 build().
                 execute( query );
 
-            return safeLongToInt( countResult.getResults().getTotalHits() );
+            return safeLongToInt( countResult.getTotalHits() );
         }
         else
         {

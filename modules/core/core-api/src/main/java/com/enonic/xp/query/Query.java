@@ -10,20 +10,22 @@ import com.enonic.xp.query.filter.Filters;
 
 public interface Query
 {
-    public ImmutableList<OrderExpr> getOrderBys();
+    ImmutableList<OrderExpr> getOrderBys();
 
-    public QueryExpr getQuery();
+    QueryExpr getQuery();
 
-    public Filters getPostFilters();
+    Filters getPostFilters();
 
-    public Filters getQueryFilters();
+    Filters getQueryFilters();
 
-    public AggregationQueries getAggregationQueries();
+    AggregationQueries getAggregationQueries();
 
-    public int getFrom();
+    int getFrom();
 
-    public int getSize();
+    int getSize();
 
-    public SearchMode getSearchMode();
+    SearchMode getSearchMode();
+
+    boolean isExplain();
 
 }
