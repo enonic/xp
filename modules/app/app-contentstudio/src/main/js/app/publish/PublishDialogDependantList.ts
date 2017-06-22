@@ -40,6 +40,10 @@ export class PublishDialogDependantList extends DialogDependantList {
             }
         });
 
+        view.onRendered(() => {
+            (<StatusSelectionItem>view).setRemoveButtonTooltip('Exclude from publishing');
+        });
+
         if (!isContentSummaryValid(item)) {
             view.addClass('invalid');
             view.getEl().setTitle(i18n('dialog.publish.editInvalid'));
