@@ -17,6 +17,7 @@ export class ContentWizardToolbarPublishControls
     private publishButton: MenuButton;
     private publishAction: Action;
     private publishTreeAction: Action;
+    private createIssueAction: Action;
     private unpublishAction: Action;
     private publishMobileAction: Action;
     private contentStateSpan: SpanEl;
@@ -32,10 +33,11 @@ export class ContentWizardToolbarPublishControls
         this.publishAction = actions.getPublishAction();
         this.publishAction.setIconClass('publish-action');
         this.publishTreeAction = actions.getPublishTreeAction();
+        this.createIssueAction = actions.getCreateIssueAction();
         this.unpublishAction = actions.getUnpublishAction();
         this.publishMobileAction = actions.getPublishMobileAction();
 
-        this.publishButton = new MenuButton(this.publishAction, [this.publishTreeAction, this.unpublishAction]);
+        this.publishButton = new MenuButton(this.publishAction, [this.publishTreeAction, this.createIssueAction, this.unpublishAction]);
         this.publishButton.addClass('content-wizard-toolbar-publish-button');
 
         this.contentStateSpan = new SpanEl('content-status');
@@ -82,13 +84,14 @@ export class ContentWizardToolbarPublishControls
     private refreshState() {
         let canBePublished = !this.isOnline() && this.contentCanBePublished && this.userCanPublish;
         let canTreeBePublished = !this.leafContent && this.contentCanBePublished && this.userCanPublish;
+        let canCreateIssue = canBePublished;
         let canBeUnpublished = this.content.isPublished() && this.userCanPublish;
 
         this.publishAction.setEnabled(canBePublished);
         this.publishTreeAction.setEnabled(canTreeBePublished);
+        this.createIssueAction.setEnabled(canCreateIssue);
         this.unpublishAction.setEnabled(canBeUnpublished);
         this.publishMobileAction.setEnabled(canBePublished);
-        this.publishMobileAction.setVisible(canBePublished);
 
         this.contentStateSpan.setHtml(this.getContentStateValueForSpan(this.content), false);
         this.publishButtonForMobile.setLabel(

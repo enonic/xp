@@ -139,15 +139,19 @@
     margin-left: 11px;
   }
 
+  &._0-240, &._240-360, &._360-540 {
+    box-sizing: content-box;
+  }
+
   &._0-240, &._240-360 {
-    margin: 0%;
+    margin: 0;
     padding-left: 2%;
     padding-right: 2%;
     width: 96%;
   }
 
   &._360-540 {
-    margin: 0%;
+    margin: 0;
     padding-left: 3%;
     padding-right: 3%;
     width: 94%;
@@ -195,7 +199,7 @@ body {
     .cancel-button-top {
 
       top: 16px;
-      right: 0px;
+      right: 0;
       width: 26px;
       height: 26px;
       line-height: 26px;
