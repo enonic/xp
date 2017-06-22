@@ -110,8 +110,6 @@ class RepoDumper
     private void doExecute()
     {
         final Branch branch = ContextAccessor.current().getBranch();
-        reportDumpingBranch( branch );
-
         writer.writeDumpMeta( new DumpMeta( this.xpVersion ) );
         final BranchDumpResult.Builder branchDumpResult = BranchDumpResult.create( branch );
         try
@@ -144,14 +142,11 @@ class RepoDumper
             childOrder( ChildOrder.from( "_path asc" ) ).
             build();
 
+        reportDumpingBranch( ContextAccessor.current().getBranch(), executor.getTotalHits() );
+
         while ( executor.hasMore() )
         {
             final NodeIds children = executor.execute();
-
-            if ( this.listener != null )
-            {
-                this.listener.setTotal( executor.getTotalHits() );
-            }
 
             for ( final NodeId child : children )
             {
@@ -251,11 +246,11 @@ class RepoDumper
             nodeVersion.getAttachedBinaries().stream().map( AttachedBinary::getBlobKey ).collect( Collectors.toSet() ) );
     }
 
-    private void reportDumpingBranch( final Branch branch )
+    private void reportDumpingBranch( final Branch branch, final Long totalHits )
     {
         if ( this.listener != null )
         {
-            this.listener.dumpingBranch( this.repositoryId, branch );
+            this.listener.dumpingBranch( this.repositoryId, branch, totalHits );
         }
         else
         {

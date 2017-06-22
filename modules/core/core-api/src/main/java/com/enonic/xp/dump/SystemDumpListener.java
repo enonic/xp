@@ -5,9 +5,7 @@ import com.enonic.xp.repository.RepositoryId;
 
 public interface SystemDumpListener
 {
-    void dumpingBranch( final RepositoryId repositoryId, final Branch branch );
+    void dumpingBranch( final RepositoryId repositoryId, final Branch branch, final long total );
 
     void nodeDumped();
-
-    void setTotal( final Long total );
 }

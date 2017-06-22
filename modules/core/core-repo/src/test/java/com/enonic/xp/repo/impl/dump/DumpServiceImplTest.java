@@ -8,6 +8,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
 
@@ -17,6 +19,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.BranchDumpResult;
+import com.enonic.xp.dump.SystemDumpListener;
 import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemLoadParams;
@@ -279,6 +282,25 @@ public class DumpServiceImplTest
         verifyBinaries( node, updatedNode, versions );
     }
 
+    @Test
+    public void dumpListener()
+    {
+        final TestDumpListener listener = new TestDumpListener();
+
+        createNode( NodePath.ROOT, "myNode" );
+
+        NodeHelper.runAsAdmin( () -> this.dumpService.systemDump( SystemDumpParams.create().
+            dumpName( "myTestDump" ).
+            includeVersions( true ).
+            includeBinaries( true ).
+            listener( listener ).
+            build() ) );
+
+        assertEquals( 6, listener.getNodesDumped() );
+        assertNotNull( listener.dumpedBranches.get( CTX_DEFAULT.getRepositoryId() ) );
+        assertNotNull( listener.dumpedBranches.get( SystemConstants.SYSTEM_REPO.getId() ) );
+    }
+
     private void verifyBinaries( final Node node, final Node updatedNode, final NodeVersionQueryResult versions )
     {
         versions.getNodeVersionsMetadata().forEach( ( version ) -> verifyVersionBinaries( node, updatedNode, version ) );
@@ -288,9 +310,7 @@ public class DumpServiceImplTest
     {
         final NodeVersion storedNode = nodeService.getByNodeVersion( version.getNodeVersionId() );
 
-        storedNode.getAttachedBinaries().forEach( entry -> {
-            assertNotNull( this.nodeService.getBinary( storedNode.getVersionId(), entry.getBinaryReference() ) );
-        } );
+        storedNode.getAttachedBinaries().forEach( entry -> assertNotNull( this.nodeService.getBinary( storedNode.getVersionId(), entry.getBinaryReference() ) ) );
 
         if ( storedNode.getVersionId().equals( node.getNodeVersionId() ) )
         {
@@ -349,4 +369,34 @@ public class DumpServiceImplTest
             editor( ( n ) -> n.data.setInstant( "timestamp", Instant.now() ) ).
             build() );
     }
+
+    private class TestDumpListener
+        implements SystemDumpListener
+    {
+        private int nodesDumped = 0;
+
+        private long total = 0;
+
+        private final ListMultimap<RepositoryId, Branch> dumpedBranches = ArrayListMultimap.create();
+
+        @Override
+        public void dumpingBranch( final RepositoryId repositoryId, final Branch branch, final long total )
+        {
+            dumpedBranches.put( repositoryId, branch );
+            this.total = total;
+        }
+
+        @Override
+        public void nodeDumped()
+        {
+            this.nodesDumped++;
+        }
+
+        int getNodesDumped()
+        {
+            return nodesDumped;
+        }
+
+    }
+
 }

@@ -26,7 +26,7 @@ public class BatchedGetChildrenExecutor
 
     private final boolean recursive;
 
-    private Long totalHits;
+    private final Long totalHits;
 
     private BatchedGetChildrenExecutor( final Builder builder )
     {
@@ -36,15 +36,23 @@ public class BatchedGetChildrenExecutor
         this.filters = builder.filters;
         this.childOrder = builder.childOrder;
         this.recursive = builder.recursive;
+        this.totalHits = initTotalHits();
+    }
+
+    private long initTotalHits()
+    {
+        final FindNodesByParentParams queryParams = createQuery( 0, 0 );
+
+        final FindNodesByParentResult byParent = this.nodeService.findByParent( queryParams );
+
+        return byParent.getTotalHits();
     }
 
     public NodeIds execute()
     {
-        final FindNodesByParentParams queryParams = createQuery();
+        final FindNodesByParentParams queryParams = createQuery( this.currentFrom, this.batchSize );
 
         final FindNodesByParentResult result = this.nodeService.findByParent( queryParams );
-
-        this.totalHits = result.getTotalHits();
 
         if ( result.isEmpty() )
         {
@@ -59,11 +67,11 @@ public class BatchedGetChildrenExecutor
         return result.getNodeIds();
     }
 
-    private FindNodesByParentParams createQuery()
+    private FindNodesByParentParams createQuery( final int from, final int size )
     {
         final FindNodesByParentParams.Builder queryBuilder = FindNodesByParentParams.create().
-            from( this.currentFrom ).
-            size( this.batchSize ).
+            from( from ).
+            size( size ).
             recursive( this.recursive ).
             parentId( this.parentId );
 
