@@ -71,6 +71,14 @@ public class DumpServiceImplTest
         this.dumpService.setBasePath( tempFolder.getRoot().toPath() );
     }
 
+    @Test(expected = RepoDumpException.class)
+    public void admin_role_required()
+        throws Exception
+    {
+        this.dumpService.systemDump( SystemDumpParams.create().
+            dumpName( "testDump" ).
+            build() );
+    }
 
     @Test
     public void repositories_loaded()
@@ -310,7 +318,8 @@ public class DumpServiceImplTest
     {
         final NodeVersion storedNode = nodeService.getByNodeVersion( version.getNodeVersionId() );
 
-        storedNode.getAttachedBinaries().forEach( entry -> assertNotNull( this.nodeService.getBinary( storedNode.getVersionId(), entry.getBinaryReference() ) ) );
+        storedNode.getAttachedBinaries().forEach(
+            entry -> assertNotNull( this.nodeService.getBinary( storedNode.getVersionId(), entry.getBinaryReference() ) ) );
 
         if ( storedNode.getVersionId().equals( node.getNodeVersionId() ) )
         {

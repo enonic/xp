@@ -5,7 +5,7 @@ import com.enonic.xp.repo.impl.node.NodeConstants;
 
 public class DumpConstants
 {
-    public static final String META_BASE_PATH = "meta";
+    static final String META_BASE_PATH = "meta";
 
     public static final Segment DUMP_SEGMENT_NODES = NodeConstants.NODE_SEGMENT;
 

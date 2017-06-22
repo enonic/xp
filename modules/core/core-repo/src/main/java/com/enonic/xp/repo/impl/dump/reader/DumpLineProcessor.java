@@ -40,7 +40,6 @@ public class DumpLineProcessor
 
     private DumpLineProcessor( final Builder builder )
     {
-        result = builder.result;
         nodeService = builder.nodeService;
         dumpReader = builder.dumpReader;
         blobStore = builder.blobStore;
@@ -135,8 +134,6 @@ public class DumpLineProcessor
 
     public static final class Builder
     {
-        private EntryLoadResult result;
-
         private NodeService nodeService;
 
         private DumpReader dumpReader;
@@ -149,11 +146,6 @@ public class DumpLineProcessor
         {
         }
 
-        public Builder result( final EntryLoadResult val )
-        {
-            result = val;
-            return this;
-        }
 
         public Builder nodeService( final NodeService val )
         {

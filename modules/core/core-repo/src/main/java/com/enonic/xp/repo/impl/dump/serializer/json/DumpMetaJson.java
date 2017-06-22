@@ -14,11 +14,7 @@ public class DumpMetaJson
     @JsonProperty("timestamp")
     private String timestamp;
 
-    public DumpMetaJson()
-    {
-    }
-
-    public DumpMetaJson( final String xpVersion, final String timestamp )
+    private DumpMetaJson( final String xpVersion, final String timestamp )
     {
         this.xpVersion = xpVersion;
         this.timestamp = timestamp;
@@ -39,6 +35,7 @@ public class DumpMetaJson
         return xpVersion;
     }
 
+    @SuppressWarnings("unused")
     public void setXpVersion( final String xpVersion )
     {
         this.xpVersion = xpVersion;
@@ -49,6 +46,7 @@ public class DumpMetaJson
         return timestamp;
     }
 
+    @SuppressWarnings("unused")
     public void setTimestamp( final String timestamp )
     {
         this.timestamp = timestamp;

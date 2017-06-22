@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl.dump.reader;
 
 public class EntryLoadResult
 {
-    private long versions;
+    private final long versions;
 
     private EntryLoadResult( final Builder builder )
     {
@@ -18,7 +18,6 @@ public class EntryLoadResult
     {
         return new Builder();
     }
-
 
     public static final class Builder
     {
