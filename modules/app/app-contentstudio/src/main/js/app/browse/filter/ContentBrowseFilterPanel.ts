@@ -33,13 +33,14 @@ import BrowseFilterResetEvent = api.app.browse.filter.BrowseFilterResetEvent;
 import BrowseFilterRefreshEvent = api.app.browse.filter.BrowseFilterRefreshEvent;
 import BrowseFilterSearchEvent = api.app.browse.filter.BrowseFilterSearchEvent;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+import i18n = api.util.i18n;
 
 export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilterPanel<ContentSummaryAndCompareStatus> {
 
     static CONTENT_TYPE_AGGREGATION_NAME: string = 'contentTypes';
     static LAST_MODIFIED_AGGREGATION_NAME: string = 'lastModified';
-    static CONTENT_TYPE_AGGREGATION_DISPLAY_NAME: string = 'Content Types';
-    static LAST_MODIFIED_AGGREGATION_DISPLAY_NAME: string = 'Last Modified';
+    static CONTENT_TYPE_AGGREGATION_DISPLAY_NAME: string = i18n('field.contentTypes');
+    static LAST_MODIFIED_AGGREGATION_DISPLAY_NAME: string = i18n('field.lastModified');
 
     private contentTypeAggregation: ContentTypeAggregationGroupView;
     private lastModifiedAggregation: AggregationGroupView;
@@ -433,9 +434,9 @@ export class ContentBrowseFilterPanel extends api.app.browse.filter.BrowseFilter
 
         let dateRangeAgg = new DateRangeAggregationQuery((ContentBrowseFilterPanel.LAST_MODIFIED_AGGREGATION_NAME));
         dateRangeAgg.setFieldName(QueryField.MODIFIED_TIME);
-        dateRangeAgg.addRange(new DateRange('now-1h', null, '< 1 hour'));
-        dateRangeAgg.addRange(new DateRange('now-1d', null, '< 1 day'));
-        dateRangeAgg.addRange(new DateRange('now-1w', null, '< 1 week'));
+        dateRangeAgg.addRange(new DateRange('now-1h', null, i18n('field.lastModified.lessHour')));
+        dateRangeAgg.addRange(new DateRange('now-1d', null, i18n('field.lastModified.lessDay')));
+        dateRangeAgg.addRange(new DateRange('now-1w', null, i18n('field.lastModified.lessWeek')));
 
         contentQuery.addAggregationQuery(dateRangeAgg);
     }

@@ -82,6 +82,7 @@ import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
 import FragmentComponentReloadRequiredEvent = api.liveedit.FragmentComponentReloadRequiredEvent;
 import BeforeContentSavedEvent = api.content.event.BeforeContentSavedEvent;
 import ComponentPath = api.content.page.region.ComponentPath;
+import i18n = api.util.i18n;
 
 export interface LiveFormPanelConfig {
 
@@ -195,7 +196,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
     }
 
     private createInspectionsPanel(model: LiveEditModel): InspectionsPanel {
-        let saveAction = new api.ui.Action('Apply');
+        let saveAction = new api.ui.Action(i18n('action.apply'));
         saveAction.onExecuted(() => {
             if (!this.pageView) {
                 this.contentWizardPanel.saveChanges();
@@ -254,8 +255,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             this.frameContainer.appendChildren<api.dom.Element>(this.liveEditPageProxy.getIFrame(),
                 this.liveEditPageProxy.getPlaceholderIFrame(), this.liveEditPageProxy.getDragMask());
 
-            let noPreviewMessageEl = new api.dom.PEl('no-preview-message').setHtml(
-                'Failed to render content preview.<br/> Please check logs for errors or open preview in a new window', false);
+            let noPreviewMessageEl = new api.dom.PEl('no-preview-message').setHtml(i18n('field.preview.failed'), false);
 
             // append mask here in order for the context window to be above
             this.appendChildren<api.dom.Element>(this.frameContainer, this.liveEditPageProxy.getLoadMask(), this.contextWindow,
@@ -608,7 +608,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             let fragmentView: FragmentComponentView = event.getComponentView();
             let componentType = event.getSourceComponentType().getShortName();
             let componentName = fragmentView.getComponent().getName().toString();
-            api.notify.showSuccess(`Fragment created from '${componentName}' ${componentType}.`);
+            api.notify.showSuccess(i18n('notify.fragment.created', componentName, componentType));
 
             this.saveAndReloadOnlyComponent(event.getComponentView());
 

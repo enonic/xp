@@ -21,6 +21,7 @@ import LiveEditModel = api.liveedit.LiveEditModel;
 import Option = api.ui.selector.Option;
 import SelectedOption = api.ui.selector.combobox.SelectedOption;
 import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
+import i18n = api.util.i18n;
 
 export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel<PartComponent, PartDescriptor> {
 
@@ -47,7 +48,7 @@ export class PartInspectionPanel extends DescriptorBasedComponentInspectionPanel
         this.removeChildren();
 
         this.selector = new PartDescriptorDropdown();
-        this.partForm = new DescriptorBasedDropdownForm(this.selector, 'Part');
+        this.partForm = new DescriptorBasedDropdownForm(this.selector, i18n('field.part'));
 
         this.selector.loadDescriptors(this.liveEditModel.getSiteModel().getApplicationKeys());
 

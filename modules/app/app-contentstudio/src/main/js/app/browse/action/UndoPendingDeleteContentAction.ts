@@ -3,11 +3,12 @@ import {ContentTreeGrid} from '../ContentTreeGrid';
 
 import Action = api.ui.Action;
 import UndoPendingDeleteContentRequest = api.content.resource.UndoPendingDeleteContentRequest;
+import i18n = api.util.i18n;
 
 export class UndoPendingDeleteContentAction extends Action {
 
     constructor(grid: ContentTreeGrid) {
-        super('Undo delete');
+        super(i18n('action.undoDelete'));
 
         this.setEnabled(true);
         this.setVisible(false);

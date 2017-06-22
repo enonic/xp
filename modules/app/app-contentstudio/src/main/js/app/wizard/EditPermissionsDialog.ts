@@ -6,6 +6,7 @@ import AccessControlComboBox = api.ui.security.acl.AccessControlComboBox;
 import AccessControlEntry = api.security.acl.AccessControlEntry;
 import AccessControlList = api.security.acl.AccessControlList;
 import ContentPath = api.content.ContentPath;
+import i18n = api.util.i18n;
 
 export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
 
@@ -46,7 +47,7 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
 
         this.addClass('edit-permissions-dialog');
 
-        this.inheritPermissionsCheck = api.ui.Checkbox.create().setLabelText('Inherit permissions').build();
+        this.inheritPermissionsCheck = api.ui.Checkbox.create().setLabelText(i18n('dialog.permissions.inherit')).build();
         this.inheritPermissionsCheck.addClass('inherit-perm-check');
         this.appendChildToContentPanel(this.inheritPermissionsCheck);
 
@@ -84,11 +85,11 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
         };
         this.inheritPermissionsCheck.onValueChanged(changeListener);
 
-        this.overwriteChildPermissionsCheck = api.ui.Checkbox.create().setLabelText('Overwrite child permissions').build();
+        this.overwriteChildPermissionsCheck = api.ui.Checkbox.create().setLabelText(i18n('dialog.permissions.overwrite')).build();
         this.overwriteChildPermissionsCheck.addClass('overwrite-child-check');
         this.appendChildToContentPanel(this.overwriteChildPermissionsCheck);
 
-        this.applyAction = new api.ui.Action('Apply');
+        this.applyAction = new api.ui.Action(i18n('action.apply'));
         this.applyAction.onExecuted(() => {
             this.applyPermissions();
         });
@@ -125,7 +126,7 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
                 this.open();
 
             }).catch(() => {
-                api.notify.showWarning(`Could not read inherit permissions for content '${this.displayName}'`);
+                api.notify.showWarning(i18n('notify.permissions.inheritError', this.displayName));
             }).done();
         });
 
@@ -133,7 +134,7 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
     }
 
     protected createHeader(): EditPermissionsDialogHeader {
-        return new EditPermissionsDialogHeader('Edit Permissions', '');
+        return new EditPermissionsDialogHeader(i18n('dialog.permissions'), '');
     }
 
     protected getHeader(): EditPermissionsDialogHeader {
@@ -150,7 +151,7 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
             let res = req.sendAndParse();
 
             res.done((updatedContent: Content) => {
-                api.notify.showFeedback(`Permissions applied to content '${updatedContent.getDisplayName()}'`);
+                api.notify.showFeedback(i18n('notify.permissions.applied', updatedContent.getDisplayName()));
                 this.close();
             });
         } else {
@@ -203,15 +204,13 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
             new api.content.resource.GetContentByPathRequest(parentPath).sendAndParse().then((content: Content) => {
                 deferred.resolve(content.getPermissions());
             }).catch((reason: any) => {
-                deferred.reject(new Error('Inherit permissions for [' + this.contentPath.toString() +
-                                          '] could not be retrieved'));
+                deferred.reject(new Error(i18n('notify.permissions.inheritError', this.contentPath.toString())));
             }).done();
         } else {
             new api.content.resource.GetContentRootPermissionsRequest().sendAndParse().then((rootPermissions: AccessControlList) => {
                 deferred.resolve(rootPermissions);
             }).catch((reason: any) => {
-                deferred.reject(new Error('Inherit permissions for [' + this.contentPath.toString() +
-                                          '] could not be retrieved'));
+                deferred.reject(new Error(i18n('notify.permissions.inheritError', this.contentPath.toString())));
             }).done();
         }
 

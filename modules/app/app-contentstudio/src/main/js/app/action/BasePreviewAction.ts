@@ -2,6 +2,7 @@ import '../../api.ts';
 
 import Action = api.ui.Action;
 import RenderingMode = api.rendering.RenderingMode;
+import i18n = api.util.i18n;
 
 interface OpenedWindow {
     openedWindow: Window;
@@ -16,8 +17,7 @@ export class BasePreviewAction extends Action {
         super(label, shortcut, global);
         // Notification is shown not less than once in a minute, if triggered
         this.notifyBlocked = api.util.AppHelper.debounce(() => {
-            const message = 'Pop-up Blocker is enabled in browser settings! Please add selected sites to the exception list.';
-            api.notify.showWarning(message, false);
+            api.notify.showWarning(i18n('notify.popupBlocker.sites'), false);
         }, 60000, true);
     }
 

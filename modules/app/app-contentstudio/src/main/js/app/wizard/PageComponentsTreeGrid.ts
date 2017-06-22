@@ -19,6 +19,7 @@ import LayoutItemType = api.liveedit.layout.LayoutItemType;
 import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
 import Content = api.content.Content;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+import i18n = api.util.i18n;
 
 export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
 
@@ -30,7 +31,7 @@ export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
     constructor(content: Content, pageView: PageView) {
         super(new TreeGridBuilder<ItemView>().setColumns([
             new GridColumnBuilder<TreeNode<ItemView>>()
-                .setName('Name')
+                .setName(i18n('field.name'))
                 .setId('displayName')
                 .setField('displayName')
                 .setFormatter(PageComponentsTreeGrid.nameFormatter.bind(null, content))
@@ -38,7 +39,7 @@ export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
                 .setBehavior('selectAndMove')
                 .build(),
             new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>()
-                .setName('Menu')
+                .setName(i18n('field.menu'))
                 .setId('menu').setMinWidth(45)
                 .setMaxWidth(45)
                 .setField('menu')

@@ -1,3 +1,9 @@
+import i18n = api.util.i18n;
+
+declare const CONFIG;
+// init should go before imports to correctly translate their static fields etc.
+api.util.i18nInit(CONFIG.messages);
+
 import './api.ts';
 import {Router} from './app/Router';
 import {ContentAppPanel} from './app/ContentAppPanel';
@@ -34,9 +40,6 @@ import ImgEl = api.dom.ImgEl;
 import LostConnectionDetector = api.system.LostConnectionDetector;
 import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
 import GetContentTypeByNameRequest = api.schema.content.GetContentTypeByNameRequest;
-import i18n = api.util.i18n;
-
-declare var CONFIG;
 
 /*
  module components {
@@ -45,7 +48,7 @@ declare var CONFIG;
  */
 
 function getApplication(): api.app.Application {
-    let application = new api.app.Application('content-studio', 'Content Studio', 'CM', CONFIG.appIconUrl);
+    let application = new api.app.Application('content-studio', i18n('app.name'), i18n('app.abbr'), CONFIG.appIconUrl);
     application.setPath(api.rest.Path.fromString(Router.getPath()));
     application.setWindow(window);
 
@@ -124,7 +127,7 @@ function initToolTip() {
 }
 
 function updateTabTitle(title: string) {
-    wemjq('title').html(`${title} / Content Studio`);
+    wemjq('title').html(`${title} / ${i18n('app.name')}`);
 }
 
 function shouldUpdateFavicon(contentTypeName: ContentTypeName): boolean {
@@ -285,7 +288,7 @@ function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDe
             return;
         }
         if (wizard.hasUnsavedChanges()) {
-            let message = 'Wizard has unsaved changes. Continue without saving ?';
+            let message = i18n('dialog.confirm.unsavedChanges');
             // Hack for IE. returnValue is boolean
             const e: any = event || window.event || {returnValue: ''};
             e['returnValue'] = message;
@@ -349,7 +352,6 @@ function startContentApplication(application: api.app.Application) {
     let moveDialog = new MoveContentDialog();
 }
 
-api.util.i18nInit(CONFIG.messages);
 preLoadApplication();
 
 let body = api.dom.Body.get();

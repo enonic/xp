@@ -17,7 +17,7 @@ public class IssueTest
         assertNotNull( issue.getId() );
         assertNotNull( issue.getName() );
         assertNotNull( issue.getApproverIds() );
-        assertEquals( IssueStatus.Open, issue.getStatus() );
+        assertEquals( IssueStatus.OPEN, issue.getStatus() );
     }
 
     @Test

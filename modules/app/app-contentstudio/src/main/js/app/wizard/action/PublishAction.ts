@@ -5,11 +5,12 @@ import {ContentPublishPromptEvent} from '../../browse/ContentPublishPromptEvent'
 import Content = api.content.Content;
 import ContentId = api.content.ContentId;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+import i18n = api.util.i18n;
 
 export class PublishAction extends api.ui.Action {
 
     constructor(wizard: ContentWizardPanel, includeChildItems: boolean = false) {
-        super('Publish...');
+        super(i18n('action.publishMore'));
 
         this.setEnabled(false);
 
@@ -37,7 +38,7 @@ export class PublishAction extends api.ui.Action {
                     new ContentPublishPromptEvent([contentSummary], includeChildItems).fire();
                 }
             } else {
-                api.notify.showWarning('The content cannot be published yet. One or more form values are not valid.');
+                api.notify.showWarning(i18n('notify.publish.invalidError'));
             }
         });
     }

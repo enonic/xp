@@ -1,22 +1,26 @@
 .access-selector {
 
-  .tab-menu-button {
-
-    label {
-      color: @admin-blue;
-      pointer-events: none;
-      font-size: 18px;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      right: 0;
-    }
-  }
-
   &.disabled {
 
     .tab-menu-button {
       cursor: default;
+    }
+  }
+
+  .menu {
+    padding: 38px 4px 4px;
+
+    .tab-menu-item {
+      padding: 0;
+
+      .label {
+        display: block;
+        padding: 4px 5px;
+
+        &:focus {
+          background-color: @admin-bg-light-gray;
+        }
+      }
     }
   }
 

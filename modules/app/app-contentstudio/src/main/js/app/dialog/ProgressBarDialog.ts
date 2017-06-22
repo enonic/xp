@@ -3,6 +3,7 @@ import {DependantItemsDialog} from '../dialog/DependantItemsDialog';
 import {MenuButtonProgressBarManager} from '../browse/MenuButtonProgressBarManager';
 import TaskState = api.task.TaskState;
 import ModalDialogButtonRow = api.ui.dialog.ButtonRow;
+import i18n = api.util.i18n;
 
 export class ProcessingStats {
     // If the content is still being processed after this time, show the progress bar (in ms)
@@ -18,12 +19,15 @@ export interface ProgressBarConfig {
     dependantsName: string;
     isProcessingClass: string;
     processHandler: () => void;
+    processingLabel: string;
     buttonRow?: ModalDialogButtonRow;
 }
 
 export class ProgressBarDialog extends DependantItemsDialog {
 
     private progressBar: api.ui.ProgressBar;
+
+    private processingLabel: string;
 
     private isProcessingClass: string;
 
@@ -35,6 +39,7 @@ export class ProgressBarDialog extends DependantItemsDialog {
         super(config.dialogName, config.dialogSubName, config.dependantsName, config.buttonRow);
         this.isProcessingClass = config.isProcessingClass;
         this.processHandler = config.processHandler;
+        this.processingLabel = config.processingLabel;
     }
 
     protected createProgressBar() {
@@ -54,6 +59,7 @@ export class ProgressBarDialog extends DependantItemsDialog {
         api.dom.Body.get().addClass(this.isProcessingClass);
 
         MenuButtonProgressBarManager.getProgressBar().setValue(0);
+        MenuButtonProgressBarManager.getProgressBar().setLabel(this.processingLabel);
         this.unlockControls();
         this.progressBar = this.createProgressBar();
         MenuButtonProgressBarManager.updateProgressHandler(this.processHandler);
@@ -139,7 +145,7 @@ export class ProgressBarDialog extends DependantItemsDialog {
                     break;
                 case TaskState.FAILED:
                     this.handleFailed();
-                    api.notify.showError(`Processing failed: ${progress.getInfo()}`);
+                    api.notify.showError(i18n('notify.process.failed', progress.getInfo()));
                     this.notifyProgressComplete(TaskState.FAILED);
                     break;
                 default:

@@ -5,6 +5,7 @@ import ChildOrder = api.content.order.ChildOrder;
 import QueryField = api.query.QueryField;
 import FieldOrderExpr = api.content.order.FieldOrderExpr;
 import FieldOrderExprBuilder = api.content.order.FieldOrderExprBuilder;
+import i18n = api.util.i18n;
 
 interface OrderMeta {
     field: string;
@@ -33,16 +34,19 @@ export class SortContentTabMenuItems {
         };
 
         this.SORT_ASC_DISPALAY_NAME_ITEM =
-            createOrder('DisplayName - Ascending', [{field: QueryField.DISPLAY_NAME, direction: ChildOrder.ASC_ORDER_DIRECTION_VALUE}]);
+            createOrder(i18n('field.sortType.displayNameAsc'),
+                [{field: QueryField.DISPLAY_NAME, direction: ChildOrder.ASC_ORDER_DIRECTION_VALUE}]);
         this.SORT_DESC_DISPALAY_NAME_ITEM =
-            createOrder('DisplayName - Descending', [{field: QueryField.DISPLAY_NAME, direction: ChildOrder.DESC_ORDER_DIRECTION_VALUE}]);
+            createOrder(i18n('field.sortType.displayNameDesc'),
+                [{field: QueryField.DISPLAY_NAME, direction: ChildOrder.DESC_ORDER_DIRECTION_VALUE}]);
         this.SORT_ASC_MODIFIED_ITEM =
-            createOrder('Modified - Ascending', [{field: QueryField.MODIFIED_TIME, direction: ChildOrder.ASC_ORDER_DIRECTION_VALUE}]);
+            createOrder(i18n('field.sortType.modifiedAsc'),
+                [{field: QueryField.MODIFIED_TIME, direction: ChildOrder.ASC_ORDER_DIRECTION_VALUE}]);
         this.SORT_DESC_MODIFIED_ITEM =
-            createOrder('Modified - Descending (default)',
+            createOrder(i18n('field.sortType.modifiedDesc'),
                 [{field: QueryField.MODIFIED_TIME, direction: ChildOrder.DESC_ORDER_DIRECTION_VALUE}]);
         this.SORT_MANUAL_ITEM =
-            createOrder('Manually Sorted', [
+            createOrder(i18n('field.sortType.manual'), [
                 {field: QueryField.MANUAL_ORDER_VALUE, direction: ChildOrder.DESC_ORDER_DIRECTION_VALUE},
                 {field: QueryField.TIMESTAMP, direction: ChildOrder.DESC_ORDER_DIRECTION_VALUE}
             ]);

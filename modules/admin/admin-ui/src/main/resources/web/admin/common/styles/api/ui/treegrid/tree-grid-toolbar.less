@@ -26,9 +26,6 @@
         }
       }
 
-      span:empty {
-        display: none;
-      }
       span {
         position: relative;
         top: 1px;
@@ -42,6 +39,9 @@
         text-align: center;
         background: @form-button-bg-hover;
         color: @admin-white !important;
+        &:empty {
+          display: none;
+        }
       }
 
       &.updated span {
@@ -64,7 +64,8 @@
         font-size: 7px;
       }
 
-      &.single-item:after, &.multiple-items:after {
+      &.any-selected:after {
+        content: attr(data-label);
         display: block;
         font-size: 15px;
         position: absolute;
@@ -72,13 +73,6 @@
         left: 37px;
         height: 39px;
         width: 48px;
-      }
-
-      &.single-item:after {
-        content: 'item';
-      }
-      &.multiple-items:after {
-        content: 'items';
       }
 
       &:disabled:after {

@@ -7,6 +7,7 @@ import PageTemplate = api.content.page.PageTemplate;
 import PageDescriptor = api.content.page.PageDescriptor;
 import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
 import GetDefaultPageTemplateRequest = api.content.page.GetDefaultPageTemplateRequest;
+import i18n = api.util.i18n;
 
 export interface DefaultModelsFactoryConfig {
 
@@ -38,7 +39,7 @@ export class DefaultModelsFactory {
 
                         deferred.resolve(new DefaultModels(defaultPageTemplate, defaultPageTemplateDescriptor));
                     }).catch((reason) => {
-                        const msg = `Page descriptor '${defaultPageTemplate.getController()}' not found.`;
+                        const msg = i18n('notify.wizard.noDescriptor', defaultPageTemplate.getController());
                         deferred.reject(new api.Exception(msg, api.ExceptionType.WARNING));
                     }).done();
                 } else {

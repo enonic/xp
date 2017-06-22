@@ -12,6 +12,7 @@ import ContentType = api.schema.content.ContentType;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
 import PublishStatus = api.content.PublishStatus;
+import i18n = api.util.i18n;
 
 export class ContentWizardDataLoader {
 
@@ -111,7 +112,7 @@ export class ContentWizardDataLoader {
         new api.schema.content.GetContentTypeByNameRequest(name).sendAndParse().then((contentType) => {
             deferred.resolve(contentType);
         }).catch((reason) => {
-            const msg = `Content cannot be opened. Required content type '${name.toString()}' not found.`;
+            const msg = i18n('notify.wizard.noContentType', name.toString());
             deferred.reject(new api.Exception(msg, api.ExceptionType.WARNING));
         }).done();
         return deferred.promise;

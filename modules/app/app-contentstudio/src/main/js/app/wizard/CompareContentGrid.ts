@@ -14,16 +14,22 @@ import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+import i18n = api.util.i18n;
 
-export class CompareContentGrid extends TreeGrid<ContentSummaryAndCompareStatus> {
+export class CompareContentGrid
+    extends TreeGrid<ContentSummaryAndCompareStatus> {
 
     private content: api.content.Content;
 
     constructor(content: api.content.Content) {
         super(new TreeGridBuilder<ContentSummaryAndCompareStatus>().setColumns([
-                new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>().setName('Name').setId('displayName').setField(
-                    'displayName').setFormatter(this.nameFormatter).build()
-            ]).setPartialLoadEnabled(true).setLoadBufferSize(20). // rows count
+                new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>()
+                    .setName(i18n('field.name'))
+                    .setId('displayName')
+                    .setField('displayName')
+                    .setFormatter(this.nameFormatter)
+                    .build()
+            ]).setPartialLoadEnabled(true).setLoadBufferSize(20).// rows count
             prependClasses('compare-content-grid')
         );
 

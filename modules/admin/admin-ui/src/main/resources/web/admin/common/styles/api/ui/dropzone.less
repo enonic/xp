@@ -28,7 +28,7 @@
     }
 
     &:before {
-      content: "Drop here or click to select";
+      content: attr(data-drop-default);
     }
   }
 }
@@ -138,8 +138,7 @@
           margin-top: -111px; // -140 + 58/2 ( half of the sticky toolbar to be centered over image )
           font-size: 25px;
           text-align: center;
-          content: 'Drop image here!';
-          margin-left: 0px;
+          content: attr(data-drop);
         }
       }
     }

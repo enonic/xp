@@ -22,6 +22,7 @@ import UploadItem = api.ui.uploader.UploadItem;
 import ListContentByPathRequest = api.content.resource.ListContentByPathRequest;
 import LoadMask = api.ui.mask.LoadMask;
 import ContentResponse = api.content.resource.result.ContentResponse;
+import i18n = api.util.i18n;
 
 export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
@@ -42,7 +43,9 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     protected header: NewContentDialogHeader;
 
     constructor() {
-        super(<api.ui.dialog.ModalDialogConfig>{title: 'Create Content'});
+        super(<api.ui.dialog.ModalDialogConfig>{
+            title: i18n('dialog.new')
+        });
 
         this.addClass('new-content-dialog');
 
@@ -54,7 +57,7 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
     }
 
     protected createHeader(): NewContentDialogHeader {
-        return new NewContentDialogHeader('Create Content', '');
+        return new NewContentDialogHeader(i18n('dialog.new'), '');
     }
 
     protected getHeader(): NewContentDialogHeader {
@@ -66,6 +69,7 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
         this.initFileInput();
         this.initDragAndDropUploaderEvents();
         this.initLoadMask();
+        this.initButtonRow();
     }
 
     private initContentTypesLists() {
@@ -83,7 +87,7 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
         this.dropzoneContainer.hide();
         this.appendChild(this.dropzoneContainer);
 
-        this.fileInput = new api.ui.text.FileInput('large', undefined).setPlaceholder('Search for content types').setUploaderParams(
+        this.fileInput = new api.ui.text.FileInput('large', undefined).setPlaceholder(i18n('dialog.new.searchTypes')).setUploaderParams(
             {parent: ContentPath.ROOT.toString()});
 
         this.fileInput.getUploader().addDropzone(this.dropzoneContainer.getDropzone().getId());
@@ -107,6 +111,10 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
     private initLoadMask() {
         this.loadMask = new LoadMask(this);
+    }
+
+    private initButtonRow() {
+        this.getButtonRow().getEl().setAttribute('data-drop', i18n('drop.file.long'));
     }
 
     // in order to toggle appropriate handlers during drag event
@@ -293,6 +301,7 @@ export class NewContentDialogHeader extends api.ui.dialog.ModalDialogHeader {
         super(title);
 
         this.pathEl = new api.dom.PEl('path');
+        this.pathEl.getEl().setAttribute('data-desc', `${i18n('dialog.newContent.pathDescription')}:`);
         this.pathEl.setHtml(path);
         this.appendChild(this.pathEl);
     }

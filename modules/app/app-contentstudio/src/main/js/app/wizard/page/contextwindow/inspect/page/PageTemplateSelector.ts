@@ -17,6 +17,7 @@ import PageMode = api.content.page.PageMode;
 import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 import GetPageTemplatesByCanRenderRequest = api.content.page.GetPageTemplatesByCanRenderRequest;
 import PageTemplateLoader = api.content.page.PageTemplateLoader;
+import i18n = api.util.i18n;
 
 export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
 
@@ -133,7 +134,7 @@ export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
             .setDisplayName(pageTemplateDisplayName[pageTemplateDisplayName.Custom]))
             .build();
         let option = {
-            value: 'Customized',
+            value: i18n('field.customized'),
             displayValue: new PageTemplateOption(pageTemplate)
         };
 

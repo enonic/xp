@@ -1,6 +1,6 @@
 import '../../api.ts';
 import {ProgressBarConfig} from '../dialog/ProgressBarDialog';
-import {PublishDialogDependantList, isContentSummaryValid} from './PublishDialogDependantList';
+import {isContentSummaryValid, PublishDialogDependantList} from './PublishDialogDependantList';
 import {ContentPublishPromptEvent} from '../browse/ContentPublishPromptEvent';
 import {PublishDialogItemList} from './PublishDialogItemList';
 import {CreateIssueDialog} from '../issue/view/CreateIssueDialog';
@@ -27,6 +27,7 @@ import Action = api.ui.Action;
 import ActionButton = api.ui.button.ActionButton;
 import User = api.security.User;
 import DropdownButtonRow = api.ui.dialog.DropdownButtonRow;
+import i18n = api.util.i18n;
 
 /**
  * ContentPublishDialog manages list of initially checked (initially requested) items resolved via ResolvePublishDependencies command.
@@ -46,10 +47,11 @@ export class ContentPublishDialog extends SchedulableDialog {
 
     constructor() {
         super(<ProgressBarConfig> {
-                dialogName: 'Publishing Wizard',
-                dialogSubName: 'Resolving items...',
-                dependantsName: 'Other items that will be published',
+            dialogName: i18n('dialog.publish'),
+            dialogSubName: i18n('dialog.publish.resolving'),
+            dependantsName: i18n('dialog.publish.dependants'),
                 isProcessingClass: 'is-publishing',
+                processingLabel: `${i18n('field.progress.publishing')}...`,
                 processHandler: () => {
                     new ContentPublishPromptEvent([]).fire();
                 },
@@ -63,7 +65,7 @@ export class ContentPublishDialog extends SchedulableDialog {
             this.lockControls();
             this.loadMask.show();
 
-            this.setSubTitle('Resolving items...');
+            this.setSubTitle(i18n('dialog.publish.resolving'));
         });
 
         this.publishProcessor.onLoadingFinished(() => {
@@ -272,7 +274,7 @@ export class ContentPublishDialog extends SchedulableDialog {
     }
 
     private updateButtonAction() {
-        const header = this.isAllPublishable() ? null : 'Other items that will be added to the Publishing Issue';
+        const header = this.isAllPublishable() ? null : i18n('dialog.publish.dependantsIssue');
         this.updateDependantsHeader(header);
 
         this.updatePublishableStatus();
@@ -282,7 +284,7 @@ export class ContentPublishDialog extends SchedulableDialog {
 
         this.lockControls();
 
-        this.setSubTitle(`${this.countTotal()} items are being published...`);
+        this.setSubTitle(i18n('dialog.publish.publishing', this.countTotal()));
 
         let selectedIds = this.getContentToPublishIds();
 
@@ -318,14 +320,10 @@ export class ContentPublishDialog extends SchedulableDialog {
     private updateSubTitle(count: number) {
         const allValid = this.areItemsAndDependantsValid();
 
-        let subTitle = (count === 0) ?
-                       'No items to publish' :
+        let subTitle = (count === 0) ? i18n('dialog.publish.noItems') :
                        this.isAllPublishable() ?
-                       (allValid ?
-                        'Your changes are ready for publishing' :
-                        'Invalid item(s) prevent publishing'
-                       ) :
-                       'Create a new Publishing Issue with selected item(s)';
+                       (allValid ? i18n('dialog.publish.changesReady') : i18n('dialog.publish.invalidError')
+                       ) : i18n('dialog.publish.newIssue');
 
         this.setSubTitle(subTitle);
         this.toggleClass('invalid', !allValid && this.isAllPublishable());
@@ -343,10 +341,10 @@ export class ContentPublishDialog extends SchedulableDialog {
 
         const labelWithNumber = (num, label) => `${label}${num > 1 ? ` (${num})` : '' }`;
 
-        this.publishButton.getAction().setLabel(labelWithNumber(count, 'Publish'));
+        this.publishButton.getAction().setLabel(labelWithNumber(count, i18n('action.publish')));
 
-        this.showScheduleAction.setLabel(labelWithNumber(count, 'Schedule... '));
-        this.createIssueAction.setLabel(labelWithNumber(this.getItemList().getItemCount(), 'Create Issue... '));
+        this.showScheduleAction.setLabel(labelWithNumber(count, i18n('action.scheduleMore')));
+        this.createIssueAction.setLabel(labelWithNumber(this.getItemList().getItemCount(), i18n('action.createIssueMore')));
     }
 
     protected updateButtonStatus(enabled: boolean) {
@@ -397,7 +395,7 @@ export class ContentPublishDialogButtonRow extends DropdownButtonRow {
 
 export class ContentPublishDialogAction extends api.ui.Action {
     constructor(handler: () => wemQ.Promise<any>|void) {
-        super('Publish');
+        super(i18n('action.publish'));
         this.setIconClass('publish-action');
         this.onExecuted(handler);
     }
@@ -405,7 +403,7 @@ export class ContentPublishDialogAction extends api.ui.Action {
 
 export class CreateIssueDialogAction extends api.ui.Action {
     constructor(handler: () => wemQ.Promise<any>|void) {
-        super('Create Issue... ');
+        super(i18n('action.createIssueMore'));
         this.setIconClass('create-issue-action');
         this.onExecuted(handler);
     }

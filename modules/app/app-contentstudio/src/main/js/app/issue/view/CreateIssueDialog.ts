@@ -6,6 +6,7 @@ import LabelEl = api.dom.LabelEl;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import DialogButton = api.ui.dialog.DialogButton;
 import AEl = api.dom.AEl;
+import i18n = api.util.i18n;
 
 export class CreateIssueDialog extends IssueDialog {
 
@@ -18,7 +19,7 @@ export class CreateIssueDialog extends IssueDialog {
     private backButton: AEl;
 
     protected constructor() {
-        super('New Issue');
+        super(i18n('dialog.newIssue'));
 
         this.getEl().addClass('create-issue-dialog');
 
@@ -35,7 +36,7 @@ export class CreateIssueDialog extends IssueDialog {
 
     private initElements() {
         this.cancelButton = this.addCancelButtonToBottom();
-        this.itemsLabel = new LabelEl('Items', this.getItemList());
+        this.itemsLabel = new LabelEl(i18n('field.items'), this.getItemList());
         this.backButton = this.createBackButton();
     }
 
@@ -82,7 +83,7 @@ export class CreateIssueDialog extends IssueDialog {
             createIssueRequest.sendAndParse().then((issue) => {
                 this.close();
                 this.reset();
-                api.notify.showSuccess('New issue created successfully');
+                api.notify.showSuccess(i18n('notify.issue.created'));
                 IssueDetailsDialog.get().setIssue(issue).open();
             }).catch((reason) => {
                 if (reason && reason.message) {
@@ -120,7 +121,7 @@ export class CreateIssueDialog extends IssueDialog {
     }
 
     private createBackButton(): AEl {
-        const backButton: AEl = new AEl('back-button').setTitle('Back');
+        const backButton: AEl = new AEl('back-button').setTitle(i18n('action.back'));
 
         backButton.hide();
 
@@ -146,7 +147,7 @@ export class CreateIssueAction extends api.ui.Action {
     }
 
     public updateLabel(count: number) {
-        let label = 'Create Issue ';
+        let label = i18n('action.createIssue');
         if (count > 1) {
             label += '(' + count + ')';
         }

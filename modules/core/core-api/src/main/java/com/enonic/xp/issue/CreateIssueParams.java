@@ -81,7 +81,7 @@ public class CreateIssueParams
 
         public Builder()
         {
-            this.issueStatus = IssueStatus.Open;
+            this.issueStatus = IssueStatus.OPEN;
             this.approverIds = Lists.arrayList();
         }
 

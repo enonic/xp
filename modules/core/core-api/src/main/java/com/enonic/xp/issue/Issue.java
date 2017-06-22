@@ -148,7 +148,7 @@ public class Issue
         public Builder()
         {
             this.approverIds = Sets.newHashSet();
-            this.issueStatus = IssueStatus.Open;
+            this.issueStatus = IssueStatus.OPEN;
         }
 
         protected Builder( final Issue source )

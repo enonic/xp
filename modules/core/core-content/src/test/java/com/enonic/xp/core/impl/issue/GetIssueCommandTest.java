@@ -49,7 +49,7 @@ public class GetIssueCommandTest
         final Issue issue = command.execute();
         assertNotNull( issue );
         assertEquals( "title", issue.getTitle() );
-        assertEquals( IssueStatus.Open, issue.getStatus() );
+        assertEquals( IssueStatus.OPEN, issue.getStatus() );
         assertEquals( issueName, issue.getName() );
     }
 
@@ -84,7 +84,7 @@ public class GetIssueCommandTest
         final PropertySet issueAsData = propertyTree.getRoot();
 
         issueAsData.ifNotNull().addString( TITLE, "title" );
-        issueAsData.ifNotNull().addString( STATUS, IssueStatus.Open.toString() );
+        issueAsData.ifNotNull().addString( STATUS, IssueStatus.OPEN.toString() );
         issueAsData.ifNotNull().addString( CREATOR, PrincipalKey.from( "user:myStore:me" ).toString() );
         issueAsData.ifNotNull().addLong( INDEX, 1L );
 

@@ -1,5 +1,6 @@
 import '../../../../../api.ts';
 import {BaseInspectionPanel} from './BaseInspectionPanel';
+import i18n = api.util.i18n;
 
 export class ContentInspectionPanel extends BaseInspectionPanel {
 
@@ -25,7 +26,7 @@ export class ContentInspectionPanel extends BaseInspectionPanel {
             this.namesAndIcon.setMainName(content.getDisplayName());
             this.namesAndIcon.setSubName(content.getPath().toString());
         } else {
-            this.namesAndIcon.setMainName('[No Content given]');
+            this.namesAndIcon.setMainName(i18n('field.inspection.noContent'));
             this.namesAndIcon.setSubName('');
         }
     }

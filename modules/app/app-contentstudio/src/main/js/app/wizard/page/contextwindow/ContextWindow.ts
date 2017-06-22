@@ -15,6 +15,7 @@ import ImageComponent = api.content.page.region.ImageComponent;
 import ImageComponentBuilder = api.content.page.region.ImageComponentBuilder;
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
+import i18n = api.util.i18n;
 
 export interface ContextWindowConfig {
 
@@ -90,9 +91,9 @@ export class ContextWindow extends api.ui.panel.DockedPanel {
             });
 
             this.appendChild(this.splitter);
-            this.addItem('Insert', false, this.insertablesPanel);
-            this.addItem('Inspect', false, this.inspectionsPanel);
-            this.addItem('Emulator', false, this.emulatorPanel);
+            this.addItem(i18n('action.insert'), false, this.insertablesPanel);
+            this.addItem(i18n('action.inspect'), false, this.inspectionsPanel);
+            this.addItem(i18n('action.emulator'), false, this.emulatorPanel);
 
             this.insertablesPanel.getComponentsView().onBeforeInsertAction(() => {
                 this.fixed = true;

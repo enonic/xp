@@ -42,7 +42,7 @@ public class IssueDataSerializerTest
         assertNotNull( data );
         assertEquals( "title", data.getString( TITLE ) );
         assertEquals( "descr", data.getString( DESCRIPTION ) );
-        assertEquals( "Open", data.getString( STATUS ) );
+        assertEquals( "OPEN", data.getString( STATUS ) );
         assertEquals( "user:myStore:approver", data.getStrings( APPROVERS ).iterator().next() );
         assertEquals( "exclude-id",
                       data.getSet( PUBLISH_REQUEST ).getStrings( PublishRequestPropertyNames.EXCLUDE_IDS ).iterator().next() );

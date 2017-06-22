@@ -14,7 +14,7 @@ public class ListIssuesJsonTest
     {
         final ListIssuesJson json = new ListIssuesJson( "OPEN", true, true, true, 0, 10 );
 
-        assertEquals( json.getFindIssuesParams().getStatus(), IssueStatus.Open );
+        assertEquals( json.getFindIssuesParams().getStatus(), IssueStatus.OPEN );
     }
 
     @Test
@@ -23,7 +23,7 @@ public class ListIssuesJsonTest
     {
         final ListIssuesJson json = new ListIssuesJson( "CLOSED", true, true, true, 0, 10 );
 
-        assertEquals( json.getFindIssuesParams().getStatus(), IssueStatus.Closed );
+        assertEquals( json.getFindIssuesParams().getStatus(), IssueStatus.CLOSED );
     }
 
     @Test

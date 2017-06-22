@@ -12,8 +12,10 @@ import User = api.security.User;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import OpenEditPermissionsDialogEvent = api.content.event.OpenEditPermissionsDialogEvent;
 import LoginResult = api.security.auth.LoginResult;
+import i18n = api.util.i18n;
 
-export class UserAccessWidgetItemView extends WidgetItemView {
+export class UserAccessWidgetItemView
+    extends WidgetItemView {
 
     private contentId: ContentId;
 
@@ -30,11 +32,11 @@ export class UserAccessWidgetItemView extends WidgetItemView {
     public static debug: boolean = false;
 
     private static OPTIONS: any[] = [
-        {value: Access.FULL, name: 'has full access to'},
-        {value: Access.PUBLISH, name: 'can publish'},
-        {value: Access.WRITE, name: 'can report'},
-        {value: Access.READ, name: 'can read'},
-        {value: Access.CUSTOM, name: 'has custom access to'}
+        {value: Access.FULL, name: i18n('field.access.full')},
+        {value: Access.PUBLISH, name: i18n('field.access.publish')},
+        {value: Access.WRITE, name: i18n('field.access.write')},
+        {value: Access.READ, name: i18n('field.access.read')},
+        {value: Access.CUSTOM, name: i18n('field.access.custom')}
     ];
 
     constructor() {
@@ -62,8 +64,8 @@ export class UserAccessWidgetItemView extends WidgetItemView {
         if (entry) {
 
             this.everyoneAccessValue = AccessControlEntryView.getAccessValueFromEntry(entry);
-            let headerStr = entry.getPrincipalDisplayName() + ' ' + this.getOptionName(this.everyoneAccessValue) +
-                            ' this item';
+            let headerStr = `${entry.getPrincipalDisplayName()} ${this.getOptionName(this.everyoneAccessValue)} ${i18n(
+                'field.access.item')}`;
             let headerStrEl = new api.dom.SpanEl('header-string').setHtml(headerStr);
 
             this.headerEl = new api.dom.DivEl('user-access-widget-header');
@@ -86,7 +88,7 @@ export class UserAccessWidgetItemView extends WidgetItemView {
         }
 
         this.bottomEl = new api.dom.AEl('edit-permissions-link');
-        this.bottomEl.setHtml('Edit Permissions');
+        this.bottomEl.setHtml(i18n('action.editPermissions'));
 
         this.appendChild(this.bottomEl);
 

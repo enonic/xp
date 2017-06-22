@@ -39,6 +39,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIdExistsException;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
@@ -82,6 +83,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserQuery;
 import com.enonic.xp.security.UserQueryResult;
 import com.enonic.xp.security.UserStore;
+import com.enonic.xp.security.UserStoreAlreadyExistsException;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.UserStoreNotFoundException;
 import com.enonic.xp.security.UserStores;
@@ -663,7 +665,7 @@ public final class SecurityServiceImpl
 
             return PrincipalNodeTranslator.userFromNode( node );
         }
-        catch ( NodeAlreadyExistAtPathException e )
+        catch ( NodeIdExistsException | NodeAlreadyExistAtPathException e )
         {
             throw new PrincipalAlreadyExistsException( createUser.getKey() );
         }
@@ -724,7 +726,7 @@ public final class SecurityServiceImpl
 
             return PrincipalNodeTranslator.groupFromNode( node );
         }
-        catch ( NodeAlreadyExistAtPathException e )
+        catch ( NodeIdExistsException | NodeAlreadyExistAtPathException e )
         {
             throw new PrincipalAlreadyExistsException( createGroup.getKey() );
         }
@@ -784,7 +786,7 @@ public final class SecurityServiceImpl
 
             return PrincipalNodeTranslator.roleFromNode( node );
         }
-        catch ( NodeAlreadyExistAtPathException e )
+        catch ( NodeIdExistsException | NodeAlreadyExistAtPathException e )
         {
             throw new PrincipalAlreadyExistsException( createRole.getKey() );
         }
@@ -960,49 +962,64 @@ public final class SecurityServiceImpl
             data.setSet( UserStorePropertyNames.ID_PROVIDER_CONFIG_FORM_KEY, authConfig.getConfig().getRoot() );
         }
 
-        final Node node = callWithContext( () -> {
+        try
+        {
+            final Node node = callWithContext( () ->
+                                               {
 
-            final UserStoreAccessControlList permissions = createUserStoreParams.getUserStorePermissions();
-            AccessControlList userStoreNodePermissions =
-                UserStoreNodeTranslator.userStorePermissionsToUserStoreNodePermissions( permissions );
-            AccessControlList usersNodePermissions = UserStoreNodeTranslator.userStorePermissionsToUsersNodePermissions( permissions );
-            AccessControlList groupsNodePermissions = UserStoreNodeTranslator.userStorePermissionsToGroupsNodePermissions( permissions );
+                                                   final UserStoreAccessControlList permissions =
+                                                       createUserStoreParams.getUserStorePermissions();
+                                                   AccessControlList userStoreNodePermissions =
+                                                       UserStoreNodeTranslator.userStorePermissionsToUserStoreNodePermissions(
+                                                           permissions );
+                                                   AccessControlList usersNodePermissions =
+                                                       UserStoreNodeTranslator.userStorePermissionsToUsersNodePermissions( permissions );
+                                                   AccessControlList groupsNodePermissions =
+                                                       UserStoreNodeTranslator.userStorePermissionsToGroupsNodePermissions( permissions );
 
-            final Node rootNode = nodeService.getRoot();
-            userStoreNodePermissions = mergeWithRootPermissions( userStoreNodePermissions, rootNode.getPermissions() );
-            usersNodePermissions = mergeWithRootPermissions( usersNodePermissions, rootNode.getPermissions() );
-            groupsNodePermissions = mergeWithRootPermissions( groupsNodePermissions, rootNode.getPermissions() );
+                                                   final Node rootNode = nodeService.getRoot();
+                                                   userStoreNodePermissions =
+                                                       mergeWithRootPermissions( userStoreNodePermissions, rootNode.getPermissions() );
+                                                   usersNodePermissions =
+                                                       mergeWithRootPermissions( usersNodePermissions, rootNode.getPermissions() );
+                                                   groupsNodePermissions =
+                                                       mergeWithRootPermissions( groupsNodePermissions, rootNode.getPermissions() );
 
-            final Node userStoreNode = nodeService.create( CreateNodeParams.create().
-                parent( UserStoreNodeTranslator.getUserStoresParentPath() ).
-                name( createUserStoreParams.getKey().toString() ).
-                data( data ).
-                permissions( userStoreNodePermissions ).
-                build() );
+                                                   final Node userStoreNode = nodeService.create( CreateNodeParams.create().
+                                                       parent( UserStoreNodeTranslator.getUserStoresParentPath() ).
+                                                       name( createUserStoreParams.getKey().toString() ).
+                                                       data( data ).
+                                                       permissions( userStoreNodePermissions ).
+                                                       build() );
 
-            nodeService.create( CreateNodeParams.create().
-                parent( userStoreNode.path() ).
-                name( UserStoreNodeTranslator.USER_FOLDER_NODE_NAME ).
-                permissions( usersNodePermissions ).
-                build() );
-            nodeService.create( CreateNodeParams.create().
-                parent( userStoreNode.path() ).
-                name( UserStoreNodeTranslator.GROUP_FOLDER_NODE_NAME ).
-                permissions( groupsNodePermissions ).
-                build() );
+                                                   nodeService.create( CreateNodeParams.create().
+                                                       parent( userStoreNode.path() ).
+                                                       name( UserStoreNodeTranslator.USER_FOLDER_NODE_NAME ).
+                                                       permissions( usersNodePermissions ).
+                                                       build() );
+                                                   nodeService.create( CreateNodeParams.create().
+                                                       parent( userStoreNode.path() ).
+                                                       name( UserStoreNodeTranslator.GROUP_FOLDER_NODE_NAME ).
+                                                       permissions( groupsNodePermissions ).
+                                                       build() );
 
-            final ApplyNodePermissionsParams applyPermissions = ApplyNodePermissionsParams.create().
-                nodeId( rootNode.id() ).
-                overwriteChildPermissions( false ).
-                build();
-            nodeService.applyPermissions( applyPermissions );
+                                                   final ApplyNodePermissionsParams applyPermissions = ApplyNodePermissionsParams.create().
+                                                       nodeId( rootNode.id() ).
+                                                       overwriteChildPermissions( false ).
+                                                       build();
+                                                   nodeService.applyPermissions( applyPermissions );
 
-            this.nodeService.refresh( RefreshMode.SEARCH );
+                                                   this.nodeService.refresh( RefreshMode.SEARCH );
 
-            return userStoreNode;
-        } );
+                                                   return userStoreNode;
+                                               } );
 
-        return UserStoreNodeTranslator.fromNode( node );
+            return UserStoreNodeTranslator.fromNode( node );
+        }
+        catch ( NodeIdExistsException | NodeAlreadyExistAtPathException e )
+        {
+            throw new UserStoreAlreadyExistsException( createUserStoreParams.getKey() );
+        }
     }
 
     private AccessControlList mergeWithRootPermissions( final AccessControlList nodePermissions, final AccessControlList rootPermissions )

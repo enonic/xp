@@ -47,7 +47,7 @@ export class DeletePrincipalAction extends Action {
                             if (json.results && json.results.length > 0) {
                                 let key = json.results[0].principalKey;
 
-                                api.notify.showFeedback(i18n('notify.deleted.principal', key));
+                                api.notify.showFeedback(i18n('notify.delete.principal', key));
                                 api.security.UserItemDeletedEvent.create().setPrincipals(principalItems).build().fire();
                             }
                         });
@@ -63,7 +63,7 @@ export class DeletePrincipalAction extends Action {
                             if (json.results && json.results.length > 0) {
                                 let key = json.results[0].userStoreKey;
 
-                                api.notify.showFeedback(i18n('notify.deleted.userstore', key));
+                                api.notify.showFeedback(i18n('notify.delete.userstore', key));
                                 api.security.UserItemDeletedEvent.create().setUserStores(userStoreItems).build().fire();
                             }
                         });

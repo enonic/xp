@@ -23,8 +23,10 @@ import Highlighter = api.liveedit.Highlighter;
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
+import i18n = api.util.i18n;
 
-export class PageComponentsView extends api.dom.DivEl {
+export class PageComponentsView
+    extends api.dom.DivEl {
 
     private content: Content;
     private pageView: PageView;
@@ -41,7 +43,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
     private mask: Mask;
 
-    private beforeInsertActionListeners: {(event: any): void}[] = [];
+    private beforeInsertActionListeners: { (event: any): void }[] = [];
 
     private mouseDownListener: (event: MouseEvent) => void;
     private mouseUpListener: (event?: MouseEvent) => void;
@@ -70,7 +72,7 @@ export class PageComponentsView extends api.dom.DivEl {
         });
 
         this.header = new api.dom.H2El('header');
-        this.header.setHtml('Components');
+        this.header.setHtml(i18n('field.components'));
 
         this.appendChildren(<api.dom.Element>closeButton, this.header);
 
@@ -429,7 +431,7 @@ export class PageComponentsView extends api.dom.DivEl {
     }
 
     private bindTreeFragmentNodeUpdateOnComponentLoaded(fragmentComponentView: FragmentComponentView) {
-        fragmentComponentView.onFragmentContentLoaded((e)=> {
+        fragmentComponentView.onFragmentContentLoaded((e) => {
             this.tree.updateNode(e.getFragmentComponentView());
         });
     }
@@ -530,7 +532,7 @@ export class PageComponentsView extends api.dom.DivEl {
         return this;
     }
 
-    private constrainToParent(offset?: {top: number; left: number}) {
+    private constrainToParent(offset?: { top: number; left: number }) {
         const el = this.getEl();
         const elOffset = offset || el.getOffset();
         let parentEl;
@@ -644,7 +646,7 @@ export class PageComponentsView extends api.dom.DivEl {
 
         this.contextMenu.getMenu().onBeforeAction((action: api.ui.Action) => {
             this.pageView.setDisabledContextMenu(true);
-            if (action.hasParentAction() && action.getParentAction().getLabel() === 'Insert') {
+            if (action.hasParentAction() && action.getParentAction().getLabel() === i18n('field.insert')) {
                 this.notifyBeforeInsertAction();
             }
         });
@@ -671,9 +673,11 @@ export class PageComponentsView extends api.dom.DivEl {
     }
 
     private hidePageComponentsIfInMobileView(action: api.ui.Action) {
-        if (api.BrowserHelper.isMobile() && ((action.hasParentAction() && action.getParentAction().getLabel() === 'Insert')
-                                             || action.getLabel() === 'Inspect' || action.getLabel() === 'Edit' ||
-                                             action.getLabel() === 'Duplicate')) {
+        if (api.BrowserHelper.isMobile() &&
+            ((action.hasParentAction() && action.getParentAction().getLabel() === i18n('action.insert'))
+             || action.getLabel() === i18n('action.inspect')
+             || action.getLabel() === i18n('action.edit')
+             || action.getLabel() === i18n('action.duplicate'))) {
             this.hide();
         }
     }
@@ -743,7 +747,7 @@ export class PageComponentsView extends api.dom.DivEl {
         let editAction: api.ui.Action;
 
         contextMenuActions.some((action: api.ui.Action) => {
-            if (action.getLabel() === 'Edit') {
+            if (action.getLabel() === i18n('action.edit')) {
                 editAction = action;
                 return true;
             }

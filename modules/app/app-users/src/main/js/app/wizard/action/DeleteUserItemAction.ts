@@ -31,7 +31,7 @@ export class DeleteUserItemAction extends api.ui.Action {
                             if (json.results && json.results.length > 0) {
                                 let key = json.results[0].principalKey;
 
-                                api.notify.showFeedback(i18n('notify.deleted.principal', key));
+                                api.notify.showFeedback(i18n('notify.delete.principal', key));
                                 api.security.UserItemDeletedEvent.create().setPrincipals([<Principal>persistedItem]).build().fire();
                             }
                         });
@@ -46,7 +46,7 @@ export class DeleteUserItemAction extends api.ui.Action {
                             if (json.results && json.results.length > 0) {
                                 let key = json.results[0].userStoreKey;
 
-                                api.notify.showFeedback(i18n('notify.deleted.userstore', key));
+                                api.notify.showFeedback(i18n('notify.delete.userstore', key));
                                 api.security.UserItemDeletedEvent.create().setUserStores([<UserStore>persistedItem]).build().fire();
                             }
                         });
