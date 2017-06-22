@@ -30,6 +30,8 @@ public class CopyExecutor
 {
     private final static Logger LOG = LoggerFactory.getLogger( CopyExecutor.class );
 
+    public static final int BATCH_SIZE = 1_000;
+
     private final CopyRequest copyRequest;
 
     private CopyExecutor( final Builder builder )
@@ -55,7 +57,7 @@ public class CopyExecutor
             addIndexName( copyRequest.getStorageSource().getStorageName().getName() ).
             addIndexType( copyRequest.getStorageSource().getStorageType().getName() ).
             size( copyRequest.getNodeIds().getSize() ).
-            batchSize( 1_000 ).
+            batchSize( BATCH_SIZE ).
             from( 0 ).
             setReturnFields( ReturnFields.from( NodeIndexPath.SOURCE ) ).
             build();

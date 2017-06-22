@@ -11,8 +11,6 @@ public class SearchHits
 {
     private final List<SearchHit> hits;
 
-
-
     private SearchHits( final Builder builder )
     {
         this.hits = builder.hits;
