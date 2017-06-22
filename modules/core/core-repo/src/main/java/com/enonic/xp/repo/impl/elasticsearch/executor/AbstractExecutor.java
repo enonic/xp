@@ -67,7 +67,6 @@ abstract class AbstractExecutor
         }
     }
 
-
     private String createQueryString( final SearchRequestBuilder searchRequestBuilder )
     {
         final String queryAsString = searchRequestBuilder.toString();
