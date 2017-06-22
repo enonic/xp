@@ -34,7 +34,7 @@ public class IssueServiceImplTest_getIssue
         assertNotNull( issue );
         assertEquals( "title", issue.getTitle() );
         assertEquals( "description", issue.getDescription() );
-        assertEquals( IssueStatus.Open, issue.getStatus() );
+        assertEquals( IssueStatus.OPEN, issue.getStatus() );
         assertEquals( PrincipalKey.from( "user:system:test-user" ), issue.getCreator() );
         assertEquals( PrincipalKey.from( "user:myStore:approver-1" ), issue.getApproverIds().first() );
         assertEquals( ContentId.from( "content-id" ), issue.getPublishRequest().getItems().first().getId() );

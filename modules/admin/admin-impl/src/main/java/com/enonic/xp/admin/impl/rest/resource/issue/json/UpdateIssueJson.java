@@ -42,7 +42,7 @@ public class UpdateIssueJson
                         }
                         if ( status != null )
                         {
-                            editMe.issueStatus = IssueStatus.valueOf( status );
+                            editMe.issueStatus = IssueStatus.valueOf( status.trim().toUpperCase() );
                         }
                         if ( approverIds != null )
                         {

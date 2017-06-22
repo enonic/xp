@@ -45,7 +45,7 @@ public class IssueNodeTranslatorTest
         assertNotNull( issue );
         assertEquals( "title", issue.getTitle() );
         assertEquals( "description", issue.getDescription() );
-        assertEquals( IssueStatus.Open, issue.getStatus() );
+        assertEquals( IssueStatus.OPEN, issue.getStatus() );
         assertEquals( PrincipalKey.from( "user:myStore:me" ), issue.getCreator() );
         assertEquals( PrincipalKey.from( "user:myStore:approver-1" ), issue.getApproverIds().first() );
         assertTrue( issue.getPublishRequest().getItems().contains(
@@ -63,7 +63,7 @@ public class IssueNodeTranslatorTest
 
         issueAsData.addString( TITLE, "title" );
         issueAsData.addString( CREATOR, "user:myStore:me" );
-        issueAsData.addString( STATUS, IssueStatus.Open.toString() );
+        issueAsData.addString( STATUS, IssueStatus.OPEN.toString() );
         issueAsData.addString( DESCRIPTION, "description" );
         issueAsData.addLong( INDEX, 1L );
 

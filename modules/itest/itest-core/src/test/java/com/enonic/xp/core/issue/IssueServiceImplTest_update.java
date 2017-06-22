@@ -34,7 +34,7 @@ public class IssueServiceImplTest_update
                     PrincipalKeys.from( PrincipalKey.from( "user:myStore:approver-1" ), PrincipalKey.from( "user:myStore:approver-2" ) );
                 editMe.publishRequest = PublishRequest.create().addExcludeId( ContentId.from( "new-exclude-id" ) ).addItem(
                     PublishRequestItem.create().id( ContentId.from( "new-content-id" ) ).includeChildren( true ).build() ).build();
-                editMe.issueStatus = IssueStatus.Closed;
+                editMe.issueStatus = IssueStatus.CLOSED;
             } );
 
         final Issue updatedIssue = this.issueService.update( updateIssueParams );
@@ -42,7 +42,7 @@ public class IssueServiceImplTest_update
         assertNotNull( updatedIssue );
         assertEquals( "updated title", updatedIssue.getTitle() );
         assertEquals( "updated description", updatedIssue.getDescription() );
-        assertEquals( IssueStatus.Closed, updatedIssue.getStatus() );
+        assertEquals( IssueStatus.CLOSED, updatedIssue.getStatus() );
         assertEquals( PrincipalKey.from( "user:system:test-user" ), updatedIssue.getCreator() );
         assertEquals( PrincipalKey.from( "user:system:test-user" ), updatedIssue.getModifier() );
         assertEquals( PrincipalKey.from( "user:myStore:approver-1" ), updatedIssue.getApproverIds().first() );
@@ -66,7 +66,7 @@ public class IssueServiceImplTest_update
         assertNotNull( updatedIssue );
         assertEquals( "title", updatedIssue.getTitle() );
         assertEquals( "description", updatedIssue.getDescription() );
-        assertEquals( IssueStatus.Open, issue.getStatus() );
+        assertEquals( IssueStatus.OPEN, issue.getStatus() );
         assertEquals( PrincipalKey.from( "user:system:test-user" ), updatedIssue.getCreator() );
         assertEquals( PrincipalKey.from( "user:myStore:approver-1" ), updatedIssue.getApproverIds().first() );
         assertEquals( ContentId.from( "content-id" ), updatedIssue.getPublishRequest().getItems().first().getId() );

@@ -34,12 +34,12 @@ public final class ListIssuesJson
 
         if ( type.equalsIgnoreCase( "CLOSED" ) )
         {
-            return IssueStatus.Closed;
+            return IssueStatus.CLOSED;
         }
 
         if ( type.equalsIgnoreCase( "OPEN" ) )
         {
-            return IssueStatus.Open;
+            return IssueStatus.OPEN;
         }
 
         return null;

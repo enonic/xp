@@ -30,7 +30,7 @@ public class FindIssuesCommandTest
     public void testFindIssues()
         throws Exception
     {
-        final IssueQuery issueQuery = IssueQuery.create().from( 0 ).size( 20 ).status( IssueStatus.Open ).build();
+        final IssueQuery issueQuery = IssueQuery.create().from( 0 ).size( 20 ).status( IssueStatus.OPEN ).build();
         final FindIssuesCommand command = createCommand( issueQuery );
 
         Mockito.when( nodeService.findByQuery( Mockito.any( NodeQuery.class ) ) ).thenReturn(
