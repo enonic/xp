@@ -1,6 +1,7 @@
 module api.ui.security.acl {
 
     import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
+    import AppHelper = api.util.AppHelper;
 
     interface AccessSelectorOption {
         value: Access;
@@ -29,9 +30,43 @@ module api.ui.security.acl {
                 this.addNavigationItem(menuItem);
             });
 
+            this.initEventHandlers();
+        }
+
+        initEventHandlers() {
             this.onNavigationItemSelected((event: api.ui.NavigatorEvent) => {
                 let item: api.ui.tab.TabMenuItem = <api.ui.tab.TabMenuItem> event.getItem();
                 this.setValue(AccessSelector.OPTIONS[item.getIndex()].value);
+            });
+
+            this.getTabMenuButtonEl().onKeyDown((event: KeyboardEvent) => {
+                if (!this.isEnabled()) {
+                    return;
+                }
+
+                if (KeyHelper.isArrowDownKey(event)) {
+                    if (this.isMenuVisible()) {
+                        this.giveFocusToMenu();
+                    } else {
+                        this.showMenu();
+                    }
+                    AppHelper.lockEvent(event);
+                } else if (KeyHelper.isArrowUpKey(event)) {
+                    this.hideMenu();
+                    AppHelper.lockEvent(event);
+                } else if (KeyHelper.isApplyKey(event)) {
+                    if (this.isMenuVisible()) {
+                        this.hideMenu();
+                    } else {
+                        this.showMenu();
+                    }
+                    AppHelper.lockEvent(event);
+                } else if (KeyHelper.isEscKey(event)) {
+                    if (this.isMenuVisible()) {
+                        this.hideMenu();
+                        AppHelper.lockEvent(event);
+                    }
+                }
             });
         }
 
@@ -87,6 +122,8 @@ module api.ui.security.acl {
             }
 
             super.showMenu();
+
+            this.focus();
         }
 
         onValueChanged(listener: (event: api.ValueChangedEvent)=>void) {
@@ -105,6 +142,25 @@ module api.ui.security.acl {
             });
         }
 
-    }
+        giveFocusToMenu(): boolean {
+            const focused = super.giveFocusToMenu();
+            return focused || (this.getSize() > 1 && this.focusNextTab());
+        }
 
+        isKeyNext(event: KeyboardEvent) {
+            return KeyHelper.isArrowDownKey(event);
+        }
+
+        isKeyPrevious(event: KeyboardEvent) {
+            return KeyHelper.isArrowUpKey(event);
+        }
+
+        returnFocusFromMenu(): boolean {
+            return this.focus();
+        }
+
+        focus(): boolean {
+            return this.getTabMenuButtonEl().focus();
+        }
+    }
 }

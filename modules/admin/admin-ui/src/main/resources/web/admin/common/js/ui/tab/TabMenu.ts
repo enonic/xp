@@ -83,6 +83,10 @@ module api.ui.tab {
             });
         }
 
+        isEnabled(): boolean {
+            return this.enabled;
+        }
+
         giveFocusToMenu(): boolean {
             const first = this.tabs[0];
 
@@ -97,24 +101,26 @@ module api.ui.tab {
             return this.giveFocus();
         }
 
-        focusNextTab() {
+        focusNextTab(): boolean {
             const tabIndex = this.focusIndex + 1;
 
             if (tabIndex < this.tabs.length) {
-                this.tabs[tabIndex].giveFocus();
+                const focused = this.tabs[tabIndex].giveFocus();
                 this.focusIndex = tabIndex;
+                return focused || this.focusNextTab();
             }
+            return false;
         }
 
-        focusPreviousTab() {
+        focusPreviousTab(): boolean {
             const tabIndex = this.focusIndex - 1;
 
             if (tabIndex >= 0) {
-                this.tabs[tabIndex].giveFocus();
+                const focused = this.tabs[tabIndex].giveFocus();
                 this.focusIndex = tabIndex;
-            } else {
-                this.returnFocusFromMenu();
+                return focused || this.focusPreviousTab();
             }
+            return this.returnFocusFromMenu();
         }
 
         isKeyNext(event: KeyboardEvent) {
