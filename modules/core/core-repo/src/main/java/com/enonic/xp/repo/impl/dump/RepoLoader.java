@@ -61,6 +61,7 @@ class RepoLoader
         return this.reader.getBranches( this.repositoryId );
     }
 
+
     private Context setContext( final Branch branch )
     {
         return ContextBuilder.from( ContextAccessor.current() ).

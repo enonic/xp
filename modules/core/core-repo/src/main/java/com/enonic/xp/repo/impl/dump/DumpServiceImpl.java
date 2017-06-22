@@ -16,6 +16,7 @@ import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.dump.DumpService;
+import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemLoadParams;
@@ -83,7 +84,7 @@ public class DumpServiceImpl
 
         for ( final Repository repository : repositories )
         {
-            dumpResults.add( RepoDumper.create().
+            final RepoDumpResult result = RepoDumper.create().
                 writer( writer ).
                 includeVersions( params.isIncludeVersions() ).
                 includeBinaries( params.isIncludeBinaries() ).
@@ -95,7 +96,9 @@ public class DumpServiceImpl
                 maxAge( params.getMaxAge() ).
                 listener( params.getListener() ).
                 build().
-                execute() );
+                execute();
+
+            dumpResults.add( result );
         }
 
         return dumpResults.build();
@@ -111,7 +114,7 @@ public class DumpServiceImpl
             throw new RepoDumpException( "Only admin role users can dump repositories" );
         }
 
-        final FileDumpReader dumpReader = new FileDumpReader( basePath, params.getDumpName() );
+        final FileDumpReader dumpReader = new FileDumpReader( basePath, params.getDumpName(), params.getListener() );
 
         final RepositoryIds dumpRepositories = dumpReader.getRepositories();
 
@@ -129,7 +132,7 @@ public class DumpServiceImpl
         for ( Repository repository : repositoriesToLoad )
         {
             initializeRepo( repository );
-            doLoadRepository( repository.getId(), params.isIncludeVersions(), dumpReader, results );
+            doLoadRepository( repository.getId(), params, dumpReader, results );
         }
 
         return results.build();
@@ -138,7 +141,7 @@ public class DumpServiceImpl
     private void initializeSystemRepo( final SystemLoadParams params, final FileDumpReader dumpReader,
                                        final SystemLoadResult.Builder results )
     {
-        doLoadRepository( SystemConstants.SYSTEM_REPO.getId(), params.isIncludeVersions(), dumpReader, results );
+        doLoadRepository( SystemConstants.SYSTEM_REPO.getId(), params, dumpReader, results );
 
         this.repositoryService.invalidateAll();
 
@@ -161,7 +164,7 @@ public class DumpServiceImpl
         }
     }
 
-    private void doLoadRepository( final RepositoryId repositoryId, final boolean includeVersions, final FileDumpReader dumpReader,
+    private void doLoadRepository( final RepositoryId repositoryId, final SystemLoadParams params, final FileDumpReader dumpReader,
                                    final SystemLoadResult.Builder builder )
     {
         LOG.info( "Loading repository [" + repositoryId + "]" );
@@ -170,7 +173,7 @@ public class DumpServiceImpl
             reader( dumpReader ).
             nodeService( this.nodeService ).
             blobStore( this.blobStore ).
-            includeVersions( includeVersions ).
+            includeVersions( params.isIncludeVersions() ).
             repositoryService( this.repositoryService ).
             repositoryId( repositoryId ).
             build().

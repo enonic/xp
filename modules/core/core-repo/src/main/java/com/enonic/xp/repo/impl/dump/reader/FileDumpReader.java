@@ -23,6 +23,7 @@ import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.dump.BranchLoadResult;
+import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.dump.AbstractFileProcessor;
@@ -42,7 +43,9 @@ public class FileDumpReader
 
     private final NodeVersionFactory factory;
 
-    public FileDumpReader( final Path basePath, final String dumpName )
+    private final SystemLoadListener listener;
+
+    public FileDumpReader( final Path basePath, final String dumpName, final SystemLoadListener listener )
     {
         this.dumpDirectory = getDumpDirectory( basePath, dumpName );
 
@@ -51,6 +54,7 @@ public class FileDumpReader
             throw new RepoDumpException( "Dump directory does not exist: [" + this.dumpDirectory + "]" );
         }
 
+        this.listener = listener;
         this.dumpBlobStore = new DumpBlobStore( this.dumpDirectory.toFile() );
         this.factory = new NodeVersionFactory();
     }
@@ -117,6 +121,11 @@ public class FileDumpReader
             throw new RepoDumpException( "File doesnt " + metaPath + " exists" );
         }
 
+        if ( this.listener != null )
+        {
+            this.listener.loadingBranch( repositoryId, branch );
+        }
+
         try
         {
             final FileInputStream fileInputStream = new FileInputStream( tarFile );
@@ -132,6 +141,12 @@ public class FileDumpReader
                 final EntryLoadResult entryResult = processor.getResult();
                 result.addedNode();
                 result.addedVersions( entryResult.getVersions() );
+
+                if ( this.listener != null )
+                {
+                    this.listener.nodeLoaded();
+                }
+
                 entry = tarInputStream.getNextTarEntry();
             }
 

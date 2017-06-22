@@ -6,10 +6,13 @@ public class SystemLoadParams
 
     private final boolean includeVersions;
 
+    private final SystemLoadListener listener;
+
     private SystemLoadParams( final Builder builder )
     {
         dumpName = builder.dumpName;
         includeVersions = builder.includeVersions;
+        this.listener = builder.listener;
     }
 
     public String getDumpName()
@@ -20,6 +23,11 @@ public class SystemLoadParams
     public boolean isIncludeVersions()
     {
         return includeVersions;
+    }
+
+    public SystemLoadListener getListener()
+    {
+        return listener;
     }
 
     public static Builder create()
@@ -33,8 +41,16 @@ public class SystemLoadParams
 
         private boolean includeVersions = false;
 
+        private SystemLoadListener listener;
+
         private Builder()
         {
+        }
+
+        public Builder listener( final SystemLoadListener listener )
+        {
+            this.listener = listener;
+            return this;
         }
 
         public Builder dumpName( final String val )
