@@ -63,7 +63,7 @@ public class DumpServiceImpl
     }
 
     @Override
-    public SystemDumpResult systemDump( final SystemDumpParams params )
+    public SystemDumpResult dumpSystem( final SystemDumpParams params )
     {
         if ( !SecurityHelper.isAdmin() )
         {

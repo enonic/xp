@@ -40,7 +40,6 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
-import com.enonic.xp.task.TaskService;
 import com.enonic.xp.vfs.VirtualFiles;
 
 @Path("/api/system")
@@ -57,8 +56,6 @@ public final class SystemDumpResource
     private NodeRepositoryService nodeRepositoryService;
 
     private DumpService dumpService;
-
-    private TaskService taskService;
 
     private java.nio.file.Path getDumpDirectory( final String name )
     {
@@ -83,29 +80,9 @@ public final class SystemDumpResource
             maxVersions( request.getMaxVersions() ).
             build();
 
-        final SystemDumpResult result = this.dumpService.systemDump( params );
+        final SystemDumpResult result = this.dumpService.dumpSystem( params );
         return SystemDumpResultJson.from( result );
     }
-
-    private void doTaskStuff( final SystemDumpRequestJson request )
-        throws InterruptedException
-    {
-        /*
-        final RunnableTask runnableTask = ( id, progressReporter ) -> systemDumpTask( request, progressReporter );
-        final TaskId taskId = taskService.submitTask( runnableTask, "Publish content" );
-
-        TaskInfo taskInfo = taskService.getTaskInfo( taskId );
-
-        while ( taskInfo.isRunning() )
-        {
-            System.out.println( "State: " + taskInfo.getState() );
-            System.out.println( "Progress: " + taskInfo.getProgress() );
-            Thread.sleep( 1000 );
-            taskInfo = taskService.getTaskInfo( taskId );
-        }
-        */
-    }
-
 
     @POST
     @Path("load")
@@ -113,7 +90,6 @@ public final class SystemDumpResource
     {
         if ( isExport( request ) )
         {
-
             return doLoadFromExport( request );
         }
 
@@ -270,10 +246,4 @@ public final class SystemDumpResource
         this.dumpService = dumpService;
     }
 
-    @SuppressWarnings("WeakerAccess")
-    @Reference
-    public void setTaskService( final TaskService taskService )
-    {
-        this.taskService = taskService;
-    }
 }

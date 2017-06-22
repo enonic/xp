@@ -2,7 +2,7 @@ package com.enonic.xp.dump;
 
 public interface DumpService
 {
-    SystemDumpResult systemDump( final SystemDumpParams params );
+    SystemDumpResult dumpSystem( final SystemDumpParams params );
 
     SystemLoadResult loadSystemDump( final SystemLoadParams param );
 }

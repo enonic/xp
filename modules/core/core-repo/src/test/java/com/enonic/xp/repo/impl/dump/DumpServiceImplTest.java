@@ -75,7 +75,7 @@ public class DumpServiceImplTest
     public void admin_role_required()
         throws Exception
     {
-        this.dumpService.systemDump( SystemDumpParams.create().
+        this.dumpService.dumpSystem( SystemDumpParams.create().
             dumpName( "testDump" ).
             build() );
     }
@@ -99,7 +99,7 @@ public class DumpServiceImplTest
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
 
-        final SystemDumpResult systemDumpResult = NodeHelper.runAsAdmin( () -> this.dumpService.systemDump( SystemDumpParams.create().
+        final SystemDumpResult systemDumpResult = NodeHelper.runAsAdmin( () -> this.dumpService.dumpSystem( SystemDumpParams.create().
             dumpName( "testDump" ).
             build() ) );
 
@@ -162,7 +162,7 @@ public class DumpServiceImplTest
         final RepositoryId currentRepoId = CTX_DEFAULT.getRepositoryId();
 
         NodeHelper.runAsAdmin( () -> {
-            this.dumpService.systemDump( SystemDumpParams.create().
+            this.dumpService.dumpSystem( SystemDumpParams.create().
                 dumpName( "testDump" ).
                 build() );
 
@@ -297,7 +297,7 @@ public class DumpServiceImplTest
 
         createNode( NodePath.ROOT, "myNode" );
 
-        NodeHelper.runAsAdmin( () -> this.dumpService.systemDump( SystemDumpParams.create().
+        NodeHelper.runAsAdmin( () -> this.dumpService.dumpSystem( SystemDumpParams.create().
             dumpName( "myTestDump" ).
             includeVersions( true ).
             includeBinaries( true ).
@@ -344,7 +344,7 @@ public class DumpServiceImplTest
 
     private void dumpDeleteAndLoad( final boolean clearBlobStore, final SystemDumpParams params )
     {
-        this.dumpService.systemDump( params );
+        this.dumpService.dumpSystem( params );
 
         final Repositories repositories = this.repositoryService.list();
 
