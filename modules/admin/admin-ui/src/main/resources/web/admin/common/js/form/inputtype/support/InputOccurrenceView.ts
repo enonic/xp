@@ -72,7 +72,6 @@ module api.form.inputtype.support {
             this.appendChild(this.dragControl);
 
             this.removeButtonEl = new api.dom.AEl('remove-button');
-            this.appendChild(this.removeButtonEl);
             this.removeButtonEl.onClicked((event: MouseEvent) => {
                 this.notifyRemoveButtonClicked();
                 event.stopPropagation();
@@ -84,6 +83,8 @@ module api.form.inputtype.support {
             this.appendChild(inputWrapper);
 
             inputWrapper.appendChild(this.inputElement);
+
+            this.appendChild(this.removeButtonEl);
 
             this.refresh();
         }
