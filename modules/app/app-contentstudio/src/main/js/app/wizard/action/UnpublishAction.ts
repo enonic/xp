@@ -14,4 +14,3 @@ export class UnpublishAction extends BasePublishAction {
         new ContentUnpublishPromptEvent(summary).fire();
     }
 }
-
