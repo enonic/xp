@@ -26,8 +26,6 @@ export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
     private pageView: PageView;
     private content: Content;
 
-    private gridDragHandler: PageComponentsGridDragHandler;
-
     constructor(content: Content, pageView: PageView) {
         super(new TreeGridBuilder<ItemView>().setColumns([
             new GridColumnBuilder<TreeNode<ItemView>>()
@@ -69,7 +67,7 @@ export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
         this.content = content;
         this.pageView = pageView;
 
-        this.gridDragHandler = new PageComponentsGridDragHandler(this);
+        (new PageComponentsGridDragHandler(this));
     }
 
     queryScrollable(): api.dom.Element {
