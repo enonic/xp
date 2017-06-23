@@ -26,6 +26,22 @@ public class GetNodeByIdCommandTest
     }
 
     @Test
+    public void get_rootNode()
+        throws Exception
+    {
+        final Node rootNode = GetNodeByIdCommand.create().
+            id( Node.ROOT_UUID ).
+            indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
+            build().
+            execute();
+
+        assertNotNull( rootNode );
+        assertNotNull( rootNode.getNodeVersionId() );
+    }
+
+    @Test
     public void get_by_id()
         throws Exception
     {

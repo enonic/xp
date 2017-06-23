@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.file.Paths;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -181,6 +182,7 @@ public class NodeExporterTest
         assertFileExists( "/myExport/child1/child1_1/child1_1_2/_/node.xml" );
     }
 
+    @Ignore // Wait with this until decided how to handle versions. Only in dump, or in export too?
     @Test
     public void create_binary_files()
         throws Exception

@@ -1,7 +1,4 @@
-package com.enonic.xp.repo.impl.version.search;
-
-import com.enonic.xp.node.AbstractQuery;
-import com.enonic.xp.node.NodeId;
+package com.enonic.xp.node;
 
 public class NodeVersionQuery
     extends AbstractQuery

@@ -18,6 +18,8 @@ public class ExportNodesParams
 
     private final boolean includeNodeIds;
 
+    private final boolean includeVersions;
+
     private ExportNodesParams( Builder builder )
     {
         if ( builder.rootDirectory == null )
@@ -32,6 +34,7 @@ public class ExportNodesParams
         this.sourceNodePath = builder.sourceNodePath;
         this.dryRun = builder.dryRun;
         this.includeNodeIds = builder.includeNodeIds;
+        this.includeVersions = builder.includeVersions;
     }
 
     public static Builder create()
@@ -59,6 +62,11 @@ public class ExportNodesParams
         return includeNodeIds;
     }
 
+    public boolean isIncludeVersions()
+    {
+        return includeVersions;
+    }
+
     public boolean isDryRun()
     {
         return dryRun;
@@ -75,6 +83,8 @@ public class ExportNodesParams
         private boolean dryRun = false;
 
         private boolean includeNodeIds = true;
+
+        private boolean includeVersions = false;
 
         private Builder()
         {
@@ -107,6 +117,12 @@ public class ExportNodesParams
         public Builder includeNodeIds( final boolean includeNodeIds )
         {
             this.includeNodeIds = includeNodeIds;
+            return this;
+        }
+
+        public Builder includeVersions( final boolean includeVersions )
+        {
+            this.includeVersions = includeVersions;
             return this;
         }
 

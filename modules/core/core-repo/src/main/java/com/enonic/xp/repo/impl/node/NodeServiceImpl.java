@@ -24,6 +24,9 @@ import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
+import com.enonic.xp.node.ImportNodeVersionParams;
+import com.enonic.xp.node.LoadNodeParams;
+import com.enonic.xp.node.LoadNodeResult;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.MultiRepoNodeQuery;
 import com.enonic.xp.node.Node;
@@ -39,7 +42,7 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
@@ -55,11 +58,14 @@ import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.SetNodeStateResult;
 import com.enonic.xp.node.SyncWorkResolverParams;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.query.expr.FieldOrderExpr;
+import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
+import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
@@ -439,10 +445,28 @@ public class NodeServiceImpl
     public NodeVersionQueryResult findVersions( final GetNodeVersionsParams params )
     {
         verifyContext();
-        return GetNodeVersionsCommand.create().
-            nodeId( params.getNodeId() ).
-            from( params.getFrom() ).
+
+        final NodeVersionQuery query = NodeVersionQuery.create().
             size( params.getSize() ).
+            from( params.getFrom() ).
+            nodeId( params.getNodeId() ).
+            addOrderBy( FieldOrderExpr.create( VersionIndexPath.TIMESTAMP, OrderExpr.Direction.DESC ) ).
+            build();
+
+        return FindNodeVersionsCommand.create().
+            query( query ).
+            searchService( this.nodeSearchService ).
+            build().
+            execute();
+    }
+
+    @Override
+    public NodeVersionQueryResult findVersions( final NodeVersionQuery query )
+    {
+        verifyContext();
+
+        return FindNodeVersionsCommand.create().
+            query( query ).
             searchService( this.nodeSearchService ).
             build().
             execute();
@@ -487,10 +511,10 @@ public class NodeServiceImpl
     }
 
     @Override
-    public NodeVersion getByNodeVersion( final NodeVersionMetadata nodeVersionMetadata )
+    public NodeVersion getByNodeVersion( final NodeVersionId nodeVersionId )
     {
         verifyContext();
-        return this.nodeStorageService.get( nodeVersionMetadata );
+        return this.nodeStorageService.get( nodeVersionId );
     }
 
     @Override
@@ -590,6 +614,21 @@ public class NodeServiceImpl
         return GetBinaryCommand.create().
             binaryReference( reference ).
             nodeId( nodeId ).
+            indexServiceInternal( this.indexServiceInternal ).
+            binaryService( this.binaryService ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
+            build().
+            execute();
+    }
+
+    @Override
+    public ByteSource getBinary( final NodeVersionId nodeVersionId, final BinaryReference reference )
+    {
+        verifyContext();
+        return GetBinaryByVersionCommand.create().
+            binaryReference( reference ).
+            nodeVersionId( nodeVersionId ).
             indexServiceInternal( this.indexServiceInternal ).
             binaryService( this.binaryService ).
             storageService( this.nodeStorageService ).
@@ -708,6 +747,18 @@ public class NodeServiceImpl
     }
 
     @Override
+    public LoadNodeResult loadNode( final LoadNodeParams params )
+    {
+        return LoadNodeCommand.create().
+            params( params ).
+            searchService( this.nodeSearchService ).
+            storageService( this.nodeStorageService ).
+            indexServiceInternal( this.indexServiceInternal ).
+            build().
+            execute();
+    }
+
+    @Override
     public boolean nodeExists( final NodeId nodeId )
     {
         verifyContext();
@@ -751,6 +802,23 @@ public class NodeServiceImpl
             indexServiceInternal( indexServiceInternal ).
             storageService( nodeStorageService ).
             searchService( nodeSearchService ).
+            build().
+            execute();
+    }
+
+    @Override
+    public void importNodeVersion( final ImportNodeVersionParams params )
+    {
+        verifyContext();
+
+        ImportNodeVersionCommand.create().
+            nodeId( params.getNodeId() ).
+            nodePath( params.getNodePath() ).
+            nodeVersion( params.getNodeVersion() ).
+            timestamp( params.getTimestamp() ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
     }

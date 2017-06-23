@@ -29,6 +29,9 @@ import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
+import com.enonic.xp.node.ImportNodeVersionParams;
+import com.enonic.xp.node.LoadNodeParams;
+import com.enonic.xp.node.LoadNodeResult;
 import com.enonic.xp.node.MultiRepoNodeQuery;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeComparison;
@@ -42,7 +45,7 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
@@ -88,6 +91,24 @@ class NodeServiceMock
     private Node doCreate( final CreateNodeParams params )
     {
         return doCreate( params, null );
+    }
+
+    @Override
+    public void importNodeVersion( final ImportNodeVersionParams params )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public LoadNodeResult loadNode( final LoadNodeParams params )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
+    public NodeVersionQueryResult findVersions( final NodeVersionQuery nodeVersionQuery )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
     }
 
     private Node doCreate( final CreateNodeParams params, final Instant timestamp )
@@ -259,7 +280,7 @@ class NodeServiceMock
 
         return resultBuilder.hits( nodes.getSize() ).
             nodeIds( NodeIds.from( nodes.getSet().stream().
-                map( ( node ) -> node.id() ).
+                map( Node::id ).
                 collect( Collectors.toList() ) ) ).
             totalHits( nodes.getSize() ).
             build();
@@ -308,7 +329,7 @@ class NodeServiceMock
     }
 
     @Override
-    public NodeVersion getByNodeVersion( final NodeVersionMetadata nodeVersionMetadata )
+    public NodeVersion getByNodeVersion( final NodeVersionId nodeVersionId )
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
@@ -401,6 +422,12 @@ class NodeServiceMock
     }
 
     @Override
+    public ByteSource getBinary( final NodeVersionId nodeVersionId, final BinaryReference reference )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
+
+    @Override
     public ImportNodeResult importNode( final ImportNodeParams params )
     {
         final Node importNode = params.getNode();
@@ -410,7 +437,6 @@ class NodeServiceMock
         if ( importNode.isRoot() )
         {
             createdNode = createRootNode( null );
-
         }
         else
         {

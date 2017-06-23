@@ -11,16 +11,20 @@ import com.enonic.xp.toolbox.util.JsonHelper;
 public final class ExportCommand
     extends RepoCommand
 {
-    public static final String EXPORT_REST_PATH = "/api/repo/export";
+    private static final String EXPORT_REST_PATH = "/api/repo/export";
 
+    @SuppressWarnings("WeakerAccess")
     @Option(name = "-t", description = "Target name to save export.", required = true)
     public String exportName;
 
+    @SuppressWarnings("WeakerAccess")
     @Option(name = "-s", description = "Path of data to export. Format: <repo-name>:<branch-name>:<node-path>.", required = true)
     public String sourceRepoPath;
 
+    @SuppressWarnings("WeakerAccess")
     @Option(name = "--skipids", description = "Flag that skips ids in data when exporting.", required = false)
     public boolean skipids = false;
+
 
     @Override
     protected void execute()

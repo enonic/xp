@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.util.BinaryReference;
 
 public class NodeExportPathResolver
@@ -17,6 +18,8 @@ public class NodeExportPathResolver
     public static final String ORDER_EXPORT_NAME = "manualChildOrder.txt";
 
     public static final String EXPORT_PROPERTIES_NAME = "export.properties";
+
+    public static final String VERSION_FOLDER = "versions";
 
     public static Path resolveNodeBasePath( final Path exportFilePath, final NodePath nodePath, final NodePath exportRootNodePath )
     {
@@ -51,6 +54,11 @@ public class NodeExportPathResolver
     public static Path resolveNodeXmlPath( Path basePath )
     {
         return Paths.get( basePath.toString(), NODE_XML_EXPORT_NAME );
+    }
+
+    public static Path resolveNodeVersionPath( Path basePath, final NodeVersionId versionId, final NodePath nodePath )
+    {
+        return Paths.get( basePath.toString(), VERSION_FOLDER, versionId.toString(), nodePath.getName() );
     }
 
     public static Path resolveBinaryPath( final Path basePath, final BinaryReference binaryReference )

@@ -11,6 +11,7 @@ import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.repo.impl.node.NodeConstants;
+import com.enonic.xp.repository.RepositoryExeption;
 
 @Component
 public class BinaryServiceImpl
@@ -28,7 +29,14 @@ public class BinaryServiceImpl
     @Override
     public ByteSource get( final AttachedBinary attachedBinary )
     {
-        return blobStore.getRecord( NodeConstants.BINARY_SEGMENT, BlobKey.from( attachedBinary.getBlobKey() ) ).getBytes();
+        final BlobRecord record = blobStore.getRecord( NodeConstants.BINARY_SEGMENT, BlobKey.from( attachedBinary.getBlobKey() ) );
+
+        if ( record == null )
+        {
+            throw new RepositoryExeption( "Cannot load binary with key [" + attachedBinary.getBlobKey() + "], not found" );
+        }
+
+        return record.getBytes();
     }
 
     @Reference

@@ -19,7 +19,7 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.FilterBuil
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.SortQueryBuilderFactory;
 import com.enonic.xp.repo.impl.search.SearchRequest;
 import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
-import com.enonic.xp.repo.impl.version.search.NodeVersionQuery;
+import com.enonic.xp.node.NodeVersionQuery;
 
 public class ESQueryTranslator
 {

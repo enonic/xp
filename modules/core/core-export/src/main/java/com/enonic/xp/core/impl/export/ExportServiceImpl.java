@@ -45,6 +45,7 @@ public class ExportServiceImpl
             xpVersion( xpVersion ).
             dryRun( params.isDryRun() ).
             exportNodeIds( params.isIncludeNodeIds() ).
+            exportVersions( params.isIncludeVersions() ).
             build().
             execute();
     }

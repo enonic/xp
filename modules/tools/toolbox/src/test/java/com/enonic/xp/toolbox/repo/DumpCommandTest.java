@@ -14,7 +14,7 @@ public class DumpCommandTest
     extends RepoCommandTest
 {
     @Test
-    public void testDump()
+    public void testDumpDefault()
         throws Exception
     {
         final DumpCommand command = new DumpCommand();
@@ -35,6 +35,7 @@ public class DumpCommandTest
     {
         final ObjectNode json = JsonHelper.newObjectNode();
         json.put( "name", "target-path" );
+        json.put( "includeVersions", true );
         return json;
     }
 

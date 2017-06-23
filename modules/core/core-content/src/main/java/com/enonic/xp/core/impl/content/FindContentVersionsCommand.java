@@ -64,7 +64,6 @@ public class FindContentVersionsCommand
         return findContentVersionsResultBuilder.build();
     }
 
-
     public static final class Builder
         extends AbstractContentCommand.Builder<Builder>
 

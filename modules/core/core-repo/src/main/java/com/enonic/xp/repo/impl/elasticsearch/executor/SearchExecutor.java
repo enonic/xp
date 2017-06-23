@@ -45,7 +45,7 @@ public class SearchExecutor
                 execute( query );
         }
 
-        if ( size == NodeSearchService.GET_ALL_SIZE_FLAG || size > SCROLL_THRESHOLD )
+        if ( size == NodeSearchService.GET_ALL_SIZE_FLAG )
         {
             if ( anyAggregations )
             {
