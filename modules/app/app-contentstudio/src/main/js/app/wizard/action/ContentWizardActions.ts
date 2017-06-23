@@ -4,12 +4,14 @@ import {DuplicateContentAction} from './DuplicateContentAction';
 import {DeleteContentAction} from './DeleteContentAction';
 import {PublishAction} from './PublishAction';
 import {PublishTreeAction} from './PublishTreeAction';
+import {CreateIssueAction} from './CreateIssueAction';
 import {UnpublishAction} from './UnpublishAction';
 import {PreviewAction} from './PreviewAction';
 import {ShowLiveEditAction} from './ShowLiveEditAction';
 import {ShowFormAction} from './ShowFormAction';
 import {ShowSplitEditAction} from './ShowSplitEditAction';
 import {UndoPendingDeleteAction} from './UndoPendingDeleteAction';
+import Action = api.ui.Action;
 import SaveAction = api.app.wizard.SaveAction;
 import CloseAction = api.app.wizard.CloseAction;
 import SaveAndCloseAction = api.app.wizard.SaveAndCloseAction;
@@ -17,33 +19,35 @@ import i18n = api.util.i18n;
 
 export class ContentWizardActions extends api.app.wizard.WizardActions<api.content.Content> {
 
-    private save: api.ui.Action;
+    private save: Action;
 
-    private close: api.ui.Action;
+    private close: Action;
 
-    private saveAndClose: api.ui.Action;
+    private saveAndClose: Action;
 
-    private delete: api.ui.Action;
+    private delete: Action;
 
-    private duplicate: api.ui.Action;
+    private duplicate: Action;
 
-    private publish: api.ui.Action;
+    private publish: Action;
 
-    private publishTree: api.ui.Action;
+    private publishTree: Action;
 
-    private unpublish: api.ui.Action;
+    private createIssue: Action;
 
-    private publishMobile:api.ui.Action;
+    private unpublish: Action;
 
-    private preview: api.ui.Action;
+    private publishMobile:Action;
 
-    private showLiveEditAction: api.ui.Action;
+    private preview: Action;
 
-    private showFormAction: api.ui.Action;
+    private showLiveEditAction: Action;
 
-    private showSplitEditAction: api.ui.Action;
+    private showFormAction: Action;
 
-    private undoPendingDelete: api.ui.Action;
+    private showSplitEditAction: Action;
+
+    private undoPendingDelete: Action;
 
     private deleteOnlyMode: boolean = false;
 
@@ -57,6 +61,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
             new PreviewAction(wizardPanel),
             new PublishAction(wizardPanel),
             new PublishTreeAction(wizardPanel),
+            new CreateIssueAction(wizardPanel),
             new UnpublishAction(wizardPanel),
             new CloseAction(wizardPanel),
             new ShowLiveEditAction(wizardPanel),
@@ -69,20 +74,23 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
 
         this.wizardPanel = wizardPanel;
 
-        this.save = this.getActions()[0];
-        this.delete = this.getActions()[1];
-        this.duplicate = this.getActions()[2];
-        this.preview = this.getActions()[3];
-        this.publish = this.getActions()[4];
-        this.publishTree = this.getActions()[5];
-        this.unpublish = this.getActions()[6];
-        this.close = this.getActions()[7];
-        this.showLiveEditAction = this.getActions()[8];
-        this.showFormAction = this.getActions()[9];
-        this.showSplitEditAction = this.getActions()[10];
-        this.saveAndClose = this.getActions()[11];
-        this.publishMobile = this.getActions()[12];
-        this.undoPendingDelete = this.getActions()[13];
+        [
+            this.save,
+            this.delete,
+            this.duplicate,
+            this.preview,
+            this.publish,
+            this.publishTree,
+            this.createIssue,
+            this.unpublish,
+            this.close,
+            this.showLiveEditAction,
+            this.showFormAction,
+            this.showSplitEditAction,
+            this.saveAndClose,
+            this.publishMobile,
+            this.undoPendingDelete,
+        ] = this.getActions();
     }
 
     refreshPendingDeleteDecorations() {
@@ -121,6 +129,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
         this.save.setEnabled(!valueOn);
         this.duplicate.setEnabled(!valueOn);
         this.publish.setEnabled(!valueOn);
+        this.createIssue.setEnabled(!valueOn);
         this.unpublish.setEnabled(!valueOn);
         this.publishMobile.setEnabled(!valueOn);
         this.publishMobile.setVisible(!valueOn);
@@ -160,19 +169,11 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
             }
             if (!hasPublishPermission) {
                 this.publish.setEnabled(false);
+                this.createIssue.setEnabled(false);
                 this.unpublish.setEnabled(false);
                 this.publishTree.setEnabled(false);
                 this.publishMobile.setEnabled(false);
                 this.publishMobile.setVisible(false);
-            } else {
-                // check if already published to show unpublish button
-                api.content.resource.ContentSummaryAndCompareStatusFetcher.fetchByContent(existing)
-                    .then((contentAndCompare: api.content.ContentSummaryAndCompareStatus) => {
-
-                        let status = contentAndCompare.getCompareStatus();
-                        let isPublished = status !== api.content.CompareStatus.NEW &&
-                                          status !== api.content.CompareStatus.UNKNOWN;
-                    });
             }
 
             if (existing.hasParent()) {
@@ -206,55 +207,59 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
         });
     }
 
-    getDeleteAction(): api.ui.Action {
+    getDeleteAction(): Action {
         return this.delete;
     }
 
-    getSaveAction(): api.ui.Action {
+    getSaveAction(): Action {
         return this.save;
     }
 
-    getDuplicateAction(): api.ui.Action {
+    getDuplicateAction(): Action {
         return this.duplicate;
     }
 
-    getCloseAction(): api.ui.Action {
+    getCloseAction(): Action {
         return this.close;
     }
 
-    getPublishAction(): api.ui.Action {
+    getPublishAction(): Action {
         return this.publish;
     }
 
-    getPublishTreeAction(): api.ui.Action {
+    getPublishTreeAction(): Action {
         return this.publishTree;
     }
 
-    getUnpublishAction(): api.ui.Action {
+    getCreateIssueAction(): Action {
+        return this.createIssue;
+    }
+
+    getUnpublishAction(): Action {
         return this.unpublish;
     }
 
-    getPreviewAction(): api.ui.Action {
+    getPreviewAction(): Action {
         return this.preview;
     }
 
-    getShowLiveEditAction(): api.ui.Action {
+    getShowLiveEditAction(): Action {
         return this.showLiveEditAction;
     }
 
-    getShowFormAction(): api.ui.Action {
+    getShowFormAction(): Action {
         return this.showFormAction;
     }
 
-    getShowSplitEditAction(): api.ui.Action {
+    getShowSplitEditAction(): Action {
         return this.showSplitEditAction;
     }
 
-    getPublishMobileAction():api.ui.Action {
+    getPublishMobileAction():Action {
         return this.publishMobile;
     }
 
-    getUndoPendingDeleteAction(): api.ui.Action {
+    getUndoPendingDeleteAction(): Action {
         return this.undoPendingDelete;
     }
 }

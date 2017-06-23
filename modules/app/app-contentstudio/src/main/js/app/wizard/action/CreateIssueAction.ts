@@ -1,16 +1,16 @@
 import '../../../api.ts';
 import {BasePublishAction} from './BasePublishAction';
 import {ContentWizardPanel} from '../ContentWizardPanel';
-import {ContentUnpublishPromptEvent} from '../../browse/ContentUnpublishPromptEvent';
+import {CreateIssuePromptEvent} from '../../browse/CreateIssuePromptEvent';
 
 import i18n = api.util.i18n;
 
-export class UnpublishAction extends BasePublishAction {
+export class CreateIssueAction extends BasePublishAction {
     constructor(wizard: ContentWizardPanel) {
-        super({wizard, label: i18n('action.unpublish'), omitCanPublishCheck: true});
+        super({wizard, label: i18n('action.createIssueMore')});
     }
 
     protected createPromptEvent(summary: api.content.ContentSummaryAndCompareStatus[]): void {
-        new ContentUnpublishPromptEvent(summary).fire();
+        new CreateIssuePromptEvent(summary).fire();
     }
 }
