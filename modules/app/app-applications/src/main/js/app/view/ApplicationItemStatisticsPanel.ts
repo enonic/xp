@@ -177,11 +177,11 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
 
         return wemQ.all(providersPromises).spread<ItemDataGroup>(
             (application: Application) => {
-                if(application) {
-                    let providersGroup = new ItemDataGroup('field.idProviders', 'providers');
+                if (application) {
+                    const providersGroup = new ItemDataGroup(i18n('field.idProviders'), 'providers');
 
-                    providersGroup.addDataList('field.key', application.getApplicationKey().toString());
-                    providersGroup.addDataList('field.name', application.getDisplayName());
+                    providersGroup.addDataList(i18n('field.key'), application.getApplicationKey().toString());
+                    providersGroup.addDataList(i18n('field.name'), application.getDisplayName());
 
                     return providersGroup;
                 }
