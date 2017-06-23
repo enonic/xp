@@ -92,6 +92,7 @@ export class ContentWizardToolbarPublishControls
         this.createIssueAction.setEnabled(canCreateIssue);
         this.unpublishAction.setEnabled(canBeUnpublished);
         this.publishMobileAction.setEnabled(canBePublished);
+        this.publishMobileAction.setVisible(canBePublished);
 
         this.contentStateSpan.setHtml(this.getContentStateValueForSpan(this.content), false);
         this.publishButtonForMobile.setLabel(
