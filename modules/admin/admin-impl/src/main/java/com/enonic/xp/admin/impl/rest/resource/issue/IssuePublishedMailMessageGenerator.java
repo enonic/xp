@@ -27,7 +27,8 @@ public class IssuePublishedMailMessageGenerator
     }
 
     @Override
-    protected String getCopyRecepients() {
+    protected String getCopyRecepients()
+    {
         return super.getApproverEmails();
     }
 

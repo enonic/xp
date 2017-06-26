@@ -2,6 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.issue;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -75,9 +76,12 @@ public class IssueNotificationsSenderImpl
         final User publisher = getCurrentUser();
         final IssuePublishedMailMessageParams params =
             IssuePublishedMailMessageParams.create( publisher, createMessageParams( issue, url ) ).build();
-        final MailMessage mailMessage = new IssuePublishedMailMessageGenerator( params ).generateMessage();
 
-        sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+        if ( isRecipientsPresent( params ) )
+        {
+            final MailMessage mailMessage = new IssuePublishedMailMessageGenerator( params ).generateMessage();
+            sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+        }
     }
 
     public void notifyIssueUpdated( final Issue issue, final String url )
@@ -85,20 +89,24 @@ public class IssueNotificationsSenderImpl
         final User modifier = getCurrentUser();
         final IssueUpdatedMailMessageParams params =
             IssueUpdatedMailMessageParams.create( modifier, createMessageParams( issue, url ) ).build();
-        final MailMessage mailMessage = new IssueUpdatedMailMessageGenerator( params ).generateMessage();
 
-        sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+        if ( isRecipientsPresent( params ) )
+        {
+            final MailMessage mailMessage = new IssueUpdatedMailMessageGenerator( params ).generateMessage();
+            sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+        }
     }
 
     private IssueMailMessageParams createMessageParams( final Issue issue, final String url )
     {
-        final User creator = securityService.getUser( issue.getCreator() ).get();
+        final User creator = securityService.getUser( issue.getCreator() ).orElse( null );
         final ContentIds contentIds = ContentIds.from(
             issue.getPublishRequest().getItems().stream().map( publishRequestItem -> publishRequestItem.getId() ).collect( Collectors.toList() ) );
         final Contents contents = contentService.getByIds( new GetContentByIdsParams( contentIds ) );
         final CompareContentResults compareResults = contentService.compare( new CompareContentsParams( contentIds, ContentConstants.BRANCH_MASTER ) );
         final List<User> approvers =
-            issue.getApproverIds().stream().map( principalKey -> securityService.getUser( principalKey ).get() ).collect( Collectors.toList() );
+            issue.getApproverIds().stream().map( principalKey -> securityService.getUser( principalKey ).orElse( null ) ).filter(
+                Objects::nonNull ).collect( Collectors.toList() );
         final Map<ContentId, String> icons = getIcons( contents );
 
         return IssueMailMessageParams.create().issue( issue ).creator( creator ).approvers( approvers ).items( contents ).url( url ).icons(
@@ -125,6 +133,21 @@ public class IssueNotificationsSenderImpl
     {
         final Context context = ContextAccessor.current();
         return context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser() : User.ANONYMOUS;
+    }
+
+    private boolean isRecipientsPresent( final IssueMailMessageParams params )
+    {
+        if ( params.getCreator() != null && params.getCreator().getEmail() != null )
+        {
+            return true;
+        }
+
+        if ( params.getApprovers().isEmpty() )
+        {
+            return false;
+        }
+
+        return params.getApprovers().stream().anyMatch( user -> user.getEmail() != null );
     }
 
     @Reference
