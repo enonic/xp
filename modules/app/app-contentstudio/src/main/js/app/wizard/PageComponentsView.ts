@@ -188,7 +188,11 @@ export class PageComponentsView
                         if (this.tree.hasChildren(event.getComponentView())) {
                             let componentNode = this.tree.getRoot().getCurrentRoot().findNode(
                                 this.tree.getDataId(event.getComponentView()));
-                            this.tree.expandNode(componentNode, true);
+                            if (event.isDragged()) {
+                                this.tree.collapseNode(componentNode, true);
+                            } else {
+                                this.tree.expandNode(componentNode, true);
+                            }
                         }
 
                         if (api.ObjectHelper.iFrameSafeInstanceOf(event.getComponentView(), TextComponentView)) {

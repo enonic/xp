@@ -971,14 +971,16 @@ module api.ui.treegrid {
             return parentNode ? this.fetchChildren(parentNode) : this.fetchRoot();
         }
 
-        dataToTreeNode(data: DATA, parent: TreeNode<DATA>): TreeNode<DATA> {
-            return new TreeNodeBuilder<DATA>().setData(data, this.getDataId(data)).setExpanded(this.expandAll).setParent(parent).build();
+        dataToTreeNode(data: DATA, parent: TreeNode<DATA>, expandAllowed: boolean = true): TreeNode<DATA> {
+            return new TreeNodeBuilder<DATA>().setData(data, this.getDataId(data))
+                .setExpanded(this.expandAll && expandAllowed)
+                .setParent(parent).build();
         }
 
-        dataToTreeNodes(dataArray: DATA[], parent: TreeNode<DATA>): TreeNode<DATA>[] {
-            let nodes: TreeNode<DATA>[] = [];
+        dataToTreeNodes(dataArray: DATA[], parent: TreeNode<DATA>, expandAllowed: boolean = true): TreeNode<DATA>[] {
+            const nodes: TreeNode<DATA>[] = [];
             dataArray.forEach((data) => {
-                nodes.push(this.dataToTreeNode(data, parent));
+                nodes.push(this.dataToTreeNode(data, parent, expandAllowed));
             });
             return nodes;
         }
@@ -1465,7 +1467,7 @@ module api.ui.treegrid {
                     this.mask();
                     this.fetchData(node)
                         .then((dataList: DATA[]) => {
-                            node.setChildren(this.dataToTreeNodes(dataList, node));
+                            node.setChildren(this.dataToTreeNodes(dataList, node, expandAll));
                             this.initData(this.root.getCurrentRoot().treeToList());
                             this.updateExpanded();
                             if (expandAll) {
@@ -1518,8 +1520,12 @@ module api.ui.treegrid {
             this.grid.selectRow(row);
         }
 
-        private collapseNode(node: TreeNode<DATA>) {
+        collapseNode(node: TreeNode<DATA>, collapseAll: boolean = false) {
             node.setExpanded(false);
+
+            if (collapseAll) {
+                node.treeToList(false, false).forEach(n => n.setExpanded(false));
+            }
 
             // Save the selected collapsed rows in cache
             this.root.stashSelection();

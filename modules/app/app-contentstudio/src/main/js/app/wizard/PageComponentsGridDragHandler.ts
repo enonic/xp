@@ -119,7 +119,7 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
         this.contentGrid.deselectAll();
         item.getData().deselect();
 
-        (<ComponentView<Component>>item.getData()).moveToRegion(<RegionView>newParent.getData(), insertIndex);
+        (<ComponentView<Component>>item.getData()).moveToRegion(<RegionView>newParent.getData(), insertIndex, true);
 
         item.getData().select(null, api.liveedit.ItemViewContextMenuPosition.NONE);
         this.contentGrid.refresh();

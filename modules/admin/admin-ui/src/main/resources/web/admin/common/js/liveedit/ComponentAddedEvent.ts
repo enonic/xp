@@ -6,11 +6,13 @@ module api.liveedit {
 
         private componentView: ComponentView<Component>;
         private parentRegionView: RegionView;
+        private dragged: boolean;
 
-        constructor(componentView: ComponentView<Component>, regionView: RegionView) {
+        constructor(componentView: ComponentView<Component>, regionView: RegionView, dragged: boolean = false) {
             super();
             this.componentView = componentView;
             this.parentRegionView = regionView;
+            this.dragged = dragged;
         }
 
         getComponentView(): ComponentView<Component> {
@@ -19,6 +21,10 @@ module api.liveedit {
 
         getParentRegionView(): RegionView {
             return this.parentRegionView;
+        }
+
+        isDragged(): boolean {
+            return this.dragged;
         }
 
         static on(handler: (event: ComponentAddedEvent) => void, contextWindow: Window = window) {
