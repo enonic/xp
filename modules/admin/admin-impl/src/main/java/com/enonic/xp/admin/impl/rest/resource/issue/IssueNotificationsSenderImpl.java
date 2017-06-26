@@ -66,9 +66,13 @@ public class IssueNotificationsSenderImpl
 
     public void notifyIssueCreated( final Issue issue, final String url )
     {
-        final MailMessage mailMessage = new IssueCreatedMailMessageGenerator( createMessageParams( issue, url ) ).generateMessage();
+        final IssueMailMessageParams params = createMessageParams( issue, url );
 
-        sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+        if ( params.getCreator() != null && params.getCreator().getEmail() != null )
+        {
+            final MailMessage mailMessage = new IssueCreatedMailMessageGenerator( params ).generateMessage();
+            sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+        }
     }
 
     public void notifyIssuePublished( final Issue issue, final String url )
