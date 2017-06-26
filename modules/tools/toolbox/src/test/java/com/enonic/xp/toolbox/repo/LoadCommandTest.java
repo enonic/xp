@@ -20,6 +20,7 @@ public class LoadCommandTest
         final LoadCommand command = new LoadCommand();
         configure( command );
         command.source = "source-path";
+        command.interactive = true;
 
         addResponse( createResponseJson() );
 

@@ -10,8 +10,8 @@ public class SystemLoadParams
 
     private SystemLoadParams( final Builder builder )
     {
-        dumpName = builder.dumpName;
-        includeVersions = builder.includeVersions;
+        this.dumpName = builder.dumpName;
+        this.includeVersions = builder.includeVersions;
         this.listener = builder.listener;
     }
 
