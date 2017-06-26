@@ -203,6 +203,7 @@ export class IssueDialogForm extends api.ui.form.Form {
         this.description.setValue('');
         this.descriptionText.setHtml('');
         this.approversSelector.clearCombobox();
+        this.approversSelector.setValue('');
 
         this.contentItemsSelector.clearCombobox();
         this.contentItemsSelector.clearSelection();
