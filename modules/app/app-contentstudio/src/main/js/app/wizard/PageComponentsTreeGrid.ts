@@ -67,6 +67,7 @@ export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
         this.content = content;
         this.pageView = pageView;
 
+        // tslint:disable-next-line:no-unused-new
         (new PageComponentsGridDragHandler(this));
     }
 
