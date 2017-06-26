@@ -30,7 +30,7 @@ module api.content.form.inputtype.principalselector {
             let principalTypeConfig = inputConfig['principalType'] || [];
             this.principalTypes =
                 principalTypeConfig.map((cfg) => cfg['value']).filter((val) => !!val).map(
-                    (val: string) => api.security.PrincipalType[val]).filter((val) => !!val);
+                    (val: string) => api.security.PrincipalType[val]).filter((val) => val !== undefined);
         }
 
         public getPrincipalComboBox(): api.ui.security.PrincipalComboBox {
