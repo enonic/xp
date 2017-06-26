@@ -7,9 +7,11 @@ node {
 
 task lint( type: NpmTask, dependsOn: npmInstall ) {
     args = ['run', 'lint']
+    inputs.files fileTree( dir: 'modules', include: '**/src/main/**.ts' )
+    outputs.dir file('gradle')
 }
 
-task cleanNode(type: Delete) {
+task cleanNode( type: Delete ) {
     delete 'node_modules'
 }
 
