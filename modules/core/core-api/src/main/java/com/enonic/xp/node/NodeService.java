@@ -50,6 +50,8 @@ public interface NodeService
 
     NodeVersionQueryResult findVersions( GetNodeVersionsParams params );
 
+    NodeVersionQueryResult findVersions( NodeVersionQuery nodeVersionQuery );
+
     GetActiveNodeVersionsResult getActiveVersions( GetActiveNodeVersionsParams params );
 
     NodeVersionId setActiveVersion( NodeId nodeId, NodeVersionId nodeVersionId );
@@ -58,7 +60,7 @@ public interface NodeService
 
     ReorderChildNodesResult reorderChildren( ReorderChildNodesParams params );
 
-    NodeVersion getByNodeVersion( NodeVersionMetadata nodeVersionMetadata );
+    NodeVersion getByNodeVersion( NodeVersionId nodeVersionId );
 
     ResolveSyncWorkResult resolveSyncWork( SyncWorkResolverParams params );
 
@@ -67,6 +69,8 @@ public interface NodeService
     int applyPermissions( ApplyNodePermissionsParams params );
 
     ByteSource getBinary( NodeId nodeId, BinaryReference reference );
+
+    ByteSource getBinary( NodeVersionId nodeVersionId, BinaryReference reference );
 
     String getBinaryKey( NodeId nodeId, BinaryReference reference );
 
@@ -80,6 +84,8 @@ public interface NodeService
 
     ImportNodeResult importNode( ImportNodeParams params );
 
+    LoadNodeResult loadNode( final LoadNodeParams params );
+
     NodesHasChildrenResult hasChildren( Nodes nodes );
 
     boolean hasChildren( Node node );
@@ -89,4 +95,7 @@ public interface NodeService
     boolean nodeExists( NodePath nodePath );
 
     boolean hasUnpublishedChildren( NodeId parent, Branch target );
+
+    void importNodeVersion( final ImportNodeVersionParams params );
+
 }

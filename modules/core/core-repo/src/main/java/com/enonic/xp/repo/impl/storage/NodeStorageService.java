@@ -24,6 +24,8 @@ public interface NodeStorageService
 
     Node store( final Node node, final InternalContext context );
 
+    void storeVersion( final StoreNodeVersionParams params, final InternalContext context );
+
     void delete( final NodeIds nodeIds, final InternalContext context );
 
     Node updateMetadata( final Node node, final InternalContext context );
@@ -44,7 +46,7 @@ public interface NodeStorageService
 
     Node get( final NodeVersionId nodeVersionId, final InternalContext context );
 
-    NodeVersion get( final NodeVersionMetadata nodeVersionMetadata );
+    NodeVersion get( final NodeVersionId nodeVersionId );
 
     NodeBranchEntry getBranchNodeVersion( final NodeId nodeId, final InternalContext context );
 

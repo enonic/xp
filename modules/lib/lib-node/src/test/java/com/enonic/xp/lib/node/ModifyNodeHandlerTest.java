@@ -181,7 +181,7 @@ public class ModifyNodeHandlerTest
         assertTrue( editedNode.data.getProperty( "untouchedString" ).getType().equals( ValueTypes.STRING ) );
         assertTrue( editedNode.data.getProperty( "untouchedBoolean" ).getType().equals( ValueTypes.BOOLEAN ) );
         assertTrue( editedNode.data.getProperty( "untouchedDouble" ).getType().equals( ValueTypes.DOUBLE ) );
-        assertTrue( editedNode.data.getProperty( "untouchedLong" ).getType().equals( ValueTypes.DOUBLE ) );
+        assertTrue( editedNode.data.getProperty( "untouchedLong" ).getType().equals( ValueTypes.LONG ) );
         assertTrue( editedNode.data.getProperty( "untouchedLink" ).getType().equals( ValueTypes.LINK ) );
         assertTrue( editedNode.data.getProperty( "untouchedInstant" ).getType().equals( ValueTypes.DATE_TIME ) );
         assertTrue( editedNode.data.getProperty( "untouchedGeoPoint" ).getType().equals( ValueTypes.GEO_POINT ) );

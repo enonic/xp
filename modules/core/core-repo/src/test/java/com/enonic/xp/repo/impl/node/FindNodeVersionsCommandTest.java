@@ -11,13 +11,17 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.NodeVersionsMetadata;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.query.expr.FieldOrderExpr;
+import com.enonic.xp.query.expr.OrderExpr;
+import com.enonic.xp.repo.impl.version.VersionIndexPath;
 
 import static org.junit.Assert.*;
 
-public class GetNodeVersionsCommandTest
+public class FindNodeVersionsCommandTest
     extends AbstractNodeTest
 {
     private final Random random = new Random();
@@ -39,10 +43,14 @@ public class GetNodeVersionsCommandTest
             parent( NodePath.ROOT ).
             build() );
 
-        final NodeVersionQueryResult result = GetNodeVersionsCommand.create().
-            from( 0 ).
+        final NodeVersionQuery query = NodeVersionQuery.create().
             size( 100 ).
+            from( 0 ).
             nodeId( node.id() ).
+            build();
+
+        final NodeVersionQueryResult result = FindNodeVersionsCommand.create().
+            query( query ).
             searchService( this.searchService ).
             build().
             execute();
@@ -73,10 +81,15 @@ public class GetNodeVersionsCommandTest
 
         refresh();
 
-        final NodeVersionQueryResult result = GetNodeVersionsCommand.create().
-            from( 0 ).
+        final NodeVersionQuery query = NodeVersionQuery.create().
             size( 100 ).
+            from( 0 ).
             nodeId( node.id() ).
+            addOrderBy( FieldOrderExpr.create( VersionIndexPath.TIMESTAMP, OrderExpr.Direction.DESC ) ).
+            build();
+
+        final NodeVersionQueryResult result = FindNodeVersionsCommand.create().
+            query( query ).
             searchService( this.searchService ).
             build().
             execute();

@@ -362,7 +362,7 @@ module api.liveedit {
             }
         }
 
-        moveToRegion(toRegionView: RegionView, toIndex: number) {
+        moveToRegion(toRegionView: RegionView, toIndex: number, dragged?: boolean) {
             if (ComponentView.debug) {
                 console.log('ComponentView[' + this.toString() + '].moveToRegion', this, this.parentRegionView, toRegionView);
             }
@@ -385,7 +385,7 @@ module api.liveedit {
             }
 
             // Register with new region...
-            toRegionView.addComponentView(this, toIndex);
+            toRegionView.addComponentView(this, toIndex, false, dragged);
             if (parentView && this.component) {
                 this.registerComponentListeners(this.component);
             }

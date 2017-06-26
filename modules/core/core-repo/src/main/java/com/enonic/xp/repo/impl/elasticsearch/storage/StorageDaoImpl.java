@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.storage;
 
 import java.util.Collection;
 
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
@@ -18,6 +19,7 @@ import org.elasticsearch.client.Requests;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.node.NodeStorageException;
 import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 import com.enonic.xp.repo.impl.elasticsearch.executor.CopyExecutor;
@@ -113,8 +115,16 @@ public class StorageDaoImpl
 
     private String doStore( final IndexRequest request, final String timeout )
     {
-        final IndexResponse indexResponse = this.client.index( request ).
-            actionGet( timeout );
+        final IndexResponse indexResponse;
+        try
+        {
+            indexResponse = this.client.index( request ).
+                actionGet( timeout );
+        }
+        catch ( ElasticsearchException e )
+        {
+            throw new NodeStorageException( "Cannot store node " + request.toString(), e );
+        }
 
         return indexResponse.getId();
     }

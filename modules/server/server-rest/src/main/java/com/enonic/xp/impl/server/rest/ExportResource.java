@@ -64,6 +64,7 @@ public final class ExportResource
                 targetDirectory( getExportDirectory( request.getExportName() ).toString() ).
                 dryRun( request.isDryRun() ).
                 includeNodeIds( request.isExportWithIds() ).
+                includeVersions( request.isIncludeVersions() ).
                 build() ) );
 
         return NodeExportResultJson.from( result );

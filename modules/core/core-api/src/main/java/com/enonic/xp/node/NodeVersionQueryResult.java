@@ -24,10 +24,11 @@ public class NodeVersionQueryResult
         hits = builder.hits;
     }
 
-    public static NodeVersionQueryResult empty()
+    public static NodeVersionQueryResult empty( final long totalHits )
     {
         return create().
             entityVersions( NodeVersionsMetadata.empty() ).
+            totalHits( totalHits ).
             build();
     }
 

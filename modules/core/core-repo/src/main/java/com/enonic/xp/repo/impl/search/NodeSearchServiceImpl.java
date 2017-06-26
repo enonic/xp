@@ -11,7 +11,7 @@ import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
-import com.enonic.xp.repo.impl.version.search.NodeVersionQuery;
+import com.enonic.xp.node.NodeVersionQuery;
 
 @Component
 public class NodeSearchServiceImpl

@@ -14,7 +14,7 @@ import com.enonic.xp.blob.Segment;
 public class MemoryBlobStore
     implements BlobStore
 {
-    private final Map<BlobKey, BlobRecord> store;
+    private Map<BlobKey, BlobRecord> store;
 
     public MemoryBlobStore()
     {
@@ -52,4 +52,10 @@ public class MemoryBlobStore
     {
         return doStoreRecord( record.getKey(), record );
     }
+
+    public void clear()
+    {
+        this.store = Maps.newHashMap();
+    }
 }
+
