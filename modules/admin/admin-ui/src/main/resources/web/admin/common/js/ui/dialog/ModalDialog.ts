@@ -295,7 +295,8 @@ module api.ui.dialog {
 
         protected hasSubDialog(): boolean {
             // html area can spawn sub dialogs so check none is open
-            return !!api.util.htmlarea.dialog.HTMLAreaDialogHandler.getOpenDialog();
+            return !!api.util.htmlarea.dialog.HTMLAreaDialogHandler.getOpenDialog() ||
+                   (this.confirmationDialog && this.confirmationDialog.isVisible());
         }
 
         private hasTabbable(): boolean {
