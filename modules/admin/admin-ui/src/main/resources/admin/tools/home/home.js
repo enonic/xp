@@ -1,6 +1,7 @@
 var auth = require('/lib/xp/auth');
 var mustache = require('/lib/xp/mustache');
 var portal = require('/lib/xp/portal');
+var admin = require('/lib/xp/admin');
 
 function handleGet(req) {
     var uriScriptHelper = Java.type("com.enonic.xp.admin.ui.tool.UriScriptHelper");
@@ -36,8 +37,10 @@ function handleGet(req) {
         marketIconUrl: marketIconUrl,
         baseUri: '',
         xpVersion: app.version,
-        docLinkPrefix: docLinkPrefix
+        docLinkPrefix: docLinkPrefix,
+        messages: admin.getPhrases()
     };
+
     return {
         contentType: 'text/html',
         body: mustache.render(view, params)
