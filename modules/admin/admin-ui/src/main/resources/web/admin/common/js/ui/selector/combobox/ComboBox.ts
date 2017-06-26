@@ -513,7 +513,9 @@ module api.ui.selector.combobox {
 
         handleRowSelected(index: number, keyCode: number = -1) {
             let option = this.getOptionByRow(index);
-            if (option != null && !option.readOnly) {
+            if (option.disabled) {
+                this.comboBoxDropdown.markSelections(this.getSelectedOptions());
+            } else if (option != null && !option.readOnly) {
                 if (!this.isOptionSelected(option)) {
                     this.selectOption(option, false, keyCode);
                 } else {
@@ -746,6 +748,8 @@ module api.ui.selector.combobox {
             this.comboBoxDropdown.onRowSelection((event: DropdownGridRowSelectedEvent) => {
                 this.handleRowSelected(event.getRow());
             });
+
+            this.comboBoxDropdown.onRowCountChanged(() => this.comboBoxDropdown.markSelections(this.getSelectedOptions() || []));
 
             this.dropdownHandle.onClicked((event: MouseEvent) => {
                 event.preventDefault();

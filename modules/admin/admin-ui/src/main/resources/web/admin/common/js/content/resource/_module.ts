@@ -28,6 +28,7 @@
 ///<reference path='DeleteContentRequest.ts' />
 ///<reference path='BatchContentRequest.ts' />
 ///<reference path='ContentQueryRequest.ts' />
+///<reference path='ContentTreeSelectorQueryRequest.ts' />
 ///<reference path='ContentSelectorQueryRequest.ts' />
 ///<reference path='SetActiveContentVersionRequest.ts' />
 ///<reference path='UpdateContentRequest.ts' />

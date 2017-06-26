@@ -462,9 +462,9 @@ module api.ui.selector.combobox {
 
         treegridDropdownEnabled: boolean;
 
-        optionDataHelper: OptionDataHelper<T>;
+        optionDataHelper: OptionDataHelper<any>;
 
-        optionDataLoader: OptionDataLoader<T>;
+        optionDataLoader: OptionDataLoader<any>;
 
         setComboBoxName(comboBoxName: string): RichComboBoxBuilder<T> {
             this.comboBoxName = comboBoxName;
@@ -555,12 +555,12 @@ module api.ui.selector.combobox {
             return this;
         }
 
-        setOptionDataHelper(value: OptionDataHelper<T>): RichComboBoxBuilder<T> {
+        setOptionDataHelper(value: OptionDataHelper<any>): RichComboBoxBuilder<T> {
             this.optionDataHelper = value;
             return this;
         }
 
-        setOptionDataLoader(value: OptionDataLoader<T>): RichComboBoxBuilder<T> {
+        setOptionDataLoader(value: OptionDataLoader<any>): RichComboBoxBuilder<T> {
             this.optionDataLoader = value;
             return this;
         }

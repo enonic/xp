@@ -12,6 +12,6 @@ module api.ui.selector {
 
         empty? :boolean;
 
+        disabled?: boolean;
     }
-
 }

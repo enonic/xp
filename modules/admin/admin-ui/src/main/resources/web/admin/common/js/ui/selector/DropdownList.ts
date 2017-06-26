@@ -176,6 +176,10 @@ module api.ui.selector {
             this.dropdownGrid.markSelections(selectedOptions, ignoreEmpty);
         }
 
+        onRowCountChanged(listener: () => void) {
+            this.dropdownGrid.onRowCountChanged(listener);
+        }
+
         onRowSelection(listener: (event: DropdownGridRowSelectedEvent) => void) {
             this.dropdownGrid.onRowSelection(listener);
         }

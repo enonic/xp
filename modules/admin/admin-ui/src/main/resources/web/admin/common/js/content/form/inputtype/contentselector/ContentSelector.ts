@@ -16,12 +16,15 @@ module api.content.form.inputtype.contentselector {
     import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
     import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
     import ContentInputTypeManagingAdd = api.content.form.inputtype.ContentInputTypeManagingAdd;
+    import StringHelper = api.util.StringHelper;
 
     export class ContentSelector extends ContentInputTypeManagingAdd<api.content.ContentSummary> {
 
         private contentComboBox: api.content.ContentComboBox;
 
         private draggingIndex: number;
+
+        private isFlat: boolean;
 
         private static contentIdBatch: ContentId[] = [];
 
@@ -33,6 +36,14 @@ module api.content.form.inputtype.contentselector {
 
         constructor(config?: api.content.form.inputtype.ContentInputTypeViewContext) {
             super('relationship', config);
+        }
+
+        protected readConfig(inputConfig: {[element: string]: {[name: string]: string}[];}): void {
+
+            const isFlatConfig = inputConfig['flat'] ? inputConfig['flat'][0] : {};
+            this.isFlat = !StringHelper.isBlank(isFlatConfig['value']) ? isFlatConfig['value'].toLowerCase() == 'true' : false;
+
+            super.readConfig(inputConfig);
         }
 
         public getContentComboBox(): ContentComboBox {
@@ -69,14 +80,20 @@ module api.content.form.inputtype.contentselector {
                 input.getName()).setAllowedContentPaths(this.allowedContentPaths).setContentTypeNames(
                 this.allowedContentTypes).setRelationshipType(this.relationshipType).build();
 
+            const optionDataLoader = ContentSummaryOptionDataLoader.create().setAllowedContentPaths(
+                this.allowedContentPaths).setContentTypeNames(this.allowedContentTypes).setRelationshipType(
+                this.relationshipType).setContent(this.config.content).build();
+
             const comboboxValue = this.getValueFromPropertyArray(propertyArray);
 
             this.contentComboBox = api.content.ContentComboBox.create()
                 .setName(input.getName())
                 .setMaximumOccurrences(input.getOccurrences().getMaximum())
                 .setLoader(contentSelectorLoader)
+                .setOptionDataLoader(optionDataLoader)
                 .setValue(comboboxValue)
                 .setRemoveMissingSelectedOptions(true)
+                .setTreegridDropdownEnabled(!this.isFlat)
                 .build();
 
             this.contentComboBox.getComboBox().onContentMissing((ids: string[]) => {

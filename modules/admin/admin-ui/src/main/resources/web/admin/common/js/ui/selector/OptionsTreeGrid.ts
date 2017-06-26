@@ -28,7 +28,6 @@ module api.ui.selector {
                     .prependClasses('dropdown-tree-grid')
                     .setRowHeight(45)
                     .setHotkeysEnabled(true)
-                    .disableMultipleSelection(true)
                     .setShowToolbar(false);
 
             builder.getOptions().setDataItemColumnValueExtractor(builder.nodeExtractor);
@@ -58,12 +57,18 @@ module api.ui.selector {
         }
 
         reload(parentNodeData?: Option<OPTION_DISPLAY_VALUE>): wemQ.Promise<void> {
-            return super.reload(parentNodeData).then(() => {
+            return super.reload(parentNodeData, 'dataId').then(() => {
                 if (this.defaultOption && !this.isDefaultOptionActive) {
                     this.scrollToDefaultOption(this.getRoot().getCurrentRoot(), 0);
                     this.isDefaultOptionActive = true;
                 }
             });
+        }
+
+        expandNode(node?: TreeNode<Option<OPTION_DISPLAY_VALUE>>, expandAll?: boolean,
+                   idPropertyName: string = 'dataId'): wemQ.Promise<boolean> {
+
+            return super.expandNode(node, expandAll, idPropertyName);
         }
 
         private initEventHandlers() {
@@ -195,6 +200,7 @@ module api.ui.selector {
         private optionDataToTreeNodeOption(data: OPTION_DISPLAY_VALUE): Option<OPTION_DISPLAY_VALUE> {
             return {
                 value: this.treeDataHelper.getDataId(data),
+                disabled: this.treeDataHelper.isDisabled(data),
                 displayValue: data
             };
         }
@@ -219,6 +225,10 @@ module api.ui.selector {
                 } else {
                     return {cssClasses: "active readonly' title='This content is read-only'"};
                 }
+            }
+
+            if (node.getData().disabled) {
+                return {cssClasses: "disabled'"};
             }
 
             return null;

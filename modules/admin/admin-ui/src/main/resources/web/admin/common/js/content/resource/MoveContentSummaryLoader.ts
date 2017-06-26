@@ -7,7 +7,7 @@ module api.content.resource {
     import ContentType = api.schema.content.ContentType;
     import ContentTypeName = api.schema.content.ContentTypeName;
 
-    export class MoveContentSummaryLoader extends ContentSummaryPreLoader {
+    export class MoveContentSummaryLoader extends ContentSummaryLoader {
 
         protected request: MoveAllowedTargetsRequest;
 

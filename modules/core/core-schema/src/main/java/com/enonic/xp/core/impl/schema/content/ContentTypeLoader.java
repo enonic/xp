@@ -22,6 +22,9 @@ final class ContentTypeLoader
     protected ContentType load( final ContentTypeName name, final Resource resource )
     {
         final ContentType.Builder builder = ContentType.create();
+        if(name.toString().equals( "com.enonic.app.features:selector" )) {
+            parseXml( resource, builder );
+        }
         parseXml( resource, builder );
 
         final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );

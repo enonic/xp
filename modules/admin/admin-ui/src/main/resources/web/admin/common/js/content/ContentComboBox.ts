@@ -8,6 +8,8 @@ module api.content {
     import RichSelectedOptionViewBuilder = api.ui.selector.combobox.RichSelectedOptionViewBuilder;
     import ContentQueryResultJson = api.content.json.ContentQueryResultJson;
     import ContentSummaryJson = api.content.json.ContentSummaryJson;
+    import OptionDataLoader = api.ui.selector.OptionDataLoader;
+    import ContentTreeSelectorItem = api.content.resource.ContentTreeSelectorItem;
 
     export class ContentComboBox extends RichComboBox<ContentSummary> {
 
@@ -18,13 +20,18 @@ module api.content {
             let richComboBoxBuilder = new RichComboBoxBuilder<ContentSummary>()
                 .setComboBoxName(builder.name ? builder.name : 'contentSelector')
                 .setLoader(loader)
-                .setSelectedOptionsView(new ContentSelectedOptionsView())
+                .setSelectedOptionsView(builder.selectedOptionsView || new ContentSelectedOptionsView())
                 .setMaximumOccurrences(builder.maximumOccurrences)
-                .setOptionDisplayValueViewer(new api.content.ContentSummaryViewer())
-                .setDelayedInputValueChangedHandling(750)
+                .setOptionDisplayValueViewer(builder.optionDisplayValueViewer || new api.content.ContentSummaryViewer())
+                .setDelayedInputValueChangedHandling(builder.delayedInputValueChangedHandling || 750)
                 .setValue(builder.value)
                 .setDisplayMissingSelectedOptions(builder.displayMissingSelectedOptions)
                 .setRemoveMissingSelectedOptions(builder.removeMissingSelectedOptions)
+                .setSkipAutoDropShowOnValueChange(builder.skipAutoDropShowOnValueChange)
+                .setTreegridDropdownEnabled(builder.treegridDropdownEnabled == undefined ? true : builder.treegridDropdownEnabled)
+                .setOptionDataHelper(builder.optionDataHelper || new ContentSummaryOptionDataHelper())
+                .setOptionDataLoader(builder.optionDataLoader || new ContentSummaryOptionDataLoader())
+                .setMinWidth(builder.minWidth)
                 .setMinWidth(builder.minWidth);
 
             super(richComboBoxBuilder);
@@ -137,7 +144,7 @@ module api.content {
         }
     }
 
-    export class ContentComboBoxBuilder {
+    export class ContentComboBoxBuilder extends RichComboBoxBuilder<ContentSummary> {
 
         name: string;
 
@@ -185,6 +192,16 @@ module api.content {
 
         setRemoveMissingSelectedOptions(value: boolean): ContentComboBoxBuilder {
             this.removeMissingSelectedOptions = value;
+            return this;
+        }
+
+        setTreegridDropdownEnabled(value: boolean): ContentComboBoxBuilder {
+            super.setTreegridDropdownEnabled(value);
+            return this;
+        }
+
+        setOptionDataLoader(value: OptionDataLoader<ContentTreeSelectorItem>): ContentComboBoxBuilder {
+            super.setOptionDataLoader(value);
             return this;
         }
 

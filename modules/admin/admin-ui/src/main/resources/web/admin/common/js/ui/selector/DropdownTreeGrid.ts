@@ -78,12 +78,24 @@ module api.ui.selector {
             this.getGrid().subscribeOnClick((e, args) => {
                 const elem = new ElementHelper(e.target);
 
-                if (!elem.hasClass('expand collapse')) {
+                let isCheckboxClicked = elem.hasClass('slick-cell-checkboxsel') || elem.hasAnyParentClass('slick-cell-checkboxsel');
+
+                if (!elem.hasClass('expand collapse') && !isCheckboxClicked) {
+                    //also should not be called for checkbox
                     this.notifyRowSelection(args.row);
                     e.preventDefault();
                     return false;
                 }
             });
+
+            this.getGrid().subscribeOnSelectedRowsChanged((e, args) => {
+                this.notifyMultipleSelection(args.rows);
+            });
+        }
+
+        markSelections(selectedOptions: Option<OPTION_DISPLAY_VALUE>[], ignoreEmpty: boolean = false) {
+            this.optionsTreeGrid.getRoot().clearStashedSelection();
+            super.markSelections(selectedOptions, ignoreEmpty);
         }
 
         protected createColumns(): api.ui.grid.GridColumn<any>[] {

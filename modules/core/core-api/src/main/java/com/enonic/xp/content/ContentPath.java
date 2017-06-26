@@ -61,13 +61,19 @@ public final class ContentPath
 
     public ContentPath getParentPath()
     {
+        return getParentPath(1);
+    }
+
+    public ContentPath getParentPath( final Integer deep )
+    {
         if ( this.elements.size() < 1 )
         {
             return null;
         }
 
-        final LinkedList<String> parentElements = newListOfParentElements();
-        return create().absolute( absolute ).elements( parentElements ).build();
+        final LinkedList<String> parentElements = newListOfParentElements( deep );
+
+        return parentElements != null ? create().absolute( absolute ).elements( parentElements ).build() : null;
     }
 
     public boolean isAbsolute()
@@ -162,13 +168,17 @@ public final class ContentPath
         return refString;
     }
 
-    private LinkedList<String> newListOfParentElements()
+    private LinkedList<String> newListOfParentElements( final Integer deep )
     {
-
         final LinkedList<String> newElements = Lists.newLinkedList( this.elements );
-        if ( !newElements.isEmpty() )
+        for ( int count = 0; count < deep; count++ )
         {
-            newElements.removeLast();
+            if ( !newElements.isEmpty() )
+            {
+                newElements.removeLast();
+            } else {
+                return null;
+            }
         }
         return newElements;
     }
