@@ -3,7 +3,7 @@ module api.app.browse {
 
     export class BrowseItemPanel<M extends api.Equitable> extends api.ui.panel.DeckPanel {
 
-        private itemStatisticsPanel: api.app.view.ItemStatisticsPanel<M>;
+        protected itemStatisticsPanel: api.app.view.ItemStatisticsPanel<M>;
 
         private items: BrowseItem<M>[] = [];
 
