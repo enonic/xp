@@ -7,6 +7,26 @@ import static org.junit.Assert.*;
 
 public class BranchTest
 {
+    @Test(expected = IllegalArgumentException.class)
+    public void empty()
+        throws Exception
+    {
+        Branch.from( "" );
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void starts_with_dot()
+        throws Exception
+    {
+        Branch.from( ".myBranch" );
+    }
+
+    @Test
+    public void allowed_characters()
+        throws Exception
+    {
+        Branch.from( "my.branch-this:IS_my-branch" );
+    }
 
     @Test
     public void fromString()

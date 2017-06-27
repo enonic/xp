@@ -2,6 +2,7 @@ import '../../api.ts';
 import {ContentPermissionsApplyEvent} from './ContentPermissionsApplyEvent';
 
 import Content = api.content.Content;
+import ModalDialogConfig = api.ui.dialog.ModalDialogConfig;
 import AccessControlComboBox = api.ui.security.acl.AccessControlComboBox;
 import AccessControlEntry = api.security.acl.AccessControlEntry;
 import AccessControlList = api.security.acl.AccessControlList;
@@ -43,7 +44,12 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
     protected header: EditPermissionsDialogHeader;
 
     constructor() {
-        super();
+        super(<ModalDialogConfig>{
+            confirmation: {
+                yesCallback: () => this.applyAction.execute(),
+                noCallback: () => this.close(),
+            }
+        });
 
         this.addClass('edit-permissions-dialog');
 
@@ -230,6 +236,10 @@ export class EditPermissionsDialog extends api.ui.dialog.ModalDialog {
         } else {
             this.inheritPermissionsCheck.giveFocus();
         }
+    }
+
+    isDirty(): boolean {
+        return this.applyAction.isEnabled();
     }
 }
 

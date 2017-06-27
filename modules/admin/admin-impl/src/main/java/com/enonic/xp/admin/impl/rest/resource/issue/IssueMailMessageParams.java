@@ -71,6 +71,11 @@ public class IssueMailMessageParams
         return compareResults;
     }
 
+    public boolean hasValidCreator()
+    {
+        return creator != null && creator.getEmail() != null;
+    }
+
     public static Builder create()
     {
         return new Builder();

@@ -51,9 +51,9 @@ public class FileDumpReader
     {
         this.dumpDirectory = getDumpDirectory( basePath, dumpName );
 
-        if ( !this.dumpDirectory.toFile().exists() )
+        if ( !isValidDumpDataDirectory( dumpDirectory ) )
         {
-            throw new RepoDumpException( "Dump directory does not exist: [" + this.dumpDirectory + "]" );
+            throw new RepoLoadException( "Directory is not a valid dump directory: [" + this.dumpDirectory + "]" );
         }
 
         this.listener = listener;
@@ -82,11 +82,16 @@ public class FileDumpReader
 
         for ( final String repoId : repoIds )
         {
-            repositories.add( RepositoryId.from( repoId ) );
+            final Path repoFolder = Paths.get( repoRootPath.toString(), repoId );
+            if ( isValidDumpDataDirectory( repoFolder ) )
+            {
+                repositories.add( RepositoryId.from( repoId ) );
+            }
         }
 
         return RepositoryIds.from( repositories );
     }
+
 
     @Override
     public Branches getBranches( final RepositoryId repositoryId )
@@ -104,7 +109,11 @@ public class FileDumpReader
 
         for ( final String branch : branchFiles )
         {
-            branches.add( Branch.from( branch ) );
+            final Path branchFolder = Paths.get( branchRootPath.toString(), branch );
+            if ( isValidDumpDataDirectory( branchFolder ) )
+            {
+                branches.add( Branch.from( branch ) );
+            }
         }
 
         return Branches.from( branches );
@@ -142,6 +151,13 @@ public class FileDumpReader
             throw new RepoDumpException( "Cannot read meta-data", e );
         }
     }
+
+    private boolean isValidDumpDataDirectory( final Path folder )
+    {
+        final File file = folder.toFile();
+        return file.exists() && file.isDirectory() && !file.isHidden();
+    }
+
 
     private File getDumpFile( final RepositoryId repositoryId, final Branch branch )
     {
