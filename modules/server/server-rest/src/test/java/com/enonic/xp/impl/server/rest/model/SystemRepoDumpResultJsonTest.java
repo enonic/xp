@@ -53,8 +53,8 @@ public class SystemRepoDumpResultJsonTest
                 add( BranchDumpResult.create( Branch.from( "branch4" ) ).
                     addedVersions( 109 ).
                     addedNodes( 23 ).
-                    error( DumpError.binaryNotFound( "cannot find binary with version 123" ) ).
-                    error( DumpError.versionNotFound( "cannot find version with id 123" ) ).
+                    error( DumpError.error( "cannot find binary with version 123" ) ).
+                    error( DumpError.error( "cannot find version with id 123" ) ).
                     build() ).
                 build() ).
             build();

@@ -176,8 +176,8 @@ class RepoDumper
             }
             catch ( RepoDumpException e )
             {
-                LOG.error( "Cannot dump binary", e );
-                dumpResult.error( DumpError.binaryNotFound( e.getMessage() ) );
+                LOG.error( "Cannot dump binary:", e );
+                dumpResult.error( DumpError.error( "Cannot dump binary: " + e.getMessage() ) );
             }
         } );
     }
@@ -192,7 +192,7 @@ class RepoDumper
             catch ( RepoDumpException e )
             {
                 LOG.error( "Cannot dump version", e );
-                dumpResult.error( DumpError.versionNotFound( e.getMessage() ) );
+                dumpResult.error( DumpError.error( "Cannot dump version: " + e.getMessage() ) );
             }
         } );
     }

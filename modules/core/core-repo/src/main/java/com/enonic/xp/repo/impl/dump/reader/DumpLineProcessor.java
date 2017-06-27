@@ -12,6 +12,7 @@ import com.google.common.io.LineProcessor;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
+import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.ImportNodeVersionParams;
 import com.enonic.xp.node.LoadNodeParams;
 import com.enonic.xp.node.Node;
@@ -140,7 +141,9 @@ public class DumpLineProcessor
 
     private void reportVersionError( final EntryLoadResult.Builder result, final Meta meta )
     {
-        result.error( EntryLoadError.error( "Failed to load version: " + meta.getVersion() ) );
+        final String message =
+            String.format( "Failed to load version for node with path %s, blobKey %s", meta.getNodePath(), meta.getVersion() );
+        result.error( EntryLoadError.error( message ) );
     }
 
     private void validateOrAddBinary( final NodeVersion nodeVersion, final EntryLoadResult.Builder result )
@@ -158,12 +161,18 @@ public class DumpLineProcessor
                 }
                 catch ( RepoLoadException e )
                 {
-                    result.error( EntryLoadError.error( "Failed to load binary: " + binary.getBlobKey() ) );
-                    LOG.error( "Cannot load binary, missing in existing blobStore, and not present in dump: " + binary.getBlobKey(), e );
+                    reportBinaryError( nodeVersion, result, binary, e );
                 }
-
             }
         } );
+    }
+
+    private void reportBinaryError( final NodeVersion nodeVersion, final EntryLoadResult.Builder result, final AttachedBinary binary,
+                                    final RepoLoadException e )
+    {
+        final String message = String.format( "Failed to load binary for nodeId %s, blobKey %s", nodeVersion.getId(), binary.getBlobKey() );
+        result.error( EntryLoadError.error( message ) );
+        LOG.error( "Cannot load binary, missing in existing blobStore, and not present in dump: " + binary.getBlobKey(), e );
     }
 
     @Override
