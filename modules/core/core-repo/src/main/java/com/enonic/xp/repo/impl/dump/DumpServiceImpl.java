@@ -23,11 +23,14 @@ import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.home.HomeDir;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.SecurityHelper;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
 import com.enonic.xp.repo.impl.dump.writer.FileDumpWriter;
+import com.enonic.xp.repo.impl.node.executor.BatchedGetChildrenExecutor;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.Repositories;
@@ -148,11 +151,31 @@ public class DumpServiceImpl
             branch( SystemConstants.BRANCH_SYSTEM ).
             build();
 
+        systemContext.runWith( () -> this.nodeService.refresh( RefreshMode.ALL ) );
+
+        doDeleteAllNodes( systemContext );
+
         doLoadRepository( SystemConstants.SYSTEM_REPO.getId(), params, dumpReader, results );
 
         this.repositoryService.invalidateAll();
 
         systemContext.runWith( () -> this.nodeService.refresh( RefreshMode.ALL ) );
+    }
+
+    private void doDeleteAllNodes( final Context context )
+    {
+        context.runWith( () -> {
+            final BatchedGetChildrenExecutor executor = BatchedGetChildrenExecutor.create().parentId( Node.ROOT_UUID ).
+                nodeService( this.nodeService ).
+                recursive( false ).
+                build();
+
+            while ( executor.hasMore() )
+            {
+                final NodeIds children = executor.execute();
+                children.forEach( ( child ) -> this.nodeService.deleteById( child ) );
+            }
+        } );
     }
 
     private void initializeRepo( final Repository repository )
