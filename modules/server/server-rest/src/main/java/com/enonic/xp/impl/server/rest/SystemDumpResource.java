@@ -126,6 +126,7 @@ public final class SystemDumpResource
     {
         final SystemLoadResult systemLoadResult = this.dumpService.loadSystemDump( SystemLoadParams.create().
             dumpName( request.getName() ).
+            dumpName( request.getName() ).
             includeVersions( true ).
             build() );
 

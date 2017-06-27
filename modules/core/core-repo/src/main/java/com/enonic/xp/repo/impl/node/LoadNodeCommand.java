@@ -1,9 +1,13 @@
 package com.enonic.xp.repo.impl.node;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.LoadNodeParams;
 import com.enonic.xp.node.LoadNodeResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeLoadException;
+import com.enonic.xp.node.NodePath;
 
 public class LoadNodeCommand
     extends AbstractNodeCommand
@@ -18,6 +22,8 @@ public class LoadNodeCommand
 
     public LoadNodeResult execute()
     {
+        verifyNodeProperties( params.getNode() );
+
         final Node nodeToLoad = params.getNode();
 
         if ( nodeToLoad.path().isRoot() )
@@ -30,8 +36,19 @@ public class LoadNodeCommand
         }
     }
 
+    private void verifyNodeProperties( final Node node )
+    {
+        Preconditions.checkArgument( node.id() != null, "NodeId must be set when loading node" );
+        Preconditions.checkArgument( node.name() != null, "Node name must be set when loading node" );
+        Preconditions.checkArgument( node.isRoot() || node.parentPath() != null, "Node parentPath must be set when loading node" );
+        Preconditions.checkArgument( node.getTimestamp() != null, "Node timestamp must be set when loading node" );
+    }
+
     private LoadNodeResult loadNode()
     {
+        verifyParentExists();
+        deleteIfExistsAtPath();
+
         final Node node = StoreNodeCommand.create( this ).
             node( params.getNode() ).
             updateMetadataOnly( false ).
@@ -41,6 +58,38 @@ public class LoadNodeCommand
         return LoadNodeResult.create().
             node( node ).
             build();
+    }
+
+    private void deleteIfExistsAtPath()
+    {
+        final boolean existsAlready = nodeExistsAtPath( params.getNode().path() );
+
+        if ( existsAlready )
+        {
+            DeleteNodeByPathCommand.create( this ).
+                nodePath( params.getNode().path() ).
+                build().
+                execute();
+        }
+    }
+
+    private void verifyParentExists()
+    {
+        final boolean parentExists = nodeExistsAtPath( this.params.getNode().parentPath() );
+
+        if ( !parentExists )
+        {
+            throw new NodeLoadException(
+                String.format( "Cannot load node with path [%s], parent does not exist", params.getNode().path() ) );
+        }
+    }
+
+    private boolean nodeExistsAtPath( final NodePath nodePath )
+    {
+        return CheckNodeExistsCommand.create( this ).
+            nodePath( nodePath ).
+            build().
+            execute();
     }
 
     private LoadNodeResult loadRootNode( final Node nodeToLoad )

@@ -124,7 +124,6 @@ public class RepositoryEntryServiceImpl
     @Override
     public void deleteRepositoryEntry( final RepositoryId repositoryId )
     {
-
         final NodeBranchEntries deletedNodes = createContext().callWith( () -> DeleteNodeByIdCommand.create().
             nodeId( NodeId.from( repositoryId.toString() ) ).
             indexServiceInternal( this.indexServiceInternal ).

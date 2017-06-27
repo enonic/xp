@@ -45,6 +45,7 @@ import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.repository.NodeRepositoryServiceImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryEntryServiceImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryServiceImpl;
+import com.enonic.xp.repo.impl.repository.SystemRepoInitializer;
 import com.enonic.xp.repo.impl.search.NodeSearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.NodeStorageServiceImpl;
@@ -56,7 +57,6 @@ import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -185,7 +185,7 @@ public abstract class AbstractNodeTest
 
         setUpRepositoryServices();
 
-        createRepository( SystemConstants.SYSTEM_REPO );
+        new SystemRepoInitializer( this.repositoryService, this.storageService ).initialize();
         createRepository( TEST_REPO );
         waitForClusterHealth();
     }
@@ -218,7 +218,6 @@ public abstract class AbstractNodeTest
         this.repositoryService.setNodeSearchService( this.searchService );
 
         this.nodeService.setRepositoryService( this.repositoryService );
-
     }
 
     private void createRepository( final Repository repository )

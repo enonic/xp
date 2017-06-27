@@ -34,6 +34,7 @@ import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.NodeHelper;
+import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.repository.SystemRepoInitializer;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.DeleteBranchParams;
@@ -75,9 +76,32 @@ public class DumpServiceImplTest
     public void admin_role_required()
         throws Exception
     {
-        this.dumpService.dumpSystem( SystemDumpParams.create().
+        doDump( SystemDumpParams.create().
             dumpName( "testDump" ).
             build() );
+    }
+
+    @Test
+    public void existing_repositories_deleted()
+        throws Exception
+    {
+        final Node node = createNode( NodePath.ROOT, "myNode" );
+
+        NodeHelper.runAsAdmin( () -> this.dumpService.dumpSystem( SystemDumpParams.create().
+            dumpName( "testDump" ).
+            build() ) );
+
+        NodeHelper.runAsAdmin( () -> doDump( SystemDumpParams.create().dumpName( "myTestDump" ).
+            includeVersions( true ).
+            includeBinaries( true ).
+            build() ) );
+
+        final Node toBeDeleted = createNode( NodePath.ROOT, "ShouldBeDeleted" );
+
+        NodeHelper.runAsAdmin( this::doLoad );
+
+        assertNotNull( getNode( node.id() ) );
+        assertNull( getNode( toBeDeleted.id() ) );
     }
 
     @Test
@@ -162,7 +186,7 @@ public class DumpServiceImplTest
         final RepositoryId currentRepoId = CTX_DEFAULT.getRepositoryId();
 
         NodeHelper.runAsAdmin( () -> {
-            this.dumpService.dumpSystem( SystemDumpParams.create().
+            doDump( SystemDumpParams.create().
                 dumpName( "testDump" ).
                 build() );
 
@@ -304,7 +328,7 @@ public class DumpServiceImplTest
             listener( listener ).
             build() ) );
 
-        assertEquals( 6, listener.getNodesDumped() );
+        assertEquals( 7, listener.getNodesDumped() );
         assertNotNull( listener.dumpedBranches.get( CTX_DEFAULT.getRepositoryId() ) );
         assertNotNull( listener.dumpedBranches.get( SystemConstants.SYSTEM_REPO.getId() ) );
     }
@@ -344,7 +368,7 @@ public class DumpServiceImplTest
 
     private void dumpDeleteAndLoad( final boolean clearBlobStore, final SystemDumpParams params )
     {
-        this.dumpService.dumpSystem( params );
+        doDump( params );
 
         final Repositories repositories = this.repositoryService.list();
 
@@ -361,14 +385,27 @@ public class DumpServiceImplTest
             this.blobStore.clear();
         }
 
+        this.indexServiceInternal.deleteIndices( IndexNameResolver.resolveSearchIndexName( SystemConstants.SYSTEM_REPO.getId() ) );
+        this.indexServiceInternal.deleteIndices( IndexNameResolver.resolveStorageIndexName( SystemConstants.SYSTEM_REPO.getId() ) );
+
         new SystemRepoInitializer( this.repositoryService, this.storageService ).initialize();
 
+        doLoad();
+
+        refresh();
+    }
+
+    private void doLoad()
+    {
         this.dumpService.loadSystemDump( SystemLoadParams.create().
             dumpName( "myTestDump" ).
             includeVersions( true ).
             build() );
+    }
 
-        refresh();
+    private void doDump( final SystemDumpParams params )
+    {
+        this.dumpService.dumpSystem( params );
     }
 
     private Node updateNode( final Node node )

@@ -247,7 +247,7 @@ public class IndexServiceImplTest
 
         refresh();
 
-        assertEquals( 4, systemRepoContext.
+        assertEquals( 5, systemRepoContext.
             callWith( this::findAllNodes ).getHits() );
 
         this.indexService.purgeSearchIndex( new PurgeIndexParams( systemRepoContext.getRepositoryId() ) );
@@ -263,7 +263,7 @@ public class IndexServiceImplTest
 
         refresh();
 
-        assertEquals( 4, systemRepoContext.
+        assertEquals( 5, systemRepoContext.
             callWith( this::findAllNodes ).getHits() );
 
     }
