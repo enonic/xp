@@ -15,6 +15,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.dump.BranchDumpResult;
+import com.enonic.xp.dump.DumpError;
 import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpListener;
 import com.enonic.xp.index.ChildOrder;
@@ -159,12 +160,41 @@ class RepoDumper
     {
         final DumpEntry dumpEntry = createDumpEntry( nodeId );
         writer.writeMetaData( dumpEntry );
-        dumpEntry.getAllVersionIds().forEach( writer::writeVersion );
-        dumpEntry.getBinaryReferences().forEach( writer::writeBinary );
+        writeVersions( dumpResult, dumpEntry );
+        writeBinaries( dumpResult, dumpEntry );
         dumpResult.addedNode();
         dumpResult.addedVersions( dumpEntry.getAllVersionIds().size() );
-
         reportNodeDumped();
+    }
+
+    private void writeBinaries( final BranchDumpResult.Builder dumpResult, final DumpEntry dumpEntry )
+    {
+        dumpEntry.getBinaryReferences().forEach( ( ref ) -> {
+            try
+            {
+                this.writer.writeBinary( ref );
+            }
+            catch ( RepoDumpException e )
+            {
+                LOG.error( "Cannot dump binary", e );
+                dumpResult.error( DumpError.binaryNotFound( e.getMessage() ) );
+            }
+        } );
+    }
+
+    private void writeVersions( final BranchDumpResult.Builder dumpResult, final DumpEntry dumpEntry )
+    {
+        dumpEntry.getAllVersionIds().forEach( ( versionId ) -> {
+            try
+            {
+                this.writer.writeVersion( versionId );
+            }
+            catch ( RepoDumpException e )
+            {
+                LOG.error( "Cannot dump version", e );
+                dumpResult.error( DumpError.versionNotFound( e.getMessage() ) );
+            }
+        } );
     }
 
     private void reportNodeDumped()

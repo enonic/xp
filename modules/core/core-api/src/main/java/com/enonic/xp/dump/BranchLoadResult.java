@@ -1,6 +1,9 @@
 package com.enonic.xp.dump;
 
 import java.time.Duration;
+import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.branch.Branch;
 
@@ -14,12 +17,15 @@ public class BranchLoadResult
 
     private final Duration duration;
 
+    private final List<LoadError> errors;
+
     private BranchLoadResult( final Builder builder )
     {
-        branch = builder.branch;
-        numberOfNodes = builder.numberOfNodes;
-        numberOfVersions = builder.numberOfVersions;
+        this.branch = builder.branch;
+        this.numberOfNodes = builder.numberOfNodes;
+        this.numberOfVersions = builder.numberOfVersions;
         this.duration = builder.duration != null ? builder.duration : Duration.ofMillis( builder.endTime - builder.startTime );
+        this.errors = builder.errors;
     }
 
     public Branch getBranch()
@@ -42,6 +48,11 @@ public class BranchLoadResult
         return duration;
     }
 
+    public List<LoadError> getErrors()
+    {
+        return errors;
+    }
+
     public static Builder create( final Branch branch )
     {
         return new Builder( branch );
@@ -60,6 +71,8 @@ public class BranchLoadResult
         private Long endTime;
 
         private Duration duration;
+
+        private final List<LoadError> errors = Lists.newArrayList();
 
         private Builder( final Branch branch )
         {
@@ -88,6 +101,12 @@ public class BranchLoadResult
         public Builder duration( final Duration duration )
         {
             this.duration = duration;
+            return this;
+        }
+
+        public Builder error( final LoadError error )
+        {
+            this.errors.add( error );
             return this;
         }
 

@@ -1,5 +1,8 @@
 package com.enonic.xp.impl.server.rest.model;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.enonic.xp.dump.BranchDumpResult;
 
 public class BranchDumpResultJson
@@ -12,12 +15,15 @@ public class BranchDumpResultJson
 
     private final String timeUsed;
 
+    private final List<DumpErrorJson> errors;
+
     private BranchDumpResultJson( final Builder builder )
     {
-        branch = builder.branch;
-        numberOfNodes = builder.numberOfNodes;
-        numberOfVersions = builder.numberOfVersions;
-        timeUsed = builder.timeUsed;
+        this.branch = builder.branch;
+        this.numberOfNodes = builder.numberOfNodes;
+        this.numberOfVersions = builder.numberOfVersions;
+        this.timeUsed = builder.timeUsed;
+        this.errors = builder.errors;
     }
 
     public static BranchDumpResultJson from( final BranchDumpResult result )
@@ -27,31 +33,38 @@ public class BranchDumpResultJson
             numberOfNodes( result.getNumberOfNodes() ).
             numberOfVersions( result.getNumberOfVersions() ).
             timeUsed( result.getDuration().toString() ).
+            errors( result.getErrors().stream().map( DumpErrorJson::from ).collect( Collectors.toList() ) ).
             build();
     }
 
-    @SuppressWarnings( "unused" )
+    @SuppressWarnings("unused")
     public String getBranch()
     {
         return branch;
     }
 
-    @SuppressWarnings( "unused" )
+    @SuppressWarnings("unused")
     public Long getNumberOfNodes()
     {
         return numberOfNodes;
     }
 
-    @SuppressWarnings( "unused" )
+    @SuppressWarnings("unused")
     public Long getNumberOfVersions()
     {
         return numberOfVersions;
     }
 
-    @SuppressWarnings( "unused" )
+    @SuppressWarnings("unused")
     public String getTimeUsed()
     {
         return timeUsed;
+    }
+
+    @SuppressWarnings("unused")
+    public List<DumpErrorJson> getErrors()
+    {
+        return errors;
     }
 
     private static Builder create()
@@ -68,6 +81,8 @@ public class BranchDumpResultJson
         private Long numberOfVersions;
 
         private String timeUsed;
+
+        private List<DumpErrorJson> errors;
 
         private Builder()
         {
@@ -94,6 +109,12 @@ public class BranchDumpResultJson
         public Builder timeUsed( final String val )
         {
             timeUsed = val;
+            return this;
+        }
+
+        public Builder errors( final List<DumpErrorJson> errors )
+        {
+            this.errors = errors;
             return this;
         }
 
