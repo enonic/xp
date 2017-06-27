@@ -94,6 +94,8 @@ module api.ui.dialog {
                 if (noCallback) {
                     this.confirmationDialog.setNoCallback(noCallback);
                 }
+
+                this.confirmationDialog.onClosed(() => this.removeClass('await-confirmation'));
             }
         }
 
@@ -376,6 +378,7 @@ module api.ui.dialog {
         confirmBeforeClose() {
             if (this.confirmationDialog && this.isDirty()) {
                 this.confirmationDialog.open();
+                this.addClass('await-confirmation');
             } else {
                 this.close();
             }
