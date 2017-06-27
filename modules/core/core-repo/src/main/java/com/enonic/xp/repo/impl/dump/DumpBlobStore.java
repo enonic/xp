@@ -15,7 +15,8 @@ import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.BlobStoreException;
 import com.enonic.xp.blob.Segment;
 
-public class DumpBlobStore implements BlobStore
+public class DumpBlobStore
+    implements BlobStore
 {
     private final static Logger LOG = LoggerFactory.getLogger( DumpBlobStore.class );
 
