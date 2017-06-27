@@ -94,6 +94,8 @@ module api.ui.dialog {
                 if (noCallback) {
                     this.confirmationDialog.setNoCallback(noCallback);
                 }
+
+                this.confirmationDialog.onClosed(() => this.removeClass('await-confirmation'));
             }
         }
 
@@ -295,7 +297,8 @@ module api.ui.dialog {
 
         protected hasSubDialog(): boolean {
             // html area can spawn sub dialogs so check none is open
-            return !!api.util.htmlarea.dialog.HTMLAreaDialogHandler.getOpenDialog();
+            return !!api.util.htmlarea.dialog.HTMLAreaDialogHandler.getOpenDialog() ||
+                   (this.confirmationDialog && this.confirmationDialog.isVisible());
         }
 
         private hasTabbable(): boolean {
@@ -375,6 +378,7 @@ module api.ui.dialog {
         confirmBeforeClose() {
             if (this.confirmationDialog && this.isDirty()) {
                 this.confirmationDialog.open();
+                this.addClass('await-confirmation');
             } else {
                 this.close();
             }

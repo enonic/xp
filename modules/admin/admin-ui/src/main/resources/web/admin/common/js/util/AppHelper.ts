@@ -95,6 +95,22 @@ module api.util {
             event.stopPropagation();
             event.preventDefault();
         }
+
+        static isDirty(element: api.dom.Element): boolean {
+
+            const checkDirty = (el: api.dom.Element) => {
+                // Check isDirty() on element, except root element to prevent recursion
+                const canCheckForDirty = (el !== element && typeof el['isDirty'] === 'function');
+                if (canCheckForDirty) {
+                    return el['isDirty']();
+                } else if (el.getChildren().length > 0) {
+                    return el.getChildren().some(checkDirty);
+                }
+                return false;
+            };
+
+            return checkDirty(element);
+        }
     }
 
 }
