@@ -1,6 +1,8 @@
 var $ = require('jquery');
 
 $(function () {
+    api.util.i18nInit(CONFIG.messages);
+
     var launcher = require('./launcher');
     launcher.init();
 

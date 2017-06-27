@@ -39,8 +39,7 @@ module api.ui.grid {
 
             let nodes = this.contentGrid.getRoot().getCurrentRoot().treeToList();
             let draggedNode = nodes[row.getSiblingIndex()];
-            draggedNode.setExpanded(false);
-            this.contentGrid.refreshNode(draggedNode);
+            this.contentGrid.collapseNode(draggedNode);
 
             row = Element.fromString(draggableClass).getParentElement();
 

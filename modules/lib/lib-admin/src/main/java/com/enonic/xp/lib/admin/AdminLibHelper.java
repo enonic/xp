@@ -40,7 +40,25 @@ public final class AdminLibHelper
     {
         final HttpServletRequest req = ServletRequestHolder.getRequest();
         final Locale locale = req != null ? req.getLocale() : Locale.getDefault();
-        return locale.getCountry().toLowerCase();
+        return resolveLanguage( locale.getLanguage().toLowerCase() );
+    }
+
+    /**
+     * This is a hack for now. We should resolve language in another way.
+     */
+    private String resolveLanguage( final String lang )
+    {
+        if ( lang.equals( "nn" ) )
+        {
+            return "no";
+        }
+
+        if ( lang.equals( "nb" ) )
+        {
+            return "no";
+        }
+
+        return lang;
     }
 
     private static String generateVersion()

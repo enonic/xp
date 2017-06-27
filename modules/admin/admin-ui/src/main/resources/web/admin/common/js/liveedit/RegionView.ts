@@ -319,7 +319,7 @@ module api.liveedit {
             return 0;
         }
 
-        addComponentView(componentView: ComponentView<Component>, index: number, isNew: boolean = false) {
+        addComponentView(componentView: ComponentView<Component>, index: number, isNew: boolean = false, dragged?: boolean) {
             if (RegionView.debug) {
                 console.log('RegionView[' + this.toString() + ']addComponentView: ' + componentView.toString() + ' at ' + index);
             }
@@ -330,7 +330,7 @@ module api.liveedit {
             this.insertChild(componentView, index);
             this.registerComponentView(componentView, index, isNew);
 
-            new ComponentAddedEvent(componentView, this).fire();
+            new ComponentAddedEvent(componentView, this, dragged).fire();
         }
 
         removeComponentView(componentView: ComponentView<Component>) {

@@ -156,6 +156,11 @@ public abstract class MapGeneratorBase
             return convertValue( (MapSerializable) value );
         }
 
+        if ( value instanceof Number )
+        {
+            return convertNumber( (Number) value );
+        }
+
         return value;
     }
 
