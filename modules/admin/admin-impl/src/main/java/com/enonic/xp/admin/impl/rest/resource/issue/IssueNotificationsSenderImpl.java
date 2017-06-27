@@ -68,7 +68,7 @@ public class IssueNotificationsSenderImpl
     {
         final IssueMailMessageParams params = createMessageParams( issue, url );
 
-        if ( params.getCreator() != null && params.getCreator().getEmail() != null )
+        if ( params.hasValidCreator() )
         {
             final MailMessage mailMessage = new IssueCreatedMailMessageGenerator( params ).generateMessage();
             sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
@@ -141,7 +141,7 @@ public class IssueNotificationsSenderImpl
 
     private boolean isRecipientsPresent( final IssueMailMessageParams params )
     {
-        if ( params.getCreator() != null && params.getCreator().getEmail() != null )
+        if ( params.hasValidCreator() )
         {
             return true;
         }
