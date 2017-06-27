@@ -2,8 +2,12 @@
 
   .instant-delete-check {
     position: absolute;
+    width: calc(~'100% - 240px');
     bottom: 40px;
-    left: 38px;
+    left: 39px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 
     input[type="checkbox"] + label {
       color: @admin-blue !important;
@@ -34,6 +38,26 @@
 
     .instant-delete-check, .load-mask {
       display: none !important;
+    }
+  }
+
+  &._0-240, &._240-360, &._360-540, &._540-720 {
+    .instant-delete-check {
+
+    }
+  }
+
+  &._0-240, &._240-360 {
+    .instant-delete-check {
+      left: calc(~'2% + 9px');
+      width: calc(~'96% - 190px');
+    }
+  }
+
+  &._360-540 {
+    .instant-delete-check {
+      left: calc(~'3% + 9px');
+      width: calc(~'94% - 190px');
     }
   }
 
