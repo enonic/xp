@@ -4,16 +4,19 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-import com.enonic.xp.util.CharacterChecker;
-
 @Beta
 public final class Branch
 {
+    private static final String VALID_REPOSITORY_ID_REGEX = "([a-zA-Z0-9\\-:])([a-zA-Z0-9_\\-\\.:])*";
+
     private final String value;
 
     private Branch( final Builder builder )
     {
-        this.value = CharacterChecker.check( builder.value, "Not a valid value for BranchId [" + builder.value + "]" );
+        Preconditions.checkArgument( !Strings.isNullOrEmpty( builder.value ), "Branch name cannot be null or empty" );
+        Preconditions.checkArgument( builder.value.matches( "^" + VALID_REPOSITORY_ID_REGEX + "$" ),
+                                     "Branch name format incorrect: " + builder.value );
+        this.value = builder.value;
     }
 
     public static Branch from( final String name )
@@ -74,11 +77,6 @@ public final class Branch
         {
             this.value = value;
             return this;
-        }
-
-        private void validate()
-        {
-            Preconditions.checkArgument( !Strings.isNullOrEmpty( this.value ) );
         }
 
         public Branch build()
