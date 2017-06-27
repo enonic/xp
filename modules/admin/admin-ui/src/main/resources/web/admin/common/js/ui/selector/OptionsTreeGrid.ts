@@ -119,7 +119,7 @@ module api.ui.selector {
                 from--;
             }
 
-            return this.loader.fetchChildren(parentNode, from, OptionsTreeGrid.MAX_FETCH_SIZE).then(
+            return this.loader.fetchChildren(parentNode).then(
                 (loadedData: OptionDataLoaderData<OPTION_DISPLAY_VALUE>) => {
                     let newOptions = this.optionsDataToTreeNodeOption(loadedData.getData());
                     let options = parentNode.getChildren().map((el) => el.getData()).slice(0, from).concat(newOptions);
