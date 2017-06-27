@@ -65,6 +65,11 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
 
     protected String getCreatorEmail()
     {
+        if ( !params.hasValidCreator() )
+        {
+            return "";
+        }
+
         return params.getCreator().getEmail();
     }
 
