@@ -9,18 +9,35 @@ module api.util.htmlarea.editor {
 
     export class HTMLAreaHelper {
 
-        private static getConvertedImageSrc(imgSrc:string):string {
-            let contentId = imgSrc.replace(ImageModalDialog.imagePrefix, StringHelper.EMPTY_STRING);
+        private static getConvertedImageSrc(imgSrc: string): string {
+            let contentId = HTMLAreaHelper.extractContentIdFromImgSrc(imgSrc);
+            let scaleValue = HTMLAreaHelper.extractScaleParamFromImgSrc(imgSrc);
             let imageUrl = new api.content.util.ContentImageUrlResolver().
                     setContentId(new api.content.ContentId(contentId)).
-                    setScaleWidth(true).
+                    setScaleWidth(true).setScale(scaleValue).
                     setSize(ImageModalDialog.maxImageWidth).
                     resolve();
 
             return ` src="${imageUrl}" data-src="${imgSrc}"`;
         }
 
-        public static prepareImgSrcsInValueForEdit(value:string):string {
+        private static extractContentIdFromImgSrc(imgSrc: string): string {
+            if (imgSrc.indexOf('?') !== -1) {
+                return StringHelper.substringBetween(imgSrc, ImageModalDialog.imagePrefix, "?");
+            }
+
+            return imgSrc.replace(ImageModalDialog.imagePrefix, StringHelper.EMPTY_STRING);
+        }
+
+        private static extractScaleParamFromImgSrc(imgSrc: string): string {
+            if (imgSrc.indexOf('scale=') !== -1) {
+                return api.util.UriHelper.decodeUrlParams(imgSrc.replace('&amp;', '&'))['scale'];
+            }
+
+            return null;
+        }
+
+        public static prepareImgSrcsInValueForEdit(value: string): string {
             let processedContent = value;
             let regex = /<img.*?src="(.*?)"/g;
             let imgSrcs;
@@ -32,7 +49,7 @@ module api.util.htmlarea.editor {
             while (processedContent.search(` src="${ImageModalDialog.imagePrefix}`) > -1) {
                 imgSrcs = regex.exec(processedContent);
                 if (imgSrcs) {
-                    imgSrcs.forEach((imgSrc:string) => {
+                    imgSrcs.forEach((imgSrc: string) => {
                         if (imgSrc.indexOf(ImageModalDialog.imagePrefix) === 0) {
                             processedContent =
                                 processedContent.replace(` src="${imgSrc}"`, HTMLAreaHelper.getConvertedImageSrc(imgSrc));
@@ -43,7 +60,7 @@ module api.util.htmlarea.editor {
             return processedContent;
         }
 
-        public static prepareEditorImageSrcsBeforeSave(editor:HtmlAreaEditor):string {
+        public static prepareEditorImageSrcsBeforeSave(editor: HtmlAreaEditor): string {
             const content = editor.getContent();
             const regex = /<img.*?data-src="(.*?)".*?>/g;
             let processedContent = editor.getContent();

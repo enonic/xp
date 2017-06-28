@@ -47,5 +47,24 @@ module api.util.htmlarea.dialog {
             });
         }
 
+        public addCustomScaleOption(value: string): Option<ImageCroppingOption> {
+            const scaleRegex = /^(\d+):(\d+)$/;
+            if (!scaleRegex.test(value)) {
+                return null;
+            }
+
+            const result = scaleRegex.exec(value);
+            const customOption: ImageCroppingOption = new ImageCroppingOption('Custom', parseInt(result[1]), parseInt(result[2]));
+
+            const option: Option<ImageCroppingOption> = {
+                value: customOption.getName(),
+                displayValue: customOption
+            };
+
+            this.addOption(option);
+
+            return option;
+        }
+
     }
 }
