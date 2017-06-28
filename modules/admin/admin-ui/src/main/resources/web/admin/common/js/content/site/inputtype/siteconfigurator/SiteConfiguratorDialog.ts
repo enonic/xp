@@ -103,7 +103,7 @@ module api.content.site.inputtype.siteconfigurator {
                     this.handleSelectorsDropdowns(this.formView);
                     this.handleDialogClose(this.formView);
 
-                    ResponsiveManager.fireResizeEvent();
+                    setTimeout(() => ResponsiveManager.fireResizeEvent(), 100);
 
                     return rendered;
                 });
