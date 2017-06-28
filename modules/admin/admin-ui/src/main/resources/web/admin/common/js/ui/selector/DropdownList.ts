@@ -158,7 +158,9 @@ module api.ui.selector {
             }
             if (selectedOption) {
                 let row = this.dropdownGrid.getRowByValue(selectedOption.value);
-                this.dropdownGrid.navigateToRow(row);
+                if(row != undefined) {
+                    this.dropdownGrid.navigateToRow(row);
+                }
             } else {
                 this.dropdownGrid.navigateToFirstRow();
             }

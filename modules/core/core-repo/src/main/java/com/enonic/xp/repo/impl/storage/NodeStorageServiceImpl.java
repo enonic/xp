@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.storage;
 
+import java.util.stream.Collectors;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -342,7 +344,8 @@ public class NodeStorageServiceImpl
     private Nodes doReturnNodes( final NodeBranchEntries nodeBranchEntries )
     {
         final NodeVersionIds.Builder builder = NodeVersionIds.create();
-        nodeBranchEntries.forEach( ( nodeBranchVersion ) -> builder.add( nodeBranchVersion.getVersionId() ) );
+
+        builder.addAll( nodeBranchEntries.stream().map( nodeBranchVersion -> nodeBranchVersion.getVersionId() ).collect( Collectors.toList() ));
 
         final NodeVersions nodeVersions = nodeVersionService.get( builder.build() );
 

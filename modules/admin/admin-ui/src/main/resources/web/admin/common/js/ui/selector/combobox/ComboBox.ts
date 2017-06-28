@@ -247,7 +247,12 @@ module api.ui.selector.combobox {
 
             const inputEl = this.input.getEl();
             const parent = restrainToBody(this.getScrollableParent(inputEl));
-            const dropdown = this.comboBoxDropdown.getDropdownGrid().getElement().getEl();
+
+            let dropdown = this.comboBoxDropdown.getDropdownGrid().getGrid().getEl();
+
+            if(!dropdown.isVisible()) {
+                dropdown = this.comboBoxDropdown.getEmptyDropdown().getEl();
+            }
 
             // If the page is in iframe page is not scrollable and fully rendered
             // The height of the iframe should be used instead
@@ -286,7 +291,7 @@ module api.ui.selector.combobox {
         }
 
         private placeDropdownBelow() {
-            let dropdown = this.comboBoxDropdown.getDropdownGrid().getElement().getEl();
+            let dropdown = this.comboBoxDropdown.getDropdownGrid().getGrid().getEl();
             dropdown.removeClass('reverted');
 
             let inputEl = this.input.getEl();
@@ -294,7 +299,7 @@ module api.ui.selector.combobox {
         }
 
         private placeDropdownAbove() {
-            let dropdown = this.comboBoxDropdown.getDropdownGrid().getElement().getEl();
+            let dropdown = this.comboBoxDropdown.getDropdownGrid().getGrid().getEl();
             let placeholder = this.comboBoxDropdown.getEmptyDropdown().getEl();
 
             dropdown.setTopPx(-dropdown.getHeightWithBorder()).addClass('reverted');
@@ -749,7 +754,10 @@ module api.ui.selector.combobox {
                 this.handleRowSelected(event.getRow());
             });
 
-            this.comboBoxDropdown.onRowCountChanged(() => this.comboBoxDropdown.markSelections(this.getSelectedOptions() || []));
+            this.comboBoxDropdown.onRowCountChanged(() => {
+                this.comboBoxDropdown.markSelections(this.getSelectedOptions() || []);
+                this.doUpdateDropdownTopPositionAndWidth();
+            });
 
             this.dropdownHandle.onClicked((event: MouseEvent) => {
                 event.preventDefault();
@@ -1030,7 +1038,7 @@ module api.ui.selector.combobox {
         }
 
         private notifyExpanded(expanded: boolean) {
-            const grid: api.dom.Element = <api.dom.Element>this.comboBoxDropdown.getDropdownGrid().getElement();
+            const grid: api.dom.Element = <api.dom.Element>this.comboBoxDropdown.getDropdownGrid().getGrid();
             const event = new api.ui.selector.DropdownExpandedEvent(grid, expanded);
             this.expandedListeners.forEach((listener: (event: api.ui.selector.DropdownExpandedEvent) => void) => {
                 listener(event);

@@ -1346,11 +1346,11 @@ public final class ContentResource
         final ContentPath parentPath = contentQueryJson.getParentPath();
         final Integer parentPathSize = parentPath != null ? parentPath.elementCount() : 0;
 
-        final ContentPaths layerPaths = ContentPaths.from( contents.stream().
+        final List<ContentPath> layerPaths = contents.stream().
             filter( content -> parentPath != null ? content.getPath().isChildOf( parentPath ) : true ).
-            map( content -> content.getPath().getParentPath( content.getPath().elementCount() - parentPathSize - 1 ) ) );
+            map( content -> content.getPath().getParentPath( content.getPath().elementCount() - parentPathSize - 1 ) ).collect( Collectors.toList());
 
-        final Contents layerContents = contentService.getByPaths( layerPaths );
+        final Contents layerContents = contentService.getByPaths( ContentPaths.from( layerPaths) );
 
         return layerContents.stream().map(
             content -> new ContentTreeSelectorJson( new ContentJson( content, contentIconUrlResolver, principalsResolver ),

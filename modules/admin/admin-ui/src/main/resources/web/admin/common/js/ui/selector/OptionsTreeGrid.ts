@@ -100,7 +100,7 @@ module api.ui.selector {
         }
 
         isEmptyNode(node: TreeNode<Option<OPTION_DISPLAY_VALUE>>): boolean {
-            return !node.getData().displayValue;
+            return !(node.getData() && node.getData().displayValue);
         }
 
         fetch(node: TreeNode<Option<OPTION_DISPLAY_VALUE>>, dataId?: string): wemQ.Promise<Option<OPTION_DISPLAY_VALUE>> {

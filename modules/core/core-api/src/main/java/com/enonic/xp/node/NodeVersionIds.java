@@ -1,5 +1,6 @@
 package com.enonic.xp.node;
 
+import java.util.Collection;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
@@ -40,6 +41,12 @@ public class NodeVersionIds
         public Builder add( final NodeVersionId nodeVersionId )
         {
             this.nodeVersionIds.add( nodeVersionId );
+            return this;
+        }
+
+        public Builder addAll( final Collection<NodeVersionId> nodeVersionIds )
+        {
+            this.nodeVersionIds.addAll( nodeVersionIds );
             return this;
         }
 
