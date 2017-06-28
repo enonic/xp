@@ -100,11 +100,7 @@ module api.ui.dialog {
         }
 
         private initListeners() {
-            ResponsiveManager.onAvailableSizeChanged(this, () => {
-                if (this.isVisible()) {
-                    this.centerMyself();
-                }
-            });
+            ResponsiveManager.onAvailableSizeChanged(this, () => this.centerMyself());
 
             // Set the ResponsiveRanges on first show() call
             const firstTimeResize = () => {
