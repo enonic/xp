@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Splitter;
+import com.google.common.primitives.Ints;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -51,7 +52,9 @@ public class HtmlLinkProcessor
     private static final String INLINE_MODE = "inline";
 
 
-    private static final String IMAGE_SCALE = "width(768)";
+    private static final String DEFAULT_IMAGE_SCALE_WIDTH = "width(768)";
+
+    private static final String IMAGE_SCALE_WIDTH = "width(%d)";
 
     private static final int DEFAULT_WIDTH = 768;
 
@@ -60,6 +63,8 @@ public class HtmlLinkProcessor
     private static final String KEEP_SIZE = "keepSize";
 
     private static final String SCALE = "scale";
+
+    private static final String SIZE = "size";
 
 
     private ContentService contentService;
@@ -144,6 +149,8 @@ public class HtmlLinkProcessor
         }
 
         final boolean keepSize = urlParams.containsKey( KEEP_SIZE );
+        final String sizeParam = urlParams.get( SIZE );
+        final Integer size = sizeParam != null ? Ints.tryParse( sizeParam ) : null;
 
         if ( urlParams.containsKey( SCALE ) )
         {
@@ -155,14 +162,37 @@ public class HtmlLinkProcessor
             final String horizontalProportion = substringBefore( scaleParam, ":" );
             final String verticalProportion = substringAfter( scaleParam, ":" );
 
-            final int width = keepSize ? getImageOriginalWidth( id ) : DEFAULT_WIDTH;
+            final int width;
+            if ( keepSize )
+            {
+                width = getImageOriginalWidth( id );
+            }
+            else if ( size != null )
+            {
+                width = size;
+            }
+            else
+            {
+                width = DEFAULT_WIDTH;
+            }
             final int height = width / Integer.parseInt( horizontalProportion ) * Integer.parseInt( verticalProportion );
 
             return "block(" + width + "," + height + ")";
         }
         else
         {
-            return keepSize ? IMAGE_NO_SCALING : IMAGE_SCALE;
+            if ( keepSize )
+            {
+                return IMAGE_NO_SCALING;
+            }
+            else if ( size != null )
+            {
+                return String.format( IMAGE_SCALE_WIDTH, size );
+            }
+            else
+            {
+                return DEFAULT_IMAGE_SCALE_WIDTH;
+            }
         }
     }
 
