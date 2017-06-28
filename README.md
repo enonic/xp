@@ -42,5 +42,5 @@ Also the distribution includes 3rd party software components. The vast majority 
 Apache 2.0. For a complete list please read [NOTICE.txt](https://github.com/enonic/xp/raw/master/NOTICE.txt).
 
 All our libraries (`lib-*`) that can be bundled in your own applications are licensed as Apache 2.0. 
-See [LICENSE.txt](https://github.com/enonic/xp/raw/master/LICENSE_AL.txt)
+See [LICENSE_AL.txt](https://github.com/enonic/xp/raw/master/LICENSE_AL.txt)
 
