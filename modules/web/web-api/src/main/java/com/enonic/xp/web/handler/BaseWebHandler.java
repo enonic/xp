@@ -34,7 +34,7 @@ public abstract class BaseWebHandler
 
     public BaseWebHandler( final int order )
     {
-        this( order, EnumSet.allOf( HttpMethod.class ) );
+        this( order, HttpMethod.standard() );
     }
 
     public BaseWebHandler( final EnumSet<HttpMethod> methodsAllowed )
