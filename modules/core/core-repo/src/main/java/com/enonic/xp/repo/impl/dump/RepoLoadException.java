@@ -1,9 +1,9 @@
 package com.enonic.xp.repo.impl.dump;
 
-class RepoLoadException
+public class RepoLoadException
     extends RuntimeException
 {
-    RepoLoadException( final String message )
+    public RepoLoadException( final String message )
     {
         super( message );
     }

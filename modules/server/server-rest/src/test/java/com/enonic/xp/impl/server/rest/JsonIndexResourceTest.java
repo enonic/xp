@@ -65,7 +65,6 @@ public class JsonIndexResourceTest
         assertJson( "update_index_settings.json", result );
     }
 
-
     @Override
     protected Object getResourceInstance()
     {

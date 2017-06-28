@@ -1,8 +1,5 @@
 package com.enonic.xp.repo.impl.dump;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -21,8 +18,6 @@ import com.enonic.xp.repository.RepositoryService;
 
 class RepoLoader
 {
-    private final static Logger LOG = LoggerFactory.getLogger( RepoLoader.class );
-
     private final RepositoryId repositoryId;
 
     private final RepositoryService repositoryService;
@@ -60,7 +55,6 @@ class RepoLoader
     {
         return this.reader.getBranches( this.repositoryId );
     }
-
 
     private Context setContext( final Branch branch )
     {
