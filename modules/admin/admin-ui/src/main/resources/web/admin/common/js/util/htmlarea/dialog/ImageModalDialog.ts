@@ -582,8 +582,7 @@ module api.util.htmlarea.dialog {
                 let scaleOption = ImageCroppingOptions.getOptionByProportion(scaleParamValue);
                 if (!!scaleOption) {
                     imageCroppingSelector.selectOption(imageCroppingSelector.getOptionByValue(scaleOption.getName()));
-                }
-                else {
+                } else {
                     const customOption: Option<ImageCroppingOption> = imageCroppingSelector.addCustomScaleOption(scaleParamValue);
                     if (!!customOption) {
                         imageCroppingSelector.selectOption(customOption);

@@ -23,7 +23,7 @@ module api.util.htmlarea.editor {
 
         private static extractContentIdFromImgSrc(imgSrc: string): string {
             if (imgSrc.indexOf('?') !== -1) {
-                return StringHelper.substringBetween(imgSrc, ImageModalDialog.imagePrefix, "?");
+                return StringHelper.substringBetween(imgSrc, ImageModalDialog.imagePrefix, '?');
             }
 
             return imgSrc.replace(ImageModalDialog.imagePrefix, StringHelper.EMPTY_STRING);

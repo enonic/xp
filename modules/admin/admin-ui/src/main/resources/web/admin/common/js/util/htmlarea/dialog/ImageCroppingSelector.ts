@@ -54,7 +54,7 @@ module api.util.htmlarea.dialog {
             }
 
             const result = scaleRegex.exec(value);
-            const customOption: ImageCroppingOption = new ImageCroppingOption('Custom', parseInt(result[1]), parseInt(result[2]));
+            const customOption: ImageCroppingOption = new ImageCroppingOption('Custom', parseInt(result[1], 10), parseInt(result[2], 10));
 
             const option: Option<ImageCroppingOption> = {
                 value: customOption.getName(),
