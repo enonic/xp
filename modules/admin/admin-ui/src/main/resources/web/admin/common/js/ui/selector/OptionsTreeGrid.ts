@@ -28,7 +28,8 @@ module api.ui.selector {
                     .prependClasses('dropdown-tree-grid')
                     .setRowHeight(45)
                     .setHotkeysEnabled(true)
-                    .setShowToolbar(false);
+                    .setShowToolbar(false)
+                    .setIdPropertyName('dataId');
 
             builder.getOptions().setDataItemColumnValueExtractor(builder.nodeExtractor);
 
@@ -65,10 +66,9 @@ module api.ui.selector {
             });
         }
 
-        expandNode(node?: TreeNode<Option<OPTION_DISPLAY_VALUE>>, expandAll?: boolean,
-                   idPropertyName: string = 'dataId'): wemQ.Promise<boolean> {
+        expandNode(node?: TreeNode<Option<OPTION_DISPLAY_VALUE>>, expandAll?: boolean): wemQ.Promise<boolean> {
 
-            return super.expandNode(node, expandAll, idPropertyName);
+            return super.expandNode(node, expandAll);
         }
 
         private initEventHandlers() {

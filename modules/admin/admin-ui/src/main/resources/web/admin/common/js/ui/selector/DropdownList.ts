@@ -178,6 +178,10 @@ module api.ui.selector {
             this.dropdownGrid.markSelections(selectedOptions, ignoreEmpty);
         }
 
+        addSelections(selectedOptions: Option<OPTION_DISPLAY_VALUE>[]) {
+            this.dropdownGrid.addSelections(selectedOptions);
+        }
+
         onRowCountChanged(listener: () => void) {
             this.dropdownGrid.onRowCountChanged(listener);
         }

@@ -75,6 +75,8 @@ module api.ui.treegrid {
 
         private interval: number;
 
+        private idPropertyName: string;
+
         constructor(builder: TreeGridBuilder<DATA>) {
 
             super(builder.getClasses());
@@ -126,6 +128,8 @@ module api.ui.treegrid {
             if (builder.isPartialLoadEnabled()) {
                 this.loadBufferSize = builder.getLoadBufferSize();
             }
+
+            this.idPropertyName = builder.getIdPropertyName();
 
             this.initEventListeners(builder);
         }
@@ -208,6 +212,7 @@ module api.ui.treegrid {
             });
 
             this.grid.subscribeOnSelectedRowsChanged((event, rows) => {
+                // debugger;
                 this.notifySelectionChanged(event, rows.rows);
             });
 
@@ -1102,7 +1107,7 @@ module api.ui.treegrid {
             return this.reloadNode(null, expandedNodesDataId)
                 .then(() => {
                     this.root.setCurrentSelection(selection);
-                    this.initData(this.root.getCurrentRoot().treeToList(), idPropertyName);
+                    this.initData(this.root.getCurrentRoot().treeToList());
                     this.updateExpanded();
                 }).catch((reason: any) => {
                     this.initData([]);
@@ -1347,7 +1352,7 @@ module api.ui.treegrid {
 
                             if (node) {
                                 if (!stashedParentNode) {
-                                    this.gridData.setItems(root.treeToList());
+                                    this.gridData.setItems(root.treeToList(), this.idPropertyName);
                                 }
                                 this.notifyDataChanged(new DataChangedEvent<DATA>([node], DataChangedEvent.ADDED));
 
@@ -1384,7 +1389,7 @@ module api.ui.treegrid {
             let node = root.findNode(this.getDataId(data));
             if (node) {
                 if (!stashedParentNode) {
-                    this.gridData.setItems(root.treeToList());
+                    this.gridData.setItems(root.treeToList(), this.idPropertyName);
                 }
                 if (isRootParentNode) {
                     this.sortNodeChildren(parentNode);
@@ -1425,8 +1430,8 @@ module api.ui.treegrid {
             this.notifyDataChanged(new DataChangedEvent<DATA>(deleted, DataChangedEvent.DELETED));
         }
 
-        initData(nodes: TreeNode<DATA>[], idPropertyName: string = 'id') {
-            this.gridData.setItems(nodes, idPropertyName);
+        initData(nodes: TreeNode<DATA>[]) {
+            this.gridData.setItems(nodes, this.idPropertyName);
             this.notifyDataChanged(new DataChangedEvent<DATA>(nodes, DataChangedEvent.ADDED));
             this.resetCurrentSelection(nodes);
         }
@@ -1446,7 +1451,7 @@ module api.ui.treegrid {
             this.grid.setSelectedRows(selection);
         }
 
-        expandNode(node?: TreeNode<DATA>, expandAll: boolean = false, idPropertyName?: string): wemQ.Promise<boolean> {
+        expandNode(node?: TreeNode<DATA>, expandAll: boolean = false): wemQ.Promise<boolean> {
             let deferred = wemQ.defer<boolean>();
 
             node = node || this.root.getCurrentRoot();
@@ -1459,7 +1464,7 @@ module api.ui.treegrid {
                     this.updateExpanded();
                     if (expandAll) {
                         node.getChildren().forEach((child: TreeNode<DATA>) => {
-                            this.expandNode(child, false, idPropertyName);
+                            this.expandNode(child, false);
                         });
                     }
                     deferred.resolve(true);
@@ -1468,11 +1473,11 @@ module api.ui.treegrid {
                     this.fetchData(node)
                         .then((dataList: DATA[]) => {
                             node.setChildren(this.dataToTreeNodes(dataList, node, expandAll));
-                            this.initData(this.root.getCurrentRoot().treeToList(), idPropertyName);
+                            this.initData(this.root.getCurrentRoot().treeToList());
                             this.updateExpanded();
                             if (expandAll) {
                                 node.getChildren().forEach((child: TreeNode<DATA>) => {
-                                    this.expandNode(child, false, idPropertyName);
+                                    this.expandNode(child, false);
                                 });
                             }
                             deferred.resolve(true);

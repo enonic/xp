@@ -33,6 +33,8 @@ module api.ui.treegrid {
 
         private quietErrorHandling: boolean = false;
 
+        private idPropertyName: string = 'id';
+
         constructor(grid?: TreeGrid<NODE>) {
             if (grid) {
                 this.showToolbar = grid.hasToolbar();
@@ -267,6 +269,15 @@ module api.ui.treegrid {
 
         getQuietErrorHandling(): boolean {
             return this.quietErrorHandling;
+        }
+
+        setIdPropertyName(value: string): TreeGridBuilder<NODE> {
+            this.idPropertyName = value;
+            return this;
+        }
+
+        getIdPropertyName() : string {
+            return this.idPropertyName;
         }
 
         private buildColumn(columnConfig: GridColumnConfig) {

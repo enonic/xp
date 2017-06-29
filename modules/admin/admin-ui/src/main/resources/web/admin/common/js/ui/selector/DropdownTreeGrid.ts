@@ -62,6 +62,12 @@ module api.ui.selector {
             this.optionsTreeGrid.setOptions(options);
         }
 
+        getSelectedOptions(): Option<OPTION_DISPLAY_VALUE>[] {
+            return this.optionsTreeGrid.getSelectedNodes().map(selectedNode => {
+                return this.getOptionByValue(selectedNode.getDataId());
+            })
+        }
+
         protected initGridAndData() {
             if (this.filter) {
                 // TODO
@@ -127,7 +133,13 @@ module api.ui.selector {
         }
 
         getOptionByRow(rowIndex: number): Option<OPTION_DISPLAY_VALUE> {
-            return this.getGridData().getItem(rowIndex).getData();
+            const item = this.getGridData().getItem(rowIndex);
+            return item ? item.getData() : null;
+        }
+
+        getOptionByValue(value: string): Option<OPTION_DISPLAY_VALUE> {
+            const item = this.getGridData().getItemById(value);
+            return item ? item.getData() : null;
         }
     }
 }
