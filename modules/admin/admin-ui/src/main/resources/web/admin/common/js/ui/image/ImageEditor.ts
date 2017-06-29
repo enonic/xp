@@ -107,7 +107,7 @@ module api.ui.image {
 
             this.image = new ImgEl(null, 'image-bg', true);
 
-            let resizeListener = (item) => {
+            let resizeHandler = () => {
                 if (this.isVisible()) {
                     this.updateImageDimensions(false, true);
                     this.updateStickyToolbar();
@@ -121,7 +121,7 @@ module api.ui.image {
                 this.updateStickyToolbar();
                 this.unShown(updateImageOnShown);
                 if (isFirstLoad) {
-                    api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, resizeListener);
+                    api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, resizeHandler);
                     isFirstLoad = false;
                 }
             };

@@ -6,7 +6,7 @@
   &.standout {
     position: absolute; // need to have a position other than static for z-index to have effect
     z-index: @z-index-mask + 1; // to be above image input type mask
-    width: 640px;
+    max-width: 640px;
 
     .sticky-toolbar {
       z-index: @z-index-mask; // to have it on top of zoomed image
