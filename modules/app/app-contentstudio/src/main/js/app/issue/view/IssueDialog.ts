@@ -127,7 +127,7 @@ export abstract class IssueDialog extends DependantItemsDialog {
             ContentSummaryAndCompareStatusFetcher.fetchByIds(
                 items.map(summary => summary.getContentId())).then((result) => {
 
-                this.setListItems(result.concat(this.getItemList().getItems()));
+                this.setListItems(this.getItemList().getItems().concat(result));
 
                 this.publishProcessor.reloadPublishDependencies(true);
             });
