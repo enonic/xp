@@ -86,7 +86,6 @@ public class CreateIssueCommandTest
             data( params.getData() ).
             indexConfigDocument( params.getIndexConfigDocument() ).
             childOrder( params.getChildOrder() != null ? params.getChildOrder() : IssueConstants.DEFAULT_CHILD_ORDER ).
-            permissions( IssueConstants.ACCESS_CONTROL_ENTRIES ).
             nodeType( params.getNodeType() != null ? params.getNodeType() : IssueConstants.ISSUE_NODE_COLLECTION ).
             timestamp( Instant.now() ).
             build();

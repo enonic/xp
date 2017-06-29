@@ -45,7 +45,7 @@ public class IssueInitializer
             build() ).
         add( AccessControlEntry.create().
             principal( RoleKeys.CONTENT_MANAGER_APP ).
-            allow( Permission.READ ).
+            allow( Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE ).
             build() ).
         build();
 

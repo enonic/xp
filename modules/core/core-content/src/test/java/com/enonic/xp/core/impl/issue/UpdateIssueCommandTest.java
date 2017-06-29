@@ -93,7 +93,6 @@ public class UpdateIssueCommandTest
             name( "title" ).
             data( this.createMockData() ).
             childOrder( IssueConstants.DEFAULT_CHILD_ORDER ).
-            permissions( IssueConstants.ACCESS_CONTROL_ENTRIES ).
             nodeType( IssueConstants.ISSUE_NODE_COLLECTION ).
             timestamp( Instant.now() ).
             build();
