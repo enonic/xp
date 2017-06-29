@@ -169,8 +169,8 @@ export class NonMobileDetailsPanelsManager {
         }, this.isExpanded() ? 300 : 0);
     }
 
-    hideActivePanel() {
-        this.doPanelAnimation(false);
+    hideActivePanel(onResize: boolean = false) {
+        this.doPanelAnimation(false, onResize);
     }
 
     hideDockedDetailsPanel() {
