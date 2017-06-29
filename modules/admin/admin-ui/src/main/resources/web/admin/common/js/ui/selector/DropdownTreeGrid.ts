@@ -65,7 +65,7 @@ module api.ui.selector {
         getSelectedOptions(): Option<OPTION_DISPLAY_VALUE>[] {
             return this.optionsTreeGrid.getSelectedNodes().map(selectedNode => {
                 return this.getOptionByValue(selectedNode.getDataId());
-            })
+            });
         }
 
         protected initGridAndData() {
