@@ -9,11 +9,13 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -25,12 +27,16 @@ import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.GetActiveNodeVersionsParams;
+import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
+import com.enonic.xp.node.NodeVersionsMetadata;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.NodeHelper;
@@ -227,6 +233,124 @@ public class DumpServiceImplTest
         final Node currentStoredNode = this.nodeService.getById( node.id() );
         assertEquals( currentNode.data(), currentStoredNode.data() );
         assertEquals( getOrderedTimestamps( versionsBeforeDump ), getOrderedTimestamps( versionsAfterLoad ) );
+    }
+
+    @Test
+    public void same_version_in_different_branches_not_duplicated()
+        throws Exception
+    {
+        final Node node = createNode( NodePath.ROOT, "myNode" );
+        this.nodeService.push( NodeIds.from( node.id() ), CTX_OTHER.getBranch() );
+        refresh();
+
+        final NodeVersionQueryResult versionsBeforeDump = this.nodeService.findVersions( GetNodeVersionsParams.create().
+            nodeId( node.id() ).
+            build() );
+
+        assertEquals( 1, versionsBeforeDump.getTotalHits() );
+
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
+
+        refresh();
+
+        final NodeVersionQueryResult versionsAfterLoad = this.nodeService.findVersions( GetNodeVersionsParams.create().
+            nodeId( node.id() ).
+            build() );
+
+        versionsAfterLoad.getNodeVersionsMetadata().forEach(
+            ( e ) -> System.out.println( e.getNodeVersionId() + " - " + e.getTimestamp() ) );
+
+        assertEquals( 1, versionsAfterLoad.getTotalHits() );
+    }
+
+
+    @Test
+    public void several_version_in_different_branches_not_duplicated()
+        throws Exception
+    {
+        final Node node = createNode( NodePath.ROOT, "myNode" );
+        updateNode( node );
+        this.nodeService.push( NodeIds.from( node.id() ), CTX_OTHER.getBranch() );
+        updateNode( node );
+        updateNode( node );
+        refresh();
+
+        final NodeVersionQueryResult versionsBeforeDump = this.nodeService.findVersions( GetNodeVersionsParams.create().
+            nodeId( node.id() ).
+            build() );
+
+        assertEquals( 4, versionsBeforeDump.getTotalHits() );
+
+        final NodeVersionsMetadata beforeDump = versionsBeforeDump.getNodeVersionsMetadata();
+
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
+
+        refresh();
+
+        final NodeVersionQueryResult versionsAfterLoad = this.nodeService.findVersions( GetNodeVersionsParams.create().
+            nodeId( node.id() ).
+            build() );
+
+        final NodeVersionsMetadata afterDump = versionsBeforeDump.getNodeVersionsMetadata();
+        assertEquals( versionsBeforeDump.getTotalHits(), versionsAfterLoad.getTotalHits() );
+
+        // Versions should not have changed
+        assertEquals( beforeDump, afterDump );
+    }
+
+    @Test
+    public void active_versions_after_load()
+        throws Exception
+    {
+        final Node node = createNode( NodePath.ROOT, "myNode" );
+        this.nodeService.push( NodeIds.from( node.id() ), CTX_OTHER.getBranch() );
+        updateNode( node );
+        refresh();
+
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
+        refresh();
+
+        final GetActiveNodeVersionsResult activeVersions = this.nodeService.getActiveVersions( GetActiveNodeVersionsParams.create().
+            branches( Branches.from( CTX_DEFAULT.getBranch(), CTX_OTHER.getBranch() ) ).
+            nodeId( node.id() ).
+            build() );
+
+        final Node defaultBranchNode = CTX_DEFAULT.callWith( () -> this.nodeService.getById( node.id() ) );
+        final Node otherBranchNode = CTX_OTHER.callWith( () -> this.nodeService.getById( node.id() ) );
+
+        final ImmutableMap<Branch, NodeVersionMetadata> activeVersionsMap = activeVersions.getNodeVersions();
+
+        assertEquals( 2, activeVersionsMap.size() );
+        assertEquals( defaultBranchNode.getNodeVersionId(), activeVersionsMap.get( CTX_DEFAULT.getBranch() ).getNodeVersionId() );
+        assertEquals( otherBranchNode.getNodeVersionId(), activeVersionsMap.get( CTX_OTHER.getBranch() ).getNodeVersionId() );
+    }
+
+
+    @Test
+    public void active_versions_in_versions_list()
+        throws Exception
+    {
+        final Node node = createNode( NodePath.ROOT, "myNode" );
+        this.nodeService.push( NodeIds.from( node.id() ), CTX_OTHER.getBranch() );
+        updateNode( node );
+        refresh();
+
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
+        refresh();
+
+        final GetActiveNodeVersionsResult activeVersions = this.nodeService.getActiveVersions( GetActiveNodeVersionsParams.create().
+            branches( Branches.from( CTX_DEFAULT.getBranch(), CTX_OTHER.getBranch() ) ).
+            nodeId( node.id() ).
+            build() );
+
+        final ImmutableMap<Branch, NodeVersionMetadata> activeVersionsMap = activeVersions.getNodeVersions();
+
+        final NodeVersionQueryResult versionsAfterLoad = this.nodeService.findVersions( GetNodeVersionsParams.create().
+            nodeId( node.id() ).
+            build() );
+
+        activeVersionsMap.values().forEach(
+            key -> assertTrue( versionsAfterLoad.getNodeVersionsMetadata().getAllVersionIds().contains( key.getNodeVersionId() ) ) );
     }
 
     private TreeSet<Instant> getOrderedTimestamps( final NodeVersionQueryResult result )

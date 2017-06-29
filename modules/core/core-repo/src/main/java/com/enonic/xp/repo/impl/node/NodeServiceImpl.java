@@ -811,7 +811,7 @@ public class NodeServiceImpl
     {
         verifyContext();
 
-        ImportNodeVersionCommand.create().
+        LoadNodeVersionCommand.create().
             nodeId( params.getNodeId() ).
             nodePath( params.getNodePath() ).
             nodeVersion( params.getNodeVersion() ).

@@ -35,6 +35,11 @@ public class VersionServiceImpl
     @Override
     public NodeVersionMetadata getVersion( final NodeVersionDocumentId nodeVersionDocumentId, final InternalContext context )
     {
+        return doGetById( nodeVersionDocumentId, context );
+    }
+
+    private NodeVersionMetadata doGetById( final NodeVersionDocumentId nodeVersionDocumentId, final InternalContext context )
+    {
         final GetByIdRequest getByIdRequest = GetByIdRequest.create().
             id( nodeVersionDocumentId.toString() ).
             returnFields( VERSION_RETURN_FIELDS ).
