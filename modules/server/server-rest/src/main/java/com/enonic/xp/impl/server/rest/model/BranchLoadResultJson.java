@@ -1,5 +1,8 @@
 package com.enonic.xp.impl.server.rest.model;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.enonic.xp.dump.BranchLoadResult;
 
 public class BranchLoadResultJson
@@ -12,12 +15,15 @@ public class BranchLoadResultJson
 
     private final String duration;
 
+    private final List<LoadErrorJson> errors;
+
     private BranchLoadResultJson( final Builder builder )
     {
         branch = builder.branch;
         numberOfNodes = builder.numberOfNodes;
         numberOfVersions = builder.numberOfVersions;
         duration = builder.duration;
+        errors = builder.errorList;
     }
 
     public static BranchLoadResultJson from( final BranchLoadResult result )
@@ -27,31 +33,38 @@ public class BranchLoadResultJson
             duration( result.getDuration().toString() ).
             numberOfNodes( result.getNumberOfNodes() ).
             numberOfVersions( result.getNumberOfVersions() ).
+            errors( result.getErrors().stream().map( LoadErrorJson::from ).collect( Collectors.toList() ) ).
             build();
     }
 
-    @SuppressWarnings( "unused" )
+    @SuppressWarnings("unused")
     public String getBranch()
     {
         return branch;
     }
 
-    @SuppressWarnings( "unused" )
+    @SuppressWarnings("unused")
     public Long getNumberOfNodes()
     {
         return numberOfNodes;
     }
 
-    @SuppressWarnings( "unused" )
+    @SuppressWarnings("unused")
     public Long getNumberOfVersions()
     {
         return numberOfVersions;
     }
 
-    @SuppressWarnings( "unused" )
+    @SuppressWarnings("unused")
     public String getDuration()
     {
         return duration;
+    }
+
+    @SuppressWarnings("unused")
+    public List<LoadErrorJson> getErrors()
+    {
+        return errors;
     }
 
     private static Builder create()
@@ -68,6 +81,8 @@ public class BranchLoadResultJson
         private Long numberOfVersions;
 
         private String duration;
+
+        private List<LoadErrorJson> errorList;
 
         private Builder()
         {
@@ -94,6 +109,12 @@ public class BranchLoadResultJson
         public Builder duration( final String val )
         {
             duration = val;
+            return this;
+        }
+
+        public Builder errors( final List<LoadErrorJson> errors )
+        {
+            this.errorList = errors;
             return this;
         }
 

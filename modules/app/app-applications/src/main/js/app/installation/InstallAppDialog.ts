@@ -10,6 +10,7 @@ import Application = api.application.Application;
 
 import DockedPanel = api.ui.panel.DockedPanel;
 import i18n = api.util.i18n;
+import DivEl = api.dom.DivEl;
 
 export class InstallAppDialog extends api.ui.dialog.ModalDialog {
 
@@ -91,13 +92,16 @@ export class InstallAppDialog extends api.ui.dialog.ModalDialog {
             this.initDragAndDropUploaderEvents();
 
             if (!this.marketAppPanel) {
-                this.marketAppPanel = new MarketAppPanel(this.applicationInput, 'market-app-panel');
+                this.marketAppPanel = new MarketAppPanel(this.applicationInput);
             }
+
+            const marketAppPanelWrapper: DivEl = new DivEl('market-app-panel-wrapper');
+            marketAppPanelWrapper.appendChild(this.marketAppPanel);
 
             this.appendChildToContentPanel(this.applicationInput);
             this.appendChildToContentPanel(this.statusMessage);
             this.appendChildToContentPanel(this.clearButton = this.createClearFilterButton());
-            this.appendChildToContentPanel(this.marketAppPanel);
+            this.appendChildToContentPanel(marketAppPanelWrapper);
 
             return rendered;
         });

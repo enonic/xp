@@ -23,6 +23,7 @@ import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.dump.BranchLoadResult;
+import com.enonic.xp.dump.LoadError;
 import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
@@ -30,6 +31,7 @@ import com.enonic.xp.repo.impl.dump.AbstractFileProcessor;
 import com.enonic.xp.repo.impl.dump.DumpBlobStore;
 import com.enonic.xp.repo.impl.dump.DumpConstants;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
+import com.enonic.xp.repo.impl.dump.RepoLoadException;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 
@@ -51,7 +53,7 @@ public class FileDumpReader
 
         if ( !isValidDumpDataDirectory( dumpDirectory ) )
         {
-            throw new RepoDumpException( "Directory is not a valid dump directory: [" + this.dumpDirectory + "]" );
+            throw new RepoLoadException( "Directory is not a valid dump directory: [" + this.dumpDirectory + "]" );
         }
 
         this.listener = listener;
@@ -121,14 +123,7 @@ public class FileDumpReader
     public BranchLoadResult load( final RepositoryId repositoryId, final Branch branch, final LineProcessor<EntryLoadResult> processor )
     {
         final BranchLoadResult.Builder result = BranchLoadResult.create( branch );
-
-        final Path metaPath = createMetaPath( this.dumpDirectory, repositoryId, branch );
-        final File tarFile = metaPath.toFile();
-
-        if ( !tarFile.exists() )
-        {
-            throw new RepoDumpException( "File doesnt " + metaPath + " exists" );
-        }
+        final File tarFile = getDumpFile( repositoryId, branch );
 
         if ( this.listener != null )
         {
@@ -145,17 +140,7 @@ public class FileDumpReader
 
             while ( entry != null )
             {
-                String content = readEntry( tarInputStream );
-                processor.processLine( content );
-                final EntryLoadResult entryResult = processor.getResult();
-                result.addedNode();
-                result.addedVersions( entryResult.getVersions() );
-
-                if ( this.listener != null )
-                {
-                    this.listener.nodeLoaded();
-                }
-
+                handleEntry( processor, result, tarInputStream );
                 entry = tarInputStream.getNextTarEntry();
             }
 
@@ -173,6 +158,33 @@ public class FileDumpReader
         return file.exists() && file.isDirectory() && !file.isHidden();
     }
 
+
+    private File getDumpFile( final RepositoryId repositoryId, final Branch branch )
+    {
+        final Path metaPath = createMetaPath( this.dumpDirectory, repositoryId, branch );
+        final File tarFile = metaPath.toFile();
+
+        if ( !tarFile.exists() )
+        {
+            throw new RepoDumpException( "File doesnt " + metaPath + " exists" );
+        }
+        return tarFile;
+    }
+
+    private void handleEntry( final LineProcessor<EntryLoadResult> processor, final BranchLoadResult.Builder result,
+                              final TarArchiveInputStream tarInputStream )
+        throws IOException
+    {
+        String content = readEntry( tarInputStream );
+        processor.processLine( content );
+        reportEntry( processor, result );
+
+        if ( this.listener != null )
+        {
+            this.listener.nodeLoaded();
+        }
+    }
+
     private String readEntry( final TarArchiveInputStream tarInputStream )
         throws IOException
     {
@@ -188,6 +200,14 @@ public class FileDumpReader
         return entryAsByteStream.toString( StandardCharsets.UTF_8.name() );
     }
 
+    private void reportEntry( final LineProcessor<EntryLoadResult> processor, final BranchLoadResult.Builder result )
+    {
+        final EntryLoadResult entryResult = processor.getResult();
+        result.addedNode();
+        result.addedVersions( entryResult.getVersions() );
+        entryResult.getErrors().forEach( ( error ) -> result.error( LoadError.error( error.getMessage() ) ) );
+    }
+
     @Override
     public NodeVersion get( final NodeVersionId nodeVersionId )
     {
@@ -196,7 +216,7 @@ public class FileDumpReader
 
         if ( record == null )
         {
-            throw new RepoDumpException( "Cannot find referred version id " + nodeVersionId + " in dump" );
+            throw new RepoLoadException( "Cannot find referred version id " + nodeVersionId + " in dump" );
         }
 
         return this.factory.create( record.getBytes() );
@@ -209,7 +229,7 @@ public class FileDumpReader
 
         if ( record == null )
         {
-            throw new RepoDumpException( "Cannot find referred blob id " + blobKey + " in dump" );
+            throw new RepoLoadException( "Cannot find referred blob id " + blobKey + " in dump" );
         }
 
         return record.getBytes();

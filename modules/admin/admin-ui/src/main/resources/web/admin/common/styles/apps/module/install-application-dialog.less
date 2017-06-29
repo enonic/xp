@@ -9,20 +9,23 @@
     height: 2em;
   }
 
-  .market-app-panel, .slick-viewport {
-
+  .market-app-panel-wrapper {
     max-height: 540px;
+    overflow-y: auto;
 
-    @media screen and (max-height: 720px) {
-      max-height: 380px;
-    }
+    .market-app-panel, .slick-viewport {
 
-    @media screen and (max-height: 540px) {
-      max-height: 200px;
-    }
+      @media screen and (max-height: 720px) {
+        max-height: 380px;
+      }
 
-    @media screen and (max-height: 360px) {
-      max-height: 60px;
+      @media screen and (max-height: 540px) {
+        max-height: 200px;
+      }
+
+      @media screen and (max-height: 360px) {
+        max-height: 60px;
+      }
     }
   }
 
@@ -150,7 +153,6 @@
         .install, .update {
           cursor: pointer !important;
           font-size: 16px;
-          padding: 0px 15px;
         }
         .install {
           &:hover, &:focus {

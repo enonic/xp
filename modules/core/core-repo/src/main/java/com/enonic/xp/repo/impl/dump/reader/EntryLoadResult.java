@@ -1,12 +1,19 @@
 package com.enonic.xp.repo.impl.dump.reader;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 public class EntryLoadResult
 {
     private final long versions;
 
+    private final List<EntryLoadError> errors;
+
     private EntryLoadResult( final Builder builder )
     {
-        versions = builder.versions;
+        this.versions = builder.versions;
+        this.errors = builder.errors;
     }
 
     public long getVersions()
@@ -19,9 +26,16 @@ public class EntryLoadResult
         return new Builder();
     }
 
+    public List<EntryLoadError> getErrors()
+    {
+        return errors;
+    }
+
     public static final class Builder
     {
         private long versions = 0L;
+
+        private final List<EntryLoadError> errors = Lists.newArrayList();
 
         private Builder()
         {
@@ -30,6 +44,12 @@ public class EntryLoadResult
         public Builder addedVersion()
         {
             this.versions++;
+            return this;
+        }
+
+        public Builder error( EntryLoadError error )
+        {
+            this.errors.add( error );
             return this;
         }
 
