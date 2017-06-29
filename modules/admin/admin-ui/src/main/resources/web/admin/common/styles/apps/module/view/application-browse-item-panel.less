@@ -1,0 +1,35 @@
+.application-browse-item-panel {
+
+  .application-item-statistics-panel-back-button {
+    .icon-trending_neutral();
+    display: none;
+    font-size: 20px;
+    transform: rotate(90deg);
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    cursor: pointer;
+  }
+}
+
+body._360-540, body._240-360, body._0-240 {
+
+  .application-browse-item-panel {
+    top: 100%;
+    background-color: @admin-white;
+    position: fixed !important;
+    height: inherit !important;
+    display: inherit !important;
+    .transition(top 0.3s linear);
+
+    &:not(.no-selection):not(.hidden) {
+      z-index: 2502;
+      top: 0%;
+
+      .application-item-statistics-panel-back-button {
+        display: block;
+      }
+    }
+  }
+
+}
