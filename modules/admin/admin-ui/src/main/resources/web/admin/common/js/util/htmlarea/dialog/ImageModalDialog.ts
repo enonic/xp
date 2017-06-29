@@ -13,6 +13,7 @@ module api.util.htmlarea.dialog {
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
     import ContentSummary = api.content.ContentSummary;
     import Content = api.content.Content;
+    import Option = api.ui.selector.Option;
 
     export class ImageModalDialog extends ModalDialog {
 
@@ -581,6 +582,11 @@ module api.util.htmlarea.dialog {
                 let scaleOption = ImageCroppingOptions.getOptionByProportion(scaleParamValue);
                 if (!!scaleOption) {
                     imageCroppingSelector.selectOption(imageCroppingSelector.getOptionByValue(scaleOption.getName()));
+                } else {
+                    const customOption: Option<ImageCroppingOption> = imageCroppingSelector.addCustomScaleOption(scaleParamValue);
+                    if (!!customOption) {
+                        imageCroppingSelector.selectOption(customOption);
+                    }
                 }
             }
         }
