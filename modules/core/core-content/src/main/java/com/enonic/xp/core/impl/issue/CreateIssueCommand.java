@@ -152,7 +152,7 @@ public class CreateIssueCommand
                 parent( IssueConstants.ISSUE_ROOT_PATH ).
                 data( contentAsData ).
                 indexConfigDocument( indexConfigDocument ).
-                permissions( IssueConstants.ACCESS_CONTROL_ENTRIES ).
+                inheritPermissions( true ).
                 childOrder( IssueConstants.DEFAULT_CHILD_ORDER ).
                 nodeType( IssueConstants.ISSUE_NODE_COLLECTION );
 
