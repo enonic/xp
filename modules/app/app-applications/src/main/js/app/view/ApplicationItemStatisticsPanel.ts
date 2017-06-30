@@ -13,6 +13,7 @@ import ApplicationKey = api.application.ApplicationKey;
 import Application = api.application.Application;
 import MacroDescriptor = api.macro.MacroDescriptor;
 import i18n = api.util.i18n;
+import DivEl = api.dom.DivEl;
 
 export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsPanel<api.application.Application> {
 
@@ -22,12 +23,22 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
     constructor() {
         super('application-item-statistics-panel');
 
+        this.addActionMenu();
+        this.addApplicationDataContainer();
+    }
+
+    private addActionMenu() {
         this.actionMenu =
             new api.ui.menu.ActionMenu(i18n('action.stopped'), ApplicationBrowseActions.get().START_APPLICATION,
                 ApplicationBrowseActions.get().STOP_APPLICATION);
 
-        this.appendChild(this.actionMenu);
+        const actionMenuWrapper: DivEl = new DivEl('action-menu-wrapper');
+        actionMenuWrapper.appendChild(this.actionMenu);
 
+        this.appendChild(actionMenuWrapper);
+    }
+
+    private addApplicationDataContainer() {
         this.applicationDataContainer = new api.dom.DivEl('application-data-container');
         this.appendChild(this.applicationDataContainer);
     }
