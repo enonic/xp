@@ -3,13 +3,13 @@ package com.enonic.xp.repo.impl.branch.storage;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.elasticsearch.common.Strings;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
@@ -28,9 +28,8 @@ import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResult;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
+import com.enonic.xp.repo.impl.cache.BranchCachePath;
 import com.enonic.xp.repo.impl.cache.BranchPath;
-import com.enonic.xp.repo.impl.cache.PathCache;
-import com.enonic.xp.repo.impl.cache.PathCacheImpl;
 import com.enonic.xp.repo.impl.search.SearchDao;
 import com.enonic.xp.repo.impl.search.SearchRequest;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
@@ -53,7 +52,7 @@ public class BranchServiceImpl
 
     private static final int BATCHED_EXECUTOR_LIMIT = 1000;
 
-    private final PathCache pathCache = new PathCacheImpl();
+    private final BranchCachePath pathCache = new BranchCachePath();
 
     private StorageDao storageDao;
 
@@ -75,14 +74,28 @@ public class BranchServiceImpl
         return doStore( nodeBranchEntry, context );
     }
 
-    private String doStore( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
+    private synchronized String doStore( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
     {
+        verifyNotExistingNodeWithOtherId( nodeBranchEntry, context );
+
         final StoreRequest storeRequest = BranchStorageRequestFactory.create( nodeBranchEntry, context );
+
         final String id = this.storageDao.store( storeRequest );
 
         doCache( context, nodeBranchEntry.getNodePath(), BranchDocumentId.from( id ) );
 
         return id;
+    }
+
+    private void verifyNotExistingNodeWithOtherId( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
+    {
+        final BranchDocumentId branchDocumentId = this.pathCache.get( createPath( nodeBranchEntry.getNodePath(), context ) );
+
+        if ( branchDocumentId != null &&
+            !branchDocumentId.equals( BranchDocumentId.from( nodeBranchEntry.getNodeId(), context.getBranch() ) ) )
+        {
+            throw new NodeAlreadyExistAtPathException( nodeBranchEntry.getNodePath() );
+        }
     }
 
     @Override
@@ -196,11 +209,12 @@ public class BranchServiceImpl
 
     private NodeBranchEntry doGetByPath( final NodePath nodePath, final InternalContext context )
     {
-        final String id = this.pathCache.get( new BranchPath( context.getRepositoryId(), context.getBranch(), nodePath ) );
+        final BranchDocumentId branchDocumentId =
+            this.pathCache.get( new BranchPath( context.getRepositoryId(), context.getBranch(), nodePath ) );
 
-        if ( id != null )
+        if ( branchDocumentId != null )
         {
-            final NodeId nodeId = createNodeId( id );
+            final NodeId nodeId = createNodeId( branchDocumentId );
             return doGetById( nodeId, context );
         }
 
@@ -236,16 +250,9 @@ public class BranchServiceImpl
         return null;
     }
 
-    private NodeId createNodeId( final String id )
+    private NodeId createNodeId( final BranchDocumentId id )
     {
-        final int branchSeparator = id.lastIndexOf( "_" );
-
-        if ( branchSeparator < 0 )
-        {
-            throw new StorageException( "Invalid BranchNodeId: " + id );
-        }
-
-        return NodeId.from( Strings.substring( id, 0, branchSeparator ) );
+        return id.getNodeId();
     }
 
     private void doCache( final InternalContext context, final NodePath nodePath, final NodeId nodeId )

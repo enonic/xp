@@ -9,13 +9,13 @@ import com.enonic.xp.repository.RepositoryId;
 
 import static org.junit.Assert.*;
 
-public class PathCacheImplTest
+public class BranchCachePathTest
 {
     @Test
     public void put()
         throws Exception
     {
-        final PathCacheImpl cache = new PathCacheImpl();
+        final BranchCachePath cache = new BranchCachePath();
 
         final CachePath a = createPath( "a" );
 
@@ -27,7 +27,7 @@ public class PathCacheImplTest
     public void remove()
         throws Exception
     {
-        final PathCacheImpl cache = new PathCacheImpl();
+        final BranchCachePath cache = new BranchCachePath();
 
         final CachePath a = createPath( "a" );
 
@@ -40,7 +40,7 @@ public class PathCacheImplTest
     public void update_entry()
         throws Exception
     {
-        final PathCacheImpl cache = new PathCacheImpl();
+        final BranchCachePath cache = new BranchCachePath();
 
         cache.cache( createPath( "/oldPath" ), BranchDocumentId.from( "1_draft" ) );
         cache.cache( createPath( "/newPath" ), BranchDocumentId.from( "1_draft" ) );
@@ -52,7 +52,7 @@ public class PathCacheImplTest
     public void update_entry_2()
         throws Exception
     {
-        final PathCacheImpl cache = new PathCacheImpl();
+        final BranchCachePath cache = new BranchCachePath();
 
         cache.cache( createPath( "/oldPath" ), BranchDocumentId.from( "1_draft" ) );
         cache.cache( createPath( "/oldPath" ), BranchDocumentId.from( "2_draft" ) );
@@ -66,7 +66,7 @@ public class PathCacheImplTest
     public void repo_separation()
         throws Exception
     {
-        final PathCacheImpl cache = new PathCacheImpl();
+        final BranchCachePath cache = new BranchCachePath();
 
         final CachePath repo1Path = createPath( "/myPath", RepositoryId.from( "repo1" ) );
         final CachePath repo2Path = createPath( "/myPath", RepositoryId.from( "repo2" ) );
