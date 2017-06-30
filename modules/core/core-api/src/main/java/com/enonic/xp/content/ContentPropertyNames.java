@@ -9,7 +9,7 @@ public class ContentPropertyNames
 {
     public static final String PAGE = "page";
 
-    public static final String PAGE_TEXT_COMPONENT_PROPERTY_PATH_PATTERN = "page.region.**.text";
+    public static final String PAGE_TEXT_COMPONENT_PROPERTY_PATH_PATTERN = "page.region.**.TextComponent.text";
 
     public static final String SITECONFIG = "siteconfig";
 
