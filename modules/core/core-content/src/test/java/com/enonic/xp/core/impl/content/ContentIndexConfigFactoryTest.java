@@ -151,8 +151,8 @@ public class ContentIndexConfigFactoryTest
 
         assertFalse( indexConfigDocument.getConfigForPath( PropertyPath.from( ContentPropertyNames.PAGE ) ).isEnabled() );
         assertFalse( indexConfigDocument.getConfigForPath(
-            PropertyPath.from( ContentPropertyNames.PAGE, "region", "component", "partcomponent", "template" ) ).isEnabled() );
+            PropertyPath.from( ContentPropertyNames.PAGE, "region", "component", "PartComponent", "template" ) ).isEnabled() );
         assertTrue( indexConfigDocument.getConfigForPath(
-            PropertyPath.from( ContentPropertyNames.PAGE, "region", "component", "textcomponent", "text" ) ).isEnabled() );
+            PropertyPath.from( ContentPropertyNames.PAGE, "region", "component", "TextComponent", "text" ) ).isEnabled() );
     }
 }

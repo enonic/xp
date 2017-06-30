@@ -84,6 +84,11 @@ public class IndexConfig
         return new Builder();
     }
 
+    public static Builder create( final IndexConfig source )
+    {
+        return new Builder( source );
+    }
+
     public boolean isDecideByType()
     {
         return decideByType;
@@ -191,6 +196,17 @@ public class IndexConfig
 
         private Builder()
         {
+        }
+
+        private Builder( final IndexConfig indexConfig )
+        {
+            this.decideByType = indexConfig.decideByType;
+            this.enabled = indexConfig.enabled;
+            this.nGram = indexConfig.nGram;
+            this.fulltext = indexConfig.fulltext;
+            this.includeInAllText = indexConfig.includeInAllText;
+            this.path = indexConfig.path;
+            this.indexValueProcessors.addAll( indexConfig.indexValueProcessors );
         }
 
         public Builder decideByType( boolean decideByType )

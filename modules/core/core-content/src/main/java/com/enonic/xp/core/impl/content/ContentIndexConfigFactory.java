@@ -7,6 +7,7 @@ import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
+import com.enonic.xp.index.IndexValueProcessors;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -30,7 +31,9 @@ import static com.enonic.xp.content.ContentPropertyNames.TYPE;
 
 class ContentIndexConfigFactory
 {
-
+    private final static IndexConfig TEXT_COMPONENT_INDEX_CONFIG = IndexConfig.create( IndexConfig.FULLTEXT ).
+        addIndexValueProcessor( IndexValueProcessors.HTML_STRIPPER ).
+        build();
 
     public static IndexConfigDocument create( final CreateContentTranslatorParams params, final ContentTypeService contentTypeService )
     {
@@ -53,7 +56,7 @@ class ContentIndexConfigFactory
             add( OWNER, IndexConfig.MINIMAL ).
             add( PAGE, IndexConfig.NONE ).
             add( PropertyPath.from( DATA, SITECONFIG, APPLICATION_KEY ), IndexConfig.MINIMAL ).
-            add( PAGE_TEXT_COMPONENT_PROPERTY_PATH_PATTERN, IndexConfig.FULLTEXT ).
+            add( PAGE_TEXT_COMPONENT_PROPERTY_PATH_PATTERN, TEXT_COMPONENT_INDEX_CONFIG ).
             add( PropertyPath.from( PAGE, "regions" ), IndexConfig.NONE ).
             add( SITE, IndexConfig.NONE ).
             add( DATA, IndexConfig.BY_TYPE ).
