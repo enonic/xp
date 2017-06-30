@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.branch.Branch;
 
 public class BranchLoadResult
+    implements LoadResult
 {
     private final Branch branch;
 

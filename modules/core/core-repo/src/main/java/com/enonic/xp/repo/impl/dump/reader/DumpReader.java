@@ -17,7 +17,9 @@ public interface DumpReader
 
     Branches getBranches( final RepositoryId repositoryId );
 
-    BranchLoadResult load( final RepositoryId repositoryId, final Branch branch, final LineProcessor<EntryLoadResult> processor );
+    BranchLoadResult loadBranch( final RepositoryId repositoryId, final Branch branch, final LineProcessor<EntryLoadResult> processor );
+
+    void loadVersions( final RepositoryId repositoryId, final LineProcessor<EntryLoadResult> processor );
 
     NodeVersion get( final NodeVersionId nodeVersionId );
 

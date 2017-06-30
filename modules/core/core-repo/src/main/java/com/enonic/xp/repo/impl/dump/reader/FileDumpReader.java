@@ -23,7 +23,6 @@ import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.dump.BranchLoadResult;
-import com.enonic.xp.dump.LoadError;
 import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
@@ -120,36 +119,61 @@ public class FileDumpReader
     }
 
     @Override
-    public BranchLoadResult load( final RepositoryId repositoryId, final Branch branch, final LineProcessor<EntryLoadResult> processor )
+    public BranchLoadResult loadBranch( final RepositoryId repositoryId, final Branch branch,
+                                        final LineProcessor<EntryLoadResult> processor )
     {
         final BranchLoadResult.Builder result = BranchLoadResult.create( branch );
-        final File tarFile = getDumpFile( repositoryId, branch );
+        final File tarFile = getBranchEntriesFile( repositoryId, branch );
 
         if ( this.listener != null )
         {
             this.listener.loadingBranch( repositoryId, branch );
         }
 
+        doLoadEntries( processor, tarFile );
+
+        return result.build();
+    }
+
+    @Override
+    public void loadVersions( final RepositoryId repositoryId, final LineProcessor<EntryLoadResult> processor )
+    {
+        final File tarFile = getVersionsFile( repositoryId );
+
+        if ( this.listener != null )
+        {
+            this.listener.loadingVersions( repositoryId );
+        }
+
+        doLoadEntries( processor, tarFile );
+    }
+
+    private void doLoadEntries( final LineProcessor<EntryLoadResult> processor, final File tarFile )
+    {
         try
         {
-            final FileInputStream fileInputStream = new FileInputStream( tarFile );
-            final GZIPInputStream gzipInputStream = new GZIPInputStream( fileInputStream );
-            final TarArchiveInputStream tarInputStream = new TarArchiveInputStream( gzipInputStream );
+            final TarArchiveInputStream tarInputStream = openStream( tarFile );
 
             TarArchiveEntry entry = tarInputStream.getNextTarEntry();
 
             while ( entry != null )
             {
-                handleEntry( processor, result, tarInputStream );
+                handleEntry( processor, tarInputStream );
                 entry = tarInputStream.getNextTarEntry();
             }
-
-            return result.build();
         }
         catch ( IOException e )
         {
             throw new RepoDumpException( "Cannot read meta-data", e );
         }
+    }
+
+    private TarArchiveInputStream openStream( final File tarFile )
+        throws IOException
+    {
+        final FileInputStream fileInputStream = new FileInputStream( tarFile );
+        final GZIPInputStream gzipInputStream = new GZIPInputStream( fileInputStream );
+        return new TarArchiveInputStream( gzipInputStream );
     }
 
     private boolean isValidDumpDataDirectory( final Path folder )
@@ -158,10 +182,20 @@ public class FileDumpReader
         return file.exists() && file.isDirectory() && !file.isHidden();
     }
 
-
-    private File getDumpFile( final RepositoryId repositoryId, final Branch branch )
+    private File getBranchEntriesFile( final RepositoryId repositoryId, final Branch branch )
     {
-        final Path metaPath = createMetaPath( this.dumpDirectory, repositoryId, branch );
+        final Path metaPath = createBranchMetaPath( this.dumpDirectory, repositoryId, branch );
+        return doGetFile( metaPath );
+    }
+
+    private File getVersionsFile( final RepositoryId repositoryId )
+    {
+        final Path metaPath = createVersionMetaPath( this.dumpDirectory, repositoryId );
+        return doGetFile( metaPath );
+    }
+
+    private File doGetFile( final Path metaPath )
+    {
         final File tarFile = metaPath.toFile();
 
         if ( !tarFile.exists() )
@@ -171,13 +205,12 @@ public class FileDumpReader
         return tarFile;
     }
 
-    private void handleEntry( final LineProcessor<EntryLoadResult> processor, final BranchLoadResult.Builder result,
-                              final TarArchiveInputStream tarInputStream )
+    private void handleEntry( final LineProcessor<EntryLoadResult> processor, final TarArchiveInputStream tarInputStream )
         throws IOException
     {
         String content = readEntry( tarInputStream );
         processor.processLine( content );
-        reportEntry( processor, result );
+        reportEntry( processor );
 
         if ( this.listener != null )
         {
@@ -200,12 +233,11 @@ public class FileDumpReader
         return entryAsByteStream.toString( StandardCharsets.UTF_8.name() );
     }
 
-    private void reportEntry( final LineProcessor<EntryLoadResult> processor, final BranchLoadResult.Builder result )
+    private void reportEntry( final LineProcessor<EntryLoadResult> processor )
     {
-        final EntryLoadResult entryResult = processor.getResult();
-        result.addedNode();
-        result.addedVersions( entryResult.getVersions() );
-        entryResult.getErrors().forEach( ( error ) -> result.error( LoadError.error( error.getMessage() ) ) );
+        // final EntryLoadResult entryResult = processor.getResult();
+        // result.addedNode();
+        // entryResult.getErrors().forEach( ( error ) -> result.error( LoadError.error( error.getMessage() ) ) );
     }
 
     @Override

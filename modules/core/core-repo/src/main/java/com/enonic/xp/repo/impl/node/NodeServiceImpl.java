@@ -809,7 +809,7 @@ public class NodeServiceImpl
     @Override
     public void importNodeVersion( final ImportNodeVersionParams params )
     {
-        verifyContext();
+        verifyRepositoryExists();
 
         LoadNodeVersionCommand.create().
             nodeId( params.getNodeId() ).
@@ -826,6 +826,19 @@ public class NodeServiceImpl
     private void verifyContext()
     {
         verifyBranchExists( ContextAccessor.current().getBranch() );
+    }
+
+    private void verifyRepositoryExists()
+    {
+        NodeHelper.runAsAdmin( () -> {
+            final RepositoryId repoId = ContextAccessor.current().
+                getRepositoryId();
+            final Repository repository = this.repositoryService.get( repoId );
+            if ( repository == null )
+            {
+                throw new RepositoryNotFoundException( repoId );
+            }
+        } );
     }
 
     private void verifyBranchExists( Branch branch )

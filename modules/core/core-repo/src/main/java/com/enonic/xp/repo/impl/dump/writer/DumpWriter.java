@@ -2,22 +2,27 @@ package com.enonic.xp.repo.impl.dump.writer;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.repo.impl.dump.model.DumpEntry;
+import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
+import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 import com.enonic.xp.repository.RepositoryId;
 
 public interface DumpWriter
 {
-    void writeDumpMeta( final DumpMeta dumpMeta );
+    void writeDumpMetaData( final DumpMeta dumpMeta );
 
-    void open( final RepositoryId repositoryId, final Branch branch );
+    void openBranchMeta( final RepositoryId repositoryId, final Branch branch );
+
+    void openVersionsMeta( final RepositoryId repositoryId );
 
     void close();
 
-    void writeMetaData( final DumpEntry dumpEntry );
+    void writeBranchEntry( final BranchDumpEntry branchDumpEntry );
 
-    void writeVersion( final NodeVersionId nodeVersionId );
+    void writeVersionsEntry( final VersionsDumpEntry versionsDumpEntry );
 
-    void writeBinary( final String key );
+    void writeVersionBlob( final NodeVersionId nodeVersionId );
+
+    void writeBinaryBlob( final String key );
 
 }

@@ -64,7 +64,7 @@ public class NodeStorageServiceImpl
     @Override
     public Node load( final Node node, final InternalContext context )
     {
-        final NodeVersion nodeVersions = NodeVersion.create().
+        final NodeVersion nodeVersion = NodeVersion.create().
             id( node.id() ).
             nodeType( node.getNodeType() ).
             data( node.data() ).
@@ -77,7 +77,7 @@ public class NodeStorageServiceImpl
             timestamp( node.getTimestamp() ).
             build();
 
-        final NodeVersionId nodeVersionId = nodeVersionService.store( nodeVersions );
+        final NodeVersionId nodeVersionId = nodeVersionService.store( nodeVersion );
 
         storeVersionMetadata( node, context, nodeVersionId );
 
