@@ -215,7 +215,7 @@ public class BranchServiceImpl
 
         if ( branchDocumentId != null )
         {
-            return getFromCache( nodePath, context, id );
+            return getFromCache( nodePath, context, branchDocumentId );
         }
 
         final NodeBranchQuery query = NodeBranchQuery.create().
@@ -250,10 +250,9 @@ public class BranchServiceImpl
         return null;
     }
 
-    private NodeBranchEntry getFromCache( final NodePath nodePath, final InternalContext context, final String id )
+    private NodeBranchEntry getFromCache( final NodePath nodePath, final InternalContext context, final BranchDocumentId branchDocumentId )
     {
-        final NodeId nodeId = createNodeId( id );
-        final NodeBranchEntry nodeBranchEntry = doGetById( nodeId, context );
+        final NodeBranchEntry nodeBranchEntry = doGetById( branchDocumentId.getNodeId(), context );
 
         if ( nodeBranchEntry == null )
         {
@@ -261,12 +260,6 @@ public class BranchServiceImpl
         }
 
         return nodeBranchEntry;
-    }
-
-    private NodeId createNodeId( final String id )
-    private NodeId createNodeId( final BranchDocumentId id )
-    {
-        return id.getNodeId();
     }
 
     private void doCache( final InternalContext context, final NodePath nodePath, final NodeId nodeId )

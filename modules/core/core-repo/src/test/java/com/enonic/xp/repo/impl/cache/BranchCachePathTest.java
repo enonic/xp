@@ -19,8 +19,9 @@ public class BranchCachePathTest
 
         final CachePath a = createPath( "a" );
 
-        cache.cache( a, BranchDocumentId.from( "_1_draft" ) );
-        assertEquals( "_1_draft", cache.get( a ) );
+        final BranchDocumentId documentId = BranchDocumentId.from( "_1_draft" );
+        cache.cache( a, documentId );
+        assertEquals( documentId, cache.get( a ) );
     }
 
     @Test
@@ -31,7 +32,8 @@ public class BranchCachePathTest
 
         final CachePath a = createPath( "a" );
 
-        cache.cache( a, BranchDocumentId.from( "1_draft" ) );
+        final BranchDocumentId documentId = BranchDocumentId.from( "1_draft" );
+        cache.cache( a, documentId );
         cache.evict( a );
         assertNull( cache.get( a ) );
     }
@@ -42,10 +44,11 @@ public class BranchCachePathTest
     {
         final BranchCachePath cache = new BranchCachePath();
 
-        cache.cache( createPath( "/oldPath" ), BranchDocumentId.from( "1_draft" ) );
-        cache.cache( createPath( "/newPath" ), BranchDocumentId.from( "1_draft" ) );
+        final BranchDocumentId documentId = BranchDocumentId.from( "1_draft" );
+        cache.cache( createPath( "/oldPath" ), documentId );
+        cache.cache( createPath( "/newPath" ), documentId );
 
-        assertEquals( "1_draft", cache.get( createPath( "/newPath" ) ) );
+        assertEquals( documentId, cache.get( createPath( "/newPath" ) ) );
     }
 
     @Test
@@ -54,12 +57,14 @@ public class BranchCachePathTest
     {
         final BranchCachePath cache = new BranchCachePath();
 
-        cache.cache( createPath( "/oldPath" ), BranchDocumentId.from( "1_draft" ) );
-        cache.cache( createPath( "/oldPath" ), BranchDocumentId.from( "2_draft" ) );
-        cache.cache( createPath( "/newPath" ), BranchDocumentId.from( "1_draft" ) );
+        final BranchDocumentId id1 = BranchDocumentId.from( "1_draft" );
+        final BranchDocumentId id2 = BranchDocumentId.from( "2_draft" );
+        cache.cache( createPath( "/oldPath" ), id1 );
+        cache.cache( createPath( "/oldPath" ), id2 );
+        cache.cache( createPath( "/newPath" ), id1 );
 
-        assertEquals( "2_draft", cache.get( createPath( "/oldPath" ) ) );
-        assertEquals( "1_draft", cache.get( createPath( "/newPath" ) ) );
+        assertEquals( id2, cache.get( createPath( "/oldPath" ) ) );
+        assertEquals( id1, cache.get( createPath( "/newPath" ) ) );
     }
 
     @Test
@@ -70,11 +75,13 @@ public class BranchCachePathTest
 
         final CachePath repo1Path = createPath( "/myPath", RepositoryId.from( "repo1" ) );
         final CachePath repo2Path = createPath( "/myPath", RepositoryId.from( "repo2" ) );
-        cache.cache( repo1Path, BranchDocumentId.from( "1_fisk" ) );
-        cache.cache( repo2Path, BranchDocumentId.from( "2_fisk" ) );
+        final BranchDocumentId id1 = BranchDocumentId.from( "1_fisk" );
+        final BranchDocumentId id2 = BranchDocumentId.from( "2_fisk" );
+        cache.cache( repo1Path, id1 );
+        cache.cache( repo2Path, id2 );
 
-        assertEquals( "1_fisk", cache.get( repo1Path ) );
-        assertEquals( "2_fisk", cache.get( repo2Path ) );
+        assertEquals( id1, cache.get( repo1Path ) );
+        assertEquals( id2, cache.get( repo2Path ) );
     }
 
     private CachePath createPath( final String path )
