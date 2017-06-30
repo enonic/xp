@@ -69,13 +69,13 @@ public class ContentPathTest
     }
 
     @Test
-    public void getParentPath_deep()
+    public void getAncestorPath()
         throws Exception
     {
-        assertEquals(  ContentPath.from( "/a/b" ), ContentPath.from( "/a/b/c" ).getParentPath(1) );
-        assertEquals(  ContentPath.from( "/a" ), ContentPath.from( "/a/b/c" ).getParentPath(2) );
-        assertEquals(  ContentPath.from( "/" ), ContentPath.from( "/a/b/c" ).getParentPath(3) );
-        assertEquals(  null, ContentPath.from( "/a/b/c" ).getParentPath(4) );
+        assertEquals(  ContentPath.from( "/a/b" ), ContentPath.from( "/a/b/c" ).getAncestorPath(1) );
+        assertEquals(  ContentPath.from( "/a" ), ContentPath.from( "/a/b/c" ).getAncestorPath(2) );
+        assertEquals(  ContentPath.from( "/" ), ContentPath.from( "/a/b/c" ).getAncestorPath(3) );
+        assertEquals(  null, ContentPath.from( "/a/b/c" ).getAncestorPath(4) );
     }
 
     @Test

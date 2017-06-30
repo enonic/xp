@@ -119,11 +119,6 @@ public final class ContentPaths
         return new ContentPaths( ImmutableSet.copyOf( paths ) );
     }
 
-    public static ContentPaths from( final Stream<ContentPath> paths )
-    {
-        return from( paths.collect( Collectors.toSet() ) );
-    }
-
     private static ImmutableSet<ContentPath> parsePaths( final String... paths )
     {
         final Collection<String> list = Lists.newArrayList( paths );

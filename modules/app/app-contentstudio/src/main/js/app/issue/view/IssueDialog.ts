@@ -138,7 +138,7 @@ export abstract class IssueDialog extends DependantItemsDialog {
 
     private addNewItemsHandler(items: ContentSummary[]) {
         this.newItems = this.newItems.concat(items);
-        this.debouncedAddItems(this.newItems);
+        this.debouncedAddItems();
     }
 
     private initForm() {

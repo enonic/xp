@@ -61,10 +61,10 @@ public final class ContentPath
 
     public ContentPath getParentPath()
     {
-        return getParentPath(1);
+        return getAncestorPath(1);
     }
 
-    public ContentPath getParentPath( final Integer deep )
+    public ContentPath getAncestorPath( final Integer deep )
     {
         if ( this.elements.size() < 1 )
         {
