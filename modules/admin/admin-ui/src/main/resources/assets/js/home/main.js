@@ -14,12 +14,14 @@ $(function () {
     var xptour = require('./xptour');
     var tourDialog = xptour.init();
 
-    var enonicXPTourCookie = api.util.CookieHelper.getCookie("enonic_xp_tour");
-    if (!enonicXPTourCookie) {
-        api.util.CookieHelper.setCookie("enonic_xp_tour", "tour", 365);
-        setTimeout(function () {
-            tourDialog.open();
-        }, 100);
+    if (CONFIG.tourEnabled) {
+        var enonicXPTourCookie = api.util.CookieHelper.getCookie("enonic_xp_tour");
+        if (!enonicXPTourCookie) {
+            api.util.CookieHelper.setCookie("enonic_xp_tour", "tour", 365);
+            setTimeout(function () {
+                tourDialog.open();
+            }, 100);
+        }
     }
 
     document.querySelector(".xp-tour").addEventListener("click", function () {
