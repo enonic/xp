@@ -56,7 +56,7 @@ class RepoLoader
     {
         final RepoLoadResult.Builder loadResult = RepoLoadResult.create( this.repositoryId );
 
-        getBranches().forEach( ( branch ) -> setContext( branch ).runWith( () -> doExecute( loadResult ) ) );
+        getBranches().forEach( branch -> setContext( branch ).runWith( () -> doExecute( loadResult ) ) );
 
         if ( this.includeVersions )
         {
@@ -91,6 +91,11 @@ class RepoLoader
         result.add( branchLoadResult );
     }
 
+    private void loadVersions( final RepoLoadResult.Builder result )
+    {
+        result.versions( this.reader.loadVersions( repositoryId, this.versionEntryProcessor ) );
+    }
+
     private void verifyOrCreateBranch( final Branch branch )
     {
         final Repository currentRepo = this.repositoryService.get( this.repositoryId );
@@ -101,11 +106,6 @@ class RepoLoader
         }
 
         this.repositoryService.createBranch( CreateBranchParams.from( branch ) );
-    }
-
-    private void loadVersions( final RepoLoadResult.Builder result )
-    {
-        this.reader.loadVersions( repositoryId, this.versionEntryProcessor );
     }
 
     public static Builder create()

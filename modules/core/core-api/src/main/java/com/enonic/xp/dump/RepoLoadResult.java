@@ -13,14 +13,17 @@ public class RepoLoadResult
 {
     private final List<BranchLoadResult> branchResults;
 
+    private final VersionsLoadResult versionsLoadResult;
+
     private final RepositoryId repositoryId;
 
     private final Duration duration;
 
     private RepoLoadResult( final Builder builder )
     {
-        branchResults = builder.branchResults;
-        repositoryId = builder.repositoryId;
+        this.branchResults = builder.branchResults;
+        this.repositoryId = builder.repositoryId;
+        this.versionsLoadResult = builder.versionsLoadResult;
         this.duration = Duration.ofMillis( builder.endTime - builder.startTime );
     }
 
@@ -30,19 +33,27 @@ public class RepoLoadResult
         return this.branchResults.iterator();
     }
 
+    @SuppressWarnings("unused")
     public List<BranchLoadResult> getBranchResults()
     {
         return branchResults;
     }
 
+    @SuppressWarnings("unused")
     public RepositoryId getRepositoryId()
     {
         return repositoryId;
     }
 
+    @SuppressWarnings("unused")
     public Duration getDuration()
     {
         return duration;
+    }
+
+    public VersionsLoadResult getVersionsLoadResult()
+    {
+        return versionsLoadResult;
     }
 
     public static Builder create( final RepositoryId repositoryId )
@@ -55,6 +66,8 @@ public class RepoLoadResult
         private final List<BranchLoadResult> branchResults = Lists.newArrayList();
 
         private final RepositoryId repositoryId;
+
+        private VersionsLoadResult versionsLoadResult = VersionsLoadResult.create().build();
 
         private final Long startTime;
 
@@ -69,6 +82,12 @@ public class RepoLoadResult
         public Builder add( final BranchLoadResult val )
         {
             branchResults.add( val );
+            return this;
+        }
+
+        public Builder versions( final VersionsLoadResult val )
+        {
+            versionsLoadResult = val;
             return this;
         }
 

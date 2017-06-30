@@ -64,7 +64,7 @@ public class VersionEntryProcessor
                 build() );
 
             validateOrAddBinary( nodeVersion, result );
-            result.addedVersion();
+            result.successful();
         }
     }
 

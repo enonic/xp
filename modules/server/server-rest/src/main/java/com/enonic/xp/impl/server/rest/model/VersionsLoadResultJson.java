@@ -3,30 +3,26 @@ package com.enonic.xp.impl.server.rest.model;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.enonic.xp.dump.BranchLoadResult;
+import com.enonic.xp.dump.VersionsLoadResult;
 
-public class BranchLoadResultJson
+public class VersionsLoadResultJson
 {
-    private final String branch;
-
     private final Long successful;
 
     private final String duration;
 
     private final List<LoadErrorJson> errors;
 
-    private BranchLoadResultJson( final Builder builder )
+    private VersionsLoadResultJson( final Builder builder )
     {
-        branch = builder.branch;
         successful = builder.successful;
         duration = builder.duration;
         errors = builder.errorList;
     }
 
-    public static BranchLoadResultJson from( final BranchLoadResult result )
+    public static VersionsLoadResultJson from( final VersionsLoadResult result )
     {
-        return BranchLoadResultJson.create().
-            branch( result.getBranch().toString() ).
+        return VersionsLoadResultJson.create().
             duration( result.getDuration().toString() ).
             successful( result.getSuccessful() ).
             errors( result.getErrors().stream().map( LoadErrorJson::from ).collect( Collectors.toList() ) ).
@@ -34,17 +30,10 @@ public class BranchLoadResultJson
     }
 
     @SuppressWarnings("unused")
-    public String getBranch()
-    {
-        return branch;
-    }
-
-    @SuppressWarnings("unused")
     public Long getSuccessful()
     {
         return successful;
     }
-
 
     @SuppressWarnings("unused")
     public String getDuration()
@@ -65,8 +54,6 @@ public class BranchLoadResultJson
 
     public static final class Builder
     {
-        private String branch;
-
         private Long successful;
 
         private String duration;
@@ -75,12 +62,6 @@ public class BranchLoadResultJson
 
         private Builder()
         {
-        }
-
-        public Builder branch( final String val )
-        {
-            branch = val;
-            return this;
         }
 
         public Builder successful( final Long val )
@@ -101,9 +82,11 @@ public class BranchLoadResultJson
             return this;
         }
 
-        public BranchLoadResultJson build()
+        public VersionsLoadResultJson build()
         {
-            return new BranchLoadResultJson( this );
+            return new VersionsLoadResultJson( this );
         }
     }
+
+
 }
