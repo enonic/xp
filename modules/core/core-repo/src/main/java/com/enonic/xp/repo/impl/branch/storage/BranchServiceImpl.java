@@ -15,6 +15,7 @@ import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
+import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.query.filter.IdFilter;
@@ -200,8 +201,7 @@ public class BranchServiceImpl
 
         if ( id != null )
         {
-            final NodeId nodeId = createNodeId( id );
-            return doGetById( nodeId, context );
+            return getFromCache( nodePath, context, id );
         }
 
         final NodeBranchQuery query = NodeBranchQuery.create().
@@ -234,6 +234,19 @@ public class BranchServiceImpl
         }
 
         return null;
+    }
+
+    private NodeBranchEntry getFromCache( final NodePath nodePath, final InternalContext context, final String id )
+    {
+        final NodeId nodeId = createNodeId( id );
+        final NodeBranchEntry nodeBranchEntry = doGetById( nodeId, context );
+
+        if ( nodeBranchEntry == null )
+        {
+            throw new NodeNotFoundException( "Node with path [" + nodePath + "] found in path-cache but not in storage" );
+        }
+
+        return nodeBranchEntry;
     }
 
     private NodeId createNodeId( final String id )

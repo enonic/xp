@@ -3,7 +3,9 @@ package com.enonic.xp.repo.impl.repository;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
@@ -13,6 +15,7 @@ import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.DeleteBranchParams;
+import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKey;
@@ -20,6 +23,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStoreKey;
+import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
@@ -105,10 +109,39 @@ public class RepositoryServiceImplTest
         assertNull( getNode( myNode.id() ) );
     }
 
+    @Test
+    public void deleting_repo_invalidates_path_cache()
+        throws Exception
+    {
+        final Repository repo = doCreateRepo( "fisk" );
+
+        ContextBuilder.from( ContextAccessor.current() ).
+            repositoryId( repo.getId() ).
+            branch( Branch.from( "master" ) ).
+            build().
+            runWith( () -> createNode( NodePath.ROOT, "fisk" ) );
+
+        ADMIN_CONTEXT.callWith( () -> this.repositoryService.deleteRepository( DeleteRepositoryParams.from( repo.getId() ) ) );
+
+        final Repository repoRecreated = doCreateRepo( "fisk" );
+
+        ContextBuilder.from( ContextAccessor.current() ).
+            repositoryId( repoRecreated.getId() ).
+            branch( Branch.from( "master" ) ).
+            build().
+            runWith( () -> createNode( NodePath.ROOT, "fisk" ) );
+    }
+
     private Repository doCreateRepo( final String id )
     {
         return ADMIN_CONTEXT.callWith( () -> this.repositoryService.createRepository( CreateRepositoryParams.create().
             repositoryId( RepositoryId.from( id ) ).
+            rootPermissions( AccessControlList.create().
+                add( AccessControlEntry.create().
+                    principal( TEST_DEFAULT_USER.getKey() ).
+                    allowAll().
+                    build() ).
+                build() ).
             build() ) );
     }
 }
