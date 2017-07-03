@@ -81,9 +81,7 @@ export abstract class SchedulableDialog extends ProgressBarDialog {
     }
 
     protected updateShowScheduleDialogButton() {
-        const scheduleMenuItem = this.getButtonRow().getActionMenu().getMenuItem(this.showScheduleAction);
-
-        scheduleMenuItem.setEnabled(this.isScheduleButtonAllowed());
+        this.showScheduleAction.setEnabled(this.isScheduleButtonAllowed());
     }
 
     getButtonRow(): DropdownButtonRow {
