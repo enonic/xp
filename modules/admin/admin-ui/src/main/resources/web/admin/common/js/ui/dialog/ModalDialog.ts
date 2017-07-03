@@ -117,6 +117,10 @@ module api.ui.dialog {
             this.handleFocusInOutEvents();
         }
 
+        isVisible() {
+            return super.isVisible() && !this.hasClass('masked');
+        }
+        
         private handleClickOutsideDialog() {
             const mouseClickListener: (event: MouseEvent) => void = (event: MouseEvent) => {
                 const noConfirmationDialog = !this.confirmationDialog || !this.confirmationDialog.isVisible();
