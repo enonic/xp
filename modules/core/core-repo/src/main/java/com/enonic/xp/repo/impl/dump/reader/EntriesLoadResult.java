@@ -6,19 +6,19 @@ import com.google.common.collect.Lists;
 
 public class EntriesLoadResult
 {
-    private final long entriesLoaded;
+    private final long successful;
 
     private final List<EntryLoadError> errors;
 
     private EntriesLoadResult( final Builder builder )
     {
-        entriesLoaded = builder.entriesLoaded;
+        successful = builder.successful;
         errors = builder.errors;
     }
 
-    public long getEntriesLoaded()
+    public long getSuccessful()
     {
-        return entriesLoaded;
+        return successful;
     }
 
     public List<EntryLoadError> getErrors()
@@ -33,7 +33,7 @@ public class EntriesLoadResult
 
     public static final class Builder
     {
-        private long entriesLoaded;
+        private long successful;
 
         private final List<EntryLoadError> errors = Lists.newArrayList();
 
@@ -41,15 +41,10 @@ public class EntriesLoadResult
         {
         }
 
-        public Builder entriesLoaded( final long val )
+        public Builder add( final EntryLoadResult val )
         {
-            entriesLoaded = val;
-            return this;
-        }
-
-        public Builder errors( final List<EntryLoadError> val )
-        {
-            errors.addAll( val );
+            this.successful += val.getSuccessful();
+            this.errors.addAll( val.getErrors() );
             return this;
         }
 

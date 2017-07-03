@@ -85,9 +85,7 @@ class RepoLoader
     {
         final Branch currentBranch = ContextAccessor.current().getBranch();
         verifyOrCreateBranch( currentBranch );
-
         final BranchLoadResult branchLoadResult = this.reader.loadBranch( repositoryId, currentBranch, this.branchEntryProcessor );
-
         result.add( branchLoadResult );
     }
 

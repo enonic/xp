@@ -62,11 +62,21 @@ public class BranchEntryProcessor
             nodeState( meta.getNodeState() ).
             build() );
 
-        this.nodeService.loadNode( LoadNodeParams.create().
-            node( node ).
-            build() );
+        try
+        {
+            this.nodeService.loadNode( LoadNodeParams.create().
+                node( node ).
+                build() );
 
-        validateOrAddBinary( nodeVersion, result );
+            validateOrAddBinary( nodeVersion, result );
+
+            result.successful();
+        }
+        catch ( Exception e )
+        {
+            result.error( EntryLoadError.error(
+                String.format( "Cannot load node with id %s, path %s: %s", node.id(), node.path(), e.getMessage() ) ) );
+        }
     }
 
     private NodeVersion getVersion( final VersionMeta meta )

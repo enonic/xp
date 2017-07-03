@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mockito;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMap;
@@ -14,6 +15,7 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
@@ -25,6 +27,7 @@ import com.enonic.xp.dump.SystemDumpListener;
 import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemLoadParams;
+import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
@@ -79,6 +82,7 @@ public class DumpServiceImplTest
         this.dumpService.setNodeService( this.nodeService );
         this.dumpService.setRepositoryService( this.repositoryService );
         this.dumpService.setBasePath( tempFolder.getRoot().toPath() );
+        this.dumpService.setApplicationService( Mockito.mock( ApplicationService.class ) );
     }
 
     @Test(expected = RepoDumpException.class)
@@ -138,7 +142,7 @@ public class DumpServiceImplTest
 
         final BranchDumpResult result = systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).get( CTX_DEFAULT.getBranch() );
         assertNotNull( result );
-        assertEquals( new Long( 2 ), result.getNumberOfNodes() );
+        assertEquals( new Long( 2 ), result.getSuccessful() );
 
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
 
@@ -153,6 +157,26 @@ public class DumpServiceImplTest
         assertEquals( node.getNodeState(), currentStoredNode.getNodeState() );
         assertEquals( node.getNodeType(), currentStoredNode.getNodeType() );
         assertEquals( node.data(), currentStoredNode.data() );
+    }
+
+    @Test
+    public void verify_result()
+        throws Exception
+    {
+        final Node node = createNode( NodePath.ROOT, "myNode" );
+        updateNode( node );
+        updateNode( node );
+        updateNode( node );
+
+        final SystemDumpResult systemDumpResult = NodeHelper.runAsAdmin( () -> this.dumpService.dumpSystem( SystemDumpParams.create().
+            dumpName( "testDump" ).
+            build() ) );
+
+        // 4 of node, 1 of root
+        assertEquals( new Long( 5 ), systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).getNumberOfVersions() );
+        final BranchDumpResult branchDumpResult = systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).get( CTX_DEFAULT.getBranch() );
+
+        assertEquals( new Long( 2 ), branchDumpResult.getSuccessful() );
     }
 
     @Test
@@ -509,7 +533,7 @@ public class DumpServiceImplTest
         }
     }
 
-    private void dumpDeleteAndLoad( final boolean clearBlobStore )
+    private SystemLoadResult dumpDeleteAndLoad( final boolean clearBlobStore )
     {
         final SystemDumpParams params = SystemDumpParams.create().
             dumpName( "myTestDump" ).
@@ -517,10 +541,10 @@ public class DumpServiceImplTest
             includeBinaries( true ).
             build();
 
-        dumpDeleteAndLoad( clearBlobStore, params );
+        return dumpDeleteAndLoad( clearBlobStore, params );
     }
 
-    private void dumpDeleteAndLoad( final boolean clearBlobStore, final SystemDumpParams params )
+    private SystemLoadResult dumpDeleteAndLoad( final boolean clearBlobStore, final SystemDumpParams params )
     {
         doDump( params );
 
@@ -544,14 +568,16 @@ public class DumpServiceImplTest
 
         new SystemRepoInitializer( this.repositoryService, this.storageService ).initialize();
 
-        doLoad();
+        final SystemLoadResult result = doLoad();
 
         refresh();
+
+        return result;
     }
 
-    private void doLoad()
+    private SystemLoadResult doLoad()
     {
-        this.dumpService.loadSystemDump( SystemLoadParams.create().
+        return this.dumpService.loadSystemDump( SystemLoadParams.create().
             dumpName( "myTestDump" ).
             includeVersions( true ).
             build() );

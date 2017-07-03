@@ -12,6 +12,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -30,6 +31,7 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.SecurityHelper;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
 import com.enonic.xp.repo.impl.dump.writer.FileDumpWriter;
+import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repo.impl.node.executor.BatchedGetChildrenExecutor;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.DeleteRepositoryParams;
@@ -50,6 +52,8 @@ public class DumpServiceImpl
     private NodeService nodeService;
 
     private RepositoryService repositoryService;
+
+    private ApplicationService applicationService;
 
     private String xpVersion;
 
@@ -140,7 +144,15 @@ public class DumpServiceImpl
             doLoadRepository( repository.getId(), params, dumpReader, results );
         }
 
+        initApplications();
+
         return results.build();
+    }
+
+    private void initApplications()
+    {
+        LOG.info( "Install applications" );
+        NodeHelper.runAsAdmin( () -> applicationService.installAllStoredApplications() );
     }
 
     private void initializeSystemRepo( final SystemLoadParams params, final FileDumpReader dumpReader,
@@ -226,6 +238,12 @@ public class DumpServiceImpl
     public void setRepositoryService( final RepositoryService repositoryService )
     {
         this.repositoryService = repositoryService;
+    }
+
+    @Reference
+    public void setApplicationService( final ApplicationService applicationService )
+    {
+        this.applicationService = applicationService;
     }
 
     public void setBasePath( final Path basePath )

@@ -133,8 +133,9 @@ public class FileDumpReader
         }
 
         final EntriesLoadResult result = doLoadEntries( processor, tarFile );
+
         return BranchLoadResult.create( branch ).
-            successful( result.getEntriesLoaded() ).
+            successful( result.getSuccessful() ).
             errors( result.getErrors().stream().map( error -> LoadError.error( error.getMessage() ) ).collect( Collectors.toList() ) ).
             build();
     }
@@ -151,7 +152,7 @@ public class FileDumpReader
 
         final EntriesLoadResult result = doLoadEntries( processor, tarFile );
         return VersionsLoadResult.create().
-            successful( result.getEntriesLoaded() ).
+            successful( result.getSuccessful() ).
             errors( result.getErrors().stream().map( error -> LoadError.error( error.getMessage() ) ).collect( Collectors.toList() ) ).
             build();
     }
@@ -167,8 +168,7 @@ public class FileDumpReader
             while ( entry != null )
             {
                 final EntryLoadResult entryLoadResult = handleEntry( processor, tarInputStream );
-                result.entriesLoaded( entryLoadResult.getSuccessful() );
-                result.errors( entryLoadResult.getErrors() );
+                result.add( entryLoadResult );
                 entry = tarInputStream.getNextTarEntry();
             }
         }

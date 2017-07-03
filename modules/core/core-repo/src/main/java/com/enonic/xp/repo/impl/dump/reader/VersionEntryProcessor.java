@@ -11,8 +11,8 @@ import com.google.common.io.LineProcessor;
 import com.enonic.xp.node.ImportNodeVersionParams;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
-import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.VersionMeta;
+import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 
 public class VersionEntryProcessor
     extends AbstractEntryProcessor
@@ -56,15 +56,24 @@ public class VersionEntryProcessor
                 return;
             }
 
-            this.nodeService.importNodeVersion( ImportNodeVersionParams.create().
-                nodeId( versionsDumpEntry.getNodeId() ).
-                timestamp( version.getTimestamp() ).
-                nodePath( version.getNodePath() ).
-                nodeVersion( nodeVersion ).
-                build() );
+            try
+            {
+                this.nodeService.importNodeVersion( ImportNodeVersionParams.create().
+                    nodeId( versionsDumpEntry.getNodeId() ).
+                    timestamp( version.getTimestamp() ).
+                    nodePath( version.getNodePath() ).
+                    nodeVersion( nodeVersion ).
+                    build() );
 
-            validateOrAddBinary( nodeVersion, result );
-            result.successful();
+                validateOrAddBinary( nodeVersion, result );
+                result.successful();
+            }
+            catch ( Exception e )
+            {
+                result.error( EntryLoadError.error(
+                    String.format( "Cannot load version with id %s, path %s: %s", versionsDumpEntry.getNodeId(), version.getNodePath(),
+                                   e.getMessage() ) ) );
+            }
         }
     }
 

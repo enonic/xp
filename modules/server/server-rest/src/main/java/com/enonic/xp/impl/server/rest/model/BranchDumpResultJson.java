@@ -27,7 +27,7 @@ public class BranchDumpResultJson
     {
         return BranchDumpResultJson.create().
             branch( result.getBranch().toString() ).
-            numberOfNodes( result.getNumberOfNodes() ).
+            numberOfNodes( result.getSuccessful() ).
             timeUsed( result.getDuration().toString() ).
             errors( result.getErrors().stream().map( DumpErrorJson::from ).collect( Collectors.toList() ) ).
             build();

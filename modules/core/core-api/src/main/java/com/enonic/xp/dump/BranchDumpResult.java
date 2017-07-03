@@ -12,7 +12,7 @@ public class BranchDumpResult
 {
     private final Branch branch;
 
-    private final Long numberOfNodes;
+    private final Long successful;
 
     private final Duration duration;
 
@@ -21,7 +21,7 @@ public class BranchDumpResult
     private BranchDumpResult( final Builder builder )
     {
         this.branch = builder.branch;
-        this.numberOfNodes = builder.numberOfNodes;
+        this.successful = builder.successful;
         this.duration = builder.duration != null ? builder.duration : Duration.ofMillis( builder.endTime - builder.startTime );
         this.errors = builder.errors;
     }
@@ -31,9 +31,9 @@ public class BranchDumpResult
         return branch;
     }
 
-    public Long getNumberOfNodes()
+    public Long getSuccessful()
     {
-        return numberOfNodes;
+        return successful;
     }
 
     public Duration getDuration()
@@ -59,7 +59,7 @@ public class BranchDumpResult
 
         private final Branch branch;
 
-        private Long numberOfNodes = 0L;
+        private Long successful = 0L;
 
         private Duration duration;
 
@@ -73,13 +73,13 @@ public class BranchDumpResult
 
         public Builder addedNode()
         {
-            numberOfNodes++;
+            successful++;
             return this;
         }
 
         public Builder addedNodes( final long val )
         {
-            numberOfNodes = val;
+            successful = val;
             return this;
         }
 
@@ -107,7 +107,7 @@ public class BranchDumpResult
     {
         return "BranchDumpResult{" +
             "branch=" + branch +
-            ", numberOfNodes=" + numberOfNodes +
+            ", numberOfNodes=" + successful +
             ", timeUsed=" + duration +
             '}';
     }
