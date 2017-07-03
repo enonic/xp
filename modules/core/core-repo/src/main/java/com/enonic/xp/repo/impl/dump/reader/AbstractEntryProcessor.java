@@ -21,15 +21,15 @@ class AbstractEntryProcessor
 {
     private final static Logger LOG = LoggerFactory.getLogger( AbstractEntryProcessor.class );
 
-    protected final BlobStore blobStore;
+    private final BlobStore blobStore;
 
-    protected final NodeService nodeService;
+    final NodeService nodeService;
 
-    protected final DumpReader dumpReader;
+    final DumpReader dumpReader;
 
-    protected final DumpSerializer serializer;
+    final DumpSerializer serializer;
 
-    protected AbstractEntryProcessor( final Builder builder )
+    AbstractEntryProcessor( final Builder builder )
     {
         blobStore = builder.blobStore;
         nodeService = builder.nodeService;
@@ -66,7 +66,7 @@ class AbstractEntryProcessor
         LOG.error( "Cannot load binary, missing in existing blobStore, and not present in dump: " + binary.getBlobKey(), e );
     }
 
-    protected void reportVersionError( final EntryLoadResult.Builder result, final VersionMeta meta )
+    void reportVersionError( final EntryLoadResult.Builder result, final VersionMeta meta )
     {
         final String message =
             String.format( "Failed to load version for node with path %s, blobKey %s", meta.getNodePath(), meta.getVersion() );
@@ -82,7 +82,7 @@ class AbstractEntryProcessor
 
         private DumpReader dumpReader;
 
-        protected Builder()
+        Builder()
         {
         }
 
