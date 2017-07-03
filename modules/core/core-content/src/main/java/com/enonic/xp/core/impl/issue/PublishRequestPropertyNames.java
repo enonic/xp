@@ -1,9 +1,7 @@
-package com.enonic.xp.issue;
+package com.enonic.xp.core.impl.issue;
 
-import com.google.common.annotations.Beta;
 
-@Beta
-public class PublishRequestPropertyNames
+public final class PublishRequestPropertyNames
 {
 
     public static final String EXCLUDE_IDS = "excludeIds";
@@ -13,4 +11,5 @@ public class PublishRequestPropertyNames
     public static final String ITEM_ID = "itemId";
 
     public static final String ITEM_RECURSIVE = "recursive";
+
 }

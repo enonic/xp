@@ -35,7 +35,6 @@ import com.enonic.xp.issue.FindIssuesParams;
 import com.enonic.xp.issue.FindIssuesResult;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueId;
-import com.enonic.xp.issue.IssueListMetaData;
 import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.IssueService;
 import com.enonic.xp.issue.IssueStatus;

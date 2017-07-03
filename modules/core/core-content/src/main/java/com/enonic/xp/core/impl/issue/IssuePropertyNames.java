@@ -1,9 +1,7 @@
-package com.enonic.xp.issue;
+package com.enonic.xp.core.impl.issue;
 
-import com.google.common.annotations.Beta;
 
-@Beta
-public class IssuePropertyNames
+public final class IssuePropertyNames
 {
     public static final String CREATOR = "creator";
 
@@ -21,7 +19,7 @@ public class IssuePropertyNames
 
     public static final String STATUS = "status";
 
-    public static final String APPROVERS = "approver-ids";
+    public static final String APPROVERS = "approverIds";
 
     public static final String PUBLISH_REQUEST = "publishRequest";
 }

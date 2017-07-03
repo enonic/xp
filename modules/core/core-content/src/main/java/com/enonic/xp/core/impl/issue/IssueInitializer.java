@@ -10,8 +10,6 @@ import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.issue.IssueConstants;
-import com.enonic.xp.issue.IssuePropertyNames;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeIds;

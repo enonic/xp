@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.enonic.xp.admin.impl.rest.resource.issue.IssueListMetaData;
 import com.enonic.xp.issue.Issue;
-import com.enonic.xp.issue.IssueListMetaData;
 import com.enonic.xp.security.User;
 
 public class IssueListJson

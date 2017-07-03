@@ -2,7 +2,7 @@ package com.enonic.xp.issue;
 
 import java.util.UUID;
 
-public class IssueId
+public final class IssueId
 {
     private final UUID id;
 

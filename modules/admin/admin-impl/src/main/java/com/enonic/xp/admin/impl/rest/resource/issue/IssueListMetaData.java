@@ -1,6 +1,6 @@
-package com.enonic.xp.issue;
+package com.enonic.xp.admin.impl.rest.resource.issue;
 
-public class IssueListMetaData
+public final class IssueListMetaData
 {
     private final long totalHits;
 

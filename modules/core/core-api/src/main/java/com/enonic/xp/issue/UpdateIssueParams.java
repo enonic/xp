@@ -1,21 +1,15 @@
 package com.enonic.xp.issue;
 
-public class UpdateIssueParams
+public final class UpdateIssueParams
 {
-    private IssueId id;
+    private final IssueId id;
 
-    private IssueEditor editor;
+    private final IssueEditor editor;
 
-    public UpdateIssueParams id( final IssueId id )
+    private UpdateIssueParams( final Builder builder )
     {
-        this.id = id;
-        return this;
-    }
-
-    public UpdateIssueParams editor( final IssueEditor editor )
-    {
-        this.editor = editor;
-        return this;
+        this.id = builder.id;
+        this.editor = builder.editor;
     }
 
     public IssueId getId()
@@ -26,5 +20,38 @@ public class UpdateIssueParams
     public IssueEditor getEditor()
     {
         return editor;
+    }
+
+    public static Builder create()
+    {
+        return new UpdateIssueParams.Builder();
+    }
+
+    public static class Builder
+    {
+        private IssueId id;
+
+        private IssueEditor editor;
+
+        private Builder()
+        {
+        }
+
+        public Builder id( final IssueId id )
+        {
+            this.id = id;
+            return this;
+        }
+
+        public Builder editor( final IssueEditor editor )
+        {
+            this.editor = editor;
+            return this;
+        }
+
+        public UpdateIssueParams build()
+        {
+            return new UpdateIssueParams( this );
+        }
     }
 }

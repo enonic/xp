@@ -5,28 +5,27 @@ import java.util.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.repository.RepositoryConstants;
 
-public class PublishRequestItem
+public final class PublishRequestItem
 {
     private final ContentId id;
 
-    private Boolean includeChildren;
+    private final boolean includeChildren;
+
+    private PublishRequestItem( Builder builder )
+    {
+        this.id = builder.id;
+        this.includeChildren = builder.includeChildren;
+    }
 
     public ContentId getId()
     {
         return id;
     }
 
-    public Boolean getIncludeChildren()
+    public boolean getIncludeChildren()
     {
         return includeChildren;
-    }
-
-    private PublishRequestItem( Builder builder )
-    {
-        this.id = builder.id;
-        this.includeChildren = builder.includeChildren;
     }
 
     public static Builder create()
@@ -48,7 +47,7 @@ public class PublishRequestItem
 
         final PublishRequestItem that = (PublishRequestItem) o;
 
-        return Objects.equals( id, that.id ) && this.includeChildren == includeChildren;
+        return Objects.equals( id, that.id ) && this.includeChildren == that.includeChildren;
     }
 
     @Override
@@ -61,7 +60,7 @@ public class PublishRequestItem
     {
         private ContentId id;
 
-        private Boolean includeChildren = false;
+        private boolean includeChildren = false;
 
         public Builder()
         {
@@ -73,9 +72,12 @@ public class PublishRequestItem
             return this;
         }
 
-        public Builder includeChildren( final Boolean includeChildren)
+        public Builder includeChildren( final Boolean includeChildren )
         {
-            this.includeChildren = includeChildren;
+            if ( includeChildren != null )
+            {
+                this.includeChildren = includeChildren;
+            }
             return this;
         }
 

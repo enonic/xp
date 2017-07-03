@@ -1,6 +1,6 @@
 package com.enonic.xp.issue;
 
-public class IssueAlreadyExistsException
+public final class IssueAlreadyExistsException
     extends RuntimeException
 {
     public IssueAlreadyExistsException( final IssueName issueName )

@@ -1,9 +1,10 @@
 package com.enonic.xp.issue;
 
 
+import java.util.Collections;
 import java.util.List;
 
-public class FindIssuesResult
+public final class FindIssuesResult
 {
     private final List<Issue> issues;
 
@@ -11,7 +12,7 @@ public class FindIssuesResult
 
     private final long hits;
 
-    public FindIssuesResult( Builder builder )
+    private FindIssuesResult( Builder builder )
     {
         this.issues = builder.issues;
         this.hits = builder.hits;
@@ -40,7 +41,7 @@ public class FindIssuesResult
 
     public static class Builder
     {
-        private List<Issue> issues;
+        private List<Issue> issues = Collections.emptyList();
 
         private long totalHits;
 

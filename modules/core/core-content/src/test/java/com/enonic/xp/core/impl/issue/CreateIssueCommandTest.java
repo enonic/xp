@@ -9,7 +9,6 @@ import org.mockito.invocation.InvocationOnMock;
 
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.Issue;
-import com.enonic.xp.issue.IssueConstants;
 import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByQueryResult;

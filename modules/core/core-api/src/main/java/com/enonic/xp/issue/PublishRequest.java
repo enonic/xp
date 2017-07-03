@@ -8,11 +8,17 @@ import com.google.common.collect.Sets;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 
-public class PublishRequest
+public final class PublishRequest
 {
-    private ContentIds excludeIds;
+    private final ContentIds excludeIds;
 
-    private PublishRequestItems items;
+    private final PublishRequestItems items;
+
+    private PublishRequest( Builder builder )
+    {
+        this.items = PublishRequestItems.from( builder.items );
+        this.excludeIds = ContentIds.from( builder.exclude );
+    }
 
     public PublishRequestItems getItems()
     {
@@ -24,12 +30,6 @@ public class PublishRequest
         return excludeIds;
     }
 
-    private PublishRequest( Builder builder )
-    {
-        this.items = PublishRequestItems.from( builder.items );
-        this.excludeIds = ContentIds.from( builder.exclude );
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -37,10 +37,9 @@ public class PublishRequest
 
     public static class Builder
     {
+        private Set<PublishRequestItem> items = Sets.newLinkedHashSet();
 
-        private Set<PublishRequestItem> items = Sets.newHashSet();
-
-        private Set<ContentId> exclude = Sets.newHashSet();
+        private Set<ContentId> exclude = Sets.newLinkedHashSet();
 
         public Builder addItems( final Collection<PublishRequestItem> items )
         {

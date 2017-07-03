@@ -5,17 +5,16 @@ import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.issue.PublishRequestPropertyNames;
 
-import static com.enonic.xp.issue.IssuePropertyNames.APPROVERS;
-import static com.enonic.xp.issue.IssuePropertyNames.CREATED_TIME;
-import static com.enonic.xp.issue.IssuePropertyNames.CREATOR;
-import static com.enonic.xp.issue.IssuePropertyNames.DESCRIPTION;
-import static com.enonic.xp.issue.IssuePropertyNames.MODIFIED_TIME;
-import static com.enonic.xp.issue.IssuePropertyNames.MODIFIER;
-import static com.enonic.xp.issue.IssuePropertyNames.PUBLISH_REQUEST;
-import static com.enonic.xp.issue.IssuePropertyNames.STATUS;
-import static com.enonic.xp.issue.IssuePropertyNames.TITLE;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.APPROVERS;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.CREATED_TIME;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.CREATOR;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.DESCRIPTION;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.MODIFIED_TIME;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.MODIFIER;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.PUBLISH_REQUEST;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.STATUS;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.TITLE;
 
 class IssueIndexConfigFactory
 {
