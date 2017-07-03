@@ -11,8 +11,6 @@ public class BranchDumpResultJson
 
     private final Long numberOfNodes;
 
-    private final Long numberOfVersions;
-
     private final String timeUsed;
 
     private final List<DumpErrorJson> errors;
@@ -21,7 +19,6 @@ public class BranchDumpResultJson
     {
         this.branch = builder.branch;
         this.numberOfNodes = builder.numberOfNodes;
-        this.numberOfVersions = builder.numberOfVersions;
         this.timeUsed = builder.timeUsed;
         this.errors = builder.errors;
     }
@@ -31,7 +28,6 @@ public class BranchDumpResultJson
         return BranchDumpResultJson.create().
             branch( result.getBranch().toString() ).
             numberOfNodes( result.getNumberOfNodes() ).
-            numberOfVersions( result.getNumberOfVersions() ).
             timeUsed( result.getDuration().toString() ).
             errors( result.getErrors().stream().map( DumpErrorJson::from ).collect( Collectors.toList() ) ).
             build();
@@ -49,11 +45,6 @@ public class BranchDumpResultJson
         return numberOfNodes;
     }
 
-    @SuppressWarnings("unused")
-    public Long getNumberOfVersions()
-    {
-        return numberOfVersions;
-    }
 
     @SuppressWarnings("unused")
     public String getTimeUsed()
@@ -78,8 +69,6 @@ public class BranchDumpResultJson
 
         private Long numberOfNodes;
 
-        private Long numberOfVersions;
-
         private String timeUsed;
 
         private List<DumpErrorJson> errors;
@@ -97,12 +86,6 @@ public class BranchDumpResultJson
         public Builder numberOfNodes( final Long val )
         {
             numberOfNodes = val;
-            return this;
-        }
-
-        public Builder numberOfVersions( final Long val )
-        {
-            numberOfVersions = val;
             return this;
         }
 

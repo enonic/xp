@@ -172,6 +172,7 @@ class RepoDumper
                 for ( final NodeVersionMetadata metaData : versions.getNodeVersionsMetadata() )
                 {
                     doStoreVersion( builder, metaData );
+                    this.dumpResult.addedVersion();
                 }
 
                 this.writer.writeVersionsEntry( builder.build() );
@@ -244,12 +245,19 @@ class RepoDumper
 
     private void doDumpNode( final NodeId nodeId, final BranchDumpResult.Builder dumpResult )
     {
-        final BranchDumpEntry branchDumpEntry = createDumpEntry( nodeId );
-        writer.writeBranchEntry( branchDumpEntry );
-        writer.writeVersionBlob( branchDumpEntry.getMeta().getVersion() );
-        writeBinaries( dumpResult, branchDumpEntry );
-        dumpResult.addedNode();
-        reportNodeDumped();
+        try
+        {
+            final BranchDumpEntry branchDumpEntry = createDumpEntry( nodeId );
+            writer.writeBranchEntry( branchDumpEntry );
+            writer.writeVersionBlob( branchDumpEntry.getMeta().getVersion() );
+            writeBinaries( dumpResult, branchDumpEntry );
+            dumpResult.addedNode();
+            reportNodeDumped();
+        }
+        catch ( Exception e )
+        {
+            dumpResult.error( DumpError.error( "Cannot dump node with id [" + nodeId + "]: " + e.getMessage() ) );
+        }
     }
 
     private void writeBinaries( final BranchDumpResult.Builder dumpResult, final BranchDumpEntry branchDumpEntry )

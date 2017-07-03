@@ -14,8 +14,6 @@ public class BranchDumpResult
 
     private final Long numberOfNodes;
 
-    private final Long numberOfVersions;
-
     private final Duration duration;
 
     private final List<DumpError> errors;
@@ -24,7 +22,6 @@ public class BranchDumpResult
     {
         this.branch = builder.branch;
         this.numberOfNodes = builder.numberOfNodes;
-        this.numberOfVersions = builder.numberOfVersions;
         this.duration = builder.duration != null ? builder.duration : Duration.ofMillis( builder.endTime - builder.startTime );
         this.errors = builder.errors;
     }
@@ -37,11 +34,6 @@ public class BranchDumpResult
     public Long getNumberOfNodes()
     {
         return numberOfNodes;
-    }
-
-    public Long getNumberOfVersions()
-    {
-        return numberOfVersions;
     }
 
     public Duration getDuration()
@@ -69,8 +61,6 @@ public class BranchDumpResult
 
         private Long numberOfNodes = 0L;
 
-        private Long numberOfVersions = 0L;
-
         private Duration duration;
 
         private final List<DumpError> errors = Lists.newArrayList();
@@ -90,12 +80,6 @@ public class BranchDumpResult
         public Builder addedNodes( final long val )
         {
             numberOfNodes = val;
-            return this;
-        }
-
-        public Builder addedVersions( final long val )
-        {
-            numberOfVersions += val;
             return this;
         }
 
@@ -124,7 +108,6 @@ public class BranchDumpResult
         return "BranchDumpResult{" +
             "branch=" + branch +
             ", numberOfNodes=" + numberOfNodes +
-            ", numberOfVersions=" + numberOfVersions +
             ", timeUsed=" + duration +
             '}';
     }

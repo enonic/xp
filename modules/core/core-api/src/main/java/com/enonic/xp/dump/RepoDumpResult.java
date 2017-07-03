@@ -19,11 +19,14 @@ public class RepoDumpResult
 
     private final Duration duration;
 
+    private final Long numberOfVersions;
+
     private RepoDumpResult( final Builder builder )
     {
         this.branchResults = builder.branchResults;
         this.repositoryId = builder.repositoryId;
         this.duration = Duration.ofMillis( builder.endTime - builder.startTime );
+        this.numberOfVersions = builder.numberOfVersions;
     }
 
     public List<BranchDumpResult> getBranchResults()
@@ -39,6 +42,11 @@ public class RepoDumpResult
     public String getDuration()
     {
         return duration.toString();
+    }
+
+    public Long getNumberOfVersions()
+    {
+        return numberOfVersions;
     }
 
     @Override
@@ -60,6 +68,8 @@ public class RepoDumpResult
 
         private final Long startTime;
 
+        private Long numberOfVersions = 0L;
+
         private Long endTime;
 
         private Builder( final RepositoryId repositoryId )
@@ -71,6 +81,12 @@ public class RepoDumpResult
         public Builder add( final BranchDumpResult val )
         {
             branchResults.add( val );
+            return this;
+        }
+
+        public Builder addedVersion()
+        {
+            this.numberOfVersions++;
             return this;
         }
 

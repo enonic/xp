@@ -16,16 +16,21 @@ public class RepoDumpResultJson
 
     private final String duration;
 
+    private final Long numberOfVersions;
+
     private RepoDumpResultJson( final Builder builder )
     {
         this.branches = builder.branches;
         this.repository = builder.repository;
         this.duration = builder.duration.toString();
+        this.numberOfVersions = builder.numberOfVersions;
     }
 
     public static RepoDumpResultJson from( final RepoDumpResult repoDumpResult )
     {
-        final Builder builder = RepoDumpResultJson.create();
+        final Builder builder = RepoDumpResultJson.create().
+            repository( repoDumpResult.getRepositoryId().toString() ).
+            numberOfVersions( repoDumpResult.getNumberOfVersions() );
 
         for ( final BranchDumpResult result : repoDumpResult )
         {
@@ -33,27 +38,31 @@ public class RepoDumpResultJson
             builder.addDuration( result.getDuration() );
         }
 
-        builder.repository = repoDumpResult.getRepositoryId().toString();
-
         return builder.build();
     }
 
-    @SuppressWarnings( "unused" )
+    @SuppressWarnings("unused")
     public List<BranchDumpResultJson> getBranches()
     {
         return branches;
     }
 
-    @SuppressWarnings( "unused" )
+    @SuppressWarnings("unused")
     public String getRepositoryId()
     {
         return repository;
     }
 
-    @SuppressWarnings( "unused" )
+    @SuppressWarnings("unused")
     public String getDuration()
     {
         return duration;
+    }
+
+    @SuppressWarnings("unused")
+    public Long getNumberOfVersions()
+    {
+        return numberOfVersions;
     }
 
     private static Builder create()
@@ -69,6 +78,8 @@ public class RepoDumpResultJson
 
         private Duration duration = Duration.ZERO;
 
+        private Long numberOfVersions = 0L;
+
         private Builder()
         {
         }
@@ -82,6 +93,12 @@ public class RepoDumpResultJson
         public Builder repository( final String val )
         {
             repository = val;
+            return this;
+        }
+
+        public Builder numberOfVersions( final Long numberOfVersions )
+        {
+            this.numberOfVersions = numberOfVersions;
             return this;
         }
 
