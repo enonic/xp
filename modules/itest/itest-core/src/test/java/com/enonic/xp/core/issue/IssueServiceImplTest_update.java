@@ -25,17 +25,18 @@ public class IssueServiceImplTest_update
     {
         final Issue issue = this.createIssue();
 
-        final UpdateIssueParams updateIssueParams = new UpdateIssueParams().
+        final UpdateIssueParams updateIssueParams = UpdateIssueParams.create().
             id( issue.getId() ).
-            editor( editMe -> {
-                editMe.title = "updated title";
-                editMe.description = "updated description";
-                editMe.approverIds =
-                    PrincipalKeys.from( PrincipalKey.from( "user:myStore:approver-1" ), PrincipalKey.from( "user:myStore:approver-2" ) );
-                editMe.publishRequest = PublishRequest.create().addExcludeId( ContentId.from( "new-exclude-id" ) ).addItem(
-                    PublishRequestItem.create().id( ContentId.from( "new-content-id" ) ).includeChildren( true ).build() ).build();
-                editMe.issueStatus = IssueStatus.CLOSED;
-            } );
+            editor( editMe ->
+                    {
+                        editMe.title = "updated title";
+                        editMe.description = "updated description";
+                        editMe.approverIds = PrincipalKeys.from( PrincipalKey.from( "user:myStore:approver-1" ),
+                                                                 PrincipalKey.from( "user:myStore:approver-2" ) );
+                        editMe.publishRequest = PublishRequest.create().addExcludeId( ContentId.from( "new-exclude-id" ) ).addItem(
+                            PublishRequestItem.create().id( ContentId.from( "new-content-id" ) ).includeChildren( true ).build() ).build();
+                        editMe.issueStatus = IssueStatus.CLOSED;
+                    } ).build();
 
         final Issue updatedIssue = this.issueService.update( updateIssueParams );
 
@@ -59,7 +60,7 @@ public class IssueServiceImplTest_update
     {
         final Issue issue = this.createIssue();
 
-        final UpdateIssueParams updateIssueParams = new UpdateIssueParams().id( issue.getId() );
+        final UpdateIssueParams updateIssueParams = UpdateIssueParams.create().id( issue.getId() ).build();
 
         final Issue updatedIssue = this.issueService.update( updateIssueParams );
 
@@ -79,9 +80,10 @@ public class IssueServiceImplTest_update
     {
         final Issue issue = this.createIssue();
 
-        final UpdateIssueParams updateIssueParams = new UpdateIssueParams().
+        final UpdateIssueParams updateIssueParams = UpdateIssueParams.create().
             id( issue.getId() ).
-            editor( edit -> edit.title = "new title" );
+            editor( edit -> edit.title = "new title" ).
+            build();
 
         final Issue updatedIssue = this.issueService.update( updateIssueParams );
 

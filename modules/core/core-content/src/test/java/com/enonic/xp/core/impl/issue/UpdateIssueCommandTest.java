@@ -10,7 +10,6 @@ import org.mockito.invocation.InvocationOnMock;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.issue.Issue;
-import com.enonic.xp.issue.IssueConstants;
 import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.IssueName;
 import com.enonic.xp.issue.IssueStatus;
@@ -22,10 +21,10 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.security.PrincipalKey;
 
-import static com.enonic.xp.issue.IssuePropertyNames.CREATOR;
-import static com.enonic.xp.issue.IssuePropertyNames.INDEX;
-import static com.enonic.xp.issue.IssuePropertyNames.STATUS;
-import static com.enonic.xp.issue.IssuePropertyNames.TITLE;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.CREATOR;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.INDEX;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.STATUS;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.TITLE;
 import static org.junit.Assert.*;
 
 public class UpdateIssueCommandTest
@@ -58,7 +57,7 @@ public class UpdateIssueCommandTest
 
     private UpdateIssueParams makeUpdateIssueParams()
     {
-        return new UpdateIssueParams().id( IssueId.create() );
+        return UpdateIssueParams.create().id( IssueId.create() ).build();
     }
 
     private UpdateIssueCommand updateIssueCommand( UpdateIssueParams params )

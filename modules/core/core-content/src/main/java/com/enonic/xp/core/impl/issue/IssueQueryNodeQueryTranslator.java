@@ -1,6 +1,8 @@
-package com.enonic.xp.issue;
+package com.enonic.xp.core.impl.issue;
 
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.issue.IssueQuery;
+import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.SearchMode;
@@ -8,12 +10,12 @@ import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
-import static com.enonic.xp.issue.IssuePropertyNames.APPROVERS;
-import static com.enonic.xp.issue.IssuePropertyNames.CREATOR;
-import static com.enonic.xp.issue.IssuePropertyNames.STATUS;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.APPROVERS;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.CREATOR;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.STATUS;
 import static java.util.stream.Collectors.toList;
 
-public final class IssueQueryNodeQueryTranslator
+final class IssueQueryNodeQueryTranslator
 {
     public static NodeQuery translate( final IssueQuery issueQuery )
     {

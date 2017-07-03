@@ -7,7 +7,7 @@ import org.codehaus.jparsec.util.Lists;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
-public class CreateIssueParams
+public final class CreateIssueParams
 {
     private final IssueId id;
 
@@ -79,7 +79,7 @@ public class CreateIssueParams
 
         private PublishRequest publishRequest;
 
-        public Builder()
+        private Builder()
         {
             this.issueStatus = IssueStatus.OPEN;
             this.approverIds = Lists.arrayList();

@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.core.impl.issue.PublishRequestPropertyNames;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.issue.CreateIssueParams;
@@ -14,21 +15,20 @@ import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.issue.PublishRequest;
 import com.enonic.xp.issue.PublishRequestItem;
-import com.enonic.xp.issue.PublishRequestPropertyNames;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.Reference;
 
-import static com.enonic.xp.issue.IssuePropertyNames.APPROVERS;
-import static com.enonic.xp.issue.IssuePropertyNames.CREATED_TIME;
-import static com.enonic.xp.issue.IssuePropertyNames.CREATOR;
-import static com.enonic.xp.issue.IssuePropertyNames.DESCRIPTION;
-import static com.enonic.xp.issue.IssuePropertyNames.INDEX;
-import static com.enonic.xp.issue.IssuePropertyNames.MODIFIED_TIME;
-import static com.enonic.xp.issue.IssuePropertyNames.MODIFIER;
-import static com.enonic.xp.issue.IssuePropertyNames.PUBLISH_REQUEST;
-import static com.enonic.xp.issue.IssuePropertyNames.STATUS;
-import static com.enonic.xp.issue.IssuePropertyNames.TITLE;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.APPROVERS;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.CREATED_TIME;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.CREATOR;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.DESCRIPTION;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.INDEX;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.MODIFIED_TIME;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.MODIFIER;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.PUBLISH_REQUEST;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.STATUS;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.TITLE;
 
 public class IssueDataSerializer
 {

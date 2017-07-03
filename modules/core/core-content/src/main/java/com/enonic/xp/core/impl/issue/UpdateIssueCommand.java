@@ -9,6 +9,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.issue.EditableIssue;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueEditor;
+import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeEditor;
@@ -35,7 +36,7 @@ public class UpdateIssueCommand
 
     private Issue doExecute()
     {
-        Issue editedIssue = editIssue( params.getEditor(), getIssue( params ) );
+        Issue editedIssue = editIssue( params.getEditor(), getIssue( params.getId() ) );
 
         editedIssue = setModifiedTime( editedIssue );
         editedIssue = setModifier( editedIssue );
@@ -57,10 +58,10 @@ public class UpdateIssueCommand
         return editableIssue.build();
     }
 
-    private Issue getIssue( final UpdateIssueParams params )
+    private Issue getIssue( final IssueId issueId )
     {
         return GetIssueByIdCommand.create().
-            issueId( params.getId() ).
+            issueId( issueId ).
             nodeService( this.nodeService ).
             build().
             execute();

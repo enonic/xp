@@ -5,7 +5,6 @@ import java.util.List;
 import com.enonic.xp.issue.FindIssuesResult;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueQuery;
-import com.enonic.xp.issue.IssueQueryNodeQueryTranslator;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.Nodes;

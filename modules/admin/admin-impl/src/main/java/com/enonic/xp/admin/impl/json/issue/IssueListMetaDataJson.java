@@ -1,6 +1,6 @@
 package com.enonic.xp.admin.impl.json.issue;
 
-import com.enonic.xp.issue.IssueListMetaData;
+import com.enonic.xp.admin.impl.rest.resource.issue.IssueListMetaData;
 
 public class IssueListMetaDataJson
 {

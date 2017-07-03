@@ -2,7 +2,7 @@ package com.enonic.xp.issue;
 
 import com.enonic.xp.name.Name;
 
-public class IssueName
+public final class IssueName
     extends Name
 {
     private IssueName( final String name )

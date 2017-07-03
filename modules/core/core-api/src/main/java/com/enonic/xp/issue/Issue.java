@@ -8,7 +8,7 @@ import com.google.common.collect.Sets;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
-public class Issue
+public final class Issue
 {
     private final IssueId id;
 
@@ -115,8 +115,9 @@ public class Issue
         return new Builder();
     }
 
-    public static Builder create( final Issue source ) {
-        return new Builder(source);
+    public static Builder create( final Issue source )
+    {
+        return new Builder( source );
     }
 
     public static class Builder
@@ -147,7 +148,7 @@ public class Issue
 
         public Builder()
         {
-            this.approverIds = Sets.newHashSet();
+            this.approverIds = Sets.newLinkedHashSet();
             this.issueStatus = IssueStatus.OPEN;
         }
 

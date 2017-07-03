@@ -3,9 +3,9 @@ package com.enonic.xp.issue;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
-public class IssueQuery
+public final class IssueQuery
 {
-    public static final int DEFAULT_FETCH_SIZE = 10;
+    private static final int DEFAULT_FETCH_SIZE = 10;
 
     private final PrincipalKey creator;
 
