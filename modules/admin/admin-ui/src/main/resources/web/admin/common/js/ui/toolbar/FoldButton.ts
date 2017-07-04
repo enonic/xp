@@ -1,5 +1,7 @@
 module api.ui.toolbar {
 
+    import i18n = api.util.i18n;
+
     export class FoldButton extends api.dom.DivEl {
 
         private span: api.dom.SpanEl;
@@ -8,7 +10,7 @@ module api.ui.toolbar {
         private hostElement: api.dom.Element;
         private static expandedCls: string = 'expanded';
 
-        constructor(caption: string = 'Actions', hostElement?: api.dom.Element) {
+        constructor(caption: string = i18n('action.actions'), hostElement?: api.dom.Element) {
             super();
 
             this.addClass('fold-button');

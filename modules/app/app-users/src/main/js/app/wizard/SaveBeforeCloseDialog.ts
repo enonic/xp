@@ -7,9 +7,9 @@ export class SaveBeforeCloseDialog extends ModalDialog {
 
     private wizardPanel: WizardPanel<any>;
 
-    private yesAction: Action = new Action(i18n('action.yes'), 'y');
+    private yesAction: Action = new Action(i18n('action.yes'), i18n('action.yes').slice(0, 1).toLowerCase());
 
-    private noAction: Action = new Action(i18n('action.no'), 'n');
+    private noAction: Action = new Action(i18n('action.no'), i18n('action.no').slice(0, 1).toLowerCase());
 
     constructor(wizardPanel: WizardPanel<any>) {
         super(i18n('dialog.saveBeforeClose.title'));
@@ -20,13 +20,13 @@ export class SaveBeforeCloseDialog extends ModalDialog {
         message.getEl().setInnerHtml(i18n('dialog.saveBeforeClose.msg'));
         this.appendChildToContentPanel(message);
 
-        this.yesAction.setMnemonic('y');
+        this.yesAction.setMnemonic(i18n('action.yes').slice(0, 1).toLowerCase());
         this.yesAction.onExecuted(() => {
             this.doSaveAndClose();
         });
         this.addAction(this.yesAction, true);
 
-        this.noAction.setMnemonic('n');
+        this.noAction.setMnemonic(i18n('action.no').slice(0, 1).toLowerCase());
         this.noAction.onExecuted(() => {
             this.doCloseWithoutSaveCheck();
         });

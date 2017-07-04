@@ -1,6 +1,7 @@
 module api.ui.toolbar {
 
     import ActionButton = api.ui.button.ActionButton;
+    import i18n = api.util.i18n;
 
     export class Toolbar extends api.dom.DivEl implements api.ui.ActionContainer {
 
@@ -106,7 +107,7 @@ module api.ui.toolbar {
                 }
             }
 
-            this.fold.setLabel(this.areAllActionsFolded() ? 'Actions' : 'More');
+            this.fold.setLabel(this.areAllActionsFolded() ? i18n('action.actions') : i18n('action.more'));
         }
 
         private getVisibleButtonsWidth(includeFold: boolean = true): number {
