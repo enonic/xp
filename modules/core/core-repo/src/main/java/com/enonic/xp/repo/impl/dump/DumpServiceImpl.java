@@ -79,8 +79,6 @@ public class DumpServiceImpl
             throw new RepoDumpException( "Only admin role users can dump repositories" );
         }
 
-        this.nodeService.refresh( RefreshMode.ALL );
-
         final FileDumpWriter writer = FileDumpWriter.create().
             basePath( basePath ).
             dumpName( params.getDumpName() ).

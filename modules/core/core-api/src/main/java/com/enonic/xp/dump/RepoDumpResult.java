@@ -16,13 +16,13 @@ public class RepoDumpResult
 
     private final RepositoryId repositoryId;
 
-    private final Long numberOfVersions;
+    private final Long versions;
 
     private RepoDumpResult( final Builder builder )
     {
         this.branchResults = builder.branchResults;
         this.repositoryId = builder.repositoryId;
-        this.numberOfVersions = builder.numberOfVersions;
+        this.versions = builder.versions;
     }
 
     public List<BranchDumpResult> getBranchResults()
@@ -35,9 +35,9 @@ public class RepoDumpResult
         return repositoryId;
     }
 
-    public Long getNumberOfVersions()
+    public Long getVersions()
     {
-        return numberOfVersions;
+        return versions;
     }
 
     public BranchDumpResult get( final Branch branch )
@@ -65,7 +65,7 @@ public class RepoDumpResult
 
         private final RepositoryId repositoryId;
 
-        private Long numberOfVersions = 0L;
+        private Long versions = 0L;
 
         private Builder( final RepositoryId repositoryId )
         {
@@ -80,7 +80,7 @@ public class RepoDumpResult
 
         public Builder addedVersion()
         {
-            this.numberOfVersions++;
+            this.versions++;
             return this;
         }
 

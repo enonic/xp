@@ -31,6 +31,7 @@ import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
@@ -38,6 +39,7 @@ import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
 import com.enonic.xp.repo.impl.node.executor.BatchedGetChildrenExecutor;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 
@@ -94,7 +96,7 @@ class RepoDumper
 
         if ( this.includeVersions )
         {
-            dumpVersions( dumpedNodes );
+            setContext( RepositoryConstants.MASTER_BRANCH ).runWith( () -> dumpVersions( dumpedNodes ) );
         }
 
         return this.dumpResult.build();
@@ -102,6 +104,8 @@ class RepoDumper
 
     private Set<NodeId> doExecute()
     {
+        this.nodeService.refresh( RefreshMode.ALL );
+
         Set<NodeId> dumpedNodes = Sets.newHashSet();
 
         final Branch branch = ContextAccessor.current().getBranch();

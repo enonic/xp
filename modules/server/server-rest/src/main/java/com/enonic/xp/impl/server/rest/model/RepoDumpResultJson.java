@@ -1,6 +1,5 @@
 package com.enonic.xp.impl.server.rest.model;
 
-import java.time.Duration;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -14,20 +13,20 @@ public class RepoDumpResultJson
 
     private final String repository;
 
-    private final Long numberOfVersions;
+    private final Long versions;
 
     private RepoDumpResultJson( final Builder builder )
     {
         this.branches = builder.branches;
         this.repository = builder.repository;
-        this.numberOfVersions = builder.numberOfVersions;
+        this.versions = builder.versions;
     }
 
     public static RepoDumpResultJson from( final RepoDumpResult repoDumpResult )
     {
         final Builder builder = RepoDumpResultJson.create().
             repository( repoDumpResult.getRepositoryId().toString() ).
-            numberOfVersions( repoDumpResult.getNumberOfVersions() );
+            versions( repoDumpResult.getVersions() );
 
         for ( final BranchDumpResult result : repoDumpResult )
         {
@@ -50,9 +49,9 @@ public class RepoDumpResultJson
     }
 
     @SuppressWarnings("unused")
-    public Long getNumberOfVersions()
+    public Long getVersions()
     {
-        return numberOfVersions;
+        return versions;
     }
 
     private static Builder create()
@@ -66,7 +65,7 @@ public class RepoDumpResultJson
 
         private String repository;
 
-        private Long numberOfVersions = 0L;
+        private Long versions = 0L;
 
         private Builder()
         {
@@ -84,9 +83,9 @@ public class RepoDumpResultJson
             return this;
         }
 
-        public Builder numberOfVersions( final Long numberOfVersions )
+        public Builder versions( final Long versions )
         {
-            this.numberOfVersions = numberOfVersions;
+            this.versions = versions;
             return this;
         }
 

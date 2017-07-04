@@ -14,6 +14,7 @@ import com.enonic.xp.repo.impl.dump.reader.DumpReader;
 import com.enonic.xp.repo.impl.dump.reader.VersionEntryProcessor;
 import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 
@@ -62,6 +63,7 @@ class RepoLoader
         {
             ContextBuilder.from( ContextAccessor.current() ).
                 repositoryId( this.repositoryId ).
+                branch( RepositoryConstants.MASTER_BRANCH ).
                 build().runWith( () -> loadVersions( loadResult ) );
         }
 

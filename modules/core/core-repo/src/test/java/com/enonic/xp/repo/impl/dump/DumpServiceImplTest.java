@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.dump;
 
 import java.time.Instant;
+import java.util.Iterator;
 import java.util.TreeSet;
 
 import org.junit.Before;
@@ -23,11 +24,13 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.BranchDumpResult;
+import com.enonic.xp.dump.RepoLoadResult;
 import com.enonic.xp.dump.SystemDumpListener;
 import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
+import com.enonic.xp.dump.VersionsLoadResult;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
@@ -173,7 +176,7 @@ public class DumpServiceImplTest
             build() ) );
 
         // 4 of node, 1 of root
-        assertEquals( new Long( 5 ), systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).getNumberOfVersions() );
+        assertEquals( new Long( 5 ), systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).getVersions() );
         final BranchDumpResult branchDumpResult = systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).get( CTX_DEFAULT.getBranch() );
 
         assertEquals( new Long( 2 ), branchDumpResult.getSuccessful() );
@@ -457,6 +460,56 @@ public class DumpServiceImplTest
             build() );
 
         assertEquals( 6, versionsAfterLoad.getHits() );
+    }
+
+    @Test
+    public void number_of_versions_in_other_repo()
+    {
+        final Repository myRepo = NodeHelper.runAsAdmin( () -> this.repositoryService.createRepository( CreateRepositoryParams.create().
+            repositoryId( RepositoryId.from( "myrepo" ) ).
+            rootPermissions( AccessControlList.create().
+                add( AccessControlEntry.create().
+                    principal( CTX_DEFAULT.getAuthInfo().getUser().getKey() ).
+                    allowAll().
+                    build() ).
+                build() ).
+            build() ) );
+
+        final Context myRepoContext = ContextBuilder.from( ContextAccessor.current() ).
+            repositoryId( myRepo.getId() ).
+            branch( RepositoryConstants.MASTER_BRANCH ).
+            build();
+
+        final Node myNode = myRepoContext.callWith( () -> createNode( NodePath.ROOT, "myNode" ) );
+        myRepoContext.runWith( () -> updateNode( myNode ) );
+        myRepoContext.runWith( () -> updateNode( myNode ) );
+        myRepoContext.runWith( () -> updateNode( myNode ) );
+
+        final SystemLoadResult dumpResult = NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true, SystemDumpParams.create().
+            dumpName( "myTestDump" ).
+            build() ) );
+
+        final RepoLoadResult repoLoadResult = getRepoLoadResult( dumpResult, myRepo.getId() );
+
+        final VersionsLoadResult versionsLoadResult = repoLoadResult.getVersionsLoadResult();
+        assertNotNull( versionsLoadResult );
+        // One for root, 4 for myNode
+        assertEquals( new Long( 5 ), versionsLoadResult.getSuccessful() );
+    }
+
+    private RepoLoadResult getRepoLoadResult( final SystemLoadResult result, final RepositoryId repositoryId )
+    {
+        final Iterator<RepoLoadResult> iterator = result.iterator();
+
+        while ( iterator.hasNext() )
+        {
+            final RepoLoadResult next = iterator.next();
+            if ( next.getRepositoryId().equals( repositoryId ) )
+            {
+                return next;
+            }
+        }
+        return null;
     }
 
     @Test
