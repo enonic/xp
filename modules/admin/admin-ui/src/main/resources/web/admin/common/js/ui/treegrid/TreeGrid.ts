@@ -212,7 +212,6 @@ module api.ui.treegrid {
             });
 
             this.grid.subscribeOnSelectedRowsChanged((event, rows) => {
-                // debugger;
                 this.notifySelectionChanged(event, rows.rows);
             });
 

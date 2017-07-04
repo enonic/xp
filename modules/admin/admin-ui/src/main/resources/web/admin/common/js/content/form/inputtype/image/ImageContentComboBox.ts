@@ -11,6 +11,8 @@ module api.content.form.inputtype.image {
     import ContentQueryResultJson = api.content.json.ContentQueryResultJson;
     import ContentSummaryJson = api.content.json.ContentSummaryJson;
     import BaseLoader = api.util.loader.BaseLoader;
+    import OptionDataLoader = api.ui.selector.OptionDataLoader;
+    import SelectedOptionsView = api.ui.selector.combobox.SelectedOptionsView;
 
     export class ImageContentComboBox extends RichComboBox<ImageSelectorDisplayValue> {
 
@@ -27,6 +29,9 @@ module api.content.form.inputtype.image {
                 setDelayedInputValueChangedHandling(750).
                 setValue(builder.value).
                 setMinWidth(builder.minWidth).
+                setTreegridDropdownEnabled(builder.treegridDropdownEnabled).
+                setOptionDataLoader(builder.optionDataLoader).
+                setOptionDataHelper(new ContentSummaryOptionDataHelper()).
                 setRemoveMissingSelectedOptions(true).
                 setDisplayMissingSelectedOptions(true);
 
@@ -62,6 +67,10 @@ module api.content.form.inputtype.image {
 
         optionDisplayValueViewer: ImageSelectorViewer;
 
+        optionDataLoader: OptionDataLoader<any>;
+
+        treegridDropdownEnabled: boolean;
+
         value: string;
 
         setName(value: string): ImageContentComboBoxBuilder {
@@ -96,6 +105,16 @@ module api.content.form.inputtype.image {
 
         setOptionDisplayValueViewer(value: ImageSelectorViewer): ImageContentComboBoxBuilder {
             this.optionDisplayValueViewer = value;
+            return this;
+        }
+
+        setOptionDataLoader(value: OptionDataLoader<any>): ImageContentComboBoxBuilder {
+            this.optionDataLoader = value;
+            return this;
+        }
+
+        setTreegridDropdownEnabled(value: boolean): ImageContentComboBoxBuilder {
+            this.treegridDropdownEnabled = value;
             return this;
         }
 

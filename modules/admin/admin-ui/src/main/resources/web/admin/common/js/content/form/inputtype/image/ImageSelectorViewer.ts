@@ -15,7 +15,7 @@ module api.content.form.inputtype.image {
         }
 
         resolveSubName(object: ImageSelectorDisplayValue, relativePath: boolean = false): string {
-            return object.getPath();
+            return object.getPath() ? object.getPath().toString() : '';
         }
 
         resolveIconUrl(object: ImageSelectorDisplayValue): string {

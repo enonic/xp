@@ -31,7 +31,6 @@ module api.content {
                 .setTreegridDropdownEnabled(builder.treegridDropdownEnabled == undefined ? true : builder.treegridDropdownEnabled)
                 .setOptionDataHelper(builder.optionDataHelper || new ContentSummaryOptionDataHelper())
                 .setOptionDataLoader(builder.optionDataLoader || new ContentSummaryOptionDataLoader())
-                .setMinWidth(builder.minWidth)
                 .setMinWidth(builder.minWidth);
 
             super(richComboBoxBuilder);

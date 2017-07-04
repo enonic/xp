@@ -1,6 +1,6 @@
 const path = require('path');
 
-const formatPath = error => path.normalize(error.module.resource);
+const formatPath = error => path.normalize(error.module ? error.module.resource : error.file);
 const formatPosition = error => error.location ? `[${error.location.line}, ${error.location.character}]` : '';
 const formatError = error => `${formatPath(error)}${formatPosition(error)}: ${error.rawMessage}`;
 
