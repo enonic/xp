@@ -169,7 +169,7 @@ export class ContentWizardActions extends api.app.wizard.WizardActions<api.conte
             }
             if (!hasPublishPermission) {
                 this.publish.setEnabled(false);
-                this.createIssue.setEnabled(false);
+                this.createIssue.setEnabled(true);
                 this.unpublish.setEnabled(false);
                 this.publishTree.setEnabled(false);
                 this.publishMobile.setEnabled(false);

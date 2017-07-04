@@ -84,12 +84,11 @@ export class ContentWizardToolbarPublishControls
     private refreshState() {
         let canBePublished = !this.isOnline() && this.contentCanBePublished && this.userCanPublish;
         let canTreeBePublished = !this.leafContent && this.contentCanBePublished && this.userCanPublish;
-        let canCreateIssue = canBePublished;
         let canBeUnpublished = this.content.isPublished() && this.userCanPublish;
 
         this.publishAction.setEnabled(canBePublished);
         this.publishTreeAction.setEnabled(canTreeBePublished);
-        this.createIssueAction.setEnabled(canCreateIssue);
+        this.createIssueAction.setEnabled(true);
         this.unpublishAction.setEnabled(canBeUnpublished);
         this.publishMobileAction.setEnabled(canBePublished);
         this.publishMobileAction.setVisible(canBePublished);
