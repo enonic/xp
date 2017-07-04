@@ -150,9 +150,9 @@ public class FileDumpReader
             this.listener.loadingVersions( repositoryId );
         }
 
+        final VersionsLoadResult.Builder builder = VersionsLoadResult.create();
         final EntriesLoadResult result = doLoadEntries( processor, tarFile );
-        return VersionsLoadResult.create().
-            successful( result.getSuccessful() ).
+        return builder.successful( result.getSuccessful() ).
             errors( result.getErrors().stream().map( error -> LoadError.error( error.getMessage() ) ).collect( Collectors.toList() ) ).
             build();
     }

@@ -1,7 +1,7 @@
 package com.enonic.xp.dump;
 
 public class VersionsLoadResult
-    extends LoadResult<VersionsLoadResult>
+    extends AbstractLoadResult
 {
     private VersionsLoadResult( final Builder builder )
     {
@@ -14,7 +14,7 @@ public class VersionsLoadResult
     }
 
     public static final class Builder
-        extends LoadResult.Builder<VersionsLoadResult, Builder>
+        extends AbstractLoadResult.Builder<VersionsLoadResult, Builder>
     {
         private Builder()
         {

@@ -9,21 +9,17 @@ public class VersionsLoadResultJson
 {
     private final Long successful;
 
-    private final String duration;
-
     private final List<LoadErrorJson> errors;
 
     private VersionsLoadResultJson( final Builder builder )
     {
         successful = builder.successful;
-        duration = builder.duration;
         errors = builder.errorList;
     }
 
     public static VersionsLoadResultJson from( final VersionsLoadResult result )
     {
         return VersionsLoadResultJson.create().
-            duration( result.getDuration().toString() ).
             successful( result.getSuccessful() ).
             errors( result.getErrors().stream().map( LoadErrorJson::from ).collect( Collectors.toList() ) ).
             build();
@@ -33,12 +29,6 @@ public class VersionsLoadResultJson
     public Long getSuccessful()
     {
         return successful;
-    }
-
-    @SuppressWarnings("unused")
-    public String getDuration()
-    {
-        return duration;
     }
 
     @SuppressWarnings("unused")
@@ -56,8 +46,6 @@ public class VersionsLoadResultJson
     {
         private Long successful;
 
-        private String duration;
-
         private List<LoadErrorJson> errorList;
 
         private Builder()
@@ -67,12 +55,6 @@ public class VersionsLoadResultJson
         public Builder successful( final Long val )
         {
             successful = val;
-            return this;
-        }
-
-        public Builder duration( final String val )
-        {
-            duration = val;
             return this;
         }
 

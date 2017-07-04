@@ -100,7 +100,7 @@ public class DumpServiceImplTest
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
 
-        NodeHelper.runAsAdmin( () -> this.dumpService.dumpSystem( SystemDumpParams.create().
+        NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().
             dumpName( "testDump" ).
             build() ) );
 
@@ -136,7 +136,7 @@ public class DumpServiceImplTest
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
 
-        final SystemDumpResult systemDumpResult = NodeHelper.runAsAdmin( () -> this.dumpService.dumpSystem( SystemDumpParams.create().
+        final SystemDumpResult systemDumpResult = NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().
             dumpName( "testDump" ).
             build() ) );
 
@@ -168,7 +168,7 @@ public class DumpServiceImplTest
         updateNode( node );
         updateNode( node );
 
-        final SystemDumpResult systemDumpResult = NodeHelper.runAsAdmin( () -> this.dumpService.dumpSystem( SystemDumpParams.create().
+        final SystemDumpResult systemDumpResult = NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().
             dumpName( "testDump" ).
             build() ) );
 
@@ -226,7 +226,7 @@ public class DumpServiceImplTest
             this.repositoryService.deleteBranch( DeleteBranchParams.from( branch ) );
             assertFalse( this.repositoryService.get( currentRepoId ).getBranches().contains( branch ) );
 
-            this.dumpService.loadSystemDump( SystemLoadParams.create().
+            this.dumpService.load( SystemLoadParams.create().
                 dumpName( "testDump" ).
                 build() );
 
@@ -499,7 +499,7 @@ public class DumpServiceImplTest
 
         createNode( NodePath.ROOT, "myNode" );
 
-        NodeHelper.runAsAdmin( () -> this.dumpService.dumpSystem( SystemDumpParams.create().
+        NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().
             dumpName( "myTestDump" ).
             includeVersions( true ).
             includeBinaries( true ).
@@ -577,7 +577,7 @@ public class DumpServiceImplTest
 
     private SystemLoadResult doLoad()
     {
-        return this.dumpService.loadSystemDump( SystemLoadParams.create().
+        return this.dumpService.load( SystemLoadParams.create().
             dumpName( "myTestDump" ).
             includeVersions( true ).
             build() );
@@ -585,7 +585,7 @@ public class DumpServiceImplTest
 
     private void doDump( final SystemDumpParams params )
     {
-        this.dumpService.dumpSystem( params );
+        this.dumpService.dump( params );
     }
 
     private Node updateNode( final Node node )

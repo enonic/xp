@@ -14,15 +14,12 @@ public class RepoDumpResultJson
 
     private final String repository;
 
-    private final String duration;
-
     private final Long numberOfVersions;
 
     private RepoDumpResultJson( final Builder builder )
     {
         this.branches = builder.branches;
         this.repository = builder.repository;
-        this.duration = builder.duration.toString();
         this.numberOfVersions = builder.numberOfVersions;
     }
 
@@ -35,7 +32,6 @@ public class RepoDumpResultJson
         for ( final BranchDumpResult result : repoDumpResult )
         {
             builder.add( BranchDumpResultJson.from( result ) );
-            builder.addDuration( result.getDuration() );
         }
 
         return builder.build();
@@ -54,12 +50,6 @@ public class RepoDumpResultJson
     }
 
     @SuppressWarnings("unused")
-    public String getDuration()
-    {
-        return duration;
-    }
-
-    @SuppressWarnings("unused")
     public Long getNumberOfVersions()
     {
         return numberOfVersions;
@@ -75,8 +65,6 @@ public class RepoDumpResultJson
         private final List<BranchDumpResultJson> branches = Lists.newArrayList();
 
         private String repository;
-
-        private Duration duration = Duration.ZERO;
 
         private Long numberOfVersions = 0L;
 
@@ -105,12 +93,6 @@ public class RepoDumpResultJson
         public RepoDumpResultJson build()
         {
             return new RepoDumpResultJson( this );
-        }
-
-        public Builder addDuration( final Duration duration )
-        {
-            this.duration = this.duration.plus( duration );
-            return this;
         }
     }
 }

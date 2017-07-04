@@ -1,6 +1,5 @@
 package com.enonic.xp.dump;
 
-import java.time.Duration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -17,15 +16,12 @@ public class RepoDumpResult
 
     private final RepositoryId repositoryId;
 
-    private final Duration duration;
-
     private final Long numberOfVersions;
 
     private RepoDumpResult( final Builder builder )
     {
         this.branchResults = builder.branchResults;
         this.repositoryId = builder.repositoryId;
-        this.duration = Duration.ofMillis( builder.endTime - builder.startTime );
         this.numberOfVersions = builder.numberOfVersions;
     }
 
@@ -39,14 +35,17 @@ public class RepoDumpResult
         return repositoryId;
     }
 
-    public String getDuration()
-    {
-        return duration.toString();
-    }
-
     public Long getNumberOfVersions()
     {
         return numberOfVersions;
+    }
+
+    public BranchDumpResult get( final Branch branch )
+    {
+        final Optional<BranchDumpResult> branchDumpEntry =
+            this.branchResults.stream().filter( ( entry ) -> entry.getBranch().equals( branch ) ).findFirst();
+
+        return branchDumpEntry.isPresent() ? branchDumpEntry.get() : null;
     }
 
     @Override
@@ -66,16 +65,11 @@ public class RepoDumpResult
 
         private final RepositoryId repositoryId;
 
-        private final Long startTime;
-
         private Long numberOfVersions = 0L;
-
-        private Long endTime;
 
         private Builder( final RepositoryId repositoryId )
         {
             this.repositoryId = repositoryId;
-            this.startTime = System.currentTimeMillis();
         }
 
         public Builder add( final BranchDumpResult val )
@@ -92,29 +86,7 @@ public class RepoDumpResult
 
         public RepoDumpResult build()
         {
-            this.endTime = System.currentTimeMillis();
             return new RepoDumpResult( this );
         }
-    }
-
-
-    public BranchDumpResult get( final Branch branch )
-    {
-        final Optional<BranchDumpResult> branchDumpEntry =
-            this.branchResults.stream().filter( ( entry ) -> entry.getBranch().equals( branch ) ).findFirst();
-
-        return branchDumpEntry.isPresent() ? branchDumpEntry.get() : null;
-    }
-
-    @Override
-    public String toString()
-    {
-        StringBuilder builder = new StringBuilder();
-        builder.append( "DumpResult{" );
-        this.branchResults.forEach( ( entry ) -> builder.append( entry.toString() ).append( ", " ) );
-        builder.append( ", repositoryId=" + repositoryId );
-        builder.append( '}' );
-
-        return builder.toString();
     }
 }

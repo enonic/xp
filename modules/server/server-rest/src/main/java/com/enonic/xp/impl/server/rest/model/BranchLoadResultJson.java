@@ -11,15 +11,12 @@ public class BranchLoadResultJson
 
     private final Long successful;
 
-    private final String duration;
-
     private final List<LoadErrorJson> errors;
 
     private BranchLoadResultJson( final Builder builder )
     {
         branch = builder.branch;
         successful = builder.successful;
-        duration = builder.duration;
         errors = builder.errorList;
     }
 
@@ -27,7 +24,6 @@ public class BranchLoadResultJson
     {
         return BranchLoadResultJson.create().
             branch( result.getBranch().toString() ).
-            duration( result.getDuration().toString() ).
             successful( result.getSuccessful() ).
             errors( result.getErrors().stream().map( LoadErrorJson::from ).collect( Collectors.toList() ) ).
             build();
@@ -43,13 +39,6 @@ public class BranchLoadResultJson
     public Long getSuccessful()
     {
         return successful;
-    }
-
-
-    @SuppressWarnings("unused")
-    public String getDuration()
-    {
-        return duration;
     }
 
     @SuppressWarnings("unused")
@@ -69,8 +58,6 @@ public class BranchLoadResultJson
 
         private Long successful;
 
-        private String duration;
-
         private List<LoadErrorJson> errorList;
 
         private Builder()
@@ -86,12 +73,6 @@ public class BranchLoadResultJson
         public Builder successful( final Long val )
         {
             successful = val;
-            return this;
-        }
-
-        public Builder duration( final String val )
-        {
-            duration = val;
             return this;
         }
 

@@ -9,8 +9,6 @@ import com.enonic.xp.dump.RepoLoadResult;
 
 public class RepoLoadResultJson
 {
-    private final String duration;
-
     private final List<BranchLoadResultJson> branches;
 
     private final VersionsLoadResultJson versions;
@@ -19,7 +17,6 @@ public class RepoLoadResultJson
 
     private RepoLoadResultJson( final Builder builder )
     {
-        this.duration = builder.duration;
         this.branches = builder.branches;
         this.versions = builder.versions;
         this.repository = builder.repository;
@@ -28,7 +25,6 @@ public class RepoLoadResultJson
     public static RepoLoadResultJson from( final RepoLoadResult results )
     {
         final Builder builder = RepoLoadResultJson.create( results.getRepositoryId().toString() ).
-            duration( results.getDuration().toString() ).
             versions( VersionsLoadResultJson.from( results.getVersionsLoadResult() ) );
 
         for ( final BranchLoadResult result : results )
@@ -37,12 +33,6 @@ public class RepoLoadResultJson
         }
 
         return builder.build();
-    }
-
-    @SuppressWarnings("unused")
-    public String getDuration()
-    {
-        return duration;
     }
 
     @SuppressWarnings("unused")
@@ -70,8 +60,6 @@ public class RepoLoadResultJson
 
     public static final class Builder
     {
-        private String duration;
-
         private final List<BranchLoadResultJson> branches = Lists.newArrayList();
 
         private VersionsLoadResultJson versions;
@@ -83,11 +71,6 @@ public class RepoLoadResultJson
             this.repository = repositoryId;
         }
 
-        public Builder duration( final String val )
-        {
-            duration = val;
-            return this;
-        }
 
         public Builder add( final BranchLoadResultJson val )
         {

@@ -6,30 +6,22 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-public abstract class LoadResult<T>
+abstract class AbstractLoadResult
 {
     private final Long successful;
-
-    private final Duration duration;
 
     private final List<LoadError> errors;
 
     @SuppressWarnings("unchecked")
-    LoadResult( final Builder builder )
+    AbstractLoadResult( final Builder builder )
     {
         this.successful = builder.successful;
-        this.duration = builder.duration != null ? builder.duration : Duration.ofMillis( builder.endTime - builder.startTime );
         this.errors = builder.errors;
     }
 
     public Long getSuccessful()
     {
         return successful;
-    }
-
-    public Duration getDuration()
-    {
-        return duration;
     }
 
     public List<LoadError> getErrors()
@@ -41,30 +33,16 @@ public abstract class LoadResult<T>
     {
         private Long successful = 0L;
 
-        private final Long startTime;
-
-        private Long endTime;
-
-        private Duration duration;
-
         private final List<LoadError> errors = Lists.newArrayList();
 
         protected Builder()
         {
-            this.startTime = System.currentTimeMillis();
         }
 
         @SuppressWarnings("unchecked")
         public B successful( final Long val )
         {
             successful += val;
-            return (B) this;
-        }
-
-        @SuppressWarnings("unchecked")
-        public B duration( final Duration duration )
-        {
-            this.duration = duration;
             return (B) this;
         }
 
@@ -85,7 +63,6 @@ public abstract class LoadResult<T>
         @SuppressWarnings("unchecked")
         protected T build()
         {
-            this.endTime = System.currentTimeMillis();
             return (T) this;
         }
 

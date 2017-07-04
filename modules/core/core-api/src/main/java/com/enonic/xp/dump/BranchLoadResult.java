@@ -3,7 +3,7 @@ package com.enonic.xp.dump;
 import com.enonic.xp.branch.Branch;
 
 public class BranchLoadResult
-    extends LoadResult<BranchLoadResult>
+    extends AbstractLoadResult
 {
     private final Branch branch;
 
@@ -24,7 +24,7 @@ public class BranchLoadResult
     }
 
     public static final class Builder
-        extends LoadResult.Builder<BranchLoadResult, Builder>
+        extends AbstractLoadResult.Builder<BranchLoadResult, Builder>
     {
         private final Branch branch;
 

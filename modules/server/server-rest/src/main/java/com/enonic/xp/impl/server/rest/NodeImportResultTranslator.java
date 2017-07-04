@@ -10,14 +10,13 @@ import com.enonic.xp.export.NodeImportResult;
 
 class NodeImportResultTranslator
 {
-    static BranchLoadResult translate( final NodeImportResult result, final Branch branch, final Duration duration )
+    static BranchLoadResult translate( final NodeImportResult result, final Branch branch )
     {
         return BranchLoadResult.create( branch ).
             successful( (long) result.addedNodes.getSize() ).
             errors( result.getImportErrors().stream().
                 map( error -> LoadError.error( error.getMessage() ) ).
                 collect( Collectors.toList() ) ).
-            duration( duration ).
             build();
     }
 }

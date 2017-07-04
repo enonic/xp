@@ -17,14 +17,11 @@ public class RepoLoadResult
 
     private final RepositoryId repositoryId;
 
-    private final Duration duration;
-
     private RepoLoadResult( final Builder builder )
     {
         this.branchResults = builder.branchResults;
         this.repositoryId = builder.repositoryId;
         this.versionsLoadResult = builder.versionsLoadResult;
-        this.duration = Duration.ofMillis( builder.endTime - builder.startTime );
     }
 
     @Override
@@ -45,12 +42,6 @@ public class RepoLoadResult
         return repositoryId;
     }
 
-    @SuppressWarnings("unused")
-    public Duration getDuration()
-    {
-        return duration;
-    }
-
     public VersionsLoadResult getVersionsLoadResult()
     {
         return versionsLoadResult;
@@ -69,13 +60,9 @@ public class RepoLoadResult
 
         private VersionsLoadResult versionsLoadResult = VersionsLoadResult.create().build();
 
-        private final Long startTime;
-
-        private Long endTime;
 
         private Builder( final RepositoryId repositoryId )
         {
-            this.startTime = System.currentTimeMillis();
             this.repositoryId = repositoryId;
         }
 
@@ -93,7 +80,6 @@ public class RepoLoadResult
 
         public RepoLoadResult build()
         {
-            endTime = System.currentTimeMillis();
             return new RepoLoadResult( this );
         }
     }
