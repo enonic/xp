@@ -85,25 +85,24 @@ export class ContentTreeGrid
 
         this.setContextMenu(new TreeGridContextMenu(new ContentTreeGridActions(this)));
 
-        let columns = builder.getColumns();
-        const nameColumn = columns[1];
-        const compareStatusColumn = columns[2];
-        const orderColumn = columns[3];
-        const modifiedTimeColumn = columns[4];
+        const [
+            nameColumn,
+            compareStatusColumn,
+            orderColumn,
+            modifiedTimeColumn,
+        ] = builder.getColumns().slice(1);
 
-        let updateColumns = (force?: boolean) => {
+        const updateColumns = (force?: boolean) => {
             if (force) {
-                let width = this.getEl().getWidth();
-                let checkSelIsMoved = ResponsiveRanges._360_540.isFitOrSmaller(api.dom.Body.get().getEl().getWidth());
+                const width = this.getEl().getWidth(); //
+                const checkSelIsMoved = ResponsiveRanges._360_540.isFitOrSmaller(api.dom.Body.get().getEl().getWidth());
 
-                let curClass = nameColumn.getCssClass();
+                const curClass = nameColumn.getCssClass();
 
                 if (checkSelIsMoved) {
-                    nameColumn.setCssClass(curClass ? curClass : '' + 'shifted');
-                } else {
-                    if (curClass && curClass.indexOf('shifted') >= 0) {
-                        nameColumn.setCssClass(curClass.replace('shifted', ''));
-                    }
+                    nameColumn.setCssClass(curClass || 'shifted');
+                } else if (curClass && curClass.indexOf('shifted') >= 0) {
+                    nameColumn.setCssClass(curClass.replace('shifted', ''));
                 }
 
                 if (ResponsiveRanges._240_360.isFitOrSmaller(width)) {
@@ -154,7 +153,7 @@ export class ContentTreeGrid
             }
         });
 
-        this.getGrid().subscribeOnClick((event, data) => {
+        this.getGrid().subscribeOnClick((event) => {
             let elem = new ElementHelper(event.target);
             if (elem.hasClass('sort-dialog-trigger')) {
                 new SortContentEvent(this.getSelectedDataList()).fire();

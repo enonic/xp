@@ -17,11 +17,14 @@ import TreeGridContextMenu = api.ui.treegrid.TreeGridContextMenu;
 import UploadItem = api.ui.uploader.UploadItem;
 import ApplicationKey = api.application.ApplicationKey;
 import i18n = api.util.i18n;
+import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
+import ResponsiveItem = api.ui.responsive.ResponsiveItem;
+import ElementHelper = api.dom.ElementHelper;
 
 export class ApplicationTreeGrid extends TreeGrid<Application> {
 
     constructor() {
-        super(new TreeGridBuilder<Application>().setColumnConfig([{
+        const builder = new TreeGridBuilder<Application>().setColumnConfig([{
                 name: i18n('field.name'),
                 id: 'displayName',
                 field: 'displayName',
@@ -38,17 +41,71 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
                 field: 'state',
                 formatter: ApplicationRowFormatter.stateFormatter,
                 style: {cssClass: 'state', minWidth: 80, maxWidth: 100}
-            }]).prependClasses('application-grid')
-        );
+        }]).prependClasses('application-grid');
+
+        super(builder);
 
         this.setContextMenu(new TreeGridContextMenu(ApplicationBrowseActions.init(this)));
 
-        this.initEventHandlers();
+        const columns = builder.getColumns();
+        const [
+            nameColumn,
+            versionColumn,
+            stateColumn,
+        ] = builder.getColumns().slice(1);
+
+        const updateColumns = (force?: boolean) => {
+            if (force) {
+                let width = this.getEl().getWidth();
+                let checkSelIsMoved = ResponsiveRanges._360_540.isFitOrSmaller(api.dom.Body.get().getEl().getWidth());
+
+                const curClass = nameColumn.getCssClass();
+
+                if (checkSelIsMoved) {
+                    nameColumn.setCssClass(curClass || 'shifted');
+                } else if (curClass && curClass.indexOf('shifted') >= 0) {
+                    nameColumn.setCssClass(curClass.replace('shifted', ''));
+                }
+
+                if (ResponsiveRanges._240_360.isFitOrSmaller(width)) {
+                    nameColumn.setBoundaryWidth(150, 250);
+                    versionColumn.setBoundaryWidth(50, 70);
+                    stateColumn.setBoundaryWidth(50, 50);
+                } else if (ResponsiveRanges._360_540.isFitOrSmaller(width)) {
+                    nameColumn.setBoundaryWidth(200, 350);
+                    versionColumn.setBoundaryWidth(50, 70);
+                    stateColumn.setBoundaryWidth(50, 70);
+                } else {
+                    nameColumn.setBoundaryWidth(200, 9999);
+                    versionColumn.setBoundaryWidth(50, 130);
+                    stateColumn.setBoundaryWidth(80, 100);
+                }
+                this.setColumns(columns.slice(1), checkSelIsMoved);
+
+                this.getGrid().syncGridSelection(true);
+            } else {
+                this.getGrid().resizeCanvas();
+                this.highlightCurrentNode();
+            }
+        };
+
+        this.initEventHandlers(updateColumns);
     }
 
-    private initEventHandlers() {
-        api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, () => {
-            this.getGrid().resizeCanvas();
+    private initEventHandlers(updateColumnsHandler: Function) {
+        const onBecameActive = (active: boolean) => {
+            if (active) {
+                updateColumnsHandler(true);
+                this.unActiveChanged(onBecameActive);
+            }
+        };
+        // update columns when grid becomes active for the first time
+        this.onActiveChanged(onBecameActive);
+
+        api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
+            if (this.isInRenderingView()) {
+                updateColumnsHandler(item.isRangeSizeChanged());
+            }
         });
     }
 
@@ -161,7 +218,7 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
             }
         };
 
-        item.onProgress((progress: number) => {
+        item.onProgress(() => {
             this.invalidate();
         });
 
