@@ -43,8 +43,27 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
                 field: 'modifiedTime',
                 formatter: DateTimeFormatter.format,
                 style: {cssClass: 'modified', minWidth: 150, maxWidth: 170}
-         }*/]).setPartialLoadEnabled(true).setLoadBufferSize(20).// rows count
-        prependClasses('user-tree-grid');
+         }*/]).setPartialLoadEnabled(true).setLoadBufferSize(20)
+            .prependClasses('user-tree-grid');
+
+        const columns = builder.getColumns().slice(0);
+        const [nameColumn] = columns;
+
+        const updateColumns = () => {
+            let checkSelIsMoved = ResponsiveRanges._360_540.isFitOrSmaller(api.dom.Body.get().getEl().getWidth());
+
+            const curClass = nameColumn.getCssClass();
+
+            if (checkSelIsMoved) {
+                nameColumn.setCssClass(curClass || 'shifted');
+            } else if (curClass && curClass.indexOf('shifted') >= 0) {
+                nameColumn.setCssClass(curClass.replace('shifted', ''));
+            }
+
+            this.setColumns(columns.slice(0), checkSelIsMoved);
+        };
+
+        builder.setColumnUpdater(updateColumns);
 
         super(builder);
 
@@ -52,34 +71,10 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
 
         this.setContextMenu(new TreeGridContextMenu(this.treeGridActions));
 
-        const columns = builder.getColumns();
-        const [nameColumn] = builder.getColumns().slice(1);
-
-        const updateColumns = (force?: boolean) => {
-            if (force) {
-                let checkSelIsMoved = ResponsiveRanges._360_540.isFitOrSmaller(api.dom.Body.get().getEl().getWidth());
-
-                const curClass = nameColumn.getCssClass();
-
-                if (checkSelIsMoved) {
-                    nameColumn.setCssClass(curClass || 'shifted');
-                } else if (curClass && curClass.indexOf('shifted') >= 0) {
-                    nameColumn.setCssClass(curClass.replace('shifted', ''));
-                }
-
-                this.setColumns(columns.slice(1), checkSelIsMoved);
-
-                this.getGrid().syncGridSelection(true);
-            } else {
-                this.getGrid().resizeCanvas();
-                this.highlightCurrentNode();
-            }
-        };
-
-        this.initEventHandlers(updateColumns);
+        this.initEventHandlers();
     }
 
-    private initEventHandlers(updateColumnsHandler: Function) {
+    private initEventHandlers() {
         BrowseFilterSearchEvent.on((event) => {
             let items = event.getData().map((principal: Principal) => {
                 return new UserTreeGridItemBuilder().setPrincipal(principal).setType(UserTreeGridItemType.PRINCIPAL).build();
@@ -90,21 +85,6 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
 
         BrowseFilterResetEvent.on(() => {
             this.resetFilter();
-        });
-
-        const onBecameActive = (active: boolean) => {
-            if (active) {
-                updateColumnsHandler(true);
-                this.unActiveChanged(onBecameActive);
-            }
-        };
-        // update columns when grid becomes active for the first time
-        this.onActiveChanged(onBecameActive);
-
-        api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item) => {
-            if (this.isInRenderingView()) {
-                updateColumnsHandler(item.isRangeSizeChanged());
-            }
         });
 
         this.getGrid().subscribeOnDblClick((event, data) => {

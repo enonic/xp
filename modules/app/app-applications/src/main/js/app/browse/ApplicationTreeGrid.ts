@@ -43,70 +43,46 @@ export class ApplicationTreeGrid extends TreeGrid<Application> {
                 style: {cssClass: 'state', minWidth: 80, maxWidth: 100}
         }]).prependClasses('application-grid');
 
-        super(builder);
-
-        this.setContextMenu(new TreeGridContextMenu(ApplicationBrowseActions.init(this)));
-
-        const columns = builder.getColumns();
+        const columns = builder.getColumns().slice(0);
         const [
             nameColumn,
             versionColumn,
             stateColumn,
-        ] = builder.getColumns().slice(1);
+        ] = columns;
 
-        const updateColumns = (force?: boolean) => {
-            if (force) {
-                let width = this.getEl().getWidth();
-                let checkSelIsMoved = ResponsiveRanges._360_540.isFitOrSmaller(api.dom.Body.get().getEl().getWidth());
+        const updateColumns = () => {
+            let width = this.getEl().getWidth();
+            let checkSelIsMoved = ResponsiveRanges._360_540.isFitOrSmaller(api.dom.Body.get().getEl().getWidth());
 
-                const curClass = nameColumn.getCssClass();
+            const curClass = nameColumn.getCssClass();
 
-                if (checkSelIsMoved) {
-                    nameColumn.setCssClass(curClass || 'shifted');
-                } else if (curClass && curClass.indexOf('shifted') >= 0) {
-                    nameColumn.setCssClass(curClass.replace('shifted', ''));
-                }
+            if (checkSelIsMoved) {
+                nameColumn.setCssClass(curClass || 'shifted');
+            } else if (curClass && curClass.indexOf('shifted') >= 0) {
+                nameColumn.setCssClass(curClass.replace('shifted', ''));
+            }
 
-                if (ResponsiveRanges._240_360.isFitOrSmaller(width)) {
-                    nameColumn.setBoundaryWidth(150, 250);
-                    versionColumn.setBoundaryWidth(50, 70);
-                    stateColumn.setBoundaryWidth(50, 50);
-                } else if (ResponsiveRanges._360_540.isFitOrSmaller(width)) {
-                    nameColumn.setBoundaryWidth(200, 350);
-                    versionColumn.setBoundaryWidth(50, 70);
-                    stateColumn.setBoundaryWidth(50, 70);
-                } else {
-                    nameColumn.setBoundaryWidth(200, 9999);
-                    versionColumn.setBoundaryWidth(50, 130);
-                    stateColumn.setBoundaryWidth(80, 100);
-                }
-                this.setColumns(columns.slice(1), checkSelIsMoved);
-
-                this.getGrid().syncGridSelection(true);
+            if (ResponsiveRanges._240_360.isFitOrSmaller(width)) {
+                nameColumn.setBoundaryWidth(150, 250);
+                versionColumn.setBoundaryWidth(50, 70);
+                stateColumn.setBoundaryWidth(50, 50);
+            } else if (ResponsiveRanges._360_540.isFitOrSmaller(width)) {
+                nameColumn.setBoundaryWidth(200, 350);
+                versionColumn.setBoundaryWidth(50, 70);
+                stateColumn.setBoundaryWidth(50, 70);
             } else {
-                this.getGrid().resizeCanvas();
-                this.highlightCurrentNode();
+                nameColumn.setBoundaryWidth(200, 9999);
+                versionColumn.setBoundaryWidth(50, 130);
+                stateColumn.setBoundaryWidth(80, 100);
             }
+            this.setColumns(columns.slice(0), checkSelIsMoved);
         };
 
-        this.initEventHandlers(updateColumns);
-    }
+        builder.setColumnUpdater(updateColumns);
 
-    private initEventHandlers(updateColumnsHandler: Function) {
-        const onBecameActive = (active: boolean) => {
-            if (active) {
-                updateColumnsHandler(true);
-                this.unActiveChanged(onBecameActive);
-            }
-        };
-        // update columns when grid becomes active for the first time
-        this.onActiveChanged(onBecameActive);
+        super(builder);
 
-        api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
-            if (this.isInRenderingView()) {
-                updateColumnsHandler(item.isRangeSizeChanged());
-            }
-        });
+        this.setContextMenu(new TreeGridContextMenu(ApplicationBrowseActions.init(this)));
     }
 
     getDataId(data: Application): string {

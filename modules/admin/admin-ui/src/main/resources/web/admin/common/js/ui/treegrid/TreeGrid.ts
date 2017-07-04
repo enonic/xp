@@ -17,6 +17,7 @@ module api.ui.treegrid {
     import TreeGridActions = api.ui.treegrid.actions.TreeGridActions;
     import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
     import AppHelper = api.util.AppHelper;
+    import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 
     /*
      * There are several methods that should be overridden:
@@ -217,6 +218,33 @@ module api.ui.treegrid {
             });
 
             this.onLoaded(() => this.unmask());
+
+            const updateColumns = builder.getColumnUpdater() || function () { /* empty */
+                };
+            const updateColumnsHandler = (force?: boolean) => {
+                if (force) {
+                    updateColumns();
+                    this.getGrid().syncGridSelection(true);
+                } else {
+                    this.getGrid().resizeCanvas();
+                    this.highlightCurrentNode();
+                }
+            };
+
+            const onBecameActive = (active: boolean) => {
+                if (active) {
+                    updateColumnsHandler(true);
+                    this.unActiveChanged(onBecameActive);
+                }
+            };
+            // update columns when grid becomes active for the first time
+            this.onActiveChanged(onBecameActive);
+
+            api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
+                if (this.isInRenderingView()) {
+                    updateColumnsHandler(item.isRangeSizeChanged());
+                }
+            });
         }
 
         private onRenderedHandler(builder: TreeGridBuilder<DATA>) {
@@ -662,7 +690,7 @@ module api.ui.treegrid {
             }
 
             let row = this.getRowByNode(node);
-            if (!!row) {
+            if (row) {
                 row.addClass('selected');
             }
         }

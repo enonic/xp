@@ -81,54 +81,48 @@ export class ContentTreeGrid
             }]).setPartialLoadEnabled(true).setLoadBufferSize(20).// rows count
             prependClasses('content-tree-grid');
 
-        super(builder);
-
-        this.setContextMenu(new TreeGridContextMenu(new ContentTreeGridActions(this)));
-
         const [
             nameColumn,
             compareStatusColumn,
             orderColumn,
             modifiedTimeColumn,
-        ] = builder.getColumns().slice(1);
+        ] = builder.getColumns().slice(0);
 
-        const updateColumns = (force?: boolean) => {
-            if (force) {
-                const width = this.getEl().getWidth(); //
-                const checkSelIsMoved = ResponsiveRanges._360_540.isFitOrSmaller(api.dom.Body.get().getEl().getWidth());
+        const updateColumns = () => {
+            const width = this.getEl().getWidth();
+            const checkSelIsMoved = ResponsiveRanges._360_540.isFitOrSmaller(api.dom.Body.get().getEl().getWidth());
 
-                const curClass = nameColumn.getCssClass();
+            const curClass = nameColumn.getCssClass();
 
-                if (checkSelIsMoved) {
-                    nameColumn.setCssClass(curClass || 'shifted');
-                } else if (curClass && curClass.indexOf('shifted') >= 0) {
-                    nameColumn.setCssClass(curClass.replace('shifted', ''));
-                }
-
-                if (ResponsiveRanges._240_360.isFitOrSmaller(width)) {
-                    this.setColumns([nameColumn, orderColumn], checkSelIsMoved);
-                } else if (ResponsiveRanges._360_540.isFitOrSmaller(width)) {
-                    this.setColumns([nameColumn, orderColumn, compareStatusColumn], checkSelIsMoved);
-                } else {
-                    if (ResponsiveRanges._540_720.isFitOrSmaller(width)) {
-                        modifiedTimeColumn.setMaxWidth(90);
-                        modifiedTimeColumn.setFormatter(DateTimeFormatter.formatNoTimestamp);
-                    } else {
-                        modifiedTimeColumn.setMaxWidth(135);
-                        modifiedTimeColumn.setFormatter(DateTimeFormatter.format);
-                    }
-                    this.setColumns([nameColumn, orderColumn, compareStatusColumn, modifiedTimeColumn]);
-                }
-
-                this.getGrid().syncGridSelection(true);
-            } else {
-                this.getGrid().resizeCanvas();
-                this.highlightCurrentNode();
+            if (checkSelIsMoved) {
+                nameColumn.setCssClass(curClass || 'shifted');
+            } else if (curClass && curClass.indexOf('shifted') >= 0) {
+                nameColumn.setCssClass(curClass.replace('shifted', ''));
             }
-            // re-set the selection to update selected rows presentation
+
+            if (ResponsiveRanges._240_360.isFitOrSmaller(width)) {
+                this.setColumns([nameColumn, orderColumn], checkSelIsMoved);
+            } else if (ResponsiveRanges._360_540.isFitOrSmaller(width)) {
+                this.setColumns([nameColumn, orderColumn, compareStatusColumn], checkSelIsMoved);
+            } else {
+                if (ResponsiveRanges._540_720.isFitOrSmaller(width)) {
+                    modifiedTimeColumn.setMaxWidth(90);
+                    modifiedTimeColumn.setFormatter(DateTimeFormatter.formatNoTimestamp);
+                } else {
+                    modifiedTimeColumn.setMaxWidth(135);
+                    modifiedTimeColumn.setFormatter(DateTimeFormatter.format);
+                }
+                this.setColumns([nameColumn, orderColumn, compareStatusColumn, modifiedTimeColumn]);
+            }
         };
 
-        this.initEventHandlers(updateColumns);
+        builder.setColumnUpdater(updateColumns);
+
+        super(builder);
+
+        this.setContextMenu(new TreeGridContextMenu(new ContentTreeGridActions(this)));
+
+        this.initEventHandlers();
     }
 
     protected editItem(node: TreeNode<ContentSummaryAndCompareStatus>) {
@@ -137,22 +131,7 @@ export class ContentTreeGrid
         }
     }
 
-    private initEventHandlers(updateColumnsHandler: Function) {
-        let onBecameActive = (active: boolean) => {
-            if (active) {
-                updateColumnsHandler(true);
-                this.unActiveChanged(onBecameActive);
-            }
-        };
-        // update columns when grid becomes active for the first time
-        this.onActiveChanged(onBecameActive);
-
-        api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, (item: ResponsiveItem) => {
-            if (this.isInRenderingView()) {
-                updateColumnsHandler(item.isRangeSizeChanged());
-            }
-        });
-
+    private initEventHandlers() {
         this.getGrid().subscribeOnClick((event) => {
             let elem = new ElementHelper(event.target);
             if (elem.hasClass('sort-dialog-trigger')) {
