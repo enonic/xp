@@ -158,7 +158,9 @@ module api.ui.selector {
             }
             if (selectedOption) {
                 let row = this.dropdownGrid.getRowByValue(selectedOption.value);
-                this.dropdownGrid.navigateToRow(row);
+                if(row != undefined) {
+                    this.dropdownGrid.navigateToRow(row);
+                }
             } else {
                 this.dropdownGrid.navigateToFirstRow();
             }
@@ -174,6 +176,14 @@ module api.ui.selector {
 
         markSelections(selectedOptions: Option<OPTION_DISPLAY_VALUE>[], ignoreEmpty: boolean = false) {
             this.dropdownGrid.markSelections(selectedOptions, ignoreEmpty);
+        }
+
+        addSelections(selectedOptions: Option<OPTION_DISPLAY_VALUE>[]) {
+            this.dropdownGrid.addSelections(selectedOptions);
+        }
+
+        onRowCountChanged(listener: () => void) {
+            this.dropdownGrid.onRowCountChanged(listener);
         }
 
         onRowSelection(listener: (event: DropdownGridRowSelectedEvent) => void) {

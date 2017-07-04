@@ -62,6 +62,12 @@ module api.ui.selector {
             this.optionsTreeGrid.setOptions(options);
         }
 
+        getSelectedOptions(): Option<OPTION_DISPLAY_VALUE>[] {
+            return this.optionsTreeGrid.getSelectedNodes().map(selectedNode => {
+                return this.getOptionByValue(selectedNode.getDataId());
+            });
+        }
+
         protected initGridAndData() {
             if (this.filter) {
                 // TODO
@@ -78,12 +84,24 @@ module api.ui.selector {
             this.getGrid().subscribeOnClick((e, args) => {
                 const elem = new ElementHelper(e.target);
 
-                if (!elem.hasClass('expand collapse')) {
+                let isCheckboxClicked = elem.hasClass('slick-cell-checkboxsel') || elem.hasAnyParentClass('slick-cell-checkboxsel');
+
+                if (!elem.hasClass('expand collapse') && !isCheckboxClicked) {
+                    //also should not be called for checkbox
                     this.notifyRowSelection(args.row);
                     e.preventDefault();
                     return false;
                 }
             });
+
+            this.getGrid().subscribeOnSelectedRowsChanged((e, args) => {
+                this.notifyMultipleSelection(args.rows);
+            });
+        }
+
+        markSelections(selectedOptions: Option<OPTION_DISPLAY_VALUE>[], ignoreEmpty: boolean = false) {
+            this.optionsTreeGrid.getRoot().clearStashedSelection();
+            super.markSelections(selectedOptions, ignoreEmpty);
         }
 
         protected createColumns(): api.ui.grid.GridColumn<any>[] {
@@ -115,7 +133,13 @@ module api.ui.selector {
         }
 
         getOptionByRow(rowIndex: number): Option<OPTION_DISPLAY_VALUE> {
-            return this.getGridData().getItem(rowIndex).getData();
+            const item = this.getGridData().getItem(rowIndex);
+            return item ? item.getData() : null;
+        }
+
+        getOptionByValue(value: string): Option<OPTION_DISPLAY_VALUE> {
+            const item = this.getGridData().getItemById(value);
+            return item ? item.getData() : null;
         }
     }
 }

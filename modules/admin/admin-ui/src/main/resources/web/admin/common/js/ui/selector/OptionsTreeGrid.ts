@@ -28,8 +28,8 @@ module api.ui.selector {
                     .prependClasses('dropdown-tree-grid')
                     .setRowHeight(45)
                     .setHotkeysEnabled(true)
-                    .disableMultipleSelection(true)
-                    .setShowToolbar(false);
+                    .setShowToolbar(false)
+                    .setIdPropertyName('dataId');
 
             builder.getOptions().setDataItemColumnValueExtractor(builder.nodeExtractor);
 
@@ -58,12 +58,17 @@ module api.ui.selector {
         }
 
         reload(parentNodeData?: Option<OPTION_DISPLAY_VALUE>): wemQ.Promise<void> {
-            return super.reload(parentNodeData).then(() => {
+            return super.reload(parentNodeData, 'dataId').then(() => {
                 if (this.defaultOption && !this.isDefaultOptionActive) {
                     this.scrollToDefaultOption(this.getRoot().getCurrentRoot(), 0);
                     this.isDefaultOptionActive = true;
                 }
             });
+        }
+
+        expandNode(node?: TreeNode<Option<OPTION_DISPLAY_VALUE>>, expandAll?: boolean): wemQ.Promise<boolean> {
+
+            return super.expandNode(node, expandAll);
         }
 
         private initEventHandlers() {
@@ -95,7 +100,7 @@ module api.ui.selector {
         }
 
         isEmptyNode(node: TreeNode<Option<OPTION_DISPLAY_VALUE>>): boolean {
-            return !node.getData().displayValue;
+            return !(node.getData() && node.getData().displayValue);
         }
 
         fetch(node: TreeNode<Option<OPTION_DISPLAY_VALUE>>, dataId?: string): wemQ.Promise<Option<OPTION_DISPLAY_VALUE>> {
@@ -114,7 +119,7 @@ module api.ui.selector {
                 from--;
             }
 
-            return this.loader.fetchChildren(parentNode, from, OptionsTreeGrid.MAX_FETCH_SIZE).then(
+            return this.loader.fetchChildren(parentNode).then(
                 (loadedData: OptionDataLoaderData<OPTION_DISPLAY_VALUE>) => {
                     let newOptions = this.optionsDataToTreeNodeOption(loadedData.getData());
                     let options = parentNode.getChildren().map((el) => el.getData()).slice(0, from).concat(newOptions);
@@ -195,6 +200,7 @@ module api.ui.selector {
         private optionDataToTreeNodeOption(data: OPTION_DISPLAY_VALUE): Option<OPTION_DISPLAY_VALUE> {
             return {
                 value: this.treeDataHelper.getDataId(data),
+                disabled: this.treeDataHelper.isDisabled(data),
                 displayValue: data
             };
         }
@@ -219,6 +225,10 @@ module api.ui.selector {
                 } else {
                     return {cssClasses: "active readonly' title='This content is read-only'"};
                 }
+            }
+
+            if (node.getData().disabled) {
+                return {cssClasses: "disabled'"};
             }
 
             return null;

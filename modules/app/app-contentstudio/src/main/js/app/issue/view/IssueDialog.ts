@@ -21,6 +21,10 @@ export abstract class IssueDialog extends DependantItemsDialog {
 
     private opener: ModalDialog;
 
+    private debouncedAddItems: Function;
+
+    private newItems: ContentSummary[] = [];
+
     protected constructor(title: string) {
         super(title);
 
@@ -65,6 +69,18 @@ export abstract class IssueDialog extends DependantItemsDialog {
         });
 
         this.closeIcon.onClicked(() => this.opener ? this.opener.close() : true);
+
+        this.debouncedAddItems = api.util.AppHelper.debounce(() => {
+            ContentSummaryAndCompareStatusFetcher.fetchByIds(
+                this.newItems.map(summary => summary.getContentId())).then((result) => {
+
+                this.setListItems(this.getItemList().getItems().concat(result));
+
+                this.publishProcessor.reloadPublishDependencies(true);
+
+                this.newItems = [];
+            });
+        }, 100);
     }
 
     static get(): IssueDialog {
@@ -120,17 +136,16 @@ export abstract class IssueDialog extends DependantItemsDialog {
         super.close();
     }
 
+    private addNewItemsHandler(items: ContentSummary[]) {
+        this.newItems = this.newItems.concat(items);
+        this.debouncedAddItems();
+    }
+
     private initForm() {
         this.form = new IssueDialogForm();
 
         this.form.onContentItemsAdded((items: ContentSummary[]) => {
-            ContentSummaryAndCompareStatusFetcher.fetchByIds(
-                items.map(summary => summary.getContentId())).then((result) => {
-
-                this.setListItems(result.concat(this.getItemList().getItems()));
-
-                this.publishProcessor.reloadPublishDependencies(true);
-            });
+            this.addNewItemsHandler(items);
         });
 
         this.form.onContentItemsRemoved((items) => {

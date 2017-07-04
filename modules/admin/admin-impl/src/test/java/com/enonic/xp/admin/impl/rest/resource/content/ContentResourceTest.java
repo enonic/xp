@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
@@ -16,6 +17,9 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentIdsJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.ContentSelectorQueryJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.ContentTreeSelectorJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.ContentTreeSelectorQueryJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.GetDescendantsOfContents;
 import com.enonic.xp.admin.impl.rest.resource.content.json.HasUnpublishedChildrenResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
@@ -68,6 +72,7 @@ import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.MixinName;
@@ -1245,6 +1250,54 @@ public class ContentResourceTest
             post().getAsString();
 
         assertEquals( "[]", jsonString );
+    }
+
+    @Test
+    public void treeSelectorQuery()
+    {
+        ContentResource contentResource = getResourceInstance();
+
+        Content content1 = createContent( "content-id1", "content-name1", "myapplication:content-type" );
+        Content content2 = createContent( "content-id2", content1.getPath(), "content-name2", "myapplication:content-type" );
+        Content content3 = createContent( "content-id3", content2.getPath(), "content-name3", "myapplication:content-type" );
+        Content content4 = createContent( "content-id4", content3.getPath(), "content-name4", "myapplication:content-type" );
+
+        Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
+            FindContentIdsByQueryResult.create().totalHits( 1L ).contents( ContentIds.from( content4.getId() ) ).build() );
+
+        Mockito.when( this.contentService.getByIds( new GetContentByIdsParams( ContentIds.from( content4.getId() ) ) ) ).thenReturn(
+            Contents.from( content4 ) );
+
+        Mockito.when( this.contentService.getByPaths( ContentPaths.from( content1.getPath() )) ).thenReturn(
+            Contents.from( content1 ) );
+        Mockito.when( this.contentService.getByPaths( ContentPaths.from( content2.getPath() )) ).thenReturn(
+            Contents.from( content2 ) );
+        Mockito.when( this.contentService.getByPaths( ContentPaths.from( content3.getPath() )) ).thenReturn(
+            Contents.from( content3 ) );
+
+        ContentTreeSelectorQueryJson json = initContentTreeSelectorQueryJson(null);
+        List<ContentTreeSelectorJson> result = contentResource.treeSelectorQuery( json );
+        assertEquals( result.get(0).getContent().getId(), content1.getId().toString() );
+
+        json = initContentTreeSelectorQueryJson(content1.getPath());
+        result = contentResource.treeSelectorQuery( json );
+        assertEquals( result.get(0).getContent().getId(), content2.getId().toString() );
+
+        json = initContentTreeSelectorQueryJson(content2.getPath());
+        result = contentResource.treeSelectorQuery( json );
+        assertEquals( result.get(0).getContent().getId(), content3.getId().toString() );
+    }
+
+    private ContentTreeSelectorQueryJson initContentTreeSelectorQueryJson(final ContentPath parentPath) {
+        final ContentTreeSelectorQueryJson json = Mockito.mock( ContentTreeSelectorQueryJson.class );
+
+        Mockito.when( json.getFrom() ).thenReturn( 0 );
+        Mockito.when( json.getSize() ).thenReturn( -1 );
+        Mockito.when( json.getQueryExprString() ).thenReturn( "" );
+        Mockito.when( json.getContentTypeNames() ).thenReturn( ContentTypeNames.empty() );
+        Mockito.when( json.getParentPath() ).thenReturn( parentPath );
+
+        return json;
     }
 
     private User createUser( final String displayName )

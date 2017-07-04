@@ -1,3 +1,6 @@
+///<reference path='ContentSummaryOptionDataLoader.ts' />
+///<reference path='ContentSummaryOptionDataHelper.ts' />
+
 ///<reference path='ContentId.ts' />
 ///<reference path='ContentIds.ts' />
 ///<reference path='ContentName.ts' />

@@ -91,6 +91,12 @@ public class NodePaths
             return this;
         }
 
+        public Builder addNodePaths( final Collection<NodePath> nodePaths )
+        {
+            this.nodePaths.addAll( nodePaths );
+            return this;
+        }
+
         public NodePaths build()
         {
             return new NodePaths( this );

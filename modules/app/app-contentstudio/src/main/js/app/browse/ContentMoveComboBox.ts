@@ -1,6 +1,4 @@
 import '../../api.ts';
-import {ContentSummaryOptionDataHelper} from './ContentSummaryOptionDataHelper';
-import {ContentSummaryOptionDataLoader} from './ContentSummaryOptionDataLoader';
 
 import SelectedOption = api.ui.selector.combobox.SelectedOption;
 import MoveContentSummaryLoader = api.content.resource.MoveContentSummaryLoader;
@@ -10,13 +8,18 @@ import ContentPath = api.content.ContentPath;
 import SelectedOptionsView = api.ui.selector.combobox.SelectedOptionsView;
 import RichComboBoxBuilder = api.ui.selector.combobox.RichComboBoxBuilder;
 import ContentTypeName = api.schema.content.ContentTypeName;
+import ContentComboBox = api.content.ContentComboBox;
+import ContentComboBoxBuilder = api.content.ContentComboBoxBuilder;
+import ContentSummaryOptionDataHelper = api.content.ContentSummaryOptionDataHelper;
+import ContentSummaryOptionDataLoader = api.content.ContentSummaryOptionDataLoader;
 
-export class ContentMoveComboBox extends api.ui.selector.combobox.RichComboBox<ContentSummary> {
+export class ContentMoveComboBox extends ContentComboBox {
 
     private readonlyChecker: ReadonlyChecker;
 
     constructor() {
-        let richComboBoxBuilder: RichComboBoxBuilder<ContentSummary> = new RichComboBoxBuilder<ContentSummary>();
+        const richComboBoxBuilder: ContentComboBoxBuilder = new ContentComboBoxBuilder();
+
         richComboBoxBuilder
             .setMaximumOccurrences(1)
             .setComboBoxName('contentSelector')

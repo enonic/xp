@@ -62,6 +62,23 @@ public class ContentPathTest
     }
 
     @Test
+    public void getParentPath_root()
+        throws Exception
+    {
+        assertEquals( null, ContentPath.from( "/" ).getParentPath() );
+    }
+
+    @Test
+    public void getAncestorPath()
+        throws Exception
+    {
+        assertEquals(  ContentPath.from( "/a/b" ), ContentPath.from( "/a/b/c" ).getAncestorPath(1) );
+        assertEquals(  ContentPath.from( "/a" ), ContentPath.from( "/a/b/c" ).getAncestorPath(2) );
+        assertEquals(  ContentPath.from( "/" ), ContentPath.from( "/a/b/c" ).getAncestorPath(3) );
+        assertEquals(  null, ContentPath.from( "/a/b/c" ).getAncestorPath(4) );
+    }
+
+    @Test
     public void isRoot()
         throws Exception
     {

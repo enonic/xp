@@ -238,6 +238,15 @@ module api.ui.selector {
             this.getGrid().resizeCanvas();
         }
 
+        addSelections(selectedOptions: Option<OPTION_DISPLAY_VALUE>[]) {
+            selectedOptions.forEach((selectedOption: Option<OPTION_DISPLAY_VALUE>) => {
+                let row = this.getGridData().getRowById(selectedOption.value);
+                if(row != undefined && !this.getGrid().isRowSelected(row)) {
+                    this.getGrid().addSelectedRow(row);
+                }
+            });
+        }
+
         markSelections(selectedOptions: Option<OPTION_DISPLAY_VALUE>[], ignoreEmpty: boolean = false) {
 
             let stylesHash: Slick.CellCssStylesHash = {};

@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.branch.storage;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -156,17 +157,9 @@ public class BranchServiceImpl
     @Override
     public NodeBranchEntries get( final NodePaths nodePaths, final InternalContext context )
     {
-        Set<NodeBranchEntry> nodeBranchEntries = Sets.newHashSet();
-
-        for ( final NodePath nodePath : nodePaths )
-        {
-            final NodeBranchEntry branchVersion = doGetByPath( nodePath, context );
-
-            if ( branchVersion != null )
-            {
-                nodeBranchEntries.add( branchVersion );
-            }
-        }
+        final List<NodeBranchEntry> nodeBranchEntries = nodePaths.stream().
+            map( nodePath -> doGetByPath( nodePath, context ) ).
+            filter( branchVersion -> branchVersion != null ).collect( Collectors.toList() );
 
         return NodeBranchEntries.from( nodeBranchEntries );
     }

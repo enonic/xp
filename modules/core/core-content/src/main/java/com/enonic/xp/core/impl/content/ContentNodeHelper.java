@@ -28,10 +28,11 @@ class ContentNodeHelper
     public static NodePaths translateContentPathsToNodePaths( final ContentPaths contentPaths )
     {
         final NodePaths.Builder builder = NodePaths.create();
-        for ( final ContentPath contentPath : contentPaths )
-        {
-            builder.addNodePath( ContentNodeHelper.translateContentPathToNodePath( contentPath ) );
-        }
+
+        builder.addNodePaths(
+            contentPaths.stream().map( ( contentPath -> ContentNodeHelper.translateContentPathToNodePath( contentPath ) ) ).collect(
+                Collectors.toList() )
+         );
 
         return builder.build();
     }

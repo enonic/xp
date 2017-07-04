@@ -100,10 +100,23 @@
       opacity: 0.5;
       pointer-events: none;
     }
+    &.disabled {
+      .slick-cell-checkboxsel {
+        visibility: hidden;
+      }
+    }
     .toggle.icon {
       margin-right: 0px;
       padding-left: 10px;
       margin-right: 10px;
+    }
+
+    .selected {
+      .@{_COMMON_PREFIX}names-view {
+        .@{_COMMON_PREFIX}main-name {
+          color: white;
+        }
+      }
     }
   }
 }
