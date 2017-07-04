@@ -35,7 +35,7 @@ module api.app.browse.filter {
 
             let showResultsButtonWrapper = new api.dom.DivEl('show-filter-results');
             this.showResultsButton = new api.dom.SpanEl('show-filter-results-button');
-            this.showResultsButton.setHtml('Show results');
+            this.updateResultsTitle(true);
             this.showResultsButton.onClicked(() => this.notifyShowResultsButtonPressed());
             showResultsButtonWrapper.appendChild(this.showResultsButton);
 
@@ -45,9 +45,7 @@ module api.app.browse.filter {
             });
 
             this.clearFilter = new ClearFilterButton();
-            this.clearFilter.onClicked((event: MouseEvent) => {
-                this.reset();
-            });
+            this.clearFilter.onClicked(() => this.reset());
 
             this.hitsCounterEl = new api.dom.SpanEl('hits-counter');
 
@@ -71,7 +69,7 @@ module api.app.browse.filter {
                 );
             }
 
-            this.onRendered((event) => {
+            this.onRendered(() => {
                 this.appendChild(this.hideFilterPanelButton);
                 this.appendExtraSections();
                 this.appendChild(this.searchField);
@@ -81,7 +79,7 @@ module api.app.browse.filter {
 
                 this.showResultsButton.hide();
 
-                api.ui.KeyBindings.get().bindKey(new api.ui.KeyBinding('/', (e: ExtendedKeyboardEvent) => {
+                api.ui.KeyBindings.get().bindKey(new api.ui.KeyBinding('/', () => {
                     setTimeout(this.giveFocusToSearch.bind(this), 100);
                 }).setGlobal(true));
             });
@@ -177,11 +175,11 @@ module api.app.browse.filter {
         }
 
         search(elementChanged?: api.dom.Element) {
-            if (this.hasFilterSet()) {
-                this.clearFilter.show();
-            } else {
-                this.clearFilter.hide();
-            }
+            const hasFilterSet = this.hasFilterSet();
+
+            this.clearFilter.setVisible(hasFilterSet);
+            this.updateResultsTitle(!hasFilterSet);
+
             this.notifySearchStarted();
             this.doSearch(elementChanged);
         }
@@ -217,6 +215,7 @@ module api.app.browse.filter {
             this.searchField.clear(true);
             this.aggregationContainer.deselectAll(true);
             this.clearFilter.hide();
+            this.updateResultsTitle(true);
         }
 
         protected resetFacets(suppressEvent?: boolean, doResetAll?: boolean) {
@@ -296,6 +295,11 @@ module api.app.browse.filter {
             } else {
                 this.showResultsButton.hide();
             }
+        }
+
+        updateResultsTitle(allShown: boolean) {
+            const title = allShown ? 'Show all' : 'Show results';
+            this.showResultsButton.setHtml(title);
         }
     }
 
