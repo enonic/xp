@@ -58,21 +58,6 @@ module api.form {
             this.formItemLayer = new FormItemLayer(context);
         }
 
-        isDirty(): boolean {
-            const checkDirty = (el: api.dom.Element) => {
-                // Check isDirty() on element, except FormView itself to prevent recursion
-                const canCheckForDirty = (!(el instanceof FormView) && typeof el['isDirty'] === 'function');
-                if (canCheckForDirty) {
-                    return el['isDirty']();
-                } else if (el.getChildren().length > 0) {
-                    return el.getChildren().some(checkDirty);
-                }
-                return false;
-            };
-
-            return checkDirty(this);
-        }
-
         /**
          * Lays out the form.
          */

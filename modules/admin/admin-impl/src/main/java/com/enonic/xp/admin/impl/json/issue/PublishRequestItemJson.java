@@ -8,7 +8,7 @@ public class PublishRequestItemJson
 {
     private String id;
 
-    private Boolean includeChildren;
+    private boolean includeChildren;
 
     public PublishRequestItemJson() {
 
@@ -25,7 +25,7 @@ public class PublishRequestItemJson
         return id;
     }
 
-    public Boolean getIncludeChildren()
+    public boolean getIncludeChildren()
     {
         return includeChildren;
     }

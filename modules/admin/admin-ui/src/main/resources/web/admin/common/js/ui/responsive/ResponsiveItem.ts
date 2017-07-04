@@ -54,7 +54,7 @@ module api.ui.responsive {
                 this.fitToRange(); // update rangeSize
                 this.element.getEl().addClass(this.rangeSize.getRangeClass());
             }
-            this.handle.call(this, this);     // Additional handler
+            this.handle.call(this, this); // Additional handler
         }
 
         isRangeSizeChanged(): boolean {

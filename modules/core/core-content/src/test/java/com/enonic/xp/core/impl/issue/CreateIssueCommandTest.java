@@ -9,7 +9,6 @@ import org.mockito.invocation.InvocationOnMock;
 
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.Issue;
-import com.enonic.xp.issue.IssueConstants;
 import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
@@ -86,7 +85,6 @@ public class CreateIssueCommandTest
             data( params.getData() ).
             indexConfigDocument( params.getIndexConfigDocument() ).
             childOrder( params.getChildOrder() != null ? params.getChildOrder() : IssueConstants.DEFAULT_CHILD_ORDER ).
-            permissions( IssueConstants.ACCESS_CONTROL_ENTRIES ).
             nodeType( params.getNodeType() != null ? params.getNodeType() : IssueConstants.ISSUE_NODE_COLLECTION ).
             timestamp( Instant.now() ).
             build();

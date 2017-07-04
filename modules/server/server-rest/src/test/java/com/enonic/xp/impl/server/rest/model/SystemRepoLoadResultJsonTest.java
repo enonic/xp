@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.dump.BranchLoadResult;
+import com.enonic.xp.dump.LoadError;
 import com.enonic.xp.dump.RepoLoadResult;
 import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.repository.RepositoryId;
@@ -48,11 +49,15 @@ public class SystemRepoLoadResultJsonTest
                 add( BranchLoadResult.create( Branch.from( "myBranch2" ) ).
                     addedNodes( 100L ).
                     addedVersions( 1000L ).
+                    error( LoadError.error( "this is an error" ) ).
+                    error( LoadError.error( "this is another error" ) ).
                     build() ).
                 build() ).
             build();
 
         final SystemLoadResultJson json = SystemLoadResultJson.from( results );
+
+        System.out.println( mapper.writeValueAsString( json ) );
 
         assertEquals( 2, json.getRepositories().size() );
         assertEquals( 2, json.getRepositories().get( 0 ).getBranches().size() );

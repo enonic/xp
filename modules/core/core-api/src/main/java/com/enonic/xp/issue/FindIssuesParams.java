@@ -1,6 +1,6 @@
 package com.enonic.xp.issue;
 
-public class FindIssuesParams
+public final class FindIssuesParams
 {
     private final IssueStatus status;
 
@@ -8,9 +8,9 @@ public class FindIssuesParams
 
     private final boolean createdByMe;
 
-    private final Integer from;
+    private final int from;
 
-    private final Integer size;
+    private final int size;
 
     private FindIssuesParams( final Builder builder )
     {
@@ -36,12 +36,12 @@ public class FindIssuesParams
         return createdByMe;
     }
 
-    public Integer getFrom()
+    public int getFrom()
     {
         return from;
     }
 
-    public Integer getSize()
+    public int getSize()
     {
         return size;
     }
@@ -59,9 +59,9 @@ public class FindIssuesParams
 
         private boolean createdByMe = false;
 
-        private Integer from = 0;
+        private int from = 0;
 
-        private Integer size = 0;
+        private int size = 0;
 
         private Builder()
         {
@@ -87,13 +87,19 @@ public class FindIssuesParams
 
         public Builder from( final Integer value )
         {
-            this.from = value;
+            if ( value != null )
+            {
+                this.from = value;
+            }
             return this;
         }
 
         public Builder size( final Integer value )
         {
-            this.size = value;
+            if ( value != null )
+            {
+                this.size = value;
+            }
             return this;
         }
 

@@ -28,7 +28,7 @@ public class UpdateIssueJson
     {
         this.isPublish = isPublish;
 
-        updateIssueParams = new UpdateIssueParams().
+        updateIssueParams = UpdateIssueParams.create().
             id( IssueId.from( issueId ) ).
             editor( editMe ->
                     {
@@ -53,7 +53,8 @@ public class UpdateIssueJson
                         {
                             editMe.publishRequest = publishRequest.toRequest();
                         }
-                    } );
+                    } ).
+            build();
     }
 
     @JsonIgnore

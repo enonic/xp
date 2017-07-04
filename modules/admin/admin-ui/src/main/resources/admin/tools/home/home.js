@@ -38,7 +38,8 @@ function handleGet(req) {
         baseUri: '',
         xpVersion: app.version,
         docLinkPrefix: docLinkPrefix,
-        messages: admin.getPhrases()
+        messages: admin.getPhrases(),
+        tourEnabled: !(app.config.tourDisabled || false)
     };
 
     return {

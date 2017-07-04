@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.dump.BranchDumpResult;
+import com.enonic.xp.dump.DumpError;
 import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.repository.RepositoryId;
@@ -16,7 +17,6 @@ import static org.junit.Assert.*;
 
 public class SystemRepoDumpResultJsonTest
 {
-
     private ObjectMapper mapper;
 
     @Before
@@ -53,11 +53,15 @@ public class SystemRepoDumpResultJsonTest
                 add( BranchDumpResult.create( Branch.from( "branch4" ) ).
                     addedVersions( 109 ).
                     addedNodes( 23 ).
+                    error( DumpError.error( "cannot find binary with version 123" ) ).
+                    error( DumpError.error( "cannot find version with id 123" ) ).
                     build() ).
                 build() ).
             build();
 
         final SystemDumpResultJson json = SystemDumpResultJson.from( systemDumpResult );
+
+        System.out.println( this.mapper.writeValueAsString( json ) );
 
         assertEquals( 2, json.getRepositories().size() );
         assertEquals( 2, json.getRepositories().get( 0 ).getBranches().size() );

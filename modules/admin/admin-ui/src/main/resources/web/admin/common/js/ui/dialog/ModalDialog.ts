@@ -94,6 +94,8 @@ module api.ui.dialog {
                 if (noCallback) {
                     this.confirmationDialog.setNoCallback(noCallback);
                 }
+
+                this.confirmationDialog.onClosed(() => this.removeClass('await-confirmation'));
             }
         }
 
@@ -115,10 +117,14 @@ module api.ui.dialog {
             this.handleFocusInOutEvents();
         }
 
+        private isActive() {
+            return super.isVisible() && !this.hasClass('masked');
+        }
+
         private handleClickOutsideDialog() {
             const mouseClickListener: (event: MouseEvent) => void = (event: MouseEvent) => {
                 const noConfirmationDialog = !this.confirmationDialog || !this.confirmationDialog.isVisible();
-                if (this.isVisible() && noConfirmationDialog) {
+                if (this.isActive() && noConfirmationDialog) {
                     for (let element = event.target; element; element = (<any>element).parentNode) {
                         if (element === this.getHTMLElement() || this.isIgnoredElementClicked(<any>element)) {
                             return;
@@ -295,7 +301,8 @@ module api.ui.dialog {
 
         protected hasSubDialog(): boolean {
             // html area can spawn sub dialogs so check none is open
-            return !!api.util.htmlarea.dialog.HTMLAreaDialogHandler.getOpenDialog();
+            return !!api.util.htmlarea.dialog.HTMLAreaDialogHandler.getOpenDialog() ||
+                   (this.confirmationDialog && this.confirmationDialog.isVisible());
         }
 
         private hasTabbable(): boolean {
@@ -375,6 +382,7 @@ module api.ui.dialog {
         confirmBeforeClose() {
             if (this.confirmationDialog && this.isDirty()) {
                 this.confirmationDialog.open();
+                this.addClass('await-confirmation');
             } else {
                 this.close();
             }

@@ -16,6 +16,7 @@ module api.content.site.inputtype.siteconfigurator {
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import HtmlAreaResizeEvent = api.form.inputtype.text.HtmlAreaResizeEvent;
     import ModalDialogConfig = api.ui.dialog.ModalDialogConfig;
+    import AppHelper = api.util.AppHelper;
 
     export class SiteConfiguratorDialog extends api.ui.dialog.ModalDialog {
 
@@ -102,7 +103,7 @@ module api.content.site.inputtype.siteconfigurator {
                     this.handleSelectorsDropdowns(this.formView);
                     this.handleDialogClose(this.formView);
 
-                    ResponsiveManager.fireResizeEvent();
+                    setTimeout(() => ResponsiveManager.fireResizeEvent(), 100);
 
                     return rendered;
                 });
@@ -183,7 +184,7 @@ module api.content.site.inputtype.siteconfigurator {
             let inputView: InputView = <InputView> itemView;
             if (this.isContentOrImageOrPrincipalOrComboSelectorInput(inputView)) {
                 let combobox = this.getComboboxFromSelectorInputView(inputView);
-                if (!!combobox) {
+                if (combobox) {
                     comboboxArray.push(combobox);
                 }
             }
@@ -223,7 +224,7 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         isDirty(): boolean {
-            return this.formView.isDirty();
+            return AppHelper.isDirty(this.formView);
         }
     }
 }

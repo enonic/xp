@@ -2,9 +2,8 @@ package com.enonic.xp.issue;
 
 import com.enonic.xp.security.PrincipalKeys;
 
-public class EditableIssue
+public final class EditableIssue
 {
-
     public final Issue source;
 
     public String title;

@@ -56,14 +56,14 @@ public class BatchedGetChildrenExecutor
 
         if ( result.isEmpty() )
         {
-            hasMore = false;
+            this.hasMore = false;
         }
         else
         {
-            currentFrom += batchSize;
-            hasMore = true;
-        }
+            this.currentFrom += this.batchSize;
 
+            this.hasMore = currentFrom < result.getTotalHits();
+        }
         return result.getNodeIds();
     }
 

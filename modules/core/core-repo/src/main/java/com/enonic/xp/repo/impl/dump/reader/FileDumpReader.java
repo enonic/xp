@@ -23,6 +23,7 @@ import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.dump.BranchLoadResult;
+import com.enonic.xp.dump.LoadError;
 import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
@@ -30,6 +31,7 @@ import com.enonic.xp.repo.impl.dump.AbstractFileProcessor;
 import com.enonic.xp.repo.impl.dump.DumpBlobStore;
 import com.enonic.xp.repo.impl.dump.DumpConstants;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
+import com.enonic.xp.repo.impl.dump.RepoLoadException;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 
@@ -49,9 +51,9 @@ public class FileDumpReader
     {
         this.dumpDirectory = getDumpDirectory( basePath, dumpName );
 
-        if ( !this.dumpDirectory.toFile().exists() )
+        if ( !isValidDumpDataDirectory( dumpDirectory ) )
         {
-            throw new RepoDumpException( "Dump directory does not exist: [" + this.dumpDirectory + "]" );
+            throw new RepoLoadException( "Directory is not a valid dump directory: [" + this.dumpDirectory + "]" );
         }
 
         this.listener = listener;
@@ -80,11 +82,16 @@ public class FileDumpReader
 
         for ( final String repoId : repoIds )
         {
-            repositories.add( RepositoryId.from( repoId ) );
+            final Path repoFolder = Paths.get( repoRootPath.toString(), repoId );
+            if ( isValidDumpDataDirectory( repoFolder ) )
+            {
+                repositories.add( RepositoryId.from( repoId ) );
+            }
         }
 
         return RepositoryIds.from( repositories );
     }
+
 
     @Override
     public Branches getBranches( final RepositoryId repositoryId )
@@ -102,7 +109,11 @@ public class FileDumpReader
 
         for ( final String branch : branchFiles )
         {
-            branches.add( Branch.from( branch ) );
+            final Path branchFolder = Paths.get( branchRootPath.toString(), branch );
+            if ( isValidDumpDataDirectory( branchFolder ) )
+            {
+                branches.add( Branch.from( branch ) );
+            }
         }
 
         return Branches.from( branches );
@@ -112,14 +123,7 @@ public class FileDumpReader
     public BranchLoadResult load( final RepositoryId repositoryId, final Branch branch, final LineProcessor<EntryLoadResult> processor )
     {
         final BranchLoadResult.Builder result = BranchLoadResult.create( branch );
-
-        final Path metaPath = createMetaPath( this.dumpDirectory, repositoryId, branch );
-        final File tarFile = metaPath.toFile();
-
-        if ( !tarFile.exists() )
-        {
-            throw new RepoDumpException( "File doesnt " + metaPath + " exists" );
-        }
+        final File tarFile = getDumpFile( repositoryId, branch );
 
         if ( this.listener != null )
         {
@@ -136,17 +140,7 @@ public class FileDumpReader
 
             while ( entry != null )
             {
-                String content = readEntry( tarInputStream );
-                processor.processLine( content );
-                final EntryLoadResult entryResult = processor.getResult();
-                result.addedNode();
-                result.addedVersions( entryResult.getVersions() );
-
-                if ( this.listener != null )
-                {
-                    this.listener.nodeLoaded();
-                }
-
+                handleEntry( processor, result, tarInputStream );
                 entry = tarInputStream.getNextTarEntry();
             }
 
@@ -155,6 +149,39 @@ public class FileDumpReader
         catch ( IOException e )
         {
             throw new RepoDumpException( "Cannot read meta-data", e );
+        }
+    }
+
+    private boolean isValidDumpDataDirectory( final Path folder )
+    {
+        final File file = folder.toFile();
+        return file.exists() && file.isDirectory() && !file.isHidden();
+    }
+
+
+    private File getDumpFile( final RepositoryId repositoryId, final Branch branch )
+    {
+        final Path metaPath = createMetaPath( this.dumpDirectory, repositoryId, branch );
+        final File tarFile = metaPath.toFile();
+
+        if ( !tarFile.exists() )
+        {
+            throw new RepoDumpException( "File doesnt " + metaPath + " exists" );
+        }
+        return tarFile;
+    }
+
+    private void handleEntry( final LineProcessor<EntryLoadResult> processor, final BranchLoadResult.Builder result,
+                              final TarArchiveInputStream tarInputStream )
+        throws IOException
+    {
+        String content = readEntry( tarInputStream );
+        processor.processLine( content );
+        reportEntry( processor, result );
+
+        if ( this.listener != null )
+        {
+            this.listener.nodeLoaded();
         }
     }
 
@@ -173,6 +200,14 @@ public class FileDumpReader
         return entryAsByteStream.toString( StandardCharsets.UTF_8.name() );
     }
 
+    private void reportEntry( final LineProcessor<EntryLoadResult> processor, final BranchLoadResult.Builder result )
+    {
+        final EntryLoadResult entryResult = processor.getResult();
+        result.addedNode();
+        result.addedVersions( entryResult.getVersions() );
+        entryResult.getErrors().forEach( ( error ) -> result.error( LoadError.error( error.getMessage() ) ) );
+    }
+
     @Override
     public NodeVersion get( final NodeVersionId nodeVersionId )
     {
@@ -181,7 +216,7 @@ public class FileDumpReader
 
         if ( record == null )
         {
-            throw new RepoDumpException( "Cannot find referred version id " + nodeVersionId + " in dump" );
+            throw new RepoLoadException( "Cannot find referred version id " + nodeVersionId + " in dump" );
         }
 
         return this.factory.create( record.getBytes() );
@@ -194,7 +229,7 @@ public class FileDumpReader
 
         if ( record == null )
         {
-            throw new RepoDumpException( "Cannot find referred blob id " + blobKey + " in dump" );
+            throw new RepoLoadException( "Cannot find referred blob id " + blobKey + " in dump" );
         }
 
         return record.getBytes();

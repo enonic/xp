@@ -37,6 +37,7 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStoreKey;
 
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -121,7 +122,7 @@ public class IssueNotificationsSenderImplTest
         throws Exception
     {
         final User creator = generateUser();
-        final User approver = generateUser();
+        final User approver = generateUserNoEmail();
         final Issue issue = createIssue( creator.getKey(), PrincipalKeys.from( approver.getKey() ) );
         final Content content = Content.create().
             id( ContentId.from( "aaa" ) ).
@@ -151,10 +152,42 @@ public class IssueNotificationsSenderImplTest
     }
 
     @Test
+    public void testNotifyIssueUpdatedNotCalledNoRecipients()
+        throws Exception
+    {
+        final User creator = generateUserNoEmail();
+        final User approver = generateUserNoEmail();
+        final Issue issue = createIssue( creator.getKey(), PrincipalKeys.from( approver.getKey() ) );
+        final Content content = Content.create().
+            id( ContentId.from( "aaa" ) ).
+            type( ContentTypeName.folder() ).
+            name( "name" ).
+            parentPath( ContentPath.from( "/aaa" ) ).
+            build();
+        final Contents contents = Contents.from( content );
+        final CompareContentResults compareResults = CompareContentResults.create().
+            add( new CompareContentResult( CompareStatus.NEW, ContentId.from( "aaa" ) ) ).
+            add( new CompareContentResult( CompareStatus.NEW, ContentId.from( "contentId2" ) ) ).
+            build();
+
+        Mockito.when( securityService.getUser( issue.getCreator() ) ).thenReturn( Optional.of( creator ) );
+        Mockito.when( securityService.getUser( issue.getApproverIds().first() ) ).thenReturn( Optional.of( approver ) );
+        Mockito.when( contentService.getByIds( Mockito.any( GetContentByIdsParams.class ) ) ).thenReturn( contents );
+        Mockito.when( contentService.compare( Mockito.any( CompareContentsParams.class ) ) ).thenReturn( compareResults );
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
+            ContentType.create().name( "mycontenttype" ).icon( Icon.from( new byte[]{1}, "image/svg+xml", Instant.now() ) ).setBuiltIn(
+                true ).build() );
+
+        issueNotificationsSender.notifyIssueUpdated( issue, "url" );
+
+        verify( mailService, never() ).send( Mockito.any() );
+    }
+
+    @Test
     public void testNotifyIssuePublished()
         throws Exception
     {
-        final User creator = generateUser();
+        final User creator = generateUserNoEmail();
         final User approver = generateUser();
         final Issue issue = createIssue( creator.getKey(), PrincipalKeys.from( approver.getKey() ) );
         final Contents contents = Contents.empty();
@@ -170,6 +203,24 @@ public class IssueNotificationsSenderImplTest
         verify( contentService, times( 1 ) ).compare( Mockito.any( CompareContentsParams.class ) );
     }
 
+    @Test
+    public void testNotifyIssuePublishedNotCalledNoRecipients()
+        throws Exception
+    {
+        final User creator = generateUserNoEmail();
+        final User approver = generateUserNoEmail();
+        final Issue issue = createIssue( creator.getKey(), PrincipalKeys.from( approver.getKey() ) );
+        final Contents contents = Contents.empty();
+
+        Mockito.when( securityService.getUser( issue.getCreator() ) ).thenReturn( Optional.of( creator ) );
+        Mockito.when( securityService.getUser( issue.getApproverIds().first() ) ).thenReturn( Optional.empty() );
+        Mockito.when( contentService.getByIds( Mockito.any( GetContentByIdsParams.class ) ) ).thenReturn( contents );
+
+        issueNotificationsSender.notifyIssuePublished( issue, "url" );
+
+        verify( mailService, never() ).send( Mockito.any() );
+    }
+
     private Issue createIssue( final PrincipalKey creator, final PrincipalKeys approvers )
     {
         return Issue.create().id( IssueId.create() ).title( "title" ).description( "description" ).creator( creator ).addApproverIds(
@@ -181,6 +232,13 @@ public class IssueNotificationsSenderImplTest
     {
         final String userId = UUID.randomUUID().toString();
         return User.create().key( PrincipalKey.ofUser( UserStoreKey.createDefault(), userId ) ).login( userId ).email(
-            "kitamo@tut.by" ).displayName( "Some User" ).build();
+            "some@user.com" ).displayName( "Some User" ).build();
+    }
+
+    private User generateUserNoEmail()
+    {
+        final String userId = UUID.randomUUID().toString();
+        return User.create().key( PrincipalKey.ofUser( UserStoreKey.createDefault(), userId ) ).login( userId ).displayName(
+            "noemail" ).build();
     }
 }

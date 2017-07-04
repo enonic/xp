@@ -10,10 +10,8 @@ import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueAlreadyExistsException;
-import com.enonic.xp.issue.IssueConstants;
 import com.enonic.xp.issue.IssueName;
 import com.enonic.xp.issue.IssueQuery;
-import com.enonic.xp.issue.IssueQueryNodeQueryTranslator;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
@@ -23,10 +21,10 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.security.User;
 
-import static com.enonic.xp.issue.IssuePropertyNames.CREATED_TIME;
-import static com.enonic.xp.issue.IssuePropertyNames.CREATOR;
-import static com.enonic.xp.issue.IssuePropertyNames.INDEX;
-import static com.enonic.xp.issue.IssuePropertyNames.MODIFIED_TIME;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.CREATED_TIME;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.CREATOR;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.INDEX;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.MODIFIED_TIME;
 
 public class CreateIssueCommand
     extends AbstractIssueCommand
@@ -152,7 +150,7 @@ public class CreateIssueCommand
                 parent( IssueConstants.ISSUE_ROOT_PATH ).
                 data( contentAsData ).
                 indexConfigDocument( indexConfigDocument ).
-                permissions( IssueConstants.ACCESS_CONTROL_ENTRIES ).
+                inheritPermissions( true ).
                 childOrder( IssueConstants.DEFAULT_CHILD_ORDER ).
                 nodeType( IssueConstants.ISSUE_NODE_COLLECTION );
 

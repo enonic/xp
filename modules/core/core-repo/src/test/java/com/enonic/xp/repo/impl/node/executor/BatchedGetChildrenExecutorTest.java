@@ -55,6 +55,61 @@ public class BatchedGetChildrenExecutorTest
     }
 
     @Test
+    public void all_yields_only_one_invocation()
+        throws Exception
+    {
+        createNode( NodePath.ROOT, "node1" );
+        createNode( NodePath.ROOT, "node2" );
+        createNode( NodePath.ROOT, "node3" );
+        createNode( NodePath.ROOT, "node4" );
+        createNode( NodePath.ROOT, "node5" );
+
+        final BatchedGetChildrenExecutor executor = BatchedGetChildrenExecutor.create().
+            nodeService( this.nodeService ).
+            parentId( Node.ROOT_UUID ).
+            batchSize( 5 ).
+            build();
+
+        final NodeIds.Builder builder = NodeIds.create();
+
+        while ( executor.hasMore() )
+        {
+            builder.addAll( executor.execute() );
+        }
+
+        final NodeIds result = builder.build();
+        assertEquals( 5, result.getSize() );
+    }
+
+    @Test
+    public void one_larger_than_batch()
+        throws Exception
+    {
+        createNode( NodePath.ROOT, "node1" );
+        createNode( NodePath.ROOT, "node2" );
+        createNode( NodePath.ROOT, "node3" );
+        createNode( NodePath.ROOT, "node4" );
+        createNode( NodePath.ROOT, "node5" );
+        createNode( NodePath.ROOT, "node6" );
+
+        final BatchedGetChildrenExecutor executor = BatchedGetChildrenExecutor.create().
+            nodeService( this.nodeService ).
+            parentId( Node.ROOT_UUID ).
+            batchSize( 5 ).
+            build();
+
+        final NodeIds.Builder builder = NodeIds.create();
+
+        while ( executor.hasMore() )
+        {
+            builder.addAll( executor.execute() );
+        }
+
+        final NodeIds result = builder.build();
+        assertEquals( 6, result.getSize() );
+    }
+
+    @Test
     public void recursive()
         throws Exception
     {
@@ -110,11 +165,11 @@ public class BatchedGetChildrenExecutorTest
         assertEquals( 5, result.getSize() );
 
         final Iterator<NodeId> iterator = result.iterator();
-        assertEquals( iterator.next(), NodeId.from( "a" ));
-        assertEquals( iterator.next(), NodeId.from( "b" ));
-        assertEquals( iterator.next(), NodeId.from( "c" ));
-        assertEquals( iterator.next(), NodeId.from( "d" ));
-        assertEquals( iterator.next(), NodeId.from( "e" ));
+        assertEquals( iterator.next(), NodeId.from( "a" ) );
+        assertEquals( iterator.next(), NodeId.from( "b" ) );
+        assertEquals( iterator.next(), NodeId.from( "c" ) );
+        assertEquals( iterator.next(), NodeId.from( "d" ) );
+        assertEquals( iterator.next(), NodeId.from( "e" ) );
     }
 
 }

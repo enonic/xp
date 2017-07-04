@@ -184,8 +184,6 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             unpublishEnabled = someArePublished;
         }
 
-        const createIssueEnabled = !allAreOnline || this.isNonLeafInMany(contentSummaries);
-
         this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(contentSummaries.length < 2);
         this.EDIT_CONTENT.setEnabled(this.anyEditable(contentSummaries));
         this.DELETE_CONTENT.setEnabled(this.anyDeletable(contentSummaries));
@@ -197,7 +195,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         this.PUBLISH_TREE_CONTENT.setEnabled(treePublishEnabled);
         this.UNPUBLISH_CONTENT.setEnabled(unpublishEnabled);
 
-        this.CREATE_ISSUE.setEnabled(createIssueEnabled);
+        this.CREATE_ISSUE.setEnabled(true);
 
         this.SHOW_NEW_CONTENT_DIALOG_ACTION.setVisible(!allArePendingDelete);
         this.MOVE_CONTENT.setVisible(!allArePendingDelete);
@@ -287,8 +285,6 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
                     this.PUBLISH_CONTENT.setEnabled(false);
                     this.PUBLISH_TREE_CONTENT.setEnabled(false);
                     this.UNPUBLISH_CONTENT.setEnabled(false);
-
-                    this.CREATE_ISSUE.setEnabled(false);
                 }
             });
     }

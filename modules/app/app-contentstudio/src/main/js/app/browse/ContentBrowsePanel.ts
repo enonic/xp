@@ -175,11 +175,11 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             this.updateDetailsPanelOnItemChange(fullSelection);
         });
 
-        this.getTreeGrid().onHighlightingChanged((node: TreeNode<ContentSummaryAndCompareStatus>) => {
+        this.getTreeGrid().onHighlightingChanged(() => {
             this.updateDetailsPanelOnItemChange();
         });
 
-        ResponsiveManager.onAvailableSizeChanged(this.getFilterAndGridSplitPanel(), (item: ResponsiveItem) => {
+        ResponsiveManager.onAvailableSizeChanged(this.getFilterAndGridSplitPanel(), () => {
             nonMobileDetailsPanelsManager.handleResizeEvent();
         });
 
@@ -187,10 +187,10 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             if (ResponsiveRanges._540_720.isFitOrBigger(item.getOldRangeValue())) {
                 contentPublishMenuButton.maximize();
                 if (item.isInRangeOrSmaller(ResponsiveRanges._360_540)) {
-                    nonMobileDetailsPanelsManager.hideActivePanel();
-                    ActiveDetailsPanelManager.setActiveDetailsPanel(this.mobileContentItemStatisticsPanel.getDetailsPanel());
+                    nonMobileDetailsPanelsManager.hideActivePanel(true);
                 } else {
                     nonMobileDetailsPanelsManager.setActivePanel();
+                    this.mobileContentItemStatisticsPanel.slideAllOut();
                 }
             } else {
                 contentPublishMenuButton.minimize();

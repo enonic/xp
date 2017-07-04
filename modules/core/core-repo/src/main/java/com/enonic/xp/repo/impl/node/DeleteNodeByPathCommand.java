@@ -28,12 +28,17 @@ final class DeleteNodeByPathCommand
             build().
             execute();
 
-            return node != null ? deleteNodeWithChildren( node, context ) : NodeBranchEntries.empty();
+        return node != null ? deleteNodeWithChildren( node, context ) : NodeBranchEntries.empty();
     }
 
     static Builder create()
     {
         return new Builder();
+    }
+
+    static Builder create( final AbstractNodeCommand source )
+    {
+        return new Builder( source );
     }
 
     static class Builder
@@ -44,6 +49,11 @@ final class DeleteNodeByPathCommand
         Builder()
         {
             super();
+        }
+
+        Builder( final AbstractNodeCommand source )
+        {
+            super( source );
         }
 
         Builder nodePath( final NodePath nodePath )

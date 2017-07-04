@@ -3,12 +3,16 @@ package com.enonic.xp.repo.impl.dump.reader;
 import java.io.IOException;
 import java.util.Collection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.io.ByteSource;
 import com.google.common.io.LineProcessor;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
+import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.ImportNodeVersionParams;
 import com.enonic.xp.node.LoadNodeParams;
 import com.enonic.xp.node.Node;
@@ -16,7 +20,7 @@ import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
-import com.enonic.xp.repo.impl.dump.RepoDumpException;
+import com.enonic.xp.repo.impl.dump.RepoLoadException;
 import com.enonic.xp.repo.impl.dump.model.DumpEntry;
 import com.enonic.xp.repo.impl.dump.model.Meta;
 import com.enonic.xp.repo.impl.dump.serializer.DumpEntrySerializer;
@@ -37,6 +41,8 @@ public class DumpLineProcessor
     private final DumpEntrySerializer serializer;
 
     private final boolean includeVersions;
+
+    private final static Logger LOG = LoggerFactory.getLogger( DumpLineProcessor.class );
 
     private DumpLineProcessor( final Builder builder )
     {
@@ -61,38 +67,11 @@ public class DumpLineProcessor
         {
             if ( meta.isCurrent() )
             {
-                final NodeVersion nodeVersion = this.dumpReader.get( meta.getVersion() );
-
-                final Node node = NodeFactory.create( nodeVersion, NodeBranchEntry.create().
-                    nodeId( dumpEntry.getNodeId() ).
-                    nodePath( meta.getNodePath() ).
-                    nodeVersionId( meta.getVersion() ).
-                    timestamp( meta.getTimestamp() ).
-                    nodeState( meta.getNodeState() ).
-                    build() );
-
-                this.nodeService.loadNode( LoadNodeParams.create().
-                    node( node ).
-                    build() );
-
-                validateOrAddBinary( nodeVersion );
-
-                result.addedVersion();
+                addCurrentNode( result, dumpEntry, meta );
             }
             else if ( includeVersions )
             {
-                final NodeVersion nodeVersion = this.dumpReader.get( meta.getVersion() );
-
-                this.nodeService.importNodeVersion( ImportNodeVersionParams.create().
-                    nodeId( dumpEntry.getNodeId() ).
-                    timestamp( meta.getTimestamp() ).
-                    nodePath( meta.getNodePath() ).
-                    nodeVersion( nodeVersion ).
-                    build() );
-
-                validateOrAddBinary( nodeVersion );
-
-                result.addedVersion();
+                addVersion( result, dumpEntry, meta );
             }
         }
 
@@ -100,7 +79,74 @@ public class DumpLineProcessor
         return true;
     }
 
-    private void validateOrAddBinary( final NodeVersion nodeVersion )
+    private void addCurrentNode( final EntryLoadResult.Builder result, final DumpEntry dumpEntry, final Meta meta )
+    {
+        final NodeVersion nodeVersion = getVersion( meta );
+
+        if ( nodeVersion == null )
+        {
+            reportVersionError( result, meta );
+            return;
+        }
+
+        final Node node = NodeFactory.create( nodeVersion, NodeBranchEntry.create().
+            nodeId( dumpEntry.getNodeId() ).
+            nodePath( meta.getNodePath() ).
+            nodeVersionId( meta.getVersion() ).
+            timestamp( meta.getTimestamp() ).
+            nodeState( meta.getNodeState() ).
+            build() );
+
+        this.nodeService.loadNode( LoadNodeParams.create().
+            node( node ).
+            build() );
+
+        validateOrAddBinary( nodeVersion, result );
+        result.addedVersion();
+    }
+
+    private void addVersion( final EntryLoadResult.Builder result, final DumpEntry dumpEntry, final Meta meta )
+    {
+        final NodeVersion nodeVersion = getVersion( meta );
+
+        if ( nodeVersion == null )
+        {
+            reportVersionError( result, meta );
+            return;
+        }
+
+        this.nodeService.importNodeVersion( ImportNodeVersionParams.create().
+            nodeId( dumpEntry.getNodeId() ).
+            timestamp( meta.getTimestamp() ).
+            nodePath( meta.getNodePath() ).
+            nodeVersion( nodeVersion ).
+            build() );
+
+        validateOrAddBinary( nodeVersion, result );
+        result.addedVersion();
+    }
+
+    private NodeVersion getVersion( final Meta meta )
+    {
+        try
+        {
+            return this.dumpReader.get( meta.getVersion() );
+        }
+        catch ( RepoLoadException e )
+        {
+            LOG.error( "Cannot load version, missing in existing blobStore, and not present in dump: " + meta.getVersion(), e );
+            return null;
+        }
+    }
+
+    private void reportVersionError( final EntryLoadResult.Builder result, final Meta meta )
+    {
+        final String message =
+            String.format( "Failed to load version for node with path %s, blobKey %s", meta.getNodePath(), meta.getVersion() );
+        result.error( EntryLoadError.error( message ) );
+    }
+
+    private void validateOrAddBinary( final NodeVersion nodeVersion, final EntryLoadResult.Builder result )
     {
         nodeVersion.getAttachedBinaries().forEach( binary -> {
 
@@ -108,17 +154,25 @@ public class DumpLineProcessor
 
             if ( existingRecord == null )
             {
-                final ByteSource dumpBinary = this.dumpReader.getBinary( binary.getBlobKey() );
-
-                if ( dumpBinary == null )
+                try
                 {
-                    throw new RepoDumpException(
-                        "Cannot load binary, missing in existing blobStore, and not present in dump: " + binary.getBlobKey() );
+                    final ByteSource dumpBinary = this.dumpReader.getBinary( binary.getBlobKey() );
+                    this.blobStore.addRecord( NodeConstants.BINARY_SEGMENT, dumpBinary );
                 }
-
-                this.blobStore.addRecord( NodeConstants.BINARY_SEGMENT, dumpBinary );
+                catch ( RepoLoadException e )
+                {
+                    reportBinaryError( nodeVersion, result, binary, e );
+                }
             }
         } );
+    }
+
+    private void reportBinaryError( final NodeVersion nodeVersion, final EntryLoadResult.Builder result, final AttachedBinary binary,
+                                    final RepoLoadException e )
+    {
+        final String message = String.format( "Failed to load binary for nodeId %s, blobKey %s", nodeVersion.getId(), binary.getBlobKey() );
+        result.error( EntryLoadError.error( message ) );
+        LOG.error( "Cannot load binary, missing in existing blobStore, and not present in dump: " + binary.getBlobKey(), e );
     }
 
     @Override

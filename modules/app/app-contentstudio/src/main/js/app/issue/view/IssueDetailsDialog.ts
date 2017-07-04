@@ -424,7 +424,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
     private areSomeItemsOffline(): boolean {
         let summaries: ContentSummaryAndCompareStatus[] = this.getItemList().getItems();
-        return summaries.some((summary) => summary.getCompareStatus() === CompareStatus.NEW);
+        return summaries.every((summary) => !summary.isOnline());
     }
 
     protected doScheduledAction() {

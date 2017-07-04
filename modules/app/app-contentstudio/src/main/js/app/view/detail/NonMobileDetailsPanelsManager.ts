@@ -39,7 +39,7 @@ export class NonMobileDetailsPanelsManager {
 
     private doHandleResizeEvent() {
 
-        if (this.resizeEventMonitorLocked) {
+        if (this.resizeEventMonitorLocked || !this.toggleButton.isRendered()) {
             return;
         }
 
@@ -105,7 +105,6 @@ export class NonMobileDetailsPanelsManager {
 
         setTimeout(() => {
             this.ensureButtonHasCorrectState();
-            this.splitPanelWithGridAndDetails.toggleClass('details-panel-expanded', this.isExpanded());
         }, this.isExpanded() ? 300 : 0);
     }
 
@@ -164,13 +163,13 @@ export class NonMobileDetailsPanelsManager {
         this.splitPanelWithGridAndDetails.removeClass('sliding');
 
         setTimeout(() => {
-            this.splitPanelWithGridAndDetails.removeClass('details-panel-expanded');
             this.ensureButtonHasCorrectState();
+            this.splitPanelWithGridAndDetails.removeClass('details-panel-expanded');
         }, this.isExpanded() ? 300 : 0);
     }
 
-    hideActivePanel() {
-        this.doPanelAnimation(false);
+    hideActivePanel(onResize: boolean = false) {
+        this.doPanelAnimation(false, onResize);
     }
 
     hideDockedDetailsPanel() {
@@ -251,6 +250,7 @@ export class NonMobileDetailsPanelsManager {
     ensureButtonHasCorrectState() {
         this.toggleButton.toggleClass('expanded',
             !this.splitPanelWithGridAndDetails.isSecondPanelHidden() || this.floatingPanelIsShown());
+        this.splitPanelWithGridAndDetails.toggleClass('details-panel-expanded', this.isExpanded());
     }
 
     static create(): NonMobileDetailsPanelsManagerBuilder {

@@ -7,19 +7,19 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.core.impl.issue.PublishRequestPropertyNames;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.PublishRequest;
 import com.enonic.xp.issue.PublishRequestItem;
-import com.enonic.xp.issue.PublishRequestPropertyNames;
 import com.enonic.xp.security.PrincipalKey;
 
-import static com.enonic.xp.issue.IssuePropertyNames.APPROVERS;
-import static com.enonic.xp.issue.IssuePropertyNames.DESCRIPTION;
-import static com.enonic.xp.issue.IssuePropertyNames.PUBLISH_REQUEST;
-import static com.enonic.xp.issue.IssuePropertyNames.STATUS;
-import static com.enonic.xp.issue.IssuePropertyNames.TITLE;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.APPROVERS;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.DESCRIPTION;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.PUBLISH_REQUEST;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.STATUS;
+import static com.enonic.xp.core.impl.issue.IssuePropertyNames.TITLE;
 import static org.junit.Assert.*;
 
 public class IssueDataSerializerTest

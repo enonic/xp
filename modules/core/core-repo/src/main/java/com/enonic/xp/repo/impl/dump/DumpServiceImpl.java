@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.blob.BlobStore;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.dump.DumpService;
@@ -22,12 +23,16 @@ import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.home.HomeDir;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.SecurityHelper;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
 import com.enonic.xp.repo.impl.dump.writer.FileDumpWriter;
+import com.enonic.xp.repo.impl.node.executor.BatchedGetChildrenExecutor;
 import com.enonic.xp.repository.CreateRepositoryParams;
+import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
@@ -111,7 +116,7 @@ public class DumpServiceImpl
 
         if ( !SecurityHelper.isAdmin() )
         {
-            throw new RepoDumpException( "Only admin role users can dump repositories" );
+            throw new RepoLoadException( "Only admin role users can load repositories" );
         }
 
         final FileDumpReader dumpReader = new FileDumpReader( basePath, params.getDumpName(), params.getListener() );
@@ -141,27 +146,52 @@ public class DumpServiceImpl
     private void initializeSystemRepo( final SystemLoadParams params, final FileDumpReader dumpReader,
                                        final SystemLoadResult.Builder results )
     {
+        final Context systemContext = ContextBuilder.from( ContextAccessor.current() ).
+            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+            branch( SystemConstants.BRANCH_SYSTEM ).
+            build();
+
+        systemContext.runWith( () -> this.nodeService.refresh( RefreshMode.ALL ) );
+
+        doDeleteAllNodes( systemContext );
+
         doLoadRepository( SystemConstants.SYSTEM_REPO.getId(), params, dumpReader, results );
 
         this.repositoryService.invalidateAll();
 
-        ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
-            branch( SystemConstants.BRANCH_SYSTEM ).
-            build().runWith( () -> this.nodeService.refresh( RefreshMode.ALL ) );
+        systemContext.runWith( () -> this.nodeService.refresh( RefreshMode.ALL ) );
+    }
+
+    private void doDeleteAllNodes( final Context context )
+    {
+        context.runWith( () -> {
+            final BatchedGetChildrenExecutor executor = BatchedGetChildrenExecutor.create().parentId( Node.ROOT_UUID ).
+                nodeService( this.nodeService ).
+                recursive( false ).
+                build();
+
+            while ( executor.hasMore() )
+            {
+                final NodeIds children = executor.execute();
+                children.forEach( ( child ) -> this.nodeService.deleteById( child ) );
+            }
+        } );
     }
 
     private void initializeRepo( final Repository repository )
     {
-        if ( !this.repositoryService.isInitialized( repository.getId() ) )
+        if ( this.repositoryService.isInitialized( repository.getId() ) )
         {
-            final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
-                repositoryId( repository.getId() ).
-                repositorySettings( repository.getSettings() ).
-                build();
-
-            this.repositoryService.createRepository( createRepositoryParams );
+            LOG.info( "Deleting repository [" + repository.getId() + "] before loading" );
+            this.repositoryService.deleteRepository( DeleteRepositoryParams.from( repository.getId() ) );
         }
+
+        final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
+            repositoryId( repository.getId() ).
+            repositorySettings( repository.getSettings() ).
+            build();
+
+        this.repositoryService.createRepository( createRepositoryParams );
     }
 
     private void doLoadRepository( final RepositoryId repositoryId, final SystemLoadParams params, final FileDumpReader dumpReader,

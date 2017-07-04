@@ -45,6 +45,7 @@
         appId: 'home',
         xpVersion: '{{xpVersion}}',
         docLinkPrefix: '{{docLinkPrefix}}',
+        tourEnabled: {{tourEnabled}},
         messages: {{{messages}}}
     };
 
@@ -62,10 +63,12 @@
     <div id="background-image" style="background-image: url(&quot;{{backgroundUri}}&quot;);" class="lazy-image empty"></div>
 
     <div class="home-main-dashboard">
+        {{#tourEnabled}}
         <div class="xp-tour dashboard-item">
             <img src="{{busIconUrl}}">
             <div>XP Tour</div>
         </div>
+        {{/tourEnabled}}
         <div class="xp-about dashboard-item">
             <img src="{{infoIconUrl}}">
             <div>About</div>

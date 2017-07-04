@@ -3,10 +3,14 @@ package com.enonic.xp.repo.impl.node;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -22,6 +26,20 @@ public class GetNodeByPathCommandTest
     {
         super.setUp();
         this.createDefaultRootNode();
+    }
+
+    @Test
+    public void get_root()
+        throws Exception
+    {
+        final Context systemContext = ContextBuilder.from( ContextAccessor.current() ).
+            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+            branch( SystemConstants.BRANCH_SYSTEM ).
+            build();
+
+        final Node rootNode = systemContext.callWith( () -> doGetNodeByPath( NodePath.ROOT ) );
+
+        assertNotNull( rootNode );
     }
 
     @Test

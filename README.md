@@ -37,22 +37,10 @@ You can also go to the `modules/distro` directory and type:
 
 ## License
 
-This software is licensed under AGPL 3.0 license. See full license terms [here](http://www.enonic.com/license). Also the distribution includes
-3rd party software components. The vast majority of these libraries are licensed under Apache 2.0. For a complete list please
-read [NOTICE.txt](https://github.com/enonic/xp/raw/master/NOTICE.txt).
+This software is licensed under GPL v3. See [LICENSE.txt](https://github.com/enonic/xp/raw/master/LICENSE.txt). 
+Also the distribution includes 3rd party software components. The vast majority of these libraries are licensed under 
+Apache 2.0. For a complete list please read [NOTICE.txt](https://github.com/enonic/xp/raw/master/NOTICE.txt).
 
-	Enonic XP
-	Copyright (C) 2000-2017 Enonic AS.
+All our libraries (`lib-*`) that can be bundled in your own applications are licensed as Apache 2.0. 
+See [LICENSE_AL.txt](https://github.com/enonic/xp/raw/master/LICENSE_AL.txt)
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU Affero General Public License as
-	published by the Free Software Foundation, either version 3 of the
-	License, or (at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU Affero General Public License for more details.
-
-	You should have received a copy of the GNU Affero General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
