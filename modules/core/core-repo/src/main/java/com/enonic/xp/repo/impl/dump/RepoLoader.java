@@ -9,10 +9,12 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.dump.BranchLoadResult;
 import com.enonic.xp.dump.RepoLoadResult;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.repo.impl.dump.reader.DumpLineProcessor;
+import com.enonic.xp.repo.impl.dump.reader.BranchEntryProcessor;
 import com.enonic.xp.repo.impl.dump.reader.DumpReader;
+import com.enonic.xp.repo.impl.dump.reader.VersionEntryProcessor;
 import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 
@@ -26,7 +28,11 @@ class RepoLoader
 
     private final DumpReader reader;
 
-    private final DumpLineProcessor processor;
+    private final boolean includeVersions;
+
+    private final BranchEntryProcessor branchEntryProcessor;
+
+    private final VersionEntryProcessor versionEntryProcessor;
 
     private RepoLoader( final Builder builder )
     {
@@ -34,10 +40,15 @@ class RepoLoader
         repositoryService = builder.repositoryService;
         nodeService = builder.nodeService;
         reader = builder.reader;
-        this.processor = DumpLineProcessor.create().
+        this.includeVersions = builder.includeVersions;
+        this.branchEntryProcessor = BranchEntryProcessor.create().
             dumpReader( this.reader ).
             nodeService( this.nodeService ).
-            includeVersions( builder.includeVersions ).
+            blobStore( builder.blobStore ).
+            build();
+        this.versionEntryProcessor = VersionEntryProcessor.create().
+            dumpReader( this.reader ).
+            nodeService( this.nodeService ).
             blobStore( builder.blobStore ).
             build();
     }
@@ -46,7 +57,15 @@ class RepoLoader
     {
         final RepoLoadResult.Builder loadResult = RepoLoadResult.create( this.repositoryId );
 
-        getBranches().forEach( ( branch ) -> setContext( branch ).runWith( () -> doExecute( loadResult ) ) );
+        getBranches().forEach( branch -> setContext( branch ).runWith( () -> doExecute( loadResult ) ) );
+
+        if ( this.includeVersions )
+        {
+            ContextBuilder.from( ContextAccessor.current() ).
+                repositoryId( this.repositoryId ).
+                branch( RepositoryConstants.MASTER_BRANCH ).
+                build().runWith( () -> loadVersions( loadResult ) );
+        }
 
         return loadResult.build();
     }
@@ -68,10 +87,13 @@ class RepoLoader
     {
         final Branch currentBranch = ContextAccessor.current().getBranch();
         verifyOrCreateBranch( currentBranch );
-
-        final BranchLoadResult branchLoadResult = this.reader.load( repositoryId, currentBranch, this.processor );
-
+        final BranchLoadResult branchLoadResult = this.reader.loadBranch( repositoryId, currentBranch, this.branchEntryProcessor );
         result.add( branchLoadResult );
+    }
+
+    private void loadVersions( final RepoLoadResult.Builder result )
+    {
+        result.versions( this.reader.loadVersions( repositoryId, this.versionEntryProcessor ) );
     }
 
     private void verifyOrCreateBranch( final Branch branch )

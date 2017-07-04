@@ -18,8 +18,13 @@ public abstract class AbstractFileProcessor
         return Paths.get( createRepoRootPath( basePath ).toString(), repositoryId.toString() );
     }
 
-    protected Path createMetaPath( final Path basePath, final RepositoryId repositoryId, final Branch branch )
+    protected Path createBranchMetaPath( final Path basePath, final RepositoryId repositoryId, final Branch branch )
     {
         return Paths.get( createBranchRootPath( basePath, repositoryId ).toString(), branch.toString(), "meta.tar.gz" );
+    }
+
+    protected Path createVersionMetaPath( final Path basePath, final RepositoryId repositoryId )
+    {
+        return Paths.get( createBranchRootPath( basePath, repositoryId ).toString(), "versions.tar.gz" );
     }
 }

@@ -9,20 +9,14 @@ public class BranchDumpResultJson
 {
     private final String branch;
 
-    private final Long numberOfNodes;
-
-    private final Long numberOfVersions;
-
-    private final String timeUsed;
+    private final Long successful;
 
     private final List<DumpErrorJson> errors;
 
     private BranchDumpResultJson( final Builder builder )
     {
         this.branch = builder.branch;
-        this.numberOfNodes = builder.numberOfNodes;
-        this.numberOfVersions = builder.numberOfVersions;
-        this.timeUsed = builder.timeUsed;
+        this.successful = builder.successful;
         this.errors = builder.errors;
     }
 
@@ -30,9 +24,7 @@ public class BranchDumpResultJson
     {
         return BranchDumpResultJson.create().
             branch( result.getBranch().toString() ).
-            numberOfNodes( result.getNumberOfNodes() ).
-            numberOfVersions( result.getNumberOfVersions() ).
-            timeUsed( result.getDuration().toString() ).
+            successful( result.getSuccessful() ).
             errors( result.getErrors().stream().map( DumpErrorJson::from ).collect( Collectors.toList() ) ).
             build();
     }
@@ -44,21 +36,9 @@ public class BranchDumpResultJson
     }
 
     @SuppressWarnings("unused")
-    public Long getNumberOfNodes()
+    public Long getSuccessful()
     {
-        return numberOfNodes;
-    }
-
-    @SuppressWarnings("unused")
-    public Long getNumberOfVersions()
-    {
-        return numberOfVersions;
-    }
-
-    @SuppressWarnings("unused")
-    public String getTimeUsed()
-    {
-        return timeUsed;
+        return successful;
     }
 
     @SuppressWarnings("unused")
@@ -76,11 +56,7 @@ public class BranchDumpResultJson
     {
         private String branch;
 
-        private Long numberOfNodes;
-
-        private Long numberOfVersions;
-
-        private String timeUsed;
+        private Long successful;
 
         private List<DumpErrorJson> errors;
 
@@ -94,23 +70,12 @@ public class BranchDumpResultJson
             return this;
         }
 
-        public Builder numberOfNodes( final Long val )
+        public Builder successful( final Long val )
         {
-            numberOfNodes = val;
+            successful = val;
             return this;
         }
 
-        public Builder numberOfVersions( final Long val )
-        {
-            numberOfVersions = val;
-            return this;
-        }
-
-        public Builder timeUsed( final String val )
-        {
-            timeUsed = val;
-            return this;
-        }
 
         public Builder errors( final List<DumpErrorJson> errors )
         {

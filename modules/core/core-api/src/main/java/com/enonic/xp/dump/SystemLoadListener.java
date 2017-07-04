@@ -7,6 +7,8 @@ public interface SystemLoadListener
 {
     void loadingBranch( final RepositoryId repositoryId, final Branch branch );
 
+    void loadingVersions( final RepositoryId repositoryId );
+
     void nodeLoaded();
 
     void setTotal( final Long total );
