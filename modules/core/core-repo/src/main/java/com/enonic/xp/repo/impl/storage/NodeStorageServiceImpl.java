@@ -62,6 +62,35 @@ public class NodeStorageServiceImpl
     }
 
     @Override
+    public Node load( final Node node, final InternalContext context )
+    {
+        final NodeVersion nodeVersion = NodeVersion.create().
+            id( node.id() ).
+            nodeType( node.getNodeType() ).
+            data( node.data() ).
+            indexConfigDocument( node.getIndexConfigDocument() ).
+            childOrder( node.getChildOrder() ).
+            manualOrderValue( node.getManualOrderValue() ).
+            permissions( node.getPermissions() ).
+            inheritPermissions( node.inheritsPermissions() ).
+            attachedBinaries( node.getAttachedBinaries() ).
+            timestamp( node.getTimestamp() ).
+            build();
+
+        final NodeVersionId nodeVersionId = nodeVersionService.store( nodeVersion );
+
+        storeVersionMetadata( node, context, nodeVersionId );
+
+        storeBranchMetadata( node, context, nodeVersionId );
+
+        indexNode( node, nodeVersionId, context );
+
+        return Node.create( node ).
+            nodeVersionId( nodeVersionId ).
+            build();
+    }
+
+    @Override
     public void storeVersion( final StoreNodeVersionParams params, final InternalContext context )
     {
         final NodeVersionId nodeVersionId = this.nodeVersionService.store( params.getNodeVersion() );

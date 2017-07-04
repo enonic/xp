@@ -66,7 +66,11 @@ public class NodeRepositoryServiceImpl
         final String storageIndexName = IndexNameResolver.resolveStorageIndexName( repositoryId );
         final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repositoryId );
 
-        return indexServiceInternal.indicesExists( storageIndexName, searchIndexName );
+        final boolean indicesExists = indexServiceInternal.indicesExists( storageIndexName, searchIndexName );
+
+        LOG.info( String.format( "Checking if repository %s indexes exists: %b", repositoryId, indicesExists ) );
+
+        return indicesExists;
     }
 
     private void createIndexes( final CreateRepositoryParams params )

@@ -1,5 +1,6 @@
 package com.enonic.xp.node;
 
+import java.util.Collection;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
@@ -27,6 +28,11 @@ public class NodeVersionIds
         return new NodeVersionIds( ImmutableSet.copyOf( nodeVersionIds ) );
     }
 
+
+    public static NodeVersionIds from( final Collection<NodeVersionId> nodeVersionIds )
+    {
+        return new NodeVersionIds( ImmutableSet.copyOf( nodeVersionIds ) );
+    }
 
     public static Builder create()
     {

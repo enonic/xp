@@ -9,7 +9,7 @@ import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.storage.StoreNodeVersionParams;
 
-public class ImportNodeVersionCommand
+public class LoadNodeVersionCommand
     extends AbstractNodeCommand
 {
     private final NodeId nodeId;
@@ -20,7 +20,7 @@ public class ImportNodeVersionCommand
 
     private final NodeVersion nodeVersion;
 
-    private ImportNodeVersionCommand( final Builder builder )
+    private LoadNodeVersionCommand( final Builder builder )
     {
         super( builder );
         nodeId = builder.nodeId;
@@ -59,9 +59,9 @@ public class ImportNodeVersionCommand
         {
         }
 
-        public ImportNodeVersionCommand build()
+        public LoadNodeVersionCommand build()
         {
-            return new ImportNodeVersionCommand( this );
+            return new LoadNodeVersionCommand( this );
         }
 
         public Builder nodeId( final NodeId val )

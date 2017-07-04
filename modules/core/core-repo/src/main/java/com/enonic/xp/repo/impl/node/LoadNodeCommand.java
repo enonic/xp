@@ -2,12 +2,14 @@ package com.enonic.xp.repo.impl.node;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.LoadNodeParams;
 import com.enonic.xp.node.LoadNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeLoadException;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.repo.impl.InternalContext;
 
 public class LoadNodeCommand
     extends AbstractNodeCommand
@@ -49,14 +51,10 @@ public class LoadNodeCommand
         verifyParentExists();
         deleteIfExistsAtPath();
 
-        final Node node = StoreNodeCommand.create( this ).
-            node( params.getNode() ).
-            updateMetadataOnly( false ).
-            build().
-            execute();
+        final Node loadedNode = this.nodeStorageService.load( this.params.getNode(), InternalContext.from( ContextAccessor.current() ) );
 
         return LoadNodeResult.create().
-            node( node ).
+            node( loadedNode ).
             build();
     }
 
