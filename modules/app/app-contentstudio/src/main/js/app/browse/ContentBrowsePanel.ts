@@ -58,6 +58,8 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
             this.getBrowseActions().TOGGLE_SEARCH_PANEL.setVisible(item.isInRangeOrSmaller(ResponsiveRanges._360_540));
         });
 
+        this.getBrowseActions().updateActionsEnabledState([]); // to enable/disable actions correctly
+
         this.handleGlobalEvents();
     }
 
