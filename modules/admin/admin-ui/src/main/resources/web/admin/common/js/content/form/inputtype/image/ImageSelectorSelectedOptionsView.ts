@@ -73,7 +73,7 @@ module api.content.form.inputtype.image {
 
         private temporarilyDisableClickEvent() {
             this.clickDisabled = true;
-            setTimeout(()=> this.clickDisabled = false, 50);
+            setTimeout(() => this.clickDisabled = false, 50);
         }
 
         removeOption(optionToRemove: Option<ImageSelectorDisplayValue>, silent: boolean = false) {
@@ -134,7 +134,11 @@ module api.content.form.inputtype.image {
             }
 
             // tslint:disable-next-line:no-unused-new
-            new Tooltip(optionView, isMissingContent ? option.value : option.displayValue.getPath(), 1000);
+            new Tooltip(optionView, isMissingContent
+                ? option.value
+                : option.displayValue.getPath()
+                                        ? option.displayValue.getPath().toString()
+                                        : '', 1000);
         }
 
         updateUploadedOption(option: Option<ImageSelectorDisplayValue>) {
@@ -268,29 +272,29 @@ module api.content.form.inputtype.image {
             let checkbox = optionView.getCheckbox();
 
             switch (event.which) {
-                case 32: // Spacebar
-                    checkbox.toggleChecked();
-                    event.stopPropagation();
-                    break;
-                case 8: // Backspace
-                    checkbox.setChecked(false);
-                    this.removeOptionViewAndRefocus(option);
-                    event.preventDefault();
-                    event.stopPropagation();
-                    break;
-                case 46: // Delete
-                    checkbox.setChecked(false);
-                    this.removeOptionViewAndRefocus(option);
-                    event.stopPropagation();
-                    break;
-                case 13: // Enter
-                    this.notifyEditSelectedOptions([option]);
-                    event.stopPropagation();
-                    break;
-                case 9: // tab
-                    this.resetActiveOption();
-                    event.stopPropagation();
-                    break;
+            case 32: // Spacebar
+                checkbox.toggleChecked();
+                event.stopPropagation();
+                break;
+            case 8: // Backspace
+                checkbox.setChecked(false);
+                this.removeOptionViewAndRefocus(option);
+                event.preventDefault();
+                event.stopPropagation();
+                break;
+            case 46: // Delete
+                checkbox.setChecked(false);
+                this.removeOptionViewAndRefocus(option);
+                event.stopPropagation();
+                break;
+            case 13: // Enter
+                this.notifyEditSelectedOptions([option]);
+                event.stopPropagation();
+                break;
+            case 9: // tab
+                this.resetActiveOption();
+                event.stopPropagation();
+                break;
             }
         }
 

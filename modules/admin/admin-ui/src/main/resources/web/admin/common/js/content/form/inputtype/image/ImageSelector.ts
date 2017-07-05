@@ -32,6 +32,11 @@ module api.content.form.inputtype.image {
     import ServerEventsListener = api.app.ServerEventsListener;
     import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
     import ContentInputTypeManagingAdd = api.content.form.inputtype.ContentInputTypeManagingAdd;
+    import ContentSummaryJson = api.content.json.ContentSummaryJson;
+    import ContentQueryResultJson = api.content.json.ContentQueryResultJson;
+    import BaseLoader = api.util.loader.BaseLoader;
+    import SelectedOptionsView = api.ui.selector.combobox.SelectedOptionsView;
+    import StringHelper = api.util.StringHelper;
 
     export class ImageSelector extends ContentInputTypeManagingAdd<ImageSelectorDisplayValue> {
 
@@ -45,6 +50,8 @@ module api.content.form.inputtype.image {
         private uploader: api.content.image.ImageUploaderEl;
 
         private editContentRequestListeners: {(content: ContentSummary): void}[] = [];
+
+        private isFlat: boolean;
 
         constructor(config: api.content.form.inputtype.ContentInputTypeViewContext) {
             super('image-selector', config);
@@ -138,14 +145,34 @@ module api.content.form.inputtype.image {
                                relationshipAllowedContentTypes.length ? relationshipAllowedContentTypes :
                                    [ContentTypeName.IMAGE.toString(), ContentTypeName.MEDIA_VECTOR.toString()];
 
-            let imageSelectorLoader = ImageSelectorLoader.create().setContent(this.config.content).setInputName(
-                inputName).setAllowedContentPaths(this.allowedContentPaths).setContentTypeNames(contentTypes).setRelationshipType(
-                this.relationshipType).build();
+            const optionDataLoader = ImageOptionDataLoader
+                .create()
+                .setContent(this.config.content)
+                .setInputName(inputName)
+                .setAllowedContentPaths(this.allowedContentPaths)
+                .setContentTypeNames(contentTypes)
+                .setRelationshipType(this.relationshipType)
+                .build();
 
-            let contentComboBox: ImageContentComboBox
-                = ImageContentComboBox.create().setMaximumOccurrences(maximumOccurrences).setLoader(
-                imageSelectorLoader).setSelectedOptionsView(this.selectedOptionsView = this.createSelectedOptionsView()).setValue(
-                value).build();
+            const imageSelectorLoader = ImageSelectorLoader
+                .create()
+                .setContent(this.config.content)
+                .setInputName(inputName)
+                .setAllowedContentPaths(this.allowedContentPaths)
+                .setContentTypeNames(contentTypes)
+                .setRelationshipType(this.relationshipType)
+                .build();
+
+            const contentComboBox: ImageContentComboBox
+                = ImageContentComboBox.create()
+                .setMaximumOccurrences(maximumOccurrences)
+                .setLoader(imageSelectorLoader)
+                .setSelectedOptionsView(this.selectedOptionsView = this.createSelectedOptionsView())
+                .setValue(value)
+                .setOptionDataLoader(optionDataLoader)
+                .setTreegridDropdownEnabled(!this.isFlat)
+                .build();
+
             let comboBox: ComboBox<ImageSelectorDisplayValue> = contentComboBox.getComboBox();
 
             comboBox.onHidden((event: api.dom.ElementHiddenEvent) => {
@@ -390,6 +417,13 @@ module api.content.form.inputtype.image {
                 }
                 this.ignorePropertyChange = false;
             }
+        }
+
+        protected readConfig(inputConfig: {[element: string]: {[name: string]: string}[];}): void {
+            const isFlatConfig = inputConfig['flat'] ? inputConfig['flat'][0] : {};
+            this.isFlat = !StringHelper.isBlank(isFlatConfig['value']) ? isFlatConfig['value'].toLowerCase() == 'true' : false;
+
+            super.readConfig(inputConfig);
         }
 
         onFocus(listener: (event: FocusEvent) => void) {

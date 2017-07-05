@@ -20,7 +20,7 @@ module api.content {
 
         private relationshipType: string;
 
-        constructor(builder?: Builder) {
+        constructor(builder?: ContentSummaryOptionDataLoaderBuilder) {
             if (builder) {
                 this.contentTypeNames = builder.contentTypeNames;
                 this.allowedContentPaths = builder.allowedContentPaths;
@@ -30,7 +30,7 @@ module api.content {
             }
         }
 
-        private initRequest(builder: Builder) {
+        private initRequest(builder: ContentSummaryOptionDataLoaderBuilder) {
             let request = this.request;
             request.setContentTypeNames(builder.contentTypeNames);
             request.setAllowedContentPaths(builder.allowedContentPaths);
@@ -41,52 +41,40 @@ module api.content {
         fetch(node: TreeNode<Option<ContentTreeSelectorItem>>): wemQ.Promise<ContentTreeSelectorItem> {
 
             this.request.setParentPath(node.getDataId() ? node.getData().displayValue.getPath() : null);
-            if (this.request.getContent()) {
                 return this.request.sendAndParse().then((contents: ContentTreeSelectorItem[]) => {
                     return !!contents && contents.length > 0 ? contents[0] : null;
                 });
-            } else {
-                return ContentSummaryFetcher.fetch(node.getData().displayValue.getContentId()).then(
-                    content => new ContentTreeSelectorItem(content, false));
-            }
         }
 
         fetchChildren(parentNode: TreeNode<Option<ContentTreeSelectorItem>>, from: number = 0,
                       size: number = -1): wemQ.Promise<OptionDataLoaderData<ContentTreeSelectorItem>> {
 
-            if (this.request.getContent()) {
                 this.request.setFrom(from);
                 this.request.setSize(size);
 
                 this.request.setParentPath(parentNode.getDataId() ? parentNode.getData().displayValue.getPath() : null);
 
                 return this.request.sendAndParse().then(items => {
-                    return new OptionDataLoaderData(items,
-                        0,
-                        0);
+                    return this.createOptionData(items);
                 });
-            } else {
-                return ContentSummaryFetcher.fetchChildren(parentNode.getData() ? parentNode.getData().displayValue.getContentId() : null,
-                    from,
-                    size).then((response: ContentResponse<ContentSummary>) => {
-                    return new OptionDataLoaderData(response.getContents().map(content => new ContentTreeSelectorItem(content, false)),
-                        response.getMetadata().getHits(),
-                        response.getMetadata().getTotalHits());
-                });
-            }
+        }
 
+        protected createOptionData(data: ContentTreeSelectorItem[]) {
+            return new OptionDataLoaderData(data,
+                0,
+                0);
         }
 
         checkReadonly(items: ContentTreeSelectorItem[]): wemQ.Promise<string[]> {
             return ContentSummaryFetcher.getReadOnly(items.map(item => item.getContent()));
         }
 
-        static create(): Builder {
-            return new Builder();
+        static create(): ContentSummaryOptionDataLoaderBuilder {
+            return new ContentSummaryOptionDataLoaderBuilder();
         }
     }
 
-    export class Builder {
+    export class ContentSummaryOptionDataLoaderBuilder {
 
         content: ContentSummary;
 
@@ -96,22 +84,22 @@ module api.content {
 
         relationshipType: string;
 
-        public setContentTypeNames(contentTypeNames: string[]): Builder {
+        public setContentTypeNames(contentTypeNames: string[]): ContentSummaryOptionDataLoaderBuilder {
             this.contentTypeNames = contentTypeNames;
             return this;
         }
 
-        public setAllowedContentPaths(allowedContentPaths: string[]): Builder {
+        public setAllowedContentPaths(allowedContentPaths: string[]): ContentSummaryOptionDataLoaderBuilder {
             this.allowedContentPaths = allowedContentPaths;
             return this;
         }
 
-        public setRelationshipType(relationshipType: string): Builder {
+        public setRelationshipType(relationshipType: string): ContentSummaryOptionDataLoaderBuilder {
             this.relationshipType = relationshipType;
             return this;
         }
 
-        public setContent(content: ContentSummary): Builder {
+        public setContent(content: ContentSummary): ContentSummaryOptionDataLoaderBuilder {
             this.content = content;
             return this;
         }

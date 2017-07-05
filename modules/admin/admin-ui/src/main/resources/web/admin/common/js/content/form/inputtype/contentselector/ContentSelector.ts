@@ -38,14 +38,6 @@ module api.content.form.inputtype.contentselector {
             super('relationship', config);
         }
 
-        protected readConfig(inputConfig: {[element: string]: {[name: string]: string}[];}): void {
-
-            const isFlatConfig = inputConfig['flat'] ? inputConfig['flat'][0] : {};
-            this.isFlat = !StringHelper.isBlank(isFlatConfig['value']) ? isFlatConfig['value'].toLowerCase() == 'true' : false;
-
-            super.readConfig(inputConfig);
-        }
-
         public getContentComboBox(): ContentComboBox {
             return this.contentComboBox;
         }
@@ -266,6 +258,14 @@ module api.content.form.inputtype.contentselector {
 
         protected getNumberOfValids(): number {
             return this.contentComboBox.countSelected();
+        }
+
+        protected readConfig(inputConfig: {[element: string]: {[name: string]: string}[];}): void {
+
+            const isFlatConfig = inputConfig['flat'] ? inputConfig['flat'][0] : {};
+            this.isFlat = !StringHelper.isBlank(isFlatConfig['value']) ? isFlatConfig['value'].toLowerCase() == 'true' : false;
+
+            super.readConfig(inputConfig);
         }
 
         giveFocus(): boolean {
