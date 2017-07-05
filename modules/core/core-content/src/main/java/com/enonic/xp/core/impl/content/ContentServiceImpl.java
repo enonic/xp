@@ -345,7 +345,7 @@ public class ContentServiceImpl
             contentIds( params.getContentIds() ).
             excludedContentIds( params.getExcludedContentIds() ).
             target( params.getTarget() ).
-            excludeChildrenIds( params.getExcludeChildrenIds() ).
+            excludeChildrenIds( getExcludeChildrenIds( params ) ).
             includeDependencies( params.isIncludeDependencies() ).
             pushListener( params.getPushContentListener() ).
             build().
@@ -356,6 +356,7 @@ public class ContentServiceImpl
     @Override
     public PublishContentResult publish( final PushContentParams params )
     {
+        params.getExcludeChildrenIds();
         return PublishContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
@@ -365,11 +366,24 @@ public class ContentServiceImpl
             excludedContentIds( params.getExcludedContentIds() ).
             target( params.getTarget() ).
             contentPublishInfo( params.getContentPublishInfo() ).
-            excludeChildrenIds( params.getExcludeChildrenIds() ).
+            excludeChildrenIds( getExcludeChildrenIds( params ) ).
             includeDependencies( params.isIncludeDependencies() ).
             pushListener( params.getPushContentListener() ).
             build().
             execute();
+    }
+
+    private ContentIds getExcludeChildrenIds( final PushContentParams params )
+    {
+        if ( params.getExcludeChildrenIds().isNotEmpty() )
+        {
+            return params.getExcludeChildrenIds();
+        }
+        if ( params.isIncludeChildren() )
+        {
+            return ContentIds.empty();
+        }
+        return params.getContentIds();
     }
 
     @Override
