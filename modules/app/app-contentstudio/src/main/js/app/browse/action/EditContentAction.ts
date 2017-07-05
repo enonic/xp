@@ -13,7 +13,7 @@ export class EditContentAction extends Action {
         this.setEnabled(false);
         this.onExecuted(() => {
             let contents: api.content.ContentSummaryAndCompareStatus[]
-                = grid.getSelectedDataList();
+                = grid.getSelectedDataList().filter((content) => !content.isReadOnly());
 
             if (contents.length > EditContentAction.MAX_ITEMS_TO_EDIT) {
                 api.notify.showWarning(i18n('notify.edit.tooMuch'));

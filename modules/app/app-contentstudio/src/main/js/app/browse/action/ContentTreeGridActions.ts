@@ -159,6 +159,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         let allAreOnline = contentBrowseItems.length > 0;
         let allArePendingDelete = contentBrowseItems.length > 0;
         let someArePublished = false;
+        let allAreReadonly = contentBrowseItems.length > 0;
 
         contentBrowseItems.forEach((browseItem) => {
             let content = browseItem.getModel();
@@ -171,6 +172,9 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
             }
             if (!someArePublished && content.isPublished()) {
                 someArePublished = true;
+            }
+            if (allAreReadonly && !content.isReadOnly()) {
+                allAreReadonly = false;
             }
         });
 
@@ -185,7 +189,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
         }
 
         this.SHOW_NEW_CONTENT_DIALOG_ACTION.setEnabled(contentSummaries.length < 2);
-        this.EDIT_CONTENT.setEnabled(this.anyEditable(contentSummaries));
+        this.EDIT_CONTENT.setEnabled(!allAreReadonly && this.anyEditable(contentSummaries));
         this.DELETE_CONTENT.setEnabled(this.anyDeletable(contentSummaries));
         this.DUPLICATE_CONTENT.setEnabled(contentSummaries.length === 1);
         this.MOVE_CONTENT.setEnabled(!this.isAllItemsSelected(contentBrowseItems.length));
@@ -308,7 +312,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
     private anyDeletable(contentSummaries: api.content.ContentSummary[]): boolean {
         return contentSummaries.some((content) => {
-            return !!content && content.isDeletable();
+            return !!content && content.isDeletable() && !content;
         });
     }
 
