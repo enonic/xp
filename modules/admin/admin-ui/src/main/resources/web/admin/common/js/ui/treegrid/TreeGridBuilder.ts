@@ -35,6 +35,8 @@ module api.ui.treegrid {
 
         private idPropertyName: string = 'id';
 
+        private columnUpdater: () => void;
+
         constructor(grid?: TreeGrid<NODE>) {
             if (grid) {
                 this.showToolbar = grid.hasToolbar();
@@ -278,6 +280,14 @@ module api.ui.treegrid {
 
         getIdPropertyName() : string {
             return this.idPropertyName;
+        }
+
+        setColumnUpdater(columnUpdater: () => void) {
+            this.columnUpdater = columnUpdater;
+        }
+
+        getColumnUpdater(): () => void {
+            return this.columnUpdater;
         }
 
         private buildColumn(columnConfig: GridColumnConfig) {

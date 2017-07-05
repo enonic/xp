@@ -99,6 +99,10 @@
           background: url("../../../../images/admin-checked.gif") center no-repeat;
         }
 
+        &:last-child {
+          padding-right: 20px;
+        }
+
       }
 
       .toggle {
@@ -184,6 +188,11 @@
           color: @admin-dark-gray;
           .animation(rotate360, .5s, 0s, linear);
         }
+      }
+
+      .shifted .toggle.icon {
+        width: 45px;
+        margin-right: 0;
       }
     }
   }
