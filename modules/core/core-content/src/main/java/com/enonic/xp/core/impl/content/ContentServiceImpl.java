@@ -356,7 +356,6 @@ public class ContentServiceImpl
     @Override
     public PublishContentResult publish( final PushContentParams params )
     {
-        params.getExcludeChildrenIds();
         return PublishContentCommand.create().
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
