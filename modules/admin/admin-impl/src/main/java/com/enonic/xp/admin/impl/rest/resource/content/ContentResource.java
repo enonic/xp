@@ -722,12 +722,12 @@ public final class ContentResource
         final HasUnpublishedChildrenResultJson.Builder result = HasUnpublishedChildrenResultJson.create();
 
         ids.getContentIds().forEach( contentId ->
-                     {
-                         final Boolean hasChildren = this.contentService.hasUnpublishedChildren(
-                             new HasUnpublishedChildrenParams( contentId, ContentConstants.BRANCH_MASTER ) );
+                                     {
+                                         final Boolean hasChildren = this.contentService.hasUnpublishedChildren(
+                                             new HasUnpublishedChildrenParams( contentId, ContentConstants.BRANCH_MASTER ) );
 
-                         result.addHasChildren( contentId, hasChildren );
-                     } );
+                                         result.addHasChildren( contentId, hasChildren );
+                                     } );
 
         return result.build();
     }
@@ -763,10 +763,14 @@ public final class ContentResource
             target( ContentConstants.BRANCH_MASTER ).
             build() );
 
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+
         //check if user has access to publish every content
-        final Boolean isAllPublishable = fullPublishList.stream().allMatch( id ->
-                                                                                this.contentService.getPermissionsById( id ).isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(), Permission.PUBLISH )
-        );
+        final Boolean isAllPublishable = authInfo.hasRole( RoleKeys.ADMIN )
+            ? true
+            : fullPublishList.stream().allMatch(
+                id -> this.contentService.getPermissionsById( id ).isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(),
+                                                                                 Permission.PUBLISH ) );
 
         //filter required dependant ids
         final ContentIds requiredDependantIds = ContentIds.from( requiredIds.stream().
@@ -845,15 +849,16 @@ public final class ContentResource
         // Sorts the contents by path and for each
         return contents.stream().
             // sorted( ( content1, content2 ) -> content1.getPath().compareTo( content2.getPath() ) ).
-                map( content -> {
-                //Creates a ContentPublishItem
-                final CompareContentResult compareContentResult = compareContentResultsMap.get( content.getId() );
-                return ContentPublishItemJson.create().
-                    content( content ).
-                    compareStatus( compareContentResult.getCompareStatus().name() ).
-                    iconUrl( contentIconUrlResolver.resolve( content ) ).
-                    build();
-            } ).
+                map( content ->
+                     {
+                         //Creates a ContentPublishItem
+                         final CompareContentResult compareContentResult = compareContentResultsMap.get( content.getId() );
+                         return ContentPublishItemJson.create().
+                             content( content ).
+                             compareStatus( compareContentResult.getCompareStatus().name() ).
+                             iconUrl( contentIconUrlResolver.resolve( content ) ).
+                             build();
+                     } ).
                 collect( Collectors.toList() );
     }
 
@@ -1009,12 +1014,13 @@ public final class ContentResource
 
         final List<String> result = new ArrayList<>();
 
-        contents.stream().forEach( content -> {
-            if ( !content.getPermissions().isAllowedFor( authInfo.getPrincipals(), Permission.MODIFY ) )
-            {
-                result.add( content.getId().toString() );
-            }
-        } );
+        contents.stream().forEach( content ->
+                                   {
+                                       if ( !content.getPermissions().isAllowedFor( authInfo.getPrincipals(), Permission.MODIFY ) )
+                                       {
+                                           result.add( content.getId().toString() );
+                                       }
+                                   } );
 
         return result;
     }
@@ -1101,12 +1107,13 @@ public final class ContentResource
 
         final List<String> result = new ArrayList<>();
 
-        permissions.forEach( permission -> {
-            if ( userHasPermission( authInfo, permission, contentsPermissions ) )
-            {
-                result.add( permission.name() );
-            }
-        } );
+        permissions.forEach( permission ->
+                             {
+                                 if ( userHasPermission( authInfo, permission, contentsPermissions ) )
+                                 {
+                                     result.add( permission.name() );
+                                 }
+                             } );
 
         return result;
     }
