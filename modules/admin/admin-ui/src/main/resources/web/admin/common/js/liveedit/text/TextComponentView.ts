@@ -78,7 +78,7 @@ module api.liveedit.text {
                 if (!this.initOnAdd) {
                     return;
                 }
-                
+
                 this.initialize();
             });
 

@@ -108,7 +108,7 @@ module api.liveedit {
         private propertyChangedListener: (event: ComponentPropertyChangedEvent) => void;
 
         private resetListener: (event: ComponentResetEvent) => void;
-        
+
         protected initOnAdd: boolean = true;
 
         public static debug: boolean = false;
@@ -443,7 +443,7 @@ module api.liveedit {
         isEmpty(): boolean {
             return !this.component || this.component.isEmpty();
         }
-        
+
         private skipInitOnAdd(): void {
             this.initOnAdd = false;
         }
