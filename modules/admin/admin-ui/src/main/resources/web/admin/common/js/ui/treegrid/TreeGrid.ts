@@ -19,6 +19,12 @@ module api.ui.treegrid {
     import AppHelper = api.util.AppHelper;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 
+    export enum SelectionOnClickType {
+        HIGHLIGHT,
+        SELECT,
+        NONE,
+    }
+
     /*
      * There are several methods that should be overridden:
      * 1. hasChildren(data: DATA)  -- Should be implemented if a grid has a tree structure and supports expand/collapse.
@@ -72,7 +78,7 @@ module api.ui.treegrid {
 
         private highlightedNode: TreeNode<DATA>;
 
-        protected highlightingEnabled: boolean = true;
+        private selectionOnClick: SelectionOnClickType = SelectionOnClickType.HIGHLIGHT;
 
         private interval: number;
 
@@ -303,17 +309,21 @@ module api.ui.treegrid {
                 this.setActive(true);
 
                 // Checkbox is clicked
-                let isCheckboxClicked = elem.hasClass('slick-cell-checkboxsel') || elem.hasAnyParentClass('slick-cell-checkboxsel');
+                const isCheckboxClicked = elem.hasClass('slick-cell-checkboxsel') || elem.hasAnyParentClass('slick-cell-checkboxsel');
+                const selectOnClick = this.selectionOnClick === SelectionOnClickType.SELECT;
 
-                if (!this.highlightingEnabled || this.gridOptions.isMultipleSelectionDisabled() || isCheckboxClicked) {
+                if (selectOnClick || this.gridOptions.isMultipleSelectionDisabled() || isCheckboxClicked) {
+
                     this.onRowSelected(data);
                     return;
                 }
 
-                this.onRowHighlighted(elem, data);
+                if (this.selectionOnClick === SelectionOnClickType.HIGHLIGHT) {
+                    this.onRowHighlighted(elem, data);
+                }
 
                 if (!elem.hasClass('sort-dialog-trigger')) {
-                    new TreeGridItemClickedEvent(!!this.getFirstSelectedOrHighlightedNode()).fire();
+                    new TreeGridItemClickedEvent(this.getItem(data.row), !!this.getFirstSelectedOrHighlightedNode()).fire();
                 }
             });
 
@@ -679,7 +689,7 @@ module api.ui.treegrid {
         }
 
         private highlightRowByNode(node: TreeNode<DATA>) {
-            if (!this.highlightingEnabled) {
+            if (this.selectionOnClick === SelectionOnClickType.SELECT) {
                 return;
             }
             if (!this.highlightedNode || this.highlightedNode !== node) {
@@ -1111,6 +1121,10 @@ module api.ui.treegrid {
             return selectedItems.map((node: TreeNode<DATA>) => {
                 return node.getData();
             });
+        }
+
+        setSelectionOnClick(type: SelectionOnClickType): void {
+            this.selectionOnClick = type;
         }
 
         // Hard reset
