@@ -40,15 +40,21 @@ module api.content {
 
         fetch(node: TreeNode<Option<ContentTreeSelectorItem>>): wemQ.Promise<ContentTreeSelectorItem> {
 
-            this.request.setParentPath(node.getDataId() ? node.getData().displayValue.getPath() : null);
+            if (this.request.getContent()) {
+                this.request.setParentPath(node.getDataId() ? node.getData().displayValue.getPath() : null);
                 return this.request.sendAndParse().then((contents: ContentTreeSelectorItem[]) => {
                     return !!contents && contents.length > 0 ? contents[0] : null;
                 });
+            } else {
+                return ContentSummaryFetcher.fetch(node.getData().displayValue.getContentId()).then(
+                    content => new ContentTreeSelectorItem(content, false));
+            }
         }
 
         fetchChildren(parentNode: TreeNode<Option<ContentTreeSelectorItem>>, from: number = 0,
                       size: number = -1): wemQ.Promise<OptionDataLoaderData<ContentTreeSelectorItem>> {
 
+            if (this.request.getContent()) {
                 this.request.setFrom(from);
                 this.request.setSize(size);
 
@@ -57,6 +63,15 @@ module api.content {
                 return this.request.sendAndParse().then(items => {
                     return this.createOptionData(items);
                 });
+            } else {
+                return ContentSummaryFetcher.fetchChildren(parentNode.getData() ? parentNode.getData().displayValue.getContentId() : null,
+                    from,
+                    size).then((response: ContentResponse<ContentSummary>) => {
+                    return new OptionDataLoaderData(response.getContents().map(content => new ContentTreeSelectorItem(content, false)),
+                        response.getMetadata().getHits(),
+                        response.getMetadata().getTotalHits());
+                });
+            }
         }
 
         protected createOptionData(data: ContentTreeSelectorItem[]) {
