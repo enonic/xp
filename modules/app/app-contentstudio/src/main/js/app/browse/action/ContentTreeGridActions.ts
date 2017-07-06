@@ -312,7 +312,7 @@ export class ContentTreeGridActions implements TreeGridActions<ContentSummaryAnd
 
     private anyDeletable(contentSummaries: api.content.ContentSummary[]): boolean {
         return contentSummaries.some((content) => {
-            return !!content && content.isDeletable() && !content;
+            return !!content && content.isDeletable();
         });
     }
 
