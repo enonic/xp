@@ -40,7 +40,9 @@ module api.content.util {
         }
 
         setScale(value: string): ContentImageUrlResolver {
-            this.scale = '' + value;
+            if (value) {
+                this.scale = '' + value;
+            }
             return this;
         }
 

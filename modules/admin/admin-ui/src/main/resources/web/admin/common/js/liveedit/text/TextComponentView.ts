@@ -375,7 +375,7 @@ module api.liveedit.text {
                 this.htmlAreaEditor.setContent(TextComponentView.DEFAULT_TEXT);
                 this.htmlAreaEditor.selection.select(this.htmlAreaEditor.getBody(), true);
             }
-            if (this.focusOnInit) {
+            if (this.focusOnInit && this.isAdded()) {
                 if (api.BrowserHelper.isFirefox()) {
                     setTimeout(() => {
                         this.forceEditorFocus();
