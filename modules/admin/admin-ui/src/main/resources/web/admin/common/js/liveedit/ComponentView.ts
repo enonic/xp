@@ -9,6 +9,7 @@ module api.liveedit {
     import Content = api.content.Content;
     import FragmentComponent = api.content.page.region.FragmentComponent;
     import FragmentComponentView = api.liveedit.fragment.FragmentComponentView;
+    import i18n = api.util.i18n;
 
     export class ComponentViewBuilder<COMPONENT extends Component> {
 
@@ -181,21 +182,21 @@ module api.liveedit {
             }
 
             if (inspectActionRequired) {
-                actions.push(new api.ui.Action('Inspect').onExecuted(() => {
+                actions.push(new api.ui.Action(i18n('live.view.inspect')).onExecuted(() => {
                     new ComponentInspectedEvent(this).fire();
                 }));
             }
 
-            actions.push(new api.ui.Action('Reset').onExecuted(() => {
+            actions.push(new api.ui.Action(i18n('live.view.reset')).onExecuted(() => {
                 this.component.reset();
             }));
 
             if (!isTopFragmentComponent) {
-                actions.push(new api.ui.Action('Remove').onExecuted(() => {
+                actions.push(new api.ui.Action(i18n('live.view.remove')).onExecuted(() => {
                     this.deselect();
                     this.remove();
                 }));
-                actions.push(new api.ui.Action('Duplicate').onExecuted(() => {
+                actions.push(new api.ui.Action(i18n('live.view.duplicate')).onExecuted(() => {
                     this.deselect();
 
                     let duplicatedComponent = <COMPONENT> this.getComponent().duplicate();
@@ -210,7 +211,7 @@ module api.liveedit {
             let isFragmentComponent = this instanceof api.liveedit.fragment.FragmentComponentView;
 
             if (!isFragmentComponent && this.liveEditModel.isFragmentAllowed()) {
-                actions.push(new api.ui.Action('Create Fragment').onExecuted(() => {
+                actions.push(new api.ui.Action(i18n('live.view.create.fragment')).onExecuted(() => {
                     this.deselect();
                     this.createFragment().then((content: Content): void => {
                         // replace created fragment in place of source component

@@ -14,6 +14,7 @@ module api.liveedit.text {
     import HTMLAreaHelper = api.util.htmlarea.editor.HTMLAreaHelper;
     import ModalDialog = api.util.htmlarea.dialog.ModalDialog;
     import Promise = Q.Promise;
+    import i18n = api.util.i18n;
 
     export class TextComponentViewBuilder extends ComponentViewBuilder<TextComponent> {
         constructor() {
@@ -482,7 +483,7 @@ module api.liveedit.text {
 
         private addTextContextMenuActions() {
             this.addContextMenuActions([
-                new api.ui.Action('Edit').onExecuted(() => {
+                new api.ui.Action(i18n('action.edit')).onExecuted(() => {
                     this.startPageTextEditMode();
                     this.focusOnInit = true;
                     this.forceEditorFocus();

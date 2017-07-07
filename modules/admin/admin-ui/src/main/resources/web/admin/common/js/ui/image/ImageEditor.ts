@@ -8,6 +8,7 @@ module api.ui.image {
     import TabMenuItem = api.ui.tab.TabMenuItem;
     import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
     import NavigatorEvent = api.ui.NavigatorEvent;
+    import i18n = api.util.i18n;
 
     export interface Point {
         x: number;
@@ -630,7 +631,7 @@ module api.ui.image {
 
             let editContainer = new DivEl('edit-container');
 
-            this.editResetButton = new Button('Reset');
+            this.editResetButton = new Button(i18n('button.reset'));
             this.editResetButton.setVisible(false).addClass('transparent').onClicked((event: MouseEvent) => {
                 event.stopPropagation();
 

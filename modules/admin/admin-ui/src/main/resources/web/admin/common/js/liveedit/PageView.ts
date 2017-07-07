@@ -14,6 +14,7 @@ module api.liveedit {
     import FragmentComponentView = api.liveedit.fragment.FragmentComponentView;
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
     import SetController = api.content.page.SetController;
+    import i18n = api.util.i18n;
 
     export class PageViewBuilder {
 
@@ -179,11 +180,11 @@ module api.liveedit {
 
         private addPageContextMenuActions() {
             let pageModel = this.liveEditModel.getPageModel();
-            let inspectAction = new api.ui.Action('Inspect').onExecuted(() => {
+            let inspectAction = new api.ui.Action(i18n('live.view.inspect')).onExecuted(() => {
                 new PageInspectedEvent().fire();
             });
 
-            this.resetAction = new api.ui.Action('Reset');
+            this.resetAction = new api.ui.Action(i18n('live.view.reset'));
             this.resetAction.onExecuted(() => {
                 if (PageView.debug) {
                     console.log('PageView.reset');
@@ -365,7 +366,7 @@ module api.liveedit {
         }
 
         getLockedMenuActions(): api.ui.Action[] {
-            let unlockAction = new api.ui.Action('Customize Page');
+            let unlockAction = new api.ui.Action(i18n('live.menu.page.customize'));
 
             unlockAction.onExecuted(() => {
                 this.setLocked(false);
@@ -632,7 +633,7 @@ module api.liveedit {
         }
 
         setParentItemView(itemView: ItemView) {
-            throw new Error('PageView is the topmost item view and cannot have a parent');
+            throw new Error(i18n('live.view.page.error.noparent'));
         }
 
         private registerRegionView(regionView: RegionView) {
@@ -685,7 +686,7 @@ module api.liveedit {
         }
 
         getItemViewById(id: ItemViewId): ItemView {
-            api.util.assertNotNull(id, 'value cannot be null');
+            api.util.assertNotNull(id, i18n('live.view.itemview.error.idisnull'));
             return this.viewsById[id.toNumber()];
         }
 
@@ -703,7 +704,7 @@ module api.liveedit {
         }
 
         getItemViewByElement(element: HTMLElement): ItemView {
-            api.util.assertNotNull(element, 'element cannot be null');
+            api.util.assertNotNull(element, i18n('live.view.itemview.error.elementisnull'));
 
             let itemId = ItemView.parseItemId(element);
             if (!itemId) {
@@ -711,7 +712,7 @@ module api.liveedit {
             }
 
             let itemView = this.getItemViewById(itemId);
-            api.util.assertNotNull(itemView, 'ItemView not found: ' + itemId.toString());
+            api.util.assertNotNull(itemView, i18n('live.view.itemview.error.notfound', itemId.toString()));
 
             return itemView;
         }
