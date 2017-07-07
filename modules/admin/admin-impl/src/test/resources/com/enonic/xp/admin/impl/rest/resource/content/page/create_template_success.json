@@ -1,0 +1,47 @@
+{
+  "attachments": [],
+  "childOrder": null,
+  "contentState": "DEFAULT",
+  "createdTime": null,
+  "creator": null,
+  "data": [
+    {
+      "name": "supports",
+      "type": "String",
+      "values": [
+        {
+          "v": "myapplication:content-type"
+        }
+      ]
+    }
+  ],
+  "deletable": true,
+  "displayName": "My page template",
+  "editable": true,
+  "hasChildren": false,
+  "iconUrl": "/admin/rest/schema/content/icon/portal:page-template",
+  "id": "template-id",
+  "inheritPermissions": true,
+  "isPage": true,
+  "isRoot": false,
+  "isValid": false,
+  "language": null,
+  "meta": [],
+  "modifiedTime": null,
+  "modifier": null,
+  "name": "template-myapplication-2",
+  "owner": "user:myStore:me",
+  "page": {
+    "config": [],
+    "controller": "my-descriptor:",
+    "customized": false,
+    "fragment": null,
+    "regions": [],
+    "template": null
+  },
+  "path": "/site/_templates/template-myapplication-2",
+  "permissions": [],
+  "publish": null,
+  "thumbnail": null,
+  "type": "portal:page-template"
+}

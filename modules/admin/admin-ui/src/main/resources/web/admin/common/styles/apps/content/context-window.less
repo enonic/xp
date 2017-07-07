@@ -172,16 +172,25 @@
 
       .form-element-spacing(@form-field-spacing);
 
-      &.page-controller-form, &.descriptor-based-dropdown-form, &.page-template-form, &.image-combobox-form, &.fragment-combobox-form {
+      &.page-controller-form,
+      &.descriptor-based-dropdown-form,
+      &.page-template-form,
+      &.image-combobox-form,
+      &.fragment-combobox-form {
         margin-top: 0px;
 
         label {
           display: block;
+          text-align: left;
         }
 
         &:first-child {
           margin-bottom: 0px;
         }
+      }
+
+      &.page-controller-form {
+        text-align: center; // to center save as template button
       }
 
       form {

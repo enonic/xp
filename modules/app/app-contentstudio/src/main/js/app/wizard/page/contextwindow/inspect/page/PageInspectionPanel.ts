@@ -23,8 +23,16 @@ import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRe
 import SetController = api.content.page.SetController;
 import PageTemplateDisplayName = api.content.page.PageTemplateDisplayName;
 import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
+import ActionButton = api.ui.button.ActionButton;
+import Button = api.ui.button.Button;
+import i18n = api.util.i18n;
+import Permission = api.security.acl.Permission;
+import EditContentEvent = api.content.event.EditContentEvent;
+import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+import CreatePageTemplateRequest = api.content.page.CreatePageTemplateRequest;
 
-export class PageInspectionPanel extends BaseInspectionPanel {
+export class PageInspectionPanel
+    extends BaseInspectionPanel {
 
     private liveEditModel: LiveEditModel;
 
@@ -39,6 +47,10 @@ export class PageInspectionPanel extends BaseInspectionPanel {
     private pageControllerSelector: PageControllerSelector;
 
     private inspectionHandler: BaseInspectionHandler;
+
+    private saveAsTemplateButton: Button;
+
+    private currentUserHasCreateRights: Boolean;
 
     constructor() {
         super();
@@ -66,8 +78,29 @@ export class PageInspectionPanel extends BaseInspectionPanel {
 
         this.pageControllerSelector = new PageControllerSelector(this.liveEditModel);
         this.pageControllerForm = new PageControllerForm(this.pageControllerSelector);
+        this.pageControllerForm.onShown(event => this.updateSaveAsTemplateVisibility());
         this.pageControllerForm.hide();
         this.appendChild(this.pageControllerForm);
+
+        this.currentUserHasCreateRights = null;
+        this.saveAsTemplateButton = new Button(i18n('action.saveAsTemplate'));
+        this.saveAsTemplateButton.addClass('blue large save-as-template');
+        this.saveAsTemplateButton.onClicked(event => {
+            let content = this.liveEditModel.getContent();
+            new CreatePageTemplateRequest()
+                .setController(this.pageControllerSelector.getSelectedOption().displayValue.getKey())
+                .setRegions(this.pageModel.getRegions())
+                .setConfig(this.pageModel.getConfig())
+                .setDisplayName(content.getDisplayName())
+                .setSite(content.getPath())
+                .setSupports(content.getType())
+                .setName(content.getName())
+                .sendAndParse().then(createdTemplate => {
+
+                new EditContentEvent([ContentSummaryAndCompareStatus.fromContentSummary(createdTemplate)]).fire();
+            });
+        });
+        this.pageControllerForm.appendChild(this.saveAsTemplateButton);
 
         this.inspectionHandler = new BaseInspectionHandler();
 
@@ -89,13 +122,13 @@ export class PageInspectionPanel extends BaseInspectionPanel {
 
     private handleTemplateSelected(event: OptionSelectedEvent<PageTemplateOption>) {
         const selectedOption: PageTemplateOption = event.getOption().displayValue;
-        const previousOption: PageTemplateOption = event.getPreviousOption().displayValue;
+        const previousOption: PageTemplateOption = event.getPreviousOption() ? event.getPreviousOption().displayValue : null;
 
         if (selectedOption.equals(previousOption)) {
             return;
         }
 
-        if (previousOption.isCustom()) { // show confirmation dialog
+        if (previousOption && previousOption.isCustom()) { // show confirmation dialog
             new api.ui.dialog.ConfirmationDialog()
                 .setQuestion(
                     'Switching to a page template will discard all of the custom changes made to the page. Are you sure?')
@@ -108,6 +141,27 @@ export class PageInspectionPanel extends BaseInspectionPanel {
                 }).open();
         } else {
             this.doSelectTemplate(selectedOption);
+        }
+    }
+
+    private updateSaveAsTemplateVisibility() {
+        const content = this.liveEditModel.getContent();
+        const hasController = this.pageTemplateSelector.getValue();
+        if (hasController && content.isSite()) {
+            if (this.currentUserHasCreateRights === null) {
+                new api.content.resource.GetPermittedActionsRequest()
+                    .addContentIds(content.getContentId())
+                    .addPermissionsToBeChecked(Permission.CREATE)
+                    .sendAndParse().then((allowedPermissions: Permission[]) => {
+
+                    this.currentUserHasCreateRights = allowedPermissions.indexOf(Permission.CREATE) > -1;
+                    this.saveAsTemplateButton.setVisible(this.currentUserHasCreateRights.valueOf());
+                });
+            } else {
+                this.saveAsTemplateButton.setVisible(this.currentUserHasCreateRights.valueOf());
+            }
+        } else {
+            this.saveAsTemplateButton.setVisible(false);
         }
     }
 

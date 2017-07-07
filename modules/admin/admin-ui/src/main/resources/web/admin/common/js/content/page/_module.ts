@@ -48,3 +48,4 @@
 ///<reference path='PageModel.ts' />
 ///<reference path='DescriptorByDisplayNameComparator.ts' />
 ///<reference path='PageTemplateByDisplayNameComparator.ts' />
+///<reference path='CreatePageTemplateRequest.ts' />
