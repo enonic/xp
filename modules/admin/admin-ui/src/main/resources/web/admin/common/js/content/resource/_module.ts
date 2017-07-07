@@ -52,3 +52,5 @@
 ///<reference path='GetContentIdsByParentRequest.ts' />
 ///<reference path='UndoPendingDeleteContentRequest.ts' />
 ///<reference path='HasUnpublishedChildrenRequest.ts' />
+///<reference path='ContentTreeSelectorItem.ts' />
+///<reference path='ContentAndStatusTreeSelectorItem.ts' />

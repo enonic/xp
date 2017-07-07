@@ -6,6 +6,7 @@ module api.ui.selector.dropdown {
     import DropdownHandle = api.ui.button.DropdownHandle;
     import Viewer = api.ui.Viewer;
     import DefaultOptionDisplayValueViewer = api.ui.selector.DefaultOptionDisplayValueViewer;
+    import GridColumn = api.ui.grid.GridColumn;
 
     export interface DropdownConfig<OPTION_DISPLAY_VALUE> {
 
@@ -26,6 +27,8 @@ module api.ui.selector.dropdown {
         inputPlaceholderText?: string;
 
         noOptionsText?: string;
+
+        createColumns?: GridColumn<OPTION_DISPLAY_VALUE>[];
     }
 
     export class Dropdown<OPTION_DISPLAY_VALUE> extends api.dom.FormInputEl {
@@ -93,7 +96,8 @@ module api.ui.selector.dropdown {
                 width: this.input.getEl().getWidth(),
                 optionDisplayValueViewer: config.optionDisplayValueViewer,
                 filter: filter,
-                dataIdProperty: config.dataIdProperty
+                dataIdProperty: config.dataIdProperty,
+                createColumns: config.createColumns
             });
             if (filter) {
                 this.dropdownList.setFilterArgs({searchString: ''});

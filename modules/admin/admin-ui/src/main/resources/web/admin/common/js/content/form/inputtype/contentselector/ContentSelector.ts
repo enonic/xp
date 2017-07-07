@@ -17,6 +17,7 @@ module api.content.form.inputtype.contentselector {
     import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
     import ContentInputTypeManagingAdd = api.content.form.inputtype.ContentInputTypeManagingAdd;
     import StringHelper = api.util.StringHelper;
+    import ContentRowFormatter = api.content.util.ContentRowFormatter;
 
     export class ContentSelector extends ContentInputTypeManagingAdd<api.content.ContentSummary> {
 
@@ -25,6 +26,8 @@ module api.content.form.inputtype.contentselector {
         private draggingIndex: number;
 
         private isFlat: boolean;
+
+        private showStatus: boolean;
 
         private static contentIdBatch: ContentId[] = [];
 
@@ -36,6 +39,17 @@ module api.content.form.inputtype.contentselector {
 
         constructor(config?: api.content.form.inputtype.ContentInputTypeViewContext) {
             super('relationship', config);
+        }
+
+        protected readConfig(inputConfig: {[element: string]: {[name: string]: string}[];}): void {
+
+            const isFlatConfig = inputConfig['flat'] ? inputConfig['flat'][0] : {};
+            this.isFlat = !StringHelper.isBlank(isFlatConfig['value']) ? isFlatConfig['value'].toLowerCase() == 'true' : false;
+
+            const showStatusConfig = inputConfig['showStatus'] ? inputConfig['showStatus'][0] : {};
+            this.showStatus = !StringHelper.isBlank(showStatusConfig['value']) ? showStatusConfig['value'].toLowerCase() == 'true' : false;
+
+            super.readConfig(inputConfig);
         }
 
         public getContentComboBox(): ContentComboBox {
@@ -86,6 +100,7 @@ module api.content.form.inputtype.contentselector {
                 .setValue(comboboxValue)
                 .setRemoveMissingSelectedOptions(true)
                 .setTreegridDropdownEnabled(!this.isFlat)
+                .setShowStatus(this.showStatus)
                 .build();
 
             this.contentComboBox.getComboBox().onContentMissing((ids: string[]) => {
@@ -258,14 +273,6 @@ module api.content.form.inputtype.contentselector {
 
         protected getNumberOfValids(): number {
             return this.contentComboBox.countSelected();
-        }
-
-        protected readConfig(inputConfig: {[element: string]: {[name: string]: string}[];}): void {
-
-            const isFlatConfig = inputConfig['flat'] ? inputConfig['flat'][0] : {};
-            this.isFlat = !StringHelper.isBlank(isFlatConfig['value']) ? isFlatConfig['value'].toLowerCase() == 'true' : false;
-
-            super.readConfig(inputConfig);
         }
 
         giveFocus(): boolean {
