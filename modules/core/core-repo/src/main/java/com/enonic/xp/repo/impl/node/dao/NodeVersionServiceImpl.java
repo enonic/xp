@@ -12,6 +12,7 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
+import com.enonic.xp.blob.CachingBlobStore;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
@@ -103,6 +104,10 @@ public class NodeVersionServiceImpl
         }
         catch ( IOException e )
         {
+            if ( blobStore instanceof CachingBlobStore )
+            {
+                ( (CachingBlobStore) blobStore ).invalidate( NodeConstants.NODE_SEGMENT, blob.getKey() );
+            }
             throw new RuntimeException( "Failed to load blob with key: " + blob.getKey(), e );
         }
     }

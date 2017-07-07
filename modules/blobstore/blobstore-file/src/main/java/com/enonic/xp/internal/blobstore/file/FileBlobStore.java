@@ -71,6 +71,20 @@ public final class FileBlobStore
         }
     }
 
+    @Override
+    public void removeRecord( final Segment segment, final BlobKey key )
+        throws BlobStoreException
+    {
+        final File file = getBlobFile( segment, key );
+        if ( file.exists() )
+        {
+            if ( !file.delete() )
+            {
+                throw new BlobStoreException( "Failed to remove blob" );
+            }
+        }
+    }
+
     private BlobRecord addRecord( final Segment segment, final BlobKey key, final ByteSource in )
         throws IOException
     {

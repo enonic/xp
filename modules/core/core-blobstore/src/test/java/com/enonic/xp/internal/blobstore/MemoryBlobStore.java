@@ -53,6 +53,13 @@ public class MemoryBlobStore
         return doStoreRecord( record.getKey(), record );
     }
 
+    @Override
+    public void removeRecord( final Segment segment, final BlobKey key )
+        throws BlobStoreException
+    {
+        this.store.remove( key );
+    }
+
     public void clear()
     {
         this.store = Maps.newHashMap();

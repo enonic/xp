@@ -8,10 +8,11 @@ import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.BlobStoreException;
+import com.enonic.xp.blob.CachingBlobStore;
 import com.enonic.xp.blob.Segment;
 
 public final class CachedBlobStore
-    implements BlobStore
+    implements BlobStore, CachingBlobStore
 {
     private final BlobStore store;
 
@@ -66,6 +67,20 @@ public final class CachedBlobStore
         this.store.addRecord( segment, record );
         addToCache( record );
         return record;
+    }
+
+    @Override
+    public void removeRecord( final Segment segment, final BlobKey key )
+        throws BlobStoreException
+    {
+        this.store.removeRecord( segment, key );
+        this.cache.invalidate( key );
+    }
+
+    @Override
+    public void invalidate( final Segment segment, final BlobKey key )
+    {
+        this.cache.invalidate( key );
     }
 
     private void addToCache( final BlobRecord record )
