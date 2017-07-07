@@ -179,10 +179,10 @@ export class ContentTreeGrid
             }).done();
         });
 
-        BrowseFilterResetEvent.on((event) => {
+        BrowseFilterResetEvent.on(() => {
             this.resetFilter();
         });
-        BrowseFilterRefreshEvent.on((event) => {
+        BrowseFilterRefreshEvent.on(() => {
             this.notifyLoaded();
         });
         ContentVersionSetEvent.on((event: ContentVersionSetEvent) => {

@@ -3,10 +3,10 @@ module api.ui.selector {
     import TreeGrid = api.ui.treegrid.TreeGrid;
     import TreeGridBuilder = api.ui.treegrid.TreeGridBuilder;
     import ResponsiveItem = api.ui.responsive.ResponsiveItem;
+    import SelectionOnClickType = api.ui.treegrid.SelectionOnClickType;
 
     export class OptionsTreeGrid<OPTION_DISPLAY_VALUE> extends TreeGrid<Option<OPTION_DISPLAY_VALUE>> {
 
-        static MAX_FETCH_SIZE: number = 10;
         private loader: OptionDataLoader<OPTION_DISPLAY_VALUE>;
         private treeDataHelper: OptionDataHelper<OPTION_DISPLAY_VALUE>;
         private readonlyChecker: (optionToCheck: OPTION_DISPLAY_VALUE) => boolean;
@@ -23,7 +23,7 @@ module api.ui.selector {
                 new TreeGridBuilder<Option<OPTION_DISPLAY_VALUE>>().setColumns(columns)
                     .setOptions(gridOptions)
                     .setPartialLoadEnabled(true)
-                    .setLoadBufferSize(20)// rows count
+                    .setLoadBufferSize(20)
                     .setAutoLoad(false)
                     .prependClasses('dropdown-tree-grid')
                     .setRowHeight(45)
@@ -37,7 +37,7 @@ module api.ui.selector {
             this.loader = loader;
             this.treeDataHelper = treeDataHelper;
             this.isSelfLoading = true;
-            this.highlightingEnabled = false;
+            this.setSelectionOnClick(SelectionOnClickType.SELECT);
 
             this.initEventHandlers();
         }
