@@ -1,6 +1,5 @@
 package com.enonic.xp.impl.server.rest.model;
 
-import java.time.Duration;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -14,46 +13,45 @@ public class RepoDumpResultJson
 
     private final String repository;
 
-    private final String duration;
+    private final Long versions;
 
     private RepoDumpResultJson( final Builder builder )
     {
         this.branches = builder.branches;
         this.repository = builder.repository;
-        this.duration = builder.duration.toString();
+        this.versions = builder.versions;
     }
 
     public static RepoDumpResultJson from( final RepoDumpResult repoDumpResult )
     {
-        final Builder builder = RepoDumpResultJson.create();
+        final Builder builder = RepoDumpResultJson.create().
+            repository( repoDumpResult.getRepositoryId().toString() ).
+            versions( repoDumpResult.getVersions() );
 
         for ( final BranchDumpResult result : repoDumpResult )
         {
             builder.add( BranchDumpResultJson.from( result ) );
-            builder.addDuration( result.getDuration() );
         }
-
-        builder.repository = repoDumpResult.getRepositoryId().toString();
 
         return builder.build();
     }
 
-    @SuppressWarnings( "unused" )
+    @SuppressWarnings("unused")
     public List<BranchDumpResultJson> getBranches()
     {
         return branches;
     }
 
-    @SuppressWarnings( "unused" )
+    @SuppressWarnings("unused")
     public String getRepositoryId()
     {
         return repository;
     }
 
-    @SuppressWarnings( "unused" )
-    public String getDuration()
+    @SuppressWarnings("unused")
+    public Long getVersions()
     {
-        return duration;
+        return versions;
     }
 
     private static Builder create()
@@ -67,7 +65,7 @@ public class RepoDumpResultJson
 
         private String repository;
 
-        private Duration duration = Duration.ZERO;
+        private Long versions = 0L;
 
         private Builder()
         {
@@ -85,15 +83,15 @@ public class RepoDumpResultJson
             return this;
         }
 
+        public Builder versions( final Long versions )
+        {
+            this.versions = versions;
+            return this;
+        }
+
         public RepoDumpResultJson build()
         {
             return new RepoDumpResultJson( this );
-        }
-
-        public Builder addDuration( final Duration duration )
-        {
-            this.duration = this.duration.plus( duration );
-            return this;
         }
     }
 }

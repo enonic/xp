@@ -20,7 +20,9 @@ export class ChangeUserPasswordDialog extends api.ui.dialog.ModalDialog {
     private changePasswordButton: DialogButton;
 
     constructor() {
-        super(i18n('dialog.changePassword.title'));
+        super({
+            title: i18n('dialog.changePassword.title')
+        });
 
         this.getEl().addClass('change-password-dialog');
 

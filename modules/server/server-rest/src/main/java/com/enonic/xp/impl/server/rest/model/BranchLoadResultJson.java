@@ -9,20 +9,14 @@ public class BranchLoadResultJson
 {
     private final String branch;
 
-    private final Long numberOfNodes;
-
-    private final Long numberOfVersions;
-
-    private final String duration;
+    private final Long successful;
 
     private final List<LoadErrorJson> errors;
 
     private BranchLoadResultJson( final Builder builder )
     {
         branch = builder.branch;
-        numberOfNodes = builder.numberOfNodes;
-        numberOfVersions = builder.numberOfVersions;
-        duration = builder.duration;
+        successful = builder.successful;
         errors = builder.errorList;
     }
 
@@ -30,9 +24,7 @@ public class BranchLoadResultJson
     {
         return BranchLoadResultJson.create().
             branch( result.getBranch().toString() ).
-            duration( result.getDuration().toString() ).
-            numberOfNodes( result.getNumberOfNodes() ).
-            numberOfVersions( result.getNumberOfVersions() ).
+            successful( result.getSuccessful() ).
             errors( result.getErrors().stream().map( LoadErrorJson::from ).collect( Collectors.toList() ) ).
             build();
     }
@@ -44,21 +36,9 @@ public class BranchLoadResultJson
     }
 
     @SuppressWarnings("unused")
-    public Long getNumberOfNodes()
+    public Long getSuccessful()
     {
-        return numberOfNodes;
-    }
-
-    @SuppressWarnings("unused")
-    public Long getNumberOfVersions()
-    {
-        return numberOfVersions;
-    }
-
-    @SuppressWarnings("unused")
-    public String getDuration()
-    {
-        return duration;
+        return successful;
     }
 
     @SuppressWarnings("unused")
@@ -76,11 +56,7 @@ public class BranchLoadResultJson
     {
         private String branch;
 
-        private Long numberOfNodes;
-
-        private Long numberOfVersions;
-
-        private String duration;
+        private Long successful;
 
         private List<LoadErrorJson> errorList;
 
@@ -94,21 +70,9 @@ public class BranchLoadResultJson
             return this;
         }
 
-        public Builder numberOfNodes( final Long val )
+        public Builder successful( final Long val )
         {
-            numberOfNodes = val;
-            return this;
-        }
-
-        public Builder numberOfVersions( final Long val )
-        {
-            numberOfVersions = val;
-            return this;
-        }
-
-        public Builder duration( final String val )
-        {
-            duration = val;
+            successful = val;
             return this;
         }
 

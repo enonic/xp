@@ -44,7 +44,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
             msg.addRecipients( Message.RecipientType.TO, recipients );
             msg.addRecipients( Message.RecipientType.CC, copyRecipients );
             msg.setSubject( messageSubject );
-            msg.setContent( messageBody, "text/html" );
+            msg.setContent( messageBody, "text/html; charset=UTF-8" );
         };
     }
 

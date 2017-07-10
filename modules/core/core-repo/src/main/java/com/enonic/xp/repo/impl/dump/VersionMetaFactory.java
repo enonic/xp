@@ -2,31 +2,29 @@ package com.enonic.xp.repo.impl.dump;
 
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeState;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionMetadata;
-import com.enonic.xp.repo.impl.dump.model.Meta;
+import com.enonic.xp.repo.impl.dump.model.VersionMeta;
 
-class MetaFactory
+class VersionMetaFactory
 {
-    public static Meta create( final Node node, final boolean current )
+    public static VersionMeta create( final Node node )
     {
-        return Meta.create().
+        return VersionMeta.create().
             timestamp( node.getTimestamp() ).
             nodePath( node.path() ).
             version( node.getNodeVersionId() ).
             nodeState( node.getNodeState() ).
-            current( current ).
             build();
     }
 
-    public static Meta create( final NodeVersionMetadata metaData, final boolean current )
+    public static VersionMeta create( final NodeVersion nodeVersion, final NodeVersionMetadata metaData )
     {
-        return Meta.create().
-            timestamp( metaData.getTimestamp() ).
+        return VersionMeta.create().
+            timestamp( nodeVersion.getTimestamp() ).
             nodePath( metaData.getNodePath() ).
-            version( metaData.getNodeVersionId() ).
+            version( nodeVersion.getVersionId() ).
             nodeState( NodeState.DEFAULT ).
-            current( current ).
             build();
     }
-
 }

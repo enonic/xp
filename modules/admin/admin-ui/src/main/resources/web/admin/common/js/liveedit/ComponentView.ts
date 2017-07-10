@@ -110,6 +110,8 @@ module api.liveedit {
 
         private resetListener: (event: ComponentResetEvent) => void;
 
+        protected initOnAdd: boolean = true;
+
         public static debug: boolean = false;
 
         constructor(builder: ComponentViewBuilder<COMPONENT>) {
@@ -305,7 +307,7 @@ module api.liveedit {
             return clone;
         }
 
-        private duplicate(duplicate: COMPONENT): ComponentView<Component> {
+        protected duplicate(duplicate: COMPONENT): ComponentView<Component> {
 
             let parentView = this.getParentItemView();
             let index = parentView.getComponentViewIndex(this);
@@ -317,6 +319,7 @@ module api.liveedit {
                     setData(duplicate).
                     setPositionIndex(index + 1));
 
+            duplicateView.skipInitOnAdd();
             parentView.addComponentView(duplicateView, index + 1);
 
             return duplicateView;
@@ -440,6 +443,10 @@ module api.liveedit {
 
         isEmpty(): boolean {
             return !this.component || this.component.isEmpty();
+        }
+
+        private skipInitOnAdd(): void {
+            this.initOnAdd = false;
         }
 
         static findParentRegionViewHTMLElement(htmlElement: HTMLElement): HTMLElement {

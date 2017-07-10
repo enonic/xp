@@ -1,19 +1,22 @@
 package com.enonic.xp.impl.server.rest;
 
 import java.time.Duration;
+import java.util.stream.Collectors;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.dump.BranchLoadResult;
+import com.enonic.xp.dump.LoadError;
 import com.enonic.xp.export.NodeImportResult;
 
 class NodeImportResultTranslator
 {
-    static BranchLoadResult translate( final NodeImportResult result, final Branch branch, final Duration duration )
+    static BranchLoadResult translate( final NodeImportResult result, final Branch branch )
     {
         return BranchLoadResult.create( branch ).
-            addedNodes( (long) result.addedNodes.getSize() ).
-            addedVersions( (long) result.addedNodes.getSize() ).
-            duration( duration ).
+            successful( (long) result.addedNodes.getSize() ).
+            errors( result.getImportErrors().stream().
+                map( error -> LoadError.error( error.getMessage() ) ).
+                collect( Collectors.toList() ) ).
             build();
     }
 }

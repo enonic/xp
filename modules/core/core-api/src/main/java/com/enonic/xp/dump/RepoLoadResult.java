@@ -13,15 +13,15 @@ public class RepoLoadResult
 {
     private final List<BranchLoadResult> branchResults;
 
-    private final RepositoryId repositoryId;
+    private final VersionsLoadResult versionsLoadResult;
 
-    private final Duration duration;
+    private final RepositoryId repositoryId;
 
     private RepoLoadResult( final Builder builder )
     {
-        branchResults = builder.branchResults;
-        repositoryId = builder.repositoryId;
-        this.duration = Duration.ofMillis( builder.endTime - builder.startTime );
+        this.branchResults = builder.branchResults;
+        this.repositoryId = builder.repositoryId;
+        this.versionsLoadResult = builder.versionsLoadResult;
     }
 
     @Override
@@ -30,19 +30,21 @@ public class RepoLoadResult
         return this.branchResults.iterator();
     }
 
+    @SuppressWarnings("unused")
     public List<BranchLoadResult> getBranchResults()
     {
         return branchResults;
     }
 
+    @SuppressWarnings("unused")
     public RepositoryId getRepositoryId()
     {
         return repositoryId;
     }
 
-    public Duration getDuration()
+    public VersionsLoadResult getVersionsLoadResult()
     {
-        return duration;
+        return versionsLoadResult;
     }
 
     public static Builder create( final RepositoryId repositoryId )
@@ -56,13 +58,11 @@ public class RepoLoadResult
 
         private final RepositoryId repositoryId;
 
-        private final Long startTime;
+        private VersionsLoadResult versionsLoadResult = VersionsLoadResult.create().build();
 
-        private Long endTime;
 
         private Builder( final RepositoryId repositoryId )
         {
-            this.startTime = System.currentTimeMillis();
             this.repositoryId = repositoryId;
         }
 
@@ -72,9 +72,14 @@ public class RepoLoadResult
             return this;
         }
 
+        public Builder versions( final VersionsLoadResult val )
+        {
+            versionsLoadResult = val;
+            return this;
+        }
+
         public RepoLoadResult build()
         {
-            endTime = System.currentTimeMillis();
             return new RepoLoadResult( this );
         }
     }

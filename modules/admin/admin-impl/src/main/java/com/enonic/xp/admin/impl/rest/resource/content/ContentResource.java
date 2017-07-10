@@ -765,10 +765,13 @@ public final class ContentResource
             target( ContentConstants.BRANCH_MASTER ).
             build() );
 
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+
         //check if user has access to publish every content
-        final Boolean isAllPublishable = fullPublishList.stream().allMatch(
-            id -> this.contentService.getPermissionsById( id ).isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(),
-                                                                             Permission.PUBLISH ) );
+        final Boolean isAllPublishable = authInfo.hasRole( RoleKeys.ADMIN )
+            ? true
+            : fullPublishList.stream().allMatch( id -> this.contentService.getPermissionsById( id ).
+                isAllowedFor( authInfo.getPrincipals(), Permission.PUBLISH ) );
 
         //filter required dependant ids
         final ContentIds requiredDependantIds = ContentIds.from( requiredIds.stream().

@@ -2,6 +2,7 @@ package com.enonic.xp.node;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
@@ -25,6 +26,12 @@ public class NodeVersionsMetadata
     {
         this.nodeId = nodeId;
         this.nodeVersionMetadatas = nodeVersionMetadatas;
+    }
+
+    public NodeVersionIds getAllVersionIds()
+    {
+        return NodeVersionIds.from(
+            nodeVersionMetadatas.stream().map( NodeVersionMetadata::getNodeVersionId ).collect( Collectors.toList() ) );
     }
 
     public NodeId getNodeId()

@@ -104,7 +104,7 @@ export class DependenciesWidgetItemView extends WidgetItemView {
         if (dependencies.length === 0) {
             this.addClass('no-'  + typeAsString);
             div.addClass('no-dependencies');
-            div.setHtml(i18n('field.widget.noDependencies', typeAsString));
+            div.setHtml(i18n('field.widget.noDependencies.' + typeAsString));
         } else {
             this.appendDependencies(div, dependencies);
         }

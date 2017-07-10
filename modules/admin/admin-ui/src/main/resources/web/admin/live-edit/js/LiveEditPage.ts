@@ -35,6 +35,7 @@ module LiveEdit {
     import InitializeLiveEditEvent = api.liveedit.InitializeLiveEditEvent;
     import LiveEditPageInitializationErrorEvent = api.liveedit.LiveEditPageInitializationErrorEvent;
     import LiveEditPageViewReadyEvent = api.liveedit.LiveEditPageViewReadyEvent;
+    import i18n = api.util.i18n;
 
     export class LiveEditPage {
 
@@ -77,6 +78,8 @@ module LiveEdit {
             if (LiveEditPage.debug) {
                 console.debug('LiveEditPage: starting live edit initialization');
             }
+
+            api.util.i18nInit(CONFIG.messages);
 
             let liveEditModel = event.getLiveEditModel();
 

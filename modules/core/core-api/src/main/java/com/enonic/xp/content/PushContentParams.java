@@ -19,6 +19,8 @@ public class PushContentParams
 
     private final ContentPublishInfo contentPublishInfo;
 
+    private final boolean includeChildren;
+
     private final boolean includeDependencies;
 
     private final PushContentListener pushContentListener;
@@ -31,6 +33,7 @@ public class PushContentParams
         contentPublishInfo = builder.contentPublishInfo;
         includeDependencies = builder.includeDependencies;
         excludeChildrenIds = builder.excludeChildrenIds;
+        includeChildren = builder.includeChildren;
         pushContentListener = builder.pushContentListener;
     }
 
@@ -57,6 +60,12 @@ public class PushContentParams
     public ContentPublishInfo getContentPublishInfo()
     {
         return contentPublishInfo;
+    }
+
+    @Deprecated
+    public boolean isIncludeChildren()
+    {
+        return includeChildren;
     }
 
     public ContentIds getExcludeChildrenIds()
@@ -86,15 +95,17 @@ public class PushContentParams
             return false;
         }
         final PushContentParams that = (PushContentParams) o;
-        return includeDependencies == that.includeDependencies && Objects.equals( excludeChildrenIds, that.excludeChildrenIds ) &&
-            Objects.equals( contentIds, that.contentIds ) && Objects.equals( excludedContentIds, that.excludedContentIds ) &&
-            Objects.equals( target, that.target ) && Objects.equals( pushContentListener, that.pushContentListener );
+        return includeChildren == that.includeChildren && includeDependencies == that.includeDependencies &&
+            Objects.equals( excludeChildrenIds, that.excludeChildrenIds ) && Objects.equals( contentIds, that.contentIds ) &&
+            Objects.equals( excludedContentIds, that.excludedContentIds ) && Objects.equals( target, that.target ) &&
+            Objects.equals( pushContentListener, that.pushContentListener );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( contentIds, excludedContentIds, excludeChildrenIds, target, includeDependencies, pushContentListener );
+        return Objects.hash( contentIds, excludedContentIds, includeChildren, excludeChildrenIds, target, includeDependencies,
+                             pushContentListener );
     }
 
     public static final class Builder
@@ -104,11 +115,12 @@ public class PushContentParams
         private ContentIds excludedContentIds;
 
         private ContentIds excludeChildrenIds = ContentIds.empty();
-//        private boolean excludeChildrenIds = true;
 
         private Branch target;
 
         private ContentPublishInfo contentPublishInfo;
+
+        private boolean includeChildren = true;
 
         private boolean includeDependencies = true;
 
@@ -146,6 +158,13 @@ public class PushContentParams
         public Builder contentPublishInfo( ContentPublishInfo contentPublishInfo )
         {
             this.contentPublishInfo = contentPublishInfo;
+            return this;
+        }
+
+        @Deprecated
+        public Builder includeChildren( boolean includeChildren )
+        {
+            this.includeChildren = includeChildren;
             return this;
         }
 

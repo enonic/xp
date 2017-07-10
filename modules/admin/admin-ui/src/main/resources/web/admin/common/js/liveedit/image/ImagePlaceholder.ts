@@ -4,6 +4,7 @@ module api.liveedit.image {
     import ContentTypeName = api.schema.content.ContentTypeName;
     import ImageComponent = api.content.page.region.ImageComponent;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
+    import i18n = api.util.i18n;
 
     export class ImagePlaceholder extends api.liveedit.ItemViewPlaceholder {
 
@@ -36,7 +37,7 @@ module api.liveedit.image {
                 setMinWidth(270).
                 build();
 
-            this.comboBox.getComboBox().getInput().setPlaceholder('Type to search or drop image here...');
+            this.comboBox.getComboBox().getInput().setPlaceholder(i18n('field.image.placeholder'));
             this.comboBox.onOptionSelected((event: SelectedOptionEvent<api.content.ContentSummary>) => {
 
                 let component: ImageComponent = this.imageComponentView.getComponent();

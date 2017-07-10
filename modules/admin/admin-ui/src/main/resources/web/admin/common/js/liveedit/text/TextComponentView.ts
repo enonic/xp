@@ -76,17 +76,11 @@ module api.liveedit.text {
                 });
 
             this.onAdded(() => { // is triggered on item insert or move
-                if (api.BrowserHelper.isFirefox() && !!tinymce.activeEditor) {
-                    tinymce.activeEditor.fire('blur');
+                if (!this.initOnAdd) {
+                    return;
                 }
-                this.focusOnInit = true;
-                this.addClass(TextComponentView.EDITOR_FOCUSED_CLASS);
-                if (!this.isEditorReady()) {
-                    this.initEditor();
-                } else if (this.htmlAreaEditor) {
-                    this.reInitEditor(); // on added, inline editor losses its root element of the editable area
-                }
-                this.unhighlight();
+
+                this.initialize();
             });
 
             this.getPageView().appendContainerForTextToolbar();
@@ -108,6 +102,20 @@ module api.liveedit.text {
             });
 
             api.liveedit.LiveEditPageDialogCreatedEvent.on(handleDialogCreated.bind(this));
+        }
+
+        private initialize() {
+            if (api.BrowserHelper.isFirefox() && !!tinymce.activeEditor) {
+                tinymce.activeEditor.fire('blur');
+            }
+            this.focusOnInit = true;
+            this.addClass(TextComponentView.EDITOR_FOCUSED_CLASS);
+            if (!this.isEditorReady()) {
+                this.initEditor();
+            } else if (this.htmlAreaEditor) {
+                this.reInitEditor(); // on added, inline editor losses its root element of the editable area
+            }
+            this.unhighlight();
         }
 
         private reInitEditor() {
@@ -250,6 +258,10 @@ module api.liveedit.text {
         }
 
         setEditMode(flag: boolean) {
+            if (!this.initOnAdd) {
+                return;
+            }
+
             if (!flag) {
                 if (this.htmlAreaEditor) {
                     this.processEditorValue();
@@ -376,7 +388,7 @@ module api.liveedit.text {
                 this.htmlAreaEditor.setContent(TextComponentView.DEFAULT_TEXT);
                 this.htmlAreaEditor.selection.select(this.htmlAreaEditor.getBody(), true);
             }
-            if (this.focusOnInit) {
+            if (this.focusOnInit && this.isAdded()) {
                 if (api.BrowserHelper.isFirefox()) {
                     setTimeout(() => {
                         this.forceEditorFocus();

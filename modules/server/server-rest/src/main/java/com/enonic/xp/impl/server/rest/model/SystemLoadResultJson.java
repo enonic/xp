@@ -12,12 +12,9 @@ public class SystemLoadResultJson
 {
     private final List<RepoLoadResultJson> repositories;
 
-    private final String duration;
-
     private SystemLoadResultJson( final Builder builder )
     {
         repositories = builder.repositories;
-        duration = builder.duration.toString();
     }
 
     public static SystemLoadResultJson from( final SystemLoadResult results )
@@ -27,7 +24,6 @@ public class SystemLoadResultJson
         for ( final RepoLoadResult repoLoadResult : results )
         {
             builder.add( RepoLoadResultJson.from( repoLoadResult ) );
-            builder.addDuration( repoLoadResult.getDuration() );
         }
 
         return builder.build();
@@ -39,12 +35,6 @@ public class SystemLoadResultJson
         return repositories;
     }
 
-    @SuppressWarnings( "unused" )
-    public String getDuration()
-    {
-        return duration;
-    }
-
     private static Builder create()
     {
         return new Builder();
@@ -54,8 +44,6 @@ public class SystemLoadResultJson
     {
         private final List<RepoLoadResultJson> repositories = Lists.newArrayList();
 
-        private Duration duration = Duration.ZERO;
-
         private Builder()
         {
         }
@@ -63,12 +51,6 @@ public class SystemLoadResultJson
         public Builder add( final RepoLoadResultJson val )
         {
             repositories.add( val );
-            return this;
-        }
-
-        public Builder addDuration( final Duration val )
-        {
-            this.duration = duration.plus( val );
             return this;
         }
 

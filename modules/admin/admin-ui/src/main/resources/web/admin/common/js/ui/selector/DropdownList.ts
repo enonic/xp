@@ -1,5 +1,7 @@
 module api.ui.selector {
 
+    import i18n = api.util.i18n;
+
     export class DropdownList<OPTION_DISPLAY_VALUE> {
 
         private emptyDropdown: api.dom.DivEl;
@@ -9,7 +11,7 @@ module api.ui.selector {
         constructor(config: DropdownGridConfig<OPTION_DISPLAY_VALUE>) {
 
             this.emptyDropdown = new api.dom.DivEl('empty-options');
-            this.emptyDropdown.getEl().setInnerHtml('No matching items');
+            this.emptyDropdown.getEl().setInnerHtml(i18n('field.selector.noMatch'));
             this.emptyDropdown.hide();
 
             this.initDropdownGrid(config);
@@ -112,7 +114,7 @@ module api.ui.selector {
                 }
             } else {
                 this.dropdownGrid.hide();
-                this.emptyDropdown.getEl().setInnerHtml(!!noOptionsText ? noOptionsText : 'No matching items');
+                this.emptyDropdown.getEl().setInnerHtml(!!noOptionsText ? noOptionsText : i18n('field.selector.noMatch'));
                 this.emptyDropdown.show();
             }
         }
