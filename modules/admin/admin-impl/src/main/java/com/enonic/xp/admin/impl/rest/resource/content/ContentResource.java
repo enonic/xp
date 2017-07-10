@@ -12,6 +12,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -765,10 +766,14 @@ public final class ContentResource
             target( ContentConstants.BRANCH_MASTER ).
             build() );
 
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+
+        final Predicate<ContentId> publishAllowedCondition = id -> this.contentService.getPermissionsById( id ).isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(),
+                                                                                                                        Permission.PUBLISH );
         //check if user has access to publish every content
-        final Boolean isAllPublishable = fullPublishList.stream().allMatch(
-            id -> this.contentService.getPermissionsById( id ).isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(),
-                                                                             Permission.PUBLISH ) );
+        final Boolean isAllPublishable = authInfo.hasRole( RoleKeys.ADMIN ) ? true : fullPublishList.stream().allMatch(publishAllowedCondition);
+        //check if user has access to publish any content
+        final Boolean isAnyPublishable = authInfo.hasRole( RoleKeys.ADMIN ) ? true :fullPublishList.stream().anyMatch(publishAllowedCondition);
 
         //filter required dependant ids
         final ContentIds requiredDependantIds = ContentIds.from( requiredIds.stream().
@@ -790,6 +795,7 @@ public final class ContentResource
             setDependentContents( this.invalidDependantsOnTop( sortedDependentContentIds, requestedContentIds, sortedInvalidContentIds ) ).
             setRequiredContents( requiredDependantIds ).
             setAllPublishable( isAllPublishable ).
+            setAnyPublishable( isAnyPublishable ).
             setContainsInvalid( !invalidContentIds.isEmpty() ).
             build();
     }

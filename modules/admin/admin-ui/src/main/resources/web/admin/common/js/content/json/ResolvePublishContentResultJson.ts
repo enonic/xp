@@ -7,5 +7,6 @@ module api.content.json {
         requiredContents: ContentIdBaseItemJson[];
         containsInvalid: boolean;
         allPublishable: boolean;
+        anyPublishable: boolean;
     }
 }

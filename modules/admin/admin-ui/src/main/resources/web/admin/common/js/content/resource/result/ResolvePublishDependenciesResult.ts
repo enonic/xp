@@ -10,6 +10,7 @@ module api.content.resource.result {
         requiredContents: ContentId[];
         containsInvalid: boolean;
         allPublishable: boolean;
+        anyPublishable: boolean;
 
         constructor(builder: Builder) {
             this.dependentContents = builder.dependentContents;
@@ -17,6 +18,7 @@ module api.content.resource.result {
             this.requiredContents = builder.requiredContents;
             this.containsInvalid = builder.containsInvalid;
             this.allPublishable = builder.allPublishable;
+            this.anyPublishable = builder.anyPublishable;
         }
 
         getDependants(): ContentId[] {
@@ -39,6 +41,10 @@ module api.content.resource.result {
             return this.allPublishable;
         }
 
+        isAnyPublishable(): boolean {
+            return this.anyPublishable;
+        }
+
         static fromJson(json: ResolvePublishContentResultJson): ResolvePublishDependenciesResult {
 
             let dependants: ContentId[] = json.dependentContents
@@ -48,12 +54,14 @@ module api.content.resource.result {
             let required: ContentId[] = json.requiredContents ? json.requiredContents.map(dependant => new ContentId(dependant.id)) : [];
             let containsInvalid: boolean = json.containsInvalid;
             let allPublishable: boolean = json.allPublishable;
+            let anyPublishable: boolean = json.anyPublishable;
 
             return ResolvePublishDependenciesResult.create().setDependentContents(dependants).setRequestedContents(
                 requested)
                 .setRequiredContents(required)
                 .setContainsInvalid(containsInvalid)
                 .setAllPublishable(allPublishable)
+                .setAnyPublishable(anyPublishable)
                 .build();
         }
 
@@ -67,6 +75,7 @@ module api.content.resource.result {
         requiredContents: ContentId[];
         containsInvalid: boolean;
         allPublishable: boolean;
+        anyPublishable: boolean;
 
         setDependentContents(value: ContentId[]): Builder {
             this.dependentContents = value;
@@ -90,6 +99,11 @@ module api.content.resource.result {
 
         setAllPublishable(value: boolean): Builder {
             this.allPublishable = value;
+            return this;
+        }
+
+        setAnyPublishable(value: boolean): Builder {
+            this.anyPublishable = value;
             return this;
         }
 

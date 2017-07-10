@@ -1,5 +1,6 @@
 {
   "allPublishable" : false,
+  "anyPublishable" : false,
   "containsInvalid": true,
   "dependentContents": [
     {
