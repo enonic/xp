@@ -71,7 +71,9 @@ export class DeletePrincipalAction extends Action {
             });
 
         this.onExecuted(() => {
-            confirmation.open();
+            const multiple = grid.getSelectedDataList().length > 1;
+            const question = multiple ? i18n('dialog.delete.multiple.question') : i18n('dialog.delete.question');
+            confirmation.setQuestion(question).open();
         });
     }
 }
