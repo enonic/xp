@@ -56,8 +56,8 @@ export class IssueDetailsDialog extends SchedulableDialog {
 
     private constructor() {
         super(<ProgressBarConfig> {
-            dialogName: i18n('dialog.issue'),
-            dialogSubName: i18n('dialog.issue.resolving'),
+                dialogName: i18n('dialog.issue'),
+                dialogSubName: i18n('dialog.issue.resolving'),
                 dependantsName: '',
                 isProcessingClass: 'is-publishing',
                 processingLabel: `${i18n('field.progress.publishing')}...`,
@@ -396,7 +396,8 @@ export class IssueDetailsDialog extends SchedulableDialog {
                 const countToPublish = this.countTotal();
                 this.updateButtonCount(i18n('action.publish'), countToPublish);
 
-                this.toggleAction(countToPublish > 0 && !depResult.isContainsInvalid());
+                this.toggleAction(countToPublish > 0);
+                this.getButtonRow().getActionMenu().setEnabled(!depResult.isContainsInvalid());
 
                 this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
                     this.setDependantItems(dependants);
