@@ -84,7 +84,7 @@ module api.ui.dialog {
 
         private initConfirmationDialog(confirmation: ConfirmationConfig) {
             if (confirmation) {
-                const {yesCallback, noCallback, question = 'You have made changes to the form, do you want to apply them?'} = confirmation;
+                const {yesCallback, noCallback, question = i18n('dialog.confirm.applyChanges')} = confirmation;
 
                 this.confirmationDialog = new ConfirmationDialog()
                     .setQuestion(question)
@@ -100,11 +100,7 @@ module api.ui.dialog {
         }
 
         private initListeners() {
-            ResponsiveManager.onAvailableSizeChanged(this, () => {
-                if (this.isVisible()) {
-                    this.centerMyself();
-                }
-            });
+            ResponsiveManager.onAvailableSizeChanged(this, () => this.centerMyself());
 
             // Set the ResponsiveRanges on first show() call
             const firstTimeResize = () => {
@@ -196,7 +192,7 @@ module api.ui.dialog {
         }
 
         private createDefaultCancelAction() {
-            let cancelAction = new Action('Cancel', 'esc', true);
+            let cancelAction = new Action(i18n('action.cancel'), 'esc', true);
             cancelAction.setIconClass('cancel-button-top');
             cancelAction.setLabel('');
             cancelAction.onExecuted(() => {
@@ -210,7 +206,7 @@ module api.ui.dialog {
             return this.cancelAction;
         }
 
-        addCancelButtonToBottom(buttonLabel: string = 'Cancel'): DialogButton {
+        addCancelButtonToBottom(buttonLabel: string = i18n('action.cancel')): DialogButton {
             let cancelAction = new Action(buttonLabel);
             cancelAction.setIconClass('cancel-button-bottom force-enabled');
             cancelAction.onExecuted(() => this.cancelAction.execute());

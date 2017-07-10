@@ -8,9 +8,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.repo.impl.dump.model.Meta;
+import com.enonic.xp.repo.impl.dump.model.VersionMeta;
 
-public class MetaJson
+public class VersionDumpEntryJson
 {
     @JsonProperty("nodePath")
     private String nodePath;
@@ -24,40 +24,34 @@ public class MetaJson
     @JsonProperty("nodeState")
     private String nodeState;
 
-    @JsonProperty("current")
-    private boolean current;
-
-    public MetaJson()
+    public VersionDumpEntryJson()
     {
     }
 
-    private MetaJson( final Builder builder )
+    private VersionDumpEntryJson( final Builder builder )
     {
         nodePath = builder.nodePath;
         timestamp = builder.timestamp;
         version = builder.version;
         nodeState = builder.nodeState;
-        current = builder.current;
     }
 
-    public static Meta fromJson( final MetaJson json )
+    public static VersionMeta fromJson( final VersionDumpEntryJson json )
     {
-        return Meta.create().
+        return VersionMeta.create().
             nodePath( NodePath.create( json.nodePath ).build() ).
             timestamp( json.getTimestamp() != null ? Instant.parse( json.getTimestamp() ) : null ).
             version( json.getVersion() != null ? NodeVersionId.from( json.getVersion() ) : null ).
             nodeState( NodeState.from( json.getNodeState() ) ).
-            current( json.isCurrent() ).
             build();
     }
 
-    public static MetaJson from( final Meta meta )
+    public static VersionDumpEntryJson from( final VersionMeta meta )
     {
-        return MetaJson.create().
+        return VersionDumpEntryJson.create().
             nodePath( meta.getNodePath().toString() ).
             timestamp( meta.getTimestamp() != null ? meta.getTimestamp().toString() : null ).
             version( meta.getVersion() != null ? meta.getVersion().toString() : null ).
-            current( meta.isCurrent() ).
             build();
     }
 
@@ -86,11 +80,6 @@ public class MetaJson
         return nodeState;
     }
 
-    private boolean isCurrent()
-    {
-        return current;
-    }
-
     public static final class Builder
     {
         private String nodePath;
@@ -100,8 +89,6 @@ public class MetaJson
         private String version;
 
         private String nodeState;
-
-        private boolean current;
 
         private Builder()
         {
@@ -131,15 +118,9 @@ public class MetaJson
             return this;
         }
 
-        public Builder current( final boolean val )
+        public VersionDumpEntryJson build()
         {
-            current = val;
-            return this;
-        }
-
-        public MetaJson build()
-        {
-            return new MetaJson( this );
+            return new VersionDumpEntryJson( this );
         }
     }
 }

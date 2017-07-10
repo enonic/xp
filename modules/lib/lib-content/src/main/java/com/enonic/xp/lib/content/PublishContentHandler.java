@@ -36,6 +36,8 @@ public final class PublishContentHandler
 
     private String[] excludeChildrenIds;
 
+    private Boolean includeChildren;
+
     private Boolean includeDependencies;
 
     private ContentService contentService;
@@ -93,6 +95,10 @@ public final class PublishContentHandler
         {
             builder.excludeChildrenIds( ContentIds.from( this.excludeChildrenIds ) );
         }
+        if ( this.includeChildren != null )
+        {
+            builder.includeChildren( this.includeChildren );
+        }
         if ( this.includeDependencies != null )
         {
             builder.includeDependencies( includeDependencies );
@@ -131,6 +137,11 @@ public final class PublishContentHandler
     public void setExcludeChildrenIds( final String[] excludeChildrenIds )
     {
         this.excludeChildrenIds = excludeChildrenIds;
+    }
+
+    public void setIncludeChildren( final Boolean includeChildren )
+    {
+        this.includeChildren = includeChildren;
     }
 
     public void setIncludeDependencies( final Boolean includeDependencies )

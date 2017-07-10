@@ -29,6 +29,11 @@ public class NodeVersionIds
     }
 
 
+    public static NodeVersionIds from( final Collection<NodeVersionId> nodeVersionIds )
+    {
+        return new NodeVersionIds( ImmutableSet.copyOf( nodeVersionIds ) );
+    }
+
     public static Builder create()
     {
         return new Builder();

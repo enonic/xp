@@ -294,6 +294,10 @@ exports.publish = function (params) {
     if (params.excludeChildrenIds) {
         bean.excludeChildrenIds = params.excludeChildrenIds;
     }
+    if (!nullOrValue(params.includeChildren)) {
+        // keep for backwards compatibility
+        bean.includeChildren = params.includeChildren;
+    }
     if (!nullOrValue(params.includeDependencies)) {
         bean.includeDependencies = params.includeDependencies;
     }

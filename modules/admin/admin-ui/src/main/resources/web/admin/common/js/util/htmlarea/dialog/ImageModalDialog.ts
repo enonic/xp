@@ -14,6 +14,7 @@ module api.util.htmlarea.dialog {
     import ContentSummary = api.content.ContentSummary;
     import Content = api.content.Content;
     import Option = api.ui.selector.Option;
+    import i18n = api.util.i18n;
 
     export class ImageModalDialog extends ModalDialog {
 

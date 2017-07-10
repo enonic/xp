@@ -160,14 +160,11 @@ module api.content.image {
                 this.notifyEditModeChanged(edit, position, zoom, focus);
                 this.togglePlaceholder(edit);
 
-                let index = -1;
-
                 if (edit) {
-                    index = imageEditor.getSiblingIndex();
                     api.dom.Body.get().appendChild(imageEditor.addClass(ImageUploaderEl.STANDOUT_CLASS));
                     this.positionImageEditor(imageEditor);
                 } else {
-                    this.getResultContainer().insertChild(imageEditor.removeClass(ImageUploaderEl.STANDOUT_CLASS), index);
+                    this.getResultContainer().insertChild(imageEditor.removeClass(ImageUploaderEl.STANDOUT_CLASS), -1);
                 }
             };
             let uploadButtonClickedHandler = () => {

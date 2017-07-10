@@ -12,8 +12,8 @@ export class MarketAppPanel extends api.ui.panel.Panel {
 
     private isGridLoadingData: boolean = false;
 
-    constructor(applicationInput: ApplicationInput, className?: string) {
-        super(className);
+    constructor(applicationInput: ApplicationInput) {
+        super('market-app-panel');
         this.marketAppsTreeGrid = new MarketAppsTreeGrid(applicationInput);
     }
 
