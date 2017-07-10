@@ -41,7 +41,11 @@ module api.content {
                 .setMinWidth(builder.minWidth);
 
             if(builder.showStatus && treeGridDropdownEnabled) {
-                this.initNewColumns(richComboBoxBuilder);
+                const columns = [new api.ui.grid.GridColumnBuilder().setId('status').setName('Status').setField(
+                    'displayValue').setFormatter(
+                    ContentRowFormatter.statusSelectorFormatter).setCssClass('status').setBoundaryWidth(75, 75).build()];
+
+                richComboBoxBuilder.setCreateColumns(columns);
             }
             super(richComboBoxBuilder);
 
@@ -75,14 +79,6 @@ module api.content {
                 this.selectOption(optionToSelect);
 
             }
-        }
-
-        private initNewColumns(richComboBoxBuilder: RichComboBoxBuilder<ContentSummary>) {
-           const columns = [new api.ui.grid.GridColumnBuilder().setId('status').setName('Status').setField(
-                'displayValue').setFormatter(
-                ContentRowFormatter.statusSelectorFormatter).setCssClass('status').setBoundaryWidth(75, 75).build()];
-
-            richComboBoxBuilder.setCreateColumns(columns);
         }
 
         public static create(): ContentComboBoxBuilder {
