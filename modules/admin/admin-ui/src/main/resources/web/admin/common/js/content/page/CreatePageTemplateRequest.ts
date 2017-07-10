@@ -2,6 +2,7 @@ module api.content.page {
 
     import Content = api.content.Content;
     import ContentJson = api.content.json.ContentJson;
+    import ContentTypeName = api.schema.content.ContentTypeName;
 
     export class CreatePageTemplateRequest
         extends PageTemplateResourceRequest<ContentJson, Content>

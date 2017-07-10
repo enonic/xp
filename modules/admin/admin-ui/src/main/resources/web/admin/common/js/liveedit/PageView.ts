@@ -14,6 +14,10 @@ module api.liveedit {
     import FragmentComponentView = api.liveedit.fragment.FragmentComponentView;
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
     import SetController = api.content.page.SetController;
+    import i18n = api.util.i18n;
+    import CreatePageTemplateRequest = api.content.page.CreatePageTemplateRequest;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+    import EditContentEvent = api.content.event.EditContentEvent;
 
     export class PageViewBuilder {
 
@@ -43,7 +47,8 @@ module api.liveedit {
         }
     }
 
-    export class PageView extends ItemView {
+    export class PageView
+        extends ItemView {
 
         private pageModel: PageModel;
 
@@ -51,15 +56,15 @@ module api.liveedit {
 
         private fragmentView: ComponentView<Component>;
 
-        private viewsById: {[s: number]: ItemView;};
+        private viewsById: { [s: number]: ItemView; };
 
         private ignorePropertyChanges: boolean;
 
-        private itemViewAddedListeners: {(event: ItemViewAddedEvent): void}[];
+        private itemViewAddedListeners: { (event: ItemViewAddedEvent): void }[];
 
-        private itemViewRemovedListeners: {(event: ItemViewRemovedEvent): void}[];
+        private itemViewRemovedListeners: { (event: ItemViewRemovedEvent): void }[];
 
-        private pageLockedListeners: {(locked: boolean): void}[];
+        private pageLockedListeners: { (locked: boolean): void }[];
 
         private resetAction: api.ui.Action;
 
@@ -88,6 +93,8 @@ module api.liveedit {
         private highlightingAllowed: boolean;
 
         private nextClickDisabled: boolean;
+
+        private saveAsTemplateAction: api.ui.Action;
 
         constructor(builder: PageViewBuilder) {
 
@@ -183,8 +190,7 @@ module api.liveedit {
                 new PageInspectedEvent().fire();
             });
 
-            this.resetAction = new api.ui.Action('Reset');
-            this.resetAction.onExecuted(() => {
+            this.resetAction = new api.ui.Action('Reset').onExecuted(() => {
                 if (PageView.debug) {
                     console.log('PageView.reset');
                 }
@@ -197,7 +203,23 @@ module api.liveedit {
                 this.resetAction.setEnabled(false);
             }
 
-            this.addContextMenuActions([inspectAction, this.resetAction]);
+            this.saveAsTemplateAction = new api.ui.Action('Save as Template').onExecuted(action => {
+                let content = this.liveEditModel.getContent();
+                new CreatePageTemplateRequest()
+                    .setController(this.pageModel.getController().getKey())
+                    .setRegions(this.pageModel.getRegions())
+                    .setConfig(this.pageModel.getConfig())
+                    .setDisplayName(content.getDisplayName())
+                    .setSite(content.getPath())
+                    .setSupports(content.getType())
+                    .setName(content.getName())
+                    .sendAndParse().then(createdTemplate => {
+
+                    new EditContentEvent([ContentSummaryAndCompareStatus.fromContentSummary(createdTemplate)]).fire();
+                });
+            });
+
+            this.addContextMenuActions([inspectAction, this.resetAction, this.saveAsTemplateAction]);
         }
 
         private initListeners() {
@@ -540,7 +562,7 @@ module api.liveedit {
             let toolbarHeight;
             let attempts = 0;
 
-            intervalId = setInterval(()=> {
+            intervalId = setInterval(() => {
                 attempts++;
                 toolbarHeight = this.getEditorToolbarWidth();
                 if (!!toolbarHeight) {
@@ -654,6 +676,10 @@ module api.liveedit {
 
         getRegions(): RegionView[] {
             return this.regionViews;
+        }
+
+        getModel(): PageModel {
+            return this.pageModel;
         }
 
         getFragmentView(): ComponentView<Component> {
@@ -812,7 +838,7 @@ module api.liveedit {
             }
 
             // unregister existing regions
-            this.regionViews.forEach((regionView: RegionView)=> {
+            this.regionViews.forEach((regionView: RegionView) => {
                 this.unregisterRegionView(regionView);
             });
 
