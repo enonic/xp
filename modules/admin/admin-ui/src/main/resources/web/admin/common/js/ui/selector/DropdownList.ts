@@ -11,7 +11,7 @@ module api.ui.selector {
         constructor(config: DropdownGridConfig<OPTION_DISPLAY_VALUE>) {
 
             this.emptyDropdown = new api.dom.DivEl('empty-options');
-            this.emptyDropdown.getEl().setInnerHtml(i18n('field.selector.noMatch'));
+            this.emptyDropdown.getEl().setInnerHtml(i18n('field.option.noitems'));
             this.emptyDropdown.hide();
 
             this.initDropdownGrid(config);
