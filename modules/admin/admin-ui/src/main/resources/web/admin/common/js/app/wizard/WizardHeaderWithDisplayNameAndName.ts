@@ -1,5 +1,7 @@
 module api.app.wizard {
 
+    import i18n = api.util.i18n;
+
     export class WizardHeaderWithDisplayNameAndNameBuilder {
 
         displayNameGenerator: DisplayNameGenerator;
@@ -44,7 +46,7 @@ module api.app.wizard {
             this.displayNameProgrammaticallySet = this.displayNameGenerator != null;
 
             this.displayNameEl = api.ui.text.AutosizeTextInput.large();
-            this.displayNameEl.setPlaceholder('<Display Name>').setName(api.query.QueryField.DISPLAY_NAME);
+            this.displayNameEl.setPlaceholder('<' + i18n('field.item.displayName') + '>').setName(api.query.QueryField.DISPLAY_NAME);
             this.displayNameEl.onValueChanged((event: api.ValueChangedEvent) => {
                 this.notifyPropertyChanged(api.query.QueryField.DISPLAY_NAME, event.getOldValue(), event.getNewValue());
             });
@@ -57,7 +59,7 @@ module api.app.wizard {
             this.nameEl = api.ui.text.AutosizeTextInput.middle().setForbiddenCharsRe(this.forbiddenChars);
             this.nameEl.setPlaceholder('<name>').setName('name');
             this.nameEl.onValueChanged((event: api.ValueChangedEvent) => {
-                this.notifyPropertyChanged('name', event.getOldValue(), event.getNewValue());
+                this.notifyPropertyChanged('<' + i18n('field.item.name') + '>', event.getOldValue(), event.getNewValue());
             });
             this.appendChild(this.nameEl);
 
