@@ -37,7 +37,7 @@ module api.liveedit.image {
                 setMinWidth(270).
                 build();
 
-            this.comboBox.getComboBox().getInput().setPlaceholder(i18n('field.image.placeholder'));
+            this.comboBox.getComboBox().getInput().setPlaceholder(i18n('field.image.option.placeholder'));
             this.comboBox.onOptionSelected((event: SelectedOptionEvent<api.content.ContentSummary>) => {
 
                 let component: ImageComponent = this.imageComponentView.getComponent();

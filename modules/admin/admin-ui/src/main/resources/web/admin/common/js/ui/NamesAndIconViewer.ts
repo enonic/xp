@@ -1,11 +1,13 @@
 module api.ui {
 
+    import i18n = api.util.i18n;
+
     /**
      * A parent class capable of viewing a given object with names and icon.
      */
     export class NamesAndIconViewer<OBJECT> extends api.ui.Viewer<OBJECT> {
 
-        static EMPTY_DISPLAY_NAME: string = '<Display Name>';
+        static EMPTY_DISPLAY_NAME: string = '<' + i18n('field.item.displayName') + '>';
 
         private namesAndIconView: api.app.NamesAndIconView;
 

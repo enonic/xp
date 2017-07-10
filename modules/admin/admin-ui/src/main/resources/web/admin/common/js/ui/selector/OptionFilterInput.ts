@@ -8,7 +8,7 @@ module api.ui.selector {
 
         constructor(placeholderText?: string) {
             super('option-filter-input');
-            this.placeholderText = placeholderText ? placeholderText : i18n('field.selector.placeholder');
+            this.placeholderText = placeholderText ? placeholderText : i18n('field.option.placeholder');
 
             this.setPlaceholder(this.placeholderText);
         }

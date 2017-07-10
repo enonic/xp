@@ -119,7 +119,7 @@ module api.util.htmlarea.dialog {
             let formItem = this.createFormItem(formItemBuilder);
             let imageSelectorComboBox = imageSelector.getComboBox();
 
-            imageSelector.getComboBox().getInput().setPlaceholder(i18n('field.image.placeholder'));
+            imageSelector.getComboBox().getInput().setPlaceholder(i18n('field.image.option.placeholder'));
 
             this.imageSelector = imageSelector;
 
