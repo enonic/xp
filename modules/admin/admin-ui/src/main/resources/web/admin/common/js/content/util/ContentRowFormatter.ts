@@ -64,7 +64,6 @@ module api.content.util {
             return ContentRowFormatter.doStatusFormat(data, value.getCompareStatus());
         }
 
-
         private static doStatusFormat(data: ContentSummaryAndCompareStatus, value: any) {
 
             if (data && data.getContentSummary()) {

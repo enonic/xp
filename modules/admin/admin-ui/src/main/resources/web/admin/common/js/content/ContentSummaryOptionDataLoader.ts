@@ -68,7 +68,7 @@ module api.content {
 
                                 return new ContentAndStatusTreeSelectorItem(
                                     ContentSummaryAndCompareStatus.fromContentAndCompareAndPublishStatus(content,
-                                        compareResult.getCompareStatus(), compareResult.getPublishStatus()), false)
+                                        compareResult.getCompareStatus(), compareResult.getPublishStatus()), false);
                             });
                     });
             }
@@ -109,7 +109,6 @@ module api.content {
                 });
             }
         }
-
 
         checkReadonly(items: ContentAndStatusTreeSelectorItem[]): wemQ.Promise<string[]> {
             return ContentSummaryFetcher.getReadOnly(items.map(item => item.getContent().getContentSummary()));
