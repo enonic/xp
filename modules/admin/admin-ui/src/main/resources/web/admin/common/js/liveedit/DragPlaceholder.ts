@@ -1,12 +1,13 @@
 module api.liveedit {
 
     import Component = api.content.page.region.Component;
+    import i18n = api.util.i18n;
 
     export class DragPlaceholder extends ItemViewPlaceholder {
 
         private itemType: ItemType;
 
-        private pattern: string = 'Drop here';
+        private pattern: string = i18n('live.view.drag.drophere');
 
         private regionView: RegionView;
 

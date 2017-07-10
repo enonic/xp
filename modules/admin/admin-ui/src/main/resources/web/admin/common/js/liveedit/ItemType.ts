@@ -1,6 +1,7 @@
 module api.liveedit {
 
     import StringHelper = api.util.StringHelper;
+    import i18n = api.util.i18n;
 
     type ShortName = {[shortName: string]: ItemType};
 
@@ -38,7 +39,7 @@ module api.liveedit {
         }
 
         toComponentType(): api.content.page.region.ComponentType {
-            api.util.assert(this.isComponentType(), 'Not support when ItemType is not a ComponentType');
+            api.util.assert(this.isComponentType(), i18n('live.view.itemtype.error.isnotcomponenttype'));
             return api.content.page.region.ComponentType.byShortName(this.shortName);
         }
 

@@ -9,6 +9,7 @@ module api.liveedit {
     import ComponentType = api.content.page.region.ComponentType;
     import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
     import DescriptorBasedComponentBuilder = api.content.page.region.DescriptorBasedComponentBuilder;
+    import i18n = api.util.i18n;
 
     export class RegionViewBuilder {
 
@@ -165,7 +166,7 @@ module api.liveedit {
 
             actions.push(this.createSelectParentAction());
             actions.push(this.createInsertAction());
-            actions.push(new api.ui.Action('Reset').onExecuted(() => {
+            actions.push(new api.ui.Action(i18n('live.view.reset')).onExecuted(() => {
                 this.deselect();
                 this.empty();
             }));
@@ -216,7 +217,7 @@ module api.liveedit {
         }
 
         getName(): string {
-            return this.getRegionName() ? this.getRegionName().toString() : '[No Name]';
+            return this.getRegionName() ? this.getRegionName().toString() : i18n('live.view.itemview.noname');
         }
 /*
         highlight() {

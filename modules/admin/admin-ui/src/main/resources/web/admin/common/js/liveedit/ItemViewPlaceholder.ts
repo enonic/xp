@@ -1,12 +1,13 @@
 module api.liveedit {
 
+    import i18n = api.util.i18n;
     export class ItemViewPlaceholder extends api.dom.DivEl {
 
         constructor() {
             super('item-placeholder', api.StyleHelper.PAGE_EDITOR_PREFIX);
         }
 
-        showRenderingError(url: string, errorMessage: string = 'Error rendering component') {
+        showRenderingError(url: string, errorMessage: string = i18n('live.view.component.render.error')) {
 
             this.removeChildren();
             this.addClass('rendering-error');
@@ -14,9 +15,7 @@ module api.liveedit {
             let errorTitle = new api.dom.PEl().
                 setHtml(errorMessage);
 
-            let urlAnchor = new api.dom.AEl().
-                setUrl(url, '_blank').
-                setHtml('Show more...');
+            let urlAnchor = new api.dom.AEl().setUrl(url, '_blank').setHtml(i18n('live.view.component.render.error.urltext'));
 
             this.appendChildren(errorTitle, urlAnchor);
         }

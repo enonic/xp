@@ -11,6 +11,7 @@ module api.liveedit.fragment {
     import HTMLAreaHelper = api.util.htmlarea.editor.HTMLAreaHelper;
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import ContentTypeName = api.schema.content.ContentTypeName;
+    import i18n = api.util.i18n;
 
     export class FragmentComponentViewBuilder extends ContentBasedComponentViewBuilder<FragmentComponent> {
 
@@ -70,8 +71,7 @@ module api.liveedit.fragment {
                 });
                 if (deleted) {
                     this.notifyFragmentLoadError();
-                    new api.liveedit.ShowWarningLiveEditEvent('Fragment ' + this.component.getFragment() +
-                                                              ' is no longer available').fire();
+                    new api.liveedit.ShowWarningLiveEditEvent(i18n('live.view.fragment.notavailable', this.component.getFragment())).fire();
                     this.convertToBrokenFragmentView();
                 }
             };
@@ -102,7 +102,7 @@ module api.liveedit.fragment {
             this.getEl().setAttribute('data-portal-placeholder-error', 'true');
             this.removeChild(this.getFirstChild());
             let errorSpan = new api.dom.SpanEl('data-portal-placeholder-error');
-            errorSpan.setHtml('Fragment content could not be found');
+            errorSpan.setHtml(i18n('live.view.fragment.notfound'));
             this.prependChild(errorSpan);
         }
 
@@ -140,7 +140,7 @@ module api.liveedit.fragment {
                         this.fragmentContent = null;
                         this.notifyFragmentContentLoaded();
                         this.notifyFragmentLoadError();
-                        new api.liveedit.ShowWarningLiveEditEvent('Fragment ' + contentId + ' could not be found').fire();
+                        new api.liveedit.ShowWarningLiveEditEvent(i18n('live.view.fragment.notfoundid', contentId)).fire();
                     }).done();
                 }
             } else {
@@ -158,7 +158,7 @@ module api.liveedit.fragment {
                 this.removeContextMenuAction(this.editFragmentAction);
             }
 
-            this.editFragmentAction = new api.ui.Action('Edit in new tab').onExecuted(() => {
+            this.editFragmentAction = new api.ui.Action(i18n('live.view.fragment.editnewtab')).onExecuted(() => {
                 this.deselect();
                 new api.content.event.EditContentEvent([contentAndSummary]).fire();
             });
