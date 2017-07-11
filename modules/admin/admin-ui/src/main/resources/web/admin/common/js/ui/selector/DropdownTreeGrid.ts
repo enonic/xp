@@ -114,10 +114,13 @@ module api.ui.selector {
                     return '';
                 };
 
-            return [
+            const columns = [
                 new api.ui.grid.GridColumnBuilder().setId('option').setName('Options').setField('displayValue').setFormatter(
-                    columnFormatter).build()
+                    columnFormatter).setBoundaryWidth(100, 9999).build()
+
             ];
+
+            return this.config.createColumns ? columns.concat(this.config.createColumns) : columns;
         }
 
         getElement(): Element {

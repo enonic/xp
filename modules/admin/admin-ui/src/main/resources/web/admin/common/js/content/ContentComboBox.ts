@@ -10,12 +10,19 @@ module api.content {
     import ContentSummaryJson = api.content.json.ContentSummaryJson;
     import OptionDataLoader = api.ui.selector.OptionDataLoader;
     import ContentTreeSelectorItem = api.content.resource.ContentTreeSelectorItem;
+    import Viewer = api.ui.Viewer;
+    import ContentAndStatusTreeSelectorItem = api.content.resource.ContentAndStatusTreeSelectorItem;
+    import TreeNode = api.ui.treegrid.TreeNode;
+    import ContentRowFormatter = api.content.util.ContentRowFormatter;
+    import GridColumn = api.ui.grid.GridColumn;
 
     export class ContentComboBox extends RichComboBox<ContentSummary> {
 
         constructor(builder: ContentComboBoxBuilder) {
 
             let loader = builder.loader ? builder.loader : new ContentSummaryLoader();
+
+            const treeGridDropdownEnabled = builder.treegridDropdownEnabled == undefined ? true : builder.treegridDropdownEnabled;
 
             let richComboBoxBuilder = new RichComboBoxBuilder<ContentSummary>()
                 .setComboBoxName(builder.name ? builder.name : 'contentSelector')
@@ -28,11 +35,19 @@ module api.content {
                 .setDisplayMissingSelectedOptions(builder.displayMissingSelectedOptions)
                 .setRemoveMissingSelectedOptions(builder.removeMissingSelectedOptions)
                 .setSkipAutoDropShowOnValueChange(builder.skipAutoDropShowOnValueChange)
-                .setTreegridDropdownEnabled(builder.treegridDropdownEnabled == undefined ? true : builder.treegridDropdownEnabled)
+                .setTreegridDropdownEnabled(treeGridDropdownEnabled)
                 .setOptionDataHelper(builder.optionDataHelper || new ContentSummaryOptionDataHelper())
-                .setOptionDataLoader(builder.optionDataLoader || new ContentSummaryOptionDataLoader())
+                .setOptionDataLoader(builder.optionDataLoader ||
+                                     ContentSummaryOptionDataLoader.create().setLoadStatus(builder.showStatus).build())
                 .setMinWidth(builder.minWidth);
 
+            if(builder.showStatus && treeGridDropdownEnabled) {
+                const columns = [new api.ui.grid.GridColumnBuilder().setId('status').setName('Status').setField(
+                    'displayValue').setFormatter(
+                    ContentRowFormatter.statusSelectorFormatter).setCssClass('status').setBoundaryWidth(75, 75).build()];
+
+                richComboBoxBuilder.setCreateColumns(columns);
+            }
             super(richComboBoxBuilder);
 
             this.addClass('content-combo-box');
@@ -159,6 +174,8 @@ module api.content {
 
         removeMissingSelectedOptions: boolean;
 
+        showStatus: boolean = false;
+
         setName(value: string): ContentComboBoxBuilder {
             this.name = value;
             return this;
@@ -199,7 +216,17 @@ module api.content {
             return this;
         }
 
-        setOptionDataLoader(value: OptionDataLoader<ContentTreeSelectorItem>): ContentComboBoxBuilder {
+        setShowStatus(value: boolean): ContentComboBoxBuilder {
+            this.showStatus = value;
+            return this;
+        }
+
+        setOptionDisplayValueViewer(value: Viewer<any>): ContentComboBoxBuilder {
+            super.setOptionDisplayValueViewer(value);
+            return this;
+        }
+
+        setOptionDataLoader(value: OptionDataLoader<ContentAndStatusTreeSelectorItem>): ContentComboBoxBuilder {
             super.setOptionDataLoader(value);
             return this;
         }

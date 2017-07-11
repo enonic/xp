@@ -1,6 +1,7 @@
 module api.ui.selector {
 
     import Viewer = api.ui.Viewer;
+    import GridColumn = api.ui.grid.GridColumn;
 
     export interface DropdownGridConfig<OPTION_DISPLAY_VALUE> {
 
@@ -12,7 +13,7 @@ module api.ui.selector {
 
         filter: (item: Option<OPTION_DISPLAY_VALUE>, args: any) => boolean;
 
-        dataIdProperty?:string;
+        dataIdProperty?: string;
 
         multipleSelections?: boolean;
 
@@ -21,6 +22,8 @@ module api.ui.selector {
         optionDataHelper?: OptionDataHelper<OPTION_DISPLAY_VALUE>;
 
         optionDataLoader?: OptionDataLoader<OPTION_DISPLAY_VALUE>;
+
+        createColumns?: GridColumn<OPTION_DISPLAY_VALUE>[];
     }
 
     export class DropdownGrid<OPTION_DISPLAY_VALUE> {
@@ -120,6 +123,10 @@ module api.ui.selector {
 
         isVisible(): boolean {
             return this.getGrid().isVisible();
+        }
+
+        isTreeGrid(): boolean {
+            return this.config.isDropdownGrid;
         }
 
         show() {

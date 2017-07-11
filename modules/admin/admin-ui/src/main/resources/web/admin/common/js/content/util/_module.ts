@@ -5,3 +5,4 @@
 ///<reference path='ContentNodeByModifiedTimeComparator.ts' />
 ///<reference path='CreateContentFilter.ts' />
 ///<reference path='ExtraDataByMixinNameComparator.ts' />
+///<reference path='ContentRowFormatter.ts' />

@@ -10,6 +10,7 @@ module api.ui.selector.combobox {
     import IFrameEl = api.dom.IFrameEl;
     import Body = api.dom.Body;
     import WindowDOM = api.dom.WindowDOM;
+    import GridColumn = api.ui.grid.GridColumn;
     import i18n = api.util.i18n;
 
     export interface ComboBoxConfig<T> {
@@ -53,6 +54,8 @@ module api.ui.selector.combobox {
         optionDataLoader?: OptionDataLoader<T>;
 
         onDropdownShownCallback?: () => wemQ.Promise<void>;
+
+        createColumns?: GridColumn<T>[];
     }
 
     export enum PositionType {
@@ -193,7 +196,8 @@ module api.ui.selector.combobox {
                 multipleSelections: (this.selectedOptionsView && (config.maximumOccurrences !== 1)),
                 isDropdownGrid: config.treegridDropdownEnabled,
                 optionDataHelper: config.optionDataHelper,
-                optionDataLoader: config.optionDataLoader
+                optionDataLoader: config.optionDataLoader,
+                createColumns: config.createColumns
             });
 
             this.appendChild(this.comboBoxDropdown.getEmptyDropdown());

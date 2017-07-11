@@ -1,18 +1,12 @@
 module api.content.resource {
 
-    import OrderExpr = api.query.expr.OrderExpr;
     import FieldOrderExpr = api.query.expr.FieldOrderExpr;
-    import OrderDirection = api.query.expr.OrderDirection;
     import FieldExpr = api.query.expr.FieldExpr;
+    import OrderDirection = api.query.expr.OrderDirection;
+    import OrderExpr = api.query.expr.OrderExpr;
+    import QueryExpr = api.query.expr.QueryExpr;
     import Expression = api.query.expr.Expression;
     import QueryField = api.query.QueryField;
-    import QueryExpr = api.query.expr.QueryExpr;
-    import ContentSummaryJson = api.content.json.ContentSummaryJson;
-    import ContentId = api.content.ContentId;
-    import ContentQueryResultJson = api.content.json.ContentQueryResultJson;
-    import BatchContentResult = api.content.resource.result.BatchContentResult;
-    import ContentState = api.schema.content.ContentState;
-    import ContentTypeName = api.schema.content.ContentTypeName;
 
     export class ContentTreeSelectorQueryRequest extends ContentResourceRequest<ContentTreeSelectorItemJson[], ContentTreeSelectorItem[]> {
 
@@ -180,84 +174,6 @@ module api.content.resource {
             default:
                 return 'summary';
             }
-        }
-    }
-    export class ContentTreeSelectorItemJson {
-
-        content: ContentSummaryJson;
-
-        expand: boolean;
-    }
-
-    export class ContentTreeSelectorItem {
-
-        private content: ContentSummary;
-
-        private expand: boolean;
-
-        constructor(content: ContentSummary, expand: boolean) {
-            this.content = content;
-            this.expand = expand;
-        }
-
-        public static fromJson(json: ContentTreeSelectorItemJson) {
-            return new ContentTreeSelectorItem(ContentSummary.fromJson(json.content), json.expand);
-        }
-
-        getContent(): ContentSummary {
-            return this.content;
-        }
-
-        getId(): string {
-            return this.content.getId();
-        }
-
-        getContentId(): ContentId {
-            return this.content.getContentId();
-        }
-
-        getPath(): ContentPath {
-            return this.content.getPath();
-        }
-
-        getName(): ContentName {
-            return this.content.getName();
-        }
-
-        getDisplayName(): string {
-            return this.content.getDisplayName();
-        }
-
-        getContentState(): ContentState {
-            return this.content.getContentState();
-        }
-
-        hasChildren(): boolean {
-            return this.content.hasChildren();
-        }
-
-        isValid(): boolean {
-            return this.content.isValid();
-        }
-
-        getIconUrl(): string {
-            return this.content.getIconUrl();
-        }
-
-        getType(): ContentTypeName {
-            return this.content.getType();
-        }
-
-        isImage(): boolean {
-            return this.content.isImage();
-        }
-
-        isSite(): boolean {
-            return this.content.isSite();
-        }
-
-        getExpand(): boolean {
-            return this.expand;
         }
     }
 }

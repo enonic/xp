@@ -3,7 +3,6 @@ import {SortContentEvent} from './SortContentEvent';
 import {ContentTreeGridActions} from './action/ContentTreeGridActions';
 import {TreeNodesOfContentPath} from './TreeNodesOfContentPath';
 import {TreeNodeParentOfContent} from './TreeNodeParentOfContent';
-import {ContentRowFormatter} from './ContentRowFormatter';
 
 import Element = api.dom.Element;
 import ElementHelper = api.dom.ElementHelper;
@@ -44,6 +43,7 @@ import BrowseFilterResetEvent = api.app.browse.filter.BrowseFilterResetEvent;
 import BrowseFilterRefreshEvent = api.app.browse.filter.BrowseFilterRefreshEvent;
 import BrowseFilterSearchEvent = api.app.browse.filter.BrowseFilterSearchEvent;
 import i18n = api.util.i18n;
+import ContentRowFormatter = api.content.util.ContentRowFormatter;
 
 export class ContentTreeGrid
     extends TreeGrid<ContentSummaryAndCompareStatus> {
