@@ -116,7 +116,7 @@ final class CreateContentCommand
         }
     }
 
-    private synchronized Node doCreateContent( final CreateNodeParams createNodeParams )
+    private Node doCreateContent( final CreateNodeParams createNodeParams )
     {
         return nodeService.create( createNodeParams );
     }

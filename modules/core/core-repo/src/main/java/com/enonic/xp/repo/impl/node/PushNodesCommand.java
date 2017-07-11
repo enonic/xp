@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 
 import com.google.common.base.Preconditions;
 
@@ -81,7 +81,7 @@ public class PushNodesCommand
         final InternalPushNodesResult.Builder builder = InternalPushNodesResult.create();
 
         final ArrayList<NodeBranchEntry> list = new ArrayList<>( nodeBranchEntries.getSet() );
-        Collections.sort( list, ( e1, e2 ) -> e1.getNodePath().compareTo( e2.getNodePath() ) );
+        list.sort( Comparator.comparing( NodeBranchEntry::getNodePath ) );
 
         for ( final NodeBranchEntry branchEntry : list )
         {
@@ -139,7 +139,9 @@ public class PushNodesCommand
 
         final PushNodeEntries pushNodeEntries = publishBuilder.build();
         builder.setPushNodeEntries( pushNodeEntries );
-        this.nodeStorageService.push( pushNodeEntries, pushListener, InternalContext.from( context ) );
+
+        final InternalContext pushContext = InternalContext.create( context ).skipConstraints( true ).build();
+        this.nodeStorageService.push( pushNodeEntries, pushListener, pushContext );
 
         return builder;
     }

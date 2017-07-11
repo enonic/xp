@@ -1,12 +1,15 @@
 package com.enonic.xp.repo.impl.branch.storage;
 
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.Striped;
 
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
@@ -53,6 +56,8 @@ public class BranchServiceImpl
 
     private static final int BATCHED_EXECUTOR_LIMIT = 1000;
 
+    private final static Striped<Lock> PARENT_PATH_LOCKS = Striped.lazyWeakLock( 100 );
+
     private final BranchCachePath pathCache = new BranchCachePath();
 
     private StorageDao storageDao;
@@ -72,12 +77,24 @@ public class BranchServiceImpl
         {
             this.pathCache.evict( createPath( previousPath, context ) );
         }
-        return doStore( nodeBranchEntry, context );
+
+        if ( context.isSkipConstraints() )
+        {
+            return doStore( nodeBranchEntry, context, false );
+        }
+        else
+        {
+            final NodePath parentPath = nodeBranchEntry.getNodePath().getParentPath();
+            return synchronizeByPath( parentPath, () -> doStore( nodeBranchEntry, context, true ) );
+        }
     }
 
-    private synchronized String doStore( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
+    private String doStore( final NodeBranchEntry nodeBranchEntry, final InternalContext context, final boolean validate )
     {
-        verifyNotExistingNodeWithOtherId( nodeBranchEntry, context );
+        if ( validate )
+        {
+            verifyNotExistingNodeWithOtherId( nodeBranchEntry, context );
+        }
 
         final StoreRequest storeRequest = BranchStorageRequestFactory.create( nodeBranchEntry, context );
 
@@ -86,6 +103,20 @@ public class BranchServiceImpl
         doCache( context, nodeBranchEntry.getNodePath(), BranchDocumentId.from( id ) );
 
         return id;
+    }
+
+    private <T> T synchronizeByPath( final NodePath path, final Supplier<T> callback )
+    {
+        final Lock lock = PARENT_PATH_LOCKS.get( path );
+        try
+        {
+            lock.lock();
+            return callback.get();
+        }
+        finally
+        {
+            lock.unlock();
+        }
     }
 
     private void verifyNotExistingNodeWithOtherId( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
