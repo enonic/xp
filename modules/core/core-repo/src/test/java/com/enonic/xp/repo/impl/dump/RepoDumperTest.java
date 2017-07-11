@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.dump;
 
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -13,13 +12,9 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.UpdateNodeParams;
-import com.enonic.xp.repo.impl.dump.model.DumpEntry;
+import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.util.BinaryReference;
@@ -52,7 +47,7 @@ public class RepoDumperTest
 
         doDump( writer );
 
-        final List<DumpEntry> dumpEntries = writer.get( CTX_DEFAULT.getRepositoryId(), CTX_DEFAULT.getBranch() );
+        final List<BranchDumpEntry> dumpEntries = writer.get( CTX_DEFAULT.getRepositoryId(), CTX_DEFAULT.getBranch() );
 
         assertEquals( 5, dumpEntries.size() );
     }
@@ -73,49 +68,6 @@ public class RepoDumperTest
         doDump( writer );
 
         assertTrue( writer.hasVersions( node1.getNodeVersionId(), updatedNode.getNodeVersionId() ) );
-    }
-
-    @Test
-    public void node_versions_meta_data_stored()
-        throws Exception
-    {
-        final Node node1 = createNode( NodePath.ROOT, "myNode" );
-
-        final Node updatedNode = updateNode( UpdateNodeParams.create().
-            id( node1.id() ).
-            editor( ( node ) -> node.data.setString( "fisk", "Ost" ) ).
-            build() );
-
-        final TestDumpWriter writer = new TestDumpWriter();
-
-        doDump( writer );
-
-        assertTrue( hasVersionMeta( writer, node1.id(), node1.getNodeVersionId(), updatedNode.getNodeVersionId() ) );
-    }
-
-    @Test
-    public void renamed()
-        throws Exception
-    {
-        final Node node1 = createNode( NodePath.ROOT, "myNode" );
-
-        final NodeName newName = NodeName.from( "updatedName" );
-        this.nodeService.rename( RenameNodeParams.create().
-            nodeId( node1.id() ).
-            nodeName( newName ).
-            build() );
-
-        final TestDumpWriter writer = new TestDumpWriter();
-
-        doDump( writer );
-
-        final List<DumpEntry> dumpedEntries = writer.get( CTX_DEFAULT.getRepositoryId(), CTX_DEFAULT.getBranch() );
-
-        assertEquals( 2, dumpedEntries.size() );
-        final DumpEntry node1Dump = dumpedEntries.get( 0 );
-        assertEquals( 2, node1Dump.getVersions().size() );
-        //  assertEquals( newName.toString(), node1Dump.getVersions().iterator().next().getNodePath().getName() );
-        //  assertEquals( node1.name().toString(), node1Dump.getOtherVersions().get( 0 ).getNodePath().getName() );
     }
 
     @Test
@@ -142,7 +94,6 @@ public class RepoDumperTest
 
         assertTrue( writer.getBinaries().contains( attachedBinary.getBlobKey() ) );
     }
-
 
     @Test
     public void binaries_with_versions()
@@ -193,19 +144,6 @@ public class RepoDumperTest
         assertEquals( "x-y-z", writer.getDumpMeta().getXpVersion() );
     }
 
-    private boolean hasVersionMeta( final TestDumpWriter writer, final NodeId nodeId, final NodeVersionId... versionIds )
-    {
-        final List<DumpEntry> dumpedEntries = writer.get( CTX_DEFAULT.getRepositoryId(), CTX_DEFAULT.getBranch() );
-
-        for ( final DumpEntry entry : dumpedEntries )
-        {
-            if ( entry.getNodeId().equals( nodeId ) )
-            {
-                return entry.getAllVersionIds().containsAll( Arrays.asList( versionIds ) );
-            }
-        }
-        return false;
-    }
 
     private void doDump( final TestDumpWriter writer )
     {

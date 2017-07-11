@@ -26,11 +26,12 @@ import com.enonic.xp.repo.impl.dump.AbstractFileProcessor;
 import com.enonic.xp.repo.impl.dump.DumpBlobStore;
 import com.enonic.xp.repo.impl.dump.DumpConstants;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
-import com.enonic.xp.repo.impl.dump.model.DumpEntry;
+import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
-import com.enonic.xp.repo.impl.dump.serializer.DumpEntrySerializer;
-import com.enonic.xp.repo.impl.dump.serializer.json.DumpEntryJsonSerializer;
+import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
+import com.enonic.xp.repo.impl.dump.serializer.DumpSerializer;
 import com.enonic.xp.repo.impl.dump.serializer.json.DumpMetaJsonSerializer;
+import com.enonic.xp.repo.impl.dump.serializer.json.JsonDumpSerializer;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -46,7 +47,7 @@ public class FileDumpWriter
 
     private final Path dumpDirectory;
 
-    private final DumpEntrySerializer serializer;
+    private final DumpSerializer serializer;
 
     private GZIPOutputStream gzipOut;
 
@@ -58,7 +59,7 @@ public class FileDumpWriter
     {
         this.dumpDirectory = getDumpDirectory( builder.basePath, builder.dumpName );
         this.dumpBlobStore = new DumpBlobStore( this.dumpDirectory.toFile() );
-        this.serializer = new DumpEntryJsonSerializer();
+        this.serializer = new JsonDumpSerializer();
         this.blobStore = builder.blobStore;
     }
 
@@ -68,7 +69,7 @@ public class FileDumpWriter
     }
 
     @Override
-    public void writeDumpMeta( final DumpMeta dumpMeta )
+    public void writeDumpMetaData( final DumpMeta dumpMeta )
     {
         final Path dumpMetaFile = Paths.get( this.dumpDirectory.toString(), "dump.json" );
 
@@ -85,14 +86,12 @@ public class FileDumpWriter
     }
 
     @Override
-    public void open( final RepositoryId repositoryId, final Branch branch )
+    public void openBranchMeta( final RepositoryId repositoryId, final Branch branch )
     {
         try
         {
-            final File metaFile = createMetaFile( repositoryId, branch );
-            this.fileOut = new FileOutputStream( metaFile );
-            this.gzipOut = new GZIPOutputStream( fileOut );
-            this.tarOutputStream = new TarArchiveOutputStream( gzipOut );
+            final File metaFile = createBranchMeta( repositoryId, branch );
+            doOpenFile( metaFile );
         }
         catch ( Exception e )
         {
@@ -100,10 +99,44 @@ public class FileDumpWriter
         }
     }
 
-    private File createMetaFile( final RepositoryId repositoryId, final Branch branch )
+    @Override
+    public void openVersionsMeta( final RepositoryId repositoryId )
     {
-        final File metaFile = createMetaPath( this.dumpDirectory, repositoryId, branch ).toFile();
+        try
+        {
+            final File metaFile = createVersionsMeta( repositoryId );
+            doOpenFile( metaFile );
+        }
+        catch ( Exception e )
+        {
+            throw new RepoDumpException( "Could not open meta-file", e );
+        }
+    }
 
+    private void doOpenFile( final File metaFile )
+        throws IOException
+    {
+        this.fileOut = new FileOutputStream( metaFile );
+        this.gzipOut = new GZIPOutputStream( fileOut );
+        this.tarOutputStream = new TarArchiveOutputStream( gzipOut );
+    }
+
+    private File createBranchMeta( final RepositoryId repositoryId, final Branch branch )
+    {
+        final File metaFile = createBranchMetaPath( this.dumpDirectory, repositoryId, branch ).toFile();
+
+        return doCreateMetaFile( metaFile );
+    }
+
+    private File createVersionsMeta( final RepositoryId repositoryId )
+    {
+        final File metaFile = createVersionMetaPath( this.dumpDirectory, repositoryId ).toFile();
+
+        return doCreateMetaFile( metaFile );
+    }
+
+    private File doCreateMetaFile( final File metaFile )
+    {
         if ( metaFile.exists() )
         {
             throw new RepoDumpException( "Meta-file with path [" + metaFile.getPath() + "] already exists" );
@@ -120,14 +153,28 @@ public class FileDumpWriter
     }
 
     @Override
-    public void writeMetaData( final DumpEntry dumpEntry )
+    public void writeBranchEntry( final BranchDumpEntry branchDumpEntry )
     {
-        final String serializedEntry = serializer.serialize( dumpEntry );
+        final String serializedEntry = serializer.serialize( branchDumpEntry );
+        final String entryName = branchDumpEntry.getNodeId().toString() + ".json";
+        storeTarEntry( serializedEntry, entryName );
+    }
 
+
+    @Override
+    public void writeVersionsEntry( final VersionsDumpEntry versionsDumpEntry )
+    {
+        final String serializedEntry = serializer.serialize( versionsDumpEntry );
+        final String entryName = versionsDumpEntry.getNodeId().toString() + ".json";
+        storeTarEntry( serializedEntry, entryName );
+    }
+
+    private void storeTarEntry( final String serializedEntry, final String entryName )
+    {
         try
         {
-            final TarArchiveEntry entry = new TarArchiveEntry( dumpEntry.getNodeId().toString() + ".json" );
             final byte[] data = serializedEntry.getBytes( Charsets.UTF_8 );
+            final TarArchiveEntry entry = new TarArchiveEntry( entryName );
             entry.setSize( data.length );
             tarOutputStream.putArchiveEntry( entry );
             tarOutputStream.write( data );
@@ -139,8 +186,9 @@ public class FileDumpWriter
         }
     }
 
+
     @Override
-    public void writeVersion( final NodeVersionId nodeVersionId )
+    public void writeVersionBlob( final NodeVersionId nodeVersionId )
     {
         final BlobRecord existingVersion =
             blobStore.getRecord( DumpConstants.DUMP_SEGMENT_NODES, BlobKey.from( nodeVersionId.toString() ) );
@@ -154,7 +202,7 @@ public class FileDumpWriter
     }
 
     @Override
-    public void writeBinary( final String blobKey )
+    public void writeBinaryBlob( final String blobKey )
     {
         final BlobRecord binaryRecord = blobStore.getRecord( DumpConstants.DUMP_SEGMENT_BINARIES, BlobKey.from( blobKey ) );
 

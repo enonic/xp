@@ -10,15 +10,16 @@ import com.google.common.collect.Sets;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.repo.impl.dump.model.DumpEntry;
+import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
+import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
 import com.enonic.xp.repository.RepositoryId;
 
 class TestDumpWriter
     implements DumpWriter
 {
-    private final ListMultimap<RepoBranchEntry, DumpEntry> entries;
+    private final ListMultimap<RepoBranchEntry, BranchDumpEntry> entries;
 
     private RepoBranchEntry current;
 
@@ -34,15 +35,21 @@ class TestDumpWriter
     }
 
     @Override
-    public void writeDumpMeta( final DumpMeta dumpMeta )
+    public void writeDumpMetaData( final DumpMeta dumpMeta )
     {
         this.dumpMeta = dumpMeta;
     }
 
     @Override
-    public void open( final RepositoryId repositoryId, final Branch branch )
+    public void openBranchMeta( final RepositoryId repositoryId, final Branch branch )
     {
         current = new RepoBranchEntry( repositoryId, branch );
+    }
+
+    @Override
+    public void openVersionsMeta( final RepositoryId repositoryId )
+    {
+        // Do nothing yet
     }
 
     @Override
@@ -52,24 +59,30 @@ class TestDumpWriter
     }
 
     @Override
-    public void writeMetaData( final DumpEntry dumpEntry )
+    public void writeBranchEntry( final BranchDumpEntry branchDumpEntry )
     {
-        entries.put( current, dumpEntry );
+        entries.put( current, branchDumpEntry );
     }
 
     @Override
-    public void writeVersion( final NodeVersionId nodeVersionId )
+    public void writeVersionsEntry( final VersionsDumpEntry versionsDumpEntry )
+    {
+        // Do nothing yet
+    }
+
+    @Override
+    public void writeVersionBlob( final NodeVersionId nodeVersionId )
     {
         nodeVersions.add( nodeVersionId );
     }
 
     @Override
-    public void writeBinary( final String key )
+    public void writeBinaryBlob( final String key )
     {
         binaries.add( key );
     }
 
-    public List<DumpEntry> get( final RepositoryId repoId, final Branch branch )
+    public List<BranchDumpEntry> get( final RepositoryId repoId, final Branch branch )
     {
         return this.entries.get( new RepoBranchEntry( repoId, branch ) );
     }

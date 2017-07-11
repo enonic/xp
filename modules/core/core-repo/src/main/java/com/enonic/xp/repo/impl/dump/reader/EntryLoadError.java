@@ -9,7 +9,7 @@ class EntryLoadError
         this.message = message;
     }
 
-    final static EntryLoadError error( final String message )
+    static EntryLoadError error( final String message )
     {
         return new EntryLoadError( message );
     }

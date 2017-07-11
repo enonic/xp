@@ -209,7 +209,7 @@ export class PageComponentsGridDragHandler extends GridDragHandler<ItemView> {
             parentPosition = parentPosition <= 0 ? 0 : parentPosition - 1;
 
             parentComponentNode = data[parentPosition];
-            parentComponentView = parentComponentNode.getData();
+            parentComponentView = parentComponentNode.initData();
 
             if (parentComponentNode.calcLevel() === calcLevel && !isFirstChildPosition) {
                 insertIndex++;

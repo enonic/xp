@@ -62,7 +62,7 @@ public class NodeVersion
             permissions( node.getPermissions() ).
             inheritPermissions( node.inheritsPermissions() ).
             attachedBinaries( node.getAttachedBinaries() ).
-            timestamp( Instant.now() ).
+            timestamp( node.getTimestamp() != null ? node.getTimestamp() : Instant.now() ).
             build();
     }
 
@@ -321,5 +321,23 @@ public class NodeVersion
         result = 31 * result + ( inheritPermissions ? 1 : 0 );
         result = 31 * result + ( attachedBinaries != null ? attachedBinaries.hashCode() : 0 );
         return result;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "NodeVersion{" +
+            "id=" + id +
+            ", versionId=" + versionId +
+            ", nodeType=" + nodeType +
+            ", timestamp=" + timestamp +
+            ", data=" + data +
+            ", indexConfigDocument=" + indexConfigDocument +
+            ", childOrder=" + childOrder +
+            ", manualOrderValue=" + manualOrderValue +
+            ", permissions=" + permissions +
+            ", inheritPermissions=" + inheritPermissions +
+            ", attachedBinaries=" + attachedBinaries +
+            '}';
     }
 }

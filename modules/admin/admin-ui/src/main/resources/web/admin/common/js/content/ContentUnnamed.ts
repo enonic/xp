@@ -1,10 +1,11 @@
 module api.content {
 
     import StringHelper = api.util.StringHelper;
+    import i18n = api.util.i18n;
 
     export class ContentUnnamed extends ContentName implements api.Equitable {
 
-        public static PRETTY_UNNAMED: string = 'unnamed';
+        public static PRETTY_UNNAMED: string = i18n('field.unnamed');
 
         constructor(name: string) {
             super(name);

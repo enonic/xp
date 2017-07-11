@@ -8,6 +8,7 @@ module api.ui.image {
     import TabMenuItem = api.ui.tab.TabMenuItem;
     import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
     import NavigatorEvent = api.ui.NavigatorEvent;
+    import i18n = api.util.i18n;
 
     export interface Point {
         x: number;
@@ -107,7 +108,7 @@ module api.ui.image {
 
             this.image = new ImgEl(null, 'image-bg', true);
 
-            let resizeListener = (item) => {
+            let resizeHandler = () => {
                 if (this.isVisible()) {
                     this.updateImageDimensions(false, true);
                     this.updateStickyToolbar();
@@ -121,7 +122,7 @@ module api.ui.image {
                 this.updateStickyToolbar();
                 this.unShown(updateImageOnShown);
                 if (isFirstLoad) {
-                    api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, resizeListener);
+                    api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, resizeHandler);
                     isFirstLoad = false;
                 }
             };
@@ -630,7 +631,7 @@ module api.ui.image {
 
             let editContainer = new DivEl('edit-container');
 
-            this.editResetButton = new Button('Reset');
+            this.editResetButton = new Button(i18n('button.reset'));
             this.editResetButton.setVisible(false).addClass('transparent').onClicked((event: MouseEvent) => {
                 event.stopPropagation();
 
@@ -878,6 +879,7 @@ module api.ui.image {
                 this.setEditMode(true, applyChanges);
             }
 
+            this.updateImageDimensions(false, true);
             this.bindFocusMouseListeners();
             this.updateFocusMaskPosition();
         }
@@ -893,6 +895,7 @@ module api.ui.image {
 
             if (exitEditMode) {
                 this.setEditMode(false, applyChanges);
+                this.updateImageDimensions(false, true);
             }
         }
 
@@ -1197,6 +1200,7 @@ module api.ui.image {
                 this.setEditMode(true, applyChanges);
             }
 
+            this.updateImageDimensions(false, true);
             this.bindCropMouseListeners();
             this.updateCropMaskPosition();
             this.updateZoomPosition();
@@ -1213,6 +1217,7 @@ module api.ui.image {
 
             if (exitEditMode) {
                 this.setEditMode(false, applyChanges);
+                this.updateImageDimensions(false, true);
             }
         }
 

@@ -7,7 +7,7 @@ import {ChangeUserPasswordDialog} from './app/wizard/ChangeUserPasswordDialog';
 import {Router} from './app/Router';
 
 function getApplication(): api.app.Application {
-    let application = new api.app.Application('user-manager', 'Users', 'UM', CONFIG.appIconUrl);
+    let application = new api.app.Application('user-manager', i18n('app.name'), i18n('app.abbr'), CONFIG.appIconUrl);
     application.setPath(api.rest.Path.fromString(Router.getPath()));
     application.setWindow(window);
 

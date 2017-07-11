@@ -11,6 +11,7 @@ module api.ui.selector.combobox {
     import Body = api.dom.Body;
     import WindowDOM = api.dom.WindowDOM;
     import GridColumn = api.ui.grid.GridColumn;
+    import i18n = api.util.i18n;
 
     export interface ComboBoxConfig<T> {
 
@@ -180,7 +181,7 @@ module api.ui.selector.combobox {
             this.appendChild(this.dropdownHandle);
 
             if (this.selectedOptionsView && (config.maximumOccurrences !== 1)) {
-                this.applySelectionsButton = new Button('Apply');
+                this.applySelectionsButton = new Button(i18n('action.apply'));
                 this.applySelectionsButton.addClass('small apply-button');
                 this.applySelectionsButton.hide();
                 this.appendChild(this.applySelectionsButton);
@@ -792,7 +793,7 @@ module api.ui.selector.combobox {
                 if (this.delayedInputValueChangedHandling === 0) {
                     this.handleInputValueChanged();
                 } else if (!event.valuesAreEqual()) {
-                    this.setEmptyDropdownText('Just keep on typing...');
+                    this.setEmptyDropdownText(i18n('field.search.placeholder'));
                     this.delayedHandleInputValueChangedFnCall.delayCall();
                 }
             });

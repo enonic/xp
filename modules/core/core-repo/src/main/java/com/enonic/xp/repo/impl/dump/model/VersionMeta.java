@@ -6,7 +6,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersionId;
 
-public class Meta
+public class VersionMeta
 {
     private final NodePath nodePath;
 
@@ -16,15 +16,12 @@ public class Meta
 
     private final NodeState nodeState;
 
-    private final boolean current;
-
-    private Meta( final Builder builder )
+    private VersionMeta( final Builder builder )
     {
         nodePath = builder.nodePath;
         timestamp = builder.timestamp;
         version = builder.version;
         nodeState = builder.nodeState;
-        current = builder.current;
     }
 
     public NodePath getNodePath()
@@ -47,11 +44,6 @@ public class Meta
         return nodeState;
     }
 
-    public boolean isCurrent()
-    {
-        return current;
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -66,8 +58,6 @@ public class Meta
         private NodeVersionId version;
 
         private NodeState nodeState;
-
-        private boolean current;
 
         private Builder()
         {
@@ -97,16 +87,9 @@ public class Meta
             return this;
         }
 
-        public Builder current( final boolean val )
+        public VersionMeta build()
         {
-            current = val;
-            return this;
-        }
-
-
-        public Meta build()
-        {
-            return new Meta( this );
+            return new VersionMeta( this );
         }
     }
 
@@ -122,12 +105,8 @@ public class Meta
             return false;
         }
 
-        final Meta meta = (Meta) o;
+        final VersionMeta meta = (VersionMeta) o;
 
-        if ( current != meta.current )
-        {
-            return false;
-        }
         if ( nodePath != null ? !nodePath.equals( meta.nodePath ) : meta.nodePath != null )
         {
             return false;
@@ -151,7 +130,6 @@ public class Meta
         result = 31 * result + ( timestamp != null ? timestamp.hashCode() : 0 );
         result = 31 * result + ( version != null ? version.hashCode() : 0 );
         result = 31 * result + ( nodeState != null ? nodeState.hashCode() : 0 );
-        result = 31 * result + ( current ? 1 : 0 );
         return result;
     }
 }

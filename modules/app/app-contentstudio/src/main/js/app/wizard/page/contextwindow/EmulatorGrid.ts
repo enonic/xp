@@ -1,4 +1,5 @@
 import '../../../../api.ts';
+import {EmulatorDeviceItem} from './EmulatorDevice';
 
 export class EmulatorGrid extends api.ui.grid.Grid<any> {
 
@@ -15,25 +16,25 @@ export class EmulatorGrid extends api.ui.grid.Grid<any> {
         ];
     }
 
-    private buildRow(row: any, cell: any, data: any): api.dom.DivEl {
+    private buildRow(row: any, cell: any, data: EmulatorDeviceItem): api.dom.DivEl {
         let rowEl = new api.dom.DivEl();
-        rowEl.getEl().setData('width', data.width);
-        rowEl.getEl().setData('height', data.height);
-        rowEl.getEl().setData('units', data.units);
+        rowEl.getEl().setData('width', data.getWidth().toString());
+        rowEl.getEl().setData('height', data.getHeight().toString());
+        rowEl.getEl().setData('units', data.getUnits());
 
-        let icon = new api.ui.FontIcon('icon-' + data.device_type);
+        let icon = new api.ui.FontIcon('icon-' + data.getDeviceType());
 
         let title = new api.dom.H5El();
-        title.getEl().setInnerHtml(data.name);
+        title.getEl().setInnerHtml(data.getName());
 
         let subtitle = new api.dom.H6El();
-        let units = data.display_units ? data.units : '';
-        subtitle.getEl().setInnerHtml(data.width + units + ' &times; ' + data.height + units, false);
+        let units = data.getDisplayUnits() ? data.getUnits() : '';
+        subtitle.getEl().setInnerHtml(data.getWidth().toString() + units + ' &times; ' + data.getHeight().toString() + units, false);
         rowEl.appendChild(icon);
         rowEl.appendChild(title);
         rowEl.appendChild(subtitle);
 
-        if (data.rotatable === true) {
+        if (data.getRotatable() === true) {
             let rotator = new api.dom.DivEl();
             rotator.addClass('rotate');
             rotator.addClassEx('icon-loop');
@@ -41,20 +42,6 @@ export class EmulatorGrid extends api.ui.grid.Grid<any> {
         }
 
         return rowEl;
-    }
-
-    static toSlickData(data: any[]): any[] {
-        let result = [];
-        let i = 1;
-        data['devices'].forEach((item, index) => {
-            let tmp = {
-                id: i,
-                device: item
-            };
-            result.push(tmp);
-            i++;
-        });
-        return result;
     }
 
 }

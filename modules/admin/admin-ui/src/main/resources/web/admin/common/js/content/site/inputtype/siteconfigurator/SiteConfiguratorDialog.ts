@@ -54,9 +54,11 @@ module api.content.site.inputtype.siteconfigurator {
 
             CreateHtmlAreaDialogEvent.on((event: CreateHtmlAreaDialogEvent) => {
                 this.addClass('masked');
+                this.addClass('await-confirmation');
 
                 api.util.htmlarea.dialog.HTMLAreaDialogHandler.getOpenDialog().onRemoved(() => {
                     this.removeClass('masked');
+                    this.removeClass('await-confirmation');
                 });
             });
 

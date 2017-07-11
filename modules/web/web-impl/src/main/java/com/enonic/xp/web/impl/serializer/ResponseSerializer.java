@@ -79,10 +79,7 @@ public final class ResponseSerializer
             return;
         }
 
-        if ( body != null )
-        {
-            serializeBody( response, body.toString() );
-        }
+        serializeBody( response, body == null ? "" : body.toString() );
     }
 
     private String convertToJson( final Object value )
