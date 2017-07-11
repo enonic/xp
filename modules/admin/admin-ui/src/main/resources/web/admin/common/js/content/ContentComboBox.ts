@@ -37,7 +37,8 @@ module api.content {
                 .setSkipAutoDropShowOnValueChange(builder.skipAutoDropShowOnValueChange)
                 .setTreegridDropdownEnabled(treeGridDropdownEnabled)
                 .setOptionDataHelper(builder.optionDataHelper || new ContentSummaryOptionDataHelper())
-                .setOptionDataLoader(builder.optionDataLoader || new ContentSummaryOptionDataLoader())
+                .setOptionDataLoader(builder.optionDataLoader ||
+                                     ContentSummaryOptionDataLoader.create().setLoadStatus(builder.showStatus).build())
                 .setMinWidth(builder.minWidth);
 
             if(builder.showStatus && treeGridDropdownEnabled) {

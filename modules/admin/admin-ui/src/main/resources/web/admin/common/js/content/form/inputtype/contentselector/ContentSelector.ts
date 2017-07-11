@@ -88,7 +88,7 @@ module api.content.form.inputtype.contentselector {
 
             const optionDataLoader = ContentSummaryOptionDataLoader.create().setAllowedContentPaths(
                 this.allowedContentPaths).setContentTypeNames(this.allowedContentTypes).setRelationshipType(
-                this.relationshipType).setContent(this.config.content).build();
+                this.relationshipType).setContent(this.config.content).setLoadStatus(this.showStatus).build();
 
             const comboboxValue = this.getValueFromPropertyArray(propertyArray);
 

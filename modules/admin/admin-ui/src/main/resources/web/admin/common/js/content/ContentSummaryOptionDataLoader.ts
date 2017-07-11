@@ -19,58 +19,35 @@ module api.content {
 
         private request: ContentTreeSelectorQueryRequest = new ContentTreeSelectorQueryRequest();
 
-        private contentTypeNames: string[] = [];
-
-        private allowedContentPaths: string[] = [];
-
-        private relationshipType: string;
+        private loadStatus: boolean;
 
         constructor(builder?: ContentSummaryOptionDataLoaderBuilder) {
             if (builder) {
-                this.contentTypeNames = builder.contentTypeNames;
-                this.allowedContentPaths = builder.allowedContentPaths;
-                this.relationshipType = builder.relationshipType;
+                this.loadStatus = builder.loadStatus;
 
                 this.initRequest(builder);
             }
         }
 
         private initRequest(builder: ContentSummaryOptionDataLoaderBuilder) {
-            let request = this.request;
-            request.setContentTypeNames(builder.contentTypeNames);
-            request.setAllowedContentPaths(builder.allowedContentPaths);
-            request.setRelationshipType(builder.relationshipType);
-            request.setContent(builder.content);
+            this.request.setContentTypeNames(builder.contentTypeNames);
+            this.request.setAllowedContentPaths(builder.allowedContentPaths);
+            this.request.setRelationshipType(builder.relationshipType);
+            this.request.setContent(builder.content);
         }
 
         fetch(node: TreeNode<Option<ContentAndStatusTreeSelectorItem>>): wemQ.Promise<ContentAndStatusTreeSelectorItem> {
             this.request.setParentPath(node.getDataId() ? node.getData().displayValue.getPath() : null);
             if (this.request.getContent()) {
-                this.request.sendAndParse().then((items: ContentTreeSelectorItem[]) => {
-
-                    const contentSummaries: ContentSummary[] = items.map(item => item.getContent());
-
-                    return CompareContentRequest.fromContentSummaries(contentSummaries).sendAndParse().then(
-                        (compareResults: CompareContentResults) => {
-                            const contents: ContentSummaryAndCompareStatus[] = ContentSummaryAndCompareStatusFetcher.updateCompareStatus(
-                                contentSummaries, compareResults);
-
-                            return !!contents && contents.length > 0 ? contents[0] : null;
-                        });
-                });
+                return this.load().then(items => items[0]);
             } else {
-                return ContentSummaryFetcher.fetch(node.getData().displayValue.getContentId()).then(
-                    content => {
-                        return CompareContentRequest.fromContentSummaries([content]).sendAndParse().then(
-                            (compareResults: CompareContentResults) => {
-
-                                const compareResult = compareResults.get(content.getContentId().toString());
-
-                                return new ContentAndStatusTreeSelectorItem(
-                                    ContentSummaryAndCompareStatus.fromContentAndCompareAndPublishStatus(content,
-                                        compareResult.getCompareStatus(), compareResult.getPublishStatus()), false);
-                            });
-                    });
+                if (this.loadStatus) {
+                    return ContentSummaryAndCompareStatusFetcher.fetch(node.getData().displayValue.getContentId()).then(
+                        content => new ContentAndStatusTreeSelectorItem(content, false));
+                } else {
+                    return ContentSummaryFetcher.fetch(node.getData().displayValue.getContentId()).then(
+                        content => new ContentAndStatusTreeSelectorItem(ContentSummaryAndCompareStatus.fromContentSummary(content), false));
+                }
             }
         }
 
@@ -82,36 +59,73 @@ module api.content {
 
                 this.request.setParentPath(parentNode.getDataId() ? parentNode.getData().displayValue.getPath() : null);
 
-                return this.request.sendAndParse().then(items => {
-                    return CompareContentRequest.fromContentSummaries(items.map(item => item.getContent())).sendAndParse().then(
-                        (compareResults: CompareContentResults) => {
-                            const result = items.map(item => {
-                                const compareResult: CompareContentResult = compareResults.get(item.getId());
-                                const contentAndCompareStatus = ContentSummaryAndCompareStatus.fromContentAndCompareAndPublishStatus(
-                                    item.getContent(), compareResult.getCompareStatus(), compareResult.getPublishStatus());
-                                return new ContentAndStatusTreeSelectorItem(contentAndCompareStatus, item.getExpand());
-                            });
-
-                            return new OptionDataLoaderData(result,
-                                0,
-                                0);
-                        });
+                return this.load().then((result: ContentAndStatusTreeSelectorItem[]) => {
+                    return new OptionDataLoaderData(result, 0, 0);
                 });
             } else {
-                return ContentSummaryAndCompareStatusFetcher.fetchChildren(
-                    parentNode.getData() ? parentNode.getData().displayValue.getContentId() : null,
-                    from,
-                    size).then((response: ContentResponse<ContentSummaryAndCompareStatus>) => {
-                    return new OptionDataLoaderData(response.getContents().map(
-                        content => new ContentAndStatusTreeSelectorItem(content, false)),
-                        response.getMetadata().getHits(),
-                        response.getMetadata().getTotalHits());
-                });
+
+                if (this.loadStatus) {
+                    return ContentSummaryAndCompareStatusFetcher.fetchChildren(
+                        parentNode.getData() ? parentNode.getData().displayValue.getContentId() : null, from, size).then(
+                        (response: ContentResponse<ContentSummaryAndCompareStatus>) => {
+
+                            return new OptionDataLoaderData(response.getContents().map(
+                                content => new ContentAndStatusTreeSelectorItem(content, false)),
+                                response.getMetadata().getHits(),
+                                response.getMetadata().getTotalHits());
+                        });
+                } else {
+                    return ContentSummaryFetcher.fetchChildren(
+                        parentNode.getData() ? parentNode.getData().displayValue.getContentId() : null, from, size).then(
+                        (response: ContentResponse<ContentSummary>) => {
+
+                            return new OptionDataLoaderData(response.getContents().map(
+                                content => new ContentAndStatusTreeSelectorItem(ContentSummaryAndCompareStatus.fromContentSummary(
+                                    content), false)),
+                                response.getMetadata().getHits(),
+                                response.getMetadata().getTotalHits());
+                        });
+                }
             }
         }
 
         checkReadonly(items: ContentAndStatusTreeSelectorItem[]): wemQ.Promise<string[]> {
-            return ContentSummaryFetcher.getReadOnly(items.map(item => item.getContent().getContentSummary()));
+            return ContentSummaryFetcher.getReadOnly(items.map(item => item.getContent()));
+        }
+
+        private load(): wemQ.Promise<ContentAndStatusTreeSelectorItem[]> {
+            if (this.request.getContent()) {
+                return this.request.sendAndParse().then(items => {
+                    if (this.loadStatus) {
+                        return this.loadStatuses(items);
+                    } else {
+
+                        const deferred = wemQ.defer<ContentAndStatusTreeSelectorItem[]>();
+
+                        deferred.resolve( items.map((item: ContentTreeSelectorItem) => {
+                            return new ContentAndStatusTreeSelectorItem(ContentSummaryAndCompareStatus.fromContentSummary(
+                                item.getContent()), item.getExpand());
+                        }));
+
+                        return deferred.promise;
+                    }
+                });
+            }
+        }
+
+        private loadStatuses(contents: ContentTreeSelectorItem[]): wemQ.Promise<ContentAndStatusTreeSelectorItem[]> {
+            return CompareContentRequest.fromContentSummaries(contents.map(item => item.getContent())).sendAndParse().then(
+                (compareResults: CompareContentResults) => {
+
+                    return contents.map(item => {
+
+                        const compareResult: CompareContentResult = compareResults.get(item.getId());
+                        const contentAndCompareStatus = ContentSummaryAndCompareStatus.fromContentAndCompareAndPublishStatus(
+                            item.getContent(), compareResult.getCompareStatus(), compareResult.getPublishStatus());
+
+                        return new ContentAndStatusTreeSelectorItem(contentAndCompareStatus, item.getExpand());
+                    });
+                });
         }
 
         static create(): ContentSummaryOptionDataLoaderBuilder {
@@ -128,6 +142,8 @@ module api.content {
         allowedContentPaths: string[] = [];
 
         relationshipType: string;
+
+        loadStatus: boolean;
 
         public setContentTypeNames(contentTypeNames: string[]): ContentSummaryOptionDataLoaderBuilder {
             this.contentTypeNames = contentTypeNames;
@@ -146,6 +162,11 @@ module api.content {
 
         public setContent(content: ContentSummary): ContentSummaryOptionDataLoaderBuilder {
             this.content = content;
+            return this;
+        }
+
+        public setLoadStatus(value: boolean): ContentSummaryOptionDataLoaderBuilder {
+            this.loadStatus = value;
             return this;
         }
 

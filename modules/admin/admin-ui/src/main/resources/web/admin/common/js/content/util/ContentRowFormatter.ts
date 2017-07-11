@@ -59,9 +59,9 @@ module api.content.util {
         public static statusSelectorFormatter(row: number, cell: number, value: ContentAndStatusTreeSelectorItem, columnDef: any,
                                               node: TreeNode<Option<ContentAndStatusTreeSelectorItem>>) {
 
-            const data = node.getData().displayValue ? node.getData().displayValue.getContent() : null;
-
-            return ContentRowFormatter.doStatusFormat(data, value.getCompareStatus());
+            return ContentRowFormatter.doStatusFormat(
+                ContentSummaryAndCompareStatus.fromContentAndCompareAndPublishStatus(value.getContent(), value.getCompareStatus(),
+                    value.getPublishStatus()), value.getCompareStatus());
         }
 
         private static doStatusFormat(data: ContentSummaryAndCompareStatus, value: any) {
