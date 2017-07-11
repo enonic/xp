@@ -1,5 +1,6 @@
 module api.ui.security.acl {
 
+    import i18n = api.util.i18n;
     import Permission = api.security.acl.Permission;
     import PermissionState = api.security.acl.PermissionState;
 
@@ -15,20 +16,10 @@ module api.ui.security.acl {
         private valueChangedListeners: {(event: api.ValueChangedEvent):void}[] = [];
         private enabled: boolean = true;
 
-        private static OPTIONS: PermissionSelectorOption[] = [
-            {name: 'Read', value: Permission.READ},
-            {name: 'Create', value: Permission.CREATE},
-            {name: 'Modify', value: Permission.MODIFY},
-            {name: 'Delete', value: Permission.DELETE},
-            {name: 'Publish', value: Permission.PUBLISH},
-            {name: 'Read Permissions', value: Permission.READ_PERMISSIONS},
-            {name: 'Write Permissions', value: Permission.WRITE_PERMISSIONS}
-        ];
-
         constructor() {
             super('permission-selector');
 
-            PermissionSelector.OPTIONS.forEach((option: PermissionSelectorOption) => {
+            this.getOptions().forEach((option: PermissionSelectorOption) => {
                 let toggle = new PermissionToggle(option);
                 toggle.setEnabled(this.enabled);
                 toggle.onValueChanged((event: api.ValueChangedEvent) => {
@@ -39,6 +30,18 @@ module api.ui.security.acl {
                 this.toggles.push(toggle);
                 this.appendChild(toggle);
             });
+        }
+
+        private getOptions(): PermissionSelectorOption[] {
+            return [
+                {name: i18n('security.permission.read'), value: Permission.READ},
+                {name: i18n('security.permission.create'), value: Permission.CREATE},
+                {name: i18n('security.permission.modify'), value: Permission.MODIFY},
+                {name: i18n('security.permission.delete'), value: Permission.DELETE},
+                {name: i18n('security.permission.publish'), value: Permission.PUBLISH},
+                {name: i18n('security.permission.readpermissions'), value: Permission.READ_PERMISSIONS},
+                {name: i18n('security.permission.writepermissions'), value: Permission.WRITE_PERMISSIONS}
+            ];
         }
 
         setEnabled(enabled: boolean): PermissionSelector {

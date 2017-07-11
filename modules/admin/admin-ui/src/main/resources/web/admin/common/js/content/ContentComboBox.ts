@@ -15,6 +15,7 @@ module api.content {
     import TreeNode = api.ui.treegrid.TreeNode;
     import ContentRowFormatter = api.content.util.ContentRowFormatter;
     import GridColumn = api.ui.grid.GridColumn;
+    import i18n = api.util.i18n;
 
     export class ContentComboBox extends RichComboBox<ContentSummary> {
 
@@ -109,7 +110,7 @@ module api.content {
             let removeButtonEl = new api.dom.AEl('remove');
             let message = new api.dom.H6El('missing-content');
 
-            message.setHtml('No access to content with id=' + this.id);
+            message.setHtml(i18n('field.content.noaccess', this.id));
 
             removeButtonEl.onClicked((event: Event) => {
                 this.notifyRemoveClicked();

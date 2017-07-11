@@ -7,7 +7,7 @@ module api.ui {
      */
     export class NamesAndIconViewer<OBJECT> extends api.ui.Viewer<OBJECT> {
 
-        static EMPTY_DISPLAY_NAME: string = '<' + i18n('field.item.displayName') + '>';
+        private emptyDisplayName: string = '<' + i18n('field.item.displayName') + '>';
 
         private namesAndIconView: api.app.NamesAndIconView;
 
@@ -70,7 +70,7 @@ module api.ui {
 
         private normalizeDisplayName(displayName: string): string {
             if (api.util.StringHelper.isEmpty(displayName)) {
-                return NamesAndIconViewer.EMPTY_DISPLAY_NAME;
+                return this.emptyDisplayName;
             } else {
                 return api.content.ContentUnnamed.prettifyUnnamed(displayName);
             }

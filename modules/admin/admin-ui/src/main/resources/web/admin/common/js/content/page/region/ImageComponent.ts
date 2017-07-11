@@ -7,6 +7,7 @@ module api.content.page.region {
     import TextArea = api.form.inputtype.text.TextArea;
     import PropertyTree = api.data.PropertyTree;
     import PropertyEvent = api.data.PropertyEvent;
+    import i18n = api.util.i18n;
 
     export class ImageComponent extends Component implements api.Equitable, api.Cloneable {
 
@@ -45,8 +46,7 @@ module api.content.page.region {
             let formBuilder = new FormBuilder();
             formBuilder.addFormItem(new api.form.InputBuilder().
                 setName('caption').
-                setInputType(TextArea.getName()).
-                setLabel('Caption').
+                setInputType(TextArea.getName()).setLabel(i18n('field.caption')).
                 setOccurrences(new OccurrencesBuilder().setMinimum(0).setMaximum(1).build()).
                 build());
             this.form = formBuilder.build();

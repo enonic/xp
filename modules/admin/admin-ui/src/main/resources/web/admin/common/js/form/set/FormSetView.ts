@@ -4,6 +4,7 @@ module api.form {
     import PropertyArray = api.data.PropertyArray;
     import DragHelper = api.ui.DragHelper;
     import ValueTypes = api.data.ValueTypes;
+    import i18n = api.util.i18n;
 
     export class FormSetView<V extends FormSetOccurrenceView> extends FormItemView {
 
@@ -132,13 +133,13 @@ module api.form {
 
         private makeCollapseButton(): api.dom.AEl {
             let collapseButton = new api.dom.AEl('collapse-button');
-            collapseButton.setHtml('Collapse');
+            collapseButton.setHtml(i18n('button.collapse'));
             collapseButton.onClicked((event: MouseEvent) => {
                 if ((<FormSetOccurrences<V>> this.formItemOccurrences).isCollapsed()) {
-                    collapseButton.setHtml('Collapse');
+                    collapseButton.setHtml(i18n('button.collapse'));
                     (<FormSetOccurrences<V>> this.formItemOccurrences).showOccurrences(true);
                 } else {
-                    collapseButton.setHtml('Expand');
+                    collapseButton.setHtml(i18n('button.expand'));
                     (<FormSetOccurrences<V>> this.formItemOccurrences).showOccurrences(false);
                 }
                 event.stopPropagation();
