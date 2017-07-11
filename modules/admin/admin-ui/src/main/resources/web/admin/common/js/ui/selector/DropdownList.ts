@@ -114,7 +114,7 @@ module api.ui.selector {
                 }
             } else {
                 this.dropdownGrid.hide();
-                this.emptyDropdown.getEl().setInnerHtml(!!noOptionsText ? noOptionsText : i18n('field.selector.noMatch'));
+                this.emptyDropdown.getEl().setInnerHtml(!!noOptionsText ? noOptionsText : i18n('field.option.noitems'));
                 this.emptyDropdown.show();
             }
         }
