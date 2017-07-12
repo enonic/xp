@@ -1,10 +1,9 @@
 module api.content {
 
     import StringHelper = api.util.StringHelper;
+    import i18n = api.util.i18n;
 
     export class ContentUnnamed extends ContentName implements api.Equitable {
-
-        public static PRETTY_UNNAMED: string = 'unnamed';
 
         constructor(name: string) {
             super(name);
@@ -39,13 +38,17 @@ module api.content {
 
         public static prettifyUnnamed(name?: string) {
             if (!name) {
-                return `<${ContentUnnamed.PRETTY_UNNAMED}>`;
+                return `<${ContentUnnamed.getPrettyUnnamed()}>`;
             }
 
             let prettifiedName = name.replace(/-/g, ' ').trim();
-            prettifiedName = StringHelper.capitalizeAll(`${ContentUnnamed.PRETTY_UNNAMED} ${prettifiedName}`);
+            prettifiedName = StringHelper.capitalizeAll(`${ContentUnnamed.getPrettyUnnamed()} ${prettifiedName}`);
 
             return `<${prettifiedName}>`;
+        }
+
+        public static getPrettyUnnamed(): string {
+            return i18n('field.unnamed');
         }
     }
 }

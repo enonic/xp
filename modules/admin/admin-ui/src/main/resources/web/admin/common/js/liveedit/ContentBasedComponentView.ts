@@ -5,6 +5,7 @@ module api.liveedit {
     import ContentSummaryBuilder = api.content.ContentSummaryBuilder;
     import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
     import ContentTypeName = api.schema.content.ContentTypeName;
+    import i18n = api.util.i18n;
 
     export class ContentBasedComponentViewBuilder<COMPONENT extends Component> extends ComponentViewBuilder<COMPONENT> {
 
@@ -35,7 +36,7 @@ module api.liveedit {
         }
 
         private createEditAction(): api.ui.Action {
-            return new api.ui.Action('Edit').onExecuted(() => {
+            return new api.ui.Action(i18n('action.edit')).onExecuted(() => {
                 new api.content.event.EditContentEvent([this.generateContentSummaryAndCompareStatus()]).fire();
             });
         }

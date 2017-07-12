@@ -10,6 +10,8 @@ module api.ui.selector.combobox {
     import IFrameEl = api.dom.IFrameEl;
     import Body = api.dom.Body;
     import WindowDOM = api.dom.WindowDOM;
+    import GridColumn = api.ui.grid.GridColumn;
+    import i18n = api.util.i18n;
 
     export interface ComboBoxConfig<T> {
 
@@ -52,6 +54,8 @@ module api.ui.selector.combobox {
         optionDataLoader?: OptionDataLoader<T>;
 
         onDropdownShownCallback?: () => wemQ.Promise<void>;
+
+        createColumns?: GridColumn<T>[];
     }
 
     export enum PositionType {
@@ -177,7 +181,7 @@ module api.ui.selector.combobox {
             this.appendChild(this.dropdownHandle);
 
             if (this.selectedOptionsView && (config.maximumOccurrences !== 1)) {
-                this.applySelectionsButton = new Button('Apply');
+                this.applySelectionsButton = new Button(i18n('action.apply'));
                 this.applySelectionsButton.addClass('small apply-button');
                 this.applySelectionsButton.hide();
                 this.appendChild(this.applySelectionsButton);
@@ -192,7 +196,8 @@ module api.ui.selector.combobox {
                 multipleSelections: (this.selectedOptionsView && (config.maximumOccurrences !== 1)),
                 isDropdownGrid: config.treegridDropdownEnabled,
                 optionDataHelper: config.optionDataHelper,
-                optionDataLoader: config.optionDataLoader
+                optionDataLoader: config.optionDataLoader,
+                createColumns: config.createColumns
             });
 
             this.appendChild(this.comboBoxDropdown.getEmptyDropdown());
@@ -788,7 +793,7 @@ module api.ui.selector.combobox {
                 if (this.delayedInputValueChangedHandling === 0) {
                     this.handleInputValueChanged();
                 } else if (!event.valuesAreEqual()) {
-                    this.setEmptyDropdownText('Just keep on typing...');
+                    this.setEmptyDropdownText(i18n('field.search.placeholder'));
                     this.delayedHandleInputValueChangedFnCall.delayCall();
                 }
             });

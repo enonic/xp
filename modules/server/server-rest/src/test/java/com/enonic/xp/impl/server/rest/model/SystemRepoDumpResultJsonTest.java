@@ -37,25 +37,23 @@ public class SystemRepoDumpResultJsonTest
         final SystemDumpResult systemDumpResult = SystemDumpResult.create().
             add( RepoDumpResult.create( RepositoryId.from( "repo1" ) ).
                 add( BranchDumpResult.create( Branch.from( "branch1" ) ).
-                    addedVersions( 10 ).
                     addedNodes( 5 ).
                     build() ).
                 add( BranchDumpResult.create( Branch.from( "branch2" ) ).
-                    addedVersions( 109 ).
                     addedNodes( 23 ).
                     build() ).
+                addedVersion().
                 build() ).
             add( RepoDumpResult.create( RepositoryId.from( "repo2" ) ).
                 add( BranchDumpResult.create( Branch.from( "branch3" ) ).
-                    addedVersions( 10 ).
                     addedNodes( 5 ).
                     build() ).
                 add( BranchDumpResult.create( Branch.from( "branch4" ) ).
-                    addedVersions( 109 ).
                     addedNodes( 23 ).
                     error( DumpError.error( "cannot find binary with version 123" ) ).
                     error( DumpError.error( "cannot find version with id 123" ) ).
                     build() ).
+                addedVersion().
                 build() ).
             build();
 

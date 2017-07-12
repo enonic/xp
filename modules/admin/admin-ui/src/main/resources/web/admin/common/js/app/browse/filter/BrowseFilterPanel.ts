@@ -1,12 +1,14 @@
 module api.app.browse.filter {
 
+    import i18n = api.util.i18n;
+
     export class BrowseFilterPanel<T> extends api.ui.panel.Panel {
 
-        private searchStartedListeners: {():void}[] = [];
+        private searchStartedListeners: {(): void}[] = [];
 
-        private hideFilterPanelButtonClickedListeners: {():void}[] = [];
+        private hideFilterPanelButtonClickedListeners: {(): void}[] = [];
 
-        private showResultsButtonClickedListeners: {():void}[] = [];
+        private showResultsButtonClickedListeners: {(): void}[] = [];
 
         private aggregationContainer: api.aggregation.AggregationContainer;
 
@@ -22,7 +24,7 @@ module api.app.browse.filter {
 
         protected filterPanelRefreshNeeded: boolean = false;
 
-        private refreshStartedListeners: {():void}[] = [];
+        private refreshStartedListeners: {(): void}[] = [];
 
         protected selectionSection: ConstraintSection<T>;
 
@@ -39,7 +41,7 @@ module api.app.browse.filter {
             this.showResultsButton.onClicked(() => this.notifyShowResultsButtonPressed());
             showResultsButtonWrapper.appendChild(this.showResultsButton);
 
-            this.searchField = new TextSearchField('Search');
+            this.searchField = new TextSearchField(i18n('panel.filter.search'));
             this.searchField.onValueChanged(() => {
                 this.search(this.searchField);
             });
@@ -133,7 +135,8 @@ module api.app.browse.filter {
         }
 
         protected createConstraintSection(): api.app.browse.filter.ConstraintSection<T> {
-            return new api.app.browse.filter.ConstraintSection<T>('Selected Items', () => this.onCloseFilterInConstrainedMode());
+            return new api.app.browse.filter.ConstraintSection<T>(i18n(
+                'panel.filter.selecteditems'), () => this.onCloseFilterInConstrainedMode());
         }
 
         protected onCloseFilterInConstrainedMode() {
@@ -281,12 +284,12 @@ module api.app.browse.filter {
         updateHitsCounter(hits: number, emptyFilterValue: boolean = false) {
             let unfilteredSelection = (this.hasConstraint() && hits === this.getSelectionItems().length);
             if (emptyFilterValue || unfilteredSelection) {
-                this.hitsCounterEl.setHtml(hits + ' total');
+                this.hitsCounterEl.setHtml(i18n('panel.filter.totalhits', hits));
             } else {
                 if (hits !== 1) {
-                    this.hitsCounterEl.setHtml(hits + ' hits');
+                    this.hitsCounterEl.setHtml(i18n('panel.filter.hits', hits));
                 } else {
-                    this.hitsCounterEl.setHtml(hits + ' hit');
+                    this.hitsCounterEl.setHtml(i18n('panel.filter.hit', hits));
                 }
             }
 
@@ -298,7 +301,7 @@ module api.app.browse.filter {
         }
 
         updateResultsTitle(allShown: boolean) {
-            const title = allShown ? 'Show all' : 'Show results';
+            const title = allShown ? i18n('panel.filter.showall') : i18n('panel.filter.showresults');
             this.showResultsButton.setHtml(title);
         }
     }
@@ -321,9 +324,9 @@ module api.app.browse.filter {
             }
         }
 
-        private appendCloseButton(closeCallback: () => void):  api.ui.button.ActionButton {
+        private appendCloseButton(closeCallback: () => void): api.ui.button.ActionButton {
             let action = new api.ui.Action('').onExecuted(() => closeCallback());
-            let button = new  api.ui.button.ActionButton(action);
+            let button = new api.ui.button.ActionButton(action);
 
             button.addClass('btn-close');
             this.appendChild(button);

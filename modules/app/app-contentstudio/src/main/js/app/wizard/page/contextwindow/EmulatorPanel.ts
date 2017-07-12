@@ -1,6 +1,7 @@
 import '../../../../api.ts';
 import {LiveEditPageProxy} from '../LiveEditPageProxy';
 import {EmulatorGrid} from './EmulatorGrid';
+import {EmulatorDevice} from './EmulatorDevice';
 import i18n = api.util.i18n;
 
 declare var CONFIG;
@@ -30,7 +31,7 @@ export class EmulatorPanel extends api.ui.panel.Panel {
         this.grid = new EmulatorGrid(this.dataView);
         this.appendChild(this.grid);
 
-        this.getData();
+        this.initData();
 
         // Using jQuery since grid.setOnClick fires event twice, bug in slickgrid
         wemjq(this.getHTMLElement()).on('click', '.grid-row > div', (event: JQueryEventObject) => {
@@ -60,14 +61,34 @@ export class EmulatorPanel extends api.ui.panel.Panel {
         });
     }
 
-    private getData(): void {
-        wemjq.ajax({
-            url: CONFIG.assetsUri + '/data/devices.json',
-            success: (data: any, textStatus: string, jqXHR: JQueryXHR) => {
-                this.dataView.setItems(EmulatorGrid.toSlickData(data));
-                this.grid.setActiveCell(0, 0); // select first option
-            }
-        });
+    private initData(): void {
+        this.dataView.setItems(this.generateEmulatorDevices());
+        this.grid.setActiveCell(0, 0); // select first option
+    }
+
+    private generateEmulatorDevices(): EmulatorDevice[] {
+        const data: EmulatorDevice[] = [];
+
+        const fullSizeDevice: EmulatorDevice = new EmulatorDevice(0, i18n(
+            'live.view.device.fullsize'), 'monitor', 100, 100, '%', true, false);
+        const smallPhoneDevice: EmulatorDevice = new EmulatorDevice(1, i18n(
+            'live.view.device.smallphone'), 'mobile', 320, 480, 'px', false, true);
+        const mediumPhoneDevice: EmulatorDevice = new EmulatorDevice(2, i18n(
+            'live.view.device.mediumphone'), 'mobile', 375, 667, 'px', false, true);
+        const largePhoneDevice: EmulatorDevice = new EmulatorDevice(3, i18n(
+            'live.view.device.largephone'), 'mobile', 414, 736, 'px', false, true);
+        const tabletDevice: EmulatorDevice = new EmulatorDevice(4, i18n('live.view.device.tablet'), 'tablet', 768, 1024, 'px', false, true);
+        const notebook13Device: EmulatorDevice = new EmulatorDevice(5, i18n(
+            'live.view.device.notebook13'), 'monitor', 1280, 800, 'px', false, false);
+        const notebook15Device: EmulatorDevice = new EmulatorDevice(6, i18n(
+            'live.view.device.notebook15'), 'monitor', 1366, 768, 'px', false, false);
+        const highDefinitionTVDevice: EmulatorDevice = new EmulatorDevice(7, i18n(
+            'live.view.device.highDefinitionTV'), 'monitor', 1920, 1080, 'px', false, false);
+
+        data.push(fullSizeDevice, smallPhoneDevice, mediumPhoneDevice, largePhoneDevice, tabletDevice, notebook13Device, notebook15Device,
+            highDefinitionTVDevice);
+
+        return data;
     }
 
     private updateLiveEditFrameContainerHeight(height: number) { // this helps to put horizontal scrollbar in the bottom of live edit frame

@@ -32,11 +32,11 @@ import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.Assert.*;
 
-public class NodeVersionJsonSerializerTest
+public class NodeVersionJsonDumpSerializerTest
 {
     private final NodeVersionJsonSerializer serializer;
 
-    public NodeVersionJsonSerializerTest()
+    public NodeVersionJsonDumpSerializerTest()
     {
         this.serializer = NodeVersionJsonSerializer.create( true );
     }

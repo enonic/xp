@@ -1,5 +1,6 @@
 module api.liveedit {
     import Component = api.content.page.region.Component;
+    import i18n = api.util.i18n;
 
     export interface ElementDimensions {
         top: number;
@@ -770,7 +771,7 @@ module api.liveedit {
         }
 
         getName(): string {
-            return '[No Name]';
+            return i18n('live.view.itemview.noname');
         }
 
         getIconUrl(content: api.content.Content): string {
@@ -908,15 +909,15 @@ module api.liveedit {
         private getInsertActions(liveEditModel: LiveEditModel): api.ui.Action[] {
             let isFragmentContent = liveEditModel.getContent().getType().isFragment();
 
-            let actions = [this.createInsertSubAction('Image', api.liveedit.image.ImageItemType.get()),
-                this.createInsertSubAction('Part', api.liveedit.part.PartItemType.get())];
+            let actions = [this.createInsertSubAction(i18n('live.view.insert.image'), api.liveedit.image.ImageItemType.get()),
+                this.createInsertSubAction(i18n('live.view.insert.part'), api.liveedit.part.PartItemType.get())];
 
             let isInRegion = api.ObjectHelper.iFrameSafeInstanceOf(this.getRegionView(), RegionView);
             if (isInRegion && !this.getRegionView().hasParentLayoutComponentView() && !isFragmentContent) {
-                actions.push(this.createInsertSubAction('Layout', api.liveedit.layout.LayoutItemType.get()));
+                actions.push(this.createInsertSubAction(i18n('live.view.insert.layout'), api.liveedit.layout.LayoutItemType.get()));
             }
-            actions.push(this.createInsertSubAction('Text', api.liveedit.text.TextItemType.get()));
-            actions.push(this.createInsertSubAction('Fragment', api.liveedit.fragment.FragmentItemType.get()));
+            actions.push(this.createInsertSubAction(i18n('live.view.insert.text'), api.liveedit.text.TextItemType.get()));
+            actions.push(this.createInsertSubAction(i18n('live.view.insert.fragment'), api.liveedit.fragment.FragmentItemType.get()));
 
             return actions;
         }
@@ -926,11 +927,11 @@ module api.liveedit {
         }
 
         protected createInsertAction(): api.ui.Action {
-            return new api.ui.Action('Insert').setChildActions(this.getInsertActions(this.liveEditModel));
+            return new api.ui.Action(i18n('action.insert')).setChildActions(this.getInsertActions(this.liveEditModel));
         }
 
         protected createSelectParentAction(): api.ui.Action {
-            let action = new api.ui.Action('Select parent');
+            let action = new api.ui.Action(i18n('live.view.selectparent'));
 
             action.setSortOrder(0);
             action.onExecuted(() => {

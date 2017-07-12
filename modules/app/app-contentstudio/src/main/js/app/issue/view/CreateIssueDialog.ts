@@ -149,7 +149,7 @@ export class CreateIssueAction extends api.ui.Action {
     public updateLabel(count: number) {
         let label = i18n('action.createIssue');
         if (count > 1) {
-            label += '(' + count + ')';
+            label += ' (' + count + ')';
         }
         this.setLabel(label);
     }

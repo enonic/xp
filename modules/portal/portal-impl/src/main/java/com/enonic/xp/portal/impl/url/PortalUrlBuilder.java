@@ -171,7 +171,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
     {
         params.putAll( this.params.getParams() );
 
-        if ( isPortalMode() )
+        if ( isPortalBase() )
         {
             appendPart( url, getBranch().toString() );
         }
@@ -198,19 +198,9 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         }
     }
 
-    private boolean isAppMode()
+    private boolean isPortalBase()
     {
-        return this.portalRequest.getMode() == RenderMode.APP;
-    }
-
-    private boolean isAdminMode()
-    {
-        return this.portalRequest.getMode() == RenderMode.ADMIN;
-    }
-
-    private boolean isPortalMode()
-    {
-        return !( isAppMode() || isAdminMode() );
+        return this.portalRequest.getBaseUri().startsWith( "/portal" ) || this.portalRequest.getBaseUri().startsWith( "/admin/portal" );
     }
 
     protected final String buildErrorUrl( final int code, final String message )
@@ -218,7 +208,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         final StringBuilder str = new StringBuilder();
         appendPart( str, getBaseUri() );
 
-        if ( isPortalMode() )
+        if ( isPortalBase() )
         {
             appendPart( str, getBranch().toString() );
             appendPart( str, this.portalRequest.getContentPath().toString() );

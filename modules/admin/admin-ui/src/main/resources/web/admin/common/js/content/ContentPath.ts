@@ -123,7 +123,7 @@ module api.content {
             let prettyElements: string[] = [];
             this.elements.forEach((element: string) => {
                 if (ContentName.fromString(element).isUnnamed()) {
-                    prettyElements.push('<' + ContentUnnamed.PRETTY_UNNAMED + '>');
+                    prettyElements.push('<' + ContentUnnamed.getPrettyUnnamed() + '>');
                 } else {
                     prettyElements.push(element);
                 }

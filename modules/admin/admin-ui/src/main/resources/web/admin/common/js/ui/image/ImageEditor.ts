@@ -8,6 +8,7 @@ module api.ui.image {
     import TabMenuItem = api.ui.tab.TabMenuItem;
     import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
     import NavigatorEvent = api.ui.NavigatorEvent;
+    import i18n = api.util.i18n;
 
     export interface Point {
         x: number;
@@ -107,7 +108,7 @@ module api.ui.image {
 
             this.image = new ImgEl(null, 'image-bg', true);
 
-            let resizeListener = (item) => {
+            let resizeHandler = () => {
                 if (this.isVisible()) {
                     this.updateImageDimensions(false, true);
                     this.updateStickyToolbar();
@@ -121,7 +122,7 @@ module api.ui.image {
                 this.updateStickyToolbar();
                 this.unShown(updateImageOnShown);
                 if (isFirstLoad) {
-                    api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, resizeListener);
+                    api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, resizeHandler);
                     isFirstLoad = false;
                 }
             };
@@ -630,7 +631,7 @@ module api.ui.image {
 
             let editContainer = new DivEl('edit-container');
 
-            this.editResetButton = new Button('Reset');
+            this.editResetButton = new Button(i18n('button.reset'));
             this.editResetButton.setVisible(false).addClass('transparent').onClicked((event: MouseEvent) => {
                 event.stopPropagation();
 
@@ -643,7 +644,7 @@ module api.ui.image {
                 }
             });
 
-            let applyButton = new Button('Apply');
+            let applyButton = new Button(i18n('button.apply'));
             applyButton.addClass('blue').onClicked((event: MouseEvent) => {
                 event.stopPropagation();
 
@@ -668,7 +669,7 @@ module api.ui.image {
             editContainer.appendChildren(this.editResetButton, applyButton, cancelButton);
 
             let standbyContainer = new DivEl('standby-container');
-            let resetButton = new Button('Reset filters');
+            let resetButton = new Button(i18n('editor.resetfilters'));
             resetButton.addClass('button-reset transparent').setVisible(false).onClicked((event: MouseEvent) => {
                 event.stopPropagation();
 
@@ -694,7 +695,7 @@ module api.ui.image {
 
             this.editCropButton = new Button();
             // tslint:disable-next-line:no-unused-new
-            new Tooltip(this.editCropButton, 'Crop Image', 1000);
+            new Tooltip(this.editCropButton, i18n('editor.cropimage'), 1000);
             this.editCropButton.addClass('button-crop transparent icon-crop').onClicked((event: MouseEvent) => {
                 event.stopPropagation();
 
@@ -712,7 +713,7 @@ module api.ui.image {
 
             this.editFocusButton = new Button();
             // tslint:disable-next-line:no-unused-new
-            new Tooltip(this.editFocusButton, 'Set Autofocus', 1000);
+            new Tooltip(this.editFocusButton, i18n('editor.setautofocus'), 1000);
             this.editFocusButton.addClass('button-focus transparent icon-center_focus_strong').onClicked((event: MouseEvent) => {
                 event.stopPropagation();
 
@@ -760,7 +761,7 @@ module api.ui.image {
             this.zoomLine.appendChild(this.zoomKnob);
 
             let zoomTitle = new api.dom.SpanEl('zoom-title');
-            zoomTitle.setHtml('Zoom');
+            zoomTitle.setHtml(i18n('field.zoom'));
 
             this.zoomContainer.appendChildren(zoomTitle, this.zoomLine);
 
@@ -870,7 +871,7 @@ module api.ui.image {
             if (ImageEditor.debug) {
                 console.log('enableFocusEditMode, applyChanges=' + applyChanges + ', enterEditMode=' + enterEditMode);
             }
-            this.editResetButton.setLabel('Reset Autofocus').setVisible(!this.focusData.auto);
+            this.editResetButton.setLabel(i18n('editor.resetautofocus')).setVisible(!this.focusData.auto);
 
             this.setFocusEditMode(true);
 
@@ -878,6 +879,7 @@ module api.ui.image {
                 this.setEditMode(true, applyChanges);
             }
 
+            this.updateImageDimensions(false, true);
             this.bindFocusMouseListeners();
             this.updateFocusMaskPosition();
         }
@@ -893,6 +895,7 @@ module api.ui.image {
 
             if (exitEditMode) {
                 this.setEditMode(false, applyChanges);
+                this.updateImageDimensions(false, true);
             }
         }
 
@@ -1189,7 +1192,7 @@ module api.ui.image {
             if (ImageEditor.debug) {
                 console.log('enableCropEditMode, applyChanges=' + applyChanges + ', enterEditMode=' + enterEditMode);
             }
-            this.editResetButton.setLabel('Reset Mask').setVisible(!this.cropData.auto);
+            this.editResetButton.setLabel(i18n('editor.resetmask')).setVisible(!this.cropData.auto);
 
             this.setCropEditMode(true);
 
@@ -1197,6 +1200,7 @@ module api.ui.image {
                 this.setEditMode(true, applyChanges);
             }
 
+            this.updateImageDimensions(false, true);
             this.bindCropMouseListeners();
             this.updateCropMaskPosition();
             this.updateZoomPosition();
@@ -1213,6 +1217,7 @@ module api.ui.image {
 
             if (exitEditMode) {
                 this.setEditMode(false, applyChanges);
+                this.updateImageDimensions(false, true);
             }
         }
 

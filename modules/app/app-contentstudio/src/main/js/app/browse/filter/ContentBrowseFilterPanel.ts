@@ -494,7 +494,7 @@ export class DependenciesSection extends api.app.browse.filter.ConstraintSection
 
     public setInbound(inbound: boolean) {
         this.inbound = inbound;
-        this.setLabel(inbound ? 'Inbound Dependencies' : 'Outbound Dependencies');
+        this.setLabel(inbound ? i18n('panel.filter.dependencies.inbound') : i18n('panel.filter.dependencies.outbound'));
     }
 
     public setItems(items: ContentSummaryAndCompareStatus[]) {

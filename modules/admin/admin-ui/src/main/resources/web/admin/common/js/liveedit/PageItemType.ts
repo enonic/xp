@@ -2,6 +2,7 @@ module api.liveedit {
 
     import Content = api.content.Content;
     import Site = api.content.site.Site;
+    import i18n = api.util.i18n;
 
     export class PageItemType extends ItemType {
 
@@ -31,7 +32,7 @@ module api.liveedit {
         }
 
         createView(config: CreateItemViewConfig<any,any>): PageView {
-            throw new Error('Not supported');
+            throw new Error(i18n('live.view.itemtype.error.createviewnotsupported'));
         }
     }
 

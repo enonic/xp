@@ -133,8 +133,8 @@
 ///<reference path='content/event/_module.ts' />
 ///<reference path='content/resource/result/_module.ts' />
 ///<reference path='content/resource/_module.ts' />
-///<reference path='content/_module.ts' />
 ///<reference path='content/util/_module.ts' />
+///<reference path='content/_module.ts' />
 ///<reference path='content/order/_module.ts' />
 ///<reference path='content/image/_module.ts' />
 ///<reference path='content/page/_module.ts' />

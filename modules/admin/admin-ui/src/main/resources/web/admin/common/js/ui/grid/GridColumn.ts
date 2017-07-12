@@ -164,6 +164,12 @@ module api.ui.grid {
             return this;
         }
 
+        setBoundaryWidth(minWidth: number, maxWidth: number): GridColumnBuilder<T> {
+            this.minWidth = minWidth;
+            this.maxWidth = maxWidth;
+            return this;
+        }
+
         build(): GridColumn<T> {
             return new GridColumn<T>(this);
         }

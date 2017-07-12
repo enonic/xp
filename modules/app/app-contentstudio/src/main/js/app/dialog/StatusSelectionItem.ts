@@ -1,5 +1,4 @@
 import '../../api.ts';
-import {ContentRowFormatter} from '../browse/ContentRowFormatter';
 
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
@@ -7,6 +6,7 @@ import PublishStatus = api.content.PublishStatus;
 import BrowseItem = api.app.browse.BrowseItem;
 import Tooltip = api.ui.Tooltip;
 import i18n = api.util.i18n;
+import ContentRowFormatter = api.content.util.ContentRowFormatter;
 
 export class StatusSelectionItem extends api.app.browse.SelectionItem<ContentSummaryAndCompareStatus> {
 

@@ -15,6 +15,7 @@ import PageDescriptor = api.content.page.PageDescriptor;
 import PageMode = api.content.page.PageMode;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
+import i18n = api.util.i18n;
 
 export class PageTemplateWidgetItemView
     extends WidgetItemView {
@@ -172,15 +173,15 @@ class PageTemplateViewer {
     private getPageModeString(): string {
         switch (this.pageMode) {
         case PageMode.AUTOMATIC:
-            return 'Automatic';
+            return i18n('widget.pagetemplate.automatic');
         case PageMode.FORCED_CONTROLLER:
-            return 'Custom';
+            return i18n('widget.pagetemplate.forcedcontroller');
         case PageMode.FORCED_TEMPLATE:
-            return 'Page Template';
+            return i18n('widget.pagetemplate.forcedtemplate');
         case PageMode.FRAGMENT:
-            return 'Fragment';
+            return i18n('widget.pagetemplate.fragment');
         default:
-            return 'Page Template is not used';
+            return i18n('widget.pagetemplate.default');
         }
     }
 
