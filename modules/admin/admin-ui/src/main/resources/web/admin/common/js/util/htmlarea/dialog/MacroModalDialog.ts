@@ -18,7 +18,7 @@ module api.util.htmlarea.dialog {
         private callback: Function;
 
         constructor(config: HtmlAreaMacro, content: api.content.ContentSummary, applicationKeys: ApplicationKey[]) {
-            super(config.editor, 'Insert Macro', 'macro-modal-dialog');
+            super(<HtmlAreaModalDialogConfig>{editor:config.editor, title:'Insert Macro', cls:'macro-modal-dialog'});
 
             this.callback = config.callback;
 

@@ -1,4 +1,4 @@
-module api.content.form.inputtype.image {
+module api.content.image {
 
     export class ImageSelectorViewer extends api.ui.NamesAndIconViewer<ImageSelectorDisplayValue> {
 

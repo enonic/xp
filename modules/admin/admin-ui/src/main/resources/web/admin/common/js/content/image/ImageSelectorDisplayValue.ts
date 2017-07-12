@@ -1,4 +1,4 @@
-module api.content.form.inputtype.image {
+module api.content.image {
 
     import ContentSummary = api.content.ContentSummary;
     import UploadItem = api.ui.uploader.UploadItem;

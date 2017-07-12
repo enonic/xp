@@ -1,22 +1,17 @@
-module api.content {
+module api.content.image {
 
-    import OptionDataLoader = api.ui.selector.OptionDataLoader;
     import TreeNode = api.ui.treegrid.TreeNode;
-    import ContentSummaryFetcher = api.content.resource.ContentSummaryFetcher;
+    import ContentAndStatusTreeSelectorItem = api.content.resource.ContentAndStatusTreeSelectorItem;
     import OptionDataLoaderData = api.ui.selector.OptionDataLoaderData;
-    import ContentResponse = api.content.resource.result.ContentResponse;
-    import Option = api.ui.selector.Option;
-    import ContentQueryRequest = api.content.resource.ContentQueryRequest;
-    import ContentTreeSelectorQueryRequest = api.content.resource.ContentTreeSelectorQueryRequest;
     import ContentTreeSelectorItem = api.content.resource.ContentTreeSelectorItem;
-    import ImageSelectorDisplayValue = api.content.form.inputtype.image.ImageSelectorDisplayValue;
+    import Option = api.ui.selector.Option;
 
     export class ImageOptionDataLoader extends ContentSummaryOptionDataLoader {
 
-        protected createOptionData(data: ContentTreeSelectorItem[]) {
+        protected createOptionData(data: ContentAndStatusTreeSelectorItem[], hits:number, totalHits: number) {
             return new OptionDataLoaderData(data.map((cur => new ImageTreeSelectorItem(cur.getContent(), cur.getExpand()))),
-                0,
-                0);
+                hits,
+                totalHits);
         }
 
         static create(): ImageOptionDataLoaderBuilder {
@@ -77,6 +72,10 @@ module api.content {
 
         getContentSummary(): ContentSummary {
             return this.imageSelectorDisplayValue.getContentSummary();
+        }
+
+        getTypeLocaleName(): string {
+            return this.imageSelectorDisplayValue.getTypeLocaleName();
         }
     }
 }
