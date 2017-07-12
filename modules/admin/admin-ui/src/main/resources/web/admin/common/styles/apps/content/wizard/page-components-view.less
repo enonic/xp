@@ -3,7 +3,7 @@
   width: 400px;
   max-width: 100%;
   background-color: rgba(255, 255, 255, 0.9);
-  z-index: @z-index-modal-dialog;
+  z-index: @z-index-context-window;
   display: none;
   margin-top: 42px;
   .notSelectable();
@@ -11,6 +11,10 @@
   .flexbox();
   flex-flow: column nowrap;
   align-items: stretch;
+
+  &.dragging {
+    z-index: @z-index-modal-dialog;
+  }
 
   &.modal {
     left: 0 !important;
