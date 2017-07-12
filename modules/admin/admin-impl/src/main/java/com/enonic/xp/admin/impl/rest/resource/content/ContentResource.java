@@ -12,6 +12,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -767,11 +768,10 @@ public final class ContentResource
 
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
 
+        final Predicate<ContentId> publishAllowedCondition = id -> this.contentService.getPermissionsById( id ).isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(),
+                                                                                                                        Permission.PUBLISH );
         //check if user has access to publish every content
-        final Boolean isAllPublishable = authInfo.hasRole( RoleKeys.ADMIN )
-            ? true
-            : fullPublishList.stream().allMatch( id -> this.contentService.getPermissionsById( id ).
-                isAllowedFor( authInfo.getPrincipals(), Permission.PUBLISH ) );
+        final Boolean isAllPublishable = authInfo.hasRole( RoleKeys.ADMIN ) ? true : fullPublishList.stream().allMatch(publishAllowedCondition);
 
         //filter required dependant ids
         final ContentIds requiredDependantIds = ContentIds.from( requiredIds.stream().

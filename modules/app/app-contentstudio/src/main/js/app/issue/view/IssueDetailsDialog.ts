@@ -397,7 +397,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
                 this.updateButtonCount(i18n('action.publish'), countToPublish);
 
                 this.toggleAction(countToPublish > 0);
-                this.getButtonRow().getActionMenu().setEnabled(!depResult.isContainsInvalid());
+                this.getButtonRow().getActionMenu().setEnabled(!depResult.isContainsInvalid() && depResult.isAllPublishable());
 
                 this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
                     this.setDependantItems(dependants);
