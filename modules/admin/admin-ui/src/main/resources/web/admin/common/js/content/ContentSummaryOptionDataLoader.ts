@@ -40,15 +40,15 @@ module api.content {
             this.request.setParentPath(node.getDataId() ? node.getData().displayValue.getPath() : null);
             if (this.request.getContent()) {
                 return this.load().then(items => items[0]);
-            } else {
-                if (this.loadStatus) {
-                    return ContentSummaryAndCompareStatusFetcher.fetch(node.getData().displayValue.getContentId()).then(
-                        content => new ContentAndStatusTreeSelectorItem(content, false));
-                } else {
-                    return ContentSummaryFetcher.fetch(node.getData().displayValue.getContentId()).then(
-                        content => new ContentAndStatusTreeSelectorItem(ContentSummaryAndCompareStatus.fromContentSummary(content), false));
-                }
             }
+
+            if (this.loadStatus) {
+                return ContentSummaryAndCompareStatusFetcher.fetch(node.getData().displayValue.getContentId()).then(
+                    content => new ContentAndStatusTreeSelectorItem(content, false));
+            }
+
+            return ContentSummaryFetcher.fetch(node.getData().displayValue.getContentId()).then(
+                content => new ContentAndStatusTreeSelectorItem(ContentSummaryAndCompareStatus.fromContentSummary(content), false));
         }
 
         fetchChildren(parentNode: TreeNode<Option<ContentTreeSelectorItem>>, from: number = 0,
@@ -63,29 +63,28 @@ module api.content {
                 return this.load().then((result: ContentAndStatusTreeSelectorItem[]) => {
                     return this.createOptionData(result, 0, 0);
                 });
-            } else {
-
-                if (this.loadStatus) {
-                    return ContentSummaryAndCompareStatusFetcher.fetchChildren(
-                        parentNode.getData() ? parentNode.getData().displayValue.getContentId() : null, from, size).then(
-                        (response: ContentResponse<ContentSummaryAndCompareStatus>) => {
-
-                            return this.createOptionData(response.getContents().map(
-                                content => new ContentAndStatusTreeSelectorItem(content, false)),
-                                response.getMetadata().getHits(),
-                                response.getMetadata().getTotalHits());
-                        });
-                } else {
-                    return ContentSummaryFetcher.fetchChildren(
-                        parentNode.getData() ? parentNode.getData().displayValue.getContentId() : null, from, size).then(
-                        (response: ContentResponse<ContentSummary>) => {
-
-                            return this.createOptionData(response.getContents().map(
-                                content => new ContentAndStatusTreeSelectorItem(ContentSummaryAndCompareStatus.fromContentSummary(
-                                    content), false)), response.getMetadata().getHits(), response.getMetadata().getTotalHits());
-                        });
-                }
             }
+
+            if (this.loadStatus) {
+                return ContentSummaryAndCompareStatusFetcher.fetchChildren(
+                    parentNode.getData() ? parentNode.getData().displayValue.getContentId() : null, from, size).then(
+                    (response: ContentResponse<ContentSummaryAndCompareStatus>) => {
+
+                        return this.createOptionData(response.getContents().map(
+                            content => new ContentAndStatusTreeSelectorItem(content, false)),
+                            response.getMetadata().getHits(),
+                            response.getMetadata().getTotalHits());
+                    });
+            }
+
+            return ContentSummaryFetcher.fetchChildren(
+                parentNode.getData() ? parentNode.getData().displayValue.getContentId() : null, from, size).then(
+                (response: ContentResponse<ContentSummary>) => {
+
+                    return this.createOptionData(response.getContents().map(
+                        content => new ContentAndStatusTreeSelectorItem(ContentSummaryAndCompareStatus.fromContentSummary(
+                            content), false)), response.getMetadata().getHits(), response.getMetadata().getTotalHits());
+                });
         }
 
         protected createOptionData(data: ContentAndStatusTreeSelectorItem[], hits: number,
@@ -102,17 +101,16 @@ module api.content {
                 return this.request.sendAndParse().then(items => {
                     if (this.loadStatus) {
                         return this.loadStatuses(items);
-                    } else {
-
-                        const deferred = wemQ.defer<ContentAndStatusTreeSelectorItem[]>();
-
-                        deferred.resolve(items.map((item: ContentTreeSelectorItem) => {
-                            return new ContentAndStatusTreeSelectorItem(ContentSummaryAndCompareStatus.fromContentSummary(
-                                item.getContent()), item.getExpand());
-                        }));
-
-                        return deferred.promise;
                     }
+
+                    const deferred = wemQ.defer<ContentAndStatusTreeSelectorItem[]>();
+
+                    deferred.resolve(items.map((item: ContentTreeSelectorItem) => {
+                        return new ContentAndStatusTreeSelectorItem(ContentSummaryAndCompareStatus.fromContentSummary(
+                            item.getContent()), item.getExpand());
+                    }));
+
+                    return deferred.promise;
                 });
             }
         }
