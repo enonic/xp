@@ -378,7 +378,6 @@ export class PageComponentsView
             this.addClass('dragging');
         });
 
-
         this.tree.getGrid().subscribeOnDragEnd(() => {
             this.removeClass('dragging');
         });
