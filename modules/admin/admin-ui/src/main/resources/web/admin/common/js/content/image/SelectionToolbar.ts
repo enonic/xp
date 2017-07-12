@@ -1,7 +1,6 @@
-module api.content.form.inputtype.image {
+module api.content.image {
 
     import Button = api.ui.button.Button;
-    import i18n = api.util.i18n;
 
     export class SelectionToolbar extends api.dom.DivEl {
 
@@ -20,14 +19,14 @@ module api.content.form.inputtype.image {
         constructor() {
             super('selection-toolbar');
 
-            this.editButton = new Button(i18n('button.edit'));
+            this.editButton = new Button('Edit');
             this.editButton.addClass('large edit');
             this.editButton.onClicked((event: MouseEvent) => {
                 this.notifyEditClicked();
             });
             this.appendChild(this.editButton);
 
-            this.removeButton = new Button(i18n('button.remove'));
+            this.removeButton = new Button('Remove');
             this.removeButton.addClass('large red');
             this.removeButton.onClicked((event: MouseEvent) => {
                 this.notifyRemoveClicked();
@@ -42,9 +41,9 @@ module api.content.form.inputtype.image {
         }
 
         private refreshUI() {
-            this.editButton.setLabel(i18n('button.edit') + ' ' + (this.editableCount > 1 ? ' (' + this.editableCount + ')' : ''));
+            this.editButton.setLabel('Edit' + (this.editableCount > 1 ? ' (' + this.editableCount + ')' : ''));
             this.editButton.setEnabled(this.editableCount > 0);
-            this.removeButton.setLabel(i18n('button.edit') + ' ' + (this.removableCount > 1 ? ' (' + this.removableCount + ')' : ''));
+            this.removeButton.setLabel('Remove ' + (this.removableCount > 1 ? ' (' + this.removableCount + ')' : ''));
         }
 
         notifyEditClicked() {

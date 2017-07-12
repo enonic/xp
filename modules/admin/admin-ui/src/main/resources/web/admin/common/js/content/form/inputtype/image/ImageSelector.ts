@@ -8,7 +8,6 @@ module api.content.form.inputtype.image {
     import ContentId = api.content.ContentId;
     import ContentSummary = api.content.ContentSummary;
     import ContentSummaryLoader = api.content.resource.ContentSummaryLoader;
-    import ContentComboBox = api.content.form.inputtype.image.ImageContentComboBox;
     import ContentTypeName = api.schema.content.ContentTypeName;
     import ComboBox = api.ui.selector.combobox.ComboBox;
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
@@ -37,10 +36,14 @@ module api.content.form.inputtype.image {
     import BaseLoader = api.util.loader.BaseLoader;
     import SelectedOptionsView = api.ui.selector.combobox.SelectedOptionsView;
     import StringHelper = api.util.StringHelper;
+    import ImageSelectorDisplayValue = api.content.image.ImageSelectorDisplayValue;
+    import ImageSelectorSelectedOptionsView = api.content.image.ImageSelectorSelectedOptionsView;
+    import ImageOptionDataLoader = api.content.image.ImageOptionDataLoader;
+    import ImageSelectorSelectedOptionView = api.content.image.ImageSelectorSelectedOptionView;
 
     export class ImageSelector extends ContentInputTypeManagingAdd<ImageSelectorDisplayValue> {
 
-        private contentComboBox: ImageContentComboBox;
+        private contentComboBox: api.content.image.ImageContentComboBox;
 
         private selectedOptionsView: ImageSelectorSelectedOptionsView;
 
@@ -70,7 +73,7 @@ module api.content.form.inputtype.image {
             });
         }
 
-        public getContentComboBox(): ImageContentComboBox {
+        public getContentComboBox(): api.content.image.ImageContentComboBox {
             return this.contentComboBox;
         }
 
@@ -135,7 +138,7 @@ module api.content.form.inputtype.image {
         }
 
         createContentComboBox(maximumOccurrences: number, inputIconUrl: string, relationshipAllowedContentTypes: string[],
-                              inputName: string): ContentComboBox {
+                              inputName: string): api.content.image.ImageContentComboBox {
 
             let value = this.getPropertyArray().getProperties().map((property) => {
                 return property.getString();
@@ -163,8 +166,8 @@ module api.content.form.inputtype.image {
                 .setRelationshipType(this.relationshipType)
                 .build();
 
-            const contentComboBox: ImageContentComboBox
-                = ImageContentComboBox.create()
+            const contentComboBox: api.content.image.ImageContentComboBox
+                = api.content.image.ImageContentComboBox.create()
                 .setMaximumOccurrences(maximumOccurrences)
                 .setLoader(imageSelectorLoader)
                 .setSelectedOptionsView(this.selectedOptionsView = this.createSelectedOptionsView())

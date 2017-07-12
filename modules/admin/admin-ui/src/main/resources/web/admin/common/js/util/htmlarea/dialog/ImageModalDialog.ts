@@ -15,6 +15,10 @@ module api.util.htmlarea.dialog {
     import Content = api.content.Content;
     import Option = api.ui.selector.Option;
     import i18n = api.util.i18n;
+    import ContentSelectorLoader = api.content.form.inputtype.contentselector.ContentSelectorLoader;
+    import ContentSummaryLoader = api.content.resource.ContentSummaryLoader;
+    import ImageSelectorDisplayValue = api.content.image.ImageSelectorDisplayValue;
+    import ContentSelectedOptionsView = api.content.ContentSelectedOptionsView;
 
     export class ImageModalDialog extends ModalDialog {
 
@@ -24,7 +28,7 @@ module api.util.htmlarea.dialog {
         private imageUploaderEl: api.content.image.ImageUploaderEl;
         private imageElement: HTMLImageElement;
         private content: api.content.ContentSummary;
-        private imageSelector: api.content.ContentComboBox;
+        private imageSelector: api.content.image.ImageContentComboBox;
         private progress: api.ui.ProgressBar;
         private error: api.dom.DivEl;
         private image: api.dom.ImgEl;
@@ -40,22 +44,15 @@ module api.util.htmlarea.dialog {
         static maxImageWidth: number = 640;
 
         constructor(config: HtmlAreaImage, content: api.content.ContentSummary) {
-            super(config.editor, 'Insert Image', 'image-modal-dialog');
-
-            this.elementContainer = config.container;
-            this.content = content;
-            this.callback = config.callback;
+            super(<ImageModalDialogConfig>{
+                config: config,
+                editor: config.editor,
+                content: content,
+                title: 'Insert Image',
+                cls: 'image-modal-dialog'
+            });
 
             this.initLoader();
-
-            if (config.element) {
-                this.imageElement = <HTMLImageElement>config.element;
-
-                this.loadImage();
-
-                this.setImageFieldValues(this.imageCaptionField, this.getCaption());
-                this.setImageFieldValues(this.imageAltTextField, this.getAltText());
-            }
         }
 
         private setImageFieldValues(field: FormItem, value: string) {
@@ -63,18 +60,13 @@ module api.util.htmlarea.dialog {
         }
 
         private initLoader() {
-            let loader = this.imageSelector.getLoader();
-
-            loader.setContentPath(this.content.getPath());
-            loader.setAllowedContentTypeNames([api.schema.content.ContentTypeName.IMAGE, api.schema.content.ContentTypeName.MEDIA_VECTOR]);
-
             this.imageUploaderEl.setParams({
                 parent: this.content.getContentId().toString()
             });
         }
 
         private loadImage() {
-            let loader = this.imageSelector.getLoader();
+            let loader = <ContentSummaryLoader>this.imageSelector.getLoader();
 
             let singleLoadListener = (event: api.util.loader.event.LoadedDataEvent<api.content.ContentSummary>) => {
                 let imageContent = this.getImageContent(event.getData());
@@ -111,10 +103,11 @@ module api.util.htmlarea.dialog {
         }
 
         private createImageSelector(id: string): FormItem {
-            let imageSelector = api.content.ContentComboBox.create().setMaximumOccurrences(1).build();
-            let formItemBuilder = new ModalDialogFormItemBuilder(id, 'Image').
-                                    setValidator(Validators.required).
-                                    setInputEl(imageSelector);
+
+            let imageSelector = api.content.image.ImageContentComboBox.create().setMaximumOccurrences(1).setContent(
+                this.content).setSelectedOptionsView(new api.content.ContentSelectedOptionsView()).setTreegridDropdownEnabled(true).build();
+
+            let formItemBuilder = new ModalDialogFormItemBuilder(id, 'Image').setValidator(Validators.required).setInputEl(imageSelector);
 
             let formItem = this.createFormItem(formItemBuilder);
             let imageSelectorComboBox = imageSelector.getComboBox();
@@ -125,18 +118,18 @@ module api.util.htmlarea.dialog {
 
             formItem.addClass('image-selector');
 
-            imageSelectorComboBox.onOptionSelected((event: SelectedOptionEvent<api.content.ContentSummary>) => {
+            imageSelectorComboBox.onOptionSelected((event: SelectedOptionEvent<ImageSelectorDisplayValue>) => {
                 let imageContent = event.getSelectedOption().getOption().displayValue;
                 if (!imageContent.getContentId()) {
                     return;
                 }
 
                 this.imageLoadMask.show();
-                this.createImgElForNewImage(imageContent);
+                this.createImgElForNewImage(imageContent.getContentSummary());
                 this.previewImage();
                 formItem.addClass('selected-item-preview');
                 this.setAltTextFieldValue(imageContent.getDisplayName());
-                this.fetchImageCaption(imageContent).then(value => this.setCaptionFieldValue(value)).catch(
+                this.fetchImageCaption(imageContent.getContentSummary()).then(value => this.setCaptionFieldValue(value)).catch(
                     (reason: any) => api.DefaultErrorHandler.handle(reason)).done();
             });
 
@@ -378,6 +371,26 @@ module api.util.htmlarea.dialog {
             this.error.show();
         }
 
+        protected initializeConfig(params: ImageModalDialogConfig) {
+            super.initializeConfig(params);
+
+            const config = params.config;
+
+            this.elementContainer = config.container;
+            this.callback = config.callback;
+
+            this.content = params.content;
+
+            if (config.element) {
+                this.imageElement = <HTMLImageElement>params.config.element;
+
+                this.loadImage();
+
+                this.setImageFieldValues(this.imageCaptionField, this.getCaption());
+                this.setImageFieldValues(this.imageAltTextField, this.getAltText());
+            }
+        }
+
         protected initializeActions() {
             let submitAction = new api.ui.Action(this.imageElement ? 'Update' : 'Insert');
             this.setSubmitAction(submitAction);
@@ -476,6 +489,13 @@ module api.util.htmlarea.dialog {
         private isImageInOriginalSize(image: HTMLElement) {
             return image.getAttribute('data-src').indexOf('keepSize=true') > 0;
         }
+    }
+
+    export class ImageModalDialogConfig extends HtmlAreaModalDialogConfig {
+
+        config: HtmlAreaImage;
+
+        content: api.content.ContentSummary;
     }
 
     export class ImageToolbar extends api.ui.toolbar.Toolbar {

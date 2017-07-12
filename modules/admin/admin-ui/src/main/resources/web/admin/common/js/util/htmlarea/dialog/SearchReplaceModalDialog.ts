@@ -24,7 +24,7 @@ module api.util.htmlarea.dialog {
         private searchAndReplaceHelper: SearchAndReplaceHelper;
 
         constructor(editor: HtmlAreaEditor) {
-            super(editor, 'Find and replace', 'search-and-replace-modal-dialog');
+            super(<HtmlAreaModalDialogConfig>{editor:editor, title:'Find and replace', cls:'search-and-replace-modal-dialog'});
             this.searchAndReplaceHelper = new SearchAndReplaceHelper(editor);
 
             this.searchAndReplaceHelper.onActionButtonsEnabled((enabled: boolean) => {
