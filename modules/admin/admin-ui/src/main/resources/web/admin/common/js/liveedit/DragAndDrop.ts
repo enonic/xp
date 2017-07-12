@@ -542,7 +542,8 @@ module api.liveedit {
             let placeholder = DragPlaceholder.get().setRegionView(enter ? regionView : null);
 
             helper.setItemName(this.draggedComponentView ?
-                               this.draggedComponentView.getName() : api.util.StringHelper.capitalize(this.getItemType().getShortName()));
+                               this.draggedComponentView.getName() : api.util.StringHelper.capitalize(
+                i18n('field.' + this.getItemType().getShortName())));
 
             if (!enter) {
                 helper.setDropAllowed(false);

@@ -555,7 +555,7 @@ module api.util.htmlarea.dialog {
                 this.rebuildImgDataSrcParams();
                 api.ui.responsive.ResponsiveManager.fireResizeEvent();
             });
-            keepOriginalSizeCheckbox.setLabel('Keep original size');
+            keepOriginalSizeCheckbox.setLabel(i18n('dialog.image.keepsize'));
 
             return keepOriginalSizeCheckbox;
         }

@@ -1,5 +1,7 @@
 module api.ui.time {
 
+    import i18n = api.util.i18n;
+
     export class CalendarBuilder {
 
         year: number;
@@ -83,7 +85,7 @@ module api.ui.time {
                 this.removeChildren();
 
                 if (api.util.DateHelper.isInvalidDate(value)) {
-                    let spanEl = new api.dom.SpanEl().setHtml('Invalid date');
+                    let spanEl = new api.dom.SpanEl().setHtml(i18n('field.invaliddate'));
                     this.appendChild(spanEl);
                 } else {
                     this.renderMonth();
