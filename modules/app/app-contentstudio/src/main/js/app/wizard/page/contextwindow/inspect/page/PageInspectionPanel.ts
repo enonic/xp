@@ -5,6 +5,7 @@ import {PageTemplateForm} from './PageTemplateForm';
 import {PageControllerForm} from './PageControllerForm';
 import {PageControllerSelector} from './PageControllerSelector';
 import {PageTemplateOption} from './PageTemplateOption';
+import {SaveAsTemplateAction} from '../../../../action/SaveAsTemplateAction';
 
 import PropertyChangedEvent = api.PropertyChangedEvent;
 import PropertyTree = api.data.PropertyTree;
@@ -48,11 +49,7 @@ export class PageInspectionPanel
 
     private inspectionHandler: BaseInspectionHandler;
 
-    private saveAsTemplateButton: Button;
-
-    private currentUserHasCreateRights: Boolean;
-
-    constructor() {
+    constructor(private saveAsTemplateAction: SaveAsTemplateAction) {
         super();
     }
 
@@ -78,29 +75,13 @@ export class PageInspectionPanel
 
         this.pageControllerSelector = new PageControllerSelector(this.liveEditModel);
         this.pageControllerForm = new PageControllerForm(this.pageControllerSelector);
-        this.pageControllerForm.onShown(event => this.updateSaveAsTemplateVisibility());
+        this.pageControllerForm.onShown(event => this.saveAsTemplateAction.updateVisibility());
         this.pageControllerForm.hide();
         this.appendChild(this.pageControllerForm);
 
-        this.currentUserHasCreateRights = null;
-        this.saveAsTemplateButton = new Button(i18n('action.saveAsTemplate'));
-        this.saveAsTemplateButton.addClass('blue large save-as-template');
-        this.saveAsTemplateButton.onClicked(event => {
-            let content = this.liveEditModel.getContent();
-            new CreatePageTemplateRequest()
-                .setController(this.pageControllerSelector.getSelectedOption().displayValue.getKey())
-                .setRegions(this.pageModel.getRegions())
-                .setConfig(this.pageModel.getConfig())
-                .setDisplayName(content.getDisplayName())
-                .setSite(content.getPath())
-                .setSupports(content.getType())
-                .setName(content.getName())
-                .sendAndParse().then(createdTemplate => {
-
-                new EditContentEvent([ContentSummaryAndCompareStatus.fromContentSummary(createdTemplate)]).fire();
-            });
-        });
-        this.pageControllerForm.appendChild(this.saveAsTemplateButton);
+        const saveAsTemplateButton = new ActionButton(this.saveAsTemplateAction);
+        saveAsTemplateButton.addClass('blue large save-as-template');
+        this.pageControllerForm.appendChild(saveAsTemplateButton);
 
         this.inspectionHandler = new BaseInspectionHandler();
 
@@ -141,27 +122,6 @@ export class PageInspectionPanel
                 }).open();
         } else {
             this.doSelectTemplate(selectedOption);
-        }
-    }
-
-    private updateSaveAsTemplateVisibility() {
-        const content = this.liveEditModel.getContent();
-        const hasController = this.pageTemplateSelector.getValue();
-        if (hasController && content.isSite()) {
-            if (this.currentUserHasCreateRights === null) {
-                new api.content.resource.GetPermittedActionsRequest()
-                    .addContentIds(content.getContentId())
-                    .addPermissionsToBeChecked(Permission.CREATE)
-                    .sendAndParse().then((allowedPermissions: Permission[]) => {
-
-                    this.currentUserHasCreateRights = allowedPermissions.indexOf(Permission.CREATE) > -1;
-                    this.saveAsTemplateButton.setVisible(this.currentUserHasCreateRights.valueOf());
-                });
-            } else {
-                this.saveAsTemplateButton.setVisible(this.currentUserHasCreateRights.valueOf());
-            }
-        } else {
-            this.saveAsTemplateButton.setVisible(false);
         }
     }
 

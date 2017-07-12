@@ -5,6 +5,7 @@ import {Insertable} from './Insertable';
 import {InsertablesGrid} from './InsertablesGrid';
 import {Insertables} from './Insertables';
 import {PageComponentsView} from '../../../PageComponentsView';
+import {SaveAsTemplateAction} from '../../../action/SaveAsTemplateAction';
 
 import DragHelper = api.ui.DragHelper;
 import PageView = api.liveedit.PageView;
@@ -18,6 +19,8 @@ export interface ComponentTypesPanelConfig {
     liveEditPage: LiveEditPageProxy;
 
     contentWizardPanel: ContentWizardPanel;
+
+    saveAsTemplateAction: SaveAsTemplateAction;
 }
 
 export class InsertablesPanel extends api.ui.panel.Panel {
@@ -54,7 +57,7 @@ export class InsertablesPanel extends api.ui.panel.Panel {
 
         this.insertablesDataView.setItems(Insertables.ALL, 'name');
 
-        this.componentsView = new PageComponentsView(config.liveEditPage);
+        this.componentsView = new PageComponentsView(config.liveEditPage, config.saveAsTemplateAction);
 
         this.appendChildren(topDescription, this.insertablesGrid);
 

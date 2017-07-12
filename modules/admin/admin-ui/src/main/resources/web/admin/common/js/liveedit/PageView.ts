@@ -94,8 +94,6 @@ module api.liveedit {
 
         private nextClickDisabled: boolean;
 
-        private saveAsTemplateAction: api.ui.Action;
-
         constructor(builder: PageViewBuilder) {
 
             super(new ItemViewBuilder()
@@ -203,23 +201,7 @@ module api.liveedit {
                 this.resetAction.setEnabled(false);
             }
 
-            this.saveAsTemplateAction = new api.ui.Action('Save as Template').onExecuted(action => {
-                let content = this.liveEditModel.getContent();
-                new CreatePageTemplateRequest()
-                    .setController(this.pageModel.getController().getKey())
-                    .setRegions(this.pageModel.getRegions())
-                    .setConfig(this.pageModel.getConfig())
-                    .setDisplayName(content.getDisplayName())
-                    .setSite(content.getPath())
-                    .setSupports(content.getType())
-                    .setName(content.getName())
-                    .sendAndParse().then(createdTemplate => {
-
-                    new EditContentEvent([ContentSummaryAndCompareStatus.fromContentSummary(createdTemplate)]).fire();
-                });
-            });
-
-            this.addContextMenuActions([inspectAction, this.resetAction, this.saveAsTemplateAction]);
+            this.addContextMenuActions([inspectAction, this.resetAction]);
         }
 
         private initListeners() {

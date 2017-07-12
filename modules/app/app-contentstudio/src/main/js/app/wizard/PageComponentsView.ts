@@ -1,6 +1,7 @@
 import '../../api.ts';
 import {LiveEditPageProxy} from './page/LiveEditPageProxy';
 import {PageComponentsTreeGrid} from './PageComponentsTreeGrid';
+import {SaveAsTemplateAction} from './action/SaveAsTemplateAction';
 
 import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
 import ItemViewDeselectedEvent = api.liveedit.ItemViewDeselectedEvent;
@@ -59,7 +60,7 @@ export class PageComponentsView
 
     private currentUserHasCreateRights: Boolean;
 
-    constructor(liveEditPage: LiveEditPageProxy) {
+    constructor(liveEditPage: LiveEditPageProxy, private saveAsTemplateAction: SaveAsTemplateAction) {
         super('page-components-view');
 
         this.liveEditPage = liveEditPage;
@@ -675,43 +676,13 @@ export class PageComponentsView
 
         this.setMenuOpenStyleOnMenuIcon(row);
 
-        this.updateSaveAsTemplateVisibility(contextMenuActions);
+        this.saveAsTemplateAction.updateVisibility();
 
         // show menu at position
         let x = clickPosition.x;
         let y = clickPosition.y;
 
         this.contextMenu.showAt(x, y, false);
-    }
-
-    private updateSaveAsTemplateVisibility(contextMenuActions: Action[]) {
-        let saveAsTemplateAction: Action;
-        contextMenuActions.some(action => {
-            if (action.getLabel() === i18n('action.saveAsTemplate')) {
-                saveAsTemplateAction = action;
-                return true;
-            }
-        });
-        if (saveAsTemplateAction) {
-            const content = this.content;
-            const hasController = !!this.pageView.getModel().getController();
-            if (hasController && content.isSite()) {
-                if (this.currentUserHasCreateRights === null) {
-                    new api.content.resource.GetPermittedActionsRequest()
-                        .addContentIds(content.getContentId())
-                        .addPermissionsToBeChecked(Permission.CREATE)
-                        .sendAndParse().then((allowedPermissions: Permission[]) => {
-
-                        this.currentUserHasCreateRights = allowedPermissions.indexOf(Permission.CREATE) > -1;
-                        saveAsTemplateAction.setVisible(this.currentUserHasCreateRights.valueOf());
-                    });
-                } else {
-                    saveAsTemplateAction.setVisible(this.currentUserHasCreateRights.valueOf());
-                }
-            } else {
-                saveAsTemplateAction.setVisible(false);
-            }
-        }
     }
 
     private hidePageComponentsIfInMobileView(action: Action) {
