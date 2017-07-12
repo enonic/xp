@@ -227,7 +227,7 @@ module api.content {
             return this;
         }
 
-        setOptionDataLoader(value: OptionDataLoader<ContentAndStatusTreeSelectorItem>): ContentComboBoxBuilder {
+        setOptionDataLoader(value: OptionDataLoader<ContentTreeSelectorItem>): ContentComboBoxBuilder {
             super.setOptionDataLoader(value);
             return this;
         }
