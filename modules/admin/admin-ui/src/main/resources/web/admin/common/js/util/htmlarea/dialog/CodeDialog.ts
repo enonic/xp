@@ -9,7 +9,7 @@ module api.util.htmlarea.dialog {
         private textArea: TextArea;
 
         constructor(editor: HtmlAreaEditor) {
-            super(editor, 'Source code', 'source-code-modal-dialog');
+            super(<HtmlAreaModalDialogConfig>{editor:editor, title:'Source code', cls:'source-code-modal-dialog'});
         }
 
         protected layout() {
