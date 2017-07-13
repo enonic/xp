@@ -50,7 +50,7 @@ exports.localDateTimeFromDate = function () {
 exports.localDateTimeFromDate = function () {
     return {
         myLocalDateTimeExpected: valueLib.localDateTime("2010-10-10T10:00:00"),
-        myLocalDateTime: valueLib.localDateTime(new Date("Sun Oct 10 2010 10:00:00 GMT+0200 (CEST)"))
+        myLocalDateTime: valueLib.localDateTime(new Date(2010, 9, 10, 10, 0, 0))
     }
 };
 
@@ -76,7 +76,7 @@ exports.localTime = function () {
 exports.localTimeFromDate = function () {
     return {
         myLocalTimeExpected: valueLib.localTime("10:00:30"),
-        myLocalTime: valueLib.localTime(new Date("Sun Oct 10 2010 10:00:30 GMT+0200 (CEST)"))
+        myLocalTime: valueLib.localTime(new Date(2010, 9, 10, 10, 0, 30))
     }
 };
 
