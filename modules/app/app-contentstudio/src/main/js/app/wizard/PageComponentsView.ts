@@ -1,6 +1,7 @@
 import '../../api.ts';
 import {LiveEditPageProxy} from './page/LiveEditPageProxy';
 import {PageComponentsTreeGrid} from './PageComponentsTreeGrid';
+import {SaveAsTemplateAction} from './action/SaveAsTemplateAction';
 
 import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
 import ItemViewDeselectedEvent = api.liveedit.ItemViewDeselectedEvent;
@@ -24,6 +25,8 @@ import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
 import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 import i18n = api.util.i18n;
+import Action = api.ui.Action;
+import Permission = api.security.acl.Permission;
 
 export class PageComponentsView
     extends api.dom.DivEl {
@@ -55,10 +58,14 @@ export class PageComponentsView
 
     private invalidItemIds: string[] = [];
 
-    constructor(liveEditPage: LiveEditPageProxy) {
+    private currentUserHasCreateRights: Boolean;
+
+    constructor(liveEditPage: LiveEditPageProxy, private saveAsTemplateAction: SaveAsTemplateAction) {
         super('page-components-view');
 
         this.liveEditPage = liveEditPage;
+
+        this.currentUserHasCreateRights = null;
 
         this.onHidden((event) => this.hideContextMenu());
 
@@ -641,7 +648,7 @@ export class PageComponentsView
         } else {
             pageView = this.pageView;
         }
-        let contextMenuActions: api.ui.Action[];
+        let contextMenuActions: Action[];
 
         if (pageView.isLocked()) {
             contextMenuActions = pageView.getLockedMenuActions();
@@ -656,14 +663,14 @@ export class PageComponentsView
             this.contextMenu.setActions(contextMenuActions);
         }
 
-        this.contextMenu.getMenu().onBeforeAction((action: api.ui.Action) => {
+        this.contextMenu.getMenu().onBeforeAction((action: Action) => {
             this.pageView.setDisabledContextMenu(true);
             if (action.hasParentAction() && action.getParentAction().getLabel() === i18n('field.insert')) {
                 this.notifyBeforeInsertAction();
             }
         });
 
-        this.contextMenu.getMenu().onAfterAction((action: api.ui.Action) => {
+        this.contextMenu.getMenu().onAfterAction((action: Action) => {
             this.hidePageComponentsIfInMobileView(action);
 
             setTimeout(() => {
@@ -677,6 +684,8 @@ export class PageComponentsView
 
         this.setMenuOpenStyleOnMenuIcon(row);
 
+        this.saveAsTemplateAction.updateVisibility();
+
         // show menu at position
         let x = clickPosition.x;
         let y = clickPosition.y;
@@ -684,7 +693,7 @@ export class PageComponentsView
         this.contextMenu.showAt(x, y, false);
     }
 
-    private hidePageComponentsIfInMobileView(action: api.ui.Action) {
+    private hidePageComponentsIfInMobileView(action: Action) {
         if (api.BrowserHelper.isMobile() &&
             ((action.hasParentAction() && action.getParentAction().getLabel() === i18n('action.insert'))
              || action.getLabel() === i18n('action.inspect')
@@ -754,11 +763,11 @@ export class PageComponentsView
     }
 
     private editTextComponent(textComponent: ItemView) {
-        let contextMenuActions: api.ui.Action[] = textComponent.getContextMenuActions();
+        let contextMenuActions: Action[] = textComponent.getContextMenuActions();
 
-        let editAction: api.ui.Action;
+        let editAction: Action;
 
-        contextMenuActions.some((action: api.ui.Action) => {
+        contextMenuActions.some((action: Action) => {
             if (action.getLabel() === i18n('action.edit')) {
                 editAction = action;
                 return true;

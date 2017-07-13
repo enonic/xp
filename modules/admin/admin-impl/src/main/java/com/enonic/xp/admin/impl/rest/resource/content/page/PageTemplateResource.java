@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.util.function.Predicate;
 
 import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -20,9 +22,13 @@ import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentListMetaData;
+import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.name.NamePrettyfier;
+import com.enonic.xp.page.CreatePageTemplateParams;
 import com.enonic.xp.page.GetDefaultPageTemplateParams;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageTemplate;
@@ -54,13 +60,15 @@ public final class PageTemplateResource
 
     private ContentPrincipalsResolver principalsResolver;
 
+    private ContentIconUrlResolver contentIconUrlResolver;
+
     @GET
     public ContentJson getByKey( @QueryParam("key") final String pageTemplateKeyAsString )
         throws IOException
     {
         final PageTemplateKey pageTemplateKey = PageTemplateKey.from( pageTemplateKeyAsString );
         final PageTemplate pageTemplate = pageTemplateService.getByKey( pageTemplateKey );
-        return new ContentJson( pageTemplate, newContentIconUrlResolver(), principalsResolver );
+        return new ContentJson( pageTemplate, contentIconUrlResolver, principalsResolver );
     }
 
     @GET
@@ -75,7 +83,7 @@ public final class PageTemplateResource
             totalHits( pageTemplates.getSize() ).
             hits( pageTemplates.getSize() ).
             build();
-        return new ContentListJson( pageTemplates.toContents(), metaData, newContentIconUrlResolver(), principalsResolver );
+        return new ContentListJson( pageTemplates.toContents(), metaData, contentIconUrlResolver, principalsResolver );
     }
 
     @GET
@@ -91,7 +99,7 @@ public final class PageTemplateResource
             totalHits( filteredPageTemplates.getSize() ).
             hits( filteredPageTemplates.getSize() ).
             build();
-        return new ContentListJson( filteredPageTemplates.toContents(), metaData, newContentIconUrlResolver(), principalsResolver );
+        return new ContentListJson( filteredPageTemplates.toContents(), metaData, contentIconUrlResolver, principalsResolver );
     }
 
     @GET
@@ -109,7 +117,7 @@ public final class PageTemplateResource
         {
             return null;
         }
-        return new ContentJson( pageTemplate, newContentIconUrlResolver(), principalsResolver );
+        return new ContentJson( pageTemplate, contentIconUrlResolver, principalsResolver );
     }
 
     @GET
@@ -164,9 +172,29 @@ public final class PageTemplateResource
         }
     }
 
-    private ContentIconUrlResolver newContentIconUrlResolver()
+    @POST
+    @javax.ws.rs.Path("create")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public ContentJson create( final CreatePageTemplateJson params )
     {
-        return new ContentIconUrlResolver( this.contentTypeService );
+        CreatePageTemplateParams templateParams = params.getCreateTemplate();
+
+        templateParams.name( ensureUniqueName( templateParams.getSite(), templateParams.getName() ) );
+
+        PageTemplate template = this.pageTemplateService.create( templateParams );
+        return new ContentJson( template, contentIconUrlResolver, principalsResolver );
+    }
+
+    private ContentName ensureUniqueName( ContentPath parent, ContentName name )
+    {
+        String baseName = name.toString();
+        String currentName = baseName;
+        int counter = 1;
+        while ( this.contentService.contentExists( ContentPath.from( ContentPath.from( parent, "_templates" ), currentName ) ) )
+        {
+            currentName = NamePrettyfier.create( baseName + "-" + counter++ );
+        }
+        return ContentName.from( currentName );
     }
 
     @Reference
@@ -184,7 +212,7 @@ public final class PageTemplateResource
     @Reference
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
-        this.contentTypeService = contentTypeService;
+        this.contentIconUrlResolver = new ContentIconUrlResolver( contentTypeService );
     }
 
     @Reference

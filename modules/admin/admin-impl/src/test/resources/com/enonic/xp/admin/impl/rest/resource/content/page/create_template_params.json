@@ -1,0 +1,11 @@
+{
+  "controller": "myapplication:controller",
+  "config": [],
+  "regions": [],
+  "site": "myapplication",
+  "displayName": "My application",
+  "name": "myapplication",
+  "supports": [
+    "myapplication:content-type"
+  ]
+}

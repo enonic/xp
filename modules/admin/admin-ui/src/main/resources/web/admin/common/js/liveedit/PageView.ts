@@ -15,6 +15,9 @@ module api.liveedit {
     import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
     import SetController = api.content.page.SetController;
     import i18n = api.util.i18n;
+    import CreatePageTemplateRequest = api.content.page.CreatePageTemplateRequest;
+    import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+    import EditContentEvent = api.content.event.EditContentEvent;
 
     export class PageViewBuilder {
 
@@ -52,15 +55,15 @@ module api.liveedit {
 
         private fragmentView: ComponentView<Component>;
 
-        private viewsById: {[s: number]: ItemView;};
+        private viewsById: { [s: number]: ItemView; };
 
         private ignorePropertyChanges: boolean;
 
-        private itemViewAddedListeners: {(event: ItemViewAddedEvent): void}[];
+        private itemViewAddedListeners: { (event: ItemViewAddedEvent): void }[];
 
-        private itemViewRemovedListeners: {(event: ItemViewRemovedEvent): void}[];
+        private itemViewRemovedListeners: { (event: ItemViewRemovedEvent): void }[];
 
-        private pageLockedListeners: {(locked: boolean): void}[];
+        private pageLockedListeners: { (locked: boolean): void }[];
 
         private resetAction: api.ui.Action;
 
@@ -184,8 +187,7 @@ module api.liveedit {
                 new PageInspectedEvent().fire();
             });
 
-            this.resetAction = new api.ui.Action(i18n('live.view.reset'));
-            this.resetAction.onExecuted(() => {
+            this.resetAction = new api.ui.Action(i18n('live.view.reset')).onExecuted(() => {
                 if (PageView.debug) {
                     console.log('PageView.reset');
                 }
@@ -541,7 +543,7 @@ module api.liveedit {
             let toolbarHeight;
             let attempts = 0;
 
-            intervalId = setInterval(()=> {
+            intervalId = setInterval(() => {
                 attempts++;
                 toolbarHeight = this.getEditorToolbarWidth();
                 if (!!toolbarHeight) {
@@ -655,6 +657,10 @@ module api.liveedit {
 
         getRegions(): RegionView[] {
             return this.regionViews;
+        }
+
+        getModel(): PageModel {
+            return this.pageModel;
         }
 
         getFragmentView(): ComponentView<Component> {
@@ -813,7 +819,7 @@ module api.liveedit {
             }
 
             // unregister existing regions
-            this.regionViews.forEach((regionView: RegionView)=> {
+            this.regionViews.forEach((regionView: RegionView) => {
                 this.unregisterRegionView(regionView);
             });
 

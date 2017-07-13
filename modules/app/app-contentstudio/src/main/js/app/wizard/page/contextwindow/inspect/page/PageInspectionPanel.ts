@@ -5,6 +5,7 @@ import {PageTemplateForm} from './PageTemplateForm';
 import {PageControllerForm} from './PageControllerForm';
 import {PageControllerSelector} from './PageControllerSelector';
 import {PageTemplateOption} from './PageTemplateOption';
+import {SaveAsTemplateAction} from '../../../../action/SaveAsTemplateAction';
 
 import PropertyChangedEvent = api.PropertyChangedEvent;
 import PropertyTree = api.data.PropertyTree;
@@ -23,8 +24,16 @@ import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRe
 import SetController = api.content.page.SetController;
 import PageTemplateDisplayName = api.content.page.PageTemplateDisplayName;
 import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
+import ActionButton = api.ui.button.ActionButton;
+import Button = api.ui.button.Button;
+import i18n = api.util.i18n;
+import Permission = api.security.acl.Permission;
+import EditContentEvent = api.content.event.EditContentEvent;
+import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+import CreatePageTemplateRequest = api.content.page.CreatePageTemplateRequest;
 
-export class PageInspectionPanel extends BaseInspectionPanel {
+export class PageInspectionPanel
+    extends BaseInspectionPanel {
 
     private liveEditModel: LiveEditModel;
 
@@ -40,7 +49,7 @@ export class PageInspectionPanel extends BaseInspectionPanel {
 
     private inspectionHandler: BaseInspectionHandler;
 
-    constructor() {
+    constructor(private saveAsTemplateAction: SaveAsTemplateAction) {
         super();
     }
 
@@ -66,8 +75,13 @@ export class PageInspectionPanel extends BaseInspectionPanel {
 
         this.pageControllerSelector = new PageControllerSelector(this.liveEditModel);
         this.pageControllerForm = new PageControllerForm(this.pageControllerSelector);
+        this.pageControllerForm.onShown(event => this.saveAsTemplateAction.updateVisibility());
         this.pageControllerForm.hide();
         this.appendChild(this.pageControllerForm);
+
+        const saveAsTemplateButton = new ActionButton(this.saveAsTemplateAction);
+        saveAsTemplateButton.addClass('blue large save-as-template');
+        this.pageControllerForm.appendChild(saveAsTemplateButton);
 
         this.inspectionHandler = new BaseInspectionHandler();
 
@@ -89,13 +103,13 @@ export class PageInspectionPanel extends BaseInspectionPanel {
 
     private handleTemplateSelected(event: OptionSelectedEvent<PageTemplateOption>) {
         const selectedOption: PageTemplateOption = event.getOption().displayValue;
-        const previousOption: PageTemplateOption = event.getPreviousOption().displayValue;
+        const previousOption: PageTemplateOption = event.getPreviousOption() ? event.getPreviousOption().displayValue : null;
 
         if (selectedOption.equals(previousOption)) {
             return;
         }
 
-        if (previousOption.isCustom()) { // show confirmation dialog
+        if (previousOption && previousOption.isCustom()) { // show confirmation dialog
             new api.ui.dialog.ConfirmationDialog()
                 .setQuestion(
                     'Switching to a page template will discard all of the custom changes made to the page. Are you sure?')

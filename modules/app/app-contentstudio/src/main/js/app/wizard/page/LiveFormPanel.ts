@@ -16,6 +16,7 @@ import {InsertablesPanel} from './contextwindow/insert/InsertablesPanel';
 import {ContextWindowController} from './contextwindow/ContextWindowController';
 import {ContextWindow, ContextWindowConfig} from './contextwindow/ContextWindow';
 import {ShowContentFormEvent} from '../ShowContentFormEvent';
+import {SaveAsTemplateAction} from '../action/SaveAsTemplateAction';
 
 import PageTemplate = api.content.page.PageTemplate;
 import PageTemplateKey = api.content.page.PageTemplateKey;
@@ -83,6 +84,9 @@ import FragmentComponentReloadRequiredEvent = api.liveedit.FragmentComponentRelo
 import BeforeContentSavedEvent = api.content.event.BeforeContentSavedEvent;
 import ComponentPath = api.content.page.region.ComponentPath;
 import i18n = api.util.i18n;
+import CreatePageTemplateRequest = api.content.page.CreatePageTemplateRequest;
+import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
+import EditContentEvent = api.content.event.EditContentEvent;
 
 export interface LiveFormPanelConfig {
 
@@ -93,7 +97,8 @@ export interface LiveFormPanelConfig {
     defaultModels: DefaultModels;
 }
 
-export class LiveFormPanel extends api.ui.panel.Panel {
+export class LiveFormPanel
+    extends api.ui.panel.Panel {
 
     public static debug: boolean = false;
 
@@ -135,6 +140,8 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
     private contentEventListener: (event: any) => void;
 
+    private saveAsTemplateAction: SaveAsTemplateAction;
+
     constructor(config: LiveFormPanelConfig) {
         super('live-form-panel');
         this.contentWizardPanel = config.contentWizardPanel;
@@ -143,6 +150,8 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         this.pageLoading = false;
         this.pageSkipReload = false;
         this.lockPageAfterProxyLoad = false;
+
+        this.saveAsTemplateAction = new SaveAsTemplateAction();
 
         this.liveEditPageProxy = this.createLiveEditPageProxy();
 
@@ -179,11 +188,12 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             liveEditPage: proxy
         });
 
-        this.inspectionsPanel = this.createInspectionsPanel(model);
+        this.inspectionsPanel = this.createInspectionsPanel(model, this.saveAsTemplateAction);
 
         this.insertablesPanel = new InsertablesPanel({
             liveEditPage: proxy,
-            contentWizardPanel: this.contentWizardPanel
+            contentWizardPanel: this.contentWizardPanel,
+            saveAsTemplateAction: this.saveAsTemplateAction
         });
 
         return new ContextWindow(<ContextWindowConfig>{
@@ -195,7 +205,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
         });
     }
 
-    private createInspectionsPanel(model: LiveEditModel): InspectionsPanel {
+    private createInspectionsPanel(model: LiveEditModel, saveAsTemplateAction: SaveAsTemplateAction): InspectionsPanel {
         let saveAction = new api.ui.Action(i18n('action.apply'));
         saveAction.onExecuted(() => {
             if (!this.pageView) {
@@ -213,7 +223,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
         this.contentInspectionPanel = new ContentInspectionPanel();
 
-        this.pageInspectionPanel = new PageInspectionPanel();
+        this.pageInspectionPanel = new PageInspectionPanel(saveAsTemplateAction);
         this.partInspectionPanel = new PartInspectionPanel();
         this.layoutInspectionPanel = new LayoutInspectionPanel();
         this.imageInspectionPanel = new ImageInspectionPanel();
@@ -306,6 +316,8 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
         this.pageModel = liveEditModel.getPageModel();
         this.pageModel.setIgnorePropertyChanges(true);
+
+        this.saveAsTemplateAction.setContent(this.content).setPageModel(this.pageModel);
 
         this.liveEditPageProxy.setModel(liveEditModel);
         this.pageInspectionPanel.setModel(liveEditModel);
@@ -501,9 +513,9 @@ export class LiveFormPanel extends api.ui.panel.Panel {
 
         const restoreSelection = () => {
             if (path) {
-                const selected = api.ObjectHelper.iFrameSafeInstanceOf(path, ComponentPath) ?
-                                 this.pageView.getComponentViewByPath(path) :
-                                 this.pageView.getRegionViewByPath(path);
+                const selected = api.ObjectHelper.iFrameSafeInstanceOf(path, ComponentPath)
+                    ? this.pageView.getComponentViewByPath(path)
+                    : this.pageView.getRegionViewByPath(path);
                 if (selected) {
                     selected.selectWithoutMenu();
                 }
@@ -514,6 +526,7 @@ export class LiveFormPanel extends api.ui.panel.Panel {
             this.pageView = event.getPageView();
             if (this.pageView) {
                 this.insertablesPanel.setPageView(this.pageView);
+                this.pageView.getContextMenuActions().push(this.saveAsTemplateAction);
                 restoreSelection();
             }
         });

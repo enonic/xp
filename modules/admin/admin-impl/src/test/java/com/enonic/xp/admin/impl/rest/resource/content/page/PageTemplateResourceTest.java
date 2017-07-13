@@ -3,6 +3,10 @@ package com.enonic.xp.admin.impl.rest.resource.content.page;
 import java.time.Instant;
 import java.util.Locale;
 
+import javax.ws.rs.core.MediaType;
+
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -11,12 +15,14 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.page.CreatePageTemplateParams;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
@@ -198,6 +204,30 @@ public class PageTemplateResourceTest
             get().getAsString();
 
         assertEquals( "true", response );
+    }
+
+    @Test
+    public void createPageTemplateWithExistingPathShouldIncrementCounter()
+        throws Exception
+    {
+        ContentPath templatePath = ContentPath.from( "myapplication/_templates/template-myapplication" );
+        ContentPath templatePath1 = ContentPath.from( "myapplication/_templates/template-myapplication-1" );
+        ContentPath templatePath2 = ContentPath.from( "myapplication/_templates/template-myapplication-2" );
+        Mockito.when( contentService.contentExists( Mockito.eq( templatePath ) ) ).thenReturn( true );
+        Mockito.when( contentService.contentExists( Mockito.eq( templatePath1 ) ) ).thenReturn( true );
+        Mockito.when( contentService.contentExists( Mockito.eq( templatePath2 ) ) ).thenReturn( false );
+
+        Matcher<CreatePageTemplateParams> paramsMatcher =
+            Matchers.hasProperty( "name", Matchers.equalTo( ContentName.from( "template-myapplication-2" ) ) );
+
+        PageTemplate template = createPageTemplate( "template-id", "template-myapplication-2", "myapplication:content-type" );
+        Mockito.when( pageTemplateService.create( Mockito.argThat( paramsMatcher ) ) ).thenReturn( template );
+
+        String response = request().path( "content/page/template/create" ).
+            entity( readFromFile( "create_template_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "create_template_success.json", response );
     }
 
     private PageTemplate createPageTemplate( final String id, final String name, final String canRender )
