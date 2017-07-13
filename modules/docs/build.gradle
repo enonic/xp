@@ -13,7 +13,7 @@ ext {
 
 def javadocProjects = leafProjects.findAll { project -> project.name.endsWith( '-api' ) }
 
-task javadoc( type: Javadoc ) {
+task javadocAll( type: Javadoc ) {
     source javadocProjects.collect { project -> project.sourceSets.main.allJava }
     classpath = files( javadocProjects.collect { project -> project.sourceSets.main.compileClasspath } )
     failOnError = false
@@ -29,7 +29,7 @@ task javadoc( type: Javadoc ) {
 }
 
 task javadocZip( type: Zip ) {
-    from javadoc
+    from javadocAll
     classifier = 'javadoc'
 }
 
