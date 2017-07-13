@@ -21,13 +21,7 @@ module api.util.htmlarea.dialog {
 
         private content: api.content.ContentSummary;
 
-        private tabNames: any = {
-            content: i18n('dialog.link.tabname.content'),
-            url: i18n('dialog.link.tabname.url'),
-            download: i18n('dialog.link.tabname.download'),
-            email: i18n('dialog.link.tabname.email'),
-            anchor: i18n('dialog.link.tabname.anchor')
-        };
+        private tabNames: any;
 
         private static contentPrefix: string = 'content://';
         private static downloadPrefix: string = 'media://download/';
@@ -221,6 +215,8 @@ module api.util.htmlarea.dialog {
         }
 
         private createDockedPanel(): DockedPanel {
+            this.initTabNames();
+
             let dockedPanel = new DockedPanel();
             dockedPanel.addItem(this.tabNames.content, true, this.createContentPanel());
             dockedPanel.addItem(this.tabNames.url, true, this.createUrlPanel());
@@ -244,6 +240,16 @@ module api.util.htmlarea.dialog {
             });
 
             return dockedPanel;
+        }
+
+        private initTabNames() {
+            this.tabNames = {
+                content: i18n('dialog.link.tabname.content'),
+                url: i18n('dialog.link.tabname.url'),
+                download: i18n('dialog.link.tabname.download'),
+                email: i18n('dialog.link.tabname.email'),
+                anchor: i18n('dialog.link.tabname.anchor')
+            };
         }
 
         protected initializeActions() {
