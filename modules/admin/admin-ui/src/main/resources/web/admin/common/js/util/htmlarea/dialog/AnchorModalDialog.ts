@@ -2,16 +2,18 @@ module api.util.htmlarea.dialog {
 
     import FormItem = api.ui.form.FormItem;
     import Validators = api.ui.form.Validators;
+    import i18n = api.util.i18n;
 
     export class AnchorModalDialog extends ModalDialog {
 
         constructor(editor: HtmlAreaEditor) {
 
-            super(<HtmlAreaModalDialogConfig>{editor:editor, title:'Insert Anchor'});
+            super(<HtmlAreaModalDialogConfig>{editor: editor, title: i18n('dialog.anchor.title')});
         }
 
         protected getMainFormItems(): FormItem[] {
-            let formItemBuilder = new ModalDialogFormItemBuilder('name', 'Name').setValidator(Validators.required);
+            let formItemBuilder = new ModalDialogFormItemBuilder('name', i18n('dialog.anchor.formitem.name')).setValidator(
+                Validators.required);
             let nameField = this.createFormItem(formItemBuilder);
 
             this.setFirstFocusField(nameField.getInput());
@@ -20,7 +22,7 @@ module api.util.htmlarea.dialog {
         }
 
         protected initializeActions() {
-            let submitAction = new api.ui.Action('Insert');
+            let submitAction = new api.ui.Action(i18n('action.insert'));
             this.setSubmitAction(submitAction);
 
             this.addAction(submitAction.onExecuted(() => {

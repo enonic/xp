@@ -7,13 +7,14 @@ module api.util.htmlarea.dialog {
     import Panel = api.ui.panel.Panel;
 
     import PropertySet = api.data.PropertySet;
+    import i18n = api.util.i18n;
 
     export class MacroDockedPanel extends DockedPanel {
 
-        private static CONFIGURATION_TAB_NAME: string = 'Configuration';
-        private static PREVIEW_TAB_NAME: string = 'Preview';
-        private static MACRO_FORM_INCOMPLETE_MES: string = 'Macro configuration is not complete';
-        private static PREVIEW_LOAD_ERROR_MESSAGE: string = 'An error occurred while loading preview';
+        private configurationTabName: string = i18n('dialog.macro.tab.configuration');
+        private previewTabName: string = i18n('dialog.macro.tab.preview');
+        private macroFormIncompleteMessage: string = i18n('dialog.macro.form.incomplete');
+        private previewLoadErrorMessage: string = i18n('dialog.macro.tab.preview.loaderror');
 
         private configPanel: Panel;
         private previewPanel: Panel;
@@ -33,8 +34,8 @@ module api.util.htmlarea.dialog {
         constructor() {
             super();
 
-            this.addItem(MacroDockedPanel.CONFIGURATION_TAB_NAME, true, this.createConfigurationPanel());
-            this.addItem(MacroDockedPanel.PREVIEW_TAB_NAME, true, this.createPreviewPanel());
+            this.addItem(this.configurationTabName, true, this.createConfigurationPanel());
+            this.addItem(this.previewTabName, true, this.createPreviewPanel());
 
             this.previewPanelLoadMask = new api.ui.mask.LoadMask(this.previewPanel);
             this.configPanelLoadMask = new api.ui.mask.LoadMask(this.configPanel);
@@ -73,7 +74,7 @@ module api.util.htmlarea.dialog {
                             this.renderPreview(macroPreview);
                         }).catch((reason: any) => {
                             api.DefaultErrorHandler.handle(reason);
-                            this.renderPreviewWithMessage(MacroDockedPanel.PREVIEW_LOAD_ERROR_MESSAGE);
+                            this.renderPreviewWithMessage(this.previewLoadErrorMessage);
                         }).finally(() => {
                             this.previewPanelLoadMask.hide();
                         });
@@ -81,7 +82,7 @@ module api.util.htmlarea.dialog {
                         this.notifyPanelRendered();
                     }
                 } else {
-                    this.renderPreviewWithMessage(MacroDockedPanel.MACRO_FORM_INCOMPLETE_MES);
+                    this.renderPreviewWithMessage(this.macroFormIncompleteMessage);
                 }
             });
         }

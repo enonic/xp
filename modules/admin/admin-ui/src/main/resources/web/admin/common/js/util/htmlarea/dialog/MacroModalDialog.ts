@@ -8,6 +8,7 @@ module api.util.htmlarea.dialog {
     import ApplicationKey = api.application.ApplicationKey;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
+    import i18n = api.util.i18n;
 
     export class MacroModalDialog extends ModalDialog {
 
@@ -18,7 +19,7 @@ module api.util.htmlarea.dialog {
         private callback: Function;
 
         constructor(config: HtmlAreaMacro, content: api.content.ContentSummary, applicationKeys: ApplicationKey[]) {
-            super(<HtmlAreaModalDialogConfig>{editor:config.editor, title:'Insert Macro', cls:'macro-modal-dialog'});
+            super(<HtmlAreaModalDialogConfig>{editor: config.editor, title: i18n('dialog.macro.title'), cls: 'macro-modal-dialog'});
 
             this.callback = config.callback;
 
@@ -75,7 +76,8 @@ module api.util.htmlarea.dialog {
         private createMacroSelector(id: string): FormItem {
             let loader = new api.macro.resource.MacrosLoader();
             let macroSelector = api.macro.MacroComboBox.create().setLoader(loader).setMaximumOccurrences(1).build();
-            const formItemBuilder = new ModalDialogFormItemBuilder(id, 'Macro').setValidator(Validators.required).setInputEl(macroSelector);
+            const formItemBuilder = new ModalDialogFormItemBuilder(id, i18n('dialog.macro.formitem.macro')).setValidator(
+                Validators.required).setInputEl(macroSelector);
             const formItem = this.createFormItem(formItemBuilder);
 
             let macroSelectorComboBox = macroSelector.getComboBox();
@@ -101,7 +103,7 @@ module api.util.htmlarea.dialog {
         }
 
         protected initializeActions() {
-            let submitAction = new api.ui.Action('Insert');
+            let submitAction = new api.ui.Action(i18n('action.insert'));
             this.setSubmitAction(submitAction);
 
             this.addAction(submitAction.onExecuted(() => {
@@ -120,7 +122,7 @@ module api.util.htmlarea.dialog {
                 this.close();
             }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
-                api.notify.showError('Failed to generate macro.');
+                api.notify.showError(i18n('dialog.macro.error'));
             });
         }
 

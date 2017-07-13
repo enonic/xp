@@ -6,6 +6,7 @@ module api.util.htmlarea.dialog {
     import TextInput = api.ui.text.TextInput;
     import Checkbox = api.ui.Checkbox;
     import ElementHelper = api.dom.ElementHelper;
+    import i18n = api.util.i18n;
 
     export class SearchReplaceModalDialog extends ModalDialog {
 
@@ -24,7 +25,7 @@ module api.util.htmlarea.dialog {
         private searchAndReplaceHelper: SearchAndReplaceHelper;
 
         constructor(editor: HtmlAreaEditor) {
-            super(<HtmlAreaModalDialogConfig>{editor:editor, title:'Find and replace', cls:'search-and-replace-modal-dialog'});
+            super(<HtmlAreaModalDialogConfig>{editor: editor, title: i18n('dialog.search.title'), cls: 'search-and-replace-modal-dialog'});
             this.searchAndReplaceHelper = new SearchAndReplaceHelper(editor);
 
             this.searchAndReplaceHelper.onActionButtonsEnabled((enabled: boolean) => {
@@ -39,10 +40,10 @@ module api.util.htmlarea.dialog {
         }
 
         protected getMainFormItems(): FormItem[] {
-            const findField = this.createFormItem(new ModalDialogFormItemBuilder('find', 'Find'));
-            const replaceField = this.createFormItem(new ModalDialogFormItemBuilder('replace', 'Replace with'));
-            const matchCaseCheckbox = this.createCheckbox('matchcase', 'Match case');
-            const wholeWordsCheckbox = this.createCheckbox('wholewords', 'Whole words');
+            const findField = this.createFormItem(new ModalDialogFormItemBuilder('find', i18n('dialog.search.find')));
+            const replaceField = this.createFormItem(new ModalDialogFormItemBuilder('replace', i18n('dialog.search.replace')));
+            const matchCaseCheckbox = this.createCheckbox('matchcase', i18n('dialog.search.matchcase'));
+            const wholeWordsCheckbox = this.createCheckbox('wholewords', i18n('dialog.search.wholewords'));
 
             this.findInput = <TextInput>findField.getInput();
             this.replaceInput = <TextInput>replaceField.getInput();

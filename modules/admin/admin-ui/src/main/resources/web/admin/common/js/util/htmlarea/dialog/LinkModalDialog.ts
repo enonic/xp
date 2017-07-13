@@ -9,6 +9,7 @@ module api.util.htmlarea.dialog {
     import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
     import Option = api.ui.selector.Option;
     import InputAlignment = api.ui.InputAlignment;
+    import i18n = api.util.i18n;
 
     export class LinkModalDialog extends ModalDialog {
         private dockedPanel: DockedPanel;
@@ -20,13 +21,7 @@ module api.util.htmlarea.dialog {
 
         private content: api.content.ContentSummary;
 
-        private static tabNames: any = {
-            content: 'Content',
-            url: 'URL',
-            download: 'Download',
-            email: 'Email',
-            anchor: 'Anchor'
-        };
+        private tabNames: any;
 
         private static contentPrefix: string = 'content://';
         private static downloadPrefix: string = 'media://download/';
@@ -34,7 +29,7 @@ module api.util.htmlarea.dialog {
         private static subjectPrefix: string = '?subject=';
 
         constructor(config: HtmlAreaAnchor, content: api.content.ContentSummary) {
-            super(<HtmlAreaModalDialogConfig>{editor:config.editor, title:'Insert Link', cls:'link-modal-dialog'});
+            super(<HtmlAreaModalDialogConfig>{editor: config.editor, title: i18n('dialog.link.title'), cls: 'link-modal-dialog'});
 
             this.link = config.element;
             this.linkText = config.text;
@@ -42,7 +37,7 @@ module api.util.htmlarea.dialog {
             this.content = content;
 
             if (config.anchorList.length > 0) {
-                this.dockedPanel.addItem(LinkModalDialog.tabNames.anchor, true, this.createAnchorPanel(config.anchorList), this.isAnchor());
+                this.dockedPanel.addItem(this.tabNames.anchor, true, this.createAnchorPanel(config.anchorList), this.isAnchor());
             }
 
             this.onlyTextSelected = config.onlyTextSelected;
@@ -64,10 +59,10 @@ module api.util.htmlarea.dialog {
         }
 
         private getToolTip(): string {
-            if(this.link) {
+            if (this.link) {
                 const linkTitleAttrValue = this.link.getAttribute('title');
 
-                if(linkTitleAttrValue) {
+                if (linkTitleAttrValue) {
                     return linkTitleAttrValue;
                 }
             }
@@ -152,21 +147,23 @@ module api.util.htmlarea.dialog {
 
         private createContentPanel(): Panel {
             return this.createFormPanel([
-                this.createSelectorFormItem('contentId', 'Target', this.createContentSelector(this.getContentId), true),
+                this.createSelectorFormItem('contentId', i18n('dialog.link.formitem.target'), this.createContentSelector(this.getContentId),
+                    true),
                 this.createTargetCheckbox('contentTarget', this.isContentLink)
             ]);
         }
 
         private createDownloadPanel(): Panel {
             return this.createFormPanel([
-                this.createSelectorFormItem('downloadId', 'Target',
+                this.createSelectorFormItem('downloadId', i18n('dialog.link.formitem.target'),
                     this.createContentSelector(this.getDownloadId, api.schema.content.ContentTypeName.getMediaTypes()))
             ]);
         }
 
         private createUrlPanel(): Panel {
             return this.createFormPanel([
-                this.createFormItemWithPostponedValue('url', 'Url', this.getUrl, Validators.required, 'https://example.com/mypage'),
+                this.createFormItemWithPostponedValue('url', i18n('dialog.link.formitem.url'), this.getUrl, Validators.required,
+                    'https://example.com/mypage'),
                 this.createTargetCheckbox('urlTarget', this.isUrl)
             ]);
         }
@@ -178,14 +175,14 @@ module api.util.htmlarea.dialog {
         }
 
         private createEmailPanel(): Panel {
-            let emailFormItem: FormItem = this.createFormItemWithPostponedValue('email', 'Email', this.getEmail,
+            let emailFormItem: FormItem = this.createFormItemWithPostponedValue('email', i18n('dialog.link.formitem.email'), this.getEmail,
                 LinkModalDialog.validationRequiredEmail);
 
             emailFormItem.getLabel().addClass('required');
 
             return this.createFormPanel([
                 emailFormItem,
-                this.createFormItemWithPostponedValue('subject', 'Subject', this.getSubject)
+                this.createFormItemWithPostponedValue('subject', i18n('dialog.link.formitem.subject'), this.getSubject)
             ]);
         }
 
@@ -198,7 +195,8 @@ module api.util.htmlarea.dialog {
         }
 
         private createTargetCheckbox(id: string, isTabSelectedFn: Function): FormItem {
-            let checkbox = api.ui.Checkbox.create().setLabelText('Open in new tab').setInputAlignment(InputAlignment.RIGHT).build();
+            let checkbox = api.ui.Checkbox.create().setLabelText(i18n('dialog.link.formitem.openinnewtab')).setInputAlignment(
+                InputAlignment.RIGHT).build();
 
             this.onAdded(() => {
                 checkbox.setChecked(this.getTarget(isTabSelectedFn.call(this)));
@@ -209,18 +207,21 @@ module api.util.htmlarea.dialog {
         }
 
         protected getMainFormItems(): FormItem [] {
-            this.textFormItem = this.createFormItemWithPostponedValue('linkText', 'Text', this.getLinkText, Validators.required);
-            this.toolTipFormItem = this.createFormItemWithPostponedValue('toolTip', 'Tooltip', this.getToolTip);
+            this.textFormItem =
+                this.createFormItemWithPostponedValue('linkText', i18n('dialog.link.formitem.text'), this.getLinkText, Validators.required);
+            this.toolTipFormItem = this.createFormItemWithPostponedValue('toolTip', i18n('dialog.link.formitem.tooltip'), this.getToolTip);
 
             return [this.textFormItem, this.toolTipFormItem];
         }
 
         private createDockedPanel(): DockedPanel {
+            this.initTabNames();
+
             let dockedPanel = new DockedPanel();
-            dockedPanel.addItem(LinkModalDialog.tabNames.content, true, this.createContentPanel());
-            dockedPanel.addItem(LinkModalDialog.tabNames.url, true, this.createUrlPanel());
-            dockedPanel.addItem(LinkModalDialog.tabNames.download, true, this.createDownloadPanel());
-            dockedPanel.addItem(LinkModalDialog.tabNames.email, true, this.createEmailPanel());
+            dockedPanel.addItem(this.tabNames.content, true, this.createContentPanel());
+            dockedPanel.addItem(this.tabNames.url, true, this.createUrlPanel());
+            dockedPanel.addItem(this.tabNames.download, true, this.createDownloadPanel());
+            dockedPanel.addItem(this.tabNames.email, true, this.createEmailPanel());
 
             this.onAdded(() => {
                 dockedPanel.getDeck().getPanels().forEach((panel, index) => {
@@ -241,8 +242,18 @@ module api.util.htmlarea.dialog {
             return dockedPanel;
         }
 
+        private initTabNames() {
+            this.tabNames = {
+                content: i18n('dialog.link.tabname.content'),
+                url: i18n('dialog.link.tabname.url'),
+                download: i18n('dialog.link.tabname.download'),
+                email: i18n('dialog.link.tabname.email'),
+                anchor: i18n('dialog.link.tabname.anchor')
+            };
+        }
+
         protected initializeActions() {
-            let submitAction = new api.ui.Action(this.link ? 'Update' : 'Insert');
+            let submitAction = new api.ui.Action(this.link ? i18n('action.update') : i18n('action.insert'));
             this.setSubmitAction(submitAction);
 
             this.addAction(submitAction.onExecuted(() => {
@@ -289,7 +300,7 @@ module api.util.htmlarea.dialog {
             contentSelector.onValueChanged((event) => {
                 this.centerMyself();
 
-                if(contentSelector.getLoader().isLoaded()) {
+                if (contentSelector.getLoader().isLoaded()) {
 
                     if (event.getNewValue()) {
                         const newValueContent = contentSelector.getContent(new api.content.ContentId(event.getNewValue()));
@@ -299,7 +310,7 @@ module api.util.htmlarea.dialog {
                         new api.content.page.IsRenderableRequest(
                             new api.content.ContentId(event.getNewValue())).sendAndParse().then((renderable: boolean) => {
                             formItem.setValidator(() =>
-                                isMedia || renderable ? '' : 'Only content items that support preview can be selected');
+                                isMedia || renderable ? '' : i18n('dialog.link.formitem.nonrenderable'));
                         });
                     } else {
                         formItem.setValidator(Validators.required);
@@ -321,9 +332,8 @@ module api.util.htmlarea.dialog {
                 dropDown.setValue(this.getAnchor());
             }
 
-            const formItemBuilder = new ModalDialogFormItemBuilder('anchor', 'Anchor').
-                                        setValidator(Validators.required).
-                                        setInputEl(dropDown);
+            const formItemBuilder = new ModalDialogFormItemBuilder('anchor', i18n('dialog.link.tabname.anchor')).setValidator(
+                Validators.required).setInputEl(dropDown);
 
             return this.createFormItem(formItemBuilder);
         }
@@ -397,19 +407,19 @@ module api.util.htmlarea.dialog {
             let toolTip: string = (<api.ui.text.TextInput>this.getFieldById('toolTip')).getValue();
 
             switch (selectedTab.getLabel()) {
-            case (LinkModalDialog.tabNames.content):
+            case (this.tabNames.content):
                 linkEl = this.createContentLink();
                 break;
-            case (LinkModalDialog.tabNames.url):
+            case (this.tabNames.url):
                 linkEl = this.createUrlLink();
                 break;
-            case (LinkModalDialog.tabNames.download):
+            case (this.tabNames.download):
                 linkEl = this.createDownloadLink();
                 break;
-            case (LinkModalDialog.tabNames.email):
+            case (this.tabNames.email):
                 linkEl = this.createEmailLink();
                 break;
-            case (LinkModalDialog.tabNames.anchor):
+            case (this.tabNames.anchor):
                 linkEl = this.createAnchor();
                 break;
             }

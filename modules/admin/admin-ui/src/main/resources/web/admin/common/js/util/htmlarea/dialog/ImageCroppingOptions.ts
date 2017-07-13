@@ -1,28 +1,40 @@
 module api.util.htmlarea.dialog {
 
     import Option = api.ui.selector.Option;
+    import i18n = api.util.i18n;
 
     export class ImageCroppingOptions {
 
-        static SQUARE: ImageCroppingOption = new ImageCroppingOption('square', 1, 1);
+        private static INSTANCE: ImageCroppingOptions;
 
-        static REGULAR: ImageCroppingOption = new ImageCroppingOption('regular', 4, 3);
+        private SQUARE: ImageCroppingOption = new ImageCroppingOption('square', 1, 1);
 
-        static WIDESCREEN: ImageCroppingOption = new ImageCroppingOption('widescreen', 16, 9);
+        private REGULAR: ImageCroppingOption = new ImageCroppingOption('regular', 4, 3);
 
-        static CINEMA: ImageCroppingOption = new ImageCroppingOption('cinema', 21, 9);
+        private WIDESCREEN: ImageCroppingOption = new ImageCroppingOption('widescreen', 16, 9);
 
-        static PORTRAIT: ImageCroppingOption = new ImageCroppingOption('portrait', 3, 4);
+        private CINEMA: ImageCroppingOption = new ImageCroppingOption('cinema', 21, 9);
 
-        static TALL: ImageCroppingOption = new ImageCroppingOption('tall', 9, 16);
+        private PORTRAIT: ImageCroppingOption = new ImageCroppingOption('portrait', 3, 4);
 
-        static SKYSCRAPER: ImageCroppingOption = new ImageCroppingOption('skyscraper', 9, 21);
+        private TALL: ImageCroppingOption = new ImageCroppingOption('tall', 9, 16);
 
-        static getOptions(): Option<ImageCroppingOption>[] {
+        private SKYSCRAPER: ImageCroppingOption = new ImageCroppingOption('skyscraper', 9, 21);
+
+        private NONE: ImageCroppingOption = new ImageCroppingOption('none', 0, 0, i18n('dialog.image.cropping.none'));
+
+        public static get(): ImageCroppingOptions {
+            if (!ImageCroppingOptions.INSTANCE) {
+                ImageCroppingOptions.INSTANCE = new ImageCroppingOptions();
+            }
+            return ImageCroppingOptions.INSTANCE;
+        }
+
+        getOptions(): Option<ImageCroppingOption>[] {
 
             let options: Option<ImageCroppingOption>[] = [];
 
-            ImageCroppingOptions.getCroppingOptions().forEach((imageCroppingOption: ImageCroppingOption) => {
+            this.getCroppingOptions().forEach((imageCroppingOption: ImageCroppingOption) => {
                 let option = {
                     value: imageCroppingOption.getName(),
                     displayValue: imageCroppingOption
@@ -34,21 +46,22 @@ module api.util.htmlarea.dialog {
             return options;
         }
 
-        static getCroppingOptions(): ImageCroppingOption[] {
+        private getCroppingOptions(): ImageCroppingOption[] {
             return [
-                ImageCroppingOptions.CINEMA,
-                ImageCroppingOptions.WIDESCREEN,
-                ImageCroppingOptions.REGULAR,
-                ImageCroppingOptions.SQUARE,
-                ImageCroppingOptions.PORTRAIT,
-                ImageCroppingOptions.TALL,
-                ImageCroppingOptions.SKYSCRAPER
+                this.NONE,
+                this.CINEMA,
+                this.WIDESCREEN,
+                this.REGULAR,
+                this.SQUARE,
+                this.PORTRAIT,
+                this.TALL,
+                this.SKYSCRAPER
             ];
         }
 
-        static getOptionByProportion(proportion: string): ImageCroppingOption {
+        getOptionByProportion(proportion: string): ImageCroppingOption {
             let imageCroppingOption: ImageCroppingOption = null;
-            let imageCroppingOptions: ImageCroppingOption[] = ImageCroppingOptions.getCroppingOptions();
+            let imageCroppingOptions: ImageCroppingOption[] = this.getCroppingOptions();
 
             for (let i = 0; i < imageCroppingOptions.length; i++) {
                 if (imageCroppingOptions[i].getProportionString() === proportion) {
