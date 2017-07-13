@@ -526,7 +526,7 @@ export class LiveFormPanel
             this.pageView = event.getPageView();
             if (this.pageView) {
                 this.insertablesPanel.setPageView(this.pageView);
-                this.pageView.getContextMenuActions().unshift(this.saveAsTemplateAction);
+                this.pageView.getContextMenuActions().push(this.saveAsTemplateAction);
                 restoreSelection();
             }
         });
