@@ -288,7 +288,7 @@ function startContentWizard(wizardParams: ContentWizardPanelParams, connectionDe
             return;
         }
         if (wizard.hasUnsavedChanges()) {
-            let message = i18n('dialog.confirm.unsavedChanges');
+            let message = i18n('dialog.wizard.unsavedChanges');
             // Hack for IE. returnValue is boolean
             const e: any = event || window.event || {returnValue: ''};
             e['returnValue'] = message;

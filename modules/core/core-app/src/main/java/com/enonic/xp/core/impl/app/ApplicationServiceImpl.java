@@ -189,7 +189,12 @@ public final class ApplicationServiceImpl
         return application;
     }
 
-    private void installAllStoredApplications()
+    public void installAllStoredApplications()
+    {
+        ApplicationHelper.runWithContext( this::doInstallStoredApplications );
+    }
+
+    private void doInstallStoredApplications()
     {
         LOG.info( "Searching for installed applications" );
 

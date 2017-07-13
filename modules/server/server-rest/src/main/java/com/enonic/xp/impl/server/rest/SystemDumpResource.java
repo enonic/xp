@@ -1,7 +1,6 @@
 package com.enonic.xp.impl.server.rest;
 
 import java.nio.file.Paths;
-import java.time.Duration;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.POST;
@@ -80,7 +79,7 @@ public final class SystemDumpResource
             maxVersions( request.getMaxVersions() ).
             build();
 
-        final SystemDumpResult result = this.dumpService.dumpSystem( params );
+        final SystemDumpResult result = this.dumpService.dump( params );
         return SystemDumpResultJson.from( result );
     }
 
@@ -124,7 +123,7 @@ public final class SystemDumpResource
 
     private SystemLoadResultJson doLoadFromSystemDump( final SystemLoadRequestJson request )
     {
-        final SystemLoadResult systemLoadResult = this.dumpService.loadSystemDump( SystemLoadParams.create().
+        final SystemLoadResult systemLoadResult = this.dumpService.load( SystemLoadParams.create().
             dumpName( request.getName() ).
             dumpName( request.getName() ).
             includeVersions( true ).
@@ -144,11 +143,8 @@ public final class SystemDumpResource
                 continue;
             }
 
-            final long startTime = System.currentTimeMillis();
             final NodeImportResult nodeImportResult = importRepoBranch( repository.getId().toString(), branch.getValue(), dumpName );
-
-            builder.add( NodeImportResultTranslator.translate( nodeImportResult, branch,
-                                                               Duration.ofMillis( System.currentTimeMillis() - startTime ) ) );
+            builder.add( NodeImportResultTranslator.translate( nodeImportResult, branch ) );
         }
 
         return builder.build();
@@ -175,13 +171,10 @@ public final class SystemDumpResource
     {
         final RepoLoadResult.Builder builder = RepoLoadResult.create( SystemConstants.SYSTEM_REPO.getId() );
 
-        final long start = System.currentTimeMillis();
         final NodeImportResult systemRepoImport =
             importRepoBranch( SystemConstants.SYSTEM_REPO.getId().toString(), SystemConstants.BRANCH_SYSTEM.toString(), request.getName() );
 
-        final BranchLoadResult branchLoadResult = NodeImportResultTranslator.translate( systemRepoImport, SystemConstants.BRANCH_SYSTEM,
-                                                                                        Duration.ofMillis(
-                                                                                            System.currentTimeMillis() - start ) );
+        final BranchLoadResult branchLoadResult = NodeImportResultTranslator.translate( systemRepoImport, SystemConstants.BRANCH_SYSTEM );
         builder.add( branchLoadResult );
         return builder.build();
     }

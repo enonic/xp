@@ -1,3 +1,4 @@
+import i18n = api.util.i18n;
 import KeyBinding = api.ui.KeyBinding;
 declare var CONFIG;
 declare var wemjq: JQueryStatic;
@@ -10,6 +11,7 @@ api.StyleHelper.setCurrentPrefix(api.StyleHelper.PAGE_EDITOR_PREFIX);
 let liveEditPage: LiveEdit.LiveEditPage;
 
 wemjq(document).ready(() => {
+    api.util.i18nInit(CONFIG.messages);
 
     if (liveEditPage) {
         liveEditPage.destroy();

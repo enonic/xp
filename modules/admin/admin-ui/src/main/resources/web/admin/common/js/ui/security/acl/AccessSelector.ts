@@ -1,5 +1,6 @@
 module api.ui.security.acl {
 
+    import i18n = api.util.i18n;
     import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
     import AppHelper = api.util.AppHelper;
 
@@ -10,21 +11,15 @@ module api.ui.security.acl {
 
     export class AccessSelector extends api.ui.tab.TabMenu {
 
-        private static OPTIONS: AccessSelectorOption[] = [
-            {value: Access.READ, name: 'Can Read'},
-            {value: Access.WRITE, name: 'Can Write'},
-            {value: Access.PUBLISH, name: 'Can Publish'},
-            {value: Access.FULL, name: 'Full Access'},
-            {value: Access.CUSTOM, name: 'Custom...'}
-        ];
-
+        private options: AccessSelectorOption[];
         private value: Access;
         private valueChangedListeners: {(event: api.ValueChangedEvent): void}[] = [];
 
         constructor() {
             super('access-selector');
+            this.options = this.initOptions();
 
-            AccessSelector.OPTIONS.forEach((option: AccessSelectorOption, index: number) => {
+            this.options.forEach((option: AccessSelectorOption, index: number) => {
                 let menuItem = (<TabMenuItemBuilder>new TabMenuItemBuilder().setLabel(option.name).setAddLabelTitleAttribute(
                     false)).build();
                 this.addNavigationItem(menuItem);
@@ -33,10 +28,20 @@ module api.ui.security.acl {
             this.initEventHandlers();
         }
 
+        private initOptions(): AccessSelectorOption[] {
+            return [
+                {value: Access.READ, name: i18n('security.access.read')},
+                {value: Access.WRITE, name: i18n('security.access.write')},
+                {value: Access.PUBLISH, name: i18n('security.access.full')},
+                {value: Access.FULL, name: i18n('security.access.publish')},
+                {value: Access.CUSTOM, name: i18n('security.access.custom')}
+            ];
+        }
+
         initEventHandlers() {
             this.onNavigationItemSelected((event: api.ui.NavigatorEvent) => {
                 let item: api.ui.tab.TabMenuItem = <api.ui.tab.TabMenuItem> event.getItem();
-                this.setValue(AccessSelector.OPTIONS[item.getIndex()].value);
+                this.setValue(this.options[item.getIndex()].value);
             });
 
             this.getTabMenuButtonEl().onKeyDown((event: KeyboardEvent) => {
@@ -77,7 +82,7 @@ module api.ui.security.acl {
         setValue(value: Access, silent?: boolean): AccessSelector {
             let option = this.findOptionByValue(value);
             if (option) {
-                this.selectNavigationItem(AccessSelector.OPTIONS.indexOf(option));
+                this.selectNavigationItem(this.options.indexOf(option));
                 if (!silent) {
                     this.notifyValueChanged(new api.ValueChangedEvent(Access[this.value], Access[value]));
                 }
@@ -92,8 +97,8 @@ module api.ui.security.acl {
         }
 
         private findOptionByValue(value: Access): AccessSelectorOption {
-            for (let i = 0; i < AccessSelector.OPTIONS.length; i++) {
-                let option = AccessSelector.OPTIONS[i];
+            for (let i = 0; i < this.options.length; i++) {
+                let option = this.options[i];
                 if (option.value === value) {
                     return option;
                 }

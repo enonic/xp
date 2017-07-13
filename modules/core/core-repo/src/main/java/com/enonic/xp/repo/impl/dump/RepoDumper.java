@@ -2,10 +2,13 @@ package com.enonic.xp.repo.impl.dump;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -25,16 +28,18 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.filter.RangeFilter;
-import com.enonic.xp.repo.impl.dump.model.DumpEntry;
+import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
+import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
 import com.enonic.xp.repo.impl.node.executor.BatchedGetChildrenExecutor;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 
@@ -83,9 +88,142 @@ class RepoDumper
 
     public RepoDumpResult execute()
     {
-        getBranches().forEach( ( branch ) -> setContext( branch ).runWith( this::doExecute ) );
+        writer.writeDumpMetaData( new DumpMeta( this.xpVersion ) );
+
+        final Set<NodeId> dumpedNodes = Sets.newHashSet();
+
+        getBranches().forEach( ( branch ) -> dumpedNodes.addAll( setContext( branch ).callWith( this::doExecute ) ) );
+
+        if ( this.includeVersions )
+        {
+            setContext( RepositoryConstants.MASTER_BRANCH ).runWith( () -> dumpVersions( dumpedNodes ) );
+        }
 
         return this.dumpResult.build();
+    }
+
+    private Set<NodeId> doExecute()
+    {
+        this.nodeService.refresh( RefreshMode.ALL );
+
+        Set<NodeId> dumpedNodes = Sets.newHashSet();
+
+        final Branch branch = ContextAccessor.current().getBranch();
+
+        final BranchDumpResult.Builder branchDumpResult = BranchDumpResult.create( branch );
+        try
+        {
+            writer.openBranchMeta( this.repositoryId, branch );
+            final Node rootNode = this.nodeService.getRoot();
+            dumpedNodes.add( rootNode.id() );
+            doDumpNode( rootNode.id(), branchDumpResult );
+            dumpedNodes.addAll( dumpChildren( rootNode.id(), branchDumpResult ) );
+        }
+        catch ( Exception e )
+        {
+            throw new RepoDumpException( "Error occurred when dumping repository " + repositoryId, e );
+        }
+        finally
+        {
+            writer.close();
+        }
+
+        this.dumpResult.add( branchDumpResult.build() );
+
+        return dumpedNodes;
+    }
+
+    private Set<NodeId> dumpChildren( final NodeId nodeId, final BranchDumpResult.Builder dumpResult )
+    {
+        Set<NodeId> dumpedNodes = Sets.newHashSet();
+
+        final BatchedGetChildrenExecutor executor = BatchedGetChildrenExecutor.create().
+            nodeService( this.nodeService ).
+            parentId( nodeId ).
+            recursive( true ).
+            batchSize( DEFAULT_BATCH_SIZE ).
+            childOrder( ChildOrder.from( "_path asc" ) ).
+            build();
+
+        reportDumpingBranch( ContextAccessor.current().getBranch(), executor.getTotalHits() );
+
+        while ( executor.hasMore() )
+        {
+            final NodeIds children = executor.execute();
+
+            for ( final NodeId child : children )
+            {
+                doDumpNode( child, dumpResult );
+                dumpedNodes.add( child );
+            }
+        }
+
+        return dumpedNodes;
+    }
+
+    private void dumpVersions( final Set<NodeId> dumpedNodes )
+    {
+        try
+        {
+            writer.openVersionsMeta( this.repositoryId );
+
+            dumpedNodes.stream().forEach( ( nodeId ) -> {
+
+                final VersionsDumpEntry.Builder builder = VersionsDumpEntry.create( nodeId );
+
+                final NodeVersionQueryResult versions = getVersions( nodeId );
+
+                for ( final NodeVersionMetadata metaData : versions.getNodeVersionsMetadata() )
+                {
+                    doStoreVersion( builder, metaData );
+                    this.dumpResult.addedVersion();
+                }
+
+                this.writer.writeVersionsEntry( builder.build() );
+            } );
+        }
+        finally
+        {
+            writer.close();
+        }
+    }
+
+    private void doStoreVersion( final VersionsDumpEntry.Builder builder, final NodeVersionMetadata metaData )
+    {
+        final NodeVersion nodeVersion = this.nodeService.getByNodeVersion( metaData.getNodeVersionId() );
+        builder.addVersion( VersionMetaFactory.create( nodeVersion, metaData ) );
+
+        storeVersionBlob( metaData );
+        storeVersionBinaries( metaData, nodeVersion );
+    }
+
+    private void storeVersionBlob( final NodeVersionMetadata metaData )
+    {
+        try
+        {
+            this.writer.writeVersionBlob( metaData.getNodeVersionId() );
+        }
+        catch ( Exception e )
+        {
+            // Report
+            LOG.error( "Failed to write version for nodeVersion " + metaData.getNodeVersionId(), e );
+        }
+    }
+
+    private void storeVersionBinaries( final NodeVersionMetadata metaData, final NodeVersion nodeVersion )
+    {
+        nodeVersion.getAttachedBinaries().forEach( ( attachedBinary ) -> {
+            try
+            {
+                this.writer.writeBinaryBlob( attachedBinary.getBlobKey() );
+            }
+            catch ( Exception e )
+            {
+                // Report
+                LOG.error( "Failed to write binary for nodeVersion " + metaData.getNodeVersionId() + ", binary " +
+                               attachedBinary.getBlobKey(), e );
+            }
+        } );
     }
 
     private Branches getBranches()
@@ -108,91 +246,35 @@ class RepoDumper
             build();
     }
 
-    private void doExecute()
-    {
-        final Branch branch = ContextAccessor.current().getBranch();
-        writer.writeDumpMeta( new DumpMeta( this.xpVersion ) );
-        final BranchDumpResult.Builder branchDumpResult = BranchDumpResult.create( branch );
-        try
-        {
-            writer.open( this.repositoryId, branch );
-            final Node rootNode = this.nodeService.getRoot();
-            doDumpNode( rootNode.id(), branchDumpResult );
-            dumpChildren( rootNode.id(), branchDumpResult );
-        }
-        catch ( Exception e )
-        {
-            throw new RepoDumpException( "Error occurred when dumping repository " + repositoryId, e );
-        }
-        finally
-        {
-            writer.close();
-        }
-
-        this.dumpResult.add( branchDumpResult.build() );
-    }
-
-
-    private void dumpChildren( final NodeId nodeId, final BranchDumpResult.Builder dumpResult )
-    {
-        final BatchedGetChildrenExecutor executor = BatchedGetChildrenExecutor.create().
-            nodeService( this.nodeService ).
-            parentId( nodeId ).
-            recursive( true ).
-            batchSize( DEFAULT_BATCH_SIZE ).
-            childOrder( ChildOrder.from( "_path asc" ) ).
-            build();
-
-        reportDumpingBranch( ContextAccessor.current().getBranch(), executor.getTotalHits() );
-
-        while ( executor.hasMore() )
-        {
-            final NodeIds children = executor.execute();
-
-            for ( final NodeId child : children )
-            {
-                doDumpNode( child, dumpResult );
-            }
-        }
-    }
 
     private void doDumpNode( final NodeId nodeId, final BranchDumpResult.Builder dumpResult )
     {
-        final DumpEntry dumpEntry = createDumpEntry( nodeId );
-        writer.writeMetaData( dumpEntry );
-        writeVersions( dumpResult, dumpEntry );
-        writeBinaries( dumpResult, dumpEntry );
-        dumpResult.addedNode();
-        dumpResult.addedVersions( dumpEntry.getAllVersionIds().size() );
-        reportNodeDumped();
+        try
+        {
+            final BranchDumpEntry branchDumpEntry = createDumpEntry( nodeId );
+            writer.writeBranchEntry( branchDumpEntry );
+            writer.writeVersionBlob( branchDumpEntry.getMeta().getVersion() );
+            writeBinaries( dumpResult, branchDumpEntry );
+            dumpResult.addedNode();
+            reportNodeDumped();
+        }
+        catch ( Exception e )
+        {
+            dumpResult.error( DumpError.error( "Cannot dump node with id [" + nodeId + "]: " + e.getMessage() ) );
+        }
     }
 
-    private void writeBinaries( final BranchDumpResult.Builder dumpResult, final DumpEntry dumpEntry )
+    private void writeBinaries( final BranchDumpResult.Builder dumpResult, final BranchDumpEntry branchDumpEntry )
     {
-        dumpEntry.getBinaryReferences().forEach( ( ref ) -> {
+        branchDumpEntry.getBinaryReferences().forEach( ( ref ) -> {
             try
             {
-                this.writer.writeBinary( ref );
+                this.writer.writeBinaryBlob( ref );
             }
             catch ( RepoDumpException e )
             {
                 LOG.error( "Cannot dump binary:", e );
                 dumpResult.error( DumpError.error( "Cannot dump binary: " + e.getMessage() ) );
-            }
-        } );
-    }
-
-    private void writeVersions( final BranchDumpResult.Builder dumpResult, final DumpEntry dumpEntry )
-    {
-        dumpEntry.getAllVersionIds().forEach( ( versionId ) -> {
-            try
-            {
-                this.writer.writeVersion( versionId );
-            }
-            catch ( RepoDumpException e )
-            {
-                LOG.error( "Cannot dump version", e );
-                dumpResult.error( DumpError.error( "Cannot dump version: " + e.getMessage() ) );
             }
         } );
     }
@@ -205,14 +287,14 @@ class RepoDumper
         }
     }
 
-    private DumpEntry createDumpEntry( final NodeId nodeId )
+    private BranchDumpEntry createDumpEntry( final NodeId nodeId )
     {
-        final DumpEntry.Builder builder = DumpEntry.create().
+        final BranchDumpEntry.Builder builder = BranchDumpEntry.create().
             nodeId( nodeId );
 
         final Node currentNode = this.nodeService.getById( nodeId );
 
-        builder.addVersion( MetaFactory.create( currentNode, true ) );
+        builder.meta( VersionMetaFactory.create( currentNode ) );
 
         if ( this.includeBinaries )
         {
@@ -220,35 +302,7 @@ class RepoDumper
                 currentNode.getAttachedBinaries().stream().map( AttachedBinary::getBlobKey ).collect( Collectors.toSet() ) );
         }
 
-        if ( this.includeVersions )
-        {
-            addVersions( nodeId, builder, currentNode.getNodeVersionId() );
-        }
-
         return builder.build();
-    }
-
-    private void addVersions( final NodeId nodeId, final DumpEntry.Builder builder, final NodeVersionId currentVersion )
-    {
-        final NodeVersionQueryResult result = getVersions( nodeId );
-
-        for ( final NodeVersionMetadata metaData : result.getNodeVersionsMetadata() )
-        {
-            if ( metaData.getNodeVersionId().equals( currentVersion ) )
-            {
-                // Skip current, since this will be dumped anyway
-                continue;
-            }
-
-            if ( this.includeBinaries )
-            {
-                addVersionWithBinaries( builder, metaData );
-            }
-            else
-            {
-                builder.addVersion( MetaFactory.create( metaData, false ) );
-            }
-        }
     }
 
     private NodeVersionQueryResult getVersions( final NodeId nodeId )
@@ -266,14 +320,6 @@ class RepoDumper
         }
 
         return this.nodeService.findVersions( queryBuilder.build() );
-    }
-
-    private void addVersionWithBinaries( final DumpEntry.Builder builder, final NodeVersionMetadata metaData )
-    {
-        final NodeVersion nodeVersion = this.nodeService.getByNodeVersion( metaData.getNodeVersionId() );
-        builder.addVersion( MetaFactory.create( metaData, false ) );
-        builder.addBinaryReferences(
-            nodeVersion.getAttachedBinaries().stream().map( AttachedBinary::getBlobKey ).collect( Collectors.toSet() ) );
     }
 
     private void reportDumpingBranch( final Branch branch, final Long totalHits )

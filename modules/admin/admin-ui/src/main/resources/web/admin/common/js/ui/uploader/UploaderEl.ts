@@ -142,7 +142,7 @@ module api.ui.uploader {
         }
 
         private initCancelButton() {
-            this.cancelBtn = new Button('Cancel');
+            this.cancelBtn = new Button(i18n('action.cancel'));
             this.cancelBtn.setVisible(this.config.showCancel);
             this.cancelBtn.onClicked((event: MouseEvent) => {
                 this.stop();

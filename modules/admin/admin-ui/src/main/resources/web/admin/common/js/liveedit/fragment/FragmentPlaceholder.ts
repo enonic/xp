@@ -9,6 +9,7 @@ module api.liveedit.fragment {
     import FieldExpr = api.query.expr.FieldExpr;
     import ValueExpr = api.query.expr.ValueExpr;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
+    import i18n = api.util.i18n;
 
     export class FragmentPlaceholder extends api.liveedit.ItemViewPlaceholder {
 
@@ -44,7 +45,7 @@ module api.liveedit.fragment {
 
                         if (fragmentComponent && api.ObjectHelper.iFrameSafeInstanceOf(fragmentComponent.getType(), LayoutComponentType)) {
                             this.comboBox.clearSelection();
-                            new api.liveedit.ShowWarningLiveEditEvent('Layout within layout not allowed').fire();
+                            new api.liveedit.ShowWarningLiveEditEvent(i18n('notify.nestedLayouts')).fire();
 
                         } else {
                             component.setFragment(fragmentContent.getContentId(), fragmentContent.getDisplayName());

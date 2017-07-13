@@ -1,5 +1,7 @@
 module api.ui.dialog {
 
+    import i18n = api.util.i18n;
+
     export class ConfirmationDialog extends ModalDialog {
 
         private questionEl: api.dom.H6El;
@@ -11,7 +13,7 @@ module api.ui.dialog {
 
         constructor(config: ModalDialogConfig = {}) {
             super((() => {
-                config.title = config.title || 'Confirmation';
+                config.title = config.title || i18n('dialog.confirmation.title');
                 config.closeIconCallback = config.closeIconCallback || (() => this.closeWithoutCallback());
                 return config;
             })());
@@ -21,12 +23,12 @@ module api.ui.dialog {
             this.questionEl = new api.dom.H6El('question');
             this.appendChildToContentPanel(this.questionEl);
 
-            this.noAction = new api.ui.Action('No', 'esc');
+            this.noAction = new api.ui.Action(i18n('action.no'), 'esc');
             this.noAction.onExecuted(() => {
                 this.close();
             });
 
-            this.yesAction = new api.ui.Action('Yes');
+            this.yesAction = new api.ui.Action(i18n('action.yes'));
             this.yesAction.onExecuted(() => {
                 this.noCallback = null;
                 this.close();

@@ -8,10 +8,15 @@ module api.ui.selector {
     export class OptionsTreeGrid<OPTION_DISPLAY_VALUE> extends TreeGrid<Option<OPTION_DISPLAY_VALUE>> {
 
         private loader: OptionDataLoader<OPTION_DISPLAY_VALUE>;
+
         private treeDataHelper: OptionDataHelper<OPTION_DISPLAY_VALUE>;
+
         private readonlyChecker: (optionToCheck: OPTION_DISPLAY_VALUE) => boolean;
-        private isSelfLoading: boolean;
+
         private defaultOption: OPTION_DISPLAY_VALUE;
+
+        private isSelfLoading: boolean;
+
         private isDefaultOptionActive: boolean;
 
         constructor(columns: api.ui.grid.GridColumn<any>[],
@@ -20,7 +25,8 @@ module api.ui.selector {
                     treeDataHelper: OptionDataHelper<OPTION_DISPLAY_VALUE>) {
 
             let builder: TreeGridBuilder<Option<OPTION_DISPLAY_VALUE>> =
-                new TreeGridBuilder<Option<OPTION_DISPLAY_VALUE>>().setColumns(columns)
+                new TreeGridBuilder<Option<OPTION_DISPLAY_VALUE>>()
+                    .setColumns(columns)
                     .setOptions(gridOptions)
                     .setPartialLoadEnabled(true)
                     .setLoadBufferSize(20)
@@ -58,7 +64,7 @@ module api.ui.selector {
         }
 
         reload(parentNodeData?: Option<OPTION_DISPLAY_VALUE>): wemQ.Promise<void> {
-            return super.reload(parentNodeData, 'dataId').then(() => {
+            return super.reload(parentNodeData).then(() => {
                 if (this.defaultOption && !this.isDefaultOptionActive) {
                     this.scrollToDefaultOption(this.getRoot().getCurrentRoot(), 0);
                     this.isDefaultOptionActive = true;

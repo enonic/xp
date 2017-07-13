@@ -380,6 +380,14 @@ export class PageComponentsView
             this.subscribeOnFragmentLoadError();
             this.applyMaskToTree();
         });
+
+        this.tree.getGrid().subscribeOnDrag(() => {
+            this.addClass('dragging');
+        });
+
+        this.tree.getGrid().subscribeOnDragEnd(() => {
+            this.removeClass('dragging');
+        });
     }
 
     private applyMaskToTree() {

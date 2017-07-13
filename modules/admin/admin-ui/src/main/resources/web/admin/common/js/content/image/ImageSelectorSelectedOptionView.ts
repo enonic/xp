@@ -1,4 +1,4 @@
-module api.content.form.inputtype.image {
+module api.content.image {
 
     import LoadMask = api.ui.mask.LoadMask;
 

@@ -24,7 +24,7 @@ module api.util.htmlarea.dialog {
         private searchAndReplaceHelper: SearchAndReplaceHelper;
 
         constructor(editor: HtmlAreaEditor) {
-            super(editor, 'Find and replace', 'search-and-replace-modal-dialog');
+            super(<HtmlAreaModalDialogConfig>{editor:editor, title:'Find and replace', cls:'search-and-replace-modal-dialog'});
             this.searchAndReplaceHelper = new SearchAndReplaceHelper(editor);
 
             this.searchAndReplaceHelper.onActionButtonsEnabled((enabled: boolean) => {
@@ -77,7 +77,7 @@ module api.util.htmlarea.dialog {
             this.addAction(this.createPrevAction());
             this.addAction(this.createNextAction());
 
-            this.findAction = new Action('Submit');
+            this.findAction = new Action(i18n('action.submit'));
             this.findAction.onExecuted(() => {
                 this.searchAndReplaceHelper.submit(this.findInput.getValue(), this.matchCaseCheckbox.isChecked(),
                     this.wholeWordsCheckbox.isChecked());
@@ -102,7 +102,7 @@ module api.util.htmlarea.dialog {
         }
 
         private createReplaceAction(): Action {
-            this.replaceAction = new Action('Replace');
+            this.replaceAction = new Action(i18n('action.replace'));
             this.replaceAction.setEnabled(false);
 
             this.replaceAction.onExecuted(() => {
@@ -122,7 +122,7 @@ module api.util.htmlarea.dialog {
         }
 
         private createReplaceAllAction(): Action {
-            this.replaceAllAction = new Action('Replace all');
+            this.replaceAllAction = new Action(i18n('action.replaceall'));
             this.replaceAllAction.setEnabled(false);
 
             this.replaceAllAction.onExecuted(() => {
@@ -140,7 +140,7 @@ module api.util.htmlarea.dialog {
         }
 
         private createPrevAction(): Action {
-            this.prevAction = new Action('Prev');
+            this.prevAction = new Action(i18n('action.previous'));
             this.prevAction.setEnabled(false);
 
             this.prevAction.onExecuted(() => {
@@ -152,7 +152,7 @@ module api.util.htmlarea.dialog {
         }
 
         private createNextAction(): Action {
-            this.nextAction = new Action('Next');
+            this.nextAction = new Action(i18n('action.next'));
             this.nextAction.setEnabled(false);
 
             this.nextAction.onExecuted(() => {

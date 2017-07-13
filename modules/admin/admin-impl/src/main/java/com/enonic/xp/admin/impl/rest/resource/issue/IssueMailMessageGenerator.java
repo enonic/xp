@@ -16,6 +16,7 @@ import com.google.common.io.Resources;
 
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.mail.MailMessage;
 import com.enonic.xp.security.User;
@@ -43,7 +44,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
             msg.addRecipients( Message.RecipientType.TO, recipients );
             msg.addRecipients( Message.RecipientType.CC, copyRecipients );
             msg.setSubject( messageSubject );
-            msg.setContent( messageBody, "text/html" );
+            msg.setContent( messageBody, "text/html; charset=UTF-8" );
         };
     }
 
@@ -136,12 +137,32 @@ public abstract class IssueMailMessageGenerator<P extends IssueMailMessageParams
         final Map itemParams = Maps.newHashMap();
         itemParams.put( "displayName", item.getDisplayName() );
         itemParams.put( "path", item.getPath() );
-        itemParams.put( "icon", params.getIcons().getOrDefault( item.getId(), "" ) );
+        itemParams.put( "icon", getIcon( item.getId() ) );
         itemParams.put( "status", status.getFormattedStatus() );
         itemParams.put( "bgcolor", even ? "#f5f5f5" : "initial" );
         itemParams.put( "statusColor", isOnline ? "#609e24" : "initial" );
 
         return new StrSubstitutor( itemParams ).replace( template );
+    }
+
+    private String getIcon( final ContentId id )
+    {
+        final String icon = params.getIcons().get( id );
+
+        if ( icon == null )
+        {
+            return "";
+        }
+
+        final boolean isSvg = icon.contains( "<svg" );
+
+        if ( isSvg )
+        {
+            return icon.replaceFirst( "(\\s+)(width=\")(.+?)(\")", " width=\"100%\"" ).
+                replaceFirst( "(\\s+)(height=\")(.+?)(\")"," height=\"auto\"" );
+        }
+
+        return icon;
     }
 
     private String generateApproversHtml()

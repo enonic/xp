@@ -16,6 +16,7 @@ import PrincipalViewerCompact = api.ui.security.PrincipalViewerCompact;
 import DivEl = api.dom.DivEl;
 import Tooltip = api.ui.Tooltip;
 import Element = api.dom.Element;
+import i18n = api.util.i18n;
 
 export class IssueList extends ListBox<IssueWithAssignees> {
 
@@ -56,7 +57,7 @@ export class IssueList extends ListBox<IssueWithAssignees> {
             if (response.getIssues().length > 0) {
                 this.addItems(response.getIssues());
             } else {
-                this.appendChild(new PEl('no-issues-message').setHtml('No issues found'));
+                this.appendChild(new PEl('no-issues-message').setHtml(i18n('dialog.issue.noIssuesFound')));
             }
         }).catch((reason: any) => {
             api.DefaultErrorHandler.handle(reason);

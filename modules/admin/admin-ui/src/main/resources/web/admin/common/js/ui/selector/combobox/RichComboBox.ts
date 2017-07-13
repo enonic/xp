@@ -6,6 +6,7 @@ module api.ui.selector.combobox {
     import Option = api.ui.selector.Option;
     import PostLoader = api.util.loader.PostLoader;
     import LoaderErrorEvent = api.util.loader.event.LoaderErrorEvent;
+    import GridColumn = api.ui.grid.GridColumn;
 
     export class RichComboBox<OPTION_DISPLAY_VALUE> extends api.dom.CompositeFormInputEl {
 
@@ -84,7 +85,8 @@ module api.ui.selector.combobox {
                 treegridDropdownEnabled: builder.treegridDropdownEnabled,
                 optionDataHelper: builder.optionDataHelper,
                 optionDataLoader: builder.optionDataLoader,
-                onDropdownShownCallback: this.loadOptionsAfterShowDropdown.bind(this)
+                onDropdownShownCallback: this.loadOptionsAfterShowDropdown.bind(this),
+                createColumns: builder.createColumns
             };
         }
 
@@ -313,7 +315,9 @@ module api.ui.selector.combobox {
                 this.errorContainer.hide();
                 let options = this.createOptions(event.getData());
                 // check if postLoad and save selection
-                this.comboBox.setOptions(options, event.isPostLoad());
+                if(!this.comboBox.getComboBoxDropdownGrid().isTreeGrid()) {
+                    this.comboBox.setOptions(options, event.isPostLoad());
+                }
                 this.notifyLoaded(event.getData(), event.isPostLoad());
             });
 
@@ -466,6 +470,8 @@ module api.ui.selector.combobox {
 
         optionDataLoader: OptionDataLoader<any>;
 
+        createColumns: GridColumn<T>[];
+
         setComboBoxName(comboBoxName: string): RichComboBoxBuilder<T> {
             this.comboBoxName = comboBoxName;
             return this;
@@ -495,7 +501,7 @@ module api.ui.selector.combobox {
             return this;
         }
 
-        setOptionDisplayValueViewer(value: Viewer<T>): RichComboBoxBuilder<T> {
+        setOptionDisplayValueViewer(value: Viewer<any>): RichComboBoxBuilder<T> {
             this.optionDisplayValueViewer = value;
             return this;
         }
@@ -562,6 +568,11 @@ module api.ui.selector.combobox {
 
         setOptionDataLoader(value: OptionDataLoader<any>): RichComboBoxBuilder<T> {
             this.optionDataLoader = value;
+            return this;
+        }
+
+        setCreateColumns(value: GridColumn<T>[]): RichComboBoxBuilder<T> {
+            this.createColumns = value;
             return this;
         }
 

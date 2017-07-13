@@ -6,8 +6,8 @@ module api.liveedit {
     import ComponentType = api.content.page.region.ComponentType;
     import DescriptorBasedComponent = api.content.page.region.DescriptorBasedComponent;
     import DescriptorBasedComponentBuilder = api.content.page.region.DescriptorBasedComponentBuilder;
-
     import DragHelper = api.ui.DragHelper;
+    import i18n = api.util.i18n;
 
     export class DragAndDrop {
 
@@ -542,13 +542,14 @@ module api.liveedit {
             let placeholder = DragPlaceholder.get().setRegionView(enter ? regionView : null);
 
             helper.setItemName(this.draggedComponentView ?
-                               this.draggedComponentView.getName() : api.util.StringHelper.capitalize(this.getItemType().getShortName()));
+                               this.draggedComponentView.getName() : api.util.StringHelper.capitalize(
+                i18n('field.' + this.getItemType().getShortName())));
 
             if (!enter) {
                 helper.setDropAllowed(false);
             } else if (this.isDraggingLayoutOverLayout(regionView, this.getItemType())) {
                 helper.setDropAllowed(false);
-                placeholder.setText('Layout within layout not allowed');
+                placeholder.setText(i18n('notify.nestedLayouts'));
                 placeholder.setDropAllowed(false);
             } else {
                 helper.setDropAllowed(true);
@@ -561,7 +562,7 @@ module api.liveedit {
             } else if (this.newItemItemType) {
                 return this.newItemItemType;
             } else {
-                throw new Error('Dragged component and new item type can not be both null');
+                throw new Error(i18n('live.view.drag.error.sourceandtargetnull'));
             }
         }
 
@@ -589,13 +590,13 @@ module api.liveedit {
 
         private getComponentView(jq: JQuery): ComponentView<Component> {
             let comp = this.pageView.getComponentViewByElement(jq.get(0));
-            api.util.assertState(!!comp, 'ComponentView is not expected to be null');
+            api.util.assertState(!!comp, i18n('live.view.drag.error.compviewisnull'));
             return comp;
         }
 
         private getRegionView(jq: JQuery): RegionView {
             let region = this.pageView.getRegionViewByElement(jq.get(0));
-            api.util.assertState(!!region, 'RegionView is not expected to be null');
+            api.util.assertState(!!region, i18n('live.view.drag.error.regionviewisnull'));
             return region;
         }
 

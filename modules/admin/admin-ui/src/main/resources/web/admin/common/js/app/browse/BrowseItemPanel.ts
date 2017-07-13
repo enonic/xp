@@ -1,9 +1,10 @@
 module api.app.browse {
     import TreeGrid = api.ui.treegrid.TreeGrid;
+    import i18n = api.util.i18n;
 
     export class BrowseItemPanel<M extends api.Equitable> extends api.ui.panel.DeckPanel {
 
-        private itemStatisticsPanel: api.app.view.ItemStatisticsPanel<M>;
+        protected itemStatisticsPanel: api.app.view.ItemStatisticsPanel<M>;
 
         private items: BrowseItem<M>[] = [];
 
@@ -15,7 +16,7 @@ module api.app.browse {
             this.itemStatisticsPanel = this.createItemStatisticsPanel();
 
             this.noSelectionContainer = new api.dom.DivEl('no-selection-container');
-            this.noSelectionContainer.setHtml('You are wasting this space - select something!');
+            this.noSelectionContainer.setHtml(i18n('panel.noselection'));
 
             this.addPanel(this.itemStatisticsPanel);
             this.appendChild(this.noSelectionContainer);

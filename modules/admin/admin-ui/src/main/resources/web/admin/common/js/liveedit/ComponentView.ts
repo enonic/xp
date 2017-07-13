@@ -9,6 +9,7 @@ module api.liveedit {
     import Content = api.content.Content;
     import FragmentComponent = api.content.page.region.FragmentComponent;
     import FragmentComponentView = api.liveedit.fragment.FragmentComponentView;
+    import i18n = api.util.i18n;
 
     export class ComponentViewBuilder<COMPONENT extends Component> {
 
@@ -109,6 +110,8 @@ module api.liveedit {
 
         private resetListener: (event: ComponentResetEvent) => void;
 
+        protected initOnAdd: boolean = true;
+
         public static debug: boolean = false;
 
         constructor(builder: ComponentViewBuilder<COMPONENT>) {
@@ -181,21 +184,21 @@ module api.liveedit {
             }
 
             if (inspectActionRequired) {
-                actions.push(new api.ui.Action('Inspect').onExecuted(() => {
+                actions.push(new api.ui.Action(i18n('live.view.inspect')).onExecuted(() => {
                     new ComponentInspectedEvent(this).fire();
                 }));
             }
 
-            actions.push(new api.ui.Action('Reset').onExecuted(() => {
+            actions.push(new api.ui.Action(i18n('live.view.reset')).onExecuted(() => {
                 this.component.reset();
             }));
 
             if (!isTopFragmentComponent) {
-                actions.push(new api.ui.Action('Remove').onExecuted(() => {
+                actions.push(new api.ui.Action(i18n('live.view.remove')).onExecuted(() => {
                     this.deselect();
                     this.remove();
                 }));
-                actions.push(new api.ui.Action('Duplicate').onExecuted(() => {
+                actions.push(new api.ui.Action(i18n('live.view.duplicate')).onExecuted(() => {
                     this.deselect();
 
                     let duplicatedComponent = <COMPONENT> this.getComponent().duplicate();
@@ -210,7 +213,7 @@ module api.liveedit {
             let isFragmentComponent = this instanceof api.liveedit.fragment.FragmentComponentView;
 
             if (!isFragmentComponent && this.liveEditModel.isFragmentAllowed()) {
-                actions.push(new api.ui.Action('Create Fragment').onExecuted(() => {
+                actions.push(new api.ui.Action(i18n('live.view.create.fragment')).onExecuted(() => {
                     this.deselect();
                     this.createFragment().then((content: Content): void => {
                         // replace created fragment in place of source component
@@ -304,7 +307,7 @@ module api.liveedit {
             return clone;
         }
 
-        private duplicate(duplicate: COMPONENT): ComponentView<Component> {
+        protected duplicate(duplicate: COMPONENT): ComponentView<Component> {
 
             let parentView = this.getParentItemView();
             let index = parentView.getComponentViewIndex(this);
@@ -316,6 +319,7 @@ module api.liveedit {
                     setData(duplicate).
                     setPositionIndex(index + 1));
 
+            duplicateView.skipInitOnAdd();
             parentView.addComponentView(duplicateView, index + 1);
 
             return duplicateView;
@@ -439,6 +443,10 @@ module api.liveedit {
 
         isEmpty(): boolean {
             return !this.component || this.component.isEmpty();
+        }
+
+        private skipInitOnAdd(): void {
+            this.initOnAdd = false;
         }
 
         static findParentRegionViewHTMLElement(htmlElement: HTMLElement): HTMLElement {

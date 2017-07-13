@@ -8,6 +8,7 @@ module api.content.attachment {
     import AttachmentJson = api.content.attachment.AttachmentJson;
     import AttachmentBuilder = api.content.attachment.AttachmentBuilder;
     import SelectionItem = api.app.browse.SelectionItem;
+    import i18n = api.util.i18n;
 
     export class AttachmentUploaderEl extends api.ui.uploader.FileUploaderEl<Attachment> {
 
@@ -38,7 +39,7 @@ module api.content.attachment {
             }
 
             const noAttachmentsDescription = new api.dom.DivEl('no-attachments-description');
-            noAttachmentsDescription.setHtml('< No attachment found >');
+            noAttachmentsDescription.setHtml('< ' + i18n('field.content.noattachment') + ' >');
             noAttachmentsDescription.insertAfterEl(this.getResultContainer());
 
             this.addClass('attachment-uploader-el');

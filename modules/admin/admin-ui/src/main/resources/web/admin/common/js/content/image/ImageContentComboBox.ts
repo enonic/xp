@@ -1,24 +1,27 @@
-module api.content.form.inputtype.image {
+module api.content.image {
 
     import ContentSummaryLoader = api.content.resource.ContentSummaryLoader;
     import SelectedOption = api.ui.selector.combobox.SelectedOption;
     import Option = api.ui.selector.Option;
     import RichComboBox = api.ui.selector.combobox.RichComboBox;
     import RichComboBoxBuilder = api.ui.selector.combobox.RichComboBoxBuilder;
-    import ImageSelectorDisplayValue = api.content.form.inputtype.image.ImageSelectorDisplayValue;
-    import ImageSelectorViewer = api.content.form.inputtype.image.ImageSelectorViewer;
-    import ImageSelectorSelectedOptionsView = api.content.form.inputtype.image.ImageSelectorSelectedOptionsView;
     import ContentQueryResultJson = api.content.json.ContentQueryResultJson;
     import ContentSummaryJson = api.content.json.ContentSummaryJson;
     import BaseLoader = api.util.loader.BaseLoader;
     import OptionDataLoader = api.ui.selector.OptionDataLoader;
     import SelectedOptionsView = api.ui.selector.combobox.SelectedOptionsView;
+    import ContentTypeName = api.schema.content.ContentTypeName;
 
-    export class ImageContentComboBox extends RichComboBox<ImageSelectorDisplayValue> {
+    export class ImageContentComboBox extends RichComboBox<any> {
 
         constructor(builder: ImageContentComboBoxBuilder) {
 
             let loader = builder.loader ? builder.loader : new ContentSummaryLoader();
+
+            if (!builder.optionDataLoader) {
+                builder.setOptionDataLoader(ImageOptionDataLoader.create().setContent(builder.content).setContentTypeNames(
+                    [ContentTypeName.IMAGE.toString(), ContentTypeName.MEDIA_VECTOR.toString()]).build());
+            }
 
             let richComboBoxBuilder = new RichComboBoxBuilder().
                 setComboBoxName(builder.name ? builder.name : 'imageContentSelector').
@@ -48,6 +51,20 @@ module api.content.form.inputtype.image {
             };
         }
 
+        setContent(content: ContentSummary) {
+
+            this.clearSelection();
+            if (content) {
+                let optionToSelect: Option<ImageSelectorDisplayValue> = this.getOptionByValue(content.getContentId().toString());
+                if (!optionToSelect) {
+                    optionToSelect = this.createOption(content);
+                    this.addOption(optionToSelect);
+                }
+                this.selectOption(optionToSelect);
+
+            }
+        }
+
         public static create(): ImageContentComboBoxBuilder {
             return new ImageContentComboBoxBuilder();
         }
@@ -63,7 +80,7 @@ module api.content.form.inputtype.image {
 
         minWidth: number;
 
-        selectedOptionsView: ImageSelectorSelectedOptionsView;
+        selectedOptionsView: SelectedOptionsView<any>;
 
         optionDisplayValueViewer: ImageSelectorViewer;
 
@@ -72,6 +89,13 @@ module api.content.form.inputtype.image {
         treegridDropdownEnabled: boolean;
 
         value: string;
+
+        content: ContentSummary;
+
+        setContent(value: ContentSummary): ImageContentComboBoxBuilder {
+            this.content = value;
+            return this;
+        }
 
         setName(value: string): ImageContentComboBoxBuilder {
             this.name = value;
@@ -98,7 +122,7 @@ module api.content.form.inputtype.image {
             return this;
         }
 
-        setSelectedOptionsView(value: ImageSelectorSelectedOptionsView): ImageContentComboBoxBuilder {
+        setSelectedOptionsView(value: SelectedOptionsView<any>): ImageContentComboBoxBuilder {
             this.selectedOptionsView = value;
             return this;
         }

@@ -9,46 +9,46 @@ module api.content {
     import ContentQueryRequest = api.content.resource.ContentQueryRequest;
     import ContentTreeSelectorQueryRequest = api.content.resource.ContentTreeSelectorQueryRequest;
     import ContentTreeSelectorItem = api.content.resource.ContentTreeSelectorItem;
+    import CompareContentRequest = api.content.resource.CompareContentRequest;
+    import CompareContentResults = api.content.resource.result.CompareContentResults;
+    import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
+    import ContentAndStatusTreeSelectorItem = api.content.resource.ContentAndStatusTreeSelectorItem;
+    import CompareContentResult = api.content.resource.result.CompareContentResult;
 
     export class ContentSummaryOptionDataLoader implements OptionDataLoader<ContentTreeSelectorItem> {
 
-        private request: ContentTreeSelectorQueryRequest = new ContentTreeSelectorQueryRequest();
+        protected request: ContentTreeSelectorQueryRequest = new ContentTreeSelectorQueryRequest();
 
-        private contentTypeNames: string[] = [];
-
-        private allowedContentPaths: string[] = [];
-
-        private relationshipType: string;
+        private loadStatus: boolean;
 
         constructor(builder?: ContentSummaryOptionDataLoaderBuilder) {
             if (builder) {
-                this.contentTypeNames = builder.contentTypeNames;
-                this.allowedContentPaths = builder.allowedContentPaths;
-                this.relationshipType = builder.relationshipType;
+                this.loadStatus = builder.loadStatus;
 
                 this.initRequest(builder);
             }
         }
 
         private initRequest(builder: ContentSummaryOptionDataLoaderBuilder) {
-            let request = this.request;
-            request.setContentTypeNames(builder.contentTypeNames);
-            request.setAllowedContentPaths(builder.allowedContentPaths);
-            request.setRelationshipType(builder.relationshipType);
-            request.setContent(builder.content);
+            this.request.setContentTypeNames(builder.contentTypeNames);
+            this.request.setAllowedContentPaths(builder.allowedContentPaths);
+            this.request.setRelationshipType(builder.relationshipType);
+            this.request.setContent(builder.content);
         }
 
         fetch(node: TreeNode<Option<ContentTreeSelectorItem>>): wemQ.Promise<ContentTreeSelectorItem> {
-
+            this.request.setParentPath(node.getDataId() ? node.getData().displayValue.getPath() : null);
             if (this.request.getContent()) {
-                this.request.setParentPath(node.getDataId() ? node.getData().displayValue.getPath() : null);
-                return this.request.sendAndParse().then((contents: ContentTreeSelectorItem[]) => {
-                    return !!contents && contents.length > 0 ? contents[0] : null;
-                });
+                return this.load().then(items => items[0]);
+            }
+
+            if (this.loadStatus) {
+                return ContentSummaryAndCompareStatusFetcher.fetch(node.getData().displayValue.getContentId()).then(
+                    content => new ContentAndStatusTreeSelectorItem(content, false));
             }
 
             return ContentSummaryFetcher.fetch(node.getData().displayValue.getContentId()).then(
-                content => new ContentTreeSelectorItem(content, false));
+                content => new ContentAndStatusTreeSelectorItem(ContentSummaryAndCompareStatus.fromContentSummary(content), false));
         }
 
         fetchChildren(parentNode: TreeNode<Option<ContentTreeSelectorItem>>, from: number = 0,
@@ -60,28 +60,74 @@ module api.content {
 
                 this.request.setParentPath(parentNode.getDataId() ? parentNode.getData().displayValue.getPath() : null);
 
-                return this.request.sendAndParse().then(items => {
-                    return this.createOptionData(items);
+                return this.load().then((result: ContentAndStatusTreeSelectorItem[]) => {
+                    return this.createOptionData(result, 0, 0);
                 });
             }
 
-            return ContentSummaryFetcher.fetchChildren(parentNode.getData() ? parentNode.getData().displayValue.getContentId() : null,
-                from,
-                size).then((response: ContentResponse<ContentSummary>) => {
-                return new OptionDataLoaderData(response.getContents().map(content => new ContentTreeSelectorItem(content, false)),
-                    response.getMetadata().getHits(),
-                    response.getMetadata().getTotalHits());
-            });
+            if (this.loadStatus) {
+                return ContentSummaryAndCompareStatusFetcher.fetchChildren(
+                    parentNode.getData() ? parentNode.getData().displayValue.getContentId() : null, from, size).then(
+                    (response: ContentResponse<ContentSummaryAndCompareStatus>) => {
+
+                        return this.createOptionData(response.getContents().map(
+                            content => new ContentAndStatusTreeSelectorItem(content, false)),
+                            response.getMetadata().getHits(),
+                            response.getMetadata().getTotalHits());
+                    });
+            }
+
+            return ContentSummaryFetcher.fetchChildren(
+                parentNode.getData() ? parentNode.getData().displayValue.getContentId() : null, from, size).then(
+                (response: ContentResponse<ContentSummary>) => {
+
+                    return this.createOptionData(response.getContents().map(
+                        content => new ContentAndStatusTreeSelectorItem(ContentSummaryAndCompareStatus.fromContentSummary(
+                            content), false)), response.getMetadata().getHits(), response.getMetadata().getTotalHits());
+                });
         }
 
-        protected createOptionData(data: ContentTreeSelectorItem[]) {
-            return new OptionDataLoaderData(data,
-                0,
-                0);
+        protected createOptionData(data: ContentAndStatusTreeSelectorItem[], hits: number,
+                                   totalHits: number): OptionDataLoaderData<ContentTreeSelectorItem> {
+            return new OptionDataLoaderData(data, hits, totalHits);
         }
 
-        checkReadonly(items: ContentTreeSelectorItem[]): wemQ.Promise<string[]> {
+        checkReadonly(items: ContentAndStatusTreeSelectorItem[]): wemQ.Promise<string[]> {
             return ContentSummaryFetcher.getReadOnly(items.map(item => item.getContent()));
+        }
+
+        private load(): wemQ.Promise<ContentAndStatusTreeSelectorItem[]> {
+            if (this.request.getContent()) {
+                return this.request.sendAndParse().then(items => {
+                    if (this.loadStatus) {
+                        return this.loadStatuses(items);
+                    }
+
+                    const deferred = wemQ.defer<ContentAndStatusTreeSelectorItem[]>();
+
+                    deferred.resolve(items.map((item: ContentTreeSelectorItem) => {
+                        return new ContentAndStatusTreeSelectorItem(ContentSummaryAndCompareStatus.fromContentSummary(
+                            item.getContent()), item.getExpand());
+                    }));
+
+                    return deferred.promise;
+                });
+            }
+        }
+
+        private loadStatuses(contents: ContentTreeSelectorItem[]): wemQ.Promise<ContentAndStatusTreeSelectorItem[]> {
+            return CompareContentRequest.fromContentSummaries(contents.map(item => item.getContent())).sendAndParse().then(
+                (compareResults: CompareContentResults) => {
+
+                    return contents.map(item => {
+
+                        const compareResult: CompareContentResult = compareResults.get(item.getId());
+                        const contentAndCompareStatus = ContentSummaryAndCompareStatus.fromContentAndCompareAndPublishStatus(
+                            item.getContent(), compareResult.getCompareStatus(), compareResult.getPublishStatus());
+
+                        return new ContentAndStatusTreeSelectorItem(contentAndCompareStatus, item.getExpand());
+                    });
+                });
         }
 
         static create(): ContentSummaryOptionDataLoaderBuilder {
@@ -98,6 +144,8 @@ module api.content {
         allowedContentPaths: string[] = [];
 
         relationshipType: string;
+
+        loadStatus: boolean;
 
         public setContentTypeNames(contentTypeNames: string[]): ContentSummaryOptionDataLoaderBuilder {
             this.contentTypeNames = contentTypeNames;
@@ -116,6 +164,11 @@ module api.content {
 
         public setContent(content: ContentSummary): ContentSummaryOptionDataLoaderBuilder {
             this.content = content;
+            return this;
+        }
+
+        public setLoadStatus(value: boolean): ContentSummaryOptionDataLoaderBuilder {
+            this.loadStatus = value;
             return this;
         }
 

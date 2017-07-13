@@ -4,6 +4,7 @@ module api.app {
     import Panel = api.ui.panel.Panel;
     import AppBarTabMenuItem = api.app.bar.AppBarTabMenuItem;
     import NavigatorEvent = api.ui.NavigatorEvent;
+    import i18n = api.util.i18n;
 
     export class NavigatedAppPanel<M extends api.Equitable> extends AppPanel<M> {
 
@@ -85,7 +86,7 @@ module api.app {
             if (!this.browsePanel) {
                 this.browsePanel = browsePanel;
 
-                let browseMenuItem = new api.app.bar.AppBarTabMenuItemBuilder().setLabel('<Select>').setTabId(
+                let browseMenuItem = new api.app.bar.AppBarTabMenuItemBuilder().setLabel('<' + i18n('action.select') + '>').setTabId(
                     new api.app.bar.AppBarTabId('hidden', '____home')).build();
                 browseMenuItem.setVisibleInMenu(false);
                 this.addNavigablePanel(browseMenuItem, browsePanel);

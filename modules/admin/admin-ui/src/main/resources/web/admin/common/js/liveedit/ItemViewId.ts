@@ -1,5 +1,6 @@
 module api.liveedit {
 
+    import i18n = api.util.i18n;
     export class ItemViewId implements api.Equitable {
 
         static DATA_ATTRIBUTE: string = 'live-edit-id';
@@ -9,7 +10,7 @@ module api.liveedit {
         private refString: string;
 
         constructor(value: number) {
-            api.util.assert(value >= 1, 'An ItemViewId must be 1 or larger');
+            api.util.assert(value >= 1, i18n('live.view.itemviewid.istooshort'));
             this.value = value;
             this.refString = '' + value;
         }

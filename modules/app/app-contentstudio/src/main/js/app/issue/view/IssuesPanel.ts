@@ -80,8 +80,7 @@ export class IssuesPanel extends Panel {
         this.assignedToMeCheckbox.toggleClass('disabled', total === 0);
         this.assignedToMeCheckbox.setLabel(this.makeFilterLabel(i18n('field.assignedToMe'), total));
         if (total === 0) {
-            this.assignedToMeCheckbox.setChecked(false, true);
-            this.issuesList.setLoadAssignedToMe(false);
+            this.assignedToMeCheckbox.setChecked(false);
         }
     }
 
@@ -89,8 +88,7 @@ export class IssuesPanel extends Panel {
         this.myIssuesCheckbox.toggleClass('disabled', total === 0);
         this.myIssuesCheckbox.setLabel(this.makeFilterLabel(i18n('field.myIssues'), total));
         if (total === 0) {
-            this.myIssuesCheckbox.setChecked(false, true);
-            this.issuesList.setLoadMyIssues(false);
+            this.myIssuesCheckbox.setChecked(false);
         }
     }
 

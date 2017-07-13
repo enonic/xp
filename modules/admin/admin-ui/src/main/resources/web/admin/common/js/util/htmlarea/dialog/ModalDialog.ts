@@ -47,6 +47,15 @@ module api.util.htmlarea.dialog {
         }
     }
 
+    export class HtmlAreaModalDialogConfig {
+
+        editor: HtmlAreaEditor;
+
+        title: string;
+
+        cls?: string;
+    }
+
     export class ModalDialog extends api.ui.dialog.ModalDialog {
         private fields: { [id: string]: api.dom.FormItemEl } = {};
         private validated: boolean = false;
@@ -57,13 +66,13 @@ module api.util.htmlarea.dialog {
 
         public static CLASS_NAME: string = 'html-area-modal-dialog';
 
-        constructor(editor: HtmlAreaEditor, title: string, cls?: string) {
+        constructor(config: HtmlAreaModalDialogConfig) {
 
-            super(<api.ui.dialog.ModalDialogConfig>{title});
+            super(<api.ui.dialog.ModalDialogConfig>{title: config.title});
 
-            this.editor = editor;
+            this.editor = config.editor;
 
-            this.getEl().addClass(ModalDialog.CLASS_NAME + (cls ? ' ' + cls : ''));
+            this.initializeConfig(config);
 
             this.layout();
             this.initializeActions();
@@ -248,6 +257,10 @@ module api.util.htmlarea.dialog {
                 this.editor.focus();
             }
             this.remove();
+        }
+
+        protected initializeConfig(config: HtmlAreaModalDialogConfig) {
+            this.getEl().addClass(ModalDialog.CLASS_NAME + (config.cls ? ' ' + config.cls : ''));
         }
 
         private initializeListeners() {

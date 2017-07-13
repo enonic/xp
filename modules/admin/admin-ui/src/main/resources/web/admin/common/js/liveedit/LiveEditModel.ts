@@ -17,6 +17,7 @@ module api.liveedit {
     import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
     import SiteModel = api.content.site.SiteModel;
     import ContentFormContext = api.content.form.ContentFormContext;
+    import i18n = api.util.i18n;
 
     export class LiveEditModel {
 
@@ -159,7 +160,7 @@ module api.liveedit {
             } else if (pageMode === PageMode.NO_CONTROLLER) {
                 this.initNoControllerPageTemplate(pageTemplate, pageModel);
             } else {
-                throw new Error(`Unsupported PageMode for a PageTemplate: ${pageMode}`);
+                throw new Error(i18n('live.view.page.error.templmodenotsupported', pageMode));
             }
         }
 
@@ -174,7 +175,7 @@ module api.liveedit {
             } else if (pageMode === PageMode.NO_CONTROLLER || pageMode === PageMode.FRAGMENT) {
                 this.initNoControllerPage(pageModel);
             } else {
-                throw new Error(`Unsupported PageMode for a Content: ${PageMode[<number>pageMode]}`);
+                throw new Error(i18n('live.view.page.error.contentmodenotsupported', PageMode[<number>pageMode]));
             }
         }
 
@@ -310,7 +311,7 @@ module api.liveedit {
             new GetPageTemplateByKeyRequest(key).sendAndParse().then((pageTemplate: PageTemplate) => {
                 deferred.resolve(pageTemplate);
             }).catch(() => {
-                deferred.reject(new api.Exception(`Page template "${key}" not found.`, api.ExceptionType.WARNING));
+                deferred.reject(new api.Exception(i18n('live.view.page.error.templatenotfound', key), api.ExceptionType.WARNING));
             }).done();
             return deferred.promise;
         }
@@ -320,7 +321,7 @@ module api.liveedit {
             new GetPageDescriptorByKeyRequest(key).sendAndParse().then((pageDescriptor: PageDescriptor) => {
                 deferred.resolve(pageDescriptor);
             }).catch(() => {
-                deferred.reject(new api.Exception(`Page descriptor "${key}" not found.`, api.ExceptionType.WARNING));
+                deferred.reject(new api.Exception(i18n('live.view.page.error.descriptornotfound', key), api.ExceptionType.WARNING));
             }).done();
             return deferred.promise;
         }

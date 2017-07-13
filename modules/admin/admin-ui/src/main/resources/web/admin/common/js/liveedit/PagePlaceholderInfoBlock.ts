@@ -1,5 +1,6 @@
 module api.liveedit {
 
+    import i18n = api.util.i18n;
     export class PagePlaceholderInfoBlock extends api.dom.DivEl {
 
         private line1: api.dom.DivEl;
@@ -17,16 +18,16 @@ module api.liveedit {
 
         setTextForContent(contentTypeDisplayName: string) {
             this.setBaseHeader();
-            this.line2.setHtml(`No page templates supporting content type "${contentTypeDisplayName}" found`);
+            this.line2.setHtml(i18n('live.view.page.notemplates', contentTypeDisplayName));
         }
 
         setBaseHeader(value?: string) {
-            this.line1.setHtml(api.util.StringHelper.isEmpty(value) ? 'Select a controller below to set up a customized page' : value);
+            this.line1.setHtml(api.util.StringHelper.isEmpty(value) ? i18n('live.view.page.selectcontroller') : value);
         }
 
         setNoControllersAvailableText() {
-            this.line1.setHtml('No page controllers found');
-            this.line2.setHtml('Please add an application to your site to enable rendering of this item');
+            this.line1.setHtml(i18n('live.view.page.nocontrollers'));
+            this.line2.setHtml(i18n('live.view.page.addapplications'));
         }
 
     }

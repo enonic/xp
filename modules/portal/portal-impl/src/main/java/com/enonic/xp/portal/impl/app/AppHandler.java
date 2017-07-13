@@ -101,7 +101,6 @@ public final class AppHandler
     private PortalRequest createRequest( final WebRequest req, final ApplicationKey applicationKey )
     {
         final PortalRequest portalRequest = ( req instanceof PortalRequest ) ? (PortalRequest) req : new PortalRequest( req );
-        portalRequest.setMode( RenderMode.APP );
         portalRequest.setApplicationKey( applicationKey );
         portalRequest.setBaseUri( "/app/" + applicationKey.getName() );
 
