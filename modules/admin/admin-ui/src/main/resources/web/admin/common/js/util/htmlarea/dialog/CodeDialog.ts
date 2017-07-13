@@ -3,13 +3,14 @@ module api.util.htmlarea.dialog {
     import FormItem = api.ui.form.FormItem;
     import Validators = api.ui.form.Validators;
     import TextArea = api.ui.text.TextArea;
+    import i18n = api.util.i18n;
 
     export class CodeDialog extends ModalDialog {
 
         private textArea: TextArea;
 
         constructor(editor: HtmlAreaEditor) {
-            super(<HtmlAreaModalDialogConfig>{editor:editor, title:'Source code', cls:'source-code-modal-dialog'});
+            super(<HtmlAreaModalDialogConfig>{editor: editor, title: i18n('dialog.sourcecode.title'), cls: 'source-code-modal-dialog'});
         }
 
         protected layout() {
@@ -37,7 +38,7 @@ module api.util.htmlarea.dialog {
         }
 
         protected initializeActions() {
-            const okAction: api.ui.Action = new api.ui.Action('Ok');
+            const okAction: api.ui.Action = new api.ui.Action(i18n('action.ok'));
 
             this.addAction(okAction.onExecuted(() => {
                 this.getEditor().focus();

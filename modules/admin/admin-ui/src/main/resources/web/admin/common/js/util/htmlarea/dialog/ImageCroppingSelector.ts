@@ -4,13 +4,14 @@ module api.util.htmlarea.dialog {
     import Option = api.ui.selector.Option;
     import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
     import OptionSelectedEvent = api.ui.selector.OptionSelectedEvent;
+    import i18n = api.util.i18n;
 
     export class ImageCroppingSelector extends Dropdown<ImageCroppingOption> {
 
         constructor() {
             super('imageSelector', <DropdownConfig<ImageCroppingOption>>{
                 optionDisplayValueViewer: new ImageCroppingOptionViewer(),
-                inputPlaceholderText: 'Cropping effect'
+                inputPlaceholderText: i18n('dialog.image.cropping.effect')
             });
             this.addClass('image-cropping-selector');
 
@@ -18,8 +19,6 @@ module api.util.htmlarea.dialog {
         }
 
         private initDropdown() {
-
-            this.addNoneOption();
             this.addCroppingOptions();
 
             this.onOptionSelected((event: OptionSelectedEvent<ImageCroppingOption>) => {
@@ -29,20 +28,8 @@ module api.util.htmlarea.dialog {
             });
         }
 
-        private addNoneOption() {
-            let noneOption = new ImageCroppingOption('none', 0 , 0);
-            noneOption.setDisplayValue('<None>');
-
-            let option =  {
-                value: noneOption.getName(),
-                displayValue: noneOption
-            };
-
-            this.addOption(option);
-        }
-
         private addCroppingOptions() {
-            ImageCroppingOptions.getOptions().forEach((option: Option<ImageCroppingOption>) => {
+            ImageCroppingOptions.get().getOptions().forEach((option: Option<ImageCroppingOption>) => {
                 this.addOption(option);
             });
         }
@@ -54,7 +41,7 @@ module api.util.htmlarea.dialog {
             }
 
             const result = scaleRegex.exec(value);
-            const customOption: ImageCroppingOption = new ImageCroppingOption('Custom', parseInt(result[1], 10), parseInt(result[2], 10));
+            const customOption: ImageCroppingOption = new ImageCroppingOption('custom', parseInt(result[1], 10), parseInt(result[2], 10));
 
             const option: Option<ImageCroppingOption> = {
                 value: customOption.getName(),

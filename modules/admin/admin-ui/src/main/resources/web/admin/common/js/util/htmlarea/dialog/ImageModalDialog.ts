@@ -48,7 +48,7 @@ module api.util.htmlarea.dialog {
                 config: config,
                 editor: config.editor,
                 content: content,
-                title: 'Insert Image',
+                title: i18n('dialog.image.title'),
                 cls: 'image-modal-dialog'
             });
 
@@ -89,8 +89,8 @@ module api.util.htmlarea.dialog {
             this.addUploaderAndPreviewControls();
             this.setFirstFocusField(this.imageSelectorFormItem.getInput());
 
-            this.imageCaptionField = this.createFormItem(new ModalDialogFormItemBuilder('caption', 'Caption'));
-            this.imageAltTextField = this.createFormItem(new ModalDialogFormItemBuilder('altText', 'Alternative text'));
+            this.imageCaptionField = this.createFormItem(new ModalDialogFormItemBuilder('caption', i18n('dialog.image.formitem.caption')));
+            this.imageAltTextField = this.createFormItem(new ModalDialogFormItemBuilder('altText', i18n('dialog.image.formitem.alttext')));
 
             this.imageCaptionField.addClass('caption').hide();
             this.imageAltTextField.addClass('alttext').hide();
@@ -107,7 +107,8 @@ module api.util.htmlarea.dialog {
             let imageSelector = api.content.image.ImageContentComboBox.create().setMaximumOccurrences(1).setContent(
                 this.content).setSelectedOptionsView(new api.content.ContentSelectedOptionsView()).setTreegridDropdownEnabled(true).build();
 
-            let formItemBuilder = new ModalDialogFormItemBuilder(id, 'Image').setValidator(Validators.required).setInputEl(imageSelector);
+            let formItemBuilder = new ModalDialogFormItemBuilder(id, i18n('dialog.image.formitem.image')).setValidator(
+                Validators.required).setInputEl(imageSelector);
 
             let formItem = this.createFormItem(formItemBuilder);
             let imageSelectorComboBox = imageSelector.getComboBox();
@@ -600,7 +601,7 @@ module api.util.htmlarea.dialog {
             let scalingApplied: boolean = imgSrc.indexOf('scale=') > 0;
             if (scalingApplied) {
                 let scaleParamValue = api.util.UriHelper.decodeUrlParams(imgSrc.replace('&amp;', '&'))['scale'];
-                let scaleOption = ImageCroppingOptions.getOptionByProportion(scaleParamValue);
+                let scaleOption = ImageCroppingOptions.get().getOptionByProportion(scaleParamValue);
                 if (!!scaleOption) {
                     imageCroppingSelector.selectOption(imageCroppingSelector.getOptionByValue(scaleOption.getName()));
                 } else {

@@ -1,5 +1,7 @@
 module api.util.htmlarea.dialog {
 
+    import i18n = api.util.i18n;
+
     export class ImageCroppingOption {
 
         private name: string;
@@ -10,11 +12,11 @@ module api.util.htmlarea.dialog {
 
         private heightProportion: number;
 
-        constructor(name: string, widthProportion: number, heightProportion: number) {
+        constructor(name: string, widthProportion: number, heightProportion: number, displayValue?: string) {
             this.name = name;
             this.widthProportion = widthProportion;
             this.heightProportion = heightProportion;
-            this.displayValue = api.util.StringHelper.capitalize(name) + ' (' + widthProportion + ':' + heightProportion + ')';
+            this.displayValue = !!displayValue ? displayValue : this.makeDisplayValue();
         }
 
         getName(): string {
@@ -31,6 +33,10 @@ module api.util.htmlarea.dialog {
 
         getProportionString(): string {
             return this.widthProportion + ':' + this.heightProportion;
+        }
+
+        private makeDisplayValue(): string {
+            return i18n('dialog.image.cropping.' + this.name) + ' (' + this.widthProportion + ':' + this.heightProportion + ')';
         }
 
     }

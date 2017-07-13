@@ -1,9 +1,11 @@
 module api.util.htmlarea.dialog {
 
+    import i18n = api.util.i18n;
+
     export class CharMapDialog extends ModalDialog {
 
         constructor(editor: HtmlAreaEditor) {
-            super(<HtmlAreaModalDialogConfig>{editor:editor, title:'Special character', cls:'special-chars-modal-dialog'});
+            super(<HtmlAreaModalDialogConfig>{editor: editor, title: i18n('dialog.charmap.title'), cls: 'special-chars-modal-dialog'});
         }
 
         protected layout() {
