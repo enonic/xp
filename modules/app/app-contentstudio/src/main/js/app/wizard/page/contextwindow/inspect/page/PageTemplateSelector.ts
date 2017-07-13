@@ -18,8 +18,10 @@ import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
 import GetPageTemplatesByCanRenderRequest = api.content.page.GetPageTemplatesByCanRenderRequest;
 import PageTemplateLoader = api.content.page.PageTemplateLoader;
 import i18n = api.util.i18n;
+import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
 
-export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
+export class PageTemplateSelector
+    extends Dropdown<PageTemplateOption> {
 
     private customizedOption: Option<PageTemplateOption>;
 
@@ -30,17 +32,30 @@ export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
             optionDisplayValueViewer: new PageTemplateOptionViewer(liveEditModel.getPageModel().getDefaultPageTemplate())
         });
 
+        this.autoOption = {value: '__auto__', displayValue: new PageTemplateOption()};
+        this.customizedOption = this.createCustomizedOption();
+
         this.loadPageTemplates(liveEditModel).then((options: Option<PageTemplateOption>[]) => {
-
             this.initOptionsList(options);
-
             this.selectInitialOption(liveEditModel.getPageModel());
-
-            this.initPageModelListeners(liveEditModel.getPageModel());
 
         }).catch((reason: any) => {
             api.DefaultErrorHandler.handle(reason);
         }).done();
+
+        ContentServerEventsHandler.getInstance().onContentCreated(summaries => {
+            const isTemplateCreated = summaries.some(summary => summary.getType().isPageTemplate());
+            if (isTemplateCreated) {
+                this.loadPageTemplates(liveEditModel).then(options => {
+                    const selectedValue = this.getValue();
+                    this.removeAllOptions();
+                    this.initOptionsList(options);
+                    this.setValue(selectedValue);
+                });
+            }
+        });
+
+        this.initPageModelListeners(liveEditModel.getPageModel());
     }
 
     private loadPageTemplates(liveEditModel: LiveEditModel): wemQ.Promise<Option<PageTemplateOption>[]> {
@@ -80,14 +95,12 @@ export class PageTemplateSelector extends Dropdown<PageTemplateOption> {
     }
 
     private initOptionsList(options: Option<PageTemplateOption>[]) {
-        this.autoOption = {value: '__auto__', displayValue: new PageTemplateOption()};
         this.addOption(this.autoOption);
 
         options.forEach((option: Option<PageTemplateOption>) => {
             this.addOption(option);
         });
 
-        this.customizedOption = this.createCustomizedOption();
         this.addOption(this.customizedOption);
     }
 
