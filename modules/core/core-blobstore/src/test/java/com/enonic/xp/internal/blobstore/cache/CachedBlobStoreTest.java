@@ -91,4 +91,39 @@ public class CachedBlobStoreTest
 
         Mockito.verify( this.blobStore, Mockito.times( 1 ) ).getRecord( segment, record.getKey() );
     }
+
+    @Test
+    public void removeRecord()
+        throws Exception
+    {
+        final BlobRecord record = newRecord( "0123", 10L );
+        final ByteSource byteSource = ByteSource.wrap( "0123".getBytes() );
+        Mockito.when( this.blobStore.addRecord( segment, byteSource ) ).thenReturn( record );
+
+        this.cachedBlobStore.removeRecord( this.segment, record.getKey() );
+
+        Mockito.verify( this.blobStore, Mockito.times( 1 ) ).removeRecord( segment, record.getKey() );
+
+        Mockito.when( this.blobStore.getRecord( segment, record.getKey() ) ).thenReturn( null );
+        assertNull( this.cachedBlobStore.getRecord( segment, record.getKey() ) );
+    }
+
+    @Test
+    public void invalidate()
+        throws Exception
+    {
+        final BlobRecord record = newRecord( "0123", 10L );
+        Mockito.when( this.blobStore.getRecord( segment, record.getKey() ) ).thenReturn( record );
+
+        this.cachedBlobStore.getRecord( this.segment, record.getKey() );
+        this.cachedBlobStore.getRecord( this.segment, record.getKey() );
+        this.cachedBlobStore.getRecord( this.segment, record.getKey() );
+        Mockito.verify( this.blobStore, Mockito.times( 1 ) ).getRecord( segment, record.getKey() );
+
+        this.cachedBlobStore.invalidate( this.segment, record.getKey() );
+
+        this.cachedBlobStore.getRecord( this.segment, record.getKey() );
+        Mockito.verify( this.blobStore, Mockito.times( 2 ) ).getRecord( segment, record.getKey() );
+    }
+
 }

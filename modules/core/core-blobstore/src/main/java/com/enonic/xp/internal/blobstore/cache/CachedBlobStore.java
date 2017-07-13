@@ -20,7 +20,7 @@ public final class CachedBlobStore
 
     private long sizeTreshold;
 
-    public CachedBlobStore( final Builder builder )
+    private CachedBlobStore( final Builder builder )
     {
         this.store = builder.store;
         this.sizeTreshold = builder.sizeTreshold;
