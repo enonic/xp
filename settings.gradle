@@ -93,7 +93,7 @@ include 'repack:repack-okhttp'
 include 'repack:repack-resteasy'
 
 include 'distro'
-//include 'docs'
+include 'docs'
 
 rootProject.name = 'xp'
 
