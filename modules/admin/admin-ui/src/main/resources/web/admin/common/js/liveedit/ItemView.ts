@@ -526,6 +526,12 @@ module api.liveedit {
                 return;
             }
 
+            const elem = new api.dom.ElementHelper(<HTMLElement>event.target);
+
+            if (elem.hasClass('toggle') && elem.hasClass('expand')) {
+                return;
+            }
+
             let rightClicked = event.which === 3 || event.ctrlKey;
 
             if (rightClicked) { // right click

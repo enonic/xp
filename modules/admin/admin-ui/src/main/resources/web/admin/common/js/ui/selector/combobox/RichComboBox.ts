@@ -218,6 +218,10 @@ module api.ui.selector.combobox {
             return this.comboBox.getOptionByRow(rowIndex);
         }
 
+        getOptionDataLoader(): OptionDataLoader<OPTION_DISPLAY_VALUE> {
+            return this.comboBox.getOptionDataLoader();
+        }
+
         countSelected(): number {
             return this.comboBox.countSelectedOptions();
         }

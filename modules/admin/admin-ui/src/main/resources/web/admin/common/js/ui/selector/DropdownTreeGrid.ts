@@ -62,6 +62,10 @@ module api.ui.selector {
             this.optionsTreeGrid.setOptions(options);
         }
 
+        addOption(option: Option<OPTION_DISPLAY_VALUE>) {
+            this.optionsTreeGrid.addOption(option);
+        }
+
         getSelectedOptions(): Option<OPTION_DISPLAY_VALUE>[] {
             return this.optionsTreeGrid.getSelectedNodes().map(selectedNode => {
                 return this.getOptionByValue(selectedNode.getDataId());
@@ -73,6 +77,8 @@ module api.ui.selector {
                 // TODO
                 // this.getGridData().setFilter(this.filter);
             }
+
+            this.dataIdProperty = 'dataId';
 
             this.optionsTreeGrid = new OptionsTreeGrid(this.createColumns(),
                 this.createOptions(),

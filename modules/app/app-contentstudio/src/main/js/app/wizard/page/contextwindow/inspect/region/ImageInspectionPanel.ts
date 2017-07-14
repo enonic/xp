@@ -18,6 +18,8 @@ import PropertyTree = api.data.PropertyTree;
 import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
 import ContentSummaryBuilder = api.content.ContentSummaryBuilder;
 import i18n = api.util.i18n;
+import ImageContentComboBox = api.content.image.ImageContentComboBox;
+import ContentSelectedOptionsView = api.content.ContentSelectedOptionsView;
 
 export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponent> {
 
@@ -27,7 +29,7 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
 
     private formView: api.form.FormView;
 
-    private imageSelector: ContentComboBox;
+    private imageSelector: ImageContentComboBox;
 
     private loader: ContentSummaryLoader;
 
@@ -43,7 +45,14 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
         });
         this.loader = new api.content.resource.ContentSummaryLoader();
         this.loader.setAllowedContentTypeNames([ContentTypeName.IMAGE, ContentTypeName.MEDIA_VECTOR]);
-        this.imageSelector = ContentComboBox.create().setMaximumOccurrences(1).setLoader(this.loader).build();
+
+        this.imageSelector = ImageContentComboBox
+            .create()
+            .setLoader(this.loader)
+            .setMaximumOccurrences(1)
+            .setTreegridDropdownEnabled(true)
+            .setSelectedOptionsView(new ContentSelectedOptionsView())
+            .build();
 
         this.imageSelectorForm = new ImageSelectorForm(this.imageSelector, i18n('field.image'));
 
@@ -72,6 +81,9 @@ export class ImageInspectionPanel extends ComponentInspectionPanel<ImageComponen
 
     setImageComponent(imageView: ImageComponentView) {
         this.imageView = imageView;
+
+        this.imageSelector.getOptionDataLoader().setContent(this.imageView.getLiveEditModel().getContent());
+
         if (this.imageComponent) {
             this.unregisterComponentListeners(this.imageComponent);
         }

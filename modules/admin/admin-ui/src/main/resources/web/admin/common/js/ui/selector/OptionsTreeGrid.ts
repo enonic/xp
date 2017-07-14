@@ -35,7 +35,7 @@ module api.ui.selector {
                     .setRowHeight(45)
                     .setHotkeysEnabled(true)
                     .setShowToolbar(false)
-                    .setIdPropertyName('dataId');
+                    .setIdPropertyName(gridOptions.dataIdProperty);
 
             builder.getOptions().setDataItemColumnValueExtractor(builder.nodeExtractor);
 
@@ -51,6 +51,11 @@ module api.ui.selector {
         setOptions(options: Option<OPTION_DISPLAY_VALUE>[]) {
             this.isSelfLoading = false;
             this.getGrid().getDataView().setItems(this.dataToTreeNodes(options, this.getRoot().getCurrentRoot()), 'dataId');
+        }
+
+        addOption(option: Option<OPTION_DISPLAY_VALUE>) {
+            this.isSelfLoading = false;
+            this.getGrid().getDataView().addItem(this.dataToTreeNode(option, this.getRoot().getCurrentRoot()));
         }
 
         setReadonlyChecker(checker: (optionToCheck: OPTION_DISPLAY_VALUE) => boolean) {

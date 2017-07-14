@@ -1,12 +1,13 @@
 import '../../../../../../api.ts';
 
 import ContentComboBox = api.content.ContentComboBox;
+import ImageContentComboBox = api.content.image.ImageContentComboBox;
 
 export class ImageSelectorForm extends api.ui.form.Form {
 
-    private imageSelector: ContentComboBox;
+    private imageSelector: ImageContentComboBox;
 
-    constructor(templateSelector: ContentComboBox, title?: string) {
+    constructor(templateSelector: ImageContentComboBox, title?: string) {
         super('image-combobox-form');
         this.imageSelector = templateSelector;
 
@@ -20,7 +21,7 @@ export class ImageSelectorForm extends api.ui.form.Form {
         this.add(fieldSet);
     }
 
-    getSelector(): ContentComboBox {
+    getSelector(): ImageContentComboBox {
         return this.imageSelector;
     }
 
