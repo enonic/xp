@@ -76,7 +76,6 @@ module api.content.image {
             return <ImageOptionDataLoader>super.getOptionDataLoader();
         }
 
-
         public static create(): ImageContentComboBoxBuilder {
             return new ImageContentComboBoxBuilder();
         }
