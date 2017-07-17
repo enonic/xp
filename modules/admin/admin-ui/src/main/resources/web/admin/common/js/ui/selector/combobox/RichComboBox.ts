@@ -315,7 +315,7 @@ module api.ui.selector.combobox {
                 this.errorContainer.hide();
                 let options = this.createOptions(event.getData());
                 // check if postLoad and save selection
-                if(!this.comboBox.getComboBoxDropdownGrid().isTreeGrid()) {
+                if(!this.comboBox.getComboBoxDropdownGrid().isTreeGrid() || !this.isDataGridSelfLoading()) {
                     this.comboBox.setOptions(options, event.isPostLoad());
                 }
                 this.notifyLoaded(event.getData(), event.isPostLoad());
