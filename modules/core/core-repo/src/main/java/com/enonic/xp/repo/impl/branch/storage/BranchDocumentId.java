@@ -75,4 +75,39 @@ public class BranchDocumentId
     {
         return value;
     }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+
+        final BranchDocumentId that = (BranchDocumentId) o;
+
+        if ( value != null ? !value.equals( that.value ) : that.value != null )
+        {
+            return false;
+        }
+        if ( nodeId != null ? !nodeId.equals( that.nodeId ) : that.nodeId != null )
+        {
+            return false;
+        }
+        return branch != null ? branch.equals( that.branch ) : that.branch == null;
+
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = value != null ? value.hashCode() : 0;
+        result = 31 * result + ( nodeId != null ? nodeId.hashCode() : 0 );
+        result = 31 * result + ( branch != null ? branch.hashCode() : 0 );
+        return result;
+    }
 }

@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl;
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
@@ -16,11 +18,14 @@ public class InternalContext
 
     private final PrincipalKeys principalsKeys;
 
+    private final boolean skipConstraints;
+
     private InternalContext( final Builder builder )
     {
         this.repositoryId = builder.repositoryId;
         this.branch = builder.branch;
         this.principalsKeys = builder.principalsKeys;
+        this.skipConstraints = builder.skipConstraints;
     }
 
     public static InternalContext from( final Context context )
@@ -47,6 +52,11 @@ public class InternalContext
         return principalsKeys;
     }
 
+    public boolean isSkipConstraints()
+    {
+        return skipConstraints;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -56,6 +66,7 @@ public class InternalContext
     {
         return create().
             authInfo( context.getAuthInfo() ).
+            principalsKeys( context.getAuthInfo() != null ? context.getAuthInfo().getPrincipals() : PrincipalKeys.empty() ).
             branch( context.getBranch() ).
             repositoryId( context.getRepositoryId() );
     }
@@ -65,7 +76,8 @@ public class InternalContext
         return create().
             principalsKeys( context.getPrincipalsKeys() ).
             branch( context.getBranch() ).
-            repositoryId( context.getRepositoryId() );
+            repositoryId( context.getRepositoryId() ).
+            skipConstraints( context.skipConstraints );
     }
 
     @Override
@@ -75,31 +87,19 @@ public class InternalContext
         {
             return true;
         }
-        if ( !( o instanceof InternalContext ) )
+        if ( o == null || getClass() != o.getClass() )
         {
             return false;
         }
-
         final InternalContext that = (InternalContext) o;
-
-        if ( repositoryId != null ? !repositoryId.equals( that.repositoryId ) : that.repositoryId != null )
-        {
-            return false;
-        }
-        if ( branch != null ? !branch.equals( that.branch ) : that.branch != null )
-        {
-            return false;
-        }
-
-        return true;
+        return skipConstraints == that.skipConstraints && Objects.equals( repositoryId, that.repositoryId ) &&
+            Objects.equals( branch, that.branch ) && Objects.equals( principalsKeys, that.principalsKeys );
     }
 
     @Override
     public int hashCode()
     {
-        int result = repositoryId != null ? repositoryId.hashCode() : 0;
-        result = 31 * result + ( branch != null ? branch.hashCode() : 0 );
-        return result;
+        return Objects.hash( repositoryId, branch, principalsKeys, skipConstraints );
     }
 
     public static final class Builder
@@ -109,6 +109,8 @@ public class InternalContext
         private Branch branch;
 
         private PrincipalKeys principalsKeys;
+
+        private boolean skipConstraints;
 
         private Builder()
         {
@@ -135,6 +137,12 @@ public class InternalContext
         public Builder principalsKeys( final PrincipalKeys principalsKeys )
         {
             this.principalsKeys = principalsKeys;
+            return this;
+        }
+
+        public Builder skipConstraints( final boolean skip )
+        {
+            this.skipConstraints = skip;
             return this;
         }
 
