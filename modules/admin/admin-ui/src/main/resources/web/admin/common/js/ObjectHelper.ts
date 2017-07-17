@@ -263,21 +263,6 @@ module api {
 
         }
 
-        static contains(array: Equitable[], el: Equitable): boolean {
-            if (array && array.length > 0) {
-                return array.some((curEl) => {
-                    return curEl.equals(el);
-                });
-            }
-            return false;
-        }
-
-        static filter(array:Equitable[], el: Equitable):Equitable[] {
-            return array.filter((curEl) => {
-                return !curEl.equals(el);
-            });
-        }
-
         static objectPropertyIterator(object: any, callback: {(name: string, property: any, index?: number): void;}) {
 
             let index = 0;
