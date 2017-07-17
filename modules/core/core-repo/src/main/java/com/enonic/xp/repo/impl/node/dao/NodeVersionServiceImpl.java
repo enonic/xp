@@ -12,7 +12,7 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
-import com.enonic.xp.node.NodeNotFoundException;
+import com.enonic.xp.blob.CachingBlobStore;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionIds;
@@ -46,54 +46,42 @@ public class NodeVersionServiceImpl
     @Override
     public NodeVersions get( final NodeVersionIds nodeVersionIds )
     {
-        return doGetFromVersionIds( nodeVersionIds );
+        return doGetNodeVersions( nodeVersionIds );
     }
 
     @Override
     public NodeVersion get( final NodeVersionId nodeVersionId )
     {
-        return doGetByVersionId( nodeVersionId );
+        return doGetNodeVersion( nodeVersionId, BlobKey.from( nodeVersionId.toString() ) );
     }
 
-    private NodeVersion doGetByVersionId( final NodeVersionId nodeVersionId )
-    {
-        final BlobKey blobKey = BlobKey.from( nodeVersionId.toString() );
-
-        final NodeVersion nodeVersionFromBlob = getNodeVersionFromBlob( blobStore.getRecord( NodeConstants.NODE_SEGMENT, blobKey ) );
-        return NodeVersion.create( nodeVersionFromBlob ).
-            versionId( nodeVersionId ).
-            build();
-    }
-
-    private NodeVersions doGetFromVersionIds( final NodeVersionIds nodeVersionIds )
+    private NodeVersions doGetNodeVersions( final NodeVersionIds nodeVersionIds )
     {
         NodeVersions.Builder builder = NodeVersions.create();
 
         for ( final NodeVersionId nodeVersionId : nodeVersionIds )
         {
-            final BlobRecord blob = blobStore.getRecord( NodeConstants.NODE_SEGMENT, BlobKey.from( nodeVersionId.toString() ) );
-
-            if ( blob == null )
-            {
-                throw new NodeNotFoundException( "Blob for node with BlobKey " + nodeVersionId + " not found" );
-            }
-
-            final NodeVersion nodeVersionFromBlob = getNodeVersionFromBlob( blob );
-            final NodeVersion nodeVersion = NodeVersion.create( nodeVersionFromBlob ).
-                versionId( nodeVersionId ).
-                build();
-
-            builder.add( nodeVersion );
+            builder.add( doGetNodeVersion( nodeVersionId, BlobKey.from( nodeVersionId.toString() ) ) );
         }
 
         return builder.build();
     }
 
-    private NodeVersion getNodeVersionFromBlob( final BlobRecord blob )
+    private NodeVersion doGetNodeVersion( final NodeVersionId nodeVersionId, final BlobKey key )
     {
+        final NodeVersion blobVersion = getFromBlob( key );
+        return NodeVersion.create( blobVersion ).
+            versionId( nodeVersionId ).
+            build();
+    }
+
+    private NodeVersion getFromBlob( final BlobKey blobKey )
+    {
+        final BlobRecord blob = blobStore.getRecord( NodeConstants.NODE_SEGMENT, blobKey );
+
         if ( blob == null )
         {
-            throw new IllegalArgumentException( "Trying to load blob when blob is null" );
+            throw new IllegalArgumentException( "Cannot get blob with blobKey: " + blobKey + ": blob is null" );
         }
 
         try
@@ -103,6 +91,10 @@ public class NodeVersionServiceImpl
         }
         catch ( IOException e )
         {
+            if ( blobStore instanceof CachingBlobStore )
+            {
+                ( (CachingBlobStore) blobStore ).invalidate( NodeConstants.NODE_SEGMENT, blob.getKey() );
+            }
             throw new RuntimeException( "Failed to load blob with key: " + blob.getKey(), e );
         }
     }

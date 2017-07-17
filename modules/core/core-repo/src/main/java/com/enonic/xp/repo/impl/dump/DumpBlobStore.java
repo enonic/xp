@@ -71,6 +71,13 @@ public class DumpBlobStore
         }
     }
 
+    @Override
+    public void removeRecord( final Segment segment, final BlobKey key )
+        throws BlobStoreException
+    {
+        throw new UnsupportedOperationException( "Not implemented" );
+    }
+
     private BlobRecord addRecord( final Segment segment, final BlobKey key, final ByteSource in )
         throws IOException
     {

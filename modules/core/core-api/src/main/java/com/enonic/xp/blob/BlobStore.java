@@ -12,4 +12,8 @@ public interface BlobStore
 
     BlobRecord addRecord( Segment segment, BlobRecord record )
         throws BlobStoreException;
+
+    void removeRecord( Segment segment, BlobKey key )
+        throws BlobStoreException;
+
 }
