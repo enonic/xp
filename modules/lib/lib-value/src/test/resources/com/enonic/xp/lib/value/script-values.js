@@ -43,13 +43,6 @@ exports.localDateTime = function () {
 exports.localDateTimeFromDate = function () {
     return {
         myLocalDateTimeExpected: valueLib.localDateTime("2010-10-10T10:00:00"),
-        myLocalDateTime: valueLib.localDateTime(new Date("Sun Oct 10 2010 10:00:00 GMT+0200 (CEST)"))
-    }
-};
-
-exports.localDateTimeFromDate = function () {
-    return {
-        myLocalDateTimeExpected: valueLib.localDateTime("2010-10-10T10:00:00"),
         myLocalDateTime: valueLib.localDateTime(new Date(2010, 9, 10, 10, 0, 0))
     }
 };
