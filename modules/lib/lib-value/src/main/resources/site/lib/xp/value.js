@@ -17,6 +17,25 @@ var ReferenceType = Java.type("com.enonic.xp.util.Reference");
 var BinaryReferenceType = Java.type("com.enonic.xp.util.BinaryReference");
 var BinaryAttachmentType = Java.type("com.enonic.xp.node.BinaryAttachment");
 
+var pad = function (number) {
+    if (number < 10) {
+        return '0' + number;
+    }
+    return number;
+};
+
+var toLocalDateString = function (date) {
+    return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate());
+};
+
+var toLocalTimeString = function (date) {
+    return date.toTimeString().substring(0, 8);
+};
+
+var toLocalDateTimeString = function (date) {
+    return toLocalDateString(date) + 'T' + toLocalTimeString(date);
+};
+
 /**
  * Creates a GeoPoint java-type.
  * @param {number} lat Latitude
@@ -41,12 +60,17 @@ exports.geoPointString = function (value) {
 
 /**
  * Creates a Instant java-type.
- * @param {string} value An ISO-8601-formatted instant (e.g '2011-12-03T10:15:30Z')
+ * @param {string|Date} value An ISO-8601-formatted instant (e.g '2011-12-03T10:15:30Z'), or a Date object.
  *
  * @returns {*} Instant java-type
  */
 exports.instant = function (value) {
-    return InstantType.parse(value);
+    if (typeof value === 'string') {
+        return InstantType.parse(value);
+    } else if (value.toISOString) {
+        return InstantType.parse(value.toISOString());
+    }
+    return InstantType.parse(value.toString());
 };
 
 /**
@@ -61,32 +85,47 @@ exports.reference = function (value) {
 
 /**
  * Creates a LocalDateTime java-type.
- * @param {string} value A local date-time string (e.g '2007-12-03T10:15:30')
+ * @param {string|Date} value A local date-time string (e.g '2007-12-03T10:15:30'), or a Date object.
  *
  * @returns {*} LocalDateTime java-type
  */
 exports.localDateTime = function (value) {
-    return LocalDateTimeType.parse(value);
+    if (typeof value === 'string') {
+        return LocalDateTimeType.parse(value);
+    } else if (value.toISOString) {
+        return LocalDateTimeType.parse(toLocalDateTimeString(value));
+    }
+    return LocalDateTimeType.parse(value.toString());
 };
 
 /**
  * Creates a LocalDate java-type.
- * @param {string} value A ISO local date-time string (e.g '2011-12-03')
+ * @param {string|Date} value A ISO local date-time string (e.g '2011-12-03'), or a Date object.
  *
  * @returns {*} LocalDate java-type
  */
 exports.localDate = function (value) {
-    return LocalDateType.parse(value);
+    if (typeof value === 'string') {
+        return LocalDateType.parse(value);
+    } else if (value.toISOString) {
+        return LocalDateType.parse(toLocalDateString(value));
+    }
+    return LocalDateType.parse(value.toString());
 };
 
 /**
  * Creates a LocalTime java-type.
- * @param {string} value A ISO local date-time string (e.g '10:15:30')
+ * @param {string|Date} value A ISO local date-time string (e.g '10:15:30'), or a Date object.
  *
  * @returns {*} LocalTime java-type
  */
 exports.localTime = function (value) {
-    return LocalTimeType.parse(value);
+    if (typeof value === 'string') {
+        return LocalTimeType.parse(value);
+    } else if (value.toISOString) {
+        return LocalTimeType.parse(toLocalTimeString(value));
+    }
+    return LocalTimeType.parse(value.toString());
 };
 
 /**

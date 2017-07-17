@@ -52,6 +52,16 @@ public class ScriptValueTranslatorTest
     }
 
     @Test
+    public void instantFromDate()
+        throws Exception
+    {
+        final PropertyTree properties = getPropertyTree( "instantFromDate" );
+        assertNotNull( properties.getInstant( "myInstant" ) );
+        assertEquals( properties.getInstant( "myInstantExpected" ), properties.getInstant( "myInstant" ) );
+        validateType( properties, "myInstant", ValueTypes.DATE_TIME );
+    }
+
+    @Test
     public void booleanTest()
         throws Exception
     {
@@ -79,6 +89,16 @@ public class ScriptValueTranslatorTest
     }
 
     @Test
+    public void localDateTimeFromDate()
+        throws Exception
+    {
+        final PropertyTree properties = getPropertyTree( "localDateTimeFromDate" );
+        assertNotNull( properties.getLocalDateTime( "myLocalDateTime" ) );
+        validateType( properties, "myLocalDateTime", ValueTypes.LOCAL_DATE_TIME );
+        assertEquals( properties.getLocalDateTime( "myLocalDateTimeExpected" ), properties.getLocalDateTime( "myLocalDateTime" ) );
+    }
+
+    @Test
     public void localDate()
         throws Exception
     {
@@ -88,12 +108,33 @@ public class ScriptValueTranslatorTest
     }
 
     @Test
+    public void localDateFromDate()
+        throws Exception
+    {
+        final PropertyTree properties = getPropertyTree( "localDateFromDate" );
+        assertNotNull( properties.getLocalDate( "myLocalDate" ) );
+        assertEquals( properties.getLocalDate( "myLocalDateExpected" ), properties.getLocalDate( "myLocalDate" ) );
+        validateType( properties, "myLocalDate", ValueTypes.LOCAL_DATE );
+        assertEquals( properties.getLocalDate( "myLocalDateExpected" ), properties.getLocalDate( "myLocalDate" ) );
+    }
+
+    @Test
     public void localTime()
         throws Exception
     {
         final PropertyTree properties = getPropertyTree( "localTime" );
         assertNotNull( properties.getLocalTime( "myLocalTime" ) );
         validateType( properties, "myLocalTime", ValueTypes.LOCAL_TIME );
+    }
+
+    @Test
+    public void localTimeFromDate()
+        throws Exception
+    {
+        final PropertyTree properties = getPropertyTree( "localTimeFromDate" );
+        assertNotNull( properties.getLocalTime( "myLocalTime" ) );
+        validateType( properties, "myLocalTime", ValueTypes.LOCAL_TIME );
+        assertEquals( properties.getLocalTime( "myLocalTimeExpected" ), properties.getLocalTime( "myLocalTime" ) );
     }
 
     @Test
