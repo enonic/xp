@@ -24,9 +24,9 @@ module api.ui.selector {
                     loader: OptionDataLoader<OPTION_DISPLAY_VALUE>,
                     treeDataHelper: OptionDataHelper<OPTION_DISPLAY_VALUE>) {
 
-            let builder: TreeGridBuilder<Option<OPTION_DISPLAY_VALUE>> =
+            const builder: TreeGridBuilder<Option<OPTION_DISPLAY_VALUE>> =
                 new TreeGridBuilder<Option<OPTION_DISPLAY_VALUE>>()
-                    .setColumns(columns)
+                    .setColumns(columns.slice())
                     .setOptions(gridOptions)
                     .setPartialLoadEnabled(true)
                     .setLoadBufferSize(20)
@@ -36,6 +36,10 @@ module api.ui.selector {
                     .setHotkeysEnabled(true)
                     .setShowToolbar(false)
                     .setIdPropertyName('dataId');
+
+            builder.setColumnUpdater(() => {
+                this.setColumns(columns, true);
+            });
 
             builder.getOptions().setDataItemColumnValueExtractor(builder.nodeExtractor);
 
