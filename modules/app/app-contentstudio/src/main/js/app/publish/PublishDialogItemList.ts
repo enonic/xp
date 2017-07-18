@@ -7,6 +7,7 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 import Tooltip = api.ui.Tooltip;
 import ObjectHelper = api.ObjectHelper;
 import i18n = api.util.i18n;
+import ArrayHelper = api.util.ArrayHelper;
 
 export class PublishDialogItemList extends DialogItemList {
 
@@ -64,10 +65,10 @@ export class PublishDialogItemList extends DialogItemList {
         const item = new PublicStatusSelectionItem(viewer, browseItem);
         item.onItemStateChanged((contentId, enabled) => {
 
-            const exist = ObjectHelper.contains(this.excludeChildrenIds, contentId);
+            const exist = ArrayHelper.contains(this.excludeChildrenIds, contentId);
             if (enabled) {
                 if (exist) {
-                    this.excludeChildrenIds = <ContentId[]>ObjectHelper.filter(this.excludeChildrenIds, contentId);
+                    this.excludeChildrenIds = <ContentId[]>ArrayHelper.filter(this.excludeChildrenIds, contentId);
                 }
             } else {
                 if (!exist) {
@@ -77,7 +78,7 @@ export class PublishDialogItemList extends DialogItemList {
             this.debounceNotifyListChanged();
         });
 
-        if (!ObjectHelper.contains(this.excludeChildrenIds, browseItem.getModel().getContentId())) {
+        if (!ArrayHelper.contains(this.excludeChildrenIds, browseItem.getModel().getContentId())) {
             this.excludeChildrenIds.push(browseItem.getModel().getContentId());
         }
 
@@ -113,8 +114,8 @@ export class PublishDialogItemList extends DialogItemList {
         this.excludeChildrenIds = ids;
 
         this.getItemViews().forEach(itemView => {
-            if(itemView.getIncludeChildrenToggler()) {
-                itemView.getIncludeChildrenToggler().toggle(ids.indexOf(itemView.getContentId()) < 0, true);
+            if (itemView.getIncludeChildrenToggler()) {
+                itemView.getIncludeChildrenToggler().toggle(!ArrayHelper.contains(this.excludeChildrenIds, itemView.getContentId()), true);
             }
         });
 

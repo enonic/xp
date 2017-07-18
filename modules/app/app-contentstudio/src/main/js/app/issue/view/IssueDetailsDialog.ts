@@ -37,10 +37,10 @@ import RequestError = api.rest.RequestError;
 import MenuButton = api.ui.button.MenuButton;
 import Action = api.ui.Action;
 import DropdownButtonRow = api.ui.dialog.DropdownButtonRow;
-import ObjectHelper = api.ObjectHelper;
 import User = api.security.User;
 import ModalDialog = api.ui.dialog.ModalDialog;
 import i18n = api.util.i18n;
+import ArrayHelper = api.util.ArrayHelper;
 
 export class IssueDetailsDialog extends SchedulableDialog {
 
@@ -208,7 +208,7 @@ export class IssueDetailsDialog extends SchedulableDialog {
     private getExistingPublishItems(): PublishRequestItem[] {
         let itemIds = this.getItemList().getItemsIds();
         return this.issue.getPublishRequest().getItems().filter(publishRequestItem =>
-            ObjectHelper.contains(itemIds, publishRequestItem.getId()));
+            ArrayHelper.contains(itemIds, publishRequestItem.getId()));
     }
 
     private makeStatusInfo(): DetailsDialogSubTitle {
