@@ -37,6 +37,10 @@ module api.ui.selector {
             return this.emptyDropdown;
         }
 
+        getOptionDataLoader(): OptionDataLoader<OPTION_DISPLAY_VALUE> {
+            return this.dropdownGrid.getOptionDataLoader();
+        }
+
         isDropdownShown(): boolean {
             return this.emptyDropdown.isVisible() || this.dropdownGrid.isVisible();
         }

@@ -36,6 +36,10 @@ module api.content {
             this.request.setContent(builder.content);
         }
 
+        setContent(content: ContentSummary) {
+            this.request.setContent(content);
+        }
+
         fetch(node: TreeNode<Option<ContentTreeSelectorItem>>): wemQ.Promise<ContentTreeSelectorItem> {
             this.request.setParentPath(node.getDataId() ? node.getData().displayValue.getPath() : null);
             if (this.request.getContent()) {

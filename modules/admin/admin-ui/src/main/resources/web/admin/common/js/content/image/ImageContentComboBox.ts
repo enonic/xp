@@ -23,20 +23,19 @@ module api.content.image {
                     [ContentTypeName.IMAGE.toString(), ContentTypeName.MEDIA_VECTOR.toString()]).build());
             }
 
-            let richComboBoxBuilder = new RichComboBoxBuilder().
-                setComboBoxName(builder.name ? builder.name : 'imageContentSelector').
-                setLoader(loader).
-                setSelectedOptionsView(builder.selectedOptionsView || new ImageSelectorSelectedOptionsView()).
-                setMaximumOccurrences(builder.maximumOccurrences).
-                setOptionDisplayValueViewer(new ImageSelectorViewer()).
-                setDelayedInputValueChangedHandling(750).
-                setValue(builder.value).
-                setMinWidth(builder.minWidth).
-                setTreegridDropdownEnabled(builder.treegridDropdownEnabled).
-                setOptionDataLoader(builder.optionDataLoader).
-                setOptionDataHelper(new ContentSummaryOptionDataHelper()).
-                setRemoveMissingSelectedOptions(true).
-                setDisplayMissingSelectedOptions(true);
+            let richComboBoxBuilder = new RichComboBoxBuilder()
+                .setComboBoxName(builder.name ? builder.name : 'imageContentSelector')
+                .setLoader(loader).setSelectedOptionsView(builder.selectedOptionsView || new ImageSelectorSelectedOptionsView())
+                .setMaximumOccurrences(builder.maximumOccurrences)
+                .setOptionDisplayValueViewer(new ImageSelectorViewer())
+                .setDelayedInputValueChangedHandling(750)
+                .setValue(builder.value)
+                .setMinWidth(builder.minWidth)
+                .setTreegridDropdownEnabled(builder.treegridDropdownEnabled)
+                .setOptionDataLoader(builder.optionDataLoader)
+                .setOptionDataHelper(new ContentSummaryOptionDataHelper())
+                .setRemoveMissingSelectedOptions(true)
+                .setDisplayMissingSelectedOptions(true);
 
             // Actually the hack.
             // ImageSelectorSelectedOptionsView and BaseSelectedOptionsView<ContentSummary> are incompatible in loaders.
@@ -63,6 +62,18 @@ module api.content.image {
                 this.selectOption(optionToSelect);
 
             }
+        }
+
+        getContent(contentId: ContentId): ContentSummary {
+            let option = this.getOptionByValue(contentId.toString());
+            if (option) {
+                return option.displayValue;
+            }
+            return null;
+        }
+
+        getOptionDataLoader(): ImageOptionDataLoader {
+            return <ImageOptionDataLoader>super.getOptionDataLoader();
         }
 
         public static create(): ImageContentComboBoxBuilder {

@@ -92,6 +92,10 @@ module api.ui.selector {
             throw new Error('Must be implemented by inheritors');
         }
 
+        getOptionDataLoader(): OptionDataLoader<OPTION_DISPLAY_VALUE> {
+            return this.config.optionDataLoader;
+        }
+
         protected getGridData(): api.ui.grid.DataView<any> {
             throw new Error('Must be implemented by inheritors');
         }
