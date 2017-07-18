@@ -67,7 +67,7 @@ module api.content.image {
         getContent(contentId: ContentId): ContentSummary {
             let option = this.getOptionByValue(contentId.toString());
             if (option) {
-                return option.displayValue;
+                return (<ImageSelectorDisplayValue>option.displayValue).getContentSummary();
             }
             return null;
         }
