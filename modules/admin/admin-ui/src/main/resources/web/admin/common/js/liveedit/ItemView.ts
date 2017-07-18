@@ -528,7 +528,7 @@ module api.liveedit {
 
             const elem = new api.dom.ElementHelper(<HTMLElement>event.target);
 
-            if (elem.hasClass('toggle') && elem.hasClass('expand')) {
+            if (elem.hasClass('toggle') && (elem.hasClass('expand') || elem.hasClass('collapse'))) {
                 return;
             }
 
