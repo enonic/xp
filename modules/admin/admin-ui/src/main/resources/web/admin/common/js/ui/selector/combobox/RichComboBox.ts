@@ -315,15 +315,11 @@ module api.ui.selector.combobox {
                 this.notifyLoading();
             });
 
-            this.loader.onLoadedData((event: api.util.loader.event.LoadedDataEvent<OPTION_DISPLAY_VALUE>) => {
-                this.errorContainer.hide();
-                let options = this.createOptions(event.getData());
-                // check if postLoad and save selection
-                if(!this.comboBox.getComboBoxDropdownGrid().isTreeGrid() || !this.isDataGridSelfLoading()) {
-                    this.comboBox.setOptions(options, event.isPostLoad());
-                }
-                this.notifyLoaded(event.getData(), event.isPostLoad());
-            });
+            this.loader.onLoadedData(this.handleLoadedData.bind(this));
+
+            if (this.getOptionDataLoader()) {
+                this.getOptionDataLoader().onLoadedData(this.handleLoadedData.bind(this));
+            }
 
             this.loader.onErrorOccurred((event: LoaderErrorEvent) => {
                 this.comboBox.hideDropdown();
@@ -333,6 +329,14 @@ module api.ui.selector.combobox {
             if (api.ObjectHelper.iFrameSafeInstanceOf(this.loader, PostLoader)) {
                 this.handleLastRange((<PostLoader<any, OPTION_DISPLAY_VALUE>>this.loader).postLoad.bind(this.loader));
             }
+        }
+
+        private handleLoadedData(event: api.util.loader.event.LoadedDataEvent<OPTION_DISPLAY_VALUE>) {
+            this.errorContainer.hide();
+            let options = this.createOptions(event.getData());
+
+            this.comboBox.setOptions(options, event.isPostLoad());
+            this.notifyLoaded(event.getData(), event.isPostLoad());
         }
 
         private createOptions(items: Object[]): api.ui.selector.Option<OPTION_DISPLAY_VALUE>[] {
