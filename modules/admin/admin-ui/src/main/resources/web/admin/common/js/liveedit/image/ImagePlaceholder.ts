@@ -5,12 +5,13 @@ module api.liveedit.image {
     import ImageComponent = api.content.page.region.ImageComponent;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
     import i18n = api.util.i18n;
+    import ContentSelectedOptionsView = api.content.ContentSelectedOptionsView;
 
     export class ImagePlaceholder extends api.liveedit.ItemViewPlaceholder {
 
         private imageComponentView: ImageComponentView;
 
-        private comboBox: api.content.ContentComboBox;
+        private comboBox: api.content.image.ImageContentComboBox;
 
         private comboboxWrapper: api.dom.DivEl;
 
@@ -31,9 +32,12 @@ module api.liveedit.image {
             loader.setContentPath(imageView.getLiveEditModel().getContent().getPath());
             loader.setAllowedContentTypeNames([ContentTypeName.IMAGE, ContentTypeName.MEDIA_VECTOR]);
 
-            this.comboBox = api.content.ContentComboBox.create().
+            this.comboBox = api.content.image.ImageContentComboBox.create().
                 setMaximumOccurrences(1).
                 setLoader(loader).
+                 setContent(imageView.getLiveEditModel().getContent()).
+                 setTreegridDropdownEnabled(true).
+               //  setSelectedOptionsView(new ContentSelectedOptionsView()).
                 setMinWidth(270).
                 build();
 

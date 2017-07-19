@@ -7,9 +7,9 @@ import {PublishDialogDependantList} from '../../publish/PublishDialogDependantLi
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import ContentSummary = api.content.ContentSummary;
 import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSummaryAndCompareStatusFetcher;
-import ObjectHelper = api.ObjectHelper;
 import ListBox = api.ui.selector.list.ListBox;
 import ModalDialog = api.ui.dialog.ModalDialog;
+import ArrayHelper = api.util.ArrayHelper;
 
 export abstract class IssueDialog extends DependantItemsDialog {
 
@@ -151,7 +151,7 @@ export abstract class IssueDialog extends DependantItemsDialog {
         this.form.onContentItemsRemoved((items) => {
 
             const filteredItems = this.getItemList().getItems().filter((oldItem: ContentSummaryAndCompareStatus) => {
-                return !ObjectHelper.contains(items, oldItem.getContentSummary());
+                return !ArrayHelper.contains(items, oldItem.getContentSummary());
             });
 
             this.setListItems(filteredItems, true);
@@ -192,7 +192,7 @@ export abstract class IssueDialog extends DependantItemsDialog {
         }).map(contentId => {
             return PublishRequestItem.create()
                 .setId(contentId)
-                .setIncludeChildren(this.getItemList().getExcludeChildrenIds().indexOf(contentId) < 0)
+                .setIncludeChildren(!ArrayHelper.contains(this.getItemList().getExcludeChildrenIds(), contentId))
                 .build();
         });
     }

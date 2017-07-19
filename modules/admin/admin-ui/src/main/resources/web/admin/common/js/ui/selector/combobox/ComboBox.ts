@@ -430,6 +430,10 @@ module api.ui.selector.combobox {
             this.comboBoxDropdown.setFilterArgs(args);
         }
 
+        getOptionDataLoader(): OptionDataLoader<OPTION_DISPLAY_VALUE> {
+            return this.comboBoxDropdown.getOptionDataLoader();
+        }
+
         protected doGetValue(): string {
             if (this.selectedOptionsView) {
                 return this.getSelectedOptions().map((item: Option<OPTION_DISPLAY_VALUE>) => item.value).join(';');

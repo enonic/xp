@@ -218,6 +218,10 @@ module api.ui.selector.combobox {
             return this.comboBox.getOptionByRow(rowIndex);
         }
 
+        getOptionDataLoader(): OptionDataLoader<OPTION_DISPLAY_VALUE> {
+            return this.comboBox.getOptionDataLoader();
+        }
+
         countSelected(): number {
             return this.comboBox.countSelectedOptions();
         }
@@ -315,7 +319,7 @@ module api.ui.selector.combobox {
                 this.errorContainer.hide();
                 let options = this.createOptions(event.getData());
                 // check if postLoad and save selection
-                if(!this.comboBox.getComboBoxDropdownGrid().isTreeGrid()) {
+                if(!this.comboBox.getComboBoxDropdownGrid().isTreeGrid() || !this.isDataGridSelfLoading()) {
                     this.comboBox.setOptions(options, event.isPostLoad());
                 }
                 this.notifyLoaded(event.getData(), event.isPostLoad());

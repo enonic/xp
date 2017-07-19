@@ -6,10 +6,11 @@ import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.BlobStoreException;
+import com.enonic.xp.blob.CachingBlobStore;
 import com.enonic.xp.blob.Segment;
 
 public class ReadThroughBlobStore
-    implements BlobStore
+    implements BlobStore, CachingBlobStore
 {
     private BlobStore store;
 
@@ -76,6 +77,25 @@ public class ReadThroughBlobStore
         this.store.addRecord( segment, record );
         this.readThroughStore.addRecord( segment, record );
         return record;
+    }
+
+    @Override
+    public void removeRecord( final Segment segment, final BlobKey key )
+        throws BlobStoreException
+    {
+        this.store.removeRecord( segment, key );
+        this.invalidate( segment, key );
+    }
+
+    @Override
+    public void invalidate( final Segment segment, final BlobKey key )
+    {
+        readThroughStore.removeRecord( segment, key );
+
+        if ( store instanceof CachingBlobStore )
+        {
+            ( (CachingBlobStore) store ).invalidate( segment, key );
+        }
     }
 
     public static final class Builder

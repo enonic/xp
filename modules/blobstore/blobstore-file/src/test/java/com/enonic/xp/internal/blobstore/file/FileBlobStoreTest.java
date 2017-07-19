@@ -58,6 +58,20 @@ public class FileBlobStoreTest
         this.blobStore.addRecord( this.segment, record );
     }
 
+    @Test
+    public void removeRecord()
+        throws Exception
+    {
+        final BlobRecord createdRecord = createRecord( "bye" );
+        final BlobRecord retrievedRecord = this.blobStore.getRecord( this.segment, createdRecord.getKey() );
+        assertNotNull( retrievedRecord );
+        assertEquals( createdRecord.getKey(), retrievedRecord.getKey() );
+
+        this.blobStore.removeRecord( this.segment, createdRecord.getKey() );
+        final BlobRecord removedRecord = this.blobStore.getRecord( this.segment, createdRecord.getKey() );
+        assertNull( removedRecord );
+    }
+
     private BlobRecord createRecord( final String str )
     {
         final ByteSource source = ByteSource.wrap( str.getBytes() );

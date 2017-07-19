@@ -24,9 +24,9 @@ module api.ui.selector {
                     loader: OptionDataLoader<OPTION_DISPLAY_VALUE>,
                     treeDataHelper: OptionDataHelper<OPTION_DISPLAY_VALUE>) {
 
-            let builder: TreeGridBuilder<Option<OPTION_DISPLAY_VALUE>> =
+            const builder: TreeGridBuilder<Option<OPTION_DISPLAY_VALUE>> =
                 new TreeGridBuilder<Option<OPTION_DISPLAY_VALUE>>()
-                    .setColumns(columns)
+                    .setColumns(columns.slice())
                     .setOptions(gridOptions)
                     .setPartialLoadEnabled(true)
                     .setLoadBufferSize(20)
@@ -35,7 +35,11 @@ module api.ui.selector {
                     .setRowHeight(45)
                     .setHotkeysEnabled(true)
                     .setShowToolbar(false)
-                    .setIdPropertyName('dataId');
+                    .setIdPropertyName(gridOptions.dataIdProperty);
+
+            builder.setColumnUpdater(() => {
+                this.setColumns(columns, true);
+            });
 
             builder.getOptions().setDataItemColumnValueExtractor(builder.nodeExtractor);
 
@@ -51,6 +55,11 @@ module api.ui.selector {
         setOptions(options: Option<OPTION_DISPLAY_VALUE>[]) {
             this.isSelfLoading = false;
             this.getGrid().getDataView().setItems(this.dataToTreeNodes(options, this.getRoot().getCurrentRoot()), 'dataId');
+        }
+
+        addOption(option: Option<OPTION_DISPLAY_VALUE>) {
+            this.isSelfLoading = false;
+            this.getGrid().getDataView().addItem(this.dataToTreeNode(option, this.getRoot().getCurrentRoot()));
         }
 
         setReadonlyChecker(checker: (optionToCheck: OPTION_DISPLAY_VALUE) => boolean) {

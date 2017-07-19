@@ -7,7 +7,7 @@ module api.ui {
      */
     export class NamesAndIconViewer<OBJECT> extends api.ui.Viewer<OBJECT> {
 
-        private emptyDisplayName: string = '<' + i18n('field.item.displayName') + '>';
+        private emptyDisplayName: string = '<' + i18n('field.displayName') + '>';
 
         private namesAndIconView: api.app.NamesAndIconView;
 

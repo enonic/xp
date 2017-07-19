@@ -1763,7 +1763,7 @@ export class ContentWizardPanel
 
     private isEditorEnabled(): boolean {
 
-        return !!this.site || ( this.shouldOpenEditorByDefault() && !api.ObjectHelper.contains(ContentWizardPanel.EDITOR_DISABLED_TYPES,
+        return !!this.site || ( this.shouldOpenEditorByDefault() && !api.util.ArrayHelper.contains(ContentWizardPanel.EDITOR_DISABLED_TYPES,
                 this.contentType.getContentTypeName()));
     }
 

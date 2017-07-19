@@ -66,6 +66,10 @@ module api.content.image {
             return this.content ? new api.content.util.ContentIconUrlResolver().setContent(this.content).resolve() : null;
         }
 
+        getIconUrl(): string {
+            return this.content ? new api.content.util.ContentIconUrlResolver().setContent(this.content).resolve() : null;
+        }
+
         getLabel(): string {
             return this.content ? this.content.getName().toString() : this.uploadItem.getName();
         }

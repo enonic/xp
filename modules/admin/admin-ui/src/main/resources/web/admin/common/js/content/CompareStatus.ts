@@ -1,5 +1,7 @@
 module api.content {
 
+    import i18n = api.util.i18n;
+
     export enum CompareStatus {
         NEW,
         NEW_TARGET,
@@ -29,41 +31,41 @@ module api.content {
             switch (compareStatus) {
             case CompareStatus.NEW:
                 if(content && !content.getPublishFirstTime()) {
-                    status = 'New';
+                    status = i18n('status.new');
                 } else {
-                    status = 'Offline';
+                    status = i18n('status.offline');
                 }
                 break;
             case CompareStatus.NEWER:
-                status = 'Modified';
+                status = i18n('status.modified');
                 break;
             case CompareStatus.OLDER:
-                status = 'Out-of-date';
+                status = i18n('status.outofdate');
                 break;
             case CompareStatus.PENDING_DELETE:
-                status = 'Deleted';
+                status = i18n('status.deleted');
                 break;
             case CompareStatus.EQUAL:
-                status = 'Online';
+                status = i18n('status.online');
                 break;
             case CompareStatus.MOVED:
-                status = 'Moved';
+                status = i18n('status.moved');
                 break;
             case CompareStatus.PENDING_DELETE_TARGET:
-                status = 'Deleted in prod';
+                status = i18n('status.deletedinprod');
                 break;
             case CompareStatus.NEW_TARGET:
-                status = 'New in prod';
+                status = i18n('status.newinprod');
                 break;
             case CompareStatus.CONFLICT_PATH_EXISTS:
-                status = 'Conflict';
+                status = i18n('status.conflict');
                 break;
             default:
-                status = 'Unknown';
+                status = i18n('status.unknown');
             }
 
             if (!!CompareStatus[status]) {
-                return 'Unknown';
+                return i18n('status.unknown');
             }
 
             return status;
