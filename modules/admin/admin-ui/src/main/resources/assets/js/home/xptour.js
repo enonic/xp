@@ -7,6 +7,7 @@ var isInstallingDemoAppsNow = false;
 var demoAppsNames = ["com.enonic.app.superhero", "com.enonic.app.wireframe", "com.enonic.app.imagexpert"];
 var marketDemoApps = [];
 var isSystemAdmin = false;
+var i18n = api.util.i18n;
 
 exports.init = function () {
     initDialog();
@@ -27,7 +28,7 @@ exports.init = function () {
 
 function appendInstalAppStep() {
     tourSteps.push(createStep5());
-    tourDialog.setTitle("Welcome Tour - Step 1 of 5");
+    tourDialog.setTitle(i18n('tour.title.stepXofY', 1, 5));
 }
 
 function checkAdminRights() {
@@ -39,17 +40,17 @@ function checkAdminRights() {
 }
 
 function initDialog() {
-    tourDialog = new api.ui.dialog.ModalDialog("Welcome Tour - Step 1 of 4");
+    tourDialog = new api.ui.dialog.ModalDialog(i18n('tour.title.stepXofY', 1, 4));
     tourDialog.addClass("xp-tour-dialog");
 
     initNavigation();
 }
 
 function initNavigation() {
-    var previousStepAction = new api.ui.Action("Skip Tour");
+    var previousStepAction = new api.ui.Action(i18n('tour.action.skip'));
     var previousStepActionButton = tourDialog.addAction(previousStepAction);
 
-    var nextStepAction = new api.ui.Action("Next");
+    var nextStepAction = new api.ui.Action(i18n('action.next'));
     var nextStepActionButton = tourDialog.addAction(nextStepAction);
 
     var currentStep = 1;
@@ -60,10 +61,10 @@ function initNavigation() {
         else {
             currentStep--;
             if (currentStep === 1) {
-                previousStepActionButton.setLabel("Skip Tour");
+                previousStepActionButton.setLabel(i18n('tour.action.skip'));
             }
             nextStepActionButton.setEnabled(true);
-            nextStepActionButton.setLabel("Next");
+            nextStepActionButton.setLabel(i18n('action.next'));
             nextStepActionButton.removeClass("last-step");
             setTourStep(currentStep);
 
@@ -76,13 +77,13 @@ function initNavigation() {
     nextStepAction.onExecuted(function () {
         if (currentStep === tourSteps.length) {
             if (canInstallDemoApps) { // if install is hit
-                nextStepActionButton.setLabel("Installing...");
+                nextStepActionButton.setLabel(i18n('tour.action.installing'));
                 nextStepActionButton.setEnabled(false);
                 isInstallingDemoAppsNow = true;
 
                 wemQ.all(loadDemoApps()).spread(function () {
                     if (currentStep === tourSteps.length) { //if still on install apps page of xp tour
-                        nextStepActionButton.setLabel("Finish");
+                        nextStepActionButton.setLabel(i18n('tour.action.finish'));
                         nextStepActionButton.addClass("last-step");
                         nextStepActionButton.setEnabled(true);
                     }
@@ -91,9 +92,9 @@ function initNavigation() {
                 });
             } else { // Finish button was hit
                 tourDialog.close();
-                nextStepActionButton.setLabel("Next");
+                nextStepActionButton.setLabel(i18n('action.next'));
                 nextStepActionButton.removeClass("last-step");
-                previousStepActionButton.setLabel("Skip Tour");
+                previousStepActionButton.setLabel(i18n('tour.action.skip'));
                 currentStep = 1;
                 setTourStep(currentStep);
             }
@@ -102,7 +103,7 @@ function initNavigation() {
         else {
             currentStep++;
 
-            previousStepActionButton.setLabel("Previous");
+            previousStepActionButton.setLabel(i18n('tour.action.previous'));
             setTourStep(currentStep);
 
             if (currentStep === tourSteps.length) {
@@ -121,7 +122,7 @@ function initNavigation() {
 
                     demoAppsLoadMask.show();
 
-                    nextStepActionButton.setLabel("Finish");
+                    nextStepActionButton.setLabel(i18n('tour.action.finish'));
                     nextStepActionButton.addClass("last-step");
 
                     fetchDemoAppsFromMarket().then(function (apps) {
@@ -139,7 +140,7 @@ function initNavigation() {
                             setTourStep(currentStep);
                             demoAppsContainer = api.dom.Element.fromHtmlElement(document.querySelector(".demo-apps"));
                             if (canInstallDemoApps) {
-                                nextStepActionButton.setLabel("Install Apps");
+                                nextStepActionButton.setLabel(i18n('tour.action.install'));
                                 nextStepActionButton.removeClass("last-step");
                             }
                         }
@@ -151,12 +152,12 @@ function initNavigation() {
                         demoAppsLoadMask.hide();
                     });
                 } else if (isInstallingDemoAppsNow) {
-                    nextStepActionButton.setLabel("Installing...");
+                    nextStepActionButton.setLabel(i18n('tour.action.installing'));
                     nextStepActionButton.setEnabled(false);
                 } else if (canInstallDemoApps) {
-                    nextStepActionButton.setLabel("Install Apps");
+                    nextStepActionButton.setLabel(i18n('tour.action.install'));
                 } else {
-                    nextStepActionButton.setLabel("Finish");
+                    nextStepActionButton.setLabel(i18n('tour.action.finish'));
                     nextStepActionButton.addClass("last-step");
                 }
 
@@ -173,21 +174,21 @@ function initTourSteps() {
 function createStep1() {
     var html = '<div class="xp-tour-step step-1">' +
                '    <div class="subtitle">' +
-               '        <div class="subtitle-part-1">Welcome to Enonic XP! </div>' +
-               '        <div class="subtitle-part-2">Complete this tour to get started with Enonic XP</div>' +
+               '        <div class="subtitle-part-1">' + i18n('tour.step1.subtitle1') + '</div>' +
+               '        <div class="subtitle-part-2">' + i18n('tour.step1.subtitle2') + '</div>' +
                '    </div>' +
-               '    <div class="caption">Enonic XP - The Web Operating System</div>' +
-               '    <img src="' +  CONFIG.adminUrl + '/common/images/app-icon.svg">' +
+               '    <div class="caption">' + i18n('tour.step1.caption') + '</div>' +
+               '    <img src="' + CONFIG.adminUrl + '/common/images/app-icon.svg">' +
                '    <div class="text">' +
-               '        <div class="paragraph1">Enonic XP is a powerful platform for building highly scalable, customer tailored applications and sites. It is five systems in one: </div>' +
+               '        <div class="paragraph1">' + i18n('tour.step1.paragraph1') + '</div>' +
                '        <ul>' +
-               '            <li>Database/Storage</li>' +
-               '            <li>Search</li>' +
-               '            <li>Application Engine</li>' +
-               '            <li>Identity/Role system</li>' +
-               '            <li>Topped off with a powerful CMS.</li>' +
+               '            <li>' + i18n('tour.step1.system1') + '</li>' +
+               '            <li>' + i18n('tour.step1.system2') + '</li>' +
+               '            <li>' + i18n('tour.step1.system3') + '</li>' +
+               '            <li>' + i18n('tour.step1.system4') + '</li>' +
+               '            <li>' + i18n('tour.step1.system5') + '</li>' +
                '        </ul>' +
-               '        <div class="paragraph2">Similar to a regular operating system - with XP installed you have everything you need to deploy and run custom applications. This is why we call it a ‘Web Operating System’.</div>' +
+               '        <div class="paragraph2">' + i18n('tour.step1.paragraph2') + '</div>' +
                '    </div>' +
                '</div>';
     var element = api.dom.Element.fromString(html);
@@ -197,14 +198,14 @@ function createStep1() {
 function createStep2() {
     var html = '<div class="xp-tour-step step-2">' +
                '    <div class="subtitle">' +
-               '        <div class="subtitle-part-1">Did you know? </div>' +
-               '        <div class="subtitle-part-2">You can build your own tools and add them to this menu!</div>' +
+               '        <div class="subtitle-part-1">' + i18n('tour.step2.subtitle1') + '</div>' +
+               '        <div class="subtitle-part-2">' + i18n('tour.step2.subtitle2') + '</div>' +
                '    </div>' +
-               '    <div class="caption">Tools and Navigation</div>' +
-               '    <img src="' +  CONFIG.adminUrl + '/common/images/launcher.svg">' +
+               '    <div class="caption">' + i18n('tour.step2.caption') + '</div>' +
+               '    <img src="' + CONFIG.adminUrl + '/common/images/launcher.svg">' +
                '    <div class="text">' +
-               '        <div class="paragraph1">XP admin is all about admin.tools. You are currently in the ‘Home’ tool. Navigate to different tools using the menu icon which is available at the top right. The current tool is always highlighted.</div>' +
-               '        <div class="paragraph2">Tools are launched in separate browser tabs so you can easily navigate between them later. Tools can also be bookmarked for direct access.</div>' +
+               '        <div class="paragraph1">' + i18n('tour.step2.paragraph1') + '</div>' +
+               '        <div class="paragraph2">' + i18n('tour.step2.paragraph2') + '</div>' +
                '    </div>' +
                '</div>';
     var element = api.dom.Element.fromString(html);
@@ -214,15 +215,20 @@ function createStep2() {
 function createStep3() {
     var html = '<div class="xp-tour-step step-3">' +
                '    <div class="subtitle">' +
-               '        <div class="subtitle-part-1">Did you know? </div>' +
-               '        <div class="subtitle-part-2">You can contribute to Enonic Market by submitting your apps!</div>' +
+               '        <div class="subtitle-part-1">' + i18n('tour.step3.subtitle1') + '</div>' +
+               '        <div class="subtitle-part-2">' + i18n('tour.step3.subtitle2') + '</div>' +
                '    </div>' +
-               '    <div class="caption">Applications and Enonic Market</div>' +
-               '    <img src="' +  CONFIG.adminUrl + '/common/images/market.svg">' +
+               '    <div class="caption">' + i18n('tour.step3.caption') + '</div>' +
+               '    <img src="' + CONFIG.adminUrl + '/common/images/market.svg">' +
                '    <div class="text">' +
-               '        <div class="paragraph1">Enonic XP is all about applications. You can create your own apps or install ready-2-run applications from Enonic Market using the <a href="/admin/tool/com.enonic.xp.admin.ui/applications" target="_blank">Applications tool</a>.</div>' +
-               '        <div class="paragraph2"><a href="https://market.enonic.com/" target="_blank">Enonic Market</a> also features libraries and starters for developers to get going quickly. Applications are primarily built with Javascript - but can also include Java since XP is running on the Java Virtual Machine.</div>' +
-               '        <div class="paragraph3">Learn more about building applications from our <a href="http://docs.enonic.com/en/latest/" target="_blank">documentation</a>.</div>' +
+               '        <div class="paragraph1">' + i18n('tour.step3.paragraph1') +
+               ' <a href="/admin/tool/com.enonic.xp.app.applications/main" target="_blank">' +
+               i18n('tour.step3.paragraph1hreftext') + '</a>.</div>' +
+               '        <div class="paragraph2"><a href="https://market.enonic.com/" target="_blank">' +
+               i18n('tour.step3.paragraph2hreftext') + '</a> ' + i18n('tour.step3.paragraph2') + '</div>' +
+               '        <div class="paragraph3">' + i18n('tour.step3.paragraph3') +
+               ' <a href="http://docs.enonic.com/en/latest/" target="_blank">' + i18n('tour.step3.paragraph3hreftext') +
+               '</a>.</div>' +
                '    </div>' +
                '</div>';
     var element = api.dom.Element.fromString(html);
@@ -232,14 +238,18 @@ function createStep3() {
 function createStep4() {
     var html = '<div class="xp-tour-step step-4">' +
                '    <div class="subtitle">' +
-               '        <div class="subtitle-part-1">Did you know? </div>' +
-               '        <div class="subtitle-part-2">You can easily add 3rd party services like Google Analytics to the CMS</div>' +
+               '        <div class="subtitle-part-1">' + i18n('tour.step4.subtitle1') + '</div>' +
+               '        <div class="subtitle-part-2">' + i18n('tour.step4.subtitle2') + '</div>' +
                '    </div>' +
-               '    <div class="caption">Embedded CMS - Content Studio</div>' +
-               '    <img src="' +  CONFIG.adminUrl + '/common/images/studio.svg">' +
+               '    <div class="caption">' + i18n('tour.step4.caption') + '</div>' +
+               '    <img src="' + CONFIG.adminUrl + '/common/images/studio.svg">' +
                '    <div class="text">' +
-               '        <div class="paragraph1">A valuable part of XP is the <a href="/admin/tool/com.enonic.xp.admin.ui/content-studio" target="_blank">Content Studio tool</a> - its an awesome CMS that can be used to compose websites of any kind - or simply to make your applications more dynamic.</div>' +
-               '        <div class="paragraph2">The interface is praised by users as it combines simplicity of use with powerful features - and it’s fully responsive too! It can also be extended with 3rd party services like the <a href="https://market.enonic.com/vendors/enonic/com.enonic.app.ga" target="_blank">Google Analytics app</a> for the enjoyment of your site’s editors.</div>' +
+               '        <div class="paragraph1">' + i18n('tour.step4.paragraph1part1') +
+               ' <a href="/admin/tool/com.enonic.xp.app.contentstudio/main" target="_blank">' +
+               i18n('tour.step4.paragraph1hreftext') + '</a> - ' + i18n('tour.step4.paragraph1part2') + '</div>' +
+               '        <div class="paragraph2">' + i18n('tour.step4.paragraph2part1') +
+               ' <a href="https://market.enonic.com/vendors/enonic/com.enonic.app.ga" target="_blank">' +
+               i18n('tour.step4.paragraph2hreftext') + '</a> ' + i18n('tour.step4.paragraph2part2') + '</div>' +
                '    </div>' +
                '</div>';
     var element = api.dom.Element.fromString(html);
@@ -249,15 +259,16 @@ function createStep4() {
 function createStep5() {
     var html = '<div class="xp-tour-step step-5">' +
                '    <div class="subtitle">' +
-               '        <div class="subtitle-part-1">Custom apps you say? </div>' +
-               '        <div class="subtitle-part-2">Simply choose Install + Upload in the Applications Tool</div>' +
+               '        <div class="subtitle-part-1">' + i18n('tour.step5.subtitle1') + '</div>' +
+               '        <div class="subtitle-part-2">' + i18n('tour.step5.subtitle2') + '</div>' +
                '    </div>' +
-               '    <div class="caption">Install Demo Applications</div>' +
+               '    <div class="caption">' + i18n('tour.step5.caption') + '</div>' +
                '    <div class="text">' +
-               '        <div class="paragraph1">If you are evaluating or just testing Enonic XP, let’s install some sample applications from Enonic Market - showing you some of Enonic XP’s capabilities.</div>' +
+               '        <div class="paragraph1">' + i18n('tour.step5.paragraph1') + '</div>' +
                '    </div>' +
                '    <div class="demo-apps">' +
-                    getAppsDiv() +
+
+               getAppsDiv() +
                '    </div>'
                 '</div>';
 
@@ -268,7 +279,7 @@ function createStep5() {
 function getAppsDiv() {
     return marketDemoApps.length > 0 ?
            getDemoAppsHtml() :
-           '        <div class="demo-apps-text">Enonic Market is not available at the moment. Please try again later.</div>';
+           '        <div class="demo-apps-text">' + i18n('tour.apps.notavailable') + '</div>';
 }
 
 function fetchDemoAppsFromMarket() {
@@ -368,11 +379,11 @@ function loadApp(marketDemoApp) {
             ".demo-app-status");
         if (!result.getFailure()) {
             statusContainer.className = "demo-app-status installed";
-            statusContainer.textContent = "Installed";
+            statusContainer.textContent = i18n('tour.apps.status.installed');
         }
         else {
             statusContainer.className = "demo-app-status failure";
-            statusContainer.textContent = "Failed";
+            statusContainer.textContent = i18n('tour.apps.status.failed');
         }
     }).catch(function (err) {
         api.DefaultErrorHandler.handle(err);
@@ -381,7 +392,8 @@ function loadApp(marketDemoApp) {
 }
 
 function updateHeaderStep(step) {
-    tourDialog.setTitle("Welcome Tour - Step " + step + " of " + (isSystemAdmin ? "5" : "4"));
+    const totalSteps = isSystemAdmin ? "5" : "4";
+    tourDialog.setTitle(i18n('tour.title.stepXofY', step, totalSteps));
 }
 
 function setTourStep(step) {
