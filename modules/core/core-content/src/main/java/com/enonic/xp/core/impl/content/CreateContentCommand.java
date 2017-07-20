@@ -96,7 +96,7 @@ final class CreateContentCommand
 
         try
         {
-            final Node createdNode = nodeService.create( createNodeParams );
+            final Node createdNode = doCreateContent( createNodeParams );
 
             if ( params.isRefresh() )
             {
@@ -114,6 +114,11 @@ final class CreateContentCommand
         {
             throw new ContentAccessException( e );
         }
+    }
+
+    private Node doCreateContent( final CreateNodeParams createNodeParams )
+    {
+        return nodeService.create( createNodeParams );
     }
 
     private void validateBlockingChecks()

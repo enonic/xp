@@ -5,12 +5,12 @@ import com.google.common.cache.CacheBuilder;
 
 import com.enonic.xp.repo.impl.branch.storage.BranchDocumentId;
 
-public class PathCacheImpl
-    implements PathCache
+public class BranchCachePath
+    implements PathCache<BranchDocumentId>
 {
-    private final Cache<CachePath, String> pathCache;
+    private final Cache<CachePath, BranchDocumentId> pathCache;
 
-    public PathCacheImpl()
+    public BranchCachePath()
     {
         pathCache = CacheBuilder.newBuilder().
             maximumSize( 100000 ).
@@ -20,7 +20,7 @@ public class PathCacheImpl
     @Override
     public void cache( final CachePath path, final BranchDocumentId id )
     {
-        this.pathCache.put( path, id.toString() );
+        this.pathCache.put( path, id );
     }
 
     @Override
@@ -36,7 +36,7 @@ public class PathCacheImpl
     }
 
     @Override
-    public String get( final CachePath path )
+    public BranchDocumentId get( final CachePath path )
     {
         return this.pathCache.getIfPresent( path );
     }
