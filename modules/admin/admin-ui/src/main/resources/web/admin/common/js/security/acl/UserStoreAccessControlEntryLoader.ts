@@ -15,7 +15,7 @@ module api.security.acl {
 
         constructor() {
             super();
-            super.setMethod("POST")
+            super.setMethod('POST');
         }
 
         getParams(): Object {
