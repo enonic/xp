@@ -13,6 +13,7 @@ module api.security.acl {
 
         constructor() {
             super();
+            super.setMethod('POST');
         }
 
         getParams(): Object {

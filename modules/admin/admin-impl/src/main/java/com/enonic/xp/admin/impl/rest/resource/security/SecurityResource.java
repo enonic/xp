@@ -1,6 +1,5 @@
 package com.enonic.xp.admin.impl.rest.resource.security;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,9 +16,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jparsec.util.Lists;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateGroupJson;
@@ -33,6 +33,7 @@ import com.enonic.xp.admin.impl.rest.resource.security.json.DeleteUserStoreJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.DeleteUserStoreResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.DeleteUserStoresResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.EmailAvailabilityJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.FindPrincipalsJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.FindPrincipalsResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.GroupJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.PrincipalJson;
@@ -65,7 +66,6 @@ import com.enonic.xp.security.PrincipalQuery;
 import com.enonic.xp.security.PrincipalQueryResult;
 import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.PrincipalRelationships;
-import com.enonic.xp.security.PrincipalType;
 import com.enonic.xp.security.Principals;
 import com.enonic.xp.security.Role;
 import com.enonic.xp.security.RoleKeys;
@@ -205,58 +205,56 @@ public final class SecurityResource
         return resultsJson;
     }
 
-    @GET
+    @POST
     @Path("principals")
-    public FindPrincipalsResultJson findPrincipals( @QueryParam("types") final String types,
-
-                                                    @QueryParam("query") final String query,
-
-                                                    @QueryParam("userStoreKey") final String storeKey,
-
-                                                    @QueryParam("from") final Integer from,
-
-                                                    @QueryParam("size") final Integer size )
+    public FindPrincipalsResultJson findPrincipals( final FindPrincipalsJson params )
     {
-
-        final List<PrincipalType> principalTypes = new ArrayList<>();
-        if ( StringUtils.isNotBlank( types ) )
-        {
-            final String[] typeItems = types.split( "," );
-            for ( String typeItem : typeItems )
-            {
-                try
-                {
-                    principalTypes.add( PrincipalType.valueOf( typeItem.toUpperCase() ) );
-                }
-                catch ( IllegalArgumentException e )
-                {
-                    throw new WebApplicationException( "Invalid principal type: " + typeItem );
-                }
-            }
-        }
-
         final PrincipalQuery.Builder principalQuery = PrincipalQuery.create().
             getAll().
-            includeTypes( principalTypes ).
-            searchText( query );
+            includeTypes( params.toPrincipalTypes() ).
+            searchText( params.query );
 
-        if ( StringUtils.isNotEmpty( storeKey ) )
+        if ( StringUtils.isNotEmpty( params.storeKey ) )
         {
-            principalQuery.userStore( UserStoreKey.from( storeKey ) );
+            principalQuery.userStore( UserStoreKey.from( params.storeKey ) );
         }
 
-        if ( from != null )
+        if ( params.from != null )
         {
-            principalQuery.from( from );
+            principalQuery.from( params.from );
         }
 
-        if ( size != null )
+        if ( params.size != null )
         {
-            principalQuery.size( size );
+            principalQuery.size( params.size );
         }
 
         final PrincipalQueryResult result = securityService.query( principalQuery.build() );
-        return new FindPrincipalsResultJson( result.getPrincipals(), result.getTotalSize() );
+
+        final List<PrincipalJson> principalsJson = params.resolveMemberships ?
+            result.getPrincipals().stream().map( this::resolvePrincipalWithMembersToJson ).collect(toList()) :
+            result.getPrincipals().stream().map( PrincipalJson::new ).collect(toList());
+
+        return new FindPrincipalsResultJson( principalsJson, result.getTotalSize() );
+    }
+
+    private PrincipalJson resolvePrincipalWithMembersToJson(final Principal principal)
+    {
+            if ( principal.getKey().isUser() )
+            {
+                final PrincipalKeys membershipKeys = securityService.getMemberships( principal.getKey() );
+                final Principals memberships = securityService.getPrincipals( membershipKeys );
+                return new UserJson( (User) principal, memberships );
+            }
+
+            if ( principal.getKey().isGroup() )
+            {
+                final PrincipalKeys groupMembers = getMembers( principal.getKey() );
+                return new GroupJson( (Group) principal, groupMembers );
+            }
+
+            final PrincipalKeys roleMembers = getMembers( principal.getKey() );
+            return new RoleJson( (Role) principal, roleMembers );
     }
 
     @GET
@@ -481,7 +479,7 @@ public final class SecurityResource
     {
         PrincipalKeys members = this.getMembers( principal );
 
-        List<PrincipalKey> subMembers = Lists.arrayList();
+        List<PrincipalKey> subMembers = Lists.newArrayList();
         members.stream().filter( member -> member.isGroup() || member.isRole() ).forEach( member -> {
             subMembers.addAll( getUserMembers( member ).getSet() );
         } );

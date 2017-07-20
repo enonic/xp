@@ -13,6 +13,9 @@ module api.ui.security {
     import RichComboBoxBuilder = api.ui.selector.combobox.RichComboBoxBuilder;
 
     export class PrincipalComboBox extends RichComboBox<Principal> {
+
+        private isPrincipalReadOnlyFunction: (principal: Principal) => boolean;
+
         constructor(builder: PrincipalComboBoxBuilder) {
             let richComboBoxBuilder = new RichComboBoxBuilder<Principal>().setMaximumOccurrences(
                 builder.maxOccurrences).setComboBoxName('principalSelector').setIdentifierMethod('getKey').setLoader(
@@ -23,10 +26,32 @@ module api.ui.security {
                 new PrincipalViewer()).setDelayedInputValueChangedHandling(500);
 
             super(richComboBoxBuilder);
+
+            this.addClass('principal-combobox');
         }
 
         static create(): PrincipalComboBoxBuilder {
             return new PrincipalComboBoxBuilder();
+        }
+
+        protected createOption(value: Principal): Option<Principal> {
+            return {
+                value: this.getDisplayValueId(value),
+                displayValue: value,
+                readOnly: this.isPrincipalReadOnly(value)
+            };
+        }
+
+        setIsPrincipalReadOnlyFunction(isReadOnlyFunction: (principal: Principal) => boolean) {
+            this.isPrincipalReadOnlyFunction = isReadOnlyFunction;
+        }
+
+        private isPrincipalReadOnly(principal: Principal): boolean {
+            if (this.isPrincipalReadOnlyFunction) {
+                return this.isPrincipalReadOnlyFunction(principal);
+            }
+
+            return false;
         }
     }
 
@@ -80,6 +105,7 @@ module api.ui.security {
             super();
             this.setOption(option);
             this.setClass('principal-selected-option-view');
+            this.toggleClass('readonly', option.readOnly);
             let removeButton = new api.dom.AEl('icon-close');
             removeButton.onClicked((event: MouseEvent) => {
                 this.notifyRemoveClicked(event);
