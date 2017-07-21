@@ -10,17 +10,17 @@ module api.form.inputtype.support {
 
         private context: api.form.inputtype.InputTypeViewContext;
 
-        private input: api.form.Input;
+        protected input: api.form.Input;
 
         protected propertyArray: PropertyArray;
 
-        private inputOccurrences: InputOccurrences;
+        protected inputOccurrences: InputOccurrences;
 
         private inputValidityChangedListeners: {(event: api.form.inputtype.InputValidityChangedEvent) : void}[] = [];
 
         private inputValueChangedListeners: {(occurrence: api.dom.Element, value: api.data.Value): void}[] = [];
 
-        private previousValidationRecording: api.form.inputtype.InputValidationRecording;
+        protected previousValidationRecording: api.form.inputtype.InputValidationRecording;
 
         /**
          * The index of child Data being dragged.
@@ -144,7 +144,7 @@ module api.form.inputtype.support {
             });
         }
 
-        private notifyValidityChanged(event: api.form.inputtype.InputValidityChangedEvent) {
+        protected notifyValidityChanged(event: api.form.inputtype.InputValidityChangedEvent) {
             this.inputValidityChangedListeners.forEach((listener: (event: api.form.inputtype.InputValidityChangedEvent)=>void) => {
                 listener(event);
             });
@@ -234,14 +234,14 @@ module api.form.inputtype.support {
             }
 
             this.previousValidationRecording = recording;
-            return recording;
+            return recording.clone();
         }
 
         protected additionalValidate(recording: api.form.inputtype.InputValidationRecording) {
             //Do nothing
         }
 
-        private validateOccurrences(): api.form.inputtype.InputValidationRecording {
+        protected validateOccurrences(): api.form.inputtype.InputValidationRecording {
             let recording = new api.form.inputtype.InputValidationRecording();
             let numberOfValids = 0;
             this.inputOccurrences.getOccurrenceViews().forEach((occurrenceView: InputOccurrenceView) => {
