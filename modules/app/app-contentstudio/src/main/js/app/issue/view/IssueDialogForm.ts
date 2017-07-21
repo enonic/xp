@@ -49,10 +49,8 @@ export class IssueDialogForm extends api.ui.form.Form {
     public doRender(): wemQ.Promise<boolean> {
         return super.doRender().then(() => {
             return this.approversSelector.getLoader().load().then(() => {
-                return this.contentItemsSelector.getLoader().load().then(() => {
                     this.title.giveFocus();
                     return true;
-                });
             });
         });
     }
