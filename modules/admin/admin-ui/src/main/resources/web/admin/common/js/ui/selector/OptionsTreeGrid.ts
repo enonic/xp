@@ -46,19 +46,19 @@ module api.ui.selector {
             super(builder);
             this.loader = loader;
             this.treeDataHelper = treeDataHelper;
-            this.isSelfLoading = true;
+            this.setSelfLoading(true);
             this.setSelectionOnClick(SelectionOnClickType.SELECT);
 
             this.initEventHandlers();
         }
 
         setOptions(options: Option<OPTION_DISPLAY_VALUE>[]) {
-            this.isSelfLoading = false;
+            this.setSelfLoading(false);
             this.getGrid().getDataView().setItems(this.dataToTreeNodes(options, this.getRoot().getCurrentRoot()), 'dataId');
         }
 
         addOption(option: Option<OPTION_DISPLAY_VALUE>) {
-            this.isSelfLoading = false;
+            this.setSelfLoading(false);
             this.getGrid().getDataView().addItem(this.dataToTreeNode(option, this.getRoot().getCurrentRoot()));
         }
 
@@ -125,7 +125,7 @@ module api.ui.selector {
         }
 
         fetchChildren(parentNode?: TreeNode<Option<OPTION_DISPLAY_VALUE>>): wemQ.Promise<Option<OPTION_DISPLAY_VALUE>[]> {
-            this.isSelfLoading = true;
+            this.setSelfLoading(true);
             parentNode = parentNode ? parentNode : this.getRoot().getCurrentRoot();
 
             let from = parentNode.getChildren().length;
@@ -225,6 +225,11 @@ module api.ui.selector {
                 value: null,
                 displayValue: null
             };
+        }
+
+        private setSelfLoading(value: boolean) {
+            this.isSelfLoading = value;
+            this.toggleClass('self-loaded', value);
         }
 
         protected handleItemMetadata(row: number) {

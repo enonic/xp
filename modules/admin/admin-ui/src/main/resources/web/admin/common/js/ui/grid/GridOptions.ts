@@ -85,6 +85,8 @@ module api.ui.grid {
 
         checkableRows: boolean;
 
+        checkCellsToBegin: boolean;
+
         disabledMultipleSelection: boolean;
 
         dragAndDrop: boolean;
@@ -134,6 +136,7 @@ module api.ui.grid {
                 this.dataIdProperty = source.getDataIdProperty();
                 this.autoRenderGridOnDataChanges = source.isAutoRenderGridOnDataChanges();
                 this.checkableRows = source.isCheckableRows();
+                this.checkCellsToBegin = source.isCheckCellsToBegin();
                 this.disabledMultipleSelection = source.isMultipleSelectionDisabled();
                 this.dragAndDrop = source.isDragAndDrop();
             }
@@ -344,6 +347,11 @@ module api.ui.grid {
             return this;
         }
 
+        setCheckCellsToBegin(checkCellsToBegin: boolean): GridOptionsBuilder<T> {
+            this.checkCellsToBegin = checkCellsToBegin;
+            return this;
+        }
+
         disableMultipleSelection(disabledMultipleSelection: boolean): GridOptionsBuilder<T> {
             this.disabledMultipleSelection = disabledMultipleSelection;
             return this;
@@ -444,6 +452,8 @@ module api.ui.grid {
 
         checkableRows: boolean;
 
+        checkCellsToBegin: boolean;
+
         disabledMultipleSelection: boolean;
 
         dragAndDrop: boolean;
@@ -491,6 +501,7 @@ module api.ui.grid {
             this.dataIdProperty = builder.dataIdProperty;
             this.autoRenderGridOnDataChanges = builder.autoRenderGridOnDataChanges;
             this.checkableRows = builder.checkableRows;
+            this.checkCellsToBegin = builder.checkCellsToBegin;
             this.disabledMultipleSelection = builder.disabledMultipleSelection;
             this.dragAndDrop = builder.dragAndDrop;
         }
@@ -657,6 +668,10 @@ module api.ui.grid {
 
         isCheckableRows(): boolean {
             return this.checkableRows;
+        }
+
+        isCheckCellsToBegin(): boolean {
+            return this.checkCellsToBegin;
         }
 
         isMultipleSelectionDisabled(): boolean {
@@ -869,6 +884,11 @@ module api.ui.grid {
 
         setCheckableRows(checkableRows: boolean): GridOptions<T> {
             this.checkableRows = checkableRows;
+            return this;
+        }
+
+        setCheckCellsToBegin(checkCellsToBegin: boolean): GridOptions<T> {
+            this.checkCellsToBegin = checkCellsToBegin;
             return this;
         }
 

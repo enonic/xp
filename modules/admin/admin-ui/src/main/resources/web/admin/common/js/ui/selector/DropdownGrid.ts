@@ -156,6 +156,7 @@ module api.ui.selector {
                 .setForceFitColumns(true)
                 .setRowHeight(this.optionDisplayValueViewer.getPreferredHeight())
                 .setCheckableRows(this.multipleSelections)
+                .setCheckCellsToBegin(false)
                 .setMultiSelect(this.multipleSelections)
                 .setDataIdProperty(this.dataIdProperty)
                 .build();

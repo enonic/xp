@@ -11,6 +11,8 @@ module api.ui.selector.combobox {
         constructor(name: string, config: ComboBoxConfig<OPTION_DISPLAY_VALUE>,
                     loader: api.util.loader.BaseLoader<any, OPTION_DISPLAY_VALUE>) {
             super(name, config);
+
+            this.addClass('loader-combobox');
             this.loader = loader;
         }
 

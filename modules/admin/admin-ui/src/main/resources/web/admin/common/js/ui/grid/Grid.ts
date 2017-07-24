@@ -42,7 +42,12 @@ module api.ui.grid {
                     cssClass: 'slick-cell-checkboxsel',
                     width: 40
                 });
-                columns.unshift(<GridColumn<T>>this.checkboxSelectorPlugin.getColumnDefinition());
+
+                if(options.isCheckCellsToBegin()) {
+                    columns.unshift(<GridColumn<T>>this.checkboxSelectorPlugin.getColumnDefinition());
+                } else {
+                    columns.push(<GridColumn<T>>this.checkboxSelectorPlugin.getColumnDefinition());
+                }
             }
 
             if (options.isDragAndDrop()) {
