@@ -84,12 +84,12 @@ export class ChangeUserPasswordDialog extends api.ui.dialog.ModalDialog {
     }
 
     show() {
+        this.password.setValue('');
         api.dom.Body.get().appendChild(this);
         super.show();
     }
 
     close() {
-        this.password.setValue('');
         super.close();
         this.remove();
     }

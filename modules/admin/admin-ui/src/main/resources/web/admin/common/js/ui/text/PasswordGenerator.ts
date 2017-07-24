@@ -50,10 +50,14 @@ module api.ui.text {
             this.showLink.getEl().setAttribute('data-i18n', i18n('field.pswGenerator.show'));
             this.initFocusEvents(this.showLink);
             this.showLink.onClicked((event: MouseEvent) => {
+
+                this.toggleClass('unlocked');
+
                 const unlocked = this.hasClass('unlocked');
-                this.toggleClass('unlocked', !unlocked);
+
                 this.showLink.getEl().setAttribute('data-i18n', i18n(`field.pswGenerator.${unlocked ? 'hide' : 'show'}`));
-                this.input.setType(unlocked ? 'password' : 'text');
+                this.input.setType(unlocked ? 'text' : 'password');
+
                 event.stopPropagation();
                 event.preventDefault();
                 return false;
@@ -74,12 +78,16 @@ module api.ui.text {
             this.appendChild(this.generateLink);
         }
 
+        setValue(value: string, silent?: boolean, userInput?: boolean): PasswordGenerator {
+            return this.doSetValue(value, silent, userInput);
+        }
+
         doGetValue(): string {
             return this.input.getValue();
         }
 
-        doSetValue(value: string, silent?: boolean): PasswordGenerator {
-            this.input.setValue(value, silent);
+        doSetValue(value: string, silent?: boolean, userInput?: boolean): PasswordGenerator {
+            this.input.setValue(value, silent, userInput);
             this.assessComplexity(value);
             return this;
         }
