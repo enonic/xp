@@ -31,10 +31,10 @@ module api.app.browse {
         togglePreviewForItem(item?: BrowseItem<M>) {
             if (item) {
                 this.removeClass('no-selection');
-                this.setStatisticsItem(item);
             } else {
                 this.showNoSelectionMessage();
             }
+            this.setStatisticsItem(item);
         }
 
         updatePreviewPanel() {
@@ -46,7 +46,7 @@ module api.app.browse {
         }
 
         setStatisticsItem(item: BrowseItem<M>) {
-            this.itemStatisticsPanel.setItem(item.toViewItem());
+            item ? this.itemStatisticsPanel.setItem(item.toViewItem()) : this.itemStatisticsPanel.clearItem();
         }
 
         getStatisticsItem(): api.app.view.ViewItem<M> {

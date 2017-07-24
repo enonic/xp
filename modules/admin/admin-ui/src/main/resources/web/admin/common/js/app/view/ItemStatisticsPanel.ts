@@ -22,6 +22,11 @@ module api.app.view {
             this.header.setItem(item);
         }
 
+        clearItem() {
+            this.browseItem = null;
+            this.header.setItem(null);
+        }
+
         getItem(): ViewItem<M> {
             return this.browseItem;
         }
