@@ -32,7 +32,7 @@ module api.ui.selector {
                     .setLoadBufferSize(20)
                     .setAutoLoad(false)
                     .prependClasses('dropdown-tree-grid')
-                    .setRowHeight(45)
+                    .setRowHeight(50)
                     .setHotkeysEnabled(true)
                     .setShowToolbar(false)
                     .setIdPropertyName(gridOptions.dataIdProperty);

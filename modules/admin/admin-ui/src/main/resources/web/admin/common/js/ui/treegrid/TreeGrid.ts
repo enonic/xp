@@ -866,12 +866,13 @@ module api.ui.treegrid {
                 return;
             }
             let scrollEl = this.scrollable.getEl();
+            let rowHeight = this.gridOptions.getRowHeight();
 
             if (row > -1 && (skipSelectionCheck || this.grid.getSelectedRows().length > 0)) {
-                if (scrollEl.getScrollTop() > row * 45) {
-                    scrollEl.setScrollTop(row * 45);
-                } else if (scrollEl.getScrollTop() + scrollEl.getHeight() < (row + 1) * 45) {
-                    scrollEl.setScrollTop((row + 1) * 45 - scrollEl.getHeight());
+                if (scrollEl.getScrollTop() > row * rowHeight) {
+                    scrollEl.setScrollTop(row * rowHeight);
+                } else if (scrollEl.getScrollTop() + scrollEl.getHeight() < (row + 1) * rowHeight) {
+                    scrollEl.setScrollTop((row + 1) * rowHeight - scrollEl.getHeight());
                 }
             }
         }

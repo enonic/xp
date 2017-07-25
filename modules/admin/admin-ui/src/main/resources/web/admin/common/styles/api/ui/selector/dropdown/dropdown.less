@@ -102,6 +102,11 @@
         pointer-events: none;
       }
       &.disabled {
+        &.active {
+          .slick-cell.active {
+            width: 100%;
+          }
+        }
         .slick-cell-checkboxsel {
           visibility: hidden;
         }
@@ -119,6 +124,11 @@
           }
         }
       }
+    }
+  }
+  &.self-loaded {
+    .grid .slick-row .slick-cell {
+      padding-left: 0;
     }
   }
   &:not(.self-loaded) {
