@@ -5,6 +5,7 @@ module api.form.inputtype.support {
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
     import InputTypeView = api.form.inputtype.InputTypeView;
+    import i18n = api.util.i18n;
 
     export class BaseInputTypeNotManagingAdd<RAW_VALUE_TYPE> extends api.dom.DivEl implements InputTypeView<RAW_VALUE_TYPE> {
 
@@ -223,7 +224,7 @@ module api.form.inputtype.support {
             if (!this.hasValidUserInput()) {
                 recording.setAdditionalValidationRecord(api.form.AdditionalValidationRecord.create().
                     setOverwriteDefault(true).
-                    setMessage('Incorrect value entered').
+                    setMessage(i18n('notify.field.wrong.value')).
                     build());
             } else {
                 this.additionalValidate(recording);

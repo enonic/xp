@@ -7,6 +7,7 @@ module api.form {
     import ValueTypes = api.data.ValueTypes;
     import PropertySet = api.data.PropertySet;
     import BaseInputTypeNotManagingAdd = api.form.inputtype.support.BaseInputTypeNotManagingAdd;
+    import i18n = api.util.i18n;
 
     export interface InputViewConfig {
 
@@ -112,7 +113,7 @@ module api.form {
                         }
                     });
 
-                    this.addButton = new api.ui.button.Button('Add');
+                    this.addButton = new api.ui.button.Button(i18n('action.add'));
                     this.addButton.addClass('small');
                     this.addButton.onClicked((event: MouseEvent) => {
                         inputTypeViewNotManagingAdd.createAndAddOccurrence();
