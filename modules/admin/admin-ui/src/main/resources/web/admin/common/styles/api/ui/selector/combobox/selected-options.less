@@ -69,15 +69,13 @@
 }
 
 .option-cell() {
-  .default-slick-cell-styling();
+  .default-slick-cell-styling(10px 0 0 15px);
 
   &:hover, &.active {
     background: @admin-bg-light-gray;
   }
 
   &.slick-cell-checkboxsel {
-    padding-right: 0;
-
     label {
       cursor: pointer;
     }

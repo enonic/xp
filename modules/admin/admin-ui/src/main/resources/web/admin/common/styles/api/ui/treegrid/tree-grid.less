@@ -33,10 +33,11 @@
     }
 
     .slick-cell {
-      .default-slick-cell-styling(4px 8px 4px 2px);
+      .default-slick-cell-styling(6px 8px 4px 15px);
       cursor: pointer;
       line-height: 37px;
-      height: 45px; // firefox ignores SlickGrid.rowHeight
+      height: 50px; // firefox ignores SlickGrid.rowHeight
+      display: block;
 
       * {
         // force same cursor on every child
@@ -73,7 +74,6 @@
 
       .slick-cell-checkboxsel {
         min-width: 45px;
-        padding-left: 8px;
         line-height: normal;
 
         display: flex;
@@ -100,7 +100,7 @@
         }
 
         &:last-child {
-          padding-right: 20px;
+          padding-right: 10px;
         }
 
       }
