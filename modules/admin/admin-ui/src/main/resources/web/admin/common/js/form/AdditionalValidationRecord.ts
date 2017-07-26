@@ -22,6 +22,10 @@ module api.form {
             return this.overwriteDefault;
         }
 
+        clone(): AdditionalValidationRecord {
+            return AdditionalValidationRecord.create().setMessage(this.message).setOverwriteDefault(this.overwriteDefault).build();
+        }
+
         equals(that: AdditionalValidationRecord): boolean {
 
             if (this.message !== that.message) {

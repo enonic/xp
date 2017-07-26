@@ -5,11 +5,20 @@ module api.content.form.inputtype.double {
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
+    import TextInput = api.ui.text.TextInput;
+    import NumberHelper = api.util.NumberHelper;
+    import InputOccurrenceView = api.form.inputtype.support.InputOccurrenceView;
+    import ValueTypeDouble = api.data.ValueTypeDouble;
 
     export class Double extends BaseInputTypeNotManagingAdd<number> {
 
+        private min: number = null;
+
+        private max: number = null;
+
         constructor(config: api.form.inputtype.InputTypeViewContext) {
             super(config);
+            this.readConfig(config);
         }
 
         getValueType(): ValueType {
@@ -18,6 +27,15 @@ module api.content.form.inputtype.double {
 
         newInitialValue(): Value {
             return super.newInitialValue() || ValueTypes.DOUBLE.newNullValue();
+        }
+
+        protected readConfig(config: api.form.inputtype.InputTypeViewContext): void {
+
+            const minConfig = config.inputConfig['min'] ? config.inputConfig['min'][0] : {};
+            this.min = NumberHelper.toNumber(minConfig['value']);
+
+            const maxConfig = config.inputConfig['max'] ? config.inputConfig['max'][0] : {};
+            this.max = NumberHelper.toNumber(maxConfig['value']);
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
@@ -64,20 +82,67 @@ module api.content.form.inputtype.double {
         }
 
         private isValid(value: string): boolean {
-            let validUserInput = true;
 
             if (api.util.StringHelper.isEmpty(value)) {
-                validUserInput = true;
-            } else {
+                return true;
+            }
 
-                if (api.util.NumberHelper.isNumber(+value)) {
-                    validUserInput = true;
-                } else {
-                    validUserInput = false;
+            if (api.util.NumberHelper.isNumber(+value)) {
+                return this.isValidMax(api.util.NumberHelper.toNumber(value)) &&
+                       this.isValidMin(api.util.NumberHelper.toNumber(value));
+            }
+
+            return false;
+        }
+
+        private isValidMin(value: number) {
+            if (NumberHelper.isNumber(value)) {
+                if (NumberHelper.isNumber(this.min)) {
+                    return value >= this.min;
                 }
             }
 
-            return validUserInput;
+            return true;
+        }
+
+        private isValidMax(value: number) {
+            if (NumberHelper.isNumber(value)) {
+                if (NumberHelper.isNumber(this.max)) {
+                    return value <= this.max;
+                }
+            }
+
+            return true;
+        }
+
+        validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
+            const recording = super.validate(silent);
+
+            this.inputOccurrences.getOccurrenceViews().forEach((occurrenceView: InputOccurrenceView) => {
+
+                const value = NumberHelper.toNumber((<api.ui.text.TextInput>occurrenceView.getInputElement()).getValue());
+
+                if (!this.isValidMin(value)) {
+                    recording.setAdditionalValidationRecord(
+                        api.form.AdditionalValidationRecord.create().setOverwriteDefault(true).setMessage(
+                            `The value cannot be less than ${this.min}`).build());
+                }
+
+                if (!this.isValidMax(value)) {
+                    recording.setAdditionalValidationRecord(
+                        api.form.AdditionalValidationRecord.create().setOverwriteDefault(true).setMessage(
+                            `The value cannot be greater than ${this.max}`).build());
+                }
+
+            });
+
+            if (!silent && recording.validityChanged(this.previousValidationRecording)) {
+                this.notifyValidityChanged(new api.form.inputtype.InputValidityChangedEvent(recording, this.input.getName()));
+
+                this.previousValidationRecording = recording;
+            }
+
+            return recording.clone();
         }
 
     }

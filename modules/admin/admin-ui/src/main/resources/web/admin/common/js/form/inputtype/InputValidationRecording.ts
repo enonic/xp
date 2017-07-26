@@ -58,6 +58,15 @@ module api.form.inputtype {
             return true;
         }
 
+        clone(): InputValidationRecording {
+            const clone = new InputValidationRecording();
+            clone.setBreaksMinimumOccurrences(this.breaksMinimumOccurrences);
+            clone.setBreaksMaximumOccurrences(this.breaksMaximumOccurrences);
+            clone.setAdditionalValidationRecord(this.additionalValidationRecord ? this.additionalValidationRecord.clone() : null);
+
+            return clone;
+        }
+
         validityChanged(other: InputValidationRecording) {
             return other == null || other == null || !other.equals(this);
         }
