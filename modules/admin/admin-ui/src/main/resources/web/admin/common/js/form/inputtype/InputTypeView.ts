@@ -42,7 +42,7 @@ module api.form.inputtype {
 
         displayValidationErrors(value: boolean);
 
-        hasValidUserInput() : boolean;
+        hasValidUserInput(recording?: api.form.inputtype.InputValidationRecording) : boolean;
 
         validate(silent: boolean) : InputValidationRecording;
 

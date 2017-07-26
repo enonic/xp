@@ -190,11 +190,11 @@ module api.form.inputtype.support {
             this.inputOccurrences.reset();
         }
 
-        hasValidUserInput(): boolean {
-            return this.inputOccurrences.hasValidUserInput();
+        hasValidUserInput(recording?: api.form.inputtype.InputValidationRecording): boolean {
+            return this.inputOccurrences.hasValidUserInput(recording);
         }
 
-        hasInputElementValidUserInput(inputElement: api.dom.Element): boolean {
+        hasInputElementValidUserInput(inputElement: api.dom.Element, recording?: api.form.inputtype.InputValidationRecording): boolean {
             throw new Error('Must be implemented by inheritor');
         }
 
@@ -221,11 +221,12 @@ module api.form.inputtype.support {
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
             let recording = this.validateOccurrences();
 
-            if (!this.hasValidUserInput()) {
-                recording.setAdditionalValidationRecord(api.form.AdditionalValidationRecord.create().
-                    setOverwriteDefault(true).
-                    setMessage(i18n('notify.field.wrong.value')).
-                    build());
+            if (!this.hasValidUserInput(recording)) {
+                if (!recording.hasAdditionalValidationRecord()) {
+                    recording.setAdditionalValidationRecord(
+                        api.form.AdditionalValidationRecord.create().setOverwriteDefault(true).setMessage(
+                            i18n('notify.field.wrong.value')).build());
+                }
             } else {
                 this.additionalValidate(recording);
             }
@@ -249,7 +250,7 @@ module api.form.inputtype.support {
 
                 let valueFromPropertyArray = this.propertyArray.getValue(occurrenceView.getIndex());
                 if (valueFromPropertyArray) {
-                    if (!this.valueBreaksRequiredContract(valueFromPropertyArray) && this.hasValidUserInput()) {
+                    if (!this.valueBreaksRequiredContract(valueFromPropertyArray) && this.hasValidUserInput(recording)) {
                         numberOfValids++;
                     }
                 }
