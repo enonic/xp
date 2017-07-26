@@ -89,7 +89,7 @@ module api.ui.treegrid {
                 setForceFitColumns(true).
                 setHideColumnHeaders(true).
                 setCheckableRows(true).
-                setCheckCellsToBegin(true).
+                setLeftAlignedCheckbox(true).
                 setRowHeight(45).
                 setHeight('100%').
                 setWidth('100%').
@@ -206,13 +206,13 @@ module api.ui.treegrid {
             return this.options.isCheckableRows();
         }
 
-        setCheckCellsToBegin(value: boolean): TreeGridBuilder<NODE> {
-            this.options.setCheckCellsToBegin(value);
+        setLeftAlignedCheckbox(value: boolean): TreeGridBuilder<NODE> {
+            this.options.setLeftAlignedCheckbox(value);
             return this;
         }
 
-        isCheckCellsToBegin(): boolean {
-            return this.options.isCheckCellsToBegin();
+        isLeftAlignedCheckbox(): boolean {
+            return this.options.isLeftAlignedCheckbox();
         }
 
         setDragAndDrop(dragAndDrop: boolean): TreeGridBuilder<NODE> {

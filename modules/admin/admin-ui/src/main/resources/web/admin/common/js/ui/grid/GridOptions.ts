@@ -85,7 +85,7 @@ module api.ui.grid {
 
         checkableRows: boolean;
 
-        checkCellsToBegin: boolean;
+        leftAlignedCheckbox: boolean;
 
         disabledMultipleSelection: boolean;
 
@@ -136,7 +136,7 @@ module api.ui.grid {
                 this.dataIdProperty = source.getDataIdProperty();
                 this.autoRenderGridOnDataChanges = source.isAutoRenderGridOnDataChanges();
                 this.checkableRows = source.isCheckableRows();
-                this.checkCellsToBegin = source.isCheckCellsToBegin();
+                this.leftAlignedCheckbox = source.isLeftAlignedCheckbox();
                 this.disabledMultipleSelection = source.isMultipleSelectionDisabled();
                 this.dragAndDrop = source.isDragAndDrop();
             }
@@ -347,8 +347,8 @@ module api.ui.grid {
             return this;
         }
 
-        setCheckCellsToBegin(checkCellsToBegin: boolean): GridOptionsBuilder<T> {
-            this.checkCellsToBegin = checkCellsToBegin;
+        setLeftAlignedCheckbox(leftAlignedCheckbox: boolean): GridOptionsBuilder<T> {
+            this.leftAlignedCheckbox = leftAlignedCheckbox;
             return this;
         }
 
@@ -452,7 +452,7 @@ module api.ui.grid {
 
         checkableRows: boolean;
 
-        checkCellsToBegin: boolean;
+        leftAlignedCheckbox: boolean;
 
         disabledMultipleSelection: boolean;
 
@@ -501,7 +501,7 @@ module api.ui.grid {
             this.dataIdProperty = builder.dataIdProperty;
             this.autoRenderGridOnDataChanges = builder.autoRenderGridOnDataChanges;
             this.checkableRows = builder.checkableRows;
-            this.checkCellsToBegin = builder.checkCellsToBegin;
+            this.leftAlignedCheckbox = builder.leftAlignedCheckbox;
             this.disabledMultipleSelection = builder.disabledMultipleSelection;
             this.dragAndDrop = builder.dragAndDrop;
         }
@@ -670,8 +670,8 @@ module api.ui.grid {
             return this.checkableRows;
         }
 
-        isCheckCellsToBegin(): boolean {
-            return this.checkCellsToBegin;
+        isLeftAlignedCheckbox(): boolean {
+            return this.leftAlignedCheckbox;
         }
 
         isMultipleSelectionDisabled(): boolean {
@@ -887,8 +887,8 @@ module api.ui.grid {
             return this;
         }
 
-        setCheckCellsToBegin(checkCellsToBegin: boolean): GridOptions<T> {
-            this.checkCellsToBegin = checkCellsToBegin;
+        setLeftAlignedCheckbox(leftAlignedCheckbox: boolean): GridOptions<T> {
+            this.leftAlignedCheckbox = leftAlignedCheckbox;
             return this;
         }
 

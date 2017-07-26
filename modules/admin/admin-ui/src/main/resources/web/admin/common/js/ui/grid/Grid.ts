@@ -43,7 +43,7 @@ module api.ui.grid {
                     width: 40
                 });
 
-                if(options.isCheckCellsToBegin()) {
+                if(options.isLeftAlignedCheckbox()) {
                     columns.unshift(<GridColumn<T>>this.checkboxSelectorPlugin.getColumnDefinition());
                 } else {
                     columns.push(<GridColumn<T>>this.checkboxSelectorPlugin.getColumnDefinition());
