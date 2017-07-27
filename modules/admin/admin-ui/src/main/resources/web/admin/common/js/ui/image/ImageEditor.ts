@@ -70,12 +70,14 @@ module api.ui.image {
         private zoomData: ZoomData = {x: 0, y: 0, w: 0, h: 0};
         private revertZoomData: ZoomData;
 
+        private orientation: number;
+        private revertOrientation: number;
+
         private imgW: number = 1;
         private imgH: number = 1;
         private frameW: number = 1;
         private frameH: number = 1;
         private maxZoom: number = 5;
-        private orientation: number = 0;
 
         private mouseUpListener: (event: MouseEvent) => void;
         private mouseMoveListener: (event: MouseEvent) => void;
@@ -132,7 +134,7 @@ module api.ui.image {
                 if (ImageEditor.debug) {
                     console.debug('ImageEditor: originalImage loaded');
                 }
-                this.setOrientation(this.orientation, true);
+                this.setOrientation(this.orientation || 0, true);
             });
 
             let resizeHandler = () => {
@@ -716,6 +718,7 @@ module api.ui.image {
                 this.resetZoomPosition();
                 this.resetFocusPosition();
                 this.resetFocusRadius();
+                this.resetOrientation();
             });
 
             this.onFocusAutoPositionedChanged((auto) => {
@@ -726,6 +729,10 @@ module api.ui.image {
             this.onCropAutoPositionedChanged((auto) => {
                 this.editResetButton.setVisible(!auto);
                 resetButton.setVisible(!auto || !this.focusData.auto);
+            });
+
+            this.onOrientationChanged((orientation) => {
+                resetButton.setVisible(orientation !== this.revertOrientation);
             });
 
             this.uploadButton = new Button();
@@ -804,6 +811,10 @@ module api.ui.image {
          */
         setOrientation(orientation?: number, silent?: boolean) {
             this.orientation = orientation % 8; // limit it to 0-7 values
+            if (this.revertOrientation == undefined) {
+                this.revertOrientation = this.orientation;
+            }
+
             if (ImageEditor.debug) {
                 console.debug('ImageEditor.setOrientation = ' + this.orientation);
             }
@@ -820,6 +831,10 @@ module api.ui.image {
             if (!silent) {
                 this.notifyOrientationChanged(orientation);
             }
+        }
+
+        private resetOrientation() {
+            this.setOrientation(this.revertOrientation || 0);
         }
 
         private rotateImage(image: ImgEl, orientation: number): string {
