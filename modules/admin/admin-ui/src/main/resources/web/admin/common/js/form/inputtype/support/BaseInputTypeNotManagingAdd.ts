@@ -225,7 +225,7 @@ module api.form.inputtype.support {
                 if (!recording.hasAdditionalValidationRecord()) {
                     recording.setAdditionalValidationRecord(
                         api.form.AdditionalValidationRecord.create().setOverwriteDefault(true).setMessage(
-                            i18n('notify.field.wrong.value')).build());
+                            i18n('field.value.invalid')).build());
                 }
             } else {
                 this.additionalValidate(recording);

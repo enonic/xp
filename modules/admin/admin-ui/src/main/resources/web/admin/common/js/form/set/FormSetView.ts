@@ -120,7 +120,7 @@ module api.form {
         }
 
         private makeAddButton(): api.ui.button.Button {
-            let addButton = new api.ui.button.Button('Add ' + this.formSet.getLabel());
+            let addButton = new api.ui.button.Button(i18n('button.add', this.formSet.getLabel()));
             addButton.addClass('small');
             addButton.onClicked((event: MouseEvent) => {
                 this.formItemOccurrences.createAndAddOccurrence(this.formItemOccurrences.countOccurrences(), false);

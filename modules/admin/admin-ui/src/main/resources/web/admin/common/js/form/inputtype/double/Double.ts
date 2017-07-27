@@ -9,6 +9,7 @@ module api.content.form.inputtype.double {
     import NumberHelper = api.util.NumberHelper;
     import InputOccurrenceView = api.form.inputtype.support.InputOccurrenceView;
     import ValueTypeDouble = api.data.ValueTypeDouble;
+    import i18n = api.util.i18n;
 
     export class Double extends BaseInputTypeNotManagingAdd<number> {
 
@@ -93,7 +94,7 @@ module api.content.form.inputtype.double {
                     if (recording) {
                         recording.setAdditionalValidationRecord(
                             api.form.AdditionalValidationRecord.create().setOverwriteDefault(true).setMessage(
-                                `The value cannot be less than ${this.min}`).build());
+                                i18n('field.value.breaks.min', this.min)).build());
                     }
 
                     return false;
@@ -103,7 +104,7 @@ module api.content.form.inputtype.double {
                     if (recording) {
                         recording.setAdditionalValidationRecord(
                             api.form.AdditionalValidationRecord.create().setOverwriteDefault(true).setMessage(
-                                `The value cannot be greater than ${this.max}`).build());
+                                i18n('field.value.breaks.max', this.max)).build());
                     }
 
                     return false;

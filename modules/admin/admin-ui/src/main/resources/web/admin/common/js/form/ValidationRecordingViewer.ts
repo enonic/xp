@@ -1,11 +1,9 @@
 module api.form {
+    import i18n = api.util.i18n;
 
     export class ValidationRecordingViewer extends api.ui.Viewer<ValidationRecording> {
 
         private list: api.dom.UlEl;
-        private minText: string = 'Min {0} occurrences required';
-        private minTextSingle: string = 'This field is required';
-        private maxText: string = 'Max {0} occurrence{1} allowed';
 
         constructor() {
             super('validation-viewer');
@@ -51,11 +49,11 @@ module api.form {
         }
 
         private resolveMinText(path: ValidationRecordingPath): string {
-            return path.getMin() > 1 ? api.util.StringHelper.format(this.minText, path.getMin()) : this.minTextSingle;
+            return path.getMin() > 1 ? i18n('field.occurrence.breaks.min', path.getMin()) : i18n('field.value.required');
         }
 
         private resolveMaxText(path: ValidationRecordingPath): string {
-            return api.util.StringHelper.format(this.maxText, path.getMax(), path.getMax() > 1 ? 's' : '');
+            return path.getMax() > 1 ? i18n('field.occurrence.breaks.max.many', path.getMax()) : i18n('field.occurrence.breaks.max.one');
         }
 
     }

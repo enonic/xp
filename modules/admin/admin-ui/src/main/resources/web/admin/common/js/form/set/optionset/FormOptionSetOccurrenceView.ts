@@ -5,6 +5,7 @@ module api.form {
     import PropertyPath = api.data.PropertyPath;
     import ValueTypes = api.data.ValueTypes;
     import Value = api.data.Value;
+    import i18n = api.util.i18n;
 
     export interface FormOptionSetOccurrenceViewConfig {
         context: FormContext;
@@ -104,16 +105,16 @@ module api.form {
                 let message;
                 if (!selectionValidationRecording.isMinimumOccurrencesValid()) {
                     if (selection.getMinimum() === 1) {
-                        message = 'At least 1 option must be selected';
+                        message = i18n('field.optionset.breaks.min.one');
                     } else if (selection.getMinimum() > 1) {
-                        message = 'At least ' + selection.getMinimum() + ' options must be selected';
+                        message = i18n('field.optionset.breaks.min.many', selection.getMinimum());
                     }
                 }
                 if (!selectionValidationRecording.isMaximumOccurrencesValid()) {
                     if (selection.getMaximum() === 1) {
-                        message = 'Maximum 1 option can be selected';
+                        message = i18n('field.optionset.breaks.max.one');
                     } else if (selection.getMaximum() > 1) {
-                        message = 'Maximum ' + selection.getMaximum() + ' options can be selected';
+                        message = i18n('field.optionset.breaks.max.many', selection.getMaximum());
                     }
                 }
 
@@ -122,33 +123,6 @@ module api.form {
                     this.selectionValidationMessage.removeClass('empty');
                 }
             }
-        }
-
-        private makeMultiselectionNote(): string {
-            let multiselection = this.formOptionSet.getMultiselection();
-            if (multiselection.getMinimum() === 1 && multiselection.getMaximum() === 1) {
-                return null;
-            }
-
-            if (multiselection.getMinimum() === 0 && multiselection.getMaximum() === 0) {
-                return '(any)';
-            }
-            if (multiselection.getMinimum() > 0 && multiselection.getMaximum() === 0) {
-                return '(at least ' + multiselection.getMinimum() + ')';
-            }
-            if (multiselection.getMinimum() > 1 && multiselection.getMinimum() === multiselection.getMaximum()) {
-                return '(pick ' + multiselection.getMinimum() + ')';
-            }
-            if (multiselection.getMinimum() === 0 && multiselection.getMaximum() > 1) {
-                return '(up to ' + multiselection.getMaximum() + ')';
-            }
-            if (multiselection.getMinimum() > 0 && multiselection.getMaximum() > multiselection.getMinimum()) {
-                return '(' + multiselection.getMinimum() + ' to ' + multiselection.getMaximum() + ')';
-            }
-            if (multiselection.getMinimum() === 0 && multiselection.getMaximum() === 1) {
-                return '(0 or 1)';
-            }
-            return null;
         }
 
         protected ensureSelectionArrayExists(propertyArraySet: PropertySet) {
