@@ -216,9 +216,9 @@ module api.form {
             this.inputTypeView.displayValidationErrors(value);
         }
 
-        hasValidUserInput(): boolean {
+        hasValidUserInput(recording?: api.form.inputtype.InputValidationRecording): boolean {
 
-            return this.inputTypeView.hasValidUserInput();
+            return this.inputTypeView.hasValidUserInput(recording);
         }
 
         validate(silent: boolean = true): ValidationRecording {
@@ -232,7 +232,7 @@ module api.form {
 
             let recording = new ValidationRecording();
             let validationRecordingPath = this.resolveValidationRecordingPath();
-            let hasValidInput = this.hasValidUserInput();
+            let hasValidInput = this.hasValidUserInput(inputRecording);
 
             if (inputRecording.isMinimumOccurrencesBreached()) {
                 recording.breaksMinimumOccurrences(validationRecordingPath);

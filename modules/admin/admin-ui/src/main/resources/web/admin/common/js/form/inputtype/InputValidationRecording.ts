@@ -41,6 +41,10 @@ module api.form.inputtype {
             return this.additionalValidationRecord;
         }
 
+        hasAdditionalValidationRecord(): boolean {
+            return !!this.additionalValidationRecord;
+        }
+
         equals(that: InputValidationRecording): boolean {
 
             if (this.breaksMinimumOccurrences !== that.breaksMinimumOccurrences) {

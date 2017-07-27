@@ -33,7 +33,7 @@ module api.form {
             return wemQ<void>(null);
         }
 
-        hasValidUserInput(): boolean {
+        hasValidUserInput(recording?: api.form.inputtype.InputValidationRecording): boolean {
 
             throw new Error('Must be implemented by inheritor');
         }

@@ -143,8 +143,8 @@ module api.form.inputtype.support {
             return this.inputElement;
         }
 
-        hasValidUserInput(): boolean {
-            return this.inputTypeView.hasInputElementValidUserInput(this.inputElement);
+        hasValidUserInput(recording?: api.form.inputtype.InputValidationRecording): boolean {
+            return this.inputTypeView.hasInputElementValidUserInput(this.inputElement, recording);
         }
 
         giveFocus(): boolean {

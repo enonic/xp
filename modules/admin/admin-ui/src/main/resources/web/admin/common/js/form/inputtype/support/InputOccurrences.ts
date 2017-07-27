@@ -54,11 +54,11 @@ module api.form.inputtype.support {
             this.input = config.input;
         }
 
-        hasValidUserInput(): boolean {
+        hasValidUserInput(recording?: api.form.inputtype.InputValidationRecording): boolean {
             let result = true;
             this.getOccurrenceViews().forEach((formItemOccurrenceView: FormItemOccurrenceView) => {
 
-                if (!formItemOccurrenceView.hasValidUserInput()) {
+                if (!formItemOccurrenceView.hasValidUserInput(recording)) {
                     result = false;
                 }
             });
