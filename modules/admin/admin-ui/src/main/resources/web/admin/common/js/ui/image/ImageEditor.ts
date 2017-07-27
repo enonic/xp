@@ -798,7 +798,7 @@ module api.ui.image {
 
         private setToolbarButtonsEnabled(value: boolean) {
             if (ImageEditor.debug) {
-                console.debug("ImageEditor.setToolbarButtonsEnabled", value);
+                console.debug('ImageEditor.setToolbarButtonsEnabled', value);
             }
             this.rotateButton.setEnabled(value);
             this.editCropButton.setEnabled(value);
