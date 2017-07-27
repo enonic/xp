@@ -29,6 +29,7 @@ module api.ui.selector.combobox {
                     this.getOptionDataLoader().load(this.splitValues(value)).then(() => {
                         super.doSetValue(value, silent);
                         this.refreshValueChanged(silent);
+                        this.refreshDirtyState(silent);
                     });
                 }
 
