@@ -8,12 +8,14 @@ module api.content.image {
     import ImageEditor = api.ui.image.ImageEditor;
     import i18n = api.util.i18n;
 
-    export class ImageUploaderEl extends api.ui.uploader.MediaUploaderEl {
+    export class ImageUploaderEl
+        extends api.ui.uploader.MediaUploaderEl {
 
         private imageEditors: ImageEditor[];
-        private editModeListeners: {(edit: boolean, crop: Rect, zoom: Rect, focus: Point): void}[];
-        private focusAutoPositionedListeners: {(auto: boolean): void}[];
-        private cropAutoPositionedListeners: {(auto: boolean): void}[];
+        private editModeListeners: { (edit: boolean, crop: Rect, zoom: Rect, focus: Point): void }[];
+        private focusAutoPositionedListeners: { (auto: boolean): void }[];
+        private cropAutoPositionedListeners: { (auto: boolean): void }[];
+        private orientationChangedListeners: { (orientation: number) }[];
 
         private initialWidth: number;
         private originalHeight: number;
@@ -38,6 +40,7 @@ module api.content.image {
             this.editModeListeners = [];
             this.focusAutoPositionedListeners = [];
             this.cropAutoPositionedListeners = [];
+            this.orientationChangedListeners = [];
 
             this.addClass('image-uploader-el');
             this.getEl().setAttribute('data-drop', i18n('drop.image'));
@@ -185,8 +188,13 @@ module api.content.image {
                 api.notify.showError('Failed to upload an image ' + contentId.toString());
             };
 
+            const orientationHandler = (orientation: number) => {
+                this.notifyOrientationChanged(orientation);
+            };
+
             imageEditor.getImage().onLoaded((event: UIEvent) => {
                 this.togglePlaceholder(false);
+                imageEditor.onOrientationChanged(orientationHandler);
                 imageEditor.onShaderVisibilityChanged(shaderVisibilityChangedHandler);
                 imageEditor.onEditModeChanged(editModeChangedHandler);
                 imageEditor.onFocusAutoPositionedChanged(focusAutoPositionedChangedHandler);
@@ -198,6 +206,7 @@ module api.content.image {
             imageEditor.onImageError(imageErrorHandler);
 
             imageEditor.onRemoved(() => {
+                imageEditor.unOrientationChanged(orientationHandler);
                 imageEditor.unShaderVisibilityChanged(shaderVisibilityChangedHandler);
                 imageEditor.unEditModeChanged(editModeChangedHandler);
                 imageEditor.unFocusAutoPositionedChanged(focusAutoPositionedChangedHandler);
@@ -277,6 +286,10 @@ module api.content.image {
             });
         }
 
+        setOrientation(orientation: number) {
+            this.imageEditors.forEach((editor: ImageEditor) => editor.setOrientation(orientation));
+        }
+
         isFocalPointEditMode(): boolean {
             return this.imageEditors.some((editor: ImageEditor) => {
                 return editor.isFocusEditMode();
@@ -335,6 +348,18 @@ module api.content.image {
 
         private notifyFocusAutoPositionedChanged(auto: boolean) {
             this.focusAutoPositionedListeners.forEach((listener) => listener(auto));
+        }
+
+        onOrientationChanged(listener: (orientation: number) => void) {
+            this.orientationChangedListeners.push(listener);
+        }
+
+        unOrientationChanged(listener: (orientation: number) => void) {
+            this.orientationChangedListeners = this.orientationChangedListeners.filter(curr => curr !== listener);
+        }
+
+        private notifyOrientationChanged(orientation: number) {
+            this.orientationChangedListeners.forEach((listener) => listener(orientation));
         }
 
     }

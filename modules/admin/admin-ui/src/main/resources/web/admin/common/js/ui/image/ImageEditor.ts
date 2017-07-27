@@ -9,34 +9,43 @@ module api.ui.image {
     import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
     import NavigatorEvent = api.ui.NavigatorEvent;
     import i18n = api.util.i18n;
+    import ElementBuilder = api.dom.ElementBuilder;
+    import ElementFromHelperBuilder = api.dom.ElementFromHelperBuilder;
+    import StringHelper = api.util.StringHelper;
 
     export interface Point {
         x: number;
         y: number;
     }
 
-    export interface Rect extends Point {
+    export interface Rect
+        extends Point {
         x2: number;
         y2: number;
     }
 
-    interface SVGRect extends Point {
+    interface SVGRect
+        extends Point {
         w: number;
         h: number;
     }
 
-    interface FocusData extends Point {
+    interface FocusData
+        extends Point {
         r: number;
         auto: boolean;
     }
 
-    interface CropData extends SVGRect {
+    interface CropData
+        extends SVGRect {
         auto: boolean;
     }
 
-    interface ZoomData extends SVGRect {}
+    interface ZoomData
+        extends SVGRect {}
 
-    export class ImageEditor extends api.dom.DivEl {
+    export class ImageEditor
+        extends api.dom.DivEl {
 
         private SCROLLABLE_SELECTOR: string = '.form-panel';
         private WIZARD_TOOLBAR_SELECTOR: string = '.wizard-step-navigator-and-toolbar';
@@ -66,6 +75,7 @@ module api.ui.image {
         private frameW: number = 1;
         private frameH: number = 1;
         private maxZoom: number = 5;
+        private orientation: number = 0;
 
         private mouseUpListener: (event: MouseEvent) => void;
         private mouseMoveListener: (event: MouseEvent) => void;
@@ -78,27 +88,34 @@ module api.ui.image {
         private editCropButton: Button;
         private editFocusButton: Button;
         private editResetButton: Button;
-        private uploadButton: api.dom.ButtonEl;
+        private rotateButton: Button;
+        private uploadButton: Button;
 
-        private editModeListeners: {(edit: boolean, position: Rect, zoom: Rect, focus: Point): void}[] = [];
+        private editModeListeners: { (edit: boolean, position: Rect, zoom: Rect, focus: Point): void }[] = [];
 
-        private focusPositionChangedListeners: {(position: Point): void}[] = [];
-        private autoFocusChangedListeners: {(auto: boolean): void}[] = [];
-        private focusRadiusChangedListeners: {(r: number): void}[] = [];
+        private focusPositionChangedListeners: { (position: Point): void }[] = [];
+        private autoFocusChangedListeners: { (auto: boolean): void }[] = [];
+        private focusRadiusChangedListeners: { (r: number): void }[] = [];
 
-        private cropPositionChangedListeners: {(position: Rect): void}[] = [];
-        private autoCropChangedListeners: {(auto: boolean): void}[] = [];
-        private shaderVisibilityChangedListeners: {(visible: boolean): void}[] = [];
+        private cropPositionChangedListeners: { (position: Rect): void }[] = [];
+        private autoCropChangedListeners: { (auto: boolean): void }[] = [];
+        private shaderVisibilityChangedListeners: { (visible: boolean): void }[] = [];
 
         private maskWheelListener: (event: WheelEvent) => void;
         private maskClickListener: (event: MouseEvent) => void;
         private maskHideListener: (event: api.dom.ElementHiddenEvent) => void;
 
-        private imageErrorListeners: {(event: UIEvent): void}[] = [];
+        private imageErrorListeners: { (event: UIEvent): void }[] = [];
+
+        private orientationListeners: { (orientation: number): void }[] = [];
 
         private skipNextOutsideClick: boolean;
 
-        public static debug: boolean = false;
+        private rotateCanvas: HTMLCanvasElement;
+        private rotateContext: CanvasRenderingContext2D;
+        private originalImage: ImgEl;
+
+        public static debug: boolean = true;
 
         constructor(src?: string) {
             super('image-editor');
@@ -106,7 +123,17 @@ module api.ui.image {
             this.frame = new DivEl('image-frame');
             this.canvas = new DivEl('image-canvas');
 
+            this.rotateCanvas = document.createElement('canvas');
+            this.rotateContext = this.rotateCanvas.getContext('2d');
+
             this.image = new ImgEl(null, 'image-bg', true);
+            this.originalImage = new ImgEl();
+            this.originalImage.onLoaded(() => {
+                if (ImageEditor.debug) {
+                    console.debug('ImageEditor: originalImage loaded');
+                }
+                this.setOrientation(this.orientation, true);
+            });
 
             let resizeHandler = () => {
                 if (this.isVisible()) {
@@ -118,8 +145,9 @@ module api.ui.image {
             let isFirstLoad = true;
 
             let updateImageOnShown: () => void = () => {
-                this.updateImageDimensions(true);
+                this.updateImageDimensions(true, !isFirstLoad);
                 this.updateStickyToolbar();
+                this.setToolbarButtonsEnabled(true);
                 this.unShown(updateImageOnShown);
                 if (isFirstLoad) {
                     api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, resizeHandler);
@@ -237,13 +265,19 @@ module api.ui.image {
         }
 
         setSrc(src: string) {
+            if (src && this.originalImage.getSrc() != src) {
+                this.originalImage.setSrc(src);
+            }
+        }
+
+        private renderSrc(src: string) {
             this.image.setSrc(src);
-            let image: SVGImageElement = <SVGImageElement>this.clip.getHTMLElement().querySelector('image');
+            const image: SVGImageElement = <SVGImageElement>this.clip.getHTMLElement().querySelector('image');
             image.setAttribute('xlink:href', src);
         }
 
         getSrc(): string {
-            return this.image.getSrc();
+            return this.originalImage.getSrc();
         }
 
         getImage(): ImgEl {
@@ -351,9 +385,6 @@ module api.ui.image {
         }
 
         private updateImageDimensions(reset: boolean = false, scale: boolean = false) {
-            let imgEl = this.image.getEl();
-            let frameEl = this.frame.getEl();
-
             let zoomPct: SVGRect;
             let cropPct: SVGRect;
             let focusPosPct: Point;
@@ -381,18 +412,7 @@ module api.ui.image {
                 }
             }
 
-            this.imgW = imgEl.getNaturalWidth();
-            this.imgH = imgEl.getNaturalHeight();
-
-            this.frameW = this.getEl().getWidth();
-            this.frameH = (this.frameW * this.imgH) / this.imgW;
-
-            frameEl.setWidthPx(this.frameW).setHeightPx(this.frameH);
-
-            if (ImageEditor.debug) {
-                console.group('ImageEditor.updateImageDimensions');
-                console.log('Image loaded: ' + this.imgW + ' x ' + this.imgH + ', frame: ' + this.frameW + ' x ' + this.frameH);
-            }
+            this.calcImageAndFrameSize();
 
             if (reset) {
                 if (this.revertZoomData) {
@@ -475,6 +495,25 @@ module api.ui.image {
             }
         }
 
+        private calcImageAndFrameSize() {
+            const imgEl = this.image.getEl();
+            const frameEl = this.frame.getEl();
+
+            this.imgH = imgEl.getNaturalHeight();
+            this.imgW = imgEl.getNaturalWidth();
+
+            this.frameW = this.getEl().getWidth();
+            this.frameH = (this.frameW * this.imgH) / this.imgW;
+
+            frameEl.setWidthPx(this.frameW).setHeightPx(this.frameH);
+
+            if (ImageEditor.debug) {
+                console.log(
+                    'ImageEditor.calcImageAndFrameSize:\nimage: ' + this.imgW + ' x ' + this.imgH + '\nframe: ' + this.frameW + ' x ' +
+                    this.frameH);
+            }
+        }
+
         private updateFrameHeight() {
             this.frame.getEl().setHeightPx(this.cropData.h);
         }
@@ -485,7 +524,7 @@ module api.ui.image {
             let bottom = offset.top + el.getHeightWithBorder();
             let right = offset.left + el.getWidthWithBorder();
             let scrollEl = wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR);
-            let scrollOffset = scrollEl.length === 1 ? scrollEl.offset() : { left: 0, top: 0 };
+            let scrollOffset = scrollEl.length === 1 ? scrollEl.offset() : {left: 0, top: 0};
 
             return event.clientX < Math.max(scrollOffset.left, offset.left) ||
                    event.clientX > right ||
@@ -587,13 +626,13 @@ module api.ui.image {
         private WHEEL_PAGE_HEIGHT: number = 800;
 
         // https://github.com/facebook/fixed-data-table/blob/master/dist/fixed-data-table.js#L2052
-        private normalizeWheel(event: (WheelEvent|any)) {
+        private normalizeWheel(event: (WheelEvent | any)) {
             let spinX = 0;
             let spinY = 0;
 
             // Legacy
-            if ('detail'      in event) { spinY = event.detail; }
-            if ('wheelDelta'  in event) { spinY = -event.wheelDelta / 120; }
+            if ('detail' in event) { spinY = event.detail; }
+            if ('wheelDelta' in event) { spinY = -event.wheelDelta / 120; }
             if ('wheelDeltaY' in event) { spinY = -event.wheelDeltaY / 120; }
             if ('wheelDeltaX' in event) { spinX = -event.wheelDeltaX / 120; }
 
@@ -623,7 +662,7 @@ module api.ui.image {
             if (pixelX && !spinX) { spinX = (pixelX < 1) ? -1 : 1; }
             if (pixelY && !spinY) { spinY = (pixelY < 1) ? -1 : 1; }
 
-            return {spinX, spinY, pixelX, pixelY };
+            return {spinX, spinY, pixelX, pixelY};
         }
 
         private createStickyToolbar(): DivEl {
@@ -693,7 +732,7 @@ module api.ui.image {
             this.uploadButton.addClass('button-upload');
             standbyContainer.appendChildren(resetButton, this.uploadButton);
 
-            this.editCropButton = new Button();
+            this.editCropButton = new Button().setEnabled(false);
             // tslint:disable-next-line:no-unused-new
             new Tooltip(this.editCropButton, i18n('editor.cropimage'), 1000);
             this.editCropButton.addClass('button-crop transparent icon-crop').onClicked((event: MouseEvent) => {
@@ -711,7 +750,7 @@ module api.ui.image {
                 }
             });
 
-            this.editFocusButton = new Button();
+            this.editFocusButton = new Button().setEnabled(false);
             // tslint:disable-next-line:no-unused-new
             new Tooltip(this.editFocusButton, i18n('editor.setautofocus'), 1000);
             this.editFocusButton.addClass('button-focus transparent icon-center_focus_strong').onClicked((event: MouseEvent) => {
@@ -734,12 +773,126 @@ module api.ui.image {
 
             let zoomContainer = this.createZoomContainer();
 
+            this.rotateButton = new Button(i18n('action.rotate'));
+            this.rotateButton.setEnabled(false)
+                .addClass('button-rotate transparent icon-rotate_right')
+                .onClicked((event: MouseEvent) => {
+                    event.stopPropagation();
+                    this.setOrientation(this.orientation + 1);
+                });
+
             let topContainer = new DivEl('top-container');
-            topContainer.appendChildren(this.editCropButton, this.editFocusButton, rightContainer);
+            topContainer.appendChildren<Element>(this.editCropButton, this.editFocusButton, this.rotateButton, rightContainer);
 
             toolbar.appendChildren(topContainer, zoomContainer);
 
             return toolbar;
+        }
+
+        private setToolbarButtonsEnabled(value: boolean) {
+            if (ImageEditor.debug) {
+                console.debug("ImageEditor.setToolbarButtonsEnabled", value);
+            }
+            this.rotateButton.setEnabled(value);
+            this.editCropButton.setEnabled(value);
+            this.editFocusButton.setEnabled(value);
+        }
+
+        /*
+         * About EXIF orientation
+         * http://sylvana.net/jpegcrop/exif_orientation.html
+         */
+        setOrientation(orientation?: number, silent?: boolean) {
+            this.orientation = orientation % 8; // limit it to 0-7 values
+            if (ImageEditor.debug) {
+                console.debug('ImageEditor.setOrientation = ' + this.orientation);
+            }
+
+            if (!this.originalImage.isLoaded()) {
+                return;
+            }
+
+            this.setToolbarButtonsEnabled(false);
+
+            const srcData = this.rotateImage(this.originalImage, this.orientation);
+            this.renderSrc(srcData);
+
+            if (!silent) {
+                this.notifyOrientationChanged(orientation);
+            }
+        }
+
+        private rotateImage(image: ImgEl, orientation: number): string {
+            this.rotateContext.save();
+
+            let w;
+            let h;
+            let width = image.getEl().getNaturalWidth();
+            let height = image.getEl().getNaturalHeight();
+
+            if (orientation >= 0 && orientation < 4) {
+                w = width;
+                h = height;
+            } else if (orientation >= 4 && orientation < 8) {
+                w = height;
+                h = width;
+            }
+            this.rotateCanvas.width = w;
+            this.rotateCanvas.height = h;
+            this.rotateContext.clearRect(0, 0, w, h);
+
+            let x;
+            let y;
+            switch (orientation) {
+            case 0:
+                x = 0;
+                y = 0;
+                break;
+            case 1:
+                this.rotateContext.scale(-1, 1);
+                x = -width;
+                y = 0;
+                break;
+            case 2:
+                this.rotateContext.rotate(Math.PI);
+                x = -width;
+                y = -height;
+                break;
+            case 3:
+                this.rotateContext.scale(1, -1);
+                x = 0;
+                y = -height;
+                break;
+            case 4:
+                this.rotateContext.rotate(Math.PI / 2);
+                this.rotateContext.scale(1, -1);
+                x = 0;
+                y = 0;
+                break;
+            case 5:
+                this.rotateContext.rotate(-Math.PI / 2);
+                x = -width;
+                y = 0;
+                break;
+            case 6:
+                this.rotateContext.rotate(-Math.PI / 2);
+                this.rotateContext.scale(1, -1);
+                x = -width;
+                y = -height;
+                break;
+            case 7:
+                this.rotateContext.rotate(Math.PI / 2);
+                x = 0;
+                y = -height;
+                break;
+            }
+
+            this.rotateContext.drawImage(image.getHTMLElement(), x, y);
+
+            const data = this.rotateCanvas.toDataURL();
+            this.rotateContext.restore();
+
+            return data;
         }
 
         private updateStickyToolbar() {
@@ -1716,7 +1869,7 @@ module api.ui.image {
                 let x = this.zoomData.x - (w - this.zoomData.w) / 2;
                 let y = this.zoomData.y - (h - this.zoomData.h) / 2;
 
-                this.setZoomPositionPx({x, y, w, h });
+                this.setZoomPositionPx({x, y, w, h});
             }
         }
 
@@ -1726,11 +1879,8 @@ module api.ui.image {
                 console.log('ImageEditor.updateZoomPosition', this.zoomData);
             }
 
-            this.canvas.getEl().
-                setWidthPx(this.zoomData.w).
-                setHeightPx(this.zoomData.h).
-                setLeftPx(this.zoomData.x).
-                setTopPx(this.zoomData.y);
+            this.canvas.getEl().setWidthPx(this.zoomData.w).setHeightPx(this.zoomData.h).setLeftPx(this.zoomData.x).setTopPx(
+                this.zoomData.y);
 
             let zoomKnobEl = this.zoomKnob.getEl();
             let zoomLineEl = this.zoomLine.getEl();
@@ -1811,6 +1961,24 @@ module api.ui.image {
         private notifyEditModeChanged(edit: boolean, position: Rect, zoom: Rect, focus: Point) {
             this.editModeListeners.forEach((listener) => {
                 listener(edit, position, zoom, focus);
+            });
+        }
+
+        /*
+         *      Orientation listeneres
+         */
+
+        onOrientationChanged(listener: (orientation: number) => void) {
+            this.orientationListeners.push(listener);
+        }
+
+        unOrientationChanged(listener: (orientation: number) => void) {
+            this.orientationListeners = this.orientationListeners.filter(curr => curr !== listener);
+        }
+
+        private notifyOrientationChanged(orientation: number) {
+            this.orientationListeners.forEach((listener) => {
+                listener(orientation);
             });
         }
 

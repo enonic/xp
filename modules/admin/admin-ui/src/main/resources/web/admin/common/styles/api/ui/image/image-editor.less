@@ -106,6 +106,42 @@
     }
   }
 
+  &.orientation-1 {
+    .image-canvas {
+      transform: scaleX(-1);
+    }
+  }
+  &.orientation-2 {
+    .image-canvas {
+      transform: rotate(180deg);
+    }
+  }
+  &.orientation-3 {
+    .image-canvas {
+      transform: scaleY(-1);
+    }
+  }
+  &.orientation-4 {
+    .image-canvas {
+      transform: rotate(90deg) scaleX(-1);
+    }
+  }
+  &.orientation-5 {
+    .image-canvas {
+      transform: rotate(-90deg);
+    }
+  }
+  &.orientation-6 {
+    .image-canvas {
+      transform: rotate(-90deg) scaleX(-1);
+    }
+  }
+  &.orientation-7 {
+    .image-canvas {
+      transform: rotate(90deg);
+    }
+  }
+
   .image-frame {
     overflow: hidden;
     position: relative;
@@ -202,6 +238,7 @@
       margin: 0 10px 0 0;
 
       &.button-focus,
+      &.button-rotate,
       &.button-crop,
       &.button-upload {
         height: 38px;
