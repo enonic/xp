@@ -94,6 +94,8 @@ export class PublishProcessor {
         this.dependantList.setRequiredIds([]);
         this.dependantList.setItems([]);
         this.dependantList.setReadOnly(false);
+
+        this.resetExcludedIds();
     }
 
     public getContentToPublishIds(): ContentId[] {
