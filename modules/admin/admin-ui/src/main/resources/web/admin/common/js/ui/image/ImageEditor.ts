@@ -91,6 +91,7 @@ module api.ui.image {
         private editFocusButton: Button;
         private editResetButton: Button;
         private rotateButton: Button;
+        private mirrorButton: Button;
         private uploadButton: Button;
 
         private editModeListeners: { (edit: boolean, position: Rect, zoom: Rect, focus: Point): void }[] = [];
@@ -134,7 +135,7 @@ module api.ui.image {
                 if (ImageEditor.debug) {
                     console.debug('ImageEditor: originalImage loaded');
                 }
-                this.setOrientation(this.orientation || 0, true);
+                this.setOrientation(this.orientation || 1, true);
             });
 
             let resizeHandler = () => {
@@ -780,16 +781,29 @@ module api.ui.image {
 
             let zoomContainer = this.createZoomContainer();
 
-            this.rotateButton = new Button(i18n('action.rotate'));
-            this.rotateButton.setEnabled(false)
+            this.rotateButton = new Button();
+            this.rotateButton
+                .setEnabled(false)
+                .setTitle(i18n('action.rotate'))
                 .addClass('button-rotate transparent icon-rotate_right')
                 .onClicked((event: MouseEvent) => {
                     event.stopPropagation();
-                    this.setOrientation(this.orientation + 1);
+                    this.rotate90();
+                });
+
+            this.mirrorButton = new Button('Mirror');
+            this.mirrorButton
+                .setEnabled(false)
+                .setTitle(i18n('action.mirror'))
+                .addClass('button-mirror transparent icon-mirror')
+                .onClicked((event: MouseEvent) => {
+                    event.stopPropagation();
+                    this.mirrorHorizontal();
                 });
 
             let topContainer = new DivEl('top-container');
-            topContainer.appendChildren<Element>(this.editCropButton, this.editFocusButton, this.rotateButton, rightContainer);
+            topContainer.appendChildren<Element>(this.editCropButton, this.editFocusButton, this.rotateButton, this.mirrorButton,
+                rightContainer);
 
             toolbar.appendChildren(topContainer, zoomContainer);
 
@@ -801,8 +815,73 @@ module api.ui.image {
                 console.debug('ImageEditor.setToolbarButtonsEnabled', value);
             }
             this.rotateButton.setEnabled(value);
+            this.mirrorButton.setEnabled(value);
             this.editCropButton.setEnabled(value);
             this.editFocusButton.setEnabled(value);
+        }
+
+        private rotate90() {
+            let rotatedOrientation;
+            switch (this.orientation) {
+            case 1:
+            default:
+                rotatedOrientation = 8;
+                break;
+            case 2:
+                rotatedOrientation = 7;
+                break;
+            case 3:
+                rotatedOrientation = 6;
+                break;
+            case 4:
+                rotatedOrientation = 5;
+                break;
+            case 5:
+                rotatedOrientation = 2;
+                break;
+            case 6:
+                rotatedOrientation = 1;
+                break;
+            case 7:
+                rotatedOrientation = 4;
+                break;
+            case 8:
+                rotatedOrientation = 3;
+                break;
+            }
+            this.setOrientation(rotatedOrientation);
+        }
+
+        private mirrorHorizontal() {
+            let mirroredOrientation;
+            switch (this.orientation) {
+            case 1:
+            default:
+                mirroredOrientation = 2;
+                break;
+            case 2:
+                mirroredOrientation = 1;
+                break;
+            case 3:
+                mirroredOrientation = 4;
+                break;
+            case 4:
+                mirroredOrientation = 3;
+                break;
+            case 5:
+                mirroredOrientation = 8;
+                break;
+            case 6:
+                mirroredOrientation = 7;
+                break;
+            case 7:
+                mirroredOrientation = 6;
+                break;
+            case 8:
+                mirroredOrientation = 5;
+                break;
+            }
+            this.setOrientation(mirroredOrientation);
         }
 
         /*
@@ -810,7 +889,7 @@ module api.ui.image {
          * http://sylvana.net/jpegcrop/exif_orientation.html
          */
         setOrientation(orientation?: number, silent?: boolean) {
-            this.orientation = orientation % 8; // limit it to 0-7 values
+            this.orientation = Math.min(Math.max(orientation, 1), 8);
             if (this.revertOrientation == undefined) {
                 this.revertOrientation = this.orientation;
             }
@@ -834,7 +913,7 @@ module api.ui.image {
         }
 
         private resetOrientation() {
-            this.setOrientation(this.revertOrientation || 0);
+            this.setOrientation(this.revertOrientation || 1);
         }
 
         private rotateImage(image: ImgEl, orientation: number): string {
@@ -845,10 +924,10 @@ module api.ui.image {
             let width = image.getEl().getNaturalWidth();
             let height = image.getEl().getNaturalHeight();
 
-            if (orientation >= 0 && orientation < 4) {
+            if (orientation >= 1 && orientation < 5) {
                 w = width;
                 h = height;
-            } else if (orientation >= 4 && orientation < 8) {
+            } else if (orientation >= 5 && orientation < 9) {
                 w = height;
                 h = width;
             }
@@ -859,43 +938,43 @@ module api.ui.image {
             let x;
             let y;
             switch (orientation) {
-            case 0:
+            case 1:
                 x = 0;
                 y = 0;
                 break;
-            case 1:
+            case 2:
                 this.rotateContext.scale(-1, 1);
                 x = -width;
                 y = 0;
                 break;
-            case 2:
+            case 3:
                 this.rotateContext.rotate(Math.PI);
                 x = -width;
                 y = -height;
                 break;
-            case 3:
+            case 4:
                 this.rotateContext.scale(1, -1);
                 x = 0;
                 y = -height;
                 break;
-            case 4:
+            case 5:
                 this.rotateContext.rotate(Math.PI / 2);
                 this.rotateContext.scale(1, -1);
                 x = 0;
                 y = 0;
                 break;
-            case 5:
+            case 6:
                 this.rotateContext.rotate(-Math.PI / 2);
                 x = -width;
                 y = 0;
                 break;
-            case 6:
+            case 7:
                 this.rotateContext.rotate(-Math.PI / 2);
                 this.rotateContext.scale(1, -1);
                 x = -width;
                 y = -height;
                 break;
-            case 7:
+            case 8:
                 this.rotateContext.rotate(Math.PI / 2);
                 x = 0;
                 y = -height;
