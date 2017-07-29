@@ -533,10 +533,10 @@ public class SecurityResourceTest
             build();
 
         Mockito.when( securityService.updateGroup( Mockito.any( UpdateGroupParams.class ) ) ).thenReturn( group );
-        PrincipalRelationship membership1 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
-        PrincipalRelationship membership2 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
-        PrincipalRelationships memberships = PrincipalRelationships.from( membership1, membership2 );
-        Mockito.when( securityService.getRelationships( group.getKey() ) ).thenReturn( memberships );
+        PrincipalRelationship members1 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
+        PrincipalRelationship members2 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
+        PrincipalRelationships members = PrincipalRelationships.from( members1, members2 );
+        Mockito.when( securityService.getRelationships( group.getKey() ) ).thenReturn( members );
 
         String jsonString = request().
             path( "security/principals/updateGroup" ).

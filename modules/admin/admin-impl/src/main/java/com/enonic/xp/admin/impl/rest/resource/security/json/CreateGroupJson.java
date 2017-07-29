@@ -1,7 +1,9 @@
 package com.enonic.xp.admin.impl.rest.resource.security.json;
 
+import java.util.Collections;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.security.CreateGroupParams;
@@ -21,6 +23,9 @@ public final class CreateGroupJson
     @JsonProperty("members")
     public List<String> members;
 
+    @JsonProperty("memberships")
+    public List<String> memberships = Collections.emptyList();
+
     @JsonProperty("description")
     public String description;
 
@@ -34,8 +39,15 @@ public final class CreateGroupJson
             build();
     }
 
+    @JsonIgnore
     public PrincipalKeys toMemberKeys()
     {
         return PrincipalKeys.from( this.members.stream().map( PrincipalKey::from ).collect( toList() ) );
+    }
+
+    @JsonIgnore
+    public PrincipalKeys toMembershipKeys()
+    {
+        return PrincipalKeys.from( this.memberships.stream().map( PrincipalKey::from ).collect( toList() ) );
     }
 }

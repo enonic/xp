@@ -14,6 +14,7 @@ import PrincipalLoader = api.security.PrincipalLoader;
 import WizardStep = api.app.wizard.WizardStep;
 
 import i18n = api.util.i18n;
+import ArrayHelper = api.util.ArrayHelper;
 
 export class GroupWizardPanel extends GroupRoleWizardPanel {
 
@@ -74,8 +75,8 @@ export class GroupWizardPanel extends GroupRoleWizardPanel {
             .setKey(key)
             .setDisplayName(name)
             .setMembers(members)
-            .setDescription(description);
-        // .setMemberships(memberships);
+            .setDescription(description)
+            .setMemberships(memberships);
     }
 
     updatePersistedItem(): wemQ.Promise<Principal> {
@@ -91,18 +92,24 @@ export class GroupWizardPanel extends GroupRoleWizardPanel {
         const key = group.getKey();
         const displayName = group.getDisplayName();
         const description = group.getDescription();
+
         const oldMembers = this.getPersistedItem().asGroup().getMembers();
-        const oldMembersIds = oldMembers.map(el => el.getId());
         const newMembers = group.getMembers();
-        const newMembersIds = newMembers.map(el => el.getId());
-        const addMembers = newMembers.filter(el => oldMembersIds.indexOf(el.getId()) < 0);
-        const removeMembers = oldMembers.filter(el => newMembersIds.indexOf(el.getId()) < 0);
+        const addMembers = ArrayHelper.difference(newMembers, oldMembers, (a, b) => (a.getId() === b.getId()));
+        const removeMembers = ArrayHelper.difference(oldMembers, newMembers, (a, b) => (a.getId() === b.getId()));
+
+        const oldMemberships = this.getPersistedItem().asGroup().getMemberships().map(value => value.getKey());
+        const newMemberships = group.getMemberships().map(value => value.getKey());
+        const addMemberships = ArrayHelper.difference(newMemberships, oldMemberships, (a, b) => (a.getId() === b.getId()));
+        const removeMemberships = ArrayHelper.difference(oldMemberships, newMemberships, (a, b) => (a.getId() === b.getId()));
 
         return new UpdateGroupRequest()
             .setKey(key)
             .setDisplayName(displayName)
             .addMembers(addMembers)
             .removeMembers(removeMembers)
+            .addMemberships(addMemberships)
+            .removeMemberhips(removeMemberships)
             .setDescription(description);
     }
 

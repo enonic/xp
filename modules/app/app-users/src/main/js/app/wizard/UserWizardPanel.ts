@@ -15,6 +15,7 @@ import UserStoreKey = api.security.UserStoreKey;
 import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
 import WizardStep = api.app.wizard.WizardStep;
 import i18n = api.util.i18n;
+import ArrayHelper = api.util.ArrayHelper;
 
 export class UserWizardPanel extends PrincipalWizardPanel {
 
@@ -134,17 +135,16 @@ export class UserWizardPanel extends PrincipalWizardPanel {
     }
 
     produceUpdateRequest(viewedPrincipal: Principal): UpdateUserRequest {
-        let user = viewedPrincipal.asUser();
-        let key = user.getKey();
-        let displayName = user.getDisplayName();
-        let email = user.getEmail();
-        let login = user.getLogin();
-        let oldMemberships = this.getPersistedItem().asUser().getMemberships().map(el => el.getKey());
-        let oldMembershipsIds = oldMemberships.map(el => el.getId());
-        let newMemberships = user.getMemberships().map(el => el.getKey());
-        let newMembershipsIds = newMemberships.map(el => el.getId());
-        let addMemberships = newMemberships.filter(el => oldMembershipsIds.indexOf(el.getId()) < 0);
-        let removeMemberships = oldMemberships.filter(el => newMembershipsIds.indexOf(el.getId()) < 0);
+        const user = viewedPrincipal.asUser();
+        const key = user.getKey();
+        const displayName = user.getDisplayName();
+        const email = user.getEmail();
+        const login = user.getLogin();
+
+        const oldMemberships = this.getPersistedItem().asUser().getMemberships().map(value => value.getKey());
+        const newMemberships = user.getMemberships().map(value => value.getKey());
+        const addMemberships = ArrayHelper.difference(newMemberships, oldMemberships, (a, b) => (a.getId() === b.getId()));
+        const removeMemberships = ArrayHelper.difference(oldMemberships, newMemberships, (a, b) => (a.getId() === b.getId()));
 
         return new UpdateUserRequest()
             .setKey(key)

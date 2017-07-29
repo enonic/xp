@@ -362,7 +362,15 @@ public final class SecurityResource
             securityService.addRelationship( rel );
         }
 
-        return new GroupJson( group, members );
+        for ( final PrincipalKey membershipToAdd : params.toMembershipKeys() )
+        {
+            final PrincipalRelationship rel = PrincipalRelationship.from( membershipToAdd ).to( groupKey );
+            this.securityService.addRelationship( rel );
+        }
+
+        final Principals memberships = this.securityService.getPrincipals( this.securityService.getMemberships( groupKey ) );
+
+        return new GroupJson( group, members, memberships );
     }
 
     @POST
@@ -389,16 +397,8 @@ public final class SecurityResource
         final User user = securityService.updateUser( params.getUpdateUserParams() );
 
         final PrincipalKey userKey = user.getKey();
-        for ( PrincipalKey membershipToAdd : params.getAddMemberships() )
-        {
-            final PrincipalRelationship rel = PrincipalRelationship.from( membershipToAdd ).to( userKey );
-            securityService.addRelationship( rel );
-        }
-        for ( PrincipalKey membershipToRemove : params.getRemoveMemberships() )
-        {
-            final PrincipalRelationship rel = PrincipalRelationship.from( membershipToRemove ).to( userKey );
-            securityService.removeRelationship( rel );
-        }
+
+        updateMemberships( userKey, params.getAddMemberships(), params.getRemoveMemberships() );
 
         final Principals memberships = securityService.getPrincipals( securityService.getMemberships( userKey ) );
         return new UserJson( user, memberships );
@@ -426,10 +426,14 @@ public final class SecurityResource
         final Group group = securityService.updateGroup( params.getUpdateGroupParams() );
         final PrincipalKey groupKey = group.getKey();
 
-        updateMemberships( groupKey, params.getRemoveMembers(), params.getAddMembers() );
+        updateMembers( groupKey, params.getAddMembers(), params.getRemoveMembers() );
+
+        updateMemberships( groupKey, params.getAddMemberships(), params.getRemoveMemberships() );
+
+        final Principals memberships = securityService.getPrincipals( securityService.getMemberships( groupKey ) );
 
         final PrincipalKeys groupMembers = getMembers( groupKey );
-        return new GroupJson( group, groupMembers );
+        return new GroupJson( group, groupMembers, memberships );
     }
 
     @POST
@@ -439,7 +443,7 @@ public final class SecurityResource
         final Role role = securityService.updateRole( params.getUpdateRoleParams() );
         final PrincipalKey roleKey = role.getKey();
 
-        updateMemberships( roleKey, params.getRemoveMembers(), params.getAddMembers() );
+        updateMembers( roleKey, params.getAddMembers(), params.getRemoveMembers() );
 
         final PrincipalKeys roleMembers = getMembers( roleKey );
         return new RoleJson( role, roleMembers );
@@ -464,7 +468,7 @@ public final class SecurityResource
         return resultsJson;
     }
 
-    private void updateMemberships( final PrincipalKey target, PrincipalKeys membersToRemove, PrincipalKeys membersToAdd )
+    private void updateMembers( final PrincipalKey target, PrincipalKeys membersToAdd, PrincipalKeys membersToRemove )
     {
         for ( PrincipalKey memberToAdd : membersToAdd )
         {
@@ -475,6 +479,21 @@ public final class SecurityResource
         for ( PrincipalKey memberToRemove : membersToRemove )
         {
             final PrincipalRelationship rel = PrincipalRelationship.from( target ).to( memberToRemove );
+            securityService.removeRelationship( rel );
+        }
+    }
+
+    private void updateMemberships( final PrincipalKey source, PrincipalKeys membershipsToAdd, PrincipalKeys membershipsToRemove )
+    {
+        for ( PrincipalKey membershipToAdd : membershipsToAdd )
+        {
+            final PrincipalRelationship rel = PrincipalRelationship.from( membershipToAdd ).to( source );
+            securityService.addRelationship( rel );
+        }
+
+        for ( PrincipalKey membershipToRemove : membershipsToRemove )
+        {
+            final PrincipalRelationship rel = PrincipalRelationship.from( membershipToRemove ).to( source );
             securityService.removeRelationship( rel );
         }
     }
