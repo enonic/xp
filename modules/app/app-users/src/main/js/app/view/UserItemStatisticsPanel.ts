@@ -75,7 +75,7 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
         rolesAndGroupsGroup.addDataArray(i18n('field.groups'), []);
         this.userDataContainer.appendChild(rolesAndGroupsGroup);
 
-        new GetPrincipalByKeyRequest(item.getModel().getPrincipal().getKey()).includeUserMemberships(true).sendAndParse().then(
+        new GetPrincipalByKeyRequest(item.getModel().getPrincipal().getKey()).setIncludeMemberships(true).sendAndParse().then(
             (principal: Principal) => {
                 userGroup = new ItemDataGroup(i18n('field.user'), 'user');
                 userGroup.addDataList(i18n('field.email'), principal.asUser().getEmail());
@@ -122,7 +122,7 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
         this.userDataContainer.appendChild(membersGroup);
 
         new GetPrincipalByKeyRequest(item.getModel().getPrincipal().getKey())
-            .includeUserMemberships(true)
+            .setIncludeMemberships(true)
             .sendAndParse()
             .then((principal: Principal) => {
 
