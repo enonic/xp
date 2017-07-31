@@ -97,8 +97,7 @@
 ///<reference path='form/inputtype/combobox/_module.ts' />
 ///<reference path='form/inputtype/radiobutton/_module.ts' />
 ///<reference path='form/inputtype/checkbox/_module.ts' />
-///<reference path='form/inputtype/long/_module.ts' />
-///<reference path='form/inputtype/double/_module.ts' />
+///<reference path='form/inputtype/number/_module.ts' />
 ///<reference path='form/inputtype/time/_module.ts' />
 ///<reference path='form/inputtype/publish/_module.ts' />
 
