@@ -1,12 +1,12 @@
 module api.content.form.inputtype.long {
 
-    import BaseInputTypeNotManagingAdd = api.form.inputtype.support.BaseInputTypeNotManagingAdd;
-    import Property = api.data.Property;
-    import Value = api.data.Value;
+    import NumberInputType = api.content.form.inputtype.double.NumberInputType;
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
+    import Value = api.data.Value;
+    import Property = api.data.Property;
 
-    export class Long extends BaseInputTypeNotManagingAdd<number> {
+    export class Long extends NumberInputType {
 
         constructor(config: api.form.inputtype.InputTypeViewContext) {
             super(config);
@@ -62,29 +62,11 @@ module api.content.form.inputtype.long {
             return value.isNull() || !value.getType().equals(ValueTypes.LONG);
         }
 
-        hasInputElementValidUserInput(inputElement: api.dom.Element) {
+        hasInputElementValidUserInput(inputElement: api.dom.Element, recording ?: api.form.inputtype.InputValidationRecording) {
             let value = <api.ui.text.TextInput>inputElement;
 
-            return this.isValid(value.getValue());
+            return this.isValid(value.getValue(), recording);
         }
-
-        private isValid(value: string): boolean {
-            let validUserInput = true;
-
-            if (api.util.StringHelper.isEmpty(value)) {
-                validUserInput = true;
-            } else {
-
-                if (api.util.NumberHelper.isWholeNumber(+value)) {
-                    validUserInput = true;
-                } else {
-                    validUserInput = false;
-                }
-            }
-
-            return validUserInput;
-        }
-
     }
 
     api.form.inputtype.InputTypeManager.register(new api.Class('Long', Long));

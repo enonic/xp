@@ -3,6 +3,8 @@
   .flexbox();
   .align-items(center);
 
+  flex-wrap: wrap;
+
   &:not(:last-child) {
     margin-bottom: 7px;
   }
@@ -24,6 +26,13 @@
     .form-input {
       width: 100%;
     }
+  }
+
+  .length-counter {
+    .order(4);
+    display: block;
+    width: 100%;
+    text-align: right;
   }
 
   .remove-button {
