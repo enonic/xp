@@ -44,8 +44,9 @@ final class AttachmentHandlerWorker
         final Attachment attachment = resolveAttachment( content, this.name );
         final ByteSource binary = resolveBinary( this.id, attachment );
 
+        final MediaType contentType = MediaType.parse( attachment.getMimeType() );
         final PortalResponse.Builder portalResponse = PortalResponse.create().
-            contentType( MediaType.parse( attachment.getMimeType() ) ).
+            contentType( contentType ).
             body( binary );
 
         if ( this.download )
@@ -63,6 +64,8 @@ final class AttachmentHandlerWorker
             final boolean masterBranch = ContentConstants.BRANCH_MASTER.equals( request.getBranch() );
             setResponseCacheable( portalResponse, everyoneCanRead && masterBranch );
         }
+
+        new RangeRequestHelper().handleRangeRequest( request, portalResponse, binary, contentType );
 
         return portalResponse.build();
     }

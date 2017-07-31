@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.handler.attachment;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
 import org.junit.Before;
@@ -70,7 +71,7 @@ public class AttachmentHandlerTest
         Mockito.when( this.contentService.getById( Mockito.eq( content.getId() ) ) ).thenReturn( content );
         Mockito.when( this.contentService.getByPath( Mockito.eq( content.getPath() ) ) ).thenReturn( content );
 
-        this.mediaBytes = ByteSource.wrap( new byte[0] );
+        this.mediaBytes = ByteSource.wrap( new byte[]{'0', '1', '2', '3', '4', '5', '6'} );
         Mockito.when( this.contentService.getBinary( Mockito.isA( ContentId.class ), Mockito.isA( BinaryReference.class ) ) ).
             thenReturn( this.mediaBytes );
     }
@@ -218,5 +219,136 @@ public class AttachmentHandlerTest
             assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
             assertEquals( "Attachment [other.png] not found for [/path/to/content]", e.getMessage() );
         }
+    }
+
+    @Test
+    public void testByteServing()
+        throws Exception
+    {
+        this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
+        this.request.getHeaders().put( "Range", "bytes=2-4" );
+
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertNotNull( res );
+        assertEquals( HttpStatus.PARTIAL_CONTENT, res.getStatus() );
+        assertEquals( MediaType.PNG.withoutParameters(), res.getContentType() );
+        assertEquals( "bytes", res.getHeaders().get( "accept-ranges" ) );
+        assertNull( res.getHeaders().get( "Content-Disposition" ) );
+
+        final byte[] responseBody = ( (ByteSource) res.getBody() ).read();
+        final byte[] mediaBytesData = mediaBytes.read();
+
+        assertEquals( 3, responseBody.length );
+        assertArrayEquals( new byte[]{mediaBytesData[2], mediaBytesData[3], mediaBytesData[4]}, responseBody );
+    }
+
+    @Test
+    public void testByteServingSuffixLength()
+        throws Exception
+    {
+        this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
+        this.request.getHeaders().put( "Range", "bytes=-3" );
+
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertNotNull( res );
+        assertEquals( HttpStatus.PARTIAL_CONTENT, res.getStatus() );
+        assertEquals( MediaType.PNG.withoutParameters(), res.getContentType() );
+        assertEquals( "bytes", res.getHeaders().get( "accept-ranges" ) );
+        assertNull( res.getHeaders().get( "Content-Disposition" ) );
+
+        final byte[] responseBody = ( (ByteSource) res.getBody() ).read();
+        final byte[] mediaBytesData = mediaBytes.read();
+
+        assertEquals( 4, responseBody.length );
+        assertArrayEquals( new byte[]{mediaBytesData[3], mediaBytesData[4], mediaBytesData[5], mediaBytesData[6]}, responseBody );
+    }
+
+    @Test
+    public void testByteServingSuffixFrom()
+        throws Exception
+    {
+        this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
+        this.request.getHeaders().put( "Range", "bytes=4-" );
+
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertNotNull( res );
+        assertEquals( HttpStatus.PARTIAL_CONTENT, res.getStatus() );
+        assertEquals( MediaType.PNG.withoutParameters(), res.getContentType() );
+        assertEquals( "bytes", res.getHeaders().get( "accept-ranges" ) );
+        assertNull( res.getHeaders().get( "Content-Disposition" ) );
+
+        final byte[] responseBody = ( (ByteSource) res.getBody() ).read();
+        final byte[] mediaBytesData = mediaBytes.read();
+
+        assertEquals( 3, responseBody.length );
+        assertArrayEquals( new byte[]{mediaBytesData[4], mediaBytesData[5], mediaBytesData[6]}, responseBody );
+    }
+
+    @Test
+    public void testByteServingLongerThanFile()
+        throws Exception
+    {
+        this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
+        this.request.getHeaders().put( "Range", "bytes=5-1000" );
+
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertNotNull( res );
+        assertEquals( HttpStatus.PARTIAL_CONTENT, res.getStatus() );
+        assertEquals( MediaType.PNG.withoutParameters(), res.getContentType() );
+        assertEquals( "bytes", res.getHeaders().get( "accept-ranges" ) );
+        assertNull( res.getHeaders().get( "Content-Disposition" ) );
+
+        final byte[] responseBody = ( (ByteSource) res.getBody() ).read();
+        final byte[] mediaBytesData = mediaBytes.read();
+
+        assertEquals( 2, responseBody.length );
+        assertArrayEquals( new byte[]{mediaBytesData[5], mediaBytesData[6]}, responseBody );
+    }
+
+    @Test
+    public void testByteServingMultipleRanges()
+        throws Exception
+    {
+        this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
+        this.request.getHeaders().put( "Range", "bytes=0-1,3-4,6-" );
+
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertNotNull( res );
+        assertEquals( HttpStatus.PARTIAL_CONTENT, res.getStatus() );
+        assertEquals( MediaType.parse( "multipart/byteranges" ), res.getContentType().withoutParameters() );
+        assertEquals( "bytes", res.getHeaders().get( "accept-ranges" ) );
+
+        final byte[] responseBody = ( (ByteSource) res.getBody() ).read();
+
+        final String responseMultipartString = new String( responseBody, StandardCharsets.UTF_8 );
+        String responseMultipartLines[] = responseMultipartString.split( "\\r?\\n" );
+
+        assertEquals( "Content-Type: image/png", responseMultipartLines[2] );
+        assertEquals( "Content-Range: bytes 0-1/7", responseMultipartLines[3] );
+        assertEquals( "01", responseMultipartLines[5] );
+
+        assertEquals( "Content-Type: image/png", responseMultipartLines[7] );
+        assertEquals( "Content-Range: bytes 3-4/7", responseMultipartLines[8] );
+        assertEquals( "34", responseMultipartLines[10] );
+
+        assertEquals( "Content-Type: image/png", responseMultipartLines[12] );
+        assertEquals( "Content-Range: bytes 6-6/7", responseMultipartLines[13] );
+        assertEquals( "6", responseMultipartLines[15] );
+    }
+
+    @Test
+    public void testByteServingInvalidRange()
+        throws Exception
+    {
+        this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
+        this.request.getHeaders().put( "Range", "bytes=many" );
+
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertNotNull( res );
+        assertEquals( HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE, res.getStatus() );
+        assertEquals( MediaType.PNG.withoutParameters(), res.getContentType() );
+        assertEquals( "bytes", res.getHeaders().get( "accept-ranges" ) );
+
+        assertNull( res.getBody() );
     }
 }
