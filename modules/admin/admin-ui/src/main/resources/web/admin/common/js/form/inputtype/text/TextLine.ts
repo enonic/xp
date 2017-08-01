@@ -8,26 +8,24 @@ module api.form.inputtype.text {
     import i18n = api.util.i18n;
     import NumberHelper = api.util.NumberHelper;
     import DivEl = api.dom.DivEl;
+    import FormInputEl = api.dom.FormInputEl;
 
-    export class TextLine extends support.BaseInputTypeNotManagingAdd<string> {
+    export class TextLine extends TextInputType {
 
         private regexp: RegExp;
-
-        private maxLength: number;
 
         constructor(config: api.form.inputtype.InputTypeViewContext) {
             super(config);
             this.readConfig(config.inputConfig);
         }
 
-        private readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
+        protected readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
+            super.readConfig(inputConfig);
+
             const regexpConfig = inputConfig['regexp'] ? inputConfig['regexp'][0] : {};
             const regexp = regexpConfig ? regexpConfig['value'] : '';
             this.regexp = new RegExp(regexp);
 
-            const maxLengthConfig = inputConfig['max-length'] ? inputConfig['max-length'][0] : {};
-            const maxLength = NumberHelper.toNumber(maxLengthConfig['value']);
-            this.maxLength = maxLength > 0 ? maxLength : null;
         }
 
         getValueType(): ValueType {
@@ -52,29 +50,11 @@ module api.form.inputtype.text {
                 this.notifyOccurrenceValueChanged(inputEl, value);
                 inputEl.updateValidationStatusOnUserInput(isValid);
 
-                if (NumberHelper.isNumber(this.maxLength)) {
-                    const lengthCounter = inputEl.getNextElement();
-                    if (lengthCounter.hasClass('length-counter')) {
-                        this.updateLengthCounterValue(lengthCounter, inputEl.getValue());
-                    }
-                }
             });
 
-            inputEl.onRendered(() => {
-                if (NumberHelper.isNumber(this.maxLength)) {
-
-                    const lengthCounter = new DivEl('length-counter');
-                    this.updateLengthCounterValue(lengthCounter, inputEl.getValue());
-
-                    lengthCounter.insertAfterEl(inputEl);
-                }
-            });
+            this.initOccurenceListeners(inputEl);
 
             return inputEl;
-        }
-
-        private updateLengthCounterValue(lengthCounter: DivEl, newValue: string ) {
-            lengthCounter.setHtml(`${this.maxLength - newValue.length}`);
         }
 
         updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly: boolean) {
@@ -100,12 +80,12 @@ module api.form.inputtype.text {
                    api.util.StringHelper.isBlank(value.getString());
         }
 
-        hasInputElementValidUserInput(inputElement: api.dom.Element, recording?: api.form.inputtype.InputValidationRecording) {
+        hasInputElementValidUserInput(inputElement: FormInputEl, recording?: api.form.inputtype.InputValidationRecording) {
             let textInput = <api.ui.text.TextInput>inputElement;
             return this.isValid(textInput.getValue(), textInput, true, recording);
         }
 
-        private isValid(value: string, textInput: api.ui.text.TextInput, silent: boolean = false,
+        protected isValid(value: string, textInput: api.ui.text.TextInput, silent: boolean = false,
                         recording?: api.form.inputtype.InputValidationRecording): boolean {
             let parent = textInput.getParentElement();
 
@@ -116,28 +96,13 @@ module api.form.inputtype.text {
 
             const regexpValid = this.regexp.test(value);
 
-            const lengthValid = this.isValidMaxLength(value);
-
-            if (!lengthValid) {
-                if (recording) {
-                    recording.setAdditionalValidationRecord(
-                        api.form.AdditionalValidationRecord.create().setOverwriteDefault(true).setMessage(
-                            i18n('field.value.breaks.maxlength', this.maxLength)).build());
-                }
-
-            }
-
             if (!silent) {
                 parent.toggleClass('valid-regexp', regexpValid);
                 parent.toggleClass('invalid-regexp', !regexpValid);
                 parent.getEl().setAttribute('data-regex-status', i18n(`field.${regexpValid ? 'valid' : 'invalid'}`));
             }
 
-            return regexpValid && lengthValid;
-        }
-
-        private isValidMaxLength(value: string): boolean {
-            return NumberHelper.isNumber(this.maxLength) ? value.length <= this.maxLength : true;
+            return regexpValid && super.isValid(value, textInput, silent, recording);
         }
 
         static getName(): api.form.InputTypeName {

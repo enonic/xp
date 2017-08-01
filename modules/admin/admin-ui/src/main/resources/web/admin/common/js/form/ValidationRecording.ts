@@ -1,10 +1,14 @@
 module api.form {
 
+    import ArrayHelper = api.util.ArrayHelper;
+
     export class ValidationRecording {
 
-        breaksMinimumOccurrencesArray: ValidationRecordingPath[] = [];
+        private breaksMinimumOccurrencesArray: ValidationRecordingPath[] = [];
 
-        breaksMaximumOccurrencesArray: ValidationRecordingPath[] = [];
+        private breaksMaximumOccurrencesArray: ValidationRecordingPath[] = [];
+
+        private additionalValidationRecords:Map<string,AdditionalValidationRecord> = new Map<string,AdditionalValidationRecord>();
 
         breaksMinimumOccurrences(path: ValidationRecordingPath) {
             if (!this.exists(path, this.breaksMinimumOccurrencesArray)) {
@@ -18,8 +22,13 @@ module api.form {
             }
         }
 
+        addValidationRecord(path: string, record: AdditionalValidationRecord) {
+            this.additionalValidationRecords.set(path, record);
+        }
+
         isValid(): boolean {
-            return this.breaksMinimumOccurrencesArray.length === 0 && this.breaksMaximumOccurrencesArray.length === 0;
+            return this.breaksMinimumOccurrencesArray.length === 0 && this.breaksMaximumOccurrencesArray.length === 0
+                   && this.additionalValidationRecords.size == 0;
         }
 
         isMinimumOccurrencesValid(): boolean {
@@ -28,6 +37,14 @@ module api.form {
 
         isMaximumOccurrencesValid(): boolean {
             return this.breaksMaximumOccurrencesArray.length === 0;
+        }
+
+        getBreakMinimumOccurrences(): ValidationRecordingPath[] {
+            return this.breaksMinimumOccurrencesArray;
+        }
+
+        getBreakMaximumOccurrences(): ValidationRecordingPath[] {
+            return this.breaksMaximumOccurrencesArray;
         }
 
         flatten(recording: ValidationRecording) {
@@ -39,16 +56,14 @@ module api.form {
             recording.breaksMaximumOccurrencesArray.forEach((path: ValidationRecordingPath)=> {
                 this.breaksMaximumOccurrences(path);
             });
+
+            recording.additionalValidationRecords.forEach((value: AdditionalValidationRecord, key: string)=> {
+                this.addValidationRecord(key, value);
+            });
         }
 
-        subtract(recording: ValidationRecording) {
-            this.breaksMinimumOccurrencesArray = this.breaksMinimumOccurrencesArray.filter((path: ValidationRecordingPath)=> {
-                return !this.exists(path, recording.breaksMinimumOccurrencesArray);
-            });
-
-            this.breaksMaximumOccurrencesArray = this.breaksMaximumOccurrencesArray.filter((path: ValidationRecordingPath)=> {
-                return !this.exists(path, recording.breaksMaximumOccurrencesArray);
-            });
+        removeRecord(key: string) {
+            this.additionalValidationRecords.delete(key);
         }
 
         /**
@@ -60,6 +75,7 @@ module api.form {
 
             this.removeUnreachedMinimumOccurrencesByPath(path, strict, includeChildren);
             this.removeBreachedMaximumOccurrencesByPath(path, strict, includeChildren);
+            this.removeRecord(path.toString());
         }
 
         removeUnreachedMinimumOccurrencesByPath(path: ValidationRecordingPath, strict?: boolean, includeChildren?: boolean) {
@@ -100,6 +116,8 @@ module api.form {
                 return false;
             } else if (this.breaksMaximumOccurrencesArray.length !== other.breaksMaximumOccurrencesArray.length) {
                 return false;
+            } else if (this.additionalValidationRecords.size !== other.additionalValidationRecords.size) {
+                return false;
             }
 
             for (let i = 0; i < this.breaksMinimumOccurrencesArray.length; i++) {
@@ -112,6 +130,10 @@ module api.form {
                 if (this.breaksMaximumOccurrencesArray[i].toString() !== other.breaksMaximumOccurrencesArray[i].toString()) {
                     return false;
                 }
+            }
+
+            if (!ObjectHelper.mapEquals(this.additionalValidationRecords, other.additionalValidationRecords)) {
+                return false;
             }
 
             return true;

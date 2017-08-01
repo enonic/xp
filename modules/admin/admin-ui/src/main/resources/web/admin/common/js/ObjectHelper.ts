@@ -111,7 +111,31 @@ module api {
             return true;
         }
 
-        static mapEquals(mapA: {[s: string]: Equitable;}, mapB: {[s: string]: Equitable;}) {
+        static mapEquals(mapA: Map<string, Equitable>, mapB: Map<string, Equitable>): boolean {
+            if(mapA.size != mapB.size) {
+                return false;
+            }
+
+            const keys = mapA.keys();
+            let result: IteratorResult;
+
+            do {
+                result = keys.next();
+
+                if (!result.done) {
+                    const key: string = result.value;
+
+                    if (!mapA.get(key).equals(mapB.get(key))) {
+                        return false;
+                    }
+                }
+
+            } while (!result.done);
+
+            return true;
+        }
+
+        static objectMapEquals(mapA: {[s: string]: Equitable;}, mapB: {[s: string]: Equitable;}) {
 
             if (!mapA && !mapB) {
                 return true;

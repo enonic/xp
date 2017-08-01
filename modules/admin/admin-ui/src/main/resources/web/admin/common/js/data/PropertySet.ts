@@ -409,7 +409,7 @@ module api.data {
 
             let other = <PropertySet>o;
 
-            if (!api.ObjectHelper.mapEquals(this.propertyArrayByName, other.propertyArrayByName)) {
+            if (!api.ObjectHelper.objectMapEquals(this.propertyArrayByName, other.propertyArrayByName)) {
                 return false;
             }
 
