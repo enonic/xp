@@ -7,7 +7,8 @@ module api.content.form.inputtype.upload {
     import Point = api.ui.image.Point;
     import Rect = api.ui.image.Rect;
 
-    export class ImageUploader extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<string> {
+    export class ImageUploader
+        extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<string> {
 
         private imageUploader: api.content.image.ImageUploaderEl;
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
@@ -90,16 +91,20 @@ module api.content.form.inputtype.upload {
                 }
             });
 
-            this.imageUploader.onCropAutoPositionedChanged((auto) => {
+            this.imageUploader.onCropAutoPositionedChanged(auto => {
                 if (auto) {
                     this.saveEditDataToProperty({x: 0, y: 0, x2: 1, y2: 1}, {x: 0, y: 0, x2: 1, y2: 1}, null);
                 }
             });
 
-            this.imageUploader.onFocusAutoPositionedChanged((auto) => {
+            this.imageUploader.onFocusAutoPositionedChanged(auto => {
                 if (auto) {
                     this.saveEditDataToProperty(null, null, {x: 0.5, y: 0.5});
                 }
+            });
+
+            this.imageUploader.onOrientationChanged(orientation => {
+                this.writeOrientation(<Content>this.getContext().content, orientation);
             });
 
             return property.hasNonNullValue() ? this.updateProperty(property) : wemQ<void>(null);
@@ -233,6 +238,28 @@ module api.content.form.inputtype.upload {
             return {x, y, x2, y2};
         }
 
+        private writeOrientation(content: Content, orientation: number) {
+            const property = this.getMetaProperty(content, 'orientation');
+            if (property) {
+                property.setValue(new Value(String(orientation), ValueTypes.STRING));
+            }
+        }
+
+        private readOrientation(content: Content): number {
+            const property = this.getMetaProperty(content, 'orientation');
+            return property && property.getLong() || 0;
+        }
+
+        private getMetaProperty(content: Content, propertyName: string) {
+            const extra = content.getAllExtraData();
+            for (let i = 0; i < extra.length; i++) {
+                const metaProperty = extra[i].getData().getProperty(propertyName);
+                if (metaProperty) {
+                    return metaProperty;
+                }
+            }
+        }
+
         private getMediaProperty(content: Content, propertyName: string) {
             let mediaProperty = content.getProperty('media');
             if (!mediaProperty || !ValueTypes.DATA.equals(mediaProperty.getType())) {
@@ -255,6 +282,11 @@ module api.content.form.inputtype.upload {
 
             let zoomPosition = this.getRectFromProperty(content, 'zoomPosition');
             this.imageUploader.setZoom(zoomPosition);
+
+            const orientation = this.readOrientation(content);
+            if (orientation) {
+                this.imageUploader.setOrientation(orientation);
+            }
         }
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {
