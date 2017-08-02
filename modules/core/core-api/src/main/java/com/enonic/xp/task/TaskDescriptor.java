@@ -1,29 +1,25 @@
 package com.enonic.xp.task;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.page.DescriptorKey;
 
+@Beta
 public final class TaskDescriptor
+    extends Descriptor
 {
-    private final DescriptorKey key;
-
     private final String description;
 
-    private final Form form;
+    private final Form config;
 
     private TaskDescriptor( final Builder builder )
     {
-        Preconditions.checkNotNull( builder.key, "key cannot be null" );
-        this.key = builder.key;
+        super( builder.key );
         this.description = builder.description;
-        this.form = builder.form;
-    }
-
-    public DescriptorKey getKey()
-    {
-        return key;
+        this.config = builder.config == null ? Form.create().build() : builder.config;
     }
 
     public String getDescription()
@@ -31,9 +27,9 @@ public final class TaskDescriptor
         return description;
     }
 
-    public Form getForm()
+    public Form getConfig()
     {
-        return form;
+        return config;
     }
 
     public static Builder create()
@@ -47,7 +43,7 @@ public final class TaskDescriptor
 
         private String description;
 
-        private Form form;
+        private Form config;
 
         private Builder()
         {
@@ -59,20 +55,21 @@ public final class TaskDescriptor
             return this;
         }
 
-        public Builder descriptor( final String description )
+        public Builder description( final String description )
         {
             this.description = description;
             return this;
         }
 
-        public Builder form( final Form form )
+        public Builder config( final Form config )
         {
-            this.form = form;
+            this.config = config;
             return this;
         }
 
         public TaskDescriptor build()
         {
+            Preconditions.checkNotNull( this.key, "key cannot be null" );
             return new TaskDescriptor( this );
         }
     }
