@@ -59,7 +59,7 @@ var CONFIG = {
                 launcher: {src: '/js/launcher/main.js', name: 'launcher', assets: true}
             },
             ts: {
-                target: 'ES2015',
+                target: 'ES5',
                 lib: [
                     "ES5",
                     "ES6",
