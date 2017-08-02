@@ -8,7 +8,7 @@ module api.form {
 
         private breaksMaximumOccurrencesArray: ValidationRecordingPath[] = [];
 
-        private additionalValidationRecords:Map<string,AdditionalValidationRecord> = new Map<string,AdditionalValidationRecord>();
+        private additionalValidationRecords: Map<string,AdditionalValidationRecord> = new Map<string,AdditionalValidationRecord>();
 
         breaksMinimumOccurrences(path: ValidationRecordingPath) {
             if (!this.exists(path, this.breaksMinimumOccurrencesArray)) {
@@ -132,7 +132,7 @@ module api.form {
                 }
             }
 
-            if (!ObjectHelper.mapEquals(this.additionalValidationRecords, other.additionalValidationRecords)) {
+            if (!this.mapEquals(this.additionalValidationRecords, other.additionalValidationRecords)) {
                 return false;
             }
 
@@ -158,6 +158,33 @@ module api.form {
                 }
             }
             return false;
+        }
+
+        /*
+         * Should be moved to ObjectHelper.ts after changing gulp to webpack in common module
+         * */
+        private mapEquals(mapA: Map<string, Equitable>, mapB: Map<string, Equitable>): boolean {
+            if (mapA.size != mapB.size) {
+                return false;
+            }
+
+            const keys = mapA.keys();
+            let result: IteratorResult<string>;
+
+            do {
+                result = keys.next();
+
+                if (!result.done) {
+                    const key: string = result.value;
+
+                    if (!mapA.get(key).equals(mapB.get(key))) {
+                        return false;
+                    }
+                }
+
+            } while (!result.done);
+
+            return true;
         }
     }
 }

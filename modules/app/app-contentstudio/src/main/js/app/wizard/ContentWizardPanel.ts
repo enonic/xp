@@ -97,8 +97,7 @@ import FragmentComponent = api.content.page.region.FragmentComponent;
 import FragmentComponentType = api.content.page.region.FragmentComponentType;
 import i18n = api.util.i18n;
 
-export class ContentWizardPanel
-    extends api.app.wizard.WizardPanel<Content> {
+export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     protected wizardActions: ContentWizardActions;
 
@@ -1564,17 +1563,12 @@ export class ContentWizardPanel
     }
 
     private displayValidationErrors(value: boolean) {
-      //  if (!this.isContentFormValid) {
-            this.contentWizardStepForm.displayValidationErrors(value);
-       // }
+        this.contentWizardStepForm.displayValidationErrors(value);
 
         for (let key in this.metadataStepFormByName) {
             if (this.metadataStepFormByName.hasOwnProperty(key)) {
                 let form = this.metadataStepFormByName[key];
-                debugger;
-               // if (!form.isValid()) {
-                    form.displayValidationErrors(value);
-              //  }
+                form.displayValidationErrors(value);
             }
         }
     }
