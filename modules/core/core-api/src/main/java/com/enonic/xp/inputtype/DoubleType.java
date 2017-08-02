@@ -40,5 +40,6 @@ final class DoubleType
     public void validate( final Property property, final InputTypeConfig config )
     {
         validateType( property, ValueTypes.DOUBLE );
+        super.validate( property, config );
     }
 }
