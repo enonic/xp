@@ -9,7 +9,7 @@ import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.Input;
 
 final class LongType
-    extends InputTypeBase
+    extends NumberType
 {
     public final static LongType INSTANCE = new LongType();
 
@@ -39,5 +39,6 @@ final class LongType
     public void validate( final Property property, final InputTypeConfig config )
     {
         validateType( property, ValueTypes.LONG );
+        super.validate( property, config );
     }
 }
