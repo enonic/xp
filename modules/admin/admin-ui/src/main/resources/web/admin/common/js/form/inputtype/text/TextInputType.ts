@@ -23,7 +23,7 @@ module api.form.inputtype.text {
         protected readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
             const maxLengthConfig = inputConfig['max-length'] ? inputConfig['max-length'][0] : {};
             const maxLength = NumberHelper.toNumber(maxLengthConfig['value']);
-            this.maxLength = 3;//maxLength > 0 ? maxLength : null;
+            this.maxLength = maxLength > 0 ? maxLength : null;
         }
 
         protected initOccurenceListeners(inputEl: FormInputEl) {
