@@ -7,6 +7,7 @@ import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
+import com.enonic.xp.task.TaskKey;
 import com.enonic.xp.task.TaskProgress;
 import com.enonic.xp.task.TaskService;
 
@@ -25,6 +26,12 @@ class MockTaskService
         this.description = description;
         this.progressHistory = new ArrayList<>();
         runnable.run( taskId, this );
+        return taskId;
+    }
+
+    @Override
+    public TaskId submitTask( final TaskKey key )
+    {
         return taskId;
     }
 
