@@ -2,6 +2,7 @@ module api.util.htmlarea.editor {
 
     import CreateHtmlAreaDialogEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
     import ApplicationKey = api.application.ApplicationKey;
+    import editor = CKEDITOR.editor;
 
     export class HTMLAreaBuilder {
 
@@ -11,6 +12,7 @@ module api.util.htmlarea.editor {
 
         private assetsUri: string;
         private selector: string;
+        private id: string;
         private focusHandler: (e: FocusEvent) => void;
         private blurHandler: (e: FocusEvent) => void;
         private keydownHandler: (e: KeyboardEvent) => void;
@@ -61,6 +63,11 @@ module api.util.htmlarea.editor {
 
         setSelector(selector: string): HTMLAreaBuilder {
             this.selector = selector;
+            return this;
+        }
+
+        setTextAreaId(id: string): HTMLAreaBuilder {
+            this.id = id;
             return this;
         }
 
@@ -186,14 +193,24 @@ module api.util.htmlarea.editor {
             }
         }
 
-        public createEditor(): wemQ.Promise<HtmlAreaEditor> {
+        public createEditor(): editor {
             this.checkRequiredFieldsAreSet();
 
             if (this.inline && this.editableSourceCode && !this.isToolExcluded('code')) {
                 this.includeTool('code');
             }
 
-            let deferred = wemQ.defer<HtmlAreaEditor>();
+            const ckeditor: editor = CKEDITOR.replace(this.id);
+
+            ckeditor.on('change', (e) => {
+                console.log('change');
+                if (this.nodeChangeHandler) {
+                    this.nodeChangeHandler(null);
+                }
+            });
+            return ckeditor;
+
+            /*            let deferred = wemQ.defer<HtmlAreaEditor>();
 
             tinymce.init({
                 selector: this.selector,
@@ -331,6 +348,7 @@ module api.util.htmlarea.editor {
                 }
             });
             return deferred.promise;
+             */
         }
 
         private getExternalPlugins(): any {
