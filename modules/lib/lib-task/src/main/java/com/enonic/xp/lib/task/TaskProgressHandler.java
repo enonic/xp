@@ -1,6 +1,7 @@
 package com.enonic.xp.lib.task;
 
 import com.enonic.xp.task.ProgressReporter;
+import com.enonic.xp.task.TaskProgressReporterContext;
 
 public final class TaskProgressHandler
 {
@@ -28,7 +29,7 @@ public final class TaskProgressHandler
 
     public void reportProgress()
     {
-        final ProgressReporter progressReporter = TaskProgressReporterHolder.get();
+        final ProgressReporter progressReporter = TaskProgressReporterContext.current();
         if ( progressReporter == null )
         {
             throw new RuntimeException( "The reportProgress function must be called from within a task." );

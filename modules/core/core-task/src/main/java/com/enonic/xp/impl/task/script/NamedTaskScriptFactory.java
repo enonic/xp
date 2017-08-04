@@ -11,7 +11,7 @@ import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskDescriptor;
 
-@Component
+@Component(immediate = true, service = NamedTaskScriptFactory.class)
 public class NamedTaskScriptFactory
 {
     private static final String TASKS_PATH_PREFIX = "tasks/";
@@ -42,7 +42,7 @@ public class NamedTaskScriptFactory
             return null;
         }
 
-        return new NamedTaskScript( exports );
+        return new NamedTaskScript( exports, task );
     }
 
     private ResourceKey toControllerResourceKey( final TaskDescriptor task )
