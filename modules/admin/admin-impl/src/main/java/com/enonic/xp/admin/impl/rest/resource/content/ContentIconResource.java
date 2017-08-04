@@ -241,7 +241,7 @@ public final class ContentIconResource
     private ImageOrientation getSourceAttachmentOrientation( final Media media )
     {
         final ByteSource sourceBinary = contentService.getBinary( media.getId(), media.getMediaAttachment().getBinaryReference() );
-        return mediaInfoService.getImageOrientation( sourceBinary );
+        return mediaInfoService.getImageOrientation( sourceBinary, media );
     }
 
     private ImageOrientation getThumbnailOrientation( final Thumbnail thumbnail, final ContentId id )

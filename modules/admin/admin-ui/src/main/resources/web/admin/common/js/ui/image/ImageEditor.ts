@@ -12,6 +12,7 @@ module api.ui.image {
     import ElementBuilder = api.dom.ElementBuilder;
     import ElementFromHelperBuilder = api.dom.ElementFromHelperBuilder;
     import StringHelper = api.util.StringHelper;
+    import LoadMask = api.ui.mask.LoadMask;
 
     export interface Point {
         x: number;
@@ -71,7 +72,7 @@ module api.ui.image {
         private revertZoomData: ZoomData;
 
         private orientation: number;
-        private revertOrientation: number;
+        private originalOrientation: number;
 
         private imgW: number = 1;
         private imgH: number = 1;
@@ -117,8 +118,10 @@ module api.ui.image {
         private rotateCanvas: HTMLCanvasElement;
         private rotateContext: CanvasRenderingContext2D;
         private originalImage: ImgEl;
+        private unorientedImage: ImgEl;
+        private imageMask: LoadMask;
 
-        public static debug: boolean = true;
+        public static debug: boolean = false;
 
         constructor(src?: string) {
             super('image-editor');
@@ -131,11 +134,21 @@ module api.ui.image {
 
             this.image = new ImgEl(null, 'image-bg', true);
             this.originalImage = new ImgEl();
+            this.unorientedImage = new ImgEl();
             this.originalImage.onLoaded(() => {
                 if (ImageEditor.debug) {
                     console.debug('ImageEditor: originalImage loaded');
                 }
-                this.setOrientation(this.orientation || 1, true);
+                let unorientedSrc;
+                const originalSrc = this.originalImage.getSrc();
+                if (!this.orientation) {
+                    this.setOrientation(1, false, true);    // set default orientation
+                    unorientedSrc = originalSrc;
+                } else {
+                    unorientedSrc = this.rotateImage(this.originalImage, this.orientation, true);
+                }
+                this.unorientedImage.setSrc(unorientedSrc);
+                this.renderSrc(originalSrc);
             });
 
             let resizeHandler = () => {
@@ -222,6 +235,7 @@ module api.ui.image {
             this.canvas.appendChildren(imageMask, this.image, this.clip);
 
             this.frame.appendChild(this.canvas);
+            this.imageMask = new LoadMask(this.frame);
 
             this.stickyToolbar = this.createStickyToolbar();
             this.appendChildren(this.stickyToolbar, this.frame);
@@ -733,7 +747,7 @@ module api.ui.image {
             });
 
             this.onOrientationChanged((orientation) => {
-                resetButton.setVisible(orientation !== this.revertOrientation);
+                resetButton.setVisible(orientation !== this.originalOrientation);
             });
 
             this.uploadButton = new Button();
@@ -811,8 +825,14 @@ module api.ui.image {
         }
 
         private setToolbarButtonsEnabled(value: boolean) {
+            console.debug('ImageEditor.setToolbarButtonsEnabled = ' + value + ' at ' + new Date().toLocaleTimeString());
             if (ImageEditor.debug) {
                 console.debug('ImageEditor.setToolbarButtonsEnabled', value);
+            }
+            if (!value) {
+                this.imageMask.show();
+            } else {
+                this.imageMask.hide();
             }
             this.rotateButton.setEnabled(value);
             this.mirrorButton.setEnabled(value);
@@ -825,13 +845,13 @@ module api.ui.image {
             switch (this.orientation) {
             case 1:
             default:
-                rotatedOrientation = 8;
+                rotatedOrientation = 6;
                 break;
             case 2:
                 rotatedOrientation = 7;
                 break;
             case 3:
-                rotatedOrientation = 6;
+                rotatedOrientation = 8;
                 break;
             case 4:
                 rotatedOrientation = 5;
@@ -840,13 +860,13 @@ module api.ui.image {
                 rotatedOrientation = 2;
                 break;
             case 6:
-                rotatedOrientation = 1;
+                rotatedOrientation = 3;
                 break;
             case 7:
                 rotatedOrientation = 4;
                 break;
             case 8:
-                rotatedOrientation = 3;
+                rotatedOrientation = 1;
                 break;
             }
             this.setOrientation(rotatedOrientation);
@@ -869,16 +889,16 @@ module api.ui.image {
                 mirroredOrientation = 3;
                 break;
             case 5:
-                mirroredOrientation = 8;
-                break;
-            case 6:
-                mirroredOrientation = 7;
-                break;
-            case 7:
                 mirroredOrientation = 6;
                 break;
-            case 8:
+            case 6:
                 mirroredOrientation = 5;
+                break;
+            case 7:
+                mirroredOrientation = 8;
+                break;
+            case 8:
+                mirroredOrientation = 7;
                 break;
             }
             this.setOrientation(mirroredOrientation);
@@ -888,35 +908,51 @@ module api.ui.image {
          * About EXIF orientation
          * http://sylvana.net/jpegcrop/exif_orientation.html
          */
-        setOrientation(orientation?: number, silent?: boolean) {
+        setOrientation(orientation: number, render: boolean = true, silent?: boolean) {
             this.orientation = Math.min(Math.max(orientation, 1), 8);
-            if (this.revertOrientation == undefined) {
-                this.revertOrientation = this.orientation;
+
+            if (this.originalOrientation == undefined) {
+                this.originalOrientation = this.orientation;
             }
 
             if (ImageEditor.debug) {
                 console.debug('ImageEditor.setOrientation = ' + this.orientation);
             }
 
-            if (!this.originalImage.isLoaded()) {
-                return;
+            if (render) {
+                this.renderOrientation(this.orientation);
             }
-
-            this.setToolbarButtonsEnabled(false);
-
-            const srcData = this.rotateImage(this.originalImage, this.orientation);
-            this.renderSrc(srcData);
 
             if (!silent) {
                 this.notifyOrientationChanged(orientation);
             }
         }
 
-        private resetOrientation() {
-            this.setOrientation(this.revertOrientation || 1);
+        private renderOrientation(orientation: number) {
+            if (!this.unorientedImage.isLoaded()) {
+                return;
+            }
+
+            this.setToolbarButtonsEnabled(false);
+
+            setTimeout(() => {
+                const srcData = this.rotateImage(this.unorientedImage, orientation);
+                this.renderSrc(srcData);
+            }, 1);
         }
 
-        private rotateImage(image: ImgEl, orientation: number): string {
+        private resetOrientation() {
+            this.setOrientation(this.originalOrientation);
+        }
+
+        /**
+         * Transform image from orientation 1 to given one
+         * @param image
+         * @param orientation
+         * @param inverse
+         * @returns {string}
+         */
+        private rotateImage(image: ImgEl, orientation: number, inverse?: boolean): string {
             this.rotateContext.save();
 
             let w;
@@ -937,6 +973,7 @@ module api.ui.image {
 
             let x;
             let y;
+            let modifier = inverse ? -1 : 1;
             switch (orientation) {
             case 1:
                 x = 0;
@@ -958,26 +995,26 @@ module api.ui.image {
                 y = -height;
                 break;
             case 5:
+                this.rotateContext.scale(-1, 1);
                 this.rotateContext.rotate(Math.PI / 2);
-                this.rotateContext.scale(1, -1);
                 x = 0;
                 y = 0;
                 break;
             case 6:
-                this.rotateContext.rotate(-Math.PI / 2);
-                x = -width;
-                y = 0;
+                this.rotateContext.rotate(modifier * Math.PI / 2);
+                x = inverse ? -width : 0;
+                y = inverse ? 0 : -height;
                 break;
             case 7:
+                this.rotateContext.scale(-1, 1);
                 this.rotateContext.rotate(-Math.PI / 2);
-                this.rotateContext.scale(1, -1);
                 x = -width;
                 y = -height;
                 break;
             case 8:
-                this.rotateContext.rotate(Math.PI / 2);
-                x = 0;
-                y = -height;
+                this.rotateContext.rotate(modifier * -Math.PI / 2);
+                x = inverse ? 0 : -width;
+                y = inverse ? -height : 0;
                 break;
             }
 

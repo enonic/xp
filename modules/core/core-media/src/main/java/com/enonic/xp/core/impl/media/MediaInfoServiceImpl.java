@@ -9,6 +9,8 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.io.ByteSource;
 import com.google.common.net.HttpHeaders;
 
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.media.ImageOrientation;
@@ -61,6 +63,18 @@ public final class MediaInfoServiceImpl
         final ExtractedData extractedData = binaryExtractor.extract( byteSource );
         final String orientation = extractedData.getImageOrientation();
         return ImageOrientation.from( orientation );
+    }
+
+    public ImageOrientation getImageOrientation( ByteSource byteSource, Content media )
+    {
+        for ( final ExtraData next : media.getAllExtraData() )
+        {
+            if ( next.getData().hasProperty( "orientation" ) )
+            {
+                return ImageOrientation.from( next.getData().getProperty( "orientation" ).getString() );
+            }
+        }
+        return getImageOrientation( byteSource );
     }
 
     @Reference
