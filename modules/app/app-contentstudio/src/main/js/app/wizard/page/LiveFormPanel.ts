@@ -158,7 +158,7 @@ export class LiveFormPanel
             // Update action with new content on save if it gets updated
             summaryAndStatuses.some(summaryAndStatus => {
                 if (this.content.getContentId().equals(summaryAndStatus.getContentId())) {
-                    this.saveAsTemplateAction.setContent(summaryAndStatuses[0].getContentSummary());
+                    this.saveAsTemplateAction.setContentSummary(summaryAndStatuses[0].getContentSummary());
                     return true;
                 }
             });
@@ -329,7 +329,7 @@ export class LiveFormPanel
         this.pageModel = liveEditModel.getPageModel();
         this.pageModel.setIgnorePropertyChanges(true);
 
-        this.saveAsTemplateAction.setContent(this.content).setPageModel(this.pageModel);
+        this.saveAsTemplateAction.setContentSummary(this.content).setPageModel(this.pageModel);
 
         this.liveEditPageProxy.setModel(liveEditModel);
         this.pageInspectionPanel.setModel(liveEditModel);
