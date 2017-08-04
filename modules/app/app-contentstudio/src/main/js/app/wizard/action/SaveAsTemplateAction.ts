@@ -7,13 +7,14 @@ import EditContentEvent = api.content.event.EditContentEvent;
 import Action = api.ui.Action;
 import PageModel = api.content.page.PageModel;
 import Permission = api.security.acl.Permission;
+import ContentSummary = api.content.ContentSummary;
 
 export class SaveAsTemplateAction
     extends Action {
 
     private userHasCreateRights: Boolean;
 
-    constructor(private content?: Content, private pageModel?: PageModel) {
+    constructor(private content?: ContentSummary, private pageModel?: PageModel) {
         super(i18n('action.saveAsTemplate'));
 
         this.onExecuted(action => {

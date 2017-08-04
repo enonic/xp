@@ -87,6 +87,7 @@ import i18n = api.util.i18n;
 import CreatePageTemplateRequest = api.content.page.CreatePageTemplateRequest;
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import EditContentEvent = api.content.event.EditContentEvent;
+import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
 
 export interface LiveFormPanelConfig {
 
@@ -152,6 +153,17 @@ export class LiveFormPanel
         this.lockPageAfterProxyLoad = false;
 
         this.saveAsTemplateAction = new SaveAsTemplateAction();
+
+        const contentUpdatedHandler = summaryAndStatuses => {
+            // Update action with new content on save if it gets updated
+            summaryAndStatuses.some(summaryAndStatus => {
+                if (this.content.getContentId().equals(summaryAndStatus.getContentId())) {
+                    this.saveAsTemplateAction.setContent(summaryAndStatuses[0].getContentSummary());
+                    return true;
+                }
+            });
+        };
+        ContentServerEventsHandler.getInstance().onContentUpdated(contentUpdatedHandler);
 
         this.liveEditPageProxy = this.createLiveEditPageProxy();
 
