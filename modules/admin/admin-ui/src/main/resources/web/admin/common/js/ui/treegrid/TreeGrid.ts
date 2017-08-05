@@ -1130,12 +1130,9 @@ module api.ui.treegrid {
 
         // Hard reset
 
-        reload(parentNodeData?: DATA, idPropertyName?: string): wemQ.Promise<void> {
-            let expandedNodesDataId = this.grid.getDataView().getItems().filter((item) => {
-                return item.isExpanded();
-            }).map((item) => {
-                return item.getDataId();
-            });
+        reload(parentNodeData?: DATA, idPropertyName?: string, rememberExpanded: boolean = true): wemQ.Promise<void> {
+            const expandedNodesDataId = rememberExpanded ? this.grid.getDataView().getItems()
+                                                             .filter(item => item.isExpanded()).map(item => item.getDataId()) : [];
 
             let selection = this.root.getCurrentSelection();
 

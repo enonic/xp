@@ -1,0 +1,44 @@
+.new-principal-dialog {
+  .tree-grid {
+
+  }
+
+  .modal-dialog-footer {
+    display: none;
+  }
+
+  .tree-grid {
+    .viewer.root-viewer {
+      .names-and-icon-view {
+        .@{_COMMON_PREFIX}main-name {
+          height: 36px !important;
+          line-height: 36px !important;
+        }
+        .@{_COMMON_PREFIX}sub-name {
+          display: none;
+        }
+      }
+    }
+
+    .viewer:not(.root-viewer) {
+      box-sizing: border-box;
+      padding-left: 47px;
+    }
+
+    .slick-cell.selected {
+      .names-and-icon-view {
+        h6,
+        p {
+          color: @admin-black;
+        }
+
+      }
+      background-color: transparent;
+      color: inherit;
+    }
+
+    .slick-cell .toggle {
+      display: none !important;
+    }
+  }
+}
