@@ -46,7 +46,6 @@ import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
 import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
-import com.enonic.xp.core.impl.site.SiteDescriptorRegistry;
 import com.enonic.xp.core.impl.site.SiteServiceImpl;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -73,6 +72,7 @@ import com.enonic.xp.repo.impl.search.NodeSearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.NodeStorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
+import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinService;
@@ -256,9 +256,10 @@ public class AbstractContentServiceTest
         final MediaInfoServiceImpl mediaInfoService = new MediaInfoServiceImpl();
         mediaInfoService.setBinaryExtractor( extractor );
 
-        final SiteDescriptorRegistry siteDescriptorRegistry = Mockito.mock( SiteDescriptorRegistry.class );
+        final ResourceService resourceService = Mockito.mock( ResourceService.class );
         final SiteServiceImpl siteService = new SiteServiceImpl();
-        siteService.setSiteDescriptorRegistry( siteDescriptorRegistry );
+        siteService.setResourceService( resourceService );
+        siteService.setMixinService( mixinService );
 
         this.contentTypeService = new ContentTypeServiceImpl();
         contentTypeService.setMixinService( mixinService );
