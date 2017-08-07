@@ -47,13 +47,18 @@ public class DeleteRequests
         return timeout;
     }
 
+    public String getTimeoutAsString()
+    {
+        return timeout + "s";
+    }
+
     public static final class Builder
     {
         private StorageSource settings;
 
         private boolean forceRefresh;
 
-        private int timeout;
+        private int timeout = 5;
 
         private Set<String> ids;
 

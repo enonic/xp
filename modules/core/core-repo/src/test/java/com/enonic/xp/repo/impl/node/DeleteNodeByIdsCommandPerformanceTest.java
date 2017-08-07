@@ -28,7 +28,7 @@ public class DeleteNodeByIdsCommandPerformanceTest
 
     @Ignore
     @Test
-    public void testDuplicatePerformance()
+    public void deleteNodeByIds()
         throws Exception
     {
         final Node rootNode = createNode( CreateNodeParams.create().
@@ -36,7 +36,7 @@ public class DeleteNodeByIdsCommandPerformanceTest
             parent( NodePath.ROOT ).
             build(), false );
 
-        createNodes( rootNode, 30, 3, 1 );
+        createNodes( rootNode, 50, 3, 1 );
 
         refresh();
 
