@@ -21,7 +21,7 @@ module api.form.inputtype.text {
         }
 
         protected readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
-            const maxLengthConfig = inputConfig['max-length'] ? inputConfig['max-length'][0] : {};
+            const maxLengthConfig = inputConfig['maxLength'] ? inputConfig['maxLength'][0] : {};
             const maxLength = NumberHelper.toNumber(maxLengthConfig['value']);
             this.maxLength = maxLength > 0 ? maxLength : null;
         }
