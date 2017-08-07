@@ -67,4 +67,19 @@ public class LongTypeTest
         final InputTypeConfig config = InputTypeConfig.create().build();
         this.type.validate( booleanProperty( true ), config );
     }
+
+    @Test(expected = InputTypeValidationException.class)
+    public void testValidate_invalidMin()
+    {
+        final InputTypeConfig config = InputTypeConfig.create().property( InputTypeProperty.create( "min", "5" ).build( )).build();
+        this.type.validate( longProperty( 2 ), config );
+    }
+
+    @Test(expected = InputTypeValidationException.class)
+    public void testValidate_invalidMax()
+    {
+        final InputTypeConfig config = InputTypeConfig.create().property( InputTypeProperty.create( "max", "5" ).build( )).build();
+        this.type.validate( longProperty( 7 ), config );
+    }
+
 }
