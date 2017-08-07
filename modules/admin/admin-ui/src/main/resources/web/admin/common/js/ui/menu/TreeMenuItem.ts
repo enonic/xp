@@ -1,6 +1,7 @@
 module api.ui.menu {
 
-    export class TreeMenuItem extends api.dom.DdDtEl {
+    export class TreeMenuItem
+        extends api.dom.DdDtEl {
         private action: api.ui.Action;
 
         constructor(action: api.ui.Action, cls: string = '', expanded: boolean = false) {
@@ -22,6 +23,7 @@ module api.ui.menu {
                 }
             });
             this.setEnabled(action.isEnabled());
+            this.setVisible(action.isVisible());
 
             action.onPropertyChanged((changedAction: api.ui.Action) => {
                 this.setEnabled(changedAction.isEnabled());
