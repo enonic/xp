@@ -1,5 +1,8 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.content;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -20,6 +23,8 @@ import com.enonic.xp.admin.impl.json.schema.content.ContentTypeSummaryListJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.schema.SchemaImageHelper;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.schema.content.ContentType;
@@ -29,6 +34,9 @@ import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.content.GetAllContentTypesParams;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @Path(ResourceConstants.REST_ROOT + "schema/content")
 @Produces("application/json")
@@ -44,6 +52,8 @@ public final class ContentTypeResource
     private ContentTypeIconUrlResolver contentTypeIconUrlResolver;
 
     private ContentTypeIconResolver contentTypeIconResolver;
+
+    private ContentService contentService;
 
     @GET
     public ContentTypeJson get( @QueryParam("name") final String nameAsString,
@@ -64,9 +74,35 @@ public final class ContentTypeResource
     @GET
     @Path("all")
     public ContentTypeSummaryListJson all(
-        @DefaultValue("false") @QueryParam("inlineMixinsToFormItems") final boolean inlineMixinsToFormItems )
+        @DefaultValue("false") @QueryParam("inlineMixinsToFormItems") final boolean inlineMixinsToFormItems,
+        @DefaultValue("false") @QueryParam("context") final boolean context, @QueryParam("contentId") final String content )
     {
-        return list( inlineMixinsToFormItems );
+        final ContentTypes contentTypes;
+        if ( context )
+        {
+            final ContentId contentId = ContentId.from( content );
+            final Site site = contentService.getNearestSite( contentId );
+            if ( site != null )
+            {
+                final List<ContentType> types = site.getSiteConfigs().stream().
+                    map( SiteConfig::getApplicationKey ).
+                    map( ( appKey ) -> contentTypeService.getByApplication( appKey ) ).
+                    flatMap( AbstractImmutableEntityList::stream ).
+                    collect( Collectors.toList() );
+                contentTypes = ContentTypes.from( types );
+            }
+            else
+            {
+                contentTypes = ContentTypes.empty();
+            }
+        }
+        else
+        {
+            final GetAllContentTypesParams getAll = new GetAllContentTypesParams().inlineMixinsToFormItems( inlineMixinsToFormItems );
+            contentTypes = contentTypeService.getAll( getAll );
+        }
+
+        return new ContentTypeSummaryListJson( contentTypes, this.contentTypeIconUrlResolver );
     }
 
     @GET
@@ -126,5 +162,11 @@ public final class ContentTypeResource
         this.contentTypeService = contentTypeService;
         this.contentTypeIconResolver = new ContentTypeIconResolver( contentTypeService );
         this.contentTypeIconUrlResolver = new ContentTypeIconUrlResolver( this.contentTypeIconResolver );
+    }
+
+    @Reference
+    public void setContentService( final ContentService contentService )
+    {
+        this.contentService = contentService;
     }
 }

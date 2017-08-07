@@ -26,10 +26,19 @@ module api.schema.content.inputtype {
 
         private onContentTypesLoadedHandler: (contentTypeArray: ContentTypeSummary[]) => void;
 
+        private isContextDependent: boolean;
+
         constructor(context: ContentInputTypeViewContext) {
             super('content-type-filter');
             this.context = context;
             this.onContentTypesLoadedHandler = this.onContentTypesLoaded.bind(this);
+            this.readConfig(context.inputConfig);
+        }
+
+        protected readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
+            const isContextDependentConfig = inputConfig['context'] ? inputConfig['context'][0] : {};
+            const value = isContextDependentConfig['value'] || '';
+            this.isContextDependent = value.toLowerCase() == 'true';
         }
 
         getValueType(): ValueType {
@@ -41,8 +50,12 @@ module api.schema.content.inputtype {
         }
 
         private createLoader(): BaseLoader<ContentTypeSummaryListJson, ContentTypeSummary> {
-            let loader = this.context.formContext.getContentTypeName().isPageTemplate() ?
-                            this.createPageTemplateLoader() : new ContentTypeSummaryLoader();
+            let loader: BaseLoader<ContentTypeSummaryListJson, ContentTypeSummary>;
+            if (this.context.formContext.getContentTypeName().isPageTemplate()) {
+                loader = this.createPageTemplateLoader();
+            } else {
+                loader = new ContentTypeSummaryLoader(this.isContextDependent, this.context.content && this.context.content.getId());
+            }
 
             loader.setComparator(new api.content.ContentTypeSummaryByDisplayNameComparator());
 
