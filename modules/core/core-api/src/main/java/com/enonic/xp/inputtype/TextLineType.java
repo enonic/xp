@@ -11,7 +11,7 @@ import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.Input;
 
 final class TextLineType
-    extends TextInputType
+    extends TextInputTypeBase
 {
     public final static TextLineType INSTANCE = new TextLineType();
 

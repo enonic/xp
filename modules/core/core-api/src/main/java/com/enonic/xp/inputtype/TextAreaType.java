@@ -9,7 +9,7 @@ import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.Input;
 
 final class TextAreaType
-    extends TextInputType
+    extends TextInputTypeBase
 {
     public final static TextAreaType INSTANCE = new TextAreaType();
 
