@@ -7,13 +7,14 @@ import EditContentEvent = api.content.event.EditContentEvent;
 import Action = api.ui.Action;
 import PageModel = api.content.page.PageModel;
 import Permission = api.security.acl.Permission;
+import ContentSummary = api.content.ContentSummary;
 
 export class SaveAsTemplateAction
     extends Action {
 
     private userHasCreateRights: Boolean;
 
-    constructor(private content?: Content, private pageModel?: PageModel) {
+    constructor(private contentSummary?: ContentSummary, private pageModel?: PageModel) {
         super(i18n('action.saveAsTemplate'));
 
         this.onExecuted(action => {
@@ -21,10 +22,10 @@ export class SaveAsTemplateAction
                 .setController(this.pageModel.getController().getKey())
                 .setRegions(this.pageModel.getRegions())
                 .setConfig(this.pageModel.getConfig())
-                .setDisplayName(this.content.getDisplayName())
-                .setSite(this.content.getPath())
-                .setSupports(this.content.getType())
-                .setName(this.content.getName())
+                .setDisplayName(this.contentSummary.getDisplayName())
+                .setSite(this.contentSummary.getPath())
+                .setSupports(this.contentSummary.getType())
+                .setName(this.contentSummary.getName())
                 .sendAndParse().then(createdTemplate => {
 
                 new EditContentEvent([ContentSummaryAndCompareStatus.fromContentSummary(createdTemplate)]).fire();
@@ -34,10 +35,10 @@ export class SaveAsTemplateAction
 
     updateVisibility() {
         const hasController = this.pageModel.getController();
-        if (hasController && this.content.isSite()) {
+        if (hasController && this.contentSummary.isSite()) {
             if (this.userHasCreateRights === undefined) {
                 new api.content.resource.GetPermittedActionsRequest()
-                    .addContentIds(this.content.getContentId())
+                    .addContentIds(this.contentSummary.getContentId())
                     .addPermissionsToBeChecked(Permission.CREATE)
                     .sendAndParse().then((allowedPermissions: Permission[]) => {
 
@@ -52,8 +53,8 @@ export class SaveAsTemplateAction
         }
     }
 
-    setContent(content: Content): SaveAsTemplateAction {
-        this.content = content;
+    setContentSummary(contentSummary: ContentSummary): SaveAsTemplateAction {
+        this.contentSummary = contentSummary;
         return this;
     }
 
