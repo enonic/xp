@@ -45,9 +45,11 @@ export class DeletePrincipalAction extends Action {
                             let json = jsonResponse.getJson();
 
                             if (json.results && json.results.length > 0) {
-                                let key = json.results[0].principalKey;
+                                const key = json.results[0].principalKey;
+                                const count = json.results.length;
+                                const msg = count > 1 ? i18n('notify.delete.users', count) : i18n('notify.delete.principal', key);
 
-                                api.notify.showFeedback(i18n('notify.delete.principal', key));
+                                api.notify.showFeedback(msg);
                                 api.security.UserItemDeletedEvent.create().setPrincipals(principalItems).build().fire();
                             }
                         });
