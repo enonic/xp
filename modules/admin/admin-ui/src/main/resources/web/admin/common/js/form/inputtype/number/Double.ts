@@ -1,50 +1,44 @@
-module api.content.form.inputtype.long {
+module api.content.form.inputtype.number.double {
 
-    import NumberInputType = api.content.form.inputtype.double.NumberInputType;
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
     import Value = api.data.Value;
     import Property = api.data.Property;
 
-    export class Long extends NumberInputType {
+    export class Double extends NumberInputType {
 
         constructor(config: api.form.inputtype.InputTypeViewContext) {
             super(config);
         }
 
         getValueType(): ValueType {
-            return ValueTypes.LONG;
+            return ValueTypes.DOUBLE;
         }
 
         newInitialValue(): Value {
-            return super.newInitialValue() || ValueTypes.LONG.newNullValue();
+            return super.newInitialValue() || ValueTypes.DOUBLE.newNullValue();
         }
 
         createInputOccurrenceElement(index: number, property: Property): api.dom.Element {
-            if (!ValueTypes.LONG.equals(property.getType())) {
-                property.convertValueType(ValueTypes.LONG);
+            if (!ValueTypes.DOUBLE.equals(property.getType())) {
+                property.convertValueType(ValueTypes.DOUBLE);
             }
 
             let inputEl = api.ui.text.TextInput.middle(undefined, this.getPropertyValue(property));
             inputEl.setName(this.getInput().getName() + '-' + property.getIndex());
 
             inputEl.onValueChanged((event: api.ValueChangedEvent) => {
-
                 let isValid = this.isValid(event.getNewValue());
-                let value = isValid ? ValueTypes.LONG.newValue(event.getNewValue()) : this.newInitialValue();
+                let value = isValid ? ValueTypes.DOUBLE.newValue(event.getNewValue()) : this.newInitialValue();
 
                 this.notifyOccurrenceValueChanged(inputEl, value);
                 inputEl.updateValidationStatusOnUserInput(isValid);
             });
 
-            property.onPropertyValueChanged((event: api.data.PropertyValueChangedEvent) => {
-                this.updateInputOccurrenceElement(inputEl, property, true);
-            });
-
             return inputEl;
         }
 
-        updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly: boolean) {
+        updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly ?: boolean) {
             let input = <api.ui.text.TextInput> occurrence;
 
             if (!unchangedOnly || !input.isDirty()) {
@@ -59,7 +53,7 @@ module api.content.form.inputtype.long {
         }
 
         valueBreaksRequiredContract(value: Value): boolean {
-            return value.isNull() || !value.getType().equals(ValueTypes.LONG);
+            return value.isNull() || !value.getType().equals(ValueTypes.DOUBLE);
         }
 
         hasInputElementValidUserInput(inputElement: api.dom.Element, recording ?: api.form.inputtype.InputValidationRecording) {
@@ -69,5 +63,5 @@ module api.content.form.inputtype.long {
         }
     }
 
-    api.form.inputtype.InputTypeManager.register(new api.Class('Long', Long));
+    api.form.inputtype.InputTypeManager.register(new api.Class('Double', Double));
 }

@@ -1,4 +1,4 @@
-module api.content.form.inputtype.double {
+module api.content.form.inputtype.number {
 
     import BaseInputTypeNotManagingAdd = api.form.inputtype.support.BaseInputTypeNotManagingAdd;
     import NumberHelper = api.util.NumberHelper;
@@ -7,7 +7,6 @@ module api.content.form.inputtype.double {
     export abstract class NumberInputType extends BaseInputTypeNotManagingAdd<number> {
 
         private min: number = null;
-
         private max: number = null;
 
         constructor(config: api.form.inputtype.InputTypeViewContext) {
@@ -31,7 +30,7 @@ module api.content.form.inputtype.double {
                 return true;
             }
 
-            if(!api.util.NumberHelper.isWholeNumber(+value)) {
+            if (!api.util.NumberHelper.isWholeNumber(+value)) {
                 return false;
             }
 
@@ -55,10 +54,11 @@ module api.content.form.inputtype.double {
 
                     return false;
                 }
-            } else {
-                return false;
+
+                return true;
             }
-            return true;
+
+            return false;
         }
 
         private isValidMin(value: number) {

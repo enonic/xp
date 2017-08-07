@@ -1,3 +1,3 @@
 ///<reference path='NumberInputType.ts' />
-///<reference path='double/Double.ts' />
-///<reference path='long/Long.ts' />
+///<reference path='Double.ts' />
+///<reference path='Long.ts' />

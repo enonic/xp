@@ -98,6 +98,13 @@ public class TextLineTypeTest
         this.type.validate( stringProperty( "abc" ), config );
     }
 
+    @Test(expected = InputTypeValidationException.class)
+    public void testValidate_invalidMaxLength()
+    {
+        final InputTypeConfig config = InputTypeConfig.create().property( InputTypeProperty.create( "max-length", "5" ).build( )).build();
+        this.type.validate( stringProperty( "max-length" ), config );
+    }
+
     private InputTypeConfig newValidConfig()
     {
         return InputTypeConfig.create().
