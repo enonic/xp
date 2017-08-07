@@ -15,6 +15,10 @@ public interface IndexServiceInternal
 
     boolean indicesExists( final String... indices );
 
+    void closeIndices( final String... indices );
+
+    void openIndices( final String... indices );
+
     void applyMapping( final ApplyMappingRequest request );
 
     ClusterHealthStatus getClusterHealth( final String timeout, final String... indexNames );

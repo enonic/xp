@@ -16,6 +16,7 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
+import org.elasticsearch.cluster.block.ClusterBlockException;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -110,7 +111,7 @@ public class StorageDaoImpl
 
         final BulkResponse response = bulkRequest.execute().actionGet();
 
-        return response.hasFailures();
+        return !response.hasFailures();
     }
 
     private String doStore( final IndexRequest request, final String timeout )
@@ -120,6 +121,10 @@ public class StorageDaoImpl
         {
             indexResponse = this.client.index( request ).
                 actionGet( timeout );
+        }
+        catch ( ClusterBlockException e )
+        {
+            throw new NodeStorageException( "Cannot write node, index is in READ-ONLY mode" );
         }
         catch ( ElasticsearchException e )
         {
