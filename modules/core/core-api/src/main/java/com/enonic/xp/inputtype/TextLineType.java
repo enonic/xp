@@ -11,7 +11,7 @@ import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.Input;
 
 final class TextLineType
-    extends InputTypeBase
+    extends TextInputType
 {
     public final static TextLineType INSTANCE = new TextLineType();
 
@@ -47,19 +47,19 @@ final class TextLineType
     {
         validateType( property, ValueTypes.STRING );
         final String regexp = regexp( config ).trim();
-        if ( regexp.isEmpty() || property.hasNullValue() )
+        if ( !regexp.isEmpty() && !property.hasNullValue() )
         {
-            return;
+            try
+            {
+                final boolean matchesRegexp = property.getString().matches( regexp );
+                validateValue( property, matchesRegexp, "Value does not match with regular expression" );
+            }
+            catch ( PatternSyntaxException e )
+            {
+                validateValue( property, false, "Invalid regexp '" + regexp + "' in " + this.getName() + " input type: " + e.getMessage() );
+            }
         }
 
-        try
-        {
-            final boolean matchesRegexp = property.getString().matches( regexp );
-            validateValue( property, matchesRegexp, "Value does not match with regular expression" );
-        }
-        catch ( PatternSyntaxException e )
-        {
-            validateValue( property, false, "Invalid regexp '" + regexp + "' in " + this.getName() + " input type: " + e.getMessage() );
-        }
+        super.validate( property, config );
     }
 }
