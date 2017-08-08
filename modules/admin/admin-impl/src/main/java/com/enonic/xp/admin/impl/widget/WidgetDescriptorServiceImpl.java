@@ -8,6 +8,7 @@ import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.admin.widget.WidgetDescriptorService;
 import com.enonic.xp.descriptor.DescriptorService;
 import com.enonic.xp.descriptor.Descriptors;
+import com.enonic.xp.page.DescriptorKey;
 
 @Component(immediate = true)
 public final class WidgetDescriptorServiceImpl
@@ -30,6 +31,12 @@ public final class WidgetDescriptorServiceImpl
                 }
                 return true;
             } );
+    }
+
+    @Override
+    public WidgetDescriptor getByKey( final DescriptorKey descriptorKey )
+    {
+        return this.descriptorService.get( WidgetDescriptor.class, descriptorKey );
     }
 
     @Reference

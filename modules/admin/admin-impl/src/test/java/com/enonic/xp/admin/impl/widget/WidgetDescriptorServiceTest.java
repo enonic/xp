@@ -52,6 +52,7 @@ public class WidgetDescriptorServiceTest
 
         final Descriptors<WidgetDescriptor> real = Descriptors.from( desc1, desc2, desc3 );
         Mockito.when( this.descriptorService.getAll( WidgetDescriptor.class ) ).thenReturn( real );
+        Mockito.when( this.descriptorService.get( WidgetDescriptor.class, DescriptorKey.from( "app:c" ) ) ).thenReturn( desc3 );
 
         final GetWidgetDescriptorsParams getAllWidgetsParams = GetWidgetDescriptorsParams.create().build();
         final Descriptors<WidgetDescriptor> result1 = this.service.getWidgetDescriptors( getAllWidgetsParams );
@@ -75,5 +76,8 @@ public class WidgetDescriptorServiceTest
             build();
         final Descriptors<WidgetDescriptor> result4 = this.service.getWidgetDescriptors( getAllAllowedMyInterfaceWidgetsParams2 );
         assertEquals( 1, result4.getSize() );
+
+        final WidgetDescriptor widgetDescriptor = this.service.getByKey( DescriptorKey.from( "app:c" ) );
+        assertEquals( desc3, widgetDescriptor );
     }
 }
