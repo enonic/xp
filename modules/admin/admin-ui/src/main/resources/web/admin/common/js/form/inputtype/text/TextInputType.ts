@@ -18,6 +18,10 @@ module api.form.inputtype.text {
         constructor(config: api.form.inputtype.InputTypeViewContext) {
             super(config);
             this.readConfig(config.inputConfig);
+
+            if (NumberHelper.isNumber(this.maxLength)) {
+                this.addClass('max-length-limited');
+            }
         }
 
         protected readConfig(inputConfig: { [element: string]: { [name: string]: string }[]; }): void {
@@ -28,25 +32,24 @@ module api.form.inputtype.text {
 
         protected initOccurenceListeners(inputEl: FormInputEl) {
 
-            inputEl.onValueChanged((event: api.ValueChangedEvent) => {
-                if (NumberHelper.isNumber(this.maxLength)) {
+            if (NumberHelper.isNumber(this.maxLength)) {
+
+                inputEl.onValueChanged((event: api.ValueChangedEvent) => {
                     const lengthCounter = Element.fromHtmlElement(
                         (<HTMLElement>inputEl.getParentElement().getHTMLElement().querySelector('.length-counter')));
                     if (lengthCounter) {
                         this.updateLengthCounterValue(lengthCounter, inputEl.getValue());
                     }
-                }
-            });
+                });
 
-            inputEl.onRendered(() => {
-                if (NumberHelper.isNumber(this.maxLength)) {
-
+                inputEl.onRendered(() => {
                     const lengthCounter = new DivEl('length-counter');
                     this.updateLengthCounterValue(lengthCounter, inputEl.getValue());
 
                     inputEl.getParentElement().appendChild(lengthCounter);
-                }
-            });
+                });
+
+            }
 
             return inputEl;
         }
