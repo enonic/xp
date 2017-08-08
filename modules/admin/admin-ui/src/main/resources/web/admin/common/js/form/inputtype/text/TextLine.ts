@@ -9,6 +9,8 @@ module api.form.inputtype.text {
     import NumberHelper = api.util.NumberHelper;
     import DivEl = api.dom.DivEl;
     import FormInputEl = api.dom.FormInputEl;
+    import Element = api.dom.Element;
+    import StringHelper = api.util.StringHelper;
 
     export class TextLine extends TextInputType {
 
@@ -24,7 +26,7 @@ module api.form.inputtype.text {
 
             const regexpConfig = inputConfig['regexp'] ? inputConfig['regexp'][0] : {};
             const regexp = regexpConfig ? regexpConfig['value'] : '';
-            this.regexp = new RegExp(regexp);
+            this.regexp = !StringHelper.isBlank(regexp) ? new RegExp(regexp) : null;
 
         }
 
@@ -86,11 +88,23 @@ module api.form.inputtype.text {
         }
 
         protected isValid(value: string, textInput: api.ui.text.TextInput, silent: boolean = false,
-                        recording?: api.form.inputtype.InputValidationRecording): boolean {
-            let parent = textInput.getParentElement();
+                          recording?: api.form.inputtype.InputValidationRecording): boolean {
+
+            const parent = textInput.getParentElement();
 
             if (api.util.StringHelper.isEmpty(value)) {
                 parent.removeClass('valid-regexp invalid-regexp');
+                return true;
+            }
+
+            let regexpValid: boolean = this.checkRegexpValidation(value, parent, silent);
+
+            return regexpValid && super.isValid(value, textInput, silent, recording);
+        }
+
+        private checkRegexpValidation(value: string, parent: Element, silent: boolean): boolean {
+
+            if (!this.regexp) {
                 return true;
             }
 
@@ -102,7 +116,7 @@ module api.form.inputtype.text {
                 parent.getEl().setAttribute('data-regex-status', i18n(`field.${regexpValid ? 'valid' : 'invalid'}`));
             }
 
-            return regexpValid && super.isValid(value, textInput, silent, recording);
+            return regexpValid;
         }
 
         static getName(): api.form.InputTypeName {
