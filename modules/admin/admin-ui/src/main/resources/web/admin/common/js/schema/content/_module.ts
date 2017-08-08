@@ -11,6 +11,7 @@
 
 ///<reference path='ContentTypeResourceRequest.ts' />
 ///<reference path='GetAllContentTypesRequest.ts' />
+///<reference path='GetContentTypesByContentRequest.ts' />
 ///<reference path='GetContentTypeByNameRequest.ts' />
 ///<reference path='GetContentTypesByApplicationRequest.ts' />
 ///<reference path='ContentTypeCache.ts' />
