@@ -1,6 +1,11 @@
 @empty-node-size: 32px;
 
 .tree-grid {
+
+  &:not(.components-grid) .grid .slick-cell {
+    height: 50px; // firefox ignores SlickGrid.rowHeight
+  }
+
   position: static;
   height: 100%;
   &:not(.no-toolbar) {
@@ -36,7 +41,6 @@
       .default-slick-cell-styling(4px 8px 4px 2px);
       cursor: pointer;
       line-height: 37px;
-      height: 50px; // firefox ignores SlickGrid.rowHeight
 
       * {
         // force same cursor on every child
