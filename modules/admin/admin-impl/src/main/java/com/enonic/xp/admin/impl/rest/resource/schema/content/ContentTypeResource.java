@@ -73,36 +73,9 @@ public final class ContentTypeResource
 
     @GET
     @Path("all")
-    public ContentTypeSummaryListJson all(
-        @DefaultValue("false") @QueryParam("inlineMixinsToFormItems") final boolean inlineMixinsToFormItems,
-        @DefaultValue("false") @QueryParam("context") final boolean context, @QueryParam("contentId") final String content )
+    public ContentTypeSummaryListJson all()
     {
-        final ContentTypes contentTypes;
-        if ( context )
-        {
-            final ContentId contentId = ContentId.from( content );
-            final Site site = contentService.getNearestSite( contentId );
-            if ( site != null )
-            {
-                final List<ContentType> types = site.getSiteConfigs().stream().
-                    map( SiteConfig::getApplicationKey ).
-                    map( ( appKey ) -> contentTypeService.getByApplication( appKey ) ).
-                    flatMap( AbstractImmutableEntityList::stream ).
-                    collect( Collectors.toList() );
-                contentTypes = ContentTypes.from( types );
-            }
-            else
-            {
-                contentTypes = ContentTypes.empty();
-            }
-        }
-        else
-        {
-            final GetAllContentTypesParams getAll = new GetAllContentTypesParams().inlineMixinsToFormItems( inlineMixinsToFormItems );
-            contentTypes = contentTypeService.getAll( getAll );
-        }
-
-        return new ContentTypeSummaryListJson( contentTypes, this.contentTypeIconUrlResolver );
+        return list( true );
     }
 
     @GET
@@ -113,6 +86,31 @@ public final class ContentTypeResource
 
         final GetAllContentTypesParams getAll = new GetAllContentTypesParams().inlineMixinsToFormItems( inlineMixinsToFormItems );
         final ContentTypes contentTypes = contentTypeService.getAll( getAll );
+
+        return new ContentTypeSummaryListJson( contentTypes, this.contentTypeIconUrlResolver );
+    }
+
+    @GET
+    @Path("byContent")
+    public ContentTypeSummaryListJson byContent( @QueryParam("contentId") final String content )
+    {
+        final ContentId contentId = ContentId.from( content );
+        final Site site = contentService.getNearestSite( contentId );
+
+        final ContentTypes contentTypes;
+        if ( site != null )
+        {
+            final List<ContentType> types = site.getSiteConfigs().stream().
+                map( SiteConfig::getApplicationKey ).
+                map( ( appKey ) -> contentTypeService.getByApplication( appKey ) ).
+                flatMap( AbstractImmutableEntityList::stream ).
+                collect( Collectors.toList() );
+            contentTypes = ContentTypes.from( types );
+        }
+        else
+        {
+            contentTypes = ContentTypes.empty();
+        }
 
         return new ContentTypeSummaryListJson( contentTypes, this.contentTypeIconUrlResolver );
     }

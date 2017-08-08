@@ -18,7 +18,8 @@ module api.schema.content.inputtype {
     import FocusSwitchEvent = api.ui.FocusSwitchEvent;
     import BaseLoader = api.util.loader.BaseLoader;
 
-    export class ContentTypeFilter extends api.form.inputtype.support.BaseInputTypeManagingAdd<string> {
+    export class ContentTypeFilter
+        extends api.form.inputtype.support.BaseInputTypeManagingAdd<string> {
 
         private combobox: ContentTypeComboBox;
 
@@ -54,7 +55,8 @@ module api.schema.content.inputtype {
             if (this.context.formContext.getContentTypeName().isPageTemplate()) {
                 loader = this.createPageTemplateLoader();
             } else {
-                loader = new ContentTypeSummaryLoader(this.isContextDependent, this.context.content && this.context.content.getId());
+                let contentId = this.isContextDependent ? this.context.content && this.context.content.getId() : null;
+                loader = new ContentTypeSummaryLoader(contentId);
             }
 
             loader.setComparator(new api.content.ContentTypeSummaryByDisplayNameComparator());

@@ -210,7 +210,6 @@ public class ContentTypeResourceTest
         // execute
         String jsonString = request().
             path( "schema/content/all" ).
-            queryParam( "inlineMixinsToFormItems", "false" ).
             get().getAsString();
 
         // verify
@@ -218,7 +217,7 @@ public class ContentTypeResourceTest
     }
 
     @Test
-    public void list_one_contentType_context_based()
+    public void getTypesByContentContext()
         throws Exception
     {
         // setup
@@ -241,10 +240,8 @@ public class ContentTypeResourceTest
 
         // execute
         String jsonString = request().
-            path( "schema/content/all" ).
-            queryParam( "context", "true" ).
+            path( "schema/content/byContent" ).
             queryParam( "contentId", "1004242" ).
-            queryParam( "inlineMixinsToFormItems", "false" ).
             get().getAsString();
 
         // verify
@@ -290,7 +287,7 @@ public class ContentTypeResourceTest
         setupContentType( contentType );
 
         // exercise
-        final Response response = this.resource.getIcon( "myapplication:icon_svg_test", 20, null );
+        final Response response = this.resource.getIcon( "myapplication:icon_svg_test", 20, "fed8beb6054fd1eed2916e4c1f43109c" );
 
         assertNotNull( response.getEntity() );
         assertEquals( schemaIcon.getMimeType(), response.getMediaType().toString() );
