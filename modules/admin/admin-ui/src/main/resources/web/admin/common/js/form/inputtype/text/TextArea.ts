@@ -5,11 +5,13 @@ module api.form.inputtype.text {
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
+    import FormInputEl = api.dom.FormInputEl;
 
-    export class TextArea extends support.BaseInputTypeNotManagingAdd<string> {
+    export class TextArea extends TextInputType {
 
         constructor(config: api.form.inputtype.InputTypeViewContext) {
             super(config);
+            this.readConfig(config.inputConfig);
         }
 
         getValueType(): ValueType {
@@ -32,6 +34,8 @@ module api.form.inputtype.text {
                 const newValue = ValueTypes.STRING.newValue(event.getNewValue());
                 this.notifyOccurrenceValueChanged(inputEl, newValue);
             });
+
+            this.initOccurenceListeners(inputEl);
 
             return inputEl;
         }
@@ -59,10 +63,9 @@ module api.form.inputtype.text {
                    api.util.StringHelper.isBlank(value.getString());
         }
 
-        hasInputElementValidUserInput(inputElement: api.dom.Element) {
-
-            // TODO
-            return true;
+        hasInputElementValidUserInput(inputElement: FormInputEl, recording?: api.form.inputtype.InputValidationRecording) {
+            let textInput = inputElement;
+            return this.isValid(textInput.getValue(), textInput, true, recording);
         }
 
         static getName(): api.form.InputTypeName {

@@ -97,8 +97,7 @@ import FragmentComponent = api.content.page.region.FragmentComponent;
 import FragmentComponentType = api.content.page.region.FragmentComponentType;
 import i18n = api.util.i18n;
 
-export class ContentWizardPanel
-    extends api.app.wizard.WizardPanel<Content> {
+export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     protected wizardActions: ContentWizardActions;
 
@@ -213,7 +212,7 @@ export class ContentWizardPanel
         wizardActions.getShowLiveEditAction().setEnabled(false);
         wizardActions.getSaveAction().onExecuted(() => {
             this.contentWizardStepForm.validate();
-            this.displayValidationErrors();
+            this.displayValidationErrors(!this.isValid());
         });
 
         wizardActions.getShowSplitEditAction().onExecuted(() => {
@@ -226,7 +225,7 @@ export class ContentWizardPanel
         let publishActionHandler = () => {
             if (this.hasUnsavedChanges()) {
                 this.contentWizardStepForm.validate();
-                this.displayValidationErrors();
+                this.displayValidationErrors(!this.isValid());
             }
         };
 
@@ -454,13 +453,13 @@ export class ContentWizardPanel
             });
 
             this.onValidityChanged((event: api.ValidityChangedEvent) => {
-                let isThisValid = this.isValid(); // event.isValid() = false will prevent the call to this.isValid()
+                let isThisValid = this.isValid() && event.isValid(); // event.isValid() = false will prevent the call to this.isValid()
                 this.isContentFormValid = isThisValid;
                 let thumbnailUploader = this.getFormIcon();
                 thumbnailUploader.toggleClass('invalid', !isThisValid);
                 this.getContentWizardToolbarPublishControls().setContentCanBePublished(this.checkContentCanBePublished());
                 if (!this.formState.isNew()) {
-                    this.displayValidationErrors();
+                    this.displayValidationErrors(!isThisValid);
                 }
             });
 
@@ -1147,7 +1146,7 @@ export class ContentWizardPanel
                     if (this.formState.isNew()) {
                         this.contentWizardStepForm.getFormView().highlightInputsOnValidityChange(true);
                     } else {
-                        this.displayValidationErrors();
+                        this.displayValidationErrors(!this.isValid());
                     }
 
                     this.enableDisplayNameScriptExecution(this.contentWizardStepForm.getFormView());
@@ -1563,17 +1562,13 @@ export class ContentWizardPanel
         return this.getSplitPanel() && this.getSplitPanel().hasClass('toggle-live');
     }
 
-    private displayValidationErrors() {
-        if (!this.isContentFormValid) {
-            this.contentWizardStepForm.displayValidationErrors(true);
-        }
+    private displayValidationErrors(value: boolean) {
+        this.contentWizardStepForm.displayValidationErrors(value);
 
         for (let key in this.metadataStepFormByName) {
             if (this.metadataStepFormByName.hasOwnProperty(key)) {
                 let form = this.metadataStepFormByName[key];
-                if (!form.isValid()) {
-                    form.displayValidationErrors(true);
-                }
+                form.displayValidationErrors(value);
             }
         }
     }
