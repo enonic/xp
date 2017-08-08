@@ -1,13 +1,17 @@
 package com.enonic.xp.admin.impl.widget;
 
+import java.util.Collections;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.admin.widget.GetWidgetDescriptorsParams;
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.descriptor.DescriptorService;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.Assert.*;
 
@@ -27,24 +31,49 @@ public class WidgetDescriptorServiceTest
     }
 
     @Test
-    public void getByInterface()
+    public void getWidgetDescriptors()
         throws Exception
     {
-        final WidgetDescriptor desc1 = WidgetDescriptor.create().key( DescriptorKey.from( "app:a" ) ).
-            addInterface( "com.enonic.xp.my-interface" ).build();
+        final WidgetDescriptor desc1 = WidgetDescriptor.create().
+            key( DescriptorKey.from( "app:a" ) ).
+            addInterface( "com.enonic.xp.my-interface" ).
+            build();
 
-        final WidgetDescriptor desc2 = WidgetDescriptor.create().key( DescriptorKey.from( "app:b" ) ).
-            addInterface( "com.enonic.xp.my-interface" ).build();
+        final WidgetDescriptor desc2 = WidgetDescriptor.create().
+            key( DescriptorKey.from( "app:b" ) ).
+            addInterface( "com.enonic.xp.another-interface" ).
+            build();
 
-        final Descriptors<WidgetDescriptor> real = Descriptors.from( desc1, desc2 );
+        final WidgetDescriptor desc3 = WidgetDescriptor.create().
+            key( DescriptorKey.from( "app:c" ) ).
+            addInterface( "com.enonic.xp.my-interface" ).
+            setAllowedPrincipals( Collections.singleton( PrincipalKey.from( "role:system.user.admin" ) ) ).
+            build();
+
+        final Descriptors<WidgetDescriptor> real = Descriptors.from( desc1, desc2, desc3 );
         Mockito.when( this.descriptorService.getAll( WidgetDescriptor.class ) ).thenReturn( real );
 
-        final Descriptors<WidgetDescriptor> result1 = this.service.getByInterfaces( "com.enonic.xp.my-interface" );
-        assertNotNull( result1 );
-        assertEquals( 2, result1.getSize() );
+        final GetWidgetDescriptorsParams getAllWidgetsParams = GetWidgetDescriptorsParams.create().build();
+        final Descriptors<WidgetDescriptor> result1 = this.service.getWidgetDescriptors( getAllWidgetsParams );
+        assertEquals( 3, result1.getSize() );
 
-        final Descriptors<WidgetDescriptor> result2 = this.service.getByInterfaces( "unknown" );
-        assertNotNull( result2 );
-        assertEquals( 0, result2.getSize() );
+        final GetWidgetDescriptorsParams getAllMyInterfaceWidgetsParams =
+            GetWidgetDescriptorsParams.create().setInterfaceNames( Collections.singleton( "com.enonic.xp.my-interface" ) ).build();
+        final Descriptors<WidgetDescriptor> result2 = this.service.getWidgetDescriptors( getAllMyInterfaceWidgetsParams );
+        assertEquals( 2, result2.getSize() );
+
+        final GetWidgetDescriptorsParams getAllAllowedMyInterfaceWidgetsParams = GetWidgetDescriptorsParams.create().
+            setInterfaceNames( Collections.singleton( "com.enonic.xp.my-interface" ) ).
+            setPrincipalKeys( Collections.singleton( PrincipalKey.from( "role:system.user.admin" ) ) ).
+            build();
+        final Descriptors<WidgetDescriptor> result3 = this.service.getWidgetDescriptors( getAllAllowedMyInterfaceWidgetsParams );
+        assertEquals( 2, result3.getSize() );
+
+        final GetWidgetDescriptorsParams getAllAllowedMyInterfaceWidgetsParams2 = GetWidgetDescriptorsParams.create().
+            setInterfaceNames( Collections.singleton( "com.enonic.xp.my-interface" ) ).
+            setPrincipalKeys( Collections.singleton( PrincipalKey.from( "role:system.user.app" ) ) ).
+            build();
+        final Descriptors<WidgetDescriptor> result4 = this.service.getWidgetDescriptors( getAllAllowedMyInterfaceWidgetsParams2 );
+        assertEquals( 1, result4.getSize() );
     }
 }

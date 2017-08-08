@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.widget;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -11,6 +12,8 @@ import com.google.common.collect.Sets;
 
 import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
 
 @Beta
 public final class WidgetDescriptor
@@ -19,6 +22,8 @@ public final class WidgetDescriptor
     private final String displayName;
 
     private final ImmutableSet<String> interfaces;
+
+    private final PrincipalKeys allowedPrincipals;
 
     private final ImmutableMap<String, String> config;
 
@@ -29,6 +34,7 @@ public final class WidgetDescriptor
         super( builder.key );
         this.displayName = builder.displayName;
         this.interfaces = ImmutableSet.copyOf( builder.interfaces );
+        this.allowedPrincipals = builder.allowedPrincipals == null ? null : PrincipalKeys.from( builder.allowedPrincipals );
         this.config = ImmutableMap.copyOf( builder.config );
     }
 
@@ -52,6 +58,22 @@ public final class WidgetDescriptor
         return interfaces;
     }
 
+    public boolean hasInterface( final String interfaceName )
+    {
+        return interfaces.contains( interfaceName );
+    }
+
+    public PrincipalKeys getAllowedPrincipals()
+    {
+        return allowedPrincipals;
+    }
+
+    public boolean isAccessAllowed( final PrincipalKeys principalKeys )
+    {
+        return allowedPrincipals == null || principalKeys.stream().
+            anyMatch( allowedPrincipals::contains );
+    }
+
     public Map<String, String> getConfig()
     {
         return config;
@@ -69,6 +91,8 @@ public final class WidgetDescriptor
         private String displayName;
 
         public final Set<String> interfaces = Sets.newTreeSet();
+
+        private Collection<PrincipalKey> allowedPrincipals;
 
         public final Map<String, String> config = Maps.newHashMap();
 
@@ -91,6 +115,12 @@ public final class WidgetDescriptor
         public Builder addInterface( final String interfaceName )
         {
             this.interfaces.add( interfaceName );
+            return this;
+        }
+
+        public Builder setAllowedPrincipals( final Collection<PrincipalKey> allowedPrincipals )
+        {
+            this.allowedPrincipals = allowedPrincipals;
             return this;
         }
 

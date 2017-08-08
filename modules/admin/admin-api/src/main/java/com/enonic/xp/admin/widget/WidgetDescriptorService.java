@@ -7,5 +7,5 @@ import com.enonic.xp.descriptor.Descriptors;
 @Beta
 public interface WidgetDescriptorService
 {
-    Descriptors<WidgetDescriptor> getByInterfaces( final String... interfaceName );
+    Descriptors<WidgetDescriptor> getWidgetDescriptors( final GetWidgetDescriptorsParams params );
 }

@@ -3,6 +3,7 @@ package com.enonic.xp.admin.impl.widget;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.admin.widget.GetWidgetDescriptorsParams;
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.admin.widget.WidgetDescriptorService;
 import com.enonic.xp.descriptor.DescriptorService;
@@ -15,23 +16,20 @@ public final class WidgetDescriptorServiceImpl
     private DescriptorService descriptorService;
 
     @Override
-    public Descriptors<WidgetDescriptor> getByInterfaces( final String... interfaceNames )
+    public Descriptors<WidgetDescriptor> getWidgetDescriptors( final GetWidgetDescriptorsParams params )
     {
         return this.descriptorService.getAll( WidgetDescriptor.class ).
-            filter( w -> containsInterface( w, interfaceNames ) );
-    }
-
-    private boolean containsInterface( final WidgetDescriptor descriptor, final String... interfaceNames )
-    {
-        for ( final String interfaceName : interfaceNames )
-        {
-            if ( descriptor.getInterfaces().contains( interfaceName ) )
-            {
+            filter( widgetDescriptor -> {
+                if ( params.getInterfaceNames() != null && params.getInterfaceNames().stream().noneMatch( widgetDescriptor::hasInterface ) )
+                {
+                    return false;
+                }
+                if ( params.getPrincipalKeys() != null && !widgetDescriptor.isAccessAllowed( params.getPrincipalKeys() ) )
+                {
+                    return false;
+                }
                 return true;
-            }
-        }
-
-        return false;
+            } );
     }
 
     @Reference
