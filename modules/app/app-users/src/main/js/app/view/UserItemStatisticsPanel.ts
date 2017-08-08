@@ -46,10 +46,10 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
                     this.appendUserMetadata(item);
                     break;
                 case PrincipalType.GROUP:
-                    this.appendGroupRoleMetadata(item);
+                    this.appendGroupMetadata(item);
                     break;
                 case PrincipalType.ROLE:
-                    this.appendGroupRoleMetadata(item);
+                    this.appendRoleMetadata(item);
                     break;
                 }
             }
@@ -108,14 +108,18 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
         }).done();
     }
 
-    private appendGroupRoleMetadata(item: ViewItem<UserTreeGridItem>) {
+    private appendGroupMetadata(item: ViewItem<UserTreeGridItem>) {
         // Insert an empty data first to avoid blinking, after full data is loaded.
         const type = PrincipalType[item.getModel().getPrincipal().getType()];
         const name = type.charAt(0) + type.slice(1).toLowerCase();
 
-        const groupAndRoleGroup = new ItemDataGroup(name, 'group-and-role');
-        groupAndRoleGroup.appendChild(new api.dom.DivEl('description').setHtml(item.getModel().getPrincipal().getDescription()));
-        this.userDataContainer.appendChild(groupAndRoleGroup);
+        const groupGroup = new ItemDataGroup(name, 'group');
+        groupGroup.appendChild(new api.dom.DivEl('description').setHtml(item.getModel().getPrincipal().getDescription()));
+        this.userDataContainer.appendChild(groupGroup);
+
+        const rolesGroup = new ItemDataGroup(i18n('field.roles'), 'roles');
+        rolesGroup.addDataArray(i18n('field.roles'), []);
+        this.userDataContainer.appendChild(rolesGroup);
 
         const membersGroup = new ItemDataGroup(i18n('field.members'), 'members');
         membersGroup.addDataArray(i18n('field.members'), []);
@@ -126,11 +130,63 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
             .sendAndParse()
             .then((principal: Principal) => {
 
-                const membersPromises =
-                    (principal.isGroup() ? principal.asGroup().getMembers() : principal.asRole().getMembers())
-                        .map((el) => {
-                            return new GetPrincipalByKeyRequest(el).sendAndParse();
-                        });
+                const group = principal.asGroup();
+
+                const newRolesGroup = new ItemDataGroup(i18n('field.roles'), 'roles');
+                newRolesGroup.addDataElements(null, group.getMemberships().map((el) => {
+                    const viewer = new PrincipalViewer();
+                    viewer.setObject(el);
+                    return viewer;
+                }));
+
+                const membersPromises = group.getMembers().map((el) => {
+                    return new GetPrincipalByKeyRequest(el).sendAndParse();
+                });
+
+                wemQ.all(membersPromises).then((results: Principal[]) => {
+
+                    const newMembersGroup = new ItemDataGroup(i18n('field.members'), 'members');
+
+                    newMembersGroup.addDataElements(null, results.map((el) => {
+                        const viewer = new PrincipalViewer();
+                        viewer.setObject(el);
+                        return viewer;
+                    }));
+
+                    this.userDataContainer.removeChildren();
+                    this.userDataContainer.appendChild(groupGroup);
+                    this.userDataContainer.appendChild(newRolesGroup);
+                    this.userDataContainer.appendChild(newMembersGroup);
+                }).catch((reason: any) => {
+                    api.DefaultErrorHandler.handle(reason);
+                }).done();
+
+            }).catch((reason: any) => {
+            api.DefaultErrorHandler.handle(reason);
+        }).done();
+    }
+
+    private appendRoleMetadata(item: ViewItem<UserTreeGridItem>) {
+        // Insert an empty data first to avoid blinking, after full data is loaded.
+        const type = PrincipalType[item.getModel().getPrincipal().getType()];
+        const name = type.charAt(0) + type.slice(1).toLowerCase();
+
+        const roleGroup = new ItemDataGroup(name, 'role');
+        roleGroup.appendChild(new api.dom.DivEl('description').setHtml(item.getModel().getPrincipal().getDescription()));
+        this.userDataContainer.appendChild(roleGroup);
+
+        const membersGroup = new ItemDataGroup(i18n('field.members'), 'members');
+        membersGroup.addDataArray(i18n('field.members'), []);
+        this.userDataContainer.appendChild(membersGroup);
+
+        new GetPrincipalByKeyRequest(item.getModel().getPrincipal().getKey())
+            .setIncludeMemberships(true)
+            .sendAndParse()
+            .then((principal: Principal) => {
+
+                const membersPromises = principal.asRole().getMembers().map((el) => {
+                    return new GetPrincipalByKeyRequest(el).sendAndParse();
+                });
 
                 wemQ.all(membersPromises).then((results: Principal[]) => {
 
@@ -143,7 +199,7 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
                     }));
 
                     this.userDataContainer.removeChildren();
-                    this.userDataContainer.appendChild(groupAndRoleGroup);
+                    this.userDataContainer.appendChild(roleGroup);
                     this.userDataContainer.appendChild(newMembersGroup);
                 }).catch((reason: any) => {
                     api.DefaultErrorHandler.handle(reason);
