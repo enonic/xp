@@ -10,6 +10,10 @@ module api.liveedit {
     import FragmentComponent = api.content.page.region.FragmentComponent;
     import FragmentComponentView = api.liveedit.fragment.FragmentComponentView;
     import i18n = api.util.i18n;
+    import KeyBindings = api.ui.KeyBindings;
+    import KeyBinding = api.ui.KeyBinding;
+    import ElementHelper = api.dom.ElementHelper;
+    import Element = api.dom.Element;
 
     export class ComponentViewBuilder<COMPONENT extends Component> {
 
@@ -114,6 +118,24 @@ module api.liveedit {
 
         public static debug: boolean = false;
 
+        private keyBinding: KeyBinding[];
+
+        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false,
+               rightClicked: boolean = false) {
+
+            Element.fromHtmlElement(<HTMLElement>window.frameElement).giveFocus();
+
+            super.select(clickPosition, menuPosition, isNew, rightClicked);
+            api.ui.KeyBindings.get().bindKeys(this.keyBinding);
+
+        }
+
+        deselect(silent?: boolean) {
+            api.ui.KeyBindings.get().unbindKeys(this.keyBinding);
+
+            super.deselect(silent);
+        }
+
         constructor(builder: ComponentViewBuilder<COMPONENT>) {
             super(new ItemViewBuilder().
                     setItemViewIdProducer(builder.itemViewProducer
@@ -147,6 +169,8 @@ module api.liveedit {
 
             this.setComponent(builder.component);
             this.onRemoved(event => this.unregisterComponentListeners(this.component));
+
+            this.initKeyBoardBindings();
 
             // TODO: by task about using HTML5 DnD api (JVS 2014-06-23) - do not remove
             //this.setDraggable(true);
@@ -228,6 +252,19 @@ module api.liveedit {
             }
 
             this.addContextMenuActions(actions);
+        }
+
+        private initKeyBoardBindings() {
+            const removeHandler = () => {
+                this.deselect();
+                this.remove();
+                return true;
+            };
+            this.keyBinding = [
+                new KeyBinding('del', removeHandler),
+                new KeyBinding('backspace', removeHandler)
+            ];
+
         }
 
         remove(): ComponentView<Component> {
