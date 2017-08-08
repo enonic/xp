@@ -55,7 +55,7 @@ module api.schema.content.inputtype {
             if (this.context.formContext.getContentTypeName().isPageTemplate()) {
                 loader = this.createPageTemplateLoader();
             } else {
-                let contentId = this.isContextDependent ? this.context.content && this.context.content.getId() : null;
+                let contentId = this.isContextDependent && !!this.context.content ? this.context.content.getContentId() : null;
                 loader = new ContentTypeSummaryLoader(contentId);
             }
 
