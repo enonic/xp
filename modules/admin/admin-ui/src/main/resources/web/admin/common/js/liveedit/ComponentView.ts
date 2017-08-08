@@ -120,22 +120,6 @@ module api.liveedit {
 
         private keyBinding: KeyBinding[];
 
-        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false,
-               rightClicked: boolean = false) {
-
-            Element.fromHtmlElement(<HTMLElement>window.frameElement).giveFocus();
-
-            super.select(clickPosition, menuPosition, isNew, rightClicked);
-            api.ui.KeyBindings.get().bindKeys(this.keyBinding);
-
-        }
-
-        deselect(silent?: boolean) {
-            api.ui.KeyBindings.get().unbindKeys(this.keyBinding);
-
-            super.deselect(silent);
-        }
-
         constructor(builder: ComponentViewBuilder<COMPONENT>) {
             super(new ItemViewBuilder().
                     setItemViewIdProducer(builder.itemViewProducer
@@ -265,6 +249,22 @@ module api.liveedit {
                 new KeyBinding('backspace', removeHandler)
             ];
 
+        }
+
+        select(clickPosition?: Position, menuPosition?: ItemViewContextMenuPosition, isNew: boolean = false,
+               rightClicked: boolean = false) {
+
+            Element.fromHtmlElement(<HTMLElement>window.frameElement).giveFocus();
+
+            super.select(clickPosition, menuPosition, isNew, rightClicked);
+            api.ui.KeyBindings.get().bindKeys(this.keyBinding);
+
+        }
+
+        deselect(silent?: boolean) {
+            api.ui.KeyBindings.get().unbindKeys(this.keyBinding);
+
+            super.deselect(silent);
         }
 
         remove(): ComponentView<Component> {
