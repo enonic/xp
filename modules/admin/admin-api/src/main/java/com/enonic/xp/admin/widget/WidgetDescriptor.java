@@ -16,7 +16,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
 @Beta
-public final class WidgetDescriptor
+public class WidgetDescriptor
     extends Descriptor
 {
     private final String displayName;
