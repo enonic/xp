@@ -7,6 +7,7 @@ import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateRequestBuilder;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
+import org.elasticsearch.action.admin.indices.close.CloseIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -14,6 +15,7 @@ import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsReques
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequestBuilder;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
+import org.elasticsearch.action.admin.indices.open.OpenIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -22,6 +24,7 @@ import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
+import org.elasticsearch.indices.IndexMissingException;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -231,6 +234,46 @@ public class IndexServiceInternalImpl
         return new ClusterHealthStatus( ClusterStatusCode.valueOf( response.getStatus().name() ), response.isTimedOut() );
     }
 
+    @Override
+    public void closeIndices( final String... indices )
+    {
+        for ( final String indexName : indices )
+        {
+            CloseIndexRequestBuilder closeIndexRequestBuilder = new CloseIndexRequestBuilder( this.client.admin().indices() ).
+                setIndices( indexName );
+
+            try
+            {
+                this.client.admin().indices().close( closeIndexRequestBuilder.request() ).actionGet();
+                LOG.info( "Closed index " + indexName );
+            }
+            catch ( IndexMissingException e )
+            {
+                LOG.warn( "Could not close index [" + indexName + "], not found" );
+            }
+        }
+    }
+
+    @Override
+    public void openIndices( final String... indices )
+    {
+        for ( final String indexName : indices )
+        {
+            OpenIndexRequestBuilder openIndexRequestBuilder = new OpenIndexRequestBuilder( this.client.admin().indices() ).
+                setIndices( indexName );
+
+            try
+            {
+                this.client.admin().indices().open( openIndexRequestBuilder.request() ).actionGet();
+                LOG.info( "Opened index " + indexName );
+            }
+            catch ( ElasticsearchException e )
+            {
+                LOG.error( "Could not open index [" + indexName + "]", e );
+                throw new IndexException( "Cannot open index [" + indexName + "]", e );
+            }
+        }
+    }
 
     private void doDeleteIndex( final String indexName )
     {

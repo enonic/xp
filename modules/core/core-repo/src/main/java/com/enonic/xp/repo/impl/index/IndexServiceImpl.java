@@ -46,6 +46,7 @@ import com.enonic.xp.repository.IndexMapping;
 import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.util.JsonHelper;
 
@@ -168,6 +169,29 @@ public class IndexServiceImpl
         }
 
         return result.build();
+    }
+
+    @Override
+    public void triggerReadOnlyMode( final boolean readOnly, final RepositoryIds repositoryIds )
+    {
+        for ( final RepositoryId repositoryId : repositoryIds )
+        {
+            final String searchIndex = IndexNameResolver.resolveSearchIndexName( repositoryId );
+            final String storageIndex = IndexNameResolver.resolveStorageIndexName( repositoryId );
+
+            this.indexServiceInternal.closeIndices( searchIndex, storageIndex );
+
+            try
+            {
+                final UpdateIndexSettingsResult.Builder builder = UpdateIndexSettingsResult.create();
+
+                updateIndexSettings( repositoryId, UpdateIndexSettings.from( "{\"blocks.write\": " + readOnly + " }" ), builder );
+            }
+            finally
+            {
+                this.indexServiceInternal.openIndices( searchIndex, storageIndex );
+            }
+        }
     }
 
     private void updateIndexSettings( final RepositoryId repositoryId, final UpdateIndexSettings updateIndexSettings,

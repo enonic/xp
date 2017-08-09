@@ -117,7 +117,7 @@ public class StorageDaoImpl
 
                 this.client.delete( request ).actionGet( requests.getTimeoutAsString() );
             }
-            catch ( ElasticsearchException e )
+            catch ( Exception e )
             {
                 throw new NodeStorageException( "Cannot delete node " + id, e );
             }
