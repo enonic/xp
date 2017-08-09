@@ -25,3 +25,4 @@
 // =include tinymce/themes/modern/theme.js
 // =include bower_components/webcomponentsjs/webcomponents-lite.min.js
 // =include tinymce/plugins/*/plugin.js
+// =include ckeditor/ckeditor.js

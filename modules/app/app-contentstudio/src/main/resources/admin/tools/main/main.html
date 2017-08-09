@@ -31,6 +31,9 @@
 
     <!-- Styles -->
     <link rel="stylesheet" type="text/css" href="{{adminAssetsUri}}/common/styles/_all.css">
+    <script type="text/javascript">
+        var CKEDITOR_BASEPATH = '{{adminAssetsUri}}/common/lib/ckeditor/';
+    </script>
     <script type="text/javascript" src="{{adminAssetsUri}}/common/lib/_all.js"></script>
 
 </head>
@@ -46,6 +49,10 @@
         adminAssetsUri: '{{adminAssetsUri}}',
         messages: {{{messages}}}
     };
+
+    if (CKEDITOR) {
+        CKEDITOR.config.language = '{{locale}}';
+    }
 </script>
 
 <!-- App javascript -->

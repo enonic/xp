@@ -21,6 +21,7 @@ module api.form.inputtype.text {
     import Promise = Q.Promise;
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import AppHelper = api.util.AppHelper;
+    import editor = CKEDITOR.editor;
 
     export class HtmlArea extends support.BaseInputTypeNotManagingAdd<string> {
 
@@ -197,7 +198,7 @@ module api.form.inputtype.text {
             };
 
             new HTMLAreaBuilder().
-                setSelector('textarea.' + id.replace(/\./g, '_')).
+                setSelector('textarea.' + id.replace(/\./g, '_')).setTextAreaId(id).
                 setAssetsUri(baseUrl).
                 setInline(false).
                 onCreateDialog(createDialogHandler).
@@ -214,31 +215,30 @@ module api.form.inputtype.text {
                     exclude: this.inputConfig['exclude']
                 }).
                 setForcedRootBlock(this.inputConfig['forcedRootBlock'] ? this.inputConfig['forcedRootBlock'][0].value : 'p').
-                setEditableSourceCode(this.editableSourceCode).
-                createEditor().
-                then((editor: HtmlAreaEditor) => {
-                    this.setEditorContent(id, property);
-                    if (this.notInLiveEdit()) {
-                        this.setupStickyEditorToolbarForInputOccurence(textAreaWrapper, id);
-                    }
-                    this.removeTooltipFromEditorArea(textAreaWrapper);
-
-                    let removeButtonEL = wemjq(textAreaWrapper.getParentElement().getParentElement().getHTMLElement()).find(
-                        '.remove-button')[0];
-                    removeButtonEL.addEventListener('mouseover', () => {
-                        isMouseOverRemoveOccurenceButton = true;
-                    });
-                    removeButtonEL.addEventListener('mouseleave', () => {
-                        isMouseOverRemoveOccurenceButton = false;
-                    });
-
-                this.onShown(() => {
-                            // invoke auto resize on shown in case contents have been updated while inactive
-                    if (editor['contentAreaContainer'] || editor['bodyElement']) {
-                                editor.execCommand('mceAutoResize', false, null, {skip_focus: true});
-                            }
-                    });
-                });
+                setEditableSourceCode(this.editableSourceCode).createEditor();//.
+            // then((editor: editor) => {
+            //     this.setEditorContent(id, property);
+            //     if (this.notInLiveEdit()) {
+            //         this.setupStickyEditorToolbarForInputOccurence(textAreaWrapper, id);
+            //     }
+            //     this.removeTooltipFromEditorArea(textAreaWrapper);
+            //
+            //     let removeButtonEL = wemjq(textAreaWrapper.getParentElement().getParentElement().getHTMLElement()).find(
+            //         '.remove-button')[0];
+            //     removeButtonEL.addEventListener('mouseover', () => {
+            //         isMouseOverRemoveOccurenceButton = true;
+            //     });
+            //     removeButtonEL.addEventListener('mouseleave', () => {
+            //         isMouseOverRemoveOccurenceButton = false;
+            //     });
+            //
+            // this.onShown(() => {
+            //             // invoke auto resize on shown in case contents have been updated while inactive
+            //     if (editor['contentAreaContainer'] || editor['bodyElement']) {
+            //                 editor.execCommand('mceAutoResize', false, null, {skip_focus: true});
+            //             }
+            //     });
+            // });
         }
 
         private setFocusOnEditorAfterCreate(inputOccurence: Element, id: string): void {
@@ -345,21 +345,21 @@ module api.form.inputtype.text {
             }
         }
 
-        private getEditor(editorId: string): HtmlAreaEditor {
-            return tinymce.get(editorId);
+        private getEditor(editorId: string): editor {
+            return CKEDITOR.instances[editorId];
         }
 
         isDirty(): boolean {
             return this.editors.some((editor: HtmlAreaOccurrenceInfo) => {
-                return this.getEditor(editor.id).getContent() !== editor.textAreaEl.getValue();
+                return this.getEditor(editor.id).getData() !== editor.textAreaEl.getValue();
             });
         }
 
         private setEditorContent(editorId: string, property: Property): void {
             let editor = this.getEditor(editorId);
             if (editor) {
-                editor.setContent(property.hasNonNullValue() ? HTMLAreaHelper.prepareImgSrcsInValueForEdit(property.getString()) : '');
-                HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
+                editor.setData(property.hasNonNullValue() ? HTMLAreaHelper.prepareImgSrcsInValueForEdit(property.getString()) : '');
+                //HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
             } else {
                 console.log(`Editor with id '${editorId}' not found`);
             }
@@ -370,7 +370,8 @@ module api.form.inputtype.text {
         }
 
         private notifyValueChanged(id: string, occurrence: api.dom.Element) {
-            let value = ValueTypes.STRING.newValue(HTMLAreaHelper.prepareEditorImageSrcsBeforeSave(this.getEditor(id)));
+            // let value = ValueTypes.STRING.newValue(HTMLAreaHelper.prepareEditorImageSrcsBeforeSave(this.getEditor(id)));
+            let value = ValueTypes.STRING.newValue(this.getEditor(id).getData());
             this.notifyOccurrenceValueChanged(occurrence, value);
         }
 
