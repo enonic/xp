@@ -52,11 +52,13 @@ exports.imageUrlTest = function () {
         params: {
             a: 1,
             b: [1, 2]
-        }
+        },
+        cache: false
     });
 
     // NOTE: This is not the actual url. Only a mock representation.
-    assert.assertEquals('ImageUrlParams{type=server, params={a=[1], b=[1, 2]}, id=123, quality=90, filter=scale(1,1), background=ffffff}',
+    assert.assertEquals(
+        'ImageUrlParams{type=server, params={a=[1], b=[1, 2]}, id=123, quality=90, filter=scale(1,1), background=ffffff, cache=false}',
         result);
     return true;
 };
