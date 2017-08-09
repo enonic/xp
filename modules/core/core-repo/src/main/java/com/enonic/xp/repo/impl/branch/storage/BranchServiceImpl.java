@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.branch.storage;
 
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -9,7 +8,6 @@ import java.util.stream.Collectors;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.Striped;
 
 import com.enonic.xp.data.ValueFactory;
@@ -157,7 +155,7 @@ public class BranchServiceImpl
             forceRefresh( false ).
             ids( nodeIds.stream().
                 map( nodeId -> new BranchDocumentId( nodeId, context.getBranch() ).toString() ).
-                collect( Collectors.toSet() ) ).
+                collect( Collectors.toList() ) ).
             settings( createStorageSettings( context ) ).
             build() );
     }

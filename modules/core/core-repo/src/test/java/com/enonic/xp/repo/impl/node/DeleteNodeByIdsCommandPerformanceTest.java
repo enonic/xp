@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.concurrent.TimeUnit;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -64,10 +62,7 @@ public class DeleteNodeByIdsCommandPerformanceTest
 
         started.stop();
 
-        final long elapsed = started.elapsed( TimeUnit.SECONDS );
-
         System.out.println( "Deleted [" + result.getTotalHits() + "] in " + started );
     }
-
 
 }

@@ -85,8 +85,16 @@ public class StorageDaoImpl
             setType( settings.getStorageType().getName() ).
             setRefresh( request.isForceRefresh() );
 
-        final DeleteResponse deleteResponse = this.client.delete( builder.request() ).
-            actionGet( request.getTimeoutAsString() );
+        final DeleteResponse deleteResponse;
+        try
+        {
+            deleteResponse = this.client.delete( builder.request() ).
+                actionGet( request.getTimeoutAsString() );
+        }
+        catch ( ElasticsearchException e )
+        {
+            throw new NodeStorageException( "Cannot delete node " + id, e );
+        }
 
         return deleteResponse.isFound();
     }
@@ -95,14 +103,24 @@ public class StorageDaoImpl
     public void delete( final DeleteRequests requests )
     {
         final StorageSource settings = requests.getSettings();
-        final DeleteRequestBuilder request = new DeleteRequestBuilder( this.client ).
-            setIndex( settings.getStorageName().getName() ).
-            setType( settings.getStorageType().getName() ).
-            setRefresh( requests.isForceRefresh() );
 
         for ( final String id : requests.getIds() )
         {
-            this.client.delete( request.setId( id ).request() ).actionGet( requests.getTimeoutAsString() );
+            try
+            {
+                final org.elasticsearch.action.delete.DeleteRequest request = new DeleteRequestBuilder( this.client ).
+                    setIndex( settings.getStorageName().getName() ).
+                    setType( settings.getStorageType().getName() ).
+                    setRefresh( requests.isForceRefresh() ).
+                    setId( id ).
+                    request();
+
+                this.client.delete( request ).actionGet( requests.getTimeoutAsString() );
+            }
+            catch ( ElasticsearchException e )
+            {
+                throw new NodeStorageException( "Cannot delete node " + id, e );
+            }
         }
     }
 
