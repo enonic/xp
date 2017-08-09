@@ -31,6 +31,11 @@ module api.security {
             return this;
         }
 
+        setResolveMemberships(value: boolean): PrincipalLoader {
+            this.getRequest().setResolveMemberships(value);
+            return this;
+        }
+
         search(searchString: string): wemQ.Promise<Principal[]> {
             this.getRequest().setSearchQuery(searchString);
             return this.load();

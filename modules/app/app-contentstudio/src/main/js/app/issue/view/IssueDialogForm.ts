@@ -15,6 +15,7 @@ import PrincipalKey = api.security.PrincipalKey;
 import ContentId = api.content.ContentId;
 import UserStoreKey = api.security.UserStoreKey;
 import i18n = api.util.i18n;
+import Principal = api.security.Principal;
 
 export class IssueDialogForm extends api.ui.form.Form {
 
@@ -70,13 +71,27 @@ export class IssueDialogForm extends api.ui.form.Form {
         this.descriptionText = new PEl('description-text');
 
         const principalLoader = new PrincipalLoader().setAllowedTypes([PrincipalType.USER]).skipPrincipals(
-            [PrincipalKey.ofAnonymous(), PrincipalKey.ofUser(UserStoreKey.SYSTEM, 'su')]);
+            [PrincipalKey.ofAnonymous(), PrincipalKey.ofUser(UserStoreKey.SYSTEM, 'su')]).setResolveMemberships(true);
 
         this.approversSelector = api.ui.security.PrincipalComboBox.create().setLoader(principalLoader).setMaxOccurences(0).setCompactView(
             this.compactAssigneesView).build();
 
-        this.contentItemsSelector = api.content.ContentComboBox.create().
-            setLoader(new api.content.resource.ContentSummaryLoader()).setShowStatus(true).setTreegridDropdownEnabled(true).build();
+        const rolesAllowed: PrincipalKey[] = [PrincipalKey.ofRole('system.admin'), PrincipalKey.ofRole('cms.admin'),
+            PrincipalKey.ofRole('cms.cm.app'),
+            PrincipalKey.ofRole('cms.expert')];
+
+        this.approversSelector.setIsPrincipalReadOnlyFunction((principal: Principal) => {
+            if (principal.asUser().getMemberships().some(
+                    principalRole => rolesAllowed.some(allowedRole => allowedRole.equals(principalRole.getKey())))) {
+                return false;
+            }
+
+            return true;
+        });
+
+        this.contentItemsSelector =
+            api.content.ContentComboBox.create().setLoader(new api.content.resource.ContentSummaryLoader()).setShowStatus(
+                true).setTreegridDropdownEnabled(true).build();
 
         this.contentItemsSelector.onOptionSelected((option) => {
             this.notifyContentItemsAdded(

@@ -112,10 +112,10 @@ module api.ui.selector {
                 if (selectedOptions) {
                     this.dropdownGrid.markSelections(selectedOptions);
                     if (selectedOptions.length > 0) {
-                        this.dropdownGrid.markReadOnly(selectedOptions);
                         this.navigateToRowIfNotActive(selectedOptions[0]);
                     }
                 }
+                this.dropdownGrid.markReadOnly();
             } else {
                 this.dropdownGrid.hide();
                 this.emptyDropdown.getEl().setInnerHtml(!!noOptionsText ? noOptionsText : i18n('field.option.noitems'));

@@ -274,12 +274,11 @@ module api.ui.selector {
             }
         }
 
-        markReadOnly(selectedOptions: Option<OPTION_DISPLAY_VALUE>[]) {
-
+        markReadOnly() {
             let stylesHash: Slick.CellCssStylesHash = {};
-            selectedOptions.forEach((selectedOption: Option<OPTION_DISPLAY_VALUE>) => {
-                if(selectedOption.readOnly) {
-                    let row = this.getGridData().getRowById(selectedOption.value);
+            this.getOptions().forEach((option: Option<OPTION_DISPLAY_VALUE>) => {
+                if(option.readOnly) {
+                    let row = this.getGridData().getRowById(option.value);
                     stylesHash[row] = {_checkbox_selector: 'readonly', option: 'readonly'};
                 }
             });

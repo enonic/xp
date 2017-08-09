@@ -25,6 +25,11 @@ module api.security {
             return this;
         }
 
+        setResolveMemberships(value: boolean): FindPrincipalListRequest {
+            this.request.setResolveMemberships(value);
+            return this;
+        }
+
         setSearchQuery(query: string): FindPrincipalListRequest {
             this.request.setSearchQuery(query);
             return this;

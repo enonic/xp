@@ -3,6 +3,7 @@ module api.security {
     export class FindPrincipalsRequest extends api.security.SecurityResourceRequest<FindPrincipalsResultJson, FindPrincipalsResult> {
 
         private allowedTypes: PrincipalType[];
+        private resolveMemberships: boolean = false;
         private searchQuery: string;
         private userStoreKey: UserStoreKey;
         private filterPredicate: (principal: Principal) => boolean;
@@ -11,12 +12,13 @@ module api.security {
 
         constructor() {
             super();
-            super.setMethod('GET');
+            super.setMethod('POST');
         }
 
         getParams(): Object {
             return {
-                types: this.enumToStrings(this.allowedTypes).join(','),
+                types: PrincipalTypeUtil.typesToStrings(this.allowedTypes),
+                memberships: this.resolveMemberships,
                 query: this.searchQuery || null,
                 userStoreKey: this.userStoreKey ? this.userStoreKey.toString() : null,
                 from: this.from || null,
@@ -41,12 +43,6 @@ module api.security {
                 });
         }
 
-        private enumToStrings(types: PrincipalType[]): string[] {
-            return types.map((type: PrincipalType) => {
-                return PrincipalType[type].toUpperCase();
-            });
-        }
-
         setUserStoreKey(key: UserStoreKey): FindPrincipalsRequest {
             this.userStoreKey = key;
             return this;
@@ -54,6 +50,11 @@ module api.security {
 
         setAllowedTypes(types: PrincipalType[]): FindPrincipalsRequest {
             this.allowedTypes = types;
+            return this;
+        }
+
+        setResolveMemberships(value: boolean): FindPrincipalsRequest {
+            this.resolveMemberships = value;
             return this;
         }
 
