@@ -4,11 +4,11 @@
 @form-field-set-spacing: 35px;
 
 .form-element-spacing(@size: @form-field-spacing) {
-  &:not(:first-child) {
+  &:not(:first-of-type) {
     margin-top: @size;
   }
 
-  &:not(:last-child) {
+  &:not(:last-of-type) {
     margin-bottom: @size;
   }
 }
@@ -27,12 +27,6 @@
   &.panel-may-display-validation-errors {
     .input-view {
       padding-top: 10px;
-    }
-  }
-
-  &.display-validation-errors {
-
-    .input-view {
 
       &.invalid {
         padding: 10px;
@@ -43,7 +37,9 @@
         }
       }
     }
+  }
 
+  &.display-validation-errors {
     .show-validation-viewer();
   }
 

@@ -75,7 +75,7 @@ export class ScheduleWizardStepForm
 
         this.initPropertySet(content);
         this.formView = new api.form.FormView(api.form.FormContext.create().build(), formBuilder.build(), this.propertySet);
-        this.formView.addClass('display-validation-errors');
+        this.formView.displayValidationErrors(true);
         this.formView.layout().then(() => {
             this.formView.onFocus((event) => {
                 this.notifyFocused(event);
