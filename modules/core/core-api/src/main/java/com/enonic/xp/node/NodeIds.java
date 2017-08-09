@@ -2,6 +2,7 @@ package com.enonic.xp.node;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
@@ -65,16 +66,9 @@ public class NodeIds
         return ImmutableSet.copyOf( pathList );
     }
 
-    public ImmutableSet<String> getAsStrings()
+    public List<String> getAsStrings()
     {
-        ImmutableSet.Builder<String> builder = ImmutableSet.builder();
-
-        for ( final NodeId nodeId : this.getSet() )
-        {
-            builder.add( nodeId.toString() );
-        }
-
-        return builder.build();
+        return this.set.stream().map( NodeId::toString ).collect( Collectors.toList() );
     }
 
     private final static class ParseFunction
