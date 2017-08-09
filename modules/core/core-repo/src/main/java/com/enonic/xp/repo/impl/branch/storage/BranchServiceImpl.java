@@ -155,7 +155,7 @@ public class BranchServiceImpl
             forceRefresh( false ).
             ids( nodeIds.stream().
                 map( nodeId -> new BranchDocumentId( nodeId, context.getBranch() ).toString() ).
-                collect( Collectors.toSet() ) ).
+                collect( Collectors.toList() ) ).
             settings( createStorageSettings( context ) ).
             build() );
     }

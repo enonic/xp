@@ -12,7 +12,7 @@ public interface StorageDao
 
     boolean delete( final DeleteRequest request );
 
-    boolean delete( final DeleteRequests request );
+    void delete( final DeleteRequests request );
 
     GetResult getById( final GetByIdRequest request );
 
