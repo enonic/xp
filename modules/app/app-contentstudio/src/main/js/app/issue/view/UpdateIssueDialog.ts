@@ -4,6 +4,7 @@ import {UpdateIssueRequest} from '../resource/UpdateIssueRequest';
 import {PublishRequest} from '../PublishRequest';
 import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import i18n = api.util.i18n;
+import PrincipalKey = api.security.PrincipalKey;
 
 export class UpdateIssueDialog extends IssueDialog {
 
@@ -42,10 +43,11 @@ export class UpdateIssueDialog extends IssueDialog {
         this.displayValidationErrors(!valid);
 
         if (valid) {
+            const approvers: PrincipalKey[] = this.form.getApprovers();
             const updateIssueRequest = new UpdateIssueRequest(this.persistedIssue.getId())
                 .setTitle(this.form.getTitle())
                 .setDescription(this.form.getDescription())
-                .setApprovers(this.form.getApprovers())
+                .setApprovers(approvers)
                 .setStatus(this.persistedIssue.getIssueStatus())
                 .setPublishRequest(
                     PublishRequest.create()
@@ -56,6 +58,9 @@ export class UpdateIssueDialog extends IssueDialog {
 
             updateIssueRequest.sendAndParse().then((issue) => {
                 api.notify.showSuccess(i18n('notify.issue.updated'));
+                if ( approvers.length > issue.getApprovers().length ) {
+                    api.notify.showWarning(i18n('notify.issue.asiignees.norights'));
+                }
                 this.close();
             }).catch((reason) => {
                 if (reason && reason.message) {

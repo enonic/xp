@@ -97,7 +97,7 @@ public class IssueServiceImplTest_update
         return this.createIssue( CreateIssueParams.create().
             title( "title" ).
             description( "description" ).
-            addApproverId( PrincipalKey.from( "user:myStore:approver-1" ) ).
+            setApproverIds( PrincipalKeys.from( "user:myStore:approver-1" ) ).
             setPublishRequest( PublishRequest.create().addItem(
                 PublishRequestItem.create().id( ContentId.from( "content-id" ) ).includeChildren( true ).build() ).build() ) );
     }
