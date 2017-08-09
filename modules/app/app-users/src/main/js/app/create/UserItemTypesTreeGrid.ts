@@ -33,6 +33,8 @@ import i18n = api.util.i18n;
 import Role = api.security.Role;
 import User = api.security.User;
 import Group = api.security.Group;
+import ElementHelper = api.dom.ElementHelper;
+import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 
 export class UserItemTypesTreeGrid extends TreeGrid<UserTypeTreeGridItem> {
 
@@ -59,10 +61,14 @@ export class UserItemTypesTreeGrid extends TreeGrid<UserTypeTreeGridItem> {
 
     private initEventHandlers() {
         this.getGrid().subscribeOnClick((event, data) => {
+            event.preventDefault();
+            event.stopPropagation();
+
             const node = this.getGrid().getDataView().getItem(data.row);
             const userItem = node.getData().getUserItem();
             if (node.getData().hasChildren()) {
-                this.expandNode(node);
+                this.toggleNode(node);
+                ResponsiveManager.fireResizeEvent();
             } else {
                 const isRootNode = node.calcLevel() === 1;
                 if (userItem instanceof UserStore) {
@@ -78,7 +84,6 @@ export class UserItemTypesTreeGrid extends TreeGrid<UserTypeTreeGridItem> {
                 } else if (userItem instanceof Role) {
                     new NewPrincipalEvent([new UserTreeGridItemBuilder().setType(UserTreeGridItemType.ROLES).build()]).fire();
                 }
-                // close
             }
         });
     }
@@ -95,6 +100,7 @@ export class UserItemTypesTreeGrid extends TreeGrid<UserTypeTreeGridItem> {
 
         return new ListUserStoresRequest().sendAndParse().then((userStores: UserStore[]) => {
             this.userStores = userStores;
+            this.toggleClass('flat', this.userStores.length === 1);
             return userStores;
         });
     }
@@ -108,27 +114,27 @@ export class UserItemTypesTreeGrid extends TreeGrid<UserTypeTreeGridItem> {
     }
 
     fetchRoot(): wemQ.Promise<UserTypeTreeGridItem[]> {
-        return wemQ.resolve([
-            new UserTypeTreeGridItemBuilder()
-                .setUserItem(new RoleBuilder()
-                    .setKey(new PrincipalKey(UserStoreKey.SYSTEM, PrincipalType.ROLE, 'role'))
-                    .setDisplayName('Role')
-                    .build()).build(),
+        return this.fetchUserStores().then(() => [
             new UserTypeTreeGridItemBuilder()
                 .setUserItem(new UserBuilder()
                     .setKey(new PrincipalKey(UserStoreKey.SYSTEM, PrincipalType.USER, 'user'))
-                    .setDisplayName('User')
+                    .setDisplayName(i18n('field.user'))
                     .build()).build(),
             new UserTypeTreeGridItemBuilder()
                 .setUserItem(new GroupBuilder()
                     .setKey(new PrincipalKey(UserStoreKey.SYSTEM, PrincipalType.GROUP, 'user-group'))
-                    .setDisplayName('User Group')
+                    .setDisplayName(i18n('field.userGroup'))
                     .build()).build(),
             new UserTypeTreeGridItemBuilder()
                 .setUserItem(new UserStoreBuilder()
                     .setKey(UserStoreKey.SYSTEM.toString())
-                    .setDisplayName('User Store')
-                    .build()).build()
+                    .setDisplayName(i18n('field.userStore'))
+                    .build()).build(),
+            new UserTypeTreeGridItemBuilder()
+                .setUserItem(new RoleBuilder()
+                    .setKey(new PrincipalKey(UserStoreKey.SYSTEM, PrincipalType.ROLE, 'role'))
+                    .setDisplayName(i18n('field.role'))
+                    .build()).build(),
         ]);
     }
 

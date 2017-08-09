@@ -1,13 +1,26 @@
 .new-principal-dialog {
-  .tree-grid {
-
-  }
-
   .modal-dialog-footer {
     display: none;
   }
 
   .tree-grid {
+    &.flat {
+      .slick-cell .toggle {
+        display: none !important;
+      }
+      .viewer.root-viewer {
+        .names-and-icon-view {
+          padding-left: 6px;
+        }
+      }
+    }
+
+    &:not(.flat) {
+      .viewer.root-viewer {
+        padding-left: 0px;
+      }
+    }
+
     .viewer.root-viewer {
       .names-and-icon-view {
         .@{_COMMON_PREFIX}main-name {
@@ -22,7 +35,7 @@
 
     .viewer:not(.root-viewer) {
       box-sizing: border-box;
-      padding-left: 47px;
+      padding-left: 77px;
     }
 
     .slick-cell.selected {
@@ -35,10 +48,6 @@
       }
       background-color: transparent;
       color: inherit;
-    }
-
-    .slick-cell .toggle {
-      display: none !important;
     }
   }
 }

@@ -297,11 +297,15 @@ module api.ui.treegrid {
                 this.setActive(false);
 
                 if (elem.hasClass('expand')) {
+                    event.preventDefault();
+                    event.stopPropagation();
                     this.onExpand(elem, data);
                     return;
                 }
 
                 if (elem.hasClass('collapse')) {
+                    event.preventDefault();
+                    event.stopPropagation();
                     this.onCollapse(elem, data);
                     return;
                 }
@@ -1578,6 +1582,14 @@ module api.ui.treegrid {
             this.invalidate();
             this.triggerSelectionChangedListeners();
             this.setActive(true);
+        }
+
+        toggleNode(node: TreeNode<DATA>, all: boolean = false) {
+            if (node.isExpanded()) {
+                this.collapseNode(node, all);
+            } else {
+                this.expandNode(node, all);
+            }
         }
 
         notifyLoaded(): void {
