@@ -200,7 +200,7 @@ module api.ui.treegrid {
                 });
             }
 
-            this.bindClickEvents();
+            this.bindClickEvents(builder.isToggleClickEnabled());
 
             this.grid.onShown(() => {
                 this.scrollable = this.queryScrollable();
@@ -272,7 +272,7 @@ module api.ui.treegrid {
             }
         };
 
-        private bindClickEvents() {
+        private bindClickEvents(toggleClickEnabled: boolean) {
             let clickHandler = ((event, data) => {
                 if (!this.isActive()) {
                     return;
@@ -296,18 +296,16 @@ module api.ui.treegrid {
 
                 this.setActive(false);
 
-                if (elem.hasClass('expand')) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    this.onExpand(elem, data);
-                    return;
-                }
+                if (toggleClickEnabled) {
+                    if (elem.hasClass('expand')) {
+                        this.onExpand(elem, data);
+                        return;
+                    }
 
-                if (elem.hasClass('collapse')) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    this.onCollapse(elem, data);
-                    return;
+                    if (elem.hasClass('collapse')) {
+                        this.onCollapse(elem, data);
+                        return;
+                    }
                 }
 
                 this.setActive(true);

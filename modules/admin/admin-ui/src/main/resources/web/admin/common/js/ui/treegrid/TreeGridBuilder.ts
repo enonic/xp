@@ -37,6 +37,8 @@ module api.ui.treegrid {
 
         private columnUpdater: () => void;
 
+        private toggleClickEnabled: boolean = true;
+
         constructor(grid?: TreeGrid<NODE>) {
             if (grid) {
                 this.showToolbar = grid.hasToolbar();
@@ -298,6 +300,15 @@ module api.ui.treegrid {
 
         getColumnUpdater(): () => void {
             return this.columnUpdater;
+        }
+
+        setToggleClickEnabled(toggleClickEnabled: boolean): TreeGridBuilder<NODE> {
+            this.toggleClickEnabled = toggleClickEnabled;
+            return this;
+        }
+
+        isToggleClickEnabled(): boolean {
+            return this.toggleClickEnabled;
         }
 
         private buildColumn(columnConfig: GridColumnConfig) {

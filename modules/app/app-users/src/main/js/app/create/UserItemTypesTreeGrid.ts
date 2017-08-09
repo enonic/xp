@@ -52,6 +52,7 @@ export class UserItemTypesTreeGrid extends TreeGrid<UserTypeTreeGridItem> {
             .setShowToolbar(false)
             .disableMultipleSelection(true)
             .setCheckableRows(false)
+            .setToggleClickEnabled(false)
             .prependClasses('user-types-tree-grid');
 
         super(builder);
