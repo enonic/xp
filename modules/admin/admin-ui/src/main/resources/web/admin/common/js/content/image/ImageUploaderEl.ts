@@ -192,8 +192,12 @@ module api.content.image {
                 this.notifyOrientationChanged(orientation);
             };
 
-            imageEditor.getImage().onLoaded((event: UIEvent) => {
-                this.togglePlaceholder(false);
+
+            const editorImage = imageEditor.getImage();
+            editorImage.onLoaded((event: UIEvent) => {
+                if (!editorImage.isPlaceholder()) {
+                    this.togglePlaceholder(false);
+                }
                 imageEditor.onOrientationChanged(orientationHandler);
                 imageEditor.onShaderVisibilityChanged(shaderVisibilityChangedHandler);
                 imageEditor.onEditModeChanged(editModeChangedHandler);
