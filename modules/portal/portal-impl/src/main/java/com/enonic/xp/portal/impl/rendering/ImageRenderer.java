@@ -89,9 +89,9 @@ public final class ImageRenderer
 
     private String buildUrl( final PortalRequest portalRequest, final ContentId id )
     {
-        final ImageUrlParams params = new ImageUrlParams().portalRequest( portalRequest );
-        params.id( id.toString() );
-        params.scale( "width(768)" );
+        final ImageUrlParams params =
+            new ImageUrlParams().portalRequest( portalRequest ).id( id.toString() ).scale( "width(768)" ).cache( false );
+
         return this.urlService.imageUrl( params );
     }
 

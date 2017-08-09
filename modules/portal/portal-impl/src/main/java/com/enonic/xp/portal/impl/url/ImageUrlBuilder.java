@@ -36,6 +36,7 @@ final class ImageUrlBuilder
         addParamIfNeeded( params, "quality", this.params.getQuality() );
         addParamIfNeeded( params, "background", this.params.getBackground() );
         addParamIfNeeded( params, "filter", this.params.getFilter() );
+        addParamIfNeeded( params, "ts", !this.params.isCache() ? System.nanoTime() : null );
     }
 
     private void addParamIfNeeded( final Multimap<String, String> params, final String name, final Object value )

@@ -692,6 +692,8 @@ export class ContentWizardPanel
         return this.getPersistedItem().getPath().isDescendantOf(path) || this.getPersistedItem().getPath().equals(path);
     }
 
+    private formContext: ContentFormContext;
+
     private updateWizard(content: Content, unchangedOnly: boolean = true) {
 
         this.updateWizardHeader(content);
@@ -864,7 +866,7 @@ export class ContentWizardPanel
 
     private updateLiveForm() {
         let content = this.getPersistedItem();
-        let formContext = this.createFormContext(content);
+        let formContext = this.getFormContext(content);
 
         if (this.siteModel) {
             this.unbindSiteModelListeners();
@@ -1103,7 +1105,7 @@ export class ContentWizardPanel
 
         this.toggleClass('rendered', false);
 
-        let formContext = this.createFormContext(content);
+        let formContext = this.getFormContext(content);
 
         return this.initLiveEditor(formContext, content).then(() => {
             this.updateButtonsState();
@@ -1285,6 +1287,8 @@ export class ContentWizardPanel
             });
             return wemQ.all(getMixinPromises);
         }).then((mixins: Mixin[]) => {
+            const formContext = this.getFormContext(this.getPersistedItem());
+
             mixins.forEach((mixin: Mixin) => {
                 if (!this.metadataStepFormByName[mixin.getMixinName().toString()]) {
 
@@ -1296,7 +1300,7 @@ export class ContentWizardPanel
 
                     let extraData = new ExtraData(mixin.getMixinName(), new PropertyTree());
 
-                    stepForm.layout(this.createFormContext(this.getPersistedItem()), extraData.getData(), mixin.toForm());
+                    stepForm.layout(formContext, extraData.getData(), mixin.toForm());
                 }
             });
 
@@ -1650,12 +1654,14 @@ export class ContentWizardPanel
         });
     }
 
-    private createFormContext(content: Content): ContentFormContext {
-        let formContext: ContentFormContext = <ContentFormContext>ContentFormContext.create().setSite(this.site).setParentContent(
-            this.parentContent).setPersistedContent(content).setContentTypeName(
-            this.contentType ? this.contentType.getContentTypeName() : undefined).setFormState(
-            this.formState).setShowEmptyFormItemSetOccurrences(this.isItemPersisted()).build();
-        return formContext;
+    private getFormContext(content: Content): ContentFormContext {
+        if (!this.formContext) {
+            this.formContext = <ContentFormContext>ContentFormContext.create().setSite(this.site).setParentContent(
+                this.parentContent).setPersistedContent(content).setContentTypeName(
+                this.contentType ? this.contentType.getContentTypeName() : undefined).setFormState(
+                this.formState).setShowEmptyFormItemSetOccurrences(this.isItemPersisted()).build();
+        }
+        return this.formContext;
     }
 
     private checkSecurityWizardStepFormAllowed(loginResult: api.security.auth.LoginResult) {
@@ -1670,6 +1676,7 @@ export class ContentWizardPanel
      */
     private updateMetadataAndMetadataStepForms(content: Content, unchangedOnly: boolean = true) {
         let contentCopy = content.clone();
+        this.getFormContext(contentCopy).updatePersistedContent(contentCopy);
 
         for (let key in this.metadataStepFormByName) {
             if (this.metadataStepFormByName.hasOwnProperty(key)) {

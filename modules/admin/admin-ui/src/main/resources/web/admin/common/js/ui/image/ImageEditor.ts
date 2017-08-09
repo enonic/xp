@@ -1028,11 +1028,13 @@ module api.ui.image {
 
         private updateStickyToolbar() {
             let relativeScrollTop = this.getRelativeScrollTop();
+            const el = this.stickyToolbar.getEl();
+            this.getEl().setPaddingTop(el.getHeight() + 'px');
             if (!this.isTopEdgeVisible(relativeScrollTop) && this.isBottomEdgeVisible(relativeScrollTop)) {
                 this.addClass('sticky-mode');
-                this.stickyToolbar.getEl().setTopPx(-relativeScrollTop);
+                el.setTopPx(-relativeScrollTop);
             } else {
-                this.stickyToolbar.getEl().setTopPx(0);
+                el.setTopPx(0);
                 this.removeClass('sticky-mode');
             }
         }
