@@ -60,7 +60,7 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
                     type = i18n('field.user');
                     break;
                 case UserTreeGridItemType.GROUPS:
-                    type = i18n('field.group');
+                    type = i18n('field.userGroup');
                     break;
                 case UserTreeGridItemType.ROLES:
                     type = i18n('field.role');
@@ -78,7 +78,7 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
                 label = [i18n('action.new'), type].join(' ');
             }
             newAction.setLabel(label);
-        }, 50);
+        }, 10);
 
         this.treeGrid.onSelectionChanged((currentSelection: TreeNode<UserTreeGridItem>[]) => changeSelectionStatus(currentSelection));
 
