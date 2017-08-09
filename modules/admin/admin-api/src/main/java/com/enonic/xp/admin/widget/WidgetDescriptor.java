@@ -14,6 +14,7 @@ import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.RoleKeys;
 
 @Beta
 public class WidgetDescriptor
@@ -70,7 +71,7 @@ public class WidgetDescriptor
 
     public boolean isAccessAllowed( final PrincipalKeys principalKeys )
     {
-        return allowedPrincipals == null || principalKeys.stream().
+        return allowedPrincipals == null || principalKeys.contains( RoleKeys.ADMIN ) || principalKeys.stream().
             anyMatch( allowedPrincipals::contains );
     }
 

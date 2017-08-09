@@ -1,6 +1,5 @@
 package com.enonic.xp.admin.impl.rest.resource.widget;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
@@ -16,10 +15,8 @@ import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.widget.json.WidgetDescriptorJson;
-import com.enonic.xp.admin.widget.GetWidgetDescriptorsParams;
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.admin.widget.WidgetDescriptorService;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.RoleKeys;
@@ -39,14 +36,7 @@ public class WidgetDescriptorResource
     @Path("list/byinterfaces")
     public List<WidgetDescriptorJson> getByInterfaces( final String[] widgetInterfaces )
     {
-        final GetWidgetDescriptorsParams getWidgetDescriptorsParams = GetWidgetDescriptorsParams.create().
-            setPrincipalKeys( ContextAccessor.current().
-                getAuthInfo().
-                getPrincipals().getSet() ).
-            setInterfaceNames( Arrays.asList( widgetInterfaces ) ).
-            build();
-        final Descriptors<WidgetDescriptor> widgetDescriptors =
-            this.widgetDescriptorService.getWidgetDescriptors( getWidgetDescriptorsParams );
+        final Descriptors<WidgetDescriptor> widgetDescriptors = this.widgetDescriptorService.getByInterfaces( widgetInterfaces );
         return widgetDescriptorsToJsonList( widgetDescriptors );
     }
 
