@@ -6,11 +6,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.admin.widget.WidgetDescriptor;
+import com.enonic.xp.admin.widget.WidgetDescriptorService;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
@@ -43,6 +46,8 @@ public class WidgetHandlerTest
 
     protected ContentService contentService;
 
+    private WidgetDescriptorService widgetDescriptorService;
+
     private ControllerScript controllerScript;
 
     private HttpServletRequest rawRequest;
@@ -60,10 +65,12 @@ public class WidgetHandlerTest
         Mockito.when( this.controllerScript.execute( Mockito.anyObject() ) ).thenReturn( portalResponse );
 
         this.contentService = Mockito.mock( ContentService.class );
+        this.widgetDescriptorService = Mockito.mock( WidgetDescriptorService.class );
 
         this.handler = new WidgetHandler();
         this.handler.setControllerScriptFactory( controllerScriptFactory );
         this.handler.setContentService( this.contentService );
+        this.handler.setWidgetDescriptorService( this.widgetDescriptorService );
 
         this.rawRequest = Mockito.mock( HttpServletRequest.class );
         Mockito.when( this.rawRequest.isUserInRole( Mockito.anyString() ) ).thenReturn( Boolean.TRUE );
@@ -139,10 +146,22 @@ public class WidgetHandlerTest
         Mockito.verify( this.controllerScript ).execute( this.request );
     }
 
+    @Test(expected = WebException.class)
+    public void testForbidden()
+        throws Exception
+    {
+        this.mockDescriptor( false );
+        this.request.setEndpointPath( "/_/widgets/demo/test" );
+        this.request.setMode( RenderMode.ADMIN );
+        this.handler.handle( this.request, WebResponse.create().build(), null );
+    }
+
     @Test
     public void executeScript_noContent()
         throws Exception
     {
+        mockDescriptor( true );
+
         this.request.setEndpointPath( "/_/widgets/demo/test" );
         this.request.setMode( RenderMode.ADMIN );
 
@@ -161,6 +180,7 @@ public class WidgetHandlerTest
         throws Exception
     {
         setupContentAndSite();
+        mockDescriptor( true );
 
         this.request.setEndpointPath( "/_/widgets/demo/test" );
         this.request.setMode( RenderMode.ADMIN );
@@ -180,12 +200,11 @@ public class WidgetHandlerTest
         throws Exception
     {
         final Content content = createPage( "id", "site/somepath/content", "myapplication:ctype", false );
-
         Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
             thenReturn( content );
-
         Mockito.when( this.contentService.getById( content.getId() ) ).
             thenReturn( content );
+        mockDescriptor( true );
 
         this.request.setEndpointPath( "/_/widgets/demo/test" );
         this.request.setMode( RenderMode.ADMIN );
@@ -266,5 +285,13 @@ public class WidgetHandlerTest
             type( ContentTypeName.from( contentTypeName ) ).
             page( page ).
             build();
+    }
+
+    private void mockDescriptor( boolean hasAccess )
+    {
+        WidgetDescriptor descriptor = Mockito.mock( WidgetDescriptor.class );
+        Mockito.when( this.widgetDescriptorService.getByKey( Mockito.any( DescriptorKey.class ) ) ).thenReturn(
+            hasAccess ? descriptor : null );
+        Mockito.when( this.widgetDescriptorService.widgetExists( Mockito.any( DescriptorKey.class ) ) ).thenReturn( true );
     }
 }
