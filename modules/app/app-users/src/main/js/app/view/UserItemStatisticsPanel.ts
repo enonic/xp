@@ -80,7 +80,7 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
                 userGroup = new ItemDataGroup(i18n('field.user'), 'user');
                 userGroup.addDataList(i18n('field.email'), principal.asUser().getEmail());
 
-                rolesAndGroupsGroup = new ItemDataGroup(i18n('field.rolesAndGroups'), 'memeberships');
+                rolesAndGroupsGroup = new ItemDataGroup(i18n('field.rolesAndGroups'), 'memberships');
 
                 let roles = principal.asUser().getMemberships().filter((el) => {
                     return el.isRole();
