@@ -6,6 +6,7 @@ import ItemStatisticsPanel = api.app.view.ItemStatisticsPanel;
 import ItemDataGroup = api.app.view.ItemDataGroup;
 
 import Principal = api.security.Principal;
+import PrincipalKey = api.security.PrincipalKey;
 import PrincipalType = api.security.PrincipalType;
 import GetPrincipalByKeyRequest = api.security.GetPrincipalByKeyRequest;
 
@@ -38,21 +39,7 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
 
             this.userDataContainer.removeChildren();
 
-            if (item.getModel().getPrincipal()) {
-                let type = item.getModel().getPrincipal().getType();
-
-                switch (type) {
-                case PrincipalType.USER:
-                    this.appendUserMetadata(item);
-                    break;
-                case PrincipalType.GROUP:
-                    this.appendGroupMetadata(item);
-                    break;
-                case PrincipalType.ROLE:
-                    this.appendRoleMetadata(item);
-                    break;
-                }
-            }
+            this.appendMetadata(item);
 
             super.setItem(item);
         }
@@ -64,149 +51,99 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
         item.setIconSize(128);
     }
 
-    private appendUserMetadata(item: ViewItem<UserTreeGridItem>) {
-        // Insert an empty data first to avoid blinking, after full data is loaded.
-        let userGroup = new ItemDataGroup(i18n('field.user'), 'user');
-        userGroup.addDataList(i18n('field.email'), ' ');
-        this.userDataContainer.appendChild(userGroup);
+    private appendMetadata(item: ViewItem<UserTreeGridItem>) {
+        const principal = item.getModel().getPrincipal();
+        const type = principal ? principal.getTypeName().toLowerCase() : '';
 
-        let rolesAndGroupsGroup = new ItemDataGroup(i18n('field.rolesAndGroups'), 'roles-and-groups');
-        rolesAndGroupsGroup.addDataArray(i18n('field.roles'), []);
-        rolesAndGroupsGroup.addDataArray(i18n('field.groups'), []);
-        this.userDataContainer.appendChild(rolesAndGroupsGroup);
+        if (type) {
+            const mainGroup = new ItemDataGroup(i18n(`field.${type}`), type);
+            let metaGroups: wemQ.Promise<ItemDataGroup[]>;
 
-        new GetPrincipalByKeyRequest(item.getModel().getPrincipal().getKey()).setIncludeMemberships(true).sendAndParse().then(
-            (principal: Principal) => {
-                userGroup = new ItemDataGroup(i18n('field.user'), 'user');
-                userGroup.addDataList(i18n('field.email'), principal.asUser().getEmail());
+            switch (principal.getType()) {
+            case PrincipalType.USER:
+                metaGroups = this.createUserMetadataGroups(principal.getKey(), mainGroup);
+                break;
+            case PrincipalType.GROUP:
+                metaGroups = this.createGroupMetadataGroups(principal.getKey(), mainGroup, principal.getDescription());
+                break;
+            case PrincipalType.ROLE:
+                metaGroups = this.createRoleMetadataGroups(principal.getKey(), mainGroup, principal.getDescription());
+                break;
+            }
 
-                rolesAndGroupsGroup = new ItemDataGroup(i18n('field.rolesAndGroups'), 'memberships');
-
-                let roles = principal.asUser().getMemberships().filter((el) => {
-                    return el.isRole();
-                }).map((el) => {
-                    let viewer = new PrincipalViewer();
-                    viewer.setObject(el);
-                    return viewer;
-                });
-                rolesAndGroupsGroup.addDataElements(i18n('field.roles'), roles);
-
-                let groups = principal.asUser().getMemberships().filter((el) => {
-                    return el.isGroup();
-                }).map((el) => {
-                    let viewer = new PrincipalViewer();
-                    viewer.setObject(el);
-                    return viewer;
-                });
-                rolesAndGroupsGroup.addDataElements(i18n('field.groups'), groups);
-
+            metaGroups.then((groups: ItemDataGroup[]) => {
                 this.userDataContainer.removeChildren();
-                this.userDataContainer.appendChild(userGroup);
-                this.userDataContainer.appendChild(rolesAndGroupsGroup);
+                this.appendChildren(...groups);
             }).catch((reason: any) => {
-            api.DefaultErrorHandler.handle(reason);
-        }).done();
+                api.DefaultErrorHandler.handle(reason);
+            }).done();
+        }
     }
 
-    private appendGroupMetadata(item: ViewItem<UserTreeGridItem>) {
-        // Insert an empty data first to avoid blinking, after full data is loaded.
-        const type = PrincipalType[item.getModel().getPrincipal().getType()];
-        const name = type.charAt(0) + type.slice(1).toLowerCase();
+    private createPricnipalViewer(principal: Principal): PrincipalViewer {
+        const viewer = new PrincipalViewer();
+        viewer.setObject(principal);
+        return viewer;
+    }
 
-        const groupGroup = new ItemDataGroup(name, 'group');
-        groupGroup.appendChild(new api.dom.DivEl('description').setHtml(item.getModel().getPrincipal().getDescription()));
-        this.userDataContainer.appendChild(groupGroup);
+    private createUserMetadataGroups(key: PrincipalKey, mainGroup: ItemDataGroup): wemQ.Promise<ItemDataGroup[]> {
+        this.userDataContainer.appendChild(mainGroup);
+
+        const rolesAndGroupsGroup = new ItemDataGroup(i18n('field.rolesAndGroups'), 'memberships');
+        this.userDataContainer.appendChild(rolesAndGroupsGroup);
+
+        return new GetPrincipalByKeyRequest(key).setIncludeMemberships(true).sendAndParse().then((principal: Principal) => {
+            const user = principal.asUser();
+            mainGroup.addDataList(i18n('field.email'), user.getEmail());
+
+            const roles = user.getMemberships().filter(el => el.isRole()).map(el => this.createPricnipalViewer(el));
+            rolesAndGroupsGroup.addDataElements(i18n('field.roles'), roles);
+
+            let groups = principal.asUser().getMemberships().filter(el => el.isGroup()).map(el => this.createPricnipalViewer(el));
+            rolesAndGroupsGroup.addDataElements(i18n('field.groups'), groups);
+
+            return [mainGroup, rolesAndGroupsGroup];
+        });
+    }
+
+    private createGroupMetadataGroups(key: PrincipalKey, mainGroup: ItemDataGroup, description: string): wemQ.Promise<ItemDataGroup[]> {
+        mainGroup.appendChild(new api.dom.DivEl('description').setHtml(description));
+        this.userDataContainer.appendChild(mainGroup);
 
         const rolesGroup = new ItemDataGroup(i18n('field.roles'), 'roles');
-        rolesGroup.addDataArray(i18n('field.roles'), []);
         this.userDataContainer.appendChild(rolesGroup);
 
         const membersGroup = new ItemDataGroup(i18n('field.members'), 'members');
-        membersGroup.addDataArray(i18n('field.members'), []);
         this.userDataContainer.appendChild(membersGroup);
 
-        new GetPrincipalByKeyRequest(item.getModel().getPrincipal().getKey())
-            .setIncludeMemberships(true)
-            .sendAndParse()
-            .then((principal: Principal) => {
+        return new GetPrincipalByKeyRequest(key).setIncludeMemberships(true).sendAndParse().then((principal: Principal) => {
+            const group = principal.asGroup();
 
-                const group = principal.asGroup();
+            rolesGroup.addDataElements(null, group.getMemberships().map(el => this.createPricnipalViewer(el)));
 
-                const newRolesGroup = new ItemDataGroup(i18n('field.roles'), 'roles');
-                newRolesGroup.addDataElements(null, group.getMemberships().map((el) => {
-                    const viewer = new PrincipalViewer();
-                    viewer.setObject(el);
-                    return viewer;
-                }));
+            const membersPromises = group.getMembers().map(el => new GetPrincipalByKeyRequest(el).sendAndParse());
 
-                const membersPromises = group.getMembers().map((el) => {
-                    return new GetPrincipalByKeyRequest(el).sendAndParse();
-                });
-
-                wemQ.all(membersPromises).then((results: Principal[]) => {
-
-                    const newMembersGroup = new ItemDataGroup(i18n('field.members'), 'members');
-
-                    newMembersGroup.addDataElements(null, results.map((el) => {
-                        const viewer = new PrincipalViewer();
-                        viewer.setObject(el);
-                        return viewer;
-                    }));
-
-                    this.userDataContainer.removeChildren();
-                    this.userDataContainer.appendChild(groupGroup);
-                    this.userDataContainer.appendChild(newRolesGroup);
-                    this.userDataContainer.appendChild(newMembersGroup);
-                }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
-                }).done();
-
-            }).catch((reason: any) => {
-            api.DefaultErrorHandler.handle(reason);
-        }).done();
+            return wemQ.all(membersPromises).then((results: Principal[]) => {
+                membersGroup.addDataElements(null, results.map(el => this.createPricnipalViewer(el)));
+            }).then(() => [mainGroup, rolesGroup, membersGroup]);
+        });
     }
 
-    private appendRoleMetadata(item: ViewItem<UserTreeGridItem>) {
-        // Insert an empty data first to avoid blinking, after full data is loaded.
-        const type = PrincipalType[item.getModel().getPrincipal().getType()];
-        const name = type.charAt(0) + type.slice(1).toLowerCase();
-
-        const roleGroup = new ItemDataGroup(name, 'role');
-        roleGroup.appendChild(new api.dom.DivEl('description').setHtml(item.getModel().getPrincipal().getDescription()));
-        this.userDataContainer.appendChild(roleGroup);
+    private createRoleMetadataGroups(key: PrincipalKey, mainGroup: ItemDataGroup, description: string): wemQ.Promise<ItemDataGroup[]> {
+        mainGroup.appendChild(new api.dom.DivEl('description').setHtml(description));
+        this.userDataContainer.appendChild(mainGroup);
 
         const membersGroup = new ItemDataGroup(i18n('field.members'), 'members');
-        membersGroup.addDataArray(i18n('field.members'), []);
         this.userDataContainer.appendChild(membersGroup);
 
-        new GetPrincipalByKeyRequest(item.getModel().getPrincipal().getKey())
-            .setIncludeMemberships(true)
-            .sendAndParse()
-            .then((principal: Principal) => {
+        return new GetPrincipalByKeyRequest(key).setIncludeMemberships(true).sendAndParse().then((principal: Principal) => {
+            const role = principal.asRole();
 
-                const membersPromises = principal.asRole().getMembers().map((el) => {
-                    return new GetPrincipalByKeyRequest(el).sendAndParse();
-                });
+            const membersPromises = role.getMembers().map(el => new GetPrincipalByKeyRequest(el).sendAndParse());
 
-                wemQ.all(membersPromises).then((results: Principal[]) => {
-
-                    const newMembersGroup = new ItemDataGroup(i18n('field.members'), 'members');
-
-                    newMembersGroup.addDataElements(i18n('field.members'), results.map((el) => {
-                        const viewer = new PrincipalViewer();
-                        viewer.setObject(el);
-                        return viewer;
-                    }));
-
-                    this.userDataContainer.removeChildren();
-                    this.userDataContainer.appendChild(roleGroup);
-                    this.userDataContainer.appendChild(newMembersGroup);
-                }).catch((reason: any) => {
-                    api.DefaultErrorHandler.handle(reason);
-                }).done();
-
-            }).catch((reason: any) => {
-            api.DefaultErrorHandler.handle(reason);
-        }).done();
+            return wemQ.all(membersPromises).then((results: Principal[]) => {
+                membersGroup.addDataElements(null, results.map(el => this.createPricnipalViewer(el)));
+            }).then(() => [mainGroup, membersGroup]);
+        });
     }
 }
