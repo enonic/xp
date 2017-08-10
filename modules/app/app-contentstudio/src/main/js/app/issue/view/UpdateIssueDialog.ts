@@ -30,6 +30,8 @@ export class UpdateIssueDialog extends IssueDialog {
         this.persistedIssue = issue;
         this.form.setIssue(issue);
 
+        this.setExcludedIds(this.persistedIssue.getPublishRequest().getExcludeIds());
+
         this.setItems(items);
     }
 

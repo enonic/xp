@@ -47,7 +47,7 @@ module api.ui.text {
             inputWrapper.appendChild(this.input);
 
             this.showLink = new api.dom.AEl('show-link');
-            this.showLink.getEl().setAttribute('data-i18n', i18n('field.pswGenerator.show'));
+            this.toggleShowLink(true);
             this.initFocusEvents(this.showLink);
             this.showLink.onClicked((event: MouseEvent) => {
 
@@ -55,7 +55,7 @@ module api.ui.text {
 
                 const unlocked = this.hasClass('unlocked');
 
-                this.showLink.getEl().setAttribute('data-i18n', i18n(`field.pswGenerator.${unlocked ? 'hide' : 'show'}`));
+                this.toggleShowLink(!unlocked);
                 this.input.setType(unlocked ? 'text' : 'password');
 
                 event.stopPropagation();
@@ -108,6 +108,15 @@ module api.ui.text {
 
         getPlaceholder(): string {
             return this.input.getPlaceholder();
+        }
+
+        private toggleShowLink(locked: boolean) {
+            this.showLink.getEl().setAttribute('data-i18n', i18n(`field.pswGenerator.${locked ? 'show' : 'hide'}`));
+        }
+
+        reset() {
+            this.setValue('');
+            this.toggleShowLink(true);
         }
 
         private assessComplexity(value: string) {
