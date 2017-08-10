@@ -197,7 +197,7 @@ module api.form.inputtype.text {
                 textAreaWrapper.addClass(focusedEditorCls);
             };
 
-            new HTMLAreaBuilder().
+            const ckeditor: editor = new HTMLAreaBuilder().
                 setSelector('textarea.' + id.replace(/\./g, '_')).setTextAreaId(id).
                 setAssetsUri(baseUrl).
                 setInline(false).
@@ -215,30 +215,27 @@ module api.form.inputtype.text {
                     exclude: this.inputConfig['exclude']
                 }).
                 setForcedRootBlock(this.inputConfig['forcedRootBlock'] ? this.inputConfig['forcedRootBlock'][0].value : 'p').
-                setEditableSourceCode(this.editableSourceCode).createEditor();//.
-            // then((editor: editor) => {
-            //     this.setEditorContent(id, property);
-            //     if (this.notInLiveEdit()) {
-            //         this.setupStickyEditorToolbarForInputOccurence(textAreaWrapper, id);
-            //     }
-            //     this.removeTooltipFromEditorArea(textAreaWrapper);
-            //
-            //     let removeButtonEL = wemjq(textAreaWrapper.getParentElement().getParentElement().getHTMLElement()).find(
-            //         '.remove-button')[0];
-            //     removeButtonEL.addEventListener('mouseover', () => {
-            //         isMouseOverRemoveOccurenceButton = true;
-            //     });
-            //     removeButtonEL.addEventListener('mouseleave', () => {
-            //         isMouseOverRemoveOccurenceButton = false;
-            //     });
-            //
-            // this.onShown(() => {
-            //             // invoke auto resize on shown in case contents have been updated while inactive
-            //     if (editor['contentAreaContainer'] || editor['bodyElement']) {
-            //                 editor.execCommand('mceAutoResize', false, null, {skip_focus: true});
-            //             }
-            //     });
-            // });
+                setEditableSourceCode(this.editableSourceCode).createEditor();
+
+            ckeditor.on('loaded', () => {
+                this.setEditorContent(id, property);
+
+                if (this.notInLiveEdit()) {
+                    this.setupStickyEditorToolbarForInputOccurence(textAreaWrapper, id);
+                }
+
+                this.removeTooltipFromEditorArea(textAreaWrapper);
+
+                const removeButtonEL = wemjq(textAreaWrapper.getParentElement().getParentElement().getHTMLElement()).find(
+                    '.remove-button')[0];
+                removeButtonEL.addEventListener('mouseover', () => {
+                    isMouseOverRemoveOccurenceButton = true;
+                });
+                removeButtonEL.addEventListener('mouseleave', () => {
+                    isMouseOverRemoveOccurenceButton = false;
+                });
+
+            });
         }
 
         private setFocusOnEditorAfterCreate(inputOccurence: Element, id: string): void {
@@ -296,16 +293,16 @@ module api.form.inputtype.text {
         }
 
         private updateEditorToolbarPos(inputOccurence: Element) {
-            wemjq(inputOccurence.getHTMLElement()).find('.mce-toolbar-grp').css({top: this.getToolbarOffsetTop(1)});
+            wemjq(inputOccurence.getHTMLElement()).find('.cke_top').css({top: this.getToolbarOffsetTop(1)});
         }
 
         private updateEditorToolbarWidth(inputOccurence: Element, editorInfo: HtmlAreaOccurrenceInfo) {
             if (editorInfo.hasStickyToolbar) {
                 // Toolbar in sticky mode has position: fixed which makes it not
                 // inherit width of its parent, so we have to explicitly set width
-                wemjq(inputOccurence.getHTMLElement()).find('.mce-toolbar-grp').width(inputOccurence.getEl().getWidth() - 3);
+                wemjq(inputOccurence.getHTMLElement()).find('.cke_top').width(inputOccurence.getEl().getWidth() - 19);
             } else {
-                wemjq(inputOccurence.getHTMLElement()).find('.mce-toolbar-grp').width('auto');
+                wemjq(inputOccurence.getHTMLElement()).find('.cke_top').width('auto');
             }
         }
 
@@ -315,8 +312,8 @@ module api.form.inputtype.text {
 
         private editorLowerEdgeIsVisible(inputOccurence: Element): boolean {
             let distToTopOfScrlblArea = this.calcDistToTopOfScrlbleArea(inputOccurence);
-            let editorToolbarHeight = wemjq(inputOccurence.getHTMLElement()).find('.mce-toolbar-grp').outerHeight(true);
-            let mceStatusToolbarHeight = wemjq(inputOccurence.getHTMLElement()).find('.mce-statusbar').outerHeight(true);
+            let editorToolbarHeight = wemjq(inputOccurence.getHTMLElement()).find('.cke_top').outerHeight(true);
+            let mceStatusToolbarHeight = wemjq(inputOccurence.getHTMLElement()).find('.cke_bottom').outerHeight(true);
             return (inputOccurence.getEl().getHeightWithoutPadding() - editorToolbarHeight - mceStatusToolbarHeight +
                     distToTopOfScrlblArea) > 0;
         }
