@@ -61,13 +61,13 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
 
             switch (principal.getType()) {
             case PrincipalType.USER:
-                metaGroups = this.createUserMetadataGroups(principal.getKey(), mainGroup);
+                metaGroups = this.createUserMetadataGroups(principal, mainGroup);
                 break;
             case PrincipalType.GROUP:
-                metaGroups = this.createGroupMetadataGroups(principal.getKey(), mainGroup, principal.getDescription());
+                metaGroups = this.createGroupOrRoleMetadataGroups(principal, mainGroup);
                 break;
             case PrincipalType.ROLE:
-                metaGroups = this.createRoleMetadataGroups(principal.getKey(), mainGroup, principal.getDescription());
+                metaGroups = this.createGroupOrRoleMetadataGroups(principal, mainGroup);
                 break;
             }
 
@@ -86,38 +86,41 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
         return viewer;
     }
 
-    private createUserMetadataGroups(key: PrincipalKey, mainGroup: ItemDataGroup): wemQ.Promise<ItemDataGroup[]> {
+    private createUserMetadataGroups(principal: Principal, mainGroup: ItemDataGroup): wemQ.Promise<ItemDataGroup[]> {
         this.userDataContainer.appendChild(mainGroup);
 
         const rolesAndGroupsGroup = new ItemDataGroup(i18n('field.rolesAndGroups'), 'memberships');
         this.userDataContainer.appendChild(rolesAndGroupsGroup);
 
-        return new GetPrincipalByKeyRequest(key).setIncludeMemberships(true).sendAndParse().then((principal: Principal) => {
-            const user = principal.asUser();
+        return new GetPrincipalByKeyRequest(principal.getKey()).setIncludeMemberships(true).sendAndParse().then((p: Principal) => {
+            const user = p.asUser();
             mainGroup.addDataList(i18n('field.email'), user.getEmail());
 
             const roles = user.getMemberships().filter(el => el.isRole()).map(el => this.createPricnipalViewer(el));
             rolesAndGroupsGroup.addDataElements(i18n('field.roles'), roles);
 
-            let groups = principal.asUser().getMemberships().filter(el => el.isGroup()).map(el => this.createPricnipalViewer(el));
+            let groups = p.asUser().getMemberships().filter(el => el.isGroup()).map(el => this.createPricnipalViewer(el));
             rolesAndGroupsGroup.addDataElements(i18n('field.groups'), groups);
 
             return [mainGroup, rolesAndGroupsGroup];
         });
     }
 
-    private createGroupMetadataGroups(key: PrincipalKey, mainGroup: ItemDataGroup, description: string): wemQ.Promise<ItemDataGroup[]> {
-        mainGroup.appendChild(new api.dom.DivEl('description').setHtml(description));
+    createGroupOrRoleMetadataGroups(principal: Principal, mainGroup: ItemDataGroup): wemQ.Promise<ItemDataGroup[]> {
+        mainGroup.appendChild(new api.dom.DivEl('description').setHtml(principal.getDescription()));
         this.userDataContainer.appendChild(mainGroup);
 
         const rolesGroup = new ItemDataGroup(i18n('field.roles'), 'roles');
         this.userDataContainer.appendChild(rolesGroup);
 
-        const membersGroup = new ItemDataGroup(i18n('field.members'), 'members');
-        this.userDataContainer.appendChild(membersGroup);
+        let membersGroup;
+        if (principal.isGroup()) {
+            membersGroup = new ItemDataGroup(i18n('field.members'), 'members');
+            this.userDataContainer.appendChild(membersGroup);
+        }
 
-        return new GetPrincipalByKeyRequest(key).setIncludeMemberships(true).sendAndParse().then((principal: Principal) => {
-            const group = principal.asGroup();
+        return new GetPrincipalByKeyRequest(principal.getKey()).setIncludeMemberships(true).sendAndParse().then((p: Principal) => {
+            const group = p.asGroup();
 
             rolesGroup.addDataElements(null, group.getMemberships().map(el => this.createPricnipalViewer(el)));
 
@@ -125,25 +128,7 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
 
             return wemQ.all(membersPromises).then((results: Principal[]) => {
                 membersGroup.addDataElements(null, results.map(el => this.createPricnipalViewer(el)));
-            }).then(() => [mainGroup, rolesGroup, membersGroup]);
-        });
-    }
-
-    private createRoleMetadataGroups(key: PrincipalKey, mainGroup: ItemDataGroup, description: string): wemQ.Promise<ItemDataGroup[]> {
-        mainGroup.appendChild(new api.dom.DivEl('description').setHtml(description));
-        this.userDataContainer.appendChild(mainGroup);
-
-        const membersGroup = new ItemDataGroup(i18n('field.members'), 'members');
-        this.userDataContainer.appendChild(membersGroup);
-
-        return new GetPrincipalByKeyRequest(key).setIncludeMemberships(true).sendAndParse().then((principal: Principal) => {
-            const role = principal.asRole();
-
-            const membersPromises = role.getMembers().map(el => new GetPrincipalByKeyRequest(el).sendAndParse());
-
-            return wemQ.all(membersPromises).then((results: Principal[]) => {
-                membersGroup.addDataElements(null, results.map(el => this.createPricnipalViewer(el)));
-            }).then(() => [mainGroup, membersGroup]);
+            }).then(() => (principal.isRole() ? [mainGroup, rolesGroup] : [mainGroup, rolesGroup, membersGroup]));
         });
     }
 }
