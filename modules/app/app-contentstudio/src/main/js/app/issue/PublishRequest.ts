@@ -14,11 +14,11 @@
         }
 
         public getExcludeIds(): ContentId[] {
-            return this.excludeIds;
+            return [...this.excludeIds];
         }
 
         public getItems(): PublishRequestItem[] {
-            return this.items;
+            return [...this.items];
         }
 
         public getItemsIds(): ContentId[] {

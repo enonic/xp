@@ -139,7 +139,6 @@ public class AdminToolHandlerTest
     {
         AdminToolDescriptor descriptor = Mockito.mock( AdminToolDescriptor.class );
         Mockito.when( descriptor.isAccessAllowed( Mockito.any( PrincipalKeys.class ) ) ).thenReturn( hasAccess );
-
         Mockito.when( this.adminToolDescriptorService.getByKey( Mockito.any( DescriptorKey.class ) ) ).thenReturn( descriptor );
     }
 }

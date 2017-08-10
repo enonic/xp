@@ -3,8 +3,6 @@ package com.enonic.xp.repo.impl.elasticsearch.storage;
 import java.util.Collection;
 
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -87,30 +85,43 @@ public class StorageDaoImpl
             setType( settings.getStorageType().getName() ).
             setRefresh( request.isForceRefresh() );
 
-        final DeleteResponse deleteResponse = this.client.delete( builder.request() ).
-            actionGet( request.getTimeoutAsString() );
+        final DeleteResponse deleteResponse;
+        try
+        {
+            deleteResponse = this.client.delete( builder.request() ).
+                actionGet( request.getTimeoutAsString() );
+        }
+        catch ( ElasticsearchException e )
+        {
+            throw new NodeStorageException( "Cannot delete node " + id, e );
+        }
 
         return deleteResponse.isFound();
     }
 
     @Override
-    public boolean delete( final DeleteRequests request )
+    public void delete( final DeleteRequests requests )
     {
-        final StorageSource settings = request.getSettings();
+        final StorageSource settings = requests.getSettings();
 
-        final BulkRequestBuilder bulkRequest = new BulkRequestBuilder( this.client );
-
-        for ( final String nodeId : request.getIds() )
+        for ( final String id : requests.getIds() )
         {
-            bulkRequest.add( new DeleteRequestBuilder( this.client ).
-                setId( nodeId ).
-                setIndex( settings.getStorageName().getName() ).
-                setType( settings.getStorageType().getName() ) );
+            try
+            {
+                final org.elasticsearch.action.delete.DeleteRequest request = new DeleteRequestBuilder( this.client ).
+                    setIndex( settings.getStorageName().getName() ).
+                    setType( settings.getStorageType().getName() ).
+                    setRefresh( requests.isForceRefresh() ).
+                    setId( id ).
+                    request();
+
+                this.client.delete( request ).actionGet( requests.getTimeoutAsString() );
+            }
+            catch ( ElasticsearchException e )
+            {
+                throw new NodeStorageException( "Cannot delete node " + id, e );
+            }
         }
-
-        final BulkResponse response = bulkRequest.execute().actionGet();
-
-        return response.hasFailures();
     }
 
     private String doStore( final IndexRequest request, final String timeout )
