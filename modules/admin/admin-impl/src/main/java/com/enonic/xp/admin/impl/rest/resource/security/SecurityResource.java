@@ -518,19 +518,6 @@ public final class SecurityResource
         return PrincipalKeys.from( members.stream().filter( PrincipalKey::isUser ).collect( toList() ) );
     }
 
-/*    private PrincipalKeys getGroupMembers( final PrincipalKey principal )
-    {
-        PrincipalKeys members = this.getMembers( principal );
-
-        List<PrincipalKey> subMembers = Lists.arrayList();
-        members.stream().filter( member -> member.isRole() ).forEach( member -> {
-            subMembers.addAll( getGroupMembers( member ).getSet() );
-        } );
-        members = PrincipalKeys.from( members, subMembers );
-
-        return PrincipalKeys.from( members.stream().filter( PrincipalKey::isGroup ).collect( toList() ) );
-    }*/
-
     private AuthDescriptorMode retrieveIdProviderMode( UserStore userStore )
     {
         final AuthConfig authConfig = userStore.getAuthConfig();
