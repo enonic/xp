@@ -137,7 +137,7 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
         this.getAppBarTabMenu().deselectNavigationItem();
     }
 
-    protected createBrowsePanel() {
+    protected createBrowsePanel(): UserBrowsePanel {
         return new UserBrowsePanel();
     }
 
@@ -243,9 +243,9 @@ export class UserAppPanel extends api.app.NavigatedAppPanel<UserTreeGridItem> {
         }
 
         return {
-            tabName: tabName,
-            principalType: principalType,
-            principalPath: principalPath
+            tabName,
+            principalType,
+            principalPath
         };
     }
 

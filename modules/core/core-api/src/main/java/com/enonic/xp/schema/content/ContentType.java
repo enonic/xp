@@ -45,7 +45,7 @@ public final class ContentType
         this.isFinal = builder.isFinal;
         this.allowChildContent = builder.allowChildContent;
         this.isBuiltIn = builder.isBuiltIn;
-        this.form = builder.formBuilder.build();
+        this.form = builder.formBuilder != null ? builder.formBuilder.build() : Form.create().build();
         this.contentDisplayNameScript = builder.contentDisplayNameScript;
         this.metadata = builder.metadata;
     }
@@ -239,7 +239,7 @@ public final class ContentType
 
         public Builder form( final Form form )
         {
-            this.formBuilder = Form.create( form );
+            this.formBuilder = form != null ? Form.create( form ) : Form.create();
             return this;
         }
 

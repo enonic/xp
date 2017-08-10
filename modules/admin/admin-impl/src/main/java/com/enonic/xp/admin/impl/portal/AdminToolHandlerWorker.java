@@ -47,7 +47,7 @@ final class AdminToolHandlerWorker
             throw forbidden( "You don't have permission to access [%s]", descriptorKey.toString() );
         }
 
-        //Render the Admin application
+        //Renders the Admin application
         this.request.setBaseUri( AdminToolHandler.ADMIN_TOOL_PREFIX + descriptorKey.getApplicationKey() + "/" + descriptorKey.getName() );
         this.request.setApplicationKey( descriptorKey.getApplicationKey() );
         final ResourceKey scriptDir = ResourceKey.from( descriptorKey.getApplicationKey(), "admin/tools/" + descriptorKey.getName() );

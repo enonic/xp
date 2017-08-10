@@ -9,6 +9,7 @@ import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.Assert.*;
 
@@ -58,7 +59,7 @@ public class WidgetDescriptorLoaderTest
     }
 
     @Test
-    public void testLoad()
+    public void testLoadMax()
     {
         final DescriptorKey descriptorKey = DescriptorKey.from( "myapp1:widget1" );
 
@@ -69,5 +70,23 @@ public class WidgetDescriptorLoaderTest
         final WidgetDescriptor descriptor = this.loader.load( descriptorKey, resource );
 
         assertEquals( "MyWidget", descriptor.getDisplayName() );
+        assertEquals( 1, descriptor.getInterfaces().size() );
+        assertTrue( descriptor.getInterfaces().contains( "com.enonic.xp.my-interface" ) );
+        assertEquals( 1, descriptor.getAllowedPrincipals().getSize() );
+        assertTrue( descriptor.getAllowedPrincipals().contains( PrincipalKey.from( "role:system.user.admin" ) ) );
+    }
+
+    @Test
+    public void testLoadMin()
+    {
+        final DescriptorKey descriptorKey = DescriptorKey.from( "myapp1:widget2" );
+        final ResourceKey resourceKey = this.loader.toResource( descriptorKey );
+        final Resource resource = this.resourceService.getResource( resourceKey );
+        final WidgetDescriptor descriptor = this.loader.load( descriptorKey, resource );
+
+        assertEquals( "MyWidget2", descriptor.getDisplayName() );
+        assertEquals( 1, descriptor.getInterfaces().size() );
+        assertTrue( descriptor.getInterfaces().contains( "com.enonic.xp.my-interface" ) );
+        assertNull( descriptor.getAllowedPrincipals() );
     }
 }

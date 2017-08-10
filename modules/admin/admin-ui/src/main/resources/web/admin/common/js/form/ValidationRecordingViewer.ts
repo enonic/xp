@@ -20,10 +20,10 @@ module api.form {
             }
 
             if (object && this.list.getChildren().length === 0) {
-                object.breaksMinimumOccurrencesArray.forEach((path: ValidationRecordingPath) => {
+                object.getBreakMinimumOccurrences().forEach((path: ValidationRecordingPath) => {
                     this.list.appendChild(this.createItemView(path, true));
                 });
-                object.breaksMaximumOccurrencesArray.forEach((path: ValidationRecordingPath) => {
+                object.getBreakMaximumOccurrences().forEach((path: ValidationRecordingPath) => {
                     this.list.appendChild(this.createItemView(path, false));
                 });
             }

@@ -60,6 +60,11 @@ var CONFIG = {
             },
             ts: {
                 target: 'ES5',
+                lib: [
+                    "ES5",
+                    "ES6",
+                    "DOM"
+                ],
                 declaration: true,
                 noImplicitAny: false
             },

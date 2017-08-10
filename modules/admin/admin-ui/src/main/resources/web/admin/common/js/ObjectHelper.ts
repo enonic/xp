@@ -111,7 +111,7 @@ module api {
             return true;
         }
 
-        static mapEquals(mapA: {[s: string]: Equitable;}, mapB: {[s: string]: Equitable;}) {
+        static objectMapEquals(mapA: {[s: string]: Equitable;}, mapB: {[s: string]: Equitable;}) {
 
             if (!mapA && !mapB) {
                 return true;

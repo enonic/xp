@@ -10,6 +10,8 @@ import {Router} from '../Router';
 import TreeGrid = api.ui.treegrid.TreeGrid;
 import TreeNode = api.ui.treegrid.TreeNode;
 import BrowseItem = api.app.browse.BrowseItem;
+import PrincipalType = api.security.PrincipalType;
+import i18n = api.util.i18n;
 
 export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem> {
 
@@ -40,13 +42,47 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
             this.refreshFilter();
         });
 
-        const changeSelectionStatus = api.util.AppHelper.debounce((noSelection: boolean) => {
-            this.browseToolbar.toggleClass('no-selection', noSelection);
-        }, 50);
+        const changeSelectionStatus = api.util.AppHelper.debounce((selection: TreeNode<UserTreeGridItem>[]) => {
+            const noSelection = selection.length === 0;
+            const newAction = this.treeGrid.getTreeGridActions().NEW;
 
-        this.treeGrid.onSelectionChanged((currentSelection, fullSelection) => changeSelectionStatus(fullSelection.length === 0));
+            let label;
 
-        this.treeGrid.onHighlightingChanged((node: TreeNode<UserTreeGridItem>) => changeSelectionStatus(!node));
+            if (noSelection) {
+                label = `${i18n('action.new')}…`;
+            } else {
+                const userItem = selection[0].getData();
+                let type;
+
+                switch (userItem.getType()) {
+
+                case UserTreeGridItemType.USERS:
+                    type = i18n('field.user');
+                    break;
+                case UserTreeGridItemType.GROUPS:
+                    type = i18n('field.userGroup');
+                    break;
+                case UserTreeGridItemType.ROLES:
+                    type = i18n('field.role');
+                    break;
+                case UserTreeGridItemType.PRINCIPAL:
+                    type = i18n(`field.${PrincipalType[userItem.getPrincipal().getType()].toLowerCase()}`);
+                    break;
+                case UserTreeGridItemType.USER_STORE:
+                    type = i18n('field.userStore');
+                    break;
+                default:
+                    type = '';
+                }
+
+                label = [i18n('action.new'), type].join(' ');
+            }
+            newAction.setLabel(label);
+        }, 10);
+
+        this.treeGrid.onSelectionChanged((currentSelection: TreeNode<UserTreeGridItem>[]) => changeSelectionStatus(currentSelection));
+
+        this.treeGrid.onHighlightingChanged((node: TreeNode<UserTreeGridItem>) => changeSelectionStatus(node ? [node] : []));
 
         this.onShown((event) => {
             Router.setHash('browse');

@@ -70,20 +70,21 @@ abstract class AbstractDeleteNodeCommand
         final FindNodeIdsByParentCommand command = FindNodeIdsByParentCommand.create( this ).
             parentPath( node.path() ).
             recursive( true ).
-            childOrder( ChildOrder.path() ).
+            childOrder( ChildOrder.reversePath() ).
             size( NodeSearchService.GET_ALL_SIZE_FLAG ).
             build();
 
         final FindNodesByParentResult result = command.execute();
 
         final NodeIds nodeIds = NodeIds.create().
-            add( node.id() ).
             addAll( result.getNodeIds() ).
+            add( node.id() ).
             build();
 
         return FindNodeBranchEntriesByIdCommand.
             create( command ).
             ids( nodeIds ).
+            orderExpressions( ChildOrder.reversePath().getOrderExpressions() ).
             build().
             execute();
     }

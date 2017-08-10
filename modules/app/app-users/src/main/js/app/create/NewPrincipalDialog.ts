@@ -48,7 +48,7 @@ export class NewPrincipalDialog extends api.ui.dialog.ModalDialog {
 
     private initEventHandlers() {
         this.grid.onDataChanged(() => ResponsiveManager.fireResizeEvent());
-        NewPrincipalEvent.on(() => this.close());
+        NewPrincipalEvent.on(() => this.isVisible() && this.close());
     }
 
     open() {

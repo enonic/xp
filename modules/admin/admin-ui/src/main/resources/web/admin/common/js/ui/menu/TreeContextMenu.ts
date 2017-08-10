@@ -1,7 +1,8 @@
 module api.ui.menu {
 
-    export class TreeContextMenu extends api.dom.DlEl {
-        private itemClickListeners: {(item: TreeMenuItem): void}[] = [];
+    export class TreeContextMenu
+        extends api.dom.DlEl {
+        private itemClickListeners: { (item: TreeMenuItem): void }[] = [];
 
         private actions: api.ui.Action[] = [];
 
@@ -53,6 +54,11 @@ module api.ui.menu {
                     event.stopPropagation();
                 });
             }
+            action.onPropertyChanged(changedAction => {
+                menuItem.setEnabled(changedAction.isEnabled());
+                menuItem.setVisible(changedAction.isVisible());
+            });
+
             return menuItem;
         }
 
@@ -90,7 +96,7 @@ module api.ui.menu {
         }
 
         private notifyItemClicked() {
-            this.itemClickListeners.forEach((listener: ()=>void) => {
+            this.itemClickListeners.forEach((listener: () => void) => {
                 listener();
             });
         }

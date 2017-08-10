@@ -240,6 +240,10 @@ module api.form {
             if (inputRecording.isMaximumOccurrencesBreached()) {
                 recording.breaksMaximumOccurrences(validationRecordingPath);
             }
+            if (inputRecording.hasAdditionalValidationRecord()) {
+                recording.addValidationRecord(this.resolveValidationRecordingPath().toString(),
+                    inputRecording.getAdditionalValidationRecord());
+            }
 
             if (recording.validityChanged(this.previousValidityRecording) || this.userInputValidityChanged(hasValidInput)) {
                 if (!silent) {
@@ -257,7 +261,7 @@ module api.form {
             this.previousValidityRecording = recording;
             this.userInputValid = hasValidInput;
 
-            this.renderValidationErrors(recording, inputRecording.getAdditionalValidationRecord());
+            this.renderValidationErrors(recording, inputRecording);
             return recording;
         }
 
@@ -286,12 +290,12 @@ module api.form {
             });
         }
 
-        private renderValidationErrors(recording: ValidationRecording, additionalValidationRecord: AdditionalValidationRecord) {
+        private renderValidationErrors(recording: ValidationRecording, inputRecording: api.form.inputtype.InputValidationRecording) {
             if (!this.mayRenderValidationError()) {
                 return;
             }
 
-            if (recording.isValid() && this.hasValidUserInput()) {
+            if (recording.isValid() && this.hasValidUserInput(inputRecording)) {
                 this.removeClass('invalid');
                 this.addClass('valid');
             } else {
@@ -301,8 +305,8 @@ module api.form {
 
             this.validationViewer.setObject(recording);
 
-            if (additionalValidationRecord && additionalValidationRecord.isOverwriteDefault()) {
-                this.validationViewer.appendValidationMessage(additionalValidationRecord.getMessage());
+            if (inputRecording.hasAdditionalValidationRecord() && inputRecording.getAdditionalValidationRecord().isOverwriteDefault()) {
+                this.validationViewer.appendValidationMessage(inputRecording.getAdditionalValidationRecord().getMessage());
             }
         }
 

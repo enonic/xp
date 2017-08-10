@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.concurrent.TimeUnit;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -28,7 +26,7 @@ public class DeleteNodeByIdsCommandPerformanceTest
 
     @Ignore
     @Test
-    public void testDuplicatePerformance()
+    public void deleteNodeByIds()
         throws Exception
     {
         final Node rootNode = createNode( CreateNodeParams.create().
@@ -36,7 +34,7 @@ public class DeleteNodeByIdsCommandPerformanceTest
             parent( NodePath.ROOT ).
             build(), false );
 
-        createNodes( rootNode, 30, 3, 1 );
+        createNodes( rootNode, 50, 3, 1 );
 
         refresh();
 
@@ -64,10 +62,7 @@ public class DeleteNodeByIdsCommandPerformanceTest
 
         started.stop();
 
-        final long elapsed = started.elapsed( TimeUnit.SECONDS );
-
         System.out.println( "Deleted [" + result.getTotalHits() + "] in " + started );
     }
-
 
 }

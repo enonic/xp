@@ -1,19 +1,24 @@
 module api.schema.content {
 
-    export class GetAllContentTypesRequest
+    export class GetContentTypesByContentRequest
         extends ContentTypeResourceRequest<ContentTypeSummaryListJson, ContentTypeSummary[]> {
 
-        constructor() {
+        private contentId: api.content.ContentId;
+
+        constructor(content: ContentId) {
             super();
             super.setMethod('GET');
+            this.contentId = content;
         }
 
         getParams(): Object {
-            return {};
+            return {
+                contentId: this.contentId && this.contentId.toString()
+            };
         }
 
         getRequestPath(): api.rest.Path {
-            return api.rest.Path.fromParent(super.getResourcePath(), 'all');
+            return api.rest.Path.fromParent(super.getResourcePath(), 'byContent');
         }
 
         sendAndParse(): wemQ.Promise<ContentTypeSummary[]> {

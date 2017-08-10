@@ -1,12 +1,12 @@
 package com.enonic.xp.repo.impl.storage;
 
-import java.util.Set;
+import java.util.List;
 
 import com.enonic.xp.repo.impl.StorageSource;
 
 public class DeleteRequests
 {
-    private final Set<String> ids;
+    private final List<String> ids;
 
     private final StorageSource settings;
 
@@ -27,7 +27,7 @@ public class DeleteRequests
         return new Builder();
     }
 
-    public Set<String> getIds()
+    public List<String> getIds()
     {
         return ids;
     }
@@ -47,15 +47,20 @@ public class DeleteRequests
         return timeout;
     }
 
+    public String getTimeoutAsString()
+    {
+        return timeout + "s";
+    }
+
     public static final class Builder
     {
         private StorageSource settings;
 
         private boolean forceRefresh;
 
-        private int timeout;
+        private int timeout = 5;
 
-        private Set<String> ids;
+        private List<String> ids;
 
         private Builder()
         {
@@ -84,7 +89,7 @@ public class DeleteRequests
             return new DeleteRequests( this );
         }
 
-        public Builder ids( final Set<String> val )
+        public Builder ids( final List<String> val )
         {
             ids = val;
             return this;

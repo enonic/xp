@@ -3,4 +3,7 @@
   <interfaces>
     <interface>com.enonic.xp.my-interface</interface>
   </interfaces>
+  <allow>
+    <principal>role:system.user.admin</principal>
+  </allow>
 </widget>

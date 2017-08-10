@@ -1,8 +1,10 @@
 package com.enonic.xp.admin.impl.widget;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.enonic.xp.admin.widget.WidgetDescriptor;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.parser.XmlModelParser;
 
@@ -32,6 +34,16 @@ final class XmlWidgetDescriptorParser
             {
                 this.builder.addInterface( anInterface.getValue() );
             }
+        }
+
+        final DomElement allowedPrincipals = root.getChild( "allow" );
+        if ( allowedPrincipals != null )
+        {
+            final List<PrincipalKey> allowedPrincipalList = allowedPrincipals.getChildren( "principal" ).
+                stream().
+                map( allowedPrincipal -> PrincipalKey.from( allowedPrincipal.getValue() ) ).
+                collect( Collectors.toList() );
+            this.builder.setAllowedPrincipals(allowedPrincipalList);
         }
 
         final DomElement config = root.getChild( "config" );
