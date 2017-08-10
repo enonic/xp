@@ -55,6 +55,8 @@ public class ContentPropertyNames
 
     public static final String MEDIA_CROPPING_ZOOM = "zoom";
 
+    public static final String ORIENTATION = "orientation";
+
     public static final String ATTACHMENT = "attachment";
 
     public static final String ATTACHMENT_LABEL = "label";

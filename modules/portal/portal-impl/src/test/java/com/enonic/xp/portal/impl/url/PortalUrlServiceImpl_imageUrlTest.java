@@ -28,7 +28,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456:992a0004e50e58383fb909fea2b588dc714a7115/max-300/mycontent", url );
+        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
     }
 
     @Test
@@ -42,7 +42,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456:992a0004e50e58383fb909fea2b588dc714a7115/max-300/mycontent.png", url );
+        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png", url );
     }
 
     @Test
@@ -59,7 +59,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456:992a0004e50e58383fb909fea2b588dc714a7115/max-300/mycontent.jpg?" +
+        assertEquals( "/portal/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.jpg?" +
                           "filter=scale%2810%2C10%29&background=00ff00&quality=90", url );
     }
 
@@ -74,7 +74,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/draft/context/path/_/image/123456:992a0004e50e58383fb909fea2b588dc714a7115/max-300/mycontent", url );
+        assertEquals( "/portal/draft/context/path/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
     }
 
     @Test
@@ -88,7 +88,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" );
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/portal/draft/context/path/_/image/123456:992a0004e50e58383fb909fea2b588dc714a7115/max-300/mycontent", url );
+        assertEquals( "/portal/draft/context/path/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
     }
 
     @Test
@@ -121,7 +121,7 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         final String url = this.service.imageUrl( params );
         assertEquals(
-            "http://localhost/portal/draft/a/b/mycontent/_/image/123456:992a0004e50e58383fb909fea2b588dc714a7115/max-300/mycontent", url );
+            "http://localhost/portal/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
     }
 
     @Test
@@ -136,7 +136,7 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         final String url = this.service.imageUrl( params );
         assertEquals(
-            "/portal/draft/a/b/name%20with%20spaces(and-others).png/_/image/123456:992a0004e50e58383fb909fea2b588dc714a7115/max-300/name%20with%20spaces(and-others).png",
+            "/portal/draft/a/b/name%20with%20spaces(and-others).png/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/name%20with%20spaces(and-others).png",
             url );
     }
 

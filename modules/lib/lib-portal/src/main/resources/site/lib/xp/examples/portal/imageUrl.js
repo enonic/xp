@@ -5,10 +5,8 @@ var assert = require('/lib/xp/assert');
 var url = portalLib.imageUrl({
     id: '1234',
     scale: 'block(1024,768)',
-    filter: 'rounded(5);sharpen()',
-    cache: false
+    filter: 'rounded(5);sharpen()'
 });
 // END
 
-assert.assertEquals('ImageUrlParams{type=server, params={}, id=1234, filter=rounded(5);sharpen(), scale=block(1024,768), cache=false}',
-    url);
+assert.assertEquals('ImageUrlParams{type=server, params={}, id=1234, filter=rounded(5);sharpen(), scale=block(1024,768)}', url);

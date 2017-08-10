@@ -11,6 +11,7 @@ import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
+import com.enonic.xp.media.MediaInfo;
 
 @Beta
 public class Media
@@ -58,6 +59,16 @@ public class Media
         }
 
         return getAttachments().byName( mediaAttachmentName );
+    }
+
+    public Integer getOrientation()
+    {
+        final ExtraData cameraInfo = getAllExtraData().getMetadata( MediaInfo.CAMERA_INFO_METADATA_NAME );
+        if ( cameraInfo != null && cameraInfo.getData().hasProperty( ContentPropertyNames.ORIENTATION ) )
+        {
+            return Integer.valueOf( cameraInfo.getData().getString( ContentPropertyNames.ORIENTATION ) );
+        }
+        return null;
     }
 
     public FocalPoint getFocalPoint()

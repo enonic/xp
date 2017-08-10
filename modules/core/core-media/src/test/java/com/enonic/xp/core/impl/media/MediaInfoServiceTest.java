@@ -15,6 +15,7 @@ import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
@@ -22,7 +23,6 @@ import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.MixinName;
 
 import static org.junit.Assert.*;
 
@@ -102,9 +102,9 @@ public class MediaInfoServiceTest
         final PropertyTree imageDataTree = new PropertyTree();
         if ( addOrientation )
         {
-            imageDataTree.addProperty( "orientation", ValueFactory.newString( "3" ) );
+            imageDataTree.addProperty( ContentPropertyNames.ORIENTATION, ValueFactory.newString( "3" ) );
         }
-        final ExtraData eData = new ExtraData( MixinName.from( "Image data" ), imageDataTree );
+        final ExtraData eData = new ExtraData( MediaInfo.CAMERA_INFO_METADATA_NAME, imageDataTree );
 
         return Content.create( ContentTypeName.imageMedia() ).name( name ).parentPath( parentPath ).addExtraData( eData ).build();
     }

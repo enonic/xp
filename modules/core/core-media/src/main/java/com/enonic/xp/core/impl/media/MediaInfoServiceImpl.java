@@ -10,6 +10,7 @@ import com.google.common.io.ByteSource;
 import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
@@ -67,12 +68,10 @@ public final class MediaInfoServiceImpl
 
     public ImageOrientation getImageOrientation( ByteSource byteSource, Content media )
     {
-        for ( final ExtraData next : media.getAllExtraData() )
+        final ExtraData cameraInfo = media.getAllExtraData().getMetadata( MediaInfo.CAMERA_INFO_METADATA_NAME );
+        if ( cameraInfo != null && cameraInfo.getData().hasProperty( ContentPropertyNames.ORIENTATION ) )
         {
-            if ( next.getData().hasProperty( "orientation" ) )
-            {
-                return ImageOrientation.from( next.getData().getProperty( "orientation" ).getString() );
-            }
+            return ImageOrientation.from( cameraInfo.getData().getString( ContentPropertyNames.ORIENTATION ) );
         }
         return getImageOrientation( byteSource );
     }

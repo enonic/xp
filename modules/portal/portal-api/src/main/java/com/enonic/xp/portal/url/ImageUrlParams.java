@@ -23,8 +23,6 @@ public final class ImageUrlParams
 
     private String scale;
 
-    private Boolean cache = true;
-
     public String getId()
     {
         return this.id;
@@ -58,11 +56,6 @@ public final class ImageUrlParams
     public String getScale()
     {
         return this.scale;
-    }
-
-    public Boolean isCache()
-    {
-        return this.cache;
     }
 
     public ImageUrlParams id( final String value )
@@ -112,12 +105,6 @@ public final class ImageUrlParams
         return this;
     }
 
-    public ImageUrlParams cache( final Boolean value )
-    {
-        this.cache = value;
-        return this;
-    }
-
     @Override
     public ImageUrlParams setAsMap( final Multimap<String, String> map )
     {
@@ -129,15 +116,8 @@ public final class ImageUrlParams
         filter( singleValue( map, "_filter" ) );
         background( singleValue( map, "_background" ) );
         scale( singleValue( map, "_scale" ) );
-        cache( singleValueAsBoolean( map, "_cache", Boolean.TRUE ) );
         getParams().putAll( map );
         return this;
-    }
-
-    private Boolean singleValueAsBoolean( final Multimap<String, String> map, final String name, final Boolean defaults )
-    {
-        final String value = singleValue( map, name );
-        return value != null ? Boolean.valueOf( value ) : defaults;
     }
 
     @Override
@@ -151,6 +131,5 @@ public final class ImageUrlParams
         helper.add( "filter", this.filter );
         helper.add( "background", this.background );
         helper.add( "scale", this.scale );
-        helper.add( "cache", this.cache );
     }
 }
