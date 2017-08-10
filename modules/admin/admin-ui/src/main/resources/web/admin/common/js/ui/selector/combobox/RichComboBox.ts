@@ -281,11 +281,14 @@ module api.ui.selector.combobox {
                 if (this.isDataGridSelfLoading()) {
                     this.comboBox.getComboBoxDropdownGrid().reload().then(() => {
                         this.comboBox.showDropdown();
+                        this.comboBox.setReadOnly(false);
                         deferred.resolve(null);
                     });
                 } else {
                     this.comboBox.getComboBoxDropdownGrid().search(this.comboBox.getInput().getValue()).then(() => {
                         this.comboBox.showDropdown();
+                        this.comboBox.setReadOnly(false);
+                        deferred.resolve(null);
                     });
                 }
             } else {
@@ -305,10 +308,12 @@ module api.ui.selector.combobox {
                     if (this.isDataGridSelfLoading()) {
                         this.comboBox.getComboBoxDropdownGrid().reload().then(() => {
                             this.comboBox.showDropdown();
+                            this.comboBox.giveInputFocus();
                         });
                     } else {
                         this.comboBox.getComboBoxDropdownGrid().search(event.getNewValue()).then(() => {
                             this.comboBox.showDropdown();
+                            this.comboBox.giveInputFocus();
                         });
                     }
                 } else {
