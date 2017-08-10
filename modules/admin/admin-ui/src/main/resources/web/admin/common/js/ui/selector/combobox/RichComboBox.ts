@@ -227,7 +227,7 @@ module api.ui.selector.combobox {
         }
 
         select(value: OPTION_DISPLAY_VALUE, readOnly?: boolean, silent?: boolean) {
-            this.comboBox.selectOption(this.createOption(value, readOnly),silent);
+            this.comboBox.selectOption(this.createOption(value, readOnly), silent);
         }
 
         deselect(value: OPTION_DISPLAY_VALUE, silent?: boolean) {
@@ -277,11 +277,17 @@ module api.ui.selector.combobox {
 
         private loadOptionsAfterShowDropdown(): wemQ.Promise<void> {
             let deferred = wemQ.defer<void>();
-            if (this.isDataGridSelfLoading()) {
-                this.comboBox.getComboBoxDropdownGrid().reload().then(() => {
-                    this.comboBox.showDropdown();
-                    deferred.resolve(null);
-                });
+            if (this.treegridDropdownEnabled) {
+                if (this.isDataGridSelfLoading()) {
+                    this.comboBox.getComboBoxDropdownGrid().reload().then(() => {
+                        this.comboBox.showDropdown();
+                        deferred.resolve(null);
+                    });
+                } else {
+                    this.comboBox.getComboBoxDropdownGrid().search(this.comboBox.getInput().getValue()).then(() => {
+                        this.comboBox.showDropdown();
+                    });
+                }
             } else {
                 this.loader.load().then(() => {
                     deferred.resolve(null);
@@ -295,10 +301,16 @@ module api.ui.selector.combobox {
         private setupLoader() {
 
             this.comboBox.onOptionFilterInputValueChanged((event: OptionFilterInputValueChangedEvent<OPTION_DISPLAY_VALUE>) => {
-                if (this.isDataGridSelfLoading()) {
-                    this.comboBox.getComboBoxDropdownGrid().reload().then(() => {
-                        this.comboBox.showDropdown();
-                    });
+                if (this.treegridDropdownEnabled) {
+                    if (this.isDataGridSelfLoading()) {
+                        this.comboBox.getComboBoxDropdownGrid().reload().then(() => {
+                            this.comboBox.showDropdown();
+                        });
+                    } else {
+                        this.comboBox.getComboBoxDropdownGrid().search(event.getNewValue()).then(() => {
+                            this.comboBox.showDropdown();
+                        });
+                    }
                 } else {
                     this.loader.search(event.getNewValue()).then((result: OPTION_DISPLAY_VALUE[]) => {
                         return result;

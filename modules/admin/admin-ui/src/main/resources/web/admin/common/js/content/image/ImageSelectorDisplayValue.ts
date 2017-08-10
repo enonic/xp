@@ -86,5 +86,27 @@ module api.content.image {
             return this.content ? this.content.getPath() : null;
         }
 
+        equals(o: api.Equitable): boolean {
+
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, api.ClassHelper.getClass(this))) {
+                return false;
+            }
+
+            let other = <ImageSelectorDisplayValue>o;
+
+            if (!ObjectHelper.equals(this.uploadItem, other.uploadItem)) {
+                return false;
+            }
+
+            if (!ObjectHelper.equals(this.content, other.content)) {
+                return false;
+            }
+
+            if (this.empty != other.empty) {
+                return false;
+            }
+
+            return true;
+        }
     }
 }

@@ -140,7 +140,7 @@ module api.content.resource {
                 from: this.getFrom(),
                 size: this.getSize(),
                 expand: this.expandAsString(),
-                contentId: this.content.getId().toString(),
+                contentId: this.content ? this.content.getId().toString() : null,
                 inputName: this.getInputName(),
                 contentTypeNames: this.contentTypeNames,
                 allowedContentPaths: this.allowedContentPaths,

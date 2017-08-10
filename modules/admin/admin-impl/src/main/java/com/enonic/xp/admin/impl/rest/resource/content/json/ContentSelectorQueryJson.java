@@ -43,7 +43,7 @@ public class ContentSelectorQueryJson
         this.from = from;
         this.size = size;
         this.queryExprString = queryExprString;
-        this.contentId = ContentId.from( contentId );
+        this.contentId = contentId != null ? ContentId.from( contentId ) : null;
         this.expand = expand != null ? expand : "none";
         this.inputName = inputName;
         this.contentTypeNames = ContentTypeNames.from( contentTypeNamesString );

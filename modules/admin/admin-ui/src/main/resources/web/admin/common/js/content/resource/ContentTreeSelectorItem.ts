@@ -11,7 +11,7 @@ module api.content.resource {
         expand: boolean;
     }
 
-    export class ContentTreeSelectorItem {
+    export class ContentTreeSelectorItem implements Equitable {
 
         private content: ContentSummary;
 
@@ -81,5 +81,25 @@ module api.content.resource {
         getExpand(): boolean {
             return this.expand;
         }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, api.ClassHelper.getClass(this))) {
+                return false;
+            }
+
+            let other = <ContentTreeSelectorItem>o;
+
+            if (!api.ObjectHelper.equals(this.content, other.content)) {
+                return false;
+            }
+
+            if (this.expand != other.expand) {
+                return false;
+            }
+
+            return true;
+        }
+
     }
 }
