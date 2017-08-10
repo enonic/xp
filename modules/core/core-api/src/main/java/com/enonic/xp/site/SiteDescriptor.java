@@ -3,7 +3,9 @@ package com.enonic.xp.site;
 
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.site.filter.FilterDescriptors;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
@@ -11,6 +13,8 @@ import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
 @Beta
 public final class SiteDescriptor
 {
+    private static final String SITE_DESCRIPTOR_PATH = "site/site.xml";
+
     private final Form form;
 
     private final MixinNames metaSteps;
@@ -45,6 +49,11 @@ public final class SiteDescriptor
     public ControllerMappingDescriptors getMappingDescriptors()
     {
         return mappingDescriptors;
+    }
+
+    public static ResourceKey toResourceKey( final ApplicationKey applicationKey )
+    {
+        return ResourceKey.from( applicationKey, SITE_DESCRIPTOR_PATH );
     }
 
     public static Builder create()
