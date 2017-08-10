@@ -137,7 +137,10 @@ module api.content.form.inputtype.upload {
                 return new api.content.resource.GetContentByIdRequest(this.getContext().content.getContentId())
                     .sendAndParse().then((content: api.content.Content) => {
 
-                        this.imageUploader.setOriginalDimensions(content);
+                        this.imageUploader.setOriginalDimensions(
+                            this.readSizeValue(content, 'imageWidth'),
+                            this.readSizeValue(content, 'imageHeight'),
+                            this.readOrientation(content));
                         this.imageUploader.setValue(content.getId(), false, false);
 
                         this.configEditorsProperties(content);
@@ -250,7 +253,20 @@ module api.content.form.inputtype.upload {
             return property && property.getLong() || 0;
         }
 
-        private getMetaProperty(content: Content, propertyName: string) {
+        private readSizeValue(content: Content, propertyName: string): number {
+            let metaData = content.getProperty('metadata');
+            if (metaData && api.data.ValueTypes.DATA.equals(metaData.getType())) {
+                return parseInt(metaData.getPropertySet().getProperty(propertyName).getString(), 10);
+            } else {
+                metaData = this.getMetaProperty(content, propertyName);
+                if (metaData) {
+                    return parseInt(metaData.getString(), 10);
+                }
+            }
+            return 0;
+        }
+
+        private getMetaProperty(content: Content, propertyName: string): Property {
             const extra = content.getAllExtraData();
             for (let i = 0; i < extra.length; i++) {
                 const metaProperty = extra[i].getData().getProperty(propertyName);

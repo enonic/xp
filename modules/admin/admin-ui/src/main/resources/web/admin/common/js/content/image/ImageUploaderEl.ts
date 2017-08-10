@@ -20,6 +20,7 @@ module api.content.image {
         private initialWidth: number;
         private originalHeight: number;
         private originalWidth: number;
+        private originalOrientation: number;
 
         private static SELECTED_CLASS: string = 'selected';
         private static STANDOUT_CLASS: string = 'standout';
@@ -95,34 +96,19 @@ module api.content.image {
             });
         }
 
-        private getSizeValue(content: api.content.Content, propertyName: string): number {
-            let value = 0;
-            let metaData = content.getContentData().getProperty('metadata');
-
-            if (metaData && api.data.ValueTypes.DATA.equals(metaData.getType())) {
-                return parseInt(metaData.getPropertySet().getProperty(propertyName).getString(), 10);
-            } else {
-                let allExtraData = content.getAllExtraData();
-                allExtraData.forEach((extraData: ExtraData) => {
-                    if (!value && extraData.getData().getProperty(propertyName)) {
-                        value = parseInt(extraData.getData().getProperty(propertyName).getValue().getString(), 10);
-                    }
-                });
-            }
-
-            return value;
-        }
-
-        setOriginalDimensions(content: api.content.Content) {
-            this.originalWidth = this.getSizeValue(content, 'imageWidth') || this.initialWidth;
-            this.originalHeight = this.getSizeValue(content, 'imageHeight');
+        setOriginalDimensions(width: number = this.initialWidth, height: number = 0, orientation: number = 1) {
+            this.originalWidth = width;
+            this.originalHeight = height;
+            this.originalOrientation = orientation;
         }
 
         private getProportionalHeight(): number {
-            if (!this.originalHeight || !this.originalWidth) {
+            if (!this.originalHeight || !this.originalWidth || !this.originalOrientation) {
                 return 0;
             }
-            return Math.round(this.initialWidth * this.originalHeight / this.originalWidth);
+            const inverse = this.originalOrientation > 4;
+            const ratio = this.originalHeight / this.originalWidth;
+            return Math.round(this.initialWidth * (inverse ? 1 / ratio : ratio));
         }
 
         private togglePlaceholder(flag: boolean) {
@@ -191,7 +177,6 @@ module api.content.image {
             const orientationHandler = (orientation: number) => {
                 this.notifyOrientationChanged(orientation);
             };
-
 
             const editorImage = imageEditor.getImage();
             editorImage.onLoaded((event: UIEvent) => {
