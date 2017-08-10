@@ -52,7 +52,12 @@ export class NewPrincipalDialog extends api.ui.dialog.ModalDialog {
     }
 
     open() {
-        this.grid.resetCache();
+        this.grid.reload(null, null, false);
         super.open();
+    }
+    
+    close() {
+        this.grid.clearUserStores();
+        super.close();
     }
 }

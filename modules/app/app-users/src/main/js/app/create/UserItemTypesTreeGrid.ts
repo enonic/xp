@@ -89,11 +89,6 @@ export class UserItemTypesTreeGrid extends TreeGrid<UserTypeTreeGridItem> {
         });
     }
 
-    resetCache() {
-        this.reload(null, null, false);
-        this.userStores = null;
-    }
-
     fetchUserStores(): wemQ.Promise<UserStore[]> {
         if (this.userStores) {
             return wemQ.resolve(this.userStores);
@@ -160,5 +155,9 @@ export class UserItemTypesTreeGrid extends TreeGrid<UserTypeTreeGridItem> {
             }
             return [];
         });
+    }
+
+    clearUserStores() {
+        this.userStores = null;
     }
 }
