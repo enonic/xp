@@ -200,7 +200,7 @@ module api.ui.treegrid {
                 });
             }
 
-            this.bindClickEvents();
+            this.bindClickEvents(builder.isToggleClickEnabled());
 
             this.grid.onShown(() => {
                 this.scrollable = this.queryScrollable();
@@ -272,7 +272,7 @@ module api.ui.treegrid {
             }
         };
 
-        private bindClickEvents() {
+        private bindClickEvents(toggleClickEnabled: boolean) {
             let clickHandler = ((event, data) => {
                 if (!this.isActive()) {
                     return;
@@ -296,14 +296,16 @@ module api.ui.treegrid {
 
                 this.setActive(false);
 
-                if (elem.hasClass('expand')) {
-                    this.onExpand(elem, data);
-                    return;
-                }
+                if (toggleClickEnabled) {
+                    if (elem.hasClass('expand')) {
+                        this.onExpand(elem, data);
+                        return;
+                    }
 
-                if (elem.hasClass('collapse')) {
-                    this.onCollapse(elem, data);
-                    return;
+                    if (elem.hasClass('collapse')) {
+                        this.onCollapse(elem, data);
+                        return;
+                    }
                 }
 
                 this.setActive(true);
@@ -1130,12 +1132,9 @@ module api.ui.treegrid {
 
         // Hard reset
 
-        reload(parentNodeData?: DATA, idPropertyName?: string): wemQ.Promise<void> {
-            let expandedNodesDataId = this.grid.getDataView().getItems().filter((item) => {
-                return item.isExpanded();
-            }).map((item) => {
-                return item.getDataId();
-            });
+        reload(parentNodeData?: DATA, idPropertyName?: string, rememberExpanded: boolean = true): wemQ.Promise<void> {
+            const expandedNodesDataId = rememberExpanded ? this.grid.getDataView().getItems()
+                                                             .filter(item => item.isExpanded()).map(item => item.getDataId()) : [];
 
             let selection = this.root.getCurrentSelection();
 
@@ -1581,6 +1580,14 @@ module api.ui.treegrid {
             this.invalidate();
             this.triggerSelectionChangedListeners();
             this.setActive(true);
+        }
+
+        toggleNode(node: TreeNode<DATA>, all: boolean = false) {
+            if (node.isExpanded()) {
+                this.collapseNode(node, all);
+            } else {
+                this.expandNode(node, all);
+            }
         }
 
         notifyLoaded(): void {

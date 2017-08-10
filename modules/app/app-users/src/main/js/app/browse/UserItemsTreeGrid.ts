@@ -3,6 +3,7 @@ import {UserTreeGridItem, UserTreeGridItemType, UserTreeGridItemBuilder} from '.
 import {UserTreeGridActions} from './UserTreeGridActions';
 import {EditPrincipalEvent} from './EditPrincipalEvent';
 import {UserItemsRowFormatter} from './UserItemsRowFormatter';
+import {NewPrincipalEvent} from './NewPrincipalEvent';
 
 import GridColumn = api.ui.grid.GridColumn;
 import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
@@ -37,13 +38,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
                 field: 'displayName',
                 formatter: UserItemsRowFormatter.nameFormatter,
             style: {minWidth: 200}
-        }, /* {
-                name: i18n('field.modifiedTime'),
-                id: 'modifiedTime',
-                field: 'modifiedTime',
-                formatter: DateTimeFormatter.format,
-                style: {cssClass: 'modified', minWidth: 150, maxWidth: 170}
-         }*/]).setPartialLoadEnabled(true).setLoadBufferSize(20)
+        }]).setPartialLoadEnabled(true).setLoadBufferSize(20)
             .prependClasses('user-tree-grid');
 
         const columns = builder.getColumns().slice(0);
@@ -162,6 +157,11 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
 
             this.appendNode(userTreeGridItem, parentOfSameType, false);
 
+            // If a new principal is added to the root it means it was added from the New Principal modal dialog,
+            // in which case we have to reload the tree so that the new node is placed correctly
+            if (this.getParentNode(parentOfSameType) == this.getRoot().getCurrentRoot()) {
+                this.reload();
+            }
         }
     }
 

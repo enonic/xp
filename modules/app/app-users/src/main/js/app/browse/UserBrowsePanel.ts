@@ -40,6 +40,14 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
             this.refreshFilter();
         });
 
+        const changeSelectionStatus = api.util.AppHelper.debounce((noSelection: boolean) => {
+            this.browseToolbar.toggleClass('no-selection', noSelection);
+        }, 50);
+
+        this.treeGrid.onSelectionChanged((currentSelection, fullSelection) => changeSelectionStatus(fullSelection.length === 0));
+
+        this.treeGrid.onHighlightingChanged((node: TreeNode<UserTreeGridItem>) => changeSelectionStatus(!node));
+
         this.onShown((event) => {
             Router.setHash('browse');
         });
