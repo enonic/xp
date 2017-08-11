@@ -87,6 +87,7 @@ module api.ui.image {
         private knobMouseDownListener: (event: MouseEvent) => void;
 
         private stickyToolbar: DivEl;
+        private topContainer: DivEl;
 
         private editCropButton: Button;
         private editFocusButton: Button;
@@ -121,7 +122,7 @@ module api.ui.image {
         private unorientedImage: ImgEl;
         private imageMask: LoadMask;
 
-        public static debug: boolean = false;
+        public static debug: boolean = true;
 
         constructor(src?: string) {
             super('image-editor');
@@ -408,7 +409,9 @@ module api.ui.image {
             let focusRadPct: number;
             let revZoomPct: SVGRect;
             let revCropPct: SVGRect;
+            let revCropAuto: boolean;
             let revFocusPosPct: Point;
+            let revFocusAuto: boolean;
             let revFocusRadPct;
 
             if (scale) {
@@ -422,10 +425,12 @@ module api.ui.image {
                 }
                 if (this.revertCropData) {
                     revCropPct = this.normalizeRect(this.revertCropData);
+                    revCropAuto = this.revertCropData.auto;
                 }
                 if (this.revertFocusData) {
                     revFocusPosPct = this.normalizePoint(this.revertFocusData);
                     revFocusRadPct = this.normalizeRadius(this.revertFocusData.r);
+                    revFocusAuto = this.revertFocusData.auto;
                 }
             }
 
@@ -492,7 +497,7 @@ module api.ui.image {
                         y: revCrop.y,
                         w: revCrop.w,
                         h: revCrop.h,
-                        auto: this.revertCropData.auto
+                        auto: revCropAuto
                     };
                 }
                 if (revFocusPosPct && revFocusRadPct) {
@@ -502,7 +507,7 @@ module api.ui.image {
                         x: revFocusPos.x,
                         y: revFocusPos.y,
                         r: revFocusRad,
-                        auto: this.revertFocusData.auto
+                        auto: revFocusAuto
                     };
                 }
             }
@@ -815,11 +820,11 @@ module api.ui.image {
                     this.mirrorHorizontal();
                 });
 
-            let topContainer = new DivEl('top-container');
-            topContainer.appendChildren<Element>(this.editCropButton, this.editFocusButton, this.rotateButton, this.mirrorButton,
+            this.topContainer = new DivEl('top-container');
+            this.topContainer.appendChildren<Element>(this.editCropButton, this.editFocusButton, this.rotateButton, this.mirrorButton,
                 rightContainer);
 
-            toolbar.appendChildren(topContainer, zoomContainer);
+            toolbar.appendChildren(this.topContainer, zoomContainer);
 
             return toolbar;
         }
@@ -1029,7 +1034,7 @@ module api.ui.image {
         private updateStickyToolbar() {
             let relativeScrollTop = this.getRelativeScrollTop();
             const el = this.stickyToolbar.getEl();
-            this.getEl().setPaddingTop(el.getHeight() + 'px');
+            this.getEl().setPaddingTop(this.topContainer.getEl().getHeight() + 'px');
             if (!this.isTopEdgeVisible(relativeScrollTop) && this.isBottomEdgeVisible(relativeScrollTop)) {
                 this.addClass('sticky-mode');
                 el.setTopPx(-relativeScrollTop);

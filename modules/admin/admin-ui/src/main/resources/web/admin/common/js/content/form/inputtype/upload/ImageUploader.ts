@@ -59,7 +59,10 @@ module api.content.form.inputtype.upload {
                 let content = event.getUploadItem().getModel();
                 let value = this.imageUploader.getMediaValue(content);
 
-                this.imageUploader.setOriginalDimensions(content);
+                this.imageUploader.setOriginalDimensions(
+                    this.readSizeValue(content, 'imageWidth'),
+                    this.readSizeValue(content, 'imageHeight'),
+                    this.readOrientation(content));
 
                 this.saveToProperty(value);
                 api.notify.showFeedback(content.getDisplayName() + ' saved');
