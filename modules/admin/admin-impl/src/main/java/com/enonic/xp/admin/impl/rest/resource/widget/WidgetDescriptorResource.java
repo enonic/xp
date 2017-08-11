@@ -36,7 +36,8 @@ public class WidgetDescriptorResource
     @Path("list/byinterfaces")
     public List<WidgetDescriptorJson> getByInterfaces( final String[] widgetInterfaces )
     {
-        return widgetDescriptorsToJsonList( widgetDescriptorService.getByInterfaces( widgetInterfaces ) );
+        final Descriptors<WidgetDescriptor> widgetDescriptors = this.widgetDescriptorService.getByInterfaces( widgetInterfaces );
+        return widgetDescriptorsToJsonList( widgetDescriptors );
     }
 
     @Reference

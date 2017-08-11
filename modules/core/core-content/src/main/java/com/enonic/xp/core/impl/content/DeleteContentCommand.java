@@ -83,8 +83,6 @@ final class DeleteContentCommand
     {
         final CompareStatus rootNodeStatus = getCompareStatus( nodeToDelete );
 
-        final NodeIds children = getAllChildren( nodeToDelete );
-
         final DeleteContentsResult.Builder result = DeleteContentsResult.create();
 
         if ( rootNodeStatus == CompareStatus.NEW )
@@ -109,6 +107,8 @@ final class DeleteContentCommand
                 build() );
 
             result.addPending( ContentId.from( nodeToDelete.toString() ) );
+
+            final NodeIds children = getAllChildren( nodeToDelete );
 
             for ( final NodeId child : children )
             {
@@ -135,7 +135,7 @@ final class DeleteContentCommand
     {
         final FindNodesByParentResult findNodesByParentResult = this.nodeService.findByParent( FindNodesByParentParams.create().
             parentId( nodeToDelete ).
-            recursive( true ).
+            recursive( false ).
             build() );
 
         return findNodesByParentResult.getNodeIds();

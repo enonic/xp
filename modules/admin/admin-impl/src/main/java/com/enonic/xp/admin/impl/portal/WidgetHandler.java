@@ -6,13 +6,14 @@ import java.util.regex.Pattern;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.admin.widget.WidgetDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.EndpointHandler;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
-import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.WebHandler;
@@ -27,6 +28,8 @@ public final class WidgetHandler
     private ContentService contentService;
 
     private ControllerScriptFactory controllerScriptFactory;
+
+    private WidgetDescriptorService widgetDescriptorService;
 
     public WidgetHandler()
     {
@@ -46,17 +49,14 @@ public final class WidgetHandler
         {
             throw notFound( "Not a valid service url pattern" );
         }
-
-        final ApplicationKey appKey = ApplicationKey.from( matcher.group( 1 ) );
-        final ResourceKey scriptDir = ResourceKey.from( appKey, "admin/widgets/" + matcher.group( 2 ) );
-
         final PortalRequest portalRequest =
             webRequest instanceof PortalRequest ? (PortalRequest) webRequest : new PortalRequest( webRequest );
 
         final WidgetHandlerWorker worker = new WidgetHandlerWorker( portalRequest );
-        worker.scriptDir = scriptDir;
         worker.controllerScriptFactory = this.controllerScriptFactory;
+        worker.widgetDescriptorService = this.widgetDescriptorService;
         worker.setContentService( this.contentService );
+        worker.descriptorKey = DescriptorKey.from( ApplicationKey.from( matcher.group( 1 ) ), matcher.group( 2 ) );
         return worker.execute();
     }
 
@@ -71,4 +71,11 @@ public final class WidgetHandler
     {
         this.controllerScriptFactory = controllerScriptFactory;
     }
+
+    @Reference
+    public void setWidgetDescriptorService( final WidgetDescriptorService widgetDescriptorService )
+    {
+        this.widgetDescriptorService = widgetDescriptorService;
+    }
+
 }
