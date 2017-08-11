@@ -20,7 +20,6 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.impl.server.rest.model.ReindexRequestJson;
 import com.enonic.xp.impl.server.rest.model.ReindexResultJson;
-import com.enonic.xp.impl.server.rest.model.SetReadOnlyModeJson;
 import com.enonic.xp.impl.server.rest.model.UpdateIndexSettingsRequestJson;
 import com.enonic.xp.impl.server.rest.model.UpdateIndexSettingsResultJson;
 import com.enonic.xp.index.IndexService;
@@ -29,10 +28,8 @@ import com.enonic.xp.index.ReindexResult;
 import com.enonic.xp.index.UpdateIndexSettingsParams;
 import com.enonic.xp.index.UpdateIndexSettingsResult;
 import com.enonic.xp.jaxrs.JaxRsComponent;
-import com.enonic.xp.repository.Repositories;
-import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositoryNotFoundException;
+import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
 
@@ -65,39 +62,24 @@ public final class IndexResource
     @Path("updateSettings")
     public UpdateIndexSettingsResultJson updateSettings( final UpdateIndexSettingsRequestJson request )
     {
-        final UpdateIndexSettingsResult result = this.indexService.updateIndexSettings( UpdateIndexSettingsParams.create().
-            indexName( request.indexName ).
-            settings( request.settings.toString() ).
-            build() );
+        final RepositoryIds.Builder repositoryIds = RepositoryIds.create();
 
-        return UpdateIndexSettingsResultJson.create( result );
-    }
-
-    @POST
-    @Path("setReadOnlyMode")
-    public UpdateIndexSettingsResultJson setReadOnlyMode( final SetReadOnlyModeJson request )
-    {
-        final Repositories repositories;
-
-        if ( Strings.isNullOrEmpty( request.repositoryId ) )
+        if ( !Strings.isNullOrEmpty( request.repositoryId ) )
         {
-            repositories = repositoryService.list();
+            repositoryIds.add( RepositoryId.from( request.repositoryId ) );
         }
         else
         {
-            final Repository repository = this.repositoryService.get( RepositoryId.from( request.repositoryId ) );
-
-            if ( repository == null )
-            {
-                throw new RepositoryNotFoundException( RepositoryId.from( request.repositoryId ) );
-            }
-
-            repositories = Repositories.from( repository );
+            repositoryIds.addAll( this.repositoryService.list().getIds() );
         }
 
-        indexService.triggerReadOnlyMode( request.readOnly, repositories.getIds() );
+        final UpdateIndexSettingsResult result = this.indexService.updateIndexSettings( UpdateIndexSettingsParams.create().
+            repositories( repositoryIds.build() ).
+            settings( request.settings.toString() ).
+            requireClosedIndex( request.requireClosedIndex ).
+            build() );
 
-        return UpdateIndexSettingsResultJson.create( UpdateIndexSettingsResult.create().build() );
+        return UpdateIndexSettingsResultJson.create( result );
     }
 
     @Reference

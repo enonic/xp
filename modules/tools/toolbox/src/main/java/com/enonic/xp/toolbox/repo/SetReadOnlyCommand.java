@@ -1,6 +1,7 @@
 package com.enonic.xp.toolbox.repo;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.base.Strings;
 
 import io.airlift.airline.Arguments;
 import io.airlift.airline.Command;
@@ -12,7 +13,7 @@ import com.enonic.xp.toolbox.util.JsonHelper;
 public final class SetReadOnlyCommand
     extends RepoCommand
 {
-    public static final String REST_PATH = "/api/repo/index/setReadOnlyMode";
+    public static final String REST_PATH = "/api/repo/index/updateSettings";
 
     @Arguments(description = "Read only mode enabled", required = true)
     public boolean readOnly;
@@ -30,9 +31,22 @@ public final class SetReadOnlyCommand
 
     private ObjectNode createJsonRequest()
     {
+        final ObjectNode settingsIndexObjectNode = JsonHelper.newObjectNode();
+        settingsIndexObjectNode.put( "blocks.write", readOnly );
+
+        final ObjectNode settingsObjectNode = JsonHelper.newObjectNode();
+        settingsObjectNode.set( "index", settingsIndexObjectNode );
+
         final ObjectNode json = JsonHelper.newObjectNode();
-        json.put( "readOnly", readOnly );
-        json.put( "repositoryId", repositoryId );
+        json.set( "settings", settingsObjectNode );
+
+        if ( !Strings.isNullOrEmpty( repositoryId ) )
+        {
+            json.put( "repositoryId", repositoryId );
+        }
+
+        json.put( "requireClosedIndex", true );
+
         return json;
     }
 }
