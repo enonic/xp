@@ -240,10 +240,6 @@ module api.form {
             if (inputRecording.isMaximumOccurrencesBreached()) {
                 recording.breaksMaximumOccurrences(validationRecordingPath);
             }
-            if (inputRecording.hasAdditionalValidationRecord()) {
-                recording.addValidationRecord(this.resolveValidationRecordingPath().toString(),
-                    inputRecording.getAdditionalValidationRecord());
-            }
 
             if (recording.validityChanged(this.previousValidityRecording) || this.userInputValidityChanged(hasValidInput)) {
                 if (!silent) {
