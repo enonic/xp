@@ -55,7 +55,7 @@ export class NewPrincipalDialog extends api.ui.dialog.ModalDialog {
         this.grid.reload(null, null, false);
         super.open();
     }
-    
+
     close() {
         this.grid.clearUserStores();
         super.close();
