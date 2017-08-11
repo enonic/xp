@@ -6,6 +6,7 @@ module api.content.form.inputtype.upload {
     import ValueTypes = api.data.ValueTypes;
     import Point = api.ui.image.Point;
     import Rect = api.ui.image.Rect;
+    import MixinName = api.schema.mixin.MixinName;
 
     export class ImageUploader
         extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<string> {
@@ -245,12 +246,15 @@ module api.content.form.inputtype.upload {
         }
 
         private writeOrientation(content: Content, orientation: number) {
-            const property = this.getMetaProperty(content, 'orientation');
-            if (property) {
-                if (orientation == 1) {
-                    property.getParent().removeProperty(property.getName(), property.getIndex());
-                } else {
+            const extra = content.getExtraData(new MixinName('media:cameraInfo'));
+            const property = extra && extra.getData().getProperty('orientation');
+            if (orientation == 1 && property) {
+                property.getParent().removeProperty(property.getName(), property.getIndex());
+            } else if (orientation != 1) {
+                if (property) {
                     property.setValue(new Value(String(orientation), ValueTypes.STRING));
+                } else if (extra) {
+                    extra.getData().addString('orientation', String(orientation));
                 }
             }
         }
