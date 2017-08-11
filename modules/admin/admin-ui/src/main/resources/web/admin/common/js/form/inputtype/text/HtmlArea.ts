@@ -351,12 +351,12 @@ module api.form.inputtype.text {
 
         isDirty(): boolean {
             return this.editors.some((editor: HtmlAreaOccurrenceInfo) => {
-                return this.getEditor(editor.id).getData() !== editor.textAreaEl.getValue();
+                return this.getEditor(editor.id).getSnapshot() !== editor.textAreaEl.getValue();
             });
         }
 
         private setEditorContent(editorId: string, property: Property): void {
-            let editor = this.getEditor(editorId);
+            const editor: editor = this.getEditor(editorId);
             if (editor) {
                 editor.setData(property.hasNonNullValue() ? HTMLAreaHelper.prepareImgSrcsInValueForEdit(property.getString()) : '');
                 //HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
@@ -370,8 +370,8 @@ module api.form.inputtype.text {
         }
 
         private notifyValueChanged(id: string, occurrence: api.dom.Element) {
-            // let value = ValueTypes.STRING.newValue(HTMLAreaHelper.prepareEditorImageSrcsBeforeSave(this.getEditor(id)));
-            let value = ValueTypes.STRING.newValue(this.getEditor(id).getData());
+            const value: Value = ValueTypes.STRING.newValue(
+                HTMLAreaHelper.prepareEditorImageSrcsBeforeSave(this.getEditor(id).getSnapshot()));
             this.notifyOccurrenceValueChanged(occurrence, value);
         }
 
