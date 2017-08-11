@@ -59,7 +59,7 @@ export class UpdateIssueDialog extends IssueDialog {
             updateIssueRequest.sendAndParse().then((issue) => {
                 api.notify.showSuccess(i18n('notify.issue.updated'));
                 if ( approvers.length > issue.getApprovers().length ) {
-                    api.notify.showWarning(i18n('notify.issue.asiignees.norights'));
+                    api.notify.showWarning(i18n('notify.issue.assignees.norights'));
                 }
                 this.close();
             }).catch((reason) => {

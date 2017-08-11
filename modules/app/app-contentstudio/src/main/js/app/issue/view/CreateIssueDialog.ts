@@ -85,7 +85,7 @@ export class CreateIssueDialog extends IssueDialog {
             createIssueRequest.sendAndParse().then((issue) => {
                 api.notify.showSuccess(i18n('notify.issue.created'));
                 if ( approvers.length > issue.getApprovers().length ) {
-                    api.notify.showWarning(i18n('notify.issue.asiignees.norights'));
+                    api.notify.showWarning(i18n('notify.issue.assignees.norights'));
                 }
                 this.close();
                 this.reset();
