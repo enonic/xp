@@ -13,7 +13,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.PublishRequest;
 import com.enonic.xp.issue.PublishRequestItem;
-import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
 
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.APPROVERS;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.DESCRIPTION;
@@ -31,7 +31,7 @@ public class IssueDataSerializerTest
         CreateIssueParams params = CreateIssueParams.create().
             title( "title" ).
             description( "descr" ).
-            addApproverId( PrincipalKey.from( "user:myStore:approver" ) ).
+            setApproverIds( PrincipalKeys.from( "user:myStore:approver" ) ).
             setPublishRequest( PublishRequest.create().addItem(
                 PublishRequestItem.create().id( ContentId.from( "content-id" ) ).includeChildren( false ).build() ).addExcludeId(
                 ContentId.from( "exclude-id" ) ).build() ).

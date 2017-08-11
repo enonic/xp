@@ -10,15 +10,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishRequestJson;
 import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.IssueStatus;
+import com.enonic.xp.issue.PublishRequest;
 import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
 public class UpdateIssueJson
 {
-    private final UpdateIssueParams updateIssueParams;
+    public final IssueId issueId;
 
-    private final boolean isPublish;
+    public final String title;
+
+    public final String description;
+
+    public final IssueStatus issueStatus;
+
+    public final List<PrincipalKey> approverIds;
+
+    public final PublishRequest publishRequest;
+
+    public final boolean isPublish;
 
     @JsonCreator
     public UpdateIssueJson( @JsonProperty("id") final String issueId, @JsonProperty("title") final String title,
@@ -26,47 +37,14 @@ public class UpdateIssueJson
                             @JsonProperty("isPublish") final boolean isPublish, @JsonProperty("approvers") final List<String> approverIds,
                             @JsonProperty("publishRequest") final PublishRequestJson publishRequest )
     {
+        this.issueId = IssueId.from( issueId );
         this.isPublish = isPublish;
-
-        updateIssueParams = UpdateIssueParams.create().
-            id( IssueId.from( issueId ) ).
-            editor( editMe ->
-                    {
-                        if ( title != null )
-                        {
-                            editMe.title = title;
-                        }
-                        if ( description != null )
-                        {
-                            editMe.description = description;
-                        }
-                        if ( status != null )
-                        {
-                            editMe.issueStatus = IssueStatus.valueOf( status.trim().toUpperCase() );
-                        }
-                        if ( approverIds != null )
-                        {
-                            editMe.approverIds = PrincipalKeys.from(
-                                approverIds.stream().map( str -> PrincipalKey.from( str ) ).collect( Collectors.toList() ) );
-                        }
-                        if ( publishRequest != null )
-                        {
-                            editMe.publishRequest = publishRequest.toRequest();
-                        }
-                    } ).
-            build();
-    }
-
-    @JsonIgnore
-    public UpdateIssueParams getUpdateIssueParams()
-    {
-        return updateIssueParams;
-    }
-
-    @JsonIgnore
-    public boolean isPublish()
-    {
-        return isPublish;
+        this.title = title;
+        this.description = description;
+        this.issueStatus = status != null ? IssueStatus.valueOf( status.trim().toUpperCase() ) : null;
+        this.approverIds =
+            approverIds != null ? approverIds.stream().map( str -> PrincipalKey.from( str ) ).collect( Collectors.toList() ) : null;
+        this.publishRequest = publishRequest != null ? publishRequest.toRequest() : null;
     }
 
 }
