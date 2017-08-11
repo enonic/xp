@@ -68,7 +68,7 @@ public class ImageUrlBuilderTest
         final StringBuilder stringBuilder = new StringBuilder( "test/" );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals( "test/draft/context/path/_/image/testID:231c46bf8276e2cc6c29c7bfa10c7b7ea9371d9a/testScale/testName",
+        assertEquals( "test/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/testName",
                       stringBuilder.toString() );
     }
 
@@ -80,7 +80,7 @@ public class ImageUrlBuilderTest
         Mockito.when( media.getName() ).thenReturn( ContentName.from( "test+Name.png" ) );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals( "test/draft/context/path/_/image/testID:231c46bf8276e2cc6c29c7bfa10c7b7ea9371d9a/testScale/test%2BName.png",
+        assertEquals( "test/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/test%2BName.png",
                       stringBuilder.toString() );
     }
 
@@ -92,7 +92,7 @@ public class ImageUrlBuilderTest
         Mockito.when( media.getName() ).thenReturn( ContentName.from( "test Name.png" ) );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals( "test/draft/context/path/_/image/testID:231c46bf8276e2cc6c29c7bfa10c7b7ea9371d9a/testScale/test%20Name.png",
+        assertEquals( "test/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/test%20Name.png",
                       stringBuilder.toString() );
     }
 
@@ -103,7 +103,7 @@ public class ImageUrlBuilderTest
         imageUrlParams.format( "png" );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals( "test/draft/context/path/_/image/testID:231c46bf8276e2cc6c29c7bfa10c7b7ea9371d9a/testScale/testName.png",
+        assertEquals( "test/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/testName.png",
                       stringBuilder.toString() );
     }
 
@@ -116,7 +116,7 @@ public class ImageUrlBuilderTest
         Mockito.when( media.getName() ).thenReturn( ContentName.from( "testName.png" ) );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals( "test/draft/context/path/_/image/testID:231c46bf8276e2cc6c29c7bfa10c7b7ea9371d9a/testScale/testName.png",
+        assertEquals( "test/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/testName.png",
                       stringBuilder.toString() );
     }
 
@@ -129,7 +129,7 @@ public class ImageUrlBuilderTest
         Mockito.when( media.getName() ).thenReturn( ContentName.from( "testName.jpg" ) );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals( "test/draft/context/path/_/image/testID:231c46bf8276e2cc6c29c7bfa10c7b7ea9371d9a/testScale/testName.jpg.png",
+        assertEquals( "test/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/testName.jpg.png",
                       stringBuilder.toString() );
     }
 
@@ -140,7 +140,7 @@ public class ImageUrlBuilderTest
         imageUrlParams.scale( "block(310,175)" );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals( "test/draft/context/path/_/image/testID:231c46bf8276e2cc6c29c7bfa10c7b7ea9371d9a/block-310-175/testName",
+        assertEquals( "test/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/block-310-175/testName",
                       stringBuilder.toString() );
     }
 
@@ -151,7 +151,7 @@ public class ImageUrlBuilderTest
         imageUrlParams.scale( "block( 310, 175)" );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals( "test/draft/context/path/_/image/testID:231c46bf8276e2cc6c29c7bfa10c7b7ea9371d9a/block-310-175/testName",
+        assertEquals( "test/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/block-310-175/testName",
                       stringBuilder.toString() );
     }
 }
