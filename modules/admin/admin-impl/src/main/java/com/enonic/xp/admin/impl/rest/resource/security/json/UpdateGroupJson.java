@@ -21,12 +21,18 @@ public final class UpdateGroupJson
 
     private final PrincipalKeys removeMembers;
 
+    private final PrincipalKeys addMemberships;
+
+    private final PrincipalKeys removeMemberships;
+
     private final String description;
 
     @JsonCreator
     public UpdateGroupJson( @JsonProperty("key") final String userKey, @JsonProperty("displayName") final String displayName,
                             @JsonProperty("addMembers") final List<String> addMembers,
                             @JsonProperty("removeMembers") final List<String> removeMembers,
+                            @JsonProperty("addMemberships") final List<String> addMemberships,
+                            @JsonProperty("removeMemberships") final List<String> removeMemberships,
                             @JsonProperty("description") final String description )
     {
         final PrincipalKey principalKey = PrincipalKey.from( userKey );
@@ -37,6 +43,8 @@ public final class UpdateGroupJson
             build();
         this.addMembers = PrincipalKeys.from( addMembers.stream().map( PrincipalKey::from ).collect( toList() ) );
         this.removeMembers = PrincipalKeys.from( removeMembers.stream().map( PrincipalKey::from ).collect( toList() ) );
+        this.addMemberships = PrincipalKeys.from( addMemberships.stream().map( PrincipalKey::from ).collect( toList() ) );
+        this.removeMemberships = PrincipalKeys.from( removeMemberships.stream().map( PrincipalKey::from ).collect( toList() ) );
         this.description = description;
     }
 
@@ -56,5 +64,17 @@ public final class UpdateGroupJson
     public PrincipalKeys getRemoveMembers()
     {
         return removeMembers;
+    }
+
+    @JsonIgnore
+    public PrincipalKeys getAddMemberships()
+    {
+        return addMemberships;
+    }
+
+    @JsonIgnore
+    public PrincipalKeys getRemoveMemberships()
+    {
+        return removeMemberships;
     }
 }

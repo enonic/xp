@@ -4,10 +4,13 @@ module api.security {
 
         private members: PrincipalKey[];
 
+        private memberships: Principal[];
+
         constructor(builder: GroupBuilder) {
             super(builder);
             api.util.assert(this.getKey().isGroup(), 'Expected PrincipalKey of type Group');
             this.members = builder.members || [];
+            this.memberships = builder.memberships || [];
         }
 
         getMembers(): PrincipalKey[] {
@@ -22,13 +25,23 @@ module api.security {
             this.members.push(member);
         }
 
+        getMemberships(): Principal[] {
+            return this.memberships;
+        }
+
+        setMemberships(memberships: Principal[]) {
+            this.memberships = memberships;
+        }
+
         equals(o: api.Equitable): boolean {
             if (!api.ObjectHelper.iFrameSafeInstanceOf(o, Group)) {
                 return false;
             }
 
             let other = <Group> o;
-            return super.equals(o) && api.ObjectHelper.arrayEquals(this.members, other.getMembers());
+            return super.equals(o) &&
+                   api.ObjectHelper.arrayEquals(this.members, other.getMembers()) &&
+                   api.ObjectHelper.arrayEquals(this.memberships, other.getMemberships());
         }
 
         clone(): Group {
@@ -49,14 +62,19 @@ module api.security {
     }
 
     export class GroupBuilder extends PrincipalBuilder {
+
         members: PrincipalKey[];
+
+        memberships: Principal[];
 
         constructor(source?: Group) {
             if (source) {
                 super(source);
                 this.members = source.getMembers().slice(0);
+                this.memberships = source.getMemberships().slice(0);
             } else {
                 this.members = [];
+                this.memberships = [];
             }
         }
 
@@ -66,11 +84,19 @@ module api.security {
             if (json.members) {
                 this.members = json.members.map((memberStr) => PrincipalKey.fromString(memberStr));
             }
+            if (json.memberships) {
+                this.memberships = json.memberships.map((principalJson) => Principal.fromJson(principalJson));
+            }
             return this;
         }
 
         setMembers(members: PrincipalKey[]): GroupBuilder {
             this.members = members || [];
+            return this;
+        }
+
+        setMemberships(memberships: Principal[]): GroupBuilder {
+            this.memberships = memberships || [];
             return this;
         }
 
