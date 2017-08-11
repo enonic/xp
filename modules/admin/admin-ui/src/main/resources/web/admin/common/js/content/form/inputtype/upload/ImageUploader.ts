@@ -247,7 +247,11 @@ module api.content.form.inputtype.upload {
         private writeOrientation(content: Content, orientation: number) {
             const property = this.getMetaProperty(content, 'orientation');
             if (property) {
-                property.setValue(new Value(String(orientation), ValueTypes.STRING));
+                if (orientation == 1) {
+                    property.getParent().removeProperty(property.getName(), property.getIndex());
+                } else {
+                    property.setValue(new Value(String(orientation), ValueTypes.STRING));
+                }
             }
         }
 

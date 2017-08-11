@@ -122,7 +122,7 @@ module api.ui.image {
         private unorientedImage: ImgEl;
         private imageMask: LoadMask;
 
-        public static debug: boolean = true;
+        public static debug: boolean = false;
 
         constructor(src?: string) {
             super('image-editor');
