@@ -52,8 +52,14 @@ module api.ui.selector {
             this.initEventHandlers();
         }
 
+        removeAllOptions() {
+            this.getGrid().getDataView().setItems([]);
+        }
+
         setOptions(options: Option<OPTION_DISPLAY_VALUE>[]) {
             this.setSelfLoading(false);
+
+            this.removeAllOptions();
             this.getGrid().getDataView().setItems(this.dataToTreeNodes(options, this.getRoot().getCurrentRoot()), 'dataId');
         }
 
@@ -81,8 +87,14 @@ module api.ui.selector {
             });
         }
 
-        expandNode(node?: TreeNode<Option<OPTION_DISPLAY_VALUE>>, expandAll?: boolean): wemQ.Promise<boolean> {
+        search(searchString: string): wemQ.Promise<void> {
+            return this.loader.search(searchString).then((items) => {
+                this.setOptions(this.createOptions(items));
+                this.updateExpanded();
+            });
+        }
 
+        expandNode(node?: TreeNode<Option<OPTION_DISPLAY_VALUE>>, expandAll?: boolean): wemQ.Promise<boolean> {
             return super.expandNode(node, expandAll);
         }
 
@@ -120,7 +132,7 @@ module api.ui.selector {
 
         fetch(node: TreeNode<Option<OPTION_DISPLAY_VALUE>>, dataId?: string): wemQ.Promise<Option<OPTION_DISPLAY_VALUE>> {
             return this.loader.fetch(node).then((data: OPTION_DISPLAY_VALUE) => {
-                return this.optionDataToTreeNodeOption(data);
+                return this.createOption(data);
             });
         }
 
@@ -136,7 +148,7 @@ module api.ui.selector {
 
             return this.loader.fetchChildren(parentNode).then(
                 (loadedData: OptionDataLoaderData<OPTION_DISPLAY_VALUE>) => {
-                    let newOptions = this.optionsDataToTreeNodeOption(loadedData.getData());
+                    let newOptions = this.createOptions(loadedData.getData());
                     let options = parentNode.getChildren().map((el) => el.getData()).slice(0, from).concat(newOptions);
 
                     parentNode.setMaxChildren(loadedData.getTotalHits());
@@ -208,11 +220,11 @@ module api.ui.selector {
             }
         }
 
-        private optionsDataToTreeNodeOption(data: OPTION_DISPLAY_VALUE[]): Option<OPTION_DISPLAY_VALUE>[] {
-            return data.map((item) => this.optionDataToTreeNodeOption(item));
+        createOptions(data: OPTION_DISPLAY_VALUE[]): Option<OPTION_DISPLAY_VALUE>[] {
+            return data.map((item) => this.createOption(item));
         }
 
-        private optionDataToTreeNodeOption(data: OPTION_DISPLAY_VALUE): Option<OPTION_DISPLAY_VALUE> {
+        private createOption(data: OPTION_DISPLAY_VALUE): Option<OPTION_DISPLAY_VALUE> {
             return {
                 value: this.treeDataHelper.getDataId(data),
                 disabled: this.treeDataHelper.isDisabled(data),

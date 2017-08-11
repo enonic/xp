@@ -15,6 +15,8 @@ import PrincipalKey = api.security.PrincipalKey;
 import ContentId = api.content.ContentId;
 import UserStoreKey = api.security.UserStoreKey;
 import i18n = api.util.i18n;
+import ContentTreeSelectorItem = api.content.resource.ContentTreeSelectorItem;
+import RichComboBox = api.ui.selector.combobox.RichComboBox;
 
 export class IssueDialogForm extends api.ui.form.Form {
 
@@ -22,7 +24,7 @@ export class IssueDialogForm extends api.ui.form.Form {
 
     private description: TextArea;
 
-    private contentItemsSelector: api.content.ContentComboBox;
+    private contentItemsSelector: RichComboBox<any>;
 
     private descriptionText: PEl;
 
@@ -30,9 +32,9 @@ export class IssueDialogForm extends api.ui.form.Form {
 
     private compactAssigneesView: boolean;
 
-    private contentItemsAddedListeners: {(items: ContentSummary[]): void}[] = [];
+    private contentItemsAddedListeners: {(items: ContentTreeSelectorItem[]): void}[] = [];
 
-    private contentItemsRemovedListeners: {(items: ContentSummary[]): void}[] = [];
+    private contentItemsRemovedListeners: {(items: ContentTreeSelectorItem[]): void}[] = [];
 
     constructor(compactAssigneesView?: boolean) {
 
@@ -80,12 +82,12 @@ export class IssueDialogForm extends api.ui.form.Form {
 
         this.contentItemsSelector.onOptionSelected((option) => {
             this.notifyContentItemsAdded(
-                [option.getSelectedOption().getOption().displayValue]);
+                [<ContentTreeSelectorItem>option.getSelectedOption().getOption().displayValue]);
         });
 
-        this.contentItemsSelector.onOptionDeselected((option) => {
+        this.contentItemsSelector.onOptionDeselected((option ) => {
             this.notifyContentItemsRemoved(
-                [option.getSelectedOption().getOption().displayValue]);
+                [<ContentTreeSelectorItem>option.getSelectedOption().getOption().displayValue]);
         });
     }
 
@@ -256,33 +258,33 @@ export class IssueDialogForm extends api.ui.form.Form {
         }
     }
 
-    onContentItemsAdded(listener: (items: ContentSummary[]) => void) {
+    onContentItemsAdded(listener: (items: ContentTreeSelectorItem[]) => void) {
         this.contentItemsAddedListeners.push(listener);
     }
 
-    unContentItemsAdded(listener: (items: ContentSummary[]) => void) {
+    unContentItemsAdded(listener: (items: ContentTreeSelectorItem[]) => void) {
         this.contentItemsAddedListeners = this.contentItemsAddedListeners.filter((current) => {
             return listener !== current;
         });
     }
 
-    private notifyContentItemsAdded(items: ContentSummary[]) {
+    private notifyContentItemsAdded(items: ContentTreeSelectorItem[]) {
         this.contentItemsAddedListeners.forEach((listener) => {
             listener(items);
         });
     }
 
-    onContentItemsRemoved(listener: (items: ContentSummary[]) => void) {
+    onContentItemsRemoved(listener: (items: ContentTreeSelectorItem[]) => void) {
         this.contentItemsRemovedListeners.push(listener);
     }
 
-    unContentItemsRemoved(listener: (items: ContentSummary[]) => void) {
+    unContentItemsRemoved(listener: (items: ContentTreeSelectorItem[]) => void) {
         this.contentItemsRemovedListeners = this.contentItemsRemovedListeners.filter((current) => {
             return listener !== current;
         });
     }
 
-    private notifyContentItemsRemoved(items: ContentSummary[]) {
+    private notifyContentItemsRemoved(items: ContentTreeSelectorItem[]) {
         this.contentItemsRemovedListeners.forEach((listener) => {
             listener(items);
         });
