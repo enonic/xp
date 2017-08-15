@@ -1,28 +1,42 @@
 package com.enonic.xp.index;
 
+import java.util.Set;
+
 import com.google.common.annotations.Beta;
+import com.google.common.collect.Sets;
+
+import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryIds;
 
 @Beta
 public class UpdateIndexSettingsParams
 {
-    private final String indexName;
+    private final RepositoryIds repositoryIds;
 
     private final String settings;
 
+    private final boolean requireClosedIndex;
+
     private UpdateIndexSettingsParams( Builder builder )
     {
-        indexName = builder.indexName;
+        repositoryIds = RepositoryIds.from( builder.repositoryIds );
         settings = builder.settings;
+        this.requireClosedIndex = builder.requireClosedIndex;
     }
 
-    public String getIndexName()
+    public RepositoryIds getRepositoryIds()
     {
-        return indexName;
+        return repositoryIds;
     }
 
     public String getSettings()
     {
         return settings;
+    }
+
+    public boolean isRequireClosedIndex()
+    {
+        return requireClosedIndex;
     }
 
     public static Builder create()
@@ -32,23 +46,37 @@ public class UpdateIndexSettingsParams
 
     public static final class Builder
     {
-        private String indexName;
+        private Set<RepositoryId> repositoryIds = Sets.newHashSet();
 
         private String settings;
+
+        private boolean requireClosedIndex = false;
 
         private Builder()
         {
         }
 
-        public Builder indexName( final String indexName )
+        public Builder repository( final RepositoryId repositorId )
         {
-            this.indexName = indexName;
+            this.repositoryIds.add( repositorId );
+            return this;
+        }
+
+        public Builder repositories( final RepositoryIds repositoryIds )
+        {
+            this.repositoryIds = repositoryIds.getSet();
             return this;
         }
 
         public Builder settings( final String settings )
         {
             this.settings = settings;
+            return this;
+        }
+
+        public Builder requireClosedIndex( final boolean requireClosedIndex )
+        {
+            this.requireClosedIndex = requireClosedIndex;
             return this;
         }
 

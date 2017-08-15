@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -46,7 +45,6 @@ import com.enonic.xp.repository.IndexMapping;
 import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.util.JsonHelper;
 
 @Component
@@ -154,35 +152,45 @@ public class IndexServiceImpl
     {
         final UpdateIndexSettingsResult.Builder result = UpdateIndexSettingsResult.create();
 
-        final String indexName = params.getIndexName();
         final UpdateIndexSettings updateIndexSettings = UpdateIndexSettings.from( params.getSettings() );
 
-        if ( indexName != null )
+        for ( final RepositoryId repositoryId : params.getRepositoryIds() )
         {
-            updateIndexSettings( indexName, updateIndexSettings, result );
-        }
-        else
-        {
-            updateIndexSettings( ContentConstants.CONTENT_REPO.getId(), updateIndexSettings, result );
-            updateIndexSettings( SystemConstants.SYSTEM_REPO.getId(), updateIndexSettings, result );
+            updateIndexSettings( repositoryId, updateIndexSettings, params.isRequireClosedIndex(), result );
         }
 
         return result.build();
     }
 
     private void updateIndexSettings( final RepositoryId repositoryId, final UpdateIndexSettings updateIndexSettings,
-                                      final UpdateIndexSettingsResult.Builder result )
+                                      final boolean closeIndex, final UpdateIndexSettingsResult.Builder result )
     {
         final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repositoryId );
         final String storageIndexName = IndexNameResolver.resolveStorageIndexName( repositoryId );
-        updateIndexSettings( searchIndexName, updateIndexSettings, result );
-        updateIndexSettings( storageIndexName, updateIndexSettings, result );
+        updateIndexSettings( searchIndexName, updateIndexSettings, result, closeIndex );
+        updateIndexSettings( storageIndexName, updateIndexSettings, result, closeIndex );
     }
 
-    private void updateIndexSettings( final String indexName, final UpdateIndexSettings updateIndexSettings,
-                                      final UpdateIndexSettingsResult.Builder result )
+    private void updateIndexSettings( final String indexName, final UpdateIndexSettings settings,
+                                      final UpdateIndexSettingsResult.Builder result, final boolean closeIndex )
     {
-        indexServiceInternal.updateIndex( indexName, updateIndexSettings );
+        if ( closeIndex )
+        {
+            this.indexServiceInternal.closeIndices( indexName );
+        }
+
+        try
+        {
+            indexServiceInternal.updateIndex( indexName, settings );
+        }
+        finally
+        {
+            if ( closeIndex )
+            {
+                indexServiceInternal.openIndices( indexName );
+            }
+        }
+
         result.addUpdatedIndex( indexName );
     }
 
