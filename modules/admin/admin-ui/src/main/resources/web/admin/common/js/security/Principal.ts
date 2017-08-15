@@ -135,6 +135,16 @@ module api.security {
             return this;
         }
 
+        setDisplayName(displayName: string): PrincipalBuilder {
+            super.setDisplayName(displayName);
+            return this;
+        }
+
+        setDescription(description: string): PrincipalBuilder {
+            super.setDescription(description);
+            return this;
+        }
+
         build(): Principal {
             return new Principal(this);
         }

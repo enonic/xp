@@ -128,6 +128,16 @@ module api.security {
             return this;
         }
 
+        setDisplayName(displayName: string): UserStoreBuilder {
+            super.setDisplayName(displayName);
+            return this;
+        }
+
+        setDescription(description: string): UserStoreBuilder {
+            super.setDescription(description);
+            return this;
+        }
+
         build(): UserStore {
             return new UserStore(this);
         }
