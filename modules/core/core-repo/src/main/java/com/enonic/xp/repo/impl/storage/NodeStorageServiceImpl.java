@@ -132,6 +132,9 @@ public class NodeStorageServiceImpl
     {
         branchService.delete( nodeIds, context );
         indexDataService.delete( nodeIds, context );
+
+        // Ok, so node is deleted from branch. If this node is not in any other branches, we can delete the version also
+        //versionService.delete( nodeIds, context );
     }
 
     @Override

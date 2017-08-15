@@ -3,10 +3,12 @@ package com.enonic.xp.repo.impl.version;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.StorageSource;
+import com.enonic.xp.repo.impl.storage.DeleteRequests;
 import com.enonic.xp.repo.impl.storage.GetByIdRequest;
 import com.enonic.xp.repo.impl.storage.GetResult;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
@@ -30,6 +32,16 @@ public class VersionServiceImpl
         final StoreRequest storeRequest = VersionStorageDocFactory.create( nodeVersionMetadata, context.getRepositoryId() );
 
         this.storageDao.store( storeRequest );
+    }
+
+    @Override
+    public void delete( final NodeIds nodeIds, final InternalContext context )
+    {
+        storageDao.delete( DeleteRequests.create().
+            forceRefresh( false ).
+            ids( nodeIds.getAsStrings() ).
+            settings( createStorageSettings( context ) ).
+            build() );
     }
 
     @Override
