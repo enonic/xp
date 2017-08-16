@@ -38,7 +38,6 @@ import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskDescriptorService;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
-import com.enonic.xp.task.TaskKey;
 import com.enonic.xp.task.TaskNotFoundException;
 import com.enonic.xp.task.TaskProgress;
 import com.enonic.xp.task.TaskState;
@@ -259,7 +258,7 @@ public class TaskServiceImplTest
         Mockito.when( taskManager.submitTask( eq( runnableTask ), eq( "My task" ) ) ).thenReturn( TaskId.from( "123" ) );
 
         // submit task by name
-        final TaskId taskId = taskService.submitTask( TaskKey.from( "myapplication:task1" ) );
+        final TaskId taskId = taskService.submitTask( DescriptorKey.from( "myapplication:task1" ) );
 
         // verify
         assertEquals( "123", taskId.toString() );
@@ -273,7 +272,7 @@ public class TaskServiceImplTest
         Mockito.when( taskDescriptorService.getTasks( app ) ).thenReturn( Descriptors.empty() );
 
         // submit task by name
-        taskService.submitTask( TaskKey.from( "myapplication:task1" ) );
+        taskService.submitTask( DescriptorKey.from( "myapplication:task1" ) );
     }
 
     @Test(expected = TaskNotFoundException.class)
@@ -290,7 +289,7 @@ public class TaskServiceImplTest
         Mockito.when( namedTaskScriptFactory.create( Mockito.eq( descriptor ) ) ).thenReturn( null );
 
         // submit task by name
-        taskService.submitTask( TaskKey.from( "myapplication:task1" ) );
+        taskService.submitTask( DescriptorKey.from( "myapplication:task1" ) );
     }
 
     private Thread callServiceMethod( Supplier<List<TaskInfo>> serviceMethod )

@@ -3,8 +3,8 @@ package com.enonic.xp.lib.task;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.task.TaskId;
-import com.enonic.xp.task.TaskKey;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.testing.script.ScriptTestSupport;
 
@@ -28,7 +28,7 @@ public class SubmitNamedTaskHandlerTest
     public void testExample()
     {
         final TaskId taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
-        Mockito.when( this.taskService.submitTask( any( TaskKey.class ) ) ).thenReturn( taskId );
+        Mockito.when( this.taskService.submitTask( any( DescriptorKey.class ) ) ).thenReturn( taskId );
 
         runScript( "/site/lib/xp/examples/task/submitNamed.js" );
     }
@@ -37,7 +37,7 @@ public class SubmitNamedTaskHandlerTest
     public void testSubmitNamedTask()
         throws Exception
     {
-        Mockito.when( this.taskService.submitTask( any( TaskKey.class ) ) ).thenReturn( TaskId.from( "123" ) );
+        Mockito.when( this.taskService.submitTask( any( DescriptorKey.class ) ) ).thenReturn( TaskId.from( "123" ) );
 
         runFunction( "/site/test/submitNamed-test.js", "submitTask" );
     }

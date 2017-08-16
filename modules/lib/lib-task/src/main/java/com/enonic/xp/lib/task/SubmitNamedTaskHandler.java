@@ -3,12 +3,12 @@ package com.enonic.xp.lib.task;
 import java.util.function.Supplier;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.task.TaskId;
-import com.enonic.xp.task.TaskKey;
 import com.enonic.xp.task.TaskService;
 
 public final class SubmitNamedTaskHandler
@@ -27,10 +27,10 @@ public final class SubmitNamedTaskHandler
     {
         name = name == null ? "" : name;
 
-        final TaskKey taskKey;
+        final DescriptorKey taskKey;
         if ( name.contains( ":" ) )
         {
-            taskKey = TaskKey.from( name );
+            taskKey = DescriptorKey.from( name );
         }
         else
         {
@@ -39,7 +39,7 @@ public final class SubmitNamedTaskHandler
             {
                 throw new RuntimeException( "Could not resolve current application for named task: '" + name + "'" );
             }
-            taskKey = TaskKey.from( app, name );
+            taskKey = DescriptorKey.from( app, name );
         }
 
         final TaskService taskService = taskServiceSupplier.get();
