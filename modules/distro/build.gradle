@@ -25,6 +25,9 @@ addBundle( 'org.apache.felix:org.apache.felix.eventadmin:1.4.4', 5 )
 addBundle( 'org.apache.felix:org.apache.felix.configadmin:1.8.8', 5 )
 addBundle( 'org.apache.felix:org.apache.felix.scr:2.0.2', 5 )
 
+// Java Cryptography Extension
+addBundle( 'org.bouncycastle:bcprov-jdk15on:1.54', 6 )
+
 // Library dependencies
 addBundle( 'com.google.guava:guava:18.0', 8 )
 addBundle( 'commons-lang:commons-lang:2.4', 8 )
