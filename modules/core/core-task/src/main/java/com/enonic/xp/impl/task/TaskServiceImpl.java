@@ -6,10 +6,17 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.impl.task.cluster.TaskTransportRequestSender;
+import com.enonic.xp.impl.task.script.NamedTaskScriptFactory;
 import com.enonic.xp.task.RunnableTask;
+import com.enonic.xp.task.TaskDescriptor;
+import com.enonic.xp.task.TaskDescriptorService;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
+import com.enonic.xp.task.TaskKey;
+import com.enonic.xp.task.TaskNotFoundException;
 import com.enonic.xp.task.TaskService;
+
+import static com.enonic.xp.impl.task.script.NamedTaskScript.SCRIPT_METHOD_NAME;
 
 @Component(immediate = true)
 public final class TaskServiceImpl
@@ -19,11 +26,33 @@ public final class TaskServiceImpl
 
     private TaskTransportRequestSender taskTransportRequestSender;
 
-    @Override
+    private TaskDescriptorService taskDescriptorService;
 
+    private NamedTaskScriptFactory namedTaskScriptFactory;
+
+    @Override
     public TaskId submitTask( final RunnableTask runnable, final String description )
     {
         return taskManager.submitTask( runnable, description );
+    }
+
+    @Override
+    public TaskId submitTask( final TaskKey key )
+    {
+        final TaskDescriptor descriptor = taskDescriptorService.getTasks( key.getApplicationKey() ).
+            filter( key.getApplicationKey() ).first();
+        if ( descriptor == null )
+        {
+            throw new TaskNotFoundException( key );
+        }
+
+        final RunnableTask runnableTask = namedTaskScriptFactory.create( descriptor );
+        if ( runnableTask == null )
+        {
+            throw new TaskNotFoundException( key, "Missing exported function '" + SCRIPT_METHOD_NAME + "' in task script" );
+        }
+
+        return submitTask( runnableTask, descriptor.getDescription() );
     }
 
     @Override
@@ -55,5 +84,17 @@ public final class TaskServiceImpl
     public void setTaskTransportRequestSender( final TaskTransportRequestSender taskTransportRequestSender )
     {
         this.taskTransportRequestSender = taskTransportRequestSender;
+    }
+
+    @Reference
+    public void setTaskDescriptorService( final TaskDescriptorService taskDescriptorService )
+    {
+        this.taskDescriptorService = taskDescriptorService;
+    }
+
+    @Reference
+    public void setNamedTaskScriptFactory( final NamedTaskScriptFactory namedTaskScriptFactory )
+    {
+        this.namedTaskScriptFactory = namedTaskScriptFactory;
     }
 }

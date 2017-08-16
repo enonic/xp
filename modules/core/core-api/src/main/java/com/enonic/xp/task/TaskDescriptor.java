@@ -1,5 +1,7 @@
 package com.enonic.xp.task;
 
+import java.util.Objects;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
@@ -30,6 +32,27 @@ public final class TaskDescriptor
     public Form getConfig()
     {
         return config;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        final TaskDescriptor that = (TaskDescriptor) o;
+        return Objects.equals( description, that.description ) && Objects.equals( config, that.config );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( description, config );
     }
 
     public static Builder create()

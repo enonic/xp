@@ -9,6 +9,8 @@ public interface TaskService
 {
     TaskId submitTask( RunnableTask runnable, String description );
 
+    TaskId submitTask( TaskKey key );
+
     TaskInfo getTaskInfo( TaskId taskId );
 
     List<TaskInfo> getAllTasks();
