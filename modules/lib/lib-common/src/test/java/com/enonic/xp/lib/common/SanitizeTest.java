@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import com.enonic.xp.testing.script.ScriptTestSupport;
 
-public class PrettifyTest
+public class SanitizeTest
     extends ScriptTestSupport
 {
 
@@ -18,6 +18,6 @@ public class PrettifyTest
     @Test
     public void testExamples()
     {
-        runScript( "/site/lib/xp/examples/common/prettify.js" );
+        runScript( "/site/lib/xp/examples/common/sanitize.js" );
     }
 }
