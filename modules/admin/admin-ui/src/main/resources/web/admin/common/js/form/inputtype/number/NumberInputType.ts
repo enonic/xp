@@ -25,7 +25,6 @@ module api.content.form.inputtype.number {
         }
 
         protected isValid(value: string, recording ?: api.form.inputtype.InputValidationRecording): boolean {
-            debugger;
             if (api.util.StringHelper.isEmpty(value)) {
                 return true;
             }
