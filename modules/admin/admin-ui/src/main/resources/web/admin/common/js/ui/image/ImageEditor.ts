@@ -74,6 +74,9 @@ module api.ui.image {
         private orientation: number;
         private originalOrientation: number;
 
+        private rotated: boolean;
+        private flippedHor: boolean;
+
         private imgW: number = 1;
         private imgH: number = 1;
         private frameW: number = 1;
@@ -414,12 +417,15 @@ module api.ui.image {
             let revFocusAuto: boolean;
             let revFocusRadPct;
 
-            if (scale) {
-                // save all positions in percents before updating dimensions to scale them accordingly
+            // save all positions in percents before updating dimensions to scale them accordingly
+            if (this.rotated || this.flippedHor || scale) {
                 zoomPct = this.normalizeRect(this.getZoomPositionPx());
                 cropPct = this.normalizeRect(this.getCropPositionPx());
                 focusPosPct = this.normalizePoint(this.getFocusPositionPx());
                 focusRadPct = this.normalizeRadius(this.getFocusRadiusPx());
+            }
+
+            if (scale) {
                 if (this.revertZoomData) {
                     revZoomPct = this.normalizeRect(this.revertZoomData);
                 }
@@ -477,6 +483,30 @@ module api.ui.image {
                 this.updateCropMaskPosition();
                 this.updateZoomPosition();
 
+            }
+
+            if (this.rotated || this.flippedHor) {
+                if (this.rotated) {
+                    const zoomBottomPct = 1 + Math.abs(zoomPct.y) - zoomPct.h;
+                    zoomPct.y = zoomPct.x;
+                    zoomPct.x = zoomBottomPct;
+
+                    const cropBottomPct = zoomPct.h - cropPct.y - cropPct.h;
+                    cropPct.y = cropPct.x;
+                    cropPct.x = cropBottomPct;
+
+                    const focusBottomPct = cropPct.h - focusPosPct.y;
+                    focusPosPct.y = focusPosPct.x;
+                    focusPosPct.x = focusBottomPct;
+                    this.rotated = false;
+                }
+
+                if (this.flippedHor) {
+                    zoomPct.x = 1 + Math.abs(zoomPct.x) - zoomPct.w;
+                    cropPct.x = zoomPct.w - cropPct.x - cropPct.w;
+                    focusPosPct.x = cropPct.w - focusPosPct.x;
+                    this.flippedHor = false;
+                }
             }
 
             if (scale) {
@@ -874,6 +904,7 @@ module api.ui.image {
                 rotatedOrientation = 1;
                 break;
             }
+            this.rotated = true;
             this.setOrientation(rotatedOrientation);
         }
 
@@ -906,6 +937,7 @@ module api.ui.image {
                 mirroredOrientation = 7;
                 break;
             }
+            this.flippedHor = true;
             this.setOrientation(mirroredOrientation);
         }
 
