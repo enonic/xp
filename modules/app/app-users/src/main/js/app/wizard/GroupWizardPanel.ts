@@ -35,7 +35,7 @@ export class GroupWizardPanel extends GroupRoleWizardPanel {
         this.membershipsWizardStepForm = new MembershipsWizardStepForm(MembershipsType.ROLES);
 
         steps.push(new WizardStep(i18n('field.groups'), descriptionStep));
-        steps.push(new WizardStep(i18n('field.grants'), membersStep));
+        steps.push(new WizardStep(i18n('field.members'), membersStep));
         steps.push(new WizardStep(i18n('field.roles'), this.membershipsWizardStepForm));
 
         return steps;
