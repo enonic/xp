@@ -32,7 +32,7 @@
     display: none;
   }
 
-  .mce-content-body {
+  .cke_editable {
     cursor: auto;
     display: none;
     padding: 5px;
@@ -45,7 +45,7 @@
   &.edit-mode {
     min-height: 0px;
 
-    .mce-content-body {
+    .cke_editable {
       display: block;
       box-sizing: border-box;
     }
@@ -97,13 +97,35 @@
 
 }
 
-.mce-toolbar-container {
-  position: fixed;
+.cke-toolbar-container {
+  &.visible .cke_top {
+    display: block !important;
+  }
+
+  .cke_combopanel {
+    z-index: @z-index-mce-toolbar !important;
+  }
+}
+
+.cke_top {
+  position: fixed !important;
   top: 0;
   left: 0;
   z-index: @z-index-mce-toolbar;
-  width: 100%;
-  border-bottom: 1px solid #cccccc;
+  width: 100% !important;
+  border-bottom: 1px solid #cccccc !important;
+  text-align: center !important;
+  padding: 6px 0px 2px !important;
+  display: none !important;
+
+  .cke_toolbox {
+    display: inline-block;
+    padding-right: 30px;
+
+    a {
+      pointer-events: auto;
+    }
+  }
 
   > div {
     display: none;

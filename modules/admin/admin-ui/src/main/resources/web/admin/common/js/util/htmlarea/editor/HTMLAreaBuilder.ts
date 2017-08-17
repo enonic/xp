@@ -3,6 +3,7 @@ module api.util.htmlarea.editor {
     import CreateHtmlAreaDialogEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
     import ApplicationKey = api.application.ApplicationKey;
     import editor = CKEDITOR.editor;
+    import config = CKEDITOR.config;
 
     export class HTMLAreaBuilder {
 
@@ -11,8 +12,7 @@ module api.util.htmlarea.editor {
         private applicationKeys: ApplicationKey[]; // used for macro dialog
 
         private assetsUri: string;
-        private selector: string;
-        private id: string;
+        private editorContainerId: string;
         private focusHandler: (e: FocusEvent) => void;
         private blurHandler: (e: FocusEvent) => void;
         private keydownHandler: (e: KeyboardEvent) => void;
@@ -49,13 +49,8 @@ module api.util.htmlarea.editor {
             return this;
         }
 
-        setSelector(selector: string): HTMLAreaBuilder {
-            this.selector = selector;
-            return this;
-        }
-
-        setTextAreaId(id: string): HTMLAreaBuilder {
-            this.id = id;
+        setEditorContainerId(id: string): HTMLAreaBuilder {
+            this.editorContainerId = id;
             return this;
         }
 
@@ -162,7 +157,7 @@ module api.util.htmlarea.editor {
         }
 
         private checkRequiredFieldsAreSet() {
-            if (!this.assetsUri || !this.selector || !this.content) {
+            if (!this.assetsUri || !this.editorContainerId || !this.content) {
                 throw new Error('some required fields are missing for tinymce editor');
             }
         }
@@ -176,19 +171,39 @@ module api.util.htmlarea.editor {
 
             this.tools.push({ name: 'custom', items: this.toolsToInclude });
 
-            const ckeditor: editor = CKEDITOR.replace(this.id, {
+            const config: config = {
                 toolbar: this.tools,
                 removePlugins: 'resize',
                 removeButtons: this.toolsToExlcude,
-                extraPlugins: this.plugins,
-                autoGrow_onStartup: true
-            });
+                extraPlugins: this.plugins + (this.inline ? ',sharedspace' : ''),
+                autoGrow_onStartup: true,
+                sharedSpaces: this.inline ? {top: this.fixedToolbarContainer} : null
+            };
+
+            const ckeditor: editor = this.inline ? CKEDITOR.inline(this.editorContainerId, config) : CKEDITOR.replace(
+                this.editorContainerId, config);
 
             ckeditor.on('change', (e) => {
                 if (this.nodeChangeHandler) {
                     this.nodeChangeHandler(null);
                 }
             });
+
+            // ckeditor.on('focus', (e) => {
+            //     if (this.focusHandler) {
+            //         this.focusHandler(null);
+            //     }
+            // });
+            //
+            // ckeditor.on('blur', (e) => {
+            //     if (this.hasActiveDialog) {
+            //         //e.stopImmediatePropagation();
+            //         this.hasActiveDialog = false;
+            //     }
+            //     if (this.blurHandler) {
+            //         this.blurHandler(null);
+            //     }
+            // });
 
             return ckeditor;
 

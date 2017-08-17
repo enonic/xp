@@ -183,7 +183,7 @@ module api.ui.dialog {
         private isIgnoredElementClicked(element: HTMLElement): boolean {
             let ignoredElementClicked = false;
             if (element && element.className && element.className.indexOf) {
-                ignoredElementClicked = element.className.indexOf('mce-') > -1 || element.className.indexOf('html-area-modal-dialog') > -1;
+                ignoredElementClicked = element.className.indexOf('cke-') > -1 || element.className.indexOf('html-area-modal-dialog') > -1;
             }
             ignoredElementClicked = ignoredElementClicked || this.listOfClickIgnoredElements.some((elem: api.dom.Element) => {
                     return elem.getHTMLElement() === element || elem.getEl().contains(element);

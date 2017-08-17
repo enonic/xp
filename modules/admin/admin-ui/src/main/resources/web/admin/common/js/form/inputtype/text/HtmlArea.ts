@@ -197,8 +197,7 @@ module api.form.inputtype.text {
                 textAreaWrapper.addClass(focusedEditorCls);
             };
 
-            const ckeditor: editor = new HTMLAreaBuilder().
-                setSelector('textarea.' + id.replace(/\./g, '_')).setTextAreaId(id).
+            const ckeditor: editor = new HTMLAreaBuilder().setEditorContainerId(id).
                 setAssetsUri(baseUrl).
                 setInline(false).
                 onCreateDialog(createDialogHandler).
