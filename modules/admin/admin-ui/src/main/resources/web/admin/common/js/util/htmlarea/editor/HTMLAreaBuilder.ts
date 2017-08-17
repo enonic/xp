@@ -26,30 +26,18 @@ module api.util.htmlarea.editor {
         private customToolConfig: any;
         private editableSourceCode: boolean;
         private forcedRootBlock: string;
+        private toolsToExlcude: string = '';
+        private toolsToInclude: string[] = [];
 
-        private tools: string = [
-            'styleselect',
-            'alignleft aligncenter alignright alignjustify',
-            'bullist numlist outdent indent',
-            'charmap anchor image macro link unlink',
-            'table',
-            'pastetext'
-        ].join(' | ');
-
-        private plugins: string[] = [
-            'autoresize',
-            'directionality',
-            'fullscreen',
-            'hr',
-            'lists',
-            'paste',
-            'preview',
-            'table',
-            'textcolor',
-            'visualblocks',
-            'visualchars',
-            'charmap'
+        private tools: any[] = [
+            { name: 'gr1', items: ['Format', 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', 'Code', '-'] },
+            { name: 'gr2', items: [ 'Blockquote', 'CreateDiv', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-'] },
+            { name: 'gr3', items: ['BulletedList', 'NumberedList', 'Outdent', 'Indent', '-'] },
+            { name: 'gr4', items: ['SpecialChar', 'Anchor', 'Image', 'Link', 'Unlink', '-'] },
+            { name: 'gr5', items: ['Table', '-', 'PasteText', '-', 'Maximize'] }
         ];
+
+        private plugins: string = 'autogrow,codeTag';
 
         setEditableSourceCode(value: boolean): HTMLAreaBuilder {
             this.editableSourceCode = value;
@@ -144,35 +132,21 @@ module api.util.htmlarea.editor {
             return this;
         }
 
-        private excludeTools(tools: any[]) {
-            let strTools = this.tools;
-            tools.forEach((toolStr: any) => {
-                toolStr.value.split(' ').forEach((tool: string) => {
-                    if (tool === '*') {
-                        strTools = '';
-                    } else {
-                        strTools = strTools.replace(tool, '');
-                    }
-                });
-            });
-            this.tools = strTools;
-        }
-
         private includeTools(tools: any[]) {
             tools.forEach((tool: any) => {
-                this.includeTool(tool.value);
+                this.includeTool(tool);
             });
         }
 
         private includeTool(tool: string) {
-            this.tools += ' ' + tool;
+            this.toolsToInclude.push(tool);
         }
 
         setTools(tools: any): HTMLAreaBuilder {
             this.customToolConfig = tools;
 
             if (tools['exclude'] && tools['exclude'] instanceof Array) {
-                this.excludeTools(tools['exclude']);
+                this.toolsToExlcude = tools['exclude'].join();
             }
             if (tools['include'] && tools['include'] instanceof Array) {
                 this.includeTools(tools['include']);
@@ -196,18 +170,26 @@ module api.util.htmlarea.editor {
         public createEditor(): editor {
             this.checkRequiredFieldsAreSet();
 
-            if (this.inline && this.editableSourceCode && !this.isToolExcluded('code')) {
-                this.includeTool('code');
+            if (this.editableSourceCode && !this.isToolExcluded('Source')) {
+                this.includeTool('Source');
             }
 
-            const ckeditor: editor = CKEDITOR.replace(this.id);
+            this.tools.push({ name: 'custom', items: this.toolsToInclude });
+
+            const ckeditor: editor = CKEDITOR.replace(this.id, {
+                toolbar: this.tools,
+                removePlugins: 'resize',
+                removeButtons: this.toolsToExlcude,
+                extraPlugins: this.plugins,
+                autoGrow_onStartup: true
+            });
 
             ckeditor.on('change', (e) => {
-                console.log('change');
                 if (this.nodeChangeHandler) {
                     this.nodeChangeHandler(null);
                 }
             });
+
             return ckeditor;
 
             /*            let deferred = wemQ.defer<HtmlAreaEditor>();
