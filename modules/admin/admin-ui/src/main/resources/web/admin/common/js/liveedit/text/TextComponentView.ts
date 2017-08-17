@@ -418,7 +418,8 @@ module api.liveedit.text {
                 // copy editor raw content (without any processing!) over to the root html element
                 this.rootElement.getHTMLElement().innerHTML = this.htmlAreaEditor.getSnapshot();
                 // but save processed text to the component
-                // this.component.setText(HTMLAreaHelper.prepareEditorImageSrcsBeforeSave(this.htmlAreaEditor.getSnapshot())); // after 5131 merged
+                // this.component.setText(HTMLAreaHelper.prepareEditorImageSrcsBeforeSave(this.htmlAreaEditor.getSnapshot()));
+                // after 5131 merged
                 this.component.setText(this.htmlAreaEditor.getSnapshot());
             }
         }
