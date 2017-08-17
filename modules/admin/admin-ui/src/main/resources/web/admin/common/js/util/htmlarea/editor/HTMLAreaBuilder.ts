@@ -189,21 +189,21 @@ module api.util.htmlarea.editor {
                 }
             });
 
-            // ckeditor.on('focus', (e) => {
-            //     if (this.focusHandler) {
-            //         this.focusHandler(null);
-            //     }
-            // });
-            //
-            // ckeditor.on('blur', (e) => {
-            //     if (this.hasActiveDialog) {
-            //         //e.stopImmediatePropagation();
-            //         this.hasActiveDialog = false;
-            //     }
-            //     if (this.blurHandler) {
-            //         this.blurHandler(null);
-            //     }
-            // });
+            ckeditor.on('focus', (e) => {
+                if (this.focusHandler) {
+                    this.focusHandler(null);
+                }
+            });
+
+            ckeditor.on('blur', (e) => {
+                if (this.hasActiveDialog) {
+                    //e.stopImmediatePropagation();
+                    this.hasActiveDialog = false;
+                }
+                if (this.blurHandler) {
+                    this.blurHandler(null);
+                }
+            });
 
             return ckeditor;
 
