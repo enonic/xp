@@ -7,12 +7,12 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.impl.task.cluster.TaskTransportRequestSender;
 import com.enonic.xp.impl.task.script.NamedTaskScriptFactory;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskDescriptorService;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
-import com.enonic.xp.task.TaskKey;
 import com.enonic.xp.task.TaskNotFoundException;
 import com.enonic.xp.task.TaskService;
 
@@ -37,7 +37,7 @@ public final class TaskServiceImpl
     }
 
     @Override
-    public TaskId submitTask( final TaskKey key )
+    public TaskId submitTask( final DescriptorKey key )
     {
         final TaskDescriptor descriptor = taskDescriptorService.getTasks( key.getApplicationKey() ).
             filter( key.getApplicationKey() ).first();

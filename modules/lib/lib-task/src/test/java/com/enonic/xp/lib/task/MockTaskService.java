@@ -3,11 +3,11 @@ package com.enonic.xp.lib.task;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
-import com.enonic.xp.task.TaskKey;
 import com.enonic.xp.task.TaskProgress;
 import com.enonic.xp.task.TaskService;
 
@@ -30,7 +30,7 @@ class MockTaskService
     }
 
     @Override
-    public TaskId submitTask( final TaskKey key )
+    public TaskId submitTask( final DescriptorKey key )
     {
         return taskId;
     }
