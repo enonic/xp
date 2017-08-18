@@ -89,8 +89,10 @@ module api.ui.selector {
 
         search(searchString: string): wemQ.Promise<void> {
             return this.loader.search(searchString).then((items) => {
-                this.setOptions(this.createOptions(items));
-                this.updateExpanded();
+                return this.checkReadonly(new OptionDataLoaderData(items, 0, 0)).then((newOptions) => {
+                    this.setOptions(newOptions);
+                    this.updateExpanded();
+                });
             });
         }
 
@@ -148,25 +150,11 @@ module api.ui.selector {
 
             return this.loader.fetchChildren(parentNode).then(
                 (loadedData: OptionDataLoaderData<OPTION_DISPLAY_VALUE>) => {
-                    let newOptions = this.createOptions(loadedData.getData());
-                    let options = parentNode.getChildren().map((el) => el.getData()).slice(0, from).concat(newOptions);
 
                     parentNode.setMaxChildren(loadedData.getTotalHits());
 
-                    return this.loader.checkReadonly(loadedData.getData()).then((readonlyIds: string[]) => {
-                        newOptions.forEach((option: Option<OPTION_DISPLAY_VALUE>) => {
-                            const markedReadonly = readonlyIds.some((id: string) => {
-                                if (this.treeDataHelper.getDataId(option.displayValue) === id) {
-                                    option.readOnly = true;
-                                    return true;
-                                }
-                            });
-                            if (!markedReadonly) {
-                                if (this.readonlyChecker && this.readonlyChecker(option.displayValue)) {
-                                    option.readOnly = true;
-                                }
-                            }
-                        });
+                    return this.checkReadonly(loadedData).then((newOptions: Option<OPTION_DISPLAY_VALUE>[]) => {
+                        let options = parentNode.getChildren().map((el) => el.getData()).slice(0, from).concat(newOptions);
 
                         if (from + loadedData.getHits() < loadedData.getTotalHits()) {
                             options.push(this.makeEmptyData());
@@ -179,6 +167,29 @@ module api.ui.selector {
         presetDefaultOption(data: OPTION_DISPLAY_VALUE) {
             this.defaultOption = data;
             this.isDefaultOptionActive = false;
+        }
+
+        private checkReadonly(loadedData: OptionDataLoaderData<OPTION_DISPLAY_VALUE>): wemQ.Promise<Option<OPTION_DISPLAY_VALUE>[]> {
+            return this.loader.checkReadonly(loadedData.getData()).then((readonlyIds: string[]) => {
+
+                let newOptions = this.createOptions(loadedData.getData());
+
+                newOptions.forEach((option: Option<OPTION_DISPLAY_VALUE>) => {
+                    const markedReadonly = readonlyIds.some((id: string) => {
+                        if (this.treeDataHelper.getDataId(option.displayValue) === id) {
+                            option.readOnly = true;
+                            return true;
+                        }
+                    });
+                    if (!markedReadonly) {
+                        if (this.readonlyChecker && this.readonlyChecker(option.displayValue)) {
+                            option.readOnly = true;
+                        }
+                    }
+                });
+
+                return newOptions;
+            });
         }
 
         private scrollToDefaultOption(parentNode: TreeNode<Option<OPTION_DISPLAY_VALUE>>, startFrom: number) {
