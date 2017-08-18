@@ -4,12 +4,16 @@ import FormItemBuilder = api.ui.form.FormItemBuilder;
 import DivEl = api.dom.DivEl;
 import LabelEl = api.dom.LabelEl;
 import i18n = api.util.i18n;
+import FormContext = api.form.FormContext;
+import SecurityFormContext = api.security.form.SecurityFormContext;
 
 export class UserStoreWizardStepForm extends api.app.wizard.WizardStepForm {
 
     private formView: api.form.FormView;
 
     private propertySet: api.data.PropertySet;
+
+    private context: SecurityFormContext;
 
     constructor() {
         super();
@@ -72,7 +76,8 @@ export class UserStoreWizardStepForm extends api.app.wizard.WizardStepForm {
             }
         }
 
-        return new api.form.FormView(api.form.FormContext.create().build(), formBuilder.build(), this.propertySet);
+        const context = SecurityFormContext.create().setUserStore(userStore).build();
+        return new api.form.FormView(context, formBuilder.build(), this.propertySet);
     }
 
     public validate(silent?: boolean): api.form.ValidationRecording {
