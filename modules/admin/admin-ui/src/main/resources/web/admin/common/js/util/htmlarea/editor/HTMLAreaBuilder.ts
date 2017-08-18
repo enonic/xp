@@ -30,8 +30,8 @@ module api.util.htmlarea.editor {
         private toolsToInclude: string[] = [];
 
         private tools: any[] = [
-            { name: 'gr1', items: ['Format', 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', 'Code', '-'] },
-            { name: 'gr2', items: [ 'Blockquote', 'CreateDiv', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-'] },
+            {name: 'gr1', items: ['Format', 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', 'Blockquote', '-']},
+            {name: 'gr2', items: ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-']},
             { name: 'gr3', items: ['BulletedList', 'NumberedList', 'Outdent', 'Indent', '-'] },
             { name: 'gr4', items: ['SpecialChar', 'Anchor', 'Image', 'Link', 'Unlink', '-'] },
             { name: 'gr5', items: ['Table', '-', 'PasteText', '-', 'Maximize'] }
@@ -177,6 +177,7 @@ module api.util.htmlarea.editor {
                 removeButtons: this.toolsToExlcude,
                 extraPlugins: this.plugins + (this.inline ? ',sharedspace' : ''),
                 autoGrow_onStartup: true,
+                contentsCss: this.assetsUri + '/common/styles/api/util/htmlarea/html-editor.css',
                 sharedSpaces: this.inline ? {top: this.fixedToolbarContainer} : null
             };
 
