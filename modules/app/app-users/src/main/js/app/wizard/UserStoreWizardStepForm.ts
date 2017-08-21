@@ -16,7 +16,7 @@ export class UserStoreWizardStepForm extends api.app.wizard.WizardStepForm {
         super();
     }
 
-    layout(userStore?: api.security.UserStore): wemQ.Promise<void> {
+    layout(userStore: api.security.UserStore): wemQ.Promise<void> {
 
         this.formView = this.createFormView(userStore);
 
