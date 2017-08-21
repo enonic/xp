@@ -190,6 +190,10 @@ module api.form.inputtype.support {
             this.inputOccurrences.reset();
         }
 
+        refresh() {
+            //to be implemented on demand in inheritors
+        }
+
         hasValidUserInput(recording?: api.form.inputtype.InputValidationRecording): boolean {
             return this.inputOccurrences.hasValidUserInput(recording);
         }
