@@ -481,8 +481,7 @@ export class PageComponentsView
 
     private initKeyBoardBindings() {
         const removeHandler = () => {
-
-            const selectedNode = this.tree.getFirstSelectedOrHighlightedNode();
+            const selectedNode = this.tree.getSelectedNodes()[0];
             const itemView = selectedNode ? selectedNode.getData() : null;
 
             if(itemView) {

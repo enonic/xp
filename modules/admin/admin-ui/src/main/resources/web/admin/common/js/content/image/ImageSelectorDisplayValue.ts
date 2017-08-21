@@ -2,6 +2,7 @@ module api.content.image {
 
     import ContentSummary = api.content.ContentSummary;
     import UploadItem = api.ui.uploader.UploadItem;
+    import ContentTypeName = api.schema.content.ContentTypeName;
 
     export class ImageSelectorDisplayValue {
 
@@ -76,6 +77,10 @@ module api.content.image {
 
         getDisplayName(): string {
             return this.content ? this.content.getDisplayName() : null;
+        }
+
+        getType(): ContentTypeName {
+            return this.content ? this.content.getType() : null;
         }
 
         getTypeLocaleName(): string {
