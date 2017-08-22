@@ -89,8 +89,10 @@ module api.ui.selector {
 
         search(searchString: string): wemQ.Promise<void> {
             return this.loader.search(searchString).then((items) => {
-                this.setOptions(this.createOptions(items));
-                this.updateExpanded();
+                return this.createOptions(items).then(newOptions => {
+                    this.setOptions(newOptions);
+                    this.updateExpanded();
+                });
             });
         }
 
@@ -148,31 +150,33 @@ module api.ui.selector {
 
             return this.loader.fetchChildren(parentNode).then(
                 (loadedData: OptionDataLoaderData<OPTION_DISPLAY_VALUE>) => {
-                    let newOptions = this.createOptions(loadedData.getData());
-                    let options = parentNode.getChildren().map((el) => el.getData()).slice(0, from).concat(newOptions);
+                    return this.createOptions(loadedData.getData()).then((newOptions) => {
 
-                    parentNode.setMaxChildren(loadedData.getTotalHits());
-
-                    return this.loader.checkReadonly(loadedData.getData()).then((readonlyIds: string[]) => {
-                        newOptions.forEach((option: Option<OPTION_DISPLAY_VALUE>) => {
-                            const markedReadonly = readonlyIds.some((id: string) => {
-                                if (this.treeDataHelper.getDataId(option.displayValue) === id) {
-                                    option.readOnly = true;
-                                    return true;
-                                }
-                            });
-                            if (!markedReadonly) {
-                                if (this.readonlyChecker && this.readonlyChecker(option.displayValue)) {
-                                    option.readOnly = true;
-                                }
-                            }
-                        });
+                        let options = parentNode.getChildren().map((el) => el.getData()).slice(0, from).concat(newOptions);
+                        parentNode.setMaxChildren(loadedData.getTotalHits());
 
                         if (from + loadedData.getHits() < loadedData.getTotalHits()) {
                             options.push(this.makeEmptyData());
                         }
                         return options;
                     });
+
+                    //  return this.loader.checkReadonly(loadedData.getData()).then((readonlyIds: string[]) => {
+                    /* newOptions.forEach((option: Option<OPTION_DISPLAY_VALUE>) => {
+                     const markedReadonly = readonlyIds.some((id: string) => {
+                     if (this.treeDataHelper.getDataId(option.displayValue) === id) {
+                     option.readOnly = true;
+                     return true;
+                     }
+                     });
+                     if (!markedReadonly) {
+                     if (this.readonlyChecker && this.readonlyChecker(option.displayValue)) {
+                     option.readOnly = true;
+                     }
+                     }
+                     });*/
+
+                    //   });
                 });
         }
 
@@ -180,6 +184,29 @@ module api.ui.selector {
             this.defaultOption = data;
             this.isDefaultOptionActive = false;
         }
+
+        /*private checkReadonly(loadedData: OptionDataLoaderData<OPTION_DISPLAY_VALUE>): wemQ.Promise<Option<OPTION_DISPLAY_VALUE>[]> {
+         return this.loader.checkReadonly(loadedData.getData()).then((readonlyIds: string[]) => {
+
+         let newOptions = this.createOptions(loadedData.getData());
+
+         newOptions.forEach((option: Option<OPTION_DISPLAY_VALUE>) => {
+         const markedReadonly = readonlyIds.some((id: string) => {
+         if (this.treeDataHelper.getDataId(option.displayValue) === id) {
+         option.readOnly = true;
+         return true;
+         }
+         });
+         if (!markedReadonly) {
+         if (this.readonlyChecker && this.readonlyChecker(option.displayValue)) {
+         option.readOnly = true;
+         }
+         }
+         });
+
+         return newOptions;
+         });
+         }*/
 
         private scrollToDefaultOption(parentNode: TreeNode<Option<OPTION_DISPLAY_VALUE>>, startFrom: number) {
             const length = parentNode.getChildren().length;
@@ -220,16 +247,31 @@ module api.ui.selector {
             }
         }
 
-        createOptions(data: OPTION_DISPLAY_VALUE[]): Option<OPTION_DISPLAY_VALUE>[] {
-            return data.map((item) => this.createOption(item));
+        createOptions(data: OPTION_DISPLAY_VALUE[]): wemQ.Promise<Option<OPTION_DISPLAY_VALUE>[]> {
+            return this.loader.checkReadonly(data).then((readonlyIds: string[]) => {
+                return data.map((item) => this.createOption(item, readonlyIds));
+            });
         }
 
-        private createOption(data: OPTION_DISPLAY_VALUE): Option<OPTION_DISPLAY_VALUE> {
+        private createOption(data: OPTION_DISPLAY_VALUE, readonlyIds: string[] = []): Option<OPTION_DISPLAY_VALUE> {
             return {
                 value: this.treeDataHelper.getDataId(data),
                 disabled: this.treeDataHelper.isDisabled(data),
-                displayValue: data
+                displayValue: data,
+                readOnly: readonlyIds ? this.isOptionReadonly(data, readonlyIds) : false
             };
+        }
+
+        private isOptionReadonly(data: OPTION_DISPLAY_VALUE, readonlyIds: string[]): boolean {
+            if (this.readonlyChecker && this.readonlyChecker(data)) {
+                return true;
+            }
+
+            return readonlyIds.some((id: string) => {
+                if (this.treeDataHelper.getDataId(data) === id) {
+                    return true;
+                }
+            });
         }
 
         private makeEmptyData(): Option<OPTION_DISPLAY_VALUE> {
