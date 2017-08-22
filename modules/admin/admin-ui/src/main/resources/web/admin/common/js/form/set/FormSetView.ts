@@ -69,7 +69,7 @@ module api.form {
                 this.bottomButtonRow.appendChild(this.addButton = this.makeAddButton());
                 this.bottomButtonRow.appendChild(this.collapseButton = this.makeCollapseButton());
 
-                this.refresh();
+                this.refreshButtonsState();
 
                 if (validate) {
                     this.validate(true);
@@ -88,7 +88,7 @@ module api.form {
             });
 
             this.formItemOccurrences.onOccurrenceAdded((event: OccurrenceAddedEvent) => {
-                this.refresh();
+                this.refreshButtonsState();
                 wemjq(this.occurrenceViewsContainer.getHTMLElement()).sortable('refresh');
 
                 if (api.ObjectHelper.iFrameSafeInstanceOf(event.getOccurrenceView(), FormSetOccurrenceView)) {
@@ -100,7 +100,7 @@ module api.form {
             });
             this.formItemOccurrences.onOccurrenceRemoved((event: OccurrenceRemovedEvent) => {
 
-                this.refresh();
+                this.refreshButtonsState();
 
                 if (api.ObjectHelper.iFrameSafeInstanceOf(event.getOccurrenceView(), FormItemSetOccurrenceView)) {
                     // force validate, since FormItemSet might have become invalid
@@ -261,7 +261,7 @@ module api.form {
             });
         }
 
-        refresh() {
+        private refreshButtonsState() {
             this.collapseButton.setVisible(this.formItemOccurrences.getOccurrences().length > 0);
             this.addButton.setVisible(!this.formItemOccurrences.maximumOccurrencesReached());
         }
@@ -323,7 +323,6 @@ module api.form {
         }
 
         protected handleDnDStart(event: Event, ui: JQueryUI.SortableUIParams): void {
-
             let draggedElement = api.dom.Element.fromHtmlElement(<HTMLElement>ui.item.context);
             api.util.assert(draggedElement.hasClass(this.classPrefix + '-occurrence-view'));
             this.draggingIndex = draggedElement.getSiblingIndex();
@@ -340,6 +339,8 @@ module api.form {
                 let draggedToIndex = draggedElement.getSiblingIndex();
 
                 this.formItemOccurrences.moveOccurrence(this.draggingIndex, draggedToIndex);
+
+                this.formItemOccurrences.refreshOccurence(draggedToIndex);
             }
 
             this.draggingIndex = -1;

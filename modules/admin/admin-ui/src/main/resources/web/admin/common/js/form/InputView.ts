@@ -100,10 +100,10 @@ module api.form {
 
                     let inputTypeViewNotManagingAdd = <BaseInputTypeNotManagingAdd<any>>this.inputTypeView;
                     inputTypeViewNotManagingAdd.onOccurrenceAdded(() => {
-                        this.refresh();
+                        this.refreshButtonsState();
                     });
                     inputTypeViewNotManagingAdd.onOccurrenceRemoved((event: api.form.OccurrenceRemovedEvent) => {
-                        this.refresh();
+                        this.refreshButtonsState();
 
                         if (api.ObjectHelper.iFrameSafeInstanceOf(event.getOccurrenceView(),
                                 api.form.inputtype.support.InputOccurrenceView)) {
@@ -130,7 +130,7 @@ module api.form {
                     this.handleInputValidationRecording(event.getRecording(), false);
                 });
 
-                this.refresh(validate);
+                this.refreshButtonsState(validate);
             });
         }
 
@@ -168,6 +168,10 @@ module api.form {
             this.inputTypeView.reset();
         }
 
+        refresh() {
+            this.inputTypeView.refresh();
+        }
+
         public getInputTypeView(): api.form.inputtype.InputTypeView<any> {
             return this.inputTypeView;
         }
@@ -194,7 +198,7 @@ module api.form {
             }
         }
 
-        refresh(validate: boolean = true) {
+        private refreshButtonsState(validate: boolean = true) {
             if (!this.inputTypeView.isManagingAdd()) {
                 let inputTypeViewNotManagingAdd = <BaseInputTypeNotManagingAdd<any>>this.inputTypeView;
                 this.addButton.setVisible(!inputTypeViewNotManagingAdd.maximumOccurrencesReached());

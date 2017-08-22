@@ -17,6 +17,8 @@ module api.form.inputtype {
 
         reset();
 
+        refresh();
+
         newInitialValue(): Value;
 
         /*

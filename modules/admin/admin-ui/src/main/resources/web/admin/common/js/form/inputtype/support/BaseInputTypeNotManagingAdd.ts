@@ -189,6 +189,10 @@ module api.form.inputtype.support {
             this.inputOccurrences.reset();
         }
 
+        refresh() {
+            //to be implemented on demand in inheritors
+        }
+
         hasValidUserInput(): boolean {
             return this.inputOccurrences.hasValidUserInput();
         }
