@@ -160,23 +160,6 @@ module api.ui.selector {
                         }
                         return options;
                     });
-
-                    //  return this.loader.checkReadonly(loadedData.getData()).then((readonlyIds: string[]) => {
-                    /* newOptions.forEach((option: Option<OPTION_DISPLAY_VALUE>) => {
-                     const markedReadonly = readonlyIds.some((id: string) => {
-                     if (this.treeDataHelper.getDataId(option.displayValue) === id) {
-                     option.readOnly = true;
-                     return true;
-                     }
-                     });
-                     if (!markedReadonly) {
-                     if (this.readonlyChecker && this.readonlyChecker(option.displayValue)) {
-                     option.readOnly = true;
-                     }
-                     }
-                     });*/
-
-                    //   });
                 });
         }
 
@@ -184,29 +167,6 @@ module api.ui.selector {
             this.defaultOption = data;
             this.isDefaultOptionActive = false;
         }
-
-        /*private checkReadonly(loadedData: OptionDataLoaderData<OPTION_DISPLAY_VALUE>): wemQ.Promise<Option<OPTION_DISPLAY_VALUE>[]> {
-         return this.loader.checkReadonly(loadedData.getData()).then((readonlyIds: string[]) => {
-
-         let newOptions = this.createOptions(loadedData.getData());
-
-         newOptions.forEach((option: Option<OPTION_DISPLAY_VALUE>) => {
-         const markedReadonly = readonlyIds.some((id: string) => {
-         if (this.treeDataHelper.getDataId(option.displayValue) === id) {
-         option.readOnly = true;
-         return true;
-         }
-         });
-         if (!markedReadonly) {
-         if (this.readonlyChecker && this.readonlyChecker(option.displayValue)) {
-         option.readOnly = true;
-         }
-         }
-         });
-
-         return newOptions;
-         });
-         }*/
 
         private scrollToDefaultOption(parentNode: TreeNode<Option<OPTION_DISPLAY_VALUE>>, startFrom: number) {
             const length = parentNode.getChildren().length;
