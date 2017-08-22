@@ -61,6 +61,10 @@ module api.form {
             throw new Error('Must be implemented by inheritors');
         }
 
+        refresh() {
+            //to be implemented on demand in inheritors
+        }
+
         getContext(): FormContext {
             return this.context;
         }
