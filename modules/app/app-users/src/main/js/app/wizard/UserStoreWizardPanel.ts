@@ -118,7 +118,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
             this.userStoreWizardStepForm.layout(persistedItem);
             this.permissionsWizardStepForm.layout(persistedItem, this.defaultUserStore);
         } else {
-            this.userStoreWizardStepForm.layout();
+            this.userStoreWizardStepForm.layout(this.defaultUserStore);
             this.permissionsWizardStepForm.layoutReadOnly(this.defaultUserStore);
         }
 
