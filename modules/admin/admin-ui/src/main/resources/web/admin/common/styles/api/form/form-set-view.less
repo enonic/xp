@@ -66,9 +66,10 @@
       background-color: @admin-bg-light-gray;
       padding: 10px 10px 0px 10px;
       .clearfix();
-    }
-    > .bottom-button-row {
-      padding-top: 0px;
+
+      &:not(:empty) + .bottom-button-row {
+        padding-top: 0px;
+      }
     }
   }
 
@@ -91,10 +92,6 @@
     .bottom-button-row,
     .validation-viewer {
       margin-left: @form-label-width;
-    }
-
-    .bottom-button-row {
-      background-color: white;
     }
 
     &.label-over-input {
