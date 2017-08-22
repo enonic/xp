@@ -74,6 +74,10 @@ module api.form.inputtype.support {
             throw Error('Must be implemented in inheritors');
         }
 
+        refresh() {
+            //to be implemented on demand in inheritors
+        }
+
         updateProperty(property: Property, unchangedOnly?: boolean): wemQ.Promise<void> {
             throw new Error('Must be implemented by inheritor: ' + api.ClassHelper.getClassName(this));
         }

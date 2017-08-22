@@ -18,7 +18,7 @@ module api.form {
 
         private occurrences: FormItemOccurrence<V>[] = [];
 
-        private occurrenceViews: V[] = [];
+        protected occurrenceViews: V[] = [];
 
         private occurrenceViewContainer: api.dom.Element;
 
@@ -68,6 +68,10 @@ module api.form {
 
         onOccurrenceRendered(listener: (event: OccurrenceRenderedEvent)=>void) {
             this.occurrenceRenderedListeners.push(listener);
+        }
+
+        refreshOccurence(index: number) {
+            //to be implemented on demand in inheritors
         }
 
         unOccurrenceRendered(listener: (event: OccurrenceRenderedEvent)=>void) {

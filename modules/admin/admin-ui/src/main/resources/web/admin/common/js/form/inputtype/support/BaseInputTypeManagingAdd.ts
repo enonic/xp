@@ -111,6 +111,10 @@ module api.form.inputtype.support {
             throw Error('Must be implemented in inheritors');
         }
 
+        refresh() {
+            //to be implemented on demand in inheritors
+        }
+
         private registerPropertyArray(propertyArray: PropertyArray) {
             if (this.propertyArray) {
                 if (BaseInputTypeManagingAdd.debug) {
