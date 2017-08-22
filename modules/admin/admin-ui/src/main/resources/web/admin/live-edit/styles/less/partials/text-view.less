@@ -48,6 +48,14 @@
     .cke_editable {
       display: block;
       box-sizing: border-box;
+
+      > *:first-child {
+        margin-top: 0px;
+      }
+
+      > *:last-child {
+        margin-bottom: 0px;
+      }
     }
 
     &.editor-focused {
@@ -115,12 +123,13 @@
   width: 100% !important;
   border-bottom: 1px solid #cccccc !important;
   text-align: center !important;
-  padding: 6px 0px 2px !important;
+  padding: 6px 0px 0px !important;
   display: none !important;
 
   .cke_toolbox {
     display: inline-block;
     padding-right: 30px;
+    vertical-align: middle;
 
     a {
       pointer-events: auto;
@@ -190,6 +199,7 @@
   font-size: 26px;
   display: none;
   text-decoration: none;
+  cursor: pointer;
 
   &.active {
     display: inline;

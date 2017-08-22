@@ -177,7 +177,7 @@ module api.util.htmlarea.editor {
                 removeButtons: this.toolsToExlcude,
                 extraPlugins: this.plugins + (this.inline ? ',sharedspace' : ''),
                 autoGrow_onStartup: true,
-                contentsCss: this.assetsUri + '/common/styles/api/util/htmlarea/html-editor.css',
+                contentsCss: this.assetsUri + '/common/styles/api/util/htmlarea/html-editor.css', // for classic mode only
                 sharedSpaces: this.inline ? {top: this.fixedToolbarContainer} : null
             };
 
@@ -192,7 +192,7 @@ module api.util.htmlarea.editor {
 
             ckeditor.on('focus', (e) => {
                 if (this.focusHandler) {
-                    this.focusHandler(null);
+                    this.focusHandler(<any>e);
                 }
             });
 
@@ -202,7 +202,7 @@ module api.util.htmlarea.editor {
                     this.hasActiveDialog = false;
                 }
                 if (this.blurHandler) {
-                    this.blurHandler(null);
+                    this.blurHandler(<any>e);
                 }
             });
 
