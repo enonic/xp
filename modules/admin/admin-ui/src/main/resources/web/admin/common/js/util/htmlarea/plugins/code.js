@@ -1,14 +1,10 @@
-/*global tinymce:true */
+CKEDITOR.plugins.add('code', {
 
-tinymce.PluginManager.add('code', function (editor) {
-    function showDialog() {
-        editor.execCommand("openCodeDialog", editor);
+    init: function (editor) {
+        editor.ui.addButton('Code', {
+            icon: 'code',
+            label: 'Source code',
+            command: 'openCodeDialog'
+        });
     }
-
-    editor.addButton('code', {
-        icon: 'code',
-        tooltip: 'Source code',
-        onclick: showDialog,
-        type: 'button'
-    });
 });

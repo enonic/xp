@@ -225,6 +225,10 @@ module api.form.inputtype.text {
 
                 this.removeTooltipFromEditorArea(textAreaWrapper);
 
+                this.moveFullScreenButtonToBottomBar(textAreaWrapper);
+
+                this.moveFullSourceButtonToBottomBar(textAreaWrapper);
+
                 const removeButtonEL = wemjq(textAreaWrapper.getParentElement().getParentElement().getHTMLElement()).find(
                     '.remove-button')[0];
                 removeButtonEL.addEventListener('mouseover', () => {
@@ -236,6 +240,17 @@ module api.form.inputtype.text {
 
             });
         }
+
+        private moveFullScreenButtonToBottomBar(inputOccurence: Element): void {
+            wemjq(inputOccurence.getHTMLElement()).find('.cke_button__maximize').appendTo(
+                wemjq(inputOccurence.getHTMLElement()).find('.cke_bottom'));
+        }
+
+        private moveFullSourceButtonToBottomBar(inputOccurence: Element): void {
+            wemjq(inputOccurence.getHTMLElement()).find('.cke_button__code').appendTo(
+                wemjq(inputOccurence.getHTMLElement()).find('.cke_bottom'));
+        }
+
 
         private setFocusOnEditorAfterCreate(inputOccurence: Element, id: string): void {
             inputOccurence.giveFocus = () => {

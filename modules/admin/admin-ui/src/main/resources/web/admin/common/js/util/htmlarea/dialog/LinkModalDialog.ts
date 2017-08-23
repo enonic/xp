@@ -433,7 +433,7 @@ module api.util.htmlarea.dialog {
                 this.link.parentElement.replaceChild(linkEl.getHTMLElement(), this.link);
             } else {
                 if (this.onlyTextSelected) {
-                    this.getEditor().insertContent(linkEl.toString());
+                    //this.getEditor().insertContent(linkEl.toString());
                 } else {
                     let linkAttrs = {
                         href: linkEl.getHref(),
@@ -444,7 +444,7 @@ module api.util.htmlarea.dialog {
                         title: linkEl.getTitle()
                     };
 
-                    this.getEditor().execCommand('mceInsertLink', false, linkAttrs);
+                    //this.getEditor().execCommand('mceInsertLink', false, linkAttrs);
                 }
             }
         }

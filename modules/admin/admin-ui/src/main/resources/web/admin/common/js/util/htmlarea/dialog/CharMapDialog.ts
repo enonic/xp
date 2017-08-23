@@ -1,10 +1,11 @@
 module api.util.htmlarea.dialog {
 
     import i18n = api.util.i18n;
+    import editor = CKEDITOR.editor;
 
     export class CharMapDialog extends ModalDialog {
 
-        constructor(editor: HtmlAreaEditor) {
+        constructor(editor: editor) {
             super(<HtmlAreaModalDialogConfig>{editor: editor, title: i18n('dialog.charmap.title'), cls: 'special-chars-modal-dialog'});
         }
 
@@ -103,16 +104,16 @@ module api.util.htmlarea.dialog {
         }
 
         private extendCharMap(charmap: any) {
-            const settings = this.getEditor().settings;
-
-            if (settings.charmap) {
-                charmap = this.getCharsFromSetting(settings.charmap);
-            }
-
-            if (settings.charmap_append) {
-                return [].concat(charmap).concat(this.getCharsFromSetting(settings.charmap_append));
-            }
-
+            // const settings = this.getEditor().settings;
+            //
+            // if (settings.charmap) {
+            //     charmap = this.getCharsFromSetting(settings.charmap);
+            // }
+            //
+            // if (settings.charmap_append) {
+            //     return [].concat(charmap).concat(this.getCharsFromSetting(settings.charmap_append));
+            // }
+            //
             return charmap;
         }
 
@@ -122,7 +123,7 @@ module api.util.htmlarea.dialog {
 
         private insertChar(chr: string) {
             this.getEditor().fire('insertCustomChar', {chr: chr});
-            this.getEditor().execCommand('mceInsertContent', false, chr);
+            //this.getEditor().execCommand('mceInsertContent', false, chr);
         }
 
         private getDefaultCharMap(): any[] {
