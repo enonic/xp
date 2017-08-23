@@ -105,7 +105,7 @@ module api.ui.image {
         private autoFocusChangedListeners: { (auto: boolean): void }[] = [];
         private focusRadiusChangedListeners: { (r: number): void }[] = [];
 
-        private cropPositionChangedListeners: { (position: Rect): void }[] = [];
+        private cropPositionChangedListeners: { (crop: Rect, zoom: Rect): void }[] = [];
         private autoCropChangedListeners: { (auto: boolean): void }[] = [];
         private shaderVisibilityChangedListeners: { (visible: boolean): void }[] = [];
 
@@ -485,7 +485,7 @@ module api.ui.image {
 
             }
 
-            if (this.rotated || this.flippedHor) {
+            if (this.rotated || this.flippedHor || scale) {
                 if (this.rotated) {
                     const zoomBottomPct = 1 + Math.abs(zoomPct.y) - zoomPct.h;
                     zoomPct.y = zoomPct.x;
@@ -507,15 +507,14 @@ module api.ui.image {
                     focusPosPct.x = cropPct.w - focusPosPct.x;
                     this.flippedHor = false;
                 }
-            }
 
-            if (scale) {
-                // scale all positions accordingly to dimensions change in edit mode
                 this.setZoomPositionPx(this.denormalizeRect(zoomPct), false);
                 this.setCropPositionPx(this.denormalizeRect(cropPct), false);
                 this.setFocusPositionPx(this.denormalizePoint(focusPosPct.x, focusPosPct.y), false);
                 this.setFocusRadiusPx(this.denormalizeRadius(focusRadPct), false);
+            }
 
+            if (scale) {
                 //also update revert positions in case user will cancel changes
                 if (revZoomPct) {
                     this.revertZoomData = this.denormalizeRect(revZoomPct);
@@ -1630,7 +1629,7 @@ module api.ui.image {
                     console.log('After restraining', dx, dy, this.cropData);
                 }
 
-                this.notifyCropPositionChanged(this.cropData);
+                this.notifyCropPositionChanged(this.cropData, this.zoomData);
 
                 if (this.isImageLoaded() && this.isCropEditMode()) {
                     this.updateCropMaskPosition();
@@ -2228,20 +2227,21 @@ module api.ui.image {
             });
         }
 
-        onCropPositionChanged(listener: (position: Rect) => void) {
+        onCropPositionChanged(listener: (crop: Rect, zoom: Rect) => void) {
             this.cropPositionChangedListeners.push(listener);
         }
 
-        unCropPositionChanged(listener: (position: Rect) => void) {
+        unCropPositionChanged(listener: (crop: Rect, zoom: Rect) => void) {
             this.cropPositionChangedListeners = this.cropPositionChangedListeners.filter((curr) => {
                 return curr !== listener;
             });
         }
 
-        private notifyCropPositionChanged(position: SVGRect) {
-            let normalizedPosition = this.rectFromSVG(this.normalizeRect(position));
-            this.cropPositionChangedListeners.forEach((listener) => {
-                listener(normalizedPosition);
+        private notifyCropPositionChanged(crop: SVGRect, zoom: SVGRect) {
+            let normalizedCrop = this.rectFromSVG(this.normalizeRect(crop));
+            let normalizedZoom = this.rectFromSVG(this.normalizeRect(zoom));
+            this.cropPositionChangedListeners.forEach(listener => {
+                listener(normalizedCrop, normalizedZoom);
             });
         }
 

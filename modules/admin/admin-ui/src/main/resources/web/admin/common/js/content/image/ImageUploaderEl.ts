@@ -14,7 +14,9 @@ module api.content.image {
         private imageEditors: ImageEditor[];
         private editModeListeners: { (edit: boolean, crop: Rect, zoom: Rect, focus: Point): void }[];
         private focusAutoPositionedListeners: { (auto: boolean): void }[];
+        private focusPositionChangedListeners: { (focus: Point): void }[];
         private cropAutoPositionedListeners: { (auto: boolean): void }[];
+        private cropPositionChangedListeners: { (crop: Rect, zoom: Rect): void }[];
         private orientationChangedListeners: { (orientation: number) }[];
 
         private initialWidth: number;
@@ -40,7 +42,9 @@ module api.content.image {
             this.imageEditors = [];
             this.editModeListeners = [];
             this.focusAutoPositionedListeners = [];
+            this.focusPositionChangedListeners = [];
             this.cropAutoPositionedListeners = [];
+            this.cropPositionChangedListeners = [];
             this.orientationChangedListeners = [];
 
             this.addClass('image-uploader-el');
@@ -178,11 +182,21 @@ module api.content.image {
                 this.notifyOrientationChanged(orientation);
             };
 
+            const cropPositionHandler = (crop: Rect, zoom: Rect) => {
+                this.notifyCropPositionChanged(crop, zoom);
+            };
+
+            const focusPositionHandler = (focus: Point) => {
+                this.notifyFocusPositionChanged(focus);
+            };
+
             const editorImage = imageEditor.getImage();
             editorImage.onLoaded((event: UIEvent) => {
                 if (!editorImage.isPlaceholder()) {
                     this.togglePlaceholder(false);
                 }
+                imageEditor.onCropPositionChanged(cropPositionHandler);
+                imageEditor.onFocusPositionChanged(focusPositionHandler);
                 imageEditor.onOrientationChanged(orientationHandler);
                 imageEditor.onShaderVisibilityChanged(shaderVisibilityChangedHandler);
                 imageEditor.onEditModeChanged(editModeChangedHandler);
@@ -195,6 +209,8 @@ module api.content.image {
             imageEditor.onImageError(imageErrorHandler);
 
             imageEditor.onRemoved(() => {
+                imageEditor.unCropPositionChanged(cropPositionHandler);
+                imageEditor.unFocusPositionChanged(focusPositionHandler);
                 imageEditor.unOrientationChanged(orientationHandler);
                 imageEditor.unShaderVisibilityChanged(shaderVisibilityChangedHandler);
                 imageEditor.unEditModeChanged(editModeChangedHandler);
@@ -313,6 +329,20 @@ module api.content.image {
             });
         }
 
+        onCropPositionChanged(listener: (crop: Rect, zoom: Rect) => void) {
+            this.cropPositionChangedListeners.push(listener);
+        }
+
+        unCropPositionChanged(listener: (crop: Rect, zoom: Rect) => void) {
+            this.cropPositionChangedListeners = this.cropPositionChangedListeners.filter(curr => {
+                return curr !== listener;
+            });
+        }
+
+        private notifyCropPositionChanged(crop: Rect, zoom: Rect) {
+            this.cropPositionChangedListeners.forEach(listener => listener(crop, zoom));
+        }
+
         onCropAutoPositionedChanged(listener: (auto: boolean) => void) {
             this.cropAutoPositionedListeners.push(listener);
         }
@@ -325,6 +355,20 @@ module api.content.image {
 
         private notifyCropAutoPositionedChanged(auto: boolean) {
             this.cropAutoPositionedListeners.forEach((listener) => listener(auto));
+        }
+
+        onFocusPositionChanged(listener: (focus: Point) => void) {
+            this.focusPositionChangedListeners.push(listener);
+        }
+
+        unFocusPositionChanged(listener: (focus: Point) => void) {
+            this.focusPositionChangedListeners = this.focusPositionChangedListeners.filter(curr => {
+                return curr !== listener;
+            });
+        }
+
+        private notifyFocusPositionChanged(focus: Point) {
+            this.focusPositionChangedListeners.forEach(listener => listener(focus));
         }
 
         onFocusAutoPositionedChanged(listener: (auto: boolean) => void) {
