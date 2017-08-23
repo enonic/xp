@@ -67,7 +67,7 @@ body.mobile-statistics-panel {
       width: @panel-outer-width;
     }
     .launcher-title  {
-      width: calc(@panel-outer-width - 60px);
+      width: calc(@panel-outer-width - 30px);
     }
   }
 }
@@ -283,10 +283,6 @@ body.mobile-statistics-panel {
     height: 3px;
     background: @admin-white;
     cursor: pointer;
-
-    .dark & {
-      background: @admin-bg-light-gray;
-    }
   }
 
   .lines {
@@ -308,6 +304,12 @@ body.mobile-statistics-panel {
     }
     &:after {
       top: -6px;
+    }
+  }
+
+  &.dark {
+    .lines, .lines:before, .lines:after {
+      background: @admin-dark-gray-border;
     }
   }
 
