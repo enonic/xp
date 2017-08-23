@@ -275,8 +275,10 @@ module api.content.image {
             });
         }
 
-        setOrientation(orientation: number) {
-            this.imageEditors.forEach((editor: ImageEditor) => editor.setOrientation(orientation, false));
+        setOrientation(orientation: number, originalOrientation?: number) {
+            this.imageEditors.forEach((editor: ImageEditor) => {
+                editor.setOrientation(orientation, originalOrientation, false);
+            });
         }
 
         isFocalPointEditMode(): boolean {

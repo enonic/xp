@@ -7,6 +7,8 @@ module api.content.form.inputtype.upload {
     import Point = api.ui.image.Point;
     import Rect = api.ui.image.Rect;
     import MixinName = api.schema.mixin.MixinName;
+    import ValueTypes = api.data.ValueTypes;
+    import ValueTypes = api.data.ValueTypes;
 
     export class ImageUploader
         extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<string> {
@@ -186,7 +188,7 @@ module api.content.form.inputtype.upload {
             }
         }
 
-        private getPropertyContainer(property: Property) {
+        private getPropertyContainer(property: Property): PropertySet {
             let container;
             switch (property.getType()) {
             case ValueTypes.DATA:
@@ -194,13 +196,13 @@ module api.content.form.inputtype.upload {
                 break;
             case ValueTypes.STRING:
                 // save in new format always no matter what was the format originally
-                container = new api.data.PropertyTree();
+                container = new api.data.PropertyTree().getRoot();
                 container.setString('attachment', 0, property.getString());
                 let propertyParent = property.getParent();
                 let propertyName = property.getName();
                 // remove old string property and set the new property set
                 propertyParent.removeProperty(propertyName, 0);
-                let newProperty = propertyParent.setPropertySet(propertyName, 0, container.getRoot());
+                let newProperty = propertyParent.setPropertySet(propertyName, 0, container);
                 // update local property reference
                 this.registerProperty(newProperty);
                 break;
@@ -246,22 +248,29 @@ module api.content.form.inputtype.upload {
         }
 
         private writeOrientation(content: Content, orientation: number) {
-            const extra = content.getExtraData(new MixinName('media:cameraInfo'));
-            const property = extra && extra.getData().getProperty('orientation');
-            if (orientation == 1 && property) {
-                property.getParent().removeProperty(property.getName(), property.getIndex());
-            } else if (orientation != 1) {
-                if (property) {
-                    property.setValue(new Value(String(orientation), ValueTypes.STRING));
-                } else if (extra) {
-                    extra.getData().addString('orientation', String(orientation));
-                }
+            const container = this.getPropertyContainer(this.getProperty());
+
+            if (container && orientation == this.readOriginalOrientation(content)) {
+                container.removeProperty('orientation', 0);
+            } else {
+                container.setLongByPath('orientation', orientation);
             }
         }
 
         private readOrientation(content: Content): number {
+            let property = this.getMediaProperty(content, 'orientation');
+            if (!property) {
+                return this.readOriginalOrientation(content);
+            }
+            return property && property.getLong() || null;
+        }
+
+        private readOriginalOrientation(content: Content): number {
             const property = this.getMetaProperty(content, 'orientation');
-            return property && property.getLong() || 0;
+            if (!property) {
+                return null;
+            }
+            return property && property.getLong() || null;
         }
 
         private readSizeValue(content: Content, propertyName: string): number {
@@ -292,12 +301,7 @@ module api.content.form.inputtype.upload {
             if (!mediaProperty || !ValueTypes.DATA.equals(mediaProperty.getType())) {
                 return null;
             }
-
-            let resultProperty = mediaProperty.getPropertySet().getProperty(propertyName);
-            if (!resultProperty || !ValueTypes.DATA.equals(resultProperty.getType())) {
-                return null;
-            }
-            return resultProperty;
+            return mediaProperty.getPropertySet().getProperty(propertyName);
         }
 
         private configEditorsProperties(content: Content) {
@@ -312,7 +316,8 @@ module api.content.form.inputtype.upload {
 
             const orientation = this.readOrientation(content);
             if (orientation) {
-                this.imageUploader.setOrientation(orientation);
+                const originalOrientation = this.readOriginalOrientation(content);
+                this.imageUploader.setOrientation(orientation, originalOrientation);
             }
         }
 

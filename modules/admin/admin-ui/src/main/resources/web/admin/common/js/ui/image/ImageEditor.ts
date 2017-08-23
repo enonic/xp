@@ -146,7 +146,7 @@ module api.ui.image {
                 let unorientedSrc;
                 const originalSrc = this.originalImage.getSrc();
                 if (!this.orientation) {
-                    this.setOrientation(1, false, true);    // set default orientation
+                    this.setOrientation(1, 1, false, true);    // set default orientation
                     unorientedSrc = originalSrc;
                 } else {
                     unorientedSrc = this.rotateImage(this.originalImage, this.orientation, true);
@@ -945,11 +945,13 @@ module api.ui.image {
          * About EXIF orientation
          * http://sylvana.net/jpegcrop/exif_orientation.html
          */
-        setOrientation(orientation: number, render: boolean = true, silent?: boolean) {
+        setOrientation(orientation: number, originalOrientation?: number, render: boolean = true, silent?: boolean) {
             this.orientation = Math.min(Math.max(orientation, 1), 8);
 
-            if (this.originalOrientation == undefined) {
+            if (this.originalOrientation == undefined && !originalOrientation) {
                 this.originalOrientation = this.orientation;
+            } else if (originalOrientation) {
+                this.originalOrientation = originalOrientation;
             }
 
             if (ImageEditor.debug) {
