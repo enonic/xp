@@ -15,7 +15,7 @@ import ContentSummaryOptionDataLoader = api.content.ContentSummaryOptionDataLoad
 
 export class ContentMoveComboBox extends ContentComboBox {
 
-    private readonlyChecker: ReadonlyChecker;
+    private readonlyChecker: MoveReadOnlyChecker;
 
     constructor() {
         const richComboBoxBuilder: ContentComboBoxBuilder = new ContentComboBoxBuilder();
@@ -33,7 +33,7 @@ export class ContentMoveComboBox extends ContentComboBox {
             .setOptionDataLoader(new ContentSummaryOptionDataLoader());
 
         super(richComboBoxBuilder);
-        this.readonlyChecker = new ReadonlyChecker();
+        this.readonlyChecker = new MoveReadOnlyChecker();
         this.getComboBox().getComboBoxDropdownGrid().setReadonlyChecker(this.readonlyChecker.isReadOnly.bind(this.readonlyChecker));
         this.onOptionDeselected(() => {
             this.getComboBox().getInput().reset();
@@ -46,7 +46,7 @@ export class ContentMoveComboBox extends ContentComboBox {
 
     setFilterContents(contents: ContentSummary[]) {
         this.getLoader().setFilterContentPaths(contents.map((content) => content.getPath()));
-        this.readonlyChecker.setFilterContentIds(contents.map((content) => content.getContentId()));
+        this.readonlyChecker.setFilterContentPaths(contents.map((content) => content.getPath()));
     }
 
     setFilterContentTypes(contentTypes: api.schema.content.ContentType[]) {
@@ -60,9 +60,9 @@ export class ContentMoveComboBox extends ContentComboBox {
     }
 }
 
-class ReadonlyChecker {
+class MoveReadOnlyChecker {
 
-    private filterContentIds: ContentId[] = [];
+    private filterContentPaths: ContentPath[] = [];
 
     private filterContentTypes: ContentTypeName[] = [ContentTypeName.IMAGE, ContentTypeName.MEDIA, ContentTypeName.PAGE_TEMPLATE,
         ContentTypeName.FRAGMENT, ContentTypeName.MEDIA_DATA, ContentTypeName.MEDIA_AUDIO, ContentTypeName.MEDIA_ARCHIVE,
@@ -71,12 +71,12 @@ class ReadonlyChecker {
         ContentTypeName.SHORTCUT];
 
     isReadOnly(item: ContentSummary): boolean {
-        return this.matchesIds(item) || this.matchesType(item);
+        return this.matchesPaths(item) || this.matchesType(item);
     }
 
-    private matchesIds(item: ContentSummary) {
-        return this.filterContentIds.some((id: ContentId) => {
-            if (item.getContentId().equals(id)) {
+    private matchesPaths(item: ContentSummary) {
+        return this.filterContentPaths.some((path: ContentPath) => {
+            if (item.getPath().equals(path) || item.getPath().isDescendantOf(path)) {
                 return true;
             }
         });
@@ -90,8 +90,8 @@ class ReadonlyChecker {
         });
     }
 
-    setFilterContentIds(contentIds: ContentId[]) {
-        this.filterContentIds = contentIds;
+    setFilterContentPaths(contentPaths: ContentPath[]) {
+        this.filterContentPaths = contentPaths;
     }
 
     setFilterContentTypes(contentTypes: ContentTypeName[]) {
