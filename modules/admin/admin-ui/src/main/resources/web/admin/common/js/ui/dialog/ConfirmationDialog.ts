@@ -13,7 +13,7 @@ module api.ui.dialog {
 
         constructor(config: ModalDialogConfig = {}) {
             super((() => {
-                config.title = config.title || i18n('dialog.confirmation.title');
+                config.title = config.title || i18n('dialog.confirm.title');
                 config.closeIconCallback = config.closeIconCallback || (() => this.closeWithoutCallback());
                 return config;
             })());
