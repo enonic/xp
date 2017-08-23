@@ -4,13 +4,13 @@ module api.util.htmlarea.dialog {
     import Validators = api.ui.form.Validators;
     import TextArea = api.ui.text.TextArea;
     import i18n = api.util.i18n;
-    import editor = CKEDITOR.editor;
+    import HTMLAreaEditor = CKEDITOR.editor;
 
     export class CodeDialog extends ModalDialog {
 
         private textArea: TextArea;
 
-        constructor(editor: editor) {
+        constructor(editor: HTMLAreaEditor) {
             super(<HtmlAreaModalDialogConfig>{editor: editor, title: i18n('dialog.sourcecode.title'), cls: 'source-code-modal-dialog'});
         }
 

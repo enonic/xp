@@ -1,11 +1,11 @@
 module api.util.htmlarea.dialog {
 
     import i18n = api.util.i18n;
-    import editor = CKEDITOR.editor;
+    import HTMLAreaEditor = CKEDITOR.editor;
 
     export class CharMapDialog extends ModalDialog {
 
-        constructor(editor: editor) {
+        constructor(editor: HTMLAreaEditor) {
             super(<HtmlAreaModalDialogConfig>{editor: editor, title: i18n('dialog.charmap.title'), cls: 'special-chars-modal-dialog'});
         }
 

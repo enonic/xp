@@ -7,7 +7,7 @@ module api.util.htmlarea.dialog {
     import Checkbox = api.ui.Checkbox;
     import ElementHelper = api.dom.ElementHelper;
     import i18n = api.util.i18n;
-    import editor = CKEDITOR.editor;
+    import HTMLAreaEditor = CKEDITOR.editor;
 
     export class SearchReplaceModalDialog extends ModalDialog {
 
@@ -25,7 +25,7 @@ module api.util.htmlarea.dialog {
 
         private searchAndReplaceHelper: SearchAndReplaceHelper;
 
-        constructor(editor: editor) {
+        constructor(editor: HTMLAreaEditor) {
             super(<HtmlAreaModalDialogConfig>{editor: editor, title: i18n('dialog.search.title'), cls: 'search-and-replace-modal-dialog'});
             this.searchAndReplaceHelper = new SearchAndReplaceHelper(editor);
 
@@ -188,7 +188,7 @@ module api.util.htmlarea.dialog {
 
     class SearchAndReplaceHelper {
 
-        private editor: editor;
+        private editor: HTMLAreaEditor;
 
         private m: any;
         private matches: any;
@@ -207,7 +207,7 @@ module api.util.htmlarea.dialog {
         currentIndex: number = -1;
         last: any = {};
 
-        constructor(editor: editor) {
+        constructor(editor: HTMLAreaEditor) {
             this.editor = editor;
         }
 

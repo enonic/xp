@@ -4,7 +4,7 @@ module api.util.htmlarea.dialog {
     import Fieldset = api.ui.form.Fieldset;
     import FormItem = api.ui.form.FormItem;
     import FormItemBuilder = api.ui.form.FormItemBuilder;
-    import editor = CKEDITOR.editor;
+    import HTMLAreaEditor = CKEDITOR.editor;
 
     export class ModalDialogFormItemBuilder {
 
@@ -50,7 +50,7 @@ module api.util.htmlarea.dialog {
 
     export class HtmlAreaModalDialogConfig {
 
-        editor: editor;
+        editor: HTMLAreaEditor;
 
         title: string;
 
@@ -60,7 +60,7 @@ module api.util.htmlarea.dialog {
     export class ModalDialog extends api.ui.dialog.ModalDialog {
         private fields: { [id: string]: api.dom.FormItemEl } = {};
         private validated: boolean = false;
-        private editor: editor;
+        private editor: HTMLAreaEditor;
         private mainForm: Form;
         private firstFocusField: api.dom.Element;
         private submitAction: api.ui.Action;
@@ -84,7 +84,7 @@ module api.util.htmlarea.dialog {
             this.submitAction = action;
         }
 
-        protected getEditor(): editor {
+        protected getEditor(): HTMLAreaEditor {
             return this.editor;
         }
 
@@ -289,7 +289,7 @@ module api.util.htmlarea.dialog {
     }
 
     export interface HtmlAreaAnchor {
-        editor: editor;
+        editor: HTMLAreaEditor;
         element: HTMLElement;
         text: string;
         anchorList: string[];
@@ -297,14 +297,14 @@ module api.util.htmlarea.dialog {
     }
 
     export interface HtmlAreaImage {
-        editor: editor;
+        editor: HTMLAreaEditor;
         element: HTMLElement;
         container: HTMLElement;
         callback: Function;
     }
 
     export interface HtmlAreaMacro {
-        editor: editor;
+        editor: HTMLAreaEditor;
         callback: Function;
     }
 }

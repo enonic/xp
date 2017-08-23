@@ -3,11 +3,11 @@ module api.util.htmlarea.dialog {
     import FormItem = api.ui.form.FormItem;
     import Validators = api.ui.form.Validators;
     import i18n = api.util.i18n;
-    import editor = CKEDITOR.editor;
+    import HTMLAreaEditor = CKEDITOR.editor;
 
     export class AnchorModalDialog extends ModalDialog {
 
-        constructor(editor: editor) {
+        constructor(editor: HTMLAreaEditor) {
 
             super(<HtmlAreaModalDialogConfig>{editor: editor, title: i18n('dialog.anchor.title')});
         }
