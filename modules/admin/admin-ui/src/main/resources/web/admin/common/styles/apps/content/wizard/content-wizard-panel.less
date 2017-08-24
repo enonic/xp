@@ -234,8 +234,12 @@
   }
 }
 
-.mce-fullscreen {
+html[style*="z-index: 9995"] { // ckeditor fullscreen mode
   .wizard-step-navigator-and-toolbar {
+    display: none;
+  }
+
+  .launcher-button {
     display: none;
   }
 }

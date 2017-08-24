@@ -2,7 +2,8 @@ module api.util.htmlarea.editor {
 
     import CreateHtmlAreaDialogEvent = api.util.htmlarea.dialog.CreateHtmlAreaDialogEvent;
     import ApplicationKey = api.application.ApplicationKey;
-    import editor = CKEDITOR.editor;
+    import HTMLAreaEditor = CKEDITOR.editor;
+    import config = CKEDITOR.config;
 
     export class HTMLAreaBuilder {
 
@@ -11,8 +12,7 @@ module api.util.htmlarea.editor {
         private applicationKeys: ApplicationKey[]; // used for macro dialog
 
         private assetsUri: string;
-        private selector: string;
-        private id: string;
+        private editorContainerId: string;
         private focusHandler: (e: FocusEvent) => void;
         private blurHandler: (e: FocusEvent) => void;
         private keydownHandler: (e: KeyboardEvent) => void;
@@ -30,14 +30,14 @@ module api.util.htmlarea.editor {
         private toolsToInclude: string[] = [];
 
         private tools: any[] = [
-            { name: 'gr1', items: ['Format', 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', 'Code', '-'] },
-            { name: 'gr2', items: [ 'Blockquote', 'CreateDiv', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-'] },
-            { name: 'gr3', items: ['BulletedList', 'NumberedList', 'Outdent', 'Indent', '-'] },
-            { name: 'gr4', items: ['SpecialChar', 'Anchor', 'Image', 'Link', 'Unlink', '-'] },
+            {name: 'gr1', items: ['Format', 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', 'Blockquote']},
+            {name: 'gr2', items: ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
+            {name: 'gr3', items: ['BulletedList', 'NumberedList', 'Outdent', 'Indent']},
+            {name: 'gr4', items: ['SpecialChar', 'Anchor', 'Image', 'Link', 'Unlink']},
             { name: 'gr5', items: ['Table', '-', 'PasteText', '-', 'Maximize'] }
         ];
 
-        private plugins: string = 'autogrow,codeTag';
+        private plugins: string = 'autogrow,codeTag,code';
 
         setEditableSourceCode(value: boolean): HTMLAreaBuilder {
             this.editableSourceCode = value;
@@ -49,13 +49,8 @@ module api.util.htmlarea.editor {
             return this;
         }
 
-        setSelector(selector: string): HTMLAreaBuilder {
-            this.selector = selector;
-            return this;
-        }
-
-        setTextAreaId(id: string): HTMLAreaBuilder {
-            this.id = id;
+        setEditorContainerId(id: string): HTMLAreaBuilder {
+            this.editorContainerId = id;
             return this;
         }
 
@@ -162,27 +157,32 @@ module api.util.htmlarea.editor {
         }
 
         private checkRequiredFieldsAreSet() {
-            if (!this.assetsUri || !this.selector || !this.content) {
+            if (!this.assetsUri || !this.editorContainerId || !this.content) {
                 throw new Error('some required fields are missing for tinymce editor');
             }
         }
 
-        public createEditor(): editor {
+        public createEditor(): HTMLAreaEditor {
             this.checkRequiredFieldsAreSet();
 
-            if (this.editableSourceCode && !this.isToolExcluded('Source')) {
-                this.includeTool('Source');
+            if (this.editableSourceCode && !this.isToolExcluded('Code')) {
+                this.includeTool('Code');
             }
 
             this.tools.push({ name: 'custom', items: this.toolsToInclude });
 
-            const ckeditor: editor = CKEDITOR.replace(this.id, {
+            const config: config = {
                 toolbar: this.tools,
                 removePlugins: 'resize',
                 removeButtons: this.toolsToExlcude,
-                extraPlugins: this.plugins,
-                autoGrow_onStartup: true
-            });
+                extraPlugins: this.plugins + (this.inline ? ',sharedspace' : ''),
+                autoGrow_onStartup: true,
+                contentsCss: this.assetsUri + '/common/styles/api/util/htmlarea/html-editor.css', // for classic mode only
+                sharedSpaces: this.inline ? {top: this.fixedToolbarContainer} : null
+            };
+
+            const ckeditor: HTMLAreaEditor = this.inline ? CKEDITOR.inline(this.editorContainerId, config) : CKEDITOR.replace(
+                this.editorContainerId, config);
 
             ckeditor.on('change', (e) => {
                 if (this.nodeChangeHandler) {
@@ -190,6 +190,30 @@ module api.util.htmlarea.editor {
                 }
             });
 
+            ckeditor.on('focus', (e) => {
+                if (this.focusHandler) {
+                    this.focusHandler(<any>e);
+                }
+            });
+
+            ckeditor.on('blur', (e) => {
+                if (this.hasActiveDialog) {
+                    //e.stopImmediatePropagation();
+                    this.hasActiveDialog = false;
+                }
+                if (this.blurHandler) {
+                    this.blurHandler(<any>e);
+                }
+            });
+
+            ckeditor.addCommand('openCodeDialog', {
+                exec: (editor) => {
+                    this.notifyCodeDialog(editor);
+                    return true;
+                }
+            });
+
+            CKEDITOR.plugins.addExternal('code', this.assetsUri + '/common/js/util/htmlarea/plugins/', 'code.js');
             return ckeditor;
 
             /*            let deferred = wemQ.defer<HtmlAreaEditor>();
@@ -382,8 +406,8 @@ module api.util.htmlarea.editor {
             this.publishCreateDialogEvent(event);
         }
 
-        private notifyCodeDialog(config: any) {
-            let event = CreateHtmlAreaDialogEvent.create().setConfig(config).setType(
+        private notifyCodeDialog(editor: HTMLAreaEditor) {
+            let event = CreateHtmlAreaDialogEvent.create().setConfig(editor).setType(
                 api.util.htmlarea.dialog.HtmlAreaDialogType.CODE).build();
             this.publishCreateDialogEvent(event);
         }

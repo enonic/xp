@@ -21,7 +21,7 @@ module api.form.inputtype.text {
     import Promise = Q.Promise;
     import ResponsiveManager = api.ui.responsive.ResponsiveManager;
     import AppHelper = api.util.AppHelper;
-    import editor = CKEDITOR.editor;
+    import HTMLAreaEditor = CKEDITOR.editor;
 
     export class HtmlArea extends support.BaseInputTypeNotManagingAdd<string> {
 
@@ -197,8 +197,7 @@ module api.form.inputtype.text {
                 textAreaWrapper.addClass(focusedEditorCls);
             };
 
-            const ckeditor: editor = new HTMLAreaBuilder().
-                setSelector('textarea.' + id.replace(/\./g, '_')).setTextAreaId(id).
+            const editor: HTMLAreaEditor = new HTMLAreaBuilder().setEditorContainerId(id).
                 setAssetsUri(baseUrl).
                 setInline(false).
                 onCreateDialog(createDialogHandler).
@@ -217,7 +216,7 @@ module api.form.inputtype.text {
                 setForcedRootBlock(this.inputConfig['forcedRootBlock'] ? this.inputConfig['forcedRootBlock'][0].value : 'p').
                 setEditableSourceCode(this.editableSourceCode).createEditor();
 
-            ckeditor.on('loaded', () => {
+            editor.on('loaded', () => {
                 this.setEditorContent(id, property);
 
                 if (this.notInLiveEdit()) {
@@ -225,6 +224,9 @@ module api.form.inputtype.text {
                 }
 
                 this.removeTooltipFromEditorArea(textAreaWrapper);
+
+                this.moveButtonToBottomBar(textAreaWrapper, '.cke_button__maximize');
+                this.moveButtonToBottomBar(textAreaWrapper, '.cke_button__code');
 
                 const removeButtonEL = wemjq(textAreaWrapper.getParentElement().getParentElement().getHTMLElement()).find(
                     '.remove-button')[0];
@@ -236,6 +238,11 @@ module api.form.inputtype.text {
                 });
 
             });
+        }
+
+        private moveButtonToBottomBar(inputOccurence: Element, buttonClass: string): void {
+            wemjq(inputOccurence.getHTMLElement()).find(buttonClass).appendTo(
+                wemjq(inputOccurence.getHTMLElement()).find('.cke_bottom'));
         }
 
         private setFocusOnEditorAfterCreate(inputOccurence: Element, id: string): void {
@@ -342,7 +349,7 @@ module api.form.inputtype.text {
             }
         }
 
-        private getEditor(editorId: string): editor {
+        private getEditor(editorId: string): HTMLAreaEditor {
             return CKEDITOR.instances[editorId];
         }
 
@@ -353,7 +360,7 @@ module api.form.inputtype.text {
         }
 
         private setEditorContent(editorId: string, property: Property): void {
-            const editor: editor = this.getEditor(editorId);
+            const editor: HTMLAreaEditor = this.getEditor(editorId);
             if (editor) {
                 editor.setData(property.hasNonNullValue() ? HTMLAreaHelper.prepareImgSrcsInValueForEdit(property.getString()) : '');
                 //HTMLAreaHelper.updateImageAlignmentBehaviour(editor);
