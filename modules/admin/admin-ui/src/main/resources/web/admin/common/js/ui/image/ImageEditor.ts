@@ -770,18 +770,22 @@ module api.ui.image {
                 this.resetOrientation();
             });
 
+            const isEditorDirty = () => {
+                return !this.focusData.auto || !this.cropData.auto || this.orientation != this.originalOrientation;
+            };
+
             this.onFocusAutoPositionedChanged((auto) => {
                 this.editResetButton.setVisible(!auto);
                 this.toggleClass('autofocused', auto);
-                resetButton.setVisible(!auto || !this.cropData.auto);
+                resetButton.setVisible(isEditorDirty());
             });
             this.onCropAutoPositionedChanged((auto) => {
                 this.editResetButton.setVisible(!auto);
-                resetButton.setVisible(!auto || !this.focusData.auto);
+                resetButton.setVisible(isEditorDirty());
             });
 
             this.onOrientationChanged((orientation) => {
-                resetButton.setVisible(orientation !== this.originalOrientation);
+                resetButton.setVisible(isEditorDirty());
             });
 
             this.uploadButton = new Button();

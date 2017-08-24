@@ -1,14 +1,13 @@
 module api.content.form.inputtype.upload {
 
     import Property = api.data.Property;
+    import PropertySet = api.data.PropertySet;
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
     import Point = api.ui.image.Point;
     import Rect = api.ui.image.Rect;
     import MixinName = api.schema.mixin.MixinName;
-    import ValueTypes = api.data.ValueTypes;
-    import ValueTypes = api.data.ValueTypes;
 
     export class ImageUploader
         extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<string> {
@@ -279,7 +278,7 @@ module api.content.form.inputtype.upload {
             if (!property) {
                 return this.readOriginalOrientation(content);
             }
-            return property && property.getLong() || null;
+            return property && property.getLong() || 1;
         }
 
         private readOriginalOrientation(content: Content): number {
@@ -287,7 +286,7 @@ module api.content.form.inputtype.upload {
             if (!property) {
                 return null;
             }
-            return property && property.getLong() || null;
+            return property && property.getLong() || 1;
         }
 
         private readSizeValue(content: Content, propertyName: string): number {
@@ -332,8 +331,8 @@ module api.content.form.inputtype.upload {
             this.imageUploader.setZoom(zoomPosition);
 
             const orientation = this.readOrientation(content);
-            if (orientation) {
-                const originalOrientation = this.readOriginalOrientation(content);
+            const originalOrientation = this.readOriginalOrientation(content);
+            if (orientation != 1 || orientation != originalOrientation) {
                 this.imageUploader.setOrientation(orientation, originalOrientation);
             }
         }
