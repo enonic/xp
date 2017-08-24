@@ -1,21 +1,18 @@
 module api.schema.content {
 
-    export class GetAllContentTypesRequest extends ContentTypeResourceRequest<ContentTypeSummaryListJson, ContentTypeSummary[]> {
-
-        private inlineMixinsToFormItems:boolean = true;
+    export class GetAllContentTypesRequest
+        extends ContentTypeResourceRequest<ContentTypeSummaryListJson, ContentTypeSummary[]> {
 
         constructor() {
             super();
             super.setMethod('GET');
         }
 
-        getParams():Object {
-            return {
-                inlineMixinsToFormItems: this.inlineMixinsToFormItems
-            };
+        getParams(): Object {
+            return {};
         }
 
-        getRequestPath():api.rest.Path {
+        getRequestPath(): api.rest.Path {
             return api.rest.Path.fromParent(super.getResourcePath(), 'all');
         }
 

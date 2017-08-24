@@ -27,6 +27,9 @@ import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 import i18n = api.util.i18n;
 import Action = api.ui.Action;
 import Permission = api.security.acl.Permission;
+import KeyBinding = api.ui.KeyBinding;
+import ObjectHelper = api.ObjectHelper;
+import ComponentView = api.liveedit.ComponentView;
 
 export class PageComponentsView
     extends api.dom.DivEl {
@@ -59,6 +62,8 @@ export class PageComponentsView
     private invalidItemIds: string[] = [];
 
     private currentUserHasCreateRights: Boolean;
+
+    private keyBinding: KeyBinding[];
 
     constructor(liveEditPage: LiveEditPageProxy, private saveAsTemplateAction: SaveAsTemplateAction) {
         super('page-components-view');
@@ -104,6 +109,18 @@ export class PageComponentsView
                 this.setModal(smallSize).setDraggable(!smallSize);
             }
         });
+
+        this.initKeyBoardBindings();
+    }
+
+    show() {
+        api.ui.KeyBindings.get().bindKeys(this.keyBinding);
+        super.show();
+    }
+
+    hide() {
+        super.hide();
+        api.ui.KeyBindings.get().unbindKeys(this.keyBinding);
     }
 
     setPageView(pageView: PageView) {
@@ -460,6 +477,26 @@ export class PageComponentsView
             this.addToInvalidItems(e.getFragmentComponentView().getItemId().toString());
 
         });
+    }
+
+    private initKeyBoardBindings() {
+        const removeHandler = () => {
+            const selectedNode = this.tree.getSelectedNodes()[0];
+            const itemView = selectedNode ? selectedNode.getData() : null;
+
+            if(itemView) {
+                if (ObjectHelper.iFrameSafeInstanceOf(itemView, ComponentView)) {
+                    itemView.deselect();
+                    itemView.remove();
+                }
+            }
+            return true;
+        };
+        this.keyBinding = [
+            new KeyBinding('del', removeHandler),
+            new KeyBinding('backspace', removeHandler)
+        ];
+
     }
 
     private selectItem(treeNode: TreeNode<ItemView>) {

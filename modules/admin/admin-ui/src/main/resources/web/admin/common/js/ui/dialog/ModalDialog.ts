@@ -44,6 +44,8 @@ module api.ui.dialog {
 
         private closeIconCallback: () => void;
 
+        private clickOutsideCallback: () => void;
+
         public static debug: boolean = false;
 
         constructor(config: ModalDialogConfig = <ModalDialogConfig>{}) {
@@ -57,9 +59,16 @@ module api.ui.dialog {
             this.cancelAction = this.createDefaultCancelAction();
             this.closeIconCallback = config.closeIconCallback || (() => {
                     if (this.cancelAction) {
-                        this.confirmBeforeClose();
+                        this.cancelAction.execute();
+                    } else {
+                        this.close();
                     }
                 });
+
+            this.clickOutsideCallback = (() => {
+                this.confirmBeforeClose();
+            });
+
             this.closeIcon = new DivEl('cancel-button-top');
             this.closeIcon.onClicked(this.closeIconCallback);
             wrapper.appendChild(this.closeIcon);
@@ -126,7 +135,7 @@ module api.ui.dialog {
                             return;
                         }
                     }
-                    this.closeIconCallback();
+                    this.clickOutsideCallback();
                 }
             };
 

@@ -14,7 +14,7 @@ module api.form.inputtype {
         }
 
         isValid(): boolean {
-            return !this.breaksMaximumOccurrences && !this.breaksMinimumOccurrences;
+            return !this.breaksMaximumOccurrences && !this.breaksMinimumOccurrences && !this.additionalValidationRecord;
         }
 
         setBreaksMinimumOccurrences(value: boolean) {

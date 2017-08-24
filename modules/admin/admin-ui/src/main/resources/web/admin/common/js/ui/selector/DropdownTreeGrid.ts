@@ -50,12 +50,20 @@ module api.ui.selector {
             return this.optionsTreeGrid.reload();
         }
 
+        search(searchString: string): wemQ.Promise<void> {
+            return this.optionsTreeGrid.search(searchString);
+        }
+
         setReadonlyChecker(checker: (optionToCheck: OPTION_DISPLAY_VALUE) => boolean) {
             this.optionsTreeGrid.setReadonlyChecker(checker);
         }
 
         presetDefaultOption(data: OPTION_DISPLAY_VALUE) {
             this.optionsTreeGrid.presetDefaultOption(data);
+        }
+
+        removeAllOptions() {
+            this.optionsTreeGrid.removeAllOptions();
         }
 
         setOptions(options: Option<OPTION_DISPLAY_VALUE>[]) {

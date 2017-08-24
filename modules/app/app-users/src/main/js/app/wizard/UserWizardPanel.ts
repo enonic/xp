@@ -2,28 +2,26 @@ import '../../api.ts';
 import {PrincipalWizardPanel} from './PrincipalWizardPanel';
 import {UserEmailWizardStepForm} from './UserEmailWizardStepForm';
 import {UserPasswordWizardStepForm} from './UserPasswordWizardStepForm';
-import {UserMembershipsWizardStepForm} from './UserMembershipsWizardStepForm';
+import {MembershipsWizardStepForm, MembershipsType} from './MembershipsWizardStepForm';
 import {PrincipalWizardPanelParams} from './PrincipalWizardPanelParams';
 
 import User = api.security.User;
 import UserBuilder = api.security.UserBuilder;
 import CreateUserRequest = api.security.CreateUserRequest;
 import UpdateUserRequest = api.security.UpdateUserRequest;
-
 import Principal = api.security.Principal;
 import PrincipalKey = api.security.PrincipalKey;
 import UserStoreKey = api.security.UserStoreKey;
-import GetPrincipalByKeyRequest = api.security.GetPrincipalByKeyRequest;
-
 import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
 import WizardStep = api.app.wizard.WizardStep;
 import i18n = api.util.i18n;
+import ArrayHelper = api.util.ArrayHelper;
 
 export class UserWizardPanel extends PrincipalWizardPanel {
 
     private userEmailWizardStepForm: UserEmailWizardStepForm;
     private userPasswordWizardStepForm: UserPasswordWizardStepForm;
-    private userMembershipsWizardStepForm: UserMembershipsWizardStepForm;
+    private membershipsWizardStepForm: MembershipsWizardStepForm;
 
     constructor(params: PrincipalWizardPanelParams) {
 
@@ -50,11 +48,11 @@ export class UserWizardPanel extends PrincipalWizardPanel {
 
         this.userEmailWizardStepForm = new UserEmailWizardStepForm(this.getParams().userStore.getKey());
         this.userPasswordWizardStepForm = new UserPasswordWizardStepForm();
-        this.userMembershipsWizardStepForm = new UserMembershipsWizardStepForm();
+        this.membershipsWizardStepForm = new MembershipsWizardStepForm(MembershipsType.ALL);
 
         steps.push(new WizardStep(i18n('field.user'), this.userEmailWizardStepForm));
         steps.push(new WizardStep(i18n('field.authentication'), this.userPasswordWizardStepForm));
-        steps.push(new WizardStep(i18n('field.rolesAndGroups'), this.userMembershipsWizardStepForm));
+        steps.push(new WizardStep(i18n('field.rolesAndGroups'), this.membershipsWizardStepForm));
 
         return steps;
     }
@@ -75,7 +73,8 @@ export class UserWizardPanel extends PrincipalWizardPanel {
                     new ConfirmationDialog()
                         .setQuestion(i18n('dialog.principal.update'))
                         .setYesCallback(() => this.doLayoutPersistedItem(persistedPrincipal.clone()))
-                        .setNoCallback(() => { /* empty */})
+                        .setNoCallback(() => { /* empty */
+                        })
                         .show();
                 }
 
@@ -90,10 +89,10 @@ export class UserWizardPanel extends PrincipalWizardPanel {
     protected doLayoutPersistedItem(principal: Principal): wemQ.Promise<void> {
 
         return super.doLayoutPersistedItem(principal).then(() => {
-            if (!!principal) {
+            if (principal) {
                 this.userEmailWizardStepForm.layout(principal);
                 this.userPasswordWizardStepForm.layout(principal);
-                this.userMembershipsWizardStepForm.layout(principal);
+                this.membershipsWizardStepForm.layout(principal);
             }
         });
     }
@@ -117,9 +116,7 @@ export class UserWizardPanel extends PrincipalWizardPanel {
         let name = wizardHeader.getDisplayName();
         let email = this.userEmailWizardStepForm.getEmail();
         let password = this.userPasswordWizardStepForm.getPassword();
-        let memberships = this.userMembershipsWizardStepForm.getMemberships().map((el) => {
-            return el.getKey();
-        });
+        let memberships = this.membershipsWizardStepForm.getMemberships().map(el => el.getKey());
         return new CreateUserRequest()
             .setKey(key)
             .setDisplayName(name)
@@ -130,37 +127,42 @@ export class UserWizardPanel extends PrincipalWizardPanel {
     }
 
     updatePersistedItem(): wemQ.Promise<Principal> {
-        return super.updatePersistedItem().then((principal:Principal) => {
+        return super.updatePersistedItem().then((principal: Principal) => {
             //remove after users event handling is configured and layout is updated on receiving upd from server
-            this.userMembershipsWizardStepForm.layout(principal);
+            this.membershipsWizardStepForm.layout(principal);
             return principal;
         });
     }
 
-    produceUpdateRequest(viewedPrincipal:Principal):UpdateUserRequest {
-        let user = viewedPrincipal.asUser();
-        let key = user.getKey();
-        let displayName = user.getDisplayName();
-        let email = user.getEmail();
-        let login = user.getLogin();
-        let oldMemberships = this.getPersistedItem().asUser().getMemberships().map(el => el.getKey());
-        let oldMembershipsIds = oldMemberships.map(el => el.getId());
-        let newMemberships = user.getMemberships().map(el => el.getKey());
-        let newMembershipsIds = newMemberships.map(el => el.getId());
-        let addMemberships = newMemberships.filter(el => oldMembershipsIds.indexOf(el.getId()) < 0);
-        let removeMemberships = oldMemberships.filter(el => newMembershipsIds.indexOf(el.getId()) < 0);
+    produceUpdateRequest(viewedPrincipal: Principal): UpdateUserRequest {
+        const user = viewedPrincipal.asUser();
+        const key = user.getKey();
+        const displayName = user.getDisplayName();
+        const email = user.getEmail();
+        const login = user.getLogin();
 
-        return new UpdateUserRequest().setKey(key).setDisplayName(displayName).setEmail(email).setLogin(login).addMemberships(
-            addMemberships).removeMemberships(removeMemberships);
+        const oldMemberships = this.getPersistedItem().asUser().getMemberships().map(value => value.getKey());
+        const newMemberships = user.getMemberships().map(value => value.getKey());
+        const addMemberships = ArrayHelper.difference(newMemberships, oldMemberships, (a, b) => (a.getId() === b.getId()));
+        const removeMemberships = ArrayHelper.difference(oldMemberships, newMemberships, (a, b) => (a.getId() === b.getId()));
+
+        return new UpdateUserRequest()
+            .setKey(key)
+            .setDisplayName(displayName)
+            .setEmail(email)
+            .setLogin(login)
+            .addMemberships(addMemberships)
+            .removeMemberships(removeMemberships);
     }
 
     assembleViewedItem(): Principal {
         let wizardHeader = this.getWizardHeader();
-        return <Principal>new UserBuilder(this.getPersistedItem() ? this.getPersistedItem().asUser() : null).setEmail(
-            this.userEmailWizardStepForm.getEmail()).setLogin(wizardHeader.getName()).setMemberships(
-            this.userMembershipsWizardStepForm.getMemberships()).setDisplayName(
-            wizardHeader.getDisplayName()).// setDisabled().
-        build();
+        return <Principal>new UserBuilder(this.getPersistedItem() ? this.getPersistedItem().asUser() : null)
+            .setEmail(this.userEmailWizardStepForm.getEmail())
+            .setLogin(wizardHeader.getName())
+            .setMemberships(this.membershipsWizardStepForm.getMemberships())
+            .setDisplayName(wizardHeader.getDisplayName())
+            .build();
     }
 
     isPersistedEqualsViewed(): boolean {
@@ -192,7 +194,7 @@ export class UserWizardPanel extends PrincipalWizardPanel {
     hasUnsavedChanges(): boolean {
         let persistedPrincipal = this.getPersistedItem();
         let email = this.userEmailWizardStepForm.getEmail();
-        let memberships = this.userMembershipsWizardStepForm.getMemberships();
+        let memberships = this.membershipsWizardStepForm.getMemberships();
         if (persistedPrincipal == null) {
             let wizardHeader = this.getWizardHeader();
             return wizardHeader.getName() !== '' ||

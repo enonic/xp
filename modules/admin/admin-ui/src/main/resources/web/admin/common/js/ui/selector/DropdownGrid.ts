@@ -84,6 +84,10 @@ module api.ui.selector {
             return api.util.PromiseHelper.newResolvedVoidPromise();
         }
 
+        search(searchString: string): wemQ.Promise<void> {
+            return api.util.PromiseHelper.newResolvedVoidPromise();
+        }
+
         getElement(): api.dom.Element {
             throw new Error('Must be implemented by inheritors');
         }

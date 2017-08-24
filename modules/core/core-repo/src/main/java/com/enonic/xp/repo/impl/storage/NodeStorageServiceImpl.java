@@ -131,7 +131,6 @@ public class NodeStorageServiceImpl
     public void delete( final NodeIds nodeIds, final InternalContext context )
     {
         branchService.delete( nodeIds, context );
-
         indexDataService.delete( nodeIds, context );
     }
 
@@ -374,7 +373,8 @@ public class NodeStorageServiceImpl
     {
         final NodeVersionIds.Builder builder = NodeVersionIds.create();
 
-        builder.addAll( nodeBranchEntries.stream().map( nodeBranchVersion -> nodeBranchVersion.getVersionId() ).collect( Collectors.toList() ));
+        builder.addAll(
+            nodeBranchEntries.stream().map( nodeBranchVersion -> nodeBranchVersion.getVersionId() ).collect( Collectors.toList() ) );
 
         final NodeVersions nodeVersions = nodeVersionService.get( builder.build() );
 

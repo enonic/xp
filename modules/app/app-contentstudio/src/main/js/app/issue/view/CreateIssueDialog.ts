@@ -7,6 +7,7 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 import DialogButton = api.ui.dialog.DialogButton;
 import AEl = api.dom.AEl;
 import i18n = api.util.i18n;
+import PrincipalKey = api.security.PrincipalKey;
 
 export class CreateIssueDialog extends IssueDialog {
 
@@ -71,8 +72,9 @@ export class CreateIssueDialog extends IssueDialog {
         this.displayValidationErrors(!valid);
 
         if (valid) {
+            const approvers: PrincipalKey[] = this.form.getApprovers();
             const createIssueRequest = new CreateIssueRequest()
-                .setApprovers(this.form.getApprovers())
+                .setApprovers(approvers)
                 .setPublishRequest(
                     PublishRequest.create()
                         .addExcludeIds(this.getExcludedIds())
@@ -81,9 +83,12 @@ export class CreateIssueDialog extends IssueDialog {
                 ).setDescription(this.form.getDescription()).setTitle(this.form.getTitle());
 
             createIssueRequest.sendAndParse().then((issue) => {
+                api.notify.showSuccess(i18n('notify.issue.created'));
+                if ( approvers.length > issue.getApprovers().length ) {
+                    api.notify.showWarning(i18n('notify.issue.assignees.norights'));
+                }
                 this.close();
                 this.reset();
-                api.notify.showSuccess(i18n('notify.issue.created'));
                 IssueDetailsDialog.get().setIssue(issue).open();
             }).catch((reason) => {
                 if (reason && reason.message) {

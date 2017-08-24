@@ -84,6 +84,8 @@ module api.ui.treegrid {
 
         private idPropertyName: string;
 
+        private keyBindings: KeyBinding[] = [];
+
         constructor(builder: TreeGridBuilder<DATA>) {
 
             super(builder.getClasses());
@@ -139,6 +141,7 @@ module api.ui.treegrid {
             this.idPropertyName = builder.getIdPropertyName();
 
             this.initEventListeners(builder);
+            this.initKeyBindings(builder);
         }
 
         private initSelectorPlugin() {
@@ -156,6 +159,33 @@ module api.ui.treegrid {
                 this.removeClass('no-toolbar');
             } else {
                 this.addClass('no-toolbar');
+            }
+        }
+
+        private initKeyBindings(builder: TreeGridBuilder<DATA>) {
+            this.grid.resizeCanvas();
+            if (builder.isHotkeysEnabled()) {
+
+                if (!this.gridOptions.isMultipleSelectionDisabled()) {
+                    this.keyBindings = [
+                        new KeyBinding('shift+up', (event: ExtendedKeyboardEvent) => {
+                            this.onSelectRange(event, this.grid.addSelectedUp.bind(this.grid));
+                        }),
+                        new KeyBinding('shift+down', (event: ExtendedKeyboardEvent) => {
+                            this.onSelectRange(event, this.grid.addSelectedDown.bind(this.grid));
+                        })
+                    ];
+                }
+
+                this.keyBindings = this.keyBindings.concat([
+                    new KeyBinding('up', this.onUpKeyPress.bind(this)),
+                    new KeyBinding('down', this.onDownKeyPress.bind(this)),
+                    new KeyBinding('left', this.onLeftKeyPress.bind(this)),
+                    new KeyBinding('right', this.onRightKeyPress.bind(this)),
+                    new KeyBinding('mod+a', this.onAwithModKeyPress.bind(this)),
+                    new KeyBinding('space', this.onSpaceKeyPress.bind(this)),
+                    new KeyBinding('enter', this.onEnterKeyPress.bind(this), KeyBindingAction.KEYUP)
+                ]);
             }
         }
 
@@ -206,16 +236,16 @@ module api.ui.treegrid {
                 this.scrollable = this.queryScrollable();
             });
 
-            this.onShown(() => {
-                this.bindKeys(builder, keyBindings);
-            });
-
             this.onRendered(() => {
                 this.onRenderedHandler(builder);
             });
 
-            this.onRemoved(() => {
-                this.onRemovedHandler(builder, keyBindings);
+            this.grid.onShown(() => {
+                this.bindKeys(builder);
+            });
+
+            this.grid.onHidden(() => {
+                this.unbindKeys(builder);
             });
 
             this.grid.subscribeOnSelectedRowsChanged((event, rows) => {
@@ -262,15 +292,26 @@ module api.ui.treegrid {
             }
         }
 
-        private onRemovedHandler(builder: TreeGridBuilder<DATA>, keyBindings: KeyBinding[]) {
-            if (builder.isHotkeysEnabled()) {
-                KeyBindings.get().unbindKeys(keyBindings);
+        private bindKeys(builder: TreeGridBuilder<DATA>) {
+            if (this.keyBindings.length > 0) {
+                KeyBindings.get().shelveBindings(this.keyBindings);
+                KeyBindings.get().bindKeys(this.keyBindings);
+            }
+        }
+
+        private unbindKeys(builder: TreeGridBuilder<DATA>) {
+            if (this.keyBindings.length > 0 &&
+                this.keyBindings.every((keyBinding) => KeyBindings.get().isActive(keyBinding))) {
+                if (builder.isHotkeysEnabled()) {
+                    KeyBindings.get().unbindKeys(this.keyBindings);
+                    KeyBindings.get().unshelveBindings(this.keyBindings);
+                }
             }
 
             if (builder.isPartialLoadEnabled() && this.interval) {
                 clearInterval(this.interval);
             }
-        };
+        }
 
         private bindClickEvents() {
             let clickHandler = ((event, data) => {
@@ -448,35 +489,6 @@ module api.ui.treegrid {
 
         private isSelectionNotEmpty() {
             return this.grid.getSelectedRows().length > 0 || this.root.getStashedSelection().length > 0;
-        }
-
-        private bindKeys(builder: TreeGridBuilder<DATA>, keyBindings: KeyBinding[]) {
-            this.grid.resizeCanvas();
-            if (builder.isHotkeysEnabled()) {
-
-                if (!this.gridOptions.isMultipleSelectionDisabled()) {
-                    keyBindings = [
-                        new KeyBinding('shift+up', (event: ExtendedKeyboardEvent) => {
-                            this.onSelectRange(event, this.grid.addSelectedUp.bind(this.grid));
-                        }),
-                        new KeyBinding('shift+down', (event: ExtendedKeyboardEvent) => {
-                            this.onSelectRange(event, this.grid.addSelectedDown.bind(this.grid));
-                        })
-                    ];
-                }
-
-                keyBindings = keyBindings.concat([
-                    new KeyBinding('up', this.onUpKeyPress.bind(this)),
-                    new KeyBinding('down', this.onDownKeyPress.bind(this)),
-                    new KeyBinding('left', this.onLeftKeyPress.bind(this)),
-                    new KeyBinding('right', this.onRightKeyPress.bind(this)),
-                    new KeyBinding('mod+a', this.onAwithModKeyPress.bind(this)),
-                    new KeyBinding('space', this.onSpaceKeyPress.bind(this)),
-                    new KeyBinding('enter', this.onEnterKeyPress.bind(this), KeyBindingAction.KEYUP)
-                ]);
-
-                KeyBindings.get().bindKeys(keyBindings);
-            }
         }
 
         private onUpKeyPress() {

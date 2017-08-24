@@ -101,9 +101,9 @@ public abstract class AbstractNodeTest
 
     protected NodeVersionServiceImpl nodeDao;
 
-    private VersionServiceImpl versionService;
+    protected VersionServiceImpl versionService;
 
-    private BranchServiceImpl branchService;
+    protected BranchServiceImpl branchService;
 
     protected IndexServiceInternalImpl indexServiceInternal;
 
@@ -125,6 +125,8 @@ public abstract class AbstractNodeTest
 
     protected NodeServiceImpl nodeService;
 
+    protected StorageDaoImpl storageDao;
+
     @Before
     public void setUp()
         throws Exception
@@ -143,7 +145,7 @@ public abstract class AbstractNodeTest
         this.binaryService = new BinaryServiceImpl();
         this.binaryService.setBlobStore( blobStore );
 
-        final StorageDaoImpl storageDao = new StorageDaoImpl();
+        storageDao = new StorageDaoImpl();
         storageDao.setClient( this.client );
 
         this.searchDao = new SearchDaoImpl();

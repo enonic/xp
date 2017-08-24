@@ -4,5 +4,7 @@ module api.security {
 
         members?: string[];
 
+        memberships?: PrincipalJson[];
+
     }
 }

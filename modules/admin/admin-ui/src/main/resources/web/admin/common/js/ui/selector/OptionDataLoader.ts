@@ -5,6 +5,8 @@ module api.ui.selector {
 
     export interface OptionDataLoader<DATA> {
 
+        search(value: string): wemQ.Promise<DATA[]>;
+
         load(values: string[]): wemQ.Promise<DATA[]>;
 
         fetch(node: TreeNode<Option<DATA>>): wemQ.Promise<DATA>;

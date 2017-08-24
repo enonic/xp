@@ -4,11 +4,11 @@
 @form-field-set-spacing: 35px;
 
 .form-element-spacing(@size: @form-field-spacing) {
-  &:not(:first-child) {
+  &:not(:first-of-type) {
     margin-top: @size;
   }
 
-  &:not(:last-child) {
+  &:not(:last-of-type) {
     margin-bottom: @size;
   }
 }

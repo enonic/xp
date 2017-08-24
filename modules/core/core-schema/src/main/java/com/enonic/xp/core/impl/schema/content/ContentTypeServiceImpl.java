@@ -40,7 +40,12 @@ public final class ContentTypeServiceImpl
     @Override
     public ContentTypes getByApplication( final ApplicationKey applicationKey )
     {
-        return this.registry.getByApplication( applicationKey );
+        final GetApplicationContentTypesCommand command = new GetApplicationContentTypesCommand();
+        command.registry = this.registry;
+        command.mixinService = this.mixinService;
+        command.applicationKey = applicationKey;
+        command.inlineMixinsToFormItems = true;
+        return command.execute();
     }
 
     @Override

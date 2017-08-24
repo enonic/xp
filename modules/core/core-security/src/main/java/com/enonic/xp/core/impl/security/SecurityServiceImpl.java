@@ -344,9 +344,9 @@ public final class SecurityServiceImpl
     }
 
     @Override
-    public PrincipalKeys getMemberships( final PrincipalKey userKey )
+    public PrincipalKeys getMemberships( final PrincipalKey principalKey )
     {
-        return queryDirectMemberships( userKey );
+        return queryDirectMemberships( principalKey );
     }
 
     @Override

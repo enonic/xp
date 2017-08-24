@@ -9,7 +9,7 @@ import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.Input;
 
 final class TextAreaType
-    extends InputTypeBase
+    extends TextInputTypeBase
 {
     public final static TextAreaType INSTANCE = new TextAreaType();
 
@@ -39,5 +39,6 @@ final class TextAreaType
     public void validate( final Property property, final InputTypeConfig config )
     {
         validateType( property, ValueTypes.STRING );
+        super.validate( property, config );
     }
 }

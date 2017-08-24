@@ -414,6 +414,16 @@ module api.form.inputtype.text {
             this.destroyEditor(editorId);
         }
 
+        refresh() {
+            this.editors.forEach((editor) => {
+                const editorId = editor.id;
+
+                this.destroyEditor(editorId);
+                this.reInitEditor(editorId);
+                tinymce.execCommand('mceAddEditor', false, editorId);
+            });
+        }
+
         handleDnDStop(event: Event, ui: JQueryUI.SortableUIParams): void {
             let editorId = wemjq('textarea', ui.item)[0].id;
 

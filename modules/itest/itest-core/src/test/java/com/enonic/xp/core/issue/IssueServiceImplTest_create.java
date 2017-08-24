@@ -10,6 +10,7 @@ import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.issue.PublishRequest;
 import com.enonic.xp.issue.PublishRequestItem;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
 
 import static org.junit.Assert.*;
 
@@ -23,7 +24,7 @@ public class IssueServiceImplTest_create
         final CreateIssueParams params = CreateIssueParams.create().
             title( "title" ).
             description( "description" ).
-            addApproverId( PrincipalKey.from( "user:myStore:approver-1" ) ).
+            setApproverIds( PrincipalKeys.from( "user:myStore:approver-1" ) ).
             setPublishRequest( PublishRequest.create().addExcludeId( ContentId.from( "exclude-id" ) ).addItem(
                 PublishRequestItem.create().id( ContentId.from( "content-id" ) ).includeChildren( true ).build() ).build() ).
             build();

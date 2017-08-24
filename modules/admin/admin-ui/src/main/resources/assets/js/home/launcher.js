@@ -6,7 +6,7 @@ var appId = window.CONFIG ? window.CONFIG.appId : "";
 
 function appendLauncherButton() {
     launcherButton = document.createElement("button");
-    launcherButton.setAttribute("class", "launcher-button");
+    launcherButton.setAttribute("class", "launcher-button " + getColorClass());
 
     var span = document.createElement("span");
     span.setAttribute("class", "lines");
@@ -19,6 +19,14 @@ function appendLauncherButton() {
         container.appendChild(launcherButton);
         launcherButton.focus();
     }, 700);
+}
+
+function getColorClass() {
+    if (document.querySelector(".appbar") || document.querySelector(".home-main-container")) {
+        return "";
+    }
+    
+    return "dark";
 }
 
 function togglePanelState() {
@@ -57,10 +65,16 @@ function onLauncherClick(e) {
 }
 
 function isDashboardIcon(element) {
+    if (!window.wemjq) {
+        return false;
+    }
     return (wemjq(element).closest(".dashboard-item").length > 0);
 }
 
 function isModalDialogActiveOnHomePage(element) {
+    if (!window.wemjq) {
+        return false;
+    }
     return (window.CONFIG.appId == "home") &&
            (document.body.classList.contains("modal-dialog") || (wemjq(element).closest(".xp-admin-common-modal-dialog").length > 0));
 }

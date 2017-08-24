@@ -269,7 +269,7 @@ module api.util.htmlarea.dialog {
         private resetPreviewContainerMaxHeight() {
             //limiting image modal dialog height up to screen size except padding on top and bottom
             //so 340 is 300px content of image modal dialog except preview container + 20*2 from top and bottom of screen
-            let maxImagePreviewHeight = wemjq(window).height() - 340;
+            let maxImagePreviewHeight = wemjq(window).height() - 440;
             new api.dom.ElementHelper(this.imagePreviewContainer.getHTMLElement()).setMaxHeightPx(maxImagePreviewHeight);
         }
 

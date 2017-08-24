@@ -33,15 +33,18 @@ export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
                 .setId('displayName')
                 .setField('displayName')
                 .setFormatter(PageComponentsTreeGrid.nameFormatter.bind(null, content))
-                .setMinWidth(250)
+                .setMinWidth(295)
                 .setBehavior('selectAndMove')
+                .setResizable(false)
                 .build(),
             new GridColumnBuilder<TreeNode<ContentSummaryAndCompareStatus>>()
                 .setName(i18n('field.menu'))
-                .setId('menu').setMinWidth(45)
+                .setId('menu')
+                .setMinWidth(45)
                 .setMaxWidth(45)
                 .setField('menu')
                 .setCssClass('menu-cell')
+                .setResizable(false)
                 .setFormatter(PageComponentsTreeGrid.menuFormatter).build()
         ]).setOptions(
             new GridOptionsBuilder<TreeNode<ItemView>>()
@@ -51,7 +54,7 @@ export class PageComponentsTreeGrid extends TreeGrid<ItemView> {
                 .setForceFitColumns(true)
                 .setFullWidthRows(true)
                 .setHeight('initial')
-                .setWidth('100%')
+                .setWidth('340')
                 // It is necessary to turn off the library key handling. It may cause
                 // the conflicts with Mousetrap, which leads to skipping the key events
                 // Do not set to true, if you are not fully aware of the result

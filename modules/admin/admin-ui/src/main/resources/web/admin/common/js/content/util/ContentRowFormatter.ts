@@ -59,12 +59,17 @@ module api.content.util {
         public static statusSelectorFormatter(row: number, cell: number, value: ContentAndStatusTreeSelectorItem, columnDef: any,
                                               node: TreeNode<Option<ContentAndStatusTreeSelectorItem>>) {
 
-            return ContentRowFormatter.doStatusFormat(
-                ContentSummaryAndCompareStatus.fromContentAndCompareAndPublishStatus(value.getContent(), value.getCompareStatus(),
-                    value.getPublishStatus()), value.getCompareStatus());
+            if (value.getCompareStatus() || value.getPublishStatus()) {
+                return ContentRowFormatter.doStatusFormat(
+                    ContentSummaryAndCompareStatus.fromContentAndCompareAndPublishStatus(value.getContent(),
+                        value.getCompareStatus(),
+                        value.getPublishStatus()), value.getCompareStatus());
+            }
+
+            return '';
         }
 
-        private static doStatusFormat(data: ContentSummaryAndCompareStatus, value: any) {
+        private static doStatusFormat(data: ContentSummaryAndCompareStatus, value: any): string {
 
             if (data && data.getContentSummary()) {
                 const publishStatus: PublishStatus = data.getPublishStatus();

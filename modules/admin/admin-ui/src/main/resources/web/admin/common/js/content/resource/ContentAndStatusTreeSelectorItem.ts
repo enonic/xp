@@ -26,5 +26,28 @@ module api.content.resource {
         getCompareStatus(): CompareStatus {
             return this.compareStatus;
         }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, api.ClassHelper.getClass(this))) {
+                return false;
+            }
+
+            if(!super.equals(o)) {
+                return false;
+            }
+
+            let other = <ContentAndStatusTreeSelectorItem>o;
+
+            if (this.compareStatus != other.compareStatus) {
+                return false;
+            }
+
+            if (this.publishStatus != other.publishStatus) {
+                return false;
+            }
+
+            return true;
+        }
     }
 }

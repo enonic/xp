@@ -38,6 +38,8 @@ module api.util {
             });
         }
 
+        // Non-symmetric difference of A and B
+        // Will return all values from A, that is absent in B
         static difference<T>(left: T[], right: T[], equals: (valueLeft: T, valueRight: T) => boolean): T[] {
             return left.filter((value) => {
                 for (let i = 0; i < right.length; i++) {

@@ -101,10 +101,10 @@ module api.form {
 
                     let inputTypeViewNotManagingAdd = <BaseInputTypeNotManagingAdd<any>>this.inputTypeView;
                     inputTypeViewNotManagingAdd.onOccurrenceAdded(() => {
-                        this.refresh();
+                        this.refreshButtonsState();
                     });
                     inputTypeViewNotManagingAdd.onOccurrenceRemoved((event: api.form.OccurrenceRemovedEvent) => {
-                        this.refresh();
+                        this.refreshButtonsState();
 
                         if (api.ObjectHelper.iFrameSafeInstanceOf(event.getOccurrenceView(),
                                 api.form.inputtype.support.InputOccurrenceView)) {
@@ -131,7 +131,7 @@ module api.form {
                     this.handleInputValidationRecording(event.getRecording(), false);
                 });
 
-                this.refresh(validate);
+                this.refreshButtonsState(validate);
             });
         }
 
@@ -169,6 +169,10 @@ module api.form {
             this.inputTypeView.reset();
         }
 
+        refresh() {
+            this.inputTypeView.refresh();
+        }
+
         public getInputTypeView(): api.form.inputtype.InputTypeView<any> {
             return this.inputTypeView;
         }
@@ -195,7 +199,7 @@ module api.form {
             }
         }
 
-        refresh(validate: boolean = true) {
+        private refreshButtonsState(validate: boolean = true) {
             if (!this.inputTypeView.isManagingAdd()) {
                 let inputTypeViewNotManagingAdd = <BaseInputTypeNotManagingAdd<any>>this.inputTypeView;
                 this.addButton.setVisible(!inputTypeViewNotManagingAdd.maximumOccurrencesReached());
@@ -257,7 +261,7 @@ module api.form {
             this.previousValidityRecording = recording;
             this.userInputValid = hasValidInput;
 
-            this.renderValidationErrors(recording, inputRecording.getAdditionalValidationRecord());
+            this.renderValidationErrors(recording, inputRecording);
             return recording;
         }
 
@@ -286,12 +290,12 @@ module api.form {
             });
         }
 
-        private renderValidationErrors(recording: ValidationRecording, additionalValidationRecord: AdditionalValidationRecord) {
+        private renderValidationErrors(recording: ValidationRecording, inputRecording: api.form.inputtype.InputValidationRecording) {
             if (!this.mayRenderValidationError()) {
                 return;
             }
 
-            if (recording.isValid() && this.hasValidUserInput()) {
+            if (recording.isValid() && this.hasValidUserInput(inputRecording)) {
                 this.removeClass('invalid');
                 this.addClass('valid');
             } else {
@@ -301,8 +305,8 @@ module api.form {
 
             this.validationViewer.setObject(recording);
 
-            if (additionalValidationRecord && additionalValidationRecord.isOverwriteDefault()) {
-                this.validationViewer.appendValidationMessage(additionalValidationRecord.getMessage());
+            if (inputRecording.hasAdditionalValidationRecord() && inputRecording.getAdditionalValidationRecord().isOverwriteDefault()) {
+                this.validationViewer.appendValidationMessage(inputRecording.getAdditionalValidationRecord().getMessage());
             }
         }
 

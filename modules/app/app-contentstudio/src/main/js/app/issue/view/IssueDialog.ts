@@ -10,6 +10,7 @@ import ContentSummaryAndCompareStatusFetcher = api.content.resource.ContentSumma
 import ListBox = api.ui.selector.list.ListBox;
 import ModalDialog = api.ui.dialog.ModalDialog;
 import ArrayHelper = api.util.ArrayHelper;
+import ContentTreeSelectorItem = api.content.resource.ContentTreeSelectorItem;
 
 export abstract class IssueDialog extends DependantItemsDialog {
 
@@ -144,14 +145,18 @@ export abstract class IssueDialog extends DependantItemsDialog {
     private initForm() {
         this.form = new IssueDialogForm();
 
-        this.form.onContentItemsAdded((items: ContentSummary[]) => {
-            this.addNewItemsHandler(items);
+        this.form.onContentItemsAdded((items: ContentTreeSelectorItem[]) => {
+            const contents: ContentSummary[] = items.map(item => item.getContent());
+
+            this.addNewItemsHandler(contents);
         });
 
-        this.form.onContentItemsRemoved((items) => {
+        this.form.onContentItemsRemoved((items: ContentTreeSelectorItem[]) => {
+
+            const contents: ContentSummary[] = items.map(item => item.getContent());
 
             const filteredItems = this.getItemList().getItems().filter((oldItem: ContentSummaryAndCompareStatus) => {
-                return !ArrayHelper.contains(items, oldItem.getContentSummary());
+                return !ArrayHelper.contains(contents, oldItem.getContentSummary());
             });
 
             this.setListItems(filteredItems, true);

@@ -1,5 +1,8 @@
 module api.app.view {
 
+    import SpanEl = api.dom.SpanEl;
+    import StringHelper = api.util.StringHelper;
+
     export class ItemDataGroup extends api.dom.DivEl {
 
         private header: api.dom.H2El;
@@ -20,31 +23,23 @@ module api.app.view {
         }
 
         addDataArray(header: string, datas: string[]) {
-            let dataList = new api.dom.UlEl('data-list');
-
-            if (header) {
-                this.addHeader(header, dataList);
-            }
-
-            datas.forEach((data) => {
-                let dataElement = new api.dom.LiEl();
-                dataElement.getEl().setInnerHtml(data, false);
-                dataList.appendChild(dataElement);
-                this.empty = false;
-            });
-
-            this.appendChild(dataList);
+            const elements = datas.filter(text => !StringHelper.isBlank(text)).map(text => new SpanEl().setHtml(text, false));
+            this.addDataElements(header, elements);
         }
 
         addDataElements(header:string, datas:api.dom.Element[]) {
             let dataList = new api.dom.UlEl('data-list');
 
+            if (!datas || datas.length === 0) {
+                return;
+            }
+
             if (header) {
                 this.addHeader(header, dataList);
             }
 
             datas.forEach((data) => {
-                let dataElement = new api.dom.LiEl();
+                const dataElement = new api.dom.LiEl();
                 dataElement.appendChild(data);
                 dataList.appendChild(dataElement);
                 this.empty = false;

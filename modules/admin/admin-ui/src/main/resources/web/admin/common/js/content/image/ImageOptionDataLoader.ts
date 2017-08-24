@@ -8,10 +8,18 @@ module api.content.image {
 
     export class ImageOptionDataLoader extends ContentSummaryOptionDataLoader {
 
-        protected createOptionData(data: ContentAndStatusTreeSelectorItem[], hits:number, totalHits: number) {
+        protected createOptionData(data: ContentAndStatusTreeSelectorItem[], hits: number, totalHits: number) {
             return new OptionDataLoaderData(data.map((cur => new ImageTreeSelectorItem(cur.getContent(), cur.getExpand()))),
                 hits,
                 totalHits);
+        }
+
+        search(value: string): wemQ.Promise<ImageTreeSelectorItem[]> {
+            return super.search(value).then((items: ContentTreeSelectorItem[]) => {
+                return items.map(item =>
+                    new ImageTreeSelectorItem(item.getContent(), item.getExpand())
+                );
+            });
         }
 
         static create(): ImageOptionDataLoaderBuilder {
@@ -76,6 +84,25 @@ module api.content.image {
 
         getTypeLocaleName(): string {
             return this.imageSelectorDisplayValue.getTypeLocaleName();
+        }
+
+        equals(o: api.Equitable): boolean {
+
+            if (!api.ObjectHelper.iFrameSafeInstanceOf(o, api.ClassHelper.getClass(this))) {
+                return false;
+            }
+
+            if (!super.equals(o)) {
+                return false;
+            }
+
+            let other = <ImageTreeSelectorItem>o;
+
+            if (!ObjectHelper.equals(this.imageSelectorDisplayValue, other.imageSelectorDisplayValue)) {
+                return false;
+            }
+
+            return true;
         }
     }
 }

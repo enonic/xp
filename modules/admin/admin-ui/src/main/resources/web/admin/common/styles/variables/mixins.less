@@ -749,12 +749,14 @@
   }
 }
 
-.icon-close-mixin() {
+.icon-close-mixin(@right: 0) {
   .icon-close {
     .focusable();
     position: absolute;
-    top: 8px;
-    right: 0px;
+    top: 50%;
+    right: @right;
+    margin-top: -6px;
+    border: 1px solid transparent;
     cursor: pointer;
     text-decoration: none;
   }
