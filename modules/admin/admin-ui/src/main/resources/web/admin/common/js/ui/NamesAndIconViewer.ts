@@ -5,7 +5,8 @@ module api.ui {
     /**
      * A parent class capable of viewing a given object with names and icon.
      */
-    export class NamesAndIconViewer<OBJECT> extends api.ui.Viewer<OBJECT> {
+    export class NamesAndIconViewer<OBJECT>
+        extends api.ui.Viewer<OBJECT> {
 
         private emptyDisplayName: string = '<' + i18n('field.displayName') + '>';
 
@@ -48,7 +49,7 @@ module api.ui {
                 let iconUrl;
                 let iconClass;
                 let iconEl = this.resolveIconEl(object);
-
+                let hideIcon = false;
                 if (iconEl) {
                     this.namesAndIconView.setIconEl(iconEl);
                 } else {
@@ -59,9 +60,12 @@ module api.ui {
                         iconClass = this.resolveIconClass(object);
                         if (!api.util.StringHelper.isBlank(iconClass)) {
                             this.namesAndIconView.setIconClass(iconClass);
+                        } else {
+                            hideIcon = true;
                         }
                     }
                 }
+                this.namesAndIconView.toggleClass('no-icon', hideIcon);
 
                 this.namesAndIconView.setMainName(displayName)
                     .setSubName(subName, subTitle);
