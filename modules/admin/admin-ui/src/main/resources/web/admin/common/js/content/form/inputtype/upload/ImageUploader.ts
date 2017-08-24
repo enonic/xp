@@ -1,13 +1,16 @@
 module api.content.form.inputtype.upload {
 
     import Property = api.data.Property;
+    import PropertySet = api.data.PropertySet;
     import Value = api.data.Value;
     import ValueType = api.data.ValueType;
     import ValueTypes = api.data.ValueTypes;
     import Point = api.ui.image.Point;
     import Rect = api.ui.image.Rect;
+    import MixinName = api.schema.mixin.MixinName;
 
-    export class ImageUploader extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<string> {
+    export class ImageUploader
+        extends api.form.inputtype.support.BaseInputTypeSingleOccurrence<string> {
 
         private imageUploader: api.content.image.ImageUploaderEl;
         private previousValidationRecording: api.form.inputtype.InputValidationRecording;
@@ -58,7 +61,10 @@ module api.content.form.inputtype.upload {
                 let content = event.getUploadItem().getModel();
                 let value = this.imageUploader.getMediaValue(content);
 
-                this.imageUploader.setOriginalDimensions(content);
+                this.imageUploader.setOriginalDimensions(
+                    this.readSizeValue(content, 'imageWidth'),
+                    this.readSizeValue(content, 'imageHeight'),
+                    this.readOrientation(content));
 
                 this.saveToProperty(value);
                 api.notify.showFeedback(content.getDisplayName() + ' saved');
@@ -90,16 +96,28 @@ module api.content.form.inputtype.upload {
                 }
             });
 
-            this.imageUploader.onCropAutoPositionedChanged((auto) => {
+            this.imageUploader.onCropPositionChanged((crop: Rect, zoom: Rect) => {
+                this.saveCropToProperty(crop, zoom);
+            });
+
+            this.imageUploader.onCropAutoPositionedChanged(auto => {
                 if (auto) {
                     this.saveEditDataToProperty({x: 0, y: 0, x2: 1, y2: 1}, {x: 0, y: 0, x2: 1, y2: 1}, null);
                 }
             });
 
-            this.imageUploader.onFocusAutoPositionedChanged((auto) => {
+            this.imageUploader.onFocusPositionChanged((focus: Point) => {
+                this.saveFocusToProperty(focus);
+            });
+
+            this.imageUploader.onFocusAutoPositionedChanged(auto => {
                 if (auto) {
                     this.saveEditDataToProperty(null, null, {x: 0.5, y: 0.5});
                 }
+            });
+
+            this.imageUploader.onOrientationChanged(orientation => {
+                this.writeOrientation(<Content>this.getContext().content, orientation);
             });
 
             return property.hasNonNullValue() ? this.updateProperty(property) : wemQ<void>(null);
@@ -132,7 +150,10 @@ module api.content.form.inputtype.upload {
                 return new api.content.resource.GetContentByIdRequest(this.getContext().content.getContentId())
                     .sendAndParse().then((content: api.content.Content) => {
 
-                        this.imageUploader.setOriginalDimensions(content);
+                        this.imageUploader.setOriginalDimensions(
+                            this.readSizeValue(content, 'imageWidth'),
+                            this.readSizeValue(content, 'imageHeight'),
+                            this.readOrientation(content));
                         this.imageUploader.setValue(content.getId(), false, false);
 
                         this.configEditorsProperties(content);
@@ -151,30 +172,39 @@ module api.content.form.inputtype.upload {
         private saveEditDataToProperty(crop: Rect, zoom: Rect, focus: Point) {
             let container = this.getPropertyContainer(this.getProperty());
 
-            if (container) {
-                if (crop) {
-                    container.setDoubleByPath('cropPosition.left', crop.x);
-                    container.setDoubleByPath('cropPosition.top', crop.y);
-                    container.setDoubleByPath('cropPosition.right', crop.x2);
-                    container.setDoubleByPath('cropPosition.bottom', crop.y2);
-                    container.setDoubleByPath('cropPosition.zoom', zoom.x2 - zoom.x);
-                }
+            this.saveCropToProperty(crop, zoom, container);
+            this.saveFocusToProperty(focus, container);
+        }
 
-                if (zoom) {
-                    container.setDoubleByPath('zoomPosition.left', zoom.x);
-                    container.setDoubleByPath('zoomPosition.top', zoom.y);
-                    container.setDoubleByPath('zoomPosition.right', zoom.x2);
-                    container.setDoubleByPath('zoomPosition.bottom', zoom.y2);
-                }
+        private saveCropToProperty(crop: Rect, zoom: Rect, container?: PropertySet) {
+            if (!container) {
+                container = this.getPropertyContainer(this.getProperty());
+            }
+            if (container && crop && zoom) {
+                container.setDoubleByPath('zoomPosition.left', zoom.x);
+                container.setDoubleByPath('zoomPosition.top', zoom.y);
+                container.setDoubleByPath('zoomPosition.right', zoom.x2);
+                container.setDoubleByPath('zoomPosition.bottom', zoom.y2);
 
-                if (focus) {
-                    container.setDoubleByPath('focalPoint.x', focus.x);
-                    container.setDoubleByPath('focalPoint.y', focus.y);
-                }
+                container.setDoubleByPath('cropPosition.left', crop.x);
+                container.setDoubleByPath('cropPosition.top', crop.y);
+                container.setDoubleByPath('cropPosition.right', crop.x2);
+                container.setDoubleByPath('cropPosition.bottom', crop.y2);
+                container.setDoubleByPath('cropPosition.zoom', zoom.x2 - zoom.x);
             }
         }
 
-        private getPropertyContainer(property: Property) {
+        private saveFocusToProperty(focus: Point, container?: PropertySet) {
+            if (!container) {
+                container = this.getPropertyContainer(this.getProperty());
+            }
+            if (container && focus) {
+                container.setDoubleByPath('focalPoint.x', focus.x);
+                container.setDoubleByPath('focalPoint.y', focus.y);
+            }
+        }
+
+        private getPropertyContainer(property: Property): PropertySet {
             let container;
             switch (property.getType()) {
             case ValueTypes.DATA:
@@ -182,13 +212,13 @@ module api.content.form.inputtype.upload {
                 break;
             case ValueTypes.STRING:
                 // save in new format always no matter what was the format originally
-                container = new api.data.PropertyTree();
+                container = new api.data.PropertyTree().getRoot();
                 container.setString('attachment', 0, property.getString());
                 let propertyParent = property.getParent();
                 let propertyName = property.getName();
                 // remove old string property and set the new property set
                 propertyParent.removeProperty(propertyName, 0);
-                let newProperty = propertyParent.setPropertySet(propertyName, 0, container.getRoot());
+                let newProperty = propertyParent.setPropertySet(propertyName, 0, container);
                 // update local property reference
                 this.registerProperty(newProperty);
                 break;
@@ -233,17 +263,61 @@ module api.content.form.inputtype.upload {
             return {x, y, x2, y2};
         }
 
+        private writeOrientation(content: Content, orientation: number) {
+            const container = this.getPropertyContainer(this.getProperty());
+
+            if (container && orientation == this.readOriginalOrientation(content)) {
+                container.removeProperty('orientation', 0);
+            } else {
+                container.setLongByPath('orientation', orientation);
+            }
+        }
+
+        private readOrientation(content: Content): number {
+            let property = this.getMediaProperty(content, 'orientation');
+            if (!property) {
+                return this.readOriginalOrientation(content);
+            }
+            return property && property.getLong() || 1;
+        }
+
+        private readOriginalOrientation(content: Content): number {
+            const property = this.getMetaProperty(content, 'orientation');
+            if (!property) {
+                return null;
+            }
+            return property && property.getLong() || 1;
+        }
+
+        private readSizeValue(content: Content, propertyName: string): number {
+            let metaData = content.getProperty('metadata');
+            if (metaData && api.data.ValueTypes.DATA.equals(metaData.getType())) {
+                return parseInt(metaData.getPropertySet().getProperty(propertyName).getString(), 10);
+            } else {
+                metaData = this.getMetaProperty(content, propertyName);
+                if (metaData) {
+                    return parseInt(metaData.getString(), 10);
+                }
+            }
+            return 0;
+        }
+
+        private getMetaProperty(content: Content, propertyName: string): Property {
+            const extra = content.getAllExtraData();
+            for (let i = 0; i < extra.length; i++) {
+                const metaProperty = extra[i].getData().getProperty(propertyName);
+                if (metaProperty) {
+                    return metaProperty;
+                }
+            }
+        }
+
         private getMediaProperty(content: Content, propertyName: string) {
             let mediaProperty = content.getProperty('media');
             if (!mediaProperty || !ValueTypes.DATA.equals(mediaProperty.getType())) {
                 return null;
             }
-
-            let resultProperty = mediaProperty.getPropertySet().getProperty(propertyName);
-            if (!resultProperty || !ValueTypes.DATA.equals(resultProperty.getType())) {
-                return null;
-            }
-            return resultProperty;
+            return mediaProperty.getPropertySet().getProperty(propertyName);
         }
 
         private configEditorsProperties(content: Content) {
@@ -255,6 +329,12 @@ module api.content.form.inputtype.upload {
 
             let zoomPosition = this.getRectFromProperty(content, 'zoomPosition');
             this.imageUploader.setZoom(zoomPosition);
+
+            const orientation = this.readOrientation(content);
+            const originalOrientation = this.readOriginalOrientation(content);
+            if (orientation != 1 || orientation != originalOrientation) {
+                this.imageUploader.setOrientation(orientation, originalOrientation);
+            }
         }
 
         validate(silent: boolean = true): api.form.inputtype.InputValidationRecording {

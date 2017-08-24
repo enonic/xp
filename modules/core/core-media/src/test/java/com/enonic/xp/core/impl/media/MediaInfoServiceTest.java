@@ -13,8 +13,16 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
 
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.extractor.ExtractedData;
+import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfo;
+import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.junit.Assert.*;
 
@@ -26,17 +34,18 @@ public class MediaInfoServiceTest
     public void setup()
     {
         this.service = new MediaInfoServiceImpl();
-        service.setBinaryExtractor( source -> {
-            Map<String, List<String>> data = Maps.newHashMap();
-            data.put( HttpHeaders.CONTENT_TYPE, Lists.newArrayList( "image/jpeg" ) );
-            data.put( "myExtractedValue", Lists.newArrayList( "fisk" ) );
+        service.setBinaryExtractor( source ->
+                                    {
+                                        Map<String, List<String>> data = Maps.newHashMap();
+                                        data.put( HttpHeaders.CONTENT_TYPE, Lists.newArrayList( "image/jpeg" ) );
+                                        data.put( "myExtractedValue", Lists.newArrayList( "fisk" ) );
 
-            return ExtractedData.create().
-                metadata( data ).
-                text( "myTextValue" ).
-                imageOrientation( "1" ).
-                build();
-        } );
+                                        return ExtractedData.create().
+                                            metadata( data ).
+                                            text( "myTextValue" ).
+                                            imageOrientation( "1" ).
+                                            build();
+                                    } );
     }
 
     @Test
@@ -54,6 +63,27 @@ public class MediaInfoServiceTest
     }
 
     @Test
+    public void loadImageWithNativeOrientation()
+    {
+        final ByteSource byteSource = Resources.asByteSource( getClass().getResource( "NikonD100.jpg" ) );
+        final Content media = this.createMedia( "image", ContentPath.ROOT, false );
+        final ImageOrientation orientation = this.service.getImageOrientation( byteSource, media );
+
+        assertEquals( 1, orientation.getValue() );
+    }
+
+    @Test
+    public void loadImageWithEditedOrientation()
+    {
+        final ByteSource byteSource = Resources.asByteSource( getClass().getResource( "NikonD100.jpg" ) );
+        final Content media = this.createMedia( "image", ContentPath.ROOT, true );
+
+        final ImageOrientation orientation = this.service.getImageOrientation( byteSource, media );
+
+        assertEquals( 3, orientation.getValue() );
+    }
+
+    @Test
     public void multiple_colorSpace_entries()
     {
         final ByteSource byteSource = Resources.asByteSource( getClass().getResource( "Multiple-colorSpace-entries.jpg" ) );
@@ -65,5 +95,17 @@ public class MediaInfoServiceTest
     {
         final ByteSource byteSource = Resources.asByteSource( getClass().getResource( "Multiple-FNumber-entries.JPG" ) );
         final MediaInfo mediaInfo = this.service.parseMediaInfo( byteSource );
+    }
+
+    private Content createMedia( String name, ContentPath parentPath, boolean addOrientation )
+    {
+        final PropertyTree imageDataTree = new PropertyTree();
+        if ( addOrientation )
+        {
+            imageDataTree.addProperty( ContentPropertyNames.ORIENTATION, ValueFactory.newString( "3" ) );
+        }
+        final ExtraData eData = new ExtraData( MediaInfo.CAMERA_INFO_METADATA_NAME, imageDataTree );
+
+        return Content.create( ContentTypeName.imageMedia() ).name( name ).parentPath( parentPath ).addExtraData( eData ).build();
     }
 }
