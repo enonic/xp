@@ -1,4 +1,4 @@
-package com.enonic.xp.script.impl;
+package com.enonic.xp.script.impl.executor;
 
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.ScriptExports;
@@ -13,7 +13,7 @@ final class ScriptExportsImpl
 
     private final Object raw;
 
-    public ScriptExportsImpl( final ResourceKey script, final ScriptValue value, final Object raw )
+    ScriptExportsImpl( final ResourceKey script, final ScriptValue value, final Object raw )
     {
         this.script = script;
         this.value = value;

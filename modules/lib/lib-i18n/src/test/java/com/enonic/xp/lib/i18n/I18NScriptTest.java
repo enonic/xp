@@ -15,37 +15,44 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.site.Site;
-import com.enonic.xp.testing.script.ScriptRunnerSupport;
+import com.enonic.xp.testkit.mock.MockServiceRegistry;
+import com.enonic.xp.testkit.portal.PortalTestSupport;
 
 public class I18NScriptTest
-    extends ScriptRunnerSupport
+    extends PortalTestSupport
 {
-    @Override
-    public void initialize()
-        throws Exception
+    public I18NScriptTest()
     {
-        super.initialize();
+        setTestFiles( "test/*-test.js", "site/lib/xp/examples/i18n/*.js" );
+    }
 
-        this.portalRequest.setSite( Site.create().
-            name( ContentName.from( "test" ) ).
-            parentPath( ContentPath.ROOT ).
-            language( Locale.ENGLISH ).
-            build() );
+    @Override
+    public void setupServices( final MockServiceRegistry registry )
+    {
+        super.setupServices( registry );
 
         final LocaleService localeService = Mockito.mock( LocaleService.class );
 
         final MessageBundle bundle = Mockito.mock( MessageBundle.class, (Answer) this::answer );
-        Mockito.when( localeService.getBundle( Mockito.any( ApplicationKey.class ), Mockito.any( Locale.class ), Mockito.any( String[].class ) ) ).
+        Mockito.when(
+            localeService.getBundle( Mockito.any( ApplicationKey.class ), Mockito.any( Locale.class ), Mockito.any( String[].class ) ) ).
             thenAnswer( mock -> bundle );
 
-        addService( LocaleService.class, localeService );
+        registry.register( LocaleService.class, localeService );
     }
 
     @Override
-    public String getScriptTestFile()
+    public void setupRequest( final PortalRequest request )
     {
-        return "/site/test/localize-test.js";
+        super.setupRequest( request );
+
+        request.setSite( Site.create().
+            name( ContentName.from( "test" ) ).
+            parentPath( ContentPath.ROOT ).
+            language( Locale.ENGLISH ).
+            build() );
     }
 
     private Object answer( final InvocationOnMock invocation )
