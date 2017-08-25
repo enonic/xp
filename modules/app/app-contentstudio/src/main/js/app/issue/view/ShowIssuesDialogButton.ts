@@ -4,6 +4,7 @@ import {IssueServerEventsHandler} from '../event/IssueServerEventsHandler';
 import {IssueResponse} from '../resource/IssueResponse';
 import {ListIssuesRequest} from '../resource/ListIssuesRequest';
 import {IssueStatus} from '../IssueStatus';
+import i18n = api.util.i18n;
 
 export class ShowIssuesDialogButton extends ActionButton {
 
@@ -32,8 +33,8 @@ export class ShowIssuesDialogButton extends ActionButton {
             (response: IssueResponse) => {
                 this.toggleClass('has-assigned-issues', response.getMetadata().getTotalHits() > 0);
                 this.getEl().setTitle((response.getMetadata().getTotalHits() === 0) ?
-                                      'Publishing Issues' :
-                                      'You have unclosed Publishing Issues');
+                                      i18n('text.publishingissues') :
+                                      i18n('text.youhaveissues'));
             }).catch((reason: any) => {
             api.DefaultErrorHandler.handle(reason);
         });

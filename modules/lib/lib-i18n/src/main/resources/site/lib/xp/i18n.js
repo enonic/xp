@@ -18,11 +18,12 @@ var bean = __.newBean('com.enonic.xp.lib.i18n.LocaleScriptBean');
  * @param {string} params.key The property key.
  * @param {string} [params.locale] A string-representation of a locale. If the locale is not set, the site language is used.
  * @param {string[]} [params.values] Optional placeholder values.
+ * @param {string[]} [params.bundles] Optional list of bundle names.
  *
  * @returns {string} The localized string.
  */
 exports.localize = function (params) {
-    return bean.localize(params.key, __.nullOrValue(params.locale), __.toScriptValue(params.values));
+    return bean.localize(params.key, __.nullOrValue(params.locale), __.toScriptValue(params.values),__.nullOrValue(params.bundles));
 };
 
 /**

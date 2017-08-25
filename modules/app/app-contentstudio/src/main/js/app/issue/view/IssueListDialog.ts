@@ -36,7 +36,7 @@ export class IssueListDialog extends ModalDialog {
     private currentUser: User;
 
     private constructor() {
-        super(<api.ui.dialog.ModalDialogConfig>{title: i18n('dialog.issuelist.title')});
+        super(<api.ui.dialog.ModalDialogConfig>{title: i18n('text.publishingissues')});
         this.addClass('issue-list-dialog');
 
         this.initDeboundcedReloadFunc();

@@ -22,9 +22,19 @@ public final class LocaleScriptBean
 {
     private Supplier<LocaleService> localeService;
 
-    public String localize( final String key, final String locale, final ScriptValue values )
+    public String localize( final String key, final String locale, final ScriptValue values, final String[] bundles )
     {
-        return getMessageBundle( locale, "site/i18n/phrases" ).localize( key, toArray( values ) );
+        MessageBundle bundle;
+
+        if ( bundles != null && bundles.length > 0 )
+        {
+            bundle = getMessageBundle( locale, bundles);
+        }
+        else {
+            bundle = getMessageBundle( locale, "site/i18n/phrases");
+        }
+
+        return bundle.localize( key, toArray( values ) );
     }
 
     public MapSerializable getPhrases( final String locale, final String... bundleNames )

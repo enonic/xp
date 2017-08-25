@@ -47,6 +47,7 @@ import LiveEditPageDialogCreatedEvent = api.liveedit.LiveEditPageDialogCreatedEv
 import MinimizeWizardPanelEvent = api.app.wizard.MinimizeWizardPanelEvent;
 import PageView = api.liveedit.PageView;
 import FragmentComponentReloadRequiredEvent = api.liveedit.FragmentComponentReloadRequiredEvent;
+import i18n = api.util.i18n;
 
 export class LiveEditPageProxy {
 
@@ -171,9 +172,11 @@ export class LiveEditPageProxy {
     }
 
     private createPlaceholderIFrame(): api.dom.IFrameEl {
-        let placeholderIFrame = new api.dom.IFrameEl('live-edit-frame-blank');
+        const placeholderIFrame = new api.dom.IFrameEl('live-edit-frame-blank');
         placeholderIFrame.setSrc(CONFIG.adminAssetsUri + '/live-edit/js/_blank.html');
 
+        placeholderIFrame.onLoaded(() => this.handlePlaceholderIFrameLoadedEvent(placeholderIFrame));
+        
         return placeholderIFrame;
     }
 
@@ -350,6 +353,13 @@ export class LiveEditPageProxy {
         this.notifyLoaded();
     }
 
+    private handlePlaceholderIFrameLoadedEvent(iframe) {
+        let window = iframe.getHTMLElement()['contentWindow'];
+
+        wemjq(window.document.body).find('.page-placeholder-info-line1').html(i18n('live.view.page.nocontrollers'));
+        wemjq(window.document.body).find('.page-placeholder-info-line2').html(i18n('live.view.page.addapplications'));
+    }
+    
     public loadComponent(componentView: ComponentView<Component>, componentUrl: string): wemQ.Promise<string> {
         let deferred = wemQ.defer<string>();
         api.util.assertNotNull(componentView, 'componentView cannot be null');

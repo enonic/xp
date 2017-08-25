@@ -1,6 +1,8 @@
 var auth = require('/lib/xp/auth');
 var mustache = require('/lib/xp/mustache');
 var portal = require('/lib/xp/portal');
+var i18n = require('/lib/xp/i18n');
+var admin = require('/lib/xp/admin');
 
 function getAdminTools() {
     var bean = __.newBean('com.enonic.xp.admin.ui.tool.GetAdminToolsScriptBean');
@@ -30,6 +32,8 @@ function handleGet(req) {
     });
     var user = auth.getUser();
 
+    var locale = admin.getLocale();
+
     var params = {
         xpVersion: app.version,
         appId: 'launcher',
@@ -39,7 +43,22 @@ function handleGet(req) {
         logoutUrl: logoutUrl,
         homeUrl: uriScriptHelper.generateAdminToolUri(),
         installation: uriScriptHelper.getInstallation() || "Tools",
-        launcherCss: launcherCss
+        launcherCss: launcherCss,
+        homeToolCaption: i18n.localize({
+            key: 'launcher.tools.home.caption',
+            bundles: ['admin/i18n/common'],
+            locale: locale
+        }),
+        homeToolDescription: i18n.localize({
+            key: 'launcher.tools.home.description',
+            bundles: ['admin/i18n/common'],
+            locale: locale
+        }),
+        logOutLink: i18n.localize({
+            key: 'launcher.link.logout',
+            bundles: ['admin/i18n/common'],
+            locale: locale
+        })
     };
 
     return {

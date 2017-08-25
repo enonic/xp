@@ -38,7 +38,7 @@ export class SecurityWizardStepForm extends api.app.wizard.WizardStepForm {
 
         let label = new DivEl('input-label');
         let wrapper = new DivEl('wrapper required');
-        this.label = new LabelEl('Permissions');
+        this.label = new LabelEl(i18n('field.permissions'));
         wrapper.appendChild(this.label);
         label.appendChild(wrapper);
 

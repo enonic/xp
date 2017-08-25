@@ -29,7 +29,7 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
 
     private addActionMenu() {
         this.actionMenu =
-            new api.ui.menu.ActionMenu(i18n('action.stopped'), ApplicationBrowseActions.get().START_APPLICATION,
+            new api.ui.menu.ActionMenu(i18n('application.state.stopped'), ApplicationBrowseActions.get().START_APPLICATION,
                 ApplicationBrowseActions.get().STOP_APPLICATION);
 
         const actionMenuWrapper: DivEl = new DivEl('action-menu-wrapper');
@@ -62,7 +62,7 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
             this.getHeader().setHeaderSubtitle(currentApplication.getDescription(), 'app-description');
         }
 
-        this.actionMenu.setLabel(api.util.StringHelper.capitalize(currentApplication.getState()));
+        this.actionMenu.setLabel(this.getLocalizedState(currentApplication.getState()));
 
         this.applicationDataContainer.removeChildren();
 
@@ -204,4 +204,14 @@ export class ApplicationItemStatisticsPanel extends api.app.view.ItemStatisticsP
         return a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase());
     }
 
+    private getLocalizedState(state: string): string {
+        switch (state) {
+        case Application.STATE_STARTED:
+            return i18n('application.state.started');
+        case Application.STATE_STOPPED:
+            return i18n('application.state.stopped');
+        default:
+            return '';
+        }
+    }
 }

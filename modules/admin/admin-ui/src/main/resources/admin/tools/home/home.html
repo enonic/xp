@@ -63,34 +63,18 @@
     <div id="background-image" style="background-image: url(&quot;{{backgroundUri}}&quot;);" class="lazy-image empty"></div>
 
     <div class="home-main-dashboard">
-        {{#tourEnabled}}
-        <div class="xp-tour dashboard-item">
-            <img src="{{busIconUrl}}">
-            <div>XP Tour</div>
-        </div>
-        {{/tourEnabled}}
-        <div class="xp-about dashboard-item">
-            <img src="{{infoIconUrl}}">
-            <div>About</div>
-        </div>
-        <div class="dashboard-item">
-            <a href="{{docLinkPrefix}}/" target="_blank">
-                <img src="{{docsIconUrl}}">
-                <div>Docs</div>
+        {{#dashboardIcons}}
+        <div class="{{cls}} dashboard-item">
+            {{#link}}
+            <a href="{{link}}" target="_blank">
+            {{/link}}
+                <img src="{{src}}">
+                <div>{{caption}}</div>
+            {{#link}}
             </a>
+            {{/link}}
         </div>
-        <div class="dashboard-item">
-            <a href="https://discuss.enonic.com/" target="_blank">
-                <img src="{{forumIconUrl}}">
-                <div>Discuss</div>
-            </a>
-        </div>
-        <div class="dashboard-item">
-            <a href="https://market.enonic.com/" target="_blank">
-                <img src="{{marketIconUrl}}">
-                <div>Market</div>
-            </a>
-        </div>
+        {{/dashboardIcons}}
     </div>
 
 </div>

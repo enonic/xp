@@ -56,6 +56,8 @@ function setupAboutDialog() {
 }
 
 function getAboutDialogContent() {
+    var i18n = api.util.i18n;
+
     var html = '<div class="xp-about-dialog-content">' +
                '    <div class="xp-about-dialog-app-icon">' +
                '        <img src="' + CONFIG.adminUrl + '/common/images/app-icon.svg">' +
@@ -63,16 +65,19 @@ function getAboutDialogContent() {
                '    <h1>Enonic XP</h1>' +
                '    <div class="xp-about-dialog-version-block">' +
                '        <span class="xp-about-dialog-version">' + CONFIG.xpVersion + '</span>&nbsp;&nbsp;' +
-               '        <a href="' + CONFIG.docLinkPrefix + '/appendix/release-notes/" target="_blank">What\'s new</a>' +
+               '        <a href="' + CONFIG.docLinkPrefix + '/appendix/release-notes/" target="_blank">' +
+               i18n("home.dashboard.about.dialog.whatsnew") + '</a>' +
                '    </div>' +
                '    <div class="xp-about-dialog-text">' +
-               'The Web Operating System - ‌‌Designed to simplify development and delivery of digital experiences and services.<br><br>' +
-               'Built with <span style="color: red;">♥</span> by the Enonic Team.' +
+               i18n('home.dashboard.about.dialog.text', '<span style="color: red;">♥</span>') +
                '    </div>' +
                '    <div class="xp-about-dialog-footer">' +
-               '        <a href="https://github.com/enonic/xp/blob/master/LICENSE.txt" target="_blank">Licensing</a>' +
-               '        <a href="https://github.com/enonic/xp/" target="_blank">Source Code</a>' +
-               '        <a href="https://enonic.com/downloads" target="_blank">Downloads</a>' +
+               '        <a href="https://github.com/enonic/xp/blob/master/LICENSE.txt" target="_blank">' +
+               i18n('home.dashboard.about.dialog.licensing') + '</a>' +
+               '        <a href="https://github.com/enonic/xp/" target="_blank">' +
+               i18n('home.dashboard.about.dialog.sourcecode') + '</a>' +
+               '        <a href="https://enonic.com/downloads" target="_blank">' +
+               i18n("home.dashboard.about.dialog.downloads") + '</a>' +
                '    </div>' +
                '</div>';
 
