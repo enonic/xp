@@ -14,14 +14,6 @@ module api.ui.security.acl {
 
         private currentUser: User;
 
-        private static OPTIONS: any[] = [
-            {value: Access.FULL, name: 'Full Access'},
-            {value: Access.PUBLISH, name: 'Can Publish'},
-            {value: Access.WRITE, name: 'Can Write'},
-            {value: Access.READ, name: 'Can Read'},
-            {value: Access.CUSTOM, name: 'Custom...'}
-        ];
-
         public static debug: boolean = false;
 
         constructor(className?: string) {
@@ -102,13 +94,14 @@ module api.ui.security.acl {
         }
 
         private getOptionName(access: Access): string {
-            let currentOption = UserAccessListItemView.OPTIONS.filter(option => {
+            let currentOption = accessOptions.filter(option => {
                 return option.value === access;
             });
             if (currentOption && currentOption.length > 0) {
                 return currentOption[0].name;
             }
 
+            return '';
         }
 
     }
