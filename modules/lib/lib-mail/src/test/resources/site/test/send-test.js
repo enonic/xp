@@ -1,4 +1,4 @@
-var assert = require('/lib/xp/assert.js');
+var assert = require('/lib/xp/testing.js');
 var mail = require('/lib/xp/mail.js');
 
 exports.simpleMail = function () {
@@ -17,7 +17,7 @@ exports.simpleMail = function () {
         }
     });
 
-    assert.assertEquals('Should be true', true, result);
+    assert.assertEquals(true, result);
 
 };
 
@@ -33,7 +33,7 @@ exports.multiRecipientsMail = function () {
         replyTo: ['replyTo@bar.com', 'replyTo@foo.com']
     });
 
-    assert.assertEquals('Should be true', true, result);
+    assert.assertEquals(true, result);
 
 };
 
@@ -46,7 +46,7 @@ exports.rfc822AddressMail = function () {
         from: ['From Bar <from@bar.com>', 'From Foo <from@foo.com>']
     });
 
-    assert.assertEquals('Should be true', true, result);
+    assert.assertEquals(true, result);
 
 };
 
@@ -59,7 +59,7 @@ exports.failSendMail = function () {
         from: 'from@bar.com'
     });
 
-    assert.assertEquals('Should be false', false, result);
+    assert.assertEquals(false, result);
 
 };
 
@@ -73,13 +73,13 @@ exports.sendMailWithContentType = function () {
         contentType: 'text/html'
     });
 
-    assert.assertEquals('Should be true', true, result);
+    assert.assertEquals(true, result);
 
 };
 
 exports.sendWithoutRequiredFrom = function () {
 
-    var result = mail.send({
+    mail.send({
         subject: 'test subject',
         to: 'to@bar.com'
     });
@@ -88,7 +88,7 @@ exports.sendWithoutRequiredFrom = function () {
 
 exports.sendWithoutRequiredTo = function () {
 
-    var result = mail.send({
+    mail.send({
         subject: 'test subject',
         from: 'to@bar.com'
     });
@@ -97,7 +97,7 @@ exports.sendWithoutRequiredTo = function () {
 
 exports.sendWithAttachments = function () {
 
-    var result = mail.send({
+    mail.send({
         subject: 'test subject',
         body: 'test body',
         to: 'to@bar.com',

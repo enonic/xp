@@ -5,7 +5,7 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryService;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.ScriptTestSupport;
 
 public class DeleteBranchScriptTest
     extends ScriptTestSupport

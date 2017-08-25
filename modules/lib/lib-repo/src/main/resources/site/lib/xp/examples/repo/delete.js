@@ -1,5 +1,5 @@
 var repoLib = require('/lib/xp/repo.js');
-var assert = require('/lib/xp/assert');
+var t = require('/lib/xp/testing');
 
 // BEGIN
 // Retrieves a repository
@@ -12,4 +12,4 @@ if (result) {
 }
 // END
 
-assert.assertJsonEquals(true, result);
+t.assertJsonEquals(true, result);

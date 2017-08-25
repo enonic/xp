@@ -1,5 +1,5 @@
 var authLib = require('/lib/xp/auth');
-var assert = require('/lib/xp/assert');
+var t = require('/lib/xp/testing');
 
 // BEGIN
 // Callback to edit the group.
@@ -27,4 +27,4 @@ var expected = {
 };
 // END
 
-assert.assertJsonEquals(expected, group);
+t.assertJsonEquals(expected, group);

@@ -1,5 +1,5 @@
 var portalLib = require('/lib/xp/portal');
-var assert = require('/lib/xp/assert');
+var t = require('/lib/xp/testing');
 
 // BEGIN
 var url = portalLib.pageUrl({
@@ -11,4 +11,4 @@ var url = portalLib.pageUrl({
 });
 // END
 
-assert.assertEquals('PageUrlParams{type=server, params={a=[1], b=[1, 2]}, path=/my/page}', url);
+t.assertEquals('PageUrlParams{type=server, params={a=[1], b=[1, 2]}, path=/my/page}', url);

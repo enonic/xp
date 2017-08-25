@@ -1,5 +1,5 @@
-var assert = require('/lib/xp/assert.js');
-var content = require('/lib/xp/content.js');
+var t = require('/lib/xp/testing');
+var content = require('/lib/xp/content');
 
 exports.getAttachmentStreamById = function () {
     var result = content.getAttachmentStream({
@@ -7,7 +7,7 @@ exports.getAttachmentStreamById = function () {
         name: 'document.pdf'
     });
 
-    assert.assertNotNull(result);
+    t.assertNotNull(result);
 };
 
 exports.getAttachmentStreamByPath = function () {
@@ -16,7 +16,7 @@ exports.getAttachmentStreamByPath = function () {
         name: 'document.pdf'
     });
 
-    assert.assertNotNull(result);
+    t.assertNotNull(result);
 };
 
 exports.getAttachmentStreamById_notFound = function () {
@@ -25,7 +25,7 @@ exports.getAttachmentStreamById_notFound = function () {
         name: 'document.pdf'
     });
 
-    assert.assertNull(result);
+    t.assertNull(result);
 };
 
 exports.getAttachmentStreamByPath_notFound = function () {
@@ -34,7 +34,7 @@ exports.getAttachmentStreamByPath_notFound = function () {
         name: 'document.pdf'
     });
 
-    assert.assertNull(result);
+    t.assertNull(result);
 };
 
 exports.getAttachmentStreamById_AttachmentNotFound = function () {
@@ -43,5 +43,5 @@ exports.getAttachmentStreamById_AttachmentNotFound = function () {
         name: 'other.pdf'
     });
 
-    assert.assertNull(result);
+    t.assertNull(result);
 };

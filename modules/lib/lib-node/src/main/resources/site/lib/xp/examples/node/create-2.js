@@ -1,4 +1,4 @@
-var assert = require('/lib/xp/assert');
+var assert = require('/lib/xp/testing');
 
 var TestClass = Java.type('com.enonic.xp.lib.node.BaseNodeHandlerTest');
 var byteSource1 = TestClass.createByteSource('Hello World');

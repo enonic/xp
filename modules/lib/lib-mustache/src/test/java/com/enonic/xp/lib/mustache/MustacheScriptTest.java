@@ -8,7 +8,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.testing.script.ScriptRunnerSupport;
+import com.enonic.xp.testing.ScriptRunnerSupport;
 
 public class MustacheScriptTest
     extends ScriptRunnerSupport

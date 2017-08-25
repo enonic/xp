@@ -1,4 +1,4 @@
-var t = require('/lib/xp/testkit');
+var t = require('/lib/xp/testing');
 var i18nLib = require('/lib/xp/i18n');
 
 // BEGIN

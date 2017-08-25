@@ -1,5 +1,5 @@
 var authLib = require('/lib/xp/auth');
-var assert = require('/lib/xp/assert');
+var t = require('/lib/xp/testing');
 
 // BEGIN
 var result = authLib.getIdProviderConfig();
@@ -17,4 +17,4 @@ var expected = {
 };
 // END
 
-assert.assertJsonEquals(expected, result);
+t.assertJsonEquals(expected, result);

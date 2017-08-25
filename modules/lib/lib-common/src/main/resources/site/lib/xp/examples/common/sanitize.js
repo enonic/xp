@@ -1,5 +1,5 @@
 var common = require('/lib/xp/common');
-var assert = require('/lib/xp/assert');
+var t = require('/lib/xp/testing');
 
 // BEGIN
 // Sanitize string
@@ -9,5 +9,5 @@ print(sanitizedText);
 var result = sanitizedText === 'pina-coladae-script-alerthi-script';
 
 // END
-assert.assertEquals('pina-coladae-script-alerthi-script', sanitizedText);
+t.assertEquals('pina-coladae-script-alerthi-script', sanitizedText);
 

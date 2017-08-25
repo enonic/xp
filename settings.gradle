@@ -55,7 +55,6 @@ include 'tools:upgrade'
 include 'tools:toolbox'
 include 'tools:testing'
 include 'tools:gradle-plugin'
-include 'tools:testkit'
 
 include 'lib:lib-common'
 include 'lib:lib-content'

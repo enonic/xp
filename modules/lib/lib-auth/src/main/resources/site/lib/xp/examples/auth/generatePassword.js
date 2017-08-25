@@ -1,5 +1,5 @@
 var authLib = require('/lib/xp/auth');
-var assert = require('/lib/xp/assert');
+var t = require('/lib/xp/testing');
 
 // BEGIN
 // Generate a password and returns the password string.
@@ -7,4 +7,4 @@ var pwd = authLib.generatePassword();
 log.info('New password: %s', pwd);
 // END
 
-assert.assertNotNull(pwd);
+t.assertNotNull(pwd);

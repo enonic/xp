@@ -1,5 +1,5 @@
 var thymeleafLib = require('/lib/xp/thymeleaf');
-var assert = require('/lib/xp/assert');
+var assert = require('/lib/xp/testing');
 
 // BEGIN
 var view = resolve('view/fruit.html');

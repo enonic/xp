@@ -1,5 +1,5 @@
 var authLib = require('/lib/xp/auth');
-var assert = require('/lib/xp/assert');
+var t = require('/lib/xp/testing');
 
 // BEGIN
 // Returns the current loggedin user.
@@ -24,4 +24,4 @@ var expected = {
 };
 // END
 
-assert.assertJsonEquals(expected, user);
+t.assertJsonEquals(expected, user);

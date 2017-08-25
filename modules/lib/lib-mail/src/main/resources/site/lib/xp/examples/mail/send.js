@@ -1,5 +1,5 @@
 var mailLib = require('/lib/xp/mail.js');
-var assert = require('/lib/xp/assert.js');
+var assert = require('/lib/xp/testing.js');
 
 var stream1 = testInstance.createByteSource('image data');
 var stream2 = testInstance.createByteSource('some text');

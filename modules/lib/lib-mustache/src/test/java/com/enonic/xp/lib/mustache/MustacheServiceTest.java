@@ -3,10 +3,10 @@ package com.enonic.xp.lib.mustache;
 import org.junit.Test;
 
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.testing.script.ScriptBeanTestSupport;
+import com.enonic.xp.testing.ScriptTestSupport;
 
 public class MustacheServiceTest
-    extends ScriptBeanTestSupport
+    extends ScriptTestSupport
 {
     private MustacheService service;
 

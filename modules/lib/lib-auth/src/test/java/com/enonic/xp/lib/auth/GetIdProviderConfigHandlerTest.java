@@ -3,7 +3,7 @@ package com.enonic.xp.lib.auth;
 import org.junit.Test;
 
 import com.enonic.xp.security.UserStore;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.ScriptTestSupport;
 
 public class GetIdProviderConfigHandlerTest
     extends ScriptTestSupport

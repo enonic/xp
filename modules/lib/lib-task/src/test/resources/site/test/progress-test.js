@@ -1,4 +1,4 @@
-var assert = require('/lib/xp/assert.js');
+var assert = require('/lib/xp/testing.js');
 var taskLib = require('/lib/xp/task.js');
 
 exports.reportProgress = function () {

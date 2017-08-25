@@ -1,4 +1,4 @@
-var assert = require('/lib/xp/assert.js');
+var assert = require('/lib/xp/testing.js');
 var taskLib = require('/lib/xp/task.js');
 
 exports.getExistingTask = function () {
@@ -22,6 +22,6 @@ exports.getTaskNotFound = function () {
 
     var result = taskLib.get("123");
 
-    assert.assertNull('Should be true', result);
+    assert.assertNull(result);
 
 };

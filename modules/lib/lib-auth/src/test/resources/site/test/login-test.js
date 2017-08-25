@@ -1,4 +1,4 @@
-var assert = require('/lib/xp/assert.js');
+var t = require('/lib/xp/testing.js');
 var auth = require('/lib/xp/auth.js');
 
 exports.loginSuccess = function () {
@@ -23,7 +23,7 @@ exports.loginSuccess = function () {
         }
     };
 
-    assert.assertJsonEquals('Login result not equals', expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 
 };
 
@@ -40,7 +40,7 @@ exports.invalidLogin = function () {
         message: 'Access Denied'
     };
 
-    assert.assertJsonEquals('Login result not equals', expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 
 };
 
@@ -65,7 +65,7 @@ exports.loginNoUserStore = function () {
         }
     };
 
-    assert.assertJsonEquals('Login result not equals', expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 
 };
 
@@ -91,7 +91,7 @@ exports.loginMultipleUserStore = function () {
         }
     };
 
-    assert.assertJsonEquals('Login result not equals', expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 
 };
 
@@ -116,6 +116,6 @@ exports.loginMultipleUserStoresInOrder = function () {
         }
     };
 
-    assert.assertJsonEquals('Login result not equals', expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 
 };

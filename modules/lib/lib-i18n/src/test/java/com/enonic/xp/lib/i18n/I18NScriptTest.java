@@ -15,23 +15,23 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
-import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.site.Site;
-import com.enonic.xp.testkit.mock.MockServiceRegistry;
-import com.enonic.xp.testkit.portal.PortalTestSupport;
+import com.enonic.xp.testing.ScriptRunnerSupport;
 
 public class I18NScriptTest
-    extends PortalTestSupport
+    extends ScriptRunnerSupport
 {
-    public I18NScriptTest()
+    @Override
+    public String getScriptTestFile()
     {
-        setTestFiles( "test/*-test.js", "site/lib/xp/examples/i18n/*.js" );
+        return "test/localize-test.js";
     }
 
     @Override
-    public void setupServices( final MockServiceRegistry registry )
+    protected void initialize()
+        throws Exception
     {
-        super.setupServices( registry );
+        super.initialize();
 
         final LocaleService localeService = Mockito.mock( LocaleService.class );
 
@@ -40,15 +40,9 @@ public class I18NScriptTest
             localeService.getBundle( Mockito.any( ApplicationKey.class ), Mockito.any( Locale.class ), Mockito.any( String[].class ) ) ).
             thenAnswer( mock -> bundle );
 
-        registry.register( LocaleService.class, localeService );
-    }
+        addService( LocaleService.class, localeService );
 
-    @Override
-    public void setupRequest( final PortalRequest request )
-    {
-        super.setupRequest( request );
-
-        request.setSite( Site.create().
+        getPortalRequest().setSite( Site.create().
             name( ContentName.from( "test" ) ).
             parentPath( ContentPath.ROOT ).
             language( Locale.ENGLISH ).

@@ -1,5 +1,5 @@
 var authLib = require('/lib/xp/auth');
-var assert = require('/lib/xp/assert');
+var t = require('/lib/xp/testing');
 
 // BEGIN 
 // Login with a explicit user store.
@@ -57,7 +57,7 @@ var expected = {
 };
 // END
 
-assert.assertJsonEquals(expected, result1);
-assert.assertJsonEquals(expected, result2);
-assert.assertJsonEquals(expected, result3);
-assert.assertJsonEquals(expected, result4);
+t.assertJsonEquals(expected, result1);
+t.assertJsonEquals(expected, result2);
+t.assertJsonEquals(expected, result3);
+t.assertJsonEquals(expected, result4);

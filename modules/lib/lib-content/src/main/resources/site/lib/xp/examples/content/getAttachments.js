@@ -1,5 +1,5 @@
 var contentLib = require('/lib/xp/content');
-var assert = require('/lib/xp/assert');
+var assert = require('/lib/xp/testing');
 
 // BEGIN
 // Gets all attachments for a content.

@@ -1,38 +1,42 @@
-var t = require('/lib/xp/testkit');
+var t = require('/lib/xp/testing');
 var i18n = require('/lib/xp/i18n');
 
-t.test('localize', function () {
+exports.testLocalize = function () {
     var result = i18n.localize({
         key: 'myKey'
     });
 
     t.assertEquals("[myKey]", result);
-});
+};
 
-t.test('localize with locale', function () {
+exports.testLocalizeWithLocale = function () {
     var result = i18n.localize({
         key: 'myKey',
         locale: 'en-US'
     });
 
     t.assertEquals("[myKey]", result);
-});
+};
 
-t.test('localize with placeholders', function () {
+exports.testLcalizeWithPlaceholders = function () {
     var result = i18n.localize({
         key: 'myKey',
         values: ['a', 1, 'b']
     });
 
     t.assertEquals("[myKey, a, 1, b]", result);
-});
+};
 
-t.test('get phrases', function () {
+exports.testGetPhrases = function () {
     var actual = {
         "a": "1",
         "b": "2"
     };
 
     var result = i18n.getPhrases('en', null);
-    t.assertJson(actual, result);
-});
+    t.assertJsonEquals(actual, result);
+};
+
+exports.testExamples = function () {
+    t.runScript('/site/lib/xp/examples/i18n/localize.js');
+};

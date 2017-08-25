@@ -1,5 +1,5 @@
 var portalLib = require('/lib/xp/portal');
-var assert = require('/lib/xp/assert');
+var assert = require('/lib/xp/testing');
 
 // BEGIN
 var url = portalLib.url({

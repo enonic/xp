@@ -1,5 +1,5 @@
 var authLib = require('/lib/xp/auth');
-var assert = require('/lib/xp/assert');
+var t = require('/lib/xp/testing');
 
 // BEGIN
 // Creates a user.
@@ -25,4 +25,4 @@ var expected = {
 };
 // END
 
-assert.assertJsonEquals(expected, user);
+t.assertJsonEquals(expected, user);

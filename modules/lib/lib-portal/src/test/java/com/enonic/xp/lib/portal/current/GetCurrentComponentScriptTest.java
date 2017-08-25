@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import com.enonic.xp.lib.portal.TestDataFixtures;
 import com.enonic.xp.region.Component;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.ScriptTestSupport;
 
 public class GetCurrentComponentScriptTest
     extends ScriptTestSupport

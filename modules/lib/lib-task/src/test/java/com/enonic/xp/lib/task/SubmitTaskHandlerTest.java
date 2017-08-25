@@ -7,7 +7,7 @@ import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;

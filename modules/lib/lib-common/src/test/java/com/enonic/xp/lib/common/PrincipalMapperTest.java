@@ -2,7 +2,7 @@ package com.enonic.xp.lib.common;
 
 import org.junit.Test;
 
-import com.enonic.xp.testing.JsonAssert;
+import com.enonic.xp.testing.helper.JsonAssert;
 
 public class PrincipalMapperTest
 {
