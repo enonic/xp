@@ -73,7 +73,7 @@ export class UserItemStatisticsPanel extends ItemStatisticsPanel<UserTreeGridIte
 
             metaGroups.then((groups: ItemDataGroup[]) => {
                 this.userDataContainer.removeChildren();
-                this.appendChildren(...groups);
+                this.userDataContainer.appendChildren(...groups);
             }).catch((reason: any) => {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
