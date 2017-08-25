@@ -4,7 +4,8 @@ module api.content.form {
     import PropertyArray = api.data.PropertyArray;
     import FormState = api.app.wizard.FormState;
 
-    export class ContentFormContext extends api.form.FormContext {
+    export class ContentFormContext
+        extends api.form.FormContext {
 
         private site: api.content.site.Site;
 
@@ -15,6 +16,8 @@ module api.content.form {
         private contentTypeName: api.schema.content.ContentTypeName;
 
         private formState: FormState;
+
+        private contentUpdatedListeners: { (content: Content): void }[] = [];
 
         constructor(builder: ContentFormContextBuilder) {
             super(builder);
@@ -58,6 +61,11 @@ module api.content.form {
             return this.persistedContent;
         }
 
+        updatePersistedContent(content: Content) {
+            this.persistedContent = content;
+            this.contentUpdatedListeners.forEach(listener => listener(content));
+        }
+
         getContentTypeName(): api.schema.content.ContentTypeName {
             return this.contentTypeName;
         }
@@ -65,7 +73,7 @@ module api.content.form {
         createInputTypeViewContext(inputTypeConfig: any, parentPropertyPath: PropertyPath,
                                    input: api.form.Input): api.form.inputtype.InputTypeViewContext {
 
-            return <api.content.form.inputtype.ContentInputTypeViewContext> {
+            let viewContext = <api.content.form.inputtype.ContentInputTypeViewContext> {
                 formContext: this,
                 input: input,
                 inputConfig: inputTypeConfig,
@@ -75,6 +83,12 @@ module api.content.form {
                 contentPath: this.getContentPath(),
                 parentContentPath: this.getParentContentPath()
             };
+
+            this.contentUpdatedListeners.push(content => {
+                viewContext.content = content;
+            });
+
+            return viewContext;
         }
 
         static create(): ContentFormContextBuilder {
@@ -82,7 +96,8 @@ module api.content.form {
         }
     }
 
-    export class ContentFormContextBuilder extends api.form.FormContextBuilder {
+    export class ContentFormContextBuilder
+        extends api.form.FormContextBuilder {
 
         site: api.content.site.Site;
 

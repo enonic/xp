@@ -86,7 +86,7 @@ final class ImageHandlerWorker
 
         final String mimeType = getMimeType( this.name, imageContent.getName(), attachment );
         final String format = getFormat( this.name, mimeType );
-        final ImageOrientation imageOrientation = mediaInfoService.getImageOrientation( binary );
+        final ImageOrientation imageOrientation = mediaInfoService.getImageOrientation( binary, imageContent );
 
         final PortalResponse.Builder portalResponse = PortalResponse.create().
             contentType( MediaType.parse( mimeType ) );

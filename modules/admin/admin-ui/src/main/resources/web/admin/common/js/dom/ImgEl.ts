@@ -1,12 +1,13 @@
 module api.dom {
 
-    export class ImgEl extends Element {
+    export class ImgEl
+        extends Element {
 
         private loaded: boolean;
 
-        private loadedListeners: {(event: UIEvent): void}[] = [];
+        private loadedListeners: { (event: UIEvent): void }[] = [];
 
-        private errorListeners: {(event: UIEvent): void}[] = [];
+        private errorListeners: { (event: UIEvent): void }[] = [];
 
         public static debug: boolean = false;
 
@@ -14,10 +15,7 @@ module api.dom {
         public static PLACEHOLDER: string = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
 
         constructor(src?: string, className?: string, usePlaceholder: boolean = false) {
-            super(new NewElementBuilder().
-                setTagName('img').
-                setHelper(ImgHelper.create()).
-                setClassName(className));
+            super(new NewElementBuilder().setTagName('img').setHelper(ImgHelper.create()).setClassName(className));
 
             if (src || usePlaceholder) {
                 this.getEl().setSrc(src ? src : ImgEl.PLACEHOLDER);
@@ -101,6 +99,10 @@ module api.dom {
 
         isPlaceholder(): boolean {
             return this.getCurrentSrc() === ImgEl.PLACEHOLDER;
+        }
+
+        getHTMLElement(): HTMLImageElement {
+            return <HTMLImageElement> super.getHTMLElement();
         }
     }
 }

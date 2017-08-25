@@ -513,13 +513,15 @@ export class LiveFormPanel
 
         let path;
         BeforeContentSavedEvent.on(() => {
+            path = null;
+            if (!this.pageView) {
+                return;
+            }
             const selected = this.pageView.getSelectedView();
             if (api.ObjectHelper.iFrameSafeInstanceOf(selected, ComponentView)) {
                 path = (<ComponentView<any>>selected).getComponentPath();
             } else if (api.ObjectHelper.iFrameSafeInstanceOf(selected, RegionView)) {
                 path = (<RegionView>selected).getRegionPath();
-            } else {
-                path = null;
             }
         });
 

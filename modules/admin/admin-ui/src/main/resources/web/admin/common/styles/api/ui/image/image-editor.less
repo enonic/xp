@@ -1,7 +1,6 @@
 .image-editor {
   .notSelectable();
   display: block;
-  padding-top: 58px; // equals to the height of sticky toolbar;
 
   &.standout {
     position: absolute; // need to have a position other than static for z-index to have effect
@@ -202,6 +201,8 @@
       margin: 0 10px 0 0;
 
       &.button-focus,
+      &.button-rotate,
+      &.button-mirror,
       &.button-crop,
       &.button-upload {
         height: 38px;
@@ -250,10 +251,18 @@
     .top-container {
       padding: 10px;
       background-color: rgba(255, 255, 255, .9);
+      display: flex;
+      flex-wrap: wrap;
+
+      .@{_COMMON_PREFIX}button {
+        flex-shrink: 0;
+        white-space: nowrap;
+      }
     }
 
     .right-container {
-      float: right;
+      flex: 1;
+      text-align: right;
 
       .@{_COMMON_PREFIX}button {
         margin: 0 0 0 10px;

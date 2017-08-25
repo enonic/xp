@@ -85,7 +85,9 @@ module api.liveedit.fragment {
 
         private handleContentUpdatedEvent() {
             let contentUpdatedListener = (event: ContentUpdatedEvent) => {
-                if (event.getContentId().equals(this.component.getFragment())) {
+                const fragmentId = this.component ? this.component.getFragment() : null;
+
+                if (fragmentId && fragmentId.equals(event.getContentId())) {
                     new FragmentComponentReloadRequiredEvent(this).fire();
                 }
             };
@@ -124,7 +126,7 @@ module api.liveedit.fragment {
             return this.fragmentContent ? this.fragmentContent.getDisplayName() : null;
         }
 
-        isLoaded() : boolean {
+        isLoaded(): boolean {
             return this.loaded;
         }
 

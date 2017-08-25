@@ -8,16 +8,21 @@ module api.content.image {
     import ImageEditor = api.ui.image.ImageEditor;
     import i18n = api.util.i18n;
 
-    export class ImageUploaderEl extends api.ui.uploader.MediaUploaderEl {
+    export class ImageUploaderEl
+        extends api.ui.uploader.MediaUploaderEl {
 
         private imageEditors: ImageEditor[];
-        private editModeListeners: {(edit: boolean, crop: Rect, zoom: Rect, focus: Point): void}[];
-        private focusAutoPositionedListeners: {(auto: boolean): void}[];
-        private cropAutoPositionedListeners: {(auto: boolean): void}[];
+        private editModeListeners: { (edit: boolean, crop: Rect, zoom: Rect, focus: Point): void }[];
+        private focusAutoPositionedListeners: { (auto: boolean): void }[];
+        private focusPositionChangedListeners: { (focus: Point): void }[];
+        private cropAutoPositionedListeners: { (auto: boolean): void }[];
+        private cropPositionChangedListeners: { (crop: Rect, zoom: Rect): void }[];
+        private orientationChangedListeners: { (orientation: number) }[];
 
         private initialWidth: number;
         private originalHeight: number;
         private originalWidth: number;
+        private originalOrientation: number;
 
         private static SELECTED_CLASS: string = 'selected';
         private static STANDOUT_CLASS: string = 'standout';
@@ -37,7 +42,10 @@ module api.content.image {
             this.imageEditors = [];
             this.editModeListeners = [];
             this.focusAutoPositionedListeners = [];
+            this.focusPositionChangedListeners = [];
             this.cropAutoPositionedListeners = [];
+            this.cropPositionChangedListeners = [];
+            this.orientationChangedListeners = [];
 
             this.addClass('image-uploader-el');
             this.getEl().setAttribute('data-drop', i18n('drop.image'));
@@ -92,34 +100,19 @@ module api.content.image {
             });
         }
 
-        private getSizeValue(content: api.content.Content, propertyName: string): number {
-            let value = 0;
-            let metaData = content.getContentData().getProperty('metadata');
-
-            if (metaData && api.data.ValueTypes.DATA.equals(metaData.getType())) {
-                return parseInt(metaData.getPropertySet().getProperty(propertyName).getString(), 10);
-            } else {
-                let allExtraData = content.getAllExtraData();
-                allExtraData.forEach((extraData: ExtraData) => {
-                    if (!value && extraData.getData().getProperty(propertyName)) {
-                        value = parseInt(extraData.getData().getProperty(propertyName).getValue().getString(), 10);
-                    }
-                });
-            }
-
-            return value;
-        }
-
-        setOriginalDimensions(content: api.content.Content) {
-            this.originalWidth = this.getSizeValue(content, 'imageWidth') || this.initialWidth;
-            this.originalHeight = this.getSizeValue(content, 'imageHeight');
+        setOriginalDimensions(width: number = this.initialWidth, height: number = 0, orientation: number = 1) {
+            this.originalWidth = width;
+            this.originalHeight = height;
+            this.originalOrientation = orientation;
         }
 
         private getProportionalHeight(): number {
-            if (!this.originalHeight || !this.originalWidth) {
+            if (!this.originalHeight || !this.originalWidth || !this.originalOrientation) {
                 return 0;
             }
-            return Math.round(this.initialWidth * this.originalHeight / this.originalWidth);
+            const inverse = this.originalOrientation > 4;
+            const ratio = this.originalHeight / this.originalWidth;
+            return Math.round(this.initialWidth * (inverse ? 1 / ratio : ratio));
         }
 
         private togglePlaceholder(flag: boolean) {
@@ -185,8 +178,26 @@ module api.content.image {
                 api.notify.showError('Failed to upload an image ' + contentId.toString());
             };
 
-            imageEditor.getImage().onLoaded((event: UIEvent) => {
-                this.togglePlaceholder(false);
+            const orientationHandler = (orientation: number) => {
+                this.notifyOrientationChanged(orientation);
+            };
+
+            const cropPositionHandler = (crop: Rect, zoom: Rect) => {
+                this.notifyCropPositionChanged(crop, zoom);
+            };
+
+            const focusPositionHandler = (focus: Point) => {
+                this.notifyFocusPositionChanged(focus);
+            };
+
+            const editorImage = imageEditor.getImage();
+            editorImage.onLoaded((event: UIEvent) => {
+                if (!editorImage.isPlaceholder()) {
+                    this.togglePlaceholder(false);
+                }
+                imageEditor.onCropPositionChanged(cropPositionHandler);
+                imageEditor.onFocusPositionChanged(focusPositionHandler);
+                imageEditor.onOrientationChanged(orientationHandler);
                 imageEditor.onShaderVisibilityChanged(shaderVisibilityChangedHandler);
                 imageEditor.onEditModeChanged(editModeChangedHandler);
                 imageEditor.onFocusAutoPositionedChanged(focusAutoPositionedChangedHandler);
@@ -198,6 +209,9 @@ module api.content.image {
             imageEditor.onImageError(imageErrorHandler);
 
             imageEditor.onRemoved(() => {
+                imageEditor.unCropPositionChanged(cropPositionHandler);
+                imageEditor.unFocusPositionChanged(focusPositionHandler);
+                imageEditor.unOrientationChanged(orientationHandler);
                 imageEditor.unShaderVisibilityChanged(shaderVisibilityChangedHandler);
                 imageEditor.unEditModeChanged(editModeChangedHandler);
                 imageEditor.unFocusAutoPositionedChanged(focusAutoPositionedChangedHandler);
@@ -277,6 +291,12 @@ module api.content.image {
             });
         }
 
+        setOrientation(orientation: number, originalOrientation?: number) {
+            this.imageEditors.forEach((editor: ImageEditor) => {
+                editor.setOrientation(orientation, originalOrientation, false);
+            });
+        }
+
         isFocalPointEditMode(): boolean {
             return this.imageEditors.some((editor: ImageEditor) => {
                 return editor.isFocusEditMode();
@@ -309,6 +329,20 @@ module api.content.image {
             });
         }
 
+        onCropPositionChanged(listener: (crop: Rect, zoom: Rect) => void) {
+            this.cropPositionChangedListeners.push(listener);
+        }
+
+        unCropPositionChanged(listener: (crop: Rect, zoom: Rect) => void) {
+            this.cropPositionChangedListeners = this.cropPositionChangedListeners.filter(curr => {
+                return curr !== listener;
+            });
+        }
+
+        private notifyCropPositionChanged(crop: Rect, zoom: Rect) {
+            this.cropPositionChangedListeners.forEach(listener => listener(crop, zoom));
+        }
+
         onCropAutoPositionedChanged(listener: (auto: boolean) => void) {
             this.cropAutoPositionedListeners.push(listener);
         }
@@ -323,6 +357,20 @@ module api.content.image {
             this.cropAutoPositionedListeners.forEach((listener) => listener(auto));
         }
 
+        onFocusPositionChanged(listener: (focus: Point) => void) {
+            this.focusPositionChangedListeners.push(listener);
+        }
+
+        unFocusPositionChanged(listener: (focus: Point) => void) {
+            this.focusPositionChangedListeners = this.focusPositionChangedListeners.filter(curr => {
+                return curr !== listener;
+            });
+        }
+
+        private notifyFocusPositionChanged(focus: Point) {
+            this.focusPositionChangedListeners.forEach(listener => listener(focus));
+        }
+
         onFocusAutoPositionedChanged(listener: (auto: boolean) => void) {
             this.focusAutoPositionedListeners.push(listener);
         }
@@ -335,6 +383,18 @@ module api.content.image {
 
         private notifyFocusAutoPositionedChanged(auto: boolean) {
             this.focusAutoPositionedListeners.forEach((listener) => listener(auto));
+        }
+
+        onOrientationChanged(listener: (orientation: number) => void) {
+            this.orientationChangedListeners.push(listener);
+        }
+
+        unOrientationChanged(listener: (orientation: number) => void) {
+            this.orientationChangedListeners = this.orientationChangedListeners.filter(curr => curr !== listener);
+        }
+
+        private notifyOrientationChanged(orientation: number) {
+            this.orientationChangedListeners.forEach((listener) => listener(orientation));
         }
 
     }

@@ -4,6 +4,7 @@ import FormItemBuilder = api.ui.form.FormItemBuilder;
 import DivEl = api.dom.DivEl;
 import LabelEl = api.dom.LabelEl;
 import i18n = api.util.i18n;
+import SecurityFormContext = api.security.form.SecurityFormContext;
 
 export class UserStoreWizardStepForm extends api.app.wizard.WizardStepForm {
 
@@ -15,7 +16,7 @@ export class UserStoreWizardStepForm extends api.app.wizard.WizardStepForm {
         super();
     }
 
-    layout(userStore?: api.security.UserStore): wemQ.Promise<void> {
+    layout(userStore: api.security.UserStore): wemQ.Promise<void> {
 
         this.formView = this.createFormView(userStore);
 
@@ -72,7 +73,8 @@ export class UserStoreWizardStepForm extends api.app.wizard.WizardStepForm {
             }
         }
 
-        return new api.form.FormView(api.form.FormContext.create().build(), formBuilder.build(), this.propertySet);
+        const context = SecurityFormContext.create().setUserStore(userStore).build();
+        return new api.form.FormView(context, formBuilder.build(), this.propertySet);
     }
 
     public validate(silent?: boolean): api.form.ValidationRecording {

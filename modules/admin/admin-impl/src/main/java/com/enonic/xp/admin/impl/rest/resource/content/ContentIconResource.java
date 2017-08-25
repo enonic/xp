@@ -103,7 +103,7 @@ public final class ContentIconResource
             final ResolveIconParams params = new ResolveIconParams().
                 setBinaryReference( contentThumbnail.getBinaryReference() ).
                 setId( content.getId() ).
-                setImageOrientation( getThumbnailOrientation( contentThumbnail, content.getId() ) ).
+                setImageOrientation( getThumbnailOrientation( contentThumbnail, content ) ).
                 setMimeType( contentThumbnail.getMimeType() ).
                 setSize( size ).
                 setCrop( crop );
@@ -241,13 +241,13 @@ public final class ContentIconResource
     private ImageOrientation getSourceAttachmentOrientation( final Media media )
     {
         final ByteSource sourceBinary = contentService.getBinary( media.getId(), media.getMediaAttachment().getBinaryReference() );
-        return mediaInfoService.getImageOrientation( sourceBinary );
+        return mediaInfoService.getImageOrientation( sourceBinary, media );
     }
 
-    private ImageOrientation getThumbnailOrientation( final Thumbnail thumbnail, final ContentId id )
+    private ImageOrientation getThumbnailOrientation( final Thumbnail thumbnail, final Content content )
     {
-        final ByteSource sourceBinary = contentService.getBinary( id, thumbnail.getBinaryReference() );
-        return mediaInfoService.getImageOrientation( sourceBinary );
+        final ByteSource sourceBinary = contentService.getBinary( content.getId(), thumbnail.getBinaryReference() );
+        return mediaInfoService.getImageOrientation( sourceBinary, content );
     }
 
     private Response cacheAndReturnResponse( final String timestamp, final ResolvedImage resolvedImage )

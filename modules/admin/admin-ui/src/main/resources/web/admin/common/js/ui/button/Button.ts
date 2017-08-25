@@ -1,6 +1,7 @@
 module api.ui.button {
 
-    export class Button extends api.dom.ButtonEl {
+    export class Button
+        extends api.dom.ButtonEl {
 
         private labelEl: api.dom.SpanEl;
 
@@ -32,7 +33,7 @@ module api.ui.button {
             return this.labelEl.getEl().getInnerHtml();
         }
 
-        setTitle(title: string, forceAction: boolean = true) {
+        setTitle(title: string, forceAction: boolean = true): Button {
             if (!api.BrowserHelper.isIOS()) {
                 if (title) {
                     this.getEl().setAttribute('title', title);
@@ -46,6 +47,7 @@ module api.ui.button {
                     this.getEl().removeAttribute('title');
                 }
             }
+            return this;
         }
     }
 }

@@ -155,7 +155,7 @@ export class LiveEditPageProxy {
 
         this.showLoadMaskHandler = () => {
             // in case someone tries to open live edit while it's still not loaded
-            if (!this.pageView && this.liveEditIFrame.isVisible()) {
+            if (this.liveEditModel.isPageRenderable() && this.liveEditIFrame.isVisible()) {
                 this.loadMask.show();
             }
         };
@@ -344,6 +344,7 @@ export class LiveEditPageProxy {
                 if (LiveEditPageProxy.debug) {
                     console.debug('LiveEditPageProxy.handleIframeLoadedEvent: notify live edit ready at ' + new Date().toISOString());
                 }
+                this.loadMask.hide();
                 this.notifyLiveEditPageViewReady(new api.liveedit.LiveEditPageViewReadyEvent());
             }
         }

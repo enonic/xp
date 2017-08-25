@@ -104,6 +104,9 @@
 ///<reference path='util/htmlarea/_module.ts' />
 ///<reference path='form/inputtype/text/_module.ts' />
 
+///<reference path='security/form/inputtype/_module.ts' />
+///<reference path='security/form/_module.ts' />
+
 ///<reference path='site/json/_module.ts' />
 ///<reference path='site/_module.ts' />
 
