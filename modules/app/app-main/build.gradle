@@ -1,5 +1,5 @@
 apply from: "$rootDir/gradle/osgi.gradle"
-apply plugin: 'com.moowork.node'
+apply plugin: 'com.moowork.gulp'
 
 
 dependencies {
@@ -7,6 +7,7 @@ dependencies {
     include project( ":lib:lib-mustache" )
     include project( ":lib:lib-portal" )
     include project( ":lib:lib-admin" )
+    include project( ":lib:lib-auth" )
 }
 
 node {
@@ -25,17 +26,16 @@ bundle {
     instruction 'X-Source-Paths', "$resourcesDir, $buildResourcesDir"
 }
 
-/*
-task webpack( type: NodeTask, dependsOn: npmInstall ) {
-    description = 'Build UI resources (ts, css, etc).'
-    script = file( './node_modules/webpack/bin/webpack' )
-    args = ['--config', "$rootDir/scripts/util/webpack.config.js"]
+task gulpAll( type: GulpTask, dependsOn: npmInstall ) {
+    description = 'Build UI resources (css, etc).'
+    inputs.dir 'src/main/resources'
+    outputs.dir 'build/resources/main'
+    args = ['all']
 }
+
+jar.dependsOn += gulpAll
+jar.outputs.dir "${buildDir}/resources/main"
 
 task cleanNode( type: Delete ) {
     delete 'node_modules'
 }
-
-jar.dependsOn += webpack
-jar.outputs.dir "${buildDir}/resources/main"
-*/

@@ -1,0 +1,22 @@
+{
+  "name": "app-main",
+  "version": "1.0.0",
+  "description": "Enonix Main App",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-inline-fonts": "^1.0.4",
+    "gulp-less": "^3.3.2",
+    "gulp-less-sourcemap": "^1.4.3",
+    "gulp-sourcemaps": "^2.6.1",
+    "gulp-webpack": "^1.5.0",
+    "less": "^2.7.2",
+    "less-plugin-autoprefix": "^1.5.1"
+  },
+  "dependencies": {
+    "jquery": "^2.2.4"
+  },
+  "engines": {
+    "node": ">= 6.9.2",
+    "npm": ">= 3.10.9"
+  }
+}

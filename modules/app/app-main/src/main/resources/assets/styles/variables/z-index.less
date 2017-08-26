@@ -1,0 +1,29 @@
+@z-index-mask: 2000;
+@z-index-context-window: @z-index-mask - 1;
+@z-index-user-info-popup: @z-index-mask - 1;
+@z-index-draggable: @z-index-mask + 1;
+@z-index-modal-dialog: @z-index-mask + 1;
+@z-index-tab-menu: @z-index-mask - 1;
+@z-index-notification: @z-index-mask + 1;
+@z-index-toolbar-element: @z-index-tab-menu - 1;
+@z-index-scroll-stick: @z-index-toolbar-element - 1;
+@z-index-docked-panel: @z-index-toolbar-element - 1;
+
+@z-index-wizard-option: 200;
+@z-index-wizard-filed: @z-index-wizard-option + 1;
+@z-index-wizard-filed-element: @z-index-wizard-filed + 1;
+@z-index-wizard-steps: @z-index-wizard-filed-element + 1;
+
+@z-index-mce-shader: 65535;
+@z-index-mce-toolbar-close: @z-index-mce-shader - 1;
+@z-index-mce-toolbar: @z-index-mce-toolbar-close - 1;
+
+@z-index-shader: 2147483600; // number close to max integer 2147483647 to be above live edit page elements
+@z-index-drag-helper: @z-index-shader + 1;
+@z-index-context-menu: @z-index-shader + 2;
+@z-index-empty-component-options: @z-index-context-menu + 1;
+@z-index-tooltip: @z-index-empty-component-options + 1;
+@z-index-text-editor-toolbar: @z-index-shader + 1;
+
+@z-index-launcher-panel: 2500;
+@z-index-launcher-button: 2501;
