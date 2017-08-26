@@ -116,6 +116,7 @@ addBundle( project( ':admin:admin-impl' ), 30 )
 addBundle( project( ':blobstore:blobstore-file' ), 22 )
 
 // Applications
+addBundle( project( ':app:app-main' ), 32 )
 addBundle( project( ':app:app-standardidprovider' ), 32 )
 addBundle( project( ':app:app-users' ), 32 )
 addBundle( project( ':app:app-applications' ), 32 )

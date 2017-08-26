@@ -1,24 +1,18 @@
-var auth = require('/lib/xp/auth');
-var mustache = require('/lib/xp/mustache');
-var portal = require('/lib/xp/portal');
-var admin = require('/lib/xp/admin');
 var i18n = require('/lib/xp/i18n');
+var admin = require('/lib/xp/admin');
+var portal = require('/lib/xp/portal');
+var mustache = require('/lib/xp/mustache');
 
-function handleGet(req) {
-    var uriScriptHelper = Java.type("com.enonic.xp.admin.ui.tool.UriScriptHelper");
-    var adminUrl = uriScriptHelper.generateAdminUri();
-    var assetsUri = uriScriptHelper.generateAdminAssetsUri();
-    var backgroundUri = uriScriptHelper.generateBackgroundUri();
-    var view = resolve('home.html');
+exports.get = function () {
 
     var busIconUrl = portal.assetUrl({path: "icons/bus.svg"});
     var infoIconUrl = portal.assetUrl({path: "icons/info-with-circle.svg"});
     var docsIconUrl = portal.assetUrl({path: "icons/docs.svg"});
     var forumIconUrl = portal.assetUrl({path: "icons/discuss.svg"});
     var marketIconUrl = portal.assetUrl({path: "icons/market.svg"});
-    
-    var isLatestSnapshot = app.version.endsWith('.0.SNAPSHOT');
+
     var docLinkPrefix = 'http://docs.enonic.com/en/';
+    var isLatestSnapshot = app.version.endsWith('.0.SNAPSHOT');
 
     if (isLatestSnapshot) {
         docLinkPrefix += 'latest';
@@ -28,7 +22,6 @@ function handleGet(req) {
     }
 
     var locale = admin.getLocale();
-
     var dashboardIcons = [{
         src: infoIconUrl,
         cls: 'xp-about',
@@ -71,22 +64,27 @@ function handleGet(req) {
         });
     }
 
+    var view = resolve('./home.html');
     var params = {
-        adminUrl: adminUrl,
-        assetsUri: assetsUri,
-        backgroundUri: backgroundUri,
-        dashboardIcons: dashboardIcons,
-        baseUri: '',
+        adminUrl: admin.getBaseUri(),
+        assetsUri: portal.assetUrl({
+            path: ''
+        }),
+        backgroundUri: portal.assetUrl({
+            path: 'images/background.jpg'
+        }),
+        adminAssetsUri: admin.getAssetsUri(),
         xpVersion: app.version,
         docLinkPrefix: docLinkPrefix,
+        tourEnabled: tourEnabled,
         messages: admin.getPhrases(),
-        tourEnabled: tourEnabled
+        dashboardIcons: dashboardIcons
     };
 
     return {
         contentType: 'text/html',
         body: mustache.render(view, params)
     };
-}
 
-exports.get = handleGet;
+};
+
