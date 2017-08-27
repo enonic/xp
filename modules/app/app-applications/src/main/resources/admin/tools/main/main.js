@@ -15,10 +15,7 @@ function handleGet() {
         appId: app.name,
         xpVersion: app.version,
         messages: admin.getPhrases(),
-        launcherUrl: portal.assetUrl({
-            path: '/js/launcher',
-            application: 'com.enonic.xp.app.main'
-        })
+        launcherUrl: admin.getLauncherUrl()
     };
 
     return {
