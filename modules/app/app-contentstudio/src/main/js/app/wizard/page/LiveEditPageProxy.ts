@@ -176,7 +176,7 @@ export class LiveEditPageProxy {
         placeholderIFrame.setSrc(CONFIG.adminAssetsUri + '/live-edit/js/_blank.html');
 
         placeholderIFrame.onLoaded(() => this.handlePlaceholderIFrameLoadedEvent(placeholderIFrame));
-        
+
         return placeholderIFrame;
     }
 
@@ -353,13 +353,13 @@ export class LiveEditPageProxy {
         this.notifyLoaded();
     }
 
-    private handlePlaceholderIFrameLoadedEvent(iframe) {
+    private handlePlaceholderIFrameLoadedEvent(iframe: api.dom.IFrameEl) {
         let window = iframe.getHTMLElement()['contentWindow'];
 
         wemjq(window.document.body).find('.page-placeholder-info-line1').html(i18n('live.view.page.nocontrollers'));
         wemjq(window.document.body).find('.page-placeholder-info-line2').html(i18n('live.view.page.addapplications'));
     }
-    
+
     public loadComponent(componentView: ComponentView<Component>, componentUrl: string): wemQ.Promise<string> {
         let deferred = wemQ.defer<string>();
         api.util.assertNotNull(componentView, 'componentView cannot be null');
