@@ -12,6 +12,12 @@
     }
   }
 
+  &.empty {
+    .@{_CLS_PREFIX}item-placeholder {
+      height: @placeholder-height;
+    }
+  }
+
   &[data-portal-placeholder-error=true] {
     background-color: @admin-input-red;
 
