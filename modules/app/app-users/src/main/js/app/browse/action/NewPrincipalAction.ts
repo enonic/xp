@@ -1,6 +1,6 @@
 import '../../../api.ts';
 import {NewPrincipalEvent} from '../NewPrincipalEvent';
-import {UserTreeGridItem} from '../UserTreeGridItem';
+import {UserTreeGridItem, UserTreeGridItemType} from '../UserTreeGridItem';
 import {UserItemsTreeGrid} from '../UserItemsTreeGrid';
 import {ShowNewPrincipalDialogEvent} from '../ShowNewPrincipalDialogEvent';
 
@@ -14,10 +14,10 @@ export class NewPrincipalAction extends Action {
         this.setEnabled(false);
         this.onExecuted(() => {
             const principals: UserTreeGridItem[] = grid.getSelectedDataList();
-            if (principals.length > 0) {
+            if (principals.length > 0 && principals[0].getType() !== UserTreeGridItemType.USER_STORE) {
                 new NewPrincipalEvent(principals).fire();
             } else {
-                new ShowNewPrincipalDialogEvent().fire();
+                new ShowNewPrincipalDialogEvent(principals).fire();
             }
         });
     }

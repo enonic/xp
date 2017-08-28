@@ -1,6 +1,7 @@
 import '../../api.ts';
 import {UserItemTypesTreeGrid} from './UserItemTypesTreeGrid';
 import {NewPrincipalEvent} from '../browse/NewPrincipalEvent';
+import {UserTreeGridItem, UserTreeGridItemType} from '../browse/UserTreeGridItem';
 
 import i18n = api.util.i18n;
 import LoadMask = api.ui.mask.LoadMask;
@@ -51,8 +52,17 @@ export class NewPrincipalDialog extends api.ui.dialog.ModalDialog {
         NewPrincipalEvent.on(() => this.isVisible() && this.close());
     }
 
+    setSelection(selection: UserTreeGridItem[]): NewPrincipalDialog {
+        const isUserStore = selection.length > 0 && selection[0].getType() === UserTreeGridItemType.USER_STORE;
+        if (isUserStore) {
+            this.grid.setUserStore(selection[0].getUserStore());
+        }
+        return this;
+    }
+
     open() {
         this.grid.reload(null, null, false);
+        this.grid.getGrid().resizeCanvas();
         super.open();
     }
 

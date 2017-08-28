@@ -59,8 +59,8 @@ function startApplication() {
     api.security.event.PrincipalServerEventsHandler.getInstance().start();
 
     const newPrincipalDialog = new NewPrincipalDialog();
-    ShowNewPrincipalDialogEvent.on(() => {
-        newPrincipalDialog.open();
+    ShowNewPrincipalDialogEvent.on((event) => {
+        newPrincipalDialog.setSelection(event.getSelection()).open();
     });
 }
 

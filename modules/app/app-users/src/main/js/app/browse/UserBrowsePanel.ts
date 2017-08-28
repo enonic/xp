@@ -48,7 +48,7 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
 
             let label;
 
-            if (noSelection) {
+            if (noSelection || selection[0].getData().getType() === UserTreeGridItemType.USER_STORE) {
                 label = `${i18n('action.new')}…`;
             } else {
                 const userItem = selection[0].getData();
@@ -68,9 +68,6 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
                 case UserTreeGridItemType.PRINCIPAL:
                     type = i18n(`field.${PrincipalType[userItem.getPrincipal().getType()].toLowerCase()}`);
                     break;
-                case UserTreeGridItemType.USER_STORE:
-                    type = i18n('field.userStore');
-                    break;
                 default:
                     type = '';
                 }
@@ -84,7 +81,7 @@ export class UserBrowsePanel extends api.app.browse.BrowsePanel<UserTreeGridItem
 
         this.treeGrid.onHighlightingChanged((node: TreeNode<UserTreeGridItem>) => changeSelectionStatus(node ? [node] : []));
 
-        this.onShown((event) => {
+        this.onShown(() => {
             Router.setHash('browse');
         });
     }

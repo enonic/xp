@@ -40,8 +40,9 @@ export class UserItemTypesTreeGrid extends TreeGrid<UserTypeTreeGridItem> {
 
     private userStores: UserStore[];
 
-    constructor() {
+    private manualUserStore: boolean;
 
+    constructor() {
         const builder = new TreeGridBuilder<UserTypeTreeGridItem>().setColumnConfig([{
             name: i18n('field.name'),
             id: 'name',
@@ -56,6 +57,8 @@ export class UserItemTypesTreeGrid extends TreeGrid<UserTypeTreeGridItem> {
             .prependClasses('user-types-tree-grid');
 
         super(builder);
+
+        this.manualUserStore = false;
 
         this.initEventHandlers();
     }
@@ -121,16 +124,18 @@ export class UserItemTypesTreeGrid extends TreeGrid<UserTypeTreeGridItem> {
                     .setKey(new PrincipalKey(UserStoreKey.SYSTEM, PrincipalType.GROUP, 'user-group'))
                     .setDisplayName(i18n('field.userGroup'))
                     .build()).build(),
-            new UserTypeTreeGridItemBuilder()
-                .setUserItem(new UserStoreBuilder()
-                    .setKey(UserStoreKey.SYSTEM.toString())
-                    .setDisplayName(i18n('field.userStore'))
-                    .build()).build(),
-            new UserTypeTreeGridItemBuilder()
-                .setUserItem(new RoleBuilder()
-                    .setKey(new PrincipalKey(UserStoreKey.SYSTEM, PrincipalType.ROLE, 'role'))
-                    .setDisplayName(i18n('field.role'))
-                    .build()).build(),
+            ...(this.manualUserStore ? [] : [
+                    new UserTypeTreeGridItemBuilder()
+                        .setUserItem(new UserStoreBuilder()
+                            .setKey(UserStoreKey.SYSTEM.toString())
+                            .setDisplayName(i18n('field.userStore'))
+                            .build()).build(),
+                    new UserTypeTreeGridItemBuilder()
+                        .setUserItem(new RoleBuilder()
+                            .setKey(new PrincipalKey(UserStoreKey.SYSTEM, PrincipalType.ROLE, 'role'))
+                            .setDisplayName(i18n('field.role'))
+                            .build()).build(),
+                ])
         ]);
     }
 
@@ -157,7 +162,15 @@ export class UserItemTypesTreeGrid extends TreeGrid<UserTypeTreeGridItem> {
         });
     }
 
+    setUserStore(userStore: UserStore) {
+        this.userStores = [userStore];
+        this.manualUserStore = true;
+        this.addClass('flat');
+    }
+
     clearUserStores() {
         this.userStores = null;
+        this.manualUserStore = false;
+        this.removeClass('flat');
     }
 }
