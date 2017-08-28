@@ -7,6 +7,7 @@ import com.google.common.collect.Multimap;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
@@ -65,26 +66,35 @@ final class PageHandlerWorker
         {
             pageTemplate = (PageTemplate) content;
         }
-        else if ( !content.hasPage() )
+        else if ( content.hasPage() )
         {
-            pageTemplate = getDefaultPageTemplate( content.getType(), site );
-        }
-        else // hasPage
-        {
+
             final Page page = getPage( content );
             if ( page.hasTemplate() )
             {
-                final PageTemplate resolvedPageTemplate = getPageTemplate( page );
-                if ( resolvedPageTemplate.canRender( content.getType() ) )
+                try
                 {
-                    //template may be deleted or updated to not support content type after content had been created
-                    pageTemplate = resolvedPageTemplate;
+                    final PageTemplate resolvedPageTemplate = getPageTemplate( page );
+                    if ( resolvedPageTemplate.canRender( content.getType() ) )
+                    {
+                        //template may be deleted or updated to not support content type after content had been created
+                        pageTemplate = resolvedPageTemplate;
+                    }
+                }
+                catch ( ContentNotFoundException e )
+                {
+                    pageTemplate = null;
                 }
             }
             else if ( page.hasController() )
             {
                 pageDescriptor = getPageDescriptor( page.getController() );
             }
+
+        }
+        if(pageTemplate == null)
+        {
+            pageTemplate = getDefaultPageTemplate( content.getType(), site );
         }
 
         if ( pageTemplate != null && pageTemplate.getController() != null )

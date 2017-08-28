@@ -418,9 +418,9 @@ module api.content.page {
                     setFragment(this.fragment).
                     build();
             } else if (this.mode === PageMode.NO_CONTROLLER) {
-                if (this.contentHasNonRenderableTemplateSet()) {
+                if (this.fragment != null) {
                     return new PageBuilder().
-                        setTemplate(this.liveEditModel.getContent().getPage().getTemplate()).setFragment(this.fragment).
+                        setFragment(this.fragment).
                         build();
                 } else {
                     return null;
@@ -507,12 +507,6 @@ module api.content.page {
 
         isCustomized(): boolean {
             return this.customized;
-        }
-
-        private contentHasNonRenderableTemplateSet() {
-            return !this.isPageTemplate() && (this.mode === PageMode.NO_CONTROLLER) &&
-                   this.liveEditModel.getContent().getPage() &&
-                   this.liveEditModel.getContent().getPage().getTemplate();
         }
 
         private registerRegionsListeners(regions: api.content.page.region.Regions) {
