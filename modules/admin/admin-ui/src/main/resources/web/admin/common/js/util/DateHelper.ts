@@ -234,8 +234,6 @@ module api.util {
         }
 
         static getModifiedString(modified: Date): string {
-            import i18n = api.util.i18n;
-
             let timeDiff = Math.abs(Date.now() - modified.getTime());
             let secInMs = 1000;
             let minInMs = secInMs * 60;
@@ -245,37 +243,37 @@ module api.util {
             let yrInMs = dayInMs * 365;
 
             if (timeDiff < minInMs) {
-                return i18n('widget.versionhistory.lessthanminuteago');
+                return api.util.i18n('widget.versionhistory.lessthanminuteago');
             }
             if (timeDiff < 2 * minInMs) {
-                return i18n('widget.versionhistory.minuteago');
+                return api.util.i18n('widget.versionhistory.minuteago');
             }
             if (timeDiff < hrInMs) {
-                return i18n('widget.versionhistory.minutesago', ~~(timeDiff / minInMs));
+                return api.util.i18n('widget.versionhistory.minutesago', ~~(timeDiff / minInMs));
             }
             if (timeDiff < 2 * hrInMs) {
-                return i18n('widget.versionhistory.overhourago');
+                return api.util.i18n('widget.versionhistory.overhourago');
             }
             if (timeDiff < dayInMs) {
-                return i18n('widget.versionhistory.overhoursago', ~~(timeDiff / hrInMs));
+                return api.util.i18n('widget.versionhistory.overhoursago', ~~(timeDiff / hrInMs));
             }
             if (timeDiff < 2 * dayInMs) {
-                return i18n('widget.versionhistory.overdayago');
+                return api.util.i18n('widget.versionhistory.overdayago');
             }
             if (timeDiff < monInMs) {
-                return i18n('widget.versionhistory.overdayssago', ~~(timeDiff / dayInMs));
+                return api.util.i18n('widget.versionhistory.overdayssago', ~~(timeDiff / dayInMs));
             }
             if (timeDiff < 2 * monInMs) {
-                return i18n('widget.versionhistory.overmonthago');
+                return api.util.i18n('widget.versionhistory.overmonthago');
             }
             if (timeDiff < yrInMs) {
-                return i18n('widget.versionhistory.overmonthsago', ~~(timeDiff / monInMs));
+                return api.util.i18n('widget.versionhistory.overmonthsago', ~~(timeDiff / monInMs));
             }
             if (timeDiff < 2 * yrInMs) {
-                return i18n('widget.versionhistory.overyearago');
+                return api.util.i18n('widget.versionhistory.overyearago');
             }
 
-            return i18n('widget.versionhistory.overyearsago', ~~(timeDiff / yrInMs));
+            return api.util.i18n('widget.versionhistory.overyearsago', ~~(timeDiff / yrInMs));
         }
     }
 
