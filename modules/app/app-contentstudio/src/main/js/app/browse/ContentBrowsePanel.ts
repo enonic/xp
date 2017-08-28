@@ -677,14 +677,14 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
         }
 
         let content: ContentSummaryAndCompareStatus;
-        let detailsPanelNeedsUpdate = data.some((contentItem: ContentSummaryAndCompareStatus) => {
+        let itemInDetailsPanelUpdated = data.some((contentItem: ContentSummaryAndCompareStatus) => {
             if (contentItem.getId() === itemInDetailPanel.getId()) {
                 content = contentItem;
                 return true;
             }
         });
 
-        if (detailsPanelNeedsUpdate) {
+        if (itemInDetailsPanelUpdated) {
             this.doUpdateDetailsPanel(content);
         }
     }
