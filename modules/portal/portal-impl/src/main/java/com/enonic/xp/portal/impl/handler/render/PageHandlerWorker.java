@@ -66,9 +66,12 @@ final class PageHandlerWorker
         {
             pageTemplate = (PageTemplate) content;
         }
-        else if ( content.hasPage() )
+        else if ( !content.hasPage() )
         {
-
+            pageTemplate = getDefaultPageTemplate( content.getType(), site );
+        }
+        else
+        {
             final Page page = getPage( content );
             if ( page.hasTemplate() )
             {
@@ -83,7 +86,7 @@ final class PageHandlerWorker
                 }
                 catch ( ContentNotFoundException e )
                 {
-                    pageTemplate = null;
+                    pageTemplate = getDefaultPageTemplate( content.getType(), site );
                 }
             }
             else if ( page.hasController() )
@@ -91,10 +94,6 @@ final class PageHandlerWorker
                 pageDescriptor = getPageDescriptor( page.getController() );
             }
 
-        }
-        if(pageTemplate == null)
-        {
-            pageTemplate = getDefaultPageTemplate( content.getType(), site );
         }
 
         if ( pageTemplate != null && pageTemplate.getController() != null )
