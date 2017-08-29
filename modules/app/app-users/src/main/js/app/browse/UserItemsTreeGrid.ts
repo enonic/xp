@@ -3,7 +3,6 @@ import {UserTreeGridItem, UserTreeGridItemType, UserTreeGridItemBuilder} from '.
 import {UserTreeGridActions} from './UserTreeGridActions';
 import {EditPrincipalEvent} from './EditPrincipalEvent';
 import {UserItemsRowFormatter} from './UserItemsRowFormatter';
-import {NewPrincipalEvent} from './NewPrincipalEvent';
 
 import GridColumn = api.ui.grid.GridColumn;
 import GridColumnBuilder = api.ui.grid.GridColumnBuilder;
@@ -38,8 +37,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
                 field: 'displayName',
                 formatter: UserItemsRowFormatter.nameFormatter,
             style: {minWidth: 200}
-        }]).setPartialLoadEnabled(true).setLoadBufferSize(20)
-            .prependClasses('user-tree-grid');
+        }]).setPartialLoadEnabled(true).setLoadBufferSize(20).prependClasses('user-tree-grid');
 
         const columns = builder.getColumns().slice(0);
         const [nameColumn] = columns;
@@ -171,6 +169,34 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
         }
 
         super.deleteNodes(userTreeGridItemsToDelete);
+    }
+
+    getParentNode(nextToSelection: boolean = false, stashedParentNode?: TreeNode<UserTreeGridItem>, data?: UserTreeGridItem) {
+        const parent = super.getParentNode(nextToSelection, stashedParentNode);
+        if (parent.getData().getType() === UserTreeGridItemType.USER_STORE && parent.hasChildren()) {
+            const parentType = (data && data.getPrincipal().isUser()) ? UserTreeGridItemType.USERS : UserTreeGridItemType.GROUPS;
+            return parent.getChildren().filter(node => node.getData().getType() === parentType)[0] || parent;
+        }
+
+        return parent;
+    }
+
+    protected updateSelectedNode(node: TreeNode<UserTreeGridItem>) {
+        // Highlighted nodes should remain as is, and must not be selected
+        const firstSelectedOrHighlighted = this.getFirstSelectedOrHighlightedNode();
+        const highlighted = this.getRoot().getFullSelection().length === 0 && !!firstSelectedOrHighlighted;
+
+        const usersAndGroupsTypes = [UserTreeGridItemType.USERS, UserTreeGridItemType.GROUPS];
+        const usersOrGroupsUpdating = usersAndGroupsTypes.some(type => type === node.getData().getType());
+        const selectedData = this.getSelectedDataList()[0];
+        const userStoreSelected = selectedData && selectedData.getType() === UserTreeGridItemType.USER_STORE;
+
+        const nodeToUpdate = (usersOrGroupsUpdating && userStoreSelected) ? node.getParent() : node;
+        if (highlighted) {
+            this.refreshNode(nodeToUpdate);
+        } else {
+            super.updateSelectedNode(nodeToUpdate);
+        }
     }
 
     getDataId(item: UserTreeGridItem): string {
