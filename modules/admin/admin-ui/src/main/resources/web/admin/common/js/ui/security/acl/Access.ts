@@ -18,8 +18,8 @@ module api.ui.security.acl {
     }
 
     export const accessOptions: AccessOption[] = [
-        {value: Access.FULL, name: i18n('security.access.publish')},
-        {value: Access.PUBLISH, name: i18n('security.access.full')},
+        {value: Access.FULL, name: i18n('security.access.full')},
+        {value: Access.PUBLISH, name: i18n('security.access.publish')},
         {value: Access.WRITE, name: i18n('security.access.write')},
         {value: Access.READ, name: i18n('security.access.read')},
         {value: Access.CUSTOM, name: i18n('security.access.custom')}
