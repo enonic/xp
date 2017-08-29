@@ -73,6 +73,7 @@ include 'lib:lib-task'
 include 'lib:lib-value'
 include 'lib:lib-event'
 include 'lib:lib-admin'
+include 'lib:lib-admin-ui'
 
 include 'launcher:launcher-api'
 include 'launcher:launcher-impl'

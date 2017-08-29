@@ -1,10 +1,6 @@
 package com.enonic.xp.admin.impl.app;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
@@ -18,42 +14,22 @@ import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 public final class MainWebHandler
     extends BaseWebHandler
 {
-    private final static Pattern ASSET_PATTERN = Pattern.compile( "/admin/(.+)" );
-
-    private final static Pattern VERSIONED_ASSET_PATTERN = Pattern.compile( "/admin/assets/([^/]+)/(.+)" );
-
-    private final ResourceHandler resourceHandler;
-
     public MainWebHandler()
     {
         super( 100 );
-        this.resourceHandler = new ResourceHandler();
     }
 
     @Override
     protected boolean canHandle( final WebRequest req )
     {
         final String path = req.getRawPath();
-        return path.equals("") || path.equals( "/" ) || path.equals( "/admin" ) || path.startsWith( "/admin/" ) || ASSET_PATTERN.matcher( path ).matches();
+        return path.equals( "" ) || path.equals( "/" ) || path.equals( "/admin" ) || path.equals( "/admin/" );
     }
 
     @Override
     protected WebResponse doHandle( final WebRequest req, final WebResponse res, final WebHandlerChain chain )
         throws Exception
     {
-        final String path = req.getRawPath();
-        Matcher matcher = VERSIONED_ASSET_PATTERN.matcher( path );
-        if ( matcher.matches() )
-        {
-            return serveAsset( matcher.group( 1 ), matcher.group( 2 ) );
-        }
-
-        matcher = ASSET_PATTERN.matcher( path );
-        if ( matcher.matches() )
-        {
-            return serveAsset( null, matcher.group( 1 ) );
-        }
-
         return redirectToLoginPage();
     }
 
@@ -64,17 +40,5 @@ public final class MainWebHandler
             status( HttpStatus.TEMPORARY_REDIRECT ).
             header( "Location", uri ).
             build();
-    }
-
-    private WebResponse serveAsset( final String version, final String path )
-        throws Exception
-    {
-        return this.resourceHandler.handle( "admin/" + path, version != null );
-    }
-
-    @Reference
-    public void setResourceLocator( final ResourceLocator resourceLocator )
-    {
-        this.resourceHandler.setResourceLocator( resourceLocator );
     }
 }

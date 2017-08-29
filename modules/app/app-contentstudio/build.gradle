@@ -5,7 +5,7 @@ dependencies {
     compile project( ":admin:admin-ui" )
     include project( ":lib:lib-mustache" )
     include project( ":lib:lib-portal" )
-    include project( ":lib:lib-admin" )
+    include project( ":lib:lib-admin-ui" )
 }
 
 node {
