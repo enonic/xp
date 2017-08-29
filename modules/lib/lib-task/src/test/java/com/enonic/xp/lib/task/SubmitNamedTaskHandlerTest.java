@@ -6,7 +6,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.mockito.Matchers.any;
 

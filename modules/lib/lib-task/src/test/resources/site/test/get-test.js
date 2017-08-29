@@ -1,4 +1,4 @@
-var assert = require('/lib/xp/testing.js');
+var t = require('/lib/xp/testing.js');
 var taskLib = require('/lib/xp/task.js');
 
 exports.getExistingTask = function () {
@@ -15,13 +15,13 @@ exports.getExistingTask = function () {
             "total": 42
         }
     };
-    assert.assertJsonEquals(expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 };
 
 exports.getTaskNotFound = function () {
 
     var result = taskLib.get("123");
 
-    assert.assertNull(result);
+    t.assertNull(result);
 
 };

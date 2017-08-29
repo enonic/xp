@@ -1,4 +1,4 @@
-var assert = require('/lib/xp/testing.js');
+var t = require('/lib/xp/testing.js');
 var taskLib = require('/lib/xp/task.js');
 
 exports.sleep = function () {
@@ -10,5 +10,5 @@ exports.sleep = function () {
 
     var t2 = System.currentTimeMillis();
 
-    assert.assertTrue(t2 - t1 >= 200);
+    t.assertTrue(t2 - t1 >= 200);
 };

@@ -1,4 +1,4 @@
-var assert = require('/lib/xp/testing.js');
+var t = require('/lib/xp/testing.js');
 var taskLib = require('/lib/xp/task.js');
 
 exports.submitTask = function () {
@@ -10,7 +10,7 @@ exports.submitTask = function () {
         }
     });
 
-    assert.assertEquals('123', taskId);
+    t.assertEquals('123', taskId);
 };
 
 exports.submitTaskThrowingError = function () {
@@ -22,5 +22,5 @@ exports.submitTaskThrowingError = function () {
         }
     });
 
-    assert.assertEquals('123', taskId);
+    t.assertEquals('123', taskId);
 };

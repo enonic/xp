@@ -1,4 +1,4 @@
-var assert = require('/lib/xp/testing.js');
+var t = require('/lib/xp/testing.js');
 var taskLib = require('/lib/xp/task.js');
 
 exports.getExistingTasks = function () {
@@ -38,7 +38,7 @@ exports.getExistingTasks = function () {
         }
     ];
 
-    assert.assertJsonEquals(expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 };
 
 exports.listNone = function () {
@@ -47,6 +47,6 @@ exports.listNone = function () {
 
     var expectedJson = [];
 
-    assert.assertJsonEquals(expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 
 };
