@@ -27,7 +27,9 @@ bundle {
 task webpack( type: NodeTask, dependsOn: npmInstall ) {
     description = 'Build UI resources (ts, css, etc).'
     script = file( './node_modules/webpack/bin/webpack' )
-    args = ['--config', "$rootDir/scripts/util/webpack.config.js"]
+    args = ['--config', "./webpack.config.js"]
+    inputs.dir 'src/main/resources'
+    outputs.dir 'build/resources/main'
 }
 
 task cleanNode( type: Delete ) {
