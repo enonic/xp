@@ -27,6 +27,10 @@ module api.content.site.inputtype.siteconfigurator {
 
         private formValidityChangedHandler: {(event: api.form.FormValidityChangedEvent): void};
 
+        private configureDialog: SiteConfiguratorDialog;
+
+        private formViewStateOnDialogOpen: FormView;
+
         constructor(option: Option<Application>, siteConfig: SiteConfig, formContext: api.content.form.ContentFormContext) {
             super(option);
 
@@ -82,7 +86,8 @@ module api.content.site.inputtype.siteconfigurator {
             });
             header.appendChild(removeButton);
 
-            return wemQ(true);
+            return this.initConfigureDialog().render(true)
+                .then(()=> wemQ(true));
         }
 
         setSiteConfig(siteConfig: SiteConfig) {
@@ -95,7 +100,7 @@ module api.content.site.inputtype.siteconfigurator {
             editButton.onClicked((event: MouseEvent) => {
                 if (this.isEditable()) {
                     this.notifyEditClicked(event);
-                    this.initAndOpenConfigureDialog();
+                    this.showConfigureDialog();
                     event.stopPropagation();
                     event.preventDefault();
                     return false;
@@ -104,15 +109,23 @@ module api.content.site.inputtype.siteconfigurator {
 
             return editButton;
         }
+        showConfigureDialog() {
 
-        initAndOpenConfigureDialog(comboBoxToUndoSelectionOnCancel?: SiteConfiguratorComboBox) {
+            if (this.formView) {
+                this.formViewStateOnDialogOpen = this.formView;
+                this.unbindValidationEvent(this.formViewStateOnDialogOpen);
+            }
 
+            this.configureDialog = this.initConfigureDialog();
+            if (this.configureDialog) {
+                this.configureDialog.open();
+            }
+        }
+
+        initConfigureDialog(): SiteConfiguratorDialog {
             if (this.application.getForm().getFormItems().length > 0) {
 
                 let tempSiteConfig: SiteConfig = this.makeTemporarySiteConfig();
-
-                let formViewStateOnDialogOpen = this.formView;
-                this.unbindValidationEvent(formViewStateOnDialogOpen);
 
                 this.formView = this.createFormView(tempSiteConfig);
                 this.bindValidationEvent(this.formView);
@@ -125,10 +138,7 @@ module api.content.site.inputtype.siteconfigurator {
                 };
 
                 let cancelCallback = () => {
-                    this.revertFormViewToGivenState(formViewStateOnDialogOpen);
-                    if (comboBoxToUndoSelectionOnCancel) {
-                        this.undoSelectionOnCancel(comboBoxToUndoSelectionOnCancel);
-                    }
+                    this.revertFormViewToGivenState(this.formViewStateOnDialogOpen);
                 };
 
                 let siteConfiguratorDialog = new SiteConfiguratorDialog(this.application,
@@ -136,8 +146,9 @@ module api.content.site.inputtype.siteconfigurator {
                     okCallback,
                     cancelCallback);
 
-                siteConfiguratorDialog.open();
+                return this.configureDialog = siteConfiguratorDialog;
             }
+            return null;
         }
 
         private revertFormViewToGivenState(formViewStateToRevertTo: FormView) {
