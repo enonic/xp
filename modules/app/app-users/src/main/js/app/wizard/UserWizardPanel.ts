@@ -18,6 +18,7 @@ import GetPrincipalByKeyRequest = api.security.GetPrincipalByKeyRequest;
 import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
 import WizardStep = api.app.wizard.WizardStep;
 import i18n = api.util.i18n;
+import IsAuthenticatedRequest = api.security.auth.IsAuthenticatedRequest;
 
 export class UserWizardPanel extends PrincipalWizardPanel {
 
@@ -45,21 +46,27 @@ export class UserWizardPanel extends PrincipalWizardPanel {
         }
     }
 
-    createSteps(principal?: Principal): WizardStep[] {
-        let steps: WizardStep[] = [];
+    createSteps(principal?: Principal): wemQ.Promise<WizardStep[]> {
 
         this.userEmailWizardStepForm = new UserEmailWizardStepForm(this.getParams().userStore.getKey());
         this.userPasswordWizardStepForm = new UserPasswordWizardStepForm();
         this.userMembershipsWizardStepForm = new UserMembershipsWizardStepForm();
 
-        steps.push(new WizardStep(i18n('field.user'), this.userEmailWizardStepForm));
-        steps.push(new WizardStep(i18n('field.authentication'), this.userPasswordWizardStepForm));
-        steps.push(new WizardStep(i18n('field.rolesAndGroups'), this.userMembershipsWizardStepForm));
+        const userStep = new WizardStep(i18n('field.user'), this.userEmailWizardStepForm);
+        const authStep = new WizardStep(i18n('field.authentication'), this.userPasswordWizardStepForm);
+        const rolesAndGroupsStep = new WizardStep(i18n('field.rolesAndGroups'), this.userMembershipsWizardStepForm);
 
-        return steps;
+        return new IsAuthenticatedRequest().sendAndParse().then(result => {
+            const principals = result.getPrincipals();
+            const validKeys = ['su', 'system.admin', 'system.user.admin'];
+            const rolesAndGroupsAccessible = validKeys.some(id => principals.some(p => p.getId() === id));
+
+            return rolesAndGroupsAccessible ? [userStep, authStep, rolesAndGroupsStep] : [userStep, authStep];
+        });
     }
 
     doLayout(persistedPrincipal: Principal): wemQ.Promise<void> {
+
 
         return super.doLayout(persistedPrincipal).then(() => {
 

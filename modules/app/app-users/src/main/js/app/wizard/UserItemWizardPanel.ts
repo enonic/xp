@@ -183,15 +183,15 @@ export class UserItemWizardPanel<USER_ITEM_TYPE extends UserItem> extends api.ap
         }
     }
 
-    createSteps(persistedItem: USER_ITEM_TYPE): WizardStep[] {
+    createSteps(persistedItem: USER_ITEM_TYPE): wemQ.Promise<WizardStep[]> {
         throw new Error('Must be implemented by inheritors');
     }
 
     doLayout(persistedItem: USER_ITEM_TYPE): wemQ.Promise<void> {
 
-        this.setSteps(this.createSteps(this.getPersistedItem()));
-
-        return wemQ<void>(null);
+        return this.createSteps(this.getPersistedItem()).then(steps => {
+            this.setSteps(steps);
+        });
     }
 
     protected doLayoutPersistedItem(persistedItem: USER_ITEM_TYPE): Q.Promise<void> {

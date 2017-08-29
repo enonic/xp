@@ -117,7 +117,7 @@ export class PrincipalWizardPanel extends UserItemWizardPanel<Principal> {
         return this.getParams().userStore;
     }
 
-    createSteps(principal?: Principal): WizardStep[] {
+    createSteps(principal?: Principal): wemQ.Promise<WizardStep[]> {
         throw new Error('Must be implemented by inheritors');
     }
 
