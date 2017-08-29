@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
+import com.enonic.xp.task.TaskProgressReporterContext;
 
 final class TaskWrapper
     implements RunnableTask
@@ -27,19 +28,19 @@ final class TaskWrapper
     @Override
     public void run( final TaskId id, final ProgressReporter progressReporter )
     {
+        TaskProgressReporterContext.withContext( this::runTask ).run( id, progressReporter );
+    }
+
+    private void runTask( final TaskId id, final ProgressReporter progressReporter )
+    {
         try
         {
-            TaskProgressReporterHolder.set( progressReporter );
             taskFunction.apply( null );
         }
         catch ( Throwable t )
         {
-            LOG.info( "Error executing task [{}] '{}': ", id.toString(), description, t.getMessage(), t );
+            LOG.error( "Error executing task [{}] '{}': {}", id.toString(), description, t.getMessage(), t );
             throw t;
-        }
-        finally
-        {
-            TaskProgressReporterHolder.set( null );
         }
     }
 }

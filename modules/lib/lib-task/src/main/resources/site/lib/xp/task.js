@@ -27,6 +27,7 @@ function checkRequired(params, name) {
 
 /**
  * Submits a task to be executed in the background and returns an id representing the task.
+ *
  * This function returns immediately. The callback function will be executed asynchronously.
  *
  * @example-ref examples/task/submit.js
@@ -48,7 +49,26 @@ exports.submit = function (params) {
     bean.task = __.nullOrValue(params.task);
 
     return bean.submit();
+};
 
+/**
+ * Submits a named task to be executed in the background and returns an id representing the task.
+ *
+ * This function returns immediately. The callback function will be executed asynchronously.
+ *
+ * @example-ref examples/task/submitNamed.js
+ *
+ * @param {string} taskName Name of the task to execute.
+ *
+ * @returns {string} Id of the task that will be executed.
+ */
+exports.submitNamed = function (taskName) {
+
+    var bean = __.newBean('com.enonic.xp.lib.task.SubmitNamedTaskHandler');
+
+    bean.name = __.nullOrValue(taskName);
+
+    return bean.submit();
 };
 
 /**

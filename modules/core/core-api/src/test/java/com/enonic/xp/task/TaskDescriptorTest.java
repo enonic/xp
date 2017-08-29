@@ -18,12 +18,27 @@ public class TaskDescriptorTest
 
         final TaskDescriptor descriptor = TaskDescriptor.create().
             key( key ).
-            descriptor( "test" ).
-            form( form ).
+            description( "test" ).
+            config( form ).
             build();
 
         assertSame( key, descriptor.getKey() );
         assertEquals( "test", descriptor.getDescription() );
-        assertSame( form, descriptor.getForm() );
+        assertSame( form, descriptor.getConfig() );
+    }
+
+    @Test
+    public void testDescriptorWithoutConfig()
+    {
+        final DescriptorKey key = DescriptorKey.from( ApplicationKey.SYSTEM, "test" );
+
+        final TaskDescriptor descriptor = TaskDescriptor.create().
+            key( key ).
+            description( "test" ).
+            build();
+
+        assertSame( key, descriptor.getKey() );
+        assertEquals( "test", descriptor.getDescription() );
+        assertNotNull( descriptor.getConfig() );
     }
 }
