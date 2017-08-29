@@ -35,6 +35,7 @@ import User = api.security.User;
 import Group = api.security.Group;
 import ElementHelper = api.dom.ElementHelper;
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
+import IsAuthenticatedRequest = api.security.auth.IsAuthenticatedRequest;
 
 export class UserItemTypesTreeGrid extends TreeGrid<UserTypeTreeGridItem> {
 
@@ -113,7 +114,11 @@ export class UserItemTypesTreeGrid extends TreeGrid<UserTypeTreeGridItem> {
     }
 
     fetchRoot(): wemQ.Promise<UserTypeTreeGridItem[]> {
-        return this.fetchUserStores().then(() => [
+        return wemQ.spread([new IsAuthenticatedRequest().sendAndParse(), this.fetchUserStores()], result => {
+            const principals = result.getPrincipals();
+            const validKeys = ['su', 'system.admin', 'system.user.admin'];
+            return validKeys.some(id => principals.some(p => p.getId() === id));
+        }, reason => !api.DefaultErrorHandler.handle(reason)).then(userIsAdmin => [
             new UserTypeTreeGridItemBuilder()
                 .setUserItem(new UserBuilder()
                     .setKey(new PrincipalKey(UserStoreKey.SYSTEM, PrincipalType.USER, 'user'))
@@ -124,7 +129,7 @@ export class UserItemTypesTreeGrid extends TreeGrid<UserTypeTreeGridItem> {
                     .setKey(new PrincipalKey(UserStoreKey.SYSTEM, PrincipalType.GROUP, 'user-group'))
                     .setDisplayName(i18n('field.userGroup'))
                     .build()).build(),
-            ...(this.manualUserStore ? [] : [
+            ...((this.manualUserStore || !userIsAdmin) ? [] : [
                     new UserTypeTreeGridItemBuilder()
                         .setUserItem(new UserStoreBuilder()
                             .setKey(UserStoreKey.SYSTEM.toString())
