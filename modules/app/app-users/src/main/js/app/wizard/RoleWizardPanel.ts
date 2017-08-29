@@ -24,7 +24,7 @@ export class RoleWizardPanel extends GroupRoleWizardPanel {
         this.addClass('role-wizard-panel');
     }
 
-    createSteps(principal?: Principal): WizardStep[] {
+    createSteps(principal?: Principal): wemQ.Promise<WizardStep[]> {
         let steps: WizardStep[] = [];
 
         let descriptionStep = this.getDescriptionWizardStepForm();
@@ -37,7 +37,7 @@ export class RoleWizardPanel extends GroupRoleWizardPanel {
             steps.push(new WizardStep(i18n('field.grants'), membersStep));
         }
 
-        return steps;
+        return wemQ.resolve(steps);
     }
 
     persistNewItem(): wemQ.Promise<Principal> {

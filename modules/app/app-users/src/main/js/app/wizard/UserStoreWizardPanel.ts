@@ -87,7 +87,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         return i18n('field.userStore');
     }
 
-    createSteps(persistedItem: UserStore): WizardStep[] {
+    createSteps(persistedItem: UserStore): wemQ.Promise<WizardStep[]> {
         let steps: WizardStep[] = [];
 
         this.userStoreWizardStepForm = new UserStoreWizardStepForm();
@@ -96,7 +96,7 @@ export class UserStoreWizardPanel extends UserItemWizardPanel<UserStore> {
         steps.push(new WizardStep(i18n('field.userStore'), this.userStoreWizardStepForm));
         steps.push(new WizardStep(i18n('field.permissions'), this.permissionsWizardStepForm));
 
-        return steps;
+        return wemQ.resolve(steps);
     }
 
     doLayout(persistedUserStore: UserStore): wemQ.Promise<void> {
