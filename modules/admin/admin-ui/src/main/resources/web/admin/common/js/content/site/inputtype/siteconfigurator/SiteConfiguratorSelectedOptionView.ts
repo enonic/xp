@@ -123,32 +123,32 @@ module api.content.site.inputtype.siteconfigurator {
         }
 
         initConfigureDialog(): SiteConfiguratorDialog {
-            if (this.application.getForm().getFormItems().length > 0) {
-
-                let tempSiteConfig: SiteConfig = this.makeTemporarySiteConfig();
-
-                this.formView = this.createFormView(tempSiteConfig);
-                this.bindValidationEvent(this.formView);
-
-                let okCallback = () => {
-                    if (!tempSiteConfig.equals(this.siteConfig)) {
-                        this.applyTemporaryConfig(tempSiteConfig);
-                        new api.content.event.ContentRequiresSaveEvent(this.formContext.getPersistedContent().getContentId()).fire();
-                    }
-                };
-
-                let cancelCallback = () => {
-                    this.revertFormViewToGivenState(this.formViewStateOnDialogOpen);
-                };
-
-                let siteConfiguratorDialog = new SiteConfiguratorDialog(this.application,
-                    this.formView,
-                    okCallback,
-                    cancelCallback);
-
-                return this.configureDialog = siteConfiguratorDialog;
+            if (!this.application.getForm().getFormItems().length) {
+                return null;
             }
-            return null;
+
+            let tempSiteConfig: SiteConfig = this.makeTemporarySiteConfig();
+
+            this.formView = this.createFormView(tempSiteConfig);
+            this.bindValidationEvent(this.formView);
+
+            let okCallback = () => {
+                if (!tempSiteConfig.equals(this.siteConfig)) {
+                    this.applyTemporaryConfig(tempSiteConfig);
+                    new api.content.event.ContentRequiresSaveEvent(this.formContext.getPersistedContent().getContentId()).fire();
+                }
+            };
+
+            let cancelCallback = () => {
+                this.revertFormViewToGivenState(this.formViewStateOnDialogOpen);
+            };
+
+            let siteConfiguratorDialog = new SiteConfiguratorDialog(this.application,
+                this.formView,
+                okCallback,
+                cancelCallback);
+
+            return this.configureDialog = siteConfiguratorDialog;
         }
 
         private revertFormViewToGivenState(formViewStateToRevertTo: FormView) {
