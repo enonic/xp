@@ -1,4 +1,3 @@
-require('../../styles/home.less');
 var $ = require('jquery');
 
 $(function () {

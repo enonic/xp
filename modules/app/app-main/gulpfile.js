@@ -2,7 +2,7 @@ var gulp = require('gulp');
 var less = require('gulp-less');
 var sourceMaps = require("gulp-sourcemaps");
 var LessAutoPrefix = require('less-plugin-autoprefix');
-var webpack = require('gulp-webpack');
+var webpack = require('webpack-stream');
 
 var autoPrefix = new LessAutoPrefix({
     browsers: ['last 3 versions', 'ie 11']

@@ -3,17 +3,13 @@
   "version": "1.0.0",
   "description": "Enonix Main App",
   "devDependencies": {
-    "autoprefixer-loader": "^3.2.0",
-    "css-loader": "^0.28.5",
-    "extract-text-webpack-plugin": "^3.0.0",
-    "file-loader": "^0.11.2",
+    "gulp": "^3.9.1",
+    "gulp-less": "^3.3.2",
+    "gulp-sourcemaps": "^2.6.1",
     "less": "^2.7.2",
-    "less-loader": "^4.0.5",
     "less-plugin-autoprefix": "^1.5.1",
-    "postcss-loader": "^2.0.6",
-    "style-loader": "^0.18.2",
-    "url-loader": "^0.5.9",
-    "webpack": "^3.5.5"
+    "webpack": "^3.5.5",
+    "webpack-stream": "^4.0.0"
   },
   "dependencies": {
     "jquery": "^2.2.4"
