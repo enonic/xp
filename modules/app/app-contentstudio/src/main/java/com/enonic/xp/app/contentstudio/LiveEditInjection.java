@@ -76,8 +76,7 @@ public final class LiveEditInjection
     private Map<String, String> makeModelForHeadEnd( final PortalRequest portalRequest )
     {
         final Map<String, String> map = Maps.newHashMap();
-        map.put( "adminUrl", portalRequest.rewriteUri( "/admin" ) );
-
+        map.put( "assetsUrl", portalRequest.rewriteUri( "/admin/_/assets/com.enonic.xp.app.contentstudio" ) );
         return map;
     }
 

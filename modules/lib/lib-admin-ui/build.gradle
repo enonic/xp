@@ -10,7 +10,7 @@ task copyCommonAssets( type: Copy, dependsOn: ':admin:admin-ui:build' ) {
 
 task copyLiveEditAssets( type: Copy, dependsOn: ':admin:admin-ui:build' ) {
     from '../../admin/admin-ui/build/resources/main/web/admin/live-edit'
-    into 'build/resources/main/assets/admin/live-edit'
+    into 'build/resources/main/assets/live-edit'
 }
 
 task copyDevResources( type: Copy, dependsOn: ':admin:admin-ui:build' ) {
