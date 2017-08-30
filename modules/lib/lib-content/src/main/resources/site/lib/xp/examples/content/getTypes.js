@@ -1,5 +1,5 @@
 var contentLib = require('/lib/xp/content');
-var assert = require('/lib/xp/assert');
+var assert = require('/lib/xp/testing');
 
 // BEGIN
 // Gets the list of all content types in the system

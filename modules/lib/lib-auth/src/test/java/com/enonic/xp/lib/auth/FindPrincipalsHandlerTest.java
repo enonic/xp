@@ -7,7 +7,7 @@ import com.enonic.xp.security.PrincipalQuery;
 import com.enonic.xp.security.PrincipalQueryResult;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UserStoreKey;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.ScriptTestSupport;
 
 public class FindPrincipalsHandlerTest
     extends ScriptTestSupport

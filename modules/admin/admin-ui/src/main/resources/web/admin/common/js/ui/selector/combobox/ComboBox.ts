@@ -568,8 +568,7 @@ module api.ui.selector.combobox {
                     let row = this.comboBoxDropdown.getDropdownGrid().getRowByValue(value);
                     this.handleRowSelected(row, keyCode);
                 });
-                this.input.setValue('');
-                this.hideDropdown();
+                this.input.setValue('', true);
             } else {
                 this.handleRowSelected(index, keyCode);
                 this.input.setValue('');

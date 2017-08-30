@@ -8,7 +8,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.ScriptTestSupport;
 
 public class GetPrincipalHandlerTest
     extends ScriptTestSupport

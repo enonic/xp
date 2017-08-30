@@ -315,16 +315,56 @@ public class SecurityResourceTest
         Mockito.<Optional<? extends Principal>>when(
             securityService.getPrincipal( PrincipalKey.from( "group:system:group-a" ) ) ).thenReturn( userRes );
 
-        PrincipalRelationship membership1 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
-        PrincipalRelationship membership2 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
-        PrincipalRelationships memberships = PrincipalRelationships.from( membership1, membership2 );
-        Mockito.when( securityService.getRelationships( PrincipalKey.from( "group:system:group-a" ) ) ).thenReturn( memberships );
+        PrincipalRelationship member1 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
+        PrincipalRelationship member2 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
+        PrincipalRelationships members = PrincipalRelationships.from( member1, member2 );
+        Mockito.when( securityService.getRelationships( PrincipalKey.from( "group:system:group-a" ) ) ).thenReturn( members );
 
         String jsonString = request().
             path( "security/principals/" + URLEncoder.encode( "group:system:group-a", "UTF-8" ) ).
             get().getAsString();
 
         assertJson( "getPrincipalGroupById.json", jsonString );
+    }
+
+    @Test
+    public void getPrincipalGroupByIdWithMemberships()
+        throws Exception
+    {
+        final Group group = Group.create().
+            key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
+            displayName( "Group A" ).
+            description( "group a" ).
+            modifiedTime( Instant.now( clock ) ).
+            build();
+
+        final Role role = Role.create().
+            key( PrincipalKey.ofRole( "superuser" ) ).
+            displayName( "Super user role" ).
+            modifiedTime( Instant.now( clock ) ).
+            description( "super u" ).
+            build();
+
+        final Optional<? extends Principal> userRes = Optional.of( group );
+        Mockito.<Optional<? extends Principal>>when(
+            securityService.getPrincipal( PrincipalKey.from( "group:system:group-a" ) ) ).thenReturn( userRes );
+
+        PrincipalRelationship member1 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
+        PrincipalRelationship member2 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
+        PrincipalRelationships members = PrincipalRelationships.from( member1, member2 );
+        Mockito.when( securityService.getRelationships( PrincipalKey.from( "group:system:group-a" ) ) ).thenReturn( members );
+
+        final PrincipalKeys membershipKeys = PrincipalKeys.from( role.getKey() );
+        Mockito.when( securityService.getMemberships( PrincipalKey.from( "group:system:group-a" ) ) ).thenReturn( membershipKeys );
+        final Principals memberships = Principals.from( role );
+        Mockito.when( securityService.getPrincipals( membershipKeys ) ).thenReturn( memberships );
+
+        String jsonString = request().
+            path( "security/principals/" + URLEncoder.encode( "group:system:group-a", "UTF-8" ) ).
+            queryParam( "memberships", "true" ).
+            get().getAsString();
+
+        assertJson( "getPrincipalGroupByIdWithMemberships.json", jsonString );
     }
 
     @Test
@@ -493,10 +533,10 @@ public class SecurityResourceTest
             build();
 
         Mockito.when( securityService.updateGroup( Mockito.any( UpdateGroupParams.class ) ) ).thenReturn( group );
-        PrincipalRelationship membership1 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
-        PrincipalRelationship membership2 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
-        PrincipalRelationships memberships = PrincipalRelationships.from( membership1, membership2 );
-        Mockito.when( securityService.getRelationships( group.getKey() ) ).thenReturn( memberships );
+        PrincipalRelationship members1 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user1" ) );
+        PrincipalRelationship members2 = from( group.getKey() ).to( PrincipalKey.from( "user:system:user2" ) );
+        PrincipalRelationships members = PrincipalRelationships.from( members1, members2 );
+        Mockito.when( securityService.getRelationships( group.getKey() ) ).thenReturn( members );
 
         String jsonString = request().
             path( "security/principals/updateGroup" ).

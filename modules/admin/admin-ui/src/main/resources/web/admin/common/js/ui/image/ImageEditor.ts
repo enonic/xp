@@ -9,34 +9,44 @@ module api.ui.image {
     import TabMenuItemBuilder = api.ui.tab.TabMenuItemBuilder;
     import NavigatorEvent = api.ui.NavigatorEvent;
     import i18n = api.util.i18n;
+    import ElementBuilder = api.dom.ElementBuilder;
+    import ElementFromHelperBuilder = api.dom.ElementFromHelperBuilder;
+    import StringHelper = api.util.StringHelper;
+    import LoadMask = api.ui.mask.LoadMask;
 
     export interface Point {
         x: number;
         y: number;
     }
 
-    export interface Rect extends Point {
+    export interface Rect
+        extends Point {
         x2: number;
         y2: number;
     }
 
-    interface SVGRect extends Point {
+    interface SVGRect
+        extends Point {
         w: number;
         h: number;
     }
 
-    interface FocusData extends Point {
+    interface FocusData
+        extends Point {
         r: number;
         auto: boolean;
     }
 
-    interface CropData extends SVGRect {
+    interface CropData
+        extends SVGRect {
         auto: boolean;
     }
 
-    interface ZoomData extends SVGRect {}
+    interface ZoomData
+        extends SVGRect {}
 
-    export class ImageEditor extends api.dom.DivEl {
+    export class ImageEditor
+        extends api.dom.DivEl {
 
         private SCROLLABLE_SELECTOR: string = '.form-panel';
         private WIZARD_TOOLBAR_SELECTOR: string = '.wizard-step-navigator-and-toolbar';
@@ -61,6 +71,12 @@ module api.ui.image {
         private zoomData: ZoomData = {x: 0, y: 0, w: 0, h: 0};
         private revertZoomData: ZoomData;
 
+        private orientation: number;
+        private originalOrientation: number;
+
+        private rotated: boolean;
+        private flippedHor: boolean;
+
         private imgW: number = 1;
         private imgH: number = 1;
         private frameW: number = 1;
@@ -74,29 +90,40 @@ module api.ui.image {
         private knobMouseDownListener: (event: MouseEvent) => void;
 
         private stickyToolbar: DivEl;
+        private topContainer: DivEl;
 
         private editCropButton: Button;
         private editFocusButton: Button;
         private editResetButton: Button;
-        private uploadButton: api.dom.ButtonEl;
+        private rotateButton: Button;
+        private mirrorButton: Button;
+        private uploadButton: Button;
 
-        private editModeListeners: {(edit: boolean, position: Rect, zoom: Rect, focus: Point): void}[] = [];
+        private editModeListeners: { (edit: boolean, position: Rect, zoom: Rect, focus: Point): void }[] = [];
 
-        private focusPositionChangedListeners: {(position: Point): void}[] = [];
-        private autoFocusChangedListeners: {(auto: boolean): void}[] = [];
-        private focusRadiusChangedListeners: {(r: number): void}[] = [];
+        private focusPositionChangedListeners: { (position: Point): void }[] = [];
+        private autoFocusChangedListeners: { (auto: boolean): void }[] = [];
+        private focusRadiusChangedListeners: { (r: number): void }[] = [];
 
-        private cropPositionChangedListeners: {(position: Rect): void}[] = [];
-        private autoCropChangedListeners: {(auto: boolean): void}[] = [];
-        private shaderVisibilityChangedListeners: {(visible: boolean): void}[] = [];
+        private cropPositionChangedListeners: { (crop: Rect, zoom: Rect): void }[] = [];
+        private autoCropChangedListeners: { (auto: boolean): void }[] = [];
+        private shaderVisibilityChangedListeners: { (visible: boolean): void }[] = [];
 
         private maskWheelListener: (event: WheelEvent) => void;
         private maskClickListener: (event: MouseEvent) => void;
         private maskHideListener: (event: api.dom.ElementHiddenEvent) => void;
 
-        private imageErrorListeners: {(event: UIEvent): void}[] = [];
+        private imageErrorListeners: { (event: UIEvent): void }[] = [];
+
+        private orientationListeners: { (orientation: number): void }[] = [];
 
         private skipNextOutsideClick: boolean;
+
+        private rotateCanvas: HTMLCanvasElement;
+        private rotateContext: CanvasRenderingContext2D;
+        private originalImage: ImgEl;
+        private unorientedImage: ImgEl;
+        private imageMask: LoadMask;
 
         public static debug: boolean = false;
 
@@ -106,7 +133,27 @@ module api.ui.image {
             this.frame = new DivEl('image-frame');
             this.canvas = new DivEl('image-canvas');
 
+            this.rotateCanvas = document.createElement('canvas');
+            this.rotateContext = this.rotateCanvas.getContext('2d');
+
             this.image = new ImgEl(null, 'image-bg', true);
+            this.originalImage = new ImgEl();
+            this.unorientedImage = new ImgEl();
+            this.originalImage.onLoaded(() => {
+                if (ImageEditor.debug) {
+                    console.debug('ImageEditor: originalImage loaded');
+                }
+                let unorientedSrc;
+                const originalSrc = this.originalImage.getSrc();
+                if (!this.orientation) {
+                    this.setOrientation(1, 1, false, true);    // set default orientation
+                    unorientedSrc = originalSrc;
+                } else {
+                    unorientedSrc = this.rotateImage(this.originalImage, this.orientation, true);
+                }
+                this.unorientedImage.setSrc(unorientedSrc);
+                this.renderSrc(originalSrc);
+            });
 
             let resizeHandler = () => {
                 if (this.isVisible()) {
@@ -118,8 +165,9 @@ module api.ui.image {
             let isFirstLoad = true;
 
             let updateImageOnShown: () => void = () => {
-                this.updateImageDimensions(true);
+                this.updateImageDimensions(true, !isFirstLoad);
                 this.updateStickyToolbar();
+                this.setToolbarButtonsEnabled(true);
                 this.unShown(updateImageOnShown);
                 if (isFirstLoad) {
                     api.ui.responsive.ResponsiveManager.onAvailableSizeChanged(this, resizeHandler);
@@ -191,6 +239,7 @@ module api.ui.image {
             this.canvas.appendChildren(imageMask, this.image, this.clip);
 
             this.frame.appendChild(this.canvas);
+            this.imageMask = new LoadMask(this.frame);
 
             this.stickyToolbar = this.createStickyToolbar();
             this.appendChildren(this.stickyToolbar, this.frame);
@@ -237,13 +286,19 @@ module api.ui.image {
         }
 
         setSrc(src: string) {
+            if (src && this.originalImage.getSrc() != src) {
+                this.originalImage.setSrc(src);
+            }
+        }
+
+        private renderSrc(src: string) {
             this.image.setSrc(src);
-            let image: SVGImageElement = <SVGImageElement>this.clip.getHTMLElement().querySelector('image');
+            const image: SVGImageElement = <SVGImageElement>this.clip.getHTMLElement().querySelector('image');
             image.setAttribute('xlink:href', src);
         }
 
         getSrc(): string {
-            return this.image.getSrc();
+            return this.originalImage.getSrc();
         }
 
         getImage(): ImgEl {
@@ -351,48 +406,41 @@ module api.ui.image {
         }
 
         private updateImageDimensions(reset: boolean = false, scale: boolean = false) {
-            let imgEl = this.image.getEl();
-            let frameEl = this.frame.getEl();
-
             let zoomPct: SVGRect;
             let cropPct: SVGRect;
             let focusPosPct: Point;
             let focusRadPct: number;
             let revZoomPct: SVGRect;
             let revCropPct: SVGRect;
+            let revCropAuto: boolean;
             let revFocusPosPct: Point;
+            let revFocusAuto: boolean;
             let revFocusRadPct;
 
-            if (scale) {
-                // save all positions in percents before updating dimensions to scale them accordingly
+            // save all positions in percents before updating dimensions to scale them accordingly
+            if (this.rotated || this.flippedHor || scale) {
                 zoomPct = this.normalizeRect(this.getZoomPositionPx());
                 cropPct = this.normalizeRect(this.getCropPositionPx());
                 focusPosPct = this.normalizePoint(this.getFocusPositionPx());
                 focusRadPct = this.normalizeRadius(this.getFocusRadiusPx());
+            }
+
+            if (scale) {
                 if (this.revertZoomData) {
                     revZoomPct = this.normalizeRect(this.revertZoomData);
                 }
                 if (this.revertCropData) {
                     revCropPct = this.normalizeRect(this.revertCropData);
+                    revCropAuto = this.revertCropData.auto;
                 }
                 if (this.revertFocusData) {
                     revFocusPosPct = this.normalizePoint(this.revertFocusData);
                     revFocusRadPct = this.normalizeRadius(this.revertFocusData.r);
+                    revFocusAuto = this.revertFocusData.auto;
                 }
             }
 
-            this.imgW = imgEl.getNaturalWidth();
-            this.imgH = imgEl.getNaturalHeight();
-
-            this.frameW = this.getEl().getWidth();
-            this.frameH = (this.frameW * this.imgH) / this.imgW;
-
-            frameEl.setWidthPx(this.frameW).setHeightPx(this.frameH);
-
-            if (ImageEditor.debug) {
-                console.group('ImageEditor.updateImageDimensions');
-                console.log('Image loaded: ' + this.imgW + ' x ' + this.imgH + ', frame: ' + this.frameW + ' x ' + this.frameH);
-            }
+            this.calcImageAndFrameSize();
 
             if (reset) {
                 if (this.revertZoomData) {
@@ -437,13 +485,36 @@ module api.ui.image {
 
             }
 
-            if (scale) {
-                // scale all positions accordingly to dimensions change in edit mode
+            if (this.rotated || this.flippedHor || scale) {
+                if (this.rotated) {
+                    const zoomBottomPct = 1 + Math.abs(zoomPct.y) - zoomPct.h;
+                    zoomPct.y = zoomPct.x;
+                    zoomPct.x = zoomBottomPct;
+
+                    const cropBottomPct = zoomPct.h - cropPct.y - cropPct.h;
+                    cropPct.y = cropPct.x;
+                    cropPct.x = cropBottomPct;
+
+                    const focusBottomPct = cropPct.h - focusPosPct.y;
+                    focusPosPct.y = focusPosPct.x;
+                    focusPosPct.x = focusBottomPct;
+                    this.rotated = false;
+                }
+
+                if (this.flippedHor) {
+                    zoomPct.x = 1 + Math.abs(zoomPct.x) - zoomPct.w;
+                    cropPct.x = zoomPct.w - cropPct.x - cropPct.w;
+                    focusPosPct.x = cropPct.w - focusPosPct.x;
+                    this.flippedHor = false;
+                }
+
                 this.setZoomPositionPx(this.denormalizeRect(zoomPct), false);
                 this.setCropPositionPx(this.denormalizeRect(cropPct), false);
                 this.setFocusPositionPx(this.denormalizePoint(focusPosPct.x, focusPosPct.y), false);
                 this.setFocusRadiusPx(this.denormalizeRadius(focusRadPct), false);
+            }
 
+            if (scale) {
                 //also update revert positions in case user will cancel changes
                 if (revZoomPct) {
                     this.revertZoomData = this.denormalizeRect(revZoomPct);
@@ -455,7 +526,7 @@ module api.ui.image {
                         y: revCrop.y,
                         w: revCrop.w,
                         h: revCrop.h,
-                        auto: this.revertCropData.auto
+                        auto: revCropAuto
                     };
                 }
                 if (revFocusPosPct && revFocusRadPct) {
@@ -465,13 +536,32 @@ module api.ui.image {
                         x: revFocusPos.x,
                         y: revFocusPos.y,
                         r: revFocusRad,
-                        auto: this.revertFocusData.auto
+                        auto: revFocusAuto
                     };
                 }
             }
 
             if (ImageEditor.debug) {
                 console.groupEnd();
+            }
+        }
+
+        private calcImageAndFrameSize() {
+            const imgEl = this.image.getEl();
+            const frameEl = this.frame.getEl();
+
+            this.imgH = imgEl.getNaturalHeight();
+            this.imgW = imgEl.getNaturalWidth();
+
+            this.frameW = this.getEl().getWidth();
+            this.frameH = (this.frameW * this.imgH) / this.imgW;
+
+            frameEl.setWidthPx(this.frameW).setHeightPx(this.frameH);
+
+            if (ImageEditor.debug) {
+                console.log(
+                    'ImageEditor.calcImageAndFrameSize:\nimage: ' + this.imgW + ' x ' + this.imgH + '\nframe: ' + this.frameW + ' x ' +
+                    this.frameH);
             }
         }
 
@@ -485,7 +575,7 @@ module api.ui.image {
             let bottom = offset.top + el.getHeightWithBorder();
             let right = offset.left + el.getWidthWithBorder();
             let scrollEl = wemjq(this.getHTMLElement()).closest(this.SCROLLABLE_SELECTOR);
-            let scrollOffset = scrollEl.length === 1 ? scrollEl.offset() : { left: 0, top: 0 };
+            let scrollOffset = scrollEl.length === 1 ? scrollEl.offset() : {left: 0, top: 0};
 
             return event.clientX < Math.max(scrollOffset.left, offset.left) ||
                    event.clientX > right ||
@@ -587,13 +677,13 @@ module api.ui.image {
         private WHEEL_PAGE_HEIGHT: number = 800;
 
         // https://github.com/facebook/fixed-data-table/blob/master/dist/fixed-data-table.js#L2052
-        private normalizeWheel(event: (WheelEvent|any)) {
+        private normalizeWheel(event: (WheelEvent | any)) {
             let spinX = 0;
             let spinY = 0;
 
             // Legacy
-            if ('detail'      in event) { spinY = event.detail; }
-            if ('wheelDelta'  in event) { spinY = -event.wheelDelta / 120; }
+            if ('detail' in event) { spinY = event.detail; }
+            if ('wheelDelta' in event) { spinY = -event.wheelDelta / 120; }
             if ('wheelDeltaY' in event) { spinY = -event.wheelDeltaY / 120; }
             if ('wheelDeltaX' in event) { spinX = -event.wheelDeltaX / 120; }
 
@@ -623,7 +713,7 @@ module api.ui.image {
             if (pixelX && !spinX) { spinX = (pixelX < 1) ? -1 : 1; }
             if (pixelY && !spinY) { spinY = (pixelY < 1) ? -1 : 1; }
 
-            return {spinX, spinY, pixelX, pixelY };
+            return {spinX, spinY, pixelX, pixelY};
         }
 
         private createStickyToolbar(): DivEl {
@@ -677,23 +767,32 @@ module api.ui.image {
                 this.resetZoomPosition();
                 this.resetFocusPosition();
                 this.resetFocusRadius();
+                this.resetOrientation();
             });
+
+            const isEditorDirty = () => {
+                return !this.focusData.auto || !this.cropData.auto || this.orientation != this.originalOrientation;
+            };
 
             this.onFocusAutoPositionedChanged((auto) => {
                 this.editResetButton.setVisible(!auto);
                 this.toggleClass('autofocused', auto);
-                resetButton.setVisible(!auto || !this.cropData.auto);
+                resetButton.setVisible(isEditorDirty());
             });
             this.onCropAutoPositionedChanged((auto) => {
                 this.editResetButton.setVisible(!auto);
-                resetButton.setVisible(!auto || !this.focusData.auto);
+                resetButton.setVisible(isEditorDirty());
+            });
+
+            this.onOrientationChanged((orientation) => {
+                resetButton.setVisible(isEditorDirty());
             });
 
             this.uploadButton = new Button();
             this.uploadButton.addClass('button-upload');
             standbyContainer.appendChildren(resetButton, this.uploadButton);
 
-            this.editCropButton = new Button();
+            this.editCropButton = new Button().setEnabled(false);
             // tslint:disable-next-line:no-unused-new
             new Tooltip(this.editCropButton, i18n('editor.cropimage'), 1000);
             this.editCropButton.addClass('button-crop transparent icon-crop').onClicked((event: MouseEvent) => {
@@ -711,7 +810,7 @@ module api.ui.image {
                 }
             });
 
-            this.editFocusButton = new Button();
+            this.editFocusButton = new Button().setEnabled(false);
             // tslint:disable-next-line:no-unused-new
             new Tooltip(this.editFocusButton, i18n('editor.setautofocus'), 1000);
             this.editFocusButton.addClass('button-focus transparent icon-center_focus_strong').onClicked((event: MouseEvent) => {
@@ -734,21 +833,250 @@ module api.ui.image {
 
             let zoomContainer = this.createZoomContainer();
 
-            let topContainer = new DivEl('top-container');
-            topContainer.appendChildren(this.editCropButton, this.editFocusButton, rightContainer);
+            this.rotateButton = new Button();
+            this.rotateButton
+                .setEnabled(false)
+                .setTitle(i18n('action.rotate'))
+                .addClass('button-rotate transparent icon-rotate_right')
+                .onClicked((event: MouseEvent) => {
+                    event.stopPropagation();
+                    this.rotate90();
+                });
 
-            toolbar.appendChildren(topContainer, zoomContainer);
+            this.mirrorButton = new Button('Mirror');
+            this.mirrorButton
+                .setEnabled(false)
+                .setTitle(i18n('action.mirror'))
+                .addClass('button-mirror transparent icon-mirror')
+                .onClicked((event: MouseEvent) => {
+                    event.stopPropagation();
+                    this.mirrorHorizontal();
+                });
+
+            this.topContainer = new DivEl('top-container');
+            this.topContainer.appendChildren<Element>(this.editCropButton, this.editFocusButton, this.rotateButton, this.mirrorButton,
+                rightContainer);
+
+            toolbar.appendChildren(this.topContainer, zoomContainer);
 
             return toolbar;
         }
 
+        private setToolbarButtonsEnabled(value: boolean) {
+            console.debug('ImageEditor.setToolbarButtonsEnabled = ' + value + ' at ' + new Date().toLocaleTimeString());
+            if (ImageEditor.debug) {
+                console.debug('ImageEditor.setToolbarButtonsEnabled', value);
+            }
+            if (!value) {
+                this.imageMask.show();
+            } else {
+                this.imageMask.hide();
+            }
+            this.rotateButton.setEnabled(value);
+            this.mirrorButton.setEnabled(value);
+            this.editCropButton.setEnabled(value);
+            this.editFocusButton.setEnabled(value);
+        }
+
+        private rotate90() {
+            let rotatedOrientation;
+            switch (this.orientation) {
+            case 1:
+            default:
+                rotatedOrientation = 6;
+                break;
+            case 2:
+                rotatedOrientation = 7;
+                break;
+            case 3:
+                rotatedOrientation = 8;
+                break;
+            case 4:
+                rotatedOrientation = 5;
+                break;
+            case 5:
+                rotatedOrientation = 2;
+                break;
+            case 6:
+                rotatedOrientation = 3;
+                break;
+            case 7:
+                rotatedOrientation = 4;
+                break;
+            case 8:
+                rotatedOrientation = 1;
+                break;
+            }
+            this.rotated = true;
+            this.setOrientation(rotatedOrientation);
+        }
+
+        private mirrorHorizontal() {
+            let mirroredOrientation;
+            switch (this.orientation) {
+            case 1:
+            default:
+                mirroredOrientation = 2;
+                break;
+            case 2:
+                mirroredOrientation = 1;
+                break;
+            case 3:
+                mirroredOrientation = 4;
+                break;
+            case 4:
+                mirroredOrientation = 3;
+                break;
+            case 5:
+                mirroredOrientation = 6;
+                break;
+            case 6:
+                mirroredOrientation = 5;
+                break;
+            case 7:
+                mirroredOrientation = 8;
+                break;
+            case 8:
+                mirroredOrientation = 7;
+                break;
+            }
+            this.flippedHor = true;
+            this.setOrientation(mirroredOrientation);
+        }
+
+        /*
+         * About EXIF orientation
+         * http://sylvana.net/jpegcrop/exif_orientation.html
+         */
+        setOrientation(orientation: number, originalOrientation?: number, render: boolean = true, silent?: boolean) {
+            this.orientation = Math.min(Math.max(orientation, 1), 8);
+
+            if (this.originalOrientation == undefined && !originalOrientation) {
+                this.originalOrientation = this.orientation;
+            } else if (originalOrientation) {
+                this.originalOrientation = originalOrientation;
+            }
+
+            if (ImageEditor.debug) {
+                console.debug('ImageEditor.setOrientation = ' + this.orientation);
+            }
+
+            if (render) {
+                this.renderOrientation(this.orientation);
+            }
+
+            if (!silent) {
+                this.notifyOrientationChanged(orientation);
+            }
+        }
+
+        private renderOrientation(orientation: number) {
+            if (!this.unorientedImage.isLoaded()) {
+                return;
+            }
+
+            this.setToolbarButtonsEnabled(false);
+
+            setTimeout(() => {
+                const srcData = this.rotateImage(this.unorientedImage, orientation);
+                this.renderSrc(srcData);
+            }, 1);
+        }
+
+        private resetOrientation() {
+            this.setOrientation(this.originalOrientation);
+        }
+
+        /**
+         * Transform image from orientation 1 to given one
+         * @param image
+         * @param orientation
+         * @param inverse
+         * @returns {string}
+         */
+        private rotateImage(image: ImgEl, orientation: number, inverse?: boolean): string {
+            this.rotateContext.save();
+
+            let w;
+            let h;
+            let width = image.getEl().getNaturalWidth();
+            let height = image.getEl().getNaturalHeight();
+
+            if (orientation >= 1 && orientation < 5) {
+                w = width;
+                h = height;
+            } else if (orientation >= 5 && orientation < 9) {
+                w = height;
+                h = width;
+            }
+            this.rotateCanvas.width = w;
+            this.rotateCanvas.height = h;
+            this.rotateContext.clearRect(0, 0, w, h);
+
+            let x;
+            let y;
+            let modifier = inverse ? -1 : 1;
+            switch (orientation) {
+            case 1:
+                x = 0;
+                y = 0;
+                break;
+            case 2:
+                this.rotateContext.scale(-1, 1);
+                x = -width;
+                y = 0;
+                break;
+            case 3:
+                this.rotateContext.rotate(Math.PI);
+                x = -width;
+                y = -height;
+                break;
+            case 4:
+                this.rotateContext.scale(1, -1);
+                x = 0;
+                y = -height;
+                break;
+            case 5:
+                this.rotateContext.scale(-1, 1);
+                this.rotateContext.rotate(Math.PI / 2);
+                x = 0;
+                y = 0;
+                break;
+            case 6:
+                this.rotateContext.rotate(modifier * Math.PI / 2);
+                x = inverse ? -width : 0;
+                y = inverse ? 0 : -height;
+                break;
+            case 7:
+                this.rotateContext.scale(-1, 1);
+                this.rotateContext.rotate(-Math.PI / 2);
+                x = -width;
+                y = -height;
+                break;
+            case 8:
+                this.rotateContext.rotate(modifier * -Math.PI / 2);
+                x = inverse ? 0 : -width;
+                y = inverse ? -height : 0;
+                break;
+            }
+
+            this.rotateContext.drawImage(image.getHTMLElement(), x, y);
+
+            const data = this.rotateCanvas.toDataURL();
+            this.rotateContext.restore();
+
+            return data;
+        }
+
         private updateStickyToolbar() {
             let relativeScrollTop = this.getRelativeScrollTop();
+            const el = this.stickyToolbar.getEl();
+            this.getEl().setPaddingTop(this.topContainer.getEl().getHeight() + 'px');
             if (!this.isTopEdgeVisible(relativeScrollTop) && this.isBottomEdgeVisible(relativeScrollTop)) {
                 this.addClass('sticky-mode');
-                this.stickyToolbar.getEl().setTopPx(-relativeScrollTop);
+                el.setTopPx(-relativeScrollTop);
             } else {
-                this.stickyToolbar.getEl().setTopPx(0);
+                el.setTopPx(0);
                 this.removeClass('sticky-mode');
             }
         }
@@ -1305,7 +1633,7 @@ module api.ui.image {
                     console.log('After restraining', dx, dy, this.cropData);
                 }
 
-                this.notifyCropPositionChanged(this.cropData);
+                this.notifyCropPositionChanged(this.cropData, this.zoomData);
 
                 if (this.isImageLoaded() && this.isCropEditMode()) {
                     this.updateCropMaskPosition();
@@ -1716,7 +2044,7 @@ module api.ui.image {
                 let x = this.zoomData.x - (w - this.zoomData.w) / 2;
                 let y = this.zoomData.y - (h - this.zoomData.h) / 2;
 
-                this.setZoomPositionPx({x, y, w, h });
+                this.setZoomPositionPx({x, y, w, h});
             }
         }
 
@@ -1726,11 +2054,8 @@ module api.ui.image {
                 console.log('ImageEditor.updateZoomPosition', this.zoomData);
             }
 
-            this.canvas.getEl().
-                setWidthPx(this.zoomData.w).
-                setHeightPx(this.zoomData.h).
-                setLeftPx(this.zoomData.x).
-                setTopPx(this.zoomData.y);
+            this.canvas.getEl().setWidthPx(this.zoomData.w).setHeightPx(this.zoomData.h).setLeftPx(this.zoomData.x).setTopPx(
+                this.zoomData.y);
 
             let zoomKnobEl = this.zoomKnob.getEl();
             let zoomLineEl = this.zoomLine.getEl();
@@ -1815,6 +2140,24 @@ module api.ui.image {
         }
 
         /*
+         *      Orientation listeneres
+         */
+
+        onOrientationChanged(listener: (orientation: number) => void) {
+            this.orientationListeners.push(listener);
+        }
+
+        unOrientationChanged(listener: (orientation: number) => void) {
+            this.orientationListeners = this.orientationListeners.filter(curr => curr !== listener);
+        }
+
+        private notifyOrientationChanged(orientation: number) {
+            this.orientationListeners.forEach((listener) => {
+                listener(orientation);
+            });
+        }
+
+        /*
          *   Focus related listeners
          */
 
@@ -1888,20 +2231,21 @@ module api.ui.image {
             });
         }
 
-        onCropPositionChanged(listener: (position: Rect) => void) {
+        onCropPositionChanged(listener: (crop: Rect, zoom: Rect) => void) {
             this.cropPositionChangedListeners.push(listener);
         }
 
-        unCropPositionChanged(listener: (position: Rect) => void) {
+        unCropPositionChanged(listener: (crop: Rect, zoom: Rect) => void) {
             this.cropPositionChangedListeners = this.cropPositionChangedListeners.filter((curr) => {
                 return curr !== listener;
             });
         }
 
-        private notifyCropPositionChanged(position: SVGRect) {
-            let normalizedPosition = this.rectFromSVG(this.normalizeRect(position));
-            this.cropPositionChangedListeners.forEach((listener) => {
-                listener(normalizedPosition);
+        private notifyCropPositionChanged(crop: SVGRect, zoom: SVGRect) {
+            let normalizedCrop = this.rectFromSVG(this.normalizeRect(crop));
+            let normalizedZoom = this.rectFromSVG(this.normalizeRect(zoom));
+            this.cropPositionChangedListeners.forEach(listener => {
+                listener(normalizedCrop, normalizedZoom);
             });
         }
 

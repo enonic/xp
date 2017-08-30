@@ -60,18 +60,22 @@
         }
       }
 
-      &.memeberships .data-list li {
-        margin-bottom: 10px;
-
-        &.list-header {
+      &.memberships, &.roles {
+        .data-list li {
           margin-bottom: 10px;
+
+          &.list-header {
+            margin-bottom: 10px;
+          }
         }
       }
 
-      &.group-and-role .data-list li {
-
-        &.list-header {
-          min-height: 20px;
+      &.group,
+      &.role {
+        .data-list li {
+          &.list-header {
+            min-height: 20px;
+          }
         }
       }
 

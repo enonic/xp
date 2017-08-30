@@ -7,5 +7,7 @@
   ],
   "removeMembers": [
     "user:system:user3"
-  ]
+  ],
+  "addMemberships": [],
+  "removeMemberships": []
 }

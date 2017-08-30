@@ -144,7 +144,7 @@ public final class ContentImageResource
                 try
                 {
                     final Cropping cropping = source ? null : media.getCropping();
-                    final ImageOrientation imageOrientation = mediaInfoService.getImageOrientation( binary );
+                    final ImageOrientation imageOrientation = mediaInfoService.getImageOrientation( binary, media );
                     final String format = imageService.getFormatByMimeType( attachment.getMimeType() );
                     final ScaleParams scaleParams = parseScaleParam( media, scale, size );
 

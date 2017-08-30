@@ -1,4 +1,4 @@
-var assert = require('/lib/xp/assert.js');
+var t = require('/lib/xp/testing.js');
 var content = require('/lib/xp/content.js');
 
 var expectedJson = [
@@ -12,7 +12,7 @@ exports.unpublishById = function () {
         keys: ['9f5b0db0-38f9-4e81-b92e-116f25476b1c', '45d67001-7f2b-4093-99ae-639be9fdd1f6', '79e21db0-5b43-45ce-b58c-6e1c420b22bd']
     });
 
-    assert.assertJsonEquals(expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 };
 
 exports.unpublishByPath = function () {
@@ -20,5 +20,5 @@ exports.unpublishByPath = function () {
         keys: ['/myfolder/mycontent', '/yourfolder/yourcontent']
     });
 
-    assert.assertJsonEquals(expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 };

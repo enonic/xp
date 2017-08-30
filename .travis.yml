@@ -1,12 +1,12 @@
 language: java
-sudo: false
+sudo: required
 
 jdk:
 - oraclejdk8
 
 install: true
 script:
-  - ./gradlew ci
+  - ./gradlew ci --stacktrace --no-daemon
 
 cache:
   directories:

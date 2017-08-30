@@ -6,7 +6,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.resource.ResourceProblemException;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;

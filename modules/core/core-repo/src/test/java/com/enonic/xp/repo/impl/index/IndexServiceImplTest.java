@@ -24,7 +24,6 @@ import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.FindNodesByQueryCommand;
 import com.enonic.xp.repo.impl.node.PushNodesCommand;
-import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.security.SystemConstants;
 
 import static org.junit.Assert.*;
@@ -299,13 +298,12 @@ public class IndexServiceImplTest
     public void updateIndexSettings()
         throws Exception
     {
-
         final UpdateIndexSettingsResult result = this.indexService.updateIndexSettings( UpdateIndexSettingsParams.create().
-            indexName( IndexNameResolver.resolveStorageIndexName( TEST_REPO.getId() ) ).
+            repository( TEST_REPO.getId() ).
             settings( "{\"index\": {\"number_of_replicas\": 2}}" ).
             build() );
 
-        assertEquals( 1, result.getUpdatedIndexes().size() );
+        assertEquals( 2, result.getUpdatedIndexes().size() );
     }
 
 }

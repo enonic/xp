@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.io;
 
-import com.enonic.xp.testing.script.ScriptRunnerSupport;
+import com.enonic.xp.testing.ScriptRunnerSupport;
 
 public class IOScriptTest
     extends ScriptRunnerSupport

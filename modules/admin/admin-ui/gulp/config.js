@@ -24,18 +24,9 @@ var CONFIG = {
                     src: '/live-edit/styles/_module.less',
                     dest: '/live-edit/styles/_all.css'
                 },
-                home: {
-                    src: '/common/styles/apps/home/home.less',
-                    dest: '/common/styles/_home.css'
-                },
                 editor: {
                     src: '/common/styles/api/util/htmlarea/html-editor.module.less',
                     dest: '/common/styles/api/util/htmlarea/html-editor.css'
-                },
-                launcher: {
-                    src: '/common/styles/apps/launcher/launcher.less',
-                    dest: '/styles/_launcher.css',
-                    assets: true
                 }
             }
         },
@@ -53,10 +44,7 @@ var CONFIG = {
                 // still processed with gulp
                 common: {src: '/common/js/_module.ts', dest: '/common/js/_all.js'},
                 live: {src: '/live-edit/js/_module.ts', dest: '/live-edit/js/_all.js'},
-                spec: {src: '../spec/_spec.ts', dest: '../spec/_all.js'},
-                // webpack
-                home: {src: '/js/home/main.js', name: 'home', assets: true},
-                launcher: {src: '/js/launcher/main.js', name: 'launcher', assets: true}
+                spec: {src: '../spec/_spec.ts', dest: '../spec/_all.js'}
             },
             ts: {
                 target: 'ES5',
@@ -73,7 +61,6 @@ var CONFIG = {
                 dest: '/apps/[name]/js/_all.js'
             },
             assets: [
-                'launcher'
             ]
         },
         resources: {

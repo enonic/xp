@@ -13,6 +13,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.branch.Branch;
@@ -28,6 +29,8 @@ import com.enonic.xp.index.UpdateIndexSettingsParams;
 import com.enonic.xp.index.UpdateIndexSettingsResult;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryIds;
+import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
 
 @Path("/api/repo/index")
@@ -39,6 +42,8 @@ public final class IndexResource
     implements JaxRsComponent
 {
     private IndexService indexService;
+
+    private RepositoryService repositoryService;
 
     @POST
     @Path("reindex")
@@ -57,9 +62,21 @@ public final class IndexResource
     @Path("updateSettings")
     public UpdateIndexSettingsResultJson updateSettings( final UpdateIndexSettingsRequestJson request )
     {
+        final RepositoryIds.Builder repositoryIds = RepositoryIds.create();
+
+        if ( !Strings.isNullOrEmpty( request.repositoryId ) )
+        {
+            repositoryIds.add( RepositoryId.from( request.repositoryId ) );
+        }
+        else
+        {
+            repositoryIds.addAll( this.repositoryService.list().getIds() );
+        }
+
         final UpdateIndexSettingsResult result = this.indexService.updateIndexSettings( UpdateIndexSettingsParams.create().
-            indexName( request.indexName ).
+            repositories( repositoryIds.build() ).
             settings( request.settings.toString() ).
+            requireClosedIndex( request.requireClosedIndex ).
             build() );
 
         return UpdateIndexSettingsResultJson.create( result );
@@ -69,6 +86,12 @@ public final class IndexResource
     public void setIndexService( final IndexService indexService )
     {
         this.indexService = indexService;
+    }
+
+    @Reference
+    public void setRepositoryService( final RepositoryService repositoryService )
+    {
+        this.repositoryService = repositoryService;
     }
 
     private static Branches parseBranches( final String branches )

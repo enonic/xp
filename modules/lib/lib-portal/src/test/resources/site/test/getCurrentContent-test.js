@@ -1,4 +1,4 @@
-var assert = require('/lib/xp/assert.js');
+var assert = require('/lib/xp/testing.js');
 var portal = require('/lib/xp/portal.js');
 
 var expectedJson = {
@@ -123,10 +123,10 @@ var expectedJson = {
 
 exports.currentContent = function () {
     var result = portal.getContent();
-    assert.assertJsonEquals('Content JSON not equals', expectedJson, result);
+    assert.assertJsonEquals(expectedJson, result);
 };
 
 exports.noCurrentContent = function () {
     var result = portal.getContent();
-    assert.assertNull('Content JSON not null', result);
+    assert.assertNull(result);
 };

@@ -15,6 +15,7 @@ module api.content {
     import ContentAndStatusTreeSelectorItem = api.content.resource.ContentAndStatusTreeSelectorItem;
     import CompareContentResult = api.content.resource.result.CompareContentResult;
     import LoadedDataEvent = api.util.loader.event.LoadedDataEvent;
+    import ContentSelectorQueryRequest = api.content.resource.ContentSelectorQueryRequest;
 
     export class ContentSummaryOptionDataLoader implements OptionDataLoader<ContentTreeSelectorItem> {
 
@@ -41,6 +42,28 @@ module api.content {
 
         setContent(content: ContentSummary) {
             this.request.setContent(content);
+        }
+
+        search(value: string): wemQ.Promise<ContentTreeSelectorItem[]> {
+
+            const req = new ContentSelectorQueryRequest();
+            req.setContent(this.request.getContent());
+            req.setAllowedContentPaths(this.request.getAllowedContentPaths());
+            req.setContentTypeNames(this.request.getContentTypeNames());
+            req.setFrom(this.request.getFrom());
+            req.setSize(this.request.getSize());
+            req.setInputName(this.request.getInputName());
+            req.setRelationshipType(this.request.getRelationshipType());
+            req.setQueryExpr(value);
+
+            return req.sendAndParse().then((contents: ContentSummary[]) => {
+                const result = contents.map(
+                    content => new ContentAndStatusTreeSelectorItem(ContentSummaryAndCompareStatus.fromContentSummary(
+                        content), false));
+
+               // this.notifyLoadedData(result);
+                return result;
+            });
         }
 
         load(values: string[]): wemQ.Promise<ContentTreeSelectorItem[]> {
@@ -94,6 +117,7 @@ module api.content {
                 this.request.setParentPath(parentNode.getDataId() ? parentNode.getData().displayValue.getPath() : null);
 
                 return this.loadItems().then((result: ContentAndStatusTreeSelectorItem[]) => {
+         //           this.notifyLoadedData(result);
                     return this.createOptionData(result, 0, 0);
                 });
             }
@@ -103,8 +127,11 @@ module api.content {
                     parentNode.getData() ? parentNode.getData().displayValue.getContentId() : null, from, size).then(
                     (response: ContentResponse<ContentSummaryAndCompareStatus>) => {
 
-                        return this.createOptionData(response.getContents().map(
-                            content => new ContentAndStatusTreeSelectorItem(content, false)),
+                        const result = response.getContents().map(
+                            content => new ContentAndStatusTreeSelectorItem(content, false));
+              //          this.notifyLoadedData(result);
+
+                        return this.createOptionData(result,
                             response.getMetadata().getHits(),
                             response.getMetadata().getTotalHits());
                     });
@@ -114,9 +141,12 @@ module api.content {
                 parentNode.getData() ? parentNode.getData().displayValue.getContentId() : null, from, size).then(
                 (response: ContentResponse<ContentSummary>) => {
 
-                    return this.createOptionData(response.getContents().map(
+                    const result = response.getContents().map(
                         content => new ContentAndStatusTreeSelectorItem(ContentSummaryAndCompareStatus.fromContentSummary(
-                            content), false)), response.getMetadata().getHits(), response.getMetadata().getTotalHits());
+                            content), false));
+           //         this.notifyLoadedData(result);
+
+                    return this.createOptionData(result, response.getMetadata().getHits(), response.getMetadata().getTotalHits());
                 });
         }
 

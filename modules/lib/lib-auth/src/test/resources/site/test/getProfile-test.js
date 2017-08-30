@@ -1,4 +1,4 @@
-var assert = require('/lib/xp/assert.js');
+var t = require('/lib/xp/testing.js');
 var auth = require('/lib/xp/auth.js');
 
 exports.noProfile = function () {
@@ -6,5 +6,5 @@ exports.noProfile = function () {
         key: "user:enonic:user1",
         scope: "myapp"
     });
-    assert.assertNull('Profile not null', result);
+    t.assertNull(result);
 };

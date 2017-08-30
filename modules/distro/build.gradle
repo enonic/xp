@@ -25,6 +25,9 @@ addBundle( 'org.apache.felix:org.apache.felix.eventadmin:1.4.4', 5 )
 addBundle( 'org.apache.felix:org.apache.felix.configadmin:1.8.8', 5 )
 addBundle( 'org.apache.felix:org.apache.felix.scr:2.0.2', 5 )
 
+// Java Cryptography Extension
+addBundle( 'org.bouncycastle:bcprov-jdk15on:1.54', 6 )
+
 // Library dependencies
 addBundle( 'com.google.guava:guava:18.0', 8 )
 addBundle( 'commons-lang:commons-lang:2.4', 8 )
@@ -113,6 +116,7 @@ addBundle( project( ':admin:admin-impl' ), 30 )
 addBundle( project( ':blobstore:blobstore-file' ), 22 )
 
 // Applications
+addBundle( project( ':app:app-main' ), 32 )
 addBundle( project( ':app:app-standardidprovider' ), 32 )
 addBundle( project( ':app:app-users' ), 32 )
 addBundle( project( ':app:app-applications' ), 32 )

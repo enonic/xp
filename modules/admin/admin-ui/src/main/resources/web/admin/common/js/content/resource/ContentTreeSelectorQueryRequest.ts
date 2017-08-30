@@ -115,6 +115,18 @@ module api.content.resource {
                 .build();
         }
 
+        getAllowedContentPaths(): string[] {
+            return this.allowedContentPaths;
+        }
+
+        getContentTypeNames(): string[] {
+            return this.contentTypeNames;
+        }
+
+        getRelationshipType(): string {
+            return this.relationshipType;
+        }
+
         getQueryExpr(): api.query.expr.QueryExpr {
             return this.queryExpr;
         }
@@ -144,7 +156,7 @@ module api.content.resource {
                 from: this.getFrom(),
                 size: this.getSize(),
                 expand: this.expandAsString(),
-                contentId: this.content.getId().toString(),
+                contentId: this.content ? this.content.getId().toString() : null,
                 inputName: this.getInputName(),
                 contentTypeNames: this.contentTypeNames,
                 allowedContentPaths: this.allowedContentPaths,

@@ -243,28 +243,37 @@ module api.util {
             let yrInMs = dayInMs * 365;
 
             if (timeDiff < minInMs) {
-                return 'less than a minute ago';
-            } else if (timeDiff < 2 * minInMs) {
-                return 'a minute ago';
-            } else if (timeDiff < hrInMs) {
-                return ~~(timeDiff / minInMs) + ' minutes ago';
-            } else if (timeDiff < 2 * hrInMs) {
-                return 'over an hour ago';
-            } else if (timeDiff < dayInMs) {
-                return 'over ' + ~~(timeDiff / hrInMs) + ' hours ago';
-            } else if (timeDiff < 2 * dayInMs) {
-                return 'over a day ago';
-            } else if (timeDiff < monInMs) {
-                return 'over ' + ~~(timeDiff / dayInMs) + ' days ago';
-            } else if (timeDiff < 2 * monInMs) {
-                return 'over a month ago';
-            } else if (timeDiff < yrInMs) {
-                return 'over ' + ~~(timeDiff / monInMs) + ' months ago';
-            } else if (timeDiff < 2 * yrInMs) {
-                return 'over a year ago';
+                return api.util.i18n('widget.versionhistory.lessthanminuteago');
+            }
+            if (timeDiff < 2 * minInMs) {
+                return api.util.i18n('widget.versionhistory.minuteago');
+            }
+            if (timeDiff < hrInMs) {
+                return api.util.i18n('widget.versionhistory.minutesago', ~~(timeDiff / minInMs));
+            }
+            if (timeDiff < 2 * hrInMs) {
+                return api.util.i18n('widget.versionhistory.overhourago');
+            }
+            if (timeDiff < dayInMs) {
+                return api.util.i18n('widget.versionhistory.overhoursago', ~~(timeDiff / hrInMs));
+            }
+            if (timeDiff < 2 * dayInMs) {
+                return api.util.i18n('widget.versionhistory.overdayago');
+            }
+            if (timeDiff < monInMs) {
+                return api.util.i18n('widget.versionhistory.overdayssago', ~~(timeDiff / dayInMs));
+            }
+            if (timeDiff < 2 * monInMs) {
+                return api.util.i18n('widget.versionhistory.overmonthago');
+            }
+            if (timeDiff < yrInMs) {
+                return api.util.i18n('widget.versionhistory.overmonthsago', ~~(timeDiff / monInMs));
+            }
+            if (timeDiff < 2 * yrInMs) {
+                return api.util.i18n('widget.versionhistory.overyearago');
             }
 
-            return 'over ' + ~~(timeDiff / yrInMs) + ' years ago';
+            return api.util.i18n('widget.versionhistory.overyearsago', ~~(timeDiff / yrInMs));
         }
     }
 

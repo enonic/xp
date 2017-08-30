@@ -1,5 +1,5 @@
 var portalLib = require('/lib/xp/portal');
-var assert = require('/lib/xp/assert');
+var assert = require('/lib/xp/testing');
 
 // BEGIN
 var unsafeHtml = '<p><a href="http://example.com/" onclick="stealCookies()">Link</a></p>' +
@@ -12,4 +12,4 @@ var sanitizedHtml = portalLib.sanitizeHtml(unsafeHtml);
 var expectedHtml = '<p><a href="http://example.com/">Link</a></p>';
 // END
 
-assert.assertEquals('HTML result not equals', expectedHtml, sanitizedHtml);
+assert.assertEquals(expectedHtml, sanitizedHtml);

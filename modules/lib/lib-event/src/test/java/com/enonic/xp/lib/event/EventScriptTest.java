@@ -6,7 +6,7 @@ import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.script.event.ScriptEventListener;
 import com.enonic.xp.script.event.ScriptEventManager;
-import com.enonic.xp.testing.script.ScriptRunnerSupport;
+import com.enonic.xp.testing.ScriptRunnerSupport;
 
 public class EventScriptTest
     extends ScriptRunnerSupport

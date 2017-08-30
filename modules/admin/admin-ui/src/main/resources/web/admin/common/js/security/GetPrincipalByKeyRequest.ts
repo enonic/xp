@@ -13,14 +13,14 @@ module api.security {
             this.includeMemberships = false;
         }
 
-        includeUserMemberships(includeMemberships: boolean): GetPrincipalByKeyRequest {
+        setIncludeMemberships(includeMemberships: boolean): GetPrincipalByKeyRequest {
             this.includeMemberships = includeMemberships;
             return this;
         }
 
         getParams(): Object {
             return {
-                memberships: this.includeMemberships && this.principalKey.isUser()
+                memberships: this.includeMemberships
             };
         }
 

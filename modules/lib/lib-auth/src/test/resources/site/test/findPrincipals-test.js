@@ -1,4 +1,4 @@
-var assert = require('/lib/xp/assert.js');
+var t = require('/lib/xp/testing.js');
 var auth = require('/lib/xp/auth.js');
 
 exports.findPrincipalsDefaultParameters = function () {
@@ -36,7 +36,7 @@ exports.findPrincipalsDefaultParameters = function () {
         ]
     };
 
-    assert.assertJsonEquals('findPrincipals result not equals', expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 
 };
 
@@ -66,7 +66,7 @@ exports.findPrincipalsUsers = function () {
         ]
     };
 
-    assert.assertJsonEquals('findPrincipals result not equals', expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 
 };
 
@@ -93,7 +93,7 @@ exports.findPrincipalsGroups = function () {
         ]
     };
 
-    assert.assertJsonEquals('findPrincipals result not equals', expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 
 };
 
@@ -120,7 +120,7 @@ exports.findPrincipalsRoles = function () {
         ]
     };
 
-    assert.assertJsonEquals('findPrincipals result not equals', expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 
 };
 
@@ -148,7 +148,7 @@ exports.findPrincipalsByName = function () {
         ]
     };
 
-    assert.assertJsonEquals('findPrincipals result not equals', expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 
 };
 
@@ -175,6 +175,6 @@ exports.findPrincipalsBySearchText = function () {
         ]
     };
 
-    assert.assertJsonEquals('findPrincipals result not equals', expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 
 };

@@ -89,7 +89,7 @@ public final class ApplicationResource
         }
         catch ( IOException e )
         {
-            LOG.error( failure = "Failed to upload application from " + urlString );
+            LOG.error( failure = "Failed to upload application from " + urlString, e );
             result.setFailure( failure );
             return result;
         }
@@ -108,7 +108,7 @@ public final class ApplicationResource
         catch ( Exception e )
         {
             final String failure = "Failed to process application from " + url;
-            LOG.error( failure );
+            LOG.error( failure, e );
 
             result.setFailure( failure );
         }
@@ -128,7 +128,7 @@ public final class ApplicationResource
         catch ( Exception e )
         {
             final String failure = "Failed to process application " + applicationName;
-            LOG.error( failure );
+            LOG.error( failure, e );
 
             result.setFailure( failure );
         }

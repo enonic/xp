@@ -1,5 +1,5 @@
 var taskLib = require('/lib/xp/task.js');
-var assert = require('/lib/xp/assert');
+var t = require('/lib/xp/testing');
 
 // BEGIN
 // Obtains list of active tasks
@@ -42,4 +42,4 @@ var expected = [
 ];
 // END
 
-assert.assertJsonEquals(expected, tasks);
+t.assertJsonEquals(expected, tasks);

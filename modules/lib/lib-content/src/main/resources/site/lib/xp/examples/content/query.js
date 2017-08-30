@@ -1,5 +1,5 @@
 var contentLib = require('/lib/xp/content');
-var assert = require('/lib/xp/assert');
+var t = require('/lib/xp/testing');
 
 // BEGIN
 // Query content using aggregations.
@@ -221,4 +221,4 @@ var expected = {
 };
 // END
 
-assert.assertJsonEquals(expected, result);
+t.assertJsonEquals(expected, result);

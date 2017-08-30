@@ -1,5 +1,5 @@
 var contentLib = require('/lib/xp/content');
-var assert = require('/lib/xp/assert');
+var t = require('/lib/xp/testing');
 
 var TestClass = Java.type('com.enonic.xp.lib.content.CreateMediaHandlerTest');
 var stream = TestClass.createByteSource('Hello World');
@@ -34,4 +34,4 @@ var expected = {
 };
 // END
 
-assert.assertJsonEquals(expected, result);
+t.assertJsonEquals(expected, result);

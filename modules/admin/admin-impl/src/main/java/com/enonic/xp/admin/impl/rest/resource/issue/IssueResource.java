@@ -31,6 +31,7 @@ import com.enonic.xp.admin.impl.rest.resource.issue.json.GetIssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.ListIssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueJson;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.FindIssuesParams;
 import com.enonic.xp.issue.FindIssuesResult;
 import com.enonic.xp.issue.Issue;
@@ -38,8 +39,13 @@ import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.IssueService;
 import com.enonic.xp.issue.IssueStatus;
+import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.security.Principal;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.Principals;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
@@ -61,9 +67,9 @@ public final class IssueResource
 
     @POST
     @Path("create")
-    public IssueJson create( final CreateIssueJson params, @Context HttpServletRequest request )
+    public IssueJson create( final CreateIssueJson json, @Context HttpServletRequest request )
     {
-        final Issue issue = issueService.create( params.getCreateIssueParams() );
+        final Issue issue = issueService.create( generateCreateIssueParams( json ) );
         issueNotificationsSender.notifyIssueCreated( issue, request.getHeader( HttpHeaders.REFERER ) );
 
         return new IssueJson( issue );
@@ -94,9 +100,9 @@ public final class IssueResource
     @Path("update")
     public IssueJson update( final UpdateIssueJson params, @Context HttpServletRequest request )
     {
-        final Issue issue = issueService.update( params.getUpdateIssueParams() );
+        final Issue issue = issueService.update( generateUpdateIssueParams( params ) );
 
-        if ( params.isPublish() )
+        if ( params.isPublish )
         {
             issueNotificationsSender.notifyIssuePublished( issue, request.getHeader( HttpHeaders.REFERER ) );
         }
@@ -194,6 +200,87 @@ public final class IssueResource
     {
         return issue.getApproverIds().stream().map( key -> securityService.getUser( key ).orElse( null ) ).filter(
             Objects::nonNull ).collect( Collectors.toList() );
+    }
+
+    private CreateIssueParams generateCreateIssueParams( final CreateIssueJson json )
+    {
+        final CreateIssueParams.Builder builder = CreateIssueParams.create();
+
+        builder.title( json.title );
+        builder.description( json.description );
+        builder.setPublishRequest( json.publishRequest );
+        builder.setApproverIds( filterInvalidAssignees( json.assignees ) );
+
+        return builder.build();
+    }
+
+    private UpdateIssueParams generateUpdateIssueParams( final UpdateIssueJson json )
+    {
+
+        return UpdateIssueParams.create().
+            id( json.issueId ).
+            editor( editMe ->
+                    {
+                        if ( json.title != null )
+                        {
+                            editMe.title = json.title;
+                        }
+                        if ( json.description != null )
+                        {
+                            editMe.description = json.description;
+                        }
+                        if ( json.issueStatus != null )
+                        {
+                            editMe.issueStatus = json.issueStatus;
+                        }
+                        if ( json.approverIds != null )
+                        {
+                            editMe.approverIds = filterInvalidAssignees( json.approverIds );
+                        }
+                        if ( json.publishRequest != null )
+                        {
+                            editMe.publishRequest = json.publishRequest;
+                        }
+                    } ).
+            build();
+    }
+
+    private PrincipalKeys filterInvalidAssignees( final List<PrincipalKey> assignees )
+    {
+         return PrincipalKeys.from( assignees.stream().filter( this::isValidAssignee ).collect( Collectors.toList() ) );
+    }
+
+    private boolean isValidAssignee( final PrincipalKey principalKey )
+    {
+        final PrincipalKeys membershipKeys = securityService.getMemberships( principalKey );
+        final Principals memberships = securityService.getPrincipals( membershipKeys );
+
+        return memberships.stream().anyMatch( this::hasIssuePermissions );
+    }
+
+    private boolean hasIssuePermissions( final Principal principal )
+    {
+        if ( principal.getKey().equals( RoleKeys.ADMIN ) )
+        {
+            return true;
+        }
+
+        if ( principal.getKey().equals( RoleKeys.CONTENT_MANAGER_ADMIN ) )
+        {
+            return true;
+        }
+
+        if ( principal.getKey().equals( RoleKeys.CONTENT_MANAGER_EXPERT ) )
+        {
+            return true;
+        }
+
+        if ( principal.getKey().equals( RoleKeys.CONTENT_MANAGER_APP ) )
+        {
+            return true;
+        }
+
+        return false;
     }
 
     @Reference

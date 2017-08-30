@@ -1,5 +1,5 @@
 var contextLib = require('/lib/xp/context');
-var assert = require('/lib/xp/assert');
+var assert = require('/lib/xp/testing');
 
 // BEGIN
 // Define the callback to be executed.

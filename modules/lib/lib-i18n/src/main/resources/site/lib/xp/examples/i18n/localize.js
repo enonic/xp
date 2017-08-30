@@ -1,5 +1,5 @@
+var t = require('/lib/xp/testing');
 var i18nLib = require('/lib/xp/i18n');
-var assert = require('/lib/xp/assert');
 
 // BEGIN
 // Localizes a simple message.
@@ -17,5 +17,5 @@ var message2 = i18nLib.localize({
 });
 // END
 
-assert.assertEquals('[mymessage]', message1);
-assert.assertEquals('[mymessage_with_placeholder, John, London]', message2);
+t.assertEquals('[mymessage]', message1);
+t.assertEquals('[mymessage_with_placeholder, John, London]', message2);

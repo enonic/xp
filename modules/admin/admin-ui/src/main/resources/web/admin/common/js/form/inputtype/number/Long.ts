@@ -43,6 +43,13 @@ module api.content.form.inputtype.number.long {
             return inputEl;
         }
 
+        protected isValid(value: string, recording?: api.form.inputtype.InputValidationRecording): boolean {
+            if (!api.util.NumberHelper.isWholeNumber(+value)) {
+                return false;
+            }
+            return super.isValid(value, recording);
+        }
+
         updateInputOccurrenceElement(occurrence: api.dom.Element, property: api.data.Property, unchangedOnly: boolean) {
             let input = <api.ui.text.TextInput> occurrence;
 

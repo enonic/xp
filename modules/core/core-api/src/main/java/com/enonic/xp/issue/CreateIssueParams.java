@@ -1,10 +1,5 @@
 package com.enonic.xp.issue;
 
-import java.util.List;
-
-import org.codehaus.jparsec.util.Lists;
-
-import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
 public final class CreateIssueParams
@@ -27,7 +22,7 @@ public final class CreateIssueParams
         this.title = builder.title;
         this.description = builder.description;
         this.issueStatus = builder.issueStatus;
-        this.approverIds = PrincipalKeys.from( builder.approverIds );
+        this.approverIds = builder.approverIds ;
         this.publishRequest = builder.publishRequest;
     }
 
@@ -75,14 +70,14 @@ public final class CreateIssueParams
 
         private IssueStatus issueStatus;
 
-        private List<PrincipalKey> approverIds;
+        private PrincipalKeys approverIds;
 
         private PublishRequest publishRequest;
 
         private Builder()
         {
             this.issueStatus = IssueStatus.OPEN;
-            this.approverIds = Lists.arrayList();
+            this.approverIds = PrincipalKeys.empty();
         }
 
         public Builder title( final String title )
@@ -97,9 +92,9 @@ public final class CreateIssueParams
             return this;
         }
 
-        public Builder addApproverId( final PrincipalKey approverId )
+        public Builder setApproverIds( final PrincipalKeys approverIds )
         {
-            this.approverIds.add( approverId );
+            this.approverIds = approverIds;
             return this;
         }
 

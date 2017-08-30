@@ -5,6 +5,7 @@ module api.security {
         private key: PrincipalKey;
         private displayName: string;
         private members: PrincipalKey[] = [];
+        private memberships: PrincipalKey[] = [];
         private description: string;
 
         constructor() {
@@ -27,6 +28,11 @@ module api.security {
             return this;
         }
 
+        setMemberships(memberships: PrincipalKey[]): CreateGroupRequest {
+            this.memberships = memberships.slice(0);
+            return this;
+        }
+
         setDescription(description: string): CreateGroupRequest {
             this.description = description;
             return this;
@@ -36,7 +42,8 @@ module api.security {
             return {
                 key: this.key.toString(),
                 displayName: this.displayName,
-                members: this.members.map((memberKey) => memberKey.toString()),
+                members: this.members.map(key => key.toString()),
+                memberships: this.memberships.map(key => key.toString()),
                 description: this.description
             };
         }

@@ -16,6 +16,7 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.impl.function.ApplicationInfoBuilder;
 import com.enonic.xp.script.impl.function.ScriptFunctions;
@@ -23,12 +24,13 @@ import com.enonic.xp.script.impl.service.ServiceRegistry;
 import com.enonic.xp.script.impl.util.ErrorHelper;
 import com.enonic.xp.script.impl.util.JavascriptHelper;
 import com.enonic.xp.script.impl.util.JavascriptHelperFactory;
+import com.enonic.xp.script.impl.util.NashornHelper;
 import com.enonic.xp.script.impl.value.ScriptValueFactory;
 import com.enonic.xp.script.impl.value.ScriptValueFactoryImpl;
 import com.enonic.xp.script.runtime.ScriptSettings;
 import com.enonic.xp.server.RunMode;
 
-final class ScriptExecutorImpl
+public final class ScriptExecutorImpl
     implements ScriptExecutor
 {
     private final static String PRE_SCRIPT = "(function(log, require, resolve, __, exports, module) { ";
@@ -58,11 +60,6 @@ final class ScriptExecutorImpl
     private ScriptValueFactory scriptValueFactory;
 
     private JavascriptHelper javascriptHelper;
-
-    public void setEngine( final ScriptEngine engine )
-    {
-        this.engine = engine;
-    }
 
     public void setScriptSettings( final ScriptSettings scriptSettings )
     {
@@ -96,6 +93,7 @@ final class ScriptExecutorImpl
 
     public void initialize()
     {
+        this.engine = NashornHelper.getScriptEngine( this.classLoader );
         this.mocks = Maps.newHashMap();
         this.disposers = Maps.newHashMap();
         this.exportsCache = new ScriptExportsCache();
@@ -119,10 +117,13 @@ final class ScriptExecutorImpl
     }
 
     @Override
-    public Object executeMain( final ResourceKey key )
+    public ScriptExports executeMain( final ResourceKey key )
     {
         expireCacheIfNeeded();
-        return executeRequire( key );
+
+        final Object exports = executeRequire( key );
+        final ScriptValue value = newScriptValue( exports );
+        return new ScriptExportsImpl( key, value, exports );
     }
 
     private void expireCacheIfNeeded()

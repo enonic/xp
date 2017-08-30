@@ -18,3 +18,6 @@ bundle {
     instruction 'Bundle-Name', 'Enonic XP Core - Api'
     instruction 'Export-Package', 'com.enonic.xp.*;-split-package:=first'
 }
+
+// Change the output directory for the main source set back to the old path
+sourceSets.main.output.classesDir = new File(buildDir, "classes/main")

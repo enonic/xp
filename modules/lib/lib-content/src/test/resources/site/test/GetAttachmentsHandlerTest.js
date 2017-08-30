@@ -1,5 +1,5 @@
-var assert = require('/lib/xp/assert.js');
-var content = require('/lib/xp/content.js');
+var t = require('/lib/xp/testing');
+var content = require('/lib/xp/content');
 
 var expectedJson = {
     "logo.png": {
@@ -18,23 +18,23 @@ var expectedJson = {
 exports.getById = function () {
     var result = content.getAttachments('123456');
 
-    assert.assertJsonEquals(expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 };
 
 exports.getByPath = function () {
     var result = content.getAttachments('/a/b/mycontent');
 
-    assert.assertJsonEquals(expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 };
 
 exports.getById_notFound = function () {
     var result = content.getAttachments('123456');
 
-    assert.assertNull(result);
+    t.assertNull(result);
 };
 
 exports.getByPath_notFound = function () {
     var result = content.getAttachments('/a/b/mycontent');
 
-    assert.assertNull(result);
+    t.assertNull(result);
 };

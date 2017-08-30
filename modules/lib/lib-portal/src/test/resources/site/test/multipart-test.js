@@ -1,4 +1,4 @@
-var assert = require('/lib/xp/assert.js');
+var assert = require('/lib/xp/testing.js');
 var portal = require('/lib/xp/portal.js');
 
 exports.getForm = function () {
@@ -83,7 +83,7 @@ exports.getItemMultiple = function () {
     var result2 = portal.getMultipartItem("file1", 1);
     assert.assertNotNull(result1);
     assert.assertNotNull(result2);
-    assert.assertTrue(result1 != result2);
+    assert.assertTrue(result1 !== result2);
 };
 
 exports.getItem_notFound = function () {
@@ -101,7 +101,7 @@ exports.getTextMultiple = function () {
     var result2 = portal.getMultipartText("file1", 1);
     assert.assertNotNull(result1);
     assert.assertNotNull(result2);
-    assert.assertTrue(result1 != result2);
+    assert.assertTrue(result1 !== result2);
 };
 
 exports.getText_notFound = function () {

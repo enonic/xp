@@ -14,6 +14,7 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
+import org.elasticsearch.cluster.block.ClusterBlockException;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -91,7 +92,11 @@ public class StorageDaoImpl
             deleteResponse = this.client.delete( builder.request() ).
                 actionGet( request.getTimeoutAsString() );
         }
-        catch ( ElasticsearchException e )
+        catch ( ClusterBlockException e )
+        {
+            throw new NodeStorageException( "Cannot delete node " + id + ", Repository in 'READ-ONLY mode'" );
+        }
+        catch ( Exception e )
         {
             throw new NodeStorageException( "Cannot delete node " + id, e );
         }
@@ -117,7 +122,11 @@ public class StorageDaoImpl
 
                 this.client.delete( request ).actionGet( requests.getTimeoutAsString() );
             }
-            catch ( ElasticsearchException e )
+            catch ( ClusterBlockException e )
+            {
+                throw new NodeStorageException( "Cannot delete node " + id + ", Repository in 'READ-ONLY mode'" );
+            }
+            catch ( Exception e )
             {
                 throw new NodeStorageException( "Cannot delete node " + id, e );
             }
@@ -131,6 +140,10 @@ public class StorageDaoImpl
         {
             indexResponse = this.client.index( request ).
                 actionGet( timeout );
+        }
+        catch ( ClusterBlockException e )
+        {
+            throw new NodeStorageException( "Cannot store node " + request.id() + ", Repository in 'READ-ONLY mode'" );
         }
         catch ( ElasticsearchException e )
         {

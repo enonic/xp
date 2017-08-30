@@ -1,4 +1,4 @@
-var assert = require('/lib/xp/assert.js');
+var t = require('/lib/xp/testing.js');
 var auth = require('/lib/xp/auth.js');
 
 exports.getUserMemberships = function () {
@@ -15,7 +15,7 @@ exports.getUserMemberships = function () {
         }
     ];
 
-    assert.assertJsonEquals('getMemberships result not equals', expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 
 };
 
@@ -40,7 +40,7 @@ exports.getUserMembershipsWithRoleAndGroup = function () {
         }
     ];
 
-    assert.assertJsonEquals('getMemberships result not equals', expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 
 };
 
@@ -50,6 +50,6 @@ exports.getNonExistingMemberships = function () {
 
     var expectedJson = [];
 
-    assert.assertJsonEquals('getMemberships result not equals', expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 
 };

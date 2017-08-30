@@ -7,6 +7,15 @@
   &.empty > .@{_CLS_PREFIX}item-placeholder,
   &[data-portal-placeholder=true] > .@{_CLS_PREFIX}item-placeholder {
     display: block;
+    .tree-grid {
+      height: auto;
+    }
+  }
+
+  &.empty {
+    .@{_CLS_PREFIX}item-placeholder {
+      height: @placeholder-height;
+    }
   }
 
   &[data-portal-placeholder-error=true] {
@@ -66,6 +75,10 @@
         content: '';
       }
     }
+  }
+
+  & figure.empty {
+    margin: 0;
   }
 }
 

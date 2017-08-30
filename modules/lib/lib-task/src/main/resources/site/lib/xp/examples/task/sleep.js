@@ -1,5 +1,5 @@
 var taskLib = require('/lib/xp/task.js');
-var assert = require('/lib/xp/assert');
+var assert = require('/lib/xp/testing');
 
 var count = 0;
 function fetchRemoteData() {

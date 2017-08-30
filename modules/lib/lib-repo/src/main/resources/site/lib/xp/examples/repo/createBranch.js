@@ -1,5 +1,5 @@
 var repoLib = require('/lib/xp/repo.js');
-var assert = require('/lib/xp/assert');
+var assert = require('/lib/xp/testing');
 
 // BEGIN
 // Creates a branch
