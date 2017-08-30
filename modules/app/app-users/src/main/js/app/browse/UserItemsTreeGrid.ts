@@ -96,14 +96,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
     }
 
     private isUserItemEditable(userItem: UserTreeGridItem): boolean {
-
-        let type: UserTreeGridItemType = userItem.getType();
-
-        if (type === UserTreeGridItemType.ROLES || type === UserTreeGridItemType.GROUPS || type === UserTreeGridItemType.USERS) {
-            return false;
-        }
-
-        return true;
+        return !(userItem.isRole() || userItem.isUserGroup() || userItem.isUser());
     }
 
     isEmptyNode(node: TreeNode<UserTreeGridItem>): boolean {
@@ -167,7 +160,8 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
 
     getParentNode(nextToSelection: boolean = false, stashedParentNode?: TreeNode<UserTreeGridItem>, data?: UserTreeGridItem) {
         const parent = super.getParentNode(nextToSelection, stashedParentNode);
-        if (parent.getData().getType() === UserTreeGridItemType.USER_STORE && parent.hasChildren()) {
+        const parentItem = parent.getData();
+        if (parentItem.isUserStore() && parent.hasChildren()) {
             const parentType = (data && data.getPrincipal().isUser()) ? UserTreeGridItemType.USERS : UserTreeGridItemType.GROUPS;
             return parent.getChildren().filter(node => node.getData().getType() === parentType)[0] || parent;
         }
@@ -175,17 +169,20 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
         return parent;
     }
 
+    private getNodeToUpdate(node: TreeNode<UserTreeGridItem>): TreeNode<UserTreeGridItem> {
+        const usersOrGroupsUpdating = node.getData().isUser() || node.getData().isUserGroup();
+        const selectedData = this.getSelectedDataList()[0];
+        const userStoreSelected = selectedData && selectedData.isUserStore();
+
+        return (usersOrGroupsUpdating && userStoreSelected) ? node.getParent() : node;
+    }
+
     protected updateSelectedNode(node: TreeNode<UserTreeGridItem>) {
         // Highlighted nodes should remain as is, and must not be selected
         const firstSelectedOrHighlighted = this.getFirstSelectedOrHighlightedNode();
         const highlighted = this.getRoot().getFullSelection().length === 0 && !!firstSelectedOrHighlighted;
 
-        const usersAndGroupsTypes = [UserTreeGridItemType.USERS, UserTreeGridItemType.GROUPS];
-        const usersOrGroupsUpdating = usersAndGroupsTypes.some(type => type === node.getData().getType());
-        const selectedData = this.getSelectedDataList()[0];
-        const userStoreSelected = selectedData && selectedData.getType() === UserTreeGridItemType.USER_STORE;
-
-        const nodeToUpdate = (usersOrGroupsUpdating && userStoreSelected) ? node.getParent() : node;
+        const nodeToUpdate = this.getNodeToUpdate(node);
         if (highlighted) {
             this.refreshNode(nodeToUpdate);
         } else {
@@ -212,7 +209,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
         // Creating a role with parent node pointing to another role may cause fetching to fail
         // We need to select a parent node first
         if (level !== 0 && parentNode.getData().getPrincipal() &&
-            parentNode.getData().getType() === UserTreeGridItemType.PRINCIPAL &&
+            parentNode.getData().isPrincipal() &&
             parentNode.getData().getPrincipal().isRole() && !!parentNode.getParent()) {
 
             parentNode = parentNode.getParent();
@@ -233,7 +230,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
 
-        } else if (parentNode.getData().getType() === UserTreeGridItemType.ROLES) {
+        } else if (parentNode.getData().isRole()) {
             // fetch roles, if parent node 'Roles' was selected
             return this.loadChildren(parentNode, [PrincipalType.ROLE]);
 
@@ -269,7 +266,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
         let userStoreNode: UserTreeGridItem = null;
         let userStoreKey: UserStoreKey = null;
         // fetch principals from the user store, if parent node 'Groups' or 'Users' was selected
-        if(parentNode.getData().getType() !== UserTreeGridItemType.ROLES) {
+        if (!parentNode.getData().isRole()) {
             userStoreNode = parentNode.getParent().getData();
             userStoreKey = userStoreNode.getUserStore().getKey();
         }
@@ -318,7 +315,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
 
     private addUsersGroupsToUserStore(parentItem: UserTreeGridItem): UserTreeGridItem[] {
         let items: UserTreeGridItem[] = [];
-        if (parentItem.getType() === UserTreeGridItemType.USER_STORE) {
+        if (parentItem.isUserStore()) {
             let userStore = parentItem.getUserStore();
             let userFolderItem = new UserTreeGridItemBuilder().setUserStore(userStore).setType(UserTreeGridItemType.USERS).build();
             let groupFolderItem = new UserTreeGridItemBuilder().setUserStore(userStore).setType(UserTreeGridItemType.GROUPS).build();
