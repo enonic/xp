@@ -22,7 +22,10 @@ import UploadItem = api.ui.uploader.UploadItem;
 import ListContentByPathRequest = api.content.resource.ListContentByPathRequest;
 import LoadMask = api.ui.mask.LoadMask;
 import ContentResponse = api.content.resource.result.ContentResponse;
+import IsAuthenticatedRequest = api.security.auth.IsAuthenticatedRequest;
+import LoginResult = api.security.auth.LoginResult;
 import i18n = api.util.i18n;
+import RoleKeys = api.security.RoleKeys;
 
 export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
@@ -256,7 +259,12 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
 
     private sendRequestsToFetchContentData(): wemQ.Promise<any>[] {
         let requests: wemQ.Promise<any>[] = [];
-        requests.push(new GetAllContentTypesRequest().sendAndParse());
+        requests.push(new GetAllContentTypesRequest().sendAndParse().then((contentTypes: ContentTypeSummary[]) => {
+            return new IsAuthenticatedRequest().sendAndParse().then((loginResult: LoginResult) => {
+                return this.filterContentTypes(contentTypes, loginResult);
+            });
+        }));
+
         if (this.parentContent) {
             requests.push(new ListContentByPathRequest(this.parentContent.getPath()).sendAndParse());
             requests.push(new GetNearestSiteRequest(this.parentContent.getContentId()).sendAndParse());
@@ -265,6 +273,19 @@ export class NewContentDialog extends api.ui.dialog.ModalDialog {
         }
 
         return requests;
+    }
+
+    private filterContentTypes(contentTypes: ContentTypeSummary[], loginResult: LoginResult): ContentTypeSummary[] {
+        contentTypes = contentTypes.filter(contentType => contentType.getId() !== 'base:unstructured');
+
+        const isAdmin: boolean = loginResult.getPrincipals().some(
+            principalKey => principalKey.equals(RoleKeys.CMS_ADMIN) || principalKey.equals(RoleKeys.ADMIN));
+
+        if (!isAdmin) {
+            contentTypes = contentTypes.filter(contentType => !contentType.isSite());
+        }
+
+        return contentTypes;
     }
 
     private updateDialogTitlePath() {
