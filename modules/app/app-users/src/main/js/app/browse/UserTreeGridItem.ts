@@ -118,7 +118,7 @@ export class UserTreeGridItem implements api.Equitable {
     isPrincipal(): boolean {
         return this.type === UserTreeGridItemType.PRINCIPAL;
     }
-    
+
     hasChildren(): boolean {
         return (this.isUser() || this.isUserGroup() || this.isUserStore() || this.isRole());
     }
