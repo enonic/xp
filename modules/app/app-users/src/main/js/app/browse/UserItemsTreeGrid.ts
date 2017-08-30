@@ -154,12 +154,6 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
             const userTreeGridItem = new UserTreeGridItemBuilder().setPrincipal(principal).setType(UserTreeGridItemType.PRINCIPAL).build();
 
             this.appendNode(userTreeGridItem, parentOfSameType, false);
-
-            // If a new principal is added to the root it means it was added from the New Principal modal dialog,
-            // in which case we have to reload the tree so that the new node is placed correctly
-            if (this.getParentNode(parentOfSameType) == this.getRoot().getCurrentRoot()) {
-                this.reload();
-            }
         }
     }
 

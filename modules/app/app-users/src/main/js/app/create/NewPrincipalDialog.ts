@@ -13,6 +13,8 @@ export class NewPrincipalDialog extends api.ui.dialog.ModalDialog {
 
     private grid: UserItemTypesTreeGrid;
 
+    private pathEl: api.dom.PEl;
+
     constructor() {
         super(<api.ui.dialog.ModalDialogConfig>{
             title: i18n('dialog.new')
@@ -56,6 +58,10 @@ export class NewPrincipalDialog extends api.ui.dialog.ModalDialog {
         const isUserStore = selection.length > 0 && selection[0].getType() === UserTreeGridItemType.USER_STORE;
         if (isUserStore) {
             this.grid.setUserStore(selection[0].getUserStore());
+            this.setPath(selection[0].getItemDisplayName());
+        }
+        else {
+            this.pathEl.hide();
         }
         return this;
     }
@@ -69,5 +75,21 @@ export class NewPrincipalDialog extends api.ui.dialog.ModalDialog {
     close() {
         this.grid.clearUserStores();
         super.close();
+    }
+
+    private createPathEl(): api.dom.PEl {
+        const pathEl = new api.dom.PEl('path');
+        pathEl.getEl().setAttribute('data-desc', `${i18n('dialog.newContent.pathDescription')}:`);
+        this.header.appendChild(pathEl);
+
+        return pathEl;
+    }
+
+    private setPath(path: string) {
+        if (!this.pathEl) {
+            this.pathEl = this.createPathEl();
+        }
+        this.pathEl.setHtml(path);
+        this.pathEl.show();
     }
 }
