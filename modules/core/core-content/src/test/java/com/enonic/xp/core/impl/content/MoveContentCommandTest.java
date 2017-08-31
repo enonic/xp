@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentAlreadyMovedException;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
@@ -14,6 +15,7 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -78,12 +80,42 @@ public class MoveContentCommandTest
             eventPublisher( this.eventPublisher ).
             build();
 
-        final Node mockNode = Node.create().build();
+        final Node mockNode = Node.create().parentPath( NodePath.ROOT ).build();
 
         Mockito.when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
         Mockito.when( translator.fromNode( mockNode, true ) ).thenReturn( existingContent );
         Mockito.when( translator.fromNode( mockNode, false ) ).thenReturn( existingContent );
         Mockito.when( contentService.getNearestSite( existingContent.getId() ) ).thenReturn( parentSite );
+
+        // exercise
+        command.execute();
+    }
+
+    @Test(expected = ContentAlreadyMovedException.class)
+    public void move_to_the_same_parent()
+        throws Exception
+    {
+        final PropertyTree existingContentData = new PropertyTree();
+        existingContentData.addString( "myData", "aaa" );
+
+        final Content existingContent = createContent( existingContentData, ContentPath.ROOT, ContentTypeName.folder() );
+
+        final MoveContentParams params = new MoveContentParams( existingContent.getId(), ContentPath.ROOT );
+
+        final MoveContentCommand command = MoveContentCommand.create( params ).
+            contentTypeService( this.contentTypeService ).
+            nodeService( this.nodeService ).
+            contentService( this.contentService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            build();
+
+        final Node mockNode =
+            Node.create().parentPath( ContentNodeHelper.translateContentParentToNodeParentPath( existingContent.getParentPath() ) ).build();
+
+        Mockito.when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
+        Mockito.when( translator.fromNode( mockNode, true ) ).thenReturn( existingContent );
+        Mockito.when( translator.fromNode( mockNode, false ) ).thenReturn( existingContent );
 
         // exercise
         command.execute();
