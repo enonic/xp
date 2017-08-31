@@ -4,7 +4,9 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
+import com.enonic.xp.content.ContentAlreadyMovedException;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ExtraDatas;
@@ -15,7 +17,9 @@ import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
+import com.enonic.xp.node.NodeAlreadyMovedException;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.GetContentTypeParams;
@@ -48,6 +52,10 @@ final class MoveContentCommand
         {
             return doExecute();
         }
+        catch ( NodeAlreadyMovedException e )
+        {
+            throw new ContentAlreadyMovedException( e.getMessage() );
+        }
         catch ( MoveNodeException e )
         {
             throw new MoveContentException( e.getMessage() );
@@ -78,10 +86,23 @@ final class MoveContentCommand
         final NodePath nodePath = NodePath.create( ContentConstants.CONTENT_ROOT_PATH ).
             elements( params.getParentContentPath().toString() ).
             build();
-        final Node movedNode = nodeService.move( sourceNodeId, nodePath );
-        final Content movedContent = translator.fromNode( movedNode, true );
 
-        final boolean isOutOfSite = nearestSite != null && !movedContent.getPath().isChildOf( nearestSite.getPath() );
+        if ( sourceNode.parentPath().equals( nodePath ) )
+        {
+            throw new NodeAlreadyMovedException(
+                String.format( "Content with id [%s] is already a child of [%s]", params.getContentId(), params.getParentContentPath() ) );
+        }
+
+        final ContentPath newParentPath = ContentNodeHelper.translateNodePathToContentPath( nodePath );
+
+        final boolean isOutOfSite =
+            nearestSite != null && ( !newParentPath.isChildOf( nearestSite.getPath() ) || !newParentPath.equals( nearestSite.getPath() ) );
+
+        checkRestrictedMoves( sourceNode, isOutOfSite );
+
+        final Node movedNode = nodeService.move( sourceNodeId, nodePath );
+
+        final Content movedContent = translator.fromNode( movedNode, true );
 
         if ( isOutOfSite )
         {
@@ -94,7 +115,8 @@ final class MoveContentCommand
         return movedContent;
     }
 
-    private void verifyIntegrity( ContentPath destinationPath ) {
+    private void verifyIntegrity( ContentPath destinationPath )
+    {
         if ( !destinationPath.isRoot() )
         {
             final Content parent = contentService.getByPath( destinationPath );
@@ -109,6 +131,17 @@ final class MoveContentCommand
             {
                 throw new IllegalArgumentException(
                     "Content could not be moved. Children not allowed in destination [" + destinationPath.toString() + "]" );
+            }
+        }
+    }
+
+    private void checkRestrictedMoves( final Node existingNode, final Boolean isOutOfSite )
+    {
+        if ( translator.fromNode( existingNode, false ).getType().isFragment() )
+        {
+            if ( isOutOfSite )
+            {
+                throw new MoveContentException( "A Fragment is not allowed to be moved out of its site." );
             }
         }
     }

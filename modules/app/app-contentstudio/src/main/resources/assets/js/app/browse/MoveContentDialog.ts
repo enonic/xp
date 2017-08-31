@@ -13,6 +13,7 @@ import MoveContentResultFailure = api.content.resource.result.MoveContentResultF
 import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
 import TreeNode = api.ui.treegrid.TreeNode;
 import i18n = api.util.i18n;
+import ContentAndStatusTreeSelectorItem = api.content.resource.ContentAndStatusTreeSelectorItem;
 
 export class MoveContentDialog extends api.ui.dialog.ModalDialog {
 
@@ -161,6 +162,8 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
                 } else {
                     api.notify.showFeedback(i18n('notify.item.moved', response.getMoved()[0]));
                 }
+            } else if(response.getMoveFailures().length == 0) {
+                api.notify.showWarning(i18n('notify.item.nothingToMove'));
             }
 
             response.getMoveFailures().forEach((failure: MoveContentResultFailure) => {
@@ -177,7 +180,8 @@ export class MoveContentDialog extends api.ui.dialog.ModalDialog {
     }
 
     private getParentContent(): api.content.ContentSummary {
-        return <api.content.ContentSummary> this.destinationSearchInput.getSelectedDisplayValues()[0];
+        const selected = this.destinationSearchInput.getSelectedDisplayValues()[0];
+        return selected != null ? selected.getContent() : null;
     }
 
     show() {
