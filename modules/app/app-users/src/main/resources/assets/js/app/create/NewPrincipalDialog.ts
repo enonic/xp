@@ -59,7 +59,7 @@ export class NewPrincipalDialog extends api.ui.dialog.ModalDialog {
         if (isUserStore) {
             this.grid.setUserStore(selection[0].getUserStore());
             this.setPath(selection[0].getItemDisplayName());
-        } else {
+        } else if (this.pathEl) {
             this.pathEl.hide();
         }
         return this;
