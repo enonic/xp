@@ -41,6 +41,7 @@ import User = api.security.User;
 import ModalDialog = api.ui.dialog.ModalDialog;
 import i18n = api.util.i18n;
 import ArrayHelper = api.util.ArrayHelper;
+import Tooltip = api.ui.Tooltip;
 
 export class IssueDetailsDialog extends SchedulableDialog {
 
@@ -51,6 +52,8 @@ export class IssueDetailsDialog extends SchedulableDialog {
     private itemsHeader: H6El;
 
     private currentUser: User;
+
+    private errorTooltip: Tooltip;
 
     private static INSTANCE: IssueDetailsDialog = new IssueDetailsDialog();
 
@@ -236,6 +239,9 @@ export class IssueDetailsDialog extends SchedulableDialog {
         const actionMenu: MenuButton = this.getButtonRow().makeActionMenu(publishAction, [this.showScheduleAction]);
 
         this.actionButton = actionMenu.getActionButton();
+        this.errorTooltip = new Tooltip(actionMenu, i18n('dialog.publish.invalidError'), 500);
+        this.errorTooltip.setActive(false);
+
     }
 
     private createBackButton() {
@@ -397,7 +403,9 @@ export class IssueDetailsDialog extends SchedulableDialog {
                 this.updateButtonCount(i18n('action.publish'), countToPublish);
 
                 this.toggleAction(countToPublish > 0);
+
                 this.getButtonRow().getActionMenu().setEnabled(!depResult.isContainsInvalid() && depResult.isAllPublishable());
+                this.errorTooltip.setActive(depResult.isContainsInvalid());
 
                 this.loadDescendants(0, 20).then((dependants: ContentSummaryAndCompareStatus[]) => {
                     this.setDependantItems(dependants);
