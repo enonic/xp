@@ -1028,6 +1028,23 @@ module api.ui.treegrid {
             return parentNode ? this.fetchChildren(parentNode) : this.fetchRoot();
         }
 
+        fetchDataAndSetNodes(parentNode: TreeNode<DATA>): wemQ.Promise<TreeNode<DATA>[]> {
+            let deferred = wemQ.defer<TreeNode<DATA>[]>();
+
+            if (parentNode.hasChildren()) {
+                deferred.resolve(parentNode.getChildren());
+            } else {
+                this.fetchData(parentNode).then((dataList: DATA[]) => {
+                    parentNode.setChildren(this.dataToTreeNodes(dataList, parentNode));
+                    this.initData(this.root.getCurrentRoot().treeToList());
+
+                    deferred.resolve(parentNode.getChildren());
+                });
+            }
+
+            return deferred.promise;
+        }
+
         dataToTreeNode(data: DATA, parent: TreeNode<DATA>, expandAllowed: boolean = true): TreeNode<DATA> {
             return new TreeNodeBuilder<DATA>().setData(data, this.getDataId(data))
                 .setExpanded(this.expandAll && expandAllowed)
@@ -1364,6 +1381,14 @@ module api.ui.treegrid {
             return this.insertNode(data, nextToSelection, index, stashedParentNode);
         }
 
+        appendNodeToParent(parentNode: TreeNode<DATA>, data: DATA) {
+            let index = Math.max(0, parentNode.getChildren().length - 1);
+            let root = this.root.getCurrentRoot();
+            let isRootParentNode: boolean = (parentNode === root);
+
+            this.doInsertNodeToParentWithChildren(parentNode, data, root, index);
+        }
+
         getParentNode(nextToSelection: boolean = false, stashedParentNode?: TreeNode<DATA>, data?: DATA) {
             let root = stashedParentNode || this.root.getCurrentRoot();
             let parentNode: TreeNode<DATA>;
@@ -1386,13 +1411,11 @@ module api.ui.treegrid {
             let root = stashedParentNode || this.root.getCurrentRoot();
             let parentNode = this.getParentNode(nextToSelection, stashedParentNode, data);
 
-            let isRootParentNode: boolean = (parentNode === root);
-
-            if (!parentNode.hasChildren() && !isRootParentNode) {
+            if (!parentNode.hasChildren() && (parentNode !== root)) {
                 this.fetchData(parentNode)
                     .then((dataList: DATA[]) => {
                         if (parentNode.hasChildren()) {
-                            this.doInsertNodeToParentWithChildren(parentNode, data, root, index, stashedParentNode, isRootParentNode);
+                            this.doInsertNodeToParentWithChildren(parentNode, data, root, index, stashedParentNode);
 
                         } else {
                             parentNode.setChildren(this.dataToTreeNodes(dataList, parentNode));
@@ -1424,7 +1447,7 @@ module api.ui.treegrid {
                     deferred.reject(reason);
                 });
             } else {
-                this.doInsertNodeToParentWithChildren(parentNode, data, root, index, stashedParentNode, isRootParentNode);
+                this.doInsertNodeToParentWithChildren(parentNode, data, root, index, stashedParentNode);
                 deferred.resolve(null);
             }
 
@@ -1435,8 +1458,9 @@ module api.ui.treegrid {
                                                  data: DATA,
                                                  root: TreeNode<DATA>,
                                                  index: number,
-                                                 stashedParentNode: TreeNode<DATA>,
-                                                 isRootParentNode: boolean) {
+                                                 stashedParentNode?: TreeNode<DATA>) {
+
+            let isRootParentNode: boolean = (parentNode === root);
             parentNode.insertChild(this.dataToTreeNode(data, root), index);
 
             let node = root.findNode(this.getDataId(data));

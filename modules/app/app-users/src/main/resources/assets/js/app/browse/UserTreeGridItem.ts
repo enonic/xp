@@ -1,6 +1,7 @@
 import '../../api.ts';
 
 import Principal = api.security.Principal;
+import PrincipalType = api.security.PrincipalType;
 import UserStore = api.security.UserStore;
 import i18n = api.util.i18n;
 
@@ -142,6 +143,19 @@ export class UserTreeGridItem implements api.Equitable {
 
     static fromPrincipal(principal: Principal): UserTreeGridItem {
         return new UserTreeGridItemBuilder().setPrincipal(principal).setType(UserTreeGridItemType.PRINCIPAL).build();
+    }
+
+    static getParentType(principal: Principal): UserTreeGridItemType {
+        switch (principal.getType()) {
+        case PrincipalType.GROUP:
+            return UserTreeGridItemType.GROUPS;
+        case PrincipalType.USER:
+            return UserTreeGridItemType.USERS;
+        case PrincipalType.ROLE:
+            return UserTreeGridItemType.ROLES;
+        default:
+            return null;
+        }
     }
 }
 
