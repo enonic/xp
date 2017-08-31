@@ -84,9 +84,9 @@ final class MoveContentCommand
         final ContentPath newParentPath = ContentNodeHelper.translateNodePathToContentPath( nodePath );
 
         final boolean isOutOfSite =
-            nearestSite != null && (!newParentPath.isChildOf( nearestSite.getPath() ) || !newParentPath.equals( nearestSite.getPath() ));
+            nearestSite != null && ( !newParentPath.isChildOf( nearestSite.getPath() ) || !newParentPath.equals( nearestSite.getPath() ) );
 
-        checkRestrictedMoves(sourceNode, isOutOfSite);
+        checkRestrictedMoves( sourceNode, isOutOfSite );
 
         final Node movedNode = nodeService.move( sourceNodeId, nodePath );
 
@@ -103,7 +103,8 @@ final class MoveContentCommand
         return movedContent;
     }
 
-    private void verifyIntegrity( ContentPath destinationPath ) {
+    private void verifyIntegrity( ContentPath destinationPath )
+    {
         if ( !destinationPath.isRoot() )
         {
             final Content parent = contentService.getByPath( destinationPath );
@@ -124,8 +125,10 @@ final class MoveContentCommand
 
     private void checkRestrictedMoves( final Node existingNode, final Boolean isOutOfSite )
     {
-        if(translator.fromNode( existingNode, false ).getType().isFragment()) {
-            if(isOutOfSite) {
+        if ( translator.fromNode( existingNode, false ).getType().isFragment() )
+        {
+            if ( isOutOfSite )
+            {
                 throw new MoveContentException( "A Fragment is not allowed to be moved out of its site." );
             }
         }
