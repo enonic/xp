@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
+import com.enonic.xp.content.ContentAlreadyMovedException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
@@ -16,6 +17,7 @@ import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
+import com.enonic.xp.node.NodeAlreadyMovedException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
@@ -50,6 +52,10 @@ final class MoveContentCommand
         {
             return doExecute();
         }
+        catch ( NodeAlreadyMovedException e )
+        {
+            throw new ContentAlreadyMovedException( e.getMessage() );
+        }
         catch ( MoveNodeException e )
         {
             throw new MoveContentException( e.getMessage() );
@@ -80,6 +86,12 @@ final class MoveContentCommand
         final NodePath nodePath = NodePath.create( ContentConstants.CONTENT_ROOT_PATH ).
             elements( params.getParentContentPath().toString() ).
             build();
+
+        if ( sourceNode.parentPath().equals( nodePath ) )
+        {
+            throw new NodeAlreadyMovedException(
+                String.format( "Content with id [%s] is already a child of [%s]", params.getContentId(), params.getParentContentPath() ) );
+        }
 
         final ContentPath newParentPath = ContentNodeHelper.translateNodePathToContentPath( nodePath );
 
