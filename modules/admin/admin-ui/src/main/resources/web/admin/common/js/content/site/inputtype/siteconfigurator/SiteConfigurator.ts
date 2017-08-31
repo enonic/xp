@@ -42,9 +42,7 @@ module api.content.site.inputtype.siteconfigurator {
 
             this.readOnlyPromise =
                 new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
-                    this.readOnly = !loginResult.getPrincipals().some(function (principal: PrincipalKey) {
-                        return principal.equals(api.security.RoleKeys.ADMIN) || principal.equals(api.security.RoleKeys.CMS_ADMIN);
-                    });
+                    this.readOnly = !loginResult.isContentAdmin();
                 });
         }
 
