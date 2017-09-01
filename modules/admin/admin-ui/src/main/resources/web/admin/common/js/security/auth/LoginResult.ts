@@ -28,6 +28,10 @@ module api.security.auth {
             return this.principals.some(principalKey => RoleKeys.isContentAdmin(principalKey));
         }
 
+        isUserAdmin(): boolean {
+            return this.principals.some(principalKey => RoleKeys.isUserAdmin(principalKey));
+        }
+
         isContentExpert(): boolean {
             return this.principals.some(principalKey => RoleKeys.isContentExpert(principalKey));
         }

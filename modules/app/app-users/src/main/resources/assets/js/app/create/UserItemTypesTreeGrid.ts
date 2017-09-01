@@ -114,11 +114,11 @@ export class UserItemTypesTreeGrid extends TreeGrid<UserTypeTreeGridItem> {
     }
 
     fetchRoot(): wemQ.Promise<UserTypeTreeGridItem[]> {
-        return wemQ.spread([new IsAuthenticatedRequest().sendAndParse(), this.fetchUserStores()], result => {
-            const principals = result.getPrincipals();
-            const validKeys = ['su', 'system.admin', 'system.user.admin'];
-            return validKeys.some(id => principals.some(p => p.getId() === id));
-        }, reason => !api.DefaultErrorHandler.handle(reason)).then(userIsAdmin => [
+        return wemQ.spread(
+            [new IsAuthenticatedRequest().sendAndParse(), this.fetchUserStores()],
+            result => result.isUserAdmin(),
+            reason => !api.DefaultErrorHandler.handle(reason)
+        ).then(userIsAdmin => [
             new UserTypeTreeGridItemBuilder()
                 .setUserItem(new UserBuilder()
                     .setKey(new PrincipalKey(UserStoreKey.SYSTEM, PrincipalType.USER, 'user'))
