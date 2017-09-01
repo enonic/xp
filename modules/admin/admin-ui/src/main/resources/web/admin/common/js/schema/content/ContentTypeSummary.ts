@@ -52,6 +52,10 @@ module api.schema.content {
             return this.getContentTypeName().isShortcut();
         }
 
+        isUnstructured(): boolean {
+            return this.getContentTypeName().isUnstructured();
+        }
+
         isFinal(): boolean {
             return this.final;
         }
