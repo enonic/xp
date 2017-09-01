@@ -130,6 +130,38 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
         this.invalidate();
     }
 
+    deleteNodes(userTreeGridItemsToDelete: UserTreeGridItem[]) {
+        if (this.isSingleItemSelected() && this.isHighlightedItemIn(userTreeGridItemsToDelete)) {
+            this.removeHighlighting();
+        }
+
+        super.deleteNodes(userTreeGridItemsToDelete);
+    }
+
+    private loadParentNode(principal: api.security.Principal, userStore: api.security.UserStore): wemQ.Promise<TreeNode<UserTreeGridItem>> {
+        let deferred = wemQ.defer<TreeNode<UserTreeGridItem>>();
+        let parentNode = this.getParentNode();
+
+        if (!parentNode.getData() && !principal.isRole()) { // No parent selected
+            const userStoreId = userStore.getKey().getId();
+            parentNode = parentNode.getChildren().filter(node => node.getDataId() === userStoreId)[0] || parentNode;
+        }
+
+        this.fetchDataAndSetNodes(parentNode).then(() => {
+            const parentItemType = UserTreeGridItem.getParentType(principal);
+
+            if (parentNode.getData().getType() === parentItemType) {
+                deferred.resolve(parentNode);
+            } else {
+                parentNode = parentNode.getChildren().filter(node => node.getData().getType() === parentItemType)[0] || parentNode;
+
+                this.fetchDataAndSetNodes(parentNode).then(() => deferred.resolve(parentNode));
+            }
+        });
+
+        return deferred.promise;
+    }
+
     appendUserNode(principal: api.security.Principal, userStore: api.security.UserStore, parentOfSameType?: boolean) {
         if (!principal) { // UserStore type
 
@@ -146,27 +178,13 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
 
             const userTreeGridItem = new UserTreeGridItemBuilder().setPrincipal(principal).setType(UserTreeGridItemType.PRINCIPAL).build();
 
-            this.appendNode(userTreeGridItem, parentOfSameType, false);
+            if (parentOfSameType) {
+                this.appendNode(userTreeGridItem, parentOfSameType, false);
+                return;
+            }
+
+            this.loadParentNode(principal, userStore).then((parentNode) => this.appendNodeToParent(parentNode, userTreeGridItem));
         }
-    }
-
-    deleteNodes(userTreeGridItemsToDelete: UserTreeGridItem[]) {
-        if (this.isSingleItemSelected() && this.isHighlightedItemIn(userTreeGridItemsToDelete)) {
-            this.removeHighlighting();
-        }
-
-        super.deleteNodes(userTreeGridItemsToDelete);
-    }
-
-    getParentNode(nextToSelection: boolean = false, stashedParentNode?: TreeNode<UserTreeGridItem>, data?: UserTreeGridItem) {
-        const parent = super.getParentNode(nextToSelection, stashedParentNode);
-        const parentItem = parent.getData();
-        if (parentItem.isUserStore() && parent.hasChildren()) {
-            const parentType = (data && data.getPrincipal().isUser()) ? UserTreeGridItemType.USERS : UserTreeGridItemType.GROUPS;
-            return parent.getChildren().filter(node => node.getData().getType() === parentType)[0] || parent;
-        }
-
-        return parent;
     }
 
     private getNodeToUpdate(node: TreeNode<UserTreeGridItem>): TreeNode<UserTreeGridItem> {
@@ -180,12 +198,13 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
     protected updateSelectedNode(node: TreeNode<UserTreeGridItem>) {
         // Highlighted nodes should remain as is, and must not be selected
         const firstSelectedOrHighlighted = this.getFirstSelectedOrHighlightedNode();
-        const highlighted = this.getRoot().getFullSelection().length === 0 && !!firstSelectedOrHighlighted;
+        const selected = this.getRoot().getFullSelection().length > 0;
+        const highlighted = !selected && !!firstSelectedOrHighlighted;
 
         const nodeToUpdate = this.getNodeToUpdate(node);
         if (highlighted) {
             this.refreshNode(nodeToUpdate);
-        } else {
+        } else if (selected) {
             super.updateSelectedNode(nodeToUpdate);
         }
     }

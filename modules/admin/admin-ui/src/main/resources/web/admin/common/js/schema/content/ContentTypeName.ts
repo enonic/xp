@@ -95,6 +95,10 @@ module api.schema.content {
             return ContentTypeName.SHORTCUT.equals(this);
         }
 
+        isUnstructured(): boolean {
+            return ContentTypeName.UNSTRUCTURED.equals(this);
+        }
+
         static getMediaTypes(): ContentTypeName[] {
             return [
                 ContentTypeName.MEDIA_ARCHIVE,

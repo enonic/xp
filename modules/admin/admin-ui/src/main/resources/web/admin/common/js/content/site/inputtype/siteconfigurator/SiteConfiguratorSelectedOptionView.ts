@@ -86,8 +86,13 @@ module api.content.site.inputtype.siteconfigurator {
             });
             header.appendChild(removeButton);
 
-            return this.initConfigureDialog().render(true)
-                .then(()=> wemQ(true));
+            this.configureDialog = this.initConfigureDialog();
+            if(this.configureDialog) {
+                return this.configureDialog.render(true)
+                    .then(()=> wemQ(true));
+            } else {
+                return wemQ(true);
+            }
         }
 
         setSiteConfig(siteConfig: SiteConfig) {
@@ -148,7 +153,7 @@ module api.content.site.inputtype.siteconfigurator {
                 okCallback,
                 cancelCallback);
 
-            return this.configureDialog = siteConfiguratorDialog;
+            return siteConfiguratorDialog;
         }
 
         private revertFormViewToGivenState(formViewStateToRevertTo: FormView) {
