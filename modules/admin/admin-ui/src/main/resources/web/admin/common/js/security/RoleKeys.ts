@@ -39,23 +39,23 @@ module api.security {
         /* */
 
         public static isContentAdmin(principalKey: PrincipalKey): boolean {
-            return RoleKeys.contentAdminRoles.some(roleId => principalKey.getId() === roleId);
+            return !!principalKey && RoleKeys.contentAdminRoles.some(roleId => principalKey.getId() === roleId);
         }
 
         public static isUserAdmin(principalKey: PrincipalKey): boolean {
-            return RoleKeys.userAdminRoles.some(roleId => principalKey.getId() === roleId);
+            return !!principalKey && RoleKeys.userAdminRoles.some(roleId => principalKey.getId() === roleId);
         }
 
         public static isContentExpert(principalKey: PrincipalKey): boolean {
-            return RoleKeys.contentExpertRoles.some(roleId => principalKey.getId() === roleId);
+            return !!principalKey && RoleKeys.contentExpertRoles.some(roleId => principalKey.getId() === roleId);
         }
 
         public static isAdmin(principalKey: PrincipalKey): boolean {
-            return RoleKeys.ROLE_ADMIN === principalKey.getId();
+            return !!principalKey && RoleKeys.ROLE_ADMIN === principalKey.getId();
         }
 
         public static isEveryone(principalKey: PrincipalKey): boolean {
-            return RoleKeys.ROLE_EVERYONE === principalKey.getId();
+            return !!principalKey && RoleKeys.ROLE_EVERYONE === principalKey.getId();
         }
     }
 }
