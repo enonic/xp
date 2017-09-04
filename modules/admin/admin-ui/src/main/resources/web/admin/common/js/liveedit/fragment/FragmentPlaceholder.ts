@@ -10,7 +10,6 @@ module api.liveedit.fragment {
     import ValueExpr = api.query.expr.ValueExpr;
     import SelectedOptionEvent = api.ui.selector.combobox.SelectedOptionEvent;
     import i18n = api.util.i18n;
-    import ContentSummaryOptionDataLoader = api.content.ContentSummaryOptionDataLoader;
 
     export class FragmentPlaceholder extends api.liveedit.ItemViewPlaceholder {
 
@@ -30,19 +29,9 @@ module api.liveedit.fragment {
             let sitePath = this.fragmentComponentView.getLiveEditModel().getSiteModel().getSite().getPath().toString();
             let loader = new api.content.resource.FragmentContentSummaryLoader().setParentSitePath(sitePath);
 
-            this.comboBox = api.content.ContentComboBox
-                .create()
-                .setMaximumOccurrences(1)
-                .setLoader(loader)
-                .setTreegridDropdownEnabled(true)
-                .setMinWidth(270)
-                .setOptionDataLoader(
-                    ContentSummaryOptionDataLoader.create()
-                        .setContentTypeNames([ContentTypeName.FRAGMENT.toString()])
-                        .setContent(fragmentView.getLiveEditModel().getContent())
-                        .build()
-                )
-                .build();
+            this.comboBox =
+                api.content.ContentComboBox.create().setMaximumOccurrences(1).setLoader(loader).setMinWidth(270).setTreegridDropdownEnabled(
+                    false).build();
 
             this.comboboxWrapper.appendChildren(this.comboBox);
             this.appendChild(this.comboboxWrapper);

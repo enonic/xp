@@ -19,6 +19,8 @@ import GetPageTemplatesByCanRenderRequest = api.content.page.GetPageTemplatesByC
 import PageTemplateLoader = api.content.page.PageTemplateLoader;
 import i18n = api.util.i18n;
 import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
+import ContentServerChangeItem = api.content.event.ContentServerChangeItem;
+import ArrayHelper = api.util.ArrayHelper;
 
 export class PageTemplateSelector
     extends Dropdown<PageTemplateOption> {
@@ -43,19 +45,32 @@ export class PageTemplateSelector
             api.DefaultErrorHandler.handle(reason);
         }).done();
 
-        ContentServerEventsHandler.getInstance().onContentCreated(summaries => {
-            const isTemplateCreated = summaries.some(summary => summary.getType().isPageTemplate());
-            if (isTemplateCreated) {
-                this.loadPageTemplates(liveEditModel).then(options => {
-                    const selectedValue = this.getValue();
-                    this.removeAllOptions();
-                    this.initOptionsList(options);
-                    this.setValue(selectedValue);
-                });
+        ContentServerEventsHandler.getInstance().onContentUpdated(summaries => {
+            const isTemplateUpdated = summaries.some(summary => summary.getType().isPageTemplate());
+
+            if (isTemplateUpdated) {
+                this.reload(liveEditModel);
+            }
+        });
+        ContentServerEventsHandler.getInstance().onContentDeleted((items: ContentServerChangeItem[]) => {
+
+            const deletedIds: ContentId[] = items.map(item => item.getContentId());
+
+            if(this.getOptions().some(option => ArrayHelper.contains(deletedIds, new ContentId(option.value)))) {
+                this.reload(liveEditModel);
             }
         });
 
         this.initPageModelListeners(liveEditModel.getPageModel());
+    }
+
+    private reload(liveEditModel: LiveEditModel): wemQ.Promise<void> {
+        return this.loadPageTemplates(liveEditModel).then(options => {
+            const selectedValue = this.getValue();
+            this.removeAllOptions();
+            this.initOptionsList(options);
+            this.setValue(selectedValue);
+        });
     }
 
     private loadPageTemplates(liveEditModel: LiveEditModel): wemQ.Promise<Option<PageTemplateOption>[]> {

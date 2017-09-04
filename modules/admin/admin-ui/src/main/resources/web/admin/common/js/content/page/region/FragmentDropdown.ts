@@ -10,28 +10,34 @@ module api.content.page.region {
     import FragmentContentSummaryLoader = api.content.resource.FragmentContentSummaryLoader;
 
     import RichDropdown = api.ui.selector.dropdown.RichDropdown;
+    import LiveEditModel = api.liveedit.LiveEditModel;
 
     export class FragmentDropdown extends RichDropdown<ContentSummary> {
 
         protected loader: FragmentContentSummaryLoader;
 
-        private parentSitePath: string;
-        private contentPath: ContentPath;
+        private model: LiveEditModel;
 
-        constructor(sitePath: string, contentPath: ContentPath) {
+        constructor(model: LiveEditModel) {
 
             super({
                 optionDisplayValueViewer: new ContentSummaryViewer(),
                 dataIdProperty: 'value'
             });
 
-            this.parentSitePath = sitePath;
-            this.contentPath = contentPath;
+           this.model = model;
         }
 
         load() {
-            this.loader.setParentSitePath(this.parentSitePath).setContentPath(this.contentPath);
+            this.loader
+                .setParentSitePath(this.model.getSiteModel().getSite().getPath().toString())
+                .setContentPath(this.model.getContent().getPath());
+
             this.loader.load();
+        }
+
+        setModel(model: LiveEditModel) {
+            this.model = model;
         }
 
         protected createLoader(): FragmentContentSummaryLoader {

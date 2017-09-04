@@ -668,7 +668,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         return super.saveChanges().then((content: Content) => {
             if (liveFormPanel) {
                 this.liveEditModel.setContent(content);
-                liveFormPanel.loadPage(false);
+                this.updateLiveForm();
             }
 
             if (content.getType().isImage()) {
