@@ -5,24 +5,38 @@ import java.util.Map;
 
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.sax.BodyContentHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.extractor.ExtractedData;
 
-public class ExtractorResultFactory
+class ExtractorResultFactory
 {
-    public static ExtractedData create( final Metadata metadata, final BodyContentHandler handler )
+    private final static Logger LOG = LoggerFactory.getLogger( ExtractorResultFactory.class );
+
+    static ExtractedData create( final Metadata metadata, final BodyContentHandler handler )
     {
+        String contentText = handler.toString();
+        try
+        {
+            contentText = ExtractedTextCleaner.clean( contentText );
+        }
+        catch ( Throwable t )
+        {
+            LOG.warn( "Error cleaning up extracted text", t );
+        }
+
         return ExtractedData.create().
             metadata( toMap( metadata ) ).
-            text( ExtractedTextCleaner.clean( handler.toString() ) ).
+            text( contentText ).
             imageOrientation( metadata.get( Metadata.ORIENTATION ) ).
             build();
     }
 
-    private final static Map<String, List<String>> toMap( final Metadata metadata )
+    private static Map<String, List<String>> toMap( final Metadata metadata )
     {
         Map<String, List<String>> values = Maps.newHashMap();
 

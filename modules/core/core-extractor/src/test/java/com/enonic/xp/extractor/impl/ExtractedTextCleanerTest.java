@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 
 public class ExtractedTextCleanerTest
 {
-    //   @Test
+    @Test
     public void strip_consecutive_linebreaks_and_whitespaces()
         throws Exception
     {
@@ -19,10 +19,10 @@ public class ExtractedTextCleanerTest
 
         final String expected = Resources.toString( this.getClass().getResource( "linebreaked-clean.txt" ), Charsets.UTF_8 );
 
-        assertEquals( expected, cleanedText );
+        assertEquals( expected.trim(), cleanedText.trim() );
     }
 
-    //   @Test
+    @Test
     public void strip_consecutive_linebreaks_and_whitespaces_2()
         throws Exception
     {
