@@ -19,7 +19,15 @@ module api.util.htmlarea.dialog {
         private callback: Function;
 
         constructor(config: HtmlAreaMacro, content: api.content.ContentSummary, applicationKeys: ApplicationKey[]) {
-            super(<HtmlAreaModalDialogConfig>{editor: config.editor, title: i18n('dialog.macro.title'), cls: 'macro-modal-dialog'});
+            super(<HtmlAreaModalDialogConfig>{
+                editor: config.editor,
+                title: i18n('dialog.macro.title'),
+                cls: 'macro-modal-dialog',
+                confirmation: {
+                    yesCallback: () => this.getSubmitAction().execute(),
+                    noCallback: () => this.close(),
+                }
+            });
 
             this.callback = config.callback;
 
@@ -131,6 +139,10 @@ module api.util.htmlarea.dialog {
             let configPanelValid = this.macroDockedPanel.validateMacroForm();
 
             return mainFormValid && configPanelValid;
+        }
+
+        isDirty(): boolean {
+            return this.macroSelector.isDirty();
         }
     }
 }
