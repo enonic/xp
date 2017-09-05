@@ -54,7 +54,6 @@ include 'itest:itest-core'
 include 'tools:upgrade'
 include 'tools:toolbox'
 include 'tools:testing'
-include 'tools:gradle-plugin'
 
 include 'lib:lib-common'
 include 'lib:lib-content'
