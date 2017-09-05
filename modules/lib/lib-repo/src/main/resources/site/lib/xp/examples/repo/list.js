@@ -1,5 +1,5 @@
 var repoLib = require('/lib/xp/repo.js');
-var assert = require('/lib/xp/assert');
+var t = require('/lib/xp/testing');
 
 // BEGIN
 // Retrieves the list of repositories
@@ -23,4 +23,4 @@ var expected = [{
     settings: {}
 }];
 // END
-assert.assertJsonEquals(expected, result);
+t.assertJsonEquals(expected, result);

@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import com.enonic.xp.lib.portal.TestDataFixtures;
 import com.enonic.xp.site.Site;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.ScriptTestSupport;
 
 public class GetCurrentSiteConfigScriptTest
     extends ScriptTestSupport

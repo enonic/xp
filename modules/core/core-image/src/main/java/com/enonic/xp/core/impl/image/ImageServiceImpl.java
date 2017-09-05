@@ -293,29 +293,29 @@ public class ImageServiceImpl
                 transform.scale( 1.0, -1.0 );
                 transform.translate( 0, -resultHeight );
                 break;
-            case LeftTop: // - PI/2 and Flip X
-                transform.rotate( -Math.PI / 2 );
+            case LeftTop: // -PI/2 and Flip X
                 transform.scale( -1.0, 1.0 );
+                transform.rotate( Math.PI / 2 );
                 resultWidth = bufferedImage.getHeight();
                 resultHeight = bufferedImage.getWidth();
                 break;
-            case RightTop: // -PI/2 and -width
+            case RightTop: // -PI/2
                 transform.translate( resultHeight, 0 );
                 transform.rotate( Math.PI / 2 );
                 resultWidth = bufferedImage.getHeight();
                 resultHeight = bufferedImage.getWidth();
                 break;
-            case RightBottom: // PI/2 and Flip
+            case RightBottom: // PI/2 and Flip X
                 transform.scale( -1.0, 1.0 );
                 transform.translate( -resultHeight, 0 );
                 transform.translate( 0, resultWidth );
-                transform.rotate( 3 * Math.PI / 2 );
+                transform.rotate( -Math.PI / 2 );
                 resultWidth = bufferedImage.getHeight();
                 resultHeight = bufferedImage.getWidth();
                 break;
-            case LeftBottom: // PI / 2
+            case LeftBottom: // PI/2
                 transform.translate( 0, resultWidth );
-                transform.rotate( 3 * Math.PI / 2 );
+                transform.rotate( -Math.PI / 2 );
                 resultWidth = bufferedImage.getHeight();
                 resultHeight = bufferedImage.getWidth();
                 break;

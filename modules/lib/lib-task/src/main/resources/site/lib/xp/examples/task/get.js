@@ -1,5 +1,5 @@
 var taskLib = require('/lib/xp/task.js');
-var assert = require('/lib/xp/assert');
+var assert = require('/lib/xp/testing');
 
 // BEGIN
 // Obtains details for an active task

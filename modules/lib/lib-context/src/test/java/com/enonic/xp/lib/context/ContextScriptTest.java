@@ -8,7 +8,7 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.UserStoreKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.testing.script.ScriptRunnerSupport;
+import com.enonic.xp.testing.ScriptRunnerSupport;
 
 public class ContextScriptTest
     extends ScriptRunnerSupport

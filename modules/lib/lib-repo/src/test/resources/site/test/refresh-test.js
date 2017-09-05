@@ -1,4 +1,4 @@
-var assert = require('/lib/xp/assert.js');
+var assert = require('/lib/xp/testing.js');
 var repoLib = require('/lib/xp/repo.js');
 
 exports.refreshDefault = function () {

@@ -1,5 +1,5 @@
 var content = require('/lib/xp/content.js');
-var assert = require('/lib/xp/assert.js');
+var assert = require('/lib/xp/testing.js');
 
 exports.testGet = function () {
     var result = content.getType('com.enonic.myapp:article');

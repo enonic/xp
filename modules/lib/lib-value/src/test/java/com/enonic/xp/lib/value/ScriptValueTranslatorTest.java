@@ -14,7 +14,7 @@ import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.junit.Assert.*;
 

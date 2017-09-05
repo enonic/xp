@@ -3,6 +3,7 @@ package com.enonic.xp.script.impl.executor;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.impl.service.ServiceRegistry;
 import com.enonic.xp.script.impl.util.JavascriptHelper;
@@ -12,7 +13,7 @@ public interface ScriptExecutor
 {
     Application getApplication();
 
-    Object executeMain( ResourceKey key );
+    ScriptExports executeMain( ResourceKey key );
 
     Object executeRequire( ResourceKey key );
 

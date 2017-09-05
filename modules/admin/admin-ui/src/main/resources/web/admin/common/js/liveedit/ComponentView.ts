@@ -152,7 +152,11 @@ module api.liveedit {
             };
 
             this.setComponent(builder.component);
-            this.onRemoved(event => this.unregisterComponentListeners(this.component));
+            this.onRemoved(event => {
+                if(this.component) {
+                    this.unregisterComponentListeners(this.component);
+                }
+            });
 
             this.initKeyBoardBindings();
 
@@ -198,7 +202,9 @@ module api.liveedit {
             }
 
             actions.push(new api.ui.Action(i18n('live.view.reset')).onExecuted(() => {
-                this.component.reset();
+                if (this.component) {
+                    this.component.reset();
+                }
             }));
 
             if (!isTopFragmentComponent) {
@@ -268,7 +274,9 @@ module api.liveedit {
         }
 
         remove(): ComponentView<Component> {
-            this.unregisterComponentListeners(this.component);
+            if(this.component) {
+                this.unregisterComponentListeners(this.component);
+            }
 
             let parentView = this.getParentItemView();
             if (parentView) {
@@ -387,7 +395,9 @@ module api.liveedit {
             super.replaceWith(replacement);
 
             // unbind the old view from the component and bind the new one
-            this.unregisterComponentListeners(this.component);
+            if(this.component) {
+                this.unregisterComponentListeners(this.component);
+            }
             this.unbindMouseListeners();
 
             let parentIsPage = api.ObjectHelper.iFrameSafeInstanceOf(this.getParentItemView(), PageView);

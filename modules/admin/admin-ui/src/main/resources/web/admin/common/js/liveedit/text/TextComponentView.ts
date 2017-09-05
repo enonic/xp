@@ -70,9 +70,7 @@ module api.liveedit.text {
 
             this.authRequest =
                 new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
-                    this.editableSourceCode = loginResult.getPrincipals().some(principal => RoleKeys.ADMIN.equals(principal) ||
-                                                                                            RoleKeys.CMS_ADMIN.equals(principal) ||
-                                                                                            RoleKeys.CMS_EXPERT.equals(principal));
+                    this.editableSourceCode = loginResult.isContentExpert();
                 });
 
             this.onAdded(() => { // is triggered on item insert or move

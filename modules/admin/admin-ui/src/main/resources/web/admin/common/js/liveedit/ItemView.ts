@@ -915,15 +915,15 @@ module api.liveedit {
         private getInsertActions(liveEditModel: LiveEditModel): api.ui.Action[] {
             let isFragmentContent = liveEditModel.getContent().getType().isFragment();
 
-            let actions = [this.createInsertSubAction(i18n('live.view.insert.image'), api.liveedit.image.ImageItemType.get()),
-                this.createInsertSubAction(i18n('live.view.insert.part'), api.liveedit.part.PartItemType.get())];
+            let actions = [this.createInsertSubAction('image', api.liveedit.image.ImageItemType.get()),
+                this.createInsertSubAction('part', api.liveedit.part.PartItemType.get())];
 
             let isInRegion = api.ObjectHelper.iFrameSafeInstanceOf(this.getRegionView(), RegionView);
             if (isInRegion && !this.getRegionView().hasParentLayoutComponentView() && !isFragmentContent) {
-                actions.push(this.createInsertSubAction(i18n('live.view.insert.layout'), api.liveedit.layout.LayoutItemType.get()));
+                actions.push(this.createInsertSubAction('layout', api.liveedit.layout.LayoutItemType.get()));
             }
-            actions.push(this.createInsertSubAction(i18n('live.view.insert.text'), api.liveedit.text.TextItemType.get()));
-            actions.push(this.createInsertSubAction(i18n('live.view.insert.fragment'), api.liveedit.fragment.FragmentItemType.get()));
+            actions.push(this.createInsertSubAction('text', api.liveedit.text.TextItemType.get()));
+            actions.push(this.createInsertSubAction('fragment', api.liveedit.fragment.FragmentItemType.get()));
 
             return actions;
         }
@@ -953,12 +953,12 @@ module api.liveedit {
         }
 
         private createInsertSubAction(label: string, componentItemType: ItemType): api.ui.Action {
-            let action = new api.ui.Action(label).onExecuted(() => {
+            let action = new api.ui.Action(i18n('live.view.insert.' + label)).onExecuted(() => {
                 let componentView = this.createComponentView(componentItemType);
                 this.addComponentView(<ComponentView<Component>>componentView, this.getNewItemIndex(), true);
             });
 
-            action.setIconClass(api.StyleHelper.getCommonIconCls(label.toLowerCase()));
+            action.setIconClass(api.StyleHelper.getCommonIconCls(label));
 
             return action;
         }

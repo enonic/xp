@@ -51,9 +51,7 @@ module api.form.inputtype.text {
 
             this.authRequest =
                 new api.security.auth.IsAuthenticatedRequest().sendAndParse().then((loginResult: api.security.auth.LoginResult) => {
-                    this.editableSourceCode = loginResult.getPrincipals().some(principal => RoleKeys.ADMIN.equals(principal) ||
-                                                                                            RoleKeys.CMS_ADMIN.equals(principal) ||
-                                                                                            RoleKeys.CMS_EXPERT.equals(principal));
+                    this.editableSourceCode = loginResult.isContentExpert();
                 });
         }
 
@@ -407,6 +405,16 @@ module api.form.inputtype.text {
 
             let editorId = wemjq('textarea', ui.item)[0].id;
             this.destroyEditor(editorId);
+        }
+
+        refresh() {
+            this.editors.forEach((editor) => {
+                const editorId = editor.id;
+
+                this.destroyEditor(editorId);
+                this.reInitEditor(editorId);
+                tinymce.execCommand('mceAddEditor', false, editorId);
+            });
         }
 
         handleDnDStop(event: Event, ui: JQueryUI.SortableUIParams): void {

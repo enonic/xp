@@ -1,4 +1,4 @@
-var assert = require('/lib/xp/assert.js');
+var assert = require('/lib/xp/testing.js');
 var content = require('/lib/xp/content.js');
 
 var TestClass = Java.type('com.enonic.xp.lib.content.CreateMediaHandlerTest');

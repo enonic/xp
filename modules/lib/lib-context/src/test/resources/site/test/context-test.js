@@ -1,4 +1,4 @@
-var assert = require('/lib/xp/assert');
+var assert = require('/lib/xp/testing');
 var context = require('/lib/xp/context');
 
 exports.testNoChange = function () {

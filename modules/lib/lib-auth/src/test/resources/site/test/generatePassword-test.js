@@ -1,10 +1,10 @@
 var auth = require('/lib/xp/auth.js');
-var assert = require('/lib/xp/assert.js');
+var t = require('/lib/xp/testing.js');
 
 exports.generatePassword = function () {
 
     var result = auth.generatePassword();
 
-    assert.assertNotNull(result);
+    t.assertTrue(result);
 
 };

@@ -1,5 +1,5 @@
 var authLib = require('/lib/xp/auth');
-var assert = require('/lib/xp/assert');
+var t = require('/lib/xp/testing');
 
 // BEGIN
 // Returns the profile of user1 for myapp
@@ -29,5 +29,5 @@ var expectedScopedProfile = {
 };
 // END
 
-assert.assertJsonEquals(expectedProfile, profile);
-assert.assertJsonEquals(expectedScopedProfile, scopedProfile);
+t.assertJsonEquals(expectedProfile, profile);
+t.assertJsonEquals(expectedScopedProfile, scopedProfile);

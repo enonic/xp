@@ -1,4 +1,4 @@
-var assert = require('/lib/xp/assert.js');
+var t = require('/lib/xp/testing.js');
 var auth = require('/lib/xp/auth.js');
 
 exports.createGroup = function () {
@@ -18,7 +18,7 @@ exports.createGroup = function () {
         "description": "description"
     };
 
-    assert.assertJsonEquals('createGroup result not equals', expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 
 };
 
@@ -32,5 +32,5 @@ exports.createGroupUnAuthenticated = function () {
 
     var expectedJson = null;
 
-    assert.assertJsonEquals('createGroupUnAuthenticated result not equals', expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 };

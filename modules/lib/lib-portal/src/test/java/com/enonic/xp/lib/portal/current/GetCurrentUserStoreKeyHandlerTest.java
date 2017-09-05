@@ -7,7 +7,7 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.lib.portal.TestDataFixtures;
 import com.enonic.xp.security.UserStore;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.ScriptTestSupport;
 
 public class GetCurrentUserStoreKeyHandlerTest
     extends ScriptTestSupport

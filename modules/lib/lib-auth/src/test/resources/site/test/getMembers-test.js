@@ -1,4 +1,4 @@
-var assert = require('/lib/xp/assert.js');
+var t = require('/lib/xp/testing.js');
 var auth = require('/lib/xp/auth.js');
 
 exports.getMembers = function () {
@@ -28,7 +28,7 @@ exports.getMembers = function () {
         }
     ];
 
-    assert.assertJsonEquals('getMemberships result not equals', expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 
 };
 
@@ -38,6 +38,6 @@ exports.getNoMembers = function () {
 
     var expectedJson = [];
 
-    assert.assertJsonEquals('getMemberships result not equals', expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 
 };

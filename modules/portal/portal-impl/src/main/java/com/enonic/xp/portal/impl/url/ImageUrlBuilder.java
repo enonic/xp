@@ -55,7 +55,7 @@ final class ImageUrlBuilder
     {
         final Attachment mediaAttachment = media.getMediaAttachment();
         String binaryKey = this.contentService.getBinaryKey( media.getId(), mediaAttachment.getBinaryReference() );
-        String key = binaryKey + media.getFocalPoint() + media.getCropping();
+        String key = binaryKey + media.getFocalPoint() + media.getCropping() + media.getOrientation();
         return Hashing.sha1().
             newHasher().
             putString( key, Charsets.UTF_8 ).

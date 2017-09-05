@@ -3,7 +3,7 @@ var portalLib = require('/lib/xp/portal');
 var authLib = require('/lib/xp/auth');
 var admin = require('/lib/xp/admin');
 
-exports.handle401 = function (req) {
+exports.handle401 = function () {
     var body = generateLoginPage();
 
     return {
@@ -57,9 +57,9 @@ function generateLoginPage(redirectUrl) {
     var jQueryUrl = portalLib.assetUrl({path: "js/jquery-2.2.0.min.js"});
     var appLoginJsUrl = portalLib.assetUrl({path: "js/login.js"});
     var appLoginCssUrl = portalLib.assetUrl({path: "common/styles/_all.css"});
-    var appLoginBackgroundUrl = portalLib.assetUrl({path: "common/images/background-1920.jpg"});
+    var appLoginBackgroundUrl = portalLib.assetUrl({path: "images/background.jpg"});
     var appLoginServiceUrl = portalLib.serviceUrl({service: "login"});
-    var imageUrl = portalLib.assetUrl({path: "common/images/"});
+    var imageUrl = portalLib.assetUrl({path: "icons/"});
     var i18nJsUrl = portalLib.assetUrl({path: "js/i18n.js"});
 
     var configView = resolve('idprovider-config.txt');

@@ -1,4 +1,3 @@
-var assert = require('/lib/xp/assert.js');
 var auth = require('/lib/xp/auth.js');
 
 exports.addUserAndGroupMembersToRole = function () {

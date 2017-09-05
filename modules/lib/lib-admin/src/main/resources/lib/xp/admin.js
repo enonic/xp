@@ -8,6 +8,7 @@
  */
 
 var i18n = require('/lib/xp/i18n');
+var portal = require('/lib/xp/portal');
 var helper = __.newBean('com.enonic.xp.lib.admin.AdminLibHelper');
 
 /**
@@ -44,4 +45,25 @@ exports.getLocale = function () {
  */
 exports.getPhrases = function () {
     return JSON.stringify(i18n.getPhrases(helper.getLocale(), ['admin/i18n/common', 'admin/i18n/phrases']));
+};
+
+function getMainAppUrl(path) {
+    return portal.assetUrl({
+        path: path,
+        application: 'com.enonic.xp.app.main'
+    });
+}
+
+/**
+ * Return url for the main app.
+ *
+ * @param path Path for resource.
+ */
+exports.getMainAppUrl = getMainAppUrl;
+
+/**
+ * Returns the URL for launcher javascript.
+ */
+exports.getLauncherUrl = function () {
+    return getMainAppUrl('/js/launcher/bundle.js');
 };

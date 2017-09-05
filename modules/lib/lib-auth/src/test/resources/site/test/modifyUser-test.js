@@ -1,4 +1,4 @@
-var assert = require('/lib/xp/assert.js');
+var t = require('/lib/xp/testing.js');
 var auth = require('/lib/xp/auth.js');
 
 function editor(c) {
@@ -26,6 +26,6 @@ exports.modifyUser = function () {
         "userStore": "enonic"
     };
 
-    assert.assertJsonEquals('modifyUser result not equals', expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 
 };

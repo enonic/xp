@@ -1,5 +1,5 @@
 var authLib = require('/lib/xp/auth');
-var assert = require('/lib/xp/assert');
+var t = require('/lib/xp/testing');
 
 // BEGIN
 // Callback to edit the user profile.
@@ -28,4 +28,4 @@ var expected = {
 };
 // END
 
-assert.assertJsonEquals(expected, profile);
+t.assertJsonEquals(expected, profile);

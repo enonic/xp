@@ -1,4 +1,4 @@
-var assert = require('/lib/xp/assert.js');
+var t = require('/lib/xp/testing.js');
 var auth = require('/lib/xp/auth.js');
 
 exports.getUserAuthenticated = function () {
@@ -16,7 +16,7 @@ exports.getUserAuthenticated = function () {
         "userStore": "enonic"
     };
 
-    assert.assertJsonEquals('getUser result not equals', expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 
 };
 
@@ -24,6 +24,6 @@ exports.getUserNotAuthenticated = function () {
 
     var result = auth.getUser();
 
-    assert.assertEquals('getUser result not null', null, result);
+    t.assertEquals(null, result);
 
 };

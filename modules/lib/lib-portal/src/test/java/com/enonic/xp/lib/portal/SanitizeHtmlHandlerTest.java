@@ -5,7 +5,7 @@ import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 import com.enonic.xp.portal.owasp.HtmlSanitizer;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.ScriptTestSupport;
 
 public class SanitizeHtmlHandlerTest
     extends ScriptTestSupport

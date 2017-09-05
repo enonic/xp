@@ -12,7 +12,7 @@ import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskProgress;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.task.TaskState;
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.ScriptTestSupport;
 
 public class ListTasksHandlerTest
     extends ScriptTestSupport

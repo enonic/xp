@@ -1,5 +1,5 @@
 var nodeLib = require('/lib/xp/node');
-var assert = require('/lib/xp/assert');
+var t = require('/lib/xp/testing');
 
 var repo = nodeLib.connect({
     repoId: "cms-repo",
@@ -34,6 +34,6 @@ var expected = {
 };
 // END
 
-assert.assertJsonEquals(expected, result);
+t.assertJsonEquals(expected, result);
 
 

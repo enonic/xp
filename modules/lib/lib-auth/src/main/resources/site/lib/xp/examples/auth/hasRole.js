@@ -1,5 +1,5 @@
 var authLib = require('/lib/xp/auth');
-var assert = require('/lib/xp/assert');
+var t = require('/lib/xp/testing');
 
 // BEGIN
 // Checks if the user has the specified role.
@@ -9,4 +9,4 @@ log.info('The user ' + (flag ? 'has' : 'does not have') +
          ' access to the admin console.');
 // END
 
-assert.assertTrue(flag);
+t.assertTrue(flag);

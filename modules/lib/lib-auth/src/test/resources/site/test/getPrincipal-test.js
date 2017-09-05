@@ -1,4 +1,4 @@
-var assert = require('/lib/xp/assert.js');
+var t = require('/lib/xp/testing.js');
 var auth = require('/lib/xp/auth.js');
 
 exports.getUserPrincipal = function () {
@@ -16,7 +16,7 @@ exports.getUserPrincipal = function () {
         "userStore": "enonic"
     };
 
-    assert.assertJsonEquals('getPrincipal result not equals', expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 
 };
 
@@ -32,7 +32,7 @@ exports.getRolePrincipal = function () {
         "description": "description"
     };
 
-    assert.assertJsonEquals('getRole result not equals', expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 
 };
 
@@ -48,7 +48,7 @@ exports.getGroupPrincipal = function () {
         "description": "description"
     };
 
-    assert.assertJsonEquals('getRole result not equals', expectedJson, result);
+    t.assertJsonEquals(expectedJson, result);
 
 };
 
@@ -56,6 +56,6 @@ exports.getNonExistingPrincipal = function () {
 
     var result = auth.getPrincipal('user:myUserStore:XXX');
 
-    assert.assertEquals('getPrincipal result not null', null, result);
+    t.assertEquals(null, result);
 
 };

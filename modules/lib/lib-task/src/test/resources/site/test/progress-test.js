@@ -1,4 +1,4 @@
-var assert = require('/lib/xp/assert.js');
+var t = require('/lib/xp/testing.js');
 var taskLib = require('/lib/xp/task.js');
 
 exports.reportProgress = function () {
@@ -21,12 +21,12 @@ exports.reportProgress = function () {
         }
     });
 
-    assert.assertEquals('7ca603c1-3b88-4009-8f30-46ddbcc4bb19', taskId);
+    t.assertEquals('7ca603c1-3b88-4009-8f30-46ddbcc4bb19', taskId);
 };
 
 exports.reportProgressOutsideTask = function () {
 
     taskLib.progress({info: 'Starting task'});
 
-    assert.assertTrue(false, 'Expected exception');
+    t.assertTrue(false, 'Expected exception');
 };

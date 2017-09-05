@@ -1,5 +1,5 @@
 var authLib = require('/lib/xp/auth');
-var assert = require('/lib/xp/assert');
+var t = require('/lib/xp/testing');
 
 // BEGIN
 // Returns the principal information for specified principal key.
@@ -20,4 +20,4 @@ var expected = {
 };
 // END
 
-assert.assertJsonEquals(expected, principal);
+t.assertJsonEquals(expected, principal);

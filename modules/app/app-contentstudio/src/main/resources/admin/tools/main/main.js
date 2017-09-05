@@ -14,7 +14,8 @@ function handleGet() {
         appName: 'Content Studio',
         appId: app.name,
         xpVersion: app.version,
-        messages: admin.getPhrases()
+        messages: admin.getPhrases(),
+        launcherUrl: admin.getLauncherUrl()
     };
 
     return {

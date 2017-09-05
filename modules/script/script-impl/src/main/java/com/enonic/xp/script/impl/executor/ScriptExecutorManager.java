@@ -2,8 +2,6 @@ package com.enonic.xp.script.impl.executor;
 
 import java.util.concurrent.ConcurrentMap;
 
-import javax.script.ScriptEngine;
-
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.app.Application;
@@ -12,7 +10,6 @@ import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.impl.service.ServiceRegistryImpl;
-import com.enonic.xp.script.impl.util.NashornHelper;
 import com.enonic.xp.script.runtime.ScriptSettings;
 import com.enonic.xp.server.RunMode;
 
@@ -46,10 +43,8 @@ public final class ScriptExecutorManager
         }
 
         final ClassLoader classLoader = application.getClassLoader();
-        final ScriptEngine engine = NashornHelper.getScriptEngine( classLoader );
 
         final ScriptExecutorImpl executor = new ScriptExecutorImpl();
-        executor.setEngine( engine );
         executor.setScriptSettings( this.scriptSettings );
         executor.setClassLoader( classLoader );
         executor.setServiceRegistry( new ServiceRegistryImpl( application.getBundle().getBundleContext() ) );

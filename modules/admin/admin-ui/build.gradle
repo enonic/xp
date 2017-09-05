@@ -12,14 +12,7 @@ bundle {
     instruction 'X-Bundle-Type', 'system'
 }
 
-dependencies {
-    compile project( ":admin:admin-api" )
-    compile project( ":script:script-api" )
-    include project( ":lib:lib-auth" )
-    include project( ":lib:lib-mustache" )
-    include project( ":lib:lib-portal" )
-    include project( ":lib:lib-admin" )
-}
+dependencies {}
 
 task cleanSourceFiles( type: Delete ) {
     description = 'Clean source files that is used by Gulp.'
@@ -39,7 +32,7 @@ task copyAll( type: Copy, dependsOn: gulpAll ) {
     into "$buildDir/resources/main"
 }
 
-task cleanNode(type: Delete) {
+task cleanNode( type: Delete ) {
     delete 'node_modules'
 }
 

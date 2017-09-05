@@ -2,7 +2,7 @@ package com.enonic.xp.lib.common;
 
 import org.junit.Test;
 
-import com.enonic.xp.testing.script.ScriptTestSupport;
+import com.enonic.xp.testing.ScriptTestSupport;
 
 public class SanitizeTest
     extends ScriptTestSupport

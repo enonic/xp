@@ -1,5 +1,5 @@
 var nodeLib = require('/lib/xp/node');
-var assert = require('/lib/xp/assert');
+var assert = require('/lib/xp/testing');
 
 // BEGIN
 // Query content using aggregations.
