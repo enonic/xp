@@ -309,11 +309,18 @@ module api.app.wizard {
             return this.stepToolbar;
         }
 
-        protected doRenderOnDataLoaded(rendered: boolean, delayMask?: boolean): wemQ.Promise<boolean> {
-            let formMaskFn = () => {
-                this.formMask = new api.ui.mask.LoadMask(this.formPanel);
+        protected onFormPanelAdded(skipMask: boolean = false) {
+            if (WizardPanel.debug) {
+                console.debug('WizardPanel: formPanel.onAdded');
+            }
+            this.formMask = new api.ui.mask.LoadMask(this.formPanel);
+
+            if (!skipMask) {
                 this.formMask.show();
-            };
+            }
+        }
+
+        protected doRenderOnDataLoaded(rendered: boolean): wemQ.Promise<boolean> {
             if (WizardPanel.debug) {
                 console.debug('WizardPanel.doRenderOnDataLoaded');
             }
@@ -327,16 +334,7 @@ module api.app.wizard {
             this.formPanel = new api.ui.panel.Panel('form-panel rendering');
             this.formPanel.onScroll(() => this.updateStickyToolbar());
 
-            this.formPanel.onAdded((event) => {
-                if (WizardPanel.debug) {
-                    console.debug('WizardPanel: formPanel.onAdded');
-                }
-                if (delayMask) {
-                    setTimeout(formMaskFn, 1);
-                } else {
-                    formMaskFn();
-                }
-            });
+            this.formPanel.onAdded((event) => this.onFormPanelAdded());
 
             let firstShow;
             this.formPanel.onRendered((event) => {
