@@ -182,7 +182,7 @@ export class LiveFormPanel
         
         this.showLoadMaskHandler = () => {
             // in case someone tries to open live edit while it's still not loaded
-            if (this.pageLoading && this.liveEditModel.isPageRenderable()) {
+            if (this.pageLoading && !this.liveEditPageProxy.isPlaceholderVisible()) {
                 this.contentWizardPanel.getLiveMask().show();
             }
         };
@@ -289,12 +289,12 @@ export class LiveFormPanel
                 this.liveEditPageProxy.skipNextReloadConfirmation(true);
             });
 
-            this.liveEditPageProxy.getPlaceholderIFrame().onShown(() => {
+            if (!this.liveEditModel.isRenderableContent()) {
                 // If we are about to show blank placeholder in the editor then remove
                 // 'rendering' class from the panel so that it's instantly visible
                 this.removeClass('rendering');
-            });
-
+            }
+            
             this.frameContainer = new Panel('frame-container');
             this.frameContainer.appendChildren<api.dom.Element>(this.liveEditPageProxy.getIFrame(),
                 this.liveEditPageProxy.getPlaceholderIFrame(), this.liveEditPageProxy.getDragMask());

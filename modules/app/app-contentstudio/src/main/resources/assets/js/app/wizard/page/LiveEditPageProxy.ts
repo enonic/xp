@@ -234,19 +234,19 @@ export class LiveEditPageProxy {
             if (LiveEditPageProxy.debug) {
                 console.debug('LiveEditPageProxy.load: no reason to load page, showing blank placeholder');
             }
+            
+            this.hideEditorAndShowPlaceholder();
 
-            if (this.placeholderIFrame.isAdded()) {
-                this.hideEditorAndShowPlaceholder();
-            } else {
-                this.placeholderIFrame.onAdded(() => {
-                    this.liveEditModel.getSiteModel().onApplicationAdded(() => {
-                        this.hidePlaceholderAndShowEditor();
-                    });
-
-                    this.hideEditorAndShowPlaceholder();
+            this.placeholderIFrame.onAdded(() => {
+                this.liveEditModel.getSiteModel().onApplicationAdded(() => {
+                    this.hidePlaceholderAndShowEditor();
                 });
-            }
+            });
         }
+    }
+    
+    public isPlaceholderVisible(): boolean {
+        return this.placeholderIFrame.hasClass('shown');
     }
 
     private hideEditorAndShowPlaceholder() {
