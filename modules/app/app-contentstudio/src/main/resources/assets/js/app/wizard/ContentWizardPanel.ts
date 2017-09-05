@@ -255,8 +255,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         });
 
         this.dataChangedListener = () => {
-            setTimeout(
-                this.updatePublishStatusOnDataChange.bind(this), 100);
+            setTimeout(this.updatePublishStatusOnDataChange.bind(this), 100);
         };
 
         this.applicationAddedListener = (event: api.content.site.ApplicationAddedEvent) => {
