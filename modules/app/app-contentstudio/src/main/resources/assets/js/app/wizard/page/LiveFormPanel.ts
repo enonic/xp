@@ -147,7 +147,7 @@ export class LiveFormPanel
 
     private showLoadMaskHandler: () => void;
     private hideLoadMaskHandler: () => void;
-    
+
     constructor(config: LiveFormPanelConfig) {
         super('live-form-panel');
         this.contentWizardPanel = config.contentWizardPanel;
@@ -179,7 +179,7 @@ export class LiveFormPanel
             this.contextWindow,
             this.contentWizardPanel
         );
-        
+
         this.showLoadMaskHandler = () => {
             // in case someone tries to open live edit while it's still not loaded
             if (this.pageLoading && !this.liveEditPageProxy.isPlaceholderVisible()) {
@@ -194,7 +194,7 @@ export class LiveFormPanel
                 liveEditMask.hide();
             }
         };
-        
+
         ShowLiveEditEvent.on(this.showLoadMaskHandler);
         ShowSplitEditEvent.on(this.showLoadMaskHandler);
         ShowContentFormEvent.on(this.hideLoadMaskHandler);
@@ -294,7 +294,7 @@ export class LiveFormPanel
                 // 'rendering' class from the panel so that it's instantly visible
                 this.removeClass('rendering');
             }
-            
+
             this.frameContainer = new Panel('frame-container');
             this.frameContainer.appendChildren<api.dom.Element>(this.liveEditPageProxy.getIFrame(),
                 this.liveEditPageProxy.getPlaceholderIFrame(), this.liveEditPageProxy.getDragMask());
@@ -334,7 +334,7 @@ export class LiveFormPanel
         ShowLiveEditEvent.un(this.showLoadMaskHandler);
         ShowSplitEditEvent.un(this.showLoadMaskHandler);
         ShowContentFormEvent.un(this.hideLoadMaskHandler);
-        
+
         this.liveEditPageProxy.remove();
         super.remove();
         return this;

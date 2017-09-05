@@ -234,7 +234,7 @@ export class LiveEditPageProxy {
             if (LiveEditPageProxy.debug) {
                 console.debug('LiveEditPageProxy.load: no reason to load page, showing blank placeholder');
             }
-            
+
             this.hideEditorAndShowPlaceholder();
 
             this.placeholderIFrame.onAdded(() => {
@@ -244,7 +244,7 @@ export class LiveEditPageProxy {
             });
         }
     }
-    
+
     public isPlaceholderVisible(): boolean {
         return this.placeholderIFrame.hasClass('shown');
     }

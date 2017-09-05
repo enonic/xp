@@ -1189,7 +1189,8 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     }
 
     private isSplitEditModeActive() {
-        return (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange() && this.isEditorEnabled() && this.shouldOpenEditorByDefault());
+        return (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange() &&
+                this.isEditorEnabled() && this.shouldOpenEditorByDefault());
     }
 
     private setupWizardLiveEdit() {
@@ -1209,7 +1210,6 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         } else if (!!this.getSplitPanel()) {
             this.wizardActions.getShowFormAction().execute();
         }
-        
         if (editorEnabled) {
             this.formMask.show();
         }
