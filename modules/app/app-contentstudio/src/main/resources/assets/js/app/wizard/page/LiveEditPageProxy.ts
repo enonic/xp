@@ -1,7 +1,4 @@
 import '../../../api.ts';
-import {ShowContentFormEvent} from '../ShowContentFormEvent';
-import {ShowLiveEditEvent} from '../ShowLiveEditEvent';
-import {ShowSplitEditEvent} from '../ShowSplitEditEvent';
 
 declare var CONFIG;
 
@@ -58,8 +55,6 @@ export class LiveEditPageProxy {
     private liveEditIFrame: api.dom.IFrameEl;
 
     private placeholderIFrame: api.dom.IFrameEl;
-
-    private loadMask: api.ui.mask.LoadMask;
 
     private liveEditWindow: any;
 
@@ -121,10 +116,6 @@ export class LiveEditPageProxy {
 
     private createHtmlAreaDialogListeners: {(event: CreateHtmlAreaDialogEvent): void;}[] = [];
 
-    private showLoadMaskHandler: () => void;
-
-    private hideLoadMaskHandler: () => void;
-
     private static debug: boolean = false;
 
     private regionsCopyForIE: any;
@@ -136,32 +127,14 @@ export class LiveEditPageProxy {
         this.liveEditIFrame = this.createLiveEditIFrame();
         this.placeholderIFrame = this.createPlaceholderIFrame();
 
-        this.loadMask = new api.ui.mask.LoadMask(this.liveEditIFrame);
         this.dragMask = new api.ui.mask.DragMask(this.liveEditIFrame);
 
-        this.hideLoadMaskHandler = () => {
-            if (!this.pageView && this.liveEditIFrame.isVisible()) {
-                this.loadMask.hide();
-            }
-        };
         this.onLiveEditPageViewReady((event: LiveEditPageViewReadyEvent) => {
             if (LiveEditPageProxy.debug) {
                 console.debug('LiveEditPageProxy.onLiveEditPageViewReady at ' + new Date().toISOString());
             }
-            this.hideLoadMaskHandler();
             this.pageView = event.getPageView();
         });
-        ShowContentFormEvent.on(this.hideLoadMaskHandler);
-
-        this.showLoadMaskHandler = () => {
-            // in case someone tries to open live edit while it's still not loaded
-            if (this.liveEditModel.isPageRenderable() && this.liveEditIFrame.isVisible()) {
-                this.loadMask.show();
-            }
-        };
-
-        ShowLiveEditEvent.on(this.showLoadMaskHandler);
-        ShowSplitEditEvent.on(this.showLoadMaskHandler);
     }
 
     private createLiveEditIFrame(): api.dom.IFrameEl {
@@ -216,10 +189,6 @@ export class LiveEditPageProxy {
         return this.placeholderIFrame;
     }
 
-    public getLoadMask(): api.ui.mask.LoadMask {
-        return this.loadMask;
-    }
-
     public getJQuery(): JQueryStatic {
         return this.livejq;
     }
@@ -237,12 +206,7 @@ export class LiveEditPageProxy {
     }
 
     public remove() {
-        ShowLiveEditEvent.un(this.showLoadMaskHandler);
-        ShowSplitEditEvent.un(this.showLoadMaskHandler);
-        ShowContentFormEvent.un(this.hideLoadMaskHandler);
-        LiveEditPageViewReadyEvent.un(this.hideLoadMaskHandler);
         this.dragMask.remove();
-        this.loadMask.remove();
     }
 
     public load() {
@@ -251,10 +215,6 @@ export class LiveEditPageProxy {
             this.pageView.remove();
             this.pageView = null;
         }
-        if (this.liveEditModel.isRenderableContent()) {
-            this.showLoadMaskHandler();
-        }
-
         let contentId = this.liveEditModel.getContent().getContentId().toString();
         let pageUrl = api.rendering.UriHelper.getPortalUri(contentId, RenderingMode.EDIT, Workspace.DRAFT);
 
@@ -269,7 +229,6 @@ export class LiveEditPageProxy {
                 console.log(`LiveEditPageProxy.load loading page from '${pageUrl}' at ${new Date().toISOString()}`);
             }
             this.hidePlaceholderAndShowEditor();
-            this.hideLoadMaskHandler();
         } else {
 
             if (LiveEditPageProxy.debug) {
@@ -344,7 +303,6 @@ export class LiveEditPageProxy {
                 if (LiveEditPageProxy.debug) {
                     console.debug('LiveEditPageProxy.handleIframeLoadedEvent: notify live edit ready at ' + new Date().toISOString());
                 }
-                this.loadMask.hide();
                 this.notifyLiveEditPageViewReady(new api.liveedit.LiveEditPageViewReadyEvent());
             }
         }

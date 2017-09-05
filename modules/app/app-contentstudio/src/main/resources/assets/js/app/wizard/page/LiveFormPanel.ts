@@ -17,6 +17,8 @@ import {ContextWindowController} from './contextwindow/ContextWindowController';
 import {ContextWindow, ContextWindowConfig} from './contextwindow/ContextWindow';
 import {ShowContentFormEvent} from '../ShowContentFormEvent';
 import {SaveAsTemplateAction} from '../action/SaveAsTemplateAction';
+import {ShowLiveEditEvent} from '../ShowLiveEditEvent';
+import {ShowSplitEditEvent} from '../ShowSplitEditEvent';
 
 import PageTemplate = api.content.page.PageTemplate;
 import PageTemplateKey = api.content.page.PageTemplateKey;
@@ -143,6 +145,9 @@ export class LiveFormPanel
 
     private saveAsTemplateAction: SaveAsTemplateAction;
 
+    private showLoadMaskHandler: () => void;
+    private hideLoadMaskHandler: () => void;
+    
     constructor(config: LiveFormPanelConfig) {
         super('live-form-panel');
         this.contentWizardPanel = config.contentWizardPanel;
@@ -174,16 +179,33 @@ export class LiveFormPanel
             this.contextWindow,
             this.contentWizardPanel
         );
+        
+        this.showLoadMaskHandler = () => {
+            // in case someone tries to open live edit while it's still not loaded
+            if (this.pageLoading && this.liveEditModel.isPageRenderable()) {
+                this.contentWizardPanel.getLiveMask().show();
+            }
+        };
+
+        this.hideLoadMaskHandler = () => {
+            const liveEditMask = this.contentWizardPanel.getLiveMask();
+            // in case someone tries to open live edit while it's still not loaded
+            if (!!liveEditMask && liveEditMask.isVisible()) {
+                liveEditMask.hide();
+            }
+        };
+        
+        ShowLiveEditEvent.on(this.showLoadMaskHandler);
+        ShowSplitEditEvent.on(this.showLoadMaskHandler);
+        ShowContentFormEvent.on(this.hideLoadMaskHandler);
     }
 
     private createLiveEditPageProxy(): LiveEditPageProxy {
         let liveEditPageProxy = new LiveEditPageProxy();
         liveEditPageProxy.onLoaded(() => {
-            if (this.isRendered()) {
-                // If LiveEdit is not rendered yet, don't remove the spinner - WizardPanel will do that in onRendered()
-                this.contentWizardPanel.getLiveMask().hide();
-            }
+            this.hideLoadMaskHandler();
             this.pageLoading = false;
+
             if (this.lockPageAfterProxyLoad) {
                 this.pageView.setLocked(true);
                 this.lockPageAfterProxyLoad = false;
@@ -280,7 +302,7 @@ export class LiveFormPanel
             let noPreviewMessageEl = new api.dom.PEl('no-preview-message').setHtml(i18n('field.preview.failed'), false);
 
             // append mask here in order for the context window to be above
-            this.appendChildren<api.dom.Element>(this.frameContainer, this.liveEditPageProxy.getLoadMask(), this.contextWindow,
+            this.appendChildren<api.dom.Element>(this.frameContainer, this.contextWindow,
                 noPreviewMessageEl);
 
             this.contextWindow.onDisplayModeChanged(() => {
@@ -309,7 +331,10 @@ export class LiveFormPanel
     }
 
     remove(): LiveFormPanel {
-
+        ShowLiveEditEvent.un(this.showLoadMaskHandler);
+        ShowSplitEditEvent.un(this.showLoadMaskHandler);
+        ShowContentFormEvent.un(this.hideLoadMaskHandler);
+        
         this.liveEditPageProxy.remove();
         super.remove();
         return this;
@@ -451,9 +476,6 @@ export class LiveFormPanel
             }
 
             this.pageLoading = true;
-            if (this.isShown() && this.liveEditModel.isRenderableContent()) {
-                this.contentWizardPanel.getLiveMask().show();
-            }
 
             this.liveEditPageProxy.load();
 
