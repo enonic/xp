@@ -73,7 +73,7 @@ export class UserTreeGridActions implements TreeGridActions<UserTreeGridItem> {
         const onlyUsersSelected = totalSelection >= 1 && totalSelection === usersSelected;
         const onePrincipalSelected = totalSelection === 1 && totalSelection === principalsSelected;
 
-        this.NEW.setEnabled((directoriesSelected <= 1) && (totalSelection <= 1));
+        this.NEW.setEnabled(true);
         this.EDIT.setEnabled(directoriesSelected < 1 && (anyUserStore || anyPrincipal));
 
         if (onlyUsersSelected || onePrincipalSelected) {

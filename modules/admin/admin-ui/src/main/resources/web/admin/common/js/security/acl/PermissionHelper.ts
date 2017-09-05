@@ -12,7 +12,7 @@ module api.security.acl {
             });
 
             loginResult.getPrincipals().some((principalKey: api.security.PrincipalKey) => {
-                if (api.security.RoleKeys.ADMIN.equals(principalKey) ||
+                if (api.security.RoleKeys.isAdmin(principalKey) ||
                     this.isPrincipalPresent(principalKey, accessEntriesWithGivenPermissions)) {
                     result = true;
                     return true;

@@ -137,20 +137,35 @@ module api.liveedit {
 
     export class LiveEditModelInitializer {
 
+        static loadForcedPageTemplate(content: Content): wemQ.Promise<PageTemplate> {
+            if (content && content.isPage()) {
+                if (content.getPage().hasTemplate()) {
+                    return this.loadPageTemplate(content.getPage().getTemplate())
+                        .then(pageTemplate => pageTemplate)
+                        .fail(reason => null);
+                }
+            }
+            return wemQ(<PageTemplate>null);
+        }
+
         static initPageModel(liveEditModel: LiveEditModel, content: Content, defaultPageTemplate: PageTemplate,
                              defaultTemplateDescriptor: PageDescriptor): Q.Promise<PageModel> {
 
             const promises: wemQ.Promise<any>[] = [];
-            const pageMode: PageMode = this.getPageMode(content, !!defaultPageTemplate);
-            const pageModel: PageModel = new PageModel(liveEditModel, defaultPageTemplate, defaultTemplateDescriptor, pageMode);
 
-            if (content.isPageTemplate()) {
-                this.initPageTemplate(content, pageMode, pageModel, promises);
-            } else {
-                this.initPage(content, pageMode, pageModel, promises);
-            }
+            return this.loadForcedPageTemplate(content).then(forcedPageTemplate => {
+                const pageMode = LiveEditModelInitializer.getPageMode(content, !!defaultPageTemplate, forcedPageTemplate);
 
-            return this.resolvePromises(pageModel, promises);
+                const pageModel: PageModel = new PageModel(liveEditModel, defaultPageTemplate, defaultTemplateDescriptor, pageMode);
+
+                if (content.isPageTemplate()) {
+                    this.initPageTemplate(content, pageMode, pageModel, promises);
+                } else {
+                    this.initPage(content, pageMode, pageModel, promises, forcedPageTemplate);
+                }
+
+                return this.resolvePromises(pageModel, promises);
+            });
         }
 
         private static initPageTemplate(content: Content, pageMode: PageMode, pageModel: PageModel, promises: wemQ.Promise<any>[]): void {
@@ -164,10 +179,11 @@ module api.liveedit {
             }
         }
 
-        private static initPage(content: Content, pageMode: PageMode, pageModel: PageModel, promises: wemQ.Promise<any>[]): void {
+        private static initPage(content: Content, pageMode: PageMode, pageModel: PageModel, promises: wemQ.Promise<any>[],
+                                forcedPageTemplate: PageTemplate): void {
             const page: Page = content.getPage();
             if (pageMode === PageMode.FORCED_TEMPLATE) {
-                this.initForcedTemplatePage(content, page, pageModel, promises);
+                this.initForcedTemplatePage(content, page, pageModel, promises, forcedPageTemplate);
             } else if (pageMode === PageMode.FORCED_CONTROLLER) {
                 this.initForcedControllerPage(page, pageModel, promises);
             } else if (pageMode === PageMode.AUTOMATIC) {
@@ -218,9 +234,10 @@ module api.liveedit {
         private static initForcedTemplatePage(content: Content,
                                               page: api.content.page.Page,
                                               pageModel: PageModel,
-                                              promises: wemQ.Promise<any>[]): void {
+                                              promises: wemQ.Promise<any>[], forcedPageTemplate?: PageTemplate): void {
             const pageTemplateKey: PageTemplateKey = page.getTemplate();
-            const pageTemplatePromise: wemQ.Promise<PageTemplate> = this.loadPageTemplate(pageTemplateKey);
+            const pageTemplatePromise: wemQ.Promise<PageTemplate> = !forcedPageTemplate ?
+                                                                    this.loadPageTemplate(pageTemplateKey) : wemQ(forcedPageTemplate);
 
             pageTemplatePromise.then((pageTemplate: PageTemplate) => {
 
@@ -284,15 +301,24 @@ module api.liveedit {
             pageModel.initController(setController);
         }
 
-        private static getPageMode(content: Content, defaultTemplatePresents: boolean): api.content.page.PageMode {
+        private static getPageMode(content: Content, defaultTemplatePresents: boolean,
+                                   forcedPageTemplate: PageTemplate): api.content.page.PageMode {
+            if (forcedPageTemplate) {
+                return api.content.page.PageMode.FORCED_TEMPLATE;
+            }
+
             if (content.getType().isFragment()) {
                 return api.content.page.PageMode.FRAGMENT;
+            }
 
-            } else if (content.isPage()) {
+            if (content.isPage()) {
                 if (content.getPage().hasTemplate()) {
                     //in case content's template was deleted or updated to not support content's type
+                    api.notify.showWarning(i18n('live.view.page.error.pagetemplatenotfound'));
+
                     if (defaultTemplatePresents) {
-                        return api.content.page.PageMode.FORCED_TEMPLATE;
+                        return api.content.page.PageMode.AUTOMATIC;
+
                     } else {
                         return api.content.page.PageMode.NO_CONTROLLER;
                     }

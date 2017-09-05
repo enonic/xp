@@ -110,6 +110,7 @@ import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
+import com.enonic.xp.content.ContentAlreadyMovedException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentId;
@@ -376,6 +377,9 @@ public final class ContentResource
             {
                 final Content movedContent = contentService.move( new MoveContentParams( contentId, params.getParentContentPath() ) );
                 resultJson.addSuccess( movedContent != null ? movedContent.getDisplayName() : contentId.toString() );
+            }
+            catch ( ContentAlreadyMovedException e ) {
+                continue;
             }
             catch ( MoveContentException e )
             {

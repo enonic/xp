@@ -37,14 +37,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
                 field: 'displayName',
                 formatter: UserItemsRowFormatter.nameFormatter,
             style: {minWidth: 200}
-        }, /* {
-                name: i18n('field.modifiedTime'),
-                id: 'modifiedTime',
-                field: 'modifiedTime',
-                formatter: DateTimeFormatter.format,
-                style: {cssClass: 'modified', minWidth: 150, maxWidth: 170}
-         }*/]).setPartialLoadEnabled(true).setLoadBufferSize(20)
-            .prependClasses('user-tree-grid');
+        }]).setPartialLoadEnabled(true).setLoadBufferSize(20).prependClasses('user-tree-grid');
 
         const columns = builder.getColumns().slice(0);
         const [nameColumn] = columns;
@@ -103,14 +96,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
     }
 
     private isUserItemEditable(userItem: UserTreeGridItem): boolean {
-
-        let type: UserTreeGridItemType = userItem.getType();
-
-        if (type === UserTreeGridItemType.ROLES || type === UserTreeGridItemType.GROUPS || type === UserTreeGridItemType.USERS) {
-            return false;
-        }
-
-        return true;
+        return !(userItem.isRole() || userItem.isUserGroup() || userItem.isUser());
     }
 
     isEmptyNode(node: TreeNode<UserTreeGridItem>): boolean {
@@ -144,6 +130,38 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
         this.invalidate();
     }
 
+    deleteNodes(userTreeGridItemsToDelete: UserTreeGridItem[]) {
+        if (this.isSingleItemSelected() && this.isHighlightedItemIn(userTreeGridItemsToDelete)) {
+            this.removeHighlighting();
+        }
+
+        super.deleteNodes(userTreeGridItemsToDelete);
+    }
+
+    private loadParentNode(principal: api.security.Principal, userStore: api.security.UserStore): wemQ.Promise<TreeNode<UserTreeGridItem>> {
+        let deferred = wemQ.defer<TreeNode<UserTreeGridItem>>();
+        let parentNode = this.getParentNode();
+
+        if (!parentNode.getData() && !principal.isRole()) { // No parent selected
+            const userStoreId = userStore.getKey().getId();
+            parentNode = parentNode.getChildren().filter(node => node.getDataId() === userStoreId)[0] || parentNode;
+        }
+
+        this.fetchDataAndSetNodes(parentNode).then(() => {
+            const parentItemType = UserTreeGridItem.getParentType(principal);
+
+            if (parentNode.getData().getType() === parentItemType) {
+                deferred.resolve(parentNode);
+            } else {
+                parentNode = parentNode.getChildren().filter(node => node.getData().getType() === parentItemType)[0] || parentNode;
+
+                this.fetchDataAndSetNodes(parentNode).then(() => deferred.resolve(parentNode));
+            }
+        });
+
+        return deferred.promise;
+    }
+
     appendUserNode(principal: api.security.Principal, userStore: api.security.UserStore, parentOfSameType?: boolean) {
         if (!principal) { // UserStore type
 
@@ -160,17 +178,35 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
 
             const userTreeGridItem = new UserTreeGridItemBuilder().setPrincipal(principal).setType(UserTreeGridItemType.PRINCIPAL).build();
 
-            this.appendNode(userTreeGridItem, parentOfSameType, false);
+            if (parentOfSameType) {
+                this.appendNode(userTreeGridItem, parentOfSameType, false);
+                return;
+            }
 
+            this.loadParentNode(principal, userStore).then((parentNode) => this.appendNodeToParent(parentNode, userTreeGridItem));
         }
     }
 
-    deleteNodes(userTreeGridItemsToDelete: UserTreeGridItem[]) {
-        if (this.isSingleItemSelected() && this.isHighlightedItemIn(userTreeGridItemsToDelete)) {
-            this.removeHighlighting();
-        }
+    private getNodeToUpdate(node: TreeNode<UserTreeGridItem>): TreeNode<UserTreeGridItem> {
+        const usersOrGroupsUpdating = node.getData().isUser() || node.getData().isUserGroup();
+        const selectedData = this.getSelectedDataList()[0];
+        const userStoreSelected = selectedData && selectedData.isUserStore();
 
-        super.deleteNodes(userTreeGridItemsToDelete);
+        return (usersOrGroupsUpdating && userStoreSelected) ? node.getParent() : node;
+    }
+
+    protected updateSelectedNode(node: TreeNode<UserTreeGridItem>) {
+        // Highlighted nodes should remain as is, and must not be selected
+        const firstSelectedOrHighlighted = this.getFirstSelectedOrHighlightedNode();
+        const selected = this.getRoot().getFullSelection().length > 0;
+        const highlighted = !selected && !!firstSelectedOrHighlighted;
+
+        const nodeToUpdate = this.getNodeToUpdate(node);
+        if (highlighted) {
+            this.refreshNode(nodeToUpdate);
+        } else if (selected) {
+            super.updateSelectedNode(nodeToUpdate);
+        }
     }
 
     getDataId(item: UserTreeGridItem): string {
@@ -192,7 +228,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
         // Creating a role with parent node pointing to another role may cause fetching to fail
         // We need to select a parent node first
         if (level !== 0 && parentNode.getData().getPrincipal() &&
-            parentNode.getData().getType() === UserTreeGridItemType.PRINCIPAL &&
+            parentNode.getData().isPrincipal() &&
             parentNode.getData().getPrincipal().isRole() && !!parentNode.getParent()) {
 
             parentNode = parentNode.getParent();
@@ -213,7 +249,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
                 api.DefaultErrorHandler.handle(reason);
             }).done();
 
-        } else if (parentNode.getData().getType() === UserTreeGridItemType.ROLES) {
+        } else if (parentNode.getData().isRole()) {
             // fetch roles, if parent node 'Roles' was selected
             return this.loadChildren(parentNode, [PrincipalType.ROLE]);
 
@@ -249,7 +285,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
         let userStoreNode: UserTreeGridItem = null;
         let userStoreKey: UserStoreKey = null;
         // fetch principals from the user store, if parent node 'Groups' or 'Users' was selected
-        if(parentNode.getData().getType() !== UserTreeGridItemType.ROLES) {
+        if (!parentNode.getData().isRole()) {
             userStoreNode = parentNode.getParent().getData();
             userStoreKey = userStoreNode.getUserStore().getKey();
         }
@@ -298,7 +334,7 @@ export class UserItemsTreeGrid extends TreeGrid<UserTreeGridItem> {
 
     private addUsersGroupsToUserStore(parentItem: UserTreeGridItem): UserTreeGridItem[] {
         let items: UserTreeGridItem[] = [];
-        if (parentItem.getType() === UserTreeGridItemType.USER_STORE) {
+        if (parentItem.isUserStore()) {
             let userStore = parentItem.getUserStore();
             let userFolderItem = new UserTreeGridItemBuilder().setUserStore(userStore).setType(UserTreeGridItemType.USERS).build();
             let groupFolderItem = new UserTreeGridItemBuilder().setUserStore(userStore).setType(UserTreeGridItemType.GROUPS).build();

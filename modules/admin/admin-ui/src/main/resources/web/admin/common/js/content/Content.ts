@@ -5,6 +5,7 @@ module api.content {
     import Property = api.data.Property;
     import PropertyTree = api.data.PropertyTree;
     import PropertyPath = api.data.PropertyPath;
+    import RoleKeys = api.security.RoleKeys;
 
     export class Content extends ContentSummary implements api.Equitable, api.Cloneable {
 
@@ -73,7 +74,7 @@ module api.content {
 
         isAnyPrincipalAllowed(principalKeys: api.security.PrincipalKey[], permission: api.security.acl.Permission): boolean {
 
-            if (principalKeys.map(key => key.toString()).indexOf(api.security.RoleKeys.ADMIN.toString()) > -1) {
+            if (principalKeys.some(key => RoleKeys.isAdmin(key))) {
                 return true;
             }
 

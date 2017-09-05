@@ -12,8 +12,10 @@ import ContentComboBox = api.content.ContentComboBox;
 import ContentComboBoxBuilder = api.content.ContentComboBoxBuilder;
 import ContentSummaryOptionDataHelper = api.content.ContentSummaryOptionDataHelper;
 import ContentSummaryOptionDataLoader = api.content.ContentSummaryOptionDataLoader;
+import RichComboBox = api.ui.selector.combobox.RichComboBox;
+import ContentAndStatusTreeSelectorItem = api.content.resource.ContentAndStatusTreeSelectorItem;
 
-export class ContentMoveComboBox extends ContentComboBox {
+export class ContentMoveComboBox extends RichComboBox<any> {
 
     private readonlyChecker: MoveReadOnlyChecker;
 
@@ -57,6 +59,10 @@ export class ContentMoveComboBox extends ContentComboBox {
         super.clearCombobox();
         this.getComboBox().getComboBoxDropdownGrid().removeAllOptions();
         this.getLoader().resetSearchString();
+    }
+
+    getSelectedDisplayValues(): ContentAndStatusTreeSelectorItem[] {
+        return (<ContentAndStatusTreeSelectorItem[]>super.getSelectedDisplayValues());
     }
 }
 
