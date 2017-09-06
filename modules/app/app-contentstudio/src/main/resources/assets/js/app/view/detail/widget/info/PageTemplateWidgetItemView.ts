@@ -30,9 +30,9 @@ export class PageTemplateWidgetItemView extends WidgetItemView {
         super('page-template-widget-item-view');
     }
 
-    public setContentAndUpdateView(item: ContentSummaryAndCompareStatus, force: boolean = false): wemQ.Promise<any> {
+    public setContentAndUpdateView(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
         let content = item.getContentSummary();
-        if (!content.equals(this.content) || force) {
+        if (!content.equals(this.content)) {
             if (!this.content) {
                 this.initListeners();
             }
