@@ -60,7 +60,7 @@ function getAboutDialogContent() {
 
     var html = '<div class="xp-about-dialog-content">' +
                '    <div class="xp-about-dialog-app-icon">' +
-               '        <img src="' + CONFIG.assetsUri + '/admin/images/app-icon.svg">' +
+               '        <img src="' + CONFIG.assetsUri + '/icons/app-icon.svg">' +
                '    </div>' +
                '    <h1>Enonic XP</h1>' +
                '    <div class="xp-about-dialog-version-block">' +

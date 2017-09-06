@@ -3,23 +3,11 @@ dependencies {
     testCompile project( ':tools:testing' )
 }
 
-task copyCommonAssets( type: Copy, dependsOn: ':admin:admin-ui:build' ) {
-    from '../../admin/admin-ui/build/resources/main/web/admin/common'
+task copyAdminAssets( type: Copy, dependsOn: ':admin:admin-ui:build' ) {
+    from '../../admin/admin-ui/build/resources/main/web/admin'
     into 'build/resources/main/assets/admin'
 }
 
-task copyLiveEditAssets( type: Copy, dependsOn: ':admin:admin-ui:build' ) {
-    from '../../admin/admin-ui/build/resources/main/web/admin/live-edit'
-    into 'build/resources/main/assets/live-edit'
-}
-
-task copyDevResources( type: Copy, dependsOn: ':admin:admin-ui:build' ) {
-    from '../../admin/admin-ui/build/resources/main/web/admin/common/js'
-    include '**/*.d.ts'
-    into 'build/resources/main/dev/d.ts'
-    includeEmptyDirs false
-}
-
-task copyResources( dependsOn: [copyCommonAssets, copyLiveEditAssets, copyDevResources] ) {}
+task copyResources( dependsOn: copyAdminAssets ) {}
 
 jar.dependsOn += copyResources
