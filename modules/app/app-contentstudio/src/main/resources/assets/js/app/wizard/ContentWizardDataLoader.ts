@@ -2,14 +2,11 @@ import '../../api.ts';
 import {DefaultModels} from './page/DefaultModels';
 import {DefaultModelsFactory, DefaultModelsFactoryConfig} from './page/DefaultModelsFactory';
 import {ContentWizardPanelParams} from './ContentWizardPanelParams';
-
 import ContentId = api.content.ContentId;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import Content = api.content.Content;
-import ContentSummary = api.content.ContentSummary;
 import Site = api.content.site.Site;
 import ContentType = api.schema.content.ContentType;
-import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
 import CompareStatus = api.content.CompareStatus;
 import PublishStatus = api.content.PublishStatus;
 import i18n = api.util.i18n;
@@ -118,11 +115,11 @@ export class ContentWizardDataLoader {
         return deferred.promise;
     }
 
-    private loadSite(contentId: ContentId): wemQ.Promise<Site> {
+    public loadSite(contentId: ContentId): wemQ.Promise<Site> {
         return contentId ? new api.content.resource.GetNearestSiteRequest(contentId).sendAndParse() : wemQ<Site>(null);
     }
 
-    private loadDefaultModels(site: Site, contentType: ContentTypeName): wemQ.Promise<DefaultModels> {
+    public loadDefaultModels(site: Site, contentType: ContentTypeName): wemQ.Promise<DefaultModels> {
 
         if (site) {
             return DefaultModelsFactory.create(<DefaultModelsFactoryConfig>{

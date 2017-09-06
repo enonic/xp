@@ -19,22 +19,12 @@ import {ShowContentFormEvent} from '../ShowContentFormEvent';
 import {SaveAsTemplateAction} from '../action/SaveAsTemplateAction';
 import {ShowLiveEditEvent} from '../ShowLiveEditEvent';
 import {ShowSplitEditEvent} from '../ShowSplitEditEvent';
-
-import PageTemplate = api.content.page.PageTemplate;
-import PageTemplateKey = api.content.page.PageTemplateKey;
-import DescriptorKey = api.content.page.DescriptorKey;
 import Content = api.content.Content;
-import ContentId = api.content.ContentId;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import Page = api.content.page.Page;
 import PageMode = api.content.page.PageMode;
 import PageModel = api.content.page.PageModel;
-import SiteModel = api.content.site.SiteModel;
 import LiveEditModel = api.liveedit.LiveEditModel;
-
-import PageDescriptor = api.content.page.PageDescriptor;
-import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
-import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
 
 import Component = api.content.page.region.Component;
 import ImageComponent = api.content.page.region.ImageComponent;
@@ -43,13 +33,7 @@ import PartComponent = api.content.page.region.PartComponent;
 import LayoutComponent = api.content.page.region.LayoutComponent;
 import FragmentComponent = api.content.page.region.FragmentComponent;
 import ComponentPropertyChangedEvent = api.content.page.region.ComponentPropertyChangedEvent;
-import ComponentPropertyValueChangedEvent = api.content.page.region.ComponentPropertyValueChangedEvent;
-
-import GetPartDescriptorsByApplicationsRequest = api.content.page.region.GetPartDescriptorsByApplicationsRequest;
-import GetLayoutDescriptorsByApplicationsRequest = api.content.page.region.GetLayoutDescriptorsByApplicationsRequest;
 import RenderingMode = api.rendering.RenderingMode;
-
-import ItemView = api.liveedit.ItemView;
 import RegionView = api.liveedit.RegionView;
 import ComponentView = api.liveedit.ComponentView;
 import PageView = api.liveedit.PageView;
@@ -58,9 +42,7 @@ import PartComponentView = api.liveedit.part.PartComponentView;
 import LayoutComponentView = api.liveedit.layout.LayoutComponentView;
 import TextComponentView = api.liveedit.text.TextComponentView;
 import FragmentComponentView = api.liveedit.fragment.FragmentComponentView;
-import ComponentViewDragStartedEvent = api.liveedit.ComponentViewDragStartedEvent;
 import ComponentViewDragDroppedEvent = api.liveedit.ComponentViewDragDroppedEvent;
-import ComponentViewDragCanceledEvent = api.liveedit.ComponentViewDragCanceledEvent;
 import PageSelectedEvent = api.liveedit.PageSelectedEvent;
 import RegionSelectedEvent = api.liveedit.RegionSelectedEvent;
 import ItemViewSelectedEvent = api.liveedit.ItemViewSelectedEvent;
@@ -86,9 +68,6 @@ import FragmentComponentReloadRequiredEvent = api.liveedit.FragmentComponentRelo
 import BeforeContentSavedEvent = api.content.event.BeforeContentSavedEvent;
 import ComponentPath = api.content.page.region.ComponentPath;
 import i18n = api.util.i18n;
-import CreatePageTemplateRequest = api.content.page.CreatePageTemplateRequest;
-import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStatus;
-import EditContentEvent = api.content.event.EditContentEvent;
 import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
 
 export interface LiveFormPanelConfig {

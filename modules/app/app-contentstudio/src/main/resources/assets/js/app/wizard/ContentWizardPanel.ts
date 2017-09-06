@@ -15,10 +15,8 @@ import {PersistNewContentRoutine} from './PersistNewContentRoutine';
 import {UpdatePersistedContentRoutine} from './UpdatePersistedContentRoutine';
 import {ContentWizardDataLoader} from './ContentWizardDataLoader';
 import {ThumbnailUploaderEl} from './ThumbnailUploaderEl';
-
 import PropertyTree = api.data.PropertyTree;
 import FormView = api.form.FormView;
-import FormContextBuilder = api.form.FormContextBuilder;
 import ContentFormContext = api.content.form.ContentFormContext;
 import Content = api.content.Content;
 import ContentId = api.content.ContentId;
@@ -27,7 +25,6 @@ import ContentSummaryAndCompareStatus = api.content.ContentSummaryAndCompareStat
 import CompareStatus = api.content.CompareStatus;
 import PublishStatus = api.content.PublishStatus;
 import ContentBuilder = api.content.ContentBuilder;
-import Thumbnail = api.thumb.Thumbnail;
 import ContentName = api.content.ContentName;
 import ContentUnnamed = api.content.ContentUnnamed;
 import CreateContentRequest = api.content.resource.CreateContentRequest;
@@ -40,64 +37,38 @@ import SiteModel = api.content.site.SiteModel;
 import LiveEditModel = api.liveedit.LiveEditModel;
 import ContentType = api.schema.content.ContentType;
 import ContentTypeName = api.schema.content.ContentTypeName;
-import PageTemplate = api.content.page.PageTemplate;
-import PageDescriptor = api.content.page.PageDescriptor;
-import AccessControlList = api.security.acl.AccessControlList;
-import AccessControlEntry = api.security.acl.AccessControlEntry;
-import GetPageTemplateByKeyRequest = api.content.page.GetPageTemplateByKeyRequest;
-import GetPageDescriptorByKeyRequest = api.content.page.GetPageDescriptorByKeyRequest;
-import IsRenderableRequest = api.content.page.IsRenderableRequest;
-import GetNearestSiteRequest = api.content.resource.GetNearestSiteRequest;
-import GetPageDescriptorsByApplicationsRequest = api.content.page.GetPageDescriptorsByApplicationsRequest;
 
 import ConfirmationDialog = api.ui.dialog.ConfirmationDialog;
 import ResponsiveManager = api.ui.responsive.ResponsiveManager;
 import ResponsiveRanges = api.ui.responsive.ResponsiveRanges;
 import ResponsiveItem = api.ui.responsive.ResponsiveItem;
-import FormIcon = api.app.wizard.FormIcon;
-import FileUploadCompleteEvent = api.ui.uploader.FileUploadCompleteEvent;
 import TogglerButton = api.ui.button.TogglerButton;
 import WizardHeaderWithDisplayNameAndName = api.app.wizard.WizardHeaderWithDisplayNameAndName;
 import WizardHeaderWithDisplayNameAndNameBuilder = api.app.wizard.WizardHeaderWithDisplayNameAndNameBuilder;
 import WizardStep = api.app.wizard.WizardStep;
-import WizardStepValidityChangedEvent = api.app.wizard.WizardStepValidityChangedEvent;
 import ContentRequiresSaveEvent = api.content.event.ContentRequiresSaveEvent;
 import ImageErrorEvent = api.content.image.ImageErrorEvent;
 
 import Application = api.application.Application;
 import ApplicationKey = api.application.ApplicationKey;
 import ApplicationEvent = api.application.ApplicationEvent;
-import ApplicationEventType = api.application.ApplicationEventType;
 import Mixin = api.schema.mixin.Mixin;
 import MixinName = api.schema.mixin.MixinName;
 import MixinNames = api.schema.mixin.MixinNames;
 import GetMixinByQualifiedNameRequest = api.schema.mixin.GetMixinByQualifiedNameRequest;
 
 import ContentDeletedEvent = api.content.event.ContentDeletedEvent;
-import ContentUpdatedEvent = api.content.event.ContentUpdatedEvent;
 import ContentNamedEvent = api.content.event.ContentNamedEvent;
-import ActiveContentVersionSetEvent = api.content.event.ActiveContentVersionSetEvent;
-import ContentServerEventsHandler = api.content.event.ContentServerEventsHandler;
 import BeforeContentSavedEvent = api.content.event.BeforeContentSavedEvent;
-
-import DialogButton = api.ui.dialog.DialogButton;
 
 import Toolbar = api.ui.toolbar.Toolbar;
 import CycleButton = api.ui.button.CycleButton;
 
 import Permission = api.security.acl.Permission;
-import Region = api.content.page.region.Region;
-import Component = api.content.page.region.Component;
-import ImageComponent = api.content.page.region.ImageComponent;
-import ImageComponentType = api.content.page.region.ImageComponentType;
-import ObjectHelper = api.ObjectHelper;
-import LayoutComponentType = api.content.page.region.LayoutComponentType;
-import LayoutComponent = api.content.page.region.LayoutComponent;
-import FragmentComponent = api.content.page.region.FragmentComponent;
-import FragmentComponentType = api.content.page.region.FragmentComponentType;
 import i18n = api.util.i18n;
 
-export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
+export class ContentWizardPanel
+    extends api.app.wizard.WizardPanel<Content> {
 
     protected wizardActions: ContentWizardActions;
 
@@ -251,6 +222,18 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                 shownAndLoadedHandler();
             } else {
                 this.onDataLoaded(shownAndLoadedHandler);
+            }
+        });
+
+        this.onContentNamed(event => {
+            // content path has changed so update site as well
+            const content = event.getContent();
+            if (content.isSite()) {
+                this.site = <Site>content;
+            } else {
+                new ContentWizardDataLoader().loadSite(content.getContentId()).then(site => {
+                    this.site = site;
+                });
             }
         });
 
@@ -800,18 +783,43 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
                     }
                 });
             } else {
-                this.doComponentsContainId(contentId).then((contains) => {
+                const containsIdPromise = this.doComponentsContainId(contentId).then((contains) => {
                     if (contains) {
                         new GetContentByIdRequest(this.getPersistedItem().getContentId()).sendAndParse().done((content: Content) => {
                             this.updateWizard(content, true);
                             if (this.isEditorEnabled()) {
-                                let liveFormPanel = this.getLivePanel();
-                                liveFormPanel.skipNextReloadConfirmation(true);
-                                liveFormPanel.loadPage(false);
+                                return true;
                             }
                         });
+                    } else {
+                        return wemQ(false);
                     }
                 });
+
+                const templateUpdatedPromise = updateLiveEditModelIfNeeded(updatedContent);
+
+                wemQ.all([containsIdPromise, templateUpdatedPromise]).spread((containsId, templateUpdated) => {
+                    if (containsId || templateUpdated) {
+                        this.getLivePanel().skipNextReloadConfirmation(true);
+                        this.getLivePanel().loadPage(false);
+                    }
+                })
+            }
+        };
+
+        const updateLiveEditModelIfNeeded = (updatedContent: ContentSummaryAndCompareStatus) => {
+            const isTemplate = updatedContent.getType().isPageTemplate();
+
+            if (isTemplate && this.site && updatedContent.getPath().isDescendantOf(this.site.getPath())) {
+                return new ContentWizardDataLoader().loadDefaultModels(this.site, this.contentType.getContentTypeName()).then(
+                    defaultModels => {
+                        return this.liveEditModel.init(defaultModels.getPageTemplate(), defaultModels.getPageDescriptor()).then(model => {
+                            this.getLivePanel().setModel(this.liveEditModel);
+                            return true;
+                        });
+                    });
+            } else {
+                return wemQ(false);
             }
         };
 
@@ -845,19 +853,19 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         };
 
         ContentDeletedEvent.on(deleteHandler);
-        ContentServerEventsHandler.getInstance().onContentMoved(movedHandler);
-        ContentServerEventsHandler.getInstance().onContentSorted(sortedHandler);
-        ContentServerEventsHandler.getInstance().onContentUpdated(contentUpdatedHandler);
 
+        serverEvents.onContentMoved(movedHandler);
+        serverEvents.onContentSorted(sortedHandler);
+        serverEvents.onContentUpdated(contentUpdatedHandler);
         serverEvents.onContentPublished(publishOrUnpublishHandler);
         serverEvents.onContentUnpublished(publishOrUnpublishHandler);
 
         this.onClosed(() => {
             ContentDeletedEvent.un(deleteHandler);
-            ContentServerEventsHandler.getInstance().unContentMoved(movedHandler);
-            ContentServerEventsHandler.getInstance().unContentSorted(sortedHandler);
-            ContentServerEventsHandler.getInstance().unContentUpdated(contentUpdatedHandler);
 
+            serverEvents.unContentMoved(movedHandler);
+            serverEvents.unContentSorted(sortedHandler);
+            serverEvents.unContentUpdated(contentUpdatedHandler);
             serverEvents.unContentPublished(publishOrUnpublishHandler);
             serverEvents.unContentUnpublished(publishOrUnpublishHandler);
         });
@@ -1318,9 +1326,13 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     private initLiveEditModel(content: Content, siteModel: SiteModel, formContext: ContentFormContext): wemQ.Promise<void> {
         this.unbindSiteModelListeners();
         this.initSiteModelListeners();
-        this.liveEditModel =
-            LiveEditModel.create().setParentContent(this.parentContent).setContent(content).setContentFormContext(formContext).setSiteModel(
-                siteModel).build();
+        this.liveEditModel = LiveEditModel.create()
+            .setParentContent(this.parentContent)
+            .setContent(content)
+            .setContentFormContext(formContext)
+            .setSiteModel(siteModel)
+            .build();
+
         return this.liveEditModel.init(this.defaultModels.getPageTemplate(), this.defaultModels.getPageDescriptor());
     }
 
@@ -1334,9 +1346,9 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     postPersistNewItem(persistedContent: Content): wemQ.Promise<Content> {
 
-        if (persistedContent.isSite()) {
-            this.site = <Site>persistedContent;
-        }
+        /*        if (persistedContent.isSite()) {
+                    this.site = <Site>persistedContent;
+                }*/
 
         return wemQ(persistedContent);
     }
@@ -1657,10 +1669,14 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     private getFormContext(content: Content): ContentFormContext {
         if (!this.formContext) {
-            this.formContext = <ContentFormContext>ContentFormContext.create().setSite(this.site).setParentContent(
-                this.parentContent).setPersistedContent(content).setContentTypeName(
-                this.contentType ? this.contentType.getContentTypeName() : undefined).setFormState(
-                this.formState).setShowEmptyFormItemSetOccurrences(this.isItemPersisted()).build();
+            this.formContext = <ContentFormContext>ContentFormContext.create()
+                .setSite(this.site)
+                .setParentContent(this.parentContent)
+                .setPersistedContent(content)
+                .setContentTypeName(this.contentType ? this.contentType.getContentTypeName() : undefined)
+                .setFormState(this.formState)
+                .setShowEmptyFormItemSetOccurrences(this.isItemPersisted())
+                .build();
         }
         return this.formContext;
     }
@@ -1772,7 +1788,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
     private isEditorEnabled(): boolean {
 
         return !!this.site || ( this.shouldOpenEditorByDefault() && !api.util.ArrayHelper.contains(ContentWizardPanel.EDITOR_DISABLED_TYPES,
-                this.contentType.getContentTypeName()));
+            this.contentType.getContentTypeName()));
     }
 
     private updateButtonsState() {

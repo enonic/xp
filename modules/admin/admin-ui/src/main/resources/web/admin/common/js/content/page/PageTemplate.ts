@@ -41,7 +41,7 @@ module api.content.page {
             return this.getPage().getController();
         }
 
-        isCanRender(pattern: ContentTypeName): boolean {
+        supports(pattern: ContentTypeName): boolean {
             return this.getCanRender().some((name: ContentTypeName) => {
                 return name.equals(pattern);
             });
