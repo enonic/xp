@@ -49,10 +49,23 @@ module api.util.htmlarea.dialog {
                 editor: config.editor,
                 content: content,
                 title: i18n('dialog.image.title'),
-                cls: 'image-modal-dialog'
+                cls: 'image-modal-dialog',
+                confirmation: {
+                    yesCallback: () => this.getSubmitAction().execute(),
+                    noCallback: () => this.close(),
+                }
             });
 
             this.initLoader();
+
+            if (config.element) {
+                this.imageElement = <HTMLImageElement>config.element;
+
+                this.loadImage();
+
+                this.setImageFieldValues(this.imageCaptionField, this.getCaption());
+                this.setImageFieldValues(this.imageAltTextField, this.getAltText());
+            }
         }
 
         private setImageFieldValues(field: FormItem, value: string) {
@@ -381,15 +394,6 @@ module api.util.htmlarea.dialog {
             this.callback = config.callback;
 
             this.content = params.content;
-
-            if (config.element) {
-                this.imageElement = <HTMLImageElement>params.config.element;
-
-                this.loadImage();
-
-                this.setImageFieldValues(this.imageCaptionField, this.getCaption());
-                this.setImageFieldValues(this.imageAltTextField, this.getAltText());
-            }
         }
 
         protected initializeActions() {
@@ -489,6 +493,10 @@ module api.util.htmlarea.dialog {
 
         private isImageInOriginalSize(image: HTMLElement) {
             return image.getAttribute('data-src').indexOf('keepSize=true') > 0;
+        }
+
+        isDirty(): boolean {
+            return AppHelper.isDirty(this);
         }
     }
 

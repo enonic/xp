@@ -3,14 +3,24 @@ module api.util.htmlarea.dialog {
     import FormItem = api.ui.form.FormItem;
     import Validators = api.ui.form.Validators;
     import TextArea = api.ui.text.TextArea;
+    import Action = api.ui.Action;
     import i18n = api.util.i18n;
 
     export class CodeDialog extends ModalDialog {
 
         private textArea: TextArea;
 
+        private okAction: Action;
+
         constructor(editor: HtmlAreaEditor) {
-            super(<HtmlAreaModalDialogConfig>{editor: editor, title: i18n('dialog.sourcecode.title'), cls: 'source-code-modal-dialog'});
+            super(<HtmlAreaModalDialogConfig>{
+                editor: editor,
+                title: i18n('dialog.sourcecode.title'), cls: 'source-code-modal-dialog',
+                confirmation: {
+                    yesCallback: () => this.okAction.execute(),
+                    noCallback: () => this.close(),
+                }
+            });
         }
 
         protected layout() {
@@ -38,9 +48,9 @@ module api.util.htmlarea.dialog {
         }
 
         protected initializeActions() {
-            const okAction: api.ui.Action = new api.ui.Action(i18n('action.ok'));
+            this.okAction = new Action(i18n('action.ok'));
 
-            this.addAction(okAction.onExecuted(() => {
+            this.addAction(this.okAction.onExecuted(() => {
                 this.getEditor().focus();
 
                 this.getEditor().undoManager.transact(() => {
@@ -54,6 +64,10 @@ module api.util.htmlarea.dialog {
             }));
 
             super.initializeActions();
+        }
+
+        isDirty(): boolean {
+            return this.textArea.isDirty();
         }
     }
 }

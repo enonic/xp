@@ -3,22 +3,32 @@ module api.util.htmlarea.dialog {
     import FormItem = api.ui.form.FormItem;
     import Validators = api.ui.form.Validators;
     import i18n = api.util.i18n;
+    import TextInput = api.ui.text.TextInput;
 
     export class AnchorModalDialog extends ModalDialog {
 
+        private nameField: FormItem;
+
         constructor(editor: HtmlAreaEditor) {
 
-            super(<HtmlAreaModalDialogConfig>{editor: editor, title: i18n('dialog.anchor.title')});
+            super(<HtmlAreaModalDialogConfig>{
+                editor: editor,
+                title: i18n('dialog.anchor.title'),
+                confirmation: {
+                    yesCallback: () => this.getSubmitAction().execute(),
+                    noCallback: () => this.close(),
+                }
+            });
         }
 
         protected getMainFormItems(): FormItem[] {
             let formItemBuilder = new ModalDialogFormItemBuilder('name', i18n('dialog.anchor.formitem.name')).setValidator(
                 Validators.required);
-            let nameField = this.createFormItem(formItemBuilder);
+            this.nameField = this.createFormItem(formItemBuilder);
 
-            this.setFirstFocusField(nameField.getInput());
+            this.setFirstFocusField(this.nameField.getInput());
 
-            return [nameField];
+            return [this.nameField];
         }
 
         protected initializeActions() {
@@ -51,6 +61,10 @@ module api.util.htmlarea.dialog {
         private insertAnchor(): void {
             let anchorEl = this.createAnchorEl();
             this.getEditor().insertContent(anchorEl);
+        }
+
+        isDirty(): boolean {
+            return (<TextInput>this.nameField.getInput()).isDirty();
         }
     }
 }

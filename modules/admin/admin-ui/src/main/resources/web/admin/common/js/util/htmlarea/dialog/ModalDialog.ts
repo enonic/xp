@@ -4,6 +4,7 @@ module api.util.htmlarea.dialog {
     import Fieldset = api.ui.form.Fieldset;
     import FormItem = api.ui.form.FormItem;
     import FormItemBuilder = api.ui.form.FormItemBuilder;
+    import ConfirmationConfig = api.ui.dialog.ConfirmationConfig;
 
     export class ModalDialogFormItemBuilder {
 
@@ -54,6 +55,8 @@ module api.util.htmlarea.dialog {
         title: string;
 
         cls?: string;
+
+        confirmation?: ConfirmationConfig;
     }
 
     export class ModalDialog extends api.ui.dialog.ModalDialog {
@@ -68,7 +71,7 @@ module api.util.htmlarea.dialog {
 
         constructor(config: HtmlAreaModalDialogConfig) {
 
-            super(<api.ui.dialog.ModalDialogConfig>{title: config.title});
+            super(<api.ui.dialog.ModalDialogConfig>{title: config.title, confirmation: config.confirmation});
 
             this.editor = config.editor;
 
@@ -81,6 +84,10 @@ module api.util.htmlarea.dialog {
 
         setSubmitAction(action: api.ui.Action) {
             this.submitAction = action;
+        }
+
+        getSubmitAction(): api.ui.Action {
+            return this.submitAction;
         }
 
         protected getEditor(): HtmlAreaEditor {
