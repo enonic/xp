@@ -16,9 +16,9 @@ import PageMode = api.content.page.PageMode;
 import ContentTypeName = api.schema.content.ContentTypeName;
 import GetContentByIdRequest = api.content.resource.GetContentByIdRequest;
 import i18n = api.util.i18n;
+import GetDefaultPageTemplateRequest = api.content.page.GetDefaultPageTemplateRequest;
 
-export class PageTemplateWidgetItemView
-    extends WidgetItemView {
+export class PageTemplateWidgetItemView extends WidgetItemView {
 
     private content: ContentSummary;
 
@@ -30,9 +30,9 @@ export class PageTemplateWidgetItemView
         super('page-template-widget-item-view');
     }
 
-    public setContentAndUpdateView(item: ContentSummaryAndCompareStatus, force: boolean = false): wemQ.Promise<any> {
+    public setContentAndUpdateView(item: ContentSummaryAndCompareStatus): wemQ.Promise<any> {
         let content = item.getContentSummary();
-        if (!content.equals(this.content) || force) {
+        if (!content.equals(this.content)) {
             if (!this.content) {
                 this.initListeners();
             }
@@ -93,11 +93,14 @@ export class PageTemplateWidgetItemView
                 pageTemplateViewer.setPageMode(api.content.page.PageMode.FORCED_TEMPLATE);
 
                 return new GetPageTemplateByKeyRequest(content.getPage().getTemplate()).sendAndParse()
-                    .then((pageTemplate: PageTemplate) => {
-                        pageTemplateViewer.setPageTemplate(pageTemplate);
+                    .then(
+                        (pageTemplate: PageTemplate) => {
+                            pageTemplateViewer.setPageTemplate(pageTemplate);
 
-                        return wemQ(pageTemplateViewer);
-                    });
+                            return wemQ(pageTemplateViewer);
+                        }, reason => {
+                            return this.tryToSetAutomaticMode(pageTemplateViewer);
+                        });
             }
 
             pageTemplateViewer.setPageMode(api.content.page.PageMode.FORCED_CONTROLLER);
@@ -110,9 +113,13 @@ export class PageTemplateWidgetItemView
                 });
         }
 
+        return this.tryToSetAutomaticMode(pageTemplateViewer);
+    }
+
+    private tryToSetAutomaticMode(pageTemplateViewer: PageTemplateViewer): wemQ.Promise<PageTemplateViewer> {
         return new GetNearestSiteRequest(this.content.getContentId()).sendAndParse().then((site: Site) => {
 
-            return this.loadDefaultModels(site, content.getType()).then((defaultModels: DefaultModels) => {
+            return this.loadDefaultModels(site, this.content.getType()).then((defaultModels: DefaultModels) => {
 
                 if (defaultModels && defaultModels.hasPageTemplate()) {
                     pageTemplateViewer.setPageMode(PageMode.AUTOMATIC);
@@ -204,10 +211,17 @@ class PageTemplateViewer {
         return pageTemplateEl;
     }
 
+    private getEmptyDescriptorEl(): api.dom.SpanEl {
+        const emptyEl = new api.dom.SpanEl();
+
+        emptyEl.setHtml(i18n('widget.pagetemplate.notfound'));
+        return emptyEl;
+    }
+
     private getDescriptorEl(): api.dom.Element {
 
         if (!(this.pageTemplate || this.pageController)) {
-            return;
+            return this.getEmptyDescriptorEl();
         }
 
         if (this.pageTemplate) {

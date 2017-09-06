@@ -53,6 +53,10 @@ module api.app.browse {
             return this.itemStatisticsPanel.getItem();
         }
 
+        getItemStatisticsPanel(): api.app.view.ItemStatisticsPanel<M> {
+            return this.itemStatisticsPanel;
+        }
+
         private addItem(item: BrowseItem<M>) {
             const index = this.indexOf(item);
             if (index >= 0) {
