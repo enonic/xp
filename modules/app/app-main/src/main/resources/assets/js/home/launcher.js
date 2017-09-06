@@ -1,13 +1,34 @@
 var adminUrl = window.CONFIG && window.CONFIG.adminUrl || '/admin';
 var launcherUrl = adminUrl + (adminUrl.slice(-1) === '/' ? '' : '/' ) + 'tool/com.enonic.xp.app.main/launcher';
-var launcherPanel, launcherButton, launcherMainContainer;
 var autoOpenLauncher = window.CONFIG && window.CONFIG.autoOpenLauncher;
 var appId = window.CONFIG ? window.CONFIG.appId : '';
+
+var launcherPanel, launcherButton, launcherMainContainer;
+var oldLauncherPanel, oldLauncherButton;
+
+function debounce(func, wait, immediate) {
+    var timeout;
+    return function () {
+        var context = this, args = arguments;
+        var later = function () {
+            timeout = null;
+            if (!immediate) {
+                func.apply(context, args);
+            }
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) {
+            func.apply(context, args);
+        }
+    };
+};
 
 function appendLauncherButton() {
     launcherButton = document.createElement('button');
     launcherButton.setAttribute('class', 'launcher-button ' + getColorClass());
-    launcherButton.classList.add('hidden');
+    launcherButton.hidden = true;
 
     var span = document.createElement('span');
     span.setAttribute('class', 'lines');
@@ -23,11 +44,8 @@ function appendLauncherButton() {
 }
 
 function getColorClass() {
-    if (document.querySelector('.appbar') || document.querySelector('.home-main-container')) {
-        return '';
-    }
-
-    return 'dark';
+    var darkBackground = document.querySelector('.appbar') || document.querySelector('.home-main-container');
+    return darkBackground ? 'light' : 'dark';
 }
 
 function togglePanelState() {
@@ -89,6 +107,8 @@ function createLauncherLink(container) {
     link.setAttribute('async', '');
 
     link.onload = function () {
+        removeOldLauncherPanel();
+        launcherButton.hidden = false;
         launcherMainContainer = link.import.querySelector('.launcher-main-container');
         launcherMainContainer.setAttribute('hidden', 'true');
         if (window.CONFIG.appId == 'home') {
@@ -225,16 +245,41 @@ function onKeyPressed(e) {
 }
 
 function addApplicationsListeners() {
-    var triesLeft = 3;
-    var intervalID = setInterval(function () {
-        var initialized = initApplicationsListeners();
-        if (!initialized && triesLeft > 0) {
-            triesLeft -= 1;
-        } else {
-            clearInterval(intervalID);
-        }
-    }, 3000);
+    if (!initApplicationsListeners()) {
+        var triesLeft = 3;
+        var intervalID = setInterval(function () {
+            var initialized = initApplicationsListeners();
+            if (!initialized && triesLeft > 0) {
+                triesLeft -= 1;
+            } else {
+                clearInterval(intervalID);
+            }
+        }, 3000);
+    }
 }
+
+function init() {
+    appendLauncherButton();
+    appendLauncherPanel();
+    addApplicationsListeners();
+}
+
+function reloadLauncher() {
+    oldLauncherPanel = launcherPanel;
+    oldLauncherButton = launcherButton;
+    init();
+}
+
+function removeOldLauncherPanel() {
+    if (oldLauncherButton) {
+        oldLauncherButton.remove();
+    }
+    if (oldLauncherPanel) {
+        oldLauncherPanel.remove();
+    }
+}
+
+var debouncedReload = debounce(reloadLauncher, 1000, true);
 
 function initApplicationsListeners() {
     if (api.application.ApplicationEvent) {
@@ -242,7 +287,7 @@ function initApplicationsListeners() {
             switch (event.getEventType()) {
             case api.application.ApplicationEventType.STARTED:
             case api.application.ApplicationEventType.STOPPED:
-                reloadLauncher();
+                debouncedReload();
                 break;
             }
         });
@@ -251,16 +296,4 @@ function initApplicationsListeners() {
     return false;
 }
 
-function reloadLauncher() {
-    launcherPanel.remove();
-    launcherButton.remove();
-    appendLauncherButton();
-    appendLauncherPanel();
-    addApplicationsListeners();
-}
-
-exports.init = function () {
-    appendLauncherButton();
-    appendLauncherPanel();
-    addApplicationsListeners();
-};
+exports.init = init;
