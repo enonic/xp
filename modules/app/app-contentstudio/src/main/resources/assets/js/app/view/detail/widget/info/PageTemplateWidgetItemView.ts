@@ -214,7 +214,7 @@ class PageTemplateViewer {
     private getEmptyDescriptorEl(): api.dom.SpanEl {
         const emptyEl = new api.dom.SpanEl();
 
-        emptyEl.setHtml('Not found');
+        emptyEl.setHtml(i18n('widget.pagetemplate.notfound'));
         return emptyEl;
     }
 
