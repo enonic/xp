@@ -48,6 +48,9 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
 
     setModel(liveEditModel: LiveEditModel) {
         super.setModel(liveEditModel);
+        if(this.fragmentSelector) {
+            this.fragmentSelector.setModel(liveEditModel);
+        }
         this.layout();
 
     }
@@ -56,9 +59,7 @@ export class FragmentInspectionPanel extends ComponentInspectionPanel<FragmentCo
 
         this.removeChildren();
 
-        let sitePath = this.liveEditModel.getSiteModel().getSite().getPath().toString();
-
-        this.fragmentSelector = new FragmentDropdown(sitePath, this.liveEditModel.getContent().getPath());
+        this.fragmentSelector = new FragmentDropdown(this.liveEditModel);
         this.fragmentForm = new FragmentSelectorForm(this.fragmentSelector, i18n('field.fragment'));
 
         this.fragmentSelector.load();
