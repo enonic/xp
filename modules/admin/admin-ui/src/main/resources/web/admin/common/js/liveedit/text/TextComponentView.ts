@@ -356,7 +356,7 @@ module api.liveedit.text {
 
         private doInitEditor() {
             this.isInitializingEditor = true;
-            let assetsUri = CONFIG.adminAssetsUri;
+            let assetsUri = CONFIG.assetsUri;
             let id = this.getId().replace(/\./g, '_');
 
             this.addClass(id);

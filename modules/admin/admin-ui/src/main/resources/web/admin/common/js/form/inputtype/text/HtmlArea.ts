@@ -119,7 +119,7 @@ module api.form.inputtype.text {
 
         private initEditor(id: string, property: Property, textAreaWrapper: Element): void {
             let focusedEditorCls = 'html-area-focused';
-            let baseUrl = CONFIG.adminAssetsUri;
+            let assetsUri = CONFIG.assetsUri;
 
             let focusHandler = (e) => {
                 this.resetInputHeight();
@@ -196,7 +196,7 @@ module api.form.inputtype.text {
 
             new HTMLAreaBuilder().
                 setSelector('textarea.' + id.replace(/\./g, '_')).
-                setAssetsUri(baseUrl).
+                setAssetsUri(assetsUri).
                 setInline(false).
                 onCreateDialog(createDialogHandler).
                 setFocusHandler(focusHandler.bind(this)).
