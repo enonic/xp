@@ -752,6 +752,22 @@ export class ContentWizardPanel
             });
         };
 
+        const updateLiveEditModelIfNeeded = (updatedContent: ContentSummaryAndCompareStatus) => {
+            const isTemplate = updatedContent.getType().isPageTemplate();
+
+            if (isTemplate && this.site && updatedContent.getPath().isDescendantOf(this.site.getPath())) {
+                return new ContentWizardDataLoader().loadDefaultModels(this.site, this.contentType.getContentTypeName()).then(
+                    defaultModels => {
+                        return this.liveEditModel.init(defaultModels.getPageTemplate(), defaultModels.getPageDescriptor()).then(model => {
+                            this.getLivePanel().setModel(this.liveEditModel);
+                            return true;
+                        });
+                    });
+            } else {
+                return wemQ(false);
+            }
+        };
+
         let updateHandler = (updatedContent: ContentSummaryAndCompareStatus) => {
             const contentId = updatedContent.getContentId();
 
@@ -803,23 +819,7 @@ export class ContentWizardPanel
                         this.getLivePanel().skipNextReloadConfirmation(true);
                         this.getLivePanel().loadPage(false);
                     }
-                })
-            }
-        };
-
-        const updateLiveEditModelIfNeeded = (updatedContent: ContentSummaryAndCompareStatus) => {
-            const isTemplate = updatedContent.getType().isPageTemplate();
-
-            if (isTemplate && this.site && updatedContent.getPath().isDescendantOf(this.site.getPath())) {
-                return new ContentWizardDataLoader().loadDefaultModels(this.site, this.contentType.getContentTypeName()).then(
-                    defaultModels => {
-                        return this.liveEditModel.init(defaultModels.getPageTemplate(), defaultModels.getPageDescriptor()).then(model => {
-                            this.getLivePanel().setModel(this.liveEditModel);
-                            return true;
-                        });
-                    });
-            } else {
-                return wemQ(false);
+                });
             }
         };
 
