@@ -640,6 +640,11 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
                     return true;
                 }
 
+                if (content.getContentSummary().isPageTemplate()) {
+                    this.forcePreviewRerender();
+                    return true;
+                }
+
                 if (!previewRefreshed) {
                     previewItemContent.containsChildContentId(content.getContentId()).then((containsId: boolean) => {
                         if (containsId) {
@@ -664,7 +669,7 @@ export class ContentBrowsePanel extends api.app.browse.BrowsePanel<ContentSummar
 
     private forcePreviewRerender() {
         let previewItem = this.getBrowseItemPanel().getStatisticsItem();
-        (<ContentItemStatisticsPanel>this.getBrowseItemPanel().getPanel(1)).getPreviewPanel().setItem(previewItem, true);
+        (<ContentItemStatisticsPanel>this.getBrowseItemPanel().getItemStatisticsPanel()).getPreviewPanel().setItem(previewItem, true);
         this.mobileContentItemStatisticsPanel.getPreviewPanel().setItem(previewItem, true);
     }
 

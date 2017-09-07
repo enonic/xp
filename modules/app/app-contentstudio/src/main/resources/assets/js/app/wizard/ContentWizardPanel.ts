@@ -427,7 +427,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
     doRenderOnDataLoaded(rendered: boolean): Q.Promise<boolean> {
 
-        return super.doRenderOnDataLoaded(rendered, true).then((renderedAfter: boolean) => {
+        return super.doRenderOnDataLoaded(rendered).then((renderedAfter: boolean) => {
             if (ContentWizardPanel.debug) {
                 console.debug('ContentWizardPanel.doRenderOnDataLoaded at ' + new Date().toISOString());
             }
@@ -668,7 +668,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         return super.saveChanges().then((content: Content) => {
             if (liveFormPanel) {
                 this.liveEditModel.setContent(content);
-                liveFormPanel.loadPage(false);
+                this.updateLiveForm();
             }
 
             if (content.getType().isImage()) {
@@ -1188,10 +1188,14 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         return extraData;
     }
 
+    private isSplitEditModeActive() {
+        return (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange() &&
+                this.isEditorEnabled() && this.shouldOpenEditorByDefault());
+    }
+
     private setupWizardLiveEdit() {
 
-        let editorEnabled = this.isEditorEnabled();
-        let shouldOpenEditor = this.shouldOpenEditorByDefault();
+        const editorEnabled = this.isEditorEnabled();
 
         this.toggleClass('rendered', editorEnabled);
 
@@ -1201,11 +1205,13 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
 
         this.getCycleViewModeButton().setVisible(editorEnabled);
 
-        if (this.getEl().getWidth() > ResponsiveRanges._720_960.getMaximumRange() && (editorEnabled && shouldOpenEditor)) {
+        if (this.isSplitEditModeActive()) {
             this.wizardActions.getShowSplitEditAction().execute();
         } else if (!!this.getSplitPanel()) {
-
             this.wizardActions.getShowFormAction().execute();
+        }
+        if (editorEnabled) {
+            this.formMask.show();
         }
     }
 
@@ -1815,4 +1821,7 @@ export class ContentWizardPanel extends api.app.wizard.WizardPanel<Content> {
         return this.liveMask;
     }
 
+    onFormPanelAdded() {
+        super.onFormPanelAdded(!this.isSplitEditModeActive());
+    }
 }

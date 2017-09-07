@@ -178,7 +178,7 @@ function createStep1() {
                '        <div class="subtitle-part-2">' + i18n('tour.step1.subtitle2') + '</div>' +
                '    </div>' +
                '    <div class="caption">' + i18n('tour.step1.caption') + '</div>' +
-               '    <img src="' + CONFIG.adminUrl + '/common/images/app-icon.svg">' +
+               '    <img src="' + CONFIG.assetsUri + '/icons/app-icon.svg">' +
                '    <div class="text">' +
                '        <div class="paragraph1">' + i18n('tour.step1.paragraph1') + '</div>' +
                '        <ul>' +
@@ -202,7 +202,7 @@ function createStep2() {
                '        <div class="subtitle-part-2">' + i18n('tour.step2.subtitle2') + '</div>' +
                '    </div>' +
                '    <div class="caption">' + i18n('tour.step2.caption') + '</div>' +
-               '    <img src="' + CONFIG.adminUrl + '/common/images/launcher.svg">' +
+               '    <img src="' + CONFIG.assetsUri + '/icons/launcher.svg">' +
                '    <div class="text">' +
                '        <div class="paragraph1">' + i18n('tour.step2.paragraph1') + '</div>' +
                '        <div class="paragraph2">' + i18n('tour.step2.paragraph2') + '</div>' +
@@ -219,7 +219,7 @@ function createStep3() {
                '        <div class="subtitle-part-2">' + i18n('tour.step3.subtitle2') + '</div>' +
                '    </div>' +
                '    <div class="caption">' + i18n('tour.step3.caption') + '</div>' +
-               '    <img src="' + CONFIG.adminUrl + '/common/images/market.svg">' +
+               '    <img src="' + CONFIG.assetsUri + '/icons/market.svg">' +
                '    <div class="text">' +
                '        <div class="paragraph1">' + i18n('tour.step3.paragraph1') +
                ' <a href="/admin/tool/com.enonic.xp.app.applications/main" target="_blank">' +
@@ -242,7 +242,7 @@ function createStep4() {
                '        <div class="subtitle-part-2">' + i18n('tour.step4.subtitle2') + '</div>' +
                '    </div>' +
                '    <div class="caption">' + i18n('tour.step4.caption') + '</div>' +
-               '    <img src="' + CONFIG.adminUrl + '/common/images/studio.svg">' +
+               '    <img src="' + CONFIG.assetsUri + '/icons/studio.svg">' +
                '    <div class="text">' +
                '        <div class="paragraph1">' + i18n('tour.step4.paragraph1part1') +
                ' <a href="/admin/tool/com.enonic.xp.app.contentstudio/main" target="_blank">' +

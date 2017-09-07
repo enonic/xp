@@ -198,9 +198,9 @@ module api.util.htmlarea.editor {
             tinymce.init({
                 selector: this.selector,
                 forced_root_block : this.forcedRootBlock,
-                document_base_url: this.assetsUri + '/common/lib/tinymce/',
-                skin_url: this.assetsUri + '/common/lib/tinymce/skins/lightgray',
-                content_css: this.assetsUri + '/common/styles/api/util/htmlarea/html-editor.css',
+                document_base_url: this.assetsUri + '/admin/common/lib/tinymce/',
+                skin_url: this.assetsUri + '/admin/common/lib/tinymce/skins/lightgray',
+                content_css: this.assetsUri + '/admin/common/styles/api/util/htmlarea/html-editor.css',
                 theme_url: 'modern',
                 inline: this.inline,
                 fixed_toolbar_container: this.fixedToolbarContainer,
@@ -335,16 +335,16 @@ module api.util.htmlarea.editor {
 
         private getExternalPlugins(): any {
             const externalPlugins: any = {
-                link: this.assetsUri + '/common/js/util/htmlarea/plugins/link.js',
-                anchor: this.assetsUri + '/common/js/util/htmlarea/plugins/anchor.js',
-                image: this.assetsUri + '/common/js/util/htmlarea/plugins/image.js',
-                macro: this.assetsUri + '/common/js/util/htmlarea/plugins/macro.js',
-                searchreplace: this.assetsUri + '/common/js/util/htmlarea/plugins/searchreplace.js',
-                charmap: this.assetsUri + '/common/js/util/htmlarea/plugins/charmap.js'
+                link: this.assetsUri + '/admin/common/js/util/htmlarea/plugins/link.js',
+                anchor: this.assetsUri + '/admin/common/js/util/htmlarea/plugins/anchor.js',
+                image: this.assetsUri + '/admin/common/js/util/htmlarea/plugins/image.js',
+                macro: this.assetsUri + '/admin/common/js/util/htmlarea/plugins/macro.js',
+                searchreplace: this.assetsUri + '/admin/common/js/util/htmlarea/plugins/searchreplace.js',
+                charmap: this.assetsUri + '/admin/common/js/util/htmlarea/plugins/charmap.js'
             };
 
             if (this.editableSourceCode) {
-                externalPlugins['code'] = this.assetsUri + '/common/js/util/htmlarea/plugins/code.js';
+                externalPlugins['code'] = this.assetsUri + '/admin/common/js/util/htmlarea/plugins/code.js';
             }
 
             return externalPlugins;

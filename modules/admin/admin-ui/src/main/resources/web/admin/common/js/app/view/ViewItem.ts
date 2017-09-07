@@ -108,6 +108,7 @@ module api.app.view {
                    this.pathName === other.getPathName() &&
                    this.iconUrl === other.getIconUrl() &&
                    this.iconClass === other.getIconClass() &&
+                   this.renderable === other.isRenderable() &&
                    this.iconSize === other.getIconSize();
 
         }

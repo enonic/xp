@@ -9,6 +9,7 @@ module api.util.htmlarea.dialog {
     import DropdownConfig = api.ui.selector.dropdown.DropdownConfig;
     import Option = api.ui.selector.Option;
     import InputAlignment = api.ui.InputAlignment;
+    import TextInput = api.ui.text.TextInput;
     import i18n = api.util.i18n;
 
     export class LinkModalDialog extends ModalDialog {
@@ -29,7 +30,15 @@ module api.util.htmlarea.dialog {
         private static subjectPrefix: string = '?subject=';
 
         constructor(config: HtmlAreaAnchor, content: api.content.ContentSummary) {
-            super(<HtmlAreaModalDialogConfig>{editor: config.editor, title: i18n('dialog.link.title'), cls: 'link-modal-dialog'});
+            super(<HtmlAreaModalDialogConfig>{
+                editor: config.editor,
+                title: i18n('dialog.link.title'),
+                cls: 'link-modal-dialog',
+                confirmation: {
+                    yesCallback: () => this.getSubmitAction().execute(),
+                    noCallback: () => this.close(),
+                }
+            });
 
             this.link = config.element;
             this.linkText = config.text;
@@ -469,6 +478,11 @@ module api.util.htmlarea.dialog {
             });
 
             return formItem;
+        }
+
+        isDirty(): boolean {
+            return (<TextInput>this.textFormItem.getInput()).isDirty() || (<TextInput>this.toolTipFormItem.getInput()).isDirty() ||
+                   AppHelper.isDirty(this.dockedPanel);
         }
     }
 
