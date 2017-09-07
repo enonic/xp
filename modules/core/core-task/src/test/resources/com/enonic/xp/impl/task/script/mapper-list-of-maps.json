@@ -1,0 +1,12 @@
+{
+  "subSets": [
+    {
+      "subSet1Value1": "fisk1",
+      "subSet2Value2": "ost1"
+    },
+    {
+      "subSet2Value1": "fisk2",
+      "subSet2Value2": "ost2"
+    }
+  ]
+}
