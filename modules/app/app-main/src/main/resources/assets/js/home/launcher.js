@@ -6,25 +6,6 @@ var appId = window.CONFIG ? window.CONFIG.appId : '';
 var launcherPanel, launcherButton, launcherMainContainer;
 var oldLauncherPanel, oldLauncherButton;
 
-function debounce(func, wait, immediate) {
-    var timeout;
-    return function () {
-        var context = this, args = arguments;
-        var later = function () {
-            timeout = null;
-            if (!immediate) {
-                func.apply(context, args);
-            }
-        };
-        var callNow = immediate && !timeout;
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-        if (callNow) {
-            func.apply(context, args);
-        }
-    };
-}
-
 function appendLauncherButton() {
     launcherButton = document.createElement('button');
     launcherButton.setAttribute('class', 'launcher-button ' + getColorClass());
@@ -45,7 +26,11 @@ function appendLauncherButton() {
 
 function getColorClass() {
     var darkBackground = document.querySelector('.appbar') || document.querySelector('.home-main-container');
-    return darkBackground ? 'light' : 'dark';
+    return darkBackground ? '' : 'dark';
+}
+
+function isPanelExpanded() {
+    return launcherPanel.classList.contains('visible');
 }
 
 function togglePanelState() {
@@ -175,10 +160,6 @@ function addLongClickHandler(container) {
     }
 }
 
-function isPanelExpanded() {
-    return launcherPanel.classList.contains('visible');
-}
-
 function openLauncherPanel() {
     launcherMainContainer.removeAttribute('hidden');
     listenToKeyboardEvents();
@@ -196,6 +177,16 @@ function closeLauncherPanel(skipTransition) {
     launcherPanel.classList.add((skipTransition === true) ? 'hidden' : 'slideout');
     toggleButton();
     unselectCurrentApp();
+}
+
+function onKeyPressed(e) {
+    if (!isPanelExpanded()) {
+        return;
+    }
+    e.stopPropagation();
+    if (e.keyCode === 27) {
+        closeLauncherPanel();
+    }
 }
 
 function listenToKeyboardEvents() {
@@ -229,21 +220,6 @@ function highlightActiveApp() {
     }
 }
 
-function onKeyPressed(e) {
-    if (!isPanelExpanded()) {
-        return;
-    }
-
-    e.stopPropagation();
-
-    switch (e.keyCode) {
-    case 27:
-        // esc key pressed
-        closeLauncherPanel();
-        break;
-    }
-}
-
 function addApplicationsListeners() {
     if (!initApplicationsListeners()) {
         var triesLeft = 3;
@@ -267,19 +243,18 @@ function removeOldLauncherPanel() {
     }
 }
 
-function init() {
+function initLauncher() {
     appendLauncherButton();
     appendLauncherPanel();
-    addApplicationsListeners();
 }
 
 function reloadLauncher() {
     oldLauncherPanel = launcherPanel;
     oldLauncherButton = launcherButton;
-    init();
+    initLauncher();
 }
 
-var debouncedReload = debounce(reloadLauncher, 1000, true);
+var debouncedReload = api.util.AppHelper.debounce(reloadLauncher, 1000, false);
 
 function initApplicationsListeners() {
     if (api.application.ApplicationEvent) {
@@ -296,4 +271,7 @@ function initApplicationsListeners() {
     return false;
 }
 
-exports.init = init;
+exports.init = function () {
+    initLauncher();
+    addApplicationsListeners();
+};
