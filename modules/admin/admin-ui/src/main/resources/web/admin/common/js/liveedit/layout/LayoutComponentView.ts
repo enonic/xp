@@ -19,8 +19,6 @@ module api.liveedit.layout {
 
     export class LayoutComponentView extends ComponentView<LayoutComponent> {
 
-        protected component: LayoutComponent;
-
         private regionViews: RegionView[];
 
         private itemViewAddedListener: (event: ItemViewAddedEvent) => void;

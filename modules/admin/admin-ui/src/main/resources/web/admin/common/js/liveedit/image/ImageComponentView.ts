@@ -17,7 +17,6 @@ module api.liveedit.image {
     export class ImageComponentView extends ContentBasedComponentView<ImageComponent> {
 
         private image: api.dom.Element;
-        protected component: ImageComponent;
 
         constructor(builder: ImageComponentViewBuilder) {
             super(<ImageComponentViewBuilder>builder.
