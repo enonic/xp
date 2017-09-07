@@ -3,6 +3,12 @@ var $ = require('jquery');
 $(function () {
     api.util.i18nInit(CONFIG.messages);
 
+    var dummyApp = new api.app.Application('home', 'home', 'home', '');
+    dummyApp.setWindow(window);
+
+    var serverEventsListener = new api.app.ServerEventsListener([dummyApp]);
+    serverEventsListener.start();
+
     var launcher = require('./launcher');
     launcher.init();
 

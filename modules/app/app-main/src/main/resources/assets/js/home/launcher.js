@@ -23,7 +23,7 @@ function debounce(func, wait, immediate) {
             func.apply(context, args);
         }
     };
-};
+}
 
 function appendLauncherButton() {
     launcherButton = document.createElement('button');
@@ -258,6 +258,15 @@ function addApplicationsListeners() {
     }
 }
 
+function removeOldLauncherPanel() {
+    if (oldLauncherButton) {
+        oldLauncherButton.remove();
+    }
+    if (oldLauncherPanel) {
+        oldLauncherPanel.remove();
+    }
+}
+
 function init() {
     appendLauncherButton();
     appendLauncherPanel();
@@ -268,15 +277,6 @@ function reloadLauncher() {
     oldLauncherPanel = launcherPanel;
     oldLauncherButton = launcherButton;
     init();
-}
-
-function removeOldLauncherPanel() {
-    if (oldLauncherButton) {
-        oldLauncherButton.remove();
-    }
-    if (oldLauncherPanel) {
-        oldLauncherPanel.remove();
-    }
 }
 
 var debouncedReload = debounce(reloadLauncher, 1000, true);
