@@ -474,4 +474,10 @@ class NodeServiceMock
     {
         throw new UnsupportedOperationException( "Not implemented in mock" );
     }
+
+    @Override
+    public boolean deleteVersion( final NodeVersionId nodeVersionId )
+    {
+        throw new UnsupportedOperationException( "Not implemented in mock" );
+    }
 }
