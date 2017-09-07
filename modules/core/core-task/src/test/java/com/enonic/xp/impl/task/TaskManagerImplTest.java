@@ -50,7 +50,7 @@ public class TaskManagerImplTest
         assertEquals( 0, taskMan.getRunningTasks().size() );
         assertNull( taskMan.getTaskInfo( TaskId.from( "1" ) ) );
 
-        final TaskId taskId = taskMan.submitTask( runnableTask, "task 1" );
+        final TaskId taskId = taskMan.submitTask( runnableTask, "task 1", "" );
 
         assertNotNull( taskMan.getTaskInfo( taskId ) );
 
@@ -82,7 +82,7 @@ public class TaskManagerImplTest
         assertEquals( 0, taskMan.getRunningTasks().size() );
         assertNull( taskMan.getTaskInfo( TaskId.from( "1" ) ) );
 
-        final TaskId taskId = taskMan.submitTask( runnableTask, "task 1" );
+        final TaskId taskId = taskMan.submitTask( runnableTask, "task 1", "" );
 
         assertNotNull( taskMan.getTaskInfo( taskId ) );
 
@@ -108,7 +108,7 @@ public class TaskManagerImplTest
             latch.countDown();
         };
 
-        TaskId taskId = taskMan.submitTask( runnableTask, "task 1" );
+        TaskId taskId = taskMan.submitTask( runnableTask, "task 1", "" );
         taskMan.removeExpiredTasks();
 
         assertNotNull( taskMan.getTaskInfo( taskId ) );

@@ -58,13 +58,14 @@ public final class TaskManagerImpl
     }
 
     @Override
-    public TaskId submitTask( final RunnableTask runnable, final String description )
+    public TaskId submitTask( final RunnableTask runnable, final String description, String name )
     {
         final TaskId id = idGen.get();
 
         final TaskInfo info = TaskInfo.create().
             id( id ).
             description( description ).
+            name( name ).
             state( TaskState.WAITING ).
             build();
 

@@ -11,7 +11,7 @@ import com.enonic.xp.task.TaskInfo;
 @Beta
 public interface TaskManager
 {
-    TaskId submitTask( RunnableTask runnable, String description );
+    TaskId submitTask( RunnableTask runnable, String description, String name );
 
     TaskInfo getTaskInfo( TaskId taskId );
 

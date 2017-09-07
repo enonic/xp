@@ -44,6 +44,7 @@ import com.enonic.xp.task.TaskProgress;
 import com.enonic.xp.task.TaskState;
 
 import static junit.framework.TestCase.assertEquals;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 
 public class TaskServiceImplTest
@@ -256,7 +257,7 @@ public class TaskServiceImplTest
         {
         };
         Mockito.when( namedTaskScriptFactory.create( Mockito.eq( descriptor ), Mockito.any() ) ).thenReturn( runnableTask );
-        Mockito.when( taskManager.submitTask( eq( runnableTask ), eq( "My task" ) ) ).thenReturn( TaskId.from( "123" ) );
+        Mockito.when( taskManager.submitTask( eq( runnableTask ), eq( "My task" ), anyString() ) ).thenReturn( TaskId.from( "123" ) );
 
         // submit task by name
         final TaskId taskId = taskService.submitTask( DescriptorKey.from( "myapplication:task1" ), new PropertyTree() );

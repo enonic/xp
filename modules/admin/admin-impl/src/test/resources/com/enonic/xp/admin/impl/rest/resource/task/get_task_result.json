@@ -1,6 +1,7 @@
 {
   "description": "My task",
   "id": "123",
+  "name" : "task-123",
   "progress": {
     "current": 2,
     "info": "Processing items",

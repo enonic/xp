@@ -34,7 +34,7 @@ public final class TaskServiceImpl
     @Override
     public TaskId submitTask( final RunnableTask runnable, final String description )
     {
-        return taskManager.submitTask( runnable, description );
+        return taskManager.submitTask( runnable, description, "" );
     }
 
     @Override
@@ -53,7 +53,7 @@ public final class TaskServiceImpl
             throw new TaskNotFoundException( key, "Missing exported function '" + SCRIPT_METHOD_NAME + "' in task script" );
         }
 
-        return submitTask( runnableTask, descriptor.getDescription() );
+        return taskManager.submitTask( runnableTask, descriptor.getDescription(), key.toString() );
     }
 
     @Override

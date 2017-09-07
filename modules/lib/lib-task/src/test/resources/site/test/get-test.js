@@ -8,6 +8,7 @@ exports.getExistingTask = function () {
     var expectedJson = {
         "description": "Long running task",
         "id": "123",
+        "name": "task-123",
         "state": "RUNNING",
         "progress": {
             "info": "Processing item 33",
