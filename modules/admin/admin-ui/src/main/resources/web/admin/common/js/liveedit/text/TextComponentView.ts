@@ -25,8 +25,6 @@ module api.liveedit.text {
 
     export class TextComponentView extends ComponentView<TextComponent> {
 
-        protected component: TextComponent;
-
         private rootElement: api.dom.Element;
 
         private htmlAreaEditor: HtmlAreaEditor;
