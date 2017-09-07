@@ -58,15 +58,19 @@ exports.submit = function (params) {
  *
  * @example-ref examples/task/submitNamed.js
  *
- * @param {string} taskName Name of the task to execute.
- *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.name Name of the task to execute.
+ * @param {object} [params.config] Configuration parameters to pass to the task to be executed.
+ * The object must be valid according to the schema defined in the form of the task descriptor XML.
  * @returns {string} Id of the task that will be executed.
  */
-exports.submitNamed = function (taskName) {
+exports.submitNamed = function (params) {
+    checkRequired(params, 'name');
 
     var bean = __.newBean('com.enonic.xp.lib.task.SubmitNamedTaskHandler');
 
-    bean.name = __.nullOrValue(taskName);
+    bean.name = __.nullOrValue(params.name);
+    bean.config = __.toScriptValue(params.config);
 
     return bean.submit();
 };

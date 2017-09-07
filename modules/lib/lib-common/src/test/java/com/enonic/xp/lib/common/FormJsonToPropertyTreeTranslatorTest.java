@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.content;
+package com.enonic.xp.lib.common;
 
 import java.net.URL;
 
@@ -24,7 +24,7 @@ import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
 import static org.junit.Assert.*;
 
-public class ContentJsonToPropertyTreeTranslatorTest
+public class FormJsonToPropertyTreeTranslatorTest
 {
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -36,7 +36,7 @@ public class ContentJsonToPropertyTreeTranslatorTest
         throws Exception
     {
         final JsonNode node = loadJson( "allInputTypes" );
-        final PropertyTree data = new ContentJsonToPropertyTreeTranslator( createFormForAllInputTypes(), true ).translate( node );
+        final PropertyTree data = new FormJsonToPropertyTreeTranslator( createFormForAllInputTypes(), true ).translate( node );
 
         final Property media = data.getProperty( "media" );
         assertNotNull( media );
@@ -51,7 +51,7 @@ public class ContentJsonToPropertyTreeTranslatorTest
         expectedEx.expectMessage( "No mapping defined for property cheesecake with value not allowed" );
 
         final JsonNode node = loadJson( "propertyNotInForm" );
-        new ContentJsonToPropertyTreeTranslator( createFormForAllInputTypes(), true ).translate( node );
+        new FormJsonToPropertyTreeTranslator( createFormForAllInputTypes(), true ).translate( node );
     }
 
     @Test
@@ -60,7 +60,7 @@ public class ContentJsonToPropertyTreeTranslatorTest
     {
         final JsonNode node = loadJson( "allInputTypes" );
 
-        final PropertyTree data = new ContentJsonToPropertyTreeTranslator( null, false ).translate( node );
+        final PropertyTree data = new FormJsonToPropertyTreeTranslator( null, false ).translate( node );
 
         final Property myArray = data.getProperty( "stringArray" );
         assertNotNull( myArray );
@@ -82,7 +82,7 @@ public class ContentJsonToPropertyTreeTranslatorTest
     {
         final JsonNode node = loadJson( "allInputTypes" );
 
-        final PropertyTree data = new ContentJsonToPropertyTreeTranslator( createFormForAllInputTypes(), true ).translate( node );
+        final PropertyTree data = new FormJsonToPropertyTreeTranslator( createFormForAllInputTypes(), true ).translate( node );
 
         final Property noTimezone = data.getProperty( "localDateTime" );
         assertNotNull( noTimezone );
@@ -99,7 +99,7 @@ public class ContentJsonToPropertyTreeTranslatorTest
     {
         final JsonNode node = loadJson( "allInputTypes" );
 
-        final PropertyTree data = new ContentJsonToPropertyTreeTranslator( createFormForAllInputTypes(), true ).translate( node );
+        final PropertyTree data = new FormJsonToPropertyTreeTranslator( createFormForAllInputTypes(), true ).translate( node );
 
         final Property optionSet = data.getProperty( "myOptionSet" );
         assertNotNull( optionSet );

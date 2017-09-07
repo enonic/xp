@@ -5,6 +5,7 @@ import java.util.List;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.impl.task.cluster.TaskTransportRequestSender;
 import com.enonic.xp.impl.task.script.NamedTaskScriptFactory;
 import com.enonic.xp.page.DescriptorKey;
@@ -37,7 +38,7 @@ public final class TaskServiceImpl
     }
 
     @Override
-    public TaskId submitTask( final DescriptorKey key )
+    public TaskId submitTask( final DescriptorKey key, final PropertyTree config )
     {
         final TaskDescriptor descriptor = taskDescriptorService.getTasks( key.getApplicationKey() ).
             filter( key.getApplicationKey() ).first();
@@ -46,7 +47,7 @@ public final class TaskServiceImpl
             throw new TaskNotFoundException( key );
         }
 
-        final RunnableTask runnableTask = namedTaskScriptFactory.create( descriptor );
+        final RunnableTask runnableTask = namedTaskScriptFactory.create( descriptor, config );
         if ( runnableTask == null )
         {
             throw new TaskNotFoundException( key, "Missing exported function '" + SCRIPT_METHOD_NAME + "' in task script" );
