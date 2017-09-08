@@ -3,7 +3,7 @@ apply plugin: 'com.moowork.node'
 apply plugin: 'com.moowork.gulp'
 
 dependencies {
-    include 'com.enonic.lib:lib-admin-ui:1.0.0'
+    include 'com.enonic.lib:lib-admin-ui:1.0.1'
 }
 
 node {
