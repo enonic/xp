@@ -1,9 +1,0 @@
-///<reference path='ImageUploaderEl.ts' />
-///<reference path='ImageErrorEvent.ts' />
-///<reference path='ImageOptionDataLoader.ts' />
-///<reference path='ImageSelectorDisplayValue.ts' />
-///<reference path='ImageContentComboBox.ts' />
-///<reference path='ImageSelectorViewer.ts' />
-///<reference path='ImageSelectorSelectedOptionsView.ts' />
-///<reference path='ImageSelectorSelectedOptionView.ts' />
-///<reference path='SelectionToolbar.ts' />

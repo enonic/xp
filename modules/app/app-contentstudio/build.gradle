@@ -1,16 +1,9 @@
-apply from: "$rootDir/gradle/osgi.gradle"
-apply plugin: 'com.moowork.node'
+apply from: "$rootDir/gradle/admin-app.gradle"
 
 dependencies {
-    compile project( ":admin:admin-ui" )
+    include project( ":lib:lib-admin" )
     include project( ":lib:lib-mustache" )
     include project( ":lib:lib-portal" )
-    include project( ":lib:lib-admin-ui" )
-}
-
-node {
-    download = true
-    version = '6.9.2'
 }
 
 ext {
@@ -30,10 +23,6 @@ task webpack( type: NodeTask, dependsOn: npmInstall ) {
     args = ['--config', "./webpack.config.js"]
     inputs.dir 'src/main/resources'
     outputs.dir 'build/resources/main'
-}
-
-task cleanNode( type: Delete ) {
-    delete 'node_modules'
 }
 
 jar.dependsOn += webpack

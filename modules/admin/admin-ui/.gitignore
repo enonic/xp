@@ -1,8 +1,0 @@
-node_modules
-tscommand*tmp.txt
-_all.*
-_home.*
-_launcher.*
-html-editor.css
-*.map
-src/main/resources/web/spec/coverage

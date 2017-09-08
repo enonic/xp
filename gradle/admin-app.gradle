@@ -1,0 +1,28 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+apply plugin: 'com.moowork.node'
+apply plugin: 'com.moowork.gulp'
+
+dependencies {
+    include 'com.enonic.lib:lib-admin-ui:1.0.0'
+}
+
+node {
+    download = true
+    version = '6.9.2'
+}
+
+task cleanNode( type: Delete ) {
+    delete 'node_modules'
+}
+
+task extractDev( type: Copy ) {
+    from {
+        configurations.compile.collect {
+            zipTree( it )
+        }
+    }
+    include 'dev/**'
+    into '.xp'
+}
+
+processResources.dependsOn += extractDev

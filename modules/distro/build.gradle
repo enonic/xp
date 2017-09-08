@@ -109,7 +109,6 @@ addBundle( project( ':portal:portal-owasp' ), 30 )
 
 // Admin app
 addBundle( project( ':admin:admin-event' ), 30 )
-addBundle( project( ':admin:admin-ui' ), 30 )
 addBundle( project( ':admin:admin-impl' ), 30 )
 
 // BlobStore providers

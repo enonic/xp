@@ -1,18 +1,10 @@
-apply from: "$rootDir/gradle/osgi.gradle"
-apply plugin: 'com.moowork.gulp'
-
+apply from: "$rootDir/gradle/admin-app.gradle"
 
 dependencies {
-    compile project( ":admin:admin-ui" )
+    include project( ":lib:lib-admin" )
     include project( ":lib:lib-mustache" )
     include project( ":lib:lib-portal" )
-    include project( ":lib:lib-admin-ui" )
     include project( ":lib:lib-auth" )
-}
-
-node {
-    download = true
-    version = '6.9.2'
 }
 
 ext {
@@ -35,7 +27,3 @@ task gulpAll( type: GulpTask, dependsOn: npmInstall ) {
 
 jar.dependsOn += gulpAll
 jar.outputs.dir "${buildDir}/resources/main"
-
-task cleanNode( type: Delete ) {
-    delete 'node_modules'
-}

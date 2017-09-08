@@ -18,3 +18,7 @@ npm-debug.log
 generated-java
 classes/
 out/
+.xp/
+
+
+

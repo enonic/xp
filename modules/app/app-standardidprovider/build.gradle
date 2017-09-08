@@ -1,20 +1,13 @@
-apply from: "$rootDir/gradle/osgi.gradle"
+apply from: "$rootDir/gradle/admin-app.gradle"
 
 dependencies {
+    include project( ":lib:lib-admin" )
     include project( ":lib:lib-mustache" )
     include project( ":lib:lib-portal" )
     include project( ":lib:lib-auth" )
-    include project( ":lib:lib-admin" )
 }
 
 bundle {
     instruction 'Bundle-Name', 'Standard ID Provider'
     instruction 'X-Bundle-Type', 'system'
 }
-
-task copyAdminUiCommon( type: Copy ) {
-    from '../../admin/admin-ui/build/resources/main/web/admin/common'
-    into "$buildDir/resources/main/assets/common"
-}
-
-jar.dependsOn += copyAdminUiCommon

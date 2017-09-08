@@ -47,7 +47,6 @@ include 'portal:portal-impl'
 include 'admin:admin-api'
 include 'admin:admin-impl'
 include 'admin:admin-event'
-include 'admin:admin-ui'
 
 include 'itest:itest-core'
 
@@ -72,7 +71,6 @@ include 'lib:lib-task'
 include 'lib:lib-value'
 include 'lib:lib-event'
 include 'lib:lib-admin'
-include 'lib:lib-admin-ui'
 
 include 'launcher:launcher-api'
 include 'launcher:launcher-impl'
