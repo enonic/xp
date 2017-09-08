@@ -81,7 +81,6 @@ include 'blobstore:blobstore-file'
 
 include 'app:app-main'
 include 'app:app-standardidprovider'
-include 'app:app-applications'
 include 'app:app-contentstudio'
 
 include 'repack:repack-attoparser'

@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<tool xmlns="urn:enonic:xp:model:1.0">
-  <display-name>Applications</display-name>
-  <description>Install and manage your Apps</description>
-  <allow>
-    <principal>role:system.admin</principal>
-  </allow>
-</tool>
