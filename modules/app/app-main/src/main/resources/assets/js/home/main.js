@@ -3,6 +3,8 @@ var $ = require('jquery');
 $(function () {
     api.util.i18nInit(CONFIG.messages);
 
+    setupWebSocketListener();
+
     var launcher = require('./launcher');
     launcher.init();
 
@@ -30,6 +32,14 @@ $(function () {
     });
 
 });
+
+function setupWebSocketListener() {
+    var dummyApp = new api.app.Application('home', 'home', 'home', '');
+    dummyApp.setWindow(window);
+
+    var serverEventsListener = new api.app.ServerEventsListener([dummyApp]);
+    serverEventsListener.start();
+}
 
 function setupBodyClickListeners(dialog) {
     var bodyEl = api.ui.mask.BodyMask.get().getHTMLElement(),
