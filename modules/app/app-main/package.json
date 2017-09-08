@@ -1,7 +1,7 @@
 {
   "name": "app-main",
   "version": "1.0.0",
-  "description": "Enonix Main App",
+  "description": "Enonic Main App",
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-less": "^3.3.2",

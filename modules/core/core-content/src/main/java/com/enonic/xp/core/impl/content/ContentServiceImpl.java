@@ -755,7 +755,7 @@ public class ContentServiceImpl
     @Override
     public Boolean hasUnpublishedChildren( final HasUnpublishedChildrenParams params )
     {
-        return nodeService.hasUnpublishedChildren( NodeId.from(params.getContentId()),params.getTarget() ) ;
+        return nodeService.hasUnpublishedChildren( NodeId.from( params.getContentId() ), params.getTarget() );
     }
 
     @Override
@@ -956,9 +956,14 @@ public class ContentServiceImpl
 
     @SuppressWarnings("unused")
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    public void contentProcessors( final ContentProcessor contentProcessor )
+    public void addContentProcessor( final ContentProcessor contentProcessor )
     {
         this.contentProcessors.add( contentProcessor );
+    }
+
+    public void removeContentProcessor( final ContentProcessor contentProcessor )
+    {
+        this.contentProcessors.remove( contentProcessor );
     }
 
     @Reference

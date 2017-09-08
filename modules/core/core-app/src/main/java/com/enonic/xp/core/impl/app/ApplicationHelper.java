@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.app;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -12,6 +13,7 @@ import org.osgi.framework.VersionRange;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -29,6 +31,8 @@ public final class ApplicationHelper
     final static String X_SYSTEM_VERSION = "X-System-Version";
 
     final static String X_SOURCE_PATHS = "X-Source-Paths";
+
+    final static String X_CAPABILITY = "X-Capability";
 
     static final String X_BUNDLE_TYPE = "X-Bundle-Type";
 
@@ -85,6 +89,12 @@ public final class ApplicationHelper
     {
         final String value = bundle.getHeaders().get( name );
         return Strings.isNullOrEmpty( value ) ? defValue : value;
+    }
+
+    static Set<String> getCapabilities( final Bundle bundle )
+    {
+        final String value = getHeader( bundle, X_CAPABILITY, "" );
+        return Sets.newHashSet( Splitter.on( ',' ).omitEmptyStrings().trimResults().split( value ) );
     }
 
     static List<String> getSourcePaths( final Bundle bundle )

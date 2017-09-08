@@ -38,6 +38,8 @@ public interface Application
 
     Instant getModifiedTime();
 
+    Set<String> getCapabilities();
+
     boolean isStarted();
 
     Set<String> getFiles();

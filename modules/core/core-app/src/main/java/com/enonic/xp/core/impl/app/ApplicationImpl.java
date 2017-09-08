@@ -34,6 +34,8 @@ final class ApplicationImpl
 
     private final Configuration config;
 
+    private final Set<String> capabilities;
+
     ApplicationImpl( final Bundle bundle, final ApplicationUrlResolver urlResolver, final ClassLoader classLoader,
                      final Configuration config )
     {
@@ -43,6 +45,7 @@ final class ApplicationImpl
         this.urlResolver = urlResolver;
         this.classLoader = classLoader;
         this.config = config;
+        this.capabilities = ApplicationHelper.getCapabilities( bundle );
     }
 
     @Override
@@ -144,6 +147,12 @@ final class ApplicationImpl
     public Configuration getConfig()
     {
         return this.config;
+    }
+
+    @Override
+    public Set<String> getCapabilities()
+    {
+        return this.capabilities;
     }
 
     @Override
