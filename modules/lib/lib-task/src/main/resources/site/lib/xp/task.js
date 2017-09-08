@@ -17,6 +17,7 @@ function checkRequired(params, name) {
  * @typedef TaskInfo
  * @type Object
  * @property {string} id Task Id.
+ * @property {string} name Task Id.
  * @property {string} description Task description.
  * @property {string} state Task state. Possible values: 'WAITING' | 'RUNNING' | 'FINISHED' | 'FAILED'
  * @property {object} progress Progress information provided by the running task.
@@ -149,5 +150,25 @@ exports.progress = function (params) {
     bean.info = __.nullOrValue(params.info);
 
     bean.reportProgress();
+
+};
+
+/**
+ * Checks if any task with the given name or id is currently running.
+ *
+ * @example-ref examples/task/isRunning.js
+ *
+ * @param {string} task Name or id of the task.
+ *
+ * @returns {boolean} True if there is a task with the specified name or id, and state 'RUNNING'; False otherwise.
+ */
+exports.isRunning = function (task) {
+
+    var bean = __.newBean('com.enonic.xp.lib.task.IsRunningHandler');
+    if (task === undefined) {
+        throw "Parameter task is required";
+    }
+
+    return __.toNativeObject(bean.isRunning(task));
 
 };
