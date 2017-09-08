@@ -14,7 +14,7 @@ module api.ui.dialog {
         constructor(config: ModalDialogConfig = {}) {
             super((() => {
                 config.title = config.title || i18n('dialog.confirm.title');
-                config.closeIconCallback = config.closeIconCallback || (() => this.closeWithoutCallback());
+                config.closeIconCallback = config.closeIconCallback || (() => this.close());
                 return config;
             })());
 
@@ -26,11 +26,14 @@ module api.ui.dialog {
             this.noAction = new api.ui.Action(i18n('action.no'), 'esc');
             this.noAction.onExecuted(() => {
                 this.close();
+
+                if (this.noCallback) {
+                    this.noCallback();
+                }
             });
 
             this.yesAction = new api.ui.Action(i18n('action.yes'));
             this.yesAction.onExecuted(() => {
-                this.noCallback = null;
                 this.close();
 
                 if (this.yesCallback) {
@@ -65,14 +68,6 @@ module api.ui.dialog {
         }
 
         close() {
-            this.closeWithoutCallback();
-
-            if (this.noCallback) {
-                this.noCallback();
-            }
-        }
-
-        private closeWithoutCallback() {
             super.close();
             api.ui.mask.BodyMask.get().removeClass('confirmation-dialog-mask');
             this.remove();
