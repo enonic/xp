@@ -46,3 +46,30 @@ var expected = [
 // END
 
 t.assertJsonEquals(expected, tasks);
+
+// BEGIN
+// Obtains list of active tasks with a given name and state
+var tasks = taskLib.list({
+    name: "com.enonic.myapp:clean-up",
+    state: "RUNNING"
+});
+// END
+
+// BEGIN
+// Tasks returned
+var expected = [
+    {
+        "description": "Long running task",
+        "id": "7ca603c1-3b88-4009-8f30-46ddbcc4bb19",
+        "name": "com.enonic.myapp:clean-up",
+        "state": "RUNNING",
+        "progress": {
+            "info": "Processing item 33",
+            "current": 33,
+            "total": 42
+        }
+    }
+];
+// END
+
+t.assertJsonEquals(expected, tasks);
