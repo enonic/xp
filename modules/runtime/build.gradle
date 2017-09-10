@@ -15,7 +15,7 @@ dependencies {
 ext {
     installDir = "$buildDir/install"
     bundlesDir = "$installDir/system"
-    archiveBase = "enonic-xp-$version"
+    // archiveBase = "enonic-xp-$version"
     bundleCopySpecs = []
 }
 
@@ -203,7 +203,7 @@ task distZip( type: Zip, dependsOn: installDist ) {
     description = 'Build full distribution zip.'
     group = 'Dist'
     from installDir
-    into archiveBase
+    // into archiveBase
 }
 
 artifacts {

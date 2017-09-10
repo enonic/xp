@@ -29,9 +29,9 @@ Build all code skipping all tests:
 
 After building the project, you can start it locally by running the server script (or `bat` on Windows):
 
-    modules/distro/build/install/bin/server.sh
+    modules/runtime/build/install/bin/server.sh
     
-You can also go to the `modules/distro` directory and type:
+You can also go to the `modules/runtime` directory and type:
     
     gradle run    
 
