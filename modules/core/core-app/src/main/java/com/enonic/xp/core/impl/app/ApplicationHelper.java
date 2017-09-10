@@ -72,7 +72,8 @@ public final class ApplicationHelper
             return false;
         }
 
-        return getAttribute( manifest, X_BUNDLE_TYPE, "" ).equals( APPLICATION_BUNDLE_TYPE );
+        final String value = getAttribute( manifest, X_BUNDLE_TYPE, "" );
+        return value.equals( APPLICATION_BUNDLE_TYPE ) || value.equals( SYSTEM_BUNDLE_TYPE );
     }
 
     static String getAttribute( final Manifest manifest, final String name, final String defValue )

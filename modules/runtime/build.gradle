@@ -114,10 +114,6 @@ addBundle( project( ':admin:admin-impl' ), 30 )
 // BlobStore providers
 addBundle( project( ':blobstore:blobstore-file' ), 22 )
 
-// Applications
-addBundle( project( ':app:app-main' ), 32 )
-addBundle( project( ':app:app-standardidprovider' ), 32 )
-
 def addBundle( dep, level )
 {
     def config = getOrCreateBundleConfig( level )
