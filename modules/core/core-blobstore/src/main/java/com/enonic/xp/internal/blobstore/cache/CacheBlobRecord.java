@@ -17,15 +17,17 @@ public class CacheBlobRecord
 {
     private final BlobKey blobKey;
 
+    private final long lastModified;
+
     private byte[] content;
 
     private final static Logger LOG = LoggerFactory.getLogger( CacheBlobRecord.class );
 
-    public CacheBlobRecord( final BlobKey blobKey, final ByteSource source )
+    public CacheBlobRecord( final BlobRecord blobRecord )
     {
-        this.blobKey = blobKey;
+        this.blobKey = blobRecord.getKey();
 
-        try (final InputStream stream = source.openStream())
+        try (final InputStream stream = blobRecord.getBytes().openStream())
         {
             this.content = ByteStreams.toByteArray( stream );
         }
@@ -33,6 +35,14 @@ public class CacheBlobRecord
         {
             LOG.error( "Could not create cache blob-record", e );
         }
+
+        this.lastModified = blobRecord.lastModified();
+    }
+
+    @Override
+    public long lastModified()
+    {
+        return this.lastModified;
     }
 
     @Override
@@ -49,8 +59,12 @@ public class CacheBlobRecord
 
         final CacheBlobRecord that = (CacheBlobRecord) o;
 
-        return blobKey != null ? blobKey.equals( that.blobKey ) : that.blobKey == null;
+        if ( lastModified != that.lastModified )
+        {
+            return false;
+        }
 
+        return blobKey != null ? blobKey.equals( that.blobKey ) : that.blobKey == null;
     }
 
     @Override

@@ -40,6 +40,12 @@ final class FileBlobRecord
     }
 
     @Override
+    public long lastModified()
+    {
+        return this.file.lastModified();
+    }
+
+    @Override
     public boolean equals( final Object o )
     {
         if ( this == o )

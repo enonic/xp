@@ -61,7 +61,6 @@ public final class CachedBlobStore
         return record;
     }
 
-
     @Override
     public BlobRecord addRecord( final Segment segment, final BlobRecord record )
         throws BlobStoreException
@@ -92,7 +91,7 @@ public final class CachedBlobStore
             return;
         }
 
-        this.cache.put( record.getKey(), new CacheBlobRecord( record.getKey(), record.getBytes() ) );
+        this.cache.put( record.getKey(), new CacheBlobRecord( record ) );
     }
 
     @Override
