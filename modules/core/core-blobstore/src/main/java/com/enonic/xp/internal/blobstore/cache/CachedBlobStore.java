@@ -1,5 +1,7 @@
 package com.enonic.xp.internal.blobstore.cache;
 
+import java.util.stream.Stream;
+
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.io.ByteSource;
@@ -91,6 +93,12 @@ public final class CachedBlobStore
         }
 
         this.cache.put( record.getKey(), new CacheBlobRecord( record.getKey(), record.getBytes() ) );
+    }
+
+    @Override
+    public Stream<BlobRecord> list( final Segment segment )
+    {
+        return this.store.list( segment );
     }
 
     public static Builder create()

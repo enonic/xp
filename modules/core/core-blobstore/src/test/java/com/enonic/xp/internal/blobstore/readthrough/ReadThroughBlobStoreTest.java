@@ -1,5 +1,9 @@
 package com.enonic.xp.internal.blobstore.readthrough;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -111,6 +115,25 @@ public class ReadThroughBlobStoreTest
         actualBlobStore.removeRecord( segment, record.getKey() );
         assertNull( this.readThroughStore.getRecord( segment, record.getKey() ) );
         assertNull( this.finalStore.getRecord( segment, record.getKey() ) );
+    }
+
+    @Test
+    public void list()
+        throws Exception
+    {
+        final ByteSource binary = ByteSource.wrap( "this is a record".getBytes() );
+        final Segment segment = Segment.from( "test" );
+
+        final BlobRecord record = this.finalStore.addRecord( segment, binary );
+        final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create().
+            readThroughStore( this.readThroughStore ).
+            store( this.finalStore ).
+            build();
+
+        final Stream<BlobRecord> stream = actualBlobStore.list( segment );
+        final List<BlobRecord> records = stream.collect( Collectors.toList() );
+
+        assertTrue( records.contains( record ) );
     }
 
     @Test

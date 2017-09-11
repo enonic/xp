@@ -2,6 +2,7 @@ package com.enonic.xp.internal.blobstore.file;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,11 @@ public final class FileBlobStore
     @Override
     public BlobRecord getRecord( final Segment segment, final BlobKey key )
         throws BlobStoreException
+    {
+        return doGetRecord( segment, key );
+    }
+
+    private BlobRecord doGetRecord( final Segment segment, final BlobKey key )
     {
         final File file = getBlobFile( segment, key );
         if ( !file.exists() )
@@ -82,6 +88,24 @@ public final class FileBlobStore
             {
                 throw new BlobStoreException( "Failed to remove blob" );
             }
+        }
+    }
+
+    @Override
+    public Stream<BlobRecord> list( final Segment segment )
+    {
+        try
+        {
+            return java.nio.file.Files.walk( this.baseDir.toPath() ).
+                filter( path -> path.toFile().isFile() ).
+                map( ( path -> {
+                    final BlobKey blobKey = BlobKey.from( path.getFileName().toString() );
+                    return doGetRecord( segment, blobKey );
+                } ) );
+        }
+        catch ( IOException e )
+        {
+            throw new BlobStoreException( "Failed to list files", e );
         }
     }
 

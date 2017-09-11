@@ -1,5 +1,7 @@
 package com.enonic.xp.internal.blobstore.readthrough;
 
+import java.util.stream.Stream;
+
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
@@ -96,6 +98,12 @@ public class ReadThroughBlobStore
         {
             ( (CachingBlobStore) store ).invalidate( segment, key );
         }
+    }
+
+    @Override
+    public Stream<BlobRecord> list( final Segment segment )
+    {
+        return this.store.list( segment );
     }
 
     public static final class Builder

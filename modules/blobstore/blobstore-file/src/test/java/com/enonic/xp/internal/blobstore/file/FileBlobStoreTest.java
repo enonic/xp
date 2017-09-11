@@ -1,10 +1,15 @@
 package com.enonic.xp.internal.blobstore.file;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
@@ -70,6 +75,24 @@ public class FileBlobStoreTest
         this.blobStore.removeRecord( this.segment, createdRecord.getKey() );
         final BlobRecord removedRecord = this.blobStore.getRecord( this.segment, createdRecord.getKey() );
         assertNull( removedRecord );
+    }
+
+    @Test
+    public void list()
+        throws Exception
+    {
+        List<BlobRecord> stored = Lists.newArrayList();
+        stored.add( createRecord( "f1" ) );
+        stored.add( createRecord( "f2" ) );
+        stored.add( createRecord( "f3" ) );
+        stored.add( createRecord( "f4" ) );
+        stored.add( createRecord( "f5" ) );
+        stored.add( createRecord( "f6" ) );
+        stored.add( createRecord( "f7" ) );
+        final Stream<BlobRecord> stream = this.blobStore.list( this.segment );
+        final List<BlobRecord> records = stream.collect( Collectors.toList() );
+        assertEquals( 7, records.size() );
+        assertTrue( records.containsAll( stored )  );
     }
 
     private BlobRecord createRecord( final String str )
