@@ -92,7 +92,19 @@ public class FileBlobStoreTest
         final Stream<BlobRecord> stream = this.blobStore.list( this.segment );
         final List<BlobRecord> records = stream.collect( Collectors.toList() );
         assertEquals( 7, records.size() );
-        assertTrue( records.containsAll( stored )  );
+        assertTrue( records.containsAll( stored ) );
+    }
+
+    @Test
+    public void lastModifiedUpdated()
+        throws Exception
+    {
+        final BlobRecord rec1 = this.blobStore.addRecord( this.segment, ByteSource.wrap( "hello".getBytes() ) );
+        final long beforeUpdate = rec1.lastModified();
+        Thread.sleep( 1000 ); // ensure a second difference
+        final BlobRecord rec2 = this.blobStore.addRecord( this.segment, ByteSource.wrap( "hello".getBytes() ) );
+
+        assertTrue( beforeUpdate < rec2.lastModified() );
     }
 
     private BlobRecord createRecord( final String str )

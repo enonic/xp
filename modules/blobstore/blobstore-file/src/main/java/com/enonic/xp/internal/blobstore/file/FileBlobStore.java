@@ -109,14 +109,20 @@ public final class FileBlobStore
         }
     }
 
+    @SuppressWarnings("unusedReturnValue")
     private BlobRecord addRecord( final Segment segment, final BlobKey key, final ByteSource in )
         throws IOException
     {
         final File file = getBlobFile( segment, key );
+
         if ( !file.exists() )
         {
             mkdirs( file.getParentFile(), false );
             in.copyTo( Files.asByteSink( file ) );
+        }
+        else
+        {
+            file.setLastModified( System.currentTimeMillis() );
         }
 
         return new FileBlobRecord( key, file );
