@@ -78,7 +78,7 @@ public class VersionFileCleanerTaskTest
 
         final VacuumTaskResult result = task.execute( VacuumTaskParams.create().ageThreshold( 0 ).build() );
         assertEquals( 2, result.getProcessed() );
-        assertEquals( 1, result.getFound() );
+        assertEquals( 1, result.getInUse() );
         assertEquals( 1, result.getDeleted() );
 
         assertNull( blobStore.getRecord( NodeConstants.NODE_SEGMENT, rec1.getKey() ) );

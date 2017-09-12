@@ -61,7 +61,7 @@ public class VersionTableCleanupTask
     public VacuumTaskResult execute( final VacuumTaskParams params )
     {
         final NodeVersionQuery query = createQuery( params );
-        final VacuumTaskResult.Builder result = VacuumTaskResult.create();
+        final VacuumTaskResult.Builder result = VacuumTaskResult.create().taskName( this.name() );
 
         this.repositoryService.list().forEach( repo -> cleanRepository( repo, query, result ) );
 
@@ -91,23 +91,41 @@ public class VersionTableCleanupTask
         while ( executor.hasMore() )
         {
             final NodeVersionsMetadata versions = executor.execute();
-
             versions.forEach( ( version ) -> {
-
-                result.processed();
-
-                if ( !versionUsedInAnyBranch( repository, version ) )
-                {
-                    result.deleted();
-                    toBeDeleted.add( new NodeVersionDocumentId( version.getNodeId(), version.getNodeVersionId() ) );
-                }
-
+                processVersion( repository, result, toBeDeleted, version );
             } );
         }
 
         LOG.info( "Deleting: " + toBeDeleted.size() + " versions from repository: " + repository.getId() );
 
         versionService.delete( toBeDeleted, InternalContext.from( ContextAccessor.current() ) );
+    }
+
+    private void processVersion( final Repository repository, final VacuumTaskResult.Builder result,
+                                 final List<NodeVersionDocumentId> toBeDeleted, final NodeVersionMetadata version )
+    {
+        result.processed();
+
+        final boolean versionInUse;
+        try
+        {
+            versionInUse = versionUsedInAnyBranch( repository, version );
+            if ( !versionInUse )
+            {
+                result.deleted();
+                toBeDeleted.add( new NodeVersionDocumentId( version.getNodeId(), version.getNodeVersionId() ) );
+            }
+            else
+            {
+                result.inUse();
+            }
+        }
+        catch ( Exception e )
+        {
+            result.failed();
+            LOG.error( String.format( "Cannot verify version with id %s in repository %s", version.getNodeVersionId(), repository.getId() ),
+                       e );
+        }
     }
 
     private boolean versionUsedInAnyBranch( final Repository repository, final NodeVersionMetadata version )

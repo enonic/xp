@@ -46,7 +46,7 @@ public class UnusedBinaryFileCleanerTaskTest
 
         assertEquals( 3, result.getProcessed() );
         assertEquals( 2, result.getDeleted() );
-        assertEquals( 1, result.getFound() );
+        assertEquals( 1, result.getInUse() );
     }
 
     @Test

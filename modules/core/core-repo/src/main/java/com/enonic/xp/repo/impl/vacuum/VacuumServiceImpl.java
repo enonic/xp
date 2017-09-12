@@ -42,11 +42,11 @@ public class VacuumServiceImpl
 
         for ( final VacuumTask task : this.tasks )
         {
-            LOG.info( "Running VacuumTask:" + this.getClass().getName() );
+            LOG.info( "Running VacuumTask:" + task.name() );
             final VacuumTaskResult taskResult = task.execute( VacuumTaskParams.create().build() );
             LOG.info( task.name() + " : " + taskResult.toString() );
             taskResults.add( taskResult );
-            LOG.info( "VacuumTask done: " + this.getClass().getName() );
+            LOG.info( "VacuumTask done: " + task.name() );
         }
         return taskResults;
     }

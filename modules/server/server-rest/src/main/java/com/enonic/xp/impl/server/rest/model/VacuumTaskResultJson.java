@@ -1,6 +1,6 @@
-package com.enonic.xp.vacuum;
+package com.enonic.xp.impl.server.rest.model;
 
-public class VacuumTaskResult
+public class VacuumTaskResultJson
 {
     private final long processed;
 
@@ -12,44 +12,43 @@ public class VacuumTaskResult
 
     private final String taskName;
 
-    private VacuumTaskResult( final Builder builder )
+    private VacuumTaskResultJson( final Builder builder )
     {
         processed = builder.processed;
         deleted = builder.deleted;
         inUse = builder.inUse;
         failed = builder.failed;
-        taskName = builder.taskName;
+        this.taskName = builder.taskName;
     }
 
+    @SuppressWarnings("unused")
     public long getProcessed()
     {
         return processed;
     }
 
+    @SuppressWarnings("unused")
     public long getDeleted()
     {
         return deleted;
     }
 
+    @SuppressWarnings("unused")
     public long getInUse()
     {
         return inUse;
     }
 
+    @SuppressWarnings("unused")
     public long getFailed()
     {
         return failed;
     }
 
+    @SuppressWarnings("unused")
     public String getTaskName()
     {
         return taskName;
-    }
-
-    @Override
-    public String toString()
-    {
-        return "VacuumTaskResult{" + "processed=" + processed + ", deleted=" + deleted + ", found=" + inUse + ", failed=" + failed + '}';
     }
 
     public static Builder create()
@@ -73,42 +72,39 @@ public class VacuumTaskResult
         {
         }
 
-        public Builder processed()
+        Builder processed( final long val )
         {
-            processed++;
+            processed = val;
             return this;
         }
 
-        public Builder deleted()
+        Builder deleted( final long val )
         {
-            deleted++;
+            deleted = val;
             return this;
         }
 
-
-        public Builder inUse()
+        Builder inUse( final long val )
         {
-            inUse++;
+            inUse = val;
             return this;
         }
 
-        public Builder failed()
+        Builder failed( final long val )
         {
-            failed++;
+            failed = val;
             return this;
         }
 
-        public Builder taskName( final String val )
+        Builder taskName( final String val )
         {
             this.taskName = val;
             return this;
         }
 
-        public VacuumTaskResult build()
+        public VacuumTaskResultJson build()
         {
-            return new VacuumTaskResult( this );
+            return new VacuumTaskResultJson( this );
         }
     }
-
-
 }

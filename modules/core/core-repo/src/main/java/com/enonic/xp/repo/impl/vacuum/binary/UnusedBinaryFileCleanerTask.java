@@ -49,8 +49,9 @@ public class UnusedBinaryFileCleanerTask
 
     public VacuumTaskResult execute( final VacuumTaskParams params )
     {
+        final VacuumTaskResult.Builder result = VacuumTaskResult.create().taskName( this.name() );
+
         final BinaryNodeStateResolver stateResolver = new BinaryNodeStateResolver( getAllBinaryReferences() );
-        final VacuumTaskResult.Builder result = VacuumTaskResult.create();
         doExecute( result, stateResolver, params.getAgeThreshold() );
 
         return result.build();

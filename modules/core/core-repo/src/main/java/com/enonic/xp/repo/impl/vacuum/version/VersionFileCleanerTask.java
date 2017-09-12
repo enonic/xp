@@ -50,7 +50,7 @@ public class VersionFileCleanerTask
     @Override
     public VacuumTaskResult execute( final VacuumTaskParams params )
     {
-        final VacuumTaskResult.Builder result = VacuumTaskResult.create();
+        final VacuumTaskResult.Builder result = VacuumTaskResult.create().taskName( this.name() );
 
         doExecute( result, params.getAgeThreshold() );
 
@@ -60,6 +60,8 @@ public class VersionFileCleanerTask
     private void doExecute( final VacuumTaskResult.Builder result, final long ageThreshold )
     {
         List<BlobKey> toBeRemoved = Lists.newArrayList();
+
+        LOG.info( "Traversing node-folder....." );
 
         this.blobStore.list( NodeConstants.NODE_SEGMENT ).
             filter( rec -> includeRecord( rec, ageThreshold ) ).
