@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.vacuum;
 
 import org.junit.Test;
 
+import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.vacuum.VacuumParameters;
 import com.enonic.xp.vacuum.VacuumResult;
 import com.enonic.xp.vacuum.VacuumTaskResult;
@@ -61,7 +62,7 @@ public class VacuumServiceImplTest
             }
         } );
 
-        final VacuumResult result = service.vacuum( new VacuumParameters() );
+        final VacuumResult result = NodeHelper.runAsAdmin( () -> service.vacuum( new VacuumParameters() ) );
 
         assertEquals( 2, result.getResults().size() );
     }

@@ -22,8 +22,16 @@ class VacuumTasks
         return tasks.iterator();
     }
 
+    public int size()
+    {
+        return this.tasks.size();
+    }
+
     public void add( final VacuumTask task )
     {
+
+        System.out.println( "Adding task: " + task.name() );
+
         this.tasks.add( task );
     }
 }

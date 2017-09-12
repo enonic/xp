@@ -1,5 +1,7 @@
 package com.enonic.xp.node;
 
+import com.enonic.xp.query.expr.OrderExpressions;
+
 public class NodeVersionQuery
     extends AbstractQuery
 {
@@ -21,6 +23,11 @@ public class NodeVersionQuery
         return new Builder();
     }
 
+    public static Builder create( final NodeVersionQuery source )
+    {
+        return new Builder( source );
+    }
+
     public static final class Builder
         extends AbstractQuery.Builder<Builder>
     {
@@ -28,6 +35,18 @@ public class NodeVersionQuery
 
         private Builder()
         {
+        }
+
+        private Builder( final NodeVersionQuery source )
+        {
+            this.addQueryFilters( source.getQueryFilters() ).
+                nodeId( source.nodeId ).
+                size( source.getSize() ).
+                from( source.getFrom() ).
+                aggregationQueries( source.getAggregationQueries().getSet() ).
+                setOrderExpressions( OrderExpressions.from( source.getOrderBys() ) );
+
+            source.getPostFilters().forEach( filter -> this.addPostFilter( filter ) );
         }
 
         public Builder nodeId( NodeId nodeId )

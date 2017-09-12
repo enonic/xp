@@ -4,7 +4,6 @@ import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
 public abstract class AbstractVacuumTask
-    implements VacuumTask
 {
     protected boolean includeRecord( final BlobRecord record, final long ageThreshold )
     {

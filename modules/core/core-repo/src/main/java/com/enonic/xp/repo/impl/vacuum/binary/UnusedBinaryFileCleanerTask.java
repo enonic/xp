@@ -22,12 +22,14 @@ import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.vacuum.AbstractVacuumTask;
 import com.enonic.xp.repo.impl.vacuum.EntryState;
 import com.enonic.xp.repo.impl.vacuum.VacuumException;
+import com.enonic.xp.repo.impl.vacuum.VacuumTask;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
 @Component(immediate = true)
 public class UnusedBinaryFileCleanerTask
     extends AbstractVacuumTask
+    implements VacuumTask
 {
     private BlobStore blobStore;
 
@@ -51,7 +53,6 @@ public class UnusedBinaryFileCleanerTask
         final VacuumTaskResult.Builder result = VacuumTaskResult.create();
         doExecute( result, stateResolver, params.getAgeThreshold() );
 
-        LOG.info( "Done" );
         return result.build();
     }
 
@@ -88,13 +89,19 @@ public class UnusedBinaryFileCleanerTask
 
         final Set<String> binaryReferences = Sets.newHashSet();
 
-        this.blobStore.list( NodeConstants.NODE_SEGMENT ).forEach( record -> binaryReferences.addAll( getBinaryReference( record ) ) );
+        this.blobStore.list( NodeConstants.NODE_SEGMENT ).
+            forEach( record -> binaryReferences.addAll( getBinaryReference( record ) ) );
 
         return binaryReferences;
     }
 
     private Set<String> getBinaryReference( final BlobRecord record )
     {
+        if ( record == null )
+        {
+            throw new VacuumException( "Record is null" );
+        }
+
         final CharSource source = record.getBytes().asCharSource( Charsets.UTF_8 );
 
         try

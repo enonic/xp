@@ -2,6 +2,7 @@ package com.enonic.xp.internal.blobstore.file;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -98,6 +99,7 @@ public final class FileBlobStore
         {
             return java.nio.file.Files.walk( this.baseDir.toPath() ).
                 filter( path -> path.toFile().isFile() ).
+                filter( path -> isBlobFileName( segment, path ) ).
                 map( ( path -> {
                     final BlobKey blobKey = BlobKey.from( path.getFileName().toString() );
                     return doGetRecord( segment, blobKey );
@@ -126,6 +128,18 @@ public final class FileBlobStore
         }
 
         return new FileBlobRecord( key, file );
+    }
+
+    private boolean isBlobFileName( final Segment segment, final Path path )
+    {
+        final String fileName = path.getFileName().toString();
+
+        if ( fileName.length() < 6 )
+        {
+            return false;
+        }
+
+        return getBlobFile( segment, BlobKey.from( fileName ) ).exists();
     }
 
     private File getBlobFile( final Segment segment, final BlobKey key )

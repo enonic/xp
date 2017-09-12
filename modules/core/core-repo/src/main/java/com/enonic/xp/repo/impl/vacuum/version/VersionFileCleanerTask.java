@@ -18,12 +18,14 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.vacuum.AbstractVacuumTask;
 import com.enonic.xp.repo.impl.vacuum.EntryState;
+import com.enonic.xp.repo.impl.vacuum.VacuumTask;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
 @Component(immediate = true)
 public class VersionFileCleanerTask
     extends AbstractVacuumTask
+    implements VacuumTask
 {
     private final static Logger LOG = LoggerFactory.getLogger( VersionFileCleanerTask.class );
 
@@ -48,7 +50,6 @@ public class VersionFileCleanerTask
     @Override
     public VacuumTaskResult execute( final VacuumTaskParams params )
     {
-        LOG.info( "Running " + this.getClass().getName() );
         final VacuumTaskResult.Builder result = VacuumTaskResult.create();
 
         doExecute( result, params.getAgeThreshold() );
@@ -70,16 +71,12 @@ public class VersionFileCleanerTask
     private Consumer<BlobRecord> handleEntry( final VacuumTaskResult.Builder result, final List<BlobKey> toBeRemoved )
     {
         return record -> {
-
             final EntryState entryState = resolveState( record );
-
             report( entryState, result );
-
             if ( entryState.equals( EntryState.NOT_IN_USE ) )
             {
                 toBeRemoved.add( record.getKey() );
             }
-
         };
     }
 
@@ -119,14 +116,12 @@ public class VersionFileCleanerTask
     }
 
     @Reference
-    @SuppressWarnings("WeakerAccess")
     public void setNodeInUseDetector( final NodeInUseDetector nodeInUseDetector )
     {
         this.nodeInUseDetector = nodeInUseDetector;
     }
 
     @Reference
-    @SuppressWarnings("WeakerAccess")
     public void setNodeIdResolver( final NodeIdResolver nodeIdResolver )
     {
         this.nodeIdResolver = nodeIdResolver;

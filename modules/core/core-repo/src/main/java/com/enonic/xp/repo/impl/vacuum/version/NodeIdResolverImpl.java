@@ -13,8 +13,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.node.NodeId;
 
-@Component
-class NodeIdResolverImpl
+@Component(immediate = true)
+public class NodeIdResolverImpl
     implements NodeIdResolver
 {
     private final ObjectMapper mapper = new ObjectMapper();

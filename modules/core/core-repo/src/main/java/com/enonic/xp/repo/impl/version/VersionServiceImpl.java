@@ -1,9 +1,11 @@
 package com.enonic.xp.repo.impl.version;
 
+import java.util.Collection;
+import java.util.stream.Collectors;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
@@ -35,11 +37,11 @@ public class VersionServiceImpl
     }
 
     @Override
-    public void delete( final NodeIds nodeIds, final InternalContext context )
+    public void delete( final Collection<NodeVersionDocumentId> nodeVersionDocumentIds, final InternalContext context )
     {
         storageDao.delete( DeleteRequests.create().
             forceRefresh( false ).
-            ids( nodeIds.getAsStrings() ).
+            ids( nodeVersionDocumentIds.stream().map( NodeVersionDocumentId::toString ).collect( Collectors.toList() ) ).
             settings( createStorageSettings( context ) ).
             build() );
     }
