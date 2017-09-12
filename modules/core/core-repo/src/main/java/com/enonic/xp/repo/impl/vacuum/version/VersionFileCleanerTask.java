@@ -17,8 +17,8 @@ import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.vacuum.AbstractVacuumTask;
-import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repo.impl.vacuum.EntryState;
+import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
 @Component(immediate = true)
@@ -51,15 +51,19 @@ public class VersionFileCleanerTask
         LOG.info( "Running " + this.getClass().getName() );
         final VacuumTaskResult.Builder result = VacuumTaskResult.create();
 
-        doExecute( result );
+        doExecute( result, params.getAgeThreshold() );
 
         return result.build();
     }
 
-    private void doExecute( final VacuumTaskResult.Builder result )
+    private void doExecute( final VacuumTaskResult.Builder result, final long ageThreshold )
     {
         List<BlobKey> toBeRemoved = Lists.newArrayList();
-        this.blobStore.list( NodeConstants.NODE_SEGMENT ).forEach( handleEntry( result, toBeRemoved ) );
+
+        this.blobStore.list( NodeConstants.NODE_SEGMENT ).
+            filter( rec -> includeRecord( rec, ageThreshold ) ).
+            forEach( handleEntry( result, toBeRemoved ) );
+
         toBeRemoved.forEach( key -> this.blobStore.removeRecord( NodeConstants.NODE_SEGMENT, key ) );
     }
 
@@ -115,12 +119,14 @@ public class VersionFileCleanerTask
     }
 
     @Reference
+    @SuppressWarnings("WeakerAccess")
     public void setNodeInUseDetector( final NodeInUseDetector nodeInUseDetector )
     {
         this.nodeInUseDetector = nodeInUseDetector;
     }
 
     @Reference
+    @SuppressWarnings("WeakerAccess")
     public void setNodeIdResolver( final NodeIdResolver nodeIdResolver )
     {
         this.nodeIdResolver = nodeIdResolver;

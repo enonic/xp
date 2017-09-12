@@ -1,16 +1,14 @@
 package com.enonic.xp.repo.impl.vacuum;
 
+import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.vacuum.VacuumTaskResult;
-import com.enonic.xp.vfs.VirtualFile;
 
 public abstract class AbstractVacuumTask
     implements VacuumTask
 {
-
-    protected boolean include( final VirtualFile file )
+    protected boolean includeRecord( final BlobRecord record, final long ageThreshold )
     {
-        //return System.currentTimeMillis() - file.getLastModified() > ageThreshold;
-        return false;
+        return System.currentTimeMillis() - record.lastModified() >= ageThreshold;
     }
 
     protected void report( final EntryState entryState, final VacuumTaskResult.Builder result )

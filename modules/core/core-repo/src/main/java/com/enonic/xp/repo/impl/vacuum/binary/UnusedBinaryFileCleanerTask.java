@@ -20,9 +20,9 @@ import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.vacuum.AbstractVacuumTask;
+import com.enonic.xp.repo.impl.vacuum.EntryState;
 import com.enonic.xp.repo.impl.vacuum.VacuumException;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
-import com.enonic.xp.repo.impl.vacuum.EntryState;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
 @Component(immediate = true)
@@ -49,17 +49,20 @@ public class UnusedBinaryFileCleanerTask
     {
         final BinaryNodeStateResolver stateResolver = new BinaryNodeStateResolver( getAllBinaryReferences() );
         final VacuumTaskResult.Builder result = VacuumTaskResult.create();
-        doExecute( result, stateResolver );
+        doExecute( result, stateResolver, params.getAgeThreshold() );
 
         LOG.info( "Done" );
         return result.build();
     }
 
-    private void doExecute( final VacuumTaskResult.Builder result, final BinaryNodeStateResolver stateResolver )
+    private void doExecute( final VacuumTaskResult.Builder result, final BinaryNodeStateResolver stateResolver, final long ageThreshold )
     {
         LOG.info( "Traversing binary-folder....." );
         final List<BlobKey> toBeDeleted = Lists.newArrayList();
-        this.blobStore.list( NodeConstants.BINARY_SEGMENT ).forEach( handleEntry( result, stateResolver, toBeDeleted ) );
+
+        this.blobStore.list( NodeConstants.BINARY_SEGMENT ).
+            filter( rec -> includeRecord( rec, ageThreshold ) ).
+            forEach( handleEntry( result, stateResolver, toBeDeleted ) );
 
         toBeDeleted.forEach( entry -> this.blobStore.removeRecord( NodeConstants.BINARY_SEGMENT, entry ) );
     }
@@ -85,9 +88,7 @@ public class UnusedBinaryFileCleanerTask
 
         final Set<String> binaryReferences = Sets.newHashSet();
 
-        this.blobStore.list( NodeConstants.NODE_SEGMENT ).forEach( record -> {
-            binaryReferences.addAll( getBinaryReference( record ) );
-        } );
+        this.blobStore.list( NodeConstants.NODE_SEGMENT ).forEach( record -> binaryReferences.addAll( getBinaryReference( record ) ) );
 
         return binaryReferences;
     }

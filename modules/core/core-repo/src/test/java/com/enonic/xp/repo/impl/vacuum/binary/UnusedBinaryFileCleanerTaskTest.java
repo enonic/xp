@@ -42,12 +42,25 @@ public class UnusedBinaryFileCleanerTaskTest
         final UnusedBinaryFileCleanerTask task = new UnusedBinaryFileCleanerTask();
         task.setBlobStore( this.blobStore );
 
-        final VacuumTaskResult result = task.execute( new VacuumTaskParams() );
+        final VacuumTaskResult result = task.execute( VacuumTaskParams.create().ageThreshold( 0 ).build() );
 
-        // a should be kept, b and c deleted, d should not be considered
         assertEquals( 3, result.getProcessed() );
         assertEquals( 2, result.getDeleted() );
         assertEquals( 1, result.getFound() );
+    }
+
+    @Test
+    public void age_threshold()
+        throws Exception
+    {
+        this.blobStore.addRecord( NodeConstants.BINARY_SEGMENT, createBinaryRecord( 'a' ) );
+
+        final UnusedBinaryFileCleanerTask task = new UnusedBinaryFileCleanerTask();
+        task.setBlobStore( this.blobStore );
+
+        final VacuumTaskResult result = task.execute( VacuumTaskParams.create().build() );
+
+        assertEquals( 0, result.getProcessed() );
     }
 
     private MemoryBlobRecord createVersionRecordWithBinaryRef( final String key, final char binaryRef )

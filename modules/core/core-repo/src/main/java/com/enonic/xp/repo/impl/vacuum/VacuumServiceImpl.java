@@ -28,13 +28,14 @@ public class VacuumServiceImpl
 
         for ( final VacuumTask task : this.tasks )
         {
-            taskResults.add( task.execute( new VacuumTaskParams() ) );
+            taskResults.add( task.execute( VacuumTaskParams.create().build() ) );
         }
 
         return taskResults.build();
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+    @SuppressWarnings("WeakerAccess")
     public void addTask( final VacuumTask task )
     {
         this.tasks.add( task );
