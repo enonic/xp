@@ -27,4 +27,16 @@ public class FileBlobRecordTest
         assertNotNull( record.getBytes() );
         assertEquals( 0, record.getLength() );
     }
+
+    @Test
+    public void lastModified()
+        throws Exception
+    {
+        final BlobKey key = BlobKey.from( "test" );
+        final File file = this.temporaryFolder.newFile( "test" );
+
+        final FileBlobRecord record = new FileBlobRecord( key, file );
+
+        assertEquals( file.lastModified(), record.lastModified() );
+    }
 }

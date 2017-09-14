@@ -1,5 +1,9 @@
 package com.enonic.xp.internal.blobstore.readthrough;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -114,6 +118,25 @@ public class ReadThroughBlobStoreTest
     }
 
     @Test
+    public void list()
+        throws Exception
+    {
+        final ByteSource binary = ByteSource.wrap( "this is a record".getBytes() );
+        final Segment segment = Segment.from( "test" );
+
+        final BlobRecord record = this.finalStore.addRecord( segment, binary );
+        final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create().
+            readThroughStore( this.readThroughStore ).
+            store( this.finalStore ).
+            build();
+
+        final Stream<BlobRecord> stream = actualBlobStore.list( segment );
+        final List<BlobRecord> records = stream.collect( Collectors.toList() );
+
+        assertTrue( records.contains( record ) );
+    }
+
+    @Test
     public void invalidate()
         throws Exception
     {
@@ -133,6 +156,58 @@ public class ReadThroughBlobStoreTest
         actualBlobStore.invalidate( segment, record.getKey() );
         assertNull( this.readThroughStore.getRecord( segment, record.getKey() ) );
         assertNotNull( this.finalStore.getRecord( segment, record.getKey() ) );
+    }
+
+
+    @Test
+    public void last_modified()
+        throws Exception
+    {
+        final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create().
+            readThroughStore( this.readThroughStore ).
+            store( this.finalStore ).
+            sizeThreshold( ByteSizeParser.parse( "80kb" ) ).
+            build();
+
+        final ByteSource binary = ByteSource.wrap( "this is a record".getBytes() );
+
+        final Segment segment = Segment.from( "test" );
+        final BlobRecord record = actualBlobStore.addRecord( segment, binary );
+
+        final BlobRecord readThroughRecord = this.readThroughStore.getRecord( segment, record.getKey() );
+        assertNotNull( readThroughRecord );
+        final BlobRecord fileRecord = this.finalStore.getRecord( segment, record.getKey() );
+        assertNotNull( fileRecord );
+
+        assertEquals( readThroughRecord.lastModified(), fileRecord.lastModified() );
+    }
+
+    @Test
+    public void last_modified_updated()
+        throws Exception
+    {
+        final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create().
+            readThroughStore( this.readThroughStore ).
+            store( this.finalStore ).
+            sizeThreshold( ByteSizeParser.parse( "80kb" ) ).
+            build();
+
+        final ByteSource binary = ByteSource.wrap( "this is a record".getBytes() );
+
+        final Segment segment = Segment.from( "test" );
+        final BlobRecord record = actualBlobStore.addRecord( segment, binary );
+
+        final BlobRecord readThroughRecord = this.readThroughStore.getRecord( segment, record.getKey() );
+        final BlobRecord fileRecord = this.finalStore.getRecord( segment, record.getKey() );
+        assertEquals( readThroughRecord.lastModified(), fileRecord.lastModified() );
+
+        Thread.sleep( 1000 ); // ensure a second difference since
+
+        actualBlobStore.addRecord( segment, binary );
+        final BlobRecord readThroughUpdated = this.readThroughStore.getRecord( segment, record.getKey() );
+        final BlobRecord finalUpdated = this.finalStore.getRecord( segment, record.getKey() );
+        assertEquals( readThroughUpdated.lastModified(), finalUpdated.lastModified() );
+        assertTrue( readThroughUpdated.lastModified() > readThroughRecord.lastModified() );
     }
 
 }

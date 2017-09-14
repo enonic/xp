@@ -1,5 +1,9 @@
 package com.enonic.xp.internal.blobstore.cache;
 
+import java.time.Instant;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -10,6 +14,7 @@ import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.Segment;
+import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 
 import static org.junit.Assert.*;
 
@@ -34,10 +39,16 @@ public class CachedBlobStoreTest
 
     private BlobRecord newRecord( final String key, final long size )
     {
+        return newRecord( key, size, System.currentTimeMillis() );
+    }
+
+    private BlobRecord newRecord( final String key, final long size, final long lastModified )
+    {
         final BlobRecord record = Mockito.mock( BlobRecord.class );
         Mockito.when( record.getKey() ).thenReturn( BlobKey.from( key ) );
         Mockito.when( record.getLength() ).thenReturn( size );
         Mockito.when( record.getBytes() ).thenReturn( ByteSource.wrap( "these are my bytes".getBytes() ) );
+        Mockito.when( record.lastModified() ).thenReturn( lastModified );
         return record;
     }
 
@@ -126,4 +137,49 @@ public class CachedBlobStoreTest
         Mockito.verify( this.blobStore, Mockito.times( 2 ) ).getRecord( segment, record.getKey() );
     }
 
+    @Test
+    public void lastModified()
+        throws Exception
+    {
+        final BlobRecord record = newRecord( "0123", 10L, Instant.now().toEpochMilli() );
+        Mockito.when( this.blobStore.getRecord( segment, record.getKey() ) ).thenReturn( record );
+
+        final BlobRecord firstRetrieval = this.cachedBlobStore.getRecord( this.segment, record.getKey() );
+        assertNotNull( firstRetrieval );
+        assertEquals( firstRetrieval.lastModified(), record.lastModified() );
+
+        final BlobRecord secondRetrieval = this.cachedBlobStore.getRecord( this.segment, record.getKey() );
+        assertNotNull( secondRetrieval );
+        assertEquals( secondRetrieval.lastModified(), record.lastModified() );
+    }
+
+    @Test
+    public void lastModified_updated()
+        throws Exception
+    {
+        final MemoryBlobStore memoryBlobStore = new MemoryBlobStore();
+        final ByteSource source = ByteSource.wrap( "abc".getBytes() );
+
+        final BlobRecord record = memoryBlobStore.addRecord( this.segment, source );
+
+        this.cachedBlobStore = CachedBlobStore.create().
+            blobStore( memoryBlobStore ).
+            memoryCapacity( 100 ).
+            sizeTreshold( 10 ).
+            build();
+
+        // Cache this
+        this.cachedBlobStore.getRecord( this.segment, record.getKey() );
+
+        // Add same record again
+        final BlobRecord updatedRecord = this.cachedBlobStore.addRecord( this.segment, source );
+
+        // Only single entry added
+        final List<BlobRecord> cached = this.cachedBlobStore.list( this.segment ).collect( Collectors.toList() );
+        assertEquals( 1, cached.size() );
+
+        final BlobRecord retrievedAfterStore = this.cachedBlobStore.getRecord( this.segment, record.getKey() );
+        assertNotNull( retrievedAfterStore );
+        assertEquals( updatedRecord.lastModified(), retrievedAfterStore.lastModified() );
+    }
 }

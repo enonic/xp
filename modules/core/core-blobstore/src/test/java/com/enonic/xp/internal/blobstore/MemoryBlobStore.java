@@ -1,6 +1,8 @@
 package com.enonic.xp.internal.blobstore;
 
+import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
@@ -14,7 +16,7 @@ import com.enonic.xp.blob.Segment;
 public class MemoryBlobStore
     implements BlobStore
 {
-    private Map<BlobKey, BlobRecord> store;
+    private Map<Segment, Map<BlobKey, BlobRecord>> store;
 
     public MemoryBlobStore()
     {
@@ -25,7 +27,14 @@ public class MemoryBlobStore
     public BlobRecord getRecord( final Segment segment, final BlobKey key )
         throws BlobStoreException
     {
-        return this.store.get( key );
+        final Map<BlobKey, BlobRecord> segmentStore = this.store.get( segment );
+
+        if ( segmentStore == null )
+        {
+            return null;
+        }
+
+        return segmentStore.get( key );
     }
 
     @Override
@@ -35,29 +44,37 @@ public class MemoryBlobStore
         final BlobKey key = BlobKey.from( in );
         final MemoryBlobRecord record = new MemoryBlobRecord( key, in );
 
-        return doStoreRecord( key, record );
+        return doStoreRecord( segment, key, record );
     }
 
-    private BlobRecord doStoreRecord( final BlobKey key, final BlobRecord record )
+    private BlobRecord doStoreRecord( final Segment segment, final BlobKey key, final BlobRecord record )
     {
-        this.store.put( key, record );
+        this.store.computeIfAbsent( segment, k -> Maps.newHashMap() ).put( key, record );
 
         return record;
     }
-
 
     @Override
     public BlobRecord addRecord( final Segment segment, final BlobRecord record )
         throws BlobStoreException
     {
-        return doStoreRecord( record.getKey(), record );
+        return doStoreRecord( segment, record.getKey(), record );
     }
 
     @Override
     public void removeRecord( final Segment segment, final BlobKey key )
         throws BlobStoreException
     {
-        this.store.remove( key );
+        final Map<BlobKey, BlobRecord> segmentStore = this.store.get( segment );
+        segmentStore.remove( key );
+    }
+
+    @Override
+    public Stream<BlobRecord> list( final Segment segment )
+    {
+        final Map<BlobKey, BlobRecord> map = this.store.computeIfAbsent( segment, k -> Maps.newHashMap() );
+        final Collection<BlobRecord> values = map.values();
+        return values.stream();
     }
 
     public void clear()

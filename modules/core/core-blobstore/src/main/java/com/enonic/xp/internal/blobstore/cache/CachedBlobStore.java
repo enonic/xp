@@ -1,5 +1,7 @@
 package com.enonic.xp.internal.blobstore.cache;
 
+import java.util.stream.Stream;
+
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.io.ByteSource;
@@ -59,7 +61,6 @@ public final class CachedBlobStore
         return record;
     }
 
-
     @Override
     public BlobRecord addRecord( final Segment segment, final BlobRecord record )
         throws BlobStoreException
@@ -90,7 +91,13 @@ public final class CachedBlobStore
             return;
         }
 
-        this.cache.put( record.getKey(), new CacheBlobRecord( record.getKey(), record.getBytes() ) );
+        this.cache.put( record.getKey(), new CacheBlobRecord( record ) );
+    }
+
+    @Override
+    public Stream<BlobRecord> list( final Segment segment )
+    {
+        return this.store.list( segment );
     }
 
     public static Builder create()

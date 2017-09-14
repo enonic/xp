@@ -2,6 +2,8 @@ package com.enonic.xp.internal.blobstore.file;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +33,11 @@ public final class FileBlobStore
     @Override
     public BlobRecord getRecord( final Segment segment, final BlobKey key )
         throws BlobStoreException
+    {
+        return doGetRecord( segment, key );
+    }
+
+    private BlobRecord doGetRecord( final Segment segment, final BlobKey key )
     {
         final File file = getBlobFile( segment, key );
         if ( !file.exists() )
@@ -85,17 +92,54 @@ public final class FileBlobStore
         }
     }
 
+    @Override
+    public Stream<BlobRecord> list( final Segment segment )
+    {
+        try
+        {
+            return java.nio.file.Files.walk( this.baseDir.toPath() ).
+                filter( path -> path.toFile().isFile() ).
+                filter( path -> isBlobFileName( segment, path ) ).
+                map( ( path -> {
+                    final BlobKey blobKey = BlobKey.from( path.getFileName().toString() );
+                    return doGetRecord( segment, blobKey );
+                } ) );
+        }
+        catch ( IOException e )
+        {
+            throw new BlobStoreException( "Failed to list files", e );
+        }
+    }
+
+    @SuppressWarnings("unusedReturnValue")
     private BlobRecord addRecord( final Segment segment, final BlobKey key, final ByteSource in )
         throws IOException
     {
         final File file = getBlobFile( segment, key );
+
         if ( !file.exists() )
         {
             mkdirs( file.getParentFile(), false );
             in.copyTo( Files.asByteSink( file ) );
         }
+        else
+        {
+            file.setLastModified( System.currentTimeMillis() );
+        }
 
         return new FileBlobRecord( key, file );
+    }
+
+    private boolean isBlobFileName( final Segment segment, final Path path )
+    {
+        final String fileName = path.getFileName().toString();
+
+        if ( fileName.length() < 6 )
+        {
+            return false;
+        }
+
+        return getBlobFile( segment, BlobKey.from( fileName ) ).exists();
     }
 
     private File getBlobFile( final Segment segment, final BlobKey key )

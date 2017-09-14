@@ -24,7 +24,7 @@ import com.enonic.xp.security.SystemConstants;
 
 import static org.mockito.Matchers.isA;
 
-public class SystemDumpResourceTest
+public class SystemResourceTest
     extends ServerRestTestSupport
 {
     private ExportService exportService;
@@ -97,7 +97,7 @@ public class SystemDumpResourceTest
         this.nodeRepositoryService = Mockito.mock( NodeRepositoryService.class );
         this.dumpService = Mockito.mock( DumpService.class );
 
-        final SystemDumpResource resource = new SystemDumpResource();
+        final SystemResource resource = new SystemResource();
         resource.setExportService( exportService );
         resource.setRepositoryService( repositoryService );
         resource.setNodeRepositoryService( nodeRepositoryService );
