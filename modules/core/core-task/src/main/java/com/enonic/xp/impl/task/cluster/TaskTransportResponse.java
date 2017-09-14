@@ -54,6 +54,7 @@ public final class TaskTransportResponse
     {
         return TaskInfo.create().
             id( TaskId.from( streamInput.readString() ) ).
+            name( streamInput.readString() ).
             description( streamInput.readString() ).
             state( TaskState.values()[streamInput.readInt()] ).
             progress( readTaskProgressFrom( streamInput ) ).
@@ -88,6 +89,7 @@ public final class TaskTransportResponse
         throws IOException
     {
         streamOutput.writeString( taskInfo.getId().toString() );
+        streamOutput.writeString( taskInfo.getName() );
         streamOutput.writeString( taskInfo.getDescription() );
         streamOutput.writeInt( taskInfo.getState().ordinal() );
         writeTo( streamOutput, taskInfo.getProgress() );

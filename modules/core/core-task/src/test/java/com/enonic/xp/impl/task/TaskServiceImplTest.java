@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.impl.task.cluster.TaskTransportRequest;
 import com.enonic.xp.impl.task.cluster.TaskTransportRequestHandler;
@@ -43,6 +44,7 @@ import com.enonic.xp.task.TaskProgress;
 import com.enonic.xp.task.TaskState;
 
 import static junit.framework.TestCase.assertEquals;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 
 public class TaskServiceImplTest
@@ -254,11 +256,11 @@ public class TaskServiceImplTest
         final RunnableTask runnableTask = ( id, progressReporter ) ->
         {
         };
-        Mockito.when( namedTaskScriptFactory.create( Mockito.eq( descriptor ) ) ).thenReturn( runnableTask );
-        Mockito.when( taskManager.submitTask( eq( runnableTask ), eq( "My task" ) ) ).thenReturn( TaskId.from( "123" ) );
+        Mockito.when( namedTaskScriptFactory.create( Mockito.eq( descriptor ), Mockito.any() ) ).thenReturn( runnableTask );
+        Mockito.when( taskManager.submitTask( eq( runnableTask ), eq( "My task" ), anyString() ) ).thenReturn( TaskId.from( "123" ) );
 
         // submit task by name
-        final TaskId taskId = taskService.submitTask( DescriptorKey.from( "myapplication:task1" ) );
+        final TaskId taskId = taskService.submitTask( DescriptorKey.from( "myapplication:task1" ), new PropertyTree() );
 
         // verify
         assertEquals( "123", taskId.toString() );
@@ -272,7 +274,7 @@ public class TaskServiceImplTest
         Mockito.when( taskDescriptorService.getTasks( app ) ).thenReturn( Descriptors.empty() );
 
         // submit task by name
-        taskService.submitTask( DescriptorKey.from( "myapplication:task1" ) );
+        taskService.submitTask( DescriptorKey.from( "myapplication:task1" ), new PropertyTree() );
     }
 
     @Test(expected = TaskNotFoundException.class)
@@ -286,10 +288,10 @@ public class TaskServiceImplTest
         Mockito.when( taskDescriptorService.getTasks( app ) ).thenReturn( descriptors );
 
         // set up script
-        Mockito.when( namedTaskScriptFactory.create( Mockito.eq( descriptor ) ) ).thenReturn( null );
+        Mockito.when( namedTaskScriptFactory.create( Mockito.eq( descriptor ), Mockito.any() ) ).thenReturn( null );
 
         // submit task by name
-        taskService.submitTask( DescriptorKey.from( "myapplication:task1" ) );
+        taskService.submitTask( DescriptorKey.from( "myapplication:task1" ), new PropertyTree() );
     }
 
     private Thread callServiceMethod( Supplier<List<TaskInfo>> serviceMethod )

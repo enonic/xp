@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.content;
+package com.enonic.xp.lib.common;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -18,7 +18,7 @@ import com.enonic.xp.inputtype.InputType;
 import com.enonic.xp.inputtype.InputTypeResolver;
 import com.enonic.xp.inputtype.InputTypes;
 
-final class ContentJsonToPropertyTreeTranslator
+public final class FormJsonToPropertyTreeTranslator
 {
     private final Form form;
 
@@ -30,7 +30,7 @@ final class ContentJsonToPropertyTreeTranslator
 
     private static final String OPTION_SET_SELECTION_ARRAY_NAME = "_selected";
 
-    public ContentJsonToPropertyTreeTranslator( final Form form, final boolean strict )
+    public FormJsonToPropertyTreeTranslator( final Form form, final boolean strict )
     {
         this.form = form != null ? form : Form.create().build();
         this.strictMode = strict;
@@ -125,19 +125,20 @@ final class ContentJsonToPropertyTreeTranslator
         {
             PropertySet propertySet = new PropertySet();
             value.fields().
-                forEachRemaining( ( field ) -> {
-                    if ( field.getValue().isArray() )
-                    {
-                        for ( final JsonNode arrayNode : field.getValue() )
-                        {
-                            propertySet.addProperty( field.getKey(), resolveCoreValue( arrayNode ) );
-                        }
-                    }
-                    else
-                    {
-                        propertySet.addProperty( field.getKey(), resolveCoreValue( field.getValue() ) );
-                    }
-                } );
+                forEachRemaining( ( field ) ->
+                                  {
+                                      if ( field.getValue().isArray() )
+                                      {
+                                          for ( final JsonNode arrayNode : field.getValue() )
+                                          {
+                                              propertySet.addProperty( field.getKey(), resolveCoreValue( arrayNode ) );
+                                          }
+                                      }
+                                      else
+                                      {
+                                          propertySet.addProperty( field.getKey(), resolveCoreValue( field.getValue() ) );
+                                      }
+                                  } );
             return ValueFactory.newPropertySet( propertySet );
         }
 

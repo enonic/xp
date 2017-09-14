@@ -11,6 +11,8 @@ public final class TaskInfo
 {
     private final TaskId id;
 
+    private final String name;
+
     private final String description;
 
     private final TaskState state;
@@ -21,6 +23,7 @@ public final class TaskInfo
     {
         Preconditions.checkNotNull( builder.id, "TaskId cannot be null" );
         id = builder.id;
+        name = builder.name == null || builder.name.trim().isEmpty() ? "task-" + builder.id.toString() : builder.name;
         state = builder.state == null ? TaskState.WAITING : builder.state;
         description = builder.description == null ? "" : builder.description;
         progress = builder.progress == null ? TaskProgress.EMPTY : builder.progress;
@@ -29,6 +32,11 @@ public final class TaskInfo
     public TaskId getId()
     {
         return id;
+    }
+
+    public String getName()
+    {
+        return name;
     }
 
     public String getDescription()
@@ -65,14 +73,14 @@ public final class TaskInfo
         }
 
         final TaskInfo taskInfo = (TaskInfo) o;
-        return Objects.equals( id, taskInfo.id ) && Objects.equals( description, taskInfo.description ) && state == taskInfo.state &&
-            Objects.equals( progress, taskInfo.progress );
+        return Objects.equals( id, taskInfo.id ) && Objects.equals( name, taskInfo.name ) &&
+            Objects.equals( description, taskInfo.description ) && state == taskInfo.state && Objects.equals( progress, taskInfo.progress );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( id, description, state, progress );
+        return Objects.hash( id, name, description, state, progress );
     }
 
     @Override
@@ -80,6 +88,7 @@ public final class TaskInfo
     {
         return MoreObjects.toStringHelper( this ).
             add( "id", id ).
+            add( "name", name ).
             add( "description", description ).
             add( "state", state ).
             add( "progress", progress ).
@@ -100,6 +109,8 @@ public final class TaskInfo
     {
         private TaskId id;
 
+        private String name;
+
         private TaskState state;
 
         private String description;
@@ -113,6 +124,7 @@ public final class TaskInfo
         private Builder( final TaskInfo source )
         {
             id = source.id;
+            name = source.name;
             state = source.state;
             description = source.description;
             progress = source.progress;
@@ -139,6 +151,12 @@ public final class TaskInfo
         public Builder progress( final TaskProgress progress )
         {
             this.progress = progress;
+            return this;
+        }
+
+        public Builder name( final String name )
+        {
+            this.name = name;
             return this;
         }
 

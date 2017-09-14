@@ -14,12 +14,14 @@ public class TaskInfoTest
 
         final TaskInfo info = TaskInfo.create().
             id( id ).
+            name( "name" ).
             description( "test" ).
             state( TaskState.FINISHED ).
             progress( progress ).
             build();
 
         assertEquals( id, info.getId() );
+        assertEquals( "name", info.getName() );
         assertEquals( "test", info.getDescription() );
         assertEquals( TaskState.FINISHED, info.getState() );
         assertEquals( progress, info.getProgress() );
@@ -82,6 +84,7 @@ public class TaskInfoTest
     public void testToString()
     {
         final TaskInfo i = TaskInfo.create().id( TaskId.from( "123" ) ).build();
-        assertEquals( "TaskInfo{id=123, description=, state=WAITING, progress=TaskProgress{current=0, total=0, info=}}", i.toString() );
+        assertEquals( "TaskInfo{id=123, name=task-123, description=, state=WAITING, progress=TaskProgress{current=0, total=0, info=}}",
+                      i.toString() );
     }
 }

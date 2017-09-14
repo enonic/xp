@@ -17,6 +17,7 @@ if (taskInfo) {
 var expected = {
     "description": "Long running task",
     "id": "7ca603c1-3b88-4009-8f30-46ddbcc4bb19",
+    "name": "task-7ca603c1-3b88-4009-8f30-46ddbcc4bb19",
     "state": "RUNNING",
     "progress": {
         "info": "Processing item 33",

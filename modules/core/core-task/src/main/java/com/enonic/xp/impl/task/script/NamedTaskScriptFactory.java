@@ -3,6 +3,7 @@ package com.enonic.xp.impl.task.script;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
@@ -22,7 +23,7 @@ public class NamedTaskScriptFactory
     {
     }
 
-    public RunnableTask create( final TaskDescriptor task )
+    public RunnableTask create( final TaskDescriptor task, final PropertyTree config )
     {
         final ResourceKey scriptResourceKey = toControllerResourceKey( task );
 
@@ -42,7 +43,7 @@ public class NamedTaskScriptFactory
             return null;
         }
 
-        return new NamedTaskScript( exports, task );
+        return new NamedTaskScript( exports, task, config );
     }
 
     private ResourceKey toControllerResourceKey( final TaskDescriptor task )

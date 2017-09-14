@@ -21,6 +21,11 @@ public class TaskInfoJson
         return taskInfo != null ? taskInfo.getDescription() : "";
     }
 
+    public String getName()
+    {
+        return taskInfo != null ? taskInfo.getName() : "";
+    }
+
     public String getState()
     {
         return taskInfo != null ? taskInfo.getState().name() : "";
