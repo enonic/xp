@@ -81,11 +81,17 @@ exports.submitNamed = function (params) {
  *
  * @example-ref examples/task/list.js
  *
+ * @param {object} [params] JSON with optional parameters.
+ * @param {string} [params.name] Filter by name.
+ * @param {object} [params.state] Filter by task state ('WAITING' | 'RUNNING' | 'FINISHED' | 'FAILED').
  * @returns {TaskInfo[]} List with task information for every task.
  */
-exports.list = function () {
-
+exports.list = function (params) {
+    params = params || {};
     var bean = __.newBean('com.enonic.xp.lib.task.ListTasksHandler');
+
+    bean.name = __.nullOrValue(params.name);
+    bean.state = __.nullOrValue(params.state);
 
     return __.toNativeObject(bean.list());
 

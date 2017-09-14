@@ -2,6 +2,7 @@ package com.enonic.xp.lib.task;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
@@ -31,7 +32,15 @@ public class ListTasksHandlerTest
     @Test
     public void testExample()
     {
-        Mockito.when( this.taskService.getAllTasks() ).thenReturn( taskList() );
+        final TaskInfo taskInfo = TaskInfo.create().
+            state( TaskState.RUNNING ).
+            id( TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" ) ).
+            name( "com.enonic.myapp:clean-up" ).
+            description( "Long running task" ).
+            progress( TaskProgress.create().current( 33 ).total( 42 ).info( "Processing item 33" ).build() ).
+            build();
+
+        Mockito.when( this.taskService.getAllTasks() ).thenReturn( taskList() ).thenReturn( Collections.singletonList( taskInfo ) );
 
         runScript( "/site/lib/xp/examples/task/list.js" );
     }
