@@ -29,9 +29,6 @@ class VacuumTasks
 
     public void add( final VacuumTask task )
     {
-
-        System.out.println( "Adding task: " + task.name() );
-
         this.tasks.add( task );
     }
 }
