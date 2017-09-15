@@ -1,9 +1,9 @@
 package com.enonic.xp.core.repo.vacuum.versiontable;
 
 import java.time.Instant;
+import java.util.Random;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.enonic.xp.node.Node;
@@ -41,24 +41,25 @@ public class VersionTableCleanupTaskTest
     }
 
     @Test
-    @Ignore("Test failure in gradle, but not in Idea.")
     public void delete_node_deletes_versions()
         throws Exception
     {
-        final Node node1 = createNode( NodePath.ROOT, "node1" );
-        updateNode( node1.id(), 1000 ); // Do enough updates to go over the default batch-size
+        // Do enough updates to go over the default batch-size
+        final int updates = 1000;
 
+        final Node node1 = createNode( NodePath.ROOT, "node1" );
+        updateNode( node1.id(), updates );
         doDeleteNode( node1.id() );
-        refresh();
-        assertVersions( node1.id(), 1001 );
+
+        assertVersions( node1.id(), updates + 1 );
 
         final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create().
             ageThreshold( 0 ).
             build() ) );
         refresh();
 
-        assertEquals( 1008, result.getProcessed() );
-        assertEquals( 1001, result.getDeleted() );
+        assertEquals( updates + 8, result.getProcessed() );
+        assertEquals( updates + 1, result.getDeleted() );
 
         assertVersions( node1.id(), 0 );
     }
@@ -136,18 +137,25 @@ public class VersionTableCleanupTaskTest
     private void assertVersions( final NodeId nodeId, final int versions )
     {
         final NodeVersionQueryResult result = this.nodeService.findVersions( NodeVersionQuery.create().
-            nodeId( nodeId ).build() );
+            nodeId( nodeId ).
+            size( 0 ).
+            build() );
 
-        assertEquals( versions, result.getTotalHits() );
+        assertEquals( "Wrong number of versions found", versions, result.getTotalHits() );
     }
 
     private void updateNode( final NodeId nodeId, final int updates )
     {
+        final Random random = new Random();
+
         for ( int i = 0; i < updates; i++ )
         {
             updateNode( UpdateNodeParams.create().
                 id( nodeId ).
-                editor( node -> node.data.setInstant( "now", Instant.now() ) ).
+                editor( node -> {
+                    node.data.setInstant( "now", Instant.now() );
+                    node.data.setLong( "random", random.nextLong() );
+                } ).
                 build() );
         }
     }
