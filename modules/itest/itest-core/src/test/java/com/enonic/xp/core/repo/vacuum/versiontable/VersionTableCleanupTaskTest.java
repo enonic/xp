@@ -92,7 +92,7 @@ public class VersionTableCleanupTaskTest
     public void version_not_deleted_in_all_branches()
         throws Exception
     {
-        final Noede node1 = createNode( NodePath.ROOT, "node1" );
+        final Node node1 = createNode( NodePath.ROOT, "node1" );
         pushNodes( NodeIds.from( node1.id() ), CTX_OTHER.getBranch() );
         refresh();
 
