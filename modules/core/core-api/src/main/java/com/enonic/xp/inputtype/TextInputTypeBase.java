@@ -27,7 +27,7 @@ abstract class TextInputTypeBase
     {
         try
         {
-            final Integer maxLength = config.getValue( "max-length", Integer.class );
+            final Integer maxLength = config.getValue( "maxLength", Integer.class );
             final String value = property.getString();
 
             if ( maxLength != null && value != null )
