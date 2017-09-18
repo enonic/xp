@@ -92,7 +92,7 @@ public class VersionTableCleanupTaskTest
     public void version_not_deleted_in_all_branches()
         throws Exception
     {
-        final Node node1 = createNode( NodePath.ROOT, "node1" );
+        final Noede node1 = createNode( NodePath.ROOT, "node1" );
         pushNodes( NodeIds.from( node1.id() ), CTX_OTHER.getBranch() );
         refresh();
 
@@ -141,7 +141,7 @@ public class VersionTableCleanupTaskTest
             size( 0 ).
             build() );
 
-        assertEquals( "Wrong number of versions found", versions, result.getTotalHits() );
+        assertEquals( "Wrong number of versions found", versions, result.getTotalHits() + 2 );
     }
 
     private void updateNode( final NodeId nodeId, final int updates )
@@ -155,6 +155,7 @@ public class VersionTableCleanupTaskTest
                 editor( node -> {
                     node.data.setInstant( "now", Instant.now() );
                     node.data.setLong( "random", random.nextLong() );
+                    node.data.setLong( "random2", random.nextLong() );
                 } ).
                 build() );
         }
