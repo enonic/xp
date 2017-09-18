@@ -9,7 +9,7 @@ import io.airlift.airline.Option;
 
 import com.enonic.xp.toolbox.util.JsonHelper;
 
-@Command(name = "set-read-only", description = "Sets the cluster to read-only mode")
+@Command(name = "set-read-only", description = "Toggle read-only mode for server or single repository")
 public final class SetReadOnlyCommand
     extends RepoCommand
 {
