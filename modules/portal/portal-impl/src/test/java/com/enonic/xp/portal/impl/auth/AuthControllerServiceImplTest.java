@@ -27,7 +27,7 @@ import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
-import com.enonic.xp.script.impl.ScriptRuntimeFactoryImpl;
+import com.enonic.xp.script.impl.standard.ScriptRuntimeFactoryImpl;
 import com.enonic.xp.security.AuthConfig;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UserStore;
