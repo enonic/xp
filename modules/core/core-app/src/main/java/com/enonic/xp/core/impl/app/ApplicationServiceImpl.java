@@ -45,7 +45,7 @@ public final class ApplicationServiceImpl
 
     private final ConcurrentMap<ApplicationKey, Boolean> localApplicationSet = Maps.newConcurrentMap();
 
-    private ApplicationRegistry registry;
+    private ApplicationRegistry registry = new ApplicationRegistry();
 
     private BundleContext context;
 
@@ -56,8 +56,8 @@ public final class ApplicationServiceImpl
     @Activate
     public void activate( final BundleContext context )
     {
-        this.registry = new ApplicationRegistry( context );
         this.context = context;
+        this.registry.activate( context );
 
         ApplicationHelper.runAsAdmin( this::installAllStoredApplications );
     }
