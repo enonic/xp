@@ -126,7 +126,7 @@ public final class ResponseSerializer
     private void writeToStream( final HttpServletResponse response, final ByteSource data )
         throws IOException
     {
-        response.setContentLength( Math.toIntExact( data.size() ) );
+        response.setContentLengthLong( data.size() );
 
         if ( !isHeadRequest() )
         {
