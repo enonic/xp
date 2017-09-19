@@ -19,6 +19,7 @@ import com.enonic.xp.toolbox.repo.RestoreCommand;
 import com.enonic.xp.toolbox.repo.SetReadOnlyCommand;
 import com.enonic.xp.toolbox.repo.SetReplicasCommand;
 import com.enonic.xp.toolbox.repo.SnapshotCommand;
+import com.enonic.xp.toolbox.repo.VacuumCommand;
 import com.enonic.xp.toolbox.upgrade.UpgradeCommand;
 
 public final class Main
@@ -44,6 +45,7 @@ public final class Main
         builder.withCommand( UpgradeCommand.class );
         builder.withCommand( InitAppCommand.class );
         builder.withCommand( InstallApplicationCommand.class );
+        builder.withCommand( VacuumCommand.class );
 
         final Cli<Runnable> parser = builder.build();
 

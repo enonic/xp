@@ -473,6 +473,19 @@ public class NodeServiceImpl
     }
 
     @Override
+    public boolean deleteVersion( final NodeVersionId nodeVersionId )
+    {
+        return DeleteVersionCommand.create().
+            nodeVersionId( nodeVersionId ).
+            repositoryService( this.repositoryService ).
+            searchService( this.nodeSearchService ).
+            storageService( this.nodeStorageService ).
+            indexServiceInternal( this.indexServiceInternal ).
+            build().
+            execute();
+    }
+
+    @Override
     public GetActiveNodeVersionsResult getActiveVersions( final GetActiveNodeVersionsParams params )
     {
         verifyContext();

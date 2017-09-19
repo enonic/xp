@@ -15,10 +15,13 @@ class DumpBlobRecord
 
     private final File file;
 
+    private final long lastModified;
+
     DumpBlobRecord( final BlobKey key, final File file )
     {
         this.key = key;
         this.file = file;
+        this.lastModified = System.currentTimeMillis();
     }
 
     @Override
@@ -39,4 +42,9 @@ class DumpBlobRecord
         return Files.asByteSource( this.file );
     }
 
+    @Override
+    public long lastModified()
+    {
+        return this.lastModified;
+    }
 }

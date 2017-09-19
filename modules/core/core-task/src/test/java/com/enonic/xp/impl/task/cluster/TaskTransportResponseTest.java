@@ -21,12 +21,14 @@ public class TaskTransportResponseTest
     {
         TaskInfo taskInfo1 = TaskInfo.create().
             id( TaskId.from( "task1" ) ).
+            name( "name1" ).
             description( "Task1 on node1" ).
             progress( TaskProgress.EMPTY ).
             state( TaskState.WAITING ).
             build();
         TaskInfo taskInfo2 = TaskInfo.create().
             id( TaskId.from( "task2" ) ).
+            name( "name2" ).
             description( "Task2 on node1" ).
             progress( TaskProgress.EMPTY ).
             state( TaskState.FINISHED ).

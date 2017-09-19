@@ -15,10 +15,13 @@ public class MemoryBlobRecord
 
     private ByteSource byteSource;
 
+    private final long lastModified;
+
     public MemoryBlobRecord( final BlobKey blobKey, final ByteSource source )
     {
         this.blobKey = blobKey;
         this.byteSource = source;
+        this.lastModified = System.currentTimeMillis();
     }
 
     @Override
@@ -44,5 +47,11 @@ public class MemoryBlobRecord
     public ByteSource getBytes()
     {
         return byteSource;
+    }
+
+    @Override
+    public long lastModified()
+    {
+        return this.lastModified;
     }
 }

@@ -52,6 +52,8 @@ public interface NodeService
 
     NodeVersionQueryResult findVersions( NodeVersionQuery nodeVersionQuery );
 
+    boolean deleteVersion( NodeVersionId nodeVersionId);
+
     GetActiveNodeVersionsResult getActiveVersions( GetActiveNodeVersionsParams params );
 
     NodeVersionId setActiveVersion( NodeId nodeId, NodeVersionId nodeVersionId );

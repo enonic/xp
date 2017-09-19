@@ -7,11 +7,11 @@ import com.enonic.xp.blob.ProviderConfig;
 public final class MemoryBlobStoreProvider
     implements BlobStoreProvider
 {
-    final MemoryBlobStore blobStore;
+    private final MemoryBlobStore blobStore;
 
-    final ProviderConfig config;
+    private final ProviderConfig config;
 
-    final String name;
+    private final String name;
 
     public MemoryBlobStoreProvider( final String name, final MemoryBlobStore blobStore, final ProviderConfig config )
     {

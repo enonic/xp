@@ -30,6 +30,7 @@ import com.enonic.xp.impl.server.rest.model.SystemDumpRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemDumpResultJson;
 import com.enonic.xp.impl.server.rest.model.SystemLoadRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemLoadResultJson;
+import com.enonic.xp.impl.server.rest.model.VacuumResultJson;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.CreateRepositoryParams;
@@ -39,13 +40,16 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
+import com.enonic.xp.vacuum.VacuumParameters;
+import com.enonic.xp.vacuum.VacuumResult;
+import com.enonic.xp.vacuum.VacuumService;
 import com.enonic.xp.vfs.VirtualFiles;
 
 @Path("/api/system")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed(RoleKeys.ADMIN_ID)
 @Component(immediate = true, property = "group=api")
-public final class SystemDumpResource
+public final class SystemResource
     implements JaxRsComponent
 {
     private ExportService exportService;
@@ -55,6 +59,8 @@ public final class SystemDumpResource
     private NodeRepositoryService nodeRepositoryService;
 
     private DumpService dumpService;
+
+    private VacuumService vacuumService;
 
     private java.nio.file.Path getDumpDirectory( final String name )
     {
@@ -93,6 +99,21 @@ public final class SystemDumpResource
         }
 
         return doLoadFromSystemDump( request );
+    }
+
+    @POST
+    @Path("vacuum")
+    public VacuumResultJson vacuum( final SystemDumpRequestJson request )
+        throws Exception
+    {
+        final VacuumResult result = this.vacuumService.vacuum( new VacuumParameters() );
+        return VacuumResultJson.from( result );
+    }
+
+    @Reference
+    public void setVacuumService( final VacuumService vacuumService )
+    {
+        this.vacuumService = vacuumService;
     }
 
     private boolean isExport( final SystemLoadRequestJson request )

@@ -1,5 +1,7 @@
 package com.enonic.xp.blob;
 
+import java.util.stream.Stream;
+
 import com.google.common.io.ByteSource;
 
 public interface BlobStore
@@ -15,5 +17,7 @@ public interface BlobStore
 
     void removeRecord( Segment segment, BlobKey key )
         throws BlobStoreException;
+
+    Stream<BlobRecord> list( Segment segment );
 
 }

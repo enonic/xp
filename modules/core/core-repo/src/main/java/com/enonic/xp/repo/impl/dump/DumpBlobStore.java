@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.dump;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,6 +90,12 @@ public class DumpBlobStore
         }
 
         return new DumpBlobRecord( key, file );
+    }
+
+    @Override
+    public Stream<BlobRecord> list( final Segment segment )
+    {
+        throw new BlobStoreException( "Not implemented" );
     }
 
     private File getBlobFile( final Segment segment, final BlobKey key )

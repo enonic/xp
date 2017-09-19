@@ -20,6 +20,7 @@ public final class TaskMapper
     {
         gen.value( "description", this.taskInfo.getDescription() );
         gen.value( "id", this.taskInfo.getId().toString() );
+        gen.value( "name", this.taskInfo.getName() );
         gen.value( "state", this.taskInfo.getState().toString() );
 
         final TaskProgress progress = this.taskInfo.getProgress();

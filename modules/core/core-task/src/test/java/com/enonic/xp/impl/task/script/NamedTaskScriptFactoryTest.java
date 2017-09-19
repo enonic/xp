@@ -12,6 +12,7 @@ import org.osgi.framework.BundleContext;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.impl.controller.AbstractControllerTest;
 import com.enonic.xp.portal.impl.script.PortalScriptServiceImpl;
@@ -80,7 +81,7 @@ public class NamedTaskScriptFactoryTest
         throws Exception
     {
         final TaskDescriptor taskDescriptor = TaskDescriptor.create().key( DescriptorKey.from( "myapplication:mytask" ) ).build();
-        final RunnableTask runnableTask = namedTaskScriptFactory.create( taskDescriptor );
+        final RunnableTask runnableTask = namedTaskScriptFactory.create( taskDescriptor, new PropertyTree() );
         assertNotNull( runnableTask );
         runnableTask.run( TaskId.from( "123" ), null );
     }
@@ -90,7 +91,7 @@ public class NamedTaskScriptFactoryTest
         throws Exception
     {
         final TaskDescriptor taskDescriptor = TaskDescriptor.create().key( DescriptorKey.from( "myapplication:mytask2" ) ).build();
-        final RunnableTask runnableTask = namedTaskScriptFactory.create( taskDescriptor );
+        final RunnableTask runnableTask = namedTaskScriptFactory.create( taskDescriptor, new PropertyTree() );
         assertNull( runnableTask );
     }
 
@@ -99,7 +100,7 @@ public class NamedTaskScriptFactoryTest
         throws Exception
     {
         final TaskDescriptor taskDescriptor = TaskDescriptor.create().key( DescriptorKey.from( "myapplication:mytask3" ) ).build();
-        final RunnableTask runnableTask = namedTaskScriptFactory.create( taskDescriptor );
+        final RunnableTask runnableTask = namedTaskScriptFactory.create( taskDescriptor, new PropertyTree() );
         assertNull( runnableTask );
     }
 

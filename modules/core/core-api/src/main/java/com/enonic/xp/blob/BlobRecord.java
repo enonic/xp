@@ -9,4 +9,6 @@ public interface BlobRecord
     long getLength();
 
     ByteSource getBytes();
+
+    long lastModified();
 }

@@ -3,6 +3,7 @@ package com.enonic.xp.impl.task.script;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.RunnableTask;
@@ -21,10 +22,13 @@ public final class NamedTaskScript
 
     private final TaskDescriptor taskDescriptor;
 
-    NamedTaskScript( final ScriptExports scriptExports, TaskDescriptor taskDescriptor )
+    private final PropertyTree config;
+
+    NamedTaskScript( final ScriptExports scriptExports, TaskDescriptor taskDescriptor, final PropertyTree config )
     {
         this.scriptExports = scriptExports;
         this.taskDescriptor = taskDescriptor;
+        this.config = config;
     }
 
     @Override
@@ -37,7 +41,8 @@ public final class NamedTaskScript
     {
         try
         {
-            this.scriptExports.executeMethod( SCRIPT_METHOD_NAME );
+            final PropertyTreeMapper configMapper = new PropertyTreeMapper( config );
+            this.scriptExports.executeMethod( SCRIPT_METHOD_NAME, configMapper );
         }
         catch ( Throwable t )
         {

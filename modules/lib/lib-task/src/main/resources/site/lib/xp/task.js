@@ -17,6 +17,7 @@ function checkRequired(params, name) {
  * @typedef TaskInfo
  * @type Object
  * @property {string} id Task Id.
+ * @property {string} name Task Id.
  * @property {string} description Task description.
  * @property {string} state Task state. Possible values: 'WAITING' | 'RUNNING' | 'FINISHED' | 'FAILED'
  * @property {object} progress Progress information provided by the running task.
@@ -58,15 +59,19 @@ exports.submit = function (params) {
  *
  * @example-ref examples/task/submitNamed.js
  *
- * @param {string} taskName Name of the task to execute.
- *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.name Name of the task to execute.
+ * @param {object} [params.config] Configuration parameters to pass to the task to be executed.
+ * The object must be valid according to the schema defined in the form of the task descriptor XML.
  * @returns {string} Id of the task that will be executed.
  */
-exports.submitNamed = function (taskName) {
+exports.submitNamed = function (params) {
+    checkRequired(params, 'name');
 
     var bean = __.newBean('com.enonic.xp.lib.task.SubmitNamedTaskHandler');
 
-    bean.name = __.nullOrValue(taskName);
+    bean.name = __.nullOrValue(params.name);
+    bean.config = __.toScriptValue(params.config);
 
     return bean.submit();
 };
@@ -76,11 +81,17 @@ exports.submitNamed = function (taskName) {
  *
  * @example-ref examples/task/list.js
  *
+ * @param {object} [params] JSON with optional parameters.
+ * @param {string} [params.name] Filter by name.
+ * @param {object} [params.state] Filter by task state ('WAITING' | 'RUNNING' | 'FINISHED' | 'FAILED').
  * @returns {TaskInfo[]} List with task information for every task.
  */
-exports.list = function () {
-
+exports.list = function (params) {
+    params = params || {};
     var bean = __.newBean('com.enonic.xp.lib.task.ListTasksHandler');
+
+    bean.name = __.nullOrValue(params.name);
+    bean.state = __.nullOrValue(params.state);
 
     return __.toNativeObject(bean.list());
 
@@ -145,5 +156,25 @@ exports.progress = function (params) {
     bean.info = __.nullOrValue(params.info);
 
     bean.reportProgress();
+
+};
+
+/**
+ * Checks if any task with the given name or id is currently running.
+ *
+ * @example-ref examples/task/isRunning.js
+ *
+ * @param {string} task Name or id of the task.
+ *
+ * @returns {boolean} True if there is a task with the specified name or id, and state 'RUNNING'; False otherwise.
+ */
+exports.isRunning = function (task) {
+
+    var bean = __.newBean('com.enonic.xp.lib.task.IsRunningHandler');
+    if (task === undefined) {
+        throw "Parameter task is required";
+    }
+
+    return __.toNativeObject(bean.isRunning(task));
 
 };
