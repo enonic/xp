@@ -1,7 +1,7 @@
 package com.enonic.xp.core.repo.vacuum.versiontable;
 
+import java.security.SecureRandom;
 import java.time.Instant;
-import java.util.Random;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -24,6 +24,8 @@ import static org.junit.Assert.*;
 public class VersionTableCleanupTaskTest
     extends AbstractNodeTest
 {
+    private final SecureRandom random = new SecureRandom();
+
     private VersionTableCleanupTask task;
 
     @Override
@@ -146,8 +148,6 @@ public class VersionTableCleanupTaskTest
 
     private void updateNode( final NodeId nodeId, final int updates )
     {
-        final Random random = new Random();
-
         for ( int i = 0; i < updates; i++ )
         {
             updateNode( UpdateNodeParams.create().
@@ -155,7 +155,6 @@ public class VersionTableCleanupTaskTest
                 editor( node -> {
                     node.data.setInstant( "now", Instant.now() );
                     node.data.setLong( "random", random.nextLong() );
-                    node.data.setLong( "random2", random.nextLong() );
                 } ).
                 build() );
         }
