@@ -1,15 +1,10 @@
 package com.enonic.xp.admin.impl.json.schema.mixin;
 
 import java.time.Instant;
-import java.util.List;
-
-import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.admin.impl.json.ItemJson;
-import com.enonic.xp.admin.impl.json.form.FormItemJson;
-import com.enonic.xp.admin.impl.json.form.FormItemJsonFactory;
+import com.enonic.xp.admin.impl.json.form.FormJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.MixinIconUrlResolver;
-import com.enonic.xp.form.FormItem;
 import com.enonic.xp.schema.mixin.Mixin;
 
 public class MixinJson
@@ -55,15 +50,9 @@ public class MixinJson
         return iconUrl;
     }
 
-    public List<FormItemJson> getItems()
+    public FormJson getForm()
     {
-        final ImmutableList.Builder<FormItemJson> builder = ImmutableList.builder();
-        for ( final FormItem formItem : mixin.getForm() )
-        {
-            builder.add( FormItemJsonFactory.create( formItem ) );
-        }
-        
-        return builder.build();
+        return new FormJson( mixin.getForm() );
     }
 
     public String getCreator()
