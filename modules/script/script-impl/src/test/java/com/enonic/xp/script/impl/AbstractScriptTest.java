@@ -14,17 +14,54 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.ScriptExports;
+import com.enonic.xp.script.impl.purplejs.PurpleJsRuntimeProviderImpl;
 import com.enonic.xp.script.impl.standard.ScriptRuntimeFactoryImpl;
 import com.enonic.xp.script.runtime.ScriptRuntime;
+import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
 import com.enonic.xp.script.runtime.ScriptSettings;
 
 public abstract class AbstractScriptTest
 {
+    private final static boolean USE_PURPLEJS = false;
+
     private final static ApplicationKey APPLICATION_KEY = ApplicationKey.from( "myapplication" );
 
     protected final ScriptRuntime scriptRuntime;
 
     public AbstractScriptTest()
+    {
+        final ScriptRuntimeFactory factory = createScriptRuntimeFactory();
+        this.scriptRuntime = factory.create( ScriptSettings.create().build() );
+    }
+
+    protected final ScriptExports runTestScript( final String name )
+    {
+        return runTestScript( ResourceKey.from( APPLICATION_KEY, name ) );
+    }
+
+    protected final ScriptExports runTestScript( final ResourceKey key )
+    {
+        return this.scriptRuntime.execute( key );
+    }
+
+    private ScriptRuntimeFactory createScriptRuntimeFactory()
+    {
+        if ( USE_PURPLEJS )
+        {
+            return createPurpleJsRuntimeFactory();
+        }
+        else
+        {
+            return createStandardRuntimeFactory();
+        }
+    }
+
+    private ScriptRuntimeFactory createPurpleJsRuntimeFactory()
+    {
+        return new PurpleJsRuntimeProviderImpl();
+    }
+
+    private ScriptRuntimeFactory createStandardRuntimeFactory()
     {
         final BundleContext bundleContext = Mockito.mock( BundleContext.class );
 
@@ -51,17 +88,6 @@ public abstract class AbstractScriptTest
         scriptRuntimeFactory.setApplicationService( applicationService );
         scriptRuntimeFactory.setResourceService( resourceService );
 
-        this.scriptRuntime = scriptRuntimeFactory.create( ScriptSettings.create().
-            build() );
-    }
-
-    protected final ScriptExports runTestScript( final String name )
-    {
-        return runTestScript( ResourceKey.from( APPLICATION_KEY, name ) );
-    }
-
-    protected final ScriptExports runTestScript( final ResourceKey key )
-    {
-        return this.scriptRuntime.execute( key );
+        return scriptRuntimeFactory;
     }
 }
