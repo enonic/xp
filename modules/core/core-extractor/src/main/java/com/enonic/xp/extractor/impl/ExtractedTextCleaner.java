@@ -22,7 +22,7 @@ class ExtractedTextCleaner
 
     private final static String CONSECUTIVE_HORIZONTAL_WHITESPACE = "(" + ANY_HORIZONTAL_WHITESPACE + ")+";
 
-    private final static String SYSTEM_LINE_SEPARATOR = System.getProperty( "line.separator" );
+    private final static String LINE_SEPARATOR = "\n";
 
     public static String clean( final String value )
     {
@@ -42,16 +42,16 @@ class ExtractedTextCleaner
 
     private static String cleanLineBreaks( final String original )
     {
-        String result = original.replaceAll( LINE_BREAK_AND_WHITESPACE, SYSTEM_LINE_SEPARATOR );
+        String result = original.replaceAll( LINE_BREAK_AND_WHITESPACE, LINE_SEPARATOR );
 
         String previous = null;
         while ( !result.equals( previous ) )
         {
             previous = result;
-            result = result.replaceAll( ANY_LINE_BREAK_AND_WHITESPACE, SYSTEM_LINE_SEPARATOR );
+            result = result.replaceAll( ANY_LINE_BREAK_AND_WHITESPACE, LINE_SEPARATOR );
         }
 
-        result = result.replaceAll( LINE_BREAKS, SYSTEM_LINE_SEPARATOR );
+        result = result.replaceAll( LINE_BREAKS, LINE_SEPARATOR );
         return result.replaceAll( CONSECUTIVE_HORIZONTAL_WHITESPACE, " " );
     }
 
