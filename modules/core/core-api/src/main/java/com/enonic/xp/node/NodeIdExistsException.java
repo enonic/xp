@@ -8,6 +8,6 @@ public class NodeIdExistsException
 {
     public NodeIdExistsException( final NodeId nodeId )
     {
-        super( "Node already exist, id: " + nodeId );
+        super( "Node already exists, id: " + nodeId );
     }
 }
