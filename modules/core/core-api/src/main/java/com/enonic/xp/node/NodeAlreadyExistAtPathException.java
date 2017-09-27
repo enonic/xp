@@ -11,7 +11,7 @@ public class NodeAlreadyExistAtPathException
 
     public NodeAlreadyExistAtPathException( final NodePath nodePath )
     {
-        super( "Node already exist, path: " + nodePath );
+        super( "Node already exists, path: " + nodePath );
         this.node = nodePath;
     }
 
