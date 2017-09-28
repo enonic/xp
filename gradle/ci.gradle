@@ -2,4 +2,3 @@ task ci {
     description = 'Builds and generates coverage report.'
     dependsOn = ['build', 'jacocoMergedReport']
 }
-

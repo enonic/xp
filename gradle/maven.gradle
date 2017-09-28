@@ -1,1 +1,17 @@
 apply plugin: 'maven'
+
+def outputDir = System.getenv( 'CI_OUTPUT_DIR' )
+task uploadLocal( type: Upload ) {
+    group = 'Upload'
+    description "Copy maven output artifacts local directory ($outputDir)"
+    configuration = configurations.archives
+    repositories {
+        mavenDeployer {
+            repository( url: "file:///$outputDir" )
+        }
+    }
+}
+
+uploadLocal.onlyIf {
+    outputDir
+}
