@@ -3,4 +3,3 @@ task ci {
     dependsOn = ['build', 'jacocoMergedReport']
 }
 
-println System.getenv()
