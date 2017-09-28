@@ -15,6 +15,7 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.security.PrincipalKey;
 
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.*;
 
 public class ContentTypeTest
@@ -113,6 +114,47 @@ public class ContentTypeTest
                       contentType.getForm().getInput( "top-set.inner-set.myInnerInput" ).getPath().toString() );
     }
 
+
+    @Test
+    public void duplicate_formItem_in_fieldSet()
+        throws Exception
+    {
+        // setup
+        Input myTextLine = Input.create().
+            name( "myTextLine" ).
+            inputType( InputTypeName.TEXT_LINE ).
+            label( "My text line" ).
+            required( true ).
+            build();
+
+        FieldSet myFieldSet = FieldSet.create().
+            name( "myFieldSet" ).
+            label( "My field set" ).
+            addFormItem( Input.create().
+                name( "myTextLine" ).
+                inputType( InputTypeName.TEXT_LINE ).
+                label( "My text line" ).
+                required( false ).
+                build() ).
+            build();
+
+        try
+        {
+            ContentType contentType = ContentType.create().
+                name( "myapplication:test" ).
+                superType( ContentTypeName.unstructured() ).
+                addFormItem( myTextLine ).
+                addFormItem( myFieldSet ).
+                build();
+
+        }
+        catch ( Exception e )
+        {
+            assertThat( e, instanceOf( IllegalArgumentException.class ) );
+            assertTrue( e.getMessage().contains( "myTextLine" ) );
+        }
+    }
+
     @Test
     public void contentTypeBuilder()
     {
@@ -204,8 +246,8 @@ public class ContentTypeTest
     {
         List<ContentTypeName> list = new ArrayList<ContentTypeName>()
         {{
-                add( ContentTypeName.audioMedia() );
-            }};
+            add( ContentTypeName.audioMedia() );
+        }};
         GetContentTypesParams params1 = new GetContentTypesParams();
         params1.contentTypeNames( ContentTypeNames.create().add( ContentTypeName.archiveMedia() ).addAll( list ).build() );
         GetContentTypesParams params2 = new GetContentTypesParams();

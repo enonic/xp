@@ -94,7 +94,7 @@ var expected = [
                 "items": [
                     {
                         "formItemType": "Input",
-                        "name": "myTextLine",
+                        "name": "myTextLine1",
                         "label": "My text line",
                         "maximize": true,
                         "inputType": "TextLine",
