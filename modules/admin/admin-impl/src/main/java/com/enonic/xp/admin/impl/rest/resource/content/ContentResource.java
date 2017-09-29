@@ -1327,7 +1327,7 @@ public final class ContentResource
     @Consumes(MediaType.APPLICATION_JSON)
     public AbstractContentQueryResultJson selectorQuery( final ContentSelectorQueryJson contentQueryJson )
     {
-        final FindContentIdsByQueryResult findResult = findContentsBySelectorQuery(contentQueryJson);
+        final FindContentIdsByQueryResult findResult = findContentsBySelectorQuery( contentQueryJson );
 
         return FindContentByQuertResultJsonFactory.create().
             contents( this.contentService.getByIds( new GetContentByIdsParams( findResult.getContentIds() ) ) ).
@@ -1346,7 +1346,7 @@ public final class ContentResource
     @Consumes(MediaType.APPLICATION_JSON)
     public List<ContentTreeSelectorJson> treeSelectorQuery( final ContentTreeSelectorQueryJson contentQueryJson )
     {
-        final FindContentIdsByQueryResult findResult = findContentsBySelectorQuery(contentQueryJson);
+        final FindContentIdsByQueryResult findResult = findContentsBySelectorQuery( contentQueryJson );
 
         final Contents contents = this.contentService.getByIds( new GetContentByIdsParams( findResult.getContentIds() ) );
 
@@ -1356,16 +1356,24 @@ public final class ContentResource
         final List<ContentPath> layerPaths = contents.stream().
             filter( content -> parentPath != null ? content.getPath().isChildOf( parentPath ) : true ).
             map( content -> content.getPath().getAncestorPath( content.getPath().elementCount() - parentPathSize - 1 ) ).
-            collect( Collectors.toList());
+            collect( Collectors.toList() );
 
-        final Contents layerContents = contentService.getByPaths( ContentPaths.from( layerPaths) );
+        final ChildOrder layerOrder =
+            contentQueryJson.getChildOrder() != null ? contentQueryJson.getChildOrder() : ChildOrder.defaultOrder();
 
-        return layerContents.stream().map(
-            content -> new ContentTreeSelectorJson( new ContentJson( content, contentIconUrlResolver, principalsResolver ),
-                                                    !contents.contains( content ) ) ).collect( Collectors.toList() );
+        final FindContentIdsByQueryResult findLayerContentsResult = contentService.find( ContentQuery.create().size( -1 ).
+            queryExpr( constructExprToFindByPaths( ContentPaths.from( layerPaths ), layerOrder ) ).
+            build() );
+
+        return contentService.getByIds( new GetContentByIdsParams( findLayerContentsResult.getContentIds() ) ).
+            stream().
+            map( content -> new ContentTreeSelectorJson( new ContentJson( content, contentIconUrlResolver, principalsResolver ),
+                                                         !contents.contains( content ) ) ).
+            collect( Collectors.toList() );
     }
 
-    private FindContentIdsByQueryResult findContentsBySelectorQuery(final ContentSelectorQueryJson contentQueryJson) {
+    private FindContentIdsByQueryResult findContentsBySelectorQuery( final ContentSelectorQueryJson contentQueryJson )
+    {
 
         final ContentSelectorQueryJsonToContentQueryConverter selectorQueryProcessor =
             ContentSelectorQueryJsonToContentQueryConverter.create().
@@ -1663,6 +1671,16 @@ public final class ContentResource
             map( contentPath -> ValueExpr.string( "/content" + contentPath ) ).collect( Collectors.toList() ) ) );
 
         return QueryExpr.from( expr, new FieldOrderExpr( fieldExpr, OrderExpr.Direction.ASC ) );
+    }
+
+    private QueryExpr constructExprToFindByPaths( final ContentPaths contentsPaths, final ChildOrder order )
+    {
+        final FieldExpr fieldExpr = FieldExpr.from( "_path" );
+
+        final CompareExpr compareExpr = CompareExpr.in( fieldExpr, contentsPaths.stream().
+            map( contentPath -> ValueExpr.string( "/content" + contentPath ) ).collect( Collectors.toList() ) );
+
+        return QueryExpr.from( compareExpr, order != null ? order.getOrderExpressions() : null );
     }
 
     private QueryExpr constructExprToFindChildren( final ContentIds contentsIds )
