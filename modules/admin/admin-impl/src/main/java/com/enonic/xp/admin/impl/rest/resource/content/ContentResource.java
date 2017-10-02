@@ -1358,8 +1358,9 @@ public final class ContentResource
             map( content -> content.getPath().getAncestorPath( content.getPath().elementCount() - parentPathSize - 1 ) ).
             collect( Collectors.toList() );
 
-        final ChildOrder layerOrder =
-            contentQueryJson.getChildOrder() != null ? contentQueryJson.getChildOrder() : ChildOrder.defaultOrder();
+        final ChildOrder layerOrder = parentPath == null
+            ? ContentConstants.DEFAULT_CONTENT_REPO_ROOT_ORDER
+            : contentQueryJson.getChildOrder() != null ? contentQueryJson.getChildOrder() : ContentConstants.DEFAULT_CHILD_ORDER;
 
         final FindContentIdsByQueryResult findLayerContentsResult = contentService.find( ContentQuery.create().size( -1 ).
             queryExpr( constructExprToFindByPaths( ContentPaths.from( layerPaths ), layerOrder ) ).
