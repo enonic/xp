@@ -12,7 +12,10 @@ import com.google.common.net.HttpHeaders;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.media.ImageOrientation;
@@ -69,12 +72,16 @@ public final class MediaInfoServiceImpl
 
     public ImageOrientation getImageOrientation( ByteSource byteSource, Content media )
     {
-        final PropertySet mediaSet = media.getData().getPropertySet( ContentPropertyNames.MEDIA );
-        if ( mediaSet != null && mediaSet.hasProperty( ContentPropertyNames.ORIENTATION ) )
+        final PropertyTree mediaData = media.getData();
+        final Property mediaProperty = mediaData.getProperty( ContentPropertyNames.MEDIA );
+        if ( mediaProperty != null && ValueTypes.PROPERTY_SET.equals( mediaProperty.getType() ) )
         {
-            return ImageOrientation.from( mediaSet.getString( ContentPropertyNames.ORIENTATION ) );
+            final PropertySet mediaSet = mediaProperty.getSet();
+            if ( mediaSet != null && mediaSet.hasProperty( ContentPropertyNames.ORIENTATION ) )
+            {
+                return ImageOrientation.from( mediaSet.getString( ContentPropertyNames.ORIENTATION ) );
+            }
         }
-
         final ExtraData cameraInfo = media.getAllExtraData().getMetadata( MediaInfo.CAMERA_INFO_METADATA_NAME );
         if ( cameraInfo != null && cameraInfo.getData().hasProperty( ContentPropertyNames.ORIENTATION ) )
         {
