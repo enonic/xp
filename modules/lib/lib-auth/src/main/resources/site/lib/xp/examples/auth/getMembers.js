@@ -3,7 +3,7 @@ var t = require('/lib/xp/testing');
 
 // BEGIN
 // Returns all members for specified principal key.
-var members = authLib.getMembers('group:system:group-a');
+var members = authLib.getMembers({key:'group:system:group-a'});
 // END
 
 // BEGIN

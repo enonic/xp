@@ -19,6 +19,10 @@ public final class GetMembersHandler
 {
     private PrincipalKey principalKey;
 
+    private Integer from = 0;
+
+    private Integer size = -1;
+
     private Supplier<SecurityService> securityService;
 
     public void setPrincipalKey( final String value )
@@ -26,13 +30,28 @@ public final class GetMembersHandler
         this.principalKey = value == null ? null : PrincipalKey.from( value );
     }
 
+    public void setFrom( final Integer value )
+    {
+        this.from = value == null ? this.from : value;
+    }
+
+    public void setSize( final Integer value )
+    {
+        this.size = value == null ? this.size : value;
+    }
+
     public List<PrincipalMapper> getMembers()
     {
         final PrincipalRelationships relationships = this.securityService.get().getRelationships( this.principalKey );
+
         final PrincipalKeys principalKeys = PrincipalKeys.from( relationships.stream().
             map( PrincipalRelationship::getTo ).
+            skip( this.from ).
+            limit( this.size > 0 ? this.size : relationships.getSize()).
             toArray( PrincipalKey[]::new ) );
+
         final Principals principals = this.securityService.get().getPrincipals( principalKeys );
+
         return principals.stream().map( PrincipalMapper::new ).collect( Collectors.toList() );
     }
 

@@ -168,13 +168,17 @@ exports.getMemberships = function (principalKey) {
  *
  * @example-ref examples/auth/getMembers.js
  *
- * @param {string} principalKey Principal key to retrieve members for.
+ * @param {string} params.key Principal key to retrieve members for.
+ * @param {string} params.from Principal to fetch from.
+ * @param {string} params.size A limit on the number of principals to be returned.
  * @returns {object[]} Returns the list of principals.
  */
-exports.getMembers = function (principalKey) {
+exports.getMembers = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.GetMembersHandler');
 
-    bean.principalKey = __.nullOrValue(principalKey);
+    bean.principalKey = nullOrValue(params.key);
+    bean.from = nullOrValue(params.from);
+    bean.size = nullOrValue(params.size);
 
     return __.toNativeObject(bean.getMembers());
 };
