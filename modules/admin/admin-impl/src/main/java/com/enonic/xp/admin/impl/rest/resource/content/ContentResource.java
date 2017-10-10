@@ -49,6 +49,7 @@ import com.enonic.xp.admin.impl.json.content.ContentListJson;
 import com.enonic.xp.admin.impl.json.content.ContentPermissionsJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryJson;
 import com.enonic.xp.admin.impl.json.content.ContentSummaryListJson;
+import com.enonic.xp.admin.impl.json.content.ContentTreeSelectorListJson;
 import com.enonic.xp.admin.impl.json.content.ContentsExistJson;
 import com.enonic.xp.admin.impl.json.content.DependenciesAggregationJson;
 import com.enonic.xp.admin.impl.json.content.DependenciesJson;
@@ -1344,8 +1345,14 @@ public final class ContentResource
     @POST
     @Path("treeSelectorQuery")
     @Consumes(MediaType.APPLICATION_JSON)
-    public List<ContentTreeSelectorJson> treeSelectorQuery( final ContentTreeSelectorQueryJson contentQueryJson )
+    public ContentTreeSelectorListJson treeSelectorQuery( final ContentTreeSelectorQueryJson contentQueryJson )
     {
+        final Integer from  = contentQueryJson.getFrom();
+        contentQueryJson.setFrom( null );
+
+        final Integer size = contentQueryJson.getSize();
+        contentQueryJson.setSize( null );
+
         final FindContentIdsByQueryResult findResult = findContentsBySelectorQuery( contentQueryJson );
 
         final Contents contents = this.contentService.getByIds( new GetContentByIdsParams( findResult.getContentIds() ) );
@@ -1356,21 +1363,29 @@ public final class ContentResource
         final List<ContentPath> layerPaths = contents.stream().
             filter( content -> parentPath != null ? content.getPath().isChildOf( parentPath ) : true ).
             map( content -> content.getPath().getAncestorPath( content.getPath().elementCount() - parentPathSize - 1 ) ).
+
             collect( Collectors.toList() );
 
         final ChildOrder layerOrder = parentPath == null
             ? ContentConstants.DEFAULT_CONTENT_REPO_ROOT_ORDER
             : contentQueryJson.getChildOrder() != null ? contentQueryJson.getChildOrder() : ContentConstants.DEFAULT_CHILD_ORDER;
 
-        final FindContentIdsByQueryResult findLayerContentsResult = contentService.find( ContentQuery.create().size( -1 ).
+        final FindContentIdsByQueryResult findLayerContentsResult = contentService.find( ContentQuery.create().
+            from( from ).
+            size( size ).
             queryExpr( constructExprToFindByPaths( ContentPaths.from( layerPaths ), layerOrder ) ).
             build() );
 
-        return contentService.getByIds( new GetContentByIdsParams( findLayerContentsResult.getContentIds() ) ).
+        final List<ContentTreeSelectorJson> resultItems = contentService.getByIds( new GetContentByIdsParams( findLayerContentsResult.getContentIds() ) ).
             stream().
             map( content -> new ContentTreeSelectorJson( new ContentJson( content, contentIconUrlResolver, principalsResolver ),
                                                          !contents.contains( content ) ) ).
             collect( Collectors.toList() );
+
+        final ContentListMetaData metaData = ContentListMetaData.create().hits( findLayerContentsResult.getHits() ).totalHits(
+            findLayerContentsResult.getTotalHits() ).build();
+
+        return new ContentTreeSelectorListJson( resultItems, metaData );
     }
 
     private FindContentIdsByQueryResult findContentsBySelectorQuery( final ContentSelectorQueryJson contentQueryJson )
