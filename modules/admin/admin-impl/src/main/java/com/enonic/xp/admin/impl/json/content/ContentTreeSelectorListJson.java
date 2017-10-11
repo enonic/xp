@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.json.content;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentTreeSelectorJson;
@@ -21,7 +22,13 @@ public class ContentTreeSelectorListJson
     public ContentTreeSelectorListJson( final List<ContentTreeSelectorJson> items, final ContentListMetaData metadata )
     {
         this.items = items;
-        this.metadata = new ContentListMetaDataJson(metadata);
+        this.metadata = new ContentListMetaDataJson( metadata );
+    }
+
+    public static ContentTreeSelectorListJson empty()
+    {
+        return new ContentTreeSelectorListJson( new ArrayList<ContentTreeSelectorJson>(), new ContentListMetaDataJson(
+            ContentListMetaData.create().hits( 0 ).totalHits( 0 ).build() ) );
     }
 
     public List<ContentTreeSelectorJson> getItems()

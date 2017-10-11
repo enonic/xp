@@ -1366,6 +1366,10 @@ public final class ContentResource
 
             collect( Collectors.toList() );
 
+        if(layerPaths.size() == 0) {
+            return ContentTreeSelectorListJson.empty();
+        }
+
         final ChildOrder layerOrder = parentPath == null
             ? ContentConstants.DEFAULT_CONTENT_REPO_ROOT_ORDER
             : contentQueryJson.getChildOrder() != null ? contentQueryJson.getChildOrder() : ContentConstants.DEFAULT_CHILD_ORDER;
