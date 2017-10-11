@@ -79,13 +79,21 @@ public final class MediaInfoServiceImpl
             final PropertySet mediaSet = mediaProperty.getSet();
             if ( mediaSet != null && mediaSet.hasProperty( ContentPropertyNames.ORIENTATION ) )
             {
-                return ImageOrientation.from( mediaSet.getString( ContentPropertyNames.ORIENTATION ) );
+                final String orientationValue = mediaSet.getString( ContentPropertyNames.ORIENTATION );
+                if ( ImageOrientation.isValid( orientationValue ) )
+                {
+                    return ImageOrientation.from( orientationValue );
+                }
             }
         }
         final ExtraData cameraInfo = media.getAllExtraData().getMetadata( MediaInfo.CAMERA_INFO_METADATA_NAME );
         if ( cameraInfo != null && cameraInfo.getData().hasProperty( ContentPropertyNames.ORIENTATION ) )
         {
-            return ImageOrientation.from( cameraInfo.getData().getString( ContentPropertyNames.ORIENTATION ) );
+            final String orientationValue = cameraInfo.getData().getString( ContentPropertyNames.ORIENTATION );
+            if ( ImageOrientation.isValid( orientationValue ) )
+            {
+                return ImageOrientation.from( orientationValue );
+            }
         }
         return getImageOrientation( byteSource );
     }

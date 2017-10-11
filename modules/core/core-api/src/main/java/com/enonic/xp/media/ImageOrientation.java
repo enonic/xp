@@ -63,4 +63,22 @@ public enum ImageOrientation
             return DEFAULT;
         }
     }
+
+    public static boolean isValid( final String value )
+    {
+        if ( value == null )
+        {
+            return false;
+        }
+        try
+        {
+            final Integer intValue = Integer.valueOf( value );
+            final ImageOrientation orientation = LOOKUP_TABLE.get( intValue );
+            return orientation != null;
+        }
+        catch ( NumberFormatException e )
+        {
+            return false;
+        }
+    }
 }
