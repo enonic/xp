@@ -57,11 +57,11 @@ public class FindNodesByParentResult
 
     public static final class Builder
     {
-        private NodeIds nodeIds;
+        private NodeIds nodeIds = NodeIds.empty();
 
-        private long totalHits;
+        private long totalHits = 0;
 
-        private long hits;
+        private long hits = 0;
 
         private Builder()
         {

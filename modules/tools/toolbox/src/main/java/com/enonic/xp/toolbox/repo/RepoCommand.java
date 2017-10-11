@@ -27,12 +27,15 @@ public abstract class RepoCommand
     @Option(name = "-a", description = "Authentication token for basic authentication (user:password).", required = true)
     public String auth;
 
+    @Option(name = "--scheme", description = "Scheme (default is http).")
+    public String scheme = "http";
+
     @Option(name = "-h", description = "Host name for server (default is localhost).")
     public String host = "localhost";
 
     @Option(name = "-p", description = "Port number for server (default is 8080).")
     public int port = 8080;
-
+    
     protected String postRequest( final String urlPath, final JsonNode json )
         throws Exception
     {
@@ -44,7 +47,7 @@ public abstract class RepoCommand
     {
         final RequestBody body = RequestBody.create( JSON, json );
 
-        final String url = "http://" + host + ":" + port + urlPath;
+        final String url = scheme + "://" + host + ":" + port + urlPath;
         final Request request = new Request.Builder().
             url( url ).
             post( body ).
@@ -57,7 +60,7 @@ public abstract class RepoCommand
     protected String getRequest( final String urlPath )
         throws Exception
     {
-        final String url = "http://" + host + ":" + port + urlPath;
+        final String url = scheme + "://" + host + ":" + port + urlPath;
         final Request request = new Request.Builder().
             url( url ).
             get().

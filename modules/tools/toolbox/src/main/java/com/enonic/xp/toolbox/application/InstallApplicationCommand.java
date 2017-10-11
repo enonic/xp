@@ -74,7 +74,7 @@ public class InstallApplicationCommand
 
     private Request createMultipartRequest( final File file )
     {
-        final String url = "http://" + host + ":" + port + INSTALL_APP_FILE_REST_PATH;
+        final String url = scheme + "://" + host + ":" + port + INSTALL_APP_FILE_REST_PATH;
 
         final RequestBody body = RequestBody.create( MediaType.parse( "multipart/form-data" ), file );
 

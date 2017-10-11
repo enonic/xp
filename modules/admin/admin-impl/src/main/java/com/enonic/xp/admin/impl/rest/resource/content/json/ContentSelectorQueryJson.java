@@ -15,10 +15,6 @@ public class ContentSelectorQueryJson
 
     private final String queryExprString;
 
-    private final Integer from;
-
-    private final Integer size;
-
     private final ContentId contentId;
 
     private final String inputName;
@@ -28,6 +24,10 @@ public class ContentSelectorQueryJson
     private final List<String> allowedContentPaths;
 
     private final String relationshipType;
+
+    private Integer from;
+
+    private Integer size;
 
     @JsonCreator
     public ContentSelectorQueryJson( @JsonProperty("queryExpr") final String queryExprString, //
@@ -103,5 +103,15 @@ public class ContentSelectorQueryJson
     public String getRelationshipType()
     {
         return relationshipType;
+    }
+
+    public void setFrom( final Integer from )
+    {
+        this.from = from;
+    }
+
+    public void setSize( final Integer size )
+    {
+        this.size = size;
     }
 }
