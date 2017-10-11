@@ -43,7 +43,7 @@ public class ContentSelectorQueryJsonToContentQueryConverter
         this.contentQueryJson = builder.contentQueryJson;
         this.contentService = builder.contentService;
         this.relationshipTypeService = builder.relationshipTypeService;
-        this.content = contentQueryJson.getContentId()!= null ? contentService.getById( contentQueryJson.getContentId() ) : null;
+        this.content = contentQueryJson.getContentId() != null ? contentService.getById( contentQueryJson.getContentId() ) : null;
     }
 
     public ContentQuery createQuery()
@@ -88,7 +88,7 @@ public class ContentSelectorQueryJsonToContentQueryConverter
             return QueryParser.parse( this.contentQueryJson.getQueryExprString() );
         }
 
-        if(this.content != null)
+        if ( this.content != null )
         {
             this.resolveParentSiteIfNeeded( allowedPaths );
         }

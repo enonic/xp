@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
+import com.enonic.xp.admin.impl.json.content.ContentTreeSelectorListJson;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentIdsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentSelectorQueryJson;
@@ -1281,8 +1282,8 @@ public class ContentResourceTest
             thenReturn(  FindContentIdsByQueryResult.create().totalHits( 1L ).contents( ContentIds.from( content1.getId() ) ).build() );
 
         ContentTreeSelectorQueryJson json = initContentTreeSelectorQueryJson(null);
-        List<ContentTreeSelectorJson> result = contentResource.treeSelectorQuery( json );
-        assertEquals( result.get(0).getContent().getId(), content1.getId().toString() );
+        ContentTreeSelectorListJson result = contentResource.treeSelectorQuery( json );
+        assertEquals( result.getItems().get(0).getContent().getId(), content1.getId().toString() );
 
         Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).
             thenReturn(FindContentIdsByQueryResult.create().totalHits( 1L ).contents( ContentIds.from( content4.getId() ) ).build() ).
@@ -1290,7 +1291,7 @@ public class ContentResourceTest
 
         json = initContentTreeSelectorQueryJson(content1.getPath());
         result = contentResource.treeSelectorQuery( json );
-        assertEquals( result.get(0).getContent().getId(), content2.getId().toString() );
+        assertEquals( result.getItems().get(0).getContent().getId(), content2.getId().toString() );
 
         Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).
             thenReturn(FindContentIdsByQueryResult.create().totalHits( 1L ).contents( ContentIds.from( content4.getId() ) ).build() ).
@@ -1298,17 +1299,7 @@ public class ContentResourceTest
 
         json = initContentTreeSelectorQueryJson(content2.getPath());
         result = contentResource.treeSelectorQuery( json );
-        assertEquals( result.get(0).getContent().getId(), content3.getId().toString() );
-    }
-
-    private QueryExpr constructExprToFindByPaths( final ContentPaths contentsPaths, final ChildOrder order )
-    {
-        final FieldExpr fieldExpr = FieldExpr.from( "_path" );
-
-        final CompareExpr compareExpr = CompareExpr.in( fieldExpr, contentsPaths.stream().
-            map( contentPath -> ValueExpr.string( "/content" + contentPath ) ).collect( Collectors.toList() ) );
-
-        return QueryExpr.from( compareExpr, order != null ? order.getOrderExpressions() : null );
+        assertEquals( result.getItems().get(0).getContent().getId(), content3.getId().toString() );
     }
 
     private ContentTreeSelectorQueryJson initContentTreeSelectorQueryJson(final ContentPath parentPath) {
