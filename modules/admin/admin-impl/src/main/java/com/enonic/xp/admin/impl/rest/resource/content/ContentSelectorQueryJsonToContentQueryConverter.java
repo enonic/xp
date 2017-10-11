@@ -49,8 +49,8 @@ public class ContentSelectorQueryJsonToContentQueryConverter
     public ContentQuery createQuery()
     {
         final ContentQuery.Builder builder = ContentQuery.create().
-            from( this.contentQueryJson.getFrom() != null ? this.contentQueryJson.getFrom() : 0 ).
-            size( this.contentQueryJson.getSize() != null ? this.contentQueryJson.getSize() : -1 ).
+            from( this.contentQueryJson.getFrom() ).
+            size( this.contentQueryJson.getSize() ).
             queryExpr( this.createQueryExpr() ).
             addContentTypeNames( this.getContentTypeNamesFromJson() );
 

@@ -1348,10 +1348,10 @@ public final class ContentResource
     public ContentTreeSelectorListJson treeSelectorQuery( final ContentTreeSelectorQueryJson contentQueryJson )
     {
         final Integer from  = contentQueryJson.getFrom();
-        contentQueryJson.setFrom( null );
+        contentQueryJson.setFrom( 0 );
 
         final Integer size = contentQueryJson.getSize();
-        contentQueryJson.setSize( null );
+        contentQueryJson.setSize( -1 );
 
         final FindContentIdsByQueryResult findResult = findContentsBySelectorQuery( contentQueryJson );
 
