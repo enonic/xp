@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.core.MediaType;
 
@@ -15,6 +16,7 @@ import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
+import com.enonic.xp.admin.impl.json.content.ContentTreeSelectorListJson;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentIdsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentSelectorQueryJson;
@@ -68,6 +70,10 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
+import com.enonic.xp.query.expr.CompareExpr;
+import com.enonic.xp.query.expr.FieldExpr;
+import com.enonic.xp.query.expr.QueryExpr;
+import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.schema.content.ContentType;
@@ -1262,30 +1268,38 @@ public class ContentResourceTest
         Content content3 = createContent( "content-id3", content2.getPath(), "content-name3", "myapplication:content-type" );
         Content content4 = createContent( "content-id4", content3.getPath(), "content-name4", "myapplication:content-type" );
 
-        Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
-            FindContentIdsByQueryResult.create().totalHits( 1L ).contents( ContentIds.from( content4.getId() ) ).build() );
-
+        Mockito.when( this.contentService.getByIds( new GetContentByIdsParams( ContentIds.from( content1.getId() ) ) ) ).thenReturn(
+            Contents.from( content1 ) );
+        Mockito.when( this.contentService.getByIds( new GetContentByIdsParams( ContentIds.from( content2.getId() ) ) ) ).thenReturn(
+            Contents.from( content2 ) );
+        Mockito.when( this.contentService.getByIds( new GetContentByIdsParams( ContentIds.from( content3.getId() ) ) ) ).thenReturn(
+            Contents.from( content3 ) );
         Mockito.when( this.contentService.getByIds( new GetContentByIdsParams( ContentIds.from( content4.getId() ) ) ) ).thenReturn(
             Contents.from( content4 ) );
 
-        Mockito.when( this.contentService.getByPaths( ContentPaths.from( content1.getPath() )) ).thenReturn(
-            Contents.from( content1 ) );
-        Mockito.when( this.contentService.getByPaths( ContentPaths.from( content2.getPath() )) ).thenReturn(
-            Contents.from( content2 ) );
-        Mockito.when( this.contentService.getByPaths( ContentPaths.from( content3.getPath() )) ).thenReturn(
-            Contents.from( content3 ) );
+        Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).
+            thenReturn(FindContentIdsByQueryResult.create().totalHits( 1L ).contents( ContentIds.from( content4.getId() ) ).build() ).
+            thenReturn(  FindContentIdsByQueryResult.create().totalHits( 1L ).contents( ContentIds.from( content1.getId() ) ).build() );
 
         ContentTreeSelectorQueryJson json = initContentTreeSelectorQueryJson(null);
-        List<ContentTreeSelectorJson> result = contentResource.treeSelectorQuery( json );
-        assertEquals( result.get(0).getContent().getId(), content1.getId().toString() );
+        ContentTreeSelectorListJson result = contentResource.treeSelectorQuery( json );
+        assertEquals( result.getItems().get(0).getContent().getId(), content1.getId().toString() );
+
+        Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).
+            thenReturn(FindContentIdsByQueryResult.create().totalHits( 1L ).contents( ContentIds.from( content4.getId() ) ).build() ).
+            thenReturn(  FindContentIdsByQueryResult.create().totalHits( 1L ).contents( ContentIds.from( content2.getId() ) ).build() );
 
         json = initContentTreeSelectorQueryJson(content1.getPath());
         result = contentResource.treeSelectorQuery( json );
-        assertEquals( result.get(0).getContent().getId(), content2.getId().toString() );
+        assertEquals( result.getItems().get(0).getContent().getId(), content2.getId().toString() );
+
+        Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).
+            thenReturn(FindContentIdsByQueryResult.create().totalHits( 1L ).contents( ContentIds.from( content4.getId() ) ).build() ).
+            thenReturn(  FindContentIdsByQueryResult.create().totalHits( 1L ).contents( ContentIds.from( content3.getId() ) ).build() );
 
         json = initContentTreeSelectorQueryJson(content2.getPath());
         result = contentResource.treeSelectorQuery( json );
-        assertEquals( result.get(0).getContent().getId(), content3.getId().toString() );
+        assertEquals( result.getItems().get(0).getContent().getId(), content3.getId().toString() );
     }
 
     private ContentTreeSelectorQueryJson initContentTreeSelectorQueryJson(final ContentPath parentPath) {

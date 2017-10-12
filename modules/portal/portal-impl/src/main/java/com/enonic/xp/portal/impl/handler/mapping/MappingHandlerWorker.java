@@ -13,6 +13,9 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
+import com.enonic.xp.web.websocket.WebSocketConfig;
+import com.enonic.xp.web.websocket.WebSocketContext;
+import com.enonic.xp.web.websocket.WebSocketEndpoint;
 
 final class MappingHandlerWorker
     extends PortalHandlerWorker<PortalRequest>
@@ -45,14 +48,24 @@ final class MappingHandlerWorker
             trace.put( "type", "mapping" );
         }
 
+        final PortalResponse portalResponse;
         if ( this.request.getContent().hasPage() )
         {
-            return renderPage( controllerScript );
+            portalResponse = renderPage( controllerScript );
         }
         else
         {
-            return renderController( controllerScript );
+            portalResponse = renderController( controllerScript );
         }
+
+        final WebSocketConfig webSocketConfig = portalResponse.getWebSocket();
+        final WebSocketContext webSocketContext = this.request.getWebSocketContext();
+        if ( ( webSocketContext != null ) && ( webSocketConfig != null ) )
+        {
+            final WebSocketEndpoint webSocketEndpoint = new WebSocketEndpointImpl( webSocketConfig, this::getScript );
+            webSocketContext.apply( webSocketEndpoint );
+        }
+        return portalResponse;
     }
 
     private PortalResponse renderPage( final ControllerScript controllerScript )

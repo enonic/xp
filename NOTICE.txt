@@ -1,84 +1,87 @@
 
 Licenses used by Enonic XP
 
-Most of the software used in this project is licensed as Apache 2.0 license.
-See http://www.apache.org/licenses/LICENSE-2.0 for license terms.
-
-Other software licenses used by this product:
-
-    OSGi Specifications
-    OSGi Specification License, Version 2.0.
-    http://www.osgi.org/Specifications/Licensing
-
-    SLF4J Libraries
-    MIT License
-    http://slf4j.org/license.html
-
-    JMustache
-    Liberal license from Michael Bayne
-    https://github.com/samskivert/jmustache/blob/master/LICENSE
-
-    Logback Libraries
-    Eclipse Public License - Version 1.0
-    https://www.eclipse.org/legal/epl-v10.html
-
-    Saxon HE
-    Mozilla Public License - Version 2.0
-    https://www.mozilla.org/MPL/2.0/
-
-    JavaMail
-    CDDL and others.
-    JavaMail is included in Java, but has some special licensing: https://java.net/projects/javamail/pages/License
+    Java Activation Framework
+    Common Development and Distribution License (CDDL) v.1.0
+    http://www.oracle.com/technetwork/java/jaf11-139815.html
 
     ATTO Parser
     MIT License
     https://github.com/tpolecat/atto
 
-    Tiny MCE
-    GNU LGPL 2.1
-    https://raw.githubusercontent.com/tinymce/tinymce/master/LICENSE.TXT
-
-    Web Components
-    BSD "style" license:
-    https://github.com/webcomponents/webcomponentsjs/blob/master/LICENSE.md
-
-Javascript library licenses used by this product:
-
-    CodeMirror
-    Liberal license from Marijn Haverbeke
-    https://github.com/codemirror/CodeMirror/blob/master/LICENSE
-
-    Crossroads.js
+    Bouncy Castle
     MIT License
-    http://millermedeiros.github.io/crossroads.js
+    https://bouncycastle.org/licence.html
 
-    Fine Uploader
+    Apache Commons
+    Apache License 2.0
+    https://commons.apache.org/proper/commons-daemon/license.html
+
+    ElasticSearch
+    Apache License 2.0
+    https://github.com/elastic/elasticsearch/blob/master/LICENSE.txt
+
+    Apache Felix Framework
+    Apache License 2.0
+    https://felix.apache.org/license.html
+
+    Google Guava
+    Apache License 2.0
+    https://github.com/google/guava/blob/master/COPYING
+
+    Jackson Annotations
+    Apache License 2.0
+    https://github.com/FasterXML/jackson-annotations
+
+    Jackson Core
+    Apache License 2.0
+    https://github.com/FasterXML/jackson-core
+
+    Jackson Databind
+    Apache License 2.0
+    https://github.com/FasterXML/jackson-databind
+
+    Jackson Datatype JSR310
+    Apache License 2.0
+    https://github.com/FasterXML/jackson-datatype-jsr310
+
+    Jackson JAX-RS (Base and JSON)
+    Apache License 2.0
+    https://github.com/FasterXML/jackson-jaxrs-providers
+
+    JParSec
+    Apache License 2.0
+    https://github.com/jparsec/jparsec/blob/master/LICENSE
+
+    Logback Libraries
+    Eclipse Public License - Version 1.0
+    https://www.eclipse.org/legal/epl-v10.html
+
+    JavaMail
+    Common Development and Distribution License (CDDL) v.1.0
+    https://javaee.github.io/javamail/LICENSE
+
+    Metrics
+    Apache License 2.0
+    https://github.com/dropwizard/metrics/blob/4.0-development/LICENSE
+
+    OK Http
+    Apache License 2.0
+    https://github.com/square/okhttp/blob/master/LICENSE.txt
+
+    OSGi Utilities
+    Apache License 2.0
+    https://www.mvnrepository.com/artifact/org.osgi/org.osgi.core
+    https://www.mvnrepository.com/artifact/org.osgi/org.osgi.compendium
+
+    Rest Easy
+    Apache License 2.0
+    https://github.com/resteasy/Resteasy/blob/master/License.html
+
+    SLF4J Libraries
     MIT License
-    http://fineuploader.com/
+    http://slf4j.org/license.html
 
-    Hasher
-    MIT License
-    http://github.com/millermedeiros/hasher
-
-    Signals
-    MIT License
-    http://millermedeiros.github.com/js-signals
-
-    JQuery
-    MIT License
-    https://jquery.org/license/
-
-    Q.js
-    Very liberal license from Kristopher Michael Kowal
-    https://github.com/kriskowal/q/blob/v1/LICENSE
-
-    SlickGrid
-    MIT License
-    https://github.com/mleibman/SlickGrid/blob/master/MIT-LICENSE.txt
-
-Artwork licenses used by this product:
-
-    IcoMoon icons (Ultimate Pack)
-    Need seperate development licenses for developing software using the icons.
-    https://icomoon.io/#icons-icomoon/license
-
+    Apache Tika
+    Apache License 2.0
+    https://tika.apache.org/license.html

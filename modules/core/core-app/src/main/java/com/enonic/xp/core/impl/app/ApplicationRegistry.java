@@ -20,18 +20,21 @@ final class ApplicationRegistry
 {
     private final ConcurrentMap<ApplicationKey, Application> applications;
 
-    private final BundleContext context;
+    private BundleContext context;
 
     private final ApplicationFactory factory;
 
     private final List<ApplicationInvalidator> invalidators;
 
-    public ApplicationRegistry( final BundleContext context )
+    public ApplicationRegistry()
     {
-        this.context = context;
         this.applications = Maps.newConcurrentMap();
         this.factory = new ApplicationFactory( RunMode.get() );
         this.invalidators = Lists.newCopyOnWriteArrayList();
+    }
+    
+    public void activate(final BundleContext context) {
+        this.context = context;
     }
 
     public ApplicationKeys getKeys()

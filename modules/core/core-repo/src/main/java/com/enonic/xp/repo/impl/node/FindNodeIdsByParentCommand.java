@@ -81,7 +81,9 @@ public class FindNodeIdsByParentCommand
 
         if ( result.getNumberOfHits() == 0 )
         {
-            return FindNodesByParentResult.empty();
+            return FindNodesByParentResult.create().
+                totalHits( result.getTotalHits() ).
+                build();
         }
 
         return FindNodesByParentResult.create().
