@@ -84,7 +84,7 @@ exports.testGet = function () {
                 "items": [
                     {
                         "formItemType": "Input",
-                        "name": "myTextLine",
+                        "name": "myTextLineInFieldSet",
                         "label": "My text line",
                         "maximize": true,
                         "inputType": "TextLine",
@@ -278,7 +278,7 @@ exports.testList = function () {
                     "items": [
                         {
                             "formItemType": "Input",
-                            "name": "myTextLine",
+                            "name": "myTextLineInFieldSet",
                             "label": "My text line",
                             "maximize": true,
                             "inputType": "TextLine",

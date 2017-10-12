@@ -31,8 +31,10 @@ public final class Form
                 this.formItems.add( formItem );
             }
         }
+        FormValidator.validate( this );
     }
 
+    @Deprecated
     public void addFormItem( final FormItem formItem )
     {
         this.formItems.add( formItem );
