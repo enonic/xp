@@ -1,8 +1,10 @@
 package com.enonic.xp.admin.impl.rest.resource.security;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +35,7 @@ import com.enonic.xp.admin.impl.rest.resource.security.json.DeleteUserStoreJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.DeleteUserStoreResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.DeleteUserStoresResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.EmailAvailabilityJson;
+import com.enonic.xp.admin.impl.rest.resource.security.json.FetchPrincipalsByKeysJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.FindPrincipalsResultJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.GroupJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.PrincipalJson;
@@ -259,21 +262,14 @@ public final class SecurityResource
         return new FindPrincipalsResultJson( result.getPrincipals(), result.getTotalSize() );
     }
 
-    @GET
-    @Path("principals/{key:.+}")
-    public PrincipalJson getPrincipalByKey( @PathParam("key") final String keyParam,
-                                            @QueryParam("memberships") final String resolveMembershipsParam )
-    {
-        final boolean resolveMemberships = "true".equals( resolveMembershipsParam );
-        final PrincipalKey principalKey = PrincipalKey.from( keyParam );
-        final Optional<? extends Principal> principalResult = securityService.getPrincipal( principalKey );
+    private PrincipalJson principalToJson(final Principal principal, final Boolean resolveMemberships) {
 
-        if ( !principalResult.isPresent() )
-        {
-            throw JaxRsExceptions.notFound( String.format( "Principal [%s] was not found", keyParam ) );
+        if(principal == null) {
+            return null;
         }
 
-        final Principal principal = principalResult.get();
+        final PrincipalKey principalKey = principal.getKey();
+
         switch ( principalKey.getType() )
         {
             case USER:
@@ -305,8 +301,45 @@ public final class SecurityResource
                 final PrincipalKeys roleMembers = getMembers( principalKey );
                 return new RoleJson( (Role) principal, roleMembers );
         }
+        return null;
+    }
 
-        throw JaxRsExceptions.notFound( String.format( "Principal [%s] was not found", keyParam ) );
+    @POST
+    @Path("principals/resolveByKeys")
+    public List<PrincipalJson> getPrincipalsByKeys( final FetchPrincipalsByKeysJson json )
+    {
+        final PrincipalKeys principalKeys =
+            PrincipalKeys.from( json.getKeys().stream().map( key -> PrincipalKey.from( key ) ).collect( Collectors.toList() ) );
+
+        final Principals principalsResult = securityService.getPrincipals( principalKeys );
+
+        return principalsResult.stream().map( principal -> this.principalToJson( principal, json.getResolveMemberships() ) ).collect( Collectors.toList() );
+    }
+
+    @GET
+    @Path("principals/{key:.+}")
+    public PrincipalJson getPrincipalByKey( @PathParam("key") final String keyParam,
+                                            @QueryParam("memberships") final String resolveMembershipsParam )
+    {
+        final boolean resolveMemberships = "true".equals( resolveMembershipsParam );
+        final PrincipalKey principalKey = PrincipalKey.from( keyParam );
+        final Optional<? extends Principal> principalResult = securityService.getPrincipal( principalKey );
+
+        if ( !principalResult.isPresent() )
+        {
+            throw JaxRsExceptions.notFound( String.format( "Principal [%s] was not found", keyParam ) );
+        }
+
+        final Principal principal = principalResult.get();
+
+        final PrincipalJson jsonResult = this.principalToJson( principal, resolveMemberships );
+
+        if(jsonResult == null)
+        {
+            throw JaxRsExceptions.notFound( String.format( "Principal [%s] was not found", keyParam ) );
+        }
+
+        return jsonResult;
     }
 
     @GET
