@@ -4,6 +4,8 @@ import java.net.URLEncoder;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import javax.ws.rs.WebApplicationException;
@@ -394,6 +396,47 @@ public class SecurityResourceTest
         assertJson( "getPrincipalRoleById.json", jsonString );
     }
 
+    @Test
+    public void getPrincipalsByKeys()
+        throws Exception
+    {
+        final Role role = Role.create().
+            key( PrincipalKey.ofRole( "superuser" ) ).
+            displayName( "Super user role" ).
+            modifiedTime( Instant.now( clock ) ).
+            description( "super u" ).
+            build();
+
+        final User user = User.create().
+            key( PrincipalKey.ofUser( USER_STORE_1, "a" ) ).
+            displayName( "Alice" ).
+            modifiedTime( Instant.now( clock ) ).
+            email( "alice@a.org" ).
+            login( "alice" ).
+            build();
+
+        final Group group = Group.create().
+            key( PrincipalKey.ofGroup( UserStoreKey.system(), "group-a" ) ).
+            displayName( "Group A" ).
+            description( "group a" ).
+            modifiedTime( Instant.now( clock ) ).
+            build();
+
+        Mockito.when( securityService.getPrincipals( PrincipalKeys.from( user.getKey(), group.getKey(), role.getKey() ) ) ).thenReturn(
+            Principals.from( user, group, role ) );
+
+        Mockito.when( securityService.getRelationships( PrincipalKey.from( group.getKey().toString() ) ) ).thenReturn(
+            PrincipalRelationships.empty() );
+        Mockito.when( securityService.getRelationships( PrincipalKey.from( role.getKey().toString() ) ) ).thenReturn(
+            PrincipalRelationships.empty() );
+
+        final String jsonString = request().
+            path( "security/principals/resolveByKeys" )
+            .entity( readFromFile( "getPrincipalsByKeysParams.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "getPrincipalsByKeys.json", jsonString );
+    }
 
     @Test
     public void isEmailAvailableNegative()
