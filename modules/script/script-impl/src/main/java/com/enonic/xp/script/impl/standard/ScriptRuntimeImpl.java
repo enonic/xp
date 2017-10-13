@@ -1,4 +1,4 @@
-package com.enonic.xp.script.impl;
+package com.enonic.xp.script.impl.standard;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;

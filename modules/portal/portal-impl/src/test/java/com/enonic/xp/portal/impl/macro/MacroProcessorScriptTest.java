@@ -25,7 +25,7 @@ import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
-import com.enonic.xp.script.impl.ScriptRuntimeFactoryImpl;
+import com.enonic.xp.script.impl.standard.ScriptRuntimeFactoryImpl;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.Assert.*;

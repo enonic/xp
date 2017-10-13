@@ -19,7 +19,7 @@ import com.enonic.xp.portal.impl.script.PortalScriptServiceImpl;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
-import com.enonic.xp.script.impl.ScriptRuntimeFactoryImpl;
+import com.enonic.xp.script.impl.standard.ScriptRuntimeFactoryImpl;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.servlet.ServletRequestHolder;

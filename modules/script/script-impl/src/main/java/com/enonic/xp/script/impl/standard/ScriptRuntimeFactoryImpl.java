@@ -1,4 +1,4 @@
-package com.enonic.xp.script.impl;
+package com.enonic.xp.script.impl.standard;
 
 import java.util.List;
 
@@ -7,17 +7,17 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.Lists;
 
-import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.script.impl.ScriptRuntimeProvider;
 import com.enonic.xp.script.runtime.ScriptRuntime;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
 import com.enonic.xp.script.runtime.ScriptSettings;
 
-@Component(immediate = true, service = {ScriptRuntimeFactory.class, ApplicationInvalidator.class})
+@Component(immediate = true, property = "provider=standard", service = {ScriptRuntimeProvider.class})
 public final class ScriptRuntimeFactoryImpl
-    implements ScriptRuntimeFactory, ApplicationInvalidator
+    implements ScriptRuntimeProvider, ScriptRuntimeFactory
 {
     private final List<ScriptRuntime> list;
 
