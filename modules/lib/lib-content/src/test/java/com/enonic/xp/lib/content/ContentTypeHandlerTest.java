@@ -177,7 +177,7 @@ public class ContentTypeHandlerTest
             name( "myFieldSet" ).
             label( "My field set" ).
             addFormItem( Input.create().
-                name( "myTextLine" ).
+                name( "myTextLineInFieldSet" ).
                 inputType( InputTypeName.TEXT_LINE ).
                 label( "My text line" ).
                 required( false ).

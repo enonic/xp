@@ -60,7 +60,7 @@
                 "inputType": "TextLine",
                 "label": "My text line",
                 "maximizeUIInputWidth": true,
-                "name": "myTextLine",
+                "name": "myTextLine2",
                 "occurrences": {
                   "maximum": 1,
                   "minimum": 0
