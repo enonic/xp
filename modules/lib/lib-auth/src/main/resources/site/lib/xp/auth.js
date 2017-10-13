@@ -398,3 +398,22 @@ exports.findUsers = function (params) {
     bean.includeProfile = !!params.includeProfile;
     return __.toNativeObject(bean.execute());
 };
+
+/**
+ * Creates a role.
+ *
+ * @example-ref examples/auth/createRole.js
+ *
+ * @param {string} principalKey Key of the role to create.
+ * @param {string} params.displayName Group display name.
+ * @param {string} params.description as principal description .
+ */
+exports.createRole = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.CreateRoleHandler');
+
+    bean.key = nullOrValue(params.key);
+    bean.displayName = nullOrValue(params.displayName);
+    bean.description = nullOrValue(params.description);
+
+    return __.toNativeObject(bean.createRole());
+};
