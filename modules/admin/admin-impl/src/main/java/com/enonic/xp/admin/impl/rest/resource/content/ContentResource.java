@@ -1353,18 +1353,16 @@ public final class ContentResource
         final Integer size = contentQueryJson.getSize();
         contentQueryJson.setSize( -1 );
 
-        final FindContentIdsByQueryResult findResult = findContentsBySelectorQuery( contentQueryJson );
-
-        final Contents contents = this.contentService.getByIds( new GetContentByIdsParams( findResult.getContentIds() ) );
+        final ContentPaths targetContentPaths = findContentPathsBySelectorQuery( contentQueryJson );
 
         final ContentPath parentPath = contentQueryJson.getParentPath();
         final Integer parentPathSize = parentPath != null ? parentPath.elementCount() : 0;
 
-        final List<ContentPath> layerPaths = contents.stream().
-            filter( content -> parentPath != null ? content.getPath().isChildOf( parentPath ) : true ).
-            map( content -> content.getPath().getAncestorPath( content.getPath().elementCount() - parentPathSize - 1 ) ).
+        final Set<ContentPath> layerPaths = targetContentPaths.stream().
+            filter( path -> parentPath != null ? path.isChildOf( parentPath ) : true ).
+            map( path -> path.getAncestorPath( path.elementCount() - parentPathSize - 1 ) ).
 
-            collect( Collectors.toList() );
+            collect( Collectors.toSet() );
 
         if(layerPaths.size() == 0) {
             return ContentTreeSelectorListJson.empty();
@@ -1383,7 +1381,7 @@ public final class ContentResource
         final List<ContentTreeSelectorJson> resultItems = contentService.getByIds( new GetContentByIdsParams( findLayerContentsResult.getContentIds() ) ).
             stream().
             map( content -> new ContentTreeSelectorJson( new ContentJson( content, contentIconUrlResolver, principalsResolver ),
-                                                         contents.contains( content ), contents.stream().anyMatch( child -> child.getPath().isChildOf( content.getPath() ) ) ) ).
+                                                         !targetContentPaths.contains( content.getPath() ) ) ).
             collect( Collectors.toList() );
 
         final ContentListMetaData metaData = ContentListMetaData.create().hits( findLayerContentsResult.getHits() ).totalHits(
@@ -1394,15 +1392,22 @@ public final class ContentResource
 
     private FindContentIdsByQueryResult findContentsBySelectorQuery( final ContentSelectorQueryJson contentQueryJson )
     {
+        return contentService.find( makeConverterFromSelectorQuery( contentQueryJson ).createQuery() );
+    }
 
-        final ContentSelectorQueryJsonToContentQueryConverter selectorQueryProcessor =
-            ContentSelectorQueryJsonToContentQueryConverter.create().
-                contentQueryJson( contentQueryJson ).
-                contentService( this.contentService ).
-                relationshipTypeService( this.relationshipTypeService ).
-                build();
+    private ContentPaths findContentPathsBySelectorQuery( final ContentSelectorQueryJson contentQueryJson )
+    {
+        return contentService.findContentPaths( makeConverterFromSelectorQuery( contentQueryJson ).createQuery() );
+    }
 
-        return contentService.find( selectorQueryProcessor.createQuery() );
+    private ContentSelectorQueryJsonToContentQueryConverter makeConverterFromSelectorQuery(
+        final ContentSelectorQueryJson contentQueryJson )
+    {
+        return ContentSelectorQueryJsonToContentQueryConverter.create().
+            contentQueryJson( contentQueryJson ).
+            contentService( this.contentService ).
+            relationshipTypeService( this.relationshipTypeService ).
+            build();
     }
 
     @POST
@@ -1698,7 +1703,7 @@ public final class ContentResource
         final FieldExpr fieldExpr = FieldExpr.from( "_path" );
 
         final CompareExpr compareExpr = CompareExpr.in( fieldExpr, contentsPaths.stream().
-            map( contentPath -> ValueExpr.string( "/content" + contentPath ) ).collect( Collectors.toList() ) );
+            map( contentPath -> ValueExpr.string( "/content/" + contentPath ) ).collect( Collectors.toList() ) );
 
         return QueryExpr.from( compareExpr, order != null ? order.getOrderExpressions() : null );
     }

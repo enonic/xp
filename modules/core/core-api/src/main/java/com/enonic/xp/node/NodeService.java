@@ -42,6 +42,8 @@ public interface NodeService
 
     FindNodesByQueryResult findByQuery( NodeQuery nodeQuery );
 
+    FindNodePathsByQueryResult findNodePathsByQuery( NodeQuery nodeQuery );
+
     FindNodesByMultiRepoQueryResult findByQuery( MultiRepoNodeQuery nodeQuery );
 
     NodeComparison compare( NodeId id, Branch target );

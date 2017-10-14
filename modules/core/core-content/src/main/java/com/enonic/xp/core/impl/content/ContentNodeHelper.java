@@ -37,6 +37,13 @@ class ContentNodeHelper
         return builder.build();
     }
 
+    public static ContentPaths translateNodePathsToContentPaths( final NodePaths nodePaths )
+    {
+        return ContentPaths.from(
+            nodePaths.stream().map( ( nodePath -> ContentNodeHelper.translateNodePathToContentPath( nodePath ) ) ).collect(
+                Collectors.toList() ) );
+    }
+
     public static ContentPath translateNodePathToContentPath( final NodePath nodePath )
     {
         final String contentPath = StringUtils.substringAfter( nodePath.asAbsolute().toString(), CONTENT_ROOT_NODE_NAME + "/" );

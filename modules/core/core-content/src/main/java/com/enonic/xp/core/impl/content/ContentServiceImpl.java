@@ -49,6 +49,7 @@ import com.enonic.xp.content.FindContentByQueryParams;
 import com.enonic.xp.content.FindContentByQueryResult;
 import com.enonic.xp.content.FindContentIdsByParentResult;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
+import com.enonic.xp.content.FindContentPathsByQueryParams;
 import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.GetActiveContentVersionsParams;
@@ -610,6 +611,17 @@ public class ContentServiceImpl
     {
         return FindContentIdsByQueryCommand.create().
             query( query ).
+            nodeService( this.nodeService ).
+            contentTypeService( this.contentTypeService ).
+            translator( this.translator ).
+            eventPublisher( this.eventPublisher ).
+            build().
+            execute();
+    }
+
+    public ContentPaths findContentPaths( ContentQuery query){
+        return FindContentPathsByQueryCommand.create().
+            params( new FindContentPathsByQueryParams( query) ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
