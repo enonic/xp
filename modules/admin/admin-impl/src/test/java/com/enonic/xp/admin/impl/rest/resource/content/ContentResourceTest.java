@@ -1277,16 +1277,17 @@ public class ContentResourceTest
         Mockito.when( this.contentService.getByIds( new GetContentByIdsParams( ContentIds.from( content4.getId() ) ) ) ).thenReturn(
             Contents.from( content4 ) );
 
+        Mockito.when( this.contentService.findContentPaths( Mockito.isA( ContentQuery.class ) ) ).
+            thenReturn(ContentPaths.from( content4.getPath()) );
+
         Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).
-            thenReturn(FindContentIdsByQueryResult.create().totalHits( 1L ).contents( ContentIds.from( content4.getId() ) ).build() ).
             thenReturn(  FindContentIdsByQueryResult.create().totalHits( 1L ).contents( ContentIds.from( content1.getId() ) ).build() );
 
         ContentTreeSelectorQueryJson json = initContentTreeSelectorQueryJson(null);
         ContentTreeSelectorListJson result = contentResource.treeSelectorQuery( json );
         assertEquals( result.getItems().get(0).getContent().getId(), content1.getId().toString() );
 
-        Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).
-            thenReturn(FindContentIdsByQueryResult.create().totalHits( 1L ).contents( ContentIds.from( content4.getId() ) ).build() ).
+       Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).
             thenReturn(  FindContentIdsByQueryResult.create().totalHits( 1L ).contents( ContentIds.from( content2.getId() ) ).build() );
 
         json = initContentTreeSelectorQueryJson(content1.getPath());
@@ -1294,7 +1295,6 @@ public class ContentResourceTest
         assertEquals( result.getItems().get(0).getContent().getId(), content2.getId().toString() );
 
         Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).
-            thenReturn(FindContentIdsByQueryResult.create().totalHits( 1L ).contents( ContentIds.from( content4.getId() ) ).build() ).
             thenReturn(  FindContentIdsByQueryResult.create().totalHits( 1L ).contents( ContentIds.from( content3.getId() ) ).build() );
 
         json = initContentTreeSelectorQueryJson(content2.getPath());
