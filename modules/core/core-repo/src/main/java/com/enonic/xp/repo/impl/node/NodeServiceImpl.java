@@ -211,6 +211,7 @@ public class NodeServiceImpl
             execute();
     }
 
+    @Override
     public FindNodePathsByQueryResult findNodePathsByQuery( NodeQuery nodeQuery )
     {
         verifyContext();
