@@ -82,6 +82,8 @@ public interface ContentService
 
     FindContentIdsByQueryResult find( ContentQuery query );
 
+    ContentPaths findContentPaths( ContentQuery query);
+
     CompareContentResult compare( CompareContentParams params );
 
     CompareContentResults compare( CompareContentsParams params );
