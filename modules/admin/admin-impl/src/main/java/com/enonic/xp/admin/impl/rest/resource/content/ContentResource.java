@@ -1381,7 +1381,7 @@ public final class ContentResource
         final List<ContentTreeSelectorJson> resultItems = contentService.getByIds( new GetContentByIdsParams( findLayerContentsResult.getContentIds() ) ).
             stream().
             map( content -> new ContentTreeSelectorJson( new ContentJson( content, contentIconUrlResolver, principalsResolver ),
-                                                         !targetContentPaths.contains( content.getPath() ),
+                                                         targetContentPaths.contains( content.getPath() ),
                                                          targetContentPaths.stream().anyMatch( path -> path.isChildOf( content.getPath() )) )).
             collect( Collectors.toList() );
 
