@@ -619,9 +619,11 @@ public class ContentServiceImpl
             execute();
     }
 
-    public ContentPaths findContentPaths( ContentQuery query){
+    @Override
+    public ContentPaths findContentPaths( ContentQuery query )
+    {
         return FindContentPathsByQueryCommand.create().
-            params( new FindContentPathsByQueryParams( query) ).
+            params( new FindContentPathsByQueryParams( query ) ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).

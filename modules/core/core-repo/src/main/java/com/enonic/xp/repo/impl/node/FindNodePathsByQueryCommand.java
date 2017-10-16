@@ -3,9 +3,7 @@ package com.enonic.xp.repo.impl.node;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.FindNodePathsByQueryResult;
-import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.repo.impl.ReturnFields;
@@ -28,11 +26,6 @@ public class FindNodePathsByQueryCommand
         return new Builder();
     }
 
-    public static Builder create( final AbstractNodeCommand source )
-    {
-        return new Builder( source );
-    }
-
     public FindNodePathsByQueryResult execute()
     {
         final SearchResult result = nodeSearchService.query( this.query, ReturnFields.from( NodeIndexPath.PATH ), SingleRepoSearchSource.from( ContextAccessor.current() ) );
@@ -48,11 +41,6 @@ public class FindNodePathsByQueryCommand
         private Builder()
         {
             super();
-        }
-
-        private Builder( final AbstractNodeCommand source )
-        {
-            super( source );
         }
 
         public Builder query( NodeQuery query )
