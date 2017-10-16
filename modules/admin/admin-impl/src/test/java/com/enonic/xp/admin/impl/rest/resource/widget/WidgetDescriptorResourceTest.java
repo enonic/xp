@@ -49,7 +49,7 @@ public class WidgetDescriptorResourceTest
 
         final Descriptors<WidgetDescriptor> widgetDescriptors = Descriptors.from( widgetDescriptor1, widgetDescriptor2 );
 
-        Mockito.when( widgetDescriptorService.getByInterfaces( Mockito.any() ) ).thenReturn( widgetDescriptors );
+        Mockito.when( widgetDescriptorService.getAllowedByInterfaces( Mockito.any() ) ).thenReturn( widgetDescriptors );
 
         String jsonString = request().path( "widget/list/byinterfaces" ).entity( "[\"someInterfaceName\"]",
                                                                                  MediaType.APPLICATION_JSON_TYPE ).post().getAsString();

@@ -81,7 +81,7 @@ public class WidgetDescriptorServiceTest
     public void get_by_interfaces()
         throws Exception
     {
-        final Descriptors<WidgetDescriptor> result = this.service.getByInterfaces( "com.enonic.xp.my-interface" );
+        final Descriptors<WidgetDescriptor> result = this.service.getAllowedByInterfaces( "com.enonic.xp.my-interface" );
         assertEquals( 2, result.getSize() );
         assertTrue( result.contains( widgetDescriptor1 ) );
         assertTrue( result.contains( widgetDescriptor4 ) );
@@ -99,7 +99,7 @@ public class WidgetDescriptorServiceTest
             authInfo( authenticationInfo ).build();
 
         adminContext.runWith( () -> {
-            final Descriptors<WidgetDescriptor> result = this.service.getByInterfaces( "com.enonic.xp.my-interface" );
+            final Descriptors<WidgetDescriptor> result = this.service.getAllowedByInterfaces( "com.enonic.xp.my-interface" );
             assertEquals( 4, result.getSize() );
             assertTrue( result.contains( widgetDescriptor1 ) );
             assertTrue( result.contains( widgetDescriptor3 ) );
@@ -112,22 +112,10 @@ public class WidgetDescriptorServiceTest
     public void get_by_key()
         throws Exception
     {
-        final WidgetDescriptor forbiddenWidget = this.service.getByKey( DescriptorKey.from( "app:c" ) );
-        assertNull( forbiddenWidget );
-
         final WidgetDescriptor allowedWidget = this.service.getByKey( DescriptorKey.from( "app:d" ) );
         assertTrue( allowedWidget == widgetDescriptor4 );
 
         final WidgetDescriptor unknownWidget = this.service.getByKey( DescriptorKey.from( "app:unknown" ) );
         assertNull( unknownWidget );
-    }
-
-    @Test
-    public void widget_exists()
-        throws Exception
-    {
-        assertTrue( this.service.widgetExists( DescriptorKey.from( "app:c" ) ) );
-        assertTrue( this.service.widgetExists( DescriptorKey.from( "app:d" ) ) );
-        assertFalse( this.service.widgetExists( DescriptorKey.from( "app:unknown" ) ) );
     }
 }

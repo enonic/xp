@@ -41,7 +41,20 @@ final class WidgetHandlerWorker
         }
 
         //Retrieves the WidgetDescriptor
-        final WidgetDescriptor widgetDescriptor = getWidgetDescriptor();
+        final WidgetDescriptor widgetDescriptor = widgetDescriptorService.getByKey( descriptorKey );
+        if ( widgetDescriptor == null )
+        {
+            throw notFound( "Widget [%s] not found", descriptorKey.toString() );
+        }
+
+        //Checks if the access to WidgetDescriptor is allowed
+        final PrincipalKeys principals = ContextAccessor.current().
+            getAuthInfo().
+            getPrincipals();
+        if ( !widgetDescriptor.isAccessAllowed( principals ) )
+        {
+            throw forbidden( "You don't have permission to access [%s]", descriptorKey.toString() );
+        }
 
         //Renders the widget
         this.request.setApplicationKey( this.descriptorKey.getApplicationKey() );
@@ -52,19 +65,5 @@ final class WidgetHandlerWorker
         final ResourceKey scriptDir = ResourceKey.from( descriptorKey.getApplicationKey(), "admin/widgets/" + descriptorKey.getName() );
         final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( scriptDir );
         return controllerScript.execute( this.request );
-    }
-    
-    private WidgetDescriptor getWidgetDescriptor() {
-        final WidgetDescriptor widgetDescriptor = widgetDescriptorService.getByKey( descriptorKey );
-        if ( widgetDescriptor != null )
-        {
-            return widgetDescriptor;
-        }
-        
-        if (widgetDescriptorService.widgetExists( descriptorKey )) {
-            throw forbidden( "You don't have permission to access [%s]", descriptorKey.toString() );
-        } else {
-            throw notFound( "Widget [%s] not found", descriptorKey.toString() );
-        }        
     }
 }

@@ -20,7 +20,7 @@ public final class WidgetDescriptorServiceImpl
     private DescriptorService descriptorService;
 
     @Override
-    public Descriptors<WidgetDescriptor> getByInterfaces( final String... interfaceNames )
+    public Descriptors<WidgetDescriptor> getAllowedByInterfaces( final String... interfaceNames )
     {
         final PrincipalKeys userPrincipalKeys = getPrincipalKeys();
         return this.descriptorService.getAll( WidgetDescriptor.class ).
@@ -40,18 +40,7 @@ public final class WidgetDescriptorServiceImpl
     @Override
     public WidgetDescriptor getByKey( final DescriptorKey descriptorKey )
     {
-        final WidgetDescriptor widgetDescriptor = this.descriptorService.get( WidgetDescriptor.class, descriptorKey );
-        if ( widgetDescriptor != null && widgetDescriptor.isAccessAllowed( getPrincipalKeys() ) )
-        {
-            return widgetDescriptor;
-        }
-        return null;
-    }
-
-    @Override
-    public boolean widgetExists( final DescriptorKey descriptorKey )
-    {
-        return this.descriptorService.get( WidgetDescriptor.class, descriptorKey ) != null;
+        return this.descriptorService.get( WidgetDescriptor.class, descriptorKey );
     }
 
 
