@@ -71,10 +71,12 @@ public final class AppHandler
         final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( 1 ) );
         final String restPath = matcher.group( 2 );
 
-        final WebResponse response = serveAsset( applicationKey, restPath );
-        if ( response != null )
-        {
-            return response;
+        if (restPath != null && !"/".equals( restPath )) {
+            final WebResponse response = serveAsset( applicationKey, restPath );
+            if ( response != null )
+            {
+                return response;
+            }
         }
 
         final PortalRequest portalRequest = createRequest( req, applicationKey );
