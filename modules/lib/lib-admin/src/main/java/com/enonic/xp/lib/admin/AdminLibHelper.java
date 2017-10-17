@@ -1,5 +1,7 @@
 package com.enonic.xp.lib.admin;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -7,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
+
+import static java.util.stream.Collectors.toList;
 
 public final class AdminLibHelper
 {
@@ -41,6 +45,30 @@ public final class AdminLibHelper
         final HttpServletRequest req = ServletRequestHolder.getRequest();
         final Locale locale = req != null ? req.getLocale() : Locale.getDefault();
         return resolveLanguage( locale.getLanguage().toLowerCase() );
+    }
+
+    public List<String> getLocales()
+    {
+        final HttpServletRequest req = ServletRequestHolder.getRequest();
+        final List<Locale> locales;
+        if ( req != null )
+        {
+            locales = Collections.list( req.getLocales() );
+        }
+        else
+        {
+            locales = Collections.singletonList( Locale.getDefault() );
+        }
+
+        final List<String> localeList = locales.stream().map( ( l ) -> resolveLanguage( l.toString().toLowerCase() ) ).collect( toList() );
+        if ( localeList.isEmpty() )
+        {
+            return Collections.singletonList( resolveLanguage( Locale.getDefault().getLanguage().toLowerCase() ) );
+        }
+        else
+        {
+            return localeList;
+        }
     }
 
     /**

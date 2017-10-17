@@ -12,7 +12,16 @@ exports.testLocalize = function () {
 exports.testLocalizeWithLocale = function () {
     var result = i18n.localize({
         key: 'myKey',
-        locale: 'en-US'
+        locale: 'en_US'
+    });
+
+    t.assertEquals("[myKey]", result);
+};
+
+exports.testLocalizeWithMultipleLocale = function () {
+    var result = i18n.localize({
+        key: 'myKey',
+        locale: ['es', 'en_US']
     });
 
     t.assertEquals("[myKey]", result);
