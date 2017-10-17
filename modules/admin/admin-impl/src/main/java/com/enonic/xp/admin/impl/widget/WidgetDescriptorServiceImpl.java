@@ -20,6 +20,13 @@ public final class WidgetDescriptorServiceImpl
     private DescriptorService descriptorService;
 
     @Override
+    public Descriptors<WidgetDescriptor> getByInterfaces( final String... interfaceNames )
+    {
+        return this.descriptorService.getAll( WidgetDescriptor.class ).
+            filter( widgetDescriptor -> Arrays.stream( interfaceNames ).anyMatch( widgetDescriptor::hasInterface ) );
+    }
+    
+    @Override
     public Descriptors<WidgetDescriptor> getAllowedByInterfaces( final String... interfaceNames )
     {
         final PrincipalKeys userPrincipalKeys = getPrincipalKeys();
