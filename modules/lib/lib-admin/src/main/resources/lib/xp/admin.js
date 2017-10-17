@@ -30,7 +30,7 @@ exports.getAssetsUri = function () {
 };
 
 /**
- * Returns the current locale based on request or server.
+ * Returns the preferred locale based on the current HTTP request, or the server default locale if none is specified.
  *
  * @returns {string} Current locale.
  */
@@ -39,12 +39,21 @@ exports.getLocale = function () {
 };
 
 /**
+ * Returns the list of preferred locales based on the current HTTP request, or the server default locale if none is specified.
+ *
+ * @returns {string[]} Current locales in order of preference.
+ */
+exports.getLocales = function () {
+    return __.toNativeObject(helper.getLocales());
+};
+
+/**
  * Returns all i18n phrases.
  *
  * @returns {string} Current locale.
  */
 exports.getPhrases = function () {
-    return JSON.stringify(i18n.getPhrases(helper.getLocale(), ['admin/i18n/common', 'admin/i18n/phrases']));
+    return JSON.stringify(i18n.getPhrases(exports.getLocales(), ['admin/i18n/common', 'admin/i18n/phrases']));
 };
 
 function getMainAppUrl(path) {

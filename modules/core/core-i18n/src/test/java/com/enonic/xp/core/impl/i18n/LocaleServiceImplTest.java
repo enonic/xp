@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.i18n;
 
 import java.net.URL;
 import java.util.Locale;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +13,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 
@@ -21,12 +23,14 @@ public class LocaleServiceImplTest
 {
     private LocaleServiceImpl localeService;
 
+    private ResourceService resourceService;
+
     @Before
     public void before()
         throws Exception
     {
         this.localeService = new LocaleServiceImpl();
-        final ResourceService resourceService = Mockito.mock( ResourceService.class );
+        this.resourceService = Mockito.mock( ResourceService.class );
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( this::loadResource );
         this.localeService.setResourceService( resourceService );
     }
@@ -104,7 +108,8 @@ public class LocaleServiceImplTest
         assertEquals( "ЯБГДЖЙ", bundle.localize( "russian" ) );
         assertEquals( "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃ", bundle.localize( "japanese" ) );
 
-        assertEquals( "{msg=en, a=en, german=ÄäÜüß, japanese=ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃ, c=none, russian=ЯБГДЖЙ, polish=ŁĄŻĘĆŃŚŹ, norwegian=æøå}", bundle.asMap().toString() );
+        assertEquals( "{msg=en, a=en, german=ÄäÜüß, japanese=ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃ, c=none, russian=ЯБГДЖЙ, polish=ŁĄŻĘĆŃŚŹ, norwegian=æøå}",
+                      bundle.asMap().toString() );
     }
 
     @Test
@@ -117,5 +122,29 @@ public class LocaleServiceImplTest
         assertNotNull( bundle );
         assertEquals( 9, bundle.getKeys().size() );
         assertEquals( "override", bundle.localize( "msg" ) );
+    }
+
+    @Test
+    public void getLocales()
+        throws Exception
+    {
+        final ResourceKeys resourceKeys =
+            ResourceKeys.from( "myapplication:/site/i18n/myphrases.properties", "myapplication:/site/i18n/myphrases_en.properties",
+                               "myapplication:/site/i18n/myphrases_en_US.properties",
+                               "myapplication:/site/i18n/myphrases_en_US_1.properties", "myapplication:/site/i18n/myphrases_fr.properties",
+                               "myapplication:/site/i18n/myphrases_ca.properties" );
+
+        Mockito.when( resourceService.findFiles( Mockito.any(), Mockito.eq( "\\Q/phrases\\E.*\\.properties" ) ) ).thenReturn(
+            resourceKeys );
+
+        final Set<Locale> locales = localeService.getLocales( ApplicationKey.from( "myapplication" ), "/phrases" );
+
+        assertNotNull( locales );
+        assertEquals( 5, locales.size() );
+        assertTrue( locales.contains( new Locale( "en" ) ) );
+        assertTrue( locales.contains( new Locale( "en", "US" ) ) );
+        assertTrue( locales.contains( new Locale( "en", "US", "1" ) ) );
+        assertTrue( locales.contains( new Locale( "fr" ) ) );
+        assertTrue( locales.contains( new Locale( "ca" ) ) );
     }
 }
