@@ -81,6 +81,18 @@ public class WidgetDescriptorServiceTest
     public void get_by_interfaces()
         throws Exception
     {
+        final Descriptors<WidgetDescriptor> result = this.service.getByInterfaces( "com.enonic.xp.my-interface" );
+        assertEquals( 4, result.getSize() );
+        assertTrue( result.contains( widgetDescriptor1 ) );
+        assertTrue( result.contains( widgetDescriptor3 ) );
+        assertTrue( result.contains( widgetDescriptor4 ) );
+        assertTrue( result.contains( widgetDescriptor5 ) );
+    }
+
+    @Test
+    public void get_allowed_by_interfaces()
+        throws Exception
+    {
         final Descriptors<WidgetDescriptor> result = this.service.getAllowedByInterfaces( "com.enonic.xp.my-interface" );
         assertEquals( 2, result.getSize() );
         assertTrue( result.contains( widgetDescriptor1 ) );
@@ -88,7 +100,7 @@ public class WidgetDescriptorServiceTest
     }
 
     @Test
-    public void get_by_interfaces_as_admin()
+    public void get_allowed_by_interfaces_as_admin()
         throws Exception
     {
         final AuthenticationInfo authenticationInfo = AuthenticationInfo.copyOf( ContextAccessor.current().getAuthInfo() ).
