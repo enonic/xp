@@ -404,14 +404,14 @@ exports.findUsers = function (params) {
  *
  * @example-ref examples/auth/createRole.js
  *
- * @param {string} principalKey Key of the role to create.
- * @param {string} params.displayName Group display name.
+ * @param {string} name Role name.
+ * @param {string} params.displayName Role display name.
  * @param {string} params.description as principal description .
  */
 exports.createRole = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.CreateRoleHandler');
 
-    bean.key = nullOrValue(params.key);
+    bean.name = required(params, 'name');
     bean.displayName = nullOrValue(params.displayName);
     bean.description = nullOrValue(params.description);
 

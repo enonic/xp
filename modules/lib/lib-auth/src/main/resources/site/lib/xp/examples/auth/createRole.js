@@ -4,7 +4,7 @@ var t = require('/lib/xp/testing');
 // BEGIN
 // Creates a group.
 var role = authLib.createRole({
-    key: 'role:aRole',
+    name: 'aRole',
     displayName: 'Role Display Name',
     description: 'description'
 });

@@ -15,15 +15,15 @@ public final class CreateRoleHandler
 {
     private Supplier<SecurityService> securityService;
 
-    private PrincipalKey key;
+    private String name;
 
     private String displayName;
 
     private String description;
 
-    public void setKey( final String key )
+    public void setName( final String name )
     {
-        this.key = PrincipalKey.from( key );
+        this.name = name;
     }
 
     public void setDisplayName( final String displayName )
@@ -39,7 +39,7 @@ public final class CreateRoleHandler
     public PrincipalMapper createRole()
     {
         final Role role = this.securityService.get().createRole( CreateRoleParams.create().
-            roleKey( this.key ).
+            roleKey( PrincipalKey.ofRole( name )).
             displayName( this.displayName ).
             description( this.description ).
             build() );
