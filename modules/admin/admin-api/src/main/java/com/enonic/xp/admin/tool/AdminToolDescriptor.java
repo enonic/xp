@@ -7,6 +7,7 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.RoleKeys;
 
 public class AdminToolDescriptor
 {
@@ -48,7 +49,7 @@ public class AdminToolDescriptor
 
     public boolean isAccessAllowed( final PrincipalKeys principalKeys )
     {
-        return principalKeys.stream().
+        return principalKeys.contains( RoleKeys.ADMIN ) || principalKeys.stream().
             anyMatch( allowedPrincipals::contains );
     }
 

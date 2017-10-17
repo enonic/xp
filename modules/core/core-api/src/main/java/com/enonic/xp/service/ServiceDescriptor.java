@@ -6,6 +6,7 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.RoleKeys;
 
 public final class ServiceDescriptor
 {
@@ -35,7 +36,8 @@ public final class ServiceDescriptor
 
     public boolean isAccessAllowed( final PrincipalKeys principalKeys )
     {
-        return allowedPrincipals == null || allowedPrincipals.stream().anyMatch( principalKeys::contains );
+        return allowedPrincipals == null || principalKeys.contains( RoleKeys.ADMIN ) ||
+            allowedPrincipals.stream().anyMatch( principalKeys::contains );
     }
 
     public static ResourceKey toRootResourceKey( final DescriptorKey key )
