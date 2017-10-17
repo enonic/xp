@@ -417,3 +417,22 @@ exports.createRole = function (params) {
 
     return __.toNativeObject(bean.createRole());
 };
+
+/**
+ * Retrieves the role specified and updates it with the changes applied.
+ *
+ * @example-ref examples/auth/modifyRole.js
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.key Principal key of the role to modify.
+ * @param {function} params.editor Role editor function to apply to role.
+ * @returns {object} the updated role.
+ */
+exports.modifyRole = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.auth.ModifyRoleHandler');
+
+    bean.principalKey = required(params, 'key');
+    bean.editor = __.toScriptValue(required(params, 'editor'));
+
+    return __.toNativeObject(bean.modifyRole());
+};

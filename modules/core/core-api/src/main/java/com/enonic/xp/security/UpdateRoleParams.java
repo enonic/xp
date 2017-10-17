@@ -12,12 +12,15 @@ public final class UpdateRoleParams
 
     private final String displayName;
 
+    private final RoleEditor editor;
+
     private final String description;
 
     private UpdateRoleParams( final Builder builder )
     {
         this.key = checkNotNull( builder.principalKey, "roleKey is required for a role" );
         this.displayName = builder.displayName;
+        this.editor = builder.editor;
         this.description = builder.description;
     }
 
@@ -31,6 +34,11 @@ public final class UpdateRoleParams
         return displayName;
     }
 
+    public RoleEditor getEditor()
+    {
+        return editor;
+    }
+
     public String getDescription()
     {
         return description;
@@ -38,6 +46,13 @@ public final class UpdateRoleParams
 
     public Role update( final Role source )
     {
+        if ( this.editor != null )
+        {
+            final EditableRole editableRole = new EditableRole( source );
+            editor.edit( editableRole );
+            return editableRole.build();
+        }
+
         Role.Builder result = Role.create( source );
         if ( this.displayName != null )
         {
@@ -48,6 +63,7 @@ public final class UpdateRoleParams
         {
             result.description( this.getDescription() );
         }
+
         return result.build();
     }
 
@@ -66,6 +82,8 @@ public final class UpdateRoleParams
         private PrincipalKey principalKey;
 
         private String displayName;
+
+        private RoleEditor editor;
 
         private String description;
 
@@ -90,6 +108,12 @@ public final class UpdateRoleParams
         public Builder displayName( final String value )
         {
             this.displayName = value;
+            return this;
+        }
+
+        public Builder editor( final RoleEditor value )
+        {
+            this.editor = value;
             return this;
         }
 

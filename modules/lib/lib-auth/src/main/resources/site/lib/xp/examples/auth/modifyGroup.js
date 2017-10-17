@@ -5,7 +5,7 @@ var t = require('/lib/xp/testing');
 // Callback to edit the group.
 function editor(c) {
     c.displayName = 'Modified display name';
-    c.description = 'descriptionX'
+    c.description = 'descriptionX';
     return c;
 }
 
