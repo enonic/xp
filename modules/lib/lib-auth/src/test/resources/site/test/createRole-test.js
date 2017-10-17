@@ -3,7 +3,7 @@ var authLib = require('/lib/xp/auth.js');
 
 function createRole() {
     return authLib.createRole({
-        key: 'role:aRole',
+        name: 'aRole',
         displayName: 'Role Display Name',
         description: 'description'
     });
