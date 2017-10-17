@@ -42,6 +42,9 @@ public interface NodeService
 
     FindNodesByQueryResult findByQuery( NodeQuery nodeQuery );
 
+    @Deprecated
+    FindNodePathsByQueryResult findNodePathsByQuery( NodeQuery nodeQuery );
+
     FindNodesByMultiRepoQueryResult findByQuery( MultiRepoNodeQuery nodeQuery );
 
     NodeComparison compare( NodeId id, Branch target );

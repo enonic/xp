@@ -15,6 +15,7 @@ import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.DuplicateNodeProcessor;
+import com.enonic.xp.node.FindNodePathsByQueryResult;
 import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
@@ -202,6 +203,19 @@ public class NodeServiceImpl
     {
         verifyContext();
         return FindNodesByQueryCommand.create().
+            query( nodeQuery ).
+            indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
+            build().
+            execute();
+    }
+
+    @Override
+    public FindNodePathsByQueryResult findNodePathsByQuery( NodeQuery nodeQuery )
+    {
+        verifyContext();
+        return FindNodePathsByQueryCommand.create().
             query( nodeQuery ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.nodeStorageService ).
