@@ -35,7 +35,7 @@ import com.enonic.xp.web.websocket.WebSocketEndpoint;
 public final class AppHandler
     extends BaseWebHandler
 {
-    private final static Pattern PATTERN = Pattern.compile( "/app/([^/]+)(.+)?" );
+    public final static Pattern PATTERN = Pattern.compile( "/app/([^/]+)(.+)?" );
 
     private final static String ROOT_ASSET_PREFIX = "assets/";
 
