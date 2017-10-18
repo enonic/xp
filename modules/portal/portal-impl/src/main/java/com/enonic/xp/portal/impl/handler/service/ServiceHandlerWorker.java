@@ -1,14 +1,18 @@
 package com.enonic.xp.portal.impl.handler.service;
 
+import java.util.regex.Matcher;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.ControllerHandlerWorker;
+import com.enonic.xp.portal.impl.app.AppHandler;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -60,14 +64,29 @@ final class ServiceHandlerWorker
             getPrincipals();
         if ( !serviceDescriptor.isAccessAllowed( principals ) )
         {
-            throw forbidden( "You don't have permission to access [%s]", serviceDescriptor.toString() );
+            throw forbidden( "You don't have permission to access [%s]", descriptorKey.toString() );
+        }
+
+        //Checks if the application is set on the current site
+        final Content content = getContentOrNull( getContentSelector() );
+        final Site site = getSiteOrNull( content );
+        if ( site != null )
+        {
+            final PropertyTree siteConfig = site.getSiteConfig( applicationKey );
+            if (siteConfig == null) {
+                throw forbidden( "Service [%s] forbidden for this site", descriptorKey.toString() );
+            }
+        }
+
+        //Checks if the application is set on the current application
+        final ApplicationKey baseApplicationKey = getBaseApplicationKey();
+        if (baseApplicationKey != null && !baseApplicationKey.equals( applicationKey )) {
+            throw forbidden( "Service [%s] forbidden for this application", descriptorKey.toString() );
         }
 
         //Prepares the request
         this.request.setApplicationKey( applicationKey );
-        final Content content = getContentOrNull( getContentSelector() );
         this.request.setContent( content );
-        final Site site = getSiteOrNull( content );
         this.request.setSite( site );
 
         //Executes the service
@@ -96,6 +115,16 @@ final class ServiceHandlerWorker
 
         //Executes the service
         return this.controllerScriptFactory.fromDir( resource.getKey() );
+    }
+
+    private ApplicationKey getBaseApplicationKey()
+    {
+        final Matcher matcher = AppHandler.PATTERN.matcher( this.request.getRawPath() );
+        if (matcher.matches()) {
+            final String applicationBase = matcher.group( 1 );
+            return ApplicationKey.from( applicationBase );
+        }
+        return null;
     }
 
     private WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config )
