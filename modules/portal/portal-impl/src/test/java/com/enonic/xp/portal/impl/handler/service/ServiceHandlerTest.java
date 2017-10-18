@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
@@ -31,6 +32,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.service.ServiceDescriptor;
 import com.enonic.xp.service.ServiceDescriptorService;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
@@ -92,6 +94,7 @@ public class ServiceHandlerTest
         this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
         this.request.setEndpointPath( "/_/service/demo/myservice" );
+        this.request.setRawPath( "portal/draft/site/somepath/content/_/service/demo/myservice" );
     }
 
     @Test
@@ -209,6 +212,41 @@ public class ServiceHandlerTest
         assertNotNull( this.request.getContent() );
     }
 
+    @Test(expected=com.enonic.xp.web.WebException.class)
+    public void executeScript_invalidSite()
+        throws Exception
+    {
+        setupContentAndSite();
+        this.request.setEndpointPath( "/_/service/forbidden/test" );
+        final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
+    }
+
+    @Test
+    public void executeScript_validApplication()
+        throws Exception
+    {
+        this.request.setRawPath( "/app/demo/_/service/demo/test" );
+        this.request.setEndpointPath( "/_/service/demo/test" );
+
+        final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertEquals( HttpStatus.OK, response.getStatus() );        
+        Mockito.verify( this.controllerScript ).execute( this.request );
+        assertNotNull( this.request.getApplicationKey() );
+    }
+
+    @Test(expected=com.enonic.xp.web.WebException.class)
+    public void executeScript_invalidApplication()
+        throws Exception
+    {
+        this.request.setRawPath( "/app/forbidden/_/service/demo/test" );
+        this.request.setEndpointPath( "/_/service/demo/test" );
+
+        final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertEquals( HttpStatus.OK, response.getStatus() );        
+        Mockito.verify( this.controllerScript ).execute( this.request );
+        assertNotNull( this.request.getApplicationKey() );
+    }
+
     private void setupContentAndSite()
         throws Exception
     {
@@ -266,7 +304,13 @@ public class ServiceHandlerTest
             config( rootDataSet ).
             build();
 
+        final SiteConfig siteConfig = SiteConfig.create().
+            application( ApplicationKey.from( "demo" ) ).
+            config( new PropertyTree() ).
+            build();
+
         return Site.create().
+            addSiteConfig( siteConfig ).
             id( ContentId.from( id ) ).
             path( ContentPath.from( path ) ).
             owner( PrincipalKey.from( "user:myStore:me" ) ).
