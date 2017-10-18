@@ -61,7 +61,7 @@ public final class Site
     }
 
     public static class Builder
-        extends Content.Builder<Builder, Site>
+        extends Content.Builder<Builder>
     {
         private static final SiteConfigsDataSerializer SITE_CONFIGS_DATA_SERIALIZER = new SiteConfigsDataSerializer();
 

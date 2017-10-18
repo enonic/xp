@@ -182,7 +182,7 @@ public class Media
     }
 
     public static class Builder
-        extends Content.Builder<Builder, Media>
+        extends Content.Builder<Builder>
     {
 
         public Builder( final Media source )
