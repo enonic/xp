@@ -78,7 +78,7 @@ public final class PageTemplate
     }
 
     public static class Builder
-        extends Content.Builder<Builder, PageTemplate>
+        extends Content.Builder<Builder>
     {
         private PageTemplateKey key;
 
@@ -100,7 +100,7 @@ public final class PageTemplate
         }
 
         @Override
-        public Content.Builder<Builder, PageTemplate> id( final ContentId value )
+        public Builder id( final ContentId value )
         {
             super.id( value );
             this.key = PageTemplateKey.from( value );

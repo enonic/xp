@@ -364,7 +364,7 @@ public class Content
                              language, contentState, publishInfo );
     }
 
-    public static class Builder<BUILDER extends Builder, C extends Content>
+    public static class Builder<BUILDER extends Builder>
     {
         protected ContentId id;
 
@@ -447,60 +447,60 @@ public class Content
             this.publishInfo = source.publishInfo;
         }
 
-        public Builder<BUILDER, C> parentPath( final ContentPath path )
+        public BUILDER parentPath( final ContentPath path )
         {
             this.parentPath = path;
-            return this;
+            return (BUILDER) this;
         }
 
-        public Builder<BUILDER, C> name( final String name )
+        public BUILDER name( final String name )
         {
             this.name = ContentName.from( name );
-            return this;
+            return (BUILDER) this;
         }
 
-        public Builder<BUILDER, C> name( final ContentName name )
+        public BUILDER name( final ContentName name )
         {
             this.name = name;
-            return this;
+            return (BUILDER) this;
         }
 
-        public Builder<BUILDER, C> path( final String path )
+        public BUILDER path( final String path )
         {
-            return path( ContentPath.from( path ) );
+            return (BUILDER) path( ContentPath.from( path ) );
         }
 
-        public Builder<BUILDER, C> path( final ContentPath path )
+        public BUILDER path( final ContentPath path )
         {
             this.parentPath = path.getParentPath() != null ? path.getParentPath().asAbsolute() : null;
             Preconditions.checkArgument( path.elementCount() > 0, "No content can be \"root content\": " + path.toString() );
             this.name = ContentName.from( path.getElement( path.elementCount() - 1 ) );
-            return this;
+            return (BUILDER) this;
         }
 
-        public Builder<BUILDER, C> valid( final boolean valid )
+        public BUILDER valid( final boolean valid )
         {
             this.valid = valid;
-            return this;
+            return (BUILDER) this;
         }
 
-        public Builder<BUILDER, C> type( final ContentTypeName type )
+        public BUILDER type( final ContentTypeName type )
         {
             if ( type.isDescendantOfMedia() && !( this instanceof Media.Builder ) )
             {
                 throw new IllegalArgumentException( "Please create Builder via Media when creating a Media" );
             }
             this.type = type;
-            return this;
+            return (BUILDER) this;
         }
 
-        public Builder<BUILDER, C> data( final PropertyTree data )
+        public BUILDER data( final PropertyTree data )
         {
             this.data = data;
-            return this;
+            return (BUILDER) this;
         }
 
-        public Builder<BUILDER, C> attachments( final Attachments attachments )
+        public BUILDER attachments( final Attachments attachments )
         {
             this.attachments = attachments;
 
@@ -510,126 +510,126 @@ public class Content
                 thumbnail( Thumbnail.from( thumbnailAttachment.getBinaryReference(), thumbnailAttachment.getMimeType(),
                                            thumbnailAttachment.getSize() ) );
             }
-            return this;
+            return (BUILDER) this;
         }
 
-        public Builder<BUILDER, C> addExtraData( final ExtraData extraData )
+        public BUILDER addExtraData( final ExtraData extraData )
         {
             if ( this.extraDatas == null )
             {
                 this.extraDatas = ExtraDatas.empty();
             }
             this.extraDatas = ExtraDatas.from( this.extraDatas, extraData );
-            return this;
+            return (BUILDER) this;
         }
 
-        public Builder<BUILDER, C> extraDatas( final ExtraDatas extraDatas )
+        public BUILDER extraDatas( final ExtraDatas extraDatas )
         {
             this.extraDatas = extraDatas;
-            return this;
+            return (BUILDER) this;
         }
 
-        public Builder<BUILDER, C> displayName( final String displayName )
+        public BUILDER displayName( final String displayName )
         {
             this.displayName = displayName;
-            return this;
+            return (BUILDER) this;
         }
 
-        public Builder<BUILDER, C> owner( final PrincipalKey owner )
+        public BUILDER owner( final PrincipalKey owner )
         {
             this.owner = owner;
-            return this;
+            return (BUILDER) this;
         }
 
-        public Builder<BUILDER, C> creator( final PrincipalKey modifier )
+        public BUILDER creator( final PrincipalKey modifier )
         {
             this.creator = modifier;
-            return this;
+            return (BUILDER) this;
         }
 
-        public Builder<BUILDER, C> modifier( final PrincipalKey modifier )
+        public BUILDER modifier( final PrincipalKey modifier )
         {
             this.modifier = modifier;
-            return this;
+            return (BUILDER) this;
         }
 
-        public Builder<BUILDER, C> createdTime( final Instant createdTime )
+        public BUILDER createdTime( final Instant createdTime )
         {
             this.createdTime = createdTime;
-            return this;
+            return (BUILDER) this;
         }
 
-        public Builder<BUILDER, C> modifiedTime( final Instant modifiedTime )
+        public BUILDER modifiedTime( final Instant modifiedTime )
         {
             this.modifiedTime = modifiedTime;
-            return this;
+            return (BUILDER) this;
         }
 
 
-        public Builder<BUILDER, C> publishInfo( final ContentPublishInfo publishInfo )
+        public BUILDER publishInfo( final ContentPublishInfo publishInfo )
         {
             this.publishInfo = publishInfo;
-            return this;
+            return (BUILDER) this;
         }
 
-        public Builder<BUILDER, C> id( final ContentId contentId )
+        public BUILDER id( final ContentId contentId )
         {
             this.id = contentId;
-            return this;
+            return (BUILDER) this;
         }
 
-        public Builder<BUILDER, C> hasChildren( final boolean hasChildren )
+        public BUILDER hasChildren( final boolean hasChildren )
         {
             this.hasChildren = hasChildren;
-            return this;
+            return (BUILDER) this;
         }
 
-        public Builder<BUILDER, C> childOrder( final ChildOrder childOrder )
+        public BUILDER childOrder( final ChildOrder childOrder )
         {
             this.childOrder = childOrder;
-            return this;
+            return (BUILDER) this;
         }
 
-        public Builder<BUILDER, C> page( final Page page )
+        public BUILDER page( final Page page )
         {
             this.page = page;
-            return this;
+            return (BUILDER) this;
         }
 
-        public Builder<BUILDER, C> thumbnail( final Thumbnail thumbnail )
+        public BUILDER thumbnail( final Thumbnail thumbnail )
         {
             this.thumbnail = thumbnail;
-            return this;
+            return (BUILDER) this;
         }
 
-        public Builder<BUILDER, C> permissions( final AccessControlList permissions )
+        public BUILDER permissions( final AccessControlList permissions )
         {
             this.permissions = permissions;
-            return this;
+            return (BUILDER) this;
         }
 
-        public Builder<BUILDER, C> inheritPermissions( final boolean inheritPermissions )
+        public BUILDER inheritPermissions( final boolean inheritPermissions )
         {
             this.inheritPermissions = inheritPermissions;
-            return this;
+            return (BUILDER) this;
         }
 
-        public Builder<BUILDER, C> language( final Locale language )
+        public BUILDER language( final Locale language )
         {
             this.language = language;
-            return this;
+            return (BUILDER) this;
         }
 
-        public Builder<BUILDER, C> contentState( final ContentState contentState )
+        public BUILDER contentState( final ContentState contentState )
         {
             this.contentState = contentState;
-            return this;
+            return (BUILDER) this;
         }
 
         @SuppressWarnings("unchecked")
-        public C build()
+        public Content build()
         {
-            return (C) new Content( this );
+            return new Content( this );
         }
     }
 }

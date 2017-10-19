@@ -50,9 +50,9 @@ public class SiteTest
             config( new PropertyTree() ).
             build();
         Site site = Site.create().
-            addSiteConfig( siteConfig ).
             name( "my-content" ).
             parentPath( ContentPath.ROOT ).
+            addSiteConfig( siteConfig ).
             build();
 
         Site site1 = Site.create( site ).build();
