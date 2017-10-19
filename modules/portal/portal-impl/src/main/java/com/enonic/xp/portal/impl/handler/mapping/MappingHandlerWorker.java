@@ -63,9 +63,8 @@ final class MappingHandlerWorker
     private PortalResponse renderPage( final ControllerScript controllerScript )
     {
         this.request.setControllerScript( controllerScript );
-
+        final Renderer<Content> renderer = this.rendererFactory.getRenderer( Content.class );
         final Content content = this.request.getContent();
-        final Renderer<Content> renderer = this.rendererFactory.getRenderer( content );
         return renderer.render( content, this.request );
     }
 
