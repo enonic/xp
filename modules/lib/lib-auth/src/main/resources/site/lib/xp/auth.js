@@ -34,6 +34,7 @@ function nullOrValue(value) {
  * @param {string} [params.userStore] Name of user-store where the user is stored. If not specified it will try all available user-stores, in alphabetical order.
  * @param {string} [params.password] Password for the user. Ignored if skipAuth is set to true, mandatory otherwise.
  * @param {boolean} [params.skipAuth=false] Skip authentication.
+ * @param {number} [params.sessionTimeout] Session timeout (in seconds). By default, the value of session.timeout from com.enonic.xp.web.jetty.cfg
  * @returns {object} Information for logged-in user.
  */
 exports.login = function (params) {
@@ -50,6 +51,8 @@ exports.login = function (params) {
     if (params['userStore']) {
         bean.userStore = [].concat(params['userStore']);
     }
+    
+    bean.sessionTimeout = nullOrValue(params['sessionTimeout']);
 
     return __.toNativeObject(bean.login());
 };
