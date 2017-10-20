@@ -38,13 +38,13 @@ public final class LoginHandler
     private boolean skipAuth;
 
     private String[] userStore;
-    
+
     private Integer sessionTimeout;
 
     private Supplier<SecurityService> securityService;
 
     private Supplier<Context> context;
-    
+
     private Supplier<PortalRequest> portalRequestSupplier;
 
     public void setUser( final String user )
@@ -66,7 +66,7 @@ public final class LoginHandler
     {
         this.userStore = userStore;
     }
-    
+
     public void setSessionTimeout( final Integer sessionTimeout )
     {
         this.sessionTimeout = sessionTimeout;
@@ -84,10 +84,10 @@ public final class LoginHandler
                 session.setAttribute( authInfo );
             }
 
-            if (this.sessionTimeout != null) {
+            if ( this.sessionTimeout != null )
+            {
                 setSessionTimeout();
             }
-            
 
             return new LoginResultMapper( authInfo );
         }
@@ -208,9 +208,11 @@ public final class LoginHandler
     private void setSessionTimeout()
     {
         final PortalRequest portalRequest = this.portalRequestSupplier.get();
-        if (portalRequest != null) {
+        if ( portalRequest != null )
+        {
             final HttpSession httpSession = portalRequest.getRawRequest().getSession();
-            if (httpSession != null) {
+            if ( httpSession != null )
+            {
                 httpSession.setMaxInactiveInterval( this.sessionTimeout );
             }
         }
