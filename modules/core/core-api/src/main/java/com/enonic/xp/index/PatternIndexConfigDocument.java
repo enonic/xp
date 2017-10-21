@@ -49,6 +49,10 @@ public class PatternIndexConfigDocument
     {
         final PathIndexConfig exactMatch = pathIndexConfigMap.get( dataPath.resetAllIndexesTo( 0 ).toString().toLowerCase() );
 
+        if(dataPath.toString().startsWith( "page.config" )) {
+            System.out.print( "" );
+        }
+
         if ( exactMatch != null )
         {
             return exactMatch.getIndexConfig();
