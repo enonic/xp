@@ -163,6 +163,25 @@ public class DumpServiceImplTest
     }
 
     @Test
+    public void dump_long_filename()
+        throws Exception
+    {
+        createNode( NodePath.ROOT,
+                    "this-is-my-node-with-very-long-filename-more-than-100-characters-yes-it-has-to-be-very-long-indeed-sir" );
+
+        final SystemDumpResult systemDumpResult = NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().
+            dumpName( "testDump" ).
+            build() ) );
+
+        final BranchDumpResult result = systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).get( CTX_DEFAULT.getBranch() );
+        assertNotNull( result );
+        assertEquals( new Long( 2 ), result.getSuccessful() );
+
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
+
+    }
+
+    @Test
     public void verify_result()
         throws Exception
     {
