@@ -119,6 +119,7 @@ public class FileDumpWriter
         this.fileOut = new FileOutputStream( metaFile );
         this.gzipOut = new GZIPOutputStream( fileOut );
         this.tarOutputStream = new TarArchiveOutputStream( gzipOut );
+        this.tarOutputStream.setLongFileMode( TarArchiveOutputStream.LONGFILE_POSIX );
     }
 
     private File createBranchMeta( final RepositoryId repositoryId, final Branch branch )
