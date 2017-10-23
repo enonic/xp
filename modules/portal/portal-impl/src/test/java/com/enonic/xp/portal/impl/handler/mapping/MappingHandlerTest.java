@@ -129,22 +129,22 @@ public class MappingHandlerTest
         this.request.setEndpointPath( "" );
         this.request.setContent( this.contentService.getById( ContentId.from( "id" ) ) );
 
-        Renderer<Content> renderer = new Renderer<Content>()
+        Renderer<ControllerMappingDescriptor> renderer = new Renderer<ControllerMappingDescriptor>()
         {
             @Override
-            public Class<Content> getType()
+            public Class<ControllerMappingDescriptor> getType()
             {
-                return Content.class;
+                return ControllerMappingDescriptor.class;
             }
 
             @Override
-            public PortalResponse render( final Content component, final PortalRequest portalRequest )
+            public PortalResponse render( final ControllerMappingDescriptor component, final PortalRequest portalRequest )
             {
                 return PortalResponse.create().body( "Ok" ).build();
             }
         };
 
-        when( rendererFactory.getRenderer( isA( Content.class ) ) ).thenReturn( renderer );
+        when( rendererFactory.getRenderer( isA( ControllerMappingDescriptor.class ) ) ).thenReturn( renderer );
 
         final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertEquals( HttpStatus.OK, response.getStatus() );
