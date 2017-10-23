@@ -27,7 +27,7 @@ public final class RendererFactoryImpl
         return getRenderer( (Class<R>) renderable.getClass() );
     }
 
-    public <R> Renderer<R> getRenderer( final Class<R> renderableType )
+    private <R> Renderer<R> getRenderer( final Class<R> renderableType )
     {
         return findRenderer( renderableType );
     }

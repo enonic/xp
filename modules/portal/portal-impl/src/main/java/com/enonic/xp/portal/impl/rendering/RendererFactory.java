@@ -6,6 +6,4 @@ import com.google.common.annotations.Beta;
 public interface RendererFactory
 {
     <R> Renderer<R> getRenderer( R renderable );
-    
-    <R> Renderer<R> getRenderer( Class<R> renderableType );
 }
