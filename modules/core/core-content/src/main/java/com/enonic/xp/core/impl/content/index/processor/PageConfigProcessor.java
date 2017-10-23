@@ -21,7 +21,7 @@ public class PageConfigProcessor implements ContentIndexConfigProcessor
 
     private DescriptorKey descriptorKey;
 
-    private final static IndexConfig TEXT_COMPONENT_INDEX_CONFIG = IndexConfig.create( IndexConfig.FULLTEXT ).
+    public final static IndexConfig TEXT_COMPONENT_INDEX_CONFIG = IndexConfig.create( IndexConfig.FULLTEXT ).
         addIndexValueProcessor( IndexValueProcessors.HTML_STRIPPER ).
         build();
 
@@ -35,7 +35,7 @@ public class PageConfigProcessor implements ContentIndexConfigProcessor
     {
         builder.add( PAGE, IndexConfig.NONE ).
             add( PropertyPath.from( PAGE, "controller"), IndexConfig.MINIMAL ).
-            add( PropertyPath.from( PAGE_CONFIG, "*"), IndexConfig.BY_TYPE ).
+                add( PropertyPath.from( PAGE_CONFIG, "*"), IndexConfig.BY_TYPE ).
             add( PAGE_TEXT_COMPONENT_PROPERTY_PATH_PATTERN, TEXT_COMPONENT_INDEX_CONFIG ).
             add( PropertyPath.from( PAGE, "regions" ), IndexConfig.NONE );
 
@@ -43,8 +43,8 @@ public class PageConfigProcessor implements ContentIndexConfigProcessor
 
         if(configForm != null && configForm.getFormItems().size() > 0)
         {
-            final IndexConfigVisitor indexConfigVisitor2 = new IndexConfigVisitor( PAGE_CONFIG, builder );
-            indexConfigVisitor2.traverse( configForm );
+            final IndexConfigVisitor indexConfigVisitor = new IndexConfigVisitor( PAGE_CONFIG, builder );
+            indexConfigVisitor.traverse( configForm );
         }
 
         return builder;

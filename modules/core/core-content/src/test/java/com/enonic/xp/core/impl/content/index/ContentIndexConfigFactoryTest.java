@@ -1,15 +1,11 @@
-package com.enonic.xp.core.impl.content;
+package com.enonic.xp.core.impl.content.index;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.core.impl.content.index.ContentIndexConfigFactory;
-import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -26,7 +22,6 @@ import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.Assert.*;
 
@@ -115,15 +110,6 @@ public class ContentIndexConfigFactoryTest
     public void page_indexing()
         throws Exception
     {
-        final PropertyTree data = new PropertyTree();
-        final PropertySet page = data.addSet( ContentPropertyNames.PAGE );
-        page.addString( "controller", "controllerName" );
-
-        final PropertySet region = page.addSet( "region" );
-        final PropertySet component = region.addSet( "component" );
-        final PropertySet textcomponent = component.addSet( "textcomponent" );
-        textcomponent.setString( "text", "<h1>This is a text component</h1>" );
-
         final Form pageForm = Form.create().
             addFormItem( FormItemSet.create().
                 name( "region" ).
@@ -150,10 +136,14 @@ public class ContentIndexConfigFactoryTest
             descriptorKey( DescriptorKey.from( "controllerName" ) ).
             build().produce();
 
+
         assertFalse( indexConfigDocument.getConfigForPath( PropertyPath.from( ContentPropertyNames.PAGE ) ).isEnabled() );
         assertFalse( indexConfigDocument.getConfigForPath(
             PropertyPath.from( ContentPropertyNames.PAGE, "region", "component", "PartComponent", "template" ) ).isEnabled() );
-        assertTrue( indexConfigDocument.getConfigForPath(
-            PropertyPath.from( ContentPropertyNames.PAGE, "region", "component", "TextComponent", "text" ) ).isEnabled() );
+
+        final IndexConfig htmlAreaConfig = indexConfigDocument.getConfigForPath(
+            PropertyPath.from( ContentPropertyNames.PAGE, "region", "component", "TextComponent", "text" ) );
+
+        assertEquals( htmlAreaConfig.getIndexValueProcessors().get( 0 ).getName(), "htmlStripper");
     }
 }
