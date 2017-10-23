@@ -9,6 +9,8 @@ public class RepositoryEvents
 
     public final static String RESTORED_EVENT_TYPE = "repository.restored";
 
+    public final static String RESTORE_INITIALIZED_EVENT_TYPE = "repository.restoreInitialized";
+
     public final static String CREATED_EVENT_TYPE = "repository.created";
 
     public final static String UPDATED_EVENT_TYPE = "repository.updated";
@@ -42,6 +44,14 @@ public class RepositoryEvents
     public static Event restored()
     {
         return Event.create( RESTORED_EVENT_TYPE ).
+            distributed( true ).
+            localOrigin( true ).
+            build();
+    }
+
+    public static Event restoreInitialized()
+    {
+        return Event.create( RESTORE_INITIALIZED_EVENT_TYPE ).
             distributed( true ).
             localOrigin( true ).
             build();
