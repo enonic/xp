@@ -48,15 +48,7 @@ final class MappingHandlerWorker
             trace.put( "type", "mapping" );
         }
 
-        final PortalResponse portalResponse;
-        if ( this.request.getContent().hasPage() )
-        {
-            portalResponse = renderPage( controllerScript );
-        }
-        else
-        {
-            portalResponse = renderController( controllerScript );
-        }
+        final PortalResponse portalResponse = renderController( controllerScript );
 
         final WebSocketConfig webSocketConfig = portalResponse.getWebSocket();
         final WebSocketContext webSocketContext = this.request.getWebSocketContext();
@@ -68,18 +60,11 @@ final class MappingHandlerWorker
         return portalResponse;
     }
 
-    private PortalResponse renderPage( final ControllerScript controllerScript )
-    {
-        this.request.setControllerScript( controllerScript );
-
-        final Content content = this.request.getContent();
-        final Renderer<Content> renderer = this.rendererFactory.getRenderer( content );
-        return renderer.render( content, this.request );
-    }
-
     private PortalResponse renderController( final ControllerScript controllerScript )
     {
-        return controllerScript.execute( this.request );
+        this.request.setControllerScript( controllerScript );
+        final Renderer<ControllerMappingDescriptor> renderer = this.rendererFactory.getRenderer( mappingDescriptor );
+        return renderer.render( mappingDescriptor, this.request );
     }
 
     private ControllerScript getScript()

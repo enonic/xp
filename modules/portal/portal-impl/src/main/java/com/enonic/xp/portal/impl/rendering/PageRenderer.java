@@ -16,10 +16,6 @@ import com.enonic.xp.portal.impl.filter.FilterChainResolver;
 import com.enonic.xp.portal.impl.filter.FilterExecutor;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.script.PortalScriptService;
-import com.enonic.xp.site.filter.FilterDescriptor;
-import com.enonic.xp.site.filter.FilterDescriptors;
-import com.enonic.xp.trace.Trace;
-import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpStatus;
 
 import static com.enonic.xp.portal.RenderMode.EDIT;
@@ -30,15 +26,9 @@ import static com.enonic.xp.portal.impl.rendering.RenderingConstants.PORTAL_COMP
 
 @Component(immediate = true, service = Renderer.class)
 public final class PageRenderer
-    implements Renderer<Content>
+    extends PostRenderingRenderer<Content>
 {
     private ControllerScriptFactory controllerScriptFactory;
-
-    private PostProcessor postProcessor;
-
-    private FilterExecutor filterExecutor;
-
-    private FilterChainResolver filterChainResolver;
 
     @Override
     public Class<Content> getType()
@@ -47,7 +37,7 @@ public final class PageRenderer
     }
 
     @Override
-    public PortalResponse render( final Content content, final PortalRequest portalRequest )
+    public PortalResponse doRender( final Content content, final PortalRequest portalRequest )
     {
         final PageDescriptor pageDescriptor = portalRequest.getPageDescriptor();
         final RenderMode mode = portalRequest.getMode();
@@ -69,10 +59,6 @@ public final class PageRenderer
         {
             portalResponse = renderForNoPageDescriptor( portalRequest, content );
         }
-
-        portalResponse = this.postProcessor.processResponseInstructions( portalRequest, portalResponse );
-        portalResponse = executeResponseFilters( portalRequest, portalResponse );
-        portalResponse = this.postProcessor.processResponseContributions( portalRequest, portalResponse );
         return portalResponse;
     }
 
@@ -126,35 +112,6 @@ public final class PageRenderer
             build();
     }
 
-    private PortalResponse executeResponseFilters( final PortalRequest portalRequest, final PortalResponse portalResponse )
-    {
-        final FilterDescriptors filters = this.filterChainResolver.resolve( portalRequest );
-        if ( !portalResponse.applyFilters() || filters.isEmpty() )
-        {
-            return portalResponse;
-        }
-
-        PortalResponse filterResponse = portalResponse;
-        for ( FilterDescriptor filter : filters )
-        {
-            final Trace trace = Tracer.newTrace( "renderFilter" );
-            if ( trace != null )
-            {
-                trace.put( "app", filter.getApplication().toString() );
-                trace.put( "name", filter.getName() );
-                trace.put( "type", "filter" );
-            }
-            final PortalResponse filterPortalResponse = filterResponse;
-            filterResponse =
-                Tracer.trace( trace, () -> filterExecutor.executeResponseFilter( filter, portalRequest, filterPortalResponse ) );
-            if ( !filterResponse.applyFilters() )
-            {
-                break;
-            }
-        }
-
-        return filterResponse;
-    }
 
     @Reference
     public void setControllerScriptFactory( final ControllerScriptFactory controllerScriptFactory )
