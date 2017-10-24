@@ -27,18 +27,21 @@ public final class LocaleScriptBean
 {
     private Supplier<LocaleService> localeService;
 
-    public String localize( final String key, final List<String> locales, final ScriptValue values, final String[] bundles )
-    {
-        final String locale = getPreferredLocale( locales, bundles );
+    private ApplicationKey application;
 
-        MessageBundle bundle;
-        if ( bundles != null && bundles.length > 0 )
+    public String localize( final String key, final List<String> locales, final ScriptValue values, String[] bundles )
+    {
+        if ( bundles == null || bundles.length > 0 )
         {
-            bundle = getMessageBundle( locale, bundles );
+            bundles = new String[]{"site/i18n/phrases"};
         }
-        else
+
+        final String locale = getPreferredLocale( locales, bundles );
+        final MessageBundle bundle = getMessageBundle( locale, bundles );
+
+        if ( bundle == null )
         {
-            bundle = getMessageBundle( locale, "site/i18n/phrases" );
+            return null;
         }
 
         return bundle.localize( key, toArray( values ) );
@@ -52,7 +55,7 @@ public final class LocaleScriptBean
 
     public List<String> getSupportedLocales( final String... bundleNames )
     {
-        final ApplicationKey applicationKey = getRequest().getApplicationKey();
+        final ApplicationKey applicationKey = getApplication();
         return this.localeService.get().getLocales( applicationKey, bundleNames ).stream().
             map( Locale::toString ).
             sorted( String::compareTo ).
@@ -61,7 +64,7 @@ public final class LocaleScriptBean
 
     private String getPreferredLocale( final List<String> locales, final String[] bundleNames )
     {
-        final ApplicationKey applicationKey = getRequest().getApplicationKey();
+        final ApplicationKey applicationKey = getApplication();
         final Set<String> supportedLocales = this.localeService.get().getLocales( applicationKey, bundleNames ).stream().
             map( Locale::toString ).
             collect( toSet() );
@@ -89,9 +92,22 @@ public final class LocaleScriptBean
 
     private MessageBundle getMessageBundle( final String locale, final String... bundleNames )
     {
-        final ApplicationKey applicationKey = getRequest().getApplicationKey();
+        final ApplicationKey applicationKey = getApplication();
         final Locale resolvedLocale = resolveLocale( locale );
         return this.localeService.get().getBundle( applicationKey, resolvedLocale, bundleNames );
+    }
+
+    private ApplicationKey getApplication()
+    {
+        if ( this.application != null )
+        {
+            return this.application;
+        }
+        else
+        {
+            final PortalRequest req = getRequest();
+            return req != null ? req.getApplicationKey() : ApplicationKey.from( LocaleScriptBean.class );
+        }
     }
 
     private Locale resolveLocale( final String locale )
@@ -102,6 +118,11 @@ public final class LocaleScriptBean
     private Locale resolveLocaleFromSite()
     {
         final PortalRequest request = getRequest();
+        if ( request == null )
+        {
+            return null;
+        }
+
         final Site site = request.getSite();
 
         if ( site != null )
@@ -125,6 +146,11 @@ public final class LocaleScriptBean
     private String[] toArray( final List<String> value )
     {
         return value.toArray( new String[value.size()] );
+    }
+
+    public void setApplication( final String application )
+    {
+        this.application = application == null ? null : ApplicationKey.from( application );
     }
 
     @Override

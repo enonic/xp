@@ -7,8 +7,6 @@
  * @module i18n
  */
 
-var bean = __.newBean('com.enonic.xp.lib.i18n.LocaleScriptBean');
-
 /**
  * This function localizes a phrase.
  *
@@ -19,12 +17,15 @@ var bean = __.newBean('com.enonic.xp.lib.i18n.LocaleScriptBean');
  * @param {string|string[]} [params.locale] A string-representation of a locale, or an array of locales in preferred order. If the locale is not set, the site language is used.
  * @param {string[]} [params.values] Optional placeholder values.
  * @param {string[]} [params.bundles] Optional list of bundle names.
+ * @param {string} [params.application] Application key where to find resource bundles. Defaults to current application.
  *
  * @returns {string} The localized string.
  */
 exports.localize = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.i18n.LocaleScriptBean');
     params = params || {};
     params.locale = forceArray(params.locale);
+    bean.application = __.nullOrValue(params.application);
     return bean.localize(params.key, __.nullOrValue(params.locale), __.toScriptValue(params.values), __.nullOrValue(params.bundles));
 };
 
@@ -37,6 +38,7 @@ exports.localize = function (params) {
  * @returns {object} An object of all phrases.
  */
 exports.getPhrases = function (locale, bundles) {
+    var bean = __.newBean('com.enonic.xp.lib.i18n.LocaleScriptBean');
     locale = forceArray(locale);
     return __.toNativeObject(bean.getPhrases(__.nullOrValue(locale), bundles));
 };
@@ -49,6 +51,7 @@ exports.getPhrases = function (locale, bundles) {
  * @returns {string[]} A list of supported locale codes for the specified bundles.
  */
 exports.getSupportedLocales = function (bundles) {
+    var bean = __.newBean('com.enonic.xp.lib.i18n.LocaleScriptBean');
     return __.toNativeObject(bean.getSupportedLocales(bundles));
 };
 

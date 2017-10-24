@@ -19,6 +19,8 @@ class LocalizeParams
 
     private Locale locale;
 
+    private String application;
+
     private Object[] params;
 
     private final Pattern VALUES_PATTERN = Pattern.compile( "^\\{.*\\}$" );
@@ -37,6 +39,14 @@ class LocalizeParams
 
     public ApplicationKey getApplicationKey()
     {
+        if ( this.application != null )
+        {
+            return ApplicationKey.from( this.application );
+        }
+        if ( this.request == null )
+        {
+            throw new IllegalArgumentException( "Expected application parameter for localize function" );
+        }
         return this.request.getApplicationKey();
     }
 
@@ -97,11 +107,19 @@ class LocalizeParams
         this.params = Arrays.asList( argumentList.split( "," ) ).toArray();
     }
 
+
+    public LocalizeParams application( final String value )
+    {
+        this.application = Strings.emptyToNull( value );
+        return this;
+    }
+
     public LocalizeParams setAsMap( final Multimap<String, String> map )
     {
         key( singleValue( map, "_key" ) );
         locale( singleValue( map, "_locale" ) );
         values( multipleValues( map, "_values" ) );
+        application( singleValue( map, "_application" ) );
         return this;
     }
 
