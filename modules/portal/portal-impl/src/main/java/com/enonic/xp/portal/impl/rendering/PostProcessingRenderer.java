@@ -1,19 +1,16 @@
 package com.enonic.xp.portal.impl.rendering;
 
-import org.osgi.service.component.annotations.Reference;
-
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.filter.FilterChainResolver;
 import com.enonic.xp.portal.impl.filter.FilterExecutor;
 import com.enonic.xp.portal.postprocess.PostProcessor;
-import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.site.filter.FilterDescriptor;
 import com.enonic.xp.site.filter.FilterDescriptors;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 
-public abstract class PostRenderingRenderer<R>
+public abstract class PostProcessingRenderer<R>
     implements Renderer<R>
 {
     protected PostProcessor postProcessor;

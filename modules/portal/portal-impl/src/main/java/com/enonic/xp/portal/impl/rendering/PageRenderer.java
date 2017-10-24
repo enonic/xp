@@ -26,7 +26,7 @@ import static com.enonic.xp.portal.impl.rendering.RenderingConstants.PORTAL_COMP
 
 @Component(immediate = true, service = Renderer.class)
 public final class PageRenderer
-    extends PostRenderingRenderer<Content>
+    extends PostProcessingRenderer<Content>
 {
     private ControllerScriptFactory controllerScriptFactory;
 

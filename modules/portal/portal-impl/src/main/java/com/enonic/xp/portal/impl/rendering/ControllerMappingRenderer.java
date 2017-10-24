@@ -13,7 +13,7 @@ import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 
 @Component(immediate = true, service = Renderer.class)
 public final class ControllerMappingRenderer
-    extends PostRenderingRenderer<ControllerMappingDescriptor>
+    extends PostProcessingRenderer<ControllerMappingDescriptor>
 {
     @Override
     public Class<ControllerMappingDescriptor> getType()
